@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/PrintStream.h>
 #include <wtf/RefPtr.h>
 
 namespace JSC {
@@ -97,6 +98,8 @@ public:
                 return;
         }
     }
+    
+    void dump(PrintStream&) const;
 
 private:
     void clearMarksForCodeBlocksInRememberedExecutables(const Vector<const JSCell*>&);

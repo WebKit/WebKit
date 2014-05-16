@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "CodeBlock.h"
 #include "JSCInlines.h"
 #include "SlotVisitor.h"
+#include <wtf/CommaPrinter.h>
 
 namespace JSC {
 
@@ -155,6 +156,23 @@ void CodeBlockSet::rememberCurrentlyExecutingCodeBlocks(Heap* heap)
 #else
     UNUSED_PARAM(heap);
 #endif // ENABLE(GGC)
+}
+
+void CodeBlockSet::dump(PrintStream& out) const
+{
+    CommaPrinter comma;
+    out.print("{old = [");
+    for (CodeBlock* codeBlock : m_oldCodeBlocks)
+        out.print(comma, pointerDump(codeBlock));
+    out.print("], new = [");
+    comma = CommaPrinter();
+    for (CodeBlock* codeBlock : m_newCodeBlocks)
+        out.print(comma, pointerDump(codeBlock));
+    out.print("], currentlyExecuting = [");
+    comma = CommaPrinter();
+    for (CodeBlock* codeBlock : m_currentlyExecuting)
+        out.print(comma, pointerDump(codeBlock));
+    out.print("]}");
 }
 
 } // namespace JSC
