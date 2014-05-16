@@ -53,7 +53,33 @@ mock_revisions = {
             "path/to/file",
             "another/file",
         ],
-        "bug_description": "Example description.",
+        "bug_description": "Example description of bug 50000.",
+    }),
+    963: CommitInfo(963, "eric@webkit.org", {
+        "bug_id": 50005,
+        "author_name": "Carol Szabo",
+        "author_email": "carol.szabo@nokia.com",
+        "author": committer_list.contributor_by_email("carol.szabo@nokia.com"),
+        "reviewer_text": "Darin Adler",
+        "reviewer": committer_list.committer_by_name("Darin Adler"),
+        "changed_files": [
+            "path/to/file",
+            "another/file",
+        ],
+        "bug_description": "Example description of bug 50005.",
+    }),
+    987: CommitInfo(987, "eric@webkit.org", {
+        "bug_id": 50006,
+        "author_name": "Adam Barth",
+        "author_email": "abarth@webkit.org",
+        "author": committer_list.contributor_by_email("abarth@webkit.org"),
+        "reviewer_text": "Darin Adler",
+        "reviewer": committer_list.committer_by_name("Darin Adler"),
+        "changed_files": [
+            "path/to/file",
+            "another/file",
+        ],
+        "bug_description": "Example description of bug 50005.",
     }),
     3001: CommitInfo(3001, "tomz@codeaurora.org", {
         "bug_id": 50004,
@@ -66,7 +92,7 @@ mock_revisions = {
             "path/to/file",
             "another/file",
         ],
-        "bug_description": "Another example description.",
+        "bug_description": "Example description of bug 50004.",
     })
 }
 

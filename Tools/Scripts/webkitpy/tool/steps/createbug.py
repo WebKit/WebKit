@@ -46,11 +46,14 @@ class CreateBug(AbstractStep):
         cc = self._options.cc
         if not cc:
             cc = state.get("bug_cc")
-        blocks = self._options.blocks
-        if not blocks:
-            blocks = state.get("bug_blocked")
+        if self._options.blocks:
+            blocked_bugs = [int(self._options.blocks)]
+        else:
+            blocked_bugs = state.get("bug_id_list", [])
+        blocks = ", ".join(str(bug) for bug in blocked_bugs if bug)
         state["bug_id"] = self._tool.bugs.create_bug(state["bug_title"], state["bug_description"], blocked=blocks, component=self._options.component, cc=cc)
-        if blocks:
-            status = self._tool.bugs.fetch_bug(blocks).status()
-            if status == 'RESOLVED':
-                self._tool.bugs.reopen_bug(blocks, "Re-opened since this is blocked by bug %s" % state["bug_id"])
+        for blocked_bug in blocked_bugs:
+            if blocked_bug:
+                status = self._tool.bugs.fetch_bug(blocked_bug).status()
+                if status == 'RESOLVED':
+                    self._tool.bugs.reopen_bug(blocked_bug, "Re-opened since this is blocked by bug %s" % state["bug_id"])

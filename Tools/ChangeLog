@@ -1,3 +1,24 @@
+2014-05-16  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        [webkitpy] In case of multiple bug rollout, all bugs should be reopened, not only the oldest one
+        https://bugs.webkit.org/show_bug.cgi?id=131363
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/common/checkout/checkout_mock.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py:
+        (MockBugzilla):
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        (test_create_rollout_multiple_revision_with_one_resolved):
+        (test_create_rollout_multiple_resolved):
+        (test_rollout_two_revisions):
+        (test_rollout_multiple_revisions):
+        (test_rollout_multiple_revisions_with_a_missing_bug_id):
+        * Scripts/webkitpy/tool/steps/createbug.py:
+        (CreateBug.run):
+        * Scripts/webkitpy/tool/steps/reopenbugafterrollout.py:
+        (ReopenBugAfterRollout.run):
+
 2014-05-16  Martin Hodovan  <mhodovan.u-szeged@partner.samsung.com>
 
         [WK2] Change the remaining framework includes from WebKit2 to WebKit

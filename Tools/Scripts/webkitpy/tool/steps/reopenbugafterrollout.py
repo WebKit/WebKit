@@ -29,6 +29,7 @@
 import logging
 
 from webkitpy.tool.comments import bug_comment_from_commit_text
+from webkitpy.tool.grammar import join_with_separators
 from webkitpy.tool.steps.abstractstep import AbstractStep
 
 _log = logging.getLogger(__name__)
@@ -37,11 +38,13 @@ _log = logging.getLogger(__name__)
 class ReopenBugAfterRollout(AbstractStep):
     def run(self, state):
         commit_comment = bug_comment_from_commit_text(self._tool.scm(), state["commit_text"])
-        comment_text = "Reverted r%s for reason:\n\n%s\n\n%s" % (state["revision"], state["reason"], commit_comment)
-
-        bug_id = state["bug_blocked"]
-        if not bug_id:
+        revision_list = join_with_separators(['r' + str(revision) for revision in state["revision_list"]])
+        comment_text = "Reverted %s for reason:\n\n%s\n\n%s" % (revision_list, state["reason"], commit_comment)
+        bug_ids = state["bug_id_list"]
+        if not bug_ids:
             _log.info(comment_text)
             _log.info("No bugs were updated.")
             return
-        self._tool.bugs.reopen_bug(bug_id, comment_text)
+        for bug_id in bug_ids:
+            if bug_id:
+                self._tool.bugs.reopen_bug(bug_id, comment_text)

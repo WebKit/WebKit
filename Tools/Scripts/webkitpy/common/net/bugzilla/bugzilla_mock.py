@@ -236,6 +236,39 @@ _bug5 = {
 }
 
 
+_bug6 = {
+    "id": 50005,
+    "title": "1st resolved bug",
+    "reporter_email": _commit_queue_email,
+    "assigned_to_email": "foo@foo.com",
+    "cc_emails": [],
+    "attachments": [],
+    "bug_status": "RESOLVED",
+    "comments": [{"comment_date":  datetime.datetime(2011, 6, 11, 9, 4, 3),
+                  "comment_email": "bar@foo.com",
+                  "text": "Committed r95: <http://trac.webkit.org/changeset/95>",
+                  },
+                 ],
+
+}
+
+
+_bug7 = {
+    "id": 50006,
+    "title": "2nd resolved bug",
+    "reporter_email": "eric@webkit.org",
+    "assigned_to_email": "foo@foo.com",
+    "cc_emails": ["abarth@webkit.org", ],
+    "attachments": [],
+    "bug_status": "RESOLVED",
+    "comments": [{"comment_date":  datetime.datetime(2011, 6, 11, 9, 4, 3),
+                  "comment_email": "bar@foo.com",
+                  "text": "Message1.\nCommitted r105: <http://trac.webkit.org/changeset/105>",
+                  },
+                 ],
+}
+
+
 class MockBugzillaQueries(object):
 
     def __init__(self, bugzilla):
@@ -302,7 +335,7 @@ class MockBugzilla(object):
 
     bug_server_url = "http://example.com"
 
-    bug_cache = _id_to_object_dictionary(_bug1, _bug2, _bug3, _bug4, _bug5)
+    bug_cache = _id_to_object_dictionary(_bug1, _bug2, _bug3, _bug4, _bug5, _bug6, _bug7)
 
     attachment_cache = _id_to_object_dictionary(_patch1,
                                                 _patch2,

@@ -326,7 +326,7 @@ bug_description: http://trac.webkit.org/changeset/852 broke the build:
 Reason
 component: MOCK component
 cc: MOCK cc
-blocked: 50000
+blocked: 50000, 50000
 MOCK add_patch_to_bug: bug_id=60001, description=ROLLOUT of r852, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
 -- Begin comment --
 Any committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the rollout will be successful.  This process takes approximately 15 minutes.
@@ -338,8 +338,33 @@ If you would like to land the rollout faster, you can use the following command:
 where ATTACHMENT_ID is the ID of this attachment.
 -- End comment --
 """
-        self.maxDiff = None
         self.assert_execute_outputs(CreateRollout(), ["855 852 854", "Reason"], options=self._default_options(), expected_logs=expected_logs)
+
+    def test_create_rollout_multiple_revision_with_one_resolved(self):
+        expected_logs = """Preparing rollout for bug 50000.
+Unable to parse bug number from diff.
+Preparing rollout for bug 50004.
+Updating working directory
+MOCK create_bug
+bug_title: REGRESSION(r852): Reason
+bug_description: http://trac.webkit.org/changeset/852 broke the build:
+Reason
+component: MOCK component
+cc: MOCK cc
+blocked: 50000, 50004
+MOCK reopen_bug 50004 with comment 'Re-opened since this is blocked by bug 60001'
+MOCK add_patch_to_bug: bug_id=60001, description=ROLLOUT of r852, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
+-- Begin comment --
+Any committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the rollout will be successful.  This process takes approximately 15 minutes.
+
+If you would like to land the rollout faster, you can use the following command:
+
+  webkit-patch land-attachment ATTACHMENT_ID
+
+where ATTACHMENT_ID is the ID of this attachment.
+-- End comment --
+"""
+        self.assert_execute_outputs(CreateRollout(), ["855 852 3001", "Reason"], options=self._default_options(), expected_logs=expected_logs)
 
     def test_create_rollout_resolved(self):
         expected_logs = """Preparing rollout for bug 50004.
@@ -365,6 +390,34 @@ where ATTACHMENT_ID is the ID of this attachment.
 """
         self.assert_execute_outputs(CreateRollout(), [3001, "Reason"], options=self._default_options(), expected_logs=expected_logs)
 
+    def test_create_rollout_multiple_resolved(self):
+        expected_logs = """Preparing rollout for bug 50005.
+Preparing rollout for bug 50006.
+Preparing rollout for bug 50004.
+Updating working directory
+MOCK create_bug
+bug_title: REGRESSION(r963): Reason
+bug_description: http://trac.webkit.org/changeset/963 broke the build:
+Reason
+component: MOCK component
+cc: MOCK cc
+blocked: 50005, 50006, 50004
+MOCK reopen_bug 50005 with comment 'Re-opened since this is blocked by bug 60001'
+MOCK reopen_bug 50006 with comment 'Re-opened since this is blocked by bug 60001'
+MOCK reopen_bug 50004 with comment 'Re-opened since this is blocked by bug 60001'
+MOCK add_patch_to_bug: bug_id=60001, description=ROLLOUT of r963, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
+-- Begin comment --
+Any committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the rollout will be successful.  This process takes approximately 15 minutes.
+
+If you would like to land the rollout faster, you can use the following command:
+
+  webkit-patch land-attachment ATTACHMENT_ID
+
+where ATTACHMENT_ID is the ID of this attachment.
+-- End comment --
+"""
+        self.assert_execute_outputs(CreateRollout(), ["987 3001 963", "Reason"], options=self._default_options(), expected_logs=expected_logs)
+
     def test_rollout(self):
         expected_logs = """Preparing rollout for bug 50000.
 Updating working directory
@@ -380,3 +433,72 @@ Committed r49824: <http://trac.webkit.org/changeset/49824>'
 """
         self.assert_execute_outputs(Rollout(), [852, "Reason", "Description"], options=self._default_options(), expected_logs=expected_logs)
 
+    def test_rollout_two_revisions(self):
+        expected_logs = """Preparing rollout for bug 50000.
+Preparing rollout for bug 50005.
+Updating working directory
+MOCK: user.open_url: file://...
+Was that diff correct?
+Building WebKit
+Committed r49824: <http://trac.webkit.org/changeset/49824>
+MOCK reopen_bug 50000 with comment 'Reverted r852 and r963 for reason:
+
+Reason
+
+Committed r49824: <http://trac.webkit.org/changeset/49824>'
+MOCK reopen_bug 50005 with comment 'Reverted r852 and r963 for reason:
+
+Reason
+
+Committed r49824: <http://trac.webkit.org/changeset/49824>'
+"""
+        self.assert_execute_outputs(Rollout(), ["852 963", "Reason", "Description"], options=self._default_options(), expected_logs=expected_logs)
+
+    def test_rollout_multiple_revisions(self):
+        expected_logs = """Preparing rollout for bug 50000.
+Preparing rollout for bug 50005.
+Preparing rollout for bug 50004.
+Updating working directory
+MOCK: user.open_url: file://...
+Was that diff correct?
+Building WebKit
+Committed r49824: <http://trac.webkit.org/changeset/49824>
+MOCK reopen_bug 50000 with comment 'Reverted r852, r963, and r3001 for reason:
+
+Reason
+
+Committed r49824: <http://trac.webkit.org/changeset/49824>'
+MOCK reopen_bug 50005 with comment 'Reverted r852, r963, and r3001 for reason:
+
+Reason
+
+Committed r49824: <http://trac.webkit.org/changeset/49824>'
+MOCK reopen_bug 50004 with comment 'Reverted r852, r963, and r3001 for reason:
+
+Reason
+
+Committed r49824: <http://trac.webkit.org/changeset/49824>'
+"""
+        self.assert_execute_outputs(Rollout(), ["852 3001 963", "Reason", "Description"], options=self._default_options(), expected_logs=expected_logs)
+
+    def test_rollout_multiple_revisions_with_a_missing_bug_id(self):
+        expected_logs = """Preparing rollout for bug 50000.
+Preparing rollout for bug 50005.
+Unable to parse bug number from diff.
+Updating working directory
+MOCK: user.open_url: file://...
+Was that diff correct?
+Building WebKit
+Committed r49824: <http://trac.webkit.org/changeset/49824>
+MOCK reopen_bug 50000 with comment 'Reverted r852, r963, and r999 for reason:
+
+Reason
+
+Committed r49824: <http://trac.webkit.org/changeset/49824>'
+MOCK reopen_bug 50005 with comment 'Reverted r852, r963, and r999 for reason:
+
+Reason
+
+Committed r49824: <http://trac.webkit.org/changeset/49824>'
+"""
+        self.assert_execute_outputs(Rollout(), ["852 999 963", "Reason", "Description"], options=self._default_options(), expected_logs=expected_logs)
