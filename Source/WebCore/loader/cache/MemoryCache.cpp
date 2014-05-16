@@ -266,7 +266,7 @@ bool MemoryCache::addImageToCache(NativeImagePtr image, const URL& url, const St
 #if ENABLE(CACHE_PARTITIONING)
     cachedImage->resourceRequest().setCachePartition(cachePartition);
 #endif
-    return true;
+    return add(cachedImage.release());
 }
 
 void MemoryCache::removeImageFromCache(const URL& url, const String& cachePartition)

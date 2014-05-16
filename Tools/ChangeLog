@@ -1,3 +1,16 @@
+2014-05-16  Martin Hock  <mhock@apple.com>
+
+        MemoryCache::addImageToCache should return the result of add().
+        https://bugs.webkit.org/show_bug.cgi?id=132928
+        <rdar://problem/16651547>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/MemoryCacheAddImageToCacheIOS.mm: Added.
+        (TestWebKitAPI::TEST):
+
 2014-05-15  David Farler  <dfarler@apple.com>
 
         old-run-webkit-tests: allow specifying a simulator app path

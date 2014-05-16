@@ -1,3 +1,16 @@
+2014-05-16  Martin Hock  <mhock@apple.com>
+
+        MemoryCache::addImageToCache should return the result of add().
+        https://bugs.webkit.org/show_bug.cgi?id=132928
+        <rdar://problem/16651547>
+
+        Reviewed by Alexey Proskuryakov.
+
+        API test: WebKit1.MemoryCacheADdImageToCache (MemoryCacheAddImageToCacheIOS.mm)
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::addImageToCache):
+
 2014-05-16  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Reduce the RenderRegion invasiveness in rendering code

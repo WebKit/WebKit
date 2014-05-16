@@ -110,6 +110,7 @@
 		52CB47411448FB9300873995 /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52CB47401448FB9300873995 /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp */; };
 		52E5CE4614D21E9D003B2BD8 /* ParentFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52E5CE4514D21E9D003B2BD8 /* ParentFrame.cpp */; };
 		52E5CE4914D21EAB003B2BD8 /* ParentFrame_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52E5CE4814D21EAB003B2BD8 /* ParentFrame_Bundle.cpp */; };
+		7560917819259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7560917719259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm */; };
 		75F3134018C171B70041CAEC /* EphemeralSessionPushStateNoHistoryCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75F3133F18C171B70041CAEC /* EphemeralSessionPushStateNoHistoryCallback.cpp */; };
 		76E182DA1547550100F1FADD /* WillSendSubmitEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76E182D91547550100F1FADD /* WillSendSubmitEvent.cpp */; };
 		76E182DD1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76E182DC1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp */; };
@@ -445,6 +446,7 @@
 		52CB47401448FB9300873995 /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadAlternateHTMLStringWithNonDirectoryURL.cpp; sourceTree = "<group>"; };
 		52E5CE4514D21E9D003B2BD8 /* ParentFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParentFrame.cpp; sourceTree = "<group>"; };
 		52E5CE4814D21EAB003B2BD8 /* ParentFrame_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParentFrame_Bundle.cpp; sourceTree = "<group>"; };
+		7560917719259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryCacheAddImageToCacheIOS.mm; sourceTree = "<group>"; };
 		75F3133F18C171B70041CAEC /* EphemeralSessionPushStateNoHistoryCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EphemeralSessionPushStateNoHistoryCallback.cpp; sourceTree = "<group>"; };
 		76E182D91547550100F1FADD /* WillSendSubmitEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillSendSubmitEvent.cpp; sourceTree = "<group>"; };
 		76E182DC1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillSendSubmitEvent_Bundle.cpp; sourceTree = "<group>"; };
@@ -724,6 +726,14 @@
 			path = Cocoa;
 			sourceTree = "<group>";
 		};
+		7560917619259C59009EF06E /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				7560917719259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm */,
+			);
+			path = ios;
+			sourceTree = "<group>";
+		};
 		BC029B1A1486B23800817DA9 /* ns */ = {
 			isa = PBXGroup;
 			children = (
@@ -962,6 +972,7 @@
 			children = (
 				44A82E7B19251B3500C1C8C4 /* Cocoa */,
 				FE217ECB1640A54A0052988B /* JavaScriptCore */,
+				7560917619259C59009EF06E /* ios */,
 				C07E6CAD13FD67650038B22B /* mac */,
 				C08587F913FEC39B001EF4E5 /* TestWebKitAPI */,
 				440A1D3614A01000008A66F2 /* WebCore */,
@@ -1199,6 +1210,7 @@
 				939BA91714103412001A01BD /* DeviceScaleFactorOnBack.mm in Sources */,
 				BCB68040126FBFE100642A61 /* DocumentStartUserScriptAlertCrash.cpp in Sources */,
 				37E1064D16976C8500B78BD0 /* DOMHTMLTableCellCellAbove.mm in Sources */,
+				7560917819259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm in Sources */,
 				3751AF7C169518F800764319 /* DOMNodeFromJSObject.mm in Sources */,
 				37DC678D140D7C5000ABCCDB /* DOMRangeOfString.mm in Sources */,
 				51393E201523944A005F39C5 /* DOMWindowExtensionBasic.cpp in Sources */,
