@@ -26,7 +26,7 @@
 #import "config.h"
 #import "SandboxExtension.h"
 
-#if ENABLE(WEB_PROCESS_SANDBOX)
+#if ENABLE(SANDBOX_EXTENSIONS)
 
 #import "ArgumentDecoder.h"
 #import "ArgumentEncoder.h"
@@ -322,4 +322,4 @@ bool SandboxExtension::consumePermanently(const Handle& handle)
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_PROCESS_SANDBOX)
+#endif // ENABLE(SANDBOX_EXTENSIONS)

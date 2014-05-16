@@ -3083,7 +3083,7 @@ void WebPage::didCancelForOpenPanel()
     m_activeOpenPanelResultListener = 0;
 }
 
-#if ENABLE(WEB_PROCESS_SANDBOX)
+#if ENABLE(SANDBOX_EXTENSIONS)
 void WebPage::extendSandboxForFileFromOpenPanel(const SandboxExtension::Handle& handle)
 {
     SandboxExtension::create(handle)->consumePermanently();

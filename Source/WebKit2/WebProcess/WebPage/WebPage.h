@@ -971,7 +971,7 @@ private:
 #endif
     void didChooseFilesForOpenPanel(const Vector<String>&);
     void didCancelForOpenPanel();
-#if ENABLE(WEB_PROCESS_SANDBOX)
+#if ENABLE(SANDBOX_EXTENSIONS)
     void extendSandboxForFileFromOpenPanel(const SandboxExtension::Handle&);
 #endif
 

@@ -159,7 +159,7 @@ static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
 
 void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, IPC::MessageDecoder&)
 {
-#if ENABLE(WEB_PROCESS_SANDBOX)
+#if ENABLE(SANDBOX_EXTENSIONS)
     SandboxExtension::consumePermanently(parameters.uiProcessBundleResourcePathExtensionHandle);
     SandboxExtension::consumePermanently(parameters.databaseDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.applicationCacheDirectoryExtensionHandle);

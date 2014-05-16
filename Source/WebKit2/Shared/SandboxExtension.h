@@ -32,7 +32,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(WEB_PROCESS_SANDBOX)
+#if ENABLE(SANDBOX_EXTENSIONS)
 typedef struct __WKSandboxExtension* WKSandboxExtensionRef;
 #endif
 
@@ -62,7 +62,7 @@ public:
 
     private:
         friend class SandboxExtension;
-#if ENABLE(WEB_PROCESS_SANDBOX)
+#if ENABLE(SANDBOX_EXTENSIONS)
         mutable WKSandboxExtensionRef m_sandboxExtension;
 #endif
     };
@@ -81,7 +81,7 @@ public:
         static bool decode(IPC::ArgumentDecoder&, HandleArray&);
        
     private:
-#if ENABLE(WEB_PROCESS_SANDBOX)
+#if ENABLE(SANDBOX_EXTENSIONS)
         std::unique_ptr<Handle[]> m_data;
         size_t m_size;
 #else
@@ -104,13 +104,13 @@ public:
 private:
     explicit SandboxExtension(const Handle&);
                      
-#if ENABLE(WEB_PROCESS_SANDBOX)
+#if ENABLE(SANDBOX_EXTENSIONS)
     mutable WKSandboxExtensionRef m_sandboxExtension;
     size_t m_useCount;
 #endif
 };
 
-#if !ENABLE(WEB_PROCESS_SANDBOX)
+#if !ENABLE(SANDBOX_EXTENSIONS)
 inline SandboxExtension::Handle::Handle() { }
 inline SandboxExtension::Handle::~Handle() { }
 inline void SandboxExtension::Handle::encode(IPC::ArgumentEncoder&) const { }

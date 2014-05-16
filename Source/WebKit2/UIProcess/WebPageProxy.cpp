@@ -3601,7 +3601,7 @@ void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs)
     if (!isValid())
         return;
 
-#if ENABLE(WEB_PROCESS_SANDBOX)
+#if ENABLE(SANDBOX_EXTENSIONS)
     // FIXME: The sandbox extensions should be sent with the DidChooseFilesForOpenPanel message. This
     // is gated on a way of passing SandboxExtension::Handles in a Vector.
     for (size_t i = 0; i < fileURLs.size(); ++i) {

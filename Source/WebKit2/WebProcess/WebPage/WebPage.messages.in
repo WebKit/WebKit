@@ -233,7 +233,7 @@ messages -> WebPage LegacyReceiver {
 #endif
     DidChooseFilesForOpenPanel(Vector<String> fileURLs)
     DidCancelForOpenPanel()
-#if ENABLE(WEB_PROCESS_SANDBOX)
+#if ENABLE(SANDBOX_EXTENSIONS)
     ExtendSandboxForFileFromOpenPanel(WebKit::SandboxExtension::Handle sandboxExtensionHandle)
 #endif
 
