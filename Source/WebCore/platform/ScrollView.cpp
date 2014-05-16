@@ -504,7 +504,7 @@ void ScrollView::setScrollPosition(const IntPoint& scrollPoint)
     }
 #endif
 
-    IntPoint newScrollPosition = adjustScrollPositionWithinRange(scrollPoint);
+    IntPoint newScrollPosition = !delegatesScrolling() ? adjustScrollPositionWithinRange(scrollPoint) : scrollPoint;
 
     if ((!delegatesScrolling() || !inProgrammaticScroll()) && newScrollPosition == scrollPosition())
         return;

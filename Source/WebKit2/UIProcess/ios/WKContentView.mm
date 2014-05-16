@@ -446,6 +446,17 @@ static inline FloatRect fixedPositionRectFromExposedRect(CGRect unobscuredRect, 
     return [_webView _scrollToRect:targetRect origin:origin minimumScrollDistance:minimumScrollDistance];
 }
 
+- (void)_zoomToFocusRect:(CGRect)rectToFocus selectionRect:(CGRect)selectionRect fontSize:(float)fontSize minimumScale:(double)minimumScale maximumScale:(double)maximumScale allowScaling:(BOOL)allowScaling forceScroll:(BOOL)forceScroll
+{
+    [_webView _zoomToFocusRect:rectToFocus
+                 selectionRect:selectionRect
+                      fontSize:fontSize
+                  minimumScale:minimumScale
+                  maximumScale:maximumScale
+              allowScaling:allowScaling
+                   forceScroll:forceScroll];
+}
+
 - (BOOL)_zoomToRect:(CGRect)targetRect withOrigin:(CGPoint)origin fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale minimumScrollDistance:(CGFloat)minimumScrollDistance
 {
     return [_webView _zoomToRect:targetRect withOrigin:origin fitEntireRect:fitEntireRect minimumScale:minimumScale maximumScale:maximumScale minimumScrollDistance:minimumScrollDistance];
