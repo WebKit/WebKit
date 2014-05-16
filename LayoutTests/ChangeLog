@@ -1,3 +1,16 @@
+2014-05-16  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Push named flows in region to device pixel when painting.
+        https://bugs.webkit.org/show_bug.cgi?id=132986
+
+        Reviewed by Simon Fraser.
+
+        Remove integral rounding when named flow sets the painting offset on the graphics context.
+        Use device pixel snapping instead to ensure that we can paint on odd device pixel positions on retina displays. 
+
+        * fast/regions/hidpi-region-with-auto-margin-on-subpixel-position-expected.html: Added.
+        * fast/regions/hidpi-region-with-auto-margin-on-subpixel-position.html: Added.
+
 2014-05-16  Kiran  <kiran.guduru@samsung.com>
 
         RTCDtmfSender default values need to be updated.

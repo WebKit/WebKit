@@ -6682,7 +6682,7 @@ void RenderLayer::paintNamedFlowThreadInsideRegion(GraphicsContext* context, Ren
     LayoutRect regionContentBox = toRenderBox(region->layerOwner()).contentBoxRect();
     LayoutSize moveOffset = region->flowThreadPortionLocation() - (paintOffset + regionContentBox.location()) + region->fragmentContainer().scrolledContentOffset();
 
-    IntPoint adjustedPaintOffset = roundedIntPoint(-moveOffset);
+    FloatPoint adjustedPaintOffset = roundedForPainting(LayoutPoint(-moveOffset.width(), -moveOffset.height()), renderer().document().deviceScaleFactor());
     paintDirtyRect.move(moveOffset);
 
     context->save();
