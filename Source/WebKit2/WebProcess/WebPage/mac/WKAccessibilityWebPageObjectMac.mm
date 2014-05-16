@@ -199,7 +199,9 @@ using namespace WebKit;
     IntPoint convertedPoint = m_page->screenToRootView(IntPoint(point));
     if (WebCore::FrameView* frameView = m_page->mainFrameView())
         convertedPoint.moveBy(frameView->scrollPosition());
-        
+    if (WebCore::Page* page = m_page->corePage())
+        convertedPoint.move(0, -page->topContentInset());
+    
     return [[self accessibilityRootObjectWrapper] accessibilityHitTest:convertedPoint];
 }
 #pragma clang diagnostic pop
