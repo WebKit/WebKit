@@ -1,5 +1,15 @@
 2014-05-16  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168724
+
+    2014-05-13  Anders Carlsson  <andersca@apple.com>
+
+            Another follow-up build fix.
+
+            * Shared/API/Cocoa/WKFoundation.h:
+
+2014-05-16  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168694
 
     2014-05-13  Anders Carlsson  <andersca@apple.com>

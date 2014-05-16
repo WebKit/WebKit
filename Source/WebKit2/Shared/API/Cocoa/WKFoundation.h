@@ -45,9 +45,12 @@
 #define WK_ENUM_AVAILABLE(_mac, _ios)
 
 #if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
-#import <Foundation/Foundation.h>
 
+#ifdef __OBJC__
+#import <Foundation/Foundation.h>
 typedef NSUInteger NSEventModifierFlags;
+#endif
+
 #endif
 
 #endif
