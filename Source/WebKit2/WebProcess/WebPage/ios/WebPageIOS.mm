@@ -2049,6 +2049,19 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
                 newUnobscuredContentRect.setY(0);
                 newExposedContentRect.setY(0);
             }
+
+            bool likelyResponsiveDesignViewport = newLayoutSize.width() == minimumLayoutSize.width() && withinEpsilon(scale, 1);
+            bool contentBleedsOutsideLayoutWidth = newContentSize.width() > newLayoutSize.width();
+            bool originalScrollPositionWasOnTheLeftEdge = targetUnobscuredRect.x() <= 0;
+            if (likelyResponsiveDesignViewport && contentBleedsOutsideLayoutWidth && originalScrollPositionWasOnTheLeftEdge) {
+                // This is a special heuristics for "responsive" design with odd layout. It is quite common for responsive design
+                // to have content "bleeding" outside of the minimal layout width, usually from an image or table larger than expected.
+                // In those cases, the design usually does not adapt to the new width and remain at the newLayoutSize except for the
+                // large boxes.
+                // It is worth revisiting this special case as web developers get better with responsive design.
+                newExposedContentRect.setX(0);
+                newUnobscuredContentRect.setX(0);
+            }
         }
 
         float horizontalAdjustment = 0;
