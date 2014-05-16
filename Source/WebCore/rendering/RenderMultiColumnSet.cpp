@@ -488,6 +488,10 @@ unsigned RenderMultiColumnSet::columnIndexAtOffset(LayoutUnit offset, ColumnInde
             return columnCount() - 1;
     }
 
+    // Sometimes computedColumnHeight() is 0 here: see https://bugs.webkit.org/show_bug.cgi?id=132884
+    if (!computedColumnHeight())
+        return 0;
+
     // Just divide by the column height to determine the correct column.
     return static_cast<float>(offset - flowThreadLogicalTop) / computedColumnHeight();
 }

@@ -1,5 +1,27 @@
 2014-05-16  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168882
+
+    2014-05-14  Simon Fraser  <simon.fraser@apple.com>
+
+            [New multicolumn] Spin in RenderMultiColumnSet::repaintFlowThreadContent()
+            https://bugs.webkit.org/show_bug.cgi?id=132884
+
+            Reviewed by Beth Dakin.
+
+            On iOS, wikipedia pages can hang under RenderMultiColumnSet::repaintFlowThreadContent().
+            It appears that computedColumnHeight is set to 0 in prepareForLayout, but layout never happens
+            on the RenderMultiColumnSet in some cases, leaving the column height set to zero.
+            This caused columnIndexAtOffset() to return bad values, which resulted in very long loops
+            in repaintFlowThreadContent().
+
+            This fix is a stop-gap.
+
+            * rendering/RenderMultiColumnSet.cpp:
+            (WebCore::RenderMultiColumnSet::columnIndexAtOffset):
+
+2014-05-16  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168758
 
     2014-05-13  Eric Carlson  <eric.carlson@apple.com>
