@@ -45,17 +45,14 @@ namespace JSC {
 
 inline void emitPointerValidation(CCallHelpers& jit, GPRReg pointerGPR)
 {
-#if !ASSERT_DISABLED
+    if (ASSERT_DISABLED)
+        return;
     CCallHelpers::Jump isNonZero = jit.branchTestPtr(CCallHelpers::NonZero, pointerGPR);
-    jit.breakpoint();
+    jit.abortWithReason(TGInvalidPointer);
     isNonZero.link(&jit);
     jit.pushToSave(pointerGPR);
     jit.load8(pointerGPR, pointerGPR);
     jit.popToRestore(pointerGPR);
-#else
-    UNUSED_PARAM(jit);
-    UNUSED_PARAM(pointerGPR);
-#endif
 }
 
 // We will jump here if the JIT code tries to make a call, but the
@@ -373,7 +370,7 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
 #else
 #error "JIT not supported on this platform."
     UNUSED_PARAM(executableOffsetToFunction);
-    breakpoint();
+    abortWithReason(TGNotSupported);
 #endif
 
     // Check for an exception

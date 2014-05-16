@@ -818,6 +818,7 @@
     <ClInclude Include="..\API\JSWrapperMap.h" />
     <ClInclude Include="..\API\OpaqueJSString.h" />
     <ClInclude Include="..\API\WebKitAvailability.h" />
+    <ClInclude Include="..\assembler\AbortReason.h" />
     <ClInclude Include="..\assembler\AbstractMacroAssembler.h" />
     <ClInclude Include="..\assembler\AssemblerBuffer.h" />
     <ClInclude Include="..\assembler\CodeLocation.h" />

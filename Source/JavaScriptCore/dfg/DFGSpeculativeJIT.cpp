@@ -1341,7 +1341,7 @@ void SpeculativeJIT::compileMovHint(Node* node)
 void SpeculativeJIT::bail()
 {
     m_compileOkay = true;
-    m_jit.breakpoint();
+    m_jit.abortWithReason(DFGBailed);
     clearGenerationInfo();
 }
 
@@ -1360,7 +1360,7 @@ void SpeculativeJIT::compileCurrentBlock()
         // Don't generate code for basic blocks that are unreachable according to CFA.
         // But to be sure that nobody has generated a jump to this block, drop in a
         // breakpoint here.
-        m_jit.breakpoint();
+        m_jit.abortWithReason(DFGUnreachableBasicBlock);
         return;
     }
 
@@ -2821,7 +2821,7 @@ void SpeculativeJIT::compileMakeRope(Node* node)
     if (!ASSERT_DISABLED) {
         JITCompiler::Jump ok = m_jit.branch32(
             JITCompiler::GreaterThanOrEqual, allocatorGPR, TrustedImm32(0));
-        m_jit.breakpoint();
+        m_jit.abortWithReason(DFGNegativeStringLength);
         ok.link(&m_jit);
     }
     for (unsigned i = 1; i < numOpGPRs; ++i) {
@@ -2837,7 +2837,7 @@ void SpeculativeJIT::compileMakeRope(Node* node)
     if (!ASSERT_DISABLED) {
         JITCompiler::Jump ok = m_jit.branch32(
             JITCompiler::GreaterThanOrEqual, allocatorGPR, TrustedImm32(0));
-        m_jit.breakpoint();
+        m_jit.abortWithReason(DFGNegativeStringLength);
         ok.link(&m_jit);
     }
     m_jit.store32(allocatorGPR, JITCompiler::Address(resultGPR, JSString::offsetOfLength()));

@@ -161,11 +161,11 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     
     Label done = label();
 
-#if !ASSERT_DISABLED
-    Jump resultOK = branch32(NotEqual, regT1, TrustedImm32(JSValue::EmptyValueTag));
-    breakpoint();
-    resultOK.link(this);
-#endif
+    if (!ASSERT_DISABLED) {
+        Jump resultOK = branch32(NotEqual, regT1, TrustedImm32(JSValue::EmptyValueTag));
+        abortWithReason(JITGetByValResultIsNotEmpty);
+        resultOK.link(this);
+    }
 
     emitValueProfilingSite();
     emitStore(dst, regT1, regT0);
@@ -601,11 +601,11 @@ void JIT::compileGetDirectOffset(RegisterID base, RegisterID resultTag, Register
         addPtr(TrustedImmPtr(JSObject::offsetOfInlineStorage() - (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), base);
         done.link(this);
     } else {
-#if !ASSERT_DISABLED
-        Jump isOutOfLine = branch32(GreaterThanOrEqual, offset, TrustedImm32(firstOutOfLineOffset));
-        breakpoint();
-        isOutOfLine.link(this);
-#endif
+        if (!ASSERT_DISABLED) {
+            Jump isOutOfLine = branch32(GreaterThanOrEqual, offset, TrustedImm32(firstOutOfLineOffset));
+            abortWithReason(JITOffsetIsNotOutOfLine);
+            isOutOfLine.link(this);
+        }
         loadPtr(Address(base, JSObject::butterflyOffset()), base);
         neg32(offset);
     }

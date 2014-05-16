@@ -101,7 +101,7 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
     restoreReturnAddressBeforeReturn(regT3);
 #else
 #error "JIT not supported on this platform."
-    breakpoint();
+    abortWithReason(JITNotSupported);
 #endif // CPU(X86)
 
     // Check for an exception

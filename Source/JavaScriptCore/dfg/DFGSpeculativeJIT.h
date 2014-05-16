@@ -2143,7 +2143,7 @@ public:
 #ifndef NDEBUG
         m_jit.move(size, resultGPR);
         MacroAssembler::Jump nonZeroSize = m_jit.branchTest32(MacroAssembler::NonZero, resultGPR);
-        m_jit.breakpoint();
+        m_jit.abortWithReason(DFGBasicStorageAllocatorZeroSize);
         nonZeroSize.link(&m_jit);
 #endif
 

@@ -1,3 +1,85 @@
+2014-05-16  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168776
+
+    2014-05-13  Filip Pizlo  <fpizlo@apple.com>
+
+            JIT breakpoints should be more informative
+            https://bugs.webkit.org/show_bug.cgi?id=132882
+
+            Reviewed by Oliver Hunt.
+
+            Introduce the notion of an AbortReason, which is a nice enumeration of coded assertion
+            failure names. This means that all you need to figure out why the JIT SIGTRAP'd is to look
+            at that platform's abort reason register (r11 on X86-64 for example).
+
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * assembler/AbortReason.h: Added.
+            * assembler/AbstractMacroAssembler.h:
+            * assembler/MacroAssemblerARM64.h:
+            (JSC::MacroAssemblerARM64::abortWithReason):
+            * assembler/MacroAssemblerARMv7.h:
+            (JSC::MacroAssemblerARMv7::abortWithReason):
+            * assembler/MacroAssemblerX86.h:
+            (JSC::MacroAssemblerX86::abortWithReason):
+            * assembler/MacroAssemblerX86_64.h:
+            (JSC::MacroAssemblerX86_64::abortWithReason):
+            * dfg/DFGSlowPathGenerator.h:
+            (JSC::DFG::SlowPathGenerator::generate):
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::bail):
+            (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+            (JSC::DFG::SpeculativeJIT::compileMakeRope):
+            * dfg/DFGSpeculativeJIT.h:
+            (JSC::DFG::SpeculativeJIT::emitAllocateBasicStorage):
+            * dfg/DFGSpeculativeJIT32_64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGThunks.cpp:
+            (JSC::DFG::osrEntryThunkGenerator):
+            * jit/AssemblyHelpers.cpp:
+            (JSC::AssemblyHelpers::jitAssertIsInt32):
+            (JSC::AssemblyHelpers::jitAssertIsJSInt32):
+            (JSC::AssemblyHelpers::jitAssertIsJSNumber):
+            (JSC::AssemblyHelpers::jitAssertIsJSDouble):
+            (JSC::AssemblyHelpers::jitAssertIsCell):
+            (JSC::AssemblyHelpers::jitAssertTagsInPlace):
+            (JSC::AssemblyHelpers::jitAssertHasValidCallFrame):
+            (JSC::AssemblyHelpers::jitAssertIsNull):
+            (JSC::AssemblyHelpers::jitAssertArgumentCountSane):
+            (JSC::AssemblyHelpers::emitStoreStructureWithTypeInfo):
+            * jit/AssemblyHelpers.h:
+            (JSC::AssemblyHelpers::checkStackPointerAlignment):
+            (JSC::AssemblyHelpers::emitStoreStructureWithTypeInfo): Deleted.
+            * jit/JIT.h:
+            * jit/JITArithmetic.cpp:
+            (JSC::JIT::emitSlow_op_div):
+            * jit/JITOpcodes.cpp:
+            (JSC::JIT::emitSlow_op_loop_hint):
+            * jit/JITOpcodes32_64.cpp:
+            (JSC::JIT::privateCompileCTINativeCall):
+            * jit/JITPropertyAccess.cpp:
+            (JSC::JIT::emit_op_get_by_val):
+            (JSC::JIT::compileGetDirectOffset):
+            (JSC::JIT::addStructureTransitionCheck): Deleted.
+            (JSC::JIT::testPrototype): Deleted.
+            * jit/JITPropertyAccess32_64.cpp:
+            (JSC::JIT::emit_op_get_by_val):
+            (JSC::JIT::compileGetDirectOffset):
+            * jit/RegisterPreservationWrapperGenerator.cpp:
+            (JSC::generateRegisterRestoration):
+            * jit/Repatch.cpp:
+            (JSC::addStructureTransitionCheck):
+            (JSC::linkClosureCall):
+            * jit/ThunkGenerators.cpp:
+            (JSC::emitPointerValidation):
+            (JSC::nativeForGenerator):
+            * yarr/YarrJIT.cpp:
+            (JSC::Yarr::YarrGenerator::generate):
+
 2014-05-16  Dean Jackson  <dino@apple.com>
 
         Disable some features on the safari-538.34 branch.
