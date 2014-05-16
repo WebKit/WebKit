@@ -1,3 +1,23 @@
+2014-05-16  Dean Jackson  <dino@apple.com>
+
+        Disable some features on the safari-538.34 branch.
+        <rdar://problem/16650338>
+
+        Reviewed by Simon Fraser.
+
+        Disable:
+        - CSS_EXCLUSIONS
+        - CSS_GRID_LAYOUT
+        - INPUT_TYPE_COLOR
+        - INPUT_TYPE_COLOR_POPUP
+        - CANVAS_PATH
+        - CSS_TRANSFORMS_ANIMATIONS_UNPREFIXED
+        - INDIE_UI
+        - SHARED_WORKERS
+        - WEB_TIMING
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-05-16  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168497
