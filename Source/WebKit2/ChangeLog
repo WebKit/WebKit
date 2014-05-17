@@ -1,3 +1,19 @@
+2014-05-17  Alexey Proskuryakov  <ap@apple.com>
+
+        NetworkProcess can repeatedly crash handling Blob messages after any unrelated crash
+        https://bugs.webkit.org/show_bug.cgi?id=133032
+        <rdar://problem/16951630>
+
+        Reviewed by Geoffrey Garen.
+
+        Replaced assertions with runtime checks. This can happen if NetworkProcess previously
+        crashed for any unrelated reason.
+
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        (WebKit::NetworkBlobRegistry::registerBlobURL):
+        (WebKit::NetworkBlobRegistry::registerBlobURLForSlice):
+        (WebKit::NetworkBlobRegistry::unregisterBlobURL):
+
 2014-05-17  Anders Carlsson  <andersca@apple.com>
 
         -[WKWebView dealloc] should close the page

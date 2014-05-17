@@ -74,29 +74,41 @@ void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connect
 
 void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const WebCore::URL& url, const WebCore::URL& srcURL)
 {
+    // The connection may not be registered if NetworkProcess prevously crashed for any reason.
+    BlobForConnectionMap::iterator mapIterator = m_blobsForConnection.find(connection);
+    if (mapIterator == m_blobsForConnection.end())
+        return;
+
     blobRegistry().registerBlobURL(url, srcURL);
 
-    ASSERT(m_blobsForConnection.contains(connection));
-    ASSERT(m_blobsForConnection.find(connection)->value.contains(srcURL));
-    m_blobsForConnection.find(connection)->value.add(url);
+    ASSERT(mapIterator->value.contains(srcURL));
+    mapIterator->value.add(url);
 }
 
 void NetworkBlobRegistry::registerBlobURLForSlice(NetworkConnectionToWebProcess* connection, const WebCore::URL& url, const WebCore::URL& srcURL, int64_t start, int64_t end)
 {
+    // The connection may not be registered if NetworkProcess prevously crashed for any reason.
+    BlobForConnectionMap::iterator mapIterator = m_blobsForConnection.find(connection);
+    if (mapIterator == m_blobsForConnection.end())
+        return;
+
     blobRegistry().registerBlobURLForSlice(url, srcURL, start, end);
 
-    ASSERT(m_blobsForConnection.contains(connection));
-    ASSERT(m_blobsForConnection.find(connection)->value.contains(srcURL));
-    m_blobsForConnection.find(connection)->value.add(url);
+    ASSERT(mapIterator->value.contains(srcURL));
+    mapIterator->value.add(url);
 }
 
 void NetworkBlobRegistry::unregisterBlobURL(NetworkConnectionToWebProcess* connection, const WebCore::URL& url)
 {
+    // The connection may not be registered if NetworkProcess prevously crashed for any reason.
+    BlobForConnectionMap::iterator mapIterator = m_blobsForConnection.find(connection);
+    if (mapIterator == m_blobsForConnection.end())
+        return;
+
     blobRegistry().unregisterBlobURL(url);
 
-    ASSERT(m_blobsForConnection.contains(connection));
-    ASSERT(m_blobsForConnection.find(connection)->value.contains(url));
-    m_blobsForConnection.find(connection)->value.remove(url);
+    ASSERT(mapIterator->value.contains(url));
+    mapIterator->value.remove(url);
 }
 
 uint64_t NetworkBlobRegistry::blobSize(NetworkConnectionToWebProcess* connection, const WebCore::URL& url)
