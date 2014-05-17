@@ -676,7 +676,6 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     bool showDebugVisuals = debugVisualsEnvironment && !strcmp(debugVisualsEnvironment, "1");
     pageSettings.setShowDebugBorders(showDebugVisuals);
     pageSettings.setShowRepaintCounter(showDebugVisuals);
-    pageSettings.setRegionBasedColumnsEnabled(true);
 
     url = pageSettings.userStyleSheetLocation();
     priv->settings.userStylesheet = eina_stringshare_add(url.string().utf8().data());

@@ -1,3 +1,13 @@
+2014-05-16  Piotr Grad  <p.grad@samsung.com>
+
+        [EFL] Build break after 168978.
+        https://bugs.webkit.org/show_bug.cgi?id=133012.
+
+        Reviewed by Simon Fraser.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
 2014-05-12  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL][WK1] Enable region based columns
