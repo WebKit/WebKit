@@ -487,11 +487,6 @@ WK_EXPORT void WKContextSetApplicationCacheDirectory(WKContextRef contextRef, WK
     toImpl(contextRef)->setApplicationCacheDirectory(toImpl(applicationCacheDirectory)->string());
 }
 
-void WKContextSetDatabaseDirectory(WKContextRef contextRef, WKStringRef databaseDirectory)
-{
-    toImpl(contextRef)->setDatabaseDirectory(toImpl(databaseDirectory)->string());
-}
-
 WK_EXPORT void WKContextSetDiskCacheDirectory(WKContextRef contextRef, WKStringRef diskCacheDirectory)
 {
     toImpl(contextRef)->setDiskCacheDirectory(toImpl(diskCacheDirectory)->string());

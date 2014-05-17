@@ -42,8 +42,10 @@ WebKit::WebContextConfiguration ContextConfiguration::webContextConfiguration() 
 {
     WebKit::WebContextConfiguration configuration;
 
+    configuration.indexedDBDatabaseDirectory = m_indexedDBDatabaseDirectory;
     configuration.injectedBundlePath = m_injectedBundlePath;
     configuration.localStorageDirectory = m_localStorageDirectory;
+    configuration.webSQLDatabaseDirectory = m_webSQLDatabaseDirectory;
 
     WebKit::WebContext::applyPlatformSpecificConfigurationDefaults(configuration);
 

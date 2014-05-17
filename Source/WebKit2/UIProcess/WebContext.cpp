@@ -124,6 +124,12 @@ void WebContext::applyPlatformSpecificConfigurationDefaults(WebContextConfigurat
 
     if (!configuration.localStorageDirectory)
         configuration.localStorageDirectory = platformDefaultLocalStorageDirectory();
+
+    if (!configuration.webSQLDatabaseDirectory)
+        configuration.webSQLDatabaseDirectory = platformDefaultWebSQLDatabaseDirectory();
+
+    if (!configuration.indexedDBDatabaseDirectory)
+        configuration.indexedDBDatabaseDirectory = platformDefaultIndexedDBDatabaseDirectory();
 }
 
 PassRefPtr<WebContext> WebContext::create(WebContextConfiguration configuration)
@@ -164,6 +170,8 @@ WebContext::WebContext(WebContextConfiguration configuration)
 #if USE(SOUP)
     , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain)
 #endif
+    , m_webSQLDatabaseDirectory(std::move(configuration.webSQLDatabaseDirectory))
+    , m_indexedDBDatabaseDirectory(std::move(configuration.indexedDBDatabaseDirectory))
     , m_shouldUseTestingNetworkSession(false)
     , m_processTerminationEnabled(true)
 #if ENABLE(NETWORK_PROCESS)
@@ -449,13 +457,11 @@ void WebContext::ensureDatabaseProcess()
 
     m_databaseProcess = DatabaseProcessProxy::create(this);
 
-    DatabaseProcessCreationParameters parameters;
+    ASSERT(!m_indexedDBDatabaseDirectory.isEmpty());
 
-    // Indexed databases exist in a subdirectory of the "database directory path."
-    // Currently, the top level of that directory contains entities related to WebSQL databases.
-    // We should fix this, and move WebSQL into a subdirectory (https://bugs.webkit.org/show_bug.cgi?id=124807)
-    // In the meantime, an entity name prefixed with three underscores will not conflict with any WebSQL entities.
-    parameters.indexedDatabaseDirectory = pathByAppendingComponent(databaseDirectory(), "___IndexedDB");
+    DatabaseProcessCreationParameters parameters;
+    parameters.indexedDatabaseDirectory = m_indexedDBDatabaseDirectory;
+
     SandboxExtension::createHandleForReadWriteDirectory(parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
 
     m_databaseProcess->send(Messages::DatabaseProcess::InitializeDatabaseProcess(parameters), 0);
@@ -565,9 +571,9 @@ WebProcessProxy& WebContext::createNewWebProcess()
     if (!parameters.applicationCacheDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.applicationCacheDirectory, parameters.applicationCacheDirectoryExtensionHandle);
 
-    parameters.databaseDirectory = databaseDirectory();
-    if (!parameters.databaseDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.databaseDirectory, parameters.databaseDirectoryExtensionHandle);
+    parameters.webSQLDatabaseDirectory = m_webSQLDatabaseDirectory;
+    if (!parameters.webSQLDatabaseDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(parameters.webSQLDatabaseDirectory, parameters.webSQLDatabaseDirectoryExtensionHandle);
 
     parameters.diskCacheDirectory = diskCacheDirectory();
     if (!parameters.diskCacheDirectory.isEmpty())
@@ -1122,14 +1128,6 @@ String WebContext::applicationCacheDirectory() const
         return m_overrideApplicationCacheDirectory;
 
     return platformDefaultApplicationCacheDirectory();
-}
-
-String WebContext::databaseDirectory() const
-{
-    if (!m_overrideDatabaseDirectory.isEmpty())
-        return m_overrideDatabaseDirectory;
-
-    return platformDefaultDatabaseDirectory();
 }
 
 void WebContext::setIconDatabasePath(const String& path)

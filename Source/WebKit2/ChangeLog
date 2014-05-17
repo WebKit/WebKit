@@ -1,3 +1,71 @@
+2014-05-17  Anders Carlsson  <andersca@apple.com>
+
+        Replace WKContextSetDatabaseDirectory with two WKContextConfiguration parameters
+        https://bugs.webkit.org/show_bug.cgi?id=133033
+        <rdar://problem/16830143>
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        Rename databaseDirectory to webSQLDatabaseDirectory to better indicate the directory type.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetDatabaseDirectory): Deleted.
+        This is no longer needed.
+
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationCopyIndexedDBDatabaseDirectory):
+        (WKContextConfigurationSetIndexedDBDatabaseDirectory):
+        (WKContextConfigurationCopyWebSQLDatabaseDirectory):
+        (WKContextConfigurationSetWebSQLDatabaseDirectory):
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        Add setters and getters.
+
+        * UIProcess/API/C/WKContextPrivate.h:
+        Remove WKContextSetDatabaseDirectory.
+
+        * UIProcess/APIContextConfiguration.cpp:
+        (API::ContextConfiguration::webContextConfiguration):
+        Set m_indexedDBDatabaseDirectory and m_webSQLDatabaseDirectory on the configuration.
+
+        * UIProcess/APIContextConfiguration.h:
+        (API::ContextConfiguration::indexedDBDatabaseDirectory):
+        (API::ContextConfiguration::setIndexedDBDatabaseDirectory):
+        (API::ContextConfiguration::webSQLDatabaseDirectory):
+        (API::ContextConfiguration::setWebSQLDatabaseDirectory):
+        Add getters and setters to the C++ part of WKContextConfigurationRef.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::applyPlatformSpecificConfigurationDefaults):
+        Set webSQLDatabaseDirectory and indexedDBDatabaseDirectory.
+
+        (WebKit::WebContext::WebContext):
+        Initialize m_webSQLDatabaseDirectory and m_indexedDBDatabaseDirectory.
+
+        (WebKit::WebContext::ensureDatabaseProcess):
+        Set parameters.indexedDatabaseDirectory from m_indexedDBDatabaseDirectory.
+
+        (WebKit::WebContext::createNewWebProcess):
+        Set parameters.webSQLDatabaseDirectory from m_webSQLDatabaseDirectory.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformDefaultWebSQLDatabaseDirectory):
+        Rename this to indicate that it's about WebSQL databases.
+
+        (WebKit::WebContext::platformDefaultIndexedDBDatabaseDirectory):
+        Add this.
+
+        * WebProcess/WebCoreSupport/WebDatabaseManager.cpp:
+        (WebKit::WebDatabaseManager::initialize):
+        Update for WebProcessCreationParameters rename.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        Update for WebProcessCreationParameters rename.
+
 2014-05-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Phone Number Detection] drop-down menu in the phone number detection box doesn't appear.

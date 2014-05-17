@@ -55,7 +55,7 @@ WebDatabaseManager::WebDatabaseManager(WebProcess* process)
 
 void WebDatabaseManager::initialize(const WebProcessCreationParameters& parameters)
 {
-    DatabaseManager::manager().initialize(parameters.databaseDirectory);
+    DatabaseManager::manager().initialize(parameters.webSQLDatabaseDirectory);
     DatabaseManager::manager().setClient(this);
 }
 

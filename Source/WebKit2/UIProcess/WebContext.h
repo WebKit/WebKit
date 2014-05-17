@@ -98,6 +98,8 @@ int webProcessThroughputQOS();
 struct WebContextConfiguration {
     String injectedBundlePath;
     String localStorageDirectory;
+    String webSQLDatabaseDirectory;
+    String indexedDBDatabaseDirectory;
 };
 
 class WebContext : public API::ObjectImpl<API::Object::Type::Context>, private IPC::MessageReceiver
@@ -243,7 +245,6 @@ public:
     static Statistics& statistics();    
 
     void setApplicationCacheDirectory(const String& dir) { m_overrideApplicationCacheDirectory = dir; }
-    void setDatabaseDirectory(const String& dir) { m_overrideDatabaseDirectory = dir; }
     void setIconDatabasePath(const String&);
     String iconDatabasePath() const;
     void setDiskCacheDirectory(const String& dir) { m_overrideDiskCacheDirectory = dir; }
@@ -409,12 +410,11 @@ private:
     String applicationCacheDirectory() const;
     String platformDefaultApplicationCacheDirectory() const;
 
-    String databaseDirectory() const;
-    String platformDefaultDatabaseDirectory() const;
-
     String platformDefaultIconDatabasePath() const;
 
     static String platformDefaultLocalStorageDirectory();
+    static String platformDefaultIndexedDBDatabaseDirectory();
+    static String platformDefaultWebSQLDatabaseDirectory();
 
     String diskCacheDirectory() const;
     String platformDefaultDiskCacheDirectory() const;
@@ -514,10 +514,12 @@ private:
 #endif
 
     String m_overrideApplicationCacheDirectory;
-    String m_overrideDatabaseDirectory;
     String m_overrideIconDatabasePath;
     String m_overrideDiskCacheDirectory;
     String m_overrideCookieStorageDirectory;
+
+    String m_webSQLDatabaseDirectory;
+    String m_indexedDBDatabaseDirectory;
 
     bool m_shouldUseTestingNetworkSession;
 

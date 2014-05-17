@@ -259,12 +259,21 @@ String WebContext::platformDefaultCookieStorageDirectory() const
     return [@"" stringByStandardizingPath];
 }
 
-String WebContext::platformDefaultDatabaseDirectory() const
+String WebContext::platformDefaultWebSQLDatabaseDirectory()
 {
     NSString *databasesDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebDatabaseDirectoryDefaultsKey];
     if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
         databasesDirectory = @"~/Library/WebKit/Databases";
     return [databasesDirectory stringByStandardizingPath];
+}
+
+String WebContext::platformDefaultIndexedDBDatabaseDirectory()
+{
+    // Indexed databases exist in a subdirectory of the "database directory path."
+    // Currently, the top level of that directory contains entities related to WebSQL databases.
+    // We should fix this, and move WebSQL into a subdirectory (https://bugs.webkit.org/show_bug.cgi?id=124807)
+    // In the meantime, an entity name prefixed with three underscores will not conflict with any WebSQL entities.
+    return pathByAppendingComponent(platformDefaultWebSQLDatabaseDirectory(), "___IndexedDB");
 }
 
 String WebContext::platformDefaultIconDatabasePath() const

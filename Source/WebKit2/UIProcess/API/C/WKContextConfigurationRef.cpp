@@ -36,6 +36,16 @@ WKContextConfigurationRef WKContextConfigurationCreate()
     return toAPI(API::ContextConfiguration::create().leakRef());
 }
 
+WKStringRef WKContextConfigurationCopyIndexedDBDatabaseDirectory(WKContextConfigurationRef configuration)
+{
+    return toCopiedAPI(toImpl(configuration)->indexedDBDatabaseDirectory());
+}
+
+void WKContextConfigurationSetIndexedDBDatabaseDirectory(WKContextConfigurationRef configuration, WKStringRef indexedDBDatabaseDirectory)
+{
+    toImpl(configuration)->setIndexedDBDatabaseDirectory(toImpl(indexedDBDatabaseDirectory)->string());
+}
+
 WKStringRef WKContextConfigurationCopyInjectedBundlePath(WKContextConfigurationRef configuration)
 {
     return toCopiedAPI(toImpl(configuration)->injectedBundlePath());
@@ -54,4 +64,14 @@ WKStringRef WKContextConfigurationCopyLocalStorageDirectory(WKContextConfigurati
 void WKContextConfigurationSetLocalStorageDirectory(WKContextConfigurationRef configuration, WKStringRef localStorageDirectory)
 {
     toImpl(configuration)->setLocalStorageDirectory(toImpl(localStorageDirectory)->string());
+}
+
+WKStringRef WKContextConfigurationCopyWebSQLDatabaseDirectory(WKContextConfigurationRef configuration)
+{
+    return toCopiedAPI(toImpl(configuration)->webSQLDatabaseDirectory());
+}
+
+void WKContextConfigurationSetWebSQLDatabaseDirectory(WKContextConfigurationRef configuration, WKStringRef webSQLDatabaseDirectory)
+{
+    toImpl(configuration)->setWebSQLDatabaseDirectory(toImpl(webSQLDatabaseDirectory)->string());
 }

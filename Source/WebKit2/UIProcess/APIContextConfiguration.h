@@ -43,19 +43,27 @@ public:
     }
     virtual ~ContextConfiguration();
 
+    String indexedDBDatabaseDirectory() const { return m_indexedDBDatabaseDirectory; }
+    void setIndexedDBDatabaseDirectory(const String& indexedDBDatabaseDirectory) { m_indexedDBDatabaseDirectory = indexedDBDatabaseDirectory; }
+
     String injectedBundlePath() const { return m_injectedBundlePath; }
     void setInjectedBundlePath(const String& injectedBundlePath) { m_injectedBundlePath = injectedBundlePath; }
 
     String localStorageDirectory() const { return m_localStorageDirectory; }
     void setLocalStorageDirectory(const String& localStorageDirectory) { m_localStorageDirectory = localStorageDirectory; }
 
+    String webSQLDatabaseDirectory() const { return m_webSQLDatabaseDirectory; }
+    void setWebSQLDatabaseDirectory(const String& webSQLDatabaseDirectory) { m_webSQLDatabaseDirectory = webSQLDatabaseDirectory; }
+
     WebKit::WebContextConfiguration webContextConfiguration() const;
 
 private:
     ContextConfiguration();
 
+    String m_indexedDBDatabaseDirectory;
     String m_injectedBundlePath;
     String m_localStorageDirectory;
+    String m_webSQLDatabaseDirectory;
 };
 
 } // namespace API
