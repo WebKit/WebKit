@@ -67,6 +67,7 @@ public:
     bool hasAudio() const;
     bool hasVideo() const;
 
+    void seekToTime(MediaTime);
     MediaTime seekToTime(MediaTime, MediaTime negativeThreshold, MediaTime positiveThreshold);
     IntSize naturalSize() const;
 
