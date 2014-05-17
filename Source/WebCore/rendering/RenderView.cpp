@@ -102,6 +102,7 @@ RenderView::RenderView(Document& document, PassRef<RenderStyle> style)
     , m_selectionEndPos(-1)
     , m_rendererCount(0)
     , m_maximalOutlineSize(0)
+    , m_lazyRepaintTimer(this, &RenderView::lazyRepaintTimerFired)
     , m_pageLogicalHeight(0)
     , m_pageLogicalHeightChanged(false)
     , m_layoutState(nullptr)
@@ -134,6 +135,38 @@ RenderView::RenderView(Document& document, PassRef<RenderStyle> style)
 
 RenderView::~RenderView()
 {
+}
+
+void RenderView::scheduleLazyRepaint(RenderBox& renderer)
+{
+    if (renderer.renderBoxNeedsLazyRepaint())
+        return;
+    renderer.setRenderBoxNeedsLazyRepaint(true);
+    m_renderersNeedingLazyRepaint.add(&renderer);
+    if (!m_lazyRepaintTimer.isActive())
+        m_lazyRepaintTimer.startOneShot(0);
+}
+
+void RenderView::unscheduleLazyRepaint(RenderBox& renderer)
+{
+    if (!renderer.renderBoxNeedsLazyRepaint())
+        return;
+    renderer.setRenderBoxNeedsLazyRepaint(false);
+    m_renderersNeedingLazyRepaint.remove(&renderer);
+    if (m_renderersNeedingLazyRepaint.isEmpty())
+        m_lazyRepaintTimer.stop();
+}
+
+void RenderView::lazyRepaintTimerFired(Timer<RenderView>&)
+{
+    bool shouldRepaint = !document().inPageCache();
+
+    for (auto& renderer : m_renderersNeedingLazyRepaint) {
+        if (shouldRepaint)
+            renderer->repaint();
+        renderer->setRenderBoxNeedsLazyRepaint(false);
+    }
+    m_renderersNeedingLazyRepaint.clear();
 }
 
 bool RenderView::hitTest(const HitTestRequest& request, HitTestResult& result)

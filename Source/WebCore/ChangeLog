@@ -1,3 +1,38 @@
+2014-05-17  Andreas Kling  <akling@apple.com>
+
+        REGRESSION (r166422): All RenderBox objects grew 104 bytes from adding repaint timers.
+        <https://webkit.org/b/133027>
+        <rdar://problem/16867410>
+
+        Instead of storing a rarely-used repaint timer on every RenderBox, store one
+        on the RenderView, and keep a hash set of renderers needing repaint.
+
+        Renderers get a flag tracking whether they have a pending lazy repaint.
+        This way we can avoid hash lookups in the common case.
+
+        Also added a static assertion to catch RenderBox growing in the future.
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::SameSizeAsRenderBox::~SameSizeAsRenderBox):
+        (WebCore::RenderBox::RenderBox):
+        (WebCore::RenderBox::~RenderBox):
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        * rendering/RenderBox.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::setRenderBoxNeedsLazyRepaint):
+        (WebCore::RenderElement::renderBoxNeedsLazyRepaint):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        (WebCore::RenderView::scheduleLazyRepaint):
+        (WebCore::RenderView::unscheduleLazyRepaint):
+        (WebCore::RenderView::lazyRepaintTimerFired):
+        * rendering/RenderView.h:
+
 2014-05-16  Jer Noble  <jer.noble@apple.com>
 
         [Mac][MSE] setCurrentTime() goes down fastSeek path in MediaPlayerPrivateMediaSourceAVFObjC.

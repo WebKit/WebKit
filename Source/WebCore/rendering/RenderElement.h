@@ -155,6 +155,9 @@ public:
 
     RenderNamedFlowThread* renderNamedFlowThreadWrapper();
 
+    void setRenderBoxNeedsLazyRepaint(bool b) { m_renderBoxNeedsLazyRepaint = b; }
+    bool renderBoxNeedsLazyRepaint() const { return m_renderBoxNeedsLazyRepaint; }
+
 protected:
     enum BaseTypeFlags {
         RenderLayerModelObjectFlag = 1 << 0,
@@ -224,6 +227,7 @@ private:
     bool m_hasInitializedStyle : 1;
 
     bool m_renderInlineAlwaysCreatesLineBoxes : 1;
+    bool m_renderBoxNeedsLazyRepaint : 1;
     bool m_hasPausedImageAnimations : 1;
 
     RenderObject* m_firstChild;

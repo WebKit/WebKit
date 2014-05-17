@@ -67,6 +67,16 @@
 
 namespace WebCore {
 
+struct SameSizeAsRenderBox : public RenderBoxModelObject {
+    virtual ~SameSizeAsRenderBox() { }
+    LayoutRect frameRect;
+    LayoutBoxExtent marginBox;
+    LayoutUnit preferredLogicalWidths[2];
+    void* pointers[2];
+};
+
+COMPILE_ASSERT(sizeof(RenderBox) == sizeof(SameSizeAsRenderBox), RenderBox_should_stay_small);
+
 using namespace HTMLNames;
 
 // Used by flexible boxes when flexing this element and by table cells.
@@ -103,7 +113,6 @@ RenderBox::RenderBox(Element& element, PassRef<RenderStyle> style, unsigned base
     , m_minPreferredLogicalWidth(-1)
     , m_maxPreferredLogicalWidth(-1)
     , m_inlineBoxWrapper(0)
-    , m_repaintTimer(this, &RenderBox::repaintTimerFired)
 {
     setIsBox();
 }
@@ -113,14 +122,13 @@ RenderBox::RenderBox(Document& document, PassRef<RenderStyle> style, unsigned ba
     , m_minPreferredLogicalWidth(-1)
     , m_maxPreferredLogicalWidth(-1)
     , m_inlineBoxWrapper(0)
-    , m_repaintTimer(this, &RenderBox::repaintTimerFired)
 {
     setIsBox();
 }
 
 RenderBox::~RenderBox()
 {
-    m_repaintTimer.stop();
+    view().unscheduleLazyRepaint(*this);
     if (hasControlStatesForRenderer(this))
         removeControlStatesForRenderer(this);
 }
@@ -1255,7 +1263,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     bool themePainted = style().hasAppearance() && !theme().paint(*this, controlStates, paintInfo, paintRect);
 
     if (controlStates && controlStates->needsRepaint())
-        m_repaintTimer.startOneShot(0);
+        view().scheduleLazyRepaint(*this);
 
     if (!themePainted) {
         if (bleedAvoidance == BackgroundBleedBackgroundOverBorder)
@@ -4779,12 +4787,6 @@ LayoutUnit RenderBox::offsetFromLogicalTopOfFirstPage() const
 
     RenderBlock* containerBlock = containingBlock();
     return containerBlock->offsetFromLogicalTopOfFirstPage() + logicalTop();
-}
-
-void RenderBox::repaintTimerFired(Timer<RenderBox>&)
-{
-    if (!document().inPageCache())
-        this->repaint();
 }
 
 } // namespace WebCore

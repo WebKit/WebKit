@@ -246,6 +246,9 @@ public:
         bool m_wasAccumulatingRepaintRegion;
     };
 
+    void scheduleLazyRepaint(RenderBox&);
+    void unscheduleLazyRepaint(RenderBox&);
+
 protected:
     virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags = ApplyContainerFlip, bool* wasFixed = 0) const override;
     virtual const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
@@ -338,6 +341,11 @@ private:
     int m_maximalOutlineSize; // Used to apply a fudge factor to dirty-rect checks on blocks/tables.
 
     bool shouldUsePrintingLayout() const;
+
+    void lazyRepaintTimerFired(Timer<RenderView>&);
+
+    Timer<RenderView> m_lazyRepaintTimer;
+    HashSet<RenderBox*> m_renderersNeedingLazyRepaint;
 
     std::unique_ptr<ImageQualityController> m_imageQualityController;
     LayoutUnit m_pageLogicalHeight;
