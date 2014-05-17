@@ -44,13 +44,6 @@ typedef NS_ENUM(NSInteger, WKUserScriptInjectionTime) {
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKUserScript : NSObject <NSCopying>
 
-/*! @abstract Returns an initialized user script that can be added to a @link WKUserContentController @/link.
- @param source The script source.
- @param injectionTime When the script should be injected.
- @param forMainFrameOnly Whether the script should be injected into all frames or just the main frame.
- */
-- (instancetype)initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly;
-
 /* @abstract The script source code. */
 @property (nonatomic, readonly) NSString *source;
 
@@ -59,6 +52,13 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /* @abstract Whether the script should be injected into all frames or just the main frame. */
 @property (nonatomic, readonly, getter=isForMainFrameOnly) BOOL forMainFrameOnly;
+
+/*! @abstract Returns an initialized user script that can be added to a @link WKUserContentController @/link.
+ @param source The script source.
+ @param injectionTime When the script should be injected.
+ @param forMainFrameOnly Whether the script should be injected into all frames or just the main frame.
+ */
+- (instancetype)initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly;
 
 @end
 
