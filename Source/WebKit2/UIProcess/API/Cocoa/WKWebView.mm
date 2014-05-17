@@ -237,6 +237,8 @@
 
 - (void)dealloc
 {
+    _page->close();
+
     [_remoteObjectRegistry _invalidate];
 #if PLATFORM(IOS)
     [[_configuration _contentProviderRegistry] removePage:*_page];
