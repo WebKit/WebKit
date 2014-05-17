@@ -1,3 +1,31 @@
+2014-05-16  Anders Carlsson  <andersca@apple.com>
+
+        Expose WKUserScript as API
+        https://bugs.webkit.org/show_bug.cgi?id=133017
+        <rdar://problem/16948059>
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+        Export symbols.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Change UserContentController.h to be a private header.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        Set m_userContentController from the page configuration and add it if it's not null.
+
+        * page/Page.h:
+        Add UserContentController to PageClients.
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::addPage):
+        Only try to add a user content controller if the page doesn't already have one.
+
+        (WebCore::PageGroup::removePage):
+        Only try to remove the user content controller if it's the group one.
+
 2014-05-17  Andreas Kling  <akling@apple.com>
 
         REGRESSION (r166422): All RenderBox objects grew 104 bytes from adding repaint timers.

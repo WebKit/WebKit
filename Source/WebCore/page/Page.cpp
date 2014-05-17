@@ -197,13 +197,17 @@ Page::Page(PageClients& pageClients)
 #endif
     , m_lastSpatialNavigationCandidatesCount(0) // NOTE: Only called from Internals for Spatial Navigation testing.
     , m_framesHandlingBeforeUnloadEvent(0)
+    , m_userContentController(std::move(pageClients.userContentController))
     , m_visitedLinkStore(std::move(pageClients.visitedLinkStore))
     , m_sessionID(SessionID::defaultSessionID())
 {
     ASSERT(m_editorClient);
     
     setTimerThrottlingEnabled(m_viewState & ViewState::IsVisuallyIdle);
-    
+
+    if (m_userContentController)
+        m_userContentController->addPage(*this);
+
     if (m_visitedLinkStore)
         m_visitedLinkStore->addPage(*this);
 

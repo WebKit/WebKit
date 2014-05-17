@@ -118,6 +118,7 @@ public:
     static void updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 
     // It is up to the platform to ensure that non-null clients are provided where required.
+    // FIXME: Rename this to PageConfiguration and move it to its own class.
     struct PageClients {
         WTF_MAKE_NONCOPYABLE(PageClients); WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -138,6 +139,7 @@ public:
         ValidationMessageClient* validationMessageClient;
         FrameLoaderClient* loaderClientForMainFrame;
 
+        RefPtr<UserContentController> userContentController;
         RefPtr<VisitedLinkStore> visitedLinkStore;
     };
 

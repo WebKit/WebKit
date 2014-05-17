@@ -873,7 +873,7 @@
 		1AE2AEC70A1D297B00B42B25 /* JSHTMLQuoteElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE2AEC30A1D297B00B42B25 /* JSHTMLQuoteElement.cpp */; };
 		1AE2AEC80A1D297B00B42B25 /* JSHTMLQuoteElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AEC40A1D297B00B42B25 /* JSHTMLQuoteElement.h */; };
 		1AE79D42188DB61F002239C2 /* UserContentController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE79D40188DB61F002239C2 /* UserContentController.cpp */; };
-		1AE79D43188DB61F002239C2 /* UserContentController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE79D41188DB61F002239C2 /* UserContentController.h */; };
+		1AE79D43188DB61F002239C2 /* UserContentController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE79D41188DB61F002239C2 /* UserContentController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AE82F8F0CAAFA9D002237AE /* JSDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE82F8D0CAAFA9D002237AE /* JSDatabase.cpp */; };
 		1AE82F900CAAFA9D002237AE /* JSDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE82F8E0CAAFA9D002237AE /* JSDatabase.h */; };
 		1AE82FEC0CAB07EE002237AE /* JSSQLResultSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE82FEA0CAB07EE002237AE /* JSSQLResultSet.cpp */; };

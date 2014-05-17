@@ -92,6 +92,7 @@
 #include "WebProcessProxyMessages.h"
 #include "WebProgressTrackerClient.h"
 #include "WebUndoStep.h"
+#include "WebUserContentController.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/Chrome.h>
@@ -270,6 +271,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if ENABLE(INPUT_TYPE_COLOR)
     , m_activeColorChooser(0)
 #endif
+    , m_userContentController(parameters.userContentControllerID ? WebUserContentController::getOrCreate(parameters.userContentControllerID) : nullptr)
 #if ENABLE(GEOLOCATION)
     , m_geolocationPermissionRequestManager(this)
 #endif
@@ -342,6 +344,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageClients.loaderClientForMainFrame = new WebFrameLoaderClient;
     pageClients.progressTrackerClient = new WebProgressTrackerClient(*this);
 
+    pageClients.userContentController = m_userContentController ? &m_userContentController->userContentController() : nullptr;
     pageClients.visitedLinkStore = VisitedLinkTableController::getOrCreate(parameters.visitedLinkTableID);
 
     m_page = std::make_unique<Page>(pageClients);

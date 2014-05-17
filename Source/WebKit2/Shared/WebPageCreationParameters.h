@@ -85,6 +85,7 @@ struct WebPageCreationParameters {
     WebCore::SessionID sessionID;
     uint64_t highestUsedBackForwardItemID;
 
+    uint64_t userContentControllerID;
     uint64_t visitedLinkTableID;
     bool canRunBeforeUnloadConfirmPanel;
     bool canRunModal;

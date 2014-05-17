@@ -159,6 +159,7 @@ class WebOpenPanelResultListener;
 class WebPageGroupProxy;
 class WebPopupMenu;
 class WebUndoStep;
+class WebUserContentController;
 class WebVideoFullscreenManager;
 class WebWheelEvent;
 struct AssistedNodeInformation;
@@ -1138,6 +1139,8 @@ private:
 #endif
     RefPtr<WebOpenPanelResultListener> m_activeOpenPanelResultListener;
     RefPtr<NotificationPermissionRequestManager> m_notificationPermissionRequestManager;
+
+    RefPtr<WebUserContentController> m_userContentController;
 
 #if ENABLE(GEOLOCATION)
     GeolocationPermissionRequestManager m_geolocationPermissionRequestManager;

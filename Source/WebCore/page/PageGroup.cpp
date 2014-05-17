@@ -167,7 +167,8 @@ void PageGroup::addPage(Page& page)
     ASSERT(!m_pages.contains(&page));
     m_pages.add(&page);
 
-    page.setUserContentController(m_userContentController.get());
+    if (!page.userContentController())
+        page.setUserContentController(m_userContentController.get());
 }
 
 void PageGroup::removePage(Page& page)
@@ -175,7 +176,8 @@ void PageGroup::removePage(Page& page)
     ASSERT(m_pages.contains(&page));
     m_pages.remove(&page);
 
-    page.setUserContentController(nullptr);
+    if (page.userContentController() == m_userContentController)
+        page.setUserContentController(nullptr);
 }
 
 VisitedLinkStore& PageGroup::visitedLinkStore()
