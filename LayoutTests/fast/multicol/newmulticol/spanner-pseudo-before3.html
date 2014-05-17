@@ -3,8 +3,6 @@
     <head>
         <title>Spanner as ::before pseudo element</title>
         <script>
-            if (window.internals)
-                internals.settings.setRegionBasedColumnsEnabled(true);
             function test() {
                 document.body.offsetTop; // trigger layout
                 document.getElementById('elm').className = "x";

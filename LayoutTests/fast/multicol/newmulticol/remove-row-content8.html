@@ -3,8 +3,6 @@
     <head>
         <title>Remove all content from row before spanner, then insert some content there</title>
         <script>
-            if (window.internals)
-                internals.settings.setRegionBasedColumnsEnabled(true);
             function test() {
                 document.body.offsetTop; // trigger layout
                 var elm = document.getElementById('elm');

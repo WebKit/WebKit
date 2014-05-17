@@ -2,10 +2,6 @@
 <html>
     <head>
         <title>Spanner as ::before and ::after pseudo elements</title>
-        <script>
-            if (window.internals)
-                internals.settings.setRegionBasedColumnsEnabled(true);
-        </script>
         <style>
             #elm::before, #elm::after { display:block; -webkit-column-span:all; column-span:all; background:yellow; content:".........."; }
         </style>
