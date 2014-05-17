@@ -1,3 +1,15 @@
+2014-05-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [Phone Number Detection] drop-down menu in the phone number detection box doesn't appear.
+        https://bugs.webkit.org/show_bug.cgi?id=133024
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebPage/mac/TelephoneNumberOverlayControllerMac.mm:
+        (WebKit::TelephoneNumberOverlayController::drawRect): Don't clear the set of found phone numbers each
+        time we call drawRect. This gets called ~9 times per screen refresh, so end up with no active
+        phone numbers to interact with.
+
 2014-05-17  Alexey Proskuryakov  <ap@apple.com>
 
         NetworkProcess can repeatedly crash handling Blob messages after any unrelated crash

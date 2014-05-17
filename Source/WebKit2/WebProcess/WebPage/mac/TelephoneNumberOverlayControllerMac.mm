@@ -69,11 +69,11 @@ static IntRect textQuadsToBoundingRectForRange(Range& range)
 
 void TelephoneNumberOverlayController::drawRect(PageOverlay* overlay, WebCore::GraphicsContext& graphicsContext, const WebCore::IntRect& dirtyRect)
 {
-    if (m_currentSelectionRanges.isEmpty())
+    if (m_currentSelectionRanges.isEmpty()) {
+        clearHighlights();
         return;
-    
-    clearHighlights();
-    
+    }
+
     CGContextRef cgContext = graphicsContext.platformContext();
     
     for (auto& range : m_currentSelectionRanges) {
