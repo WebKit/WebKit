@@ -1,3 +1,13 @@
+2014-05-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Put back a symbol removed in r168978 that Safari needs, but deprecate it.
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        (WKPreferencesSetRegionBasedColumnsEnabled):
+        (WKPreferencesGetRegionBasedColumnsEnabled):
+
 2014-05-16  Oliver Hunt  <oliver@apple.com>
 
         Separate enabling sandbox extensions from the WEB_PROCESS_SANDBOX flag

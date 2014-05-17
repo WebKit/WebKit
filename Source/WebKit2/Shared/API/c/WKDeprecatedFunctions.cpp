@@ -47,6 +47,9 @@ WK_EXPORT bool WKDictionaryAddItem(WKMutableDictionaryRef dictionary, WKStringRe
 WK_EXPORT bool WKDictionaryIsMutable(WKDictionaryRef dictionary);
 WK_EXPORT void WKDictionaryRemoveItem(WKMutableDictionaryRef dictionary, WKStringRef key);
 
+WK_EXPORT void WKPreferencesSetRegionBasedColumnsEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetRegionBasedColumnsEnabled(WKPreferencesRef);
+
 #if PLATFORM(MAC)
 WK_EXPORT CGContextRef WKGraphicsContextGetCGContext(WKGraphicsContextRef graphicsContext);
 #endif
@@ -74,6 +77,15 @@ bool WKDictionaryAddItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRe
 void WKDictionaryRemoveItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRef)
 {
     toImpl(dictionaryRef)->remove(toImpl(keyRef)->string());
+}
+
+void WKPreferencesSetRegionBasedColumnsEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetRegionBasedColumnsEnabled(WKPreferencesRef)
+{
+    return true;
 }
 
 #if PLATFORM(MAC)
