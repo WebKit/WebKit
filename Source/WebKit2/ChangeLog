@@ -1,3 +1,13 @@
+2014-05-16  Piotr Grad  <p.grad@samsung.com>
+
+        [GTK] Build break after 168978.
+        https://bugs.webkit.org/show_bug.cgi?id=133012.
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsConstructed):
+
 2014-05-16  Simon Fraser  <simon.fraser@apple.com>
 
         Put back a symbol removed in r168978 that Safari needs, but deprecate it.

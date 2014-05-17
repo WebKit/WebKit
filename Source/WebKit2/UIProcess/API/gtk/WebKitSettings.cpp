@@ -146,11 +146,6 @@ static void webKitSettingsConstructed(GObject* object)
     G_OBJECT_CLASS(webkit_settings_parent_class)->constructed(object);
 
     WebPreferences* prefs = WEBKIT_SETTINGS(object)->priv->preferences.get();
-    ExperimentalFeatures features;
-    bool regionBasedColumnsEnabled = features.isEnabled(ExperimentalFeatures::RegionBasedColumns);
-    if (prefs->regionBasedColumnsEnabled() != regionBasedColumnsEnabled)
-        prefs->setRegionBasedColumnsEnabled(regionBasedColumnsEnabled);
-
     prefs->setShouldRespectImageOrientation(true);
 }
 
