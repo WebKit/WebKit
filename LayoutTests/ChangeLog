@@ -1,5 +1,13 @@
 2014-05-16  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix a straggler.
+
+        Remove call to internals.settings.setRegionBasedColumnsEnabled(true).
+
+        * fast/repaint/spanner-with-margin.html:
+
+2014-05-16  Simon Fraser  <simon.fraser@apple.com>
+
         Remove calls to internals.settings.setRegionBasedColumnsEnabled(true);
         in tests.
         
