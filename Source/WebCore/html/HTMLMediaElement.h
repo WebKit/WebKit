@@ -500,6 +500,8 @@ private:
     void setReadyState(MediaPlayer::ReadyState);
     void setNetworkState(MediaPlayer::NetworkState);
 
+    double effectivePlaybackRate() const;
+
     virtual Document* mediaPlayerOwningDocument() override;
     virtual void mediaPlayerNetworkStateChanged(MediaPlayer*) override;
     virtual void mediaPlayerReadyStateChanged(MediaPlayer*) override;

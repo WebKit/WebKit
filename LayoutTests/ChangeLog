@@ -1,3 +1,13 @@
+2014-05-17  Piotr Grad  <p.grad@samsung.com>
+
+        Setting playback rate on video with media controller is not ignored.
+        https://bugs.webkit.org/show_bug.cgi?id=129048
+
+        Reviewed by Jer Noble.
+
+        * media/video-controller-child-rate-expected.txt: Added.
+        * media/video-controller-child-rate.html: Added.
+
 2014-05-16  Simon Fraser  <simon.fraser@apple.com>
 
         Fix a straggler.

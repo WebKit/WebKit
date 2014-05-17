@@ -2535,7 +2535,7 @@ double HTMLMediaElement::currentTime() const
 
         // Not too soon, use the cached time only if it hasn't expired.
         if (clockDelta < maximumDurationToCacheMediaTime) {
-            double adjustedCacheTime = m_cachedTime + (m_playbackRate * clockDelta);
+            double adjustedCacheTime = m_cachedTime + (effectivePlaybackRate() * clockDelta);
 
 #if LOG_CACHED_TIME_WARNINGS
             double delta = adjustedCacheTime - m_player->currentTime();
@@ -2549,7 +2549,7 @@ double HTMLMediaElement::currentTime() const
 #if LOG_CACHED_TIME_WARNINGS
     if (maximumDurationToCacheMediaTime && now > m_minimumClockTimeToUpdateCachedTime && m_cachedTime != MediaPlayer::invalidTime()) {
         double clockDelta = now - m_clockTimeAtLastCachedTimeUpdate;
-        double delta = m_cachedTime + (m_playbackRate * clockDelta) - m_player->currentTime();
+        double delta = m_cachedTime + (effectivePlaybackRate() * clockDelta) - m_player->currentTime();
         LOG(Media, "HTMLMediaElement::currentTime - cached time was %f seconds off of media time when it expired", delta);
     }
 #endif
@@ -2615,6 +2615,11 @@ void HTMLMediaElement::setDefaultPlaybackRate(double rate)
     }
 }
 
+double HTMLMediaElement::effectivePlaybackRate() const
+{
+    return m_mediaController ? m_mediaController->playbackRate() : m_playbackRate;
+}
+
 double HTMLMediaElement::playbackRate() const
 {
     return m_playbackRate;
@@ -2636,7 +2641,7 @@ void HTMLMediaElement::setPlaybackRate(double rate)
 
 void HTMLMediaElement::updatePlaybackRate()
 {
-    double effectiveRate = m_mediaController ? m_mediaController->playbackRate() : m_playbackRate;
+    double effectiveRate = effectivePlaybackRate();
     if (m_player && potentiallyPlaying() && m_player->rate() != effectiveRate)
         m_player->setRate(effectiveRate);
 }
@@ -2663,7 +2668,7 @@ bool HTMLMediaElement::ended() const
     // 4.8.10.8 Playing the media resource
     // The ended attribute must return true if the media element has ended 
     // playback and the direction of playback is forwards, and false otherwise.
-    return endedPlayback() && m_playbackRate > 0;
+    return endedPlayback() && effectivePlaybackRate() > 0;
 }
 
 bool HTMLMediaElement::autoplay() const
@@ -3100,7 +3105,7 @@ void HTMLMediaElement::playbackProgressTimerFired(Timer<HTMLMediaElement>&)
 {
     ASSERT(m_player);
 
-    if (m_fragmentEndTime != MediaPlayer::invalidTime() && currentTime() >= m_fragmentEndTime && m_playbackRate > 0) {
+    if (m_fragmentEndTime != MediaPlayer::invalidTime() && currentTime() >= m_fragmentEndTime && effectivePlaybackRate() > 0) {
         m_fragmentEndTime = MediaPlayer::invalidTime();
         if (!m_mediaController && !m_paused) {
             // changes paused to true and fires a simple event named pause at the media element.
@@ -3110,7 +3115,7 @@ void HTMLMediaElement::playbackProgressTimerFired(Timer<HTMLMediaElement>&)
     
     scheduleTimeupdateEvent(true);
 
-    if (!m_playbackRate)
+    if (!effectivePlaybackRate())
         return;
 
     if (!m_paused && hasMediaControls())
@@ -4032,17 +4037,18 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
 
     double now = currentTime();
     double dur = duration();
+    double playbackRate = effectivePlaybackRate();
     
     // When the current playback position reaches the end of the media resource then the user agent must follow these steps:
     if (!std::isnan(dur) && dur) {
         // If the media element has a loop attribute specified and does not have a current media controller,
-        if (loop() && !m_mediaController && m_playbackRate > 0) {
+        if (loop() && !m_mediaController && playbackRate > 0) {
             m_sentEndEvent = false;
             // then seek to the earliest possible position of the media resource and abort these steps when the direction of
             // playback is forwards,
             if (now >= dur)
                 seek(0);
-        } else if ((now <= 0 && m_playbackRate < 0) || (now >= dur && m_playbackRate > 0)) {
+        } else if ((now <= 0 && playbackRate < 0) || (now >= dur && playbackRate > 0)) {
             // If the media element does not have a current media controller, and the media element
             // has still ended playback and paused is false,
             if (!m_mediaController && !m_paused) {
@@ -4352,12 +4358,12 @@ bool HTMLMediaElement::endedPlayback() const
     // of playback is forwards, Either the media element does not have a loop attribute specified,
     // or the media element has a current media controller.
     double now = currentTime();
-    if (m_playbackRate > 0)
+    if (effectivePlaybackRate() > 0)
         return dur > 0 && now >= dur && (!loop() || m_mediaController);
 
     // or the current playback position is the earliest possible position and the direction 
     // of playback is backwards
-    if (m_playbackRate < 0)
+    if (effectivePlaybackRate() < 0)
         return now <= 0;
 
     return false;
@@ -4460,7 +4466,7 @@ void HTMLMediaElement::updatePlayState()
 
             // Set rate, muted before calling play in case they were set before the media engine was setup.
             // The media engine should just stash the rate and muted values since it isn't already playing.
-            m_player->setRate(m_playbackRate);
+            m_player->setRate(effectivePlaybackRate());
             m_player->setMuted(muted());
 
             m_player->play();

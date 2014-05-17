@@ -1,3 +1,19 @@
+2014-05-17  Piotr Grad  <p.grad@samsung.com>
+
+        Setting playback rate on video with media controller is not ignored.
+        https://bugs.webkit.org/show_bug.cgi?id=129048
+
+        Reviewed by Jer Noble.
+
+        Replaced queries for m_playbackRate with effectivePlaybackRate()
+        which includes media controller playback rate.
+
+        Test: media/video-controller-child-rate.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+
 2014-05-16  Anders Carlsson  <andersca@apple.com>
 
         Expose WKUserScript as API
