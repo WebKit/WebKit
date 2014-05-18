@@ -32,6 +32,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
+#if ENABLE(USER_MESSAGE_HANDLERS)
+#include "UserMessageHandlerDescriptorTypes.h"
+#endif
+
 namespace WebCore {
 
 class DOMWrapperWorld;
@@ -39,6 +43,7 @@ class Page;
 class URL;
 class UserScript;
 class UserStyleSheet;
+class UserMessageHandlerDescriptor;
 
 class UserContentController : public RefCounted<UserContentController> {
 public:
@@ -62,6 +67,13 @@ public:
 
     void removeAllUserContent();
 
+#if ENABLE(USER_MESSAGE_HANDLERS)
+    const UserMessageHandlerDescriptorMap* userMessageHandlerDescriptors() const { return m_userMessageHandlerDescriptors.get(); }
+
+    void addUserMessageHandlerDescriptor(UserMessageHandlerDescriptor&);
+    void removeUserMessageHandlerDescriptor(UserMessageHandlerDescriptor&);
+#endif
+
 private:
     UserContentController();
 
@@ -71,6 +83,9 @@ private:
 
     std::unique_ptr<UserScriptMap> m_userScripts;
     std::unique_ptr<UserStyleSheetMap> m_userStyleSheets;
+#if ENABLE(USER_MESSAGE_HANDLERS)
+    std::unique_ptr<UserMessageHandlerDescriptorMap> m_userMessageHandlerDescriptors;
+#endif
 };
 
 } // namespace WebCore

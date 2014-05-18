@@ -23,16 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKScriptMessage.h>
+#ifndef UserMessageHandler_h
+#define UserMessageHandler_h
 
-#if WK_API_ENABLED
+#if ENABLE(USER_MESSAGE_HANDLERS)
 
-@class _WKScriptWorld;
+#include "FrameDestructionObserver.h"
+#include "UserMessageHandlerDescriptor.h"
+#include <bindings/ScriptValue.h>
 
-@interface WKScriptMessage (WKPrivate)
+namespace WebCore {
 
-@property (nonatomic, readonly) _WKScriptWorld *_scriptWorld;
+class UserMessageHandler : public RefCounted<UserMessageHandler>, public FrameDestructionObserver {
+public:
+    static PassRef<UserMessageHandler> create(Frame& frame, UserMessageHandlerDescriptor& descriptor)
+    {
+        return adoptRef(*new UserMessageHandler(frame, descriptor));
+    }
+    virtual ~UserMessageHandler();
 
-@end
+    void postMessage(PassRefPtr<SerializedScriptValue>);
 
-#endif
+    const AtomicString& name();
+    DOMWrapperWorld& world();
+
+private:
+    UserMessageHandler(Frame&, UserMessageHandlerDescriptor&);
+    
+    Ref<UserMessageHandlerDescriptor> m_descriptor;
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(USER_MESSAGE_HANDLERS)
+#endif // UserMessageHandler_h

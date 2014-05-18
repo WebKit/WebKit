@@ -23,20 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKUserContentController.h"
+#include "config.h"
+#include "UserMessageHandlerDescriptor.h"
 
-#if WK_API_ENABLED
+#if ENABLE(USER_MESSAGE_HANDLERS)
 
-#import <wtf/RefPtr.h>
+#include "DOMWrapperWorld.h"
 
-namespace WebKit {
-class WebUserContentControllerProxy;
+namespace WebCore {
+
+UserMessageHandlerDescriptor::UserMessageHandlerDescriptor(const AtomicString& name, DOMWrapperWorld& world, Client& client)
+    : m_name(name)
+    , m_world(world)
+    , m_client(client)
+{
 }
 
-@interface WKUserContentController () {
-@package
-    RefPtr<WebKit::WebUserContentControllerProxy> _userContentControllerProxy;
+UserMessageHandlerDescriptor::~UserMessageHandlerDescriptor()
+{
 }
-@end
 
-#endif
+const AtomicString& UserMessageHandlerDescriptor::name()
+{
+    return m_name;
+}
+
+DOMWrapperWorld& UserMessageHandlerDescriptor::world()
+{
+    return m_world.get();
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(USER_MESSAGE_HANDLERS)

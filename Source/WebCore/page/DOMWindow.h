@@ -48,7 +48,9 @@ namespace WebCore {
     class DOMApplicationCache;
     class DOMSelection;
     class DOMURL;
+    class DOMWindowCSS;
     class DOMWindowProperty;
+    class DOMWrapperWorld;
     class Database;
     class DatabaseCallback;
     class Document;
@@ -73,8 +75,8 @@ namespace WebCore {
     class SerializedScriptValue;
     class Storage;
     class StyleMedia;
+    class WebKitNamespace;
     class WebKitPoint;
-    class DOMWindowCSS;
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     class RequestAnimationFrameCallback;
@@ -426,6 +428,11 @@ namespace WebCore {
         bool hasTouchEventListeners() const { return m_touchEventListenerCount > 0; }
 #endif
 
+#if ENABLE(USER_MESSAGE_HANDLERS)
+        bool shouldHaveWebKitNamespaceForWorld(DOMWrapperWorld&);
+        WebKitNamespace* webkitNamespace() const;
+#endif
+
         // FIXME: When this DOMWindow is no longer the active DOMWindow (i.e.,
         // when its document is no longer the document that is displayed in its
         // frame), we would like to zero out m_frame to avoid being confused
@@ -500,6 +507,10 @@ namespace WebCore {
 
 #if ENABLE(CSS3_CONDITIONAL_RULES)
         mutable RefPtr<DOMWindowCSS> m_css;
+#endif
+
+#if ENABLE(USER_MESSAGE_HANDLERS)
+        mutable RefPtr<WebKitNamespace> m_webkitNamespace;
 #endif
     };
 

@@ -64,6 +64,8 @@
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKVisitedLinkProviderInternal.h"
 #import "_WKWebsiteDataStoreInternal.h"
+#import <wtf/HashMap.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
@@ -103,6 +105,18 @@
 #import "WKViewInternal.h"
 #import <WebCore/ColorMac.h>
 #endif
+
+
+static HashMap<WebKit::WebPageProxy*, WKWebView *>& pageToViewMap()
+{
+    static NeverDestroyed<HashMap<WebKit::WebPageProxy*, WKWebView *>> map;
+    return map;
+}
+
+WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
+{
+    return pageToViewMap().get(&page);
+}
 
 @implementation WKWebView {
     std::unique_ptr<WebKit::NavigationState> _navigationState;
@@ -232,6 +246,8 @@
 
     _page->setFindClient(std::make_unique<WebKit::FindClient>(self));
 
+    pageToViewMap().add(_page.get(), self);
+
     return self;
 }
 
@@ -244,6 +260,8 @@
     [[_configuration _contentProviderRegistry] removePage:*_page];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 #endif
+
+    pageToViewMap().remove(_page.get());
 
     [super dealloc];
 }

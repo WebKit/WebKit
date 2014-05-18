@@ -23,20 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKUserContentController.h"
+#import "WKScriptMessage.h"
 
 #if WK_API_ENABLED
 
-#import <wtf/RefPtr.h>
+@interface WKScriptMessage ()
 
-namespace WebKit {
-class WebUserContentControllerProxy;
-}
+- (instancetype)_initWithBody:(id)body webView:(WKWebView *)webView name:(NSString *)name;
 
-@interface WKUserContentController () {
-@package
-    RefPtr<WebKit::WebUserContentControllerProxy> _userContentControllerProxy;
-}
 @end
 
 #endif

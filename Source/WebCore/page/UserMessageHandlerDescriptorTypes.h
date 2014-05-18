@@ -23,20 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKUserContentController.h"
+#ifndef UserMessageHandlerDescriptorTypes_h
+#define UserMessageHandlerDescriptorTypes_h
 
-#if WK_API_ENABLED
+#if ENABLE(USER_MESSAGE_HANDLERS)
 
-#import <wtf/RefPtr.h>
+#include <wtf/HashMap.h>
+#include <wtf/RefPtr.h>
+#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomicStringHash.h>
 
-namespace WebKit {
-class WebUserContentControllerProxy;
-}
+namespace WebCore {
 
-@interface WKUserContentController () {
-@package
-    RefPtr<WebKit::WebUserContentControllerProxy> _userContentControllerProxy;
-}
-@end
+class DOMWrapperWorld;
+class UserMessageHandlerDescriptor;
 
-#endif
+typedef HashMap<std::pair<AtomicString, RefPtr<DOMWrapperWorld>>, RefPtr<UserMessageHandlerDescriptor>> UserMessageHandlerDescriptorMap;
+
+} // namespace WebCore
+
+#endif // ENABLE(USER_MESSAGE_HANDLERS)
+#endif // UserMessageHandlerDescriptorTypes_h

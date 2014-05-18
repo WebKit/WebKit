@@ -23,47 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebUserContentController_h
-#define WebUserContentController_h
+#ifndef UserMessageHandlersNamespace_h
+#define UserMessageHandlersNamespace_h
 
-#include "MessageReceiver.h"
-#include "WebScriptMessageHandler.h"
-#include <WebCore/UserContentController.h>
-#include <wtf/HashMap.h>
+#if ENABLE(USER_MESSAGE_HANDLERS)
+
+#include "FrameDestructionObserver.h"
+#include "UserMessageHandler.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/text/AtomicString.h>
 
-namespace WebKit {
+namespace WebCore {
 
-class WebUserMessageHandlerDescriptorProxy;
+class Frame;
+class UserMessageHandler;
+class DOMWrapperWorld;
 
-class WebUserContentController final : public RefCounted<WebUserContentController>, private IPC::MessageReceiver  {
+class UserMessageHandlersNamespace : public RefCounted<UserMessageHandlersNamespace>, public FrameDestructionObserver {
 public:
-    static PassRefPtr<WebUserContentController> getOrCreate(uint64_t identifier);
-    virtual ~WebUserContentController();
+    static PassRef<UserMessageHandlersNamespace> create(Frame& frame)
+    {
+        return adoptRef(*new UserMessageHandlersNamespace(frame));
+    }
 
-    WebCore::UserContentController& userContentController() { return m_userContentController.get(); }
+    virtual ~UserMessageHandlersNamespace();
 
-    uint64_t identifier() { return m_identifier; } 
+    UserMessageHandler* handler(const AtomicString&, DOMWrapperWorld&);
 
 private:
-    explicit WebUserContentController(uint64_t identifier);
+    explicit UserMessageHandlersNamespace(Frame&);
 
-    // IPC::MessageReceiver.
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
-
-    void addUserScripts(const Vector<WebCore::UserScript>& userScripts);
-    void removeAllUserScripts();
-
-    void addUserScriptMessageHandlers(const Vector<WebScriptMessageHandlerHandle>& scriptMessageHandlers);
-    void removeUserScriptMessageHandler(uint64_t);
-
-    uint64_t m_identifier;
-    Ref<WebCore::UserContentController> m_userContentController;
-#if ENABLE(USER_MESSAGE_HANDLERS)
-    HashMap<uint64_t, RefPtr<WebUserMessageHandlerDescriptorProxy>> m_userMessageHandlerDescriptors;
-#endif
+    Vector<Ref<UserMessageHandler>> m_messageHandlers;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
-#endif // WebUserContentController_h
+#endif // ENABLE(USER_MESSAGE_HANDLERS)
+#endif // UserMessageHandlersNamespace_h

@@ -23,20 +23,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKUserContentController.h"
+#ifndef UserMessageHandlerDescriptor_h
+#define UserMessageHandlerDescriptor_h
 
-#if WK_API_ENABLED
+#if ENABLE(USER_MESSAGE_HANDLERS)
 
-#import <wtf/RefPtr.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/text/AtomicString.h>
 
-namespace WebKit {
-class WebUserContentControllerProxy;
-}
+namespace WebCore {
 
-@interface WKUserContentController () {
-@package
-    RefPtr<WebKit::WebUserContentControllerProxy> _userContentControllerProxy;
-}
-@end
+class Frame;
+class DOMWrapperWorld;
+class UserMessageHandler;
+class SerializedScriptValue;
 
-#endif
+class UserMessageHandlerDescriptor : public RefCounted<UserMessageHandlerDescriptor> {
+public:
+    class Client {
+    public:
+        virtual ~Client() { }
+        virtual void didPostMessage(UserMessageHandler&, SerializedScriptValue*) = 0;
+    };
+
+    static PassRefPtr<UserMessageHandlerDescriptor> create(const AtomicString& name, DOMWrapperWorld& world, Client& client)
+    {
+        return adoptRef(new UserMessageHandlerDescriptor(name, world, client));
+    }
+    ~UserMessageHandlerDescriptor();
+
+    const AtomicString& name();
+    DOMWrapperWorld& world();
+    
+    Client& client() const { return m_client; }
+
+private:
+    explicit UserMessageHandlerDescriptor(const AtomicString&, DOMWrapperWorld&, Client&);
+    
+    AtomicString m_name;
+    Ref<DOMWrapperWorld> m_world;
+    Client& m_client;
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(USER_MESSAGE_HANDLERS)
+#endif // UserMessageHandlerDescriptor_h
