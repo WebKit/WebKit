@@ -25,8 +25,6 @@
 
 #import <WebKit/WKWebView.h>
 
-#import <WebKit/WKBase.h>
-
 #if WK_API_ENABLED
 
 typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
@@ -157,8 +155,6 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 - (void)_hideFindUI;
 
 @property (nonatomic, weak, setter=_setFormDelegate:) id <_WKFormDelegate> _formDelegate;
-
-@property (nonatomic, readonly) WKPageRef _pageRef;
 
 @end
 
