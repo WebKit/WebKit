@@ -495,6 +495,7 @@ public:
         [NSNumber numberWithBool:NO],   WebKitMultithreadedWebGLEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitForceSoftwareWebGLRenderingPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitAccelerated2dCanvasEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitSubpixelCSSOMElementMetricsEnabledPreferenceKey,
 #if PLATFORM(IOS)
         [NSNumber numberWithBool:YES],  WebKitFrameFlatteningEnabledPreferenceKey,
 #else
@@ -1907,6 +1908,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setWebAudioEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitWebAudioEnabledPreferenceKey];
+}
+
+- (BOOL)subpixelCSSOMElementMetricsEnabled
+{
+    return [self _boolValueForKey:WebKitSubpixelCSSOMElementMetricsEnabledPreferenceKey];
+}
+
+- (void) setSubpixelCSSOMElementMetricsEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitSubpixelCSSOMElementMetricsEnabledPreferenceKey];
 }
 
 - (BOOL)webGLEnabled

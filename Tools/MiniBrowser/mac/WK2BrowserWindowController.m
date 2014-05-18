@@ -36,6 +36,7 @@
 
 static void* keyValueObservingContext = &keyValueObservingContext;
 static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
+static NSString * const WebKit2SubpixelCSSOMElementMetricsEnabledKey = @"WebKitSubpixelCSSOMElementMetricsEnabled";
 
 @interface WK2BrowserWindowController () <WKNavigationDelegate, WKUIDelegate>
 @end
@@ -133,6 +134,8 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
         [menuItem setState:[[self window] isOpaque] ? NSOffState : NSOnState];
     else if ([menuItem action] == @selector(toggleUISideCompositing:))
         [menuItem setState:[self isUISideCompositingEnabled] ? NSOnState : NSOffState];
+    else if ([menuItem action] == @selector(toggleSubpixelCSSOMElementMetricsEnabled:))
+        [menuItem setState:[self isSubpixelCSSOMElementMetricsEnabled] ? NSOnState : NSOffState];
 
     return YES;
 }
@@ -292,6 +295,16 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
     _webView._drawsTransparentBackground = isTransparent;
 
     [[self window] display];    
+}
+
+- (BOOL)isSubpixelCSSOMElementMetricsEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKit2SubpixelCSSOMElementMetricsEnabledKey];
+}
+
+- (IBAction)toggleSubpixelCSSOMElementMetricsEnabled:(id)sender
+{
+    [[NSUserDefaults standardUserDefaults] setBool:![self isSubpixelCSSOMElementMetricsEnabled] forKey:WebKit2SubpixelCSSOMElementMetricsEnabledKey];
 }
 
 - (BOOL)isUISideCompositingEnabled

@@ -214,6 +214,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)webAudioEnabled;
 - (void)setWebAudioEnabled:(BOOL)enabled;
 
+- (BOOL)subpixelCSSOMElementMetricsEnabled;
+- (void)setSubpixelCSSOMElementMetricsEnabled:(BOOL)enabled;
+
 - (BOOL)webGLEnabled;
 - (void)setWebGLEnabled:(BOOL)enabled;
 

@@ -28,6 +28,9 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/WebViewPrivate.h>
 #import "AppDelegate.h"
+#import <WebKit/WebPreferences.h>
+#import <WebKit/WebPreferencesPrivate.h>
+#import <WebKit/WebPreferenceKeysPrivate.h>
 
 @interface WK1BrowserWindowController ()
 @end
@@ -131,6 +134,8 @@
         [menuItem setState:[self isPaginated] ? NSOnState : NSOffState];
     else if ([menuItem action] == @selector(toggleTransparentWindow:))
         [menuItem setState:[[self window] isOpaque] ? NSOffState : NSOnState];
+    else if ([menuItem action] == @selector(toggleSubpixelCSSOMElementMetricsEnabled:))
+        [menuItem setState:[self isSubpixelCSSOMElementMetricsEnabled] ? NSOnState : NSOffState];
 
     return YES;
 }
@@ -248,6 +253,16 @@
         [_webView setBackgroundColor:[NSColor whiteColor]];
 
     [[self window] display];
+}
+
+- (BOOL)isSubpixelCSSOMElementMetricsEnabled
+{
+    return [[WebPreferences standardPreferences] subpixelCSSOMElementMetricsEnabled];
+}
+
+- (IBAction)toggleSubpixelCSSOMElementMetricsEnabled:(id)sender
+{
+    [[WebPreferences standardPreferences] setSubpixelCSSOMElementMetricsEnabled:![self isSubpixelCSSOMElementMetricsEnabled]];
 }
 
 - (IBAction)find:(id)sender

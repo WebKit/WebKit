@@ -1,3 +1,26 @@
+2014-05-17  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Add subpixelCSSOMElementMetricsEnabled to WK1 WebPreferences.
+        https://bugs.webkit.org/show_bug.cgi?id=133029
+
+        Reviewed by Simon Fraser.
+
+        Added a menu item to toggle subpixelCSSOMElementMetricsEnabled's value. However
+        toggling it on a WK2 window needs restart.
+        Adding dynamic toggle to WK2 requires a WebPreferences SPI. It's not worth cluttering
+        the WebPreferences just to support this temporary toggle.
+
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/MainMenu.xib:
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController validateMenuItem:]):
+        (-[WK1BrowserWindowController isSubpixelCSSOMElementMetricsEnabled]):
+        (-[WK1BrowserWindowController toggleSubpixelCSSOMElementMetricsEnabled:]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController validateMenuItem:]):
+        (-[WK2BrowserWindowController isSubpixelCSSOMElementMetricsEnabled]):
+        (-[WK2BrowserWindowController toggleSubpixelCSSOMElementMetricsEnabled:]):
+
 2014-05-17  Anders Carlsson  <andersca@apple.com>
 
         Replace WKContextSetDatabaseDirectory with two WKContextConfiguration parameters
