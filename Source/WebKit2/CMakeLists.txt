@@ -421,6 +421,7 @@ set(WebKit2_SOURCES
     UIProcess/Storage/LocalStorageDatabase.cpp
     UIProcess/Storage/LocalStorageDatabaseTracker.cpp
 
+    UIProcess/UserContent/WebScriptMessageHandler.cpp
     UIProcess/UserContent/WebUserContentControllerProxy.cpp
 
     WebProcess/WebConnectionToUIProcess.cpp
@@ -600,6 +601,8 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/Plugins/PluginProcessProxy.messages.in
 
     UIProcess/Storage/StorageManager.messages.in
+
+    UIProcess/UserContent/WebUserContentControllerProxy.messages.in
 
     WebProcess/WebProcess.messages.in
 
