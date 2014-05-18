@@ -1,5 +1,15 @@
 2014-05-18  Martin Hodovan  <mhodovan.u-szeged@partner.samsung.com>
 
+        [WK2][EFL] Buildfix after r168999.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * UIProcess/efl/WebContextEfl.cpp:
+        (WebKit::WebContext::platformDefaultWebSQLDatabaseDirectory): Renamed from WebKit::WebContext::platformDefaultDatabaseDirectory().
+        (WebKit::WebContext::platformDefaultIndexedDBDatabaseDirectory): Added.
+
+2014-05-18  Martin Hodovan  <mhodovan.u-szeged@partner.samsung.com>
+
         [WK2][cmake] Buildfix after r168994.
 
         Reviewed by Csaba Osztrogonác.
