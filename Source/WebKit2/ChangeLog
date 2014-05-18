@@ -1,3 +1,11 @@
+2014-05-18  Martin Hodovan  <mhodovan.u-szeged@partner.samsung.com>
+
+        [WK2][cmake] Buildfix after r168994.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * CMakeLists.txt: Added new files to the build system introduced in r168994.
+
 2014-05-17  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (NetworkProcess): Trying to use appcache fallback crashes in ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache

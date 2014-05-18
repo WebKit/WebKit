@@ -32,6 +32,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/Notifications"
     "${WEBKIT2_DIR}/UIProcess/Plugins"
     "${WEBKIT2_DIR}/UIProcess/Storage"
+    "${WEBKIT2_DIR}/UIProcess/UserContent"
     "${WEBKIT2_DIR}/WebProcess"
     "${WEBKIT2_DIR}/WebProcess/ApplicationCache"
     "${WEBKIT2_DIR}/WebProcess/Battery"
@@ -55,6 +56,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/Plugins/Netscape"
     "${WEBKIT2_DIR}/WebProcess/ResourceCache"
     "${WEBKIT2_DIR}/WebProcess/Storage"
+    "${WEBKIT2_DIR}/WebProcess/UserContent"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport"
     "${WEBKIT2_DIR}/WebProcess/WebPage"
     "${WEBCORE_DIR}"
@@ -419,6 +421,8 @@ set(WebKit2_SOURCES
     UIProcess/Storage/LocalStorageDatabase.cpp
     UIProcess/Storage/LocalStorageDatabaseTracker.cpp
 
+    UIProcess/UserContent/WebUserContentControllerProxy.cpp
+
     WebProcess/WebConnectionToUIProcess.cpp
     WebProcess/WebProcess.cpp
 
@@ -507,6 +511,8 @@ set(WebKit2_SOURCES
     WebProcess/Storage/StorageAreaImpl.cpp
     WebProcess/Storage/StorageAreaMap.cpp
     WebProcess/Storage/StorageNamespaceImpl.cpp
+
+    WebProcess/UserContent/WebUserContentController.cpp
 
     WebProcess/WebCoreSupport/WebBatteryClient.cpp
     WebProcess/WebCoreSupport/WebChromeClient.cpp
@@ -625,6 +631,8 @@ set(WebKit2_MESSAGES_IN_FILES
     WebProcess/ResourceCache/WebResourceCacheManager.messages.in
 
     WebProcess/Storage/StorageAreaMap.messages.in
+
+    WebProcess/UserContent/WebUserContentController.messages.in
 
     WebProcess/WebCoreSupport/WebDatabaseManager.messages.in
 
