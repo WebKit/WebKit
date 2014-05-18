@@ -29,6 +29,7 @@
 
 #include "EwkView.h"
 #include "PageViewportController.h"
+#include <WebCore/FloatPoint.h>
 
 using namespace WebCore;
 
@@ -46,13 +47,10 @@ void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSi
     m_view->scheduleUpdateDisplay();
 }
 
-void PageViewportControllerClientEfl::setViewportPosition(const WebCore::FloatPoint& contentsPoint)
+void PageViewportControllerClientEfl::setViewportPosition(const WebCore::FloatPoint& contentsPosition)
 {
-    m_contentPosition = contentsPoint;
-
-    WKViewSetContentPosition(m_view->wkView(), WKPointMake(contentsPoint.x(), contentsPoint.y()));
-
-    m_controller->didChangeContentsVisibility(m_contentPosition, m_controller->currentScale());
+    WKViewSetContentPosition(m_view->wkView(), WKPointMake(contentsPosition.x(), contentsPosition.y()));
+    m_controller->didChangeContentsVisibility(contentsPosition, m_controller->currentScale());
 }
 
 void PageViewportControllerClientEfl::setPageScaleFactor(float newScale)

@@ -38,7 +38,7 @@ public:
     PageViewportControllerClient() { }
     virtual ~PageViewportControllerClient() { }
 
-    virtual void setViewportPosition(const WebCore::FloatPoint& contentsPoint) = 0;
+    virtual void setViewportPosition(const WebCore::FloatPoint&) = 0;
     virtual void setPageScaleFactor(float) = 0;
 
     virtual void didChangeContentsSize(const WebCore::IntSize&) = 0;

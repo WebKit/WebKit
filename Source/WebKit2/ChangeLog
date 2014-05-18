@@ -1,3 +1,19 @@
+2014-05-17  Jae Hyun Park  <jaepark@webkit.org>
+
+        [EFL] Remove m_contentPosition from PageViewportControllerClientEfl
+        https://bugs.webkit.org/show_bug.cgi?id=132774
+
+        Reviewed by Anders Carlsson.
+
+        m_contentPosition is not used anywhere. So, this patch removes
+        m_contentPosition and reduces one unnecessary assignment in
+        setViewportPosition. Also, it renames contentsPoint to contentsPosition.
+
+        * UIProcess/PageViewportControllerClient.h:
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::setViewportPosition):
+        * UIProcess/efl/PageViewportControllerClientEfl.h:
+
 2014-05-17  David Kilzer  <ddkilzer@apple.com>
 
         Need a way to get a WKPageRef from a WKWebView

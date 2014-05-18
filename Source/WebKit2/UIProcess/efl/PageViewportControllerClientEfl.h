@@ -28,7 +28,6 @@
 #define PageViewportControllerClientEfl_h
 
 #include "PageViewportControllerClient.h"
-#include <WebCore/FloatPoint.h>
 
 class EwkView;
 
@@ -50,7 +49,6 @@ public:
 
 private:
     EwkView* m_view;
-    WebCore::FloatPoint m_contentPosition;
     PageViewportController* m_controller;
 };
 
