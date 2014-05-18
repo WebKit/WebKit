@@ -1,3 +1,18 @@
+2014-05-17  Andreas Kling  <akling@apple.com>
+
+        We shouldn't make a ScrollingThread on iOS.
+        <https://webkit.org/b/133038>
+        <rdar://problem/16947589>
+
+        Don't call ScrollingThred::dispatch() from the pressure relief
+        code on iOS since that will end up instantiating a scrolling thread
+        which we'd otherwise never have.
+
+        Reviewed by Sam Weinig.
+
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseMemory):
+
 2014-05-17  Piotr Grad  <p.grad@samsung.com>
 
         Setting playback rate on video with media controller is not ignored.
