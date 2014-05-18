@@ -1,3 +1,41 @@
+2014-05-17  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (NetworkProcess): Trying to use appcache fallback crashes in ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache
+        https://bugs.webkit.org/show_bug.cgi?id=133007
+        <rdar://problem/13702706>
+
+        appcache tests often fail on the Mac WebKit2 bot
+        https://bugs.webkit.org/show_bug.cgi?id=82061
+
+        Reviewed by Maciej Stachowiak.
+
+        Covered by existing tests, which this patch enables.
+
+        * WebCore.exp.in: Export ResourceLoader::cancel(const ResourceError&). It used
+        to be virtual, but marking subclasses final has resulted in the compiler calling
+        it directly from WebKitLegacy framework. Seeing that no subclass overrides it,
+        I then made it non-virtual.
+        Also export ApplicationCacheHost functions that are now used from WebKit2.
+
+        * loader/ResourceLoader.h: Made the class abstract (as I didn't realize at first
+        that it's always either a SubresourceLoader or a NetscapePlugInStreamLoader).
+        Made ResourceHandleClient functions private, as they should never be called other
+        than via a ResourceHandleClient pointer.
+
+        * loader/NetscapePlugInStreamLoader.h:
+        * loader/SubresourceLoader.h:
+        Marked these final.
+
+        * loader/ResourceLoader.cpp: (WebCore::ResourceLoader::willSwitchToSubstituteResource):
+        Added a function to be called when switching to a substitute resource. We still
+        need a ResourceLoader at this point, as substitute resource will be delivered through
+        it, but we don't want it to continue its current load.
+
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache):
+        Call the ResourceLoader function instead of using handle, which is null when
+        using out of process networking.
+
 2014-05-17  Andreas Kling  <akling@apple.com>
 
         We shouldn't make a ScrollingThread on iOS.

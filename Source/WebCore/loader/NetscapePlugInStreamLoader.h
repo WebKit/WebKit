@@ -48,7 +48,7 @@ protected:
     virtual ~NetscapePlugInStreamLoaderClient() { }
 };
 
-class NetscapePlugInStreamLoader : public ResourceLoader {
+class NetscapePlugInStreamLoader final : public ResourceLoader {
 public:
     static PassRefPtr<NetscapePlugInStreamLoader> create(Frame*, NetscapePlugInStreamLoaderClient*, const ResourceRequest&);
     virtual ~NetscapePlugInStreamLoader();

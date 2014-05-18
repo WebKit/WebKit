@@ -35,6 +35,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebProcess.h"
+#include <WebCore/ApplicationCacheHost.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/ResourceBuffer.h>
@@ -84,8 +85,10 @@ void WebResourceLoader::willSendRequest(const ResourceRequest& proposedRequest, 
     LOG(Network, "(WebProcess) WebResourceLoader::willSendRequest to '%s'", proposedRequest.url().string().utf8().data());
 
     Ref<WebResourceLoader> protect(*this);
-    
+
     ResourceRequest newRequest = proposedRequest;
+    if (m_coreLoader->documentLoader()->applicationCacheHost()->maybeLoadFallbackForRedirect(m_coreLoader.get(), newRequest, redirectResponse))
+        return;
     m_coreLoader->willSendRequest(newRequest, redirectResponse);
     
     if (!m_coreLoader)
@@ -120,6 +123,8 @@ void WebResourceLoader::didReceiveResponseWithCertificateInfo(const ResourceResp
     responseCopy.setSoupMessageCertificate(certificateInfo.certificate());
     responseCopy.setSoupMessageTLSErrors(certificateInfo.tlsErrors());
 #endif
+    if (m_coreLoader->documentLoader()->applicationCacheHost()->maybeLoadFallbackForResponse(m_coreLoader.get(), responseCopy))
+        return;
     m_coreLoader->didReceiveResponse(responseCopy);
 
     // If m_coreLoader becomes null as a result of the didReceiveResponse callback, we can't use the send function(). 
@@ -163,6 +168,8 @@ void WebResourceLoader::didFailResourceLoad(const ResourceError& error)
     if (m_quickLookHandle)
         m_quickLookHandle->didFail();
 #endif
+    if (m_coreLoader->documentLoader()->applicationCacheHost()->maybeLoadFallbackForError(m_coreLoader.get(), error))
+        return;
     m_coreLoader->didFail(error);
 }
 

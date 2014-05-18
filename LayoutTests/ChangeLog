@@ -1,3 +1,18 @@
+2014-05-17  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (NetworkProcess): Trying to use appcache fallback crashes in ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache
+        https://bugs.webkit.org/show_bug.cgi?id=133007
+        <rdar://problem/13702706>
+
+        appcache tests often fail on the Mac WebKit2 bot
+        https://bugs.webkit.org/show_bug.cgi?id=82061
+
+        Reviewed by Maciej Stachowiak.
+
+        * platform/mac-wk2/TestExpectations: Let's enable all the appcache tests (except
+        for a couple that fail), and see what happens on bots. I don't see any reason
+        why WebKit2 would be any more flaky than WebKit1 here.
+
 2014-05-17  Piotr Grad  <p.grad@samsung.com>
 
         Setting playback rate on video with media controller is not ignored.

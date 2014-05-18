@@ -207,6 +207,13 @@ void ResourceLoader::setDataBufferingPolicy(DataBufferingPolicy dataBufferingPol
         m_resourceData = 0;
 }
     
+void ResourceLoader::willSwitchToSubstituteResource()
+{
+    ASSERT(!m_documentLoader->isSubstituteLoadPending(this));
+    platformStrategies()->loaderStrategy()->resourceLoadScheduler()->remove(this);
+    if (m_handle)
+        m_handle->cancel();
+}
 
 void ResourceLoader::addDataOrBuffer(const char* data, unsigned length, SharedBuffer* buffer, DataPayloadType dataPayloadType)
 {

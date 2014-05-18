@@ -1,3 +1,23 @@
+2014-05-17  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (NetworkProcess): Trying to use appcache fallback crashes in ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache
+        https://bugs.webkit.org/show_bug.cgi?id=133007
+        <rdar://problem/13702706>
+
+        appcache tests often fail on the Mac WebKit2 bot
+        https://bugs.webkit.org/show_bug.cgi?id=82061
+
+        Reviewed by Maciej Stachowiak.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest):
+        (WebKit::WebResourceLoader::didReceiveResponseWithCertificateInfo):
+        (WebKit::WebResourceLoader::didFailResourceLoad):
+        Perform the same appcache checks that ResourceHandleClient implementation in ResourceLoader
+        does. We should eventually come up with a way to share the code. Perhaps add a class that
+        isolates ResourceLoader from networking details? But ResourceLoader was itself supposed
+        to be the class that isolates DocumentLoader from networking details. So, unsure.
+
 2014-05-17  Jae Hyun Park  <jaepark@webkit.org>
 
         [EFL] Remove m_contentPosition from PageViewportControllerClientEfl

@@ -42,7 +42,7 @@ class Document;
 class PageActivityAssertionToken;
 class ResourceRequest;
 
-class SubresourceLoader : public ResourceLoader {
+class SubresourceLoader final : public ResourceLoader {
 public:
     static PassRefPtr<SubresourceLoader> create(Frame*, CachedResource*, const ResourceRequest&, const ResourceLoaderOptions&);
 

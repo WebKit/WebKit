@@ -399,10 +399,10 @@ bool ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache(Reso
     if (!getApplicationCacheFallbackResource(loader->request(), resource, cache))
         return false;
 
+    loader->willSwitchToSubstituteResource();
+
     m_documentLoader->m_pendingSubstituteResources.set(loader, resource);
     m_documentLoader->deliverSubstituteResourcesAfterDelay();
-    
-    loader->handle()->cancel();
 
     return true;
 }
