@@ -1169,7 +1169,6 @@ webkit.org/b/122021 media/video-controls-visible-exiting-fullscreen.html
 webkit.org/b/122021 media/video-controls-captions-trackmenu-only-captions-descriptions-and-subtitles.html
 webkit.org/b/122021 media/video-display-toggle.html
 webkit.org/b/122021 media/video-empty-source.html
-webkit.org/b/122021 media/video-rtl.html
 webkit.org/b/122021 media/video-volume-slider.html
 webkit.org/b/122021 media/volume-bar-empty-when-muted.html
 webkit.org/b/122021 media/track/track-cue-rendering-vertical.html [ Pass Failure ]

@@ -94,6 +94,8 @@ audio::-webkit-media-controls-panel {
     -webkit-align-items: center;
     -webkit-user-select: none;
 
+    direction: ltr;
+
     transition: opacity 0.25s linear;
 }
 

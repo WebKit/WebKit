@@ -1,3 +1,16 @@
+2014-05-18  Maciej Stachowiak  <mjs@apple.com>
+
+        REGRESSION (r156546): Default media controls are laid out incorrectly when media element is styled with direction:rtl
+        https://bugs.webkit.org/show_bug.cgi?id=132531
+        <rdar://problem/16806267>
+        
+        Reviewed by Mark Rowe.
+
+        This was already tested by the media/video-rtl.htm reftest, now unskipped.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-panel): Add missing direction: ltr
+
 2014-05-18  Rik Cabanier  <cabanier@adobe.com>
 
         support for navigator.hardwareConcurrency
