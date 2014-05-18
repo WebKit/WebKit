@@ -1,3 +1,15 @@
+2014-05-17  David Kilzer  <ddkilzer@apple.com>
+
+        Need a way to get a WKPageRef from a WKWebView
+        <http://webkit.org/b/133015>
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _pageRef]): Added.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        (-[WKWebView _pageRef]): Added declaration.
+
 2014-05-17  Anders Carlsson  <andersca@apple.com>
 
         Give user scripts custom URLs

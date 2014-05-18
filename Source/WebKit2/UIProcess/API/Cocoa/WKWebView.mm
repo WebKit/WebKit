@@ -1444,6 +1444,11 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         _page->setFormClient(nullptr);
 }
 
+- (WKPageRef)_pageRef
+{
+    return toAPI(_page.get());
+}
+
 #pragma mark iOS-specific methods
 
 #if PLATFORM(IOS)
