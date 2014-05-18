@@ -1,3 +1,23 @@
+2014-05-18  Anders Carlsson  <andersca@apple.com>
+
+        Implement Navigations for all methods declared returning one
+        https://bugs.webkit.org/show_bug.cgi?id=133048
+        <rdar://problem/16830064>
+
+        Reviewed by Sam Weinig.
+
+        * MiniBrowser/mac/MiniBrowser_Prefix.pch:
+        Import WebKit.h.
+        
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController webView:didStartProvisionalNavigation:]):
+        (-[WK2BrowserWindowController webView:didReceiveServerRedirectForProvisionalNavigation:]):
+        (-[WK2BrowserWindowController webView:didFailProvisionalNavigation:withError:]):
+        (-[WK2BrowserWindowController webView:didCommitNavigation:]):
+        (-[WK2BrowserWindowController webView:didFinishLoadingNavigation:]):
+        (-[WK2BrowserWindowController webView:didFailNavigation:withError:]):
+        Print out the navigations.
+
 2014-05-17  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Add subpixelCSSOMElementMetricsEnabled to WK1 WebPreferences.

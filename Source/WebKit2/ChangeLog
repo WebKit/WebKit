@@ -1,3 +1,68 @@
+2014-05-18  Anders Carlsson  <andersca@apple.com>
+
+        Implement Navigations for all methods declared returning one
+        https://bugs.webkit.org/show_bug.cgi?id=133048
+        <rdar://problem/16830064>
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView goToBackForwardListItem:]):
+        (-[WKWebView goBack]):
+        (-[WKWebView goForward]):
+        (-[WKWebView reload]):
+        (-[WKWebView reloadFromOrigin]):
+        Create and return navigations.
+
+        (-[WKWebView _reload]):
+        Call -[WKWebView reload].
+
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::createBackForwardNavigation):
+        Create a back/forward navigation.
+
+        (WebKit::NavigationState::createReloadNavigation):
+        Create a reload navigation.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcessWithItem):
+        Generate a navigation ID and send it with the GoToBackForwardItem message.
+
+        (WebKit::WebPageProxy::reload):
+        Return a navigation ID.
+
+        (WebKit::WebPageProxy::goForward):
+        Generate a navigation ID and send it with the GoForward message.
+        
+        (WebKit::WebPageProxy::goBack):
+        Generate a navigation ID and send it with the GoBack message.
+
+        (WebKit::WebPageProxy::goToBackForwardItem):
+        Generate a navigation ID and send it with the GoToBackForwardItem message.
+
+        * UIProcess/WebPageProxy.h:
+        Return navigation IDs where appropriate.
+
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::WebPageProxy::restoreFromSessionStateData):
+        Generate a navigation ID and send it with the RestoreSessionAndNavigateToCurrentItem message.
+        
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::goForward):
+        (WebKit::WebPage::goBack):
+        (WebKit::WebPage::goToBackForwardItem):
+        Set up the pending navigation ID.
+
+        (WebKit::WebPage::restoreSessionAndNavigateToCurrentItem):
+        Call goToBackForwardItem with a navigation ID.
+
+        * WebProcess/WebPage/WebPage.h:
+        Add navigation IDs.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        Add navigation IDs.
+
 2014-05-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r169001.

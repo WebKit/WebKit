@@ -104,9 +104,9 @@ messages -> WebPage LegacyReceiver {
     ScrollBy(uint32_t scrollDirection, uint32_t scrollGranularity)
     CenterSelectionInVisibleArea()
 
-    GoBack(uint64_t backForwardItemID)
-    GoForward(uint64_t backForwardItemID)
-    GoToBackForwardItem(uint64_t backForwardItemID)
+    GoBack(uint64_t navigationID, uint64_t backForwardItemID)
+    GoForward(uint64_t navigationID, uint64_t backForwardItemID)
+    GoToBackForwardItem(uint64_t navigationID, uint64_t backForwardItemID)
     TryRestoreScrollPosition()
 
     LoadURLInFrame(String url, uint64_t frameID)
@@ -123,7 +123,7 @@ messages -> WebPage LegacyReceiver {
     StopLoadingFrame(uint64_t frameID)
     
     RestoreSession(WebKit::SessionState state)
-    RestoreSessionAndNavigateToCurrentItem(WebKit::SessionState state)
+    RestoreSessionAndNavigateToCurrentItem(uint64_t navigationID, WebKit::SessionState state)
 
     DidRemoveBackForwardItem(uint64_t backForwardItemID)
 

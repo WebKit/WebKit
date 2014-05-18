@@ -63,7 +63,9 @@ public:
     RetainPtr<id <WKHistoryDelegatePrivate> > historyDelegate();
     void setHistoryDelegate(id <WKHistoryDelegatePrivate>);
 
+    RetainPtr<WKNavigation> createBackForwardNavigation(uint64_t navigationID, const WebBackForwardListItem&);
     RetainPtr<WKNavigation> createLoadRequestNavigation(uint64_t navigationID, NSURLRequest *);
+    RetainPtr<WKNavigation> createReloadNavigation(uint64_t navigationID);
 
     // Called by the history client.
     void didNavigateWithNavigationData(const WebKit::WebNavigationDataStore&);

@@ -855,9 +855,9 @@ private:
     void loadPlainTextString(const String&, IPC::MessageDecoder&);
     void loadWebArchiveData(const IPC::DataReference&, IPC::MessageDecoder&);
     void reload(uint64_t navigationID, bool reloadFromOrigin, const SandboxExtension::Handle&);
-    void goForward(uint64_t);
-    void goBack(uint64_t);
-    void goToBackForwardItem(uint64_t);
+    void goForward(uint64_t navigationID, uint64_t);
+    void goBack(uint64_t navigationID, uint64_t);
+    void goToBackForwardItem(uint64_t navigationID, uint64_t);
     void tryRestoreScrollPosition();
     void setActive(bool);
     void setFocused(bool);
@@ -890,7 +890,7 @@ private:
     void loadURLInFrame(const String&, uint64_t frameID);
 
     uint64_t restoreSession(const SessionState&);
-    void restoreSessionAndNavigateToCurrentItem(const SessionState&);
+    void restoreSessionAndNavigateToCurrentItem(uint64_t navigationID, const SessionState&);
 
     void didRemoveBackForwardItem(uint64_t);
 

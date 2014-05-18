@@ -553,7 +553,7 @@ void WebPageProxy::reattachToWebProcess()
     m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
 }
 
-void WebPageProxy::reattachToWebProcessWithItem(WebBackForwardListItem* item)
+uint64_t WebPageProxy::reattachToWebProcessWithItem(WebBackForwardListItem* item)
 {
     if (item && item != m_backForwardList->currentItem())
         m_backForwardList->goToItem(item);
@@ -561,10 +561,14 @@ void WebPageProxy::reattachToWebProcessWithItem(WebBackForwardListItem* item)
     reattachToWebProcess();
 
     if (!item)
-        return;
+        return 0;
 
-    m_process->send(Messages::WebPage::GoToBackForwardItem(item->itemID()), m_pageID);
+    uint64_t navigationID = generateNavigationID();
+
+    m_process->send(Messages::WebPage::GoToBackForwardItem(navigationID, item->itemID()), m_pageID);
     m_process->responsivenessTimer()->start();
+
+    return navigationID;
 }
 
 void WebPageProxy::setSession(API::Session& session)
@@ -795,7 +799,7 @@ void WebPageProxy::stopLoading()
     m_process->responsivenessTimer()->start();
 }
 
-void WebPageProxy::reload(bool reloadFromOrigin)
+uint64_t WebPageProxy::reload(bool reloadFromOrigin)
 {
     SandboxExtension::Handle sandboxExtensionHandle;
 
@@ -810,13 +814,15 @@ void WebPageProxy::reload(bool reloadFromOrigin)
             m_process->willAcquireUniversalFileReadSandboxExtension();
     }
 
-    if (!isValid()) {
-        reattachToWebProcessWithItem(m_backForwardList->currentItem());
-        return;
-    }
+    if (!isValid())
+        return reattachToWebProcessWithItem(m_backForwardList->currentItem());
 
-    m_process->send(Messages::WebPage::Reload(generateNavigationID(), reloadFromOrigin, sandboxExtensionHandle), m_pageID);
+    uint64_t navigationID = generateNavigationID();
+
+    m_process->send(Messages::WebPage::Reload(navigationID, reloadFromOrigin, sandboxExtensionHandle), m_pageID);
     m_process->responsivenessTimer()->start();
+
+    return navigationID;
 }
 
 void WebPageProxy::recordNavigationSnapshot()
@@ -829,11 +835,11 @@ void WebPageProxy::recordNavigationSnapshot()
 #endif
 }
 
-void WebPageProxy::goForward()
+uint64_t WebPageProxy::goForward()
 {
     WebBackForwardListItem* forwardItem = m_backForwardList->forwardItem();
     if (!forwardItem)
-        return;
+        return 0;
 
     recordNavigationSnapshot();
 
@@ -841,20 +847,22 @@ void WebPageProxy::goForward()
 
     m_pageLoadState.setPendingAPIRequestURL(transaction, forwardItem->url());
 
-    if (!isValid()) {
-        reattachToWebProcessWithItem(forwardItem);
-        return;
-    }
+    if (!isValid())
+        return reattachToWebProcessWithItem(forwardItem);
 
-    m_process->send(Messages::WebPage::GoForward(forwardItem->itemID()), m_pageID);
+    uint64_t navigationID = generateNavigationID();
+
+    m_process->send(Messages::WebPage::GoForward(navigationID, forwardItem->itemID()), m_pageID);
     m_process->responsivenessTimer()->start();
+
+    return navigationID;
 }
 
-void WebPageProxy::goBack()
+uint64_t WebPageProxy::goBack()
 {
     WebBackForwardListItem* backItem = m_backForwardList->backItem();
     if (!backItem)
-        return;
+        return 0;
 
     recordNavigationSnapshot();
 
@@ -862,21 +870,21 @@ void WebPageProxy::goBack()
 
     m_pageLoadState.setPendingAPIRequestURL(transaction, backItem->url());
 
-    if (!isValid()) {
-        reattachToWebProcessWithItem(backItem);
-        return;
-    }
+    if (!isValid())
+        return reattachToWebProcessWithItem(backItem);
 
-    m_process->send(Messages::WebPage::GoBack(backItem->itemID()), m_pageID);
+    uint64_t navigationID = generateNavigationID();
+
+    m_process->send(Messages::WebPage::GoBack(navigationID, backItem->itemID()), m_pageID);
     m_process->responsivenessTimer()->start();
+
+    return navigationID;
 }
 
-void WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
+uint64_t WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
 {
-    if (!isValid()) {
-        reattachToWebProcessWithItem(item);
-        return;
-    }
+    if (!isValid())
+        return reattachToWebProcessWithItem(item);
 
     recordNavigationSnapshot();
     
@@ -884,8 +892,12 @@ void WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
 
     m_pageLoadState.setPendingAPIRequestURL(transaction, item->url());
 
-    m_process->send(Messages::WebPage::GoToBackForwardItem(item->itemID()), m_pageID);
+    uint64_t navigationID = generateNavigationID();
+
+    m_process->send(Messages::WebPage::GoToBackForwardItem(navigationID, item->itemID()), m_pageID);
     m_process->responsivenessTimer()->start();
+
+    return navigationID;
 }
 
 void WebPageProxy::tryRestoreScrollPosition()
