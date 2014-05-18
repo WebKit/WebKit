@@ -112,10 +112,16 @@ void WebContext::platformInvalidateContext()
 {
 }
 
-String WebContext::platformDefaultDatabaseDirectory() const
+String WebContext::platformDefaultWebSQLDatabaseDirectory()
 {
     GUniquePtr<gchar> databaseDirectory(g_build_filename(g_get_user_data_dir(), "webkitgtk", "databases", nullptr));
     return WebCore::filenameToString(databaseDirectory.get());
+}
+
+String WebContext::platformDefaultIndexedDBDatabaseDirectory()
+{
+    notImplemented();
+    return String();
 }
 
 String WebContext::platformDefaultIconDatabasePath() const
