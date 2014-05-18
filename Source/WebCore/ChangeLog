@@ -1,3 +1,17 @@
+2014-05-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Don't attempt to update id or name for nodes that are already removed
+        https://bugs.webkit.org/show_bug.cgi?id=133041
+
+        Reviewed by Sam Weinig.
+
+        Tests: fast/dom/remove-element-with-id-that-was-inserted-on-DOMNodeRemoved.html
+               fast/dom/remove-element-with-name-that-was-inserted-on-DOMNodeRemoved.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::removedFrom): Skip updating ids and names for an element not
+        in a treescope, as we already do for elements not in a document.
+
 2014-05-17  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (NetworkProcess): Trying to use appcache fallback crashes in ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache

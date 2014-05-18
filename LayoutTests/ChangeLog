@@ -1,3 +1,17 @@
+2014-05-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Don't attempt to update id or name for nodes that are already removed
+        https://bugs.webkit.org/show_bug.cgi?id=133041
+
+        Reviewed by Sam Weinig.
+        
+        Test originally by Dan Bates.
+
+        * fast/dom/remove-element-with-id-that-was-inserted-on-DOMNodeRemoved-expected.txt: Added.
+        * fast/dom/remove-element-with-id-that-was-inserted-on-DOMNodeRemoved.html: Added.
+        * fast/dom/remove-element-with-name-that-was-inserted-on-DOMNodeRemoved-expected.txt: Added.
+        * fast/dom/remove-element-with-name-that-was-inserted-on-DOMNodeRemoved.html: Added.
+
 2014-05-17  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (NetworkProcess): Trying to use appcache fallback crashes in ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache
