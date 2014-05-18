@@ -62,6 +62,7 @@
 #include "RenderView.h"
 #include "SVGRenderSupport.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "StyleResolver.h"
 #include "TransformState.h"
 #include "htmlediting.h"
@@ -1499,7 +1500,7 @@ Color RenderObject::selectionBackgroundColor() const
         if (frame().selection().shouldShowBlockCursor() && frame().selection().isCaret())
             color = style().visitedDependentColor(CSSPropertyColor).blendWithWhite();
         else {
-            RefPtr<RenderStyle> pseudoStyle = getUncachedPseudoStyle(PseudoStyleRequest(SELECTION));
+            RefPtr<RenderStyle> pseudoStyle = selectionPseudoStyle();
             if (pseudoStyle && pseudoStyle->visitedDependentColor(CSSPropertyBackgroundColor).isValid())
                 color = pseudoStyle->visitedDependentColor(CSSPropertyBackgroundColor).blendWithWhite();
             else
@@ -1519,7 +1520,7 @@ Color RenderObject::selectionColor(int colorProperty) const
         || (view().frameView().paintBehavior() & PaintBehaviorSelectionOnly))
         return color;
 
-    if (RefPtr<RenderStyle> pseudoStyle = getUncachedPseudoStyle(PseudoStyleRequest(SELECTION))) {
+    if (RefPtr<RenderStyle> pseudoStyle = selectionPseudoStyle()) {
         color = pseudoStyle->visitedDependentColor(colorProperty);
         if (!color.isValid())
             color = pseudoStyle->visitedDependentColor(CSSPropertyColor);
@@ -1527,6 +1528,21 @@ Color RenderObject::selectionColor(int colorProperty) const
         color = frame().selection().isFocusedAndActive() ? theme().activeSelectionForegroundColor() : theme().inactiveSelectionForegroundColor();
 
     return color;
+}
+
+PassRefPtr<RenderStyle> RenderObject::selectionPseudoStyle() const
+{
+    if (isAnonymous())
+        return nullptr;
+
+    if (ShadowRoot* root = m_node.containingShadowRoot()) {
+        if (root->type() == ShadowRoot::UserAgentShadowRoot) {
+            if (Element* shadowHost = m_node.shadowHost())
+                return shadowHost->renderer()->getUncachedPseudoStyle(PseudoStyleRequest(SELECTION));
+        }
+    }
+
+    return getUncachedPseudoStyle(PseudoStyleRequest(SELECTION));
 }
 
 Color RenderObject::selectionForegroundColor() const

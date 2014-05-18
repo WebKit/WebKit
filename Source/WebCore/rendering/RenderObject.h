@@ -897,6 +897,7 @@ private:
     void removeFromRenderFlowThreadRecursive(RenderFlowThread*);
 
     Color selectionColor(int colorProperty) const;
+    PassRefPtr<RenderStyle> selectionPseudoStyle() const;
 
     Node* generatingPseudoHostElement() const;
 

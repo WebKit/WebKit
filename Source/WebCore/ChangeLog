@@ -1,3 +1,21 @@
+2014-05-18  Svetlana Redchenko  <redchenko@yandex-team.ru>
+
+        Input ::selection pseudo class does not work leading to hidden selection
+        https://bugs.webkit.org/show_bug.cgi?id=38943
+
+        Reviewed by Darin Adler.
+
+        Test: fast/selectors/input-with-selection-pseudo-element.html
+
+        When text is selected inside input element, it should change the
+        color and background color according to the ::selection pseudo element.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::selectionBackgroundColor):
+        (WebCore::RenderObject::selectionColor):
+        (WebCore::RenderObject::selectionPseudoStyle):
+        * rendering/RenderObject.h:
+
 2014-05-18  Sam Weinig  <sam@webkit.org>
 
         [WebKit2] Implement ScriptMessageHandlers
