@@ -1,3 +1,11 @@
+2014-05-18  Jon Lee  <jonlee@apple.com>
+
+        Build fix for r169006.
+
+        Unreviewed.
+
+        * loader/ResourceLoader.h: Return didCreateQuickLookHandle() to public.
+
 2014-05-18  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r160259): text-combine glyphs are not rendered

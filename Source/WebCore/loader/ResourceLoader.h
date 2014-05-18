@@ -113,6 +113,10 @@ public:
 #endif
     virtual void receivedCancellation(const AuthenticationChallenge&);
 
+#if USE(QUICK_LOOK)
+    virtual void didCreateQuickLookHandle(QuickLookHandle&) override;
+#endif
+
     const URL& url() const { return m_request.url(); }
     ResourceHandle* handle() const { return m_handle.get(); }
     bool shouldSendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbacks; }
@@ -193,9 +197,6 @@ private:
 #if PLATFORM(WIN) && USE(CFNETWORK)
     // FIXME: Windows should use willCacheResponse - <https://bugs.webkit.org/show_bug.cgi?id=57257>.
     virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
-#endif
-#if USE(QUICK_LOOK)
-    virtual void didCreateQuickLookHandle(QuickLookHandle&) override;
 #endif
 
     ResourceRequest m_request;
