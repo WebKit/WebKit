@@ -158,7 +158,7 @@ protected:
     virtual void computePreferredLogicalWidths(float leadWidth);
     virtual void willBeDestroyed() override;
 
-    virtual void setTextInternal(const String&);
+    virtual void setRenderedText(const String&);
     virtual UChar previousCharacter() const;
 
 private:

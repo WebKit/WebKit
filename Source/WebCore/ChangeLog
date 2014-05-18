@@ -1,3 +1,43 @@
+2014-05-18  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r160259): text-combine glyphs are not rendered
+        https://bugs.webkit.org/show_bug.cgi?id=127324
+
+        Reviewed by Andreas Kling.
+        
+        The original text gets overwritten by a change that is supposed to affect rendered text only.
+        Fixed by giving the text update functions well-defined purposes.
+
+        Test: fast/text/text-combine-rendering.html
+
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::styleDidChange):
+        (WebCore::RenderCombineText::setRenderedText):
+        (WebCore::RenderCombineText::combineText):
+        (WebCore::RenderCombineText::setTextInternal): Deleted.
+        * rendering/RenderCombineText.h:
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::computePreferredLogicalWidths):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setRenderedText):
+        
+            This function now updates the rendered text but does not change the original.
+            Get the original text by calling originalText().
+
+        (WebCore::RenderText::setText):
+        
+            This the only place original text now changes.
+
+        (WebCore::RenderText::setTextInternal): Deleted.
+        
+            Renamed to setRenderedText.
+
+        * rendering/RenderText.h:
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::setRenderedText):
+        (WebCore::RenderSVGInlineText::setTextInternal): Deleted.
+        * rendering/svg/RenderSVGInlineText.h:
+
 2014-05-17  Maciej Stachowiak  <mjs@apple.com>
 
         Don't attempt to update id or name for nodes that are already removed

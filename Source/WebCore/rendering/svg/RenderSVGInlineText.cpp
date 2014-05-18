@@ -77,9 +77,9 @@ String RenderSVGInlineText::originalText() const
     return textNode().data();
 }
 
-void RenderSVGInlineText::setTextInternal(const String& text)
+void RenderSVGInlineText::setRenderedText(const String& text)
 {
-    RenderText::setTextInternal(text);
+    RenderText::setRenderedText(text);
     if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
         textAncestor->subtreeTextDidChange(this);
 }

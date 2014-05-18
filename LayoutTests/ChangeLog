@@ -1,3 +1,13 @@
+2014-05-18  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r160259): text-combine glyphs are not rendered
+        https://bugs.webkit.org/show_bug.cgi?id=127324
+
+        Reviewed by Andreas Kling.
+
+        * fast/text/text-combine-rendering-expected.html: Added.
+        * fast/text/text-combine-rendering.html: Added.
+
 2014-05-17  Maciej Stachowiak  <mjs@apple.com>
 
         Don't attempt to update id or name for nodes that are already removed

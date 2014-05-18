@@ -436,7 +436,7 @@ void RenderCounter::computePreferredLogicalWidths(float lead)
     SetLayoutNeededForbiddenScope layoutForbiddenScope(this, false);
 #endif
 
-    setTextInternal(originalText());
+    setRenderedText(originalText());
 
     RenderText::computePreferredLogicalWidths(lead);
 }

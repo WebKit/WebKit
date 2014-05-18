@@ -52,7 +52,7 @@ private:
     virtual const char* renderName() const override { return "RenderSVGInlineText"; }
 
     virtual String originalText() const override;
-    virtual void setTextInternal(const String&) override;
+    virtual void setRenderedText(const String&) override;
     virtual void styleDidChange(StyleDifference, const RenderStyle*) override;
 
     virtual FloatRect objectBoundingBox() const override { return floatLinesBoundingBox(); }

@@ -1017,15 +1017,11 @@ void applyTextTransform(const RenderStyle& style, String& text, UChar previousCh
     }
 }
 
-void RenderText::setTextInternal(const String& text)
+void RenderText::setRenderedText(const String& text)
 {
     ASSERT(!text.isNull());
 
-    if (m_originalTextDiffersFromRendered) {
-        originalTextMap().remove(this);
-        m_originalTextDiffersFromRendered = false;
-    }
-    String originalText = text;
+    String originalText = this->originalText();
 
     m_text = text;
 
@@ -1069,8 +1065,11 @@ void RenderText::setTextInternal(const String& text)
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
 
     if (m_text != originalText) {
-        originalTextMap().add(this, originalText);
+        originalTextMap().set(this, originalText);
         m_originalTextDiffersFromRendered = true;
+    } else if (m_originalTextDiffersFromRendered) {
+        originalTextMap().remove(this);
+        m_originalTextDiffersFromRendered = false;
     }
 }
 
@@ -1103,7 +1102,14 @@ void RenderText::setText(const String& text, bool force)
     if (!force && text == originalText())
         return;
 
-    setTextInternal(text);
+    m_text = text;
+    if (m_originalTextDiffersFromRendered) {
+        originalTextMap().remove(this);
+        m_originalTextDiffersFromRendered = false;
+    }
+
+    setRenderedText(text);
+
     setNeedsLayoutAndPrefWidthsRecalc();
     m_knownToHaveNoOverflowAndNoFallbackFonts = false;
 
