@@ -37,6 +37,10 @@
 
     readonly attribute boolean onLine;
 
+#if defined(ENABLE_NAVIGATOR_HWCONCURRENCY)
+    readonly attribute long hardwareConcurrency;
+#endif
+
     // FIXME: Convert this #if'def to an IDL conditional attribute.
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
     readonly attribute boolean standalone;

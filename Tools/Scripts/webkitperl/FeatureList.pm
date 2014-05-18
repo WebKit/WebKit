@@ -336,6 +336,9 @@ my @features = (
     { option => "navigator-content-utils", desc => "Toggle Navigator Content Utils support",
       define => "ENABLE_NAVIGATOR_CONTENT_UTILS", default => isEfl(), value => \$registerProtocolHandlerSupport },
 
+    { option => "navigator-hardware-concurrency", desc => "Toggle Navigator hardware concurrenct support",
+      define => "ENABLE_NAVIGATOR_HWCONCURRENCY", default => 1, value => \$registerProtocolHandlerSupport },
+
     { option => "netscape-plugin-api", desc => "Toggle Netscape Plugin API support",
       define => "ENABLE_NETSCAPE_PLUGIN_API", default => !isIOSWebKit(), value => \$netscapePluginAPISupport },
 

@@ -1,3 +1,20 @@
+2014-05-18  Rik Cabanier  <cabanier@adobe.com>
+
+        support for navigator.hardwareConcurrency
+        https://bugs.webkit.org/show_bug.cgi?id=132588
+
+        Reviewed by Filip Pizlo.
+
+        Added a new API that returns the number of CPU cores up to 8.
+
+        Test: fast/dom/navigator-hardwareConcurrency.html
+
+        * Configurations/FeatureDefines.xcconfig:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::hardwareConcurrency):
+        * page/Navigator.h:
+        * page/Navigator.idl:
+
 2014-05-18  Anders Carlsson  <andersca@apple.com>
 
         Fix iOS build.

@@ -1,3 +1,14 @@
+2014-05-18  Rik Cabanier  <cabanier@adobe.com>
+
+        support for navigator.hardwareConcurrency
+        https://bugs.webkit.org/show_bug.cgi?id=132588
+
+        Reviewed by Filip Pizlo.
+
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+        * fast/dom/navigator-hardwareConcurrency-expected.txt: Added.
+        * fast/dom/navigator-hardwareConcurrency.html: Added.
+
 2014-05-18  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r160259): text-combine glyphs are not rendered

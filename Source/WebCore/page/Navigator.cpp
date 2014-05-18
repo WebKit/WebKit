@@ -39,7 +39,10 @@
 #include "Settings.h"
 #include "StorageNamespace.h"
 #include <wtf/HashSet.h>
+#include <wtf/NumberOfCores.h>
 #include <wtf/StdLibExtras.h>
+
+using namespace WTF;
 
 namespace WebCore {
 
@@ -131,6 +134,28 @@ bool Navigator::javaEnabled() const
 
     return true;
 }
+
+#if defined(ENABLE_NAVIGATOR_HWCONCURRENCY)
+int Navigator::hardwareConcurrency() const
+{
+    // Enforce a maximum for the number of cores reported to mitigate
+    // fingerprinting for the minority of machines with large numbers of cores.
+    // If machines with more than 8 cores become commonplace, we should bump this number.
+    // see https://bugs.webkit.org/show_bug.cgi?id=132588 for the
+    // rationale behind this decision.
+#if PLATFORM(IOS)
+    const int maxCoresToReport = 2;
+#else
+    const int maxCoresToReport = 8;
+#endif
+    int hardwareConcurrency = numberOfProcessorCores();
+
+    if (hardwareConcurrency > maxCoresToReport)
+        return maxCoresToReport;
+
+    return hardwareConcurrency;
+}
+#endif
 
 #if PLATFORM(IOS)
 bool Navigator::standalone() const

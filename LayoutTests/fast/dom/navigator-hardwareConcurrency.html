@@ -1,0 +1,17 @@
+<html>
+<body>
+<p>Tests for navigator.hardwareConcurrency</p>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var concurrency = navigator.hardwareConcurrency;
+
+    if(concurrency && concurrency > 0)
+        document.write("PASS");
+    else
+        document.write("Fail, navigator.hardwareConcurrency is " + concurrency);
+</script>
+</body>
+</html>
+
