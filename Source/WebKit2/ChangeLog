@@ -1,3 +1,22 @@
+2014-05-18  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168976
+
+    2014-05-16  Brent Fulgham  <bfulgham@apple.com>
+
+            Work around bug in Silverlight
+            https://bugs.webkit.org/show_bug.cgi?id=133004
+
+            Reviewed by Anders Carlsson.
+
+            * PluginProcess/EntryPoint/mac/LegacyProcess/PluginProcessMain.mm:
+            (WebKit::PluginProcessMainDelegate::doPreInitializationWork): Add low-resolution flag
+            to user defaults prior to NSApplication invocation. This code was moved from
+            PluginProcess::platformInitializeProcess.
+            * PluginProcess/mac/PluginProcessMac.mm:
+            (WebKit::PluginProcess::platformInitializeProcess): Move low-resolution flag
+            setting to PluginProcessMainDelegate.
+
 2014-05-15  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r168745.

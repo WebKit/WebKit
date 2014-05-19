@@ -429,12 +429,6 @@ void PluginProcess::platformInitializeProcess(const ChildProcessInitializationPa
     // allowing plug-ins to change the mouse cursor at any time.
     WKEnableSettingCursorWhenInBackground();
 
-#if defined(__i386__)
-    NSDictionary *defaults = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], @"AppleMagnifiedMode", nil];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
-    [defaults release];
-#endif
-
     RetainPtr<CFURLRef> pluginURL = adoptCF(CFURLCreateWithFileSystemPath(0, m_pluginPath.createCFString().get(), kCFURLPOSIXPathStyle, false));
     if (!pluginURL)
         return;
