@@ -225,6 +225,7 @@ Connection::Connection(Identifier identifier, bool isServer, Client* client, Run
     , m_inDispatchMessageCount(0)
     , m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount(0)
     , m_didReceiveInvalidMessage(false)
+    , m_messageWaitingInterruptedByClosedConnection(false)
     , m_syncMessageState(SyncMessageState::getOrCreate(clientRunLoop))
     , m_shouldWaitForSyncReplies(true)
 {
@@ -413,9 +414,15 @@ std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messa
         }
 
         // Now we wait.
-        if (m_waitForMessageCondition.wait_for(lock, timeout) == std::cv_status::timeout) {
-            // We timed out, now remove the pending wait.
+        std::cv_status status = m_waitForMessageCondition.wait_for(lock, timeout);
+        if (status == std::cv_status::timeout || m_messageWaitingInterruptedByClosedConnection) {
+            // We timed out or lost our connection, now remove the pending wait.
             m_waitForMessageMap.remove(messageAndDestination);
+
+            // If there are no more waiters, reset m_messageWaitingInterruptedByClosedConnection while we already hold
+            // the necessary lock in case the connection is later reopened.
+            if (m_waitForMessageMap.isEmpty())
+                m_messageWaitingInterruptedByClosedConnection = false;
 
             break;
         }
@@ -675,6 +682,12 @@ void Connection::connectionDidClose()
         for (SecondaryThreadPendingSyncReplyMap::iterator iter = m_secondaryThreadPendingSyncReplyMap.begin(); iter != m_secondaryThreadPendingSyncReplyMap.end(); ++iter)
             iter->value->semaphore.signal();
     }
+
+    {
+        std::lock_guard<std::mutex> lock(m_waitForMessageMutex);
+        m_messageWaitingInterruptedByClosedConnection = true;
+    }
+    m_waitForMessageCondition.notify_all();
 
     if (m_didCloseOnConnectionWorkQueueCallback)
         m_didCloseOnConnectionWorkQueueCallback(this);

@@ -247,6 +247,7 @@ private:
     
     std::condition_variable m_waitForMessageCondition;
     std::mutex m_waitForMessageMutex;
+    bool m_messageWaitingInterruptedByClosedConnection;
     HashMap<std::pair<std::pair<StringReference, StringReference>, uint64_t>, std::unique_ptr<MessageDecoder>> m_waitForMessageMap;
 
     // Represents a sync request for which we're waiting on a reply.
