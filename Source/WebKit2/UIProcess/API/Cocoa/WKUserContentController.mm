@@ -32,6 +32,7 @@
 #import "WebUserContentControllerProxy.h"
 #import "_WKScriptWorld.h"
 #import <WebCore/UserScript.h>
+#import <wtf/text/StringBuilder.h>
 
 @implementation WKUserContentController {
     RetainPtr<NSMutableArray> _userScripts;
@@ -71,7 +72,12 @@ static WebCore::UserScriptInjectionTime toWebCoreUserScriptInjectionTime(WKUserS
 {
     [_userScripts addObject:userScript];
 
-    _userContentControllerProxy->addUserScript(WebCore::UserScript { userScript->_source.get(), WebCore::blankURL(), { }, { }, toWebCoreUserScriptInjectionTime(userScript->_injectionTime), userScript->_forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames });
+    StringBuilder urlStringBuilder;
+    urlStringBuilder.append("user-script:");
+    urlStringBuilder.appendNumber([_userScripts count]);
+
+    WebCore::URL url { WebCore::URL { }, urlStringBuilder.toString() };
+    _userContentControllerProxy->addUserScript(WebCore::UserScript { userScript->_source.get(), url, { }, { }, toWebCoreUserScriptInjectionTime(userScript->_injectionTime), userScript->_forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames });
 }
 
 - (void)removeAllUserScripts
