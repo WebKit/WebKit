@@ -162,6 +162,8 @@ protected:
     virtual UChar previousCharacter() const;
 
 private:
+    RenderText(Node&, const String&);
+
     virtual bool canHaveChildren() const override final { return false; }
 
     void computePreferredLogicalWidths(float leadWidth, HashSet<const SimpleFontData*>& fallbackFonts, GlyphOverflow&);

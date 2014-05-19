@@ -1,3 +1,20 @@
+2014-05-18  Andreas Kling  <akling@apple.com>
+
+        Reduce constructor copypasta in RenderText and RenderElement.
+        <https://webkit.org/b/133056>
+
+        Use delegating constructors to remove duplicated initializer lists
+        from the constructors of RenderText and RenderElement.
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement):
+        * rendering/RenderElement.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::RenderText):
+        * rendering/RenderText.h:
+
 2014-05-18  Brent Fulgham  <bfulgham@apple.com>
 
         Crash during scroll when latched

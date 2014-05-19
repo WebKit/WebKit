@@ -153,8 +153,8 @@ void makeCapitalized(String* string, UChar previous)
     *string = result.toString();
 }
 
-RenderText::RenderText(Text& textNode, const String& text)
-    : RenderObject(textNode)
+inline RenderText::RenderText(Node& node, const String& text)
+    : RenderObject(node)
     , m_hasTab(false)
     , m_linesDirty(false)
     , m_containsReversedText(false)
@@ -177,28 +177,14 @@ RenderText::RenderText(Text& textNode, const String& text)
     view().frameView().incrementVisuallyNonEmptyCharacterCount(textLength());
 }
 
-RenderText::RenderText(Document& document, const String& text)
-    : RenderObject(document)
-    , m_hasTab(false)
-    , m_linesDirty(false)
-    , m_containsReversedText(false)
-    , m_isAllASCII(text.containsOnlyASCII())
-    , m_knownToHaveNoOverflowAndNoFallbackFonts(false)
-    , m_useBackslashAsYenSymbol(false)
-    , m_originalTextDiffersFromRendered(false)
-#if ENABLE(IOS_TEXT_AUTOSIZING)
-    , m_candidateComputedTextSize(0)
-#endif
-    , m_minWidth(-1)
-    , m_maxWidth(-1)
-    , m_beginMinWidth(0)
-    , m_endMinWidth(0)
-    , m_text(text)
+RenderText::RenderText(Text& textNode, const String& text)
+    : RenderText(static_cast<Node&>(textNode), text)
 {
-    ASSERT(!m_text.isNull());
-    setIsText();
-    m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
-    view().frameView().incrementVisuallyNonEmptyCharacterCount(textLength());
+}
+
+RenderText::RenderText(Document& document, const String& text)
+    : RenderText(static_cast<Node&>(document), text)
+{
 }
 
 RenderText::~RenderText()

@@ -199,6 +199,7 @@ protected:
     static void addControlStatesForRenderer(const RenderObject*, ControlStates*);
 
 private:
+    RenderElement(ContainerNode&, PassRef<RenderStyle>, unsigned baseTypeFlags);
     void node() const = delete;
     void nonPseudoNode() const = delete;
     void generatingNode() const = delete;
