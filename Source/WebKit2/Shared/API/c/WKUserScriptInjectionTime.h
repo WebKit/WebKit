@@ -26,10 +26,10 @@
 #ifndef WKUserScriptInjectionTime_h
 #define WKUserScriptInjectionTime_h
 
-enum WKUserScriptInjectionTime {
+enum _WKUserScriptInjectionTime {
     kWKInjectAtDocumentStart,
     kWKInjectAtDocumentEnd
 };
-typedef enum WKUserScriptInjectionTime WKUserScriptInjectionTime;
+typedef enum _WKUserScriptInjectionTime _WKUserScriptInjectionTime;
 
 #endif /* WKUserScriptInjectionTime_h */

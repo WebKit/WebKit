@@ -29,6 +29,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class WKUserScript;
 @protocol WKScriptMessageHandler;
 
 /*! WKUserContentController provides a way for JavaScript to post messages to the @link WKWebView @/link.
@@ -36,6 +37,19 @@
  */
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKUserContentController : NSObject
+
+/*! @abstract The user scripts associated with this user content controller.
+*/
+@property (nonatomic, readonly) NSArray *userScripts;
+
+/*! @abstract Adds a user script.
+ @param userScript The user script to add.
+*/
+- (void)addUserScript:(WKUserScript *)userScript;
+
+/*! @abstract Removes all associated user scripts.
+*/
+- (void)removeAllUserScripts;
 
 /*! @abstract Adds a script message handler.
  @param scriptMessageHandler The message handler where the messages should be delivered.

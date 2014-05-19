@@ -1,3 +1,178 @@
+2014-05-19  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r168994.
+
+    2014-05-16  Anders Carlsson  <andersca@apple.com>
+    
+            Expose WKUserScript as API
+            https://bugs.webkit.org/show_bug.cgi?id=133017
+            <rdar://problem/16948059>
+    
+            Reviewed by Sam Weinig.
+    
+            * DerivedSources.make:
+            Add WebUserContentController.
+    
+            * Shared/API/Cocoa/WebKit.h:
+            Add WKUserScript.h
+    
+            * Shared/API/c/WKSharedAPICast.h:
+            (WebKit::toUserScriptInjectionTime):
+            Update for WKUserScriptInjectionTime -> _WKUserScriptInjectionTime rename.
+    
+            * Shared/API/c/WKUserScriptInjectionTime.h:
+            Rename WKUserScriptInjectionTime to _WKUserScriptInjectionTime to free up the name for the Objective-C API
+    
+            * Shared/WebPageCreationParameters.cpp:
+            (WebKit::WebPageCreationParameters::encode):
+            Encode the user content controller ID.
+    
+            (WebKit::WebPageCreationParameters::decode):
+            Decode the user content controller ID.
+    
+            * Shared/WebPageCreationParameters.h:
+            Add userContentControllerID.
+    
+            * UIProcess/API/C/WKPageGroup.cpp:
+            (WKPageGroupAddUserScript):
+            Update for WKUserScriptInjectionTime -> _WKUserScriptInjectionTime rename.
+    
+            * UIProcess/API/C/WKPageGroup.h:
+            Update for WKUserScriptInjectionTime -> _WKUserScriptInjectionTime rename.
+    
+            * UIProcess/API/Cocoa/WKBrowsingContextGroup.h:
+            Update for WKUserScriptInjectionTime -> _WKUserScriptInjectionTime rename.
+    
+            * UIProcess/API/Cocoa/WKBrowsingContextGroup.mm:
+            (-[WKBrowsingContextGroup addUserScript:baseURL:whitelistedURLPatterns:blacklistedURLPatterns:injectionTime:mainFrameOnly:]):
+            Update for WKUserScriptInjectionTime -> _WKUserScriptInjectionTime rename.
+    
+            * UIProcess/API/Cocoa/WKUserContentController.h:
+            Add new methods.
+    
+            * UIProcess/API/Cocoa/WKUserContentController.mm:
+            (-[WKUserContentController init]):
+            Create the WebUserContentControllerProxy object and user scripts array.
+    
+            (-[WKUserContentController userScripts]):
+            Return the user scripts array.
+    
+            (toWebCoreUserScriptInjectionTime):
+            Helper for converting from a WKUserScriptInjectionTime enum to WebCore::UserScriptInjectionTime.
+    
+            (-[WKUserContentController addUserScript:]):
+            Call through to the _userContentControllerProxy object.
+    
+            (-[WKUserContentController removeAllUserScripts]):
+            Call through to the _userContentControllerProxy object.
+            
+            * UIProcess/API/Cocoa/WKUserContentControllerInternal.h: Added.
+            Add WebUserContentControllerProxy ivar.
+    
+            * UIProcess/API/Cocoa/WKUserScript.h: Added.
+            Add new header.
+    
+            * UIProcess/API/Cocoa/WKUserScript.mm:
+            (-[WKUserScript initWithSource:injectionTime:forMainFrameOnly:]):
+            Initialize the WKUserScript object.
+    
+            (-[WKUserScript source]):
+            (-[WKUserScript injectionTime]):
+            (-[WKUserScript isForMainFrameOnly]):
+            Add getters.
+    
+            (-[WKUserScript copyWithZone:]):
+            Since WKUserScript is immutable, just return a retained object.
+    
+            * UIProcess/API/Cocoa/WKUserScriptInternal.h:
+            Add ivars.
+    
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView initWithFrame:configuration:]):
+            Set the user content controller from the configuration.
+    
+            * UIProcess/UserContent/WebUserContentControllerProxy.cpp: Added.
+            (WebKit::generateIdentifier):
+            Return a unique identifier.
+    
+            (WebKit::WebUserContentControllerProxy::create):
+            Return a new WebUserContentControllerProxy object.
+    
+            (WebKit::WebUserContentControllerProxy::WebUserContentControllerProxy):
+            Initialize m_identifier.
+    
+            (WebKit::WebUserContentControllerProxy::~WebUserContentControllerProxy):
+            Add destructor.
+    
+            (WebKit::WebUserContentControllerProxy::addProcess):
+            Add the process to the m_processes set. If it's the first time doing so, add the user scripts we know about.
+    
+            (WebKit::WebUserContentControllerProxy::removeProcess):
+            Remove the process from m_processes.
+    
+            (WebKit::WebUserContentControllerProxy::addUserScript):
+            Add the user script and let all the web processes know that it was added.
+    
+            (WebKit::WebUserContentControllerProxy::removeAllUserScripts):
+            Remove all user scripts and tell all the web processes about it.
+            
+            * UIProcess/UserContent/WebUserContentControllerProxy.h:
+            Add new class.
+    
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::WebPageProxy):
+            If the process is already running, add it to the user content controller.
+    
+            (WebKit::WebPageProxy::close):
+            If the process is running, remove it from the user content controller.
+    
+            (WebKit::WebPageProxy::connectionWillOpen):
+            Add the process to the user content controller.
+    
+            (WebKit::WebPageProxy::resetStateAfterProcessExited):
+            Remove the process from the user content controller.
+    
+            (WebKit::WebPageProxy::creationParameters):
+            Pass along the user content controller ID when creating the web page.
+    
+            * UIProcess/WebPageProxy.h:
+            Add a WebUserContentControllerProxy object to the web page configuration.
+    
+            * WebKit2.xcodeproj/project.pbxproj:
+            Add new files.
+    
+            * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+            * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+            Update for WKUserScriptInjectionTime -> _WKUserScriptInjectionTime rename.
+            
+            * WebProcess/UserContent/WebUserContentController.cpp: Added.
+            New class that manages a WebCore::UserContentController object.
+    
+            (WebKit::WebUserContentController::getOrCreate):
+            Look up (or create) a WebUserContentController object given its identifier.
+    
+            (WebKit::WebUserContentController::WebUserContentController):
+            Add ourselves as a message receiver.
+    
+            (WebKit::WebUserContentController::~WebUserContentController):
+            Remove ourselves as a message receiver.
+    
+            (WebKit::WebUserContentController::addUserScripts):
+            Add all passed in user scripts to the WebCore user content controller object.
+    
+            (WebKit::WebUserContentController::removeAllUserScripts):
+            Remove all user scripts from the WebCore user content controller object.
+    
+            * WebProcess/UserContent/WebUserContentController.messages.in: Added.
+            Add new messages file.
+    
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::WebPage):
+            Get a WebUserContentController object and pass it along to WebCore.
+    
+            * WebProcess/WebPage/WebPage.h:
+            Add WebUserContentController member.
+    
 2014-05-18  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168976

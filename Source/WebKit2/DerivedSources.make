@@ -49,6 +49,7 @@ VPATH = \
     $(WebKit2)/WebProcess/ResourceCache \
     $(WebKit2)/WebProcess/Scrolling \
     $(WebKit2)/WebProcess/Storage \
+    $(WebKit2)/WebProcess/UserContent \
     $(WebKit2)/WebProcess/WebCoreSupport \
     $(WebKit2)/WebProcess/WebPage \
     $(WebKit2)/WebProcess/ios \
@@ -133,6 +134,7 @@ MESSAGE_RECEIVERS = \
     WebResourceCacheManager \
     WebResourceCacheManagerProxy \
     WebResourceLoader \
+    WebUserContentController \
     WebVideoFullscreenManager \
     WebVideoFullscreenManagerProxy \
 #

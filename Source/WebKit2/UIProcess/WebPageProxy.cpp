@@ -88,6 +88,7 @@
 #include "WebProcessProxy.h"
 #include "WebProtectionSpace.h"
 #include "WebSecurityOrigin.h"
+#include "WebUserContentControllerProxy.h"
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
 #include <WebCore/FloatRect.h>
@@ -263,6 +264,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_process(process)
     , m_pageGroup(*configuration.pageGroup)
     , m_preferences(*configuration.preferences)
+    , m_userContentController(configuration.userContentController)
     , m_visitedLinkProvider(*configuration.visitedLinkProvider)
     , m_mainFrame(nullptr)
     , m_userAgent(standardUserAgent())
@@ -358,8 +360,11 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_scrollPinningBehavior(DoNotPin)
     , m_navigationID(0)
 {
-    if (m_process->state() == WebProcessProxy::State::Running)
+    if (m_process->state() == WebProcessProxy::State::Running) {
+        if (m_userContentController)
+            m_userContentController->addProcess(m_process.get());
         m_visitedLinkProvider->addProcess(m_process.get());
+    }
 
     updateViewState();
     updateActivityToken();
@@ -618,8 +623,11 @@ void WebPageProxy::close()
 
     m_isClosed = true;
 
-    if (m_process->state() == WebProcessProxy::State::Running)
+    if (m_process->state() == WebProcessProxy::State::Running) {
+        if (m_userContentController)
+            m_userContentController->removeProcess(m_process.get());
         m_visitedLinkProvider->removeProcess(m_process.get());
+    }
 
     m_backForwardList->pageClosed();
     m_pageClient.pageClosed();
@@ -2900,6 +2908,8 @@ void WebPageProxy::connectionWillOpen(IPC::Connection* connection)
 {
     ASSERT(connection == m_process->connection());
 
+    if (m_userContentController)
+        m_userContentController->addProcess(m_process.get());
     m_visitedLinkProvider->addProcess(m_process.get());
 
     m_process->context().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, connection);
@@ -4200,8 +4210,11 @@ void WebPageProxy::resetStateAfterProcessExited()
     // FIXME: It's weird that resetStateAfterProcessExited() is called even though the process is launching.
     ASSERT(m_process->state() == WebProcessProxy::State::Launching || m_process->state() == WebProcessProxy::State::Terminated);
 
-    if (m_process->state() == WebProcessProxy::State::Terminated)
+    if (m_process->state() == WebProcessProxy::State::Terminated) {
+        if (m_userContentController)
+            m_userContentController->removeProcess(m_process.get());
         m_visitedLinkProvider->removeProcess(m_process.get());
+    }
 
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
 
@@ -4270,6 +4283,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.sessionState = SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex());
     parameters.sessionID = m_session->getID();
     parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
+    parameters.userContentControllerID = m_userContentController ? m_userContentController->identifier() : 0;
     parameters.visitedLinkTableID = m_visitedLinkProvider->identifier();
     parameters.canRunBeforeUnloadConfirmPanel = m_uiClient->canRunBeforeUnloadConfirmPanel();
     parameters.canRunModal = m_canRunModal;

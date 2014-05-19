@@ -48,7 +48,7 @@
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
 #import "WKUIDelegate.h"
-#import "WKUserContentController.h"
+#import "WKUserContentControllerInternal.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewContentProvider.h"
 #import "WebBackForwardList.h"
@@ -176,6 +176,7 @@
     if (WKWebView *relatedWebView = [_configuration _relatedWebView])
         webPageConfiguration.relatedPage = relatedWebView->_page.get();
 
+    webPageConfiguration.userContentController = [_configuration userContentController]->_userContentControllerProxy.get();
     webPageConfiguration.visitedLinkProvider = [_configuration _visitedLinkProvider]->_visitedLinkProvider.get();
     webPageConfiguration.session = [_configuration _websiteDataStore]->_session.get();
     
