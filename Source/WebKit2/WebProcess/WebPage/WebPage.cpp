@@ -4534,9 +4534,7 @@ PassRefPtr<DocumentLoader> WebPage::createDocumentLoader(Frame& frame, const Res
 {
     RefPtr<WebDocumentLoader> documentLoader = WebDocumentLoader::create(request, substituteData);
 
-    if (m_pendingNavigationID) {
-        ASSERT_UNUSED(frame, frame.isMainFrame());
-
+    if (m_pendingNavigationID && frame.isMainFrame()) {
         documentLoader->setNavigationID(m_pendingNavigationID);
         m_pendingNavigationID = 0;
     }

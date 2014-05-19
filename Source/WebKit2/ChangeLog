@@ -1,5 +1,22 @@
 2014-05-19  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r169026
+
+    2014-05-18  Anders Carlsson  <andersca@apple.com>
+
+            Relax an assertion when creating document loaders
+            https://bugs.webkit.org/show_bug.cgi?id=133058
+
+            Reviewed by Sam Weinig.
+
+            When navigating back/forward items recursively, createDocumentLoader will be called
+            for subframes before main frames so only associate the navigation with main frames.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::createDocumentLoader):
+
+2014-05-19  Lucas Forschler  <lforschler@apple.com>
+
         Merge r169023
 
     2014-05-18  Sam Weinig  <sam@webkit.org>
