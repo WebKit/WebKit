@@ -1,3 +1,25 @@
+2014-05-18  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: iOS: using AXAttributeCacheEnabler is too slow for every accessibilityElementAtIndex:
+        https://bugs.webkit.org/show_bug.cgi?id=133043
+
+        Reviewed by Mario Sanchez Prada.
+
+        iOS Accessibility code tries to improve performance by caching attributes when accessing
+        elements through the platform API. However, those API calls can be used very frequently when 
+        iterating elements. Creating the AXAttributeCacheEnabler object and tearing it down is proving
+        to be the hottest code path in samples for accessibility access.
+
+        We need to move the logic for enabling/disabling the attribute cache to a level that can make
+        a more informed decision about when to enable/disable.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper enableAttributeCaching]):
+        (-[WebAccessibilityObjectWrapper disableAttributeCaching]):
+        (-[WebAccessibilityObjectWrapper accessibilityElementCount]):
+        (-[WebAccessibilityObjectWrapper accessibilityElementAtIndex:]):
+        (-[WebAccessibilityObjectWrapper indexOfAccessibilityElement:]):
+
 2014-05-18  Simon Fraser  <simon.fraser@apple.com>
 
         Use RenderStyle& in more places in RenderLayerBacking

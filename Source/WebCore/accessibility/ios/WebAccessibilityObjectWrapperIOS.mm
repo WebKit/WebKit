@@ -341,12 +341,23 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return AccessibilityUnignoredAncestor(axObject->wrapper());    
 }
 
+- (void)enableAttributeCaching
+{
+    if (AXObjectCache* cache = m_object->axObjectCache())
+        cache->startCachingComputedObjectAttributesUntilTreeMutates();
+}
+
+- (void)disableAttributeCaching
+{
+    if (AXObjectCache* cache = m_object->axObjectCache())
+        cache->stopCachingComputedObjectAttributes();
+}
+
 - (NSInteger)accessibilityElementCount
 {
     if (![self _prepareAccessibilityCall])
         return 0;
 
-    AXAttributeCacheEnabler enableCache(m_object->axObjectCache());
     if ([self isAttachment])
         return [[self attachmentView] accessibilityElementCount];
     
@@ -358,7 +369,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    AXAttributeCacheEnabler enableCache(m_object->axObjectCache());
     if ([self isAttachment])
         return [[self attachmentView] accessibilityElementAtIndex:index];
     
@@ -378,7 +388,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (![self _prepareAccessibilityCall])
         return NSNotFound;
     
-    AXAttributeCacheEnabler enableCache(m_object->axObjectCache());
     if ([self isAttachment])
         return [[self attachmentView] indexOfAccessibilityElement:element];
     
