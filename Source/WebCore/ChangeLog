@@ -1,3 +1,31 @@
+2014-05-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Use RenderStyle& in more places in RenderLayerBacking
+        https://bugs.webkit.org/show_bug.cgi?id=133061
+
+        Reviewed by Andreas Kling.
+
+        Convert several member functions to use references to RenderStyle rather
+        than pointers. Move canCreateTiledImage() higher in the file (no code
+        changes). Other minor cleanup.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+        (WebCore::RenderLayerBacking::updateOpacity):
+        (WebCore::RenderLayerBacking::updateTransform):
+        (WebCore::RenderLayerBacking::updateFilters):
+        (WebCore::RenderLayerBacking::updateBlendMode):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::hasBoxDecorations):
+        (WebCore::canCreateTiledImage):
+        (WebCore::hasBoxDecorationsOrBackgroundImage):
+        (WebCore::hasPerspectiveOrPreserves3D):
+        (WebCore::supportsDirectBoxDecorationsComposition):
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer):
+        (WebCore::RenderLayerBacking::contentChanged):
+        (WebCore::RenderLayerBacking::startTransition):
+        * rendering/RenderLayerBacking.h:
+
 2014-05-17  Simon Fraser  <simon.fraser@apple.com>
 
         Rename some RenderLayerBacking member functions

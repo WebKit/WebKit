@@ -251,13 +251,13 @@ private:
     // Result is transform origin in device pixels.
     FloatPoint3D computeTransformOriginForPainting(const LayoutRect& borderBox) const;
 
-    void updateOpacity(const RenderStyle*);
-    void updateTransform(const RenderStyle*);
+    void updateOpacity(const RenderStyle&);
+    void updateTransform(const RenderStyle&);
 #if ENABLE(CSS_FILTERS)
-    void updateFilters(const RenderStyle*);
+    void updateFilters(const RenderStyle&);
 #endif
 #if ENABLE(CSS_COMPOSITING)
-    void updateBlendMode(const RenderStyle*);
+    void updateBlendMode(const RenderStyle&);
 #endif
     // Return the opacity value that this layer should use for compositing.
     float compositingOpacity(float rendererOpacity) const;
