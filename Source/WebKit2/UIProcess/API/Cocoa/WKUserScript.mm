@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKPageGroup_h
-#define WKPageGroup_h
+#import "config.h"
+#import "WKUserScriptInternal.h"
 
-#include <WebKit/WKBase.h>
-#include <WebKit/WKUserContentInjectedFrames.h>
-#include <WebKit/WKUserScriptInjectionTime.h>
+#if WK_API_ENABLED
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+@implementation WKUserScript
 
-WK_EXPORT WKTypeID WKPageGroupGetTypeID();
+- (instancetype)initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly
+{
+    if (!(self = [super init]))
+        return nil;
 
-WK_EXPORT WKPageGroupRef WKPageGroupCreateWithIdentifier(WKStringRef identifier);
+    _source = adoptNS([source copy]);
+    _injectionTime = injectionTime;
+    _forMainFrameOnly = forMainFrameOnly;
 
-WK_EXPORT WKStringRef WKPageGroupCopyIdentifier(WKPageGroupRef pageGroup);
-
-WK_EXPORT void WKPageGroupSetPreferences(WKPageGroupRef pageGroup, WKPreferencesRef preferences);
-WK_EXPORT WKPreferencesRef WKPageGroupGetPreferences(WKPageGroupRef pageGroup);
-    
-WK_EXPORT void WKPageGroupAddUserStyleSheet(WKPageGroupRef pageGroup, WKStringRef source, WKURLRef baseURL, WKArrayRef whitelistedURLPatterns, WKArrayRef blacklistedURLPatterns, WKUserContentInjectedFrames);
-WK_EXPORT void WKPageGroupRemoveAllUserStyleSheets(WKPageGroupRef pageGroup);
-    
-WK_EXPORT void WKPageGroupAddUserScript(WKPageGroupRef pageGroup, WKStringRef source, WKURLRef baseURL, WKArrayRef whitelistedURLPatterns, WKArrayRef blacklistedURLPatterns, WKUserContentInjectedFrames, _WKUserScriptInjectionTime);
-WK_EXPORT void WKPageGroupRemoveAllUserScripts(WKPageGroupRef pageGroup);
-
-#ifdef __cplusplus
+    return self;
 }
-#endif
 
-#endif /* WKPageGroup_h */
+- (NSString *)source
+{
+    return _source.get();
+}
+
+- (WKUserScriptInjectionTime)injectionTime
+{
+    return _injectionTime;
+}
+
+- (BOOL)isForMainFrameOnly
+{
+    return _forMainFrameOnly;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
+}
+
+@end
+
+#endif

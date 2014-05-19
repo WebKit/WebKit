@@ -163,6 +163,7 @@ class WebMouseEvent;
 class WebOpenPanelResultListenerProxy;
 class WebPageGroup;
 class WebProcessProxy;
+class WebUserContentControllerProxy;
 class WebWheelEvent;
 struct AttributedString;
 struct ColorSpaceData;
@@ -427,7 +428,9 @@ private:
 struct WebPageConfiguration {
     WebPageGroup* pageGroup = nullptr;
     WebPreferences* preferences = nullptr;
+    WebUserContentControllerProxy* userContentController = nullptr;
     VisitedLinkProvider* visitedLinkProvider = nullptr;
+
     API::Session* session = nullptr;
     WebPageProxy* relatedPage = nullptr;
 };
@@ -1450,6 +1453,7 @@ private:
     Ref<WebProcessProxy> m_process;
     Ref<WebPageGroup> m_pageGroup;
     Ref<WebPreferences> m_preferences;
+    const RefPtr<WebUserContentControllerProxy> m_userContentController;
     Ref<VisitedLinkProvider> m_visitedLinkProvider;
 
     RefPtr<WebFrameProxy> m_mainFrame;

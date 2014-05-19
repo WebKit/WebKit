@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKPageGroup_h
-#define WKPageGroup_h
+#ifndef WebUserContentController_h
+#define WebUserContentController_h
 
-#include <WebKit/WKBase.h>
-#include <WebKit/WKUserContentInjectedFrames.h>
-#include <WebKit/WKUserScriptInjectionTime.h>
+#include "MessageReceiver.h"
+#include <WebCore/UserContentController.h>
+#include <wtf/RefCounted.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace WebKit {
 
-WK_EXPORT WKTypeID WKPageGroupGetTypeID();
+class WebUserContentController final : public RefCounted<WebUserContentController>, private IPC::MessageReceiver  {
+public:
+    static PassRefPtr<WebUserContentController> getOrCreate(uint64_t identifier);
+    virtual ~WebUserContentController();
 
-WK_EXPORT WKPageGroupRef WKPageGroupCreateWithIdentifier(WKStringRef identifier);
+    WebCore::UserContentController& userContentController() { return m_userContentController.get(); }
 
-WK_EXPORT WKStringRef WKPageGroupCopyIdentifier(WKPageGroupRef pageGroup);
+private:
+    explicit WebUserContentController(uint64_t identifier);
 
-WK_EXPORT void WKPageGroupSetPreferences(WKPageGroupRef pageGroup, WKPreferencesRef preferences);
-WK_EXPORT WKPreferencesRef WKPageGroupGetPreferences(WKPageGroupRef pageGroup);
-    
-WK_EXPORT void WKPageGroupAddUserStyleSheet(WKPageGroupRef pageGroup, WKStringRef source, WKURLRef baseURL, WKArrayRef whitelistedURLPatterns, WKArrayRef blacklistedURLPatterns, WKUserContentInjectedFrames);
-WK_EXPORT void WKPageGroupRemoveAllUserStyleSheets(WKPageGroupRef pageGroup);
-    
-WK_EXPORT void WKPageGroupAddUserScript(WKPageGroupRef pageGroup, WKStringRef source, WKURLRef baseURL, WKArrayRef whitelistedURLPatterns, WKArrayRef blacklistedURLPatterns, WKUserContentInjectedFrames, _WKUserScriptInjectionTime);
-WK_EXPORT void WKPageGroupRemoveAllUserScripts(WKPageGroupRef pageGroup);
+    // IPC::MessageReceiver.
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
-#ifdef __cplusplus
-}
-#endif
+    void addUserScripts(const Vector<WebCore::UserScript>& userScripts);
+    void removeAllUserScripts();
 
-#endif /* WKPageGroup_h */
+    uint64_t m_identifier;
+    Ref<WebCore::UserContentController> m_userContentController;
+};
+
+} // namespace WebKit
+
+#endif // WebUserContentController_h

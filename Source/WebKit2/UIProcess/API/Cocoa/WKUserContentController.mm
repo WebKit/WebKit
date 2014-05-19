@@ -24,13 +24,62 @@
  */
 
 #import "config.h"
-#import "WKUserContentControllerPrivate.h"
+#import "WKUserContentControllerInternal.h"
 
 #if WK_API_ENABLED
 
+#import "WKUserScriptInternal.h"
+#import "WebUserContentControllerProxy.h"
 #import "_WKScriptWorld.h"
+#import <WebCore/UserScript.h>
 
-@implementation WKUserContentController
+@implementation WKUserContentController {
+    RetainPtr<NSMutableArray> _userScripts;
+}
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _userContentControllerProxy = WebKit::WebUserContentControllerProxy::create();
+    _userScripts = adoptNS([[NSMutableArray alloc] init]);
+
+    return self;
+}
+
+- (NSArray *)userScripts
+{
+    return _userScripts.get();
+}
+
+static WebCore::UserScriptInjectionTime toWebCoreUserScriptInjectionTime(WKUserScriptInjectionTime injectionTime)
+{
+    switch (injectionTime) {
+    case WKUserScriptInjectionTimeAtDocumentStart:
+        return WebCore::InjectAtDocumentStart;
+
+    case WKUserScriptInjectionTimeAtDocumentEnd:
+        return WebCore::InjectAtDocumentEnd;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebCore::InjectAtDocumentEnd;
+}
+
+- (void)addUserScript:(WKUserScript *)userScript
+{
+    [_userScripts addObject:userScript];
+
+    _userContentControllerProxy->addUserScript(WebCore::UserScript { userScript->_source.get(), WebCore::blankURL(), { }, { }, toWebCoreUserScriptInjectionTime(userScript->_injectionTime), userScript->_forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames });
+}
+
+- (void)removeAllUserScripts
+{
+    [_userScripts removeAllObjects];
+
+    _userContentControllerProxy->removeAllUserScripts();
+}
 
 - (void)addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name
 {

@@ -895,7 +895,7 @@ inline SnapshotOptions toSnapshotOptions(WKSnapshotOptions wkSnapshotOptions)
     return snapshotOptions;
 }
 
-inline WebCore::UserScriptInjectionTime toUserScriptInjectionTime(WKUserScriptInjectionTime wkInjectedTime)
+inline WebCore::UserScriptInjectionTime toUserScriptInjectionTime(_WKUserScriptInjectionTime wkInjectedTime)
 {
     switch (wkInjectedTime) {
     case kWKInjectAtDocumentStart:
