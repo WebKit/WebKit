@@ -46,16 +46,16 @@
 namespace WebCore {
 namespace SimpleLineLayout {
 
-static void paintDebugBorders(GraphicsContext& context, const LayoutRect& borderRect, const LayoutPoint& paintOffset)
+static void paintDebugBorders(GraphicsContext& context, LayoutRect borderRect, const LayoutPoint& paintOffset)
 {
-    if (borderRect.isEmpty())
+    borderRect.moveBy(paintOffset);
+    IntRect snappedRect = pixelSnappedIntRect(borderRect);
+    if (snappedRect.isEmpty())
         return;
     GraphicsContextStateSaver stateSaver(context);
     context.setStrokeColor(Color(0, 255, 0), ColorSpaceDeviceRGB);
     context.setFillColor(Color::transparent, ColorSpaceDeviceRGB);
-    LayoutRect rect(borderRect);
-    rect.moveBy(paintOffset);
-    context.drawRect(pixelSnappedIntRect(rect));
+    context.drawRect(snappedRect);
 }
 
 void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& paintInfo, const LayoutPoint& paintOffset)

@@ -1,3 +1,12 @@
+2014-05-19  Antti Koivisto  <antti@apple.com>
+
+        Fix assertion failure with simple line layout debug borders enabled.
+
+        Rubber-stamped by Andreas Kling.
+
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintDebugBorders): We shoudn't try to paint empty rects.
+
 2014-05-18  Andreas Kling  <akling@apple.com>
 
         Reduce constructor copypasta in RenderText and RenderElement.
