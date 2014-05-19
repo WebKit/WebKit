@@ -1,3 +1,20 @@
+2014-05-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Move scale noise filtering to the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=133021
+
+        Reviewed by Darin Adler.
+
+        Filtering in the UIProcess was stupid. It forces to handle a third kind of scale just for updates.
+
+        The WebProcess already adjusts the input scale based on the viewport. Changing the input scale at that level
+        is already supported. It is a better place to have the filtering.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2014-05-19  Simon Fraser  <simon.fraser@apple.com>
 
         Split scrolling tree ScrollingNodes into FrameScrollingNodes and OverflowScrollingNodes

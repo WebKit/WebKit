@@ -302,17 +302,9 @@ private:
     else
         _historicalKinematicData.clear();
 
-    double scaleNoiseThreshold = 0.0005;
-    CGFloat filteredScale = zoomScale;
-    if (!isStableState && fabs(filteredScale - _page->displayedContentScale()) < scaleNoiseThreshold) {
-        // Tiny changes of scale during interactive zoom cause content to jump by one pixel, creating
-        // visual noise. We filter those useless updates.
-        filteredScale = _page->displayedContentScale();
-    }
-
     FloatRect fixedPositionRectForLayout = _page->computeCustomFixedPositionRect(unobscuredRect, zoomScale, WebPageProxy::UnobscuredRectConstraint::ConstrainedToDocumentRect);
     _page->updateVisibleContentRects(VisibleContentRectUpdateInfo(_page->nextVisibleContentRectUpdateID(), visibleRect, unobscuredRect, unobscuredRectInScrollViewCoordinates, fixedPositionRectForLayout,
-        filteredScale, isStableState, isChangingObscuredInsetsInteractively, timestamp, velocityData.horizontalVelocity, velocityData.verticalVelocity, velocityData.scaleChangeRate));
+        zoomScale, isStableState, isChangingObscuredInsetsInteractively, timestamp, velocityData.horizontalVelocity, velocityData.verticalVelocity, velocityData.scaleChangeRate));
 
     RemoteScrollingCoordinatorProxy* scrollingCoordinator = _page->scrollingCoordinatorProxy();
     scrollingCoordinator->viewportChangedViaDelegatedScrolling(scrollingCoordinator->rootScrollingNodeID(), _page->computeCustomFixedPositionRect(_page->unobscuredContentRect(), zoomScale), zoomScale);

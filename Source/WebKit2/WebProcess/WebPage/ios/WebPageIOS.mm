@@ -2203,7 +2203,16 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     m_hasReceivedVisibleContentRectsAfterDidCommitLoad = true;
     m_lastVisibleContentRectUpdateID = visibleContentRectUpdateInfo.updateID();
 
-    double boundedScale = std::min(m_viewportConfiguration.maximumScale(), std::max(m_viewportConfiguration.minimumScale(), visibleContentRectUpdateInfo.scale()));
+    double scaleNoiseThreshold = 0.005;
+    double filteredScale = visibleContentRectUpdateInfo.scale();
+    double currentScale = m_page->pageScaleFactor();
+    if (!visibleContentRectUpdateInfo.inStableState() && fabs(filteredScale - m_page->pageScaleFactor()) < scaleNoiseThreshold) {
+        // Tiny changes of scale during interactive zoom cause content to jump by one pixel, creating
+        // visual noise. We filter those useless updates.
+        filteredScale = currentScale;
+    }
+
+    double boundedScale = std::min(m_viewportConfiguration.maximumScale(), std::max(m_viewportConfiguration.minimumScale(), filteredScale));
 
     FloatRect exposedRect = visibleContentRectUpdateInfo.exposedRect();
     FloatRect adjustedExposedRect = adjustExposedRectForBoundedScale(exposedRect, visibleContentRectUpdateInfo.scale(), boundedScale);
@@ -2214,7 +2223,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
 
     float floatBoundedScale = boundedScale;
     bool hasSetPageScale = false;
-    if (floatBoundedScale != m_page->pageScaleFactor()) {
+    if (floatBoundedScale != currentScale) {
         m_scaleWasSetByUIProcess = true;
 
         m_dynamicSizeUpdateHistory.clear();
