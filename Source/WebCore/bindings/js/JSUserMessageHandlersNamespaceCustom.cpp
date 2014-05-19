@@ -23,20 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKUserContentController.h"
+#include "config.h"
+#include "JSUserMessageHandlersNamespace.h"
 
-#if WK_API_ENABLED
+#if ENABLE(USER_MESSAGE_HANDLERS)
 
-#import <wtf/RefPtr.h>
+#include "JSUserMessageHandler.h"
 
-namespace WebKit {
-class WebUserContentControllerProxy;
+using namespace JSC;
+
+namespace WebCore {
+
+bool JSUserMessageHandlersNamespace::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+{
+    if (UserMessageHandler* handler = impl().handler(propertyNameToAtomicString(propertyName), globalObject()->world())) {
+        slot.setValue(this, ReadOnly | DontDelete | DontEnum, toJS(exec, globalObject(), handler));
+        return true;
+    }
+    return false;
 }
 
-@interface WKUserContentController () {
-@package
-    RefPtr<WebKit::WebUserContentControllerProxy> _userContentControllerProxy;
 }
-@end
 
-#endif
+#endif // ENABLE(USER_MESSAGE_HANDLERS)

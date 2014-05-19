@@ -23,20 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKUserContentController.h"
+#include "config.h"
+#include "UserMessageHandler.h"
 
-#if WK_API_ENABLED
+#if ENABLE(USER_MESSAGE_HANDLERS)
 
-#import <wtf/RefPtr.h>
+#include "Frame.h"
+#include "SerializedScriptValue.h"
 
-namespace WebKit {
-class WebUserContentControllerProxy;
+namespace WebCore {
+
+UserMessageHandler::UserMessageHandler(Frame& frame, UserMessageHandlerDescriptor& descriptor)
+    : FrameDestructionObserver(&frame)
+    , m_descriptor(descriptor)
+{
 }
 
-@interface WKUserContentController () {
-@package
-    RefPtr<WebKit::WebUserContentControllerProxy> _userContentControllerProxy;
+UserMessageHandler::~UserMessageHandler()
+{
 }
-@end
 
-#endif
+void UserMessageHandler::postMessage(PassRefPtr<SerializedScriptValue> value)
+{
+    m_descriptor->client().didPostMessage(*this, value.get());
+}
+
+const AtomicString& UserMessageHandler::name()
+{
+    return m_descriptor->name();
+}
+
+DOMWrapperWorld& UserMessageHandler::world()
+{
+    return m_descriptor->world();
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(USER_MESSAGE_HANDLERS)

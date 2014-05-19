@@ -26,8 +26,12 @@
 #include "config.h"
 #include "WebUserContentControllerProxy.h"
 
+#include "DataReference.h"
 #include "WebProcessProxy.h"
+#include "WebScriptMessageHandler.h"
 #include "WebUserContentControllerMessages.h"
+#include "WebUserContentControllerProxyMessages.h"
+#include <WebCore/SerializedScriptValue.h>
 
 namespace WebKit {
 
@@ -59,14 +63,22 @@ void WebUserContentControllerProxy::addProcess(WebProcessProxy& webProcessProxy)
     if (!m_processes.add(&webProcessProxy).isNewEntry)
         return;
 
+    webProcessProxy.addMessageReceiver(Messages::WebUserContentControllerProxy::messageReceiverName(), m_identifier, *this);
+
     webProcessProxy.connection()->send(Messages::WebUserContentController::AddUserScripts(m_userScripts), m_identifier);
+    
+    Vector<WebScriptMessageHandlerHandle> messageHandlerHandles;
+    for (auto& handler : m_scriptMessageHandlers.values())
+        messageHandlerHandles.append(handler->handle());
+    webProcessProxy.connection()->send(Messages::WebUserContentController::AddUserScriptMessageHandlers(messageHandlerHandles), m_identifier);
 }
 
 void WebUserContentControllerProxy::removeProcess(WebProcessProxy& webProcessProxy)
 {
     ASSERT(m_processes.contains(&webProcessProxy));
 
-    m_processes.remove(&webProcessProxy);
+    if (m_processes.remove(&webProcessProxy))
+        webProcessProxy.removeMessageReceiver(Messages::WebUserContentControllerProxy::messageReceiverName(), m_identifier);
 }
 
 void WebUserContentControllerProxy::addUserScript(WebCore::UserScript userScript)
@@ -83,6 +95,57 @@ void WebUserContentControllerProxy::removeAllUserScripts()
 
     for (auto& processAndCount : m_processes)
         processAndCount.key->connection()->send(Messages::WebUserContentController::RemoveAllUserScripts(), m_identifier);
+}
+
+bool WebUserContentControllerProxy::addUserScriptMessageHandler(WebScriptMessageHandler* handler)
+{
+    for (auto& existingHandler : m_scriptMessageHandlers.values()) {
+        if (existingHandler->name() == handler->name())
+            return false;
+    }
+
+    m_scriptMessageHandlers.add(handler->identifier(), handler);
+
+    for (auto& processAndCount : m_processes)
+        processAndCount.key->connection()->send(Messages::WebUserContentController::AddUserScriptMessageHandlers({ handler->handle() }), m_identifier);
+    
+    return true;
+}
+
+void WebUserContentControllerProxy::removeUserMessageHandlerForName(const String& name)
+{
+    for (auto it = m_scriptMessageHandlers.begin(), end = m_scriptMessageHandlers.end(); it != end; ++it) {
+        if (it->value->name() == name) {
+            for (auto& processAndCount : m_processes)
+                processAndCount.key->connection()->send(Messages::WebUserContentController::RemoveUserScriptMessageHandler(it->value->identifier()), m_identifier);
+            m_scriptMessageHandlers.remove(it);
+            return;
+        }
+    }
+}
+
+void WebUserContentControllerProxy::didPostMessage(IPC::Connection* connection, uint64_t pageID, uint64_t frameID, uint64_t messageHandlerID, const IPC::DataReference& dataReference)
+{
+    WebPageProxy* page = WebProcessProxy::webPage(pageID);
+    if (!page)
+        return;
+
+    WebProcessProxy* webProcess = WebProcessProxy::fromConnection(connection);
+    WebFrameProxy* frame = webProcess->webFrame(frameID);
+    if (!frame)
+        return;
+
+    if (!HashMap<uint64_t, RefPtr<WebScriptMessageHandler>>::isValidKey(messageHandlerID))
+        return;
+
+    RefPtr<WebScriptMessageHandler> handler = m_scriptMessageHandlers.get(messageHandlerID);
+    if (!handler)
+        return;
+
+    auto buffer = dataReference.vector();
+    RefPtr<WebCore::SerializedScriptValue> value = WebCore::SerializedScriptValue::adopt(buffer);
+
+    handler->client().didPostMessage(*page, *frame, *value);
 }
 
 } // namespace WebKit

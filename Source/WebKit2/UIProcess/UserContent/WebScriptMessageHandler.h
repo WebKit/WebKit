@@ -23,47 +23,62 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebUserContentController_h
-#define WebUserContentController_h
+#ifndef WebScriptMessageHandler_h
+#define WebScriptMessageHandler_h
 
-#include "MessageReceiver.h"
-#include "WebScriptMessageHandler.h"
-#include <WebCore/UserContentController.h>
-#include <wtf/HashMap.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
+
+namespace IPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
+}
+
+namespace WebCore {
+class SerializedScriptValue;
+}
 
 namespace WebKit {
 
-class WebUserMessageHandlerDescriptorProxy;
+class WebPageProxy;
+class WebFrameProxy;
 
-class WebUserContentController final : public RefCounted<WebUserContentController>, private IPC::MessageReceiver  {
-public:
-    static PassRefPtr<WebUserContentController> getOrCreate(uint64_t identifier);
-    virtual ~WebUserContentController();
+struct WebScriptMessageHandlerHandle {
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, WebScriptMessageHandlerHandle&);
 
-    WebCore::UserContentController& userContentController() { return m_userContentController.get(); }
-
-    uint64_t identifier() { return m_identifier; } 
-
-private:
-    explicit WebUserContentController(uint64_t identifier);
-
-    // IPC::MessageReceiver.
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
-
-    void addUserScripts(const Vector<WebCore::UserScript>& userScripts);
-    void removeAllUserScripts();
-
-    void addUserScriptMessageHandlers(const Vector<WebScriptMessageHandlerHandle>& scriptMessageHandlers);
-    void removeUserScriptMessageHandler(uint64_t);
-
-    uint64_t m_identifier;
-    Ref<WebCore::UserContentController> m_userContentController;
-#if ENABLE(USER_MESSAGE_HANDLERS)
-    HashMap<uint64_t, RefPtr<WebUserMessageHandlerDescriptorProxy>> m_userMessageHandlerDescriptors;
-#endif
+    uint64_t identifier;
+    String name;
 };
 
-} // namespace WebKit
+class WebScriptMessageHandler : public RefCounted<WebScriptMessageHandler> {
+public:
+    class Client {
+    public:
+        virtual ~Client() { }
+        virtual void didPostMessage(WebPageProxy&, WebFrameProxy&, WebCore::SerializedScriptValue&) = 0;
+    };
 
-#endif // WebUserContentController_h
+    static PassRefPtr<WebScriptMessageHandler> create(std::unique_ptr<Client>, const String& name);    
+    virtual ~WebScriptMessageHandler();
+
+    WebScriptMessageHandlerHandle handle() { return { m_identifier, m_name }; }
+
+    uint64_t identifier() const { return m_identifier; }
+    String name() const { return m_name; }
+
+    Client& client() const { return *m_client; }
+
+private:
+    WebScriptMessageHandler(std::unique_ptr<Client>, const String&);
+    
+    uint64_t m_identifier;
+
+    std::unique_ptr<Client> m_client;
+    String m_name;
+};
+
+} // namespace API
+    
+#endif // WebScriptMessageHandler_h

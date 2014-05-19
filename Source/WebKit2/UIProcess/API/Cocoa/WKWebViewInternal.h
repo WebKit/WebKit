@@ -76,4 +76,6 @@ struct ViewSnapshot;
 #endif
 @end
 
+WKWebView* fromWebPageProxy(WebKit::WebPageProxy&);
+
 #endif
