@@ -76,7 +76,7 @@ private:
 #endif // USE(NETWORK_CFDATA_ARRAY_CALLBACK)
 
     virtual CFURLRequestRef willSendRequest(CFURLRequestRef, CFURLResponseRef) = 0;
-    virtual void didReceiveResponse(CFURLResponseRef) = 0;
+    virtual void didReceiveResponse(CFURLConnectionRef, CFURLResponseRef) = 0;
     virtual void didReceiveData(CFDataRef, CFIndex originalLength) = 0;
     virtual void didFinishLoading() = 0;
     virtual void didFail(CFErrorRef) = 0;

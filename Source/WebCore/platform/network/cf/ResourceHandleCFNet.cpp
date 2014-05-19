@@ -254,7 +254,11 @@ bool ResourceHandle::start()
     CFURLConnectionStart(d->m_connection.get());
 
     LOG(Network, "CFNet - Starting URL %s (handle=%p, conn=%p)", firstRequest().url().string().utf8().data(), this, d->m_connection.get());
-
+    
+#if ENABLE(WEB_TIMING)
+    setCollectsTimingData();
+#endif
+    
     return true;
 }
 

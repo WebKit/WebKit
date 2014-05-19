@@ -1,3 +1,39 @@
+2014-05-19  Alex Christensen  <achristensen@webkit.org>
+
+        Collect web timing data on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=133075
+
+        Reviewed by Sam Weinig.
+
+        * platform/network/ResourceHandle.h:
+        Added setCollectsTimingData wrapper and getConnectionTimingData declarations.
+        getConnectionTimingData with a dictionary parameter is a private helper function.
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::start):
+        Call setCollectsTimingData wrapper when creating a connection to ensure that timing data is collected.
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegate::didReceiveResponseCallback):
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegate.h:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse):
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.h:
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse):
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.h:
+        Pass the CFURLConnectionRef to didReceiveResponse to get timing data from.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::getConnectionTimingData):
+        Moved from getTimingData to compile regardless of using CFNetwork and added wrapper with CFDictionaryRef.
+        (WebCore::ResourceHandle::setCollectsTimingData):
+        Added wrapper to call objc function from c++.
+        (WebCore::ResourceHandle::getTimingData):
+        Renamed to getConnectionTimingData.
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveResponse:]):
+        Updated function name from getTimingData to getConnectionTimingData.
+
 2014-05-19  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver sees the WebArea out of order when topContentInset is used

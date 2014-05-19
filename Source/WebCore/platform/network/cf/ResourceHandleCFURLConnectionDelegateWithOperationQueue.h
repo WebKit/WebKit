@@ -47,7 +47,7 @@ private:
     virtual void setupConnectionScheduling(CFURLConnectionRef) override;
 
     virtual CFURLRequestRef willSendRequest(CFURLRequestRef, CFURLResponseRef) override;
-    virtual void didReceiveResponse(CFURLResponseRef) override;
+    virtual void didReceiveResponse(CFURLConnectionRef, CFURLResponseRef) override;
     virtual void didReceiveData(CFDataRef, CFIndex originalLength) override;
     virtual void didFinishLoading() override;
     virtual void didFail(CFErrorRef) override;

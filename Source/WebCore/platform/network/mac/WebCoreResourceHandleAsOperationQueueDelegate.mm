@@ -214,7 +214,7 @@ using namespace WebCore;
         
         ResourceResponse resourceResponse(r);
 #if ENABLE(WEB_TIMING)
-        ResourceHandle::getTimingData(connection, resourceResponse.resourceLoadTiming());
+        ResourceHandle::getConnectionTimingData(connection, resourceResponse.resourceLoadTiming());
 #else
         UNUSED_PARAM(connection);
 #endif

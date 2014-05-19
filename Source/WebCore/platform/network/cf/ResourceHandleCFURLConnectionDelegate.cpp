@@ -61,9 +61,9 @@ CFURLRequestRef ResourceHandleCFURLConnectionDelegate::willSendRequestCallback(C
     return static_cast<ResourceHandleCFURLConnectionDelegate*>(const_cast<void*>(clientInfo))->willSendRequest(cfRequest, originalRedirectResponse);
 }
 
-void ResourceHandleCFURLConnectionDelegate::didReceiveResponseCallback(CFURLConnectionRef, CFURLResponseRef cfResponse, const void* clientInfo)
+void ResourceHandleCFURLConnectionDelegate::didReceiveResponseCallback(CFURLConnectionRef connection, CFURLResponseRef cfResponse, const void* clientInfo)
 {
-    static_cast<ResourceHandleCFURLConnectionDelegate*>(const_cast<void*>(clientInfo))->didReceiveResponse(cfResponse);
+    static_cast<ResourceHandleCFURLConnectionDelegate*>(const_cast<void*>(clientInfo))->didReceiveResponse(connection, cfResponse);
 }
 
 void ResourceHandleCFURLConnectionDelegate::didReceiveDataCallback(CFURLConnectionRef, CFDataRef data, CFIndex originalLength, const void* clientInfo)

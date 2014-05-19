@@ -131,12 +131,20 @@ public:
 #if PLATFORM(COCOA) && !USE(CFNETWORK)
     void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
     NSURLConnection *connection() const;
-    static void getTimingData(NSURLConnection*, ResourceLoadTiming&);
     id makeDelegate(bool);
     id delegate();
     void releaseDelegate();
 #endif
-
+        
+#if PLATFORM(COCOA) && ENABLE(WEB_TIMING)
+#if USE(CFNETWORK)
+    void setCollectsTimingData();
+    static void getConnectionTimingData(CFURLConnectionRef, ResourceLoadTiming&);
+#else
+    static void getConnectionTimingData(NSURLConnection *, ResourceLoadTiming&);
+#endif
+#endif
+        
 #if PLATFORM(COCOA)
     void schedule(WTF::SchedulePair&);
     void unschedule(WTF::SchedulePair&);
@@ -287,6 +295,10 @@ private:
 
 #if PLATFORM(COCOA) && !USE(CFNETWORK)
     void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, SchedulingBehavior);
+#endif
+
+#if PLATFORM(COCOA) && ENABLE(WEB_TIMING)
+static void getConnectionTimingData(NSDictionary *timingData, ResourceLoadTiming&);
 #endif
 
     friend class ResourceHandleInternal;

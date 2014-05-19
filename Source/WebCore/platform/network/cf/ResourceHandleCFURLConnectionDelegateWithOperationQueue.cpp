@@ -108,7 +108,7 @@ CFURLRequestRef ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSen
     return m_requestResult.leakRef();
 }
 
-void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse(CFURLResponseRef cfResponse)
+void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse(CFURLConnectionRef connection, CFURLResponseRef cfResponse)
 {
     RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
 
@@ -131,8 +131,15 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse
         if (_CFURLRequestCopyProtocolPropertyForKey(m_handle->firstRequest().cfURLRequest(DoNotUpdateHTTPBody), CFSTR("ForceHTMLMIMEType")))
             wkSetCFURLResponseMIMEType(cfResponse, CFSTR("text/html"));
 #endif // !PLATFORM(IOS)
-
-        m_handle->client()->didReceiveResponseAsync(m_handle, cfResponse);
+        
+        ResourceResponse resourceResponse(cfResponse);
+#if ENABLE(WEB_TIMING)
+        ResourceHandle::getConnectionTimingData(connection, resourceResponse.resourceLoadTiming());
+#else
+        UNUSED_PARAM(connection);
+#endif
+        
+        m_handle->client()->didReceiveResponseAsync(m_handle, resourceResponse);
     });
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
 }

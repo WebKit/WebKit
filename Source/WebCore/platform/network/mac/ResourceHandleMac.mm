@@ -26,8 +26,6 @@
 #import "config.h"
 #import "ResourceHandleInternal.h"
 
-#if !USE(CFNETWORK)
-
 #import "AuthenticationChallenge.h"
 #import "AuthenticationMac.h"
 #import "BlockExceptions.h"
@@ -87,7 +85,9 @@ using namespace WebCore;
 @end
 
 namespace WebCore {
-
+    
+#if !USE(CFNETWORK)
+    
 static void applyBasicAuthorizationHeader(ResourceRequest& request, const Credential& credential)
 {
     String authenticationHeader = "Basic " + base64Encode(String(credential.user() + ":" + credential.password()).utf8());
@@ -368,36 +368,6 @@ void ResourceHandle::releaseDelegate()
 NSURLConnection *ResourceHandle::connection() const
 {
     return d->m_connection.get();
-}
-    
-void ResourceHandle::getTimingData(NSURLConnection *connection, ResourceLoadTiming& timing)
-{
-#if ENABLE(WEB_TIMING)
-    if (NSDictionary *timingData = [connection _timingData]) {
-        // This is not the navigationStart time in monotonic time, but the other times are relative to this time
-        // and only the differences between times are stored.
-        double referenceStart = [[timingData valueForKey:@"_kCFNTimingDataTimingDataInit"] doubleValue];
-        
-        double domainLookupStart = [[timingData valueForKey:@"_kCFNTimingDataDomainLookupStart"] doubleValue];
-        double domainLookupEnd = [[timingData valueForKey:@"_kCFNTimingDataDomainLookupEnd"] doubleValue];
-        double connectStart = [[timingData valueForKey:@"_kCFNTimingDataConnectStart"] doubleValue];
-        double secureConnectionStart = [[timingData valueForKey:@"_kCFNTimingDataSecureConnectionStart"] doubleValue];
-        double connectEnd = [[timingData valueForKey:@"_kCFNTimingDataConnectEnd"] doubleValue];
-        double requestStart = [[timingData valueForKey:@"_kCFNTimingDataRequestStart"] doubleValue];
-        double responseStart = [[timingData valueForKey:@"_kCFNTimingDataResponseStart"] doubleValue];
-        
-        timing.domainLookupStart = domainLookupStart <= 0 ? -1 : (domainLookupStart - referenceStart) * 1000;
-        timing.domainLookupEnd = domainLookupEnd <= 0 ? -1 : (domainLookupEnd - referenceStart) * 1000;
-        timing.connectStart = connectStart <= 0 ? -1 : (connectStart - referenceStart) * 1000;
-        timing.secureConnectionStart = secureConnectionStart <= 0 ? -1 : (secureConnectionStart - referenceStart) * 1000;
-        timing.connectEnd = connectEnd <= 0 ? -1 : (connectEnd - referenceStart) * 1000;
-        timing.requestStart = requestStart <= 0 ? -1 : (requestStart - referenceStart) * 1000;
-        timing.responseStart = responseStart <= 0 ? -1 : (responseStart - referenceStart) * 1000;
-    }
-#else
-    UNUSED_PARAM(connection);
-    UNUSED_PARAM(timing);
-#endif
 }
     
 bool ResourceHandle::loadsBlocked()
@@ -735,8 +705,59 @@ void ResourceHandle::continueWillCacheResponse(NSCachedURLResponse *response)
 
     [(id)delegate() continueWillCacheResponse:response];
 }
+    
+#endif // !USE(CFNETWORK)
+    
+#if ENABLE(WEB_TIMING)
+    
+void ResourceHandle::getConnectionTimingData(NSDictionary *timingData, ResourceLoadTiming& timing)
+{
+    if (!timingData)
+        return;
 
+    // This is not the navigationStart time in monotonic time, but the other times are relative to this time
+    // and only the differences between times are stored.
+    double referenceStart = [[timingData valueForKey:@"_kCFNTimingDataTimingDataInit"] doubleValue];
+            
+    double domainLookupStart = [[timingData valueForKey:@"_kCFNTimingDataDomainLookupStart"] doubleValue];
+    double domainLookupEnd = [[timingData valueForKey:@"_kCFNTimingDataDomainLookupEnd"] doubleValue];
+    double connectStart = [[timingData valueForKey:@"_kCFNTimingDataConnectStart"] doubleValue];
+    double secureConnectionStart = [[timingData valueForKey:@"_kCFNTimingDataSecureConnectionStart"] doubleValue];
+    double connectEnd = [[timingData valueForKey:@"_kCFNTimingDataConnectEnd"] doubleValue];
+    double requestStart = [[timingData valueForKey:@"_kCFNTimingDataRequestStart"] doubleValue];
+    double responseStart = [[timingData valueForKey:@"_kCFNTimingDataResponseStart"] doubleValue];
+        
+    timing.domainLookupStart = domainLookupStart <= 0 ? -1 : (domainLookupStart - referenceStart) * 1000;
+    timing.domainLookupEnd = domainLookupEnd <= 0 ? -1 : (domainLookupEnd - referenceStart) * 1000;
+    timing.connectStart = connectStart <= 0 ? -1 : (connectStart - referenceStart) * 1000;
+    timing.secureConnectionStart = secureConnectionStart <= 0 ? -1 : (secureConnectionStart - referenceStart) * 1000;
+    timing.connectEnd = connectEnd <= 0 ? -1 : (connectEnd - referenceStart) * 1000;
+    timing.requestStart = requestStart <= 0 ? -1 : (requestStart - referenceStart) * 1000;
+    timing.responseStart = responseStart <= 0 ? -1 : (responseStart - referenceStart) * 1000;
+}
+    
+#if USE(CFNETWORK)
+    
+void ResourceHandle::setCollectsTimingData()
+{
+    [NSURLConnection _setCollectsTimingData:YES];
+}
+    
+void ResourceHandle::getConnectionTimingData(CFURLConnectionRef connection, ResourceLoadTiming& timing)
+{
+    getConnectionTimingData((__bridge NSDictionary*)(adoptCF(_CFURLConnectionCopyTimingData(connection)).get()), timing);
+}
+    
+#else
+    
+void ResourceHandle::getConnectionTimingData(NSURLConnection *connection, ResourceLoadTiming& timing)
+{
+    getConnectionTimingData([connection _timingData], timing);
+}
+    
+#endif
+    
+#endif // ENABLE(WEB_TIMING)
 
 } // namespace WebCore
 
-#endif // !USE(CFNETWORK)
