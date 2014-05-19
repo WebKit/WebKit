@@ -38,7 +38,7 @@ namespace JSC { namespace DFG {
 template<typename AbstractStateType>
 class AbstractInterpreter {
 public:
-    AbstractInterpreter(Graph&, AbstractStateType& state);
+    AbstractInterpreter(Graph&, AbstractStateType&);
     ~AbstractInterpreter();
     
     AbstractValue& forNode(Node* node)

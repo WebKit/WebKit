@@ -38,7 +38,7 @@ namespace JSC { namespace DFG {
 
 class InPlaceAbstractState {
 public:
-    InPlaceAbstractState(Graph& graph);
+    InPlaceAbstractState(Graph&);
     
     ~InPlaceAbstractState();
     

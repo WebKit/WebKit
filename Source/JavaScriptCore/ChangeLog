@@ -1,3 +1,19 @@
+2014-05-19  Tanay C  <tanay.c@samsung.com>
+
+        Removing some check-webkit-style warnings from ./dfg
+        https://bugs.webkit.org/show_bug.cgi?id=132854
+
+        Reviewed by Darin Adler.
+
+        * dfg/DFGAbstractInterpreter.h:
+        * dfg/DFGAbstractValue.h:
+        * dfg/DFGBlockInsertionSet.h:
+        * dfg/DFGCommonData.h:
+        * dfg/DFGDominators.h:
+        * dfg/DFGGraph.h:
+        * dfg/DFGInPlaceAbstractState.h:
+        * dfg/DFGPredictionPropagationPhase.h:
+
 2014-05-18  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, remove bogus comment. We already made the FTL use our calling convention.

@@ -38,11 +38,11 @@ typedef WTF::Insertion<RefPtr<BasicBlock>> BlockInsertion;
 
 class BlockInsertionSet {
 public:
-    BlockInsertionSet(Graph& graph);
+    BlockInsertionSet(Graph&);
     ~BlockInsertionSet();
     
-    void insert(const BlockInsertion& insertion);
-    void insert(size_t index, PassRefPtr<BasicBlock> block);
+    void insert(const BlockInsertion&);
+    void insert(size_t index, PassRefPtr<BasicBlock>);
     BasicBlock* insert(size_t index, float executionCount);
     BasicBlock* insertBefore(BasicBlock* before, float executionCount);
     

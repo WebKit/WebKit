@@ -180,7 +180,7 @@ public:
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
     void dump(PrintStream& = WTF::dataFile(), DumpContext* = 0);
     enum PhiNodeDumpMode { DumpLivePhisOnly, DumpAllPhis };
-    void dumpBlockHeader(PrintStream&, const char* prefix, BasicBlock*, PhiNodeDumpMode, DumpContext* context);
+    void dumpBlockHeader(PrintStream&, const char* prefix, BasicBlock*, PhiNodeDumpMode, DumpContext*);
     void dump(PrintStream&, Edge);
     void dump(PrintStream&, const char* prefix, Node*, DumpContext* = 0);
     static int amountOfNodeWhiteSpace(Node*);
@@ -188,7 +188,7 @@ public:
 
     // Dump the code origin of the given node as a diff from the code origin of the
     // preceding node. Returns true if anything was printed.
-    bool dumpCodeOrigin(PrintStream&, const char* prefix, Node* previousNode, Node* currentNode, DumpContext* context);
+    bool dumpCodeOrigin(PrintStream&, const char* prefix, Node* previousNode, Node* currentNode, DumpContext*);
 
     SpeculatedType getJSConstantSpeculation(Node* node)
     {

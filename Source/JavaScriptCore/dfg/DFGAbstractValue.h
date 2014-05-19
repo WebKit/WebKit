@@ -200,11 +200,11 @@ struct AbstractValue {
     
     FiltrationResult filter(Graph&, const StructureSet&);
     
-    FiltrationResult filterArrayModes(ArrayModes arrayModes);
+    FiltrationResult filterArrayModes(ArrayModes);
     
-    FiltrationResult filter(SpeculatedType type);
+    FiltrationResult filter(SpeculatedType);
     
-    FiltrationResult filterByValue(JSValue value);
+    FiltrationResult filterByValue(JSValue);
     
     bool validate(JSValue value) const
     {
@@ -397,7 +397,7 @@ private:
         checkConsistency();
     }
     
-    void setFuturePossibleStructure(Graph&, Structure* structure);
+    void setFuturePossibleStructure(Graph&, Structure*);
 
     void filterValueByType();
     void filterArrayModesByType();
