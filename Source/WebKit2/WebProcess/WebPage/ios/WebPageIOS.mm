@@ -1941,10 +1941,12 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
     m_dynamicSizeUpdateHistory.add(std::make_pair(oldContentSize, oldPageScaleFactor), IntPoint(frameView.scrollOffset()));
 
     RefPtr<Node> oldNodeAtCenter;
+    double visibleHorizontalFraction = 1;
     float relativeHorizontalPositionInNodeAtCenter = 0;
     float relativeVerticalPositionInNodeAtCenter = 0;
     {
         IntRect unobscuredContentRect = frameView.unobscuredContentRect();
+        visibleHorizontalFraction = static_cast<float>(unobscuredContentRect.width()) / oldContentSize.width();
         IntPoint unobscuredContentRectCenter = unobscuredContentRect.center();
 
         HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
@@ -1977,6 +1979,14 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
         scale = m_viewportConfiguration.initialScale();
     else
         scale = std::max(std::min(targetScale, m_viewportConfiguration.maximumScale()), m_viewportConfiguration.minimumScale());
+
+    if (m_userHasChangedPageScaleFactor && newContentSize.width() != oldContentSize.width()) {
+        // When the content size change, we keep the same relative horizontal content width in view, otherwise we would
+        // end up zoom to far in landscape->portrait, and too close in portrait->landscape.
+        float widthToKeepInView = visibleHorizontalFraction * newContentSize.width();
+        double newScale = targetUnobscuredRectInScrollViewCoordinates.width() / widthToKeepInView;
+        scale = std::max(std::min(newScale, m_viewportConfiguration.maximumScale()), m_viewportConfiguration.minimumScale());
+    }
 
     FloatRect newUnobscuredContentRect = targetUnobscuredRect;
     FloatRect newExposedContentRect = targetExposedContentRect;
