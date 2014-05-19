@@ -517,7 +517,7 @@ void MediaPlayerPrivateQTKit::createQTMovieLayer()
 #ifndef NDEBUG
         [(CALayer *)m_qtVideoLayer.get() setName:@"Video layer"];
 #endif
-        // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration().
+        // The layer will get hooked up via RenderLayerBacking::updateConfiguration().
     }
 }
 

@@ -495,7 +495,7 @@ void RenderLayerBacking::updateAfterWidgetResize()
 void RenderLayerBacking::updateAfterLayout(UpdateAfterLayoutFlags flags)
 {
     if (!compositor().compositingLayersNeedRebuild()) {
-        // Calling updateGraphicsLayerGeometry() here gives incorrect results, because the
+        // Calling updateGeometry() here gives incorrect results, because the
         // position of this layer's GraphicsLayer depends on the position of our compositing
         // ancestor's GraphicsLayer. That cannot be determined until all the descendant 
         // RenderLayers of that ancestor have been processed via updateLayerPositions().
@@ -506,7 +506,7 @@ void RenderLayerBacking::updateAfterLayout(UpdateAfterLayoutFlags flags)
         compositor().updateCompositingDescendantGeometry(m_owningLayer, m_owningLayer, flags & CompositingChildrenOnly);
         
         if (flags & IsUpdateRoot) {
-            updateGraphicsLayerGeometry();
+            updateGeometry();
             compositor().updateRootLayerPosition();
             RenderLayer* stackingContainer = m_owningLayer.enclosingStackingContainer();
             if (!compositor().compositingLayersNeedRebuild() && stackingContainer && (stackingContainer != &m_owningLayer))
@@ -518,7 +518,7 @@ void RenderLayerBacking::updateAfterLayout(UpdateAfterLayoutFlags flags)
         setContentsNeedDisplay();
 }
 
-bool RenderLayerBacking::updateGraphicsLayerConfiguration()
+bool RenderLayerBacking::updateConfiguration()
 {
     m_owningLayer.updateDescendantDependentFlags();
     m_owningLayer.updateZOrderLists();
@@ -647,7 +647,7 @@ static void calculateDevicePixelOffsetFromRenderer(const LayoutSize& rendererOff
     devicePixelOffsetFromRenderer = rendererOffsetFromGraphicsLayer - devicePixelFractionFromRenderer;
 }
 
-void RenderLayerBacking::updateGraphicsLayerGeometry()
+void RenderLayerBacking::updateGeometry()
 {
     // If we haven't built z-order lists yet, wait until later.
     if (m_owningLayer.isStackingContainer() && m_owningLayer.m_zOrderListsDirty)
@@ -898,7 +898,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
 
     if (m_owningLayer.reflectionLayer() && m_owningLayer.reflectionLayer()->isComposited()) {
         RenderLayerBacking* reflectionBacking = m_owningLayer.reflectionLayer()->backing();
-        reflectionBacking->updateGraphicsLayerGeometry();
+        reflectionBacking->updateGeometry();
         
         // The reflection layer has the bounds of m_owningLayer.reflectionLayer(),
         // but the reflected layer is the bounds of this layer, so we need to position it appropriately.
@@ -1861,7 +1861,7 @@ void RenderLayerBacking::contentChanged(ContentChangeType changeType)
     }
 
     if ((changeType == BackgroundImageChanged) && canCreateTiledImage(&renderer().style()))
-        updateGraphicsLayerGeometry();
+        updateGeometry();
 
     if ((changeType == MaskImageChanged) && m_maskLayer) {
         // The composited layer bounds relies on box->maskClipRect(), which changes
@@ -2106,7 +2106,7 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, Graph
         FloatRect layerDirtyRect = pixelSnappedRectForPainting;
         layerDirtyRect.move(-m_scrollingContentsLayer->offsetFromRenderer() + m_devicePixelFractionFromRenderer);
 #if PLATFORM(IOS)
-        // Account for the fact that RenderLayerBacking::updateGraphicsLayerGeometry() bakes scrollOffset into offsetFromRenderer on iOS.
+        // Account for the fact that RenderLayerBacking::updateGeometry() bakes scrollOffset into offsetFromRenderer on iOS.
         layerDirtyRect.move(-m_owningLayer.scrollOffset() + m_devicePixelFractionFromRenderer);
 #endif
         m_scrollingContentsLayer->setNeedsDisplayInRect(layerDirtyRect, shouldClip);

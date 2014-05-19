@@ -1690,7 +1690,7 @@ void AVFWrapper::createAVCFVideoLayer()
     if (!avPlayer() || m_avCFVideoLayer)
         return;
 
-    // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration().
+    // The layer will get hooked up via RenderLayerBacking::updateConfiguration().
     m_avCFVideoLayer = adoptCF(AVCFPlayerLayerCreateWithAVCFPlayer(kCFAllocatorDefault, avPlayer(), m_notificationQueue));
     LOG(Media, "AVFWrapper::createAVCFVideoLayer(%p) - returning %p", this, videoLayer());
 }

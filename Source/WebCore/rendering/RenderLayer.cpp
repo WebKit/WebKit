@@ -6455,7 +6455,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
         || needsCompositingLayersRebuiltForOverflow(oldStyle, &newStyle))
         compositor().setCompositingLayersNeedRebuild();
     else if (isComposited())
-        backing()->updateGraphicsLayerGeometry();
+        backing()->updateGeometry();
 
     if (oldStyle) {
         // Compositing layers keep track of whether they are clipped by any of the ancestors.

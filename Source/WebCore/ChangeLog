@@ -1,3 +1,36 @@
+2014-05-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename some RenderLayerBacking member functions
+        https://bugs.webkit.org/show_bug.cgi?id=133030
+
+        Reviewed by Sam Weinig.
+
+        Remove "GraphicsLayer" from some member function names on RenderLayerBacking.
+        
+        No behavior change.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::AVFWrapper::createAVCFVideoLayer):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::createQTMovieLayer):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAfterLayout):
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::contentChanged):
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration): Deleted.
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): Deleted.
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateLayerCompositingState):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::updateLayerTreeGeometry):
+        (WebCore::RenderLayerCompositor::updateCompositingDescendantGeometry):
+        (WebCore::RenderLayerCompositor::attachRootLayer):
+
 2014-05-19  Antti Koivisto  <antti@apple.com>
 
         Fix assertion failure with simple line layout debug borders enabled.

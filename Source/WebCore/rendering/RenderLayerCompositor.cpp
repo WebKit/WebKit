@@ -920,7 +920,7 @@ bool RenderLayerCompositor::updateLayerCompositingState(RenderLayer& layer, Comp
 
     // See if we need content or clipping layers. Methods called here should assume
     // that the compositing state of descendant layers has not been updated yet.
-    if (layer.backing() && layer.backing()->updateGraphicsLayerConfiguration())
+    if (layer.backing() && layer.backing()->updateConfiguration())
         layerChanged = true;
 
     return layerChanged;
@@ -1433,10 +1433,10 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
                 reflection->backing()->updateCompositedBounds();
         }
 
-        if (layerBacking->updateGraphicsLayerConfiguration())
+        if (layerBacking->updateConfiguration())
             layerBacking->updateDebugIndicators(m_showDebugBorders, m_showRepaintCounter);
         
-        layerBacking->updateGraphicsLayerGeometry();
+        layerBacking->updateGeometry();
 
         if (!layer.parent())
             updateRootLayerPosition();
@@ -1716,8 +1716,8 @@ void RenderLayerCompositor::updateLayerTreeGeometry(RenderLayer& layer, int dept
                 reflection->backing()->updateCompositedBounds();
         }
 
-        layerBacking->updateGraphicsLayerConfiguration();
-        layerBacking->updateGraphicsLayerGeometry();
+        layerBacking->updateConfiguration();
+        layerBacking->updateGeometry();
 
         if (!layer.parent())
             updateRootLayerPosition();
@@ -1765,7 +1765,7 @@ void RenderLayerCompositor::updateCompositingDescendantGeometry(RenderLayer& com
                     reflection->backing()->updateCompositedBounds();
             }
 
-            layerBacking->updateGraphicsLayerGeometry();
+            layerBacking->updateGeometry();
             if (compositedChildrenOnly)
                 return;
         }
@@ -3335,7 +3335,7 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
             break;
         }
         case RootLayerAttachedViaEnclosingFrame: {
-            // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration()
+            // The layer will get hooked up via RenderLayerBacking::updateConfiguration()
             // for the frame's renderer in the parent document.
             m_renderView.document().ownerElement()->scheduleSetNeedsStyleRecalc(SyntheticStyleChange);
             break;

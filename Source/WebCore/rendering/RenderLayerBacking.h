@@ -74,9 +74,9 @@ public:
     void updateAfterLayout(UpdateAfterLayoutFlags);
     
     // Returns true if layer configuration changed.
-    bool updateGraphicsLayerConfiguration();
+    bool updateConfiguration();
     // Update graphics layer position and bounds.
-    void updateGraphicsLayerGeometry(); // make private
+    void updateGeometry(); // make private
     // Update contents and clipping structure.
     void updateDrawsContent();
     
@@ -291,7 +291,7 @@ private:
 
     void paintIntoLayer(const GraphicsLayer*, GraphicsContext*, const IntRect& paintDirtyRect, PaintBehavior, GraphicsLayerPaintingPhase);
 
-    // Helper function for updateGraphicsLayerGeometry.
+    // Helper function for updateGeometry.
     void adjustAncestorCompositingBoundsForFlowThread(LayoutRect& ancestorCompositingBounds, const RenderLayer* compositingAncestor) const;
 
     static CSSPropertyID graphicsLayerToCSSProperty(AnimatedPropertyID);
