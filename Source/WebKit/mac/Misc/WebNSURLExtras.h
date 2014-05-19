@@ -97,4 +97,9 @@
 - (NSString *)_webkit_URLFragment;
 - (NSString *)_webkit_scriptIfJavaScriptURL;
 
+#if TARGET_OS_IPHONE
+- (NSString *)_webkit_unescapedQueryValue;
+- (NSDictionary *)_webkit_queryKeysAndValues;
+#endif
+
 @end
