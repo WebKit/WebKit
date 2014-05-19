@@ -169,7 +169,7 @@ void WebPageProxy::restoreFromSessionStateData(API::Data* apiData)
                     if (WebBackForwardListItem* item = m_backForwardList->currentItem())
                         m_pageLoadState.setPendingAPIRequestURL(transaction, item->url());
 
-                    process().send(Messages::WebPage::RestoreSessionAndNavigateToCurrentItem(state), m_pageID);
+                    process().send(Messages::WebPage::RestoreSessionAndNavigateToCurrentItem(generateNavigationID(), state), m_pageID);
                 }
             }
         }

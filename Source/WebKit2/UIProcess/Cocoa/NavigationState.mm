@@ -163,6 +163,30 @@ RetainPtr<WKNavigation> NavigationState::createLoadRequestNavigation(uint64_t na
     return navigation;
 }
 
+RetainPtr<WKNavigation> NavigationState::createBackForwardNavigation(uint64_t navigationID, const WebBackForwardListItem& item)
+{
+    ASSERT(!m_navigations.contains(navigationID));
+
+    auto navigation = adoptNS([[WKNavigation alloc] init]);
+
+    // FIXME: We need to remove the navigation when we're done with it!
+    m_navigations.set(navigationID, navigation);
+
+    return navigation;
+}
+
+RetainPtr<WKNavigation> NavigationState::createReloadNavigation(uint64_t navigationID)
+{
+    ASSERT(!m_navigations.contains(navigationID));
+
+    auto navigation = adoptNS([[WKNavigation alloc] init]);
+
+    // FIXME: We need to remove the navigation when we're done with it!
+    m_navigations.set(navigationID, navigation);
+
+    return navigation;
+}
+
 void NavigationState::didNavigateWithNavigationData(const WebKit::WebNavigationDataStore& navigationDataStore)
 {
     if (!m_historyDelegateMethods.webViewDidNavigateWithNavigationData)

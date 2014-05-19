@@ -284,10 +284,11 @@
 
 - (WKNavigation *)goToBackForwardListItem:(WKBackForwardListItem *)item
 {
-    _page->goToBackForwardItem(&item._item);
+    uint64_t navigationID = _page->goToBackForwardItem(&item._item);
 
-    // FIXME: return a WKNavigation object.
-    return nil;
+    auto navigation = _navigationState->createBackForwardNavigation(navigationID, item._item);
+
+    return [navigation.leakRef() autorelease];
 }
 
 - (NSString *)title
@@ -329,34 +330,44 @@
 
 - (WKNavigation *)goBack
 {
-    _page->goBack();
+    uint64_t navigationID = _page->goBack();
+    if (!navigationID)
+        return nil;
 
-    // FIXME: Return a navigation object.
-    return nil;
+    ASSERT(_page->backForwardList().currentItem());
+    auto navigation = _navigationState->createBackForwardNavigation(navigationID, *_page->backForwardList().currentItem());
+
+    return [navigation.leakRef() autorelease];
 }
 
 - (WKNavigation *)goForward
 {
-    _page->goForward();
+    uint64_t navigationID = _page->goForward();
+    if (!navigationID)
+        return nil;
 
-    // FIXME: Return a navigation object.
-    return nil;
+    ASSERT(_page->backForwardList().currentItem());
+    auto navigation = _navigationState->createBackForwardNavigation(navigationID, *_page->backForwardList().currentItem());
+
+    return [navigation.leakRef() autorelease];
 }
 
 - (WKNavigation *)reload
 {
-    _page->reload(false);
+    uint64_t navigationID = _page->reload(false);
+    ASSERT(navigationID);
 
-    // FIXME: Return a navigation object.
-    return nil;
+    auto navigation = _navigationState->createReloadNavigation(navigationID);
+    return [navigation.leakRef() autorelease];
 }
 
 - (WKNavigation *)reloadFromOrigin
 {
-    _page->reload(true);
+    uint64_t navigationID = _page->reload(true);
+    ASSERT(navigationID);
 
-    // FIXME: Return a navigation object.
-    return nil;
+    auto navigation = _navigationState->createReloadNavigation(navigationID);
+    return [navigation.leakRef() autorelease];
 }
 
 - (void)stopLoading
@@ -1072,10 +1083,7 @@ static inline void setViewportConfigurationMinimumLayoutSize(WebKit::WebPageProx
 
 - (WKNavigation *)_reload
 {
-    _page->reload(false);
-
-    // FIXME: return a WKNavigation object.
-    return nil;
+    return [self reload];
 }
 
 - (NSArray *)_certificateChain

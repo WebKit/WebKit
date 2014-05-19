@@ -411,32 +411,32 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
 {
-    LOG(@"didStartProvisionalNavigation");
+    LOG(@"didStartProvisionalNavigation: %@", navigation);
 }
 
 - (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation
 {
-    LOG(@"didReceiveServerRedirectForProvisionalNavigation");
+    LOG(@"didReceiveServerRedirectForProvisionalNavigation: %@", navigation);
 }
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
-    LOG(@"didFailProvisionalNavigation: %@", error);
+    LOG(@"didFailProvisionalNavigation: %@navigation, error: %@", navigation, error);
 }
 
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
 {
-    LOG(@"didCommitNavigation: %@", error);
+    LOG(@"didCommitNavigation: %@", navigation);
 }
 
 - (void)webView:(WKWebView *)webView didFinishLoadingNavigation:(WKNavigation *)navigation
 {
-    LOG(@"didFinishLoadingNavigation");
+    LOG(@"didFinishLoadingNavigation: %@", navigation);
 }
 
 - (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
-    LOG(@"didFailNavigation: %@", error);
+    LOG(@"didFailNavigation: %@, error %@", navigation, error);
 }
 
 @end

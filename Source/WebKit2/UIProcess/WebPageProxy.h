@@ -517,12 +517,12 @@ public:
     void loadWebArchiveData(API::Data*, API::Object* userData = nullptr);
 
     void stopLoading();
-    void reload(bool reloadFromOrigin);
+    uint64_t reload(bool reloadFromOrigin);
 
-    void goForward();
-    void goBack();
+    uint64_t goForward();
+    uint64_t goBack();
 
-    void goToBackForwardItem(WebBackForwardListItem*);
+    uint64_t goToBackForwardItem(WebBackForwardListItem*);
     void tryRestoreScrollPosition();
     void didChangeBackForwardList(WebBackForwardListItem* addedItem, Vector<RefPtr<WebBackForwardListItem>> removed);
     void willGoToBackForwardListItem(uint64_t itemID, IPC::MessageDecoder&);
@@ -1202,7 +1202,7 @@ private:
     void setCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents) { m_canShortCircuitHorizontalWheelEvents = canShortCircuitHorizontalWheelEvents; }
 
     void reattachToWebProcess();
-    void reattachToWebProcessWithItem(WebBackForwardListItem*);
+    uint64_t reattachToWebProcessWithItem(WebBackForwardListItem*);
 
     void requestNotificationPermission(uint64_t notificationID, const String& originString);
     void showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, const String& dir, const String& originString, uint64_t notificationID);

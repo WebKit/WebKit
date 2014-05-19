@@ -1078,7 +1078,7 @@ void WebPage::reload(uint64_t navigationID, bool reloadFromOrigin, const Sandbox
     corePage()->userInputBridge().reloadFrame(m_mainFrame->coreFrame(), reloadFromOrigin);
 }
 
-void WebPage::goForward(uint64_t backForwardItemID)
+void WebPage::goForward(uint64_t navigationID, uint64_t backForwardItemID)
 {
     SendStopResponsivenessTimer stopper(this);
 
@@ -1086,11 +1086,15 @@ void WebPage::goForward(uint64_t backForwardItemID)
     ASSERT(item);
     if (!item)
         return;
+
+    ASSERT(!m_pendingNavigationID);
+    if (!item->isInPageCache())
+        m_pendingNavigationID = navigationID;
 
     m_page->goToItem(item, FrameLoadTypeForward);
 }
 
-void WebPage::goBack(uint64_t backForwardItemID)
+void WebPage::goBack(uint64_t navigationID, uint64_t backForwardItemID)
 {
     SendStopResponsivenessTimer stopper(this);
 
@@ -1098,11 +1102,15 @@ void WebPage::goBack(uint64_t backForwardItemID)
     ASSERT(item);
     if (!item)
         return;
+
+    ASSERT(!m_pendingNavigationID);
+    if (!item->isInPageCache())
+        m_pendingNavigationID = navigationID;
 
     m_page->goToItem(item, FrameLoadTypeBack);
 }
 
-void WebPage::goToBackForwardItem(uint64_t backForwardItemID)
+void WebPage::goToBackForwardItem(uint64_t navigationID, uint64_t backForwardItemID)
 {
     SendStopResponsivenessTimer stopper(this);
 
@@ -1110,6 +1118,10 @@ void WebPage::goToBackForwardItem(uint64_t backForwardItemID)
     ASSERT(item);
     if (!item)
         return;
+
+    ASSERT(!m_pendingNavigationID);
+    if (!item->isInPageCache())
+        m_pendingNavigationID = navigationID;
 
     m_page->goToItem(item, FrameLoadTypeIndexedBackForward);
 }
@@ -1954,10 +1966,10 @@ uint64_t WebPage::restoreSession(const SessionState& sessionState)
     return currentItemID;
 }
 
-void WebPage::restoreSessionAndNavigateToCurrentItem(const SessionState& sessionState)
+void WebPage::restoreSessionAndNavigateToCurrentItem(uint64_t navigationID, const SessionState& sessionState)
 {
     if (uint64_t currentItemID = restoreSession(sessionState))
-        goToBackForwardItem(currentItemID);
+        goToBackForwardItem(navigationID, currentItemID);
 }
 
 #if ENABLE(TOUCH_EVENTS)
