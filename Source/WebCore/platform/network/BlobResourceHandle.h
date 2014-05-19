@@ -48,19 +48,11 @@ class ResourceHandleClient;
 class ResourceRequest;
 struct BlobDataItem;
 
-class BlobResourceHandle : public FileStreamClient, public ResourceHandle  {
+class BlobResourceHandle final : public FileStreamClient, public ResourceHandle  {
 public:
     static PassRefPtr<BlobResourceHandle> createAsync(BlobData*, const ResourceRequest&, ResourceHandleClient*);
 
     static void loadResourceSynchronously(BlobData*, const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>& data);
-
-    // FileStreamClient methods.
-    virtual void didGetSize(long long) override;
-    virtual void didOpen(bool) override;
-    virtual void didRead(int) override;
-
-    // ResourceHandle methods.
-    virtual void cancel() override;
 
     void start();
     int readSync(char*, int);
@@ -72,6 +64,15 @@ private:
 
     BlobResourceHandle(BlobData*, const ResourceRequest&, ResourceHandleClient*, bool async);
     virtual ~BlobResourceHandle();
+
+    // FileStreamClient methods.
+    virtual void didGetSize(long long) override;
+    virtual void didOpen(bool) override;
+    virtual void didRead(int) override;
+
+    // ResourceHandle methods.
+    virtual void cancel() override;
+    virtual void continueDidReceiveResponse() override;
 
     void doStart();
     void getSizeForNext();

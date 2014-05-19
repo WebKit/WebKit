@@ -1,3 +1,24 @@
+2014-05-19  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168909
+
+    2014-05-15  Alexey Proskuryakov  <ap@apple.com>
+
+            NetworkProcess crashes at ResourceHandle::continueDidReceiveResponse
+            https://bugs.webkit.org/show_bug.cgi?id=132966
+            <rdar://problem/16373694>
+
+            Reviewed by Brady Eidson.
+
+            Covered by many fast/files tests.
+
+            * platform/network/BlobResourceHandle.cpp: (WebCore::BlobResourceHandle::continueDidReceiveResponse):
+            * platform/network/BlobResourceHandle.h:
+            * platform/network/ResourceHandle.h:
+            Don't call delegate's continueDidReceiveResponse when loading a blob:// URL,
+            the delegate is null. On the Mac, we used to lazily create it, which was also wrong,
+            but at least not observable.
+
 2014-05-16  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168886

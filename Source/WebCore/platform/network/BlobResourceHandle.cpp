@@ -202,6 +202,11 @@ void BlobResourceHandle::cancel()
     ResourceHandle::cancel();
 }
 
+void BlobResourceHandle::continueDidReceiveResponse()
+{
+    // BlobResourceHandle doesn't wait for didReceiveResponse, and it currently cannot be used for downloading.
+}
+
 void delayedStartBlobResourceHandle(void* context)
 {
     RefPtr<BlobResourceHandle> handle = adoptRef(static_cast<BlobResourceHandle*>(context));

@@ -207,7 +207,7 @@ public:
     void continueWillSendRequest(const ResourceRequest&);
 
     // Called in response to ResourceHandleClient::didReceiveResponseAsync().
-    void continueDidReceiveResponse();
+    virtual void continueDidReceiveResponse();
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     // Called in response to ResourceHandleClient::canAuthenticateAgainstProtectionSpaceAsync().
