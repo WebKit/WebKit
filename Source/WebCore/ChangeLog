@@ -1,3 +1,24 @@
+2014-05-19  Beth Dakin  <bdakin@apple.com>
+
+        Scrollbars display incorrectly after switching between fast and slow scrolling 
+        mode, affects Find and real sites
+        https://bugs.webkit.org/show_bug.cgi?id=133077
+        -and corresponding-
+        <rdar://problem/16888608>
+
+        Reviewed by Tim Horton.
+
+        We should always return true here when updating on the secondary thread is 
+        supported. It does not need to be gated on whether we are actively taking 
+        advantage of that support at this moment.
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::supportsUpdateOnSecondaryThread):
+
+        Always update the presentationValue whenever we update the doubleValue just to 
+        keep them in sync.
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::setPaintCharacteristicsForScrollbar):
+
 2014-05-19  Simon Fraser  <simon.fraser@apple.com>
 
         Split scrolling tree ScrollingNodes into FrameScrollingNodes and OverflowScrollingNodes

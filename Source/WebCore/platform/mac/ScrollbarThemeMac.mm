@@ -479,6 +479,7 @@ void ScrollbarThemeMac::setPaintCharacteristicsForScrollbar(ScrollbarThemeClient
     [painter setEnabled:scrollbar->enabled()];
     [painter setBoundsSize:scrollbar->frameRect().size()];
     [painter setDoubleValue:value];
+    [painter setPresentationValue:value];
     [painter setKnobProportion:proportion];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
