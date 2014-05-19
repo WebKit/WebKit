@@ -234,7 +234,7 @@ BuildbotIteration.prototype = {
             // a dictionary.
 
             var openSourceRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "got_revision" || property[0] === "revision" || property[0] === "opensource_got_revision"; });
-            this.openSourceRevision = parseRevisionProperty(openSourceRevisionProperty, "WebKitOpenSource");
+            this.openSourceRevision = parseRevisionProperty(openSourceRevisionProperty, "WebKit");
 
             var internalRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "internal_got_revision" || isMultiCodebaseGotRevisionProperty(property); });
             this.internalRevision = parseRevisionProperty(internalRevisionProperty, "Internal");
