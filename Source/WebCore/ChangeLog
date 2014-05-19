@@ -1,5 +1,16 @@
 2014-05-19  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r169015.
+
+    2014-05-18  Anders Carlsson  <andersca@apple.com>
+    
+            Fix iOS build.
+    
+            * WebCore.exp.in:
+            Move UserContentController symbols to the right place.
+    
+2014-05-19  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r168994.
 
     2014-05-16  Anders Carlsson  <andersca@apple.com>
