@@ -4138,13 +4138,6 @@ void WebPageProxy::resetState()
     }
 #endif
 
-#if PLATFORM(IOS)
-    if (m_videoFullscreenManager) {
-        m_videoFullscreenManager->invalidate();
-        m_videoFullscreenManager = nullptr;
-    }
-#endif
-
 #if ENABLE(VIBRATION)
     m_vibration->invalidate();
 #endif
@@ -4153,6 +4146,10 @@ void WebPageProxy::resetState()
         m_openPanelResultListener->invalidate();
         m_openPanelResultListener = nullptr;
     }
+
+#if ENABLE(TOUCH_EVENTS)
+    m_isTrackingTouchEvents = false;
+#endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
     if (m_colorPicker) {
@@ -4179,6 +4176,15 @@ void WebPageProxy::resetState()
 
     m_visibleScrollerThumbRect = IntRect();
 
+#if PLATFORM(IOS)
+    if (m_videoFullscreenManager) {
+        m_videoFullscreenManager->invalidate();
+        m_videoFullscreenManager = nullptr;
+    }
+
+    m_lastVisibleContentRectUpdate = VisibleContentRectUpdateInfo();
+#endif
+
     invalidateCallbackMap(m_voidCallbacks);
     invalidateCallbackMap(m_dataCallbacks);
     invalidateCallbackMap(m_imageCallbacks);
@@ -4198,6 +4204,7 @@ void WebPageProxy::resetState()
     invalidateCallbackMap(m_touchesCallbacks);
     invalidateCallbackMap(m_autocorrectionCallbacks);
     invalidateCallbackMap(m_autocorrectionContextCallbacks);
+    invalidateCallbackMap(m_dictationContextCallbacks);
 #endif
 #if PLATFORM(GTK)
     invalidateCallbackMap(m_printFinishedCallbacks);
