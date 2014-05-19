@@ -1,3 +1,12 @@
+2014-05-19  Jono Wells  <jonowells@apple.com>
+
+        Script include paths for js-test-pre.js and js-test-post.js were incorrect.
+        https://bugs.webkit.org/show_bug.cgi?id=133072
+
+        Reviewed by Andy Estes.
+
+        * http/tests/navigation/forward-to-fragment-fires-onload.html: Fixed script includes.
+
 2014-05-19  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r133351, sub-pixel layout): Right-to-left block with text-overflow: ellipsis truncates prematurely (breaks facebook.com Hebrew UI)
