@@ -280,8 +280,9 @@ float ImageDocument::scale()
 
     LayoutSize imageSize = this->imageSize();
 
-    float widthScale = view->width() / imageSize.width().toFloat();
-    float heightScale = view->height() / imageSize.height().toFloat();
+    IntSize viewportSize = view->visibleSize();
+    float widthScale = viewportSize.width() / imageSize.width().toFloat();
+    float heightScale = viewportSize.height() / imageSize.height().toFloat();
 
     return std::min(widthScale, heightScale);
 }
@@ -327,8 +328,8 @@ bool ImageDocument::imageFitsInWindow()
         return true;
 
     LayoutSize imageSize = this->imageSize();
-    LayoutSize windowSize = LayoutSize(view->width(), view->height());
-    return imageSize.width() <= windowSize.width() && imageSize.height() <= windowSize.height();
+    IntSize viewportSize = view->visibleSize();
+    return imageSize.width() <= viewportSize.width() && imageSize.height() <= viewportSize.height();
 }
 
 
@@ -382,8 +383,9 @@ void ImageDocument::imageClicked(int x, int y)
 
         float scale = this->scale();
 
-        int scrollX = static_cast<int>(x / scale - view()->width() / 2.0f);
-        int scrollY = static_cast<int>(y / scale - view()->height() / 2.0f);
+        IntSize viewportSize = view()->visibleSize();
+        int scrollX = static_cast<int>(x / scale - viewportSize.width() / 2.0f);
+        int scrollY = static_cast<int>(y / scale - viewportSize.height() / 2.0f);
 
         view()->setScrollPosition(IntPoint(scrollX, scrollY));
     }

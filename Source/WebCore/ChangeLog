@@ -1,3 +1,21 @@
+2014-05-19  Beth Dakin  <bdakin@apple.com>
+
+        REGRESSION: Standalone images need to take topContentInset into account
+        https://bugs.webkit.org/show_bug.cgi?id=133092
+        -and corresponding-
+        <rdar://problem/16945791>
+
+        Reviewed by Darin Adler.
+
+        The FrameView’s size is accurate in terms of the NSWindow size, but that is not 
+        really what the ImageDocument code is looking for here. The ImageDocument wants to 
+        know the size of the unobscured viewport area. We should use visibleSize() for 
+        that.
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::scale):
+        (WebCore::ImageDocument::imageFitsInWindow):
+        (WebCore::ImageDocument::imageClicked):
+
 2014-05-19  Alex Christensen  <achristensen@webkit.org>
 
         Collect web timing data on iOS.
