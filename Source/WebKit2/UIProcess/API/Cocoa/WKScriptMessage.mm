@@ -24,40 +24,45 @@
  */
 
 #import "config.h"
-#import "WKScriptMessagePrivate.h"
+#import "WKScriptMessageInternal.h"
 
 #if WK_API_ENABLED
 
-// FIXME: Consider adding the navigation as well.
+#import "WeakObjCPtr.h"
+#import <wtf/RetainPtr.h>
 
-@implementation WKScriptMessage
+@implementation WKScriptMessage {
+    RetainPtr<id> _body;
+    WebKit::WeakObjCPtr<WKWebView> _webView;
+    RetainPtr<NSString> _name;
+}
+
+- (instancetype)_initWithBody:(id)body webView:(WKWebView *)webView name:(NSString *)name
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _body = [body copy];
+    _webView = webView;
+    _name = adoptNS([name copy]);
+
+    return self;
+
+}
 
 - (id)body
 {
-    // FIXME: Implement.
-    return nil;
+    return _body.get();
 }
 
 - (WKWebView *)webView
 {
-    // FIXME: Implement.
-    return nil;
+    return _webView.getAutoreleased();
 }
 
 - (NSString *)name
 {
-    // FIXME: Implement.
-    return nil;
-}
-
-@end
-
-@implementation WKScriptMessage (WKPrivate)
-
-- (_WKScriptWorld *)_scriptWorld
-{
-    // FIXME: Implement.
-    return nil;
+    return _name.get();
 }
 
 @end

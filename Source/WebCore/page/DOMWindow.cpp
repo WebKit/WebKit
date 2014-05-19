@@ -110,6 +110,12 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(USER_MESSAGE_HANDLERS)
+#include "UserContentController.h"
+#include "UserMessageHandlerDescriptor.h"
+#include "WebKitNamespace.h"
+#endif
+
 #if ENABLE(PROXIMITY_EVENTS)
 #include "DeviceProximityController.h"
 #endif
@@ -710,6 +716,42 @@ Location* DOMWindow::location() const
         m_location = Location::create(m_frame);
     return m_location.get();
 }
+
+#if ENABLE(USER_MESSAGE_HANDLERS)
+bool DOMWindow::shouldHaveWebKitNamespaceForWorld(DOMWrapperWorld& world)
+{
+    if (!m_frame)
+        return false;
+
+    auto* page = m_frame->page();
+    if (!page)
+        return false;
+
+    auto* userContentController = page->userContentController();
+    if (!userContentController)
+        return false;
+
+    auto* descriptorMap = userContentController->userMessageHandlerDescriptors();
+    if (!descriptorMap)
+        return false;
+
+    for (auto& descriptor : descriptorMap->values()) {
+        if (&descriptor->world() == &world)
+            return true;
+    }
+
+    return false;
+}
+
+WebKitNamespace* DOMWindow::webkitNamespace() const
+{
+    if (!isCurrentlyDisplayedInFrame())
+        return nullptr;
+    if (!m_webkitNamespace)
+        m_webkitNamespace = WebKitNamespace::create(*m_frame);
+    return m_webkitNamespace.get();
+}
+#endif
 
 Storage* DOMWindow::sessionStorage(ExceptionCode& ec) const
 {

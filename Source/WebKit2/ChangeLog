@@ -1,5 +1,76 @@
 2014-05-19  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r169023.
+
+    2014-05-18  Sam Weinig  <sam@webkit.org>
+
+            [WebKit2] Implement ScriptMessageHandlers
+            https://bugs.webkit.org/show_bug.cgi?id=133053
+
+            Reviewed by Anders Carlsson.
+
+            * DerivedSources.make:
+            * Scripts/webkit2/messages.py:
+            (struct_or_class):
+            (argument_coder_headers_for_type):
+            (headers_for_type):
+            * UIProcess/API/Cocoa/WKScriptMessage.mm:
+            (-[WKScriptMessage _initWithBody:webView:name:]):
+            (-[WKScriptMessage body]):
+            (-[WKScriptMessage webView]):
+            (-[WKScriptMessage name]):
+            (-[WKScriptMessage _scriptWorld]): Deleted.
+            * UIProcess/API/Cocoa/WKScriptMessageInternal.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKScriptMessagePrivate.h.
+            * UIProcess/API/Cocoa/WKScriptMessagePrivate.h: Removed.
+            * UIProcess/API/Cocoa/WKUserContentController.mm:
+            (-[WKUserContentController addScriptMessageHandler:name:]):
+            (-[WKUserContentController removeScriptMessageHandlerForName:]):
+            (-[WKUserContentController _addScriptMessageHandler:name:world:]): Deleted.
+            (-[WKUserContentController _removeScriptMessageHandlerForName:world:]): Deleted.
+            * UIProcess/API/Cocoa/WKUserContentControllerInternal.h:
+            * UIProcess/API/Cocoa/WKUserContentControllerPrivate.h: Removed.
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (pageToViewMap):
+            (fromWebPageProxy):
+            (-[WKWebView initWithFrame:configuration:]):
+            (-[WKWebView dealloc]):
+            * UIProcess/API/Cocoa/WKWebViewInternal.h:
+            * UIProcess/UserContent/WebScriptMessageHandler.cpp: Added.
+            (WebKit::WebScriptMessageHandlerHandle::encode):
+            (WebKit::WebScriptMessageHandlerHandle::decode):
+            (WebKit::generateIdentifier):
+            (WebKit::WebScriptMessageHandler::create):
+            (WebKit::WebScriptMessageHandler::WebScriptMessageHandler):
+            (WebKit::WebScriptMessageHandler::~WebScriptMessageHandler):
+            * UIProcess/UserContent/WebScriptMessageHandler.h: Added.
+            (WebKit::WebScriptMessageHandler::Client::~Client):
+            (WebKit::WebScriptMessageHandler::handle):
+            (WebKit::WebScriptMessageHandler::identifier):
+            (WebKit::WebScriptMessageHandler::name):
+            (WebKit::WebScriptMessageHandler::client):
+            * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+            (WebKit::WebUserContentControllerProxy::addProcess):
+            (WebKit::WebUserContentControllerProxy::removeProcess):
+            (WebKit::WebUserContentControllerProxy::addUserScriptMessageHandler):
+            (WebKit::WebUserContentControllerProxy::removeUserMessageHandlerForName):
+            (WebKit::WebUserContentControllerProxy::didPostMessage):
+            * UIProcess/UserContent/WebUserContentControllerProxy.h:
+            * UIProcess/UserContent/WebUserContentControllerProxy.messages.in: Added.
+            * WebKit2.xcodeproj/project.pbxproj:
+            * WebProcess/UserContent/WebUserContentController.cpp:
+            (WebKit::WebUserMessageHandlerDescriptorProxy::create):
+            (WebKit::WebUserMessageHandlerDescriptorProxy::~WebUserMessageHandlerDescriptorProxy):
+            (WebKit::WebUserMessageHandlerDescriptorProxy::didPostMessage):
+            (WebKit::WebUserMessageHandlerDescriptorProxy::descriptor):
+            (WebKit::WebUserMessageHandlerDescriptorProxy::identifier):
+            (WebKit::WebUserMessageHandlerDescriptorProxy::WebUserMessageHandlerDescriptorProxy):
+            (WebKit::WebUserContentController::addUserScriptMessageHandlers):
+            (WebKit::WebUserContentController::removeUserScriptMessageHandler):
+            * WebProcess/UserContent/WebUserContentController.h:
+            * WebProcess/UserContent/WebUserContentController.messages.in:
+
+2014-05-19  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r169000.
 
     2014-05-17  Anders Carlsson  <andersca@apple.com>

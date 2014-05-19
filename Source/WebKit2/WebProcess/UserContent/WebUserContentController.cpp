@@ -26,11 +26,21 @@
 #include "config.h"
 #include "WebUserContentController.h"
 
+#include "DataReference.h"
+#include "WebFrame.h"
+#include "WebPage.h"
 #include "WebProcess.h"
 #include "WebUserContentControllerMessages.h"
+#include "WebUserContentControllerProxyMessages.h"
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/ScriptController.h>
+#include <WebCore/SerializedScriptValue.h>
 #include <wtf/NeverDestroyed.h>
+
+#if ENABLE(USER_MESSAGE_HANDLERS)
+#include <WebCore/UserMessageHandler.h>
+#include <WebCore/UserMessageHandlerDescriptor.h>
+#endif
 
 using namespace WebCore;
 
@@ -80,6 +90,76 @@ void WebUserContentController::addUserScripts(const Vector<WebCore::UserScript>&
 void WebUserContentController::removeAllUserScripts()
 {
     m_userContentController->removeUserScripts(mainThreadNormalWorld());
+}
+
+#if ENABLE(USER_MESSAGE_HANDLERS)
+class WebUserMessageHandlerDescriptorProxy : public RefCounted<WebUserMessageHandlerDescriptorProxy>, public WebCore::UserMessageHandlerDescriptor::Client {
+public:
+    static PassRefPtr<WebUserMessageHandlerDescriptorProxy> create(WebUserContentController* controller, const String& name, uint64_t identifier)
+    {
+        return adoptRef(new WebUserMessageHandlerDescriptorProxy(controller, name, identifier));
+    }
+
+    virtual ~WebUserMessageHandlerDescriptorProxy()
+    {
+    }
+
+    // WebCore::UserMessageHandlerDescriptor::Client
+    virtual void didPostMessage(WebCore::UserMessageHandler& handler, WebCore::SerializedScriptValue* value)
+    {
+        WebCore::Frame* frame = handler.frame();
+        if (!frame)
+            return;
+    
+        WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
+        if (!webFrame)
+            return;
+
+        WebPage* webPage = webFrame->page();
+        if (!webPage)
+            return;
+
+        WebProcess::shared().parentProcessConnection()->send(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->pageID(), webFrame->frameID(), m_identifier, IPC::DataReference(value->data())), m_controller->identifier());
+    }
+
+    WebCore::UserMessageHandlerDescriptor& descriptor() { return *m_descriptor; }
+    uint64_t identifier() { return m_identifier; }
+
+private:
+    WebUserMessageHandlerDescriptorProxy(WebUserContentController* controller, const String& name, uint64_t identifier)
+        : m_controller(controller)
+        , m_descriptor(UserMessageHandlerDescriptor::create(name, mainThreadNormalWorld(), *this))
+        , m_identifier(identifier)
+    {
+    }
+
+    RefPtr<WebUserContentController> m_controller;
+    RefPtr<WebCore::UserMessageHandlerDescriptor> m_descriptor;
+    uint64_t m_identifier;
+};
+#endif
+
+void WebUserContentController::addUserScriptMessageHandlers(const Vector<WebScriptMessageHandlerHandle>& scriptMessageHandlers)
+{
+#if ENABLE(USER_MESSAGE_HANDLERS)
+    for (auto& handle : scriptMessageHandlers) {
+        RefPtr<WebUserMessageHandlerDescriptorProxy> descriptor = WebUserMessageHandlerDescriptorProxy::create(this, handle.name, handle.identifier);
+
+        m_userMessageHandlerDescriptors.add(descriptor->identifier(), descriptor);
+        m_userContentController->addUserMessageHandlerDescriptor(descriptor->descriptor());
+    }
+#endif
+}
+
+void WebUserContentController::removeUserScriptMessageHandler(uint64_t identifier)
+{
+#if ENABLE(USER_MESSAGE_HANDLERS)
+    auto it = m_userMessageHandlerDescriptors.find(identifier);
+    ASSERT(it != m_userMessageHandlerDescriptors.end());
+    
+    m_userContentController->removeUserMessageHandlerDescriptor(it->value->descriptor());
+    m_userMessageHandlerDescriptors.remove(it);
+#endif
 }
 
 } // namespace WebKit

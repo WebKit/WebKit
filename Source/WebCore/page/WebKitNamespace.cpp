@@ -23,20 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKUserContentController.h"
+#include "config.h"
+#include "WebKitNamespace.h"
 
-#if WK_API_ENABLED
+#if ENABLE(USER_MESSAGE_HANDLERS)
 
-#import <wtf/RefPtr.h>
+#include "DOMWindow.h"
+#include "UserMessageHandlersNamespace.h"
 
-namespace WebKit {
-class WebUserContentControllerProxy;
+namespace WebCore {
+
+WebKitNamespace::WebKitNamespace(Frame& frame)
+    : DOMWindowProperty(&frame)
+    , m_messageHandlerNamespace(UserMessageHandlersNamespace::create(frame))
+{
 }
 
-@interface WKUserContentController () {
-@package
-    RefPtr<WebKit::WebUserContentControllerProxy> _userContentControllerProxy;
+WebKitNamespace::~WebKitNamespace()
+{
 }
-@end
 
-#endif
+UserMessageHandlersNamespace* WebKitNamespace::messageHandlers()
+{
+    return &m_messageHandlerNamespace.get();
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(USER_MESSAGE_HANDLERS)

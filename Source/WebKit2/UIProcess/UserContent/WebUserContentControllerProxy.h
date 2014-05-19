@@ -26,9 +26,16 @@
 #ifndef WebUserContentControllerProxy_h
 #define WebUserContentControllerProxy_h
 
+#include "MessageReceiver.h"
+#include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
+#include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+
+namespace IPC {
+class DataReference;
+}
 
 namespace WebCore {
 class UserScript;
@@ -37,8 +44,9 @@ class UserScript;
 namespace WebKit {
 
 class WebProcessProxy;
+class WebScriptMessageHandler;
 
-class WebUserContentControllerProxy : public RefCounted<WebUserContentControllerProxy> {
+class WebUserContentControllerProxy : public RefCounted<WebUserContentControllerProxy>, private IPC::MessageReceiver {
 public:
     static PassRefPtr<WebUserContentControllerProxy> create();
     ~WebUserContentControllerProxy();
@@ -51,13 +59,23 @@ public:
     void addUserScript(WebCore::UserScript);
     void removeAllUserScripts();
 
+    // Returns false if there was a name conflict.
+    bool addUserScriptMessageHandler(WebScriptMessageHandler*);
+    void removeUserMessageHandlerForName(const String&);
+
 private:
     explicit WebUserContentControllerProxy();
+
+    // IPC::MessageReceiver.
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+
+    void didPostMessage(IPC::Connection*, uint64_t pageID, uint64_t frameID, uint64_t messageHandlerID, const IPC::DataReference&);
 
     uint64_t m_identifier;
     HashCountedSet<WebProcessProxy*> m_processes;
 
     Vector<WebCore::UserScript> m_userScripts;
+    HashMap<uint64_t, RefPtr<WebScriptMessageHandler>> m_scriptMessageHandlers;
 };
 
 } // namespace WebKit

@@ -33,6 +33,10 @@
 #include "UserScript.h"
 #include "UserStyleSheet.h"
 
+#if ENABLE(USER_MESSAGE_HANDLERS)
+#include "UserMessageHandlerDescriptor.h"
+#endif
+
 namespace WebCore {
 
 RefPtr<UserContentController> UserContentController::create()
@@ -150,6 +154,24 @@ void UserContentController::removeUserStyleSheets(DOMWrapperWorld& world)
 
     invalidateInjectedStyleSheetCacheInAllFrames();
 }
+
+#if ENABLE(USER_MESSAGE_HANDLERS)
+void UserContentController::addUserMessageHandlerDescriptor(UserMessageHandlerDescriptor& descriptor)
+{
+    if (!m_userMessageHandlerDescriptors)
+        m_userMessageHandlerDescriptors = std::make_unique<UserMessageHandlerDescriptorMap>();
+
+    m_userMessageHandlerDescriptors->add(std::make_pair(descriptor.name(), &descriptor.world()), &descriptor);
+}
+
+void UserContentController::removeUserMessageHandlerDescriptor(UserMessageHandlerDescriptor& descriptor)
+{
+    if (!m_userMessageHandlerDescriptors)
+        return;
+
+    m_userMessageHandlerDescriptors->remove(std::make_pair(descriptor.name(), &descriptor.world()));
+}
+#endif
 
 void UserContentController::removeAllUserContent()
 {

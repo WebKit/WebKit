@@ -1,5 +1,66 @@
 2014-05-19  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r169023.
+
+    2014-05-18  Sam Weinig  <sam@webkit.org>
+
+            [WebKit2] Implement ScriptMessageHandlers
+            https://bugs.webkit.org/show_bug.cgi?id=133053
+
+            Reviewed by Anders Carlsson.
+
+            * DerivedSources.make:
+            * WebCore.exp.in:
+            * WebCore.xcodeproj/project.pbxproj:
+            * bindings/js/JSDOMWindowBase.cpp:
+            (WebCore::JSDOMWindowBase::finishCreation):
+            * bindings/js/JSUserMessageHandlersNamespaceCustom.cpp: Added.
+            (WebCore::JSUserMessageHandlersNamespace::getOwnPropertySlotDelegate):
+            * page/DOMWindow.cpp:
+            (WebCore::DOMWindow::shouldHaveWebKitNamespaceForWorld):
+            (WebCore::DOMWindow::webkitNamespace):
+            * page/DOMWindow.h:
+            * page/UserContentController.cpp:
+            (WebCore::UserContentController::addUserMessageHandlerDescriptor):
+            (WebCore::UserContentController::removeUserMessageHandlerDescriptor):
+            * page/UserContentController.h:
+            (WebCore::UserContentController::userMessageHandlerDescriptors):
+            * page/UserMessageHandler.cpp: Added.
+            (WebCore::UserMessageHandler::UserMessageHandler):
+            (WebCore::UserMessageHandler::~UserMessageHandler):
+            (WebCore::UserMessageHandler::postMessage):
+            (WebCore::UserMessageHandler::name):
+            (WebCore::UserMessageHandler::world):
+            * page/UserMessageHandler.h: Added.
+            (WebCore::UserMessageHandler::create):
+            * page/UserMessageHandler.idl: Added.
+            * page/UserMessageHandlerDescriptor.cpp: Added.
+            (WebCore::UserMessageHandlerDescriptor::UserMessageHandlerDescriptor):
+            (WebCore::UserMessageHandlerDescriptor::~UserMessageHandlerDescriptor):
+            (WebCore::UserMessageHandlerDescriptor::name):
+            (WebCore::UserMessageHandlerDescriptor::world):
+            * page/UserMessageHandlerDescriptor.h: Added.
+            (WebCore::UserMessageHandlerDescriptor::Client::~Client):
+            (WebCore::UserMessageHandlerDescriptor::create):
+            (WebCore::UserMessageHandlerDescriptor::client):
+            * page/UserMessageHandlerDescriptorTypes.h: Added.
+            * page/UserMessageHandlersNamespace.cpp: Added.
+            (WebCore::UserMessageHandlersNamespace::UserMessageHandlersNamespace):
+            (WebCore::UserMessageHandlersNamespace::~UserMessageHandlersNamespace):
+            (WebCore::UserMessageHandlersNamespace::handler):
+            * page/UserMessageHandlersNamespace.h: Added.
+            (WebCore::UserMessageHandlersNamespace::create):
+            * page/UserMessageHandlersNamespace.idl: Added.
+            * page/WebKitNamespace.cpp: Added.
+            (WebCore::WebKitNamespace::WebKitNamespace):
+            (WebCore::WebKitNamespace::~WebKitNamespace):
+            (WebCore::WebKitNamespace::messageHandlers):
+            * page/WebKitNamespace.h: Added.
+            (WebCore::WebKitNamespace::create):
+            * page/WebKitNamespace.idl: Added.
+
+2014-05-19  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r169015.
 
     2014-05-18  Anders Carlsson  <andersca@apple.com>

@@ -214,6 +214,7 @@ def struct_or_class(namespace, type):
         'WebKit::WebPageCreationParameters',
         'WebKit::WebPreferencesStore',
         'WebKit::WebProcessCreationParameters',
+        'WebKit::WebScriptMessageHandlerHandle',
         'WebKit::WindowGeometry',
     ])
 
@@ -396,6 +397,7 @@ def argument_coder_headers_for_type(type):
         'String': '"ArgumentCoders.h"',
         'WebKit::InjectedBundleUserMessageEncoder': '"InjectedBundleUserMessageCoders.h"',
         'WebKit::WebContextUserMessageEncoder': '"WebContextUserMessageCoders.h"',
+        'WebKit::ScriptMessageHandlerHandle': '"WebScriptMessageHandler.h"',
     }
 
     headers = []
@@ -439,6 +441,7 @@ def headers_for_type(type):
         'WebKit::WebMouseEvent': ['"WebEvent.h"'],
         'WebKit::WebTouchEvent': ['"WebEvent.h"'],
         'WebKit::WebWheelEvent': ['"WebEvent.h"'],
+        'WebKit::WebScriptMessageHandlerHandle': ['"WebScriptMessageHandler.h"'],
     }
 
     headers = []

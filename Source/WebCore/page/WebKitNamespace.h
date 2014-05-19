@@ -23,47 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebUserContentController_h
-#define WebUserContentController_h
+#ifndef WebKitNamespace_h
+#define WebKitNamespace_h
 
-#include "MessageReceiver.h"
-#include "WebScriptMessageHandler.h"
-#include <WebCore/UserContentController.h>
-#include <wtf/HashMap.h>
+#if ENABLE(USER_MESSAGE_HANDLERS)
+
+#include "DOMWindowProperty.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
-namespace WebKit {
+namespace WebCore {
 
-class WebUserMessageHandlerDescriptorProxy;
+class Frame;
+class UserMessageHandlersNamespace;
 
-class WebUserContentController final : public RefCounted<WebUserContentController>, private IPC::MessageReceiver  {
+class WebKitNamespace : public DOMWindowProperty, public RefCounted<WebKitNamespace> {
 public:
-    static PassRefPtr<WebUserContentController> getOrCreate(uint64_t identifier);
-    virtual ~WebUserContentController();
+    static PassRefPtr<WebKitNamespace> create(Frame& frame)
+    {
+        return adoptRef(new WebKitNamespace(frame));
+    }
 
-    WebCore::UserContentController& userContentController() { return m_userContentController.get(); }
+    virtual ~WebKitNamespace();
 
-    uint64_t identifier() { return m_identifier; } 
+    UserMessageHandlersNamespace* messageHandlers();
 
 private:
-    explicit WebUserContentController(uint64_t identifier);
+    explicit WebKitNamespace(Frame&);
 
-    // IPC::MessageReceiver.
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
-
-    void addUserScripts(const Vector<WebCore::UserScript>& userScripts);
-    void removeAllUserScripts();
-
-    void addUserScriptMessageHandlers(const Vector<WebScriptMessageHandlerHandle>& scriptMessageHandlers);
-    void removeUserScriptMessageHandler(uint64_t);
-
-    uint64_t m_identifier;
-    Ref<WebCore::UserContentController> m_userContentController;
-#if ENABLE(USER_MESSAGE_HANDLERS)
-    HashMap<uint64_t, RefPtr<WebUserMessageHandlerDescriptorProxy>> m_userMessageHandlerDescriptors;
-#endif
+    Ref<UserMessageHandlersNamespace> m_messageHandlerNamespace;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
-#endif // WebUserContentController_h
+#endif // ENABLE(USER_MESSAGE_HANDLERS)
+#endif // WebKitNamespace_h

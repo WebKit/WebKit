@@ -23,19 +23,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKUserContentController.h>
+#include "config.h"
+#include "WebScriptMessageHandler.h"
 
-#if WK_API_ENABLED
+#include "ArgumentCoders.h"
 
-@class _WKScriptWorld;
+namespace WebKit {
 
-@interface WKUserContentController (WKPrivate)
+void WebScriptMessageHandlerHandle::encode(IPC::ArgumentEncoder& encoder) const
+{
+    encoder << identifier;
+    encoder << name;
+}
 
-- (void)_addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name world:(_WKScriptWorld *)world;
-- (void)_removeScriptMessageHandlerForName:(NSString *)name world:(_WKScriptWorld *)world;
+bool WebScriptMessageHandlerHandle::decode(IPC::ArgumentDecoder& decoder, WebScriptMessageHandlerHandle& handle)
+{
+    if (!decoder.decode(handle.identifier))
+        return false;
 
-@end
+    if (!decoder.decode(handle.name))
+        return false;
 
-#endif
+    return true;
+}
 
+static uint64_t generateIdentifier()
+{
+    static uint64_t identifier;
 
+    return ++identifier;
+}
+
+PassRefPtr<WebScriptMessageHandler> WebScriptMessageHandler::create(std::unique_ptr<Client> client, const String& name)
+{
+    return adoptRef(new WebScriptMessageHandler(std::move(client), name));
+}
+
+WebScriptMessageHandler::WebScriptMessageHandler(std::unique_ptr<Client> client, const String& name)
+    : m_identifier(generateIdentifier())
+    , m_client(std::move(client))
+    , m_name(name)
+{
+}
+
+WebScriptMessageHandler::~WebScriptMessageHandler()
+{
+}
+
+} // namespace WebKit
