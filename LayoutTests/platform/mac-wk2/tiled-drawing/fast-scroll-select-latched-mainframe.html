@@ -71,8 +71,8 @@ function scrollTest() {
     selectScrollPositionBefore = selectTarget.scrollTop;
 
     // Scroll the #source until we reach the #target.
-    var startPosX = selectTarget.offsetLeft + 20;
-    var startPosY = selectTarget.offsetTop - 42; // Slightly more than one wheel scroll away from the IFrame
+    var startPosX = Math.round(selectTarget.offsetLeft) + 20;
+    var startPosY = Math.round(selectTarget.offsetTop) - 42; // Slightly more than one wheel scroll away from the IFrame
     eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
     debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none', true);

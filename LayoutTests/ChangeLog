@@ -1,3 +1,19 @@
+2014-05-19  Zalan Bujtas  <zalan@apple.com>
+
+        Fix Element.offset* and .client* rounding mismatches after r168868.
+        https://bugs.webkit.org/show_bug.cgi?id=133076
+        
+        Unreviewed gardening.
+
+        * platform/mac-wk2/tiled-drawing/fast-scroll-div-latched-div-with-handler.html:
+        * platform/mac-wk2/tiled-drawing/fast-scroll-div-latched-div.html:
+        * platform/mac-wk2/tiled-drawing/fast-scroll-div-latched-mainframe-with-handler.html:
+        * platform/mac-wk2/tiled-drawing/fast-scroll-div-latched-mainframe.html:
+        * platform/mac-wk2/tiled-drawing/fast-scroll-select-latched-mainframe-with-handler.html:
+        * platform/mac-wk2/tiled-drawing/fast-scroll-select-latched-mainframe.html:
+        * platform/mac-wk2/tiled-drawing/fast-scroll-select-latched-select-with-handler.html:
+        * platform/mac-wk2/tiled-drawing/fast-scroll-select-latched-select.html:
+
 2014-05-19  Simon Fraser  <simon.fraser@apple.com>
 
         Images missing sometimes with composited clipping layers
