@@ -1298,7 +1298,7 @@ sub sharedCommandLineOptions()
     );
 }
 
-sub sharedCommandLineOptionsUsage(+@)
+sub sharedCommandLineOptionsUsage
 {
     my %opts = @_;
 
