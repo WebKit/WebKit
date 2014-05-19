@@ -1,3 +1,18 @@
+2014-05-19  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r169037.
+
+    2014-05-18  Brent Fulgham  <bfulgham@apple.com>
+    
+            Crash during scroll when latched
+            https://bugs.webkit.org/show_bug.cgi?id=133064
+    
+            Reviewed by Simon Fraser.
+    
+            * page/mac/EventHandlerMac.mm:
+            (WebCore::EventHandler::platformPrepareForWheelEvents): Prevent dereference of NULL
+            wheelEventTarget argument.
+    
 2014-05-16  Jer Noble  <jer.noble@apple.com>
 
         [Mac][MSE] setCurrentTime() goes down fastSeek path in MediaPlayerPrivateMediaSourceAVFObjC.

@@ -804,7 +804,7 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
     }
     
     if (wheelEvent.shouldConsiderLatching()) {
-        if (scrollableArea)
+        if (scrollableArea && scrollableContainer)
             m_startedGestureAtScrollLimit = scrolledToEdgeInDominantDirection(*scrollableContainer, *scrollableArea, wheelEvent.deltaX(), wheelEvent.deltaY());
         else
             m_startedGestureAtScrollLimit = false;
