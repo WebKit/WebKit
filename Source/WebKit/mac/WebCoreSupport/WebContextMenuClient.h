@@ -65,7 +65,7 @@ public:
     WebView *webView() { return m_webView; }
         
 private:
-    NSMenu *contextMenuForEvent(NSEvent *, NSView *);
+    NSMenu *contextMenuForEvent(NSEvent *, NSView *, bool& isServicesMenu);
 
     bool clientFloatRectForNode(WebCore::Node&, WebCore::FloatRect&) const;
 

@@ -1,3 +1,17 @@
+2014-05-19  Brady Eidson  <beidson@apple.com>
+
+        Use different AppKit API for image control menus.
+        <rdar://problem/16807828> and https://bugs.webkit.org/show_bug.cgi?id=133087
+
+        Reviewed by Tim Horton.
+
+        For image control menus, use popUpMenuPositioningItem: instead of popUpContextMenu:
+        
+        * WebCoreSupport/WebContextMenuClient.h:
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::contextMenuForEvent):
+        (WebContextMenuClient::showContextMenu):
+
 2014-05-19  Andy Estes  <aestes@apple.com>
 
         Set WebKitSuppressesIncrementalRenderingKey to NO by default on both Mac and iOS

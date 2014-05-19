@@ -460,8 +460,10 @@ NSImage *WebContextMenuClient::renderedImageForControlledImage() const
 #endif
 
 
-NSMenu *WebContextMenuClient::contextMenuForEvent(NSEvent *event, NSView *view)
+NSMenu *WebContextMenuClient::contextMenuForEvent(NSEvent *event, NSView *view, bool& isServicesMenu)
 {
+    isServicesMenu = false;
+
     Page* page = [m_webView page];
     if (!page)
         return nil;
@@ -476,7 +478,8 @@ NSMenu *WebContextMenuClient::contextMenuForEvent(NSEvent *event, NSView *view)
 
         bool isContentEditable = page->contextMenuController().context().hitTestResult().innerNode()->isContentEditable();
         m_sharingServicePickerController = adoptNS([[WebSharingServicePickerController alloc] initWithData:(NSData *)cfData.get() includeEditorServices:isContentEditable menuClient:this]);
-        
+
+        isServicesMenu = true;
         return [m_sharingServicePickerController menu];
     }
 #endif
@@ -501,8 +504,13 @@ void WebContextMenuClient::showContextMenu()
     NSEvent* event = [NSEvent mouseEventWithType:NSRightMouseDown location:point modifierFlags:0 timestamp:0 windowNumber:[[view window] windowNumber] context:0 eventNumber:0 clickCount:1 pressure:1];
 
     // Show the contextual menu for this event.
-    if (NSMenu *menu = contextMenuForEvent(event, view))
-        [NSMenu popUpContextMenu:menu withEvent:event forView:view];
+    bool isServicesMenu;
+    if (NSMenu *menu = contextMenuForEvent(event, view, isServicesMenu)) {
+        if (isServicesMenu)
+            [menu popUpMenuPositioningItem:nil atLocation:[view convertPoint:point toView:nil] inView:view];
+        else
+            [NSMenu popUpContextMenu:menu withEvent:event forView:view];
+    }
 }
 
 #if ENABLE(SERVICE_CONTROLS)
