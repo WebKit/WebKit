@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 # Copyright (C) 2006 Eric Seidel (eric@webkit.org)
+# Copyright (C) 2014 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -47,9 +48,13 @@ my $showHelp = 0;
 
 my $usage =
     "Usage: " . basename($0) . "[options] testName\n" .
-    "  --help                  Show this help message\n";
+    "  --help                  Show this help message\n" .
+    sharedCommandLineOptionsUsage(indent => 2, switchWidth => 23);
 
-my $getOptionsResult = GetOptions('help' => \$showHelp);
+my $getOptionsResult = GetOptions(
+    sharedCommandLineOptions(),
+   'help' => \$showHelp
+);
 
 if (!$getOptionsResult || $showHelp) {
     print STDERR $usage;
@@ -81,8 +86,7 @@ my $productDir = productDir();
 
 # Set up DYLD_FRAMEWORK_PATH to point to the product directory.
 print "Starting Safari with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
-$ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-$ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
+setupMacWebKitEnvironment($productDir);
 
 my @testCommands = ('activate');
 # Autovicki would clear history, we skip that here as this is likely an active user account

@@ -1,3 +1,54 @@
+2014-05-19  David Kilzer  <ddkilzer@apple.com>
+
+        webkitdirs.pm: Add setupMacWebKitEnvironment() to set __XPC_DYLD_FRAMEWORK_PATH consistently
+        <http://webkit.org/b/132954>
+
+        Reviewed by Darin Adler.
+
+        Extract code into setupMacWebKitEnvironment() for setting up
+        common environment variables so it may be shared.  Sets
+        __XPC_DYLD_FRAMEWORK_PATH consistently and adds support for
+        using guardmalloc to some scripts.
+
+        Also adds support for parsing shared (common) command-line
+        switches, initially just -g|--guard-malloc.
+
+        * Scripts/bisect-builds: Add -g|--guard-malloc support by using
+        sharedCommandLineOptions() and sharedCommandLineOptionsUsage().
+        (mountAndRunNightly): Call setupMacWebKitEnvironment().  Use a
+        local copy of %ENV when launching Safari so we don't have to
+        restore variables.
+
+        * Scripts/run-api-tests: Add -g|--guard-malloc support by using
+        sharedCommandLineOptions() and sharedCommandLineOptionsUsage().
+        Check result of GetOptions() to catch invalid command-line
+        switches.
+        (runTest): Use a local copy of %ENV when running tests so we
+        don't have to restore variables.
+        (prepareEnvironmentForRunningTestTool): Call
+        setupMacWebKitEnvironment().
+
+        * Scripts/run-pageloadtest: Add -g|--guard-malloc support by
+        using sharedCommandLineOptions() and
+        sharedCommandLineOptionsUsage().  Call
+        setupMacWebKitEnvironment().
+
+        * Scripts/webkitdirs.pm:
+        (sharedCommandLineOptions): Return array of common switches to
+        pass to Getopt::Long::GetOptions().
+        (sharedCommandLineOptionsUsage): Return formatted string of
+        common switches for printing usage help text.
+        (setUpGuardMallocIfNeeded): Support using '-g' for enabling
+        guardmalloc.
+        (printHelpAndExitForRunAndDebugWebKitAppIfNeeded): Ditto.
+        (setupMacWebKitEnvironment): Extracted from runMacWebKitApp()
+        and changed not to clobber DYLD_FRAMEWORK_PATH if already set.
+        (runMacWebKitApp): Call setupMacWebKitEnvironment().  Use a
+        local copy of %ENV when launching Safari so we don't have to
+        restore variables.
+        (execMacWebKitAppForDebugging): Call
+        setupMacWebKitEnvironment().
+
 2014-05-18  Rik Cabanier  <cabanier@adobe.com>
 
         support for navigator.hardwareConcurrency

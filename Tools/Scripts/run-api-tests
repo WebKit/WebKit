@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
+# Copyright (C) 2010-2012, 2014 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -65,7 +65,7 @@ Usage: $programName [options] [suite or test prefixes]
   -d|--dump-tests       Dump the names of testcases without running them
   --[no-]build          Build (or do not build) unit tests prior to running (default: $buildDefault)
   --root=               Path to the pre-built root containing TestWebKitAPI
-
+@{[ sharedCommandLineOptionsUsage(indent => 2, switchWidth => 21) ]}
 Examples
 
 The following command will run a single test:
@@ -76,7 +76,8 @@ The following command will run all tests in suites that begin with 'WebKit2':
 
 EOF
 
-GetOptions(
+my $getOptionsResult = GetOptions(
+    sharedCommandLineOptions(),
     'help' => \$showHelp,
     'verbose|v' => \$verbose,
     'dump|d' => \$dumpTests,
@@ -84,7 +85,7 @@ GetOptions(
     'root=s' => \$root
 );
 
-if ($showHelp) {
+if (!$getOptionsResult || $showHelp) {
    print STDERR $usage;
    exit 1;
 }
@@ -174,6 +175,7 @@ sub runTest($$$)
 
     die "run-api-tests is not supported on this platform.\n" unless isSupportedPlatform();
 
+    local %ENV = %ENV;
     prepareEnvironmentForRunningTestTool();
 
     local *DEVNULL;
@@ -335,8 +337,7 @@ sub prepareEnvironmentForRunningTestTool()
 {
     return unless isAppleMacWebKit();
 
-    $ENV{DYLD_FRAMEWORK_PATH} = productDir();
-    $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
+    setupMacWebKitEnvironment(productDir());
 }
 
 sub testToolPath()
