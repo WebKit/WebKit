@@ -26,9 +26,7 @@
 #import <WebKit/WKBackForwardListPrivate.h>
 #import <WebKit/WKHistoryDelegatePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
-#import <WebKit/WKScriptMessagePrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
-#import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKActivatedElementInfo.h>

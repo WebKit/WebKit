@@ -1,5 +1,16 @@
 2014-05-19  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r169039
+
+    2014-05-19  Mark Rowe  <mrowe@apple.com>
+
+            Build fix after r169023.
+
+            * Shared/API/Cocoa/WebKitPrivate.h: Stop including headers that no longer exist.
+            I hope for weinig's sake that no-one was relying on them.
+
+2014-05-19  Lucas Forschler  <lforschler@apple.com>
+
         Merge r169026
 
     2014-05-18  Anders Carlsson  <andersca@apple.com>
