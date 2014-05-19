@@ -311,6 +311,7 @@ sub printThingsFound
 }
 
 my @jscStressFailList = readAllLines($jscStressResultsDir . "/failed");
+@jscStressFailList = sort @jscStressFailList;
 my $numJSCStressFailures = @jscStressFailList;
 
 if ($numJSCStressFailures) {

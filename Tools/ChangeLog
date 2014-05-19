@@ -1,3 +1,12 @@
+2014-05-19  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        run-javascriptcore-tests should sort the list of failing stress tests
+        https://bugs.webkit.org/show_bug.cgi?id=132989
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/run-javascriptcore-tests:
+
 2014-05-19  David Kilzer  <ddkilzer@apple.com>
 
         webkitdirs.pm: Add setupMacWebKitEnvironment() to set __XPC_DYLD_FRAMEWORK_PATH consistently
