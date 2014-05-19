@@ -1,3 +1,13 @@
+2014-05-19  Andy Estes  <aestes@apple.com>
+
+        Set WebKitSuppressesIncrementalRenderingKey to NO by default on both Mac and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=133073
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
 2014-05-18  Anders Carlsson  <andersca@apple.com>
 
         Bring back two NSString category methods on iOS
