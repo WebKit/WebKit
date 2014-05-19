@@ -47,7 +47,7 @@ function elementRect(elementId)
 {
     var s = document.getElementById("container").getBoundingClientRect();
     var r = document.getElementById(elementId).getBoundingClientRect();
-    return {left: r.left - s.left, top: r.top - s.top, width: r.width, height: r.height};
+    return {left: Math.round(r.left) - Math.round(s.left), top: Math.round(r.top) - Math.round(s.top), width: Math.round(r.width), height: Math.round(r.height)};
 }
 
 test(function () {
@@ -59,7 +59,7 @@ test(function () {
 test(function () {
     var rect = elementRect("s2");
     assert_equals(rect.left, 11);
-    assert_approx_equals(rect.top, 97, 0.1);
+    assert_approx_equals(rect.top, 98, 0.1);
 }, "2nd square is properly affected by shape.");
 
 test(function () {
@@ -101,7 +101,7 @@ test(function () {
 test(function () {
     var rect = elementRect("s9");
     assert_equals(rect.left, 81);
-    assert_approx_equals(rect.top, 92, 0.1);
+    assert_approx_equals(rect.top, 93, 0.1);
 }, "9th square is properly affected by shape.");
 
 test(function () {

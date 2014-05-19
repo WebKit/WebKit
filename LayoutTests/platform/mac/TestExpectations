@@ -1303,6 +1303,10 @@ webkit.org/b/128081 fast/events/page-scaled-mouse-click-iframe.html
 webkit.org/b/131887 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
 # cliprect fails to cover textarea.
 webkit.org/b/132515 fast/forms/hidpi-textarea-on-subpixel-position.html [ ImageOnlyFailure ]
+# Some CSS region expected tests do not properly match CSS region's behavior.
+webkit.org/b/132990 fast/regions/overflow-size-change-with-stacking-context.html [ ImageOnlyFailure ]
+webkit.org/b/132990 fast/regions/overflow-size-change-in-variable-width-regions.html [ ImageOnlyFailure ]
+webkit.org/b/132990 fast/regions/overflow-not-moving-below-floats-in-variable-width-regions.html [ ImageOnlyFailure ]
 # End of subpixel failures.
 
 webkit.org/b/35297 media/video-display-aspect-ratio.html [ Pass Failure ]

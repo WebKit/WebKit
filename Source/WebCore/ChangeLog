@@ -1,3 +1,30 @@
+2014-05-19  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r133351, sub-pixel layout): Right-to-left block with text-overflow: ellipsis truncates prematurely (breaks facebook.com Hebrew UI)
+        https://bugs.webkit.org/show_bug.cgi?id=112227
+
+        Reviewed by Maciej Stachowiak.
+
+        This patch removes unnecessary integral snapping of inlines at layout time.
+
+        The general rule of thumb of using round/floor/ceil at layout time is to not use them.
+ 
+        When some computed values (x, y, width, height) get snapped during layout, while others don't,
+        intersecting/measuring mismatches could occur and they could end up producing visual artifacts such as truncations.
+        This patch also enables iframe content to be positioned on odd device pixel positions on retina displays.
+        
+        Tests: fast/frames/hidpi-position-iframe-on-device-pixel.html
+               fast/inline/hidpi-rtl-text-does-not-fit-line-and-gets-cut-off.html
+
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::pixelSnappedLogicalLeftOffsetForLine): Deleted.
+        (WebCore::RenderBlock::pixelSnappedLogicalRightOffsetForLine): Deleted.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::updateLogicalInlinePositions):
+        (WebCore::RenderBlockFlow::deleteEllipsisLineBoxes):
+        (WebCore::RenderBlockFlow::checkLinesForTextOverflow):
+
 2014-05-18  Chris Fleizach  <cfleizach@apple.com>
 
         AX: iOS: using AXAttributeCacheEnabler is too slow for every accessibilityElementAtIndex:

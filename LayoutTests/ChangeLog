@@ -1,3 +1,86 @@
+2014-05-19  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r133351, sub-pixel layout): Right-to-left block with text-overflow: ellipsis truncates prematurely (breaks facebook.com Hebrew UI)
+        https://bugs.webkit.org/show_bug.cgi?id=112227
+
+        Reviewed by Maciej Stachowiak.
+
+        This patch removes unnecessary integral snapping of inlines at layout time.
+
+        1px off differences and rounding expected results to match new behavior. -rebaselining.
+
+        * fast/frames/hidpi-position-iframe-on-device-pixel-expected.html: Added.
+        * fast/frames/hidpi-position-iframe-on-device-pixel.html: Added.
+        * fast/inline/hidpi-rtl-text-does-not-fit-line-and-gets-cut-off-expected.html: Added.
+        * fast/inline/hidpi-rtl-text-does-not-fit-line-and-gets-cut-off.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-margin-left.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-margin-right.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-different-writing-modes-left.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-different-writing-modes-right.html:
+        * fast/shapes/shape-outside-floats/shape-outside-rounded-boxes-001.html:
+        * fast/shapes/shape-outside-floats/shape-outside-rounded-boxes-002.html:
+        * fast/shapes/shape-outside-floats/shape-outside-rounded-inset-expected.html:
+        * platform/mac/TestExpectations:
+        * platform/mac/css1/box_properties/float_on_text_elements-expected.txt:
+        * platform/mac/css1/text_properties/text_indent-expected.txt:
+        * platform/mac/css2.1/t0905-c414-flt-wrap-00-e-expected.txt:
+        * platform/mac/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt:
+        * platform/mac/css2.1/t100801-c544-valgn-00-a-ag-expected.txt:
+        * platform/mac/css2.1/t100801-c544-valgn-02-d-agi-expected.txt:
+        * platform/mac/css2.1/t100801-c544-valgn-03-d-agi-expected.txt:
+        * platform/mac/css2.1/t100801-c544-valgn-04-d-agi-expected.txt:
+        * platform/mac/css3/unicode-bidi-isolate-basic-expected.txt:
+        * platform/mac/editing/selection/caret-ltr-2-expected.txt:
+        * platform/mac/editing/selection/caret-ltr-2-left-expected.txt:
+        * platform/mac/editing/selection/caret-rtl-expected.txt:
+        * platform/mac/editing/selection/caret-rtl-right-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.txt:
+        * platform/mac/fast/block/float/026-expected.txt:
+        * platform/mac/fast/block/float/028-expected.txt:
+        * platform/mac/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.txt: Added.
+        * platform/mac/fast/css/empty-pseudo-class-expected.txt:
+        * platform/mac/fast/css/first-child-pseudo-class-expected.txt:
+        * platform/mac/fast/css/first-of-type-pseudo-class-expected.txt:
+        * platform/mac/fast/css/last-child-pseudo-class-expected.txt:
+        * platform/mac/fast/css/last-of-type-pseudo-class-expected.txt:
+        * platform/mac/fast/css/only-child-pseudo-class-expected.txt:
+        * platform/mac/fast/css/only-of-type-pseudo-class-expected.txt:
+        * platform/mac/fast/css/text-overflow-input-expected.txt:
+        * platform/mac/fast/forms/file/file-input-direction-expected.txt:
+        * platform/mac/fast/forms/input-text-scroll-left-on-blur-expected.txt:
+        * platform/mac/fast/forms/number/number-appearance-rtl-expected.txt:
+        * platform/mac/fast/forms/placeholder-position-expected.txt:
+        * platform/mac/fast/forms/search-rtl-expected.txt:
+        * platform/mac/fast/line-grid/line-align-left-edges-expected.txt:
+        * platform/mac/fast/lists/008-expected.txt:
+        * platform/mac/fast/lists/008-vertical-expected.txt:
+        * platform/mac/fast/multicol/column-count-with-rules-expected.txt:
+        * platform/mac/fast/multicol/float-multicol-expected.txt:
+        * platform/mac/fast/multicol/layers-in-multicol-expected.txt:
+        * platform/mac/fast/multicol/vertical-lr/float-multicol-expected.txt:
+        * platform/mac/fast/multicol/vertical-rl/float-multicol-expected.txt:
+        * platform/mac/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.txt:
+        * platform/mac/fast/regions/repaint/line-flow-with-floats-in-regions-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-1-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-10-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-2-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-3-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-4-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-5-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-6-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-7-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-8-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-9-expected.txt:
+        * platform/mac/fast/text/script-tests/ligature-subdivision.js:
+        * platform/mac/fast/text/vertical-rl-rtl-linebreak-expected.txt:
+        * platform/mac/fast/text/whitespace/024-expected.txt:
+        * platform/mac/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.txt:
+        * platform/mac/fast/text/word-break-run-rounding-expected.txt:
+        * platform/mac/svg/wicd/rightsizing-grid-expected.txt:
+
 2014-05-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening, try to unbreak Mac buildbots and EWS bots after r169023.

@@ -47,7 +47,7 @@ shouldBe('document.caretRangeFromPoint(x - 90, y).startOffset', '3');
 
 range.setStart(arabic.firstChild, 0);
 range.setEnd(arabic.firstChild, 2);
-var w = range.getBoundingClientRect().width;
+var w = Math.round(range.getBoundingClientRect().width);
 // Widths vary between Mac OS X Leopard, Snow Leopard, and current Mac OS X.
 shouldBeTrue('w === 66 || w === 65 || w === 61');
 

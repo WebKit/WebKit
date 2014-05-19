@@ -61,8 +61,8 @@ layer at (13,36) size 139x13
   RenderBlock {DIV} at (3,3) size 140x13
 layer at (21,59) size 139x13
   RenderBlock {DIV} at (11,3) size 140x13 [color=#A9A9A9]
-    RenderText {#text} at (76,0) size 63x13
-      text run at (76,0) width 63: "placeholder"
+    RenderText {#text} at (76,0) size 64x13
+      text run at (76,0) width 64: "placeholder"
 layer at (21,59) size 139x13
   RenderBlock {DIV} at (0,0) size 140x13
 layer at (35,82) size 139x13

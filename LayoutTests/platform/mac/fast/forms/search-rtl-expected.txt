@@ -43,20 +43,20 @@ layer at (0,0) size 800x600
           text run at (0,0) width 39: "PASS"
 layer at (35,47) size 139x13
   RenderBlock {DIV} at (0,0) size 140x13
-    RenderText {#text} at (4,0) size 135x13
-      text run at (4,0) width 24 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+    RenderText {#text} at (5,0) size 135x13
+      text run at (5,0) width 23 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
       text run at (27,0) width 19: "she"
       text run at (45,0) width 45 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
       text run at (89,0) width 14: "he"
-      text run at (102,0) width 37 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (102,0) width 38 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
 layer at (35,70) size 209x13
   RenderBlock {DIV} at (0,0) size 209x13
-    RenderText {#text} at (73,0) size 135x13
-      text run at (73,0) width 24 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+    RenderText {#text} at (74,0) size 135x13
+      text run at (74,0) width 23 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
       text run at (96,0) width 19: "she"
       text run at (114,0) width 45 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
       text run at (158,0) width 14: "he"
-      text run at (171,0) width 37 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (171,0) width 38 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
 layer at (35,93) size 139x13
   RenderBlock {DIV} at (0,0) size 140x13
 caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#document-fragment} of child 9 {INPUT} of child 3 {P} of body

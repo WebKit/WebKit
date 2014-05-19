@@ -84,7 +84,7 @@ layer at (0,0) size 785x1435
                   RenderSVGText {text} at (32,28) size 16x24 contains 1 chunk(s)
                     RenderSVGInlineText {#text} at (0,0) size 15x24
                       chunk 1 (middle anchor) text run 1 at (32.81,47.00) startOffset 0 endOffset 1 width 14.38: "K"
-            RenderBR {br} at (256,0) size 0x18
+            RenderBR {br} at (256,0) size 1x18
             RenderEmbeddedObject {object} at (0,256) size 257x192
               layer at (0,0) size 256x192
                 RenderView at (0,0) size 256x192
@@ -267,15 +267,15 @@ layer at (0,0) size 785x1435
                       chunk 1 (middle anchor) text run 1 at (8.91,27.00) startOffset 0 endOffset 1 width 12.19: "T"
         RenderBlock {p} at (0,119) size 769x595 [color=#FFFFFF]
           RenderBR {br} at (769,0) size 0x18
-          RenderText {#text} at (641,576) size 8x18
-            text run at (641,576) width 8: ".."
+          RenderText {#text} at (640,576) size 9x18
+            text run at (640,576) width 9: ".."
         RenderBlock {p} at (0,729) size 769x579
-          RenderText {#text} at (641,0) size 768x578
-            text run at (641,0) width 121: "Above, you should"
-            text run at (641,18) width 97: "see a grid of 17"
-            text run at (641,36) width 127: "SVG child elements"
-            text run at (641,54) width 115: "sticked together to"
-            text run at (641,72) width 120: "build one rectangle"
+          RenderText {#text} at (640,0) size 768x578
+            text run at (640,0) width 122: "Above, you should"
+            text run at (640,18) width 98: "see a grid of 17"
+            text run at (640,36) width 128: "SVG child elements"
+            text run at (640,54) width 116: "sticked together to"
+            text run at (640,72) width 121: "build one rectangle"
             text run at (0,542) width 33: "grid. "
             text run at (33,542) width 718: "You should be able to resize your browser window and the grid rendering should adjust to it. The outcome should"
             text run at (0,560) width 239: "look like in these sample screenshots: "

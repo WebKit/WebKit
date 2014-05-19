@@ -46,7 +46,7 @@ function elementRect(elementId)
 {
     var s = document.getElementById("container").getBoundingClientRect();
     var r = document.getElementById(elementId).getBoundingClientRect();
-    return {left: r.left - s.left, top: r.top - s.top, width: r.width, height: r.height};
+    return {left: Math.round(r.left) - Math.round(s.left), top: Math.round(r.top) - Math.round(s.top), width: Math.round(r.width), height: Math.round(r.height)};
 }
 
 test(function () {

@@ -157,16 +157,6 @@ public:
     {
         return logicalLeftOffsetForLine(position, logicalLeftOffsetForContent(position), shouldIndentText, logicalHeight);
     }
-    LayoutUnit pixelSnappedLogicalLeftOffsetForLine(LayoutUnit position, bool shouldIndentText, LayoutUnit logicalHeight = 0) const 
-    {
-        return roundToInt(logicalLeftOffsetForLine(position, shouldIndentText, logicalHeight));
-    }
-    LayoutUnit pixelSnappedLogicalRightOffsetForLine(LayoutUnit position, bool shouldIndentText, LayoutUnit logicalHeight = 0) const 
-    {
-        // FIXME: Now that we have a new multicolumn implementation, can this be fixed?
-        // https://bugs.webkit.org/show_bug.cgi?id=105461
-        return floorToInt(logicalRightOffsetForLine(position, shouldIndentText, logicalHeight));
-    }
     LayoutUnit startOffsetForLine(LayoutUnit position, bool shouldIndentText, LayoutUnit logicalHeight = 0) const
     {
         return style().isLeftToRightDirection() ? logicalLeftOffsetForLine(position, shouldIndentText, logicalHeight)

@@ -57,7 +57,7 @@ function elementRect(elementId)
 {
     var s = document.getElementById("container").getBoundingClientRect();
     var r = document.getElementById(elementId).getBoundingClientRect();
-    return {right: (r.left - s.left) + r.width, top: r.top - s.top, width: r.width, height: r.height};
+    return {right: (Math.round(r.left) - Math.round(s.left)) + Math.round(r.width), top: Math.round(r.top) - Math.round(s.top), width: Math.round(r.width), height: Math.round(r.height)};
 }
 
 // You'll find the equation for the X intercept of an elliptical arc here (among other places):
@@ -67,7 +67,7 @@ function marginEllipseRightXIntercept(y, cx, rx, ry)
 {
     var containerWidth = document.getElementById("container").getBoundingClientRect().width;
     var f = SubPixelLayout.snapToLayoutUnit(containerWidth - (cx + rx * Math.sqrt(1 - Math.pow((ry - y) / ry, 2))));
-    return String( Math.floor(f) );
+    return String( Math.round(f) );
 }
 
 // In the ".right" tests below, it's the lower edge of the 20px Ahem glyph that that defines the element rect's left edge. 

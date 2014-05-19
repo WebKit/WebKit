@@ -44,7 +44,7 @@ function elementRect(elementId)
 {
     var s = document.getElementById("container").getBoundingClientRect();
     var r = document.getElementById(elementId).getBoundingClientRect();
-    return {left: r.left - s.left, top: r.top - s.top, width: r.width, height: r.height};
+    return {left: Math.round(r.left) - Math.round(s.left), top: Math.round(r.top) - Math.round(s.top), width: Math.round(r.width), height: Math.round(r.height)};
 }
 
 // You'll find the equation for the X intercept of an elliptical arc here (among other places):
@@ -53,7 +53,7 @@ function elementRect(elementId)
 function cornerEllipseRightXIntercept(y, cx, rx, ry)
 {
     var f = SubPixelLayout.snapToLayoutUnit(cx + rx * Math.sqrt(1 - Math.pow((ry - y) / ry, 2)));
-    return String( Math.floor(f) );
+    return String( Math.round(f) );
 }
 
 var quiet = true; // PASS output depends on SubPixelLayout.isEnabled()
