@@ -3718,8 +3718,6 @@ private:
     
     void compileReturn()
     {
-        // FIXME: have a real epilogue when we switch to using our calling convention.
-        // https://bugs.webkit.org/show_bug.cgi?id=113621
         m_out.ret(lowJSValue(m_node->child1()));
     }
     

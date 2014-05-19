@@ -1,3 +1,11 @@
+2014-05-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, remove bogus comment. We already made the FTL use our calling convention.
+        That was a long time ago.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileReturn):
+
 2014-05-18  Rik Cabanier  <cabanier@adobe.com>
 
         support for navigator.hardwareConcurrency
