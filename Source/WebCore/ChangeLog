@@ -1,3 +1,14 @@
+2014-05-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Crash during scroll when latched
+        https://bugs.webkit.org/show_bug.cgi?id=133064
+
+        Reviewed by Simon Fraser.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::platformPrepareForWheelEvents): Prevent dereference of NULL
+        wheelEventTarget argument.
+
 2014-05-18  Svetlana Redchenko  <redchenko@yandex-team.ru>
 
         Input ::selection pseudo class does not work leading to hidden selection
