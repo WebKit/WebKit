@@ -1,3 +1,14 @@
+2014-05-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Images missing sometimes with composited clipping layers
+        https://bugs.webkit.org/show_bug.cgi?id=133065
+        <rdar://problem/15224559>
+
+        Reviewed by Beth Dakin.
+
+        * compositing/backing/solid-color-with-paints-into-ancestor-expected.html: Added.
+        * compositing/backing/solid-color-with-paints-into-ancestor.html: Added.
+
 2014-05-19  Jono Wells  <jonowells@apple.com>
 
         Script include paths for js-test-pre.js and js-test-post.js were incorrect.

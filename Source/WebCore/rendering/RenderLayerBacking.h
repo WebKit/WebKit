@@ -75,8 +75,13 @@ public:
     
     // Returns true if layer configuration changed.
     bool updateConfiguration();
+
     // Update graphics layer position and bounds.
-    void updateGeometry(); // make private
+    void updateGeometry();
+
+    // Update state the requires that descendant layers have been updated.
+    void updateAfterDescendents();
+
     // Update contents and clipping structure.
     void updateDrawsContent();
     
@@ -282,7 +287,7 @@ private:
 
     void resetContentsRect();
 
-    bool hasVisibleNonCompositingDescendantLayers() const;
+    bool isPaintDestinationForDescendentLayers() const;
 
     bool shouldClipCompositedBounds() const;
 

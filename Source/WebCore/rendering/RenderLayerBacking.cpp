@@ -670,14 +670,7 @@ void RenderLayerBacking::updateGeometry()
     updateBlendMode(style);
 #endif
 
-    bool isSimpleContainer = isSimpleContainerCompositingLayer();
-    
     m_owningLayer.updateDescendantDependentFlags();
-
-    // m_graphicsLayer is the corresponding GraphicsLayer for this RenderLayer and its non-compositing
-    // descendants. So, the visibility flag for m_graphicsLayer should be true if there are any
-    // non-compositing visible layers.
-    m_graphicsLayer->setContentsVisible(m_owningLayer.hasVisibleContent() || hasVisibleNonCompositingDescendantLayers());
 
     // FIXME: reflections should force transform-style to be flat in the style: https://bugs.webkit.org/show_bug.cgi?id=106959
     bool preserves3D = style.transformStyle3D() == TransformStyle3DPreserve3D && !renderer().hasReflection();
@@ -972,15 +965,22 @@ void RenderLayerBacking::updateGeometry()
     // If this layer was created just for clipping or to apply perspective, it doesn't need its own backing store.
     setRequiresOwnBackingStore(compositor().requiresOwnBackingStore(m_owningLayer, compAncestor, enclosingRelativeCompositingBounds, ancestorCompositingBounds));
 
+    updateAfterWidgetResize();
+
+    compositor().updateScrollCoordinatedStatus(m_owningLayer);
+}
+
+void RenderLayerBacking::updateAfterDescendents()
+{
     bool didUpdateContentsRect = false;
+    bool isSimpleContainer = isSimpleContainerCompositingLayer();
     updateDirectlyCompositedContents(isSimpleContainer, didUpdateContentsRect);
     if (!didUpdateContentsRect && m_graphicsLayer->usesContentsLayer())
         resetContentsRect();
 
     updateDrawsContent(isSimpleContainer);
-    updateAfterWidgetResize();
 
-    compositor().updateScrollCoordinatedStatus(m_owningLayer);
+    m_graphicsLayer->setContentsVisible(m_owningLayer.hasVisibleContent() || isPaintDestinationForDescendentLayers());
 }
 
 void RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread(LayoutRect& ancestorCompositingBounds, const RenderLayer* compositingAncestor) const
@@ -1680,7 +1680,7 @@ bool RenderLayerBacking::paintsChildren() const
     if (m_owningLayer.hasVisibleContent() && m_owningLayer.hasNonEmptyChildRenderers())
         return true;
 
-    if (hasVisibleNonCompositingDescendantLayers())
+    if (isPaintDestinationForDescendentLayers())
         return true;
 
     return false;
@@ -1744,7 +1744,12 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
     return true;
 }
 
-static bool hasVisibleNonCompositingDescendant(RenderLayer& parent)
+static bool compositedWithOwnBackingStore(const RenderLayer* layer)
+{
+    return layer->isComposited() && !layer->backing()->paintsIntoCompositedAncestor();
+}
+
+static bool descendentLayerPaintsIntoAncestor(RenderLayer& parent)
 {
     // FIXME: We shouldn't be called with a stale z-order lists. See bug 85512.
     parent.updateLayerListsIfNeeded();
@@ -1757,8 +1762,8 @@ static bool hasVisibleNonCompositingDescendant(RenderLayer& parent)
         size_t listSize = normalFlowList->size();
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = normalFlowList->at(i);
-            if (!curLayer->isComposited()
-                && (curLayer->hasVisibleContent() || hasVisibleNonCompositingDescendant(*curLayer)))
+            if (!compositedWithOwnBackingStore(curLayer)
+                && (curLayer->hasVisibleContent() || descendentLayerPaintsIntoAncestor(*curLayer)))
                 return true;
         }
     }
@@ -1772,8 +1777,8 @@ static bool hasVisibleNonCompositingDescendant(RenderLayer& parent)
             size_t listSize = negZOrderList->size();
             for (size_t i = 0; i < listSize; ++i) {
                 RenderLayer* curLayer = negZOrderList->at(i);
-                if (!curLayer->isComposited()
-                    && (curLayer->hasVisibleContent() || hasVisibleNonCompositingDescendant(*curLayer)))
+                if (!compositedWithOwnBackingStore(curLayer)
+                    && (curLayer->hasVisibleContent() || descendentLayerPaintsIntoAncestor(*curLayer)))
                     return true;
             }
         }
@@ -1782,8 +1787,8 @@ static bool hasVisibleNonCompositingDescendant(RenderLayer& parent)
             size_t listSize = posZOrderList->size();
             for (size_t i = 0; i < listSize; ++i) {
                 RenderLayer* curLayer = posZOrderList->at(i);
-                if (!curLayer->isComposited()
-                    && (curLayer->hasVisibleContent() || hasVisibleNonCompositingDescendant(*curLayer)))
+                if (!compositedWithOwnBackingStore(curLayer)
+                    && (curLayer->hasVisibleContent() || descendentLayerPaintsIntoAncestor(*curLayer)))
                     return true;
             }
         }
@@ -1793,9 +1798,9 @@ static bool hasVisibleNonCompositingDescendant(RenderLayer& parent)
 }
 
 // Conservative test for having no rendered children.
-bool RenderLayerBacking::hasVisibleNonCompositingDescendantLayers() const
+bool RenderLayerBacking::isPaintDestinationForDescendentLayers() const
 {
-    return hasVisibleNonCompositingDescendant(m_owningLayer);
+    return descendentLayerPaintsIntoAncestor(m_owningLayer);
 }
 
 bool RenderLayerBacking::containsPaintedContent(bool isSimpleContainer) const

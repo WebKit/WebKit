@@ -1,3 +1,41 @@
+2014-05-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Images missing sometimes with composited clipping layers
+        https://bugs.webkit.org/show_bug.cgi?id=133065
+        <rdar://problem/15224559>
+
+        Reviewed by Beth Dakin.
+        
+        When support for solid colors on layers was added, a layer was considered a candidate
+        for the solid color optimization without regard to whether it had descendent layers
+        with "paintsIntoCompositedAncestor" requirements.
+        
+        Fix hasVisibleNonCompositingDescendantLayers(), renaming it to isPaintDestinationForDescendentLayers()
+        and having it take into account whether descendent layers need to paint into an
+        ancestor.
+        
+        Also, this test has to happen after those descendent layers have had their
+        compositing state updated, so move the isSimpleContainerCompositingLayer() to
+        a new updateAfterDescendents() function which is called from the various
+        places we do compositing-udpate-tree-walks.
+
+        Test: compositing/backing/solid-color-with-paints-into-ancestor.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::updateAfterDescendents):
+        (WebCore::RenderLayerBacking::paintsChildren):
+        (WebCore::compositedWithOwnBackingStore):
+        (WebCore::descendentLayerPaintsIntoAncestor):
+        (WebCore::RenderLayerBacking::isPaintDestinationForDescendentLayers):
+        (WebCore::hasVisibleNonCompositingDescendant): Deleted.
+        (WebCore::RenderLayerBacking::hasVisibleNonCompositingDescendantLayers): Deleted.
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::updateLayerTreeGeometry):
+        (WebCore::RenderLayerCompositor::updateCompositingDescendantGeometry):
+
 2014-05-19  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r133351, sub-pixel layout): Right-to-left block with text-overflow: ellipsis truncates prematurely (breaks facebook.com Hebrew UI)
