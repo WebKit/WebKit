@@ -1,3 +1,12 @@
+2014-05-19  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Fix a typo in plug-in sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=133074
+
+        Reviewed by Anders Carlsson.
+
+        * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb:
+
 2014-05-16  Andy Estes  <aestes@apple.com>
 
         [WebKit2] Wake up threads blocked in waitForAndDispatchImmediately() if we lose our connection

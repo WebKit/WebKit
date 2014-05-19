@@ -315,7 +315,7 @@
         (literal "/private/etc/cups/client.conf")
         (literal "/private/etc/cups/lpoptions")
         (subpath "/private/etc/cups/ppd")
-        (subpath "/private/var/run/cupsd"))
+        (literal "/private/var/run/cupsd"))
     (shared-preferences-read "org.cups.PrintingPrefs"))
 
 ;; Text Services Manager
