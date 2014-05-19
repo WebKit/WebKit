@@ -3664,13 +3664,14 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Scr
             scrolledContentsLayer = m_rootContentLayer.get();
             counterScrollingLayer = fixedRootBackgroundLayer();
             insetClipLayer = clipLayer();
-            scrollingCoordinator->updateScrollingNode(nodeID, scrollingLayer, scrolledContentsLayer, counterScrollingLayer, insetClipLayer);
+            scrollingCoordinator->updateFrameScrollingNode(nodeID, scrollingLayer, counterScrollingLayer, insetClipLayer);
         } else {
             ScrollingCoordinator::ScrollingGeometry scrollingGeometry;
             scrollingGeometry.scrollOrigin = layer.scrollOrigin();
             scrollingGeometry.scrollPosition = layer.scrollPosition();
+            scrollingGeometry.scrollableAreaSize = layer.visibleSize();
             scrollingGeometry.contentSize = layer.contentsSize();
-            scrollingCoordinator->updateScrollingNode(nodeID, scrollingLayer, scrolledContentsLayer, counterScrollingLayer, insetClipLayer, &scrollingGeometry);
+            scrollingCoordinator->updateOverflowScrollingNode(nodeID, scrollingLayer, scrolledContentsLayer, &scrollingGeometry);
         }
     }
 }

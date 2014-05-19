@@ -23,27 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingTreeScrollingNodeMac_h
-#define ScrollingTreeScrollingNodeMac_h
+#ifndef ScrollingTreeFrameScrollingNodeMac_h
+#define ScrollingTreeFrameScrollingNodeMac_h
 
-#if ENABLE(ASYNC_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
 #include "ScrollElasticityController.h"
 #include "ScrollbarThemeMac.h"
-#include "ScrollingTreeScrollingNode.h"
+#include "ScrollingTreeFrameScrollingNode.h"
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS CALayer;
 
 namespace WebCore {
 
-class ScrollingTreeScrollingNodeMac : public ScrollingTreeScrollingNode, private ScrollElasticityControllerClient {
+class ScrollingTreeFrameScrollingNodeMac : public ScrollingTreeFrameScrollingNode, private ScrollElasticityControllerClient {
 public:
-    static PassOwnPtr<ScrollingTreeScrollingNode> create(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
-    virtual ~ScrollingTreeScrollingNodeMac();
+    static PassOwnPtr<ScrollingTreeFrameScrollingNode> create(ScrollingTree&, ScrollingNodeID);
+    virtual ~ScrollingTreeFrameScrollingNodeMac();
 
 private:
-    ScrollingTreeScrollingNodeMac(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
+    ScrollingTreeFrameScrollingNodeMac(ScrollingTree&, ScrollingNodeID);
 
     // ScrollingTreeNode member functions.
     virtual void updateBeforeChildren(const ScrollingStateNode&) override;
@@ -71,10 +71,10 @@ private:
 
     virtual void updateLayersAfterViewportChange(const FloatRect& viewportRect, double scale) override;
 
-    void setScrollLayerPosition(const FloatPoint&);
+    virtual void setScrollLayerPosition(const FloatPoint&) override;
 
-    FloatPoint minimumScrollPosition() const;
-    FloatPoint maximumScrollPosition() const;
+    virtual FloatPoint minimumScrollPosition() const override;
+    virtual FloatPoint maximumScrollPosition() const override;
 
     void scrollBy(const IntSize&);
     void scrollByWithoutContentEdgeConstraints(const IntSize&);
@@ -101,6 +101,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING)
+#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
-#endif // ScrollingTreeScrollingNodeMac_h
+#endif // ScrollingTreeFrameScrollingNodeMac_h

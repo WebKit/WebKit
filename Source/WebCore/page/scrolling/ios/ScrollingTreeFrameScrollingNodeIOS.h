@@ -23,32 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingTreeScrollingNodeIOS_h
-#define ScrollingTreeScrollingNodeIOS_h
+#ifndef ScrollingTreeFrameScrollingNodeIOS_h
+#define ScrollingTreeFrameScrollingNodeIOS_h
 
-#if ENABLE(ASYNC_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS)
 
-#include "ScrollingTreeScrollingNode.h"
+#include "ScrollingTreeFrameScrollingNode.h"
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS CALayer;
 
 namespace WebCore {
 
-class ScrollingTreeScrollingNodeIOS : public ScrollingTreeScrollingNode {
+class ScrollingTreeFrameScrollingNodeIOS : public ScrollingTreeFrameScrollingNode {
 public:
-    static PassOwnPtr<ScrollingTreeScrollingNode> create(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
-    virtual ~ScrollingTreeScrollingNodeIOS();
+    static PassOwnPtr<ScrollingTreeFrameScrollingNodeIOS> create(ScrollingTree&, ScrollingNodeID);
+    virtual ~ScrollingTreeFrameScrollingNodeIOS();
 
 protected:
-    ScrollingTreeScrollingNodeIOS(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
+    ScrollingTreeFrameScrollingNodeIOS(ScrollingTree&, ScrollingNodeID);
 
     // ScrollingTreeNode member functions.
     virtual void updateBeforeChildren(const ScrollingStateNode&) override;
     virtual void updateAfterChildren(const ScrollingStateNode&) override;
     virtual void handleWheelEvent(const PlatformWheelEvent&) override { }
-
-    CALayer *scrollLayer() const { return m_scrollLayer.get(); }
 
     FloatPoint scrollPosition() const;
     virtual void setScrollPosition(const FloatPoint&) override;
@@ -57,7 +55,7 @@ protected:
     virtual void updateLayersAfterViewportChange(const FloatRect& viewportRect, double scale);
     virtual void updateLayersAfterDelegatedScroll(const FloatPoint&) override;
 
-    void setScrollLayerPosition(const FloatPoint&);
+    virtual void setScrollLayerPosition(const FloatPoint&) override;
 
     FloatPoint minimumScrollPosition() const;
     FloatPoint maximumScrollPosition() const;
@@ -67,9 +65,9 @@ protected:
 
 private:
     void updateChildNodesAfterScroll(const FloatPoint&);
+    CALayer *scrollLayer() const { return m_scrollLayer.get(); }
 
     RetainPtr<CALayer> m_scrollLayer;
-    RetainPtr<CALayer> m_scrolledContentsLayer;
     RetainPtr<CALayer> m_counterScrollingLayer;
     RetainPtr<CALayer> m_headerLayer;
     RetainPtr<CALayer> m_footerLayer;
@@ -78,6 +76,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING)
+#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS)
 
-#endif // ScrollingTreeScrollingNodeIOS_h
+#endif // ScrollingTreeFrameScrollingNodeIOS_h

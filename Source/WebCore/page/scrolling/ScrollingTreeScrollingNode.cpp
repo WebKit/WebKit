@@ -35,12 +35,6 @@ namespace WebCore {
 
 ScrollingTreeScrollingNode::ScrollingTreeScrollingNode(ScrollingTree& scrollingTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
     : ScrollingTreeNode(scrollingTree, nodeType, nodeID)
-    , m_frameScaleFactor(1)
-    , m_headerHeight(0)
-    , m_footerHeight(0)
-    , m_synchronousScrollingReasons(0)
-    , m_behaviorForFixed(StickToDocumentBounds)
-    , m_topContentInset(0)
 {
 }
 
@@ -52,14 +46,15 @@ void ScrollingTreeScrollingNode::updateBeforeChildren(const ScrollingStateNode& 
 {
     const ScrollingStateScrollingNode& state = toScrollingStateScrollingNode(stateNode);
 
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::ViewportSize))
-        m_viewportSize = state.viewportSize();
+    if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrollableAreaSize))
+        m_scrollableAreaSize = state.scrollableAreaSize();
 
     if (state.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize)) {
         if (scrollingTree().isRubberBandInProgress())
             m_totalContentsSizeForRubberBand = m_totalContentsSize;
         else
             m_totalContentsSizeForRubberBand = state.totalContentsSize();
+
         m_totalContentsSize = state.totalContentsSize();
     }
 
@@ -71,24 +66,6 @@ void ScrollingTreeScrollingNode::updateBeforeChildren(const ScrollingStateNode& 
 
     if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrollableAreaParams))
         m_scrollableAreaParameters = state.scrollableAreaParameters();
-
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::FrameScaleFactor))
-        m_frameScaleFactor = state.frameScaleFactor();
-
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::ReasonsForSynchronousScrolling))
-        m_synchronousScrollingReasons = state.synchronousScrollingReasons();
-
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::HeaderHeight))
-        m_headerHeight = state.headerHeight();
-
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::FooterHeight))
-        m_footerHeight = state.footerHeight();
-
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::BehaviorForFixedElements))
-        m_behaviorForFixed = state.scrollBehaviorForFixedElements();
-
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::TopContentInset))
-        m_topContentInset = state.topContentInset();
 }
 
 void ScrollingTreeScrollingNode::updateAfterChildren(const ScrollingStateNode& stateNode)
@@ -97,6 +74,33 @@ void ScrollingTreeScrollingNode::updateAfterChildren(const ScrollingStateNode& s
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition))
         scrollingTree().scrollingTreeNodeRequestsScroll(scrollingNodeID(), scrollingStateNode.requestedScrollPosition(), scrollingStateNode.requestedScrollPositionRepresentsProgrammaticScroll());
 }
+
+void ScrollingTreeScrollingNode::setScrollPosition(const FloatPoint& scrollPosition)
+{
+    FloatPoint newScrollPosition = scrollPosition;
+    newScrollPosition = newScrollPosition.shrunkTo(maximumScrollPosition());
+    newScrollPosition = newScrollPosition.expandedTo(minimumScrollPosition());
+
+    setScrollPositionWithoutContentEdgeConstraints(newScrollPosition);
+}
+
+void ScrollingTreeScrollingNode::setScrollPositionWithoutContentEdgeConstraints(const FloatPoint& scrollPosition)
+{
+    setScrollLayerPosition(scrollPosition);
+    scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition);
+}
+
+FloatPoint ScrollingTreeScrollingNode::minimumScrollPosition() const
+{
+    return FloatPoint();
+}
+
+FloatPoint ScrollingTreeScrollingNode::maximumScrollPosition() const
+{
+    FloatPoint contentSizePoint(totalContentsSize());
+    return FloatPoint(contentSizePoint - scrollableAreaSize()).expandedTo(FloatPoint());
+}
+
 
 } // namespace WebCore
 

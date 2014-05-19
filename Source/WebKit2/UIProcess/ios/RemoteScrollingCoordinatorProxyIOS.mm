@@ -31,6 +31,8 @@
 
 #include "LayerRepresentation.h"
 #include "RemoteLayerTreeHost.h"
+#include <WebCore/ScrollingStateFrameScrollingNode.h>
+#include <WebCore/ScrollingStateOverflowScrollingNode.h>
 #include <WebCore/ScrollingStateTree.h>
 #include <UIKit/UIView.h>
 
@@ -47,24 +49,30 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
 {
     for (auto& currNode : stateTree.nodeMap().values()) {
         switch (currNode->nodeType()) {
-        case FrameScrollingNode:
         case OverflowScrollingNode: {
-            ScrollingStateScrollingNode* scrollingStateNode = toScrollingStateScrollingNode(currNode);
+            ScrollingStateOverflowScrollingNode* scrollingStateNode = toScrollingStateOverflowScrollingNode(currNode);
+            
+            if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
+                scrollingStateNode->setLayer(layerRepresentationFromLayerOrView(layerTreeHost.getLayer(scrollingStateNode->layer())));
+            
+            if (scrollingStateNode->hasChangedProperty(ScrollingStateOverflowScrollingNode::ScrolledContentsLayer))
+                scrollingStateNode->setScrolledContentsLayer(layerRepresentationFromLayerOrView(layerTreeHost.getLayer(scrollingStateNode->scrolledContentsLayer())));
+            break;
+        };
+        case FrameScrollingNode: {
+            ScrollingStateFrameScrollingNode* scrollingStateNode = toScrollingStateFrameScrollingNode(currNode);
             
             if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
                 scrollingStateNode->setLayer(layerRepresentationFromLayerOrView(layerTreeHost.getLayer(scrollingStateNode->layer())));
 
-            if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
-                scrollingStateNode->setScrolledContentsLayer(layerRepresentationFromLayerOrView(layerTreeHost.getLayer(scrollingStateNode->scrolledContentsLayer())));
-
-            if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::CounterScrollingLayer))
+            if (scrollingStateNode->hasChangedProperty(ScrollingStateFrameScrollingNode::CounterScrollingLayer))
                 scrollingStateNode->setCounterScrollingLayer(layerRepresentationFromLayerOrView(layerTreeHost.getLayer(scrollingStateNode->counterScrollingLayer())));
 
             // FIXME: we should never have header and footer layers coming from the WebProcess.
-            if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::HeaderLayer))
+            if (scrollingStateNode->hasChangedProperty(ScrollingStateFrameScrollingNode::HeaderLayer))
                 scrollingStateNode->setHeaderLayer(layerRepresentationFromLayerOrView(layerTreeHost.getLayer(scrollingStateNode->headerLayer())));
 
-            if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::FooterLayer))
+            if (scrollingStateNode->hasChangedProperty(ScrollingStateFrameScrollingNode::FooterLayer))
                 scrollingStateNode->setFooterLayer(layerRepresentationFromLayerOrView(layerTreeHost.getLayer(scrollingStateNode->footerLayer())));
             break;
         }

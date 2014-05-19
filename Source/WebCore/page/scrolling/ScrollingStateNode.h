@@ -90,6 +90,11 @@ public:
         ASSERT(m_representation == PlatformLayerRepresentation);
         return m_platformLayer;
     }
+    
+    GraphicsLayer::PlatformLayerID layerID() const
+    {
+        return m_layerID;
+    }
 
     operator GraphicsLayer::PlatformLayerID() const
     {
@@ -156,6 +161,8 @@ public:
     bool isFixedNode() const { return m_nodeType == FixedNode; }
     bool isStickyNode() const { return m_nodeType == StickyNode; }
     bool isScrollingNode() const { return m_nodeType == FrameScrollingNode || m_nodeType == OverflowScrollingNode; }
+    bool isFrameScrollingNode() const { return m_nodeType == FrameScrollingNode; }
+    bool isOverflowScrollingNode() const { return m_nodeType == OverflowScrollingNode; }
 
     virtual PassOwnPtr<ScrollingStateNode> clone(ScrollingStateTree& adoptiveTree) = 0;
     PassOwnPtr<ScrollingStateNode> cloneAndReset(ScrollingStateTree& adoptiveTree);

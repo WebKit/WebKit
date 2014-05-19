@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,35 +24,22 @@
  */
 
 #include "config.h"
-#include "ScrollingStateScrollingNode.h"
-
-#include "GraphicsLayer.h"
-#include "Scrollbar.h"
-#include "ScrollbarThemeMac.h"
-#include "ScrollingStateTree.h"
+#include "ScrollingTreeOverflowScrollingNode.h"
 
 #if ENABLE(ASYNC_SCROLLING)
 
+#include "ScrollingStateTree.h"
+#include "ScrollingTree.h"
+
 namespace WebCore {
-void ScrollingStateScrollingNode::setScrollbarPaintersFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar)
+
+ScrollingTreeOverflowScrollingNode::ScrollingTreeOverflowScrollingNode(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
+    : ScrollingTreeScrollingNode(scrollingTree, OverflowScrollingNode, nodeID)
 {
-    ScrollbarTheme* scrollbarTheme = ScrollbarTheme::theme();
-    if (scrollbarTheme->isMockTheme())
-        return;
-    ScrollbarThemeMac* macTheme = static_cast<ScrollbarThemeMac*>(scrollbarTheme);
+}
 
-    ScrollbarPainter verticalPainter = verticalScrollbar && verticalScrollbar->supportsUpdateOnSecondaryThread()
-        ? macTheme->painterForScrollbar(verticalScrollbar) : 0;
-    ScrollbarPainter horizontalPainter = horizontalScrollbar && horizontalScrollbar->supportsUpdateOnSecondaryThread()
-        ? macTheme->painterForScrollbar(horizontalScrollbar) : 0;
-
-    if (m_verticalScrollbarPainter == verticalPainter && m_horizontalScrollbarPainter == horizontalPainter)
-        return;
-
-    m_verticalScrollbarPainter = verticalPainter;
-    m_horizontalScrollbarPainter = horizontalPainter;
-
-    setPropertyChanged(PainterForScrollbar);
+ScrollingTreeOverflowScrollingNode::~ScrollingTreeOverflowScrollingNode()
+{
 }
 
 } // namespace WebCore

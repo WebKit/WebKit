@@ -29,8 +29,9 @@
 #if PLATFORM(IOS)
 #if ENABLE(ASYNC_SCROLLING)
 
+#import <QuartzCore/QuartzCore.h>
 #import <WebCore/BlockExceptions.h>
-#import <WebCore/ScrollingStateScrollingNode.h>
+#import <WebCore/ScrollingStateOverflowScrollingNode.h>
 #import <WebCore/ScrollingTree.h>
 #import <UIKit/UIScrollView.h>
 
@@ -92,7 +93,7 @@ PassOwnPtr<ScrollingTreeOverflowScrollingNodeIOS> ScrollingTreeOverflowScrolling
 }
 
 ScrollingTreeOverflowScrollingNodeIOS::ScrollingTreeOverflowScrollingNodeIOS(WebCore::ScrollingTree& scrollingTree, WebCore::ScrollingNodeID nodeID)
-    : ScrollingTreeScrollingNodeIOS(scrollingTree, OverflowScrollingNode, nodeID)
+    : ScrollingTreeOverflowScrollingNode(scrollingTree, nodeID)
 {
 }
 
@@ -117,14 +118,21 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateBeforeChildren(const WebCore::
         END_BLOCK_OBJC_EXCEPTIONS
     }
 
-    ScrollingTreeScrollingNodeIOS::updateBeforeChildren(stateNode);
+    ScrollingTreeOverflowScrollingNode::updateBeforeChildren(stateNode);
+
+    const auto& scrollingStateNode = toScrollingStateOverflowScrollingNode(stateNode);
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
+        m_scrollLayer = scrollingStateNode.layer();
+
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateOverflowScrollingNode::ScrolledContentsLayer))
+        m_scrolledContentsLayer = scrollingStateNode.scrolledContentsLayer();
 }
 
 void ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingTreeScrollingNodeIOS::updateAfterChildren(stateNode);
+    ScrollingTreeOverflowScrollingNode::updateAfterChildren(stateNode);
 
-    const auto& scrollingStateNode = toScrollingStateScrollingNode(stateNode);
+    const auto& scrollingStateNode = toScrollingStateOverflowScrollingNode(stateNode);
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollLayer)
         || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize)
@@ -148,6 +156,21 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren(const ScrollingS
 
         END_BLOCK_OBJC_EXCEPTIONS
     }
+}
+
+void ScrollingTreeOverflowScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& scrollPosition)
+{
+    [m_scrollLayer setPosition:CGPointMake(-scrollPosition.x() + scrollOrigin().x(), -scrollPosition.y() + scrollOrigin().y())];
+
+    updateChildNodesAfterScroll(scrollPosition);
+}
+
+void ScrollingTreeOverflowScrollingNodeIOS::updateChildNodesAfterScroll(const FloatPoint&)
+{
+    if (!m_children)
+        return;
+
+    // FIXME: this needs to adjust child fixed/sticky nodes.
 }
 
 void ScrollingTreeOverflowScrollingNodeIOS::scrollViewDidScroll(const FloatPoint& scrollPosition, bool inUserInteration)

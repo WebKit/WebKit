@@ -38,6 +38,8 @@
 #include "RemoteScrollingTree.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include <WebCore/ScrollingStateFrameScrollingNode.h>
+#include <WebCore/ScrollingStateOverflowScrollingNode.h>
 #include <WebCore/ScrollingStateTree.h>
 #include <WebCore/ScrollingTreeScrollingNode.h>
 
@@ -94,45 +96,44 @@ void RemoteScrollingCoordinatorProxy::updateScrollingTree(const RemoteScrollingC
 void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost, bool& fixedOrStickyLayerChanged)
 {
     for (auto& currNode : stateTree.nodeMap().values()) {
+        if (currNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
+            currNode->setLayer(layerTreeHost.getLayer(currNode->layer()));
+
         switch (currNode->nodeType()) {
-        case FrameScrollingNode:
-        case OverflowScrollingNode: {
-            ScrollingStateScrollingNode* scrollingStateNode = toScrollingStateScrollingNode(currNode);
+        case FrameScrollingNode: {
+            ScrollingStateFrameScrollingNode* scrollingStateNode = toScrollingStateFrameScrollingNode(currNode);
             
-            if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
-                scrollingStateNode->setLayer(layerTreeHost.getLayer(scrollingStateNode->layer()));
-
-            if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
-                scrollingStateNode->setScrolledContentsLayer(layerTreeHost.getLayer(scrollingStateNode->scrolledContentsLayer()));
-
-            if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::CounterScrollingLayer))
+            if (scrollingStateNode->hasChangedProperty(ScrollingStateFrameScrollingNode::CounterScrollingLayer))
                 scrollingStateNode->setCounterScrollingLayer(layerTreeHost.getLayer(scrollingStateNode->counterScrollingLayer()));
 
-            if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::InsetClipLayer))
+            if (scrollingStateNode->hasChangedProperty(ScrollingStateFrameScrollingNode::InsetClipLayer))
                 scrollingStateNode->setInsetClipLayer(layerTreeHost.getLayer(scrollingStateNode->insetClipLayer()));
 
-            if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::ContentShadowLayer))
+            if (scrollingStateNode->hasChangedProperty(ScrollingStateFrameScrollingNode::ContentShadowLayer))
                 scrollingStateNode->setContentShadowLayer(layerTreeHost.getLayer(scrollingStateNode->contentShadowLayer()));
 
             // FIXME: we should never have header and footer layers coming from the WebProcess.
-            if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::HeaderLayer))
+            if (scrollingStateNode->hasChangedProperty(ScrollingStateFrameScrollingNode::HeaderLayer))
                 scrollingStateNode->setHeaderLayer(layerTreeHost.getLayer(scrollingStateNode->headerLayer()));
 
-            if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::FooterLayer))
+            if (scrollingStateNode->hasChangedProperty(ScrollingStateFrameScrollingNode::FooterLayer))
                 scrollingStateNode->setFooterLayer(layerTreeHost.getLayer(scrollingStateNode->footerLayer()));
             break;
         }
+        case OverflowScrollingNode: {
+            ScrollingStateOverflowScrollingNode* scrollingStateNode = toScrollingStateOverflowScrollingNode(currNode);
+
+            if (scrollingStateNode->hasChangedProperty(ScrollingStateOverflowScrollingNode::ScrolledContentsLayer))
+                scrollingStateNode->setScrolledContentsLayer(layerTreeHost.getLayer(scrollingStateNode->scrolledContentsLayer()));
+            break;
+        }
         case FixedNode:
-            if (currNode->hasChangedProperty(ScrollingStateNode::ScrollLayer)) {
-                currNode->setLayer(layerTreeHost.getLayer(currNode->layer()));
+            if (currNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
                 fixedOrStickyLayerChanged = true;
-            }
             break;
         case StickyNode:
-            if (currNode->hasChangedProperty(ScrollingStateNode::ScrollLayer)) {
-                currNode->setLayer(layerTreeHost.getLayer(currNode->layer()));
+            if (currNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
                 fixedOrStickyLayerChanged = true;
-            }
             break;
         }
     }

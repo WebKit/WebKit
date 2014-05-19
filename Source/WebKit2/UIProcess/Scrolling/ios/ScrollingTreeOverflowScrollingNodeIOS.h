@@ -26,35 +26,45 @@
 #ifndef ScrollingTreeOverflowScrollingNodeIOS_h
 #define ScrollingTreeOverflowScrollingNodeIOS_h
 
-#if PLATFORM(IOS)
-#if ENABLE(ASYNC_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS)
 
 #include <WebCore/ScrollingCoordinator.h>
-#include <WebCore/ScrollingTreeScrollingNodeIOS.h>
+#include <WebCore/ScrollingTreeOverflowScrollingNode.h>
 
 OBJC_CLASS WKOverflowScrollViewDelegate;
 
 namespace WebKit {
 
-class ScrollingTreeOverflowScrollingNodeIOS : public WebCore::ScrollingTreeScrollingNodeIOS {
+class ScrollingTreeOverflowScrollingNodeIOS : public WebCore::ScrollingTreeOverflowScrollingNode {
 public:
     static PassOwnPtr<ScrollingTreeOverflowScrollingNodeIOS> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
     virtual ~ScrollingTreeOverflowScrollingNodeIOS();
 
     void scrollViewDidScroll(const WebCore::FloatPoint&, bool inUserInteration);
+    
+    CALayer *scrollLayer() const { return m_scrollLayer.get(); }
 
 private:
     ScrollingTreeOverflowScrollingNodeIOS(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
 
     virtual void updateBeforeChildren(const WebCore::ScrollingStateNode&) override;
     virtual void updateAfterChildren(const WebCore::ScrollingStateNode&) override;
+    
+    virtual void setScrollLayerPosition(const WebCore::FloatPoint&) override;
+
+    virtual void updateLayersAfterViewportChange(const WebCore::FloatRect& viewportRect, double scale) { }
+    virtual void handleWheelEvent(const WebCore::PlatformWheelEvent&) override { }
+
+    void updateChildNodesAfterScroll(const WebCore::FloatPoint&);
+    
+    RetainPtr<CALayer> m_scrollLayer;
+    RetainPtr<CALayer> m_scrolledContentsLayer;
 
     RetainPtr<WKOverflowScrollViewDelegate> m_scrollViewDelegate;
 };
 
 } // namespace WebKit
 
-#endif // ENABLE(ASYNC_SCROLLING)
-#endif // PLATFORM(IOS)
+#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS)
 
 #endif // ScrollingTreeOverflowScrollingNodeIOS_h

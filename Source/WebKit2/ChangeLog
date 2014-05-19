@@ -1,3 +1,45 @@
+2014-05-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Split scrolling tree ScrollingNodes into FrameScrollingNodes and OverflowScrollingNodes
+        https://bugs.webkit.org/show_bug.cgi?id=133022
+
+        Reviewed by Sam Weinig.
+        
+        In both the scrolling state tree and the scrolling tree, split the "scrolling nodes"
+        into FrameScrolling and OverflowScrolling nodes.
+        
+        Move what was the "viewportSize" property onto the base class for the scrolling
+        nodes, calling it "scrollableAreaSize".
+        
+        Make minimum/maximumScrollPosition() virtual so we can share more code (and there
+        is more code sharing to be done in future).
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateOverflowScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateScrollingNode>::decode):
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::decode):
+        (ArgumentCoder<ScrollingStateOverflowScrollingNode>::decode):
+        (WebKit::encodeNodeAndDescendants):
+        (WebKit::RemoteScrollingCoordinatorTransaction::decode):
+        (WebKit::RemoteScrollingTreeTextStream::dump):
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * UIProcess/Scrolling/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::createNode):
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::scrollLayer):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateLayersAfterViewportChange):
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::ScrollingTreeOverflowScrollingNodeIOS):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateBeforeChildren):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::setScrollLayerPosition):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateChildNodesAfterScroll):
+        * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+
 2014-05-19  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Fix a typo in plug-in sandbox

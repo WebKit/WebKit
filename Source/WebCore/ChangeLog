@@ -1,5 +1,210 @@
 2014-05-19  Simon Fraser  <simon.fraser@apple.com>
 
+        Split scrolling tree ScrollingNodes into FrameScrollingNodes and OverflowScrollingNodes
+        https://bugs.webkit.org/show_bug.cgi?id=133022
+
+        Reviewed by Sam Weinig.
+
+        In both the scrolling state tree and the scrolling tree, split the "scrolling nodes"
+        into FrameScrolling and OverflowScrolling nodes.
+        
+        Move what was the "viewportSize" property onto the base class for the scrolling
+        nodes, calling it "scrollableAreaSize".
+        
+        Make minimum/maximumScrollPosition() virtual so we can share more code (and there
+        is more code sharing to be done in future).
+
+        * Configurations/WebCore.xcconfig: Remove ScrollingStateScrollingNodeMac.mm and ScrollingTreeScrollingNodeMac.mm
+        from the list, using #ifdefs in the file instead.
+        * WebCore.exp.in: Lots of exports.
+        * WebCore.xcodeproj/project.pbxproj: New files.
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        (WebCore::AsyncScrollingCoordinator::frameViewRootLayerDidChange):
+        (WebCore::AsyncScrollingCoordinator::updateFrameScrollingNode):
+        (WebCore::AsyncScrollingCoordinator::updateOverflowScrollingNode):
+        (WebCore::AsyncScrollingCoordinator::recomputeWheelEventHandlerCountForFrameView):
+        (WebCore::AsyncScrollingCoordinator::updateScrollingNode): Deleted.
+        (WebCore::AsyncScrollingCoordinator::setScrollbarPaintersFromScrollbarsForNode): Deleted.
+        This tiny function didn't need to exist.
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::updateFrameScrollingNode):
+        (WebCore::ScrollingCoordinator::updateOverflowScrollingNode):
+        (WebCore::ScrollingCoordinator::updateScrollingNode): Deleted.
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp: Copied from Source/WebCore/page/scrolling/ScrollingStateScrollingNode.cpp.
+        (WebCore::ScrollingStateFrameScrollingNode::create):
+        (WebCore::ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode):
+        (WebCore::ScrollingStateFrameScrollingNode::~ScrollingStateFrameScrollingNode):
+        (WebCore::ScrollingStateFrameScrollingNode::clone):
+        (WebCore::ScrollingStateFrameScrollingNode::setFrameScaleFactor):
+        (WebCore::ScrollingStateFrameScrollingNode::setNonFastScrollableRegion):
+        (WebCore::ScrollingStateFrameScrollingNode::setWheelEventHandlerCount):
+        (WebCore::ScrollingStateFrameScrollingNode::setSynchronousScrollingReasons):
+        (WebCore::ScrollingStateFrameScrollingNode::setScrollBehaviorForFixedElements):
+        (WebCore::ScrollingStateFrameScrollingNode::setHeaderHeight):
+        (WebCore::ScrollingStateFrameScrollingNode::setFooterHeight):
+        (WebCore::ScrollingStateFrameScrollingNode::setTopContentInset):
+        (WebCore::ScrollingStateFrameScrollingNode::setCounterScrollingLayer):
+        (WebCore::ScrollingStateFrameScrollingNode::setInsetClipLayer):
+        (WebCore::ScrollingStateFrameScrollingNode::setContentShadowLayer):
+        (WebCore::ScrollingStateFrameScrollingNode::setHeaderLayer):
+        (WebCore::ScrollingStateFrameScrollingNode::setFooterLayer):
+        (WebCore::ScrollingStateFrameScrollingNode::setScrollbarPaintersFromScrollbars):
+        (WebCore::ScrollingStateFrameScrollingNode::dumpProperties):
+        * page/scrolling/ScrollingStateFrameScrollingNode.h: Copied from Source/WebCore/page/scrolling/ScrollingStateScrollingNode.h.
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::LayerRepresentation::layerID):
+        (WebCore::ScrollingStateNode::isFrameScrollingNode):
+        (WebCore::ScrollingStateNode::isOverflowScrollingNode):
+        * page/scrolling/ScrollingStateOverflowScrollingNode.cpp: Added.
+        (WebCore::ScrollingStateOverflowScrollingNode::create):
+        (WebCore::ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode):
+        (WebCore::ScrollingStateOverflowScrollingNode::~ScrollingStateOverflowScrollingNode):
+        (WebCore::ScrollingStateOverflowScrollingNode::clone):
+        (WebCore::ScrollingStateOverflowScrollingNode::setScrolledContentsLayer):
+        (WebCore::ScrollingStateOverflowScrollingNode::dumpProperties):
+        * page/scrolling/ScrollingStateOverflowScrollingNode.h: Copied from Source/WebCore/page/scrolling/mac/ScrollingStateScrollingNodeMac.mm.
+        (WebCore::ScrollingStateOverflowScrollingNode::scrolledContentsLayer):
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::setScrollableAreaSize):
+        (WebCore::ScrollingStateScrollingNode::setTotalContentsSize):
+        (WebCore::ScrollingStateScrollingNode::dumpProperties):
+        (WebCore::ScrollingStateScrollingNode::create): Deleted.
+        (WebCore::ScrollingStateScrollingNode::clone): Deleted.
+        (WebCore::ScrollingStateScrollingNode::setViewportSize): Deleted.
+        (WebCore::ScrollingStateScrollingNode::setFrameScaleFactor): Deleted.
+        (WebCore::ScrollingStateScrollingNode::setNonFastScrollableRegion): Deleted.
+        (WebCore::ScrollingStateScrollingNode::setWheelEventHandlerCount): Deleted.
+        (WebCore::ScrollingStateScrollingNode::setSynchronousScrollingReasons): Deleted.
+        (WebCore::ScrollingStateScrollingNode::setScrollBehaviorForFixedElements): Deleted.
+        (WebCore::ScrollingStateScrollingNode::setHeaderHeight): Deleted.
+        (WebCore::ScrollingStateScrollingNode::setFooterHeight): Deleted.
+        (WebCore::ScrollingStateScrollingNode::setTopContentInset): Deleted.
+        (WebCore::ScrollingStateScrollingNode::setScrolledContentsLayer): Deleted.
+        (WebCore::ScrollingStateScrollingNode::setCounterScrollingLayer): Deleted.
+        (WebCore::ScrollingStateScrollingNode::setInsetClipLayer): Deleted.
+        (WebCore::ScrollingStateScrollingNode::setContentShadowLayer): Deleted.
+        (WebCore::ScrollingStateScrollingNode::setHeaderLayer): Deleted.
+        (WebCore::ScrollingStateScrollingNode::setFooterLayer): Deleted.
+        (WebCore::ScrollingStateScrollingNode::setScrollbarPaintersFromScrollbars): Deleted.
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        (WebCore::ScrollingStateScrollingNode::scrollableAreaSize):
+        (WebCore::ScrollingStateScrollingNode::totalContentsSize):
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::attachNode):
+        (WebCore::ScrollingStateTree::commit):
+        * page/scrolling/ScrollingStateTree.h:
+        (WebCore::ScrollingStateTree::rootStateNode):
+        (WebCore::ScrollingStateTree::setRootStateNode):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitNewTreeState):
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp: Added.
+        (WebCore::ScrollingTreeFrameScrollingNode::ScrollingTreeFrameScrollingNode):
+        (WebCore::ScrollingTreeFrameScrollingNode::~ScrollingTreeFrameScrollingNode):
+        (WebCore::ScrollingTreeFrameScrollingNode::updateBeforeChildren):
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h: Copied from Source/WebCore/page/scrolling/ScrollingTreeScrollingNode.h.
+        (WebCore::ScrollingTreeFrameScrollingNode::updateLayersAfterDelegatedScroll):
+        (WebCore::ScrollingTreeFrameScrollingNode::synchronousScrollingReasons):
+        (WebCore::ScrollingTreeFrameScrollingNode::shouldUpdateScrollLayerPositionSynchronously):
+        (WebCore::ScrollingTreeFrameScrollingNode::frameScaleFactor):
+        (WebCore::ScrollingTreeFrameScrollingNode::headerHeight):
+        (WebCore::ScrollingTreeFrameScrollingNode::footerHeight):
+        (WebCore::ScrollingTreeFrameScrollingNode::topContentInset):
+        (WebCore::ScrollingTreeFrameScrollingNode::scrollBehaviorForFixedElements):
+        * page/scrolling/ScrollingTreeNode.h:
+        (WebCore::ScrollingTreeNode::isFrameScrollingNode):
+        (WebCore::ScrollingTreeNode::isOverflowScrollingNode):
+        * page/scrolling/ScrollingTreeOverflowScrollingNode.cpp: Copied from Source/WebKit2/UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h.
+        (WebCore::ScrollingTreeOverflowScrollingNode::ScrollingTreeOverflowScrollingNode):
+        (WebCore::ScrollingTreeOverflowScrollingNode::~ScrollingTreeOverflowScrollingNode):
+        * page/scrolling/ScrollingTreeOverflowScrollingNode.h: Copied from Source/WebKit2/UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h.
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::ScrollingTreeScrollingNode):
+        (WebCore::ScrollingTreeScrollingNode::updateBeforeChildren):
+        (WebCore::ScrollingTreeScrollingNode::updateAfterChildren):
+        (WebCore::ScrollingTreeScrollingNode::setScrollPosition):
+        (WebCore::ScrollingTreeScrollingNode::setScrollPositionWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeScrollingNode::minimumScrollPosition):
+        (WebCore::ScrollingTreeScrollingNode::maximumScrollPosition):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::scrollableAreaSize):
+        (WebCore::ScrollingTreeScrollingNode::totalContentsSize):
+        (WebCore::ScrollingTreeScrollingNode::totalContentsSizeForRubberBand):
+        (WebCore::ScrollingTreeScrollingNode::setTotalContentsSizeForRubberBand):
+        (WebCore::ScrollingTreeScrollingNode::synchronousScrollingReasons): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::shouldUpdateScrollLayerPositionSynchronously): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::viewportSize): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::frameScaleFactor): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::headerHeight): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::footerHeight): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::scrollBehaviorForFixedElements): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::topContentInset): Deleted.
+        * page/scrolling/ios/ScrollingCoordinatorIOS.mm:
+        (WebCore::ScrollingCoordinatorIOS::createScrollingTreeNode):
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.h: Renamed from Source/WebCore/page/scrolling/ios/ScrollingTreeScrollingNodeIOS.h.
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::scrollLayer):
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm: Renamed from Source/WebCore/page/scrolling/ios/ScrollingTreeScrollingNodeIOS.mm.
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::create):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::ScrollingTreeFrameScrollingNodeIOS):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::~ScrollingTreeFrameScrollingNodeIOS):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::updateBeforeChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::updateAfterChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::scrollPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::setScrollPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::setScrollPositionWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::setScrollLayerPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::updateLayersAfterViewportChange):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::updateLayersAfterDelegatedScroll):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::updateChildNodesAfterScroll):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::minimumScrollPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::maximumScrollPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::scrollBy):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::scrollByWithoutContentEdgeConstraints):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::createScrollingTreeNode):
+        * page/scrolling/mac/ScrollingStateFrameScrollingNodeMac.mm: Renamed from Source/WebCore/page/scrolling/mac/ScrollingStateScrollingNodeMac.mm.
+        (WebCore::ScrollingStateFrameScrollingNode::setScrollbarPaintersFromScrollbars):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h: Renamed from Source/WebCore/page/scrolling/mac/ScrollingTreeScrollingNodeMac.h.
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm: Renamed from Source/WebCore/page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::create):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::~ScrollingTreeFrameScrollingNodeMac):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::updateAfterChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::handleWheelEvent):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::allowsHorizontalStretching):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::allowsVerticalStretching):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::stretchAmount):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::pinnedInDirection):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::canScrollHorizontally):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::canScrollVertically):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::shouldRubberBandInDirection):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::absoluteScrollPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::immediateScrollBy):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::immediateScrollByWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::startSnapRubberbandTimer):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::stopSnapRubberbandTimer):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::adjustScrollPositionToBoundsIfNecessary):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::scrollPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollPositionWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::updateLayersAfterViewportChange):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::minimumScrollPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::maximumScrollPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::scrollBy):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::scrollByWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::updateMainFramePinState):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::logExposedUnfilledArea):
+        (WebCore::logThreadedScrollingMode):
+        (WebCore::logWheelEventHandlerCountChanged):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+
+2014-05-19  Simon Fraser  <simon.fraser@apple.com>
+
         Images missing sometimes with composited clipping layers
         https://bugs.webkit.org/show_bug.cgi?id=133065
         <rdar://problem/15224559>

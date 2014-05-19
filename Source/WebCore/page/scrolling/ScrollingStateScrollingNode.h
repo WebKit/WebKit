@@ -28,56 +28,32 @@
 
 #if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
 
-#include "GraphicsLayer.h"
-#include "IntRect.h"
-#include "Region.h"
 #include "ScrollTypes.h"
-#include "ScrollbarThemeComposite.h"
 #include "ScrollingCoordinator.h"
 #include "ScrollingStateNode.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-class Scrollbar;
-
-class ScrollingStateScrollingNode final : public ScrollingStateNode {
+class ScrollingStateScrollingNode : public ScrollingStateNode {
 public:
-    static PassOwnPtr<ScrollingStateScrollingNode> create(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);
-
-    virtual PassOwnPtr<ScrollingStateNode> clone(ScrollingStateTree&);
-
     virtual ~ScrollingStateScrollingNode();
 
     enum ChangedProperty {
-        ViewportSize = NumStateNodeBits,
+        ScrollableAreaSize = NumStateNodeBits,
         TotalContentsSize,
         ScrollPosition,
         ScrollOrigin,
         ScrollableAreaParams,
-        FrameScaleFactor,
-        NonFastScrollableRegion,
-        WheelEventHandlerCount,
-        ReasonsForSynchronousScrolling,
         RequestedScrollPosition,
-        ScrolledContentsLayer,
-        CounterScrollingLayer,
-        InsetClipLayer,
-        ContentShadowLayer,
-        HeaderHeight,
-        FooterHeight,
-        HeaderLayer,
-        FooterLayer,
-        PainterForScrollbar,
-        BehaviorForFixedElements,
-        TopContentInset
+        NumScrollingStateNodeBits,
     };
 
-    const FloatSize& viewportSize() const { return m_viewportSize; }
-    void setViewportSize(const FloatSize&);
+    const FloatSize& scrollableAreaSize() const { return m_scrollableAreaSize; }
+    void setScrollableAreaSize(const FloatSize&);
 
-    const IntSize& totalContentsSize() const { return m_totalContentsSize; }
-    void setTotalContentsSize(const IntSize&);
+    const FloatSize& totalContentsSize() const { return m_totalContentsSize; }
+    void setTotalContentsSize(const FloatSize&);
 
     const FloatPoint& scrollPosition() const { return m_scrollPosition; }
     void setScrollPosition(const FloatPoint&);
@@ -85,103 +61,27 @@ public:
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
     void setScrollOrigin(const IntPoint&);
 
-    float frameScaleFactor() const { return m_frameScaleFactor; }
-    void setFrameScaleFactor(float);
-
-    const Region& nonFastScrollableRegion() const { return m_nonFastScrollableRegion; }
-    void setNonFastScrollableRegion(const Region&);
-
-    unsigned wheelEventHandlerCount() const { return m_wheelEventHandlerCount; }
-    void setWheelEventHandlerCount(unsigned);
-
-    SynchronousScrollingReasons synchronousScrollingReasons() const { return m_synchronousScrollingReasons; }
-    void setSynchronousScrollingReasons(SynchronousScrollingReasons);
-
     const ScrollableAreaParameters& scrollableAreaParameters() const { return m_scrollableAreaParameters; }
     void setScrollableAreaParameters(const ScrollableAreaParameters& params);
-
-    ScrollBehaviorForFixedElements scrollBehaviorForFixedElements() const { return m_behaviorForFixed; }
-    void setScrollBehaviorForFixedElements(ScrollBehaviorForFixedElements);
 
     const FloatPoint& requestedScrollPosition() const { return m_requestedScrollPosition; }
     bool requestedScrollPositionRepresentsProgrammaticScroll() const { return m_requestedScrollPositionRepresentsProgrammaticScroll; }
     void setRequestedScrollPosition(const FloatPoint&, bool representsProgrammaticScroll);
     
-    int headerHeight() const { return m_headerHeight; }
-    void setHeaderHeight(int);
-
-    int footerHeight() const { return m_footerHeight; }
-    void setFooterHeight(int);
-
-    float topContentInset() const { return m_topContentInset; }
-    void setTopContentInset(float);
-
-    // This is a layer with the contents that move.
-    const LayerRepresentation& scrolledContentsLayer() const { return m_scrolledContentsLayer; }
-    void setScrolledContentsLayer(const LayerRepresentation&);
-
-    // This is a layer moved in the opposite direction to scrolling, for example for background-attachment:fixed
-    const LayerRepresentation& counterScrollingLayer() const { return m_counterScrollingLayer; }
-    void setCounterScrollingLayer(const LayerRepresentation&);
-
-    // This is a clipping layer that will scroll with the page for all y-delta scroll values between 0
-    // and topContentInset(). Once the y-deltas get beyond the content inset point, this layer no longer
-    // needs to move. If the topContentInset() is 0, this layer does not need to move at all. This is
-    // only used on the Mac.
-    const LayerRepresentation& insetClipLayer() const { return m_insetClipLayer; }
-    void setInsetClipLayer(const LayerRepresentation&);
-
-    const LayerRepresentation& contentShadowLayer() const { return m_contentShadowLayer; }
-    void setContentShadowLayer(const LayerRepresentation&);
-
-    // The header and footer layers scroll vertically with the page, they should remain fixed when scrolling horizontally.
-    const LayerRepresentation& headerLayer() const { return m_headerLayer; }
-    void setHeaderLayer(const LayerRepresentation&);
-
-    // The header and footer layers scroll vertically with the page, they should remain fixed when scrolling horizontally.
-    const LayerRepresentation& footerLayer() const { return m_footerLayer; }
-    void setFooterLayer(const LayerRepresentation&);
-
-#if PLATFORM(MAC)
-    ScrollbarPainter verticalScrollbarPainter() const { return m_verticalScrollbarPainter.get(); }
-    ScrollbarPainter horizontalScrollbarPainter() const { return m_horizontalScrollbarPainter.get(); }
-#endif
-    void setScrollbarPaintersFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar);
-
     virtual void dumpProperties(TextStream&, int indent) const override;
-
-private:
+    
+protected:
     ScrollingStateScrollingNode(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);
     ScrollingStateScrollingNode(const ScrollingStateScrollingNode&, ScrollingStateTree&);
-
-    LayerRepresentation m_scrolledContentsLayer;
-    LayerRepresentation m_counterScrollingLayer;
-    LayerRepresentation m_insetClipLayer;
-    LayerRepresentation m_contentShadowLayer;
-    LayerRepresentation m_headerLayer;
-    LayerRepresentation m_footerLayer;
-
-#if PLATFORM(MAC)
-    RetainPtr<ScrollbarPainter> m_verticalScrollbarPainter;
-    RetainPtr<ScrollbarPainter> m_horizontalScrollbarPainter;
-#endif
-
-    FloatSize m_viewportSize;
-    IntSize m_totalContentsSize;
-    FloatPoint m_scrollPosition;
-    IntPoint m_scrollOrigin;
     
-    ScrollableAreaParameters m_scrollableAreaParameters;
-    Region m_nonFastScrollableRegion;
-    float m_frameScaleFactor;
-    unsigned m_wheelEventHandlerCount;
-    SynchronousScrollingReasons m_synchronousScrollingReasons;
-    ScrollBehaviorForFixedElements m_behaviorForFixed;
-    int m_headerHeight;
-    int m_footerHeight;
+private:
+    FloatSize m_scrollableAreaSize;
+    FloatSize m_totalContentsSize;
+    FloatPoint m_scrollPosition;
     FloatPoint m_requestedScrollPosition;
+    IntPoint m_scrollOrigin;
+    ScrollableAreaParameters m_scrollableAreaParameters;
     bool m_requestedScrollPositionRepresentsProgrammaticScroll;
-    float m_topContentInset;
 };
 
 SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateScrollingNode, isScrollingNode());

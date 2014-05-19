@@ -30,7 +30,8 @@
 
 #include "AsyncScrollingCoordinator.h"
 #include "ScrollingStateFixedNode.h"
-#include "ScrollingStateScrollingNode.h"
+#include "ScrollingStateFrameScrollingNode.h"
+#include "ScrollingStateOverflowScrollingNode.h"
 #include "ScrollingStateStickyNode.h"
 
 namespace WebCore {
@@ -86,7 +87,7 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
         // If we're resetting the root node, we should clear the HashMap and destroy the current children.
         clear();
 
-        setRootStateNode(ScrollingStateScrollingNode::create(*this, FrameScrollingNode, newNodeID));
+        setRootStateNode(ScrollingStateFrameScrollingNode::create(*this, newNodeID));
         newNode = rootStateNode();
         m_hasNewRootStateNode = true;
     } else {
@@ -107,9 +108,14 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
             parent->appendChild(stickyNode.release());
             break;
         }
-        case FrameScrollingNode:
+        case FrameScrollingNode: {
+            OwnPtr<ScrollingStateFrameScrollingNode> scrollingNode = ScrollingStateFrameScrollingNode::create(*this, newNodeID);
+            newNode = scrollingNode.get();
+            parent->appendChild(scrollingNode.release());
+            break;
+        }
         case OverflowScrollingNode: {
-            OwnPtr<ScrollingStateScrollingNode> scrollingNode = ScrollingStateScrollingNode::create(*this, nodeType, newNodeID);
+            OwnPtr<ScrollingStateOverflowScrollingNode> scrollingNode = ScrollingStateOverflowScrollingNode::create(*this, newNodeID);
             newNode = scrollingNode.get();
             parent->appendChild(scrollingNode.release());
             break;
@@ -147,7 +153,7 @@ PassOwnPtr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentation::T
     treeStateClone->setPreferredLayerRepresentation(preferredLayerRepresentation);
 
     if (m_rootStateNode)
-        treeStateClone->setRootStateNode(static_pointer_cast<ScrollingStateScrollingNode>(m_rootStateNode->cloneAndReset(*treeStateClone)));
+        treeStateClone->setRootStateNode(static_pointer_cast<ScrollingStateFrameScrollingNode>(m_rootStateNode->cloneAndReset(*treeStateClone)));
 
     // Copy the IDs of the nodes that have been removed since the last commit into the clone.
     treeStateClone->m_nodesRemovedSinceLastCommit.swap(m_nodesRemovedSinceLastCommit);

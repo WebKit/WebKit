@@ -36,7 +36,7 @@
 #include "ScrollingStateTree.h"
 #include "ScrollingThread.h"
 #include "ScrollingTreeFixedNode.h"
-#include "ScrollingTreeScrollingNodeIOS.h"
+#include "ScrollingTreeFrameScrollingNodeIOS.h"
 #include "ScrollingTreeStickyNode.h"
 #include "ScrollingTreeIOS.h"
 #include <wtf/Functional.h>
@@ -110,8 +110,10 @@ PassOwnPtr<ScrollingTreeNode> ScrollingCoordinatorIOS::createScrollingTreeNode(S
 
     switch (nodeType) {
     case FrameScrollingNode:
+        return ScrollingTreeFrameScrollingNodeIOS::create(*scrollingTree(), nodeID);
     case OverflowScrollingNode:
-        return ScrollingTreeScrollingNodeIOS::create(*scrollingTree(), nodeType, nodeID);
+        ASSERT_NOT_REACHED();
+        return nullptr;
     case FixedNode:
         return ScrollingTreeFixedNode::create(*scrollingTree(), nodeID);
     case StickyNode:

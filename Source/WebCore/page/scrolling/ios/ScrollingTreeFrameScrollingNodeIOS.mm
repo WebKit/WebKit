@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "ScrollingTreeScrollingNodeIOS.h"
+#import "ScrollingTreeFrameScrollingNodeIOS.h"
 
 #if ENABLE(ASYNC_SCROLLING)
 
@@ -40,41 +40,39 @@
 
 namespace WebCore {
 
-PassOwnPtr<ScrollingTreeScrollingNode> ScrollingTreeScrollingNodeIOS::create(ScrollingTree& scrollingTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+PassOwnPtr<ScrollingTreeFrameScrollingNodeIOS> ScrollingTreeFrameScrollingNodeIOS::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
 {
-    return adoptPtr(new ScrollingTreeScrollingNodeIOS(scrollingTree, nodeType, nodeID));
+    return adoptPtr(new ScrollingTreeFrameScrollingNodeIOS(scrollingTree, nodeID));
 }
 
-ScrollingTreeScrollingNodeIOS::ScrollingTreeScrollingNodeIOS(ScrollingTree& scrollingTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
-    : ScrollingTreeScrollingNode(scrollingTree, nodeType, nodeID)
-{
-}
-
-ScrollingTreeScrollingNodeIOS::~ScrollingTreeScrollingNodeIOS()
+ScrollingTreeFrameScrollingNodeIOS::ScrollingTreeFrameScrollingNodeIOS(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
+    : ScrollingTreeFrameScrollingNode(scrollingTree, nodeID)
 {
 }
 
-void ScrollingTreeScrollingNodeIOS::updateBeforeChildren(const ScrollingStateNode& stateNode)
+ScrollingTreeFrameScrollingNodeIOS::~ScrollingTreeFrameScrollingNodeIOS()
 {
-    ScrollingTreeScrollingNode::updateBeforeChildren(stateNode);
-    const auto& scrollingStateNode = toScrollingStateScrollingNode(stateNode);
+}
+
+void ScrollingTreeFrameScrollingNodeIOS::updateBeforeChildren(const ScrollingStateNode& stateNode)
+{
+    ScrollingTreeFrameScrollingNode::updateBeforeChildren(stateNode);
+    
+    const auto& scrollingStateNode = toScrollingStateFrameScrollingNode(stateNode);
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
         m_scrollLayer = scrollingStateNode.layer();
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
-        m_scrolledContentsLayer = scrollingStateNode.scrolledContentsLayer();
-
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::CounterScrollingLayer))
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::CounterScrollingLayer))
         m_counterScrollingLayer = scrollingStateNode.counterScrollingLayer();
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::HeaderLayer))
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::HeaderLayer))
         m_headerLayer = scrollingStateNode.headerLayer();
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::FooterLayer))
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::FooterLayer))
         m_footerLayer = scrollingStateNode.footerLayer();
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ReasonsForSynchronousScrolling)) {
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::ReasonsForSynchronousScrolling)) {
         if (shouldUpdateScrollLayerPositionSynchronously()) {
             // We're transitioning to the slow "update scroll layer position on the main thread" mode.
             // Initialize the probable main thread scroll position with the current scroll layer position.
@@ -88,18 +86,18 @@ void ScrollingTreeScrollingNodeIOS::updateBeforeChildren(const ScrollingStateNod
     }
 }
 
-void ScrollingTreeScrollingNodeIOS::updateAfterChildren(const ScrollingStateNode& stateNode)
+void ScrollingTreeFrameScrollingNodeIOS::updateAfterChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingTreeScrollingNode::updateAfterChildren(stateNode);
+    ScrollingTreeFrameScrollingNode::updateAfterChildren(stateNode);
 
-    const auto& scrollingStateNode = toScrollingStateScrollingNode(stateNode);
+    const auto& scrollingStateNode = toScrollingStateFrameScrollingNode(stateNode);
 
     // Update the scroll position after child nodes have been updated, because they need to have updated their constraints before any scrolling happens.
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition))
         setScrollPosition(scrollingStateNode.requestedScrollPosition());
 }
 
-FloatPoint ScrollingTreeScrollingNodeIOS::scrollPosition() const
+FloatPoint ScrollingTreeFrameScrollingNodeIOS::scrollPosition() const
 {
     if (shouldUpdateScrollLayerPositionSynchronously())
         return m_probableMainThreadScrollPosition;
@@ -108,7 +106,7 @@ FloatPoint ScrollingTreeScrollingNodeIOS::scrollPosition() const
     return IntPoint(-scrollLayerPosition.x + scrollOrigin().x(), -scrollLayerPosition.y + scrollOrigin().y());
 }
 
-void ScrollingTreeScrollingNodeIOS::setScrollPosition(const FloatPoint& scrollPosition)
+void ScrollingTreeFrameScrollingNodeIOS::setScrollPosition(const FloatPoint& scrollPosition)
 {
     FloatPoint newScrollPosition = scrollPosition;
     newScrollPosition = newScrollPosition.shrunkTo(maximumScrollPosition());
@@ -117,7 +115,7 @@ void ScrollingTreeScrollingNodeIOS::setScrollPosition(const FloatPoint& scrollPo
     setScrollPositionWithoutContentEdgeConstraints(newScrollPosition);
 }
 
-void ScrollingTreeScrollingNodeIOS::setScrollPositionWithoutContentEdgeConstraints(const FloatPoint& scrollPosition)
+void ScrollingTreeFrameScrollingNodeIOS::setScrollPositionWithoutContentEdgeConstraints(const FloatPoint& scrollPosition)
 {
     if (shouldUpdateScrollLayerPositionSynchronously()) {
         m_probableMainThreadScrollPosition = scrollPosition;
@@ -129,7 +127,7 @@ void ScrollingTreeScrollingNodeIOS::setScrollPositionWithoutContentEdgeConstrain
     scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition);
 }
 
-void ScrollingTreeScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& scrollPosition)
+void ScrollingTreeFrameScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& scrollPosition)
 {
     ASSERT(!shouldUpdateScrollLayerPositionSynchronously());
     [m_scrollLayer setPosition:CGPointMake(-scrollPosition.x() + scrollOrigin().x(), -scrollPosition.y() + scrollOrigin().y())];
@@ -137,7 +135,7 @@ void ScrollingTreeScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& scr
     updateChildNodesAfterScroll(scrollPosition);
 }
 
-void ScrollingTreeScrollingNodeIOS::updateLayersAfterViewportChange(const FloatRect& viewportRect, double /*scale*/)
+void ScrollingTreeFrameScrollingNodeIOS::updateLayersAfterViewportChange(const FloatRect& viewportRect, double /*scale*/)
 {
     [m_counterScrollingLayer setPosition:viewportRect.location()];
 
@@ -149,17 +147,17 @@ void ScrollingTreeScrollingNodeIOS::updateLayersAfterViewportChange(const FloatR
         m_children->at(i)->parentScrollPositionDidChange(viewportRect, FloatSize());
 }
 
-void ScrollingTreeScrollingNodeIOS::updateLayersAfterDelegatedScroll(const FloatPoint& scrollPosition)
+void ScrollingTreeFrameScrollingNodeIOS::updateLayersAfterDelegatedScroll(const FloatPoint& scrollPosition)
 {
     updateChildNodesAfterScroll(scrollPosition);
 }
 
-void ScrollingTreeScrollingNodeIOS::updateChildNodesAfterScroll(const FloatPoint& scrollPosition)
+void ScrollingTreeFrameScrollingNodeIOS::updateChildNodesAfterScroll(const FloatPoint& scrollPosition)
 {
     ScrollBehaviorForFixedElements behaviorForFixed = scrollBehaviorForFixedElements();
     FloatPoint scrollOffset = scrollPosition - toIntSize(scrollOrigin());
-    FloatRect viewportRect(FloatPoint(), viewportSize());
-    FloatSize scrollOffsetForFixedChildren = FrameView::scrollOffsetForFixedPosition(enclosingLayoutRect(viewportRect), totalContentsSize(), flooredIntPoint(scrollOffset), scrollOrigin(), frameScaleFactor(), false, behaviorForFixed, headerHeight(), footerHeight());
+    FloatRect viewportRect(FloatPoint(), scrollableAreaSize());
+    FloatSize scrollOffsetForFixedChildren = FrameView::scrollOffsetForFixedPosition(enclosingLayoutRect(viewportRect), roundedLayoutSize(totalContentsSize()), roundedLayoutPoint(scrollOffset), scrollOrigin(), frameScaleFactor(), false, behaviorForFixed, headerHeight(), footerHeight());
 
     [m_counterScrollingLayer setPosition:FloatPoint(scrollOffsetForFixedChildren)];
 
@@ -169,7 +167,7 @@ void ScrollingTreeScrollingNodeIOS::updateChildNodesAfterScroll(const FloatPoint
         // then we should recompute scrollOffsetForFixedChildren for the banner with a scale factor of 1.
         float horizontalScrollOffsetForBanner = scrollOffsetForFixedChildren.width();
         if (frameScaleFactor() != 1)
-            horizontalScrollOffsetForBanner = FrameView::scrollOffsetForFixedPosition(enclosingLayoutRect(viewportRect), totalContentsSize(), flooredIntPoint(scrollOffset), scrollOrigin(), 1, false, behaviorForFixed, headerHeight(), footerHeight()).width();
+            horizontalScrollOffsetForBanner = FrameView::scrollOffsetForFixedPosition(enclosingLayoutRect(viewportRect), roundedLayoutSize(totalContentsSize()), roundedLayoutPoint(scrollOffset), scrollOrigin(), 1, false, behaviorForFixed, headerHeight(), footerHeight()).width();
 
         if (m_headerLayer)
             [m_headerLayer setPosition:FloatPoint(horizontalScrollOffsetForBanner, 0)];
@@ -183,14 +181,14 @@ void ScrollingTreeScrollingNodeIOS::updateChildNodesAfterScroll(const FloatPoint
     
     viewportRect.setLocation(scrollOffset);
     
-    FloatRect viewportConstrainedObjectsRect = FrameView::rectForViewportConstrainedObjects(enclosingLayoutRect(viewportRect), totalContentsSize(), frameScaleFactor(), false, behaviorForFixed);
+    FloatRect viewportConstrainedObjectsRect = FrameView::rectForViewportConstrainedObjects(enclosingLayoutRect(viewportRect), roundedLayoutSize(totalContentsSize()), frameScaleFactor(), false, behaviorForFixed);
     
     size_t size = m_children->size();
     for (size_t i = 0; i < size; ++i)
         m_children->at(i)->parentScrollPositionDidChange(viewportConstrainedObjectsRect, FloatSize());
 }
 
-FloatPoint ScrollingTreeScrollingNodeIOS::minimumScrollPosition() const
+FloatPoint ScrollingTreeFrameScrollingNodeIOS::minimumScrollPosition() const
 {
     FloatPoint position;
     
@@ -200,10 +198,10 @@ FloatPoint ScrollingTreeScrollingNodeIOS::minimumScrollPosition() const
     return position;
 }
 
-FloatPoint ScrollingTreeScrollingNodeIOS::maximumScrollPosition() const
+FloatPoint ScrollingTreeFrameScrollingNodeIOS::maximumScrollPosition() const
 {
-    FloatPoint position(totalContentsSizeForRubberBand().width() - viewportSize().width(),
-        totalContentsSizeForRubberBand().height() - viewportSize().height());
+    FloatPoint position(totalContentsSizeForRubberBand().width() - scrollableAreaSize().width(),
+        totalContentsSizeForRubberBand().height() - scrollableAreaSize().height());
 
     position = position.expandedTo(FloatPoint());
 
@@ -213,12 +211,12 @@ FloatPoint ScrollingTreeScrollingNodeIOS::maximumScrollPosition() const
     return position;
 }
 
-void ScrollingTreeScrollingNodeIOS::scrollBy(const IntSize& offset)
+void ScrollingTreeFrameScrollingNodeIOS::scrollBy(const IntSize& offset)
 {
     setScrollPosition(scrollPosition() + offset);
 }
 
-void ScrollingTreeScrollingNodeIOS::scrollByWithoutContentEdgeConstraints(const IntSize& offset)
+void ScrollingTreeFrameScrollingNodeIOS::scrollByWithoutContentEdgeConstraints(const IntSize& offset)
 {
     setScrollPositionWithoutContentEdgeConstraints(scrollPosition() + offset);
 }

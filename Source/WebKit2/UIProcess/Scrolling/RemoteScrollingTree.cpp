@@ -35,9 +35,9 @@
 
 #if PLATFORM(IOS)
 #include "ScrollingTreeOverflowScrollingNodeIOS.h"
-#include <WebCore/ScrollingTreeScrollingNodeIOS.h>
+#include <WebCore/ScrollingTreeFrameScrollingNodeIOS.h>
 #else
-#include <WebCore/ScrollingTreeScrollingNodeMac.h>
+#include <WebCore/ScrollingTreeFrameScrollingNodeMac.h>
 #endif
 
 using namespace WebCore;
@@ -92,15 +92,16 @@ PassOwnPtr<ScrollingTreeNode> RemoteScrollingTree::createNode(ScrollingNodeType 
     switch (nodeType) {
     case FrameScrollingNode:
 #if PLATFORM(IOS)
-        return ScrollingTreeScrollingNodeIOS::create(*this, nodeType, nodeID);
+        return ScrollingTreeFrameScrollingNodeIOS::create(*this, nodeID);
 #else
-        return ScrollingTreeScrollingNodeMac::create(*this, nodeType, nodeID);
+        return ScrollingTreeFrameScrollingNodeMac::create(*this, nodeID);
 #endif
     case OverflowScrollingNode:
 #if PLATFORM(IOS)
         return ScrollingTreeOverflowScrollingNodeIOS::create(*this, nodeID);
 #else
-        return ScrollingTreeScrollingNodeMac::create(*this, nodeType, nodeID);
+        ASSERT_NOT_REACHED();
+        return nullptr;
 #endif
     case FixedNode:
         return ScrollingTreeFixedNode::create(*this, nodeID);

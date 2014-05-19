@@ -37,7 +37,7 @@
 #include "ScrollingStateTree.h"
 #include "ScrollingThread.h"
 #include "ScrollingTreeFixedNode.h"
-#include "ScrollingTreeScrollingNodeMac.h"
+#include "ScrollingTreeFrameScrollingNodeMac.h"
 #include "ScrollingTreeStickyNode.h"
 #include "ThreadedScrollingTree.h"
 #include "TiledBacking.h"
@@ -148,7 +148,7 @@ PassOwnPtr<ScrollingTreeNode> ScrollingCoordinatorMac::createScrollingTreeNode(S
 
     switch (nodeType) {
     case FrameScrollingNode:
-        return ScrollingTreeScrollingNodeMac::create(*scrollingTree(), nodeType, nodeID);
+        return ScrollingTreeFrameScrollingNodeMac::create(*scrollingTree(), nodeID);
     case OverflowScrollingNode:
         ASSERT_NOT_REACHED();
         return nullptr;

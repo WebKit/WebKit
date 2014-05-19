@@ -1935,6 +1935,9 @@ set(WebCore_SOURCES
     page/scrolling/ScrollingStateFixedNode.cpp
     page/scrolling/ScrollingStateNode.cpp
     page/scrolling/ScrollingStateScrollingNode.cpp
+    page/scrolling/ScrollingStateFrameScrollingNode.cpp
+    page/scrolling/ScrollingStateOverflowScrollingNode.cpp
+    page/scrolling/ScrollingStateScrollingNode.cpp
     page/scrolling/ScrollingStateStickyNode.cpp
     page/scrolling/ScrollingStateTree.cpp
 

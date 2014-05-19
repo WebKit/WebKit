@@ -35,7 +35,8 @@
 #include "Page.h"
 #include "ScrollingConstraints.h"
 #include "ScrollingStateFixedNode.h"
-#include "ScrollingStateScrollingNode.h"
+#include "ScrollingStateFrameScrollingNode.h"
+#include "ScrollingStateOverflowScrollingNode.h"
 #include "ScrollingStateStickyNode.h"
 #include "ScrollingStateTree.h"
 
@@ -76,21 +77,21 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
     if (!coordinatesScrollingForFrameView(frameView))
         return;
 
-    ScrollingStateScrollingNode* node = toScrollingStateScrollingNode(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
+    ScrollingStateFrameScrollingNode* node = toScrollingStateFrameScrollingNode(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
     if (!node)
         return;
 
     Scrollbar* verticalScrollbar = frameView->verticalScrollbar();
     Scrollbar* horizontalScrollbar = frameView->horizontalScrollbar();
-    setScrollbarPaintersFromScrollbarsForNode(verticalScrollbar, horizontalScrollbar, node);
-
+    node->setScrollbarPaintersFromScrollbars(verticalScrollbar, horizontalScrollbar);
+    
     node->setFrameScaleFactor(frameView->frame().frameScaleFactor());
     node->setHeaderHeight(frameView->headerHeight());
     node->setFooterHeight(frameView->footerHeight());
     node->setTopContentInset(frameView->topContentInset());
 
     node->setScrollOrigin(frameView->scrollOrigin());
-    node->setViewportSize(frameView->visibleContentRect().size());
+    node->setScrollableAreaSize(frameView->visibleContentRect().size());
     node->setTotalContentsSize(frameView->totalContentsSize());
 
     ScrollableAreaParameters scrollParameters;
@@ -131,7 +132,7 @@ void AsyncScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView
 
     ScrollingCoordinator::frameViewRootLayerDidChange(frameView);
 
-    ScrollingStateScrollingNode* node = toScrollingStateScrollingNode(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
+    ScrollingStateFrameScrollingNode* node = toScrollingStateFrameScrollingNode(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
     node->setLayer(scrollLayerForFrameView(frameView));
     node->setCounterScrollingLayer(counterScrollingLayerForFrameView(frameView));
     node->setInsetClipLayer(insetClipLayerForFrameView(frameView));
@@ -327,15 +328,14 @@ void AsyncScrollingCoordinator::ensureRootStateNodeForFrameView(FrameView* frame
     attachToStateTree(FrameScrollingNode, frameView->scrollLayerID(), 0);
 }
 
-void AsyncScrollingCoordinator::updateScrollingNode(ScrollingNodeID nodeID, GraphicsLayer* layer, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer, GraphicsLayer* insetClipLayer, const ScrollingGeometry* scrollingGeometry)
+void AsyncScrollingCoordinator::updateFrameScrollingNode(ScrollingNodeID nodeID, GraphicsLayer* layer, GraphicsLayer* counterScrollingLayer, GraphicsLayer* insetClipLayer, const ScrollingGeometry* scrollingGeometry)
 {
-    ScrollingStateScrollingNode* node = toScrollingStateScrollingNode(m_scrollingStateTree->stateNodeForID(nodeID));
+    ScrollingStateFrameScrollingNode* node = toScrollingStateFrameScrollingNode(m_scrollingStateTree->stateNodeForID(nodeID));
     ASSERT(node);
     if (!node)
         return;
 
     node->setLayer(layer);
-    node->setScrolledContentsLayer(scrolledContentsLayer);
     node->setInsetClipLayer(insetClipLayer);
     node->setCounterScrollingLayer(counterScrollingLayer);
 
@@ -343,6 +343,25 @@ void AsyncScrollingCoordinator::updateScrollingNode(ScrollingNodeID nodeID, Grap
         node->setScrollOrigin(scrollingGeometry->scrollOrigin);
         node->setScrollPosition(scrollingGeometry->scrollPosition);
         node->setTotalContentsSize(scrollingGeometry->contentSize);
+        node->setScrollableAreaSize(scrollingGeometry->scrollableAreaSize);
+    }
+}
+    
+void AsyncScrollingCoordinator::updateOverflowScrollingNode(ScrollingNodeID nodeID, GraphicsLayer* layer, GraphicsLayer* scrolledContentsLayer, const ScrollingGeometry* scrollingGeometry)
+{
+    ScrollingStateOverflowScrollingNode* node = toScrollingStateOverflowScrollingNode(m_scrollingStateTree->stateNodeForID(nodeID));
+    ASSERT(node);
+    if (!node)
+        return;
+
+    node->setLayer(layer);
+    node->setScrolledContentsLayer(scrolledContentsLayer);
+    
+    if (scrollingGeometry) {
+        node->setScrollOrigin(scrollingGeometry->scrollOrigin);
+        node->setScrollPosition(scrollingGeometry->scrollPosition);
+        node->setTotalContentsSize(scrollingGeometry->contentSize);
+        node->setScrollableAreaSize(scrollingGeometry->scrollableAreaSize);
     }
 }
 
@@ -368,12 +387,6 @@ void AsyncScrollingCoordinator::updateViewportConstrainedNode(ScrollingNodeID no
         break;
     }
     }
-}
-
-// FIXME: not sure if this belongs here.
-void AsyncScrollingCoordinator::setScrollbarPaintersFromScrollbarsForNode(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar, ScrollingStateScrollingNode* node)
-{
-    node->setScrollbarPaintersFromScrollbars(verticalScrollbar, horizontalScrollbar);
 }
 
 void AsyncScrollingCoordinator::setSynchronousScrollingReasons(SynchronousScrollingReasons reasons)
@@ -406,7 +419,7 @@ void AsyncScrollingCoordinator::updateMainFrameScrollLayerPosition()
 
 void AsyncScrollingCoordinator::recomputeWheelEventHandlerCountForFrameView(FrameView* frameView)
 {
-    ScrollingStateScrollingNode* node = toScrollingStateScrollingNode(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
+    ScrollingStateFrameScrollingNode* node = toScrollingStateFrameScrollingNode(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
     if (!node)
         return;
     node->setWheelEventHandlerCount(computeCurrentWheelEventHandlerCount());

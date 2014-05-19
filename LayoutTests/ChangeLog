@@ -1,3 +1,29 @@
+2014-05-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Split scrolling tree ScrollingNodes into FrameScrollingNodes and OverflowScrollingNodes
+        https://bugs.webkit.org/show_bug.cgi?id=133022
+
+        Reviewed by Sam Weinig.
+        
+        Updated for new node name. No geometry changes.
+
+        * platform/mac-wk2/tiled-drawing/clamp-out-of-bounds-scrolls-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/absolute-inside-fixed-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/absolute-inside-out-of-view-fixed-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/fixed-in-overflow-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/fixed-position-out-of-view-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/fixed-position-out-of-view-negative-zindex-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/four-bars-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/four-bars-with-header-and-footer-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/negative-scroll-offset-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/negative-scroll-offset-in-view-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/nested-fixed-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/percentage-inside-fixed-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling-tree-after-scroll-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling-tree-slow-scrolling-expected.txt:
+        * platform/mac-wk2/tiled-drawing/sticky/negative-scroll-offset-expected.txt:
+        * platform/mac-wk2/tiled-drawing/sticky/sticky-horizontal-expected.txt:
+
 2014-05-19  Zalan Bujtas  <zalan@apple.com>
 
         Fix Element.offset* and .client* rounding mismatches after r168868.

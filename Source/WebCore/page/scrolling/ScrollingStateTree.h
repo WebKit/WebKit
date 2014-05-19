@@ -28,7 +28,7 @@
 
 #if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
 
-#include "ScrollingStateScrollingNode.h"
+#include "ScrollingStateFrameScrollingNode.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
@@ -49,7 +49,7 @@ public:
     static PassOwnPtr<ScrollingStateTree> create(AsyncScrollingCoordinator* = 0);
     ~ScrollingStateTree();
 
-    ScrollingStateScrollingNode* rootStateNode() const { return m_rootStateNode.get(); }
+    ScrollingStateFrameScrollingNode* rootStateNode() const { return m_rootStateNode.get(); }
     ScrollingStateNode* stateNodeForID(ScrollingNodeID);
 
     ScrollingNodeID attachNode(ScrollingNodeType, ScrollingNodeID, ScrollingNodeID parentID);
@@ -79,14 +79,14 @@ public:
 private:
     ScrollingStateTree(AsyncScrollingCoordinator*);
 
-    void setRootStateNode(PassOwnPtr<ScrollingStateScrollingNode> rootStateNode) { m_rootStateNode = rootStateNode; }
+    void setRootStateNode(PassOwnPtr<ScrollingStateFrameScrollingNode> rootStateNode) { m_rootStateNode = rootStateNode; }
     void addNode(ScrollingStateNode*);
     void removeNode(ScrollingStateNode*);
     void didRemoveNode(ScrollingNodeID);
 
     AsyncScrollingCoordinator* m_scrollingCoordinator;
     StateNodeMap m_stateNodeMap;
-    OwnPtr<ScrollingStateScrollingNode> m_rootStateNode;
+    OwnPtr<ScrollingStateFrameScrollingNode> m_rootStateNode;
     Vector<ScrollingNodeID> m_nodesRemovedSinceLastCommit;
     bool m_hasChangedProperties;
     bool m_hasNewRootStateNode;

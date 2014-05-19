@@ -1,5 +1,5 @@
-(Scrolling node
-  (viewport rect 785 600)
+(Frame scrolling node
+  (scrollable area size 785 600)
   (contents size 785 1021)
   (children 1
     (Fixed node
