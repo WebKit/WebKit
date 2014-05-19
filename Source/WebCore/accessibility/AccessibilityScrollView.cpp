@@ -221,7 +221,9 @@ LayoutRect AccessibilityScrollView::elementRect() const
     if (!m_scrollView)
         return LayoutRect();
 
-    return m_scrollView->frameRect();
+    LayoutRect rect = m_scrollView->frameRect();
+    rect.setY(rect.y() + m_scrollView->topContentInset());
+    return rect;
 }
 
 FrameView* AccessibilityScrollView::documentFrameView() const

@@ -1,3 +1,19 @@
+2014-05-19  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver sees the WebArea out of order when topContentInset is used
+        https://bugs.webkit.org/show_bug.cgi?id=133091
+
+        Reviewed by Simon Fraser.
+
+        Modify the scroll view's frame so that it recognizes the content inset.
+        This is needed so that when VoiceOver sorts elements to create an ordering,
+        the web area is not ordered at the top of the screen.
+
+        Test: platform/mac-wk2/accessibility/content-inset-scrollview-frame.html
+
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::elementRect):
+
 2014-05-19  Beth Dakin  <bdakin@apple.com>
 
         Scrollbars display incorrectly after switching between fast and slow scrolling 

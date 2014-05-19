@@ -1,0 +1,14 @@
+This tests that a page with a content inset will not affect the bounds of the main frame scroll view. It will appear as the same as the web area's sbounds
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Web area role: AXRole: AXWebArea
+WebArea frame: {-10000, 10300}, {800, 600}
+ScrollView role: AXRole: AXScrollArea
+ScrollView frame (0 content inset): {-10000, 10300}, {800, 600}
+ScrollView frame (100 content inset): {-10000, 10200}, {800, 600}
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
