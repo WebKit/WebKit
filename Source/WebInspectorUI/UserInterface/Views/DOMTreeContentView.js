@@ -293,6 +293,9 @@ WebInspector.DOMTreeContentView.prototype = {
 
     _restoreSelectedNodeAfterUpdate: function(documentURL, defaultNode)
     {
+        if (!WebInspector.domTreeManager.restoreSelectedNodeIsAllowed)
+            return;
+
         function selectNode(lastSelectedNode)
         {
             var nodeToFocus = lastSelectedNode;
@@ -313,6 +316,8 @@ WebInspector.DOMTreeContentView.prototype = {
 
         function selectLastSelectedNode(nodeId)
         {
+            if (!WebInspector.domTreeManager.restoreSelectedNodeIsAllowed)
+                return;
             selectNode.call(this, WebInspector.domTreeManager.nodeForId(nodeId));
         }
 

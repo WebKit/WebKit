@@ -1,3 +1,27 @@
+2014-05-19  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: Inspect Element sometimes does not select the right DOM Node
+        https://bugs.webkit.org/show_bug.cgi?id=127938
+
+        Reviewed by Joseph Pecoraro.
+
+        Inspecting an element when the inspector is in a closed state was selecting the node but then 
+        overriding the selection when DOMTreeContentView#_restoreSelectedNodeAfterUpdate was called.
+        Now when an element is inspected a flag prevents the restore from taking place.
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager):
+        (WebInspector.DOMTreeManager.prototype.inspectElement):
+        (WebInspector.DOMTreeManager.prototype.inspectNodeObject):
+        Add WebInspector.DOMTreeManager#_restoreSelectedNodeIsAllowed.
+
+        (WebInspector.DOMTreeManager.prototype.get restoreSelectedNodeIsAllowed):
+        Added.
+
+        * UserInterface/Views/FrameDOMTreeContentView.js:
+        (WebInspector.FrameDOMTreeContentView.prototype._rootDOMNodeAvailable):
+        Add check for WebInspector.domTreeManager.restoreSelectedNodeIsAllowed.
+
 2014-05-15  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: Should remove JSDoc comment blocks.
