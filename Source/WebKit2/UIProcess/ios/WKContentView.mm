@@ -208,10 +208,9 @@ private:
 
     self.layer.hitTestsAsOpaque = YES;
 
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
-
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:[UIApplication sharedApplication]];
-
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:[UIApplication sharedApplication]];
 
     return self;
@@ -461,9 +460,15 @@ private:
     _page->applicationWillResignActive();
 }
 
+- (void)_applicationDidEnterBackground:(NSNotification*)notification
+{
+    _page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow);
+}
+
 - (void)_applicationWillEnterForeground:(NSNotification*)notification
 {
     _page->applicationWillEnterForeground();
+    _page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow);
 }
 
 - (void)_applicationDidBecomeActive:(NSNotification*)notification

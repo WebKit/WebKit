@@ -110,17 +110,19 @@ IntSize PageClientImpl::viewSize()
 
 bool PageClientImpl::isViewWindowActive()
 {
-    return [m_webView window];
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=133098
+    return isViewVisible();
 }
 
 bool PageClientImpl::isViewFocused()
 {
-    return [m_webView window];
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=133098
+    return isViewWindowActive();
 }
 
 bool PageClientImpl::isViewVisible()
 {
-    return [m_webView window];
+    return [m_webView window] && [UIApplication sharedApplication].applicationState != UIApplicationStateBackground;
 }
 
 bool PageClientImpl::isViewInWindow()
@@ -130,12 +132,12 @@ bool PageClientImpl::isViewInWindow()
 
 bool PageClientImpl::isViewVisibleOrOccluded()
 {
-    return [m_webView window];
+    return isViewVisible();
 }
 
 bool PageClientImpl::isVisuallyIdle()
 {
-    return ![m_webView window];
+    return !isViewVisible();
 }
 
 void PageClientImpl::processDidExit()
