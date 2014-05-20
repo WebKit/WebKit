@@ -1,3 +1,29 @@
+2014-05-20  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Block incorrectly sized when containing an unsplittable box
+        https://bugs.webkit.org/show_bug.cgi?id=132601
+
+        Reviewed by Antti Koivisto.
+
+        When laying out elements in a region, when an inline element is encountered
+        the size of its parent must not be increased beyond the bottom of the current region,
+        unless if its the last region. This will ensure that the next sibling of the
+        inline element is correctly laid out at the top of the next region, instead
+        of leaving an empty space equal to the height of the overflow, as it did until now.
+
+        Tests: fast/regions/inline-block-inside-anonymous-overflow.html
+               fast/regions/inline-block-overflow.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::adjustLinePositionForPagination):
+        (WebCore::RenderBlockFlow::hasNextPage):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlockFlow::linkToEndLineIfNeeded):
+        (WebCore::RenderBlockFlow::determineStartPosition):
+        (WebCore::RenderBlockFlow::checkPaginationAndFloatsAtEndLine):
+
 2014-05-20  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Crash while painting block selection gaps in regions

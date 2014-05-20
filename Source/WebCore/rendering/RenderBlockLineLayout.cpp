@@ -1134,7 +1134,8 @@ void RenderBlockFlow::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, I
 
                 if (paginated) {
                     LayoutUnit adjustment = 0;
-                    adjustLinePositionForPagination(lineBox, adjustment, layoutState.flowThread());
+                    bool overflowsRegion;
+                    adjustLinePositionForPagination(lineBox, adjustment, overflowsRegion, layoutState.flowThread());
                     if (adjustment) {
                         LayoutUnit oldLineWidth = availableLogicalWidthForLine(oldLogicalHeight, layoutState.lineInfo().isFirstLine());
                         lineBox->adjustBlockDirectionPosition(adjustment);
@@ -1149,6 +1150,16 @@ void RenderBlockFlow::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, I
                         }
 
                         setLogicalHeight(lineBox->lineBottomWithLeading());
+                    }
+                    
+                    if (RenderFlowThread* flowThread = flowThreadContainingBlock()) {
+                        if (flowThread->isRenderNamedFlowThread() && overflowsRegion && hasNextPage(lineBox->lineTop())) {
+                            // Limit the height of this block to the end of the current region because
+                            // it is also fragmented into the next region.
+                            LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalTop(), ExcludePageBoundary);
+                            if (logicalHeight() > remainingLogicalHeight)
+                                setLogicalHeight(remainingLogicalHeight);
+                        }
                     }
 
                     if (layoutState.flowThread())
@@ -1265,7 +1276,8 @@ void RenderBlockFlow::linkToEndLineIfNeeded(LineLayoutState& layoutState)
                 line->attachLine();
                 if (paginated) {
                     delta -= line->paginationStrut();
-                    adjustLinePositionForPagination(line, delta, layoutState.flowThread());
+                    bool overflowsRegion;
+                    adjustLinePositionForPagination(line, delta, overflowsRegion, layoutState.flowThread());
                 }
                 if (delta) {
                     layoutState.updateRepaintRangeFromBox(line, delta);
@@ -1505,7 +1517,8 @@ RootInlineBox* RenderBlockFlow::determineStartPosition(LineLayoutState& layoutSt
                     break;
                 }
                 paginationDelta -= curr->paginationStrut();
-                adjustLinePositionForPagination(curr, paginationDelta, layoutState.flowThread());
+                bool overflowsRegion;
+                adjustLinePositionForPagination(curr, paginationDelta, overflowsRegion, layoutState.flowThread());
                 if (paginationDelta) {
                     if (containsFloats() || !layoutState.floats().isEmpty()) {
                         // FIXME: Do better eventually.  For now if we ever shift because of pagination and floats are present just go to a full layout.
@@ -1653,8 +1666,9 @@ bool RenderBlockFlow::checkPaginationAndFloatsAtEndLine(LineLayoutState& layoutS
                 // This isn't the real move we're going to do, so don't update the line box's pagination
                 // strut yet.
                 LayoutUnit oldPaginationStrut = lineBox->paginationStrut();
+                bool overflowsRegion;
                 lineDelta -= oldPaginationStrut;
-                adjustLinePositionForPagination(lineBox, lineDelta, layoutState.flowThread());
+                adjustLinePositionForPagination(lineBox, lineDelta, overflowsRegion, layoutState.flowThread());
                 lineBox->setPaginationStrut(oldPaginationStrut);
             }
             if (lineWidthForPaginatedLineChanged(lineBox, lineDelta, layoutState.flowThread()))
