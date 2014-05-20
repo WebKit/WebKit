@@ -35,7 +35,6 @@
 #include <WebKit/WKRetainPtr.h>
 #include <sstream>
 #include <wtf/Forward.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -135,7 +134,7 @@ private:
 
     WKBundleRef m_bundle;
     WKBundlePageGroupRef m_pageGroup;
-    Vector<OwnPtr<InjectedBundlePage> > m_pages;
+    Vector<std::unique_ptr<InjectedBundlePage>> m_pages;
 
     RefPtr<AccessibilityController> m_accessibilityController;
     RefPtr<TestRunner> m_testRunner;

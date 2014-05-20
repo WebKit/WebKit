@@ -27,7 +27,6 @@
 #define WorkQueueManager_h
 
 #include <wtf/Deque.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTR {
@@ -51,7 +50,7 @@ public:
     void queueNonLoadingScript(const String& script);
 
 private:    
-    typedef Deque<OwnPtr<class WorkQueueItem> > WorkQueue;
+    typedef Deque<std::unique_ptr<class WorkQueueItem>> WorkQueue;
 
     void enqueue(WorkQueueItem*); // Adopts pointer.
 

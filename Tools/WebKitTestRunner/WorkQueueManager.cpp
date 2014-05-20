@@ -31,7 +31,6 @@
 #include <WebKit/WKPage.h>
 #include <WebKit/WKRetainPtr.h>
 #include <stdio.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 
 namespace WTR {
@@ -119,7 +118,7 @@ bool WorkQueueManager::processWorkQueue()
 {
     m_processing = false;
     while (!m_processing && !m_workQueue.isEmpty()) {
-        OwnPtr<WorkQueueItem> item(m_workQueue.takeFirst());
+        std::unique_ptr<WorkQueueItem> item(m_workQueue.takeFirst());
         m_processing = (item->invoke() == WorkQueueItem::Loading);
     }
 
@@ -222,7 +221,7 @@ void WorkQueueManager::enqueue(WorkQueueItem* item)
         return;
     }
 
-    m_workQueue.append(adoptPtr(item));
+    m_workQueue.append(std::unique_ptr<WorkQueueItem>(item));
 }
 
 } // namespace WTR

@@ -51,7 +51,6 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(COCOA)
@@ -341,7 +340,7 @@ void TestController::initialize(int argc, const char* argv[])
     }
 
     m_context = adoptWK(WKContextCreateWithConfiguration(configuration.get()));
-    m_geolocationProvider = adoptPtr(new GeolocationProviderMock(m_context.get()));
+    m_geolocationProvider = std::make_unique<GeolocationProviderMock>(m_context.get());
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080)
     WKContextSetUsesNetworkProcess(m_context.get(), true);
@@ -418,7 +417,7 @@ void TestController::initialize(int argc, const char* argv[])
 
 void TestController::createWebViewWithOptions(WKDictionaryRef options)
 {
-    m_mainWebView = adoptPtr(new PlatformWebView(m_context.get(), m_pageGroup.get(), 0, options));
+    m_mainWebView = std::make_unique<PlatformWebView>(m_context.get(), m_pageGroup.get(), nullptr, options);
     WKPageUIClientV2 pageUIClient = {
         { 2, m_mainWebView.get() },
         0, // createNewPage_deprecatedForUseWithV0
@@ -616,7 +615,7 @@ bool TestController::resetStateToConsistentValues()
     // FIXME: This function should also ensure that there is only one page open.
 
     // Reset the EventSender for each test.
-    m_eventSenderProxy = adoptPtr(new EventSenderProxy(this));
+    m_eventSenderProxy = std::make_unique<EventSenderProxy>(this);
 
     // FIXME: Is this needed? Nothing in TestController changes preferences during tests, and if there is
     // some other code doing this, it should probably be responsible for cleanup too.
@@ -760,7 +759,7 @@ bool TestController::runTest(const char* inputLine)
 
     m_state = RunningTest;
 
-    m_currentInvocation = adoptPtr(new TestInvocation(command.pathOrURL));
+    m_currentInvocation = std::make_unique<TestInvocation>(command.pathOrURL);
     if (command.shouldDumpPixels || m_shouldDumpPixelsForAllTests)
         m_currentInvocation->setIsPixelTest(command.expectedPixelHash);
     if (command.timeout > 0)
@@ -769,7 +768,7 @@ bool TestController::runTest(const char* inputLine)
     platformWillRunTest(*m_currentInvocation);
 
     m_currentInvocation->invoke();
-    m_currentInvocation.clear();
+    m_currentInvocation = nullptr;
 
     return true;
 }

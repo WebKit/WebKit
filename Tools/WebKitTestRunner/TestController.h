@@ -32,7 +32,6 @@
 #include <WebKit/WKRetainPtr.h>
 #include <string>
 #include <vector>
-#include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WTR {
@@ -185,7 +184,7 @@ private:
     static const char* libraryPathForTesting();
     static const char* platformLibraryPathForTesting();
 
-    OwnPtr<TestInvocation> m_currentInvocation;
+    std::unique_ptr<TestInvocation> m_currentInvocation;
 
     bool m_verbose;
     bool m_printSeparators;
@@ -198,7 +197,7 @@ private:
 
     WebNotificationProvider m_webNotificationProvider;
 
-    OwnPtr<PlatformWebView> m_mainWebView;
+    std::unique_ptr<PlatformWebView> m_mainWebView;
     WKRetainPtr<WKContextRef> m_context;
     WKRetainPtr<WKPageGroupRef> m_pageGroup;
 
@@ -223,7 +222,7 @@ private:
     
     bool m_beforeUnloadReturnValue;
 
-    OwnPtr<GeolocationProviderMock> m_geolocationProvider;
+    std::unique_ptr<GeolocationProviderMock> m_geolocationProvider;
     Vector<WKRetainPtr<WKGeolocationPermissionRequestRef> > m_geolocationPermissionRequests;
     bool m_isGeolocationPermissionSet;
     bool m_isGeolocationPermissionAllowed;
@@ -243,7 +242,7 @@ private:
 
     bool m_shouldLogHistoryClientCallbacks;
 
-    OwnPtr<EventSenderProxy> m_eventSenderProxy;
+    std::unique_ptr<EventSenderProxy> m_eventSenderProxy;
 
     WorkQueueManager m_workQueueManager;
 };

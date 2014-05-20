@@ -38,7 +38,6 @@
 #include <WebKit/WKRetainPtr.h>
 #include <climits>
 #include <cstdio>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 

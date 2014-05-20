@@ -29,7 +29,6 @@
 #include <WebKit/WKRetainPtr.h>
 #include <string>
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WTR {

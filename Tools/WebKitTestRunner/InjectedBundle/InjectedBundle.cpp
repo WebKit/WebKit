@@ -35,7 +35,6 @@
 #include <WebKit/WKBundlePrivate.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WebKit2_C.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/Vector.h>
@@ -106,7 +105,7 @@ void InjectedBundle::initialize(WKBundleRef bundle, WKTypeRef initializationUser
 
 void InjectedBundle::didCreatePage(WKBundlePageRef page)
 {
-    m_pages.append(adoptPtr(new InjectedBundlePage(page)));
+    m_pages.append(std::make_unique<InjectedBundlePage>(page));
 }
 
 void InjectedBundle::willDestroyPage(WKBundlePageRef page)
