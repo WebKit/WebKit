@@ -62,6 +62,11 @@ PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(PlatformLayer* customLa
     [customLayer web_disableAllActions];
 
     m_providesContents = [customLayer isKindOfClass:NSClassFromString(@"WebGLLayer")];
+
+    properties().position = FloatPoint3D(customLayer.position.x, customLayer.position.y, customLayer.zPosition);
+    properties().anchorPoint = FloatPoint3D(customLayer.anchorPoint.x, customLayer.anchorPoint.y, customLayer.anchorPointZ);
+    properties().bounds = customLayer.bounds;
+    properties().contentsRect = customLayer.contentsRect;
 }
 
 PlatformCALayerRemoteCustom::~PlatformCALayerRemoteCustom()
