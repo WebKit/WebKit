@@ -1,3 +1,17 @@
+2014-05-20  Alex Christensen  <achristensen@webkit.org>
+
+        Fix web timing assertion failure.
+        https://bugs.webkit.org/show_bug.cgi?id=133094
+        <rdar://problem/16966032>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::getConnectionTimingData):
+        Set requestStart and responseStart to 0 instead of -1 to match the 
+        ResourceLoadTiming constructor and prevent the assertion failure in
+        PerformanceTiming::responseStart.
+
 2014-05-20  Prashant Hiremath  <hiremathprashants@gmail.com>
 
         Only set title on SVG documents

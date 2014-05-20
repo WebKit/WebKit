@@ -732,8 +732,8 @@ void ResourceHandle::getConnectionTimingData(NSDictionary *timingData, ResourceL
     timing.connectStart = connectStart <= 0 ? -1 : (connectStart - referenceStart) * 1000;
     timing.secureConnectionStart = secureConnectionStart <= 0 ? -1 : (secureConnectionStart - referenceStart) * 1000;
     timing.connectEnd = connectEnd <= 0 ? -1 : (connectEnd - referenceStart) * 1000;
-    timing.requestStart = requestStart <= 0 ? -1 : (requestStart - referenceStart) * 1000;
-    timing.responseStart = responseStart <= 0 ? -1 : (responseStart - referenceStart) * 1000;
+    timing.requestStart = requestStart <= 0 ? 0 : (requestStart - referenceStart) * 1000;
+    timing.responseStart = responseStart <= 0 ? 0 : (responseStart - referenceStart) * 1000;
 }
     
 #if USE(CFNETWORK)
