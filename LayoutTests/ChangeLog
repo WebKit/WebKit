@@ -1,3 +1,13 @@
+2014-05-20  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Regions] Add polygon tests for shapes on regions and shapes on the content flow
+        https://bugs.webkit.org/show_bug.cgi?id=133107
+
+        Reviewed by Mihnea Ovidenie.
+
+        * fast/regions/shape-outside-floats/regions-shape-outside-region-polygon-floats-expected.html: Added.
+        * fast/regions/shape-outside-floats/regions-shape-outside-region-polygon-floats.html: Added.
+
 2014-05-20  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Crash while painting block selection gaps in regions
