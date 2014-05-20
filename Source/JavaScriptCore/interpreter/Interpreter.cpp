@@ -913,7 +913,7 @@ failedJSONP:
 
     ProgramCodeBlock* codeBlock = program->codeBlock();
 
-    if (UNLIKELY(vm.watchdog.didFire(callFrame)))
+    if (UNLIKELY(vm.watchdog && vm.watchdog->didFire(callFrame)))
         return throwTerminatedExecutionException(callFrame);
 
     ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
@@ -928,7 +928,7 @@ failedJSONP:
     JSValue result;
     {
         SamplingTool::CallRecord callRecord(m_sampler.get());
-        Watchdog::Scope watchdogScope(vm.watchdog);
+        Watchdog::Scope watchdogScope(vm.watchdog.get());
 
         result = program->generatedJITCode()->execute(&vm, &protoCallFrame);
     }
@@ -975,7 +975,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     } else
         newCodeBlock = 0;
 
-    if (UNLIKELY(vm.watchdog.didFire(callFrame)))
+    if (UNLIKELY(vm.watchdog && vm.watchdog->didFire(callFrame)))
         return throwTerminatedExecutionException(callFrame);
 
     ProtoCallFrame protoCallFrame;
@@ -987,7 +987,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     JSValue result;
     {
         SamplingTool::CallRecord callRecord(m_sampler.get(), !isJSCall);
-        Watchdog::Scope watchdogScope(vm.watchdog);
+        Watchdog::Scope watchdogScope(vm.watchdog.get());
 
         // Execute the code:
         if (isJSCall)
@@ -1043,7 +1043,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     } else
         newCodeBlock = 0;
 
-    if (UNLIKELY(vm.watchdog.didFire(callFrame)))
+    if (UNLIKELY(vm.watchdog && vm.watchdog->didFire(callFrame)))
         return throwTerminatedExecutionException(callFrame);
 
     ProtoCallFrame protoCallFrame;
@@ -1055,7 +1055,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     JSValue result;
     {
         SamplingTool::CallRecord callRecord(m_sampler.get(), !isJSConstruct);
-        Watchdog::Scope watchdogScope(vm.watchdog);
+        Watchdog::Scope watchdogScope(vm.watchdog.get());
 
         // Execute the code.
         if (isJSConstruct)
@@ -1118,14 +1118,14 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
     if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->willExecute(closure.oldCallFrame, closure.function);
 
-    if (UNLIKELY(vm.watchdog.didFire(closure.oldCallFrame)))
+    if (UNLIKELY(vm.watchdog && vm.watchdog->didFire(closure.oldCallFrame)))
         return throwTerminatedExecutionException(closure.oldCallFrame);
 
     // Execute the code:
     JSValue result;
     {
         SamplingTool::CallRecord callRecord(m_sampler.get());
-        Watchdog::Scope watchdogScope(vm.watchdog);
+        Watchdog::Scope watchdogScope(vm.watchdog.get());
 
         result = closure.functionExecutable->generatedJITCodeForCall()->execute(&vm, closure.protoCallFrame);
     }
@@ -1194,7 +1194,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
         }
     }
 
-    if (UNLIKELY(vm.watchdog.didFire(callFrame)))
+    if (UNLIKELY(vm.watchdog && vm.watchdog->didFire(callFrame)))
         return throwTerminatedExecutionException(callFrame);
 
     ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
@@ -1209,7 +1209,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     JSValue result;
     {
         SamplingTool::CallRecord callRecord(m_sampler.get());
-        Watchdog::Scope watchdogScope(vm.watchdog);
+        Watchdog::Scope watchdogScope(vm.watchdog.get());
 
         result = eval->generatedJITCode()->execute(&vm, &protoCallFrame);
     }

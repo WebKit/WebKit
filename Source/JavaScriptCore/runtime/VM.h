@@ -230,7 +230,7 @@ namespace JSC {
         VMType vmType;
         ClientData* clientData;
         ExecState* topCallFrame;
-        Watchdog watchdog;
+        std::unique_ptr<Watchdog> watchdog;
 
         const OwnPtr<const HashTable> arrayConstructorTable;
         const OwnPtr<const HashTable> arrayPrototypeTable;

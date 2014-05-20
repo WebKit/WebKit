@@ -1354,7 +1354,8 @@ LLINT_SLOW_PATH_DECL(slow_path_throw_static_error)
 LLINT_SLOW_PATH_DECL(slow_path_handle_watchdog_timer)
 {
     LLINT_BEGIN_NO_SET_PC();
-    if (UNLIKELY(vm.watchdog.didFire(exec)))
+    ASSERT(vm.watchdog);
+    if (UNLIKELY(vm.watchdog->didFire(exec)))
         LLINT_THROW(createTerminatedExecutionException(&vm));
     LLINT_RETURN_TWO(0, exec);
 }

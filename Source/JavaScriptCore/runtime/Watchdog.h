@@ -104,11 +104,23 @@ private:
 
 class Watchdog::Scope {
 public:
-    Scope(Watchdog&);
-    ~Scope();
+    Scope(Watchdog* watchdog)
+        : m_watchdog(watchdog)
+    {
+        if (!watchdog)
+            return;
+        m_watchdog->arm();
+    }
+    
+    ~Scope()
+    {
+        if (!m_watchdog)
+            return;
+        m_watchdog->disarm();
+    }
 
 private:
-    Watchdog& m_watchdog;
+    Watchdog* m_watchdog;
 };
 
 } // namespace JSC

@@ -983,7 +983,7 @@ void JIT_OPERATION operationHandleWatchdogTimer(ExecState* exec)
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    if (UNLIKELY(vm.watchdog.didFire(exec)))
+    if (UNLIKELY(vm.watchdog && vm.watchdog->didFire(exec)))
         vm.throwException(exec, createTerminatedExecutionException(&vm));
 }
 

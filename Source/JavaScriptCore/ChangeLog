@@ -1,3 +1,44 @@
+2014-05-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Watchdog timer should be lazily allocated
+        https://bugs.webkit.org/show_bug.cgi?id=133135
+
+        Reviewed by Geoffrey Garen.
+
+        We incur a noticeable amount of overhead on some benchmarks due to checking if the Watchdog ever fired. 
+        There is no reason to do this checking if we never activated the Watchdog, which can only be done through 
+        JSContextGroupSetExecutionTimeLimit or JSContextGroupClearExecutionTimeLimit. 
+
+        By allocating the Watchdog lazily on the VM we can avoid all of the associated overhead when we don't use 
+        these two API functions (which is true of most clients).
+
+        * API/JSContextRef.cpp:
+        (JSContextGroupSetExecutionTimeLimit):
+        (JSContextGroupClearExecutionTimeLimit):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_hint):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/VM.h:
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::Scope::Scope): Deleted.
+        (JSC::Watchdog::Scope::~Scope): Deleted.
+        * runtime/Watchdog.h:
+        (JSC::Watchdog::Scope::Scope):
+        (JSC::Watchdog::Scope::~Scope):
+
 2014-05-19  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSArray::shiftCountWith* could be more efficient

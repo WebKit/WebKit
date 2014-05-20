@@ -4551,11 +4551,12 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case CheckWatchdogTimer:
+        ASSERT(m_jit.vm()->watchdog);
         speculationCheck(
             WatchdogTimerFired, JSValueRegs(), 0,
             m_jit.branchTest8(
                 JITCompiler::NonZero,
-                JITCompiler::AbsoluteAddress(m_jit.vm()->watchdog.timerDidFireAddress())));
+                JITCompiler::AbsoluteAddress(m_jit.vm()->watchdog->timerDidFireAddress())));
         break;
 
     case CountExecution:

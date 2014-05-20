@@ -89,7 +89,9 @@ void JSContextGroupSetExecutionTimeLimit(JSContextGroupRef group, double limit, 
 {
     VM& vm = *toJS(group);
     JSLockHolder locker(&vm);
-    Watchdog& watchdog = vm.watchdog;
+    if (!vm.watchdog)
+        vm.watchdog = std::make_unique<Watchdog>();
+    Watchdog& watchdog = *vm.watchdog;
     if (callback) {
         void* callbackPtr = reinterpret_cast<void*>(callback);
         watchdog.setTimeLimit(vm, limit, internalScriptTimeoutCallback, callbackPtr, callbackData);
@@ -101,7 +103,9 @@ void JSContextGroupClearExecutionTimeLimit(JSContextGroupRef group)
 {
     VM& vm = *toJS(group);
     JSLockHolder locker(&vm);
-    Watchdog& watchdog = vm.watchdog;
+    if (!vm.watchdog)
+        vm.watchdog = std::make_unique<Watchdog>();
+    Watchdog& watchdog = *vm.watchdog;
     watchdog.setTimeLimit(vm, std::numeric_limits<double>::infinity());
 }
 

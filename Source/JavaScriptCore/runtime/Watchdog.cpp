@@ -185,15 +185,4 @@ void Watchdog::stopCountdown()
     m_isStopped = true;
 }
 
-Watchdog::Scope::Scope(Watchdog& watchdog)
-    : m_watchdog(watchdog)
-{
-    m_watchdog.arm();
-}
-
-Watchdog::Scope::~Scope()
-{
-    m_watchdog.disarm();
-}
-
 } // namespace JSC

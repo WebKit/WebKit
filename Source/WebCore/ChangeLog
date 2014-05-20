@@ -1,3 +1,26 @@
+2014-05-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Watchdog timer should be lazily allocated
+        https://bugs.webkit.org/show_bug.cgi?id=133135
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        We incur a noticeable amount of overhead on some benchmarks due to checking if the Watchdog ever fired. 
+        There is no reason to do this checking if we never activated the Watchdog, which can only be done through 
+        JSContextGroupSetExecutionTimeLimit or JSContextGroupClearExecutionTimeLimit. 
+
+        By allocating the Watchdog lazily on the VM we can avoid all of the associated overhead when we don't use 
+        these two API functions (which is true of most clients).
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate):
+        (WebCore::WorkerScriptController::scheduleExecutionTermination):
+        (WebCore::WorkerScriptController::isExecutionTerminating):
+
 2014-05-20  Dean Jackson  <dino@apple.com>
 
         [Mac] Allow popup menus to override default appearance

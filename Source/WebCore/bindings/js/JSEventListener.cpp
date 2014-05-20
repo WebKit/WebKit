@@ -133,7 +133,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
 
         if (scriptExecutionContext->isWorkerGlobalScope()) {
             bool terminatorCausedException = (exec->hadException() && isTerminatedExecutionException(exec->exception()));
-            if (terminatorCausedException || vm.watchdog.didFire())
+            if (terminatorCausedException || (vm.watchdog && vm.watchdog->didFire()))
                 toWorkerGlobalScope(scriptExecutionContext)->script()->forbidExecution();
         }
 
