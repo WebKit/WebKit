@@ -9,8 +9,8 @@ layer at (0,0) size 800x474
           text run at (0,8) width 137: "be of the same width. There must be"
           text run at (0,17) width 26: "no red."
       RenderBlock {P} at (10,46) size 121x29 [bgcolor=#008000] [border: (9.25px solid #0000FF)]
-        RenderText {#text} at (9,8) size 2x10
-          text run at (9,8) width 2: " "
+        RenderText {#text} at (9,8) size 3x10
+          text run at (9,8) width 3: " "
       RenderBlock {P} at (1,129) size 139x11
         RenderText {#text} at (0,-1) size 12x10
           text run at (0,-1) width 12: "      "

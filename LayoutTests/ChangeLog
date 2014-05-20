@@ -1,3 +1,51 @@
+2014-05-20  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK] Unreviewed GTK gardening
+
+        Rebaseline affected tests by changes on integral snapping of inlines
+        introduced at r169048.
+
+        * platform/gtk/css1/box_properties/float_on_text_elements-expected.txt:
+        * platform/gtk/css1/text_properties/text_indent-expected.txt:
+        * platform/gtk/css2.1/t0905-c414-flt-wrap-00-e-expected.txt:
+        * platform/gtk/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt:
+        * platform/gtk/css2.1/t100801-c544-valgn-00-a-ag-expected.txt:
+        * platform/gtk/css2.1/t100801-c544-valgn-02-d-agi-expected.txt:
+        * platform/gtk/css2.1/t100801-c544-valgn-03-d-agi-expected.txt:
+        * platform/gtk/css2.1/t100801-c544-valgn-04-d-agi-expected.txt:
+        * platform/gtk/css2.1/t1601-c547-indent-00-b-a-expected.txt:
+        * platform/gtk/fast/block/float/026-expected.txt:
+        * platform/gtk/fast/block/float/028-expected.txt:
+        * platform/gtk/fast/css/empty-pseudo-class-expected.txt:
+        * platform/gtk/fast/css/first-child-pseudo-class-expected.txt:
+        * platform/gtk/fast/css/first-of-type-pseudo-class-expected.txt:
+        * platform/gtk/fast/css/last-child-pseudo-class-expected.txt:
+        * platform/gtk/fast/css/last-of-type-pseudo-class-expected.txt:
+        * platform/gtk/fast/css/only-child-pseudo-class-expected.txt:
+        * platform/gtk/fast/css/only-of-type-pseudo-class-expected.txt:
+        * platform/gtk/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/gtk/fast/line-grid/line-align-left-edges-expected.txt:
+        * platform/gtk/fast/multicol/column-count-with-rules-expected.txt:
+        * platform/gtk/fast/multicol/float-multicol-expected.txt:
+        * platform/gtk/fast/multicol/layers-in-multicol-expected.txt:
+        * platform/gtk/fast/multicol/vertical-lr/float-multicol-expected.txt:
+        * platform/gtk/fast/multicol/vertical-rl/float-multicol-expected.txt:
+        * platform/gtk/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.txt:
+        * platform/gtk/fast/regions/repaint/line-flow-with-floats-in-regions-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-1-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-10-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-2-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-3-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-4-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-5-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-6-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-7-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-8-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-9-expected.txt:
+        * platform/gtk/fast/text/whitespace/024-expected.txt:
+        * platform/gtk/svg/wicd/rightsizing-grid-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt:
+
 2014-05-19  Filip Pizlo  <fpizlo@apple.com>
 
         Test gardening: skip some failing tests on not-X86.

@@ -21,10 +21,10 @@ Named flows
           RenderBlock {DIV} at (27,15) size 396x342 [border: (1px solid #0000FF)]
             RenderBlock {DIV} at (40,11) size 316x242 [border: (1px solid #008000)]
               RenderBlock {P} at (1,17) size 314x91
-                RenderText {#text} at (-18,0) size 331x91
-                  text run at (-18,0) width 248: "This line of text should not get out of"
-                  text run at (-18,17) width 248: "the region. This line of text should not"
-                  text run at (-18,34) width 248: "get out of the region. This line of text"
+                RenderText {#text} at (-17,0) size 331x91
+                  text run at (-17,0) width 248: "This line of text should not get out of"
+                  text run at (-17,17) width 248: "the region. This line of text should not"
+                  text run at (-17,34) width 248: "get out of the region. This line of text"
                   text run at (0,57) width 313: "should not get out of the region. This line of text"
                   text run at (0,74) width 201: "should not get out of the region."
               RenderBlock {P} at (1,124) size 314x68
