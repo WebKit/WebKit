@@ -73,6 +73,9 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const Scrolli
     , m_requestedScrollPositionRepresentsProgrammaticScroll(stateNode.requestedScrollPositionRepresentsProgrammaticScroll())
     , m_topContentInset(stateNode.topContentInset())
 {
+    if (hasChangedProperty(ScrolledContentsLayer))
+        setScrolledContentsLayer(stateNode.scrolledContentsLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
+
     if (hasChangedProperty(CounterScrollingLayer))
         setCounterScrollingLayer(stateNode.counterScrollingLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
 
@@ -169,6 +172,15 @@ void ScrollingStateFrameScrollingNode::setTopContentInset(float topContentInset)
 
     m_topContentInset = topContentInset;
     setPropertyChanged(TopContentInset);
+}
+
+void ScrollingStateFrameScrollingNode::setScrolledContentsLayer(const LayerRepresentation& layerRepresentation)
+{
+    if (layerRepresentation == m_scrolledContentsLayer)
+        return;
+    
+    m_scrolledContentsLayer = layerRepresentation;
+    setPropertyChanged(ScrolledContentsLayer);
 }
 
 void ScrollingStateFrameScrollingNode::setCounterScrollingLayer(const LayerRepresentation& layerRepresentation)

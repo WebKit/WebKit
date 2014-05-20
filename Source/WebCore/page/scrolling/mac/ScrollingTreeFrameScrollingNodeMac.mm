@@ -77,7 +77,10 @@ void ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren(const ScrollingSta
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
         m_scrollLayer = scrollingStateNode.layer();
-    
+
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::ScrolledContentsLayer))
+        m_scrolledContentsLayer = scrollingStateNode.scrolledContentsLayer();
+
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::CounterScrollingLayer))
         m_counterScrollingLayer = scrollingStateNode.counterScrollingLayer();
 

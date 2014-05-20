@@ -3673,7 +3673,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Scr
             scrolledContentsLayer = m_rootContentLayer.get();
             counterScrollingLayer = fixedRootBackgroundLayer();
             insetClipLayer = clipLayer();
-            scrollingCoordinator->updateFrameScrollingNode(nodeID, scrollingLayer, counterScrollingLayer, insetClipLayer);
+            scrollingCoordinator->updateFrameScrollingNode(nodeID, scrollingLayer, scrolledContentsLayer, counterScrollingLayer, insetClipLayer);
         } else {
             ScrollingCoordinator::ScrollingGeometry scrollingGeometry;
             scrollingGeometry.scrollOrigin = layer.scrollOrigin();

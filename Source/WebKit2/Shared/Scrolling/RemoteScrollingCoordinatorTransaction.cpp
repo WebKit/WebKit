@@ -145,6 +145,9 @@ void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(ArgumentEncoder& en
     SCROLLING_NODE_ENCODE(ScrollingStateFrameScrollingNode::FooterHeight, footerHeight)
     SCROLLING_NODE_ENCODE(ScrollingStateFrameScrollingNode::TopContentInset, topContentInset)
 
+    if (node.hasChangedProperty(ScrollingStateFrameScrollingNode::ScrolledContentsLayer))
+        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer());
+
     if (node.hasChangedProperty(ScrollingStateFrameScrollingNode::CounterScrollingLayer))
         encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.counterScrollingLayer());
 
@@ -219,6 +222,13 @@ bool ArgumentCoder<ScrollingStateFrameScrollingNode>::decode(ArgumentDecoder& de
     SCROLLING_NODE_DECODE(ScrollingStateFrameScrollingNode::HeaderHeight, int, setHeaderHeight);
     SCROLLING_NODE_DECODE(ScrollingStateFrameScrollingNode::FooterHeight, int, setFooterHeight);
     SCROLLING_NODE_DECODE(ScrollingStateFrameScrollingNode::TopContentInset, float, setTopContentInset);
+
+    if (node.hasChangedProperty(ScrollingStateFrameScrollingNode::ScrolledContentsLayer)) {
+        GraphicsLayer::PlatformLayerID layerID;
+        if (!decoder.decode(layerID))
+            return false;
+        node.setScrolledContentsLayer(layerID);
+    }
 
     if (node.hasChangedProperty(ScrollingStateFrameScrollingNode::CounterScrollingLayer)) {
         GraphicsLayer::PlatformLayerID layerID;
@@ -595,9 +605,11 @@ void RemoteScrollingTreeTextStream::dump(const ScrollingStateFrameScrollingNode&
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::TopContentInset))
         dumpProperty(ts, "top-content-inset", node.topContentInset());
 
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::ScrolledContentsLayer))
+        dumpProperty(ts, "scrolled-contents-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer()));
+
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::InsetClipLayer))
         dumpProperty(ts, "clip-inset-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.insetClipLayer()));
-
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::ContentShadowLayer))
         dumpProperty(ts, "content-shadow-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.contentShadowLayer()));

@@ -52,6 +52,7 @@ public:
         NonFastScrollableRegion,
         WheelEventHandlerCount,
         ReasonsForSynchronousScrolling,
+        ScrolledContentsLayer,
         CounterScrollingLayer,
         InsetClipLayer,
         ContentShadowLayer,
@@ -87,7 +88,10 @@ public:
 
     float topContentInset() const { return m_topContentInset; }
     void setTopContentInset(float);
-    
+
+    const LayerRepresentation& scrolledContentsLayer() const { return m_scrolledContentsLayer; }
+    void setScrolledContentsLayer(const LayerRepresentation&);
+
     // This is a layer moved in the opposite direction to scrolling, for example for background-attachment:fixed
     const LayerRepresentation& counterScrollingLayer() const { return m_counterScrollingLayer; }
     void setCounterScrollingLayer(const LayerRepresentation&);
@@ -124,6 +128,7 @@ private:
 
     LayerRepresentation m_counterScrollingLayer;
     LayerRepresentation m_insetClipLayer;
+    LayerRepresentation m_scrolledContentsLayer;
     LayerRepresentation m_contentShadowLayer;
     LayerRepresentation m_headerLayer;
     LayerRepresentation m_footerLayer;
