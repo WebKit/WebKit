@@ -64,6 +64,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "TransformState.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StackStats.h>
 #include <wtf/TemporaryChange.h>
 
@@ -90,11 +91,26 @@ static TrackedDescendantsMap* gPercentHeightDescendantsMap = 0;
 static TrackedContainerMap* gPositionedContainerMap = 0;
 static TrackedContainerMap* gPercentHeightContainerMap = 0;
     
-typedef WTF::HashMap<RenderBlock*, std::unique_ptr<ListHashSet<RenderInline*>>> ContinuationOutlineTableMap;
+typedef HashMap<RenderBlock*, std::unique_ptr<ListHashSet<RenderInline*>>> ContinuationOutlineTableMap;
 
-typedef WTF::HashSet<RenderBlock*> DelayedUpdateScrollInfoSet;
-static int gDelayUpdateScrollInfo = 0;
-static DelayedUpdateScrollInfoSet* gDelayedUpdateScrollInfoSet = 0;
+struct UpdateScrollInfoAfterLayoutTransaction {
+    UpdateScrollInfoAfterLayoutTransaction(const RenderView& view)
+        : nestedCount(0)
+        , view(&view)
+    {
+    }
+
+    int nestedCount;
+    const RenderView* view;
+    HashSet<RenderBlock*> blocks;
+};
+
+typedef Vector<UpdateScrollInfoAfterLayoutTransaction> DelayedUpdateScrollInfoStack;
+static std::unique_ptr<DelayedUpdateScrollInfoStack>& updateScrollInfoAfterLayoutTransactionStack()
+{
+    static NeverDestroyed<std::unique_ptr<DelayedUpdateScrollInfoStack>> delayedUpdatedScrollInfoStack;
+    return delayedUpdatedScrollInfoStack;
+}
 
 // Allocated only when some of these fields have non-default values
 
@@ -236,7 +252,7 @@ void RenderBlock::willBeDestroyed()
             parent()->dirtyLinesFromChangedChild(this);
     }
 
-    removeFromDelayedUpdateScrollInfoSet();
+    removeFromUpdateScrollInfoAfterLayoutTransaction();
 
     RenderBox::willBeDestroyed();
 }
@@ -919,40 +935,56 @@ bool RenderBlock::isSelfCollapsingBlock() const
     return false;
 }
 
-void RenderBlock::startDelayUpdateScrollInfo()
+static inline UpdateScrollInfoAfterLayoutTransaction* currentUpdateScrollInfoAfterLayoutTransaction()
 {
-    if (gDelayUpdateScrollInfo == 0) {
-        ASSERT(!gDelayedUpdateScrollInfoSet);
-        gDelayedUpdateScrollInfoSet = new DelayedUpdateScrollInfoSet;
-    }
-    ASSERT(gDelayedUpdateScrollInfoSet);
-    ++gDelayUpdateScrollInfo;
+    if (!updateScrollInfoAfterLayoutTransactionStack())
+        return nullptr;
+    return &updateScrollInfoAfterLayoutTransactionStack()->last();
 }
 
-void RenderBlock::finishDelayUpdateScrollInfo()
+void RenderBlock::beginUpdateScrollInfoAfterLayoutTransaction()
 {
-    --gDelayUpdateScrollInfo;
-    ASSERT(gDelayUpdateScrollInfo >= 0);
-    if (gDelayUpdateScrollInfo == 0) {
-        ASSERT(gDelayedUpdateScrollInfoSet);
+    if (!updateScrollInfoAfterLayoutTransactionStack())
+        updateScrollInfoAfterLayoutTransactionStack() = std::make_unique<DelayedUpdateScrollInfoStack>();
+    if (updateScrollInfoAfterLayoutTransactionStack()->isEmpty() || currentUpdateScrollInfoAfterLayoutTransaction()->view != &view())
+        updateScrollInfoAfterLayoutTransactionStack()->append(UpdateScrollInfoAfterLayoutTransaction(view()));
+    ++currentUpdateScrollInfoAfterLayoutTransaction()->nestedCount;
+}
 
-        std::unique_ptr<DelayedUpdateScrollInfoSet> infoSet(gDelayedUpdateScrollInfoSet);
-        gDelayedUpdateScrollInfoSet = 0;
+void RenderBlock::endAndCommitUpdateScrollInfoAfterLayoutTransaction()
+{
+    UpdateScrollInfoAfterLayoutTransaction* transaction = currentUpdateScrollInfoAfterLayoutTransaction();
+    ASSERT(transaction);
+    ASSERT(transaction->view == &view());
+    if (--transaction->nestedCount)
+        return;
 
-        for (DelayedUpdateScrollInfoSet::iterator it = infoSet->begin(); it != infoSet->end(); ++it) {
-            RenderBlock* block = *it;
-            if (block->hasOverflowClip()) {
-                block->layer()->updateScrollInfoAfterLayout();
-                block->clearLayoutOverflow();
-            }
-        }
+    // Calling RenderLayer::updateScrollInfoAfterLayout() may cause its associated block to layout again and
+    // updates its scroll info (i.e. call RenderBlock::updateScrollInfoAfterLayout()). We remove |transaction|
+    // from the transaction stack to ensure that all subsequent calls to RenderBlock::updateScrollInfoAfterLayout()
+    // are dispatched immediately. That is, to ensure that such subsequent calls aren't added to |transaction|
+    // while we are processing it.
+    Vector<RenderBlock*> blocksToUpdate;
+    copyToVector(transaction->blocks, blocksToUpdate);
+    updateScrollInfoAfterLayoutTransactionStack()->removeLast();
+    if (updateScrollInfoAfterLayoutTransactionStack()->isEmpty())
+        updateScrollInfoAfterLayoutTransactionStack() = nullptr;
+
+    for (auto* block : blocksToUpdate) {
+        ASSERT(block->hasOverflowClip());
+        block->layer()->updateScrollInfoAfterLayout();
+        block->clearLayoutOverflow();
     }
 }
 
-void RenderBlock::removeFromDelayedUpdateScrollInfoSet()
+void RenderBlock::removeFromUpdateScrollInfoAfterLayoutTransaction()
 {
-    if (UNLIKELY(gDelayedUpdateScrollInfoSet != 0))
-        gDelayedUpdateScrollInfoSet->remove(this);
+    if (UNLIKELY(updateScrollInfoAfterLayoutTransactionStack().get() != 0)) {
+        UpdateScrollInfoAfterLayoutTransaction* transaction = currentUpdateScrollInfoAfterLayoutTransaction();
+        ASSERT(transaction);
+        ASSERT(transaction->view == &view());
+        transaction->blocks.remove(this);
+    }
 }
 
 void RenderBlock::updateScrollInfoAfterLayout()
@@ -967,10 +999,12 @@ void RenderBlock::updateScrollInfoAfterLayout()
             return;
         }
 
-        if (gDelayUpdateScrollInfo)
-            gDelayedUpdateScrollInfoSet->add(this);
-        else
-            layer()->updateScrollInfoAfterLayout();
+        UpdateScrollInfoAfterLayoutTransaction* transaction = currentUpdateScrollInfoAfterLayoutTransaction();
+        if (transaction && transaction->view == &view()) {
+            transaction->blocks.add(this);
+            return;
+        }
+        layer()->updateScrollInfoAfterLayout();
     }
 }
 
@@ -988,7 +1022,9 @@ void RenderBlock::layout()
     
     // It's safe to check for control clip here, since controls can never be table cells.
     // If we have a lightweight clip, there can never be any overflow from children.
-    if (hasControlClip() && m_overflow && !gDelayUpdateScrollInfo)
+    UpdateScrollInfoAfterLayoutTransaction* transaction = currentUpdateScrollInfoAfterLayoutTransaction();
+    bool isDelayingUpdateScrollInfoAfterLayoutInView = transaction && transaction->view == &view();
+    if (hasControlClip() && m_overflow && !isDelayingUpdateScrollInfoAfterLayoutInView)
         clearLayoutOverflow();
 
     invalidateBackgroundObscurationStatus();

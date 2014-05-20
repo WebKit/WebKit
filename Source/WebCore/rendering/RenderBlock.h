@@ -345,16 +345,15 @@ protected:
     virtual int firstLineBaseline() const override;
     virtual int inlineBlockBaseline(LineDirectionMode) const override;
 
-    // Delay update scrollbar until finishDelayRepaint() will be
-    // called. This function is used when a flexbox is laying out its
-    // descendant. If multiple calls are made to startDelayRepaint(),
-    // finishDelayRepaint() will do nothing until finishDelayRepaint()
-    // is called the same number of times.
-    static void startDelayUpdateScrollInfo();
-    static void finishDelayUpdateScrollInfo();
+    // Delay updating scrollbars until endAndCommitUpdateScrollInfoAfterLayoutTransaction() is called. These functions are used
+    // when a flexbox is laying out its descendants. If multiple calls are made to beginUpdateScrollInfoAfterLayoutTransaction()
+    // then endAndCommitUpdateScrollInfoAfterLayoutTransaction() will do nothing until it is called the same number of times.
+    void beginUpdateScrollInfoAfterLayoutTransaction();
+    void endAndCommitUpdateScrollInfoAfterLayoutTransaction();
+
+    void removeFromUpdateScrollInfoAfterLayoutTransaction();
 
     void updateScrollInfoAfterLayout();
-    void removeFromDelayedUpdateScrollInfoSet();
 
     virtual void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;

@@ -1,3 +1,19 @@
+2014-05-20  Daniel Bates  <dabates@apple.com>
+
+        Element within flattened frame may update its scroll state during the layout phase of the wrong RenderView
+        https://bugs.webkit.org/show_bug.cgi?id=133013
+        <rdar://problem/16760154>
+
+        Reviewed by David Hyatt.
+
+        Added tests to ensure that that we update the scroll state of an element during the layout phase of its
+        associated RenderView.
+
+        * fast/frames/flattening/scrollable-flexbox-inside-iframe-with-zero-height-and-needs-full-repaint-crash-expected.txt: Added.
+        * fast/frames/flattening/scrollable-flexbox-inside-iframe-with-zero-height-and-needs-full-repaint-crash.html: Added.
+        * fast/frames/flattening/scrollable-flexbox-inside-iframe-with-zero-height-assertion-failure-expected.txt: Added.
+        * fast/frames/flattening/scrollable-flexbox-inside-iframe-with-zero-height-assertion-failure.html: Added.
+
 2014-05-19  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSArray::shiftCountWith* could be more efficient

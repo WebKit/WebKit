@@ -271,7 +271,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     m_numberOfInFlowChildrenOnFirstLine = -1;
 
-    RenderBlock::startDelayUpdateScrollInfo();
+    beginUpdateScrollInfoAfterLayoutTransaction();
 
     dirtyForLayoutFromPercentageHeightDescendants();
 
@@ -287,7 +287,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     updateLogicalHeight();
     repositionLogicalHeightDependentFlexItems(lineContexts);
 
-    RenderBlock::finishDelayUpdateScrollInfo();
+    endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 
     if (logicalHeight() != previousHeight)
         relayoutChildren = true;

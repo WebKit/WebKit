@@ -391,7 +391,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
     bool haveFlex = false, flexingChildren = false; 
     gatherFlexChildrenInfo(iterator, relayoutChildren, highestFlexGroup, lowestFlexGroup, haveFlex);
 
-    RenderBlock::startDelayUpdateScrollInfo();
+    beginUpdateScrollInfoAfterLayoutTransaction();
 
     ChildLayoutDeltas childLayoutDeltas;
     appendChildLayoutDeltas(this, childLayoutDeltas);
@@ -621,7 +621,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
         }
     } while (haveFlex);
 
-    RenderBlock::finishDelayUpdateScrollInfo();
+    endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 
     if (remainingSpace > 0 && ((style().isLeftToRightDirection() && style().boxPack() != Start)
         || (!style().isLeftToRightDirection() && style().boxPack() != End))) {
@@ -698,7 +698,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
     if (haveLineClamp)
         applyLineClamp(iterator, relayoutChildren);
 
-    RenderBlock::startDelayUpdateScrollInfo();
+    beginUpdateScrollInfoAfterLayoutTransaction();
 
     ChildLayoutDeltas childLayoutDeltas;
     appendChildLayoutDeltas(this, childLayoutDeltas);
@@ -879,7 +879,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
         }
     } while (haveFlex);
 
-    RenderBlock::finishDelayUpdateScrollInfo();
+    endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 
     if (style().boxPack() != Start && remainingSpace > 0) {
         // Children must be repositioned.

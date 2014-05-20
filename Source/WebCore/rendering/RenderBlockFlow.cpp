@@ -182,7 +182,7 @@ void RenderBlockFlow::willBeDestroyed()
 
     m_lineBoxes.deleteLineBoxes();
 
-    removeFromDelayedUpdateScrollInfoSet();
+    removeFromUpdateScrollInfoAfterLayoutTransaction();
 
     // NOTE: This jumps down to RenderBox, bypassing RenderBlock since it would do duplicate work.
     RenderBox::willBeDestroyed();

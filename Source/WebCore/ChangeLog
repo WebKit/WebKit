@@ -1,3 +1,59 @@
+2014-05-20  Daniel Bates  <dabates@apple.com>
+
+        Element within flattened frame may update its scroll state during the layout phase of the wrong RenderView
+        https://bugs.webkit.org/show_bug.cgi?id=133013
+        <rdar://problem/16760154>
+
+        Reviewed by David Hyatt.
+
+        Fixes an issue where the scroll state of an element may be updated during the layout of the wrong
+        RenderView. In particular, the scroll state of an element inside a CSS flex box in a flattened
+        frame f is updated during the layout of the RenderView associated with the parent frame of f instead
+        of during the layout of the RenderView associated with f.
+
+        The layout machinery assumes that the scroll state of each scrollable element is updated before the
+        completion of layout for its associated RenderView. Currently we have logic to defer updating the scroll
+        state of a scrollable element until completion of recursive layout. For a page with a flattened frame, we
+        defer such updates until completion of layout for all RenderViews along the ancestor frame hierarchy of
+        each flattened frame regardless of the RenderView associated with the element that originated the
+        deferred scroll state request. Instead, only the RenderView associated with the element that deferred its
+        scroll state update should dispatch the scroll state update.
+
+        Tests: fast/frames/flattening/scrollable-flexbox-inside-iframe-with-zero-height-and-needs-full-repaint-crash.html
+               fast/frames/flattening/scrollable-flexbox-inside-iframe-with-zero-height-assertion-failure.html
+
+        * rendering/RenderBlock.cpp: Removed WTF::-prefix in typedef definition for ContinuationOutlineTableMap.
+        (WebCore::UpdateScrollInfoAfterLayoutTransaction::UpdateScrollInfoAfterLayoutTransaction): Added; a struct
+        that represents a RenderView v, nested transaction count, and a list of RenderBlocks in v that will need
+        to have their scroll state updated.
+        (WebCore::updateScrollInfoAfterLayoutTransactionStack): Added; returns the global stack of transactions.
+        (WebCore::RenderBlock::willBeDestroyed): Call removeFromUpdateScrollInfoAfterLayoutTransaction(), which
+        was formerly named as removeFromDelayedUpdateScrollInfoSet.
+        (WebCore::currentUpdateScrollInfoAfterLayoutTransaction): Added; returns the top-most transaction in the
+        global stack.
+        (WebCore::RenderBlock::beginUpdateScrollInfoAfterLayoutTransaction): Modified as appropriate to make use
+        of the global stack of transactions; formerly named startDelayUpdateScrollInfo.
+        (WebCore::RenderBlock::endAndCommitUpdateScrollInfoAfterLayoutTransaction): Modified as appropriate to
+        make use of the global stack of transactions; formerly named finishDelayUpdateScrollInfo.
+        (WebCore::RenderBlock::removeFromUpdateScrollInfoAfterLayoutTransaction): Modified as appropriate to make
+        use of the global stack of transactions; formerly named removeFromDelayedUpdateScrollInfoSet.
+        (WebCore::RenderBlock::updateScrollInfoAfterLayout): Modified as appropriate to make use of the global
+        stack of transactions.
+        (WebCore::RenderBlock::layout): Ditto.
+        (WebCore::RenderBlock::startDelayUpdateScrollInfo): Deleted.
+        (WebCore::RenderBlock::finishDelayUpdateScrollInfo): Deleted.
+        (WebCore::RenderBlock::removeFromDelayedUpdateScrollInfoSet): Deleted.
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::willBeDestroyed): Call removeFromUpdateScrollInfoAfterLayoutTransaction(), which
+        was formerly named removeFromDelayedUpdateScrollInfoSet.
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox): Call {begin, end}UpdateScrollInfoAfterLayoutTransaction(),
+        which was formerly named {start, end}DelayUpdateScrollInfo.
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox): Ditto.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock): Ditto.
+
 2014-05-20  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION (r169065): Mountain Lion run-api-tests failures: ASSERTION FAILED: 
