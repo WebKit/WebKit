@@ -12,22 +12,22 @@
 
     description("This tests that a page with a content inset will not affect the bounds of the main frame scroll view. It will appear as the same as the web area's sbounds");
 
-    function outputFrame(message, element) {
-        debug(message + ": {" + element.x + ", " + element.y + "}, {" + element.width + ", " + element.height + "}");
-    }
-
     if (window.accessibilityController) {
         var webArea = accessibilityController.rootElement.childAtIndex(0);
-        debug("Web area role: " + webArea.role);
-        outputFrame("WebArea frame", webArea);
+        var webX = webArea.x;
+        var webY = webArea.y;
 
         var scrollView = webArea.parentElement();
-        debug("ScrollView role: " + scrollView.role);
-        outputFrame("ScrollView frame (0 content inset)", scrollView);
-    
+        var scrollViewX = scrollView.x;
+        var scrollViewY = scrollView.y;
+  
+        debug("The position of the web area and the scroll view should be the same when there's no content inset");
+        shouldBeTrue("webX == scrollViewX && webY == scrollViewY");
+ 
         window.internals.setTopContentInset(100);
 
-        outputFrame("ScrollView frame (100 content inset)", scrollView);
+        debug("After setting the content inset, the new y position should be less than the initial");
+        shouldBe("scrollViewY - scrollView.y", "100")
     }
 </script>
 
