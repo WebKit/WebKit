@@ -1,3 +1,15 @@
+2014-05-20  Beth Dakin  <bdakin@apple.com>
+
+        REGRESSION (r169065): Mountain Lion run-api-tests failures: ASSERTION FAILED: 
+        Uncaught exception - -[NSRegularLegacyScrollerImp setPresentationValue:]: 
+        unrecognized selector sent to instance 0x7ff51aa38000
+        https://bugs.webkit.org/show_bug.cgi?id=133121
+
+        Reviewed by Tim Horton.
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::setPaintCharacteristicsForScrollbar):
+
 2014-05-19  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r169063) Fixed and sticky nodes misplaced on scrolling sometimes

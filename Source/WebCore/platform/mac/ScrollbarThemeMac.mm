@@ -479,7 +479,9 @@ void ScrollbarThemeMac::setPaintCharacteristicsForScrollbar(ScrollbarThemeClient
     [painter setEnabled:scrollbar->enabled()];
     [painter setBoundsSize:scrollbar->frameRect().size()];
     [painter setDoubleValue:value];
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [painter setPresentationValue:value];
+#endif
     [painter setKnobProportion:proportion];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
