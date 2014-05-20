@@ -1773,8 +1773,10 @@ static inline bool hasFocusableElement(Node* startNode, Page* page, bool isForwa
 void WebPage::focusNextAssistedNode(bool isForward)
 {
     Element* nextElement = nextFocusableElement(m_assistedNode.get(), m_page.get(), isForward);
+    m_userIsInteracting = true;
     if (nextElement)
         nextElement->focus();
+    m_userIsInteracting = false;
 }
 
 void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)

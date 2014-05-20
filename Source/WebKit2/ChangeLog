@@ -1,3 +1,19 @@
+2014-05-19  Enrica Casucci  <enrica@apple.com>
+
+        WK2 iOS: Pressing the form navigation button causes the keyboard to be dismissed.
+        https://bugs.webkit.org/show_bug.cgi?id=133100
+        <rdar://problem/16808673>
+
+        Reviewed by Benjamin Poulain.
+
+        The call to focusNextAssistedNode is the result of a user action, since
+        it is called when the user pressed the form navigation buttons.
+        Therefore we must set m_userIsInteracting to true before changing the focus
+        to make sure the focus change is honored.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::focusNextAssistedNode):
+
 2014-05-19  Beth Dakin  <bdakin@apple.com>
 
         TelephoneNumberOverlayController should use a modern loop for text quad bounding 
