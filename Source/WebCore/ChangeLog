@@ -1,3 +1,17 @@
+2014-05-19  Dean Jackson  <dino@apple.com>
+
+        [iOS] Use status display for live streams
+        https://bugs.webkit.org/show_bug.cgi?id=133097
+
+        Reviewed by Sam Weinig.
+
+        Follow-on from https://bugs.webkit.org/show_bug.cgi?id=131390
+        Allow the iOS controls to use the status display field.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.configureInlineControls): Live streams should
+        not have a timeline or rewind button.
+
 2014-05-19  Myles C. Maxfield  <litherum@gmail.com>
 
         Text decorations do not contribute to visual overflow

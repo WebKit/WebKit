@@ -188,11 +188,14 @@ ControllerIOS.prototype = {
         this.base.appendChild(this.controls.wirelessPlaybackStatus);
 
         this.controls.panel.appendChild(this.controls.playButton);
+        this.controls.panel.appendChild(this.controls.statusDisplay);
         this.controls.panel.appendChild(this.controls.timelineBox);
         this.controls.panel.appendChild(this.controls.wirelessTargetPicker);
-        this.controls.timelineBox.appendChild(this.controls.currentTime);
-        this.controls.timelineBox.appendChild(this.controls.timeline);
-        this.controls.timelineBox.appendChild(this.controls.remainingTime);
+        if (!this.isLive) {
+            this.controls.timelineBox.appendChild(this.controls.currentTime);
+            this.controls.timelineBox.appendChild(this.controls.timeline);
+            this.controls.timelineBox.appendChild(this.controls.remainingTime);
+        }
         if (!this.isAudio())
             this.controls.panel.appendChild(this.controls.fullscreenButton);
     },
