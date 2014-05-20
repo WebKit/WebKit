@@ -234,6 +234,9 @@ public:
     virtual GraphicsLayer* layerForHorizontalScrollbar() const { return 0; }
     virtual GraphicsLayer* layerForVerticalScrollbar() const { return 0; }
 
+    bool hasLayerForHorizontalScrollbar() const;
+    bool hasLayerForVerticalScrollbar() const;
+
     void verticalScrollbarLayerDidChange();
     void horizontalScrollbarLayerDidChange();
 
@@ -254,8 +257,6 @@ protected:
     virtual GraphicsLayer* layerForOverhangAreas() const { return 0; }
 #endif
 
-    bool hasLayerForHorizontalScrollbar() const;
-    bool hasLayerForVerticalScrollbar() const;
     bool hasLayerForScrollCorner() const;
 
 private:

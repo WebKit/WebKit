@@ -1,3 +1,18 @@
+2014-05-20  Beth Dakin  <bdakin@apple.com>
+
+        REGRESSION: All non-mainframe scrollbars don't paint after r169065
+        https://bugs.webkit.org/show_bug.cgi?id=133132
+        -and corresponding-
+        <rdar://problem/16968850>
+
+        Reviewed by Geoff Garen.
+
+        We should not universally return true here. This feature will only work for 
+        scrollbars with layers.
+        * platform/ScrollableArea.h:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::supportsUpdateOnSecondaryThread):
+
 2014-05-20  Daniel Bates  <dabates@apple.com>
 
         Element within flattened frame may update its scroll state during the layout phase of the wrong RenderView
