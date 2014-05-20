@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+class Document;
+
 class SelectionSubtreeRoot {
 public:
 
@@ -43,13 +45,21 @@ public:
     int selectionStartPos() const { return m_selectionStartPos; }
     RenderObject* selectionEnd() const { return m_selectionEnd; }
     int selectionEndPos() const { return m_selectionEndPos; }
+    void selectionStartEndPositions(int& startPos, int& endPos) const;
+    bool selectionClear() const
+    {
+        return !m_selectionStart
+        && (m_selectionStartPos == -1)
+        && !m_selectionEnd
+        && (m_selectionEndPos == -1);
+    }
 
     void setSelectionStart(RenderObject* selectionStart) { m_selectionStart = selectionStart; }
     void setSelectionStartPos(int selectionStartPos) { m_selectionStartPos = selectionStartPos; }
     void setSelectionEnd(RenderObject* selectionEnd) { m_selectionEnd = selectionEnd; }
     void setSelectionEndPos(int selectionEndPos) { m_selectionEndPos = selectionEndPos; }
 
-    void selectionStartEndPositions(int& startPos, int& endPos) const;
+    void adjustForVisibleSelection(Document&);
 
 private:
 

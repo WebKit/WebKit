@@ -1,3 +1,37 @@
+2014-05-20  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Crash while painting block selection gaps in regions
+        https://bugs.webkit.org/show_bug.cgi?id=132720
+
+        Reviewed by David Hyatt.
+
+        The fix for WebKit bug https://bugs.webkit.org/show_bug.cgi?id=131511
+        allowed selection highlight to match the DOM selection when the start
+        and end point of the selection were in different flow threads. In order
+        to enable that, the selection was performed separately on view and
+        render flow threads, considered selection subtrees.
+
+        However, the start and end points for each selection subtree were computed
+        by means of Range class but it is not always possible to construct a valid
+        Range from two pairs of RenderObjects and offsets.
+
+        This patch keeps the substrees approach but instead of storing the endpoints
+        for each subtree in a Range and continuously extending the Range, it stores them
+        using the already available SelectionSubtreeRoot class. After the end points are
+        computed for each subtree and before processing the subtree selection, the end points
+        are adjusted in a similar fashion as the one used in FrameSelection::updateAppearance(),
+        to make sure we are passing the same expected information to the method implementing
+        the visible selection processing.
+
+        Test: fast/regions/selection-gaps-paint-crash.html
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::splitSelectionBetweenSubtrees):
+        * rendering/SelectionSubtreeRoot.cpp:
+        (WebCore::SelectionSubtreeRoot::adjustForVisibleSelection):
+        * rendering/SelectionSubtreeRoot.h:
+        (WebCore::SelectionSubtreeRoot::selectionClear):
+
 2014-05-19  Simon Fraser  <simon.fraser@apple.com>
 
         Scrolling pages with large TiledBacking content layers creates way too many tiles

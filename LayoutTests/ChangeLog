@@ -1,3 +1,14 @@
+2014-05-20  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Crash while painting block selection gaps in regions
+        https://bugs.webkit.org/show_bug.cgi?id=132720
+
+        Reviewed by David Hyatt.
+
+        * TestExpectations: Unskip a test that was crashing
+        * fast/regions/selection-gaps-paint-crash-expected.txt: Added.
+        * fast/regions/selection-gaps-paint-crash.html: Added.
+
 2014-05-20  Lorenzo Tilve  <ltilve@igalia.com>
 
         [GTK] Unreviewed GTK gardening

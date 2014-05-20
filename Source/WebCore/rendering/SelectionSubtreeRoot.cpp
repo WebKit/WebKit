@@ -30,6 +30,11 @@
 #include "config.h"
 #include "SelectionSubtreeRoot.h"
 
+#include "Document.h"
+#include "Position.h"
+#include "Range.h"
+#include "VisibleSelection.h"
+
 namespace WebCore {
 
 SelectionSubtreeRoot::SelectionSubtreeRoot()
@@ -44,6 +49,40 @@ void SelectionSubtreeRoot::selectionStartEndPositions(int& startPos, int& endPos
 {
     startPos = m_selectionStartPos;
     endPos = m_selectionEndPos;
+}
+
+void SelectionSubtreeRoot::adjustForVisibleSelection(Document& document)
+{
+    if (selectionClear())
+        return;
+
+    // Create a range based on the cached end points
+    Position startPosition = createLegacyEditingPosition(m_selectionStart->node(), m_selectionStartPos);
+    Position endPosition = createLegacyEditingPosition(m_selectionEnd->node(), m_selectionEndPos);
+
+    RefPtr<Range> range = Range::create(document, startPosition.parentAnchoredEquivalent(), endPosition.parentAnchoredEquivalent());
+    VisibleSelection selection(range.get());
+    Position startPos = selection.start();
+    Position candidate = startPos.downstream();
+    if (candidate.isCandidate())
+        startPos = candidate;
+
+    Position endPos = selection.end();
+    candidate = endPos.upstream();
+    if (candidate.isCandidate())
+        endPos = candidate;
+
+    m_selectionStart = nullptr;
+    m_selectionStartPos = -1;
+    m_selectionEnd = nullptr;
+    m_selectionEndPos = -1;
+
+    if (startPos.isNotNull() && endPos.isNotNull() && selection.visibleStart() != selection.visibleEnd()) {
+        m_selectionStart = startPos.deprecatedNode()->renderer();
+        m_selectionStartPos = startPos.deprecatedEditingOffset();
+        m_selectionEnd = endPos.deprecatedNode()->renderer();
+        m_selectionEndPos = endPos.deprecatedEditingOffset();
+    }
 }
 
 } // namespace WebCore

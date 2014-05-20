@@ -115,8 +115,6 @@ webkit.org/b/132421 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
 css2.1/20110323/replaced-intrinsic-001.htm [ Failure ]
 css2.1/20110323/replaced-intrinsic-002.htm [ Failure ]
 
-# Regression from r167652:
-webkit.org/b/131982 [ Debug ] fast/regions/cssom/region-range-for-box-crash.html [ Crash ]
 
 webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-fixed.html [ Skip ]
 webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-percentage.html [ Skip ]
