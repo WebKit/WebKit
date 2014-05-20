@@ -27,6 +27,7 @@
 #ifndef CurlCacheEntry_h
 #define CurlCacheEntry_h
 
+#include "FileSystem.h"
 #include "HTTPHeaderMap.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
@@ -64,6 +65,8 @@ private:
     String m_headerFilename;
     String m_contentFilename;
 
+    PlatformFileHandle m_contentFile;
+
     size_t m_entrySize;
     double m_expireDate;
     bool m_headerParsed;
@@ -74,6 +77,9 @@ private:
     void generateBaseFilename(const CString& url);
     bool loadFileToBuffer(const String& filepath, Vector<char>& buffer);
     bool loadResponseHeaders();
+
+    bool openContentFile();
+    bool closeContentFile();
 };
 
 }

@@ -30,7 +30,6 @@
 
 #include "CurlCacheEntry.h"
 
-#include "FileSystem.h"
 #include "HTTPHeaderMap.h"
 #include "HTTPParsers.h"
 #include "Logging.h"
@@ -49,6 +48,7 @@ namespace WebCore {
 CurlCacheEntry::CurlCacheEntry(const String& url, const String& cacheDir)
     : m_headerFilename(cacheDir)
     , m_contentFilename(cacheDir)
+    , m_contentFile(invalidPlatformFileHandle)
     , m_entrySize(0)
     , m_expireDate(-1)
     , m_headerParsed(false)
@@ -64,6 +64,7 @@ CurlCacheEntry::CurlCacheEntry(const String& url, const String& cacheDir)
 
 CurlCacheEntry::~CurlCacheEntry()
 {
+    closeContentFile();
 }
 
 // Cache manager should invalidate the entry on false
@@ -90,16 +91,12 @@ bool CurlCacheEntry::isCached()
 
 bool CurlCacheEntry::saveCachedData(const char* data, size_t size)
 {
-    PlatformFileHandle contentFile = openFile(m_contentFilename, OpenForWrite);
-    if (!isHandleValid(contentFile)) {
-        LOG(Network, "Cache Error: Could not open %s for write\n", m_contentFilename.latin1().data());
+    if (!openContentFile())
         return false;
-    }
 
     // Append
-    seekFile(contentFile, 0, SeekFromEnd);
-    writeToFile(contentFile, data, size);
-    closeFile(contentFile);
+    writeToFile(m_contentFile, data, size);
+
     return true;
 }
 
@@ -195,11 +192,12 @@ void CurlCacheEntry::setResponseFromCachedHeaders(ResourceResponse& response)
 void CurlCacheEntry::didFail()
 {
     // The cache manager will call invalidate()
+    closeContentFile();
 }
 
 void CurlCacheEntry::didFinishLoading()
 {
-    // Nothing to do here yet
+    closeContentFile();
 }
 
 void CurlCacheEntry::generateBaseFilename(const CString& url)
@@ -359,6 +357,32 @@ size_t CurlCacheEntry::entrySize()
     }
 
     return m_entrySize;
+}
+
+
+bool CurlCacheEntry::openContentFile()
+{
+    if (isHandleValid(m_contentFile))
+        return true;
+    
+    m_contentFile = openFile(m_contentFilename, OpenForWrite);
+
+    if (isHandleValid(m_contentFile))
+        return true;
+    
+    LOG(Network, "Cache Error: Could not open %s for write\n", m_contentFilename.latin1().data());
+    return false;
+}
+
+bool CurlCacheEntry::closeContentFile()
+{
+    if (!isHandleValid(m_contentFile))
+        return true;
+
+    closeFile(m_contentFile);
+    m_contentFile = invalidPlatformFileHandle;
+
+    return true;
 }
 
 }

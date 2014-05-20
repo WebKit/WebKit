@@ -1,3 +1,24 @@
+2014-05-20  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Invalid content in cache file, causes broken rendering.
+        https://bugs.webkit.org/show_bug.cgi?id=133069
+
+        Reviewed by Brent Fulgham.
+
+        When data for a url is received as multiple parts, the cache file for the url is truncated when opened for writing,
+        and will only contain the last part of data received.
+        This is fixed by only opening the file once, and close it after all data has been received.
+
+        * platform/network/curl/CurlCacheEntry.cpp:
+        (WebCore::CurlCacheEntry::CurlCacheEntry): Initialize cache file handle member.
+        (WebCore::CurlCacheEntry::~CurlCacheEntry): Close cache file.
+        (WebCore::CurlCacheEntry::saveCachedData): Only open cache file once to avoid truncating.
+        (WebCore::CurlCacheEntry::didFail): Close cache file.
+        (WebCore::CurlCacheEntry::didFinishLoading): Ditto.
+        (WebCore::CurlCacheEntry::openContentFile): Added method to open cache file.
+        (WebCore::CurlCacheEntry::closeContentFile): Added method to close cache file.
+        * platform/network/curl/CurlCacheEntry.h: Added file handle member, and methods to open and close cache file.
+
 2014-05-20  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Block incorrectly sized when containing an unsplittable box
