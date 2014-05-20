@@ -53,9 +53,10 @@ public:
     
     Butterfly* butterfly() { return reinterpret_cast<Butterfly*>(this); }
     IndexingHeader* indexingHeader() { return IndexingHeader::from(this); }
+    const IndexingHeader* indexingHeader() const { return IndexingHeader::from(this); }
     
     // We steal two fields from the indexing header: vectorLength and length.
-    unsigned length() { return indexingHeader()->publicLength(); }
+    unsigned length() const { return indexingHeader()->publicLength(); }
     void setLength(unsigned length) { indexingHeader()->setPublicLength(length); }
     unsigned vectorLength() { return indexingHeader()->vectorLength(); }
     void setVectorLength(unsigned length) { indexingHeader()->setVectorLength(length); }
@@ -67,6 +68,11 @@ public:
         m_numValuesInVector = other.m_numValuesInVector;
     }
     
+    bool hasHoles() const
+    {
+        return m_numValuesInVector != length();
+    }   
+
     bool inSparseMode()
     {
         return m_sparseMap && m_sparseMap->sparseMode();

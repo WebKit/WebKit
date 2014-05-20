@@ -1,3 +1,33 @@
+2014-05-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSArray::shiftCountWith* could be more efficient
+        https://bugs.webkit.org/show_bug.cgi?id=133011
+
+        Reviewed by Geoffrey Garen.
+
+        Our current implementations of shiftCountWithAnyIndexingType and shiftCountWithArrayStorage 
+        are scared of the presence of any holes in the array. We can mitigate this somewhat by enabling 
+        them to correctly handle holes, thus avoiding the slowest of slow paths in most cases.
+
+        * runtime/ArrayStorage.h:
+        (JSC::ArrayStorage::indexingHeader):
+        (JSC::ArrayStorage::length):
+        (JSC::ArrayStorage::hasHoles):
+        * runtime/IndexingHeader.h:
+        (JSC::IndexingHeader::publicLength):
+        (JSC::IndexingHeader::from):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::shiftCountWithArrayStorage):
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        (JSC::JSArray::unshiftCountWithArrayStorage):
+        * runtime/JSArray.h:
+        (JSC::JSArray::shiftCountForShift):
+        (JSC::JSArray::shiftCountForSplice):
+        (JSC::JSArray::shiftCount):
+        * runtime/Structure.cpp:
+        (JSC::Structure::holesRequireSpecialBehavior):
+        * runtime/Structure.h:
+
 2014-05-19  Filip Pizlo  <fpizlo@apple.com>
 
         Test gardening: skip some failing tests on not-X86.

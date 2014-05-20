@@ -668,15 +668,18 @@ void JSArray::push(ExecState* exec, JSValue value)
     }
 }
 
-bool JSArray::shiftCountWithArrayStorage(unsigned startIndex, unsigned count, ArrayStorage* storage)
+bool JSArray::shiftCountWithArrayStorage(VM& vm, unsigned startIndex, unsigned count, ArrayStorage* storage)
 {
     unsigned oldLength = storage->length();
     RELEASE_ASSERT(count <= oldLength);
     
     // If the array contains holes or is otherwise in an abnormal state,
     // use the generic algorithm in ArrayPrototype.
-    if (oldLength != storage->m_numValuesInVector || inSparseIndexingMode() || shouldUseSlowPut(indexingType()))
+    if ((storage->hasHoles() && this->structure(vm)->holesMustForwardToPrototype(vm)) 
+        || inSparseIndexingMode() 
+        || shouldUseSlowPut(indexingType())) {
         return false;
+    }
 
     if (!oldLength)
         return true;
@@ -710,10 +713,22 @@ bool JSArray::shiftCountWithArrayStorage(unsigned startIndex, unsigned count, Ar
         // after the shift region, so we move the elements before to the right.
         if (numElementsBeforeShiftRegion) {
             RELEASE_ASSERT(count + startIndex <= vectorLength);
-            memmove(
-                storage->m_vector + count,
-                storage->m_vector,
-                sizeof(JSValue) * startIndex);
+            if (storage->hasHoles()) {
+                for (unsigned i = startIndex; i-- > 0;) {
+                    unsigned destinationIndex = count + i;
+                    JSValue source = storage->m_vector[i].get();
+                    JSValue dest = storage->m_vector[destinationIndex].get();
+                    // Any time we overwrite a hole we know we overcounted the number of values we removed 
+                    // when we subtracted count from m_numValuesInVector above.
+                    if (!dest && destinationIndex >= firstIndexAfterShiftRegion)
+                        storage->m_numValuesInVector++;
+                    storage->m_vector[count + i].setWithoutWriteBarrier(source);
+                }
+            } else {
+                memmove(storage->m_vector + count,
+                    storage->m_vector,
+                    sizeof(JSValue) * startIndex);
+            }
         }
         // Adjust the Butterfly and the index bias. We only need to do this here because we're changing
         // the start of the Butterfly, which needs to point at the first indexed property in the used
@@ -728,10 +743,22 @@ bool JSArray::shiftCountWithArrayStorage(unsigned startIndex, unsigned count, Ar
     } else {
         // The number of elements before the shift region is greater than or equal to the number 
         // of elements after the shift region, so we move the elements after the shift region to the left.
-        memmove(
-            storage->m_vector + startIndex,
-            storage->m_vector + firstIndexAfterShiftRegion,
-            sizeof(JSValue) * numElementsAfterShiftRegion);
+        if (storage->hasHoles()) {
+            for (unsigned i = 0; i < numElementsAfterShiftRegion; ++i) {
+                unsigned destinationIndex = startIndex + i;
+                JSValue source = storage->m_vector[firstIndexAfterShiftRegion + i].get();
+                JSValue dest = storage->m_vector[destinationIndex].get();
+                // Any time we overwrite a hole we know we overcounted the number of values we removed 
+                // when we subtracted count from m_numValuesInVector above.
+                if (!dest && destinationIndex < firstIndexAfterShiftRegion)
+                    storage->m_numValuesInVector++;
+                storage->m_vector[startIndex + i].setWithoutWriteBarrier(source);
+            }
+        } else {
+            memmove(storage->m_vector + startIndex,
+                storage->m_vector + firstIndexAfterShiftRegion,
+                sizeof(JSValue) * numElementsAfterShiftRegion);
+        }
         // Clear the slots of the elements we just moved.
         unsigned startOfEmptyVectorTail = usedVectorLength - count;
         for (unsigned i = startOfEmptyVectorTail; i < usedVectorLength; ++i)
@@ -745,8 +772,9 @@ bool JSArray::shiftCountWithArrayStorage(unsigned startIndex, unsigned count, Ar
     return true;
 }
 
-bool JSArray::shiftCountWithAnyIndexingType(ExecState* exec, unsigned startIndex, unsigned count)
+bool JSArray::shiftCountWithAnyIndexingType(ExecState* exec, unsigned& startIndex, unsigned count)
 {
+    VM& vm = exec->vm();
     RELEASE_ASSERT(count > 0);
     
     switch (indexingType()) {
@@ -765,27 +793,28 @@ bool JSArray::shiftCountWithAnyIndexingType(ExecState* exec, unsigned startIndex
         // We may have to walk the entire array to do the shift. We're willing to do
         // so only if it's not horribly slow.
         if (oldLength - (startIndex + count) >= MIN_SPARSE_ARRAY_INDEX)
-            return shiftCountWithArrayStorage(startIndex, count, ensureArrayStorage(exec->vm()));
+            return shiftCountWithArrayStorage(vm, startIndex, count, ensureArrayStorage(vm));
 
         // Storing to a hole is fine since we're still having a good time. But reading from a hole 
         // is totally not fine, since we might have to read from the proto chain.
         // We have to check for holes before we start moving things around so that we don't get halfway 
         // through shifting and then realize we should have been in ArrayStorage mode.
         unsigned end = oldLength - count;
-        for (unsigned i = startIndex; i < end; ++i) {
-            JSValue v = m_butterfly->contiguous()[i + count].get();
-            if (UNLIKELY(!v))
-                return shiftCountWithArrayStorage(startIndex, count, ensureArrayStorage(exec->vm()));
+        if (this->structure(vm)->holesMustForwardToPrototype(vm)) {
+            for (unsigned i = startIndex; i < end; ++i) {
+                JSValue v = m_butterfly->contiguous()[i + count].get();
+                if (UNLIKELY(!v)) {
+                    startIndex = i;
+                    return shiftCountWithArrayStorage(vm, startIndex, count, ensureArrayStorage(vm));
+                }
+                m_butterfly->contiguous()[i].setWithoutWriteBarrier(v);
+            }
+        } else {
+            memmove(m_butterfly->contiguous().data() + startIndex, 
+                m_butterfly->contiguous().data() + startIndex + count, 
+                sizeof(JSValue) * (end - startIndex));
         }
 
-        for (unsigned i = startIndex; i < end; ++i) {
-            JSValue v = m_butterfly->contiguous()[i + count].get();
-            ASSERT(v);
-            // No need for a barrier since we're just moving data around in the same vector.
-            // This is in line with our standing assumption that we won't have a deletion
-            // barrier.
-            m_butterfly->contiguous()[i].setWithoutWriteBarrier(v);
-        }
         for (unsigned i = end; i < oldLength; ++i)
             m_butterfly->contiguous()[i].clear();
         
@@ -800,26 +829,26 @@ bool JSArray::shiftCountWithAnyIndexingType(ExecState* exec, unsigned startIndex
         // We may have to walk the entire array to do the shift. We're willing to do
         // so only if it's not horribly slow.
         if (oldLength - (startIndex + count) >= MIN_SPARSE_ARRAY_INDEX)
-            return shiftCountWithArrayStorage(startIndex, count, ensureArrayStorage(exec->vm()));
+            return shiftCountWithArrayStorage(vm, startIndex, count, ensureArrayStorage(vm));
 
         // Storing to a hole is fine since we're still having a good time. But reading from a hole 
         // is totally not fine, since we might have to read from the proto chain.
         // We have to check for holes before we start moving things around so that we don't get halfway 
         // through shifting and then realize we should have been in ArrayStorage mode.
         unsigned end = oldLength - count;
-        for (unsigned i = startIndex; i < end; ++i) {
-            double v = m_butterfly->contiguousDouble()[i + count];
-            if (UNLIKELY(v != v))
-                return shiftCountWithArrayStorage(startIndex, count, ensureArrayStorage(exec->vm()));
-        }
-            
-        for (unsigned i = startIndex; i < end; ++i) {
-            double v = m_butterfly->contiguousDouble()[i + count];
-            ASSERT(v == v);
-            // No need for a barrier since we're just moving data around in the same vector.
-            // This is in line with our standing assumption that we won't have a deletion
-            // barrier.
-            m_butterfly->contiguousDouble()[i] = v;
+        if (this->structure(vm)->holesMustForwardToPrototype(vm)) {
+            for (unsigned i = startIndex; i < end; ++i) {
+                double v = m_butterfly->contiguousDouble()[i + count];
+                if (UNLIKELY(v != v)) {
+                    startIndex = i;
+                    return shiftCountWithArrayStorage(vm, startIndex, count, ensureArrayStorage(vm));
+                }
+                m_butterfly->contiguousDouble()[i] = v;
+            }
+        } else {
+            memmove(m_butterfly->contiguousDouble().data() + startIndex,
+                m_butterfly->contiguousDouble().data() + startIndex + count,
+                sizeof(JSValue) * (end - startIndex));
         }
         for (unsigned i = end; i < oldLength; ++i)
             m_butterfly->contiguousDouble()[i] = PNaN;
@@ -830,7 +859,7 @@ bool JSArray::shiftCountWithAnyIndexingType(ExecState* exec, unsigned startIndex
         
     case ArrayWithArrayStorage:
     case ArrayWithSlowPutArrayStorage:
-        return shiftCountWithArrayStorage(startIndex, count, arrayStorage());
+        return shiftCountWithArrayStorage(vm, startIndex, count, arrayStorage());
         
     default:
         CRASH();
@@ -847,7 +876,7 @@ bool JSArray::unshiftCountWithArrayStorage(ExecState* exec, unsigned startIndex,
 
     // If the array contains holes or is otherwise in an abnormal state,
     // use the generic algorithm in ArrayPrototype.
-    if (length != storage->m_numValuesInVector || storage->inSparseMode() || shouldUseSlowPut(indexingType()))
+    if (storage->hasHoles() || storage->inSparseMode() || shouldUseSlowPut(indexingType()))
         return false;
 
     bool moveFront = !startIndex || startIndex < length / 2;

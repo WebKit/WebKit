@@ -1,3 +1,39 @@
+2014-05-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSArray::shiftCountWith* could be more efficient
+        https://bugs.webkit.org/show_bug.cgi?id=133011
+
+        Reviewed by Geoffrey Garen.
+
+        Added a performance regression test which tests the contiguous shift case. We're ~85% faster 
+        on this microbenchmark with this patch.
+
+        Also added a bunch of tests for each permutation of contiguous/array storage with no holes, holes,
+        and holes that require special behavior (e.g. indexed properties in the prototype chain).
+
+        * js/array-storage-splice-holes-expected.txt: Added.
+        * js/array-storage-splice-holes-require-special-behavior-expected.txt: Added.
+        * js/array-storage-splice-holes-require-special-behavior.html: Added.
+        * js/array-storage-splice-holes.html: Added.
+        * js/array-storage-splice-no-holes-expected.txt: Added.
+        * js/array-storage-splice-no-holes.html: Added.
+        * js/contiguous-splice-holes-expected.txt: Added.
+        * js/contiguous-splice-holes-require-special-behavior-expected.txt: Added.
+        * js/contiguous-splice-holes-require-special-behavior.html: Added.
+        * js/contiguous-splice-holes.html: Added.
+        * js/contiguous-splice-no-holes-expected.txt: Added.
+        * js/contiguous-splice-no-holes.html: Added.
+        * js/regress/array-splice-contiguous-expected.txt: Added.
+        * js/regress/array-splice-contiguous.html: Added.
+        * js/regress/script-tests/array-splice-contiguous.js: Added.
+        (foo):
+        * js/script-tests/array-storage-splice-holes-require-special-behavior.js: Added.
+        * js/script-tests/array-storage-splice-holes.js: Added.
+        * js/script-tests/array-storage-splice-no-holes.js: Added.
+        * js/script-tests/contiguous-splice-holes-require-special-behavior.js: Added.
+        * js/script-tests/contiguous-splice-holes.js: Added.
+        * js/script-tests/contiguous-splice-no-holes.js: Added.
+
 2014-05-20  Radu Stavila  <stavila@adobe.com>
 
         REGRESSION: [CSS Regions] Content flowed directly into the flow thread that ends up in the second region is not properly repainted

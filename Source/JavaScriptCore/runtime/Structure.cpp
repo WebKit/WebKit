@@ -387,6 +387,30 @@ bool Structure::anyObjectInChainMayInterceptIndexedAccesses() const
     }
 }
 
+bool Structure::holesMustForwardToPrototype(VM& vm) const
+{
+    if (this->mayInterceptIndexedAccesses())
+        return true;
+
+    JSValue prototype = this->storedPrototype();
+    if (!prototype.isObject())
+        return false;
+    JSObject* object = asObject(prototype);
+
+    while (true) {
+        Structure& structure = *object->structure(vm);
+        if (hasIndexedProperties(object->indexingType()) || structure.mayInterceptIndexedAccesses())
+            return true;
+        prototype = structure.storedPrototype();
+        if (!prototype.isObject())
+            return false;
+        object = asObject(prototype);
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
+}
+
 bool Structure::needsSlowPutIndexing() const
 {
     return anyObjectInChainMayInterceptIndexedAccesses()

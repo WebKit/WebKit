@@ -89,14 +89,14 @@ public:
 
     bool shiftCountForShift(ExecState* exec, unsigned startIndex, unsigned count)
     {
-        return shiftCountWithArrayStorage(startIndex, count, ensureArrayStorage(exec->vm()));
+        return shiftCountWithArrayStorage(exec->vm(), startIndex, count, ensureArrayStorage(exec->vm()));
     }
-    bool shiftCountForSplice(ExecState* exec, unsigned startIndex, unsigned count)
+    bool shiftCountForSplice(ExecState* exec, unsigned& startIndex, unsigned count)
     {
         return shiftCountWithAnyIndexingType(exec, startIndex, count);
     }
     template<ShiftCountMode shiftCountMode>
-    bool shiftCount(ExecState* exec, unsigned startIndex, unsigned count)
+    bool shiftCount(ExecState* exec, unsigned& startIndex, unsigned count)
     {
         switch (shiftCountMode) {
         case ShiftCountForShift:
@@ -156,8 +156,8 @@ private:
         return !map || !map->lengthIsReadOnly();
     }
         
-    bool shiftCountWithAnyIndexingType(ExecState*, unsigned startIndex, unsigned count);
-    bool shiftCountWithArrayStorage(unsigned startIndex, unsigned count, ArrayStorage*);
+    bool shiftCountWithAnyIndexingType(ExecState*, unsigned& startIndex, unsigned count);
+    bool shiftCountWithArrayStorage(VM&, unsigned startIndex, unsigned count, ArrayStorage*);
 
     bool unshiftCountWithAnyIndexingType(ExecState*, unsigned startIndex, unsigned count);
     bool unshiftCountWithArrayStorage(ExecState*, unsigned startIndex, unsigned count, ArrayStorage*);

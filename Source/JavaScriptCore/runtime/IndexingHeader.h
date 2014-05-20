@@ -62,7 +62,7 @@ public:
         u.lengths.vectorLength = length;
     }
     
-    uint32_t publicLength() { return u.lengths.publicLength; }
+    uint32_t publicLength() const { return u.lengths.publicLength; }
     void setPublicLength(uint32_t auxWord) { u.lengths.publicLength = auxWord; }
     
     ArrayBuffer* arrayBuffer() { return u.typedArray.buffer; }
@@ -80,7 +80,12 @@ public:
     
     static IndexingHeader* from(ArrayStorage* arrayStorage)
     {
-        return reinterpret_cast<IndexingHeader*>(arrayStorage) - 1;
+        return const_cast<IndexingHeader*>(from(const_cast<const ArrayStorage*>(arrayStorage)));
+    }
+    
+    static const IndexingHeader* from(const ArrayStorage* arrayStorage)
+    {
+        return reinterpret_cast<const IndexingHeader*>(arrayStorage) - 1;
     }
     
     static IndexingHeader* fromEndOf(PropertyStorage propertyStorage)

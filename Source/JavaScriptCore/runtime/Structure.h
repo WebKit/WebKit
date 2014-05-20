@@ -168,6 +168,7 @@ public:
     }
         
     bool anyObjectInChainMayInterceptIndexedAccesses() const;
+    bool holesMustForwardToPrototype(VM&) const;
         
     bool needsSlowPutIndexing() const;
     NonPropertyTransition suggestedArrayStorageTransition() const;
