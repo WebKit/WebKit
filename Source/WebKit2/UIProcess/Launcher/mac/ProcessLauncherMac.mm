@@ -44,11 +44,19 @@
 #import <wtf/text/WTFString.h>
 #import <xpc/xpc.h>
 
+#if __has_include(<xpc/private.h>)
+#import <xpc/private.h>
+#endif
+
 // FIXME: We should be doing this another way.
 extern "C" kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t);
 
 extern "C" void xpc_connection_set_instance(xpc_connection_t, uuid_t);
 extern "C" void xpc_dictionary_set_mach_send(xpc_object_t, const char*, mach_port_t);
+
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+extern "C" void xpc_connection_set_bootstrap(xpc_connection_t connection, xpc_object_t bootstrap);
+#endif
 
 namespace WebKit {
 
@@ -176,6 +184,20 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     auto connection = IPC::adoptXPC(xpc_connection_create(serviceName(launchOptions, forDevelopment), 0));
     xpc_connection_set_instance(connection.get(), instanceUUID->uuid);
 
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+    // Inherit UI process localization. It can be different from child process default localization:
+    // 1. When the application and system frameworks simply have different localized resources available, we should match the application.
+    // 1.1. An important case is WebKitTestRunner, where we should use English localizations for all system frameworks.
+    // 2. When AppleLanguages is passed as command line argument for UI process, or set in its preferences, we should respect it in child processes.
+    // FIXME: When UI process allows for mixed localizations (CFBundleAllowMixedLocalizations), we should probably send the whole AppleLanguages array.
+    RetainPtr<CFStringRef> localization = adoptCF(WKCopyCFLocalizationPreferredName(0));
+    if (localization) {
+        auto initializationMessage = IPC::adoptXPC(xpc_dictionary_create(nullptr, nullptr, 0));
+        xpc_dictionary_set_string(initializationMessage.get(), "localization", String(localization.get()).ascii().data());
+        xpc_connection_set_bootstrap(connection.get(), initializationMessage.get());
+    }
+#endif
+
     // XPC requires having an event handler, even if it is not used.
     xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t event) { });
     xpc_connection_resume(connection.get());
@@ -199,6 +221,7 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
     CString clientIdentifier = bundleIdentifier ? String([[NSBundle mainBundle] bundleIdentifier]).utf8() : *_NSGetProgname();
 
+    // FIXME: Switch to xpc_connection_set_bootstrap once it's available everywhere we need.
     auto bootstrapMessage = IPC::adoptXPC(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(bootstrapMessage.get(), "message-name", "bootstrap");
     xpc_dictionary_set_string(bootstrapMessage.get(), "framework-executable-path", [[[NSBundle bundleWithIdentifier:@"com.apple.WebKit"] executablePath] fileSystemRepresentation]);

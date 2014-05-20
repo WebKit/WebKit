@@ -1,3 +1,25 @@
+2014-05-20  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] WebProcess doesn't follow localization of UI process when run as a service
+        https://bugs.webkit.org/show_bug.cgi?id=133126
+        <rdar://problem/13396515>
+        <rdar://problem/16561084>
+
+        Reviewed by Sam Weinig and Tim Horton.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.Development.mm:
+        (WebKit::handleXPCBootstrap):
+        (main):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
+        (WebKit::handleXPCBootstrap):
+        (main):
+        Set localization very early in process lifetime (in development builds, that's
+        even before WebKit framework is loaded).
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm: (WebKit::connectToService):
+        Pass UI process localization to the service, computing it in the same way we do
+        for child processes.
+
 2014-05-20  Anders Carlsson  <andersca@apple.com>
 
         Fix a header comment

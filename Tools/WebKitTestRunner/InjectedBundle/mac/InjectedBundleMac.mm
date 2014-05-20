@@ -54,9 +54,11 @@ void InjectedBundle::platformInitialize(WKTypeRef)
         @"NSScrollAnimationEnabled": @NO,
         @"NSOverlayScrollersEnabled": @NO,
         @"AppleShowScrollBars": @"Always",
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
         // FIXME (<rdar://problem/13396515>): It is too late to set AppleLanguages here, as loaded frameworks localizations cannot be changed.
         // This breaks some accessibility tests on machines with non-English user language.
         @"AppleLanguages": @[ @"en" ],
+#endif
         // FIXME: Why does this dictionary not match the one in DumpRenderTree?
         @"NSTestCorrectionDictionary": @{
             @"notationl": @"notational"
