@@ -107,6 +107,7 @@ SourceBuffer::SourceBuffer(PassRef<SourceBufferPrivate> sourceBufferPrivate, Med
     , m_pendingRemoveEnd(MediaTime::invalidTime())
     , m_removeTimer(this, &SourceBuffer::removeTimerFired)
 {
+    ASSERT(m_private);
     ASSERT(m_source);
 
     m_private->setClient(this);
@@ -473,7 +474,7 @@ void SourceBuffer::appendBufferTimerFired(Timer<SourceBuffer>&)
 
     // 1. Loop Top: If the input buffer is empty, then jump to the need more data step below.
     if (!m_pendingAppendData.size()) {
-        sourceBufferPrivateAppendComplete(&m_private.get(), AppendSucceeded);
+        sourceBufferPrivateAppendComplete(m_private.get(), AppendSucceeded);
         return;
     }
 

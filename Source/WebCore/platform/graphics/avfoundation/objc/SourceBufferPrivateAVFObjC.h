@@ -36,7 +36,6 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomicString.h>
 
 OBJC_CLASS AVAsset;
@@ -114,12 +113,8 @@ private:
     void destroyParser();
     void destroyRenderers();
 
-    WeakPtr<SourceBufferPrivateAVFObjC> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
-
     Vector<RefPtr<VideoTrackPrivateMediaSourceAVFObjC>> m_videoTracks;
     Vector<RefPtr<AudioTrackPrivateMediaSourceAVFObjC>> m_audioTracks;
-
-    WeakPtrFactory<SourceBufferPrivateAVFObjC> m_weakFactory;
 
     RetainPtr<AVStreamDataParser> m_parser;
     RetainPtr<AVAsset> m_asset;
