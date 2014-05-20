@@ -1,3 +1,15 @@
+2014-05-20  David Kilzer  <ddkilzer@apple.com>
+
+        Make fast/dom/remove-element-with-{id|name}-that-was-inserted-on-DOMNodeRemoved.html reliable
+        <http://webkit.org/b/133088>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/dom/remove-element-with-id-that-was-inserted-on-DOMNodeRemoved.html:
+        * fast/dom/remove-element-with-name-that-was-inserted-on-DOMNodeRemoved.html:
+        - Use waitUntilDone()/notifyDone() to make the tests reliable
+          since they use setTimeout().
+
 2014-05-20  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Block incorrectly sized when containing an unsplittable box

@@ -4,8 +4,10 @@
 <body data-debug-name="declarativeBody"></body> <!-- This element isn't necessary, but makes it straightforward to reason about the test when debugging it. -->
 <!-- Notice a <script> is only executed once. -->
 <script>
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
 
 var savedDocumentElement;
 function appendBodyElementToSavedDocument()
@@ -36,5 +38,7 @@ for (var i = 0; i < elements.length; ++i)
 // following line to its own <script> and altering the execution time of this page (say, by stepping through code in a WebCore debug session)
 // tends to affect the result of |elements| (see remark [1]).
 document.write("PASS, removed element, with HTML attribute name, which was inserted on event DOMNodeRemoved.");
+if (window.testRunner)
+    testRunner.notifyDone();
 </script>
 </html>
