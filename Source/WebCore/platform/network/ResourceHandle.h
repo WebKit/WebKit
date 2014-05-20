@@ -61,6 +61,7 @@ typedef LPVOID HINTERNET;
 #if PLATFORM(COCOA)
 OBJC_CLASS NSCachedURLResponse;
 OBJC_CLASS NSData;
+OBJC_CLASS NSDictionary;
 OBJC_CLASS NSError;
 OBJC_CLASS NSURLConnection;
 #ifndef __OBJC__

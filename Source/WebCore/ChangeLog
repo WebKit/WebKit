@@ -1,3 +1,10 @@
+2014-05-19  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed build fix after r169082
+
+        * platform/network/ResourceHandle.h:
+        Added NSDictionary declaration.
+
 2014-05-19  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION: Standalone images need to take topContentInset into account
