@@ -1,3 +1,14 @@
+2014-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(CMAKE): [GTK] Several WebKit2GTK+ unit tests are no longer built
+        https://bugs.webkit.org/show_bug.cgi?id=133117
+
+        Reviewed by Philippe Normand.
+
+        Bring back missing tests to the build.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/CMakeLists.txt:
+
 2014-05-19  Filip Pizlo  <fpizlo@apple.com>
 
         Take care of some ARM64 test failures
