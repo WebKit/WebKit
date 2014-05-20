@@ -596,20 +596,31 @@ static CGFloat contentZoomScale(WKWebView* webView)
 
 - (void)_zoomToRect:(WebCore::FloatRect)targetRect atScale:(double)scale origin:(WebCore::FloatPoint)origin
 {
-    WebCore::FloatSize unobscuredContentSize([self _contentRectForUserInteraction].size);
-    WebCore::FloatSize targetRectSizeAfterZoom = targetRect.size();
-    targetRectSizeAfterZoom.scale(scale);
+    // FIMXE: Some of this could be shared with _scrollToRect.
+    const double visibleRectScaleChange = contentZoomScale(self) / scale;
+    const WebCore::FloatRect visibleRect([self convertRect:self.bounds toView:_contentView.get()]);
+    const WebCore::FloatRect unobscuredRect([self _contentRectForUserInteraction]);
 
-    // Center the target rect in the scroll view.
-    // If the target doesn't fit in the scroll view, center on the gesture location instead.
-    WebCore::FloatPoint zoomCenter = targetRect.center();
+    const WebCore::FloatSize topLeftObscuredInsetAfterZoom((unobscuredRect.minXMinYCorner() - visibleRect.minXMinYCorner()) * visibleRectScaleChange);
+    const WebCore::FloatSize bottomRightObscuredInsetAfterZoom((visibleRect.maxXMaxYCorner() - unobscuredRect.maxXMaxYCorner()) * visibleRectScaleChange);
 
-    if (targetRectSizeAfterZoom.width() > unobscuredContentSize.width())
-        zoomCenter.setX(origin.x());
-    if (targetRectSizeAfterZoom.height() > unobscuredContentSize.height())
-        zoomCenter.setY(origin.y());
+    const WebCore::FloatSize unobscuredRectSizeAfterZoom(unobscuredRect.size() * visibleRectScaleChange);
 
-    [self _zoomToPoint:zoomCenter atScale:scale];
+    // Center to the target rect.
+    WebCore::FloatPoint unobscuredRectLocationAfterZoom = targetRect.location() - (unobscuredRectSizeAfterZoom - targetRect.size()) * 0.5;
+
+    // Center to the tap point instead in case the target rect won't fit in a direction.
+    if (targetRect.width() > unobscuredRectSizeAfterZoom.width())
+        unobscuredRectLocationAfterZoom.setX(origin.x() - unobscuredRectSizeAfterZoom.width() / 2);
+    if (targetRect.height() > unobscuredRectSizeAfterZoom.height())
+        unobscuredRectLocationAfterZoom.setY(origin.y() - unobscuredRectSizeAfterZoom.height() / 2);
+
+    // We have computed where we want the unobscured rect to be. Now adjust for the obscuring insets.
+    WebCore::FloatRect visibleRectAfterZoom(unobscuredRectLocationAfterZoom, unobscuredRectSizeAfterZoom);
+    visibleRectAfterZoom.move(-topLeftObscuredInsetAfterZoom);
+    visibleRectAfterZoom.expand(topLeftObscuredInsetAfterZoom + bottomRightObscuredInsetAfterZoom);
+
+    [self _zoomToPoint:visibleRectAfterZoom.center() atScale:scale];
 }
 
 static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOffset, WebCore::FloatSize contentSize, WebCore::FloatSize unobscuredContentSize)

@@ -1,3 +1,16 @@
+2014-05-20  Antti Koivisto  <antti@apple.com>
+
+        Double-tap zoom does not take obscuring insets into account
+        https://bugs.webkit.org/show_bug.cgi?id=133116
+        <rdar://problem/16765604>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _zoomToRect:WebCore::atScale:origin:WebCore::]):
+        
+            Compute the zoom target taking insets into account.
+
 2014-05-19  Gavin Barraclough  <baraclough@apple.com>
 
         WebKit2/iOS: parented view should be considered hidden if app is backgrounded
