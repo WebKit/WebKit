@@ -152,7 +152,7 @@ void WKDrawBezeledTextFieldCell(NSRect, BOOL enabled);
 void WKDrawTextFieldCellFocusRing(NSTextFieldCell*, NSRect);
 void WKDrawBezeledTextArea(NSRect, BOOL enabled);
 
-void WKPopupMenu(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*);
+void WKPopupMenu(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*, NSControlSize controlSize, bool hideArrows);
 void WKPopupMenuWithSize(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*, NSControlSize controlSize);
 void WKPopupContextMenu(NSMenu *menu, NSPoint screenLocation);
 void WKSendUserChangeNotifications(void);
@@ -456,7 +456,6 @@ CFHTTPMessageRef WKGetCFURLResponseHTTPResponse(CFURLResponseRef);
 CFStringRef WKCopyCFURLResponseSuggestedFilename(CFURLResponseRef);
 void WKSetCFURLResponseMIMEType(CFURLResponseRef, CFStringRef mimeType);
 
-#if !TARGET_OS_IPHONE
 typedef enum {
     WKSandboxExtensionTypeReadOnly,
     WKSandboxExtensionTypeReadWrite,
@@ -472,6 +471,7 @@ bool WKSandboxExtensionInvalidate(WKSandboxExtensionRef sandboxExtension);
 const char* WKSandboxExtensionGetSerializedFormat(WKSandboxExtensionRef sandboxExtension, size_t* length);
 WKSandboxExtensionRef WKSandboxExtensionCreateFromSerializedFormat(const char* serializationFormat, size_t length);
 
+#if !TARGET_OS_IPHONE
 OSStatus WKEnableSandboxStyleFileQuarantine(void);
 
 int WKRecommendedScrollerStyle(void);

@@ -1,3 +1,16 @@
+2014-05-20  Dean Jackson  <dino@apple.com>
+
+        [Mac] Allow popup menus to override default appearance
+        https://bugs.webkit.org/show_bug.cgi?id=133129
+
+        Reviewed by Tim Horton.
+
+        Add a new parameter to WKPopupMenu.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceMavericks.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2014-05-14  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Remove CSS_STICKY_POSITION guards
