@@ -263,8 +263,8 @@ public:
     static void setShouldOptOutOfNetworkStateObservation(bool flag) { gShouldOptOutOfNetworkStateObservation = flag; }
     static bool shouldOptOutOfNetworkStateObservation() { return gShouldOptOutOfNetworkStateObservation; }
 
-    static void setShouldManageAudioSession(bool flag) { gManageAudioSession = flag; }
-    static bool shouldManageAudioSession() { return gManageAudioSession; }
+    static void setShouldManageAudioSessionCategory(bool flag) { gManageAudioSession = flag; }
+    static bool shouldManageAudioSessionCategory() { return gManageAudioSession; }
 #endif
 
 private:

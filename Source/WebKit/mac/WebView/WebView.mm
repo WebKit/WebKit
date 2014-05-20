@@ -903,7 +903,7 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
 
 #if PLATFORM(IOS)
         if (applicationIsMobileSafari())
-            Settings::setShouldManageAudioSession(true);
+            Settings::setShouldManageAudioSessionCategory(true);
 #endif
 
         didOneTimeInitialization = true;

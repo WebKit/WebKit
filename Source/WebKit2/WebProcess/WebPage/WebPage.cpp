@@ -320,7 +320,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     Settings::setDefaultMinDOMTimerInterval(0.004);
 
 #if PLATFORM(IOS)
-    Settings::setShouldManageAudioSession(true);
+    Settings::setShouldManageAudioSessionCategory(true);
 #endif
 
     Page::PageClients pageClients;

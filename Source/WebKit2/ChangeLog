@@ -1,3 +1,14 @@
+2014-05-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] do not deactivate an audio session that has running I/O
+        https://bugs.webkit.org/show_bug.cgi?id=133127
+
+        Reviewed by Jer Noble.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Settings::setShouldManageAudioSession renamed to 
+            setShouldManageAudioSessionCategory, deal with it.
+
 2014-05-19  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r169063) Fixed and sticky nodes misplaced on scrolling sometimes

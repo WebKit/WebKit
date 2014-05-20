@@ -1,3 +1,24 @@
+2014-05-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] do not deactivate an audio session that has running I/O
+        https://bugs.webkit.org/show_bug.cgi?id=133127
+
+        Reviewed by Jer Noble.
+
+        * page/Settings.h:
+        (WebCore::Settings::setShouldManageAudioSessionCategory): Renamed from setShouldManageAudioSession.
+        (WebCore::Settings::shouldManageAudioSessionCategory): Renamed from shouldManageAudioSession.
+        (WebCore::Settings::setShouldManageAudioSession): Deleted.
+        (WebCore::Settings::shouldManageAudioSession): Deleted.
+
+        * platform/audio/mac/MediaSessionManagerMac.cpp:
+        (MediaSessionManager::updateSessionState): Don't deactivate the session if there are any
+            Video or Audio sessions.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::assetStatus): Drive-by change to log errors 
+            returned by -statusOfValueForKey:error: in debug builds.
+
 2014-05-20  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION: All non-mainframe scrollbars don't paint after r169065
