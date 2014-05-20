@@ -1,3 +1,22 @@
+2014-05-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Correctly maintain the "isInWindow" state for all TiledBackings
+        https://bugs.webkit.org/show_bug.cgi?id=133095
+
+        Reviewed by Tim Horton.
+        
+        We never updated the "isInWindow" state for TiledBacking that wasn't the RenderView's
+        backing. Fix it by having RenderLayerCompositor::setIsInWindow() recurse through all
+        layers (if necessary), updating their state. Also set the state on newly created
+        TiledBackings.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerTiledBackingUsageChanged):
+        (WebCore::RenderLayerCompositor::setIsInWindowForLayerIncludingDescendants):
+        (WebCore::RenderLayerCompositor::setIsInWindow):
+        (WebCore::RenderLayerCompositor::pageTiledBacking): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
 2014-05-19  Dean Jackson  <dino@apple.com>
 
         [iOS] Use status display for live streams

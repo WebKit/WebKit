@@ -329,6 +329,7 @@ private:
     bool updateBacking(RenderLayer&, CompositingChangeRepaint shouldRepaint);
 
     void clearBackingForLayerIncludingDescendants(RenderLayer&);
+    void setIsInWindowForLayerIncludingDescendants(RenderLayer&, bool isInWindow);
 
     // Repaint the given rect (which is layer's coords), and regions of child layers that intersect that rect.
     void recursiveRepaintLayer(RenderLayer&, const IntRect* = nullptr);
@@ -386,7 +387,6 @@ private:
     bool isFlushingLayers() const { return m_flushingLayers; }
     
     Page* page() const;
-    TiledBacking* pageTiledBacking() const;
     
     GraphicsLayerFactory* graphicsLayerFactory() const;
     ScrollingCoordinator* scrollingCoordinator() const;

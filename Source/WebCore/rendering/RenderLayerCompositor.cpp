@@ -584,11 +584,14 @@ void RenderLayerCompositor::flushLayersSoon(GraphicsLayerUpdater*)
     scheduleLayerFlush(true);
 }
 
-void RenderLayerCompositor::layerTiledBackingUsageChanged(const GraphicsLayer*, bool usingTiledBacking)
+void RenderLayerCompositor::layerTiledBackingUsageChanged(const GraphicsLayer* graphicsLayer, bool usingTiledBacking)
 {
-    if (usingTiledBacking)
+    if (usingTiledBacking) {
         ++m_layersWithTiledBackingCount;
-    else {
+
+        if (Page* page = this->page())
+            graphicsLayer->tiledBacking()->setIsInWindow(page->isInWindow());
+    } else {
         ASSERT(m_layersWithTiledBackingCount > 0);
         --m_layersWithTiledBackingCount;
     }
@@ -1913,17 +1916,23 @@ GraphicsLayer* RenderLayerCompositor::footerLayer() const
 }
 #endif
 
-TiledBacking* RenderLayerCompositor::pageTiledBacking() const
+void RenderLayerCompositor::setIsInWindowForLayerIncludingDescendants(RenderLayer& layer, bool isInWindow)
 {
-    RenderLayerBacking* renderViewBacking = m_renderView.layer()->backing();
-    return renderViewBacking ? renderViewBacking->tiledBacking() : nullptr;
+    if (layer.isComposited() && layer.backing()->usingTiledBacking())
+        layer.backing()->tiledBacking()->setIsInWindow(isInWindow);
+
+    // No need to recurse if we don't have any other tiled layers.
+    if (hasNonMainLayersWithTiledBacking())
+        return;
+
+    for (RenderLayer* childLayer = layer.firstChild(); childLayer; childLayer = childLayer->nextSibling())
+        setIsInWindowForLayerIncludingDescendants(*childLayer, isInWindow);
 }
 
 void RenderLayerCompositor::setIsInWindow(bool isInWindow)
 {
-    if (TiledBacking* tiledBacking = pageTiledBacking())
-        tiledBacking->setIsInWindow(isInWindow);
-
+    setIsInWindowForLayerIncludingDescendants(*m_renderView.layer(), isInWindow);
+    
     if (!inCompositingMode())
         return;
 
