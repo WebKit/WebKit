@@ -129,7 +129,7 @@ static void uriChangedCallback(WebKitWebPage* webPage, GParamSpec* pspec, WebKit
         delayedSignalsQueue.append(adoptPtr(new DelayedSignal(URIChangedSignal, webkit_web_page_get_uri(webPage))));
 }
 
-static gboolean sendRequestCallback(WebKitWebPage*, WebKitURIRequest* request, WebKitURIResponse*, gpointer)
+static gboolean sendRequestCallback(WebKitWebPage*, WebKitURIRequest* request, WebKitURIResponse* redirectResponse, gpointer)
 {
     const char* requestURI = webkit_uri_request_get_uri(request);
     g_assert(requestURI);
@@ -138,6 +138,17 @@ static gboolean sendRequestCallback(WebKitWebPage*, WebKitURIRequest* request, W
         GUniquePtr<char> prefix(g_strndup(requestURI, strlen(requestURI) - strlen(suffix)));
         GUniquePtr<char> newURI(g_strdup_printf("%s/javascript.js", prefix.get()));
         webkit_uri_request_set_uri(request, newURI.get());
+    } else if (const char* suffix = g_strrstr(requestURI, "/remove-this/javascript-after-redirection.js")) {
+        // Redirected from /redirected.js, redirectResponse should be nullptr.
+        g_assert(WEBKIT_IS_URI_RESPONSE(redirectResponse));
+        g_assert(g_str_has_suffix(webkit_uri_response_get_uri(redirectResponse), "/redirected.js"));
+
+        GUniquePtr<char> prefix(g_strndup(requestURI, strlen(requestURI) - strlen(suffix)));
+        GUniquePtr<char> newURI(g_strdup_printf("%s/javascript-after-redirection.js", prefix.get()));
+        webkit_uri_request_set_uri(request, newURI.get());
+    } else if (g_str_has_suffix(requestURI, "/redirected.js")) {
+        // Original request, redirectResponse should be nullptr.
+        g_assert(!redirectResponse);
     } else if (g_str_has_suffix(requestURI, "/add-do-not-track-header")) {
         SoupMessageHeaders* headers = webkit_uri_request_get_http_headers(request);
         g_assert(headers);
