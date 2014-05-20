@@ -2477,6 +2477,7 @@ set(WebCore_SOURCES
     storage/StorageThread.cpp
     storage/StorageTracker.cpp
 
+    style/InlineTextBoxStyle.cpp
     style/StyleFontSizeFunctions.cpp
     style/StyleResolveForDocument.cpp
     style/StyleResolveTree.cpp

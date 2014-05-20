@@ -1,3 +1,35 @@
+2014-05-19  Myles C. Maxfield  <litherum@gmail.com>
+
+        Text decorations do not contribute to visual overflow
+        https://bugs.webkit.org/show_bug.cgi?id=132773
+
+        Reviewed by Antti Koivisto.
+
+        This first test makes sure that repaint rects are extended to include text decorations that may
+        lie outside of the text layout rects. It compares text with an underline to text that has
+        had underline applied to it in a timer.
+
+        The second test triggers an off-by-one error in collapsed table borders where a border was not
+        being drawn if it lay right on top of a repaint rect.
+
+        * fast/css3-text/css3-text-decoration/repaint/resources/Litherum.svg: Added. This font has a
+        descent of 0 (so it will not intersect underlines).
+        * fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-expected.html: Added.
+        Apply the underline without any timeout.
+        * fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html: Added.
+        Apply the underline with a timeout.
+        * fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-removed-expected.html: Added.
+        Draw text without decorations.
+        * fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-removed.html: Added.
+        Draw text with decorations which contribute to overflow, then remove those decorations on a timer.
+        * fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-altered-expected.html: Added.
+        Draw text as if the final state of the decorations had always existed.
+        * fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-altered.html: Added.
+        Make sure that modifying decorations that contribute to overflow redraw properly.
+        * fast/repaint/border-collapse-table-off-by-one-expected.html: Added.
+        * fast/repaint/border-collapse-table-off-by-one.html: Added. Trigger the off-by-one error in
+        RenderTableSection.cpp
+
 2014-05-19  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver sees the WebArea out of order when topContentInset is used

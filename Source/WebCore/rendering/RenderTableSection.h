@@ -254,6 +254,11 @@ protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
 private:
+    enum ShouldIncludeAllIntersectingCells {
+        IncludeAllIntersectingCells,
+        DoNotIncludeAllIntersectingCells
+    };
+
     virtual const char* renderName() const override { return (isAnonymous() || isPseudoElement()) ? "RenderTableSection (anonymous)" : "RenderTableSection"; }
 
     virtual bool canHaveChildren() const override { return true; }
@@ -303,8 +308,12 @@ private:
 
     // These two functions take a rectangle as input that has been flipped by logicalRectForWritingModeAndDirection.
     // The returned span of rows or columns is end-exclusive, and empty if start==end.
-    CellSpan spannedRows(const LayoutRect& flippedRect) const;
-    CellSpan spannedColumns(const LayoutRect& flippedRect) const;
+    // The IncludeAllIntersectingCells argument is used to determine which cells to include when
+    // an edge of the flippedRect lies exactly on a cell boundary. Using IncludeAllIntersectingCells
+    // will return both cells, and using DoNotIncludeAllIntersectingCells will return only the cell
+    // that hittesting should return.
+    CellSpan spannedRows(const LayoutRect& flippedRect, ShouldIncludeAllIntersectingCells) const;
+    CellSpan spannedColumns(const LayoutRect& flippedRect, ShouldIncludeAllIntersectingCells) const;
 
     void setLogicalPositionForCell(RenderTableCell*, unsigned effectiveColumn) const;
 

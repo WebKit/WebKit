@@ -6778,6 +6778,9 @@
     <ClCompile Include="..\dom\InlineStyleSheetOwner.cpp">
       <Filter>dom</Filter>
     </ClCompile>
+    <ClCompile Include="..\style\InlineTextBoxStyle.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
     <ClCompile Include="..\style\StyleFontSizeFunctions.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -14626,6 +14629,9 @@
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\style\StyleResolveTree.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\style\InlineTextBoxStyle.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\style\StyleFontSizeFunctions.h">

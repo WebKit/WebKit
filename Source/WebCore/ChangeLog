@@ -1,3 +1,60 @@
+2014-05-19  Myles C. Maxfield  <litherum@gmail.com>
+
+        Text decorations do not contribute to visual overflow
+        https://bugs.webkit.org/show_bug.cgi?id=132773
+
+        Reviewed by Antti Koivisto.
+
+        This patch creates a function, visualOverflowForDecorations, which computes
+        how much visual overflow to add around a text box due to text decorations. Most of the time,
+        text decorations are fully contained within the text box, so the result is usually 0.
+
+        This function exists within style/InlineTextBoxStyle.cpp, which is an added file. This is
+        so that it can be called from setLogicalWidthForTextRun() inside RenderBlockLineLayout.cpp
+        and from RenderStyle::changeAffectsVisualOverflow(). The former case passes in the full
+        InlineTextBox and the latter case just passes in a RenderStyle (because the InlineTextBox
+        is unavailable.)
+
+        This patch also modifies RenderTableSection::spannedColumns() to fix an off-by-one error
+        that was causing table borders to not be drawn when they existed right on the edge of
+        a repaint rect.
+
+        Tests: fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html
+        Tests: fast/repaint/border-collapse-table-off-by-one-expected.html
+
+        * WebCore.vcxproj/WebCore.vcxproj: Adding reference to new InlineTextBoxStyle.cpp file
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Adding reference to new InlineTextBoxStyle files
+        * WebCore.xcodeproj/project.pbxproj: Adding reference to new InlineTextBoxStyle files
+        * rendering/InlineTextBox.cpp:
+        (WebCore::computeUnderlineOffset): Moved to InlineTextBox.cpp
+        (WebCore::getWavyStrokeParameters): Moved to InlineTextBox.cpp
+        (WebCore::InlineTextBox::paintDecoration): Update to use newly refactored functions
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::setLogicalWidthForTextRun): Call visualOverflowForDecorations()
+        * rendering/RenderTableSection.cpp:
+        * rendering/RenderTableSelection.cpp: Fix off-by-one error when the boundary of a repaint
+        rect lies exactly on top of a table column position
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeAffectsVisualOverflow): Inspects shadows and text decorations
+        (WebCore::RenderStyle::changeRequiresLayout): Calls changeAffectsVisualOverflow()
+        (WebCore::RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline): Moved code from here
+        to changeAffectsVisualOverflow().
+        * rendering/style/RenderStyle.h: Function signature
+        * style/InlineTextBoxStyle.cpp: Added.
+        (WebCore::computeUnderlineOffset): Moved from InlineTextBox.cpp
+        (WebCore::getWavyStrokeParameters): Moved from InlineTextBox.cpp
+        (WebCore::extendIntToFloat): Convenience function for dealing with the fact that
+        underline bounding boxes use floats and GlyphOverflow uses ints
+        (WebCore::visualOverflowForDecorations): Given
+        vertical overflow bounds, possibly extend those to include location of
+        decorations.
+        * style/InlineTextBoxStyle.h: Added. Function signatures.
+        (WebCore::textDecorationStrokeThickness): Refactored from InlineTextBox.cpp
+        (WebCore::wavyOffsetFromDecoration): Refactored from InlineTextBox.cpp
+        * platform/graphics/Font.h:
+        (WebCore::GlyphOverflow::isEmpty): Convenience function
+        (WebCore::GlyphOverflow::extendTo): Convenience function
+
 2014-05-19  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed build fix after r169082

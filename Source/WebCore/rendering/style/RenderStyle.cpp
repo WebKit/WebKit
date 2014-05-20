@@ -29,6 +29,7 @@
 #include "FloatRoundedRect.h"
 #include "Font.h"
 #include "FontSelector.h"
+#include "InlineTextBoxStyle.h"
 #include "Pagination.h"
 #include "QuotesData.h"
 #include "RenderObject.h"
@@ -382,6 +383,26 @@ static bool positionChangeIsMovementOnly(const LengthBox& a, const LengthBox& b,
     return true;
 }
 
+inline bool RenderStyle::changeAffectsVisualOverflow(const RenderStyle& other) const
+{
+    if (rareNonInheritedData.get() != other.rareNonInheritedData.get()
+        && !rareNonInheritedData->shadowDataEquivalent(*other.rareNonInheritedData.get()))
+        return true;
+
+    if (inherited_flags._text_decorations != other.inherited_flags._text_decorations
+        || visual->textDecoration != other.visual->textDecoration
+        || rareNonInheritedData->m_textDecorationStyle != other.rareNonInheritedData->m_textDecorationStyle) {
+        // Underlines are always drawn outside of their textbox bounds when text-underline-position: under;
+        // is specified. We can take an early out here.
+        if (textUnderlinePosition() == TextUnderlinePositionUnder
+            || other.textUnderlinePosition() == TextUnderlinePositionUnder)
+            return true;
+        return visualOverflowForDecorations(*this, nullptr) != visualOverflowForDecorations(other, nullptr);
+    }
+
+    return false;
+}
+
 bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& changedContextSensitiveProperties) const
 {
     if (m_box->width() != other->m_box->width()
@@ -402,6 +423,10 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
         return true;
 
     if (surround->padding != other->surround->padding)
+        return true;
+
+    // FIXME: We should add an optimized form of layout that just recomputes visual overflow.
+    if (changeAffectsVisualOverflow(*other))
         return true;
 
     if (rareNonInheritedData.get() != other->rareNonInheritedData.get()) {
@@ -432,10 +457,6 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
             || rareNonInheritedData->m_alignItems != other->rareNonInheritedData->m_alignItems
             || rareNonInheritedData->m_alignSelf != other->rareNonInheritedData->m_alignSelf
             || rareNonInheritedData->m_justifyContent != other->rareNonInheritedData->m_justifyContent)
-            return true;
-
-        // FIXME: We should add an optimized form of layout that just recomputes visual overflow.
-        if (!rareNonInheritedData->shadowDataEquivalent(*other->rareNonInheritedData.get()))
             return true;
 
         if (!rareNonInheritedData->reflectionDataEquivalent(*other->rareNonInheritedData.get()))

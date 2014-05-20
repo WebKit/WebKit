@@ -69,6 +69,24 @@ struct GlyphOverflow {
     {
     }
 
+    inline bool isEmpty()
+    {
+        return !left && !right && !top && !bottom;
+    }
+
+    inline void extendTo(const GlyphOverflow& other)
+    {
+        left = std::max(left, other.left);
+        right = std::max(right, other.right);
+        top = std::max(top, other.top);
+        bottom = std::max(bottom, other.bottom);
+    }
+
+    bool operator!=(const GlyphOverflow& other)
+    {
+        return left != other.left || right != other.right || top != other.top || bottom != other.bottom;
+    }
+
     int left;
     int right;
     int top;

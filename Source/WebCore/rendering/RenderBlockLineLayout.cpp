@@ -31,6 +31,7 @@
 #include "InlineElementBox.h"
 #include "InlineIterator.h"
 #include "InlineTextBox.h"
+#include "InlineTextBoxStyle.h"
 #include "LineLayoutState.h"
 #include "Logging.h"
 #include "RenderBlockFlow.h"
@@ -524,7 +525,12 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
         copyToVector(fallbackFonts, it->value.first);
         run->box()->parent()->clearDescendantsHaveSameLineHeightAndBaseline();
     }
-    if ((glyphOverflow.top || glyphOverflow.bottom || glyphOverflow.left || glyphOverflow.right)) {
+
+    // Include text decoration visual overflow as part of the glyph overflow.
+    if (renderer->style().textDecorationsInEffect() != TextDecorationNone)
+        glyphOverflow.extendTo(visualOverflowForDecorations(run->box()->lineStyle(), toInlineTextBox(run->box())));
+
+    if (!glyphOverflow.isEmpty()) {
         ASSERT(run->box()->behavesLikeText());
         GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(toInlineTextBox(run->box()), std::make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).iterator;
         it->value.second = glyphOverflow;

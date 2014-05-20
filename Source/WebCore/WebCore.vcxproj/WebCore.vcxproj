@@ -17647,6 +17647,7 @@
     <ClCompile Include="..\storage\StorageSyncManager.cpp" />
     <ClCompile Include="..\storage\StorageThread.cpp" />
     <ClCompile Include="..\storage\StorageTracker.cpp" />
+    <ClCompile Include="..\style\InlineTextBoxStyle.cpp" />
     <ClCompile Include="..\style\StyleFontSizeFunctions.cpp" />
     <ClCompile Include="..\style\StyleResolveForDocument.cpp" />
     <ClCompile Include="..\style\StyleResolveTree.cpp" />
@@ -21039,6 +21040,7 @@
     <ClInclude Include="..\storage\StorageSyncManager.h" />
     <ClInclude Include="..\storage\StorageThread.h" />
     <ClInclude Include="..\storage\StorageTracker.h" />
+    <ClInclude Include="..\style\InlineTextBoxStyle.h" />
     <ClInclude Include="..\style\StyleFontSizeFunctions.h" />
     <ClInclude Include="..\style\StyleResolveForDocument.h" />
     <ClInclude Include="..\style\StyleResolveTree.h" />
