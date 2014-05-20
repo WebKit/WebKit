@@ -121,3 +121,5 @@ css2.1/20110323/replaced-intrinsic-002.htm [ Failure ]
 webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-fixed.html [ Skip ]
 webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-percentage.html [ Skip ]
 webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-auto.html [ Skip ]
+
+webkit.org/b/133124 fast/regions/cssom/region-range-for-box-crash.html [ Skip ]

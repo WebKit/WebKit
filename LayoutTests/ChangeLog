@@ -1,3 +1,10 @@
+2014-05-20  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION(r169105): fast/regions/cssom/region-range-for-box-crash.html is more crashy than before
+        https://bugs.webkit.org/show_bug.cgi?id=133124
+
+        * TestExpectations: Skip it.
+
 2014-05-20  Anders Carlsson  <andersca@apple.com>
 
         Skip http/tests/inspector/replay/document-last-modified-fallback-value.html since it asserts.
