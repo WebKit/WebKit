@@ -1,3 +1,9 @@
+2014-05-20  Anders Carlsson  <andersca@apple.com>
+
+        Skip http/tests/inspector/replay/document-last-modified-fallback-value.html since it asserts.
+
+        * TestExpectations:
+
 2014-05-20  David Kilzer  <ddkilzer@apple.com>
 
         Make fast/dom/remove-element-with-{id|name}-that-was-inserted-on-DOMNodeRemoved.html reliable

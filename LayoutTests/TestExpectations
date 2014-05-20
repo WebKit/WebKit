@@ -104,6 +104,9 @@ webkit.org/b/74144 fast/regions/region-content-flown-into-region.html [ Skip ]
 # Doesn't work yet, relies on network replay functionality (webkit.org/b/130728, webkit.org/b/129391)
 webkit.org/b/131318 http/tests/inspector/replay/document-last-modified-fallback-value.html [ Skip ]
 
+# Asserts in debug builds.
+[ Debug ] http/tests/inspector/replay/document-last-modified-fallback-value.html [ Skip ]
+
 # Expando properties on attribute nodes disappear
 webkit.org/b/88045 fast/dom/gc-attribute-node.html [ Failure Pass ]
 
@@ -114,7 +117,6 @@ webkit.org/b/132421 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
 # These tests are incorrect in the CSS test suite and should be fixed there first.
 css2.1/20110323/replaced-intrinsic-001.htm [ Failure ]
 css2.1/20110323/replaced-intrinsic-002.htm [ Failure ]
-
 
 webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-fixed.html [ Skip ]
 webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-percentage.html [ Skip ]
