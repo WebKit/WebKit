@@ -2408,7 +2408,12 @@ public:
         return ARM64Assembler::maxJumpReplacementSize();
     }
 
-    RegisterID scratchRegisterForBlinding() { return getCachedDataTempRegisterIDAndInvalidate(); }
+    RegisterID scratchRegisterForBlinding()
+    {
+        // We *do not* have a scratch register for blinding.
+        RELEASE_ASSERT_NOT_REACHED();
+        return getCachedDataTempRegisterIDAndInvalidate();
+    }
 
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return false; }
     static bool canJumpReplacePatchableBranch32WithPatch() { return false; }

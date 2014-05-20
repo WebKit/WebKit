@@ -176,6 +176,40 @@ unless $jscPath
     exit 1
 end
 
+# Try to determine architecture. Return nil on failure.
+def machOArchitectureCode
+    otoolLines = `otool -aSfh #{Shellwords.shellescape($jscPath.to_s)}`.split("\n")
+    otoolLines.each_with_index {
+        | value, index |
+        if value =~ /magic/ and value =~ /cputype/
+            return otoolLines[index + 1].split[1].to_i
+        end
+    }
+    $stderr.puts "Warning: unable to determine architecture."
+    nil
+end
+
+def determineArchitecture
+    code = machOArchitectureCode
+    return nil unless code
+    is64BitFlag = 0x01000000
+    case code
+    when 7
+        "x86"
+    when 7 | is64BitFlag
+        "x86-64"
+    when 12
+        "arm"
+    when 12 | is64BitFlag
+        "arm64"
+    else
+        $stderr.puts "Warning: unable to determine architecture from code: #{code}"
+        nil
+    end
+end
+
+$architecture = determineArchitecture
+
 $numFailures = 0
 
 EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20"]
@@ -478,6 +512,7 @@ def baseOutputName(kind)
 end
 
 def addRunCommand(kind, command, outputHandler, errorHandler)
+    $didAddRunCommand = true
     plan = Plan.new($benchmarkDirectory, command, baseOutputName(kind), outputHandler, errorHandler)
     if $numProcessors > 1 and $runCommandOptions[:isSlow]
         $runlist.unshift plan
@@ -490,7 +525,8 @@ end
 # $benchmark), in which case those run commands have already been executed. Otherwise
 # returns false, in which case you're supposed to add your own run commands.
 def parseRunCommands
-    didRun = false
+    oldDidAddRunCommand = $didAddRunCommand
+    $didAddRunCommand = false
 
     Dir.chdir($outputDir) {
         File.open($benchmarkDirectory + $benchmark) {
@@ -506,12 +542,13 @@ def parseRunCommands
                 end
                 next unless doesMatch
                 eval $~.post_match
-                didRun = true
             }
         }
     }
 
-    didRun
+    result = $didAddRunCommand
+    $didAddRunCommand = result or oldDidAddRunCommand
+    result
 end
 
 def slow!
@@ -797,6 +834,7 @@ def defaultRunMozillaTest(mode, *extraFiles)
 end
 
 def skip
+    $didAddRunCommand = true
     puts "Skipping #{$collectionName}/#{$benchmark}"
 end
 

@@ -1140,7 +1140,7 @@ public:
 
     void convertInt32ToDouble(Imm32 imm, FPRegisterID dest)
     {
-        if (shouldBlind(imm)) {
+        if (shouldBlind(imm) && haveScratchRegisterForBlinding()) {
             RegisterID scratchRegister = scratchRegisterForBlinding();
             loadXorBlindedConstant(xorBlindConstant(imm), scratchRegister);
             convertInt32ToDouble(scratchRegister, dest);
@@ -1176,7 +1176,7 @@ public:
 
     Jump branchPtr(RelationalCondition cond, RegisterID left, ImmPtr right)
     {
-        if (shouldBlind(right)) {
+        if (shouldBlind(right) && haveScratchRegisterForBlinding()) {
             RegisterID scratchRegister = scratchRegisterForBlinding();
             loadRotationBlindedConstant(rotationBlindConstant(right), scratchRegister);
             return branchPtr(cond, left, scratchRegister);
@@ -1186,7 +1186,7 @@ public:
     
     void storePtr(ImmPtr imm, Address dest)
     {
-        if (shouldBlind(imm)) {
+        if (shouldBlind(imm) && haveScratchRegisterForBlinding()) {
             RegisterID scratchRegister = scratchRegisterForBlinding();
             loadRotationBlindedConstant(rotationBlindConstant(imm), scratchRegister);
             storePtr(scratchRegister, dest);
@@ -1196,7 +1196,7 @@ public:
 
     void store64(Imm64 imm, Address dest)
     {
-        if (shouldBlind(imm)) {
+        if (shouldBlind(imm) && haveScratchRegisterForBlinding()) {
             RegisterID scratchRegister = scratchRegisterForBlinding();
             loadRotationBlindedConstant(rotationBlindConstant(imm), scratchRegister);
             store64(scratchRegister, dest);

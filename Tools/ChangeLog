@@ -1,3 +1,12 @@
+2014-05-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Take care of some ARM64 test failures
+        https://bugs.webkit.org/show_bug.cgi?id=133090
+
+        Reviewed by Geoffrey Garen.
+
+        * Scripts/run-jsc-stress-tests: Make it easier to conditionally skip things.
+
 2014-05-19  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] REGRESSION (r168910): webkitdirs.pm: Be more forgiving when parsing --sdk, --device and --sim
