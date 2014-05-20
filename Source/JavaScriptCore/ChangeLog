@@ -1,3 +1,9 @@
+2014-05-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Test gardening: skip some failing tests on not-X86.
+
+        * tests/mozilla/mozilla-tests.yaml:
+
 2014-05-19  Mark Lam  <mark.lam@apple.com>
 
         operationOptimize() should defer the GC for a while.

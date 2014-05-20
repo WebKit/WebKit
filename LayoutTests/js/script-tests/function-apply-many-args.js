@@ -1,3 +1,5 @@
+//@ skip if $architecture !~ /x86/i
+
 description("Tests that we throw an error when passing a number of arguments beyond a certain threshold.");
 
 function f() { return arguments.length; }

@@ -1,3 +1,9 @@
+2014-05-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Test gardening: skip some failing tests on not-X86.
+
+        * js/script-tests/function-apply-many-args.js:
+
 2014-05-19  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver sees the WebArea out of order when topContentInset is used
