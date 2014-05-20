@@ -1,3 +1,17 @@
+2014-05-20  Prashant Hiremath  <hiremathprashants@gmail.com>
+
+        Only set title on SVG documents
+        https://bugs.webkit.org/show_bug.cgi?id=133068
+
+        Reviewed by Dirk Schulze.
+
+        Test: svg/custom/html_document_set_title.html
+
+        * svg/SVGTitleElement.cpp:
+        (WebCore::SVGTitleElement::insertedInto):
+        (WebCore::SVGTitleElement::removedFrom):
+        (WebCore::SVGTitleElement::childrenChanged):
+
 2014-05-20  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] Invalid content in cache file, causes broken rendering.

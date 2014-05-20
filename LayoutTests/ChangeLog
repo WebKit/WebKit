@@ -1,3 +1,13 @@
+2014-05-20  Prashant Hiremath  <hiremathprashants@gmail.com>
+
+        Only set title on SVG documents
+        https://bugs.webkit.org/show_bug.cgi?id=133068
+
+        Reviewed by Dirk Schulze.
+
+        * svg/custom/html_document_set_title-expected.txt: Added.
+        * svg/custom/html_document_set_title.html: Added.
+
 2014-05-20  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION(r169105): fast/regions/cssom/region-range-for-box-crash.html is more crashy than before
