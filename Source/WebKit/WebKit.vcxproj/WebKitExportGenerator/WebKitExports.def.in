@@ -238,6 +238,7 @@ EXPORTS
         symbolWithPointer(?disconnectFrontend@InspectorController@WebCore@@QAEXXZ, ?disconnectFrontend@InspectorController@WebCore@@QEAAXXZ)
 #endif
         symbolWithPointer(?isActiveInsertionPoint@WebCore@@YA_NPBVNode@1@@Z, ?isActiveInsertionPoint@WebCore@@YA_NPEBVNode@1@@Z)
+        ?isCSSShapesEnabled@RuntimeEnabledFeatures@WebCore@@0_NA
         symbolWithPointer(?isPreloaded@CachedResourceLoader@WebCore@@QBE_NABVString@WTF@@@Z, ?isPreloaded@CachedResourceLoader@WebCore@@QEBA_NAEBVString@WTF@@@Z)
         symbolWithPointer(?jsArray@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@V?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@@Z, ?jsArray@WebCore@@YA?AVJSValue@JSC@@PEAVExecState@3@PEAVJSDOMGlobalObject@1@V?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@@Z)
         symbolWithPointer(?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QBE_NXZ, ?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QEBA_NXZ)

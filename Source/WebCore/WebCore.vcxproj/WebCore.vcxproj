@@ -7185,6 +7185,7 @@
     <ClCompile Include="..\platform\graphics\CrossfadeGeneratedImage.cpp" />
     <ClCompile Include="..\platform\graphics\FloatPoint.cpp" />
     <ClCompile Include="..\platform\graphics\FloatPoint3D.cpp" />
+    <ClCompile Include="..\platform\graphics\FloatPolygon.cpp" />
     <ClCompile Include="..\platform\graphics\FloatQuad.cpp" />
     <ClCompile Include="..\platform\graphics\FloatRect.cpp" />
     <ClCompile Include="..\platform\graphics\FloatSize.cpp" />
@@ -10614,6 +10615,7 @@
     <ClCompile Include="..\rendering\shapes\PolygonShape.cpp" />
     <ClCompile Include="..\rendering\shapes\RectangleShape.cpp" />
     <ClCompile Include="..\rendering\shapes\Shape.cpp" />
+    <ClCompile Include="..\rendering\shapes\ShapeInfo.cpp" />
     <ClCompile Include="..\rendering\shapes\ShapeInsideInfo.cpp" />
     <ClCompile Include="..\rendering\shapes\ShapeInterval.cpp" />
     <ClCompile Include="..\rendering\shapes\ShapeOutsideInfo.cpp" />
@@ -18875,6 +18877,7 @@
     <ClInclude Include="..\platform\graphics\CrossfadeGeneratedImage.h" />
     <ClInclude Include="..\platform\graphics\FloatPoint.h" />
     <ClInclude Include="..\platform\graphics\FloatPoint3D.h" />
+    <ClInclude Include="..\platform\graphics\FloatPolygon.h" />
     <ClInclude Include="..\platform\graphics\FloatQuad.h" />
     <ClInclude Include="..\platform\graphics\FloatRect.h" />
     <ClInclude Include="..\platform\graphics\FloatSize.h" />
@@ -19563,6 +19566,7 @@
     <ClInclude Include="..\rendering\shapes\PolygonShape.h" />
     <ClInclude Include="..\rendering\shapes\RectangleShape.h" />
     <ClInclude Include="..\rendering\shapes\Shape.h" />
+    <ClInclude Include="..\rendering\shapes\ShapeInfo.h" />
     <ClInclude Include="..\rendering\shapes\ShapeInsideInfo.h" />
     <ClInclude Include="..\rendering\shapes\ShapeInterval.h" />
     <ClInclude Include="..\rendering\shapes\ShapeOutsideInfo.h" />
