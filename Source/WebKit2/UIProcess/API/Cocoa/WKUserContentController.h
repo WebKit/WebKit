@@ -54,7 +54,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 /*! @abstract Adds a script message handler.
  @param scriptMessageHandler The message handler where the messages should be delivered.
  @param name The name of the message handler.
- @discussion Adding a scriptMessageHandler adds a function window.webkit.messaging.<name>.postMessage(<messageBody>) for all frames.
+ @discussion Adding a scriptMessageHandler adds a function window.webkit.messageHandlers.<name>.postMessage(<messageBody>) for all frames.
  */
 - (void)addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name;
 
