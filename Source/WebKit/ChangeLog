@@ -1,3 +1,16 @@
+2014-05-19  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r169098
+
+    2013-09-19  Bear Travis  <betravis@adobe.com>
+
+            CSS_SHAPES not supported on AppleWin port
+            https://bugs.webkit.org/show_bug.cgi?id=118810
+
+            Reviewed by Brent Fulgham.
+
+            * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Add required symbol for enabling CSS Shapes.
+
 2014-03-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix.
