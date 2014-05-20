@@ -49,6 +49,7 @@ void WebPopupMenu::setUpPlatformData(const IntRect&, PlatformPopupMenuData& data
     
     data.fontInfo.fontAttributeDictionary = fontDescriptorAttributes;
     data.shouldPopOver = m_popupClient->shouldPopOver();
+    data.hideArrows = !m_popupClient->menuStyle().hasDefaultAppearance();
     data.menuSize = m_popupClient->menuStyle().menuSize();
 #else
     UNUSED_PARAM(data);

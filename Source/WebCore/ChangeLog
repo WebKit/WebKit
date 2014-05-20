@@ -1,3 +1,29 @@
+2014-05-20  Dean Jackson  <dino@apple.com>
+
+        [Mac] Allow popup menus to override default appearance
+        https://bugs.webkit.org/show_bug.cgi?id=133129
+
+        Reviewed by Tim Horton.
+
+        WebKitSystemInterface's WKPopupMenu has a flag to hide
+        the arrows at the end of a popup-menu (e.g. <select>).
+        Expose that via adding a hasDefaultAppearance flag to
+        PopupMenuStyle, which then passes it on to WKSI.
+
+        * platform/PopupMenuStyle.h:
+        (WebCore::PopupMenuStyle::PopupMenuStyle): New flag in constructor.
+        (WebCore::PopupMenuStyle::hasDefaultAppearance): New flag.
+        * platform/mac/WebCoreSystemInterface.h: wkPopupMenu signature has changed to accept
+        the new flag.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::itemStyle): Pass in true as default appearance when creating
+        the PopupMenuStyle. We don't need it.
+        (RenderMenuList::menuStyle): In this case we pass in the negated value of
+        style().hasAppearance(), which indicates if we are overriding the built-in drawing.
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::menuStyle): Use true as the default value.
+
 2014-05-20  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] do not deactivate an audio session that has running I/O

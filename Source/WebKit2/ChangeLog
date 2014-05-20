@@ -1,3 +1,23 @@
+2014-05-20  Dean Jackson  <dino@apple.com>
+
+        [Mac] Allow popup menus to override default appearance
+        https://bugs.webkit.org/show_bug.cgi?id=133129
+
+        Reviewed by Tim Horton.
+
+        Add an extra "hideArrows" flag to PlatformPopupMenuData
+        and replace the call to WKPopupMenuWithSize with WKPopupMenu.
+
+        * Shared/PlatformPopupMenuData.cpp: Encode and decode the new data value.
+        (WebKit::PlatformPopupMenuData::encode):
+        (WebKit::PlatformPopupMenuData::decode):
+        * Shared/PlatformPopupMenuData.h: Add hideArrows boolean.
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+        * WebProcess/WebCoreSupport/mac/WebPopupMenuMac.mm:
+        (WebKit::WebPopupMenu::setUpPlatformData): The hideArrows flag is
+        true if we don't have the default appearance.
+
 2014-05-20  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] do not deactivate an audio session that has running I/O

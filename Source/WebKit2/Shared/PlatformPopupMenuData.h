@@ -47,6 +47,7 @@ struct PlatformPopupMenuData {
 #if PLATFORM(COCOA)
     FontInfo fontInfo;
     bool shouldPopOver;
+    bool hideArrows;
     WebCore::PopupMenuStyle::PopupMenuSize menuSize;
 #endif
 };

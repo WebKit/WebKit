@@ -204,7 +204,7 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
         break;
     }
 
-    wkPopupMenuWithSize(menu, location, roundf(NSWidth(r)), dummyView.get(), index, font, controlSize);
+    wkPopupMenu(menu, location, roundf(NSWidth(r)), dummyView.get(), index, font, controlSize, !m_client->menuStyle().hasDefaultAppearance());
 
     [m_popup dismissPopUp];
     [dummyView removeFromSuperview];

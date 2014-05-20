@@ -147,7 +147,7 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
         break;
     }
 
-    WKPopupMenuWithSize(menu, location, roundf(NSWidth(rect)), dummyView.get(), selectedIndex, font, controlSize);
+    WKPopupMenu(menu, location, roundf(NSWidth(rect)), dummyView.get(), selectedIndex, font, controlSize, data.hideArrows);
 
     [m_popup dismissPopUp];
     [dummyView removeFromSuperview];
