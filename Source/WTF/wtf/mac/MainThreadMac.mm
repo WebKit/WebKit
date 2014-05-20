@@ -106,7 +106,10 @@ static void timerFired(CFRunLoopTimerRef timer, void*)
 {
     CFRelease(timer);
     isTimerPosted = false;
-    WTF::dispatchFunctionsFromMainThread();
+
+    @autoreleasepool {
+        WTF::dispatchFunctionsFromMainThread();
+    }
 }
 
 static void postTimer()
