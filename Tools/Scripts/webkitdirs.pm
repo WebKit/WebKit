@@ -398,11 +398,13 @@ sub determineXcodeSDK
     my $sdk;
     if (checkForArgumentAndRemoveFromARGVGettingValue("--sdk", \$sdk)) {
         $xcodeSDK = $sdk;
-    } elsif (checkForArgumentAndRemoveFromARGV("--device")) {
-        $xcodeSDK = 'iphoneos.internal';
-    } elsif (checkForArgumentAndRemoveFromARGV("--sim") ||
+    }
+    if (checkForArgumentAndRemoveFromARGV("--device")) {
+        $xcodeSDK ||= 'iphoneos.internal';
+    }
+    if (checkForArgumentAndRemoveFromARGV("--sim") ||
         checkForArgumentAndRemoveFromARGV("--simulator")) {
-        $xcodeSDK = 'iphonesimulator';
+        $xcodeSDK ||= 'iphonesimulator';
     }
 }
 

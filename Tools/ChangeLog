@@ -1,3 +1,18 @@
+2014-05-19  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] REGRESSION (r168910): webkitdirs.pm: Be more forgiving when parsing --sdk, --device and --sim
+        <http://webkit.org/b/133089>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitdirs.pm:
+        (determineXcodeSDK): If both '--sdk SDKROOT' and '--sim' are
+        specified on the command line, we would remove the '--sdk'
+        arguments, but leave '--sim', potentially passing it along to
+        xcodebuild causing a build failure.  This happens when
+        'old-run-webkit-tests --release --sim' invokes
+        build-dumprendertree when DumpRenderTree hasn't been built yet.
+
 2014-05-19  David Farler  <dfarler@apple.com>
 
         Dashboard: OpenSource revision key changed from WebKitOpenSource to WebKit
