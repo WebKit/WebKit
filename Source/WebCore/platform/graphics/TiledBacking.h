@@ -96,6 +96,7 @@ public:
 
     // Includes margins.
     virtual IntRect bounds() const = 0;
+    virtual IntRect boundsWithoutMargin() const = 0;
 
     // Exposed for testing
     virtual IntRect tileCoverageRect() const = 0;

@@ -1,5 +1,20 @@
 2014-05-19  Simon Fraser  <simon.fraser@apple.com>
 
+        Scrolling pages with large TiledBacking content layers creates way too many tiles
+        https://bugs.webkit.org/show_bug.cgi?id=133101
+
+        Reviewed by Tim Horton.
+
+        Fix the GraphicsLayerCA::adjustTiledLayerVisibleRect() logic to avoid making giant rects if the old
+        and new visible rects don't overlap.
+
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::adjustTiledLayerVisibleRect):
+        * platform/graphics/ca/mac/TileController.h:
+
+2014-05-19  Simon Fraser  <simon.fraser@apple.com>
+
         Correctly maintain the "isInWindow" state for all TiledBackings
         https://bugs.webkit.org/show_bug.cgi?id=133095
 

@@ -1858,8 +1858,8 @@ FloatRect GraphicsLayerCA::adjustTiledLayerVisibleRect(TiledBacking* tiledBackin
 {
     // If the old visible rect is empty, we have no information about how the visible area is changing
     // (maybe the layer was just created), so don't attempt to expand. Also don't attempt to expand
-    // if the size changed.
-    if (oldVisibleRect.isEmpty() || newSize != oldSize)
+    // if the size changed or the rects don't overlap.
+    if (oldVisibleRect.isEmpty() || newSize != oldSize || !newVisibleRect.intersects(oldVisibleRect))
         return newVisibleRect;
 
     const float paddingMultiplier = 2;
@@ -1911,6 +1911,7 @@ FloatRect GraphicsLayerCA::adjustTiledLayerVisibleRect(TiledBacking* tiledBackin
             expandedRect.setHeight(existingTileBackingRect.maxY() - expandedRect.y());
     }
     
+    expandedRect.intersect(tiledBacking->boundsWithoutMargin());
     return expandedRect;
 }
 

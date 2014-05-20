@@ -96,6 +96,7 @@ public:
 
     virtual IntSize tileSize() const override { return m_tileSize; }
     virtual IntRect bounds() const override;
+    virtual IntRect boundsWithoutMargin() const override;
     virtual bool hasMargins() const override;
     virtual bool hasHorizontalMargins() const override;
     virtual bool hasVerticalMargins() const override;
@@ -106,8 +107,6 @@ public:
     virtual TileCoverage tileCoverage() const override { return m_tileCoverage; }
     virtual bool unparentsOffscreenTiles() const override { return m_unparentsOffscreenTiles; }
     virtual bool scrollingPerformanceLoggingEnabled() const override { return m_scrollingPerformanceLoggingEnabled; }
-
-    IntRect boundsWithoutMargin() const;
 
     FloatRect computeTileCoverageRect(const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect) const;
 
