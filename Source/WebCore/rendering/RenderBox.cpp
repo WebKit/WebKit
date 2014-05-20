@@ -2140,7 +2140,9 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
     // elements because their absolute position already pushes them down through
     // the regions so adding this here and then adding the topLeft again would cause
     // us to add the height twice.
-    if (o->isOutOfFlowRenderFlowThread() && position != AbsolutePosition) {
+    // The same logic applies for elements flowed directly into the flow thread. Their topLeft member
+    // will already contain the portion rect of the region.
+    if (o->isOutOfFlowRenderFlowThread() && position != AbsolutePosition && containingBlock() != flowThreadContainingBlock()) {
         RenderRegion* firstRegion = nullptr;
         RenderRegion* lastRegion = nullptr;
         if (toRenderFlowThread(o)->getRegionRangeForBox(this, firstRegion, lastRegion))

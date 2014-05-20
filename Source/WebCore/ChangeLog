@@ -1,3 +1,19 @@
+2014-05-20  Radu Stavila  <stavila@adobe.com>
+
+        REGRESSION: [CSS Regions] Content flowed directly into the flow thread that ends up in the second region is not properly repainted
+        https://bugs.webkit.org/show_bug.cgi?id=133111
+
+        Reviewed by David Hyatt.
+
+        When computing the repaint rect of an element flowed into a flow thread, if the element is flowed directly into
+        the flow thread (meaning its containing block is the flow thread itself), the region's position within the flow
+        must no longer be taken into consideration, because its already included in the element's |topLeft|.
+
+        Test: fast/regions/hover-element-flowed-second-region.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeRectForRepaint):
+
 2014-05-20  Alex Christensen  <achristensen@webkit.org>
 
         Fix web timing assertion failure.
