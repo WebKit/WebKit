@@ -5,7 +5,7 @@ include(FindGettext)
 # Source directory. Perhaps we want this, but for now disable it to maintain compatibility.
 set(GETTEXT_MSGMERGE_EXECUTABLE :)
 
-set(domain WebKitGTK-3.0)
+set(domain WebKit2GTK-3.0)
 set(build_directory ${CMAKE_BINARY_DIR}/Source/WebCore/platform/gtk/po)
 set(pot_file ${build_directory}/${domain}.pot)
 set(potfiles_file ${build_directory}/POTFILES)

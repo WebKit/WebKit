@@ -1,3 +1,12 @@
+2014-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Rename translation domain as WebKit2GTK-3.0
+        https://bugs.webkit.org/show_bug.cgi?id=132953
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * CMakeLists.txt:
+
 2014-04-08  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove the WebKitGTK+ WebKit 1 code
