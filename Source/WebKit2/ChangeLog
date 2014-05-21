@@ -1,3 +1,16 @@
+2014-05-21  Shivakumar JM  <shiva.jm@samsung.com>
+
+        [WebKit2] Cleanup the build from unused variable in WebProcess module
+        https://bugs.webkit.org/show_bug.cgi?id=133062
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fix unused parameter by using UNUSED_PARAM macro
+
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::addUserScriptMessageHandlers):
+        (WebKit::WebUserContentController::removeUserScriptMessageHandler):
+
 2014-05-20  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION (WK2): Tapping on the input field in duckduckgo.com shows the keyboard but not the caret.

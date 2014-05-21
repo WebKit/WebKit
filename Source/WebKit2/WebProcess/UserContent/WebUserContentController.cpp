@@ -148,6 +148,8 @@ void WebUserContentController::addUserScriptMessageHandlers(const Vector<WebScri
         m_userMessageHandlerDescriptors.add(descriptor->identifier(), descriptor);
         m_userContentController->addUserMessageHandlerDescriptor(descriptor->descriptor());
     }
+#else
+    UNUSED_PARAM(scriptMessageHandlers);
 #endif
 }
 
@@ -159,6 +161,8 @@ void WebUserContentController::removeUserScriptMessageHandler(uint64_t identifie
     
     m_userContentController->removeUserMessageHandlerDescriptor(it->value->descriptor());
     m_userMessageHandlerDescriptors.remove(it);
+#else
+    UNUSED_PARAM(identifier);
 #endif
 }
 
