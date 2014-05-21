@@ -38,14 +38,24 @@ using namespace WebCore;
 namespace WebKit {
 
 ContextMenuContextData::ContextMenuContextData()
+    : m_isTelephoneNumberContext(false)
 #if ENABLE(SERVICE_CONTROLS)
-    : m_selectionIsEditable(false)
+    , m_selectionIsEditable(false)
+#endif
+{
+}
+
+ContextMenuContextData::ContextMenuContextData(TelephoneNumberContextTag)
+    : m_isTelephoneNumberContext(true)
+#if ENABLE(SERVICE_CONTROLS)
+    , m_selectionIsEditable(false)
 #endif
 {
 }
 
 ContextMenuContextData::ContextMenuContextData(const ContextMenuContext& context)
     : m_webHitTestResultData(WebHitTestResult::Data(context.hitTestResult()))
+    , m_isTelephoneNumberContext(false)
 #if ENABLE(SERVICE_CONTROLS)
     , m_selectionIsEditable(false)
 #endif
@@ -69,6 +79,8 @@ ContextMenuContextData::ContextMenuContextData(const ContextMenuContextData& oth
 ContextMenuContextData& ContextMenuContextData::operator=(const ContextMenuContextData& other)
 {
     m_webHitTestResultData = other.m_webHitTestResultData;
+    m_isTelephoneNumberContext = other.m_isTelephoneNumberContext;
+
 #if ENABLE(SERVICE_CONTROLS)
     m_controlledImageHandle.clear();
 
@@ -76,6 +88,8 @@ ContextMenuContextData& ContextMenuContextData::operator=(const ContextMenuConte
         RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(other.m_controlledImageHandle);
         bitmap->createHandle(m_controlledImageHandle);
     }
+
+    m_selectionIsEditable = other.m_selectionIsEditable;
 #endif
 
     return *this;
@@ -84,6 +98,11 @@ ContextMenuContextData& ContextMenuContextData::operator=(const ContextMenuConte
 void ContextMenuContextData::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_webHitTestResultData;
+
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+    encoder << m_isTelephoneNumberContext;
+#endif
+
 #if ENABLE(SERVICE_CONTROLS)
     encoder << m_controlledImageHandle;
 #endif
@@ -93,7 +112,12 @@ bool ContextMenuContextData::decode(IPC::ArgumentDecoder& decoder, ContextMenuCo
 {
     if (!decoder.decode(contextMenuContextData.m_webHitTestResultData))
         return false;
-        
+
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+    if (!decoder.decode(contextMenuContextData.m_isTelephoneNumberContext))
+        return false;
+#endif
+
 #if ENABLE(SERVICE_CONTROLS)
     if (!decoder.decode(contextMenuContextData.m_controlledImageHandle))
         return false;
