@@ -2199,7 +2199,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
         _markedText = (_page->editorState().hasComposition) ? _page->editorState().markedText : String();
         if (!_showingTextStyleOptions)
             [_textSelectionAssistant selectionChanged];
-    } else
+    } else if (!_page->editorState().isContentEditable)
         [_webSelectionAssistant selectionChanged];
     _selectionNeedsUpdate = NO;
 }

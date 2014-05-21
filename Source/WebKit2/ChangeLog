@@ -1,3 +1,22 @@
+2014-05-20  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION (WK2): Tapping on the input field in duckduckgo.com shows the keyboard but not the caret.
+        https://bugs.webkit.org/show_bug.cgi?id=133140
+        <rdar://problem/16980898>
+
+        Reviewed by Benjamin Poulain.
+
+        When a page focuses a field on load, we receive the call to startAssistingNode
+        but we don't create a text interaction assistant if the focus is not originated
+        by a user action. Upon receiving the selection change notification we don't
+        call the text interaction assistant, since we don't have one, but we do call
+        the web selection assistant. We don't have any valid rects for web selection
+        and we clear the selection on the page, causing the caret not to appear and
+        the typing to have no effect.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _updateChangedSelection]):
+
 2014-05-20  Dean Jackson  <dino@apple.com>
 
         [Mac] Allow popup menus to override default appearance
