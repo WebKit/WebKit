@@ -14,10 +14,11 @@ if (window.testRunner) {
         if (internals.isPluginSnapshotted(embed1) && internals.isPluginSnapshotted(embed2))
             result.innerHTML = "PASS";
         testRunner.notifyDone();
-    }, 1000);
+    }, 1500);
 }
 </script>
 <embed id="plugin1" src="../resources/lines.swf" width="600" height="600"></embed>
-<img src="../resources/apple.gif" width="600" height="600" style="position:relative; top:-525px; left:0px">
+<img src="../resources/apple.gif" width="600" height="600" style="position:absolute; top:25px; left:0px">
+<br>
 <embed id="plugin2" src="../resources/lines.swf" width="600" height="600"></embed>
 <img src="../resources/apple.gif" width="300" height="300" style="-webkit-transform:translate(-500px,-200px)">

@@ -1,3 +1,17 @@
+2014-05-20  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Actually enable snapshot tests on mac wk2.
+        https://bugs.webkit.org/show_bug.cgi?id=131871
+
+        * platform/mac-wk1/TestExpectations: Skip them here.
+        * platform/mac/TestExpectations: Unskip them here.
+
+        Some slight modifications to some of the tests to reduce flakiness of tests.
+        * plugins/snapshotting/autoplay-dominant.html:
+        * plugins/snapshotting/autoplay-plugin-blocked-by-image.html:
+        * plugins/snapshotting/autoplay-plugin-mostly-blocked-by-image.html:
+        * plugins/snapshotting/snapshot-plugin-not-quite-blocked-by-image.html: 
+
 2014-05-21  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL] Turn on ENABLE_CSS_FILTERS

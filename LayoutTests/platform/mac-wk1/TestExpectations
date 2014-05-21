@@ -44,5 +44,8 @@ fast/forms/color/input-color-onchange-event.html [ Skip ]
 # WK1 and WK2 mousemove events are subtly different in ways that break this test on WK1.
 fast/events/ghostly-mousemoves-in-subframe.html [ Skip ]
 
+# Disable snapshotting tests on WK1 only
+plugins/snapshotting
+
 ### END OF (2) Failures without bug reports
 ########################################
