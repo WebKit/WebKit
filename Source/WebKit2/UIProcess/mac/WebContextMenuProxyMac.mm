@@ -457,6 +457,17 @@ void WebContextMenuProxyMac::showContextMenu(const IntPoint& menuLocation, const
         [m_popup attachPopUpWithFrame:menuRect inView:m_webView];
 
     NSMenu *menu = m_servicesMenu ? m_servicesMenu.get() : [m_popup menu];
+
+    // Telephone number menus must use the [NSMenu popUpMenuPositioningItem:atLocation:inView:] API.
+    // FIXME: That API is better than WKPopupContextMenu. In the future all menus should use either it
+    // or the [NSMenu popUpContextMenu:withEvent:forView:] API, depending on the menu type.
+    // Then we could get rid of NSPopUpButtonCell, custom metrics, and WKPopupContextMenu.
+    if (context.isTelephoneNumberContext()) {
+        [menu popUpMenuPositioningItem:nil atLocation:menuLocation inView:m_webView];
+        hideContextMenu();
+        return;
+    }
+
 #else
     [m_popup attachPopUpWithFrame:menuRect inView:m_webView];
 

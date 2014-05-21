@@ -1,3 +1,28 @@
+2014-05-21  Brady Eidson  <beidson@apple.com>
+
+        Special handling of telephone number detection menu.
+        <rdar://problem/16967971> and https://bugs.webkit.org/show_bug.cgi?id=133143
+
+        Reviewed by Geoff Garen.
+
+        Add a bool to ContextMenuContextData to represent telephone number menus:
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        (WebKit::ContextMenuContextData::operator=):
+        (WebKit::ContextMenuContextData::encode):
+        (WebKit::ContextMenuContextData::decode):
+        * Shared/ContextMenuContextData.h:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        (WebKit::ContextMenuContextData::isTelephoneNumberContext):
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showContextMenu): If the menu is a telephone
+          number menu then display it using a specific AppKit API.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::showTelephoneNumberMenu): Filter the array of menu items
+          through a new WKSI call, and then show it using a telephone number context.
+
 2014-05-21  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] REGRESSION (Async text input): Asian text input doesn't work in Flash
