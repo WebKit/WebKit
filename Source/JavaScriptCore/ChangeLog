@@ -1,3 +1,35 @@
+2014-05-20  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG prediction propagation should agree with fixup phase over the return type of GetByVal
+        https://bugs.webkit.org/show_bug.cgi?id=133134
+
+        Reviewed by Mark Hahnenberg.
+        
+        Make prediction propagator use ArrayMode refinement to decide the return type.
+        
+        Also introduce a heap prediction intrinsic that allows us to test weird corner cases
+        like this. The only way we'll see a mismatch like this in the real world is probably
+        through a gnarly race condition.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::setHeapPrediction):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionFalse1):
+        (functionFalse2):
+        (functionUndefined1):
+        (functionUndefined2):
+        (functionFalse): Deleted.
+        (functionOtherFalse): Deleted.
+        (functionUndefined): Deleted.
+        * runtime/Intrinsic.h:
+        * tests/stress/get-by-val-double-predicted-int.js: Added.
+        (foo):
+
 2014-05-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Watchdog timer should be lazily allocated

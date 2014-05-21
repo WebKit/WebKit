@@ -369,19 +369,36 @@ private:
         case GetByVal: {
             if (!node->child1()->prediction())
                 break;
-            if (!node->getHeapPrediction())
-                break;
             
-            if (node->child1()->shouldSpeculateFloat32Array()
-                || node->child1()->shouldSpeculateFloat64Array())
+            ArrayMode arrayMode = node->arrayMode().refine(
+                m_graph, node,
+                node->child1()->prediction(),
+                node->child2()->prediction(),
+                SpecNone, node->flags());
+            
+            switch (arrayMode.type()) {
+            case Array::Double:
+                if (arrayMode.isOutOfBounds())
+                    changed |= mergePrediction(node->getHeapPrediction() | SpecDoubleReal);
+                else
+                    changed |= mergePrediction(SpecDoubleReal);
+                break;
+            case Array::Float32Array:
+            case Array::Float64Array:
                 changed |= mergePrediction(SpecFullDouble);
-            else if (node->child1()->shouldSpeculateUint32Array()) {
+                break;
+            case Array::Uint32Array:
                 if (isInt32Speculation(node->getHeapPrediction()))
                     changed |= mergePrediction(SpecInt32);
+                else if (enableInt52())
+                    changed |= mergePrediction(SpecMachineInt);
                 else
-                    changed |= mergePrediction(SpecInt52);
-            } else
+                    changed |= mergePrediction(SpecInt32 | SpecInt52AsDouble);
+                break;
+            default:
                 changed |= mergePrediction(node->getHeapPrediction());
+                break;
+            }
             break;
         }
             

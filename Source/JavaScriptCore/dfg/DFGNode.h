@@ -1031,6 +1031,12 @@ struct Node {
         return mergeSpeculation(m_opInfo2, prediction);
     }
     
+    void setHeapPrediction(SpeculatedType prediction)
+    {
+        ASSERT(hasHeapPrediction());
+        m_opInfo2 = prediction;
+    }
+    
     bool hasFunction()
     {
         switch (op()) {

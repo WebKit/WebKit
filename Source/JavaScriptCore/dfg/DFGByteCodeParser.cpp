@@ -1737,6 +1737,16 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
         return true;
     }
         
+    case SetInt32HeapPredictionIntrinsic: {
+        for (int i = 1; i < argumentCountIncludingThis; ++i) {
+            Node* node = get(virtualRegisterForArgument(i, registerOffset));
+            if (node->hasHeapPrediction())
+                node->setHeapPrediction(SpecInt32);
+        }
+        set(VirtualRegister(resultOperand), constantUndefined());
+        return true;
+    }
+        
     default:
         return false;
     }

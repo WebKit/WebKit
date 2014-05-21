@@ -59,7 +59,8 @@ enum Intrinsic {
     // Debugging intrinsics
     DFGTrueIntrinsic,
     OSRExitIntrinsic,
-    IsFinalTierIntrinsic
+    IsFinalTierIntrinsic,
+    SetInt32HeapPredictionIntrinsic
 };
 
 } // namespace JSC
