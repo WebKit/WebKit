@@ -1,3 +1,11 @@
+2014-05-21  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK] Unreviewed GTK gardening
+
+        * platform/gtk/TestExpectations: Report and mark new tests failing.
+        * platform/gtk/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.txt: Added.
+        Rebaseline after r169048.
+
 2014-05-20  Daniel Bates  <dabates@apple.com>
 
         Element within flattened frame may update its scroll state during the layout phase of the wrong RenderView
