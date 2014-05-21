@@ -1,3 +1,15 @@
+2014-05-21  Radu Stavila  <stavila@adobe.com>
+
+        REGRESSION (r168046): Invalid layout in WebCore::RenderBox::containingBlockLogicalWidthForPositioned
+        https://bugs.webkit.org/show_bug.cgi?id=132933
+
+        Reviewed by Darin Adler.
+
+        Added test for crash caused by invalid layout for RenderTableSection.
+
+        * fast/multicol/newmulticol/table-section-crash-expected.txt: Added.
+        * fast/multicol/newmulticol/table-section-crash.html: Added.
+
 2014-05-21  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         REGRESSION(r169092 and r169102): Skip failing JSC tests on ARM64 properly

@@ -1,3 +1,17 @@
+2014-05-21  Radu Stavila  <stavila@adobe.com>
+
+        REGRESSION (r168046): Invalid layout in WebCore::RenderBox::containingBlockLogicalWidthForPositioned
+        https://bugs.webkit.org/show_bug.cgi?id=132933
+
+        Reviewed by Darin Adler.
+
+        Invalid layout is performed when calling containingBlockLogicalWidthForPositioned for a RenderTableSection object.
+
+        Test: fast/multicol/newmulticol/table-section-crash.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned):
+
 2014-05-21  Simon Pena  <simon.pena@samsung.com>
 
         [EFL] Ensure EGLOffScreenContext::initialize calls platformMakeCurrent on the surface

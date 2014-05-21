@@ -1,0 +1,39 @@
+<!-- This test passes if it doesn't crash - https://bugs.webkit.org/show_bug.cgi?id=132933 -->
+
+<body style="width: 800px; height: 600px">
+    <table>
+    <td id="td">
+    <table>
+    <tr id="td">
+</body>
+
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var head = document.getElementsByTagName("head")[0];
+    var style = document.createElement("style");
+    var rule = document.createTextNode("* { visibility: hidden; } #td { position: absolute;");
+    style.appendChild(rule);
+    head.appendChild(style);
+    style = document.createElement("style");
+    style.innerHTML = "* { \n\
+        position: -webkit-sticky;\n\
+        -webkit-animation-direction: alternate-reverse;";
+
+    head.appendChild(style);
+    style = document.createElement("style");
+    style.innerHTML = "#td { \n\
+        -webkit-animation-name: name3; \n\
+        -webkit-animation-duration: 9s; \n\
+        } \n\
+        @-webkit-keyframes name3 { \n\
+        from { \n\
+        } \n\
+        to { \n\
+        -webkit-column-count: 4294967167;";
+
+    head.appendChild(style);
+
+    //head.removeChild(style);
+</script>

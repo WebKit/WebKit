@@ -3073,6 +3073,9 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
         if (isFixedPosition && containingBlock->isRenderNamedFlowThread())
             return containingBlock->view().clientLogicalWidth();
 
+        if (!containingBlock->isRenderBlock())
+            return toRenderBox(*containingBlock).clientLogicalWidth();
+
         const RenderBlock* cb = toRenderBlock(containingBlock);
         RenderBoxRegionInfo* boxInfo = 0;
         if (!region) {
