@@ -44,6 +44,14 @@ arrayWithHoles[10] = 0;
 arrayWithHoles[20] = null;
 arrayWithHoles[30] = false;
 arrayWithHoles[40] = "";
+function numberOfCallbacksInFindIndexInArrayWithHoles() {
+    var count = 0;
+    arrayWithHoles.find(function(element, index, array) {
+        debug("find callback called with index " + index);
+        count++;
+    });
+    return count;
+}
 
 shouldBe("[undefined, 0, null, false, ''].findIndex(passUndefined)", "0");
 shouldBe("[undefined, 0, null, false, ''].findIndex(passZero)", "1");
@@ -55,14 +63,16 @@ shouldBe("[undefined, 0, false, ''].findIndex(passNull)", "-1");
 shouldBe("[undefined, 0, null, ''].findIndex(passFalse)", "-1");
 shouldBe("[undefined, 0, null, false].findIndex(passEmptyString)", "-1");
 shouldBe("[undefined, null, false, ''].findIndex(passZero)", "-1");
-shouldBe("(new Array(20)).findIndex(passUndefined)", "0");
+shouldBe("(new Array(20)).findIndex(passUndefined)", "-1");
 
 // Array with holes.
-shouldBe("arrayWithHoles.findIndex(passUndefined)", "0");
+shouldBe("arrayWithHoles.findIndex(passUndefined)", "-1");
 shouldBe("arrayWithHoles.findIndex(passZero)", "10");
 shouldBe("arrayWithHoles.findIndex(passNull)", "20");
 shouldBe("arrayWithHoles.findIndex(passFalse)", "30");
 shouldBe("arrayWithHoles.findIndex(passEmptyString)", "40");
+arrayWithHoles[50] = undefined;
+shouldBe("arrayWithHoles.findIndex(passUndefined)", "50");
 
 // Generic Object
 shouldBe("toObject([undefined, 0, null, false, '']).findIndex(passUndefined)", "0");
@@ -75,7 +85,7 @@ shouldBe("toObject([undefined, 0, false, '']).findIndex(passNull)", "-1");
 shouldBe("toObject([undefined, 0, null, '']).findIndex(passFalse)", "-1");
 shouldBe("toObject([undefined, 0, null, false]).findIndex(passEmptyString)", "-1");
 shouldBe("toObject([undefined, null, false, '']).findIndex(passZero)", "-1");
-shouldBe("toObject(new Array(20)).findIndex(passUndefined)", "0");
+shouldBe("toObject(new Array(20)).findIndex(passUndefined)", "-1");
 
 // Modification during search
 shouldBe("[0,1,2,3,4,5,6,7,8,9].findIndex(findItemAddedDuringSearch)", "-1");
@@ -90,3 +100,6 @@ shouldThrow("[].findIndex([])", "'TypeError: Array.prototype.findIndex callback 
 shouldThrow("[].findIndex({})", "'TypeError: Array.prototype.findIndex callback must be a function'");
 shouldThrow("[].findIndex(null)", "'TypeError: Array.prototype.findIndex callback must be a function'");
 shouldThrow("[].findIndex(undefined)", "'TypeError: Array.prototype.findIndex callback must be a function'");
+
+// Callbacks in the expected order and skipping holes.
+shouldBe("numberOfCallbacksInFindIndexInArrayWithHoles()", "5");

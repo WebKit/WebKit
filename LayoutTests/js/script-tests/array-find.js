@@ -44,6 +44,15 @@ arrayWithHoles[10] = 0;
 arrayWithHoles[20] = null;
 arrayWithHoles[30] = false;
 arrayWithHoles[40] = "";
+arrayWithHoles[50] = undefined;
+function numberOfCallbacksInFindInArrayWithHoles() {
+    var count = 0;
+    arrayWithHoles.find(function(element, index, array) {
+        debug("find callback called with index " + index);
+        count++;
+    });
+    return count;
+}
 
 shouldBe("[undefined, 0, null, false, ''].find(passUndefined)", "undefined");
 shouldBe("[undefined, 0, null, false, ''].find(passZero)", "0");
@@ -90,3 +99,6 @@ shouldThrow("[].find([])", "'TypeError: Array.prototype.find callback must be a 
 shouldThrow("[].find({})", "'TypeError: Array.prototype.find callback must be a function'");
 shouldThrow("[].find(null)", "'TypeError: Array.prototype.find callback must be a function'");
 shouldThrow("[].find(undefined)", "'TypeError: Array.prototype.find callback must be a function'");
+
+// Callbacks in the expected order and skipping holes.
+shouldBe("numberOfCallbacksInFindInArrayWithHoles()", "5");

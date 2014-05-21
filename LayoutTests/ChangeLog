@@ -1,3 +1,15 @@
+2014-05-21  Antoine Quint  <graouts@webkit.org>
+
+        Array.prototype.find and findIndex should skip holes
+        https://bugs.webkit.org/show_bug.cgi?id=132658
+
+        Reviewed by Geoffrey Garen.
+
+        * js/array-find-expected.txt:
+        * js/array-findIndex-expected.txt:
+        * js/script-tests/array-find.js:
+        * js/script-tests/array-findIndex.js:
+
 2014-05-21  Radu Stavila  <stavila@adobe.com>
 
         REGRESSION (r168046): Invalid layout in WebCore::RenderBox::containingBlockLogicalWidthForPositioned

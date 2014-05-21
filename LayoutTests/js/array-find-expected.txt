@@ -40,6 +40,12 @@ PASS [].find([]) threw exception TypeError: Array.prototype.find callback must b
 PASS [].find({}) threw exception TypeError: Array.prototype.find callback must be a function.
 PASS [].find(null) threw exception TypeError: Array.prototype.find callback must be a function.
 PASS [].find(undefined) threw exception TypeError: Array.prototype.find callback must be a function.
+find callback called with index 10
+find callback called with index 20
+find callback called with index 30
+find callback called with index 40
+find callback called with index 50
+PASS numberOfCallbacksInFindInArrayWithHoles() is 5
 PASS successfullyParsed is true
 
 TEST COMPLETE

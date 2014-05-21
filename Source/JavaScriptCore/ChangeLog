@@ -1,3 +1,16 @@
+2014-05-21  Antoine Quint  <graouts@webkit.org>
+
+        Array.prototype.find and findIndex should skip holes
+        https://bugs.webkit.org/show_bug.cgi?id=132658
+
+        Reviewed by Geoffrey Garen.
+
+        Skip holes in the array when iterating such that callback isn't called.
+
+        * builtins/Array.prototype.js:
+        (find):
+        (findIndex):
+
 2014-05-21  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         REGRESSION(r169092 and r169102): Skip failing JSC tests on ARM64 properly
