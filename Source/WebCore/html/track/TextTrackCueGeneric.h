@@ -78,7 +78,6 @@ public:
 
 private:
     virtual bool isOrderedBefore(const TextTrackCue*) const override;
-    virtual double startTimeVariance() const override { return 0.25; }
 
     TextTrackCueGeneric(ScriptExecutionContext&, double start, double end, const String&);
     

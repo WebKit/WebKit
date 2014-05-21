@@ -1,3 +1,35 @@
+2014-05-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] DataCues do not work properly when rewinding video
+        https://bugs.webkit.org/show_bug.cgi?id=133138
+        <rdar://problem/16979086>
+
+        Reviewed by Eric Carlson.
+
+        Make the TrackPrivateBase responsible for knowing if a type of track needs a non-zero
+        startTimeVariance value.
+
+        Also, correct a bug in the equality test for DataCue objects.
+
+        * html/track/DataCue.cpp:
+        (WebCore::DataCue::isEqual): Handle the JSValue data types consistently, so that we don't attempt
+        to compare a JSNull against a default JSValue object.
+        * html/track/InbandTextTrack.cpp:
+        (WebCore::InbandTextTrack::startTimeVariance): Added.
+        * html/track/InbandTextTrack.h:
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::hasCue): Use new startTimeVariance method location.
+        * html/track/TextTrack.h:
+        (WebCore::TextTrack::startTimeVariance): Added.
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::hasEquivalentStartTime): Use new startTimeVariance location.
+        * html/track/TextTrackCue.h:
+        (WebCore::TextTrackCue::startTimeVariance): Deleted.
+        * html/track/TextTrackCueGeneric.h:
+        * platform/graphics/TrackPrivateBase.h:
+        (WebCore::TrackPrivateBase::startTimeVariance): Added.
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h:
+
 2014-05-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Watchdog timer should be lazily allocated

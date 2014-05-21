@@ -69,6 +69,8 @@ public:
     };
     virtual Category textTrackCategory() const = 0;
     
+    virtual double startTimeVariance() const override { return 0.25; }
+    
 protected:
     InbandTextTrackPrivateAVF(AVFInbandTrackParent*);
 

@@ -213,6 +213,14 @@ void InbandTextTrack::updateKindFromPrivate()
     }
 }
 
+double InbandTextTrack::startTimeVariance() const
+{
+    if (!m_private)
+        return false;
+    
+    return m_private->startTimeVariance();
+}
+
 } // namespace WebCore
 
 #endif

@@ -519,7 +519,7 @@ bool TextTrack::hasCue(TextTrackCue* cue, TextTrackCue::CueMatchRules match)
                     return false;
 
                 existingCue = m_cues->item(searchStart - 1);
-                if (!existingCue || cue->startTime() > (existingCue->startTime() + existingCue->startTimeVariance()))
+                if (!existingCue || cue->startTime() > (existingCue->startTime() + startTimeVariance()))
                     return false;
 
                 if (!existingCue->isEqual(*cue, match))
@@ -531,7 +531,7 @@ bool TextTrack::hasCue(TextTrackCue* cue, TextTrackCue::CueMatchRules match)
         
         size_t index = (searchStart + searchEnd) / 2;
         existingCue = m_cues->item(index);
-        if ((cue->startTime() + existingCue->startTimeVariance()) < existingCue->startTime() || (match != TextTrackCue::IgnoreDuration && cue->hasEquivalentStartTime(*existingCue) && cue->endTime() > existingCue->endTime()))
+        if ((cue->startTime() + startTimeVariance()) < existingCue->startTime() || (match != TextTrackCue::IgnoreDuration && cue->hasEquivalentStartTime(*existingCue) && cue->endTime() > existingCue->endTime()))
             searchEnd = index;
         else
             searchStart = index + 1;

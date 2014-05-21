@@ -82,6 +82,7 @@ private:
     virtual void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) override { ASSERT_NOT_REACHED(); }
 
     virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const char*, unsigned) override { ASSERT_NOT_REACHED(); }
+    virtual double startTimeVariance() const;
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)
     virtual InbandTextTrackPrivate* privateTrack() override { return m_private.get(); }

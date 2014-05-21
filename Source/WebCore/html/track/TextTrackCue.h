@@ -84,7 +84,6 @@ public:
     virtual bool isOrderedBefore(const TextTrackCue*) const;
 
     bool hasEquivalentStartTime(const TextTrackCue&) const;
-    virtual double startTimeVariance() const { return 0; }
 
     enum CueType {
         Data,

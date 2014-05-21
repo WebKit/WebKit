@@ -145,10 +145,11 @@ bool DataCue::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatchRules match
     if (m_platformValue && !m_platformValue->isEqual(*otherPlatformValue.get()))
         return false;
 
+    JSC::JSValue thisValue = value(nullptr);
     JSC::JSValue otherValue = dataCue->value(nullptr);
-    if ((otherValue && !m_value) || (!otherValue && m_value))
+    if ((otherValue && !thisValue) || (!otherValue && thisValue))
         return false;
-    if (!JSC::JSValue::strictEqual(nullptr, m_value ? m_value : JSC::JSValue(), otherValue))
+    if (!JSC::JSValue::strictEqual(nullptr, thisValue, otherValue))
         return false;
 #endif
 

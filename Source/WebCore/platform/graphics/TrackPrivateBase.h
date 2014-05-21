@@ -61,6 +61,8 @@ public:
 
     virtual int trackIndex() const { return 0; }
 
+    virtual double startTimeVariance() const { return 0; }
+    
     void willBeRemoved()
     {
         if (TrackPrivateBaseClient* client = this->client())
