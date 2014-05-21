@@ -120,9 +120,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
     Page* page = renderer().frame().page();
 
     if (layer.isRootLayer() && page) {
-        if (renderer().frame().isMainFrame())
-            m_isMainFrameRenderViewLayer = true;
-
+        m_isMainFrameRenderViewLayer = renderer().frame().isMainFrame();
         m_usingTiledCacheLayer = page->chrome().client().shouldUseTiledBackingForFrameView(renderer().frame().view());
     }
     

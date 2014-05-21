@@ -1529,11 +1529,14 @@ void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
 
 void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
 {
-    FloatPoint scaledPosition;
-    FloatPoint3D scaledAnchorPoint;
-    FloatSize scaledSize;
+    FloatPoint scaledPosition = m_position;
+    FloatPoint3D scaledAnchorPoint = m_anchorPoint;
+    FloatSize scaledSize = m_size;
     FloatSize pixelAlignmentOffset;
-    computePixelAlignment(pageScaleFactor * deviceScaleFactor(), positionRelativeToBase, scaledPosition, scaledSize, scaledAnchorPoint, pixelAlignmentOffset);
+
+    // FIXME: figure out if we really need to pixel align the graphics layer here.
+    if (m_client.needsPixelAligment() && !isIntegral(pageScaleFactor) && m_drawsContent && !m_masksToBounds)
+        computePixelAlignment(pageScaleFactor, positionRelativeToBase, scaledPosition, scaledSize, scaledAnchorPoint, pixelAlignmentOffset);
 
     FloatRect adjustedBounds(m_boundsOrigin - pixelAlignmentOffset, scaledSize);
 
@@ -3433,14 +3436,6 @@ void GraphicsLayerCA::noteChangesForScaleSensitiveProperties()
 void GraphicsLayerCA::computePixelAlignment(float contentsScale, const FloatPoint& positionRelativeToBase,
     FloatPoint& position, FloatSize& size, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const
 {
-    if (isIntegral(contentsScale) || !m_drawsContent || m_masksToBounds) {
-        position = m_position;
-        size = m_size;
-        anchorPoint = m_anchorPoint;
-        alignmentOffset = FloatSize();
-        return;
-    }
-    
     FloatRect baseRelativeBounds(positionRelativeToBase, m_size);
     FloatRect scaledBounds = baseRelativeBounds;
     // Scale by the page scale factor to compute the screen-relative bounds.

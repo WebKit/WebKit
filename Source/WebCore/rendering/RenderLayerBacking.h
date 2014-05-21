@@ -53,7 +53,7 @@ enum CompositingLayerType {
 // 
 // There is one RenderLayerBacking for each RenderLayer that is composited.
 
-class RenderLayerBacking : public GraphicsLayerClient {
+class RenderLayerBacking final : public GraphicsLayerClient {
     WTF_MAKE_NONCOPYABLE(RenderLayerBacking); WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit RenderLayerBacking(RenderLayer&);
@@ -195,6 +195,7 @@ public:
 
     virtual bool shouldAggressivelyRetainTiles(const GraphicsLayer*) const override;
     virtual bool shouldTemporarilyRetainTileCohorts(const GraphicsLayer*) const override;
+    virtual bool needsPixelAligment() const override { return !m_isMainFrameRenderViewLayer; }
 
 #ifndef NDEBUG
     virtual void verifyNotPainting();

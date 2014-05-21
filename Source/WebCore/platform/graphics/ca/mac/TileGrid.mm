@@ -215,6 +215,9 @@ bool TileGrid::prepopulateRect(const FloatRect& rect)
 
 IntRect TileGrid::rectForTileIndex(const TileIndex& tileIndex) const
 {
+    // FIXME: calculating the scaled size here should match with the rest of calculated sizes where we use the combination of
+    // enclosingIntRect, expandedIntSize (floor vs ceil).
+    // However enclosing this size could reveal gap on root layer's background. see RenderView::backgroundRect()
     IntSize tileSize = m_controller.tileSize();
     IntRect rect(tileIndex.x() * tileSize.width(), tileIndex.y() * tileSize.height(), tileSize.width(), tileSize.height());
     IntRect scaledBounds(m_controller.bounds());
