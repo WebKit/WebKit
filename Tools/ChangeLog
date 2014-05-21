@@ -1,3 +1,12 @@
+2014-05-21  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        REGRESSION(r169092): It broke run-jsc-stress tests on non Mac platforms
+        https://bugs.webkit.org/show_bug.cgi?id=133145
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/run-jsc-stress-tests:
+
 2014-05-20  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] WebProcess doesn't follow localization of UI process when run as a service

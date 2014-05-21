@@ -178,13 +178,17 @@ end
 
 # Try to determine architecture. Return nil on failure.
 def machOArchitectureCode
-    otoolLines = `otool -aSfh #{Shellwords.shellescape($jscPath.to_s)}`.split("\n")
-    otoolLines.each_with_index {
-        | value, index |
-        if value =~ /magic/ and value =~ /cputype/
-            return otoolLines[index + 1].split[1].to_i
-        end
-    }
+    begin 
+        otoolLines = `otool -aSfh #{Shellwords.shellescape($jscPath.to_s)}`.split("\n")
+        otoolLines.each_with_index {
+            | value, index |
+            if value =~ /magic/ and value =~ /cputype/
+                return otoolLines[index + 1].split[1].to_i
+            end
+        }
+    rescue
+        $stderr.puts "Warning: unable to execute otool."
+    end
     $stderr.puts "Warning: unable to determine architecture."
     nil
 end
