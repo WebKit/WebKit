@@ -8,9 +8,9 @@ configure_file(webkit2gtk.pc.in ${WebKit2_PKGCONFIG_FILE} @ONLY)
 configure_file(webkit2gtk-web-extension.pc.in ${WebKit2WebExtension_PKGCONFIG_FILE} @ONLY)
 
 add_definitions(-DWEBKIT2_COMPILATION)
-add_definitions(-DLIBEXECDIR="${CMAKE_INSTALL_FULL_LIBEXECDIR}")
+add_definitions(-DLIBEXECDIR="${LIBEXEC_INSTALL_DIR}")
 add_definitions(-DPACKAGE_LOCALE_DIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
-add_definitions(-DLIBDIR="${CMAKE_INSTALL_FULL_LIBDIR}")
+add_definitions(-DLIBDIR="${LIB_INSTALL_DIR}")
 
 set(WebKit2_USE_PREFIX_HEADER ON)
 

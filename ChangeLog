@@ -1,3 +1,17 @@
+2014-05-16  Martin Robinson  <mrobinson@igalia.com>
+
+        [CMake] Improve handling of LIB_INSTALL_DIR, EXEC_INSTALL_DIR, and LIBEXEC_INSTALL_DIR
+        https://bugs.webkit.org/show_bug.cgi?id=132819
+
+        Reviewed by Carlos Garcia Campos.
+
+        * CMakeLists.txt: Hard-code CMAKE_ARCHIVE_OUTPUT_DIRECTORY etc, so that we can accept absolute paths for LIB_INSTALL_DIR
+        and friends.
+        * Source/cmake/OptionsCommon.cmake: Get rid of LIB_SUFFIX and try to make all path variables absolute. Also set
+        CMAKE_ARCHIVE_OUTPUT_DIRECTORY, etc using the last path component of LIB_INSTALL_DIR, etc, so that absolute paths
+        are supported.
+        * Source/cmake/OptionsGTK.cmake: Ditto. Also get rid of all pkg-config specific variables.
+
 2014-05-20  Gustavo Noronha Silva  <gns@gnome.org>
 
         [CMake] Support building with Debug Fission

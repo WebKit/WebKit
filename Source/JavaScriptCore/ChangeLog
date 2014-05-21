@@ -1,3 +1,13 @@
+2014-05-16  Martin Robinson  <mrobinson@igalia.com>
+
+        [CMake] Improve handling of LIB_INSTALL_DIR, EXEC_INSTALL_DIR, and LIBEXEC_INSTALL_DIR
+        https://bugs.webkit.org/show_bug.cgi?id=132819
+
+        Reviewed by Carlos Garcia Campos.
+
+        * javascriptcoregtk.pc.in: Instead of using the special pkg-config variables,
+        use the common CMake ones directly.
+
 2014-05-21  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out http://trac.webkit.org/changeset/169159.

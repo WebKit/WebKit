@@ -1,3 +1,18 @@
+2014-05-16  Martin Robinson  <mrobinson@igalia.com>
+
+        [CMake] Improve handling of LIB_INSTALL_DIR, EXEC_INSTALL_DIR, and LIBEXEC_INSTALL_DIR
+        https://bugs.webkit.org/show_bug.cgi?id=132819
+
+        Reviewed by Carlos Garcia Campos.
+
+        * PlatformEfl.cmake: No need to prefix EXEC_INSTALL_DIR with the prefix any longer.
+        * PlatformGtk.cmake: No longer use CMAKE_INSTALL_FULL_FOO variables, instead using the WebKit-specific ones.
+        * efl/EWebKit2Config.cmake.in: Ditto.
+        * efl/ewebkit2.pc.in: Instead of hard-coding the path to the library installation directory use LIB_INSTALL_DIR.
+        * webkit2gtk-web-extension.pc.in: No longer use the pkg-config only variables. Instead use
+        the common CMake ones.
+        * webkit2gtk.pc.in: Ditto.
+
 2014-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r168625): [GTK] Assertion failure in LocalStorageDatabaseTracker

@@ -61,12 +61,11 @@ if (UNIX AND NOT APPLE)
     set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined ${CMAKE_SHARED_LINKER_FLAGS}")
 endif ()
 
-# GTK uses the GNU installation directories.
+# GTK uses the GNU installation directories as defaults.
 if (NOT PORT STREQUAL "GTK")
-    set(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)")
-    set(LIB_INSTALL_DIR "lib${LIB_SUFFIX}" CACHE PATH "Where to install libraries (lib${LIB_SUFFIX})")
-    set(EXEC_INSTALL_DIR "bin" CACHE PATH "Where to install executables")
-    set(LIBEXEC_INSTALL_DIR "bin" CACHE PATH "Where to install executables executed by the library")
+    set(LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib" CACHE PATH "Absolute path to library installation directory")
+    set(EXEC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/bin" CACHE PATH "Absolute path to executable installation directory")
+    set(LIBEXEC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/bin" CACHE PATH "Absolute path to install executables executed by the library")
 endif ()
 
 # The Ninja generator does not yet know how to build archives in pieces, and so response

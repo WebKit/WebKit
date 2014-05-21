@@ -1,3 +1,14 @@
+2014-05-16  Martin Robinson  <mrobinson@igalia.com>
+
+        [CMake] Improve handling of LIB_INSTALL_DIR, EXEC_INSTALL_DIR, and LIBEXEC_INSTALL_DIR
+        https://bugs.webkit.org/show_bug.cgi?id=132819
+
+        Reviewed by Carlos Garcia Campos.
+
+        * EWebKitConfig.cmake.in: LIB_INSTALL_DIR is always absolute now, so we don't need
+        to prefix it with the prefix.
+        * ewebkit.pc.in: Instead of hard-coding the path to the library installation directory use LIB_INSTALL_DIR.
+
 2014-05-16  Piotr Grad  <p.grad@samsung.com>
 
         [EFL] Build break after 168978.

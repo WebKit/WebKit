@@ -1,7 +1,3 @@
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
 include(GNUInstallDirs)
 
 set(PROJECT_VERSION_MAJOR 2)
@@ -100,13 +96,6 @@ set(ENABLE_PLUGIN_PROCESS ON)
 set(GDK_VERSION_MIN_REQUIRED GDK_VERSION_3_6)
 set(GTK_API_VERSION 3.0)
 
-# These are used to generate the pkg-config files.
-set(prefix ${CMAKE_INSTALL_PREFIX})
-set(exec_prefix ${CMAKE_INSTALL_PREFIX})
-set(libdir "${prefix}/${CMAKE_INSTALL_LIBDIR}")
-set(includedir "${prefix}/include")
-set(VERSION ${PROJECT_VERSION})
-
 set(WTF_USE_SOUP 1)
 set(WTF_USE_UDIS86 1)
 
@@ -119,11 +108,14 @@ set(WebKit2_WebProcess_OUTPUT_NAME WebKitWebProcess)
 set(WebKit2_NetworkProcess_OUTPUT_NAME WebKitNetworkProcess)
 set(WebKit2_PluginProcess_OUTPUT_NAME WebKitPluginProcess)
 
+# These are shared variables, but we special case their definition so that we can use the
+# CMAKE_INSTALL_* variables that are populated by the GNUInstallDirs macro.
+set(LIB_INSTALL_DIR "${CMAKE_INSTALL_FULL_LIBDIR}" CACHE PATH "Absolute path to library installation directory")
+set(EXEC_INSTALL_DIR "${CMAKE_INSTALL_FULL_BINDIR}" CACHE PATH "Absolute path to executable installation directory")
+set(LIBEXEC_INSTALL_DIR "${CMAKE_INSTALL_FULL_LIBEXECDIR}" CACHE PATH "Absolute path to install executables executed by the library")
+
 set(DATA_BUILD_DIR "${CMAKE_BINARY_DIR}/share/${WebKit_OUTPUT_NAME}")
 set(DATA_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/webkitgtk-${WEBKITGTK_API_VERSION}")
-set(LIB_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}" CACHE PATH "Where to install libraries")
-set(EXEC_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}" CACHE PATH "Where to install executables")
-set(LIBEXEC_INSTALL_DIR "${CMAKE_INSTALL_LIBEXECDIR}" CACHE PATH "Where to install executables executed by the library")
 set(WEBKITGTK_HEADER_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/webkitgtk-${WEBKITGTK_API_VERSION}")
 
 add_definitions(-DBUILDING_GTK__=1)
