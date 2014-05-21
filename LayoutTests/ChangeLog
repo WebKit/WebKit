@@ -1,3 +1,45 @@
+2014-05-21  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Rebaseline test expectations after r169048.
+
+        * platform/efl/css1/box_properties/float_on_text_elements-expected.txt:
+        * platform/efl/css1/text_properties/text_indent-expected.txt:
+        * platform/efl/css2.1/t0905-c414-flt-wrap-00-e-expected.txt:
+        * platform/efl/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt:
+        * platform/efl/css2.1/t100801-c544-valgn-00-a-ag-expected.txt:
+        * platform/efl/css2.1/t100801-c544-valgn-02-d-agi-expected.txt:
+        * platform/efl/css2.1/t100801-c544-valgn-03-d-agi-expected.txt:
+        * platform/efl/css2.1/t100801-c544-valgn-04-d-agi-expected.txt:
+        * platform/efl/css2.1/t1601-c547-indent-00-b-a-expected.txt:
+        * platform/efl/fast/block/float/026-expected.txt:
+        * platform/efl/fast/block/float/028-expected.txt:
+        * platform/efl/fast/css/empty-pseudo-class-expected.txt:
+        * platform/efl/fast/css/first-child-pseudo-class-expected.txt:
+        * platform/efl/fast/css/first-of-type-pseudo-class-expected.txt:
+        * platform/efl/fast/css/last-child-pseudo-class-expected.txt:
+        * platform/efl/fast/css/last-of-type-pseudo-class-expected.txt:
+        * platform/efl/fast/css/only-child-pseudo-class-expected.txt:
+        * platform/efl/fast/css/only-of-type-pseudo-class-expected.txt:
+        * platform/efl/fast/line-grid/line-align-left-edges-expected.txt:
+        * platform/efl/fast/multicol/column-count-with-rules-expected.txt:
+        * platform/efl/fast/multicol/float-multicol-expected.txt:
+        * platform/efl/fast/multicol/layers-in-multicol-expected.txt:
+        * platform/efl/fast/multicol/vertical-lr/float-multicol-expected.txt:
+        * platform/efl/fast/multicol/vertical-rl/float-multicol-expected.txt:
+        * platform/efl/fast/repaint/line-flow-with-floats-1-expected.txt:
+        * platform/efl/fast/repaint/line-flow-with-floats-10-expected.txt:
+        * platform/efl/fast/repaint/line-flow-with-floats-2-expected.txt:
+        * platform/efl/fast/repaint/line-flow-with-floats-3-expected.txt:
+        * platform/efl/fast/repaint/line-flow-with-floats-4-expected.txt:
+        * platform/efl/fast/repaint/line-flow-with-floats-5-expected.txt:
+        * platform/efl/fast/repaint/line-flow-with-floats-6-expected.txt:
+        * platform/efl/fast/repaint/line-flow-with-floats-7-expected.txt:
+        * platform/efl/fast/repaint/line-flow-with-floats-8-expected.txt:
+        * platform/efl/fast/repaint/line-flow-with-floats-9-expected.txt:
+        * platform/efl/fast/text/whitespace/024-expected.txt:
+
 2014-05-21  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed EFL gardening.
