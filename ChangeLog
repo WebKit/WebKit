@@ -1,3 +1,12 @@
+2014-05-21  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL] Turn on ENABLE_CSS_FILTERS
+        https://bugs.webkit.org/show_bug.cgi?id=133153
+
+        Reviewed by Gyuyoung Kim.
+
+        * Source/cmake/OptionsEfl.cmake: Enable CSS_FILTERS as default option value.
+
 2014-05-16  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] Improve handling of LIB_INSTALL_DIR, EXEC_INSTALL_DIR, and LIBEXEC_INSTALL_DIR

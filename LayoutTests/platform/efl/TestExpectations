@@ -1456,18 +1456,8 @@ webkit.org/b/120682 inspector-protocol/page/archive.html [ Failure ]
 
 webkit.org/b/124414 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
-# ref test mismatch does not occur
-webkit.org/b/124417 fast/css/drop-shadow-viewport-height.html [ ImageOnlyFailure ]
-webkit.org/b/124417 fast/css/drop-shadow-viewport-vmax.html [ ImageOnlyFailure ]
-webkit.org/b/124417 fast/css/drop-shadow-viewport-vmin.html [ ImageOnlyFailure ]
-webkit.org/b/124417 fast/css/drop-shadow-viewport-width.html [ ImageOnlyFailure ]
-
 # CSS filters layout tests are failing
-webkit.org/b/124516 fast/filter-image/filter-image-animation.html [ Failure ]
-webkit.org/b/124517 fast/filter-image/filter-image-blur.html [ ImageOnlyFailure ]
 webkit.org/b/124518 fast/filter-image/filter-image-svg.html [ ImageOnlyFailure ]
-webkit.org/b/124519 fast/filter-image/filter-image.html [ ImageOnlyFailure ]
-webkit.org/b/124519 fast/filter-image/parse-filter-image.html [ Failure ]
 
 webkit.org/b/124582 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
 

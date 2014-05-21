@@ -1,3 +1,15 @@
+2014-05-21  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL] Turn on ENABLE_CSS_FILTERS
+        https://bugs.webkit.org/show_bug.cgi?id=133153
+
+        Reviewed by Gyuyoung Kim.
+
+        Make WebKit2 compile after r166741 when CSS_FILTERS are enabled.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (IPC::ArgumentCoder<WebCore::FilterOperations>::decode):
+
 2014-05-21  Brady Eidson  <beidson@apple.com>
 
         Special handling of telephone number detection menu.

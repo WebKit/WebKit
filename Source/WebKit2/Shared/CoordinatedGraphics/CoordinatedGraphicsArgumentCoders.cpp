@@ -139,7 +139,7 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder& decoder, 
             Length length;
             if (!ArgumentCoder<Length>::decode(decoder, length))
                 return false;
-            filter = BlurFilterOperation::create(length, type);
+            filter = BlurFilterOperation::create(length);
             break;
         }
         case FilterOperation::DROP_SHADOW: {
@@ -152,7 +152,7 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder& decoder, 
                 return false;
             if (!ArgumentCoder<Color>::decode(decoder, color))
                 return false;
-            filter = DropShadowFilterOperation::create(location, stdDeviation, color, type);
+            filter = DropShadowFilterOperation::create(location, stdDeviation, color);
             break;
         }
         default:
