@@ -259,6 +259,7 @@ public:
     virtual void didChangeViewportMetaTagWidth(float) = 0;
     virtual double minimumZoomScale() const = 0;
     virtual WebCore::FloatSize contentsSize() const = 0;
+    virtual void didFinishDrawingPagesToPDF(const IPC::DataReference&) = 0;
 
 #if ENABLE(INSPECTOR)
     virtual void showInspectorIndication() = 0;

@@ -144,7 +144,7 @@ namespace WebKit {
     macro(PaginateDuringLayoutEnabled, paginateDuringLayoutEnabled, Bool, bool, false) \
     macro(DOMPasteAllowed, domPasteAllowed, Bool, bool, false) \
     macro(JavaScriptCanAccessClipboard, javaScriptCanAccessClipboard, Bool, bool, false) \
-    macro(ShouldPrintBackgrounds, shouldPrintBackgrounds, Bool, bool, false) \
+    macro(ShouldPrintBackgrounds, shouldPrintBackgrounds, Bool, bool, DEFAULT_SHOULD_PRINT_BACKGROUNDS) \
     macro(FullScreenEnabled, fullScreenEnabled, Bool, bool, false) \
     macro(AsynchronousSpellCheckingEnabled, asynchronousSpellCheckingEnabled, Bool, bool, false) \
     macro(WebSecurityEnabled, webSecurityEnabled, Bool, bool, true) \

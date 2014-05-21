@@ -3608,6 +3608,13 @@ void WebPage::computePagesForPrinting(uint64_t frameID, const PrintInfo& printIn
 {
     Vector<IntRect> resultPageRects;
     double resultTotalScaleFactorForPrinting = 1;
+    computePagesForPrintingImpl(frameID, printInfo, resultPageRects, resultTotalScaleFactorForPrinting);
+    send(Messages::WebPageProxy::ComputedPagesCallback(resultPageRects, resultTotalScaleFactorForPrinting, callbackID));
+}
+
+void WebPage::computePagesForPrintingImpl(uint64_t frameID, const PrintInfo& printInfo, Vector<WebCore::IntRect>& resultPageRects, double& resultTotalScaleFactorForPrinting)
+{
+    ASSERT(resultPageRects.isEmpty());
 
     beginPrinting(frameID, printInfo);
 
@@ -3623,8 +3630,6 @@ void WebPage::computePagesForPrinting(uint64_t frameID, const PrintInfo& printIn
     // If we're asked to print, we should actually print at least a blank page.
     if (resultPageRects.isEmpty())
         resultPageRects.append(IntRect(0, 0, 1, 1));
-
-    send(Messages::WebPageProxy::ComputedPagesCallback(resultPageRects, resultTotalScaleFactorForPrinting, callbackID));
 }
 
 #if PLATFORM(COCOA)
@@ -3675,10 +3680,17 @@ void WebPage::drawRectToImage(uint64_t frameID, const PrintInfo& printInfo, cons
 
 void WebPage::drawPagesToPDF(uint64_t frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, uint64_t callbackID)
 {
+    RetainPtr<CFMutableDataRef> pdfPageData;
+    drawPagesToPDFImpl(frameID, printInfo, first, count, pdfPageData);
+    send(Messages::WebPageProxy::DataCallback(IPC::DataReference(CFDataGetBytePtr(pdfPageData.get()), CFDataGetLength(pdfPageData.get())), callbackID));
+}
+
+void WebPage::drawPagesToPDFImpl(uint64_t frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, RetainPtr<CFMutableDataRef>& pdfPageData)
+{
     WebFrame* frame = WebProcess::shared().webFrame(frameID);
     Frame* coreFrame = frame ? frame->coreFrame() : 0;
 
-    RetainPtr<CFMutableDataRef> pdfPageData = adoptCF(CFDataCreateMutable(0, 0));
+    pdfPageData = adoptCF(CFDataCreateMutable(0, 0));
 
 #if USE(CG)
     if (coreFrame) {
@@ -3721,8 +3733,6 @@ void WebPage::drawPagesToPDF(uint64_t frameID, const PrintInfo& printInfo, uint3
         CGPDFContextClose(context.get());
     }
 #endif
-
-    send(Messages::WebPageProxy::DataCallback(IPC::DataReference(CFDataGetBytePtr(pdfPageData.get()), CFDataGetLength(pdfPageData.get())), callbackID));
 }
 
 #elif PLATFORM(GTK)

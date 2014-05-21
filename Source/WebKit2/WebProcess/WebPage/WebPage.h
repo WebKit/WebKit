@@ -77,6 +77,7 @@
 
 #if PLATFORM(IOS)
 #include "GestureTypes.h"
+#import "WebPageMessages.h"
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -651,9 +652,14 @@ public:
     void beginPrinting(uint64_t frameID, const PrintInfo&);
     void endPrinting();
     void computePagesForPrinting(uint64_t frameID, const PrintInfo&, uint64_t callbackID);
+    void computePagesForPrintingImpl(uint64_t frameID, const PrintInfo&, Vector<WebCore::IntRect>& pageRects, double& totalScaleFactor);
 #if PLATFORM(COCOA)
     void drawRectToImage(uint64_t frameID, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, uint64_t callbackID);
     void drawPagesToPDF(uint64_t frameID, const PrintInfo&, uint32_t first, uint32_t count, uint64_t callbackID);
+    void drawPagesToPDFImpl(uint64_t frameID, const PrintInfo&, uint32_t first, uint32_t count, RetainPtr<CFMutableDataRef>& pdfPageData);
+#if PLATFORM(IOS)
+    void computePagesForPrintingAndStartDrawingToPDF(uint64_t frameID, const PrintInfo&, uint32_t firstPage, PassRefPtr<Messages::WebPage::ComputePagesForPrintingAndStartDrawingToPDF::DelayedReply>);
+#endif
 #elif PLATFORM(GTK)
     void drawPagesForPrinting(uint64_t frameID, const PrintInfo&, uint64_t callbackID);
     void didFinishPrintOperation(const WebCore::ResourceError&, uint64_t callbackID);

@@ -28,7 +28,6 @@
 
 #if PLATFORM(IOS)
 
-#import <CoreGraphics/CGPDFDocumentPrivate.h>
 #import <CorePDF/UIPDFDocument.h>
 #import <CorePDF/UIPDFPageView.h>
 #import <WebCore/FloatRect.h>
@@ -70,14 +69,14 @@ typedef struct {
     return self;
 }
 
-- (NSData *)documentData
-{    
-    return [(NSData *)CGDataProviderCopyData(CGPDFDocumentGetDataProvider([_pdfDocument CGDocument])) autorelease];
-}
-
 - (NSString *)suggestedFilename
 {
     return _suggestedFilename.get();
+}
+
+- (CGPDFDocumentRef)pdfDocument
+{
+    return [_pdfDocument CGDocument];
 }
 
 - (void)web_setContentProviderData:(NSData *)data suggestedFilename:(NSString *)filename

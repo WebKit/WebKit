@@ -69,11 +69,15 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
+#import "PrintInfo.h"
 #import "ProcessThrottler.h"
 #import "WKPDFView.h"
 #import "WKScrollView.h"
 #import "WKWebViewContentProviderRegistry.h"
+#import "WKWebViewPrintFormatter.h"
+#import "WebPageMessages.h"
 #import <CoreGraphics/CGFloat.h>
+#import <CoreGraphics/CGPDFDocumentPrivate.h>
 #import <UIKit/UIPeripheralHost_Private.h>
 #import <QuartzCore/CARenderServer.h>
 #import <QuartzCore/QuartzCorePrivate.h>
@@ -154,6 +158,9 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
 
     BOOL _delayUpdateVisibleContentRects;
     BOOL _hadDelayedUpdateVisibleContentRects;
+
+    BOOL _pageIsPrintingToPDF;
+    RetainPtr<CGPDFDocumentRef> _printedDocument;
 #endif
 #if PLATFORM(MAC)
     RetainPtr<WKView> _wkView;
@@ -1738,7 +1745,8 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 {
     if (![self _isDisplayingPDF])
         return nil;
-    return [(WKPDFView *)_customContentView.get() documentData];
+    CGPDFDocumentRef pdfDocument = [(WKPDFView *)_customContentView pdfDocument];
+    return [(NSData *)CGDataProviderCopyData(CGPDFDocumentGetDataProvider(pdfDocument)) autorelease];
 }
 
 - (NSString *)_suggestedFilenameForDisplayedPDF
@@ -1850,6 +1858,67 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 @end
 
+#endif
+
+#if PLATFORM(IOS)
+@implementation WKWebView (WKWebViewPrintFormatter)
+
+- (Class)_printFormatterClass
+{
+    return [WKWebViewPrintFormatter class];
+}
+
+- (NSInteger)_computePageCountAndStartDrawingToPDFWithPrintInfo:(const WebKit::PrintInfo&)printInfo firstPage:(uint32_t)firstPage computedTotalScaleFactor:(double&)totalScaleFactor
+{
+    if ([self _isDisplayingPDF])
+        return CGPDFDocumentGetNumberOfPages([(WKPDFView *)_customContentView pdfDocument]);
+
+    _pageIsPrintingToPDF = YES;
+    Vector<WebCore::IntRect> pageRects;
+    if (!_page->sendSync(Messages::WebPage::ComputePagesForPrintingAndStartDrawingToPDF(_page->mainFrame()->frameID(), printInfo, firstPage), Messages::WebPage::ComputePagesForPrintingAndStartDrawingToPDF::Reply(pageRects, totalScaleFactor)))
+        return 0;
+    return pageRects.size();
+}
+
+- (void)_endPrinting
+{
+    _pageIsPrintingToPDF = NO;
+    _printedDocument = nullptr;
+    _page->send(Messages::WebPage::EndPrinting());
+}
+
+// FIXME: milliseconds::max() overflows when converted to nanoseconds, causing condition_variable::wait_for() to believe
+// a timeout occurred on any spurious wakeup. Use nanoseconds::max() (converted to ms) to avoid this. We should perhaps
+// change waitForAndDispatchImmediately() to take nanoseconds to avoid this issue.
+static constexpr std::chrono::milliseconds didFinishLoadingTimeout = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::nanoseconds::max());
+
+- (CGPDFDocumentRef)_printedDocument
+{
+    if ([self _isDisplayingPDF]) {
+        ASSERT(!_pageIsPrintingToPDF);
+        return [(WKPDFView *)_customContentView pdfDocument];
+    }
+
+    if (_pageIsPrintingToPDF) {
+        if (!_page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidFinishDrawingPagesToPDF>(_page->pageID(), didFinishLoadingTimeout)) {
+            ASSERT_NOT_REACHED();
+            return nullptr;
+        }
+        ASSERT(!_pageIsPrintingToPDF);
+    }
+    return _printedDocument.get();
+}
+
+- (void)_setPrintedDocument:(CGPDFDocumentRef)printedDocument
+{
+    if (!_pageIsPrintingToPDF)
+        return;
+    ASSERT(![self _isDisplayingPDF]);
+    _printedDocument = printedDocument;
+    _pageIsPrintingToPDF = NO;
+}
+
+@end
 #endif
 
 #endif // WK_API_ENABLED

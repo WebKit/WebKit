@@ -633,6 +633,7 @@ public:
     void commitPotentialTapFailed();
     void didNotHandleTapAsClick(const WebCore::IntPoint&);
     void viewportMetaTagWidthDidChange(float width);
+    void didFinishDrawingPagesToPDF(const IPC::DataReference&);
 #endif
 
     const EditorState& editorState() const { return m_editorState; }

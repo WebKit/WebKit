@@ -268,6 +268,9 @@ messages -> WebPage LegacyReceiver {
 #if PLATFORM(COCOA)
     DrawRectToImage(uint64_t frameID, WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize, uint64_t callbackID)
     DrawPagesToPDF(uint64_t frameID, WebKit::PrintInfo printInfo, uint32_t first, uint32_t count, uint64_t callbackID)
+#if PLATFORM(IOS)
+    ComputePagesForPrintingAndStartDrawingToPDF(uint64_t frameID, WebKit::PrintInfo printInfo, uint32_t firstPage) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactor) Delayed
+#endif
 #endif
 #if PLATFORM(GTK)
     DrawPagesForPrinting(uint64_t frameID, WebKit::PrintInfo printInfo, uint64_t callbackID)

@@ -172,6 +172,7 @@ messages -> WebPageProxy {
     CommitPotentialTapFailed()
     DidNotHandleTapAsClick(WebCore::IntPoint point)
     ViewportMetaTagWidthDidChange(float width)
+    DidFinishDrawingPagesToPDF(IPC::DataReference pdfData)
 #endif
 #if PLATFORM(GTK)
     PrintFinishedCallback(WebCore::ResourceError error, uint64_t callbackID)

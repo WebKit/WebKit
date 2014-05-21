@@ -2304,6 +2304,19 @@ void WebPage::dispatchAsynchronousTouchEvents(const Vector<WebTouchEvent, 1>& qu
         dispatchTouchEvent(event, ignored);
 }
 
+void WebPage::computePagesForPrintingAndStartDrawingToPDF(uint64_t frameID, const PrintInfo& printInfo, uint32_t firstPage, PassRefPtr<Messages::WebPage::ComputePagesForPrintingAndStartDrawingToPDF::DelayedReply> reply)
+{
+    Vector<WebCore::IntRect> pageRects;
+    double totalScaleFactor = 1;
+    computePagesForPrintingImpl(frameID, printInfo, pageRects, totalScaleFactor);
+    std::size_t pageCount = pageRects.size();
+    reply->send(std::move(pageRects), totalScaleFactor);
+
+    RetainPtr<CFMutableDataRef> pdfPageData;
+    drawPagesToPDFImpl(frameID, printInfo, firstPage, pageCount - firstPage, pdfPageData);
+    send(Messages::WebPageProxy::DidFinishDrawingPagesToPDF(IPC::DataReference(CFDataGetBytePtr(pdfPageData.get()), CFDataGetLength(pdfPageData.get()))));
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

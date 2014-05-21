@@ -25,14 +25,11 @@
 
 #if PLATFORM(IOS)
 
-#import "WKWebViewContentProvider.h"
-#import <UIKit/UIView.h>
+#import <UIKit/UIPrintFormatter.h>
+#import <WebCore/IntRect.h>
+#import <wtf/Vector.h>
 
-@interface WKPDFView : UIView <WKWebViewContentProvider>
-
-@property (nonatomic, readonly) NSString *suggestedFilename;
-@property (nonatomic, readonly) CGPDFDocumentRef pdfDocument;
-
+@interface WKWebViewPrintFormatter : UIViewPrintFormatter
 @end
 
-#endif // PLATFORM(IOS)
+#endif

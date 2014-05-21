@@ -1,3 +1,70 @@
+2014-05-21  Andy Estes  <aestes@apple.com>
+
+        [iOS] Create a UIPrintFormatter for WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=133005
+
+        Reviewed by Tim Horton.
+
+        Implemented a UIPrintFormatter subclass to support printing WKWebViews using UIPrintInteractionController.
+        Overrode -_recalcPageCount: to synchronously ask the web process to lay out for printing and return the number
+        of page rects. The web process returns the page rects immediately and then starts rendering the page to a PDF,
+        returning the PDF data to the UI process asynchronously. When UIPrintInteractionController later calls our
+        overridden -drawInRect:forPageAtIndex:, we block and wait for the PDF data to be returned. Since
+        UIPrintInteractionController draws each page after a delay, it's possible that the web process has already
+        returned the PDF data to us by the time we print the first page.
+
+        * Shared/WebPreferencesStore.h: Correctly initialized shouldPrintBackgrounds for iOS.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _dataForDisplayedPDF]): Now that WKPDFView vends its CGPDFDocument directly, extract its data here.
+        (-[WKWebView _printFormatterClass]): Tell UIView which UIPrintFormatter to alloc.
+        (-[WKWebView _computePageCountAndStartDrawingToPDFWithPrintInfo:WebKit::firstPage:computedTotalScaleFactor:]):
+        If we're displaying a PDF, return its page count directly. Otherwise, synchronously ask the web process to
+        compute page rects for printing and then return the number of rects.
+        (-[WKWebView _endPrinting]): Cleared state and sent the WebPage::EndPrinting message to the web process.
+        (-[WKWebView _printedDocument]): If we're displaying a PDF, return its data directly. Otherwise, if we haven't
+        received PDF data from the web process yet, wait for it indefinitely (there's no sensible timeout to use here
+        since failing to receive the data results in printing some number of blank pages).
+        (-[WKWebView _setPrintedDocument:]): Set the CGPDFDocument received from the web process.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h: Declared methods called by WKWebViewPrintFormatter.
+        * UIProcess/PageClient.h: Declared didFinishDrawingPagesToPDF.
+        * UIProcess/WKWebViewPrintFormatter.h: Added.
+        * UIProcess/WKWebViewPrintFormatter.mm: Added.
+        (-[WKWebViewPrintFormatter dealloc]): Cleared state and called -[WKWebView _endPrinting].
+        (-[WKWebViewPrintFormatter webView]): Returned the WKWebView for this print formatter.
+        (-[WKWebViewPrintFormatter _recalcPageCount]): Set up a PrintInfo object given the formatter's content rect
+        and called -_computePageCountAndStartDrawingToPDFWithPrintInfo:...
+        (-[WKWebViewPrintFormatter rectForPageAtIndex:]): Called -_recalcIfNecessary and then returned the rect from
+        -_pageContentRect.
+        (-[WKWebViewPrintFormatter drawInRect:forPageAtIndex:]): Taught to draw the given page of the printed PDF
+        document into the given rect and context provided to us.
+        * UIProcess/WebPageProxy.h: Declared didFinishDrawingPagesToPDF.
+        * UIProcess/WebPageProxy.messages.in: Added DidFinishDrawingPagesToPDF. Made this a delayed syncrhonous message
+        so that additoinal work could be performed after sending the response.
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didFinishDrawingPagesToPDF): Created a CGPDFDocument from the data sent to us by the
+        web process and called -[WKWebView _setPrintedDocument:].
+        * UIProcess/ios/WKPDFView.h:
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView pdfDocument]): Returned the underlying CGPDFDocument.
+        (-[WKPDFView documentData]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didFinishDrawingPagesToPDF):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::computePagesForPrinting): Changed to call computePagesForPrintingImpl.
+        (WebKit::WebPage::computePagesForPrintingImpl): Moved the common logic of computePagesForPrinting to here so it
+        could be called by computePagesForPrintingAndStartDrawingToPDF.
+        (WebKit::WebPage::drawPagesToPDF): Changed to call drawPagesToPDFImpl
+        (WebKit::WebPage::drawPagesToPDFImpl): Moved the common logic of drawPagesToPDF to here so it could be called
+        by computePagesForPrintingAndStartDrawingToPDF.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::computePagesForPrintingAndStartDrawingToPDF): Computed page rects and returned them as a
+        synchronous response. Afterwards called drawPagesToPDFImpl() and returned the PDF data by sending
+        WebPageProxy::DidFinishDrawingPagesToPDF.
+
 2014-05-21  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL] Turn on ENABLE_CSS_FILTERS

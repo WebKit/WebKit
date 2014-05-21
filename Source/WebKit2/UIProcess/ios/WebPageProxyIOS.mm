@@ -649,6 +649,11 @@ void WebPageProxy::viewportMetaTagWidthDidChange(float width)
     m_pageClient.didChangeViewportMetaTagWidth(width);
 }
 
+void WebPageProxy::didFinishDrawingPagesToPDF(const IPC::DataReference& pdfData)
+{
+    m_pageClient.didFinishDrawingPagesToPDF(pdfData);
+}
+
 #if USE(QUICK_LOOK)
     
 void WebPageProxy::didStartLoadForQuickLookDocumentInMainFrame(const String& fileName, const String& uti)

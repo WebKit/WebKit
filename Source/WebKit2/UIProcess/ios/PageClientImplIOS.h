@@ -132,6 +132,7 @@ private:
 #endif
 
     virtual void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale) override;
+    virtual void didFinishDrawingPagesToPDF(const IPC::DataReference&) override;
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)

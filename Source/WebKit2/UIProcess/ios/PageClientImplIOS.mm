@@ -505,6 +505,13 @@ void PageClientImpl::zoomToRect(FloatRect rect, double minimumScale, double maxi
     [m_contentView _zoomToRect:rect withOrigin:rect.center() fitEntireRect:YES minimumScale:minimumScale maximumScale:maximumScale minimumScrollDistance:0];
 }
 
+void PageClientImpl::didFinishDrawingPagesToPDF(const IPC::DataReference& pdfData)
+{
+    RetainPtr<CFDataRef> data = adoptCF(CFDataCreate(kCFAllocatorDefault, pdfData.data(), pdfData.size()));
+    RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithCFData(data.get()));
+    m_webView._printedDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get())).get();
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

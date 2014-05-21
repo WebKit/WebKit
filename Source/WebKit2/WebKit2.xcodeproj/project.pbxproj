@@ -1053,6 +1053,8 @@
 		9F54F8951648AE0F007DF81A /* PluginProcessManagerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F54F8941648AE0E007DF81A /* PluginProcessManagerMac.mm */; };
 		9FB5F394169E6A80002C25BF /* WKContextPrivateMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FB5F392169E6A80002C25BF /* WKContextPrivateMac.mm */; };
 		9FB5F395169E6A80002C25BF /* WKContextPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A115DC71191D82D700DA8072 /* WKWebViewPrintFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = A115DC6D191D82AB00DA8072 /* WKWebViewPrintFormatter.mm */; };
+		A115DC72191D82DA00DA8072 /* WKWebViewPrintFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = A115DC6E191D82AB00DA8072 /* WKWebViewPrintFormatter.h */; };
 		A118A9EE1907AD6F00F7C92B /* QuickLookDocumentData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A118A9EC1907AD6F00F7C92B /* QuickLookDocumentData.cpp */; };
 		A118A9EF1907AD6F00F7C92B /* QuickLookDocumentData.h in Headers */ = {isa = PBXBuildFile; fileRef = A118A9ED1907AD6F00F7C92B /* QuickLookDocumentData.h */; };
 		A118A9F21908B8EA00F7C92B /* _WKNSFileManagerExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = A118A9F01908B8EA00F7C92B /* _WKNSFileManagerExtras.mm */; };
@@ -3045,6 +3047,8 @@
 		9F54F8941648AE0E007DF81A /* PluginProcessManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessManagerMac.mm; sourceTree = "<group>"; };
 		9FB5F392169E6A80002C25BF /* WKContextPrivateMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKContextPrivateMac.mm; path = mac/WKContextPrivateMac.mm; sourceTree = "<group>"; };
 		9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContextPrivateMac.h; path = mac/WKContextPrivateMac.h; sourceTree = "<group>"; };
+		A115DC6D191D82AB00DA8072 /* WKWebViewPrintFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewPrintFormatter.mm; sourceTree = "<group>"; };
+		A115DC6E191D82AB00DA8072 /* WKWebViewPrintFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewPrintFormatter.h; sourceTree = "<group>"; };
 		A118A9EC1907AD6F00F7C92B /* QuickLookDocumentData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = QuickLookDocumentData.cpp; path = ios/QuickLookDocumentData.cpp; sourceTree = "<group>"; };
 		A118A9ED1907AD6F00F7C92B /* QuickLookDocumentData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuickLookDocumentData.h; path = ios/QuickLookDocumentData.h; sourceTree = "<group>"; };
 		A118A9F01908B8EA00F7C92B /* _WKNSFileManagerExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKNSFileManagerExtras.mm; sourceTree = "<group>"; };
@@ -4713,6 +4717,8 @@
 				0FCB4E4118BBE044000FCFC9 /* WKGeolocationProviderIOSObjCSecurityOrigin.mm */,
 				0FCB4E4418BBE044000FCFC9 /* WKScrollView.h */,
 				0FCB4E4518BBE044000FCFC9 /* WKScrollView.mm */,
+				A115DC6E191D82AB00DA8072 /* WKWebViewPrintFormatter.h */,
+				A115DC6D191D82AB00DA8072 /* WKWebViewPrintFormatter.mm */,
 			);
 			name = ios;
 			sourceTree = "<group>";
@@ -7026,6 +7032,7 @@
 				1A9E32891821636900F5D04C /* _WKRemoteObjectRegistry.h in Headers */,
 				51654EFE184EF33F007DC837 /* UniqueIDBDatabaseBackingStoreSQLite.h in Headers */,
 				BC33E0D112408E8600360F3F /* InjectedBundleRangeHandle.h in Headers */,
+				A115DC72191D82DA00DA8072 /* WKWebViewPrintFormatter.h in Headers */,
 				0FCB4E6018BBE3D9000FCFC9 /* FindIndicatorWindow.h in Headers */,
 				BC14DF77120B5B7900826C0C /* InjectedBundleScriptWorld.h in Headers */,
 				BCB0B0DE12305A8C00B1341E /* InjectedBundleUserMessageCoders.h in Headers */,
@@ -8984,6 +8991,7 @@
 				519EF58E18EF770D0003B7F4 /* TelephoneNumberOverlayControllerMac.mm in Sources */,
 				BCF69FA31176D01400471A52 /* APINavigationData.cpp in Sources */,
 				31A2EC48148997C200810D71 /* WebNotification.cpp in Sources */,
+				A115DC71191D82D700DA8072 /* WKWebViewPrintFormatter.mm in Sources */,
 				31099973146C75A20029DEB9 /* WebNotificationClient.cpp in Sources */,
 				2DDE0AFB18298CC900F97EAA /* RemoteLayerTreePropertyApplier.mm in Sources */,
 				31312620148FF82C00BA2A39 /* WebNotificationManager.cpp in Sources */,
