@@ -24,6 +24,8 @@
  */
 
 #import "config.h"
+
+#if PLATFORM(MAC)
 #import "ChildProcess.h"
 
 #import "SandboxInitializationParameters.h"
@@ -35,10 +37,6 @@
 #import <pwd.h>
 #import <stdlib.h>
 #import <sysexits.h>
-
-#if PLATFORM(IOS)
-#import <WebCore/FloatingPointEnvironment.h>
-#endif
 
 // We have to #undef __APPLE_API_PRIVATE to prevent sandbox.h from looking for a header file that does not exist (<rdar://problem/9679211>). 
 #undef __APPLE_API_PRIVATE
@@ -53,7 +51,7 @@ extern "C" int sandbox_init_with_parameters(const char *profile, uint64_t flags,
 #endif
 #endif
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 typedef bool (^LSServerConnectionAllowedBlock) ( CFDictionaryRef optionsRef );
 extern "C" void _LSSetApplicationLaunchServicesServerConnectionStatus(uint64_t flags, LSServerConnectionAllowedBlock block);
 extern "C" CFDictionaryRef _LSApplicationCheckIn(int sessionID, CFDictionaryRef applicationInfo);
@@ -65,7 +63,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 static void initializeTimerCoalescingPolicy()
 {
     // Set task_latency and task_throughput QOS tiers as appropriate for a visible application.
@@ -77,7 +75,6 @@ static void initializeTimerCoalescingPolicy()
 
 void ChildProcess::setApplicationIsDaemon()
 {
-#if !PLATFORM(IOS)
     OSStatus error = SetApplicationIsDaemon(true);
     ASSERT_UNUSED(error, error == noErr);
 
@@ -85,18 +82,12 @@ void ChildProcess::setApplicationIsDaemon()
     _LSSetApplicationLaunchServicesServerConnectionStatus(0, 0);
     RetainPtr<CFDictionaryRef> unused = _LSApplicationCheckIn(-2, CFBundleGetInfoDictionary(CFBundleGetMainBundle()));
 #endif
-#endif // !PLATFORM(IOS)
 }
 
 void ChildProcess::platformInitialize()
 {
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     initializeTimerCoalescingPolicy();
-#endif
-#if PLATFORM(IOS)
-    FloatingPointEnvironment& floatingPointEnvironment = FloatingPointEnvironment::shared();
-    floatingPointEnvironment.enableDenormalSupport();
-    floatingPointEnvironment.saveMainThreadEnvironment();
 #endif
 
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
@@ -122,7 +113,7 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     String osVersion = osVersionParts[0] + '.' + osVersionParts[1];
     sandboxParameters.addParameter("_OS_VERSION", osVersion.utf8().data());
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     // Use private temporary and cache directories.
     setenv("DIRHELPER_USER_DIR_SUFFIX", fileSystemRepresentation(sandboxParameters.systemDirectorySuffix()).data(), 0);
     char temporaryDirectory[PATH_MAX];
@@ -187,14 +178,12 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     }
     }
 
-#if !PLATFORM(IOS)
     // This will override LSFileQuarantineEnabled from Info.plist unless sandbox quarantine is globally disabled.
     OSStatus error = WKEnableSandboxStyleFileQuarantine();
     if (error) {
         WTFLogAlways("%s: Couldn't enable sandbox style file quarantine: %ld\n", getprogname(), (long)error);
         exit(EX_NOPERM);
     }
-#endif
 }
 
 #if USE(APPKIT)
@@ -210,7 +199,7 @@ void ChildProcess::stopNSAppRunLoop()
 
 void ChildProcess::setQOS(int latencyQOS, int throughputQOS)
 {
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     if (!latencyQOS && !throughputQOS)
         return;
 
@@ -227,3 +216,5 @@ void ChildProcess::setQOS(int latencyQOS, int throughputQOS)
 }
 
 } // namespace WebKit
+
+#endif

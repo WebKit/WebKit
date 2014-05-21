@@ -1,3 +1,33 @@
+2014-05-21  Oliver Hunt  <oliver@apple.com>
+
+        [iOS] Enable sandboxing for the database process
+        https://bugs.webkit.org/show_bug.cgi?id=132963
+
+        Reviewed by Alexey Proskuryakov.
+
+        Simply ensure that the database process is running in a tight
+        sandbox. As part of this i've separated out ChildProcessIOS
+        and ensures that the database process loads a custom sandbox.
+
+        * Configurations/WebKit.xcconfig:
+        * DatabaseProcess/ios/DatabaseProcessIOS.mm:
+        (WebKit::DatabaseProcess::initializeSandbox):
+        * DatabaseProcess/ios/com.apple.WebKit.DatabasesIOS.sb: Added.
+        * Shared/ios/ChildProcessIOS.mm: Added.
+        Essentially cloned from the Mac version, only all the OSX
+        specific logic has been stripped.
+        (WebKit::ChildProcess::setApplicationIsDaemon):
+        (WebKit::ChildProcess::platformInitialize):
+        (WebKit::ChildProcess::initializeSandbox):
+        (WebKit::ChildProcess::setQOS):
+        * Shared/mac/ChildProcessMac.mm:
+        Remove all the IOS ifdefs.
+        (WebKit::ChildProcess::setApplicationIsDaemon):
+        (WebKit::ChildProcess::platformInitialize):
+        (WebKit::ChildProcess::initializeSandbox):
+        (WebKit::ChildProcess::setQOS):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-05-21  Andy Estes  <aestes@apple.com>
 
         [iOS] Create a UIPrintFormatter for WKWebView

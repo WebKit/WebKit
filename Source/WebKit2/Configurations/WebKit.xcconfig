@@ -43,7 +43,7 @@ OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
 OTHER_LDFLAGS_macosx = $(ASAN_OTHER_LDFLAGS) $(FRAMEWORK_AND_LIBRARY_LDFLAGS) -framework WebCore -sub_umbrella WebCore -framework WebKitLegacy -sub_umbrella WebKitLegacy;
 
 EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(PLATFORM_NAME));
-EXCLUDED_SOURCE_FILE_NAMES_iphoneos = *.pdf com.apple.WebKit.DatabaseProcess.sb com.apple.WebKit.NetworkProcess.sb com.apple.WebProcess.sb PlugInSandboxProfiles/*.sb;
+EXCLUDED_SOURCE_FILE_NAMES_iphoneos = *.pdf com.apple.WebKit.Databases.sb com.apple.WebKit.NetworkProcess.sb com.apple.WebProcess.sb PlugInSandboxProfiles/*.sb;
 EXCLUDED_SOURCE_FILE_NAMES_iphonesimulator = $(EXCLUDED_SOURCE_FILE_NAMES_iphoneos);
 
 INSTALLHDRS_SCRIPT_PHASE = YES;

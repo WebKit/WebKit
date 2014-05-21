@@ -30,11 +30,14 @@
 #import "DatabaseProcess.h"
 
 #import "SandboxInitializationParameters.h"
+#import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/NotImplemented.h>
 #import <WebKitSystemInterface.h>
 
 using namespace WebCore;
+
+#define ENABLE_MANUAL_DATABASE_SANDBOXING 0
 
 namespace WebKit {
 
@@ -48,7 +51,12 @@ void DatabaseProcess::initializeProcessName(const ChildProcessInitializationPara
 
 void DatabaseProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
-    notImplemented();
+#if ENABLE_MANUAL_DATABASE_SANDBOXING
+    // Need to overide the default, because service has a different bundle ID.
+    NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
+    sandboxParameters.setOverrideSandboxProfilePath([webkit2Bundle pathForResource:@"com.apple.WebKit.DatabasesIOS" ofType:@"sb"]);
+    ChildProcess::initializeSandbox(parameters, sandboxParameters);
+#endif
 }
 
 } // namespace WebKit
