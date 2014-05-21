@@ -1,3 +1,21 @@
+2014-05-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled out <http://trac.webkit.org/changeset/166184>
+        https://bugs.webkit.org/show_bug.cgi?id=133144
+
+        Reviewed by Gavin Barraclough.
+
+        It caused a performance regression.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::runScavengerThread):
+        * wtf/Threading.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::createThreadInternal):
+        (WTF::setCurrentThreadQOSUtility): Deleted.
+        * wtf/ThreadingWin.cpp:
+        (WTF::setCurrentThreadQOSUtility): Deleted.
+
 2014-05-20  Jer Noble  <jer.noble@apple.com>
 
         [Mac] AVAssets are never destroyed; lack of an autorelease pool when calling callOnMainThread.

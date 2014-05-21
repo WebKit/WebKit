@@ -1,3 +1,15 @@
+2014-05-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled out <http://trac.webkit.org/changeset/166184>
+        https://bugs.webkit.org/show_bug.cgi?id=133144
+
+        Reviewed by Gavin Barraclough.
+
+        It caused a performance regression.
+
+        * heap/BlockAllocator.cpp:
+        (JSC::BlockAllocator::blockFreeingThreadStartFunc):
+
 2014-05-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG prediction propagation should agree with fixup phase over the return type of GetByVal
