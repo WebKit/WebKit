@@ -1,7 +1,7 @@
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 1334.00 994.00)
-  (visible rect 0.00, 0.00 785.00 x 585.00)
+  (visible rect 0.00, 0.00 785.00 x 584.00)
   (contentsScale 1.00)
   (children 1
     (GraphicsLayer
