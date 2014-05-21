@@ -141,6 +141,7 @@
         shouldReturnTextString = true;
 
     if (shouldReturnTextString) {
+        [[_inputTextView inputContext] discardMarkedText]; // Don't show Cangjie predictive candidates, cf. <rdar://14458297>.
         [self orderOut:nil];
 
         NSString *text = [[_inputTextView textStorage] string];

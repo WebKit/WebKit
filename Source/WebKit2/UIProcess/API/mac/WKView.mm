@@ -1343,6 +1343,13 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (void)_interpretKeyEvent:(NSEvent *)event completionHandler:(void(^)(BOOL handled, const Vector<KeypressCommand>& commands))completionHandler
 {
+    // For regular Web content, input methods run before passing a keydown to DOM, but plug-ins get an opportunity to handle the event first.
+    // There is no need to collect commands, as the plug-in cannot execute them.
+    if (_data->_pluginComplexTextInputIdentifier) {
+        completionHandler(NO, Vector<KeypressCommand>());
+        return;
+    }
+
     if (![self inputContext]) {
         Vector<KeypressCommand> commands;
         [self _collectKeyboardLayoutCommandsForEvent:event to:commands];
@@ -1578,10 +1585,10 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (NSTextInputContext *)inputContext
 {
-    bool collectingKeypressCommands = _data->_collectedKeypressCommands;
-
-    if (_data->_pluginComplexTextInputIdentifier && !collectingKeypressCommands)
+    if (_data->_pluginComplexTextInputIdentifier) {
+        ASSERT(!_data->_collectedKeypressCommands); // Should not get here from -_interpretKeyEvent:completionHandler:, we only use WKTextInputWindowController after giving the plug-in a chance to handle keydown natively.
         return [[WKTextInputWindowController sharedTextInputWindowController] inputContext];
+    }
 
     // Disable text input machinery when in non-editable content. An invisible inline input area affects performance, and can prevent Expose from working.
     if (!_data->_page->editorState().isContentEditable)

@@ -1,3 +1,26 @@
+2014-05-21  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] REGRESSION (Async text input): Asian text input doesn't work in Flash
+        https://bugs.webkit.org/show_bug.cgi?id=133128
+        <rdar://problem/16890920>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _interpretKeyEvent:completionHandler:]): Added a separate code path for
+        plug-in input. Before async text input, we used to provide a nil input context due
+        to having _data->_interpretKeyEventsParameters while this function was executing,
+        and thus took a shortcut. The new behavior is different from pre-async in that
+        we don't collect commands at all, but I couldn't find any case where that mattered.
+        (-[WKView inputContext]): The _collectedKeypressCommands check was not a correct
+        replacement for _interpretKeyEventsParameters one, because this variable is not
+        always set within -_interpretKeyEvent:completionHandler:.
+
+        * UIProcess/mac/WKTextInputWindowController.mm:
+        (-[WKTextInputPanel _interpretKeyEvent:usingLegacyCocoaTextInput:string:]):
+        While at it, fixed a separate issue with Cangjie predictive input. We shouldn't
+        keep prediction pop-up on screen after hiding the bottom input window.
+
 2014-05-16  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] Improve handling of LIB_INSTALL_DIR, EXEC_INSTALL_DIR, and LIBEXEC_INSTALL_DIR
