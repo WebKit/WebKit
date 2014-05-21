@@ -1,3 +1,16 @@
+2014-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r168625): [GTK] Assertion failure in LocalStorageDatabaseTracker
+        https://bugs.webkit.org/show_bug.cgi?id=133118
+
+        Reviewed by Philippe Normand.
+
+        Call WebContext::applyPlatformSpecificConfigurationDefaults() to
+        initialize the WebContextConfiguration before creating the default WebContext.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (createDefaultWebContext):
+
 2014-05-21  Shivakumar JM  <shiva.jm@samsung.com>
 
         [WebKit2] Cleanup the build from unused variable in WebProcess module

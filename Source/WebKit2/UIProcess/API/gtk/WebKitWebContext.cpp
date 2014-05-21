@@ -255,6 +255,7 @@ static gpointer createDefaultWebContext(gpointer)
 
     WebContextConfiguration webContextConfiguration;
     webContextConfiguration.injectedBundlePath = WebCore::filenameToString(injectedBundleFilename().data());
+    WebContext::applyPlatformSpecificConfigurationDefaults(webContextConfiguration);
     priv->context = WebContext::create(std::move(webContextConfiguration));
 
     priv->requestManager = webContext->priv->context->supplement<WebSoupCustomProtocolRequestManager>();
