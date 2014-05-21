@@ -99,8 +99,11 @@ bool EGLOffScreenContext::initialize(GLPlatformSurface* surface, PlatformContext
             eglDestroyContext(m_display, m_contextHandle);
     }
 
-    if (m_contextHandle == EGL_NO_CONTEXT)
+    if (m_contextHandle == EGL_NO_CONTEXT) {
         m_contextHandle = eglCreateContext(m_display, config, sharedContext, contextAttributes);
+        if (!platformMakeCurrent(surface))
+            eglDestroyContext(m_display, m_contextHandle);
+    }
 
     if (m_contextHandle != EGL_NO_CONTEXT)
         return true;

@@ -1,3 +1,21 @@
+2014-05-21  Simon Pena  <simon.pena@samsung.com>
+
+        [EFL] Ensure EGLOffScreenContext::initialize calls platformMakeCurrent on the surface
+        https://bugs.webkit.org/show_bug.cgi?id=124832
+
+        Reviewed by Antonio Gomes.
+
+        The original code was only calling platformMakeCurrent when the
+        GL_EXT_robustness extension is supported: the alternate code path
+        would only create a context, but it wouldn't make that context
+        current. This patch ensures platformMakeCurrent is also called for
+        the alternate code path, and, if it fails to make the context
+        current, will destroy the context. Effectively, this makes both
+        code paths behave in the same way.
+
+        * platform/graphics/surfaces/egl/EGLContext.cpp:
+        (WebCore::EGLOffScreenContext::initialize):
+
 2014-05-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] DataCues do not work properly when rewinding video
