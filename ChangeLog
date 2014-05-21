@@ -1,3 +1,13 @@
+2014-05-20  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [CMake] Support building with Debug Fission
+        https://bugs.webkit.org/show_bug.cgi?id=131177
+
+        Reviewed by Philippe Normand.
+
+        * Source/cmake/OptionsCommon.cmake: add a DEBUG_FISSION option to enable usage
+        of http://gcc.gnu.org/wiki/DebugFission.
+
 2014-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Rename translation domain as WebKit2GTK-3.0
