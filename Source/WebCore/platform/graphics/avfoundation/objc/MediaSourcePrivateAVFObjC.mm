@@ -85,6 +85,7 @@ void MediaSourcePrivateAVFObjC::removeSourceBuffer(SourceBufferPrivate* buffer)
         m_activeSourceBuffers.remove(pos);
 
     pos = m_sourceBuffers.find(buffer);
+    m_sourceBuffers[pos]->clearMediaSource();
     m_sourceBuffers.remove(pos);
 }
 
@@ -157,9 +158,8 @@ void MediaSourcePrivateAVFObjC::sourceBufferKeyNeeded(SourceBufferPrivateAVFObjC
 }
 #endif
 
-static bool MediaSourcePrivateAVFObjCHasAudio(PassRefPtr<SourceBufferPrivateAVFObjC> prpSourceBuffer)
+static bool MediaSourcePrivateAVFObjCHasAudio(SourceBufferPrivateAVFObjC* sourceBuffer)
 {
-    RefPtr<SourceBufferPrivateAVFObjC> sourceBuffer = prpSourceBuffer;
     return sourceBuffer->hasAudio();
 }
 
@@ -168,9 +168,8 @@ bool MediaSourcePrivateAVFObjC::hasAudio() const
     return std::any_of(m_activeSourceBuffers.begin(), m_activeSourceBuffers.end(), MediaSourcePrivateAVFObjCHasAudio);
 }
 
-static bool MediaSourcePrivateAVFObjCHasVideo(PassRefPtr<SourceBufferPrivateAVFObjC> prpSourceBuffer)
+static bool MediaSourcePrivateAVFObjCHasVideo(SourceBufferPrivateAVFObjC* sourceBuffer)
 {
-    RefPtr<SourceBufferPrivateAVFObjC> sourceBuffer = prpSourceBuffer;
     return sourceBuffer->hasVideo();
 }
 

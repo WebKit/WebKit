@@ -1,5 +1,55 @@
 2014-05-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r168974.
+
+    2014-05-16  Jer Noble  <jer.noble@apple.com>
+    
+            [MSE] Crash at  WebCore::SourceBuffer::~SourceBuffer + 110
+            https://bugs.webkit.org/show_bug.cgi?id=132973
+    
+            Reviewed by Eric Carlson.
+    
+            Change SourceBuffer::m_private into a Ref<>, and add an assertion to
+            SourceBufferPrivateAVFObjC's destructor if its client has not been cleared.
+    
+            Eliminate unnecessary churn in MediaSourcePrivateAVFObjC by having the predicate
+            functor take bare pointers, rather than a PassRefPtr.
+    
+            The underlying problem seems to be in WebAVStreamDataParserListener. RefPtrs were
+            being created off the main thread to a non-thread safe ref counted class. In some
+            situations, this would result in double decrementing the ref, which would cause an
+            early destruction of the underlying object. Instead replace these RefPtr strong
+            pointers with explicit weak ones. Ensure the parser and its delegate are not freed
+            before the append operation completes by passing strong pointers into the async
+            append operation lambda.
+    
+            There were a few places where we weren't null checking m_mediaSource before using it,
+            and at least one place where we weren't clearing m_mediaSource.
+    
+            * Modules/mediasource/SourceBuffer.cpp:
+            (WebCore::SourceBuffer::SourceBuffer): Use Ref instead of RefPtr.
+            (WebCore::SourceBuffer::appendBufferTimerFired): Ditto.
+            * Modules/mediasource/SourceBuffer.h:
+            * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+            (WebCore::MediaSourcePrivateAVFObjCHasAudio): Take a bare pointer, instead of a PassRefPtr.
+            (WebCore::MediaSourcePrivateAVFObjCHasVideo): Ditto.
+            * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+            (WebCore::MediaSourcePrivateAVFObjC::removeSourceBuffer): Clear the back pointer when removing a buffer.
+            * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+            * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+            (-[WebAVStreamDataParserListener initWithParser:parent:WebCore::]): Use WeakPtr instead of RefPtr.
+            (-[WebAVStreamDataParserListener invalidate]): Ditto.
+            (-[WebAVStreamDataParserListener streamDataParser:didParseStreamDataAsAsset:]): Ditto.
+            (-[WebAVStreamDataParserListener streamDataParser:didParseStreamDataAsAsset:withDiscontinuity:]): Ditto.
+            (-[WebAVStreamDataParserListener streamDataParser:didFailToParseStreamDataWithError:]): Ditto.
+            (-[WebAVStreamDataParserListener streamDataParser:didProvideMediaData:forTrackID:mediaType:flags:]): Ditto.
+            (-[WebAVStreamDataParserListener streamDataParser:didReachEndOfTrackWithTrackID:mediaType:]): Ditto.
+            (-[WebAVStreamDataParserListener streamDataParser:didProvideContentKeyRequestInitializationData:forTrackID:]): Ditto.
+            (WebCore::SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC):
+            (WebCore::SourceBufferPrivateAVFObjC::append): Ditto.
+    
+2014-05-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r168599.
 
     2014-05-09  Myles C. Maxfield  <litherum@gmail.com>
