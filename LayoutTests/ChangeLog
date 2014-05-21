@@ -1,3 +1,12 @@
+2014-05-21  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        REGRESSION(r169092 and r169102): Skip failing JSC tests on ARM64 properly
+        https://bugs.webkit.org/show_bug.cgi?id=133149
+
+        Reviewed by Csaba Osztrogonác.
+
+        * js/script-tests/function-apply-many-args.js:
+
 2014-05-21  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening

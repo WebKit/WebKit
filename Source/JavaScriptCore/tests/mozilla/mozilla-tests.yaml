@@ -2113,7 +2113,7 @@
   cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: js1_5/Regress/regress-159334.js
   cmd: |
-      if $architecture =~ /x86/i
+      if $architecture !~ /arm64/
           defaultRunMozillaTest :normal, "../shell.js"
       else
           skip

@@ -26,7 +26,7 @@
 
 - path: tests/sunspider-1.0
   cmd: |
-      if $architecture =~ /x86/
+      if $architecture !~ /arm64/
           runProfiler
       else
           skip
