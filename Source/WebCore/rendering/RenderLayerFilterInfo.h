@@ -98,8 +98,6 @@ private:
     ~RenderLayerFilterInfo();
     
     RenderLayer* m_layer;
-
-    ContainerNode* layerElement() const;
     
     RefPtr<FilterEffectRenderer> m_renderer;
     LayoutRect m_dirtySourceRect;

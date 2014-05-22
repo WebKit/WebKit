@@ -4441,7 +4441,6 @@ Node* RenderLayer::enclosingElement() const
         if (Node* e = r->node())
             return e;
     }
-    ASSERT_NOT_REACHED();
     return 0;
 }
 
@@ -6465,9 +6464,10 @@ void RenderLayer::updateOrRemoveFilterEffectRenderer()
 
 void RenderLayer::filterNeedsRepaint()
 {
-    renderer()->node()->setNeedsStyleRecalc(SyntheticStyleChange);
-    if (renderer()->view())
-        renderer()->repaint();
+    // We use the enclosing element so that we recalculate style for the ancestor of an anonymous object.
+    if (Element* element = toElement(enclosingElement()))
+        element->setNeedsStyleRecalc(SyntheticStyleChange);
+    renderer()->repaint();
 }
 #endif
 
