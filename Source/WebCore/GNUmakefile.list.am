@@ -4217,8 +4217,6 @@ webcore_sources += \
 	Source/WebCore/page/FocusDirection.h \
 	Source/WebCore/page/Frame.cpp \
 	Source/WebCore/page/Frame.h \
-	Source/WebCore/page/FrameActionScheduler.cpp \
-	Source/WebCore/page/FrameActionScheduler.h \
 	Source/WebCore/page/FrameDestructionObserver.cpp \
 	Source/WebCore/page/FrameDestructionObserver.h \
 	Source/WebCore/page/FrameTree.cpp \

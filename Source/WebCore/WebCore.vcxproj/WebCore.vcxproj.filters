@@ -759,9 +759,6 @@
     <ClCompile Include="..\page\Frame.cpp">
       <Filter>page</Filter>
     </ClCompile>
-    <ClCompile Include="..\page\FrameActionScheduler.cpp">
-      <Filter>page</Filter>
-    </ClCompile>
     <ClCompile Include="..\page\FrameDestructionObserver.cpp">
       <Filter>page</Filter>
     </ClCompile>
@@ -7444,9 +7441,6 @@
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\Frame.h">
-      <Filter>page</Filter>
-    </ClInclude>
-    <ClInclude Include="..\page\FrameActionScheduler.h">
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\FrameDestructionObserver.h">

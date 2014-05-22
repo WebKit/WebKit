@@ -42,7 +42,6 @@ class AXObjectCache;
 class Element;
 class Event;
 class FloatSize;
-class FrameActionScheduler;
 class KURL;
 class Node;
 class Page;
@@ -583,8 +582,6 @@ private:
     String m_mediaType;
     String m_mediaTypeWhenNotPrinting;
 
-    OwnPtr<FrameActionScheduler> m_actionScheduler;
-
     bool m_overflowStatusDirty;
     bool m_horizontalOverflow;
     bool m_verticalOverflow;    
@@ -666,6 +663,11 @@ private:
     bool m_visualUpdatesAllowedByClient;
     
     ScrollPinningBehavior m_scrollPinningBehavior;
+
+    unsigned m_scheduledEventSuppressionCount;
+
+    struct ScheduledEvent;
+    Vector<ScheduledEvent> m_scheduledEvents;
 };
 
 inline void FrameView::incrementVisuallyNonEmptyCharacterCount(unsigned count)
