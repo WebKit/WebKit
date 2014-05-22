@@ -447,10 +447,12 @@ static bool unwindCallFrame(StackVisitor& visitor)
     JSScope* scope = callFrame->scope();
 
     if (Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger()) {
+        ClearExceptionScope scope(&callFrame->vm());
         if (callFrame->callee())
             debugger->returnEvent(callFrame);
         else
             debugger->didExecuteProgram(callFrame);
+        ASSERT(!callFrame->hadException());
     }
 
     JSValue activation;
@@ -700,9 +702,8 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(CallFrame*& callFrame, JSValue& ex
     if (exceptionValue.isEmpty() || (exceptionValue.isCell() && !exceptionValue.asCell()))
         exceptionValue = jsNull();
 
-    if (exceptionValue.isObject()) {
+    if (exceptionValue.isObject())
         isTermination = isTerminatedExecutionException(asObject(exceptionValue));
-    }
 
     ASSERT(callFrame->vm().exceptionStack().size());
 
@@ -726,6 +727,7 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(CallFrame*& callFrame, JSValue& ex
         }
 
         debugger->exception(callFrame, exceptionValue, hasHandler);
+        ASSERT(!callFrame->hadException());
     }
 
     // Calculate an exception handler vPC, unwinding call frames as necessary.
@@ -1225,28 +1227,31 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookID debugHook
     Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger();
     if (!debugger)
         return;
-    ASSERT(callFrame->codeBlock()->hasDebuggerRequests() || callFrame->hadException());
+
+    ASSERT(callFrame->codeBlock()->hasDebuggerRequests());
+    ASSERT(!callFrame->hadException());
 
     switch (debugHookID) {
         case DidEnterCallFrame:
             debugger->callEvent(callFrame);
-            return;
+            break;
         case WillLeaveCallFrame:
             debugger->returnEvent(callFrame);
-            return;
+            break;
         case WillExecuteStatement:
             debugger->atStatement(callFrame);
-            return;
+            break;
         case WillExecuteProgram:
             debugger->willExecuteProgram(callFrame);
-            return;
+            break;
         case DidExecuteProgram:
             debugger->didExecuteProgram(callFrame);
-            return;
+            break;
         case DidReachBreakpoint:
             debugger->didReachBreakpoint(callFrame);
-            return;
+            break;
     }
+    ASSERT(!callFrame->hadException());
 }    
 
 void Interpreter::enableSampler()

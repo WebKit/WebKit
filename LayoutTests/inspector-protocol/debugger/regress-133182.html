@@ -1,0 +1,78 @@
+<html>
+<head>
+<script src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script src="resources/exception.js"></script>
+<script>
+function test()
+{
+    var expectPause = false;
+    var isStepping = false;
+
+    var testIndex = 0;
+    var statementsWithUncaughtExceptions = [
+        "({}).a.b.c.d;",
+        "exceptionBasic();",
+        "exceptionDOM();",
+        "exceptionInHostFunction();",
+        "throwString();",
+        "throwParam({x:1});",
+        "throwParam(new Error('error message'));"
+    ];
+
+    function triggerNextUncaughtException()
+    {
+
+        // Evaluate statement and expect to pause.
+        if (testIndex < statementsWithUncaughtExceptions.length) {
+            var statement = statementsWithUncaughtExceptions[testIndex++];
+            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { " + statement + " }, 0);"});
+            return;
+        }
+
+        // Done evaluating statements to pause. Evaluate some more we do not expect to pause.
+        InspectorTest.log("PASS - paused for each uncaught exception");
+        InspectorTest.completeTest();
+    }
+
+
+    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorTest.sendCommand("Debugger.setPauseOnExceptions", {state: "uncaught"}, function(responseObject) {
+        InspectorTest.checkForError(responseObject);
+        expectPause = true;
+        triggerNextUncaughtException();
+    });
+
+    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        if (!expectPause) {
+            InspectorTest.log("FAIL - debugger paused when we did not expect to");
+            InspectorTest.completeTest();
+            return;
+        }
+
+        if (!isStepping) {
+            console.log("[" + testIndex + "] Testing statement '" + statementsWithUncaughtExceptions[testIndex - 1] + "'");
+            console.log("[" + testIndex + "] Paused and about to step");
+            isStepping = true;
+            InspectorTest.sendCommand("Debugger.stepOver", {});
+        } else {
+            console.log("[" + testIndex + "] Paused after stepping");
+            isStepping = false;
+            InspectorTest.sendCommand("Debugger.resume", {});
+        }
+    }
+
+    InspectorTest.eventHandler["Debugger.resumed"] = function(messageObject)
+    {
+        console.log("[" + testIndex + "] Resumed");
+        if (!isStepping)
+            triggerNextUncaughtException();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Regression test for https://bugs.webkit.org/show_bug.cgi?id=133182</p>
+<p>Stepping after breaking on uncaught exceptions should not crash</p>
+</body>
+</html>

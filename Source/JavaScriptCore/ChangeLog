@@ -1,3 +1,25 @@
+2014-05-22  Mark Lam  <mark.lam@apple.com>
+
+        REGRESSION(r154797): Debugger crashes when stepping over an uncaught exception.
+        <https://webkit.org/b/133182>
+
+        Reviewed by Oliver Hunt.
+
+        Before r154797, we used to clear the VM exception before calling into the
+        debugger.  After r154797, we don't.  This patch will restore this clearing
+        of the exception before calling into the debugger.
+
+        Also added assertions after returning from calls into the debugger to
+        ensure that the debugger did not introduce any exceptions.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::unwindCallFrame):
+        (JSC::Interpreter::unwind):
+        (JSC::Interpreter::debug):
+        - Fixed the assertion here.  Interpreter::debug() should never be called
+          with a pending exception.  Debugger callbacks for exceptions should be
+          handled by Interpreter::unwind() and Interpreter::unwindCallFrame().
+
 2014-05-21  Filip Pizlo  <fpizlo@apple.com>
 
         Store barrier elision should run after DCE in both the DFG path and the FTL path
