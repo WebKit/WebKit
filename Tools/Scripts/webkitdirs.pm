@@ -1857,7 +1857,6 @@ sub buildAutotoolsProject($@)
 
     if ($project eq 'WebKit' && !isCrossCompilation() && !($noWebKit1 && $noWebKit2)) {
         my @docGenerationOptions = ("$sourceDir/Tools/gtk/generate-gtkdoc", "--skip-html");
-        push(@docGenerationOptions, productDir());
 
         unshift(@docGenerationOptions, jhbuildWrapperPrefixIfNeeded());
 

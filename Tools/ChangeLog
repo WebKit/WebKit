@@ -1,3 +1,10 @@
+2014-05-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix the build after r168707.
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject): Fix merge conflicts not handled in r168707.
+
 2014-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] TLSErrors do not cause page load to fail when not ignored
