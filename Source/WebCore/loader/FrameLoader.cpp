@@ -630,15 +630,21 @@ void FrameLoader::receivedFirstData()
         return;
 
     double delay;
-    String url;
-    if (!parseHTTPRefresh(m_documentLoader->response().httpHeaderField("Refresh"), false, delay, url))
+    String urlString;
+    if (!parseHTTPRefresh(m_documentLoader->response().httpHeaderField("Refresh"), false, delay, urlString))
         return;
-    if (url.isEmpty())
-        url = m_frame->document()->url().string();
+    KURL completedURL;
+    if (urlString.isEmpty())
+        completedURL = m_frame->document()->url();
     else
-        url = m_frame->document()->completeURL(url).string();
+        completedURL = m_frame->document()->completeURL(urlString);
 
-    m_frame->navigationScheduler()->scheduleRedirect(delay, url);
+    if (!protocolIsJavaScript(completedURL))
+        m_frame->navigationScheduler()->scheduleRedirect(delay, completedURL);
+    else {
+        String message = "Refused to refresh " + m_frame->document()->url().stringCenterEllipsizedToLength() + " to a javascript: URL";
+        m_frame->document()->addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, message);
+    }
 }
 
 void FrameLoader::setOutgoingReferrer(const KURL& url)

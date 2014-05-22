@@ -1934,7 +1934,7 @@ PassRefPtr<Frame> DOMWindow::createWindow(const String& urlString, const AtomicS
         newFrame->loader()->changeLocation(activeWindow->document()->securityOrigin(), completedURL, referrer, false, false);
     else if (!urlString.isEmpty()) {
         bool lockHistory = !ScriptController::processingUserGesture();
-        newFrame->navigationScheduler()->scheduleLocationChange(activeWindow->document()->securityOrigin(), completedURL.string(), referrer, lockHistory, false);
+        newFrame->navigationScheduler()->scheduleLocationChange(activeWindow->document()->securityOrigin(), completedURL, referrer, lockHistory, false);
     }
 
     // Navigating the new frame could result in it being detached from its page by a navigation policy delegate.

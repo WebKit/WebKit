@@ -1,3 +1,56 @@
+2014-05-22  Dana Burkart  <dburkart@apple.com>
+
+        Merge r167856
+
+    2014-04-27  Darin Adler  <darin@apple.com>
+
+            Webpages can trigger loads with invalid URLs
+            https://bugs.webkit.org/show_bug.cgi?id=132224
+            rdar://problem/16697142
+
+            Reviewed by Alexey Proskuryakov.
+
+            Invalid URLs can be a way to trick the user about what website they
+            are looking at.  Still trying to figure out a good way to regression-test this.
+
+            * dom/Document.cpp:
+            (WebCore::Document::processHttpEquiv): Pass a URL rather than a String to
+            the navigation scheduler.
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::receivedFirstData): Ditto.
+
+            * loader/NavigationScheduler.cpp:
+            (WebCore::ScheduledURLNavigation::ScheduledURLNavigation): Take a URL rather
+            than a string.
+            (WebCore::ScheduledURLNavigation::url): Ditto.
+            (WebCore::ScheduledRedirect::ScheduledRedirect): Ditto.
+            (WebCore::ScheduledLocationChange::ScheduledLocationChange): Ditto.
+            (WebCore::ScheduledRefresh::ScheduledRefresh): Ditto.
+            (WebCore::NavigationScheduler::shouldScheduleNavigation): Added a check that
+            prevents navigation to any URL that is invalid, except for JavaScript URLs,
+            which need not be valid.
+            (WebCore::NavigationScheduler::scheduleRedirect): Use URL instead of String.
+            (WebCore::NavigationScheduler::scheduleLocationChange): Use URL instead of
+            String. Also got rid of empty string check since empty URLs are also invalid,
+            and so shouldScheduleNavigation will take care of it.
+            (WebCore::NavigationScheduler::scheduleRefresh): Use URL instead of String.
+
+            * loader/NavigationScheduler.h: Take URL instead of String. Also removed some
+            unneeded incldues and uses of WTF_MAKE_NONCOPYABLE. NavigationScheduler is
+            already noncopyable because it has a reference for a data member, and the
+            disabler doesn't have any real reason to be noncopyable.
+
+            * loader/SubframeLoader.cpp:
+            (WebCore::SubframeLoader::loadOrRedirectSubframe): Pass a URL rather than a
+            String to the NavigationScheduler.
+            * page/DOMWindow.cpp:
+            (WebCore::DOMWindow::createWindow): Ditto.
+
+            * page/SecurityOrigin.cpp:
+            (WebCore::SecurityOrigin::urlWithUniqueSecurityOrigin): Return a URL instead
+            of a String.
+            * page/SecurityOrigin.h: Updated for above change.
+
 2014-05-22  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168636
