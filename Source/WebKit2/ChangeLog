@@ -1,3 +1,15 @@
+2014-05-22  Alexey Proskuryakov  <ap@apple.com>
+
+        [iOS][WK2] Application cache is broken
+        https://bugs.webkit.org/show_bug.cgi?id=133172
+        <rdar://problem/16994593>
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformDefaultApplicationCacheDirectory): Use a proper
+        path for application cache database (same as WebKit1).
+
 2014-05-22  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION (WebKit2): Keyboard should have Search button in duckduckgo.com.

@@ -48,7 +48,9 @@
 #import "NetworkProcessProxy.h"
 #endif
 
-#if !PLATFORM(IOS)
+#if PLATFORM(IOS)
+#import <WebCore/RuntimeApplicationChecksIOS.h>
+#else
 #import <QuartzCore/CARemoteLayerServer.h>
 #endif
 
@@ -142,15 +144,25 @@ String WebContext::platformDefaultApplicationCacheDirectory() const
     NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
     if (!appName)
         appName = [[NSProcessInfo processInfo] processName];
+#if PLATFORM(IOS)
+    // This quirk used to make these apps share application cache storage, but doesn't accomplish that any more.
+    // Preserving it avoids the need to migrate data when upgrading.
+    if (applicationIsMobileSafari() || applicationIsWebApp())
+        appName = @"com.apple.WebAppCache";
+#endif
 
     ASSERT(appName);
 
+#if PLATFORM(IOS)
+    NSString *cacheDir = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches"];
+#else
     char cacheDirectory[MAXPATHLEN];
     size_t cacheDirectoryLen = confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectory, MAXPATHLEN);
     if (!cacheDirectoryLen)
         return String();
 
     NSString *cacheDir = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:cacheDirectory length:cacheDirectoryLen - 1];
+#endif
     return [cacheDir stringByAppendingPathComponent:appName];
 }
 
