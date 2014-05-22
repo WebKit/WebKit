@@ -91,6 +91,7 @@ if ENV["WEBKIT_TEST_CHILD_PROCESSES"]
 end
 
 $jscPath = nil
+$copy = true
 $enableFTL = false
 $outputDir = Pathname.new("results")
 $verbosity = 0
@@ -106,7 +107,9 @@ $remoteDirectory = nil
 def usage
     puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
     puts
-    puts "--jsc                (-j)   Path to JavaScriptCore. This option is required."
+    puts "--jsc                (-j)   Path to JavaScriptCore build product. This option is required."
+    puts "--no-copy                   Do not copy the JavaScriptCore build product before testing."
+    puts "                            --jsc specifies an already present JavaScriptCore to test."
     puts "--ftl-jit                   Indicate that we have the FTL JIT."
     puts "--output-dir         (-o)   Path where to put results. Default is #{$outputDir}."
     puts "--verbose            (-v)   Print more things while running."
@@ -120,8 +123,11 @@ def usage
     exit 1
 end
 
+jscArg = ""
+
 GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--jsc', '-j', GetoptLong::REQUIRED_ARGUMENT],
+               ['--no-copy', GetoptLong::NO_ARGUMENT],
                ['--ftl-jit', GetoptLong::NO_ARGUMENT],
                ['--output-dir', '-o', GetoptLong::REQUIRED_ARGUMENT],
                ['--run-bundle', GetoptLong::REQUIRED_ARGUMENT],
@@ -136,7 +142,9 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     when '--help'
         usage
     when '--jsc'
-        $jscPath = Pathname.new(arg).realpath
+        jscArg = arg
+    when '--no-copy'
+        $copy = false
     when '--output-dir'
         $outputDir = Pathname.new(arg)
     when '--ftl-jit'
@@ -164,6 +172,14 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     end
 }
 
+if jscArg
+    if $copy
+        $jscPath = Pathname.new(jscArg).realpath
+    else
+        $jscPath = Pathname.new(jscArg)
+    end
+end
+
 $progressMeter = ($verbosity == 0 and $stdin.tty?)
 
 if $bundle
@@ -172,7 +188,7 @@ if $bundle
 end
 
 unless $jscPath
-    $stderr.puts "Error: must specify -j <path>."
+    $stderr.puts "Error: must specify -jsc <path>"
     exit 1
 end
 
@@ -237,8 +253,9 @@ end
 
 def prepareFramework(jscPath)
     frameworkPath = frameworkFromJSCPath(jscPath)
-    $frameworkPath = Pathname.new(".vm") + "JavaScriptCore.framework"
-    $jscPath = $frameworkPath + "Resources" + "jsc"
+    destinationFrameworkPath = Pathname.new(".vm") + "JavaScriptCore.framework"
+    $jscPath = destinationFrameworkPath + "Resources" + "jsc"
+    $testingFrameworkPath = Pathname.new("..") + destinationFrameworkPath
 
     if frameworkPath
         source = frameworkPath
@@ -460,7 +477,7 @@ class Plan
         }
         script += "cd .runner\n"
 
-        script += "export DYLD_FRAMEWORK_PATH=$(cd ../#{$frameworkPath.dirname}; pwd)\n"
+        script += "export DYLD_FRAMEWORK_PATH=$(cd #{$testingFrameworkPath.dirname}; pwd)\n"
         IMPORTANT_ENVS.each {
             | key |
             if ENV[key]
@@ -1014,7 +1031,16 @@ end
 def prepareBundle
     raise if $bundle
 
-    copyVMToBundle
+    if $copy
+        copyVMToBundle
+    else
+        if !$remote
+            $testingFrameworkPath = frameworkFromJSCPath($jscPath).realpath
+            $jscPath = Pathname.new($jscPath).realpath
+        else
+            $testingFrameworkPath = frameworkFromJSCPath($jscPath)
+        end
+    end
 
     ARGV.each {
         | collection |
@@ -1211,7 +1237,7 @@ def runShellTestRunner
         remoteScript += "rm -rf #{$outputDir.basename} && "
         remoteScript += "tar xzf payload.tar.gz && "
         remoteScript += "cd #{$outputDir.basename}/.runner && "
-        remoteScript += "DYLD_FRAMEWORK_PATH=$(cd ../#{$frameworkPath.dirname}; pwd) sh runscript" 
+        remoteScript += "DYLD_FRAMEWORK_PATH=$(cd #{$testingFrameworkPath.dirname}; pwd) sh runscript" 
         system("ssh", "-p", $remotePort.to_s, "#{$remoteUser}@#{$remoteHost}", remoteScript)
     else
         Dir.chdir($runnerDir) {
