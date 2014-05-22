@@ -808,6 +808,9 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
             m_dragOffset = IntPoint(dragOrigin.x() - dragLoc.x(), dragOrigin.y() - dragLoc.y());
         }
         doSystemDrag(dragImage, dragLoc, dragOrigin, clipboard, src, false);
+    } else if (!src->document()->securityOrigin()->canDisplay(linkURL)) {
+         src->document()->addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, "Not allowed to drag local resource: " + linkURL.stringCenterEllipsizedToLength());
+         startedDrag = false;
     } else if (!imageURL.isEmpty() && element && image && !image->isNull()
                && (m_dragSourceAction & DragSourceActionImage)) {
         // We shouldn't be starting a drag for an image that can't provide an extension.
