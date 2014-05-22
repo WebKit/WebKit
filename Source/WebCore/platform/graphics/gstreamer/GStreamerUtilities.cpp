@@ -52,7 +52,8 @@ bool getVideoSizeAndFormatFromCaps(GstCaps* caps, WebCore::IntSize& size, GstVid
 {
     GstVideoInfo info;
 
-    if (!gst_caps_is_fixed(caps) || !gst_video_info_from_caps(&info, caps))
+    gst_video_info_init(&info);
+    if (!gst_video_info_from_caps(&info, caps))
         return false;
 
     format = GST_VIDEO_INFO_FORMAT(&info);

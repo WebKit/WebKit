@@ -42,6 +42,7 @@
 #include <wtf/text/CString.h>
 
 #include <gst/audio/streamvolume.h>
+#include <gst/video/gstvideometa.h>
 
 #if GST_CHECK_VERSION(1, 1, 0) && USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
 #include "TextureMapperGL.h"
@@ -309,22 +310,19 @@ PassRefPtr<BitmapTexture> MediaPlayerPrivateGStreamerBase::updateTexture(Texture
 {
     GMutexLocker lock(m_bufferMutex);
     if (!m_buffer)
-        return 0;
+        return nullptr;
 
-    const void* srcData = 0;
     GRefPtr<GstCaps> caps = currentVideoSinkCaps();
     if (!caps)
-        return 0;
+        return nullptr;
 
-    IntSize size;
-    GstVideoFormat format;
-    int pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride;
-    if (!getVideoSizeAndFormatFromCaps(caps.get(), size, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride))
-        return 0;
+    GstVideoInfo videoInfo;
+    gst_video_info_init(&videoInfo);
+    if (!gst_video_info_from_caps(&videoInfo, caps.get()))
+        return nullptr;
 
-    const GstVideoFormatInfo* formatInfo = gst_video_format_get_info(format);
-
-    RefPtr<BitmapTexture> texture = textureMapper->acquireTextureFromPool(size, GST_VIDEO_FORMAT_INFO_HAS_ALPHA(formatInfo) ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
+    IntSize size = IntSize(GST_VIDEO_INFO_WIDTH(&videoInfo), GST_VIDEO_INFO_HEIGHT(&videoInfo));
+    RefPtr<BitmapTexture> texture = textureMapper->acquireTextureFromPool(size, GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
 
 #if GST_CHECK_VERSION(1, 1, 0)
     GstVideoGLTextureUploadMeta* meta;
@@ -339,13 +337,18 @@ PassRefPtr<BitmapTexture> MediaPlayerPrivateGStreamerBase::updateTexture(Texture
     }
 #endif
 
-    GstMapInfo srcInfo;
-    gst_buffer_map(m_buffer, &srcInfo, GST_MAP_READ);
-    srcData = srcInfo.data;
+    // Right now the TextureMapper only supports chromas with one plane
+    ASSERT(GST_VIDEO_INFO_N_PLANES(&videoInfo) == 1);
 
+    GstVideoFrame videoFrame;
+    if (!gst_video_frame_map(&videoFrame, &videoInfo, m_buffer, GST_MAP_READ))
+        return nullptr;
+
+    int stride = GST_VIDEO_FRAME_PLANE_STRIDE(&videoFrame, 0);
+    const void* srcData = GST_VIDEO_FRAME_PLANE_DATA(&videoFrame, 0);
     texture->updateContents(srcData, WebCore::IntRect(WebCore::IntPoint(0, 0), size), WebCore::IntPoint(0, 0), stride, BitmapTexture::UpdateCannotModifyOriginalImageData);
+    gst_video_frame_unmap(&videoFrame);
 
-    gst_buffer_unmap(m_buffer, &srcInfo);
     return texture;
 }
 #endif
@@ -442,7 +445,7 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateGStreamerBase::movieLoadType() cons
 GRefPtr<GstCaps> MediaPlayerPrivateGStreamerBase::currentVideoSinkCaps() const
 {
     if (!m_webkitVideoSink)
-        return 0;
+        return nullptr;
 
     GRefPtr<GstCaps> currentCaps;
     g_object_get(G_OBJECT(m_webkitVideoSink.get()), "current-caps", &currentCaps.outPtr(), NULL);

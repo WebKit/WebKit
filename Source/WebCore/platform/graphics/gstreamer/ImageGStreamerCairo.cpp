@@ -33,24 +33,32 @@ using namespace std;
 using namespace WebCore;
 
 ImageGStreamer::ImageGStreamer(GstBuffer* buffer, GstCaps* caps)
-    : m_buffer(buffer)
 {
-    GstVideoFormat format;
-    IntSize size;
-    int pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride;
-    getVideoSizeAndFormatFromCaps(caps, size, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride);
+    GstVideoInfo videoInfo;
+    gst_video_info_init(&videoInfo);
+    if (!gst_video_info_from_caps(&videoInfo, caps))
+        return;
 
-    gst_buffer_map(buffer, &m_mapInfo, GST_MAP_READ);
-    unsigned char* bufferData = reinterpret_cast<unsigned char*>(m_mapInfo.data);
+    // Right now the TextureMapper only supports chromas with one plane
+    ASSERT(GST_VIDEO_INFO_N_PLANES(&videoInfo) == 1);
+
+    if (!gst_video_frame_map(&m_videoFrame, &videoInfo, buffer, GST_MAP_READ))
+        return;
+
+    unsigned char* bufferData = reinterpret_cast<unsigned char*>(GST_VIDEO_FRAME_PLANE_DATA(&m_videoFrame, 0));
 
     cairo_format_t cairoFormat;
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-    cairoFormat = (format == GST_VIDEO_FORMAT_BGRA) ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24;
+    cairoFormat = (GST_VIDEO_FRAME_FORMAT(&m_videoFrame) == GST_VIDEO_FORMAT_BGRA) ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24;
 #else
-    cairoFormat = (format == GST_VIDEO_FORMAT_ARGB) ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24;
+    cairoFormat = (GST_VIDEO_FRAME_FORMAT(&m_videoFrame) == GST_VIDEO_FORMAT_ARGB) ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24;
 #endif
 
-    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(bufferData, cairoFormat, size.width(), size.height(), stride));
+    int stride = GST_VIDEO_FRAME_PLANE_STRIDE(&m_videoFrame, 0);
+    int width = GST_VIDEO_FRAME_WIDTH(&m_videoFrame);
+    int height = GST_VIDEO_FRAME_HEIGHT(&m_videoFrame);
+
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(bufferData, cairoFormat, width, height, stride));
     ASSERT(cairo_surface_status(surface.get()) == CAIRO_STATUS_SUCCESS);
     m_image = BitmapImage::create(surface.release());
 
@@ -67,6 +75,6 @@ ImageGStreamer::~ImageGStreamer()
 
     // We keep the buffer memory mapped until the image is destroyed because the internal
     // cairo_surface_t was created using cairo_image_surface_create_for_data().
-    gst_buffer_unmap(m_buffer.get(), &m_mapInfo);
+    gst_video_frame_unmap(&m_videoFrame);
 }
 #endif // USE(GSTREAMER)

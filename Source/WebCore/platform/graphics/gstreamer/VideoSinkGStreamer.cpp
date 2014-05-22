@@ -147,21 +147,14 @@ static GstFlowReturn webkitVideoSinkRender(GstBaseSink* baseSink, GstBuffer* buf
 
     priv->buffer = gst_buffer_ref(buffer);
 
-    GRefPtr<GstCaps> caps;
     // The video info structure is valid only if the sink handled an allocation query.
-    if (GST_VIDEO_INFO_FORMAT(&priv->info) != GST_VIDEO_FORMAT_UNKNOWN)
-        caps = adoptGRef(gst_video_info_to_caps(&priv->info));
-    else
-        caps = priv->currentCaps;
-
-    GstVideoFormat format;
-    WebCore::IntSize size;
-    int pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride;
-    if (!getVideoSizeAndFormatFromCaps(caps.get(), size, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride)) {
+    GstVideoFormat format = GST_VIDEO_INFO_FORMAT(&priv->info);
+    if (format == GST_VIDEO_FORMAT_UNKNOWN) {
         gst_buffer_unref(buffer);
         return GST_FLOW_ERROR;
     }
 
+#if !(USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS))
     // Cairo's ARGB has pre-multiplied alpha while GStreamer's doesn't.
     // Here we convert to Cairo's ARGB.
     if (format == GST_VIDEO_FORMAT_ARGB || format == GST_VIDEO_FORMAT_BGRA) {
@@ -173,22 +166,35 @@ static GstFlowReturn webkitVideoSinkRender(GstBaseSink* baseSink, GstBuffer* buf
         GstBuffer* newBuffer = WebCore::createGstBuffer(buffer);
 
         // Check if allocation failed.
-        if (UNLIKELY(!newBuffer))
+        if (UNLIKELY(!newBuffer)) {
+            gst_buffer_unref(buffer);
             return GST_FLOW_ERROR;
+        }
 
         // We don't use Color::premultipliedARGBFromColor() here because
         // one function call per video pixel is just too expensive:
         // For 720p/PAL for example this means 1280*720*25=23040000
         // function calls per second!
-        GstMapInfo sourceInfo;
-        GstMapInfo destinationInfo;
-        gst_buffer_map(buffer, &sourceInfo, GST_MAP_READ);
-        const guint8* source = const_cast<guint8*>(sourceInfo.data);
-        gst_buffer_map(newBuffer, &destinationInfo, GST_MAP_WRITE);
-        guint8* destination = static_cast<guint8*>(destinationInfo.data);
+        GstVideoFrame sourceFrame;
+        GstVideoFrame destinationFrame;
 
-        for (int x = 0; x < size.height(); x++) {
-            for (int y = 0; y < size.width(); y++) {
+        if (!gst_video_frame_map(&sourceFrame, &priv->info, buffer, GST_MAP_READ)) {
+            gst_buffer_unref(buffer);
+            gst_buffer_unref(newBuffer);
+            return GST_FLOW_ERROR;
+        }
+        if (!gst_video_frame_map(&destinationFrame, &priv->info, newBuffer, GST_MAP_WRITE)) {
+            gst_video_frame_unmap(&sourceFrame);
+            gst_buffer_unref(buffer);
+            gst_buffer_unref(newBuffer);
+            return GST_FLOW_ERROR;
+        }
+
+        const guint8* source = static_cast<guint8*>(GST_VIDEO_FRAME_PLANE_DATA(&sourceFrame, 0));
+        guint8* destination = static_cast<guint8*>(GST_VIDEO_FRAME_PLANE_DATA(&destinationFrame, 0));
+
+        for (int x = 0; x < GST_VIDEO_FRAME_HEIGHT(&sourceFrame); x++) {
+            for (int y = 0; y < GST_VIDEO_FRAME_WIDTH(&sourceFrame); y++) {
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
                 unsigned short alpha = source[3];
                 destination[0] = (source[0] * alpha + 128) / 255;
@@ -207,11 +213,12 @@ static GstFlowReturn webkitVideoSinkRender(GstBaseSink* baseSink, GstBuffer* buf
             }
         }
 
-        gst_buffer_unmap(buffer, &sourceInfo);
-        gst_buffer_unmap(newBuffer, &destinationInfo);
+        gst_video_frame_unmap(&sourceFrame);
+        gst_video_frame_unmap(&destinationFrame);
         gst_buffer_unref(buffer);
         buffer = priv->buffer = newBuffer;
     }
+#endif
 
     // This should likely use a lower priority, but glib currently starves
     // lower priority sources.
@@ -335,12 +342,14 @@ static gboolean webkitVideoSinkSetCaps(GstBaseSink* baseSink, GstCaps* caps)
 
     GST_DEBUG_OBJECT(sink, "Current caps %" GST_PTR_FORMAT ", setting caps %" GST_PTR_FORMAT, priv->currentCaps, caps);
 
-    GstVideoInfo info;
-    if (!gst_video_info_from_caps(&info, caps)) {
+    GstVideoInfo videoInfo;
+    gst_video_info_init(&videoInfo);
+    if (!gst_video_info_from_caps(&videoInfo, caps)) {
         GST_ERROR_OBJECT(sink, "Invalid caps %" GST_PTR_FORMAT, caps);
         return FALSE;
     }
 
+    priv->info = videoInfo;
     gst_caps_replace(&priv->currentCaps, caps);
     return TRUE;
 }
