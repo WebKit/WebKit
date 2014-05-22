@@ -1,5 +1,21 @@
 2014-05-22  Dana Burkart  <dburkart@apple.com>
 
+        Merge r167818
+
+    2014-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
+            Crash applying editing commands from iframe onload event
+
+            <https://bugs.webkit.org/show_bug.cgi?id=132103>
+            <rdar://problem/15696351>
+
+            Reviewed by Darin Adler.
+
+            * editing/apply-style-iframe-crash-expected.txt: Added.
+            * editing/apply-style-iframe-crash.html: Added.
+
+2014-05-22  Dana Burkart  <dburkart@apple.com>
+
         Merge r166628
 
     2014-04-01  Jon Honeycutt  <jhoneycutt@apple.com>

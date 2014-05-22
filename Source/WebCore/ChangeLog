@@ -20,6 +20,32 @@
 
 2014-05-22  Dana Burkart  <dburkart@apple.com>
 
+        Merge r167818
+
+    2014-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
+            Crash applying editing commands from iframe onload event
+
+            <https://bugs.webkit.org/show_bug.cgi?id=132103>
+            <rdar://problem/15696351>
+
+            This patch merges the Chromium bug workaround from
+            <http://src.chromium.org/viewvc/blink?revision=162080&view=revision>,
+            which prevents reentrancy in CompositeEditCommand::apply().
+
+            Reviewed by Darin Adler.
+
+            Test: editing/apply-style-iframe-crash.html
+
+            * editing/CompositeEditCommand.cpp:
+            (WebCore::HTMLNames::ReentrancyGuard::isRecursiveCall):
+            (WebCore::HTMLNames::ReentrancyGuard::Scope::Scope):
+            (WebCore::HTMLNames::ReentrancyGuard::Scope::~Scope):
+            (WebCore::CompositeEditCommand::apply):
+            If this is a recursive call, return early.
+
+2014-05-22  Dana Burkart  <dburkart@apple.com>
+
         Merge r167264
 
     2014-04-14  Jer Noble  <jer.noble@apple.com>

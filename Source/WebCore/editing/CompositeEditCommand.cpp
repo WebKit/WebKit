@@ -78,6 +78,26 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+namespace ApplyEditCommand {
+    
+class ReentrancyGuard {
+public:
+    static bool isRecursiveCall() { return s_nestingCounter; }
+
+    class Scope {
+    public:
+        Scope() { ++s_nestingCounter; }
+        ~Scope() { --s_nestingCounter; }
+    };
+    friend class Scope;
+
+private:
+    static unsigned s_nestingCounter;
+};
+unsigned ApplyEditCommand::ReentrancyGuard::s_nestingCounter;
+    
+} // namespace ApplyEditCommand
+
 PassRefPtr<EditCommandComposition> EditCommandComposition::create(Document* document,
     const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, EditAction editAction)
 {
@@ -184,6 +204,12 @@ CompositeEditCommand::~CompositeEditCommand()
 
 void CompositeEditCommand::apply()
 {
+    // It's possible to enter this recursively, but legitimate cases of that are rare, and it can cause crashes. As a
+    // temporary fix, guard against recursive calls.
+    // FIXME: <rdar://16701803> Remove this workaround when <rdar://15797536> is fixed.
+    if (ApplyEditCommand::ReentrancyGuard::isRecursiveCall())
+        return;
+
     if (!endingSelection().isContentRichlyEditable()) {
         switch (editingAction()) {
         case EditActionTyping:
@@ -209,7 +235,8 @@ void CompositeEditCommand::apply()
     Frame* frame = document()->frame();
     ASSERT(frame);
     {
-        EventQueueScope scope;
+        EventQueueScope eventQueueScope;
+        ApplyEditCommand::ReentrancyGuard::Scope reentrancyGuardScope;
 #if ENABLE(DELETION_UI)
         DeleteButtonControllerDisableScope deleteButtonControllerDisableScope(frame);
 #endif
