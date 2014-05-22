@@ -35,5 +35,7 @@
 		<key>_MultipleInstances</key>
 		<true/>
 	</dict>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<true/>
 </dict>
 </plist>

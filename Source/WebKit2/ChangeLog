@@ -1,5 +1,16 @@
 2014-05-22  Alexey Proskuryakov  <ap@apple.com>
 
+        [iOS] Add CFBundleAllowMixedLocalizations to WebContentService
+        https://bugs.webkit.org/show_bug.cgi?id=133187
+        <rdar://problem/16561084>
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-iOS.plist:
+        We already had it in WebContentService.Development, just not here.
+
+2014-05-22  Alexey Proskuryakov  <ap@apple.com>
+
         [iOS][WK2] Application cache is broken
         https://bugs.webkit.org/show_bug.cgi?id=133172
         <rdar://problem/16994593>
