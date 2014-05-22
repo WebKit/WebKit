@@ -1,3 +1,10 @@
+2014-05-21  Alex Christensen  <achristensen@webkit.org>
+
+        [Win64] Unreviewed build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        Corrected 64-bit linker symbol.
+
 2014-05-13  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Revert "Don't dispatch 'beforeload' event inside FrameView::layout()",
