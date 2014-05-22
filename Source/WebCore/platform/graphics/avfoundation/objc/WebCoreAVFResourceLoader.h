@@ -51,6 +51,7 @@ public:
 
     void startLoading();
     void stopLoading();
+    void invalidate();
 
     CachedRawResource* resource();
 

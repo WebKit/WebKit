@@ -253,6 +253,9 @@ MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     [m_loaderDelegate.get() setCallback:0];
     [[m_avAsset.get() resourceLoader] setDelegate:nil queue:0];
+
+    for (auto& pair : m_resourceLoaderMap)
+        pair.value->invalidate();
 #endif
     cancelLoad();
 }

@@ -63,7 +63,7 @@ WebCoreAVFResourceLoader::~WebCoreAVFResourceLoader()
 
 void WebCoreAVFResourceLoader::startLoading()
 {
-    if (m_resource)
+    if (m_resource || !m_parent)
         return;
 
     KURL requestURL = [[m_avRequest.get() request] URL];
@@ -89,7 +89,14 @@ void WebCoreAVFResourceLoader::stopLoading()
     m_resource->removeClient(this);
     m_resource = 0;
 
-    m_parent->didStopLoadingRequest(m_avRequest.get());
+    if (m_parent)
+        m_parent->didStopLoadingRequest(m_avRequest.get());
+}
+
+void WebCoreAVFResourceLoader::invalidate()
+{
+    m_parent = nullptr;
+    stopLoading();
 }
 
 void WebCoreAVFResourceLoader::responseReceived(CachedResource* resource, const ResourceResponse& response)
