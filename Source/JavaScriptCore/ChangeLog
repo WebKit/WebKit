@@ -1,3 +1,24 @@
+2014-05-19  Mark Lam  <mark.lam@apple.com>
+
+        operationOptimize() should defer the GC for a while.
+        <https://webkit.org/b/133103>
+
+        Reviewed by Filip Pizlo.
+
+        Currently, operationOptimize() only defers the GC until its end.  As a result,
+        a GC may be triggered just before we return from operationOptimize(), and it may
+        jettison the optimize codeBlock that we're planning to OSR enter into when we
+        return from this function.  This is because the OSR entry on-ramp code hasn't
+        been executed yet, and hence, there is not yet a reference to this new codeBlock
+        from the stack, and there won't be until we've had a chance to return out of
+        operationOptimize() to run the OSR entry on-ramp code.
+
+        This issue is now fixed by using DeferGCForAWhile instead of DeferGC.  This
+        ensures that the GC will be deferred until after the OSR entry on-ramp can be
+        executed.
+
+        * jit/JITOperations.cpp:
+
 2014-05-09  Alberto Garcia  <berto@igalia.com>
 
         jsmin.py license header confusing, mentions non-free license

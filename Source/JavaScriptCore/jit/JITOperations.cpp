@@ -979,25 +979,21 @@ char* JIT_OPERATION operationOptimize(ExecState* exec, int32_t bytecodeIndex)
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    // Defer GC so that it doesn't run between when we enter into this slow path and
-    // when we figure out the state of our code block. This prevents a number of
-    // awkward reentrancy scenarios, including:
+    // Defer GC for a while so that it doesn't run between when we enter into this
+    // slow path and when we figure out the state of our code block. This prevents
+    // a number of awkward reentrancy scenarios, including:
     //
     // - The optimized version of our code block being jettisoned by GC right after
-    //   we concluded that we wanted to use it.
+    //   we concluded that we wanted to use it, but have not planted it into the JS
+    //   stack yet.
     //
     // - An optimized version of our code block being installed just as we decided
     //   that it wasn't ready yet.
     //
-    // This still leaves the following: anytime we return from cti_optimize, we may
-    // GC, and the GC may either jettison the optimized version of our code block,
-    // or it may install the optimized version of our code block even though we
-    // concluded that it wasn't ready yet.
-    //
     // Note that jettisoning won't happen if we already initiated OSR, because in
     // that case we would have already planted the optimized code block into the JS
     // stack.
-    DeferGC deferGC(vm.heap);
+    DeferGCForAWhile deferGC(vm.heap);
     
     CodeBlock* codeBlock = exec->codeBlock();
 
