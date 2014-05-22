@@ -1962,9 +1962,12 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
     if (auto fragment = renderNamedFlowFragment())
         fragment->setStyle(RenderNamedFlowFragment::createStyle(style()));
 
-    if (diff >= StyleDifferenceRepaint)
-        invalidateLineLayoutPath();
-    
+    if (diff >= StyleDifferenceRepaint) {
+        // FIXME: This could use a cheaper style-only test instead of SimpleLineLayout::canUseFor.
+        if (selfNeedsLayout() || !m_simpleLineLayout || !SimpleLineLayout::canUseFor(*this))
+            invalidateLineLayoutPath();
+    }
+
     if (multiColumnFlowThread()) {
         for (auto child = firstChildBox();
              child && (child->isInFlowRenderFlowThread() || child->isRenderMultiColumnSet());
@@ -3390,6 +3393,27 @@ bool RenderBlockFlow::hasLines() const
     return lineBoxes().firstLineBox();
 }
 
+void RenderBlockFlow::invalidateLineLayoutPath()
+{
+    switch (m_lineLayoutPath) {
+    case UndeterminedPath:
+    case ForceLineBoxesPath:
+        ASSERT(!m_simpleLineLayout);
+        return;
+    case LineBoxesPath:
+        ASSERT(!m_simpleLineLayout);
+        m_lineLayoutPath = UndeterminedPath;
+        return;
+    case SimpleLinesPath:
+        // The simple line layout may have become invalid.
+        m_simpleLineLayout = nullptr;
+        setNeedsLayout();
+        m_lineLayoutPath = UndeterminedPath;
+        return;
+    }
+    ASSERT_NOT_REACHED();
+}
+
 void RenderBlockFlow::layoutSimpleLines(LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
     ASSERT(!m_lineBoxes.firstLineBox());
@@ -3412,28 +3436,9 @@ void RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout()
     toRenderText(firstChild())->deleteLineBoxesBeforeSimpleLineLayout();
 }
 
-const SimpleLineLayout::Layout* RenderBlockFlow::simpleLineLayout() const
-{
-    if (m_lineLayoutPath == UndeterminedPath)
-        const_cast<RenderBlockFlow&>(*this).m_lineLayoutPath = SimpleLineLayout::canUseFor(*this) ? SimpleLinesPath : LineBoxesPath;
-
-    if (m_lineLayoutPath == SimpleLinesPath)
-        return m_simpleLineLayout.get();
-
-    const_cast<RenderBlockFlow&>(*this).createLineBoxes();
-    return nullptr;
-}
-
 void RenderBlockFlow::ensureLineBoxes()
 {
     m_lineLayoutPath = ForceLineBoxesPath;
-    createLineBoxes();
-}
-
-void RenderBlockFlow::createLineBoxes()
-{
-    ASSERT(m_lineLayoutPath == LineBoxesPath || m_lineLayoutPath == ForceLineBoxesPath);
-
     if (!m_simpleLineLayout)
         return;
     m_simpleLineLayout = nullptr;

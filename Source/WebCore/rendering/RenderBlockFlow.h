@@ -347,6 +347,7 @@ public:
     RootInlineBox* lastRootBox() const { return toRootInlineBox(m_lineBoxes.lastLineBox()); }
 
     virtual bool hasLines() const override final;
+    virtual void invalidateLineLayoutPath() override final;
 
     // Helper methods for computing line counts and heights for line counts.
     RootInlineBox* lineAtIndex(int) const;
@@ -525,8 +526,6 @@ private:
     virtual VisiblePosition positionForPointWithInlineChildren(const LayoutPoint& pointInLogicalContents, const RenderRegion*) override;
     virtual void addFocusRingRectsForInlineChildren(Vector<IntRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*) override;
 
-    void createLineBoxes();
-
 // FIXME-BLOCKFLOW: These methods have implementations in
 // RenderBlockLineLayout. They should be moved to the proper header once the
 // line layout code is separated from RenderBlock and RenderBlockFlow.
@@ -627,6 +626,12 @@ RENDER_OBJECT_TYPE_CASTS(RenderBlockFlow, isRenderBlockFlow())
 inline bool RenderElement::isRenderNamedFlowFragmentContainer() const
 {
     return isRenderBlockFlow() && toRenderBlockFlow(this)->renderNamedFlowFragment();
+}
+
+inline const SimpleLineLayout::Layout* RenderBlockFlow::simpleLineLayout() const
+{
+    ASSERT(m_lineLayoutPath == SimpleLinesPath || !m_simpleLineLayout);
+    return m_simpleLineLayout.get();
 }
 
 } // namespace WebCore

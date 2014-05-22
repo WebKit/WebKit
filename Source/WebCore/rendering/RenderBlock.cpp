@@ -626,13 +626,6 @@ void RenderBlock::deleteLines()
         cache->recomputeIsIgnored(this);
 }
 
-void RenderBlock::invalidateLineLayoutPath()
-{
-    if (m_lineLayoutPath == ForceLineBoxesPath)
-        return;
-    m_lineLayoutPath = UndeterminedPath;
-}
-
 void RenderBlock::makeChildrenNonInline(RenderObject* insertionPoint)
 {    
     // makeChildrenNonInline takes a block whose children are *all* inline and it

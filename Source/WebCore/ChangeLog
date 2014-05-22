@@ -1,3 +1,44 @@
+2014-05-21  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r167870): Crash in simple line layout code with :after
+        https://bugs.webkit.org/show_bug.cgi?id=133155
+        <rdar://problem/16977696>
+
+        Reviewed by Darin Adler.
+        
+        Fix https://bugs.webkit.org/show_bug.cgi?id=132241 in a safer way.
+        The underline behavior is tested by the existing fast/text/simple-lines-hover-underline.html
+
+        Test: fast/text/simple-lines-hover-after.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::invalidateLineLayoutPath): Deleted.
+
+            Move to RenderBlockFlow.
+
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::invalidateLineLayoutPath):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::styleDidChange):
+        
+            Invalidate layout if style changes in a manner that makes us ineligible to use the simple line layout path.
+
+        (WebCore::RenderBlockFlow::invalidateLineLayoutPath):
+        
+            Drop the simple line layout on path invalidation if it exists. It may not be valid anymore.
+            Also invalidate the layout if this happens so we'll reconstruct the lines later.
+
+        (WebCore::RenderBlockFlow::simpleLineLayout): Deleted.
+        (WebCore::RenderBlockFlow::ensureLineBoxes):
+        (WebCore::RenderBlockFlow::createLineBoxes): Deleted.
+                
+            Revert some of the changes made it r167870.
+
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::simpleLineLayout):
+        
+            Add strong validity assert.
+
 2014-05-21  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] two media control button strings are not localized

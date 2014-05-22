@@ -81,7 +81,7 @@ public:
 
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0);
 
-    void invalidateLineLayoutPath();
+    virtual void invalidateLineLayoutPath() { }
 
     void insertPositionedObject(RenderBox&);
     static void removePositionedObject(RenderBox&);
