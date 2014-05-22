@@ -87,22 +87,6 @@ static inline bool isIntegral(float value)
     return static_cast<int>(value) == value;
 }
 
-static float clampedContentsScaleForScale(float rootRelativeScale, float fixedScale)
-{
-    // To avoid too many repaints when the root-relative scale of layers changes, round
-    // the scale to the nearest 0.25.
-    const float roundingFactor = 4;
-    float scale = roundf(rootRelativeScale * roundingFactor) / roundingFactor;
-
-    scale *= fixedScale;
-    
-    // Define some reasonable limits.
-    const float maxScale = 8;
-    const float minScale = 0.01f;
-
-    return std::max(minScale, std::min(scale, maxScale));
-}
-
 static bool isTransformTypeTransformationMatrix(TransformOperation::OperationType transformType)
 {
     switch (transformType) {
@@ -287,18 +271,6 @@ static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, 
     return false;
 }
 
-static float maxScaleFromTransform(const TransformationMatrix& t)
-{
-    if (t.isIdentityOrTranslation())
-        return 1;
-
-    TransformationMatrix::Decomposed4Type decomposeData;
-    if (!t.decompose4(decomposeData))
-        return 1;
-
-    return std::max(fabsf(narrowPrecisionToFloat(decomposeData.scaleX)), fabsf(narrowPrecisionToFloat(decomposeData.scaleY)));
-}
-
 #if ENABLE(CSS_FILTERS) || !ASSERT_DISABLED
 static inline bool supportsAcceleratedFilterAnimations()
 {
@@ -366,7 +338,6 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient& client)
     : GraphicsLayer(client)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_isPageTiledBackingLayer(false)
-    , m_rootRelativeScaleFactor(1)
     , m_uncommittedChanges(0)
     , m_isCommittingChanges(false)
 {
@@ -1024,8 +995,7 @@ FloatPoint GraphicsLayerCA::computePositionRelativeToBase(float& pageScale) cons
 void GraphicsLayerCA::flushCompositingState(const FloatRect& clipRect)
 {
     TransformState state(TransformState::UnapplyInverseTransformDirection, FloatQuad(clipRect));
-    TransformationMatrix rootRelativeTransform;
-    recursiveCommitChanges(CommitState(), state, rootRelativeTransform);
+    recursiveCommitChanges(CommitState(), state);
 }
 
 void GraphicsLayerCA::flushCompositingStateForThisLayerOnly()
@@ -1163,31 +1133,9 @@ FloatRect GraphicsLayerCA::computeVisibleRect(TransformState& state, ComputeVisi
     return clipRectForSelf;
 }
 
-void GraphicsLayerCA::updateRootRelativeScale(TransformationMatrix* transformFromRoot)
-{
-    if (!transformFromRoot)
-        return;
-
-    float rootRelativeScaleFactor;
-    TransformationMatrix maxScaleImpactTransform;
-    bool haveTransformAnimation = getTransformFromAnimationsWithMaxScaleImpact(*transformFromRoot, maxScaleImpactTransform, rootRelativeScaleFactor);
-    if (haveTransformAnimation)
-        transformFromRoot->multiply(maxScaleImpactTransform);
-    else if (!appliesPageScale()) {
-        TransformationMatrix unanimatedTransform = this->layerTransform(m_position);
-        transformFromRoot->multiply(unanimatedTransform);
-        rootRelativeScaleFactor = maxScaleFromTransform(*transformFromRoot);
-    }
-
-    if (rootRelativeScaleFactor != m_rootRelativeScaleFactor) {
-        m_rootRelativeScaleFactor = rootRelativeScaleFactor;
-        m_uncommittedChanges |= ContentsScaleChanged | ContentsOpaqueChanged;
-    }
-}
-
 // rootRelativeTransformForScaling is a transform from the root, but for layers with transform animations, it cherry-picked the state of the
 // animation that contributes maximally to the scale (on every layer with animations down the hierarchy).
-void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, const TransformState& state, const TransformationMatrix& rootRelativeTransformForScaling, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool affectedByPageScale)
+void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, const TransformState& state, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool affectedByPageScale)
 {
     TransformState localState = state;
     CommitState childCommitState = commitState;
@@ -1235,10 +1183,9 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
     if (affectedByPageScale)
         baseRelativePosition += m_position;
     
-    TransformationMatrix transformFromRoot = rootRelativeTransformForScaling;
     {
         TemporaryChange<bool> committingChangesChange(m_isCommittingChanges, true);
-        commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition, oldVisibleRect, &transformFromRoot);
+        commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition, oldVisibleRect);
     }
 
     if (isRunningTransformAnimation()) {
@@ -1256,11 +1203,11 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
     
     for (size_t i = 0; i < numChildren; ++i) {
         GraphicsLayerCA* curChild = static_cast<GraphicsLayerCA*>(childLayers[i]);
-        curChild->recursiveCommitChanges(childCommitState, localState, transformFromRoot, pageScaleFactor, baseRelativePosition, affectedByPageScale);
+        curChild->recursiveCommitChanges(childCommitState, localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
     }
 
     if (m_replicaLayer)
-        static_cast<GraphicsLayerCA*>(m_replicaLayer)->recursiveCommitChanges(childCommitState, localState, transformFromRoot, pageScaleFactor, baseRelativePosition, affectedByPageScale);
+        static_cast<GraphicsLayerCA*>(m_replicaLayer)->recursiveCommitChanges(childCommitState, localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
 
     if (m_maskLayer)
         static_cast<GraphicsLayerCA*>(m_maskLayer)->commitLayerChangesAfterSublayers(childCommitState);
@@ -1317,7 +1264,7 @@ bool GraphicsLayerCA::platformCALayerShouldTemporarilyRetainTileCohorts(Platform
     return client().shouldTemporarilyRetainTileCohorts(this);
 }
 
-void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState, float pageScaleFactor, const FloatPoint& positionRelativeToBase, const FloatRect& oldVisibleRect, TransformationMatrix* transformFromRoot)
+void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState, float pageScaleFactor, const FloatPoint& positionRelativeToBase, const FloatRect& oldVisibleRect)
 {
     ++commitState.treeDepth;
     if (m_structuralLayer)
@@ -1327,9 +1274,6 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
         // Ensure that we cap layer depth in commitLayerChangesAfterSublayers().
         if (commitState.treeDepth > cMaxLayerTreeDepth)
             m_uncommittedChanges |= ChildrenChanged;
-
-        updateRootRelativeScale(transformFromRoot);
-        return;
     }
 
     bool needTiledLayer = requiresTiledLayer(pageScaleFactor);
@@ -1398,9 +1342,6 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
 
     if (m_uncommittedChanges & AnimationChanged)
         updateAnimations();
-
-    // After committing animations, see if we need to adjust contentsScale accordingly.
-    updateRootRelativeScale(transformFromRoot);
 
     // Updating the contents scale can cause parts of the layer to be invalidated,
     // so make sure to update the contents scale before updating the dirty rects.
@@ -1659,7 +1600,7 @@ void GraphicsLayerCA::updateContentsOpaque(float pageScaleFactor)
 {
     bool contentsOpaque = m_contentsOpaque;
     if (contentsOpaque) {
-        float contentsScale = clampedContentsScaleForScale(m_rootRelativeScaleFactor, pageScaleFactor * deviceScaleFactor());
+        float contentsScale = pageScaleFactor * deviceScaleFactor();
         if (!isIntegral(contentsScale) && !m_client.paintsOpaquelyAtNonIntegralScales(this))
             contentsOpaque = false;
     }
@@ -2160,8 +2101,6 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::replicatedLayerRoot(ReplicaState& r
 
 void GraphicsLayerCA::updateAnimations()
 {
-    HashSet<String> finishedAnimations;
-
     if (m_animationsToProcess.size()) {
         AnimationsToProcessMap::const_iterator end = m_animationsToProcess.end();
         for (AnimationsToProcessMap::const_iterator it = m_animationsToProcess.begin(); it != end; ++it) {
@@ -2184,10 +2123,8 @@ void GraphicsLayerCA::updateAnimations()
                 }
             }
 
-            if (processingInfo.action == Remove) {
+            if (processingInfo.action == Remove)
                 m_runningAnimations.remove(currAnimationName);
-                finishedAnimations.add(currAnimationName);
-            }
         }
     
         m_animationsToProcess.clear();
@@ -2209,15 +2146,9 @@ void GraphicsLayerCA::updateAnimations()
                 Vector<LayerPropertyAnimation>& animations = it->value;
                 animations.append(pendingAnimation);
             }
-
-            finishedAnimations.remove(pendingAnimation.m_name);
         }
         m_uncomittedAnimations.clear();
     }
-    
-    HashSet<String>::const_iterator end = finishedAnimations.end();
-    for (HashSet<String>::const_iterator it = finishedAnimations.begin(); it != end; ++it)
-        m_animationTransforms.remove(*it);
 }
 
 bool GraphicsLayerCA::isRunningTransformAnimation() const
@@ -2381,62 +2312,20 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
     bool isKeyframe = valueList.size() > 2;
 
     RefPtr<PlatformCAAnimation> caAnimation;
-    Vector<TransformationMatrix> matrices;
     bool validMatrices = true;
     if (isKeyframe) {
         caAnimation = createKeyframeAnimation(animation, propertyIdToString(valueList.property()), additive);
-        validMatrices = setTransformAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, transformOp, isMatrixAnimation, boxSize, matrices);
+        validMatrices = setTransformAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, transformOp, isMatrixAnimation, boxSize);
     } else {
         caAnimation = createBasicAnimation(animation, propertyIdToString(valueList.property()), additive);
-        validMatrices = setTransformAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex, transformOp, isMatrixAnimation, boxSize, matrices);
+        validMatrices = setTransformAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex, transformOp, isMatrixAnimation, boxSize);
     }
     
     if (!validMatrices)
         return false;
 
-    m_animationTransforms.set(animationName, matrices);
-
     m_uncomittedAnimations.append(LayerPropertyAnimation(caAnimation, animationName, valueList.property(), animationIndex, 0, timeOffset));
     return true;
-}
-
-bool GraphicsLayerCA::getTransformFromAnimationsWithMaxScaleImpact(const TransformationMatrix& parentTransformFromRoot, TransformationMatrix& maxScaleTransform, float& maxScale) const
-{
-    maxScale = 1;
-    
-    bool haveTransformAnimation = false;
-    AnimationsMap::const_iterator end = m_runningAnimations.end();
-    for (AnimationsMap::const_iterator it = m_runningAnimations.begin(); it != end; ++it) {
-        const Vector<LayerPropertyAnimation>& propertyAnimations = it->value;
-        size_t numAnimations = propertyAnimations.size();
-        for (size_t i = 0; i < numAnimations; ++i) {
-            const LayerPropertyAnimation& animation = propertyAnimations[i];
-            if (animation.m_property != AnimatedPropertyWebkitTransform)
-                continue;
-
-            haveTransformAnimation = true;
-
-            TransformsMap::const_iterator it = m_animationTransforms.find(animation.m_name);
-            if (it != m_animationTransforms.end()) {
-                const Vector<TransformationMatrix>& matrices = it->value;
-                
-                for (size_t i = 0; i < matrices.size(); ++i) {
-                    TransformationMatrix rootRelativeTransformWithAnimation = parentTransformFromRoot;
-                    TransformationMatrix layerTransformWithAnimation = layerTransform(m_position, &matrices[i]);
-
-                    rootRelativeTransformWithAnimation.multiply(layerTransformWithAnimation);
-                    
-                    float rootRelativeScale = maxScaleFromTransform(rootRelativeTransformWithAnimation);
-                    if (rootRelativeScale > maxScale) {
-                        maxScale = rootRelativeScale;
-                        maxScaleTransform = matrices[i];
-                    }
-                }
-            }
-        }
-    }
-    
-    return haveTransformAnimation;
 }
 
 bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, double timeOffset, const FloatSize& boxSize)
@@ -2675,7 +2564,7 @@ bool GraphicsLayerCA::setAnimationKeyframes(const KeyframeValueList& valueList, 
     return true;
 }
 
-bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* basicAnim, int functionIndex, TransformOperation::OperationType transformOpType, bool isMatrixAnimation, const FloatSize& boxSize, Vector<TransformationMatrix>& matrixes)
+bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* basicAnim, int functionIndex, TransformOperation::OperationType transformOpType, bool isMatrixAnimation, const FloatSize& boxSize)
 {
     ASSERT(valueList.size() == 2);
 
@@ -2687,9 +2576,8 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
     const TransformAnimationValue& startValue = static_cast<const TransformAnimationValue&>(valueList.at(fromIndex));
     const TransformAnimationValue& endValue = static_cast<const TransformAnimationValue&>(valueList.at(toIndex));
 
-    TransformationMatrix fromTransform, toTransform;
-    
     if (isMatrixAnimation) {
+        TransformationMatrix fromTransform, toTransform;
         startValue.value().apply(boxSize, fromTransform);
         endValue.value().apply(boxSize, toTransform);
 
@@ -2725,12 +2613,7 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
             getTransformFunctionValue(endValue.value().at(functionIndex), transformOpType, boxSize, toValue);
             basicAnim->setToValue(toValue);
         }
-
-        startValue.value().apply(boxSize, fromTransform);
-        endValue.value().apply(boxSize, toTransform);
     }
-    matrixes.append(fromTransform);
-    matrixes.append(toTransform);
 
     // This codepath is used for 2-keyframe animations, so we still need to look in the start
     // for a timing function. Even in the reversing animation case, the first keyframe provides the timing function.
@@ -2744,7 +2627,7 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
     return true;
 }
 
-bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* keyframeAnim, int functionIndex, TransformOperation::OperationType transformOpType, bool isMatrixAnimation, const FloatSize& boxSize, Vector<TransformationMatrix>& matrixes)
+bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* keyframeAnim, int functionIndex, TransformOperation::OperationType transformOpType, bool isMatrixAnimation, const FloatSize& boxSize)
 {
     Vector<float> keyTimes;
     Vector<float> floatValues;
@@ -2787,8 +2670,6 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
 
             curValue.value().apply(boxSize, transform);
         }
-
-        matrixes.append(transform);
 
         if (i < (valueList.size() - 1))
             timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation));
@@ -2940,7 +2821,7 @@ GraphicsLayerCA::LayerMap* GraphicsLayerCA::animatedLayerClones(AnimatedProperty
 
 void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
 {
-    float contentsScale = clampedContentsScaleForScale(m_rootRelativeScaleFactor, pageScaleFactor * deviceScaleFactor());
+    float contentsScale = pageScaleFactor * deviceScaleFactor();
 
     if (m_isPageTiledBackingLayer && tiledBacking()) {
         float zoomedOutScale = m_client.zoomedOutPageScaleFactor() * deviceScaleFactor();
@@ -2959,6 +2840,7 @@ void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
         // Tiled backing repaints automatically on scale change.
         return;
     }
+
     if (drawsContent())
         m_layer->setNeedsDisplay();
 }

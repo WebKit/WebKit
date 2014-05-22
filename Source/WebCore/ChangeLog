@@ -1,3 +1,33 @@
+2014-05-22  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r155977): Very stuttery 3D css animation on jtechcommunications.com
+        https://bugs.webkit.org/show_bug.cgi?id=133179
+        <rdar://problem/16864666>
+
+        Reviewed by Dean Jackson.
+
+        Revert code added in r155977 to try to pick a good contentsScale for layers
+        based on a root-relative transform. This resulted in pages with too much 
+        backing store, and too many cases where layers repainted during animations,
+        causing stutter.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::flushCompositingState):
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateContentsOpaque):
+        (WebCore::GraphicsLayerCA::updateAnimations):
+        (WebCore::GraphicsLayerCA::appendToUncommittedAnimations):
+        (WebCore::GraphicsLayerCA::setTransformAnimationEndpoints):
+        (WebCore::GraphicsLayerCA::setTransformAnimationKeyframes):
+        (WebCore::GraphicsLayerCA::updateContentsScale):
+        (WebCore::clampedContentsScaleForScale): Deleted.
+        (WebCore::maxScaleFromTransform): Deleted.
+        (WebCore::GraphicsLayerCA::updateRootRelativeScale): Deleted.
+        (WebCore::GraphicsLayerCA::getTransformFromAnimationsWithMaxScaleImpact): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2014-05-22  Martin Hock  <mhock@apple.com>
 
         [iOS] Enable -apple-system- styled elements to respond to system font size changes.

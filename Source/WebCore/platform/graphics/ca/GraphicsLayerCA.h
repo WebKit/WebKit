@@ -156,7 +156,7 @@ public:
             , treeDepth(0)
         { }
     };
-    void recursiveCommitChanges(const CommitState&, const TransformState&, const TransformationMatrix& rootRelativeTransformForScaling, float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
+    void recursiveCommitChanges(const CommitState&, const TransformState&, float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
 
     virtual void flushCompositingState(const FloatRect&) override;
     virtual void flushCompositingStateForThisLayerOnly() override;
@@ -243,8 +243,8 @@ private:
     bool setAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*);
     bool setAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*);
 
-    bool setTransformAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, TransformOperation::OperationType, bool isMatrixAnimation, const FloatSize& boxSize, Vector<TransformationMatrix>& matrixes);
-    bool setTransformAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, TransformOperation::OperationType, bool isMatrixAnimation, const FloatSize& boxSize, Vector<TransformationMatrix>& matrixes);
+    bool setTransformAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, TransformOperation::OperationType, bool isMatrixAnimation, const FloatSize& boxSize);
+    bool setTransformAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, TransformOperation::OperationType, bool isMatrixAnimation, const FloatSize& boxSize);
     
 #if ENABLE(CSS_FILTERS)
     bool setFilterAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, int internalFilterPropertyIndex);
@@ -258,7 +258,7 @@ private:
         return m_runningAnimations.find(animationName) != m_runningAnimations.end();
     }
 
-    void commitLayerChangesBeforeSublayers(CommitState&, float pageScaleFactor, const FloatPoint& positionRelativeToBase, const FloatRect& oldVisibleRect, TransformationMatrix* transformFromRoot = 0);
+    void commitLayerChangesBeforeSublayers(CommitState&, float pageScaleFactor, const FloatPoint& positionRelativeToBase, const FloatRect& oldVisibleRect);
     void commitLayerChangesAfterSublayers(CommitState&);
 
     FloatPoint computePositionRelativeToBase(float& pageScale) const;
@@ -267,7 +267,7 @@ private:
     void swapFromOrToTiledLayer(bool useTiledLayer);
 
     CompositingCoordinatesOrientation defaultContentsOrientation() const;
-    
+
     void setupContentsLayer(PlatformCALayer*);
     PlatformCALayer* contentsLayer() const { return m_contentsLayer.get(); }
 
@@ -280,7 +280,6 @@ private:
         FloatPoint& position, FloatSize&, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const;
 
     TransformationMatrix layerTransform(const FloatPoint& position, const TransformationMatrix* customTransform = 0) const;
-    void updateRootRelativeScale(TransformationMatrix* transformFromRoot);
 
     enum ComputeVisibleRectFlag { RespectAnimatingTransforms = 1 << 0 };
     typedef unsigned ComputeVisibleRectFlags;
@@ -411,9 +410,6 @@ private:
     bool appendToUncommittedAnimations(const KeyframeValueList&, const FilterOperation*, const Animation*, const String& animationName, int animationIndex, double timeOffset);
 #endif
 
-    // Returns true if any transform animations are running.
-    bool getTransformFromAnimationsWithMaxScaleImpact(const TransformationMatrix& parentTransformFromRoot, TransformationMatrix&, float& maxScale) const;
-    
     enum LayerChange {
         NoChange = 0,
         NameChanged = 1LLU << 1,
@@ -486,8 +482,6 @@ private:
     ContentsLayerPurpose m_contentsLayerPurpose;
     bool m_isPageTiledBackingLayer : 1;
     
-    float m_rootRelativeScaleFactor;
-    
     Color m_contentsSolidColor;
 
     RetainPtr<CGImageRef> m_uncorrectedContentsImage;
@@ -532,11 +526,6 @@ private:
     // Map of animation names to their associated lists of property animations, so we can remove/pause them.
     typedef HashMap<String, Vector<LayerPropertyAnimation>> AnimationsMap;
     AnimationsMap m_runningAnimations;
-
-    // Map from animation key to TransformationMatrices for animations of transform. The vector contains a matrix for
-    // the two endpoints, or each keyframe. Used for contentsScale adjustment.
-    typedef HashMap<String, Vector<TransformationMatrix>> TransformsMap;
-    TransformsMap m_animationTransforms;
 
     Vector<FloatRect> m_dirtyRects;
 

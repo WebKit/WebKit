@@ -28,14 +28,14 @@
                   (preserves3D 1)
                   (transform [0.94 0.00 -0.34 0.00] [0.00 1.00 0.00 0.00] [0.34 0.00 0.94 0.00] [0.00 0.00 0.00 1.00])
                   (visible rect 0.00, 0.00 0.00 x 0.00)
-                  (contentsScale 1.25)
+                  (contentsScale 1.00)
                   (children 1
                     (GraphicsLayer
                       (bounds 300.00 0.00)
                       (preserves3D 1)
                       (transform [0.94 0.00 -0.34 0.00] [0.00 1.00 0.00 0.00] [0.34 0.00 0.94 0.00] [0.00 0.00 0.00 1.00])
                       (visible rect 0.00, 0.00 0.00 x 0.00)
-                      (contentsScale 1.50)
+                      (contentsScale 1.00)
                       (children 1
                         (GraphicsLayer
                           (bounds 500.00 500.00)
@@ -76,14 +76,14 @@
                       (preserves3D 1)
                       (transform [0.77 0.00 -0.64 0.00] [0.00 1.00 0.00 0.00] [0.64 0.00 0.77 0.00] [0.00 0.00 0.00 1.00])
                       (visible rect 0.00, 0.00 0.00 x 0.00)
-                      (contentsScale 1.75)
+                      (contentsScale 1.00)
                       (children 1
                         (GraphicsLayer
                           (bounds 500.00 500.00)
                           (contentsOpaque 1)
                           (transform [1.00 0.00 0.00 0.00] [0.00 0.82 0.57 0.00] [0.00 -0.57 0.82 0.00] [0.00 0.00 0.00 1.00])
                           (visible rect 0.00, 0.00 500.00 x 351.87)
-                          (contentsScale 1.25)
+                          (contentsScale 1.00)
                         )
                       )
                     )

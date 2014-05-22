@@ -19,7 +19,7 @@ Box
           (drawsContent 1)
           (transform [1.50 0.00 0.00 0.00] [0.00 1.50 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
           (visible rect 0.00, 0.00 100.00 x 100.00)
-          (contentsScale 3.00)
+          (contentsScale 1.00)
         )
       )
     )
