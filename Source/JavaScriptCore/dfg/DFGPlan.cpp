@@ -264,8 +264,6 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
 
     dfg.m_fixpointState = FixpointConverged;
 
-    performStoreBarrierElision(dfg);
-    
     // If we're doing validation, then run some analyses, to give them an opportunity
     // to self-validate. Now is as good a time as any to do this.
     if (validationEnabled()) {
@@ -277,6 +275,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     case DFGMode: {
         performTierUpCheckInjection(dfg);
 
+        performStoreBarrierElision(dfg);
         performStoreElimination(dfg);
         performCPSRethreading(dfg);
         performDCE(dfg);
@@ -316,6 +315,11 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performLICM(dfg);
         performIntegerCheckCombining(dfg);
         performCSE(dfg);
+        
+        // At this point we're not allowed to do any further code motion because our reasoning
+        // about code motion assumes that it's OK to insert GC points in random places.
+        
+        performStoreBarrierElision(dfg);
         performLivenessAnalysis(dfg);
         performCFA(dfg);
         if (Options::validateFTLOSRExitLiveness())
