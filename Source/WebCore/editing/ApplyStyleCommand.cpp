@@ -807,9 +807,10 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, PassRef
         runs.append(InlineRunToApplyStyle(runStart, runEnd, pastEndNode));
     }
 
-    for (size_t i = 0; i < runs.size(); i++) {
-        removeConflictingInlineStyleFromRun(style, runs[i].start, runs[i].end, runs[i].pastEndNode);
-        runs[i].positionForStyleComputation = positionToComputeInlineStyleChange(runs[i].start, runs[i].dummyElement);
+    for (auto& run : runs) {
+        removeConflictingInlineStyleFromRun(style, run.start, run.end, run.pastEndNode);
+        if (run.startAndEndAreStillInDocument())
+            run.positionForStyleComputation = positionToComputeInlineStyleChange(run.start, run.dummyElement);
     }
 
     document()->updateLayoutIgnorePendingStylesheets();
