@@ -130,6 +130,7 @@ public:
     PassRefPtr<Range> markerRangeForNode(Node*, const String& markerType, unsigned index, ExceptionCode&);
     String markerDescriptionForNode(Node*, const String& markerType, unsigned index, ExceptionCode&);
     void addTextMatchMarker(const Range*, bool isActive);
+    void setMarkedTextMatchesAreHighlighted(bool, ExceptionCode&);
 
     void setScrollViewPosition(long x, long y, ExceptionCode&);
     void setPagination(const String& mode, int gap, ExceptionCode& ec) { setPagination(mode, gap, 0, ec); }

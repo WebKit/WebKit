@@ -29,7 +29,8 @@
 
 #include "NodeTraversal.h"
 #include "Range.h"
-#include "RenderObject.h"
+#include "RenderBlockFlow.h"
+#include "RenderText.h"
 #include "RenderedDocumentMarker.h"
 #include "TextIterator.h"
 #include <stdio.h>
@@ -165,6 +166,14 @@ void DocumentMarkerController::addMarker(Node* node, const DocumentMarker& newMa
     ASSERT(newMarker.endOffset() >= newMarker.startOffset());
     if (newMarker.endOffset() == newMarker.startOffset())
         return;
+
+    if (auto* renderer = node->renderer()) {
+        // FIXME: Factor the marker painting code out of InlineTextBox and teach simple line layout to use it.
+        if (renderer->isText())
+            toRenderText(*renderer).ensureLineBoxes();
+        else if (renderer->isRenderBlockFlow())
+            toRenderBlockFlow(*renderer).ensureLineBoxes();
+    }
 
     m_possiblyExistingMarkerTypes.add(newMarker.type());
 

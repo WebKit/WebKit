@@ -1,3 +1,15 @@
+2014-05-22  Antti Koivisto  <antti@apple.com>
+
+        Text markers don't paint on simple lines
+        https://bugs.webkit.org/show_bug.cgi?id=133177
+
+        Reviewed by Anders Carlsson.
+
+        * fast/text/mark-matches-rendering-expected.html: Added.
+        * fast/text/mark-matches-rendering-simple-lines-expected.html: Added.
+        * fast/text/mark-matches-rendering-simple-lines.html: Added.
+        * fast/text/mark-matches-rendering.html: Added.
+
 2014-05-22  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Split the grid-item-margin-auto-columns-rows.html test.

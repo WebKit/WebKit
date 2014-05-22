@@ -801,6 +801,16 @@ void Internals::addTextMatchMarker(const Range* range, bool isActive)
     range->ownerDocument().markers().addTextMatchMarker(range, isActive);
 }
 
+void Internals::setMarkedTextMatchesAreHighlighted(bool flag, ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    document->frame()->editor().setMarkedTextMatchesAreHighlighted(flag);
+}
+
 void Internals::setScrollViewPosition(long x, long y, ExceptionCode& ec)
 {
     Document* document = contextDocument();

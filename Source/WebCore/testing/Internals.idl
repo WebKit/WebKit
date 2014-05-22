@@ -81,6 +81,7 @@
     [RaisesException] Range markerRangeForNode(Node node, DOMString markerType, unsigned long index);
     [RaisesException] DOMString markerDescriptionForNode(Node node, DOMString markerType, unsigned long index);
     void addTextMatchMarker(Range range, boolean isActive);
+    [RaisesException] void setMarkedTextMatchesAreHighlighted(boolean flag);
 
     [RaisesException] void setScrollViewPosition(long x, long y);
 

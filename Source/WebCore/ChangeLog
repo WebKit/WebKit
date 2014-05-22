@@ -1,3 +1,28 @@
+2014-05-22  Antti Koivisto  <antti@apple.com>
+
+        Text markers don't paint on simple lines
+        https://bugs.webkit.org/show_bug.cgi?id=133177
+
+        Reviewed by Anders Carlsson.
+        
+        Marker painting code does not yet support simple lines.
+
+        Tests: fast/text/mark-matches-rendering-simple-lines.html
+               fast/text/mark-matches-rendering.html
+
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::addMarker):
+        
+            Force text blocks with markers to use line boxes.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMarkedTextMatchesAreHighlighted):
+        
+            Expose this so we can make reftests for marker rendering.
+
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2014-05-22  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Guard RenderObject::isRenderGrid() method
