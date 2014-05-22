@@ -113,6 +113,7 @@ media/controls-right-click-on-timebar.html
 platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html
 platform/mac/editing/pasteboard/drag-selections-to-contenteditable.html
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html
+editing/pasteboard/drag-drop-paragraph-crasher.html
 
 # [WK2] [Mac] Spellcheck tests don't seem to work
 webkit.org/b/105616 editing/spelling/context-menu-suggestions-multiword-selection.html

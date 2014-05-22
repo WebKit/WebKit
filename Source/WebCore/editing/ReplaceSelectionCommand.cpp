@@ -628,8 +628,11 @@ void ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuild
             continue;
 
         if (isProhibitedParagraphChild(toHTMLElement(node.get())->localName())) {
-            if (HTMLElement* paragraphElement = toHTMLElement(enclosingNodeWithTag(positionInParentBeforeNode(node.get()), pTag)))
-                moveNodeOutOfAncestor(node, paragraphElement);
+            if (auto* paragraphElement = toHTMLElement(enclosingNodeWithTag(positionInParentBeforeNode(node.get()), pTag))) {
+                auto* parent = paragraphElement->parentNode();
+                if (parent && parent->hasEditableStyle())
+                    moveNodeOutOfAncestor(node, paragraphElement);
+            }
         }
 
         if (isHeaderElement(node.get())) {

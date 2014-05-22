@@ -1,3 +1,21 @@
+2014-05-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Dragging text from one paragraph to another does not render as expected
+        https://bugs.webkit.org/show_bug.cgi?id=132633
+
+        Reviewed by Darin Adler and Ryosuke Niwa.
+
+        When we are dragging and dropping into a content editable field, we detect
+        if we are trying to put a <p> into an existing <p>, and if so, split the
+        outer <p> and insert the new <p> as its sibling. However, the outer <p>
+        might not be editable, so we don't want to do any splitting and inserting
+        at that location.
+
+        Test: editing/pasteboard/drag-drop-paragraph-crasher.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuilder):
+
 2014-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] TLSErrors do not cause page load to fail when not ignored
