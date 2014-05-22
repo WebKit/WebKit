@@ -187,10 +187,15 @@ Node::InsertionNotificationRequest SVGUseElement::insertedInto(ContainerNode* ro
         return InsertionDone;
     ASSERT(!m_targetElementInstance || !isWellFormedDocument(document()));
     ASSERT(!hasPendingResources() || !isWellFormedDocument(document()));
-    if (!m_wasInsertedByParser)
-        buildPendingResource();
     SVGExternalResourcesRequired::insertedIntoDocument(this);
+    if (!m_wasInsertedByParser)
+        return InsertionShouldCallDidNotifySubtreeInsertions;
     return InsertionDone;
+}
+
+void SVGUseElement::didNotifySubtreeInsertions(ContainerNode*)
+{
+    buildPendingResource();
 }
 
 void SVGUseElement::removedFrom(ContainerNode* rootParent)

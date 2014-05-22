@@ -91,8 +91,13 @@ Node::InsertionNotificationRequest SVGMPathElement::insertedInto(ContainerNode* 
 {
     SVGElement::insertedInto(rootParent);
     if (rootParent->inDocument())
-        buildPendingResource();
+        return InsertionShouldCallDidNotifySubtreeInsertions;
     return InsertionDone;
+}
+
+void SVGMPathElement::didNotifySubtreeInsertions(ContainerNode*)
+{
+    buildPendingResource();
 }
 
 void SVGMPathElement::removedFrom(ContainerNode* rootParent)

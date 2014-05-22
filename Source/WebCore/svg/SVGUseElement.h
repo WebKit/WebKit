@@ -55,6 +55,9 @@ public:
 
     RenderObject* rendererClipChild() const;
 
+protected:
+    virtual void didNotifySubtreeInsertions(ContainerNode*) override;
+
 private:
     SVGUseElement(const QualifiedName&, Document*, bool wasInsertedByParser);
 

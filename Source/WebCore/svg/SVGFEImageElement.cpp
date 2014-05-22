@@ -177,8 +177,12 @@ void SVGFEImageElement::svgAttributeChanged(const QualifiedName& attrName)
 Node::InsertionNotificationRequest SVGFEImageElement::insertedInto(ContainerNode* rootParent)
 {
     SVGFilterPrimitiveStandardAttributes::insertedInto(rootParent);
+    return InsertionShouldCallDidNotifySubtreeInsertions;
+}
+
+void SVGFEImageElement::didNotifySubtreeInsertions(ContainerNode*)
+{
     buildPendingResource();
-    return InsertionDone;
 }
 
 void SVGFEImageElement::removedFrom(ContainerNode* rootParent)

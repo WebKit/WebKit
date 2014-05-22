@@ -43,6 +43,9 @@ public:
 
     void targetPathChanged();
 
+protected:
+    virtual void didNotifySubtreeInsertions(ContainerNode*) override;
+
 private:
     SVGMPathElement(const QualifiedName&, Document*);
 
