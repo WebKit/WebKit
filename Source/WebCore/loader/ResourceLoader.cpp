@@ -170,6 +170,8 @@ void ResourceLoader::setDefersLoading(bool defers)
         m_deferredRequest = ResourceRequest();
         start();
     }
+
+    platformStrategies()->loaderStrategy()->resourceLoadScheduler()->setDefersLoading(this, defers);
 }
 
 FrameLoader* ResourceLoader::frameLoader() const

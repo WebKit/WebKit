@@ -48,6 +48,7 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters()
     , inPrivateBrowsingMode(false)
     , shouldClearReferrerOnHTTPSToHTTPRedirect(true)
     , isMainResource(false)
+    , defersLoading(false)
 {
 }
 
@@ -97,6 +98,7 @@ void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) co
     encoder << inPrivateBrowsingMode;
     encoder << shouldClearReferrerOnHTTPSToHTTPRedirect;
     encoder << isMainResource;
+    encoder << defersLoading;
 }
 
 bool NetworkResourceLoadParameters::decode(CoreIPC::ArgumentDecoder& decoder, NetworkResourceLoadParameters& result)
@@ -146,6 +148,8 @@ bool NetworkResourceLoadParameters::decode(CoreIPC::ArgumentDecoder& decoder, Ne
     if (!decoder.decode(result.shouldClearReferrerOnHTTPSToHTTPRedirect))
         return false;
     if (!decoder.decode(result.isMainResource))
+        return false;
+    if (!decoder.decode(result.defersLoading))
         return false;
 
     return true;

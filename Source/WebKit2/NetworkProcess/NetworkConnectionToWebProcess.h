@@ -74,6 +74,7 @@ private:
 
     void removeLoadIdentifier(ResourceLoadIdentifier);
     void crossOriginRedirectReceived(ResourceLoadIdentifier, const WebCore::KURL& redirectURL);
+    void setDefersLoading(ResourceLoadIdentifier, bool);
     void servePendingRequests(uint32_t resourceLoadPriority);
     void setSerialLoadingEnabled(bool);
     void startDownload(bool privateBrowsingEnabled, uint64_t downloadID, const WebCore::ResourceRequest&);

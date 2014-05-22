@@ -50,6 +50,7 @@ public:
     
     virtual void remove(WebCore::ResourceLoader*) OVERRIDE;
     virtual void crossOriginRedirectReceived(WebCore::ResourceLoader*, const WebCore::KURL& redirectURL) OVERRIDE;
+    virtual void setDefersLoading(WebCore::ResourceLoader*, bool) override;
     
     virtual void servePendingRequests(WebCore::ResourceLoadPriority minimumPriority = WebCore::ResourceLoadPriorityVeryLow) OVERRIDE;
 

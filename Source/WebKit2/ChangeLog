@@ -1,3 +1,44 @@
+2014-05-22  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r167635
+
+    2014-04-21  Dan Bernstein  <mitz@apple.com>
+
+            WebKit part of <rdar://problem/16631323> Page::setDefersLoading doesn’t do anything when using the Network process
+            https://bugs.webkit.org/show_bug.cgi?id=131939
+
+            Reviewed by David Kilzer.
+
+            * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+            (WebKit::NetworkConnectionToWebProcess::setDefersLoading): Added. Forwards the message to
+            the NetworkResourceLoader. 
+            * NetworkProcess/NetworkConnectionToWebProcess.h:
+
+            * NetworkProcess/NetworkConnectionToWebProcess.messages.in: Added SetDefersLoading message.
+
+            * NetworkProcess/NetworkResourceLoader.cpp:
+            (WebKit::NetworkResourceLoader::NetworkResourceLoader): Initialize new member variable
+            m_defersLoading from the new field in the loader parameters.
+            (WebKit::NetworkResourceLoader::start): Added. Like WebCore::ResourceLoader, if loading is
+            deferred, keep the request in m_deferredRequest and bail out.
+            (WebKit::NetworkResourceLoader::setDefersLoading): Added. Similar to
+            WebCore::ResourceLoader::setDefersLoading.
+            * NetworkProcess/NetworkResourceLoader.h:
+            (WebKit::NetworkResourceLoader::defersLoading): 
+
+            * Shared/Network/NetworkResourceLoadParameters.cpp:
+            (WebKit::NetworkResourceLoadParameters::NetworkResourceLoadParameters): Initialize new field
+            defersLoading to false.
+            (WebKit::NetworkResourceLoadParameters::encode): Encode new field.
+            (WebKit::NetworkResourceLoadParameters::decode): Decode new field.
+            * Shared/Network/NetworkResourceLoadParameters.h: Added defersLoading field.
+
+            * WebProcess/Network/WebResourceLoadScheduler.cpp:
+            (WebKit::WebResourceLoadScheduler::scheduleLoad): Populate defersLoading field in the load
+            parameters.
+            (WebKit::WebResourceLoadScheduler::setDefersLoading): Send a message to the Network process.
+            * WebProcess/Network/WebResourceLoadScheduler.h:
+
 2014-04-30  Lucas Forschler  <lforschler@apple.com>
 
         Merge r166810
