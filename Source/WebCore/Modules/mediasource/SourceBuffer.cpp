@@ -49,6 +49,9 @@
 #include "TimeRanges.h"
 #include "VideoTrackList.h"
 #include <map>
+#include <runtime/JSCInlines.h>
+#include <runtime/JSLock.h>
+#include <runtime/VM.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -103,6 +106,7 @@ SourceBuffer::SourceBuffer(PassRef<SourceBufferPrivate> sourceBufferPrivate, Med
     , m_timeOfBufferingMonitor(monotonicallyIncreasingTime())
     , m_bufferedSinceLastMonitor(0)
     , m_averageBufferRate(0)
+    , m_reportedExtraMemoryCost(0)
     , m_pendingRemoveStart(MediaTime::invalidTime())
     , m_pendingRemoveEnd(MediaTime::invalidTime())
     , m_removeTimer(this, &SourceBuffer::removeTimerFired)
@@ -289,6 +293,11 @@ void SourceBuffer::removedFromMediaSource()
 
     abortIfUpdating();
 
+    for (auto& trackBufferPair : m_trackBufferMap.values()) {
+        trackBufferPair.samples.clear();
+        trackBufferPair.decodeQueue.clear();
+    }
+
     m_private->removedFromMediaSource();
     m_source = 0;
     m_asyncEventQueue.close();
@@ -446,6 +455,8 @@ void SourceBuffer::appendBufferInternal(unsigned char* data, unsigned size, Exce
 
     // 6. Asynchronously run the buffer append algorithm.
     m_appendBufferTimer.startOneShot(0);
+
+    reportExtraMemoryCost();
 }
 
 void SourceBuffer::appendBufferTimerFired(Timer<SourceBuffer>&)
@@ -516,6 +527,8 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(SourceBufferPrivate*, Appen
         m_source->monitorSourceBuffers();
     for (auto iter = m_trackBufferMap.begin(), end = m_trackBufferMap.end(); iter != end; ++iter)
         provideMediaData(iter->value, iter->key);
+
+    reportExtraMemoryCost();
 }
 
 void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& end)
@@ -1422,6 +1435,23 @@ bool SourceBuffer::canPlayThrough()
 
     double timeRemaining = duration - currentTime;
     return unbufferedTime / m_averageBufferRate < timeRemaining;
+}
+
+void SourceBuffer::reportExtraMemoryCost()
+{
+    size_t extraMemoryCost = m_pendingAppendData.capacity();
+    for (auto& trackBuffer : m_trackBufferMap.values())
+        extraMemoryCost += trackBuffer.samples.sizeInBytes();
+
+    if (extraMemoryCost < m_reportedExtraMemoryCost)
+        return;
+
+    size_t extraMemoryCostDelta = extraMemoryCost - m_reportedExtraMemoryCost;
+    m_reportedExtraMemoryCost = extraMemoryCost;
+
+    JSC::JSLockHolder lock(scriptExecutionContext()->vm());
+    if (extraMemoryCostDelta > 0)
+        scriptExecutionContext()->vm().heap.reportExtraMemoryCost(extraMemoryCostDelta);
 }
 
 } // namespace WebCore

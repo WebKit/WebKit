@@ -1,3 +1,43 @@
+2014-05-22  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r169209
+
+    2014-05-22  Jer Noble  <jer.noble@apple.com>
+    
+            [MSE] Stored samples are not freed when SourceBuffer is removed from MediaSource
+            https://bugs.webkit.org/show_bug.cgi?id=133174
+    
+            Reviewed by Eric Carlson.
+    
+            Clear out stored MediaSamples from SourceBuffer's TrackBuffer storage when
+            aborting loading. Also, report the memory cost of those samples, so that the
+            SourceBuffer will be GCd more readily.
+    
+            Add a mechanism for reporting the size of a MediaSample:
+            * Modules/mediasource/SourceBuffer.h:
+            * platform/MediaSample.h:
+            * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+            * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+    
+            Track the memory usage of a SampleMap when adding and removing samples, as well
+            as allowing the SampleMap to be cleared wholesale:
+            * Modules/mediasource/SampleMap.cpp:
+            (WebCore::SampleMap::clear): Release all stored MediaSamples.
+            (WebCore::SampleMap::addSample): Update m_totalSize.
+            (WebCore::SampleMap::removeSample): Ditto.
+            * Modules/mediasource/SampleMap.h:
+            (WebCore::SampleMap::SampleMap): Initialize m_totalSize.
+            (WebCore::SampleMap::sizeInBytes): Simple accessor.
+    
+            Clear the stored samples when loading is aborted, and report the extra memory
+            cost
+            * Modules/mediasource/SourceBuffer.cpp:
+            (WebCore::SourceBuffer::SourceBuffer): Initialize m_reportedExtraMemoryCost.
+            (WebCore::SourceBuffer::removedFromMediaSource): Clear all stored samples.
+            (WebCore::SourceBuffer::sourceBufferPrivateAppendComplete): Call reportExtraMemoryCost().
+            (WebCore::SourceBuffer::reportExtraMemoryCost): Inform the vm of the new
+                extra memory cost incurred by the object.
+    
 2014-05-20  Matthew Hanson  <matthew_hanson@apple.com>
 
         Rollout r169076.

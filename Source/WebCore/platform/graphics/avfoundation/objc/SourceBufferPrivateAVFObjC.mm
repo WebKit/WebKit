@@ -89,6 +89,7 @@ SOFT_LINK(CoreMedia, CMSampleBufferGetDuration, CMTime, (CMSampleBufferRef sbuf)
 SOFT_LINK(CoreMedia, CMSampleBufferGetFormatDescription, CMFormatDescriptionRef, (CMSampleBufferRef sbuf), (sbuf))
 SOFT_LINK(CoreMedia, CMSampleBufferGetPresentationTimeStamp, CMTime, (CMSampleBufferRef sbuf), (sbuf))
 SOFT_LINK(CoreMedia, CMSampleBufferGetSampleAttachmentsArray, CFArrayRef, (CMSampleBufferRef sbuf, Boolean createIfNecessary), (sbuf, createIfNecessary))
+SOFT_LINK(CoreMedia, CMSampleBufferGetTotalSampleSize, size_t, (CMSampleBufferRef sbuf), (sbuf))
 SOFT_LINK(CoreMedia, CMFormatDescriptionGetMediaSubType, FourCharCode, (CMFormatDescriptionRef desc), (desc))
 SOFT_LINK(CoreMedia, CMSetAttachment, void, (CMAttachmentBearerRef target, CFStringRef key, CFTypeRef value, CMAttachmentMode attachmentMode), (target, key, value, attachmentMode))
 SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, (CMVideoFormatDescriptionRef videoDesc, Boolean usePixelAspectRatio, Boolean useCleanAperture), (videoDesc, usePixelAspectRatio, useCleanAperture))
@@ -292,6 +293,7 @@ public:
     virtual MediaTime decodeTime() const override { return toMediaTime(CMSampleBufferGetDecodeTimeStamp(m_sample.get())); }
     virtual MediaTime duration() const override { return toMediaTime(CMSampleBufferGetDuration(m_sample.get())); }
     virtual AtomicString trackID() const override { return m_id; }
+    virtual size_t sizeInBytes() const override { return CMSampleBufferGetTotalSampleSize(m_sample.get()); }
 
     virtual SampleFlags flags() const override;
     virtual PlatformSample platformSample() override;

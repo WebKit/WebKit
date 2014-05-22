@@ -156,6 +156,8 @@ private:
     void removeTimerFired(Timer<SourceBuffer>*);
     void removeCodedFrames(const MediaTime& start, const MediaTime& end);
 
+    void reportExtraMemoryCost();
+
     Ref<SourceBufferPrivate> m_private;
     MediaSource* m_source;
     GenericEventQueue m_asyncEventQueue;
@@ -187,6 +189,8 @@ private:
     double m_timeOfBufferingMonitor;
     double m_bufferedSinceLastMonitor;
     double m_averageBufferRate;
+
+    size_t m_reportedExtraMemoryCost;
 
     MediaTime m_pendingRemoveStart;
     MediaTime m_pendingRemoveEnd;

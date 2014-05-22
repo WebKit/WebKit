@@ -44,8 +44,15 @@ public:
     typedef std::pair<iterator, iterator> iterator_range;
     typedef std::pair<reverse_iterator, reverse_iterator> reverse_iterator_range;
 
+    SampleMap()
+        : m_totalSize(0)
+    {
+    }
+
+    void clear();
     void addSample(PassRefPtr<MediaSample>);
     void removeSample(MediaSample*);
+    size_t sizeInBytes() const { return m_totalSize; }
 
     iterator presentationBegin() { return m_presentationSamples.begin(); }
     iterator presentationEnd() { return m_presentationSamples.end(); }
@@ -73,6 +80,7 @@ public:
 private:
     MapType m_presentationSamples;
     MapType m_decodeSamples;
+    size_t m_totalSize;
 };
 
 }
