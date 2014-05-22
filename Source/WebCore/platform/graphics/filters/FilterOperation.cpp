@@ -112,27 +112,6 @@ double BasicComponentTransferFilterOperation::passthroughAmount() const
     }
 }
 
-PassRefPtr<FilterOperation> GammaFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
-{
-    if (from && !from->isSameType(*this))
-        return this;
-    
-    if (blendToPassthrough)
-        return GammaFilterOperation::create(
-            WebCore::blend(m_amplitude, 1.0, progress),
-            WebCore::blend(m_exponent, 1.0, progress),
-            WebCore::blend(m_offset, 0.0, progress), m_type);
-        
-    const GammaFilterOperation* fromOp = static_cast<const GammaFilterOperation*>(from);
-    double fromAmplitude = fromOp ? fromOp->amplitude() : 1;
-    double fromExponent = fromOp ? fromOp->exponent() : 1;
-    double fromOffset = fromOp ? fromOp->offset() : 0;
-    return GammaFilterOperation::create(
-        WebCore::blend(fromAmplitude, m_amplitude, progress),
-        WebCore::blend(fromExponent, m_exponent, progress),
-        WebCore::blend(fromOffset, m_offset, progress), m_type);
-}
-
 PassRefPtr<FilterOperation> BlurFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
 {
     if (from && !from->isSameType(*this))

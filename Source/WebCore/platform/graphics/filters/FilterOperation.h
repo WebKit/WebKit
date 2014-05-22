@@ -268,41 +268,6 @@ private:
     double m_amount;
 };
 
-class GammaFilterOperation : public FilterOperation {
-public:
-    static PassRefPtr<GammaFilterOperation> create(double amplitude, double exponent, double offset, OperationType type)
-    {
-        return adoptRef(new GammaFilterOperation(amplitude, exponent, offset, type));
-    }
-
-    double amplitude() const { return m_amplitude; }
-    double exponent() const { return m_exponent; }
-    double offset() const { return m_offset; }
-
-    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false);
-
-private:
-    virtual bool operator==(const FilterOperation& o) const
-    {
-        if (!isSameType(o))
-            return false;
-        const GammaFilterOperation* other = static_cast<const GammaFilterOperation*>(&o);
-        return m_amplitude == other->m_amplitude && m_exponent == other->m_exponent && m_offset == other->m_offset;
-    }
-
-    GammaFilterOperation(double amplitude, double exponent, double offset, OperationType type)
-        : FilterOperation(type)
-        , m_amplitude(amplitude)
-        , m_exponent(exponent)
-        , m_offset(offset)
-    {
-    }
-
-    double m_amplitude;
-    double m_exponent;
-    double m_offset;
-};
-
 class BlurFilterOperation : public FilterOperation {
 public:
     static PassRefPtr<BlurFilterOperation> create(Length stdDeviation, OperationType type)

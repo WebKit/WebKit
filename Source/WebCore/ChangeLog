@@ -1,5 +1,20 @@
 2014-05-22  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r157816
+
+    2013-10-22  Tim Horton  <timothy_horton@apple.com>
+
+            GammaFilterOperation seems to be dead code
+            https://bugs.webkit.org/show_bug.cgi?id=123173
+
+            Reviewed by Simon Fraser.
+
+            * platform/graphics/filters/FilterOperation.cpp:
+            * platform/graphics/filters/FilterOperation.h:
+            Remove dead code.
+
+2014-05-22  Lucas Forschler  <lforschler@apple.com>
+
         Merge r155315
 
     2013-09-08  Andreas Kling  <akling@apple.com>
