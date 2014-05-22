@@ -50,6 +50,7 @@ public:
     virtual MediaTime decodeTime() const override { return m_box.decodeTimestamp(); }
     virtual MediaTime duration() const override { return m_box.duration(); }
     virtual AtomicString trackID() const override { return m_id; }
+    virtual size_t sizeInBytes() const override { return sizeof(m_box); }
 
     virtual SampleFlags flags() const override;
     virtual PlatformSample platformSample() override;

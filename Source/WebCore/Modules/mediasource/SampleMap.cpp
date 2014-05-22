@@ -80,12 +80,21 @@ public:
     }
 };
 
+void SampleMap::clear()
+{
+    m_presentationSamples.clear();
+    m_decodeSamples.clear();
+    m_totalSize = 0;
+}
+
 void SampleMap::addSample(PassRefPtr<MediaSample> prpSample)
 {
     RefPtr<MediaSample> sample = prpSample;
     ASSERT(sample);
     m_presentationSamples.insert(MapType::value_type(sample->presentationTime(), sample));
     m_decodeSamples.insert(MapType::value_type(sample->decodeTime(), sample));
+
+    m_totalSize += sample->sizeInBytes();
 }
 
 void SampleMap::removeSample(MediaSample* sample)
@@ -93,6 +102,8 @@ void SampleMap::removeSample(MediaSample* sample)
     ASSERT(sample);
     m_presentationSamples.erase(sample->presentationTime());
     m_decodeSamples.erase(sample->decodeTime());
+
+    m_totalSize -= sample->sizeInBytes();
 }
 
 SampleMap::iterator SampleMap::findSampleContainingPresentationTime(const MediaTime& time)
