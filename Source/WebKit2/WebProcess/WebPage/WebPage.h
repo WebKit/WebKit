@@ -487,6 +487,7 @@ public:
     void updateSelectionAppearance();
 
     void dispatchAsynchronousTouchEvents(const Vector<WebTouchEvent, 1>& queue);
+    void contentSizeCategoryDidChange(const String&);
 #if ENABLE(INSPECTOR)
     void showInspectorIndication();
     void hideInspectorIndication();

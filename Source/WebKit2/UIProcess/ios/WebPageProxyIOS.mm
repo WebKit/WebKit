@@ -654,6 +654,11 @@ void WebPageProxy::didFinishDrawingPagesToPDF(const IPC::DataReference& pdfData)
     m_pageClient.didFinishDrawingPagesToPDF(pdfData);
 }
 
+void WebPageProxy::contentSizeCategoryDidChange(const String& contentSizeCategory)
+{
+    process().send(Messages::WebPage::ContentSizeCategoryDidChange(contentSizeCategory), m_pageID);
+}
+
 #if USE(QUICK_LOOK)
     
 void WebPageProxy::didStartLoadForQuickLookDocumentInMainFrame(const String& fileName, const String& uti)

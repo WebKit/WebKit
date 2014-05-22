@@ -78,6 +78,7 @@ messages -> WebPage LegacyReceiver {
     ApplicationWillResignActive()
     ApplicationWillEnterForeground()
     ApplicationDidBecomeActive()
+    ContentSizeCategoryDidChange(String contentSizeCategory)
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)

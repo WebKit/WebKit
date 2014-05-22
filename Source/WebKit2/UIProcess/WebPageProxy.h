@@ -634,6 +634,7 @@ public:
     void didNotHandleTapAsClick(const WebCore::IntPoint&);
     void viewportMetaTagWidthDidChange(float width);
     void didFinishDrawingPagesToPDF(const IPC::DataReference&);
+    void contentSizeCategoryDidChange(const String& contentSizeCategory);
 #endif
 
     const EditorState& editorState() const { return m_editorState; }

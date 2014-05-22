@@ -1,3 +1,19 @@
+2014-05-22  Martin Hock  <mhock@apple.com>
+
+        [iOS] Enable -apple-system- styled elements to respond to system font size changes.
+        https://bugs.webkit.org/show_bug.cgi?id=133186
+        <rdar://problem/16583782>
+
+        Reviewed by Enrica Casucci.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::_contentSizeCategory):
+        (WebCore::RenderThemeIOS::contentSizeCategory):
+        (WebCore::RenderThemeIOS::setContentSizeCategory):
+
 2014-05-22  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Stored samples are not freed when SourceBuffer is removed from MediaSource

@@ -306,9 +306,22 @@ PassRefPtr<RenderTheme> RenderThemeIOS::create()
     return adoptRef(new RenderThemeIOS);
 }
 
+static String& _contentSizeCategory()
+{
+    static NeverDestroyed<String> _contentSizeCategory;
+    return _contentSizeCategory.get();
+}
+
 CFStringRef RenderThemeIOS::contentSizeCategory()
 {
+    if (!_contentSizeCategory().isNull())
+        return (__bridge CFStringRef)static_cast<NSString*>(_contentSizeCategory());
     return (CFStringRef)[[getUIApplicationClass() sharedApplication] preferredContentSizeCategory];
+}
+
+void RenderThemeIOS::setContentSizeCategory(const String& contentSizeCategory)
+{
+    _contentSizeCategory() = contentSizeCategory;
 }
 
 const Color& RenderThemeIOS::shadowColor() const

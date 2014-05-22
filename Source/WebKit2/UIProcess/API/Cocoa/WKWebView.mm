@@ -78,6 +78,7 @@
 #import "WebPageMessages.h"
 #import <CoreGraphics/CGFloat.h>
 #import <CoreGraphics/CGPDFDocumentPrivate.h>
+#import <UIKit/UIApplication.h>
 #import <UIKit/UIPeripheralHost_Private.h>
 #import <QuartzCore/CARenderServer.h>
 #import <QuartzCore/QuartzCorePrivate.h>
@@ -232,6 +233,8 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     [center addObserver:self selector:@selector(_keyboardDidChangeFrame:) name:UIKeyboardDidChangeFrameNotification object:nil];
     [center addObserver:self selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [center addObserver:self selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    [center addObserver:self selector:@selector(_contentSizeCategoryDidChange:) name:UIContentSizeCategoryDidChangeNotification object:nil];
+    _page->contentSizeCategoryDidChange([self _contentSizeCategory]);
 
     [[_configuration _contentProviderRegistry] addPage:*_page];
 #endif
@@ -1028,6 +1031,16 @@ static inline void setViewportConfigurationMinimumLayoutSize(WebKit::WebPageProx
         return;
 
     [self _keyboardChangedWithInfo:notification.userInfo adjustScrollView:YES];
+}
+
+- (void)_contentSizeCategoryDidChange:(NSNotification *)notification
+{
+    _page->contentSizeCategoryDidChange([self _contentSizeCategory]);
+}
+
+- (NSString *)_contentSizeCategory
+{
+    return [[UIApplication sharedApplication] preferredContentSizeCategory];
 }
 
 - (void)setAllowsBackForwardNavigationGestures:(BOOL)allowsBackForwardNavigationGestures

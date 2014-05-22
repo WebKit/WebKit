@@ -76,6 +76,7 @@
 #import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/RenderBlock.h>
 #import <WebCore/RenderImage.h>
+#import <WebCore/RenderThemeIOS.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/ResourceBuffer.h>
 #import <WebCore/SharedBuffer.h>
@@ -2324,6 +2325,12 @@ void WebPage::computePagesForPrintingAndStartDrawingToPDF(uint64_t frameID, cons
     RetainPtr<CFMutableDataRef> pdfPageData;
     drawPagesToPDFImpl(frameID, printInfo, firstPage, pageCount - firstPage, pdfPageData);
     send(Messages::WebPageProxy::DidFinishDrawingPagesToPDF(IPC::DataReference(CFDataGetBytePtr(pdfPageData.get()), CFDataGetLength(pdfPageData.get()))));
+}
+
+void WebPage::contentSizeCategoryDidChange(const String& contentSizeCategory)
+{
+    RenderThemeIOS::setContentSizeCategory(contentSizeCategory);
+    Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 }
 
 } // namespace WebKit

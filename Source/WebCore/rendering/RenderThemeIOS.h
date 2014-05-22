@@ -47,6 +47,8 @@ public:
 
     static CFStringRef contentSizeCategory();
 
+    static void setContentSizeCategory(const String&);
+
 protected:
     virtual int baselinePosition(const RenderObject&) const override;
 
