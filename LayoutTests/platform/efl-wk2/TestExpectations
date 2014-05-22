@@ -546,11 +546,18 @@ webkit.org/b/130020 webaudio/codec-tests/wav/24bit-22khz-resample.html [ Failure
 webkit.org/b/130340 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html [ ImageOnlyFailure ]
 
 # Need HighDPI support
+webkit.org/b/131987 fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ ImageOnlyFailure ]
 webkit.org/b/131987 fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131987 fast/borders/hidpi-border-image-gradient-on-subpixels.html [ ImageOnlyFailure ]
+webkit.org/b/131987 fast/borders/hidpi-double-border-with-border-radius-always-produce-solid-line.html [ ImageOnlyFailure ]
 webkit.org/b/131987 fast/borders/hidpi-rounded-border-on-subpixel-position.html [ ImageOnlyFailure ]
-webkit.org/b/129733 fast/borders/hidpi-simple-hairline-border-painting.html [ ImageOnlyFailure ]
+webkit.org/b/131987 fast/borders/hidpi-simple-hairline-border-painting.html [ ImageOnlyFailure ]
+webkit.org/b/131987 fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlines.html [ ImageOnlyFailure ]
+webkit.org/b/131987 fast/inline/hidpi-select-inline-on-subpixel-position.html [ ImageOnlyFailure ]
+webkit.org/b/131987 fast/inline/hidpi-selection-gap-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131987 fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
 webkit.org/b/131987 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]
 
 webkit.org/b/132049 fast/css3-text/css3-text-decoration/text-decoration-skip/glyph-inside-underline.html [ ImageOnlyFailure ]
+
+webkit.org/b/133181 fast/forms/textarea-placeholder-wrapping.html [ ImageOnlyFailure ]
