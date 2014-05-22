@@ -83,7 +83,7 @@ AM_WEBKIT_DETERMINE_BUILD_TARGET_STATUS([quartz], [enable_quartz_target], [build
 AM_WEBKIT_DETERMINE_BUILD_TARGET_STATUS([directfb], [enable_directfb_target], [build_targets])
 
 AC_MSG_CHECKING([whether to build for the Win32 target])
-AC_MSG_RESULT([$enable_wayland_target])
+AC_MSG_RESULT([$enable_win32_target])
 
 AC_MSG_CHECKING([whether to enable spellcheck support])
 AC_ARG_ENABLE([spellcheck],
