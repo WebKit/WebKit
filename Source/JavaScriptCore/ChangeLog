@@ -1,3 +1,12 @@
+2014-05-21  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
+
+        [EFL] Add include path of compact_unwind_encoding.h if FTL JIT is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=132907
+
+        Reviewed by Gyuyoung Kim.
+
+        * CMakeLists.txt:
+
 2014-05-16  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] Improve handling of LIB_INSTALL_DIR, EXEC_INSTALL_DIR, and LIBEXEC_INSTALL_DIR

@@ -292,6 +292,7 @@ endif ()
 
 if (ENABLE_FTL_JIT)
     find_package(LLVM REQUIRED)
+    find_package(LIBCXXABI REQUIRED)
     set(HAVE_LLVM ON)
 endif ()
 

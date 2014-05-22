@@ -62,6 +62,7 @@ function installDependenciesWithApt {
         libxrender-dev \
         libp11-kit-dev \
         libgpg-error-dev \
+        libc++abi-dev \
         libgcrypt11-dev
 
     # These are dependencies necessary for running tests.

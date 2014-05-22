@@ -688,6 +688,7 @@ if (ENABLE_FTL_JIT)
     # Added extra items for JavaScriptCore
     list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
         ${LLVM_INCLUDE_DIRS}
+        ${LIBCXXABI_INCLUDE_DIRS}
     )
 
     list(APPEND JavaScriptCore_SOURCES
