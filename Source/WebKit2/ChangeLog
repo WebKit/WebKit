@@ -1,3 +1,19 @@
+2014-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKitWebPage::send-request always pass a valid pointer for redirected response
+        https://bugs.webkit.org/show_bug.cgi?id=133119
+
+        Reviewed by Sergio Villar Senin.
+
+        The problem is that we were checking whether the passed in
+        WKURLResponseRef is NULL or not, but it's always a valid object
+        that can contain a NULL WebCore::ResourceResponse.
+
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (willSendRequestForFrame): Pass NULL as redirect-response
+        parameter of WebKitWebPage::send-request signal when the
+        WebCore::ResourceResponse of the passed in WKURLResponseRef is NULL.
+
 2014-04-28  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2][X11] NetscapePluginModule::scanPlugin() should write UTF-8 strings to stdout

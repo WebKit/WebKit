@@ -1,3 +1,20 @@
+2014-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKitWebPage::send-request always pass a valid pointer for redirected response
+        https://bugs.webkit.org/show_bug.cgi?id=133119
+
+        Reviewed by Sergio Villar Senin.
+
+        Check that redirect response parameter of
+        WebKitWebPage::send-request signal is NULL when not redirecting
+        and a valid WebKitURIResponse object when redirecting.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestResources.cpp:
+        (testWebResourceSendRequest):
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebExtensionTest.cpp:
+        (sendRequestCallback):
+
 2014-05-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix the build after r168707.

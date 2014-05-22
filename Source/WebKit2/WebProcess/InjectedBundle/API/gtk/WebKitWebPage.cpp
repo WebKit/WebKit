@@ -163,7 +163,8 @@ static void didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef fr
 static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef wkRequest, WKURLResponseRef wkRedirectResponse, const void* clientInfo)
 {
     GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(toImpl(wkRequest)->resourceRequest()));
-    GRefPtr<WebKitURIResponse> redirectResponse = wkRedirectResponse ? adoptGRef(webkitURIResponseCreateForResourceResponse(toImpl(wkRedirectResponse)->resourceResponse())) : 0;
+    const ResourceResponse& redirectResourceResponse = toImpl(wkRedirectResponse)->resourceResponse();
+    GRefPtr<WebKitURIResponse> redirectResponse = !redirectResourceResponse.isNull() ? adoptGRef(webkitURIResponseCreateForResourceResponse(redirectResourceResponse)) : nullptr;
 
     gboolean returnValue;
     g_signal_emit(WEBKIT_WEB_PAGE(clientInfo), signals[SEND_REQUEST], 0, request.get(), redirectResponse.get(), &returnValue);
@@ -179,7 +180,7 @@ static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef page, WKBundleFra
     message.set(String::fromUTF8("Page"), toImpl(page));
     message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
     message.set(String::fromUTF8("Request"), newRequest.get());
-    if (!toImpl(wkRedirectResponse)->resourceResponse().isNull())
+    if (!redirectResourceResponse.isNull())
         message.set(String::fromUTF8("RedirectResponse"), toImpl(wkRedirectResponse));
     WebProcess::shared().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidSendRequestForResource"), ImmutableDictionary::create(std::move(message)).get());
 

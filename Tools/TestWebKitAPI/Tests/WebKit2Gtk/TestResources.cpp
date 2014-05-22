@@ -638,7 +638,7 @@ static void testWebResourceSendRequest(SendRequestTest* test, gconstpointer)
 
     // URI changed after a redirect.
     test->setExpectedNewResourceURI(kServer->getURIForPath("/redirected.js"));
-    test->setExpectedNewResourceURIAfterRedirection(kServer->getURIForPath("/javascript.js"));
+    test->setExpectedNewResourceURIAfterRedirection(kServer->getURIForPath("/javascript-after-redirection.js"));
     test->loadURI(kServer->getURIForPath("redirected-javascript.html").data());
     test->waitUntilResourceLoadFinished();
     g_assert(test->m_resource);
@@ -717,7 +717,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, kStyleCSS, strlen(kStyleCSS));
         addCacheHTTPHeadersToResponse(message);
         soup_message_headers_append(message->response_headers, "Content-Type", "text/css");
-    } else if (g_str_equal(path, "/javascript.js")) {
+    } else if (g_str_equal(path, "/javascript.js") || g_str_equal(path, "/javascript-after-redirection.js")) {
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, kJavascript, strlen(kJavascript));
         soup_message_headers_append(message->response_headers, "Content-Type", "text/javascript");
         soup_message_headers_append(message->response_headers, "Content-Disposition", "filename=JavaScript.js");
@@ -754,7 +754,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         soup_message_headers_append(message->response_headers, "Location", "/simple-style.css");
     } else if (g_str_equal(path, "/redirected.js")) {
         soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
-        soup_message_headers_append(message->response_headers, "Location", "/remove-this/javascript.js");
+        soup_message_headers_append(message->response_headers, "Location", "/remove-this/javascript-after-redirection.js");
     } else if (g_str_equal(path, "/redirected-to-cancel.js")) {
         soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
         soup_message_headers_append(message->response_headers, "Location", "/cancel-this.js");
