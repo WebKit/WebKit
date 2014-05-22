@@ -1,3 +1,16 @@
+2014-05-22  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Guard RenderObject::isRenderGrid() method
+        https://bugs.webkit.org/show_bug.cgi?id=132380
+
+        Reviewed by Benjamin Poulain.
+
+        Guard RenderObject::isRenderGrid() method under ENABLE_CSS_GRID_LAYOUT compilation flag.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalWidthInRegion):
+        * rendering/RenderObject.h:
+
 2014-05-21  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r167870): Crash in simple line layout code with :after
