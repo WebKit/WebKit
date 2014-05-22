@@ -1,5 +1,13 @@
 2014-05-21  Oliver Hunt  <oliver@apple.com>
 
+        Only enable sandbox extensions on mac.
+
+        RS = Alexey.
+
+        * WebKit2Prefix.h:
+
+2014-05-21  Oliver Hunt  <oliver@apple.com>
+
         [iOS] Enable sandboxing for the database process
         https://bugs.webkit.org/show_bug.cgi?id=132963
 
