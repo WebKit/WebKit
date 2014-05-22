@@ -1856,8 +1856,17 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
             information.elementType = WKTypeMonth;
         else if (element->isURLField())
             information.elementType = WKTypeURL;
-        else if (element->isText())
-            information.elementType = element->getAttribute("pattern") == "\\d*" || element->getAttribute("pattern") == "[0-9]*" ? WKTypeNumberPad : WKTypeText;
+        else if (element->isText()) {
+            const AtomicString& pattern = element->fastGetAttribute(HTMLNames::patternAttr);
+            if (pattern == "\\d*" || pattern == "[0-9]*")
+                information.elementType = WKTypeNumberPad;
+            else {
+                information.elementType = WKTypeText;
+                if (!information.formAction.isEmpty()
+                    && (element->getNameAttribute().contains("search") || element->getIdAttribute().contains("search") || element->fastGetAttribute(HTMLNames::titleAttr).contains("search")))
+                    information.elementType = WKTypeSearch;
+            }
+        }
 
         information.isReadOnly = element->isReadOnly();
         information.value = element->value();

@@ -1,3 +1,19 @@
+2014-05-22  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION (WebKit2): Keyboard should have Search button in duckduckgo.com.
+        https://bugs.webkit.org/show_bug.cgi?id=133183
+        <rdar://problem/17004207>
+
+        Reviewed by Geoff Garen.
+
+        The keyboard type should be search if the input type is search
+        or if it is text and it is inside a form with an action and either
+        name, id or title contain the word search. This matches the
+        heuristics we have in WK1 for iOS.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getAssistedNodeInformation):
+
 2014-05-21  Oliver Hunt  <oliver@apple.com>
 
         Only enable sandbox extensions on mac.

@@ -1,3 +1,15 @@
+2014-05-22  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION (WebKit2): Keyboard should have Search button in duckduckgo.com.
+        https://bugs.webkit.org/show_bug.cgi?id=133183
+        <rdar://problem/17004207>
+
+        Reviewed by Geoff Garen.
+
+        Adding new export.
+
+        * WebCore.exp.in:
+
 2014-05-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r163712): [GTK] Misspelling and grammar underline marks are no longer drawn
