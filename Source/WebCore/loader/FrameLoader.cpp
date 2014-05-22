@@ -3403,14 +3403,15 @@ PassRefPtr<Frame> createWindow(Frame* openerFrame, Frame* lookupFrame, const Fra
 {
     ASSERT(!features.dialog || request.frameName().isEmpty());
 
+    created = false;
+
     if (!request.frameName().isEmpty() && request.frameName() != "_blank") {
-        if (Frame* frame = lookupFrame->loader()->findFrameForNavigation(request.frameName(), openerFrame->document())) {
+        if (RefPtr<Frame> frame = lookupFrame->loader()->findFrameForNavigation(request.frameName(), openerFrame->document())) {
             if (request.frameName() != "_self") {
                 if (Page* page = frame->page())
                     page->chrome().focus();
             }
-            created = false;
-            return frame;
+            return frame.release();
         }
     }
 
@@ -3418,7 +3419,7 @@ PassRefPtr<Frame> createWindow(Frame* openerFrame, Frame* lookupFrame, const Fra
     if (isDocumentSandboxed(openerFrame, SandboxPopups)) {
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
         openerFrame->document()->addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, "Blocked opening '" + request.resourceRequest().url().stringCenterEllipsizedToLength() + "' in a new window because the request was made in a sandboxed frame whose 'allow-popups' permission is not set.");
-        return 0;
+        return nullptr;
     }
 
     // FIXME: Setting the referrer should be the caller's responsibility.
@@ -3435,14 +3436,13 @@ PassRefPtr<Frame> createWindow(Frame* openerFrame, Frame* lookupFrame, const Fra
 
     Page* oldPage = openerFrame->page();
     if (!oldPage)
-        return 0;
+        return nullptr;
 
-    NavigationAction action(requestWithReferrer.resourceRequest());
-    Page* page = oldPage->chrome().createWindow(openerFrame, requestWithReferrer, features, action);
+    Page* page = oldPage->chrome().createWindow(openerFrame, requestWithReferrer, features, NavigationAction(requestWithReferrer.resourceRequest()));
     if (!page)
-        return 0;
+        return nullptr;
 
-    Frame* frame = page->mainFrame();
+    RefPtr<Frame> frame = page->mainFrame();
 
     frame->loader()->forceSandboxFlags(openerFrame->document()->sandboxFlags());
 
@@ -3450,9 +3450,21 @@ PassRefPtr<Frame> createWindow(Frame* openerFrame, Frame* lookupFrame, const Fra
         frame->tree()->setName(request.frameName());
 
     page->chrome().setToolbarsVisible(features.toolBarVisible || features.locationBarVisible);
+
+    if (!frame->page())
+        return nullptr;
     page->chrome().setStatusbarVisible(features.statusBarVisible);
+
+    if (!frame->page())
+        return nullptr;
     page->chrome().setScrollbarsVisible(features.scrollbarsVisible);
+
+    if (!frame->page())
+        return nullptr;
     page->chrome().setMenubarVisible(features.menuBarVisible);
+
+    if (!frame->page())
+        return nullptr;
     page->chrome().setResizable(features.resizable);
 
     // 'x' and 'y' specify the location of the window, while 'width' and 'height'
@@ -3475,7 +3487,12 @@ PassRefPtr<Frame> createWindow(Frame* openerFrame, Frame* lookupFrame, const Fra
     // Ensure non-NaN values, minimum size as well as being within valid screen area.
     FloatRect newWindowRect = DOMWindow::adjustWindowRect(page, windowRect);
 
+    if (!frame->page())
+        return nullptr;
     page->chrome().setWindowRect(newWindowRect);
+
+    if (!frame->page())
+        return nullptr;
     page->chrome().show();
 
     created = true;

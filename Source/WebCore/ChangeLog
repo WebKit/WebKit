@@ -1,5 +1,25 @@
 2014-05-22  Dana Burkart  <dburkart@apple.com>
 
+        Merge r167851
+
+    2014-04-26  Darin Adler  <darin@apple.com>
+
+            Frame and page lifetime fixes in WebCore::createWindow
+            https://bugs.webkit.org/show_bug.cgi?id=132089
+
+            Reviewed by Sam Weinig.
+
+            Speculative fix because I was unable to reproduce the crash that was
+            reported with the test case attached to this bug.
+
+            * loader/FrameLoader.cpp:
+            (WebCore::createWindow): Changed code to remove the assumption that calls
+            out will not destroy the page or frame. Use RefPtr for the frame, and
+            added early exits if frame->page() becomes null at any point before we
+            use a page pointer.
+
+2014-05-22  Dana Burkart  <dburkart@apple.com>
+
         Merge r168641
 
     2014-05-09  Jon Honeycutt  <jhoneycutt@apple.com>
