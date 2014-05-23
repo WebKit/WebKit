@@ -1,3 +1,14 @@
+2014-05-22  Myles C. Maxfield  <litherum@gmail.com>
+
+        Unreviewed typo fix.
+
+        Reviewed by NOBODY.
+
+        No new tests.
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::dashesForIntersectionsWithRect): Accidentally said run.length() instead of glyphBuffer.size().
+
 2014-05-22  Andreas Kling  <akling@apple.com>
 
         [iOS WebKit2] Web process should try to shrink its memory footprint when going into background.
