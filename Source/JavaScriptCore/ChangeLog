@@ -1,3 +1,20 @@
+2014-05-23  Andreas Kling  <akling@apple.com>
+
+        Support inline caching of RegExpMatchesArray.length
+        <https://webkit.org/b/133234>
+
+        Give RegExpMatchesArray.length the same treatment as JSArray in
+        repatch so we don't have to go out of line on every access.
+
+        ~13% speed-up on Octane/regexp.
+
+        Reviewed by Geoffrey Garen.
+
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::isRegExpMatchesArray):
+
 2014-05-22  Mark Lam  <mark.lam@apple.com>
 
         REGRESSION(r154797): Debugger crashes when stepping over an uncaught exception.

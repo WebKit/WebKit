@@ -41,6 +41,7 @@
 #include "JSCInlines.h"
 #include "PolymorphicGetByIdList.h"
 #include "PolymorphicPutByIdList.h"
+#include "RegExpMatchesArray.h"
 #include "RepatchBuffer.h"
 #include "ScratchRegisterAllocator.h"
 #include "StackAlignment.h"
@@ -603,8 +604,8 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
 
     CodeBlock* codeBlock = exec->codeBlock();
     VM* vm = &exec->vm();
-    
-    if ((isJSArray(baseValue) || isJSString(baseValue)) && propertyName == exec->propertyNames().length) {
+
+    if ((isJSArray(baseValue) || isRegExpMatchesArray(baseValue) || isJSString(baseValue)) && propertyName == exec->propertyNames().length) {
         GPRReg baseGPR = static_cast<GPRReg>(stubInfo.patch.baseGPR);
 #if USE(JSVALUE32_64)
         GPRReg resultTagGPR = static_cast<GPRReg>(stubInfo.patch.valueTagGPR);
@@ -613,7 +614,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
 
         MacroAssembler stubJit;
 
-        if (isJSArray(baseValue)) {
+        if (isJSArray(baseValue) || isRegExpMatchesArray(baseValue)) {
             GPRReg scratchGPR = TempRegisterSet(stubInfo.patch.usedRegisters).getFreeGPR();
             bool needToRestoreScratch = false;
 

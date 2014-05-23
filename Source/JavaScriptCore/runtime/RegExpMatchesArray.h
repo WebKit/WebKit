@@ -135,6 +135,11 @@ namespace JSC {
         ReifiedState m_state;
 };
 
+inline bool isRegExpMatchesArray(JSValue value)
+{
+    return value.isCell() && value.asCell()->classInfo() == RegExpMatchesArray::info();
+}
+
 }
 
 #endif // RegExpMatchesArray_h
