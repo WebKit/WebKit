@@ -1,3 +1,18 @@
+2014-05-20  Anders Carlsson  <andersca@apple.com>
+
+        Use a per app directory structure for website data
+        https://bugs.webkit.org/show_bug.cgi?id=133125
+        <rdar://problem/16830143>
+
+        Reviewed by Dan Bernstein, Sam Weinig and Tim Horton.
+
+        Put website data in subdirectories of ~/Library/WebKit/<bundle ID>/WebsiteData.
+        We use "LocalStorage", "WebSQL", and "IndexedDB" subdirectories.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (websiteDataDirectoryURL):
+        (-[WKProcessPool _initWithConfiguration:]):
+
 2014-05-23  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] WKNavigationResponsePrivate.h is internal

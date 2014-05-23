@@ -104,6 +104,29 @@ enum : NSUInteger {
 
 @implementation WKProcessPool (WKPrivate)
 
+static NSURL *websiteDataDirectoryURL(NSString *directoryName)
+{
+    static dispatch_once_t onceToken;
+    static NSURL *websiteDataURL;
+
+    dispatch_once(&onceToken, ^{
+        NSURL *url = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
+        if (!url)
+            RELEASE_ASSERT_NOT_REACHED();
+
+        url = [url URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
+        url = [url URLByAppendingPathComponent:[[NSBundle mainBundle] bundleIdentifier] isDirectory:YES];
+
+        websiteDataURL = [[url URLByAppendingPathComponent:@"WebsiteData" isDirectory:YES] retain];
+    });
+
+    NSURL *url = [websiteDataURL URLByAppendingPathComponent:directoryName isDirectory:YES];
+    if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nullptr])
+        LOG_ERROR("Failed to create directory %@", url);
+
+    return url;
+}
+
 - (instancetype)_initWithConfiguration:(_WKProcessPoolConfiguration *)configuration
 {
     if (!(self = [super init]))
@@ -125,8 +148,9 @@ enum : NSUInteger {
         webContextConfiguration.injectedBundlePath = bundleURL.path;
     }
 
-    // FIXME: These are legacy configuration defaults and should not be applied when creating a WKProcessPool.
-    WebKit::WebContext::applyPlatformSpecificConfigurationDefaults(webContextConfiguration);
+    webContextConfiguration.localStorageDirectory = websiteDataDirectoryURL(@"LocalStorage").absoluteString.fileSystemRepresentation;
+    webContextConfiguration.webSQLDatabaseDirectory = websiteDataDirectoryURL(@"WebSQL").absoluteString.fileSystemRepresentation;
+    webContextConfiguration.indexedDBDatabaseDirectory = websiteDataDirectoryURL(@"IndexedDB").absoluteString.fileSystemRepresentation;
 
     API::Object::constructInWrapper<WebKit::WebContext>(self, std::move(webContextConfiguration));
     _context->setHistoryClient(std::make_unique<WebKit::HistoryClient>());
