@@ -160,12 +160,6 @@ void RenderMarquee::start()
     if (m_timer.isActive() || m_layer->renderer()->style()->marqueeIncrement().isZero())
         return;
 
-    // We may end up propagating a scroll event. It is important that we suspend events until 
-    // the end of the function since they could delete the layer, including the marquee.
-    FrameView* frameView = m_layer->renderer()->document()->view();
-    if (frameView)
-        frameView->pauseScheduledEvents();
-
     if (!m_suspended && !m_stopped) {
         if (isHorizontal())
             m_layer->scrollToOffset(IntSize(m_start, 0));
@@ -178,9 +172,6 @@ void RenderMarquee::start()
     }
 
     m_timer.startRepeating(speed() * 0.001);
-
-    if (frameView)
-        frameView->resumeScheduledEvents();
 }
 
 void RenderMarquee::suspend()

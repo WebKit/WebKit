@@ -1,3 +1,37 @@
+2014-05-23  Dana Burkart  <dburkart@apple.com>
+
+        Merge r160847
+
+    2013-12-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+            overflowchanged event could cause a crash
+            https://bugs.webkit.org/show_bug.cgi?id=125978
+
+            Reviewed by Tim Horton.
+
+            Made the event asynchrnous by re-using Document's event queuing ability. Also removed
+            the infrastructure to queue up events in FrameView.
+
+            Test: fast/events/overflowchanged-inside-selection-collapse-crash.html
+
+            * dom/Document.cpp:
+            (WebCore::Document::recalcStyle):
+            (WebCore::Document::enqueueOverflowEvent):
+            * dom/Document.h:
+            * page/FrameView.cpp:
+            (WebCore::FrameView::FrameView):
+            (WebCore::FrameView::~FrameView):
+            (WebCore::FrameView::layout):
+            (WebCore::FrameView::performPostLayoutTasks):
+            (WebCore::FrameView::updateOverflowStatus):
+            * page/FrameView.h:
+            * rendering/RenderBlock.cpp:
+            (WebCore::OverflowEventDispatcher::~OverflowEventDispatcher):
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::scrollRectToVisible):
+            * rendering/RenderMarquee.cpp:
+            (WebCore::RenderMarquee::start):
+
 2014-05-22  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168915

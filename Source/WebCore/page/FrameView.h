@@ -40,7 +40,6 @@ namespace WebCore {
 
 class AXObjectCache;
 class Element;
-class Event;
 class FloatSize;
 class KURL;
 class Node;
@@ -254,9 +253,6 @@ public:
 
     void restoreScrollbar();
 
-    void scheduleEvent(PassRefPtr<Event>, PassRefPtr<Node>);
-    void pauseScheduledEvents();
-    void resumeScheduledEvents();
     void postLayoutTimerFired(Timer<FrameView>*);
 
     bool wasScrolledByUser() const;
@@ -663,11 +659,6 @@ private:
     bool m_visualUpdatesAllowedByClient;
     
     ScrollPinningBehavior m_scrollPinningBehavior;
-
-    unsigned m_scheduledEventSuppressionCount;
-
-    struct ScheduledEvent;
-    Vector<ScheduledEvent> m_scheduledEvents;
 };
 
 inline void FrameView::incrementVisuallyNonEmptyCharacterCount(unsigned count)

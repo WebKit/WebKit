@@ -1,3 +1,19 @@
+2014-05-23  Dana Burkart  <dburkart@apple.com>
+
+        Merge r160847
+
+    2013-12-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+            overflowchanged event could cause a crash
+            https://bugs.webkit.org/show_bug.cgi?id=125978
+
+            Reviewed by Tim Horton.
+
+            Add a regression test.
+
+            * fast/events/overflowchanged-inside-selection-collapse-crash-expected.txt: Added.
+            * fast/events/overflowchanged-inside-selection-collapse-crash.html: Added.
+
 2014-05-22  Dana Burkart  <dburkart@apple.com>
 
         Merge r169007
