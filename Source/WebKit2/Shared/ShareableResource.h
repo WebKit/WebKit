@@ -33,6 +33,8 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
+
 
 namespace WebCore {
 class SharedBuffer;
@@ -54,6 +56,9 @@ public:
         void encode(IPC::ArgumentEncoder&) const;
         static bool decode(IPC::ArgumentDecoder&, Handle&);
 
+#if USE(CF)
+        RetainPtr<CFDataRef> tryWrapInCFData() const;
+#endif
         PassRefPtr<WebCore::SharedBuffer> tryWrapInSharedBuffer() const;
 
     private:

@@ -178,6 +178,19 @@ void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& hand
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResource for '%s'", m_coreLoader->url().string().utf8().data());
 
+#if USE(QUICK_LOOK)
+    if (m_quickLookHandle) {
+        RetainPtr<CFDataRef> cfBuffer = handle.tryWrapInCFData();
+        if (cfBuffer) {
+            if (m_quickLookHandle->didReceiveData(cfBuffer.get())) {
+                m_quickLookHandle->didFinishLoading();
+                return;
+            }
+        } else
+            m_quickLookHandle->didFail();
+    }
+#endif
+
     RefPtr<SharedBuffer> buffer = handle.tryWrapInSharedBuffer();
     if (!buffer) {
         LOG_ERROR("Unable to create buffer from ShareableResource sent from the network process.");
