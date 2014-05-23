@@ -629,6 +629,9 @@ private:
     bool shouldDisableSleep() const;
 #endif
 
+    void registerWithDocument(Document*);
+    void unregisterWithDocument(Document*);
+
     Timer<HTMLMediaElement> m_loadTimer;
     Timer<HTMLMediaElement> m_progressEventTimer;
     Timer<HTMLMediaElement> m_playbackProgressTimer;

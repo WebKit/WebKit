@@ -328,8 +328,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_reportedExtraMemoryCost(0)
 {
     LOG(Media, "HTMLMediaElement::HTMLMediaElement");
-    document->registerForMediaVolumeCallbacks(this);
-    document->registerForPrivateBrowsingStateChangedCallbacks(this);
 
     if (document->settings() && document->settings()->mediaPlaybackRequiresUserGesture()) {
         addBehaviorRestriction(RequireUserGestureForRateChangeRestriction);
@@ -337,13 +335,13 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     }
 
     setHasCustomStyleCallbacks();
-    addElementToDocumentMap(this, document);
 
 #if ENABLE(VIDEO_TRACK)
-    document->registerForCaptionPreferencesChangedCallbacks(this);
     if (document->page())
         m_captionDisplayMode = document->page()->group().captionPreferences()->captionDisplayMode();
 #endif
+
+    registerWithDocument(document);
 }
 
 HTMLMediaElement::~HTMLMediaElement()
@@ -352,13 +350,11 @@ HTMLMediaElement::~HTMLMediaElement()
 
     m_asyncEventQueue->close();
 
-    if (m_isWaitingUntilMediaCanStart)
-        document()->removeMediaCanStartListener(this);
     setShouldDelayLoadEvent(false);
-    document()->unregisterForMediaVolumeCallbacks(this);
-    document()->unregisterForPrivateBrowsingStateChangedCallbacks(this);
+
+    unregisterWithDocument(document());
+
 #if ENABLE(VIDEO_TRACK)
-    document()->unregisterForCaptionPreferencesChangedCallbacks(this);
     if (m_audioTracks) {
         m_audioTracks->clearElement();
         for (unsigned i = 0; i < m_audioTracks->length(); ++i)
@@ -390,21 +386,43 @@ HTMLMediaElement::~HTMLMediaElement()
     setMediaKeys(0);
 #endif
 
-    removeElementFromDocumentMap(this, document());
-
     m_completelyLoaded = true;
     if (m_player)
         m_player->clearMediaPlayerClient();
 }
 
+void HTMLMediaElement::registerWithDocument(Document* document)
+{
+    if (m_isWaitingUntilMediaCanStart)
+        document->addMediaCanStartListener(this);
+
+    document->registerForMediaVolumeCallbacks(this);
+    document->registerForPrivateBrowsingStateChangedCallbacks(this);
+
+#if ENABLE(VIDEO_TRACK)
+    document->registerForCaptionPreferencesChangedCallbacks(this);
+#endif
+
+    addElementToDocumentMap(this, document);
+}
+
+void HTMLMediaElement::unregisterWithDocument(Document* document)
+{
+    if (m_isWaitingUntilMediaCanStart)
+        document->removeMediaCanStartListener(this);
+
+    document->unregisterForMediaVolumeCallbacks(this);
+    document->unregisterForPrivateBrowsingStateChangedCallbacks(this);
+
+#if ENABLE(VIDEO_TRACK)
+    document->unregisterForCaptionPreferencesChangedCallbacks(this);
+#endif
+
+    removeElementFromDocumentMap(this, document);
+}
+
 void HTMLMediaElement::didMoveToNewDocument(Document* oldDocument)
 {
-    if (m_isWaitingUntilMediaCanStart) {
-        if (oldDocument)
-            oldDocument->removeMediaCanStartListener(this);
-        document()->addMediaCanStartListener(this);
-    }
-
     if (m_shouldDelayLoadEvent) {
         if (oldDocument)
             oldDocument->decrementLoadEventDelayCount();
@@ -412,12 +430,10 @@ void HTMLMediaElement::didMoveToNewDocument(Document* oldDocument)
     }
 
     if (oldDocument) {
-        oldDocument->unregisterForMediaVolumeCallbacks(this);
-        removeElementFromDocumentMap(this, oldDocument);
+        unregisterWithDocument(oldDocument);
     }
 
-    document()->registerForMediaVolumeCallbacks(this);
-    addElementToDocumentMap(this, document());
+    registerWithDocument(document());
 
     HTMLElement::didMoveToNewDocument(oldDocument);
 }
