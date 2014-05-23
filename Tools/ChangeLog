@@ -1,5 +1,13 @@
 2014-05-22  Benjamin Poulain  <bpoulain@apple.com>
 
+        Add Yusuke Suzuki to the list of contributors (for real)
+
+        Wrong section...
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2014-05-22  Benjamin Poulain  <bpoulain@apple.com>
+
         Add Yusuke Suzuki to the list of contributors
 
         * Scripts/webkitpy/common/config/contributors.json:

@@ -3265,6 +3265,12 @@
             "wcarss"
          ]
       },
+      "Yusuke Suzuki" : {
+         "emails" : [
+            "utatane.tea@gmail.com"
+         ],
+         "expertise" : "JIT Compilers, CSS JIT, JavaScript/ECMAScript"
+      },
       "Zeev Lieber" : {
          "emails" : [
             "zlieber@chromium.org"
@@ -4566,12 +4572,6 @@
          "nicks" : [
             "yurys"
          ]
-      },
-      "Yusuke Suzuki" : {
-         "emails" : [
-            "utatane.tea@gmail.com"
-         ],
-         "expertise" : "JIT Compilers, CSS JIT, JavaScript/ECMAScript"
       },
       "Yuta Kitamura" : {
          "emails" : [
