@@ -1,5 +1,18 @@
 2014-05-22  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the  compositing/transitions/transform-on-large-layer.html test
+        https://bugs.webkit.org/show_bug.cgi?id=133195
+
+        Reviewed by Dean Jackson.
+        
+        This test used window resize when it doesn't need to and was flakey.
+
+        * compositing/transitions/transform-on-large-layer.html:
+        * platform/efl/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2014-05-22  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (r155977): Very stuttery 3D css animation on jtechcommunications.com
         https://bugs.webkit.org/show_bug.cgi?id=133179
         <rdar://problem/16864666>
