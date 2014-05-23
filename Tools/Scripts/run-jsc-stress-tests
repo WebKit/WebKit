@@ -1237,7 +1237,7 @@ def runAndMonitorTestRunnerCommand(numberOfTests, *cmd)
        didFail = {}
        blankLine = true
        prevStringLength = 0
-       IO.popen(cmd, mode="r") {
+       IO.popen(cmd.join(' '), mode="r") {
            | inp |
            inp.each_line {
                | line |
@@ -1300,12 +1300,13 @@ def runShellTestRunner
 
         $remoteDirectory = JSON::parse(sshRead("cat ~/.bencher"))["tempPath"]
         mysys("scp", "-P", $remotePort.to_s, ($outputDir.dirname + "payload.tar.gz").to_s, "#{$remoteUser}@#{$remoteHost}:#{$remoteDirectory}")
-        remoteScript = ""
+        remoteScript = "\""
         remoteScript += "cd #{$remoteDirectory} && "
         remoteScript += "rm -rf #{$outputDir.basename} && "
         remoteScript += "tar xzf payload.tar.gz && "
         remoteScript += "cd #{$outputDir.basename}/.runner && "
         remoteScript += "DYLD_FRAMEWORK_PATH=$(cd #{$testingFrameworkPath.dirname}; pwd) sh runscript"
+        remoteScript += "\""
         runAndMonitorTestRunnerCommand(numberOfTests, "ssh", "-p", $remotePort.to_s, "#{$remoteUser}@#{$remoteHost}", remoteScript)
     else
         Dir.chdir($runnerDir) {
