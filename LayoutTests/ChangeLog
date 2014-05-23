@@ -1,3 +1,12 @@
+2014-05-23  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rebaseline some tests after r169260
+
+        * fast/dom/Geolocation/enabled-expected.txt:
+        * fast/dom/Geolocation/script-tests/enabled.js:
+        * js/dom/delete-syntax-expected.txt:
+        * js/dom/script-tests/delete-syntax.js:
+
 2014-05-23  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Skip some snapshotting tests failing after r169173.
