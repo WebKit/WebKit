@@ -160,6 +160,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     BOOL _allowsBackForwardNavigationGestures;
 
     RetainPtr<UIView <WKWebViewContentProvider>> _customContentView;
+    RetainPtr<UIView> _customContentFixedOverlayView;
 
     WebCore::Color _scrollViewBackgroundColor;
 
@@ -429,6 +430,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
 {
     CGRect oldBounds = self.bounds;
     [super setBounds:bounds];
+    [_customContentFixedOverlayView setFrame:self.bounds];
 
     if (!CGSizeEqualToSize(oldBounds.size, bounds.size))
         [self _frameOrBoundsChanged];
@@ -448,22 +450,34 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
 {
     if (pageHasCustomContentView) {
         [_customContentView removeFromSuperview];
+        [_customContentFixedOverlayView removeFromSuperview];
 
         Class representationClass = [[_configuration _contentProviderRegistry] providerForMIMEType:mimeType];
         ASSERT(representationClass);
         _customContentView = adoptNS([[representationClass alloc] init]);
+        _customContentFixedOverlayView = adoptNS([[UIView alloc] initWithFrame:self.bounds]);
+        [_customContentFixedOverlayView setUserInteractionEnabled:NO];
 
         [_contentView removeFromSuperview];
         [_scrollView addSubview:_customContentView.get()];
+        [self addSubview:_customContentFixedOverlayView.get()];
 
         [_customContentView web_setMinimumSize:self.bounds.size];
         [_customContentView web_setScrollView:_scrollView.get()];
+        [_customContentView web_setObscuredInsets:_obscuredInsets];
+        [_customContentView web_setFixedOverlayView:_customContentFixedOverlayView.get()];
     } else if (_customContentView) {
         [_customContentView removeFromSuperview];
         _customContentView = nullptr;
 
+        [_customContentFixedOverlayView removeFromSuperview];
+        _customContentFixedOverlayView = nullptr;
+
         [_scrollView addSubview:_contentView.get()];
         [_scrollView setContentSize:[_contentView frame].size];
+
+        [_customContentFixedOverlayView setFrame:self.bounds];
+        [self addSubview:_customContentFixedOverlayView.get()];
     }
 }
 
@@ -507,7 +521,11 @@ static CGFloat contentZoomScale(WKWebView* webView)
 
 - (void)_updateScrollViewBackground
 {
-    WebCore::Color color = _page->pageExtendedBackgroundColor();
+    WebCore::Color color;
+    if (_customContentView)
+        color = [_customContentView backgroundColor].CGColor;
+    else
+        color = _page->pageExtendedBackgroundColor();
     CGFloat zoomScale = contentZoomScale(self);
     CGFloat minimumZoomScale = [_scrollView minimumZoomScale];
     if (zoomScale < minimumZoomScale) {
@@ -1578,6 +1596,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _obscuredInsets = obscuredInsets;
 
     [self _updateVisibleContentRects];
+    [_customContentView web_setObscuredInsets:obscuredInsets];
 }
 
 - (CGSize)_maximumUnobscuredSizeOverride
@@ -1750,6 +1769,11 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (void)_hideInspectorIndication
 {
     [_contentView setShowingInspectorIndication:NO];
+}
+
+- (void)_setOverlaidAccessoryViewsInset:(CGSize)inset
+{
+    [_customContentView web_setOverlaidAccessoryViewsInset:inset];
 }
 
 - (void)_snapshotRect:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler

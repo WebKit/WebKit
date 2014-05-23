@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS)
 
+#import "WKPDFPageNumberIndicator.h"
 #import <CorePDF/UIPDFDocument.h>
 #import <CorePDF/UIPDFPageView.h>
 #import <WebCore/FloatRect.h>
@@ -51,12 +52,17 @@ typedef struct {
 @implementation WKPDFView {
     RetainPtr<UIPDFDocument> _pdfDocument;
     RetainPtr<NSString> _suggestedFilename;
+    RetainPtr<WKPDFPageNumberIndicator> _pageNumberIndicator;
 
     Vector<PDFPageInfo> _pages;
     CGRect _documentFrame;
+    unsigned _centerPageNumber;
 
     CGSize _minimumSize;
+    CGSize _overlaidAccessoryViewsInset;
+    UIEdgeInsets _obscuredInsets;
     UIScrollView *_scrollView;
+    UIView *_fixedOverlayView;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -67,6 +73,12 @@ typedef struct {
     self.backgroundColor = [UIColor grayColor];
 
     return self;
+}
+
+- (void)dealloc
+{
+    [_pageNumberIndicator removeFromSuperview];
+    [super dealloc];
 }
 
 - (NSString *)suggestedFilename
@@ -111,6 +123,7 @@ typedef struct {
     [_scrollView setMinimumZoomScale:pdfMinimumZoomScale];
     [_scrollView setMaximumZoomScale:pdfMaximumZoomScale];
     [_scrollView setContentSize:_documentFrame.size];
+    [_scrollView setBackgroundColor:[UIColor grayColor]];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
@@ -119,6 +132,7 @@ typedef struct {
         return;
 
     [self _revalidateViews];
+    [_pageNumberIndicator show];
 }
 
 - (void)_revalidateViews
@@ -127,14 +141,23 @@ typedef struct {
 
     // We apply overdraw after applying scale in order to avoid excessive
     // memory use caused by scaling the overdraw.
-    targetRect = CGRectInset(targetRect, 0, -targetRect.size.height * overdrawHeightMultiplier);
+    CGRect targetRectWithOverdraw = CGRectInset(targetRect, 0, -targetRect.size.height * overdrawHeightMultiplier);
+    CGRect targetRectForCenterPage = CGRectInset(targetRect, 0, targetRect.size.height / 2 - pdfPageMargin * 2);
+
+    _centerPageNumber = 0;
+    unsigned currentPage = 0;
 
     for (auto& pageInfo : _pages) {
-        if (!CGRectIntersectsRect(pageInfo.frame, targetRect)) {
+        ++currentPage;
+
+        if (!CGRectIntersectsRect(pageInfo.frame, targetRectWithOverdraw)) {
             [pageInfo.view removeFromSuperview];
             pageInfo.view = nullptr;
             continue;
         }
+
+        if (!_centerPageNumber && CGRectIntersectsRect(pageInfo.frame, targetRectForCenterPage))
+            _centerPageNumber = currentPage;
 
         if (pageInfo.view)
             continue;
@@ -146,11 +169,54 @@ typedef struct {
         [pageInfo.view setFrame:pageInfo.frame];
         [pageInfo.view contentLayer].contentsScale = self.window.screen.scale;
     }
+
+    [self _updatePageNumberIndicator];
+}
+
+- (CGPoint)_offsetForPageNumberIndicator
+{
+    return CGPointMake(_obscuredInsets.left, _obscuredInsets.top + _overlaidAccessoryViewsInset.height);
+}
+
+- (void)_updatePageNumberIndicator
+{
+    if (!_pageNumberIndicator)
+        _pageNumberIndicator = adoptNS([[WKPDFPageNumberIndicator alloc] initWithFrame:CGRectZero]);
+
+    [_fixedOverlayView addSubview:_pageNumberIndicator.get()];
+
+    [_pageNumberIndicator setCurrentPageNumber:_centerPageNumber];
+    [_pageNumberIndicator moveToPoint:[self _offsetForPageNumberIndicator] animated:NO];
+}
+
+- (void)web_setObscuredInsets:(UIEdgeInsets)insets
+{
+    if (UIEdgeInsetsEqualToEdgeInsets(insets, _obscuredInsets))
+        return;
+
+    _obscuredInsets = insets;
+
+    [self _updatePageNumberIndicator];
+}
+
+- (void)web_setOverlaidAccessoryViewsInset:(CGSize)inset
+{
+    _overlaidAccessoryViewsInset = inset;
+    [_pageNumberIndicator moveToPoint:[self _offsetForPageNumberIndicator] animated:YES];
+}
+
+- (void)web_setFixedOverlayView:(UIView *)fixedOverlayView
+{
+    _fixedOverlayView = fixedOverlayView;
+
+    if (_pageNumberIndicator)
+        [_fixedOverlayView addSubview:_pageNumberIndicator.get()];
 }
 
 - (void)_computePageAndDocumentFrames
 {
     NSUInteger pageCount = [_pdfDocument numberOfPages];
+    [_pageNumberIndicator setPageCount:pageCount];
 
     for (auto& pageInfo : _pages)
         [pageInfo.view removeFromSuperview];

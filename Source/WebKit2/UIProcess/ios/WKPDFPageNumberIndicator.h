@@ -23,33 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
-
-#if WK_API_ENABLED
-
 #if PLATFORM(IOS)
 
-@class NSData;
-@class UIScrollView;
-@class UIView;
-@protocol NSObject;
-@protocol UIScrollViewDelegate;
-struct CGSize;
-struct UIEdgeInsets;
+#import <UIKit/UIView.h>
 
-// FIXME: This should be API (and probably should not be a UIScrollViewDelegate).
-@protocol WKWebViewContentProvider <NSObject, UIScrollViewDelegate>
+@interface WKPDFPageNumberIndicator : UIView
 
-- (void)web_setContentProviderData:(NSData *)data suggestedFilename:(NSString *)filename;
-- (void)web_setMinimumSize:(CGSize)size;
-- (void)web_setScrollView:(UIScrollView *)scrollView;
-- (void)web_setObscuredInsets:(UIEdgeInsets)insets;
-- (void)web_setOverlaidAccessoryViewsInset:(CGSize)inset;
-- (void)web_setFixedOverlayView:(UIView *)fixedOverlayView;
+@property (nonatomic) unsigned currentPageNumber;
+@property (nonatomic) unsigned pageCount;
+
+- (void)moveToPoint:(CGPoint)point animated:(BOOL)animated;
+- (void)show;
 
 @end
 
 #endif // PLATFORM(IOS)
-
-#endif // WK_API_ENABLED
-

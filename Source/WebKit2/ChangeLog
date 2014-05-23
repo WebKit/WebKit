@@ -1,3 +1,62 @@
+2014-05-23  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS] WKPDFView should have a page indicator
+        https://bugs.webkit.org/show_bug.cgi?id=133109
+        <rdar://problem/16383003>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setHasCustomContentView:loadedMIMEType:WTF::]):
+        (-[WKWebView _setObscuredInsets:]):
+        Forward obscured insets changes to the custom content view.
+
+        (-[WKWebView _updateScrollViewBackground]):
+        If we have a custom content view, use its background instead of the
+        (likely nonexistent) page's when updaing the scroll view's background color.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/WKWebViewContentProvider.h:
+        * UIProcess/Cocoa/WKWebViewContentProviderDelegate.h: Added.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setInsetForOverlaidAccessoryViews:]):
+        Add SPI for clients to inform us about potential overlaid accessory views
+        which should be taken into account e.g. for positioning the page indicator.
+
+        Add a view that sits fixed on top of the WKWebView, ignores interaction,
+        but provides the WKWebViewContentProvider a place to install views
+        that don't scroll along with the content.
+
+        * UIProcess/ios/WKPDFPageNumberIndicator.h: Added.
+        * UIProcess/ios/WKPDFPageNumberIndicator.mm: Added.
+        (-[WKPDFPageNumberIndicator initWithFrame:]):
+        (-[WKPDFPageNumberIndicator dealloc]):
+        (-[WKPDFPageNumberIndicator setCurrentPageNumber:]):
+        (-[WKPDFPageNumberIndicator setPageCount:]):
+        (-[WKPDFPageNumberIndicator show]):
+        (-[WKPDFPageNumberIndicator hide:]):
+        (-[WKPDFPageNumberIndicator moveToPoint:animated:]):
+        (-[WKPDFPageNumberIndicator sizeThatFits:]):
+        (-[WKPDFPageNumberIndicator _updateLabel]):
+        (-[WKPDFPageNumberIndicator _makeRoundedCorners]):
+        Add a page number indicator.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView dealloc]):
+        (-[WKPDFView web_setScrollView:]):
+        (-[WKPDFView _revalidateViews]):
+        (-[WKPDFView _offsetForPageNumberIndicator]):
+        (-[WKPDFView _updatePageNumberIndicator]):
+        (-[WKPDFView web_setObscuredInsets:]):
+        (-[WKPDFView web_setInsetForOverlaidAccessoryViews:]):
+        (-[WKPDFView web_setFixedOverlayView:]):
+        (-[WKPDFView _computePageAndDocumentFrames]):
+        Update the page number indicator when the topmost visible page changes.
+        Move the page number indicator around when the obscured insets change.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-05-23  Anders Carlsson  <andersca@apple.com>
 
         Fix test failures on the bot.

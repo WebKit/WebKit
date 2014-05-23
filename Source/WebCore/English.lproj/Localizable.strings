@@ -49,6 +49,9 @@
 /* Visible name of the web process. The argument is the application name. */
 "%@ Web Content" = "%@ Web Content";
 
+/* Label for PDF page number indicator. The arguments are the current page number and total page count (iOS only) */
+"%d of %d" = "%d of %d";
+
 /* Name of application's single WebCrypto master key in Keychain */
 "%@ WebCrypto Master Key" = "%@ WebCrypto Master Key";
 

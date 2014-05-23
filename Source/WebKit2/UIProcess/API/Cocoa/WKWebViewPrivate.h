@@ -134,6 +134,8 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 
 - (UIView *)_viewForFindUI;
 
+- (void)_setOverlaidAccessoryViewsInset:(CGSize)inset;
+
 // FIXME: Remove this once nobody uses it.
 @property (nonatomic, readonly) NSURL *activeURL;
 

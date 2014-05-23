@@ -538,6 +538,8 @@
 		2D429BFD1721E2C700EC681F /* PDFPluginPasswordField.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */; };
 		2D47B56C1810714E003A3AEE /* RemoteLayerBackingStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */; };
 		2D47B56D1810714E003A3AEE /* RemoteLayerBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */; };
+		2D6AB541192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6AB53F192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.h */; };
+		2D6AB542192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D6AB540192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.mm */; };
 		2D6B371B18A967AD0042AE80 /* _WKThumbnailView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6B371918A967AD0042AE80 /* _WKThumbnailView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D6B371C18A967AD0042AE80 /* _WKThumbnailView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D6B371A18A967AD0042AE80 /* _WKThumbnailView.mm */; };
 		2D6CD119189058A500E5A4A0 /* ViewSnapshotStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6CD117189058A500E5A4A0 /* ViewSnapshotStore.h */; };
@@ -2476,6 +2478,8 @@
 		2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginPasswordField.mm; path = PDF/PDFPluginPasswordField.mm; sourceTree = "<group>"; };
 		2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerBackingStore.mm; sourceTree = "<group>"; };
 		2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerBackingStore.h; sourceTree = "<group>"; };
+		2D6AB53F192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKPDFPageNumberIndicator.h; path = ios/WKPDFPageNumberIndicator.h; sourceTree = "<group>"; };
+		2D6AB540192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKPDFPageNumberIndicator.mm; path = ios/WKPDFPageNumberIndicator.mm; sourceTree = "<group>"; };
 		2D6B371918A967AD0042AE80 /* _WKThumbnailView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKThumbnailView.h; sourceTree = "<group>"; };
 		2D6B371A18A967AD0042AE80 /* _WKThumbnailView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKThumbnailView.mm; sourceTree = "<group>"; };
 		2D6CD117189058A500E5A4A0 /* ViewSnapshotStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewSnapshotStore.h; sourceTree = "<group>"; };
@@ -4693,6 +4697,8 @@
 				0F0C365B18C05CA100F607D7 /* RemoteScrollingCoordinatorProxyIOS.mm */,
 				2DA1E4FC18C02B6A00DBC929 /* WKPDFView.h */,
 				2DA1E4FD18C02B6A00DBC929 /* WKPDFView.mm */,
+				2D6AB53F192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.h */,
+				2D6AB540192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.mm */,
 				2DA944A91884E9BA00ED86DB /* TextCheckerIOS.mm */,
 				2DF9593418A42412009785A1 /* ViewGestureControllerIOS.mm */,
 				2DAF06D418BD1A470081CEB1 /* SmartMagnificationController.h */,
@@ -7290,6 +7296,7 @@
 				F6A25FDD12ADC6CC00DC40CC /* WebDatabaseManager.h in Headers */,
 				F62A76B712B1B25F0005F1B6 /* WebDatabaseManagerMessages.h in Headers */,
 				F62A765D12B1ABC30005F1B6 /* WebDatabaseManagerProxy.h in Headers */,
+				2D6AB541192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.h in Headers */,
 				1A445BA3184D5FCF004B3414 /* WKContextDownloadClient.h in Headers */,
 				1AC1338618590C4600F3EC05 /* RemoteObjectRegistryMessages.h in Headers */,
 				BCAC111F12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.h in Headers */,
@@ -8660,6 +8667,7 @@
 				2DA944951884E3B500ED86DB /* WKViewIOS.mm in Sources */,
 				BC14DF78120B5B7900826C0C /* InjectedBundleScriptWorld.cpp in Sources */,
 				1AE49A4A11FFA8CE0048B464 /* JSNPMethod.cpp in Sources */,
+				2D6AB542192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.mm in Sources */,
 				1AE4987911FF7FAA0048B464 /* JSNPObject.cpp in Sources */,
 				BCE0937714FB128C001138D9 /* LayerHostingContext.mm in Sources */,
 				1A92DC1312F8BAB90017AF65 /* LayerTreeContext.cpp in Sources */,

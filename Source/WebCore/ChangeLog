@@ -1,3 +1,13 @@
+2014-05-23  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS] WKPDFView should have a page indicator
+        https://bugs.webkit.org/show_bug.cgi?id=133109
+        <rdar://problem/16383003>
+
+        Reviewed by Anders Carlsson.
+
+        * English.lproj/Localizable.strings:
+
 2014-05-23  Enrica Casucci  <enrica@apple.com>
 
         Remove invalid ASSERT in wordRangeForPosition.
