@@ -1359,8 +1359,7 @@ void MediaControlTextTrackContainerElement::updateDisplay()
             mediaElement->setTextTrackRepresentation(m_textTrackRepresentation.get());
 
             m_textTrackRepresentation->update();
-            setInlineStyleProperty(CSSPropertyWidth, m_videoDisplaySize.size().width(), CSSPrimitiveValue::CSS_PX);
-            setInlineStyleProperty(CSSPropertyHeight, m_videoDisplaySize.size().height(), CSSPrimitiveValue::CSS_PX);
+            updateStyleForTextTrackRepresentation();
         }
     } else {
         hide();
@@ -1373,11 +1372,9 @@ void MediaControlTextTrackContainerElement::updateTimerFired(Timer<MediaControlT
     if (!document().page())
         return;
 
-    if (m_textTrackRepresentation) {
-        setInlineStyleProperty(CSSPropertyWidth, m_videoDisplaySize.size().width(), CSSPrimitiveValue::CSS_PX);
-        setInlineStyleProperty(CSSPropertyHeight, m_videoDisplaySize.size().height(), CSSPrimitiveValue::CSS_PX);
-    }
-    
+    if (m_textTrackRepresentation)
+        updateStyleForTextTrackRepresentation();
+
     HTMLMediaElement* mediaElement = parentMediaElement(this);
     if (!mediaElement)
         return;
@@ -1402,11 +1399,24 @@ void MediaControlTextTrackContainerElement::clearTextTrackRepresentation()
     if (HTMLMediaElement* mediaElement = parentMediaElement(this))
         mediaElement->setTextTrackRepresentation(nullptr);
     m_textTrackRepresentation = nullptr;
-    removeInlineStyleProperty(CSSPropertyPosition);
-    removeInlineStyleProperty(CSSPropertyWidth);
-    removeInlineStyleProperty(CSSPropertyHeight);
-    removeInlineStyleProperty(CSSPropertyLeft);
-    removeInlineStyleProperty(CSSPropertyTop);
+    updateStyleForTextTrackRepresentation();
+}
+
+void MediaControlTextTrackContainerElement::updateStyleForTextTrackRepresentation()
+{
+    if (m_textTrackRepresentation) {
+        setInlineStyleProperty(CSSPropertyWidth, m_videoDisplaySize.size().width(), CSSPrimitiveValue::CSS_PX);
+        setInlineStyleProperty(CSSPropertyHeight, m_videoDisplaySize.size().height(), CSSPrimitiveValue::CSS_PX);
+        setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
+        setInlineStyleProperty(CSSPropertyLeft, 0, CSSPrimitiveValue::CSS_PX);
+        setInlineStyleProperty(CSSPropertyTop, 0, CSSPrimitiveValue::CSS_PX);
+    } else {
+        removeInlineStyleProperty(CSSPropertyPosition);
+        removeInlineStyleProperty(CSSPropertyWidth);
+        removeInlineStyleProperty(CSSPropertyHeight);
+        removeInlineStyleProperty(CSSPropertyLeft);
+        removeInlineStyleProperty(CSSPropertyTop);
+    }
 }
 
 void MediaControlTextTrackContainerElement::enteredFullscreen()

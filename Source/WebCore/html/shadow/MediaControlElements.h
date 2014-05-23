@@ -487,6 +487,7 @@ private:
     virtual PassRefPtr<Image> createTextTrackRepresentationImage() override;
     virtual void textTrackRepresentationBoundsChanged(const IntRect&) override;
     void clearTextTrackRepresentation();
+    void updateStyleForTextTrackRepresentation();
     OwnPtr<TextTrackRepresentation> m_textTrackRepresentation;
 
     Timer<MediaControlTextTrackContainerElement> m_updateTimer;

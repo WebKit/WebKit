@@ -1,3 +1,26 @@
+2014-05-22  Jeremy Jones  <jeremyj@apple.com>
+
+        Captions layout incorrectly in fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=133175
+
+        Reviewed by Eric Carlson.
+
+        When doing layout for fullscreen, geometry should be absolute so it is not influenced
+        by the rest of the page. This change adds style for CSSPropertyPosition, CSSPropertyLeft,
+        and CSSPropertyTop.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay):
+        Refactor style changes into updateStyleForTextTrackRepresentation().
+        (WebCore::MediaControlTextTrackContainerElement::updateTimerFired):
+        Refactor style changes into updateStyleForTextTrackRepresentation().
+        (WebCore::MediaControlTextTrackContainerElement::clearTextTrackRepresentation):
+        Refactor style changes into updateStyleForTextTrackRepresentation().
+        (WebCore::MediaControlTextTrackContainerElement::updateStyleForTextTrackRepresentation):
+        Consolidate style changes here. Include the two existing and three new style changes.
+        * html/shadow/MediaControlElements.h:
+        Declare updateStyleForTextTrackRepresentation().
+
 2014-05-22  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r155977): Very stuttery 3D css animation on jtechcommunications.com
