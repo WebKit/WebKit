@@ -1,3 +1,17 @@
+2014-05-23  Jeremy Jones  <jeremyj@apple.com>
+
+        reset m_havePreparedToPlay when changing media engines.
+        https://bugs.webkit.org/show_bug.cgi?id=133199
+
+        Reviewed by Eric Carlson.
+
+        If a play request comes in before the media player is created, m_havePreparedToPlay
+        is set to true. But when the player is created, this prevents the new player from
+        getting the prepare call.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerEngineUpdated): set m_havePreparedToPlay false.
+
 2014-05-23  Oliver Hunt  <oliver@apple.com>
 
         Navigator object needs to have properties directly on the instance object

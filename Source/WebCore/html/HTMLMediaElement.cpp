@@ -4231,6 +4231,8 @@ void HTMLMediaElement::mediaPlayerEngineUpdated(MediaPlayer*)
     m_droppedVideoFrames = 0;
 #endif
 
+    m_havePreparedToPlay = false;
+
 #if PLATFORM(IOS)
     if (!m_player)
         return;
