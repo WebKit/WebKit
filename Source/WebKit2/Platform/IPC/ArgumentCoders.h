@@ -115,7 +115,7 @@ template<typename T, size_t inlineCapacity> struct VectorArgumentCoder<false, T,
             if (!decoder.decode(element))
                 return false;
             
-            tmp.append(element);
+            tmp.append(std::move(element));
         }
 
         tmp.shrinkToFit();
