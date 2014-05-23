@@ -189,7 +189,7 @@ class PerfTest(object):
 
             metric_match = self._metrics_regex.match(line)
             if not metric_match:
-                _log.error('ERROR: [' + line + ']')
+                _log.error('ERROR: ' + line)
                 return False
 
             metric = self._ensure_metrics(metric_match.group('metric'), metric_match.group('subtest'), metric_match.group('unit'), metric_match.group('aggregator'))

@@ -1,3 +1,10 @@
+2014-05-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Revert the erroneous change committed in r169286.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest._run_with_driver):
+
 2014-05-23  Geoffrey Garen  <ggaren@apple.com>
 
         run-perf-tests should ignore whitespace lines when snarfing test output
