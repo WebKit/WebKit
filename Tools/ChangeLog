@@ -1,3 +1,15 @@
+2014-05-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] GObject DOM bindings API break test should fail in the bots when the command fails to run
+        https://bugs.webkit.org/show_bug.cgi?id=133209
+
+        Reviewed by Sergio Villar Senin.
+
+        Return FAILURE when the command failed to run.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunGtkWebKitGObjectDOMBindingsAPIBreakTests.evaluateCommand):
+
 2014-05-23  Alberto Garcia  <berto@igalia.com>
 
         [GTK] Install libharfbuzz-dev in Tools/gtk/install-dependencies
