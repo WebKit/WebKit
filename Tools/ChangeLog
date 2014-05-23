@@ -1,3 +1,14 @@
+2014-05-23  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
+
+        Remove 'css-shaders' option from the build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=133212
+
+        Reviewed by Daniel Bates.
+
+        Original CSS shaders removed in r162644.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2014-05-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] GObject DOM bindings API break test should fail in the bots when the command fails to run

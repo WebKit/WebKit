@@ -62,7 +62,6 @@ my (
     $cssImageResolutionSupport,
     $cssImageSetSupport,
     $cssRegionsSupport,
-    $cssShadersSupport,
     $cssShapesSupport,
     $cssCompositingSupport,
     $cssAnimationsTransformsUnprefixedSupport,
@@ -212,9 +211,6 @@ my @features = (
 
     { option => "css-regions", desc => "Toggle CSS Regions support",
       define => "ENABLE_CSS_REGIONS", default => 1, value => \$cssRegionsSupport },
-
-    { option => "css-shaders", desc => "Toggle CSS Shaders support",
-      define => "ENABLE_CSS_SHADERS", default => isAppleMacWebKit(), value => \$cssShadersSupport },
 
     { option => "css-compositing", desc => "Toggle CSS Compositing support",
       define => "ENABLE_CSS_COMPOSITING", default => isAppleWebKit(), value => \$cssCompositingSupport },
