@@ -1,3 +1,19 @@
+2014-05-23  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r153917): Chart for the Category Explorer within Quicken Essentials
+        does not draw until you force a redraw
+        https://bugs.webkit.org/show_bug.cgi?id=133228
+        <rdar://problem/15221231>
+
+        Reviewed by Simon Fraser.
+
+        * platform/RuntimeApplicationChecks.cpp: (WebCore::applicationIsQuickenEssentials):
+        * platform/RuntimeApplicationChecks.h:
+        Added a check for Quicken Essentials.
+
+        * platform/mac/WidgetMac.mm: (WebCore::Widget::paint): Don't do an early return
+        for Quicken Essentials, it depends on drawing to update its layer.
+
 2014-05-23  Mihnea Ovidenie  <mihnea@adobe.com>
 
         REGRESSION(r169105): fast/regions/cssom/region-range-for-box-crash.html is more crashy than before

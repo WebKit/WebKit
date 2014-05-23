@@ -36,6 +36,7 @@ bool applicationIsITunes();
 bool applicationIsMicrosoftMessenger();
 bool applicationIsMicrosoftMyDay();
 bool applicationIsMicrosoftOutlook();
+bool applicationIsQuickenEssentials();
 bool applicationIsSafari();
 bool applicationIsSolidStateNetworksDownloader();
 bool applicationIsVersions();

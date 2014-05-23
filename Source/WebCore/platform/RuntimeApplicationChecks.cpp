@@ -104,6 +104,12 @@ bool applicationIsMicrosoftOutlook()
     return isMicrosoftOutlook;
 }
 
+bool applicationIsQuickenEssentials()
+{
+    static bool isQuickenEssentials = mainBundleIsEqualTo("com.intuit.QuickenEssentials");
+    return isQuickenEssentials;
+}
+
 bool applicationIsAperture()
 {
     static bool isAperture = mainBundleIsEqualTo("com.apple.Aperture");
