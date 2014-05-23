@@ -1,3 +1,29 @@
+2014-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        http/tests/security/xss-DENIED-xsl-document-redirect.xml fails with NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=132523
+
+        Reviewed by Alexey Proskuryakov.
+
+        We should not manufacture a response in the event of an error during a
+        synchronous XHR. In addition, this test removes two places that are
+        sensitive to such a manufactured response.
+
+        Updates test expectations.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest): Don't inspect a
+        loader response if there is an error
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously): Do not
+        manufacture a response
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously): Do not
+        manufacture a response
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::docLoaderFunc): Only use the response's URL if no error
+        occurred.
+
 2014-05-22  Myles C. Maxfield  <litherum@gmail.com>
 
         Unreviewed typo fix.

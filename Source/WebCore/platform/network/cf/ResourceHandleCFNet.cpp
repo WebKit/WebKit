@@ -512,14 +512,6 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
 
     if (error.isNull())
         response = client->response();
-    else {
-        response = ResourceResponse(request.url(), String(), 0, String(), String());
-        // FIXME: ResourceHandleMac also handles authentication errors by setting code to 401. CFNet version should probably do the same.
-        if (error.domain() == String(kCFErrorDomainCFNetwork))
-            response.setHTTPStatusCode(error.errorCode());
-        else
-            response.setHTTPStatusCode(404);
-    }
 
     data.swap(client->mutableData());
 }

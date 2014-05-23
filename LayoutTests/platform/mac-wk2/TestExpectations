@@ -407,9 +407,6 @@ webkit.org/b/123431 [ Mavericks ] http/tests/css/link-css-disabled-value-with-sl
 webkit.org/b/123431 [ Mavericks ] http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
 webkit.org/b/123431 [ Mavericks ] http/tests/local/link-stylesheet-load-order.html [ Failure ]
 
-# passes but has different logging
-[ Mavericks ] http/tests/security/xss-DENIED-xsl-document-redirect.xml [ Failure ]
-
 # test results in DRT don't match in browser behavior, test seems broken
 fast/dom/Window/mozilla-focus-blur.html [ Failure ]
 

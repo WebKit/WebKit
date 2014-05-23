@@ -1,3 +1,18 @@
+2014-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        http/tests/security/xss-DENIED-xsl-document-redirect.xml fails with NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=132523
+
+        Reviewed by Alexey Proskuryakov.
+
+        Two tests have been rebaselined, and re-enable test that now passes. Because of
+        r23889, synchronous XHRs for file: URLs purposely don't invoke error handlers.
+
+        * fast/xmlhttprequest/xmlhttprequest-nonexistent-file-expected.txt: Updated
+        incorrect test description
+        * fast/xmlhttprequest/resources/xmlhttprequest-nonexistent-file-real.html: Ditto
+        * platform/mac-wk2/TestExpectations: Re-enable test that now passes.
+
 2014-05-22  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the  compositing/transitions/transform-on-large-layer.html test

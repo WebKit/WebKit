@@ -71,7 +71,7 @@
     </head>
     <body onload="testXHRNonExistentFile()">
         <p> Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=22475">22475</a>: REGRESSION: Async XMLHttpRequest never finishes on nonexistent files anymore </p>
-        <p> In both cases, readyState 4 should be reached, and error handler should be invoked. </p>
+        <p> In both cases, readyState 4 should be reached. Because one of the requests is synchronous and for a file: URL, only a single error handler should be invoked. </p>
         <div id="console"/>
     </body>
 </html>

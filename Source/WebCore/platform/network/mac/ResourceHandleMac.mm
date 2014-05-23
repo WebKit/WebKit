@@ -426,25 +426,6 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
 
     if (error.isNull())
         response = client->response();
-    else {
-        // FIXME: We might not ever need to manufacture a response: This might all be dead code.
-        // When exploring removal of this code, we should substitute appropriate ASSERTs.
-        response = ResourceResponse(request.url(), String(), 0, String(), String());
-        if (error.domain() == String(NSURLErrorDomain))
-            switch (error.errorCode()) {
-            case NSURLErrorUserCancelledAuthentication:
-                // FIXME: We don't need to manufacture a 401 response if we say continueWithoutCredentialForAuthenticationChallenge:
-                // in which case we'll get the real failure response. A reading of SynchronousLoaderClient.mm suggests we already do this.
-                response.setHTTPStatusCode(401);
-                break;
-            default:
-                response.setHTTPStatusCode(error.errorCode());
-            }
-        else {
-            // FIXME: This is wrong. We shouldn't need to ever make up a 404.
-            response.setHTTPStatusCode(404);
-        }
-     }
 
     data.swap(client->mutableData());
 }

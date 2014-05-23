@@ -410,9 +410,14 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
 
     InspectorInstrumentation::documentThreadableLoaderStartedLoadingForClient(&m_document, identifier, m_client);
 
-    // No exception for file:/// resources, see <rdar://problem/4962298>.
-    // Also, if we have an HTTP response, then it wasn't a network error in fact.
-    if (!error.isNull() && !requestURL.isLocalFile() && response.httpStatusCode() <= 0) {
+    if (!error.isNull() && response.httpStatusCode() <= 0) {
+        if (requestURL.isLocalFile()) {
+            // We don't want XMLHttpRequest to raise an exception for file:// resources, see <rdar://problem/4962298>.
+            // FIXME: XMLHttpRequest quirks should be in XMLHttpRequest code, not in DocumentThreadableLoader.cpp.
+            didReceiveResponse(identifier, response);
+            didFinishLoading(identifier, 0.0);
+            return;
+        }
         m_client->didFail(error);
         return;
     }
