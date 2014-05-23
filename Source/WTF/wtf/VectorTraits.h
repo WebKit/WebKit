@@ -75,6 +75,9 @@ namespace WTF {
     struct VectorTraits<OwnPtr<P>> : SimpleClassVectorTraits { };
 
     template<typename P>
+    struct VectorTraits<std::unique_ptr<P>> : SimpleClassVectorTraits { };
+
+    template<typename P>
     struct VectorTraits<Ref<P>> : SimpleClassVectorTraits { };
 
     template<>
