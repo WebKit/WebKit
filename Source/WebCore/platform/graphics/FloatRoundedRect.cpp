@@ -151,4 +151,34 @@ bool FloatRoundedRect::isRenderable() const
         && m_radii.topRight().height() + m_radii.bottomRight().height() <= m_rect.height();
 }
 
+void FloatRoundedRect::inflateWithRadii(float size)
+{
+    FloatRect old = m_rect;
+
+    m_rect.inflate(size);
+    // Considering the inflation factor of shorter size to scale the radii seems appropriate here
+    float factor;
+    if (m_rect.width() < m_rect.height())
+        factor = old.width() ? m_rect.width() / old.width() : 0;
+    else
+        factor = old.height() ? m_rect.height() / old.height() : 0;
+
+    m_radii.scale(factor);
+}
+
+void FloatRoundedRect::adjustRadii()
+{
+    float maxRadiusWidth = std::max(m_radii.topLeft().width() + m_radii.topRight().width(), m_radii.bottomLeft().width() + m_radii.bottomRight().width());
+    float maxRadiusHeight = std::max(m_radii.topLeft().height() + m_radii.bottomLeft().height(), m_radii.topRight().height() + m_radii.bottomRight().height());
+
+    if (maxRadiusWidth <= 0 || maxRadiusHeight <= 0) {
+        m_radii.scale(0.0f);
+        return;
+    }
+    float widthRatio = m_rect.width() / maxRadiusWidth;
+    float heightRatio = m_rect.height() / maxRadiusHeight;
+    m_radii.scale(widthRatio < heightRatio ? widthRatio : heightRatio);
+}
+
+
 } // namespace WebCore

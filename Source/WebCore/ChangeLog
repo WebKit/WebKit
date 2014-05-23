@@ -1,3 +1,23 @@
+2014-05-23  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make webkit-box-shadow painting subpixel aware.
+        https://bugs.webkit.org/show_bug.cgi?id=133201
+        <rdar://problem/16072830>
+
+        Reviewed by Simon Fraser.
+
+        This patch enables webkit-box-shadow to be painted on a subpixel position. However, we
+        still truncate -webkit-box-shadow property values. Tracked here: http://webkit.org/b/133202
+
+        Test: fast/box-shadow/hidpi-webkit-box-shadow-subpixel-position.html
+
+        * platform/graphics/FloatRoundedRect.cpp:
+        (WebCore::FloatRoundedRect::inflateWithRadii): same as in from RoundedRect.
+        (WebCore::FloatRoundedRect::adjustRadii): same as in from RoundedRect.
+        * platform/graphics/FloatRoundedRect.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+
 2014-05-22  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] Crash when exceeding maximum cache limit.
