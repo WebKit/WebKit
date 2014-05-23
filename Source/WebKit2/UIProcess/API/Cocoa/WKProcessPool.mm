@@ -115,7 +115,12 @@ static NSURL *websiteDataDirectoryURL(NSString *directoryName)
             RELEASE_ASSERT_NOT_REACHED();
 
         url = [url URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
-        url = [url URLByAppendingPathComponent:[[NSBundle mainBundle] bundleIdentifier] isDirectory:YES];
+
+        NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
+        if (!bundleIdentifier)
+            bundleIdentifier = [NSProcessInfo processInfo].processName;
+
+        url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
 
         websiteDataURL = [[url URLByAppendingPathComponent:@"WebsiteData" isDirectory:YES] retain];
     });
