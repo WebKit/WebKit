@@ -334,6 +334,7 @@ EXPORTS
         symbolWithPointer(?toggleContinuousSpellChecking@Editor@WebCore@@QAEXXZ, ?toggleContinuousSpellChecking@Editor@WebCore@@QEAAXXZ)
         symbolWithPointer(?toggleOverwriteModeEnabled@Editor@WebCore@@QAEXXZ, ?toggleOverwriteModeEnabled@Editor@WebCore@@QEAAXXZ)
         symbolWithPointer(?countMatchesForText@Editor@WebCore@@QAEIABVString@WTF@@PAVRange@2@EI_NPAV?$Vector@V?$RefPtr@VRange@WebCore@@@WTF@@$0A@VCrashOnOverflow@2@@4@@Z, ?countMatchesForText@Editor@WebCore@@QEAAIAEBVString@WTF@@PEAVRange@2@EI_NPEAV?$Vector@V?$RefPtr@VRange@WebCore@@@WTF@@$0A@VCrashOnOverflow@2@@4@@Z)
+        symbolWithPointer(?setMarkedTextMatchesAreHighlighted@Editor@WebCore@@QAEX_N@Z, ?setMarkedTextMatchesAreHighlighted@Editor@WebCore@@QEAAX_N@Z)
 #if ENABLE(FULLSCREEN_API)
         symbolWithPointer(?webkitWillEnterFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z, ?webkitWillEnterFullScreenForElement@Document@WebCore@@QEAAXPEAVElement@2@@Z)
         symbolWithPointer(?webkitDidEnterFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z, ?webkitDidEnterFullScreenForElement@Document@WebCore@@QEAAXPEAVElement@2@@Z)

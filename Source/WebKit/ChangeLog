@@ -1,3 +1,9 @@
+2014-05-22  Antti Koivisto  <antti@apple.com>
+
+        Try to fix windows build.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-05-21  Alex Christensen  <achristensen@webkit.org>
 
         [Win64] Unreviewed build fix.
