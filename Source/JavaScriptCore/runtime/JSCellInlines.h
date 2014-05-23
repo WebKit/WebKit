@@ -180,11 +180,6 @@ inline void JSCell::setStructure(VM& vm, Structure* structure)
     m_indexingType = structure->indexingType();
 }
 
-inline const MethodTable* JSCell::methodTableForDestruction() const
-{
-    return &classInfo()->methodTable;
-}
-
 inline const MethodTable* JSCell::methodTable() const
 {
     VM& vm = *Heap::heap(this)->vm();

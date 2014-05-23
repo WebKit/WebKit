@@ -197,7 +197,7 @@ namespace JSC {
         MarkedBlock(Region*, MarkedAllocator*, size_t cellSize, DestructorType);
         Atom* atoms();
         size_t atomNumber(const void*);
-        void callDestructor(JSCell*);
+        template<DestructorType> void callDestructor(JSCell*);
         template<BlockState, SweepMode, DestructorType> FreeList specializedSweep();
         
         size_t m_atomsPerCell;

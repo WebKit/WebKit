@@ -1,5 +1,25 @@
 2014-05-23  Andreas Kling  <akling@apple.com>
 
+        Templatize GC's destructor invocation for dtor type.
+        <https://webkit.org/b/133231>
+
+        Get rid of a branch in callDestructor() by templatizing it for
+        the DestructorType. Removed JSCell::methodTableForDestruction()
+        since this was the only call site and it was jumping through
+        a bunch of unnecessary hoops.
+
+        Reviewed by Geoffrey Garen.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::callDestructor):
+        (JSC::MarkedBlock::specializedSweep):
+        * heap/MarkedBlock.h:
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::methodTableForDestruction): Deleted.
+
+2014-05-23  Andreas Kling  <akling@apple.com>
+
         Support inline caching of RegExpMatchesArray.length
         <https://webkit.org/b/133234>
 

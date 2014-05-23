@@ -54,13 +54,17 @@ MarkedBlock::MarkedBlock(Region* region, MarkedAllocator* allocator, size_t cell
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);
 }
 
+template<MarkedBlock::DestructorType dtorType>
 inline void MarkedBlock::callDestructor(JSCell* cell)
 {
     // A previous eager sweep may already have run cell's destructor.
     if (cell->isZapped())
         return;
 
-    cell->methodTableForDestruction()->destroy(cell);
+    if (dtorType == MarkedBlock::Normal)
+        jsCast<JSDestructibleObject*>(cell)->classInfo()->methodTable.destroy(cell);
+    else
+        cell->structure(*vm())->classInfo()->methodTable.destroy(cell);
     cell->zap();
 }
 
@@ -82,7 +86,7 @@ MarkedBlock::FreeList MarkedBlock::specializedSweep()
         JSCell* cell = reinterpret_cast_ptr<JSCell*>(&atoms()[i]);
 
         if (dtorType != MarkedBlock::None && blockState != New)
-            callDestructor(cell);
+            callDestructor<dtorType>(cell);
 
         if (sweepMode == SweepToFreeList) {
             FreeCell* freeCell = reinterpret_cast<FreeCell*>(cell);

@@ -132,7 +132,6 @@ public:
     const ClassInfo* classInfo() const;
     const MethodTable* methodTable() const;
     const MethodTable* methodTable(VM&) const;
-    const MethodTable* methodTableForDestruction() const;
     static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
         
