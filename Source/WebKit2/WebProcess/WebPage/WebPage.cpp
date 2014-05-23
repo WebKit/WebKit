@@ -1436,9 +1436,6 @@ void WebPage::setFixedLayoutSize(const IntSize& size)
         return;
 
     view->setFixedLayoutSize(size);
-    // Do not force it until the first layout, this would then become our first layout prematurely.
-    if (view->didFirstLayout())
-        view->forceLayout();
 }
 
 void WebPage::listenForLayoutMilestones(uint32_t milestones)
