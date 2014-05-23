@@ -1168,6 +1168,7 @@ void WebProcess::resetAllGeolocationPermissions()
     
 void WebProcess::processWillSuspend()
 {
+    memoryPressureHandler().releaseMemory(true);
     parentProcessConnection()->send(Messages::WebProcessProxy::ProcessReadyToSuspend(), 0);
 }
     

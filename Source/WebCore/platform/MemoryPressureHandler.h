@@ -97,6 +97,8 @@ public:
         static bool s_loggingEnabled;
     };
 
+    static void releaseMemory(bool critical);
+
 private:
     void uninstall();
 
@@ -106,7 +108,6 @@ private:
     ~MemoryPressureHandler();
 
     void respondToMemoryPressure();
-    static void releaseMemory(bool critical);
     static void platformReleaseMemory(bool critical);
 
     bool m_installed;

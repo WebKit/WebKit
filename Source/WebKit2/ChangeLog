@@ -1,5 +1,18 @@
 2014-05-22  Andreas Kling  <akling@apple.com>
 
+        [iOS WebKit2] Web process should try to shrink its memory footprint when going into background.
+        <https://webkit.org/b/133197>
+        <rdar://problem/17011561>
+
+        Try to free up as much memory as possible before going into background.
+
+        Reviewed by Gavin Barraclough.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::processWillSuspend):
+
+2014-05-22  Andreas Kling  <akling@apple.com>
+
         Hook up a setting for showing detailed logging during memory pressure relief.
         <https://webkit.org/b/133194>
 
