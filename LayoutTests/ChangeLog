@@ -1,3 +1,15 @@
+2014-05-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Can't type in status in facebook.com on iOS Safari because keyboard disappears
+        https://bugs.webkit.org/show_bug.cgi?id=133196
+
+        Reviewed by Geoffrey Garen.
+
+        Removed the test added by r156252.
+
+        * fast/dom/HTMLDocument/active-element-gets-unfocusable-expected.txt: Removed.
+        * fast/dom/HTMLDocument/active-element-gets-unfocusable.html: Removed.
+
 2014-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         http/tests/security/xss-DENIED-xsl-document-redirect.xml fails with NetworkProcess

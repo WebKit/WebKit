@@ -1,3 +1,30 @@
+2014-05-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Can't type in status in facebook.com on iOS Safari because keyboard disappears
+        https://bugs.webkit.org/show_bug.cgi?id=133196
+
+        Reviewed by Geoffrey Garen.
+
+        Fixed the bug by rolling out r156252.
+
+        When the user taps on the status on facebook.com, the page focuses a textarea,
+        which is then made momentarily invisible by setting display:none.
+        The page then removes display:none later and expects the textarea to be still focused.
+
+        With r156252, the focus is removed after the page sets display:none and the keyboard disappears.
+        Since the focus is never reset on the textarea, the user can never type in anything.
+
+        The specification may need to change here given that this (rather odd) behavior/expectation exists
+        on one of the most popular websites on the Web.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::updateLayout):
+        (WebCore::Document::resetHiddenFocusElementSoon): Deleted.
+        (WebCore::Document::resetHiddenFocusElementTimer): Deleted.
+        * dom/Document.h:
+
 2014-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         http/tests/security/xss-DENIED-xsl-document-redirect.xml fails with NetworkProcess
