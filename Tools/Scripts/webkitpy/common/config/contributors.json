@@ -4567,6 +4567,12 @@
             "yurys"
          ]
       },
+      "Yusuke Suzuki" : {
+         "emails" : [
+            "utatane.tea@gmail.com"
+         ],
+         "expertise" : "JIT Compilers, CSS JIT, JavaScript/ECMAScript"
+      },
       "Yuta Kitamura" : {
          "emails" : [
             "yutak@chromium.org"

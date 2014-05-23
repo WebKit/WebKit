@@ -1,3 +1,9 @@
+2014-05-22  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add Yusuke Suzuki to the list of contributors
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-05-22  Michael Saboff  <msaboff@apple.com>
 
         Eliminate n/total progress update from run-jsc-stress-tests output to file
