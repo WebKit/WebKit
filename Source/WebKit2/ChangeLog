@@ -1,3 +1,12 @@
+2014-05-23  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] WKNavigationResponsePrivate.h is internal
+        https://bugs.webkit.org/show_bug.cgi?id=133218
+
+        Reviewed by Dean Jackson.
+
+        * WebKit2.xcodeproj/project.pbxproj: Promote WKNavigationResponsePrivate.h to private.
+
 2014-05-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [UNIX] Reorganize and cleanup main functions of GTK and EFL ports
