@@ -1,3 +1,19 @@
+2014-05-23  Enrica Casucci  <enrica@apple.com>
+
+        Remove invalid ASSERT in wordRangeForPosition.
+        https://bugs.webkit.org/show_bug.cgi?id=133232
+
+        Reviewed by Ryosuke Niwa.
+
+        In WK2 for iOS this function is called on every selection change.
+        The selection could be set by Javascript in an element that is not visible.
+        In that case we won't be able to create a VisiblePosition therefore wordRangeForPosition
+        should not ASSERT that the VisiblePosition is not null, but rather
+        perform an early return if it is null.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::wordRangeFromPosition):
+
 2014-05-23  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Use gridRowCount() and gridColumnCount() when possible

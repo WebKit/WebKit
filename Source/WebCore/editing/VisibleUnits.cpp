@@ -1835,7 +1835,9 @@ UChar32 characterBeforePosition(const VisiblePosition& position)
 
 PassRefPtr<Range> wordRangeFromPosition(const VisiblePosition& position)
 {
-    ASSERT(position.isNotNull());
+    // The selection could be in a non visible element and we don't have a VisiblePosition.
+    if (position.isNull())
+        return nullptr;
 
     RefPtr<Range> range = enclosingTextUnitOfGranularity(position, WordGranularity, DirectionBackward);
 
