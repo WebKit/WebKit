@@ -1,5 +1,21 @@
 2014-05-23  Dana Burkart  <dburkart@apple.com>
 
+        Merge r160896
+
+    2013-12-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+            REGRESSION(r160847): fast/events/overflowchanged-inside-selection-collapse-crash.html fails
+            https://bugs.webkit.org/show_bug.cgi?id=126037
+
+            Reviewed by Anders Carlsson.
+
+            Since overflowchanged event is now asynchronous, make the call to testRunner.notifyDone() also asynchronous.
+
+            * TestExpectations:
+            * fast/dynamic/paused-event-dispatch.html:
+
+2014-05-23  Dana Burkart  <dburkart@apple.com>
+
         Merge r160847
 
     2013-12-19  Ryosuke Niwa  <rniwa@webkit.org>
