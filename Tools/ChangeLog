@@ -1,5 +1,21 @@
 2014-05-22  Michael Saboff  <msaboff@apple.com>
 
+        Eliminate n/total progress update from run-jsc-stress-tests output to file
+        https://bugs.webkit.org/show_bug.cgi?id=133191
+
+        Reviewed by Geoffrey Garen.
+
+        Changed progressMeter setting to be based on stdout being a tty instead of
+        stdin.  Unified the processing of output from the shell runner to match the
+        same processing as is used by the makefile runner.  As part of this, the 
+        shell runner script was simplified.  It now forwards the output of each
+        test_script just like the Makefile and doesn't provide its own progress.
+
+        * Scripts/jsc-stress-test-helpers/shell-runner.sh:
+        * Scripts/run-jsc-stress-tests:
+
+2014-05-22  Michael Saboff  <msaboff@apple.com>
+
         Add option to run-jsc-stress-tests to use installed jsc
         https://bugs.webkit.org/show_bug.cgi?id=133102
 

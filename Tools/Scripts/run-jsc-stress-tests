@@ -180,7 +180,7 @@ if jscArg
     end
 end
 
-$progressMeter = ($verbosity == 0 and $stdin.tty?)
+$progressMeter = ($verbosity == 0 and $stdout.tty?)
 
 if $bundle
     $jscPath = $bundle + ".vm" + "JavaScriptCore.framework" + "Resources" + "jsc"
@@ -1228,8 +1228,76 @@ def sshRead(cmd)
     result
 end
 
+def runAndMonitorTestRunnerCommand(numberOfTests, *cmd)
+    unless $progressMeter
+        mysys(*cmd)
+    else
+       running = {}
+       didRun = {}
+       didFail = {}
+       blankLine = true
+       prevStringLength = 0
+       IO.popen(cmd, mode="r") {
+           | inp |
+           inp.each_line {
+               | line |
+               line.chomp!
+               if line =~ /^Running /
+                   running[$~.post_match] = true
+               elsif line =~ /^PASS: /
+                   didRun[$~.post_match] = true
+               elsif line =~ /^FAIL: /
+                   didRun[$~.post_match] = true
+                   didFail[$~.post_match] = true
+               else
+                   unless blankLine
+                       print("\r" + " " * prevStringLength + "\r")
+                   end
+                   puts line
+                   blankLine = true
+               end
+
+               def lpad(str, chars)
+                   str = str.to_s
+                   if str.length > chars
+                       str
+                   else
+                      "%#{chars}s"%(str)
+                   end
+               end
+
+               string  = ""
+               string += "\r#{lpad(didRun.size, numberOfTests.to_s.size)}/#{numberOfTests}"
+               unless didFail.empty?
+                   string += " (failed #{didFail.size})"
+               end
+               string += " "
+               (running.size - didRun.size).times {
+                   string += "."
+               }
+               if string.length < prevStringLength
+                   print string
+                   print(" " * (prevStringLength - string.length))
+               end
+               print string
+               prevStringLength = string.length
+               blankLine = false
+               $stdout.flush
+           }
+       }
+       puts
+       raise "Failed to run #{cmd}: #{$?.inspect}" unless $?.success?
+    end
+end
+
 def runShellTestRunner
     if $remote
+        numberOfTests = 0
+        Dir.chdir($runnerDir) {
+            # -1 for the runscript, and -2 for '..' and '.'
+            numberOfTests = Dir.entries(".").count - 3
+        }
+
         $remoteDirectory = JSON::parse(sshRead("cat ~/.bencher"))["tempPath"]
         mysys("scp", "-P", $remotePort.to_s, ($outputDir.dirname + "payload.tar.gz").to_s, "#{$remoteUser}@#{$remoteHost}:#{$remoteDirectory}")
         remoteScript = ""
@@ -1237,11 +1305,13 @@ def runShellTestRunner
         remoteScript += "rm -rf #{$outputDir.basename} && "
         remoteScript += "tar xzf payload.tar.gz && "
         remoteScript += "cd #{$outputDir.basename}/.runner && "
-        remoteScript += "DYLD_FRAMEWORK_PATH=$(cd #{$testingFrameworkPath.dirname}; pwd) sh runscript" 
-        system("ssh", "-p", $remotePort.to_s, "#{$remoteUser}@#{$remoteHost}", remoteScript)
+        remoteScript += "DYLD_FRAMEWORK_PATH=$(cd #{$testingFrameworkPath.dirname}; pwd) sh runscript"
+        runAndMonitorTestRunnerCommand(numberOfTests, "ssh", "-p", $remotePort.to_s, "#{$remoteUser}@#{$remoteHost}", remoteScript)
     else
         Dir.chdir($runnerDir) {
-            mysys("sh", "runscript")
+            # -1 for the runscript, and -2 for '..' and '.'
+            numberOfTests = Dir.entries(".").count - 3
+            runAndMonitorTestRunnerCommand(numberOfTests, "sh", "runscript")
         }
     end
 end
@@ -1251,66 +1321,7 @@ def runMakeTestRunner
     Dir.chdir($runnerDir) {
         # -1 for the Makefile, and -2 for '..' and '.'
         numberOfTests = Dir.entries(".").count - 3
-        unless $progressMeter
-            mysys("make", "-j", $numProcessors.to_s, "-s", "-f", "Makefile")
-        else
-            cmd = "make -j #{$numProcessors} -s -f Makefile"
-            running = {}
-            didRun = {}
-            didFail = {}
-            blankLine = true
-            prevStringLength = 0
-            IO.popen(cmd, "r") {
-                | inp |
-                inp.each_line {
-                    | line |
-                    line.chomp!
-                    if line =~ /^Running /
-                        running[$~.post_match] = true
-                    elsif line =~ /^PASS: /
-                        didRun[$~.post_match] = true
-                    elsif line =~ /^FAIL: /
-                        didRun[$~.post_match] = true
-                        didFail[$~.post_match] = true
-                    else
-                        unless blankLine
-                            print("\r" + " " * prevStringLength + "\r")
-                        end
-                        puts line
-                        blankLine = true
-                    end
-                    
-                    def lpad(str, chars)
-                        str = str.to_s
-                        if str.length > chars
-                            str
-                        else
-                            "%#{chars}s"%(str)
-                        end
-                    end
-    
-                    string  = ""
-                    string += "\r#{lpad(didRun.size, numberOfTests.to_s.size)}/#{numberOfTests}"
-                    unless didFail.empty?
-                        string += " (failed #{didFail.size})"
-                    end
-                    string += " "
-                    (running.size - didRun.size).times {
-                        string += "."
-                    }
-                    if string.length < prevStringLength
-                        print string
-                        print(" " * (prevStringLength - string.length))
-                    end
-                    print string
-                    prevStringLength = string.length
-                    blankLine = false
-                    $stdout.flush
-                }
-            }
-            puts
-            raise "Failed to run #{cmd}: #{$?.inspect}" unless $?.success?
-        end
+        runAndMonitorTestRunnerCommand(numberOfTests, "make", "-j", $numProcessors.to_s, "-s", "-f", "Makefile")
     }
 end
 

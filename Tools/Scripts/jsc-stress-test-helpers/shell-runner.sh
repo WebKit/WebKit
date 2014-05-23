@@ -31,15 +31,6 @@ then
     fi
 fi
 
-VERBOSE=0
-while getopts "v" OPTION
-do
-    case $OPTION in
-        v) VERBOSE=1
-            ;;
-    esac
-done
-
 indexFile=".index"
 testList=".all_tests.txt"
 tempFile=".temp.txt"
@@ -63,7 +54,6 @@ then
     rmdir ${lockDir}
 fi
 
-total=`wc -l < "${testList}" | sed 's/ //g'`
 for proc in `seq ${numProcs}`
 do
     (
@@ -73,14 +63,13 @@ do
             index=`cat ${indexFile}`
             index=$((index + 1))
             echo "${index}" > ${indexFile}
-            printf "\r ${index}/${total}"
 
             nextTest=`tail -n 1 ${testList}`
             sed '$d' < ${testList} > ${tempFile}
             mv ${tempFile} ${testList}
             unlock_test_list
 
-            [ $VERBOSE -eq 1 ] && sh ${nextTest} || sh ${nextTest} 1> /dev/null
+            sh ${nextTest}
 
             lock_test_list
         done
