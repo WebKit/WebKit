@@ -3385,6 +3385,12 @@ void Editor::scanSelectionForTelephoneNumbers()
 
 void Editor::scanRangeForTelephoneNumbers(Range& range, const StringView& stringView, Vector<RefPtr<Range>>& markedRanges)
 {
+    // Don't scan for phone numbers inside editable regions.
+    Node* startNode = range.startContainer();
+    ASSERT(startNode);
+    if (startNode->hasEditableStyle())
+        return;
+
     // relativeStartPosition and relativeEndPosition are the endpoints of the phone number range,
     // relative to the scannerPosition
     unsigned length = stringView.length();
@@ -3404,14 +3410,14 @@ void Editor::scanRangeForTelephoneNumbers(Range& range, const StringView& string
         ASSERT(scannerPosition + relativeEndPosition < length);
 
         // It doesn't make sense to add the document marker to a match that's not in a text node.
-        if (!range.startContainer()->isTextNode())
+        if (!startNode->isTextNode())
             continue;
 
         unsigned startOffset = range.startOffset() + scannerPosition + relativeStartPosition;
         unsigned length = relativeEndPosition - relativeStartPosition + 1;
 
-        markedRanges.append(Range::create(range.ownerDocument(), range.startContainer(), startOffset, range.startContainer(), startOffset + length));
-        range.ownerDocument().markers().addMarkerToNode(range.startContainer(), startOffset, length, DocumentMarker::TelephoneNumber);
+        markedRanges.append(Range::create(range.ownerDocument(), startNode, startOffset, startNode, startOffset + length));
+        range.ownerDocument().markers().addMarkerToNode(startNode, startOffset, length, DocumentMarker::TelephoneNumber);
 
         scannerPosition += relativeEndPosition + 1;
     }

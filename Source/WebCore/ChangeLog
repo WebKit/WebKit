@@ -1,3 +1,15 @@
+2014-05-22  Brady Eidson  <beidson@apple.com>
+
+        Don't scan for phone numbers in editable regions
+        <rdar://problem/16949846> and https://bugs.webkit.org/show_bug.cgi?id=133192
+
+        Reviewed by Enrica Casucci.
+
+        No new tests (Currently untested WK2-only feature)
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::scanRangeForTelephoneNumbers): Skip the range if the Node is editable.
+
 2014-05-22  Jeremy Jones  <jeremyj@apple.com>
 
         Captions layout incorrectly in fullscreen.
