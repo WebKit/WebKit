@@ -125,7 +125,6 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Cach
     loadParameters.inPrivateBrowsingMode = privateBrowsingEnabled;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect;
     loadParameters.isMainResource = resource && resource->type() == CachedResource::MainResource;
-    loadParameters.defersLoading = resourceLoader->defersLoading();
 
     ASSERT((loadParameters.webPageID && loadParameters.webFrameID) || loadParameters.clientCredentialPolicy == DoNotAskClientForAnyCredentials);
 
@@ -182,12 +181,6 @@ void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
     // It's possible that this WebResourceLoader might be just about to message back to the NetworkProcess (e.g. ContinueWillSendRequest)
     // but there's no point in doing so anymore.
     loader->detachFromCoreLoader();
-}
-
-void WebResourceLoadScheduler::setDefersLoading(ResourceLoader* resourceLoader, bool defers)
-{
-    ResourceLoadIdentifier identifier = resourceLoader->identifier();
-    WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::SetDefersLoading(identifier, defers), 0);
 }
 
 void WebResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader*, const KURL&)

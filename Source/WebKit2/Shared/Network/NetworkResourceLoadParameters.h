@@ -62,7 +62,6 @@ public:
     bool inPrivateBrowsingMode;
     bool shouldClearReferrerOnHTTPSToHTTPRedirect;
     bool isMainResource;
-    bool defersLoading;
 };
 
 } // namespace WebKit

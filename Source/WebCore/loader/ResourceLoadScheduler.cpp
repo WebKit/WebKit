@@ -160,10 +160,6 @@ void ResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
     scheduleServePendingRequests();
 }
 
-void ResourceLoadScheduler::setDefersLoading(ResourceLoader*, bool)
-{
-}
-
 void ResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader* resourceLoader, const KURL& redirectURL)
 {
     HostInformation* oldHost = hostForURL(resourceLoader->url());

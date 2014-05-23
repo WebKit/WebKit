@@ -137,15 +137,6 @@ void NetworkConnectionToWebProcess::removeLoadIdentifier(ResourceLoadIdentifier 
     loader->abort();
 }
 
-void NetworkConnectionToWebProcess::setDefersLoading(ResourceLoadIdentifier identifier, bool defers)
-{
-    RefPtr<NetworkResourceLoader> loader = m_networkResourceLoaders.get(identifier);
-    if (!loader)
-        return;
-
-    loader->setDefersLoading(defers);
-}
-
 void NetworkConnectionToWebProcess::servePendingRequests(uint32_t resourceLoadPriority)
 {
     NetworkProcess::shared().networkResourceLoadScheduler().servePendingRequests(static_cast<ResourceLoadPriority>(resourceLoadPriority));

@@ -54,7 +54,6 @@ public:
     virtual PassRefPtr<NetscapePlugInStreamLoader> schedulePluginStreamLoad(Frame*, NetscapePlugInStreamLoaderClient*, const ResourceRequest&);
     virtual void remove(ResourceLoader*);
     virtual void crossOriginRedirectReceived(ResourceLoader*, const KURL& redirectURL);
-    virtual void setDefersLoading(ResourceLoader*, bool);
     
     virtual void servePendingRequests(ResourceLoadPriority minimumPriority = ResourceLoadPriorityVeryLow);
     virtual void suspendPendingRequests();
