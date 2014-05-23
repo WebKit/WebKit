@@ -1,3 +1,20 @@
+2014-05-23  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Use gridRowCount() and gridColumnCount() when possible
+        https://bugs.webkit.org/show_bug.cgi?id=133213
+
+        Reviewed by Sergio Villar Senin.
+
+        Use gridRowCount() and gridColumnCount() instead of m_grid.size() and
+        m_grid[0].size() to make the code more descriptive and easier to
+        understand.
+
+        No new tests (No change in behavior).
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::growGrid):
+        (WebCore::RenderGrid::placeAutoMajorAxisItemOnGrid):
+
 2014-05-23  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r153917): Chart for the Category Explorer within Quicken Essentials

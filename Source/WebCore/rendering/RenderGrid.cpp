@@ -630,13 +630,13 @@ bool RenderGrid::tracksAreWiderThanMinTrackBreadth(GridTrackSizingDirection dire
 void RenderGrid::growGrid(GridTrackSizingDirection direction)
 {
     if (direction == ForColumns) {
-        const size_t oldColumnSize = m_grid[0].size();
-        for (size_t row = 0; row < m_grid.size(); ++row)
+        const size_t oldColumnSize = gridColumnCount();
+        for (size_t row = 0; row < gridRowCount(); ++row)
             m_grid[row].grow(oldColumnSize + 1);
     } else {
-        const size_t oldRowSize = m_grid.size();
+        const size_t oldRowSize = gridRowCount();
         m_grid.grow(oldRowSize + 1);
-        m_grid[oldRowSize].grow(m_grid[0].size());
+        m_grid[oldRowSize].grow(gridColumnCount());
     }
 }
 
@@ -776,8 +776,8 @@ void RenderGrid::placeAutoMajorAxisItemOnGrid(RenderBox* gridItem)
     }
 
     // We didn't find an empty grid area so we need to create an extra major axis line and insert our gridItem in it.
-    const size_t columnIndex = (autoPlacementMajorAxisDirection() == ForColumns) ? m_grid[0].size() : minorAxisIndex;
-    const size_t rowIndex = (autoPlacementMajorAxisDirection() == ForColumns) ? minorAxisIndex : m_grid.size();
+    const size_t columnIndex = (autoPlacementMajorAxisDirection() == ForColumns) ? gridColumnCount() : minorAxisIndex;
+    const size_t rowIndex = (autoPlacementMajorAxisDirection() == ForColumns) ? minorAxisIndex : gridRowCount();
     growGrid(autoPlacementMajorAxisDirection());
     insertItemIntoGrid(gridItem, rowIndex, columnIndex);
 }
