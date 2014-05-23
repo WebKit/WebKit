@@ -1,3 +1,24 @@
+2014-05-23  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        REGRESSION(r169105): fast/regions/cssom/region-range-for-box-crash.html is more crashy than before
+        https://bugs.webkit.org/show_bug.cgi?id=133124
+
+        Reviewed by David Hyatt.
+
+        When adjusting the end points of a subtree selection in the case of a document
+        with named flows, we have to make sure that we pass the computed end
+        points to the visible selection algorithm only if the end points are
+        part of the same subtree, otherwise assume a selection clear behavior.
+
+        The test fast/regions/cssom/region-range-for-box-crash.html is used to
+        test this behavior.
+
+        * rendering/SelectionSubtreeRoot.cpp:
+        (WebCore::SelectionSubtreeRoot::adjustForVisibleSelection):
+        (WebCore::SelectionSubtreeRoot::selectionStartEndPositions): Moved to header file.
+        * rendering/SelectionSubtreeRoot.h:
+        (WebCore::SelectionSubtreeRoot::selectionStartEndPositions):
+
 2014-05-23  Jeremy Jones  <jeremyj@apple.com>
 
         reset m_havePreparedToPlay when changing media engines.

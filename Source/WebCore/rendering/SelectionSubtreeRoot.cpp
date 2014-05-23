@@ -45,12 +45,6 @@ SelectionSubtreeRoot::SelectionSubtreeRoot()
 {
 }
 
-void SelectionSubtreeRoot::selectionStartEndPositions(int& startPos, int& endPos) const
-{
-    startPos = m_selectionStartPos;
-    endPos = m_selectionEndPos;
-}
-
 void SelectionSubtreeRoot::adjustForVisibleSelection(Document& document)
 {
     if (selectionClear())
@@ -77,7 +71,10 @@ void SelectionSubtreeRoot::adjustForVisibleSelection(Document& document)
     m_selectionEnd = nullptr;
     m_selectionEndPos = -1;
 
-    if (startPos.isNotNull() && endPos.isNotNull() && selection.visibleStart() != selection.visibleEnd()) {
+    if (startPos.isNotNull()
+        && endPos.isNotNull()
+        && selection.visibleStart() != selection.visibleEnd()
+        && startPos.deprecatedNode()->renderer()->flowThreadContainingBlock() == endPos.deprecatedNode()->renderer()->flowThreadContainingBlock()) {
         m_selectionStart = startPos.deprecatedNode()->renderer();
         m_selectionStartPos = startPos.deprecatedEditingOffset();
         m_selectionEnd = endPos.deprecatedNode()->renderer();

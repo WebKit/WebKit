@@ -45,7 +45,12 @@ public:
     int selectionStartPos() const { return m_selectionStartPos; }
     RenderObject* selectionEnd() const { return m_selectionEnd; }
     int selectionEndPos() const { return m_selectionEndPos; }
-    void selectionStartEndPositions(int& startPos, int& endPos) const;
+    void selectionStartEndPositions(int& startPos, int& endPos) const
+    {
+        startPos = m_selectionStartPos;
+        endPos = m_selectionEndPos;
+    }
+
     bool selectionClear() const
     {
         return !m_selectionStart

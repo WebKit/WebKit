@@ -1,3 +1,14 @@
+2014-05-23  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        REGRESSION(r169105): fast/regions/cssom/region-range-for-box-crash.html is more crashy than before
+        https://bugs.webkit.org/show_bug.cgi?id=133124
+
+        Reviewed by David Hyatt.
+
+        Unskip the test file that used to crash.
+
+        * TestExpectations:
+
 2014-05-23  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rebaseline some tests after r169260
