@@ -31,11 +31,9 @@
 
 namespace WebKit {
 
-#ifdef __cplusplus
 extern "C" {
-WK_EXPORT int NetworkProcessMain(int argc, char* argv[]);
-} // extern "C"
-#endif // __cplusplus
+WK_EXPORT int NetworkProcessMainUnix(int argc, char** argv);
+}
 
 } // namespace WebKit
 

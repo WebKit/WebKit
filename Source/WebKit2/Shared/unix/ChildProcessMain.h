@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (C) 2014 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,17 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginProcessMainUnix_h
-#define PluginProcessMainUnix_h
+#ifndef ChildProcessMain_h
+#define ChildProcessMain_h
 
-#include <WebKit/WKBase.h>
+#include "ChildProcess.h"
+#include "WebKit2Initialize.h"
+#include <wtf/RunLoop.h>
 
 namespace WebKit {
 
-extern "C" {
-WK_EXPORT int PluginProcessMainUnix(int argc, char** argv);
+class ChildProcessMainBase {
+public:
+    virtual bool platformInitialize() { return true; }
+    virtual bool parseCommandLine(int argc, char** argv);
+    virtual void platformFinalize() { }
+
+    const ChildProcessInitializationParameters& initializationParameters() const { return m_parameters; }
+
+protected:
+    ChildProcessInitializationParameters m_parameters;
+};
+
+template<typename ChildProcessType, typename ChildProcessMainType>
+int ChildProcessMain(int argc, char** argv)
+{
+    ChildProcessMainType childMain;
+
+    if (!childMain.platformInitialize())
+        return EXIT_FAILURE;
+
+    InitializeWebKit2();
+
+    if (!childMain.parseCommandLine(argc, argv))
+        return EXIT_FAILURE;
+
+    ChildProcessType::shared().initialize(childMain.initializationParameters());
+    RunLoop::run();
+    childMain.platformFinalize();
+
+    return EXIT_SUCCESS;
 }
 
 } // namespace WebKit
 
-#endif // PluginProcessMainUnix_h
+#endif // ChildProcessMain_h

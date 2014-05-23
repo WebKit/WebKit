@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (C) 2014 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,19 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessMainGtk_h
-#define WebProcessMainGtk_h
+#include "WebProcessMainUnix.h"
 
-#include <WebKit/WKBase.h>
+using namespace WebKit;
 
-namespace WebKit {
-
-#ifdef __cplusplus
-extern "C" {
-WK_EXPORT int WebProcessMainGtk(int argc, char* argv[]);
-} // extern "C"
-#endif // __cplusplus
-
-} // namespace WebKit
-
-#endif // WebProcessMain_h
+int main(int argc, char** argv)
+{
+    return WebProcessMainUnix(argc, argv);
+}

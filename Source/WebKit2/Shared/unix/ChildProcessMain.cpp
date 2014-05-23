@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2014 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebProcessMainEfl.h"
+#include "config.h"
+#include "ChildProcessMain.h"
 
-int main(int argc, char** argv)
+#include <stdlib.h>
+
+namespace WebKit {
+
+bool ChildProcessMainBase::parseCommandLine(int argc, char** argv)
 {
-    return WebKit::WebProcessMainEfl(argc, argv);
+    ASSERT(argc >= 2);
+    if (argc < 2)
+        return false;
+
+    m_parameters.connectionIdentifier = atoi(argv[1]);
+    return true;
 }
+
+} // namespace WebKit

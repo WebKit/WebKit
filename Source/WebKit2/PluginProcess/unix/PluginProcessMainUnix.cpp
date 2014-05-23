@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2011, 2014 Igalia S.L.
  * Copyright (C) 2011 Apple Inc.
  * Copyright (C) 2012 Samsung Electronics
  *
@@ -30,96 +30,82 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
+#include "ChildProcessMain.h"
 #include "Logging.h"
 #include "NetscapePlugin.h"
 #include "PluginProcess.h"
-#include "WebKit2Initialize.h"
-#include <libgen.h>
-#include <wtf/RunLoop.h>
+#include <WebCore/FileSystem.h>
+#include <stdlib.h>
+#include <wtf/text/CString.h>
+
 #if PLATFORM(GTK)
 #include <gtk/gtk.h>
-#if PLATFORM(X11) && defined(GDK_WINDOWING_X11)
-#include <gdk/gdkx.h>
-#endif
 #elif PLATFORM(EFL) && HAVE_ECORE_X
 #include <Ecore_X.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
 
-#ifdef XP_UNIX
+#if defined(XP_UNIX)
 
 #if !LOG_DISABLED
 static const char xErrorString[] = "The program '%s' received an X Window System error.\n"
     "This probably reflects a bug in a browser plugin.\n"
     "The error was '%s'.\n"
     "  (Details: serial %ld error_code %d request_code %d minor_code %d)\n";
-#endif /* !LOG_DISABLED */
+#endif // !LOG_DISABLED
 
-static char* programName = 0;
+static CString programName;
 
 static int webkitXError(Display* xdisplay, XErrorEvent* error)
 {
     char errorMessage[64];
     XGetErrorText(xdisplay, error->error_code, errorMessage, 63);
 
-    LOG(Plugins, xErrorString,
-        programName, errorMessage,
-        error->serial, error->error_code,
-        error->request_code, error->minor_code);
+    LOG(Plugins, xErrorString, programName.data(), errorMessage, error->serial, error->error_code, error->request_code, error->minor_code);
 
     return 0;
 }
-#endif
+#endif // XP_UNIX
 
-WK_EXPORT int PluginProcessMainUnix(int argc, char* argv[])
-{
-#if PLUGIN_ARCHITECTURE(X11)
-    bool scanPlugin = !strcmp(argv[1], "-scanPlugin");
-#endif
-    ASSERT_UNUSED(argc, argc == 3);
-
+class PluginProcessMain final: public ChildProcessMainBase {
+public:
+    bool platformInitialize() override
+    {
 #if PLATFORM(GTK)
-    gtk_init(&argc, &argv);
+        gtk_init(nullptr, nullptr);
 #elif PLATFORM(EFL)
 #ifdef HAVE_ECORE_X
-    if (!ecore_x_init(0))
+        if (!ecore_x_init(0))
 #endif
-        return 1;
+            return false;
 #endif
 
-    InitializeWebKit2();
-
-#if PLUGIN_ARCHITECTURE(X11)
-    if (scanPlugin) {
-        String pluginPath(argv[2]);
-        if (!NetscapePluginModule::scanPlugin(pluginPath))
-            return EXIT_FAILURE;
-        return EXIT_SUCCESS;
+        return true;
     }
-#endif
 
-    // Plugins can produce X errors that are handled by the GDK X error handler, which
-    // exits the process. Since we don't want to crash due to plugin bugs, we install a
-    // custom error handler to show a warning when a X error happens without aborting.
+    bool parseCommandLine(int argc, char** argv) override
+    {
+        ASSERT(argc == 3);
+        if (argc != 3)
+            return false;
+
+        if (!strcmp(argv[1], "-scanPlugin"))
+            exit(NetscapePluginModule::scanPlugin(argv[2]) ? EXIT_SUCCESS : EXIT_FAILURE);
+
 #if defined(XP_UNIX)
-    programName = basename(argv[0]);
-    XSetErrorHandler(webkitXError);
+        programName = WebCore::pathGetFileName(argv[0]).utf8();
+        XSetErrorHandler(webkitXError);
 #endif
 
-    int socket = atoi(argv[1]);
+        m_parameters.extraInitializationData.add("plugin-path", argv[2]);
+        return ChildProcessMainBase::parseCommandLine(argc, argv);
+    }
+};
 
-    WebKit::ChildProcessInitializationParameters parameters;
-    parameters.connectionIdentifier = socket;
-    parameters.extraInitializationData.add("plugin-path", argv[2]);
-
-    WebKit::PluginProcess::shared().initialize(parameters);
-
-    RunLoop::run();
-
-    return 0;
+int PluginProcessMainUnix(int argc, char** argv)
+{
+    return ChildProcessMain<PluginProcess, PluginProcessMain>(argc, argv);
 }
 
 } // namespace WebKit

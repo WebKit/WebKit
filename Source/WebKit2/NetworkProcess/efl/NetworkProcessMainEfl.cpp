@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Company 100 Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -11,7 +11,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
@@ -24,9 +24,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebProcessMainGtk.h"
+#include "config.h"
+#include "NetworkProcessMainUnix.h"
 
-int main(int argc, char** argv)
+#if ENABLE(NETWORK_PROCESS)
+
+#include "ChildProcessMain.h"
+#include "NetworkProcess.h"
+#include <Ecore.h>
+#include <WebCore/SoupNetworkSession.h>
+#include <libsoup/soup.h>
+
+using namespace WebCore;
+
+namespace WebKit {
+
+class NetworkProcessMain final: public ChildProcessMainBase {
+public:
+    bool platformInitialize() override
+    {
+        if (!ecore_init())
+            return false;
+
+        if (!ecore_main_loop_glib_integrate())
+            return false;
+
+        SoupNetworkSession::defaultSession().setupHTTPProxyFromEnvironment();
+        return true;
+    }
+
+    void platformFinalize() override
+    {
+        if (SoupCache* soupCache = SoupNetworkSession::defaultSession().cache()) {
+            soup_cache_flush(soupCache);
+            soup_cache_dump(soupCache);
+        }
+
+        ecore_shutdown();
+    }
+};
+
+int NetworkProcessMainUnix(int argc, char** argv)
 {
-    return WebKit::WebProcessMainGtk(argc, argv);
+    return ChildProcessMain<NetworkProcess, NetworkProcessMain>(argc, argv);
 }
+
+} // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)

@@ -1,3 +1,47 @@
+2014-05-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [UNIX] Reorganize and cleanup main functions of GTK and EFL ports
+        https://bugs.webkit.org/show_bug.cgi?id=131024
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Move main function implementation files to <process-dir>/EntryPoint/unix/<ProcessName>Main.cpp
+        files that are now shared by GTK and EFL ports. These files call a
+        main method that wraps a new method ChildProcessMain that contains
+        the common code and uses a helper class for the platform specific
+        code. GTK+ and EFL ports implement that helper class for every process type.
+
+        * NetworkProcess/EntryPoint/unix/NetworkProcessMain.cpp: Renamed from Source/WebKit2/efl/MainEfl.cpp.
+        (main):
+        * NetworkProcess/efl/NetworkProcessMainEfl.cpp: Renamed from Source/WebKit2/unix/NetworkMainUnix.cpp.
+        (WebKit::NetworkProcessMainUnix):
+        * NetworkProcess/gtk/NetworkProcessMainGtk.cpp: Renamed from Source/WebKit2/NetworkProcess/unix/NetworkProcessMainUnix.cpp.
+        (WebKit::NetworkProcessMainUnix):
+        * NetworkProcess/unix/NetworkProcessMainUnix.h:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * PluginProcess/EntryPoint/unix/PluginProcessMain.cpp: Renamed from Source/WebKit2/unix/PluginMainUnix.cpp.
+        (main):
+        * PluginProcess/unix/PluginProcessMainUnix.cpp:
+        (WebKit::webkitXError):
+        (WebKit::PluginProcessMainUnix):
+        * PluginProcess/unix/PluginProcessMainUnix.h:
+        * Shared/unix/ChildProcessMain.cpp: Copied from Source/WebKit2/WebProcess/efl/WebProcessMainEfl.h.
+        (WebKit::ChildProcessMainBase::parseCommandLine):
+        * Shared/unix/ChildProcessMain.h: Renamed from Source/WebKit2/WebProcess/gtk/WebProcessMainGtk.h.
+        (WebKit::ChildProcessMainBase::platformInitialize):
+        (WebKit::ChildProcessMainBase::platformFinalize):
+        (WebKit::ChildProcessMainBase::initializationParameters):
+        (WebKit::ChildProcessMain):
+        * WebProcess/EntryPoint/unix/WebProcessMain.cpp: Renamed from Source/WebKit2/gtk/MainGtk.cpp.
+        (main):
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+        (WebKit::WebProcessMainUnix):
+        (dummyExtensionErrorHandler): Deleted.
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        (WebKit::WebProcessMainUnix):
+        * WebProcess/unix/WebProcessMainUnix.h: Renamed from Source/WebKit2/WebProcess/efl/WebProcessMainEfl.h.
+
 2014-05-22  Zan Dobersek  <zdobersek@igalia.com>
 
         Have the decoded element in VectorArgumentCoder::decode() moved into Vector::append()

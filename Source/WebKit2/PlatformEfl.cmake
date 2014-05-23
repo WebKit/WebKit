@@ -1,9 +1,9 @@
 list(APPEND WebKit2_SOURCES
+    NetworkProcess/efl/NetworkProcessMainEfl.cpp
+
     NetworkProcess/soup/NetworkProcessSoup.cpp
     NetworkProcess/soup/NetworkResourceLoadSchedulerSoup.cpp
     NetworkProcess/soup/RemoteNetworkingContextSoup.cpp
-
-    NetworkProcess/unix/NetworkProcessMainUnix.cpp
 
     Platform/IPC/unix/AttachmentUnix.cpp
     Platform/IPC/unix/ConnectionUnix.cpp
@@ -51,6 +51,8 @@ list(APPEND WebKit2_SOURCES
     Shared/linux/SeccompFilters/SyscallPolicy.cpp
 
     Shared/soup/WebCoreArgumentCodersSoup.cpp
+
+    Shared/unix/ChildProcessMain.cpp
 
     UIProcess/DefaultUndoController.cpp
 
@@ -219,6 +221,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/platform/text/enchant"
+    "${WEBKIT2_DIR}/NetworkProcess/efl"
     "${WEBKIT2_DIR}/NetworkProcess/unix"
     "${WEBKIT2_DIR}/Platform/efl"
     "${WEBKIT2_DIR}/Shared/API/c/efl"
@@ -226,6 +229,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/Downloads/soup"
     "${WEBKIT2_DIR}/Shared/efl"
     "${WEBKIT2_DIR}/Shared/soup"
+    "${WEBKIT2_DIR}/Shared/unix"
     "${WEBKIT2_DIR}/UIProcess/API/C/cairo"
     "${WEBKIT2_DIR}/UIProcess/API/C/CoordinatedGraphics"
     "${WEBKIT2_DIR}/UIProcess/API/C/efl"
@@ -238,6 +242,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/soup"
     "${WEBKIT2_DIR}/WebProcess/efl"
     "${WEBKIT2_DIR}/WebProcess/soup"
+    "${WEBKIT2_DIR}/WebProcess/unix"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/efl"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/soup"
     "${WEBKIT2_DIR}/WebProcess/WebPage/CoordinatedGraphics"
@@ -290,11 +295,11 @@ list(APPEND WebKit2_LIBRARIES
 )
 
 list(APPEND WebProcess_SOURCES
-    efl/MainEfl.cpp
+    WebProcess/EntryPoint/unix/WebProcessMain.cpp
 )
 
 list(APPEND NetworkProcess_SOURCES
-        unix/NetworkMainUnix.cpp
+    NetworkProcess/EntryPoint/unix/NetworkProcessMain.cpp
 )
 
 list(APPEND WebProcess_LIBRARIES
@@ -406,7 +411,7 @@ if (ENABLE_PLUGIN_PROCESS)
     include_directories(${PluginProcess_INCLUDE_DIRECTORIES})
 
     list(APPEND PluginProcess_SOURCES
-        ${WEBKIT2_DIR}/unix/PluginMainUnix.cpp
+        ${WEBKIT2_DIR}/PluginProcess/EntryPoint/unix/PluginProcessMain.cpp
     )
 
     if (ENABLE_ECORE_X)
