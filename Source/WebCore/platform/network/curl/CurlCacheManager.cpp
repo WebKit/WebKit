@@ -185,7 +185,7 @@ void CurlCacheManager::makeRoomForNewEntry()
     if (m_disabled)
         return;
 
-    while (m_currentStorageSize > m_storageSizeLimit) {
+    while ((m_currentStorageSize > m_storageSizeLimit) && m_LRUEntryList.size() > 0) {
         ASSERT(m_index.find(m_LRUEntryList.last()) != m_index.end());
         invalidateCacheEntry(m_LRUEntryList.last());
     }
@@ -303,9 +303,9 @@ void CurlCacheManager::invalidateCacheEntry(const String& url)
             m_currentStorageSize -= it->value->entrySize();
 
         it->value->invalidate();
-        m_LRUEntryList.remove(url);
         m_index.remove(url);
     }
+    m_LRUEntryList.remove(url);
 }
 
 void CurlCacheManager::didFail(const String& url)

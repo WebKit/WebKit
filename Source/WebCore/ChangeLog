@@ -1,3 +1,27 @@
+2014-05-22  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Crash when exceeding maximum cache limit.
+        https://bugs.webkit.org/show_bug.cgi?id=133185
+
+        Reviewed by Brent Fulgham.
+
+        When the maximum cache limit is exceeded, I get a crash.
+        This happens when deleting cache entries, because a reference to the url string object in the LRU list
+        is used as a parameter to invalidateCacheEntry(), when called from makeRoomForNewEntry().
+        When the string is removed from the LRU list in makeRoomForNewEntry(), the string is deleted.
+        Next, the string is accessed again to remove the url from the index, and we crash.
+
+        This can be fixed by removing the string from the LRU list after it is removed from the index.
+
+        Fixing the crash also revealed an infinite loop problem.
+        If the url for some reason only exist in the LRU list, and not in the index,
+        we will inifitely loop in makeRoomForNewEntry(), trying to remove this url from the cache, but never succeeding.
+        This can be fixed by removing the url from the LRU list, also when it's not in the index.
+
+        * platform/network/curl/CurlCacheManager.cpp:
+        (WebCore::CurlCacheManager::makeRoomForNewEntry): Avoid infinite loop by checking if there are more cache entries to remove.
+        (WebCore::CurlCacheManager::invalidateCacheEntry): Avoid crash and infinite loop by removing url from LRU list last.
+
 2014-05-22  Simon Fraser  <simon.fraser@apple.com>
 
         Make viewport units work in CSS gradients
