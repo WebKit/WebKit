@@ -189,7 +189,7 @@ class PerfTest(object):
 
             metric_match = self._metrics_regex.match(line)
             if not metric_match:
-                _log.error('ERROR: ' + line)
+                _log.error('ERROR: [' + line + ']')
                 return False
 
             metric = self._ensure_metrics(metric_match.group('metric'), metric_match.group('subtest'), metric_match.group('unit'), metric_match.group('aggregator'))
@@ -242,6 +242,7 @@ class PerfTest(object):
         return False
 
     _lines_to_ignore_in_parser_result = [
+        re.compile("^\s+$"),
         # Following are for handle existing test like Dromaeo
         re.compile(re.escape("""main frame - has 1 onunload handler(s)""")),
         re.compile(re.escape("""frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)""")),
