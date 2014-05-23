@@ -1,5 +1,20 @@
 2014-05-22  Benjamin Poulain  <bpoulain@apple.com>
 
+        [iOS][WK2] Reset the special action-target of WKSyntheticClickTapGestureRecognizer on destruction
+        https://bugs.webkit.org/show_bug.cgi?id=133165
+        <rdar://problem/16283914>
+
+        Reviewed by Andy Estes.
+
+        It is unclear why, but the WKSyntheticClickTapGestureRecognizer sometimes survives its own view
+        and is reset after WKContentView was destructed.
+        This patch cleans up the target-action on destruction to avoid accessing a destructed object.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+
+2014-05-22  Benjamin Poulain  <bpoulain@apple.com>
+
         Do not force a layout when changing the FixedLayoutSize in WebPage
         https://bugs.webkit.org/show_bug.cgi?id=133167
 

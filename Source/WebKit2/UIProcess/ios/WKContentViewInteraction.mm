@@ -240,6 +240,9 @@ static const float tapAndHoldDelay  = 0.75;
     [_highlightRootView removeFromSuperview];
     [_touchEventGestureRecognizer setDelegate:nil];
     [_singleTapGestureRecognizer setDelegate:nil];
+    [_singleTapGestureRecognizer setGestureRecognizedTarget:nil action:nil];
+    [_singleTapGestureRecognizer setResetTarget:nil action:nil];
+
     [_doubleTapGestureRecognizer setDelegate:nil];
     [_highlightLongPressGestureRecognizer setDelegate:nil];
     [_longPressGestureRecognizer setDelegate:nil];
