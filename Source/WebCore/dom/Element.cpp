@@ -1387,7 +1387,7 @@ void Element::removedFrom(ContainerNode* insertionPoint)
     if (insertionPoint->isInTreeScope()) {
         TreeScope* oldScope = insertionPoint->treeScope();
         HTMLDocument* oldDocument = inDocument() && oldScope->documentScope()->isHTMLDocument() ? toHTMLDocument(oldScope->documentScope()) : 0;
-        if (oldScope != treeScope())
+        if (oldScope != treeScope() || !isInTreeScope())
             oldScope = 0;
 
         const AtomicString& idValue = getIdAttribute();
