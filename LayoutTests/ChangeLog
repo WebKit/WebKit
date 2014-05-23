@@ -1,5 +1,18 @@
 2014-05-23  Dana Burkart  <dburkart@apple.com>
 
+        Merge r161008
+
+    2013-12-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+            REGRESSION (r160847): fast/dynamic/paused-event-dispatch.html is failing
+            https://bugs.webkit.org/show_bug.cgi?id=126163
+
+            Unreviewed. Try increasing the timeouts after r160896.
+
+            * fast/dynamic/paused-event-dispatch.html:
+
+2014-05-23  Dana Burkart  <dburkart@apple.com>
+
         Merge r160896
 
     2013-12-19  Ryosuke Niwa  <rniwa@webkit.org>
