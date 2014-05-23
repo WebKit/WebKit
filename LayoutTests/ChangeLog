@@ -1,3 +1,10 @@
+2014-05-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Rebaseline two tests affected by r169229.
+
+        * platform/mac-wk2/compositing/tiling/rotated-tiled-clamped-expected.txt:
+        * platform/mac-wk2/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt:
+
 2014-05-23  Mihnea Ovidenie  <mihnea@adobe.com>
 
         REGRESSION(r169105): fast/regions/cssom/region-range-for-box-crash.html is more crashy than before
