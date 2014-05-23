@@ -1,3 +1,21 @@
+2014-05-23  Dana Burkart  <dburkart@apple.com>
+
+        Merge r167832
+
+    2014-04-25  Oliver Hunt  <oliver@apple.com>
+
+            Need earlier cell test
+            https://bugs.webkit.org/show_bug.cgi?id=132211
+
+            Reviewed by Mark Lam.
+
+            Move cell test to before the function call repatch
+            location, as the repatch logic for 32bit assumes that the
+            caller will already have performed a cell check.
+
+            * jit/JITCall32_64.cpp:
+            (JSC::JIT::compileOpCall):
+
 2014-05-22  Dana Burkart  <dburkart@apple.com>
 
         Merge r165162

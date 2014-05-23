@@ -1,5 +1,25 @@
 2014-05-23  Dana Burkart  <dburkart@apple.com>
 
+        Merge r167832
+
+    2014-04-25  Oliver Hunt  <oliver@apple.com>
+
+            Need earlier cell test
+            https://bugs.webkit.org/show_bug.cgi?id=132211
+
+            Reviewed by Mark Lam.
+
+            Tests
+
+            * js/regress/polymorphic-array-call-expected.txt: Added.
+            * js/regress/polymorphic-array-call.html: Added.
+            * js/regress/script-tests/polymorphic-array-call.js: Added.
+            (func.C.this.m):
+            (func.C):
+            (func):
+
+2014-05-23  Dana Burkart  <dburkart@apple.com>
+
         Merge r161008
 
     2013-12-23  Ryosuke Niwa  <rniwa@webkit.org>
