@@ -1597,6 +1597,16 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 // Keyboard interaction
 // UITextInput protocol implementation
 
+- (void)beginSelectionChange
+{
+    [self.inputDelegate selectionWillChange:self];
+}
+
+- (void)endSelectionChange
+{
+    [self.inputDelegate selectionDidChange:self];
+}
+
 - (NSString *)textInRange:(UITextRange *)range
 {
     return nil;
