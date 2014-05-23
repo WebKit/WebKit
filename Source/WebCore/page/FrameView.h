@@ -220,8 +220,8 @@ public:
 
     void adjustViewSize();
     
-    void setViewportSize(IntSize);
-    IntSize viewportSize() const;
+    void setViewportSizeForCSSViewportUnits(IntSize);
+    IntSize viewportSizeForCSSViewportUnits() const;
     
     virtual IntRect windowClipRect(bool clipToContents = true) const override;
     IntRect windowClipRectForFrameOwner(const HTMLFrameOwnerElement*, bool clipToLayerContents) const;

@@ -1,3 +1,57 @@
+2014-05-22  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Add support for minimal-ui viewports
+        https://bugs.webkit.org/show_bug.cgi?id=133162
+
+        Reviewed by Simon Fraser.
+
+        Add support for minimal-ui directly into the Viewport configuration.
+
+        ViewportConfiguration knows about two kinds of layout size in scrollview coordinates:
+        -normal size
+        -minimal ui size.
+
+        Initially, the page is initialized with resetMinimalUI() and starts with a normal layout.
+
+        At any time before the main resource is loaded, the Web page can update its viewport meta tag
+        to include minimal-ui. The viewport configuration is updated immediately to reflect the minimal-ui
+        layout size. Any layout after that takes minimal-ui into account.
+
+        * WebCore.exp.in:
+        * css/LengthFunctions.cpp:
+        (WebCore::minimumValueForLength):
+        (WebCore::floatValueForLength):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::viewportPercentageValue):
+        * dom/ViewportArguments.h:
+        (WebCore::ViewportArguments::operator==):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setViewportSizeForCSSViewportUnits):
+        (WebCore::FrameView::viewportSizeForCSSViewportUnits):
+        (WebCore::FrameView::setViewportSize): Deleted.
+        (WebCore::FrameView::viewportSize): Deleted.
+        * page/FrameView.h:
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::ViewportConfiguration):
+        (WebCore::ViewportConfiguration::setMinimumLayoutSize):
+        (WebCore::ViewportConfiguration::setMinimumLayoutSizeForMinimalUI):
+        (WebCore::ViewportConfiguration::activeMinimumLayoutSizeInScrollViewCoordinates):
+        (WebCore::ViewportConfiguration::resetMinimalUI):
+        (WebCore::ViewportConfiguration::pageWillRenderFirstFrame):
+        (WebCore::ViewportConfiguration::initialScale):
+        (WebCore::ViewportConfiguration::minimumScale):
+        (WebCore::ViewportConfiguration::updateConfiguration):
+        (WebCore::ViewportConfiguration::layoutWidth):
+        (WebCore::ViewportConfiguration::layoutHeight):
+        (WebCore::ViewportConfiguration::description):
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::minimumLayoutSizeForMinimalUI):
+        (WebCore::ViewportConfiguration::usesMinimalUI):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::viewportSizeForCSSViewportUnits):
+        (WebCore::RenderView::viewportSize): Deleted.
+        * rendering/RenderView.h:
+
 2014-05-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Can't type in status in facebook.com on iOS Safari because keyboard disappears

@@ -4398,7 +4398,7 @@ void FrameView::setExposedRect(FloatRect exposedRect)
         view->compositor().scheduleLayerFlush(false /* canThrottle */);
 }
     
-void FrameView::setViewportSize(IntSize size)
+void FrameView::setViewportSizeForCSSViewportUnits(IntSize size)
 {
     if (m_hasOverrideViewportSize && m_overrideViewportSize == size)
         return;
@@ -4410,7 +4410,7 @@ void FrameView::setViewportSize(IntSize size)
         document->styleResolverChanged(DeferRecalcStyle);
 }
     
-IntSize FrameView::viewportSize() const
+IntSize FrameView::viewportSizeForCSSViewportUnits() const
 {
     if (m_hasOverrideViewportSize)
         return m_overrideViewportSize;

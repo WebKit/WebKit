@@ -128,9 +128,13 @@ FloatSize WebPage::availableScreenSize() const
 void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArguments)
 {
     float oldWidth = m_viewportConfiguration.viewportArguments().width;
+    bool wasUsingMinimalUI = m_viewportConfiguration.usesMinimalUI();
 
     m_viewportConfiguration.setViewportArguments(viewportArguments);
     viewportConfigurationChanged();
+
+    if (wasUsingMinimalUI != m_viewportConfiguration.usesMinimalUI())
+        send(Messages::WebPageProxy::SetUsesMinimalUI(m_viewportConfiguration.usesMinimalUI()));
 
     if (oldWidth != viewportArguments.width)
         send(Messages::WebPageProxy::ViewportMetaTagWidthDidChange(viewportArguments.width));
@@ -1915,11 +1919,17 @@ void WebPage::setViewportConfigurationMinimumLayoutSize(const FloatSize& size)
     viewportConfigurationChanged();
 }
 
-void WebPage::setMinimumLayoutSizeForMinimalUI(const FloatSize& size)
+void WebPage::setViewportConfigurationMinimumLayoutSizeForMinimalUI(const FloatSize& size)
 {
-    resetTextAutosizingBeforeLayoutIfNeeded(m_minimumLayoutSizeForMinimalUI, size);
-    m_minimumLayoutSizeForMinimalUI = size;
+    resetTextAutosizingBeforeLayoutIfNeeded(m_viewportConfiguration.minimumLayoutSizeForMinimalUI(), size);
+    m_viewportConfiguration.setMinimumLayoutSizeForMinimalUI(size);
     viewportConfigurationChanged();
+}
+
+void WebPage::setMaximumUnobscuredSize(const FloatSize& maximumUnobscuredSize)
+{
+    m_maximumUnobscuredSize = maximumUnobscuredSize;
+    updateViewportSizeForCSSViewportUnits();
 }
 
 static inline bool withinEpsilon(float a, float b)
@@ -1940,7 +1950,7 @@ void WebPage::resetTextAutosizingBeforeLayoutIfNeeded(const FloatSize& oldSize, 
     }
 }
 
-void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, double targetScale)
+void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, const FloatSize& minimumLayoutSizeForMinimalUI, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, double targetScale)
 {
     TemporaryChange<bool> dynamicSizeUpdateGuard(m_inDynamicSizeUpdate, true);
     // FIXME: this does not handle the cases where the content would change the content size or scroll position from JavaScript.
@@ -1979,9 +1989,14 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
     }
 
     resetTextAutosizingBeforeLayoutIfNeeded(m_viewportConfiguration.minimumLayoutSize(), minimumLayoutSize);
+    resetTextAutosizingBeforeLayoutIfNeeded(m_viewportConfiguration.minimumLayoutSizeForMinimalUI(), minimumLayoutSizeForMinimalUI);
     m_viewportConfiguration.setMinimumLayoutSize(minimumLayoutSize);
+    m_viewportConfiguration.setMinimumLayoutSizeForMinimalUI(minimumLayoutSizeForMinimalUI);
     IntSize newLayoutSize = m_viewportConfiguration.layoutSize();
+
     setFixedLayoutSize(newLayoutSize);
+    setMaximumUnobscuredSize(maximumUnobscuredSize);
+
     frameView.updateLayoutAndStyleIfNeededRecursive();
 
     IntSize newContentSize = frameView.contentsSize();
@@ -2152,14 +2167,12 @@ void WebPage::viewportConfigurationChanged()
 
     m_page->setZoomedOutPageScaleFactor(m_viewportConfiguration.minimumScale());
 
+    updateViewportSizeForCSSViewportUnits();
+
     FrameView& frameView = *mainFrameView();
-    FloatSize viewportSize = !m_minimumLayoutSizeForMinimalUI.isEmpty() ? m_minimumLayoutSizeForMinimalUI : m_viewportConfiguration.minimumLayoutSize();
-    viewportSize.scale(1 / initialScale);
-    frameView.setViewportSize(roundedIntSize(viewportSize));
-    
     IntPoint scrollPosition = frameView.scrollPosition();
     if (!m_hasReceivedVisibleContentRectsAfterDidCommitLoad) {
-        FloatSize minimumLayoutSizeInScrollViewCoordinates = m_viewportConfiguration.minimumLayoutSize();
+        FloatSize minimumLayoutSizeInScrollViewCoordinates = m_viewportConfiguration.activeMinimumLayoutSizeInScrollViewCoordinates();
         minimumLayoutSizeInScrollViewCoordinates.scale(1 / scale);
         IntSize minimumLayoutSizeInDocumentCoordinates = roundedIntSize(minimumLayoutSizeInScrollViewCoordinates);
         IntRect unobscuredContentRect(scrollPosition, minimumLayoutSizeInDocumentCoordinates);
@@ -2176,8 +2189,19 @@ void WebPage::viewportConfigurationChanged()
         // This takes scale into account, so do after the scale change.
         frameView.setCustomFixedPositionLayoutRect(enclosingIntRect(frameView.viewportConstrainedObjectsRect()));
 
-        frameView.setCustomSizeForResizeEvent(expandedIntSize(m_viewportConfiguration.minimumLayoutSize()));
+        frameView.setCustomSizeForResizeEvent(expandedIntSize(m_viewportConfiguration.activeMinimumLayoutSizeInScrollViewCoordinates()));
     }
+}
+
+void WebPage::updateViewportSizeForCSSViewportUnits()
+{
+    FloatSize largestUnobscuredRect = m_maximumUnobscuredSize;
+    if (largestUnobscuredRect.isEmpty())
+        largestUnobscuredRect = m_viewportConfiguration.minimumLayoutSizeForMinimalUI();
+
+    FrameView& frameView = *mainFrameView();
+    largestUnobscuredRect.scale(1 / m_viewportConfiguration.initialScale());
+    frameView.setViewportSizeForCSSViewportUnits(roundedIntSize(largestUnobscuredRect));
 }
 
 void WebPage::applicationWillResignActive()

@@ -61,6 +61,9 @@ struct ViewSnapshot;
 }
 
 #if PLATFORM(IOS)
+
+@property (nonatomic, setter=_setUsesMinimalUI:) BOOL _usesMinimalUI;
+
 - (void)_didCommitLoadForMainFrame;
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;
 

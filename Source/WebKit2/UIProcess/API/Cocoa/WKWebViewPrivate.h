@@ -95,8 +95,15 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 - (void)_close;
 
 #if TARGET_OS_IPHONE
+// DERECATED: The setters of the three following function are deprecated, please use overrideLayoutParameters.
+// Define the smallest size a page take with a regular viewport.
 @property (nonatomic, setter=_setMinimumLayoutSizeOverride:) CGSize _minimumLayoutSizeOverride;
+// Define the smallest size a page take with the minmal-ui viewport.
 @property (nonatomic, setter=_setMinimumLayoutSizeOverrideForMinimalUI:) CGSize _minimumLayoutSizeOverrideForMinimalUI;
+// Define the largest size the unobscured area can get for the current view bounds. This value is used to define viewport units.
+@property (nonatomic, setter=_setMaximumUnobscuredSizeOverride:) CGSize _maximumUnobscuredSizeOverride;
+
+@property (nonatomic, readonly) BOOL _usesMinimalUI;
 
 // Define the inset of the scrollview unusable by the web page.
 @property (nonatomic, setter=_setObscuredInsets:) UIEdgeInsets _obscuredInsets;
@@ -122,6 +129,8 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 - (void)_hideInspectorIndication;
 
 - (void)_snapshotRect:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler;
+
+- (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize minimumLayoutSizeForMinimalUI:(CGSize)minimumLayoutSizeForMinimalUI maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride;
 
 - (UIView *)_viewForFindUI;
 

@@ -172,6 +172,7 @@ messages -> WebPageProxy {
     CommitPotentialTapFailed()
     DidNotHandleTapAsClick(WebCore::IntPoint point)
     ViewportMetaTagWidthDidChange(float width)
+    SetUsesMinimalUI(bool usesMinimalUI)
     DidFinishDrawingPagesToPDF(IPC::DataReference pdfData)
 #endif
 #if PLATFORM(GTK)

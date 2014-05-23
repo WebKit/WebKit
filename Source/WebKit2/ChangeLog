@@ -1,5 +1,62 @@
 2014-05-22  Benjamin Poulain  <bpoulain@apple.com>
 
+        [iOS][WK2] Add support for minimal-ui viewports
+        https://bugs.webkit.org/show_bug.cgi?id=133162
+
+        Reviewed by Simon Fraser.
+
+        In the WebKit2 layers, we have two parts to minimal-ui.
+        -In WebPage, we need to get the values from the UIProcess and setup the ViewportConfiguration.
+         Another part is freezing the state on page load.
+        -In the UIProcess, we need to get the right information for layout and styling, and we need to tell
+         the UI clients about minimal-ui changes.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setUsesMinimalUI:]):
+        (-[WKWebView _usesMinimalUI]):
+        (-[WKWebView _didCommitLayerTree:WebKit::]):
+        (-[WKWebView _frameOrBoundsChanged]):
+        (-[WKWebView _minimumLayoutSizeOverride]):
+        (-[WKWebView _setMinimumLayoutSizeOverride:]):
+        (-[WKWebView _minimumLayoutSizeOverrideForMinimalUI]):
+        (-[WKWebView _setMinimumLayoutSizeOverrideForMinimalUI:]):
+        (-[WKWebView _largestUnobscuredSizeOverride]):
+        (-[WKWebView _setMaximumUnobscuredSizeOverride:]):
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        (setViewportConfigurationMinimumLayoutSize): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::setUsesMinimalUI):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::dynamicViewportSizeUpdate):
+        (WebKit::WebPageProxy::setViewportConfigurationMinimumLayoutSizeForMinimalUI):
+        (WebKit::WebPageProxy::setMaximumUnobscuredSize):
+        (WebKit::WebPageProxy::setUsesMinimalUI):
+        (WebKit::WebPageProxy::setMinimumLayoutSizeForMinimalUI): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setViewportConfigurationMinimumLayoutSizeForMinimalUI):
+        (WebKit::WebPage::setMaximumUnobscuredSize):
+        (WebKit::WebPage::willFlushLayers):
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::WebPage::viewportConfigurationChanged):
+        (WebKit::WebPage::updateViewportSizeForCSSViewportUnits):
+        (WebKit::WebPage::setMinimumLayoutSizeForMinimalUI): Deleted.
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+
+2014-05-22  Benjamin Poulain  <bpoulain@apple.com>
+
         [iOS][WK2] Reset the special action-target of WKSyntheticClickTapGestureRecognizer on destruction
         https://bugs.webkit.org/show_bug.cgi?id=133165
         <rdar://problem/16283914>

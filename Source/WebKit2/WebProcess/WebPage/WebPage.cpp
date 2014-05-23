@@ -4313,6 +4313,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
     WebProcess::shared().eventDispatcher().clearQueuedTouchEventsForPage(*this);
 
     resetViewportDefaultConfiguration(frame);
+    m_viewportConfiguration.resetMinimalUI();
     m_viewportConfiguration.setViewportArguments(ViewportArguments());
     m_viewportConfiguration.setContentsSize(IntSize());
     viewportConfigurationChanged();
@@ -4325,6 +4326,16 @@ void WebPage::didCommitLoad(WebFrame* frame)
     WebProcess::shared().updateActivePages();
 
     updateMainFrameScrollOffsetPinning();
+}
+
+void WebPage::didFinishDocumentLoad(WebFrame* frame)
+{
+#if PLATFORM(IOS)
+    if (!frame->isMainFrame())
+        return;
+
+    m_viewportConfiguration.didFinishDocumentLoad();
+#endif // PLATFORM(IOS)
 }
 
 void WebPage::didFinishLoad(WebFrame* frame)

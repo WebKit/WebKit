@@ -235,9 +235,9 @@ WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect&
     return FrameView::rectForViewportConstrainedObjects(enclosingLayoutRect(constrainedUnobscuredRect), roundedLayoutSize(contentsSize), displayedContentScale, false, StickToViewportBounds);
 }
 
-void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const FloatRect& targetUnobscuredRectInScrollViewCoordinates,  double targetScale)
+void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, const WebCore::FloatSize& minimumLayoutSizeForMinimalUI, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const FloatRect& targetUnobscuredRectInScrollViewCoordinates,  double targetScale)
 {
-    m_process->send(Messages::WebPage::DynamicViewportSizeUpdate(minimumLayoutSize, targetExposedContentRect, targetUnobscuredRect, targetUnobscuredRectInScrollViewCoordinates, targetScale), m_pageID);
+    m_process->send(Messages::WebPage::DynamicViewportSizeUpdate(minimumLayoutSize, minimumLayoutSizeForMinimalUI, maximumUnobscuredSize, targetExposedContentRect, targetUnobscuredRect, targetUnobscuredRectInScrollViewCoordinates, targetScale), m_pageID);
 }
 
 void WebPageProxy::setViewportConfigurationMinimumLayoutSize(const WebCore::FloatSize& size)
@@ -245,9 +245,14 @@ void WebPageProxy::setViewportConfigurationMinimumLayoutSize(const WebCore::Floa
     m_process->send(Messages::WebPage::SetViewportConfigurationMinimumLayoutSize(size), m_pageID);
 }
 
-void WebPageProxy::setMinimumLayoutSizeForMinimalUI(const WebCore::FloatSize& size)
+void WebPageProxy::setViewportConfigurationMinimumLayoutSizeForMinimalUI(const WebCore::FloatSize& size)
 {
-    m_process->send(Messages::WebPage::SetMinimumLayoutSizeForMinimalUI(size), m_pageID);
+    m_process->send(Messages::WebPage::SetViewportConfigurationMinimumLayoutSizeForMinimalUI(size), m_pageID);
+}
+
+void WebPageProxy::setMaximumUnobscuredSize(const WebCore::FloatSize& size)
+{
+    m_process->send(Messages::WebPage::SetMaximumUnobscuredSize(size), m_pageID);
 }
 
 void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& layerTreeTransaction)
@@ -647,6 +652,11 @@ void WebPageProxy::didNotHandleTapAsClick(const WebCore::IntPoint& point)
 void WebPageProxy::viewportMetaTagWidthDidChange(float width)
 {
     m_pageClient.didChangeViewportMetaTagWidth(width);
+}
+
+void WebPageProxy::setUsesMinimalUI(bool usesMinimalUI)
+{
+    m_pageClient.setUsesMinimalUI(usesMinimalUI);
 }
 
 void WebPageProxy::didFinishDrawingPagesToPDF(const IPC::DataReference& pdfData)

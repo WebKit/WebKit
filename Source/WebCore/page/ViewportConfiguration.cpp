@@ -46,6 +46,9 @@ static bool constraintsAreAllRelative(const ViewportConfiguration::Parameters& c
 
 ViewportConfiguration::ViewportConfiguration()
     : m_minimumLayoutSize(1024, 768)
+    , m_minimumLayoutSizeForMinimalUI(m_minimumLayoutSize)
+    , m_usesMinimalUI(false)
+    , m_pageDidFinishDocumentLoad(false)
 {
     // Setup a reasonable default configuration to avoid computing infinite scale/sizes.
     // Those are the original iPhone configuration.
@@ -79,7 +82,21 @@ void ViewportConfiguration::setMinimumLayoutSize(const FloatSize& minimumLayoutS
         return;
 
     m_minimumLayoutSize = minimumLayoutSize;
-    updateConfiguration();
+}
+
+void ViewportConfiguration::setMinimumLayoutSizeForMinimalUI(const FloatSize& minimumLayoutSizeForMinimalUI)
+{
+    if (m_minimumLayoutSizeForMinimalUI == minimumLayoutSizeForMinimalUI)
+        return;
+
+    m_minimumLayoutSizeForMinimalUI = minimumLayoutSizeForMinimalUI;
+}
+
+const FloatSize& ViewportConfiguration::activeMinimumLayoutSizeInScrollViewCoordinates() const
+{
+    if (m_usesMinimalUI)
+        return m_minimumLayoutSizeForMinimalUI;
+    return m_minimumLayoutSize;
 }
 
 void ViewportConfiguration::setViewportArguments(const ViewportArguments& viewportArguments)
@@ -89,6 +106,17 @@ void ViewportConfiguration::setViewportArguments(const ViewportArguments& viewpo
 
     m_viewportArguments = viewportArguments;
     updateConfiguration();
+}
+
+void ViewportConfiguration::resetMinimalUI()
+{
+    m_usesMinimalUI = false;
+    m_pageDidFinishDocumentLoad = false;
+}
+
+void ViewportConfiguration::didFinishDocumentLoad()
+{
+    m_pageDidFinishDocumentLoad = true;
 }
 
 IntSize ViewportConfiguration::layoutSize() const
@@ -107,15 +135,16 @@ double ViewportConfiguration::initialScale() const
 
     // If not, it is up to us to determine the initial scale.
     // We want a scale small enough to fit the document width-wise.
+    const FloatSize& minimumLayoutSize = activeMinimumLayoutSizeInScrollViewCoordinates();
     double width = m_contentSize.width() > 0 ? m_contentSize.width() : layoutWidth();
     double initialScale = 0;
     if (width > 0)
-        initialScale = m_minimumLayoutSize.width() / width;
+        initialScale = minimumLayoutSize.width() / width;
 
     // Prevent the intial scale from shrinking to a height smaller than our view's minimum height.
     double height = m_contentSize.height() > 0 ? m_contentSize.height() : layoutHeight();
-    if (height > 0 && height * initialScale < m_minimumLayoutSize.height())
-        initialScale = m_minimumLayoutSize.height() / height;
+    if (height > 0 && height * initialScale < minimumLayoutSize.height())
+        initialScale = minimumLayoutSize.height() / height;
     return std::min(std::max(initialScale, m_configuration.minimumScale), m_configuration.maximumScale);
 }
 
@@ -128,13 +157,14 @@ double ViewportConfiguration::minimumScale() const
     // If not, we still need to sanity check our value.
     double minimumScale = m_configuration.minimumScale;
 
+    const FloatSize& minimumLayoutSize = activeMinimumLayoutSizeInScrollViewCoordinates();
     double contentWidth = m_contentSize.width();
-    if (contentWidth > 0 && contentWidth * minimumScale < m_minimumLayoutSize.width())
-        minimumScale = m_minimumLayoutSize.width() / contentWidth;
+    if (contentWidth > 0 && contentWidth * minimumScale < minimumLayoutSize.width())
+        minimumScale = minimumLayoutSize.width() / contentWidth;
 
     double contentHeight = m_contentSize.height();
-    if (contentHeight > 0 && contentHeight * minimumScale < m_minimumLayoutSize.height())
-        minimumScale = m_minimumLayoutSize.height() / contentHeight;
+    if (contentHeight > 0 && contentHeight * minimumScale < minimumLayoutSize.height())
+        minimumScale = minimumLayoutSize.height() / contentHeight;
 
     minimumScale = std::min(std::max(minimumScale, m_configuration.minimumScale), m_configuration.maximumScale);
 
@@ -243,76 +273,83 @@ void ViewportConfiguration::updateConfiguration()
 
     if (viewportArgumentUserZoomIsSet(m_viewportArguments.userZoom))
         m_configuration.allowsUserScaling = m_viewportArguments.userZoom != 0.;
+
+#if PLATFORM(IOS)
+    if (!m_pageDidFinishDocumentLoad)
+        m_usesMinimalUI = m_usesMinimalUI || m_viewportArguments.minimalUI;
+#endif
 }
 
 int ViewportConfiguration::layoutWidth() const
 {
     ASSERT(!constraintsAreAllRelative(m_configuration));
 
+    const FloatSize& minimumLayoutSize = activeMinimumLayoutSizeInScrollViewCoordinates();
     if (m_configuration.widthIsSet) {
         // If we scale to fit, then accept the viewport width with sanity checking.
         if (!m_configuration.initialScaleIsSet) {
             double maximumScale = this->maximumScale();
             double maximumContentWidthInViewportCoordinate = maximumScale * m_configuration.width;
-            if (maximumContentWidthInViewportCoordinate < m_minimumLayoutSize.width()) {
+            if (maximumContentWidthInViewportCoordinate < minimumLayoutSize.width()) {
                 // The content zoomed to maxScale does not fit the the view. Return the minimum width
                 // satisfying the constraint maximumScale.
-                return std::round(m_minimumLayoutSize.width() / maximumScale);
+                return std::round(minimumLayoutSize.width() / maximumScale);
             }
             return std::round(m_configuration.width);
         }
 
         // If not, make sure the viewport width and initial scale can co-exist.
         double initialContentWidthInViewportCoordinate = m_configuration.width * m_configuration.initialScale;
-        if (initialContentWidthInViewportCoordinate < m_minimumLayoutSize.width()) {
+        if (initialContentWidthInViewportCoordinate < minimumLayoutSize.width()) {
             // The specified width does not fit in viewport. Return the minimum width that satisfy the initialScale constraint.
-            return std::round(m_minimumLayoutSize.width() / m_configuration.initialScale);
+            return std::round(minimumLayoutSize.width() / m_configuration.initialScale);
         }
         return std::round(m_configuration.width);
     }
 
     // If the page has a real scale, then just return the minimum size over the initial scale.
     if (m_configuration.initialScaleIsSet && !m_configuration.heightIsSet)
-        return std::round(m_minimumLayoutSize.width() / m_configuration.initialScale);
+        return std::round(minimumLayoutSize.width() / m_configuration.initialScale);
 
-    if (m_minimumLayoutSize.height() > 0)
-        return std::round(m_minimumLayoutSize.width() * layoutHeight() / m_minimumLayoutSize.height());
-    return m_minimumLayoutSize.width();
+    if (minimumLayoutSize.height() > 0)
+        return std::round(minimumLayoutSize.width() * layoutHeight() / minimumLayoutSize.height());
+    return minimumLayoutSize.width();
 }
 
 int ViewportConfiguration::layoutHeight() const
 {
     ASSERT(!constraintsAreAllRelative(m_configuration));
 
+    const FloatSize& minimumLayoutSize = activeMinimumLayoutSizeInScrollViewCoordinates();
     if (m_configuration.heightIsSet) {
         // If we scale to fit, then accept the viewport height with sanity checking.
         if (!m_configuration.initialScaleIsSet) {
             double maximumScale = this->maximumScale();
             double maximumContentHeightInViewportCoordinate = maximumScale * m_configuration.height;
-            if (maximumContentHeightInViewportCoordinate < m_minimumLayoutSize.height()) {
+            if (maximumContentHeightInViewportCoordinate < minimumLayoutSize.height()) {
                 // The content zoomed to maxScale does not fit the the view. Return the minimum height that
                 // satisfy the constraint maximumScale.
-                return std::round(m_minimumLayoutSize.height() / maximumScale);
+                return std::round(minimumLayoutSize.height() / maximumScale);
             }
             return std::round(m_configuration.height);
         }
 
         // If not, make sure the viewport width and initial scale can co-exist.
         double initialContentHeightInViewportCoordinate = m_configuration.height * m_configuration.initialScale;
-        if (initialContentHeightInViewportCoordinate < m_minimumLayoutSize.height()) {
+        if (initialContentHeightInViewportCoordinate < minimumLayoutSize.height()) {
             // The specified width does not fit in viewport. Return the minimum height that satisfy the initialScale constraint.
-            return std::round(m_minimumLayoutSize.height() / m_configuration.initialScale);
+            return std::round(minimumLayoutSize.height() / m_configuration.initialScale);
         }
         return std::round(m_configuration.height);
     }
 
     // If the page has a real scale, then just return the minimum size over the initial scale.
     if (m_configuration.initialScaleIsSet && !m_configuration.widthIsSet)
-        return std::round(m_minimumLayoutSize.height() / m_configuration.initialScale);
+        return std::round(minimumLayoutSize.height() / m_configuration.initialScale);
 
-    if (m_minimumLayoutSize.width() > 0)
-        return std::round(m_minimumLayoutSize.height() * layoutWidth() / m_minimumLayoutSize.width());
-    return m_minimumLayoutSize.height();
+    if (minimumLayoutSize.width() > 0)
+        return std::round(minimumLayoutSize.height() * layoutWidth() / minimumLayoutSize.width());
+    return minimumLayoutSize.height();
 }
 
 #ifndef NDEBUG
@@ -435,6 +472,8 @@ CString ViewportConfiguration::description() const
 
     dumpProperty(ts, "contentSize", m_contentSize);
     dumpProperty(ts, "minimumLayoutSize", m_minimumLayoutSize);
+    dumpProperty(ts, "minimumLayoutSizeForMinimalUI", m_minimumLayoutSizeForMinimalUI);
+    ts << "(uses minimal UI " << m_usesMinimalUI << ")";
 
     ts << "\n";
     ts.increaseIndent();

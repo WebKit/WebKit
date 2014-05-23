@@ -1186,9 +1186,9 @@ bool RenderView::shouldDisableLayoutStateForSubtree(RenderObject* renderer) cons
     return false;
 }
 
-IntSize RenderView::viewportSize() const
+IntSize RenderView::viewportSizeForCSSViewportUnits() const
 {
-    return frameView().viewportSize();
+    return frameView().viewportSizeForCSSViewportUnits();
 }
 
 void RenderView::updateHitTestResult(HitTestResult& result, const LayoutPoint& point)

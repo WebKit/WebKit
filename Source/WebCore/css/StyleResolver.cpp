@@ -3616,8 +3616,8 @@ StyleResolver::MatchedProperties::~MatchedProperties()
 
 int StyleResolver::viewportPercentageValue(CSSPrimitiveValue& unit, int percentage)
 {
-    int viewPortHeight = document().renderView()->viewportSize().height() * percentage / 100.0f;
-    int viewPortWidth = document().renderView()->viewportSize().width() * percentage / 100.0f;
+    int viewPortHeight = document().renderView()->viewportSizeForCSSViewportUnits().height() * percentage / 100.0f;
+    int viewPortWidth = document().renderView()->viewportSizeForCSSViewportUnits().width() * percentage / 100.0f;
 
     if (unit.isViewportPercentageHeight())
         return viewPortHeight;

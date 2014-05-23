@@ -115,10 +115,6 @@ struct ViewportArguments {
     {
         // Used for figuring out whether to reset the viewport or not,
         // thus we are not taking type into account.
-#if PLATFORM(IOS)
-        // We ignore minimalUI for the same reason -- it is a higher-level
-        // property that doesn't affect the actual viewport.
-#endif
         return width == other.width
             && minWidth == other.minWidth
             && maxWidth == other.maxWidth
@@ -129,6 +125,9 @@ struct ViewportArguments {
             && minZoom == other.minZoom
             && maxZoom == other.maxZoom
             && userZoom == other.userZoom
+#if PLATFORM(IOS)
+            && minimalUI == other.minimalUI
+#endif
             && orientation == other.orientation;
     }
 

@@ -74,14 +74,23 @@ public:
     const FloatSize& minimumLayoutSize() const { return m_minimumLayoutSize; }
     void setMinimumLayoutSize(const FloatSize&);
 
+    const FloatSize& minimumLayoutSizeForMinimalUI() const { return m_minimumLayoutSizeForMinimalUI.isEmpty() ? m_minimumLayoutSize : m_minimumLayoutSizeForMinimalUI; }
+    void setMinimumLayoutSizeForMinimalUI(const FloatSize&);
+
+    const FloatSize& activeMinimumLayoutSizeInScrollViewCoordinates() const;
+
     const ViewportArguments& viewportArguments() const { return m_viewportArguments; }
     void setViewportArguments(const ViewportArguments&);
+
+    void resetMinimalUI();
+    void didFinishDocumentLoad();
 
     IntSize layoutSize() const;
     double initialScale() const;
     double minimumScale() const;
     double maximumScale() const { return m_configuration.maximumScale; }
     bool allowsUserScaling() const { return m_configuration.allowsUserScaling; }
+    bool usesMinimalUI() const { return m_usesMinimalUI; }
 
     static Parameters webpageParameters();
     static Parameters textDocumentParameters();
@@ -102,7 +111,11 @@ private:
     Parameters m_defaultConfiguration;
     IntSize m_contentSize;
     FloatSize m_minimumLayoutSize;
+    FloatSize m_minimumLayoutSizeForMinimalUI;
     ViewportArguments m_viewportArguments;
+
+    bool m_usesMinimalUI;
+    bool m_pageDidFinishDocumentLoad;
 };
 
 } // namespace WebCore

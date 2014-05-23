@@ -48,6 +48,7 @@
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
 #import "WKUIDelegate.h"
+#import "WKUIDelegatePrivate.h"
 #import "WKUserContentControllerInternal.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewContentProvider.h"
@@ -135,9 +136,14 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     RetainPtr<WKScrollView> _scrollView;
     RetainPtr<WKContentView> _contentView;
 
-    BOOL _hasStaticMinimumLayoutSize;
+    BOOL _overridesMinimumLayoutSize;
     CGSize _minimumLayoutSizeOverride;
+    BOOL _overridesMinimumLayoutSizeForMinimalUI;
     CGSize _minimumLayoutSizeOverrideForMinimalUI;
+    BOOL _overridesMaximumUnobscuredSize;
+    CGSize _maximumUnobscuredSizeOverride;
+    BOOL _usesMinimalUI;
+    BOOL _needsToNotifyDelegateAboutMinimalUI;
     CGRect _inputViewBounds;
     CGFloat _viewportMetaTagWidth;
 
@@ -519,9 +525,21 @@ static CGFloat contentZoomScale(WKWebView* webView)
     [_scrollView setBackgroundColor:uiBackgroundColor.get()];
 }
 
+- (void)_setUsesMinimalUI:(BOOL)usesMinimalUI
+{
+    _usesMinimalUI = usesMinimalUI;
+    _needsToNotifyDelegateAboutMinimalUI = YES;
+}
+
+- (BOOL)_usesMinimalUI
+{
+    return _usesMinimalUI;
+}
+
 - (void)_didCommitLoadForMainFrame
 {
     _needsResetViewStateAfterCommitLoadForMainFrame = YES;
+    _usesMinimalUI = NO;
 }
 
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
@@ -545,6 +563,14 @@ static CGFloat contentZoomScale(WKWebView* webView)
 
     if (_gestureController)
         _gestureController->setRenderTreeSize(layerTreeTransaction.renderTreeSize());
+
+    if (_needsToNotifyDelegateAboutMinimalUI || _needsResetViewStateAfterCommitLoadForMainFrame) {
+        _needsToNotifyDelegateAboutMinimalUI = NO;
+
+        auto delegate = _uiDelegate->delegate();
+        if ([delegate respondsToSelector:@selector(_webView:usesMinimalUI:)])
+            [static_cast<id <WKUIDelegatePrivate>>(delegate.get()) _webView:self usesMinimalUI:_usesMinimalUI];
+    }
 
     if (_needsResetViewStateAfterCommitLoadForMainFrame) {
         _needsResetViewStateAfterCommitLoadForMainFrame = NO;
@@ -929,17 +955,18 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [_contentView didZoomToScale:scale];
 }
 
-static inline void setViewportConfigurationMinimumLayoutSize(WebKit::WebPageProxy& page, const CGSize& size)
-{
-    page.setViewportConfigurationMinimumLayoutSize(WebCore::FloatSize(size));
-}
-
 - (void)_frameOrBoundsChanged
 {
     CGRect bounds = self.bounds;
+    if (!_isAnimatingResize) {
+        if (!_overridesMinimumLayoutSize)
+            _page->setViewportConfigurationMinimumLayoutSize(WebCore::FloatSize(bounds.size));
+        if (!_overridesMinimumLayoutSizeForMinimalUI)
+            _page->setViewportConfigurationMinimumLayoutSizeForMinimalUI(WebCore::FloatSize(bounds.size));
+        if (!_overridesMaximumUnobscuredSize)
+            _page->setMaximumUnobscuredSize(WebCore::FloatSize(bounds.size));
+    }
 
-    if (!_hasStaticMinimumLayoutSize && !_isAnimatingResize)
-        setViewportConfigurationMinimumLayoutSize(*_page, bounds.size);
     [_scrollView setFrame:bounds];
     [_contentView setMinimumSize:bounds.size];
     [_customContentView web_setMinimumSize:bounds.size];
@@ -1507,28 +1534,30 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (CGSize)_minimumLayoutSizeOverride
 {
-    ASSERT(_hasStaticMinimumLayoutSize);
+    ASSERT(_overridesMinimumLayoutSize);
     return _minimumLayoutSizeOverride;
 }
 
 - (void)_setMinimumLayoutSizeOverride:(CGSize)minimumLayoutSizeOverride
 {
-    _hasStaticMinimumLayoutSize = YES;
+    _overridesMinimumLayoutSize = YES;
     _minimumLayoutSizeOverride = minimumLayoutSizeOverride;
     if (!_isAnimatingResize)
-        setViewportConfigurationMinimumLayoutSize(*_page, minimumLayoutSizeOverride);
+        _page->setViewportConfigurationMinimumLayoutSize(WebCore::FloatSize(minimumLayoutSizeOverride));
 }
 
 - (CGSize)_minimumLayoutSizeOverrideForMinimalUI
 {
+    ASSERT(_overridesMinimumLayoutSizeForMinimalUI);
     return _minimumLayoutSizeOverrideForMinimalUI;
 }
 
 - (void)_setMinimumLayoutSizeOverrideForMinimalUI:(CGSize)size
 {
+    _overridesMinimumLayoutSizeForMinimalUI = YES;
     _minimumLayoutSizeOverrideForMinimalUI = size;
     if (!_isAnimatingResize)
-        _page->setMinimumLayoutSizeForMinimalUI(WebCore::FloatSize(size));
+        _page->setViewportConfigurationMinimumLayoutSizeForMinimalUI(WebCore::FloatSize(size));
 }
 
 - (UIEdgeInsets)_obscuredInsets
@@ -1549,6 +1578,24 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _obscuredInsets = obscuredInsets;
 
     [self _updateVisibleContentRects];
+}
+
+- (CGSize)_maximumUnobscuredSizeOverride
+{
+    ASSERT(_overridesMaximumUnobscuredSize);
+    return _maximumUnobscuredSizeOverride;
+}
+
+- (void)_setMaximumUnobscuredSizeOverride:(CGSize)size
+{
+    ASSERT(size.width <= self.bounds.size.width && size.height <= self.bounds.size.height);
+    _overridesMaximumUnobscuredSize = YES;
+    if (CGSizeEqualToSize(_maximumUnobscuredSizeOverride, size))
+        return;
+
+    _maximumUnobscuredSizeOverride = size;
+    if (!_isAnimatingResize)
+        _page->setMaximumUnobscuredSize(WebCore::FloatSize(size));
 }
 
 - (void)_setBackgroundExtendsBeyondPage:(BOOL)backgroundExtends
@@ -1583,13 +1630,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _resizeAnimationView = adoptNS([[UIView alloc] init]);
     [_scrollView insertSubview:_resizeAnimationView.get() atIndex:indexOfContentView];
     [_resizeAnimationView addSubview:_contentView.get()];
-
-    CGRect oldBounds = self.bounds;
-    CGSize oldMinimumLayoutSize = oldBounds.size;
-    if (_hasStaticMinimumLayoutSize)
-        oldMinimumLayoutSize = _minimumLayoutSizeOverride;
     WebCore::FloatRect oldUnobscuredContentRect = _page->unobscuredContentRect();
-    UIEdgeInsets oldInsets = _obscuredInsets;
 
     updateBlock();
 
@@ -1598,13 +1639,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
     CGRect newBounds = self.bounds;
     CGSize newMinimumLayoutSize = newBounds.size;
-    if (_hasStaticMinimumLayoutSize)
-        newMinimumLayoutSize = _minimumLayoutSizeOverride;
-
-    if (CGSizeEqualToSize(newMinimumLayoutSize, oldMinimumLayoutSize)
-        && CGRectEqualToRect(newBounds, oldBounds)
-        && UIEdgeInsetsEqualToEdgeInsets(oldInsets, _obscuredInsets))
-        return;
 
     CGSize contentSizeInContentViewCoordinates = [_contentView bounds].size;
     [_scrollView setMinimumZoomScale:std::min(newMinimumLayoutSize.width / contentSizeInContentViewCoordinates.width, [_scrollView minimumZoomScale])];
@@ -1651,7 +1685,19 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     CGRect visibleRectInContentCoordinates = [self convertRect:newBounds toView:_contentView.get()];
     CGRect unobscuredRectInContentCoordinates = [self convertRect:futureUnobscuredRectInSelfCoordinates toView:_contentView.get()];
 
-    _page->dynamicViewportSizeUpdate(WebCore::FloatSize(newMinimumLayoutSize.width, newMinimumLayoutSize.height), visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, futureUnobscuredRectInSelfCoordinates, targetScale);
+    CGSize minimumLayoutSize = newBounds.size;
+    if (_overridesMinimumLayoutSize)
+        minimumLayoutSize = _minimumLayoutSizeOverride;
+
+    CGSize minimumLayoutSizeForMinimalUI = minimumLayoutSize;
+    if (_overridesMinimumLayoutSizeForMinimalUI)
+        minimumLayoutSizeForMinimalUI = _minimumLayoutSizeOverrideForMinimalUI;
+
+    CGSize maximumUnobscuredSize = newBounds.size;
+    if (_overridesMaximumUnobscuredSize)
+        maximumUnobscuredSize = _maximumUnobscuredSizeOverride;
+
+    _page->dynamicViewportSizeUpdate(WebCore::FloatSize(minimumLayoutSize), WebCore::FloatSize(minimumLayoutSizeForMinimalUI), WebCore::FloatSize(maximumUnobscuredSize), visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, futureUnobscuredRectInSelfCoordinates, targetScale);
 }
 
 - (void)_endAnimatedResize
@@ -1742,6 +1788,15 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         copiedCompletionHandler(cgImage.get());
         [copiedCompletionHandler release];
     });
+}
+
+- (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize minimumLayoutSizeForMinimalUI:(CGSize)minimumLayoutSizeForMinimalUI maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride
+{
+    // FIXME: After Safari is updated to use this function instead of setting the parameters separately, we should remove
+    // the individual setters and send a single message to send everything at once to the WebProcess.
+    self._minimumLayoutSizeOverride = minimumLayoutSize;
+    self._minimumLayoutSizeOverrideForMinimalUI = minimumLayoutSizeForMinimalUI;
+    self._maximumUnobscuredSizeOverride = maximumUnobscuredSizeOverride;
 }
 
 - (UIView *)_viewForFindUI
