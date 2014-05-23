@@ -1,3 +1,17 @@
+2014-05-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Performance testing, diamond-square terrain generation + canvas
+        https://bugs.webkit.org/show_bug.cgi?id=133054
+
+        Reviewed by Ryosuke Niwa.
+
+        This test was written by Hunter Loftis. It originally appeared on his
+        blog @ <http://www.playfuljs.com/realistic-terrain-in-130-lines/>.
+
+        I did a bit of editing for format and benchmark suitability.
+
+        * Canvas/terrain.html: Added.
+
 2014-05-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         DYEBench should run 20 iterations in browser
