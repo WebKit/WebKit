@@ -38,7 +38,7 @@ layer at (0,0) size 785x1531
       RenderBlock {P} at (0,330) size 769x19
         RenderText {#text} at (0,0) size 147x17
           text run at (0,0) width 147: "Legend align test, RTL"
-      RenderBlock (anonymous) at (0,364) size 769x1
+      RenderBlock (anonymous) at (0,364) size 769x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,364) size 769x271
@@ -70,7 +70,7 @@ layer at (0,0) size 785x1531
           RenderBlock (anonymous) at (14,23) size 737x33
             RenderTextControl {INPUT} at (543,2) size 192x28 [bgcolor=#FFFFFF]
             RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,634) size 769x1
+      RenderBlock (anonymous) at (0,634) size 769x0
         RenderInline {SPAN} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,642) size 769x3 [border: (1px inset #000000)]
@@ -109,7 +109,7 @@ layer at (0,0) size 785x1531
       RenderBlock {P} at (0,1100) size 769x19
         RenderText {#text} at (0,0) size 309x17
           text run at (0,0) width 309: "Legend align test with margin and padding, RTL"
-      RenderBlock (anonymous) at (0,1134) size 769x1
+      RenderBlock (anonymous) at (0,1134) size 769x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,1134) size 769x374
@@ -141,7 +141,7 @@ layer at (0,0) size 785x1531
           RenderBlock (anonymous) at (17,33) size 705x32
             RenderTextControl {INPUT} at (511,2) size 192x28 [bgcolor=#FFFFFF]
             RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,1522) size 769x1
+      RenderBlock (anonymous) at (0,1522) size 769x0
         RenderInline {SPAN} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
 layer at (30,74) size 185x18

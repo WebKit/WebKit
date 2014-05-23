@@ -1,3 +1,12 @@
+2014-05-23  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        * platform/efl/TestExpectations: Add test expectation for tests faling after r167840.
+        * platform/efl/fast/borders/border-antialiasing-expected.png: Rebaseline after r168046.
+        * platform/efl/fast/borders/border-antialiasing-expected.txt: Ditto.
+        * platform/efl/fast/forms/fieldset-align-expected.txt: Rebaseline after r168575.
+
 2014-05-23  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Make webkit-box-shadow painting subpixel aware.
