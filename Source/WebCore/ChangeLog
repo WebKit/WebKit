@@ -1,3 +1,16 @@
+2014-05-23  Oliver Hunt  <oliver@apple.com>
+
+        Navigator object needs to have properties directly on the instance object
+        https://bugs.webkit.org/show_bug.cgi?id=133221
+
+        Reviewed by Mark Lam.
+
+        Flag the Navigator object as requiring properties to be on the instance
+        as there were a few compatibility issues when on the prototype.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (InterfaceRequiresAttributesOnInstance):
+
 2014-05-23  Simon Fraser  <simon.fraser@apple.com>
 
         Switch CSSGradientValue to use more references

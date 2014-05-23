@@ -623,6 +623,7 @@ sub InterfaceRequiresAttributesOnInstance
     # FIXME: These two should be fixed by removing the custom override of message, etc
     return 1 if $interfaceName =~ "Exception";
     return 1 if $interfaceName =~ "Error";
+    return 1 if $interfaceName =~ "Navigator";
 
     return 1 if IsDOMGlobalObject($interface);
 
