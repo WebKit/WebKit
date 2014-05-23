@@ -152,7 +152,7 @@ private:
     OperationType m_representedType;
 };
 
-FILTEROPERATION_TYPE_CASTS(DefaultFilterOperation, type() == FilterOperation::DEFAULT);
+FILTEROPERATION_TYPE_CASTS(DefaultFilterOperation, getOperationType() == FilterOperation::DEFAULT);
 
 
 class PassthroughFilterOperation : public FilterOperation {
@@ -175,7 +175,7 @@ private:
     }
 };
 
-FILTEROPERATION_TYPE_CASTS(PassthroughFilterOperation, type() == FilterOperation::PASSTHROUGH);
+FILTEROPERATION_TYPE_CASTS(PassthroughFilterOperation, getOperationType() == FilterOperation::PASSTHROUGH);
 
 class ReferenceFilterOperation : public FilterOperation {
 public:
@@ -212,7 +212,7 @@ private:
     RefPtr<FilterEffect> m_filterEffect;
 };
 
-FILTEROPERATION_TYPE_CASTS(ReferenceFilterOperation, type() == FilterOperation::REFERENCE);
+FILTEROPERATION_TYPE_CASTS(ReferenceFilterOperation, getOperationType() == FilterOperation::REFERENCE);
 
 // GRAYSCALE, SEPIA, SATURATE and HUE_ROTATE are variations on a basic color matrix effect.
 // For HUE_ROTATE, the angle of rotation is stored in m_amount.
@@ -299,7 +299,7 @@ private:
     Length m_stdDeviation;
 };
 
-FILTEROPERATION_TYPE_CASTS(BlurFilterOperation, type() == FilterOperation::BLUR);
+FILTEROPERATION_TYPE_CASTS(BlurFilterOperation, getOperationType() == FilterOperation::BLUR);
 
 class DropShadowFilterOperation : public FilterOperation {
 public:
@@ -335,7 +335,7 @@ private:
     Color m_color;
 };
 
-FILTEROPERATION_TYPE_CASTS(DropShadowFilterOperation, type() == FilterOperation::DROP_SHADOW);
+FILTEROPERATION_TYPE_CASTS(DropShadowFilterOperation, getOperationType() == FilterOperation::DROP_SHADOW);
 
 } // namespace WebCore
 
