@@ -1,3 +1,22 @@
+2014-05-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Switch CSSGradientValue to use more references
+        https://bugs.webkit.org/show_bug.cgi?id=133206
+
+        Reviewed by Andreas Kling.
+
+        Switch from pointers to references in various places.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::image):
+        (WebCore::CSSGradientValue::addStops):
+        (WebCore::positionFromValue):
+        (WebCore::CSSGradientValue::computeEndPoint):
+        (WebCore::CSSLinearGradientValue::createGradient):
+        (WebCore::CSSRadialGradientValue::resolveRadius):
+        (WebCore::CSSRadialGradientValue::createGradient):
+        * css/CSSGradientValue.h:
+
 2014-05-23  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Make webkit-box-shadow painting subpixel aware.
