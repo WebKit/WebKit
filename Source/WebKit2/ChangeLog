@@ -1,3 +1,15 @@
+2014-05-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move the passed-in Vector<Attachment> in MessageDecoder constructor down into ArgumentDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=133080
+
+        Reviewed by Andreas Kling.
+
+        * Platform/IPC/MessageDecoder.cpp:
+        (IPC::MessageDecoder::MessageDecoder): The Vector<Attachment> object was passed in by value.
+        Move it into the ArgumentDecoder constructor as it is not used elsewhere in this constructor
+        and produces a copy otherwise.
+
 2014-05-22  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Add support for minimal-ui viewports

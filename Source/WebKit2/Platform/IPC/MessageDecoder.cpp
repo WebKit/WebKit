@@ -42,7 +42,7 @@ MessageDecoder::~MessageDecoder()
 }
 
 MessageDecoder::MessageDecoder(const DataReference& buffer, Vector<Attachment> attachments)
-    : ArgumentDecoder(buffer.data(), buffer.size(), attachments)
+    : ArgumentDecoder(buffer.data(), buffer.size(), std::move(attachments))
 {
     if (!decode(m_messageFlags))
         return;
