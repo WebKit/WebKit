@@ -1,3 +1,10 @@
+2014-05-23  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Skip some snapshotting tests failing after r169173.
+        https://bugs.webkit.org/show_bug.cgi?id=133227.
+
+        * platform/mac-wk2/TestExpectations:
+
 2014-05-23  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening
