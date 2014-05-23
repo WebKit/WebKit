@@ -1,3 +1,16 @@
+2014-05-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Make viewport units work in CSS gradients
+        https://bugs.webkit.org/show_bug.cgi?id=133204
+        <rdar://problem/17012259>
+
+        Reviewed by Tim Horton.
+
+        Make viewport percentage lengths work in gradients.
+
+        * fast/gradients/viewport-units-gradient-expected.html: Added.
+        * fast/gradients/viewport-units-gradient.html: Added.
+
 2014-05-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Can't type in status in facebook.com on iOS Safari because keyboard disappears

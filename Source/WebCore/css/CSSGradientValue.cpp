@@ -129,7 +129,7 @@ PassRefPtr<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(StyleR
     return result.release();
 }
 
-void CSSGradientValue::addStops(Gradient* gradient, const CSSToLengthConversionData& conversionData, float maxLengthForRepeat)
+void CSSGradientValue::addStops(Gradient* gradient, RenderView* renderView, const CSSToLengthConversionData& conversionData, float maxLengthForRepeat)
 {
     if (m_gradientType == CSSDeprecatedLinearGradient || m_gradientType == CSSDeprecatedRadialGradient) {
         sortStopsIfNeeded();
@@ -171,18 +171,21 @@ void CSSGradientValue::addStops(Gradient* gradient, const CSSToLengthConversionD
         stops[i].color = stop.m_resolvedColor;
 
         if (stop.m_position) {
-            if (stop.m_position->isPercentage())
-                stops[i].offset = stop.m_position->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE) / 100;
-            else if (stop.m_position->isLength() || stop.m_position->isCalculatedPercentageWithLength()) {
+            const CSSPrimitiveValue& positionValue = *stop.m_position;
+            if (positionValue.isPercentage())
+                stops[i].offset = positionValue.getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE) / 100;
+            else if (positionValue.isLength() || positionValue.isViewportPercentageLength() || positionValue.isCalculatedPercentageWithLength()) {
                 if (!computedGradientLength) {
                     FloatSize gradientSize(gradientStart - gradientEnd);
                     gradientLength = gradientSize.diagonalLength();
                 }
                 float length;
-                if (stop.m_position->isLength())
-                    length = stop.m_position->computeLength<float>(conversionData);
+                if (positionValue.isLength())
+                    length = positionValue.computeLength<float>(conversionData);
+                else if (positionValue.isViewportPercentageLength())
+                    length = valueForLength(positionValue.viewportPercentageLength(), 0, renderView);
                 else {
-                    Ref<CalculationValue> calculationValue { stop.m_position->cssCalcValue()->createCalculationValue(conversionData) };
+                    Ref<CalculationValue> calculationValue { positionValue.cssCalcValue()->createCalculationValue(conversionData) };
                     length = calculationValue->evaluate(gradientLength);
                 }
                 stops[i].offset = (gradientLength > 0) ? length / gradientLength : 0;
@@ -701,7 +704,7 @@ PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderElement* rende
     RefPtr<Gradient> gradient = Gradient::create(firstPoint, secondPoint);
 
     // Now add the stops.
-    addStops(gradient.get(), conversionData, 1);
+    addStops(gradient.get(), &renderer->view(), conversionData, 1);
 
     return gradient.release();
 }
@@ -1115,7 +1118,7 @@ PassRefPtr<Gradient> CSSRadialGradientValue::createGradient(RenderElement* rende
     }
 
     // Now add the stops.
-    addStops(gradient.get(), conversionData, maxExtent);
+    addStops(gradient.get(), &renderer->view(), conversionData, maxExtent);
 
     return gradient.release();
 }
