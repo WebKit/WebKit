@@ -214,14 +214,6 @@ EncodedJSValue JIT_OPERATION operationGenericIn(ExecState* exec, JSCell* base, E
     return JSValue::encode(jsBoolean(CommonSlowPaths::opIn(exec, JSValue::decode(key), base)));
 }
 
-EncodedJSValue JIT_OPERATION operationCallGetter(ExecState* exec, JSCell* base, JSCell* getterSetter)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-
-    return JSValue::encode(callGetter(exec, base, getterSetter));
-}
-
 void JIT_OPERATION operationPutByIdStrict(ExecState* exec, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, StringImpl* uid)
 {
     VM* vm = &exec->vm();

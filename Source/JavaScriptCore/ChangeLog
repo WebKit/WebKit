@@ -1,3 +1,15 @@
+2014-05-23  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove operationCallGetter
+
+        Rubber stamped by Filip Pizlo.
+
+        Nobody calls this function.
+
+        * JavaScriptCore.order:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+
 2014-05-23  Andreas Kling  <akling@apple.com>
 
         Templatize GC's destructor invocation for dtor type.
