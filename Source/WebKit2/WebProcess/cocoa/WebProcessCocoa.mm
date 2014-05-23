@@ -42,6 +42,7 @@
 #import <WebCore/Font.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MemoryCache.h>
+#import <WebCore/MemoryPressureHandler.h>
 #import <WebCore/PageCache.h>
 #import <WebCore/WebCoreNSURLExtras.h>
 #import <WebKitSystemInterface.h>
@@ -190,6 +191,8 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     m_presenterApplicationPid = parameters.presenterApplicationPid;
     m_shouldForceScreenFontSubstitution = parameters.shouldForceScreenFontSubstitution;
     Font::setDefaultTypesettingFeatures(parameters.shouldEnableKerningAndLigaturesByDefault ? Kerning | Ligatures : 0);
+
+    MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);
 
     setEnhancedAccessibility(parameters.accessibilityEnhancedUserInterfaceEnabled);
 

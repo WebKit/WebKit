@@ -45,6 +45,8 @@
 
 namespace WebCore {
 
+bool MemoryPressureHandler::ReliefLogger::s_loggingEnabled = false;
+
 MemoryPressureHandler& memoryPressureHandler()
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(MemoryPressureHandler, staticMemoryPressureHandler, ());

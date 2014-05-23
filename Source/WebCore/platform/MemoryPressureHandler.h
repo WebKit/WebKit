@@ -74,16 +74,18 @@ public:
     public:
         explicit ReliefLogger(const char *log)
             : m_logString(log)
-            , m_initialMemory(platformMemoryUsage())
+            , m_initialMemory(s_loggingEnabled ? platformMemoryUsage() : 0)
         {
         }
 
         ~ReliefLogger()
         {
-            platformLog();
+            if (s_loggingEnabled)
+                platformLog();
         }
 
         const char* logString() const { return m_logString; }
+        static void setLoggingEnabled(bool enabled) { s_loggingEnabled = enabled; }
 
     private:
         size_t platformMemoryUsage();
@@ -91,7 +93,9 @@ public:
 
         const char* m_logString;
         size_t m_initialMemory;
-};
+
+        static bool s_loggingEnabled;
+    };
 
 private:
     void uninstall();

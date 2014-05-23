@@ -1,3 +1,22 @@
+2014-05-22  Andreas Kling  <akling@apple.com>
+
+        Hook up a setting for showing detailed logging during memory pressure relief.
+        <https://webkit.org/b/133194>
+
+        Plumb through the same setting that we used for detailed logging in WK1.
+
+        Reviewed by Gavin Barraclough.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::WebProcessCreationParameters):
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2014-05-22  Andy Estes  <aestes@apple.com>
 
         [iOS] Send shareable resources to QuickLook if enabled

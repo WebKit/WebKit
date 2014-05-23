@@ -1,3 +1,22 @@
+2014-05-22  Andreas Kling  <akling@apple.com>
+
+        Hook up a setting for showing detailed logging during memory pressure relief.
+        <https://webkit.org/b/133194>
+
+        Make the pressure relief logger opt-in. Also make it flush memory back to the
+        OS (for both malloc and FastMalloc) to get more accurate numbers at each step.
+
+        Reviewed by Gavin Barraclough.
+
+        * WebCore.exp.in:
+        * platform/MemoryPressureHandler.cpp:
+        * platform/MemoryPressureHandler.h:
+        (WebCore::MemoryPressureHandler::ReliefLogger::ReliefLogger):
+        (WebCore::MemoryPressureHandler::ReliefLogger::~ReliefLogger):
+        (WebCore::MemoryPressureHandler::ReliefLogger::setLoggingEnabled):
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::ReliefLogger::platformMemoryUsage):
+
 2014-05-22  Brady Eidson  <beidson@apple.com>
 
         Don't scan for phone numbers in editable regions

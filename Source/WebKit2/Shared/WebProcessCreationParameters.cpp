@@ -42,6 +42,7 @@ WebProcessCreationParameters::WebProcessCreationParameters()
     , shouldEnableKerningAndLigaturesByDefault(false)
     , shouldEnableJIT(false)
     , shouldEnableFTLJIT(false)
+    , shouldEnableMemoryPressureReliefLogging(false)
 #endif
 #if ENABLE(NETWORK_PROCESS)
     , usesNetworkProcess(false)
@@ -113,6 +114,7 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << shouldEnableKerningAndLigaturesByDefault;
     encoder << shouldEnableJIT;
     encoder << shouldEnableFTLJIT;
+    encoder << shouldEnableMemoryPressureReliefLogging;
     encoder << !!bundleParameterData;
     if (bundleParameterData)
         encoder << bundleParameterData->dataReference();
@@ -241,6 +243,8 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
     if (!decoder.decode(parameters.shouldEnableJIT))
         return false;
     if (!decoder.decode(parameters.shouldEnableFTLJIT))
+        return false;
+    if (!decoder.decode(parameters.shouldEnableMemoryPressureReliefLogging))
         return false;
     
     bool hasBundleParameterData;

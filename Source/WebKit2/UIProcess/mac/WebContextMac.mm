@@ -186,6 +186,7 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     parameters.shouldEnableKerningAndLigaturesByDefault = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey];
     parameters.shouldEnableJIT = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJSCJITEnabledDefaultsKey];
     parameters.shouldEnableFTLJIT = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJSCFTLJITEnabledDefaultsKey];
+    parameters.shouldEnableMemoryPressureReliefLogging = [[NSUserDefaults standardUserDefaults] boolForKey:@"LogMemoryJetsamDetails"];
     
 #if HAVE(HOSTED_CORE_ANIMATION)
 #if !PLATFORM(IOS)
