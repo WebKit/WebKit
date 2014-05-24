@@ -1,5 +1,14 @@
 2014-05-24  Frédéric Wang  <fred.wang@free.fr>
 
+        Mark some opentype MATH tests failing due to bad references.
+        https://bugs.webkit.org/show_bug.cgi?id=130322
+
+        Unreviewed gardening.
+
+        * platform/mac/TestExpectations:
+
+2014-05-24  Frédéric Wang  <fred.wang@free.fr>
+
         Use size variants and glyph assembly from the MATH data.
         https://bugs.webkit.org/show_bug.cgi?id=130322
 
