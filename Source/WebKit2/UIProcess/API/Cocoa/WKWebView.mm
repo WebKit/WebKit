@@ -940,6 +940,14 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [_contentView didFinishScrolling];
 }
 
+- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
+{
+    // Work around <rdar://problem/16374753> by avoiding deceleration while
+    // zooming. We'll animate to the right place once the zoom finishes.
+    if ([scrollView isZooming])
+        *targetContentOffset = [scrollView contentOffset];
+}
+
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
     // If we're decelerating, scroll offset will be updated when scrollViewDidFinishDecelerating: is called.

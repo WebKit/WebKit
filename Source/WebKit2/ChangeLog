@@ -1,3 +1,15 @@
+2014-05-23  Ian Henderson  <ianh@apple.com>
+
+        REGRESSION: Rubberbanding out jumps to top left corner on google.com
+        https://bugs.webkit.org/show_bug.cgi?id=133253
+        <rdar://problem/17025664>
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView scrollViewWillEndDragging:withVelocity:targetContentOffset:]):
+        Avoid deceleration during zooming to work around a UIKit bug.
+
 2014-05-23  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Avoid updating the view from the viewport configuration unnecessarily
