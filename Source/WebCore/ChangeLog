@@ -1,3 +1,47 @@
+2014-05-24  Frédéric Wang  <fred.wang@free.fr>
+
+        Use size variants and glyph assembly from the MATH data.
+        https://bugs.webkit.org/show_bug.cgi?id=130322
+
+        Reviewed by Chris Fleizach.
+
+        This patch modifies the RenderMathMLOperator code to use the MATH table
+        when one is provided in the current font on the <math> tag. More
+        precisely, the MathVariants table is used to draw a size variant or
+        a glyph assembly. The displaystyle attribute is not supported yet, so
+        for now large operators are always assumed to be in display style. The
+        MATH support does not work well with all platforms+fonts, so at the
+        moment the default font-family on the <math> is not changed.
+
+        Tests: mathml/opentype/large-operators-LatinModern.html
+               mathml/opentype/opentype-stretchy.html
+               mathml/opentype/vertical-LatinModern.html
+
+        * css/mathml.css: We only specify the default font-family on the math root, so that people can easily style the mathematics.
+        For now, old fonts without the MATH table are still used as the default.
+        (math):
+        (math, mfenced > *): Deleted.
+        (mo, mfenced): Deleted.
+        * platform/graphics/SimpleFontData.cpp: don't return the math data if the font is loading.
+        (WebCore::SimpleFontData::mathData):
+        * platform/graphics/opentype/OpenTypeMathData.cpp: update #ifdef so that disabling ENABLE_OPENTYPE_MATH won't lead to errors with unused parameters.
+        (WebCore::OpenTypeMathData::OpenTypeMathData):
+        (WebCore::OpenTypeMathData::getMathConstant):
+        (WebCore::OpenTypeMathData::getItalicCorrection):
+        (WebCore::OpenTypeMathData::getMathVariants):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::boundsForGlyph):
+        (WebCore::RenderMathMLOperator::heightForGlyph):
+        (WebCore::RenderMathMLOperator::advanceForGlyph):
+        (WebCore::RenderMathMLOperator::computePreferredLogicalWidths): We handle preferred width of size variants.
+        (WebCore::RenderMathMLOperator::shouldAllowStretching): This function now only returns whether the operator will stretch and no longer has side effect.
+        (WebCore::RenderMathMLOperator::getGlyphAssemblyFallBack): We add a function to convert from the MathVariant table data to the format supported by RenderMathMLOperator.
+        (WebCore::RenderMathMLOperator::getDisplayStyleLargeOperator): We add a function to get the glyph that will be used for large operators in display style.
+        (WebCore::RenderMathMLOperator::findStretchyData): We make this function handle size variants.
+        (WebCore::RenderMathMLOperator::updateStyle): We handle size variants.
+        (WebCore::RenderMathMLOperator::paint): We handle size variants.
+        * rendering/mathml/RenderMathMLOperator.h:
+
 2014-05-23  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (iOS WebKit2): requestAnimationFrame fires more than once between layer tree commits

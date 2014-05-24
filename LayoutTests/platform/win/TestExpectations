@@ -2744,3 +2744,7 @@ media/track/track-in-band-legacy-api.html [ Crash ]
 media/track/track-in-band-mode.html	 [ Crash ]
 fast/canvas/canvas-path-addPath.html [ Crash ]
 
+# Missing references on Windows
+webkit.org/b/130322 mathml/opentype/large-operators-LatinModern.html [ Failure ]
+webkit.org/b/130322 mathml/opentype/opentype-stretchy.html [ Failure ]
+webkit.org/b/130322 mathml/opentype/vertical-LatinModern.html [ Failure ]

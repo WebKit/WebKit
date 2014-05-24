@@ -1,3 +1,40 @@
+2014-05-24  Frédéric Wang  <fred.wang@free.fr>
+
+        Use size variants and glyph assembly from the MATH data.
+        https://bugs.webkit.org/show_bug.cgi?id=130322
+
+        Reviewed by Chris Fleizach.
+
+        This adds some pixel tests for large operators and vertical stretchy operators.
+
+        * mathml/opentype/LICENSE-LatinModern.txt: Added.
+        * mathml/opentype/large-operators-LatinModern.html: Added.
+        * mathml/opentype/latinmodern-math.woff: Added.
+        * mathml/opentype/opentype-stretchy.html: Added.
+        * mathml/opentype/stretchy.woff: Added.
+        * mathml/opentype/vertical-LatinModern.html: Added.
+        * platform/efl/mathml/opentype/large-operators-LatinModern-expected.png: Added.
+        * platform/efl/mathml/opentype/large-operators-LatinModern-expected.txt: Added.
+        * platform/efl/mathml/opentype/opentype-stretchy-expected.png: Added.
+        * platform/efl/mathml/opentype/opentype-stretchy-expected.txt: Added.
+        * platform/efl/mathml/opentype/vertical-LatinModern-expected.png: Added.
+        * platform/efl/mathml/opentype/vertical-LatinModern-expected.txt: Added.
+        * platform/gtk/mathml/opentype/large-operators-LatinModern-expected.png: Added.
+        * platform/gtk/mathml/opentype/large-operators-LatinModern-expected.txt: Added.
+        * platform/gtk/mathml/opentype/opentype-stretchy-expected.png: Added.
+        * platform/gtk/mathml/opentype/opentype-stretchy-expected.txt: Added.
+        * platform/gtk/mathml/opentype/vertical-LatinModern-expected.png: Added.
+        * platform/gtk/mathml/opentype/vertical-LatinModern-expected.txt: Added.
+        * platform/gtk/mathml/presentation/mo-stretch-expected.png: update reference due to change in mathml.css
+        * platform/gtk/mathml/presentation/mo-stretch-expected.txt: ditto
+        * platform/mac/mathml/opentype/large-operators-LatinModern-expected.txt: Added.
+        * platform/mac/mathml/opentype/opentype-stretchy-expected.txt: Added.
+        * platform/mac/mathml/opentype/vertical-LatinModern-expected.txt: Added.
+        * platform/mac-wk2/mathml/opentype/large-operators-LatinModern-expected.txt: Added.
+        * platform/mac-wk2/mathml/opentype/opentype-stretchy-expected.txt: Added.
+        * platform/mac-wk2/mathml/opentype/vertical-LatinModern-expected.txt: Added.
+        * platform/win/TestExpectations: Mark the OpenType MATH tests as failing
+
 2014-05-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: Apply backtracking optimization to adjacent backtracking

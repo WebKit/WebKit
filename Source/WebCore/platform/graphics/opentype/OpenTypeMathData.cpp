@@ -229,9 +229,9 @@ struct MATHTable : TableBase {
 } // namespace OpenType
 #endif // ENABLE(OPENTYPE_MATH)
 
+#if ENABLE(OPENTYPE_MATH)
 OpenTypeMathData::OpenTypeMathData(const FontPlatformData& fontData)
 {
-#if ENABLE(OPENTYPE_MATH)
     m_mathBuffer = fontData.openTypeTable(OpenType::MATHTag);
     const OpenType::MATHTable* math = OpenType::validateTable<OpenType::MATHTable>(m_mathBuffer);
     if (!math) {
@@ -249,13 +249,15 @@ OpenTypeMathData::OpenTypeMathData(const FontPlatformData& fontData)
     if (!mathVariants)
         m_mathBuffer = nullptr;
 #else
+OpenTypeMathData::OpenTypeMathData(const FontPlatformData&)
+{
     m_mathBuffer = nullptr;
 #endif
 }
 
+#if ENABLE(OPENTYPE_MATH)
 float OpenTypeMathData::getMathConstant(const SimpleFontData* font, MathConstant constant) const
 {
-#if ENABLE(OPENTYPE_MATH)
     int32_t value = 0;
 
     const OpenType::MATHTable* math = OpenType::validateTable<OpenType::MATHTable>(m_mathBuffer);
@@ -277,14 +279,16 @@ float OpenTypeMathData::getMathConstant(const SimpleFontData* font, MathConstant
 
     return value * font->sizePerUnit();
 #else
+float OpenTypeMathData::getMathConstant(const SimpleFontData*, MathConstant) const
+{
     ASSERT_NOT_REACHED();
     return 0;
 #endif
 }
 
+#if ENABLE(OPENTYPE_MATH)
 float OpenTypeMathData::getItalicCorrection(const SimpleFontData* font, Glyph glyph) const
 {
-#if ENABLE(OPENTYPE_MATH)
     const OpenType::MATHTable* math = OpenType::validateTable<OpenType::MATHTable>(m_mathBuffer);
     ASSERT(math);
     const OpenType::MathGlyphInfo* mathGlyphInfo = math->mathGlyphInfo(*m_mathBuffer);
@@ -297,16 +301,18 @@ float OpenTypeMathData::getItalicCorrection(const SimpleFontData* font, Glyph gl
 
     return mathItalicsCorrectionInfo->getItalicCorrection(*m_mathBuffer, glyph) * font->sizePerUnit();
 #else
+float OpenTypeMathData::getItalicCorrection(const SimpleFontData*, Glyph) const
+{
     ASSERT_NOT_REACHED();
     return 0;
 #endif
 }
 
+#if ENABLE(OPENTYPE_MATH)
 void OpenTypeMathData::getMathVariants(Glyph glyph, bool isVertical, Vector<Glyph>& sizeVariants, Vector<AssemblyPart>& assemblyParts) const
 {
     sizeVariants.clear();
     assemblyParts.clear();
-#if ENABLE(OPENTYPE_MATH)
     const OpenType::MATHTable* math = OpenType::validateTable<OpenType::MATHTable>(m_mathBuffer);
     ASSERT(math);
     const OpenType::MathVariants* mathVariants = math->mathVariants(*m_mathBuffer);
@@ -319,6 +325,8 @@ void OpenTypeMathData::getMathVariants(Glyph glyph, bool isVertical, Vector<Glyp
     mathGlyphConstruction->getSizeVariants(*m_mathBuffer, sizeVariants);
     mathGlyphConstruction->getAssemblyParts(*m_mathBuffer, assemblyParts);
 #else
+void OpenTypeMathData::getMathVariants(Glyph, bool, Vector<Glyph>&, Vector<AssemblyPart>&) const
+{
     ASSERT_NOT_REACHED();
 #endif
 }

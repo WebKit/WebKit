@@ -10,21 +10,12 @@ mtext {
 }
 
 /* Keep font-family and other defaults here consistent with http://mxr.mozilla.org/mozilla-central/source/layout/mathml/mathml.css and feedback from www-math. */
-math, mfenced > * {
+math {
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
     /* We explicitly include the font Symbol as it's the iOS equivalent of font STIXGeneral. */
     font-family: STIXGeneral, Symbol, "Times New Roman", sans-serif;
 #else
-    font-family: MathJax_Main, STIXGeneral, "DejaVu Serif", Cambria, "Cambria Math", Times, serif;
-#endif
-}
-mo, mfenced {
-#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
-    /* We explicitly include the font Symbol as it's the iOS equivalent of font STIXGeneral. */
-    font-family: STIXGeneral, Symbol, "Times New Roman", sans-serif;
-#else
-    font-family: MathJax_Main, STIXGeneral, STIXSizeOneSym, "DejaVu Sans", "DejaVu Serif", Cambria, "Cambria Math",
-        "Lucida Sans Unicode", "Arial Unicode MS", "Lucida Grande", OpenSymbol, "Standard Symbols L", sans-serif;
+    font-family: MathJax_Main, STIXGeneral, STIXSizeOneSym, "DejaVu Sans", "DejaVu Serif", Cambria, "Cambria Math", "Lucida Sans Unicode", "Arial Unicode MS", "Lucida Grande", OpenSymbol, "Standard Symbols L", Times, serif;
 #endif
 }
 

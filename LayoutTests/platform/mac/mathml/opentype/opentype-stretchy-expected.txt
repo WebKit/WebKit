@@ -1,0 +1,50 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x118
+  RenderBlock {HTML} at (0,0) size 800x118
+    RenderBody {BODY} at (8,16) size 784x86
+      RenderBlock {P} at (0,0) size 784x18
+        RenderMathMLMath {math} at (0,7) size 15x8 [padding: 0 1 0 1]
+          RenderMathMLRow {mrow} at (1,0) size 13x8
+            RenderMathMLOperator {mo} at (0,0) size 13x8
+              RenderMathMLBlock (anonymous, flex) at (2,0) size 8x8
+                RenderBlock (anonymous) at (0,0) size 7x8
+                  RenderText at (0,-3) size 7x13
+                    text run at (0,-3) width 7: "\x{219F}"
+        RenderText {#text} at (14,0) size 5x18
+          text run at (14,0) width 5: " "
+        RenderMathMLMath {math} at (18,7) size 16x8 [padding: 0 1 0 1]
+          RenderMathMLRow {mrow} at (1,0) size 13x8
+            RenderMathMLOperator {mo} at (0,0) size 13x8
+              RenderMathMLBlock (anonymous, flex) at (2,0) size 8x8
+                RenderBlock (anonymous) at (0,0) size 7x8
+                  RenderText at (0,-3) size 7x13
+                    text run at (0,-3) width 7: "\x{219F}"
+        RenderText {#text} at (33,0) size 5x18
+          text run at (33,0) width 5: " "
+        RenderMathMLMath {math} at (37,7) size 15x8 [padding: 0 1 0 1]
+          RenderMathMLRow {mrow} at (1,0) size 13x8
+            RenderMathMLOperator {mo} at (0,0) size 13x8
+              RenderMathMLBlock (anonymous, flex) at (2,0) size 8x8
+                RenderBlock (anonymous) at (0,0) size 7x8
+                  RenderText at (0,-3) size 7x13
+                    text run at (0,-3) width 7: "\x{219F}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,34) size 784x18
+        RenderMathMLMath {math} at (0,7) size 15x8 [padding: 0 1 0 1]
+          RenderMathMLRow {mrow} at (1,0) size 13x8
+            RenderMathMLOperator {mo} at (0,0) size 13x8
+              RenderMathMLBlock (anonymous, flex) at (2,0) size 8x8
+                RenderBlock (anonymous) at (0,0) size 7x8
+                  RenderText at (0,-3) size 7x13
+                    text run at (0,-3) width 7: "\x{219F}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,68) size 784x18
+        RenderMathMLMath {math} at (0,6) size 10x11 [padding: 0 1 0 1]
+          RenderMathMLRow {mrow} at (1,0) size 8x11
+            RenderMathMLOperator {mo} at (0,0) size 8x11
+              RenderMathMLBlock (anonymous, flex) at (0,0) size 7x11
+                RenderBlock (anonymous) at (0,0) size 6x11
+                  RenderText at (0,-2) size 6x13
+                    text run at (0,-2) width 6: "\x{2A1B}"
+        RenderText {#text} at (0,0) size 0x0

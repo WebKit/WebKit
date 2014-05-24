@@ -261,6 +261,8 @@ String SimpleFontData::description() const
 
 const OpenTypeMathData* SimpleFontData::mathData() const
 {
+    if (m_isLoading)
+        return nullptr;
     if (!m_mathData) {
         m_mathData = OpenTypeMathData::create(m_platformData);
         if (!m_mathData->hasMathData())

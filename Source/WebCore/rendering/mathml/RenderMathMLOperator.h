@@ -30,7 +30,9 @@
 
 #include "GlyphPage.h"
 #include "MathMLElement.h"
+#include "OpenTypeMathData.h"
 #include "RenderMathMLToken.h"
+#include "SimpleFontData.h"
 
 namespace WebCore {
     
@@ -40,7 +42,7 @@ enum Form { Infix, Prefix, Postfix };
 enum Flag {
     Accent = 0x1, // FIXME: This must be used to implement accentunder/accent on munderover (https://bugs.webkit.org/show_bug.cgi?id=124826).
     Fence = 0x2, // This has no visual effect but allows to expose semantic information via the accessibility tree.
-    LargeOp = 0x4, // FIXME: This must be used to implement displaystyle (https://bugs.webkit.org/show_bug.cgi?id=118737)
+    LargeOp = 0x4,
     MovableLimits = 0x8, // FIXME: This must be used to implement displaystyle  (https://bugs.webkit.org/show_bug.cgi?id=118737).
     Separator = 0x10, // This has no visual effect but allows to expose semantic information via the accessibility tree.
     Stretchy = 0x20,
@@ -65,6 +67,8 @@ public:
     LayoutUnit stretchSize() const { return m_stretchHeightAboveBaseline + m_stretchDepthBelowBaseline; }
     
     bool hasOperatorFlag(MathMLOperatorDictionary::Flag flag) const { return m_operatorFlags & flag; }
+    // FIXME: The displaystyle property is not implemented (https://bugs.webkit.org/show_bug.cgi?id=118737).
+    bool isLargeOperatorInDisplayStyle() const { return !hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && hasOperatorFlag(MathMLOperatorDictionary::LargeOp); }
 
     void updateStyle() override final;
 
@@ -89,13 +93,12 @@ private:
     void rebuildTokenContent(const String& operatorString);
     void updateFromElement() override;
 
-    bool shouldAllowStretching(UChar& characterForStretching);
+    bool shouldAllowStretching() const;
 
-    FloatRect boundsForGlyph(const GlyphData&);
-    float heightForGlyph(const GlyphData&);
-    float advanceForGlyph(const GlyphData&);
+    FloatRect boundsForGlyph(const GlyphData&) const;
+    float heightForGlyph(const GlyphData&) const;
+    float advanceForGlyph(const GlyphData&) const;
 
-    // FIXME: DrawSizeVariant is not implemented yet.
     enum DrawMode {
         DrawNormal, DrawSizeVariant, DrawGlyphAssembly
     };
@@ -146,6 +149,8 @@ private:
         // FIXME: For OpenType fonts with a MATH table all the glyphs are from the same font, so we would only need to store the glyph indices here.
         GlyphData m_data[4];
     };
+    bool getGlyphAssemblyFallBack(Vector<OpenTypeMathData::AssemblyPart>, StretchyData&) const;
+    StretchyData getDisplayStyleLargeOperator(UChar) const;
     StretchyData findStretchyData(UChar, float* maximumGlyphWidth);
     
     enum GlyphPaintTrimming {
