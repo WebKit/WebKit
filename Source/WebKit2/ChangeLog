@@ -1,3 +1,10 @@
+2014-05-23  Anders Carlsson  <andersca@apple.com>
+
+        Remove an assertion.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadRequest):
+
 2014-05-23  Tim Horton  <timothy_horton@apple.com>
 
         [iOS] WKPDFView should have a page indicator

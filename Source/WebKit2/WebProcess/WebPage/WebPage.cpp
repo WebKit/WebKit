@@ -964,7 +964,6 @@ void WebPage::loadRequest(uint64_t navigationID, const ResourceRequest& request,
     if (!decoder.decode(userMessageDecoder))
         return;
 
-    ASSERT(!m_pendingNavigationID);
     m_pendingNavigationID = navigationID;
 
     m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), sandboxExtensionHandle);
