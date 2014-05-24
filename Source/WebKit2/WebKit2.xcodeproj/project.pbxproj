@@ -530,6 +530,8 @@
 		2D28F3E51885CCC1004B9EAE /* WebDatabaseManagerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D28F3E11885CCC1004B9EAE /* WebDatabaseManagerIOS.mm */; };
 		2D28F3E61885CCC1004B9EAE /* WebEditorClientIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D28F3E21885CCC1004B9EAE /* WebEditorClientIOS.mm */; };
 		2D28F3E71885CCC1004B9EAE /* WebFrameLoaderClientIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D28F3E31885CCC1004B9EAE /* WebFrameLoaderClientIOS.mm */; };
+		2D29ECD0192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D29ECCE192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.h */; };
+		2D29ECD1192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D29ECCF192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.mm */; };
 		2D2ADF0916362DD500197E47 /* PDFPluginTextAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF0616362DC700197E47 /* PDFPluginTextAnnotation.mm */; };
 		2D2ADF0B16362DDB00197E47 /* PDFPluginAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF031636243500197E47 /* PDFPluginAnnotation.mm */; };
 		2D2ADF1016364D8200197E47 /* PDFPluginChoiceAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF0E16364D8200197E47 /* PDFPluginChoiceAnnotation.mm */; };
@@ -2465,6 +2467,8 @@
 		2D28F3E11885CCC1004B9EAE /* WebDatabaseManagerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebDatabaseManagerIOS.mm; path = ios/WebDatabaseManagerIOS.mm; sourceTree = "<group>"; };
 		2D28F3E21885CCC1004B9EAE /* WebEditorClientIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebEditorClientIOS.mm; path = ios/WebEditorClientIOS.mm; sourceTree = "<group>"; };
 		2D28F3E31885CCC1004B9EAE /* WebFrameLoaderClientIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebFrameLoaderClientIOS.mm; path = ios/WebFrameLoaderClientIOS.mm; sourceTree = "<group>"; };
+		2D29ECCE192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeDisplayRefreshMonitor.h; sourceTree = "<group>"; };
+		2D29ECCF192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeDisplayRefreshMonitor.mm; sourceTree = "<group>"; };
 		2D2ADF021636243500197E47 /* PDFPluginAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPluginAnnotation.h; path = PDF/PDFPluginAnnotation.h; sourceTree = "<group>"; };
 		2D2ADF031636243500197E47 /* PDFPluginAnnotation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginAnnotation.mm; path = PDF/PDFPluginAnnotation.mm; sourceTree = "<group>"; };
 		2D2ADF0516362DC700197E47 /* PDFPluginTextAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPluginTextAnnotation.h; path = PDF/PDFPluginTextAnnotation.h; sourceTree = "<group>"; };
@@ -4649,6 +4653,15 @@
 			name = ios;
 			sourceTree = "<group>";
 		};
+		2D29ECCD192F2C2E00984B78 /* Cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				2D29ECCE192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.h */,
+				2D29ECCF192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.mm */,
+			);
+			path = Cocoa;
+			sourceTree = "<group>";
+		};
 		2DA944771884E3AB00ED86DB /* ios */ = {
 			isa = PBXGroup;
 			children = (
@@ -5546,6 +5559,7 @@
 		BC032D5E10F4372B0058C15A /* WebPage */ = {
 			isa = PBXGroup;
 			children = (
+				2D29ECCD192F2C2E00984B78 /* Cocoa */,
 				2DA944B41884EA2A00ED86DB /* ios */,
 				BC963D6C113DD19500574BE2 /* mac */,
 				93FC679D12D3CC7400A60610 /* DecoderAdapter.cpp */,
@@ -7423,6 +7437,7 @@
 				2684054418B85A630022C38B /* VisibleContentRectUpdateInfo.h in Headers */,
 				37948404150C350600E52CE9 /* WebRenderLayer.h in Headers */,
 				51E351F6180F5C7500E53BE9 /* WebIDBFactoryBackend.h in Headers */,
+				2D29ECD0192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.h in Headers */,
 				3760881F150413E900FC82C7 /* WebRenderObject.h in Headers */,
 				51217465164C21370037A5C1 /* WebResourceBuffer.h in Headers */,
 				33367630130C9998006C9DE2 /* WebResourceCacheManager.h in Headers */,
@@ -8806,6 +8821,7 @@
 				1AE117F611DBB30900981615 /* ProcessLauncher.cpp in Sources */,
 				BC111B1D112F5FE600337BAB /* ProcessLauncherMac.mm in Sources */,
 				1AB16AE9164B3A8800290D62 /* RemoteLayerTreeContext.mm in Sources */,
+				2D29ECD1192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.mm in Sources */,
 				1AAB0379185A7C6A00EDF501 /* MessageSender.cpp in Sources */,
 				1AB16ADD1648598400290D62 /* RemoteLayerTreeDrawingArea.mm in Sources */,
 				1AB16AE11648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.mm in Sources */,

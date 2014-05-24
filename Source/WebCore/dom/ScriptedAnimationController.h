@@ -30,7 +30,9 @@
 #include "DOMTimeStamp.h"
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-#include "DisplayRefreshMonitor.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "DisplayRefreshMonitorClient.h"
 #endif
 #include "Timer.h"
 #endif
@@ -89,6 +91,7 @@ private:
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     // Override for DisplayRefreshMonitorClient
     virtual void displayRefreshFired(double timestamp) override;
+    virtual PassRefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;
 
     bool m_isUsingTimer;
     bool m_isThrottled;

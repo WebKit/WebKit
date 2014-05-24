@@ -30,6 +30,7 @@
 #include "LayerTreeContext.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/PlatformScreen.h>
 #include <WebCore/ViewState.h>
 #include <functional>
 #include <wtf/Forward.h>
@@ -41,6 +42,7 @@ class MessageDecoder;
 }
 
 namespace WebCore {
+class DisplayRefreshMonitor;
 class FrameView;
 class GraphicsLayer;
 class GraphicsLayerFactory;
@@ -95,9 +97,13 @@ public:
 
     virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) { return false; }
 
-    virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return 0; }
+    virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return nullptr; }
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;
     virtual void scheduleCompositingLayerFlush() = 0;
+
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    virtual PassRefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID);
+#endif
 
     virtual WebCore::TransformationMatrix rootLayerTransform() const;
     virtual void setRootLayerTransform(const WebCore::TransformationMatrix&) { }

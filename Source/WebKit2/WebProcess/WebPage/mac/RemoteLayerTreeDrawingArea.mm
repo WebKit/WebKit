@@ -31,6 +31,7 @@
 #import "PlatformCALayerRemote.h"
 #import "RemoteLayerBackingStoreCollection.h"
 #import "RemoteLayerTreeContext.h"
+#import "RemoteLayerTreeDisplayRefreshMonitor.h"
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #import "RemoteScrollingCoordinator.h"
 #import "RemoteScrollingCoordinatorTransaction.h"
@@ -89,6 +90,18 @@ void RemoteLayerTreeDrawingArea::scroll(const IntRect& scrollRect, const IntSize
 GraphicsLayerFactory* RemoteLayerTreeDrawingArea::graphicsLayerFactory()
 {
     return m_remoteLayerTreeContext.get();
+}
+
+PassRefPtr<DisplayRefreshMonitor> RemoteLayerTreeDrawingArea::createDisplayRefreshMonitor(PlatformDisplayID displayID)
+{
+    RefPtr<RemoteLayerTreeDisplayRefreshMonitor> monitor = RemoteLayerTreeDisplayRefreshMonitor::create(displayID, *this);
+    m_displayRefreshMonitors.add(monitor.get());
+    return monitor.release();
+}
+
+void RemoteLayerTreeDrawingArea::willDestroyDisplayRefreshMonitor(DisplayRefreshMonitor* monitor)
+{
+    m_displayRefreshMonitors.remove(static_cast<RemoteLayerTreeDisplayRefreshMonitor*>(monitor));
 }
 
 void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer* rootLayer)
@@ -309,6 +322,9 @@ void RemoteLayerTreeDrawingArea::didUpdate()
     // This empty transaction serves to trigger CA's garbage collection of IOSurfaces. See <rdar://problem/16110687>
     [CATransaction begin];
     [CATransaction commit];
+
+    for (auto& monitor : m_displayRefreshMonitors)
+        monitor->didUpdateLayers();
 }
 
 void RemoteLayerTreeDrawingArea::mainFrameContentSizeChanged(const IntSize& contentsSize)

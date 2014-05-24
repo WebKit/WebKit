@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
+#import "DisplayRefreshMonitorIOS.h"
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 
-#include "DisplayRefreshMonitor.h"
-
-#include <QuartzCore/QuartzCore.h>
-#include <wtf/CurrentTime.h>
-#include <wtf/MainThread.h>
-
 #import "WebCoreThread.h"
+#import <QuartzCore/QuartzCore.h>
+#import <wtf/CurrentTime.h>
+#import <wtf/MainThread.h>
+
+using namespace WebCore;
 
 @interface WebDisplayLinkHandler : NSObject
 {
-    WebCore::DisplayRefreshMonitor* m_monitor;
-    CADisplayLink* m_displayLink;
+    DisplayRefreshMonitorIOS* m_monitor;
+    CADisplayLink *m_displayLink;
 }
 
-- (id)initWithMonitor:(WebCore::DisplayRefreshMonitor*)monitor;
+- (id)initWithMonitor:(DisplayRefreshMonitorIOS*)monitor;
 - (void)handleDisplayLink:(CADisplayLink *)sender;
 - (void)invalidate;
 
 @end
 
-static double mediaTimeToCurrentTime(CFTimeInterval t)
-{
-    return monotonicallyIncreasingTime() + t - CACurrentMediaTime();
-}
-
 @implementation WebDisplayLinkHandler
 
-- (id)initWithMonitor:(WebCore::DisplayRefreshMonitor*)monitor
+- (id)initWithMonitor:(DisplayRefreshMonitorIOS*)monitor
 {
     if (self = [super init]) {
         m_monitor = monitor;
@@ -86,34 +81,44 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
 @end
 
 namespace WebCore {
- 
-DisplayRefreshMonitor::~DisplayRefreshMonitor()
+
+DisplayRefreshMonitorIOS::DisplayRefreshMonitorIOS(PlatformDisplayID displayID)
+    : DisplayRefreshMonitor(displayID)
 {
-    [(WebDisplayLinkHandler*) m_displayLink invalidate];
-    [(WebDisplayLinkHandler*) m_displayLink release];
 }
 
-bool DisplayRefreshMonitor::requestRefreshCallback()
+DisplayRefreshMonitorIOS::~DisplayRefreshMonitorIOS()
 {
-    if (!m_active)
+    [m_handler invalidate];
+}
+
+bool DisplayRefreshMonitorIOS::requestRefreshCallback()
+{
+    if (!isActive())
         return false;
-        
-    if (!m_displayLink) {
-        m_displayLink = [[WebDisplayLinkHandler alloc] initWithMonitor:this];
-        m_active = true;
+
+    if (!m_handler) {
+        m_handler = adoptNS([[WebDisplayLinkHandler alloc] initWithMonitor:this]);
+        setIsActive(true);
     }
 
-    m_scheduled = true;
+    setIsScheduled(true);
     return true;
 }
 
-void DisplayRefreshMonitor::displayLinkFired(double nowSeconds)
+static double mediaTimeToCurrentTime(CFTimeInterval t)
 {
-    if (!m_previousFrameDone)
+    // FIXME: This may be a no-op if CACurrentMediaTime is *guaranteed* to be mach_absolute_time.
+    return monotonicallyIncreasingTime() + t - CACurrentMediaTime();
+}
+
+void DisplayRefreshMonitorIOS::displayLinkFired(double nowSeconds)
+{
+    if (!isPreviousFrameDone())
         return;
 
-    m_previousFrameDone = false;
-    m_monotonicAnimationStartTime = mediaTimeToCurrentTime(nowSeconds);
+    setIsPreviousFrameDone(false);
+    setMonotonicAnimationStartTime(mediaTimeToCurrentTime(nowSeconds));
 
     handleDisplayRefreshedNotificationOnMainThread(this);
 }

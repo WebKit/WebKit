@@ -28,6 +28,8 @@
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 
+#include "DisplayRefreshMonitor.h"
+#include "DisplayRefreshMonitorManager.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "FrameView.h"
@@ -171,7 +173,7 @@ void ScriptedAnimationController::windowScreenDidChange(PlatformDisplayID displa
     if (m_document->settings() && !m_document->settings()->requestAnimationFrameEnabled())
         return;
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    DisplayRefreshMonitorManager::sharedManager()->windowScreenDidChange(displayID, this);
+    DisplayRefreshMonitorManager::sharedManager().windowScreenDidChange(displayID, this);
 #else
     UNUSED_PARAM(displayID);
 #endif
@@ -185,7 +187,7 @@ void ScriptedAnimationController::scheduleAnimation()
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     if (!m_isUsingTimer && !m_isThrottled) {
-        if (DisplayRefreshMonitorManager::sharedManager()->scheduleAnimation(this))
+        if (DisplayRefreshMonitorManager::sharedManager().scheduleAnimation(this))
             return;
 
         m_isUsingTimer = true;
@@ -222,6 +224,13 @@ void ScriptedAnimationController::displayRefreshFired(double monotonicTimeNow)
 #endif
 #endif
 
+
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+PassRefPtr<DisplayRefreshMonitor> ScriptedAnimationController::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
+{
+    return m_document->page()->chrome().client().createDisplayRefreshMonitor(displayID);
+}
+#endif
 
 
 }

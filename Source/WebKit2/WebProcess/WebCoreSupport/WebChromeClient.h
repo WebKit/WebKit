@@ -204,6 +204,10 @@ private:
     virtual void scheduleCompositingLayerFlush() override;
     virtual WebCore::GraphicsLayer* documentOverlayLayerForFrame(WebCore::Frame&) override;
 
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    virtual PassRefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;
+#endif
+
     virtual CompositingTriggerFlags allowedCompositingTriggers() const
     {
         return static_cast<CompositingTriggerFlags>(

@@ -1,3 +1,42 @@
+2014-05-23  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (iOS WebKit2): requestAnimationFrame fires more than once between layer tree commits
+        https://bugs.webkit.org/show_bug.cgi?id=132794
+        <rdar://problem/16877909>
+
+        Reviewed by Simon Fraser.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createDisplayRefreshMonitor):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::graphicsLayerFactory):
+        (WebKit::DrawingArea::createDisplayRefreshMonitor):
+        Plumb the DisplayRefreshMonitor request through to the DrawingArea.
+        RemoteLayerTreeDrawingArea will implement and return a RemoteLayerTreeDisplayRefreshMonitor.
+
+        * WebProcess/WebPage/Cocoa/RemoteLayerTreeDisplayRefreshMonitor.h: Added.
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::create):
+        * WebProcess/WebPage/Cocoa/RemoteLayerTreeDisplayRefreshMonitor.mm: Added.
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::RemoteLayerTreeDisplayRefreshMonitor):
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::~RemoteLayerTreeDisplayRefreshMonitor):
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback):
+        When requesting a display refresh callback, schedule a layer commit.
+        It may end up being empty, but will still call us back with a didUpdate,
+        upon which we'll fire the callback.
+
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::didUpdateLayers):
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::createDisplayRefreshMonitor):
+        (WebKit::RemoteLayerTreeDrawingArea::willDestroyDisplayRefreshMonitor):
+        Keep track of the set of DisplayRefreshMonitors.
+
+        (WebKit::RemoteLayerTreeDrawingArea::didUpdate):
+        Fire requestAnimationFrame callbacks once the UI process commits the new layer tree.
+
 2014-05-23  Jeremy Jones  <jeremyj@apple.com>
 
         Hide fullscreen immediately when switching tabs.

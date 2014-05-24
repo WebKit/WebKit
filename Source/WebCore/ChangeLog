@@ -1,3 +1,58 @@
+2014-05-23  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (iOS WebKit2): requestAnimationFrame fires more than once between layer tree commits
+        https://bugs.webkit.org/show_bug.cgi?id=132794
+        <rdar://problem/16877909>
+
+        Reviewed by Simon Fraser.
+
+        Virtualize DisplayRefreshMonitor so that WebKit2 can implement its own DisplayRefreshMonitor for UI-side compositing views.
+        This allows the synchronization of requestAnimationFrame callbacks with UI-side compositing painting.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::graphicsLayerFactory):
+        (WebCore::ChromeClient::createDisplayRefreshMonitor):
+        * platform/graphics/DisplayRefreshMonitorFactory.h: Added.
+        * platform/graphics/GraphicsLayerUpdater.cpp:
+        (WebCore::GraphicsLayerUpdater::createDisplayRefreshMonitor):
+        * platform/graphics/GraphicsLayerUpdater.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::createDisplayRefreshMonitor):
+        * rendering/RenderLayerCompositor.h:
+        Give the ChromeClient a chance to provide us with a custom DisplayRefreshMonitor.
+        If it does not, we'll fall back to making a DisplayRefreshMonitorMac or
+        DisplayRefreshMonitorIOS depending on the platform.
+
+        * dom/ScriptedAnimationController.cpp:
+        * dom/ScriptedAnimationController.h:
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        * platform/graphics/DisplayRefreshMonitor.h:
+        * platform/graphics/DisplayRefreshMonitorClient.cpp: Added.
+        * platform/graphics/DisplayRefreshMonitorClient.h: Added.
+        * platform/graphics/DisplayRefreshMonitorManager.cpp: Added.
+        * platform/graphics/DisplayRefreshMonitorManager.h: Added.
+        Split DisplayRefreshMonitor.cpp into one file per class.
+        Use references in a few places.
+        Remove some useless comments.
+
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::displayDidRefresh):
+        Use takeAny() and remove a FIXME about it not existing.
+
+        * platform/graphics/DisplayRefreshMonitorClient.cpp: Added.
+        (WebCore::DisplayRefreshMonitorClient::fireDisplayRefreshIfNeeded):
+        Use an early return instead of having the whole function body in an if().
+
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.h: Added.
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.mm:
+        * platform/graphics/mac/DisplayRefreshMonitorMac.cpp:
+        * platform/graphics/mac/DisplayRefreshMonitorMac.h: Added.
+        Virtualize DisplayRefreshMonitorIOS and DisplayRefreshMonitorMac,
+        and move things specific to each of them out of DisplayRefreshMonitor itself.
+
 2014-05-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: Apply backtracking optimization to adjacent backtracking

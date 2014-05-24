@@ -45,8 +45,10 @@ class MessageEncoder;
 namespace WebKit {
 
 class RemoteLayerTreeContext;
+class RemoteLayerTreeDisplayRefreshMonitor;
 
 class RemoteLayerTreeDrawingArea : public DrawingArea, public WebCore::GraphicsLayerClient {
+    friend class RemoteLayerTreeDisplayRefreshMonitor;
 public:
     RemoteLayerTreeDrawingArea(WebPage*, const WebPageCreationParameters&);
     virtual ~RemoteLayerTreeDrawingArea();
@@ -61,6 +63,9 @@ private:
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
     virtual void scheduleCompositingLayerFlush() override;
+
+    virtual PassRefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) override;
+    void willDestroyDisplayRefreshMonitor(WebCore::DisplayRefreshMonitor*);
 
     virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) override;
 
@@ -136,6 +141,8 @@ private:
 
     dispatch_queue_t m_commitQueue;
     RefPtr<BackingStoreFlusher> m_pendingBackingStoreFlusher;
+
+    HashSet<RemoteLayerTreeDisplayRefreshMonitor*> m_displayRefreshMonitors;
 };
 
 DRAWING_AREA_TYPE_CASTS(RemoteLayerTreeDrawingArea, type() == DrawingAreaTypeRemoteLayerTree);

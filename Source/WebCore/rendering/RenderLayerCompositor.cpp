@@ -3925,4 +3925,16 @@ void RenderLayerCompositor::paintRelatedMilestonesTimerFired(Timer<RenderLayerCo
     m_renderView.frameView().firePaintRelatedMilestonesIfNeeded();
 }
 
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+PassRefPtr<DisplayRefreshMonitor> RenderLayerCompositor::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
+{
+    Frame& frame = m_renderView.frameView().frame();
+    Page* page = frame.page();
+    if (!page)
+        return nullptr;
+
+    return page->chrome().client().createDisplayRefreshMonitor(displayID);
+}
+#endif
+
 } // namespace WebCore

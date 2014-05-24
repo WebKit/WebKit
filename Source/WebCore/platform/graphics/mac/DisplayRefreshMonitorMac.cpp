@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DisplayRefreshMonitorMac.h"
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-
-#include "DisplayRefreshMonitor.h"
 
 #include <QuartzCore/QuartzCore.h>
 #include <wtf/CurrentTime.h>
@@ -35,9 +34,26 @@
 
 namespace WebCore {
 
+DisplayRefreshMonitorMac::DisplayRefreshMonitorMac(PlatformDisplayID displayID)
+    : DisplayRefreshMonitor(displayID)
+    , m_displayLink(nullptr)
+{
+}
+
+DisplayRefreshMonitorMac::~DisplayRefreshMonitorMac()
+{
+    if (m_displayLink) {
+        CVDisplayLinkStop(m_displayLink);
+        CVDisplayLinkRelease(m_displayLink);
+        m_displayLink = nullptr;
+    }
+
+    cancelCallOnMainThread(DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread, this);
+}
+
 static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp* now, const CVTimeStamp* outputTime, CVOptionFlags, CVOptionFlags*, void* data)
 {
-    DisplayRefreshMonitor* monitor = static_cast<DisplayRefreshMonitor*>(data);
+    DisplayRefreshMonitorMac* monitor = static_cast<DisplayRefreshMonitorMac*>(data);
 
     double nowSeconds = static_cast<double>(now->videoTime) / static_cast<double>(now->videoTimeScale);
     double outputTimeSeconds = static_cast<double>(outputTime->videoTime) / static_cast<double>(outputTime->videoTimeScale);
@@ -46,25 +62,14 @@ static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp* now, co
     return kCVReturnSuccess;
 }
 
-DisplayRefreshMonitor::~DisplayRefreshMonitor()
+bool DisplayRefreshMonitorMac::requestRefreshCallback()
 {
-    if (m_displayLink) {
-        CVDisplayLinkStop(m_displayLink);
-        CVDisplayLinkRelease(m_displayLink);
-        m_displayLink = 0;
-    }
-
-    cancelCallOnMainThread(DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread, this);
-}
-
-bool DisplayRefreshMonitor::requestRefreshCallback()
-{
-    if (!m_active)
+    if (!isActive())
         return false;
 
     if (!m_displayLink) {
-        m_active = false;
-        CVReturn error = CVDisplayLinkCreateWithCGDisplay(m_displayID, &m_displayLink);
+        setIsActive(false);
+        CVReturn error = CVDisplayLinkCreateWithCGDisplay(displayID(), &m_displayLink);
         if (error)
             return false;
 
@@ -76,26 +81,26 @@ bool DisplayRefreshMonitor::requestRefreshCallback()
         if (error)
             return false;
 
-        m_active = true;
+        setIsActive(true);
     }
 
-    MutexLocker lock(m_mutex);
-    m_scheduled = true;
+    MutexLocker lock(mutex());
+    setIsScheduled(true);
     return true;
 }
 
-void DisplayRefreshMonitor::displayLinkFired(double nowSeconds, double outputTimeSeconds)
+void DisplayRefreshMonitorMac::displayLinkFired(double nowSeconds, double outputTimeSeconds)
 {
-    MutexLocker lock(m_mutex);
-    if (!m_previousFrameDone)
+    MutexLocker lock(mutex());
+    if (!isPreviousFrameDone())
         return;
 
-    m_previousFrameDone = false;
+    setIsPreviousFrameDone(false);
 
     double webKitMonotonicNow = monotonicallyIncreasingTime();
     double timeUntilOutput = outputTimeSeconds - nowSeconds;
     // FIXME: Should this be using webKitMonotonicNow?
-    m_monotonicAnimationStartTime = webKitMonotonicNow + timeUntilOutput;
+    setMonotonicAnimationStartTime(webKitMonotonicNow + timeUntilOutput);
 
     callOnMainThread(handleDisplayRefreshedNotificationOnMainThread, this);
 }

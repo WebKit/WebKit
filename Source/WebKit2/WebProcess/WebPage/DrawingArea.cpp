@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "DrawingArea.h"
+#include <WebCore/DisplayRefreshMonitor.h>
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/Functional.h>
 
@@ -90,5 +91,12 @@ TransformationMatrix DrawingArea::rootLayerTransform() const
 {
     return TransformationMatrix();
 }
+
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+PassRefPtr<WebCore::DisplayRefreshMonitor> DrawingArea::createDisplayRefreshMonitor(PlatformDisplayID)
+{
+    return nullptr;
+}
+#endif
 
 } // namespace WebKit
