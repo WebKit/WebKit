@@ -159,15 +159,11 @@ using namespace WebKit;
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
 {
-    if (scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateBegan)
-        [_contentView willStartUserTriggeredZoom];
     [_contentView willStartZoomOrScroll];
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
-    if (scrollView.panGestureRecognizer.state == UIGestureRecognizerStateBegan)
-        [_contentView willStartUserTriggeredScroll];
     [_contentView willStartZoomOrScroll];
 }
 

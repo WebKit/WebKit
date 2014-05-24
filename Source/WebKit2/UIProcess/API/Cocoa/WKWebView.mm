@@ -643,7 +643,7 @@ static CGFloat contentZoomScale(WKWebView* webView)
     CFTimeInterval duration = std::min(fabs(log(zoomScale) - log(scale)) * zoomDurationFactor + minimumZoomDuration, maximumZoomDuration);
 
     if (scale != zoomScale)
-        [_contentView willStartUserTriggeredZoom];
+        _page->willStartUserTriggeredZooming();
 
     [_scrollView _zoomToCenter:point scale:scale duration:duration];
 }
@@ -851,6 +851,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     WebCore::FloatPoint newCenter = CGPointMake(topLeft.x + unobscuredScrollViewRectInWebViewCoordinates.size.width / 2.0, topLeft.y + unobscuredScrollViewRectInWebViewCoordinates.size.height / 2.0);
 
+    if (scale != contentZoomScale(self))
+        _page->willStartUserTriggeredZooming();
+
     // The newCenter has been computed in the new scale, but _zoomToCenter expected the center to be in the original scale.
     newCenter.scale(1 / scale, 1 / scale);
     [_scrollView _zoomToCenter:newCenter
@@ -911,8 +914,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (![self usesStandardContentView])
         return;
 
-    if (scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateBegan)
-        [_contentView willStartUserTriggeredZoom];
+    if (scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateBegan) {
+        _page->willStartUserTriggeredZooming();
+        [_contentView willStartPanOrPinchGesture];
+    }
     [_contentView willStartZoomOrScroll];
 }
 
@@ -922,7 +927,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return;
 
     if (scrollView.panGestureRecognizer.state == UIGestureRecognizerStateBegan)
-        [_contentView willStartUserTriggeredScroll];
+        [_contentView willStartPanOrPinchGesture];
     [_contentView willStartZoomOrScroll];
 }
 

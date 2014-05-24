@@ -879,7 +879,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     [_textSelectionAssistant willStartScrollingOverflow];
 }
 
-- (void)_willStartUserTriggeredScrollingOrZooming
+- (void)willStartPanOrPinchGesture
 {
     _canSendTouchEventsAsynchronously = YES;
 }

@@ -32,6 +32,7 @@
 
 #if PLATFORM(IOS)
 #import "WKContentView.h"
+#import "WKContentViewInteraction.h"
 #import <WebCore/FloatRect.h>
 #import <UIKit/UIScrollView_Private.h>
 #endif

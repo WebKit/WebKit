@@ -327,17 +327,6 @@ private:
     [self _willStartScrollingOrZooming];
 }
 
-- (void)willStartUserTriggeredScroll
-{
-    [self _willStartUserTriggeredScrollingOrZooming];
-}
-
-- (void)willStartUserTriggeredZoom
-{
-    [self _willStartUserTriggeredScrollingOrZooming];
-    _page->willStartUserTriggeredZooming();
-}
-
 - (void)didZoomToScale:(CGFloat)scale
 {
     [self _didEndScrollingOrZooming];

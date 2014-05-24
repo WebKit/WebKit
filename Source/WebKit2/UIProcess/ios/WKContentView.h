@@ -68,8 +68,6 @@ struct WebPageConfiguration;
 - (void)didFinishScrolling;
 - (void)didZoomToScale:(CGFloat)scale;
 - (void)willStartZoomOrScroll;
-- (void)willStartUserTriggeredScroll;
-- (void)willStartUserTriggeredZoom;
 
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
 - (void)_processDidExit;
