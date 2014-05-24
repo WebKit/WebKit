@@ -2918,10 +2918,6 @@ void WebPageProxy::connectionWillOpen(IPC::Connection* connection)
 {
     ASSERT(connection == m_process->connection());
 
-    if (m_userContentController)
-        m_userContentController->addProcess(m_process.get());
-    m_visitedLinkProvider->addProcess(m_process.get());
-
     m_process->context().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, connection);
 }
 
@@ -2930,6 +2926,13 @@ void WebPageProxy::connectionWillClose(IPC::Connection* connection)
     ASSERT_UNUSED(connection, connection == m_process->connection());
 
     m_process->context().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, 0);
+}
+
+void WebPageProxy::processDidFinishLaunching()
+{
+    if (m_userContentController)
+        m_userContentController->addProcess(m_process.get());
+    m_visitedLinkProvider->addProcess(m_process.get());
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

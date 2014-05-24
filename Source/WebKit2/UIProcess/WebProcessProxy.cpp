@@ -454,6 +454,9 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 {
     ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
+    for (auto& page : m_pageMap.values())
+        page->processDidFinishLaunching();
+
     m_webConnection = WebConnectionToWebProcess::create(this);
 
     m_context->processDidFinishLaunching(this);

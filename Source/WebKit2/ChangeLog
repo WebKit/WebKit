@@ -1,3 +1,31 @@
+2014-05-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r165841): Messages sent before the child process is launched are never sent after r165841
+        https://bugs.webkit.org/show_bug.cgi?id=131675
+
+        Reviewed by Anders Carlsson.
+
+        Since r165841 the connection is opened after the pending messages
+        are sent, because connectionWillOpen might send messages that we
+        want to happen after the ones already pending. The problem is that
+        Connection::canSendOutgoingMessages() returns false when
+        connection hasn't been opened. We should ensure no messages are
+        sent by connectionWillOpen.
+
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::didFinishLaunching): Open the
+        connection before sending pending messages.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::connectionWillOpen): Do not call
+        VisitedLinkProvider::addProcess() here because it tries to send a
+        message to the web process, but the connection hasn't be opened yet.
+        (WebKit::WebPageProxy::processDidFinishLaunching): Call
+        VisitedLinkProvider::addProcess() here instead.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didFinishLaunching): Call
+        WebPageProxy::processDidFinishLaunching() for every web page.
+
 2014-05-23  Ian Henderson  <ianh@apple.com>
 
         REGRESSION: Rubberbanding out jumps to top left corner on google.com

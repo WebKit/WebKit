@@ -1074,6 +1074,8 @@ public:
     void connectionWillOpen(IPC::Connection*);
     void connectionWillClose(IPC::Connection*);
 
+    void processDidFinishLaunching();
+
     void didSaveToPageCache();
         
     void setScrollPinningBehavior(WebCore::ScrollPinningBehavior);
