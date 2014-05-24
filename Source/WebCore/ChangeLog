@@ -1,5 +1,22 @@
 2014-05-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Rename ScrollingTreeScrollingNode's m_scrollPosition to make it clear that it's the value committed from the state tree
+        https://bugs.webkit.org/show_bug.cgi?id=133254
+
+        Reviewed by Tim Horton.
+
+        Make ScrollingTreeScrollingNode::scrollPosition() pure virtual, and rename
+        the member variable and associated getter to make it clear that they relate
+        to the last committed scroll position.
+
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::updateBeforeChildren):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::lastCommittedScrollPosition):
+        (WebCore::ScrollingTreeScrollingNode::scrollPosition): Deleted.
+
+2014-05-23  Simon Fraser  <simon.fraser@apple.com>
+
         Share some more ScrollingTreeScrollingNode code
         https://bugs.webkit.org/show_bug.cgi?id=133248
 

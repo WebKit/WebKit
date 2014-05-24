@@ -1,3 +1,16 @@
+2014-05-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename ScrollingTreeScrollingNode's m_scrollPosition to make it clear that it's the value committed from the state tree
+        https://bugs.webkit.org/show_bug.cgi?id=133254
+
+        Reviewed by Tim Horton.
+        
+        Override scrollPosition() on ScrollingTreeOverflowScrollingNodeIOS.
+
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::scrollPosition):
+
 2014-05-24  Chris Fleizach  <cfleizach@apple.com>
 
         AX: fix coordinate mapping for iOS accessibility

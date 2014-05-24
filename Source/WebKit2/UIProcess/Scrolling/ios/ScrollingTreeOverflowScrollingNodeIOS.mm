@@ -158,6 +158,15 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren(const ScrollingS
     }
 }
 
+FloatPoint ScrollingTreeOverflowScrollingNodeIOS::scrollPosition() const
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate];
+    ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
+    return [scrollView contentOffset];
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
 void ScrollingTreeOverflowScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& scrollPosition)
 {
     [m_scrollLayer setPosition:CGPointMake(-scrollPosition.x() + scrollOrigin().x(), -scrollPosition.y() + scrollOrigin().y())];

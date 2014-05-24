@@ -59,7 +59,7 @@ void ScrollingTreeScrollingNode::updateBeforeChildren(const ScrollingStateNode& 
     }
 
     if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrollPosition))
-        m_scrollPosition = state.scrollPosition();
+        m_lastCommittedScrollPosition = state.scrollPosition();
 
     if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrollOrigin))
         m_scrollOrigin = state.scrollOrigin();

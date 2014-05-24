@@ -64,7 +64,9 @@ protected:
 
     virtual void setScrollLayerPosition(const FloatPoint&) = 0;
 
-    virtual FloatPoint scrollPosition() const { return m_scrollPosition; }
+    virtual FloatPoint scrollPosition() const = 0;
+
+    FloatPoint lastCommittedScrollPosition() const { return m_lastCommittedScrollPosition; }
     const FloatSize& scrollableAreaSize() const { return m_scrollableAreaSize; }
     const FloatSize& totalContentsSize() const { return m_totalContentsSize; }
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
@@ -87,7 +89,7 @@ private:
     FloatSize m_scrollableAreaSize;
     FloatSize m_totalContentsSize;
     FloatSize m_totalContentsSizeForRubberBand;
-    FloatPoint m_scrollPosition; // FIXME: this is the committed scroll position.
+    FloatPoint m_lastCommittedScrollPosition;
     IntPoint m_scrollOrigin;
     
     ScrollableAreaParameters m_scrollableAreaParameters;

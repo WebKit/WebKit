@@ -50,6 +50,8 @@ private:
     virtual void updateBeforeChildren(const WebCore::ScrollingStateNode&) override;
     virtual void updateAfterChildren(const WebCore::ScrollingStateNode&) override;
     
+    virtual WebCore::FloatPoint scrollPosition() const override;
+
     virtual void setScrollLayerPosition(const WebCore::FloatPoint&) override;
 
     virtual void updateLayersAfterViewportChange(const WebCore::FloatRect& viewportRect, double scale) { }
