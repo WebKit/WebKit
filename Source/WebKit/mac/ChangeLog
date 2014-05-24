@@ -1,3 +1,16 @@
+2014-05-23  Jeremy Jones  <jeremyj@apple.com>
+
+        Hide fullscreen immediately when switching tabs.
+        https://bugs.webkit.org/show_bug.cgi?id=133239
+
+        Reviewed by Eric Carlson.
+
+        Renamed a function to better describe it's new functionality.
+
+        * WebView/WebView.mm:
+        (-[WebView viewDidMoveToWindow]):
+        now calls: requestHideAndExitFullscreen
+
 2014-05-20  Dean Jackson  <dino@apple.com>
 
         [Mac] Allow popup menus to override default appearance

@@ -1,3 +1,16 @@
+2014-05-23  Jeremy Jones  <jeremyj@apple.com>
+
+        Hide fullscreen immediately when switching tabs.
+        https://bugs.webkit.org/show_bug.cgi?id=133239
+
+        Reviewed by Eric Carlson.
+
+        Renamed a function to better describe it's new functionality.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewStateDidChange):
+        now calls: requestHideAndExitFullscreen
+
 2014-05-23  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION (WebKit2): Keyboard disappears/appears automatically between text boxes.

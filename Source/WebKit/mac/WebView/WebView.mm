@@ -5280,7 +5280,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     }
 #if PLATFORM(IOS)
     else
-        [_private->fullscreenController requestExitFullscreen];
+        [_private->fullscreenController requestHideAndExitFullscreen];
 #endif
 
 #if !PLATFORM(IOS)

@@ -1118,7 +1118,7 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsRepl
 #if PLATFORM(IOS)
         // When leaving the current page, close the video fullscreen.
         if (m_videoFullscreenManager)
-            m_videoFullscreenManager->requestExitFullscreen();
+            m_videoFullscreenManager->requestHideAndExitFullscreen();
 #endif
     }
 

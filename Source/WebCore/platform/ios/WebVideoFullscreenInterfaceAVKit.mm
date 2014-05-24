@@ -760,4 +760,12 @@ void WebVideoFullscreenInterfaceAVKit::invalidate()
     m_videoLayerContainer = nil;
 }
 
+void WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen()
+{
+    [m_window setHidden:YES];
+    if (m_videoFullscreenModel)
+        m_videoFullscreenModel->requestExitFullscreen();
+}
+
+
 #endif

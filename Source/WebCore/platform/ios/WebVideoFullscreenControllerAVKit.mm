@@ -131,10 +131,10 @@ public:
     _interface->exitFullscreen(_mediaElement->screenRect());
 }
 
-- (void)requestExitFullscreen
+- (void)requestHideAndExitFullscreen
 {
-    if (_model)
-        _model->requestExitFullscreen();
+    if (_interface)
+        _interface->requestHideAndExitFullscreen();
 }
 
 - (void)didEnterFullscreen

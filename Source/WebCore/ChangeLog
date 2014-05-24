@@ -1,3 +1,29 @@
+2014-05-23  Jeremy Jones  <jeremyj@apple.com>
+
+        Hide fullscreen immediately when switching tabs.
+        https://bugs.webkit.org/show_bug.cgi?id=133239
+
+        Reviewed by Eric Carlson.
+
+        This change allows fullscreen to disappear immediately while still cleaning
+        up fullscreen normally.
+
+        * WebCore.exp.in:
+        * platform/ios/WebVideoFullscreenControllerAVKit.h:
+        renamed function to requestHideAndExitFullscreen
+
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        renamed function to requestHideAndExitFullscreen
+
+        (-[WebVideoFullscreenController requestHideAndExitFullscreen]):
+        rename of requestExitFullscreen that also hides.
+
+        (-[WebVideoFullscreenController requestExitFullscreen]): Deleted.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h: declare requestHideAndExitFullscreen()
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen):
+        this hides the window before requesting exitfullscreen from the model.
+
 2014-05-23  Tim Horton  <timothy_horton@apple.com>
 
         [iOS] WKPDFView should have a page indicator
