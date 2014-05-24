@@ -72,7 +72,26 @@ void ScrollingTreeFrameScrollingNode::updateBeforeChildren(const ScrollingStateN
     if (state.hasChangedProperty(ScrollingStateFrameScrollingNode::TopContentInset))
         m_topContentInset = state.topContentInset();
 }
-    
+
+void ScrollingTreeFrameScrollingNode::scrollBy(const FloatSize& offset)
+{
+    setScrollPosition(scrollPosition() + offset);
+}
+
+void ScrollingTreeFrameScrollingNode::scrollByWithoutContentEdgeConstraints(const FloatSize& offset)
+{
+    setScrollPositionWithoutContentEdgeConstraints(scrollPosition() + offset);
+}
+
+void ScrollingTreeFrameScrollingNode::setScrollPosition(const FloatPoint& scrollPosition)
+{
+    FloatPoint newScrollPosition = scrollPosition;
+    newScrollPosition = newScrollPosition.shrunkTo(maximumScrollPosition());
+    newScrollPosition = newScrollPosition.expandedTo(minimumScrollPosition());
+
+    setScrollPositionWithoutContentEdgeConstraints(newScrollPosition);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)

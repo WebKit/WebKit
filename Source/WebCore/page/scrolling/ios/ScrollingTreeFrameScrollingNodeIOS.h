@@ -48,8 +48,7 @@ protected:
     virtual void updateAfterChildren(const ScrollingStateNode&) override;
     virtual void handleWheelEvent(const PlatformWheelEvent&) override { }
 
-    FloatPoint scrollPosition() const;
-    virtual void setScrollPosition(const FloatPoint&) override;
+    virtual FloatPoint scrollPosition() const override;
     virtual void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) override;
 
     virtual void updateLayersAfterViewportChange(const FloatRect& viewportRect, double scale);
@@ -57,11 +56,8 @@ protected:
 
     virtual void setScrollLayerPosition(const FloatPoint&) override;
 
-    FloatPoint minimumScrollPosition() const;
-    FloatPoint maximumScrollPosition() const;
-
-    void scrollBy(const IntSize&);
-    void scrollByWithoutContentEdgeConstraints(const IntSize&);
+    virtual FloatPoint minimumScrollPosition() const override;
+    virtual FloatPoint maximumScrollPosition() const override;
 
 private:
     void updateChildNodesAfterScroll(const FloatPoint&);

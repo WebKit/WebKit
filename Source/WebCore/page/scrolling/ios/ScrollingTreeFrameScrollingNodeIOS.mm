@@ -106,15 +106,6 @@ FloatPoint ScrollingTreeFrameScrollingNodeIOS::scrollPosition() const
     return IntPoint(-scrollLayerPosition.x + scrollOrigin().x(), -scrollLayerPosition.y + scrollOrigin().y());
 }
 
-void ScrollingTreeFrameScrollingNodeIOS::setScrollPosition(const FloatPoint& scrollPosition)
-{
-    FloatPoint newScrollPosition = scrollPosition;
-    newScrollPosition = newScrollPosition.shrunkTo(maximumScrollPosition());
-    newScrollPosition = newScrollPosition.expandedTo(minimumScrollPosition());
-
-    setScrollPositionWithoutContentEdgeConstraints(newScrollPosition);
-}
-
 void ScrollingTreeFrameScrollingNodeIOS::setScrollPositionWithoutContentEdgeConstraints(const FloatPoint& scrollPosition)
 {
     if (shouldUpdateScrollLayerPositionSynchronously()) {
@@ -209,16 +200,6 @@ FloatPoint ScrollingTreeFrameScrollingNodeIOS::maximumScrollPosition() const
         position.setY(minimumScrollPosition().y());
 
     return position;
-}
-
-void ScrollingTreeFrameScrollingNodeIOS::scrollBy(const IntSize& offset)
-{
-    setScrollPosition(scrollPosition() + offset);
-}
-
-void ScrollingTreeFrameScrollingNodeIOS::scrollByWithoutContentEdgeConstraints(const IntSize& offset)
-{
-    setScrollPositionWithoutContentEdgeConstraints(scrollPosition() + offset);
 }
 
 } // namespace WebCore

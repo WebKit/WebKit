@@ -1,3 +1,39 @@
+2014-05-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Share some more ScrollingTreeScrollingNode code
+        https://bugs.webkit.org/show_bug.cgi?id=133248
+
+        Reviewed by Sam Weinig.
+
+        Push scrollBy(), scrollByWithoutContentEdgeConstraints() and setScrollPosition()
+        down to ScrollingTreeFrameScrollingNode.
+        
+        This requires that scrollPosition() return the right thing for each class, so make
+        it virtual. Future patches will reduce the confusion between the committed scroll
+        position and the one derived from layers.
+
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::scrollBy):
+        (WebCore::ScrollingTreeFrameScrollingNode::scrollByWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeFrameScrollingNode::setScrollPosition):
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::scrollPosition):
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.h:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::setScrollPosition): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::scrollBy): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::scrollByWithoutContentEdgeConstraints): Deleted.
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::immediateScrollBy):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::immediateScrollByWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::scrollPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::scrollBy): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::scrollByWithoutContentEdgeConstraints): Deleted.
+
 2014-05-24  Chris Fleizach  <cfleizach@apple.com>
 
         AX: fix coordinate mapping for iOS accessibility

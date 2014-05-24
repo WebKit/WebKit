@@ -109,7 +109,7 @@ void ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren(const ScrollingSta
                 m_probableMainThreadScrollPosition = scrollingStateNode.requestedScrollPosition();
             else {
                 CGPoint scrollLayerPosition = m_scrollLayer.get().position;
-                m_probableMainThreadScrollPosition = IntPoint(-scrollLayerPosition.x, -scrollLayerPosition.y);
+                m_probableMainThreadScrollPosition = FloatPoint(-scrollLayerPosition.x, -scrollLayerPosition.y);
             }
         }
 
@@ -262,12 +262,12 @@ IntPoint ScrollingTreeFrameScrollingNodeMac::absoluteScrollPosition()
 
 void ScrollingTreeFrameScrollingNodeMac::immediateScrollBy(const FloatSize& offset)
 {
-    scrollBy(roundedIntSize(offset));
+    scrollBy(offset);
 }
 
 void ScrollingTreeFrameScrollingNodeMac::immediateScrollByWithoutContentEdgeConstraints(const FloatSize& offset)
 {
-    scrollByWithoutContentEdgeConstraints(roundedIntSize(offset));
+    scrollByWithoutContentEdgeConstraints(offset);
 }
 
 void ScrollingTreeFrameScrollingNodeMac::startSnapRubberbandTimer()
@@ -315,16 +315,12 @@ FloatPoint ScrollingTreeFrameScrollingNodeMac::scrollPosition() const
         return m_probableMainThreadScrollPosition;
 
     CGPoint scrollLayerPosition = m_scrollLayer.get().position;
-    return IntPoint(-scrollLayerPosition.x + scrollOrigin().x(), -scrollLayerPosition.y + scrollOrigin().y());
+    return FloatPoint(-scrollLayerPosition.x + scrollOrigin().x(), -scrollLayerPosition.y + scrollOrigin().y());
 }
 
 void ScrollingTreeFrameScrollingNodeMac::setScrollPosition(const FloatPoint& scrollPosition)
 {
-    FloatPoint newScrollPosition = scrollPosition;
-    newScrollPosition = newScrollPosition.shrunkTo(maximumScrollPosition());
-    newScrollPosition = newScrollPosition.expandedTo(minimumScrollPosition());
-
-    setScrollPositionWithoutContentEdgeConstraints(newScrollPosition);
+    ScrollingTreeFrameScrollingNode::setScrollPosition(scrollPosition);
 
     if (scrollingTree().scrollingPerformanceLoggingEnabled())
         logExposedUnfilledArea();
@@ -441,16 +437,6 @@ FloatPoint ScrollingTreeFrameScrollingNodeMac::maximumScrollPosition() const
         position.setY(minimumScrollPosition().y());
 
     return position;
-}
-
-void ScrollingTreeFrameScrollingNodeMac::scrollBy(const IntSize& offset)
-{
-    setScrollPosition(scrollPosition() + offset);
-}
-
-void ScrollingTreeFrameScrollingNodeMac::scrollByWithoutContentEdgeConstraints(const IntSize& offset)
-{
-    setScrollPositionWithoutContentEdgeConstraints(scrollPosition() + offset);
 }
 
 void ScrollingTreeFrameScrollingNodeMac::updateMainFramePinState(const FloatPoint& scrollPosition)
