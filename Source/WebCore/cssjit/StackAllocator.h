@@ -68,30 +68,82 @@ public:
         return StackReference(m_offsetFromTop);
     }
 
-    // FIXME: ARM64 needs an API take a list of register to push and pop to use strp and ldrp when possible.
+    Vector<StackReference> push(const Vector<JSC::MacroAssembler::RegisterID>& registerIDs)
+    {
+        RELEASE_ASSERT(!m_hasFunctionCallPadding);
+        unsigned registerCount = registerIDs.size();
+        Vector<StackReference> stackReferences;
+        stackReferences.reserveInitialCapacity(registerCount);
+#if CPU(ARM64)
+        for (unsigned i = 0; i < registerCount - 1; i += 2) {
+            m_assembler.pushPair(registerIDs[i + 1], registerIDs[i]);
+            m_offsetFromTop += stackUnitInBytes;
+            stackReferences.append(StackReference(m_offsetFromTop - stackUnitInBytes / 2));
+            stackReferences.append(StackReference(m_offsetFromTop));
+        }
+        if (registerCount % 2) {
+            m_assembler.pushToSave(registerIDs[registerCount - 1]);
+            m_offsetFromTop += stackUnitInBytes;
+            stackReferences.append(StackReference(m_offsetFromTop));
+        }
+#else
+        for (auto registerID : registerIDs) {
+            m_assembler.pushToSave(registerID);
+            m_offsetFromTop += stackUnitInBytes;
+            stackReferences.append(StackReference(m_offsetFromTop));
+        }
+#endif
+        return stackReferences;
+    }
+
     StackReference push(JSC::MacroAssembler::RegisterID registerID)
     {
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
-#if CPU(ARM64)
-        m_assembler.m_assembler.str<64>(registerID, JSC::ARM64Registers::sp, JSC::PreIndex(-16));
-#else
-        m_assembler.push(registerID);
-#endif
+        m_assembler.pushToSave(registerID);
         m_offsetFromTop += stackUnitInBytes;
         return StackReference(m_offsetFromTop);
     }
 
+    void pop(const Vector<StackReference>& stackReferences, const Vector<JSC::MacroAssembler::RegisterID>& registerIDs)
+    {
+        RELEASE_ASSERT(!m_hasFunctionCallPadding);
+        
+        unsigned registerCount = registerIDs.size();
+        RELEASE_ASSERT(stackReferences.size() == registerCount);
+#if CPU(ARM64)
+        ASSERT(m_offsetFromTop >= stackUnitInBytes * registerCount);
+        unsigned registerCountOdd = registerCount % 2;
+        if (registerCountOdd) {
+            RELEASE_ASSERT(stackReferences[registerCount - 1] == m_offsetFromTop);
+            RELEASE_ASSERT(m_offsetFromTop >= stackUnitInBytes);
+            m_offsetFromTop -= stackUnitInBytes;
+            m_assembler.popToRestore(registerIDs[registerCount - 1]);
+        }
+        for (unsigned i = registerCount - registerCountOdd; i > 0; i -= 2) {
+            RELEASE_ASSERT(stackReferences[i - 1] == m_offsetFromTop);
+            RELEASE_ASSERT(stackReferences[i - 2] == m_offsetFromTop - stackUnitInBytes / 2);
+            RELEASE_ASSERT(m_offsetFromTop >= stackUnitInBytes);
+            m_offsetFromTop -= stackUnitInBytes;
+            m_assembler.popPair(registerIDs[i - 1], registerIDs[i - 2]);
+        }
+#else
+        ASSERT(m_offsetFromTop >= stackUnitInBytes * registerCount);
+        for (unsigned i = registerCount; i > 0; --i) {
+            RELEASE_ASSERT(stackReferences[i - 1] == m_offsetFromTop);
+            RELEASE_ASSERT(m_offsetFromTop >= stackUnitInBytes);
+            m_offsetFromTop -= stackUnitInBytes;
+            m_assembler.popToRestore(registerIDs[i - 1]);
+        }
+#endif
+    }
+    
     void pop(StackReference stackReference, JSC::MacroAssembler::RegisterID registerID)
     {
         RELEASE_ASSERT(stackReference == m_offsetFromTop);
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
-        ASSERT(m_offsetFromTop > 0);
+        RELEASE_ASSERT(m_offsetFromTop >= stackUnitInBytes);
         m_offsetFromTop -= stackUnitInBytes;
-#if CPU(ARM64)
-        m_assembler.m_assembler.ldr<64>(registerID, JSC::ARM64Registers::sp, JSC::PostIndex(16));
-#else
-        m_assembler.pop(registerID);
-#endif
+        m_assembler.popToRestore(registerID);
     }
 
     void popAndDiscard(StackReference stackReference)

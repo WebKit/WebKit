@@ -221,6 +221,10 @@ private:
     Assembler::Jump modulo(JSC::MacroAssembler::ResultCondition, Assembler::RegisterID inputDividend, int divisor);
     void moduloIsZero(Assembler::JumpList& failureCases, Assembler::RegisterID inputDividend, int divisor);
 
+    bool generatePrologue();
+    void generateEpilogue();
+    Vector<StackAllocator::StackReference> m_prologueStackReferences;
+    
     Assembler m_assembler;
     RegisterAllocator m_registerAllocator;
     StackAllocator m_stackAllocator;
@@ -542,7 +546,7 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::VM* vm, JSC
     for (unsigned i = 0; i < m_functionCalls.size(); i++)
         linkBuffer.link(m_functionCalls[i].first, m_functionCalls[i].second);
 
-#if CSS_SELECTOR_JIT_DEBUGGING && ASSERT_DISABLED
+#if CSS_SELECTOR_JIT_DEBUGGING
     codeRef = linkBuffer.finalizeCodeWithDisassembly("CSS Selector JIT for \"%s\"", m_originalSelector->selectorText().utf8().data());
 #else
     codeRef = FINALIZE_CODE(linkBuffer, ("CSS Selector JIT"));
@@ -858,14 +862,48 @@ void SelectorCodeGenerator::computeBacktrackingInformation()
     }
 }
 
+inline bool SelectorCodeGenerator::generatePrologue()
+{
+#if CPU(ARM64)
+    Vector<JSC::MacroAssembler::RegisterID, 2> prologueRegisters;
+    prologueRegisters.append(JSC::ARM64Registers::lr);
+    prologueRegisters.append(JSC::ARM64Registers::fp);
+    m_prologueStackReferences = m_stackAllocator.push(prologueRegisters);
+    return true;
+#elif CPU(X86_64) && CSS_SELECTOR_JIT_DEBUGGING
+    Vector<JSC::MacroAssembler::RegisterID, 1> prologueRegister;
+    prologueRegister.append(GPRInfo::callFrameRegister);
+    m_prologueStackReferences = m_stackAllocator.push(prologueRegister);
+    return true;
+#endif
+    return false;
+}
+    
+inline void SelectorCodeGenerator::generateEpilogue()
+{
+#if CPU(ARM64)
+    Vector<JSC::MacroAssembler::RegisterID, 2> prologueRegisters;
+    prologueRegisters.append(JSC::ARM64Registers::lr);
+    prologueRegisters.append(JSC::ARM64Registers::fp);
+    m_stackAllocator.pop(m_prologueStackReferences, prologueRegisters);
+#elif CPU(X86_64) && CSS_SELECTOR_JIT_DEBUGGING
+    Vector<JSC::MacroAssembler::RegisterID, 1> prologueRegister;
+    prologueRegister.append(GPRInfo::callFrameRegister);
+    m_stackAllocator.pop(m_prologueStackReferences, prologueRegister);
+#endif
+}
+    
 void SelectorCodeGenerator::generateSelectorChecker()
 {
+    bool needsEpilogue = generatePrologue();
+    
+    Vector<StackAllocator::StackReference> calleeSavedRegisterStackReferences;
     bool reservedCalleeSavedRegisters = false;
     unsigned availableRegisterCount = m_registerAllocator.availableRegisterCount();
     unsigned minimumRegisterCountForAttributes = minimumRegisterRequirements(m_selectorFragments);
     if (availableRegisterCount < minimumRegisterCountForAttributes) {
         reservedCalleeSavedRegisters = true;
-        m_registerAllocator.reserveCalleeSavedRegisters(m_stackAllocator, minimumRegisterCountForAttributes - availableRegisterCount);
+        calleeSavedRegisterStackReferences = m_stackAllocator.push(m_registerAllocator.reserveCalleeSavedRegisters(minimumRegisterCountForAttributes - availableRegisterCount));
     }
 
     m_registerAllocator.allocateRegister(elementAddressRegister);
@@ -903,7 +941,7 @@ void SelectorCodeGenerator::generateSelectorChecker()
     m_registerAllocator.deallocateRegister(elementAddressRegister);
 
     if (m_functionType == FunctionType::SimpleSelectorChecker) {
-        if (!m_needsAdjacentBacktrackingStart && !reservedCalleeSavedRegisters) {
+        if (!m_needsAdjacentBacktrackingStart && !reservedCalleeSavedRegisters && !needsEpilogue) {
             // Success.
             m_assembler.move(Assembler::TrustedImm32(1), returnRegister);
             m_assembler.ret();
@@ -928,7 +966,10 @@ void SelectorCodeGenerator::generateSelectorChecker()
 
             if (m_needsAdjacentBacktrackingStart)
                 m_stackAllocator.popAndDiscardUpTo(m_adjacentBacktrackingStart);
-            m_registerAllocator.restoreCalleeSavedRegisters(m_stackAllocator);
+            if (reservedCalleeSavedRegisters)
+                m_stackAllocator.pop(calleeSavedRegisterStackReferences, m_registerAllocator.restoreCalleeSavedRegisters());
+            if (needsEpilogue)
+                generateEpilogue();
             m_assembler.ret();
         }
     } else {
@@ -946,7 +987,10 @@ void SelectorCodeGenerator::generateSelectorChecker()
         }
 
         m_stackAllocator.popAndDiscardUpTo(m_checkingContextStackReference);
-        m_registerAllocator.restoreCalleeSavedRegisters(m_stackAllocator);
+        if (reservedCalleeSavedRegisters)
+            m_stackAllocator.pop(calleeSavedRegisterStackReferences, m_registerAllocator.restoreCalleeSavedRegisters());
+        if (needsEpilogue)
+            generateEpilogue();
         m_assembler.ret();
     }
 }

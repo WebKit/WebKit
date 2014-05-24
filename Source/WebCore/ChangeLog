@@ -1,3 +1,36 @@
+2014-05-23  Alex Christensen  <achristensen@webkit.org>
+
+        Make CSS JIT run on ARM64.
+        https://bugs.webkit.org/show_bug.cgi?id=133156
+
+        Reviewed by Benjamin Poulain.
+
+        * cssjit/FunctionCall.h:
+        (WebCore::FunctionCall::saveAllocatedRegisters):
+        (WebCore::FunctionCall::restoreAllocatedRegisters):
+        Use StackAllocator's new push and pop functions to push and pop a vector instead of iterating it.
+        * cssjit/RegisterAllocator.h:
+        (WebCore::RegisterAllocator::reserveCalleeSavedRegisters):
+        (WebCore::RegisterAllocator::restoreCalleeSavedRegisters):
+        Return a vector of registers to allocate instead of doing the allocation to make the RegisterAllocator
+        not need to know about the StackAllocator and to use the new vector push and pop functions.
+        (WebCore::RegisterAllocator::~RegisterAllocator):
+        Store RegisterIDs instead of StackReferences to avoid needing to know about the stack.
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::compile):
+        Removed the requirement for assert to be disabled to print disassembly when debugging css jit.
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generatePrologue):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateEpilogue):
+        Added to correctly push the link register and frame pointer.
+        This is required if the jit code calls a function on arm64 and helpful for debugging tools on x86_64.
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+        Generate the prologue and epilogue which respectively push and pop
+        the link register, frame pointer, and callee saved registers if needed.
+        * cssjit/StackAllocator.h:
+        (WebCore::StackAllocator::push):
+        (WebCore::StackAllocator::pop):
+        Added new vector push and pop functions to use stp and ldb instructions on arm64.
+
 2014-05-23  Jeremy Jones  <jeremyj@apple.com>
 
         Hide fullscreen immediately when switching tabs.

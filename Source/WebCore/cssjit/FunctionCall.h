@@ -165,20 +165,14 @@ private:
     void saveAllocatedRegisters()
     {
         ASSERT(m_savedRegisterStackReferences.isEmpty());
-
-        unsigned allocatedRegistersCount = m_registerAllocator.allocatedRegisters().size();
-        m_savedRegisterStackReferences.reserveCapacity(allocatedRegistersCount);
-
-        for (unsigned i = 0; i < allocatedRegistersCount; ++i) {
-            JSC::MacroAssembler::RegisterID registerID = m_registerAllocator.allocatedRegisters()[i];
-            m_savedRegisterStackReferences.append(m_stackAllocator.push(registerID));
-        }
+        const Vector<JSC::MacroAssembler::RegisterID, registerCount>& allocatedRegisters = m_registerAllocator.allocatedRegisters();
+        Vector<StackAllocator::StackReference> stackReferences = m_stackAllocator.push(allocatedRegisters);
+        m_savedRegisterStackReferences.appendVector(stackReferences);
     }
 
     void restoreAllocatedRegisters()
     {
-        for (unsigned i = m_registerAllocator.allocatedRegisters().size(); i > 0; --i)
-            m_stackAllocator.pop(m_savedRegisterStackReferences[i - 1], m_registerAllocator.allocatedRegisters()[i - 1]);
+        m_stackAllocator.pop(m_savedRegisterStackReferences, m_registerAllocator.allocatedRegisters());
         m_savedRegisterStackReferences.clear();
     }
 
