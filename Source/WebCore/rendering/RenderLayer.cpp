@@ -4135,13 +4135,13 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext* context, const 
     convertToLayerCoords(paintingInfo.rootLayer, offsetFromParent);
     offsetFromParent.moveBy(translationOffset);
     TransformationMatrix transform(renderableTransform(paintingInfo.paintBehavior));
-    FloatPoint devicePixelFlooredOffsetFromParent = flooredForPainting(offsetFromParent, deviceScaleFactor);
+    FloatPoint devicePixelSnappedOffsetFromParent = roundedForPainting(offsetFromParent, deviceScaleFactor);
     // Translate the graphics context to the snapping position to avoid off-device-pixel positing.
-    transform.translateRight(devicePixelFlooredOffsetFromParent.x(), devicePixelFlooredOffsetFromParent.y());
+    transform.translateRight(devicePixelSnappedOffsetFromParent.x(), devicePixelSnappedOffsetFromParent.y());
     // We handle accumulated subpixels through nested layers here. Since the context gets translated to device pixels,
     // all we need to do is add the delta to the accumulated pixels coming from ancestor layers. With deep nesting of subpixel positioned
     // boxes, this could grow to a relatively large number, but the translateRight() balances it.
-    FloatSize delta = offsetFromParent - devicePixelFlooredOffsetFromParent;
+    FloatSize delta = offsetFromParent - devicePixelSnappedOffsetFromParent;
     LayoutSize adjustedSubPixelAccumulation = paintingInfo.subPixelAccumulation + LayoutSize(delta);
     // Apply the transform.
     GraphicsContextStateSaver stateSaver(*context);

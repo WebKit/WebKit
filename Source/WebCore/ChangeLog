@@ -1,3 +1,27 @@
+2014-05-24  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Non-compositing transforms with subpixel coordinates paint to wrong position.
+        https://bugs.webkit.org/show_bug.cgi?id=133184
+        <rdar://problem/16745606>
+
+        Reviewed by Simon Fraser.
+
+        Snapping relative negative coordinate values should produce the same position as if they were
+        positive absolute coordinates.
+        When a child box gets positioned off of its containers towards top/left, its relative coordinates
+        become negative. Pixel snapping those negative values should produce the same
+        final painting position as if the child box was fixed positioned with positive coordinates.
+        Since halfway values always round away from zero, negative and positive halfway values
+        produce opposite rounding direction.
+        This patch ensures that negative halfway values round to the direction as if they were positive.  
+
+        Test: fast/layers/hidpi-floor-negative-coordinate-values-to-maintain-rounding-direction.html
+
+        * platform/LayoutUnit.h:
+        (WebCore::roundToDevicePixel):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerByApplyingTransform):
+
 2014-05-24  Frédéric Wang  <fred.wang@free.fr>
 
         Use size variants and glyph assembly from the MATH data.
