@@ -1191,6 +1191,10 @@ private:
     void getWindowFrame(WebCore::FloatRect&);
     void screenToRootView(const WebCore::IntPoint& screenPoint, WebCore::IntPoint& windowPoint);
     void rootViewToScreen(const WebCore::IntRect& viewRect, WebCore::IntRect& result);
+#if PLATFORM(IOS)
+    void accessibilityScreenToRootView(const WebCore::IntPoint& screenPoint, WebCore::IntPoint& windowPoint);
+    void rootViewToAccessibilityScreen(const WebCore::IntRect& viewRect, WebCore::IntRect& result);
+#endif
     void runBeforeUnloadConfirmPanel(const String& message, uint64_t frameID, bool& shouldClose);
     void didChangeViewportProperties(const WebCore::ViewportAttributes&);
     void pageDidScroll();

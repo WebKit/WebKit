@@ -166,6 +166,10 @@ public:
 #endif
     virtual IntPoint screenToRootView(const IntPoint&) const = 0;
     virtual IntRect rootViewToScreen(const IntRect&) const = 0;
+#if PLATFORM(IOS)
+    virtual IntPoint accessibilityScreenToRootView(const IntPoint&) const = 0;
+    virtual IntRect rootViewToAccessibilityScreen(const IntRect&) const = 0;
+#endif    
     virtual PlatformPageClient platformPageClient() const = 0;
     virtual void scrollbarsModeDidChange() const = 0;
 #if ENABLE(CURSOR_SUPPORT)

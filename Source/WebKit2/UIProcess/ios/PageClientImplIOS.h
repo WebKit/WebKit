@@ -87,6 +87,8 @@ private:
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) override;
     virtual WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) override;
     virtual WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) override;
+    virtual WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) override;
+    virtual WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) override;
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;
 #if ENABLE(TOUCH_EVENTS)
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled) override;

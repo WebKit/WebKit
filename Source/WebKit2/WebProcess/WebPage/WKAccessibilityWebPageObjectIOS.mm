@@ -31,7 +31,9 @@
 #import "WebFrame.h"
 #import "WebPage.h"
 #import <WebCore/IntPoint.h>
+#import <WebCore/MainFrame.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/Page.h>
 
 /* 
  The implementation of this class will be augmented by an accesibility bundle that is loaded only when accessibility is requested to be enabled.
@@ -72,7 +74,7 @@
     if (!m_page)
         return nil;
     
-    WebCore::IntPoint convertedPoint = m_page->screenToRootView(WebCore::IntPoint(point));
+    WebCore::IntPoint convertedPoint = m_page->accessibilityScreenToRootView(WebCore::IntPoint(point));
     return [[self accessibilityRootObjectWrapper] accessibilityHitTest:convertedPoint];
 }
 

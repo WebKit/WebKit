@@ -114,6 +114,18 @@ IntRect Chrome::rootViewToScreen(const IntRect& rect) const
 {
     return m_client.rootViewToScreen(rect);
 }
+    
+#if PLATFORM(IOS)
+IntPoint Chrome::accessibilityScreenToRootView(const IntPoint& point) const
+{
+    return m_client.accessibilityScreenToRootView(point);
+}
+
+IntRect Chrome::rootViewToAccessibilityScreen(const IntRect& rect) const
+{
+    return m_client.rootViewToAccessibilityScreen(rect);
+}
+#endif
 
 PlatformPageClient Chrome::platformPageClient() const
 {

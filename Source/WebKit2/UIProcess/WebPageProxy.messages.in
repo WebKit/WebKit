@@ -63,6 +63,12 @@ messages -> WebPageProxy {
     GetWindowFrame() -> (WebCore::FloatRect windowFrame)
     ScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint)
     RootViewToScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame)
+
+#if PLATFORM(IOS)
+    AccessibilityScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint)
+    RootViewToAccessibilityScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame)
+#endif
+
     RunBeforeUnloadConfirmPanel(String message, uint64_t frameID) -> (bool shouldClose)
     PageDidScroll()
     RunOpenPanel(uint64_t frameID, WebCore::FileChooserSettings parameters)

@@ -52,6 +52,8 @@
 
 @interface UIView (IPI)
 - (UIScrollView *)_scroller;
+- (CGPoint)accessibilityConvertPointFromSceneReferenceCoordinates:(CGPoint)point;
+- (CGRect)accessibilityConvertRectToSceneReferenceCoordinates:(CGRect)rect;
 @end
 
 using namespace WebCore;
@@ -321,7 +323,23 @@ IntRect PageClientImpl::rootViewToScreen(const IntRect& rect)
 {
     return enclosingIntRect([m_contentView convertRect:rect toView:nil]);
 }
-
+    
+IntPoint PageClientImpl::accessibilityScreenToRootView(const IntPoint& point)
+{
+    CGPoint rootViewPoint = point;
+    if ([m_contentView respondsToSelector:@selector(accessibilityConvertPointFromSceneReferenceCoordinates:)])
+        rootViewPoint = [m_contentView accessibilityConvertPointFromSceneReferenceCoordinates:rootViewPoint];
+    return IntPoint(rootViewPoint);
+}
+    
+IntRect PageClientImpl::rootViewToAccessibilityScreen(const IntRect& rect)
+{
+    CGRect rootViewRect = rect;
+    if ([m_contentView respondsToSelector:@selector(accessibilityConvertRectToSceneReferenceCoordinates:)])
+        rootViewRect = [m_contentView accessibilityConvertRectToSceneReferenceCoordinates:rootViewRect];
+    return enclosingIntRect(rootViewRect);
+}
+    
 void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
 {
     notImplemented();

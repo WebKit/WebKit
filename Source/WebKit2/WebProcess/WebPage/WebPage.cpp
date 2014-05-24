@@ -2291,6 +2291,22 @@ IntRect WebPage::rootViewToScreen(const IntRect& rect)
     sendSync(Messages::WebPageProxy::RootViewToScreen(rect), Messages::WebPageProxy::RootViewToScreen::Reply(screenRect));
     return screenRect;
 }
+    
+#if PLATFORM(IOS)
+IntPoint WebPage::accessibilityScreenToRootView(const IntPoint& point)
+{
+    IntPoint windowPoint;
+    sendSync(Messages::WebPageProxy::AccessibilityScreenToRootView(point), Messages::WebPageProxy::AccessibilityScreenToRootView::Reply(windowPoint));
+    return windowPoint;
+}
+
+IntRect WebPage::rootViewToAccessibilityScreen(const IntRect& rect)
+{
+    IntRect screenRect;
+    sendSync(Messages::WebPageProxy::RootViewToAccessibilityScreen(rect), Messages::WebPageProxy::RootViewToAccessibilityScreen::Reply(screenRect));
+    return screenRect;
+}
+#endif
 
 IntRect WebPage::windowResizerRect() const
 {

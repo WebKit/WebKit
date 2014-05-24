@@ -426,11 +426,17 @@ public:
 
     void hidePageBanners();
     void showPageBanners();
+    
 #endif // !PLATFORM(IOS)
 
     WebCore::IntPoint screenToRootView(const WebCore::IntPoint&);
     WebCore::IntRect rootViewToScreen(const WebCore::IntRect&);
-
+    
+#if PLATFORM(IOS)
+    WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&);
+    WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&);
+#endif
+    
     PassRefPtr<WebImage> scaledSnapshotWithOptions(const WebCore::IntRect&, double additionalScaleFactor, SnapshotOptions);
     PassRefPtr<WebImage> snapshotAtSize(const WebCore::IntRect&, const WebCore::IntSize& bitmapSize, SnapshotOptions);
 

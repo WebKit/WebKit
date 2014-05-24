@@ -1,3 +1,15 @@
+2014-05-24  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: fix coordinate mapping for iOS accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=133188
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::accessibilityScreenToRootView):
+        (WebChromeClient::rootViewToAccessibilityScreen):
+
 2014-05-23  Jeremy Jones  <jeremyj@apple.com>
 
         Hide fullscreen immediately when switching tabs.

@@ -196,6 +196,10 @@ public:
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) = 0;
     virtual WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) = 0;
     virtual WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) = 0;
+#if PLATFORM(IOS)
+    virtual WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) = 0;
+    virtual WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) = 0;
+#endif
     
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) = 0;
 #if ENABLE(TOUCH_EVENTS)

@@ -600,6 +600,18 @@ IntRect WebChromeClient::rootViewToScreen(const IntRect& r) const
     return r;
 }
 
+#if PLATFORM(IOS)
+IntPoint WebChromeClient::accessibilityScreenToRootView(const IntPoint& p) const
+{
+    return p;
+}
+
+IntRect WebChromeClient::rootViewToAccessibilityScreen(const IntRect& r) const
+{
+    return r;
+}
+#endif
+
 PlatformPageClient WebChromeClient::platformPageClient() const
 {
     return 0;

@@ -139,6 +139,10 @@ public:
 
     virtual IntPoint screenToRootView(const IntPoint& p) const override { return p; }
     virtual IntRect rootViewToScreen(const IntRect& r) const override { return r; }
+#if PLATFORM(IOS)
+    virtual IntPoint accessibilityScreenToRootView(const IntPoint& p) const override { return p; };
+    virtual IntRect rootViewToAccessibilityScreen(const IntRect& r) const override { return r; };
+#endif
     virtual PlatformPageClient platformPageClient() const override { return 0; }
     virtual void contentsSizeChanged(Frame*, const IntSize&) const override { }
 

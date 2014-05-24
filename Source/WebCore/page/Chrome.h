@@ -78,6 +78,10 @@ public:
 #endif
     virtual IntPoint screenToRootView(const IntPoint&) const override;
     virtual IntRect rootViewToScreen(const IntRect&) const override;
+#if PLATFORM(IOS)
+    virtual IntPoint accessibilityScreenToRootView(const IntPoint&) const override;
+    virtual IntRect rootViewToAccessibilityScreen(const IntRect&) const override;
+#endif
     virtual PlatformPageClient platformPageClient() const override;
     virtual void scrollbarsModeDidChange() const override;
     virtual void setCursor(const Cursor&) override;

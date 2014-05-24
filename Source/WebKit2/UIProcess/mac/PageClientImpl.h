@@ -104,7 +104,11 @@ private:
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
     virtual WebCore::IntPoint screenToRootView(const WebCore::IntPoint&);
     virtual WebCore::IntRect rootViewToScreen(const WebCore::IntRect&);
-
+#if PLATFORM(IOS)
+    virtual WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) = 0;
+    virtual WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) = 0;
+#endif
+        
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled);
 
     virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*);

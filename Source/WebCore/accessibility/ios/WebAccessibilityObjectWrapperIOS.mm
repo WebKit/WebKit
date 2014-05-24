@@ -1128,7 +1128,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         
         if (page) {
             IntRect rect = IntRect(intPoint, IntSize(0, 0));
-            intPoint = page->chrome().rootViewToScreen(rect).location();
+            intPoint = page->chrome().rootViewToAccessibilityScreen(rect).location();
         }
         
         cgPoint = (CGPoint)intPoint;
@@ -1180,7 +1180,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
             page = parent->page();
         
         if (page)
-            rect = page->chrome().rootViewToScreen(rect);
+            rect = page->chrome().rootViewToAccessibilityScreen(rect);
         
         frame = (CGRect)rect;
     }

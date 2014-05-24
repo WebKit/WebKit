@@ -3039,6 +3039,18 @@ void WebPageProxy::rootViewToScreen(const IntRect& viewRect, IntRect& result)
     result = m_pageClient.rootViewToScreen(viewRect);
 }
     
+#if PLATFORM(IOS)
+void WebPageProxy::accessibilityScreenToRootView(const IntPoint& screenPoint, IntPoint& windowPoint)
+{
+    windowPoint = m_pageClient.accessibilityScreenToRootView(screenPoint);
+}
+
+void WebPageProxy::rootViewToAccessibilityScreen(const IntRect& viewRect, IntRect& result)
+{
+    result = m_pageClient.rootViewToAccessibilityScreen(viewRect);
+}
+#endif
+    
 void WebPageProxy::runBeforeUnloadConfirmPanel(const String& message, uint64_t frameID, bool& shouldClose)
 {
     WebFrameProxy* frame = m_process->webFrame(frameID);

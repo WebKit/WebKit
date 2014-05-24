@@ -1,3 +1,23 @@
+2014-05-24  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: fix coordinate mapping for iOS accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=133188
+
+        Reviewed by Sam Weinig.
+
+        Make WebCore aware of the accessibility point/rect conversion methods.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper convertPointToScreenSpace:]):
+        (-[WebAccessibilityObjectWrapper convertRectToScreenSpace:]):
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::accessibilityScreenToRootView):
+        (WebCore::Chrome::rootViewToAccessibilityScreen):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/HostWindow.h:
+
 2014-05-24  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Non-compositing transforms with subpixel coordinates paint to wrong position.
