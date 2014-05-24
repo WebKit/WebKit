@@ -101,7 +101,7 @@ function scrollTest() {
 function setupTopLevel() {
 
     if (window.eventSender) {
-        testRunner.dumpAsText(true);
+        testRunner.dumpAsText();
         testRunner.waitUntilDone();
 
         setTimeout(scrollTest, 1000);
