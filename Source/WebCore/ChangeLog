@@ -1,3 +1,28 @@
+2014-05-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: Apply backtracking optimization to adjacent backtracking
+        https://bugs.webkit.org/show_bug.cgi?id=132951
+
+        Reviewed by Benjamin Poulain.
+
+        Apply the backtracking optimization to the adjacent backtracking.
+        This optimization is already done for the descendant backtracking.
+        We apply this to the adjacent backtracking similarly.
+
+        Test: fast/selectors/backtracking-adjacent-optimized.html
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorFragment::SelectorFragment):
+        (WebCore::SelectorCompiler::solveAdjacentBacktrackingActionForDirectAdjacent):
+        (WebCore::SelectorCompiler::solveBacktrackingAction):
+        (WebCore::SelectorCompiler::computeBacktrackingStartOffsetInChain):
+        (WebCore::SelectorCompiler::computeBacktrackingHeightFromDescendant):
+        (WebCore::SelectorCompiler::computeBacktrackingWidthFromIndirectAdjacent):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::computeBacktrackingInformation):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateIndirectAdjacentTreeWalker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::linkFailures):
+        (WebCore::SelectorCompiler::computeBacktrackingStartHeightFromDescendant): Deleted.
+
 2014-05-23  Alex Christensen  <achristensen@webkit.org>
 
         Make CSS JIT run on ARM64.
