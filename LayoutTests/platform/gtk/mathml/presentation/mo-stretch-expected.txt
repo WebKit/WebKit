@@ -151,9 +151,9 @@ layer at (0,0) size 800x260
                 RenderText at (0,-5) size 8x25
                   text run at (0,-5) width 8: "\x{2225}"
           RenderMathMLSpace {mspace} at (123,0) size 0x76
-      RenderText {#text} at (125,81) size 5x17
-        text run at (125,81) width 5: " "
-      RenderMathMLMath {math} at (129,45) size 126x92 [padding: 0 1 0 1]
+      RenderText {#text} at (125,85) size 5x17
+        text run at (125,85) width 5: " "
+      RenderMathMLMath {math} at (129,49) size 126x92 [padding: 0 1 0 1]
         RenderMathMLRow {mrow} at (1,0) size 124x92
           RenderMathMLOperator {mo} at (0,0) size 7x92
             RenderMathMLBlock (anonymous, flex) at (0,0) size 7x14
@@ -226,9 +226,9 @@ layer at (0,0) size 800x260
                 RenderText at (0,-5) size 8x25
                   text run at (0,-5) width 8: "\x{2225}"
           RenderMathMLSpace {mspace} at (123,0) size 0x51
-      RenderText {#text} at (254,81) size 5x17
-        text run at (254,81) width 5: " "
-      RenderMathMLMath {math} at (258,75) size 126x32 [padding: 0 1 0 1]
+      RenderText {#text} at (254,85) size 5x17
+        text run at (254,85) width 5: " "
+      RenderMathMLMath {math} at (258,79) size 126x32 [padding: 0 1 0 1]
         RenderMathMLRow {mrow} at (1,0) size 124x32
           RenderMathMLOperator {mo} at (0,9) size 7x14
             RenderMathMLBlock (anonymous, flex) at (0,0) size 7x14
@@ -301,10 +301,10 @@ layer at (0,0) size 800x260
                 RenderText at (0,-5) size 8x25
                   text run at (0,-5) width 8: "\x{2225}"
           RenderMathMLSpace {mspace} at (123,0) size 0x21
-      RenderText {#text} at (383,81) size 5x17
-        text run at (383,81) width 5: " "
+      RenderText {#text} at (383,85) size 5x17
+        text run at (383,85) width 5: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderMathMLMath {math} at (0,162) size 138x78 [padding: 0 1 0 1]
+      RenderMathMLMath {math} at (0,166) size 138x78 [padding: 0 1 0 1]
         RenderMathMLSquareRoot {msqrt} at (1,0) size 136x78 [intrinsic padding: 3 0 3 12]
           RenderMathMLRow (anonymous) at (12,3) size 124x72
             RenderMathMLOperator {mo} at (0,0) size 7x72

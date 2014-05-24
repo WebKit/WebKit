@@ -80,7 +80,7 @@ layer at (0,0) size 800x371
               RenderBlock (anonymous) at (0,0) size 6x16
                 RenderText at (0,-45) size 6x106
                   text run at (0,-45) width 6: "\x{27E9}"
-          RenderMathMLSpace {mspace} at (192,4) size 1x8
+          RenderMathMLSpace {mspace} at (192,4) size 0x8
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,34) size 784x32
         RenderMathMLMath {math} at (0,3) size 194x30 [padding: 0 1 0 1]
@@ -159,7 +159,7 @@ layer at (0,0) size 800x371
               RenderBlock (anonymous) at (0,0) size 6x16
                 RenderText at (0,-45) size 6x106
                   text run at (0,-45) width 6: "\x{27E9}"
-          RenderMathMLSpace {mspace} at (192,3) size 1x16
+          RenderMathMLSpace {mspace} at (192,3) size 0x16
         RenderText {#text} at (193,8) size 5x17
           text run at (193,8) width 5: " "
         RenderMathMLMath {math} at (197,0) size 213x27 [padding: 0 1 0 1]
@@ -223,7 +223,7 @@ layer at (0,0) size 800x371
               RenderBlock (anonymous) at (0,0) size 10x16
                 RenderText at (0,-45) size 10x106
                   text run at (0,-45) width 10: "\x{21D5}"
-          RenderMathMLSpace {mspace} at (210,6) size 1x16
+          RenderMathMLSpace {mspace} at (210,6) size 0x16
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,82) size 784x47
         RenderMathMLMath {math} at (0,0) size 194x48 [padding: 0 1 0 1]
@@ -302,7 +302,7 @@ layer at (0,0) size 800x371
               RenderBlock (anonymous) at (0,0) size 6x16
                 RenderText at (0,-45) size 6x106
                   text run at (0,-45) width 6: "\x{27E9}"
-          RenderMathMLSpace {mspace} at (192,4) size 1x24
+          RenderMathMLSpace {mspace} at (192,4) size 0x24
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,145) size 784x57
         RenderMathMLMath {math} at (0,0) size 194x58 [padding: 0 1 0 1]
@@ -381,7 +381,7 @@ layer at (0,0) size 800x371
               RenderBlock (anonymous) at (0,0) size 6x16
                 RenderText at (0,-45) size 6x106
                   text run at (0,-45) width 6: "\x{27E9}"
-          RenderMathMLSpace {mspace} at (192,0) size 1x32
+          RenderMathMLSpace {mspace} at (192,0) size 0x32
         RenderText {#text} at (193,18) size 5x17
           text run at (193,18) width 5: " "
         RenderMathMLMath {math} at (197,0) size 213x32 [padding: 0 1 0 1]
@@ -445,7 +445,7 @@ layer at (0,0) size 800x371
               RenderBlock (anonymous) at (0,0) size 10x16
                 RenderText at (0,-45) size 10x106
                   text run at (0,-45) width 10: "\x{21D5}"
-          RenderMathMLSpace {mspace} at (210,0) size 1x32
+          RenderMathMLSpace {mspace} at (210,0) size 0x32
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,218) size 784x121
         RenderMathMLMath {math} at (0,0) size 194x121 [padding: 0 1 0 1]
@@ -524,7 +524,7 @@ layer at (0,0) size 800x371
               RenderBlock (anonymous) at (0,0) size 6x16
                 RenderText at (0,-45) size 6x106
                   text run at (0,-45) width 6: "\x{27E9}"
-          RenderMathMLSpace {mspace} at (192,0) size 1x64
+          RenderMathMLSpace {mspace} at (192,0) size 0x64
         RenderText {#text} at (193,50) size 5x17
           text run at (193,50) width 5: " "
         RenderMathMLMath {math} at (197,0) size 213x64 [padding: 0 1 0 1]
@@ -588,5 +588,5 @@ layer at (0,0) size 800x371
               RenderBlock (anonymous) at (0,0) size 10x16
                 RenderText at (0,-45) size 10x106
                   text run at (0,-45) width 10: "\x{21D5}"
-          RenderMathMLSpace {mspace} at (210,0) size 1x64
+          RenderMathMLSpace {mspace} at (210,0) size 0x64
         RenderText {#text} at (0,0) size 0x0
