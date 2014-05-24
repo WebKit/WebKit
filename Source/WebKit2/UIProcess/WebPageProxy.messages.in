@@ -325,7 +325,7 @@ messages -> WebPageProxy {
     DynamicViewportUpdateChangedTarget(double newTargetScale, WebCore::FloatPoint newScrollPosition)
     DidGetTapHighlightGeometries(uint64_t requestID, WebCore::Color color, Vector<WebCore::FloatQuad> geometries, WebCore::IntSize topLeftRadius, WebCore::IntSize topRightRadius, WebCore::IntSize bottomLeftRadius, WebCore::IntSize bottomRightRadius)
 
-    StartAssistingNode(WebKit::AssistedNodeInformation information, bool userIsInteracting, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    StartAssistingNode(WebKit::AssistedNodeInformation information, bool userIsInteracting, bool blurPreviousNode, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     StopAssistingNode()
     NotifyRevealedSelection()
 

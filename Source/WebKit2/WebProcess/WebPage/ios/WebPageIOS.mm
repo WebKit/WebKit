@@ -1900,14 +1900,20 @@ void WebPage::elementDidFocus(WebCore::Node* node)
         if (m_userIsInteracting)
             m_formClient->willBeginInputSession(this, toElement(node), WebFrame::fromCoreFrame(*node->document().frame()), userData);
 
-        send(Messages::WebPageProxy::StartAssistingNode(information, m_userIsInteracting, InjectedBundleUserMessageEncoder(userData.get())));
+        send(Messages::WebPageProxy::StartAssistingNode(information, m_userIsInteracting, m_hasPendingBlurNotification, InjectedBundleUserMessageEncoder(userData.get())));
+        m_hasPendingBlurNotification = false;
     }
 }
 
 void WebPage::elementDidBlur(WebCore::Node* node)
 {
     if (m_assistedNode == node) {
-        send(Messages::WebPageProxy::StopAssistingNode());
+        m_hasPendingBlurNotification = true;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (m_hasPendingBlurNotification)
+                send(Messages::WebPageProxy::StopAssistingNode());
+            m_hasPendingBlurNotification = false;
+        });
         m_assistedNode = 0;
     }
 }
