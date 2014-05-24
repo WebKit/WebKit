@@ -3266,8 +3266,11 @@ void WebPage::mainFrameDidLayout()
 #endif
 #if PLATFORM(IOS)
     if (FrameView* frameView = mainFrameView()) {
-        m_viewportConfiguration.setContentsSize(frameView->contentsSize());
-        viewportConfigurationChanged();
+        IntSize newContentSize = frameView->contentsSize();
+        if (m_viewportConfiguration.contentsSize() != newContentSize) {
+            m_viewportConfiguration.setContentsSize(newContentSize);
+            viewportConfigurationChanged();
+        }
     }
 #endif
 }

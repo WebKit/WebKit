@@ -127,6 +127,9 @@ FloatSize WebPage::availableScreenSize() const
 
 void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArguments)
 {
+    if (m_viewportConfiguration.viewportArguments() == viewportArguments)
+        return;
+
     float oldWidth = m_viewportConfiguration.viewportArguments().width;
     bool wasUsingMinimalUI = m_viewportConfiguration.usesMinimalUI();
 

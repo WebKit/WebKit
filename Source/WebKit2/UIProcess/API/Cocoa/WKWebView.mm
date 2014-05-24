@@ -1564,6 +1564,9 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (void)_setMinimumLayoutSizeOverride:(CGSize)minimumLayoutSizeOverride
 {
     _overridesMinimumLayoutSize = YES;
+    if (CGSizeEqualToSize(_minimumLayoutSizeOverride, minimumLayoutSizeOverride))
+        return;
+
     _minimumLayoutSizeOverride = minimumLayoutSizeOverride;
     if (!_isAnimatingResize)
         _page->setViewportConfigurationMinimumLayoutSize(WebCore::FloatSize(minimumLayoutSizeOverride));
@@ -1578,6 +1581,9 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (void)_setMinimumLayoutSizeOverrideForMinimalUI:(CGSize)size
 {
     _overridesMinimumLayoutSizeForMinimalUI = YES;
+    if (CGSizeEqualToSize(_minimumLayoutSizeOverrideForMinimalUI, size))
+        return;
+
     _minimumLayoutSizeOverrideForMinimalUI = size;
     if (!_isAnimatingResize)
         _page->setViewportConfigurationMinimumLayoutSizeForMinimalUI(WebCore::FloatSize(size));

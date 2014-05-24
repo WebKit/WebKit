@@ -1,5 +1,26 @@
 2014-05-23  Benjamin Poulain  <bpoulain@apple.com>
 
+        [iOS][WK2] Avoid updating the view from the viewport configuration unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=133255
+        <rdar://problem/16890926>
+
+        Reviewed by Simon Fraser.
+
+        All the updates were mostly harmless since they are pretty cheap, but they can be
+        very annoying for debugging.
+
+        This patch skips viewportUpdates in the trivial cases.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setMinimumLayoutSizeOverride:]):
+        (-[WKWebView _setMinimumLayoutSizeOverrideForMinimalUI:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mainFrameDidLayout):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::viewportPropertiesDidChange):
+
+2014-05-23  Benjamin Poulain  <bpoulain@apple.com>
+
         [iOS][WK2] The page scale factor randomly resets to initial scale when editing
         https://bugs.webkit.org/show_bug.cgi?id=133244
 
