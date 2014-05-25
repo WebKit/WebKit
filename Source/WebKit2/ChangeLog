@@ -1,3 +1,24 @@
+2014-05-24  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Potential null dereference in
+        WebFrameLoaderClient::dispatchDidFailProvisionalLoad()
+        <https://bugs.webkit.org/show_bug.cgi?id=133193>
+
+        WebFrameLoaderClient::dispatchDidFailProvisionalLoad() calls the
+        InjectedBundleLoaderClient's didFailProvisionalLoadWithErrorForFrame()
+        before sending a message to the UI process that a provisional load has
+        failed. It's possible for the provisional document loader to become
+        null while calling into the InjectedBundleLoaderClient (as is the case
+        with the WebKitTestRunner's injected bundle), leading to a null
+        dereference when trying to send the DidFailProvisionalLoadForFrame
+        message.
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        Get the navigation ID before calling into the injected bundle.
+
 2014-05-23  Simon Fraser  <simon.fraser@apple.com>
 
         Rename ScrollingTreeScrollingNode's m_scrollPosition to make it clear that it's the value committed from the state tree

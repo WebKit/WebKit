@@ -459,15 +459,16 @@ void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& e
 
     RefPtr<API::Object> userData;
 
+    uint64_t navigationID = static_cast<WebDocumentLoader*>(m_frame->coreFrame()->loader().provisionalDocumentLoader())->navigationID();
+
     // Notify the bundle client.
     webPage->injectedBundleLoaderClient().didFailProvisionalLoadWithErrorForFrame(webPage, m_frame, error, userData);
 
     webPage->sandboxExtensionTracker().didFailProvisionalLoad(m_frame);
 
     // Notify the UIProcess.
-    WebDocumentLoader& provisionalLoader = static_cast<WebDocumentLoader&>(*m_frame->coreFrame()->loader().provisionalDocumentLoader());
-    webPage->send(Messages::WebPageProxy::DidFailProvisionalLoadForFrame(m_frame->frameID(), provisionalLoader.navigationID(), error, InjectedBundleUserMessageEncoder(userData.get())));
-    
+    webPage->send(Messages::WebPageProxy::DidFailProvisionalLoadForFrame(m_frame->frameID(), navigationID, error, InjectedBundleUserMessageEncoder(userData.get())));
+
     // If we have a load listener, notify it.
     if (WebFrame::LoadListener* loadListener = m_frame->loadListener())
         loadListener->didFailLoad(m_frame, error.isCancellation());
