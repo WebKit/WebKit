@@ -1,3 +1,17 @@
+2014-05-24  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
+
+        Remove one of the CSSProperty constructor
+        https://bugs.webkit.org/show_bug.cgi?id=131094
+
+        Reviewed by Darin Adler.
+
+        Remove one of the CSSProperty constructor, because it is obsolete.
+
+        * css/CSSProperty.h:
+        (WebCore::CSSProperty::CSSProperty): Deleted.
+        * css/StyleProperties.h:
+        (WebCore::StyleProperties::PropertyReference::toCSSProperty):
+
 2014-05-23  Simon Fraser  <simon.fraser@apple.com>
 
         Rename ScrollingTreeScrollingNode's m_scrollPosition to make it clear that it's the value committed from the state tree

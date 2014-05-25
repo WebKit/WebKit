@@ -61,13 +61,6 @@ public:
     {
     }
 
-    // FIXME: Remove this.
-    CSSProperty(StylePropertyMetadata metadata, CSSValue* value)
-        : m_metadata(metadata)
-        , m_value(value)
-    {
-    }
-
     CSSPropertyID id() const { return static_cast<CSSPropertyID>(m_metadata.m_propertyID); }
     bool isSetFromShorthand() const { return m_metadata.m_isSetFromShorthand; };
     CSSPropertyID shorthandID() const { return m_metadata.shorthandID(); };
