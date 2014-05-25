@@ -1,3 +1,14 @@
+2014-05-25  David Kilzer  <ddkilzer@apple.com>
+
+        Crash in WebCore::TextResourceDecoder::checkForCSSCharset
+        <http://webkit.org/b/133257>
+        <rdar://problem/17027109>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/encoding/css-charset-missing-semi-colon-and-newline-expected.txt: Added.
+        * fast/encoding/css-charset-missing-semi-colon-and-newline.html: Added.
+
 2014-05-23  Simon Fraser  <simon.fraser@apple.com>
 
         Scrolling tests should not try to dump pixels
