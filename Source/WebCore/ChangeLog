@@ -1,3 +1,14 @@
+2014-05-24  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] preload AVAssetTrack properties before asking for them
+        https://bugs.webkit.org/show_bug.cgi?id=133240
+
+        Reviewed by Jer Noble.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::assetTrackMetadataKeyNames): Add preferredTransform and naturalSize to the list
+            of properties we preload.
+
 2014-05-24  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
 
         Remove one of the CSSProperty constructor

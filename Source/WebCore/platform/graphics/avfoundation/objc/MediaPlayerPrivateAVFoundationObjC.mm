@@ -2554,8 +2554,7 @@ NSArray* itemKVOProperties()
 
 NSArray* assetTrackMetadataKeyNames()
 {
-    static NSArray* keys = [[NSArray alloc] initWithObjects:@"totalSampleDataLength", @"mediaType", @"enabled", nil];
-
+    static NSArray* keys = [[NSArray alloc] initWithObjects:@"totalSampleDataLength", @"mediaType", @"enabled", @"preferredTransform", @"naturalSize", nil];
     return keys;
 }
 
