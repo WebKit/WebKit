@@ -1,5 +1,11 @@
 2014-05-25  Sam Weinig  <sam@webkit.org>
 
+        Build fix 2.
+
+        * UIProcess/API/Cocoa/WKPreferences.h:
+
+2014-05-25  Sam Weinig  <sam@webkit.org>
+
         Fix build.
 
         * UIProcess/API/Cocoa/WKPreferences.h:

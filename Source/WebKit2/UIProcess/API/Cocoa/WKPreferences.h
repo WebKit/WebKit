@@ -45,7 +45,8 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract The user defaults key prefix.
  */
-    
+@property (nonatomic, readonly) NSString *userDefaultsKeyPrefix;
+
 /*! @abstract The minimum font size in points. Defaults to 0.
  */
 @property (nonatomic) CGFloat minimumFontSize;
@@ -78,11 +79,11 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 #endif
 
 #if !TARGET_OS_IPHONE
-/*! @abstract Whether Java is enabled. Defaults to NO.
+/*! @abstract Whether Java is enabled. Defaults to YES.
  */
 @property (nonatomic, getter=isJavaEnabled) BOOL javaEnabled;
 
-/*! abstract Whether plug-ins are enabled. Defaults to NO.
+/*! abstract Whether plug-ins are enabled. Defaults to YES.
  */
 @property (nonatomic, getter=arePlugInsEnabled) BOOL plugInsEnabled;
 #endif
