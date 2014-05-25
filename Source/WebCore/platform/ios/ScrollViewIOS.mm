@@ -107,16 +107,16 @@ IntRect ScrollView::unobscuredContentRect(VisibleContentRectIncludesScrollbars) 
         return enclosingIntRect(r);
     }
 
-    if (!m_unobscuredContentRect.isEmpty())
-        return m_unobscuredContentRect;
+    if (!m_unobscuredContentSize.isEmpty())
+        return IntRect(IntPoint(m_scrollOffset), m_unobscuredContentSize);
 
     return unobscuredContentRectInternal();
 }
 
-void ScrollView::setUnobscuredContentRect(const IntRect& rect)
+void ScrollView::setUnobscuredContentSize(const IntSize& size)
 {
     ASSERT(!platformWidget());
-    m_unobscuredContentRect = rect;
+    m_unobscuredContentSize = size;
 }
 
 IntRect ScrollView::exposedContentRect() const

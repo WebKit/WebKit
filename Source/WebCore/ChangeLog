@@ -1,3 +1,24 @@
+2014-05-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Use ScrollView's scrollOffset as the unobscuredContentRect
+        https://bugs.webkit.org/show_bug.cgi?id=133262
+
+        Reviewed by Simon Fraser.
+
+        Since VisibleContentRect was fixed, we were no longer sending scroll events when updating the scrollOffset
+        when updating the visible content rects. The reason is that the scrollOffset was defined as the top left of the
+        VisibleContentRect, and as such was already at the end position after updating the unobscured rect.
+
+        This patch split the unobscuredContentRect in unobscuredContentSize (updated live on zoom) and the position defined
+        by the ScrollView's scrollOffset (updated when scrolling).
+
+        * WebCore.exp.in:
+        * platform/ScrollView.h:
+        * platform/ios/ScrollViewIOS.mm:
+        (WebCore::ScrollView::unobscuredContentRect):
+        (WebCore::ScrollView::setUnobscuredContentSize):
+        (WebCore::ScrollView::setUnobscuredContentRect): Deleted.
+
 2014-05-25  David Kilzer  <ddkilzer@apple.com>
 
         Add type-checked casts for TransformOperations

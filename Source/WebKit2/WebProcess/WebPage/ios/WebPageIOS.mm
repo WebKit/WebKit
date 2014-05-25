@@ -2129,7 +2129,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
     frameView.setScrollVelocity(0, 0, 0, monotonicallyIncreasingTime());
 
     IntRect roundedUnobscuredContentRect = roundedIntRect(newUnobscuredContentRect);
-    frameView.setUnobscuredContentRect(roundedUnobscuredContentRect);
+    frameView.setUnobscuredContentSize(roundedUnobscuredContentRect.size());
     m_drawingArea->setExposedContentRect(newExposedContentRect);
 
     scalePage(scale, roundedUnobscuredContentRect.location());
@@ -2184,13 +2184,12 @@ void WebPage::viewportConfigurationChanged()
         FloatSize minimumLayoutSizeInScrollViewCoordinates = m_viewportConfiguration.activeMinimumLayoutSizeInScrollViewCoordinates();
         minimumLayoutSizeInScrollViewCoordinates.scale(1 / scale);
         IntSize minimumLayoutSizeInDocumentCoordinates = roundedIntSize(minimumLayoutSizeInScrollViewCoordinates);
-        IntRect unobscuredContentRect(scrollPosition, minimumLayoutSizeInDocumentCoordinates);
-        frameView.setUnobscuredContentRect(unobscuredContentRect);
+        frameView.setUnobscuredContentSize(minimumLayoutSizeInDocumentCoordinates);
         frameView.setScrollVelocity(0, 0, 0, monotonicallyIncreasingTime());
 
         // FIXME: We could send down the obscured margins to find a better exposed rect and unobscured rect.
         // It is not a big deal at the moment because the tile coverage will always extend past the obscured bottom inset.
-        m_drawingArea->setExposedContentRect(unobscuredContentRect);
+        m_drawingArea->setExposedContentRect(IntRect(scrollPosition, minimumLayoutSizeInDocumentCoordinates));
     }
     scalePage(scale, scrollPosition);
     
@@ -2297,10 +2296,10 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     }
 
     FrameView& frameView = *m_page->mainFrame().view();
-    if (scrollPosition != IntPoint(frameView.scrollOffset()))
+    if (scrollPosition != frameView.scrollPosition())
         m_dynamicSizeUpdateHistory.clear();
 
-    frameView.setUnobscuredContentRect(roundedUnobscuredRect);
+    frameView.setUnobscuredContentSize(roundedUnobscuredRect.size());
 
     double horizontalVelocity = visibleContentRectUpdateInfo.horizontalVelocity();
     double verticalVelocity = visibleContentRectUpdateInfo.verticalVelocity();

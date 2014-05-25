@@ -186,7 +186,7 @@ public:
 
     // The given rects are only used if there is no platform widget.
     void setExposedContentRect(const IntRect&);
-    void setUnobscuredContentRect(const IntRect&);
+    void setUnobscuredContentSize(const IntSize&);
 
     void setActualScrollPosition(const IntPoint&);
     LegacyTileCache* legacyTileCache();
@@ -427,10 +427,10 @@ private:
     bool m_canBlitOnScroll;
 
     // FIXME: exposedContentRect is a very similar concept to fixedVisibleContentRect except it does not differentiate
-    // between exposed rect and unobscuredRects. The two attributes should eventually be merged.
+    // between exposed and unobscured areas. The two attributes should eventually be merged.
 #if PLATFORM(IOS)
     IntRect m_exposedContentRect;
-    IntRect m_unobscuredContentRect;
+    IntSize m_unobscuredContentSize;
 #else
     IntRect m_fixedVisibleContentRect;
 #endif

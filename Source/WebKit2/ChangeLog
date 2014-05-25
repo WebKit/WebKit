@@ -1,3 +1,15 @@
+2014-05-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Use ScrollView's scrollOffset as the unobscuredContentRect
+        https://bugs.webkit.org/show_bug.cgi?id=133262
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::WebPage::viewportConfigurationChanged):
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2014-05-25  Sam Weinig  <sam@webkit.org>
 
         Build fix 2.
