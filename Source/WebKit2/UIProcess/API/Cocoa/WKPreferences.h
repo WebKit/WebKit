@@ -34,7 +34,7 @@
  A @link WKWebView @/link can specify which WKPreferences object it uses through its @link WKWebViewConfiguration @/link.
  */
 WK_CLASS_AVAILABLE(10_10, 8_0)
-@interface WKPreferences : NSObject
+@interface      : NSObject
 
 /*! @abstract Returns an initialized WKPreferences object.
  @param userDefaultsKeyPrefix The user defaults key prefix.

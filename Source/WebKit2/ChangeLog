@@ -1,3 +1,24 @@
+2014-05-24  Sam Weinig  <sam@webkit.org>
+
+        [WebKit2] Rework WebPreferencesStore to allow easier overriding of defaults
+        https://bugs.webkit.org/show_bug.cgi?id=133258
+
+        Reviewed by Anders Carlsson.
+
+        To support changing default values of preferences based on which API you are using (either
+        the legacy C-SPI or the Objective-C API), overhaul the WebPreferencesStore to use a single
+        HashMap of String -> Value (where Value is new type that can be a String, bool, uint32_t or double)
+        instead of four HashMaps.  This allows us to use two of these new HashMaps, one for the actual
+        set values, and one for overridden defaults. This new Value class will also allow easier incremental
+        updating of preferences in the future.
+        
+        Other notable changes:
+        - Removed Float kind of preferences. There were none.
+        - Move StorageBlockingPolicy preference to the correct group, it's a uint32_t, not bool.
+
+        * Shared/WebPreferencesStore.cpp:
+        * Shared/WebPreferencesStore.h:
+
 2014-05-25  David Kilzer  <ddkilzer@apple.com>
 
         Add type-checked casts for TransformOperations
