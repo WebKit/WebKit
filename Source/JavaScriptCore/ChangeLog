@@ -1,3 +1,33 @@
+2014-05-24  Andreas Kling  <akling@apple.com>
+
+        Object.prototype.toString() should use cached strings for null/undefined.
+        <https://webkit.org/b/133261>
+
+        Normally, when calling Object.prototype.toString() on a regular object,
+        we'd cache the result of the stringification on the object's structure,
+        making repeated calls fast.
+
+        For null and undefined, we were not as smart. We'd instead construct a
+        new string with either "[object Null]" or "[object Undefined]" each time.
+
+        This was exposed by Dromaeo's JS library tests, where some prototype.js
+        subtests generate millions of strings this way.
+
+        This patch adds two VM-permanent cached strings to the SmallStrings.
+        Looks like ~10% speed-up on Dromaeo/jslib-traverse-prototype.html
+
+        Reviewed by Darin Adler.
+
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString):
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::SmallStrings):
+        (JSC::SmallStrings::initializeCommonStrings):
+        (JSC::SmallStrings::visitStrongReferences):
+        * runtime/SmallStrings.h:
+        (JSC::SmallStrings::nullObjectString):
+        (JSC::SmallStrings::undefinedObjectString):
+
 2014-05-23  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove operationCallGetter

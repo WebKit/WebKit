@@ -86,6 +86,9 @@ namespace JSC {
         JSC_COMMON_STRINGS_EACH_NAME(JSC_COMMON_STRINGS_ACCESSOR_DEFINITION)
 #undef JSC_COMMON_STRINGS_ACCESSOR_DEFINITION
 
+        JSString* nullObjectString() const { return m_nullObjectString; }
+        JSString* undefinedObjectString() const { return m_undefinedObjectString; }
+
     private:
         static const unsigned singleCharacterStringCount = maxSingleCharacterString + 1;
 
@@ -98,6 +101,8 @@ namespace JSC {
 #define JSC_COMMON_STRINGS_ATTRIBUTE_DECLARATION(name) JSString* m_##name;
         JSC_COMMON_STRINGS_EACH_NAME(JSC_COMMON_STRINGS_ATTRIBUTE_DECLARATION)
 #undef JSC_COMMON_STRINGS_ATTRIBUTE_DECLARATION
+        JSString* m_nullObjectString;
+        JSString* m_undefinedObjectString;
         JSString* m_singleCharacterStrings[singleCharacterStringCount];
         OwnPtr<SmallStringsStorage> m_storage;
     };
