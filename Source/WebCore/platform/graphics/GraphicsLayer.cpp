@@ -516,14 +516,14 @@ int GraphicsLayer::validateTransformOperations(const KeyframeValueList& valueLis
             type == TransformOperation::ROTATE_Y ||
             type == TransformOperation::ROTATE_Z ||
             type == TransformOperation::ROTATE_3D) {
-            lastRotAngle = static_cast<RotateTransformOperation*>(firstVal.operations().at(j).get())->angle();
+            lastRotAngle = toRotateTransformOperation(firstVal.operations().at(j).get())->angle();
             
             if (maxRotAngle < 0)
                 maxRotAngle = fabs(lastRotAngle);
             
             for (size_t i = firstIndex + 1; i < valueList.size(); ++i) {
                 const TransformOperations& val = operationsAt(valueList, i);
-                double rotAngle = val.operations().isEmpty() ? 0 : (static_cast<RotateTransformOperation*>(val.operations().at(j).get())->angle());
+                double rotAngle = val.operations().isEmpty() ? 0 : (toRotateTransformOperation(val.operations().at(j).get())->angle());
                 double diffAngle = fabs(rotAngle - lastRotAngle);
                 if (diffAngle > maxRotAngle)
                     maxRotAngle = diffAngle;

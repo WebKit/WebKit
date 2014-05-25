@@ -79,7 +79,30 @@ public:
                opType == MATRIX_3D ||
                opType == PERSPECTIVE;
     }
+
+    bool isRotateTransformOperationType() const
+    {
+        return type() == ROTATE_X || type() == ROTATE_Y || type() == ROTATE_Z || type() == ROTATE || type() == ROTATE_3D;
+    }
+
+    bool isScaleTransformOperationType() const
+    {
+        return type() == SCALE_X || type() == SCALE_Y || type() == SCALE_Z || type() == SCALE || type() == SCALE_3D;
+    }
+
+    bool isSkewTransformOperationType() const
+    {
+        return type() == SKEW_X || type() == SKEW_Y || type() == SKEW;
+    }
+
+    bool isTranslateTransformOperationType() const
+    {
+        return type() == TRANSLATE_X || type() == TRANSLATE_Y || type() == TRANSLATE_Z || type() == TRANSLATE || type() == TRANSLATE_3D;
+    }
 };
+
+#define TRANSFORMOPERATION_TYPE_CASTS(ToValueTypeName, predicate) \
+    TYPE_CASTS_BASE(ToValueTypeName, WebCore::TransformOperation, value, value->predicate, value.predicate)
 
 } // namespace WebCore
 

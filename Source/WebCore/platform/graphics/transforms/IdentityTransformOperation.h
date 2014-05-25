@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class IdentityTransformOperation : public TransformOperation {
+class IdentityTransformOperation final : public TransformOperation {
 public:
     static PassRefPtr<IdentityTransformOperation> create()
     {
@@ -37,21 +37,21 @@ public:
     }
         
 private:
-    virtual bool isIdentity() const { return true; }
-    virtual OperationType type() const { return IDENTITY; }
-    virtual bool isSameType(const TransformOperation& o) const { return o.type() == IDENTITY; }
+    virtual bool isIdentity() const override { return true; }
+    virtual OperationType type() const override { return IDENTITY; }
+    virtual bool isSameType(const TransformOperation& o) const override { return o.type() == IDENTITY; }
 
-    virtual bool operator==(const TransformOperation& o) const
+    virtual bool operator==(const TransformOperation& o) const override
     {
         return isSameType(o);
     }
 
-    virtual bool apply(TransformationMatrix&, const FloatSize&) const
+    virtual bool apply(TransformationMatrix&, const FloatSize&) const override
     {
         return false;
     }
 
-    virtual PassRefPtr<TransformOperation> blend(const TransformOperation*, double, bool = false)
+    virtual PassRefPtr<TransformOperation> blend(const TransformOperation*, double, bool = false) override
     {
         return this;
     }
@@ -61,6 +61,8 @@ private:
     }
 
 };
+
+TRANSFORMOPERATION_TYPE_CASTS(IdentityTransformOperation, type() == TransformOperation::IDENTITY);
 
 } // namespace WebCore
 

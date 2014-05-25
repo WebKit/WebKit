@@ -30,6 +30,14 @@
 
 namespace WebCore {
 
+bool Matrix3DTransformOperation::operator==(const TransformOperation& o) const
+{
+    if (!isSameType(o))
+        return false;
+    const Matrix3DTransformOperation& m = toMatrix3DTransformOperation(o);
+    return m_matrix == m.m_matrix;
+}
+
 PassRefPtr<TransformOperation> Matrix3DTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
     if (from && !from->isSameType(*this))

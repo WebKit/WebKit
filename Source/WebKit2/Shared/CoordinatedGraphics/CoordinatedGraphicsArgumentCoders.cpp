@@ -186,42 +186,42 @@ void ArgumentCoder<TransformOperations>::encode(ArgumentEncoder& encoder, const 
         case TransformOperation::SCALE:
         case TransformOperation::SCALE_Z:
         case TransformOperation::SCALE_3D:
-            encoder << static_cast<const ScaleTransformOperation*>(operation)->x();
-            encoder << static_cast<const ScaleTransformOperation*>(operation)->y();
-            encoder << static_cast<const ScaleTransformOperation*>(operation)->z();
+            encoder << toScaleTransformOperation(operation)->x();
+            encoder << toScaleTransformOperation(operation)->y();
+            encoder << toScaleTransformOperation(operation)->z();
             break;
         case TransformOperation::TRANSLATE_X:
         case TransformOperation::TRANSLATE_Y:
         case TransformOperation::TRANSLATE:
         case TransformOperation::TRANSLATE_Z:
         case TransformOperation::TRANSLATE_3D:
-            ArgumentCoder<Length>::encode(encoder, static_cast<const TranslateTransformOperation*>(operation)->x());
-            ArgumentCoder<Length>::encode(encoder, static_cast<const TranslateTransformOperation*>(operation)->y());
-            ArgumentCoder<Length>::encode(encoder, static_cast<const TranslateTransformOperation*>(operation)->z());
+            ArgumentCoder<Length>::encode(encoder, toTranslateTransformOperation(operation)->x());
+            ArgumentCoder<Length>::encode(encoder, toTranslateTransformOperation(operation)->y());
+            ArgumentCoder<Length>::encode(encoder, toTranslateTransformOperation(operation)->z());
             break;
         case TransformOperation::ROTATE:
         case TransformOperation::ROTATE_X:
         case TransformOperation::ROTATE_Y:
         case TransformOperation::ROTATE_3D:
-            encoder << static_cast<const RotateTransformOperation*>(operation)->x();
-            encoder << static_cast<const RotateTransformOperation*>(operation)->y();
-            encoder << static_cast<const RotateTransformOperation*>(operation)->z();
-            encoder << static_cast<const RotateTransformOperation*>(operation)->angle();
+            encoder << toRotateTransformOperation(operation)->x();
+            encoder << toRotateTransformOperation(operation)->y();
+            encoder << toRotateTransformOperation(operation)->z();
+            encoder << toRotateTransformOperation(operation)->angle();
             break;
         case TransformOperation::SKEW_X:
         case TransformOperation::SKEW_Y:
         case TransformOperation::SKEW:
-            encoder << static_cast<const SkewTransformOperation*>(operation)->angleX();
-            encoder << static_cast<const SkewTransformOperation*>(operation)->angleY();
+            encoder << toSkewTransformOperation(operation)->angleX();
+            encoder << toSkewTransformOperation(operation)->angleY();
             break;
         case TransformOperation::MATRIX:
-            ArgumentCoder<TransformationMatrix>::encode(encoder, static_cast<const MatrixTransformOperation*>(operation)->matrix());
+            ArgumentCoder<TransformationMatrix>::encode(encoder, toMatrixTransformOperation(operation)->matrix());
             break;
         case TransformOperation::MATRIX_3D:
-            ArgumentCoder<TransformationMatrix>::encode(encoder, static_cast<const Matrix3DTransformOperation*>(operation)->matrix());
+            ArgumentCoder<TransformationMatrix>::encode(encoder, toMatrix3DTransformOperation(operation)->matrix());
             break;
         case TransformOperation::PERSPECTIVE:
-            ArgumentCoder<Length>::encode(encoder, static_cast<const PerspectiveTransformOperation*>(operation)->perspective());
+            ArgumentCoder<Length>::encode(encoder, toPerspectiveTransformOperation(operation)->perspective());
             break;
         case TransformOperation::IDENTITY:
             break;

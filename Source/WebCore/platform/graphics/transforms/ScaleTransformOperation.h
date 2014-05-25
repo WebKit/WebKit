@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class ScaleTransformOperation : public TransformOperation {
+class ScaleTransformOperation final : public TransformOperation {
 public:
     static PassRefPtr<ScaleTransformOperation> create(double sx, double sy, OperationType type)
     {
@@ -46,26 +46,20 @@ public:
     double z() const { return m_z; }
 
 private:
-    virtual bool isIdentity() const { return m_x == 1 &&  m_y == 1 &&  m_z == 1; }
+    virtual bool isIdentity() const override { return m_x == 1 &&  m_y == 1 &&  m_z == 1; }
 
-    virtual OperationType type() const { return m_type; }
-    virtual bool isSameType(const TransformOperation& o) const { return o.type() == m_type; }
+    virtual OperationType type() const override { return m_type; }
+    virtual bool isSameType(const TransformOperation& o) const override { return o.type() == m_type; }
 
-    virtual bool operator==(const TransformOperation& o) const
-    {
-        if (!isSameType(o))
-            return false;
-        const ScaleTransformOperation* s = static_cast<const ScaleTransformOperation*>(&o);
-        return m_x == s->m_x && m_y == s->m_y && m_z == s->m_z;
-    }
+    virtual bool operator==(const TransformOperation&) const override;
 
-    virtual bool apply(TransformationMatrix& transform, const FloatSize&) const
+    virtual bool apply(TransformationMatrix& transform, const FloatSize&) const override
     {
         transform.scale3d(m_x, m_y, m_z);
         return false;
     }
 
-    virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false);
+    virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
 
     ScaleTransformOperation(double sx, double sy, double sz, OperationType type)
         : m_x(sx)
@@ -73,7 +67,7 @@ private:
         , m_z(sz)
         , m_type(type)
     {
-        ASSERT(type == SCALE_X || type == SCALE_Y || type == SCALE_Z || type == SCALE || type == SCALE_3D);
+        ASSERT(isScaleTransformOperationType());
     }
         
     double m_x;
@@ -81,6 +75,8 @@ private:
     double m_z;
     OperationType m_type;
 };
+
+TRANSFORMOPERATION_TYPE_CASTS(ScaleTransformOperation, isScaleTransformOperationType());
 
 } // namespace WebCore
 

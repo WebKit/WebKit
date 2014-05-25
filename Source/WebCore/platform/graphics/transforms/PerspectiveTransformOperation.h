@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class PerspectiveTransformOperation : public TransformOperation {
+class PerspectiveTransformOperation final : public TransformOperation {
 public:
     static PassRefPtr<PerspectiveTransformOperation> create(const Length& p)
     {
@@ -42,25 +42,19 @@ public:
     Length perspective() const { return m_p; }
     
 private:
-    virtual bool isIdentity() const { return !floatValueForLength(m_p, 1); }
-    virtual OperationType type() const { return PERSPECTIVE; }
-    virtual bool isSameType(const TransformOperation& o) const { return o.type() == PERSPECTIVE; }
+    virtual bool isIdentity() const override { return !floatValueForLength(m_p, 1); }
+    virtual OperationType type() const override { return PERSPECTIVE; }
+    virtual bool isSameType(const TransformOperation& o) const override { return o.type() == PERSPECTIVE; }
 
-    virtual bool operator==(const TransformOperation& o) const
-    {
-        if (!isSameType(o))
-            return false;
-        const PerspectiveTransformOperation* p = static_cast<const PerspectiveTransformOperation*>(&o);
-        return m_p == p->m_p;
-    }
+    virtual bool operator==(const TransformOperation&) const override;
 
-    virtual bool apply(TransformationMatrix& transform, const FloatSize&) const
+    virtual bool apply(TransformationMatrix& transform, const FloatSize&) const override
     {
         transform.applyPerspective(floatValueForLength(m_p, 1));
         return false;
     }
 
-    virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false);
+    virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
 
     PerspectiveTransformOperation(const Length& p)
         : m_p(p)
@@ -70,6 +64,8 @@ private:
 
     Length m_p;
 };
+
+TRANSFORMOPERATION_TYPE_CASTS(PerspectiveTransformOperation, type() == TransformOperation::PERSPECTIVE);
 
 } // namespace WebCore
 

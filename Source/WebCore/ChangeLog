@@ -1,5 +1,71 @@
 2014-05-25  David Kilzer  <ddkilzer@apple.com>
 
+        Add type-checked casts for TransformOperations
+        <http://webkit.org/b/133217>
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::validateTransformOperations):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::getTransformFunctionValue):
+        - Switch to type-checked casts.
+
+        * platform/graphics/transforms/IdentityTransformOperation.h:
+        * platform/graphics/transforms/Matrix3DTransformOperation.h:
+        * platform/graphics/transforms/MatrixTransformOperation.h:
+        * platform/graphics/transforms/PerspectiveTransformOperation.h:
+        * platform/graphics/transforms/RotateTransformOperation.h:
+        * platform/graphics/transforms/ScaleTransformOperation.h:
+        * platform/graphics/transforms/SkewTransformOperation.h:
+        * platform/graphics/transforms/TranslateTransformOperation.h:
+        - Add 'final' to class declaration.
+        - Add 'override' to overridden methods.
+        - Add type-checked cast via TRANSFORMOPERATION_TYPE_CASTS macro.
+        - Move implementation of operator==(const TransformOperation&)
+          from header to source file so it is able to use a type-checked
+          cast, and switch back to using a reference instead of a
+          pointer.
+        - Add or update ASSERT in private constructor to check for
+          correct OperationType in classes that represent multiple
+          types.
+
+        * platform/graphics/transforms/Matrix3DTransformOperation.cpp:
+        (WebCore::Matrix3DTransformOperation::operator==): Added.
+
+        * platform/graphics/transforms/MatrixTransformOperation.cpp:
+        (WebCore::Matrix3DTransformOperation::operator==): Added.
+        (WebCore::MatrixTransformOperation::blend):
+        - Switch to type-checked casts and use a reference.
+
+        * platform/graphics/transforms/PerspectiveTransformOperation.cpp:
+        (WebCore::Matrix3DTransformOperation::operator==): Added.
+        (WebCore::PerspectiveTransformOperation::blend):
+        * platform/graphics/transforms/RotateTransformOperation.cpp:
+        (WebCore::Matrix3DTransformOperation::operator==): Added.
+        (WebCore::RotateTransformOperation::blend):
+        * platform/graphics/transforms/ScaleTransformOperation.cpp:
+        (WebCore::Matrix3DTransformOperation::operator==): Added.
+        (WebCore::ScaleTransformOperation::blend):
+        * platform/graphics/transforms/SkewTransformOperation.cpp:
+        (WebCore::Matrix3DTransformOperation::operator==): Added.
+        (WebCore::SkewTransformOperation::blend):
+        * platform/graphics/transforms/TranslateTransformOperation.cpp:
+        (WebCore::Matrix3DTransformOperation::operator==): Added.
+        (WebCore::TranslateTransformOperation::blend):
+        - Switch to type-checked casts.
+
+        * platform/graphics/transforms/TransformOperation.h:
+        (WebCore::TransformOperation::isRotateTransformOperationType):
+        (WebCore::TransformOperation::isScaleTransformOperationType):
+        (WebCore::TransformOperation::isSkewTransformOperationType):
+        (WebCore::TransformOperation::isTranslateTransformOperationType):
+        - Add type-checking methods used in constructors and type-checked
+          casts.
+        - Define TRANSFORMOPERATION_TYPE_CASTS macro used by subclasses.
+
+2014-05-25  David Kilzer  <ddkilzer@apple.com>
+
         Crash in WebCore::TextResourceDecoder::checkForCSSCharset
         <http://webkit.org/b/133257>
         <rdar://problem/17027109>

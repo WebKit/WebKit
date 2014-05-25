@@ -129,25 +129,25 @@ static void getTransformFunctionValue(const TransformOperation* transformOp, Tra
     case TransformOperation::ROTATE:
     case TransformOperation::ROTATE_X:
     case TransformOperation::ROTATE_Y:
-        value = transformOp ? narrowPrecisionToFloat(deg2rad(static_cast<const RotateTransformOperation*>(transformOp)->angle())) : 0;
+        value = transformOp ? narrowPrecisionToFloat(deg2rad(toRotateTransformOperation(transformOp)->angle())) : 0;
         break;
     case TransformOperation::SCALE_X:
-        value = transformOp ? narrowPrecisionToFloat(static_cast<const ScaleTransformOperation*>(transformOp)->x()) : 1;
+        value = transformOp ? narrowPrecisionToFloat(toScaleTransformOperation(transformOp)->x()) : 1;
         break;
     case TransformOperation::SCALE_Y:
-        value = transformOp ? narrowPrecisionToFloat(static_cast<const ScaleTransformOperation*>(transformOp)->y()) : 1;
+        value = transformOp ? narrowPrecisionToFloat(toScaleTransformOperation(transformOp)->y()) : 1;
         break;
     case TransformOperation::SCALE_Z:
-        value = transformOp ? narrowPrecisionToFloat(static_cast<const ScaleTransformOperation*>(transformOp)->z()) : 1;
+        value = transformOp ? narrowPrecisionToFloat(toScaleTransformOperation(transformOp)->z()) : 1;
         break;
     case TransformOperation::TRANSLATE_X:
-        value = transformOp ? narrowPrecisionToFloat(static_cast<const TranslateTransformOperation*>(transformOp)->x(size)) : 0;
+        value = transformOp ? narrowPrecisionToFloat(toTranslateTransformOperation(transformOp)->x(size)) : 0;
         break;
     case TransformOperation::TRANSLATE_Y:
-        value = transformOp ? narrowPrecisionToFloat(static_cast<const TranslateTransformOperation*>(transformOp)->y(size)) : 0;
+        value = transformOp ? narrowPrecisionToFloat(toTranslateTransformOperation(transformOp)->y(size)) : 0;
         break;
     case TransformOperation::TRANSLATE_Z:
-        value = transformOp ? narrowPrecisionToFloat(static_cast<const TranslateTransformOperation*>(transformOp)->z(size)) : 0;
+        value = transformOp ? narrowPrecisionToFloat(toTranslateTransformOperation(transformOp)->z(size)) : 0;
         break;
     default:
         break;
@@ -158,17 +158,21 @@ static void getTransformFunctionValue(const TransformOperation* transformOp, Tra
 {
     switch (transformType) {
     case TransformOperation::SCALE:
-    case TransformOperation::SCALE_3D:
-        value.setX(transformOp ? narrowPrecisionToFloat(static_cast<const ScaleTransformOperation*>(transformOp)->x()) : 1);
-        value.setY(transformOp ? narrowPrecisionToFloat(static_cast<const ScaleTransformOperation*>(transformOp)->y()) : 1);
-        value.setZ(transformOp ? narrowPrecisionToFloat(static_cast<const ScaleTransformOperation*>(transformOp)->z()) : 1);
+    case TransformOperation::SCALE_3D: {
+        const ScaleTransformOperation* scaleTransformOp = toScaleTransformOperation(transformOp);
+        value.setX(scaleTransformOp ? narrowPrecisionToFloat(scaleTransformOp->x()) : 1);
+        value.setY(scaleTransformOp ? narrowPrecisionToFloat(scaleTransformOp->y()) : 1);
+        value.setZ(scaleTransformOp ? narrowPrecisionToFloat(scaleTransformOp->z()) : 1);
         break;
+    }
     case TransformOperation::TRANSLATE:
-    case TransformOperation::TRANSLATE_3D:
-        value.setX(transformOp ? narrowPrecisionToFloat(static_cast<const TranslateTransformOperation*>(transformOp)->x(size)) : 0);
-        value.setY(transformOp ? narrowPrecisionToFloat(static_cast<const TranslateTransformOperation*>(transformOp)->y(size)) : 0);
-        value.setZ(transformOp ? narrowPrecisionToFloat(static_cast<const TranslateTransformOperation*>(transformOp)->z(size)) : 0);
+    case TransformOperation::TRANSLATE_3D: {
+        const TranslateTransformOperation* translateTransformOp = toTranslateTransformOperation(transformOp);
+        value.setX(translateTransformOp ? narrowPrecisionToFloat(translateTransformOp->x(size)) : 0);
+        value.setY(translateTransformOp ? narrowPrecisionToFloat(translateTransformOp->y(size)) : 0);
+        value.setZ(translateTransformOp ? narrowPrecisionToFloat(translateTransformOp->z(size)) : 0);
         break;
+    }
     default:
         break;
     }

@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class SkewTransformOperation : public TransformOperation {
+class SkewTransformOperation final : public TransformOperation {
 public:
     static PassRefPtr<SkewTransformOperation> create(double angleX, double angleY, OperationType type)
     {
@@ -40,37 +40,34 @@ public:
     double angleY() const { return m_angleY; }
 
 private:
-    virtual bool isIdentity() const { return m_angleX == 0 && m_angleY == 0; }
-    virtual OperationType type() const { return m_type; }
-    virtual bool isSameType(const TransformOperation& o) const { return o.type() == m_type; }
+    virtual bool isIdentity() const override { return m_angleX == 0 && m_angleY == 0; }
+    virtual OperationType type() const override { return m_type; }
+    virtual bool isSameType(const TransformOperation& o) const override { return o.type() == m_type; }
 
-    virtual bool operator==(const TransformOperation& o) const
-    {
-        if (!isSameType(o))
-            return false;
-        const SkewTransformOperation* s = static_cast<const SkewTransformOperation*>(&o);
-        return m_angleX == s->m_angleX && m_angleY == s->m_angleY;
-    }
+    virtual bool operator==(const TransformOperation&) const override;
 
-    virtual bool apply(TransformationMatrix& transform, const FloatSize&) const
+    virtual bool apply(TransformationMatrix& transform, const FloatSize&) const override
     {
         transform.skew(m_angleX, m_angleY);
         return false;
     }
 
-    virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false);
+    virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
     
     SkewTransformOperation(double angleX, double angleY, OperationType type)
         : m_angleX(angleX)
         , m_angleY(angleY)
         , m_type(type)
     {
+        ASSERT(isSkewTransformOperationType());
     }
     
     double m_angleX;
     double m_angleY;
     OperationType m_type;
 };
+
+TRANSFORMOPERATION_TYPE_CASTS(SkewTransformOperation, isSkewTransformOperationType());
 
 } // namespace WebCore
 

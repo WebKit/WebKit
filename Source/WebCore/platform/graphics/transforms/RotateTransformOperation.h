@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class RotateTransformOperation : public TransformOperation {
+class RotateTransformOperation final : public TransformOperation {
 public:
     static PassRefPtr<RotateTransformOperation> create(double angle, OperationType type)
     {
@@ -47,26 +47,20 @@ public:
     double angle() const { return m_angle; }
 
 private:
-    virtual bool isIdentity() const { return m_angle == 0; }
+    virtual bool isIdentity() const override { return m_angle == 0; }
 
-    virtual OperationType type() const { return m_type; }
-    virtual bool isSameType(const TransformOperation& o) const { return o.type() == m_type; }
+    virtual OperationType type() const override { return m_type; }
+    virtual bool isSameType(const TransformOperation& o) const override { return o.type() == m_type; }
 
-    virtual bool operator==(const TransformOperation& o) const
-    {
-        if (!isSameType(o))
-            return false;
-        const RotateTransformOperation* r = static_cast<const RotateTransformOperation*>(&o);
-        return m_x == r->m_x && m_y == r->m_y && m_z == r->m_z && m_angle == r->m_angle;
-    }
+    virtual bool operator==(const TransformOperation&) const override;
 
-    virtual bool apply(TransformationMatrix& transform, const FloatSize& /*borderBoxSize*/) const
+    virtual bool apply(TransformationMatrix& transform, const FloatSize& /*borderBoxSize*/) const override
     {
         transform.rotate3d(m_x, m_y, m_z, m_angle);
         return false;
     }
 
-    virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false);
+    virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
 
     RotateTransformOperation(double x, double y, double z, double angle, OperationType type)
         : m_x(x)
@@ -75,7 +69,7 @@ private:
         , m_angle(angle)
         , m_type(type)
     {
-        ASSERT(type == ROTATE_X || type == ROTATE_Y || type == ROTATE_Z || type == ROTATE_3D);
+        ASSERT(isRotateTransformOperationType());
     }
 
     double m_x;
@@ -84,6 +78,8 @@ private:
     double m_angle;
     OperationType m_type;
 };
+
+TRANSFORMOPERATION_TYPE_CASTS(RotateTransformOperation, isRotateTransformOperationType());
 
 } // namespace WebCore
 

@@ -31,6 +31,14 @@
 
 namespace WebCore {
 
+bool PerspectiveTransformOperation::operator==(const TransformOperation& o) const
+{
+    if (!isSameType(o))
+        return false;
+    const PerspectiveTransformOperation& p = toPerspectiveTransformOperation(o);
+    return m_p == p.m_p;
+}
+
 PassRefPtr<TransformOperation> PerspectiveTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
     if (from && !from->isSameType(*this))
@@ -42,7 +50,7 @@ PassRefPtr<TransformOperation> PerspectiveTransformOperation::blend(const Transf
         return PerspectiveTransformOperation::create(Length(clampToPositiveInteger(p), Fixed));
     }
     
-    const PerspectiveTransformOperation* fromOp = static_cast<const PerspectiveTransformOperation*>(from);
+    const PerspectiveTransformOperation* fromOp = toPerspectiveTransformOperation(from);
     Length fromP = fromOp ? fromOp->m_p : Length(m_p.type());
     Length toP = m_p;
 

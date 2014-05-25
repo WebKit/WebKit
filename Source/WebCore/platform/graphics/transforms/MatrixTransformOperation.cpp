@@ -26,6 +26,14 @@
 
 namespace WebCore {
 
+bool MatrixTransformOperation::operator==(const TransformOperation& o) const
+{
+    if (!isSameType(o))
+        return false;
+    const MatrixTransformOperation& m = toMatrixTransformOperation(o);
+    return m_a == m.m_a && m_b == m.m_b && m_c == m.m_c && m_d == m.m_d && m_e == m.m_e && m_f == m.m_f;
+}
+
 PassRefPtr<TransformOperation> MatrixTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
     if (from && !from->isSameType(*this))
@@ -36,8 +44,8 @@ PassRefPtr<TransformOperation> MatrixTransformOperation::blend(const TransformOp
     TransformationMatrix fromT;
     TransformationMatrix toT(m_a, m_b, m_c, m_d, m_e, m_f);
     if (from) {
-        const MatrixTransformOperation* m = static_cast<const MatrixTransformOperation*>(from);
-        fromT.setMatrix(m->m_a, m->m_b, m->m_c, m->m_d, m->m_e, m->m_f);
+        const MatrixTransformOperation& m = toMatrixTransformOperation(*from);
+        fromT.setMatrix(m.m_a, m.m_b, m.m_c, m.m_d, m.m_e, m.m_f);
     }
     
     if (blendToIdentity)

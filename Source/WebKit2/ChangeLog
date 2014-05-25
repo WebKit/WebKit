@@ -1,5 +1,16 @@
 2014-05-25  David Kilzer  <ddkilzer@apple.com>
 
+        Add type-checked casts for TransformOperations
+        <http://webkit.org/b/133217>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (IPC::ArgumentCoder<TransformOperations>::encode):
+        - Switch to type-checked casts.
+
+2014-05-25  David Kilzer  <ddkilzer@apple.com>
+
         Use type-checking FilterOperation casts in CoordinatedGraphicsArgumentCoders.cpp
         <http://webkit.org/b/133203>
 
