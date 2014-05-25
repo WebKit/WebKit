@@ -1,3 +1,23 @@
+2014-05-25  Anders Carlsson  <andersca@apple.com>
+
+        Use the right paths for website data
+        https://bugs.webkit.org/show_bug.cgi?id=133267
+        <rdar://problem/17027698>
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _initWithConfiguration:]):
+        Get the path of the absolute URL.
+
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::databasePath):
+        Fix spelling error.
+
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didCacheResource):
+        Ditto.
+
 2014-05-25  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Use ScrollView's scrollOffset as the unobscuredContentRect

@@ -158,7 +158,7 @@ Vector<LocalStorageDetails> LocalStorageDatabaseTracker::details()
 String LocalStorageDatabaseTracker::databasePath(const String& filename) const
 {
     if (!makeAllDirectories(m_localStorageDirectory)) {
-        LOG_ERROR("Unabled to create LocalStorage database path %s", m_localStorageDirectory.utf8().data());
+        LOG_ERROR("Unable to create LocalStorage database path %s", m_localStorageDirectory.utf8().data());
         return String();
     }
 
