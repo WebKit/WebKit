@@ -1,3 +1,20 @@
+2014-05-25  David Kilzer  <ddkilzer@apple.com>
+
+        Use type-checking FilterOperation casts in CoordinatedGraphicsArgumentCoders.cpp
+        <http://webkit.org/b/133203>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (IPC::ArgumentCoder<WebCore::FilterOperations>::encode):
+        - Replace static_cast<>() operators with type-checking
+          FilterOperation casts.
+        - Replace 'default' statement with 'case' statements so new
+          filters added later require an explicit decision to be made.
+        (IPC::ArgumentCoder<WebCore::FilterOperations>::decode):
+        - Replace 'default' statement with 'case' statements so new
+          filters added later require an explicit decision to be made.
+
 2014-05-24  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Potential null dereference in

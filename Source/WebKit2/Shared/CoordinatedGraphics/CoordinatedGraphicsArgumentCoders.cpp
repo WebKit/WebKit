@@ -76,25 +76,28 @@ void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder& encoder, 
         case FilterOperation::SEPIA:
         case FilterOperation::SATURATE:
         case FilterOperation::HUE_ROTATE:
-            encoder << static_cast<double>(static_cast<const BasicColorMatrixFilterOperation*>(filter)->amount());
+            encoder << static_cast<double>(toBasicColorMatrixFilterOperation(filter)->amount());
             break;
         case FilterOperation::INVERT:
         case FilterOperation::BRIGHTNESS:
         case FilterOperation::CONTRAST:
         case FilterOperation::OPACITY:
-            encoder << static_cast<double>(static_cast<const BasicComponentTransferFilterOperation*>(filter)->amount());
+            encoder << static_cast<double>(toBasicComponentTransferFilterOperation(filter)->amount());
             break;
         case FilterOperation::BLUR:
-            ArgumentCoder<Length>::encode(encoder, static_cast<const BlurFilterOperation*>(filter)->stdDeviation());
+            ArgumentCoder<Length>::encode(encoder, toBlurFilterOperation(filter)->stdDeviation());
             break;
         case FilterOperation::DROP_SHADOW: {
-            const DropShadowFilterOperation* shadow = static_cast<const DropShadowFilterOperation*>(filter);
+            const DropShadowFilterOperation* shadow = toDropShadowFilterOperation(filter);
             ArgumentCoder<IntPoint>::encode(encoder, shadow->location());
             encoder << static_cast<int32_t>(shadow->stdDeviation());
             ArgumentCoder<Color>::encode(encoder, shadow->color());
             break;
         }
-        default:
+        case FilterOperation::REFERENCE:
+        case FilterOperation::PASSTHROUGH:
+        case FilterOperation::DEFAULT:
+        case FilterOperation::NONE:
             break;
         }
     }
@@ -155,7 +158,10 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder& decoder, 
             filter = DropShadowFilterOperation::create(location, stdDeviation, color);
             break;
         }
-        default:
+        case FilterOperation::REFERENCE:
+        case FilterOperation::PASSTHROUGH:
+        case FilterOperation::DEFAULT:
+        case FilterOperation::NONE:
             break;
         }
 
