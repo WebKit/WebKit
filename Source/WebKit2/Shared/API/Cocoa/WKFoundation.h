@@ -47,13 +47,19 @@
 
 #if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
 
+#define WK_DESIGNATED_INITIALIZER
+#define WK_UNAVAILABLE
+
 #ifdef __OBJC__
 #import <Foundation/Foundation.h>
 typedef NSUInteger NSEventModifierFlags;
 #endif
 
-#endif
+#else
+
+#define WK_DESIGNATED_INITIALIZER NS_DESIGNATED_INITIALIZER
+#define WK_UNAVAILABLE NS_UNAVAILABLE
 
 #endif
 
-#define WK_DESIGNATED_INITIALIZER
+#endif

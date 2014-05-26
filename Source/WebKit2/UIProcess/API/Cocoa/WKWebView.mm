@@ -268,6 +268,12 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     return self;
 }
 
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    [self release];
+    return nil;
+}
+
 - (void)dealloc
 {
     _page->close();
