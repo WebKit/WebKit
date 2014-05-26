@@ -3379,7 +3379,7 @@ void WebPageProxy::didFindString(const String& string, uint32_t matchCount, int3
     m_findClient->didFindString(this, string, matchCount, matchIndex);
 }
 
-void WebPageProxy::didFindStringMatches(const String& string, Vector<Vector<WebCore::IntRect>> matchRects, int32_t firstIndexAfterSelection)
+void WebPageProxy::didFindStringMatches(const String& string, const Vector<Vector<WebCore::IntRect>>& matchRects, int32_t firstIndexAfterSelection)
 {
     Vector<RefPtr<API::Object>> matches;
     matches.reserveInitialCapacity(matchRects.size());

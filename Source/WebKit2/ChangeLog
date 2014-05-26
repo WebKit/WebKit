@@ -1,3 +1,21 @@
+2014-05-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        WebPage::setComposition(), WebPageProxy::didFindStringMatches() should take Vector parameters by const reference
+        https://bugs.webkit.org/show_bug.cgi?id=133264
+
+        Reviewed by Darin Adler.
+
+        Taking the Vector parameters in the two methods (invoked through the IPC message handling)
+        by value causes unnecessary copies. The methods don't modify the objects and don't want
+        or need fresh copies, hence they should take in const references to Vector objects.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFindStringMatches):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setComposition):
+        * WebProcess/WebPage/WebPage.h:
+
 2014-05-25  Benjamin Poulain  <benjamin@webkit.org>
 
         [iOS][WK2] Fix some state reset on crash on the WKWebView
