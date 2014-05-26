@@ -144,14 +144,7 @@ static bool enableAssembler(ExecutableAllocator& executableAllocator)
     }
 
 #if USE(CF)
-#if COMPILER(GCC) && !COMPILER(CLANG)
-    // FIXME: remove this once the EWS have been upgraded to LLVM.
-    // Work around a bug of GCC with strict-aliasing.
-    RetainPtr<CFStringRef> canUseJITKeyRetain = adoptCF(CFStringCreateWithCString(0 , "JavaScriptCoreUseJIT", kCFStringEncodingMacRoman));
-    CFStringRef canUseJITKey = canUseJITKeyRetain.get();
-#else
     CFStringRef canUseJITKey = CFSTR("JavaScriptCoreUseJIT");
-#endif // COMPILER(GCC) && !COMPILER(CLANG)
     RetainPtr<CFTypeRef> canUseJIT = adoptCF(CFPreferencesCopyAppValue(canUseJITKey, kCFPreferencesCurrentApplication));
     if (canUseJIT)
         return kCFBooleanTrue == canUseJIT.get();
