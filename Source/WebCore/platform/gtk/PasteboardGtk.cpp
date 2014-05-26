@@ -135,27 +135,25 @@ static ClipboardDataType dataObjectTypeFromHTMLClipboardType(const String& rawTy
     return ClipboardDataTypeUnknown;
 }
 
-bool Pasteboard::writeString(const String& type, const String& data)
+void Pasteboard::writeString(const String& type, const String& data)
 {
     switch (dataObjectTypeFromHTMLClipboardType(type)) {
     case ClipboardDataTypeURIList:
     case ClipboardDataTypeURL:
         m_dataObject->setURIList(data);
-        return true;
+        return;
     case ClipboardDataTypeMarkup:
         m_dataObject->setMarkup(data);
-        return true;
+        return;
     case ClipboardDataTypeText:
         m_dataObject->setText(data);
-        return true;
+        return;
     case ClipboardDataTypeUnknown:
         m_dataObject->setUnknownTypeData(type, data);
-        return true;
+        return;
     case ClipboardDataTypeImage:
         break;
     }
-
-    return false;
 }
 
 void Pasteboard::writeSelection(Range& selectedRange, bool canSmartCopyOrDelete, Frame& frame, ShouldSerializeSelectedTextForDataTransfer shouldSerializeSelectedTextForDataTransfer)

@@ -1,3 +1,31 @@
+2014-05-25  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        setData() of DataTransfer has a void return type
+        https://bugs.webkit.org/show_bug.cgi?id=133108
+
+        Reviewed by Alexey Proskuryakov.
+
+        According to HTML5 spec, setData() of DataTranfer interface does not return value.
+        http://www.w3.org/TR/html/editing.html#the-datatransfer-interface
+
+        Test: editing/pasteboard/set_data_typeof_return.html
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::setData):
+        * dom/DataTransfer.h:
+        * dom/DataTransfer.idl:
+        * platform/Pasteboard.h:
+        * platform/efl/PasteboardEfl.cpp:
+        (WebCore::Pasteboard::writeString):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeString):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::writeString):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeString):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeString):
+
 2014-05-25  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Use ScrollView's scrollOffset as the unobscuredContentRect

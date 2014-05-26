@@ -37,7 +37,7 @@
 
     void clearData(optional DOMString type);
     DOMString getData(DOMString type);
-    boolean setData(DOMString type, DOMString data);
+    void setData(DOMString type, DOMString data);
     void setDragImage(Element image, long x, long y);
 
     [Conditional=DATA_TRANSFER_ITEMS] readonly attribute DataTransferItemList items;

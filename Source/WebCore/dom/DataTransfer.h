@@ -63,7 +63,7 @@ namespace WebCore {
 
         String getData(const String& type) const;
 
-        bool setData(const String& type, const String& data);
+        void setData(const String& type, const String& data);
 
         void setDragImage(Element*, int x, int y);
 

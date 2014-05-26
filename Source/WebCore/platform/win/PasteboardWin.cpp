@@ -389,31 +389,28 @@ static bool writeURL(WCDataObject *data, const URL& url, String title, bool with
     return success;
 }
 
-bool Pasteboard::writeString(const String& type, const String& data)
+void Pasteboard::writeString(const String& type, const String& data)
 {
     if (!m_writableDataObject)
-        return false;
+        return;
 
     ClipboardDataType winType = clipboardTypeFromMIMEType(type);
 
-    if (winType == ClipboardDataTypeURL)
-        return WebCore::writeURL(m_writableDataObject.get(), URL(URL(), data), String(), false, true);
+    if (winType == ClipboardDataTypeURL) {
+        WebCore::writeURL(m_writableDataObject.get(), URL(URL(), data), String(), false, true);
+        return;
+    }
 
     if (winType == ClipboardDataTypeText) {
         STGMEDIUM medium = {0};
         medium.tymed = TYMED_HGLOBAL;
         medium.hGlobal = createGlobalData(data);
         if (!medium.hGlobal)
-            return false;
+            return;
 
-        if (FAILED(m_writableDataObject->SetData(plainTextWFormat(), &medium, TRUE))) {
+        if (FAILED(m_writableDataObject->SetData(plainTextWFormat(), &medium, TRUE)))
             ::GlobalFree(medium.hGlobal);
-            return false;
-        }
-        return true;
     }
-
-    return false;
 }
 
 #if ENABLE(DRAG_SUPPORT)

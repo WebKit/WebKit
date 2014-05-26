@@ -570,7 +570,7 @@ static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, 
     resultTypes.add(cocoaType);
 }
 
-bool Pasteboard::writeString(const String& type, const String& data)
+void Pasteboard::writeString(const String& type, const String& data)
 {
     const String& cocoaType = cocoaTypeFromHTMLClipboardType(type);
     String cocoaData = data;
@@ -578,14 +578,14 @@ bool Pasteboard::writeString(const String& type, const String& data)
     if (cocoaType == String(NSURLPboardType) || cocoaType == String(kUTTypeFileURL)) {
         NSURL *url = [NSURL URLWithString:cocoaData];
         if ([url isFileURL])
-            return false;
+            return;
 
         Vector<String> types;
         types.append(cocoaType);
         platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName);
         m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(cocoaData, cocoaType, m_pasteboardName);
 
-        return true;
+        return;
     }
 
     if (!cocoaType.isEmpty()) {
@@ -594,10 +594,7 @@ bool Pasteboard::writeString(const String& type, const String& data)
         types.append(cocoaType);
         platformStrategies()->pasteboardStrategy()->addTypes(types, m_pasteboardName);
         m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(cocoaData, cocoaType, m_pasteboardName);
-        return true;
     }
-
-    return false;
 }
 
 Vector<String> Pasteboard::types()

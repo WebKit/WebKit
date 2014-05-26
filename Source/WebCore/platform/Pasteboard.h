@@ -136,7 +136,7 @@ public:
     Vector<String> types();
     String readString(const String& type);
 
-    bool writeString(const String& type, const String& data);
+    void writeString(const String& type, const String& data);
     void clear();
     void clear(const String& type);
 

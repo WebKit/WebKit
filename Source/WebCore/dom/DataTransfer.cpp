@@ -136,17 +136,17 @@ String DataTransfer::getData(const String& type) const
     return m_pasteboard->readString(type);
 }
 
-bool DataTransfer::setData(const String& type, const String& data)
+void DataTransfer::setData(const String& type, const String& data)
 {
     if (!canWriteData())
-        return false;
+        return;
 
 #if ENABLE(DRAG_SUPPORT)
     if (m_forFileDrag)
-        return false;
+        return;
 #endif
 
-    return m_pasteboard->writeString(type, data);
+    m_pasteboard->writeString(type, data);
 }
 
 Vector<String> DataTransfer::types() const

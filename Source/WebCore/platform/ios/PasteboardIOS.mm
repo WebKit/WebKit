@@ -348,15 +348,13 @@ static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, 
     resultTypes.add(cocoaType);
 }
 
-bool Pasteboard::writeString(const String& type, const String& data)
+void Pasteboard::writeString(const String& type, const String& data)
 {
     RetainPtr<NSString> cocoaType = cocoaTypeFromHTMLClipboardType(type);
     if (!cocoaType)
-        return false;
+        return;
 
     platformStrategies()->pasteboardStrategy()->writeToPasteboard(type, data);
-
-    return true;
 }
 
 Vector<String> Pasteboard::types()

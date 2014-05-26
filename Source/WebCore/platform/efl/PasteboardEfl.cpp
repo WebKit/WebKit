@@ -97,10 +97,9 @@ void Pasteboard::write(const PasteboardURL&)
     notImplemented();
 }
 
-bool Pasteboard::writeString(const String&, const String&)
+void Pasteboard::writeString(const String&, const String&)
 {
     notImplemented();
-    return false;
 }
 
 Vector<String> Pasteboard::types()
