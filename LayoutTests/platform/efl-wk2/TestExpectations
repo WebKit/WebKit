@@ -245,6 +245,10 @@ webkit.org/b/129199 webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-res
 
 webkit.org/b/128732 fast/css3-text/css3-text-align-last/text-align-last-with-text-align-justify.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/119789 fast/events/touch/touch-before-pressing-spin-button.html [ Crash Pass ]
+webkit.org/b/119789 fast/events/touch/touch-inside-iframe.html [ Crash Pass ]
+webkit.org/b/119789 fast/events/touch/touch-slider-no-js-touch-listener.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -460,10 +464,7 @@ webkit.org/b/109948 fast/dom/Window/mozilla-focus-blur.html [ Failure Pass ]
 
 webkit.org/b/119789 fast/events/touch/multi-touch-inside-iframes.html [ Crash ]
 webkit.org/b/119789 fast/events/touch/multi-touch-inside-nested-iframes.html [ Crash ]
-webkit.org/b/119789 fast/events/touch/touch-before-pressing-spin-button.html [ Crash ]
 webkit.org/b/119789 fast/events/touch/touch-coords-in-zoom-and-scroll.html [ Crash ]
-webkit.org/b/119789 fast/events/touch/touch-inside-iframe.html [ Crash ]
-webkit.org/b/119789 fast/events/touch/touch-slider-no-js-touch-listener.html [ Crash Pass ]
 
 # WKTR / Do not support setViewModeMediaFeature().
 Bug(EFL) fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
@@ -518,10 +519,6 @@ webkit.org/b/128733 fast/css/sticky/sticky-table-thead-top.html [ ImageOnlyFailu
 # Failing since r164015
 webkit.org/b/128734 plugins/nested-plugin-objects.html [ Failure ]
 webkit.org/b/128734 plugins/netscape-destroy-plugin-script-objects.html [ Failure ]
-
-webkit.org/b/128737 fast/events/touch/basic-multi-touch-events.html [ Failure ]
-
-webkit.org/b/129734 fast/css3-text/css3-text-decoration/text-decoration-style-double-space-scales.html [ ImageOnlyFailure ]
 
 webkit.org/b/129735 fast/regions/box-decorations-over-region-padding.html [ ImageOnlyFailure ]
 

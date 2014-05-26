@@ -654,6 +654,8 @@ webkit.org/b/128736 inspector-protocol/debugger/setBreakpoint-dfg.html [ Failure
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure Pass ]
 
+webkit.org/b/130353 mathml/wbr-in-mroot-crash.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -688,9 +690,6 @@ webkit.org/b/87619 fast/forms/number/number-size.html [ Failure ]
 
 # Needs to have PNG generated, which currently fails for this case.
 webkit.org/b/83274 fast/repaint/transform-rotate-and-remove.html [ Pass ]
-
-webkit.org/b/83906 ietestcenter/css3/grid/grid-column-001.htm [ ImageOnlyFailure ]
-webkit.org/b/83909 ietestcenter/css3/grid/grid-column-003.htm [ ImageOnlyFailure ]
 
 # EFL's EventSender does not implement continuousMouseScrollBy yet
 Bug(EFL) fast/events/continuous-platform-wheelevent-in-scrolling-div.html [ Failure ]
@@ -971,9 +970,8 @@ webkit.org/b/82140 fast/dom/Window/window-properties-geolocation.html [ Failure 
 webkit.org/b/86142 ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]
 
 # Fullscreen API is enabled but not fully implemented.
-webkit.org/b/86597 fullscreen/video-controls-drag.html [ Failure ]
 webkit.org/b/86187 media/media-fullscreen-not-in-document.html [ Failure ]
-webkit.org/b/86187 media/media-fullscreen-inline.html
+webkit.org/b/86187 media/media-fullscreen-inline.html [ Failure ]
 
 # This test is specific to QuickTime media engine.
 Bug(EFL) media/video-does-not-loop.html
@@ -1239,9 +1237,6 @@ webkit.org/b/115659 accessibility/meter-element.html [ Missing ]
 
 webkit.org/b/121593 accessibility/radio-button-title-label.html [ Failure ]
 
-# Test fails on JSC platforms due to GC timing problems
-webkit.org/b/106957 svg/dom/SVGViewSpec-invalid-ref-crash.html [ Failure ]
-
 # Fail to generate proper pixel results - let's wait with rebaselining.
 webkit.org/b/106992 scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ Failure Pass ]
 webkit.org/b/106992 scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ Failure Pass ]
@@ -1361,8 +1356,6 @@ webkit.org/b/119782 fast/forms/search-styled.html [ Failure ]
 
 # Color bleeds through; might work with newer cairo (works when running with Fedora 20's system cairo).
 fast/backgrounds/background-opaque-images-over-color.html [ ImageOnlyFailure ]
-
-webkit.org/b/119271 fast/workers/worker-call.html [ Failure ]
 
 webkit.org/b/106405 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Failure ]
 webkit.org/b/106405 http/tests/loading/basic-auth-resend-wrong-credentials.html [ Failure ]
@@ -1529,8 +1522,6 @@ webkit.org/b/127106 media/video-canvas-drawing-output.html [ Failure ]
 
 webkit.org/b/127107 media/volume-bar-empty-when-muted.html [ Failure ]
 
-webkit.org/b/127282 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-tall-underlines.html [ ImageOnlyFailure ]
-
 # Failing after r159674
 webkit.org/b/127475 fast/dom/inline-event-attributes-release.html [ Failure ]
 
@@ -1574,13 +1565,9 @@ webkit.org/b/128061 tables/mozilla_expected_failures/bugs/bug1055-2.html [ Failu
 
 webkit.org/b/128663 accessibility/roles-computedRoleString.html [ Failure ]
 
-webkit.org/b/128664 fast/css3-text/css3-text-decoration/text-decoration-thickness.html [ ImageOnlyFailure ]
-
 webkit.org/b/128665 fast/regions/clip-to-padding-box-vertical-lr.html [ ImageOnlyFailure ]
 
 webkit.org/b/128667 fast/regions/repaint/hover-border-radius.html [ Failure ]
-
-webkit.org/b/128668 fast/sub-pixel/sub-pixel-root-layer.html [ ImageOnlyFailure ]
 
 webkit.org/b/128669 fast/sub-pixel/zoomed-em-border.html [ ImageOnlyFailure ]
 
@@ -1605,8 +1592,6 @@ webkit.org/b/128499 svg/clip-path/clip-path-content-use-006.svg [ ImageOnlyFailu
 webkit.org/b/102097 compositing/hidpi-absolute-subpixel-positioned-transformed-elements.html [ ImageOnlyFailure ]
 webkit.org/b/102097 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]
 webkit.org/b/102097 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.html [ Failure ]
-
-webkit.org/b/130353 mathml/wbr-in-mroot-crash.html [ Crash ]
 
 webkit.org/b/130187 accessibility/aria-hidden-false-works-in-subtrees.html [ Missing ]
 
