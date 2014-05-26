@@ -1,3 +1,28 @@
+2014-05-26  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix the quirks mode selector matching of the pseudo classes :hover and :active
+        https://bugs.webkit.org/show_bug.cgi?id=133063
+
+        Reviewed by Antti Koivisto.
+
+        The test coverage of :hover and :active was extremly poor.
+        Those new tests add coverage for the cases fixed by this patch.
+
+        * fast/selectors/active-hover-quirks-expected.txt: Added.
+        * fast/selectors/active-hover-quirks.html: Added.
+        * fast/selectors/active-hover-strict-expected.txt: Added.
+        * fast/selectors/active-hover-strict.html: Added.
+        * fast/selectors/active-quirks-expected.txt: Added.
+        * fast/selectors/active-quirks.html: Added.
+        * fast/selectors/active-strict-expected.txt: Added.
+        * fast/selectors/active-strict.html: Added.
+        * fast/selectors/hover-quirks-expected.txt: Added.
+        * fast/selectors/hover-quirks.html: Added.
+        * fast/selectors/hover-strict-expected.txt: Added.
+        * fast/selectors/hover-strict.html: Added.
+        * fast/selectors/resources/hover-active-quirks-utility.js: Added.
+        * selectors/resources/hover-active-strict-utility.js: Added.
+
 2014-05-26  Darin Adler  <darin@apple.com>
 
         Class name matching should use ASCII case-insensitive matching, not Unicode case folding

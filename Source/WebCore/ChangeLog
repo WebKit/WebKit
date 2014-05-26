@@ -1,3 +1,43 @@
+2014-05-26  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix the quirks mode selector matching of the pseudo classes :hover and :active
+        https://bugs.webkit.org/show_bug.cgi?id=133063
+
+        Reviewed by Antti Koivisto.
+
+        Our implementation of the quirks mode of :active and :hover was very wrong. The only
+        thing it was doing is verify the pseudo class is not the first selector of a fragment
+        (which was conveniently the only thing that was tested :)).
+
+        Since those pseudo class were only checking for the order of the filters, something like
+            #target:hover
+        would succeed because :hover is not the first simple selector, while
+            :hover#target
+        would fail.
+
+        That behavior is also a problem for the CSS JIT as it is an implementation detail of SelectorChecker
+        and compiling something like that with our out-of-order matching would be nonsense.
+
+        This patch update the implementation to follow http://quirks.spec.whatwg.org/#the-:active-and-:hover-quirk
+        Basically, the only cases that do not work in quirks mode are selectors composed only of "*, :hover and :active".
+
+        To implement this behavior, I needed to be able to inspect a complete selector fragment, including
+        what is before and after :hover/:active.
+        To do that, I replaced the boolean isSubSelector by a pointer to the first selector of the fragment.
+        When we need to match :active/:hover in quirks mode, we just go over all the selectors in the fragment
+        to find one of the qualifying match type.
+
+        Tests: fast/selectors/active-hover-quirks.html
+               fast/selectors/active-quirks.html
+               fast/selectors/hover-quirks.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively):
+        (WebCore::canMatchHoverOrActiveInQuirksMode):
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::SelectorCheckingContext::SelectorCheckingContext):
+
 2014-05-26  Zalan Bujtas  <zalan@apple.com>
 
         Split the call to adjustForLocalZoom out into a separate expression.

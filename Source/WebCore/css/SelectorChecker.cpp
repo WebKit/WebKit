@@ -192,7 +192,7 @@ SelectorChecker::Match SelectorChecker::matchRecursively(const SelectorCheckingC
             return SelectorFailsCompletely;
 
         // Disable :visited matching when we see the first link or try to match anything else than an ancestors.
-        if (!context.isSubSelector && (context.element->isLink() || (relation != CSSSelector::Descendant && relation != CSSSelector::Child)))
+        if (context.firstSelectorOfTheFragment == context.selector && (context.element->isLink() || (relation != CSSSelector::Descendant && relation != CSSSelector::Child)))
             nextContext.visitedMatchType = VisitedMatchDisabled;
 
         nextContext.pseudoId = NOPSEUDO;
@@ -201,7 +201,7 @@ SelectorChecker::Match SelectorChecker::matchRecursively(const SelectorCheckingC
     switch (relation) {
     case CSSSelector::Descendant:
         nextContext.element = context.element->parentElement();
-        nextContext.isSubSelector = false;
+        nextContext.firstSelectorOfTheFragment = nextContext.selector;
         nextContext.elementStyle = 0;
         for (; nextContext.element; nextContext.element = nextContext.element->parentElement()) {
             Match match = this->matchRecursively(nextContext, ignoreDynamicPseudo);
@@ -215,7 +215,7 @@ SelectorChecker::Match SelectorChecker::matchRecursively(const SelectorCheckingC
             nextContext.element = context.element->parentElement();
             if (!nextContext.element)
                 return SelectorFailsCompletely;
-            nextContext.isSubSelector = false;
+            nextContext.firstSelectorOfTheFragment = nextContext.selector;
             nextContext.elementStyle = nullptr;
             Match match = matchRecursively(nextContext, ignoreDynamicPseudo);
             if (match == SelectorMatches || match == SelectorFailsCompletely)
@@ -231,7 +231,7 @@ SelectorChecker::Match SelectorChecker::matchRecursively(const SelectorCheckingC
         nextContext.element = context.element->previousElementSibling();
         if (!nextContext.element)
             return SelectorFailsAllSiblings;
-        nextContext.isSubSelector = false;
+        nextContext.firstSelectorOfTheFragment = nextContext.selector;
         nextContext.elementStyle = 0;
         return matchRecursively(nextContext, ignoreDynamicPseudo);
 
@@ -241,7 +241,7 @@ SelectorChecker::Match SelectorChecker::matchRecursively(const SelectorCheckingC
                 parentElement->setChildrenAffectedByForwardPositionalRules();
         }
         nextContext.element = context.element->previousElementSibling();
-        nextContext.isSubSelector = false;
+        nextContext.firstSelectorOfTheFragment = nextContext.selector;
         nextContext.elementStyle = 0;
         for (; nextContext.element; nextContext.element = nextContext.element->previousElementSibling()) {
             Match match = this->matchRecursively(nextContext, ignoreDynamicPseudo);
@@ -260,7 +260,6 @@ SelectorChecker::Match SelectorChecker::matchRecursively(const SelectorCheckingC
             && !nextContext.hasSelectionPseudo
             && !(nextContext.hasScrollbarPseudo && nextContext.selector->m_match == CSSSelector::PseudoClass))
             return SelectorFailsCompletely;
-        nextContext.isSubSelector = true;
         return matchRecursively(nextContext, dynamicPseudo);
 
     case CSSSelector::ShadowDescendant:
@@ -269,7 +268,7 @@ SelectorChecker::Match SelectorChecker::matchRecursively(const SelectorCheckingC
             if (!shadowHostNode)
                 return SelectorFailsCompletely;
             nextContext.element = shadowHostNode;
-            nextContext.isSubSelector = false;
+            nextContext.firstSelectorOfTheFragment = nextContext.selector;
             nextContext.elementStyle = 0;
             return matchRecursively(nextContext, ignoreDynamicPseudo);
         }
@@ -356,6 +355,61 @@ static bool anyAttributeMatches(Element* element, const CSSSelector* selector, c
     return false;
 }
 
+static bool canMatchHoverOrActiveInQuirksMode(const SelectorChecker::SelectorCheckingContext& context)
+{
+    // For quirks mode, follow this: http://quirks.spec.whatwg.org/#the-:active-and-:hover-quirk
+    // In quirks mode, a compound selector 'selector' that matches the following conditions must not match elements that would not also match the ':any-link' selector.
+    //
+    //    selector uses the ':active' or ':hover' pseudo-classes.
+    //    selector does not use a type selector.
+    //    selector does not use an attribute selector.
+    //    selector does not use an ID selector.
+    //    selector does not use a class selector.
+    //    selector does not use a pseudo-class selector other than ':active' and ':hover'.
+    //    selector does not use a pseudo-element selector.
+    //    selector is not part of an argument to a functional pseudo-class or pseudo-element.
+    if (context.inFunctionalPseudoClass)
+        return true;
+
+    for (const CSSSelector* selector = context.firstSelectorOfTheFragment; selector; selector = selector->tagHistory()) {
+        switch (selector->m_match) {
+        case CSSSelector::Tag:
+            if (selector->tagQName() != anyQName())
+                return true;
+            break;
+        case CSSSelector::PseudoClass: {
+            CSSSelector::PseudoClassType pseudoClassType = selector->pseudoClassType();
+            if (pseudoClassType != CSSSelector::PseudoClassHover && pseudoClassType != CSSSelector::PseudoClassActive)
+                return true;
+            break;
+        }
+        case CSSSelector::Id:
+        case CSSSelector::Class:
+        case CSSSelector::Exact:
+        case CSSSelector::Set:
+        case CSSSelector::List:
+        case CSSSelector::Hyphen:
+        case CSSSelector::Contain:
+        case CSSSelector::Begin:
+        case CSSSelector::End:
+        case CSSSelector::PagePseudoClass:
+        case CSSSelector::PseudoElement:
+            return true;
+        case CSSSelector::Unknown:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+
+        CSSSelector::Relation relation = selector->relation();
+        if (relation == CSSSelector::ShadowDescendant)
+            return true;
+
+        if (relation != CSSSelector::SubSelector)
+            return false;
+    }
+    return false;
+}
+
 bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
 {
     Element* const & element = context.element;
@@ -393,7 +447,8 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
                 return false;
 
             SelectorCheckingContext subContext(context);
-            subContext.isSubSelector = true;
+            subContext.inFunctionalPseudoClass = true;
+            subContext.firstSelectorOfTheFragment = selectorList->first();
             for (subContext.selector = selectorList->first(); subContext.selector; subContext.selector = subContext.selector->tagHistory()) {
                 if (subContext.selector->m_match == CSSSelector::PseudoClass) {
                     // :not cannot nest. I don't really know why this is a
@@ -582,9 +637,10 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
         case CSSSelector::PseudoClassAny:
             {
                 SelectorCheckingContext subContext(context);
-                subContext.isSubSelector = true;
+                subContext.inFunctionalPseudoClass = true;
                 PseudoId ignoreDynamicPseudo = NOPSEUDO;
                 for (subContext.selector = selector->selectorList()->first(); subContext.selector; subContext.selector = CSSSelectorList::next(subContext.selector)) {
+                    subContext.firstSelectorOfTheFragment = subContext.selector;
                     if (matchRecursively(subContext, ignoreDynamicPseudo) == SelectorMatches)
                         return true;
                 }
@@ -612,9 +668,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
         case CSSSelector::PseudoClassFocus:
             return matchesFocusPseudoClass(element);
         case CSSSelector::PseudoClassHover:
-            // If we're in quirks mode, then hover should never match anchors with no
-            // href and *:hover should not match anything. This is important for sites like wsj.com.
-            if (m_strictParsing || context.isSubSelector || element->isLink()) {
+            if (m_strictParsing || element->isLink() || canMatchHoverOrActiveInQuirksMode(context)) {
                 if (m_mode == ResolvingStyle) {
                     if (context.elementStyle)
                         context.elementStyle->setAffectedByHover();
@@ -626,9 +680,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             }
             break;
         case CSSSelector::PseudoClassActive:
-            // If we're in quirks mode, then :active should never match anchors with no
-            // href and *:active should not match anything.
-            if (m_strictParsing || context.isSubSelector || element->isLink()) {
+            if (m_strictParsing || element->isLink() || canMatchHoverOrActiveInQuirksMode(context)) {
                 if (m_mode == ResolvingStyle) {
                     if (context.elementStyle)
                         context.elementStyle->setAffectedByActive();
@@ -742,11 +794,12 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
 #if ENABLE(VIDEO_TRACK)
     else if (selector->m_match == CSSSelector::PseudoElement && selector->pseudoElementType() == CSSSelector::PseudoElementCue) {
         SelectorCheckingContext subContext(context);
-        subContext.isSubSelector = true;
 
         PseudoId ignoreDynamicPseudo = NOPSEUDO;
         const CSSSelector* const & selector = context.selector;
         for (subContext.selector = selector->selectorList()->first(); subContext.selector; subContext.selector = CSSSelectorList::next(subContext.selector)) {
+            subContext.firstSelectorOfTheFragment = subContext.selector;
+            subContext.inFunctionalPseudoClass = true;
             if (matchRecursively(subContext, ignoreDynamicPseudo) == SelectorMatches)
                 return true;
         }
