@@ -1,3 +1,17 @@
+2014-05-26  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r169122.
+        https://bugs.webkit.org/show_bug.cgi?id=133288
+
+        Broke CJK font fallback (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "[Mac] WebProcess doesn't follow localization of UI process
+        when run as a service"
+        https://bugs.webkit.org/show_bug.cgi?id=133126
+        http://trac.webkit.org/changeset/169122
+
 2014-05-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebProcess leaked when closing pages with network process enabled

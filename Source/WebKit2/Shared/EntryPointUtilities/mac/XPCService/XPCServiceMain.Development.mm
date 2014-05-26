@@ -31,22 +31,6 @@
 #import <stdlib.h>
 #import "XPCPtr.h"
 
-#if __has_include(<Foundation/NSPrivateDecls.h>)
-#import <Foundation/NSPrivateDecls.h>
-#endif
-
-#if __has_include(<xpc/private.h>)
-#import <xpc/private.h>
-#endif
-
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
-extern "C" xpc_object_t xpc_copy_bootstrap();
-#endif
-
-@interface NSUserDefaults (Details)
-- (void)setObject:(id)value forKey:(NSString *)defaultName inDomain:(NSString *)domain;
-@end
-
 namespace WebKit {
 
 struct ReexecInfo {
@@ -171,25 +155,12 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
     xpc_connection_resume(peer);
 }
 
-static void handleXPCBootstrap()
-{
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
-    auto bootstrapData = IPC::adoptXPC(xpc_copy_bootstrap());
-    const char* localization = xpc_dictionary_get_string(bootstrapData.get(), "localization");
-    if (localization) {
-        // Do this before calling xpc_main(), so that the preference is set before any CFBundle code runs.
-        [[NSUserDefaults standardUserDefaults] setObject:@[ [NSString stringWithUTF8String:localization] ] forKey:@"AppleLanguages" inDomain:NSArgumentDomain];
-    }
-#endif
-}
-
 } // namespace WebKit;
 
 using namespace WebKit;
 
 int main(int argc, char** argv)
 {
-    handleXPCBootstrap();
     xpc_main(XPCServiceEventHandler);
     return 0;
 }
