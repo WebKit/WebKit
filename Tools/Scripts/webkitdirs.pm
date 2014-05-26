@@ -380,8 +380,8 @@ sub argumentsForConfiguration()
     my @args = ();
     push(@args, '--debug') if ($configuration =~ "^Debug");
     push(@args, '--release') if ($configuration =~ "^Release");
-    push(@args, '--device') if ($xcodeSDK =~ /^iphoneos/);
-    push(@args, '--sim') if ($xcodeSDK =~ /^iphonesimulator/);
+    push(@args, '--device') if (defined $xcodeSDK && $xcodeSDK =~ /^iphoneos/);
+    push(@args, '--sim') if (defined $xcodeSDK && $xcodeSDK =~ /^iphonesimulator/);
     push(@args, '--32-bit') if ($architecture ne "x86_64" and !isWin64());
     push(@args, '--64-bit') if (isWin64());
     push(@args, '--gtk') if isGtk();
