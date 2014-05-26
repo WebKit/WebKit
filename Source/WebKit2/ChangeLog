@@ -1,3 +1,33 @@
+2014-05-25  Benjamin Poulain  <benjamin@webkit.org>
+
+        [iOS][WK2] Fix some state reset on crash on the WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=133039
+
+        Reviewed by Sam Weinig.
+
+        This is in no way complete, but this should reduce the undefined states on crash.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _processDidExit]):
+        If the view is animating, nuke the resize animation. That should be invisible to the user
+        because the background color is reset to white below.
+
+        Reset the contentView frame and scrollview state.
+
+        Reset the runtime states. We do not strictly need to reset _needsResetViewStateAfterCommitLoadForMainFrame,
+        _delayUpdateVisibleContentRects and _hadDelayedUpdateVisibleContentRects but it seems better to have
+        a clean slate.
+
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        (-[WKWebView _endAnimatedResize]):
+        We could have crashes during rotation. To simplify the reset code, the animated resize code
+        no longer change any state when WKWebView is using a custom content view.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::processDidExit):
+        Send a _processDidExit on the WKWebView too.
+
 2014-05-25  Anders Carlsson  <andersca@apple.com>
 
         Use the right paths for website data

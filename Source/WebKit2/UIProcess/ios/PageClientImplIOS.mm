@@ -145,6 +145,7 @@ bool PageClientImpl::isVisuallyIdle()
 void PageClientImpl::processDidExit()
 {
     [m_contentView _processDidExit];
+    [m_webView _processDidExit];
 }
 
 void PageClientImpl::didRelaunchProcess()

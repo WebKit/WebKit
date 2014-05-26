@@ -65,6 +65,8 @@ struct ViewSnapshot;
 
 @property (nonatomic, setter=_setUsesMinimalUI:) BOOL _usesMinimalUI;
 
+- (void)_processDidExit;
+
 - (void)_didCommitLoadForMainFrame;
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;
 

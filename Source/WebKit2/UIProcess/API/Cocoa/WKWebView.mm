@@ -554,6 +554,29 @@ static CGFloat contentZoomScale(WKWebView* webView)
     return _usesMinimalUI;
 }
 
+- (void)_processDidExit
+{
+    if (!_customContentView && _isAnimatingResize) {
+        NSUInteger indexOfResizeAnimationView = [[_scrollView subviews] indexOfObject:_resizeAnimationView.get()];
+        [_scrollView insertSubview:_contentView.get() atIndex:indexOfResizeAnimationView];
+        [_resizeAnimationView removeFromSuperview];
+        _resizeAnimationView = nil;
+
+        _isAnimatingResize = NO;
+        _resizeAnimationTransformAdjustments = CATransform3DIdentity;
+    }
+    [_contentView setFrame:self.bounds];
+    [_scrollView setBackgroundColor:[UIColor whiteColor]];
+    [_scrollView setContentOffset:CGPointMake(-_obscuredInsets.left, -_obscuredInsets.top)];
+    [_scrollView setZoomScale:1];
+
+    _viewportMetaTagWidth = -1;
+    _needsResetViewStateAfterCommitLoadForMainFrame = NO;
+    _scrollViewBackgroundColor = WebCore::Color();
+    _delayUpdateVisibleContentRects = NO;
+    _hadDelayedUpdateVisibleContentRects = NO;
+}
+
 - (void)_didCommitLoadForMainFrame
 {
     _needsResetViewStateAfterCommitLoadForMainFrame = YES;
@@ -1662,6 +1685,12 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (void)_beginAnimatedResizeWithUpdates:(void (^)(void))updateBlock
 {
     _isAnimatingResize = YES;
+
+    if (_customContentView) {
+        updateBlock();
+        return;
+    }
+
     _resizeAnimationTransformAdjustments = CATransform3DIdentity;
 
     NSUInteger indexOfContentView = [[_scrollView subviews] indexOfObject:_contentView.get()];
@@ -1671,9 +1700,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     WebCore::FloatRect oldUnobscuredContentRect = _page->unobscuredContentRect();
 
     updateBlock();
-
-    if (_customContentView)
-        return;
 
     CGRect newBounds = self.bounds;
     CGSize newMinimumLayoutSize = newBounds.size;
@@ -1740,7 +1766,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_endAnimatedResize
 {
-    if (!_customContentView) {
+    if (!_customContentView && _isAnimatingResize) {
         NSUInteger indexOfResizeAnimationView = [[_scrollView subviews] indexOfObject:_resizeAnimationView.get()];
         [_scrollView insertSubview:_contentView.get() atIndex:indexOfResizeAnimationView];
 
