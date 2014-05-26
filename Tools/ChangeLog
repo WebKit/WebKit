@@ -1,3 +1,12 @@
+2014-05-26  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL] Turn on ENABLE_CSS_FILTERS in build script
+        https://bugs.webkit.org/show_bug.cgi?id=133278
+
+        Reviewed by Gyuyoung Kim.
+
+        * Scripts/webkitperl/FeatureList.pm: Add a build script condition missing in r169172.
+
 2014-05-26  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         run-javascriptcore-tests warning fix on non Mac platforms
