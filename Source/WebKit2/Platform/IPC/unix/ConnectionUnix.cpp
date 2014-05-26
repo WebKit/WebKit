@@ -541,18 +541,22 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<MessageEncoder> encoder)
     return true;
 }
 
-Connection::SocketPair Connection::createPlatformConnection()
+Connection::SocketPair Connection::createPlatformConnection(unsigned options)
 {
     int sockets[2];
     RELEASE_ASSERT(socketpair(AF_UNIX, SOCKET_TYPE, 0, sockets) != -1);
 
-    // Don't expose the child socket to the parent process.
-    while (fcntl(sockets[1], F_SETFD, FD_CLOEXEC)  == -1)
-        RELEASE_ASSERT(errno != EINTR);
+    if (options & SetCloexecOnServer) {
+        // Don't expose the child socket to the parent process.
+        while (fcntl(sockets[1], F_SETFD, FD_CLOEXEC)  == -1)
+            RELEASE_ASSERT(errno != EINTR);
+    }
 
-    // Don't expose the parent socket to potential future children.
-    while (fcntl(sockets[0], F_SETFD, FD_CLOEXEC) == -1)
-        RELEASE_ASSERT(errno != EINTR);
+    if (options & SetCloexecOnClient) {
+        // Don't expose the parent socket to potential future children.
+        while (fcntl(sockets[0], F_SETFD, FD_CLOEXEC) == -1)
+            RELEASE_ASSERT(errno != EINTR);
+    }
 
     SocketPair socketPair = { sockets[0], sockets[1] };
     return socketPair;
