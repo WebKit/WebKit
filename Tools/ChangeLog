@@ -1,3 +1,15 @@
+2014-05-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r166798): [GTK] [EFL] kill-old-processes should not kill dbus-daemon
+        https://bugs.webkit.org/show_bug.cgi?id=133215
+
+        Reviewed by Csaba Osztrogonác.
+
+        This reverts r166798.
+
+        * BuildSlaveSupport/kill-old-processes:
+        (main):
+
 2014-05-26  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL] Turn on ENABLE_CSS_FILTERS in build script
