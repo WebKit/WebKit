@@ -33,8 +33,8 @@ class TiledBackingStoreBackend {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~TiledBackingStoreBackend() { }
-    virtual PassRefPtr<Tile> createTile(TiledBackingStore*, const Tile::Coordinate&);
-    virtual void paintCheckerPattern(GraphicsContext*, const FloatRect&);
+    virtual PassRefPtr<Tile> createTile(TiledBackingStore*, const Tile::Coordinate&) = 0;
+    virtual void paintCheckerPattern(GraphicsContext*, const FloatRect&) = 0;
 };
 
 }

@@ -114,8 +114,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cairo/PlatformContextCairo.cpp
     platform/graphics/cairo/PlatformPathCairo.cpp
     platform/graphics/cairo/RefPtrCairo.cpp
-    platform/graphics/cairo/TileCairo.cpp
-    platform/graphics/cairo/TiledBackingStoreBackendCairo.cpp
     platform/graphics/cairo/TransformationMatrixCairo.cpp
 
     platform/graphics/efl/CairoUtilitiesEfl.cpp

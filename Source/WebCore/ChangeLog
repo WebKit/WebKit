@@ -1,3 +1,26 @@
+2014-05-25  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Remove TileCairo and TiledBackingStoreBackendCairo
+        https://bugs.webkit.org/show_bug.cgi?id=133274
+
+        Reviewed by Gyuyoung Kim.
+
+        Now, TiledBackingStore is only used for CoordinatedGraphics and the EFL port.
+        CoordinatedGraphics does not use TileCairo and TiledBackingStoreBackendCairo.
+
+        This patch removed them and refactored related files.
+
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::TiledBackingStore): Deleted.
+        * platform/graphics/TiledBackingStore.h:
+        * platform/graphics/TiledBackingStoreBackend.h:
+        * platform/graphics/cairo/TileCairo.cpp: Removed.
+        * platform/graphics/cairo/TiledBackingStoreBackendCairo.cpp: Removed.
+
 2014-05-25  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         setData() of DataTransfer has a void return type

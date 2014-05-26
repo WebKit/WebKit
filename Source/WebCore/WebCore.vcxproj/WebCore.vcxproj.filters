@@ -6955,12 +6955,6 @@
     <ClCompile Include="..\page\scrolling\ScrollingTreeScrollingNode.cpp">
       <Filter>page\scrolling</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\cairo\TileCairo.cpp">
-      <Filter>platform\graphics\cairo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\cairo\TiledBackingStoreBackendCairo.cpp">
-      <Filter>platform\graphics\cairo</Filter>
-    </ClCompile>
     <ClCompile Include="..\rendering\SelectionSubtreeRoot.cpp">
       <Filter>rendering</Filter>
     </ClCompile>

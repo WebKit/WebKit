@@ -41,7 +41,6 @@ class TiledBackingStoreClient;
 class TiledBackingStore {
     WTF_MAKE_NONCOPYABLE(TiledBackingStore); WTF_MAKE_FAST_ALLOCATED;
 public:
-    TiledBackingStore(TiledBackingStoreClient*);
     TiledBackingStore(TiledBackingStoreClient*, std::unique_ptr<TiledBackingStoreBackend>);
     ~TiledBackingStore();
 
