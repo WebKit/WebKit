@@ -1,3 +1,31 @@
+2014-05-20  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Children of grid containers must be turned into grid items
+        https://bugs.webkit.org/show_bug.cgi?id=132991
+
+        Reviewed by Darin Adler.
+
+        From Blink r150472 by <jchaffraix@chromium.org>
+
+        Added a new test case to verify the computed value for 'display'
+        in grid items. The test also checks that items are correctly
+        positioned inside the grid, i.e., they properly became grid
+        items.
+
+        Also removed ietestcenter's grid-items-002.html and
+        grid-items-003.html from the list of failing tests as they should
+        be working now.
+
+        * fast/css-grid-layout/grid-item-display-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-display.html: Added.
+        * ietestcenter/css3/grid/grid-items-002.htm: Fixed a typo and
+        replaced -webkit-grid-definition-* by -webkit-grid-template-*
+        * ietestcenter/css3/grid/grid-items-003.htm: Ditto.
+        * platform/efl/TestExpectations: Removed the two tests above.
+        * platform/gtk/TestExpectations: Ditto.
+        * platform/mac/TestExpectations: Ditto.
+        * platform/win/TestExpectations: Ditto.
+
 2014-05-25  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         setData() of DataTransfer has a void return type

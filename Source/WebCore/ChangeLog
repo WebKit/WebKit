@@ -1,3 +1,29 @@
+2014-05-20  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Children of grid containers must be turned into grid items
+        https://bugs.webkit.org/show_bug.cgi?id=132991
+
+        Reviewed by Darin Adler.
+
+        From Blink r150472 by <jchaffraix@chromium.org>
+
+        According to specs each child of a grid container must become a
+        grid item meaning that grid items are grid level boxes and thus,
+        do not participate in the block formatting context but in the grid
+        formatting one.
+
+        This change updates the grid items' 'display' property after style
+        resolution so that we match the specification (see section 4. Grid
+        Items). The spec basically instructs us to compute the value of
+        'display' by applying the table in CSS2.1 Chapter 9.7
+        http://www.w3.org/TR/CSS2/visuren.html#dis-pos-flo
+
+        Test: fast/css-grid-layout/grid-item-display.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::isDisplayGridBox):
+        (WebCore::StyleResolver::adjustRenderStyle):
+
 2014-05-26  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove Vector copies in ShorthandPropertyWrapper implementation and use

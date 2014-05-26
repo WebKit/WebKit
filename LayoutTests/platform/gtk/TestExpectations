@@ -1526,9 +1526,6 @@ webkit.org/b/74282 editing/pasteboard/emacs-ctrl-k-with-move.html [ Failure ]
 
 webkit.org/b/81320 editing/pasteboard/copy-two-pasteboard-types-both-work.html [ Failure ]
 
-webkit.org/b/83912 ietestcenter/css3/grid/grid-items-002.htm [ ImageOnlyFailure ]
-webkit.org/b/83913 ietestcenter/css3/grid/grid-items-003.htm [ ImageOnlyFailure ]
-
 webkit.org/b/86971 svg/custom/non-scaling-stroke.svg [ Failure ]
 
 webkit.org/b/84679 css3/zoom-coords.xhtml [ Failure ]

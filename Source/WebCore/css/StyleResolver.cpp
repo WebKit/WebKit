@@ -1109,6 +1109,15 @@ static bool isDisplayFlexibleBox(EDisplay display)
     return display == FLEX || display == INLINE_FLEX;
 }
 
+static inline bool isDisplayGridBox(EDisplay display)
+{
+#if ENABLE(CSS_GRID_LAYOUT)
+    return display == GRID || display == INLINE_GRID;
+#else
+    return false;
+#endif
+}
+
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
 static bool isScrollableOverflow(EOverflow overflow)
 {
@@ -1201,7 +1210,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         if (style.writingMode() != TopToBottomWritingMode && (style.display() == BOX || style.display() == INLINE_BOX))
             style.setWritingMode(TopToBottomWritingMode);
 
-        if (isDisplayFlexibleBox(parentStyle.display())) {
+        if (isDisplayFlexibleBox(parentStyle.display()) || isDisplayGridBox(parentStyle.display())) {
             style.setFloating(NoFloat);
             style.setDisplay(equivalentBlockDisplay(style.display(), style.isFloating(), !document().inQuirksMode()));
         }
