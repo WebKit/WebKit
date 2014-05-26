@@ -170,6 +170,7 @@ private:
     int m_mediaLocationCurrentIndex;
     bool m_resetPipeline;
     bool m_paused;
+    bool m_playbackRatePause;
     bool m_seeking;
     bool m_seekIsPending;
     float m_timeOfOverlappingSeek;
