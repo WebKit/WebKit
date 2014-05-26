@@ -422,6 +422,7 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     
     LLINT_RETURN_TWO(jumpTarget, exec->topOfFrame());
 #else // ENABLE(JIT)
+    UNUSED_PARAM(pc);
     codeBlock->dontJITAnytimeSoon();
     LLINT_RETURN_TWO(0, 0);
 #endif // ENABLE(JIT)

@@ -1,3 +1,13 @@
+2014-05-26  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        JSC CLoop warning fix
+        https://bugs.webkit.org/show_bug.cgi?id=133259
+
+        Reviewed by Darin Adler.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+
 2014-05-24  Andreas Kling  <akling@apple.com>
 
         Object.prototype.toString() should use cached strings for null/undefined.
