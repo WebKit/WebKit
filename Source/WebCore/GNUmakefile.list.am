@@ -6281,9 +6281,12 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/win/GraphicsContextCairoWin.cpp \
 	Source/WebCore/platform/graphics/win/GraphicsContextWin.cpp \
 	Source/WebCore/platform/graphics/win/LocalWindowsContext.h \
+	Source/WebCore/platform/graphics/win/SharedGDIObject.h \
 	Source/WebCore/platform/graphics/win/TransformationMatrixWin.cpp \
 	Source/WebCore/platform/win/BitmapInfo.cpp \
 	Source/WebCore/platform/win/BitmapInfo.h \
+	Source/WebCore/platform/win/GDIObjectCounter.cpp \
+	Source/WebCore/platform/win/GDIObjectCounter.h \
 	Source/WebCore/platform/win/SystemInfo.cpp \
 	Source/WebCore/platform/win/SystemInfo.h \
 	Source/WebCore/platform/win/WebCoreInstanceHandle.cpp \

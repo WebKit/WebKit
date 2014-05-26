@@ -1,3 +1,15 @@
+2014-05-25  Milan Crha  <mcrha@redhat.com>
+
+        [Stable] [GTK] GdiObject.h missing in WebKitGTK 2.4.1 tarball
+        https://bugs.webkit.org/show_bug.cgi?id=132814
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add missing files and includes to fix the mingw32 build.
+
+        * GNUmakefile.list.am:
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+
 2014-05-22  Piotr Grad  <p.grad@samsung.com>
 
         Video is resumed with old playback rate.
