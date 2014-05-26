@@ -1,3 +1,48 @@
+2014-05-25  Anders Carlsson  <andersca@apple.com>
+
+        Initialize WKWebViewConfiguration ivars lazily
+        https://bugs.webkit.org/show_bug.cgi?id=133270
+        <rdar://problem/17027606>
+
+        Reviewed by Sam Weinig.
+
+        Create a LazyInitialized class template and use it to lazily initialize WKWebViewConfiguration properties.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (LazyInitialized::get):
+        Initialize m_value with the given function if it hasn't been initialized already.
+
+        (LazyInitialized::set):
+        Update m_value and set m_isInitialized to true.
+
+        (LazyInitialized::peek):
+        Return m_value without initializing it.
+
+        (-[WKWebViewConfiguration description]):
+        Use getters so we'll initialize variables if needed.
+
+        (-[WKWebViewConfiguration copyWithZone:]):
+        Ditto.
+
+        (-[WKWebViewConfiguration processPool]):
+        (-[WKWebViewConfiguration setProcessPool:]):
+        (-[WKWebViewConfiguration preferences]):
+        (-[WKWebViewConfiguration setPreferences:]):
+        (-[WKWebViewConfiguration userContentController]):
+        (-[WKWebViewConfiguration setUserContentController:]):
+        (-[WKWebViewConfiguration _visitedLinkProvider]):
+        (-[WKWebViewConfiguration _setVisitedLinkProvider:]):
+        (-[WKWebViewConfiguration _websiteDataStore]):
+        (-[WKWebViewConfiguration _setWebsiteDataStore:]):
+        (-[WKWebViewConfiguration _contentProviderRegistry]):
+        (-[WKWebViewConfiguration _setContentProviderRegistry:]):
+        Pass initialization code to all getters.
+
+        (-[WKWebViewConfiguration _validate]):
+        Use getters.
+
+        (-[WKWebViewConfiguration init]): Deleted.
+
 2014-05-26  Martin Hodovan  <mhodovan.u-szeged@partner.samsung.com>
 
         Remove WebKit2 framework from generate-forwarding-headers.pl

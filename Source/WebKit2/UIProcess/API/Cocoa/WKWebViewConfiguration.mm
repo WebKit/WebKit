@@ -37,54 +37,65 @@
 #import "_WKWebsiteDataStore.h"
 #import <wtf/RetainPtr.h>
 
+template<typename T> class LazyInitialized {
+public:
+    template<typename F>
+    T* get(F&& f)
+    {
+        if (!m_isInitialized) {
+            m_value = f();
+            m_isInitialized = true;
+        }
+
+        return m_value.get();
+    }
+
+    void set(T* t)
+    {
+        m_value = t;
+        m_isInitialized = true;
+    }
+
+    T* peek()
+    {
+        return m_value.get();
+    }
+
+private:
+    bool m_isInitialized = false;
+    RetainPtr<T> m_value;
+};
+
 @implementation WKWebViewConfiguration {
-    RetainPtr<WKProcessPool> _processPool;
-    RetainPtr<WKPreferences> _preferences;
-    RetainPtr<WKUserContentController> _userContentController;
-    RetainPtr<_WKVisitedLinkProvider> _visitedLinkProvider;
-    RetainPtr<_WKWebsiteDataStore> _websiteDataStore;
+    LazyInitialized<WKProcessPool> _processPool;
+    LazyInitialized<WKPreferences> _preferences;
+    LazyInitialized<WKUserContentController> _userContentController;
+    LazyInitialized<_WKVisitedLinkProvider> _visitedLinkProvider;
+    LazyInitialized<_WKWebsiteDataStore> _websiteDataStore;
     WebKit::WeakObjCPtr<WKWebView> _relatedWebView;
     RetainPtr<NSString> _groupIdentifier;
 #if PLATFORM(IOS)
-    RetainPtr<WKWebViewContentProviderRegistry> _contentProviderRegistry;
+    LazyInitialized<WKWebViewContentProviderRegistry> _contentProviderRegistry;
 #endif
-}
-
-- (instancetype)init
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _processPool = adoptNS([[WKProcessPool alloc] init]);
-    _preferences = adoptNS([[WKPreferences alloc] init]);
-    _userContentController = adoptNS([[WKUserContentController alloc] init]);
-    _visitedLinkProvider = adoptNS([[_WKVisitedLinkProvider alloc] init]);
-    _websiteDataStore = [_WKWebsiteDataStore defaultDataStore];
-
-#if PLATFORM(IOS)
-    _contentProviderRegistry = adoptNS([[WKWebViewContentProviderRegistry alloc] init]);
-#endif
-
-    return self;
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@: %p; processPool = %@; preferences = %@>", NSStringFromClass(self.class), self, _processPool.get(), _preferences.get()];
+    return [NSString stringWithFormat:@"<%@: %p; processPool = %@; preferences = %@>", NSStringFromClass(self.class), self, self.processPool, self.preferences];
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
     WKWebViewConfiguration *configuration = [[[self class] allocWithZone:zone] init];
 
-    configuration.processPool = _processPool.get();
-    configuration.preferences = _preferences.get();
-    configuration.userContentController = _userContentController.get();
-    configuration._visitedLinkProvider = _visitedLinkProvider.get();
-    configuration._websiteDataStore = _websiteDataStore.get();
+    configuration.processPool = self.processPool;
+    configuration.preferences = self.preferences;
+    configuration.userContentController = self.userContentController;
+    configuration._visitedLinkProvider = self._visitedLinkProvider;
+    configuration._websiteDataStore = self._websiteDataStore;
     configuration._relatedWebView = _relatedWebView.get().get();
 #if PLATFORM(IOS)
-    configuration._contentProviderRegistry = _contentProviderRegistry.get();
+    configuration._contentProviderRegistry = self._contentProviderRegistry;
 #endif
 
     return configuration;
@@ -92,85 +103,85 @@
 
 - (WKProcessPool *)processPool
 {
-    return _processPool.get();
+    return _processPool.get([] { return adoptNS([[WKProcessPool alloc] init]); });
 }
 
 - (void)setProcessPool:(WKProcessPool *)processPool
 {
-    _processPool = processPool;
+    _processPool.set(processPool);
 }
 
 - (WKPreferences *)preferences
 {
-    return _preferences.get();
+    return _preferences.get([] { return adoptNS([[WKPreferences alloc] init]); });
 }
 
 - (void)setPreferences:(WKPreferences *)preferences
 {
-    _preferences = preferences;
+    _preferences.set(preferences);
 }
 
 - (WKUserContentController *)userContentController
 {
-    return _userContentController.get();
+    return _userContentController.get([] { return adoptNS([[WKUserContentController alloc] init]); });
 }
 
 - (void)setUserContentController:(WKUserContentController *)userContentController
 {
-    _userContentController = userContentController;
+    _userContentController.set(userContentController);
 }
 
 - (_WKVisitedLinkProvider *)_visitedLinkProvider
 {
-    return _visitedLinkProvider.get();
+    return _visitedLinkProvider.get([] { return adoptNS([[_WKVisitedLinkProvider alloc] init]); });
 }
 
 - (void)_setVisitedLinkProvider:(_WKVisitedLinkProvider *)visitedLinkProvider
 {
-    _visitedLinkProvider = visitedLinkProvider;
+    _visitedLinkProvider.set(visitedLinkProvider);
 }
 
 - (_WKWebsiteDataStore *)_websiteDataStore
 {
-    return _websiteDataStore.get();
+    return _websiteDataStore.get([] { return [_WKWebsiteDataStore defaultDataStore]; });
 }
 
 - (void)_setWebsiteDataStore:(_WKWebsiteDataStore *)websiteDataStore
 {
-    _websiteDataStore = websiteDataStore;
+    _websiteDataStore.set(websiteDataStore);
 }
 
 #if PLATFORM(IOS)
 - (WKWebViewContentProviderRegistry *)_contentProviderRegistry
 {
-    return _contentProviderRegistry.get();
+    return _contentProviderRegistry.get([] { return adoptNS([[WKWebViewContentProviderRegistry alloc] init]); });
 }
 
 - (void)_setContentProviderRegistry:(WKWebViewContentProviderRegistry *)registry
 {
-    _contentProviderRegistry = registry;
+    _contentProviderRegistry.set(registry);
 }
 #endif
 
 - (void)_validate
 {
-    if (!_processPool)
+    if (!self.processPool)
         [NSException raise:NSInvalidArgumentException format:@"configuration.processPool is nil"];
 
-    if (!_preferences)
+    if (!self.preferences)
         [NSException raise:NSInvalidArgumentException format:@"configuration.preferences is nil"];
 
-    if (!_userContentController)
+    if (!self.userContentController)
         [NSException raise:NSInvalidArgumentException format:@"configuration.userContentController is nil"];
 
-    if (!_visitedLinkProvider)
+    if (!self._visitedLinkProvider)
         [NSException raise:NSInvalidArgumentException format:@"configuration._visitedLinkProvider is nil"];
 
-    if (!_websiteDataStore)
+    if (!self._websiteDataStore)
         [NSException raise:NSInvalidArgumentException format:@"configuration._websiteDataStore is nil"];
 
 #if PLATFORM(IOS)
-    if (!_contentProviderRegistry)
+    if (!self._contentProviderRegistry)
         [NSException raise:NSInvalidArgumentException format:@"configuration._contentProviderRegistry is nil"];
 #endif
 }
