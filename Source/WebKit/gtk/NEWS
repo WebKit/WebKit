@@ -1,4 +1,18 @@
 =================
+WebKitGTK+  2.4.3
+=================
+
+What's new in WebKitGTK+ 2.4.3?
+
+  - Fix video playback rate used when resuming in GStreamer media backend.
+  - Use GstMetaVideo as announced by WebKitVideoSink to fix some
+    decoders and filters that rely on buffer's meta rather that in the
+    caps structures.
+  - Do not pass a valid pointer as redirected-response parameter to
+    WebKitWebPage::send-request signal when not redirecting.
+  - Add missing files to the build required for building in Windows.
+
+=================
 WebKitGTK+  2.4.2
 =================
 
