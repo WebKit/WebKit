@@ -489,6 +489,12 @@ class Driver(object):
         block.decode_content()
         return block
 
+    @staticmethod
+    def check_driver(port):
+        # This checks if the required system dependencies for the driver are met.
+        # Since this is the generic class implementation, just return True.
+        return True
+
 
 class ContentBlock(object):
     def __init__(self):

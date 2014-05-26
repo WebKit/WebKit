@@ -37,6 +37,7 @@ from webkitpy.port.base import Port
 from webkitpy.port.pulseaudio_sanitizer import PulseAudioSanitizer
 from webkitpy.port.xvfbdriver import XvfbDriver
 from webkitpy.port.westondriver import WestonDriver
+from webkitpy.port.xorgdriver import XorgDriver
 from webkitpy.port.linux_get_crash_log import GDBCrashLogGenerator
 from webkitpy.port.leakdetector_valgrind import LeakDetectorValgrind
 
@@ -69,6 +70,8 @@ class GtkPort(Port):
     def _driver_class(self):
         if os.environ.get("WAYLAND_DISPLAY"):
             return WestonDriver
+        if os.environ.get("USE_NATIVE_XDISPLAY"):
+            return XorgDriver
         return XvfbDriver
 
     def default_timeout_ms(self):

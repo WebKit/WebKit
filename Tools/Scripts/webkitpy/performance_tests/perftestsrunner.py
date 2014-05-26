@@ -178,6 +178,12 @@ class PerfTestsRunner(object):
             _log.error("Build not up to date for %s" % self._port._path_to_driver())
             return self.EXIT_CODE_BAD_BUILD
 
+        # Check that the system dependencies (themes, fonts, ...) are correct.
+        if not self._port.check_sys_deps(needs_http=False):
+            _log.error("Failed to check system dependencies.")
+            self._port.stop_helper()
+            return self.EXIT_CODE_BAD_PREPARATION
+
         run_count = 0
         repeat = self._options.repeat
         while (run_count < repeat):

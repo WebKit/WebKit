@@ -1,5 +1,42 @@
 2014-05-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [GTK] Allow to run the tests on the native X display.
+        https://bugs.webkit.org/show_bug.cgi?id=133157
+
+        Reviewed by Benjamin Poulain.
+
+        This adds a new driver (xorgdriver) that runs the tests on the
+        X display referenced by the environment variable DISPLAY.
+
+        This new driver will be activated only if the environment variable
+        USE_NATIVE_XDISPLAY is defined. This can be used both for layout
+        tests and performance tests.
+
+        This patch also makes the script run-perf-tests to check the
+        system dependencies before starting the tests. Previously this
+        was not checked, and if the system dependencies were not met,
+        the script tried to execute the tests anyway, causing massive
+        failures. For example, if you had Xvfb not installed and you
+        wanted to use the Xvfb driver (the default on GTK and EFL),
+        run-perf-tests would not abort.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args): Check the system dependencies of
+        the driver before starting the tests.
+        * Scripts/webkitpy/port/driver.py:
+        (Driver): Implement generic check_driver method.
+        (Driver.check_driver):
+        (Driver.check_driver.implementation):
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort._driver_class): Check for environment variable
+        USE_NATIVE_XDISPLAY to decide if the Xorg driver should be used.
+        * Scripts/webkitpy/port/xorgdriver.py: Added.
+        (XorgDriver): Implement Xorg driver.
+        (XorgDriver.check_driver):
+        (XorgDriver._start):
+
+2014-05-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         REGRESSION(r166798): [GTK] [EFL] kill-old-processes should not kill dbus-daemon
         https://bugs.webkit.org/show_bug.cgi?id=133215
 
