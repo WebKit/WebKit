@@ -310,6 +310,7 @@ class TestImporter(object):
                 os.makedirs(new_path)
 
             copied_files = []
+            failed_conversion_files = []
 
             for file_to_copy in dir_to_copy['copy_list']:
                 # FIXME: Split this block into a separate function.
@@ -342,7 +343,11 @@ class TestImporter(object):
                 # FIXME: Eventually, so should js when support is added for this type of conversion
                 mimetype = mimetypes.guess_type(orig_filepath)
                 if 'html' in str(mimetype[0]) or 'xml' in str(mimetype[0])  or 'css' in str(mimetype[0]):
-                    converted_file = convert_for_webkit(new_path, filename=orig_filepath)
+                    try:
+                        converted_file = convert_for_webkit(new_path, filename=orig_filepath)
+                    except:
+                        _log.warn('Failed converting %s', orig_filepath)
+                        failed_conversion_files.append(orig_filepath)
 
                     if not converted_file:
                         shutil.copyfile(orig_filepath, new_filepath)  # The file was unmodified.
@@ -369,8 +374,11 @@ class TestImporter(object):
         _log.info('Imported %d reftests', total_imported_reftests)
         _log.info('Imported %d JS tests', total_imported_jstests)
         _log.info('Imported %d pixel/manual tests', total_imported_tests - total_imported_jstests - total_imported_reftests)
+        if len(failed_conversion_files):
+            _log.warn('Failed converting %d files (files copied without being converted)', len(failed_conversion_files))
         _log.info('')
         _log.info('Properties needing prefixes (by count):')
+
         for prefixed_property in sorted(total_prefixed_properties, key=lambda p: total_prefixed_properties[p]):
             _log.info('  %s: %s', prefixed_property, total_prefixed_properties[prefixed_property])
 

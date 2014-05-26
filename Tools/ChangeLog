@@ -1,3 +1,18 @@
+2014-05-26  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        W3C test importer should catch exceptions coming from HTML/CSS conversion
+        https://bugs.webkit.org/show_bug.cgi?id=133176
+
+        Reviewed by Darin Adler.
+
+        Exceptions raised when converting HTML/CSS are caught.
+        Files for which conversion failed are still copied to the target directory.
+        Each individual conversion failure is logged.
+        Total conversion failure number is logged at the end of the import process.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.import_tests):
+
 2014-05-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Allow to run the tests on the native X display.
