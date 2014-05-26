@@ -1,3 +1,14 @@
+2014-05-26  Tanay C  <tanay.c@samsung.com>
+
+        [EFL] Fix build error in blob.cpp after r168435
+        https://bugs.webkit.org/show_bug.cgi?id=132678
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::size): Using isInBound to check range of local var
+        actualsize to resolve build error
+
 2014-05-25  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Remove TileCairo and TiledBackingStoreBackendCairo
