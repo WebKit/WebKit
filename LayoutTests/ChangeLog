@@ -1,3 +1,12 @@
+2014-05-26  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL] Input fields and text areas are not rendered correctly after r167771
+        https://bugs.webkit.org/show_bug.cgi?id=133181
+
+        Reviewed by Gyuyoung Kim.
+
+        * platform/efl-wk2/TestExpectations: Remove now passing test from test expectations.
+
 2014-05-20  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Children of grid containers must be turned into grid items

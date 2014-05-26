@@ -559,5 +559,3 @@ webkit.org/b/131987 fast/layers/hidpi-box-positioned-off-by-one-when-transform-i
 webkit.org/b/131987 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]
 
 webkit.org/b/132049 fast/css3-text/css3-text-decoration/text-decoration-skip/glyph-inside-underline.html [ ImageOnlyFailure ]
-
-webkit.org/b/133181 fast/forms/textarea-placeholder-wrapping.html [ ImageOnlyFailure ]

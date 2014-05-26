@@ -878,16 +878,16 @@ void RenderThemeEfl::adjustTextFieldStyle(StyleResolver* styleResolver, RenderSt
     style->resetBorder();
 }
 
-bool RenderThemeEfl::paintTextField(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintTextField(const RenderObject& object, const PaintInfo& info, const FloatRect& rect)
 {
-    return paintThemePart(object, TextField, info, rect);
+    return paintThemePart(object, TextField, info, IntRect(rect));
 }
 
 void RenderThemeEfl::adjustTextAreaStyle(StyleResolver*, RenderStyle*, Element*) const
 {
 }
 
-bool RenderThemeEfl::paintTextArea(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintTextArea(const RenderObject& object, const PaintInfo& info, const FloatRect& rect)
 {
     return paintTextField(object, info, rect);
 }
