@@ -1,3 +1,17 @@
+2014-05-26  Zalan Bujtas  <zalan@apple.com>
+
+        Split the call to adjustForLocalZoom out into a separate expression.
+        https://bugs.webkit.org/show_bug.cgi?id=133286
+
+        Reviewed by Darin Adler.
+
+        This patch ensures that adjustForLocalZoom() always gets called before we look at
+        zoomFactor's value. (and not rely on the undefined behavior of the order of function argument evaluation)
+
+        * dom/Element.cpp:
+        (WebCore::Element::offsetLeft):
+        (WebCore::Element::offsetTop):
+
 2014-05-26  Darin Adler  <darin@apple.com>
 
         Class name matching should use ASCII case-insensitive matching, not Unicode case folding

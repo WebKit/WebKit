@@ -671,7 +671,8 @@ double Element::offsetLeft()
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
         double zoomFactor = 1;
-        return convertToNonSubpixelValueIfNeeded(adjustForLocalZoom(renderer->offsetLeft(), *renderer, zoomFactor), renderer->document(), zoomFactor == 1 ? Floor : Round);
+        double offsetLeftValue = adjustForLocalZoom(renderer->offsetLeft(), *renderer, zoomFactor);
+        return convertToNonSubpixelValueIfNeeded(offsetLeftValue, renderer->document(), zoomFactor == 1 ? Floor : Round);
     }
     return 0;
 }
@@ -681,7 +682,8 @@ double Element::offsetTop()
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
         double zoomFactor = 1;
-        return convertToNonSubpixelValueIfNeeded(adjustForLocalZoom(renderer->offsetTop(), *renderer, zoomFactor), renderer->document(), zoomFactor == 1 ? Floor : Round);
+        double offsetTopValue = adjustForLocalZoom(renderer->offsetTop(), *renderer, zoomFactor);
+        return convertToNonSubpixelValueIfNeeded(offsetTopValue, renderer->document(), zoomFactor == 1 ? Floor : Round);
     }
     return 0;
 }
