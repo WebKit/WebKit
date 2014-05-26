@@ -1,3 +1,19 @@
+2014-05-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove Vector copies in ShorthandPropertyWrapper implementation and use
+        https://bugs.webkit.org/show_bug.cgi?id=133265
+
+        Reviewed by Simon Fraser.
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::ShorthandPropertyWrapper::ShorthandPropertyWrapper): Move the passed-in Vector
+        into the member variable instead of using Vector<>::swap().
+        (WebCore::ShorthandPropertyWrapper::propertyWrappers): Return a const reference of the member
+        variable instead of a const value.
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap): Move the Vector
+        object into the ShorthandProperthyWrapper constructor.
+        (WebCore::gatherEnclosingShorthandProperties): Deploy a range-based for-loop.
+
 2014-05-26  Tanay C  <tanay.c@samsung.com>
 
         [EFL] Fix build error in blob.cpp after r168435

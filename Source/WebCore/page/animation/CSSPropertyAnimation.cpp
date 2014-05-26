@@ -960,8 +960,8 @@ class ShorthandPropertyWrapper : public AnimationPropertyWrapperBase {
 public:
     ShorthandPropertyWrapper(CSSPropertyID property, Vector<AnimationPropertyWrapperBase*> longhandWrappers)
         : AnimationPropertyWrapperBase(property)
+        , m_propertyWrappers(std::move(longhandWrappers))
     {
-        m_propertyWrappers.swap(longhandWrappers);
     }
 
     virtual bool isShorthandWrapper() const { return true; }
@@ -983,7 +983,7 @@ public:
             (*it)->blend(anim, dst, a, b, progress);
     }
 
-    const Vector<AnimationPropertyWrapperBase*> propertyWrappers() const { return m_propertyWrappers; }
+    const Vector<AnimationPropertyWrapperBase*>& propertyWrappers() const { return m_propertyWrappers; }
 
 private:
     Vector<AnimationPropertyWrapperBase*> m_propertyWrappers;
@@ -1335,7 +1335,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
             longhandWrappers.uncheckedAppend(m_propertyWrappers[wrapperIndex].get());
         }
 
-        m_propertyWrappers.uncheckedAppend(std::make_unique<ShorthandPropertyWrapper>(propertyID, longhandWrappers));
+        m_propertyWrappers.uncheckedAppend(std::make_unique<ShorthandPropertyWrapper>(propertyID, std::move(longhandWrappers)));
         indexFromPropertyID(propertyID) = animatableLonghandPropertiesCount + i;
     }
 }
@@ -1346,11 +1346,8 @@ static bool gatherEnclosingShorthandProperties(CSSPropertyID property, Animation
         return false;
 
     ShorthandPropertyWrapper* shorthandWrapper = static_cast<ShorthandPropertyWrapper*>(wrapper);
-
     bool contained = false;
-    for (size_t i = 0; i < shorthandWrapper->propertyWrappers().size(); ++i) {
-        AnimationPropertyWrapperBase* currWrapper = shorthandWrapper->propertyWrappers()[i];
-
+    for (auto& currWrapper : shorthandWrapper->propertyWrappers()) {
         if (gatherEnclosingShorthandProperties(property, currWrapper, propertySet) || currWrapper->property() == property)
             contained = true;
     }
