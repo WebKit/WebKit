@@ -1,3 +1,14 @@
+2014-05-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * gtk/GNUmakefile.am: Remove generate-webkitdom-doc-files from
+        EXTRA_DIST and add webkitdom.py.
+        * gtk/generate-gtkdoc:
+        (generate_documentation_for_config): Do not try to use
+        generator.saw_warnings when rebasing, it's only set when
+        generating the docs.
+
 2014-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKitWebPage::send-request always pass a valid pointer for redirected response

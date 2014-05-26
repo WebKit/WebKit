@@ -4,8 +4,8 @@ EXTRA_DIST += \
 	Tools/gtk/generate-feature-defines-files \
 	Tools/gtk/generate-gtkdoc \
 	Tools/gtk/generate-inspector-gresource-manifest.py \
-	Tools/gtk/generate-webkitdom-doc-files \
-	Tools/gtk/gtkdoc.py
+	Tools/gtk/gtkdoc.py \
+	Tools/gtk/webkitdom.py
 
 docs: docs-build.stamp
 .PHONY : docs

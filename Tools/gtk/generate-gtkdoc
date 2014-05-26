@@ -149,10 +149,9 @@ def generate_documentation_for_config(config_file):
         return
 
     if not arguments.rebase:
-        generate_doc(generator, arguments.skip_html)
-    else:
-        rebase_doc(generator)
-    return generator.saw_warnings
+        return generate_doc(generator, arguments.skip_html)
+
+    rebase_doc(generator)
 
 def prepare_environment_for_gtkdoc_generation():
     # We need to add the JavaScriptCore build directory to the PKG_CONFIG_PATH
