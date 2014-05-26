@@ -1,3 +1,16 @@
+2014-05-26  Martin Hodovan  <mhodovan.u-szeged@partner.samsung.com>
+
+        Remove WebKit2 framework from generate-forwarding-headers.pl
+        https://bugs.webkit.org/show_bug.cgi?id=133214
+
+        Since renaming WebKit2.framework to WebKit.framework is done and all WebKit2/*.h includes
+        were renamed to WebKit/*.h, generating forwarding headers for WebKit2/*.h framework style
+        headers is not necessary anymore.
+
+        Reviewed by Darin Adler.
+
+        * Scripts/generate-forwarding-headers.pl:
+
 2014-05-26  Zan Dobersek  <zdobersek@igalia.com>
 
         WebPage::setComposition(), WebPageProxy::didFindStringMatches() should take Vector parameters by const reference
