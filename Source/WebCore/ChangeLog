@@ -1,3 +1,23 @@
+2014-05-26  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: Legacy Element.offset* client* return values are invalid in certain cases.
+        https://bugs.webkit.org/show_bug.cgi?id=133272
+
+        Reviewed by Simon Fraser.
+
+        Element.offset* client* functions applied various rounding strategies on the return values before r168868.
+        (for example, offsetLeft/Top either floored through implicit integer arithmetics or rounded explicitly depending
+        whether the zoom scale was 1. see http://trac.webkit.org/changeset/168868/trunk/Source/WebCore/dom/Element.cpp for details)
+        This patch mimics the legacy behavior by either rounding or flooring the return value.
+
+        Not testable (legacy switch is not exposed)
+
+        * dom/Element.cpp:
+        (WebCore::adjustForLocalZoom):
+        (WebCore::convertToNonSubpixelValueIfNeeded):
+        (WebCore::Element::offsetLeft):
+        (WebCore::Element::offsetTop):
+
 2014-05-26  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL] Input fields and text areas are not rendered correctly after r167771

@@ -644,9 +644,9 @@ static double localZoomForRenderer(const RenderElement& renderer)
     return zoomFactor;
 }
 
-static double adjustForLocalZoom(LayoutUnit value, const RenderElement& renderer)
+static double adjustForLocalZoom(LayoutUnit value, const RenderElement& renderer, double& zoomFactor)
 {
-    double zoomFactor = localZoomForRenderer(renderer);
+    zoomFactor = localZoomForRenderer(renderer);
     if (zoomFactor == 1)
         return value.toDouble();
 #if ENABLE(SUBPIXEL_LAYOUT)
@@ -659,24 +659,30 @@ static double adjustForLocalZoom(LayoutUnit value, const RenderElement& renderer
 #endif
 }
 
-static double convertToNonSubpixelValueIfNeeded(double value, const Document& document)
+enum LegacyCSSOMElementMetricsRoundingStrategy { Round, Floor };
+
+static double convertToNonSubpixelValueIfNeeded(double value, const Document& document, LegacyCSSOMElementMetricsRoundingStrategy roundStrategy = Round)
 {
-    return document.settings() && !document.settings()->subpixelCSSOMElementMetricsEnabled() ? floor(value) : value;
+    return document.settings() && !document.settings()->subpixelCSSOMElementMetricsEnabled() ? roundStrategy == Round ? round(value) : floor(value) : value;
 }
 
 double Element::offsetLeft()
 {
     document().updateLayoutIgnorePendingStylesheets();
-    if (RenderBoxModelObject* renderer = renderBoxModelObject())
-        return convertToNonSubpixelValueIfNeeded(adjustForLocalZoom(renderer->offsetLeft(), *renderer), renderer->document());
+    if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
+        double zoomFactor = 1;
+        return convertToNonSubpixelValueIfNeeded(adjustForLocalZoom(renderer->offsetLeft(), *renderer, zoomFactor), renderer->document(), zoomFactor == 1 ? Floor : Round);
+    }
     return 0;
 }
 
 double Element::offsetTop()
 {
     document().updateLayoutIgnorePendingStylesheets();
-    if (RenderBoxModelObject* renderer = renderBoxModelObject())
-        return convertToNonSubpixelValueIfNeeded(adjustForLocalZoom(renderer->offsetTop(), *renderer), renderer->document());
+    if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
+        double zoomFactor = 1;
+        return convertToNonSubpixelValueIfNeeded(adjustForLocalZoom(renderer->offsetTop(), *renderer, zoomFactor), renderer->document(), zoomFactor == 1 ? Floor : Round);
+    }
     return 0;
 }
 
