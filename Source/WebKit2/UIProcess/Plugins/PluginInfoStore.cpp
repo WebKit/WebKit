@@ -115,15 +115,12 @@ Vector<PluginModuleInfo> PluginInfoStore::plugins()
 PluginModuleInfo PluginInfoStore::findPluginForMIMEType(const String& mimeType, PluginData::AllowedPluginTypes allowedPluginTypes) const
 {
     ASSERT(!mimeType.isNull());
-    
-    for (size_t i = 0; i < m_plugins.size(); ++i) {
-        const PluginModuleInfo& plugin = m_plugins[i];
 
+    for (const auto& plugin : m_plugins) {
         if (allowedPluginTypes == PluginData::OnlyApplicationPlugins && !plugin.info.isApplicationPlugin)
             continue;
-        
-        for (size_t j = 0; j < plugin.info.mimes.size(); ++j) {
-            const MimeClassInfo& mimeClassInfo = plugin.info.mimes[j];
+
+        for (const auto& mimeClassInfo : plugin.info.mimes) {
             if (mimeClassInfo.type == mimeType)
                 return plugin;
         }
@@ -135,16 +132,12 @@ PluginModuleInfo PluginInfoStore::findPluginForMIMEType(const String& mimeType, 
 PluginModuleInfo PluginInfoStore::findPluginForExtension(const String& extension, String& mimeType, PluginData::AllowedPluginTypes allowedPluginTypes) const
 {
     ASSERT(!extension.isNull());
-    
-    for (size_t i = 0; i < m_plugins.size(); ++i) {
-        const PluginModuleInfo& plugin = m_plugins[i];
 
+    for (const auto& plugin : m_plugins) {
         if (allowedPluginTypes == PluginData::OnlyApplicationPlugins && !plugin.info.isApplicationPlugin)
             continue;
 
-        for (size_t j = 0; j < plugin.info.mimes.size(); ++j) {
-            const MimeClassInfo& mimeClassInfo = plugin.info.mimes[j];
-
+        for (const auto& mimeClassInfo : plugin.info.mimes) {
             const Vector<String>& extensions = mimeClassInfo.extensions;
             
             if (std::find(extensions.begin(), extensions.end(), extension) != extensions.end()) {
@@ -219,11 +212,11 @@ PluginModuleInfo PluginInfoStore::findPlugin(String& mimeType, const URL& url, P
 
 PluginModuleInfo PluginInfoStore::infoForPluginWithPath(const String& pluginPath) const
 {
-    for (size_t i = 0; i < m_plugins.size(); ++i) {
-        if (m_plugins[i].path == pluginPath)
-            return m_plugins[i];
+    for (const auto& plugin : m_plugins) {
+        if (plugin.path == pluginPath)
+            return plugin;
     }
-    
+
     ASSERT_NOT_REACHED();
     return PluginModuleInfo();
 }

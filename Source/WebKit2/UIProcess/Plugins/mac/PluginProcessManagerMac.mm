@@ -34,9 +34,8 @@ namespace WebKit {
 
 void PluginProcessManager::setProcessSuppressionEnabled(bool processSuppressionEnabled)
 {
-    size_t processCount = m_pluginProcesses.size();
-    for (size_t i = 0; i < processCount; ++i)
-        m_pluginProcesses[i]->setProcessSuppressionEnabled(processSuppressionEnabled);
+    for (auto& pluginProcess : m_pluginProcesses)
+        pluginProcess->setProcessSuppressionEnabled(processSuppressionEnabled);
 }
 
 } // namespace WebKit

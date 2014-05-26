@@ -1,3 +1,17 @@
+2014-05-26  Anders Carlsson  <andersca@apple.com>
+
+        Convert a couple of loops over to range-based for
+        https://bugs.webkit.org/show_bug.cgi?id=133287
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::findPluginForMIMEType):
+        (WebKit::PluginInfoStore::findPluginForExtension):
+        (WebKit::PluginInfoStore::infoForPluginWithPath):
+        * UIProcess/Plugins/mac/PluginProcessManagerMac.mm:
+        (WebKit::PluginProcessManager::setProcessSuppressionEnabled):
+
 2014-05-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebProcess leaked when closing pages with network process enabled
