@@ -106,9 +106,9 @@ namespace WebKit {
     macro(JavaScriptMarkupEnabled, javaScriptMarkupEnabled, Bool, bool, true) \
     macro(LoadsImagesAutomatically, loadsImagesAutomatically, Bool, bool, true) \
     macro(LoadsSiteIconsIgnoringImageLoadingPreference, loadsSiteIconsIgnoringImageLoadingPreference, Bool, bool, false) \
-    macro(PluginsEnabled, pluginsEnabled, Bool, bool, true) \
-    macro(JavaEnabled, javaEnabled, Bool, bool, true) \
-    macro(JavaEnabledForLocalFiles, javaEnabledForLocalFiles, Bool, bool, true) \
+    macro(PluginsEnabled, pluginsEnabled, Bool, bool, false) \
+    macro(JavaEnabled, javaEnabled, Bool, bool, false) \
+    macro(JavaEnabledForLocalFiles, javaEnabledForLocalFiles, Bool, bool, false) \
     macro(OfflineWebApplicationCacheEnabled, offlineWebApplicationCacheEnabled, Bool, bool, false) \
     macro(LocalStorageEnabled, localStorageEnabled, Bool, bool, true) \
     macro(DatabasesEnabled, databasesEnabled, Bool, bool, true) \
@@ -243,7 +243,7 @@ namespace WebKit {
     macro(InspectorAttachedHeight, inspectorAttachedHeight, UInt32, uint32_t, 300) \
     macro(InspectorAttachedWidth, inspectorAttachedWidth, UInt32, uint32_t, 750) \
     macro(InspectorAttachmentSide, inspectorAttachmentSide, UInt32, uint32_t, 0) \
-    macro(StorageBlockingPolicy, storageBlockingPolicy, UInt32, uint32_t, WebCore::SecurityOrigin::AllowAllStorage) \
+    macro(StorageBlockingPolicy, storageBlockingPolicy, UInt32, uint32_t, WebCore::SecurityOrigin::BlockThirdPartyStorage) \
     \
 
 #if PLATFORM(COCOA)

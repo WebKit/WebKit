@@ -216,7 +216,7 @@ WK_EXPORT bool WKPreferencesGetNotificationsEnabled(WKPreferencesRef preferences
 WK_EXPORT void WKPreferencesSetShouldRespectImageOrientation(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetShouldRespectImageOrientation(WKPreferencesRef preferencesRef);
 
-// Defaults to false
+// Defaults to kWKAllowAllStorage 
 WK_EXPORT void WKPreferencesSetStorageBlockingPolicy(WKPreferencesRef preferencesRef, WKStorageBlockingPolicy policy);
 WK_EXPORT WKStorageBlockingPolicy WKPreferencesGetStorageBlockingPolicy(WKPreferencesRef preferencesRef);
 

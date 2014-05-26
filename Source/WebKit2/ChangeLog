@@ -1,3 +1,42 @@
+2014-05-26  Sam Weinig  <sam@webkit.org>
+
+        [WebKit2] Add better default preferences while keeping backward compatibility for the C-SPI
+        https://bugs.webkit.org/show_bug.cgi?id=133289
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebPreferencesStore.h:
+        Change a few defaults:
+        - PluginsEnabled -> false
+        - JavaEnabled -> false
+        - JavaEnabledForLocalFiles -> false
+        - StorageBlockingPolicy -> BlockThirdPartyStorage
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesCreate):
+        (WKPreferencesCreateWithIdentifier):
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::WebPageGroup):
+        Switch to using WebPreferences::createWithLegacyDefaults().
+
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::create):
+        (WebKit::WebPreferences::createWithLegacyDefaults):
+        * UIProcess/WebPreferences.h:
+        Move create functions to the cpp file and add createWithLegacyDefaults() which keeps
+        the old defaults;
+
+        * UIProcess/API/C/WKPreferencesRef.h:
+        Fix the comment.
+
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        Update the comment to reflect the new defaults.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Unconditionally set setShouldDispatchJavaScriptWindowOnErrorEvents() to true. This setting only
+        exists for legacy WebKit.
+
 2014-05-26  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Rewrite WK_DESIGNATED_INITIALIZER in installed headers

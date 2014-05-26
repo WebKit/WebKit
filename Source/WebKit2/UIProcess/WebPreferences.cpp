@@ -36,6 +36,21 @@ namespace WebKit {
 // Instead of tracking private browsing state as a boolean preference, we should let the client provide storage sessions explicitly.
 static unsigned privateBrowsingPageCount;
 
+PassRefPtr<WebPreferences> WebPreferences::create(const String& identifier, const String& keyPrefix)
+{
+    return adoptRef(new WebPreferences(identifier, keyPrefix));
+}
+
+PassRefPtr<WebPreferences> WebPreferences::createWithLegacyDefaults(const String& identifier, const String& keyPrefix)
+{
+    RefPtr<WebPreferences> preferences = adoptRef(new WebPreferences(identifier, keyPrefix));
+    preferences->m_store.setOverrideDefaultsBoolValueForKey(WebPreferencesKey::javaEnabledKey(), true);
+    preferences->m_store.setOverrideDefaultsBoolValueForKey(WebPreferencesKey::javaEnabledForLocalFilesKey(), true);
+    preferences->m_store.setOverrideDefaultsBoolValueForKey(WebPreferencesKey::pluginsEnabledKey(), true);
+    preferences->m_store.setOverrideDefaultsUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey(), WebCore::SecurityOrigin::AllowAllStorage);
+    return preferences.release();
+}
+
 WebPreferences::WebPreferences(const String& identifier, const String& keyPrefix)
     : m_identifier(identifier)
     , m_keyPrefix(keyPrefix)

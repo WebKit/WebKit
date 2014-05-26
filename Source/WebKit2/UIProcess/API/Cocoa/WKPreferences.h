@@ -79,11 +79,11 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 #endif
 
 #if !TARGET_OS_IPHONE
-/*! @abstract Whether Java is enabled. Defaults to YES.
+/*! @abstract Whether Java is enabled. Defaults to NO.
  */
 @property (nonatomic, getter=isJavaEnabled) BOOL javaEnabled;
 
-/*! abstract Whether plug-ins are enabled. Defaults to YES.
+/*! abstract Whether plug-ins are enabled. Defaults to NO.
  */
 @property (nonatomic, getter=arePlugInsEnabled) BOOL plugInsEnabled;
 #endif
