@@ -2084,6 +2084,8 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return getCSSPropertyValuesForGridShorthand(webkitGridAreaShorthand());
         case CSSPropertyWebkitGridTemplate:
             return getCSSPropertyValuesForGridShorthand(webkitGridTemplateShorthand());
+        case CSSPropertyWebkitGrid:
+            return getCSSPropertyValuesForGridShorthand(webkitGridShorthand());
         case CSSPropertyWebkitGridColumn:
             return getCSSPropertyValuesForGridShorthand(webkitGridColumnShorthand());
         case CSSPropertyWebkitGridRow:

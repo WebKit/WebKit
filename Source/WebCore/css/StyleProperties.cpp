@@ -162,6 +162,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return getShorthandValue(webkitGridAreaShorthand());
     case CSSPropertyWebkitGridTemplate:
         return getShorthandValue(webkitGridTemplateShorthand());
+    case CSSPropertyWebkitGrid:
+        return getShorthandValue(webkitGridShorthand());
     case CSSPropertyWebkitGridColumn:
         return getShorthandValue(webkitGridColumnShorthand());
     case CSSPropertyWebkitGridRow:

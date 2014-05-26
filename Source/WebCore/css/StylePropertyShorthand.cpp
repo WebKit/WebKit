@@ -352,6 +352,19 @@ StylePropertyShorthand webkitMarginCollapseShorthand()
 }
 
 #if ENABLE(CSS_GRID_LAYOUT)
+StylePropertyShorthand webkitGridShorthand()
+{
+    static const CSSPropertyID webkitGridProperties[] = {
+        CSSPropertyWebkitGridTemplateColumns,
+        CSSPropertyWebkitGridTemplateRows,
+        CSSPropertyWebkitGridTemplateAreas,
+        CSSPropertyWebkitGridAutoFlow,
+        CSSPropertyWebkitGridAutoColumns,
+        CSSPropertyWebkitGridAutoRows
+    };
+    return StylePropertyShorthand(CSSPropertyWebkitGrid, webkitGridProperties, WTF_ARRAY_LENGTH(webkitGridProperties));
+}
+
 StylePropertyShorthand webkitGridTemplateShorthand()
 {
     static const CSSPropertyID webkitGridTemplateProperties[] = {
@@ -569,6 +582,8 @@ StylePropertyShorthand shorthandForProperty(CSSPropertyID propertyID)
         return webkitGridAreaShorthand();
     case CSSPropertyWebkitGridTemplate:
         return webkitGridTemplateShorthand();
+    case CSSPropertyWebkitGrid:
+        return webkitGridShorthand();
     case CSSPropertyWebkitGridColumn:
         return webkitGridColumnShorthand();
     case CSSPropertyWebkitGridRow:
@@ -772,7 +787,11 @@ Vector<StylePropertyShorthand> matchingShorthandsForLonghand(CSSPropertyID prope
     case CSSPropertyWebkitGridTemplateColumns:
     case CSSPropertyWebkitGridTemplateRows:
     case CSSPropertyWebkitGridTemplateAreas:
-        return makeVector(webkitGridTemplateShorthand());
+        return makeVector(webkitGridTemplateShorthand(), webkitGridShorthand());
+    case CSSPropertyWebkitGridAutoFlow:
+    case CSSPropertyWebkitGridAutoColumns:
+    case CSSPropertyWebkitGridAutoRows:
+        return makeVector(webkitGridShorthand());
 #endif
     case CSSPropertyWebkitMarginBeforeCollapse:
     case CSSPropertyWebkitMarginAfterCollapse:

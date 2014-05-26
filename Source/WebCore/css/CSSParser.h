@@ -162,6 +162,7 @@ public:
     bool parseGridItemPositionShorthand(CSSPropertyID, bool important);
     bool parseGridTemplateRowsAndAreas(PassRefPtr<CSSValue>, bool important);
     bool parseGridTemplateShorthand(bool important);
+    bool parseGridShorthand(bool important);
     bool parseGridAreaShorthand(bool important);
     bool parseSingleGridAreaLonghand(RefPtr<CSSValue>&);
     PassRefPtr<CSSValue> parseGridTrackList();

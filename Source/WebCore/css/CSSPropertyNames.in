@@ -305,6 +305,7 @@ isolation
 -webkit-justify-content
 -webkit-font-size-delta
 #if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
+-webkit-grid
 -webkit-grid-area
 -webkit-grid-auto-columns
 -webkit-grid-auto-rows

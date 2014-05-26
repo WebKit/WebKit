@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+#gridWithNone {
+    -webkit-grid: none;
+}
+#gridWithTemplate {
+    -webkit-grid: 15px / 10px;
+}
+#gridWithTemplate1 {
+    -webkit-grid: none / 10px;
+}
+#gridWithAutoFlowNoneAndColumnsAndRows {
+    -webkit-grid: none 10px / 20px;
+}
+#gridWithAutoFlowAndColumns {
+    -webkit-grid: row 10px;
+}
+#gridWithAutoFlowNone {
+    -webkit-grid: none 10px;
+}
+#gridWithAutoFlowAndColumnsAndRows {
+    -webkit-grid: column 10px / 20px;
+}
+
+/* Bad values. */
+
+#gridWithExplicitAndImplicit {
+    -webkit-grid: 10px / 20px column;
+}
+#gridWithMisplacedNone1 {
+    -webkit-grid: column 10px / none 20px;
+}
+#gridWithMisplacedNone2 {
+    -webkit-grid: 10px / 20px none;
+}
+#gridWithWrongSlash1 {
+    -webkit-grid: column / 10px;
+}
+#gridWithWrongSlash2 {
+    -webkit-grid: column 10px 20px;
+}
+#gridWithWrongSlash3 {
+    -webkit-grid: 5x / 10px / 20px;
+}
+#gridWithAutoFlowRowAndColumn {
+    -webkit-grid: row column 10px;
+}
+#gridWithoutAutoFlowAndExtraBreath {
+    -webkit-grid: row 10px / 20px 30px;
+}
+#gridWithAutoFlowString1 {
+    -webkit-grid: row 10px "a";
+}
+#gridWithAutoFlowString2 {
+    -webkit-grid: row "a" 10px;
+}
+#gridWithAutoFlowString3 {
+    -webkit-grid: row "a";
+}
+#gridWithTemplateAndAutoFlow {
+    -webkit-grid: 10px / 10px row;
+}
+#gridWithTemplateAndMisplacedString1 {
+    -webkit-grid: 10px / 10px "a";
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div class="grid" id="gridWithNone"></div>
+<div class="grid" id="gridWithTemplate"></div>
+<div class="grid" id="gridWithTemplate1"></div>
+<div class="grid" id="gridWithAutoFlowNoneAndColumnsAndRows"></div>
+<div class="grid" id="gridWithAutoFlowAndColumns"></div>
+<div class="grid" id="gridWithAutoFlowNone"></div>
+<div class="grid" id="gridWithAutoFlowAndColumnsAndRows"></div>
+<div class="grid" id="gridWithExplicitAndImplicit"></div>
+<div class="grid" id="gridWithMisplacedNone1"></div>
+<div class="grid" id="gridWithMisplacedNone2"></div>
+<div class="grid" id="gridWithWrongSlash1"></div>
+<div class="grid" id="gridWithWrongSlash2"></div>
+<div class="grid" id="gridWithWrongSlash3"></div>
+<div class="grid" id="gridWithAutoFlowRowAndColumn"></div>
+<div class="grid" id="gridWithoutAutoFlowAndExtraBreath"></div>
+<div class="grid" id="gridWithAutoFlowString1"></div>
+<div class="grid" id="gridWithAutoFlowString2"></div>
+<div class="grid" id="gridWithAutoFlowString3"></div>
+<div class="grid" id="gridWithTemplateAndAutoFlow"></div>
+<div class="grid" id="gridWithTemplateAndMisplacedString1"></div>
+<script src="resources/grid-shorthand-parsing-utils.js"></script>
+<script>
+    description("This test checks that the 'grid' shorthand is properly parsed and the longhand properties correctly assigned.");
+
+    debug("Test getting the longhand values when shorthand is set through CSS.");
+    testGridDefinitionsValues(document.getElementById("gridWithNone"), "none", "none", "none", "none", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithTemplate"), "15px", "10px", "none", "none", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithTemplate1"), "none", "10px", "none", "none", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowNoneAndColumnsAndRows"), "none", "none", "none", "none", "10px", "20px");
+    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowAndColumns"), "none", "none", "none", "row", "10px", "10px");
+    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowNone"), "none", "none", "none", "none", "10px", "10px");
+    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowAndColumnsAndRows"), "none", "none", "none", "column", "10px", "20px");
+
+    debug("");
+    debug("Test setting wrong values for 'grid' shorthand through CSS (they should resolve to the default: 'none')");
+    testGridDefinitionsValues(document.getElementById("gridWithExplicitAndImplicit"), "none", "none", "none", "none", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithMisplacedNone1"), "none", "none", "none", "none", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithMisplacedNone2"), "none", "none", "none", "none", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithWrongSlash1"), "none", "none", "none", "none", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithWrongSlash2"), "none", "none", "none", "none", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithWrongSlash3"), "none", "none", "none", "none", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowRowAndColumn"), "none", "none", "none", "none", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithoutAutoFlowAndExtraBreath"), "none", "none", "none", "none", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowString1"), "none", "none", "none", "none", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowString2"), "none", "none", "none", "none", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowString3"), "none", "none", "none", "none", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithTemplateAndAutoFlow"), "none", "none", "none", "none", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithTemplateAndMisplacedString1"), "none", "none", "none", "none", "auto", "auto");
+
+    debug("");
+    debug("Test getting and setting 'grid' shorthand through JS");
+    testGridDefinitionsSetJSValues("10px / 20px", "10px", "20px", "none", "none", "auto", "auto", "10px", "20px", "none", "initial", "initial", "initial");
+    testGridDefinitionsSetJSValues("10px / (line) 'a' 20px", "10px", "(line) 20px", "\"a\"", "none", "auto", "auto", "10px", "(line) 20px", "\"a\"", "initial", "initial", "initial");
+    testGridDefinitionsSetJSValues("row 20px", "none", "none", "none", "row", "20px", "20px", "initial", "initial", "initial", "row", "20px", "20px");
+    testGridDefinitionsSetJSValues("column 20px / 10px", "none", "none", "none", "column", "20px", "10px", "initial", "initial", "initial", "column", "20px", "10px");
+
+    debug("");
+    debug("Test the initial value");
+    var element = document.createElement("div");
+    document.body.appendChild(element);
+    testGridDefinitionsValues(element, "none", "none", "none", "none", "auto", "auto");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns')", "'none'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows')", "'none'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-areas')", "'none'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'none'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns')", "'auto'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows')", "'auto'");
+
+    debug("");
+    debug("Test setting grid-template-columns and grid-template-rows back to 'none' through JS");
+    testGridDefinitionsSetJSValues("column 10px / 20px", "none", "none", "none", "column", "10px", "20px", "initial", "initial", "initial", "column", "10px", "20px");
+    testGridDefinitionsSetJSValues("none", "none", "none", "none", "none", "auto", "auto", "none", "none", "none", "initial", "initial", "initial");
+
+</script>
+</body>
+</html>

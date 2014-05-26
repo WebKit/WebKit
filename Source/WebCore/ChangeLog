@@ -1,3 +1,32 @@
+2014-05-26  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Implementation of the "grid" shorthand.
+        https://bugs.webkit.org/show_bug.cgi?id=132122
+
+        Reviewed by Darin Adler.
+
+        The grid property is a shorthand that sets all of the explicit
+        grid properties (grid-template-rows, grid-template-columns, and
+        grid-template-areas) as well as all the implicit grid properties
+        (grid-auto-rows, grid-auto-columns, and grid-auto-flow) in a
+        single declaration
+
+        Notice that either explicit or implicit grid can be specified,
+        assigning the initial values to the omitted properties.
+
+        Test: fast/css-grid-layout/grid-shorthand-get-set.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseGridShorthand):
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in:
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::webkitGridShorthand):
+        * css/StylePropertyShorthand.h:
+
 2014-05-26  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: Legacy Element.offset* client* return values are invalid in certain cases.
