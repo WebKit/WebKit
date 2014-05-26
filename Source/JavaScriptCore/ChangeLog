@@ -1,3 +1,142 @@
+2014-05-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Latest emscripten life benchmark is 4x slower because the DFG doesn't realize that arithmetic on booleans is a thing
+        https://bugs.webkit.org/show_bug.cgi?id=133136
+
+        Reviewed by Oliver Hunt.
+        
+        Some key concepts:
+
+        - Except for the prediction propagation and type fixup phases, which are super early in
+          the pipeline, nobody has to know about the fact that booleans may flow into numerical
+          operations because there will just be a BooleanToNumber node that will take a value
+          and, if that value is a boolean, will convert it to the equivalent numerical value. It
+          will have a BooleanUse mode where it will also speculate that the input is a boolean
+          but it can also do UntypedUse in which case it will pass through any non-booleans.
+          This operation is very easy to model in all of the compiler tiers.
+
+        - No changes to the baseline JIT. The Baseline JIT will still believe that boolean
+          inputs require taking the slow path and it will still report that it took slow path
+          for any such operations.  The DFG will now be smart enough to ignore baseline JIT slow
+          path profiling on operations that were known to have had boolean inputs.  That's a
+          little quirky, but it's probably easier than modifying the baseline JIT to track
+          booleans correctly.
+        
+        4.1x speed-up on the emscripten "life" benchmark. Up to 10x speed-up on microbenchmarks.
+
+        * bytecode/SpeculatedType.h:
+        (JSC::isInt32OrBooleanSpeculation):
+        (JSC::isInt32SpeculationForArithmetic):
+        (JSC::isInt32OrBooleanSpeculationForArithmetic):
+        (JSC::isInt32OrBooleanSpeculationExpectingDefined):
+        (JSC::isInt52Speculation):
+        (JSC::isMachineIntSpeculation):
+        (JSC::isFullNumberOrBooleanSpeculation):
+        (JSC::isFullNumberOrBooleanSpeculationExpectingDefined):
+        (JSC::isInt32SpeculationExpectingDefined): Deleted.
+        (JSC::isMachineIntSpeculationExpectingDefined): Deleted.
+        (JSC::isMachineIntSpeculationForArithmetic): Deleted.
+        (JSC::isBytecodeNumberSpeculationExpectingDefined): Deleted.
+        (JSC::isFullNumberSpeculationExpectingDefined): Deleted.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAllocator.h:
+        (JSC::DFG::Allocator<T>::indexOf):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::makeDivSafe):
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGCommon.h:
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixIntConvertingEdge):
+        (JSC::DFG::FixupPhase::fixIntOrBooleanEdge):
+        (JSC::DFG::FixupPhase::fixDoubleOrBooleanEdge):
+        (JSC::DFG::FixupPhase::attemptToMakeIntegerAdd):
+        (JSC::DFG::FixupPhase::fixIntEdge): Deleted.
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addSpeculationMode):
+        (JSC::DFG::Graph::valueAddSpeculationMode):
+        (JSC::DFG::Graph::arithAddSpeculationMode):
+        (JSC::DFG::Graph::addShouldSpeculateInt32):
+        (JSC::DFG::Graph::mulShouldSpeculateInt32):
+        (JSC::DFG::Graph::mulShouldSpeculateMachineInt):
+        (JSC::DFG::Graph::negateShouldSpeculateInt32):
+        (JSC::DFG::Graph::negateShouldSpeculateMachineInt):
+        (JSC::DFG::Graph::addImmediateShouldSpeculateInt32):
+        (JSC::DFG::Graph::mulImmediateShouldSpeculateInt32): Deleted.
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::sawBooleans):
+        (JSC::DFG::Node::shouldSpeculateInt32OrBoolean):
+        (JSC::DFG::Node::shouldSpeculateInt32ForArithmetic):
+        (JSC::DFG::Node::shouldSpeculateInt32OrBooleanForArithmetic):
+        (JSC::DFG::Node::shouldSpeculateInt32OrBooleanExpectingDefined):
+        (JSC::DFG::Node::shouldSpeculateMachineInt):
+        (JSC::DFG::Node::shouldSpeculateDouble):
+        (JSC::DFG::Node::shouldSpeculateNumberOrBoolean):
+        (JSC::DFG::Node::shouldSpeculateNumberOrBooleanExpectingDefined):
+        (JSC::DFG::Node::shouldSpeculateNumber):
+        (JSC::DFG::Node::canSpeculateInt32):
+        (JSC::DFG::Node::canSpeculateInt52):
+        (JSC::DFG::Node::sourceFor):
+        (JSC::DFG::Node::shouldSpeculateInt32ExpectingDefined): Deleted.
+        (JSC::DFG::Node::shouldSpeculateMachineIntForArithmetic): Deleted.
+        (JSC::DFG::Node::shouldSpeculateMachineIntExpectingDefined): Deleted.
+        (JSC::DFG::Node::shouldSpeculateDoubleForArithmetic): Deleted.
+        (JSC::DFG::Node::shouldSpeculateNumberExpectingDefined): Deleted.
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::dumpNodeFlags):
+        * dfg/DFGNodeFlags.h:
+        (JSC::DFG::nodeMayOverflow):
+        (JSC::DFG::nodeMayNegZero):
+        (JSC::DFG::nodeCanSpeculateInt32):
+        (JSC::DFG::nodeCanSpeculateInt52):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::run):
+        (JSC::DFG::PredictionPropagationPhase::propagateToFixpoint):
+        (JSC::DFG::PredictionPropagationPhase::speculatedDoubleTypeForPrediction):
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        (JSC::DFG::PredictionPropagationPhase::doDoubleVoting):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileValueToInt32):
+        (JSC::FTL::LowerDFGToLLVM::compileBooleanToNumber):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::asInt32ForArithmetic):
+        * tests/stress/max-boolean-exit.js: Added.
+        (foo):
+        (test):
+        * tests/stress/mul-boolean-exit.js: Added.
+        (foo):
+        (test):
+        * tests/stress/plus-boolean-exit.js: Added.
+        (foo):
+        (test):
+        * tests/stress/plus-boolean-or-double.js: Added.
+        (foo):
+        (test):
+        * tests/stress/plus-boolean-or-int.js: Added.
+        (foo):
+        (test):
+
 2014-05-26  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
 
         Remove dead code from VM.cpp

@@ -195,42 +195,52 @@ public:
         return speculationFromValue(node->valueOfJSConstant(m_codeBlock));
     }
     
-    AddSpeculationMode addSpeculationMode(Node* add, bool leftShouldSpeculateInt32, bool rightShouldSpeculateInt32)
+    AddSpeculationMode addSpeculationMode(Node* add, bool leftShouldSpeculateInt32, bool rightShouldSpeculateInt32, PredictionPass pass)
     {
         ASSERT(add->op() == ValueAdd || add->op() == ArithAdd || add->op() == ArithSub);
+        
+        RareCaseProfilingSource source = add->sourceFor(pass);
         
         Node* left = add->child1().node();
         Node* right = add->child2().node();
         
         if (left->hasConstant())
-            return addImmediateShouldSpeculateInt32(add, rightShouldSpeculateInt32, left);
+            return addImmediateShouldSpeculateInt32(add, rightShouldSpeculateInt32, left, source);
         if (right->hasConstant())
-            return addImmediateShouldSpeculateInt32(add, leftShouldSpeculateInt32, right);
+            return addImmediateShouldSpeculateInt32(add, leftShouldSpeculateInt32, right, source);
         
-        return (leftShouldSpeculateInt32 && rightShouldSpeculateInt32 && add->canSpeculateInt32()) ? SpeculateInt32 : DontSpeculateInt32;
+        return (leftShouldSpeculateInt32 && rightShouldSpeculateInt32 && add->canSpeculateInt32(source)) ? SpeculateInt32 : DontSpeculateInt32;
     }
     
-    AddSpeculationMode valueAddSpeculationMode(Node* add)
+    AddSpeculationMode valueAddSpeculationMode(Node* add, PredictionPass pass)
     {
-        return addSpeculationMode(add, add->child1()->shouldSpeculateInt32ExpectingDefined(), add->child2()->shouldSpeculateInt32ExpectingDefined());
+        return addSpeculationMode(
+            add,
+            add->child1()->shouldSpeculateInt32OrBooleanExpectingDefined(),
+            add->child2()->shouldSpeculateInt32OrBooleanExpectingDefined(),
+            pass);
     }
     
-    AddSpeculationMode arithAddSpeculationMode(Node* add)
+    AddSpeculationMode arithAddSpeculationMode(Node* add, PredictionPass pass)
     {
-        return addSpeculationMode(add, add->child1()->shouldSpeculateInt32ForArithmetic(), add->child2()->shouldSpeculateInt32ForArithmetic());
+        return addSpeculationMode(
+            add,
+            add->child1()->shouldSpeculateInt32OrBooleanForArithmetic(),
+            add->child2()->shouldSpeculateInt32OrBooleanForArithmetic(),
+            pass);
     }
     
-    AddSpeculationMode addSpeculationMode(Node* add)
+    AddSpeculationMode addSpeculationMode(Node* add, PredictionPass pass)
     {
         if (add->op() == ValueAdd)
-            return valueAddSpeculationMode(add);
+            return valueAddSpeculationMode(add, pass);
         
-        return arithAddSpeculationMode(add);
+        return arithAddSpeculationMode(add, pass);
     }
     
-    bool addShouldSpeculateInt32(Node* add)
+    bool addShouldSpeculateInt32(Node* add, PredictionPass pass)
     {
-        return addSpeculationMode(add) != DontSpeculateInt32;
+        return addSpeculationMode(add, pass) != DontSpeculateInt32;
     }
     
     bool addShouldSpeculateMachineInt(Node* add)
@@ -250,18 +260,18 @@ public:
         return speculation && !hasExitSite(add, Int52Overflow);
     }
     
-    bool mulShouldSpeculateInt32(Node* mul)
+    bool mulShouldSpeculateInt32(Node* mul, PredictionPass pass)
     {
         ASSERT(mul->op() == ArithMul);
         
         Node* left = mul->child1().node();
         Node* right = mul->child2().node();
         
-        return Node::shouldSpeculateInt32ForArithmetic(left, right)
-            && mul->canSpeculateInt32();
+        return Node::shouldSpeculateInt32OrBooleanForArithmetic(left, right)
+            && mul->canSpeculateInt32(mul->sourceFor(pass));
     }
     
-    bool mulShouldSpeculateMachineInt(Node* mul)
+    bool mulShouldSpeculateMachineInt(Node* mul, PredictionPass pass)
     {
         ASSERT(mul->op() == ArithMul);
         
@@ -272,24 +282,25 @@ public:
         Node* right = mul->child2().node();
 
         return Node::shouldSpeculateMachineInt(left, right)
-            && mul->canSpeculateInt52()
+            && mul->canSpeculateInt52(pass)
             && !hasExitSite(mul, Int52Overflow);
     }
     
-    bool negateShouldSpeculateInt32(Node* negate)
+    bool negateShouldSpeculateInt32(Node* negate, PredictionPass pass)
     {
         ASSERT(negate->op() == ArithNegate);
-        return negate->child1()->shouldSpeculateInt32ForArithmetic() && negate->canSpeculateInt32();
+        return negate->child1()->shouldSpeculateInt32OrBooleanForArithmetic()
+            && negate->canSpeculateInt32(pass);
     }
     
-    bool negateShouldSpeculateMachineInt(Node* negate)
+    bool negateShouldSpeculateMachineInt(Node* negate, PredictionPass pass)
     {
         ASSERT(negate->op() == ArithNegate);
         if (!enableInt52())
             return false;
         return negate->child1()->shouldSpeculateMachineInt()
             && !hasExitSite(negate, Int52Overflow)
-            && negate->canSpeculateInt52();
+            && negate->canSpeculateInt52(pass);
     }
     
     VirtualRegister bytecodeRegisterForArgument(CodeOrigin codeOrigin, int argument)
@@ -856,19 +867,19 @@ private:
     void handleSuccessor(Vector<BasicBlock*, 16>& worklist, BasicBlock*, BasicBlock* successor);
     void addForDepthFirstSort(Vector<BasicBlock*>& result, Vector<BasicBlock*, 16>& worklist, HashSet<BasicBlock*>& seen, BasicBlock*);
     
-    AddSpeculationMode addImmediateShouldSpeculateInt32(Node* add, bool variableShouldSpeculateInt32, Node* immediate)
+    AddSpeculationMode addImmediateShouldSpeculateInt32(Node* add, bool variableShouldSpeculateInt32, Node* immediate, RareCaseProfilingSource source)
     {
         ASSERT(immediate->hasConstant());
         
         JSValue immediateValue = immediate->valueOfJSConstant(m_codeBlock);
-        if (!immediateValue.isNumber())
+        if (!immediateValue.isNumber() && !immediateValue.isBoolean())
             return DontSpeculateInt32;
         
         if (!variableShouldSpeculateInt32)
             return DontSpeculateInt32;
         
-        if (immediateValue.isInt32())
-            return add->canSpeculateInt32() ? SpeculateInt32 : DontSpeculateInt32;
+        if (immediateValue.isInt32() || immediateValue.isBoolean())
+            return add->canSpeculateInt32(source) ? SpeculateInt32 : DontSpeculateInt32;
         
         double doubleImmediate = immediateValue.asDouble();
         const double twoToThe48 = 281474976710656.0;
@@ -876,30 +887,6 @@ private:
             return DontSpeculateInt32;
         
         return bytecodeCanTruncateInteger(add->arithNodeFlags()) ? SpeculateInt32AndTruncateConstants : DontSpeculateInt32;
-    }
-    
-    bool mulImmediateShouldSpeculateInt32(Node* mul, Node* variable, Node* immediate)
-    {
-        ASSERT(immediate->hasConstant());
-        
-        JSValue immediateValue = immediate->valueOfJSConstant(m_codeBlock);
-        if (!immediateValue.isInt32())
-            return false;
-        
-        if (!variable->shouldSpeculateInt32ForArithmetic())
-            return false;
-        
-        int32_t intImmediate = immediateValue.asInt32();
-        // Doubles have a 53 bit mantissa so we expect a multiplication of 2^31 (the highest
-        // magnitude possible int32 value) and any value less than 2^22 to not result in any
-        // rounding in a double multiplication - hence it will be equivalent to an integer
-        // multiplication, if we are doing int32 truncation afterwards (which is what
-        // canSpeculateInt32() implies).
-        const int32_t twoToThe22 = 1 << 22;
-        if (intImmediate <= -twoToThe22 || intImmediate >= twoToThe22)
-            return mul->canSpeculateInt32() && !nodeMayOverflow(mul->arithNodeFlags());
-
-        return mul->canSpeculateInt32();
     }
 };
 

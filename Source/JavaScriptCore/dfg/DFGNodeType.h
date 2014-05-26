@@ -109,6 +109,8 @@ namespace JSC { namespace DFG {
     macro(ValueToInt32, NodeResultInt32) \
     /* Used to box the result of URShift nodes (result has range 0..2^32-1). */\
     macro(UInt32ToNumber, NodeResultNumber) \
+    /* Converts booleans to numbers but passes everything else through. */\
+    macro(BooleanToNumber, NodeResultJS) \
     \
     /* Attempt to truncate a double to int32; this will exit if it can't do it. */\
     macro(DoubleAsInt32, NodeResultInt32) \

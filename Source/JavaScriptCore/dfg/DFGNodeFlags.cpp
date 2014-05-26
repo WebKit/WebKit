@@ -91,11 +91,17 @@ void dumpNodeFlags(PrintStream& actualOut, NodeFlags flags)
             out.print(comma, "UseAsOther");
     }
     
-    if (flags & NodeMayOverflow)
-        out.print(comma, "MayOverflow");
+    if (flags & NodeMayOverflowInBaseline)
+        out.print(comma, "MayOverflowInBaseline");
     
-    if (flags & NodeMayNegZero)
-        out.print(comma, "MayNegZero");
+    if (flags & NodeMayOverflowInDFG)
+        out.print(comma, "MayOverflowInDFG");
+    
+    if (flags & NodeMayNegZeroInBaseline)
+        out.print(comma, "MayNegZeroInBaseline");
+    
+    if (flags & NodeMayNegZeroInDFG)
+        out.print(comma, "MayNegZeroInDFG");
     
     if (flags & NodeBytecodeUsesAsInt)
         out.print(comma, "UseAsInt");

@@ -153,11 +153,14 @@ void Allocator<T>::reset()
 template<typename T>
 unsigned Allocator<T>::indexOf(const T* object)
 {
-    unsigned baseIndex = 0;
+    unsigned numRegions = 0;
+    for (Region* region = m_regionHead; region; region = region->m_next)
+        numRegions++;
+    unsigned regionIndex = 0;
     for (Region* region = m_regionHead; region; region = region->m_next) {
         if (region->isInThisRegion(object))
-            return baseIndex + (object - region->data());
-        baseIndex += Region::numberOfThingsPerRegion();
+            return (numRegions - 1 - regionIndex) * Region::numberOfThingsPerRegion() + (object - region->data());
+        regionIndex++;
     }
     CRASH();
     return 0;

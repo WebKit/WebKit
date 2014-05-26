@@ -131,6 +131,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case DoubleRep:
     case ValueRep:
     case Int52Rep:
+    case BooleanToNumber:
         return;
         
     case MovHint:

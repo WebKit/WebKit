@@ -265,6 +265,26 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         node->setCanExit(true);
         break;
     }
+        
+    case BooleanToNumber: {
+        JSValue concreteValue = forNode(node->child1()).value();
+        if (concreteValue) {
+            if (concreteValue.isBoolean())
+                setConstant(node, jsNumber(concreteValue.asBoolean()));
+            else
+                setConstant(node, concreteValue);
+            break;
+        }
+        AbstractValue& value = forNode(node);
+        value = forNode(node->child1());
+        if (node->child1().useKind() == UntypedUse && !(value.m_type & ~SpecBoolean))
+            m_state.setFoundConstants(true);
+        if (value.m_type & SpecBoolean) {
+            value.merge(SpecInt32);
+            value.filter(~SpecBoolean);
+        }
+        break;
+    }
             
     case DoubleAsInt32: {
         JSValue child = forNode(node->child1()).value();
@@ -292,7 +312,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
             if (child.isBoolean()) {
-                setConstant(node, JSValue(child.asBoolean()));
+                setConstant(node, jsNumber(child.asBoolean()));
                 break;
             }
             if (child.isUndefinedOrNull()) {

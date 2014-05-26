@@ -1133,6 +1133,7 @@ private:
         case DoubleRep:
         case ValueRep:
         case Int52Rep:
+        case BooleanToNumber:
             if (cseMode == StoreElimination)
                 break;
             setReplacement(pureCSE(node));

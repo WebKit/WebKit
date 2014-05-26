@@ -249,14 +249,24 @@ inline bool isInt32Speculation(SpeculatedType value)
     return value == SpecInt32;
 }
 
+inline bool isInt32OrBooleanSpeculation(SpeculatedType value)
+{
+    return value && !(value & ~(SpecBoolean | SpecInt32));
+}
+
 inline bool isInt32SpeculationForArithmetic(SpeculatedType value)
 {
     return !(value & (SpecFullDouble | SpecInt52));
 }
 
-inline bool isInt32SpeculationExpectingDefined(SpeculatedType value)
+inline bool isInt32OrBooleanSpeculationForArithmetic(SpeculatedType value)
 {
-    return isInt32Speculation(value & ~SpecOther);
+    return !(value & (SpecFullDouble | SpecInt52));
+}
+
+inline bool isInt32OrBooleanSpeculationExpectingDefined(SpeculatedType value)
+{
+    return isInt32OrBooleanSpeculation(value & ~SpecOther);
 }
 
 inline bool isInt52Speculation(SpeculatedType value)
@@ -267,16 +277,6 @@ inline bool isInt52Speculation(SpeculatedType value)
 inline bool isMachineIntSpeculation(SpeculatedType value)
 {
     return !!value && (value & SpecMachineInt) == value;
-}
-
-inline bool isMachineIntSpeculationExpectingDefined(SpeculatedType value)
-{
-    return isMachineIntSpeculation(value & ~SpecOther);
-}
-
-inline bool isMachineIntSpeculationForArithmetic(SpeculatedType value)
-{
-    return !(value & SpecFullDouble);
 }
 
 inline bool isInt52AsDoubleSpeculation(SpeculatedType value)
@@ -324,14 +324,14 @@ inline bool isFullNumberSpeculation(SpeculatedType value)
     return !!(value & SpecFullNumber) && !(value & ~SpecFullNumber);
 }
 
-inline bool isBytecodeNumberSpeculationExpectingDefined(SpeculatedType value)
+inline bool isFullNumberOrBooleanSpeculation(SpeculatedType value)
 {
-    return isBytecodeNumberSpeculation(value & ~SpecOther);
+    return value && !(value & ~(SpecFullNumber | SpecBoolean));
 }
 
-inline bool isFullNumberSpeculationExpectingDefined(SpeculatedType value)
+inline bool isFullNumberOrBooleanSpeculationExpectingDefined(SpeculatedType value)
 {
-    return isFullNumberSpeculation(value & ~SpecOther);
+    return isFullNumberOrBooleanSpeculation(value & ~SpecOther);
 }
 
 inline bool isBooleanSpeculation(SpeculatedType value)

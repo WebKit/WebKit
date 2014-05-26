@@ -253,6 +253,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ValueRep:
     case DoubleRep:
     case Int52Rep:
+    case BooleanToNumber:
         return true;
         
     case GetByVal:

@@ -155,6 +155,7 @@ inline CapabilityLevel canCompile(Node* node)
     case Int52Rep:
     case DoubleConstant:
     case Int52Constant:
+    case BooleanToNumber:
         // These are OK.
         break;
     case Identity:

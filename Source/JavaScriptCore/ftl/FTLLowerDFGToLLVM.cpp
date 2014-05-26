@@ -306,6 +306,9 @@ private:
         case ValueToInt32:
             compileValueToInt32();
             break;
+        case BooleanToNumber:
+            compileBooleanToNumber();
+            break;
         case GetArgument:
             compileGetArgument();
             break;
@@ -774,10 +777,6 @@ private:
     void compileValueToInt32()
     {
         switch (m_node->child1().useKind()) {
-        case Int32Use:
-            setInt32(lowInt32(m_node->child1()));
-            break;
-            
         case Int52RepUse:
             setInt32(m_out.castToInt32(lowStrictInt52(m_node->child1())));
             break;
@@ -809,13 +808,42 @@ private:
             break;
         }
             
-        case BooleanUse:
-            setInt32(m_out.zeroExt(lowBoolean(m_node->child1()), m_out.int32));
-            break;
-            
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
+        }
+    }
+    
+    void compileBooleanToNumber()
+    {
+        switch (m_node->child1().useKind()) {
+        case BooleanUse: {
+            setInt32(m_out.zeroExt(lowBoolean(m_node->child1()), m_out.int32));
+            return;
+        }
+            
+        case UntypedUse: {
+            LValue value = lowJSValue(m_node->child1());
+            
+            LBasicBlock booleanCase = FTL_NEW_BLOCK(m_out, ("BooleanToNumber boolean case"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("BooleanToNumber continuation"));
+            
+            ValueFromBlock notBooleanResult = m_out.anchor(value);
+            m_out.branch(isBoolean(value), unsure(booleanCase), unsure(continuation));
+            
+            LBasicBlock lastNext = m_out.appendTo(booleanCase, continuation);
+            ValueFromBlock booleanResult = m_out.anchor(m_out.bitOr(
+                m_out.zeroExt(unboxBoolean(value), m_out.int64), m_tagTypeNumber));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(m_out.int64, booleanResult, notBooleanResult));
+            return;
+        }
+            
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
         }
     }
 

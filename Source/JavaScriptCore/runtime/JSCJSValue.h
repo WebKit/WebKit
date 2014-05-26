@@ -199,6 +199,8 @@ public:
     double asDouble() const;
     bool asBoolean() const;
     double asNumber() const;
+    
+    int32_t asInt32ForArithmetic() const; // Boolean becomes an int, but otherwise like asInt32().
 
     // Querying the type.
     bool isEmpty() const;

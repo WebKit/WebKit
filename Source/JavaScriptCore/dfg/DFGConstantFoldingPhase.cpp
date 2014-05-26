@@ -79,6 +79,13 @@ private:
             bool eliminated = false;
                     
             switch (node->op()) {
+            case BooleanToNumber: {
+                if (node->child1().useKind() == UntypedUse
+                    && !m_interpreter.needsTypeCheck(node->child1(), SpecBoolean))
+                    node->child1().setUseKind(BooleanUse);
+                break;
+            }
+                
             case CheckArgumentsNotCreated: {
                 if (!isEmptySpeculation(
                         m_state.variables().operand(

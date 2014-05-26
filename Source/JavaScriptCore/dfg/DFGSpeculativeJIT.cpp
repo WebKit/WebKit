@@ -1853,14 +1853,6 @@ GeneratedOperandType SpeculativeJIT::checkGeneratedTypeForToInt32(Node* node)
 void SpeculativeJIT::compileValueToInt32(Node* node)
 {
     switch (node->child1().useKind()) {
-    case Int32Use: {
-        SpeculateInt32Operand op1(this, node->child1());
-        GPRTemporary result(this, Reuse, op1);
-        m_jit.move(op1.gpr(), result.gpr());
-        int32Result(result.gpr(), node, op1.format());
-        return;
-    }
-        
 #if USE(JSVALUE64)
     case Int52RepUse: {
         SpeculateStrictInt52Operand op1(this, node->child1());
@@ -2013,17 +2005,6 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
         return;
     }
     
-    case BooleanUse: {
-        SpeculateBooleanOperand op1(this, node->child1());
-        GPRTemporary result(this, Reuse, op1);
-        
-        m_jit.move(op1.gpr(), result.gpr());
-        m_jit.and32(JITCompiler::TrustedImm32(1), result.gpr());
-        
-        int32Result(result.gpr(), node);
-        return;
-    }
-
     default:
         ASSERT(!m_compileOkay);
         return;

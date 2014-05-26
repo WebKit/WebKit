@@ -3053,6 +3053,47 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
+    case BooleanToNumber: {
+        switch (node->child1().useKind()) {
+        case BooleanUse: {
+            JSValueOperand value(this, node->child1(), ManualOperandSpeculation);
+            GPRTemporary result(this); // FIXME: We could reuse, but on speculation fail would need recovery to restore tag (akin to add).
+            
+            m_jit.move(value.gpr(), result.gpr());
+            m_jit.xor64(TrustedImm32(static_cast<int32_t>(ValueFalse)), result.gpr());
+            DFG_TYPE_CHECK(
+                JSValueRegs(value.gpr()), node->child1(), SpecBoolean, m_jit.branchTest64(
+                    JITCompiler::NonZero, result.gpr(), TrustedImm32(static_cast<int32_t>(~1))));
+
+            int32Result(result.gpr(), node);
+            break;
+        }
+            
+        case UntypedUse: {
+            JSValueOperand value(this, node->child1());
+            GPRTemporary result(this);
+            
+            m_jit.move(value.gpr(), result.gpr());
+            m_jit.xor64(TrustedImm32(static_cast<int32_t>(ValueFalse)), result.gpr());
+            JITCompiler::Jump isBoolean = m_jit.branchTest64(
+                JITCompiler::Zero, result.gpr(), TrustedImm32(static_cast<int32_t>(~1)));
+            m_jit.move(value.gpr(), result.gpr());
+            JITCompiler::Jump done = m_jit.jump();
+            isBoolean.link(&m_jit);
+            m_jit.or64(GPRInfo::tagTypeNumberRegister, result.gpr());
+            done.link(&m_jit);
+            
+            jsValueResult(result.gpr(), node);
+            break;
+        }
+            
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    }
+        
     case ToPrimitive: {
         RELEASE_ASSERT(node->child1().useKind() == UntypedUse);
         JSValueOperand op1(this, node->child1());

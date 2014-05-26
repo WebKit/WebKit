@@ -831,6 +831,13 @@ inline bool JSValue::strictEqual(ExecState* exec, JSValue v1, JSValue v2)
     return strictEqualSlowCaseInline(exec, v1, v2);
 }
 
+inline int32_t JSValue::asInt32ForArithmetic() const
+{
+    if (isBoolean())
+        return asBoolean();
+    return asInt32();
+}
+
 inline TriState JSValue::pureStrictEqual(JSValue v1, JSValue v2)
 {
     if (v1.isInt32() && v2.isInt32())

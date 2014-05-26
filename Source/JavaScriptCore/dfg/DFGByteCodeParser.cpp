@@ -899,15 +899,15 @@ private:
     
     Node* makeSafe(Node* node)
     {
-        bool likelyToTakeSlowCase;
-        if (!isX86() && node->op() == ArithMod)
-            likelyToTakeSlowCase = false;
-        else
-            likelyToTakeSlowCase = m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex);
+        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
+            node->mergeFlags(NodeMayOverflowInDFG);
+        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
+            node->mergeFlags(NodeMayNegZeroInDFG);
         
-        if (!likelyToTakeSlowCase
-            && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow)
-            && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
+        if (!isX86() && node->op() == ArithMod)
+            return node;
+
+        if (!m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex))
             return node;
         
         switch (node->op()) {
@@ -916,15 +916,15 @@ private:
         case ArithSub:
         case ValueAdd:
         case ArithMod: // for ArithMod "MayOverflow" means we tried to divide by zero, or we saw double.
-            node->mergeFlags(NodeMayOverflow);
+            node->mergeFlags(NodeMayOverflowInBaseline);
             break;
             
         case ArithNegate:
             // Currently we can't tell the difference between a negation overflowing
             // (i.e. -(1 << 31)) or generating negative zero (i.e. -0). If it took slow
             // path then we assume that it did both of those things.
-            node->mergeFlags(NodeMayOverflow);
-            node->mergeFlags(NodeMayNegZero);
+            node->mergeFlags(NodeMayOverflowInBaseline);
+            node->mergeFlags(NodeMayNegZeroInBaseline);
             break;
 
         case ArithMul:
@@ -933,10 +933,10 @@ private:
             // https://bugs.webkit.org/show_bug.cgi?id=132470
             if (m_inlineStackTop->m_profiledBlock->likelyToTakeDeepestSlowCase(m_currentIndex)
                 || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
-                node->mergeFlags(NodeMayOverflow | NodeMayNegZero);
+                node->mergeFlags(NodeMayOverflowInBaseline | NodeMayNegZeroInBaseline);
             else if (m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
                 || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
-                node->mergeFlags(NodeMayNegZero);
+                node->mergeFlags(NodeMayNegZeroInBaseline);
             break;
             
         default:
@@ -951,20 +951,22 @@ private:
     {
         ASSERT(node->op() == ArithDiv);
         
+        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
+            node->mergeFlags(NodeMayOverflowInDFG);
+        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
+            node->mergeFlags(NodeMayNegZeroInDFG);
+        
         // The main slow case counter for op_div in the old JIT counts only when
         // the operands are not numbers. We don't care about that since we already
         // have speculations in place that take care of that separately. We only
         // care about when the outcome of the division is not an integer, which
         // is what the special fast case counter tells us.
         
-        if (!m_inlineStackTop->m_profiledBlock->couldTakeSpecialFastCase(m_currentIndex)
-            && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow)
-            && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
+        if (!m_inlineStackTop->m_profiledBlock->couldTakeSpecialFastCase(m_currentIndex))
             return node;
         
-        // FIXME: It might be possible to make this more granular. The DFG certainly can
-        // distinguish between negative zero and overflow in its exit profiles.
-        node->mergeFlags(NodeMayOverflow | NodeMayNegZero);
+        // FIXME: It might be possible to make this more granular.
+        node->mergeFlags(NodeMayOverflowInBaseline | NodeMayNegZeroInBaseline);
         
         return node;
     }
@@ -1559,7 +1561,7 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
 
         Node* node = addToGraph(ArithAbs, get(virtualRegisterForArgument(1, registerOffset)));
         if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
-            node->mergeFlags(NodeMayOverflow);
+            node->mergeFlags(NodeMayOverflowInDFG);
         set(VirtualRegister(resultOperand), node);
         return true;
     }

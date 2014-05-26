@@ -102,14 +102,14 @@ private:
         case BitRShift:
         case BitLShift:
         case BitURShift: {
-            fixIntEdge(node->child1());
-            fixIntEdge(node->child2());
+            fixIntConvertingEdge(node->child1());
+            fixIntConvertingEdge(node->child2());
             break;
         }
 
         case ArithIMul: {
-            fixIntEdge(node->child1());
-            fixIntEdge(node->child2());
+            fixIntConvertingEdge(node->child1());
+            fixIntConvertingEdge(node->child2());
             node->setOp(ArithMul);
             node->setArithMode(Arith::Unchecked);
             node->child1().setUseKind(Int32Use);
@@ -118,10 +118,10 @@ private:
         }
             
         case UInt32ToNumber: {
-            fixIntEdge(node->child1());
+            fixIntConvertingEdge(node->child1());
             if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
                 node->convertToIdentity();
-            else if (nodeCanSpeculateInt32(node->arithNodeFlags()))
+            else if (node->canSpeculateInt32(FixupPass))
                 node->setArithMode(Arith::CheckOverflow);
             else {
                 node->setArithMode(Arith::DoOverflow);
@@ -136,9 +136,9 @@ private:
                 node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
                 break;
             }
-            if (Node::shouldSpeculateNumberExpectingDefined(node->child1().node(), node->child2().node())) {
-                fixEdge<DoubleRepUse>(node->child1());
-                fixEdge<DoubleRepUse>(node->child2());
+            if (Node::shouldSpeculateNumberOrBooleanExpectingDefined(node->child1().node(), node->child2().node())) {
+                fixDoubleOrBooleanEdge(node->child1());
+                fixDoubleOrBooleanEdge(node->child2());
                 node->setOp(ArithAdd);
                 node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
                 node->setResult(NodeResultDouble);
@@ -180,15 +180,15 @@ private:
         case ArithSub: {
             if (attemptToMakeIntegerAdd(node))
                 break;
-            fixEdge<DoubleRepUse>(node->child1());
-            fixEdge<DoubleRepUse>(node->child2());
+            fixDoubleOrBooleanEdge(node->child1());
+            fixDoubleOrBooleanEdge(node->child2());
             node->setResult(NodeResultDouble);
             break;
         }
             
         case ArithNegate: {
-            if (m_graph.negateShouldSpeculateInt32(node)) {
-                fixEdge<Int32Use>(node->child1());
+            if (m_graph.negateShouldSpeculateInt32(node, FixupPass)) {
+                fixIntOrBooleanEdge(node->child1());
                 if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
                     node->setArithMode(Arith::Unchecked);
                 else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
@@ -197,7 +197,7 @@ private:
                     node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 break;
             }
-            if (m_graph.negateShouldSpeculateMachineInt(node)) {
+            if (m_graph.negateShouldSpeculateMachineInt(node, FixupPass)) {
                 fixEdge<Int52RepUse>(node->child1());
                 if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
                     node->setArithMode(Arith::CheckOverflow);
@@ -206,15 +206,15 @@ private:
                 node->setResult(NodeResultInt52);
                 break;
             }
-            fixEdge<DoubleRepUse>(node->child1());
+            fixDoubleOrBooleanEdge(node->child1());
             node->setResult(NodeResultDouble);
             break;
         }
             
         case ArithMul: {
-            if (m_graph.mulShouldSpeculateInt32(node)) {
-                fixEdge<Int32Use>(node->child1());
-                fixEdge<Int32Use>(node->child2());
+            if (m_graph.mulShouldSpeculateInt32(node, FixupPass)) {
+                fixIntOrBooleanEdge(node->child1());
+                fixIntOrBooleanEdge(node->child2());
                 if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
                     node->setArithMode(Arith::Unchecked);
                 else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
@@ -223,7 +223,7 @@ private:
                     node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 break;
             }
-            if (m_graph.mulShouldSpeculateMachineInt(node)) {
+            if (m_graph.mulShouldSpeculateMachineInt(node, FixupPass)) {
                 fixEdge<Int52RepUse>(node->child1());
                 fixEdge<Int52RepUse>(node->child2());
                 if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
@@ -233,19 +233,19 @@ private:
                 node->setResult(NodeResultInt52);
                 break;
             }
-            fixEdge<DoubleRepUse>(node->child1());
-            fixEdge<DoubleRepUse>(node->child2());
+            fixDoubleOrBooleanEdge(node->child1());
+            fixDoubleOrBooleanEdge(node->child2());
             node->setResult(NodeResultDouble);
             break;
         }
 
         case ArithDiv:
         case ArithMod: {
-            if (Node::shouldSpeculateInt32ForArithmetic(node->child1().node(), node->child2().node())
-                && node->canSpeculateInt32()) {
+            if (Node::shouldSpeculateInt32OrBooleanForArithmetic(node->child1().node(), node->child2().node())
+                && node->canSpeculateInt32(FixupPass)) {
                 if (optimizeForX86() || optimizeForARM64() || optimizeForARMv7s()) {
-                    fixEdge<Int32Use>(node->child1());
-                    fixEdge<Int32Use>(node->child2());
+                    fixIntOrBooleanEdge(node->child1());
+                    fixIntOrBooleanEdge(node->child2());
                     if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
                         node->setArithMode(Arith::Unchecked);
                     else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
@@ -256,8 +256,8 @@ private:
                 }
                 
                 // This will cause conversion nodes to be inserted later.
-                fixEdge<DoubleRepUse>(node->child1());
-                fixEdge<DoubleRepUse>(node->child2());
+                fixDoubleOrBooleanEdge(node->child1());
+                fixDoubleOrBooleanEdge(node->child2());
                 
                 // But we have to make sure that everything is phantom'd until after the
                 // DoubleAsInt32 node, which occurs after the Div/Mod node that the conversions
@@ -279,33 +279,33 @@ private:
                     node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 break;
             }
-            fixEdge<DoubleRepUse>(node->child1());
-            fixEdge<DoubleRepUse>(node->child2());
+            fixDoubleOrBooleanEdge(node->child1());
+            fixDoubleOrBooleanEdge(node->child2());
             node->setResult(NodeResultDouble);
             break;
         }
             
         case ArithMin:
         case ArithMax: {
-            if (Node::shouldSpeculateInt32ForArithmetic(node->child1().node(), node->child2().node())
-                && node->canSpeculateInt32()) {
-                fixEdge<Int32Use>(node->child1());
-                fixEdge<Int32Use>(node->child2());
+            if (Node::shouldSpeculateInt32OrBooleanForArithmetic(node->child1().node(), node->child2().node())
+                && node->canSpeculateInt32(FixupPass)) {
+                fixIntOrBooleanEdge(node->child1());
+                fixIntOrBooleanEdge(node->child2());
                 break;
             }
-            fixEdge<DoubleRepUse>(node->child1());
-            fixEdge<DoubleRepUse>(node->child2());
+            fixDoubleOrBooleanEdge(node->child1());
+            fixDoubleOrBooleanEdge(node->child2());
             node->setResult(NodeResultDouble);
             break;
         }
             
         case ArithAbs: {
-            if (node->child1()->shouldSpeculateInt32ForArithmetic()
-                && node->canSpeculateInt32()) {
-                fixEdge<Int32Use>(node->child1());
+            if (node->child1()->shouldSpeculateInt32OrBooleanForArithmetic()
+                && node->canSpeculateInt32(FixupPass)) {
+                fixIntOrBooleanEdge(node->child1());
                 break;
             }
-            fixEdge<DoubleRepUse>(node->child1());
+            fixDoubleOrBooleanEdge(node->child1());
             node->setResult(NodeResultDouble);
             break;
         }
@@ -314,7 +314,7 @@ private:
         case ArithFRound:
         case ArithSin:
         case ArithCos: {
-            fixEdge<DoubleRepUse>(node->child1());
+            fixDoubleOrBooleanEdge(node->child1());
             node->setResult(NodeResultDouble);
             break;
         }
@@ -324,8 +324,8 @@ private:
                 fixEdge<BooleanUse>(node->child1());
             else if (node->child1()->shouldSpeculateObjectOrOther())
                 fixEdge<ObjectOrOtherUse>(node->child1());
-            else if (node->child1()->shouldSpeculateInt32())
-                fixEdge<Int32Use>(node->child1());
+            else if (node->child1()->shouldSpeculateInt32OrBoolean())
+                fixIntOrBooleanEdge(node->child1());
             else if (node->child1()->shouldSpeculateNumber())
                 fixEdge<DoubleRepUse>(node->child1());
             else if (node->child1()->shouldSpeculateString())
@@ -350,9 +350,16 @@ private:
         case CompareLessEq:
         case CompareGreater:
         case CompareGreaterEq: {
-            if (Node::shouldSpeculateInt32(node->child1().node(), node->child2().node())) {
-                fixEdge<Int32Use>(node->child1());
-                fixEdge<Int32Use>(node->child2());
+            if (node->op() == CompareEq
+                && Node::shouldSpeculateBoolean(node->child1().node(), node->child2().node())) {
+                fixEdge<BooleanUse>(node->child1());
+                fixEdge<BooleanUse>(node->child2());
+                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
+                break;
+            }
+            if (Node::shouldSpeculateInt32OrBoolean(node->child1().node(), node->child2().node())) {
+                fixIntOrBooleanEdge(node->child1());
+                fixIntOrBooleanEdge(node->child2());
                 node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
                 break;
             }
@@ -363,20 +370,14 @@ private:
                 node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
                 break;
             }
-            if (Node::shouldSpeculateNumber(node->child1().node(), node->child2().node())) {
-                fixEdge<DoubleRepUse>(node->child1());
-                fixEdge<DoubleRepUse>(node->child2());
+            if (Node::shouldSpeculateNumberOrBoolean(node->child1().node(), node->child2().node())) {
+                fixDoubleOrBooleanEdge(node->child1());
+                fixDoubleOrBooleanEdge(node->child2());
                 node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
                 break;
             }
             if (node->op() != CompareEq)
                 break;
-            if (Node::shouldSpeculateBoolean(node->child1().node(), node->child2().node())) {
-                fixEdge<BooleanUse>(node->child1());
-                fixEdge<BooleanUse>(node->child2());
-                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
-                break;
-            }
             if (node->child1()->shouldSpeculateStringIdent() && node->child2()->shouldSpeculateStringIdent()) {
                 fixEdge<StringIdentUse>(node->child1());
                 fixEdge<StringIdentUse>(node->child2());
@@ -604,10 +605,6 @@ private:
                 fixEdge<KnownCellUse>(child1);
                 fixEdge<Int32Use>(child2);
                 fixEdge<Int32Use>(child3);
-                if (child3->prediction() & SpecInt52)
-                    fixEdge<Int52RepUse>(child3);
-                else
-                    fixEdge<Int32Use>(child3);
                 break;
             case Array::Double:
                 fixEdge<KnownCellUse>(child1);
@@ -624,17 +621,17 @@ private:
                 fixEdge<KnownCellUse>(child1);
                 fixEdge<Int32Use>(child2);
                 if (child3->shouldSpeculateInt32())
-                    fixEdge<Int32Use>(child3);
+                    fixIntOrBooleanEdge(child3);
                 else if (child3->shouldSpeculateMachineInt())
                     fixEdge<Int52RepUse>(child3);
                 else
-                    fixEdge<DoubleRepUse>(child3);
+                    fixDoubleOrBooleanEdge(child3);
                 break;
             case Array::Float32Array:
             case Array::Float64Array:
                 fixEdge<KnownCellUse>(child1);
                 fixEdge<Int32Use>(child2);
-                fixEdge<DoubleRepUse>(child3);
+                fixDoubleOrBooleanEdge(child3);
                 break;
             case Array::Contiguous:
             case Array::ArrayStorage:
@@ -706,10 +703,10 @@ private:
                 fixEdge<BooleanUse>(node->child1());
             else if (node->child1()->shouldSpeculateObjectOrOther())
                 fixEdge<ObjectOrOtherUse>(node->child1());
-            else if (node->child1()->shouldSpeculateInt32())
-                fixEdge<Int32Use>(node->child1());
-            else if (node->child1()->shouldSpeculateNumber())
-                fixEdge<DoubleRepUse>(node->child1());
+            else if (node->child1()->shouldSpeculateInt32OrBoolean())
+                fixIntOrBooleanEdge(node->child1());
+            else if (node->child1()->shouldSpeculateNumberOrBoolean())
+                fixDoubleOrBooleanEdge(node->child1());
 
             Node* logicalNot = node->child1().node();
             if (logicalNot->op() == LogicalNot) {
@@ -1019,6 +1016,7 @@ private:
         case DoubleConstant:
         case Int52Constant:
         case Identity: // This should have been cleaned up.
+        case BooleanToNumber:
             // These are just nodes that we don't currently expect to see during fixup.
             // If we ever wanted to insert them prior to fixup, then we just have to create
             // fixup rules for them.
@@ -1579,11 +1577,11 @@ private:
         m_insertionSet.insert(indexInBlock, barrierNode);
     }
 
-    void fixIntEdge(Edge& edge)
+    void fixIntConvertingEdge(Edge& edge)
     {
         Node* node = edge.node();
-        if (node->shouldSpeculateInt32()) {
-            fixEdge<Int32Use>(edge);
+        if (node->shouldSpeculateInt32OrBoolean()) {
+            fixIntOrBooleanEdge(edge);
             return;
         }
         
@@ -1592,8 +1590,6 @@ private:
             useKind = Int52RepUse;
         else if (node->shouldSpeculateNumber())
             useKind = DoubleRepUse;
-        else if (node->shouldSpeculateBoolean())
-            useKind = BooleanUse;
         else
             useKind = NotCellUse;
         Node* newNode = m_insertionSet.insertNode(
@@ -1602,6 +1598,50 @@ private:
         observeUseKindOnNode(node, useKind);
         
         edge = Edge(newNode, KnownInt32Use);
+        addRequiredPhantom(node);
+    }
+    
+    void fixIntOrBooleanEdge(Edge& edge)
+    {
+        Node* node = edge.node();
+        if (!node->sawBooleans()) {
+            fixEdge<Int32Use>(edge);
+            return;
+        }
+        
+        UseKind useKind;
+        if (node->shouldSpeculateBoolean())
+            useKind = BooleanUse;
+        else
+            useKind = UntypedUse;
+        Node* newNode = m_insertionSet.insertNode(
+            m_indexInBlock, SpecInt32, BooleanToNumber, m_currentNode->origin,
+            Edge(node, useKind));
+        observeUseKindOnNode(node, useKind);
+        
+        edge = Edge(newNode, Int32Use);
+        addRequiredPhantom(node);
+    }
+    
+    void fixDoubleOrBooleanEdge(Edge& edge)
+    {
+        Node* node = edge.node();
+        if (!node->sawBooleans()) {
+            fixEdge<DoubleRepUse>(edge);
+            return;
+        }
+        
+        UseKind useKind;
+        if (node->shouldSpeculateBoolean())
+            useKind = BooleanUse;
+        else
+            useKind = UntypedUse;
+        Node* newNode = m_insertionSet.insertNode(
+            m_indexInBlock, SpecInt32, BooleanToNumber, m_currentNode->origin,
+            Edge(node, useKind));
+        observeUseKindOnNode(node, useKind);
+        
+        edge = Edge(newNode, DoubleRepUse);
         addRequiredPhantom(node);
     }
     
@@ -1646,11 +1686,11 @@ private:
     
     bool attemptToMakeIntegerAdd(Node* node)
     {
-        AddSpeculationMode mode = m_graph.addSpeculationMode(node);
+        AddSpeculationMode mode = m_graph.addSpeculationMode(node, FixupPass);
         if (mode != DontSpeculateInt32) {
             truncateConstantsIfNecessary(node, mode);
-            fixEdge<Int32Use>(node->child1());
-            fixEdge<Int32Use>(node->child2());
+            fixIntOrBooleanEdge(node->child1());
+            fixIntOrBooleanEdge(node->child2());
             if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
                 node->setArithMode(Arith::Unchecked);
             else

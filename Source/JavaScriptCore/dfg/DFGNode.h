@@ -1437,14 +1437,29 @@ struct Node {
         return isInt32Speculation(prediction());
     }
     
+    bool sawBooleans()
+    {
+        return !!(prediction() & SpecBoolean);
+    }
+    
+    bool shouldSpeculateInt32OrBoolean()
+    {
+        return isInt32OrBooleanSpeculation(prediction());
+    }
+    
     bool shouldSpeculateInt32ForArithmetic()
     {
         return isInt32SpeculationForArithmetic(prediction());
     }
     
-    bool shouldSpeculateInt32ExpectingDefined()
+    bool shouldSpeculateInt32OrBooleanForArithmetic()
     {
-        return isInt32SpeculationExpectingDefined(prediction());
+        return isInt32OrBooleanSpeculationForArithmetic(prediction());
+    }
+    
+    bool shouldSpeculateInt32OrBooleanExpectingDefined()
+    {
+        return isInt32OrBooleanSpeculationExpectingDefined(prediction());
     }
     
     bool shouldSpeculateMachineInt()
@@ -1452,24 +1467,9 @@ struct Node {
         return isMachineIntSpeculation(prediction());
     }
     
-    bool shouldSpeculateMachineIntForArithmetic()
-    {
-        return isMachineIntSpeculationForArithmetic(prediction());
-    }
-    
-    bool shouldSpeculateMachineIntExpectingDefined()
-    {
-        return isMachineIntSpeculationExpectingDefined(prediction());
-    }
-    
     bool shouldSpeculateDouble()
     {
         return isDoubleSpeculation(prediction());
-    }
-    
-    bool shouldSpeculateDoubleForArithmetic()
-    {
-        return isDoubleSpeculationForArithmetic(prediction());
     }
     
     bool shouldSpeculateNumber()
@@ -1477,9 +1477,14 @@ struct Node {
         return isFullNumberSpeculation(prediction());
     }
     
-    bool shouldSpeculateNumberExpectingDefined()
+    bool shouldSpeculateNumberOrBoolean()
     {
-        return isFullNumberSpeculationExpectingDefined(prediction());
+        return isFullNumberOrBooleanSpeculation(prediction());
+    }
+    
+    bool shouldSpeculateNumberOrBooleanExpectingDefined()
+    {
+        return isFullNumberOrBooleanSpeculationExpectingDefined(prediction());
     }
     
     bool shouldSpeculateBoolean()
@@ -1617,14 +1622,22 @@ struct Node {
         return op1->shouldSpeculateInt32() && op2->shouldSpeculateInt32();
     }
     
-    static bool shouldSpeculateInt32ForArithmetic(Node* op1, Node* op2)
+    static bool shouldSpeculateInt32OrBoolean(Node* op1, Node* op2)
     {
-        return op1->shouldSpeculateInt32ForArithmetic() && op2->shouldSpeculateInt32ForArithmetic();
+        return op1->shouldSpeculateInt32OrBoolean()
+            && op2->shouldSpeculateInt32OrBoolean();
     }
     
-    static bool shouldSpeculateInt32ExpectingDefined(Node* op1, Node* op2)
+    static bool shouldSpeculateInt32OrBooleanForArithmetic(Node* op1, Node* op2)
     {
-        return op1->shouldSpeculateInt32ExpectingDefined() && op2->shouldSpeculateInt32ExpectingDefined();
+        return op1->shouldSpeculateInt32OrBooleanForArithmetic()
+            && op2->shouldSpeculateInt32OrBooleanForArithmetic();
+    }
+    
+    static bool shouldSpeculateInt32OrBooleanExpectingDefined(Node* op1, Node* op2)
+    {
+        return op1->shouldSpeculateInt32OrBooleanExpectingDefined()
+            && op2->shouldSpeculateInt32OrBooleanExpectingDefined();
     }
     
     static bool shouldSpeculateMachineInt(Node* op1, Node* op2)
@@ -1632,29 +1645,21 @@ struct Node {
         return op1->shouldSpeculateMachineInt() && op2->shouldSpeculateMachineInt();
     }
     
-    static bool shouldSpeculateMachineIntForArithmetic(Node* op1, Node* op2)
-    {
-        return op1->shouldSpeculateMachineIntForArithmetic() && op2->shouldSpeculateMachineIntForArithmetic();
-    }
-    
-    static bool shouldSpeculateMachineIntExpectingDefined(Node* op1, Node* op2)
-    {
-        return op1->shouldSpeculateMachineIntExpectingDefined() && op2->shouldSpeculateMachineIntExpectingDefined();
-    }
-    
-    static bool shouldSpeculateDoubleForArithmetic(Node* op1, Node* op2)
-    {
-        return op1->shouldSpeculateDoubleForArithmetic() && op2->shouldSpeculateDoubleForArithmetic();
-    }
-    
     static bool shouldSpeculateNumber(Node* op1, Node* op2)
     {
         return op1->shouldSpeculateNumber() && op2->shouldSpeculateNumber();
     }
     
-    static bool shouldSpeculateNumberExpectingDefined(Node* op1, Node* op2)
+    static bool shouldSpeculateNumberOrBoolean(Node* op1, Node* op2)
     {
-        return op1->shouldSpeculateNumberExpectingDefined() && op2->shouldSpeculateNumberExpectingDefined();
+        return op1->shouldSpeculateNumberOrBoolean()
+            && op2->shouldSpeculateNumberOrBoolean();
+    }
+    
+    static bool shouldSpeculateNumberOrBooleanExpectingDefined(Node* op1, Node* op2)
+    {
+        return op1->shouldSpeculateNumberOrBooleanExpectingDefined()
+            && op2->shouldSpeculateNumberOrBooleanExpectingDefined();
     }
     
     static bool shouldSpeculateFinalObject(Node* op1, Node* op2)
@@ -1667,14 +1672,31 @@ struct Node {
         return op1->shouldSpeculateArray() && op2->shouldSpeculateArray();
     }
     
-    bool canSpeculateInt32()
+    bool canSpeculateInt32(RareCaseProfilingSource source)
     {
-        return nodeCanSpeculateInt32(arithNodeFlags());
+        return nodeCanSpeculateInt32(arithNodeFlags(), source);
     }
     
-    bool canSpeculateInt52()
+    bool canSpeculateInt52(RareCaseProfilingSource source)
     {
-        return nodeCanSpeculateInt52(arithNodeFlags());
+        return nodeCanSpeculateInt52(arithNodeFlags(), source);
+    }
+    
+    RareCaseProfilingSource sourceFor(PredictionPass pass)
+    {
+        if (pass == PrimaryPass || child1()->sawBooleans() || (child2() && child2()->sawBooleans()))
+            return DFGRareCase;
+        return AllRareCases;
+    }
+    
+    bool canSpeculateInt32(PredictionPass pass)
+    {
+        return canSpeculateInt32(sourceFor(pass));
+    }
+    
+    bool canSpeculateInt52(PredictionPass pass)
+    {
+        return canSpeculateInt52(sourceFor(pass));
     }
     
     void dumpChildren(PrintStream& out)
