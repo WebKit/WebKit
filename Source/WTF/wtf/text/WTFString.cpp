@@ -335,6 +335,14 @@ String String::substringSharingImpl(unsigned offset, unsigned length) const
     return String(StringImpl::createSubstringSharingImpl(m_impl, offset, length));
 }
 
+String String::convertToASCIILowercase() const
+{
+    // FIXME: Should this function, and the many others like it, be inlined?
+    if (!m_impl)
+        return String();
+    return m_impl->convertToASCIILowercase();
+}
+
 String String::lower() const
 {
     if (!m_impl)

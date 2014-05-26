@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2008, 2013-2014 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
@@ -396,37 +396,37 @@ PassRefPtr<StringImpl> AtomicString::addFromLiteralData(const char* characters, 
     return addToStringTable<CharBuffer, CharBufferFromLiteralDataTranslator>(buffer);
 }
 
-PassRefPtr<StringImpl> AtomicString::addSlowCase(StringImpl* string)
+PassRefPtr<StringImpl> AtomicString::addSlowCase(StringImpl& string)
 {
-    if (!string->length())
+    if (!string.length())
         return StringImpl::empty();
 
-    ASSERT_WITH_MESSAGE(!string->isAtomic(), "AtomicString should not hit the slow case if the string is already atomic.");
+    ASSERT_WITH_MESSAGE(!string.isAtomic(), "AtomicString should not hit the slow case if the string is already atomic.");
 
     AtomicStringTableLocker locker;
-    HashSet<StringImpl*>::AddResult addResult = stringTable().add(string);
+    auto addResult = stringTable().add(&string);
 
     if (addResult.isNewEntry) {
-        ASSERT(*addResult.iterator == string);
-        string->setIsAtomic(true);
+        ASSERT(*addResult.iterator == &string);
+        string.setIsAtomic(true);
     }
 
     return *addResult.iterator;
 }
 
-PassRefPtr<StringImpl> AtomicString::addSlowCase(AtomicStringTable* stringTable, StringImpl* string)
+PassRefPtr<StringImpl> AtomicString::addSlowCase(AtomicStringTable& stringTable, StringImpl& string)
 {
-    if (!string->length())
+    if (!string.length())
         return StringImpl::empty();
 
-    ASSERT_WITH_MESSAGE(!string->isAtomic(), "AtomicString should not hit the slow case if the string is already atomic.");
+    ASSERT_WITH_MESSAGE(!string.isAtomic(), "AtomicString should not hit the slow case if the string is already atomic.");
 
     AtomicStringTableLocker locker;
-    HashSet<StringImpl*>::AddResult addResult = stringTable->table().add(string);
+    auto addResult = stringTable.table().add(&string);
 
     if (addResult.isNewEntry) {
-        ASSERT(*addResult.iterator == string);
-        string->setIsAtomic(true);
+        ASSERT(*addResult.iterator == &string);
+        string.setIsAtomic(true);
     }
 
     return *addResult.iterator;
@@ -474,13 +474,52 @@ AtomicString AtomicString::lower() const
     if (UNLIKELY(!impl))
         return AtomicString();
 
-    RefPtr<StringImpl> lowerImpl = impl->lower();
-    AtomicString returnValue;
-    if (LIKELY(lowerImpl == impl))
-        returnValue.m_string = lowerImpl.release();
-    else
-        returnValue.m_string = addSlowCase(lowerImpl.get());
-    return returnValue;
+    RefPtr<StringImpl> lowercasedString = impl->lower();
+    if (LIKELY(lowercasedString == impl))
+        return *this;
+
+    AtomicString result;
+    result.m_string = addSlowCase(*lowercasedString);
+    return result;
+}
+
+AtomicString AtomicString::convertToASCIILowercase() const
+{
+    StringImpl* impl = this->impl();
+    if (UNLIKELY(!impl))
+        return AtomicString();
+
+    // Convert short strings without allocating a new StringImpl, since
+    // there's a good chance these strings are already in the atomic
+    // string table and so no memory allocation will be required.
+    unsigned length;
+    const unsigned localBufferSize = 100;
+    if (impl->is8Bit() && (length = impl->length()) <= localBufferSize) {
+        const LChar* characters = impl->characters8();
+        unsigned failingIndex;
+        for (unsigned i = 0; i < length; ++i) {
+            if (UNLIKELY(isASCIIUpper(characters[i]))) {
+                failingIndex = i;
+                goto SlowPath;
+            }
+        }
+        return *this;
+SlowPath:
+        LChar localBuffer[localBufferSize];
+        for (unsigned i = 0; i < failingIndex; ++i)
+            localBuffer[i] = characters[i];
+        for (unsigned i = failingIndex; i < length; ++i)
+            localBuffer[i] = toASCIILower(characters[i]);
+        return AtomicString(localBuffer, length);
+    }
+
+    RefPtr<StringImpl> convertedString = impl->convertToASCIILowercase();
+    if (LIKELY(convertedString == impl))
+        return *this;
+
+    AtomicString result;
+    result.m_string = addSlowCase(*convertedString);
+    return result;
 }
 
 AtomicStringImpl* AtomicString::findSlowCase(StringImpl& string)

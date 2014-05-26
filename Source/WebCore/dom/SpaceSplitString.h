@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2014 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,9 +21,7 @@
 #ifndef SpaceSplitString_h
 #define SpaceSplitString_h
 
-#include <wtf/Assertions.h>
 #include <wtf/MainThread.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -51,26 +49,26 @@ public:
     unsigned size() const { return m_size; }
     static ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(SpaceSplitStringData, m_size); }
 
-    const AtomicString& operator[](size_t i)
+    const AtomicString& operator[](unsigned i)
     {
         RELEASE_ASSERT(i < m_size);
         return tokenArrayStart()[i];
     }
 
-    inline void ref()
+    void ref()
     {
         ASSERT(isMainThread());
         ASSERT(m_refCount);
         ++m_refCount;
     }
 
-    inline void deref()
+    void deref()
     {
         ASSERT(isMainThread());
         ASSERT(m_refCount);
         unsigned tempRefCount = m_refCount - 1;
         if (!tempRefCount) {
-            SpaceSplitStringData::destroy(this);
+            destroy(this);
             return;
         }
         m_refCount = tempRefCount;
@@ -89,7 +87,7 @@ private:
         ASSERT_WITH_MESSAGE(m_size, "SpaceSplitStringData should never be empty by definition. There is no difference between empty and null.");
     }
 
-    inline ~SpaceSplitStringData() { }
+    ~SpaceSplitStringData() { }
     static void destroy(SpaceSplitStringData*);
 
     AtomicString* tokenArrayStart() { return reinterpret_cast<AtomicString*>(this + 1); }
@@ -112,9 +110,9 @@ public:
     bool contains(const AtomicString& string) const { return m_data && m_data->contains(string); }
     bool containsAll(const SpaceSplitString& names) const { return !names.m_data || (m_data && m_data->containsAll(*names.m_data)); }
 
-    size_t size() const { return m_data ? m_data->size() : 0; }
+    unsigned size() const { return m_data ? m_data->size() : 0; }
     bool isEmpty() const { return !m_data; }
-    const AtomicString& operator[](size_t i) const
+    const AtomicString& operator[](unsigned i) const
     {
         ASSERT_WITH_SECURITY_IMPLICATION(m_data);
         return (*m_data)[i];
@@ -128,7 +126,6 @@ public:
     }
 
 private:
-
     RefPtr<SpaceSplitStringData> m_data;
 };
 

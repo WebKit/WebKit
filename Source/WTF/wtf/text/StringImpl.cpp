@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller ( mueller@kde.org )
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2013-2014 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
@@ -353,12 +353,12 @@ PassRef<StringImpl> StringImpl::lower()
             LChar character = m_data8[i];
             if (UNLIKELY((character & ~0x7F) || isASCIIUpper(character))) {
                 failingIndex = i;
-                goto SlowPath8bitLower;
+                goto SlowPath;
             }
         }
         return *this;
 
-SlowPath8bitLower:
+SlowPath:
         LChar* data8;
         auto newImpl = createUninitializedInternalNonEmpty(m_length, data8);
 
@@ -619,6 +619,8 @@ PassRef<StringImpl> StringImpl::fill(UChar character)
 
 PassRef<StringImpl> StringImpl::foldCase()
 {
+    // FIXME: Why doesn't this function have a preflight like the one in StringImpl::lower?
+
     if (m_length > static_cast<unsigned>(std::numeric_limits<int32_t>::max()))
         CRASH();
     int32_t length = m_length;
@@ -671,6 +673,44 @@ PassRef<StringImpl> StringImpl::foldCase()
     if (U_FAILURE(status))
         return *this;
     return newImpl.releaseNonNull();
+}
+
+PassRef<StringImpl> StringImpl::convertToASCIILowercase()
+{
+    if (is8Bit()) {
+        unsigned failingIndex;
+        for (unsigned i = 0; i < m_length; ++i) {
+            LChar character = m_data8[i];
+            if (UNLIKELY(isASCIIUpper(character))) {
+                failingIndex = i;
+                goto SlowPath;
+            }
+        }
+        return *this;
+
+SlowPath:
+        LChar* data8;
+        PassRef<StringImpl> newImpl = createUninitializedInternalNonEmpty(m_length, data8);
+        for (unsigned i = 0; i < failingIndex; ++i)
+            data8[i] = m_data8[i];
+        for (unsigned i = failingIndex; i < m_length; ++i)
+            data8[i] = toASCIILower(m_data8[i]);
+        return newImpl;
+    }
+
+    bool noUpper = true;
+    for (unsigned i = 0; i < m_length; ++i) {
+        if (UNLIKELY(isASCIIUpper(m_data16[i])))
+            noUpper = false;
+    }
+    if (noUpper)
+        return *this;
+
+    UChar* data16;
+    PassRef<StringImpl> newImpl = createUninitializedInternalNonEmpty(m_length, data16);
+    for (unsigned i = 0; i < m_length; ++i)
+        data16[i] = toASCIILower(m_data16[i]);
+    return newImpl;
 }
 
 template <class UCharPredicate>

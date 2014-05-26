@@ -1,3 +1,26 @@
+2014-05-26  Darin Adler  <darin@apple.com>
+
+        Class name matching should use ASCII case-insensitive matching, not Unicode case folding
+        https://bugs.webkit.org/show_bug.cgi?id=133292
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::addSlowCase): Change to take references instead of pointers since these
+        arguments can never be null.
+        (WTF::AtomicString::lower): Rearranged slightly to use PassRef in a more efficient but
+        slightly uglier way.
+        (WTF::AtomicString::convertToASCIILowercase): Added.
+        * wtf/text/AtomicString.h: Updated for above changes.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::convertToASCIILowercase): Added.
+        * wtf/text/StringImpl.h: Updated for above.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::convertToASCIILowercase): Added.
+        * wtf/text/WTFString.h: Updated for above.
+
 2014-05-22  Zan Dobersek  <zdobersek@igalia.com>
 
         Add the partial specialization for VectorTraits<std::unique_ptr<P>>

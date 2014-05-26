@@ -1,3 +1,32 @@
+2014-05-26  Darin Adler  <darin@apple.com>
+
+        Class name matching should use ASCII case-insensitive matching, not Unicode case folding
+        https://bugs.webkit.org/show_bug.cgi?id=133292
+
+        Reviewed by Anders Carlsson.
+
+        Tests: fast/dom/getElementsByClassName/ASCII-case-insensitive.html
+               fast/dom/getElementsByClassName/case-sensitive.html
+
+        * dom/SpaceSplitString.cpp:
+        (WebCore::hasNonASCIIOrUpper): Deleted.
+        (WebCore::tokenizeSpaceSplitString): Use a for loop instead of while.
+        (WebCore::spaceSplitStringTable): Renamed from sharedDataMap; the new name is supposed
+        to help us see the analogy with the atomic string table.
+        (WebCore::SpaceSplitString::set): Removed unneeded special case for null and preflight
+        since AtomicString::convertToASCIILowercase now handles both of those. Changed to call
+        convertToASCIILowercase instead of foldCase, since we don't want to fold non-ASCII.
+        (WebCore::SpaceSplitString::spaceSplitStringContainsValue): Ditto.
+        (WebCore::SpaceSplitStringData::create): Marked this inline since it's only called in
+        one place and that place is in this file. Also used auto a bit and used get instead of
+        find since the value type is a simple pointer.
+        (WebCore::SpaceSplitStringData::destroy): Removed unneeded check for null. We never
+        create any SpaceSplitStringData with empty strings, and a null is a kind of empty string.
+
+        * dom/SpaceSplitString.h: Removed some unneeded includes and some unneeded uses of the
+        inline keyword. Changed types from size_t to unsigned in a couple places; we had a mix
+        of the types and there was no reason to use size_t there.
+
 2014-05-26  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Implementation of the "grid" shorthand.

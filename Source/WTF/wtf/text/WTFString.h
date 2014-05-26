@@ -310,7 +310,10 @@ public:
     String left(unsigned len) const { return substring(0, len); }
     String right(unsigned len) const { return substring(length() - len, len); }
 
-    // Returns a lowercase/uppercase version of the string
+    // Returns a lowercase/uppercase version of the string.
+    // The convertToASCIILowercase is useful in many contexts such as HTML where we don't
+    // want to do any conversion for non-ASCII letters.
+    WTF_EXPORT_STRING_API String convertToASCIILowercase() const;
     WTF_EXPORT_STRING_API String lower() const;
     WTF_EXPORT_STRING_API String upper() const;
 
@@ -325,7 +328,8 @@ public:
     WTF_EXPORT_STRING_API String removeCharacters(CharacterMatchFunctionPtr) const;
     template<bool isSpecialCharacter(UChar)> bool isAllSpecialCharacters() const;
 
-    // Return the string with case folded for case insensitive comparison.
+    // Returns the string with case folded for case insensitive comparison.
+    // Use convertToASCIILowercase instead if ASCII case insensitive comparison is desired.
     WTF_EXPORT_STRING_API String foldCase() const;
 
     WTF_EXPORT_STRING_API static String format(const char *, ...) WTF_ATTRIBUTE_PRINTF(1, 2);

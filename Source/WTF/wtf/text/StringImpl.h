@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2010, 2013-2014 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -628,6 +628,7 @@ public:
     double toDouble(bool* ok = 0);
     float toFloat(bool* ok = 0);
 
+    WTF_EXPORT_STRING_API PassRef<StringImpl> convertToASCIILowercase();
     WTF_EXPORT_STRING_API PassRef<StringImpl> lower();
     WTF_EXPORT_STRING_API PassRef<StringImpl> upper();
     WTF_EXPORT_STRING_API PassRef<StringImpl> lower(const AtomicString& localeIdentifier);
@@ -635,6 +636,7 @@ public:
 
     WTF_EXPORT_STRING_API PassRef<StringImpl> fill(UChar);
     // FIXME: Do we need fill(char) or can we just do the right thing if UChar is ASCII?
+
     PassRef<StringImpl> foldCase();
 
     PassRef<StringImpl> stripWhiteSpace();

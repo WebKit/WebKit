@@ -1,3 +1,15 @@
+2014-05-26  Darin Adler  <darin@apple.com>
+
+        Class name matching should use ASCII case-insensitive matching, not Unicode case folding
+        https://bugs.webkit.org/show_bug.cgi?id=133292
+
+        Reviewed by Anders Carlsson.
+
+        * fast/dom/getElementsByClassName/ASCII-case-insensitive-expected.txt: Added.
+        * fast/dom/getElementsByClassName/ASCII-case-insensitive.html: Added.
+        * fast/dom/getElementsByClassName/case-sensitive-expected.txt: Added.
+        * fast/dom/getElementsByClassName/case-sensitive.html: Added.
+
 2014-05-25  Filip Pizlo  <fpizlo@apple.com>
 
         Latest emscripten life benchmark is 4x slower because the DFG doesn't realize that arithmetic on booleans is a thing
