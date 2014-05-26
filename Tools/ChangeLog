@@ -1,3 +1,19 @@
+2014-05-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r164632): [GTK] Crash in generate-gtkdoc when rebasing docs
+        https://bugs.webkit.org/show_bug.cgi?id=133279
+
+        Reviewed by Philippe Normand.
+
+        generator.saw_warnings is only set by GTKDoc::generate(), so it
+        should only be used after generate.
+
+        * gtk/generate-gtkdoc:
+        (generate_documentation_for_config): Do not check
+        generator.saw_warnings again, simply return the value returned by
+        generate_doc() which is generator.saw_warnings. When rebasing,
+        returns always False since there aren't warnings.
+
 2014-05-26  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         W3C test importer should catch exceptions coming from HTML/CSS conversion
