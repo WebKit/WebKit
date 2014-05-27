@@ -2294,7 +2294,7 @@ void RenderLayer::scrollTo(int x, int y)
     Frame& frame = renderer().frame();
     RenderLayerModelObject* repaintContainer = renderer().containerForRepaint();
     // The caret rect needs to be invalidated after scrolling
-    frame.selection().setCaretRectNeedsUpdate();
+    frame.selection().invalidateCaretRect();
 
     FloatQuad quadForFakeMouseMoveEvent = FloatQuad(m_repaintRect);
     if (repaintContainer)

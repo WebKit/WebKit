@@ -1,3 +1,19 @@
+2014-05-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Caret's screen position does not update during an overflow scroll
+        https://bugs.webkit.org/show_bug.cgi?id=133256
+
+        Reviewed by Simon Fraser.
+
+        During a scroll, we set a flag which caret position is gated on, but we never
+        actually invalidate the caret's position. This patch does so.
+
+        Test: editing/input/caret-position-during-scroll.html
+
+        * editing/FrameSelection.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+
 2014-05-27  Timothy Horton  <timothy_horton@apple.com>
 
         Turn on the LayerPool for iOS

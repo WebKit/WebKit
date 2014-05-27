@@ -1,3 +1,16 @@
+2014-05-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Caret's screen position does not update during an overflow scroll
+        https://bugs.webkit.org/show_bug.cgi?id=133256
+
+        Reviewed by Simon Fraser.
+
+        This test places the caret, inspects its position, scrolls, and then immediately inspects its
+        position again. The two positions should be different.
+
+        * editing/input/caret-position-during-scroll-expected.txt: Added.
+        * editing/input/caret-position-during-scroll.html: Added.
+
 2014-05-27  David Hyatt  <hyatt@apple.com>
 
         REGRESSION: Audio volume scrubber does not show volume level thumb
