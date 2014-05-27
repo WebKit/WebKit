@@ -1,3 +1,13 @@
+2014-05-27  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] media controls should prevent 'click' events from reaching the page
+        https://bugs.webkit.org/show_bug.cgi?id=133268
+
+        Reviewed by by Jer Noble.
+
+        * media/media-controls-cancel-events-expected.txt: Added.
+        * media/media-controls-cancel-events.html: Added.
+
 2014-05-27  Jon Lee  <jonlee@apple.com>
 
         Update ENABLE(MEDIA_SOURCE) on Mac

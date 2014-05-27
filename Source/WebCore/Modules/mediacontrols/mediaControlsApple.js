@@ -202,6 +202,8 @@ Controller.prototype = {
 
     handleEvent: function(event)
     {
+        var preventDefault = false;
+
         try {
             if (event.target === this.video) {
                 var handlerName = this.HandledVideoEvents[event.type];
@@ -215,11 +217,16 @@ Controller.prototype = {
 
             this.listeners[event.type].forEach(function(entry) {
                 if (entry.element === event.currentTarget && entry.handler instanceof Function)
-                    entry.handler.call(this, event);
+                    preventDefault |= entry.handler.call(this, event);
             }, this);
         } catch(e) {
             if (window.console)
                 console.error(e);
+        }
+
+        if (preventDefault) {
+            event.stopPropagation();
+            event.preventDefault();
         }
     },
 
@@ -669,6 +676,7 @@ Controller.prototype = {
                                this.video.currentTime - this.RewindAmount,
                                this.video.seekable.start(0));
         this.video.currentTime = newTime;
+        return true;
     },
 
     canPlay: function()
@@ -682,6 +690,7 @@ Controller.prototype = {
             this.video.play();
         else
             this.video.pause();
+        return true;
     },
 
     handleTimelineChange: function(event)
@@ -757,6 +766,7 @@ Controller.prototype = {
         this.video.muted = !this.video.muted;
         if (this.video.muted)
             this.controls.muteButton.setAttribute('aria-label', this.UIString('Unmute'));
+        return true;
     },
 
     handleMinButtonClicked: function(event)
@@ -766,6 +776,7 @@ Controller.prototype = {
             this.controls.muteButton.setAttribute('aria-label', this.UIString('Mute'));
         }
         this.video.volume = 0;
+        return true;
     },
 
     handleMaxButtonClicked: function(event)
@@ -792,6 +803,7 @@ Controller.prototype = {
             this.destroyCaptionMenu();
         else
             this.buildCaptionMenu();
+        return true;
     },
 
     handleFullscreenButtonClicked: function(event)
@@ -800,6 +812,7 @@ Controller.prototype = {
             document.webkitExitFullscreen();
         else
             this.video.webkitRequestFullscreen();
+        return true;
     },
 
     handleControlsChange: function()

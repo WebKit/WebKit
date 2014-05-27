@@ -272,12 +272,12 @@ ControllerIOS.prototype = {
         else
             this.video.pause();
 
-        event.stopPropagation();
+        return true;
     },
 
     handlePlayButtonTouchCancel: function(event) {
         this.controls.playButton.classList.remove('active');
-        event.stopPropagation();
+        return true;
     },
 
     handleBaseGestureStart: function(event) {
@@ -352,12 +352,12 @@ ControllerIOS.prototype = {
 
         this.handleFullscreenButtonClicked();
 
-        event.stopPropagation();
+        return true;
     },
 
     handleFullscreenTouchCancel: function(event) {
         this.controls.fullscreenButton.classList.remove('active');
-        event.stopPropagation();
+        return true;
     },
 
     handleStartPlaybackButtonTouchStart: function(event) {
@@ -367,15 +367,16 @@ ControllerIOS.prototype = {
     handleStartPlaybackButtonTouchEnd: function(event) {
         this.controls.fullscreenButton.classList.remove('active');
         if (this.video.error)
-            return;
+            return true;
 
         this.video.play();
-        event.stopPropagation();
+
+        return true;
     },
 
     handleStartPlaybackButtonTouchCancel: function(event) {
         this.controls.fullscreenButton.classList.remove('active');
-        event.stopPropagation();
+        return true;
     },
 
     handleReadyStateChange: function(event) {
@@ -394,7 +395,7 @@ ControllerIOS.prototype = {
 
     handleWirelessPickerButtonClicked: function(event) {
         this.video.webkitShowPlaybackTargetPicker();
-        event.stopPropagation();
+        return true;
     },
 
     get pageScaleFactor() {
