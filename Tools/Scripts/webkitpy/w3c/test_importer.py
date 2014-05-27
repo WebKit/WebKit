@@ -291,6 +291,8 @@ class TestImporter(object):
         total_imported_jstests = 0
         total_prefixed_properties = {}
 
+        failed_conversion_files = []
+
         for dir_to_copy in self.import_list:
             total_imported_tests += dir_to_copy['total_tests']
             total_imported_reftests += dir_to_copy['reftests']
@@ -310,7 +312,6 @@ class TestImporter(object):
                 os.makedirs(new_path)
 
             copied_files = []
-            failed_conversion_files = []
 
             for file_to_copy in dir_to_copy['copy_list']:
                 # FIXME: Split this block into a separate function.

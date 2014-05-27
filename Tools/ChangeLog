@@ -1,3 +1,15 @@
+2014-05-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Fix test failures on python test
+        https://bugs.webkit.org/show_bug.cgi?id=133297
+
+        Reviewed by Dirk Schulze.
+
+        2 tests are failing because of unbounded local variable reference in test_importer.py.
+
+        * Scripts/webkitpy/w3c/test_importer.py: Move local variable declaration to top.
+        (TestImporter.import_tests):
+
 2014-05-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] GObject DOM bindings API break test fails in the tests bots
