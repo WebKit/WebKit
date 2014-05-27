@@ -1,3 +1,22 @@
+2014-05-27  Timothy Horton  <timothy_horton@apple.com>
+
+        Turn on the LayerPool for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=133299
+
+        Reviewed by Antti Koivisto.
+
+        * Configurations/WebCore.xcconfig:
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::platformReleaseMemory):
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::createTileLayer):
+        * platform/graphics/ca/mac/TileGrid.mm:
+        (WebCore::TileGrid::removeTiles):
+        Turn on the LayerPool for iOS.
+        We've used this on Mac for a long time, and the WebKit1
+        ("legacy") iOS TileCache also had a similar pool.
+        This helps a good bit with flashiness while scrolling.
+
 2014-05-27  David Hyatt  <hyatt@apple.com>
 
         REGRESSION: Audio volume scrubber does not show volume level thumb

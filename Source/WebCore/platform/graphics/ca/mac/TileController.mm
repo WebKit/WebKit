@@ -32,9 +32,7 @@
 #import "TileCoverageMap.h"
 #import "TileGrid.h"
 #import "WebLayer.h"
-#if !PLATFORM(IOS)
 #import "LayerPool.h"
-#endif
 #import <wtf/MainThread.h>
 #import <utility>
 
@@ -490,11 +488,7 @@ int TileController::rightMarginWidth() const
 
 RefPtr<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect, TileGrid& grid)
 {
-#if PLATFORM(IOS)
-    RefPtr<PlatformCALayer> layer;
-#else
     RefPtr<PlatformCALayer> layer = LayerPool::sharedPool()->takeLayerWithSize(tileRect.size());
-#endif
 
     if (layer)
         layer->setOwner(&grid);

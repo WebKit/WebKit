@@ -47,12 +47,10 @@ namespace WebCore {
 
 void MemoryPressureHandler::platformReleaseMemory(bool)
 {
-#if PLATFORM(MAC)
     {
         ReliefLogger log("Drain LayerPool");
         LayerPool::sharedPool()->drain();
     }
-#endif
 #if USE(IOSURFACE)
     {
         ReliefLogger log("Drain IOSurfacePool");
