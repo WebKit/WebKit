@@ -50,6 +50,7 @@ public:
 
     void backingStoreWasCreated(RemoteLayerBackingStore*);
     void backingStoreWillBeDestroyed(RemoteLayerBackingStore*);
+    void backingStoreWillBeDisplayed(RemoteLayerBackingStore*);
 
     LayerHostingMode layerHostingMode() const { return m_webPage->layerHostingMode(); }
 

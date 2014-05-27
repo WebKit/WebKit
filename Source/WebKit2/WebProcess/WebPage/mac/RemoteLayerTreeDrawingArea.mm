@@ -257,6 +257,9 @@ void RemoteLayerTreeDrawingArea::flushLayers()
 
     RELEASE_ASSERT(!m_pendingBackingStoreFlusher || m_pendingBackingStoreFlusher->hasFlushed());
 
+    RemoteLayerBackingStoreCollection& backingStoreCollection = m_remoteLayerTreeContext->backingStoreCollection();
+    backingStoreCollection.willFlushLayers();
+
     m_webPage->layoutIfNeeded();
 
     FloatRect visibleRect(FloatPoint(), m_viewSize);
@@ -265,9 +268,10 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     m_webPage->corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes();
     m_rootLayer->flushCompositingStateForThisLayerOnly();
 
-    // FIXME: minize these transactions if nothing changed.
+    // FIXME: Minimize these transactions if nothing changed.
     RemoteLayerTreeTransaction layerTransaction;
     m_remoteLayerTreeContext->buildTransaction(layerTransaction, *toGraphicsLayerCARemote(m_rootLayer.get())->platformCALayer());
+    backingStoreCollection.willCommitLayerTree(layerTransaction);
     m_webPage->willCommitLayerTree(layerTransaction);
 
     RemoteScrollingCoordinatorTransaction scrollingTransaction;
@@ -282,6 +286,7 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     auto commitEncoder = std::make_unique<IPC::MessageEncoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::receiverName(), Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_webPage->pageID());
     commitEncoder->encode(message.arguments());
 
+    // FIXME: Move all backing store flushing management to RemoteLayerBackingStoreCollection.
     bool hadAnyChangedBackingStore = false;
     Vector<RetainPtr<CGContextRef>> contextsToFlush;
     for (auto& layer : layerTransaction.changedLayers()) {
@@ -296,8 +301,10 @@ void RemoteLayerTreeDrawingArea::flushLayers()
         layer->didCommit();
     }
 
+    backingStoreCollection.didFlushLayers();
+
     if (hadAnyChangedBackingStore)
-        m_remoteLayerTreeContext->backingStoreCollection().schedulePurgeabilityTimer();
+        backingStoreCollection.scheduleVolatilityTimer();
 
     RefPtr<BackingStoreFlusher> backingStoreFlusher = BackingStoreFlusher::create(WebProcess::shared().parentProcessConnection(), std::move(commitEncoder), std::move(contextsToFlush));
     m_pendingBackingStoreFlusher = backingStoreFlusher;

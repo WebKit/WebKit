@@ -75,7 +75,7 @@ public:
 
     // The graphics context cached on the surface counts as a "user", so to get
     // an accurate result from isInUse(), it needs to be released.
-    void clearGraphicsContext();
+    void releaseGraphicsContext();
 
 private:
     IOSurface(IntSize, ColorSpace);

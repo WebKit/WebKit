@@ -201,6 +201,9 @@ bool RemoteLayerBackingStore::display()
 
     m_lastDisplayTime = std::chrono::steady_clock::now();
 
+    if (m_context)
+        m_context->backingStoreWillBeDisplayed(this);
+
     // Make the previous front buffer non-volatile early, so that we can dirty the whole layer if it comes back empty.
     setBufferVolatility(BufferType::Front, false);
 
@@ -236,7 +239,7 @@ bool RemoteLayerBackingStore::display()
         context.translate(0, -expandedScaledSize.height());
         drawInContext(context, backImage.get());
 
-        m_frontBuffer.surface->clearGraphicsContext();
+        m_frontBuffer.surface->releaseGraphicsContext();
 
         return true;
     }
@@ -382,6 +385,8 @@ bool RemoteLayerBackingStore::setBufferVolatility(BufferType type, bool isVolati
     switch(type) {
     case BufferType::Front:
         if (m_frontBuffer.surface && m_frontBuffer.isVolatile != isVolatile) {
+            if (isVolatile)
+                m_frontBuffer.surface->releaseGraphicsContext();
             if (!isVolatile || !m_frontBuffer.surface->isInUse()) {
                 IOSurface::SurfaceState previousState = m_frontBuffer.surface->setIsVolatile(isVolatile);
                 m_frontBuffer.isVolatile = isVolatile;
@@ -395,6 +400,8 @@ bool RemoteLayerBackingStore::setBufferVolatility(BufferType type, bool isVolati
         break;
     case BufferType::Back:
         if (m_backBuffer.surface && m_backBuffer.isVolatile != isVolatile) {
+            if (isVolatile)
+                m_backBuffer.surface->releaseGraphicsContext();
             if (!isVolatile || !m_backBuffer.surface->isInUse()) {
                 m_backBuffer.surface->setIsVolatile(isVolatile);
                 m_backBuffer.isVolatile = isVolatile;
@@ -404,6 +411,8 @@ bool RemoteLayerBackingStore::setBufferVolatility(BufferType type, bool isVolati
         break;
     case BufferType::SecondaryBack:
         if (m_secondaryBackBuffer.surface && m_secondaryBackBuffer.isVolatile != isVolatile) {
+            if (isVolatile)
+                m_secondaryBackBuffer.surface->releaseGraphicsContext();
             if (!isVolatile || !m_secondaryBackBuffer.surface->isInUse()) {
                 m_secondaryBackBuffer.surface->setIsVolatile(isVolatile);
                 m_secondaryBackBuffer.isVolatile = isVolatile;

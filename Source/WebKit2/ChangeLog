@@ -1,3 +1,71 @@
+2014-05-26  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] RemoteLayerBackingStore front buffers should be purgeable when unparented
+        https://bugs.webkit.org/show_bug.cgi?id=133020
+        <rdar://problem/16521736>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::display):
+        Let the context know whenever a RemoteLayerBackingStore is displayed, so that
+        RemoteLayerBackingStoreCollection can (if needed) note that the backing store
+        is active once again (because we only display parented backing store).
+
+        (WebKit::RemoteLayerBackingStore::setBufferVolatility):
+        Ensure that we never have live contexts attached to any buffers when
+        marking them volatile, because checking isInUse() with live contexts is futile.
+
+        * Shared/mac/RemoteLayerBackingStoreCollection.h:
+        * Shared/mac/RemoteLayerBackingStoreCollection.mm:
+        (WebKit::RemoteLayerBackingStoreCollection::RemoteLayerBackingStoreCollection):
+        (WebKit::RemoteLayerBackingStoreCollection::willFlushLayers):
+        (WebKit::RemoteLayerBackingStoreCollection::willCommitLayerTree):
+        (WebKit::RemoteLayerBackingStoreCollection::didFlushLayers):
+        (WebKit::RemoteLayerBackingStoreCollection::backingStoreWillBeDestroyed):
+        (WebKit::RemoteLayerBackingStoreCollection::backingStoreWillBeDisplayed):
+        (WebKit::RemoteLayerBackingStoreCollection::markBackingStoreVolatileImmediately):
+        (WebKit::RemoteLayerBackingStoreCollection::markBackingStoreVolatile):
+        (WebKit::RemoteLayerBackingStoreCollection::backingStoreBecameUnreachable):
+        (WebKit::RemoteLayerBackingStoreCollection::volatilityTimerFired):
+        (WebKit::RemoteLayerBackingStoreCollection::scheduleVolatilityTimer):
+        (WebKit::RemoteLayerBackingStoreCollection::purgeabilityTimerFired): Deleted.
+        (WebKit::RemoteLayerBackingStoreCollection::schedulePurgeabilityTimer): Deleted.
+        Rename purgeable->volatile for accuracy.
+        Keep track of two sets of backing store: those which are active/parented, and
+        those which are not. Backing store is moved to the inactive set after building
+        the transaction in which its owning layer is unparented.
+        When backing store is unparented, try to mark it volatile immediately. Also,
+        mark the backing store property as dirty on the owning layer so that when
+        said layer is reparented, we encode the backing store in the commit that reparents it,
+        as the UI process will throw away its reference to the backing store when
+        the layer is unparented. Mark the front buffers of unparented layers as volatile,
+        in addition to the others.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::layerIDsWithNewlyUnreachableBackingStore):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        (WebKit::RemoteLayerTreeTransaction::setLayerIDsWithNewlyUnreachableBackingStore):
+        Include the list of layers (by ID) with backing store which just became unreachable in the transaction.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::updateLayerTree):
+        Clear the contents of layers which now have unreachable backing store.
+        Otherwise, the UI process would hold a 'use' on the IOSurface, and prevent
+        the Web process from marking it volatile.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::backingStoreWillBeDisplayed):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        Give RemoteLayerBackingStoreCollection a shot at the RemoteLayerTreeTransaction,
+        so that it can fill in layerIDsWithNewlyUnreachableBackingStore.
+        Also, let it know when the flush begins and ends, so that it can keep track
+        of which layers were reached in the flush.
+
 2014-05-26  Shivakumar JM  <shiva.jm@samsung.com>
 
         [EFL][WK2] Fix EWK2BackForwardListTest test fails.

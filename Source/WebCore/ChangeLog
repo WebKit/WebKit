@@ -1,3 +1,19 @@
+2014-05-26  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] RemoteLayerBackingStore front buffers should be purgeable when unparented
+        https://bugs.webkit.org/show_bug.cgi?id=133020
+        <rdar://problem/16521736>
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+        * platform/graphics/cg/IOSurfacePool.cpp:
+        (WebCore::IOSurfacePool::willAddSurface):
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+        (IOSurface::releaseGraphicsContext):
+        Rename clearGraphicsContext to releaseGraphicsContext for clarity.
+
 2014-05-26  Philip Rogers  <pdr@google.com>
 
         Remove special case for transparent SVG root layers

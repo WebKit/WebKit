@@ -163,6 +163,7 @@ public:
     void layerPropertiesChanged(PlatformCALayerRemote*, LayerProperties&);
     void setCreatedLayers(Vector<LayerCreationProperties>);
     void setDestroyedLayerIDs(Vector<WebCore::GraphicsLayer::PlatformLayerID>);
+    void setLayerIDsWithNewlyUnreachableBackingStore(Vector<WebCore::GraphicsLayer::PlatformLayerID>);
 
 #if !defined(NDEBUG) || !LOG_DISABLED
     WTF::CString description() const;
@@ -173,6 +174,7 @@ public:
 
     Vector<LayerCreationProperties> createdLayers() const { return m_createdLayers; }
     Vector<WebCore::GraphicsLayer::PlatformLayerID> destroyedLayers() const { return m_destroyedLayerIDs; }
+    Vector<WebCore::GraphicsLayer::PlatformLayerID> layerIDsWithNewlyUnreachableBackingStore() const { return m_layerIDsWithNewlyUnreachableBackingStore; }
 
     Vector<RefPtr<PlatformCALayerRemote>>& changedLayers() { return m_changedLayers; }
 
@@ -214,6 +216,7 @@ private:
     Vector<LayerCreationProperties> m_createdLayers;
     Vector<WebCore::GraphicsLayer::PlatformLayerID> m_destroyedLayerIDs;
     Vector<WebCore::GraphicsLayer::PlatformLayerID> m_videoLayerIDsPendingFullscreen;
+    Vector<WebCore::GraphicsLayer::PlatformLayerID> m_layerIDsWithNewlyUnreachableBackingStore;
 
     WebCore::IntSize m_contentsSize;
     WebCore::Color m_pageExtendedBackgroundColor;

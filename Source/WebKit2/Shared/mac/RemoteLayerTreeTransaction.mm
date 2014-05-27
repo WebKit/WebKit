@@ -452,6 +452,7 @@ void RemoteLayerTreeTransaction::encode(IPC::ArgumentEncoder& encoder) const
     
     encoder << m_destroyedLayerIDs;
     encoder << m_videoLayerIDsPendingFullscreen;
+    encoder << m_layerIDsWithNewlyUnreachableBackingStore;
 
     encoder << m_contentsSize;
     encoder << m_pageExtendedBackgroundColor;
@@ -503,6 +504,14 @@ bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLay
     if (!decoder.decode(result.m_videoLayerIDsPendingFullscreen))
         return false;
 
+    if (!decoder.decode(result.m_layerIDsWithNewlyUnreachableBackingStore))
+        return false;
+
+    for (auto& layerID : result.m_layerIDsWithNewlyUnreachableBackingStore) {
+        if (!layerID)
+            return false;
+    }
+
     if (!decoder.decode(result.m_contentsSize))
         return false;
     
@@ -553,6 +562,11 @@ void RemoteLayerTreeTransaction::setCreatedLayers(Vector<LayerCreationProperties
 void RemoteLayerTreeTransaction::setDestroyedLayerIDs(Vector<GraphicsLayer::PlatformLayerID> destroyedLayerIDs)
 {
     m_destroyedLayerIDs = std::move(destroyedLayerIDs);
+}
+
+void RemoteLayerTreeTransaction::setLayerIDsWithNewlyUnreachableBackingStore(Vector<GraphicsLayer::PlatformLayerID> layerIDsWithNewlyUnreachableBackingStore)
+{
+    m_layerIDsWithNewlyUnreachableBackingStore = std::move(layerIDsWithNewlyUnreachableBackingStore);
 }
 
 #if !defined(NDEBUG) || !LOG_DISABLED

@@ -30,16 +30,52 @@
 #import "RemoteLayerBackingStore.h"
 #import "RemoteLayerTreeContext.h"
 
-const std::chrono::seconds purgeableBackingStoreAgeThreshold = 1_s;
-const std::chrono::milliseconds purgeableSecondaryBackingStoreAgeThreshold = 200_ms;
-const std::chrono::milliseconds purgeabilityTimerInterval = 200_ms;
+const std::chrono::seconds volatileBackingStoreAgeThreshold = 1_s;
+const std::chrono::milliseconds volatileSecondaryBackingStoreAgeThreshold = 200_ms;
+const std::chrono::milliseconds volatilityTimerInterval = 200_ms;
 
 namespace WebKit {
 
 RemoteLayerBackingStoreCollection::RemoteLayerBackingStoreCollection(RemoteLayerTreeContext* context)
     : m_context(context)
-    , m_purgeabilityTimer(this, &RemoteLayerBackingStoreCollection::purgeabilityTimerFired)
+    , m_volatilityTimer(this, &RemoteLayerBackingStoreCollection::volatilityTimerFired)
+    , m_inLayerFlush(false)
 {
+}
+
+void RemoteLayerBackingStoreCollection::willFlushLayers()
+{
+    m_inLayerFlush = true;
+    m_reachableBackingStoreInLatestFlush.clear();
+}
+
+void RemoteLayerBackingStoreCollection::willCommitLayerTree(RemoteLayerTreeTransaction& transaction)
+{
+    ASSERT(m_inLayerFlush);
+    Vector<WebCore::GraphicsLayer::PlatformLayerID> newlyUnreachableLayerIDs;
+    for (auto& backingStore : m_liveBackingStore) {
+        if (!m_reachableBackingStoreInLatestFlush.contains(backingStore))
+            newlyUnreachableLayerIDs.append(backingStore->layer()->layerID());
+    }
+
+    transaction.setLayerIDsWithNewlyUnreachableBackingStore(newlyUnreachableLayerIDs);
+}
+
+void RemoteLayerBackingStoreCollection::didFlushLayers()
+{
+    m_inLayerFlush = false;
+
+    Vector<RemoteLayerBackingStore*> newlyUnreachableBackingStore;
+    for (auto& backingStore : m_liveBackingStore) {
+        if (!m_reachableBackingStoreInLatestFlush.contains(backingStore))
+            newlyUnreachableBackingStore.append(backingStore);
+    }
+
+    for (auto& backingStore : newlyUnreachableBackingStore)
+        backingStoreBecameUnreachable(backingStore);
+
+    if (!newlyUnreachableBackingStore.isEmpty())
+        scheduleVolatilityTimer();
 }
 
 void RemoteLayerBackingStoreCollection::backingStoreWasCreated(RemoteLayerBackingStore* backingStore)
@@ -50,41 +86,92 @@ void RemoteLayerBackingStoreCollection::backingStoreWasCreated(RemoteLayerBackin
 void RemoteLayerBackingStoreCollection::backingStoreWillBeDestroyed(RemoteLayerBackingStore* backingStore)
 {
     m_liveBackingStore.remove(backingStore);
+    m_unparentedBackingStore.remove(backingStore);
 }
 
-void RemoteLayerBackingStoreCollection::purgeabilityTimerFired(WebCore::Timer<RemoteLayerBackingStoreCollection>&)
+void RemoteLayerBackingStoreCollection::backingStoreWillBeDisplayed(RemoteLayerBackingStore* backingStore)
 {
-    auto now = std::chrono::steady_clock::now();
-    bool hadRecentlyPaintedBackingStore = false;
-    bool successfullyMadeBackingStorePurgeable = true;
+    ASSERT(m_inLayerFlush);
+    m_reachableBackingStoreInLatestFlush.add(backingStore);
 
-    for (const auto& backingStore : m_liveBackingStore) {
-        if (now - backingStore->lastDisplayTime() < purgeableBackingStoreAgeThreshold) {
-            hadRecentlyPaintedBackingStore = true;
+    auto backingStoreIter = m_unparentedBackingStore.find(backingStore);
+    if (backingStoreIter == m_unparentedBackingStore.end())
+        return;
+    m_liveBackingStore.add(backingStore);
+    m_unparentedBackingStore.remove(backingStoreIter);
+}
 
-            if (now - backingStore->lastDisplayTime() >= purgeableSecondaryBackingStoreAgeThreshold)
-                backingStore->setBufferVolatility(RemoteLayerBackingStore::BufferType::SecondaryBack, true);
+bool RemoteLayerBackingStoreCollection::markBackingStoreVolatileImmediately(RemoteLayerBackingStore& backingStore)
+{
+    ASSERT(!m_inLayerFlush);
+    bool successfullyMadeBackingStoreVolatile = true;
 
-            continue;
-        }
+    if (!backingStore.setBufferVolatility(RemoteLayerBackingStore::BufferType::SecondaryBack, true))
+        successfullyMadeBackingStoreVolatile = false;
 
-        // FIXME: If the layer is unparented, we should make all buffers volatile.
-        if (!backingStore->setBufferVolatility(RemoteLayerBackingStore::BufferType::SecondaryBack, true))
-            successfullyMadeBackingStorePurgeable = false;
-        if (!backingStore->setBufferVolatility(RemoteLayerBackingStore::BufferType::Back, true))
-            successfullyMadeBackingStorePurgeable = false;
+    if (!backingStore.setBufferVolatility(RemoteLayerBackingStore::BufferType::Back, true))
+        successfullyMadeBackingStoreVolatile = false;
+
+    if (!m_reachableBackingStoreInLatestFlush.contains(&backingStore)) {
+        if (!backingStore.setBufferVolatility(RemoteLayerBackingStore::BufferType::Front, true))
+            successfullyMadeBackingStoreVolatile = false;
     }
 
-    if (!hadRecentlyPaintedBackingStore && successfullyMadeBackingStorePurgeable)
-        m_purgeabilityTimer.stop();
+    return successfullyMadeBackingStoreVolatile;
 }
 
-void RemoteLayerBackingStoreCollection::schedulePurgeabilityTimer()
+bool RemoteLayerBackingStoreCollection::markBackingStoreVolatile(RemoteLayerBackingStore& backingStore, std::chrono::steady_clock::time_point now)
 {
-    if (m_purgeabilityTimer.isActive())
+    if (now - backingStore.lastDisplayTime() < volatileBackingStoreAgeThreshold) {
+        if (now - backingStore.lastDisplayTime() >= volatileSecondaryBackingStoreAgeThreshold)
+            backingStore.setBufferVolatility(RemoteLayerBackingStore::BufferType::SecondaryBack, true);
+
+        return false;
+    }
+    
+    return markBackingStoreVolatileImmediately(backingStore);
+}
+
+void RemoteLayerBackingStoreCollection::backingStoreBecameUnreachable(RemoteLayerBackingStore* backingStore)
+{
+    ASSERT(backingStore->layer());
+
+    auto backingStoreIter = m_liveBackingStore.find(backingStore);
+    if (backingStoreIter == m_liveBackingStore.end())
+        return;
+    m_unparentedBackingStore.add(backingStore);
+    m_liveBackingStore.remove(backingStoreIter);
+
+    // If a layer with backing store is removed from the tree, mark it as having changed backing store, so that
+    // on the commit which returns it to the tree, we serialize the backing store (despite possibly not painting).
+    backingStore->layer()->properties().notePropertiesChanged(RemoteLayerTreeTransaction::BackingStoreChanged);
+
+    // This will not succeed in marking all buffers as volatile, because the commit unparenting the layer hasn't
+    // made it to the UI process yet. The volatility timer will finish marking the remaining buffers later.
+    markBackingStoreVolatileImmediately(*backingStore);
+}
+
+void RemoteLayerBackingStoreCollection::volatilityTimerFired(WebCore::Timer<RemoteLayerBackingStoreCollection>&)
+{
+    bool successfullyMadeBackingStoreVolatile = true;
+
+    auto now = std::chrono::steady_clock::now();
+    for (const auto& backingStore : m_liveBackingStore)
+        successfullyMadeBackingStoreVolatile &= markBackingStoreVolatile(*backingStore, now);
+
+    for (const auto& backingStore : m_unparentedBackingStore)
+        successfullyMadeBackingStoreVolatile &= markBackingStoreVolatileImmediately(*backingStore);
+
+    if (successfullyMadeBackingStoreVolatile)
+        m_volatilityTimer.stop();
+}
+
+void RemoteLayerBackingStoreCollection::scheduleVolatilityTimer()
+{
+    if (m_volatilityTimer.isActive())
         return;
 
-    m_purgeabilityTimer.startRepeating(purgeabilityTimerInterval);
+    m_volatilityTimer.startRepeating(volatilityTimerInterval);
 }
 
 } // namespace WebKit

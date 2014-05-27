@@ -96,6 +96,11 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     for (auto& destroyedLayer : transaction.destroyedLayers())
         layerWillBeRemoved(destroyedLayer);
 
+    // Drop the contents of any layers which were unparented; the Web process will re-send
+    // the backing store in the commit that reparents them.
+    for (auto& newlyUnreachableLayerID : transaction.layerIDsWithNewlyUnreachableBackingStore())
+        asLayer(getLayer(newlyUnreachableLayerID)).contents = nullptr;
+
     return rootLayerChanged;
 }
 

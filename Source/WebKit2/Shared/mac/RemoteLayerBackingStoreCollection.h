@@ -34,6 +34,7 @@ namespace WebKit {
 
 class RemoteLayerBackingStore;
 class RemoteLayerTreeContext;
+class RemoteLayerTreeTransaction;
 
 class RemoteLayerBackingStoreCollection {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStoreCollection);
@@ -45,17 +46,29 @@ public:
     void backingStoreWasCreated(RemoteLayerBackingStore*);
     void backingStoreWillBeDestroyed(RemoteLayerBackingStore*);
 
-    void purgeabilityTimerFired(WebCore::Timer<RemoteLayerBackingStoreCollection>&);
+    void backingStoreWillBeDisplayed(RemoteLayerBackingStore*);
+    void backingStoreBecameUnreachable(RemoteLayerBackingStore*);
 
-    void schedulePurgeabilityTimer();
+    void willFlushLayers();
+    void willCommitLayerTree(RemoteLayerTreeTransaction&);
+    void didFlushLayers();
+
+    void volatilityTimerFired(WebCore::Timer<RemoteLayerBackingStoreCollection>&);
+
+    void scheduleVolatilityTimer();
 
 private:
-    HashSet<RemoteLayerBackingStore*> m_liveBackingStore;
+    bool markBackingStoreVolatileImmediately(RemoteLayerBackingStore&);
+    bool markBackingStoreVolatile(RemoteLayerBackingStore&, std::chrono::steady_clock::time_point now);
 
-    void markInactiveBackingStorePurgeable();
+    HashSet<RemoteLayerBackingStore*> m_liveBackingStore;
+    HashSet<RemoteLayerBackingStore*> m_unparentedBackingStore;
+    HashSet<RemoteLayerBackingStore*> m_reachableBackingStoreInLatestFlush;
 
     RemoteLayerTreeContext* m_context;
-    WebCore::Timer<RemoteLayerBackingStoreCollection> m_purgeabilityTimer;
+    WebCore::Timer<RemoteLayerBackingStoreCollection> m_volatilityTimer;
+
+    bool m_inLayerFlush;
 };
 
 } // namespace WebKit

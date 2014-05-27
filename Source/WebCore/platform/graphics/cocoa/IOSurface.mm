@@ -191,7 +191,7 @@ bool IOSurface::isInUse() const
     return IOSurfaceIsInUse(m_surface.get());
 }
 
-void IOSurface::clearGraphicsContext()
+void IOSurface::releaseGraphicsContext()
 {
     m_graphicsContext = nullptr;
     m_cgContext = nullptr;
