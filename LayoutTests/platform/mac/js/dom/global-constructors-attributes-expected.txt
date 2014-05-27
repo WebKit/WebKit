@@ -828,11 +828,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'MediaList').hasOwnProperty('get') 
 PASS Object.getOwnPropertyDescriptor(global, 'MediaList').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'MediaList').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'MediaList').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'MediaSource').value is MediaSource
-PASS Object.getOwnPropertyDescriptor(global, 'MediaSource').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'MediaSource').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'MediaSource').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'MediaSource').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'MessageChannel').value is MessageChannel
 PASS Object.getOwnPropertyDescriptor(global, 'MessageChannel').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'MessageChannel').hasOwnProperty('set') is false

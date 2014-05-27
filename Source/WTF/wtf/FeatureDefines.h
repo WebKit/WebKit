@@ -232,10 +232,6 @@
 #define ENABLE_INPUT_TYPE_COLOR_POPOVER 1
 #endif
 
-#if !defined(ENABLE_MEDIA_SOURCE)
-#define ENABLE_MEDIA_SOURCE 1
-#endif
-
 #if !defined(ENABLE_FILE_REPLACEMENT)
 #define ENABLE_FILE_REPLACEMENT 1
 #endif

@@ -1,3 +1,12 @@
+2014-05-27  Jon Lee  <jonlee@apple.com>
+
+        Update ENABLE(MEDIA_SOURCE) on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=133141
+
+        Reviewed by Darin Adler.
+
+        * wtf/FeatureDefines.h: #ifdef unneeded for Mac since it's covered in the .xcconfigs.
+
 2014-05-27  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Remove BLOB guards
