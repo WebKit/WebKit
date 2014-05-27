@@ -183,6 +183,7 @@ public:
 
 #if PLATFORM(COCOA)
     bool kill();
+    void terminateSoon(double intervalInSeconds);
 #endif
 
 private:
