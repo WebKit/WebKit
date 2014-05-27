@@ -1,3 +1,31 @@
+2014-05-22  Gavin Barraclough  <baraclough@apple.com>
+
+        Add UI process watchdog on iOS to ensure WebProcess connections close
+        https://bugs.webkit.org/show_bug.cgi?id=133200
+        <rdar://problem/16997983>
+
+        Reviewed by Darin Adler.
+
+        When the WebProcessProxy wants to disconnect from a WebContent process it just drops the connection,
+        and hopes the connection closes. There is a watchdog thread in the ChildProcess to try to ensure this
+        happens.
+
+        On iOS the process may not be runnable at the time, preventing termination. Instead add a watchdog in
+        the UI process to make the process runnable, and to terminate if it doesn't quit in a timely fashion.
+
+        * Platform/IPC/Connection.h:
+            - added terminateSoon.
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::ConnectionTerminationWatchdog::ConnectionTerminationWatchdog):
+            - take an assertion to make the process runnable, and start a watchdog timer.
+        (IPC::ConnectionTerminationWatchdog::watchdogTimerFired):
+            - if the process hasn't quit by the timer the watchdog fires, kill it.
+        (IPC::Connection::terminateSoon):
+            - create a ConnectionTerminationWatchdog.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::removeWebPage):
+            - when disconnecting from a process, first tell it to terminateSoon.
+
 2014-05-26  Sam Weinig  <sam@webkit.org>
 
         [WebKit2] Add better default preferences while keeping backward compatibility for the C-SPI
