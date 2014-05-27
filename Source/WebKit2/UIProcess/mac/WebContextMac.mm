@@ -33,6 +33,7 @@
 #import "WebKitSystemInterface.h"
 #import "WebMemoryPressureHandlerIOS.h"
 #import "WebPageGroup.h"
+#import "WebPreferencesKeys.h"
 #import "WebProcessCreationParameters.h"
 #import "WebProcessMessages.h"
 #import "WindowServerConnection.h"

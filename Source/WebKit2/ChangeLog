@@ -1,3 +1,27 @@
+2014-05-27  Sam Weinig  <sam@webkit.org>
+
+        [WebKit2] Move WebPreferences macro definitions and key names into their own files
+        https://bugs.webkit.org/show_bug.cgi?id=133315
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt:
+        * Shared/WebPreferencesDefinitions.h: Copied from Source/WebKit2/Shared/WebPreferencesStore.h.
+        * Shared/WebPreferencesKeys.cpp: Copied from Source/WebKit2/Shared/WebPreferencesStore.cpp.
+        * Shared/WebPreferencesKeys.h: Copied from Source/WebKit2/Shared/WebPreferencesStore.h.
+        * Shared/WebPreferencesStore.cpp:
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/WebPreferences.cpp:
+        * UIProcess/WebPreferences.h:
+        * UIProcess/mac/WebContextMac.mm:
+        * UIProcess/mac/WebPreferencesMac.mm:
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebProcess.cpp:
+
 2014-05-27  Gavin Barraclough  <baraclough@apple.com>
 
         Add UI process watchdog on iOS to ensure WebProcess connections close

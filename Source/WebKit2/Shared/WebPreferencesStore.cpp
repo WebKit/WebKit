@@ -28,6 +28,7 @@
 
 #include "FontSmoothingLevel.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebPreferencesKeys.h"
 #include <WebCore/Settings.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -36,21 +37,6 @@
 #endif
 
 namespace WebKit {
-
-namespace WebPreferencesKey {
-
-#define DEFINE_KEY_GETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) \
-        const String& KeyLower##Key() \
-        { \
-            static NeverDestroyed<String> key(ASCIILiteral(#KeyUpper)); \
-            return key; \
-        }
-
-    FOR_EACH_WEBKIT_PREFERENCE(DEFINE_KEY_GETTERS)
-
-#undef DEFINE_KEY_GETTERS
-
-} // namespace WebPreferencesKey
 
 typedef HashMap<String, bool> BoolOverridesMap;
 

@@ -51,7 +51,6 @@
 #include "WebPageCreationParameters.h"
 #include "WebPageGroupProxyMessages.h"
 #include "WebPlatformStrategies.h"
-#include "WebPreferencesStore.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxyMessages.h"

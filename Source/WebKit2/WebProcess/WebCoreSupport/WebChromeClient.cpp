@@ -45,7 +45,6 @@
 #include "WebPageCreationParameters.h"
 #include "WebPageProxyMessages.h"
 #include "WebPopupMenu.h"
-#include "WebPreferencesStore.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include "WebSearchPopupMenu.h"

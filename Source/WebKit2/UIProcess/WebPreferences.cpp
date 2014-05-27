@@ -28,6 +28,7 @@
 
 #include "WebContext.h"
 #include "WebPageGroup.h"
+#include "WebPreferencesKeys.h"
 #include <wtf/ThreadingPrimitives.h>
 
 namespace WebKit {
