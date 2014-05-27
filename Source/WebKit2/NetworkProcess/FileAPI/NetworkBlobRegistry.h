@@ -26,7 +26,7 @@
 #ifndef NetworkBlobRegistry_h
 #define NetworkBlobRegistry_h
 
-#if ENABLE(BLOB) && ENABLE(NETWORK_PROCESS)
+#if ENABLE(NETWORK_PROCESS)
 
 #include <WebCore/URLHash.h>
 #include <wtf/HashMap.h>
@@ -68,6 +68,6 @@ private:
 
 }
 
-#endif // ENABLE(BLOB) && ENABLE(NETWORK_PROCESS)
+#endif // ENABLE(NETWORK_PROCESS)
 
 #endif // NetworkBlobRegistry_h

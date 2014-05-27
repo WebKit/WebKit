@@ -103,7 +103,6 @@ Blob::Blob(DeserializationContructor, const URL& srcURL, const String& type, lon
     ThreadableBlobRegistry::registerBlobURL(0, m_internalURL, srcURL);
 }
 
-#if ENABLE(BLOB)
 Blob::Blob(const URL& srcURL, long long start, long long end, const String& type)
     : m_type(Blob::normalizedContentType(type))
     , m_size(-1) // size is not necessarily equal to end - start.
@@ -111,7 +110,6 @@ Blob::Blob(const URL& srcURL, long long start, long long end, const String& type
     m_internalURL = BlobURL::createInternalURL();
     ThreadableBlobRegistry::registerBlobURLForSlice(m_internalURL, srcURL, start, end);
 }
-#endif
 
 Blob::~Blob()
 {

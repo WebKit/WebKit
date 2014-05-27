@@ -336,10 +336,6 @@
 #define ENABLE_BATTERY_STATUS 0
 #endif
 
-#if !defined(ENABLE_BLOB)
-#define ENABLE_BLOB 0
-#endif
-
 #if !defined(ENABLE_CANVAS_PATH)
 #define ENABLE_CANVAS_PATH 1
 #endif

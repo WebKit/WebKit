@@ -8374,6 +8374,8 @@
     <ClCompile Include="..\platform\network\BlobData.cpp" />
     <ClCompile Include="..\platform\network\BlobDataFileReference.cpp" />
     <ClCompile Include="..\platform\network\BlobResourceHandle.cpp" />
+    <ClCompile Include="..\platform\network\BlobRegistry.cpp" />
+    <ClCompile Include="..\platform\network\BlobRegistryImpl.cpp" />
     <ClCompile Include="..\platform\network\Credential.cpp" />
     <ClCompile Include="..\platform\network\CredentialStorage.cpp" />
     <ClCompile Include="..\platform\network\DataURL.cpp" />
@@ -14729,6 +14731,7 @@
     <ClCompile Include="..\html\DOMURL.cpp" />
     <ClCompile Include="..\html\HTMLMediaSession.cpp" />
     <ClCompile Include="..\html\EmailInputType.cpp" />
+    <ClCompile Include="..\html\PublicURLManager.cpp" />
     <ClCompile Include="..\fileapi\File.cpp" />
     <ClCompile Include="..\fileapi\FileException.cpp" />
     <ClCompile Include="..\html\FileInputType.cpp" />

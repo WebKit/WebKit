@@ -32,8 +32,6 @@
 #include "config.h"
 #include "BlobRegistryImpl.h"
 
-#if ENABLE(BLOB)
-
 #include "BlobData.h"
 #include "BlobPart.h"
 #include "BlobResourceHandle.h"
@@ -237,5 +235,3 @@ unsigned long long BlobRegistryImpl::blobSize(const URL& url)
 }
 
 } // namespace WebCore
-
-#endif

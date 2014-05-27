@@ -26,7 +26,7 @@
 #include "config.h"
 #include "NetworkBlobRegistry.h"
 
-#if ENABLE(BLOB) && ENABLE(NETWORK_PROCESS)
+#if ENABLE(NETWORK_PROCESS)
 
 #include "BlobDataFileReferenceWithSandboxExtension.h"
 #include "SandboxExtension.h"

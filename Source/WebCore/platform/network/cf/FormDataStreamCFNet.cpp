@@ -104,9 +104,7 @@ struct FormStreamFields {
     SchedulePairHashSet scheduledRunLoopPairs;
     Vector<FormDataElement> remainingElements; // in reverse order
     CFReadStreamRef currentStream;
-#if ENABLE(BLOB)
     long long currentStreamRangeLength;
-#endif
     MallocPtr<char> currentData;
     CFReadStreamRef formStream;
     unsigned long long streamLength;
@@ -120,9 +118,7 @@ static void closeCurrentStream(FormStreamFields* form)
         CFReadStreamSetClient(form->currentStream, kCFStreamEventNone, 0, 0);
         CFRelease(form->currentStream);
         form->currentStream = 0;
-#if ENABLE(BLOB)
         form->currentStreamRangeLength = BlobDataItem::toEndOfFile;
-#endif
     }
 
     form->currentData = nullptr;
@@ -145,27 +141,23 @@ static bool advanceCurrentStream(FormStreamFields* form)
         form->currentStream = CFReadStreamCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(data.get()), size, kCFAllocatorNull);
         form->currentData = std::move(data);
     } else {
-#if ENABLE(BLOB)
         // Check if the file has been changed or not if required.
         if (isValidFileTime(nextInput.m_expectedFileModificationTime)) {
             time_t fileModificationTime;
             if (!getFileModificationTime(nextInput.m_filename, fileModificationTime) || fileModificationTime != static_cast<time_t>(nextInput.m_expectedFileModificationTime))
                 return false;
         }
-#endif
         const String& path = nextInput.m_shouldGenerateFile ? nextInput.m_generatedFilename : nextInput.m_filename;
         form->currentStream = CFReadStreamCreateWithFile(0, pathAsURL(path).get());
         if (!form->currentStream) {
             // The file must have been removed or become unreadable.
             return false;
         }
-#if ENABLE(BLOB)
         if (nextInput.m_fileStart > 0) {
             RetainPtr<CFNumberRef> position = adoptCF(CFNumberCreate(0, kCFNumberLongLongType, &nextInput.m_fileStart));
             CFReadStreamSetProperty(form->currentStream, kCFStreamPropertyFileCurrentOffset, position.get());
         }
         form->currentStreamRangeLength = nextInput.m_fileLength;
-#endif
     }
     form->remainingElements.removeLast();
 
@@ -201,9 +193,7 @@ static void* formCreate(CFReadStreamRef stream, void* context)
     FormStreamFields* newInfo = new FormStreamFields;
     newInfo->formData = formContext->formData.release();
     newInfo->currentStream = 0;
-#if ENABLE(BLOB)
     newInfo->currentStreamRangeLength = BlobDataItem::toEndOfFile;
-#endif
     newInfo->formStream = stream; // Don't retain. That would create a reference cycle.
     newInfo->streamLength = formContext->streamLength;
     newInfo->bytesSent = 0;
@@ -254,10 +244,8 @@ static CFIndex formRead(CFReadStreamRef, UInt8* buffer, CFIndex bufferLength, CF
 
     while (form->currentStream) {
         CFIndex bytesToRead = bufferLength;
-#if ENABLE(BLOB)
         if (form->currentStreamRangeLength != BlobDataItem::toEndOfFile && form->currentStreamRangeLength < bytesToRead)
             bytesToRead = static_cast<CFIndex>(form->currentStreamRangeLength);
-#endif
         CFIndex bytesRead = CFReadStreamRead(form->currentStream, buffer, bytesToRead);
         if (bytesRead < 0) {
             *error = CFReadStreamGetError(form->currentStream);
@@ -267,10 +255,8 @@ static CFIndex formRead(CFReadStreamRef, UInt8* buffer, CFIndex bufferLength, CF
             error->error = 0;
             *atEOF = FALSE;
             form->bytesSent += bytesRead;
-#if ENABLE(BLOB)
             if (form->currentStreamRangeLength != BlobDataItem::toEndOfFile)
                 form->currentStreamRangeLength -= bytesRead;
-#endif
 
             return bytesRead;
         }
@@ -385,10 +371,8 @@ void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> prpFormDat
         }
     }
 
-#if ENABLE(BLOB)
     formData = formData->resolveBlobReferences();
     count = formData->elements().size();
-#endif
 
     // Precompute the content length so NSURLConnection doesn't use chunked mode.
     unsigned long long length = 0;
@@ -397,13 +381,11 @@ void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> prpFormDat
         if (element.m_type == FormDataElement::Type::Data)
             length += element.m_data.size();
         else {
-#if ENABLE(BLOB)
             // If we're sending the file range, use the existing range length for now. We will detect if the file has been changed right before we read the file and abort the operation if necessary.
             if (element.m_fileLength != BlobDataItem::toEndOfFile) {
                 length += element.m_fileLength;
                 continue;
             }
-#endif
             long long fileSize;
             if (getFileSize(element.m_shouldGenerateFile ? element.m_generatedFilename : element.m_filename, fileSize))
                 length += fileSize;

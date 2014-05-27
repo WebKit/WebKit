@@ -276,14 +276,12 @@ void WebPlatformStrategies::loadResourceSynchronously(NetworkingContext* context
     }
 }
 
-#if ENABLE(BLOB)
 BlobRegistry* WebPlatformStrategies::createBlobRegistry()
 {
     if (!WebProcess::shared().usesNetworkProcess())
         return LoaderStrategy::createBlobRegistry();
     return new BlobRegistryProxy;    
 }
-#endif
 #endif
 
 // PluginStrategy

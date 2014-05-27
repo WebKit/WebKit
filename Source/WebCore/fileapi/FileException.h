@@ -31,8 +31,6 @@
 #ifndef FileException_h
 #define FileException_h
 
-#if ENABLE(BLOB)
-
 #include "ExceptionBase.h"
 
 namespace WebCore {
@@ -79,7 +77,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(BLOB)
 
 #endif // FileException_h

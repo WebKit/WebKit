@@ -31,8 +31,6 @@
 #ifndef FileThread_h
 #define FileThread_h
 
-#if ENABLE(BLOB)
-
 #include "CrossThreadCopier.h"
 #include <functional>
 #include <wtf/MessageQueue.h>
@@ -94,7 +92,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(BLOB)
 
 #endif // FileThread_h

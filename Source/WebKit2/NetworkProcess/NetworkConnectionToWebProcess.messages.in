@@ -43,14 +43,12 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     GetRawCookies(WebCore::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url) -> (Vector<WebCore::Cookie> cookies)
     DeleteCookie(WebCore::SessionID sessionID, WebCore::URL url, String cookieName)
 
-#if ENABLE(BLOB)
     RegisterFileBlobURL(WebCore::URL url, String path, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
     RegisterBlobURL(WebCore::URL url, Vector<WebCore::BlobPart> blobParts, String contentType)
     RegisterBlobURLFromURL(WebCore::URL url, WebCore::URL srcURL)
     RegisterBlobURLForSlice(WebCore::URL url, WebCore::URL srcURL, int64_t start, int64_t end)
     UnregisterBlobURL(WebCore::URL url)
     BlobSize(WebCore::URL url) -> (uint64_t resultSize)
-#endif
 }
 
 #endif // ENABLE(NETWORK_PROCESS)

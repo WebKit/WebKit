@@ -406,14 +406,12 @@ int ScriptExecutionContext::circularSequentialID()
     return m_circularSequentialID;
 }
 
-#if ENABLE(BLOB)
 PublicURLManager& ScriptExecutionContext::publicURLManager()
 {
     if (!m_publicURLManager)
         m_publicURLManager = PublicURLManager::create(this);
     return *m_publicURLManager;
 }
-#endif
 
 void ScriptExecutionContext::adjustMinimumTimerInterval(double oldMinimumTimerInterval)
 {

@@ -82,7 +82,6 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
             m_requestBodySandboxExtensions.append(extension);
     }
 
-#if ENABLE(BLOB)
     if (m_request.httpBody()) {
         for (const FormDataElement& element : m_request.httpBody()->elements()) {
             if (element.m_type == FormDataElement::Type::EncodedBlob)
@@ -94,7 +93,7 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
         ASSERT(!SandboxExtension::create(parameters.resourceSandboxExtension));
         m_fileReferences.appendVector(NetworkBlobRegistry::shared().filesInBlob(connection, m_request.url()));
     } else
-#endif
+
     if (RefPtr<SandboxExtension> resourceSandboxExtension = SandboxExtension::create(parameters.resourceSandboxExtension))
         m_resourceSandboxExtensions.append(resourceSandboxExtension);
 

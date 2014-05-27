@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if ENABLE(BLOB)
-
 #include "FileReaderSync.h"
 
 #include "Blob.h"
@@ -105,5 +103,3 @@ void FileReaderSync::startLoading(ScriptExecutionContext* scriptExecutionContext
 }
 
 } // namespace WebCore
- 
-#endif // ENABLE(BLOB)

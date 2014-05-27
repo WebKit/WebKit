@@ -1,3 +1,12 @@
+2014-05-27  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Remove BLOB guards
+        https://bugs.webkit.org/show_bug.cgi?id=132863
+
+        Reviewed by Csaba Osztrogonác.
+
+        * wtf/FeatureDefines.h:
+
 2014-05-27  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GLIB] RunLoop::dispatch always executes the function on the main thread instead of the target thread.

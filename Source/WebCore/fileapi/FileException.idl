@@ -30,7 +30,6 @@
 
 [
     NoInterfaceObject,
-    Conditional=BLOB,
     DoNotCheckConstants,
     JSNoStaticTables,
     ImplementationLacksVTable,

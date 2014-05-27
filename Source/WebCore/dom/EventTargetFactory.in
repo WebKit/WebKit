@@ -8,7 +8,7 @@ DedicatedWorkerGlobalScope
 DOMApplicationCache
 DOMWindow
 EventSource
-FileReader conditional=BLOB
+FileReader
 FontLoader conditional=FONT_LOAD_EVENTS
 IDBDatabase conditional=INDEXED_DATABASE
 IDBOpenDBRequest conditional=INDEXED_DATABASE

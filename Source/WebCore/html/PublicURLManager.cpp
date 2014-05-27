@@ -26,9 +26,6 @@
 
 #include "config.h"
 #include "PublicURLManager.h"
-
-#if ENABLE(BLOB)
-
 #include "URL.h"
 #include "URLRegistry.h"
 #include <wtf/text/StringHash.h>
@@ -84,5 +81,3 @@ void PublicURLManager::stop()
 }
 
 }
-
-#endif // ENABLE(BLOB)

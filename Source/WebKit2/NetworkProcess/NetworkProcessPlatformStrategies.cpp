@@ -85,13 +85,9 @@ void NetworkProcessPlatformStrategies::loadResourceSynchronously(NetworkingConte
     ASSERT_NOT_REACHED();
 }
 
-#if ENABLE(BLOB)
 BlobRegistry* NetworkProcessPlatformStrategies::createBlobRegistry()
 {
     return new BlobRegistryImpl;
 }
-
-#endif
-
 
 }

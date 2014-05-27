@@ -318,7 +318,7 @@
     [Conditional=IOS_TOUCH_EVENTS, CustomGetter] attribute TouchConstructor Touch; // Usable with the new operator
     [Conditional=IOS_TOUCH_EVENTS, CustomGetter] attribute TouchListConstructor TouchList; // Usable with the new operator
 
-    [Conditional=BLOB] attribute DOMURLConstructor webkitURL; // FIXME: deprecate this.
+    attribute DOMURLConstructor webkitURL; // FIXME: deprecate this.
     attribute MutationObserverConstructor WebKitMutationObserver; // FIXME: Add metrics to determine when we can remove this.
     [Conditional=INDEXED_DATABASE] attribute IDBCursorConstructor webkitIDBCursor;
     [Conditional=INDEXED_DATABASE] attribute IDBDatabaseConstructor webkitIDBDatabase;

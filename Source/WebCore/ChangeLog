@@ -1,3 +1,108 @@
+2014-05-27  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Remove BLOB guards
+        https://bugs.webkit.org/show_bug.cgi?id=132863
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::WebSocketChannel):
+        (WebCore::WebSocketChannel::didFail):
+        (WebCore::WebSocketChannel::processOutgoingFrameQueue):
+        (WebCore::WebSocketChannel::abortOutgoingFrameQueue):
+        * Modules/websockets/WebSocketChannel.h:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * bindings/js/JSBlobCustom.cpp:
+        (WebCore::JSBlobConstructor::constructJSBlob):
+        * bindings/js/JSFileReaderCustom.cpp:
+        * dom/DOMExceptions.in:
+        * dom/EventTargetFactory.in:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::publicURLManager):
+        * dom/ScriptExecutionContext.h:
+        * fileapi/AsyncFileStream.cpp:
+        * fileapi/AsyncFileStream.h:
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::Blob):
+        * fileapi/Blob.h:
+        (WebCore::Blob::slice):
+        * fileapi/Blob.idl:
+        * fileapi/FileError.h:
+        * fileapi/FileError.idl:
+        * fileapi/FileException.cpp:
+        * fileapi/FileException.h:
+        * fileapi/FileException.idl:
+        * fileapi/FileReader.cpp:
+        * fileapi/FileReader.h:
+        * fileapi/FileReader.idl:
+        * fileapi/FileReaderLoader.cpp:
+        * fileapi/FileReaderLoader.h:
+        * fileapi/FileReaderLoaderClient.h:
+        * fileapi/FileReaderSync.cpp:
+        * fileapi/FileReaderSync.h:
+        * fileapi/FileReaderSync.idl:
+        * fileapi/FileThread.cpp:
+        * fileapi/FileThread.h:
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerFileBlobURL): Deleted.
+        (WebCore::ThreadableBlobRegistry::registerBlobURL): Deleted.
+        (WebCore::ThreadableBlobRegistry::registerBlobURLForSlice): Deleted.
+        (WebCore::ThreadableBlobRegistry::unregisterBlobURL): Deleted.
+        (WebCore::ThreadableBlobRegistry::blobSize): Deleted.
+        (WebCore::ThreadableBlobRegistry::getCachedOrigin): Deleted.
+        * fileapi/WebKitBlobBuilder.cpp:
+        (WebCore::BlobBuilder::append):
+        * fileapi/WebKitBlobBuilder.h:
+        * html/DOMURL.cpp:
+        * html/DOMURL.h:
+        * html/DOMURL.idl:
+        * html/PublicURLManager.cpp:
+        * html/PublicURLManager.h:
+        * loader/LoaderStrategy.cpp:
+        (WebCore::LoaderStrategy::createBlobRegistry):
+        * loader/LoaderStrategy.h:
+        * page/DOMWindow.idl:
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::shouldUseInnerURL):
+        (WebCore::getCachedOrigin):
+        * platform/FileStream.cpp:
+        * platform/FileStream.h:
+        * platform/FileStreamClient.h:
+        * platform/SchemeRegistry.cpp:
+        (WebCore::canDisplayOnlyIfCanRequestSchemes):
+        * platform/network/BlobRegistry.cpp:
+        * platform/network/BlobRegistryImpl.cpp:
+        * platform/network/BlobResourceHandle.cpp:
+        * platform/network/BlobResourceHandle.h:
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::deepCopy):
+        (WebCore::FormData::appendFile):
+        (WebCore::FormData::appendBlob):
+        (WebCore::FormData::appendKeyValuePairItems):
+        (WebCore::FormData::resolveBlobReferences):
+        (WebCore::encodeElement):
+        (WebCore::decodeElement):
+        * platform/network/FormData.h:
+        (WebCore::FormDataElement::FormDataElement):
+        (WebCore::operator==):
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::closeCurrentStream):
+        (WebCore::advanceCurrentStream):
+        (WebCore::formCreate):
+        (WebCore::formRead):
+        (WebCore::setHTTPBody):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::getFormElementsCount):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::addEncodedBlobToSoupMessageBody):
+        (WebCore::addFormElementsToSoupMessage):
+        * workers/WorkerGlobalScope.idl:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::createRequest):
+
 2014-05-27  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
 
         Allow building CMake based ports with WEB_REPLAY

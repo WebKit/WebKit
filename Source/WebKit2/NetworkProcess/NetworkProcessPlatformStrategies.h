@@ -48,9 +48,7 @@ private:
     // WebCore::LoaderStrategy
     virtual WebCore::ResourceLoadScheduler* resourceLoadScheduler() override;
     virtual void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long resourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ClientCredentialPolicy, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>& data) override;
-#if ENABLE(BLOB)
     virtual WebCore::BlobRegistry* createBlobRegistry() override;
-#endif
 };
 
 } // namespace WebKit

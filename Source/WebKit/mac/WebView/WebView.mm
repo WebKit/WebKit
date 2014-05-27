@@ -2721,10 +2721,8 @@ static inline IMP getMethod(id o, SEL s)
     if ([scheme _webkit_isCaseInsensitiveEqualToString:@"applewebdata"])
         return YES;
 
-#if ENABLE(BLOB)
     if ([scheme _webkit_isCaseInsensitiveEqualToString:@"blob"])
         return YES;
-#endif
 
     return NO;
 }

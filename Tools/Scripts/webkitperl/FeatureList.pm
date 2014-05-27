@@ -45,7 +45,6 @@ my (
     $threeDRenderingSupport,
     $accelerated2DCanvasSupport,
     $batteryStatusSupport,
-    $blobSupport,
     $canvasPathSupport,
     $canvasProxySupport,
     $channelMessagingSupport,
@@ -160,9 +159,6 @@ my @features = (
 
     { option => "battery-status", desc => "Toggle Battery Status support",
       define => "ENABLE_BATTERY_STATUS", default => isEfl(), value => \$batteryStatusSupport },
-
-    { option => "blob", desc => "Toggle Blob support",
-      define => "ENABLE_BLOB", default => ((isAppleMacWebKit() && !isIOSWebKit()) || isGtk() || isEfl()), value => \$blobSupport },
 
     { option => "canvas-path", desc => "Toggle Canvas Path support",
       define => "ENABLE_CANVAS_PATH", default => 1, value => \$canvasPathSupport },

@@ -31,8 +31,6 @@
 #ifndef FileStream_h
 #define FileStream_h
 
-#if ENABLE(BLOB)
-
 #include "FileSystem.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
@@ -94,7 +92,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(BLOB)
 
 #endif // FileStream_h

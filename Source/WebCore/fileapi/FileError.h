@@ -31,8 +31,6 @@
 #ifndef FileError_h
 #define FileError_h
 
-#if ENABLE(BLOB)
-
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -69,7 +67,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(BLOB)
 
 #endif // FileError_h

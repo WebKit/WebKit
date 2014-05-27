@@ -98,9 +98,7 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection*)
     for (HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader>>::iterator i = m_networkResourceLoaders.begin(); i != end; ++i)
         i->value->abort();
 
-#if ENABLE(BLOB)
     NetworkBlobRegistry::shared().connectionToWebProcessDidClose(this);
-#endif
 
     m_networkResourceLoaders.clear();
     
@@ -222,7 +220,6 @@ void NetworkConnectionToWebProcess::deleteCookie(SessionID sessionID, const URL&
     WebCore::deleteCookie(storageSession(sessionID), url, cookieName);
 }
 
-#if ENABLE(BLOB)
 void NetworkConnectionToWebProcess::registerFileBlobURL(const URL& url, const String& path, const SandboxExtension::Handle& extensionHandle, const String& contentType)
 {
     RefPtr<SandboxExtension> extension = SandboxExtension::create(extensionHandle);
@@ -254,7 +251,6 @@ void NetworkConnectionToWebProcess::blobSize(const URL& url, uint64_t& resultSiz
 {
     resultSize = NetworkBlobRegistry::shared().blobSize(this, url);
 }
-#endif
 
 } // namespace WebKit
 

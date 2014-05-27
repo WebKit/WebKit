@@ -3820,10 +3820,8 @@ bool WebPage::canHandleRequest(const WebCore::ResourceRequest& request)
     if (SchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(request.url().protocol()))
         return true;
 
-#if ENABLE(BLOB)
     if (request.url().protocolIs("blob"))
         return true;
-#endif
 
     return platformCanHandleRequest(request);
 }

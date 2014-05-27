@@ -26,7 +26,7 @@
 #include "config.h"
 #include "BlobRegistryProxy.h"
 
-#if ENABLE(BLOB) && ENABLE(NETWORK_PROCESS)
+#if ENABLE(NETWORK_PROCESS)
 
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
@@ -91,4 +91,4 @@ unsigned long long BlobRegistryProxy::blobSize(const URL& url)
 
 }
 
-#endif // ENABLE(BLOB) && ENABLE(NETWORK_PROCESS)
+#endif // ENABLE(NETWORK_PROCESS)

@@ -31,8 +31,6 @@
 #ifndef FileReaderLoaderClient_h
 #define FileReaderLoaderClient_h
 
-#if ENABLE(BLOB)
-
 namespace WebCore {
 
 class FileReaderLoaderClient {
@@ -46,7 +44,5 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(BLOB)
 
 #endif // FileReaderLoaderClient_h

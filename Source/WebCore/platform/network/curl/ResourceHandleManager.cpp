@@ -753,11 +753,9 @@ static inline size_t getFormElementsCount(ResourceHandle* job)
     if (!formData)
         return 0;
 
-#if ENABLE(BLOB)
     // Resolve the blob elements so the formData can correctly report it's size.
     formData = formData->resolveBlobReferences();
     job->firstRequest().setHTTPBody(formData);
-#endif
 
     return formData->elements().size();
 }

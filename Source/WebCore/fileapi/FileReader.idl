@@ -31,7 +31,6 @@
 
 [
     GlobalContext=DOMWindow&WorkerGlobalScope,
-    Conditional=BLOB,
     ActiveDOMObject,
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,

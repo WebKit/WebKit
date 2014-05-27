@@ -98,11 +98,9 @@ static URLSchemesMap& canDisplayOnlyIfCanRequestSchemes()
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(URLSchemesMap, canDisplayOnlyIfCanRequestSchemes, ());
 
-#if ENABLE(BLOB)
     if (canDisplayOnlyIfCanRequestSchemes.isEmpty()) {
         canDisplayOnlyIfCanRequestSchemes.add("blob");
     }
-#endif // ENABLE(BLOB)
 
     return canDisplayOnlyIfCanRequestSchemes;
 }

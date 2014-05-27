@@ -69,7 +69,6 @@ void BlobBuilder::append(const String& text, const String& endingType)
     }
 }
 
-#if ENABLE(BLOB)
 void BlobBuilder::append(ArrayBuffer* arrayBuffer)
 {
     if (!arrayBuffer)
@@ -85,7 +84,6 @@ void BlobBuilder::append(PassRefPtr<ArrayBufferView> arrayBufferView)
 
     m_appendableData.append(static_cast<const char*>(arrayBufferView->baseAddress()), arrayBufferView->byteLength());
 }
-#endif
 
 void BlobBuilder::append(Blob* blob)
 {

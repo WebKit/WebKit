@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if ENABLE(BLOB)
-
 #include "FileReaderLoader.h"
 
 #include "Blob.h"
@@ -357,5 +355,3 @@ void FileReaderLoader::setEncoding(const String& encoding)
 }
 
 } // namespace WebCore
- 
-#endif // ENABLE(BLOB)

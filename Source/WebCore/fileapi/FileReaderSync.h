@@ -31,8 +31,6 @@
 #ifndef FileReaderSync_h
 #define FileReaderSync_h
 
-#if ENABLE(BLOB)
-
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -74,7 +72,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(BLOB)
 
 #endif // FileReaderSync_h

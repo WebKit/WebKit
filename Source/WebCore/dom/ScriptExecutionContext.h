@@ -80,9 +80,7 @@ public:
 
     virtual SecurityOrigin* topOrigin() const = 0;
 
-#if ENABLE(BLOB)
     PublicURLManager& publicURLManager();
-#endif
 
     // Active objects are not garbage collected even if inaccessible, e.g. because their activity may result in callbacks being invoked.
     bool canSuspendActiveDOMObjects();
@@ -217,9 +215,7 @@ private:
     ActiveDOMObject::ReasonForSuspension m_reasonForSuspendingActiveDOMObjects;
     bool m_activeDOMObjectsAreStopped;
 
-#if ENABLE(BLOB)
     std::unique_ptr<PublicURLManager> m_publicURLManager;
-#endif
 
 #if ENABLE(SQL_DATABASE)
     RefPtr<DatabaseContext> m_databaseContext;

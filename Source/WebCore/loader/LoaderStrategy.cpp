@@ -42,12 +42,9 @@ void LoaderStrategy::loadResourceSynchronously(NetworkingContext* context, unsig
     ResourceHandle::loadResourceSynchronously(context, request, storedCredentials, error, response, data);
 }
 
-#if ENABLE(BLOB)
 BlobRegistry* LoaderStrategy::createBlobRegistry()
 {
     return new BlobRegistryImpl;
 }
-#endif
-
 
 } // namespace WebCore

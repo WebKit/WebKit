@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if ENABLE(BLOB)
-
 #include "BlobResourceHandle.h"
 
 #include "AsyncFileStream.h"
@@ -689,5 +687,3 @@ void BlobResourceHandle::notifyFinish()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(BLOB)

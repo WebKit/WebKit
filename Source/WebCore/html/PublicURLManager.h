@@ -26,7 +26,6 @@
 #ifndef PublicURLManager_h
 #define PublicURLManager_h
 
-#if ENABLE(BLOB)
 #include "ActiveDOMObject.h"
 #include <memory>
 #include <wtf/HashMap.h>
@@ -63,5 +62,4 @@ private:
 
 } // namespace WebCore
 
-#endif // BLOB
 #endif // PUBLICURLMANAGER_h

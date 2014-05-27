@@ -26,7 +26,7 @@
 #ifndef BlobRegistryProxy_h
 #define BlobRegistryProxy_h
 
-#if ENABLE(BLOB) && ENABLE(NETWORK_PROCESS)
+#if ENABLE(NETWORK_PROCESS)
 
 #include <WebCore/BlobRegistry.h>
 
@@ -44,6 +44,6 @@ public:
 
 }
 
-#endif // ENABLE(BLOB) && ENABLE(NETWORK_PROCESS)
+#endif // ENABLE(NETWORK_PROCESS)
 
 #endif // BlobRegistryProxy_h

@@ -30,7 +30,6 @@
 
 [
     GlobalContext=WorkerGlobalScope,
-    Conditional=BLOB,
     Constructor,
     JSNoStaticTables,
 ] interface FileReaderSync {

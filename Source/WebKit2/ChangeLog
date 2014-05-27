@@ -1,3 +1,29 @@
+2014-05-27  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Remove BLOB guards
+        https://bugs.webkit.org/show_bug.cgi?id=132863
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::blobSize):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcessPlatformStrategies.cpp:
+        * NetworkProcess/NetworkProcessPlatformStrategies.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+        * WebProcess/FileAPI/BlobRegistryProxy.cpp:
+        * WebProcess/FileAPI/BlobRegistryProxy.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::canHandleRequest):
+
 2014-05-26  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] RemoteLayerBackingStore front buffers should be purgeable when unparented

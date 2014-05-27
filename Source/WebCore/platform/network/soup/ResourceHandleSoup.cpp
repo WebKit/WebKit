@@ -63,10 +63,8 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 
-#if ENABLE(BLOB)
 #include "BlobData.h"
 #include "BlobRegistryImpl.h"
-#endif
 
 #if PLATFORM(GTK)
 #include "CredentialBackingStore.h"
@@ -752,7 +750,6 @@ static bool addFileToSoupMessageBody(SoupMessage* message, const String& fileNam
     return true;
 }
 
-#if ENABLE(BLOB)
 static bool blobIsOutOfDate(const BlobDataItem& blobItem)
 {
     ASSERT(blobItem.type == BlobDataItem::File);
@@ -790,7 +787,6 @@ static void addEncodedBlobToSoupMessageBody(SoupMessage* message, const FormData
     for (size_t i = 0; i < blobData->items().size(); ++i)
         addEncodedBlobItemToSoupMessageBody(message, blobData->items()[i], totalBodySize);
 }
-#endif // ENABLE(BLOB)
 
 static bool addFormElementsToSoupMessage(SoupMessage* message, const char*, FormData* httpBody, unsigned long& totalBodySize)
 {
@@ -816,10 +812,8 @@ static bool addFormElementsToSoupMessage(SoupMessage* message, const char*, Form
             continue;
         }
 
-#if ENABLE(BLOB)
         ASSERT(element.m_type == FormDataElement::Type::EncodedBlob);
         addEncodedBlobToSoupMessageBody(message, element, totalBodySize);
-#endif
     }
     return true;
 }

@@ -27,8 +27,6 @@
 #include "DOMURL.h"
 
 #include "SecurityOrigin.h"
-
-#if ENABLE(BLOB)
 #include "ActiveDOMObject.h"
 #include "Blob.h"
 #include "BlobURL.h"
@@ -37,7 +35,6 @@
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/MainThread.h>
-#endif // ENABLE(BLOB)
 
 namespace WebCore {
 
@@ -93,9 +90,6 @@ void DOMURL::setHref(const String& url, ExceptionCode& ec)
         ec = TypeError;
 }
 
-
-#if ENABLE(BLOB)
-
 String DOMURL::createObjectURL(ScriptExecutionContext* scriptExecutionContext, Blob* blob)
 {
     if (!scriptExecutionContext || !blob)
@@ -128,7 +122,5 @@ void DOMURL::revokeObjectURL(ScriptExecutionContext* scriptExecutionContext, con
 
     scriptExecutionContext->publicURLManager().revoke(url);
 }
-
-#endif // ENABLE(BLOB)
 
 } // namespace WebCore

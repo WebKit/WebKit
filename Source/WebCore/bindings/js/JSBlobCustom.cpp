@@ -117,14 +117,11 @@ EncodedJSValue JSC_HOST_CALL JSBlobConstructor::constructJSBlob(ExecState* exec)
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
 
-#if ENABLE(BLOB)
         if (ArrayBuffer* arrayBuffer = toArrayBuffer(item))
             blobBuilder.append(arrayBuffer);
         else if (RefPtr<ArrayBufferView> arrayBufferView = toArrayBufferView(item))
             blobBuilder.append(arrayBufferView.release());
-        else
-#endif
-        if (Blob* blob = toBlob(item))
+        else if (Blob* blob = toBlob(item))
             blobBuilder.append(blob);
         else {
             String string = item.toString(exec)->value(exec);

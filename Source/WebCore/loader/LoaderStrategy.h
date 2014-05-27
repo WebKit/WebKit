@@ -44,9 +44,7 @@ public:
 
     virtual void loadResourceSynchronously(NetworkingContext*, unsigned long identifier, const ResourceRequest&, StoredCredentials, ClientCredentialPolicy, ResourceError&, ResourceResponse&, Vector<char>& data);
 
-#if ENABLE(BLOB)
     virtual BlobRegistry* createBlobRegistry();
-#endif
 
 protected:
     virtual ~LoaderStrategy()

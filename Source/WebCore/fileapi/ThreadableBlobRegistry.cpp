@@ -85,8 +85,6 @@ public:
     Vector<BlobPart> blobParts;
 };
 
-#if ENABLE(BLOB)
-
 typedef HashMap<String, RefPtr<SecurityOrigin>> BlobUrlOriginMap;
 
 static ThreadSpecific<BlobUrlOriginMap>& originMap()
@@ -200,39 +198,5 @@ PassRefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const URL& ur
 {
     return originMap()->get(url.string());
 }
-
-#else
-
-void ThreadableBlobRegistry::registerFileBlobURL(const URL&, const String&, const String&)
-{
-}
-
-void ThreadableBlobRegistry::registerBlobURL(const URL&, Vector<BlobPart>, const String&)
-{
-}
-
-void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin*, const URL&, const URL&)
-{
-}
-
-void ThreadableBlobRegistry::registerBlobURLForSlice(const URL&, const URL&, long long, long long)
-{
-}
-
-void ThreadableBlobRegistry::unregisterBlobURL(const URL&)
-{
-}
-
-unsigned long long ThreadableBlobRegistry::blobSize(const URL&)
-{
-    return 0;
-}
-
-PassRefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const URL&)
-{
-    return 0;
-}
-
-#endif // ENABL(BLOB)
 
 } // namespace WebCore

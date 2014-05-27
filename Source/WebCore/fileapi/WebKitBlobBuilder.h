@@ -48,10 +48,8 @@ public:
 
     void append(Blob*);
     void append(const String& text, const String& ending);
-#if ENABLE(BLOB)
     void append(JSC::ArrayBuffer*);
     void append(PassRefPtr<JSC::ArrayBufferView>);
-#endif
 
     Vector<BlobPart> finalize();
 

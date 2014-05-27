@@ -1,3 +1,12 @@
+2014-05-27  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Remove BLOB guards
+        https://bugs.webkit.org/show_bug.cgi?id=132863
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-05-27  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
 
         Allow building CMake based ports with WEB_REPLAY
