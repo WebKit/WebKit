@@ -1,3 +1,13 @@
+2014-05-27  Jon Lee  <jonlee@apple.com>
+
+        Fix Mavericks bots from r169383.
+        https://bugs.webkit.org/show_bug.cgi?id=133311
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h: Update #ifdef to check for ENABLE(MEDIA_SOURCE).
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm: Ditto.
+
 2014-05-27  Radu Stavila  <stavila@adobe.com>
 
         REGRESSION (r168046): Incorrect handling of multicol spanner
