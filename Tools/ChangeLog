@@ -1,3 +1,15 @@
+2014-05-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Change download url of freetype6
+        https://bugs.webkit.org/show_bug.cgi?id=133303
+
+        Reviewed by Csaba Osztrogonác.
+
+        freetype6 tarball isn't downloaded in Korea. So, we need to
+        change the url for now.
+
+        * efl/jhbuild.modules:
+
 2014-05-27  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Remove BLOB guards

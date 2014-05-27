@@ -93,8 +93,10 @@
              md5sum="f69b9693227d976835b4857b1ba7d0e3"/>
   </autotools>
 
+  <!-- FIXME: Original download url doesn't work in Korea. So, Bug 133303 changes the url for now.
+             Original download url: http://download.savannah.gnu.org/releases/freetype/freetype-2.4.11.tar.bz2 -->
   <tarball id="freetype6">
-    <source href="download.savannah.gnu.org/releases/freetype/freetype-2.4.11.tar.bz2" version="2.4.11"
+    <source href="github.com/shivamidow/freetype/raw/master/freetype-2.4.11.tar.bz2" version="2.4.11"
             hash="sha256:ef9d0bcb64647d9e5125dc7534d7ca371c98310fec87677c410f397f71ffbe3f"
             md5sum="b93435488942486c8d0ca22e8f768034" />
   </tarball>
