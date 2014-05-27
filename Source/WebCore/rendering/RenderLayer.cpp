@@ -6462,7 +6462,8 @@ void RenderLayer::filterNeedsRepaint()
     // We use the enclosing element so that we recalculate style for the ancestor of an anonymous object.
     if (Element* element = toElement(enclosingElement()))
         element->setNeedsStyleRecalc(SyntheticStyleChange);
-    renderer()->repaint();
+    if (renderer()->view())
+        renderer()->repaint();
 }
 #endif
 

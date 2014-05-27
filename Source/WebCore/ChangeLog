@@ -1,3 +1,11 @@
+2014-05-27  Lucas Forschler  <lforschler@apple.com>
+
+        Fix for <rdar://problem/17020210>
+        Fix by Jon Honeycutt.
+        
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::filterNeedsRepaint):
+
 2014-05-23  Lucas Forschler  <lforschler@apple.com>
 
     Rollout r169219
