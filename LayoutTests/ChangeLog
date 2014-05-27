@@ -1,3 +1,16 @@
+2014-05-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Move navigator content utils's to own directory
+        https://bugs.webkit.org/show_bug.cgi?id=133275
+
+        Reviewed by Darin Adler.
+
+        Expected results need to be maintained by own directory because navigator content utils have been maintained by
+        own directory as well.
+
+        * platform/efl/fast/dom/NavigatorContentUtils/register-protocol-handler-expected.txt: Renamed from LayoutTests/platform/efl/fast/dom/register-protocol-handler-expected.txt.
+        * platform/efl/fast/dom/NavigatorContentUtils/unregister-protocol-handler-expected.txt: Renamed from LayoutTests/platform/efl/fast/dom/unregister-protocol-handler-expected.txt.
+
 2014-05-26  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix the quirks mode selector matching of the pseudo classes :hover and :active
