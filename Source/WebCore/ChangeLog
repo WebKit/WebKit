@@ -1,3 +1,31 @@
+2014-05-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        SVG TextRuns do not always get RenderingContexts
+        https://bugs.webkit.org/show_bug.cgi?id=133198
+
+        Reviewed by Simon Fraser.
+
+        There were a couple places in RenderListMarker and RenderMenuList that were
+        implicitly creating TextRuns by passing a String to a function which
+        expected a TextRun. Because TextRun has a constructor which takes a single
+        String and isn't marked explicit, TextRuns were being created without
+        any of the associated code that initializes the TextRun (such as creating
+        a RenderingContext if necessary).
+
+        This patch marks the aforementioned constructor as "explicit" to discourage
+        such behavior in the future.
+
+        Test: svg/custom/list-items-with-svg-font-family.html
+
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun): Mark constructors as explicit.
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::computePreferredLogicalWidths): Call
+        RenderBlock::constructTextRun.
+        (WebCore::RenderListMarker::getRelativeMarkerRect): Ditto.
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::updateOptionsWidth): Ditto.
+
 2014-05-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Caret's screen position does not update during an overflow scroll

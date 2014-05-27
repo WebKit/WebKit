@@ -1,3 +1,16 @@
+2014-05-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        SVG TextRuns do not always get RenderingContexts
+        https://bugs.webkit.org/show_bug.cgi?id=133198
+
+        Reviewed by Simon Fraser.
+
+        See per-file comments.
+
+        * svg/custom/list-items-with-svg-font-family-expected.txt: Added.
+        * svg/custom/list-items-with-svg-font-family.html: Added. Make sure there is
+        no crash when styling list elements with SVG fonts.
+
 2014-05-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Caret's screen position does not update during an overflow scroll
