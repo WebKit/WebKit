@@ -1,3 +1,11 @@
+2014-05-27  Alberto Garcia  <berto@igalia.com>
+
+        Remove leftover comment from r165182.
+
+        Rubber stamped by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestMultiprocess.cpp:
+
 2014-05-26  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         [EFL] Add LLVM as optional jhbuild module for FTL developers
