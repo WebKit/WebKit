@@ -45,6 +45,7 @@
 #include "SelectorCheckerTestFunctions.h"
 #include "StackAllocator.h"
 #include "StyledElement.h"
+#include <JavaScriptCore/GPRInfo.h>
 #include <JavaScriptCore/LinkBuffer.h>
 #include <JavaScriptCore/MacroAssembler.h>
 #include <JavaScriptCore/VM.h>
@@ -174,9 +175,10 @@ public:
     SelectorCompilationStatus compile(JSC::VM*, JSC::MacroAssemblerCodeRef&);
 
 private:
-    static const Assembler::RegisterID returnRegister = JSC::GPRInfo::returnValueGPR;
-    static const Assembler::RegisterID elementAddressRegister = JSC::GPRInfo::argumentGPR0;
-    static const Assembler::RegisterID checkingContextRegister = JSC::GPRInfo::argumentGPR1;
+    static const Assembler::RegisterID returnRegister;
+    static const Assembler::RegisterID elementAddressRegister;
+    static const Assembler::RegisterID checkingContextRegister;
+    static const Assembler::RegisterID callFrameRegister;
 
     void computeBacktrackingInformation();
     void generateSelectorChecker();
@@ -258,6 +260,11 @@ private:
     const CSSSelector* m_originalSelector;
 #endif
 };
+
+const Assembler::RegisterID SelectorCodeGenerator::returnRegister = JSC::GPRInfo::returnValueGPR;
+const Assembler::RegisterID SelectorCodeGenerator::elementAddressRegister = JSC::GPRInfo::argumentGPR0;
+const Assembler::RegisterID SelectorCodeGenerator::checkingContextRegister = JSC::GPRInfo::argumentGPR1;
+const Assembler::RegisterID SelectorCodeGenerator::callFrameRegister = JSC::GPRInfo::callFrameRegister;
 
 SelectorCompilationStatus compileSelector(const CSSSelector* lastSelector, JSC::VM* vm, SelectorContext selectorContext, JSC::MacroAssemblerCodeRef& codeRef)
 {
@@ -939,7 +946,7 @@ inline bool SelectorCodeGenerator::generatePrologue()
     return true;
 #elif CPU(X86_64) && CSS_SELECTOR_JIT_DEBUGGING
     Vector<JSC::MacroAssembler::RegisterID, 1> prologueRegister;
-    prologueRegister.append(GPRInfo::callFrameRegister);
+    prologueRegister.append(callFrameRegister);
     m_prologueStackReferences = m_stackAllocator.push(prologueRegister);
     return true;
 #endif
@@ -955,7 +962,7 @@ inline void SelectorCodeGenerator::generateEpilogue()
     m_stackAllocator.pop(m_prologueStackReferences, prologueRegisters);
 #elif CPU(X86_64) && CSS_SELECTOR_JIT_DEBUGGING
     Vector<JSC::MacroAssembler::RegisterID, 1> prologueRegister;
-    prologueRegister.append(GPRInfo::callFrameRegister);
+    prologueRegister.append(callFrameRegister);
     m_stackAllocator.pop(m_prologueStackReferences, prologueRegister);
 #endif
 }
