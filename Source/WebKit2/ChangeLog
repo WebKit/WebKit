@@ -1,3 +1,16 @@
+2014-05-27  Timothy Horton  <timothy_horton@apple.com>
+
+        [wk2] PDFPlugin snapshots are misplaced
+        https://bugs.webkit.org/show_bug.cgi?id=133323
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::paintControlForLayerInContext):
+        (WebKit::PDFPlugin::snapshot):
+        Include the scroll offset in the snapshot translation,
+        and use the whole document size instead of just the view size.
+
 2014-05-27  Sam Weinig  <sam@webkit.org>
 
         [WebKit2] Move WebPreferences macro definitions and key names into their own files

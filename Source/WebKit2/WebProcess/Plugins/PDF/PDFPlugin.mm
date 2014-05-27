@@ -1110,7 +1110,7 @@ void PDFPlugin::paintControlForLayerInContext(CALayer *layer, CGContextRef conte
         return;
     }
     
-    Scrollbar* scrollbar = 0;
+    Scrollbar* scrollbar = nullptr;
     
     if (layer == m_verticalScrollbarLayer)
         scrollbar = verticalScrollbar();
@@ -1127,7 +1127,7 @@ void PDFPlugin::paintControlForLayerInContext(CALayer *layer, CGContextRef conte
 PassRefPtr<ShareableBitmap> PDFPlugin::snapshot()
 {
     if (size().isEmpty())
-        return 0;
+        return nullptr;
 
     float contentsScaleFactor = controller()->contentsScaleFactor();
     IntSize backingStoreSize = size();
@@ -1137,7 +1137,7 @@ PassRefPtr<ShareableBitmap> PDFPlugin::snapshot()
     auto context = bitmap->createGraphicsContext();
 
     context->scale(FloatSize(contentsScaleFactor, -contentsScaleFactor));
-    context->translate(0, -size().height());
+    context->translate(-m_scrollOffset.width(), -m_pdfDocumentSize.height() + m_scrollOffset.height());
 
     [m_pdfLayerController snapshotInContext:context->platformContext()];
 
