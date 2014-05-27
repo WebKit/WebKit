@@ -1,3 +1,16 @@
+2014-05-27  Jessie Berlin  <jberlin@apple.com>
+
+        Revert r169362 since it broke the ML build.
+
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::ConnectionTerminationWatchdog::createConnectionTerminationWatchdog): Deleted.
+        (IPC::ConnectionTerminationWatchdog::ConnectionTerminationWatchdog): Deleted.
+        (IPC::ConnectionTerminationWatchdog::watchdogTimerFired): Deleted.
+        (IPC::Connection::terminateSoon): Deleted.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::removeWebPage):
+
 2014-05-27  Jon Lee  <jonlee@apple.com>
 
         Update ENABLE(MEDIA_SOURCE) on Mac

@@ -36,10 +36,6 @@
 #include <wtf/RunLoop.h>
 #include <xpc/xpc.h>
 
-#if PLATFORM(IOS)
-#include "ProcessAssertion.h"
-#endif
-
 #if __has_include(<xpc/private.h>)
 #include <xpc/private.h>
 #else
@@ -67,41 +63,6 @@ static const size_t inlineMessageMaxSize = 4096;
 // Message flags.
 enum {
     MessageBodyIsOutOfLine = 1 << 0
-};
-    
-// ConnectionTerminationWatchdog does two things:
-// 1) It sets a watchdog timer to kill the peered process.
-// 2) On iOS, make the process runnable for the duration of the watchdog
-//    to ensure it has a chance to terminate cleanly.
-class ConnectionTerminationWatchdog {
-public:
-    static void createConnectionTerminationWatchdog(XPCPtr<xpc_connection_t>& xpcConnection, double intervalInSeconds)
-    {
-        new ConnectionTerminationWatchdog(xpcConnection, intervalInSeconds);
-    }
-    
-private:
-    ConnectionTerminationWatchdog(XPCPtr<xpc_connection_t>& xpcConnection, double intervalInSeconds)
-        : m_xpcConnection(xpcConnection)
-        , m_watchdogTimer(RunLoop::main(), this, &ConnectionTerminationWatchdog::watchdogTimerFired)
-#if PLATFORM(IOS)
-        , m_assertion(std::make_unique<WebKit::ProcessAssertion>(xpc_connection_get_pid(m_xpcConnection.get()), WebKit::AssertionState::Background))
-#endif
-    {
-        m_watchdogTimer.startOneShot(intervalInSeconds);
-    }
-    
-    void watchdogTimerFired()
-    {
-        xpc_connection_kill(m_xpcConnection.get(), SIGKILL);
-        delete this;
-    }
-
-    XPCPtr<xpc_connection_t> m_xpcConnection;
-    RunLoop::Timer<ConnectionTerminationWatchdog> m_watchdogTimer;
-#if PLATFORM(IOS)
-    std::unique_ptr<WebKit::ProcessAssertion> m_assertion;
-#endif
 };
     
 void Connection::platformInvalidate()
@@ -136,13 +97,7 @@ void Connection::platformInvalidate()
 
     m_xpcConnection = nullptr;
 }
-    
-void Connection::terminateSoon(double intervalInSeconds)
-{
-    if (m_xpcConnection)
-        ConnectionTerminationWatchdog::createConnectionTerminationWatchdog(m_xpcConnection, intervalInSeconds);
-}
-    
+
 void Connection::platformInitialize(Identifier identifier)
 {
 #if !PLATFORM(IOS)
