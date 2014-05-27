@@ -1230,7 +1230,7 @@ end
 
 def runAndMonitorTestRunnerCommand(numberOfTests, *cmd)
     unless $progressMeter
-        mysys(*cmd)
+        mysys(cmd.join(' '))
     else
        running = {}
        didRun = {}
