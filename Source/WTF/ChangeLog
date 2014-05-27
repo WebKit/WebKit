@@ -1,3 +1,22 @@
+2014-05-27  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GLIB] RunLoop::dispatch always executes the function on the main thread instead of the target thread.
+        https://bugs.webkit.org/show_bug.cgi?id=133291
+
+        Reviewed by Carlos Garcia Campos.
+
+        GMainLoopSource::schedule[AfterDelay] must be used with the appropriate
+        GMainContext. Because current implementations in RunLoopGtk passes nullptr
+        instead of its runLoopContext when using GMainLoopSource, all of dispatched
+        functions are executed on the main thread regardless of which runloops is used.
+
+        This patch fixes the issue by passing the m_runLoopContext instead the default
+        parameter to the GMainLoopSource::schedule[AfterDelay].
+
+        * wtf/gtk/RunLoopGtk.cpp:
+        (WTF::RunLoop::wakeUp):
+        (WTF::RunLoop::TimerBase::start):
+
 2014-05-26  Darin Adler  <darin@apple.com>
 
         Class name matching should use ASCII case-insensitive matching, not Unicode case folding

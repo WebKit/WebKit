@@ -102,7 +102,7 @@ void RunLoop::wakeUp()
     RefPtr<RunLoop> runLoop(this);
     GMainLoopSource::createAndDeleteOnDestroy().schedule("[WebKit] RunLoop work", std::function<void()>([runLoop] {
         runLoop->performWork();
-    }));
+    }), G_PRIORITY_DEFAULT, nullptr, m_runLoopContext.get());
     g_main_context_wakeup(m_runLoopContext.get());
 }
 
@@ -119,7 +119,7 @@ RunLoop::TimerBase::~TimerBase()
 void RunLoop::TimerBase::start(double fireInterval, bool repeat)
 {
     m_timerSource.scheduleAfterDelay("[WebKit] RunLoop::Timer", std::function<bool ()>([this, repeat] { fired(); return repeat; }),
-        std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration<double>(fireInterval)));
+        std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration<double>(fireInterval)), G_PRIORITY_DEFAULT, nullptr, m_runLoop.m_runLoopContext.get());
 }
 
 void RunLoop::TimerBase::stop()
