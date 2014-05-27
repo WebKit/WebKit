@@ -26,6 +26,7 @@
 
 #include <gst/audio/audio.h>
 #include <gst/gst.h>
+#include <wtf/MathExtras.h>
 #include <wtf/gobject/GUniquePtr.h>
 
 namespace WebCore {
