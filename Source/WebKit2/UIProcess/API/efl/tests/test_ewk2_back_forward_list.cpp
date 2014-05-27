@@ -100,14 +100,13 @@ TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_current_item_get)
 
 TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_previous_item_get)
 {
-    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
-    httpServer->run(serverCallbackNavigation);
-
-    WKEinaSharedString url1 = urlFromTitle(httpServer.get(), title1);
-    ASSERT_TRUE(loadUrlSync(url1));
+    WKEinaSharedString url1 = environment->urlForResource("/Page1.html").data();
+    ewk_view_url_set(webView(), url1);
+    ASSERT_TRUE(waitUntilTitleChangedTo(title1));
     ASSERT_STREQ(title1, ewk_view_title_get(webView()));
 
-    ASSERT_TRUE(loadUrlSync(urlFromTitle(httpServer.get(), title2)));
+    ewk_view_url_set(webView(), environment->urlForResource("/Page2.html").data());
+    ASSERT_TRUE(waitUntilTitleChangedTo(title2));
     ASSERT_STREQ(title2, ewk_view_title_get(webView()));
 
     Ewk_Back_Forward_List* backForwardList = ewk_view_back_forward_list_get(webView());
@@ -122,14 +121,13 @@ TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_previous_item_get)
 
 TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_next_item_get)
 {
-    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
-    httpServer->run(serverCallbackNavigation);
-
-    ASSERT_TRUE(loadUrlSync(urlFromTitle(httpServer.get(), title1)));
+    ewk_view_url_set(webView(), environment->urlForResource("/Page1.html").data());
+    ASSERT_TRUE(waitUntilTitleChangedTo(title1));
     ASSERT_STREQ(title1, ewk_view_title_get(webView()));
 
-    WKEinaSharedString url2 = urlFromTitle(httpServer.get(), title2);
-    ASSERT_TRUE(loadUrlSync(url2));
+    WKEinaSharedString url2 = environment->urlForResource("/Page2.html").data();
+    ewk_view_url_set(webView(), url2);
+    ASSERT_TRUE(waitUntilTitleChangedTo(title2));
     ASSERT_STREQ(title2, ewk_view_title_get(webView()));
 
     // Go back to Page1.
@@ -148,14 +146,13 @@ TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_next_item_get)
 
 TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_item_at_index_get)
 {
-    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
-    httpServer->run(serverCallbackNavigation);
-
-    WKEinaSharedString url1 = urlFromTitle(httpServer.get(), title1);
-    ASSERT_TRUE(loadUrlSync(url1));
+    WKEinaSharedString url1 = environment->urlForResource("/Page1.html").data();
+    ewk_view_url_set(webView(), url1);
+    ASSERT_TRUE(waitUntilTitleChangedTo(title1));
     ASSERT_STREQ(title1, ewk_view_title_get(webView()));
 
-    ASSERT_TRUE(loadUrlSync(urlFromTitle(httpServer.get(), title2)));
+    ewk_view_url_set(webView(), environment->urlForResource("/Page2.html").data());
+    ASSERT_TRUE(waitUntilTitleChangedTo(title2));
     ASSERT_STREQ(title2, ewk_view_title_get(webView()));
 
     Ewk_Back_Forward_List* backForwardList = ewk_view_back_forward_list_get(webView());
@@ -173,13 +170,12 @@ TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_item_at_index_get)
 
 TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_count)
 {
-    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
-    httpServer->run(serverCallbackNavigation);
-
-    ASSERT_TRUE(loadUrlSync(urlFromTitle(httpServer.get(), title1)));
+    ewk_view_url_set(webView(), environment->urlForResource("/Page1.html").data());
+    ASSERT_TRUE(waitUntilTitleChangedTo(title1));
     ASSERT_STREQ(title1, ewk_view_title_get(webView()));
 
-    ASSERT_TRUE(loadUrlSync(urlFromTitle(httpServer.get(), title2)));
+    ewk_view_url_set(webView(), environment->urlForResource("/Page2.html").data());
+    ASSERT_TRUE(waitUntilTitleChangedTo(title2));
     ASSERT_STREQ(title2, ewk_view_title_get(webView()));
 
     Ewk_Back_Forward_List* backForwardList = ewk_view_back_forward_list_get(webView());
@@ -190,18 +186,18 @@ TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_count)
 
 TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_n_back_items_copy)
 {
-    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
-    httpServer->run(serverCallbackNavigation);
-
-    WKEinaSharedString url1 = urlFromTitle(httpServer.get(), title1);
-    ASSERT_TRUE(loadUrlSync(url1));
+    WKEinaSharedString url1 = environment->urlForResource("/Page1.html").data();
+    ewk_view_url_set(webView(), url1);
+    ASSERT_TRUE(waitUntilTitleChangedTo(title1));
     ASSERT_STREQ(title1, ewk_view_title_get(webView()));
 
-    WKEinaSharedString url2 = urlFromTitle(httpServer.get(), title2);
-    ASSERT_TRUE(loadUrlSync(url2));
+    WKEinaSharedString url2 = environment->urlForResource("/Page2.html").data();
+    ewk_view_url_set(webView(), url2);
+    ASSERT_TRUE(waitUntilTitleChangedTo(title2));
     ASSERT_STREQ(title2, ewk_view_title_get(webView()));
 
-    ASSERT_TRUE(loadUrlSync(urlFromTitle(httpServer.get(), title3)));
+    ewk_view_url_set(webView(), environment->urlForResource("/Page3.html").data());
+    ASSERT_TRUE(waitUntilTitleChangedTo(title3));
     ASSERT_STREQ(title3, ewk_view_title_get(webView()));
 
     Ewk_Back_Forward_List* backForwardList = ewk_view_back_forward_list_get(webView());
@@ -227,18 +223,18 @@ TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_n_back_items_copy)
 
 TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_n_forward_items_copy)
 {
-    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
-    httpServer->run(serverCallbackNavigation);
-
-    ASSERT_TRUE(loadUrlSync(urlFromTitle(httpServer.get(), title1)));
+    ewk_view_url_set(webView(), environment->urlForResource("/Page1.html").data());
+    ASSERT_TRUE(waitUntilTitleChangedTo(title1));
     ASSERT_STREQ(title1, ewk_view_title_get(webView()));
 
-    WKEinaSharedString url2 = urlFromTitle(httpServer.get(), title2);
-    ASSERT_TRUE(loadUrlSync(url2));
+    WKEinaSharedString url2 = environment->urlForResource("/Page2.html").data();
+    ewk_view_url_set(webView(), url2);
+    ASSERT_TRUE(waitUntilTitleChangedTo(title2));
     ASSERT_STREQ(title2, ewk_view_title_get(webView()));
 
-    WKEinaSharedString url3 = urlFromTitle(httpServer.get(), title3);
-    ASSERT_TRUE(loadUrlSync(url3));
+    WKEinaSharedString url3 = environment->urlForResource("/Page3.html").data();
+    ewk_view_url_set(webView(), url3);
+    ASSERT_TRUE(waitUntilTitleChangedTo(title3));
     ASSERT_STREQ(title3, ewk_view_title_get(webView()));
 
     // Go back to Page1.
