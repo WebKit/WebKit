@@ -313,10 +313,10 @@ void RenderSVGRoot::addChild(RenderObject* child, RenderObject* beforeChild)
     SVGResourcesCache::clientWasAddedToTree(*child);
 }
 
-void RenderSVGRoot::removeChild(RenderObject& child)
+RenderObject* RenderSVGRoot::removeChild(RenderObject& child)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
-    RenderReplaced::removeChild(child);
+    return RenderReplaced::removeChild(child);
 }
 
 // RenderBox methods will expect coordinates w/o any transforms in coordinates

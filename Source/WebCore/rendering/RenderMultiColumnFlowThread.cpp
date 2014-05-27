@@ -279,7 +279,7 @@ void RenderMultiColumnFlowThread::flowThreadDescendantInserted(RenderObject* des
     if (gShiftingSpanner || m_beingEvacuated || descendant->isInFlowRenderFlowThread())
         return;
     RenderObject* subtreeRoot = descendant;
-    for (; descendant; descendant = descendant->nextInPreOrder(subtreeRoot)) {
+    for (; descendant; descendant = (descendant ? descendant->nextInPreOrder(subtreeRoot) : nullptr)) {
         if (descendant->isRenderMultiColumnSpannerPlaceholder()) {
             // A spanner's placeholder has been inserted. The actual spanner renderer is moved from
             // where it would otherwise occur (if it weren't a spanner) to becoming a sibling of the
@@ -296,11 +296,10 @@ void RenderMultiColumnFlowThread::flowThreadDescendantInserted(RenderObject* des
                 
                 // Get info for the move of the original content back into our flow thread.
                 RenderBoxModelObject* placeholderParent = toRenderBoxModelObject(placeholder->parent());
-                RenderObject* placeholderNextSibling = placeholder->nextSibling();
             
                 // We have to nuke the placeholder, since the ancestor already lost the mapping to it when
                 // we shifted the placeholder down into this flow thread.
-                placeholder->parent()->removeChild(*placeholder);
+                RenderObject* placeholderNextSibling = placeholderParent->removeChild(*placeholder);
 
                 // Get the ancestor multicolumn flow thread to clean up its mess.
                 RenderBlockFlow* ancestorBlock = toRenderBlockFlow(spanner->parent());
@@ -314,9 +313,14 @@ void RenderMultiColumnFlowThread::flowThreadDescendantInserted(RenderObject* des
                 if (!descendant)
                     return;
                 
+                if (!placeholderNextSibling)
+                    descendant = nullptr;
+
                 // Now that we have done this, we can continue past the spanning content, since we advanced
                 // descendant already.
-                descendant = descendant->previousInPreOrder(subtreeRoot);
+                if (descendant)
+                    descendant = descendant->previousInPreOrder(subtreeRoot);
+
                 continue;
             }
             

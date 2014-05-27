@@ -770,14 +770,12 @@ void RenderBlock::collapseAnonymousBoxChild(RenderBlock* parent, RenderBlock* ch
     child->destroy();
 }
 
-void RenderBlock::removeChild(RenderObject& oldChild)
+RenderObject* RenderBlock::removeChild(RenderObject& oldChild)
 {
     // No need to waste time in merging or removing empty anonymous blocks.
     // We can just bail out if our document is getting destroyed.
-    if (documentBeingDestroyed()) {
-        RenderBox::removeChild(oldChild);
-        return;
-    }
+    if (documentBeingDestroyed())
+        return RenderBox::removeChild(oldChild);
 
     // If this child is a block, and if our previous and next siblings are
     // both anonymous blocks with inline content, then we can go ahead and
@@ -830,7 +828,7 @@ void RenderBlock::removeChild(RenderObject& oldChild)
 
     invalidateLineLayoutPath();
 
-    RenderBox::removeChild(oldChild);
+    RenderObject* nextSibling = RenderBox::removeChild(oldChild);
 
     RenderObject* child = prev ? prev : next;
     if (canMergeAnonymousBlocks && child && !child->previousSibling() && !child->nextSibling() && canCollapseAnonymousBlockChild()) {
@@ -838,6 +836,7 @@ void RenderBlock::removeChild(RenderObject& oldChild)
         // box.  We can go ahead and pull the content right back up into our
         // box.
         collapseAnonymousBoxChild(this, toRenderBlock(child));
+        nextSibling = nullptr;
     } else if (((prev && prev->isAnonymousBlock()) || (next && next->isAnonymousBlock())) && canCollapseAnonymousBlockChild()) {
         // It's possible that the removal has knocked us down to a single anonymous
         // block with pseudo-style element siblings (e.g. first-letter). If these
@@ -847,10 +846,13 @@ void RenderBlock::removeChild(RenderObject& oldChild)
             && (!anonBlock->previousSibling() || (anonBlock->previousSibling()->style().styleType() != NOPSEUDO && anonBlock->previousSibling()->isFloating() && !anonBlock->previousSibling()->previousSibling()))
             && (!anonBlock->nextSibling() || (anonBlock->nextSibling()->style().styleType() != NOPSEUDO && anonBlock->nextSibling()->isFloating() && !anonBlock->nextSibling()->nextSibling()))) {
             collapseAnonymousBoxChild(this, anonBlock);
+            nextSibling = nullptr;
         }
     }
 
     if (!firstChild()) {
+        nextSibling = nullptr;
+
         // If this was our last child be sure to clear out our line boxes.
         if (childrenInline())
             deleteLines();
@@ -881,6 +883,8 @@ void RenderBlock::removeChild(RenderObject& oldChild)
             destroy();
         }
     }
+    
+    return nextSibling;
 }
 
 bool RenderBlock::isSelfCollapsingBlock() const

@@ -3638,14 +3638,14 @@ void RenderBlockFlow::addChild(RenderObject* newChild, RenderObject* beforeChild
     RenderBlock::addChild(newChild, beforeChild);
 }
 
-void RenderBlockFlow::removeChild(RenderObject& oldChild)
+RenderObject* RenderBlockFlow::removeChild(RenderObject& oldChild)
 {
     if (!documentBeingDestroyed()) {
         RenderFlowThread* flowThread = multiColumnFlowThread();
         if (flowThread && flowThread != &oldChild)
             flowThread->flowThreadRelativeWillBeRemoved(&oldChild);
     }
-    RenderBlock::removeChild(oldChild);
+    return RenderBlock::removeChild(oldChild);
 }
 
 void RenderBlockFlow::checkForPaginationLogicalHeightChange(bool& relayoutChildren, LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged)

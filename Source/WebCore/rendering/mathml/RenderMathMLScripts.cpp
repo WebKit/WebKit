@@ -199,12 +199,10 @@ void RenderMathMLScripts::addChildInternal(bool doNotRestructure, RenderObject* 
     wrapper->addChildInternal(false, child, wrapper->firstChild());
 }
 
-void RenderMathMLScripts::removeChildInternal(bool doNotRestructure, RenderObject& child)
+RenderObject* RenderMathMLScripts::removeChildInternal(bool doNotRestructure, RenderObject& child)
 {
-    if (doNotRestructure) {
-        RenderMathMLBlock::removeChild(child);
-        return;
-    }
+    if (doNotRestructure)
+        return RenderMathMLBlock::removeChild(child);
 
     ASSERT(isPrescript(&child));
 
@@ -223,7 +221,7 @@ void RenderMathMLScripts::removeChildInternal(bool doNotRestructure, RenderObjec
         }
     }
 
-    RenderMathMLBlock::removeChild(child);
+    return RenderMathMLBlock::removeChild(child);
 }
 
 void RenderMathMLScripts::addChild(RenderObject* child, RenderObject* beforeChild)
@@ -238,17 +236,18 @@ void RenderMathMLScripts::addChild(RenderObject* child, RenderObject* beforeChil
     fixAnonymousStyles();
 }
 
-void RenderMathMLScripts::removeChild(RenderObject& child)
+RenderObject* RenderMathMLScripts::removeChild(RenderObject& child)
 {
     if (beingDestroyed() || documentBeingDestroyed()) {
         // The renderer is being destroyed so we remove the child normally.
-        RenderMathMLBlock::removeChild(child);
-        return;
+        return RenderMathMLBlock::removeChild(child);
     }
 
-    removeChildInternal(false, child);
+    RenderObject* next = removeChildInternal(false, child);
     
     fixAnonymousStyles();
+    
+    return next;
 }
 
 void RenderMathMLScripts::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
@@ -463,12 +462,10 @@ void RenderMathMLScriptsWrapper::addChild(RenderObject* child, RenderObject* bef
     parentNode->fixAnonymousStyles();
 }
 
-void RenderMathMLScriptsWrapper::removeChildInternal(bool doNotRestructure, RenderObject& child)
+RenderObject* RenderMathMLScriptsWrapper::removeChildInternal(bool doNotRestructure, RenderObject& child)
 {
-    if (doNotRestructure) {
-        RenderMathMLBlock::removeChild(child);
-        return;
-    }
+    if (doNotRestructure)
+        return RenderMathMLBlock::removeChild(child);
 
     RenderMathMLScripts* parentNode = toRenderMathMLScripts(parent());
 
@@ -483,11 +480,11 @@ void RenderMathMLScriptsWrapper::removeChildInternal(bool doNotRestructure, Rend
             wrapper->removeChildInternal(false, *script);
             RenderMathMLBlock::addChild(script);
         }
-        return;
+        return sibling;
     }
 
     // We remove the child and shift the successors in the current sequence of scripts.
-    RenderMathMLBlock::removeChild(child);
+    RenderObject* next = RenderMathMLBlock::removeChild(child);
     RenderMathMLScriptsWrapper* subSupPair = this;
     for (RenderObject* nextSibling = subSupPair->nextSibling(); nextSibling && !isPrescript(nextSibling); nextSibling = nextSibling->nextSibling()) {
         RenderMathMLScriptsWrapper* nextSubSupPair = toRenderMathMLScriptsWrapper(nextSibling);
@@ -502,19 +499,21 @@ void RenderMathMLScriptsWrapper::removeChildInternal(bool doNotRestructure, Rend
         parentNode->removeChildInternal(true, *subSupPair);
         subSupPair->destroy();
     }
+    
+    return next;
 }
 
-void RenderMathMLScriptsWrapper::removeChild(RenderObject& child)
+RenderObject* RenderMathMLScriptsWrapper::removeChild(RenderObject& child)
 {
     if (beingDestroyed() || documentBeingDestroyed()) {
         // The renderer is being destroyed so we remove the child normally.
-        RenderMathMLBlock::removeChild(child);
-        return;
+        return RenderMathMLBlock::removeChild(child);
     }
 
     RenderMathMLScripts* parentNode = toRenderMathMLScripts(parent());
-    removeChildInternal(false, child);
+    RenderObject* next = removeChildInternal(false, child);
     parentNode->fixAnonymousStyles();
+    return next;
 }
 
 }    

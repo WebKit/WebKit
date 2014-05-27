@@ -43,7 +43,7 @@ public:
     enum WrapperType { Base, SubSupPair };
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
-    virtual void removeChild(RenderObject&) override;
+    virtual RenderObject* removeChild(RenderObject&) override;
 
 private:
     RenderMathMLScriptsWrapper(Document& document, PassRef<RenderStyle> style, WrapperType kind)
@@ -55,7 +55,7 @@ private:
     static RenderMathMLScriptsWrapper* createAnonymousWrapper(RenderMathMLScripts* renderObject, WrapperType);
 
     void addChildInternal(bool normalInsertion, RenderObject* child, RenderObject* beforeChild = 0);
-    void removeChildInternal(bool normalRemoval, RenderObject& child);
+    RenderObject* removeChildInternal(bool normalRemoval, RenderObject& child);
 
     virtual const char* renderName() const override { return m_kind == Base ? "Base Wrapper" : "SubSupPair Wrapper"; }
     virtual bool isRenderMathMLScriptsWrapper() const override final { return true; }
@@ -75,7 +75,7 @@ friend class RenderMathMLScriptsWrapper;
 public:
     RenderMathMLScripts(Element&, PassRef<RenderStyle>);
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
-    virtual void removeChild(RenderObject&) override;
+    virtual RenderObject* removeChild(RenderObject&) override;
     
     virtual RenderMathMLOperator* unembellishedOperator();
     virtual int firstLineBaseline() const override;
@@ -85,7 +85,7 @@ protected:
     
 private:
     void addChildInternal(bool normalInsertion, RenderObject* child, RenderObject* beforeChild = 0);
-    void removeChildInternal(bool normalRemoval, RenderObject& child);
+    RenderObject* removeChildInternal(bool normalRemoval, RenderObject& child);
 
     virtual bool isRenderMathMLScripts() const override final { return true; }
     virtual const char* renderName() const override { return "RenderMathMLScripts"; }
