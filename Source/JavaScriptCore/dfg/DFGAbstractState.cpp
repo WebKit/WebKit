@@ -476,6 +476,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     }
         
     case MakeRope: {
+        node->setCanExit(true);
         forNode(node).set(m_graph.m_vm.stringStructure.get());
         break;
     }
