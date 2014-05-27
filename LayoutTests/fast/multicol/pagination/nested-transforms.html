@@ -1,0 +1,27 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+ <script>
+        if (window.internals)
+            internals.setPagination("RightToLeftPaginated", 20, 180);
+    </script>
+<style>
+div {
+    height: 20px;
+    width: 80px;
+}
+
+.outer {
+    -webkit-transform: translateX(0);
+}
+
+.inner {
+    background-color: blue;
+    -webkit-transform: translateX(0);
+}
+</style>
+</head>
+  <body >
+  <br></br>
+  <div class="outer"><div id="foo" class="inner"></div></div>
+  </body>
+</html>

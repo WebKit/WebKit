@@ -957,7 +957,7 @@ void RenderLayer::updatePagination()
         // paint the transform multiple times in each column, so we don't have to use
         // fragments for the transformed content.
         m_enclosingPaginationLayer = parent()->enclosingPaginationLayer();
-        if (m_enclosingPaginationLayer && m_enclosingPaginationLayer->hasTransform())
+        if (parent()->hasTransform())
             m_enclosingPaginationLayer = 0;
         return;
     }
@@ -972,7 +972,7 @@ void RenderLayer::updatePagination()
             // paint the transform multiple times in each column, so we don't have to use
             // fragments for the transformed content.
             m_enclosingPaginationLayer = containingBlock->layer()->enclosingPaginationLayer();
-            if (m_enclosingPaginationLayer && m_enclosingPaginationLayer->hasTransform())
+            if (containingBlock->layer()->hasTransform())
                 m_enclosingPaginationLayer = 0;
             return;
         }

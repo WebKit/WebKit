@@ -1,3 +1,15 @@
+2014-05-27  David Hyatt  <hyatt@apple.com>
+
+        REGRESSION: Audio volume scrubber does not show volume level thumb
+        <rdar://problem/16902004>
+        https://bugs.webkit.org/show_bug.cgi?id=133310
+
+        Reviewed by Dean Jackson.
+
+        * fast/multicol/pagination/nested-transforms.html: Added.
+        * platform/mac/fast/multicol/pagination/nested-transforms-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/nested-transforms-expected.txt: Added.
+
 2014-05-27  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] media controls should prevent 'click' events from reaching the page

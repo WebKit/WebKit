@@ -1,3 +1,21 @@
+2014-05-27  David Hyatt  <hyatt@apple.com>
+
+        REGRESSION: Audio volume scrubber does not show volume level thumb
+        <rdar://problem/16902004>
+        https://bugs.webkit.org/show_bug.cgi?id=133310
+
+        Reviewed by Dean Jackson.
+
+        This was just a silly mistake on my part with the setting of the pagination
+        layers. Layers inside transforms are supposed to clear out their pagination
+        status based off their ancestor containing block layers, and not off the
+        enclosing pagination layer.
+        
+        Added fast/multicol/pagination/nested-transforms.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updatePagination):
+
 2014-05-27  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] media controls should prevent 'click' events from reaching the page
