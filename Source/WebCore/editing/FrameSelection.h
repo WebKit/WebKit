@@ -269,8 +269,6 @@ public:
     bool shouldShowBlockCursor() const { return m_shouldShowBlockCursor; }
     void setShouldShowBlockCursor(bool);
 
-    void invalidateCaretRect();
-
 private:
     enum EPositionType { START, END, BASE, EXTENT };
 
@@ -313,6 +311,7 @@ private:
 
     void setCaretVisibility(CaretVisibility);
     bool recomputeCaretRect();
+    void invalidateCaretRect();
 
     bool dispatchSelectStart();
 
