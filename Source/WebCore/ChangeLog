@@ -1,3 +1,28 @@
+2014-05-26  Philip Rogers  <pdr@google.com>
+
+        Remove special case for transparent SVG root layers
+        https://bugs.webkit.org/show_bug.cgi?id=116856
+
+        Reviewed by Dirk Schulze.
+
+        This patch removes a special case from RenderLayer for root SVG layers
+        with opacity. Instead of checking whether a composited layer exists in
+        SVGRenderingContext::prepareToRenderSVGContent we now exclude the root
+        SVG renderobject from the opacity checks in prepareToRenderSVGContent.
+
+        This is a merge of https://src.chromium.org/viewvc/blink?view=rev&revision=174102
+        by Philip Rogers <pdr@chromium.org>.
+
+        No new tests as this is covered by svg/custom/composited-svg-with-opacity.html.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::isTransparent): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent):
+            The opacity case for root svg renderers is now handled by
+            RenderLayer.
+
 2014-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: Fix build error raised when CSS_SELECTOR_JIT_DEBUGGING is 1

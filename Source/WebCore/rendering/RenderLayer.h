@@ -376,7 +376,7 @@ public:
 
     bool cannotBlitToWindow() const;
 
-    bool isTransparent() const;
+    bool isTransparent() const { return renderer().isTransparent() || renderer().hasMask(); }
     RenderLayer* transparentPaintingAncestor();
     void beginTransparencyLayers(GraphicsContext*, const RenderLayer* rootLayer, const LayoutRect& paintDirtyRect, PaintBehavior);
 

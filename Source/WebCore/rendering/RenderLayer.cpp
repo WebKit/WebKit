@@ -1534,13 +1534,6 @@ bool RenderLayer::cannotBlitToWindow() const
     return parent()->cannotBlitToWindow();
 }
 
-bool RenderLayer::isTransparent() const
-{
-    if (renderer().element() && renderer().element()->isSVGElement())
-        return false;
-    return renderer().isTransparent() || renderer().hasMask();
-}
-
 RenderLayer* RenderLayer::transparentPaintingAncestor()
 {
     if (isComposited())
