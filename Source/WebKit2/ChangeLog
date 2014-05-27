@@ -1,5 +1,16 @@
 2014-05-27  Gavin Barraclough  <baraclough@apple.com>
 
+        Add UI process watchdog on iOS to ensure WebProcess connections close
+        https://bugs.webkit.org/show_bug.cgi?id=133200
+        <rdar://problem/16997983>
+
+        Mountain Lion build fix
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::ConnectionTerminationWatchdog::watchdogTimerFired):
+
+2014-05-27  Gavin Barraclough  <baraclough@apple.com>
+
         importance_assertion -> denap_assertion
         https://bugs.webkit.org/show_bug.cgi?id=133294
 

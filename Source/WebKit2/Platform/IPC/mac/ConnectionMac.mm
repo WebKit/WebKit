@@ -93,7 +93,9 @@ private:
     
     void watchdogTimerFired()
     {
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
         xpc_connection_kill(m_xpcConnection.get(), SIGKILL);
+#endif
         delete this;
     }
 
