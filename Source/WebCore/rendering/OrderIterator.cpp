@@ -32,8 +32,7 @@
 #include "config.h"
 #include "OrderIterator.h"
 
-#include "RenderFlexibleBox.h"
-#include "RenderGrid.h"
+#include "RenderBox.h"
 
 namespace WebCore {
 
@@ -43,18 +42,6 @@ OrderIterator::OrderIterator(RenderBox& containerBox)
     : m_containerBox(containerBox)
 {
     reset();
-}
-
-void OrderIterator::setOrderValues(OrderValues&& orderValues)
-{
-    reset();
-    m_orderValues = std::move(orderValues);
-    if (m_orderValues.size() < 2)
-        return;
-
-    std::sort(m_orderValues.begin(), m_orderValues.end());
-    auto nextElement = std::unique(m_orderValues.begin(), m_orderValues.end());
-    m_orderValues.shrinkCapacity(nextElement - m_orderValues.begin());
 }
 
 RenderBox* OrderIterator::first()
@@ -93,5 +80,36 @@ void OrderIterator::reset()
     m_currentChild = nullptr;
     m_orderIndex = cInvalidIndex;
 }
+
+OrderIteratorPopulator::OrderIteratorPopulator(OrderIterator& iterator)
+    : m_iterator(iterator)
+{
+    // Note that we don't release the memory here, we only invalidate the size
+    // This avoids unneeded reallocation if the size ends up not changing.
+    m_iterator.m_orderValues.shrink(0);
+}
+
+OrderIteratorPopulator::~OrderIteratorPopulator()
+{
+    m_iterator.reset();
+
+    if (m_iterator.m_orderValues.size() > 1)
+        removeDuplicatedOrderValues();
+}
+
+void OrderIteratorPopulator::removeDuplicatedOrderValues()
+{
+    auto& orderValues = m_iterator.m_orderValues;
+
+    std::sort(orderValues.begin(), orderValues.end());
+    auto nextElement = std::unique(orderValues.begin(), orderValues.end());
+    orderValues.shrinkCapacity(nextElement - orderValues.begin());
+}
+
+void OrderIteratorPopulator::collectChild(const RenderBox& child)
+{
+    m_iterator.m_orderValues.append(child.style().order());
+}
+
 
 } // namespace WebCore

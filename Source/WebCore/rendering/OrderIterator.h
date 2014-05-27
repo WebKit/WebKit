@@ -41,10 +41,9 @@ class RenderBox;
 
 class OrderIterator {
 public:
-    OrderIterator(RenderBox&);
+    friend class OrderIteratorPopulator;
 
-    typedef Vector<int, 1> OrderValues;
-    void setOrderValues(OrderValues&&);
+    explicit OrderIterator(RenderBox&);
 
     RenderBox* currentChild() const { return m_currentChild; }
     RenderBox* first();
@@ -55,8 +54,22 @@ private:
 
     RenderBox& m_containerBox;
     RenderBox* m_currentChild;
-    OrderValues m_orderValues;
+
+    Vector<int, 1> m_orderValues;
     int m_orderIndex;
+};
+
+class OrderIteratorPopulator {
+public:
+    OrderIteratorPopulator(OrderIterator&);
+    ~OrderIteratorPopulator();
+
+    void collectChild(const RenderBox&);
+
+private:
+    void removeDuplicatedOrderValues();
+
+    OrderIterator& m_iterator;
 };
 
 } // namespace WebCore

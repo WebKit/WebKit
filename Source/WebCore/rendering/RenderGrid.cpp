@@ -698,17 +698,12 @@ void RenderGrid::placeItemsOnGrid()
 
 void RenderGrid::populateExplicitGridAndOrderIterator()
 {
-    // FIXME: We should find a way to share OrderValues's initialization code with RenderFlexibleBox.
-    OrderIterator::OrderValues orderValues;
+    OrderIteratorPopulator populator(m_orderIterator);
     size_t maximumRowIndex = std::max<size_t>(1, explicitGridRowCount());
     size_t maximumColumnIndex = std::max<size_t>(1, explicitGridColumnCount());
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        // Avoid growing the vector for the common-case default value of 0. This optimizes the most common case which is
-        // one or a few values with the default order 0
-        int order = child->style().order();
-        if (orderValues.isEmpty() || orderValues.last() != order)
-            orderValues.append(order);
+        populator.collectChild(*child);
 
         // This function bypasses the cache (cachedGridCoordinate()) as it is used to build it.
         std::unique_ptr<GridSpan> rowPositions = resolveGridPositionsFromStyle(child, ForRows);
@@ -725,8 +720,6 @@ void RenderGrid::populateExplicitGridAndOrderIterator()
     m_grid.grow(maximumRowIndex);
     for (size_t i = 0; i < m_grid.size(); ++i)
         m_grid[i].grow(maximumColumnIndex);
-
-    m_orderIterator.setOrderValues(std::move(orderValues));
 }
 
 void RenderGrid::placeSpecifiedMajorAxisItemsOnGrid(const Vector<RenderBox*>& autoGridItems)

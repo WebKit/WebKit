@@ -1,3 +1,35 @@
+2014-05-27  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Setting up OrderIterator shouldn't require an extra Vector
+        https://bugs.webkit.org/show_bug.cgi?id=119061
+
+        Reviewed by Darin Adler.
+
+        From Blink r153971 by <jchaffraix@chromium.org>
+
+        This patches reuse the OrderIterator's Vector. It provides a helper class OrderIteratorPopulator, used for
+        manipulating the Vector directly. Which allows to consolidate the code into a single implementation across
+        flexbox and grid.
+
+        No new tests, already covered by current tests.
+
+        * rendering/OrderIterator.cpp:
+        (WebCore::OrderIteratorPopulator::~OrderIteratorPopulator): Reset OrderIterator and call
+        removeDuplicatedOrderValues().
+        (WebCore::OrderIteratorPopulator::removeDuplicatedOrderValues): Sorts the Vector and removes the duplicated
+        order values.
+        (WebCore::OrderIteratorPopulator::collectChild): Collect order value information from child.
+        (WebCore::OrderIterator::setOrderValues): Deleted.
+        * rendering/OrderIterator.h:
+        (WebCore::OrderIteratorPopulator::OrderIteratorPopulator): Add helper class to manipulate OrderValues Vector.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock): Remove unneeded code related to old OrderValues vector.
+        (WebCore::RenderFlexibleBox::prepareOrderIteratorAndMargins): Populate OrderIterator using collectChild().
+        (WebCore::RenderFlexibleBox::computeMainAxisPreferredSizes): Deleted.
+        * rendering/RenderFlexibleBox.h: Rename computeMainAxisPreferredSizes() to prepareOrderIteratorAndMargins().
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator): Populate OrderIterator using collectChild().
+
 2014-05-26  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] RemoteLayerBackingStore front buffers should be purgeable when unparented

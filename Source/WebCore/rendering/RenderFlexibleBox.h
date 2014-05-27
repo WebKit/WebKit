@@ -137,7 +137,7 @@ private:
     LayoutUnit marginBoxAscentForChild(RenderBox&);
 
     LayoutUnit computeChildMarginValue(const Length& margin);
-    void computeMainAxisPreferredSizes(OrderIterator::OrderValues&);
+    void prepareOrderIteratorAndMargins();
     LayoutUnit adjustChildSizeForMinAndMax(RenderBox&, LayoutUnit childSize);
     bool computeNextFlexLine(OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, double& totalFlexGrow, double& totalWeightedFlexShrink, LayoutUnit& minMaxAppliedMainAxisExtent, bool& hasInfiniteLineLength);
 
