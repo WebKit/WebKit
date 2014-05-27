@@ -34,6 +34,7 @@
 #include <WebCore/NetworkingContext.h>
 #include <WebCore/ResourceHandle.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <glib.h>
 #include <locale.h>
 #include <wtf/RunLoop.h>
@@ -41,16 +42,6 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/gobject/GlibUtilities.h>
-
-#if OS(UNIX)
-#include <sys/socket.h>
-#endif
-
-#ifdef SOCK_SEQPACKET
-#define SOCKET_TYPE SOCK_SEQPACKET
-#else
-#define SOCKET_TYPE SOCK_STREAM
-#endif
 
 using namespace WebCore;
 
@@ -66,12 +57,7 @@ void ProcessLauncher::launchProcess()
 {
     GPid pid = 0;
 
-    int sockets[2];
-    if (socketpair(AF_UNIX, SOCKET_TYPE, 0, sockets) < 0) {
-        g_printerr("Creation of socket failed: %s.\n", g_strerror(errno));
-        ASSERT_NOT_REACHED();
-        return;
-    }
+    IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection(IPC::Connection::ConnectionOptions::SetCloexecOnServer);
 
     String executablePath, pluginPath;
     CString realExecutablePath, realPluginPath;
@@ -95,7 +81,7 @@ void ProcessLauncher::launchProcess()
     }
 
     realExecutablePath = fileSystemRepresentation(executablePath);
-    GUniquePtr<gchar> socket(g_strdup_printf("%d", sockets[0]));
+    GUniquePtr<gchar> socket(g_strdup_printf("%d", socketPair.client));
 
     unsigned nargs = 4; // size of the argv array for g_spawn_async()
 
@@ -123,16 +109,20 @@ void ProcessLauncher::launchProcess()
     argv[i++] = 0;
 
     GUniqueOutPtr<GError> error;
-    if (!g_spawn_async(0, argv, 0, G_SPAWN_LEAVE_DESCRIPTORS_OPEN, childSetupFunction, GINT_TO_POINTER(sockets[1]), &pid, &error.outPtr())) {
+    if (!g_spawn_async(0, argv, 0, G_SPAWN_LEAVE_DESCRIPTORS_OPEN, childSetupFunction, GINT_TO_POINTER(socketPair.server), &pid, &error.outPtr())) {
         g_printerr("Unable to fork a new WebProcess: %s.\n", error->message);
         ASSERT_NOT_REACHED();
     }
 
-    close(sockets[0]);
+    // Don't expose the parent socket to potential future children.
+    while (fcntl(socketPair.client, F_SETFD, FD_CLOEXEC) == -1)
+        RELEASE_ASSERT(errno != EINTR);
+
+    close(socketPair.client);
     m_processIdentifier = pid;
 
     // We've finished launching the process, message back to the main run loop.
-    RunLoop::main()->dispatch(bind(&ProcessLauncher::didFinishLaunchingProcess, this, m_processIdentifier, sockets[1]));
+    RunLoop::main()->dispatch(bind(&ProcessLauncher::didFinishLaunchingProcess, this, m_processIdentifier, socketPair.server));
 }
 
 void ProcessLauncher::terminateProcess()

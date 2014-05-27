@@ -90,7 +90,6 @@ public:
     {
         // FIXME: This test is disabled because the web processed don't actually die
         // due to bug https://bugs.webkit.org/show_bug.cgi?id=129684.
-#if 0
         g_assert_cmpuint(index, <, numViews);
 
         unsigned watcherID = g_bus_watch_name_on_connection(bus->connection(), m_webViewBusNames[index].get(), G_BUS_NAME_WATCHER_FLAGS_NONE,
@@ -98,7 +97,6 @@ public:
         gtk_widget_destroy(GTK_WIDGET(m_webViews[index].get()));
         g_main_loop_run(m_mainLoop);
         g_bus_unwatch_name(watcherID);
-#endif
     }
 
     GMainLoop* m_mainLoop;

@@ -122,7 +122,12 @@ public:
         int server;
     };
 
-    static Connection::SocketPair createPlatformConnection();
+    enum ConnectionOptions {
+        SetCloexecOnClient = 1 << 0,
+        SetCloexecOnServer = 1 << 1,
+    };
+
+    static Connection::SocketPair createPlatformConnection(unsigned options = SetCloexecOnClient | SetCloexecOnServer);
 #endif
 
     static PassRefPtr<Connection> createServerConnection(Identifier, Client*, WTF::RunLoop* clientRunLoop);
