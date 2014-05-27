@@ -1,5 +1,16 @@
 2014-05-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Fix wrong inclusion depth of js-test-pre.js in is-protocol-handler-registered.html
+        https://bugs.webkit.org/show_bug.cgi?id=133273
+
+        Reviewed by Darin Adler.
+
+        Can't use debug() due to wrong inclusion path.
+
+        * fast/dom/NavigatorContentUtils/is-protocol-handler-registered.html:
+
+2014-05-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         [EFL] Move navigator content utils's to own directory
         https://bugs.webkit.org/show_bug.cgi?id=133275
 
