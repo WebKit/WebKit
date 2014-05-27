@@ -50,10 +50,6 @@ webkit.org/b/98747 plugins/document-open.html [ Crash Failure ]
 webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-download.html [ Crash Failure ]
 webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Crash Failure ]
 
-# WebGL test cases crashing in WebCore::GraphicsContext3D::readPixels().
-webkit.org/b/109417 webgl/conformance/textures/texture-attachment-formats.html [ Crash Failure ]
-webkit.org/b/109945 webgl/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Crash ]
-
 # Known WebGL conformance test failures, fails on Intel and AMD hardware
 webkit.org/b/129199 webgl/1.0.2/conformance/uniforms/uniform-default-values.html [ Crash ]
 webkit.org/b/129199 webgl/conformance/uniforms/uniform-default-values.html [ Crash ]
@@ -194,7 +190,6 @@ webkit.org/b/127109 media/video-object-fit-change.html [ ImageOnlyFailure Pass ]
 webkit.org/b/127109 media/video-object-fit.html [ ImageOnlyFailure Pass ]
 
 # Started to crash after r160991
-webkit.org/b/127914 fast/canvas/webgl/css-webkit-canvas-repaint.html [ Crash Pass ]
 webkit.org/b/127914 fast/canvas/webgl/oes-texture-half-float-with-image.html [ Crash Pass ]
 webkit.org/b/127914 fast/canvas/webgl/oes-texture-half-float.html [ Crash Pass ]
 webkit.org/b/127914 fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgb565.html [ Crash Pass ]
@@ -206,14 +201,14 @@ webkit.org/b/127914 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-rgb5
 webkit.org/b/127914 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Crash Pass ]
 webkit.org/b/127914 fast/canvas/webgl/texImageTest.html [ Crash Pass ]
 webkit.org/b/127914 fast/canvas/webgl/texture-color-profile.html [ Crash Pass ]
-webkit.org/b/127914 webgl/1.0.1/conformance/rendering/gl-drawelements.html [ Crash Pass ]
-webkit.org/b/127914 webgl/1.0.1/conformance/textures/gl-pixelstorei.html [ Crash Pass ]
+webkit.org/b/127914 webgl/1.0.1/conformance/rendering/gl-drawelements.html [ Crash Failure ]
+webkit.org/b/127914 webgl/1.0.1/conformance/textures/gl-pixelstorei.html [ Crash Failure ]
 webkit.org/b/127914 webgl/1.0.1/conformance/textures/tex-image-and-sub-image-2d-with-canvas.html [ Crash Pass ]
 webkit.org/b/127914 webgl/1.0.1/conformance/textures/tex-image-and-sub-image-2d-with-image.html [ Crash Pass ]
 webkit.org/b/127914 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-image-data.html [ Crash Pass ]
 webkit.org/b/127914 webgl/1.0.2/conformance/extensions/oes-texture-float-with-image-data.html [ Crash Pass ]
-webkit.org/b/127914 webgl/1.0.2/conformance/extensions/webgl-debug-renderer-info.html [ Crash Pass ]
-webkit.org/b/127914 webgl/1.0.2/conformance/rendering/gl-drawelements.html [ Crash Pass ]
+webkit.org/b/127914 webgl/1.0.2/conformance/extensions/webgl-debug-renderer-info.html [ Crash Failure ]
+webkit.org/b/127914 webgl/1.0.2/conformance/rendering/gl-drawelements.html [ Crash Failure ]
 webkit.org/b/127914 webgl/1.0.2/conformance/textures/copy-tex-image-and-sub-image-2d.html [ Crash Pass ]
 webkit.org/b/127914 webgl/1.0.2/conformance/textures/gl-get-tex-parameter.html [ Crash Pass ]
 webkit.org/b/127914 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-canvas-rgb565.html [ Crash Pass ]
@@ -224,8 +219,8 @@ webkit.org/b/127914 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-
 webkit.org/b/127914 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-image-data-rgba4444.html [ Crash Pass ]
 webkit.org/b/127914 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-image-rgb565.html [ Crash Pass ]
 webkit.org/b/127914 webgl/conformance/extensions/oes-texture-float-with-image-data.html [ Crash Pass ]
-webkit.org/b/127914 webgl/conformance/extensions/webgl-debug-renderer-info.html [ Crash Pass ]
-webkit.org/b/127914 webgl/conformance/rendering/gl-drawelements.html [ Crash Pass ]
+webkit.org/b/127914 webgl/conformance/extensions/webgl-debug-renderer-info.html [ Crash Failure ]
+webkit.org/b/127914 webgl/conformance/rendering/gl-drawelements.html [ Crash Failure ]
 webkit.org/b/127914 webgl/conformance/textures/copy-tex-image-and-sub-image-2d.html [ Crash Pass ]
 webkit.org/b/127914 webgl/conformance/textures/gl-get-tex-parameter.html [ Crash Pass ]
 webkit.org/b/127914 webgl/conformance/textures/tex-image-and-sub-image-2d-with-canvas-rgb565.html [ Crash Pass ]
@@ -248,6 +243,12 @@ webkit.org/b/128732 fast/css3-text/css3-text-align-last/text-align-last-with-tex
 webkit.org/b/119789 fast/events/touch/touch-before-pressing-spin-button.html [ Crash Pass ]
 webkit.org/b/119789 fast/events/touch/touch-inside-iframe.html [ Crash Pass ]
 webkit.org/b/119789 fast/events/touch/touch-slider-no-js-touch-listener.html [ Crash Pass ]
+
+webkit.org/b/133305 fast/text/mark-matches-rendering.html [ ImageOnlyFailure Pass ]
+
+# WebGL test cases crashing in WebCore::GraphicsContext3D::readPixels().
+webkit.org/b/109417 webgl/conformance/textures/texture-attachment-formats.html [ Crash Failure ]
+webkit.org/b/109945 webgl/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Crash Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
@@ -554,5 +555,12 @@ webkit.org/b/131987 fast/inline/hidpi-select-inline-on-subpixel-position.html [ 
 webkit.org/b/131987 fast/inline/hidpi-selection-gap-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131987 fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
 webkit.org/b/131987 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]
+webkit.org/b/131987 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
 
 webkit.org/b/132049 fast/css3-text/css3-text-decoration/text-decoration-skip/glyph-inside-underline.html [ ImageOnlyFailure ]
+
+# Failing after r169048
+webkit.org/b/133302 fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-large-radius.html [ ImageOnlyFailure ]
+webkit.org/b/133302 fast/shapes/shape-outside-floats/shape-outside-rounded-inset.html [ ImageOnlyFailure ]
+
+webkit.org/b/133306 fast/canvas/webgl/css-webkit-canvas-repaint.html [ ImageOnlyFailure ]

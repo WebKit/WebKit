@@ -1618,3 +1618,13 @@ svg/transforms/text-with-pattern-inside-transformed-html.xhtml [ Failure ]
 
 webkit.org/b/133220 fast/events/shadow-event-path.html [ Failure ]
 webkit.org/b/133220 fast/events/shadow-event-path-2.html [ Failure ]
+
+# Failing after r168868
+webkit.org/b/133146 css3/flexbox/flex-rounding.html [ Failure ]
+webkit.org/b/133146 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
+webkit.org/b/133146 fast/sub-pixel/inline-block-with-padding.html [ Failure ]
+webkit.org/b/133146 fast/sub-pixel/client-rect-has-subpixel-precision.html [ ImageOnlyFailure ]
+
+webkit.org/b/133307 fast/forms/number/number-spinbutton-in-multi-column.html [ Failure ]
+
+webkit.org/b/133308 fast/selectors/hover-quirks.html [ Failure ]
