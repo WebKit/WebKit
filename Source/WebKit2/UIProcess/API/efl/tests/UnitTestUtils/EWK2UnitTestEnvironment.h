@@ -35,12 +35,12 @@ public:
     CString pathForResource(const char* resource);
     CString pathForTheme(const char* theme);
 
-    virtual unsigned int defaultWidth() const { return m_defaultWidth; }
-    virtual unsigned int defaultHeight() const { return m_defaultHeight; }
+    virtual unsigned defaultWidth() const { return m_defaultWidth; }
+    virtual unsigned defaultHeight() const { return m_defaultHeight; }
 
 private:
-    unsigned int m_defaultWidth;
-    unsigned int m_defaultHeight;
+    unsigned m_defaultWidth;
+    unsigned m_defaultHeight;
 };
 
 } // namespace EWK2UnitTest

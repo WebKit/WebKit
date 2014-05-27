@@ -45,8 +45,8 @@ EWK2UnitTestBase::EWK2UnitTestBase()
 
 void EWK2UnitTestBase::SetUp()
 {
-    unsigned int width = environment->defaultWidth();
-    unsigned int height = environment->defaultHeight();
+    unsigned width = environment->defaultWidth();
+    unsigned height = environment->defaultHeight();
 
 #if defined(HAVE_ECORE_X)
     const char* engine = "opengl_x11";
