@@ -1,6 +1,6 @@
 2014-05-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
-        SVG TextRuns do not always get RenderingContexts
+        Lists styled with SVG fonts are not rendered as expected
         https://bugs.webkit.org/show_bug.cgi?id=133198
 
         Reviewed by Simon Fraser.
