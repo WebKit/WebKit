@@ -44,12 +44,20 @@ public:
     explicit ImportanceAssertion(mach_msg_header_t* header)
         : m_assertion(0)
     {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+        proc_denap_assertion_begin_with_msg(header, &m_assertion);
+#else
         proc_importance_assertion_begin_with_msg(header, 0, &m_assertion);
+#endif
     }
 
     ~ImportanceAssertion()
     {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+        proc_denap_assertion_complete(m_assertion);
+#else
         proc_importance_assertion_complete(m_assertion);
+#endif
     }
 
 private:

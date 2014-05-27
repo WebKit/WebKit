@@ -1,3 +1,21 @@
+2014-05-26  Gavin Barraclough  <barraclough@apple.com>
+
+        importance_assertion -> denap_assertion
+        https://bugs.webkit.org/show_bug.cgi?id=133294
+
+        Reviewed by Sam Weinig.
+
+        Update in accordance with API change. The importance assertion is used on
+        Mavericks & newer to ensure the WebContent process wakes from AppNap.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::open):
+            - MACH_PORT_IMPORTANCE_RECEIVER -> MACH_PORT_DENAP_RECEIVER
+        * Platform/IPC/mac/ImportanceAssertion.h:
+        (IPC::ImportanceAssertion::ImportanceAssertion):
+        (IPC::ImportanceAssertion::~ImportanceAssertion):
+            - proc_importance_assertion -> proc_denap_assertion
+
 2014-05-27  Jessie Berlin  <jberlin@apple.com>
 
         Revert r169362 since it broke the ML build.
