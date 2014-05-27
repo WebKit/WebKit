@@ -1,3 +1,12 @@
+2014-05-27  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
+
+        Allow building CMake based ports with WEB_REPLAY
+        https://bugs.webkit.org/show_bug.cgi?id=133154
+
+        Reviewed by Csaba Osztrogonác.
+
+        * CMakeLists.txt:
+
 2014-05-25  Filip Pizlo  <fpizlo@apple.com>
 
         Latest emscripten life benchmark is 4x slower because the DFG doesn't realize that arithmetic on booleans is a thing

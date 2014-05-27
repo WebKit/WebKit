@@ -3123,6 +3123,44 @@ if (WTF_USE_3D_GRAPHICS)
     )
 endif ()
 
+if (ENABLE_WEB_REPLAY)
+    list(APPEND WebCore_INSPECTOR_DOMAINS
+        ${WEBCORE_DIR}/inspector/protocol/Replay.json
+    )
+    list(APPEND WebCore_INCLUDE_DIRECTORIES
+        "${JAVASCRIPTCORE_DIR}/inspector"
+        "${JAVASCRIPTCORE_DIR}/replay"
+    )
+
+    set(WebCore_WEB_REPLAY_INPUTS ${CMAKE_CURRENT_SOURCE_DIR}/replay/WebInputs.json)
+    add_custom_command(
+        OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/WebReplayInputs.h ${DERIVED_SOURCES_WEBCORE_DIR}/WebReplayInputs.cpp
+        MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/replay/scripts/CodeGeneratorReplayInputs.py
+        DEPENDS ${WebCore_WEB_REPLAY_INPUTS}
+        COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/replay/scripts/CodeGeneratorReplayInputs.py --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}/ --framework WebCore ${WebCore_WEB_REPLAY_INPUTS}
+        VERBATIM)
+
+    list(APPEND WebCore_SOURCES
+        inspector/InspectorReplayAgent.cpp
+        replay/CapturingInputCursor.cpp
+        replay/EventLoopInput.cpp
+        replay/EventLoopInputDispatcher.cpp
+        replay/MemoizedDOMResult.cpp
+        replay/ReplayController.cpp
+        replay/ReplayingInputCursor.cpp
+        replay/ReplayInputCreationMethods.cpp
+        replay/ReplayInputDispatchMethods.cpp
+        replay/ReplayInputTypes.cpp
+        replay/ReplaySession.cpp
+        replay/ReplaySessionSegment.cpp
+        replay/SegmentedInputStorage.cpp
+        replay/SerializationMethods.cpp
+        replay/UserInputBridge.cpp
+
+        ${DERIVED_SOURCES_WEBCORE_DIR}/WebReplayInputs.cpp
+    )
+endif ()
+
 set(WebCoreTestSupport_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mock"
     "${WEBCORE_DIR}/testing"

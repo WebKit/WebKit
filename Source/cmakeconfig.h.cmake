@@ -117,6 +117,7 @@
 #cmakedefine01 ENABLE_VIEW_MODE_CSS_MEDIA
 #cmakedefine01 ENABLE_WEBGL
 #cmakedefine01 ENABLE_WEB_AUDIO
+#cmakedefine01 ENABLE_WEB_REPLAY
 #cmakedefine01 ENABLE_WEB_SOCKETS
 #cmakedefine01 ENABLE_WEB_TIMING
 #cmakedefine01 ENABLE_XHR_TIMEOUT

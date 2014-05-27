@@ -1,3 +1,13 @@
+2014-05-27  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
+
+        Allow building CMake based ports with WEB_REPLAY
+        https://bugs.webkit.org/show_bug.cgi?id=133154
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2014-05-21  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
 
         [EFL] Add include path of compact_unwind_encoding.h if FTL JIT is enabled
