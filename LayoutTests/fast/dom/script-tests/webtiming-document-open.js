@@ -28,7 +28,11 @@ function testTimingWithDocumentOpen()
 }
 
 function finishTest() {
-    keys = Object.keys(timing).sort();
+    var keys = [];
+    for (var key in timing)
+        keys.push(key);
+    keys.sort();
+
     for (var i = 0; i < keys.length; ++i) {
         shouldBe("timing." + keys[i], "originalTiming." + keys[i]);
     }

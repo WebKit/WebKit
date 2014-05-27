@@ -5,7 +5,10 @@ var timing = performance.timing || {};
 
 function checkTimingNotChanged()
 {
-    properties = Object.keys(timing).sort();
+    var properties = [];
+    for (var property in timing)
+        properties.push(property);
+    properties.sort();
     for (var i = 0; i < properties.length; ++i) {
         property = properties[i];
         if (timing[property] === initialTiming[property])
