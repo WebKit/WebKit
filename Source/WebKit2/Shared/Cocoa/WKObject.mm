@@ -114,6 +114,20 @@ static inline void initializeTargetIfNeeded(WKObject *self)
     return _target ? [_target description] : [super description];
 }
 
+- (Class)classForCoder
+{
+    initializeTargetIfNeeded(self);
+
+    return [_target classForCoder];
+}
+
+- (Class)classForKeyedArchiver
+{
+    initializeTargetIfNeeded(self);
+
+    return [_target classForKeyedArchiver];
+}
+
 - (NSObject *)_web_createTarget
 {
     return nil;
