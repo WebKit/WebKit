@@ -56,6 +56,8 @@ public:
     virtual void updateLayersAfterViewportChange(const FloatRect& fixedPositionRect, double scale) = 0;
     virtual void updateLayersAfterDelegatedScroll(const FloatPoint&) { }
 
+    virtual FloatPoint scrollPosition() const = 0;
+
 protected:
     ScrollingTreeScrollingNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 
@@ -63,8 +65,6 @@ protected:
     virtual FloatPoint maximumScrollPosition() const;
 
     virtual void setScrollLayerPosition(const FloatPoint&) = 0;
-
-    virtual FloatPoint scrollPosition() const = 0;
 
     FloatPoint lastCommittedScrollPosition() const { return m_lastCommittedScrollPosition; }
     const FloatSize& scrollableAreaSize() const { return m_scrollableAreaSize; }

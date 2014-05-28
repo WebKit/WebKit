@@ -1,5 +1,38 @@
 2014-05-27  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS WK2] Fix behavior of position:sticky inside accelerated overflow-scroll
+        https://bugs.webkit.org/show_bug.cgi?id=133334
+        <rdar://problem/16462535>
+
+        Reviewed by Tim Horton.
+
+        When the scroll position changes in an accelerated overflow-scroll element, we have
+        to update child nodes in the scrolling tree for position:sticky. That requires a
+        more generic ability to update the scrolling tree after some arbitrary zoom or
+        scroll. To do this, we need to know the current fixed position rect, rather than
+        having it passed in.
+        
+        So make the fixed position rect available from ScrollingTree, and make it possible
+        to get the current scrollPosition() from any ScrollingTreeScrollingNode.
+        
+        Also, implement updateLayersAfterDelegatedScroll() in ScrollingTreeOverflowScrollingNodeIOS,
+        and have it update descendant layers.
+        
+        Finally, fix ScrollingTreeOverflowScrollingNode to use the correct rectangle for its
+        constraints math, using the scroll position of the parent node if appropriate.
+
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::updateChildNodesAfterScroll):
+        * page/scrolling/ios/ScrollingTreeIOS.cpp:
+        (WebCore::ScrollingTreeIOS::fixedPositionRect):
+        * page/scrolling/ios/ScrollingTreeIOS.h:
+        * page/scrolling/mac/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::updateLayersAfterAncestorChange):
+
+2014-05-27  Simon Fraser  <simon.fraser@apple.com>
+
         Do some renaming in the scrolling tree
         https://bugs.webkit.org/show_bug.cgi?id=133333
 

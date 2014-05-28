@@ -55,6 +55,8 @@ private:
     virtual void setScrollLayerPosition(const WebCore::FloatPoint&) override;
 
     virtual void updateLayersAfterViewportChange(const WebCore::FloatRect& fixedPositionRect, double scale) { }
+    virtual void updateLayersAfterDelegatedScroll(const WebCore::FloatPoint& scrollPosition) override;
+
     virtual void handleWheelEvent(const WebCore::PlatformWheelEvent&) override { }
 
     void updateChildNodesAfterScroll(const WebCore::FloatPoint&);

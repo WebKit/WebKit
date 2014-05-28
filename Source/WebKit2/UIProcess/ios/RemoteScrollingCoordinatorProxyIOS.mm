@@ -31,6 +31,7 @@
 
 #include "LayerRepresentation.h"
 #include "RemoteLayerTreeHost.h"
+#include "WebPageProxy.h"
 #include <WebCore/ScrollingStateFrameScrollingNode.h>
 #include <WebCore/ScrollingStateOverflowScrollingNode.h>
 #include <WebCore/ScrollingStateTree.h>
@@ -90,6 +91,11 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
             break;
         }
     }
+}
+
+FloatRect RemoteScrollingCoordinatorProxy::customFixedPositionRect() const
+{
+    return m_webPageProxy.computeCustomFixedPositionRect(m_webPageProxy.unobscuredContentRect(), m_webPageProxy.displayedContentScale());
 }
 
 } // namespace WebKit

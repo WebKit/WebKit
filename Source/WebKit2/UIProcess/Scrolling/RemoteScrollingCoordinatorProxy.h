@@ -72,6 +72,10 @@ public:
     void setPropagatesMainFrameScrolls(bool propagatesMainFrameScrolls) { m_propagatesMainFrameScrolls = propagatesMainFrameScrolls; }
     bool propagatesMainFrameScrolls() const { return m_propagatesMainFrameScrolls; }
 
+#if PLATFORM(IOS)
+    WebCore::FloatRect customFixedPositionRect() const;
+#endif
+
 private:
     void connectStateNodeLayers(WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&, bool& fixedOrStickyLayerChanged);
 

@@ -58,6 +58,8 @@ private:
 
     virtual void scrollingTreeNodeDidScroll(ScrollingNodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) override;
 
+    virtual FloatRect fixedPositionRect() override;
+
     RefPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;
 };
 

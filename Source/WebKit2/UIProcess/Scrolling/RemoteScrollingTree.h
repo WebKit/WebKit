@@ -56,6 +56,10 @@ private:
     virtual void handleWheelEventPhase(WebCore::PlatformWheelEventPhase) override;
 #endif
 
+#if PLATFORM(IOS)
+    virtual WebCore::FloatRect fixedPositionRect() override;
+#endif
+
     virtual PassOwnPtr<WebCore::ScrollingTreeNode> createNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);
     
     RemoteScrollingCoordinatorProxy& m_scrollingCoordinatorProxy;

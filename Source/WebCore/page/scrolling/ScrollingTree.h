@@ -87,6 +87,10 @@ public:
     virtual void scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID, const WebCore::FloatPoint& scrollPosition, bool inUserInteration);
 
     FloatPoint mainFrameScrollPosition();
+    
+#if PLATFORM(IOS)
+    virtual FloatRect fixedPositionRect() = 0;
+#endif
 
     bool isPointInNonFastScrollableRegion(IntPoint);
     

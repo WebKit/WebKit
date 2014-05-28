@@ -174,12 +174,21 @@ void ScrollingTreeOverflowScrollingNodeIOS::setScrollLayerPosition(const FloatPo
     updateChildNodesAfterScroll(scrollPosition);
 }
 
-void ScrollingTreeOverflowScrollingNodeIOS::updateChildNodesAfterScroll(const FloatPoint&)
+void ScrollingTreeOverflowScrollingNodeIOS::updateLayersAfterDelegatedScroll(const FloatPoint& scrollPosition)
+{
+    updateChildNodesAfterScroll(scrollPosition);
+}
+
+void ScrollingTreeOverflowScrollingNodeIOS::updateChildNodesAfterScroll(const FloatPoint& scrollPosition)
 {
     if (!m_children)
         return;
 
-    // FIXME: this needs to adjust child fixed/sticky nodes.
+    FloatRect fixedPositionRect = scrollingTree().fixedPositionRect();
+
+    size_t size = m_children->size();
+    for (size_t i = 0; i < size; ++i)
+        m_children->at(i)->updateLayersAfterAncestorChange(*this, fixedPositionRect, FloatSize());
 }
 
 void ScrollingTreeOverflowScrollingNodeIOS::scrollViewDidScroll(const FloatPoint& scrollPosition, bool inUserInteration)

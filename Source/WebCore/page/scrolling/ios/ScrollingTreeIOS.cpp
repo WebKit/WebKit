@@ -97,6 +97,14 @@ PassOwnPtr<ScrollingTreeNode> ScrollingTreeIOS::createNode(ScrollingNodeType nod
     return m_scrollingCoordinator->createScrollingTreeNode(nodeType, nodeID);
 }
 
+FloatRect ScrollingTreeIOS::fixedPositionRect()
+{
+    // When ScrollingTreeIOS starts being used for WK1 on iOS, this needs to get the customFixedPositionRect from
+    // the ScrollingCoordinator.
+    ASSERT_NOT_REACHED();
+    return FloatRect();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)

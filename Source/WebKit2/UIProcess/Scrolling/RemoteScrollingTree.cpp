@@ -77,6 +77,13 @@ void RemoteScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)
 }
 #endif
 
+#if PLATFORM(IOS)
+WebCore::FloatRect RemoteScrollingTree::fixedPositionRect()
+{
+    return m_scrollingCoordinatorProxy.customFixedPositionRect();
+}
+#endif
+
 void RemoteScrollingTree::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
 {
     m_scrollingCoordinatorProxy.scrollingTreeNodeDidScroll(nodeID, scrollPosition, scrollingLayerPositionAction);

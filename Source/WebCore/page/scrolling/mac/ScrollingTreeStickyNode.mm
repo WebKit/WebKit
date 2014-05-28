@@ -30,6 +30,7 @@
 
 #include "ScrollingStateStickyNode.h"
 #include "ScrollingTree.h"
+#include "ScrollingTreeOverflowScrollingNode.h"
 #include <QuartzCore/CALayer.h>
 
 namespace WebCore {
@@ -66,7 +67,11 @@ static inline CGPoint operator*(CGPoint& a, const CGSize& b)
 
 void ScrollingTreeStickyNode::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta)
 {
-    FloatPoint layerPosition = m_constraints.layerPositionForConstrainingRect(fixedPositionRect);
+    FloatRect constrainingRect = fixedPositionRect;
+    if (parent()->isOverflowScrollingNode())
+        constrainingRect = FloatRect(toScrollingTreeOverflowScrollingNode(parent())->scrollPosition(), m_constraints.constrainingRectAtLastLayout().size());
+
+    FloatPoint layerPosition = m_constraints.layerPositionForConstrainingRect(constrainingRect);
 
     // FIXME: Subtracting the cumulativeDelta is not totally sufficient to get the new position right for nested
     // sticky objects. We probably need a way to modify the containingBlockRect in the ViewportContraints
@@ -83,9 +88,8 @@ void ScrollingTreeStickyNode::updateLayersAfterAncestorChange(const ScrollingTre
 
     FloatSize newDelta = layerPosition - m_constraints.layerPositionAtLastLayout() + cumulativeDelta;
 
-    size_t size = m_children->size();
-    for (size_t i = 0; i < size; ++i)
-        m_children->at(i)->updateLayersAfterAncestorChange(changedNode, fixedPositionRect, newDelta);
+    for (auto& child : *m_children)
+        child->updateLayersAfterAncestorChange(changedNode, fixedPositionRect, newDelta);
 }
 
 } // namespace WebCore
