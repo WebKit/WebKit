@@ -1,3 +1,9 @@
+2014-05-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix not-x86 32-bit.
+
+        * llint/LowLevelInterpreter32_64.asm:
+
 2014-05-27  Filip Pizlo  <fpizlo@apple.com>
 
         Arrayify neglects to inform the clobberizer that it might fire watchpoints

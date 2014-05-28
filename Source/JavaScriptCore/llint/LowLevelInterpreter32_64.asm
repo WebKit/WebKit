@@ -1405,7 +1405,7 @@ _llint_op_get_array_length:
     loadi 8[PC], t0
     loadp 16[PC], t1
     loadConstantOrVariablePayload(t0, CellTag, t3, .opGetArrayLengthSlow)
-    loadp t3, t2
+    move t3, t2
     arrayProfile(t2, t1, t0)
     btiz t2, IsArray, .opGetArrayLengthSlow
     btiz t2, IndexingShapeMask, .opGetArrayLengthSlow
