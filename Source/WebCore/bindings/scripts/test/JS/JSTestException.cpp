@@ -138,6 +138,9 @@ bool JSTestException::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
 
 EncodedJSValue jsTestExceptionName(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
+    UNUSED_PARAM(exec);
+    UNUSED_PARAM(slotBase);
+    UNUSED_PARAM(thisValue);
     JSTestException* castedThis = jsCast<JSTestException*>(slotBase);
     TestException& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.name());

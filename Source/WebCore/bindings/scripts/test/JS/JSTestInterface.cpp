@@ -414,8 +414,9 @@ bool JSTestInterface::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
 #if ENABLE(Condition22) || ENABLE(Condition23)
 EncodedJSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    UNUSED_PARAM(thisValue);
+    UNUSED_PARAM(exec);
     UNUSED_PARAM(slotBase);
+    UNUSED_PARAM(thisValue);
     JSValue result = jsNumber(TestInterface::implementsStaticReadOnlyAttr());
     return JSValue::encode(result);
 }
@@ -425,8 +426,9 @@ EncodedJSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttr(ExecState*
 #if ENABLE(Condition22) || ENABLE(Condition23)
 EncodedJSValue jsTestInterfaceConstructorImplementsStaticAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    UNUSED_PARAM(thisValue);
+    UNUSED_PARAM(exec);
     UNUSED_PARAM(slotBase);
+    UNUSED_PARAM(thisValue);
     JSValue result = jsStringWithCache(exec, TestInterface::implementsStaticAttr());
     return JSValue::encode(result);
 }
@@ -436,6 +438,9 @@ EncodedJSValue jsTestInterfaceConstructorImplementsStaticAttr(ExecState* exec, J
 #if ENABLE(Condition22) || ENABLE(Condition23)
 EncodedJSValue jsTestInterfaceImplementsStr1(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
+    UNUSED_PARAM(exec);
+    UNUSED_PARAM(slotBase);
+    UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase))
@@ -452,6 +457,9 @@ EncodedJSValue jsTestInterfaceImplementsStr1(ExecState* exec, JSObject* slotBase
 #if ENABLE(Condition22) || ENABLE(Condition23)
 EncodedJSValue jsTestInterfaceImplementsStr2(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
+    UNUSED_PARAM(exec);
+    UNUSED_PARAM(slotBase);
+    UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase))
@@ -468,6 +476,9 @@ EncodedJSValue jsTestInterfaceImplementsStr2(ExecState* exec, JSObject* slotBase
 #if ENABLE(Condition22) || ENABLE(Condition23)
 EncodedJSValue jsTestInterfaceImplementsStr3(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
+    UNUSED_PARAM(exec);
+    UNUSED_PARAM(slotBase);
+    UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(slotBase);
     return JSValue::encode(castedThis->implementsStr3(exec));
 }
@@ -477,6 +488,9 @@ EncodedJSValue jsTestInterfaceImplementsStr3(ExecState* exec, JSObject* slotBase
 #if ENABLE(Condition22) || ENABLE(Condition23)
 EncodedJSValue jsTestInterfaceImplementsNode(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
+    UNUSED_PARAM(exec);
+    UNUSED_PARAM(slotBase);
+    UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase))
@@ -493,8 +507,9 @@ EncodedJSValue jsTestInterfaceImplementsNode(ExecState* exec, JSObject* slotBase
 #if ENABLE(Condition11) || ENABLE(Condition12)
 EncodedJSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    UNUSED_PARAM(thisValue);
+    UNUSED_PARAM(exec);
     UNUSED_PARAM(slotBase);
+    UNUSED_PARAM(thisValue);
     JSValue result = jsNumber(TestSupplemental::supplementalStaticReadOnlyAttr());
     return JSValue::encode(result);
 }
@@ -504,8 +519,9 @@ EncodedJSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(ExecStat
 #if ENABLE(Condition11) || ENABLE(Condition12)
 EncodedJSValue jsTestInterfaceConstructorSupplementalStaticAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    UNUSED_PARAM(thisValue);
+    UNUSED_PARAM(exec);
     UNUSED_PARAM(slotBase);
+    UNUSED_PARAM(thisValue);
     JSValue result = jsStringWithCache(exec, TestSupplemental::supplementalStaticAttr());
     return JSValue::encode(result);
 }
@@ -515,6 +531,9 @@ EncodedJSValue jsTestInterfaceConstructorSupplementalStaticAttr(ExecState* exec,
 #if ENABLE(Condition11) || ENABLE(Condition12)
 EncodedJSValue jsTestInterfaceSupplementalStr1(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
+    UNUSED_PARAM(exec);
+    UNUSED_PARAM(slotBase);
+    UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase))
@@ -531,6 +550,9 @@ EncodedJSValue jsTestInterfaceSupplementalStr1(ExecState* exec, JSObject* slotBa
 #if ENABLE(Condition11) || ENABLE(Condition12)
 EncodedJSValue jsTestInterfaceSupplementalStr2(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
+    UNUSED_PARAM(exec);
+    UNUSED_PARAM(slotBase);
+    UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase))
@@ -547,6 +569,9 @@ EncodedJSValue jsTestInterfaceSupplementalStr2(ExecState* exec, JSObject* slotBa
 #if ENABLE(Condition11) || ENABLE(Condition12)
 EncodedJSValue jsTestInterfaceSupplementalStr3(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
+    UNUSED_PARAM(exec);
+    UNUSED_PARAM(slotBase);
+    UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(slotBase);
     return JSValue::encode(castedThis->supplementalStr3(exec));
 }
@@ -556,6 +581,9 @@ EncodedJSValue jsTestInterfaceSupplementalStr3(ExecState* exec, JSObject* slotBa
 #if ENABLE(Condition11) || ENABLE(Condition12)
 EncodedJSValue jsTestInterfaceSupplementalNode(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
+    UNUSED_PARAM(exec);
+    UNUSED_PARAM(slotBase);
+    UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase))
@@ -639,6 +667,8 @@ void setJSTestInterfaceImplementsStr3(ExecState* exec, JSObject* baseObject, Enc
     UNUSED_PARAM(baseObject);
     UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(baseObject);
+    UNUSED_PARAM(thisValue);
+    UNUSED_PARAM(exec);
     castedThis->setImplementsStr3(exec, value);
 }
 
@@ -708,6 +738,8 @@ void setJSTestInterfaceSupplementalStr3(ExecState* exec, JSObject* baseObject, E
     UNUSED_PARAM(baseObject);
     UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(baseObject);
+    UNUSED_PARAM(thisValue);
+    UNUSED_PARAM(exec);
     castedThis->setSupplementalStr3(exec, value);
 }
 
