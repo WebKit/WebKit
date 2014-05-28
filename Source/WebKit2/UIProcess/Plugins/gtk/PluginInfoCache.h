@@ -31,7 +31,6 @@
 #include "PluginModuleInfo.h"
 #include <mutex>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/gobject/GMainLoopSource.h>
 #include <wtf/gobject/GUniquePtr.h>
 
 namespace WebKit {
@@ -50,10 +49,11 @@ private:
     ~PluginInfoCache();
 
     void saveToFile();
+    static gboolean saveToFileIdleCallback(PluginInfoCache*);
 
     GUniquePtr<GKeyFile> m_cacheFile;
     GUniquePtr<char> m_cachePath;
-    GMainLoopSource m_saveToFileIdle;
+    unsigned m_saveToFileIdleId;
     std::mutex m_mutex;
 };
 

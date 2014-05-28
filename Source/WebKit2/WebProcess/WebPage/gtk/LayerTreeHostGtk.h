@@ -36,7 +36,6 @@
 #include <WebCore/GraphicsLayerClient.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/gobject/GMainLoopSource.h>
 
 namespace WebKit {
 
@@ -93,6 +92,7 @@ private:
     void cancelPendingLayerFlush();
 
     void layerFlushTimerFired();
+    static gboolean layerFlushTimerFiredCallback(LayerTreeHostGtk*);
 
     WebCore::GLContext* glContext();
 
@@ -107,7 +107,7 @@ private:
     OwnPtr<WebCore::GLContext> m_context;
     double m_lastFlushTime;
     bool m_layerFlushSchedulingEnabled;
-    GMainLoopSource m_layerFlushTimerCallback;
+    unsigned m_layerFlushTimerCallbackId;
 };
 
 } // namespace WebKit
