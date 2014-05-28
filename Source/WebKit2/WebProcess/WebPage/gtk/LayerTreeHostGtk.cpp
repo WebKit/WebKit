@@ -74,7 +74,6 @@ LayerTreeHostGtk::LayerTreeHostGtk(WebPage* webPage)
     , m_notifyAfterScheduledLayerFlush(false)
     , m_lastFlushTime(0)
     , m_layerFlushSchedulingEnabled(true)
-    , m_layerFlushTimerCallbackId(0)
 {
 }
 
@@ -282,24 +281,15 @@ void LayerTreeHostGtk::paintContents(const GraphicsLayer* graphicsLayer, Graphic
     // FIXME: Draw page overlays. https://bugs.webkit.org/show_bug.cgi?id=131433.
 }
 
-gboolean LayerTreeHostGtk::layerFlushTimerFiredCallback(LayerTreeHostGtk* layerTreeHost)
-{
-    layerTreeHost->layerFlushTimerFired();
-    return FALSE;
-}
-
 void LayerTreeHostGtk::layerFlushTimerFired()
 {
-    ASSERT(m_layerFlushTimerCallbackId);
-    m_layerFlushTimerCallbackId = 0;
-
     flushAndRenderLayers();
 
-    if (toTextureMapperLayer(m_rootLayer.get())->descendantsOrSelfHaveRunningAnimations() && !m_layerFlushTimerCallbackId) {
+    if (!m_layerFlushTimerCallback.isScheduled() && toTextureMapperLayer(m_rootLayer.get())->descendantsOrSelfHaveRunningAnimations()) {
         const double targetFPS = 60;
         double nextFlush = std::max((1 / targetFPS) - (currentTime() - m_lastFlushTime), 0.0);
-        m_layerFlushTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, nextFlush * 1000.0, reinterpret_cast<GSourceFunc>(layerFlushTimerFiredCallback), this, 0);
-        g_source_set_name_by_id(m_layerFlushTimerCallbackId, "[WebKit] layerFlushTimerFiredCallback");
+        m_layerFlushTimerCallback.scheduleAfterDelay("[WebKit] layerFlushTimer", std::bind(&LayerTreeHostGtk::layerFlushTimerFired, this),
+            std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration<double>(nextFlush)), GDK_PRIORITY_EVENTS);
     }
 }
 
@@ -398,10 +388,8 @@ void LayerTreeHostGtk::scheduleLayerFlush()
         return;
 
     // We use a GLib timer because otherwise GTK+ event handling during dragging can starve WebCore timers, which have a lower priority.
-    if (!m_layerFlushTimerCallbackId) {
-        m_layerFlushTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 0, reinterpret_cast<GSourceFunc>(layerFlushTimerFiredCallback), this, 0);
-        g_source_set_name_by_id(m_layerFlushTimerCallbackId, "[WebKit] layerFlushTimerFiredCallback");
-    }
+    if (!m_layerFlushTimerCallback.isScheduled())
+        m_layerFlushTimerCallback.schedule("[WebKit] layerFlushTimer", std::bind(&LayerTreeHostGtk::layerFlushTimerFired, this), GDK_PRIORITY_EVENTS);
 }
 
 void LayerTreeHostGtk::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
@@ -426,11 +414,7 @@ void LayerTreeHostGtk::pageBackgroundTransparencyChanged()
 
 void LayerTreeHostGtk::cancelPendingLayerFlush()
 {
-    if (!m_layerFlushTimerCallbackId)
-        return;
-
-    g_source_remove(m_layerFlushTimerCallbackId);
-    m_layerFlushTimerCallbackId = 0;
+    m_layerFlushTimerCallback.cancel();
 }
 
 } // namespace WebKit

@@ -32,6 +32,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceHandleInternal.h>
 #include <gio/gio.h>
+#include <wtf/gobject/GMainLoopSource.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
@@ -49,14 +50,11 @@ class DownloadClient : public ResourceHandleClient {
 public:
     DownloadClient(Download* download)
         : m_download(download)
-        , m_handleResponseLaterID(0)
     {
     }
 
     ~DownloadClient()
     {
-        if (m_handleResponseLaterID)
-            g_source_remove(m_handleResponseLaterID);
     }
 
     void deleteIntermediateFileInNeeded()
@@ -117,8 +115,8 @@ public:
 
     void didReceiveData(ResourceHandle*, const char* data, unsigned length, int /*encodedDataLength*/)
     {
-        if (m_handleResponseLaterID) {
-            g_source_remove(m_handleResponseLaterID);
+        if (m_handleResponseLater.isScheduled()) {
+            m_handleResponseLater.cancel();
             handleResponse();
         }
 
@@ -177,26 +175,19 @@ public:
 
     void handleResponse()
     {
-        m_handleResponseLaterID = 0;
-        didReceiveResponse(0, m_delayedResponse);
-    }
-
-    static gboolean handleResponseLaterCallback(DownloadClient* downloadClient)
-    {
-        downloadClient->handleResponse();
-        return FALSE;
+        didReceiveResponse(nullptr, m_delayedResponse);
     }
 
     void handleResponseLater(const ResourceResponse& response)
     {
         ASSERT(m_response.isNull());
-        ASSERT(!m_handleResponseLaterID);
+        ASSERT(!m_handleResponseLater.isScheduled());
 
         m_delayedResponse = response;
 
         // Call didReceiveResponse in an idle to make sure the download is added
         // to the DownloadManager downloads map.
-        m_handleResponseLaterID = g_idle_add_full(G_PRIORITY_DEFAULT, reinterpret_cast<GSourceFunc>(handleResponseLaterCallback), this, 0);
+        m_handleResponseLater.schedule("[WebKit] DownloadHandleResponseLater", std::bind(&DownloadClient::handleResponse, this));
     }
 
     Download* m_download;
@@ -205,7 +196,7 @@ public:
     String m_destinationURI;
     GRefPtr<GFile> m_intermediateFile;
     ResourceResponse m_delayedResponse;
-    unsigned m_handleResponseLaterID;
+    GMainLoopSource m_handleResponseLater;
 };
 
 void Download::start()
