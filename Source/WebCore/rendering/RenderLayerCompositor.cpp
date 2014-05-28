@@ -3558,11 +3558,10 @@ StickyPositionViewportConstraints RenderLayerCompositor::computeStickyViewportCo
     ASSERT(!layer.enclosingOverflowClipLayer(ExcludeSelf));
 #endif
 
-    LayoutRect viewportRect = m_renderView.frameView().viewportConstrainedVisibleContentRect();
     RenderBoxModelObject& renderer = toRenderBoxModelObject(layer.renderer());
 
     StickyPositionViewportConstraints constraints;
-    renderer.computeStickyPositionConstraints(constraints, viewportRect);
+    renderer.computeStickyPositionConstraints(constraints, renderer.constrainingRectForStickyPosition());
 
     GraphicsLayer* graphicsLayer = layer.backing()->graphicsLayer();
 

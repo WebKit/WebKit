@@ -435,28 +435,33 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     }
 }
 
-LayoutSize RenderBoxModelObject::stickyPositionOffset() const
+FloatRect RenderBoxModelObject::constrainingRectForStickyPosition() const
 {
-    FloatRect constrainingRect;
-
-    ASSERT(hasLayer());
     RenderLayer* enclosingClippingLayer = layer()->enclosingOverflowClipLayer(ExcludeSelf);
     if (enclosingClippingLayer) {
         RenderBox& enclosingClippingBox = toRenderBox(enclosingClippingLayer->renderer());
         LayoutRect clipRect = enclosingClippingBox.overflowClipRect(LayoutPoint(), 0); // FIXME: make this work in regions.
         clipRect.contract(LayoutSize(enclosingClippingBox.paddingLeft() + enclosingClippingBox.paddingRight(),
             enclosingClippingBox.paddingTop() + enclosingClippingBox.paddingBottom()));
-        constrainingRect = enclosingClippingBox.localToContainerQuad(FloatRect(clipRect), &view()).boundingBox();
+
+        FloatRect constrainingRect = enclosingClippingBox.localToContainerQuad(FloatRect(clipRect), &view()).boundingBox();
 
         FloatPoint scrollOffset = FloatPoint() + enclosingClippingLayer->scrollOffset();
         constrainingRect.setLocation(scrollOffset);
-    } else {
-        LayoutRect viewportRect = view().frameView().viewportConstrainedVisibleContentRect();
-        float scale = view().frameView().frame().frameScaleFactor();
-        viewportRect.scale(1 / scale);
-        constrainingRect = viewportRect;
+        return constrainingRect;
     }
     
+    LayoutRect viewportRect = view().frameView().viewportConstrainedVisibleContentRect();
+    float scale = frame().frameScaleFactor();
+    viewportRect.scale(1 / scale);
+    return viewportRect;
+}
+
+LayoutSize RenderBoxModelObject::stickyPositionOffset() const
+{
+    ASSERT(hasLayer());
+    
+    FloatRect constrainingRect = constrainingRectForStickyPosition();
     StickyPositionViewportConstraints constraints;
     computeStickyPositionConstraints(constraints, constrainingRect);
     
