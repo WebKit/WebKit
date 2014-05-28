@@ -959,12 +959,22 @@ bool RenderFlowThread::checkLinesConsistency(const RenderBlockFlow* removedBlock
 }
 #endif
 
-void RenderFlowThread::deleteLines()
+void RenderFlowThread::clearLinesToRegionMap()
 {
     if (m_lineToRegionMap)
         m_lineToRegionMap->clear();
+}
 
+void RenderFlowThread::deleteLines()
+{
+    clearLinesToRegionMap();
     RenderBlockFlow::deleteLines();
+}
+
+void RenderFlowThread::willBeDestroyed()
+{
+    clearLinesToRegionMap();
+    RenderBlockFlow::willBeDestroyed();
 }
 
 // During the measure content layout phase of the named flow the regions are initialized with a height equal to their max-height.

@@ -1,3 +1,21 @@
+2014-05-28  Radu Stavila  <stavila@adobe.com>
+
+        REGRESSION (r168046): Invalid layout in multicol
+        https://bugs.webkit.org/show_bug.cgi?id=133322
+
+        Reviewed by Antti Koivisto.
+
+        In some situations, deleting the line boxes of a multicol element causes the line to region
+        link to become invalid.
+
+        Test: fast/multicol/newmulticol/multicol-inside-multicol.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::clearLinesToRegionMap):
+        (WebCore::RenderFlowThread::deleteLines):
+        (WebCore::RenderFlowThread::willBeDestroyed):
+        * rendering/RenderFlowThread.h:
+
 2014-05-28  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Remove DocumentThreadableLoaderClient.h
