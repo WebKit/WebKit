@@ -37,7 +37,6 @@
 #include "CrossOriginAccessControl.h"
 #include "CrossOriginPreflightResultCache.h"
 #include "Document.h"
-#include "DocumentThreadableLoaderClient.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "InspectorInstrumentation.h"
@@ -181,11 +180,8 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
 
     Ref<DocumentThreadableLoader> protect(*this);
     // Allow same origin requests to continue after allowing clients to audit the redirect.
-    if (isAllowedRedirect(request.url())) {
-        if (m_client->isDocumentThreadableLoaderClient())
-            static_cast<DocumentThreadableLoaderClient*>(m_client)->willSendRequest(request, redirectResponse);
+    if (isAllowedRedirect(request.url()))
         return;
-    }
 
     // When using access control, only simple cross origin requests are allowed to redirect. The new request URL must have a supported
     // scheme and not contain the userinfo production. In addition, the redirect response must pass the access control check.

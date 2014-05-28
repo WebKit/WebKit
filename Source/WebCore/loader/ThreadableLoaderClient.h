@@ -49,8 +49,6 @@ namespace WebCore {
         virtual void didFailAccessControlCheck(const ResourceError& error) { didFail(error); }
         virtual void didFailRedirectCheck() { }
 
-        virtual bool isDocumentThreadableLoaderClient() { return false; }
-
     protected:
         ThreadableLoaderClient() { }
         virtual ~ThreadableLoaderClient() { }

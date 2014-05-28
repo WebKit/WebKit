@@ -1,3 +1,19 @@
+2014-05-28  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Remove DocumentThreadableLoaderClient.h
+        https://bugs.webkit.org/show_bug.cgi?id=133341
+
+        Reviewed by Gyuyoung Kim.
+
+        DocumentThreadableLoaderClient is not used anymore.
+
+        * WebCore.order:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::redirectReceived):
+        * loader/DocumentThreadableLoaderClient.h: Removed.
+        * loader/ThreadableLoaderClient.h:
+        (WebCore::ThreadableLoaderClient::isDocumentThreadableLoaderClient): Deleted.
+
 2014-05-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update GObject DOM bindings symbols file after r169017.
