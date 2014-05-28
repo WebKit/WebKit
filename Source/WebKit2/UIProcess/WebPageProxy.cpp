@@ -271,9 +271,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_geolocationPermissionRequestManager(*this)
     , m_notificationPermissionRequestManager(*this)
     , m_viewState(ViewState::NoFlags)
-#if PLATFORM(IOS)
-    , m_activityToken(nullptr)
-#endif
     , m_backForwardList(WebBackForwardList::create(*this))
     , m_loadStateAtProcessExit(FrameLoadState::State::Finished)
 #if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
@@ -524,10 +521,6 @@ void WebPageProxy::reattachToWebProcess()
 {
     ASSERT(!isValid());
     ASSERT(m_process->state() == WebProcessProxy::State::Terminated);
-
-    updateViewState();
-    updateActivityToken();
-    
     m_isValid = true;
 
     if (m_process->context().processModel() == ProcessModelSharedSecondaryProcess)
@@ -536,6 +529,9 @@ void WebPageProxy::reattachToWebProcess()
         m_process = m_process->context().createNewWebProcessRespectingProcessCountLimit();
     m_process->addExistingWebPage(this, m_pageID);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
+
+    updateViewState();
+    updateActivityToken();
 
 #if ENABLE(INSPECTOR)
     m_inspector = WebInspectorProxy::create(this);
@@ -4249,6 +4245,10 @@ void WebPageProxy::resetStateAfterProcessExited()
     }
 
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
+
+#if PLATFORM(IOS)
+    m_activityToken = nullptr;
+#endif
 
     m_isValid = false;
     m_isPageSuspended = false;

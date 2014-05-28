@@ -1,3 +1,21 @@
+2014-05-28  Sam Weinig  <sam@webkit.org>
+
+        [iOS WebKit2] Sometimes Safari gets into a limbo state after web process crash
+        <rdar://problem/17029526>
+        https://bugs.webkit.org/show_bug.cgi?id=133362
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        Remove unnecessary initialization of a unique_ptr.
+
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        Move calls to update the view state and activity tokens to after we have swapped in the new process.
+
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        Clear the activity token on process exit.
+
 2014-05-28  Timothy Horton  <timothy_horton@apple.com>
 
         Add WKWebView SPI to forcefully kill the associated Web process
