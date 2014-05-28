@@ -1,3 +1,18 @@
+2014-05-28  Andy Estes  <aestes@apple.com>
+
+        [iOS] REGRESSION (r168388): DidNotHandleTapAsClick not sent when commitPotentialTap() fails
+        https://bugs.webkit.org/show_bug.cgi?id=133349
+
+        Reviewed by Benjamin Poulain.
+
+        WebPage::commitPotentialTap() fails when a recognized single tap cannot be sent as a synthetic click event.
+        We should send WebPageProxy::DidNotHandleTapAsClick in these cases.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::commitPotentialTap):
+        (WebKit::WebPage::commitPotentialTapFailed):
+
 2014-05-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r169423.

@@ -453,8 +453,10 @@ void WebPage::potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoi
 
 void WebPage::commitPotentialTap()
 {
-    if (!m_potentialTapNode || !m_potentialTapNode->renderer())
+    if (!m_potentialTapNode || !m_potentialTapNode->renderer()) {
+        commitPotentialTapFailed();
         return;
+    }
 
     FloatPoint adjustedPoint;
     Node* nodeRespondingToClick = m_page->mainFrame().nodeRespondingToClickEvents(m_potentialTapLocation, adjustedPoint);
@@ -462,10 +464,16 @@ void WebPage::commitPotentialTap()
     if (m_potentialTapNode == nodeRespondingToClick)
         handleSyntheticClick(nodeRespondingToClick, adjustedPoint);
     else
-        send(Messages::WebPageProxy::CommitPotentialTapFailed());
+        commitPotentialTapFailed();
 
     m_potentialTapNode = nullptr;
     m_potentialTapLocation = FloatPoint();
+}
+
+void WebPage::commitPotentialTapFailed()
+{
+    send(Messages::WebPageProxy::CommitPotentialTapFailed());
+    send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(m_potentialTapLocation)));
 }
 
 void WebPage::cancelPotentialTap()
