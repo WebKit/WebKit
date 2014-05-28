@@ -1,3 +1,14 @@
+2014-05-28  Timothy Horton  <timothy_horton@apple.com>
+
+        Add WKWebView SPI to forcefully kill the associated Web process
+        https://bugs.webkit.org/show_bug.cgi?id=133357
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _killWebContentProcess]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2014-05-28  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Crash when trying to decode an instance of a class inheriting from WKObject

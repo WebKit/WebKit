@@ -1288,6 +1288,14 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return _page->isValid() ? _page->processIdentifier() : 0;
 }
 
+- (void)_killWebContentProcess
+{
+    if (!_page->isValid())
+        return;
+
+    _page->process().terminate();
+}
+
 - (NSData *)_sessionState
 {
     return [wrapper(*_page->sessionStateData(nullptr, nullptr).leakRef()) autorelease];
