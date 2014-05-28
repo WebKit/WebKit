@@ -49,7 +49,6 @@ struct LineSegment {
 
 class BasicShape;
 class Image;
-class RenderView;
 class RoundedRect;
 
 typedef Vector<LineSegment> SegmentList;
@@ -67,7 +66,7 @@ public:
         Path marginShape;
     };
 
-    static std::unique_ptr<Shape> createShape(const BasicShape*, const LayoutSize& logicalBoxSize, WritingMode, float margin, RenderView*);
+    static std::unique_ptr<Shape> createShape(const BasicShape*, const LayoutSize& logicalBoxSize, WritingMode, float margin);
     static std::unique_ptr<Shape> createRasterShape(Image*, float threshold, const LayoutRect& imageRect, const LayoutRect& marginRect, WritingMode, float margin);
     static std::unique_ptr<Shape> createBoxShape(const RoundedRect&, WritingMode, float margin);
 

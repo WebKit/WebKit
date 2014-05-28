@@ -148,7 +148,6 @@ public:
         UAngle,
         UTime,
         UFrequency,
-        UViewportPercentageLength,
 #if ENABLE(CSS_IMAGE_RESOLUTION) || ENABLE(RESOLUTION_MEDIA_QUERY)
         UResolution,
 #endif
@@ -176,7 +175,7 @@ public:
     bool isLength() const
     {
         unsigned short type = primitiveType();
-        return (type >= CSS_EMS && type <= CSS_PC) || type == CSS_REMS || type == CSS_CHS;
+        return (type >= CSS_EMS && type <= CSS_PC) || type == CSS_REMS || type == CSS_CHS || isViewportPercentageLength();
     }
     bool isNumber() const { return primitiveType() == CSS_NUMBER; }
     bool isPercentage() const { return primitiveType() == CSS_PERCENTAGE; }
@@ -328,8 +327,6 @@ public:
     bool isQuirkValue() { return m_isQuirkValue; }
 
     void addSubresourceStyleURLs(ListHashSet<URL>&, const StyleSheetContents*) const;
-
-    Length viewportPercentageLength() const;
 
     PassRefPtr<CSSPrimitiveValue> cloneForCSSOM() const;
     void setCSSOMSafe() { m_isCSSOMSafe = true; }

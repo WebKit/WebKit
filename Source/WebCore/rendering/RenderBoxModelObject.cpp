@@ -510,9 +510,9 @@ LayoutUnit RenderBoxModelObject::computedCSSPadding(const Length& padding) const
 RoundedRect RenderBoxModelObject::getBackgroundRoundedRect(const LayoutRect& borderRect, InlineFlowBox* box, LayoutUnit inlineBoxWidth, LayoutUnit inlineBoxHeight,
     bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
-    RoundedRect border = style().getRoundedBorderFor(borderRect, &view(), includeLogicalLeftEdge, includeLogicalRightEdge);
+    RoundedRect border = style().getRoundedBorderFor(borderRect, includeLogicalLeftEdge, includeLogicalRightEdge);
     if (box && (box->nextLineBox() || box->prevLineBox())) {
-        RoundedRect segmentBorder = style().getRoundedBorderFor(LayoutRect(0, 0, inlineBoxWidth, inlineBoxHeight), &view(), includeLogicalLeftEdge, includeLogicalRightEdge);
+        RoundedRect segmentBorder = style().getRoundedBorderFor(LayoutRect(0, 0, inlineBoxWidth, inlineBoxHeight), includeLogicalLeftEdge, includeLogicalRightEdge);
         border.setRadii(segmentBorder.radii());
     }
     return border;
@@ -952,12 +952,12 @@ LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLaye
 
             if (layerWidth.isFixed())
                 tileSize.setWidth(layerWidth.value());
-            else if (layerWidth.isPercent() || layerWidth.isViewportPercentage())
+            else if (layerWidth.isPercent())
                 tileSize.setWidth(valueForLength(layerWidth, positioningAreaSize.width()));
             
             if (layerHeight.isFixed())
                 tileSize.setHeight(layerHeight.value());
-            else if (layerHeight.isPercent() || layerHeight.isViewportPercentage())
+            else if (layerHeight.isPercent())
                 tileSize.setHeight(valueForLength(layerHeight, positioningAreaSize.height()));
 
             // If one of the values is auto we have to use the appropriate
@@ -1228,13 +1228,13 @@ void RenderBoxModelObject::getGeometryForBackgroundImage(const RenderLayerModelO
     destRect = geometry.destRect();
 }
 
-static LayoutUnit computeBorderImageSide(Length borderSlice, LayoutUnit borderSide, LayoutUnit imageSide, LayoutUnit boxExtent, RenderView* renderView)
+static LayoutUnit computeBorderImageSide(Length borderSlice, LayoutUnit borderSide, LayoutUnit imageSide, LayoutUnit boxExtent)
 {
     if (borderSlice.isRelative())
         return borderSlice.value() * borderSide;
     if (borderSlice.isAuto())
         return imageSide;
-    return valueForLength(borderSlice, boxExtent, renderView);
+    return valueForLength(borderSlice, boxExtent);
 }
 
 bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext, const LayoutRect& rect, const RenderStyle& style,
@@ -1264,7 +1264,6 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
 
     LayoutUnit imageWidth = imageSize.width();
     LayoutUnit imageHeight = imageSize.height();
-    RenderView* renderView = &view();
 
     float imageScaleFactor = styleImage->imageScaleFactor();
     LayoutUnit topSlice = std::min<LayoutUnit>(imageHeight, valueForLength(ninePieceImage.imageSlices().top(), imageHeight)) * imageScaleFactor;
@@ -1275,11 +1274,11 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     ENinePieceImageRule hRule = ninePieceImage.horizontalRule();
     ENinePieceImageRule vRule = ninePieceImage.verticalRule();
 
-    LayoutUnit topWidth = computeBorderImageSide(ninePieceImage.borderSlices().top(), style.borderTopWidth(), topSlice, borderImageRect.height(), renderView);
-    LayoutUnit rightWidth = computeBorderImageSide(ninePieceImage.borderSlices().right(), style.borderRightWidth(), rightSlice, borderImageRect.width(), renderView);
-    LayoutUnit bottomWidth = computeBorderImageSide(ninePieceImage.borderSlices().bottom(), style.borderBottomWidth(), bottomSlice, borderImageRect.height(), renderView);
-    LayoutUnit leftWidth = computeBorderImageSide(ninePieceImage.borderSlices().left(), style.borderLeftWidth(), leftSlice, borderImageRect.width(), renderView);
-    
+    LayoutUnit topWidth = computeBorderImageSide(ninePieceImage.borderSlices().top(), style.borderTopWidth(), topSlice, borderImageRect.height());
+    LayoutUnit rightWidth = computeBorderImageSide(ninePieceImage.borderSlices().right(), style.borderRightWidth(), rightSlice, borderImageRect.width());
+    LayoutUnit bottomWidth = computeBorderImageSide(ninePieceImage.borderSlices().bottom(), style.borderBottomWidth(), bottomSlice, borderImageRect.height());
+    LayoutUnit leftWidth = computeBorderImageSide(ninePieceImage.borderSlices().left(), style.borderLeftWidth(), leftSlice, borderImageRect.width());
+
     // Reduce the widths if they're too large.
     // The spec says: Given Lwidth as the width of the border image area, Lheight as its height, and Wside as the border image width
     // offset for the side, let f = min(Lwidth/(Wleft+Wright), Lheight/(Wtop+Wbottom)). If f < 1, then all W are reduced by
@@ -1728,7 +1727,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
 
     BorderEdge edges[4];
     BorderEdge::getBorderEdgeInfo(edges, style, document().deviceScaleFactor(), includeLogicalLeftEdge, includeLogicalRightEdge);
-    RoundedRect outerBorder = style.getRoundedBorderFor(rect, &view(), includeLogicalLeftEdge, includeLogicalRightEdge);
+    RoundedRect outerBorder = style.getRoundedBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge);
     RoundedRect innerBorder = style.getRoundedInnerBorderFor(borderInnerRectAdjustedForBleedAvoidance(*graphicsContext, rect, bleedAvoidance), includeLogicalLeftEdge, includeLogicalRightEdge);
 
     bool haveAlphaColor = false;
@@ -2370,7 +2369,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
         return;
 
     RoundedRect border = (shadowStyle == Inset) ? style.getRoundedInnerBorderFor(paintRect, includeLogicalLeftEdge, includeLogicalRightEdge)
-        : style.getRoundedBorderFor(paintRect, &view(), includeLogicalLeftEdge, includeLogicalRightEdge);
+        : style.getRoundedBorderFor(paintRect, includeLogicalLeftEdge, includeLogicalRightEdge);
 
     bool hasBorderRadius = style.hasBorderRadius();
     bool isHorizontal = style.isHorizontalWritingMode();

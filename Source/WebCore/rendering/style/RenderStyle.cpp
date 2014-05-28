@@ -1027,17 +1027,17 @@ void RenderStyle::setBoxShadow(std::unique_ptr<ShadowData> shadowData, bool add)
     rareData->m_boxShadow = std::move(shadowData);
 }
 
-static RoundedRect::Radii calcRadiiFor(const BorderData& border, const LayoutSize& size, RenderView* renderView)
+static RoundedRect::Radii calcRadiiFor(const BorderData& border, const LayoutSize& size)
 {
     return RoundedRect::Radii(
-        LayoutSize(valueForLength(border.topLeft().width(), size.width(), renderView),
-            valueForLength(border.topLeft().height(), size.height(), renderView)),
-        LayoutSize(valueForLength(border.topRight().width(), size.width(), renderView),
-            valueForLength(border.topRight().height(), size.height(), renderView)),
-        LayoutSize(valueForLength(border.bottomLeft().width(), size.width(), renderView),
-            valueForLength(border.bottomLeft().height(), size.height(), renderView)),
-        LayoutSize(valueForLength(border.bottomRight().width(), size.width(), renderView),
-            valueForLength(border.bottomRight().height(), size.height(), renderView)));
+        LayoutSize(valueForLength(border.topLeft().width(), size.width()),
+            valueForLength(border.topLeft().height(), size.height())),
+        LayoutSize(valueForLength(border.topRight().width(), size.width()),
+            valueForLength(border.topRight().height(), size.height())),
+        LayoutSize(valueForLength(border.bottomLeft().width(), size.width()),
+            valueForLength(border.bottomLeft().height(), size.height())),
+        LayoutSize(valueForLength(border.bottomRight().width(), size.width()),
+            valueForLength(border.bottomRight().height(), size.height())));
 }
 
 StyleImage* RenderStyle::listStyleImage() const { return rareInheritedData->listStyleImage.get(); }
@@ -1057,11 +1057,11 @@ short RenderStyle::verticalBorderSpacing() const { return inherited->vertical_bo
 void RenderStyle::setHorizontalBorderSpacing(short v) { SET_VAR(inherited, horizontal_border_spacing, v); }
 void RenderStyle::setVerticalBorderSpacing(short v) { SET_VAR(inherited, vertical_border_spacing, v); }
 
-RoundedRect RenderStyle::getRoundedBorderFor(const LayoutRect& borderRect, RenderView* renderView, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
+RoundedRect RenderStyle::getRoundedBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
     RoundedRect roundedRect(borderRect);
     if (hasBorderRadius()) {
-        RoundedRect::Radii radii = calcRadiiFor(surround->border, borderRect.size(), renderView);
+        RoundedRect::Radii radii = calcRadiiFor(surround->border, borderRect.size());
         radii.scale(calcBorderRadiiConstraintScaleFor(borderRect, radii));
         roundedRect.includeLogicalEdges(radii, isHorizontalWritingMode(), includeLogicalLeftEdge, includeLogicalRightEdge);
     }
@@ -1342,7 +1342,7 @@ Length RenderStyle::lineHeight() const
 }
 void RenderStyle::setLineHeight(Length specifiedLineHeight) { SET_VAR(inherited, line_height, specifiedLineHeight); }
 
-int RenderStyle::computedLineHeight(RenderView* renderView) const
+int RenderStyle::computedLineHeight() const
 {
     const Length& lh = lineHeight();
 
@@ -1352,9 +1352,6 @@ int RenderStyle::computedLineHeight(RenderView* renderView) const
 
     if (lh.isPercent())
         return minimumValueForLength(lh, fontSize());
-
-    if (lh.isViewportPercentage())
-        return valueForLength(lh, 0, renderView);
 
     return lh.value();
 }

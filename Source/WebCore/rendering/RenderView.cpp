@@ -330,13 +330,9 @@ void RenderView::layout()
 
         for (auto& box : childrenOfType<RenderBox>(*this)) {
             if (box.hasRelativeLogicalHeight()
-                || box.hasViewportPercentageLogicalHeight()
                 || box.style().logicalHeight().isPercent()
                 || box.style().logicalMinHeight().isPercent()
                 || box.style().logicalMaxHeight().isPercent()
-                || box.style().logicalHeight().isViewportPercentage()
-                || box.style().logicalMinHeight().isViewportPercentage()
-                || box.style().logicalMaxHeight().isViewportPercentage()
                 || box.isSVGRoot()
                 )
                 box.setChildNeedsLayout(MarkOnlyThis);

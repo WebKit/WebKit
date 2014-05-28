@@ -63,9 +63,9 @@ testInner("-webkit-clip-path", "circle(1vw at 1vw 1vw)", "circle(1vw at 1vw 1vw)
 testInner("-webkit-clip-path", "circle(1vh at 1vh 1vh)", "circle(1vh at 1vh 1vh)");
 testInner("-webkit-clip-path", "circle(1vmin at 1vmin 1vmin)", "circle(1vmin at 1vmin 1vmin)");
 
-testComputed("-webkit-clip-path", "circle(1.5vw at .5vw 1vw)", "circle(1.5vw at 0.5vw 1vw)");
-testComputed("-webkit-clip-path", "circle(1.5vh at .5vh 1vh)", "circle(1.5vh at 0.5vh 1vh)");
-testComputed("-webkit-clip-path", "circle(1.5vmin at .5vmin 1vmin)", "circle(1.5vmin at 0.5vmin 1vmin)");
+testComputed("-webkit-clip-path", "circle(1.5vw at .5vw 1vw)", "circle(12px at 4px 8px)");
+testComputed("-webkit-clip-path", "circle(1.5vh at .5vh 1vh)", "circle(9px at 3px 6px)");
+testComputed("-webkit-clip-path", "circle(1.5vmin at .5vmin 1vmin)", "circle(9px at 3px 6px)");
 
 // percentage lengths - units
 testComputed("-webkit-clip-path", "circle(150% at 50% 100%)", "circle(150% at 50% 100%)");

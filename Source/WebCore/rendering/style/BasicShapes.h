@@ -43,7 +43,6 @@ namespace WebCore {
 class FloatRect;
 class Path;
 class RenderBox;
-class RenderView;
 
 class BasicShape : public RefCounted<BasicShape> {
 public:
@@ -58,7 +57,7 @@ public:
 
     bool canBlend(const BasicShape*) const;
 
-    virtual void path(Path&, const FloatRect&, RenderView*) = 0;
+    virtual void path(Path&, const FloatRect&) = 0;
     virtual WindRule windRule() const { return RULE_NONZERO; }
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const = 0;
 
@@ -152,13 +151,13 @@ public:
     const BasicShapeCenterCoordinate& centerX() const { return m_centerX; }
     const BasicShapeCenterCoordinate& centerY() const { return m_centerY; }
     const BasicShapeRadius& radius() const { return m_radius; }
-    float floatValueForRadiusInBox(float boxWidth, float boxHeight, RenderView*) const;
+    float floatValueForRadiusInBox(float boxWidth, float boxHeight) const;
 
     void setCenterX(BasicShapeCenterCoordinate centerX) { m_centerX = std::move(centerX); }
     void setCenterY(BasicShapeCenterCoordinate centerY) { m_centerY = std::move(centerY); }
     void setRadius(BasicShapeRadius radius) { m_radius = std::move(radius); }
 
-    virtual void path(Path&, const FloatRect&, RenderView*) override;
+    virtual void path(Path&, const FloatRect&) override;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;
 
     virtual Type type() const override { return BasicShapeCircleType; }
@@ -178,14 +177,14 @@ public:
     const BasicShapeCenterCoordinate& centerY() const { return m_centerY; }
     const BasicShapeRadius& radiusX() const { return m_radiusX; }
     const BasicShapeRadius& radiusY() const { return m_radiusY; }
-    float floatValueForRadiusInBox(const BasicShapeRadius&, float center, float boxWidthOrHeight, RenderView*) const;
+    float floatValueForRadiusInBox(const BasicShapeRadius&, float center, float boxWidthOrHeight) const;
 
     void setCenterX(BasicShapeCenterCoordinate centerX) { m_centerX = std::move(centerX); }
     void setCenterY(BasicShapeCenterCoordinate centerY) { m_centerY = std::move(centerY); }
     void setRadiusX(BasicShapeRadius radiusX) { m_radiusX = std::move(radiusX); }
     void setRadiusY(BasicShapeRadius radiusY) { m_radiusY = std::move(radiusY); }
 
-    virtual void path(Path&, const FloatRect&, RenderView*) override;
+    virtual void path(Path&, const FloatRect&) override;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;
 
     virtual Type type() const override { return BasicShapeEllipseType; }
@@ -209,7 +208,7 @@ public:
     void setWindRule(WindRule windRule) { m_windRule = windRule; }
     void appendPoint(Length x, Length y) { m_values.append(std::move(x)); m_values.append(std::move(y)); }
 
-    virtual void path(Path&, const FloatRect&, RenderView*) override;
+    virtual void path(Path&, const FloatRect&) override;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;
 
     virtual WindRule windRule() const override { return m_windRule; }
@@ -248,7 +247,7 @@ public:
     void setBottomRightRadius(LengthSize radius) { m_bottomRightRadius = std::move(radius); }
     void setBottomLeftRadius(LengthSize radius) { m_bottomLeftRadius = std::move(radius); }
 
-    virtual void path(Path&, const FloatRect&, RenderView*) override;
+    virtual void path(Path&, const FloatRect&) override;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;
 
     virtual Type type() const override { return BasicShapeInsetType; }

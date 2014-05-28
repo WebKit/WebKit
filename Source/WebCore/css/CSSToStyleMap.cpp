@@ -37,6 +37,7 @@
 #include "FillLayer.h"
 #include "Pair.h"
 #include "Rect.h"
+#include "RenderView.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
@@ -50,7 +51,7 @@ RenderStyle* CSSToStyleMap::style() const
 {
     return m_resolver->style();
 }
-    
+
 RenderStyle* CSSToStyleMap::rootElementStyle() const
 {
     return m_resolver->rootElementStyle();
@@ -60,7 +61,7 @@ bool CSSToStyleMap::useSVGZoomRules() const
 {
     return m_resolver->useSVGZoomRules();
 }
-    
+
 PassRefPtr<StyleImage> CSSToStyleMap::styleImage(CSSPropertyID propertyId, CSSValue* value)
 {
     return m_resolver->styleImage(propertyId, value);
@@ -253,8 +254,6 @@ void CSSToStyleMap::mapFillXPosition(CSSPropertyID propertyID, FillLayer* layer,
         length = Length(primitiveValue->getDoubleValue(), Percent);
     else if (primitiveValue->isCalculatedPercentageWithLength())
         length = Length(primitiveValue->cssCalcValue()->createCalculationValue(m_resolver->state().cssToLengthConversionData()));
-    else if (primitiveValue->isViewportPercentageLength())
-        length = primitiveValue->viewportPercentageLength();
     else
         return;
 
@@ -287,8 +286,6 @@ void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer* layer,
         length = Length(primitiveValue->getDoubleValue(), Percent);
     else if (primitiveValue->isCalculatedPercentageWithLength())
         length = Length(primitiveValue->cssCalcValue()->createCalculationValue(m_resolver->state().cssToLengthConversionData()));
-    else if (primitiveValue->isViewportPercentageLength())
-        length = primitiveValue->viewportPercentageLength();
     else
         return;
 

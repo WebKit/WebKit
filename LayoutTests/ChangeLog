@@ -1,3 +1,43 @@
+2014-05-27  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        vw/vh units used as font/line-height values don't scale with the viewport
+        https://bugs.webkit.org/show_bug.cgi?id=87846
+
+        Reviewed by Darin Adler.
+
+        Update existing tests to work with the proper behavior of viewport
+        units.
+
+        Add tests for some of the things fixed by this patch: handling of
+        viewport units in font sizes, with calc, and when the viewport is
+        resized without a reload.
+
+        The anonymous block and percent size child tests make sure that the
+        viewport unit updates still work properly when there is another
+        relative unit the depends on the size specified in viewport units.
+
+        * css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-getStyle-expected.txt:
+        * css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-getStyle.html:
+        * css3/viewport-percentage-lengths/resources/resize-test.js: Added.
+        (resizeTest):
+        (standardResizeTest):
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block-expected.txt: Added.
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html: Added.
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-calc-expected.txt: Added.
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-calc.html: Added.
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child-expected.txt: Added.
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html: Added.
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size-expected.txt: Added.
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html: Added.
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-resize-expected.txt: Added.
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html: Added.
+        * fast/canvas/draw-focus-if-needed-expected.txt: Removed.
+        * fast/canvas/draw-focus-if-needed.html: Removed.
+        * fast/masking/parsing-clip-path-shape-expected.txt:
+        * fast/masking/parsing-clip-path-shape.html:
+        * fast/shapes/parsing/parsing-shape-lengths-expected.txt:
+        * fast/shapes/parsing/parsing-shape-lengths.html:
+
 2014-05-27  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] serialization of the computed value should omit the default radii

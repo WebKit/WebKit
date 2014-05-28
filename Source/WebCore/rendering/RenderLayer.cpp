@@ -3829,7 +3829,7 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
 
         LayoutRect referenceBox = computeReferenceBox(renderer(), clippingPath, offsetFromRoot, rootRelativeBounds);
         context->save();
-        context->clipPath(clippingPath.pathForReferenceRect(referenceBox, &m_renderer.view()), clippingPath.windRule());
+        context->clipPath(clippingPath.pathForReferenceRect(referenceBox), clippingPath.windRule());
         return true;
     }
 
@@ -3840,7 +3840,7 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
         shapeRect.moveBy(offsetFromRoot);
 
         context->save();
-        context->clipPath(clippingPath.pathForReferenceRect(shapeRect, &m_renderer.view()), RULE_NONZERO);
+        context->clipPath(clippingPath.pathForReferenceRect(shapeRect), RULE_NONZERO);
         return true;
     }
 

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<style>
+    #container {
+        width: 50vw;
+        height: 50vh;
+    }
+    #percent {
+        width: 50%;
+        height: 50%;
+    }
+</style>
+<body>
+    <div id="container">
+        <div id="percent"></div>
+    </div>
+</body>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/resize-test.js"></script>
+<script>
+description("Test that percentage dimensions work in a child with a parent with viewport unit dimensions.");
+
+standardResizeTest(function (sizes) {
+    shouldBe("getComputedStyle(container).width", "'" + window.innerWidth/2 + "px'");
+    shouldBe("getComputedStyle(container).height", "'" + window.innerHeight/2 + "px'");
+    shouldBe("getComputedStyle(percent).width", "'" + window.innerWidth/4 + "px'");
+    shouldBe("getComputedStyle(percent).height", "'" + window.innerHeight/4 + "px'");
+});
+</script>
+<script src="../../resources/js-test-post.js"></script>

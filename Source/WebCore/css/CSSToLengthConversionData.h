@@ -37,39 +37,52 @@
 namespace WebCore {
 
 class RenderStyle;
+class RenderView;
 
 class CSSToLengthConversionData {
 public:
-    CSSToLengthConversionData(const RenderStyle* style, const RenderStyle* rootStyle, float zoom, bool computingFontSize = false)
+    CSSToLengthConversionData(RenderStyle* style, const RenderStyle* rootStyle, const RenderView* renderView, float zoom, bool computingFontSize = false)
         : m_style(style)
         , m_rootStyle(rootStyle)
+        , m_renderView(renderView)
         , m_zoom(zoom)
         , m_useEffectiveZoom(false)
         , m_computingFontSize(computingFontSize)
     {
         ASSERT(zoom > 0);
     }
-    CSSToLengthConversionData(const RenderStyle* style = nullptr, const RenderStyle* rootStyle = nullptr, bool computingFontSize = false)
+    CSSToLengthConversionData(RenderStyle* style, const RenderStyle* rootStyle, const RenderView* renderView, bool computingFontSize = false)
         : m_style(style)
         , m_rootStyle(rootStyle)
+        , m_renderView(renderView)
         , m_useEffectiveZoom(true)
         , m_computingFontSize(computingFontSize)
     {
     }
+    CSSToLengthConversionData()
+        : CSSToLengthConversionData(nullptr, nullptr, nullptr)
+    {
+    }
 
-    const RenderStyle* style() const { return m_style; }
+    RenderStyle* style() const { return m_style; }
     const RenderStyle* rootStyle() const { return m_rootStyle; }
     float zoom() const;
     bool computingFontSize() const { return m_computingFontSize; }
 
+    double viewportWidthFactor() const;
+    double viewportHeightFactor() const;
+    double viewportMinFactor() const;
+    double viewportMaxFactor() const;
+
     CSSToLengthConversionData copyWithAdjustedZoom(float newZoom) const
     {
-        return CSSToLengthConversionData(m_style, m_rootStyle, newZoom, m_computingFontSize);
+        return CSSToLengthConversionData(m_style, m_rootStyle, m_renderView, newZoom, m_computingFontSize);
     }
 
 private:
-    const RenderStyle* m_style;
+    RenderStyle* m_style;
     const RenderStyle* m_rootStyle;
+    const RenderView* m_renderView;
     float m_zoom;
     bool m_useEffectiveZoom;
     bool m_computingFontSize;

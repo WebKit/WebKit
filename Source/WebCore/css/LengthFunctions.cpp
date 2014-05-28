@@ -24,23 +24,23 @@
 #include "config.h"
 #include "LengthFunctions.h"
 
+#include "FloatSize.h"
 #include "LayoutUnit.h"
 #include "LengthSize.h"
-#include "RenderView.h"
 
 namespace WebCore {
 
-int minimumIntValueForLength(const Length& length, LayoutUnit maximumValue, RenderView* renderView, bool roundPercentages)
+int minimumIntValueForLength(const Length& length, LayoutUnit maximumValue, bool roundPercentages)
 {
-    return static_cast<int>(minimumValueForLength(length, maximumValue, renderView, roundPercentages));
+    return static_cast<int>(minimumValueForLength(length, maximumValue, roundPercentages));
 }
 
-int intValueForLength(const Length& length, LayoutUnit maximumValue, RenderView* renderView, bool roundPercentages)
+int intValueForLength(const Length& length, LayoutUnit maximumValue)
 {
-    return static_cast<int>(valueForLength(length, maximumValue, renderView, roundPercentages));
+    return static_cast<int>(valueForLength(length, maximumValue));
 }
 
-LayoutUnit minimumValueForLength(const Length& length, LayoutUnit maximumValue, RenderView* renderView, bool roundPercentages)
+LayoutUnit minimumValueForLength(const Length& length, LayoutUnit maximumValue, bool roundPercentages)
 {
     switch (length.type()) {
     case Fixed:
@@ -52,26 +52,6 @@ LayoutUnit minimumValueForLength(const Length& length, LayoutUnit maximumValue, 
         return LayoutUnit(static_cast<float>(maximumValue * length.percent() / 100.0f));
     case Calculated:
         return length.nonNanCalculatedValue(maximumValue);
-    case ViewportPercentageWidth:
-        if (renderView)
-            return LayoutUnit(renderView->viewportSizeForCSSViewportUnits().width() * length.viewportPercentageLength() / 100.0f);
-        return 0;
-    case ViewportPercentageHeight:
-        if (renderView)
-            return LayoutUnit(renderView->viewportSizeForCSSViewportUnits().height() * length.viewportPercentageLength() / 100.0f);
-        return 0;
-    case ViewportPercentageMin:
-        if (renderView) {
-            IntSize viewportSize = renderView->viewportSizeForCSSViewportUnits();
-            return LayoutUnit(std::min(viewportSize.width(), viewportSize.height()) * length.viewportPercentageLength() / 100.0f);
-        }
-        return 0;
-    case ViewportPercentageMax:
-        if (renderView) {
-            IntSize viewportSize = renderView->viewportSizeForCSSViewportUnits();
-            return LayoutUnit(std::max(viewportSize.width(), viewportSize.height()) * length.viewportPercentageLength() / 100.0f);
-        }
-        return 0;
     case FillAvailable:
     case Auto:
         return 0;
@@ -89,17 +69,13 @@ LayoutUnit minimumValueForLength(const Length& length, LayoutUnit maximumValue, 
     return 0;
 }
 
-LayoutUnit valueForLength(const Length& length, LayoutUnit maximumValue, RenderView* renderView, bool roundPercentages)
+LayoutUnit valueForLength(const Length& length, LayoutUnit maximumValue)
 {
     switch (length.type()) {
     case Fixed:
     case Percent:
     case Calculated:
-    case ViewportPercentageWidth:
-    case ViewportPercentageHeight:
-    case ViewportPercentageMin:
-    case ViewportPercentageMax:
-        return minimumValueForLength(length, maximumValue, renderView, roundPercentages);
+        return minimumValueForLength(length, maximumValue);
     case FillAvailable:
     case Auto:
         return maximumValue;
@@ -118,53 +94,7 @@ LayoutUnit valueForLength(const Length& length, LayoutUnit maximumValue, RenderV
 }
 
 // FIXME: when subpixel layout is supported this copy of floatValueForLength() can be removed. See bug 71143.
-float floatValueForLength(const Length& length, LayoutUnit maximumValue, RenderView* renderView)
-{
-    switch (length.type()) {
-    case Fixed:
-        return length.value();
-    case Percent:
-        return static_cast<float>(maximumValue * length.percent() / 100.0f);
-    case FillAvailable:
-    case Auto:
-        return static_cast<float>(maximumValue);
-    case Calculated:
-        return length.nonNanCalculatedValue(maximumValue);                
-    case ViewportPercentageWidth:
-        if (renderView)
-            return static_cast<int>(renderView->viewportSizeForCSSViewportUnits().width() * length.viewportPercentageLength() / 100.0f);
-        return 0;
-    case ViewportPercentageHeight:
-        if (renderView)
-            return static_cast<int>(renderView->viewportSizeForCSSViewportUnits().height() * length.viewportPercentageLength() / 100.0f);
-        return 0;
-    case ViewportPercentageMin:
-        if (renderView) {
-            IntSize viewportSize = renderView->viewportSizeForCSSViewportUnits();
-            return static_cast<int>(std::min(viewportSize.width(), viewportSize.height()) * length.viewportPercentageLength() / 100.0f);
-        }
-        return 0;
-    case ViewportPercentageMax:
-        if (renderView) {
-            IntSize viewportSize = renderView->viewportSizeForCSSViewportUnits();
-            return static_cast<int>(std::max(viewportSize.width(), viewportSize.height()) * length.viewportPercentageLength() / 100.0f);
-        }
-        return 0;
-    case Relative:
-    case Intrinsic:
-    case MinIntrinsic:
-    case MinContent:
-    case MaxContent:
-    case FitContent:
-    case Undefined:
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-float floatValueForLength(const Length& length, float maximumValue, RenderView* renderView)
+float floatValueForLength(const Length& length, LayoutUnit maximumValue)
 {
     switch (length.type()) {
     case Fixed:
@@ -176,26 +106,6 @@ float floatValueForLength(const Length& length, float maximumValue, RenderView* 
         return static_cast<float>(maximumValue);
     case Calculated:
         return length.nonNanCalculatedValue(maximumValue);
-    case ViewportPercentageWidth:
-        if (renderView)
-            return static_cast<int>(renderView->viewportSizeForCSSViewportUnits().width() * length.viewportPercentageLength() / 100.0f);
-        return 0;
-    case ViewportPercentageHeight:
-        if (renderView)
-            return static_cast<int>(renderView->viewportSizeForCSSViewportUnits().height() * length.viewportPercentageLength() / 100.0f);
-        return 0;
-    case ViewportPercentageMin:
-        if (renderView) {
-            IntSize viewportSize = renderView->viewportSizeForCSSViewportUnits();
-            return static_cast<int>(std::min(viewportSize.width(), viewportSize.height()) * length.viewportPercentageLength() / 100.0f);
-        }
-        return 0;
-    case ViewportPercentageMax:
-        if (renderView) {
-            IntSize viewportSize = renderView->viewportSizeForCSSViewportUnits();
-            return static_cast<int>(std::max(viewportSize.width(), viewportSize.height()) * length.viewportPercentageLength() / 100.0f);
-        }
-        return 0;
     case Relative:
     case Intrinsic:
     case MinIntrinsic:
@@ -210,9 +120,35 @@ float floatValueForLength(const Length& length, float maximumValue, RenderView* 
     return 0;
 }
 
-FloatSize floatSizeForLengthSize(const LengthSize& lengthSize, const FloatSize& boxSize, RenderView* view)
+float floatValueForLength(const Length& length, float maximumValue)
 {
-    return FloatSize(floatValueForLength(lengthSize.width(), boxSize.width(), view), floatValueForLength(lengthSize.height(), boxSize.height(), view));
+    switch (length.type()) {
+    case Fixed:
+        return length.value();
+    case Percent:
+        return static_cast<float>(maximumValue * length.percent() / 100.0f);
+    case FillAvailable:
+    case Auto:
+        return static_cast<float>(maximumValue);
+    case Calculated:
+        return length.nonNanCalculatedValue(maximumValue);
+    case Relative:
+    case Intrinsic:
+    case MinIntrinsic:
+    case MinContent:
+    case MaxContent:
+    case FitContent:
+    case Undefined:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+FloatSize floatSizeForLengthSize(const LengthSize& lengthSize, const FloatSize& boxSize)
+{
+    return FloatSize(floatValueForLength(lengthSize.width(), boxSize.width()), floatValueForLength(lengthSize.height(), boxSize.height()));
 }
 
 } // namespace WebCore

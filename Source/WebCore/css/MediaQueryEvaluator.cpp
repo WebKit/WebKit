@@ -725,7 +725,9 @@ bool MediaQueryEvaluator::eval(const MediaQueryExp* expr) const
     // used
     EvalFunc func = gFunctionMap->get(expr->mediaFeature().impl());
     if (func) {
-        CSSToLengthConversionData conversionData(m_style.get(), m_frame->document()->documentElement()->renderStyle());
+        CSSToLengthConversionData conversionData(m_style.get(),
+            m_frame->document()->documentElement()->renderStyle(),
+            m_frame->document()->renderView());
         return func(expr->value(), conversionData, m_frame, NoPrefix);
     }
 

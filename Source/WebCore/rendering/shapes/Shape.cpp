@@ -90,7 +90,7 @@ static inline FloatSize physicalSizeToLogical(const FloatSize& size, WritingMode
     return size.transposedSize();
 }
 
-std::unique_ptr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutSize& logicalBoxSize, WritingMode writingMode, float margin, RenderView* view)
+std::unique_ptr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutSize& logicalBoxSize, WritingMode writingMode, float margin)
 {
     ASSERT(basicShape);
 
@@ -103,9 +103,9 @@ std::unique_ptr<Shape> Shape::createShape(const BasicShape* basicShape, const La
 
     case BasicShape::BasicShapeCircleType: {
         const BasicShapeCircle* circle = static_cast<const BasicShapeCircle*>(basicShape);
-        float centerX = floatValueForCenterCoordinate(circle->centerX(), boxWidth, view);
-        float centerY = floatValueForCenterCoordinate(circle->centerY(), boxHeight, view);
-        float radius = circle->floatValueForRadiusInBox(boxWidth, boxHeight, view);
+        float centerX = floatValueForCenterCoordinate(circle->centerX(), boxWidth);
+        float centerY = floatValueForCenterCoordinate(circle->centerY(), boxHeight);
+        float radius = circle->floatValueForRadiusInBox(boxWidth, boxHeight);
         FloatPoint logicalCenter = physicalPointToLogical(FloatPoint(centerX, centerY), logicalBoxSize.height(), writingMode);
 
         shape = createCircleShape(logicalCenter, radius);
@@ -114,10 +114,10 @@ std::unique_ptr<Shape> Shape::createShape(const BasicShape* basicShape, const La
 
     case BasicShape::BasicShapeEllipseType: {
         const BasicShapeEllipse* ellipse = static_cast<const BasicShapeEllipse*>(basicShape);
-        float centerX = floatValueForCenterCoordinate(ellipse->centerX(), boxWidth, view);
-        float centerY = floatValueForCenterCoordinate(ellipse->centerY(), boxHeight, view);
-        float radiusX = ellipse->floatValueForRadiusInBox(ellipse->radiusX(), centerX, boxWidth, view);
-        float radiusY = ellipse->floatValueForRadiusInBox(ellipse->radiusY(), centerY, boxHeight, view);
+        float centerX = floatValueForCenterCoordinate(ellipse->centerX(), boxWidth);
+        float centerY = floatValueForCenterCoordinate(ellipse->centerY(), boxHeight);
+        float radiusX = ellipse->floatValueForRadiusInBox(ellipse->radiusX(), centerX, boxWidth);
+        float radiusY = ellipse->floatValueForRadiusInBox(ellipse->radiusY(), centerY, boxHeight);
         FloatPoint logicalCenter = physicalPointToLogical(FloatPoint(centerX, centerY), logicalBoxSize.height(), writingMode);
 
         shape = createEllipseShape(logicalCenter, FloatSize(radiusX, radiusY));
@@ -132,8 +132,8 @@ std::unique_ptr<Shape> Shape::createShape(const BasicShape* basicShape, const La
         std::unique_ptr<Vector<FloatPoint>> vertices = std::make_unique<Vector<FloatPoint>>(valuesSize / 2);
         for (unsigned i = 0; i < valuesSize; i += 2) {
             FloatPoint vertex(
-                floatValueForLength(values.at(i), boxWidth, view),
-                floatValueForLength(values.at(i + 1), boxHeight, view));
+                floatValueForLength(values.at(i), boxWidth),
+                floatValueForLength(values.at(i + 1), boxHeight));
             (*vertices)[i / 2] = physicalPointToLogical(vertex, logicalBoxSize.height(), writingMode);
         }
 
@@ -143,19 +143,19 @@ std::unique_ptr<Shape> Shape::createShape(const BasicShape* basicShape, const La
 
     case BasicShape::BasicShapeInsetType: {
         const BasicShapeInset& inset = *static_cast<const BasicShapeInset*>(basicShape);
-        float left = floatValueForLength(inset.left(), boxWidth, view);
-        float top = floatValueForLength(inset.top(), boxHeight, view);
+        float left = floatValueForLength(inset.left(), boxWidth);
+        float top = floatValueForLength(inset.top(), boxHeight);
         FloatRect rect(left,
             top,
-            std::max<float>(boxWidth - left - floatValueForLength(inset.right(), boxWidth, view), 0),
-            std::max<float>(boxHeight - top - floatValueForLength(inset.bottom(), boxHeight, view), 0));
+            std::max<float>(boxWidth - left - floatValueForLength(inset.right(), boxWidth), 0),
+            std::max<float>(boxHeight - top - floatValueForLength(inset.bottom(), boxHeight), 0));
         FloatRect logicalRect = physicalRectToLogical(rect, logicalBoxSize.height(), writingMode);
 
         FloatSize boxSize(boxWidth, boxHeight);
-        FloatSize topLeftRadius = physicalSizeToLogical(floatSizeForLengthSize(inset.topLeftRadius(), boxSize, view), writingMode);
-        FloatSize topRightRadius = physicalSizeToLogical(floatSizeForLengthSize(inset.topRightRadius(), boxSize, view), writingMode);
-        FloatSize bottomLeftRadius = physicalSizeToLogical(floatSizeForLengthSize(inset.bottomLeftRadius(), boxSize, view), writingMode);
-        FloatSize bottomRightRadius = physicalSizeToLogical(floatSizeForLengthSize(inset.bottomRightRadius(), boxSize, view), writingMode);
+        FloatSize topLeftRadius = physicalSizeToLogical(floatSizeForLengthSize(inset.topLeftRadius(), boxSize), writingMode);
+        FloatSize topRightRadius = physicalSizeToLogical(floatSizeForLengthSize(inset.topRightRadius(), boxSize), writingMode);
+        FloatSize bottomLeftRadius = physicalSizeToLogical(floatSizeForLengthSize(inset.bottomLeftRadius(), boxSize), writingMode);
+        FloatSize bottomRightRadius = physicalSizeToLogical(floatSizeForLengthSize(inset.bottomRightRadius(), boxSize), writingMode);
         FloatRoundedRect::Radii cornerRadii(topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
 
         cornerRadii.scale(calcBorderRadiiConstraintScaleFor(logicalRect, cornerRadii));

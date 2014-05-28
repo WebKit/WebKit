@@ -1242,7 +1242,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         // To avoid the background color bleeding out behind the border, we'll render background and border
         // into a transparency layer, and then clip that in one go (which requires setting up the clip before
         // beginning the layer).
-        RoundedRect border = style().getRoundedBorderFor(paintRect, &view());
+        RoundedRect border = style().getRoundedBorderFor(paintRect);
         stateSaver.save();
         paintInfo.context->clipRoundedRect(FloatRoundedRect(border));
         paintInfo.context->beginTransparencyLayer(1);
@@ -2731,8 +2731,6 @@ LayoutUnit RenderBox::computeContentAndScrollbarLogicalHeightUsing(const Length&
         return height.value();
     if (height.isPercent())
         return computePercentageLogicalHeight(height);
-    if (height.isViewportPercentage())
-        return valueForLength(height, 0);
     return -1;
 }
 
@@ -2818,17 +2816,6 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
             LayoutUnit contentBoxHeight = cb->constrainContentBoxLogicalHeightByMinMax(contentBoxHeightWithScrollbar - cb->scrollbarLogicalHeight());
             availableHeight = std::max<LayoutUnit>(0, contentBoxHeight);
         }
-    } else if (cbstyle.logicalHeight().isViewportPercentage()) {
-        LayoutUnit heightWithScrollbar = valueForLength(cbstyle.logicalHeight(), 0);
-        if (heightWithScrollbar != -1) {
-            LayoutUnit contentBoxHeightWithScrollbar = cb->adjustContentBoxLogicalHeightForBoxSizing(heightWithScrollbar);
-            // We need to adjust for min/max height because this method does 
-            // not handle the min/max of the current block, its caller does.
-            // So the return value from the recursive call will not have been
-            // adjusted yet.
-            LayoutUnit contentBoxHeight = cb->constrainContentBoxLogicalHeightByMinMax(contentBoxHeightWithScrollbar - cb->scrollbarLogicalHeight());
-            availableHeight = std::max<LayoutUnit>(0, contentBoxHeight);
-        }
     } else if (isOutOfFlowPositionedWithSpecifiedHeight) {
         // Don't allow this to affect the block' height() member variable, since this
         // can get called while the block is still laying out its kids.
@@ -2878,11 +2865,6 @@ LayoutUnit RenderBox::computeReplacedLogicalWidthUsing(Length logicalWidth) cons
             LayoutUnit availableLogicalWidth = 0;
             return computeIntrinsicLogicalWidthUsing(logicalWidth, availableLogicalWidth, borderAndPaddingLogicalWidth()) - borderAndPaddingLogicalWidth();
         }
-        case ViewportPercentageWidth:
-        case ViewportPercentageHeight:
-        case ViewportPercentageMin:
-        case ViewportPercentageMax:
-            return adjustContentBoxLogicalWidthForBoxSizing(valueForLength(logicalWidth, 0));
         case FitContent:
         case FillAvailable:
         case Percent: 
@@ -2976,11 +2958,6 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) co
             }
             return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(logicalHeight, availableHeight));
         }
-        case ViewportPercentageWidth:
-        case ViewportPercentageHeight:
-        case ViewportPercentageMin:
-        case ViewportPercentageMax:
-            return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(logicalHeight, 0));
         default:
             return intrinsicLogicalHeight();
     }
@@ -4729,13 +4706,6 @@ bool RenderBox::hasRelativeLogicalHeight() const
     return style().logicalHeight().isPercent()
             || style().logicalMinHeight().isPercent()
             || style().logicalMaxHeight().isPercent();
-}
-
-bool RenderBox::hasViewportPercentageLogicalHeight() const
-{
-    return style().logicalHeight().isViewportPercentage()
-        || style().logicalMinHeight().isViewportPercentage()
-        || style().logicalMaxHeight().isViewportPercentage();
 }
 
 static void markBoxForRelayoutAfterSplit(RenderBox* box)

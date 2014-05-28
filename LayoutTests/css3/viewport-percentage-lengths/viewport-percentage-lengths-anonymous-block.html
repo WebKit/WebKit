@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<style>
+    #container {
+        width: 50vw;
+        height: 50vh;
+        border: 1px solid black;
+    }
+    #random {
+        width: 50%;
+        background-color: orange;
+    }
+</style>
+<body>
+    <div id="container">
+        <span id="firstContent">This is enough text content that it will wrap around in this container. We need lots of it to account for variances in font sizes.</span>
+        <div id="random">
+            This is some content in an inner div.
+        </div>
+        <span id="secondContent">And here is some more content that will also wrap around in this container. We need lots of it to account for variances in font sizes.</span>
+    </div>
+</body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+description("Test viewport unit sizes work when an anonymous block is involved.");
+
+function resizeTest(sizes) {
+    if (!sizes.length) {
+        testRunner.notifyDone();
+        return;
+    }
+
+    var size = sizes.shift();
+    var width = size[0];
+    var height = size[1];
+    window.resizeTo(width, height);
+    window.setTimeout(function () {
+        var min = Math.min(window.innerWidth, window.innerHeight);
+        var max = Math.max(window.innerWidth, window.innerHeight);
+        shouldBe("window.outerWidth", "" + width);
+        shouldBe("window.outerHeight", "" + height);
+        shouldBe("getComputedStyle(container).width", "'" + window.innerWidth/2 + "px'");
+        shouldBe("getComputedStyle(container).height", "'" + window.innerHeight/2 + "px'");
+        shouldBe("getComputedStyle(random).width", "'" + window.innerWidth/4 + "px'");
+        shouldBeGreaterThanOrEqual("window.innerWidth/2", "document.getElementById('firstContent').offsetWidth");
+        shouldBeGreaterThanOrEqual("window.innerWidth/2", "document.getElementById('secondContent').offsetWidth");
+        resizeTest(sizes);
+    }, 0);
+}
+
+resizeTest([[800, 600], [900, 600], [900, 640], [500, 640], [800, 600]]);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>

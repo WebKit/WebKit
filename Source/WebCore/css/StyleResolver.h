@@ -220,7 +220,7 @@ public:
 
     void addViewportDependentMediaQueryResult(const MediaQueryExp*, bool result);
     bool hasViewportDependentMediaQueries() const { return !m_viewportDependentMediaQueryResults.isEmpty(); }
-    bool affectedByViewportChange() const;
+    bool hasMediaQueriesAffectedByViewportChange() const;
 
     void addKeyframeStyle(PassRefPtr<StyleRuleKeyframes>);
 
@@ -232,14 +232,14 @@ public:
     
     void invalidateMatchedPropertiesCache();
 
+    void clearCachedPropertiesAffectedByViewportUnits();
+
 #if ENABLE(CSS_FILTERS)
     bool createFilterOperations(CSSValue* inValue, FilterOperations& outOperations);
     void loadPendingSVGDocuments();
 #endif // ENABLE(CSS_FILTERS)
 
     void loadPendingResources();
-
-    int viewportPercentageValue(CSSPrimitiveValue& unit, int percentage);
 
     struct RuleRange {
         RuleRange(int& firstRuleIndex, int& lastRuleIndex): firstRuleIndex(firstRuleIndex), lastRuleIndex(lastRuleIndex) { }
@@ -333,19 +333,22 @@ public:
         WTF_MAKE_NONCOPYABLE(State);
     public:
         State()
-        : m_element(0)
-        , m_styledElement(0)
-        , m_parentStyle(0)
-        , m_rootElementStyle(0)
-        , m_regionForStyling(0)
-        , m_elementLinkState(NotInsideLink)
-        , m_elementAffectedByClassRules(false)
-        , m_applyPropertyToRegularStyle(true)
-        , m_applyPropertyToVisitedLinkStyle(false)
-        , m_lineHeightValue(0)
-        , m_fontDirty(false)
-        , m_hasUAAppearance(false)
-        , m_backgroundData(BackgroundFillLayer) { }
+            : m_element(nullptr)
+            , m_styledElement(nullptr)
+            , m_parentStyle(nullptr)
+            , m_rootElementStyle(nullptr)
+            , m_regionForStyling(nullptr)
+            , m_elementLinkState(NotInsideLink)
+            , m_elementAffectedByClassRules(false)
+            , m_applyPropertyToRegularStyle(true)
+            , m_applyPropertyToVisitedLinkStyle(false)
+            , m_lineHeightValue(nullptr)
+            , m_fontDirty(false)
+            , m_fontSizeHasViewportUnits(false)
+            , m_hasUAAppearance(false)
+            , m_backgroundData(BackgroundFillLayer)
+        {
+        }
 
     public:
         void initElement(Element*);
@@ -355,11 +358,7 @@ public:
         Document& document() const { return m_element->document(); }
         Element* element() const { return m_element; }
         StyledElement* styledElement() const { return m_styledElement; }
-        void setStyle(PassRef<RenderStyle> style)
-        {
-            m_style = std::move(style);
-            m_cssToLengthConversionData = CSSToLengthConversionData(m_style.get(), m_rootElementStyle);
-        }
+        void setStyle(PassRef<RenderStyle>);
         RenderStyle* style() const { return m_style.get(); }
         PassRef<RenderStyle> takeStyle() { return m_style.releaseNonNull(); }
 
@@ -385,6 +384,8 @@ public:
         CSSValue* lineHeightValue() { return m_lineHeightValue; }
         void setFontDirty(bool isDirty) { m_fontDirty = isDirty; }
         bool fontDirty() const { return m_fontDirty; }
+        void setFontSizeHasViewportUnits(bool hasViewportUnits) { m_fontSizeHasViewportUnits = hasViewportUnits; }
+        bool fontSizeHasViewportUnits() const { return m_fontSizeHasViewportUnits; }
 
         void cacheBorderAndBackground();
         bool hasUAAppearance() const { return m_hasUAAppearance; }
@@ -405,9 +406,8 @@ public:
         CSSToLengthConversionData cssToLengthConversionData() const { return m_cssToLengthConversionData; }
 
     private:
-        // FIXME(bug 108563): to make it easier to review, these member
-        // variables are public. However we should add methods to access
-        // these variables.
+        void updateConversionData();
+
         Element* m_element;
         RefPtr<RenderStyle> m_style;
         StyledElement* m_styledElement;
@@ -430,6 +430,7 @@ public:
 #endif
         CSSValue* m_lineHeightValue;
         bool m_fontDirty;
+        bool m_fontSizeHasViewportUnits;
 
         bool m_hasUAAppearance;
         BorderData m_borderData;

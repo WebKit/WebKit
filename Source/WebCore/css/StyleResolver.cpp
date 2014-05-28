@@ -235,7 +235,7 @@ inline void StyleResolver::State::clear()
 #if ENABLE(CSS_FILTERS)
     m_filtersWithPendingSVGDocuments.clear();
 #endif
-    m_cssToLengthConversionData = CSSToLengthConversionData(nullptr, nullptr);
+    m_cssToLengthConversionData = CSSToLengthConversionData();
 }
 
 void StyleResolver::MatchResult::addMatchedProperties(const StyleProperties& properties, StyleRule* rule, unsigned linkMatchType, PropertyWhitelistType propertyWhitelistType)
@@ -380,11 +380,17 @@ bool StyleResolver::classNamesAffectedByRules(const SpaceSplitString& classNames
     return false;
 }
 
+inline void StyleResolver::State::updateConversionData()
+{
+    m_cssToLengthConversionData = CSSToLengthConversionData(m_style.get(), m_rootElementStyle, m_element ? document().renderView() : nullptr);
+}
+
 inline void StyleResolver::State::initElement(Element* e)
 {
     m_element = e;
     m_styledElement = e && e->isStyledElement() ? toStyledElement(e) : nullptr;
     m_elementLinkState = e ? e->document().visitedLinkState().determineLinkState(e) : NotInsideLink;
+    updateConversionData();
 }
 
 inline void StyleResolver::initElement(Element* e)
@@ -416,7 +422,13 @@ inline void StyleResolver::State::initForStyleResolve(Document& document, Elemen
     m_pendingImageProperties.clear();
     m_fontDirty = false;
 
-    m_cssToLengthConversionData = CSSToLengthConversionData(m_style.get(), m_rootElementStyle);
+    updateConversionData();
+}
+
+inline void StyleResolver::State::setStyle(PassRef<RenderStyle> style)
+{
+    m_style = std::move(style);
+    updateConversionData();
 }
 
 static const unsigned cStyleSearchThreshold = 10;
@@ -795,6 +807,9 @@ PassRef<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyl
     // Clean up our style object's display and text decorations (among other fixups).
     adjustRenderStyle(*state.style(), *state.parentStyle(), element);
 
+    if (state.style()->hasViewportUnits())
+        document().setHasStyleWithViewportUnits();
+
     state.clear(); // Clear out for the next resolve.
 
     // Now return the style.
@@ -963,6 +978,9 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* element, c
 
     // Clean up our style object's display and text decorations (among other fixups).
     adjustRenderStyle(*state.style(), *m_state.parentStyle(), 0);
+
+    if (state.style()->hasViewportUnits())
+        document().setHasStyleWithViewportUnits();
 
     // Start loading resources referenced by this style.
     loadPendingResources();
@@ -1392,6 +1410,8 @@ void StyleResolver::updateFont()
     checkForZoomChange(style, m_state.parentStyle());
     checkForOrientationChange(style);
     style->font().update(m_fontSelector);
+    if (m_state.fontSizeHasViewportUnits())
+        style->setHasViewportUnits(true);
     m_state.setFontDirty(false);
 }
 
@@ -1437,12 +1457,12 @@ Vector<RefPtr<StyleRule>> StyleResolver::pseudoStyleRulesForElement(Element* ele
 
 Length StyleResolver::convertToIntLength(const CSSPrimitiveValue* primitiveValue, const CSSToLengthConversionData& conversionData)
 {
-    return primitiveValue ? primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | FractionConversion | ViewportPercentageConversion>(conversionData) : Length(Undefined);
+    return primitiveValue ? primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | FractionConversion>(conversionData) : Length(Undefined);
 }
 
 Length StyleResolver::convertToFloatLength(const CSSPrimitiveValue* primitiveValue, const CSSToLengthConversionData& conversionData)
 {
-    return primitiveValue ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | CalculatedConversion | FractionConversion | ViewportPercentageConversion>(conversionData) : Length(Undefined);
+    return primitiveValue ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | CalculatedConversion | FractionConversion>(conversionData) : Length(Undefined);
 }
 
 static bool shouldApplyPropertyInParseOrder(CSSPropertyID propertyID)
@@ -1563,6 +1583,17 @@ void StyleResolver::addToMatchedPropertiesCache(const RenderStyle* style, const 
 void StyleResolver::invalidateMatchedPropertiesCache()
 {
     m_matchedPropertiesCache.clear();
+}
+
+void StyleResolver::clearCachedPropertiesAffectedByViewportUnits()
+{
+    Vector<unsigned, 16> toRemove;
+    for (auto& cacheKeyValue : m_matchedPropertiesCache) {
+        if (cacheKeyValue.value.renderStyle->hasViewportUnits())
+            toRemove.append(cacheKeyValue.key);
+    }
+    for (auto key : toRemove)
+        m_matchedPropertiesCache.remove(key);
 }
 
 static bool isCacheableInMatchedPropertiesCache(const Element* element, const RenderStyle* style, const RenderStyle* parentStyle)
@@ -1843,7 +1874,7 @@ static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, const Styl
         return true;
     }
 
-    workingLength = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | ViewportPercentageConversion | CalculatedConversion | AutoConversion>(state.cssToLengthConversionData());
+    workingLength = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | AutoConversion>(state.cssToLengthConversionData());
     if (workingLength.length().isUndefined())
         return false;
 
@@ -2287,17 +2318,9 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
                 continue;
             CSSShadowValue* item = toCSSShadowValue(currValue);
             int x = item->x->computeLength<int>(state.cssToLengthConversionData());
-            if (item->x->isViewportPercentageLength())
-                x = viewportPercentageValue(*item->x, x);
             int y = item->y->computeLength<int>(state.cssToLengthConversionData());
-            if (item->y->isViewportPercentageLength())
-                y = viewportPercentageValue(*item->y, y);
             int blur = item->blur ? item->blur->computeLength<int>(state.cssToLengthConversionData()) : 0;
-            if (item->blur && item->blur->isViewportPercentageLength())
-                blur = viewportPercentageValue(*item->blur, blur);
             int spread = item->spread ? item->spread->computeLength<int>(state.cssToLengthConversionData()) : 0;
-            if (item->spread && item->spread->isViewportPercentageLength())
-                spread = viewportPercentageValue(*item->spread, spread);
             ShadowStyle shadowStyle = item->style && item->style->getValueID() == CSSValueInset ? Inset : Normal;
             Color color;
             if (item->color)
@@ -3236,7 +3259,7 @@ void StyleResolver::addViewportDependentMediaQueryResult(const MediaQueryExp* ex
     m_viewportDependentMediaQueryResults.append(std::make_unique<MediaQueryResult>(*expr, result));
 }
 
-bool StyleResolver::affectedByViewportChange() const
+bool StyleResolver::hasMediaQueriesAffectedByViewportChange() const
 {
     unsigned s = m_viewportDependentMediaQueryResults.size();
     for (unsigned i = 0; i < s; i++) {
@@ -3415,15 +3438,9 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
 
             CSSShadowValue* item = toCSSShadowValue(cssValue);
             int x = item->x->computeLength<int>(state.cssToLengthConversionData());
-            if (item->x->isViewportPercentageLength())
-                x = viewportPercentageValue(*item->x, x);
             int y = item->y->computeLength<int>(state.cssToLengthConversionData());
-            if (item->y->isViewportPercentageLength())
-                y = viewportPercentageValue(*item->y, y);
             IntPoint location(x, y);
             int blur = item->blur ? item->blur->computeLength<int>(state.cssToLengthConversionData()) : 0;
-            if (item->blur && item->blur->isViewportPercentageLength())
-                blur = viewportPercentageValue(*item->blur, blur);
             Color color;
             if (item->color)
                 color = colorFromPrimitiveValue(item->color.get());
@@ -3621,24 +3638,6 @@ inline StyleResolver::MatchedProperties::MatchedProperties()
 
 StyleResolver::MatchedProperties::~MatchedProperties()
 {
-}
-
-int StyleResolver::viewportPercentageValue(CSSPrimitiveValue& unit, int percentage)
-{
-    int viewPortHeight = document().renderView()->viewportSizeForCSSViewportUnits().height() * percentage / 100.0f;
-    int viewPortWidth = document().renderView()->viewportSizeForCSSViewportUnits().width() * percentage / 100.0f;
-
-    if (unit.isViewportPercentageHeight())
-        return viewPortHeight;
-    if (unit.isViewportPercentageWidth())
-        return viewPortWidth;
-    if (unit.isViewportPercentageMax())
-        return std::max(viewPortWidth, viewPortHeight);
-    if (unit.isViewportPercentageMin())
-        return std::min(viewPortWidth, viewPortHeight);
-
-    ASSERT_NOT_REACHED();
-    return 0;
 }
 
 StyleResolver::CascadedProperties::CascadedProperties(TextDirection direction, WritingMode writingMode)

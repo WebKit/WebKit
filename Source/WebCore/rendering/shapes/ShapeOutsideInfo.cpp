@@ -174,14 +174,14 @@ const Shape& ShapeOutsideInfo::computedShape() const
     const RenderStyle& containingBlockStyle = m_renderer.containingBlock()->style();
 
     WritingMode writingMode = containingBlockStyle.writingMode();
-    float margin = floatValueForLength(m_renderer.style().shapeMargin(), m_renderer.containingBlock() ? m_renderer.containingBlock()->contentWidth() : LayoutUnit(), &m_renderer.view());
+    float margin = floatValueForLength(m_renderer.style().shapeMargin(), m_renderer.containingBlock() ? m_renderer.containingBlock()->contentWidth() : LayoutUnit());
     float shapeImageThreshold = style.shapeImageThreshold();
     const ShapeValue& shapeValue = *style.shapeOutside();
 
     switch (shapeValue.type()) {
     case ShapeValue::Shape:
         ASSERT(shapeValue.shape());
-        m_shape = Shape::createShape(shapeValue.shape(), m_referenceBoxLogicalSize, writingMode, margin, &m_renderer.view());
+        m_shape = Shape::createShape(shapeValue.shape(), m_referenceBoxLogicalSize, writingMode, margin);
         break;
     case ShapeValue::Image: {
         Image* image;

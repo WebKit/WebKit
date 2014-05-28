@@ -176,7 +176,7 @@ protected:
     enum StylePropagationType { PropagateToAllChildren, PropagateToBlockChildrenOnly };
     void propagateStyleToAnonymousChildren(StylePropagationType);
 
-    LayoutUnit valueForLength(const Length&, LayoutUnit maximumValue, bool roundPercentages = false) const;
+    LayoutUnit valueForLength(const Length&, LayoutUnit maximumValue) const;
     LayoutUnit minimumValueForLength(const Length&, LayoutUnit maximumValue, bool roundPercentages = false) const;
 
     void setFirstChild(RenderObject* child) { m_firstChild = child; }
@@ -266,14 +266,14 @@ inline void RenderElement::setChildNeedsLayout(MarkingBehavior markParents)
         markContainingBlocksForLayout();
 }
 
-inline LayoutUnit RenderElement::valueForLength(const Length& length, LayoutUnit maximumValue, bool roundPercentages) const
+inline LayoutUnit RenderElement::valueForLength(const Length& length, LayoutUnit maximumValue) const
 {
-    return WebCore::valueForLength(length, maximumValue, &view(), roundPercentages);
+    return WebCore::valueForLength(length, maximumValue);
 }
 
 inline LayoutUnit RenderElement::minimumValueForLength(const Length& length, LayoutUnit maximumValue, bool roundPercentages) const
 {
-    return WebCore::minimumValueForLength(length, maximumValue, &view(), roundPercentages);
+    return WebCore::minimumValueForLength(length, maximumValue, roundPercentages);
 }
 
 inline bool RenderElement::isRenderLayerModelObject() const

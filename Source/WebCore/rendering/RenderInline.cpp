@@ -739,8 +739,6 @@ static LayoutUnit computeMargin(const RenderInline* renderer, const Length& marg
         return margin.value();
     if (margin.isPercent())
         return minimumValueForLength(margin, std::max<LayoutUnit>(0, renderer->containingBlock()->availableLogicalWidth()));
-    if (margin.isViewportPercentage())
-        return valueForLength(margin, 0, &renderer->view());
     return 0;
 }
 
@@ -1399,10 +1397,10 @@ LayoutUnit RenderInline::lineHeight(bool firstLine, LineDirectionMode /*directio
     if (firstLine && document().styleSheetCollection().usesFirstLineRules()) {
         const RenderStyle& firstLineStyle = this->firstLineStyle();
         if (&firstLineStyle != &style())
-            return firstLineStyle.computedLineHeight(&view());
+            return firstLineStyle.computedLineHeight();
     }
 
-    return style().computedLineHeight(&view());
+    return style().computedLineHeight();
 }
 
 int RenderInline::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const

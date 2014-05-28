@@ -37,12 +37,11 @@ enum LengthType {
     Intrinsic, MinIntrinsic,
     MinContent, MaxContent, FillAvailable, FitContent,
     Calculated,
-    ViewportPercentageWidth, ViewportPercentageHeight, ViewportPercentageMin, ViewportPercentageMax,
     Undefined
 };
 
-class CalculationValue;    
-    
+class CalculationValue;
+
 struct Length {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -105,7 +104,6 @@ public:
     bool isIntrinsicOrAuto() const;
     bool isSpecified() const;
     bool isSpecifiedOrIntrinsic() const;
-    bool isViewportPercentage() const;
 
     // Blend two lengths to produce a new length that is in between them. Used for animation.
     // FIXME: Why is this a member function?
@@ -263,12 +261,6 @@ inline float Length::percent() const
     return value();
 }
 
-inline float Length::viewportPercentageLength() const
-{
-    ASSERT(isViewportPercentage());
-    return value();
-}
-
 inline LengthType Length::type() const
 {
     return static_cast<LengthType>(m_type);
@@ -397,17 +389,12 @@ inline bool Length::isIntrinsicOrAuto() const
 
 inline bool Length::isSpecified() const
 {
-    return isFixed() || isPercent() || isViewportPercentage();
+    return isFixed() || isPercent();
 }
 
 inline bool Length::isSpecifiedOrIntrinsic() const
 {
     return isSpecified() || isIntrinsic();
-}
-
-inline bool Length::isViewportPercentage() const
-{
-    return type() >= ViewportPercentageWidth && type() <= ViewportPercentageMax;
 }
 
 // FIXME: Does this need to be in the header? Is it valuable to inline? Does it get inlined?

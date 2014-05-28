@@ -570,7 +570,6 @@ public:
 
     virtual bool hasRelativeDimensions() const;
     virtual bool hasRelativeLogicalHeight() const;
-    bool hasViewportPercentageLogicalHeight() const;
 
     bool hasHorizontalLayoutOverflow() const
     {

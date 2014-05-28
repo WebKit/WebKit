@@ -117,9 +117,9 @@ bool RenderSVGRoot::isEmbeddedThroughFrameContainingSVGDocument() const
     return frame().document()->isSVGDocument();
 }
 
-static inline LayoutUnit resolveLengthAttributeForSVG(const Length& length, float scale, float maxSize, RenderView* renderView)
+static inline LayoutUnit resolveLengthAttributeForSVG(const Length& length, float scale, float maxSize)
 {
-    return valueForLength(length, maxSize, renderView) * (length.isFixed() ? scale : 1);
+    return valueForLength(length, maxSize) * (length.isFixed() ? scale : 1);
 }
 
 LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
@@ -135,7 +135,7 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(ShouldComputePreferred sho
         return RenderReplaced::computeReplacedLogicalWidth(shouldComputePreferred);
 
     if (svgSVGElement().hasIntrinsicWidth())
-        return resolveLengthAttributeForSVG(svgSVGElement().intrinsicWidth(), style().effectiveZoom(), containingBlock()->availableLogicalWidth(), &view());
+        return resolveLengthAttributeForSVG(svgSVGElement().intrinsicWidth(), style().effectiveZoom(), containingBlock()->availableLogicalWidth());
 
     // SVG embedded via SVGImage (background-image/border-image/etc) / Inline SVG.
     return RenderReplaced::computeReplacedLogicalWidth(shouldComputePreferred);
@@ -154,7 +154,7 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight() const
         return RenderReplaced::computeReplacedLogicalHeight();
 
     if (svgSVGElement().hasIntrinsicHeight())
-        return resolveLengthAttributeForSVG(svgSVGElement().intrinsicHeight(), style().effectiveZoom(), containingBlock()->availableLogicalHeight(IncludeMarginBorderPadding).toFloat(), &view());
+        return resolveLengthAttributeForSVG(svgSVGElement().intrinsicHeight(), style().effectiveZoom(), containingBlock()->availableLogicalHeight(IncludeMarginBorderPadding).toFloat());
 
     // SVG embedded via SVGImage (background-image/border-image/etc) / Inline SVG.
     return RenderReplaced::computeReplacedLogicalHeight();

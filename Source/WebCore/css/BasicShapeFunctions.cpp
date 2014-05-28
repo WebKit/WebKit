@@ -36,7 +36,6 @@
 #include "CSSValuePool.h"
 #include "Pair.h"
 #include "RenderStyle.h"
-#include "RenderView.h"
 
 namespace WebCore {
 
@@ -130,7 +129,7 @@ PassRefPtr<CSSValue> valueForBasicShape(const RenderStyle* style, const BasicSha
 
 static Length convertToLength(const CSSToLengthConversionData& conversionData, CSSPrimitiveValue* value)
 {
-    return value->convertToLength<FixedIntegerConversion | FixedFloatConversion | PercentConversion | CalculatedConversion | ViewportPercentageConversion>(conversionData);
+    return value->convertToLength<FixedIntegerConversion | FixedFloatConversion | PercentConversion | CalculatedConversion>(conversionData);
 }
 
 static LengthSize convertToLengthSize(const CSSToLengthConversionData& conversionData, CSSPrimitiveValue* value)
@@ -265,9 +264,9 @@ PassRefPtr<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conve
     return basicShape.release();
 }
 
-float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate& center, float boxDimension, RenderView* view)
+float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate& center, float boxDimension)
 {
-    float offset = floatValueForLength(center.length(), boxDimension, view);
+    float offset = floatValueForLength(center.length(), boxDimension);
     if (center.direction() == BasicShapeCenterCoordinate::TopLeft)
         return offset;
     return boxDimension - offset;

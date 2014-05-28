@@ -1273,6 +1273,10 @@ public:
     virtual bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) override;
 #endif
 
+    void setHasStyleWithViewportUnits() { m_hasStyleWithViewportUnits = true; }
+    bool hasStyleWithViewportUnits() const { return m_hasStyleWithViewportUnits; }
+    void updateViewportUnitsOnResize();
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1691,6 +1695,8 @@ private:
 
     bool m_hasInjectedPlugInsScript;
     bool m_renderTreeBeingDestroyed;
+
+    bool m_hasStyleWithViewportUnits;
 };
 
 inline void Document::notifyRemovePendingSheetIfNeeded()

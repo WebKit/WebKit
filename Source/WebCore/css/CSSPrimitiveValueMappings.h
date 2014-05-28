@@ -4624,8 +4624,7 @@ enum LengthConversion {
     AutoConversion = 1 << 2,
     PercentConversion = 1 << 3,
     FractionConversion = 1 << 4,
-    CalculatedConversion = 1 << 5,
-    ViewportPercentageConversion = 1 << 6
+    CalculatedConversion = 1 << 5
 };
 
 template<int supported> Length CSSPrimitiveValue::convertToLength(const CSSToLengthConversionData& conversionData) const
@@ -4644,8 +4643,6 @@ template<int supported> Length CSSPrimitiveValue::convertToLength(const CSSToLen
         return Length(Auto);
     if ((supported & CalculatedConversion) && isCalculated())
         return Length(cssCalcValue()->createCalculationValue(conversionData));
-    if ((supported & ViewportPercentageConversion) && isViewportPercentageLength())
-        return viewportPercentageLength();
     return Length(Undefined);
 }
 

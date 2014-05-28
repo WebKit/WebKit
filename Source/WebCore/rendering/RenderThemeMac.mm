@@ -1216,7 +1216,7 @@ void RenderThemeMac::paintMenuListButtonGradients(const RenderObject& o, const P
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-    FloatRoundedRect border = FloatRoundedRect(o.style().getRoundedBorderFor(r, &o.view()));
+    FloatRoundedRect border = FloatRoundedRect(o.style().getRoundedBorderFor(r));
     int radius = border.radii().topLeft().width();
 
     CGColorSpaceRef cspace = deviceRGBColorSpaceRef();

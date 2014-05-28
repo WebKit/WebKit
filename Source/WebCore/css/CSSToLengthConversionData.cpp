@@ -32,6 +32,7 @@
 #include "CSSToLengthConversionData.h"
 
 #include "RenderStyle.h"
+#include "RenderView.h"
 
 namespace WebCore {
 
@@ -40,6 +41,48 @@ float CSSToLengthConversionData::zoom() const
     if (m_useEffectiveZoom)
         return m_style ? m_style->effectiveZoom() : 1;
     return m_zoom;
+}
+
+double CSSToLengthConversionData::viewportWidthFactor() const
+{
+    if (m_style && !m_computingFontSize)
+        m_style->setHasViewportUnits();
+    return m_renderView ? m_renderView->viewportSizeForCSSViewportUnits().width() / 100.0 : 0.0;
+}
+
+double CSSToLengthConversionData::viewportHeightFactor() const
+{
+    if (m_style && !m_computingFontSize)
+        m_style->setHasViewportUnits();
+
+    if (!m_renderView)
+        return 0.0;
+
+    return m_renderView ? m_renderView->viewportSizeForCSSViewportUnits().height() / 100.0 : 0.0;
+}
+
+double CSSToLengthConversionData::viewportMinFactor() const
+{
+    if (m_style && !m_computingFontSize)
+        m_style->setHasViewportUnits();
+
+    if (!m_renderView)
+        return 0.0;
+
+    IntSize viewportSizeForCSSViewportUnits = m_renderView->viewportSizeForCSSViewportUnits();
+    return std::min(viewportSizeForCSSViewportUnits.width(), viewportSizeForCSSViewportUnits.height()) / 100.0;
+}
+
+double CSSToLengthConversionData::viewportMaxFactor() const
+{
+    if (m_style && !m_computingFontSize)
+        m_style->setHasViewportUnits();
+
+    if (!m_renderView)
+        return 0.0;
+
+    IntSize viewportSizeForCSSViewportUnits = m_renderView->viewportSizeForCSSViewportUnits();
+    return std::max(viewportSizeForCSSViewportUnits.width(), viewportSizeForCSSViewportUnits.height()) / 100.0;
 }
 
 } // namespace WebCore

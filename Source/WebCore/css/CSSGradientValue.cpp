@@ -36,6 +36,7 @@
 #include "Image.h"
 #include "NodeRenderStyle.h"
 #include "RenderElement.h"
+#include "RenderView.h"
 #include "StyleResolver.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -129,7 +130,7 @@ PassRefPtr<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(StyleR
     return result.release();
 }
 
-void CSSGradientValue::addStops(Gradient& gradient, RenderView& renderView, const CSSToLengthConversionData& conversionData, float maxLengthForRepeat)
+void CSSGradientValue::addStops(Gradient& gradient, const CSSToLengthConversionData& conversionData, float maxLengthForRepeat)
 {
     if (m_gradientType == CSSDeprecatedLinearGradient || m_gradientType == CSSDeprecatedRadialGradient) {
         sortStopsIfNeeded();
@@ -182,8 +183,6 @@ void CSSGradientValue::addStops(Gradient& gradient, RenderView& renderView, cons
                 float length;
                 if (positionValue.isLength())
                     length = positionValue.computeLength<float>(conversionData);
-                else if (positionValue.isViewportPercentageLength())
-                    length = valueForLength(positionValue.viewportPercentageLength(), 0, &renderView);
                 else {
                     Ref<CalculationValue> calculationValue { positionValue.cssCalcValue()->createCalculationValue(conversionData) };
                     length = calculationValue->evaluate(gradientLength);
@@ -647,7 +646,7 @@ PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderElement& rende
 {
     ASSERT(!size.isEmpty());
 
-    CSSToLengthConversionData conversionData(&renderer.style(), renderer.document().documentElement()->renderStyle());
+    CSSToLengthConversionData conversionData(&renderer.style(), renderer.document().documentElement()->renderStyle(), &renderer.view());
 
     FloatPoint firstPoint;
     FloatPoint secondPoint;
@@ -704,7 +703,7 @@ PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderElement& rende
     RefPtr<Gradient> gradient = Gradient::create(firstPoint, secondPoint);
 
     // Now add the stops.
-    addStops(*gradient, renderer.view(), conversionData, 1);
+    addStops(*gradient, conversionData, 1);
 
     return gradient.release();
 }
@@ -985,7 +984,7 @@ PassRefPtr<Gradient> CSSRadialGradientValue::createGradient(RenderElement& rende
 {
     ASSERT(!size.isEmpty());
 
-    CSSToLengthConversionData conversionData(&renderer.style(), renderer.document().documentElement()->renderStyle());
+    CSSToLengthConversionData conversionData(&renderer.style(), renderer.document().documentElement()->renderStyle(), &renderer.view());
 
     FloatPoint firstPoint = computeEndPoint(m_firstX.get(), m_firstY.get(), conversionData, size);
     if (!m_firstX)
@@ -1118,7 +1117,7 @@ PassRefPtr<Gradient> CSSRadialGradientValue::createGradient(RenderElement& rende
     }
 
     // Now add the stops.
-    addStops(*gradient, renderer.view(), conversionData, maxExtent);
+    addStops(*gradient, conversionData, maxExtent);
 
     return gradient.release();
 }

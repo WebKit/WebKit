@@ -394,8 +394,6 @@ public:
             setValue(styleResolver->style(), Length(primitiveValue->getDoubleValue(), Percent));
         else if (primitiveValue->isCalculatedPercentageWithLength())
             setValue(styleResolver->style(), Length(primitiveValue->cssCalcValue()->createCalculationValue(styleResolver->state().cssToLengthConversionData())));
-        else if (primitiveValue->isViewportPercentageLength())
-            setValue(styleResolver->style(), primitiveValue->viewportPercentageLength());
     }
 
     static PropertyHandler createHandler()
@@ -446,8 +444,6 @@ public:
         Length radiusWidth;
         if (pair->first()->isPercentage())
             radiusWidth = Length(pair->first()->getDoubleValue(), Percent);
-        else if (pair->first()->isViewportPercentageLength())
-            radiusWidth = Length(styleResolver->viewportPercentageValue(*pair->first(), pair->first()->getIntValue()), Fixed);
         else if (pair->first()->isCalculatedPercentageWithLength())
             radiusWidth = Length(pair->first()->cssCalcValue()->createCalculationValue(conversionData));
         else
@@ -456,8 +452,6 @@ public:
         Length radiusHeight;
         if (pair->second()->isPercentage())
             radiusHeight = Length(pair->second()->getDoubleValue(), Percent);
-        else if (pair->second()->isViewportPercentageLength())
-            radiusHeight = Length(styleResolver->viewportPercentageValue(*pair->second(), pair->second()->getIntValue()), Fixed);
         else if (pair->second()->isCalculatedPercentageWithLength())
             radiusHeight = Length(pair->second()->cssCalcValue()->createCalculationValue(conversionData));
         else
@@ -622,8 +616,6 @@ public:
                 if (originalLength >= 1.0)
                     length = 1.0;
             }
-            if (primitiveValue->isViewportPercentageLength())
-                length = styleResolver->viewportPercentageValue(*primitiveValue, length);
         } else {
             ASSERT_NOT_REACHED();
             length = 0;
@@ -868,16 +860,15 @@ public:
         } else {
             fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize
                                               || !(primitiveValue->isPercentage() || primitiveValue->isFontRelativeLength()));
-            if (primitiveValue->isLength())
-                size = primitiveValue->computeLength<float>(CSSToLengthConversionData(styleResolver->parentStyle(), styleResolver->rootElementStyle(), 1.0f, true));
-            else if (primitiveValue->isPercentage())
+            if (primitiveValue->isLength()) {
+                size = primitiveValue->computeLength<float>(CSSToLengthConversionData(styleResolver->parentStyle(), styleResolver->rootElementStyle(), styleResolver->document().renderView(), 1.0f, true));
+                styleResolver->state().setFontSizeHasViewportUnits(primitiveValue->isViewportPercentageLength());
+            } else if (primitiveValue->isPercentage())
                 size = (primitiveValue->getFloatValue() * parentSize) / 100.0f;
             else if (primitiveValue->isCalculatedPercentageWithLength()) {
                 Ref<CalculationValue> calculationValue { primitiveValue->cssCalcValue()->createCalculationValue(styleResolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f)) };
                 size = calculationValue->evaluate(parentSize);
-            } else if (primitiveValue->isViewportPercentageLength())
-                size = valueForLength(primitiveValue->viewportPercentageLength(), 0, styleResolver->document().renderView());
-            else
+            } else
                 return;
         }
 
@@ -1458,9 +1449,7 @@ public:
         } else if (primitiveValue->isNumber()) {
             // FIXME: number and percentage values should produce the same type of Length (ie. Fixed or Percent).
             lineHeight = Length(primitiveValue->getDoubleValue() * 100.0, Percent);
-        } else if (primitiveValue->isViewportPercentageLength())
-            lineHeight = primitiveValue->viewportPercentageLength();
-        else
+        } else
             return;
         styleResolver->style()->setLineHeight(lineHeight);
     }
@@ -1498,9 +1487,7 @@ public:
                 lineHeight = Length(primitiveValue->getDoubleValue() * styleResolver->style()->textSizeAdjust().multiplier() * 100.0, Percent);
             else
                 lineHeight = Length(primitiveValue->getDoubleValue() * 100.0, Percent);
-        } else if (primitiveValue->isViewportPercentageLength())
-            lineHeight = primitiveValue->viewportPercentageLength();
-        else
+        } else
             return;
         styleResolver->style()->setLineHeight(lineHeight);
         styleResolver->style()->setSpecifiedLineHeight(lineHeight);
@@ -1543,8 +1530,6 @@ public:
             wordSpacing = Length(primitiveValue->getDoubleValue(), Percent);
         else if (primitiveValue->isNumber())
             wordSpacing = Length(primitiveValue->getDoubleValue(), Fixed);
-        else if (primitiveValue->isViewportPercentageLength())
-            wordSpacing = Length(styleResolver->viewportPercentageValue(*primitiveValue, primitiveValue->getDoubleValue()), Fixed);
         else
             return;
         styleResolver->style()->setWordSpacing(wordSpacing);
@@ -1960,7 +1945,7 @@ public:
         if (primitiveValue->getValueID())
             return styleResolver->style()->setVerticalAlign(*primitiveValue);
 
-        styleResolver->style()->setVerticalAlignLength(primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | ViewportPercentageConversion>(styleResolver->state().cssToLengthConversionData()));
+        styleResolver->style()->setVerticalAlignLength(primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver->state().cssToLengthConversionData()));
     }
 
     static PropertyHandler createHandler()
@@ -2300,7 +2285,7 @@ public:
 
             CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(item);
             if (!primitiveValue->getValueID())
-                lengthOrPercentageValue = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | ViewportPercentageConversion>(styleResolver->state().cssToLengthConversionData());
+                lengthOrPercentageValue = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver->state().cssToLengthConversionData());
 #if ENABLE(CSS3_TEXT)
             else if (primitiveValue->getValueID() == CSSValueWebkitEachLine)
                 textIndentLineValue = TextIndentEachLine;

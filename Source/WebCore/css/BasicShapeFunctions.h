@@ -36,16 +36,16 @@
 namespace WebCore {
 
 class CSSBasicShape;
+class CSSToLengthConversionData;
 class CSSPrimitiveValue;
 class CSSToLengthConversionData;
 class CSSValue;
 class RenderStyle;
-class RenderView;
 
 PassRefPtr<CSSValue> valueForBasicShape(const RenderStyle*, const BasicShape*);
 PassRefPtr<BasicShape> basicShapeForValue(const CSSToLengthConversionData&, const CSSBasicShape*);
 
-float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate&, float, RenderView*);
+float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate&, float);
 }
 
 #endif

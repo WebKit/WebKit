@@ -372,8 +372,6 @@ LayoutUnit RenderTable::convertStyleLogicalHeightToComputedHeight(const Length& 
         computedLogicalHeight = styleLogicalHeight.value() - borders;
     } else if (styleLogicalHeight.isPercent())
         computedLogicalHeight = computePercentageLogicalHeight(styleLogicalHeight);
-    else if (styleLogicalHeight.isViewportPercentage())
-        computedLogicalHeight = minimumValueForLength(styleLogicalHeight, 0);
     else
         ASSERT_NOT_REACHED();
     return std::max<LayoutUnit>(0, computedLogicalHeight);
@@ -785,13 +783,13 @@ void RenderTable::computePreferredLogicalWidths()
         m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, m_captions[i]->minPreferredLogicalWidth());
 
     RenderStyle& styleToUse = style();
-    // FIXME: This should probably be checking for isSpecified since you should be able to use percentage, calc or viewport relative values for min-width.
+    // FIXME: This should probably be checking for isSpecified since you should be able to use percentage or calc values for min-width.
     if (styleToUse.logicalMinWidth().isFixed() && styleToUse.logicalMinWidth().value() > 0) {
         m_maxPreferredLogicalWidth = std::max(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalMinWidth().value()));
         m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalMinWidth().value()));
     }
 
-    // FIXME: This should probably be checking for isSpecified since you should be able to use percentage, calc or viewport relative values for maxWidth.
+    // FIXME: This should probably be checking for isSpecified since you should be able to use percentage or calc values for maxWidth.
     if (styleToUse.logicalMaxWidth().isFixed()) {
         m_maxPreferredLogicalWidth = std::min(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalMaxWidth().value()));
         m_minPreferredLogicalWidth = std::min(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalMaxWidth().value()));

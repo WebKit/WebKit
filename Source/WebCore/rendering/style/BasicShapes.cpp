@@ -88,13 +88,13 @@ bool BasicShape::canBlend(const BasicShape* other) const
         && thisEllipse->radiusY().canBlend(otherEllipse->radiusY()));
 }
 
-float BasicShapeCircle::floatValueForRadiusInBox(float boxWidth, float boxHeight, RenderView* view) const
+float BasicShapeCircle::floatValueForRadiusInBox(float boxWidth, float boxHeight) const
 {
     if (m_radius.type() == BasicShapeRadius::Value)
         return floatValueForLength(m_radius.value(), sqrtf((boxWidth * boxWidth + boxHeight * boxHeight) / 2));
 
-    float centerX = floatValueForCenterCoordinate(m_centerX, boxWidth, view);
-    float centerY = floatValueForCenterCoordinate(m_centerY, boxHeight, view);
+    float centerX = floatValueForCenterCoordinate(m_centerX, boxWidth);
+    float centerY = floatValueForCenterCoordinate(m_centerY, boxHeight);
 
     if (m_radius.type() == BasicShapeRadius::ClosestSide)
         return std::min(std::min(centerX, boxWidth - centerX), std::min(centerY, boxHeight - centerY));
@@ -103,13 +103,13 @@ float BasicShapeCircle::floatValueForRadiusInBox(float boxWidth, float boxHeight
     return std::max(std::max(centerX, boxWidth - centerX), std::max(centerY, boxHeight - centerY));
 }
 
-void BasicShapeCircle::path(Path& path, const FloatRect& boundingBox, RenderView* view)
+void BasicShapeCircle::path(Path& path, const FloatRect& boundingBox)
 {
     ASSERT(path.isEmpty());
 
-    float centerX = floatValueForCenterCoordinate(m_centerX, boundingBox.width(), view);
-    float centerY = floatValueForCenterCoordinate(m_centerY, boundingBox.height(), view);
-    float radius = floatValueForRadiusInBox(boundingBox.width(), boundingBox.height(), view);
+    float centerX = floatValueForCenterCoordinate(m_centerX, boundingBox.width());
+    float centerY = floatValueForCenterCoordinate(m_centerY, boundingBox.height());
+    float radius = floatValueForRadiusInBox(boundingBox.width(), boundingBox.height());
     path.addEllipse(FloatRect(
         centerX - radius + boundingBox.x(),
         centerY - radius + boundingBox.y(),
@@ -130,10 +130,10 @@ PassRefPtr<BasicShape> BasicShapeCircle::blend(const BasicShape* other, double p
     return result.release();
 }
 
-float BasicShapeEllipse::floatValueForRadiusInBox(const BasicShapeRadius& radius, float center, float boxWidthOrHeight, RenderView* view) const
+float BasicShapeEllipse::floatValueForRadiusInBox(const BasicShapeRadius& radius, float center, float boxWidthOrHeight) const
 {
     if (radius.type() == BasicShapeRadius::Value)
-        return floatValueForLength(radius.value(), boxWidthOrHeight, view);
+        return floatValueForLength(radius.value(), boxWidthOrHeight);
 
     if (radius.type() == BasicShapeRadius::ClosestSide)
         return std::min(center, boxWidthOrHeight - center);
@@ -142,14 +142,14 @@ float BasicShapeEllipse::floatValueForRadiusInBox(const BasicShapeRadius& radius
     return std::max(center, boxWidthOrHeight - center);
 }
 
-void BasicShapeEllipse::path(Path& path, const FloatRect& boundingBox, RenderView* view)
+void BasicShapeEllipse::path(Path& path, const FloatRect& boundingBox)
 {
     ASSERT(path.isEmpty());
 
-    float centerX = floatValueForCenterCoordinate(m_centerX, boundingBox.width(), view);
-    float centerY = floatValueForCenterCoordinate(m_centerY, boundingBox.height(), view);
-    float radiusX = floatValueForRadiusInBox(m_radiusX, centerX, boundingBox.width(), view);
-    float radiusY = floatValueForRadiusInBox(m_radiusY, centerY, boundingBox.height(), view);
+    float centerX = floatValueForCenterCoordinate(m_centerX, boundingBox.width());
+    float centerY = floatValueForCenterCoordinate(m_centerY, boundingBox.height());
+    float radiusX = floatValueForRadiusInBox(m_radiusX, centerX, boundingBox.width());
+    float radiusY = floatValueForRadiusInBox(m_radiusY, centerY, boundingBox.height());
     path.addEllipse(FloatRect(
         centerX - radiusX + boundingBox.x(),
         centerY - radiusY + boundingBox.y(),
@@ -179,7 +179,7 @@ PassRefPtr<BasicShape> BasicShapeEllipse::blend(const BasicShape* other, double 
     return result.release();
 }
 
-void BasicShapePolygon::path(Path& path, const FloatRect& boundingBox, RenderView* view)
+void BasicShapePolygon::path(Path& path, const FloatRect& boundingBox)
 {
     ASSERT(path.isEmpty());
     ASSERT(!(m_values.size() % 2));
@@ -188,11 +188,11 @@ void BasicShapePolygon::path(Path& path, const FloatRect& boundingBox, RenderVie
     if (!length)
         return;
 
-    path.moveTo(FloatPoint(floatValueForLength(m_values.at(0), boundingBox.width(), view) + boundingBox.x(),
-        floatValueForLength(m_values.at(1), boundingBox.height(), view) + boundingBox.y()));
+    path.moveTo(FloatPoint(floatValueForLength(m_values.at(0), boundingBox.width()) + boundingBox.x(),
+        floatValueForLength(m_values.at(1), boundingBox.height()) + boundingBox.y()));
     for (size_t i = 2; i < length; i = i + 2) {
-        path.addLineTo(FloatPoint(floatValueForLength(m_values.at(i), boundingBox.width(), view) + boundingBox.x(),
-            floatValueForLength(m_values.at(i + 1), boundingBox.height(), view) + boundingBox.y()));
+        path.addLineTo(FloatPoint(floatValueForLength(m_values.at(i), boundingBox.width()) + boundingBox.x(),
+            floatValueForLength(m_values.at(i + 1), boundingBox.height()) + boundingBox.y()));
     }
     path.closeSubpath();
 }
@@ -220,28 +220,28 @@ PassRefPtr<BasicShape> BasicShapePolygon::blend(const BasicShape* other, double 
     return result.release();
 }
 
-static FloatSize floatSizeForLengthSize(const LengthSize& lengthSize, const FloatRect& boundingBox, RenderView* view)
+static FloatSize floatSizeForLengthSize(const LengthSize& lengthSize, const FloatRect& boundingBox)
 {
-    return FloatSize(floatValueForLength(lengthSize.width(), boundingBox.width(), view),
-        floatValueForLength(lengthSize.height(), boundingBox.height(), view));
+    return FloatSize(floatValueForLength(lengthSize.width(), boundingBox.width()),
+        floatValueForLength(lengthSize.height(), boundingBox.height()));
 }
 
-void BasicShapeInset::path(Path& path, const FloatRect& boundingBox, RenderView* view)
+void BasicShapeInset::path(Path& path, const FloatRect& boundingBox)
 {
     ASSERT(path.isEmpty());
-    float left = floatValueForLength(m_left, boundingBox.width(), view);
-    float top = floatValueForLength(m_top, boundingBox.height(), view);
+    float left = floatValueForLength(m_left, boundingBox.width());
+    float top = floatValueForLength(m_top, boundingBox.height());
     FloatRoundedRect r = FloatRoundedRect(
         FloatRect(
             left + boundingBox.x(),
             top + boundingBox.y(),
-            std::max<float>(boundingBox.width() - left - floatValueForLength(m_right, boundingBox.width(), view), 0),
-            std::max<float>(boundingBox.height() - top - floatValueForLength(m_bottom, boundingBox.height(), view), 0)
+            std::max<float>(boundingBox.width() - left - floatValueForLength(m_right, boundingBox.width()), 0),
+            std::max<float>(boundingBox.height() - top - floatValueForLength(m_bottom, boundingBox.height()), 0)
         ),
-        floatSizeForLengthSize(m_topLeftRadius, boundingBox, view),
-        floatSizeForLengthSize(m_topRightRadius, boundingBox, view),
-        floatSizeForLengthSize(m_bottomLeftRadius, boundingBox, view),
-        floatSizeForLengthSize(m_bottomRightRadius, boundingBox, view)
+        floatSizeForLengthSize(m_topLeftRadius, boundingBox),
+        floatSizeForLengthSize(m_topRightRadius, boundingBox),
+        floatSizeForLengthSize(m_bottomLeftRadius, boundingBox),
+        floatSizeForLengthSize(m_bottomRightRadius, boundingBox)
     );
     path.addRoundedRect(r);
 }

@@ -110,7 +110,7 @@ protected:
     {
     }
 
-    void addStops(Gradient&, RenderView&, const CSSToLengthConversionData&, float maxLengthForRepeat = 0);
+    void addStops(Gradient&, const CSSToLengthConversionData&, float maxLengthForRepeat = 0);
 
     // Resolve points/radii to front end values.
     FloatPoint computeEndPoint(CSSPrimitiveValue*, CSSPrimitiveValue*, const CSSToLengthConversionData&, const FloatSize&);

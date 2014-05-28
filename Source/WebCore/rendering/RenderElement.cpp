@@ -1244,7 +1244,7 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
         LayoutUnit borderRight = isBox() ? toRenderBox(this)->borderRight() : LayoutUnit::fromPixel(0);
         LayoutUnit boxWidth = isBox() ? toRenderBox(this)->width() : LayoutUnit();
         LayoutUnit minInsetRightShadowExtent = std::min<LayoutUnit>(-insetShadowExtent.right(), std::min<LayoutUnit>(newBounds.width(), oldBounds.width()));
-        LayoutUnit borderWidth = std::max<LayoutUnit>(borderRight, std::max<LayoutUnit>(valueForLength(style().borderTopRightRadius().width(), boxWidth, &view()), valueForLength(style().borderBottomRightRadius().width(), boxWidth)));
+        LayoutUnit borderWidth = std::max<LayoutUnit>(borderRight, std::max<LayoutUnit>(valueForLength(style().borderTopRightRadius().width(), boxWidth), valueForLength(style().borderBottomRightRadius().width(), boxWidth)));
         LayoutUnit decorationsWidth = std::max<LayoutUnit>(-outlineStyle.outlineOffset(), borderWidth + minInsetRightShadowExtent) + std::max<LayoutUnit>(outlineWidth, shadowRight);
         LayoutRect rightRect(newOutlineBox.x() + std::min(newOutlineBox.width(), oldOutlineBox.width()) - decorationsWidth,
             newOutlineBox.y(),

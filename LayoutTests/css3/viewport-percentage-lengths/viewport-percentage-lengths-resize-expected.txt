@@ -1,0 +1,39 @@
+Test that viewport lengths and font sizes properly resize with the viewport.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS window.outerWidth is 800
+PASS window.outerHeight is 600
+PASS getComputedStyle(test).fontSize is '30px'
+PASS getComputedStyle(test).width is '400px'
+PASS getComputedStyle(testpseudo, ':after').marginLeft is '120px'
+PASS getComputedStyle(testpseudo, ':after').paddingRight is '200px'
+PASS window.outerWidth is 900
+PASS window.outerHeight is 600
+PASS getComputedStyle(test).fontSize is '30px'
+PASS getComputedStyle(test).width is '400px'
+PASS getComputedStyle(testpseudo, ':after').marginLeft is '120px'
+PASS getComputedStyle(testpseudo, ':after').paddingRight is '200px'
+PASS window.outerWidth is 900
+PASS window.outerHeight is 640
+PASS getComputedStyle(test).fontSize is '30px'
+PASS getComputedStyle(test).width is '400px'
+PASS getComputedStyle(testpseudo, ':after').marginLeft is '120px'
+PASS getComputedStyle(testpseudo, ':after').paddingRight is '200px'
+PASS window.outerWidth is 500
+PASS window.outerHeight is 640
+PASS getComputedStyle(test).fontSize is '30px'
+PASS getComputedStyle(test).width is '400px'
+PASS getComputedStyle(testpseudo, ':after').marginLeft is '120px'
+PASS getComputedStyle(testpseudo, ':after').paddingRight is '200px'
+PASS window.outerWidth is 800
+PASS window.outerHeight is 600
+PASS getComputedStyle(test).fontSize is '30px'
+PASS getComputedStyle(test).width is '400px'
+PASS getComputedStyle(testpseudo, ':after').marginLeft is '120px'
+PASS getComputedStyle(testpseudo, ':after').paddingRight is '200px'
+

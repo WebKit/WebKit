@@ -66,6 +66,10 @@ static CalculationCategory unitCategory(CSSPrimitiveValue::UnitTypes type)
     case CSSPrimitiveValue::CSS_PC:
     case CSSPrimitiveValue::CSS_REMS:
     case CSSPrimitiveValue::CSS_CHS:
+    case CSSPrimitiveValue::CSS_VW:
+    case CSSPrimitiveValue::CSS_VH:
+    case CSSPrimitiveValue::CSS_VMIN:
+    case CSSPrimitiveValue::CSS_VMAX:
         return CalcLength;
     case CSSPrimitiveValue::CSS_PERCENTAGE:
         return CalcPercent;
@@ -721,10 +725,6 @@ static PassRefPtr<CSSCalcExpressionNode> createCSS(const Length& length, const R
 {
     switch (length.type()) {
     case Percent:
-    case ViewportPercentageWidth:
-    case ViewportPercentageHeight:
-    case ViewportPercentageMin:
-    case ViewportPercentageMax:
     case Fixed:
         return CSSCalcPrimitiveValue::create(CSSPrimitiveValue::create(length, &style), length.value() == trunc(length.value()));
     case Calculated:

@@ -978,7 +978,7 @@ LayoutUnit RootInlineBox::verticalPositionForBox(InlineBox* box, VerticalPositio
                 lineHeight = renderer->style().computedLineHeight();
             else
                 lineHeight = renderer->lineHeight(firstLine, lineDirection);
-            verticalPosition -= valueForLength(renderer->style().verticalAlignLength(), lineHeight, &renderer->view());
+            verticalPosition -= valueForLength(renderer->style().verticalAlignLength(), lineHeight);
         }
     }
 

@@ -1144,7 +1144,7 @@ void FrameView::layout(bool allowSubtree)
 
         // Viewport-dependent media queries may cause us to need completely different style information.
         StyleResolver* styleResolver = document.styleResolverIfExists();
-        if (!styleResolver || styleResolver->affectedByViewportChange()) {
+        if (!styleResolver || styleResolver->hasMediaQueriesAffectedByViewportChange()) {
             document.styleResolverChanged(DeferRecalcStyle);
             // FIXME: This instrumentation event is not strictly accurate since cached media query results do not persist across StyleResolver rebuilds.
             InspectorInstrumentation::mediaQueryResultChanged(&document);
@@ -1247,6 +1247,8 @@ void FrameView::layout(bool allowSubtree)
                         bodyRenderer->setChildNeedsLayout();
                     else if (rootRenderer && rootRenderer->stretchesToViewport())
                         rootRenderer->setChildNeedsLayout();
+
+                    document.updateViewportUnitsOnResize();
                 }
             }
 

@@ -64,9 +64,9 @@ testStyleValue("circle(1vw at 1vw 1vw)", "circle(1vw at 1vw 1vw)");
 testStyleValue("circle(1vh at 1vh 1vh)", "circle(1vh at 1vh 1vh)");
 testStyleValue("circle(1vmin at 1vmin 1vmin)", "circle(1vmin at 1vmin 1vmin)");
 
-testComputedStyleValue("circle(1.5vw at .5vw 1vw)", "circle(1.5vw at 0.5vw 1vw)");
-testComputedStyleValue("circle(1.5vh at .5vh 1vh)", "circle(1.5vh at 0.5vh 1vh)");
-testComputedStyleValue("circle(1.5vmin at .5vmin 1vmin)", "circle(1.5vmin at 0.5vmin 1vmin)");
+testComputedStyleValue("circle(1.5vw at .5vw 1vw)", "circle(12px at 4px 8px)");
+testComputedStyleValue("circle(1.5vh at .5vh 1vh)", "circle(9px at 3px 6px)");
+testComputedStyleValue("circle(1.5vmin at .5vmin 1vmin)", "circle(9px at 3px 6px)");
 
 // percentage lengths - units
 testStyleValue("circle(100% at 100% 100%)", "circle(100% at 100% 100%)");

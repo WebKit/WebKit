@@ -58,11 +58,11 @@ LayoutUnit RenderLineBreak::lineHeight(bool firstLine, LineDirectionMode /*direc
     if (firstLine && document().styleSheetCollection().usesFirstLineRules()) {
         const RenderStyle& firstLineStyle = this->firstLineStyle();
         if (&firstLineStyle != &style())
-            return firstLineStyle.computedLineHeight(&view());
+            return firstLineStyle.computedLineHeight();
     }
 
     if (m_cachedLineHeight == invalidLineHeight)
-        m_cachedLineHeight = style().computedLineHeight(&view());
+        m_cachedLineHeight = style().computedLineHeight();
     
     return m_cachedLineHeight;
 }

@@ -176,7 +176,8 @@ public:
                 | pageBreakMask << pageBreakBeforeOffset
                 | pageBreakMask << pageBreakAfterOffset
                 | oneBitMask << explicitInheritanceOffset
-                | tableLayoutBitMask << tableLayoutOffset;
+                | tableLayoutBitMask << tableLayoutOffset
+                | hasViewportUnitsBitMask << hasViewportUnitsOffset;
 
             m_flags = (m_flags & ~nonInheritedMask) | (other.m_flags & nonInheritedMask);
         }
@@ -201,6 +202,9 @@ public:
 
         EUnicodeBidi unicodeBidi() const { return static_cast<EUnicodeBidi>(getValue(unicodeBidiMask, unicodeBidiOffset)); }
         void setUnicodeBidi(EUnicodeBidi unicodeBidi) { updateValue(unicodeBidi, unicodeBidiMask, unicodeBidiOffset); }
+
+        bool hasViewportUnits() const { return getBoolean(hasViewportUnitsOffset); }
+        void setHasViewportUnits(bool value) { updateBoolean(value, hasViewportUnitsOffset); }
 
         EVerticalAlign verticalAlign() const { return static_cast<EVerticalAlign>(getValue(verticalAlignMask, verticalAlignOffset)); }
         void setVerticalAlign(EVerticalAlign verticalAlign) { updateValue(verticalAlign, verticalAlignMask, verticalAlignOffset); }
@@ -360,17 +364,19 @@ public:
 
         // Byte 6.
         static const unsigned pseudoBitsBitCount = 7;
-        static const unsigned pseudoBitsPadding = 1;
-        static const unsigned pseudoBitsAndPaddingBitCount = pseudoBitsBitCount + pseudoBitsPadding;
-        static const uint64_t pseudoBitsMask = (oneBitMask << pseudoBitsAndPaddingBitCount) - 1;
-        static const unsigned pseudoBitsOffset = verticalAlignOffset + verticalAlignAndPaddingBitCount;
+        static const uint64_t pseudoBitsMask = (oneBitMask << pseudoBitsBitCount) - 1;
+        static const unsigned pseudoBitsOffset = verticalAlignOffset + verticalAlignBitCount;
+
+        static const unsigned hasViewportUnitsBitCount = 1;
+        static const uint64_t hasViewportUnitsBitMask = (oneBitMask << hasViewportUnitsBitCount) - 1;
+        static const unsigned hasViewportUnitsOffset = pseudoBitsOffset + pseudoBitsBitCount;
 
         // Byte 7.
         static const unsigned styleTypeBitCount = 6;
         static const unsigned styleTypePadding = 2;
         static const unsigned styleTypeAndPaddingBitCount = styleTypeBitCount + styleTypePadding;
         static const uint64_t styleTypeMask = (oneBitMask << styleTypeAndPaddingBitCount) - 1;
-        static const unsigned styleTypeOffset = pseudoBitsOffset + pseudoBitsAndPaddingBitCount;
+        static const unsigned styleTypeOffset = hasViewportUnitsBitCount + hasViewportUnitsOffset;
 
         // Byte 8.
         static const unsigned isUniqueOffset = styleTypeOffset + styleTypeAndPaddingBitCount;
@@ -382,7 +388,8 @@ public:
         static const unsigned affectedByDragOffset = affectedByActiveOffset + 1;
         static const unsigned isLinkOffset = affectedByDragOffset + 1;
 
-        // Only 59 bits are assigned. There are 5 bits available currently used as padding to improve code generation.
+
+        // Only 60 bits are assigned. There are 4 bits available currently used as padding to improve code generation.
         // If you add more style bits here, you will also need to update RenderStyle::copyNonInheritedFrom().
         uint64_t m_flags;
     };
@@ -470,7 +477,6 @@ protected:
     NonInheritedFlags noninherited_flags;
 
 // !END SYNC!
-
 private:
     // used to create the default style.
     ALWAYS_INLINE RenderStyle(bool);
@@ -501,6 +507,9 @@ public:
     void removeCachedPseudoStyle(PseudoId);
 
     const PseudoStyleCache* cachedPseudoStyles() const { return m_cachedPseudoStyles.get(); }
+
+    void setHasViewportUnits(bool hasViewportUnits = true) { noninherited_flags.setHasViewportUnits(hasViewportUnits); }
+    bool hasViewportUnits() const { return noninherited_flags.hasViewportUnits(); }
 
     bool affectedByHover() const { return noninherited_flags.affectedByHover(); }
     bool affectedByActive() const { return noninherited_flags.affectedByActive(); }
@@ -721,7 +730,7 @@ public:
 
     const Length& specifiedLineHeight() const;
     Length lineHeight() const;
-    int computedLineHeight(RenderView* = 0) const;
+    int computedLineHeight() const;
 
     EWhiteSpace whiteSpace() const { return static_cast<EWhiteSpace>(inherited_flags._white_space); }
     static bool autoWrap(EWhiteSpace ws)
@@ -1222,7 +1231,7 @@ public:
         setBorderRadius(LengthSize(Length(s.width(), Fixed), Length(s.height(), Fixed)));
     }
     
-    RoundedRect getRoundedBorderFor(const LayoutRect& borderRect, RenderView* = 0, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
+    RoundedRect getRoundedBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
     RoundedRect getRoundedInnerBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
 
     RoundedRect getRoundedInnerBorderFor(const LayoutRect& borderRect, LayoutUnit topWidth, LayoutUnit bottomWidth,

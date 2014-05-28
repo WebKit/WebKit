@@ -1,3 +1,289 @@
+2014-05-27  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        vw/vh units used as font/line-height values don't scale with the viewport
+        https://bugs.webkit.org/show_bug.cgi?id=87846
+
+        Reviewed by Darin Adler.
+
+        This patch moves the resolution of viewport units to style recalc
+        time. Currently viewport units are left unresolved during style
+        recalcs, which leads to many problems with viewport units. Moving the
+        resolution will fix these problems, as well as reduce the plumbing
+        that goes on.
+
+        This patch touches a lot of files since the valueForLength functions
+        no longer need a RenderView. The interesting changes are in:
+
+        - CSSToLengthConversionData -> CSSPrimitiveValue: for moving
+            resolution to style recalc time.
+        - Length / LengthFunctions: no longer needs to know about viewport
+            units.
+        - FrameView -> Document -> StyleResolver: for scheduling style recalcs
+            upon resize
+
+        Note that getComputedStyle will now return pixel values when viewport
+        units are used. This behavior matches Firefox and the css3-cascade
+        spec.
+
+        This is based on a Blink patch by timloh@chromium.org.
+
+        Tests: css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html
+               css3/viewport-percentage-lengths/viewport-percentage-lengths-calc.html
+               css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html
+               css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html
+               css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html
+
+        * WebCore.exp.in: Remove RenderView argument to floatValueForLength.
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp: 
+        (getAttributeSetForAccessibilityObject): Remove RenderView argument.
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::convertToLength): Ditto.
+        (WebCore::floatValueForCenterCoordinate): Ditto.
+        * css/BasicShapeFunctions.h: Ditto.
+        * css/CSSCalculationValue.cpp:
+        (WebCore::unitCategory): Remove special handling for viewport units,
+            as they get resolved to pixels.
+        (WebCore::createCSS): Ditto.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::positionOffsetValue): Remove RendewView argument.
+        (WebCore::getBorderRadiusCornerValues): Remove handling of viewport
+            units, as they are already resolve to pixels here.
+        (WebCore::getBorderRadiusCornerValue): Remove RenderView argument.
+        (WebCore::getBorderRadiusShorthandValue): Ditto.
+        (WebCore::specifiedValueForGridTrackBreadth): Remove handling of
+            viewport units, as they are already resolved to pixels here.
+        (WebCore::specifiedValueForGridTrackSize): Remove RenderView argument.
+        (WebCore::valueForGridTrackList): Ditto.
+        (WebCore::lineHeightFromStyle): Ditto.
+        (WebCore::ComputedStyleExtractor::propertyValue): Ditto.
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSLinearGradientValue::createGradient): Pass RenderView to
+            CSSToLengthConversionData constructor.
+        (WebCore::CSSRadialGradientValue::createGradient): Ditto.
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::unitCategory): Remove handling of
+            viewport units, as they get resolved to pixels.
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Ditto.
+        (WebCore::CSSPrimitiveValue::init): Ditto.
+        (WebCore::CSSPrimitiveValue::computeLengthDouble): Resolve viewport
+            units to pixels.
+        (WebCore::CSSPrimitiveValue::canonicalUnitTypeForCategory): Remove
+        handling of viewport units, since they get resolved to pixels.
+        (WebCore::CSSPrimitiveValue::viewportPercentageLength): Deleted.
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isLength): Remove special handling of
+            viewport units, since they get resolved to pixels.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::convertToLength): Ditto.
+        * css/CSSToLengthConversionData.cpp:
+        (WebCore::CSSToLengthConversionData::viewportWidthFactor): Caclulate
+            conversion factor for viewport units to pixels. Note this does not
+            set hasViewportUnits on the RenderStyle if computing the font
+            size, because in the font size case, the RenderStyle is the
+            parent's style, not the current renderer's style.
+        (WebCore::CSSToLengthConversionData::viewportHeightFactor): Ditto.
+        (WebCore::CSSToLengthConversionData::viewportMinFactor): Ditto.
+        (WebCore::CSSToLengthConversionData::viewportMaxFactor): Ditto.
+        * css/CSSToLengthConversionData.h:
+        (WebCore::CSSToLengthConversionData::CSSToLengthConversionData): Add
+            RenderView parameter, and make RenderStyle non-const so that
+            hasViewportUnits can be set on the Style..
+        (WebCore::CSSToLengthConversionData::style): style is now non-const.
+        (WebCore::CSSToLengthConversionData::copyWithAdjustedZoom): Handle
+            RenderView argument.
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapFillXPosition): Remove handling of
+            viewport units, as they are already resolved to pixels here.
+        (WebCore::CSSToStyleMap::mapFillYPosition): Ditto.
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyLength::applyValue): Ditto.
+        (WebCore::ApplyPropertyBorderRadius::applyValue): Ditto.
+        (WebCore::ApplyPropertyComputeLength::applyValue): Ditto.
+        (WebCore::ApplyPropertyFontSize::applyValue): Ditto.
+        (WebCore::ApplyPropertyLineHeight::applyValue): Ditto.
+        (WebCore::ApplyPropertyLineHeightForIOSTextAutosizing::applyValue): Ditto.
+        (WebCore::ApplyPropertyWordSpacing::applyValue): Ditto.
+        (WebCore::ApplyPropertyVerticalAlign::applyValue): Ditto.
+        (WebCore::ApplyPropertyTextIndent::applyValue): Ditto.
+        * css/LengthFunctions.cpp:
+        (WebCore::minimumIntValueForLength): Remove RenderView argument.
+        (WebCore::intValueForLength): Remove RenderView argument and
+            roundPecentages.
+        (WebCore::minimumValueForLength): Remove RenderView argument, and
+            special handling of viewport units.
+        (WebCore::valueForLength): Ditto.
+        (WebCore::floatValueForLength): Ditto.
+        (WebCore::floatSizeForLengthSize): Remove RenderView argument.
+        * css/LengthFunctions.h: Ditto.
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::eval): Add RenderView argument for
+            CSSToLengthConversionData constuctor.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::clear): Change to 0 arg constructor
+            for CSSToLengthConversionData.
+        (WebCore::StyleResolver::State::updateConversionData): In order to get
+            the RenderView, we need to have a valid Element set on the state.
+            Since this means that we need to set the conversion data in more
+            places, move the contruction of conversion data into this helper
+            method.
+        (WebCore::StyleResolver::State::initElement): Make sure conversion
+            data is up to date.
+        (WebCore::StyleResolver::State::initForStyleResolve): Ditto.
+        (WebCore::StyleResolver::State::setStyle): When the style is set, we
+            need to make sure to update the conversion data.
+        (WebCore::StyleResolver::styleForElement): If the style has viewport
+            units, flage the document so that we can make sure to recalc the
+            viewport unit values when the viewport is resized.
+        (WebCore::StyleResolver::pseudoStyleForElement): Ditto.
+        (WebCore::StyleResolver::updateFont): Make sure the font having
+            viewport units updates the style.
+        (WebCore::StyleResolver::convertToIntLength): Remove handling of
+        viewport units, as they are resolved to pixels.
+        (WebCore::StyleResolver::convertToFloatLength): Ditto.
+        (WebCore::StyleResolver::clearCachedPropertiesAffectedByViewportUnits):
+            Invalidate the matched properties cache for styles with viewport
+            units when the viewport is resized.
+        (WebCore::createGridTrackBreadth): Remove handling of viewport units,
+            as they are resolved to pixels.
+        (WebCore::StyleResolver::applyProperty): Ditto.
+        (WebCore::StyleResolver::hasMediaQueriesAffectedByViewportChange):
+            Rename to be less confusing, since it has nothing to do with
+            viewport units.
+        (WebCore::StyleResolver::createFilterOperations): Remove handling of
+            viewport units, as they are resolved to pixels.
+        (WebCore::StyleResolver::affectedByViewportChange): Deleted.
+        (WebCore::StyleResolver::viewportPercentageValue): Deleted.
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::State::State): C++11 cleanup: 0 -> nullptr.
+        (WebCore::StyleResolver::State::setFontSizeHasViewportUnits): Set if
+            the font size is specified in viewport units.
+        (WebCore::StyleResolver::State::fontSizeHasViewportUnits): Ditto.
+        (WebCore::StyleResolver::State::setStyle): Deleted.
+        * css/TransformFunctions.cpp:
+        (WebCore::convertToFloatLength): Remove handling of viewport units,
+            since they are resolved to pixels.
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Add flag to determine if some style in
+            the document has viewport units.
+        (WebCore::Document::pageSizeAndMarginsInPixels): Remove RenderView
+            argument.
+        (WebCore::Document::updateViewportUnitsOnResize): Mark elements with
+            viewport units for style recalc when the viewport size has
+            changed.
+        * dom/Document.h:
+        (WebCore::Document::setHasStyleWithViewportUnits): Flag to determine
+            if some style in the document has viewport units.
+        (WebCore::Document::hasStyleWithViewportUnits): Ditto.
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::getRegion): Remove RenderView argument.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): When the viewport is resized, call
+            updateViewportUnitsOnResize on the document.
+        * platform/Length.h:
+        (WebCore::Length::isSpecified): Remove handling of viewport units,
+            since they are now resolved to pixels.
+        (WebCore::Length::viewportPercentageLength): Deleted.
+        (WebCore::Length::isViewportPercentage): Deleted.
+        * rendering/ClipPathOperation.h:
+        (WebCore::ShapeClipPathOperation::pathForReferenceRect): Remove
+            RenderView argument.
+        (WebCore::BoxClipPathOperation::pathForReferenceRect): Ditto.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateBlockChildDirtyBitsBeforeLayout): Remove
+            handling of viewport units, since they get updated by
+            updateViewportUnitsOnResize when the viewport is resized.
+        (WebCore::RenderBlock::nodeAtPoint): Remove RenderView argument.
+        (WebCore::RenderBlock::lineHeight): Ditto.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations): Remove RenderView argument.
+        (WebCore::RenderBox::computeContentAndScrollbarLogicalHeightUsing):
+            Remove handling of viewport units, as they are resolved to pixels.
+        (WebCore::RenderBox::computePercentageLogicalHeight): Ditto.
+        (WebCore::RenderBox::computeReplacedLogicalWidthUsing): Ditto.
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing): Ditto.
+        (WebCore::RenderBox::hasViewportPercentageLogicalHeight): Deleted.
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::getBackgroundRoundedRect): Remove
+            RenderView argument.
+        (WebCore::RenderBoxModelObject::calculateFillTileSize): Remove
+            handling of viewport units, as they are resolved to pixels.
+        (WebCore::computeBorderImageSide): Remove RenderView argument.
+        (WebCore::RenderBoxModelObject::paintNinePieceImage): Ditto.
+        (WebCore::RenderBoxModelObject::paintBorder): Ditto.
+        (WebCore::RenderBoxModelObject::paintBoxShadow): Ditto.
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::repaintAfterLayoutIfNeeded): Ditto.
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::valueForLength): Remove unused
+            roundPercentages argument.
+        (WebCore::RenderElement::minimumValueForLength): Remove unused
+            RoundPercentages and RenderView arguments.
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutGridItems): Remove handling of viewport
+            units as they are resolved to pixels.
+        * rendering/RenderInline.cpp:
+        (WebCore::computeMargin): Ditto.
+        (WebCore::RenderInline::lineHeight): Remove RenderView argument.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setupClipPath): Ditto.
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::lineHeight): Ditto.
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::calcScrollbarThicknessUsing): Ditto.
+        (WebCore::RenderScrollbarPart::computeScrollbarWidth): Ditto.
+        (WebCore::RenderScrollbarPart::computeScrollbarHeight): Ditto.
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::convertStyleLogicalHeightToComputedHeight):
+            Remove handling of viewport units, since they are resolved to
+            pixels.
+        (WebCore::RenderTable::computePreferredLogicalWidths): Now that
+            viewport unit values are resolved to pixels at style recalc time,
+            no special checking is needed to handle them, so update the
+            comment to reflect that.
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::applyCommonButtonPaddingToStyle): Add RenderView argument to
+            CSSToLengthConversionData constructor.
+        (WebCore::RenderThemeIOS::adjustButtonStyle): Ditto.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients): Remove
+            RenderView argument.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layout): Remove handling of viewport units,
+            since they are resolved to pixels.
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::ascentAndDescentForBox): Remove RenderView
+            argument.
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createShape): Remove RenderView argument.
+        * rendering/shapes/Shape.h:
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::computedShape): Ditto.
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShapeCircle::floatValueForRadiusInBox): Ditto.
+        (WebCore::BasicShapeCircle::path): Ditto.
+        (WebCore::BasicShapeEllipse::floatValueForRadiusInBox): Ditto.
+        (WebCore::BasicShapeEllipse::path): Ditto.
+        (WebCore::BasicShapePolygon::path): Ditto.
+        (WebCore::floatSizeForLengthSize): Ditto.
+        (WebCore::BasicShapeInset::path): Ditto.
+        * rendering/style/BasicShapes.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::calcRadiiFor): Ditto.
+        (WebCore::RenderStyle::getRoundedBorderFor): Ditto.
+        (WebCore::RenderStyle::computedLineHeight): Remove handling of
+            viewport units since they are resolved to pixels.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setHasViewportUnits): Set if this style has
+        a property set with viewport units.
+        (WebCore::RenderStyle::hasViewportUnits): Ditto.
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::resolveLengthAttributeForSVG): Remove RenderView argument.
+        (WebCore::RenderSVGRoot::computeReplacedLogicalWidth): Ditto.
+        (WebCore::RenderSVGRoot::computeReplacedLogicalHeight): Ditto.
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent): Ditto.
+
 2014-05-27  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] serialization of the computed value should omit the default radii

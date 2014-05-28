@@ -159,11 +159,6 @@ CSSPrimitiveValue::UnitCategory CSSPrimitiveValue::unitCategory(CSSPrimitiveValu
     case CSS_HZ:
     case CSS_KHZ:
         return UFrequency;
-    case CSS_VW:
-    case CSS_VH:
-    case CSS_VMIN:
-    case CSS_VMAX:
-        return UViewportPercentageLength;
 #if ENABLE(CSS_IMAGE_RESOLUTION) || ENABLE(RESOLUTION_MEDIA_QUERY)
     case CSS_DPPX:
     case CSS_DPI:
@@ -301,10 +296,6 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length, const RenderStyle* st
     case FillAvailable:
     case FitContent:
     case Percent:
-    case ViewportPercentageWidth:
-    case ViewportPercentageHeight:
-    case ViewportPercentageMin:
-    case ViewportPercentageMax:
         init(length);
         return;
     case Fixed:
@@ -369,22 +360,6 @@ void CSSPrimitiveValue::init(const Length& length)
         m_primitiveUnitType = CSS_PERCENTAGE;
         ASSERT(std::isfinite(length.percent()));
         m_value.num = length.percent();
-        return;
-    case ViewportPercentageWidth:
-        m_primitiveUnitType = CSS_VW;
-        m_value.num = length.viewportPercentageLength();
-        return;
-    case ViewportPercentageHeight:
-        m_primitiveUnitType = CSS_VH;
-        m_value.num = length.viewportPercentageLength();
-        return;
-    case ViewportPercentageMin:
-        m_primitiveUnitType = CSS_VMIN;
-        m_value.num = length.viewportPercentageLength();
-        return;
-    case ViewportPercentageMax:
-        m_primitiveUnitType = CSS_VMAX;
-        m_value.num = length.viewportPercentageLength();
         return;
     case Calculated:
     case Relative:
@@ -657,10 +632,16 @@ double CSSPrimitiveValue::computeLengthDouble(const CSSToLengthConversionData& c
         ASSERT_NOT_REACHED();
         return -1.0;
     case CSS_VH:
+        factor = conversionData.viewportHeightFactor();
+        break;
     case CSS_VW:
+        factor = conversionData.viewportWidthFactor();
+        break;
     case CSS_VMAX:
+        factor = conversionData.viewportMaxFactor();
+        break;
     case CSS_VMIN:
-        factor = 1.0;
+        factor = conversionData.viewportMinFactor();
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -779,8 +760,6 @@ CSSPrimitiveValue::UnitTypes CSSPrimitiveValue::canonicalUnitTypeForCategory(Uni
         return CSS_DEG;
     case UFrequency:
         return CSS_HZ;
-    case UViewportPercentageLength:
-        return CSS_UNKNOWN; // Cannot convert between numbers and relative lengths.
 #if ENABLE(CSS_IMAGE_RESOLUTION) || ENABLE(RESOLUTION_MEDIA_QUERY)
     case UResolution:
         return CSS_DPPX;
@@ -1222,29 +1201,6 @@ void CSSPrimitiveValue::addSubresourceStyleURLs(ListHashSet<URL>& urls, const St
 {
     if (m_primitiveUnitType == CSS_URI)
         addSubresourceURL(urls, styleSheet->completeURL(m_value.string));
-}
-
-Length CSSPrimitiveValue::viewportPercentageLength() const
-{
-    ASSERT(isViewportPercentageLength());
-    Length viewportLength;
-    switch (m_primitiveUnitType) {
-    case CSS_VW:
-        viewportLength = Length(getDoubleValue(), ViewportPercentageWidth);
-        break;
-    case CSS_VH:
-        viewportLength = Length(getDoubleValue(), ViewportPercentageHeight);
-        break;
-    case CSS_VMIN:
-        viewportLength = Length(getDoubleValue(), ViewportPercentageMin);
-        break;
-    case CSS_VMAX:
-        viewportLength = Length(getDoubleValue(), ViewportPercentageMax);
-        break;
-    default:
-        break;
-    }
-    return viewportLength;
 }
 
 PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const

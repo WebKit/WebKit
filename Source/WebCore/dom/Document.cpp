@@ -114,6 +114,7 @@
 #include "PointerLockController.h"
 #include "PopStateEvent.h"
 #include "ProcessingInstruction.h"
+#include "RenderChildIterator.h"
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
@@ -513,6 +514,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_disabledFieldsetElementsCount(0)
     , m_hasInjectedPlugInsScript(false)
     , m_renderTreeBeingDestroyed(false)
+    , m_hasStyleWithViewportUnits(false)
 {
     allDocuments().add(this);
 
@@ -1872,7 +1874,6 @@ bool Document::isPageBoxVisible(int pageIndex)
 void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int& marginTop, int& marginRight, int& marginBottom, int& marginLeft)
 {
     RefPtr<RenderStyle> style = ensureStyleResolver().styleForPage(pageIndex);
-    RenderView* view = renderView();
 
     int width = pageSize.width();
     int height = pageSize.height();
@@ -1891,8 +1892,8 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
         LengthSize size = style->pageSize();
         ASSERT(size.width().isFixed());
         ASSERT(size.height().isFixed());
-        width = valueForLength(size.width(), 0, view);
-        height = valueForLength(size.height(), 0, view);
+        width = valueForLength(size.width(), 0);
+        height = valueForLength(size.height(), 0);
         break;
     }
     default:
@@ -1902,10 +1903,10 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
 
     // The percentage is calculated with respect to the width even for margin top and bottom.
     // http://www.w3.org/TR/CSS2/box.html#margin-properties
-    marginTop = style->marginTop().isAuto() ? marginTop : intValueForLength(style->marginTop(), width, view);
-    marginRight = style->marginRight().isAuto() ? marginRight : intValueForLength(style->marginRight(), width, view);
-    marginBottom = style->marginBottom().isAuto() ? marginBottom : intValueForLength(style->marginBottom(), width, view);
-    marginLeft = style->marginLeft().isAuto() ? marginLeft : intValueForLength(style->marginLeft(), width, view);
+    marginTop = style->marginTop().isAuto() ? marginTop : intValueForLength(style->marginTop(), width);
+    marginRight = style->marginRight().isAuto() ? marginRight : intValueForLength(style->marginRight(), width);
+    marginBottom = style->marginBottom().isAuto() ? marginBottom : intValueForLength(style->marginBottom(), width);
+    marginLeft = style->marginLeft().isAuto() ? marginLeft : intValueForLength(style->marginLeft(), width);
 }
 
 void Document::createStyleResolver()
@@ -3170,6 +3171,21 @@ void Document::scheduleOptimizedStyleSheetUpdate()
         return;
     m_styleSheetCollection.setPendingUpdateType(DocumentStyleSheetCollection::OptimizedUpdate);
     m_optimizedStyleSheetUpdateTimer.startOneShot(0);
+}
+
+void Document::updateViewportUnitsOnResize()
+{
+    if (!hasStyleWithViewportUnits())
+        return;
+
+    ensureStyleResolver().clearCachedPropertiesAffectedByViewportUnits();
+
+    // FIXME: Ideally, we should save the list of elements that have viewport units and only iterate over those.
+    for (Element* element = ElementTraversal::firstWithin(&rootNode()); element; element = ElementTraversal::nextIncludingPseudo(element)) {
+        auto* renderer = element->renderer();
+        if (renderer && renderer->style().hasViewportUnits())
+            element->setNeedsStyleRecalc(InlineStyleChange);
+    }
 }
 
 void Document::styleResolverChanged(StyleResolverUpdateFlag updateFlag)

@@ -1239,7 +1239,7 @@ void RenderBlock::updateBlockChildDirtyBitsBeforeLayout(bool relayoutChildren, R
 {
     // FIXME: Technically percentage height objects only need a relayout if their percentage isn't going to be turned into
     // an auto value. Add a method to determine this, so that we can avoid the relayout.
-    if (relayoutChildren || (child.hasRelativeLogicalHeight() && !isRenderView()) || child.hasViewportPercentageLogicalHeight())
+    if (relayoutChildren || (child.hasRelativeLogicalHeight() && !isRenderView()))
         child.setChildNeedsLayout(MarkOnlyThis);
 
     // If relayoutChildren is set and the child has percentage padding or an embedded content box, we also need to invalidate the childs pref widths.
@@ -2541,7 +2541,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
             case CSSBoxType::ViewBox:
                 referenceBoxRect = borderBoxRect();
             }
-            if (!clipPath->pathForReferenceRect(referenceBoxRect, &view()).contains(locationInContainer.point() - localOffset, clipPath->windRule()))
+            if (!clipPath->pathForReferenceRect(referenceBoxRect).contains(locationInContainer.point() - localOffset, clipPath->windRule()))
                 return false;
             break;
         }
@@ -2572,7 +2572,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     if (!isRenderView() && style().hasBorderRadius()) {
         LayoutRect borderRect = borderBoxRect();
         borderRect.moveBy(adjustedLocation);
-        RoundedRect border = style().getRoundedBorderFor(borderRect, &view());
+        RoundedRect border = style().getRoundedBorderFor(borderRect);
         if (!locationInContainer.intersects(border))
             return false;
     }
@@ -3340,11 +3340,11 @@ LayoutUnit RenderBlock::lineHeight(bool firstLine, LineDirectionMode direction, 
     if (firstLine && document().styleSheetCollection().usesFirstLineRules()) {
         RenderStyle& s = firstLine ? firstLineStyle() : style();
         if (&s != &style())
-            return s.computedLineHeight(&view());
+            return s.computedLineHeight();
     }
     
     if (m_lineHeight == -1)
-        m_lineHeight = style().computedLineHeight(&view());
+        m_lineHeight = style().computedLineHeight();
 
     return m_lineHeight;
 }
