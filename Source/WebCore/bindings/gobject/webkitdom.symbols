@@ -1550,6 +1550,7 @@ WebKitDOMBatteryManager* webkit_dom_navigator_get_webkit_battery(WebKitDOMNaviga
 WebKitDOMGeolocation* webkit_dom_navigator_get_geolocation(WebKitDOMNavigator*)
 WebKitDOMStorageQuota* webkit_dom_navigator_get_webkit_temporary_storage(WebKitDOMNavigator*)
 WebKitDOMStorageQuota* webkit_dom_navigator_get_webkit_persistent_storage(WebKitDOMNavigator*)
+glong webkit_dom_navigator_get_hardware_concurrency(WebKitDOMNavigator*)
 gboolean webkit_dom_navigator_vibrate(WebKitDOMNavigator*, gulong)
 gulong webkit_dom_screen_get_height(WebKitDOMScreen*)
 gulong webkit_dom_screen_get_width(WebKitDOMScreen*)
