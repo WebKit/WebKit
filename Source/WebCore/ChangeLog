@@ -1,5 +1,40 @@
 2014-05-27  Simon Fraser  <simon.fraser@apple.com>
 
+        Do some renaming in the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=133333
+
+        Reviewed by Tim Horton.
+
+        Rename ScrollingTreeNode::parentScrollPositionDidChange() to updateLayersAfterAncestorChange()
+        since this goes deep and to indicate that it's about layer updating.
+        
+        Also rename the "viewportRect" parameter to "fixedPositionRect", since on iOS
+        this is the custom fixed-position rect that changes on zooming.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::viewportChangedViaDelegatedScrolling):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+        * page/scrolling/ScrollingTreeNode.h:
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.h:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::updateLayersAfterViewportChange):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::updateChildNodesAfterScroll):
+        * page/scrolling/mac/ScrollingTreeFixedNode.h:
+        * page/scrolling/mac/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::updateLayersAfterAncestorChange):
+        (WebCore::ScrollingTreeFixedNode::parentScrollPositionDidChange): Deleted.
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition):
+        * page/scrolling/mac/ScrollingTreeStickyNode.h:
+        * page/scrolling/mac/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::updateLayersAfterAncestorChange):
+        (WebCore::ScrollingTreeStickyNode::parentScrollPositionDidChange): Deleted.
+
+2014-05-27  Simon Fraser  <simon.fraser@apple.com>
+
         Instantiate a ScrollingTreeMac on Mac
         https://bugs.webkit.org/show_bug.cgi?id=133332
 

@@ -98,7 +98,7 @@ void ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
         m_rootNode->handleWheelEvent(wheelEvent);
 }
 
-void ScrollingTree::viewportChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const WebCore::FloatRect& viewportRect, double scale)
+void ScrollingTree::viewportChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const WebCore::FloatRect& fixedPositionRect, double scale)
 {
     ScrollingTreeNode* node = nodeForID(nodeID);
     if (!node)
@@ -107,7 +107,7 @@ void ScrollingTree::viewportChangedViaDelegatedScrolling(ScrollingNodeID nodeID,
     if (!node->isScrollingNode())
         return;
 
-    toScrollingTreeScrollingNode(node)->updateLayersAfterViewportChange(viewportRect, scale);
+    toScrollingTreeScrollingNode(node)->updateLayersAfterViewportChange(fixedPositionRect, scale);
 }
 
 void ScrollingTree::scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const WebCore::FloatPoint& scrollPosition, bool inUserInteration)

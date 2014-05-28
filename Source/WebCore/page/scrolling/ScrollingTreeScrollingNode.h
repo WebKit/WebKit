@@ -47,13 +47,13 @@ public:
     virtual void updateAfterChildren(const ScrollingStateNode&) override;
 
     // FIXME: We should implement this when we support ScrollingTreeScrollingNodes as children.
-    virtual void parentScrollPositionDidChange(const FloatRect& /*viewportRect*/, const FloatSize& /*cumulativeDelta*/) override { }
+    virtual void updateLayersAfterAncestorChange(const ScrollingTreeNode& /*changedNode*/, const FloatRect& /*fixedPositionRect*/, const FloatSize& /*cumulativeDelta*/) override { }
 
     virtual void handleWheelEvent(const PlatformWheelEvent&) = 0;
     virtual void setScrollPosition(const FloatPoint&);
     virtual void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&);
 
-    virtual void updateLayersAfterViewportChange(const FloatRect& viewportRect, double scale) = 0;
+    virtual void updateLayersAfterViewportChange(const FloatRect& fixedPositionRect, double scale) = 0;
     virtual void updateLayersAfterDelegatedScroll(const FloatPoint&) { }
 
 protected:

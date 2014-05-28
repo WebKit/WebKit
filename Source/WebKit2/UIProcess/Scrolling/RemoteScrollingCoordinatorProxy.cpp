@@ -154,9 +154,9 @@ bool RemoteScrollingCoordinatorProxy::isPointInNonFastScrollableRegion(const Int
     return m_scrollingTree->isPointInNonFastScrollableRegion(p);
 }
 
-void RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const FloatRect& viewportRect, double scale)
+void RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const FloatRect& fixedPositionRect, double scale)
 {
-    m_scrollingTree->viewportChangedViaDelegatedScrolling(nodeID, viewportRect, scale);
+    m_scrollingTree->viewportChangedViaDelegatedScrolling(nodeID, fixedPositionRect, scale);
 }
 
 // This comes from the scrolling tree.

@@ -349,7 +349,6 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition(const FloatPoint
     FloatPoint scrollOffset = position - toFloatSize(scrollOrigin());
     FloatRect viewportRect(FloatPoint(), scrollableAreaSize());
     
-    // FIXME: scrollOffsetForFixedPosition() needs to do float math.
     FloatSize scrollOffsetForFixedChildren = FrameView::scrollOffsetForFixedPosition(enclosingLayoutRect(viewportRect),
         roundedLayoutSize(totalContentsSize()), roundedLayoutPoint(scrollOffset), scrollOrigin(), frameScaleFactor(), false, behaviorForFixed, headerHeight(), footerHeight());
     
@@ -410,7 +409,7 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition(const FloatPoint
 
     size_t size = m_children->size();
     for (size_t i = 0; i < size; ++i)
-        m_children->at(i)->parentScrollPositionDidChange(viewportRect, FloatSize());
+        m_children->at(i)->updateLayersAfterAncestorChange(*this, viewportRect, FloatSize());
 }
 
 void ScrollingTreeFrameScrollingNodeMac::updateLayersAfterViewportChange(const FloatRect&, double)
