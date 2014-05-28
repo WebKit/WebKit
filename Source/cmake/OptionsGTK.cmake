@@ -260,6 +260,12 @@ if (ENABLE_GAMEPAD)
     find_package(GUdev)
 endif ()
 
+if (ENABLE_FTL_JIT)
+    find_package(LLVM REQUIRED)
+    find_package(LIBCXXABI REQUIRED)
+    set(HAVE_LLVM ON)
+endif ()
+
 set(CPACK_SOURCE_GENERATOR TBZ2)
 
 set(DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR ${DERIVED_SOURCES_DIR}/webkitdom)

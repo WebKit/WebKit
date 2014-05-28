@@ -9,6 +9,8 @@
 
   <repository type="tarball" name="ftp.gnome.org"
       href="http://ftp.gnome.org"/>
+  <repository type="svn" name="llvm.org"
+      href="http://llvm.org/svn/llvm-project/llvm/"/>
 
   <autotools id="libsecret" autogen-sh="configure">
     <branch repo="ftp.gnome.org"
@@ -40,6 +42,11 @@
     <dependencies>
       <dep package="glib"/>
     </dependencies>
+  </autotools>
+
+  <autotools id="llvm" autogenargs="--enable-optimized --disable-terminfo --disable-zlib">
+    <branch repo="llvm.org" module="trunk" checkoutdir="llvm" version="r206311"
+            revision="206311"/>
   </autotools>
 
 </moduleset>
