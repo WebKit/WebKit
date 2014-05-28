@@ -88,7 +88,7 @@ static String buildCircleString(const String& radius, const String& centerX, con
     char separator[] = " ";
     StringBuilder result;
     result.appendLiteral(opening);
-    if (!radius.isNull()) 
+    if (!radius.isNull())
         result.append(radius);
 
     if (!centerX.isNull() || !centerY.isNull()) {
@@ -113,7 +113,11 @@ String CSSBasicShapeCircle::cssText() const
     RefPtr<CSSPrimitiveValue> normalizedCX = buildSerializablePositionOffset(m_centerX, CSSValueLeft);
     RefPtr<CSSPrimitiveValue> normalizedCY = buildSerializablePositionOffset(m_centerY, CSSValueTop);
 
-    return buildCircleString(m_radius ? m_radius->cssText() : String(),
+    String radius;
+    if (m_radius && m_radius->getValueID() != CSSValueClosestSide)
+        radius = m_radius->cssText();
+
+    return buildCircleString(radius,
         serializePositionOffset(*normalizedCX->getPairValue(), *normalizedCY->getPairValue()),
         serializePositionOffset(*normalizedCY->getPairValue(), *normalizedCX->getPairValue()),
         m_referenceBox ? m_referenceBox->cssText() : String());
@@ -172,8 +176,21 @@ String CSSBasicShapeEllipse::cssText() const
     RefPtr<CSSPrimitiveValue> normalizedCX = buildSerializablePositionOffset(m_centerX, CSSValueLeft);
     RefPtr<CSSPrimitiveValue> normalizedCY = buildSerializablePositionOffset(m_centerY, CSSValueTop);
 
-    return buildEllipseString(m_radiusX ? m_radiusX->cssText() : String(),
-        m_radiusY ? m_radiusY->cssText() : String(),
+    String radiusX;
+    String radiusY;
+    if (m_radiusX) {
+        bool shouldSerializeRadiusXValue = m_radiusX->getValueID() != CSSValueClosestSide;
+        bool shouldSerializeRadiusYValue = false;
+
+        if (m_radiusY) {
+            shouldSerializeRadiusYValue = m_radiusY->getValueID() != CSSValueClosestSide;
+            if (shouldSerializeRadiusYValue)
+                radiusY = m_radiusY->cssText();
+        }
+        if (shouldSerializeRadiusXValue || (!shouldSerializeRadiusXValue && shouldSerializeRadiusYValue))
+            radiusX = m_radiusX->cssText();
+    }
+    return buildEllipseString(radiusX, radiusY,
         serializePositionOffset(*normalizedCX->getPairValue(), *normalizedCY->getPairValue()),
         serializePositionOffset(*normalizedCY->getPairValue(), *normalizedCX->getPairValue()),
         m_referenceBox ? m_referenceBox->cssText() : String());
