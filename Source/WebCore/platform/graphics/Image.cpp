@@ -118,7 +118,7 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
     oneTileRect.setY(destRect.y() + fmodf(fmodf(-srcPoint.y(), actualTileSize.height()) - actualTileSize.height(), actualTileSize.height()));
     oneTileRect.setSize(scaledTileSize);
     
-    // Check and see if a single draw of the image can cover the entire area we are supposed to tile.    
+    // Check and see if a single draw of the image can cover the entire area we are supposed to tile.
     if (oneTileRect.contains(destRect) && !ctxt->drawLuminanceMask()) {
         FloatRect visibleSrcRect;
         visibleSrcRect.setX((destRect.x() - oneTileRect.x()) / scale.width());
@@ -153,22 +153,27 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
     }
 #endif
 
-#if PLATFORM(IOS)
-    // CGPattern uses lots of memory got caching when the tile size is large (<rdar://problem/4691859>,
-    // <rdar://problem/6239505>). Memory consumption depends on the transformed tile size which can get
+
+    // Patterned images and gradients can use lots of memory for caching when the
+    // tile size is large (<rdar://problem/4691859>, <rdar://problem/6239505>).
+    // Memory consumption depends on the transformed tile size which can get
     // larger than the original tile if user zooms in enough.
+#if PLATFORM(IOS)
     const float maxPatternTilePixels = 512 * 512;
+#else
+    const float maxPatternTilePixels = 2048 * 2048;
+#endif
     FloatRect transformedTileSize = ctxt->getCTM().mapRect(FloatRect(FloatPoint(), scaledTileSize));
     float transformedTileSizePixels = transformedTileSize.width() * transformedTileSize.height();
     if (transformedTileSizePixels > maxPatternTilePixels) {
         float fromY = (destRect.y() - oneTileRect.y()) / scale.height();
         float toY = oneTileRect.y();
-        while (toY < CGRectGetMaxY(destRect)) {
+        while (toY < destRect.maxY()) {
             float fromX = (destRect.x() - oneTileRect.x()) / scale.width();
             float toX = oneTileRect.x();
-            while (toX < CGRectGetMaxX(destRect)) {
-                CGRect toRect = CGRectIntersection(destRect, CGRectMake(toX, toY, oneTileRect.width(), oneTileRect.height()));
-                CGRect fromRect = CGRectMake(fromX, fromY, toRect.size.width / scale.width(), toRect.size.height / scale.height());
+            while (toX < destRect.maxX()) {
+                FloatRect toRect(toX, toY, oneTileRect.width(), oneTileRect.height());
+                FloatRect fromRect(fromX, fromY, oneTileRect.width() / scale.width(), oneTileRect.height() / scale.height());
                 draw(ctxt, toRect, fromRect, styleColorSpace, op, BlendModeNormal, ImageOrientationDescription());
                 toX += oneTileRect.width();
                 fromX = 0;
@@ -178,7 +183,6 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
         }
         return;
     }
-#endif    
 
     AffineTransform patternTransform = AffineTransform().scaleNonUniform(scale.width(), scale.height());
     FloatRect tileRect(FloatPoint(), intrinsicTileSize);
