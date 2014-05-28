@@ -36,7 +36,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-bool InjectedBundle::load(API::Object* initializationUserData)
+bool InjectedBundle::initialize(const WebProcessCreationParameters&, API::Object* initializationUserData)
 {
     m_platformBundle = g_module_open(fileSystemRepresentation(m_path).data(), G_MODULE_BIND_LOCAL);
     if (!m_platformBundle) {
@@ -55,10 +55,6 @@ bool InjectedBundle::load(API::Object* initializationUserData)
 }
 
 void InjectedBundle::activateMacFontAscentHack()
-{
-}
-
-void InjectedBundle::platformInitialize(const WebProcessCreationParameters&)
 {
 }
 

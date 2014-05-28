@@ -81,14 +81,11 @@ struct WebProcessCreationParameters;
 
 class InjectedBundle : public API::ObjectImpl<API::Object::Type::Bundle> {
 public:
-    static PassRefPtr<InjectedBundle> create(const WebProcessCreationParameters& parameters)
-    {
-        return adoptRef(new InjectedBundle(parameters));
-    }
+    static PassRefPtr<InjectedBundle> create(const WebProcessCreationParameters&, API::Object* initializationUserData);
+
     ~InjectedBundle();
 
-    bool load(API::Object* initializationUserData);
-    void setSandboxExtension(PassRefPtr<SandboxExtension> sandboxExtension) { m_sandboxExtension = sandboxExtension; }
+    bool initialize(const WebProcessCreationParameters&, API::Object* initializationUserData);
 
     void setBundleParameter(const String& key, const IPC::DataReference&);
 
@@ -180,8 +177,6 @@ public:
 
 private:
     explicit InjectedBundle(const WebProcessCreationParameters&);
-
-    void platformInitialize(const WebProcessCreationParameters&);
 
     String m_path;
     PlatformBundle m_platformBundle; // This is leaked right now, since we never unload the bundle/module.
