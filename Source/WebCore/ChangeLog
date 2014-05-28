@@ -1,5 +1,32 @@
 2014-05-27  Simon Fraser  <simon.fraser@apple.com>
 
+        Instantiate a ScrollingTreeMac on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=133332
+
+        Reviewed by Tim Horton.
+
+        Mac previously instantiated a ThreadedScrollingTree, but this has no platform
+        knowledge. To support future expansion, create a ScrollingTreeMac subclass and
+        instantiate that on Mac.
+        
+        Also protect ScrollingCoordinatorMac in PLATFORM(MAC) #ifdefs and remove it from the
+        EXCLUDED_SOURCE_FILE_NAMES list in the xcconfig file, following general trends.
+
+        * Configurations/WebCore.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::create): Deleted.
+        * page/scrolling/ThreadedScrollingTree.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::ScrollingCoordinatorMac):
+        * page/scrolling/mac/ScrollingTreeMac.cpp: Copied from Source/WebCore/page/scrolling/mac/ScrollingCoordinatorMac.h.
+        (ScrollingTreeMac::create):
+        (ScrollingTreeMac::ScrollingTreeMac):
+        * page/scrolling/mac/ScrollingTreeMac.h: Copied from Source/WebCore/page/scrolling/mac/ScrollingCoordinatorMac.h.
+
+2014-05-27  Simon Fraser  <simon.fraser@apple.com>
+
         Prepare for position:sticky support inside accelerated overflow-scroll with WK2
         https://bugs.webkit.org/show_bug.cgi?id=133329
 

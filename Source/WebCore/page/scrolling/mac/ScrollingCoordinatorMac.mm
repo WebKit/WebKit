@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(ASYNC_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
 #import "ScrollingCoordinatorMac.h"
 
@@ -38,8 +38,8 @@
 #include "ScrollingThread.h"
 #include "ScrollingTreeFixedNode.h"
 #include "ScrollingTreeFrameScrollingNodeMac.h"
+#include "ScrollingTreeMac.h"
 #include "ScrollingTreeStickyNode.h"
-#include "ThreadedScrollingTree.h"
 #include "TiledBacking.h"
 #include <wtf/Functional.h>
 #include <wtf/MainThread.h>
@@ -56,7 +56,7 @@ ScrollingCoordinatorMac::ScrollingCoordinatorMac(Page* page)
     : AsyncScrollingCoordinator(page)
     , m_scrollingStateTreeCommitterTimer(this, &ScrollingCoordinatorMac::scrollingStateTreeCommitterTimerFired)
 {
-    setScrollingTree(ThreadedScrollingTree::create(this));
+    setScrollingTree(ScrollingTreeMac::create(this));
 }
 
 ScrollingCoordinatorMac::~ScrollingCoordinatorMac()
@@ -162,4 +162,4 @@ PassOwnPtr<ScrollingTreeNode> ScrollingCoordinatorMac::createScrollingTreeNode(S
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING)
+#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)

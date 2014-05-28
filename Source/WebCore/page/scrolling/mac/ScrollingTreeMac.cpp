@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingCoordinatorMac_h
-#define ScrollingCoordinatorMac_h
+#include "config.h"
+#include "ScrollingTreeMac.h"
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
-#include "AsyncScrollingCoordinator.h"
+using namespace WebCore;
 
-namespace WebCore {
+RefPtr<ScrollingTreeMac> ScrollingTreeMac::create(AsyncScrollingCoordinator* scrollingCoordinator)
+{
+    return adoptRef(new ScrollingTreeMac(scrollingCoordinator));
+}
 
-class Scrollbar;
-class ScrollingStateNode;
-class ScrollingStateScrollingNode;
-class ScrollingStateTree;
-class ThreadedScrollingTree;
-
-class ScrollingCoordinatorMac : public AsyncScrollingCoordinator {
-public:
-    explicit ScrollingCoordinatorMac(Page*);
-    virtual ~ScrollingCoordinatorMac();
-
-    virtual void pageDestroyed();
-
-    virtual void commitTreeStateIfNeeded() override;
-
-    // Handle the wheel event on the scrolling thread. Returns whether the event was handled or not.
-    virtual bool handleWheelEvent(FrameView*, const PlatformWheelEvent&) override;
-
-private:
-    virtual PassOwnPtr<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) override;
-    virtual void scheduleTreeStateCommit() override;
-
-    void scrollingStateTreeCommitterTimerFired(Timer<ScrollingCoordinatorMac>*);
-    void commitTreeState();
-    
-    void updateTiledScrollingIndicator();
-
-    Timer<ScrollingCoordinatorMac> m_scrollingStateTreeCommitterTimer;
-};
-
-} // namespace WebCore
+ScrollingTreeMac::ScrollingTreeMac(AsyncScrollingCoordinator* scrollingCoordinator)
+    : ThreadedScrollingTree(scrollingCoordinator)
+{
+}
 
 #endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
-
-#endif // ScrollingCoordinatorMac_h

@@ -40,11 +40,6 @@
 
 namespace WebCore {
 
-RefPtr<ThreadedScrollingTree> ThreadedScrollingTree::create(AsyncScrollingCoordinator* scrollingCoordinator)
-{
-    return adoptRef(new ThreadedScrollingTree(scrollingCoordinator));
-}
-
 ThreadedScrollingTree::ThreadedScrollingTree(AsyncScrollingCoordinator* scrollingCoordinator)
     : m_scrollingCoordinator(scrollingCoordinator)
 {
