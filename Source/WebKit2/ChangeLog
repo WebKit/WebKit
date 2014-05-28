@@ -1,3 +1,10 @@
+2014-05-28  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed. Fix warning: unused parameter 'frame'
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didFinishDocumentLoad):
+
 2014-05-27  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Fix behavior of position:sticky inside accelerated overflow-scroll

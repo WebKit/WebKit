@@ -4356,6 +4356,8 @@ void WebPage::didFinishDocumentLoad(WebFrame* frame)
         return;
 
     m_viewportConfiguration.didFinishDocumentLoad();
+#else
+    UNUSED_PARAM(frame);
 #endif // PLATFORM(IOS)
 }
 
