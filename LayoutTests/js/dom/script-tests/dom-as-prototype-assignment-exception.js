@@ -11,7 +11,7 @@ shouldBeUndefined('testObject.id')
 shouldThrow('testObject.id="foo"')
 
 testObject = {__proto__: document.getElementsByTagName("div")}
-shouldThrow("testObject.length")
+shouldBe("testObject.length", '1')
 
 shouldBe("div.id", "'test'")
 shouldBeFalse("div.hasOwnProperty('id')")

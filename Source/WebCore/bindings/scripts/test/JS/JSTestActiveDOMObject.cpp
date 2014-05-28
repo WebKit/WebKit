@@ -146,12 +146,7 @@ bool JSTestActiveDOMObject::getOwnPropertySlot(JSObject* object, ExecState* exec
 
 EncodedJSValue jsTestActiveDOMObjectExcitingAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    JSTestActiveDOMObject* castedThis = jsDynamicCast<JSTestActiveDOMObject*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis)) {
-        if (jsDynamicCast<JSTestActiveDOMObjectPrototype*>(slotBase))
-            return reportDeprecatedGetterError(*exec, "TestActiveDOMObject", "excitingAttr");
-        return throwGetterTypeError(*exec, "TestActiveDOMObject", "excitingAttr");
-    }
+    JSTestActiveDOMObject* castedThis = jsCast<JSTestActiveDOMObject*>(slotBase);
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->impl()))
         return JSValue::encode(jsUndefined());
     TestActiveDOMObject& impl = castedThis->impl();

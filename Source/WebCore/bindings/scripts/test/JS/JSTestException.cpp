@@ -138,12 +138,7 @@ bool JSTestException::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
 
 EncodedJSValue jsTestExceptionName(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    JSTestException* castedThis = jsDynamicCast<JSTestException*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis)) {
-        if (jsDynamicCast<JSTestExceptionPrototype*>(slotBase))
-            return reportDeprecatedGetterError(*exec, "TestException", "name");
-        return throwGetterTypeError(*exec, "TestException", "name");
-    }
+    JSTestException* castedThis = jsCast<JSTestException*>(slotBase);
     TestException& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.name());
     return JSValue::encode(result);

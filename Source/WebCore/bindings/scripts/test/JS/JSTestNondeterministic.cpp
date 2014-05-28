@@ -334,9 +334,10 @@ EncodedJSValue jsTestNondeterministicConstructor(ExecState* exec, JSObject* base
     return JSValue::encode(JSTestNondeterministic::getConstructor(exec->vm(), domObject->globalObject()));
 }
 
-void setJSTestNondeterministicNondeterministicWriteableAttr(ExecState* exec, JSObject* /* baseObject */, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+void setJSTestNondeterministicNondeterministicWriteableAttr(ExecState* exec, JSObject* baseObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(baseObject);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestNondeterministicPrototype*>(JSValue::decode(thisValue)))
@@ -353,9 +354,10 @@ void setJSTestNondeterministicNondeterministicWriteableAttr(ExecState* exec, JSO
 }
 
 
-void setJSTestNondeterministicNondeterministicExceptionAttr(ExecState* exec, JSObject* /* baseObject */, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+void setJSTestNondeterministicNondeterministicExceptionAttr(ExecState* exec, JSObject* baseObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(baseObject);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestNondeterministicPrototype*>(JSValue::decode(thisValue)))
@@ -372,9 +374,10 @@ void setJSTestNondeterministicNondeterministicExceptionAttr(ExecState* exec, JSO
 }
 
 
-void setJSTestNondeterministicNondeterministicGetterExceptionAttr(ExecState* exec, JSObject* /* baseObject */, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+void setJSTestNondeterministicNondeterministicGetterExceptionAttr(ExecState* exec, JSObject* baseObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(baseObject);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestNondeterministicPrototype*>(JSValue::decode(thisValue)))
@@ -391,9 +394,10 @@ void setJSTestNondeterministicNondeterministicGetterExceptionAttr(ExecState* exe
 }
 
 
-void setJSTestNondeterministicNondeterministicSetterExceptionAttr(ExecState* exec, JSObject* /* baseObject */, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+void setJSTestNondeterministicNondeterministicSetterExceptionAttr(ExecState* exec, JSObject* baseObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(baseObject);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestNondeterministicPrototype*>(JSValue::decode(thisValue)))
