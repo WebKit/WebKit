@@ -162,6 +162,11 @@ static NSURL *websiteDataDirectoryURL(NSString *directoryName)
     _context->setUsesNetworkProcess(true);
     _context->setProcessModel(WebKit::ProcessModelMultipleSecondaryProcesses);
 
+#if ENABLE(CACHE_PARTITIONING)
+    for (NSString *urlScheme in [_configuration cachePartitionedURLSchemes])
+        _context->registerURLSchemeAsCachePartitioned(urlScheme);
+#endif
+
     // FIXME: Add a way to configure the cache model, see <rdar://problem/16206857>.
     _context->setCacheModel(WebKit::CacheModelPrimaryWebBrowser);
 

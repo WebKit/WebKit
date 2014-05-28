@@ -1,3 +1,19 @@
+2014-05-28  Jeffrey Pfau  <jpfau@apple.com>
+
+        Add Obj-C API for cache partitioned URL schemes
+        https://bugs.webkit.org/show_bug.cgi?id=133361
+        <rdar://problem/17035415>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _initWithConfiguration:]):
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration cachePartitionedURLSchemes]):
+        (-[_WKProcessPoolConfiguration setCachePartitionedURLSchemes:]):
+        (-[_WKProcessPoolConfiguration copyWithZone:]):
+
 2014-05-28  Sam Weinig  <sam@webkit.org>
 
         [iOS WebKit2] Sometimes Safari gets into a limbo state after web process crash

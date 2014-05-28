@@ -32,6 +32,7 @@
 
 @implementation _WKProcessPoolConfiguration {
     RetainPtr<NSURL> _injectedBundleURL;
+    RetainPtr<NSArray> _cachePartitionedURLSchemes;
 }
 
 - (NSURL *)injectedBundleURL
@@ -42,6 +43,16 @@
 - (void)setInjectedBundleURL:(NSURL *)injectedBundleURL
 {
     _injectedBundleURL = adoptNS([injectedBundleURL copy]);
+}
+
+- (NSArray *)cachePartitionedURLSchemes
+{
+    return _cachePartitionedURLSchemes.get();
+}
+
+- (void)setCachePartitionedURLSchemes:(NSArray *)cachePartitionedURLSchemes
+{
+    _cachePartitionedURLSchemes = adoptNS([cachePartitionedURLSchemes copy]);
 }
 
 - (NSString *)description
@@ -59,6 +70,7 @@
 
     configuration.maximumProcessCount = self.maximumProcessCount;
     configuration.injectedBundleURL = self.injectedBundleURL;
+    configuration.cachePartitionedURLSchemes = self.cachePartitionedURLSchemes;
 
     return configuration;
 }
