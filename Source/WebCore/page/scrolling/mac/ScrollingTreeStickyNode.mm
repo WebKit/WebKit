@@ -67,29 +67,35 @@ static inline CGPoint operator*(CGPoint& a, const CGSize& b)
 
 void ScrollingTreeStickyNode::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta)
 {
-    FloatRect constrainingRect = fixedPositionRect;
-    if (parent()->isOverflowScrollingNode())
+    bool adjustStickyLayer = false;
+    FloatRect constrainingRect;
+
+    if (parent()->isOverflowScrollingNode()) {
         constrainingRect = FloatRect(toScrollingTreeOverflowScrollingNode(parent())->scrollPosition(), m_constraints.constrainingRectAtLastLayout().size());
+        adjustStickyLayer = true;
+    } else if (parent()->isFrameScrollingNode()) {
+        constrainingRect = fixedPositionRect;
+        adjustStickyLayer = true;
+    }
 
-    FloatPoint layerPosition = m_constraints.layerPositionForConstrainingRect(constrainingRect);
+    FloatSize deltaForDescendants = cumulativeDelta;
 
-    // FIXME: Subtracting the cumulativeDelta is not totally sufficient to get the new position right for nested
-    // sticky objects. We probably need a way to modify the containingBlockRect in the ViewportContraints
-    // to get this right in all cases.
-    layerPosition -= cumulativeDelta;
+    if (adjustStickyLayer) {
+        FloatPoint layerPosition = m_constraints.layerPositionForConstrainingRect(constrainingRect);
 
-    CGRect layerBounds = [m_layer.get() bounds];
-    CGPoint anchorPoint = [m_layer.get() anchorPoint];
-    CGPoint newPosition = layerPosition - m_constraints.alignmentOffset() + anchorPoint * layerBounds.size;
-    [m_layer.get() setPosition:newPosition];
+        CGRect layerBounds = [m_layer bounds];
+        CGPoint anchorPoint = [m_layer anchorPoint];
+        CGPoint newPosition = layerPosition - m_constraints.alignmentOffset() + anchorPoint * layerBounds.size;
+        [m_layer setPosition:newPosition];
+
+        deltaForDescendants = layerPosition - m_constraints.layerPositionAtLastLayout() + cumulativeDelta;
+    }
 
     if (!m_children)
         return;
 
-    FloatSize newDelta = layerPosition - m_constraints.layerPositionAtLastLayout() + cumulativeDelta;
-
     for (auto& child : *m_children)
-        child->updateLayersAfterAncestorChange(changedNode, fixedPositionRect, newDelta);
+        child->updateLayersAfterAncestorChange(changedNode, fixedPositionRect, deltaForDescendants);
 }
 
 } // namespace WebCore

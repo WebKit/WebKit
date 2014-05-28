@@ -69,10 +69,11 @@ void ScrollingTreeFixedNode::updateLayersAfterAncestorChange(const ScrollingTree
     FloatPoint layerPosition = m_constraints.layerPositionForViewportRect(fixedPositionRect);
     layerPosition -= cumulativeDelta;
 
-    CGRect layerBounds = [m_layer.get() bounds];
-    CGPoint anchorPoint = [m_layer.get() anchorPoint];
+    CGRect layerBounds = [m_layer bounds];
+    CGPoint anchorPoint = [m_layer anchorPoint];
     CGPoint newPosition = layerPosition - m_constraints.alignmentOffset() + anchorPoint * layerBounds.size;
-    [m_layer.get() setPosition:newPosition];
+    
+    [m_layer setPosition:newPosition];
 
     if (!m_children)
         return;
