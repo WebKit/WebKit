@@ -1,3 +1,17 @@
+2014-05-28  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [CMake] Clean up FAST_MOBILE_SCROLLING
+        https://bugs.webkit.org/show_bug.cgi?id=133342
+
+        Reviewed by Gyuyoung Kim.
+
+        FAST_MOBILE_SCROLLING was removed in r168726.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2014-05-27  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Remove BLOB guards
