@@ -1,3 +1,17 @@
+2014-05-27  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebKit does not recognize ARIA 1.1 tables
+        https://bugs.webkit.org/show_bug.cgi?id=133163
+
+        Reviewed by Darin Adler.
+
+        The AXObjectCache code that determines which object to create based on the role needs to be token fallback aware.
+
+        Test: accessibility/table-fallback-roles-expose-element-attributes.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::nodeHasRole):
+
 2014-05-28  Radu Stavila  <stavila@adobe.com>
 
         REGRESSION (r168046): Invalid layout in multicol
