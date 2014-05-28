@@ -1,3 +1,21 @@
+2014-05-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Arrayify neglects to inform the clobberizer that it might fire watchpoints
+        https://bugs.webkit.org/show_bug.cgi?id=133340
+
+        Reviewed by Mark Lam.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize): Be honest.
+        * llint/LowLevelInterpreter32_64.asm: Profile the object, not its structure.
+        * tests/stress/arrayify-fires-watchpoint.js: Added.
+        (foo):
+        (test):
+        (makeObjectArray):
+        * tests/stress/arrayify-structure-bad-test.js: Added.
+        (foo):
+        (test):
+
 2014-05-27  Jon Lee  <jonlee@apple.com>
 
         Update ENABLE(MEDIA_SOURCE) on Mac

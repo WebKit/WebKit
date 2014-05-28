@@ -465,6 +465,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         write(JSCell_structureID);
         write(JSCell_indexingType);
         write(JSObject_butterfly);
+        write(Watchpoint_fire);
         clobberizeForAllocation(read, write);
         return;
         
