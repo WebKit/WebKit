@@ -1,3 +1,41 @@
+2014-05-27  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Need an API test for bug #133193 (r169315)
+        <https://bugs.webkit.org/show_bug.cgi?id=133324>
+
+        This adds an API test that ensures that calling "stop loading" during a
+        "did fail provisional load" callback doesn't crash.
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Add new files to project.
+
+        * TestWebKitAPI/Tests/WebKit2/StopLoadingDuringDidFailProvisionalLoad.cpp: Added.
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+        If the message is the "test done" message, record that.
+        (TestWebKitAPI::setInjectedBundleClient):
+        Register a function for the "did receive message from injected bundle"
+        callback.
+        (TestWebKitAPI::didFailProvisionalLoadWithErrorForFrame):
+        Assert that we received the message from the injected bundle, and set
+        'done' to finish the test.
+        (TestWebKitAPI::TEST):
+        Create a WebView, register a page loader client for the "did fail
+        provisional load" callback, and load a non-existent resource.
+
+        * TestWebKitAPI/Tests/WebKit2/StopLoadingDuringDidFailProvisionalLoad_bundle.cpp: Added.
+        (TestWebKitAPI::StopLoadingDuringDidFailProvisionalLoadTest::StopLoadingDuringDidFailProvisionalLoadTest):
+        (TestWebKitAPI::didFailProvisionalLoadWithErrorForFrameCallback):
+        Tell the StopLoadingDuringDidFailProvisionalLoadTest object that the
+        provisional load failed.
+        (TestWebKitAPI::StopLoadingDuringDidFailProvisionalLoadTest::didCreatePage):
+        Register a page loader client for the "did fail provisional load"
+        callback.
+        (TestWebKitAPI::StopLoadingDuringDidFailProvisionalLoadTest::didFailProvisionalLoad):
+        Call WKBundlePageStopLoading() during the callback. This not crashing
+        is what we're ensuring with this test.
+
 2014-05-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Make it possible to build with FTL enabled
