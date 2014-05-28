@@ -30,7 +30,7 @@
 #import <Foundation/Foundation.h>
 
 /*! @enum WKUserScriptInjectionTime
- @abstract when a user script should be injected into a web page.
+ @abstract when a user script should be injected into a webpage.
  @constant WKUserScriptInjectionTimeAtDocumentStart    Inject the script after the document element has been created, but before any other content has been loaded.
  @constant WKUserScriptInjectionTimeAtDocumentEnd      Inject the script after the document has finished loading, but before any subresources may have finished loading.
  */
@@ -39,7 +39,7 @@ typedef NS_ENUM(NSInteger, WKUserScriptInjectionTime) {
     WKUserScriptInjectionTimeAtDocumentEnd
 } WK_ENUM_AVAILABLE(10_10, 8_0);
 
-/*! A @link WKUserScript @/link object represents a script that can be injected into web pages.
+/*! A @link WKUserScript @/link object represents a script that can be injected into webpages.
  */
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKUserScript : NSObject <NSCopying>

@@ -47,18 +47,18 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 @property (nonatomic, readonly) WKBackForwardListItem *forwardItem;
 
-/*! @abstract Returns an entry the given distance from the current entry.
+/*! @abstract Returns an item the given distance from the current item.
  @param index Index of the desired list item relative to the current item; 0 is current item, -1 is back item, 1 is forward item, etc.
- @result The entry the given distance from the current entry. If index exceeds the limits of the list, nil is returned.
+ @result The item the given distance from the current item. If index exceeds the limits of the list, nil is returned.
  */
 - (WKBackForwardListItem *)itemAtIndex:(NSInteger)index;
 
-/*! @abstract Returns the portion of the list before the current entry.
+/*! @abstract Returns the portion of the list before the current item.
  @discussion The entries are in the order that they were originally visited.
  */
 @property (nonatomic, readonly) NSArray *backList;
 
-/*! @abstract Returns the portion of the list after the current entry.
+/*! @abstract Returns the portion of the list after the current item.
  @discussion The entries are in the order that they were originally visited.
  */
 @property (nonatomic, readonly) NSArray *forwardList;

@@ -1,3 +1,31 @@
+2014-05-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Some proof-reading of the WebKit2 API headerdoc
+        https://bugs.webkit.org/show_bug.cgi?id=133328
+
+        Reviewed by Anders Carlsson.
+
+        Consistently say "item" to reference back-forward list items.
+
+        Consistently say "webpage" instead of "page" or "web page".
+
+        Consistently say "navigation" instead of "load".
+
+        Plus a few fix-ups for run-on sentences, mismatched verb tense, and
+        mismatched singular vs plural.
+
+        * UIProcess/API/Cocoa/WKBackForwardList.h:
+        * UIProcess/API/Cocoa/WKBackForwardListItem.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextController.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextGroup.h:
+        * UIProcess/API/Cocoa/WKFrameInfo.h:
+        * UIProcess/API/Cocoa/WKNavigation.h:
+        * UIProcess/API/Cocoa/WKNavigationAction.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        * UIProcess/API/Cocoa/WKProcessPool.h:
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+        * UIProcess/API/Cocoa/WKWebView.h:
+
 2014-05-27  Timothy Horton  <timothy_horton@apple.com>
 
         [wk2] PDFPlugin snapshots are misplaced

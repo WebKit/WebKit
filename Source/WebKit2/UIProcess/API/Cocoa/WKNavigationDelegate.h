@@ -54,8 +54,8 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
     WKNavigationResponsePolicyAllow,
 } WK_ENUM_AVAILABLE(10_10, 8_0);
 
-/*! A class that conforms to WKNavigationDelegate can provide methods for deciding load policy for main frame and subframe loads
- and track load progress for main frame loads.
+/*! A class that conforms to WKNavigationDelegate can decide policy for main frame and subframe navigations,
+ and track progress for main frame navigations.
  */
 @protocol WKNavigationDelegate <NSObject>
 
@@ -64,18 +64,18 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
 /*! @abstract Decides whether a navigation should be allowed or not.
  @param webView The WKWebView invoking the delegate method.
  @param navigationAction A description of the action that triggered the navigation request.
- @param decisionHandler The decision handler that should be called to allow or cancel the load.
+ @param decisionHandler The decision handler that should be called to allow or cancel the navigation.
  */
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler;
 
 /*! @abstract Decides whether a navigation should be allowed or cancelled once its response is known.
  @param webView The WKWebView invoking the delegate method.
  @param navigationResponse A description of the navigation response.
- @param decisionHandler The decision handler that should be called to allow or cancel the load.
+ @param decisionHandler The decision handler that should be called to allow or cancel the navigation.
  */
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler;
 
-/*! @abstract Invoked when a main frame page load starts.
+/*! @abstract Invoked when a main frame navigation starts.
  @param webView The WKWebView invoking the delegate method.
  @param navigation The navigation.
  */
@@ -90,7 +90,7 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
 /*! @abstract Invoked if an error occurs when starting to load data for the main frame.
  @param webView The WKWebView invoking the delegate method.
  @param navigation The navigation.
- @param error Specifies the type of error that occurred during the load.
+ @param error Specifies the type of error that occurred during the navigation.
  */
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error;
 
@@ -100,16 +100,16 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
  */
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation;
 
-/*! @abstract Invoked when a main frame load completes.
+/*! @abstract Invoked when a main frame navigation completes.
  @param webView The WKWebView invoking the delegate method.
  @param navigation The navigation.
  */
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation;
 
-/*! @abstract Invoked if an error occurs loading a committed main frame page load.
+/*! @abstract Invoked if an error occurs while loading a committed main frame navigation.
  @param webView The WKWebView invoking the delegate method.
  @param navigation The navigation.
- @param error Specifies the type of error that occurred during the load.
+ @param error Specifies the type of error that occurred during the navigation.
  */
 - (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error;
 

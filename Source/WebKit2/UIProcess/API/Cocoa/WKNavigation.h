@@ -29,8 +29,8 @@
 
 #import <Foundation/Foundation.h>
 
-/*! WKNavigation objects are returned from  the @link WKWebView @/link load methods and are passed to the 
- @link WKNavigationDelegate @/link methods, and can be used to track page loads from start to finish.
+/*! WKNavigation objects are returned from the @link WKWebView @/link load methods and are passed to the 
+ @link WKNavigationDelegate @/link methods. A WKNavigation object uniquely identifies a webpage load from start to finish.
  */
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKNavigation : NSObject
@@ -47,7 +47,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 @property (nonatomic, readonly) NSURLResponse *response;
 
-/* @abstract The page load error if the page failed to load, nil otherwise.
+/* @abstract The error for the navigation if it failed or nil if it did not fail.
  */
 @property (nonatomic, readonly) NSError *error;
 

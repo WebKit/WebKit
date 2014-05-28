@@ -64,13 +64,13 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 - (void)loadFileURL:(NSURL *)URL restrictToFilesWithin:(NSURL *)allowedDirectory;
 - (void)loadFileURL:(NSURL *)URL restrictToFilesWithin:(NSURL *)allowedDirectory userData:(id)userData;
 
-/* Load a page using the passed in string as its contents. */
+/* Load a webpage using the passed in string as its contents. */
 - (void)loadHTMLString:(NSString *)HTMLString baseURL:(NSURL *)baseURL;
 - (void)loadHTMLString:(NSString *)HTMLString baseURL:(NSURL *)baseURL userData:(id)userData;
 
 - (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL;
 
-/* Load a page using the passed in data as its contents. */
+/* Load a webpage using the passed in data as its contents. */
 - (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL;
 - (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL userData:(id)userData;
 
@@ -88,16 +88,16 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 #pragma mark Back/Forward
 
-/* Go to the next page in the back/forward list. */
+/* Go to the next webpage in the back/forward list. */
 - (void)goForward;
 
-/* Whether there is a next page in the back/forward list. */
+/* Whether there is a next webpage in the back/forward list. */
 @property(readonly) BOOL canGoForward;
 
-/* Go to the previous page in the back/forward list. */
+/* Go to the previous webpage in the back/forward list. */
 - (void)goBack;
 
-/* Whether there is a previous page in the back/forward list. */
+/* Whether there is a previous webpage in the back/forward list. */
 @property(readonly) BOOL canGoBack;
 
 - (void)goToBackForwardListItem:(WKBackForwardListItem *)item;

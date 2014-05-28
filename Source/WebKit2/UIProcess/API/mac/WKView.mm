@@ -1700,7 +1700,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     [self _disableComplexTextInputIfNecessary];
 
     // Pass key combos through WebCore if there is a key binding available for
-    // this event. This lets web pages have a crack at intercepting key-modified keypresses.
+    // this event. This lets webpages have a crack at intercepting key-modified keypresses.
     // FIXME: Why is the firstResponder check needed?
     if (self == [[self window] firstResponder]) {
         [self _interpretKeyEvent:event completionHandler:^(BOOL handledByInputMethod, const Vector<KeypressCommand>& commands) {
@@ -2131,7 +2131,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     [self _disableComplexTextInputIfNecessary];
 
     // Pass key combos through WebCore if there is a key binding available for
-    // this event. This lets web pages have a crack at intercepting key-modified keypresses.
+    // this event. This lets webpages have a crack at intercepting key-modified keypresses.
     // FIXME: Why is the firstResponder check needed?
     if (self == [[self window] firstResponder]) {
         Vector<KeypressCommand> commands;

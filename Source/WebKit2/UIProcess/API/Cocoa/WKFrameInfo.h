@@ -29,9 +29,9 @@
 
 #import <Foundation/Foundation.h>
 
-/*! A @link WKFrameInfo @/link object contains information about a frame on a web page.
- @discussion WKFrameInfo objects are transient data only objects, they can not be used to uniquely 
- identify a frame across multiple delegate method calls.
+/*! A @link WKFrameInfo @/link object contains information about a frame on a webpage.
+ @discussion WKFrameInfo objects are transient, data-only objects. A WKFrameInfo object
+ does not uniquely identify a frame across multiple delegate method calls.
  */
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKFrameInfo : NSObject

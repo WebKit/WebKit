@@ -30,7 +30,7 @@
 #import <Foundation/Foundation.h>
 
 /*! A pool of Web Content processes.
- A @link WKWebView @/link specifies from which pool the Web Content process backing it comes through its @link WKWebViewConfiguration @/link.
+ A @link WKWebView @/link specifies its process pool through its @link WKWebViewConfiguration @/link.
  Each WKWebView will get its own Web Content process until an implementation-defined process limit is reached; after that,
  web views with the same process pool end up sharing Web Content processes.
  */

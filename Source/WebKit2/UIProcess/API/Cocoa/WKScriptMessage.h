@@ -31,7 +31,7 @@
 
 @class WKWebView;
 
-/*! A @link WKScriptMessage @/link object contains information about a message being sent from a web page.
+/*! A @link WKScriptMessage @/link object contains information about a message being sent from a webpage.
  */
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKScriptMessage : NSObject

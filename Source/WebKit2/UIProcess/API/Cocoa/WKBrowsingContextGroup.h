@@ -46,7 +46,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /* Settings */
 
-/* Setting to control whether JavaScript referenced by a page is enabled.
+/* Setting to control whether JavaScript is enabled.
    Default: YES
 */
 @property BOOL allowsJavaScript;

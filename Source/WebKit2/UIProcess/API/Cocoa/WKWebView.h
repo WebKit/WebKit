@@ -94,7 +94,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 - (WKNavigation *)goToBackForwardListItem:(WKBackForwardListItem *)item;
 
-/*! @abstract The page title. @link WKWebView @/link is KVO-compliant for this property.
+/*! @abstract The webpage title. @link WKWebView @/link is KVO-compliant for this property.
  */
 @property (nonatomic, readonly) NSString *title;
 
@@ -116,7 +116,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 @property (nonatomic, readonly) double estimatedProgress;
 
-/*! @abstract Whether all of the resources on the page have been loaded over securely encrypted connections.
+/*! @abstract Whether all of the resources on the webpage have been loaded over securely encrypted connections.
  @link WKWebView @/link is KVO-compliant for this property.
  */
 @property (nonatomic, readonly) BOOL hasOnlySecureContent;
@@ -171,11 +171,11 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 @property (nonatomic) BOOL allowsMagnification;
 
-/* @abstract The amount by which the page content is currently scaled. Defaults to 1.0.
+/* @abstract The amount by which the webpage content is currently scaled. Defaults to 1.0.
  */
 @property (nonatomic) CGFloat magnification;
 
-/* @abstract Magnify the page content by the given amount and center the result on the given point.
+/* @abstract Magnify the webpage content by the given amount and center the result on the given point.
  * @param magnification The amount by which to magnify the content.
  * @param point The point (in view space) on which to center magnification.
  */
