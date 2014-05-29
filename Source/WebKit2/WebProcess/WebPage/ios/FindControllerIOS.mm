@@ -113,23 +113,28 @@ void FindController::hideFindIndicator()
     didHideFindIndicator();
 }
 
-// FIXME: These should likely affect the frame owning the selection, not the main frame.
 void FindController::willFindString()
 {
-    m_webPage->mainFrame()->editor().setIgnoreCompositionSelectionChange(true);
-    m_webPage->mainFrame()->selection().setUpdateAppearanceEnabled(true);
+    for (Frame* coreFrame = m_webPage->mainFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext()) {
+        coreFrame->editor().setIgnoreCompositionSelectionChange(true);
+        coreFrame->selection().setUpdateAppearanceEnabled(true);
+    }
 }
 
 void FindController::didFailToFindString()
 {
-    m_webPage->mainFrame()->selection().setUpdateAppearanceEnabled(false);
-    m_webPage->mainFrame()->editor().setIgnoreCompositionSelectionChange(false);
+    for (Frame* coreFrame = m_webPage->mainFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext()) {
+        coreFrame->selection().setUpdateAppearanceEnabled(false);
+        coreFrame->editor().setIgnoreCompositionSelectionChange(false);
+    }
 }
 
 void FindController::didHideFindIndicator()
 {
-    m_webPage->mainFrame()->selection().setUpdateAppearanceEnabled(false);
-    m_webPage->mainFrame()->editor().setIgnoreCompositionSelectionChange(false);
+    for (Frame* coreFrame = m_webPage->mainFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext()) {
+        coreFrame->selection().setUpdateAppearanceEnabled(false);
+        coreFrame->editor().setIgnoreCompositionSelectionChange(false);
+    }
 }
 
 } // namespace WebKit
