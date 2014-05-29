@@ -62,8 +62,4 @@ void InjectedBundle::setBundleParameter(const String& /*key*/, const IPC::DataRe
 {
 }
 
-void InjectedBundle::activateMacFontAscentHack()
-{
-}
-
 } // namespace WebKit

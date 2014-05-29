@@ -68,11 +68,6 @@ void WKBundleRemoveAllVisitedLinks(WKBundleRef bundleRef)
     toImpl(bundleRef)->removeAllVisitedLinks();
 }
 
-void WKBundleActivateMacFontAscentHack(WKBundleRef bundleRef)
-{
-    toImpl(bundleRef)->activateMacFontAscentHack();
-}
-
 void WKBundleSetCacheModel(WKBundleRef bundleRef, uint32_t cacheModel)
 {
     toImpl(bundleRef)->setCacheModel(cacheModel);

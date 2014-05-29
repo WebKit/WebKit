@@ -54,10 +54,6 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters&, API::Object
     return true;
 }
 
-void InjectedBundle::activateMacFontAscentHack()
-{
-}
-
 void InjectedBundle::setBundleParameter(WTF::String const&, IPC::DataReference const&)
 {
 }

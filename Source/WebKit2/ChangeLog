@@ -1,3 +1,21 @@
+2014-05-29  Dan Bernstein  <mitz@apple.com>
+
+        WKBundleActivateMacFontAscentHack is unused
+        https://bugs.webkit.org/show_bug.cgi?id=133379
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleActivateMacFontAscentHack): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/InjectedBundle/efl/InjectedBundleEfl.cpp:
+        (WebKit::InjectedBundle::activateMacFontAscentHack): Deleted.
+        * WebProcess/InjectedBundle/gtk/InjectedBundleGtk.cpp:
+        (WebKit::InjectedBundle::activateMacFontAscentHack): Deleted.
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::activateMacFontAscentHack): Deleted.
+
 2014-05-29  Alexey Proskuryakov  <ap@apple.com>
 
         Add a sandbox profile for com.apple.appstore.CodeRedeemerNetscapePlugin

@@ -140,11 +140,6 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
 #endif
 }
 
-void InjectedBundle::activateMacFontAscentHack()
-{
-}
-
-
 #if WK_API_ENABLED
 WKWebProcessBundleParameters *InjectedBundle::bundleParameters()
 {
