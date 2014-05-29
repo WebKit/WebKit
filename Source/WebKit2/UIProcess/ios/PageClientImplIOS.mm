@@ -341,9 +341,9 @@ IntRect PageClientImpl::rootViewToAccessibilityScreen(const IntRect& rect)
     return enclosingIntRect(rootViewRect);
 }
     
-void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
+void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool)
 {
-    notImplemented();
+    [m_contentView _didHandleKeyEvent:event.nativeEvent()];
 }
 
 #if ENABLE(TOUCH_EVENTS)

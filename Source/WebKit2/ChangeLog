@@ -1,3 +1,21 @@
+2014-05-29  Enrica Casucci  <enrica@apple.com>
+
+        Need to notify the keyboard about every KeyDown event.
+        https://bugs.webkit.org/show_bug.cgi?id=133383
+        <rdar://problem/16633975>
+
+        Reviewed by Benjamin Poulain.
+        
+        A key down will generate most of the time a call to the keyboard to add input or delete.
+        But the event could be handled by JavaScript and its default prevented.
+        We need to notify the keyboard in every case to allow updating its internal state about what has been typed.
+
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::doneWithKeyEvent):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _didHandleKeyEvent:]):
+
 2014-05-29  Matthew Hanson  <matthew_hanson@apple.com>
 
         Roll out r169439. <rdar://problem/17069364>

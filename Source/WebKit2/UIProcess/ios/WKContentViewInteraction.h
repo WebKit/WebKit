@@ -172,6 +172,7 @@ struct WKAutoCorrectionData {
 - (void)_showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(const WebCore::IntRect&)elementRect;
 - (void)_showRunOpenPanel:(WebKit::WebOpenPanelParameters*)parameters resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener;
 - (void)accessoryDone;
+- (void)_didHandleKeyEvent:(WebIOSEvent *)event;
 - (Vector<WebKit::WKOptionItem>&) assistedNodeSelectOptions;
 @end
 

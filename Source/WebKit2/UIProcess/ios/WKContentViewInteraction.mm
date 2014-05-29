@@ -130,6 +130,10 @@ static const float tapAndHoldDelay  = 0.75;
 - (void)scheduleChineseTransliterationForText:(NSString *)text;
 @end
 
+@interface UIKeyboardImpl (StagingToRemove)
+- (void)didHandleWebKeyEvent;
+@end
+
 @interface WKFormInputSession : NSObject <_WKFormInputSession>
 
 - (instancetype)initWithContentView:(WKContentView *)view userObject:(NSObject <NSSecureCoding> *)userObject;
@@ -1896,6 +1900,15 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 - (void)handleKeyWebEvent:(WebIOSEvent *)theEvent
 {
     _page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent));
+}
+
+- (void)_didHandleKeyEvent:(WebIOSEvent *)event
+{
+    if (event.type == WebEventKeyDown) {
+        // FIXME: This is only for staging purposes.
+        if ([[UIKeyboardImpl sharedInstance] respondsToSelector:@selector(didHandleWebKeyEvent)])
+            [[UIKeyboardImpl sharedInstance] didHandleWebKeyEvent];
+    }
 }
 
 - (BOOL)_interpretKeyEvent:(WebIOSEvent *)event isCharEvent:(BOOL)isCharEvent
