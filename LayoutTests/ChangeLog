@@ -1,3 +1,14 @@
+2014-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WK2][GTK] ASSERTION FAILED: m_status == Scheduled in GMainLoopSource
+        https://bugs.webkit.org/show_bug.cgi?id=131220
+
+        Reviewed by Philippe Normand.
+
+        Unskip inspector-protocol/dom/remove-multiple-nodes.html.
+
+        * platform/gtk/TestExpectations:
+
 2014-05-28  Martin Hock  <mhock@apple.com>
 
         Marking test as flaky pending further review.

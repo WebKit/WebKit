@@ -482,8 +482,6 @@ webkit.org/b/131216 [ Debug ] http/tests/multipart/stop-crash.html [ Crash Pass 
 
 webkit.org/b/131219 [ Debug ] http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html [ Crash ]
 
-webkit.org/b/131220 [ Debug ] inspector-protocol/dom/remove-multiple-nodes.html [ Crash ]
-
 webkit.org/b/116977 [ Debug ] media/event-attributes.html [ Crash Pass ]
 
 webkit.org/b/131222 [ Debug ] media/video-currentsrc-cleared.html [ Crash Pass ]

@@ -203,7 +203,7 @@ bool GMainLoopSource::boolCallback()
         return false;
 
     ASSERT(m_boolCallback);
-    ASSERT(m_status == Scheduled);
+    ASSERT(m_status == Scheduled || m_status == Dispatched);
     m_status = Dispatched;
 
     GSource* source = m_source.get();
@@ -220,7 +220,7 @@ bool GMainLoopSource::socketCallback(GIOCondition condition)
         return false;
 
     ASSERT(m_socketCallback);
-    ASSERT(m_status == Scheduled);
+    ASSERT(m_status == Scheduled || m_status == Dispatched);
     m_status = Dispatched;
 
     if (g_cancellable_is_cancelled(m_cancellable.get())) {
