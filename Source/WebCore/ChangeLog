@@ -1,3 +1,18 @@
+2014-05-29  Jeremy Jones  <jeremyj@apple.com>
+
+        Use correct version of requiresFullscreenForVideoPlayback().
+        https://bugs.webkit.org/show_bug.cgi?id=133331
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-fullscreeen-only-controls.html
+
+        Update the last place not yet using m_mediaSession->requiresFullscreenForVideoPlayback.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        switch to media session version for requriesFullscreenForVideoPlayback.
+
 2014-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add support for HiDPI icons

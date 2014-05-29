@@ -1,3 +1,14 @@
+2014-05-29  Jeremy Jones  <jeremyj@apple.com>
+
+        Use correct version of requiresFullscreenForVideoPlayback().
+        https://bugs.webkit.org/show_bug.cgi?id=133331
+
+        Reviewed by Eric Carlson.
+
+        * media/video-fullscreeen-only-controls-expected.txt: Added.
+        * media/video-fullscreeen-only-controls.html: Added. Make sure video element
+        controls show even when not specified if inline playback is restricted.
+
 2014-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WK2][GTK] ASSERTION FAILED: m_status == Scheduled in GMainLoopSource
