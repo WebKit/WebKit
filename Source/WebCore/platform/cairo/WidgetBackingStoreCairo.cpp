@@ -26,8 +26,10 @@
 
 namespace WebCore {
 
-static PassRefPtr<cairo_surface_t> createSurfaceForBackingStore(PlatformWidget widget, const IntSize& size)
+static PassRefPtr<cairo_surface_t> createSurfaceForBackingStore(PlatformWidget widget, IntSize size, float deviceScaleFactor)
 {
+    size.scale(deviceScaleFactor);
+
 #if PLATFORM(GTK)
     return adoptRef(gdk_window_create_similar_surface(gtk_widget_get_window(widget), CAIRO_CONTENT_COLOR_ALPHA, size.width(), size.height()));
 #else
@@ -36,20 +38,20 @@ static PassRefPtr<cairo_surface_t> createSurfaceForBackingStore(PlatformWidget w
 #endif
 }
 
-PassOwnPtr<WidgetBackingStore> WidgetBackingStoreCairo::create(PlatformWidget widget, const IntSize& size)
+PassOwnPtr<WidgetBackingStore> WidgetBackingStoreCairo::create(PlatformWidget widget, const IntSize& size, float deviceScaleFactor)
 {
-    return adoptPtr(new WidgetBackingStoreCairo(widget, size));
+    return adoptPtr(new WidgetBackingStoreCairo(widget, size, deviceScaleFactor));
 }
 
 // We keep two copies of the surface here, which will double the memory usage, but increase
 // scrolling performance since we do not have to keep reallocating a memory region during
 // quick scrolling requests.
-WidgetBackingStoreCairo::WidgetBackingStoreCairo(PlatformWidget widget, const IntSize& size)
-    : WidgetBackingStore(size)
-    , m_surface(createSurfaceForBackingStore(widget, size))
-    , m_scrollSurface(createSurfaceForBackingStore(widget, size))
-
+WidgetBackingStoreCairo::WidgetBackingStoreCairo(PlatformWidget widget, const IntSize& size, float deviceScaleFactor)
+    : WidgetBackingStore(size, deviceScaleFactor)
+    , m_surface(createSurfaceForBackingStore(widget, size, deviceScaleFactor))
+    , m_scrollSurface(createSurfaceForBackingStore(widget, size, deviceScaleFactor))
 {
+    cairoSurfaceSetDeviceScale(m_surface.get(), deviceScaleFactor, deviceScaleFactor);
 }
 
 WidgetBackingStoreCairo::~WidgetBackingStoreCairo()

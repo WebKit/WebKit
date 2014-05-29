@@ -139,6 +139,10 @@
 #include "WebVideoFullscreenManagerProxyMessages.h"
 #endif
 
+#if USE(CAIRO)
+#include <WebCore/CairoUtilities.h>
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -1844,6 +1848,12 @@ void WebPageProxy::setCustomDeviceScaleFactor(float customScaleFactor)
 {
     if (!isValid())
         return;
+
+    // FIXME: Remove this once we bump cairo requirements to support HiDPI.
+    // https://bugs.webkit.org/show_bug.cgi?id=133378
+#if USE(CAIRO) && !HAVE(CAIRO_SURFACE_SET_DEVICE_SCALE)
+    return;
+#endif
 
     if (m_customDeviceScaleFactor == customScaleFactor)
         return;

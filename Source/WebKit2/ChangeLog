@@ -1,3 +1,20 @@
+2014-05-29  Owen Taylor  <otaylor@redhat.com>
+
+        [GTK] Add HighDPI support for non-accelerated compositing contents
+        https://bugs.webkit.org/show_bug.cgi?id=131562
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (deviceScaleFactorChanged): Added this callback to pass scale changes to the page proxy.
+        (webkitWebViewBaseCreateWebPage): Attach the callback to the notify signal.
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::WebPageProxy::setCustomDeviceScaleFactor): Do not set a
+        custom device scale factor for cairo when it's not supported.
+        (WebKit::createBackingStoreForGTK): Pass the scale factor to the WebCore backing store.
+        (WebKit::BackingStore::incorporateUpdate): Ditto.
+
 2014-05-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use GMainLoopSource for idle and timeout sources in WebKit2
