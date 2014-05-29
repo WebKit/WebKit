@@ -100,7 +100,6 @@ void InjectedBundle::initialize(WKBundleRef bundle, WKTypeRef initializationUser
     platformInitialize(initializationUserData);
 
     activateFonts();
-    WKBundleActivateMacFontAscentHack(m_bundle);
 }
 
 void InjectedBundle::didCreatePage(WKBundlePageRef page)

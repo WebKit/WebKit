@@ -1,3 +1,10 @@
+2014-05-29  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the WebKitTestRunner build after r169452.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::initialize):
+
 2014-05-28  Gwang Yoon Hwang  <yoon@igalia.com>
 
         Unreviewed. Update my email addresses in contributors.json.
