@@ -1,3 +1,17 @@
+2014-05-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Add a sandbox profile for com.apple.appstore.CodeRedeemerNetscapePlugin
+        https://bugs.webkit.org/show_bug.cgi?id=133360
+
+        Reviewed by Sam Weinig.
+
+        * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb: Looks like
+        anyone using camera would need access to CoreMedia preferences.
+
+        * Resources/PlugInSandboxProfiles/com.apple.appstore.CodeRedeemerNetscapePlugin.sb: Added.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added the profile.
+
 2014-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add support for HiDPI icons
