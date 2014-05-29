@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "PluginInformation.h"
+#ifndef SandboxUtilities_h
+#define SandboxUtilities_h
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
-#import "APINumber.h"
-#import "APIString.h"
-#import "PluginModuleInfo.h"
-#import "StringUtilities.h"
-#import <WebKitSystemInterface.h>
+#include <sys/types.h>
 
 namespace WebKit {
 
-void getPlatformPluginModuleInformation(const PluginModuleInfo& plugin, ImmutableDictionary::MapType& map)
-{
-    map.set(pluginInformationBundleIdentifierKey(), API::String::create(plugin.bundleIdentifier));
-    map.set(pluginInformationBundleVersionKey(), API::String::create(plugin.versionString));
-    map.set(pluginInformationBundleShortVersionKey(), API::String::create(plugin.shortVersionString));
-    map.set(pluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey(), API::Boolean::create(WKIsPluginUpdateAvailable(nsStringFromWebCoreString(plugin.bundleIdentifier))));
-    map.set(pluginInformationHasSandboxProfileKey(), API::Boolean::create(plugin.hasSandboxProfile));
+bool processIsSandboxed(pid_t);
+
 }
 
-} // namespace WebKit
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
+#endif // SandboxUtilities_h

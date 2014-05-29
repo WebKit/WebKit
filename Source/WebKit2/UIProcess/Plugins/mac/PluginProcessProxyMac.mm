@@ -32,6 +32,7 @@
 #import "EnvironmentVariables.h"
 #import "PluginProcessCreationParameters.h"
 #import "PluginProcessMessages.h"
+#import "SandboxUtilities.h"
 #import "WebKitSystemInterface.h"
 #import <QuartzCore/CARemoteLayerServer.h>
 #import <WebCore/FileSystem.h>
@@ -151,9 +152,12 @@ void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions
     launchOptions.executableHeap = PluginProcessProxy::pluginNeedsExecutableHeap(pluginProcessAttributes.moduleInfo);
     launchOptions.extraInitializationData.add("plugin-path", pluginProcessAttributes.moduleInfo.path);
 
-    // FIXME: Don't allow this if the UI process is sandboxed.
-    if (pluginProcessAttributes.sandboxPolicy == PluginProcessSandboxPolicyUnsandboxed)
-        launchOptions.extraInitializationData.add("disable-sandbox", "1");
+    if (pluginProcessAttributes.sandboxPolicy == PluginProcessSandboxPolicyUnsandboxed) {
+        if (!processIsSandboxed(getpid()))
+            launchOptions.extraInitializationData.add("disable-sandbox", "1");
+        else
+            WTFLogAlways("Main process is sandboxed, ignoring plug-in sandbox policy");
+    }
 
     launchOptions.useXPC = shouldUseXPC(launchOptions, pluginProcessAttributes);
 }

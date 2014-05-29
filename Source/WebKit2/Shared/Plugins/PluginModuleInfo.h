@@ -56,6 +56,7 @@ struct PluginModuleInfo {
     String versionString;
     String shortVersionString;
     String preferencePanePath;
+    bool hasSandboxProfile;
 #elif PLATFORM(GTK)
     bool requiresGtk2;
 #endif

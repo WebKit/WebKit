@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "PluginInformation.h"
+#include "config.h"
+#include "SandboxUtilities.h"
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
-#import "APINumber.h"
-#import "APIString.h"
-#import "PluginModuleInfo.h"
-#import "StringUtilities.h"
-#import <WebKitSystemInterface.h>
+#if __has_include(<sandbox/private.h>)
+#import <sandbox/private.h>
+#else
+enum sandbox_filter_type {
+    SANDBOX_FILTER_NONE,
+};
+extern "C"
+int sandbox_check(pid_t, const char *operation, enum sandbox_filter_type, ...);
+#endif
 
 namespace WebKit {
 
-void getPlatformPluginModuleInformation(const PluginModuleInfo& plugin, ImmutableDictionary::MapType& map)
+bool processIsSandboxed(pid_t pid)
 {
-    map.set(pluginInformationBundleIdentifierKey(), API::String::create(plugin.bundleIdentifier));
-    map.set(pluginInformationBundleVersionKey(), API::String::create(plugin.versionString));
-    map.set(pluginInformationBundleShortVersionKey(), API::String::create(plugin.shortVersionString));
-    map.set(pluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey(), API::Boolean::create(WKIsPluginUpdateAvailable(nsStringFromWebCoreString(plugin.bundleIdentifier))));
-    map.set(pluginInformationHasSandboxProfileKey(), API::Boolean::create(plugin.hasSandboxProfile));
+    return sandbox_check(pid, nullptr, SANDBOX_FILTER_NONE);
 }
 
-} // namespace WebKit
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
+}
