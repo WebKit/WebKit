@@ -92,7 +92,7 @@ void WebView::setActive(bool active)
         return;
 
     scene->setActive(active);
-    m_page->viewStateDidChange(ViewState::WindowIsActive);
+    m_page->viewStateDidChange();
 }
 
 void WebView::setSize(const WebCore::IntSize& size)
@@ -111,7 +111,7 @@ void WebView::setFocused(bool focused)
         return;
 
     m_focused = focused;
-    m_page->viewStateDidChange(ViewState::IsFocused | ViewState::WindowIsActive);
+    m_page->viewStateDidChange();
 }
 
 void WebView::setVisible(bool visible)
@@ -120,12 +120,27 @@ void WebView::setVisible(bool visible)
         return;
 
     m_visible = visible;
-    m_page->viewStateDidChange(ViewState::IsVisible);
+    m_page->viewStateDidChange();
 
     if (CoordinatedDrawingAreaProxy* drawingArea = static_cast<CoordinatedDrawingAreaProxy*>(page()->drawingArea()))
         drawingArea->visibilityDidChange();
 }
 
+ViewState::Flags WebView::viewState()
+{
+    ViewState::Flags viewState = ViewState::IsInWindow | ViewState::WindowIsActive;
+    
+    if (isFocused())
+        viewState |= ViewState::IsFocused;
+    
+    if (isVisible())
+        viewState |= (ViewState::IsVisible | ViewState::IsVisibleOrOccluded);
+    else
+        viewState |= ViewState::IsVisuallyIdle;
+    
+    return viewState;
+}
+    
 void WebView::setUserViewportTranslation(double tx, double ty)
 {
     m_userViewportTransform = TransformationMatrix().translate(tx, ty);
@@ -321,28 +336,6 @@ bool WebView::isActive() const
         return false;
 
     return scene->isActive();
-}
-
-bool WebView::isViewWindowActive()
-{
-    notImplemented();
-    return true;
-}
-
-bool WebView::isViewFocused()
-{
-    return isFocused();
-}
-
-bool WebView::isViewVisible()
-{
-    return isVisible();
-}
-
-bool WebView::isViewInWindow()
-{
-    notImplemented();
-    return true;
 }
 
 void WebView::processDidExit()

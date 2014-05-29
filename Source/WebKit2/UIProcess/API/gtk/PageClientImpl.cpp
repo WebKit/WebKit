@@ -97,26 +97,25 @@ WebCore::IntSize PageClientImpl::viewSize()
     return IntSize(allocation.width, allocation.height);
 }
 
-bool PageClientImpl::isViewWindowActive()
+ViewState::Flags PageClientImpl::viewState()
 {
-    return webkitWebViewBaseIsInWindowActive(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+    WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(m_viewWidget);
+    ViewState::Flags viewState = ViewState::NoFlags;
+    
+    if (webkitWebViewBaseIsFocused(webView))
+        viewState |= ViewState::IsFocused;
+    if (webkitWebViewBaseIsInWindowActive(webView))
+        viewState |= ViewState::WindowIsActive;
+    if (webkitWebViewBaseIsInWindow(webView))
+        viewState |= ViewState::IsInWindow;
+    if (webkitWebViewBaseIsVisible(webView))
+        viewState |= (ViewState::IsVisible | ViewState::IsVisibleOrOccluded);
+    else
+        viewState |= ViewState::IsVisuallyIdle;
+    
+    return viewState;
 }
-
-bool PageClientImpl::isViewFocused()
-{
-    return webkitWebViewBaseIsFocused(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
-}
-
-bool PageClientImpl::isViewVisible()
-{
-    return webkitWebViewBaseIsVisible(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
-}
-
-bool PageClientImpl::isViewInWindow()
-{
-    return webkitWebViewBaseIsInWindow(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
-}
-
+    
 void PageClientImpl::PageClientImpl::processDidExit()
 {
     notImplemented();

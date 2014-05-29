@@ -110,38 +110,25 @@ IntSize PageClientImpl::viewSize()
     return IntSize(m_contentView.bounds.size);
 }
 
-bool PageClientImpl::isViewWindowActive()
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=133098
+ViewState::Flags PageClientImpl::viewState()
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=133098
-    return isViewVisible();
+    ViewState::Flags viewState = ViewState::NoFlags;
+    
+    bool isInWindow = [m_webView window];
+    bool isVisible = isInWindow && [UIApplication sharedApplication].applicationState != UIApplicationStateBackground;
+    
+    if (isInWindow)
+        viewState |= ViewState::IsInWindow;
+    
+    if (isVisible)
+        viewState |= ViewState::WindowIsActive | ViewState::IsFocused | ViewState::IsVisible | ViewState::IsVisibleOrOccluded;
+    else
+        viewState |= ViewState::IsVisuallyIdle;
+    
+    return viewState;
 }
-
-bool PageClientImpl::isViewFocused()
-{
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=133098
-    return isViewWindowActive();
-}
-
-bool PageClientImpl::isViewVisible()
-{
-    return [m_webView window] && [UIApplication sharedApplication].applicationState != UIApplicationStateBackground;
-}
-
-bool PageClientImpl::isViewInWindow()
-{
-    return [m_webView window];
-}
-
-bool PageClientImpl::isViewVisibleOrOccluded()
-{
-    return isViewVisible();
-}
-
-bool PageClientImpl::isVisuallyIdle()
-{
-    return !isViewVisible();
-}
-
+    
 void PageClientImpl::processDidExit()
 {
     [m_contentView _processDidExit];

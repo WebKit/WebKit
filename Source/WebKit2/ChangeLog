@@ -1,3 +1,106 @@
+2014-05-28  Gavin Barraclough  <baraclough@apple.com>
+
+        viewStateDidChange should always fully update ViewState
+        https://bugs.webkit.org/show_bug.cgi?id=133159
+
+        Reviewed by Anders Carlson.
+
+        Currently WebPageProxy::viewStateDidChange is passed a mask of bits to update.
+
+        This has the following negative consequences:
+         – WKWebView implicitly requires more detailed knowledge of the internal implementation of the PageClient.
+         – Updates may unnecessarily be split over multiple IPC messages.
+         – In order to support partial updates we make multiple virtual function calls to PageClient, which then makes duplicate objc calls.
+
+        Better to just always update the entire ViewState.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView didMoveToWindow]):
+            - removed argument to viewStateDidChange.
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::viewState):
+        (WebKit::PageClientImpl::isViewWindowActive): Deleted.
+        (WebKit::PageClientImpl::isViewFocused): Deleted.
+        (WebKit::PageClientImpl::isViewVisible): Deleted.
+        (WebKit::PageClientImpl::isViewInWindow): Deleted.
+        * UIProcess/API/gtk/PageClientImpl.h:
+            - merged isViewWindowActive/isViewFocused/isViewVisible/isViewInWindow to viewState.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView becomeFirstResponder]):
+        (-[WKView resignFirstResponder]):
+        (-[WKView viewDidMoveToWindow]):
+        (-[WKView _windowDidBecomeKey:]):
+        (-[WKView _windowDidResignKey:]):
+        (-[WKView _windowDidMiniaturize:]):
+        (-[WKView _windowDidDeminiaturize:]):
+        (-[WKView _windowDidOrderOffScreen:]):
+        (-[WKView _windowDidOrderOnScreen:]):
+        (-[WKView _windowDidChangeOcclusionState:]):
+        (-[WKView viewDidHide]):
+        (-[WKView viewDidUnhide]):
+        (-[WKView _activeSpaceDidChange:]):
+        (-[WKView _setThumbnailView:]):
+        (-[WKView endDeferringViewInWindowChanges]):
+        (-[WKView endDeferringViewInWindowChangesSync]):
+            - removed argument to viewStateDidChange.
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::viewState):
+        (WebKit::WebView::isViewWindowActive): Deleted.
+        (WebKit::WebView::isViewFocused): Deleted.
+        (WebKit::WebView::isViewVisible): Deleted.
+        (WebKit::WebView::isViewInWindow): Deleted.
+        * UIProcess/CoordinatedGraphics/WebView.h:
+            - merged isViewWindowActive/isViewFocused/isViewVisible/isViewInWindow to viewState.
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::isViewVisibleOrOccluded): Deleted.
+        (WebKit::PageClient::isVisuallyIdle): Deleted.
+            - merged isViewVisibleOrOccluded/isVisuallyIdle to subclass viewState methods.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+            - updateViewState -> PageClient::viewState
+        (WebKit::WebPageProxy::viewStateDidChange):
+            - argument removed; updateViewState -> PageClient::viewState.
+        (WebKit::WebPageProxy::setCursor):
+            - call isViewWindowActive on WebPageProxy, rather than PageClient.
+        (WebKit::WebPageProxy::updateBackingStoreDiscardableState):
+            - call isViewWindowActive on WebPageProxy, rather than PageClient.
+        (WebKit::WebPageProxy::updateViewState): Deleted.
+            - removed - viewState method moved to PageClient.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isViewWindowActive):
+            - added missing implementation.
+        (WebKit::WebPageProxy::isViewVisible):
+            - removed argument to viewStateDidChange.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::windowServerConnectionStateChanged):
+            - removed argument to viewStateDidChange.
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::viewState):
+        (WebKit::PageClientImpl::isViewWindowActive): Deleted.
+        (WebKit::PageClientImpl::isViewFocused): Deleted.
+        (WebKit::PageClientImpl::isViewVisible): Deleted.
+        (WebKit::PageClientImpl::isViewInWindow): Deleted.
+        (WebKit::PageClientImpl::isViewVisibleOrOccluded): Deleted.
+        (WebKit::PageClientImpl::isVisuallyIdle): Deleted.
+            - merged isViewWindowActive/isViewFocused/isViewVisible/isViewInWindow to viewState.
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didMoveToWindow]):
+        (-[WKContentView _applicationDidEnterBackground:]):
+        (-[WKContentView _applicationWillEnterForeground:]):
+            - removed argument to viewStateDidChange.
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::viewState):
+        (WebKit::PageClientImpl::showCorrectionPanel):
+        (WebKit::PageClientImpl::showDictationAlternativeUI):
+        (WebKit::PageClientImpl::isViewWindowActive): Deleted.
+        (WebKit::PageClientImpl::isViewFocused): Deleted.
+        (WebKit::PageClientImpl::isViewVisibleOrOccluded): Deleted.
+        (WebKit::PageClientImpl::isVisuallyIdle): Deleted.
+            - merged isViewWindowActive/isViewFocused/isViewVisible/isViewInWindow to viewState.
+
 2014-05-28  Jeffrey Pfau  <jpfau@apple.com>
 
         Add Obj-C API for cache partitioned URL schemes

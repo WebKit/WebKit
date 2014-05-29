@@ -55,12 +55,8 @@ private:
     virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) override;
     virtual void requestScroll(const WebCore::FloatPoint& scrollPosition, bool isProgrammaticScroll) override;
     virtual WebCore::IntSize viewSize() override;
-    virtual bool isViewWindowActive() override;
-    virtual bool isViewFocused() override;
-    virtual bool isViewVisible() override;
-    virtual bool isViewInWindow() override;
-    virtual bool isViewVisibleOrOccluded() override;
-    virtual bool isVisuallyIdle() override;
+    virtual WebCore::ViewState::Flags viewState() override;
+        
     virtual void processDidExit() override;
     virtual void didRelaunchProcess() override;
     virtual void pageClosed() override;

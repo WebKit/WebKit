@@ -135,10 +135,7 @@ protected:
 
     virtual WebCore::IntSize viewSize() override;
 
-    virtual bool isViewWindowActive() override;
-    virtual bool isViewFocused() override;
-    virtual bool isViewVisible() override;
-    virtual bool isViewInWindow() override;
+    virtual WebCore::ViewState::Flags viewState() override;
 
     virtual void processDidExit() override;
     virtual void didRelaunchProcess() override;
