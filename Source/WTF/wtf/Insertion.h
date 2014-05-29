@@ -60,6 +60,7 @@ void executeInsertions(TargetVectorType& target, InsertionVectorType& insertions
     target.grow(target.size() + insertions.size());
     size_t lastIndex = target.size();
     for (size_t indexInInsertions = insertions.size(); indexInInsertions--;) {
+        ASSERT(!indexInInsertions || insertions[indexInInsertions].index() >= insertions[indexInInsertions - 1].index());
         size_t firstIndex = insertions[indexInInsertions].index() + indexInInsertions;
         size_t indexOffset = indexInInsertions + 1;
         for (size_t i = lastIndex; --i > firstIndex;)

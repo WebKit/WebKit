@@ -1,3 +1,13 @@
+2014-05-28  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::DCEPhase inserts into an insertion set in reverse, causing hilarious basic block corruption if you kill a lot of NewArrays
+        https://bugs.webkit.org/show_bug.cgi?id=133368
+
+        Reviewed by Mark Lam.
+
+        * wtf/Insertion.h:
+        (WTF::executeInsertions): This algorithm is only correct if insertions are added in the right order. Assert that the order is right.
+
 2014-05-27  Jon Lee  <jonlee@apple.com>
 
         Update ENABLE(MEDIA_SOURCE) on Mac

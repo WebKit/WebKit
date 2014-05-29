@@ -1,5 +1,17 @@
 2014-05-28  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG::DCEPhase inserts into an insertion set in reverse, causing hilarious basic block corruption if you kill a lot of NewArrays
+        https://bugs.webkit.org/show_bug.cgi?id=133368
+
+        Reviewed by Mark Lam.
+
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::fixupBlock): Loop in the right order so that we insert in the right order.
+        * tests/stress/new-array-dead.js: Added.
+        (foo):
+
+2014-05-28  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix not-x86 32-bit.
 
         * llint/LowLevelInterpreter32_64.asm:

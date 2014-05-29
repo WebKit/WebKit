@@ -187,15 +187,17 @@ private:
             return;
         }
 
-        for (unsigned indexInBlock = block->size(); indexInBlock--;) {
+        // This has to be a forward loop because we are using the insertion set.
+        for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
             Node* node = block->at(indexInBlock);
             if (node->shouldGenerate())
                 continue;
                 
             switch (node->op()) {
             case MovHint: {
-                ASSERT(node->child1().useKind() == node->child1()->defaultUseKind());
-                if (!node->child1()->shouldGenerate()) {
+                // Check if the child is dead. MovHint's child would only be a Phantom
+                // if we had just killed it.
+                if (node->child1()->op() == Phantom) {
                     node->setOpAndDefaultFlags(ZombieHint);
                     node->child1() = Edge();
                     break;
