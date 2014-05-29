@@ -39,6 +39,7 @@
                     { "name": "gtk-linux-slave-5", "platform": "gtk"},
                     { "name": "gtk-linux-slave-6", "platform": "gtk"},
                     { "name": "gtk-linux-slave-7", "platform": "gtk"},
+                    { "name": "gtk-linux-slave-8", "platform": "gtk"},
 
                     { "name": "wincairo-1", "platform": "wincairo" },
 
@@ -161,7 +162,7 @@
                     {
                       "name": "GTK Linux 64-bit Release (Build)", "type": "Build", "builddir": "gtk-linux-64-release",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["gtk-linux-64-release-tests"],
+                      "triggers": ["gtk-linux-64-release-tests", "gtk-linux-64-release-perf-tests"],
                       "slavenames": ["gtk-linux-slave-2"]
                     },
                     {
@@ -184,6 +185,11 @@
                       "name": "GTK Linux ARM Release", "type": "BuildAndNonLayoutTest", "builddir": "gtk-linux-arm-release",
                       "platform": "gtk", "configuration": "release", "architectures": ["armv7"],
                       "slavenames": ["gtk-linux-slave-5"]
+                    },
+                    {
+                      "name": "GTK Linux 64-bit Release (Perf)", "type": "DownloadAndPerfTestWebKit2", "builddir": "gtk-linux-64-release-perf-tests",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["gtk-linux-slave-8"]
                     },
                     {
                       "name": "WinCairo Release", "type": "BuildAndNonLayoutTest", "builddir": "win-cairo-release",
@@ -284,6 +290,9 @@
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-debug-tests",
                       "builderNames": ["GTK Linux 64-bit Debug (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "gtk-linux-64-release-perf-tests",
+                      "builderNames": ["GTK Linux 64-bit Release (Perf)"]
                     }
                   ]
 }
