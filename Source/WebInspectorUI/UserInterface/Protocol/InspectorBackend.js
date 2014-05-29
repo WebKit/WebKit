@@ -381,7 +381,7 @@ InspectorBackend.Command.prototype = {
     supports: function(parameterName)
     {
         var instance = this._instance;
-        return instance.callSignature.any(function(parameter) {
+        return instance.callSignature.some(function(parameter) {
             return parameter["name"] === parameterName;
         });
     },
