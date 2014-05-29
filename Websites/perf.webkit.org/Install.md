@@ -96,3 +96,7 @@ The binaries located in PostgreSQL's directory, or if you're using Server.app in
 
 Run `database/init-database.sql` in psql as `webkit-perf-db-user`:
 `psql webkit-perf-db -h localhost --username webkit-perf-db-user -f database/init-database.sql`
+
+## Making a Backup of the Database
+
+Run `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_dump -h localhost --no-owner -f <filepath> safari-perf-db`
