@@ -38,6 +38,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract Returns an initialized WKPreferences object.
  @param userDefaultsKeyPrefix The user defaults key prefix.
+ @result An initialized WKPreferences object, or nil if the object could not be initialized.
  @discussion If the userDefaultsKeyPrefix argument is non-nil, it is prepended to the keys used to store preferences
  in the user defaults database. If the argument is nil, the preferences object won't save anything to the user defaults database.
  */
