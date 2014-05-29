@@ -1,3 +1,19 @@
+2014-05-29  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Can’t recover from subframe load errors
+        https://bugs.webkit.org/show_bug.cgi?id=133385
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h: Declared new delegate method.
+        * UIProcess/Cocoa/NavigationState.h: Added flag in m_navigationDelegateMethods struct.
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate): Initialize
+        webViewNavigationDidFailProvisionalLoadInSubframeWithError flag in the delegate methods
+        struct.
+        (WebKit::NavigationState::LoaderClient::didFailProvisionalLoadWithErrorForFrame): If the
+        error occurred in a subframe, invoke the new delegate method.
+
 2014-05-29  Geoffrey Garen  <ggaren@apple.com>
 
         Added a missing @result to WKPreferences headerdoc

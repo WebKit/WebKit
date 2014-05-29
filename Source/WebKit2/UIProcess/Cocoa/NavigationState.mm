@@ -123,6 +123,7 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewDidFinishNavigation = [delegate respondsToSelector:@selector(webView:didFinishNavigation:)];
     m_navigationDelegateMethods.webViewDidFailNavigationWithError = [delegate respondsToSelector:@selector(webView:didFailNavigation:withError:)];
 
+    m_navigationDelegateMethods.webViewNavigationDidFailProvisionalLoadInSubframeWithError = [delegate respondsToSelector:@selector(_webView:navigation:didFailProvisionalLoadInSubframe:withError:)];
     m_navigationDelegateMethods.webViewNavigationDidFinishDocumentLoad = [delegate respondsToSelector:@selector(_webView:navigationDidFinishDocumentLoad:)];
     m_navigationDelegateMethods.webViewRenderingProgressDidChange = [delegate respondsToSelector:@selector(_webView:renderingProgressDidChange:)];
     m_navigationDelegateMethods.webViewCanAuthenticateAgainstProtectionSpace = [delegate respondsToSelector:@selector(_webView:canAuthenticateAgainstProtectionSpace:)];
@@ -431,8 +432,17 @@ static RetainPtr<NSError> createErrorWithRecoveryAttempter(WKWebView *webView, W
 
 void NavigationState::LoaderClient::didFailProvisionalLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy* webFrameProxy, uint64_t navigationID, const WebCore::ResourceError& error, API::Object*)
 {
-    if (!webFrameProxy->isMainFrame())
+    if (!webFrameProxy->isMainFrame()) {
+        if (!m_navigationState.m_navigationDelegateMethods.webViewNavigationDidFailProvisionalLoadInSubframeWithError)
+            return;
+
+        auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
+        auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState.m_webView, *webFrameProxy, error);
+        // FIXME: Get the main frame's current navigation.
+        [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView navigation:nil didFailProvisionalLoadInSubframe:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*webFrameProxy]).get() withError:errorWithRecoveryAttempter.get()];
+
         return;
+    }
 
     // FIXME: We should assert that navigationID is not zero here, but it's currently zero for navigations originating from the web process.
     RetainPtr<WKNavigation> navigation;

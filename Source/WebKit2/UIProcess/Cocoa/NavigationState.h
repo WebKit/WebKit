@@ -137,6 +137,7 @@ private:
         bool webViewDidStartProvisionalNavigation : 1;
         bool webViewDidReceiveServerRedirectForProvisionalNavigation : 1;
         bool webViewDidFailProvisionalNavigationWithError : 1;
+        bool webViewNavigationDidFailProvisionalLoadInSubframeWithError : 1;
         bool webViewDidCommitNavigation : 1;
         bool webViewNavigationDidFinishDocumentLoad : 1;
         bool webViewDidFinishNavigation : 1;

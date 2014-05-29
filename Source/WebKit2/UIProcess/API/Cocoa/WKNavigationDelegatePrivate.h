@@ -24,6 +24,8 @@
  */
 
 #import <WebKit/WKNavigationDelegate.h>
+
+#import <WebKit/WKFrameInfo.h>
 #import <WebKit/WKWebViewPrivate.h>
 
 #if WK_API_ENABLED
@@ -35,6 +37,8 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 @protocol WKNavigationDelegatePrivate <WKNavigationDelegate>
 
 @optional
+
+- (void)_webView:(WKWebView *)webView navigation:(WKNavigation *)navigation didFailProvisionalLoadInSubframe:(WKFrameInfo *)subframe withError:(NSError *)error;
 
 - (void)_webView:(WKWebView *)webView navigationDidFinishDocumentLoad:(WKNavigation *)navigation;
 
