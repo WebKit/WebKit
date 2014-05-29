@@ -1,3 +1,9 @@
+2014-05-29  Jeffrey Pfau  <jpfau@apple.com>
+
+        Build fix
+
+        * WebCore.exp.in:
+
 2014-05-27  Jeffrey Pfau  <jpfau@apple.com>
 
         Workaround for <rdar://problem/16848509>
