@@ -1,5 +1,14 @@
 2014-05-29  Mark Lam  <mark.lam@apple.com>
 
+        Gardening: marking js/primitive-property-access-edge-cases.html as crashy.
+        <https://webkit.org/b/133356>
+
+        Not reviewed.
+
+        * TestExpectations:
+
+2014-05-29  Mark Lam  <mark.lam@apple.com>
+
         Gardening: marking js/primitive-property-access-edge-cases.html as flaky.
         <https://webkit.org/b/133356>
 
