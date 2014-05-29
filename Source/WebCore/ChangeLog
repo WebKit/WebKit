@@ -1,3 +1,21 @@
+2014-05-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Loading <object> from WebArchive crashes
+        https://bugs.webkit.org/show_bug.cgi?id=133386
+        <rdar://problem/13345509>
+
+        Reviewed by Brady Eidson.
+
+        Test: webarchive/loading/object.html
+
+        This (a) fixes the crash, and (b) avoids the crash.
+
+        * loader/DocumentLoader.cpp: (WebCore::DocumentLoader::continueAfterContentPolicy):
+        Some types of substitute data - such as WebArchive - don't contain HTTP result codes,
+        so let's not drop to <object> fallback content when status is 0.
+        And if the load somehow failed anyway, don't crash by trying to deliver substitute data
+        to a finished loader.
+
 2014-05-29  Alex Christensen  <achristensen@webkit.org>
 
         [iOS WebGL] Fix depth buffer clearing issue.

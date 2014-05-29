@@ -733,8 +733,8 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
     }
 
     if (m_response.isHTTP()) {
-        int status = m_response.httpStatusCode();
-        if (status < 200 || status >= 300) {
+        int status = m_response.httpStatusCode(); // Status may be zero when loading substitute data, in particular from a WebArchive.
+        if (status && (status < 200 || status >= 300)) {
             bool hostedByObject = frameLoader()->isHostedByObjectElement();
 
             frameLoader()->handleFallbackContent();
@@ -746,7 +746,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
         }
     }
 
-    if (!isStopping() && m_substituteData.isValid()) {
+    if (!isStopping() && m_substituteData.isValid() && isLoadingMainResource()) {
         if (m_substituteData.content()->size())
             dataReceived(0, m_substituteData.content()->data(), m_substituteData.content()->size());
         if (isLoadingMainResource())

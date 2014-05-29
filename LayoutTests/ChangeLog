@@ -1,3 +1,15 @@
+2014-05-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Loading <object> from WebArchive crashes
+        https://bugs.webkit.org/show_bug.cgi?id=133386
+        <rdar://problem/13345509>
+
+        Reviewed by Brady Eidson.
+
+        * webarchive/loading/object-expected.txt: Added.
+        * webarchive/loading/object.html: Added.
+        * webarchive/loading/resources/object.webarchive: Added.
+
 2014-05-29  Mark Lam  <mark.lam@apple.com>
 
         Gardening: marking js/primitive-property-access-edge-cases.html as crashy.
