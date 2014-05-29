@@ -250,7 +250,7 @@ private:
 {
     if (self.window)
         [self _updateForScreen:self.window.screen];
-    _page->viewStateDidChange();
+    _page->viewStateDidChange(ViewState::AllFlags);
 }
 
 - (WKBrowsingContextController *)browsingContextController
@@ -451,13 +451,13 @@ private:
 
 - (void)_applicationDidEnterBackground:(NSNotification*)notification
 {
-    _page->viewStateDidChange();
+    _page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow);
 }
 
 - (void)_applicationWillEnterForeground:(NSNotification*)notification
 {
     _page->applicationWillEnterForeground();
-    _page->viewStateDidChange();
+    _page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow);
 }
 
 - (void)_applicationDidBecomeActive:(NSNotification*)notification

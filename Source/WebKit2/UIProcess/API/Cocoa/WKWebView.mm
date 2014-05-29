@@ -918,7 +918,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)didMoveToWindow
 {
-    _page->viewStateDidChange();
+    _page->viewStateDidChange(WebCore::ViewState::IsInWindow);
 }
 
 #pragma mark - UIScrollViewDelegate

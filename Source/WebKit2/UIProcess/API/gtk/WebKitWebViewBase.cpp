@@ -175,7 +175,7 @@ static gboolean toplevelWindowFocusInEvent(GtkWidget*, GdkEventFocus*, WebKitWeb
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (!priv->isInWindowActive) {
         priv->isInWindowActive = true;
-        priv->pageProxy->viewStateDidChange();
+        priv->pageProxy->viewStateDidChange(ViewState::WindowIsActive);
     }
 
     return FALSE;
@@ -186,7 +186,7 @@ static gboolean toplevelWindowFocusOutEvent(GtkWidget*, GdkEventFocus*, WebKitWe
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (priv->isInWindowActive) {
         priv->isInWindowActive = false;
-        priv->pageProxy->viewStateDidChange();
+        priv->pageProxy->viewStateDidChange(ViewState::WindowIsActive);
     }
 
     return FALSE;
@@ -198,7 +198,7 @@ static gboolean toplevelWindowVisibilityEvent(GtkWidget*, GdkEventVisibility* vi
     bool isWindowVisible = visibilityEvent->state != GDK_VISIBILITY_FULLY_OBSCURED;
     if (priv->isWindowVisible != isWindowVisible) {
         priv->isWindowVisible = isWindowVisible;
-        priv->pageProxy->viewStateDidChange();
+        priv->pageProxy->viewStateDidChange(ViewState::IsVisible);
     }
 
     return FALSE;
@@ -228,7 +228,7 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
     }
 
     priv->toplevelOnScreenWindow = window;
-    priv->pageProxy->viewStateDidChange();
+    priv->pageProxy->viewStateDidChange(ViewState::IsInWindow);
     if (!priv->toplevelOnScreenWindow)
         return;
 
@@ -569,7 +569,7 @@ static void webkitWebViewBaseMap(GtkWidget* widget)
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (!priv->isVisible) {
         priv->isVisible = true;
-        priv->pageProxy->viewStateDidChange();
+        priv->pageProxy->viewStateDidChange(ViewState::IsVisible);
     }
 
     if (!priv->needsResizeOnMap)
@@ -588,7 +588,7 @@ static void webkitWebViewBaseUnmap(GtkWidget* widget)
     WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
     if (priv->isVisible) {
         priv->isVisible = false;
-        priv->pageProxy->viewStateDidChange();
+        priv->pageProxy->viewStateDidChange(ViewState::IsVisible);
     }
 }
 
@@ -1142,6 +1142,7 @@ void webkitWebViewBaseSetFocus(WebKitWebViewBase* webViewBase, bool focused)
     if (priv->isFocused == focused)
         return;
 
+    unsigned viewStateFlags = ViewState::IsFocused;
     priv->isFocused = focused;
 
     // If the view has received the focus and the window is not active
@@ -1149,9 +1150,11 @@ void webkitWebViewBaseSetFocus(WebKitWebViewBase* webViewBase, bool focused)
     // toplevel window is a GTK_WINDOW_POPUP and the focus has been
     // set programatically like WebKitTestRunner does, because POPUP
     // can't be focused.
-    if (priv->isFocused && !priv->isInWindowActive)
+    if (priv->isFocused && !priv->isInWindowActive) {
         priv->isInWindowActive = true;
-    priv->pageProxy->viewStateDidChange();
+        viewStateFlags |= ViewState::WindowIsActive;
+    }
+    priv->pageProxy->viewStateDidChange(viewStateFlags);
 }
 
 bool webkitWebViewBaseIsInWindowActive(WebKitWebViewBase* webViewBase)

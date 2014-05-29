@@ -353,7 +353,7 @@ struct WKViewInterpretKeyEventsParameters {
     _data->_inBecomeFirstResponder = true;
     
     [self _updateSecureInputState];
-    _data->_page->viewStateDidChange();
+    _data->_page->viewStateDidChange(ViewState::IsFocused);
 
     _data->_inBecomeFirstResponder = false;
     
@@ -385,7 +385,7 @@ struct WKViewInterpretKeyEventsParameters {
     if (!_data->_page->maintainsInactiveSelection())
         _data->_page->clearSelection();
     
-    _data->_page->viewStateDidChange();
+    _data->_page->viewStateDidChange(ViewState::IsFocused);
 
     _data->_inResignFirstResponder = false;
 
@@ -2448,9 +2448,12 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     if ([self window]) {
         [self doWindowDidChangeScreen];
 
+        ViewState::Flags viewStateChanges = ViewState::WindowIsActive | ViewState::IsVisible;
         if ([self isDeferringViewInWindowChanges])
             _data->_viewInWindowChangeWasDeferred = YES;
-        _data->_page->viewStateDidChange();
+        else
+            viewStateChanges |= ViewState::IsInWindow;
+        _data->_page->viewStateDidChange(viewStateChanges);
 
         [self _updateWindowAndViewFrames];
 
@@ -2463,9 +2466,12 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 
         [self _accessibilityRegisterUIProcessTokens];
     } else {
+        ViewState::Flags viewStateChanges = ViewState::WindowIsActive | ViewState::IsVisible;
         if ([self isDeferringViewInWindowChanges])
             _data->_viewInWindowChangeWasDeferred = YES;
-        _data->_page->viewStateDidChange();
+        else
+            viewStateChanges |= ViewState::IsInWindow;
+        _data->_page->viewStateDidChange(viewStateChanges);
 
         [NSEvent removeMonitor:_data->_flagsChangedEventMonitor];
         _data->_flagsChangedEventMonitor = nil;
@@ -2486,7 +2492,7 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     NSWindow *keyWindow = [notification object];
     if (keyWindow == [self window] || keyWindow == [[self window] attachedSheet]) {
         [self _updateSecureInputState];
-        _data->_page->viewStateDidChange();
+        _data->_page->viewStateDidChange(ViewState::WindowIsActive);
     }
 }
 
@@ -2505,18 +2511,18 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     NSWindow *formerKeyWindow = [notification object];
     if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet]) {
         [self _updateSecureInputState];
-        _data->_page->viewStateDidChange();
+        _data->_page->viewStateDidChange(ViewState::WindowIsActive);
     }
 }
 
 - (void)_windowDidMiniaturize:(NSNotification *)notification
 {
-    _data->_page->viewStateDidChange();
+    _data->_page->viewStateDidChange(ViewState::IsVisible);
 }
 
 - (void)_windowDidDeminiaturize:(NSNotification *)notification
 {
-    _data->_page->viewStateDidChange();
+    _data->_page->viewStateDidChange(ViewState::IsVisible);
 }
 
 - (void)_windowDidMove:(NSNotification *)notification
@@ -2531,12 +2537,12 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 
 - (void)_windowDidOrderOffScreen:(NSNotification *)notification
 {
-    _data->_page->viewStateDidChange();
+    _data->_page->viewStateDidChange(ViewState::IsVisible | ViewState::WindowIsActive);
 }
 
 - (void)_windowDidOrderOnScreen:(NSNotification *)notification
 {
-    _data->_page->viewStateDidChange();
+    _data->_page->viewStateDidChange(ViewState::IsVisible | ViewState::WindowIsActive);
 }
 
 - (void)_windowDidChangeBackingProperties:(NSNotification *)notification
@@ -2552,7 +2558,7 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 - (void)_windowDidChangeOcclusionState:(NSNotification *)notification
 {
-    _data->_page->viewStateDidChange();
+    _data->_page->viewStateDidChange(ViewState::IsVisible);
 }
 #endif
 
@@ -2576,12 +2582,12 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 
 - (void)viewDidHide
 {
-    _data->_page->viewStateDidChange();
+    _data->_page->viewStateDidChange(ViewState::IsVisible);
 }
 
 - (void)viewDidUnhide
 {
-    _data->_page->viewStateDidChange();
+    _data->_page->viewStateDidChange(ViewState::IsVisible);
 }
 
 - (void)viewDidChangeBackingProperties
@@ -2597,7 +2603,7 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 
 - (void)_activeSpaceDidChange:(NSNotification *)notification
 {
-    _data->_page->viewStateDidChange();
+    _data->_page->viewStateDidChange(ViewState::IsVisible);
 }
 
 - (void)_accessibilityRegisterUIProcessTokens
@@ -3484,7 +3490,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     else
         [self _setAcceleratedCompositingModeRootLayer:_data->_rootLayer.get()];
 
-    _data->_page->viewStateDidChange();
+    _data->_page->viewStateDidChange(ViewState::WindowIsActive | ViewState::IsInWindow | ViewState::IsVisible);
 }
 
 - (_WKThumbnailView *)_thumbnailView
@@ -3742,7 +3748,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_shouldDeferViewInWindowChanges = NO;
 
     if (_data->_viewInWindowChangeWasDeferred) {
-        _data->_page->viewStateDidChange();
+        _data->_page->viewStateDidChange(ViewState::IsInWindow);
         _data->_viewInWindowChangeWasDeferred = NO;
     }
 }
@@ -3760,7 +3766,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_shouldDeferViewInWindowChanges = NO;
 
     if (_data->_viewInWindowChangeWasDeferred) {
-        _data->_page->viewStateDidChange(hasPendingViewInWindowChange ? WebPageProxy::WantsReplyOrNot::DoesWantReply : WebPageProxy::WantsReplyOrNot::DoesNotWantReply);
+        _data->_page->viewStateDidChange(ViewState::IsInWindow, hasPendingViewInWindowChange ? WebPageProxy::WantsReplyOrNot::DoesWantReply : WebPageProxy::WantsReplyOrNot::DoesNotWantReply);
         _data->_viewInWindowChangeWasDeferred = NO;
     }
 

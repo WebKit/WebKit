@@ -274,7 +274,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_userAgent(standardUserAgent())
     , m_geolocationPermissionRequestManager(*this)
     , m_notificationPermissionRequestManager(*this)
-    , m_viewState(m_pageClient.viewState())
+    , m_viewState(ViewState::NoFlags)
     , m_backForwardList(WebBackForwardList::create(*this))
     , m_loadStateAtProcessExit(FrameLoadState::State::Finished)
 #if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
@@ -366,7 +366,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
             m_userContentController->addProcess(m_process.get());
         m_visitedLinkProvider->addProcess(m_process.get());
     }
-    
+
+    updateViewState();
     updateActivityToken();
     
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
@@ -533,7 +534,7 @@ void WebPageProxy::reattachToWebProcess()
     m_process->addExistingWebPage(this, m_pageID);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
-    m_viewState = m_pageClient.viewState();
+    updateViewState();
     updateActivityToken();
 
 #if ENABLE(INSPECTOR)
@@ -1053,15 +1054,36 @@ void WebPageProxy::requestScroll(const FloatPoint& scrollPosition, bool isProgra
     m_pageClient.requestScroll(scrollPosition, isProgrammaticScroll);
 }
 
-void WebPageProxy::viewStateDidChange(WantsReplyOrNot wantsReply)
+void WebPageProxy::updateViewState(ViewState::Flags flagsToUpdate)
+{
+    m_viewState &= ~flagsToUpdate;
+    if (flagsToUpdate & ViewState::IsFocused && m_pageClient.isViewFocused())
+        m_viewState |= ViewState::IsFocused;
+    if (flagsToUpdate & ViewState::WindowIsActive && m_pageClient.isViewWindowActive())
+        m_viewState |= ViewState::WindowIsActive;
+    if (flagsToUpdate & ViewState::IsVisible && m_pageClient.isViewVisible())
+        m_viewState |= ViewState::IsVisible;
+    if (flagsToUpdate & ViewState::IsVisibleOrOccluded && m_pageClient.isViewVisibleOrOccluded())
+        m_viewState |= ViewState::IsVisibleOrOccluded;
+    if (flagsToUpdate & ViewState::IsInWindow && m_pageClient.isViewInWindow())
+        m_viewState |= ViewState::IsInWindow;
+    if (flagsToUpdate & ViewState::IsVisuallyIdle && m_pageClient.isVisuallyIdle())
+        m_viewState |= ViewState::IsVisuallyIdle;
+}
+
+void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsReplyOrNot wantsReply)
 {
     if (!isValid())
         return;
 
+    // If the visibility state may have changed, then so may the visually idle & occluded agnostic state.
+    if (mayHaveChanged & ViewState::IsVisible)
+        mayHaveChanged |= ViewState::IsVisibleOrOccluded | ViewState::IsVisuallyIdle;
+
     // Record the prior view state, update the flags that may have changed,
     // and check which flags have actually changed.
     ViewState::Flags previousViewState = m_viewState;
-    m_viewState = m_pageClient.viewState();
+    updateViewState(mayHaveChanged);
     ViewState::Flags changed = m_viewState ^ previousViewState;
 
     if (changed)
@@ -1079,7 +1101,7 @@ void WebPageProxy::viewStateDidChange(WantsReplyOrNot wantsReply)
     if ((changed & ViewState::IsVisible) && !isViewVisible())
         m_process->responsivenessTimer()->stop();
 
-    if ((changed & ViewState::IsInWindow) && (m_viewState & ViewState::IsInWindow)) {
+    if ((mayHaveChanged & ViewState::IsInWindow) && (m_viewState & ViewState::IsInWindow)) {
         LayerHostingMode layerHostingMode = m_pageClient.viewLayerHostingMode();
         if (m_layerHostingMode != layerHostingMode) {
             m_layerHostingMode = layerHostingMode;
@@ -1087,7 +1109,7 @@ void WebPageProxy::viewStateDidChange(WantsReplyOrNot wantsReply)
         }
     }
 
-    if ((changed & ViewState::IsInWindow) && !(m_viewState & ViewState::IsInWindow)) {
+    if ((mayHaveChanged & ViewState::IsInWindow) && !(m_viewState & ViewState::IsInWindow)) {
 #if ENABLE(INPUT_TYPE_COLOR_POPOVER)
         // When leaving the current page, close the popover color well.
         if (m_colorPicker)
@@ -3789,7 +3811,7 @@ void WebPageProxy::setCursor(const WebCore::Cursor& cursor)
 {
     // The Web process may have asked to change the cursor when the view was in an active window, but
     // if it is no longer in a window or the window is not active, then the cursor should not change.
-    if (isViewWindowActive())
+    if (m_pageClient.isViewWindowActive())
         m_pageClient.setCursor(cursor);
 }
 
@@ -4677,7 +4699,7 @@ void WebPageProxy::updateBackingStoreDiscardableState()
     if (!m_process->responsivenessTimer()->isResponsive())
         isDiscardable = false;
     else
-        isDiscardable = !isViewWindowActive() || !isViewVisible();
+        isDiscardable = !m_pageClient.isViewWindowActive() || !isViewVisible();
 
     m_drawingArea->setBackingStoreIsDiscardable(isDiscardable);
 }

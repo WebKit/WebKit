@@ -32,7 +32,6 @@
 #include "WebPopupMenuProxy.h"
 #include <WebCore/AlternativeTextClient.h>
 #include <WebCore/EditorClient.h>
-#include <WebCore/ViewState.h>
 #include <wtf/Forward.h>
 
 #if PLATFORM(COCOA)
@@ -101,12 +100,23 @@ public:
     // Return the size of the view the page is associated with.
     virtual WebCore::IntSize viewSize() = 0;
 
-#if PLATFORM(MAC)
+    // Return whether the view's containing window is active.
+    virtual bool isViewWindowActive() = 0;
+
+    // Return whether the view is focused.
+    virtual bool isViewFocused() = 0;
+
+    // Return whether the view is visible.
+    virtual bool isViewVisible() = 0;
+
+    // Return whether the view is visible, or occluded by another window.
+    virtual bool isViewVisibleOrOccluded() { return isViewVisible(); }
+
     // Return whether the view is in a window.
     virtual bool isViewInWindow() = 0;
-#endif
 
-    virtual WebCore::ViewState::Flags viewState() = 0;
+    // Return whether the view is visually idle.
+    virtual bool isVisuallyIdle() { return !isViewVisible(); }
 
     // Return the layer hosting mode for the view.
     virtual LayerHostingMode viewLayerHostingMode() { return LayerHostingMode::InProcess; }

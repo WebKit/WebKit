@@ -669,7 +669,7 @@ void WebProcessProxy::releasePageCache()
 void WebProcessProxy::windowServerConnectionStateChanged()
 {
     for (const auto& page : m_pageMap.values())
-        page->viewStateDidChange();
+        page->viewStateDidChange(ViewState::IsVisuallyIdle);
 }
 
 void WebProcessProxy::requestTermination()

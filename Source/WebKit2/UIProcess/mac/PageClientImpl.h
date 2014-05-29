@@ -65,10 +65,12 @@ private:
     virtual void requestScroll(const WebCore::FloatPoint& scrollPosition, bool isProgrammaticScroll);
 
     virtual WebCore::IntSize viewSize();
-    bool isViewVisible();
+    virtual bool isViewWindowActive();
+    virtual bool isViewFocused();
+    virtual bool isViewVisible();
+    virtual bool isViewVisibleOrOccluded();
     virtual bool isViewInWindow();
-    virtual WebCore::ViewState::Flags viewState() override;
-        
+    virtual bool isVisuallyIdle();
     virtual LayerHostingMode viewLayerHostingMode() override;
     virtual ColorSpaceData colorSpace() override;
     virtual void setAcceleratedCompositingRootLayer(LayerOrView *) override;

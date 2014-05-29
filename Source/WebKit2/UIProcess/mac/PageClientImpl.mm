@@ -190,6 +190,17 @@ NSView *PageClientImpl::activeView() const
 #endif
 }
 
+bool PageClientImpl::isViewWindowActive()
+{
+    NSWindow *activeViewWindow = activeView().window;
+    return activeViewWindow.isKeyWindow || [NSApp keyWindow] == activeViewWindow;
+}
+
+bool PageClientImpl::isViewFocused()
+{
+    return [m_wkView _isFocused];
+}
+
 void PageClientImpl::makeFirstResponder()
 {
      [[m_wkView window] makeFirstResponder:m_wkView];
@@ -224,34 +235,21 @@ bool PageClientImpl::isViewVisible()
     return true;
 }
 
+bool PageClientImpl::isViewVisibleOrOccluded()
+{
+    return activeView().window.isVisible;
+}
+
 bool PageClientImpl::isViewInWindow()
 {
     return activeView().window;
 }
 
-ViewState::Flags PageClientImpl::viewState()
+bool PageClientImpl::isVisuallyIdle()
 {
-    ViewState::Flags viewState = ViewState::NoFlags;
-    
-    NSWindow *activeViewWindow = activeView().window;
-    bool isVisible = isViewVisible();
-    
-    if (activeViewWindow)
-        viewState |= ViewState::IsInWindow;
-    if (activeViewWindow.isKeyWindow || [NSApp keyWindow] == activeViewWindow)
-        viewState |= ViewState::WindowIsActive;
-    if ([m_wkView _isFocused])
-        viewState |= ViewState::IsFocused;
-    if (isVisible)
-        viewState |= ViewState::IsVisible;
-    if (activeViewWindow.isVisible)
-        viewState |= ViewState::IsVisibleOrOccluded;
-    if (!isVisible || WindowServerConnection::shared().applicationWindowModificationsHaveStopped())
-        viewState |= ViewState::IsVisuallyIdle;
-    
-    return viewState;
+    return WindowServerConnection::shared().applicationWindowModificationsHaveStopped() || !isViewVisible();
 }
-    
+
 LayerHostingMode PageClientImpl::viewLayerHostingMode()
 {
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
@@ -542,9 +540,8 @@ void PageClientImpl::dismissDictionaryLookupPanel()
 void PageClientImpl::showCorrectionPanel(AlternativeTextType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {
 #if USE(AUTOCORRECTION_PANEL)
-    if (!isViewVisible())
+    if (!isViewVisible() || !isViewInWindow())
         return;
-    ASSERT(isViewInWindow());
     m_correctionPanel.show(m_wkView, type, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
 #endif
 }
@@ -623,9 +620,8 @@ void PageClientImpl::removeDictationAlternatives(uint64_t dictationContext)
 
 void PageClientImpl::showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext)
 {
-    if (!isViewVisible())
+    if (!isViewVisible() || !isViewInWindow())
         return;
-    ASSERT(isViewInWindow());
     m_alternativeTextUIController->showAlternatives(m_wkView, boundingBoxOfDictatedText, dictationContext, ^(NSString* acceptedAlternative){
         [m_wkView handleAcceptedAlternativeText:acceptedAlternative];
     });

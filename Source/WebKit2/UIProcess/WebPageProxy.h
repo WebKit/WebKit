@@ -568,15 +568,15 @@ public:
     bool delegatesScrolling() const { return m_delegatesScrolling; }
 
     enum class WantsReplyOrNot { DoesNotWantReply, DoesWantReply };
-    void viewStateDidChange(WantsReplyOrNot = WantsReplyOrNot::DoesNotWantReply);
+    void viewStateDidChange(WebCore::ViewState::Flags mayHaveChanged, WantsReplyOrNot = WantsReplyOrNot::DoesNotWantReply);
     bool isInWindow() const { return m_viewState & WebCore::ViewState::IsInWindow; }
     void waitForDidUpdateViewState();
 
     void layerHostingModeDidChange();
 
     WebCore::IntSize viewSize() const;
-    bool isViewWindowActive() const { return m_viewState & WebCore::ViewState::WindowIsActive; }
     bool isViewVisible() const { return m_viewState & WebCore::ViewState::IsVisible; }
+    bool isViewWindowActive() const;
     bool isProcessSuppressible() const;
 
     void addMIMETypeWithCustomContentProvider(const String& mimeType);
@@ -1102,6 +1102,7 @@ private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);
     void platformInitialize();
 
+    void updateViewState(WebCore::ViewState::Flags flagsToUpdate = WebCore::ViewState::AllFlags);
     void updateActivityToken();
         
     void resetState();
