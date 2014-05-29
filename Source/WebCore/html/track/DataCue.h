@@ -90,6 +90,8 @@ public:
 #endif
 
     virtual bool isEqual(const TextTrackCue&, CueMatchRules) const override;
+    virtual bool cueContentsMatch(const TextTrackCue&) const override;
+    virtual bool doesExtendCue(const TextTrackCue&) const override;
 
 protected:
     DataCue(ScriptExecutionContext&, double start, double end, ArrayBuffer*, const String&, ExceptionCode&);

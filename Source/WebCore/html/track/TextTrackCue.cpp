@@ -202,6 +202,17 @@ bool TextTrackCue::isOrderedBefore(const TextTrackCue* other) const
     return startTime() < other->startTime() || (startTime() == other->startTime() && endTime() > other->endTime());
 }
 
+bool TextTrackCue::cueContentsMatch(const TextTrackCue& cue) const
+{
+    if (cueType() != cue.cueType())
+        return false;
+
+    if (id() != cue.id())
+        return false;
+
+    return true;
+}
+
 bool TextTrackCue::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatchRules match) const
 {
     if (cueType() != cue.cueType())
@@ -211,7 +222,7 @@ bool TextTrackCue::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatchRules 
         return false;
     if (!hasEquivalentStartTime(cue))
         return false;
-    if (id() != cue.id())
+    if (!cueContentsMatch(cue))
         return false;
 
     return true;
@@ -226,6 +237,17 @@ bool TextTrackCue::hasEquivalentStartTime(const TextTrackCue& cue) const
         startTimeVariance = cue.track()->startTimeVariance();
 
     return std::abs(std::abs(startTime()) - std::abs(cue.startTime())) <= startTimeVariance;
+}
+
+bool TextTrackCue::doesExtendCue(const TextTrackCue& cue) const
+{
+    if (!cueContentsMatch(cue))
+        return false;
+
+    if (endTime() != cue.startTime())
+        return false;
+    
+    return true;
 }
 
 } // namespace WebCore

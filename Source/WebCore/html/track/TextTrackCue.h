@@ -98,6 +98,8 @@ public:
         IgnoreDuration,
     };
     virtual bool isEqual(const TextTrackCue&, CueMatchRules) const;
+    virtual bool cueContentsMatch(const TextTrackCue&) const;
+    virtual bool doesExtendCue(const TextTrackCue&) const;
 
     void willChange();
     virtual void didChange();

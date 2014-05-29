@@ -121,11 +121,8 @@ const DataCue* toDataCue(const TextTrackCue* cue)
     return static_cast<const DataCue*>(cue);
 }
 
-bool DataCue::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatchRules match) const
+bool DataCue::cueContentsMatch(const TextTrackCue& cue) const
 {
-    if (!TextTrackCue::isEqual(cue, match))
-        return false;
-
     if (cue.cueType() != TextTrackCue::Data)
         return false;
 
@@ -154,6 +151,25 @@ bool DataCue::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatchRules match
 #endif
 
     return true;
+}
+
+bool DataCue::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatchRules match) const
+{
+    if (!TextTrackCue::isEqual(cue, match))
+        return false;
+
+    if (cue.cueType() != TextTrackCue::Data)
+        return false;
+
+    return cueContentsMatch(cue);
+}
+
+bool DataCue::doesExtendCue(const TextTrackCue& cue) const
+{
+    if (!cueContentsMatch(cue))
+        return false;
+
+    return TextTrackCue::doesExtendCue(cue);
 }
 
 #if ENABLE(DATACUE_VALUE)

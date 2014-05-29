@@ -1062,14 +1062,8 @@ std::pair<double, double> VTTCue::getCSSPosition() const
     return m_displayPosition;
 }
 
-bool VTTCue::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatchRules match) const
+bool VTTCue::cueContentsMatch(const TextTrackCue& cue) const
 {
-    if (!TextTrackCue::isEqual(cue, match))
-        return false;
-
-    if (cue.cueType() != WebVTT)
-        return false;
-
     const VTTCue* vttCue = toVTTCue(&cue);
     if (text() != vttCue->text())
         return false;
@@ -1087,6 +1081,25 @@ bool VTTCue::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatchRules match)
     return true;
 }
 
+bool VTTCue::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatchRules match) const
+{
+    if (!TextTrackCue::isEqual(cue, match))
+        return false;
+
+    if (cue.cueType() != WebVTT)
+        return false;
+
+    return cueContentsMatch(cue);
+}
+
+bool VTTCue::doesExtendCue(const TextTrackCue& cue) const
+{
+    if (!cueContentsMatch(cue))
+        return false;
+    
+    return TextTrackCue::doesExtendCue(cue);
+}
+    
 void VTTCue::setFontSize(int fontSize, const IntSize&, bool important)
 {
     if (!hasDisplayTree() || !fontSize)

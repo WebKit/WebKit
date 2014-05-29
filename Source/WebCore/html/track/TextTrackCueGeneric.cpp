@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -150,17 +150,14 @@ void TextTrackCueGeneric::setFontSize(int fontSize, const IntSize& videoSize, bo
 
     LOG(Media, "TextTrackCueGeneric::setFontSize - setting cue font size to %li", lround(size));
 }
-    
-bool TextTrackCueGeneric::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatchRules match) const
+
+bool TextTrackCueGeneric::cueContentsMatch(const TextTrackCue& cue) const
 {
-    // Do not call the parent class isEqual here, because we are not cueType() == VTTCue,
-    // and will fail that equality test.
-    if (!TextTrackCue::isEqual(cue, match))
+    // Do call the parent class cueContentsMatch here, because we want to confirm
+    // the content of the two cues are identical (even though the types are not the same).
+    if (!VTTCue::cueContentsMatch(cue))
         return false;
-
-    if (cue.cueType() != TextTrackCue::Generic)
-        return false;
-
+    
     const TextTrackCueGeneric* other = static_cast<const TextTrackCueGeneric*>(&cue);
 
     if (m_baseFontSizeRelativeToVideoHeight != other->baseFontSizeRelativeToVideoHeight())
@@ -175,6 +172,28 @@ bool TextTrackCueGeneric::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatc
         return false;
 
     return true;
+}
+
+bool TextTrackCueGeneric::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatchRules match) const
+{
+    // Do not call the parent class isEqual here, because we are not cueType() == VTTCue,
+    // and will fail that equality test.
+    if (!TextTrackCue::isEqual(cue, match))
+        return false;
+
+    if (cue.cueType() != TextTrackCue::Generic)
+        return false;
+
+    return cueContentsMatch(cue);
+}
+
+    
+bool TextTrackCueGeneric::doesExtendCue(const TextTrackCue& cue) const
+{
+    if (!cueContentsMatch(cue))
+        return false;
+    
+    return VTTCue::doesExtendCue(cue);
 }
 
 bool TextTrackCueGeneric::isOrderedBefore(const TextTrackCue* that) const

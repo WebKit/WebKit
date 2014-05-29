@@ -519,13 +519,19 @@ bool TextTrack::hasCue(TextTrackCue* cue, TextTrackCue::CueMatchRules match)
                     return false;
 
                 existingCue = m_cues->item(searchStart - 1);
-                if (!existingCue || cue->startTime() > (existingCue->startTime() + startTimeVariance()))
+                if (!existingCue)
                     return false;
 
-                if (!existingCue->isEqual(*cue, match))
-                    continue;
-                
-                return true;
+                if (existingCue->doesExtendCue(*cue)) {
+                    existingCue->setEndTime(cue->endTime(), IGNORE_EXCEPTION);
+                    return true;
+                }
+
+                if (cue->startTime() > (existingCue->startTime() + startTimeVariance()))
+                    return false;
+
+                if (existingCue->isEqual(*cue, match))
+                    return true;
             }
         }
         

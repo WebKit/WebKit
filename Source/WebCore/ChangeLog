@@ -1,3 +1,54 @@
+2014-05-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Captions during HLS playback flash/are difficult to readily
+        https://bugs.webkit.org/show_bug.cgi?id=133365
+        <rdar://problem/16584132>
+
+        Reviewed by Eric Carlson.
+
+        Correct two problems:
+        1. Add new logic to handle cues that are identical to existing cues, except
+           that they cover a slightly later moment in playback. For example, a cue
+           encoding device might emit a cue at 24 fps, with many of the cues containing
+           the same content but covering only 1/24th of a second.
+           
+           Rather than hiding and displaying our cues at the cue encoding rate, we should
+           simply continue to display the same cue as long as the content is unchanged.
+        2. The cue "isEqual" logic for TextTrackCueGeneric improperly short-circuited the
+           VTTCue isEqual logic. This was done to avoid a false failure due to the cue
+           type being 'generic' rather than 'vtt', but incorrectly treated cues with
+           non-matching text as equal.
+
+        * html/track/DataCue.cpp:
+        (WebCore::DataCue::cueContentsMatch): Move cue comparison code to new method that
+        doesn't check that the 'type' of the cue is identical.
+        (WebCore::DataCue::isEqual): Modified to use new 'cueContentsMatch' method.
+        (WebCore::DataCue::isStartOfCue): Confirms cues match except for start and end times.
+        * html/track/DataCue.h:
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::hasCue): Modify to check if a new cue is simply a continuation
+        of an existing cue.
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::cueContentsMatch): New method containing the equality code
+        that used to live in 'isEqual'.
+        (WebCore::TextTrackCue::isEqual): Modified to use new 'cueContentsMatch' method.
+        (WebCore::TextTrackCue::isStartOfCue): Confirms cues match except for start and
+        end times.
+        * html/track/TextTrackCue.h:
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGeneric::cueContentsMatch): New method containing the equality
+        code that used to live in 'isEqual'.
+        (WebCore::TextTrackCueGeneric::isEqual): Modified to use new 'cueContentsMatch' method.
+        (WebCore::TextTrackCueGeneric::isStartOfCue): Confirms cues match except for start and
+        end times.
+        * html/track/TextTrackCueGeneric.h:
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::cueContentsMatch): New method containing the equality code that
+        used to live in 'isEqual'.
+        (WebCore::VTTCue::isEqual): Modified to use new 'cueContentsMatch' method.
+        (WebCore::VTTCue::isStartOfCue): Confirms cues match except for start and end times.
+        * html/track/VTTCue.h:
+
 2014-05-28  Oliver Hunt  <oliver@apple.com>
 
         Whoops, update bindings tests results.

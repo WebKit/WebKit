@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,6 +73,8 @@ public:
     virtual void setFontSize(int, const IntSize&, bool important) override;
 
     virtual bool isEqual(const TextTrackCue&, CueMatchRules) const override;
+    virtual bool cueContentsMatch(const TextTrackCue&) const override;
+    virtual bool doesExtendCue(const TextTrackCue&) const override;
 
     virtual TextTrackCue::CueType cueType() const override { return TextTrackCue::Generic; }
 
