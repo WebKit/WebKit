@@ -71,8 +71,12 @@ static inline RenderWidget* findWidgetRenderer(const Node* n)
 RenderWidget* HTMLEmbedElement::renderWidgetForJSBindings() const
 {
     FrameView* view = document().view();
-    if (!view || (!view->isInLayout() && !view->isPainting()))
-        document().updateLayoutIgnorePendingStylesheets();
+    if (!view || (!view->isInLayout() && !view->isPainting())) {
+        // Needs to load the plugin immediatedly because this function is called
+        // when JavaScript code accesses the plugin.
+        // FIXME: <rdar://16893708> Check if dispatching events here is safe.
+        document().updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasksSynchronously);
+    }
     return findWidgetRenderer(this);
 }
 

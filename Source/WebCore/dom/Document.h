@@ -587,7 +587,11 @@ public:
     void updateStyleIfNeeded();
     bool updateStyleIfNeededForNode(const Node&);
     void updateLayout();
-    void updateLayoutIgnorePendingStylesheets();
+    enum RunPostLayoutTasks {
+        RunPostLayoutTasksAsynchronously,
+        RunPostLayoutTasksSynchronously,
+    };
+    void updateLayoutIgnorePendingStylesheets(RunPostLayoutTasks = RunPostLayoutTasksAsynchronously);
     PassRef<RenderStyle> styleForElementIgnoringPendingStylesheets(Element*);
 
     // Returns true if page box (margin boxes and page borders) is visible.

@@ -175,6 +175,7 @@ EXPORTS
         symbolWithPointer(?childItemWithTarget@HistoryItem@WebCore@@QBEPAV12@ABVString@WTF@@@Z, ?childItemWithTarget@HistoryItem@WebCore@@QEBAPEAV12@AEBVString@WTF@@@Z)
         symbolWithPointer(?create@Range@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@AAVDocument@2@V?$PassRefPtr@VNode@WebCore@@@4@H1H@Z, ?create@Range@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@AEAVDocument@2@V?$PassRefPtr@VNode@WebCore@@@4@H1H@Z)
         symbolWithPointer(?commonVM@JSDOMWindowBase@WebCore@@SAAAVVM@JSC@@XZ, ?commonVM@JSDOMWindowBase@WebCore@@SAAEAVVM@JSC@@XZ)
+		symbolWithPointer(?contentDocument@HTMLFrameOwnerElement@WebCore@@QBEPAVDocument@2@XZ, ?contentDocument@HTMLFrameOwnerElement@WebCore@@QEBAPEAVDocument@2@XZ)
         symbolWithPointer(?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@ABVString@4@@Z, ?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@AEBVString@4@@Z)
 #if USE(CF)
         symbolWithPointer(?createCFString@String@WTF@@QBE?AV?$RetainPtr@PBU__CFString@@@2@XZ, ?createCFString@String@WTF@@QEBA?AV?$RetainPtr@PEBU__CFString@@@2@XZ)
@@ -203,6 +204,7 @@ EXPORTS
 		symbolWithPointer(?getOutOfLineCachedWrapper@WebCore@@YAPAVJSObject@JSC@@PAVJSDOMGlobalObject@1@PAVNode@1@@Z, ?getOutOfLineCachedWrapper@WebCore@@YAPEAVJSObject@JSC@@PEAVJSDOMGlobalObject@1@PEAVNode@1@@Z)
         symbolWithPointer(?hitTest@RenderView@WebCore@@QAE_NABVHitTestRequest@2@AAVHitTestResult@2@@Z, ?hitTest@RenderView@WebCore@@QEAA_NAEBVHitTestRequest@2@AEAVHitTestResult@2@@Z)
         ?inputTag@HTMLNames@WebCore@@3VHTMLQualifiedName@2@B
+		symbolWithPointer(?iframeTag@HTMLNames@WebCore@@3VHTMLQualifiedName@2@B,?iframeTag@HTMLNames@WebCore@@3VHTMLQualifiedName@2@B)
         symbolWithPointer(?intersects@IntRect@WebCore@@QBE_NABV12@@Z, ?intersects@IntRect@WebCore@@QEBA_NAEBV12@@Z)
         symbolWithPointer(?item@StaticNodeList@WebCore@@UBEPAVNode@2@I@Z, ?item@StaticNodeList@WebCore@@UEBAPEAVNode@2@I@Z)
         ?selectTag@HTMLNames@WebCore@@3VHTMLQualifiedName@2@B
@@ -323,7 +325,7 @@ EXPORTS
         symbolWithPointer(?toRange@WebCore@@YAPAVRange@1@VJSValue@JSC@@@Z, ?toRange@WebCore@@YAPEAVRange@1@VJSValue@JSC@@@Z)
         symbolWithPointer(?isTreeScope@Node@WebCore@@QBE_NXZ, ?isTreeScope@Node@WebCore@@QEBA_NXZ)
         symbolWithPointer(?updateEditorUINowIfScheduled@Editor@WebCore@@QAEXXZ, ?updateEditorUINowIfScheduled@Editor@WebCore@@QEAAXXZ)
-        symbolWithPointer(?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ, ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QEAAXXZ)
+        symbolWithPointer(?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXW4RunPostLayoutTasks@12@@Z, ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QEAAXW4RunPostLayoutTasks@12@@Z)
         symbolWithPointer(?updateStyleIfNeeded@Document@WebCore@@QAEXXZ, ?updateStyleIfNeeded@Document@WebCore@@QEAAXXZ)
         symbolWithPointer(?view@Document@WebCore@@QBEPAVFrameView@2@XZ, ?view@Document@WebCore@@QEBAPEAVFrameView@2@XZ)
         symbolWithPointer(??1ContextDestructionObserver@WebCore@@MAE@XZ, ??1ContextDestructionObserver@WebCore@@MEAA@XZ)
