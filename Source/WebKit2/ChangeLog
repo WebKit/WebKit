@@ -1,3 +1,12 @@
+2014-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add support for HiDPI icons
+        https://bugs.webkit.org/show_bug.cgi?id=133377
+
+        Reviewed by Martin Robinson.
+
+        * PlatformGTK.cmake: Compile also the @2x versions for the builtin icons.
+
 2014-05-29  Owen Taylor  <otaylor@redhat.com>
 
         [GTK] Add HighDPI support for non-accelerated compositing contents

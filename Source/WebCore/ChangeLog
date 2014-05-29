@@ -1,3 +1,17 @@
+2014-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add support for HiDPI icons
+        https://bugs.webkit.org/show_bug.cgi?id=133377
+
+        Reviewed by Martin Robinson.
+
+        Use the GTK+ missing icon at 16 or 32 size depending on the device
+        scale factor.
+
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (WebCore::loadMissingImageIconFromTheme):
+        (WebCore::Image::loadPlatformResource):
+
 2014-05-29  Owen Taylor  <otaylor@redhat.com>
 
         [GTK] Add HighDPI support for non-accelerated compositing contents

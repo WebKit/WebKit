@@ -60,22 +60,23 @@ void BitmapImage::invalidatePlatformData()
 {
 }
 
-static PassRefPtr<Image> loadMissingImageIconFromTheme()
+static PassRefPtr<Image> loadMissingImageIconFromTheme(const char* name)
 {
+    int iconSize = g_str_has_suffix(name, "@2x") ? 32 : 16;
     RefPtr<BitmapImage> icon = BitmapImage::create();
-    GUniquePtr<GtkIconInfo> iconInfo(gtk_icon_theme_lookup_icon(gtk_icon_theme_get_default(), GTK_STOCK_MISSING_IMAGE, 16, GTK_ICON_LOOKUP_NO_SVG));
+    GUniquePtr<GtkIconInfo> iconInfo(gtk_icon_theme_lookup_icon(gtk_icon_theme_get_default(), GTK_STOCK_MISSING_IMAGE, iconSize, GTK_ICON_LOOKUP_NO_SVG));
     if (iconInfo) {
         RefPtr<SharedBuffer> buffer = loadResourceSharedBuffer(gtk_icon_info_get_filename(iconInfo.get()));
         icon->setData(buffer.release(), true);
         return icon.release();
     }
 
-    return loadImageFromGResource("missingImage");
+    return loadImageFromGResource(name);
 }
 
 PassRefPtr<Image> Image::loadPlatformResource(const char* name)
 {
-    return !strcmp("missingImage", name) ? loadMissingImageIconFromTheme() : loadImageFromGResource(name);
+    return g_str_has_prefix(name, "missingImage") ? loadMissingImageIconFromTheme(name) : loadImageFromGResource(name);
 }
 
 GdkPixbuf* BitmapImage::getGdkPixbuf()
