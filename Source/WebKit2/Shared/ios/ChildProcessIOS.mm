@@ -39,6 +39,8 @@
 #import <stdlib.h>
 #import <sysexits.h>
 
+#import <WebCore/FloatingPointEnvironment.h> 
+
 #ifndef ENABLE_MANUAL_SANDBOXING
 #define ENABLE_MANUAL_SANDBOXING 0
 #endif
@@ -64,6 +66,9 @@ void ChildProcess::setApplicationIsDaemon()
 
 void ChildProcess::platformInitialize()
 {
+    FloatingPointEnvironment& floatingPointEnvironment = FloatingPointEnvironment::shared(); 
+    floatingPointEnvironment.enableDenormalSupport(); 
+    floatingPointEnvironment.saveMainThreadEnvironment(); 
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
 }
 

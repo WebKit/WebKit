@@ -1,3 +1,13 @@
+2014-05-29  Mark Lam  <mark.lam@apple.com>
+
+        Restoring FloatingPointEnvironment initialization that was accidentally rolled out by r169176.
+        <https://webkit.org/b/133389>
+
+        Rubber stamped by Oliver Hunt.
+
+        * Shared/ios/ChildProcessIOS.mm:
+        (WebKit::ChildProcess::platformInitialize):
+
 2014-05-29  Enrica Casucci  <enrica@apple.com>
 
         Need to notify the keyboard about every KeyDown event.
