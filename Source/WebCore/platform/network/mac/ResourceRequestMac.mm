@@ -173,6 +173,12 @@ void ResourceRequest::doUpdatePlatformRequest()
     for (HTTPHeaderMap::const_iterator it = httpHeaderFields().begin(); it != end; ++it)
         [nsRequest setValue:it->value forHTTPHeaderField:it->key];
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
+    // Workaround for <rdar://problem/16848509>
+    if (url().host().contains('%'))
+        [nsRequest setValue:url().host() forHTTPHeaderField:@"Host"];
+#endif
+
     NSMutableArray *encodingFallbacks = [NSMutableArray array];
     unsigned count = m_responseContentDispositionEncodingFallbackArray.size();
     for (unsigned i = 0; i != count; ++i) {

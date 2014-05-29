@@ -1,3 +1,12 @@
+2014-05-27  Jeffrey Pfau  <jpfau@apple.com>
+
+        Workaround for <rdar://problem/16848509>
+
+        Reviewed by David Kilzer.
+
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+
 2014-05-27  Lucas Forschler  <lforschler@apple.com>
 
         Fix for <rdar://problem/17020210>
