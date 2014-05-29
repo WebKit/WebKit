@@ -1,5 +1,18 @@
 2014-05-29  Timothy Horton  <timothy_horton@apple.com>
 
+        Crash loading skydrive.com (assertion under RemoteLayerTreeDisplayRefreshMonitor)
+        https://bugs.webkit.org/show_bug.cgi?id=133370
+        <rdar://problem/17061361>
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::didUpdate):
+        Copy the set of refresh monitors so that we don't try to mutate the list we're iterating,
+        and don't try to fire refresh monitors that were removed in a previous iteration of the loop.
+
+2014-05-29  Timothy Horton  <timothy_horton@apple.com>
+
         REGRESSION (iOS WebKit2): Find-in-Page doesn't work in subframes
         https://bugs.webkit.org/show_bug.cgi?id=133372
         <rdar://problem/17045070>

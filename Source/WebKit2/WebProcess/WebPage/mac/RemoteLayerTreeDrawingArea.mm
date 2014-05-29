@@ -330,8 +330,15 @@ void RemoteLayerTreeDrawingArea::didUpdate()
     [CATransaction begin];
     [CATransaction commit];
 
+    Vector<RemoteLayerTreeDisplayRefreshMonitor*> monitors;
+    monitors.reserveCapacity(m_displayRefreshMonitors.size());
     for (auto& monitor : m_displayRefreshMonitors)
-        monitor->didUpdateLayers();
+        monitors.append(monitor);
+    for (auto& monitor : monitors) {
+        // The monitor might have been removed by an earlier didUpdateLayers callback.
+        if (m_displayRefreshMonitors.contains(monitor))
+            monitor->didUpdateLayers();
+    }
 }
 
 void RemoteLayerTreeDrawingArea::mainFrameContentSizeChanged(const IntSize& contentsSize)
