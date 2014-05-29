@@ -155,6 +155,7 @@ static void freeData(void *, const void *data, size_t /* size */)
 #else
     [super display];
 #endif
+    m_context->markLayerComposited();
 }
 
 @end

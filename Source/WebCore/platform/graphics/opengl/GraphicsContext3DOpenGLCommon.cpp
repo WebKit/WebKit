@@ -223,7 +223,6 @@ void GraphicsContext3D::prepareTexture()
     if (m_state.boundFBO != m_fbo)
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_state.boundFBO);
     ::glFinish();
-    m_layerComposited = true;
 }
 
 void GraphicsContext3D::readRenderingResults(unsigned char *pixels, int pixelsSize)

@@ -1,3 +1,19 @@
+2014-05-29  Alex Christensen  <achristensen@webkit.org>
+
+        [iOS WebGL] Fix depth buffer clearing issue.
+        https://bugs.webkit.org/show_bug.cgi?id=133388
+
+        Reviewed by Dean Jackson.
+
+        No new tests, but this fixes webgl/1.0.1/conformance/canvas/buffer-preserve-test.html.
+
+        * platform/graphics/mac/WebGLLayer.mm:
+        (-[WebGLLayer display]):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::prepareTexture):
+        Moved marking the layer as composited from the mac-only prepareTexture to
+        the end of [WebGLLayer display] which is called by mac and iOS.
+
 2014-05-29  Jeremy Jones  <jeremyj@apple.com>
 
         Perserve caption selection in fullscreen.
