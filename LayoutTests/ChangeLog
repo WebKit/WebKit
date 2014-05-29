@@ -1,3 +1,16 @@
+2014-05-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Support -apple-system-font on OS X
+        https://bugs.webkit.org/show_bug.cgi?id=133382
+
+        This test makes sure that -apple-system-font is rendered the same way as -webkit-system-font.
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac-mountainlion/platform/mac/fast/text/systemFont-expected.txt: Updated.
+        * platform/mac/fast/text/systemFont.html: Tests -apple-system-font in addition to -webkit-system-font.
+        * platform/mac/platform/mac/fast/text/systemFont-expected.txt: Updated.
+
 2014-05-29  Alexey Proskuryakov  <ap@apple.com>
 
         Loading <object> from WebArchive crashes

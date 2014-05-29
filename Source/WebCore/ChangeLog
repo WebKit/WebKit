@@ -1,3 +1,17 @@
+2014-05-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Support -apple-system-font on OS X
+        https://bugs.webkit.org/show_bug.cgi?id=133382
+
+        Reviewed by Simon Fraser.
+
+        Guard on both family names: "-apple-system-font" and "-webkit-system-font"
+
+        Test: platform/mac/fast/text/systemFont.html
+
+        * platform/mac/WebFontCache.mm:
+        (+[WebFontCache internalFontWithFamily:traits:weight:size:]):
+
 2014-05-29  Alexey Proskuryakov  <ap@apple.com>
 
         Loading <object> from WebArchive crashes

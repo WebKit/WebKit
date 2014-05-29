@@ -160,7 +160,8 @@ static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSIntege
 + (NSFont *)internalFontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits weight:(int)desiredWeight size:(float)size
 {
 
-    if ([desiredFamily compare:@"-webkit-system-font" options:NSCaseInsensitiveSearch] == NSOrderedSame) {
+    if ([desiredFamily compare:@"-webkit-system-font" options:NSCaseInsensitiveSearch] == NSOrderedSame
+        || [desiredFamily compare:@"-apple-system-font" options:NSCaseInsensitiveSearch] == NSOrderedSame) {
         // We ignore italic for system font.
         return (desiredWeight >= 7) ? [NSFont boldSystemFontOfSize:size] : [NSFont systemFontOfSize:size];
     }
