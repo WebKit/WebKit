@@ -1,5 +1,22 @@
 2014-05-29  Jeremy Jones  <jeremyj@apple.com>
 
+        Perserve caption selection in fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=133350
+
+        Reviewed by Eric Carlson.
+
+        Use the logic from the inline player to calculate the selected caption index.
+
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::mediaControlsHost):
+        Expose mediaControlsHost() for use by WebVideoFullscreenModelMediaElement.
+
+        * platform/ios/WebVideoFullscreenModelMediaElement.mm:
+        (WebVideoFullscreenModelMediaElement::updateLegibleOptions):
+        Use logic from buildCaptionsMenu from mediaControlsApple.js.
+
+2014-05-29  Jeremy Jones  <jeremyj@apple.com>
+
         Use correct version of requiresFullscreenForVideoPlayback().
         https://bugs.webkit.org/show_bug.cgi?id=133331
 

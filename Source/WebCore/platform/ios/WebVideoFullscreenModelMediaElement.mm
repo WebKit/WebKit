@@ -31,6 +31,7 @@
 
 #import "DOMEventInternal.h"
 #import "Logging.h"
+#import "MediaControlsHost.h"
 #import "WebVideoFullscreenInterface.h"
 #import <WebCore/DOMEventListener.h>
 #import <WebCore/Event.h>
@@ -293,17 +294,43 @@ void WebVideoFullscreenModelMediaElement::selectLegibleMediaOption(uint64_t inde
 void WebVideoFullscreenModelMediaElement::updateLegibleOptions()
 {
     TextTrackList* trackList = m_mediaElement->textTracks();
-    if (!trackList || !trackList->length() || !m_mediaElement->document().page())
+    if (!trackList || !m_mediaElement->document().page() || !m_mediaElement->mediaControlsHost())
         return;
-
+    
+    WTF::AtomicString displayMode = m_mediaElement->mediaControlsHost()->captionDisplayMode();
+    TextTrack* offItem = m_mediaElement->mediaControlsHost()->captionMenuOffItem();
+    TextTrack* automaticItem = m_mediaElement->mediaControlsHost()->captionMenuAutomaticItem();
     CaptionUserPreferences& captionPreferences = *m_mediaElement->document().page()->group().captionPreferences();
     m_legibleTracksForMenu = captionPreferences.sortedTrackListForMenu(trackList);
-
-    Vector<String> legibleOptions;
-    for (auto& track : m_legibleTracksForMenu)
-        legibleOptions.append(captionPreferences.displayNameForTrack(track.get()));
-
-    m_videoFullscreenInterface->setLegibleMediaSelectionOptions(legibleOptions, 0);
+    Vector<String> trackDisplayNames;
+    uint64_t selectedIndex = 0;
+    uint64_t offIndex = 0;
+    bool trackMenuItemSelected = false;
+    
+    for (size_t index = 0; index < m_legibleTracksForMenu.size(); index++) {
+        auto& track = m_legibleTracksForMenu[index];
+        trackDisplayNames.append(captionPreferences.displayNameForTrack(track.get()));
+        
+        if (track == offItem)
+            offIndex = index;
+        
+        if (track == automaticItem && displayMode == MediaControlsHost::automaticKeyword()) {
+            selectedIndex = index;
+            trackMenuItemSelected = true;
+        }
+        
+        if (displayMode != MediaControlsHost::automaticKeyword() && track->mode() == TextTrack::showingKeyword()) {
+            selectedIndex = index;
+            trackMenuItemSelected = true;
+        }
+    }
+    
+    if (offIndex && !trackMenuItemSelected && displayMode == MediaControlsHost::forcedOnlyKeyword()) {
+        selectedIndex = offIndex;
+        trackMenuItemSelected = true;
+    }
+    
+    m_videoFullscreenInterface->setLegibleMediaSelectionOptions(trackDisplayNames, selectedIndex);
 }
 
 #endif

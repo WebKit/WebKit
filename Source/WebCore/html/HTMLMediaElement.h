@@ -435,6 +435,8 @@ public:
     void pageScaleFactorChanged();
 #endif
 
+    MediaControlsHost* mediaControlsHost() { return m_mediaControlsHost.get(); }
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool);
     virtual ~HTMLMediaElement();
