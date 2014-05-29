@@ -45,7 +45,6 @@ PluginInfoCache& PluginInfoCache::shared()
 PluginInfoCache::PluginInfoCache()
     : m_cacheFile(g_key_file_new())
     , m_cachePath(g_build_filename(g_get_user_cache_dir(), "webkitgtk", "plugins", nullptr))
-    , m_saveToFileIdleId(0)
 {
     g_key_file_load_from_file(m_cacheFile.get(), m_cachePath.get(), G_KEY_FILE_NONE, nullptr);
 
@@ -63,22 +62,15 @@ PluginInfoCache::PluginInfoCache()
 
 PluginInfoCache::~PluginInfoCache()
 {
-    if (m_saveToFileIdleId) {
-        g_source_remove(m_saveToFileIdleId);
+    if (m_saveToFileIdle.isScheduled()) {
+        m_saveToFileIdle.cancel();
         saveToFile();
     }
-}
-
-gboolean PluginInfoCache::saveToFileIdleCallback(PluginInfoCache* cache)
-{
-    cache->saveToFile();
-    return FALSE;
 }
 
 void PluginInfoCache::saveToFile()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    m_saveToFileIdleId = 0;
 
     gsize dataLength;
     GUniquePtr<char> data(g_key_file_to_data(m_cacheFile.get(), &dataLength, nullptr));
@@ -141,10 +133,10 @@ void PluginInfoCache::updatePluginInfo(const String& pluginPath, const PluginMod
     // Save the cache file in an idle to make sure it happens in the main thread and
     // it's done only once when this is called multiple times in a very short time.
     std::lock_guard<std::mutex> lock(m_mutex);
-    if (m_saveToFileIdleId)
+    if (m_saveToFileIdle.isScheduled())
         return;
 
-    m_saveToFileIdleId = g_idle_add(reinterpret_cast<GSourceFunc>(PluginInfoCache::saveToFileIdleCallback), this);
+    m_saveToFileIdle.schedule("[WebKit] PluginInfoCache::saveToFile", std::bind(&PluginInfoCache::saveToFile, this), G_PRIORITY_DEFAULT_IDLE);
 }
 
 } // namespace WebKit

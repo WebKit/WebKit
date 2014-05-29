@@ -29,98 +29,7 @@
 #include "WorkQueue.h"
 
 #include <gio/gio.h>
-#include <glib.h>
-#include <wtf/gobject/GRefPtr.h>
 
-// WorkQueue::EventSource
-class WorkQueue::EventSource {
-public:
-    EventSource(std::function<void()> function, WorkQueue* workQueue)
-        : m_function(std::move(function))
-        , m_workQueue(workQueue)
-    {
-        ASSERT(workQueue);
-    }
-
-    virtual ~EventSource() { }
-
-    void performWork()
-    {
-        m_function();
-    }
-
-    static gboolean performWorkOnce(EventSource* eventSource)
-    {
-        ASSERT(eventSource);
-        eventSource->performWork();
-        return FALSE;
-    }
-
-    static void deleteEventSource(EventSource* eventSource)
-    {
-        ASSERT(eventSource);
-        delete eventSource;
-    }
-
-private:
-    std::function<void ()> m_function;
-    RefPtr<WorkQueue> m_workQueue;
-};
-
-class WorkQueue::SocketEventSource : public WorkQueue::EventSource {
-public:
-    SocketEventSource(std::function<void ()> function, WorkQueue* workQueue, GCancellable* cancellable, std::function<void ()> closeFunction)
-        : EventSource(std::move(function), workQueue)
-        , m_cancellable(cancellable)
-        , m_closeFunction(std::move(closeFunction))
-    {
-        ASSERT(cancellable);
-    }
-
-    void cancel()
-    {
-        g_cancellable_cancel(m_cancellable);
-    }
-
-    void didClose()
-    {
-        m_closeFunction();
-    }
-
-    bool isCancelled() const
-    {
-        return g_cancellable_is_cancelled(m_cancellable);
-    }
-
-    static gboolean eventCallback(GSocket*, GIOCondition condition, SocketEventSource* eventSource)
-    {
-        ASSERT(eventSource);
-
-        if (eventSource->isCancelled()) {
-            // EventSource has been cancelled, return FALSE to destroy the source.
-            return FALSE;
-        }
-
-        if (condition & G_IO_HUP || condition & G_IO_ERR || condition & G_IO_NVAL) {
-            eventSource->didClose();
-            return FALSE;
-        }
-
-        if (condition & G_IO_IN) {
-            eventSource->performWork();
-            return TRUE;
-        }
-
-        ASSERT_NOT_REACHED();
-        return FALSE;
-    }
-
-private:
-    GCancellable* m_cancellable;
-    std::function<void ()> m_closeFunction;
-};
-
-// WorkQueue
 static const size_t kVisualStudioThreadNameLimit = 31;
 
 void WorkQueue::platformInitialize(const char* name)
@@ -172,69 +81,40 @@ void WorkQueue::workQueueThreadBody()
 void WorkQueue::registerSocketEventHandler(int fileDescriptor, std::function<void ()> function, std::function<void ()> closeFunction)
 {
     GRefPtr<GSocket> socket = adoptGRef(g_socket_new_from_fd(fileDescriptor, 0));
-    ASSERT(socket);
-    GRefPtr<GCancellable> cancellable = adoptGRef(g_cancellable_new());
-    GRefPtr<GSource> dispatchSource = adoptGRef(g_socket_create_source(socket.get(), G_IO_IN, cancellable.get()));
-    ASSERT(dispatchSource);
-    SocketEventSource* eventSource = new SocketEventSource(std::move(function), this,
-        cancellable.get(), std::move(closeFunction));
+    ref();
+    m_socketEventSource.schedule("[WebKit] WorkQueue::SocketEventHandler", [function, closeFunction](GIOCondition condition) {
+            if (condition & G_IO_HUP || condition & G_IO_ERR || condition & G_IO_NVAL) {
+                closeFunction();
+                return GMainLoopSource::Stop;
+            }
 
-    g_source_set_callback(dispatchSource.get(), reinterpret_cast<GSourceFunc>(&WorkQueue::SocketEventSource::eventCallback),
-        eventSource, reinterpret_cast<GDestroyNotify>(&WorkQueue::EventSource::deleteEventSource));
+            if (condition & G_IO_IN) {
+                function();
+                return GMainLoopSource::Continue;
+            }
 
-    // Set up the event sources under the mutex since this is shared across multiple threads.
-    {
-        MutexLocker locker(m_eventSourcesLock);
-        Vector<SocketEventSource*> sources;
-        auto it = m_eventSources.find(fileDescriptor);
-        if (it != m_eventSources.end())
-            sources = it->value;
-
-        sources.append(eventSource);
-        m_eventSources.set(fileDescriptor, sources);
-    }
-
-    g_source_attach(dispatchSource.get(), m_eventContext.get());
+            ASSERT_NOT_REACHED();
+            return GMainLoopSource::Stop;
+        }, socket.get(), G_IO_IN,
+        [this] { deref(); },
+        m_eventContext.get());
 }
 
-void WorkQueue::unregisterSocketEventHandler(int fileDescriptor)
+void WorkQueue::unregisterSocketEventHandler(int)
 {
-    ASSERT(fileDescriptor);
-
-    MutexLocker locker(m_eventSourcesLock);
-
-    ASSERT(m_eventSources.contains(fileDescriptor));
-    auto it = m_eventSources.find(fileDescriptor);
-
-    if (it != m_eventSources.end()) {
-        Vector<SocketEventSource*> sources = it->value;
-        for (unsigned i = 0; i < sources.size(); i++)
-            sources[i]->cancel();
-
-        m_eventSources.remove(it);
-    }
-}
-
-void WorkQueue::dispatchOnSource(GSource* dispatchSource, std::function<void ()> function, GSourceFunc sourceCallback)
-{
-    g_source_set_callback(dispatchSource, sourceCallback, new EventSource(std::move(function), this),
-        reinterpret_cast<GDestroyNotify>(&WorkQueue::EventSource::deleteEventSource));
-
-    g_source_attach(dispatchSource, m_eventContext.get());
+    m_socketEventSource.cancel();
 }
 
 void WorkQueue::dispatch(std::function<void ()> function)
 {
-    GRefPtr<GSource> dispatchSource = adoptGRef(g_idle_source_new());
-    g_source_set_priority(dispatchSource.get(), G_PRIORITY_DEFAULT);
-    dispatchOnSource(dispatchSource.get(), std::move(function),
-        reinterpret_cast<GSourceFunc>(&WorkQueue::EventSource::performWorkOnce));
+    ref();
+    GMainLoopSource::createAndDeleteOnDestroy().schedule("[WebKit] WorkQueue::dispatch", std::move(function), G_PRIORITY_DEFAULT,
+        [this] { deref(); }, m_eventContext.get());
 }
 
 void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, std::function<void ()> function)
 {
-    GRefPtr<GSource> dispatchSource = adoptGRef(g_timeout_source_new(
-        static_cast<guint>(std::chrono::duration_cast<std::chrono::milliseconds>(duration).count())));
-    dispatchOnSource(dispatchSource.get(), std::move(function),
-        reinterpret_cast<GSourceFunc>(&WorkQueue::EventSource::performWorkOnce));
+    ref();
+    GMainLoopSource::createAndDeleteOnDestroy().scheduleAfterDelay("[WebKit] WorkQueue::dispatchAfter", std::move(function),
+        std::chrono::duration_cast<std::chrono::milliseconds>(duration), G_PRIORITY_DEFAULT, [this] { deref(); }, m_eventContext.get());
 }

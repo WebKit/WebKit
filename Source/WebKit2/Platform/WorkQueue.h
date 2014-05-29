@@ -45,8 +45,8 @@
 #endif
 
 #if PLATFORM(GTK)
+#include <wtf/gobject/GMainLoopSource.h>
 #include <wtf/gobject/GRefPtr.h>
-typedef gboolean (*GSourceFunc) (gpointer data);
 #elif PLATFORM(EFL)
 #include <DispatchQueueEfl.h>
 #endif
@@ -79,19 +79,14 @@ private:
     static void executeFunction(void*);
     dispatch_queue_t m_dispatchQueue;
 #elif PLATFORM(GTK)
-    class EventSource;
-    class SocketEventSource;
-
     static void startWorkQueueThread(WorkQueue*);
     void workQueueThreadBody();
-    void dispatchOnSource(GSource*, std::function<void ()>, GSourceFunc);
 
     ThreadIdentifier m_workQueueThread;
     GRefPtr<GMainContext> m_eventContext;
     Mutex m_eventLoopLock;
     GRefPtr<GMainLoop> m_eventLoop;
-    Mutex m_eventSourcesLock;
-    HashMap<int, Vector<SocketEventSource*>> m_eventSources;
+    GMainLoopSource m_socketEventSource;
 #elif PLATFORM(EFL)
     RefPtr<DispatchQueue> m_dispatchQueue;
 #endif
