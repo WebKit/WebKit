@@ -1,3 +1,9 @@
+2014-05-28  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        Unreviewed. Update my email addresses in contributors.json.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-05-27  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Need an API test for bug #133193 (r169315)

@@ -974,10 +974,11 @@
       },
       "Gwang Yoon Hwang" : {
          "emails" : [
-            "ryumiel@company100.net",
-            "ryumiel@company100.com"
+            "yoon@igalia.com",
+            "yoon@webkit.org",
+            "ryumiel@company100.net"
          ],
-         "expertise" : "Accelerated Compositing",
+         "expertise" : "Accelerated Compositing, WebKitGTK+",
          "nicks" : [
             "ryumiel"
          ]
