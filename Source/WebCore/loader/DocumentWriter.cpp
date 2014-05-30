@@ -77,7 +77,7 @@ void DocumentWriter::replaceDocument(const String& source, Document* ownerDocume
     if (!source.isNull()) {
         if (!m_hasReceivedSomeData) {
             m_hasReceivedSomeData = true;
-            m_frame->document()->setCompatibilityMode(Document::NoQuirksMode);
+            m_frame->document()->setCompatibilityMode(DocumentCompatibilityMode::NoQuirksMode);
         }
 
         // FIXME: This should call DocumentParser::appendBytes instead of append

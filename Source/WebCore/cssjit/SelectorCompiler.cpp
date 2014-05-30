@@ -36,6 +36,7 @@
 #include "FunctionCall.h"
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
+#include "InspectorInstrumentation.h"
 #include "NodeRenderStyle.h"
 #include "QualifiedName.h"
 #include "RegisterAllocator.h"
@@ -130,6 +131,7 @@ struct SelectorFragment {
         , widthFromIndirectAdjacent(0)
         , tagName(nullptr)
         , id(nullptr)
+        , inFunctionalPseudoClass(false)
     {
     }
     FragmentRelation relationToLeftFragment;
@@ -153,6 +155,8 @@ struct SelectorFragment {
     Vector<JSC::FunctionPtr> unoptimizedPseudoClasses;
     Vector<AttributeMatchingInfo> attributes;
     Vector<std::pair<int, int>> nthChildfilters;
+
+    bool inFunctionalPseudoClass;
 };
 
 struct TagNamePattern {
@@ -207,7 +211,9 @@ private:
     void generateElementDataMatching(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementFunctionCallTest(Assembler::JumpList& failureCases, JSC::FunctionPtr);
     Assembler::JumpList jumpIfNoPreviousAdjacentElement();
+    void generateElementIsActive(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsFirstChild(Assembler::JumpList& failureCases, const SelectorFragment&);
+    void generateElementIsHovered(Assembler::JumpList& failureCases, const SelectorFragment&);
     Assembler::JumpList jumpIfNoNextAdjacentElement();
     void generateElementIsLastChild(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsOnlyChild(Assembler::JumpList& failureCases, const SelectorFragment&);
@@ -227,7 +233,9 @@ private:
     void generateElementIsTarget(Assembler::JumpList& failureCases);
 
     // Helpers.
+    void addFlagsToElementStyleFromContext(Assembler::RegisterID checkingContext, int64_t);
     Assembler::Jump jumpIfNotResolvingStyle(Assembler::RegisterID checkingContextRegister);
+    void generateSpecialFailureInQuirksModeForActiveAndHoverIfNeeded(Assembler::JumpList& failureCases, const SelectorFragment&);
     Assembler::Jump modulo(JSC::MacroAssembler::ResultCondition, Assembler::RegisterID inputDividend, int divisor);
     void moduloIsZero(Assembler::JumpList& failureCases, Assembler::RegisterID inputDividend, int divisor);
 
@@ -367,7 +375,9 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         fragment.pseudoClasses.add(type);
         return FunctionType::SimpleSelectorChecker;
 
+    case CSSSelector::PseudoClassActive:
     case CSSSelector::PseudoClassFirstChild:
+    case CSSSelector::PseudoClassHover:
     case CSSSelector::PseudoClassLastChild:
     case CSSSelector::PseudoClassOnlyChild:
         fragment.pseudoClasses.add(type);
@@ -1208,6 +1218,22 @@ void SelectorCodeGenerator::generateIndirectAdjacentTreeWalker(Assembler::JumpLi
     localFailureCases.linkTo(loopStart, &m_assembler);
 }
 
+
+void SelectorCodeGenerator::addFlagsToElementStyleFromContext(Assembler::RegisterID checkingContext, int64_t newFlag)
+{
+    LocalRegister childStyle(m_registerAllocator);
+    m_assembler.loadPtr(Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, elementStyle)), childStyle);
+
+    // FIXME: We should look into doing something smart in MacroAssembler instead.
+    LocalRegister flags(m_registerAllocator);
+    Assembler::Address flagAddress(childStyle, RenderStyle::noninheritedFlagsMemoryOffset() + RenderStyle::NonInheritedFlags::flagsMemoryOffset());
+    m_assembler.load64(flagAddress, flags);
+    LocalRegister isFirstChildStateFlagImmediate(m_registerAllocator);
+    m_assembler.move(Assembler::TrustedImm64(newFlag), isFirstChildStateFlagImmediate);
+    m_assembler.or64(isFirstChildStateFlagImmediate, flags);
+    m_assembler.store64(flags, flagAddress);
+}
+
 Assembler::Jump SelectorCodeGenerator::jumpIfNotResolvingStyle(Assembler::RegisterID checkingContext)
 {
     RELEASE_ASSERT(m_selectorContext == SelectorContext::RuleCollector);
@@ -1218,6 +1244,67 @@ Assembler::Jump SelectorCodeGenerator::jumpIfNotResolvingStyle(Assembler::Regist
 
     // If we not resolving style, skip the whole marking.
     return m_assembler.branch8(Assembler::NotEqual, Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, resolvingMode)), Assembler::TrustedImm32(SelectorChecker::ResolvingStyle));
+}
+
+static bool fragmentOnlyMatchesLinksInQuirksMode(const SelectorFragment& fragment)
+{
+    // For quirks mode, follow this: http://quirks.spec.whatwg.org/#the-:active-and-:hover-quirk
+    // In quirks mode, a compound selector 'selector' that matches the following conditions must not match elements that would not also match the ':any-link' selector.
+    //
+    //    selector uses the ':active' or ':hover' pseudo-classes.
+    //    selector does not use a type selector.
+    //    selector does not use an attribute selector.
+    //    selector does not use an ID selector.
+    //    selector does not use a class selector.
+    //    selector does not use a pseudo-class selector other than ':active' and ':hover'.
+    //    selector does not use a pseudo-element selector.
+    //    selector is not part of an argument to a functional pseudo-class or pseudo-element.
+    if (fragment.tagName && *fragment.tagName != anyQName())
+        return false;
+
+    if (!fragment.attributes.isEmpty())
+        return false;
+
+    if (fragment.id)
+        return false;
+
+    if (!fragment.classNames.isEmpty())
+        return false;
+
+    if (!fragment.unoptimizedPseudoClasses.isEmpty() || !fragment.nthChildfilters.isEmpty())
+        return false;
+
+    for (unsigned pseudoClassType : fragment.pseudoClasses) {
+        if (pseudoClassType != CSSSelector::PseudoClassHover && pseudoClassType != CSSSelector::PseudoClassActive)
+            return false;
+    }
+
+    if (fragment.inFunctionalPseudoClass)
+        return false;
+
+    return true;
+}
+
+static void getDocument(Assembler& assembler, Assembler::RegisterID element, Assembler::RegisterID output)
+{
+    assembler.loadPtr(Assembler::Address(element, Node::treeScopeMemoryOffset()), output);
+    assembler.loadPtr(Assembler::Address(output, TreeScope::documentScopeMemoryOffset()), output);
+}
+
+void SelectorCodeGenerator::generateSpecialFailureInQuirksModeForActiveAndHoverIfNeeded(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
+{
+    if (fragmentOnlyMatchesLinksInQuirksMode(fragment)) {
+        // If the element is a link, it can always match :hover or :active.
+        Assembler::Jump isLink = m_assembler.branchTest32(Assembler::NonZero, Assembler::Address(elementAddressRegister, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsLink()));
+
+        // Only quirks mode restrict :hover and :active.
+        static_assert(sizeof(DocumentCompatibilityMode) == 1, "We generate a byte load/test for the compatibility mode.");
+        LocalRegister documentAddress(m_registerAllocator);
+        getDocument(m_assembler, elementAddressRegister, documentAddress);
+        failureCases.append(m_assembler.branchTest8(Assembler::NonZero, Assembler::Address(documentAddress, Document::compatibilityModeMemoryOffset()), Assembler::TrustedImm32(static_cast<std::underlying_type<DocumentCompatibilityMode>::type>(DocumentCompatibilityMode::QuirksMode))));
+
+        isLink.link(&m_assembler);
+    }
 }
 
 // The value in inputDividend is destroyed by the modulo operation.
@@ -1475,6 +1562,10 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& matchin
 
     generateElementDataMatching(matchingPostTagNameFailureCases, fragment);
 
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassActive))
+        generateElementIsActive(matchingPostTagNameFailureCases, fragment);
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassHover))
+        generateElementIsHovered(matchingPostTagNameFailureCases, fragment);
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassOnlyChild))
         generateElementIsOnlyChild(matchingPostTagNameFailureCases, fragment);
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassFirstChild))
@@ -1813,12 +1904,6 @@ static inline Assembler::Jump testIsHTMLClassOnDocument(Assembler::ResultConditi
     return assembler.branchTest32(condition, Assembler::Address(documentAddress, Document::documentClassesMemoryOffset()), Assembler::TrustedImm32(Document::isHTMLDocumentClassFlag()));
 }
 
-static void getDocument(Assembler& assembler, Assembler::RegisterID element, Assembler::RegisterID output)
-{
-    assembler.loadPtr(Assembler::Address(element, Node::treeScopeMemoryOffset()), output);
-    assembler.loadPtr(Assembler::Address(output, TreeScope::documentScopeMemoryOffset()), output);
-}
-
 void SelectorCodeGenerator::generateElementAttributeValueExactMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomicString& expectedValue, bool canDefaultToCaseSensitiveValueMatch)
 {
     LocalRegister expectedValueRegister(m_registerAllocator);
@@ -1919,6 +2004,51 @@ inline Assembler::JumpList SelectorCodeGenerator::jumpIfNoPreviousAdjacentElemen
     return successCase;
 }
 
+static bool elementIsActive(Element* element)
+{
+    return element->active() || InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassActive);
+}
+
+static bool elementIsActiveForStyleResolution(Element* element, const CheckingContext* checkingContext)
+{
+    if (checkingContext->resolvingMode == SelectorChecker::ResolvingStyle)
+        element->setChildrenAffectedByActive();
+    return element->active() || InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassActive);
+}
+
+void SelectorCodeGenerator::generateElementIsActive(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
+{
+    generateSpecialFailureInQuirksModeForActiveAndHoverIfNeeded(failureCases, fragment);
+    if (m_selectorContext == SelectorContext::QuerySelector) {
+        FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+        functionCall.setFunctionAddress(elementIsActive);
+        functionCall.setOneArgument(elementAddressRegister);
+        failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+    } else {
+        if (fragment.relationToRightFragment == FragmentRelation::Rightmost) {
+            LocalRegister checkingContext(m_registerAllocator);
+            Assembler::Jump notResolvingStyle = jumpIfNotResolvingStyle(checkingContext);
+            addFlagsToElementStyleFromContext(checkingContext, RenderStyle::NonInheritedFlags::flagIsaffectedByActive());
+            notResolvingStyle.link(&m_assembler);
+
+            FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+            functionCall.setFunctionAddress(elementIsActive);
+            functionCall.setOneArgument(elementAddressRegister);
+            failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+        } else {
+            unsigned offsetToCheckingContext = m_stackAllocator.offsetToStackReference(m_checkingContextStackReference);
+            Assembler::RegisterID checkingContext = m_registerAllocator.allocateRegister();
+            m_assembler.loadPtr(Assembler::Address(Assembler::stackPointerRegister, offsetToCheckingContext), checkingContext);
+            m_registerAllocator.deallocateRegister(checkingContext);
+
+            FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+            functionCall.setFunctionAddress(elementIsActiveForStyleResolution);
+            functionCall.setTwoArguments(elementAddressRegister, checkingContext);
+            failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+        }
+    }
+}
+
 void SelectorCodeGenerator::generateElementIsFirstChild(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
     if (m_selectorContext == SelectorContext::QuerySelector) {
@@ -1956,19 +2086,9 @@ void SelectorCodeGenerator::generateElementIsFirstChild(Assembler::JumpList& fai
     // Otherwise we need to apply setFirstChildState() on the RenderStyle.
     failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isFirstChildRegister));
 
-    if (fragment.relationToRightFragment == FragmentRelation::Rightmost) {
-        LocalRegister childStyle(m_registerAllocator);
-        m_assembler.loadPtr(Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, elementStyle)), childStyle);
-
-        // FIXME: We should look into doing something smart in MacroAssembler instead.
-        LocalRegister flags(m_registerAllocator);
-        Assembler::Address flagAddress(childStyle, RenderStyle::noninheritedFlagsMemoryOffset() + RenderStyle::NonInheritedFlags::flagsMemoryOffset());
-        m_assembler.load64(flagAddress, flags);
-        LocalRegister isFirstChildStateFlagImmediate(m_registerAllocator);
-        m_assembler.move(Assembler::TrustedImm64(RenderStyle::NonInheritedFlags::setFirstChildStateFlags()), isFirstChildStateFlagImmediate);
-        m_assembler.or64(isFirstChildStateFlagImmediate, flags);
-        m_assembler.store64(flags, flagAddress);
-    } else {
+    if (fragment.relationToRightFragment == FragmentRelation::Rightmost)
+        addFlagsToElementStyleFromContext(checkingContext, RenderStyle::NonInheritedFlags::setFirstChildStateFlags());
+    else {
         FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
         functionCall.setFunctionAddress(setFirstChildState);
         Assembler::RegisterID elementAddress = elementAddressRegister;
@@ -1978,6 +2098,51 @@ void SelectorCodeGenerator::generateElementIsFirstChild(Assembler::JumpList& fai
 
     notResolvingStyle.link(&m_assembler);
     failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isFirstChildRegister));
+}
+
+static bool elementIsHovered(Element* element)
+{
+    return element->hovered() || InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassHover);
+}
+
+static bool elementIsHoveredForStyleResolution(Element* element, const CheckingContext* checkingContext)
+{
+    if (checkingContext->resolvingMode == SelectorChecker::ResolvingStyle)
+        element->setChildrenAffectedByHover();
+    return element->hovered() || InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassHover);
+}
+
+void SelectorCodeGenerator::generateElementIsHovered(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
+{
+    generateSpecialFailureInQuirksModeForActiveAndHoverIfNeeded(failureCases, fragment);
+    if (m_selectorContext == SelectorContext::QuerySelector) {
+        FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+        functionCall.setFunctionAddress(elementIsHovered);
+        functionCall.setOneArgument(elementAddressRegister);
+        failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+    } else {
+        if (fragment.relationToRightFragment == FragmentRelation::Rightmost) {
+            LocalRegister checkingContext(m_registerAllocator);
+            Assembler::Jump notResolvingStyle = jumpIfNotResolvingStyle(checkingContext);
+            addFlagsToElementStyleFromContext(checkingContext, RenderStyle::NonInheritedFlags::flagIsaffectedByHover());
+            notResolvingStyle.link(&m_assembler);
+
+            FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+            functionCall.setFunctionAddress(elementIsHovered);
+            functionCall.setOneArgument(elementAddressRegister);
+            failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+        } else {
+            unsigned offsetToCheckingContext = m_stackAllocator.offsetToStackReference(m_checkingContextStackReference);
+            Assembler::RegisterID checkingContext = m_registerAllocator.allocateRegister();
+            m_assembler.loadPtr(Assembler::Address(Assembler::stackPointerRegister, offsetToCheckingContext), checkingContext);
+            m_registerAllocator.deallocateRegister(checkingContext);
+
+            FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+            functionCall.setFunctionAddress(elementIsHoveredForStyleResolution);
+            functionCall.setTwoArguments(elementAddressRegister, checkingContext);
+            failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+        }
+    }
 }
 
 Assembler::JumpList SelectorCodeGenerator::jumpIfNoNextAdjacentElement()
@@ -2038,19 +2203,9 @@ void SelectorCodeGenerator::generateElementIsLastChild(Assembler::JumpList& fail
     // Otherwise we need to apply setLastChildState() on the RenderStyle.
     failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isLastChildRegister));
 
-    if (fragment.relationToRightFragment == FragmentRelation::Rightmost) {
-        LocalRegister childStyle(m_registerAllocator);
-        m_assembler.loadPtr(Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, elementStyle)), childStyle);
-
-        // FIXME: We should look into doing something smart in MacroAssembler instead.
-        LocalRegister flags(m_registerAllocator);
-        Assembler::Address flagAddress(childStyle, RenderStyle::noninheritedFlagsMemoryOffset() + RenderStyle::NonInheritedFlags::flagsMemoryOffset());
-        m_assembler.load64(flagAddress, flags);
-        LocalRegister isLastChildStateFlagImmediate(m_registerAllocator);
-        m_assembler.move(Assembler::TrustedImm64(RenderStyle::NonInheritedFlags::setLastChildStateFlags()), isLastChildStateFlagImmediate);
-        m_assembler.or64(isLastChildStateFlagImmediate, flags);
-        m_assembler.store64(flags, flagAddress);
-    } else {
+    if (fragment.relationToRightFragment == FragmentRelation::Rightmost)
+        addFlagsToElementStyleFromContext(checkingContext, RenderStyle::NonInheritedFlags::setLastChildStateFlags());
+    else {
         FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
         functionCall.setFunctionAddress(setLastChildState);
         Assembler::RegisterID elementAddress = elementAddressRegister;
@@ -2123,19 +2278,9 @@ void SelectorCodeGenerator::generateElementIsOnlyChild(Assembler::JumpList& fail
     // Otherwise we need to apply setLastChildState() on the RenderStyle.
     failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isOnlyChildRegister));
 
-    if (fragment.relationToRightFragment == FragmentRelation::Rightmost) {
-        LocalRegister childStyle(m_registerAllocator);
-        m_assembler.loadPtr(Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, elementStyle)), childStyle);
-
-        // FIXME: We should look into doing something smart in MacroAssembler instead.
-        LocalRegister flags(m_registerAllocator);
-        Assembler::Address flagAddress(childStyle, RenderStyle::noninheritedFlagsMemoryOffset() + RenderStyle::NonInheritedFlags::flagsMemoryOffset());
-        m_assembler.load64(flagAddress, flags);
-        LocalRegister isLastChildStateFlagImmediate(m_registerAllocator);
-        m_assembler.move(Assembler::TrustedImm64(RenderStyle::NonInheritedFlags::setFirstChildStateFlags() | RenderStyle::NonInheritedFlags::setLastChildStateFlags()), isLastChildStateFlagImmediate);
-        m_assembler.or64(isLastChildStateFlagImmediate, flags);
-        m_assembler.store64(flags, flagAddress);
-    } else {
+    if (fragment.relationToRightFragment == FragmentRelation::Rightmost)
+        addFlagsToElementStyleFromContext(checkingContext, RenderStyle::NonInheritedFlags::setFirstChildStateFlags() | RenderStyle::NonInheritedFlags::setLastChildStateFlags());
+    else {
         FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
         functionCall.setFunctionAddress(setOnlyChildState);
         Assembler::RegisterID elementAddress = elementAddressRegister;
@@ -2304,16 +2449,7 @@ void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failu
         functionCall.call();
 
         if (fragment.relationToRightFragment == FragmentRelation::Rightmost) {
-            LocalRegister childStyle(m_registerAllocator);
-            m_assembler.loadPtr(Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, elementStyle)), childStyle);
-
-            LocalRegister flags(m_registerAllocator);
-            Assembler::Address flagAddress(childStyle, RenderStyle::noninheritedFlagsMemoryOffset() + RenderStyle::NonInheritedFlags::flagsMemoryOffset());
-            m_assembler.load64(flagAddress, flags);
-            LocalRegister isUniqueFlagImmediate(m_registerAllocator);
-            m_assembler.move(Assembler::TrustedImm64(RenderStyle::NonInheritedFlags::flagIsUnique()), isUniqueFlagImmediate);
-            m_assembler.or64(isUniqueFlagImmediate, flags);
-            m_assembler.store64(flags, flagAddress);
+            addFlagsToElementStyleFromContext(checkingContext, RenderStyle::NonInheritedFlags::flagIsUnique());
 
             Assembler::RegisterID elementAddress = elementAddressRegister;
             FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);

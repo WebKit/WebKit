@@ -293,12 +293,12 @@ void HTMLConstructionSite::setDefaultCompatibilityMode()
         return;
     if (m_document->isSrcdocDocument())
         return;
-    setCompatibilityMode(Document::QuirksMode);
+    setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
 }
 
-void HTMLConstructionSite::setCompatibilityMode(Document::CompatibilityMode mode)
+void HTMLConstructionSite::setCompatibilityMode(DocumentCompatibilityMode mode)
 {
-    m_inQuirksMode = (mode == Document::QuirksMode);
+    m_inQuirksMode = (mode == DocumentCompatibilityMode::QuirksMode);
     m_document->setCompatibilityMode(mode);
 }
 
@@ -373,7 +373,7 @@ void HTMLConstructionSite::setCompatibilityModeFromDoctype(const String& name, c
         || equalIgnoringCase(systemId, "http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd")
         || (systemId.isEmpty() && publicId.startsWith("-//W3C//DTD HTML 4.01 Frameset//", false))
         || (systemId.isEmpty() && publicId.startsWith("-//W3C//DTD HTML 4.01 Transitional//", false))) {
-        setCompatibilityMode(Document::QuirksMode);
+        setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
         return;
     }
 
@@ -382,12 +382,12 @@ void HTMLConstructionSite::setCompatibilityModeFromDoctype(const String& name, c
         || publicId.startsWith("-//W3C//DTD XHTML 1.0 Transitional//", false)
         || (!systemId.isEmpty() && publicId.startsWith("-//W3C//DTD HTML 4.01 Frameset//", false))
         || (!systemId.isEmpty() && publicId.startsWith("-//W3C//DTD HTML 4.01 Transitional//", false))) {
-        setCompatibilityMode(Document::LimitedQuirksMode);
+        setCompatibilityMode(DocumentCompatibilityMode::LimitedQuirksMode);
         return;
     }
 
     // Otherwise we are No Quirks Mode.
-    setCompatibilityMode(Document::NoQuirksMode);
+    setCompatibilityMode(DocumentCompatibilityMode::NoQuirksMode);
 }
 
 void HTMLConstructionSite::finishedParsing()
@@ -414,7 +414,7 @@ void HTMLConstructionSite::insertDoctype(AtomicHTMLToken* token)
         return;
 
     if (token->forceQuirks())
-        setCompatibilityMode(Document::QuirksMode);
+        setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
     else {
         setCompatibilityModeFromDoctype(token->name(), publicId, systemId);
     }

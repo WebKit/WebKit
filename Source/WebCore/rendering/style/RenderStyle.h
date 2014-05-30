@@ -283,6 +283,8 @@ public:
 
         static ptrdiff_t flagsMemoryOffset() { return OBJECT_OFFSETOF(NonInheritedFlags, m_flags); }
         static uint64_t flagIsUnique() { return oneBitMask << isUniqueOffset; }
+        static uint64_t flagIsaffectedByActive() { return oneBitMask << affectedByActiveOffset; }
+        static uint64_t flagIsaffectedByHover() { return oneBitMask << affectedByHoverOffset; }
         static uint64_t setFirstChildStateFlags() { return flagFirstChildState() | flagIsUnique(); }
         static uint64_t setLastChildStateFlags() { return flagLastChildState() | flagIsUnique(); }
     private:

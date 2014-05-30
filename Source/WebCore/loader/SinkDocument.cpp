@@ -52,7 +52,7 @@ private:
 SinkDocument::SinkDocument(Frame* frame, const URL& url)
     : HTMLDocument(frame, url)
 {
-    setCompatibilityMode(QuirksMode);
+    setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
     lockCompatibilityMode();
 }
 

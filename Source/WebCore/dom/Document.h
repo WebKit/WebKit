@@ -248,6 +248,12 @@ enum DocumentClass {
 
 typedef unsigned char DocumentClassFlags;
 
+enum class DocumentCompatibilityMode : unsigned char {
+    NoQuirksMode = 1,
+    QuirksMode = 1 << 1,
+    LimitedQuirksMode = 1 << 2
+};
+
 class Document : public ContainerNode, public TreeScope, public ScriptExecutionContext {
 public:
     static PassRefPtr<Document> create(Frame* frame, const URL& url)
@@ -686,17 +692,15 @@ public:
     
     bool paginated() const { return printing() || paginatedForScreen(); }
 
-    enum CompatibilityMode { QuirksMode, LimitedQuirksMode, NoQuirksMode };
-
-    void setCompatibilityMode(CompatibilityMode m);
+    void setCompatibilityMode(DocumentCompatibilityMode);
     void lockCompatibilityMode() { m_compatibilityModeLocked = true; }
-    CompatibilityMode compatibilityMode() const { return m_compatibilityMode; }
+    static ptrdiff_t compatibilityModeMemoryOffset() { return OBJECT_OFFSETOF(Document, m_compatibilityMode); }
 
     String compatMode() const;
 
-    bool inQuirksMode() const { return m_compatibilityMode == QuirksMode; }
-    bool inLimitedQuirksMode() const { return m_compatibilityMode == LimitedQuirksMode; }
-    bool inNoQuirksMode() const { return m_compatibilityMode == NoQuirksMode; }
+    bool inQuirksMode() const { return m_compatibilityMode == DocumentCompatibilityMode::QuirksMode; }
+    bool inLimitedQuirksMode() const { return m_compatibilityMode == DocumentCompatibilityMode::LimitedQuirksMode; }
+    bool inNoQuirksMode() const { return m_compatibilityMode == DocumentCompatibilityMode::NoQuirksMode; }
 
     enum ReadyState {
         Loading,
@@ -1412,7 +1416,7 @@ private:
 
     bool m_ignoreAutofocus;
 
-    CompatibilityMode m_compatibilityMode;
+    DocumentCompatibilityMode m_compatibilityMode;
     bool m_compatibilityModeLocked; // This is cheaper than making setCompatibilityMode virtual.
 
     Color m_textColor;

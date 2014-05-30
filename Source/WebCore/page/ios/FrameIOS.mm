@@ -84,7 +84,7 @@ void Frame::initWithSimpleHTMLDocument(const String& style, const URL& url)
     m_loader.initForSynthesizedDocument(url);
 
     RefPtr<HTMLDocument> document = HTMLDocument::createSynthesizedDocument(this, url);
-    document->setCompatibilityMode(Document::LimitedQuirksMode);
+    document->setCompatibilityMode(DocumentCompatibilityMode::LimitedQuirksMode);
     document->createDOMWindow();
     setDocument(document);
 

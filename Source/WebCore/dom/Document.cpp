@@ -419,7 +419,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_printing(false)
     , m_paginatedForScreen(false)
     , m_ignoreAutofocus(false)
-    , m_compatibilityMode(NoQuirksMode)
+    , m_compatibilityMode(DocumentCompatibilityMode::NoQuirksMode)
     , m_compatibilityModeLocked(false)
     , m_textColor(Color::black)
     , m_domTreeVersion(++s_globalTreeVersion)
@@ -766,7 +766,7 @@ MediaQueryMatcher& Document::mediaQueryMatcher()
     return *m_mediaQueryMatcher;
 }
 
-void Document::setCompatibilityMode(CompatibilityMode mode)
+void Document::setCompatibilityMode(DocumentCompatibilityMode mode)
 {
     if (m_compatibilityModeLocked || mode == m_compatibilityMode)
         return;
@@ -2261,7 +2261,7 @@ void Document::implicitOpen()
 
     removeChildren();
 
-    setCompatibilityMode(NoQuirksMode);
+    setCompatibilityMode(DocumentCompatibilityMode::NoQuirksMode);
 
     m_parser = createParser();
     setParsing(true);
@@ -3129,7 +3129,7 @@ void Document::cloneDataFromDocument(const Document& other)
     m_baseURLOverride = other.baseURLOverride();
     m_documentURI = other.documentURI();
 
-    setCompatibilityMode(other.compatibilityMode());
+    setCompatibilityMode(other.m_compatibilityMode);
     setSecurityOrigin(other.securityOrigin());
     setDecoder(other.decoder());
 }

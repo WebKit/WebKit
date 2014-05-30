@@ -198,7 +198,7 @@ ImageDocument::ImageDocument(Frame& frame, const URL& url)
 #endif
     , m_shouldShrinkImage(frame.settings().shrinksStandaloneImagesToFit() && frame.isMainFrame())
 {
-    setCompatibilityMode(QuirksMode);
+    setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
     lockCompatibilityMode();
 }
     

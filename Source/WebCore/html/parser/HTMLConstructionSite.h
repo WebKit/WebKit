@@ -187,7 +187,7 @@ private:
     // tokens produce only one DOM mutation.
     typedef Vector<HTMLConstructionSiteTask, 1> TaskQueue;
 
-    void setCompatibilityMode(Document::CompatibilityMode);
+    void setCompatibilityMode(DocumentCompatibilityMode);
     void setCompatibilityModeFromDoctype(const String& name, const String& publicId, const String& systemId);
 
     void attachLater(ContainerNode* parent, PassRefPtr<Node> child, bool selfClosing = false);

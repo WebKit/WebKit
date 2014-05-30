@@ -129,7 +129,7 @@ MediaDocument::MediaDocument(Frame* frame, const URL& url)
     : HTMLDocument(frame, url, MediaDocumentClass)
     , m_replaceMediaElementTimer(this, &MediaDocument::replaceMediaElementTimerFired)
 {
-    setCompatibilityMode(QuirksMode);
+    setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
     lockCompatibilityMode();
 }
 

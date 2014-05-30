@@ -144,7 +144,7 @@ PluginDocument::PluginDocument(Frame* frame, const URL& url)
     : HTMLDocument(frame, url, PluginDocumentClass)
     , m_shouldLoadPluginManually(true)
 {
-    setCompatibilityMode(QuirksMode);
+    setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
     lockCompatibilityMode();
 }
 
