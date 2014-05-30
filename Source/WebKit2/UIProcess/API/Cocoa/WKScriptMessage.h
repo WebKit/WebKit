@@ -31,18 +31,23 @@
 
 @class WKWebView;
 
-/*! A @link WKScriptMessage @/link object contains information about a message being sent from a webpage.
+/*! A WKScriptMessage object contains information about a message sent from
+ a webpage.
  */
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKScriptMessage : NSObject
 
-/*! @abstract The body of the message. Allowed types are NSDictionary, NSArray, NSNumber, NSNull, NSString, and NSDate. */
+/*! @abstract The body of the message.
+ @discussion Allowed types are NSNumber, NSString, NSDate, NSArray,
+ NSDictionary, and NSNull.
+ */
 @property (nonatomic, readonly) id body;
 
-/*! @abstract The web view the message is coming from. */
+/*! @abstract The web view sending the message. */
 @property (nonatomic, readonly, weak) WKWebView *webView;
 
-/*! @abstract The name of the message handler this message is being sent to. */
+/*! @abstract The name of the message handler to which the message is sent.
+ */
 @property (nonatomic, readonly) NSString *name;
 
 @end

@@ -1,3 +1,33 @@
+2014-05-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Some more copy-editing of the Modern WebKit headerdoc
+        https://bugs.webkit.org/show_bug.cgi?id=133408
+
+        Reviewed by Beth Dakin.
+
+        A copy-editor suggested some edits to the headerdoc for clarity,
+        style, and formatting.
+
+        I reviewed the edits and accepted about 80% of them.
+
+        * UIProcess/API/Cocoa/WKBackForwardList.h:
+        * UIProcess/API/Cocoa/WKBackForwardListItem.h:
+        * UIProcess/API/Cocoa/WKFrameInfo.h:
+        * UIProcess/API/Cocoa/WKNavigation.h:
+        * UIProcess/API/Cocoa/WKNavigationAction.h:
+        (NS_ENUM):
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        (NS_ENUM):
+        * UIProcess/API/Cocoa/WKNavigationResponse.h:
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKProcessPool.h:
+        * UIProcess/API/Cocoa/WKScriptMessage.h:
+        * UIProcess/API/Cocoa/WKScriptMessageHandler.h:
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+        * UIProcess/API/Cocoa/WKUserContentController.h:
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+
 2014-05-30  Timothy Horton  <timothy_horton@apple.com>
 
         Crash loading skydrive.com (assertion under RemoteLayerTreeDisplayRefreshMonitor)

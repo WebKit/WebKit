@@ -29,8 +29,8 @@
 
 #import <WebKit/WKBackForwardListItem.h>
 
-/*! @abstract A @link WKWebView @/link's list of previously-visited webpages that can be reached by
- going back or forward.
+/*! @abstract A WKBackForwardList object is a list of webpages previously
+ visited in a web view that can be reached by going back or forward.
  */
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKBackForwardList : NSObject
@@ -39,27 +39,35 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 @property (nonatomic, readonly) WKBackForwardListItem *currentItem;
 
-/*! @abstract The item right before the current item, or nil if there isn't one.
+/*! @abstract The item immediately preceding the current item, or nil
+if there isn't one.
  */
 @property (nonatomic, readonly) WKBackForwardListItem *backItem;
 
-/*! @abstract The item right after the current item, or nil if there isn't one.
+/*! @abstract The item immediately following the current item, or nil
+if there isn't one.
  */
 @property (nonatomic, readonly) WKBackForwardListItem *forwardItem;
 
-/*! @abstract Returns an item the given distance from the current item.
- @param index Index of the desired list item relative to the current item; 0 is current item, -1 is back item, 1 is forward item, etc.
- @result The item the given distance from the current item. If index exceeds the limits of the list, nil is returned.
+/*! @abstract Returns the item at a specified distance from the current
+ item.
+ @param index Index of the desired list item relative to the current item:
+ 0 for the current item, -1 for the immediately preceding item, 1 for the
+ immediately following item, and so on.
+ @result The item at the specified distance from the current item, or nil
+ if the index parameter exceeds the limits of the list.
  */
 - (WKBackForwardListItem *)itemAtIndex:(NSInteger)index;
 
-/*! @abstract Returns the portion of the list before the current item.
- @discussion The entries are in the order that they were originally visited.
+/*! @abstract The portion of the list preceding the current item.
+ @discussion The items are in the order in which they were originally
+ visited.
  */
 @property (nonatomic, readonly) NSArray *backList;
 
-/*! @abstract Returns the portion of the list after the current item.
- @discussion The entries are in the order that they were originally visited.
+/*! @abstract The portion of the list following the current item.
+ @discussion The items are in the order in which they were originally
+ visited.
  */
 @property (nonatomic, readonly) NSArray *forwardList;
 

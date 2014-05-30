@@ -33,25 +33,26 @@
 @class WKProcessPool;
 @class WKUserContentController;
 
-/*! A @link WKWebViewConfiguration @/link is a collection of properties used to initialize a web
- view.
+/*! A WKWebViewConfiguration object is a collection of properties with
+ which to initialize a web view.
  @helps Contains properties used to configure a @link WKWebView @/link.
  */
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKWebViewConfiguration : NSObject <NSCopying>
 
-/*! @abstract The process pool from which the Web Content process for the view should come.
- @discussion When the @link WKWebView @/link is initialized with the configuration, a new Web
- Content process from the specified pool will be created for it, or an existing process in
+/*! @abstract The process pool from which to obtain the view's web content
+ process.
+ @discussion When a web view is initialized, a new web content process
+ will be created for it from the specified pool, or an existing process in
  that pool will be used.
 */
 @property (nonatomic, strong) WKProcessPool *processPool;
 
-/*! @abstract The preferences that should be used by web views created with this configuration.
+/*! @abstract The preference settings to be used by the web view.
 */
 @property (nonatomic, strong) WKPreferences *preferences;
 
-/*! @abstract The user content controller that should be used by web views created with this configuration.
+/*! @abstract The user content controller to associate with the web view.
 */
 @property (nonatomic, strong) WKUserContentController *userContentController;
 
