@@ -36,16 +36,15 @@
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKNavigationResponse : NSObject
 
-/*! @abstract A Boolean value indicating whether the frame being navigated is the main frame.
+/*! @abstract Whether the frame that is being navigated is the main frame or not.
  */
 @property (nonatomic, readonly, getter=isForMainFrame) BOOL forMainFrame;
 
-/*! @abstract The frame's response.
+/*! @abstract The NSURLResponse of the frame.
  */
 @property (nonatomic, readonly) NSURLResponse *response;
 
-/*! @abstract A Boolean value indicating whether WebKit can display the response's MIME type natively.
- @discussion Allowing a navigation response with a MIME type that can’t be shown will cause the navigation to fail.
+/*! @abstract Whether WebKit can show the MIME type natively or not.
  */
 @property (nonatomic, readonly) BOOL canShowMIMEType;
 

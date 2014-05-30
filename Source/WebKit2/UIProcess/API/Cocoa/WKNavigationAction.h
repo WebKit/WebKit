@@ -36,12 +36,12 @@
 @class WKFrameInfo;
 
 /*! @enum WKNavigationType
- @abstract The type of action triggering a navigation.
- @constant WKNavigationTypeLinkActivated    A link with an href attribute was activated by the user.
+ @abstract the type of action that triggered a possible navigation.
+ @constant WKNavigationTypeLinkActivated    A link with an href activated by the user.
  @constant WKNavigationTypeFormSubmitted    A form was submitted.
  @constant WKNavigationTypeBackForward      An item from the back-forward list was requested.
  @constant WKNavigationTypeReload           The webpage was reloaded.
- @constant WKNavigationTypeFormResubmitted  A form was resubmitted (for example by going back, going forward, or reloading).
+ @constant WKNavigationTypeFormResubmitted  A form was resubmitted (for example by going back or forward, or reloading).
  @constant WKNavigationTypeOther            Navigation is taking place for some other reason.
  */
 typedef NS_ENUM(NSInteger, WKNavigationType) {
@@ -53,26 +53,24 @@ typedef NS_ENUM(NSInteger, WKNavigationType) {
     WKNavigationTypeOther = -1,
 } WK_ENUM_AVAILABLE(10_10, 8_0);
 
-/*! 
-A WKNavigationAction object contains information about an action that may cause a navigation, used for making policy decisions.
+/*! Contains information about an action that may cause a navigation. Used for making policy decisions.
  */
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKNavigationAction : NSObject
 
-/*! @abstract The frame requesting the navigation.
+/*! @abstract Describes the frame that requested the navigation.
  */
 @property (nonatomic, readonly) WKFrameInfo *sourceFrame;
 
-/*! @abstract The target frame, or nil if this is a new window navigation.
+/*! @abstract Describes the target frame of the navigation. If this is a new window navigation, targetFrame will be nil.
  */
 @property (nonatomic, readonly) WKFrameInfo *targetFrame;
 
-/*! @abstract The type of action that triggered the navigation.
- @discussion The value is one of the constants of the enumerated type WKNavigationType.
+/*! @abstract The type of the navigation.
  */
 @property (nonatomic, readonly) WKNavigationType navigationType;
 
-/*! @abstract The navigation's request.
+/*! @abstract The NSURLRequest of the navigation.
  */
 @property (nonatomic, readonly) NSURLRequest *request;
 
@@ -82,7 +80,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 @property (nonatomic, readonly) NSEventModifierFlags modifierFlags;
 
-/*! @abstract The number of the mouse button causing the navigation to be requested.
+/*! @abstract The mouse button number that caused the navigation to be requested.
  */
 @property (nonatomic, readonly) NSInteger buttonNumber;
 

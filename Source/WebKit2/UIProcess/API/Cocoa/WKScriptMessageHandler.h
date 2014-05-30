@@ -32,17 +32,15 @@
 @class WKScriptMessage;
 @class WKUserContentController;
 
-/*! A class conforming to the WKScriptMessageHandler protocol provides a
- method for receiving messages from JavaScript running in a webpage.
+/*! A class that conforms to WKScriptMessageHandler provides a method for recieving messages from JavaScript running in a webpage.
  */
 @protocol WKScriptMessageHandler <NSObject>
 
 @required
 
-/*! @abstract Invoked when a script message is received from a webpage.
- @param userContentController The user content controller invoking the
- delegate method.
- @param message The script message received.
+/*! @abstract Invoked when a script message is recieved from a webpage.
+ @param userContentController The WKUserContentController invoking the delegate method.
+ @param message The script message being received.
  */
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message;
 

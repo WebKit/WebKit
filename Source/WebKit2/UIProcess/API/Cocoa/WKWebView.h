@@ -42,7 +42,7 @@
 @protocol WKUIDelegate;
 
 /*!
- A WKWebView object displays interactive Web content.
+ A @link WKWebView @/link displays interactive Web content.
  @helperclass @link WKWebViewConfiguration @/link
  Used to configure @link WKWebView @/link instances.
  */
@@ -54,108 +54,90 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKWebView : NSView
 #endif
 
-/*! @abstract A copy of the configuration with which the web view was
- initialized. */
+/*! @abstract A copy of the configuration with which the @link WKWebView @/link was initialized. */
 @property (nonatomic, readonly) WKWebViewConfiguration *configuration;
 
-/*! @abstract The web view's navigation delegate. */
+/*! @abstract The view's navigation delegate. */
 @property (nonatomic, weak) id <WKNavigationDelegate> navigationDelegate;
 
-/*! @abstract The web view's user interface delegate. */
+/*! @abstract The view's user interface delegate. */
 @property (nonatomic, weak) id <WKUIDelegate> UIDelegate;
 
-/*! @abstract The web view's back-forward list. */
+/*! @abstract The view's back-forward list. */
 @property (nonatomic, readonly) WKBackForwardList *backForwardList;
 
-/*! @abstract Returns a web view initialized with a specified frame and
- configuration.
- @param frame The frame for the new web view.
- @param configuration The configuration for the new web view.
- @result An initialized web view, or nil if the object could not be
- initialized.
- @discussion This is a designated initializer. You can use
- @link -initWithFrame: @/link to initialize an instance with the default
- configuration. The initializer copies the specified configuration, so
- mutating the configuration after invoking the initializer has no effect
- on the web view.
+/*! @abstract Returns a view initialized with the specified frame and configuration.
+ @param frame The frame for the new view.
+ @param configuration The configuration for the new view.
+ @result An initialized view, or nil if the object could not be initialized.
+ @discussion This is a designated initializer. You can use @link -initWithFrame: @/link to
+ initialize an instance with the default configuration.
+ The initializer copies
+ @link //apple_ref/doc/methodparam/WKWebView/initWithFrame:configuration:/configuration
+ configuration@/link, so mutating it after initialization has no effect on the
+ @link WKWebView @/link instance.
  */
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration WK_DESIGNATED_INITIALIZER;
 
-/*! @abstract Navigates to a requested URL.
- @param request The request specifying the URL to which to navigate.
+- (instancetype)initWithCoder:(NSCoder *)coder WK_UNAVAILABLE;
+
+/*! @abstract Navigates to the given NSURLRequest.
+ @param request The NSURLRequest to navigate to.
  @result A new navigation for the given request.
  */
 - (WKNavigation *)loadRequest:(NSURLRequest *)request;
 
-/*! @abstract Navigates to an item from the back-forward list and sets it
- as the current item.
- @param item The item to which to navigate. Must be one of the items in the
- web view's back-forward list.
- @result A new navigation to the requested item, or nil if it is already
- the current item or is not part of the web view's back-forward list.
+/*! @abstract Navigates to an item from the back-forward list and sets it as the current item.
+ @param item The item to navigate to. Must be one of the items in the receiver's back-forward list.
+ @result A new navigation to the requested item, or nil if it is the current item or the item is not part of the view's back-forward list.
  @seealso backForwardList
  */
 - (WKNavigation *)goToBackForwardListItem:(WKBackForwardListItem *)item;
 
-/*! @abstract The page title.
- @discussion @link WKWebView @/link is key-value observing (KVO) compliant
- for this property.
+/*! @abstract The webpage title. @link WKWebView @/link is KVO-compliant for this property.
  */
 @property (nonatomic, readonly) NSString *title;
 
-/*! @abstract The active URL.
- @discussion This is the URL that should be reflected in the user
- interface.
- @link WKWebView @/link is key-value observing (KVO) compliant for this
- property.
+/*! @abstract The active URL. @link WKWebView @/link is KVO-compliant for this property.
+ @discussion This is the URL that should be reflected in the user interface.
  */
 @property (nonatomic, readonly) NSURL *URL;
 
-/*! @abstract A Boolean value indicating whether the view is currently
- loading content.
- @discussion @link WKWebView @/link is key-value observing (KVO) compliant
- for this property.
- */
+/*! @abstract Whether the view is loading content. @link WKWebView @/link is KVO-compliant for this
+ property. */
 @property (nonatomic, readonly, getter=isLoading) BOOL loading;
 
-/*! @abstract An estimate of what fraction of the current navigation has been completed.
- @discussion This value ranges from 0.0 to 1.0 based on the total number of
- bytes expected to be received, including the main document and all of its
- potential subresources. After a navigation completes, the value remains at 1.0
- until a new navigation starts, at which point it is reset to 0.0.
- @link WKWebView @/link is key-value observing (KVO) compliant for this
- property.
+/*! @abstract An estimate of the fraction complete for a document load. @link WKWebView @/link is
+ KVO-compliant for this property.
+ @discussion This value will range from 0 to 1 and, once a load completes, will remain at 1.0
+ until a new load starts, at which point it will be reset to 0. The value is an estimate based
+ on the total number of bytes expected to be received for a document,
+ including all its possible subresources.
  */
 @property (nonatomic, readonly) double estimatedProgress;
 
-/*! @abstract A Boolean value indicating whether all resources on the page
- have been loaded over securely encrypted connections.
- @discussion @link WKWebView @/link is key-value observing (KVO) compliant
- for this property.
+/*! @abstract Whether all of the resources on the webpage have been loaded over securely encrypted connections.
+ @link WKWebView @/link is KVO-compliant for this property.
  */
 @property (nonatomic, readonly) BOOL hasOnlySecureContent;
 
-/*! @abstract A Boolean value indicating whether there is a back item in
- the back-forward list that can be navigated to.
+/*! @abstract Whether there's a back item in the back-forward list that can be navigated to.
  @seealso backForwardList.
  */
 @property (nonatomic, readonly) BOOL canGoBack;
 
-/*! @abstract A Boolean value indicating whether there is a forward item in
- the back-forward list that can be navigated to.
+/*! @abstract Whether there's a forward item in the back-forward list that can be navigated to.
  @seealso backForwardList.
  */
 @property (nonatomic, readonly) BOOL canGoForward;
 
 /*! @abstract Navigates to the back item in the back-forward list.
- @result A new navigation to the requested item, or nil if there is no back
- item in the back-forward list.
+ @result A new navigation to the requested item, or nil if there is no back item in the back-forward list.
  */
 - (WKNavigation *)goBack;
 
 /*! @abstract Navigates to the forward item in the back-forward list.
- @result A new navigation to the requested item, or nil if there is no
- forward item in the back-forward list.
+ @result A new navigation to the requested item, or nil if there is no forward item in the back-forward list.
  */
 - (WKNavigation *)goForward;
 
@@ -164,8 +146,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 - (WKNavigation *)reload;
 
-/*! @abstract Reloads the current page, performing end-to-end revalidation
- using cache-validating conditionals if possible.
+/*! @abstract Reloads the current page, performing end-to-end revalidation using cache-validating conditionals if possible.
  @result A new navigation representing the reload.
  */
 - (WKNavigation *)reloadFromOrigin;
@@ -174,9 +155,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 - (void)stopLoading;
 
-/*! @abstract A Boolean value indicating whether horizontal swipe gestures
- will trigger back-forward list navigations.
- @discussion The default value is NO.
+/*! @abstract Whether horizontal swipe gestures will trigger back-forward list navigations. Defaults to NO.
  */
 @property (nonatomic) BOOL allowsBackForwardNavigationGestures;
 
@@ -187,22 +166,17 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 #endif
 
 #if !TARGET_OS_IPHONE
-/* @abstract A Boolean value indicating whether magnify gestures will
- change the web view's magnification.
- @discussion It is possible to set the magnification property even if
- allowsMagnification is set to NO.
- The default value is NO.
+/* @abstract Whether magnify gestures will change the WKWebView magnification. Defaults to NO.
+ @discussion It is possible to set the magnification property even if allowsMagnify is set to NO.
  */
 @property (nonatomic) BOOL allowsMagnification;
 
-/* @abstract The factor by which the page content is currently scaled.
- @discussion The default value is 1.0.
+/* @abstract The amount by which the webpage content is currently scaled. Defaults to 1.0.
  */
 @property (nonatomic) CGFloat magnification;
 
-/* @abstract Scales the page content by a specified factor and centers the
- result on a specified point.
- * @param magnification The factor by which to scale the content.
+/* @abstract Magnify the webpage content by the given amount and center the result on the given point.
+ * @param magnification The amount by which to magnify the content.
  * @param point The point (in view space) on which to center magnification.
  */
 - (void)setMagnification:(CGFloat)magnification centeredAtPoint:(CGPoint)point;
@@ -215,14 +189,12 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 @interface WKWebView (WKIBActions) <NSUserInterfaceValidations>
 
-/*! @abstract Action method that navigates to the back item in the
- back-forward list.
+/*! @abstract Action method that navigates to the back item in the back-forward list.
  @param sender The object that sent this message.
  */
 - (IBAction)goBack:(id)sender;
 
-/*! @abstract Action method that navigates to the forward item in the
- back-forward list.
+/*! @abstract Action method that navigates to the forward item in the back-forward list.
  @param sender The object that sent this message.
  */
 - (IBAction)goForward:(id)sender;
@@ -232,14 +204,13 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 - (IBAction)reload:(id)sender;
 
-/*! @abstract Action method that reloads the current page, performing
- end-to-end revalidation using cache-validating conditionals if possible.
+/*! @abstract Action method that reloads the current page, performing end-to-end revalidation using 
+ cache-validating conditionals if possible.
  @param sender The object that sent this message.
  */
 - (IBAction)reloadFromOrigin:(id)sender;
 
-/*! @abstract Action method that stops loading all resources on the current
- page.
+/*! @abstract Action method that stops loading all resources on the current page.
  @param sender The object that sent this message.
  */
 - (IBAction)stopLoading:(id)sender;

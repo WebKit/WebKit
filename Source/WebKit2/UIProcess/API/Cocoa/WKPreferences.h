@@ -30,20 +30,17 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
 
-/*! A WKPreferences object encapsulates the preference settings for a web
- view. The preferences object associated with a web view is specified by
- its web view configuration.
+/*! WKPreferences encapsulates the preferences you can change for one or more WKWebViews. 
+ A @link WKWebView @/link can specify which WKPreferences object it uses through its @link WKWebViewConfiguration @/link.
  */
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKPreferences : NSObject
 
-/*! @abstract Returns an initialized preferences object.
+/*! @abstract Returns an initialized WKPreferences object.
  @param userDefaultsKeyPrefix The user defaults key prefix.
- @result An initialized preferences object.
- @discussion If the userDefaultsKeyPrefix parameter is not nil, it is
- prepended to the keys used to store preferences in the user defaults
- database. If the parameter is nil, the preferences object will not save
- anything to the user defaults database.
+ @result An initialized WKPreferences object, or nil if the object could not be initialized.
+ @discussion If the userDefaultsKeyPrefix argument is non-nil, it is prepended to the keys used to store preferences
+ in the user defaults database. If the argument is nil, the preferences object won't save anything to the user defaults database.
  */
 - (instancetype)initWithUserDefaultsKeyPrefix:(NSString *)userDefaultsKeyPrefix WK_DESIGNATED_INITIALIZER;
 
@@ -51,56 +48,43 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 @property (nonatomic, readonly) NSString *userDefaultsKeyPrefix;
 
-/*! @abstract The minimum font size in points.
- @discussion The default value is 0.
+/*! @abstract The minimum font size in points. Defaults to 0.
  */
 @property (nonatomic) CGFloat minimumFontSize;
 
-/*! @abstract A Boolean value indicating whether JavaScript is enabled.
- @discussion The default value is YES.
+/*! @abstract Whether JavaScript is enabled. Defaults to YES.
  */
 @property (nonatomic, getter=isJavaScriptEnabled) BOOL javaScriptEnabled;
 
-/*! @abstract A Boolean value indicating whether JavaScript can open
- windows without user interaction.
- @discussion The default value is NO in iOS and YES in OS X.
+/*! @abstract Whether JavaScript can open windows without user interaction. Defaults to NO on iOS and YES on OS X.
  */
 @property (nonatomic) BOOL javaScriptCanOpenWindowsAutomatically;
 
-/*! @abstract A Boolean value indicating whether the web view suppresses
- content rendering until it is fully loaded into memory.
- @discussion The default value is NO.
+/*! @abstract Whether the WKWebView suppresses content rendering until it is fully loaded into memory. Defaults to NO.
  */
 @property (nonatomic) BOOL suppressesIncrementalRendering;
 
 #if TARGET_OS_IPHONE
-/*! @abstract A Boolean value indicating whether HTML5 videos play inline
- (YES) or use the native full-screen controller (NO).
- @discussion The default value is NO.
+/*! @abstract Whether HTML5 videos play inline or use the native full-screen controller. Defaults to NO.
  */
 @property (nonatomic) BOOL allowsInlineMediaPlayback;
 
-/*! @abstract A Boolean value indicating whether HTML5 videos require the
- user to start playing them (YES) or can play automatically (NO).
- @discussion The default value is YES.
+/*! @abstract Whether HTML5 videos can play automatically or require the user to start playing them. Defaults to YES.
  */
 @property (nonatomic) BOOL mediaPlaybackRequiresUserAction;
 
-/*! @abstract A Boolean value indicating whether AirPlay is allowed.
- @discussion The default value is YES.
+/*! @abstract Whether AirPlay is allowed. Defaults to YES.
  */
 @property (nonatomic) BOOL mediaPlaybackAllowsAirPlay;
 
 #endif
 
 #if !TARGET_OS_IPHONE
-/*! @abstract A Boolean value indicating whether Java is enabled.
- @discussion The default value is YES.
+/*! @abstract Whether Java is enabled. Defaults to NO.
  */
 @property (nonatomic, getter=isJavaEnabled) BOOL javaEnabled;
 
-/*! @abstract A Boolean value indicating whether plug-ins are enabled.
- @discussion The default value is YES.
+/*! abstract Whether plug-ins are enabled. Defaults to NO.
  */
 @property (nonatomic, getter=arePlugInsEnabled) BOOL plugInsEnabled;
 #endif

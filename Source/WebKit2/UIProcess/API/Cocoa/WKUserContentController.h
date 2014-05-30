@@ -32,16 +32,13 @@
 @class WKUserScript;
 @protocol WKScriptMessageHandler;
 
-/*! A WKUserContentController object provides a way for JavaScript to post
- messages to a web view.
- The user content controller associated with a web view is specified by its
- web view configuration.
+/*! WKUserContentController provides a way for JavaScript to post messages to the @link WKWebView @/link.
+ A @link WKWebView @/link can specify which WKUserContentController object it uses through its @link WKWebViewConfiguration @/link.
  */
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKUserContentController : NSObject
 
-/*! @abstract The user scripts associated with this user content
- controller.
+/*! @abstract The user scripts associated with this user content controller.
 */
 @property (nonatomic, readonly) NSArray *userScripts;
 
@@ -55,11 +52,9 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 - (void)removeAllUserScripts;
 
 /*! @abstract Adds a script message handler.
- @param scriptMessageHandler The message handler to add.
+ @param scriptMessageHandler The message handler where the messages should be delivered.
  @param name The name of the message handler.
- @discussion Adding a scriptMessageHandler adds a function
- window.webkit.messageHandlers.<name>.postMessage(<messageBody>) for all
- frames.
+ @discussion Adding a scriptMessageHandler adds a function window.webkit.messageHandlers.<name>.postMessage(<messageBody>) for all frames.
  */
 - (void)addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name;
 

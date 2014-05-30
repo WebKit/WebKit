@@ -35,8 +35,7 @@
 @class WKWebView;
 
 /*! @enum WKNavigationActionPolicy
- @abstract The policy to pass back to the decision handler from the
- webView:decidePolicyForNavigationAction:decisionHandler: method.
+ @abstract the policy to pass back to the decision handler in webView:decidePolicyForNavigationAction:decisionHandler:.
  @constant WKNavigationActionPolicyCancel   Cancel the navigation.
  @constant WKNavigationActionPolicyAllow    Allow the navigation to continue.
  */
@@ -46,7 +45,7 @@ typedef NS_ENUM(NSInteger, WKNavigationActionPolicy) {
 } WK_ENUM_AVAILABLE(10_10, 8_0);
 
 /*! @enum WKNavigationResponsePolicy
- @abstract The policy to pass back to the decision handler from the webView:decidePolicyForNavigationResponse:decisionHandler: method.
+ @abstract the policy to pass back to the decision handler in webView:decidePolicyForNavigationResponse:decisionHandler:.
  @constant WKNavigationResponsePolicyCancel   Cancel the navigation.
  @constant WKNavigationResponsePolicyAllow    Allow the navigation to continue.
  */
@@ -55,71 +54,62 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
     WKNavigationResponsePolicyAllow,
 } WK_ENUM_AVAILABLE(10_10, 8_0);
 
-/*! A class conforming to the WKNavigationDelegate protocol can provide
- methods for tracking progress for main frame navigations and for deciding
- policy for main frame and subframe navigations.
+/*! A class that conforms to WKNavigationDelegate can decide policy for main frame and subframe navigations,
+ and track progress for main frame navigations.
  */
 @protocol WKNavigationDelegate <NSObject>
 
 @optional
 
-/*! @abstract Decides whether to allow or cancel a navigation.
- @param webView The web view invoking the delegate method.
- @param navigationAction Descriptive information about the action
- triggering the navigation request.
- @param decisionHandler The decision handler to call to allow or cancel the
- navigation. The argument is one of the constants of the enumerated type WKNavigationActionPolicy.
+/*! @abstract Decides whether a navigation should be allowed or not.
+ @param webView The WKWebView invoking the delegate method.
+ @param navigationAction A description of the action that triggered the navigation request.
+ @param decisionHandler The decision handler that should be called to allow or cancel the navigation.
  */
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler;
 
-/*! @abstract Decides whether to allow or cancel a navigation after its
- response is known.
- @param webView The web view invoking the delegate method.
- @param navigationResponse Descriptive information about the navigation
- response.
- @param decisionHandler The decision handler to call to allow or cancel the
- navigation. The argument is one of the constants of the enumerated type WKNavigationResponsePolicy.
+/*! @abstract Decides whether a navigation should be allowed or cancelled once its response is known.
+ @param webView The WKWebView invoking the delegate method.
+ @param navigationResponse A description of the navigation response.
+ @param decisionHandler The decision handler that should be called to allow or cancel the navigation.
  */
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler;
 
 /*! @abstract Invoked when a main frame navigation starts.
- @param webView The web view invoking the delegate method.
+ @param webView The WKWebView invoking the delegate method.
  @param navigation The navigation.
  */
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation;
 
-/*! @abstract Invoked when a server redirect is received for the main
- frame.
- @param webView The web view invoking the delegate method.
+/*! @abstract Invoked when a server redirect is received for the main frame.
+ @param webView The WKWebView invoking the delegate method.
  @param navigation The navigation.
  */
 - (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation;
 
-/*! @abstract Invoked when an error occurs while starting to load data for
- the main frame.
- @param webView The web view invoking the delegate method.
+/*! @abstract Invoked if an error occurs when starting to load data for the main frame.
+ @param webView The WKWebView invoking the delegate method.
  @param navigation The navigation.
- @param error The error that occurred.
+ @param error Specifies the type of error that occurred during the navigation.
  */
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error;
 
 /*! @abstract Invoked when content starts arriving for the main frame.
- @param webView The web view invoking the delegate method.
+ @param webView The WKWebView invoking the delegate method.
  @param navigation The navigation.
  */
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation;
 
 /*! @abstract Invoked when a main frame navigation completes.
- @param webView The web view invoking the delegate method.
+ @param webView The WKWebView invoking the delegate method.
  @param navigation The navigation.
  */
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation;
 
-/*! @abstract Invoked when an error occurs during a committed main frame
- navigation.
- @param webView The web view invoking the delegate method.
+/*! @abstract Invoked if an error occurs while loading a committed main frame navigation.
+ @param webView The WKWebView invoking the delegate method.
  @param navigation The navigation.
- @param error The error that occurred.
+ @param error Specifies the type of error that occurred during the navigation.
  */
 - (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error;
 

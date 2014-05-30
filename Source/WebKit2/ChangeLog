@@ -1,5 +1,17 @@
 2014-05-30  Geoffrey Garen  <ggaren@apple.com>
 
+        Unreviewed, rolling out r169490.
+
+        It broke the build with a mysterious warning about ASCII
+
+        Reverted changeset:
+
+        "Some more copy-editing of the Modern WebKit headerdoc"
+        https://bugs.webkit.org/show_bug.cgi?id=133408
+        http://trac.webkit.org/changeset/169490
+
+2014-05-30  Geoffrey Garen  <ggaren@apple.com>
+
         Some more copy-editing of the Modern WebKit headerdoc
         https://bugs.webkit.org/show_bug.cgi?id=133408
 
