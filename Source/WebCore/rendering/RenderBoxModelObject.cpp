@@ -1328,13 +1328,13 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
         // The rect to use from within the image is obtained from our slice, and is (0, 0, leftSlice, topSlice)
         if (drawTop)
             graphicsContext->drawImage(image.get(), colorSpace, pixelSnappedForPainting(x, y, leftWidth, topWidth, deviceScaleFactor),
-                pixelSnappedForPainting(0, 0, leftSlice, topSlice, deviceScaleFactor), op, ImageOrientationDescription());
+                pixelSnappedForPainting(0, 0, leftSlice, topSlice, deviceScaleFactor), op);
 
         // The bottom left corner rect is (tx, ty + h - bottomWidth, leftWidth, bottomWidth)
         // The rect to use from within the image is (0, imageHeight - bottomSlice, leftSlice, botomSlice)
         if (drawBottom)
             graphicsContext->drawImage(image.get(), colorSpace, pixelSnappedForPainting(x, borderImageRect.maxY() - bottomWidth, leftWidth, bottomWidth, deviceScaleFactor),
-                pixelSnappedForPainting(0, imageHeight - bottomSlice, leftSlice, bottomSlice, deviceScaleFactor), op, ImageOrientationDescription());
+                pixelSnappedForPainting(0, imageHeight - bottomSlice, leftSlice, bottomSlice, deviceScaleFactor), op);
 
         // Paint the left edge.
         // Have to scale and tile into the border rect.
@@ -1349,14 +1349,14 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
         // The rect to use from within the image is obtained from our slice, and is (imageWidth - rightSlice, 0, rightSlice, topSlice)
         if (drawTop)
             graphicsContext->drawImage(image.get(), colorSpace, pixelSnappedForPainting(borderImageRect.maxX() - rightWidth, y, rightWidth, topWidth, deviceScaleFactor),
-                pixelSnappedForPainting(imageWidth - rightSlice, 0, rightSlice, topSlice, deviceScaleFactor), op, ImageOrientationDescription());
+                pixelSnappedForPainting(imageWidth - rightSlice, 0, rightSlice, topSlice, deviceScaleFactor), op);
 
         // The bottom right corner rect is (tx + w - rightWidth, ty + h - bottomWidth, rightWidth, bottomWidth)
         // The rect to use from within the image is (imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, bottomSlice)
         if (drawBottom)
             graphicsContext->drawImage(image.get(), colorSpace, pixelSnappedForPainting(borderImageRect.maxX() - rightWidth, borderImageRect.maxY() - bottomWidth,
                 rightWidth, bottomWidth, deviceScaleFactor), pixelSnappedForPainting(imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, bottomSlice, deviceScaleFactor),
-                op, ImageOrientationDescription());
+                op);
 
         // Paint the right edge.
         if (sourceHeight > 0)

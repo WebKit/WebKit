@@ -551,24 +551,19 @@ void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const 
 {
     if (!image)
         return;
-    drawImage(image, styleColorSpace, FloatRect(p, image->size()), FloatRect(FloatPoint(), image->size()), op, description);
+    drawImage(image, styleColorSpace, FloatRect(p, image->size()), FloatRect(FloatPoint(), image->size()), op, BlendModeNormal, description);
 }
 
 void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& r, CompositeOperator op, ImageOrientationDescription description, bool useLowQualityScale)
 {
     if (!image)
         return;
-    drawImage(image, styleColorSpace, r, FloatRect(FloatPoint(), image->size()), op, description, useLowQualityScale);
+    drawImage(image, styleColorSpace, r, FloatRect(FloatPoint(), image->size()), op, BlendModeNormal, description, useLowQualityScale);
 }
 
 void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatPoint& dest, const FloatRect& srcRect, CompositeOperator op, ImageOrientationDescription description)
 {
-    drawImage(image, styleColorSpace, FloatRect(dest, srcRect.size()), srcRect, op, description);
-}
-
-void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op, ImageOrientationDescription description, bool useLowQualityScale)
-{
-    drawImage(image, styleColorSpace, dest, src, op, BlendModeNormal, description, useLowQualityScale);
+    drawImage(image, styleColorSpace, FloatRect(dest, srcRect.size()), srcRect, op, BlendModeNormal, description);
 }
 
 void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op, BlendMode blendMode, ImageOrientationDescription description, bool useLowQualityScale)
