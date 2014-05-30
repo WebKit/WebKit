@@ -31,6 +31,7 @@
 #import "WebFontCache.h"
 
 #import "FontTraitsMask.h"
+#import "WebCoreNSStringExtras.h"
 #import <AppKit/AppKit.h>
 #import <Foundation/Foundation.h>
 #import <math.h>
@@ -160,8 +161,8 @@ static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSIntege
 + (NSFont *)internalFontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits weight:(int)desiredWeight size:(float)size
 {
 
-    if ([desiredFamily compare:@"-webkit-system-font" options:NSCaseInsensitiveSearch] == NSOrderedSame
-        || [desiredFamily compare:@"-apple-system-font" options:NSCaseInsensitiveSearch] == NSOrderedSame) {
+    if (stringIsCaseInsensitiveEqualToString(desiredFamily, @"-webkit-system-font")
+        || stringIsCaseInsensitiveEqualToString(desiredFamily, @"-apple-system-font")) {
         // We ignore italic for system font.
         return (desiredWeight >= 7) ? [NSFont boldSystemFontOfSize:size] : [NSFont systemFontOfSize:size];
     }

@@ -1,3 +1,13 @@
+2014-05-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Support -apple-system-font on OS X
+        https://bugs.webkit.org/show_bug.cgi?id=133382
+
+        Addressing post-review comments.
+
+        * platform/mac/WebFontCache.mm:
+        (+[WebFontCache internalFontWithFamily:traits:weight:size:]):
+
 2014-05-30  Prashant Hiremath  <hiremathprashants@gmail.com>
 
         Remove repetitive header in HTMLInputElement.cpp
