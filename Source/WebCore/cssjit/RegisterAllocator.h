@@ -51,11 +51,11 @@ static const JSC::MacroAssembler::RegisterID callerSavedRegisters[] = {
     JSC::ARM64Registers::x12,
     JSC::ARM64Registers::x13,
     JSC::ARM64Registers::x14,
-    JSC::ARM64Registers::x15,
 };
 static const JSC::MacroAssembler::RegisterID calleeSavedRegisters[] = {
     JSC::ARM64Registers::x19
 };
+static const JSC::MacroAssembler::RegisterID tempRegister = JSC::ARM64Registers::x15;
 #elif CPU(X86_64)
 static const JSC::MacroAssembler::RegisterID callerSavedRegisters[] = {
     JSC::X86Registers::eax,

@@ -88,9 +88,14 @@ private:
         // x86 can swap without a temporary register. On other architectures, we need allocate a temporary register to switch the values.
 #if CPU(X86) || CPU(X86_64)
         m_assembler.swap(a, b);
+#elif CPU(ARM64)
+        m_assembler.move(a, tempRegister);
+        m_assembler.move(b, a);
+        m_assembler.move(tempRegister, b);
 #else
         if (m_registerAllocator.availableRegisterCount()) {
             // Usually we can just use a free register.
+            // FIXME: We need to make sure that tempValue is not a or b.
             LocalRegister tempValue(m_registerAllocator);
             m_assembler.move(a, tempValue);
             m_assembler.move(b, a);
