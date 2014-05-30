@@ -81,6 +81,8 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration WK_DESIGNATED_INITIALIZER;
 
+- (instancetype)initWithCoder:(NSCoder *)coder WK_UNAVAILABLE;
+
 /*! @abstract Navigates to a requested URL.
  @param request The request specifying the URL to which to navigate.
  @result A new navigation for the given request.

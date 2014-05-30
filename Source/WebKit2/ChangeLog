@@ -1,5 +1,13 @@
 2014-05-30  Geoffrey Garen  <ggaren@apple.com>
 
+        Fixed the build by adding back a declaration I deleted by accident :(.
+
+        Unreviewed.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+
+2014-05-30  Geoffrey Garen  <ggaren@apple.com>
+
         Unreviewed, rolling in r169490.
 
         I changed a non-ASCII apostrophe to ASCII.
