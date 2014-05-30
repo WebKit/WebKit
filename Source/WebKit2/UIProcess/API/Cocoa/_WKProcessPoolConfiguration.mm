@@ -52,7 +52,7 @@
 
 - (void)setCachePartitionedURLSchemes:(NSArray *)cachePartitionedURLSchemes
 {
-    _cachePartitionedURLSchemes = adoptNS([cachePartitionedURLSchemes copy]);
+    _cachePartitionedURLSchemes = adoptNS([[NSArray alloc] initWithArray:cachePartitionedURLSchemes copyItems:YES]);
 }
 
 - (NSString *)description

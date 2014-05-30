@@ -1,3 +1,13 @@
+2014-05-29  Anders Carlsson  <andersca@apple.com>
+
+        -[WKProcessPoolConfiguration setCachePartitionedURLSchemes:] should do a deep copy
+        https://bugs.webkit.org/show_bug.cgi?id=133393
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration setCachePartitionedURLSchemes:]):
+
 2014-05-29  Mark Lam  <mark.lam@apple.com>
 
         Restoring FloatingPointEnvironment initialization that was accidentally rolled out by r169176.
