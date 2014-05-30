@@ -1,5 +1,18 @@
 2014-05-30  Mario Sanchez Prada  <mario.prada@samsung.com>
 
+        [GTK] Don't use logAccessibilityEvents() in aria-slider-required-attributes.html
+        https://bugs.webkit.org/show_bug.cgi?id=133405
+
+        Reviewed by Chris Fleizach.
+
+        Change the test to use addNotificationListener() instead.
+
+        * platform/gtk/TestExpectations: Removed failure expectation
+        * platform/gtk/accessibility/aria-slider-required-attributes-expected.txt: Updated
+        * platform/gtk/accessibility/aria-slider-required-attributes.html: Updated
+
+2014-05-30  Mario Sanchez Prada  <mario.prada@samsung.com>
+
         [ATK] Deprecate usage of logAccessibilityEvents() in layout tests
         https://bugs.webkit.org/show_bug.cgi?id=132280
 

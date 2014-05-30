@@ -1,19 +1,34 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div role="application">
+  <span id="slider" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></span>
+</div>
+<p id="description"></p>
+<div id="console"></div>
 <script>
+window.jsTestIsAsync = true;
 
-function finishTest()
-{
-    testRunner.notifyDone();
+description("This tests the exposure of attributes for an ARIA slider.");
+
+var valueChangedNotifications = 0;
+
+function notificationCallback(element, notification) {
+    if (element.role == "AXRole: AXSlider" && notification == "AXValueChanged")
+        valueChangedNotifications++;
 }
 
-function runTest()
-{
+if (window.testRunner && window.accessibilityController) {
+    testRunner.dumpAsText();
+
     slider = document.getElementById("slider");
     slider.focus();
 
     axSlider = accessibilityController.focusedElement;
+    accessibilityController.addNotificationListener(notificationCallback);
 
     shouldBe("axSlider.role", "'AXRole: AXSlider'");
     shouldBe("axSlider.intValue", "50");
@@ -26,27 +41,14 @@ function runTest()
     slider.setAttribute("aria-valuenow", "35");
     shouldBe("axSlider.intValue", "35");
 
-    window.setTimeout("finishTest();", 0);
-}
-</script>
-<script src="../../../resources/js-test-pre.js"></script>
-</head>
-<body id="body" onload="runTest();">
-<div role="application">
-  <span id="slider" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></span>
-</div>
-<p id="description"></p>
-<div id="console"></div>
-<script>
-description("This tests the exposure of attributes for an ARIA slider.");
+    window.setTimeout(function() {
+        if (window.accessibilityController)
+            accessibilityController.removeNotificationListener();
 
-if (window.accessibilityController) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
-
-if (window.accessibilityController) {
-    accessibilityController.logAccessibilityEvents();
+        shouldBe("valueChangedNotifications", "2");
+        finishJSTest();
+    },
+    0);
 }
 
 </script>
