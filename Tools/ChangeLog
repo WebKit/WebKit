@@ -1,3 +1,18 @@
+2014-05-30  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Deprecate usage of logAccessibilityEvents() in layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=132280
+
+        Rubber stamped by Carlos Garcia Campos.
+
+        Fix two small issues with previous patch (r169483), that caused some tests to break.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp:
+        (WTR::AccessibilityNotificationHandler::connectAccessibilityCallbacks): Removed
+        duplicated entry.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::setSelectedTextRange): Fix boolean condition.
+
 2014-05-30  Jarek Czekalski  <jarekczek@poczta.onet.pl>
 
         [ATK] Added new accessibility signal: text-caret-moved.

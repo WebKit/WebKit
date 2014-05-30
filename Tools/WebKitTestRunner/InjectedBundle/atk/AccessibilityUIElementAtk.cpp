@@ -1585,7 +1585,7 @@ bool AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned le
     if (!ATK_IS_TEXT(m_element.get()))
         return false;
 
-    if (length)
+    if (!length)
         return atk_text_set_caret_offset(ATK_TEXT(m_element.get()), location);
 
     return atk_text_set_selection(ATK_TEXT(m_element.get()), 0, location, location + length);

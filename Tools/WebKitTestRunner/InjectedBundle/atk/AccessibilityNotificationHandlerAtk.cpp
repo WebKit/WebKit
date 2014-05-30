@@ -251,7 +251,6 @@ void AccessibilityNotificationHandler::connectAccessibilityCallbacks()
 
     const char* signalNames[] = {
         "ATK:AtkObject:state-change",
-        "ATK:AtkObject:state-change",
         "ATK:AtkObject:focus-event",
         "ATK:AtkObject:active-descendant-changed",
         "ATK:AtkObject:children-changed",
