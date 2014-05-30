@@ -1,3 +1,9 @@
+2014-05-30  Dana Burkart  <dburkart@apple.com>
+
+        Supplementary build fix for <rdar://problem/16848509>, borrowed from <rdar://problem/16701806>.
+
+        * WebCore.exp.in:
+
 2014-05-29  Jeffrey Pfau  <jpfau@apple.com>
 
         Build fix for Mavericks
