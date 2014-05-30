@@ -2,7 +2,7 @@
 
         Unreviewed, rolling in r169490.
 
-        I change a non-ASCII apostrophe to ASCII.
+        I changed a non-ASCII apostrophe to ASCII.
 
         Restored changeset:
 
@@ -32,7 +32,7 @@
 
         Unreviewed, rolling out r169490.
 
-        It broke the build with a mysterious warning about ASCII
+        It broke the build with a mysterious warning about ASCII.
 
         Reverted changeset:
 
