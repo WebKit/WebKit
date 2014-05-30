@@ -43,23 +43,8 @@ namespace WTR {
 
 void AccessibilityController::logAccessibilityEvents()
 {
-    // Ensure no callbacks are connected before.
-    resetToConsistentState();
-
-    // Ensure that accessibility is initialized for the WebView by querying for
-    // the root accessible object, which will create the full hierarchy.
-    rootElement();
-
-    if (!m_globalNotificationHandler)
-        m_globalNotificationHandler = AccessibilityNotificationHandler::create();
-    m_globalNotificationHandler->logAccessibilityEvents();
-
-    // Ensure the Atk interface types are registered, otherwise
-    // the AtkDocument signal handlers below won't get registered.
-    GObject* dummyAxObject = G_OBJECT(g_object_new(ATK_TYPE_OBJECT, nullptr));
-    AtkObject* dummyNoOpAxObject = atk_no_op_object_new(dummyAxObject);
-    g_object_unref(G_OBJECT(dummyNoOpAxObject));
-    g_object_unref(dummyAxObject);
+    // No longer implemented for ATK. Use addNotificationListener() instead to
+    // check that relevant ATK signals are being emmitted in response to events.
 }
 
 void AccessibilityController::resetToConsistentState()

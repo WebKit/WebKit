@@ -1,3 +1,16 @@
+2014-05-30  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Deprecate usage of logAccessibilityEvents() in layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=132280
+
+        Reviewed by Chris Fleizach.
+
+        Removed 36 flaky expectations from TestExpectations for tests that
+        were ocassionally showing the output of logAccessibilityEvents()
+        even if they did not make use of that feature (thus the flakiness).
+
+        * platform/gtk/TestExpectations: Updated.
+
 2014-05-30  Jarek Czekalski  <jarekczek@poczta.onet.pl>
 
         [ATK] Convert caret offset tests from testatk.c.

@@ -3,6 +3,25 @@
         [ATK] Deprecate usage of logAccessibilityEvents() in layout tests
         https://bugs.webkit.org/show_bug.cgi?id=132280
 
+        Reviewed by Chris Fleizach.
+
+        Remove implementation of logAccessibilityEvents() for ATK based
+        ports, as this has proved to be a flaky method of checking that
+        ATK events are being properly emitted. Instead, it's better to use
+        the addNotificationListener() functions and provide a JS callback
+        to check that the right events are being emmitted from the tests.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityControllerAtk.cpp:
+        (WTR::AccessibilityController::logAccessibilityEvents): Replaced
+        with dummy implementation.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp:
+        (WTR::AccessibilityNotificationHandler::logAccessibilityEvents): Removed
+
+2014-05-30  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Deprecate usage of logAccessibilityEvents() in layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=132280
+
         Rubber stamped by Carlos Garcia Campos.
 
         Fix two small issues with previous patch (r169483), that caused some tests to break.

@@ -43,29 +43,6 @@ typedef HashMap<AtkObject*, AccessibilityNotificationHandler*> NotificationHandl
 WTF::Vector<unsigned> listenerIds;
 NotificationHandlersMap notificationHandlers;
 AccessibilityNotificationHandler* globalNotificationHandler = nullptr;
-bool loggingAccessibilityEvents = false;
-
-void printAccessibilityEvent(AtkObject* accessible, const char* signalName, const char* signalValue)
-{
-    // Do not handle state-change:defunct signals, as the AtkObject
-    // associated to them will not be valid at this point already.
-    if (!signalName || !g_strcmp0(signalName, "state-change:defunct"))
-        return;
-
-    if (!accessible || !ATK_IS_OBJECT(accessible))
-        return;
-
-    const char* objectName = atk_object_get_name(accessible);
-    AtkRole objectRole = atk_object_get_role(accessible);
-
-    // Try to always provide a name to be logged for the object.
-    if (!objectName || *objectName == '\0')
-        objectName = "(No name)";
-
-    GUniquePtr<char> signalNameAndValue(signalValue ? g_strdup_printf("%s = %s", signalName, signalValue) : g_strdup(signalName));
-    GUniquePtr<char> accessibilityEventString(g_strdup_printf("Accessibility object emitted \"%s\" / Name: \"%s\" / Role: %d\n", signalNameAndValue.get(), objectName, objectRole));
-    InjectedBundle::shared().outputText(String::fromUTF8(accessibilityEventString.get()));
-}
 
 gboolean axObjectEventListener(GSignalInvocationHint* signalHint, unsigned numParamValues, const GValue* paramValues, gpointer data)
 {
@@ -125,9 +102,6 @@ gboolean axObjectEventListener(GSignalInvocationHint* signalHint, unsigned numPa
     } else
         signalName.reset(g_strdup(signalQuery.signal_name));
 
-    if (loggingAccessibilityEvents)
-        printAccessibilityEvent(accessible, signalName.get(), signalValue.get());
-
     if (!jsContext)
         return true;
 
@@ -172,12 +146,6 @@ AccessibilityNotificationHandler::~AccessibilityNotificationHandler()
 {
     removeAccessibilityNotificationHandler();
     disconnectAccessibilityCallbacks();
-}
-
-void AccessibilityNotificationHandler::logAccessibilityEvents()
-{
-    connectAccessibilityCallbacks();
-    loggingAccessibilityEvents = true;
 }
 
 void AccessibilityNotificationHandler::setNotificationFunctionCallback(JSValueRef notificationFunctionCallback)
