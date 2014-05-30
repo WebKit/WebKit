@@ -77,6 +77,29 @@ private:
     int m_offset;
 };
 
+class InterpolationQualityMaintainer {
+public:
+    explicit InterpolationQualityMaintainer(GraphicsContext& graphicsContext, InterpolationQuality interpolationQualityToUse)
+        : m_graphicsContext(graphicsContext)
+        , m_currentInterpolationQuality(graphicsContext.imageInterpolationQuality())
+        , m_interpolationQualityChanged(m_currentInterpolationQuality != interpolationQualityToUse)
+    {
+        if (m_interpolationQualityChanged)
+            m_graphicsContext.setImageInterpolationQuality(interpolationQualityToUse);
+    }
+
+    ~InterpolationQualityMaintainer()
+    {
+        if (m_interpolationQualityChanged)
+            m_graphicsContext.setImageInterpolationQuality(m_currentInterpolationQuality);
+    }
+
+private:
+    GraphicsContext& m_graphicsContext;
+    InterpolationQuality m_currentInterpolationQuality;
+    bool m_interpolationQualityChanged;
+};
+
 #if !PLATFORM(IOS)
 GraphicsContext::GraphicsContext(PlatformGraphicsContext* platformGraphicsContext)
     : m_updatingControlTints(false)
@@ -567,21 +590,13 @@ void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const 
 }
 
 void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op, BlendMode blendMode, ImageOrientationDescription description, bool useLowQualityScale)
-{    if (paintingDisabled() || !image)
+{
+    if (paintingDisabled() || !image)
         return;
-
-    InterpolationQuality previousInterpolationQuality = InterpolationDefault;
-
-    if (useLowQualityScale) {
-        previousInterpolationQuality = imageInterpolationQuality();
-        // FIXME (49002): Should be InterpolationLow
-        setImageInterpolationQuality(InterpolationNone);
-    }
-
+    
+    // FIXME (49002): Should be InterpolationLow
+    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, useLowQualityScale ? InterpolationNone : imageInterpolationQuality());
     image->draw(this, dest, src, styleColorSpace, op, blendMode, description);
-
-    if (useLowQualityScale)
-        setImageInterpolationQuality(previousInterpolationQuality);
 }
 
 void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& tileSize, CompositeOperator op, bool useLowQualityScale, BlendMode blendMode)
@@ -589,13 +604,8 @@ void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, c
     if (paintingDisabled() || !image)
         return;
 
-    if (useLowQualityScale) {
-        InterpolationQuality previousInterpolationQuality = imageInterpolationQuality();
-        setImageInterpolationQuality(InterpolationLow);
-        image->drawTiled(this, destRect, srcPoint, tileSize, styleColorSpace, op, blendMode);
-        setImageInterpolationQuality(previousInterpolationQuality);
-    } else
-        image->drawTiled(this, destRect, srcPoint, tileSize, styleColorSpace, op, blendMode);
+    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, useLowQualityScale ? InterpolationLow : imageInterpolationQuality());
+    image->drawTiled(this, destRect, srcPoint, tileSize, styleColorSpace, op, blendMode);
 }
 
 void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& srcRect,
@@ -610,13 +620,8 @@ void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, c
         return;
     }
 
-    if (useLowQualityScale) {
-        InterpolationQuality previousInterpolationQuality = imageInterpolationQuality();
-        setImageInterpolationQuality(InterpolationLow);
-        image->drawTiled(this, dest, srcRect, tileScaleFactor, hRule, vRule, styleColorSpace, op);
-        setImageInterpolationQuality(previousInterpolationQuality);
-    } else
-        image->drawTiled(this, dest, srcRect, tileScaleFactor, hRule, vRule, styleColorSpace, op);
+    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, useLowQualityScale ? InterpolationLow : imageInterpolationQuality());
+    image->drawTiled(this, dest, srcRect, tileScaleFactor, hRule, vRule, styleColorSpace, op);
 }
 
 void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const FloatPoint& p, CompositeOperator op, BlendMode blendMode)
@@ -643,14 +648,9 @@ void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorS
     if (paintingDisabled() || !image)
         return;
 
-    if (useLowQualityScale) {
-        InterpolationQuality previousInterpolationQuality = imageInterpolationQuality();
-        // FIXME (49002): Should be InterpolationLow
-        setImageInterpolationQuality(InterpolationNone);
-        image->draw(this, styleColorSpace, dest, src, op, blendMode, useLowQualityScale);
-        setImageInterpolationQuality(previousInterpolationQuality);
-    } else
-        image->draw(this, styleColorSpace, dest, src, op, blendMode, useLowQualityScale);
+    // FIXME (49002): Should be InterpolationLow
+    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, useLowQualityScale ? InterpolationNone : imageInterpolationQuality());
+    image->draw(this, styleColorSpace, dest, src, op, blendMode, useLowQualityScale);
 }
 
 void GraphicsContext::clip(const IntRect& rect)
