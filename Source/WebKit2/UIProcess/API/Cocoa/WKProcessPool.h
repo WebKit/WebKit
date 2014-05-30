@@ -29,10 +29,11 @@
 
 #import <Foundation/Foundation.h>
 
-/*! A pool of Web Content processes.
- A @link WKWebView @/link specifies its process pool through its @link WKWebViewConfiguration @/link.
- Each WKWebView will get its own Web Content process until an implementation-defined process limit is reached; after that,
- web views with the same process pool end up sharing Web Content processes.
+/*! A WKProcessPool object represents a pool of web content processes.
+ The process pool associated with a web view is specified by its web view
+ configuration. Each web view is given its own web content process until an
+ implementation-defined process limit is reached; after that, web views
+ with the same process pool end up sharing web content processes.
  */
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKProcessPool : NSObject
