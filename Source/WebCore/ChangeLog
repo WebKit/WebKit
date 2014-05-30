@@ -1,3 +1,14 @@
+2014-05-30  Prashant Hiremath  <hiremathprashants@gmail.com>
+
+        Remove repetitive header in HTMLInputElement.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=133376
+
+        Reviewed by Anders Carlsson.
+
+        It is just removal repeative headers hence no test needed.
+
+        * html/HTMLInputElement.cpp:
+
 2014-05-30  Zalan Bujtas  <zalan@apple.com>
 
         Remove redundant GraphicsContext::drawImage() function.

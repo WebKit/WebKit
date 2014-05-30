@@ -69,10 +69,6 @@
 #include "ColorInputType.h"
 #endif
 
-#if ENABLE(INPUT_SPEECH)
-#include "RuntimeEnabledFeatures.h"
-#endif
-
 #if ENABLE(TOUCH_EVENTS)
 #include "TouchEvent.h"
 #endif
