@@ -1034,7 +1034,7 @@ def prepareBundle
     if $copy
         copyVMToBundle
     else
-        if !$remote
+        if !$remote and !$tarball
             $testingFrameworkPath = frameworkFromJSCPath($jscPath).realpath
             $jscPath = Pathname.new($jscPath).realpath
         else
