@@ -61,6 +61,7 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage* webPage, const W
     , m_hasDeferredFlush(false)
     , m_waitingForBackingStoreSwap(false)
     , m_hadFlushDeferredWhileWaitingForBackingStoreSwap(false)
+    , m_displayRefreshMonitorsToNotify(nullptr)
 {
     webPage->corePage()->settings().setForceCompositingMode(true);
 #if PLATFORM(IOS)
@@ -101,7 +102,11 @@ PassRefPtr<DisplayRefreshMonitor> RemoteLayerTreeDrawingArea::createDisplayRefre
 
 void RemoteLayerTreeDrawingArea::willDestroyDisplayRefreshMonitor(DisplayRefreshMonitor* monitor)
 {
-    m_displayRefreshMonitors.remove(static_cast<RemoteLayerTreeDisplayRefreshMonitor*>(monitor));
+    auto remoteMonitor = static_cast<RemoteLayerTreeDisplayRefreshMonitor*>(monitor);
+    m_displayRefreshMonitors.remove(remoteMonitor);
+
+    if (m_displayRefreshMonitorsToNotify)
+        m_displayRefreshMonitorsToNotify->remove(remoteMonitor);
 }
 
 void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer* rootLayer)
@@ -330,15 +335,12 @@ void RemoteLayerTreeDrawingArea::didUpdate()
     [CATransaction begin];
     [CATransaction commit];
 
-    Vector<RemoteLayerTreeDisplayRefreshMonitor*> monitors;
-    monitors.reserveCapacity(m_displayRefreshMonitors.size());
-    for (auto& monitor : m_displayRefreshMonitors)
-        monitors.append(monitor);
-    for (auto& monitor : monitors) {
-        // The monitor might have been removed by an earlier didUpdateLayers callback.
-        if (m_displayRefreshMonitors.contains(monitor))
-            monitor->didUpdateLayers();
-    }
+    HashSet<RemoteLayerTreeDisplayRefreshMonitor*> monitorsToNotify = m_displayRefreshMonitors;
+    ASSERT(!m_displayRefreshMonitorsToNotify);
+    m_displayRefreshMonitorsToNotify = &monitorsToNotify;
+    while (!monitorsToNotify.isEmpty())
+        monitorsToNotify.takeAny()->didUpdateLayers();
+    m_displayRefreshMonitorsToNotify = nullptr;
 }
 
 void RemoteLayerTreeDrawingArea::mainFrameContentSizeChanged(const IntSize& contentsSize)

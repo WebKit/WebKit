@@ -1,3 +1,26 @@
+2014-05-30  Timothy Horton  <timothy_horton@apple.com>
+
+        Crash loading skydrive.com (assertion under RemoteLayerTreeDisplayRefreshMonitor)
+        https://bugs.webkit.org/show_bug.cgi?id=133370
+        <rdar://problem/17061361>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        (WebKit::RemoteLayerTreeDrawingArea::willDestroyDisplayRefreshMonitor):
+        (WebKit::RemoteLayerTreeDrawingArea::didUpdate):
+        Post-landing review comments from Darin noted that checking if the
+        DrawingArea's m_displayRefreshMonitors contains the monitor in the
+        list to notify is insufficient, because a new one could have been
+        added with the same address. Instead, copy the HashSet, removing
+        at random from it and firing didUpdateLayers, but *also* removing
+        from it in the willDestroyDisplayRefreshMonitor callback.
+        This is very similar to what DisplayRefreshMonitor itself does internally
+        (we don't have to duplicate its code to avoid re-entry because it is
+        already impossible to re-enter didUpdate).
+
 2014-05-29  Anders Carlsson  <andersca@apple.com>
 
         -[WKProcessPoolConfiguration setCachePartitionedURLSchemes:] should do a deep copy
