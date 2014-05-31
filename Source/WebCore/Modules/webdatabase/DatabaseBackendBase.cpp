@@ -153,9 +153,6 @@ static std::mutex& guidMutex()
 typedef HashMap<DatabaseGuid, String> GuidVersionMap;
 static GuidVersionMap& guidToVersionMap()
 {
-    // Ensure the the mutex is locked.
-    ASSERT(!guidMutex().try_lock());
-
     static NeverDestroyed<GuidVersionMap> map;
     return map;
 }
@@ -163,9 +160,6 @@ static GuidVersionMap& guidToVersionMap()
 // NOTE: Caller must lock guidMutex().
 static inline void updateGuidVersionMap(DatabaseGuid guid, String newVersion)
 {
-    // Ensure the the mutex is locked.
-    ASSERT(!guidMutex().try_lock());
-
     // Note: It is not safe to put an empty string into the guidToVersionMap() map.
     // That's because the map is cross-thread, but empty strings are per-thread.
     // The copy() function makes a version of the string you can use on the current
@@ -180,18 +174,12 @@ typedef HashMap<DatabaseGuid, std::unique_ptr<HashSet<DatabaseBackendBase*>>> Gu
 
 static GuidDatabaseMap& guidToDatabaseMap()
 {
-    // Ensure the the mutex is locked.
-    ASSERT(!guidMutex().try_lock());
-
     static NeverDestroyed<GuidDatabaseMap> map;
     return map;
 }
 
 static DatabaseGuid guidForOriginAndName(const String& origin, const String& name)
 {
-    // Ensure the the mutex is locked.
-    ASSERT(!guidMutex().try_lock());
-
     String stringID = origin + "/" + name;
 
     typedef HashMap<String, int> IDGuidMap;

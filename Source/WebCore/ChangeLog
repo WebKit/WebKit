@@ -1,3 +1,19 @@
+2014-05-31  Anders Carlsson  <andersca@apple.com>
+
+        Don't use std::mutex::try_lock to check if we own a mutex
+        https://bugs.webkit.org/show_bug.cgi?id=133421
+
+        Reviewed by Dan Bernstein.
+
+        According the C++ standard, calling try_lock on a mutex that's already owned by the current thread
+        is undefined behavior, so don't do that.
+
+        * Modules/webdatabase/DatabaseBackendBase.cpp:
+        (WebCore::guidToVersionMap):
+        (WebCore::updateGuidVersionMap):
+        (WebCore::guidToDatabaseMap):
+        (WebCore::guidForOriginAndName):
+
 2014-05-30  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION (WebKit2): space space to insert period doesn't work in web forms.
