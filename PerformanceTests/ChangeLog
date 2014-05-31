@@ -1,3 +1,17 @@
+2014-05-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DYEBench spits out 404 errors for learn.json
+        https://bugs.webkit.org/show_bug.cgi?id=133416
+
+        Reviewed by Oliver Hunt.
+
+        Add an empty learn.json file so that it won't cause a 404 error when hosted on a http server.
+
+        Bumped the version number to 0.12.
+
+        * DoYouEvenBench/Full.html:
+        * DoYouEvenBench/resources/todomvc/learn.json:
+
 2014-05-23  Geoffrey Garen  <ggaren@apple.com>
 
         Performance testing, diamond-square terrain generation + canvas
