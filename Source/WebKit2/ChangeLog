@@ -1,3 +1,12 @@
+2014-05-31  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] WebKit2.framework is unused
+        https://bugs.webkit.org/show_bug.cgi?id=133424
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/WebKit2.xcconfig: Set SKIP_INSTALL to YES when targeting iOS.
+
 2014-05-30  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] When a page does not finish rotation before the end of the animation, synchronize explicitely
