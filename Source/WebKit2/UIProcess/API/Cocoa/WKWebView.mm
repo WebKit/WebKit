@@ -1780,6 +1780,8 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_endAnimatedResize
 {
+    _page->synchronizeDynamicViewportUpdate();
+
     if (!_customContentView && _isAnimatingResize) {
         NSUInteger indexOfResizeAnimationView = [[_scrollView subviews] indexOfObject:_resizeAnimationView.get()];
         [_scrollView insertSubview:_contentView.get() atIndex:indexOfResizeAnimationView];

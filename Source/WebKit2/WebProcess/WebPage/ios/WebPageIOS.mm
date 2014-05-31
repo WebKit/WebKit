@@ -2151,8 +2151,13 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
     frameView.setCustomSizeForResizeEvent(expandedIntSize(unobscuredContentRectSizeInContentCoordinates));
     frameView.setScrollOffset(roundedUnobscuredContentRect.location());
 
-    if (!withinEpsilon(pageScaleFactor(), targetScale) || roundedIntPoint(targetUnobscuredRect.location()) != frameView.scrollPosition())
-        send(Messages::WebPageProxy::DynamicViewportUpdateChangedTarget(pageScaleFactor(), frameView.scrollPosition()));
+    send(Messages::WebPageProxy::DynamicViewportUpdateChangedTarget(pageScaleFactor(), frameView.scrollPosition()));
+}
+
+void WebPage::synchronizeDynamicViewportUpdate(double& newTargetScale, FloatPoint& newScrollPosition)
+{
+    newTargetScale = pageScaleFactor();
+    newScrollPosition = m_page->mainFrame().view()->scrollPosition();
 }
 
 void WebPage::resetViewportDefaultConfiguration(WebFrame* frame)

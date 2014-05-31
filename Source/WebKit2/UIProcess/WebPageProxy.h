@@ -596,7 +596,8 @@ public:
     WebCore::FloatRect computeCustomFixedPositionRect(const WebCore::FloatRect& unobscuredContentRect, double displayedContentScale, UnobscuredRectConstraint = UnobscuredRectConstraint::Unconstrained) const;
 
     void dynamicViewportSizeUpdate(const WebCore::FloatSize& minimumLayoutSize, const WebCore::FloatSize& minimumLayoutSizeForMinimalUI, const WebCore::FloatSize& maximumUnobscuredSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, double targetScale);
-    
+    void synchronizeDynamicViewportUpdate();
+
     void setViewportConfigurationMinimumLayoutSize(const WebCore::FloatSize&);
     void setViewportConfigurationMinimumLayoutSizeForMinimalUI(const WebCore::FloatSize&);
     void setMaximumUnobscuredSize(const WebCore::FloatSize&);
@@ -1489,6 +1490,7 @@ private:
 #if PLATFORM(IOS)
     RefPtr<WebVideoFullscreenManagerProxy> m_videoFullscreenManager;
     VisibleContentRectUpdateInfo m_lastVisibleContentRectUpdate;
+    bool m_dynamicViewportSizeUpdateInProgress;
 #endif
 
 #if ENABLE(VIBRATION)

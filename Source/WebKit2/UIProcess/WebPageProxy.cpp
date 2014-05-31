@@ -272,6 +272,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_visitedLinkProvider(*configuration.visitedLinkProvider)
     , m_mainFrame(nullptr)
     , m_userAgent(standardUserAgent())
+#if PLATFORM(IOS)
+    , m_dynamicViewportSizeUpdateInProgress(false)
+#endif
     , m_geolocationPermissionRequestManager(*this)
     , m_notificationPermissionRequestManager(*this)
     , m_viewState(ViewState::NoFlags)
@@ -4204,6 +4207,7 @@ void WebPageProxy::resetState()
     }
 
     m_lastVisibleContentRectUpdate = VisibleContentRectUpdateInfo();
+    m_dynamicViewportSizeUpdateInProgress = false;
 #endif
 
     invalidateCallbackMap(m_voidCallbacks);

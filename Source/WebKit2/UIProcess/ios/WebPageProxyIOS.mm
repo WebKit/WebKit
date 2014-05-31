@@ -33,6 +33,7 @@
 #import "EditingRange.h"
 #import "NativeWebKeyboardEvent.h"
 #import "PageClient.h"
+#import "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "ViewUpdateDispatcherMessages.h"
 #import "WKBrowsingContextControllerInternal.h"
@@ -237,7 +238,33 @@ WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect&
 
 void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, const WebCore::FloatSize& minimumLayoutSizeForMinimalUI, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const FloatRect& targetUnobscuredRectInScrollViewCoordinates,  double targetScale)
 {
+    m_dynamicViewportSizeUpdateInProgress = true;
     m_process->send(Messages::WebPage::DynamicViewportSizeUpdate(minimumLayoutSize, minimumLayoutSizeForMinimalUI, maximumUnobscuredSize, targetExposedContentRect, targetUnobscuredRect, targetUnobscuredRectInScrollViewCoordinates, targetScale), m_pageID);
+}
+
+void WebPageProxy::synchronizeDynamicViewportUpdate()
+{
+    if (m_dynamicViewportSizeUpdateInProgress) {
+        // We do not want the UIProcess to finish animated resize with the old content size, scale, etc.
+        // If that happens, the UIProcess would start pushing new VisibleContentRectUpdateInfo to the WebProcess with
+        // invalid informations.
+        //
+        // Ideally, the animated resize should just be transactional, and the UIProcess would remain in the "resize" state
+        // until both DynamicViewportUpdateChangedTarget and the associated commitLayerTree are finished.
+        // The tricky part with such implementation is if a second animated resize starts before the end of the previous one.
+        // In that case, the values used for the target state needs to be computed from the output of the previous animated resize.
+        //
+        // The following is a workaround to have the UIProcess in a consistent state.
+        // Instead of handling nested resize, we block the UIProcess until the animated resize finishes.
+        m_dynamicViewportSizeUpdateInProgress = false;
+        double newScale;
+        FloatPoint newScrollPosition;
+        if (m_process->sendSync(Messages::WebPage::SynchronizeDynamicViewportUpdate(), Messages::WebPage::SynchronizeDynamicViewportUpdate::Reply(newScale, newScrollPosition), m_pageID, std::chrono::seconds(2))) {
+            m_pageClient.dynamicViewportUpdateChangedTarget(newScale, newScrollPosition);
+
+            m_process->connection()->waitForAndDispatchImmediately<Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree>(m_pageID, std::chrono::seconds(1));
+        }
+    }
 }
 
 void WebPageProxy::setViewportConfigurationMinimumLayoutSize(const WebCore::FloatSize& size)
@@ -546,10 +573,13 @@ float WebPageProxy::textAutosizingWidth()
 {
     return WKGetScreenSize().width;
 }
-    
+
 void WebPageProxy::dynamicViewportUpdateChangedTarget(double newScale, const WebCore::FloatPoint& newScrollPosition)
 {
-    m_pageClient.dynamicViewportUpdateChangedTarget(newScale, newScrollPosition);
+    if (m_dynamicViewportSizeUpdateInProgress) {
+        m_dynamicViewportSizeUpdateInProgress = false;
+        m_pageClient.dynamicViewportUpdateChangedTarget(newScale, newScrollPosition);
+    }
 }
 
 void WebPageProxy::didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius)
