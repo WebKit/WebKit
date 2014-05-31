@@ -104,7 +104,7 @@ PassRefPtr<Range> enclosingTextUnitOfGranularity(const VisiblePosition&, TextGra
 int distanceBetweenPositions(const VisiblePosition&, const VisiblePosition&);
 PassRefPtr<Range> wordRangeFromPosition(const VisiblePosition& position);
 VisiblePosition closestWordBoundaryForPosition(const VisiblePosition& position);
-UChar32 characterBeforePosition(const VisiblePosition&);
+void charactersAroundPosition(const VisiblePosition&, UChar32& oneAfter, UChar32& oneBefore, UChar32& twoBefore);
 #endif
 } // namespace WebCore
 

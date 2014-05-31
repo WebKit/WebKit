@@ -1812,25 +1812,40 @@ int distanceBetweenPositions(const VisiblePosition& vp, const VisiblePosition& o
 
     return (thisIsStart ? -distance : distance);
 }
-    
-UChar32 characterBeforePosition(const VisiblePosition& position)
+
+void charactersAroundPosition(const VisiblePosition& position, UChar32& oneAfter, UChar32& oneBefore, UChar32& twoBefore)
 {
+    Vector<UChar32> characters(3);
+
     if (position.isNull() || isStartOfDocument(position))
-        return 0;
+        return;
+
+    VisiblePosition startPosition = position;
+    VisiblePosition endPosition = position;
+
+    VisiblePosition nextPosition = nextCharacterBoundaryInDirection(position, DirectionForward);
+    if (nextPosition.isNotNull())
+        endPosition = nextPosition;
+
     VisiblePosition previousPosition = nextCharacterBoundaryInDirection(position, DirectionBackward);
-    if (previousPosition.isNull())
-        return 0;
-    String characterString = plainText(Range::create(position.deepEquivalent().anchorNode()->document(), previousPosition, position).get(), TextIteratorDefaultBehavior, true);
-    if (characterString.isEmpty())
-        return 0;
-    
-    if (characterString.length() == 2) {
-        UTF32Char lead = characterString[0];
-        UTF32Char trail = characterString[1];
-        if (U16_IS_LEAD(lead) && U16_IS_TRAIL(trail))
-            return U16_GET_SUPPLEMENTARY(lead, trail);
+    if (previousPosition.isNotNull()) {
+        startPosition = previousPosition;
+        previousPosition = nextCharacterBoundaryInDirection(previousPosition, DirectionBackward);
+        if (previousPosition.isNotNull())
+            startPosition = previousPosition;
     }
-    return characterString[0] != noBreakSpace ? characterString[0] : ' ';
+
+    if (startPosition != endPosition) {
+        String characterString = plainText(Range::create(position.deepEquivalent().anchorNode()->document(), startPosition, endPosition).get()).replace(noBreakSpace, ' ');
+        for (int i = characterString.length() - 1, index = 0; i >= 0; --i) {
+            if (!index && nextPosition.isNull())
+                index++;
+            characters[index++] = characterString[i];
+        }
+    }
+    oneAfter = characters[0];
+    oneBefore = characters[1];
+    twoBefore = characters[2];
 }
 
 PassRefPtr<Range> wordRangeFromPosition(const VisiblePosition& position)

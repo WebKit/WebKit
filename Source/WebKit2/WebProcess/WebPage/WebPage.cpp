@@ -704,7 +704,7 @@ EditorState WebPage::editorState() const
             result.lastMarkedRect = compositionRects.last().rect();
         else
             result.lastMarkedRect = result.firstMarkedRect;
-        result.markedText = plainText(compositionRange.get());
+        result.markedText = plainTextReplacingNoBreakSpace(compositionRange.get());
     }
     FrameView* view = frame.view();
     if (selection.isCaret()) {
@@ -712,15 +712,15 @@ EditorState WebPage::editorState() const
         result.caretRectAtEnd = result.caretRectAtStart;
         // FIXME: The following check should take into account writing direction.
         result.isReplaceAllowed = result.isContentEditable && atBoundaryOfGranularity(selection.start(), WordGranularity, DirectionForward);
-        result.wordAtSelection = plainText(wordRangeFromPosition(selection.start()).get());
-        result.characterBeforeSelection = characterBeforePosition(selection.start());
+        result.wordAtSelection = plainTextReplacingNoBreakSpace(wordRangeFromPosition(selection.start()).get());
+        charactersAroundPosition(selection.start(), result.characterAfterSelection, result.characterBeforeSelection, result.twoCharacterBeforeSelection);
     } else if (selection.isRange()) {
         result.caretRectAtStart = view->contentsToRootView(VisiblePosition(selection.start()).absoluteCaretBounds());
         result.caretRectAtEnd = view->contentsToRootView(VisiblePosition(selection.end()).absoluteCaretBounds());
         RefPtr<Range> selectedRange = selection.toNormalizedRange();
         selectedRange->collectSelectionRects(result.selectionRects);
         convertSelectionRectsToRootView(view, result.selectionRects);
-        String selectedText = plainText(selectedRange.get(), TextIteratorDefaultBehavior, true);
+        String selectedText = plainTextReplacingNoBreakSpace(selectedRange.get(), TextIteratorDefaultBehavior, true);
         // FIXME: We should disallow replace when the string contains only CJ characters.
         result.isReplaceAllowed = result.isContentEditable && !result.isInPasswordField && !selectedText.containsOnlyWhitespace();
         result.selectedTextLength = selectedText.length();

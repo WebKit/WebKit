@@ -41,6 +41,7 @@ class RenderText;
 class RenderTextFragment;
 
 String plainText(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
+String plainTextReplacingNoBreakSpace(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
 PassRefPtr<Range> findPlainText(const Range&, const String&, FindOptions);
 
 // FIXME: Move this somewhere else in the editing directory. It doesn't belong here.

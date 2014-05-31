@@ -1,3 +1,38 @@
+2014-05-30  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION (WebKit2): space space to insert period doesn't work in web forms.
+        https://bugs.webkit.org/show_bug.cgi?id=133413
+        <rdar://problem/16948333>
+
+        Reviewed by Benjamin Poulain.
+
+        iOS TextInput needs to know about content surrounding the
+        current position while editing. Since we don't want to
+        query this information synchronously when asked, we cache it
+        as part of the EditorState. EditorState now contains a vector of
+        three characters representing the content after, before and two
+        position before the caret position.
+        The patch also replaces all calls to plainText with plainTextReplacingNoBreakSpace
+        to work well with iOS text input.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode):
+        (WebKit::EditorState::decode):
+        * Shared/EditorState.h:
+        (WebKit::EditorState::EditorState):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _characterInRelationToCaretSelection:]):
+        (+[WKAutocorrectionContext autocorrectionContextWithData:markedText:selectedText:afterText:selectedRangeInMarkedText:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestDictationContext):
+        (WebKit::WebPage::replaceSelectedText):
+        (WebKit::WebPage::replaceDictatedText):
+        (WebKit::WebPage::requestAutocorrectionData):
+        (WebKit::WebPage::syncApplyAutocorrection):
+        (WebKit::computeAutocorrectionContext):
+
 2014-05-30  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed the build by adding back a declaration I deleted by accident :(.

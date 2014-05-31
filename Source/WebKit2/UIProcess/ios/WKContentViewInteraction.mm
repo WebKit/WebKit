@@ -1486,6 +1486,20 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
     return _page->editorState().characterBeforeSelection;
 }
 
+- (UTF32Char)_characterInRelationToCaretSelection:(int)amount
+{
+    switch (amount) {
+    case 0:
+        return _page->editorState().characterAfterSelection;
+    case -1:
+        return _page->editorState().characterBeforeSelection;
+    case -2:
+        return _page->editorState().twoCharacterBeforeSelection;
+    default:
+        return 0;
+    }
+}
+
 - (CGRect)textFirstRect
 {
     return (_page->editorState().hasComposition) ? _page->editorState().firstMarkedRect : _autocorrectionData.textFirstRect;
@@ -2471,14 +2485,16 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 {
     WKAutocorrectionContext *context = [[WKAutocorrectionContext alloc] init];
 
+    const UChar noBreakSpace = 0x00A0;
+
     if ([beforeText length])
-        context.contextBeforeSelection = [beforeText copy];
+        context.contextBeforeSelection = [[beforeText _stringByReplacingCharacter:(unichar)noBreakSpace withCharacter:' '] copy];
     if ([selectedText length])
-        context.selectedText = [selectedText copy];
+        context.selectedText = [[selectedText _stringByReplacingCharacter:(unichar)noBreakSpace withCharacter:' '] copy];
     if ([markedText length])
-        context.markedText = [markedText copy];
+        context.markedText = [[markedText _stringByReplacingCharacter:(unichar)noBreakSpace withCharacter:' '] copy];
     if ([afterText length])
-        context.contextAfterSelection = [afterText copy];
+        context.contextAfterSelection = [[afterText _stringByReplacingCharacter:(unichar)noBreakSpace withCharacter:' '] copy];
     context.rangeInMarkedText = range;
     return [context autorelease];
 }

@@ -48,7 +48,9 @@ void EditorState::encode(IPC::ArgumentEncoder& encoder) const
 
 #if PLATFORM(IOS)
     encoder << isReplaceAllowed;
+    encoder << characterAfterSelection;
     encoder << characterBeforeSelection;
+    encoder << twoCharacterBeforeSelection;
     encoder << caretRectAtStart;
     encoder << caretRectAtEnd;
     encoder << selectionRects;
@@ -93,7 +95,11 @@ bool EditorState::decode(IPC::ArgumentDecoder& decoder, EditorState& result)
 #if PLATFORM(IOS)
     if (!decoder.decode(result.isReplaceAllowed))
         return false;
+    if (!decoder.decode(result.characterAfterSelection))
+        return false;
     if (!decoder.decode(result.characterBeforeSelection))
+        return false;
+    if (!decoder.decode(result.twoCharacterBeforeSelection))
         return false;
     if (!decoder.decode(result.caretRectAtStart))
         return false;

@@ -2513,6 +2513,11 @@ String plainText(const Range* r, TextIteratorBehavior defaultBehavior, bool isDi
     return result;
 }
 
+String plainTextReplacingNoBreakSpace(const Range* range, TextIteratorBehavior defaultBehavior, bool isDisplayString)
+{
+    return plainText(range, defaultBehavior, isDisplayString).replace(noBreakSpace, ' ');
+}
+
 static PassRefPtr<Range> collapsedToBoundary(const Range& range, bool forward)
 {
     RefPtr<Range> result = range.cloneRange(ASSERT_NO_EXCEPTION);

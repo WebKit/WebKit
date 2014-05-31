@@ -1377,7 +1377,7 @@ void WebPage::requestDictationContext(uint64_t callbackID)
 
     String selectedText;
     if (frame.selection().isRange())
-        selectedText = plainText(frame.selection().selection().toNormalizedRange().get());
+        selectedText = plainTextReplacingNoBreakSpace(frame.selection().selection().toNormalizedRange().get());
 
     String contextBefore;
     if (startPosition != startOfEditableContent(startPosition)) {
@@ -1390,7 +1390,7 @@ void WebPage::requestDictationContext(uint64_t callbackID)
             lastPosition = currentPosition;
         }
         if (lastPosition.isNotNull() && lastPosition != startPosition)
-            contextBefore = plainText(Range::create(*frame.document(), lastPosition, startPosition).get());
+            contextBefore = plainTextReplacingNoBreakSpace(Range::create(*frame.document(), lastPosition, startPosition).get());
     }
 
     String contextAfter;
@@ -1404,7 +1404,7 @@ void WebPage::requestDictationContext(uint64_t callbackID)
             lastPosition = currentPosition;
         }
         if (lastPosition.isNotNull() && lastPosition != endPosition)
-            contextAfter = plainText(Range::create(*frame.document(), endPosition, lastPosition).get());
+            contextAfter = plainTextReplacingNoBreakSpace(Range::create(*frame.document(), endPosition, lastPosition).get());
     }
 
     send(Messages::WebPageProxy::DictationContextCallback(selectedText, contextBefore, contextAfter, callbackID));
@@ -1414,7 +1414,7 @@ void WebPage::replaceSelectedText(const String& oldText, const String& newText)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     RefPtr<Range> wordRange = frame.selection().isCaret() ? wordRangeFromPosition(frame.selection().selection().start()) : frame.selection().toNormalizedRange();
-    if (plainText(wordRange.get()) != oldText)
+    if (plainTextReplacingNoBreakSpace(wordRange.get()) != oldText)
         return;
     
     frame.editor().setIgnoreCompositionSelectionChange(true);
@@ -1440,7 +1440,7 @@ void WebPage::replaceDictatedText(const String& oldText, const String& newText)
         position = startOfDocument(static_cast<Node*>(frame.document()->documentElement()));
     RefPtr<Range> range = Range::create(*frame.document(), position, frame.selection().selection().start());
 
-    if (plainText(range.get()) != oldText)
+    if (plainTextReplacingNoBreakSpace(range.get()) != oldText)
         return;
 
     // We don't want to notify the client that the selection has changed until we are done inserting the new text.
@@ -1459,7 +1459,7 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, uin
     Vector<SelectionRect> selectionRects;
 
     range = wordRangeFromPosition(position);
-    String textForRange = plainText(range.get());
+    String textForRange = plainTextReplacingNoBreakSpace(range.get());
     const unsigned maxSearchAttempts = 5;
     for (size_t i = 0;  i < maxSearchAttempts && textForRange != textForAutocorrection; ++i)
     {
@@ -1467,7 +1467,7 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, uin
         if (position.isNull() || position == range->startPosition())
             break;
         range = Range::create(*frame.document(), wordRangeFromPosition(position)->startPosition(), range->endPosition());
-        textForRange = plainText(range.get());
+        textForRange = plainTextReplacingNoBreakSpace(range.get());
     }
     if (textForRange == textForAutocorrection)
         range->collectSelectionRects(selectionRects);
@@ -1507,7 +1507,7 @@ void WebPage::syncApplyAutocorrection(const String& correction, const String& or
     VisiblePosition position = frame.selection().selection().start();
     
     range = wordRangeFromPosition(position);
-    String textForRange = plainText(range.get());
+    String textForRange = plainTextReplacingNoBreakSpace(range.get());
     if (textForRange != originalText) {
         for (size_t i = 0; i < originalText.length(); ++i)
             position = position.previous();
@@ -1515,7 +1515,7 @@ void WebPage::syncApplyAutocorrection(const String& correction, const String& or
             position = startOfDocument(static_cast<Node*>(frame.document()->documentElement()));
         range = Range::create(*frame.document(), position, frame.selection().selection().start());
         if (range)
-            textForRange = (range) ? plainText(range.get()) : emptyString();
+            textForRange = (range) ? plainTextReplacingNoBreakSpace(range.get()) : emptyString();
         unsigned loopCount = 0;
         const unsigned maxPositionsAttempts = 10;
         while (textForRange.length() && textForRange.length() > originalText.length() && loopCount < maxPositionsAttempts) {
@@ -1524,7 +1524,7 @@ void WebPage::syncApplyAutocorrection(const String& correction, const String& or
                 range = NULL;
             else
                 range = Range::create(*frame.document(), position, frame.selection().selection().start());
-            textForRange = (range) ? plainText(range.get()) : emptyString();
+            textForRange = (range) ? plainTextReplacingNoBreakSpace(range.get()) : emptyString();
             loopCount++;
         }
     }
@@ -1553,17 +1553,17 @@ static void computeAutocorrectionContext(Frame& frame, String& contextBefore, St
     const unsigned maxContextLength = 30;
 
     if (frame.selection().isRange())
-        selectedText = plainText(frame.selection().selection().toNormalizedRange().get());
+        selectedText = plainTextReplacingNoBreakSpace(frame.selection().selection().toNormalizedRange().get());
 
     if (frame.editor().hasComposition()) {
         range = Range::create(*frame.document(), frame.editor().compositionRange()->startPosition(), startPosition);
         String markedTextBefore;
         if (range)
-            markedTextBefore = plainText(range.get());
+            markedTextBefore = plainTextReplacingNoBreakSpace(range.get());
         range = Range::create(*frame.document(), endPosition, frame.editor().compositionRange()->endPosition());
         String markedTextAfter;
         if (range)
-            markedTextAfter = plainText(range.get());
+            markedTextAfter = plainTextReplacingNoBreakSpace(range.get());
         markedText = markedTextBefore + selectedText + markedTextAfter;
         if (!markedText.isEmpty()) {
             location = markedTextBefore.length();
@@ -1580,14 +1580,14 @@ static void computeAutocorrectionContext(Frame& frame, String& contextBefore, St
                 previousPosition = startOfWord(positionOfNextBoundaryOfGranularity(currentPosition, WordGranularity, DirectionBackward));
                 if (previousPosition.isNull())
                     break;
-                String currentWord = plainText(Range::create(*frame.document(), previousPosition, currentPosition).get());
+                String currentWord = plainTextReplacingNoBreakSpace(Range::create(*frame.document(), previousPosition, currentPosition).get());
                 totalContextLength += currentWord.length();
                 if (totalContextLength >= maxContextLength)
                     break;
                 currentPosition = previousPosition;
             }
             if (currentPosition.isNotNull() && currentPosition != startPosition) {
-                contextBefore = plainText(Range::create(*frame.document(), currentPosition, startPosition).get());
+                contextBefore = plainTextReplacingNoBreakSpace(Range::create(*frame.document(), currentPosition, startPosition).get());
                 if (atBoundaryOfGranularity(currentPosition, ParagraphGranularity, DirectionBackward))
                     contextBefore = ASCIILiteral("\n ") + contextBefore;
             }
@@ -1598,7 +1598,7 @@ static void computeAutocorrectionContext(Frame& frame, String& contextBefore, St
             if (!atBoundaryOfGranularity(endPosition, WordGranularity, DirectionForward) && withinTextUnitOfGranularity(endPosition, WordGranularity, DirectionForward))
                 nextPosition = positionOfNextBoundaryOfGranularity(endPosition, WordGranularity, DirectionForward);
             if (nextPosition.isNotNull())
-                contextAfter = plainText(Range::create(*frame.document(), endPosition, nextPosition).get());
+                contextAfter = plainTextReplacingNoBreakSpace(Range::create(*frame.document(), endPosition, nextPosition).get());
         }
     }
 }
