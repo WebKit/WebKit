@@ -1,5 +1,23 @@
 2014-06-01  Ryosuke Niwa  <rniwa@webkit.org>
 
+        DYEBench: Split stylesheets and scripts in Full.html into separate files
+        https://bugs.webkit.org/show_bug.cgi?id=133437
+
+        Reviewed by Benjamin Poulain.
+
+        Extracted main.js and main.css.
+
+        Also fixed a bug in startBenchmark that disabled suites were counted towards the total number of tests.
+
+        * DoYouEvenBench/Full.html:
+        * DoYouEvenBench/resources/main.css: Added.
+        * DoYouEvenBench/resources/main.js: Added.
+        (.addResult):
+        (window.benchmarkClient):
+        (startBenchmark): Renamed from startTest.
+
+2014-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
         DYEBench: CSS parser warning at line 106 of base.css
         https://bugs.webkit.org/show_bug.cgi?id=133433
 

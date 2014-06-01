@@ -1,0 +1,7 @@
+caption { margin: 0; padding: 0; font-family: sans-serif; font-size: 1em; font-weight: bold; white-space: nowrap; }
+#progressContainer { padding: 605px 0 10px 0; width: 800px; }
+#progressContainer div { background-color: #ccc; width: 0; height: 5px; overflow: hidden; }
+table { font-family: sans-serif; }
+table, td, th { border: solid 1px #ccc; border-collapse: collapse; padding: 5px; }
+th { text-align: right; }
+td { text-align: left; }
