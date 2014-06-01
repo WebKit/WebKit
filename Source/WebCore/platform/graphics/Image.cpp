@@ -153,7 +153,6 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
     }
 #endif
 
-
     // Patterned images and gradients can use lots of memory for caching when the
     // tile size is large (<rdar://problem/4691859>, <rdar://problem/6239505>).
     // Memory consumption depends on the transformed tile size which can get
@@ -165,21 +164,27 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
 #endif
     FloatRect transformedTileSize = ctxt->getCTM().mapRect(FloatRect(FloatPoint(), scaledTileSize));
     float transformedTileSizePixels = transformedTileSize.width() * transformedTileSize.height();
+    FloatRect currentTileRect = oneTileRect;
     if (transformedTileSizePixels > maxPatternTilePixels) {
-        float fromY = (destRect.y() - oneTileRect.y()) / scale.height();
-        float toY = oneTileRect.y();
+        GraphicsContextStateSaver stateSaver(*ctxt);
+        ctxt->clip(destRect);
+
+        currentTileRect.shiftYEdgeTo(destRect.y());
+        float toY = currentTileRect.y();
         while (toY < destRect.maxY()) {
-            float fromX = (destRect.x() - oneTileRect.x()) / scale.width();
-            float toX = oneTileRect.x();
+            currentTileRect.shiftXEdgeTo(destRect.x());
+            float toX = currentTileRect.x();
             while (toX < destRect.maxX()) {
-                FloatRect toRect(toX, toY, oneTileRect.width(), oneTileRect.height());
-                FloatRect fromRect(fromX, fromY, oneTileRect.width() / scale.width(), oneTileRect.height() / scale.height());
+                FloatRect toRect(toX, toY, currentTileRect.width(), currentTileRect.height());
+                FloatRect fromRect(toFloatPoint(currentTileRect.location() - oneTileRect.location()), currentTileRect.size());
+                fromRect.scale(1 / scale.width(), 1 / scale.height());
+
                 draw(ctxt, toRect, fromRect, styleColorSpace, op, BlendModeNormal, ImageOrientationDescription());
-                toX += oneTileRect.width();
-                fromX = 0;
+                toX += currentTileRect.width();
+                currentTileRect.shiftXEdgeTo(oneTileRect.x());
             }
-            toY += oneTileRect.height();
-            fromY = 0;
+            toY += currentTileRect.height();
+            currentTileRect.shiftYEdgeTo(oneTileRect.y());
         }
         return;
     }

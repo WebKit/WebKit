@@ -1,3 +1,26 @@
+2014-05-31  Timothy Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r169412): Garbage pixels when vertical rubber-banding on http://yvoschaap.com/pmarca/
+        https://bugs.webkit.org/show_bug.cgi?id=133418
+        <rdar://problem/17065494>
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+        * platform/graphics/FloatPoint.h:
+        (WebCore::toFloatPoint):
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        The manual tiling code previously adjusted the initial
+        tiling source rect so that if the pattern was out of phase,
+        the first row and column would paint only the necessary part
+        of the tile. However, it did not also adjust the destination rect,
+        so the tile was painted in entirely the wrong place.
+        Additional testing (by enabling manual tiling mode for all patterned
+        images and running all of the layout tests) exposed another bug
+        where the last row and column would paint too much, which
+        was resolved by clipping to the outer image's destination rect.
+
 2014-05-31  Benjamin Poulain  <benjamin@webkit.org>
 
         CSS JIT cleanup: move two utility functions out of the properties-matcher section

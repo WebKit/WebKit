@@ -235,6 +235,11 @@ inline FloatSize toFloatSize(const FloatPoint& a)
     return FloatSize(a.x(), a.y());
 }
 
+inline FloatPoint toFloatPoint(const FloatSize& a)
+{
+    return FloatPoint(a.width(), a.height());
+}
+
 }
 
 #endif
