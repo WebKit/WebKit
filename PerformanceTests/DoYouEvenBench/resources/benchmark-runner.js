@@ -71,6 +71,7 @@ BenchmarkRunner.prototype._appendFrame = function (src) {
     frame.style.height = '600px';
     frame.style.border = '0px none';
     frame.style.position = 'absolute';
+    frame.setAttribute('scrolling', 'no');
 
     var marginLeft = parseInt(getComputedStyle(document.body).marginLeft);
     var marginTop = parseInt(getComputedStyle(document.body).marginTop);

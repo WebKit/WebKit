@@ -1,3 +1,16 @@
+2014-05-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DYEBench: Prevent frame flattening on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=133428
+
+        Reviewed by Andreas Kling.
+
+        Prevent frame flattening on iOS by setting scrolling=no.
+
+        * DoYouEvenBench/Full.html:
+        * DoYouEvenBench/resources/benchmark-runner.js:
+        (BenchmarkRunner.prototype._appendFrame):
+
 2014-05-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         DYEBench spits out 404 errors for learn.json
