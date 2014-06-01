@@ -83,6 +83,7 @@ PlatformWebView::~PlatformWebView()
 
 void PlatformWebView::resizeTo(unsigned width, unsigned height)
 {
+    // FIXME: Don't we need to resize the window too?
     evas_object_resize(m_view, width, height);
 }
 
@@ -113,6 +114,7 @@ WKRect PlatformWebView::windowFrame()
 void PlatformWebView::setWindowFrame(WKRect frame)
 {
     ecore_evas_move_resize(m_window, frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
+    evas_object_resize(m_view, frame.size.width, frame.size.height);
 }
 
 void PlatformWebView::addChromeInputField()

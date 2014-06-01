@@ -3,25 +3,56 @@ if (window.testRunner) {
     testRunner.dumpAsText();
 }
 
-function resizeTest(sizes, testfn) {
-    if (!sizes.length) {
+function resizeTest(sizes, testFunction)
+{
+    var widthDelta;
+    var heightDelta;
+
+    function performNextResize()
+    {
+        if (sizes.length) {
+            resizeTo(sizes[0][0] + widthDelta, sizes[0][1] + heightDelta);
+            return;
+        }
+        removeEventListener("resize", resizeHandler);
         if (window.testRunner)
             testRunner.notifyDone();
-        return;
+    };
+
+    function resizeHandler()
+    {
+        var nextSize = sizes.shift();
+
+        shouldEvaluateTo("innerWidth", nextSize[0]);
+        shouldEvaluateTo("innerHeight", nextSize[1]);
+
+        testFunction();
+
+        performNextResize();
+    };
+
+    const warmupWidth = outerWidth + 13;
+
+    function warmupDone()
+    {
+        if (outerWidth != warmupWidth)
+            return;
+        widthDelta = outerWidth - innerWidth;
+        heightDelta = outerHeight - innerHeight;
+        removeEventListener("resize", warmupDone);
+        setTimeout(function () {
+            addEventListener("resize", resizeHandler);
+            performNextResize();
+        }, 0);
     }
 
-    var size = sizes.shift();
-    var width = size[0];
-    var height = size[1];
-    window.resizeTo(width, height);
-    window.setTimeout(function () {
-        shouldBe("window.outerWidth", "" + width);
-        shouldBe("window.outerHeight", "" + height);
-        testfn(size);
-        resizeTest(sizes, testfn);
+    addEventListener("resize", warmupDone);
+    setTimeout(function () {
+        resizeTo(warmupWidth, outerHeight);
     }, 0);
 }
 
-function standardResizeTest(testfn) {
-    resizeTest([[800, 600], [900, 600], [900, 640], [500, 640], [800, 600]], testfn);
+function standardResizeTest(testFunction)
+{
+    resizeTest([[800, 600], [900, 600], [900, 640], [500, 640], [800, 600]], testFunction);
 }

@@ -1452,6 +1452,8 @@ static void changeWindowScaleIfNeeded(const char* testPathOrUR)
 
 static void sizeWebViewForCurrentTest()
 {
+    [uiDelegate resetWindowOrigin];
+
     // W3C SVG tests expect to be 480x360
     bool isSVGW3CTest = (gTestRunner->testPathOrURL().find("svg/W3C-SVG-1.1") != string::npos);
     if (isSVGW3CTest)

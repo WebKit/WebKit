@@ -433,9 +433,6 @@ void FrameView::setFrameRect(const IntRect& newRect)
         if (renderView->usesCompositing())
             renderView->compositor().frameViewDidChangeSize();
     }
-
-    if (!frameFlatteningEnabled())
-        sendResizeEventIfNeeded();
 }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
@@ -2819,20 +2816,26 @@ IntSize FrameView::sizeForResizeEvent() const
 
 void FrameView::sendResizeEventIfNeeded()
 {
+    if (isInLayout() || needsLayout())
+        return;
+
     RenderView* renderView = this->renderView();
     if (!renderView || renderView->printing())
         return;
+
     if (frame().page() && frame().page()->chrome().client().isSVGImageChromeClient())
         return;
 
     IntSize currentSize = sizeForResizeEvent();
     float currentZoomFactor = renderView->style().zoom();
-    bool shouldSendResizeEvent = !m_firstLayout && (currentSize != m_lastViewportSize || currentZoomFactor != m_lastZoomFactor);
+
+    if (currentSize == m_lastViewportSize && currentZoomFactor == m_lastZoomFactor)
+        return;
 
     m_lastViewportSize = currentSize;
     m_lastZoomFactor = currentZoomFactor;
 
-    if (!shouldSendResizeEvent)
+    if (m_firstLayout)
         return;
 
 #if PLATFORM(IOS)
@@ -2846,20 +2849,24 @@ void FrameView::sendResizeEventIfNeeded()
 #endif
 
     bool isMainFrame = frame().isMainFrame();
-    bool canSendResizeEventSynchronously = !m_shouldAutoSize && isMainFrame && !isInLayout();
+    bool canSendResizeEventSynchronously = isMainFrame && !m_shouldAutoSize;
 
-    // If we resized during layout, queue up a resize event for later, otherwise fire it right away.
     RefPtr<Event> resizeEvent = Event::create(eventNames().resizeEvent, false, false);
     if (canSendResizeEventSynchronously)
-        frame().document()->dispatchWindowEvent(resizeEvent.release(), frame().document()->domWindow());
-    else
+        frame().document()->dispatchWindowEvent(resizeEvent.release());
+    else {
+        // FIXME: Queueing this event for an unpredictable time in the future seems
+        // intrinsically racy. By the time this resize event fires, the frame might
+        // be resized again, so we could end up with two resize events for the same size.
         frame().document()->enqueueWindowEvent(resizeEvent.release());
+    }
 
 #if ENABLE(INSPECTOR)
-    Page* page = frame().page();
     if (InspectorInstrumentation::hasFrontends() && isMainFrame) {
-        if (InspectorClient* inspectorClient = page ? page->inspectorController().inspectorClient() : nullptr)
-            inspectorClient->didResizeMainFrame(&frame());
+        if (Page* page = frame().page()) {
+            if (InspectorClient* inspectorClient = page->inspectorController().inspectorClient())
+                inspectorClient->didResizeMainFrame(&frame());
+        }
     }
 #endif
 }

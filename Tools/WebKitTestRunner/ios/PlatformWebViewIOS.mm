@@ -133,11 +133,10 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
 
 void PlatformWebView::resizeTo(unsigned width, unsigned height)
 {
-    CGRect windowFrame = [m_window frame];
-    windowFrame.size.width = width;
-    windowFrame.size.height = height;
-    [m_window setFrame:windowFrame];
-    [m_view setFrame:CGRectMake(0, 0, width, height)];
+    WKRect frame = windowFrame();
+    frame.size.width = width;
+    frame.size.height = height;
+    setWindowFrame(frame);
 }
 
 PlatformWebView::~PlatformWebView()
@@ -174,6 +173,7 @@ WKRect PlatformWebView::windowFrame()
 void PlatformWebView::setWindowFrame(WKRect frame)
 {
     [m_window setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)];
+    [m_view setFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
 }
 
 void PlatformWebView::didInitializeClients()

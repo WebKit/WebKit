@@ -12,15 +12,25 @@
     dimensions increase by 10x10.</p>
 </div>
 <script>
-    if (window.testRunner)
+    if (window.testRunner) {
         testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
     var referenceNode = document.getElementById('reference');
     console.log('Initial reference node dimensions ' +
         referenceNode.offsetWidth + ' x ' + referenceNode.offsetHeight);
     console.log('Increasing window size by 10 x 10');
-    window.resizeBy(10, 10);
-    console.log('Post-resize reference node dimensions ' +
-        referenceNode.offsetWidth + ' x ' + referenceNode.offsetHeight);
+    addEventListener('resize', finishTest);
+    var widthBefore = innerWidth;
+    resizeBy(10, 10);
+    function finishTest() {
+        if (innerWidth != widthBefore + 10)
+            return;
+        console.log('Post-resize reference node dimensions ' +
+            referenceNode.offsetWidth + ' x ' + referenceNode.offsetHeight);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
 </script>
 
 </body>

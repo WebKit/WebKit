@@ -52,14 +52,22 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 @implementation UIDelegate
 
+- (void)resetWindowOrigin
+{
+    windowOrigin = NSZeroPoint;
+}
+
 - (void)webView:(WebView *)sender setFrame:(NSRect)frame
 {
-    m_frame = frame;
+    // FIXME: Do we need to resize an NSWindow too?
+    windowOrigin = frame.origin;
+    [sender setFrameSize:frame.size];
 }
 
 - (NSRect)webViewFrame:(WebView *)sender
 {
-    return m_frame;
+    NSSize size = [sender frame].size;
+    return NSMakeRect(windowOrigin.x, windowOrigin.y, size.width, size.height);
 }
 
 - (void)webView:(WebView *)sender addMessageToConsole:(NSDictionary *)dictionary withSource:(NSString *)source

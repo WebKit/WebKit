@@ -1,3 +1,62 @@
+2014-05-31  Darin Adler  <darin@apple.com>
+
+        Viewport percentage tests that resize the viewport are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=133351
+
+        Reviewed by Anders Carlsson.
+
+        * css3/viewport-percentage-lengths/resources/resize-test.js:
+        Added code to compensate for the difference between innerWidth/Height and outerWidth/Height
+        so this works well in a browser window. Added code to "warm up" so the first resize triggers
+        a resize event. Tweaked style of the code a bit. Use resize events to avoid flakiness due
+        to race conditions. One thing I did not fix is the "out of order" problem where all the
+        test results get written out after the words TEST COMPLETE.
+
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block-expected.txt:
+        Updated due to changes to the underlying test machinery, and also to show actual expected success.
+        The old results said PASS with various obviously wrong results.
+
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html:
+        Changed this test to use the shared resize-test.js.
+
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child-expected.txt:
+        Updated due to changes to the underlying test machinery, and also to show actual expected success.
+        The old results said PASS with various obviously wrong results.
+
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html:
+        Streamlined this test a little.
+
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size-expected.txt:
+        Updated due to changes to the underlying test machinery, and also to show actual expected success.
+        The old results said PASS with various obviously wrong results.
+
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html:
+        Streamlined this test a little.
+
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-resize-expected.txt:
+        Updated due to changes to the underlying test machinery, and also to show both expected success,
+        and some expected failures. These failures were going unnoticed before since the test didn't
+        successfully do any resizing of the web view.
+
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html:
+        Streamlined this test a little.
+
+        * fast/dom/Window/window-resize-contents-expected.txt: Updated to reflect the test actually
+        resizing. The old test results expected no resizing to occur.
+        * fast/dom/Window/window-resize-contents.html: Updated to use a resize event handler so the
+        test can successfully test asynchronous resizes like the ones done by WebKit2.
+
+        * fast/dom/rtl-scroll-to-leftmost-and-resize.html: Updated to use a resize event handler so
+        this can test asynchronous resizes. Also fixed code that was treating the arguments to resizeTo
+        as if they were inner coordinates rather than outer. However, the bug this tests for has not
+        been fixed, so need to expect failures.
+
+        * platform/mac/TestExpectations: Added a failure expection for the test above.
+
+        * platform/mac/fast/dynamic/window-resize-scrollbars-test-expected.png: Updated to expect a result
+        that successfully resized.
+        * platform/mac/fast/dynamic/window-resize-scrollbars-test-expected.txt: Ditto.
+
 2014-05-30  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Don't use logAccessibilityEvents() in aria-slider-required-attributes.html

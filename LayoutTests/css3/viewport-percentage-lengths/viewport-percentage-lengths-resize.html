@@ -18,13 +18,13 @@
 <script src="resources/resize-test.js"></script>
 <script>
 description("Test that viewport lengths and font sizes properly resize with the viewport.");
-standardResizeTest(function (size) {
-        var min = Math.min(window.innerWidth, window.innerHeight);
-        var max = Math.max(window.innerWidth, window.innerHeight);
-        shouldBe("getComputedStyle(test).fontSize", "'" + window.innerHeight/20 + "px'");
-        shouldBe("getComputedStyle(test).width", "'" + window.innerWidth/2 + "px'");
-        shouldBe("getComputedStyle(testpseudo, ':after').marginLeft", "'" + min/5 + "px'");
-        shouldBe("getComputedStyle(testpseudo, ':after').paddingRight", "'" + max/4 + "px'");
+standardResizeTest(function () {
+    var min = Math.min(innerWidth, innerHeight);
+    var max = Math.max(innerWidth, innerHeight);
+    shouldBeEqualToString("getComputedStyle(test).fontSize", innerHeight / 20 + "px");
+    shouldBeEqualToString("getComputedStyle(test).width", innerWidth / 2 + "px");
+    shouldBeEqualToString("getComputedStyle(testpseudo, ':after').marginLeft", min / 5 + "px");
+    shouldBeEqualToString("getComputedStyle(testpseudo, ':after').paddingRight", max / 4 + "px");
 });
 </script>
 <script src="../../resources/js-test-post.js"></script>

@@ -33,13 +33,13 @@
 #endif
 
 @interface UIDelegate : NSObject {
-
 @private
-    NSRect m_frame;
+    NSPoint windowOrigin;
     NSMutableSet *m_pendingGeolocationPermissionListeners;
     NSTimer *m_timer;
 }
 
+- (void)resetWindowOrigin;
 - (void)didSetMockGeolocationPermission;
 - (int)numberOfPendingGeolocationPermissionRequests;
 

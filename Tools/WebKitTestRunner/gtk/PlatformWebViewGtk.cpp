@@ -58,6 +58,8 @@ PlatformWebView::~PlatformWebView()
 
 void PlatformWebView::resizeTo(unsigned width, unsigned height)
 {
+    // FIXME: Don't we need to resize the window too?
+
     GtkAllocation size = { 0, 0, static_cast<int>(width), static_cast<int>(height) };
     gtk_widget_size_allocate(m_window, &size);
     gtk_window_resize(GTK_WINDOW(m_window), width, height);

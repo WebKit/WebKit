@@ -1,3 +1,40 @@
+2014-05-31  Darin Adler  <darin@apple.com>
+
+        Viewport percentage tests that resize the viewport are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=133351
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (sizeWebViewForCurrentTest): Added a call to reset the window origin, which
+        happens to be stored in the UI delegate object. This is part of resetting the
+        window position.
+
+        * DumpRenderTree/mac/UIDelegate.h: Store the window origin rather than storing
+        a frame rectangle. The size is stored in the size of the web view itself.
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate resetWindowOrigin]): Added.
+        (-[UIDelegate webView:setFrame:]): Changed to set the size of the web view. The
+        old version would store the frame, but not resize the web view!
+        (-[UIDelegate webViewFrame:]): Get the size from the web view.
+
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::setWindowFrame): Added code to resize the web view.
+
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::resizeTo): Added a comment about missing code to resize
+        the window.
+
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::resizeTo): Changed this to call setWindowFrame so the
+        window gets resized too, not just the web view.
+        (WTR::PlatformWebView::setWindowFrame): Added code to set the size of the web view.
+
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::resizeTo): Changed this to call setWindowFrame so the
+        window gets resized too, not just the web view.
+        (WTR::PlatformWebView::setWindowFrame): Added code to set the size of the web view.
+
 2014-05-30  Michael Saboff  <msaboff@apple.com>
 
         Change run-jsc-stress-tests to not resolve jsc path locally when creating a bundle
