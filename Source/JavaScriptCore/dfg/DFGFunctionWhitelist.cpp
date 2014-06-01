@@ -30,19 +30,20 @@
 #include "Options.h"
 #include <stdio.h>
 #include <string.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC { namespace DFG {
 
-static FunctionWhitelist* functionWhitelist;
-
 FunctionWhitelist& FunctionWhitelist::ensureGlobalWhitelist()
 {
+    static LazyNeverDestroyed<FunctionWhitelist> functionWhitelist;
     static std::once_flag initializeWhitelistFlag;
     std::call_once(initializeWhitelistFlag, [] {
-        functionWhitelist = new FunctionWhitelist(Options::dfgFunctionWhitelistFile());
+        const char* functionWhitelistFile = Options::dfgFunctionWhitelistFile();
+        functionWhitelist.construct(functionWhitelistFile);
     });
-    return *functionWhitelist;
+    return functionWhitelist;
 }
 
 FunctionWhitelist::FunctionWhitelist(const char* filename)

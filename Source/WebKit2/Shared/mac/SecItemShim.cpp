@@ -39,19 +39,20 @@
 #include <atomic>
 #include <dlfcn.h>
 #include <mutex>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
 static BlockingResponseMap<SecItemResponseData>& responseMap()
 {
     static std::once_flag onceFlag;
-    static BlockingResponseMap<SecItemResponseData>* responseMap;
+    static LazyNeverDestroyed<BlockingResponseMap<SecItemResponseData>> responseMap;
 
     std::call_once(onceFlag, []{
-        responseMap = std::make_unique<BlockingResponseMap<SecItemResponseData>>().release();
+        responseMap.construct();
     });
 
-    return *responseMap;
+    return responseMap;
 }
 
 static ChildProcess* sharedProcess;

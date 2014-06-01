@@ -1,3 +1,27 @@
+2014-05-31  Anders Carlsson  <andersca@apple.com>
+
+        Add a LazyNeverDestroyed class template and use it
+        https://bugs.webkit.org/show_bug.cgi?id=133425
+
+        Reviewed by Darin Adler.
+
+        * Modules/webdatabase/DatabaseBackendBase.cpp:
+        (WebCore::guidMutex):
+        * crypto/CryptoAlgorithmRegistry.cpp:
+        (WebCore::registryMutex):
+        * inspector/WorkerDebuggerAgent.cpp:
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::isOnAccessControlResponseHeaderWhitelist):
+        * platform/network/NetworkStateNotifier.cpp:
+        (WebCore::networkStateNotifier):
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::DefaultSharedWorkerRepository::instance):
+        * workers/DefaultSharedWorkerRepository.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::threadSetMutex):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::staticData):
+
 2014-06-01  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Selection gap produces a pixel line overlap on inline boxes.

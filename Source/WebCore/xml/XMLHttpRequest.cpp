@@ -56,6 +56,7 @@
 #include <runtime/ArrayBufferView.h>
 #include <runtime/JSCInlines.h>
 #include <runtime/JSLock.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
@@ -118,13 +119,13 @@ XMLHttpRequestStaticData::XMLHttpRequestStaticData()
 static const XMLHttpRequestStaticData& staticData()
 {
     static std::once_flag onceFlag;
-    static const XMLHttpRequestStaticData* staticData;
+    static LazyNeverDestroyed<XMLHttpRequestStaticData> staticData;
 
     std::call_once(onceFlag, [] {
-        staticData = std::make_unique<XMLHttpRequestStaticData>().release();
+        staticData.construct();
     });
 
-    return *staticData;
+    return staticData;
 }
 
 static bool isSetCookieHeader(const AtomicString& name)

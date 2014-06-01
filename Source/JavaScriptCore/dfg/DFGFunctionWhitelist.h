@@ -38,11 +38,11 @@ namespace DFG {
 class FunctionWhitelist {
 public:
     static FunctionWhitelist& ensureGlobalWhitelist();
+    explicit FunctionWhitelist(const char*);
 
     bool contains(CodeBlock*) const;
 
 private:
-    FunctionWhitelist(const char*);
     void parseFunctionNamesInFile(const char*);
 
     HashSet<String> m_entries;

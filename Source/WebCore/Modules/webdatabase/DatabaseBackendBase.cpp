@@ -141,13 +141,13 @@ static bool setTextValueInDatabase(SQLiteDatabase& db, const String& query, cons
 static std::mutex& guidMutex()
 {
     static std::once_flag onceFlag;
-    static std::mutex* mutex;
+    static LazyNeverDestroyed<std::mutex> mutex;
 
     std::call_once(onceFlag, []{
-        mutex = std::make_unique<std::mutex>().release();
+        mutex.construct();
     });
 
-    return *mutex;
+    return mutex;
 }
 
 typedef HashMap<DatabaseGuid, String> GuidVersionMap;

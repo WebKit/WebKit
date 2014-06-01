@@ -58,6 +58,7 @@
 #include <inspector/ScriptCallStack.h>
 #include <mutex>
 #include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
 
@@ -331,12 +332,12 @@ void SharedWorkerScriptLoader::notifyFinished()
 DefaultSharedWorkerRepository& DefaultSharedWorkerRepository::instance()
 {
     static std::once_flag onceFlag;
-    static DefaultSharedWorkerRepository* instance;
+    static LazyNeverDestroyed<DefaultSharedWorkerRepository> instance;
     std::call_once(onceFlag, []{
-        instance = new DefaultSharedWorkerRepository;
+        instance.construct();
     });
 
-    return *instance;
+    return instance;
 }
 
 bool DefaultSharedWorkerRepository::isAvailable()

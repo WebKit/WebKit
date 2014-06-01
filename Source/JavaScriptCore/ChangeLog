@@ -1,3 +1,14 @@
+2014-05-31  Anders Carlsson  <andersca@apple.com>
+
+        Add a LazyNeverDestroyed class template and use it
+        https://bugs.webkit.org/show_bug.cgi?id=133425
+
+        Reviewed by Darin Adler.
+
+        * dfg/DFGFunctionWhitelist.cpp:
+        (JSC::DFG::FunctionWhitelist::ensureGlobalWhitelist):
+        * dfg/DFGFunctionWhitelist.h:
+
 2014-05-28  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::DCEPhase inserts into an insertion set in reverse, causing hilarious basic block corruption if you kill a lot of NewArrays

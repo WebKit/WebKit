@@ -32,6 +32,7 @@
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
 #include <mutex>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -78,20 +79,20 @@ bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&
 bool isOnAccessControlResponseHeaderWhitelist(const String& name)
 {
     static std::once_flag onceFlag;
-    static HTTPHeaderSet* allowedCrossOriginResponseHeaders;
+    static LazyNeverDestroyed<HTTPHeaderSet> allowedCrossOriginResponseHeaders;
 
     std::call_once(onceFlag, []{
-        allowedCrossOriginResponseHeaders = std::make_unique<HTTPHeaderSet, std::initializer_list<String>>({
+        allowedCrossOriginResponseHeaders.construct<std::initializer_list<String>>({
             "cache-control",
             "content-language",
             "content-type",
             "expires",
             "last-modified",
             "pragma"
-        }).release();
+        });
     });
 
-    return allowedCrossOriginResponseHeaders->contains(name);
+    return allowedCrossOriginResponseHeaders.get().contains(name);
 }
 
 void updateRequestForAccessControl(ResourceRequest& request, SecurityOrigin* securityOrigin, StoredCredentials allowCredentials)

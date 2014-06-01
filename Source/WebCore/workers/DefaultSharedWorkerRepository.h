@@ -57,6 +57,7 @@ namespace WebCore {
     // Platform-specific implementation of the SharedWorkerRepository static interface.
     class DefaultSharedWorkerRepository {
         WTF_MAKE_NONCOPYABLE(DefaultSharedWorkerRepository); WTF_MAKE_FAST_ALLOCATED;
+
     public:
         // Returns true if the platform supports SharedWorkers, otherwise false.
         static bool isAvailable();
@@ -76,8 +77,9 @@ namespace WebCore {
         bool hasSharedWorkers(Document*);
 
         static DefaultSharedWorkerRepository& instance();
-    private:
         DefaultSharedWorkerRepository();
+
+    private:
         ~DefaultSharedWorkerRepository();
 
         PassRefPtr<SharedWorkerProxy> getProxy(const String& name, const URL&);

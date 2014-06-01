@@ -27,6 +27,7 @@
 
 #include "Functional.h"
 #include "MainThread.h"
+#include "NeverDestroyed.h"
 #include "StdLibExtras.h"
 #include <mutex>
 
@@ -47,12 +48,12 @@ void callOnMainThread(const Function<void ()>& function)
 static std::mutex& atomicallyInitializedStaticMutex()
 {
     static std::once_flag onceFlag;
-    static std::mutex* mutex;
+    static LazyNeverDestroyed<std::mutex> mutex;
     std::call_once(onceFlag, []{
-        mutex = std::make_unique<std::mutex>().release();
+        mutex.construct();
     });
 
-    return *mutex;
+    return mutex;
 }
 
 void lockAtomicallyInitializedStaticMutex()

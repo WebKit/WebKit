@@ -1,3 +1,25 @@
+2014-05-31  Anders Carlsson  <andersca@apple.com>
+
+        Add a LazyNeverDestroyed class template and use it
+        https://bugs.webkit.org/show_bug.cgi?id=133425
+
+        Reviewed by Darin Adler.
+
+        LazyNeverDestroyed is similar to NeverDestroyed, except it's lazily constructed
+        by calling construct(). This makes it useful for using inside std::call_once functions.
+        
+        * wtf/Forward.h:
+        * wtf/NeverDestroyed.h:
+        (WTF::LazyNeverDestroyed::construct):
+        (WTF::LazyNeverDestroyed::operator T&):
+        (WTF::LazyNeverDestroyed::get):
+        (WTF::LazyNeverDestroyed::asPtr):
+        (WTF::LazyNeverDestroyed::MaybeRelax::MaybeRelax):
+        * wtf/mac/DeprecatedSymbolsUsedBySafari.mm:
+        (WTF::atomicallyInitializedStaticMutex):
+        * wtf/unicode/icu/CollatorICU.cpp:
+        (WTF::cachedCollatorMutex):
+
 2014-05-29  Alex Christensen  <achristensen@webkit.org>
 
         Enable css jit by default on arm64.

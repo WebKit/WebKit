@@ -1,3 +1,13 @@
+2014-05-31  Anders Carlsson  <andersca@apple.com>
+
+        Add a LazyNeverDestroyed class template and use it
+        https://bugs.webkit.org/show_bug.cgi?id=133425
+
+        Reviewed by Darin Adler.
+
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::responseMap):
+
 2014-05-31  Timothy Horton  <timothy_horton@apple.com>
 
         View snapshots are sometimes taken at the wrong scale

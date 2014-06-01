@@ -32,20 +32,20 @@
 
 #include <mutex>
 #include <wtf/Assertions.h>
-#include <wtf/StdLibExtras.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
 NetworkStateNotifier& networkStateNotifier()
 {
     static std::once_flag onceFlag;
-    static NetworkStateNotifier* networkStateNotifier;
+    static LazyNeverDestroyed<NetworkStateNotifier> networkStateNotifier;
 
     std::call_once(onceFlag, []{
-        networkStateNotifier = std::make_unique<NetworkStateNotifier>().release();
+        networkStateNotifier.construct();
     });
 
-    return *networkStateNotifier;
+    return networkStateNotifier;
 }
 
 void NetworkStateNotifier::addNetworkStateChangeListener(std::function<void (bool)> listener)
