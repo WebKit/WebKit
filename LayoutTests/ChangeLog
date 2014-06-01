@@ -1,5 +1,13 @@
 2014-05-31  Darin Adler  <darin@apple.com>
 
+        One more missed piece of that last check-in.
+
+        * TestExpectations: Removed the flakiness expectation from the
+        css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html
+        test since that now works reliably.
+
+2014-05-31  Darin Adler  <darin@apple.com>
+
         Try to fix another failure from the previous check-in seen on some bots.
 
         * platform/mac-wk2/TestExpectations: Removed a couple obsolete lines.
