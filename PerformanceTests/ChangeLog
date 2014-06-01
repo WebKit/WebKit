@@ -1,3 +1,31 @@
+2014-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DYEBench: CSS parser warning at line 106 of base.css
+        https://bugs.webkit.org/show_bug.cgi?id=133433
+
+        Reviewed by Maciej Stachowiak.
+
+        Removed the old filter CSS property for Internet Explorer. The latest Internet Explorer supports -ms-linear-gradient
+        on background CSS property anyways.
+
+        It's interesting that some of the tests only have -webkit- prefixes. Perhaps we should update those subtests.
+
+        * DoYouEvenBench/Full.html:
+        * DoYouEvenBench/resources/todomvc/architecture-examples/angularjs/bower_components/todomvc-common/base.css:
+        (#header:before):
+        * DoYouEvenBench/resources/todomvc/architecture-examples/backbone/bower_components/todomvc-common/base.css:
+        (#header:before):
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/bower_components/todomvc-common/base.css:
+        (#header:before):
+        * DoYouEvenBench/resources/todomvc/architecture-examples/jquery/bower_components/todomvc-common/base.css:
+        (#header:before):
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/todomvc-common/base.css:
+        (#header:before):
+        * DoYouEvenBench/resources/todomvc/labs/architecture-examples/react/bower_components/todomvc-common/base.css:
+        (#header:before):
+        * DoYouEvenBench/resources/todomvc/vanilla-examples/vanillajs/bower_components/todomvc-common/base.css:
+        (#header:before):
+
 2014-05-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         DYEBench: Ember.js assertion hit at line 20593
