@@ -1,3 +1,16 @@
+2014-05-31  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS JIT cleanup: move two utility functions out of the properties-matcher section
+        https://bugs.webkit.org/show_bug.cgi?id=133427
+
+        Reviewed by Andreas Kling.
+
+        Just move the code, no other modification.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::jumpIfNoPreviousAdjacentElement):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::jumpIfNoNextAdjacentElement):
+
 2014-05-31  Darin Adler  <darin@apple.com>
 
         Viewport percentage tests that resize the viewport are flaky

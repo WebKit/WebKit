@@ -210,11 +210,9 @@ private:
     void generateElementMatching(Assembler::JumpList& matchingTagNameFailureCases, Assembler::JumpList& matchingPostTagNameFailureCases, const SelectorFragment&);
     void generateElementDataMatching(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementFunctionCallTest(Assembler::JumpList& failureCases, JSC::FunctionPtr);
-    Assembler::JumpList jumpIfNoPreviousAdjacentElement();
     void generateElementIsActive(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsFirstChild(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsHovered(Assembler::JumpList& failureCases, const SelectorFragment&);
-    Assembler::JumpList jumpIfNoNextAdjacentElement();
     void generateElementIsLastChild(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsOnlyChild(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateSynchronizeStyleAttribute(Assembler::RegisterID elementDataArraySizeAndFlags);
@@ -234,6 +232,8 @@ private:
 
     // Helpers.
     void addFlagsToElementStyleFromContext(Assembler::RegisterID checkingContext, int64_t);
+    Assembler::JumpList jumpIfNoPreviousAdjacentElement();
+    Assembler::JumpList jumpIfNoNextAdjacentElement();
     Assembler::Jump jumpIfNotResolvingStyle(Assembler::RegisterID checkingContextRegister);
     void generateSpecialFailureInQuirksModeForActiveAndHoverIfNeeded(Assembler::JumpList& failureCases, const SelectorFragment&);
     Assembler::Jump modulo(JSC::MacroAssembler::ResultCondition, Assembler::RegisterID inputDividend, int divisor);
@@ -1235,6 +1235,24 @@ void SelectorCodeGenerator::addFlagsToElementStyleFromContext(Assembler::Registe
     m_assembler.store64(flags, flagAddress);
 }
 
+Assembler::JumpList SelectorCodeGenerator::jumpIfNoPreviousAdjacentElement()
+{
+    Assembler::JumpList successCase;
+    LocalRegister previousSibling(m_registerAllocator);
+    m_assembler.move(elementAddressRegister, previousSibling);
+    generateWalkToPreviousAdjacentElement(successCase, previousSibling);
+    return successCase;
+}
+
+Assembler::JumpList SelectorCodeGenerator::jumpIfNoNextAdjacentElement()
+{
+    Assembler::JumpList successCase;
+    LocalRegister nextSibling(m_registerAllocator);
+    m_assembler.move(elementAddressRegister, nextSibling);
+    generateWalkToNextAdjacentElement(successCase, nextSibling);
+    return successCase;
+}
+
 Assembler::Jump SelectorCodeGenerator::jumpIfNotResolvingStyle(Assembler::RegisterID checkingContext)
 {
     RELEASE_ASSERT(m_selectorContext == SelectorContext::RuleCollector);
@@ -1996,15 +2014,6 @@ static void setFirstChildState(Element* element)
         style->setFirstChildState();
 }
 
-inline Assembler::JumpList SelectorCodeGenerator::jumpIfNoPreviousAdjacentElement()
-{
-    Assembler::JumpList successCase;
-    LocalRegister previousSibling(m_registerAllocator);
-    m_assembler.move(elementAddressRegister, previousSibling);
-    generateWalkToPreviousAdjacentElement(successCase, previousSibling);
-    return successCase;
-}
-
 static bool elementIsActive(Element* element)
 {
     return element->active() || InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassActive);
@@ -2144,15 +2153,6 @@ void SelectorCodeGenerator::generateElementIsHovered(Assembler::JumpList& failur
             failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
         }
     }
-}
-
-Assembler::JumpList SelectorCodeGenerator::jumpIfNoNextAdjacentElement()
-{
-    Assembler::JumpList successCase;
-    LocalRegister nextSibling(m_registerAllocator);
-    m_assembler.move(elementAddressRegister, nextSibling);
-    generateWalkToNextAdjacentElement(successCase, nextSibling);
-    return successCase;
 }
 
 static void setLastChildState(Element* element)
