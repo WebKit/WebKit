@@ -1,5 +1,25 @@
 2014-06-01  Ryosuke Niwa  <rniwa@webkit.org>
 
+        DYEBench: Move test states into benchmarkClient and remove the closure
+        https://bugs.webkit.org/show_bug.cgi?id=133438
+
+        Reviewed by Benjamin Poulain.
+
+        Moved all local variables in the closure wrapping benchmarkClient onto the object itself
+        and removed the closure to improve the readability of the code.
+
+        * DoYouEvenBench/Full.html:
+        * DoYouEvenBench/resources/main.js:
+        (window.benchmarkClient.willRunTest):
+        (window.benchmarkClient.didRunTest):
+        (window.benchmarkClient.didRunSuites):
+        (window.benchmarkClient.willStartFirstIteration):
+        (window.benchmarkClient.didFinishLastIteration):
+        (window.benchmarkClient._addResult): Moved.
+        (.): Deleted.
+
+2014-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
         DYEBench: Split stylesheets and scripts in Full.html into separate files
         https://bugs.webkit.org/show_bug.cgi?id=133437
 

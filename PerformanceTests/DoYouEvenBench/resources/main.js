@@ -1,56 +1,37 @@
-(function () {
-
-var values = [];
-var resultContainer = null;
-var title;
-var progressContainer;
-var progress;
-var iterationNumber = 0;
-var finishedTestCount = 0;
-
-function addResult(title, value) {
-    if (!resultContainer) {
-        resultContainer = document.createElement('table');
-        var caption = document.createElement('caption');
-        caption.textContent = document.title;
-        resultContainer.appendChild(caption);
-        document.body.appendChild(resultContainer);
-    }
-    if (!title)
-        return;
-    var row = document.createElement('tr');
-    var th = document.createElement('th');
-    th.textContent = title;
-    var td = document.createElement('td');
-    td.textContent = value;
-    row.appendChild(th);
-    row.appendChild(td);
-    resultContainer.appendChild(row);
-}
-
 window.benchmarkClient = {
     iterationCount: 20,
-    willRunTest: function () {
-        if (!progress) {
-            // We don't use the real progress element as some implementations animate it.
-            progressContainer = document.createElement('div');
-            progressContainer.appendChild(document.createElement('div'));
-            progressContainer.id = 'progressContainer';
-            document.body.appendChild(progressContainer);
-            progress = progressContainer.firstChild;
-        }
-        addResult();
-    },
+    _timeValues: [],
+    _finishedTestCount: 0,
+    _iterationNumber: 0,
+    _progress: null,
+    _progressCompleted: null,
+    _resultContainer: null,
+    willRunTest: function () { },
     didRunTest: function () {
-        finishedTestCount++;
-        progress.style.width = (finishedTestCount * 100 / this.testsCount) + '%';
+        this._finishedTestCount++;
+        this._progressCompleted.style.width = (this._finishedTestCount * 100 / this.testsCount) + '%';
     },
     didRunSuites: function (measuredValues) {
-        values.push(measuredValues.total);
-        iterationNumber++;
-        addResult('Iteration ' + iterationNumber, measuredValues.total.toFixed(2) + ' ms');
+        this._timeValues.push(measuredValues.total);
+        this._iterationNumber++;
+        this._addResult('Iteration ' + this._iterationNumber, measuredValues.total.toFixed(2) + ' ms');
+    },
+    willStartFirstIteration: function () {
+        // We don't use the real progress element as some implementations animate it.
+        this._progress = document.createElement('div');
+        this._progress.appendChild(document.createElement('div'));
+        this._progress.id = 'progressContainer';
+        document.body.appendChild(this._progress);
+        this._progressCompleted = this._progress.firstChild;
+
+        this._resultContainer = document.createElement('table');
+        var caption = document.createElement('caption');
+        caption.textContent = document.title;
+        this._resultContainer.appendChild(caption);
+        document.body.appendChild(this._resultContainer);
     },
     didFinishLastIteration: function () {
+        var values = this._timeValues;
         var sum = values.reduce(function (a, b) { return a + b; }, 0);
         var arithmeticMean = sum / values.length;
         var meanLabel = arithmeticMean.toFixed(2) + ' ms';
@@ -59,12 +40,20 @@ window.benchmarkClient = {
             var precentDelta = delta * 100 / arithmeticMean;
             meanLabel += ' \xb1 ' + delta.toFixed(2) + ' ms (' + precentDelta.toFixed(2) + '%)';
         }
-        addResult('Arithmetic Mean', meanLabel);
-        progressContainer.parentNode.removeChild(progressContainer);
+        this._addResult('Arithmetic Mean', meanLabel);
+        this._progress.parentNode.removeChild(this._progress);
+    },
+    _addResult: function (title, value) {
+        var row = document.createElement('tr');
+        var th = document.createElement('th');
+        th.textContent = title;
+        var td = document.createElement('td');
+        td.textContent = value;
+        row.appendChild(th);
+        row.appendChild(td);
+        this._resultContainer.appendChild(row);
     }
 }
-
-})();
 
 function startBenchmark() {
     var enabledSuites = Suites.filter(function (suite) { return !suite.disabled });
