@@ -1,3 +1,16 @@
+2014-05-31  Timothy Horton  <timothy_horton@apple.com>
+
+        View snapshots are sometimes taken at the wrong scale
+        https://bugs.webkit.org/show_bug.cgi?id=133419
+        <rdar://problem/17087497>
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _takeViewSnapshot]):
+        Work around <rdar://problem/17084993> by re-requesting the snapshot at
+        kCGWindowImageNominalResolution if it was captured at the wrong scale.
+
 2014-05-31  Dan Bernstein  <mitz@apple.com>
 
         [iOS] WebKit2.framework is unused
