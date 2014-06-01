@@ -1,5 +1,13 @@
 2014-05-31  Darin Adler  <darin@apple.com>
 
+        Try to fix another failure from the previous check-in seen on some bots.
+
+        * platform/mac-wk2/TestExpectations: Removed a couple obsolete lines.
+        * platform/wk2/TestExpectations: Added expectation for filter-hidden-content.svg, which
+        seems to be affected by the resizing for tests before it.
+
+2014-05-31  Darin Adler  <darin@apple.com>
+
         Fix test failure from the previous check-in.
 
         * fast/dynamic/window-resize-scrollbars-test.html: Add resize handler so this test works
