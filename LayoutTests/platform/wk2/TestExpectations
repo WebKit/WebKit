@@ -440,6 +440,9 @@ http/tests/navigation/timerredirect-subframeload.html
 # Unexpected output from scrolling. Might be EFL port specific issue.
 http/tests/navigation/relativeanchor-frames.html
 
+# Scrollbars appear, even though they should not
+fast/dynamic/window-resize-scrollbars-test.html [ Failure ]
+
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 

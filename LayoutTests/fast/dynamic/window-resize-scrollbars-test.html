@@ -8,6 +8,16 @@
         document.documentElement.style.width = width - 32 + "px";
         document.body.offsetTop;
 
-        resizeTo(outerWidth - 24, outerHeight - 24);
+        var newWidth = outerWidth - 24;
+
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            addEventListener("resize", function() {
+                if (outerWidth == newWidth)
+                    testRunner.notifyDone();
+            });
+        }
+
+        resizeTo(newWidth, outerHeight - 24);
     </script>
 </body>
