@@ -1,3 +1,22 @@
+2014-06-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't scroll to non-integral scroll offsets
+        https://bugs.webkit.org/show_bug.cgi?id=133436
+        <rdar://problem/17088336>
+
+        Reviewed by Darin Adler.
+
+        With the gradual migration of scroll offsets to floating point, we ended
+        up with a fully floating point code path been event scroll deltas and
+        setting scroll positions in the scrolling tree.
+        
+        With some input devices (e.g. Logitech scrollwheel mice), the scroll deltas
+        come in with non-integral values, and that caused the scroll offset to be non-integral,
+        resulting in fuzzy layer contents. So round the scroll position.
+
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollPosition):
+
 2014-05-31  Anders Carlsson  <andersca@apple.com>
 
         Add a LazyNeverDestroyed class template and use it

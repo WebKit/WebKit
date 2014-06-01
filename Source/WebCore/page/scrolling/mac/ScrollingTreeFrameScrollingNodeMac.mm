@@ -320,7 +320,11 @@ FloatPoint ScrollingTreeFrameScrollingNodeMac::scrollPosition() const
 
 void ScrollingTreeFrameScrollingNodeMac::setScrollPosition(const FloatPoint& scrollPosition)
 {
-    ScrollingTreeFrameScrollingNode::setScrollPosition(scrollPosition);
+    // Scroll deltas can be non-integral with some input devices, so scrollPosition may not be integral.
+    // FIXME: when we support half-pixel scroll positions on Retina displays, this will need to round to half pixels.
+    FloatPoint roundedPosition(roundf(scrollPosition.x()), roundf(scrollPosition.y()));
+
+    ScrollingTreeFrameScrollingNode::setScrollPosition(roundedPosition);
 
     if (scrollingTree().scrollingPerformanceLoggingEnabled())
         logExposedUnfilledArea();
