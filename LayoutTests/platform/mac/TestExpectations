@@ -1285,6 +1285,9 @@ webkit.org/b/132515 fast/forms/hidpi-textarea-on-subpixel-position.html [ ImageO
 webkit.org/b/132990 fast/regions/overflow-size-change-with-stacking-context.html [ ImageOnlyFailure ]
 webkit.org/b/132990 fast/regions/overflow-size-change-in-variable-width-regions.html [ ImageOnlyFailure ]
 webkit.org/b/132990 fast/regions/overflow-not-moving-below-floats-in-variable-width-regions.html [ ImageOnlyFailure ]
+# These tests require fractional text widths. Ahem can't provide it -> using LucidaGrandeUI -> fails on ML due to different font size.  
+[ MountainLion ] fast/inline/hidpi-selection-gap-overlaps-inline-selection.html [ ImageOnlyFailure ]
+[ MountainLion ] fast/inline/hidpi-selection-gap-and-inline-selection-have-gap-rtl.html [ ImageOnlyFailure ]
 # End of subpixel failures.
 
 webkit.org/b/35297 media/video-display-aspect-ratio.html [ Pass Failure ]

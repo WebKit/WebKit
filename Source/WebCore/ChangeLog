@@ -1,3 +1,21 @@
+2014-06-01  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Selection gap produces a pixel line overlap on inline boxes.
+        https://bugs.webkit.org/show_bug.cgi?id=133429
+
+        Reviewed by Simon Fraser.
+
+        Do not floor logical right/left values when selection gap is calculated for RenderBlocks.
+        It produces overlapping line/gap because the floored value is intersecting/too far from the
+        non-floored content selection rect.
+
+        Tests: fast/inline/hidpi-selection-gap-and-inline-selection-have-gap-rtl.html
+               fast/inline/hidpi-selection-gap-overlaps-inline-selection.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::logicalLeftSelectionGap):
+        (WebCore::RenderBlock::logicalRightSelectionGap):
+
 2014-05-31  Timothy Horton  <timothy_horton@apple.com>
 
         REGRESSION (r169412): Garbage pixels when vertical rubber-banding on http://yvoschaap.com/pmarca/
