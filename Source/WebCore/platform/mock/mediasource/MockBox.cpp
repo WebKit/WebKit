@@ -112,7 +112,7 @@ const String& MockInitializationBox::type()
 MockSampleBox::MockSampleBox(ArrayBuffer* data)
     : MockBox(data)
 {
-    ASSERT(m_length == 29);
+    ASSERT(m_length == 30);
 
     RefPtr<JSC::DataView> view = JSC::DataView::create(data, 0, data->byteLength());
     int32_t timeScale = view->get<int32_t>(8, true);
@@ -128,6 +128,7 @@ MockSampleBox::MockSampleBox(ArrayBuffer* data)
 
     m_trackID = view->get<int32_t>(24, true);
     m_flags = view->get<uint8_t>(28, true);
+    m_generation = view->get<uint8_t>(29, true);
 }
 
 const String& MockSampleBox::type()

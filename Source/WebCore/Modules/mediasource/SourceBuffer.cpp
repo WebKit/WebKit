@@ -731,6 +731,9 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
             ASSERT(textTrack);
             toInbandTextTrack(textTrack)->setPrivate(textTrackInfo.track);
         }
+
+        for (auto& trackBuffer : m_trackBufferMap.values())
+            trackBuffer.needRandomAccessFlag = true;
     }
 
     // 4. Let active track flag equal false.
@@ -1074,10 +1077,9 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         SampleMap::MapType erasedSamples;
         MediaTime microsecond(1, 1000000);
 
-        // 1.14 If last decode timestamp for track buffer is unset and there is a coded frame in
-        // track buffer with a presentation timestamp less than or equal to presentation timestamp
-        // and presentation timestamp is less than this coded frame's presentation timestamp plus
-        // its frame duration, then run the following steps:
+        // 1.14 If last decode timestamp for track buffer is unset and presentation timestamp falls
+        // falls within the presentation interval of a coded frame in track buffer, then run the
+        // following steps:
         if (trackBuffer.lastDecodeTimestamp.isInvalid()) {
             auto iter = trackBuffer.samples.findSampleContainingPresentationTime(presentationTimestamp);
             if (iter != trackBuffer.samples.presentationEnd()) {
@@ -1122,10 +1124,10 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         }
 
         // If highest presentation timestamp for track buffer is set and less than presentation timestamp
-        if (trackBuffer.highestPresentationTimestamp.isValid() && trackBuffer.highestPresentationTimestamp < presentationTimestamp) {
+        if (trackBuffer.highestPresentationTimestamp.isValid() && trackBuffer.highestPresentationTimestamp <= presentationTimestamp) {
             // Remove all coded frames from track buffer that have a presentation timestamp greater than highest
             // presentation timestamp and less than or equal to frame end timestamp.
-            auto iter_pair = trackBuffer.samples.findSamplesBetweenPresentationTimes(trackBuffer.highestPresentationTimestamp, frameEndTimestamp);
+            auto iter_pair = trackBuffer.samples.findSamplesWithinPresentationRange(trackBuffer.highestPresentationTimestamp, frameEndTimestamp);
             if (iter_pair.first != trackBuffer.samples.presentationEnd())
                 erasedSamples.insert(iter_pair.first, iter_pair.second);
         }
@@ -1452,6 +1454,20 @@ void SourceBuffer::reportExtraMemoryCost()
     JSC::JSLockHolder lock(scriptExecutionContext()->vm());
     if (extraMemoryCostDelta > 0)
         scriptExecutionContext()->vm().heap.reportExtraMemoryCost(extraMemoryCostDelta);
+}
+
+Vector<String> SourceBuffer::bufferedSamplesForTrackID(const AtomicString& trackID)
+{
+    auto it = m_trackBufferMap.find(trackID);
+    if (it == m_trackBufferMap.end())
+        return Vector<String>();
+
+    TrackBuffer& trackBuffer = it->value;
+    Vector<String> sampleDescriptions;
+    for (auto sampleIter = trackBuffer.samples.decodeBegin(); sampleIter != trackBuffer.samples.decodeEnd(); ++sampleIter)
+        sampleDescriptions.append(toString(*sampleIter->second));
+
+    return sampleDescriptions;
 }
 
 } // namespace WebCore

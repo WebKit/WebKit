@@ -1,3 +1,16 @@
+2014-06-01  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Appends of overlapping sample data do not clear existing samples properly.
+        https://bugs.webkit.org/show_bug.cgi?id=133435
+
+        Reviewed by Darin Adler.
+
+        Add a dump method to MediaTime, so that MediaTimes can be easily converted to strings (for logging purposes).
+
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::dump):
+        * wtf/MediaTime.h:
+
 2014-05-31  Anders Carlsson  <andersca@apple.com>
 
         Add a LazyNeverDestroyed class template and use it

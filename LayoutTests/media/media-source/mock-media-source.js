@@ -16,8 +16,8 @@ var SAMPLE_FLAG = {
     DELAYED: 1 << 3,
 };
 
-function makeASample(presentationTime, decodeTime, duration, trackID, flags) {
-    var byteLength = 29;
+function makeASample(presentationTime, decodeTime, duration, trackID, flags, generation) {
+    var byteLength = 30;
     var buffer = new ArrayBuffer(byteLength);
     var array = new Uint8Array(buffer);
     array.set(stringToArray('smpl'));
@@ -32,8 +32,9 @@ function makeASample(presentationTime, decodeTime, duration, trackID, flags) {
     view.setInt32(20, duration * timeScale, true);
     view.setInt32(24, trackID, true);
     view.setUint8(28, flags);
+    view.setUint8(29, generation);
 
-    return buffer;
+    return buffer
 }
 
 function concatenateSamples(samples) {

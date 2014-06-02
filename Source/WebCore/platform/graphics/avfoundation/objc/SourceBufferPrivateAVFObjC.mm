@@ -289,21 +289,23 @@ public:
     static RefPtr<MediaSampleAVFObjC> create(CMSampleBufferRef sample, int trackID) { return adoptRef(new MediaSampleAVFObjC(sample, trackID)); }
     virtual ~MediaSampleAVFObjC() { }
 
-    virtual MediaTime presentationTime() const override { return toMediaTime(CMSampleBufferGetPresentationTimeStamp(m_sample.get())); }
-    virtual MediaTime decodeTime() const override { return toMediaTime(CMSampleBufferGetDecodeTimeStamp(m_sample.get())); }
-    virtual MediaTime duration() const override { return toMediaTime(CMSampleBufferGetDuration(m_sample.get())); }
-    virtual AtomicString trackID() const override { return m_id; }
-    virtual size_t sizeInBytes() const override { return CMSampleBufferGetTotalSampleSize(m_sample.get()); }
-
-    virtual SampleFlags flags() const override;
-    virtual PlatformSample platformSample() override;
-
-protected:
+private:
     MediaSampleAVFObjC(CMSampleBufferRef sample, int trackID)
         : m_sample(sample)
         , m_id(String::format("%d", trackID))
     {
     }
+
+    virtual MediaTime presentationTime() const override { return toMediaTime(CMSampleBufferGetPresentationTimeStamp(m_sample.get())); }
+    virtual MediaTime decodeTime() const override { return toMediaTime(CMSampleBufferGetDecodeTimeStamp(m_sample.get())); }
+    virtual MediaTime duration() const override { return toMediaTime(CMSampleBufferGetDuration(m_sample.get())); }
+    virtual AtomicString trackID() const override { return m_id; }
+    virtual size_t sizeInBytes() const override { return CMSampleBufferGetTotalSampleSize(m_sample.get()); }
+    virtual FloatSize presentationSize() const override;
+
+    virtual SampleFlags flags() const override;
+    virtual PlatformSample platformSample() override;
+    virtual void dump(PrintStream&) const override;
 
     RetainPtr<CMSampleBufferRef> m_sample;
     AtomicString m_id;
@@ -337,6 +339,20 @@ MediaSample::SampleFlags MediaSampleAVFObjC::flags() const
         returnValue |= MediaSample::IsSync;
 
     return SampleFlags(returnValue);
+}
+
+FloatSize MediaSampleAVFObjC::presentationSize() const
+{
+    CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(m_sample.get());
+    if (CMFormatDescriptionGetMediaType(formatDescription) != kCMMediaType_Video)
+        return FloatSize();
+
+    return FloatSize(CMVideoFormatDescriptionGetPresentationDimensions(formatDescription, true, true)); 
+}
+
+void MediaSampleAVFObjC::dump(PrintStream& out) const
+{
+    out.print("{PTS(", presentationTime(), "), DTS(", decodeTime(), "), duration(", duration(), "), flags(", (int)flags(), "), presentationSize(", presentationSize(), ")}");
 }
 
 #pragma mark -

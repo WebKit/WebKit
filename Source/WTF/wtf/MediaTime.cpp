@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
+#include <wtf/PrintStream.h>
 
 namespace WTF {
 
@@ -372,6 +373,11 @@ void MediaTime::setTimeScale(int32_t timeScale)
     int64_t remainder = m_timeValue % m_timeScale;
     m_timeValue = newWholePart + (remainder * timeScale) / m_timeScale;
     m_timeScale = timeScale;
+}
+
+void MediaTime::dump(PrintStream &out) const
+{
+    out.print("{", m_timeValue, "/", m_timeScale, ", ", toDouble(), "}");
 }
 
 MediaTime abs(const MediaTime& rhs)

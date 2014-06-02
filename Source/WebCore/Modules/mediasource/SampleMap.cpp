@@ -68,13 +68,25 @@ public:
     }
 };
 
-class SamplePresentationTimeIsWithinRangeComparator {
-public:
-    bool operator()(std::pair<MediaTime, MediaTime> range, std::pair<MediaTime, RefPtr<MediaSample>> value)
+// SamplePresentationTimeIsInsideRangeComparator matches (range.first, range.second]
+struct SamplePresentationTimeIsInsideRangeComparator {
+    bool operator()(std::pair<MediaTime, MediaTime> range, const std::pair<MediaTime, RefPtr<MediaSample>>& value)
     {
         return range.second < value.first;
     }
-    bool operator()(std::pair<MediaTime, RefPtr<MediaSample>> value, std::pair<MediaTime, MediaTime> range)
+    bool operator()(const std::pair<MediaTime, RefPtr<MediaSample>>& value, std::pair<MediaTime, MediaTime> range)
+    {
+        return value.first <= range.first;
+    }
+};
+
+// SamplePresentationTimeIsWithinRangeComparator matches [range.first, range.second)
+struct SamplePresentationTimeIsWithinRangeComparator {
+    bool operator()(std::pair<MediaTime, MediaTime> range, const std::pair<MediaTime, RefPtr<MediaSample>>& value)
+    {
+        return range.second <= value.first;
+    }
+    bool operator()(const std::pair<MediaTime, RefPtr<MediaSample>>& value, std::pair<MediaTime, MediaTime> range)
     {
         return value.first < range.first;
     }
@@ -189,6 +201,12 @@ SampleMap::iterator SampleMap::findSyncSampleAfterDecodeIterator(iterator curren
 }
 
 SampleMap::iterator_range SampleMap::findSamplesBetweenPresentationTimes(const MediaTime& begin, const MediaTime& end)
+{
+    std::pair<MediaTime, MediaTime> range(begin, end);
+    return std::equal_range(presentationBegin(), presentationEnd(), range, SamplePresentationTimeIsInsideRangeComparator());
+}
+
+SampleMap::iterator_range SampleMap::findSamplesWithinPresentationRange(const MediaTime& begin, const MediaTime& end)
 {
     std::pair<MediaTime, MediaTime> range(begin, end);
     return std::equal_range(presentationBegin(), presentationEnd(), range, SamplePresentationTimeIsWithinRangeComparator());

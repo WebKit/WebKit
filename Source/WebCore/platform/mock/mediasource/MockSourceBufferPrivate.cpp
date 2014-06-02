@@ -38,6 +38,7 @@
 #include "SourceBufferPrivateClient.h"
 #include <map>
 #include <runtime/ArrayBuffer.h>
+#include <wtf/PrintStream.h>
 
 namespace WebCore {
 
@@ -46,21 +47,24 @@ public:
     static RefPtr<MockMediaSample> create(const MockSampleBox& box) { return adoptRef(new MockMediaSample(box)); }
     virtual ~MockMediaSample() { }
 
-    virtual MediaTime presentationTime() const override { return m_box.presentationTimestamp(); }
-    virtual MediaTime decodeTime() const override { return m_box.decodeTimestamp(); }
-    virtual MediaTime duration() const override { return m_box.duration(); }
-    virtual AtomicString trackID() const override { return m_id; }
-    virtual size_t sizeInBytes() const override { return sizeof(m_box); }
-
-    virtual SampleFlags flags() const override;
-    virtual PlatformSample platformSample() override;
-
-protected:
+private:
     MockMediaSample(const MockSampleBox& box)
         : m_box(box)
         , m_id(String::format("%d", box.trackID()))
     {
     }
+
+    virtual MediaTime presentationTime() const override { return m_box.presentationTimestamp(); }
+    virtual MediaTime decodeTime() const override { return m_box.decodeTimestamp(); }
+    virtual MediaTime duration() const override { return m_box.duration(); }
+    virtual AtomicString trackID() const override { return m_id; }
+    virtual size_t sizeInBytes() const override { return sizeof(m_box); }
+    virtual SampleFlags flags() const override;
+    virtual PlatformSample platformSample() override;
+    virtual FloatSize presentationSize() const override { return FloatSize(); }
+    virtual void dump(PrintStream&) const override;
+
+    unsigned generation() const { return m_box.generation(); }
 
     MockSampleBox m_box;
     AtomicString m_id;
@@ -78,6 +82,11 @@ PlatformSample MockMediaSample::platformSample()
 {
     PlatformSample sample = { PlatformSample::MockSampleBoxType, { &m_box } };
     return sample;
+}
+
+void MockMediaSample::dump(PrintStream& out) const
+{
+    out.print("{PTS(", presentationTime(), "), DTS(", decodeTime(), "), duration(", duration(), "), flags(", (int)flags(), "), generation(", generation(), ")}");
 }
 
 class MockMediaDescription final : public MediaDescription {

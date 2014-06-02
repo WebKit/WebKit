@@ -158,6 +158,10 @@ private:
 
     void reportExtraMemoryCost();
 
+    // Internals
+    friend class Internals;
+    Vector<String> bufferedSamplesForTrackID(const AtomicString&);
+
     Ref<SourceBufferPrivate> m_private;
     MediaSource* m_source;
     GenericEventQueue m_asyncEventQueue;

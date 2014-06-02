@@ -58,6 +58,7 @@ class Page;
 class Range;
 class ScriptExecutionContext;
 class SerializedScriptValue;
+class SourceBuffer;
 class TimeRanges;
 class TypeConversions;
 
@@ -326,6 +327,7 @@ public:
 
 #if ENABLE(MEDIA_SOURCE)
     void initializeMockMediaSource();
+    Vector<String> bufferedSamplesForTrackID(SourceBuffer*, const AtomicString&);
 #endif
 
 #if ENABLE(VIDEO)

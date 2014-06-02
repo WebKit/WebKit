@@ -75,6 +75,7 @@ public:
     iterator findSyncSampleAfterDecodeIterator(iterator);
 
     iterator_range findSamplesBetweenPresentationTimes(const MediaTime&, const MediaTime&);
+    iterator_range findSamplesWithinPresentationRange(const MediaTime&, const MediaTime&);
     reverse_iterator_range findDependentSamples(MediaSample*);
     
 private:

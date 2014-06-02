@@ -88,6 +88,7 @@
 #include "SerializedScriptValue.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "SourceBuffer.h"
 #include "SpellChecker.h"
 #include "StaticNodeList.h"
 #include "StyleSheetContents.h"
@@ -2243,6 +2244,14 @@ void Internals::initializeMockMediaSource()
     WebCore::Settings::setAVFoundationEnabled(false);
 #endif
     MediaPlayerFactorySupport::callRegisterMediaEngine(MockMediaPlayerMediaSource::registerMediaEngine);
+}
+
+Vector<String> Internals::bufferedSamplesForTrackID(SourceBuffer* buffer, const AtomicString& trackID)
+{
+    if (!buffer)
+        return Vector<String>();
+
+    return buffer->bufferedSamplesForTrackID(trackID);
 }
 #endif
 

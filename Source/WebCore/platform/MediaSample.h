@@ -26,6 +26,7 @@
 #ifndef MediaSample_h
 #define MediaSample_h
 
+#include "FloatSize.h"
 #include <wtf/MediaTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
@@ -56,6 +57,7 @@ public:
     virtual MediaTime duration() const = 0;
     virtual AtomicString trackID() const = 0;
     virtual size_t sizeInBytes() const = 0;
+    virtual FloatSize presentationSize() const = 0;
 
     enum SampleFlags {
         None = 0,
@@ -67,6 +69,8 @@ public:
 
     bool isSync() const { return flags() & IsSync; }
     bool isNonDisplaying() const { return flags() & NonDisplaying; }
+
+    virtual void dump(PrintStream&) const = 0;
 };
 
 }

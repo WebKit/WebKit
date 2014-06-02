@@ -1,3 +1,57 @@
+2014-06-01  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Appends of overlapping sample data do not clear existing samples properly.
+        https://bugs.webkit.org/show_bug.cgi?id=133435
+
+        Reviewed by Darin Adler.
+
+        Test: media/media-source/media-source-overlapping-append.html
+
+        The MSE spec has a spec error in how it removes overlapping frames. The intention seems to be
+        to check for overlapping samples only when the incoming sample increases the highest presentation time
+        field. But due to a mismatch in the range of a sample, defined as [start, end), and the check, which 
+        treats the end as inclusive, the overlapping check is almost never run.
+
+        Add the sample comparison logic to match [start, end) ranges, and rename the existing check to differentiate
+        it from the new one:
+        * Modules/mediasource/SampleMap.cpp:
+        (WebCore::SamplePresentationTimeIsInsideRangeComparator::operator()):
+        (WebCore::SamplePresentationTimeIsWithinRangeComparator::operator()):
+        (WebCore::SampleMap::findSamplesBetweenPresentationTimes):
+        (WebCore::SampleMap::findSamplesWithinPresentationRange):
+        * Modules/mediasource/SampleMap.h:
+
+        Update the overlapping check to occur whenever the highest presentation time increases, and update the
+        logic within that check to catch all overlapping frames.
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+        (WebCore::SourceBuffer::bufferedSamplesForTrackID):
+        * Modules/mediasource/SourceBuffer.h:
+        * WebCore.exp.in:
+
+        Add a dump method to MediaSample so that samples can be easily converted to a string for testing.
+        * platform/MediaSample.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::MediaSampleAVFObjC::presentationSize):
+        (WebCore::MediaSampleAVFObjC::dump):
+
+        Update the Mock MSE implementation to pass along a "generation" field, to aid in testing.
+        * platform/mock/mediasource/MockBox.cpp:
+        (WebCore::MockSampleBox::MockSampleBox):
+        * platform/mock/mediasource/MockBox.h:
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+        (WebCore::MockMediaSample::dump):
+
+        Add a method to internals to dump the buffered samples to string.
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::bufferedSamplesForTrackID):
+        * Modules/mediasource/SourceBuffer.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::bufferedSamplesForTrackID):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2014-06-01  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         getBBox() returns (0,0) when width or height is zero.

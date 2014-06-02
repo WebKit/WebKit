@@ -38,6 +38,8 @@
 
 namespace WTF {
 
+class PrintStream;
+
 class WTF_EXPORT_PRIVATE MediaTime {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -97,9 +99,11 @@ public:
     const int64_t& timeValue() const { return m_timeValue; }
     const int32_t& timeScale() const { return m_timeScale; }
 
+    void dump(PrintStream& out) const;
+
     friend WTF_EXPORT_PRIVATE MediaTime abs(const MediaTime& rhs);
 private:
-    static const int32_t DefaultTimeScale = 6000;
+    static const int32_t DefaultTimeScale = 10000000;
     static const int32_t MaximumTimeScale;
 
     void setTimeScale(int32_t);

@@ -1,3 +1,14 @@
+2014-06-01  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Appends of overlapping sample data do not clear existing samples properly.
+        https://bugs.webkit.org/show_bug.cgi?id=133435
+
+        Reviewed by Darin Adler.
+
+        * media/media-source/media-source-overlapping-append-expected.txt: Added.
+        * media/media-source/media-source-overlapping-append.html: Added.
+        * media/media-source/mock-media-source.js:
+
 2014-06-01  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         getBBox() returns (0,0) when width or height is zero.
