@@ -18,6 +18,11 @@
     var createTest;
     var valuesByIteration = new Array;
 
+    window.onload = function () {
+        document.body.removeChild(document.querySelector('main'));
+        startBenchmark();
+    }
+
     window.benchmarkClient = {
         iterationCount: 5, // Use 4 different instances of DRT/WTR to run 5 iterations.
         willStartFirstIteration: function (iterationCount) {

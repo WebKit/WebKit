@@ -83,6 +83,9 @@ BenchmarkRunner.prototype._appendFrame = function (src) {
         frame.style.top = '0px';
     }
 
+    if (this._client && this._client.willAddTestFrame)
+        this._client.willAddTestFrame(frame);
+
     document.body.insertBefore(frame, document.body.firstChild);
     this._frame = frame;
     return frame;

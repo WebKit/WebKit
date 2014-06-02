@@ -1,3 +1,58 @@
+2014-06-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename DoYouEvenBench 0.17 to Speedometer 1.0 and add a new look.
+        https://bugs.webkit.org/show_bug.cgi?id=133455
+
+        Reviewed by Timothy Hatcher.
+
+        Renamed the benchmark to Speedometer and added the new look designed by Timothy Hatcher.
+
+        Also changed the unit of measurements from milliseconds to runs-per-minute averaged over the number
+        of the benchmark suites (7 for 1.0). You can divide 420000 by the old benchmark score (in milliseconds)
+        to get the new value for the set of tests that are enabled by default in 1.0. You can continue to see
+        results in milliseconds on Full.html#ms.
+
+        * DoYouEvenBench/Full.html: Added a bunch of sections and the description of the benchmark.
+
+        * DoYouEvenBench/resources/benchmark-report.js: Remove the newly added content when ran inside a DRT or
+        WTR so that run-perf-tests wouldn't error.
+        * DoYouEvenBench/resources/benchmark-runner.js:
+        (BenchmarkRunner.prototype._appendFrame): Call a newly added willAddTestFrame callback when it exists.
+
+        * DoYouEvenBench/resources/gauge.png: Added.
+        * DoYouEvenBench/resources/gauge@2x.png: Added.
+        * DoYouEvenBench/resources/logo.png: Added.
+        * DoYouEvenBench/resources/logo@2x.png: Added.
+        * DoYouEvenBench/resources/main.css: Replaced the style.
+
+        * DoYouEvenBench/resources/main.js:
+        (window.benchmarkClient.willAddTestFrame): Place the iframe right where #testContainer is shown.
+        (window.benchmarkClient.willRunTest): Show the name of the suite (e.g. EmberJS-TodoMVC) to run next.
+        (window.benchmarkClient.didRunSuites):
+        (window.benchmarkClient.willStartFirstIteration): Initialize _timeValues and _finishedTestCount now that
+        we have an UI to run the benchmark multiple times without reloading the page.
+        (window.benchmarkClient.didFinishLastIteration): Split into smaller pieces.
+        (window.benchmarkClient._computeResults): Computes the mean and the statistics for the given time values,
+        and also format them in a human readable form.
+        (window.benchmarkClient._computeResults.totalTimeInDisplayUnit): Converts ms to runs/min.
+        (window.benchmarkClient._computeResults.sigFigFromPercentDelta): Given a percentage error (e.g. 1%),
+        returns the number of significant digits required for the mean.
+        (window.benchmarkClient._computeResults.toSigFigPrecision): Calls toPrecision with the specified precision
+        constrained to be at least the number of non-decimal digits and at most 6.
+        (window.benchmarkClient._addDetailedResultsRow): Renamed from _addResult. It now takes the table to which
+        to add a row and the iteration number.
+        (window.benchmarkClient._updateGaugeNeedle): Added. Controls the angle of the speed indicator.
+        (window.benchmarkClient._populateDetailedResults): Added.
+        (window.benchmarkClient.prepareUI): Added. It adds an event listener to show a specified section when
+        the push state of the document changes, and shows a warning sign when the view port size is too small.
+        We do this inside a callback to avoid running it inside DRT / WTR.
+        (startBenchmark):
+        (showSection): Added.
+        (startTest): Added.
+        (showResultsSummary): Added.
+        (showResultDetails): Added.
+        (showAbout): Added.
+
 2014-06-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         DYEBench: Move test states into benchmarkClient and remove the closure
