@@ -2485,16 +2485,14 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 {
     WKAutocorrectionContext *context = [[WKAutocorrectionContext alloc] init];
 
-    const UChar noBreakSpace = 0x00A0;
-
     if ([beforeText length])
-        context.contextBeforeSelection = [[beforeText _stringByReplacingCharacter:(unichar)noBreakSpace withCharacter:' '] copy];
+        context.contextBeforeSelection = [beforeText copy];
     if ([selectedText length])
-        context.selectedText = [[selectedText _stringByReplacingCharacter:(unichar)noBreakSpace withCharacter:' '] copy];
+        context.selectedText = [selectedText copy];
     if ([markedText length])
-        context.markedText = [[markedText _stringByReplacingCharacter:(unichar)noBreakSpace withCharacter:' '] copy];
+        context.markedText = [markedText copy];
     if ([afterText length])
-        context.contextAfterSelection = [[afterText _stringByReplacingCharacter:(unichar)noBreakSpace withCharacter:' '] copy];
+        context.contextAfterSelection = [afterText copy];
     context.rangeInMarkedText = range;
     return [context autorelease];
 }

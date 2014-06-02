@@ -1,3 +1,13 @@
+2014-06-02  Enrica Casucci  <enrica@apple.com>
+
+        Remove unintentional changes to WKContentViewInteraction.mm
+        introduced in r169500.
+
+        Unreviewed.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (+[WKAutocorrectionContext autocorrectionContextWithData:markedText:selectedText:afterText:selectedRangeInMarkedText:]):
+
 2014-06-02  Geoffrey Garen  <ggaren@apple.com>
 
         Address some review comments on bug 133408
