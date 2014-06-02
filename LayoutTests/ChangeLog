@@ -1,3 +1,11 @@
+2014-06-01  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL gardening.
+
+        gradient-background-leakage-hidpi.html and canvas-as-image-hidpi.html pass after r169445.
+
+        * platform/efl-wk2/TestExpectations:
+
 2014-06-01  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Appends of overlapping sample data do not clear existing samples properly.

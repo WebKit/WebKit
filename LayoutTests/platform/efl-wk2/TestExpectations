@@ -477,8 +477,6 @@ Bug(EFL) fast/media/media-query-list-06.html [ Failure ]
 
 # Failing after r150802
 webkit.org/b/125350 compositing/tiled-layers-hidpi.html [ Failure ]
-webkit.org/b/125350 fast/backgrounds/gradient-background-leakage-hidpi.html [ Failure ]
-webkit.org/b/125350 fast/canvas/canvas-as-image-hidpi.html [ Failure ]
 
 webkit.org/b/125577 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
 
