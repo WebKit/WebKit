@@ -1,3 +1,27 @@
+2014-06-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: add support for the "not" pseudo class
+        https://bugs.webkit.org/show_bug.cgi?id=133314
+
+        Add :not pseudo class support to CSS JIT. Current implementation
+        doesn't support visitedMatchType. So when link pseudo class appears in
+        :not sub fragment, fallback to the non-JIT implementation.
+
+        Reviewed by Benjamin Poulain.
+
+        * fast/selectors/not-active-hover-quirks-expected.txt: Added.
+        * fast/selectors/not-active-hover-quirks.html: Added.
+        * fast/selectors/not-active-hover-strict-expected.txt: Added.
+        * fast/selectors/not-active-hover-strict.html: Added.
+        * fast/selectors/pseudo-class-not-expected.txt: Added.
+        * fast/selectors/pseudo-class-not.html: Added.
+        * fast/selectors/resources/not-hover-active-quirks-utility.js: Added.
+        (testQuerySelector):
+        (test):
+        * fast/selectors/resources/not-hover-active-strict-utility.js: Added.
+        (testQuerySelector):
+        (test):
+
 2014-06-01  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed EFL gardening.

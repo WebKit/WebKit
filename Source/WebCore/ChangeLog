@@ -1,3 +1,32 @@
+2014-06-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: add support for the "not" pseudo class
+        https://bugs.webkit.org/show_bug.cgi?id=133314
+
+        Reviewed by Benjamin Poulain.
+
+        Add :not pseudo class support to CSS JIT. Current implementation
+        doesn't support visitedMatchType. So when link pseudo class appears in
+        :not sub fragment, fallback to the non-JIT implementation.
+
+        Tests: fast/selectors/not-active-hover-quirks.html
+               fast/selectors/not-active-hover-strict.html
+               fast/selectors/pseudo-class-not.html
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::SelectorCodeGenerator):
+        (WebCore::SelectorCompiler::constructFragments):
+        (WebCore::SelectorCompiler::minimumRegisterRequirements):
+        (WebCore::SelectorCompiler::computeBacktrackingInformation):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+        (WebCore::SelectorCompiler::fragmentOnlyMatchesLinksInQuirksMode):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementDataMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatchesNotPseudoClass):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::computeBacktrackingInformation): Deleted.
+
 2014-06-01  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Appends of overlapping sample data do not clear existing samples properly.
