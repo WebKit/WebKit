@@ -30,6 +30,14 @@
 #import "WebKit2Initialize.h"
 #import "XPCPtr.h"
 
+#if HAVE(VOUCHERS)
+#if __has_include(<os/voucher_private.h>)
+#include <os/voucher_private.h>
+#else
+extern "C" OS_NOTHROW void voucher_replace_default_voucher(void);
+#endif
+#endif
+
 namespace WebKit {
 
 class XPCServiceInitializerDelegate {
@@ -87,6 +95,11 @@ void XPCServiceInitializer(IPC::XPCPtr<xpc_connection_t> connection, xpc_object_
 
     if (!delegate.getExtraInitializationData(parameters.extraInitializationData))
         exit(EXIT_FAILURE);
+
+#if HAVE(VOUCHERS)
+    // Set the task default voucher to the current value (as propagated by XPC).
+    voucher_replace_default_voucher();
+#endif
 
     XPCServiceType::shared().initialize(parameters);
 }

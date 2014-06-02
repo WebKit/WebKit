@@ -1,3 +1,16 @@
+2014-06-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Set default voucher for XPC client processes
+        https://bugs.webkit.org/show_bug.cgi?id=133458
+
+        Reviewed by Geoff Garen.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+            - add voucher_replace_default_voucher.
+        * config.h:
+            - add HAVE_VOUCHERS.
+
 2014-06-02  Jeremy Jones  <jeremyj@apple.com>
 
         Send external playback properties to fullscreen.
