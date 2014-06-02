@@ -121,11 +121,13 @@ ControllerGtk.prototype = {
             this.controls.panel.classList.remove(this.ClassNames.down);
         }
         this.controls.volumeBox.classList.remove(this.ClassNames.hiding);
+        return true;
     },
 
     handleVolumeBoxMouseOut: function(event)
     {
         this.controls.volumeBox.classList.add(this.ClassNames.hiding);
+        return true;
     },
 
     addControls: function()
@@ -165,6 +167,7 @@ ControllerGtk.prototype = {
     handleCaptionButtonClicked: function(event)
     {
         this.handleCaptionButtonShowMenu(event)
+        return true;
     },
 
     buildCaptionMenu: function()
@@ -212,6 +215,7 @@ ControllerGtk.prototype = {
     handleCaptionButtonMouseOver: function(event)
     {
         this.handleCaptionButtonShowMenu(event);
+        return true;
     },
 
     handleCaptionButtonShowMenu: function(event)
@@ -220,12 +224,14 @@ ControllerGtk.prototype = {
             this.buildCaptionMenu();
         if (!contains(this.captionMenu.captionMenuTreeElements, event.relatedTarget))
             this.showCaptionMenu();
+        return true;
     },
 
     handleCaptionButtonMouseOut: function(event)
     {
         if (this.captionMenu && !contains(this.captionMenu.captionMenuTreeElements, event.relatedTarget))
             this.hideCaptionMenu();
+        return true;
     },
 
     handleCaptionMouseOut: function(event)
@@ -233,6 +239,7 @@ ControllerGtk.prototype = {
         if (event.relatedTarget != this.controls.captionButton &&
             !contains(this.captionMenu.captionMenuTreeElements, event.relatedTarget))
             this.hideCaptionMenu();
+        return true;
     },
 };
 

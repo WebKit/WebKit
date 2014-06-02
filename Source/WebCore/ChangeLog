@@ -1,3 +1,26 @@
+2014-06-02  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] media controls should prevent 'click' events from reaching the page
+        https://bugs.webkit.org/show_bug.cgi?id=133402
+
+        Reviewed by Eric Carlson.
+
+        When handling events, we events we need to return true in order
+        that the superclass gets the value and prevents the execution of
+        the default event handler in the page.
+
+        Test: media/media-controls-cancel-events.html
+
+        * Modules/mediacontrols/mediaControlsGtk.js:
+        (ControllerGtk.prototype.handleMuteButtonMouseOver):
+        (ControllerGtk.prototype.handleVolumeBoxMouseOut):
+        (ControllerGtk.prototype.handleCaptionButtonClicked):
+        (ControllerGtk.prototype.handleCaptionButtonMouseOver):
+        (ControllerGtk.prototype.handleCaptionButtonShowMenu):
+        (ControllerGtk.prototype.handleCaptionButtonMouseOut):
+        (ControllerGtk.prototype.handleCaptionMouseOut): Return true to
+        prevent forwarding the event execution.
+
 2014-06-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: add support for the "not" pseudo class
