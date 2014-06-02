@@ -1,3 +1,52 @@
+2014-06-02  Zalan Bujtas  <zalan@apple.com>
+
+        Provide better encapsulation for image related painting properties.
+        https://bugs.webkit.org/show_bug.cgi?id=133434
+
+        Reviewed by Darin Adler.
+
+        Image related drawing property list keeps growing for the functions below and results in
+        multiple overloadings with seemingly random default parameters.
+        
+        GraphicsContext::drawImage()
+        GraphicsContext::drawTiledImage()
+        GraphicsContext::drawImageBuffer()
+        
+        This patch provides encapsulation for the image drawing properties. Encapsulation ensures that
+        introducing a new property does not result in yet another overloaded function.
+
+        No change in functionality.
+
+        * WebCore.exp.in:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::compositeBuffer):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImage):
+        (WebCore::GraphicsContext::drawTiledImage):
+        (WebCore::GraphicsContext::drawImageBuffer):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::ImagePaintingContext::ImagePaintingContext):
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::endShadowLayer):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::draw):
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::platformApplySoftware):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRendererHelper::applyFilterEffect):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paintSnapshotImage):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::paintIntoRect):
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::paintSnapshot):
+
 2014-06-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r169529.
