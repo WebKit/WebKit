@@ -1,3 +1,16 @@
+2014-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename DoYouEvenBench 0.17 to Speedometer 1.0 and add a new look.
+        https://bugs.webkit.org/show_bug.cgi?id=133455
+
+        Reviewed by Timothy Hatcher.
+
+        Since the perf. dashboard doesn't support following renamed benchmarks,
+        keep reporting Speedometer results as DoYouEvenBench results.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (_generate_results_dict):
+
 2014-05-31  Darin Adler  <darin@apple.com>
 
         Viewport percentage tests that resize the viewport are flaky

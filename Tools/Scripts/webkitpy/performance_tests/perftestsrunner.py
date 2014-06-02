@@ -276,8 +276,14 @@ class PerfTestsRunner(object):
             for i in range(0, len(path)):
                 is_last_token = i + 1 == len(path)
                 url = view_source_url('PerformanceTests/' + '/'.join(path[0:i + 1]))
-                tests.setdefault(path[i], {'url': url})
-                current_test = tests[path[i]]
+                test_name = path[i]
+
+                # FIXME: This is a temporary workaround for the fact perf dashboard doesn't support renaming tests.
+                if test_name == 'Speedometer':
+                    test_name = 'DoYouEvenBench'
+
+                tests.setdefault(test_name, {'url': url})
+                current_test = tests[test_name]
                 if is_last_token:
                     current_test['url'] = view_source_url('PerformanceTests/' + metric.test_file_name())
                     current_test.setdefault('metrics', {})

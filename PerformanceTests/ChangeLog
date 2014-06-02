@@ -5,6 +5,16 @@
 
         Reviewed by Timothy Hatcher.
 
+        * Speedometer/: Renamed from DoYouEvenBench.
+        * Skipped: Updated the path for InteractiveRunner.html
+
+2014-06-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename DoYouEvenBench 0.17 to Speedometer 1.0 and add a new look.
+        https://bugs.webkit.org/show_bug.cgi?id=133455
+
+        Reviewed by Timothy Hatcher.
+
         Renamed the benchmark to Speedometer and added the new look designed by Timothy Hatcher.
 
         Also changed the unit of measurements from milliseconds to runs-per-minute averaged over the number
