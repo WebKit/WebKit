@@ -439,7 +439,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 #if ENABLE(CSS_IMAGE_ORIENTATION)
                 orientationDescription.setImageOrientationEnum(style().imageOrientation());
 #endif
-                context->drawImage(image.get(), style().colorSpace(), pixelSnappedForPainting(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), orientationDescription);
+                context->drawImage(image.get(), style().colorSpace(), pixelSnappedForPainting(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), CompositeSourceOver, orientationDescription);
                 errorPictureDrawn = true;
             }
 
@@ -568,8 +568,7 @@ void RenderImage::paintIntoRect(GraphicsContext* context, const FloatRect& rect)
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     orientationDescription.setImageOrientationEnum(style().imageOrientation());
 #endif
-    context->drawImage(imageResource().image(rect.width(), rect.height()).get(), style().colorSpace(), rect,
-        ImagePaintingContext(compositeOperator, BlendModeNormal, orientationDescription, useLowQualityScaling));
+    context->drawImage(imageResource().image(rect.width(), rect.height()).get(), style().colorSpace(), rect, compositeOperator, orientationDescription, useLowQualityScaling);
 }
 
 bool RenderImage::boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox*) const

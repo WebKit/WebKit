@@ -193,37 +193,6 @@ namespace WebCore {
     void setStrokeAndFillColor(PlatformGraphicsContext*, CGColorRef);
 #endif
 
-    struct ImagePaintingContext {
-        ImagePaintingContext(CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal, ImageOrientationDescription orientationDescription = ImageOrientationDescription(), bool useLowQualityScale = false)
-            : m_compositeOperator(compositeOperator)
-            , m_blendMode(blendMode)
-            , m_orientationDescription(orientationDescription)
-            , m_useLowQualityScale(useLowQualityScale)
-        {
-        }
-
-        ImagePaintingContext(ImageOrientationDescription orientationDescription, bool useLowQualityScale = false, CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal)
-            : m_compositeOperator(compositeOperator)
-            , m_blendMode(blendMode)
-            , m_orientationDescription(orientationDescription)
-            , m_useLowQualityScale(useLowQualityScale)
-        {
-        }
-
-        ImagePaintingContext(bool useLowQualityScale, ImageOrientationDescription orientationDescription = ImageOrientationDescription(), CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal)
-            : m_compositeOperator(compositeOperator)
-            , m_blendMode(blendMode)
-            , m_orientationDescription(orientationDescription)
-            , m_useLowQualityScale(useLowQualityScale)
-        {
-        }
-
-        CompositeOperator m_compositeOperator;
-        BlendMode m_blendMode;
-        ImageOrientationDescription m_orientationDescription;
-        bool m_useLowQualityScale;
-    };
-
     class GraphicsContext {
         WTF_MAKE_NONCOPYABLE(GraphicsContext); WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -333,18 +302,21 @@ namespace WebCore {
 
         void strokeRect(const FloatRect&, float lineWidth);
 
-        void drawImage(Image*, ColorSpace, const FloatPoint& destination, const ImagePaintingContext& = ImagePaintingContext());
-        void drawImage(Image*, ColorSpace, const FloatRect& destination, const ImagePaintingContext& = ImagePaintingContext());
-        void drawImage(Image*, ColorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingContext& = ImagePaintingContext());
+        void drawImage(Image*, ColorSpace styleColorSpace, const FloatPoint&, CompositeOperator = CompositeSourceOver, ImageOrientationDescription = ImageOrientationDescription());
+        void drawImage(Image*, ColorSpace styleColorSpace, const FloatRect&, CompositeOperator = CompositeSourceOver, ImageOrientationDescription = ImageOrientationDescription(), bool useLowQualityScale = false);
+        void drawImage(Image*, ColorSpace styleColorSpace, const FloatPoint& destPoint, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, ImageOrientationDescription = ImageOrientationDescription());
+        void drawImage(Image*, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal, ImageOrientationDescription = ImageOrientationDescription(), bool useLowQualityScale = false);
+        
+        void drawTiledImage(Image*, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& tileSize,
+            CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false, BlendMode = BlendModeNormal);
+        void drawTiledImage(Image*, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
+                            const FloatSize& tileScaleFactor, Image::TileRule hRule = Image::StretchTile, Image::TileRule vRule = Image::StretchTile,
+                            CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
 
-        void drawTiledImage(Image*, ColorSpace, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize,
-            const ImagePaintingContext& = ImagePaintingContext());
-        void drawTiledImage(Image*, ColorSpace, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor,
-            Image::TileRule, Image::TileRule, const ImagePaintingContext& = ImagePaintingContext());
-
-        void drawImageBuffer(ImageBuffer*, ColorSpace, const FloatPoint& destination, const ImagePaintingContext& = ImagePaintingContext());
-        void drawImageBuffer(ImageBuffer*, ColorSpace, const FloatRect& destination, const ImagePaintingContext& = ImagePaintingContext());
-        void drawImageBuffer(ImageBuffer*, ColorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingContext& = ImagePaintingContext());
+        void drawImageBuffer(ImageBuffer*, ColorSpace styleColorSpace, const FloatPoint&, CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal);
+        void drawImageBuffer(ImageBuffer*, ColorSpace styleColorSpace, const FloatRect&, CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal, bool useLowQualityScale = false);
+        void drawImageBuffer(ImageBuffer*, ColorSpace styleColorSpace, const FloatPoint& destPoint, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal);
+        void drawImageBuffer(ImageBuffer*, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal, bool useLowQualityScale = false);
 
         void setImageInterpolationQuality(InterpolationQuality);
         InterpolationQuality imageInterpolationQuality() const;

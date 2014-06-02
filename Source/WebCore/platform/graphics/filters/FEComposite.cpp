@@ -297,8 +297,8 @@ void FEComposite::platformApplySoftware()
                                     destinationRect.y() - in->absolutePaintRect().y()), destinationRect.size());
         IntRect source2Rect(IntPoint(destinationRect.x() - in2->absolutePaintRect().x(),
                                      destinationRect.y() - in2->absolutePaintRect().y()), destinationRect.size());
-        filterContext->drawImageBuffer(imageBuffer2, ColorSpaceDeviceRGB, IntRect(destinationPoint, source2Rect.size()), source2Rect);
-        filterContext->drawImageBuffer(imageBuffer, ColorSpaceDeviceRGB, IntRect(destinationPoint, sourceRect.size()), sourceRect, CompositeSourceIn);
+        filterContext->drawImageBuffer(imageBuffer2, ColorSpaceDeviceRGB, destinationPoint, source2Rect);
+        filterContext->drawImageBuffer(imageBuffer, ColorSpaceDeviceRGB, destinationPoint, sourceRect, CompositeSourceIn);
         break;
     }
     case FECOMPOSITE_OPERATOR_OUT:

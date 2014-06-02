@@ -916,7 +916,7 @@ void ShadowBlur::endShadowLayer(GraphicsContext* context)
     GraphicsContextStateSaver stateSave(*context);
 
     context->clearShadow();
-    context->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, FloatRect(roundedIntPoint(m_layerOrigin), m_layerSize), FloatRect(FloatPoint(), m_layerSize), context->compositeOperation());
+    context->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, roundedIntPoint(m_layerOrigin), IntRect(0, 0, m_layerSize.width(), m_layerSize.height()), context->compositeOperation());
 
     m_layerImage = 0;
     ScratchBuffer::shared().scheduleScratchBufferPurge();
