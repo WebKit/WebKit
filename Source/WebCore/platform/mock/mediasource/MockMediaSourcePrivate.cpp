@@ -42,7 +42,7 @@ RefPtr<MockMediaSourcePrivate> MockMediaSourcePrivate::create(MockMediaPlayerMed
 
 MockMediaSourcePrivate::MockMediaSourcePrivate(MockMediaPlayerMediaSource* parent)
     : m_player(parent)
-    , m_duration(std::numeric_limits<float>::quiet_NaN())
+    , m_duration(MediaTime::invalidTime())
     , m_isEnded(false)
     , m_totalVideoFrames(0)
     , m_droppedVideoFrames(0)
@@ -84,12 +84,12 @@ void MockMediaSourcePrivate::removeSourceBuffer(SourceBufferPrivate* buffer)
     m_sourceBuffers.remove(pos);
 }
 
-double MockMediaSourcePrivate::duration()
+MediaTime MockMediaSourcePrivate::duration()
 {
     return m_duration;
 }
 
-void MockMediaSourcePrivate::setDuration(double duration)
+void MockMediaSourcePrivate::setDuration(const MediaTime& duration)
 {
     if (duration == m_duration)
         return;

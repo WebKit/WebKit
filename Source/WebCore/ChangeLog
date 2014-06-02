@@ -1,3 +1,47 @@
+2014-06-02  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] Media does not generate 'ended' event when playing to duration.
+        https://bugs.webkit.org/show_bug.cgi?id=133452
+
+        Reviewed by Eric Carlson.
+
+        Add a boundaryTimeObserver to the AVSampleBufferRenderSynchronizer to detect when
+        playback crosses the duration boundary, and pause in that event. Also refuse to begin
+        playback if the currentTime is beyond the duration. Also, pause playback if duration
+        becomes less than currentTime.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::playInternal):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::currentTimeDouble):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::durationChanged):
+
+        Update MediaSource::duration() and ::setDuration() to take and give MediaTimes rather than doubles:
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::duration): double -> MediaTime.
+        (WebCore::MediaSource::setDuration): Ditto.
+        (WebCore::MediaSource::streamEndedWithError): Ditto.
+        * platform/graphics/MediaSourcePrivate.h: Ditto.
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+        (WebCore::MediaSourcePrivateAVFObjC::MediaSourcePrivateAVFObjC): Ditto.
+        (WebCore::MediaSourcePrivateAVFObjC::duration): Ditto.
+        (WebCore::MediaSourcePrivateAVFObjC::setDuration): Ditto.
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::MockMediaPlayerMediaSource::MockMediaPlayerMediaSource): Ditto.
+        (WebCore::MockMediaPlayerMediaSource::maxTimeSeekableDouble): Ditto.
+        (WebCore::MockMediaPlayerMediaSource::durationDouble): Ditto.
+        (WebCore::MockMediaPlayerMediaSource::advanceCurrentTime): Ditto.
+        (WebCore::MockMediaPlayerMediaSource::updateDuration): Ditto.
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.h:
+        * platform/mock/mediasource/MockMediaSourcePrivate.cpp:
+        (WebCore::MockMediaSourcePrivate::MockMediaSourcePrivate): Ditto.
+        (WebCore::MockMediaSourcePrivate::duration): Ditto.
+        (WebCore::MockMediaSourcePrivate::setDuration): Ditto.
+        * platform/mock/mediasource/MockMediaSourcePrivate.h:
+
 2014-06-02  Zalan Bujtas  <zalan@apple.com>
 
         Rename ImagePaintingContext to ImagePaintingOptions.

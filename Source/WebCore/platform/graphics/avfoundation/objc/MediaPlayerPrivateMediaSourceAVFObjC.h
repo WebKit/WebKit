@@ -152,6 +152,8 @@ private:
     virtual unsigned long corruptedVideoFrames() override;
     virtual double totalFrameDelay() override;
 
+    MediaTime currentMediaTime() const;
+
     void ensureLayer();
     void destroyLayer();
 
@@ -173,6 +175,7 @@ private:
     Vector<RetainPtr<AVSampleBufferAudioRenderer>> m_sampleBufferAudioRenderers;
     RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;
     RetainPtr<id> m_timeJumpedObserver;
+    RetainPtr<id> m_durationObserver;
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
     double m_rate;

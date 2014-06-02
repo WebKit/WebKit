@@ -47,7 +47,7 @@ public:
     virtual ~MockMediaPlayerMediaSource();
 
     void advanceCurrentTime();
-    void updateDuration(double);
+    void updateDuration(const MediaTime&);
 
     virtual MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState);
@@ -87,7 +87,7 @@ private:
     RefPtr<MockMediaSourcePrivate> m_mediaSourcePrivate;
 
     MediaTime m_currentTime;
-    double m_duration;
+    MediaTime m_duration;
     MediaPlayer::ReadyState m_readyState;
     MediaPlayer::NetworkState m_networkState;
     bool m_playing;

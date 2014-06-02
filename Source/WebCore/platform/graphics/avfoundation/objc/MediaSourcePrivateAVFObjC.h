@@ -57,8 +57,8 @@ public:
     const Vector<SourceBufferPrivateAVFObjC*>& activeSourceBuffers() const { return m_activeSourceBuffers; }
 
     virtual AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) override;
-    virtual double duration() override;
-    virtual void setDuration(double) override;
+    virtual MediaTime duration() override;
+    virtual void setDuration(const MediaTime&) override;
     virtual void markEndOfStream(EndOfStreamStatus) override;
     virtual void unmarkEndOfStream() override;
     virtual MediaPlayer::ReadyState readyState() const override;
@@ -89,7 +89,7 @@ private:
     friend class SourceBufferPrivateAVFObjC;
 
     MediaPlayerPrivateMediaSourceAVFObjC* m_player;
-    double m_duration;
+    MediaTime m_duration;
     Vector<RefPtr<SourceBufferPrivateAVFObjC>> m_sourceBuffers;
     Vector<SourceBufferPrivateAVFObjC*> m_activeSourceBuffers;
     Deque<SourceBufferPrivateAVFObjC*> m_sourceBuffersNeedingSessions;

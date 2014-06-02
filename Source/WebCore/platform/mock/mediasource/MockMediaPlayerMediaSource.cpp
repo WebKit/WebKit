@@ -84,7 +84,7 @@ MediaPlayer::SupportsType MockMediaPlayerMediaSource::supportsType(const MediaEn
 MockMediaPlayerMediaSource::MockMediaPlayerMediaSource(MediaPlayer* player)
     : m_player(player)
     , m_currentTime(MediaTime::zeroTime())
-    , m_duration(0)
+    , m_duration(MediaTime::zeroTime())
     , m_readyState(MediaPlayer::HaveNothing)
     , m_networkState(MediaPlayer::Empty)
     , m_playing(false)
@@ -163,7 +163,7 @@ MediaPlayer::ReadyState MockMediaPlayerMediaSource::readyState() const
 
 double MockMediaPlayerMediaSource::maxTimeSeekableDouble() const
 {
-    return m_duration;
+    return m_duration.toDouble();
 }
 
 std::unique_ptr<PlatformTimeRanges> MockMediaPlayerMediaSource::buffered() const
@@ -194,7 +194,7 @@ double MockMediaPlayerMediaSource::currentTimeDouble() const
 
 double MockMediaPlayerMediaSource::durationDouble() const
 {
-    return m_duration;
+    return m_duration.toDouble();
 }
 
 void MockMediaPlayerMediaSource::seekWithTolerance(double time, double negativeTolerance, double positiveTolerance)
@@ -221,11 +221,11 @@ void MockMediaPlayerMediaSource::advanceCurrentTime()
         return;
 
     bool ignoreError;
-    m_currentTime = MediaTime::createWithDouble(std::min(m_duration, buffered->end(pos, ignoreError)));
+    m_currentTime = std::min(m_duration, MediaTime::createWithDouble(buffered->end(pos, ignoreError)));
     m_player->timeChanged();
 }
 
-void MockMediaPlayerMediaSource::updateDuration(double duration)
+void MockMediaPlayerMediaSource::updateDuration(const MediaTime& duration)
 {
     if (m_duration == duration)
         return;

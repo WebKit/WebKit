@@ -50,7 +50,7 @@ RefPtr<MediaSourcePrivateAVFObjC> MediaSourcePrivateAVFObjC::create(MediaPlayerP
 
 MediaSourcePrivateAVFObjC::MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC* parent)
     : m_player(parent)
-    , m_duration(std::numeric_limits<double>::quiet_NaN())
+    , m_duration(MediaTime::invalidTime())
     , m_isEnded(false)
 {
 }
@@ -89,12 +89,12 @@ void MediaSourcePrivateAVFObjC::removeSourceBuffer(SourceBufferPrivate* buffer)
     m_sourceBuffers.remove(pos);
 }
 
-double MediaSourcePrivateAVFObjC::duration()
+MediaTime MediaSourcePrivateAVFObjC::duration()
 {
     return m_duration;
 }
 
-void MediaSourcePrivateAVFObjC::setDuration(double duration)
+void MediaSourcePrivateAVFObjC::setDuration(const MediaTime& duration)
 {
     if (duration == m_duration)
         return;

@@ -128,7 +128,7 @@ void MediaSource::removedFromRegistry()
 
 double MediaSource::duration() const
 {
-    return isClosed() ? std::numeric_limits<float>::quiet_NaN() : m_private->duration();
+    return isClosed() ? std::numeric_limits<float>::quiet_NaN() : m_private->duration().toDouble();
 }
 
 double MediaSource::currentTime() const
@@ -260,7 +260,7 @@ void MediaSource::setDuration(double duration, ExceptionCode& ec)
         ec = INVALID_STATE_ERR;
         return;
     }
-    m_private->setDuration(duration);
+    m_private->setDuration(MediaTime::createWithDouble(duration));
 }
 
 
@@ -328,7 +328,7 @@ void MediaSource::streamEndedWithError(const AtomicString& error, ExceptionCode&
         MediaTime maxEndTimestamp;
         for (auto it = m_sourceBuffers->begin(), end = m_sourceBuffers->end(); it != end; ++it)
             maxEndTimestamp = std::max((*it)->highestPresentationEndTimestamp(), maxEndTimestamp);
-        m_private->setDuration(maxEndTimestamp.toDouble());
+        m_private->setDuration(maxEndTimestamp);
 
         // 2. Notify the media element that it now has all of the media data.
         m_private->markEndOfStream(MediaSourcePrivate::EosNoError);

@@ -67,8 +67,8 @@ private:
 
     // MediaSourcePrivate Overrides
     virtual AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) override;
-    virtual double duration() override;
-    virtual void setDuration(double) override;
+    virtual MediaTime duration() override;
+    virtual void setDuration(const MediaTime&) override;
     virtual void markEndOfStream(EndOfStreamStatus) override;
     virtual void unmarkEndOfStream() override;
     virtual MediaPlayer::ReadyState readyState() const override;
@@ -80,7 +80,7 @@ private:
     friend class MockSourceBufferPrivate;
 
     MockMediaPlayerMediaSource* m_player;
-    double m_duration;
+    MediaTime m_duration;
     Vector<RefPtr<MockSourceBufferPrivate>> m_sourceBuffers;
     Vector<MockSourceBufferPrivate*> m_activeSourceBuffers;
     bool m_isEnded;

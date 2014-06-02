@@ -36,6 +36,7 @@
 #import "SoftLinking.h"
 #import "WebCoreSystemInterface.h"
 #import <AVFoundation/AVAsset.h>
+#import <AVFoundation/AVTime.h>
 #import <CoreMedia/CMSync.h>
 #import <QuartzCore/CALayer.h>
 #import <objc_runtime.h>
@@ -109,6 +110,7 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimebaseNotification_EffectiveRateChanged, CFSt
 - (void)addRenderer:(id)renderer;
 - (void)removeRenderer:(id)renderer atTime:(CMTime)time withCompletionHandler:(void (^)(BOOL didRemoveRenderer))completionHandler;
 - (id)addPeriodicTimeObserverForInterval:(CMTime)interval queue:(dispatch_queue_t)queue usingBlock:(void (^)(CMTime time))block;
+- (id)addBoundaryTimeObserverForTimes:(NSArray *)times queue:(dispatch_queue_t)queue usingBlock:(void (^)(void))block;
 - (void)removeTimeObserver:(id)observer;
 @end
 
@@ -164,6 +166,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
     CMNotificationCenterRemoveListener(nc, this, CMTimebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase);
 
     [m_synchronizer removeTimeObserver:m_timeJumpedObserver.get()];
+    [m_synchronizer removeTimeObserver:m_durationObserver.get()];
 }
 
 #pragma mark -
@@ -316,6 +319,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::play()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::playInternal()
 {
+    if (currentMediaTime() >= m_mediaSourcePrivate->duration())
+        return;
+
     m_playing = true;
     [m_synchronizer setRate:m_rate];
 }
@@ -389,9 +395,14 @@ double MediaPlayerPrivateMediaSourceAVFObjC::durationDouble() const
     return m_mediaSource->duration();
 }
 
+MediaTime MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime() const
+{
+    return std::max(MediaTime::zeroTime(), toMediaTime(CMTimebaseGetTime([m_synchronizer timebase])));
+}
+
 double MediaPlayerPrivateMediaSourceAVFObjC::currentTimeDouble() const
 {
-    return std::max<double>(0, CMTimeGetSeconds(CMTimebaseGetTime([m_synchronizer timebase])));
+    return currentMediaTime().toDouble();
 }
 
 double MediaPlayerPrivateMediaSourceAVFObjC::startTimeDouble() const
@@ -585,6 +596,23 @@ void MediaPlayerPrivateMediaSourceAVFObjC::destroyLayer()
 void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
 {
     m_player->durationChanged();
+
+    if (m_durationObserver)
+        [m_synchronizer removeTimeObserver:m_durationObserver.get()];
+
+    if (!m_mediaSourcePrivate)
+        return;
+
+    MediaTime duration = m_mediaSourcePrivate->duration();
+    auto weakThis = createWeakPtr();
+    NSArray* times = @[[NSValue valueWithCMTime:toCMTime(duration)]];
+    m_durationObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[weakThis] {
+        if (weakThis)
+            weakThis->pauseInternal();
+    }];
+
+    if (m_playing && duration <= currentMediaTime())
+        pauseInternal();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::effectiveRateChanged()
