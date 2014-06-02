@@ -149,6 +149,8 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 
 - (void)_runJavaScriptInMainFrame:(NSString *)scriptString;
 
+- (void)_getWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler;
+
 @property (nonatomic, setter=_setPaginationMode:) _WKPaginationMode _paginationMode;
 // Whether the column-break-{before,after} properties are respected instead of the
 // page-break-{before,after} properties.

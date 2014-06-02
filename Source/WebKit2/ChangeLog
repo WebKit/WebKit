@@ -1,3 +1,15 @@
+2014-06-01  Sam Weinig  <sam@webkit.org>
+
+        [Cocoa] Add SPI to get a WebArchive of the WKWebView
+        <rdar://problem/16748120>
+        https://bugs.webkit.org/show_bug.cgi?id=133439
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _getWebArchiveDataWithCompletionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2014-05-31  Anders Carlsson  <andersca@apple.com>
 
         Add a LazyNeverDestroyed class template and use it
