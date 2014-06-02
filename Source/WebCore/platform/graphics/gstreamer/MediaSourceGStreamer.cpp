@@ -47,7 +47,6 @@ void MediaSourceGStreamer::open(MediaSourcePrivateClient* mediaSource, WebKitMed
 
 MediaSourceGStreamer::MediaSourceGStreamer(WebKitMediaSrc* src)
     : m_client(adoptRef(new MediaSourceClientGstreamer(src)))
-    , m_duration(0.0)
     , m_readyState(MediaPlayer::HaveNothing)
 {
 }

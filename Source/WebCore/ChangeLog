@@ -1,5 +1,14 @@
 2014-06-02  Jer Noble  <jer.noble@apple.com>
 
+        Further unreviewed GTK build fix after r169536.
+
+        Update the m_duration contructor in MediaSourceGStreamer.
+
+        * platform/graphics/gstreamer/MediaSourceGStreamer.cpp:
+        (WebCore::MediaSourceGStreamer::MediaSourceGStreamer):
+
+2014-06-02  Jer Noble  <jer.noble@apple.com>
+
         Unreviewed GTK build fix after r169536.
 
         Update MediaSourceGStreamer to match new duration parameters.
