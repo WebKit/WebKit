@@ -57,7 +57,8 @@ private:
     // Translate to FullscreenInterface
     void enterFullscreenWithID(uint32_t, WebCore::IntRect initialRect);
     void setSeekableRangesVector(Vector<std::pair<double, double>>&);
-
+    void setExternalPlaybackProperties(bool enabled, uint32_t targetType, String localizedDeviceName);
+    
     // Fullscreen Observer
     virtual void didExitFullscreen() override;
     virtual void didEnterFullscreen() override;

@@ -1,3 +1,27 @@
+2014-06-02  Jeremy Jones  <jeremyj@apple.com>
+
+        Send external playback properties to fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=133366
+
+        Reviewed by Simon Fraser.
+
+        Refactor property updates in WebVideoFullscreenModelMediaElement and update
+        setExternalPlayback on webkitcurrentplaybacktargetiswirelesschangedEvent.
+
+        * WebCore.exp.in: Add export for setExternalPlayback.
+        * platform/ios/WebVideoFullscreenInterface.h: add setExternalPlayback
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h: add setExternalPlayback
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerController isPlayingOnExternalScreen]): added
+        (+[WebAVPlayerController keyPathsForValuesAffectingPlayingOnExternalScreen]): added
+        (WebVideoFullscreenInterfaceAVKit::setExternalPlayback): added
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreen): added
+        * platform/ios/WebVideoFullscreenModelMediaElement.h: add updateForEventName
+        * platform/ios/WebVideoFullscreenModelMediaElement.mm:
+        (WebVideoFullscreenModelMediaElement::setMediaElement): refactor property changes into updateForEventName()
+        (WebVideoFullscreenModelMediaElement::handleEvent): refactor property changes into updateForEventName()
+        (WebVideoFullscreenModelMediaElement::updateForEventName): remove duplicate code, implement for setExternalPlayback
+
 2014-06-02  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
 
         WebCore build fix for webreplay

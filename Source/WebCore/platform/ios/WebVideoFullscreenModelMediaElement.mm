@@ -47,7 +47,9 @@
 #import <WebCore/TimeRanges.h>
 #import <WebCore/WebCoreThreadRun.h>
 #import <QuartzCore/CoreAnimation.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
+
 
 using namespace WebCore;
 
@@ -67,13 +69,8 @@ void WebVideoFullscreenModelMediaElement::setMediaElement(HTMLMediaElement* medi
         return;
 
     if (m_mediaElement && m_isListening) {
-        m_mediaElement->removeEventListener(eventNames().durationchangeEvent, this, false);
-        m_mediaElement->removeEventListener(eventNames().pauseEvent, this, false);
-        m_mediaElement->removeEventListener(eventNames().playEvent, this, false);
-        m_mediaElement->removeEventListener(eventNames().ratechangeEvent, this, false);
-        m_mediaElement->removeEventListener(eventNames().timeupdateEvent, this, false);
-        m_mediaElement->removeEventListener(eventNames().addtrackEvent, this, false);
-        m_mediaElement->removeEventListener(eventNames().removetrackEvent, this, false);
+        for (auto eventName : observedEventNames())
+            m_mediaElement->removeEventListener(eventName, this, false);
     }
     m_isListening = false;
 
@@ -82,22 +79,11 @@ void WebVideoFullscreenModelMediaElement::setMediaElement(HTMLMediaElement* medi
     if (!m_mediaElement)
         return;
 
-    m_mediaElement->addEventListener(eventNames().durationchangeEvent, this, false);
-    m_mediaElement->addEventListener(eventNames().pauseEvent, this, false);
-    m_mediaElement->addEventListener(eventNames().playEvent, this, false);
-    m_mediaElement->addEventListener(eventNames().ratechangeEvent, this, false);
-    m_mediaElement->addEventListener(eventNames().timeupdateEvent, this, false);
-    m_mediaElement->addEventListener(eventNames().addtrackEvent, this, false);
-    m_mediaElement->addEventListener(eventNames().removetrackEvent, this, false);
+    for (auto eventName : observedEventNames())
+        m_mediaElement->addEventListener(eventName, this, false);
     m_isListening = true;
 
-    m_videoFullscreenInterface->setDuration(m_mediaElement->duration());
-    m_videoFullscreenInterface->setSeekableRanges(*m_mediaElement->seekable());
-    m_videoFullscreenInterface->setRate(!m_mediaElement->paused(), m_mediaElement->playbackRate());
-
-    updateLegibleOptions();
-
-    m_videoFullscreenInterface->setCurrentTime(m_mediaElement->currentTime(), [[NSProcessInfo processInfo] systemUptime]);
+    updateForEventName(eventNameAll());
 
     if (isHTMLVideoElement(m_mediaElement.get())) {
         HTMLVideoElement *videoElement = toHTMLVideoElement(m_mediaElement.get());
@@ -108,23 +94,58 @@ void WebVideoFullscreenModelMediaElement::setMediaElement(HTMLMediaElement* medi
 
 void WebVideoFullscreenModelMediaElement::handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event* event)
 {
+    LOG(Media, "handleEvent %s", event->type().characters8());
+    updateForEventName(event->type());
+}
+
+void WebVideoFullscreenModelMediaElement::updateForEventName(const WTF::AtomicString& eventName)
+{
     if (!m_mediaElement || !m_videoFullscreenInterface)
         return;
-
-    LOG(Media, "handleEvent %s", event->type().characters8());
     
-    if (event->type() == eventNames().durationchangeEvent)
+    bool all = eventName == eventNameAll();
+
+    if (all
+        || eventName == eventNames().durationchangeEvent)
         m_videoFullscreenInterface->setDuration(m_mediaElement->duration());
-    else if (event->type() == eventNames().pauseEvent
-        || event->type() == eventNames().playEvent
-        || event->type() == eventNames().ratechangeEvent)
+
+    if (all
+        || eventName == eventNames().pauseEvent
+        || eventName == eventNames().playEvent
+        || eventName == eventNames().ratechangeEvent)
         m_videoFullscreenInterface->setRate(!m_mediaElement->paused(), m_mediaElement->playbackRate());
-    else if (event->type() == eventNames().timeupdateEvent) {
+
+    if (all
+        || eventName == eventNames().timeupdateEvent) {
         m_videoFullscreenInterface->setCurrentTime(m_mediaElement->currentTime(), [[NSProcessInfo processInfo] systemUptime]);
         // FIXME: 130788 - find a better event to update seekable ranges from.
         m_videoFullscreenInterface->setSeekableRanges(*m_mediaElement->seekable());
-    } else if (event->type() == eventNames().addtrackEvent || event->type() == eventNames().removetrackEvent)
+    }
+
+    if (all
+        || eventName == eventNames().addtrackEvent
+        || eventName == eventNames().removetrackEvent)
         updateLegibleOptions();
+
+    if (all
+        || eventName == eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent) {
+        bool enabled = m_mediaElement->mediaSession().currentPlaybackTargetIsWireless(*m_mediaElement);
+        WebVideoFullscreenInterface::ExternalPlaybackTargetType targetType = WebVideoFullscreenInterface::TargetTypeNone;
+        String localizedDeviceName;
+
+        if (m_mediaElement->mediaControlsHost()) {
+            DEPRECATED_DEFINE_STATIC_LOCAL(String, airplay, (ASCIILiteral("airplay")));
+            DEPRECATED_DEFINE_STATIC_LOCAL(String, tvout, (ASCIILiteral("tvout")));
+            
+            String type = m_mediaElement->mediaControlsHost()->externalDeviceType();
+            if (type == airplay)
+                targetType = WebVideoFullscreenInterface::TargetTypeAirPlay;
+            else if (type == tvout)
+                targetType = WebVideoFullscreenInterface::TargetTypeTVOut;
+            localizedDeviceName = m_mediaElement->mediaControlsHost()->externalDeviceDisplayName();
+        }
+        m_videoFullscreenInterface->setExternalPlayback(enabled, targetType, localizedDeviceName);
+    }
 }
 
 void WebVideoFullscreenModelMediaElement::setVideoFullscreenLayer(PlatformLayer* videoLayer)
@@ -331,6 +352,29 @@ void WebVideoFullscreenModelMediaElement::updateLegibleOptions()
     }
     
     m_videoFullscreenInterface->setLegibleMediaSelectionOptions(trackDisplayNames, selectedIndex);
+}
+
+const Vector<AtomicString>& WebVideoFullscreenModelMediaElement::observedEventNames()
+{
+    static NeverDestroyed<Vector<AtomicString>> sEventNames;
+
+    if (!sEventNames.get().size()) {
+        sEventNames.get().append(eventNames().durationchangeEvent);
+        sEventNames.get().append(eventNames().pauseEvent);
+        sEventNames.get().append(eventNames().playEvent);
+        sEventNames.get().append(eventNames().ratechangeEvent);
+        sEventNames.get().append(eventNames().timeupdateEvent);
+        sEventNames.get().append(eventNames().addtrackEvent);
+        sEventNames.get().append(eventNames().removetrackEvent);
+        sEventNames.get().append(eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent);
+    }
+    return sEventNames.get();
+}
+
+const AtomicString& WebVideoFullscreenModelMediaElement::eventNameAll()
+{
+    static NeverDestroyed<AtomicString> sEventNameAll = "allEvents";
+    return sEventNameAll;
 }
 
 #endif

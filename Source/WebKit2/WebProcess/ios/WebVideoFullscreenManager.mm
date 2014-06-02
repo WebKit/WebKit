@@ -160,7 +160,12 @@ void WebVideoFullscreenManager::setLegibleMediaSelectionOptions(const Vector<Str
 {
     m_page->send(Messages::WebVideoFullscreenManagerProxy::SetLegibleMediaSelectionOptions(options, selectedIndex), m_page->pageID());
 }
-    
+
+void WebVideoFullscreenManager::setExternalPlayback(bool enabled, WebVideoFullscreenInterface::ExternalPlaybackTargetType targetType, String localizedDeviceName)
+{
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetExternalPlaybackProperties(enabled, static_cast<uint32_t>(targetType), localizedDeviceName), m_page->pageID());
+}
+
 void WebVideoFullscreenManager::didEnterFullscreen()
 {
     m_isAnimating = false;

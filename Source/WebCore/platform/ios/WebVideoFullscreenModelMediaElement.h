@@ -51,6 +51,7 @@ public:
     void setVideoFullscreenLayer(PlatformLayer*);
     
     virtual void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) override;
+    void updateForEventName(const WTF::AtomicString&);
     bool operator==(const EventListener& rhs) override
         {return static_cast<WebCore::EventListener*>(this) == &rhs;}
 
@@ -71,6 +72,9 @@ public:
     virtual void selectLegibleMediaOption(uint64_t index) override;
 
 private:
+    static const Vector<WTF::AtomicString>& observedEventNames();
+    const WTF::AtomicString& eventNameAll();
+    
     RefPtr<HTMLMediaElement> m_mediaElement;
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     bool m_isListening;

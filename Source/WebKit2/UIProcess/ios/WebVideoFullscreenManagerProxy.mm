@@ -92,6 +92,15 @@ void WebVideoFullscreenManagerProxy::setSeekableRangesVector(Vector<std::pair<do
     setSeekableRanges(*timeRanges);
 }
 
+void WebVideoFullscreenManagerProxy::setExternalPlaybackProperties(bool enabled, uint32_t targetType, String localizedDeviceName)
+{
+    WebVideoFullscreenInterface::ExternalPlaybackTargetType type = static_cast<WebVideoFullscreenInterface::ExternalPlaybackTargetType>(targetType);
+    
+    ASSERT(type == WebVideoFullscreenInterface::TargetTypeAirPlay || type == WebVideoFullscreenInterface::TargetTypeTVOut || type == WebVideoFullscreenInterface::TargetTypeNone);
+    
+    setExternalPlayback(enabled, type, localizedDeviceName);
+}
+    
 void WebVideoFullscreenManagerProxy::requestExitFullscreen()
 {
     m_page->send(Messages::WebVideoFullscreenManager::RequestExitFullscreen(), m_page->pageID());

@@ -1,3 +1,17 @@
+2014-06-02  Jeremy Jones  <jeremyj@apple.com>
+
+        Send external playback properties to fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=133366
+
+        Reviewed by Simon Fraser.
+
+        Forward setExternalPlayback.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.messages.in: add setExternalPlaybackProperties
+        * WebProcess/ios/WebVideoFullscreenManager.h: add setExternalPlaybackProperties
+        * WebProcess/ios/WebVideoFullscreenManager.mm: add setExternalPlaybackProperties
+        (WebKit::WebVideoFullscreenManager::setExternalPlaybackProperties): added
+
 2014-06-02  Enrica Casucci  <enrica@apple.com>
 
         Remove unintentional changes to WKContentViewInteraction.mm

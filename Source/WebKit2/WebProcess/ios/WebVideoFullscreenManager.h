@@ -73,7 +73,8 @@ protected:
     virtual void setSeekableRanges(const WebCore::TimeRanges&) override;
     virtual void setAudioMediaSelectionOptions(const Vector<String>& options, uint64_t selectedIndex) override;
     virtual void setLegibleMediaSelectionOptions(const Vector<String>& options, uint64_t selectedIndex) override;
-    
+    virtual void setExternalPlayback(bool enabled, WebVideoFullscreenInterface::ExternalPlaybackTargetType, String localizedDeviceName) override;
+
     // additional incoming
     virtual void didEnterFullscreen();
     virtual void didExitFullscreen();

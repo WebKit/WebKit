@@ -121,6 +121,11 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
 @property (retain) NSArray *legibleMediaSelectionOptions;
 @property (retain) WebAVMediaSelectionOption *currentLegibleMediaSelectionOption;
 
+@property (readonly, getter=isPlayingOnExternalScreen) BOOL playingOnExternalScreen;
+@property (getter=isExternalPlaybackActive) BOOL externalPlaybackActive;
+@property AVPlayerControllerExternalPlaybackType externalPlaybackType;
+@property (retain) NSString *externalPlaybackAirPlayDeviceLocalizedName;
+
 - (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldExitFullScreenWithReason:(AVPlayerViewControllerExitFullScreenReason)reason;
 @end
 
@@ -442,6 +447,16 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
     self.delegate->selectLegibleMediaOption(index != NSNotFound ? index : UINT64_MAX);
 }
 
+- (BOOL)isPlayingOnExternalScreen
+{
+    return [self isExternalPlaybackActive];
+}
+
++ (NSSet *)keyPathsForValuesAffectingPlayingOnExternalScreen
+{
+    return [NSSet setWithObjects:@"externalPlaybackActive", nil];
+}
+
 @end
 
 @interface WebAVMediaSelectionOption : NSObject
@@ -659,6 +674,20 @@ void WebVideoFullscreenInterfaceAVKit::setLegibleMediaSelectionOptions(const Vec
         playerController().currentLegibleMediaSelectionOption = webOptions[(size_t)selectedIndex];
 }
 
+void WebVideoFullscreenInterfaceAVKit::setExternalPlayback(bool enabled, ExternalPlaybackTargetType targetType, String localizedDeviceName)
+{
+    AVPlayerControllerExternalPlaybackType externalPlaybackType = AVPlayerControllerExternalPlaybackTypeNone;
+    if (targetType == TargetTypeAirPlay)
+        externalPlaybackType = AVPlayerControllerExternalPlaybackTypeAirPlay;
+    else if (targetType == TargetTypeTVOut)
+        externalPlaybackType = AVPlayerControllerExternalPlaybackTypeTVOut;
+
+    playerController().externalPlaybackAirPlayDeviceLocalizedName = localizedDeviceName;
+    playerController().externalPlaybackType = externalPlaybackType;
+    playerController().externalPlaybackActive = enabled;
+    [m_videoLayerContainer.get() setHidden:enabled];
+}
+
 void WebVideoFullscreenInterfaceAVKit::enterFullscreen(PlatformLayer& videoLayer, WebCore::IntRect initialRect)
 {
     __block RefPtr<WebVideoFullscreenInterfaceAVKit> protect(this);
@@ -673,6 +702,7 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreen(PlatformLayer& videoLayer
         [m_videoLayer removeFromSuperlayer];
         
         m_videoLayerContainer = [WebAVVideoLayer videoLayer];
+        [m_videoLayerContainer setHidden:playerController().externalPlaybackActive];
         [m_videoLayerContainer addSublayer:m_videoLayer.get()];
         
         CGSize videoSize = playerController().contentDimensions;

@@ -27,6 +27,7 @@ messages -> WebVideoFullscreenManagerProxy {
     SetSeekableRangesVector(Vector<std::pair<double, double>> ranges);
     SetAudioMediaSelectionOptions(Vector<String> options, uint64_t selectedIndex);
     SetLegibleMediaSelectionOptions(Vector<String> options, uint64_t selectedIndex);
+    SetExternalPlaybackProperties(bool enabled, uint32_t targetType, String localizedDeviceName);
     SetDuration(double duration)
     SetRate(bool isPlaying, double rate)
     EnterFullscreenWithID(uint32_t videoLayerID, WebCore::IntRect initialRect)

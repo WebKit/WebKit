@@ -41,6 +41,8 @@ class TimeRanges;
 
 class WebVideoFullscreenInterface {
 public:
+    enum ExternalPlaybackTargetType { TargetTypeNone, TargetTypeAirPlay, TargetTypeTVOut };
+    
     virtual ~WebVideoFullscreenInterface() { };
     virtual void setDuration(double) = 0;
     virtual void setCurrentTime(double currentTime, double anchorTime) = 0;
@@ -49,6 +51,7 @@ public:
     virtual void setSeekableRanges(const TimeRanges&) = 0;
     virtual void setAudioMediaSelectionOptions(const Vector<String>& options, uint64_t selectedIndex) = 0;
     virtual void setLegibleMediaSelectionOptions(const Vector<String>& options, uint64_t selectedIndex) = 0;
+    virtual void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, String localizedDeviceName) = 0;
 };
 
 }
