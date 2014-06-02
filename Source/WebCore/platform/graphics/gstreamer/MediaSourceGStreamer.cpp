@@ -62,11 +62,11 @@ MediaSourceGStreamer::AddStatus MediaSourceGStreamer::addSourceBuffer(const Cont
     return MediaSourceGStreamer::Ok;
 }
 
-void MediaSourceGStreamer::setDuration(double duration)
+void MediaSourceGStreamer::setDuration(const MediaTime& duration)
 {
     ASSERT(m_client);
     m_duration = duration;
-    m_client->didReceiveDuration(duration);
+    m_client->didReceiveDuration(duration.toDouble());
 }
 
 void MediaSourceGStreamer::markEndOfStream(EndOfStreamStatus)

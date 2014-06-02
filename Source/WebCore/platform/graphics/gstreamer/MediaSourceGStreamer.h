@@ -43,8 +43,8 @@ public:
     static void open(MediaSourcePrivateClient*, WebKitMediaSrc*);
     ~MediaSourceGStreamer();
     AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&);
-    double duration() { return m_duration; }
-    void setDuration(double);
+    MediaTime duration() { return m_duration; }
+    void setDuration(const MediaTime&);
     void markEndOfStream(EndOfStreamStatus);
     void unmarkEndOfStream();
     MediaPlayer::ReadyState readyState() const { return m_readyState; }
@@ -53,7 +53,7 @@ public:
 private:
     RefPtr<MediaSourceClientGstreamer> m_client;
     MediaSourceGStreamer(WebKitMediaSrc*);
-    double m_duration;
+    MediaTime m_duration;
     MediaPlayer::ReadyState m_readyState;
 };
 

@@ -1,5 +1,16 @@
 2014-06-02  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed GTK build fix after r169536.
+
+        Update MediaSourceGStreamer to match new duration parameters.
+
+        * platform/graphics/gstreamer/MediaSourceGStreamer.cpp:
+        (WebCore::MediaSourceGStreamer::setDuration): Ditto.
+        * platform/graphics/gstreamer/MediaSourceGStreamer.h:
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+
+2014-06-02  Jer Noble  <jer.noble@apple.com>
+
         [MSE][Mac] Media does not generate 'ended' event when playing to duration.
         https://bugs.webkit.org/show_bug.cgi?id=133452
 
