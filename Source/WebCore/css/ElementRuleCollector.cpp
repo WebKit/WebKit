@@ -271,7 +271,7 @@ void ElementRuleCollector::matchUARules(RuleSet* rules)
     sortAndTransferMatchedRules();
 }
 
-inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, PseudoId& dynamicPseudo)
+inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData)
 {
     bool fastCheckableSelector = ruleData.hasFastCheckableSelector();
     if (fastCheckableSelector) {
@@ -332,11 +332,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, PseudoId
     context.pseudoId = m_pseudoStyleRequest.pseudoId;
     context.scrollbar = m_pseudoStyleRequest.scrollbar;
     context.scrollbarPart = m_pseudoStyleRequest.scrollbarPart;
-    if (!selectorChecker.match(context, dynamicPseudo))
-        return false;
-    if (m_pseudoStyleRequest.pseudoId != NOPSEUDO && m_pseudoStyleRequest.pseudoId != dynamicPseudo)
-        return false;
-    return true;
+    return selectorChecker.match(context);
 }
 
 void ElementRuleCollector::collectMatchingRulesForList(const Vector<RuleData>* rules, const MatchRequest& matchRequest, StyleResolver::RuleRange& ruleRange)
@@ -350,38 +346,24 @@ void ElementRuleCollector::collectMatchingRulesForList(const Vector<RuleData>* r
             continue;
 
         StyleRule* rule = ruleData.rule();
-        PseudoId dynamicPseudo = NOPSEUDO;
-        if (ruleMatches(ruleData, dynamicPseudo)) {
-            // For SharingRules testing, any match is good enough, we don't care what is matched.
-            if (m_mode == SelectorChecker::SharingRules || m_mode == SelectorChecker::StyleInvalidation) {
-                addMatchedRule(&ruleData);
-                break;
-            }
 
-            // If the rule has no properties to apply, then ignore it in the non-debug mode.
-            const StyleProperties& properties = rule->properties();
-            if (properties.isEmpty() && !matchRequest.includeEmptyRules)
-                continue;
-            // FIXME: Exposing the non-standard getMatchedCSSRules API to web is the only reason this is needed.
-            if (m_sameOriginOnly && !ruleData.hasDocumentSecurityOrigin())
-                continue;
-            // If we're matching normal rules, set a pseudo bit if
-            // we really just matched a pseudo-element.
-            if (dynamicPseudo != NOPSEUDO && m_pseudoStyleRequest.pseudoId == NOPSEUDO) {
-                if (m_mode == SelectorChecker::CollectingRules)
-                    continue;
-                if (dynamicPseudo < FIRST_INTERNAL_PSEUDOID && m_style)
-                    m_style->setHasPseudoStyle(dynamicPseudo);
-            } else {
-                // Update our first/last rule indices in the matched rules array.
-                ++ruleRange.lastRuleIndex;
-                if (ruleRange.firstRuleIndex == -1)
-                    ruleRange.firstRuleIndex = ruleRange.lastRuleIndex;
+        // If the rule has no properties to apply, then ignore it in the non-debug mode.
+        const StyleProperties& properties = rule->properties();
+        if (properties.isEmpty() && !matchRequest.includeEmptyRules)
+            continue;
 
-                // Add this rule to our list of matched rules.
-                addMatchedRule(&ruleData);
-                continue;
-            }
+        // FIXME: Exposing the non-standard getMatchedCSSRules API to web is the only reason this is needed.
+        if (m_sameOriginOnly && !ruleData.hasDocumentSecurityOrigin())
+            continue;
+
+        if (ruleMatches(ruleData)) {
+            // Update our first/last rule indices in the matched rules array.
+            ++ruleRange.lastRuleIndex;
+            if (ruleRange.firstRuleIndex == -1)
+                ruleRange.firstRuleIndex = ruleRange.lastRuleIndex;
+
+            // Add this rule to our list of matched rules.
+            addMatchedRule(&ruleData);
         }
     }
 }

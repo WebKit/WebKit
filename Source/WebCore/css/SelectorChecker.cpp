@@ -167,10 +167,17 @@ SelectorChecker::Match SelectorChecker::matchRecursively(const SelectorCheckingC
 
             // When invalidating style all pseudo elements need to match.
             PseudoId pseudoId = m_mode == StyleInvalidation ? NOPSEUDO : CSSSelector::pseudoId(context.selector->pseudoElementType());
-            if (pseudoId == FIRST_LETTER)
-                context.element->document().styleSheetCollection().setUsesFirstLetterRules(true);
-            if (pseudoId != NOPSEUDO)
+            if (pseudoId != NOPSEUDO) {
                 dynamicPseudo = pseudoId;
+
+                if (pseudoId == FIRST_LETTER)
+                    context.element->document().styleSheetCollection().setUsesFirstLetterRules(true);
+
+                if (context.pseudoId == NOPSEUDO) {
+                    if (m_mode == ResolvingStyle && pseudoId < FIRST_INTERNAL_PSEUDOID)
+                        context.elementStyle->setHasPseudoStyle(pseudoId);
+                }
+            }
         }
     }
 

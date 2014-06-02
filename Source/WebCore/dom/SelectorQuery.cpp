@@ -124,8 +124,7 @@ inline bool SelectorDataList::selectorMatches(const SelectorData& selectorData, 
     SelectorChecker selectorChecker(element.document(), SelectorChecker::QueryingRules);
     SelectorChecker::SelectorCheckingContext selectorCheckingContext(selectorData.selector, &element, SelectorChecker::VisitedMatchDisabled);
     selectorCheckingContext.scope = rootNode.isDocumentNode() ? nullptr : &rootNode;
-    PseudoId ignoreDynamicPseudo = NOPSEUDO;
-    return selectorChecker.match(selectorCheckingContext, ignoreDynamicPseudo);
+    return selectorChecker.match(selectorCheckingContext);
 }
 
 bool SelectorDataList::matches(Element& targetElement) const

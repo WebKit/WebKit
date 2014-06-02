@@ -1,3 +1,57 @@
+2014-06-02  Benjamin Poulain  <benjamin@webkit.org>
+
+        Make pseudo element matching for style resolution more JIT friendly
+        https://bugs.webkit.org/show_bug.cgi?id=133441
+
+        Reviewed by Antti Koivisto.
+
+        Sharing pseudo elements is a complicated mess shared between the SelectorChecker
+        and the RuleCollector.
+
+        For compiling pseudo element matching, it would be best if all the complexity could
+        be moved to compile time instead of runtime. It is also preferable to keep the compiler
+        independant of the RuleCollector implementation's detail.
+
+        This patch is a first step toward that goal. The main objective here is to make
+        "dynamicPseudo" completely internal to the SelectorChecker.
+        This is mostly a mechanical change, it is likely PseudoElement matching could be simplified
+        further but that is not attempted here.
+
+        Test: fast/css/style-sharing-empty-rule-modification.html
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ruleMatches):
+        The condition regarding pseudo element matching has been moved into SelectorChecker::match().
+
+        This creates an extra cost for querySelector(), but that should be fine since the vast majority
+        of selectors are JIT compiled and never use SelectorChecker in the first place.
+
+        (WebCore::ElementRuleCollector::collectMatchingRulesForList):
+        The loop is changed such that the tree marking (Style::setHasPseudoStyle) could be moved
+        to SelectorChecker.
+
+        The conditions about the security origin for getMatchedCSSRules() and the empty style rules
+        are moved prior to the call to ElementRuleCollector::ruleMatches(). This ensure we keep the same
+        behavior of not adding the pseudo style for empty rules (this could also help with tree marking
+        in general but empty rules are probably uncommon).
+
+        There is one behavior change from making this loop simpler: the SharingRules and StyleInvalidation
+        modes now update their ruleRange. It is useless but it is simpler.
+
+        * css/ElementRuleCollector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively):
+        The tree marking has been moved here.
+
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::match):
+        The pseudo element matching has been moved here.
+
+        * css/StyleResolver.h:
+        (WebCore::checkRegionSelector):
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::selectorMatches):
+
 2014-06-02  Jeremy Jones  <jeremyj@apple.com>
 
         Send external playback properties to fullscreen.

@@ -82,9 +82,18 @@ public:
         bool hasSelectionPseudo;
     };
 
-    bool match(const SelectorCheckingContext& context, PseudoId& pseudoId) const
+    bool match(const SelectorCheckingContext& context) const
     {
-        return matchRecursively(context, pseudoId) == SelectorMatches;
+        PseudoId pseudoId = NOPSEUDO;
+        if (matchRecursively(context, pseudoId) != SelectorMatches)
+            return false;
+        if (context.pseudoId != NOPSEUDO && context.pseudoId != pseudoId)
+            return false;
+        if (context.pseudoId == NOPSEUDO && pseudoId != NOPSEUDO) {
+            // For SharingRules testing, any match is good enough, we don't care what is matched.
+            return m_mode == SharingRules || m_mode == StyleInvalidation;
+        }
+        return true;
     }
 
     static bool tagMatches(const Element*, const QualifiedName&);

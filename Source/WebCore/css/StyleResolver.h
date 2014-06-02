@@ -567,8 +567,7 @@ inline bool checkRegionSelector(const CSSSelector* regionSelector, Element* regi
     SelectorChecker selectorChecker(regionElement->document(), SelectorChecker::QueryingRules);
     for (const CSSSelector* s = regionSelector; s; s = CSSSelectorList::next(s)) {
         SelectorChecker::SelectorCheckingContext selectorCheckingContext(s, regionElement, SelectorChecker::VisitedMatchDisabled);
-        PseudoId ignoreDynamicPseudo = NOPSEUDO;
-        if (selectorChecker.match(selectorCheckingContext, ignoreDynamicPseudo))
+        if (selectorChecker.match(selectorCheckingContext))
             return true;
     }
     return false;
