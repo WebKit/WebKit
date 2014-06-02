@@ -11,10 +11,23 @@ PASS pc is connected
 PASS dtmfsender = pc.createDTMFSender(track); threw exception Error: SyntaxError: DOM Exception 12.
 PASS dtmfsender = pc.createDTMFSender(track); did not throw exception.
 PASS dtmfsender.canInsertDTMF is true
-PASS dtmfsender.toneBuffer is "1"
-PASS ontonechange was called.
-PASS event.tone is "1"
-PASS ontonechange was called.
+PASS dtmfsender.duration is 100
+PASS dtmfsender.interToneGap is 70
+PASS dtmfsender.duration is 40
+PASS dtmfsender.interToneGap is 30
+PASS dtmfsender.duration is 6000
+PASS dtmfsender.interToneGap is 70
+PASS dtmfsender.insertDTMF("1", "20"); threw exception Error: SyntaxError: DOM Exception 12.
+PASS dtmfsender.insertDTMF("1", "7000"); threw exception Error: SyntaxError: DOM Exception 12.
+PASS dtmfsender.insertDTMF("1", "70", "10"); threw exception Error: SyntaxError: DOM Exception 12.
+PASS ontonechange was called 1
+PASS ontonechange was called 
+PASS ontonechange was called 4
+PASS ontonechange was called 
+PASS ontonechange was called 1
+PASS ontonechange was called 2
+PASS ontonechange was called 3
+PASS ontonechange was called 
 PASS event.tone is ""
 PASS successfullyParsed is true
 

@@ -32,6 +32,7 @@
 #include "MediaConstraintsMock.h"
 #include "NotImplemented.h"
 #include "RTCDTMFSenderHandler.h"
+#include "RTCDTMFSenderHandlerMock.h"
 #include "RTCDataChannelHandler.h"
 #include "RTCDataChannelHandlerMock.h"
 #include "RTCNotifiersMock.h"
@@ -167,10 +168,7 @@ std::unique_ptr<RTCDataChannelHandler> RTCPeerConnectionHandlerMock::createDataC
 
 std::unique_ptr<RTCDTMFSenderHandler> RTCPeerConnectionHandlerMock::createDTMFSender(PassRefPtr<MediaStreamSource>)
 {
-    // Requires a mock implementation of RTCDTMFSenderHandler.
-    // This must be implemented once the mock implementation of RTCDataChannelHandler is ready.
-    notImplemented();
-    return nullptr;
+    return std::make_unique<RTCDTMFSenderHandlerMock>();
 }
 
 void RTCPeerConnectionHandlerMock::stop()

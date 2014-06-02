@@ -1,3 +1,13 @@
+2014-06-02  Kiran  <kiran.guduru@samsung.com>
+
+        Add mock DTMFSender support.
+        https://bugs.webkit.org/show_bug.cgi?id=133298
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/RTCPeerConnection-dtmf-expected.txt:
+        * fast/mediastream/RTCPeerConnection-dtmf.html:
+
 2014-06-02  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed EFL gardening.

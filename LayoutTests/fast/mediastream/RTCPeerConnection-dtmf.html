@@ -20,15 +20,14 @@
             var callCount = 1;
 
             function ontonechange(e) {
-                testPassed("ontonechange was called.");
                 event = e;
+                testPassed("ontonechange was called " + event.tone);
                 if (!lastCall) {
-                    shouldBeEqualToString('event.tone', "1");
                     callCount++;
-                    if (3 == callCount)
+                    if (8 == callCount)
                         lastCall = true;
                 } else {
-                    shouldBeEqualToString('event.tone', "");
+                    shouldBeEmptyString('event.tone');
                     finishJSTest();
                 }
             }
@@ -45,24 +44,20 @@
 
                     dtmfsender.ontonechange = ontonechange;
                     dtmfsender.insertDTMF("1");
-                    shouldBeEqualToString('dtmfsender.toneBuffer', "1");
-                    shouldBeEqualToString('dtmfsender.duration', "100");
-                    shouldBeEqualToString('dtmfsender.interToneGap', "70");
+                    shouldBe('dtmfsender.duration', "100");
+                    shouldBe('dtmfsender.interToneGap', "70");
 
-                    dtmfsender.insertDTMF("1", "40", "30");
-                    shouldBeEqualToString('dtmfsender.toneBuffer', "1");
-                    shouldBeEqualToString('dtmfsender.duration', "40");
-                    shouldBeEqualToString('dtmfsender.interToneGap', "30");
+                    dtmfsender.insertDTMF("4", "40", "30");
+                    shouldBe('dtmfsender.duration', "40");
+                    shouldBe('dtmfsender.interToneGap', "30");
 
-                    dtmfsender.insertDTMF("1", "6000");
-                    shouldBeEqualToString('dtmfsender.toneBuffer', "1");
-                    shouldBeEqualToString('dtmfsender.duration', "6000");
-                    shouldBeEqualToString('dtmfsender.interToneGap', "70");
+                    dtmfsender.insertDTMF("123", "6000");
+                    shouldBe('dtmfsender.duration', "6000");
+                    shouldBe('dtmfsender.interToneGap', "70");
 
                     shouldThrow('dtmfsender.insertDTMF("1", "20");');
                     shouldThrow('dtmfsender.insertDTMF("1", "7000");');
                     shouldThrow('dtmfsender.insertDTMF("1", "70", "10");');
-
 
                 }
             }

@@ -2170,6 +2170,7 @@ set(WebCore_SOURCES
     platform/mock/MediaConstraintsMock.cpp
     platform/mock/MockMediaStreamCenter.cpp
     platform/mock/RTCDataChannelHandlerMock.cpp
+    platform/mock/RTCDTMFSenderHandlerMock.cpp
     platform/mock/RTCNotifiersMock.cpp
     platform/mock/RTCPeerConnectionHandlerMock.cpp
     platform/mock/ScrollbarThemeMock.cpp
