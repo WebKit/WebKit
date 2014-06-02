@@ -1,3 +1,12 @@
+2014-06-02  Oliver Hunt  <oliver@apple.com>
+
+        Move ifdef to the right place.
+
+        RS=Enrica
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::initializeSandbox):
+
 2014-06-02  Gavin Barraclough  <barraclough@apple.com>
 
         Set default voucher for XPC client processes

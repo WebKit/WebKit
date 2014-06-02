@@ -252,8 +252,8 @@ void WebProcess::initializeSandbox(const ChildProcessInitializationParameters& p
 #else
     sandboxParameters.setOverrideSandboxProfilePath([webkit2Bundle pathForResource:@"com.apple.WebProcess" ofType:@"sb"]);
 #endif
-#endif
     ChildProcess::initializeSandbox(parameters, sandboxParameters);
+#endif
 #else
     UNUSED_PARAM(parameters);
     UNUSED_PARAM(sandboxParameters);
