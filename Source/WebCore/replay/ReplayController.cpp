@@ -113,8 +113,10 @@ void ReplayController::setForceDeterministicSettings(bool shouldForceDeterminist
         m_page.settings().setUsesPageCache(m_savedSettings.usesPageCache);
     }
 
+#if ENABLE(ASYNC_SCROLLING)
     if (ScrollingCoordinator* scrollingCoordinator = m_page.scrollingCoordinator())
         scrollingCoordinator->replaySessionStateDidChange();
+#endif
 }
 
 void ReplayController::setSessionState(SessionState state)

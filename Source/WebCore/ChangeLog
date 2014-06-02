@@ -1,3 +1,20 @@
+2014-06-02  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
+
+        WebCore build fix for webreplay
+        https://bugs.webkit.org/show_bug.cgi?id=133401
+
+        Reviewed by Darin Adler.
+
+        * replay/MemoizedDOMResult.cpp:
+        (WebCore::MemoizedDOMResultBase::createFromEncodedResult):
+        Add a default nullptr return in order to avoid a gcc warning.
+        The warning is because of a non-void method that has a case which doesn't return.
+        * replay/ReplayController.cpp:
+        (WebCore::ReplayController::setForceDeterministicSettings):
+        Guard the ScrollingCoordinator with the appropriate #ifdef.
+        * replay/SerializationMethods.cpp:
+        Guard the KeypressCommand with COCOA as it is only present there.
+
 2014-06-02  Jer Noble  <jer.noble@apple.com>
 
         Further unreviewed GTK build fix after r169536.

@@ -55,6 +55,9 @@ std::unique_ptr<MemoizedDOMResultBase> MemoizedDOMResultBase::createFromEncodedR
 FOR_EACH_MEMOIZED_CTYPE(CREATE_DECODE_SWITCH_CASE)
 #undef CREATE_DECODE_SWITCH_CASE
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 } // namespace WebCore

@@ -45,7 +45,6 @@
 #include "URL.h"
 #include <wtf/text/Base64.h>
 
-using WebCore::KeypressCommand;
 using WebCore::IntPoint;
 using WebCore::MimeClassInfo;
 using WebCore::MouseButton;
@@ -61,6 +60,7 @@ using WebCore::URL;
 using WebCore::inputTypes;
 
 #if PLATFORM(COCOA)
+using WebCore::KeypressCommand;
 using WebCore::PlatformWheelEventPhase;
 #endif
 
