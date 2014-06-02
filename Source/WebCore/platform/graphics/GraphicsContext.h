@@ -193,8 +193,8 @@ namespace WebCore {
     void setStrokeAndFillColor(PlatformGraphicsContext*, CGColorRef);
 #endif
 
-    struct ImagePaintingContext {
-        ImagePaintingContext(CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal, ImageOrientationDescription orientationDescription = ImageOrientationDescription(), bool useLowQualityScale = false)
+    struct ImagePaintingOptions {
+        ImagePaintingOptions(CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal, ImageOrientationDescription orientationDescription = ImageOrientationDescription(), bool useLowQualityScale = false)
             : m_compositeOperator(compositeOperator)
             , m_blendMode(blendMode)
             , m_orientationDescription(orientationDescription)
@@ -202,7 +202,7 @@ namespace WebCore {
         {
         }
 
-        ImagePaintingContext(ImageOrientationDescription orientationDescription, bool useLowQualityScale = false, CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal)
+        ImagePaintingOptions(ImageOrientationDescription orientationDescription, bool useLowQualityScale = false, CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal)
             : m_compositeOperator(compositeOperator)
             , m_blendMode(blendMode)
             , m_orientationDescription(orientationDescription)
@@ -210,7 +210,7 @@ namespace WebCore {
         {
         }
 
-        ImagePaintingContext(bool useLowQualityScale, ImageOrientationDescription orientationDescription = ImageOrientationDescription(), CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal)
+        ImagePaintingOptions(bool useLowQualityScale, ImageOrientationDescription orientationDescription = ImageOrientationDescription(), CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal)
             : m_compositeOperator(compositeOperator)
             , m_blendMode(blendMode)
             , m_orientationDescription(orientationDescription)
@@ -333,18 +333,18 @@ namespace WebCore {
 
         void strokeRect(const FloatRect&, float lineWidth);
 
-        void drawImage(Image*, ColorSpace, const FloatPoint& destination, const ImagePaintingContext& = ImagePaintingContext());
-        void drawImage(Image*, ColorSpace, const FloatRect& destination, const ImagePaintingContext& = ImagePaintingContext());
-        void drawImage(Image*, ColorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingContext& = ImagePaintingContext());
+        void drawImage(Image*, ColorSpace, const FloatPoint& destination, const ImagePaintingOptions& = ImagePaintingOptions());
+        void drawImage(Image*, ColorSpace, const FloatRect& destination, const ImagePaintingOptions& = ImagePaintingOptions());
+        void drawImage(Image*, ColorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = ImagePaintingOptions());
 
         void drawTiledImage(Image*, ColorSpace, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize,
-            const ImagePaintingContext& = ImagePaintingContext());
+            const ImagePaintingOptions& = ImagePaintingOptions());
         void drawTiledImage(Image*, ColorSpace, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor,
-            Image::TileRule, Image::TileRule, const ImagePaintingContext& = ImagePaintingContext());
+            Image::TileRule, Image::TileRule, const ImagePaintingOptions& = ImagePaintingOptions());
 
-        void drawImageBuffer(ImageBuffer*, ColorSpace, const FloatPoint& destination, const ImagePaintingContext& = ImagePaintingContext());
-        void drawImageBuffer(ImageBuffer*, ColorSpace, const FloatRect& destination, const ImagePaintingContext& = ImagePaintingContext());
-        void drawImageBuffer(ImageBuffer*, ColorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingContext& = ImagePaintingContext());
+        void drawImageBuffer(ImageBuffer*, ColorSpace, const FloatPoint& destination, const ImagePaintingOptions& = ImagePaintingOptions());
+        void drawImageBuffer(ImageBuffer*, ColorSpace, const FloatRect& destination, const ImagePaintingOptions& = ImagePaintingOptions());
+        void drawImageBuffer(ImageBuffer*, ColorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = ImagePaintingOptions());
 
         void setImageInterpolationQuality(InterpolationQuality);
         InterpolationQuality imageInterpolationQuality() const;

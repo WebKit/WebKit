@@ -569,7 +569,7 @@ void RenderImage::paintIntoRect(GraphicsContext* context, const FloatRect& rect)
     orientationDescription.setImageOrientationEnum(style().imageOrientation());
 #endif
     context->drawImage(imageResource().image(rect.width(), rect.height()).get(), style().colorSpace(), rect,
-        ImagePaintingContext(compositeOperator, BlendModeNormal, orientationDescription, useLowQualityScaling));
+        ImagePaintingOptions(compositeOperator, BlendModeNormal, orientationDescription, useLowQualityScaling));
 }
 
 bool RenderImage::boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox*) const
