@@ -1,3 +1,26 @@
+2014-06-01  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        getBBox() returns (0,0) when width or height is zero.
+        https://bugs.webkit.org/show_bug.cgi?id=93290
+
+        Reviewed by Philip Rogers.
+ 
+        * platform/mac/svg/W3C-SVG-1.1/shapes-circle-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/shapes-ellipse-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/shapes-intro-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/shapes-rect-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-32-t-expected.txt:
+        * svg/W3C-SVG-1.1/shapes-circle-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/shapes-ellipse-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/shapes-intro-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/shapes-rect-02-t-expected.txt:
+        * svg/custom/getBBox-js-circle-zerodimension-expected.txt: Added.
+        * svg/custom/getBBox-js-circle-zerodimension.html: Added.
+        * svg/custom/getBBox-js-ellipse-zerodimension-expected.txt: Added.
+        * svg/custom/getBBox-js-ellipse-zerodimension.html: Added.
+        * svg/custom/getBBox-js-rect-zerodimension-expected.txt: Added.
+        * svg/custom/getBBox-js-rect-zerodimension.html: Added.
+
 2014-06-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         EFL gardening. Unskip some iframe tests which have passed since buildbot OS bump up.

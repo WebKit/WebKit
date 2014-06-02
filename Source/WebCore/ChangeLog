@@ -1,3 +1,39 @@
+2014-06-01  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        getBBox() returns (0,0) when width or height is zero.
+        https://bugs.webkit.org/show_bug.cgi?id=93290
+
+        Reviewed by Philip Rogers.
+
+        The SVG spec states that a width or height of zero for  rects, circles and
+        ellipses is valid but disables rendering of that shape.
+        In this case, getBBox() should return the actual bounding box of the element.
+        Previously, WebKit always returned (0,0,0,0) rather than the
+        correct bounding box. This patch fixes that. 
+
+        Rects and ellipses both now follow the same behaviour where
+        the fall-back code path is only used when the shape will render (e.g. not
+        when a dimension <= 0).
+  
+        This necessitates calling calculateRadiiAndCenter for ellipses even
+        when the calculated values will be discarded in the fall back code path.
+        But calculateRadiiAndCenter is cheap and this avoids making changes 
+        elsewhere to stop CG drawing a zero width (or height) ellipse.  
+
+        Tests: svg/custom/getBBox-js-circle-zerodimension.html
+               svg/custom/getBBox-js-ellipse-zerodimension.html
+               svg/custom/getBBox-js-rect-zerodimension.html
+
+        * rendering/svg/RenderSVGEllipse.cpp:
+        (WebCore::RenderSVGEllipse::updateShapeFromElement):
+        Only follow fall-back code path when shape renders. 
+        width||height==0 is not an error case so calculate bounding box.        
+
+        * rendering/svg/RenderSVGRect.cpp:
+        (WebCore::RenderSVGRect::updateShapeFromElement):
+        Only follow fall-back code path when shape renders. 
+        rx||ry==0 is not an error case so calculate bounding box.        
+
 2014-06-01  Simon Fraser  <simon.fraser@apple.com>
 
         Don't scroll to non-integral scroll offsets

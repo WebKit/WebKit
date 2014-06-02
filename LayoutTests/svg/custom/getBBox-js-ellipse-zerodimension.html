@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <script>
+    function check_bbox(bbox, test_name)
+    {
+        var result_str = "";
+
+        if (bbox.x == 0 && bbox.y == 50 && bbox.width == 100 && bbox.height == 0) {                           
+            result_str += "Passed";
+        } else {
+            result_str += test_name + ": Failed";
+            result_str += "("+bbox.x+","+bbox.y+":"+bbox.width + "," + bbox.height+")";
+        }
+        
+        var p_result = document.querySelector("#result");
+        p_result.appendChild(document.createTextNode(result_str + "; "));
+    }
+  
+    function run()
+    {
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        
+        var svg = document.querySelector("svg");        
+        var ellipse = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+        ellipse.setAttribute("cx", "50");
+        ellipse.setAttribute("cy", "50");
+        ellipse.setAttribute("rx", "50");
+        ellipse.setAttribute("ry", "0");
+        ellipse.setAttribute("height", "0");
+        svg.appendChild(ellipse);
+        check_bbox(ellipse.getBBox(), "zero height ellipse");
+        
+        ellipse.setAttribute("stroke-width", "10");
+        ellipse.setAttribute("stroke", "red");
+        check_bbox(ellipse.getBBox(), "with stroke");
+ 
+        ellipse.setAttribute("vector-effect", "non-scaling-stroke");
+        check_bbox(ellipse.getBBox(), "with non-scaling-stroke");
+    }
+  </script>
+
+<body onload="run()">
+<p>Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=93290">93290</a>: getBBox() returns (0,0) incorrectly when width or height is zero.</p>
+<p>For this test to pass, you should see 'Passed' three times below.</a>
+<p id="result"></p>
+<svg xmlns="http://www.w3.org/2000/svg">
+</svg>
+</body>
+</html>

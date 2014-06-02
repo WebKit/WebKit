@@ -52,19 +52,22 @@ void RenderSVGEllipse::updateShapeFromElement()
     m_center = FloatPoint();
     m_radii = FloatSize();
 
-    // Fallback to RenderSVGShape if shape has a non-scaling stroke.
-    if (hasNonScalingStroke()) {
-        RenderSVGShape::updateShapeFromElement();
-        m_usePathFallback = true;
-        return;
-    } else
-        m_usePathFallback = false;
-
     calculateRadiiAndCenter();
 
-    // Spec: "A value of zero disables rendering of the element."
-    if (m_radii.width() <= 0 || m_radii.height() <= 0)
+    // Element is invalid if either dimension is negative.
+    if (m_radii.width() < 0 || m_radii.height() < 0)
         return;
+
+    // Spec: "A value of zero disables rendering of the element."
+    if (!m_radii.isEmpty()) {
+        if (hasNonScalingStroke()) {
+            // Fallback to RenderSVGShape if shape has a non-scaling stroke.
+            RenderSVGShape::updateShapeFromElement();
+            m_usePathFallback = true;
+            return;
+        }
+        m_usePathFallback = false;
+    }
 
     m_fillBoundingBox = FloatRect(m_center.x() - m_radii.width(), m_center.y() - m_radii.height(), 2 * m_radii.width(), 2 * m_radii.height());
     m_strokeBoundingBox = m_fillBoundingBox;

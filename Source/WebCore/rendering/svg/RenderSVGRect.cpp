@@ -56,17 +56,22 @@ void RenderSVGRect::updateShapeFromElement()
     m_outerStrokeRect = FloatRect();
 
     SVGLengthContext lengthContext(&rectElement());
-    // Fallback to RenderSVGShape if rect has rounded corners or a non-scaling stroke.
-    if (rectElement().rx().value(lengthContext) > 0 || rectElement().ry().value(lengthContext) > 0 || hasNonScalingStroke()) {
-        RenderSVGShape::updateShapeFromElement();
-        m_usePathFallback = true;
-        return;
-    }
-
-    m_usePathFallback = false;
     FloatSize boundingBoxSize(rectElement().width().value(lengthContext), rectElement().height().value(lengthContext));
-    if (boundingBoxSize.isEmpty())
+
+    // Element is invalid if either dimension is negative.
+    if (boundingBoxSize.width() < 0 || boundingBoxSize.height() < 0)
         return;
+
+    // Rendering enabled? Spec: "A value of zero disables rendering of the element."
+    if (!boundingBoxSize.isEmpty()) {
+        if (rectElement().rx().value(lengthContext) > 0 || rectElement().ry().value(lengthContext) > 0 || hasNonScalingStroke()) {
+            // Fall back to RenderSVGShape
+            RenderSVGShape::updateShapeFromElement();
+            m_usePathFallback = true;
+            return;
+        }
+        m_usePathFallback = false;
+    }
 
     m_fillBoundingBox = FloatRect(FloatPoint(rectElement().x().value(lengthContext), rectElement().y().value(lengthContext)), boundingBoxSize);
 
