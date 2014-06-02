@@ -570,87 +570,75 @@ float GraphicsContext::drawBidiText(const Font& font, const TextRun& run, const 
 #endif
 }
 
-void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatPoint& p, CompositeOperator op, ImageOrientationDescription description)
+void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatPoint& destination, const ImagePaintingContext& imagePaintingContext)
 {
     if (!image)
         return;
-    drawImage(image, styleColorSpace, FloatRect(p, image->size()), FloatRect(FloatPoint(), image->size()), op, BlendModeNormal, description);
+    drawImage(image, styleColorSpace, FloatRect(destination, image->size()), FloatRect(FloatPoint(), image->size()), imagePaintingContext);
 }
 
-void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& r, CompositeOperator op, ImageOrientationDescription description, bool useLowQualityScale)
+void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& destination, const ImagePaintingContext& imagePaintingContext)
 {
     if (!image)
         return;
-    drawImage(image, styleColorSpace, r, FloatRect(FloatPoint(), image->size()), op, BlendModeNormal, description, useLowQualityScale);
+    drawImage(image, styleColorSpace, destination, FloatRect(FloatPoint(), image->size()), imagePaintingContext);
 }
 
-void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatPoint& dest, const FloatRect& srcRect, CompositeOperator op, ImageOrientationDescription description)
+void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingContext& imagePaintingContext)
 {
-    drawImage(image, styleColorSpace, FloatRect(dest, srcRect.size()), srcRect, op, BlendModeNormal, description);
-}
-
-void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op, BlendMode blendMode, ImageOrientationDescription description, bool useLowQualityScale)
-{
-    if (paintingDisabled() || !image)
-        return;
-    
     // FIXME (49002): Should be InterpolationLow
-    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, useLowQualityScale ? InterpolationNone : imageInterpolationQuality());
-    image->draw(this, dest, src, styleColorSpace, op, blendMode, description);
+    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingContext.m_useLowQualityScale ? InterpolationNone : imageInterpolationQuality());
+    image->draw(this, destination, source, styleColorSpace, imagePaintingContext.m_compositeOperator, imagePaintingContext.m_blendMode, imagePaintingContext.m_orientationDescription);
 }
 
-void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& tileSize, CompositeOperator op, bool useLowQualityScale, BlendMode blendMode)
+void GraphicsContext::drawTiledImage(Image* image, ColorSpace colorSpace, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize,
+    const ImagePaintingContext& imagePaintingContext)
 {
     if (paintingDisabled() || !image)
         return;
 
-    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, useLowQualityScale ? InterpolationLow : imageInterpolationQuality());
-    image->drawTiled(this, destRect, srcPoint, tileSize, styleColorSpace, op, blendMode);
+    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingContext.m_useLowQualityScale ? InterpolationLow : imageInterpolationQuality());
+    image->drawTiled(this, destination, source, tileSize, colorSpace, imagePaintingContext.m_compositeOperator, imagePaintingContext.m_blendMode);
 }
 
-void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& srcRect,
-    const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, CompositeOperator op, bool useLowQualityScale)
+void GraphicsContext::drawTiledImage(Image* image, ColorSpace colorSpace, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor,
+    Image::TileRule hRule, Image::TileRule vRule, const ImagePaintingContext& imagePaintingContext)
 {
     if (paintingDisabled() || !image)
         return;
 
     if (hRule == Image::StretchTile && vRule == Image::StretchTile) {
         // Just do a scale.
-        drawImage(image, styleColorSpace, dest, srcRect, op);
+        drawImage(image, colorSpace, destination, source, imagePaintingContext);
         return;
     }
 
-    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, useLowQualityScale ? InterpolationLow : imageInterpolationQuality());
-    image->drawTiled(this, dest, srcRect, tileScaleFactor, hRule, vRule, styleColorSpace, op);
+    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingContext.m_useLowQualityScale ? InterpolationLow : imageInterpolationQuality());
+    image->drawTiled(this, destination, source, tileScaleFactor, hRule, vRule, colorSpace, imagePaintingContext.m_compositeOperator);
 }
 
-void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const FloatPoint& p, CompositeOperator op, BlendMode blendMode)
+void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace colorSpace, const FloatPoint& destination, const ImagePaintingContext& imagePaintingContext)
 {
     if (!image)
         return;
-    drawImageBuffer(image, styleColorSpace, FloatRect(p, image->logicalSize()), FloatRect(FloatPoint(), image->logicalSize()), op, blendMode);
+    drawImageBuffer(image, colorSpace, FloatRect(destination, image->logicalSize()), FloatRect(FloatPoint(), image->logicalSize()), imagePaintingContext);
 }
 
-void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const FloatRect& dest, CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)
+void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace colorSpace, const FloatRect& destination, const ImagePaintingContext& imagePaintingContext)
 {
     if (!image)
         return;
-    drawImageBuffer(image, styleColorSpace, dest, FloatRect(FloatPoint(), FloatSize(image->logicalSize())), op, blendMode, useLowQualityScale);
+    drawImageBuffer(image, colorSpace, destination, FloatRect(FloatPoint(), FloatSize(image->logicalSize())), imagePaintingContext);
 }
 
-void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const FloatPoint& dest, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode)
-{
-    drawImageBuffer(image, styleColorSpace, FloatRect(dest, srcRect.size()), srcRect, op, blendMode);
-}
-
-void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)
+void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace colorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingContext& imagePaintingContext)
 {
     if (paintingDisabled() || !image)
         return;
 
     // FIXME (49002): Should be InterpolationLow
-    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, useLowQualityScale ? InterpolationNone : imageInterpolationQuality());
-    image->draw(this, styleColorSpace, dest, src, op, blendMode, useLowQualityScale);
+    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingContext.m_useLowQualityScale ? InterpolationNone : imageInterpolationQuality());
+    image->draw(this, colorSpace, destination, source, imagePaintingContext.m_compositeOperator, imagePaintingContext.m_blendMode, imagePaintingContext.m_useLowQualityScale);
 }
 
 void GraphicsContext::clip(const IntRect& rect)
