@@ -1,3 +1,11 @@
+2014-06-02  Martin Hock  <mhock@apple.com>
+
+        Unreviewed TestExpectations gardening after r169532.
+
+        * TestExpectations:
+        Update fast/table/border-collapsing/collapsed-borders-adjoining-sections.html
+        from [ Failure ] to [ ImageOnlyFailure ].
+
 2014-05-31  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r154622): Borders disappear when hovering over cells in table

@@ -124,4 +124,4 @@ webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-auto.h
 
 webkit.org/b/133356 js/primitive-property-access-edge-cases.html [ Pass Crash ]
 
-webkit.org/b/133057 fast/table/border-collapsing/collapsed-borders-adjoining-sections.html [ Failure ]
+webkit.org/b/133057 fast/table/border-collapsing/collapsed-borders-adjoining-sections.html [ ImageOnlyFailure ]
