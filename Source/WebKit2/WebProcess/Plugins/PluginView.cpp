@@ -77,7 +77,7 @@ using namespace WebCore;
 namespace WebKit {
 
 // This simulated mouse click delay in HTMLPlugInImageElement.cpp should generally be the same or shorter than this delay.
-static const double pluginSnapshotTimerDelay = 1.1;
+static const auto pluginSnapshotTimerDelay = std::chrono::milliseconds { 1100 };
 
 class PluginView::URLRequest : public RefCounted<URLRequest> {
 public:
@@ -1679,7 +1679,7 @@ static bool isAlmostSolidColor(BitmapImage* bitmap)
 }
 #endif
 
-void PluginView::pluginSnapshotTimerFired(DeferrableOneShotTimer<PluginView>&)
+void PluginView::pluginSnapshotTimerFired()
 {
     ASSERT(m_plugin);
 

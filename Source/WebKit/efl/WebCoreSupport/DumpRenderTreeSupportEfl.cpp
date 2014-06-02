@@ -409,7 +409,7 @@ size_t DumpRenderTreeSupportEfl::javaScriptObjectsCount()
 
 void DumpRenderTreeSupportEfl::setDeadDecodedDataDeletionInterval(double interval)
 {
-    WebCore::memoryCache()->setDeadDecodedDataDeletionInterval(interval);
+    WebCore::memoryCache()->setDeadDecodedDataDeletionInterval(std::chrono::milliseconds { static_cast<std::chrono::milliseconds::rep>(interval * 1000) });
 }
 
 HistoryItemChildrenVector DumpRenderTreeSupportEfl::childHistoryItems(const Ewk_History_Item* ewkHistoryItem)

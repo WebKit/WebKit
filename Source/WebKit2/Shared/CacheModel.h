@@ -26,6 +26,7 @@
 #ifndef CacheModel_h
 #define CacheModel_h
 
+#include <chrono>
 #include <stdint.h>
 
 namespace WebKit {
@@ -37,7 +38,7 @@ enum CacheModel {
 };
 
 void calculateCacheSizes(CacheModel cacheModel, uint64_t memorySize, uint64_t diskFreeSize,
-    unsigned& cacheTotalCapacity, unsigned& cacheMinDeadCapacity, unsigned& cacheMaxDeadCapacity, double& deadDecodedDataDeletionInterval,
+    unsigned& cacheTotalCapacity, unsigned& cacheMinDeadCapacity, unsigned& cacheMaxDeadCapacity, std::chrono::seconds& deadDecodedDataDeletionInterval,
     unsigned& pageCacheCapacity, unsigned long& urlCacheMemoryCapacity, unsigned long& urlCacheDiskCapacity);
 
 } // namespace WebKit

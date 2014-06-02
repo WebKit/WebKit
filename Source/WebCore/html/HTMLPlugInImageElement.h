@@ -133,7 +133,7 @@ private:
     void startLoadingImage();
     void updateWidgetIfNecessary();
 
-    void simulatedMouseClickTimerFired(DeferrableOneShotTimer<HTMLPlugInImageElement>&);
+    void simulatedMouseClickTimerFired();
 
     void restartSimilarPlugIns();
     void removeSnapshotTimerFired(Timer<HTMLPlugInImageElement>&);
@@ -144,7 +144,7 @@ private:
     bool m_shouldPreferPlugInsForImages;
     bool m_needsDocumentActivationCallbacks;
     RefPtr<MouseEvent> m_pendingClickEventFromSnapshot;
-    DeferrableOneShotTimer<HTMLPlugInImageElement> m_simulatedMouseClickTimer;
+    DeferrableOneShotTimer m_simulatedMouseClickTimer;
     Timer<HTMLPlugInImageElement> m_removeSnapshotTimer;
     RefPtr<Image> m_snapshotImage;
     bool m_createdDuringUserGesture;

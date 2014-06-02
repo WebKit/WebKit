@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-static const double timeToKeepCachedGeneratedImagesInSeconds = 3;
+static const auto timeToKeepCachedGeneratedImages = std::chrono::seconds { 3 };
 
 CSSImageGeneratorValue::CSSImageGeneratorValue(ClassType classType)
     : CSSValue(classType)
@@ -94,12 +94,12 @@ CSSImageGeneratorValue::CachedGeneratedImage::CachedGeneratedImage(CSSImageGener
     : m_owner(owner)
     , m_size(size)
     , m_image(image)
-    , m_evictionTimer(this, &CSSImageGeneratorValue::CachedGeneratedImage::evictionTimerFired, timeToKeepCachedGeneratedImagesInSeconds)
+    , m_evictionTimer(this, &CSSImageGeneratorValue::CachedGeneratedImage::evictionTimerFired, timeToKeepCachedGeneratedImages)
 {
     m_evictionTimer.restart();
 }
 
-void CSSImageGeneratorValue::CachedGeneratedImage::evictionTimerFired(DeferrableOneShotTimer<CachedGeneratedImage>&)
+void CSSImageGeneratorValue::CachedGeneratedImage::evictionTimerFired()
 {
     // NOTE: This is essentially a "delete this", the object is no longer valid after this line.
     m_owner.evictCachedGeneratedImage(m_size);

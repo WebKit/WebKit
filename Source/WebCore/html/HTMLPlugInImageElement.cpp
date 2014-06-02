@@ -67,8 +67,8 @@ static const float sizingFullPageAreaRatioThreshold = 0.96;
 static const float autostartSoonAfterUserGestureThreshold = 5.0;
 
 // This delay should not exceed the snapshot delay in PluginView.cpp
-static const double simulatedMouseClickTimerDelay = .75;
-static const double removeSnapshotTimerDelay = 1.5;
+static const auto simulatedMouseClickTimerDelay = std::chrono::milliseconds { 750 };
+static const auto removeSnapshotTimerDelay = std::chrono::milliseconds { 1500 };
 
 static const String titleText(Page* page, String mimeType)
 {
@@ -509,7 +509,7 @@ void HTMLPlugInImageElement::dispatchPendingMouseClick()
     m_simulatedMouseClickTimer.restart();
 }
 
-void HTMLPlugInImageElement::simulatedMouseClickTimerFired(DeferrableOneShotTimer<HTMLPlugInImageElement>&)
+void HTMLPlugInImageElement::simulatedMouseClickTimerFired()
 {
     ASSERT(displayState() == RestartingWithPendingMouseClick);
     ASSERT(m_pendingClickEventFromSnapshot);

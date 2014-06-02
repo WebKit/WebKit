@@ -1,3 +1,37 @@
+2014-05-31  Anders Carlsson  <andersca@apple.com>
+
+        Change DeferrableOneShotTimer to use std::function instead of being a class template
+        https://bugs.webkit.org/show_bug.cgi?id=133423
+
+        Reviewed by Antti Koivisto.
+
+        Also, add a new constructor to DeferrableOneShotTimer that takes an std::function. Change the callback
+        to not pass a DeferrableOneShotTimer& anymore. Change the delay parameter to use std::chrono::milliseconds.
+
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::CachedGeneratedImage::CachedGeneratedImage):
+        (WebCore::CSSImageGeneratorValue::CachedGeneratedImage::evictionTimerFired):
+        * css/CSSImageGeneratorValue.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::simulatedMouseClickTimerFired):
+        * html/HTMLPlugInImageElement.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::deadDecodedDataDeletionIntervalForResourceType):
+        (WebCore::CachedResource::destroyDecodedDataIfNeeded):
+        (WebCore::CachedResource::decodedDataDeletionTimerFired):
+        * loader/cache/CachedResource.h:
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::MemoryCache):
+        * loader/cache/MemoryCache.h:
+        (WebCore::MemoryCache::setDeadDecodedDataDeletionInterval):
+        (WebCore::MemoryCache::deadDecodedDataDeletionInterval):
+        * platform/Timer.h:
+        (WebCore::Timer::Timer):
+        (WebCore::DeferrableOneShotTimer::DeferrableOneShotTimer):
+        * platform/graphics/cg/SubimageCacheWithTimer.cpp:
+        (WebCore::SubimageCacheWithTimer::invalidateCacheTimerFired):
+        * platform/graphics/cg/SubimageCacheWithTimer.h:
+
 2014-06-02  Benjamin Poulain  <benjamin@webkit.org>
 
         Make pseudo element matching for style resolution more JIT friendly

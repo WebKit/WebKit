@@ -122,7 +122,7 @@ void NetworkProcess::platformSetCacheModel(CacheModel cacheModel)
     unsigned cacheTotalCapacity = 0;
     unsigned cacheMinDeadCapacity = 0;
     unsigned cacheMaxDeadCapacity = 0;
-    double deadDecodedDataDeletionInterval = 0;
+    auto deadDecodedDataDeletionInterval = std::chrono::seconds { 0 };
     unsigned pageCacheCapacity = 0;
     unsigned long urlCacheMemoryCapacity = 0;
     unsigned long urlCacheDiskCapacity = 0;

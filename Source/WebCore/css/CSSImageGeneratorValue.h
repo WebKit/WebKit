@@ -77,12 +77,12 @@ private:
         void puntEvictionTimer() { m_evictionTimer.restart(); }
 
     private:
-        void evictionTimerFired(DeferrableOneShotTimer<CachedGeneratedImage>&);
+        void evictionTimerFired();
 
         CSSImageGeneratorValue& m_owner;
         FloatSize m_size;
         RefPtr<GeneratedImage> m_image;
-        DeferrableOneShotTimer<CachedGeneratedImage> m_evictionTimer;
+        DeferrableOneShotTimer m_evictionTimer;
     };
 
     friend class CachedGeneratedImage;

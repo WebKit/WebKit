@@ -7708,7 +7708,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     unsigned cacheTotalCapacity = 0;
     unsigned cacheMinDeadCapacity = 0;
     unsigned cacheMaxDeadCapacity = 0;
-    double deadDecodedDataDeletionInterval = 0;
+    auto deadDecodedDataDeletionInterval = std::chrono::seconds { 0 };
 
     unsigned pageCacheCapacity = 0;
 
@@ -7863,7 +7863,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
         // can prove that the overall system gain would justify the regression.
         cacheMaxDeadCapacity = std::max<unsigned>(24, cacheMaxDeadCapacity);
 
-        deadDecodedDataDeletionInterval = 60;
+        deadDecodedDataDeletionInterval = std::chrono::seconds { 60 };
 
 #if PLATFORM(IOS)
         if (memSize >= 1024)

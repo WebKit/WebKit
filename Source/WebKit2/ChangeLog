@@ -1,3 +1,21 @@
+2014-05-31  Anders Carlsson  <andersca@apple.com>
+
+        Change DeferrableOneShotTimer to use std::function instead of being a class template
+        https://bugs.webkit.org/show_bug.cgi?id=133423
+
+        Reviewed by Antti Koivisto.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformSetCacheModel):
+        * Shared/CacheModel.cpp:
+        (WebKit::calculateCacheSizes):
+        * Shared/CacheModel.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::pluginSnapshotTimerFired):
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformSetCacheModel):
+
 2014-06-02  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Round the UIScrollView content size to device pixel

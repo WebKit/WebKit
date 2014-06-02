@@ -138,10 +138,11 @@ static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type 
     return ResourceLoadPriorityLow;
 }
 
-static double deadDecodedDataDeletionIntervalForResourceType(CachedResource::Type type)
+static std::chrono::milliseconds deadDecodedDataDeletionIntervalForResourceType(CachedResource::Type type)
 {
     if (type == CachedResource::Script)
-        return 0;
+        return std::chrono::milliseconds { 0 };
+
     return memoryCache()->deadDecodedDataDeletionInterval();
 }
 
@@ -530,12 +531,12 @@ void CachedResource::destroyDecodedDataIfNeeded()
 {
     if (!m_decodedSize)
         return;
-    if (!memoryCache()->deadDecodedDataDeletionInterval())
+    if (!memoryCache()->deadDecodedDataDeletionInterval().count())
         return;
     m_decodedDataDeletionTimer.restart();
 }
 
-void CachedResource::decodedDataDeletionTimerFired(DeferrableOneShotTimer<CachedResource>&)
+void CachedResource::decodedDataDeletionTimerFired()
 {
     destroyDecodedData();
 }

@@ -150,8 +150,8 @@ public:
     void prune();
     void pruneToPercentage(float targetPercentLive);
 
-    void setDeadDecodedDataDeletionInterval(double interval) { m_deadDecodedDataDeletionInterval = interval; }
-    double deadDecodedDataDeletionInterval() const { return m_deadDecodedDataDeletionInterval; }
+    void setDeadDecodedDataDeletionInterval(std::chrono::milliseconds interval) { m_deadDecodedDataDeletionInterval = interval; }
+    std::chrono::milliseconds deadDecodedDataDeletionInterval() const { return m_deadDecodedDataDeletionInterval; }
 
     // Calls to put the cached resource into and out of LRU lists.
     void insertInLRUList(CachedResource*);
@@ -240,7 +240,7 @@ private:
     unsigned m_capacity;
     unsigned m_minDeadCapacity;
     unsigned m_maxDeadCapacity;
-    double m_deadDecodedDataDeletionInterval;
+    std::chrono::milliseconds m_deadDecodedDataDeletionInterval;
 
     unsigned m_liveSize; // The number of bytes currently consumed by "live" resources in the cache.
     unsigned m_deadSize; // The number of bytes currently consumed by "dead" resources in the cache.

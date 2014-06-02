@@ -138,7 +138,7 @@ private:
 
     void redeliverManualStream();
 
-    void pluginSnapshotTimerFired(WebCore::DeferrableOneShotTimer<PluginView>&);
+    void pluginSnapshotTimerFired();
     void pluginDidReceiveUserInteraction();
 
     bool shouldCreateTransientPaintingSnapshot() const;
@@ -270,7 +270,7 @@ private:
     // This snapshot is used to avoid side effects should the plugin run JS during painting.
     RefPtr<ShareableBitmap> m_transientPaintingSnapshot;
     // This timer is used when plugin snapshotting is enabled, to capture a plugin placeholder.
-    WebCore::DeferrableOneShotTimer<PluginView> m_pluginSnapshotTimer;
+    WebCore::DeferrableOneShotTimer m_pluginSnapshotTimer;
     unsigned m_countSnapshotRetries;
     bool m_didReceiveUserInteraction;
 

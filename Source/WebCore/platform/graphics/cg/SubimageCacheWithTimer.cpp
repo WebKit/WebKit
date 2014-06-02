@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-static const double subimageCacheClearDelay = 1;
+static const auto subimageCacheClearDelay = std::chrono::seconds { 1 };
 static const int maxSubimageCacheSize = 300;
 
 struct SubimageRequest {
@@ -65,7 +65,7 @@ SubimageCacheWithTimer::SubimageCacheWithTimer()
 {
 }
 
-void SubimageCacheWithTimer::invalidateCacheTimerFired(DeferrableOneShotTimer<SubimageCacheWithTimer>&)
+void SubimageCacheWithTimer::invalidateCacheTimerFired()
 {
     m_images.clear();
     m_cache.clear();

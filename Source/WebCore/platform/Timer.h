@@ -117,7 +117,7 @@ public:
     typedef void (TimerFiredClass::*TimerFiredFunction)(Timer&);
     typedef void (TimerFiredClass::*DeprecatedTimerFiredFunction)(Timer*);
 
-    Timer(TimerFiredClass* object , TimerFiredFunction function)
+    Timer(TimerFiredClass* object, TimerFiredFunction function)
         : m_function(std::bind(function, object, std::ref(*this)))
     {
     }
@@ -147,13 +147,16 @@ inline bool TimerBase::isActive() const
     return m_nextFireTime;
 }
 
-template <typename TimerFiredClass> class DeferrableOneShotTimer : protected TimerBase {
+class DeferrableOneShotTimer : protected TimerBase {
 public:
-    typedef void (TimerFiredClass::*TimerFiredFunction)(DeferrableOneShotTimer&);
+    template<typename TimerFiredClass>
+    DeferrableOneShotTimer(TimerFiredClass* object, void (TimerFiredClass::*function)(), std::chrono::milliseconds delay)
+        : DeferrableOneShotTimer(std::bind(function, object), delay)
+    {
+    }
 
-    DeferrableOneShotTimer(TimerFiredClass* object, TimerFiredFunction function, double delay)
-        : m_object(object)
-        , m_function(function)
+    DeferrableOneShotTimer(std::function<void ()> function, std::chrono::milliseconds delay)
+        : m_function(std::move(function))
         , m_delay(delay)
         , m_shouldRestartWhenTimerFires(false)
     {
@@ -189,13 +192,12 @@ private:
             return;
         }
 
-        (m_object->*m_function)(*this);
+        m_function();
     }
 
-    TimerFiredClass* m_object;
-    TimerFiredFunction m_function;
+    std::function<void ()> m_function;
 
-    double m_delay;
+    std::chrono::milliseconds m_delay;
     bool m_shouldRestartWhenTimerFires;
 };
 

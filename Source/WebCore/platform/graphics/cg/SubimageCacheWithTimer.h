@@ -88,11 +88,11 @@ public:
     void clearImage(CGImageRef);
 
 private:
-    void invalidateCacheTimerFired(DeferrableOneShotTimer<SubimageCacheWithTimer>&);
+    void invalidateCacheTimerFired();
 
     HashCountedSet<CGImageRef> m_images;
     SubimageCache m_cache;
-    DeferrableOneShotTimer<SubimageCacheWithTimer> m_timer;
+    DeferrableOneShotTimer m_timer;
 };
 
 SubimageCacheWithTimer& subimageCache();

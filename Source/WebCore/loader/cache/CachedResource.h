@@ -303,12 +303,12 @@ protected:
 
     RefPtr<ResourceBuffer> m_data;
     OwnPtr<PurgeableBuffer> m_purgeableData;
-    DeferrableOneShotTimer<CachedResource> m_decodedDataDeletionTimer;
+    DeferrableOneShotTimer m_decodedDataDeletionTimer;
 
 private:
     bool addClientToSet(CachedResourceClient*);
 
-    void decodedDataDeletionTimerFired(DeferrableOneShotTimer<CachedResource>&);
+    void decodedDataDeletionTimerFired();
 
     virtual PurgePriority purgePriority() const { return PurgeDefault; }
     virtual bool mayTryReplaceEncodedData() const { return false; }
