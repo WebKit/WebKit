@@ -126,16 +126,10 @@ accessibility/table-with-rules.html [ Skip ]
 
 # Frame flattening does not work properly for EFL port
 Bug(EFL) fast/frames/flattening/frameset-flattening-advanced.html [ Failure ]
-Bug(EFL) fast/frames/flattening/frameset-flattening-grid.html [ Failure ]
 Bug(EFL) fast/frames/flattening/frameset-flattening-simple.html [ Failure ]
 Bug(EFL) fast/frames/flattening/frameset-flattening-subframesets.html [ Failure ]
-Bug(EFL) fast/frames/flattening/iframe-flattening-fixed-height.html [ Failure ]
-Bug(EFL) fast/frames/flattening/iframe-flattening-fixed-width.html [ Failure ]
 Bug(EFL) fast/frames/flattening/iframe-flattening-offscreen.html [ Failure ]
 Bug(EFL) fast/frames/flattening/iframe-flattening-out-of-view.html [ Failure ]
-Bug(EFL) fast/frames/flattening/iframe-flattening-out-of-view-and-scroll.html [ ImageOnlyFailure ]
-Bug(EFL) fast/frames/flattening/iframe-flattening-out-of-view-scroll-and-relayout.html [ ImageOnlyFailure ]
-Bug(EFL) fast/frames/flattening/iframe-flattening-simple.html [ Failure ]
  
 # Cancel mark in search field doesn't work on wk1 pixel test
 Bug(EFL) fast/forms/search-cancel-button-style-sharing.html [ ImageOnlyFailure ]
