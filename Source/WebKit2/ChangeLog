@@ -1,3 +1,30 @@
+2014-05-31  Oliver Hunt  <oliver@apple.com>
+
+        Restructure initial distinct sandbox profiles
+        https://bugs.webkit.org/show_bug.cgi?id=133415
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add support for manually instantiating the network and
+        content process sandboxes, and add initial profiles.
+        These profiles are completely generic so we can make sure
+        nothing is broken by enabling them.
+
+        This also adds a target to the WebKit2 project to correctly
+        process the profiles.
+
+        * DatabaseProcess/ios/DatabaseProcessIOS.mm:
+        (WebKit::DatabaseProcess::initializeSandbox):
+        * DatabaseProcess/ios/com.apple.WebKit.DatabasesIOS.sb: Removed.
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::initializeSandbox):
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Databases.sb: Added.
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb: Added.
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::initializeSandbox):
+
 2014-06-01  Sam Weinig  <sam@webkit.org>
 
         [Cocoa] Add SPI to get a WebArchive of the WKWebView

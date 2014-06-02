@@ -54,6 +54,8 @@
 #import <objc/runtime.h>
 #import <stdio.h>
 
+#define ENABLE_MANUAL_WEBPROCESS_SANDBOXING !PLATFORM(IOS)
+
 #if PLATFORM(IOS)
 @interface NSURLCache (WKDetails)
 -(id)_initWithMemoryCapacity:(NSUInteger)memoryCapacity diskCapacity:(NSUInteger)diskCapacity relativePath:(NSString *)path;
@@ -242,10 +244,15 @@ void WebProcess::platformTerminate()
 void WebProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
 #if ENABLE(WEB_PROCESS_SANDBOX)
-    // Need to overide the default, because service has a different bundle ID.
+#if ENABLE_MANUAL_WEBPROCESS_SANDBOXING
+    // Need to override the default, because service has a different bundle ID.
     NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
+#if PLATFORM(IOS)
+    sandboxParameters.setOverrideSandboxProfilePath([webkit2Bundle pathForResource:@"com.apple.WebKit.WebContent" ofType:@"sb"]);
+#else
     sandboxParameters.setOverrideSandboxProfilePath([webkit2Bundle pathForResource:@"com.apple.WebProcess" ofType:@"sb"]);
-
+#endif
+#endif
     ChildProcess::initializeSandbox(parameters, sandboxParameters);
 #else
     UNUSED_PARAM(parameters);

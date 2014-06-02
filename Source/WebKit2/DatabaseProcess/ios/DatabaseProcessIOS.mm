@@ -52,9 +52,9 @@ void DatabaseProcess::initializeProcessName(const ChildProcessInitializationPara
 void DatabaseProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
 #if ENABLE_MANUAL_DATABASE_SANDBOXING
-    // Need to overide the default, because service has a different bundle ID.
+    // Need to override the default, because service has a different bundle ID.
     NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
-    sandboxParameters.setOverrideSandboxProfilePath([webkit2Bundle pathForResource:@"com.apple.WebKit.DatabasesIOS" ofType:@"sb"]);
+    sandboxParameters.setOverrideSandboxProfilePath([webkit2Bundle pathForResource:@"com.apple.WebKit.Databases" ofType:@"sb"]);
     ChildProcess::initializeSandbox(parameters, sandboxParameters);
 #endif
 }
