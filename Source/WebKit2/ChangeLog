@@ -1,3 +1,25 @@
+2014-06-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Round the UIScrollView content size to device pixel
+        https://bugs.webkit.org/show_bug.cgi?id=133417
+        <rdar://problem/15922440>
+
+        Reviewed by Simon Fraser.
+
+        We should really have the scaled content size floored to device pixels, but that will be for another
+        time.
+        This patch ensure the content size as seen by the API is rounded to device pixels. The value is floored
+        to avoid showing partial pixels when the content is stable.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (floorFloatToPixels):
+        (roundScrollViewCountentSize):
+        (-[WKWebView _setHasCustomContentView:loadedMIMEType:WTF::]):
+        (-[WKWebView _didCommitLayerTree:WebKit::]):
+        (-[WKWebView scrollView:contentSizeForZoomScale:withProposedSize:]):
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        (-[WKWebView _endAnimatedResize]):
+
 2014-06-02  Oliver Hunt  <oliver@apple.com>
 
         Move ifdef to the right place.

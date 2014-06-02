@@ -452,6 +452,17 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     return [_contentView browsingContextController];
 }
 
+static inline CGFloat floorToDevicePixel(CGFloat input, float deviceScaleFactor)
+{
+    return CGFloor(input * deviceScaleFactor) / deviceScaleFactor;
+}
+
+static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSize contentSize)
+{
+    float deviceScaleFactor = page.deviceScaleFactor();
+    return CGSizeMake(floorToDevicePixel(contentSize.width, deviceScaleFactor), floorToDevicePixel(contentSize.height, deviceScaleFactor));
+}
+
 - (void)_setHasCustomContentView:(BOOL)pageHasCustomContentView loadedMIMEType:(const WTF::String&)mimeType
 {
     if (pageHasCustomContentView) {
@@ -480,7 +491,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
         _customContentFixedOverlayView = nullptr;
 
         [_scrollView addSubview:_contentView.get()];
-        [_scrollView setContentSize:[_contentView frame].size];
+        [_scrollView setContentSize:roundScrollViewContentSize(*_page, [_contentView frame].size)];
 
         [_customContentFixedOverlayView setFrame:self.bounds];
         [self addSubview:_customContentFixedOverlayView.get()];
@@ -599,7 +610,7 @@ static CGFloat contentZoomScale(WKWebView* webView)
         return;
     }
 
-    [_scrollView setContentSize:[_contentView frame].size];
+    [_scrollView setContentSize:roundScrollViewContentSize(*_page, [_contentView frame].size)];
     [_scrollView setMinimumZoomScale:layerTreeTransaction.minimumScaleFactor()];
     [_scrollView setMaximumZoomScale:layerTreeTransaction.maximumScaleFactor()];
     [_scrollView setZoomEnabled:layerTreeTransaction.allowsUserScaling()];
@@ -926,6 +937,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 - (BOOL)usesStandardContentView
 {
     return !_customContentView;
+}
+
+- (CGSize)scrollView:(UIScrollView*)scrollView contentSizeForZoomScale:(CGFloat)scale withProposedSize:(CGSize)proposedSize
+{
+    return roundScrollViewContentSize(*_page, proposedSize);
 }
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
@@ -1772,7 +1788,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         contentOffset.y = -_obscuredInsets.top;
 
     // FIXME: if we have content centered after double tap to zoom, we should also try to keep that rect in view.
-    [_scrollView setContentSize:futureContentSizeInSelfCoordinates];
+    [_scrollView setContentSize:roundScrollViewContentSize(*_page, futureContentSizeInSelfCoordinates)];
     [_scrollView setContentOffset:contentOffset];
 
     CGRect visibleRectInContentCoordinates = [self convertRect:newBounds toView:_contentView.get()];
@@ -1824,7 +1840,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         double horizontalScrollAdjustement = _resizeAnimationTransformAdjustments.m41 * animatingScaleTarget;
         double verticalScrollAdjustment = _resizeAnimationTransformAdjustments.m42 * animatingScaleTarget;
 
-        [_scrollView setContentSize:[_contentView frame].size];
+        [_scrollView setContentSize:roundScrollViewContentSize(*_page, [_contentView frame].size)];
         [_scrollView setContentOffset:CGPointMake(currentScrollOffset.x - horizontalScrollAdjustement, currentScrollOffset.y - verticalScrollAdjustment)];
 
         [_resizeAnimationView removeFromSuperview];
