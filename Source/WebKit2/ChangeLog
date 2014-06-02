@@ -1,3 +1,14 @@
+2014-06-02  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] -[WKWebView activeURL] is unused
+        https://bugs.webkit.org/show_bug.cgi?id=133440
+
+        Reviewed by Mark Rowe.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView activeURL]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Removed the property declaration.
+
 2014-05-31  Oliver Hunt  <oliver@apple.com>
 
         Restructure initial distinct sandbox profiles

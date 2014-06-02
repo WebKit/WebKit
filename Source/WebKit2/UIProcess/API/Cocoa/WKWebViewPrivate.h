@@ -138,9 +138,6 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 
 - (void)_killWebContentProcess;
 
-// FIXME: Remove this once nobody uses it.
-@property (nonatomic, readonly) NSURL *activeURL;
-
 #else
 @property (readonly) NSColor *_pageExtendedBackgroundColor;
 @property (nonatomic, setter=_setDrawsTransparentBackground:) BOOL _drawsTransparentBackground;

@@ -1929,12 +1929,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return _viewportMetaTagWidth;
 }
 
-// FIXME: Remove this once nobody uses it.
-- (NSURL *)activeURL
-{
-    return self.URL;
-}
-
 #else
 
 #pragma mark - OS X-specific methods
