@@ -29,7 +29,7 @@
 
 #import <Foundation/Foundation.h>
 
-/*! A WKBackForwardListItem object represents a previously visited webpage in the back-forward list of a web view.
+/*! A WKBackForwardListItem object represents a webpage in the back-forward list of a web view.
  */
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKBackForwardListItem : NSObject

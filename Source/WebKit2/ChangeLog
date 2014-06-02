@@ -1,3 +1,13 @@
+2014-06-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Address some review comments on bug 133408
+        https://bugs.webkit.org/show_bug.cgi?id=133410
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKBackForwardListItem.h:
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+
 2014-06-02  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] -[WKWebView activeURL] is unused

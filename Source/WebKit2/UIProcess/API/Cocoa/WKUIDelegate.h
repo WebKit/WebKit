@@ -59,8 +59,9 @@
  call.
  @param completionHandler The completion handler to call after the alert
  panel has been dismissed.
- @discussion Clients should visually indicate that this panel comes from
- JavaScript initiated by the specified frame.
+ @discussion For user security, your app should call attention to the fact
+ that a specific website controls the content in this panel. A simple forumla
+ for identifying the controlling website is frame.request.URL.host.
  The panel should have a single OK button.
  */
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)())completionHandler;
@@ -72,8 +73,9 @@
  @param completionHandler The completion handler to call after the confirm
  panel has been dismissed. Pass YES if the user chose OK, NO if the user
  chose Cancel.
- @discussion Clients should visually indicate that this panel comes from
- JavaScript initiated by the specified frame.
+ @discussion For user security, your app should call attention to the fact
+ that a specific website controls the content in this panel. A simple forumla
+ for identifying the controlling website is frame.request.URL.host.
  The panel should have two buttons, such as OK and Cancel.
  */
 - (void)webView:(WKWebView *)webView runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL result))completionHandler;
@@ -86,8 +88,9 @@
  @param completionHandler The completion handler to call after the text
  input panel has been dismissed. Pass the entered text if the user chose
  OK, otherwise nil.
- @discussion Clients should visually indicate that this panel comes from
- JavaScript initiated by the specified frame.
+ @discussion For user security, your app should call attention to the fact
+ that a specific website controls the content in this panel. A simple forumla
+ for identifying the controlling website is frame.request.URL.host.
  The panel should have two buttons, such as OK and Cancel, and a field in
  which to enter text.
  */
