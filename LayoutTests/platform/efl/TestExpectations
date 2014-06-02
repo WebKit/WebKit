@@ -1573,8 +1573,6 @@ webkit.org/b/128669 fast/sub-pixel/zoomed-em-border.html [ ImageOnlyFailure ]
 
 # Failing after r163562
 webkit.org/b/128670 batterystatus/window-property.html [ Failure ]
-webkit.org/b/128670 fast/dom/webtiming-document-open.html [ Failure ]
-webkit.org/b/128670 fast/dom/webtiming-navigate-within-document.html [ Failure ]
 webkit.org/b/128670 fast/forms/form-hides-table.html [ Failure ]
 webkit.org/b/128670 js/dom/dom-static-property-for-in-iteration.html [ Failure ]
 

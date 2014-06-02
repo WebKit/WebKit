@@ -1,3 +1,13 @@
+2014-06-02  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Below test cases are passing after r169403.
+          - fast/dom/webtiming-document-open.html
+          - fast/dom/webtiming-navigate-within-document.html
+
+        * platform/efl/TestExpectations:
+
 2014-06-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: add support for the "not" pseudo class
