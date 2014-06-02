@@ -123,3 +123,5 @@ webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-percen
 webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-auto.html [ Skip ]
 
 webkit.org/b/133356 js/primitive-property-access-edge-cases.html [ Pass Crash ]
+
+webkit.org/b/133057 fast/table/border-collapsing/collapsed-borders-adjoining-sections.html [ Failure ]

@@ -1,3 +1,14 @@
+2014-05-31  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r154622): Borders disappear when hovering over cells in table
+        https://bugs.webkit.org/show_bug.cgi?id=133057
+        <rdar://problem/15922359>
+
+        Reviewed by Tim Horton.
+
+        * TestExpectations: Mark the test we added in r154622 as failing
+        until we provide a permanent fix.
+
 2014-06-02  Kiran  <kiran.guduru@samsung.com>
 
         Add mock DTMFSender support.
