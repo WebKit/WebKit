@@ -163,7 +163,7 @@ void TileGrid::setTileNeedsDisplayInRect(const TileIndex& tileIndex, TileInfo& t
         tileInfo.hasStaleContent = true;
 }
 
-void TileGrid::updateTilerLayerProperties()
+void TileGrid::updateTileLayerProperties()
 {
     bool acceleratesDrawing = m_controller.acceleratesDrawing();
     bool opaque = m_controller.tilesAreOpaque();

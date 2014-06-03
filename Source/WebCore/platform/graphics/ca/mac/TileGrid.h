@@ -56,7 +56,7 @@ public:
     void setNeedsDisplayInRect(const IntRect&);
     void dropTilesInRect(const IntRect&);
 
-    void updateTilerLayerProperties();
+    void updateTileLayerProperties();
 
     bool prepopulateRect(const FloatRect&);
 
