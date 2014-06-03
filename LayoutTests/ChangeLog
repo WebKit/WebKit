@@ -1,5 +1,14 @@
 2014-06-02  Jinwoo Song  <jinwoo7.song@samsung.com>
 
+        Unreviewed EFL gardening. Rebaseline.
+
+        * platform/efl/mathml/opentype/large-operators-LatinModern-expected.txt:
+        * platform/efl/mathml/opentype/opentype-stretchy-expected.txt:
+        * platform/efl/mathml/opentype/vertical-LatinModern-expected.txt:
+        * platform/efl/mathml/presentation/mo-stretch-expected.txt:
+
+2014-06-02  Jinwoo Song  <jinwoo7.song@samsung.com>
+
         Unreviewed EFL gardening.
 
         Move the EFL specific test result to platform directory.
