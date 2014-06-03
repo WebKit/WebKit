@@ -1,7 +1,12 @@
 SCRIPTS_PATH = ../Tools/Scripts
 
+ifeq ($(shell sw_vers -productVersion | cut -d. -f-2), 10.10)
+libs:
+	@true
+else
 libs:
 	perl $(SCRIPTS_PATH)/copy-webkitlibraries-to-product-directory --wksi --llvm
+endif
 
 all: libs
 

@@ -1,3 +1,14 @@
+2014-06-02  David Kilzer  <ddkilzer@apple.com>
+
+        Error running copy-webkitlibraries-to-product-directory
+        <http://webkit.org/b/133449>
+        <rdar://problem/17047638>
+
+        Reviewed by Filip Pizlo.
+
+        * Makefile: Ignore the mysterious future.  Use "@true" to
+        suppress the annoying "Nothing to be done for `libs'." message.
+
 2014-05-27  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Remove BLOB guards
