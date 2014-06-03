@@ -1,3 +1,20 @@
+2014-06-03  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] accessibility/textarea-selected-text-range.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=133479
+
+        Reviewed by Chris Fleizach.
+
+        Implement atk_text_set_caret_offset() in terms of
+        atk_text_set_selection() for zero-length selections.
+
+        No new tests needed, the following test should just start
+        passing again now: accessibility/textarea-selected-text-range.html.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (webkitAccessibleTextSetCaretOffset): Reimplemented this function
+        in terms of webkitAccessibleTextSetSelection().
+
 2014-06-03  Alex Christensen  <achristensen@webkit.org>
 
         Corrected arm64 assertion in css jit.

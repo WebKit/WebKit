@@ -1233,29 +1233,9 @@ static gboolean webkitAccessibleTextRemoveSelection(AtkText* text, gint selectio
 
 static gboolean webkitAccessibleTextSetCaretOffset(AtkText* text, gint offset)
 {
-    g_return_val_if_fail(ATK_TEXT(text), FALSE);
-    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(text), FALSE);
-
-    AccessibilityObject* coreObject = core(text);
-    if (!coreObject->isAccessibilityRenderObject())
-        return FALSE;
-
-    // We need to adjust the offsets for the list item marker.
-    int offsetAdjustment = offsetAdjustmentForListItem(coreObject);
-    if (offsetAdjustment) {
-        if (offset < offsetAdjustment)
-            return FALSE;
-
-        offset = atkOffsetToWebCoreOffset(text, offset);
-    }
-
-    PlainTextRange textRange(offset, 0);
-    VisiblePositionRange range = coreObject->visiblePositionRangeForRange(textRange);
-    if (range.isNull())
-        return FALSE;
-
-    coreObject->setSelectedVisiblePositionRange(range);
-    return TRUE;
+    // Internally, setting the caret offset is equivalent to set a zero-length
+    // selection, so delegate in that implementation and void duplicated code.
+    return webkitAccessibleTextSetSelection(text, 0, offset, offset);
 }
 
 #if ATK_CHECK_VERSION(2, 10, 0)
