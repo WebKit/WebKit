@@ -34,10 +34,11 @@ from webkitpy.common.system.executive import ScriptError
 
 class BindingsTests:
 
-    def __init__(self, reset_results, generators, executive):
+    def __init__(self, reset_results, generators, executive, verbose):
         self.reset_results = reset_results
         self.generators = generators
         self.executive = executive
+        self.verbose = verbose
 
     def generate_from_idl(self, generator, idl_file, output_directory, supplemental_dependency_file):
         cmd = ['perl', '-w',
@@ -112,7 +113,7 @@ class BindingsTests:
                 print 'FAIL: (%s) %s' % (generator, output_file)
                 print output
                 changes_found = True
-            else:
+            elif self.verbose:
                 print 'PASS: (%s) %s' % (generator, output_file)
         return changes_found
 
