@@ -157,6 +157,7 @@ struct SelectorFragment {
     Vector<AttributeMatchingInfo> attributes;
     Vector<std::pair<int, int>> nthChildFilters;
     Vector<SelectorFragment> notFilters;
+    Vector<Vector<SelectorFragment>> anyFilters;
 
     bool inFunctionalPseudoClass;
 };
@@ -229,6 +230,7 @@ private:
     void generateElementIsLink(Assembler::JumpList& failureCases);
     void generateElementIsNthChild(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementMatchesNotPseudoClass(Assembler::JumpList& failureCases, const SelectorFragment&);
+    void generateElementMatchesAnyPseudoClass(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsRoot(Assembler::JumpList& failureCases);
     void generateElementIsTarget(Assembler::JumpList& failureCases);
 
@@ -441,6 +443,42 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
             return functionType;
         }
 
+    case CSSSelector::PseudoClassAny:
+        {
+            Vector<SelectorFragment> anyFragments;
+            FunctionType functionType = FunctionType::SimpleSelectorChecker;
+            for (const CSSSelector* rootSelector = selector.selectorList()->first(); rootSelector; rootSelector = CSSSelectorList::next(rootSelector)) {
+                SelectorFragmentList fragmentList;
+                FunctionType subFunctionType = constructFragments(rootSelector, selectorContext, fragmentList);
+
+                // Since this fragment always unmatch against the element, don't insert it to anyFragments.
+                if (subFunctionType == FunctionType::CannotMatchAnything)
+                    continue;
+
+                if (subFunctionType == FunctionType::CannotCompile)
+                    return FunctionType::CannotCompile;
+
+                // :any() may not contain complex selectors which have combinators.
+                ASSERT(fragmentList.size() == 1);
+                if (fragmentList.size() != 1)
+                    return FunctionType::CannotCompile;
+
+                SelectorFragment subFragment = fragmentList.first();
+                subFragment.inFunctionalPseudoClass = true;
+                anyFragments.append(subFragment);
+                functionType = mostRestrictiveFunctionType(functionType, subFunctionType);
+            }
+
+            // Since all fragments in :any() cannot match anything, this :any() filter cannot match anything.
+            if (anyFragments.isEmpty())
+                return FunctionType::CannotMatchAnything;
+
+            ASSERT(!anyFragments.isEmpty());
+            fragment.anyFilters.append(anyFragments);
+
+            return functionType;
+        }
+
     default:
         break;
     }
@@ -594,6 +632,15 @@ static inline unsigned minimumRegisterRequirements(const SelectorFragment& selec
         unsigned notFilterMinimum = minimumRegisterRequirements(subFragment) + backtrackingRegisterRequirements;
         minimum = std::max(minimum, notFilterMinimum);
     }
+
+    // :any pseudo class filters cause some register pressure.
+    for (const auto& subFragments : selectorFragment.anyFilters) {
+        for (const SelectorFragment& subFragment : subFragments) {
+            unsigned anyFilterMinimum = minimumRegisterRequirements(subFragment) + backtrackingRegisterRequirements;
+            minimum = std::max(minimum, anyFilterMinimum);
+        }
+    }
+
     return minimum;
 }
 
@@ -1654,6 +1701,8 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& matchin
         generateElementIsNthChild(matchingPostTagNameFailureCases, fragment);
     if (!fragment.notFilters.isEmpty())
         generateElementMatchesNotPseudoClass(matchingPostTagNameFailureCases, fragment);
+    if (!fragment.anyFilters.isEmpty())
+        generateElementMatchesAnyPseudoClass(matchingPostTagNameFailureCases, fragment);
 }
 
 void SelectorCodeGenerator::generateElementDataMatching(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
@@ -2563,6 +2612,26 @@ void SelectorCodeGenerator::generateElementMatchesNotPseudoClass(Assembler::Jump
         // Since this is a not pseudo class filter, reaching here is a failure.
         failureCases.append(m_assembler.jump());
         localFailureCases.link(&m_assembler);
+    }
+}
+
+void SelectorCodeGenerator::generateElementMatchesAnyPseudoClass(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
+{
+    for (const auto& subFragments : fragment.anyFilters) {
+        RELEASE_ASSERT(!subFragments.isEmpty());
+
+        // Don't handle the last fragment in this loop.
+        Assembler::JumpList successCases;
+        for (unsigned i = 0; i < subFragments.size() - 1; ++i) {
+            Assembler::JumpList localFailureCases;
+            generateElementMatching(localFailureCases, localFailureCases, subFragments[i]);
+            successCases.append(m_assembler.jump());
+            localFailureCases.link(&m_assembler);
+        }
+
+        // At the last fragment, optimize the failure jump to jump to the non-local failure directly.
+        generateElementMatching(failureCases, failureCases, subFragments.last());
+        successCases.link(&m_assembler);
     }
 }
 

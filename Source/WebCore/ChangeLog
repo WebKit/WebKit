@@ -1,3 +1,20 @@
+2014-06-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: add support for the "any" pseudo class
+        https://bugs.webkit.org/show_bug.cgi?id=133473
+
+        Reviewed by Benjamin Poulain.
+
+        Add support for the :any pseudo class.
+
+        Test: fast/selectors/pseudo-class-any.html
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::minimumRegisterRequirements):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatchesAnyPseudoClass):
+
 2014-06-02  Jer Noble  <jer.noble@apple.com>
 
         Update PlatformTimeRanges to use MediaTime rather than doubles for time values.
