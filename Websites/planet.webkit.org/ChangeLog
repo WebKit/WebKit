@@ -1,3 +1,13 @@
+2014-06-03  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Add Igalia WebKit blog to the planet
+        https://bugs.webkit.org/show_bug.cgi?id=133446
+
+        Reviewed by Bem Jones-Bey.
+
+        * config.ini: Add Igalia WebKit blog to the planet and remove Martin's
+        and Xan's blogs as they will be included there.
+
 2013-10-09  Frédéric Wang  <fred.wang@free.fr>
 
         Add Frédéric Wang's blog to the planet
