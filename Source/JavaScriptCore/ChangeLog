@@ -1,3 +1,12 @@
+2014-06-03  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        REGRESSION(r169092 and r169102): Skip failing JSC tests poperly on non-x86 Darwin platforms
+        https://bugs.webkit.org/show_bug.cgi?id=133149
+
+        Reviewed by Csaba Osztrogonác.
+
+        * tests/mozilla/mozilla-tests.yaml: Skip js1_5/Regress/regress-159334.js only if the architecture isn't x86 and the host is Darwin.
+
 2014-05-31  Anders Carlsson  <andersca@apple.com>
 
         Add a LazyNeverDestroyed class template and use it

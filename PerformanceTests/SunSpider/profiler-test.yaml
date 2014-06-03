@@ -26,8 +26,8 @@
 
 - path: tests/sunspider-1.0
   cmd: |
-      if $architecture =~ /x86/
-          runProfiler
-      else
+      if $architecture !~ /x86/i and $hostOS == "darwin"
           skip
+      else
+          runProfiler
       end

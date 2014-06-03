@@ -26,6 +26,7 @@
 require 'fileutils'
 require 'getoptlong'
 require 'pathname'
+require 'rbconfig'
 require 'uri'
 require 'yaml'
 
@@ -228,7 +229,22 @@ def determineArchitecture
     end
 end
 
+def determineOS
+    case RbConfig::CONFIG["host_os"]
+    when /darwin/i
+        "darwin"
+    when /linux/i
+        "linux"
+    when /mswin|mingw|cygwin/
+        "windows"
+    else
+        $stderr.puts "Warning: unable to determine host operating system"
+        nil
+    end
+end
+
 $architecture = determineArchitecture
+$hostOS = determineOS
 
 $numFailures = 0
 
