@@ -2129,11 +2129,8 @@ bool FrameView::isRubberBandInProgress() const
 bool FrameView::requestScrollPositionUpdate(const IntPoint& position)
 {
 #if ENABLE(ASYNC_SCROLLING)
-    if (TiledBacking* tiledBacking = this->tiledBacking()) {
-        IntRect visibleRect = visibleContentRect();
-        visibleRect.setLocation(position);
-        tiledBacking->prepopulateRect(visibleRect);
-    }
+    if (TiledBacking* tiledBacking = this->tiledBacking())
+        tiledBacking->prepopulateRect(FloatRect(position, visibleContentRect().size()));
 
     if (Page* page = frame().page()) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())

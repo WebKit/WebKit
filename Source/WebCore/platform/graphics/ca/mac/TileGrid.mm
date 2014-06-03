@@ -202,14 +202,11 @@ bool TileGrid::tilesWouldChangeForVisibleRect(const FloatRect& newVisibleRect, c
 
 bool TileGrid::prepopulateRect(const FloatRect& rect)
 {
-    FloatRect scaledRect(rect);
-    scaledRect.scale(m_scale);
-    IntRect rectInTileCoords(enclosingIntRect(scaledRect));
-
-    if (m_primaryTileCoverageRect.contains(rectInTileCoords))
+    IntRect enclosingCoverageRect = enclosingIntRect(rect);
+    if (m_primaryTileCoverageRect.contains(enclosingCoverageRect))
         return false;
-    
-    m_secondaryTileCoverageRects.append(rect);
+
+    m_secondaryTileCoverageRects.append(enclosingCoverageRect);
     return true;
 }
 
@@ -360,8 +357,11 @@ void TileGrid::revalidateTiles(unsigned validationPolicy)
         removeAllSecondaryTiles();
         m_cohortList.clear();
     } else {
-        for (size_t i = 0; i < m_secondaryTileCoverageRects.size(); ++i)
-            ensureTilesForRect(m_secondaryTileCoverageRects[i], CoverageType::SecondaryTiles);
+        for (auto& secondaryCoverageRect : m_secondaryTileCoverageRects) {
+            FloatRect secondaryRectInLayerCoordinates(secondaryCoverageRect);
+            secondaryRectInLayerCoordinates.scale(1 / m_scale);
+            ensureTilesForRect(secondaryRectInLayerCoordinates, CoverageType::SecondaryTiles);
+        }
         m_secondaryTileCoverageRects.clear();
     }
 
