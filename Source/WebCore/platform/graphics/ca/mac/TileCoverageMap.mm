@@ -43,6 +43,7 @@ TileCoverageMap::TileCoverageMap(const TileController& controller)
     m_layer.get().setBorderColor(Color::black);
     m_layer.get().setBorderWidth(1);
     m_layer.get().setPosition(FloatPoint(2, 2));
+    m_layer.get().setContentsScale(m_controller.deviceScaleFactor());
     m_visibleRectIndicatorLayer.get().setBorderWidth(2);
     m_visibleRectIndicatorLayer.get().setAnchorPoint(FloatPoint3D());
     m_visibleRectIndicatorLayer.get().setBorderColor(Color(255, 0, 0));
@@ -62,6 +63,7 @@ void TileCoverageMap::update()
     FloatRect containerBounds = m_controller.bounds();
     FloatRect visibleRect = m_controller.visibleRect();
     visibleRect.contract(4, 4); // Layer is positioned 2px from top and left edges.
+    visibleRect.setHeight(visibleRect.height() - m_controller.topContentInset());
 
     float widthScale = 1;
     float scale = 1;
@@ -108,6 +110,11 @@ void TileCoverageMap::platformCALayerPaintContents(PlatformCALayer* platformCALa
 float TileCoverageMap::platformCALayerDeviceScaleFactor() const
 {
     return m_controller.rootLayer().owner()->platformCALayerDeviceScaleFactor();
+}
+
+void TileCoverageMap::setDeviceScaleFactor(float deviceScaleFactor)
+{
+    m_layer.get().setContentsScale(deviceScaleFactor);
 }
 
 }

@@ -579,20 +579,24 @@ void TileGrid::drawTileMapContents(CGContextRef context, CGRect layerBounds) con
         CGFloat red = 1;
         CGFloat green = 1;
         CGFloat blue = 1;
+        CGFloat alpha = 1;
         if (tileInfo.hasStaleContent) {
             red = 0.25;
             green = 0.125;
             blue = 0;
+        } else if (m_controller.shouldAggressivelyRetainTiles() && tileInfo.cohort != VisibleTileCohort) {
+            red = 0.8;
+            green = 0.8;
+            blue = 0.8;
         }
 
         TileCohort newestCohort = newestTileCohort();
         TileCohort oldestCohort = oldestTileCohort();
 
-        if (!m_controller.shouldAggressivelyRetainTiles() && tileInfo.cohort != VisibleTileCohort && newestCohort > oldestCohort) {
-            float cohortProportion = static_cast<float>((newestCohort - tileInfo.cohort)) / (newestCohort - oldestCohort);
-            CGContextSetRGBFillColor(context, red, green, blue, 1 - cohortProportion);
-        } else
-            CGContextSetRGBFillColor(context, red, green, blue, 1);
+        if (!m_controller.shouldAggressivelyRetainTiles() && tileInfo.cohort != VisibleTileCohort && newestCohort > oldestCohort)
+            alpha = 1 - (static_cast<float>((newestCohort - tileInfo.cohort)) / (newestCohort - oldestCohort));
+
+        CGContextSetRGBFillColor(context, red, green, blue, alpha);
 
         if (tileLayer->superlayer()) {
             CGContextSetLineWidth(context, 0.5 / contextScale);

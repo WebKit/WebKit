@@ -114,6 +114,9 @@ void TileController::setContentsScale(float scale)
     m_hasTilesWithTemporaryScaleFactor = false;
     m_deviceScaleFactor = deviceScaleFactor;
 
+    if (m_coverageMap)
+        m_coverageMap->setDeviceScaleFactor(deviceScaleFactor);
+
     if (m_zoomedOutTileGrid && m_zoomedOutTileGrid->scale() == scale) {
         m_tileGrid = std::move(m_zoomedOutTileGrid);
         m_tileGrid->revalidateTiles(0);

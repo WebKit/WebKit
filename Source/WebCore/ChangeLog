@@ -1,5 +1,31 @@
 2014-06-03  Timothy Horton  <timothy_horton@apple.com>
 
+        Minor TileCoverageMap refinements
+        https://bugs.webkit.org/show_bug.cgi?id=133468
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::setContentsScale):
+        * platform/graphics/ca/mac/TileCoverageMap.h:
+        * platform/graphics/ca/mac/TileCoverageMap.mm:
+        (WebCore::TileCoverageMap::TileCoverageMap):
+        (WebCore::TileCoverageMap::setDeviceScaleFactor):
+        Keep the TileCoverageMap's contentsScale at the device scale factor, so that it
+        looks sharp on non-1x displays.
+
+        (WebCore::TileCoverageMap::update):
+        Decrease the height available for the TileCoverageMap by the topContentInset;
+        it's already being vertically offset by the topContentInset, but the height was
+        not adjusted, so it would run off the bottom of the window.
+
+        * platform/graphics/ca/mac/TileGrid.mm:
+        (WebCore::TileGrid::drawTileMapContents):
+        If using aggressive tile retention (and thus not coloring tiles based on age),
+        dim tiles that aren't in the visible cohort.
+
+2014-06-03  Timothy Horton  <timothy_horton@apple.com>
+
         Fix a typo, TileGrid::updateTilerLayerProperties
         https://bugs.webkit.org/show_bug.cgi?id=133474
 

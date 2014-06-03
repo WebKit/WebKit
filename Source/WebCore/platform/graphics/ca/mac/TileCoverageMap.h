@@ -52,6 +52,8 @@ public:
 
     PlatformCALayer& layer() { return m_layer.get(); }
 
+    void setDeviceScaleFactor(float);
+
 private:
     // PlatformCALayerClient
     virtual GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const override { return GraphicsLayer::CompositingCoordinatesTopDown; }
