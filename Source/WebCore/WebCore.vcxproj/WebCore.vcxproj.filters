@@ -4122,6 +4122,9 @@
     <ClCompile Include="..\html\parser\HTMLSourceTracker.cpp">
       <Filter>html\parser</Filter>
     </ClCompile>
+    <ClCompile Include="..\html\parser\HTMLSrcsetParser.cpp">
+      <Filter>html\parser</Filter>
+    </ClCompile>
     <ClCompile Include="..\html\parser\HTMLTokenizer.cpp">
       <Filter>html\parser</Filter>
     </ClCompile>
@@ -11201,6 +11204,9 @@
       <Filter>html\parser</Filter>
     </ClInclude>
     <ClInclude Include="..\html\parser\HTMLSourceTracker.h">
+      <Filter>html\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\parser\HTMLSrcsetParser.h">
       <Filter>html\parser</Filter>
     </ClInclude>
     <ClInclude Include="..\html\parser\HTMLStackItem.h">

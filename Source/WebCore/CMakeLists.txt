@@ -1706,6 +1706,7 @@ set(WebCore_SOURCES
     html/parser/HTMLResourcePreloader.cpp
     html/parser/HTMLScriptRunner.cpp
     html/parser/HTMLSourceTracker.cpp
+    html/parser/HTMLSrcsetParser.cpp
     html/parser/HTMLTokenizer.cpp
     html/parser/HTMLTreeBuilder.cpp
     html/parser/TextDocumentParser.cpp

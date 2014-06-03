@@ -33,6 +33,7 @@
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLSrcsetParser.h"
 #include "Page.h"
 #include "RenderImage.h"
 #include "Settings.h"

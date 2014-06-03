@@ -1,3 +1,37 @@
+2014-06-03  Yoav Weiss  <yoav@yoav.ws>
+
+        Refactor the srcset parser into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=133480
+
+        Reviewed by Andreas Kling.
+
+        No new tests, since this patch doesn't change the parser's behavior.
+
+        This patch moves the srcset parser into its own file,
+        in order to prepare the code for alignment with recent spec changes.
+
+        * CMakeLists.txt:
+        * html/HTMLImageElement.cpp:
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::compareByScaleFactor): Deleted.
+        (WebCore::parseDescriptors): Deleted.
+        (WebCore::parseImagesWithScaleFromSrcsetAttribute): Deleted.
+        (WebCore::bestFitSourceForImageAttributes): Deleted.
+        * html/parser/HTMLParserIdioms.h:
+        (WebCore::ImageWithScale::ImageWithScale): Deleted.
+        (WebCore::ImageWithScale::imageURL): Deleted.
+        (WebCore::ImageWithScale::scaleFactor): Deleted.
+        * html/parser/HTMLPreloadScanner.cpp:
+        * html/parser/HTMLSrcsetParser.cpp: Added.
+        (WebCore::compareByScaleFactor):
+        (WebCore::parseDescriptors):
+        (WebCore::parseImagesWithScaleFromSrcsetAttribute):
+        (WebCore::bestFitSourceForImageAttributes):
+        * html/parser/HTMLSrcsetParser.h: Added.
+        (WebCore::ImageWithScale::ImageWithScale):
+        (WebCore::ImageWithScale::imageURL):
+        (WebCore::ImageWithScale::scaleFactor):
+
 2014-06-03  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] accessibility/textarea-selected-text-range.html is failing

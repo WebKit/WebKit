@@ -2011,6 +2011,8 @@
 		52F52E1114A0134F00ACC397 /* NSScrollerImpDetails.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52F52E1014A0134F00ACC397 /* NSScrollerImpDetails.mm */; };
 		5317612213C516690026E454 /* StyleFlexibleBoxData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5317612013C516690026E454 /* StyleFlexibleBoxData.cpp */; };
 		5317612313C516690026E454 /* StyleFlexibleBoxData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5317612113C516690026E454 /* StyleFlexibleBoxData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		536D5A20193E18E900CE4CAB /* HTMLSrcsetParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 536D5A1F193E18E900CE4CAB /* HTMLSrcsetParser.h */; };
+		536D5A21193E18EE00CE4CAB /* HTMLSrcsetParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536D5A1E193E18D000CE4CAB /* HTMLSrcsetParser.cpp */; };
 		53C8298D13D8D92700DE2DEB /* RenderFlexibleBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53C8298B13D8D92700DE2DEB /* RenderFlexibleBox.cpp */; };
 		53C8298E13D8D92700DE2DEB /* RenderFlexibleBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53E29E5E167A8A1900586D3D /* InternalSettingsGenerated.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53E29E5C167A8A1900586D3D /* InternalSettingsGenerated.cpp */; };
@@ -9072,6 +9074,8 @@
 		52F52E1014A0134F00ACC397 /* NSScrollerImpDetails.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NSScrollerImpDetails.mm; sourceTree = "<group>"; };
 		5317612013C516690026E454 /* StyleFlexibleBoxData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleFlexibleBoxData.cpp; path = style/StyleFlexibleBoxData.cpp; sourceTree = "<group>"; };
 		5317612113C516690026E454 /* StyleFlexibleBoxData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleFlexibleBoxData.h; path = style/StyleFlexibleBoxData.h; sourceTree = "<group>"; };
+		536D5A1E193E18D000CE4CAB /* HTMLSrcsetParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLSrcsetParser.cpp; path = parser/HTMLSrcsetParser.cpp; sourceTree = "<group>"; };
+		536D5A1F193E18E900CE4CAB /* HTMLSrcsetParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLSrcsetParser.h; path = parser/HTMLSrcsetParser.h; sourceTree = "<group>"; };
 		53C8298B13D8D92700DE2DEB /* RenderFlexibleBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFlexibleBox.cpp; sourceTree = "<group>"; };
 		53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderFlexibleBox.h; sourceTree = "<group>"; };
 		53E29E5C167A8A1900586D3D /* InternalSettingsGenerated.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InternalSettingsGenerated.cpp; sourceTree = "<group>"; };
@@ -18189,6 +18193,8 @@
 				977B385D122883E900B81FF8 /* HTMLScriptRunnerHost.h */,
 				977E2DCB12F0E28300C13379 /* HTMLSourceTracker.cpp */,
 				977E2DCC12F0E28300C13379 /* HTMLSourceTracker.h */,
+				536D5A1F193E18E900CE4CAB /* HTMLSrcsetParser.h */,
+				536D5A1E193E18D000CE4CAB /* HTMLSrcsetParser.cpp */,
 				97C1F552122855CB00EDE615 /* HTMLStackItem.h */,
 				97C1F552122855CB00EDE616 /* HTMLToken.h */,
 				977B385E122883E900B81FF8 /* HTMLTokenizer.cpp */,
@@ -26311,6 +26317,7 @@
 				A14832BA187F63E900DA63A6 /* WAKViewPrivate.h in Headers */,
 				A14832BB187F643200DA63A6 /* WAKWindow.h in Headers */,
 				FD7F299213D4C0CB00AD9535 /* WaveShaperDSPKernel.h in Headers */,
+				536D5A20193E18E900CE4CAB /* HTMLSrcsetParser.h in Headers */,
 				FD7F299413D4C0CB00AD9535 /* WaveShaperNode.h in Headers */,
 				FD7F299713D4C0CB00AD9535 /* WaveShaperProcessor.h in Headers */,
 				29A812490FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.h in Headers */,
@@ -27543,6 +27550,7 @@
 				B27535790B053814002CE64F /* FloatRectMac.mm in Sources */,
 				6E0E569B183BFFE600E0E8D5 /* FloatRoundedRect.cpp in Sources */,
 				B275356C0B053814002CE64F /* FloatSize.cpp in Sources */,
+				536D5A21193E18EE00CE4CAB /* HTMLSrcsetParser.cpp in Sources */,
 				B275355B0B053814002CE64F /* FloatSizeCG.cpp in Sources */,
 				B275357A0B053814002CE64F /* FloatSizeMac.mm in Sources */,
 				D72F6D79153159A3001EE44E /* FlowThreadController.cpp in Sources */,

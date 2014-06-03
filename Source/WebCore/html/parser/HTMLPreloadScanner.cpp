@@ -30,6 +30,7 @@
 
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLSrcsetParser.h"
 #include "HTMLTokenizer.h"
 #include "InputTypeNames.h"
 #include "LinkRelAttribute.h"
