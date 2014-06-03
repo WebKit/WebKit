@@ -1,3 +1,16 @@
+2014-06-03  Alex Christensen  <achristensen@webkit.org>
+
+        Corrected arm64 assertion in css jit.
+
+        Rubber stamped by Benjamin Poulain.
+
+        * cssjit/StackAllocator.h:
+        (WebCore::StackAllocator::pop):
+        Changed assertion from incorrectly matching x86_64 to using the correct minimum offset,
+        taking into account that a stackUnitInBytes is used for two registers on arm64
+        except the last stack unit, which could only be used for one register if there are
+        an odd number of registers.
+
 2014-06-03  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS] Start ignoring common bogus viewport parameters

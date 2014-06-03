@@ -111,7 +111,7 @@ public:
         unsigned registerCount = registerIDs.size();
         RELEASE_ASSERT(stackReferences.size() == registerCount);
 #if CPU(ARM64)
-        ASSERT(m_offsetFromTop >= stackUnitInBytes * registerCount);
+        ASSERT(m_offsetFromTop >= stackUnitInBytes * ((registerCount + 1) / 2));
         unsigned registerCountOdd = registerCount % 2;
         if (registerCountOdd) {
             RELEASE_ASSERT(stackReferences[registerCount - 1] == m_offsetFromTop);
