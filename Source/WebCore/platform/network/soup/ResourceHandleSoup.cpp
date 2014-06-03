@@ -695,6 +695,10 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
         d->m_response.setExpectedContentLength(soup_request_get_content_length(d->m_soupRequest.get()));
     }
 
+#if ENABLE(WEB_TIMING)
+    d->m_response.resourceLoadTiming().responseStart = milisecondsSinceRequest(handle->m_requestTime);
+#endif
+
     if (soupMessage && d->m_response.isMultipart())
         d->m_multipartInputStream = adoptGRef(soup_multipart_input_stream_new(soupMessage, inputStream.get()));
     else

@@ -1,3 +1,13 @@
+2014-06-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] ResourceLoadTiming.responseStart is always 0
+        https://bugs.webkit.org/show_bug.cgi?id=133469
+
+        Reviewed by Sergio Villar Senin.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::sendRequestCallback): Record the responseStart time.
+
 2014-06-02  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] WebCore fails to build: platform/network/mac/ResourceHandleMac.mm:729:62: error: use of undeclared identifier '_CFURLConnectionCopyTimingData'
