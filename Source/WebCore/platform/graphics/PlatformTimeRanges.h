@@ -27,6 +27,7 @@
 #define PlatformTimeRanges_h
 
 #include <algorithm>
+#include <wtf/MediaTime.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -36,17 +37,17 @@ namespace WebCore {
 class PlatformTimeRanges {
 public:
     static std::unique_ptr<PlatformTimeRanges> create();
-    static std::unique_ptr<PlatformTimeRanges> create(double start, double end);
+    static std::unique_ptr<PlatformTimeRanges> create(const MediaTime& start, const MediaTime& end);
     static std::unique_ptr<PlatformTimeRanges> create(const PlatformTimeRanges&);
 
     explicit PlatformTimeRanges() { }
-    PlatformTimeRanges(double start, double end);
+    PlatformTimeRanges(const MediaTime& start, const MediaTime& end);
     PlatformTimeRanges(const PlatformTimeRanges&);
 
     PlatformTimeRanges& operator=(const PlatformTimeRanges&);
 
-    double start(unsigned index, bool& valid) const;
-    double end(unsigned index, bool& valid) const;
+    MediaTime start(unsigned index, bool& valid) const;
+    MediaTime end(unsigned index, bool& valid) const;
 
     void invert();
     void intersectWith(const PlatformTimeRanges&);
@@ -54,15 +55,15 @@ public:
 
     unsigned length() const { return m_ranges.size(); }
 
-    void add(double start, double end);
+    void add(const MediaTime& start, const MediaTime& end);
     
-    bool contain(double time) const;
+    bool contain(const MediaTime&) const;
 
-    size_t find(double time) const;
+    size_t find(const MediaTime&) const;
     
-    double nearest(double time) const;
+    MediaTime nearest(const MediaTime&) const;
 
-    double totalDuration() const;
+    MediaTime totalDuration() const;
 
 private:
     PlatformTimeRanges& copy(const PlatformTimeRanges&);
@@ -70,15 +71,16 @@ private:
     // We consider all the Ranges to be semi-bounded as follow: [start, end[
     struct Range {
         Range() { }
-        Range(double start, double end)
+        Range(const MediaTime& start, const MediaTime& end)
+            : m_start(start)
+            , m_end(end)
         {
-            m_start = start;
-            m_end = end;
         }
-        double m_start;
-        double m_end;
 
-        inline bool isPointInRange(double point) const
+        MediaTime m_start;
+        MediaTime m_end;
+
+        inline bool isPointInRange(const MediaTime& point) const
         {
             return m_start <= point && point < m_end;
         }

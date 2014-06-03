@@ -946,7 +946,7 @@ size_t MediaPlayerPrivateAVFoundation::extraMemoryCost() const
     if (!duration)
         return 0;
 
-    unsigned long long extra = totalBytes() * buffered()->totalDuration() / duration;
+    unsigned long long extra = totalBytes() * buffered()->totalDuration().toDouble() / duration;
     return static_cast<unsigned>(extra);
 }
 

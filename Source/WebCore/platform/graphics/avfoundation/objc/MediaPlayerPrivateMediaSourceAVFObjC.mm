@@ -464,7 +464,7 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaSourceAVFObjC::readyState() const
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaSourceAVFObjC::seekable() const
 {
-    return PlatformTimeRanges::create(minTimeSeekable(), maxTimeSeekableDouble());
+    return PlatformTimeRanges::create(MediaTime::createWithDouble(minTimeSeekable()), MediaTime::createWithDouble(maxTimeSeekableDouble()));
 }
 
 double MediaPlayerPrivateMediaSourceAVFObjC::maxTimeSeekableDouble() const

@@ -60,7 +60,11 @@ namespace WebCore {
 static double ExponentialMovingAverageCoefficient = 0.1;
 
 // Allow hasCurrentTime() to be off by as much as the length of a 24fps video frame
-static double CurrentTimeFudgeFactor = 1. / 24;
+static const MediaTime& currentTimeFudgeFactor()
+{
+    static NeverDestroyed<MediaTime> fudgeFactor(1, 24);
+    return fudgeFactor;
+}
 
 struct SourceBuffer::TrackBuffer {
     MediaTime lastDecodeTimestamp;
@@ -1385,8 +1389,8 @@ bool SourceBuffer::hasCurrentTime() const
     if (isRemoved() || !m_buffered->length())
         return false;
 
-    double currentTime = m_source->currentTime();
-    return fabs(m_buffered->nearest(m_source->currentTime()) - currentTime) <= CurrentTimeFudgeFactor;
+    MediaTime currentTime = MediaTime::createWithDouble(m_source->currentTime());
+    return abs(m_buffered->ranges().nearest(currentTime) - currentTime) <= currentTimeFudgeFactor();
 }
 
 bool SourceBuffer::hasFutureTime() const
@@ -1394,20 +1398,20 @@ bool SourceBuffer::hasFutureTime() const
     if (isRemoved())
         return false;
 
-    double currentTime = m_source->currentTime();
     const PlatformTimeRanges& ranges = m_buffered->ranges();
     if (!ranges.length())
         return false;
 
-    double nearest = m_buffered->nearest(m_source->currentTime());
-    if (fabs(m_buffered->nearest(m_source->currentTime()) - currentTime) > CurrentTimeFudgeFactor)
+    MediaTime currentTime = MediaTime::createWithDouble(m_source->currentTime());
+    MediaTime nearest = ranges.nearest(currentTime);
+    if (abs(nearest - currentTime) > currentTimeFudgeFactor())
         return false;
 
     size_t found = ranges.find(nearest);
     ASSERT(found != notFound);
 
     bool ignoredValid = false;
-    return ranges.end(found, ignoredValid) - currentTime > CurrentTimeFudgeFactor;
+    return ranges.end(found, ignoredValid) - currentTime > currentTimeFudgeFactor();
 }
 
 bool SourceBuffer::canPlayThrough()
@@ -1423,9 +1427,9 @@ bool SourceBuffer::canPlayThrough()
         return true;
 
     // Add up all the time yet to be buffered.
-    double unbufferedTime = 0;
-    double currentTime = m_source->currentTime();
-    double duration = m_source->duration();
+    MediaTime unbufferedTime = MediaTime::zeroTime();
+    MediaTime currentTime = MediaTime::createWithDouble(m_source->currentTime());
+    MediaTime duration = MediaTime::createWithDouble(m_source->duration());
 
     PlatformTimeRanges unbufferedRanges = m_buffered->ranges();
     unbufferedRanges.invert();
@@ -1435,8 +1439,8 @@ bool SourceBuffer::canPlayThrough()
     for (size_t i = 0, end = unbufferedRanges.length(); i < end; ++i)
         unbufferedTime += unbufferedRanges.end(i, valid) - unbufferedRanges.start(i, valid);
 
-    double timeRemaining = duration - currentTime;
-    return unbufferedTime / m_averageBufferRate < timeRemaining;
+    MediaTime timeRemaining = duration - currentTime;
+    return unbufferedTime.toDouble() / m_averageBufferRate < timeRemaining.toDouble();
 }
 
 void SourceBuffer::reportExtraMemoryCost()

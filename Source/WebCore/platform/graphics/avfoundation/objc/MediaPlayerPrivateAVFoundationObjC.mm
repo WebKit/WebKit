@@ -45,6 +45,7 @@
 #import "OutOfBandTextTrackPrivateAVF.h"
 #import "URL.h"
 #import "Logging.h"
+#import "MediaTimeMac.h"
 #import "PlatformTimeRanges.h"
 #import "SecurityOrigin.h"
 #import "SerializedPlatformRepresentationMac.h"
@@ -1090,11 +1091,8 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateAVFoundationObjC::platform
 
     for (NSValue *thisRangeValue in m_cachedLoadedRanges.get()) {
         CMTimeRange timeRange = [thisRangeValue CMTimeRangeValue];
-        if (CMTIMERANGE_IS_VALID(timeRange) && !CMTIMERANGE_IS_EMPTY(timeRange)) {
-            float rangeStart = narrowPrecisionToFloat(CMTimeGetSeconds(timeRange.start));
-            float rangeEnd = narrowPrecisionToFloat(CMTimeGetSeconds(CMTimeRangeGetEnd(timeRange)));
-            timeRanges->add(rangeStart, rangeEnd);
-        }
+        if (CMTIMERANGE_IS_VALID(timeRange) && !CMTIMERANGE_IS_EMPTY(timeRange))
+            timeRanges->add(toMediaTime(timeRange.start), toMediaTime(CMTimeRangeGetEnd(timeRange)));
     }
     return timeRanges;
 }

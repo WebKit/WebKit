@@ -36,8 +36,8 @@
 
             function pause()
             {
-                testExpected("(video.currentTime - timeAfterPause)", 0);
-                testExpected("(video.played.end(0) - timeAfterPause)", 0);
+                testExpected("(video.currentTime - timeAfterPause)", 0.0001, "<");
+                testExpected("(video.played.end(0) - timeAfterPause)", 0.0001, "<");
                 endTest();
             }
         </script>

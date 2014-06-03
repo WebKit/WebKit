@@ -35,7 +35,7 @@ std::unique_ptr<PlatformTimeRanges> PlatformTimeRanges::create()
     return std::make_unique<PlatformTimeRanges>();
 }
 
-std::unique_ptr<PlatformTimeRanges> PlatformTimeRanges::create(double start, double end)
+std::unique_ptr<PlatformTimeRanges> PlatformTimeRanges::create(const MediaTime& start, const MediaTime& end)
 {
     return std::make_unique<PlatformTimeRanges>(start, end);
 }
@@ -45,7 +45,7 @@ std::unique_ptr<PlatformTimeRanges> PlatformTimeRanges::create(const PlatformTim
     return std::make_unique<PlatformTimeRanges>(other);
 }
     
-PlatformTimeRanges::PlatformTimeRanges(double start, double end)
+PlatformTimeRanges::PlatformTimeRanges(const MediaTime& start, const MediaTime& end)
 {
     add(start, end);
 }
@@ -72,20 +72,20 @@ PlatformTimeRanges& PlatformTimeRanges::copy(const PlatformTimeRanges& other)
 void PlatformTimeRanges::invert()
 {
     PlatformTimeRanges inverted;
-    double posInf = std::numeric_limits<double>::infinity();
-    double negInf = -std::numeric_limits<double>::infinity();
+    MediaTime posInf = MediaTime::positiveInfiniteTime();
+    MediaTime negInf = MediaTime::negativeInfiniteTime();
 
     if (!m_ranges.size())
         inverted.add(negInf, posInf);
     else {
-        double start = m_ranges.first().m_start;
+        MediaTime start = m_ranges.first().m_start;
         if (start != negInf)
             inverted.add(negInf, start);
 
         for (size_t index = 0; index + 1 < m_ranges.size(); ++index)
             inverted.add(m_ranges[index].m_end, m_ranges[index + 1].m_start);
 
-        double end = m_ranges.last().m_end;
+        MediaTime end = m_ranges.last().m_end;
         if (end != posInf)
             inverted.add(end, posInf);
     }
@@ -115,29 +115,29 @@ void PlatformTimeRanges::unionWith(const PlatformTimeRanges& other)
     m_ranges.swap(unioned.m_ranges);
 }
 
-double PlatformTimeRanges::start(unsigned index, bool& valid) const
+MediaTime PlatformTimeRanges::start(unsigned index, bool& valid) const
 { 
     if (index >= length()) {
         valid = false;
-        return 0;
+        return MediaTime::zeroTime();
     }
     
     valid = true;
     return m_ranges[index].m_start;
 }
 
-double PlatformTimeRanges::end(unsigned index, bool& valid) const
+MediaTime PlatformTimeRanges::end(unsigned index, bool& valid) const
 { 
     if (index >= length()) {
         valid = false;
-        return 0;
+        return MediaTime::zeroTime();
     }
 
     valid = true;
     return m_ranges[index].m_end;
 }
 
-void PlatformTimeRanges::add(double start, double end)
+void PlatformTimeRanges::add(const MediaTime& start, const MediaTime& end)
 {
     ASSERT(start <= end);
     unsigned overlappingArcIndex;
@@ -178,12 +178,12 @@ void PlatformTimeRanges::add(double start, double end)
     m_ranges.insert(overlappingArcIndex, addedRange);
 }
 
-bool PlatformTimeRanges::contain(double time) const
+bool PlatformTimeRanges::contain(const MediaTime& time) const
 {
     return find(time) != notFound;
 }
 
-size_t PlatformTimeRanges::find(double time) const
+size_t PlatformTimeRanges::find(const MediaTime& time) const
 {
     bool ignoreInvalid;
     for (unsigned n = 0; n < length(); n++) {
@@ -193,26 +193,26 @@ size_t PlatformTimeRanges::find(double time) const
     return notFound;
 }
 
-double PlatformTimeRanges::nearest(double time) const
+MediaTime PlatformTimeRanges::nearest(const MediaTime& time) const
 {
-    double closestDelta = std::numeric_limits<double>::infinity();
-    double closestTime = 0;
+    MediaTime closestDelta = MediaTime::positiveInfiniteTime();
+    MediaTime closestTime = MediaTime::zeroTime();
     unsigned count = length();
     bool ignoreInvalid;
 
     for (unsigned ndx = 0; ndx < count; ndx++) {
-        double startTime = start(ndx, ignoreInvalid);
-        double endTime = end(ndx, ignoreInvalid);
+        MediaTime startTime = start(ndx, ignoreInvalid);
+        MediaTime endTime = end(ndx, ignoreInvalid);
         if (time >= startTime && time <= endTime)
             return time;
 
-        double startTimeDelta = fabs(startTime - time);
+        MediaTime startTimeDelta = abs(startTime - time);
         if (startTimeDelta < closestDelta) {
             closestTime = startTime;
             closestDelta = startTimeDelta;
         }
 
-        double endTimeDelta = fabs(endTime - time);
+        MediaTime endTimeDelta = abs(endTime - time);
         if (endTimeDelta < closestDelta) {
             closestTime = endTime;
             closestDelta = endTimeDelta;
@@ -221,13 +221,13 @@ double PlatformTimeRanges::nearest(double time) const
     return closestTime;
 }
 
-double PlatformTimeRanges::totalDuration() const
+MediaTime PlatformTimeRanges::totalDuration() const
 {
-    double total = 0;
+    MediaTime total = MediaTime::zeroTime();
     bool ignoreInvalid;
 
     for (unsigned n = 0; n < length(); n++)
-        total += fabs(end(n, ignoreInvalid) - start(n, ignoreInvalid));
+        total += abs(end(n, ignoreInvalid) - start(n, ignoreInvalid));
     return total;
 }
 

@@ -638,9 +638,9 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateAVFoundationCF::platformBu
         CMTime duration = CMTimeMakeFromDictionary(static_cast<CFDictionaryRef>(CFDictionaryGetValue(range, CMTimeRangeDurationKey())));
         
         if (timeRangeIsValidAndNotEmpty(start, duration)) {
-            float rangeStart = narrowPrecisionToFloat(CMTimeGetSeconds(start));
-            float rangeEnd = narrowPrecisionToFloat(CMTimeGetSeconds(CMTimeAdd(start, duration)));
-            timeRanges->add(rangeStart, rangeEnd);
+            double rangeStart = CMTimeGetSeconds(start);
+            double rangeEnd = rangeStart + CMTimeGetSeconds(duration);
+            timeRanges->add(MediaTime::createWithDouble(rangeStart), MediaTime::createWithDouble(rangeEnd));
         }
     }
 

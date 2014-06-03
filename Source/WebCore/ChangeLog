@@ -1,3 +1,61 @@
+2014-06-02  Jer Noble  <jer.noble@apple.com>
+
+        Update PlatformTimeRanges to use MediaTime rather than doubles for time values.
+        https://bugs.webkit.org/show_bug.cgi?id=133454
+
+        Reviewed by Eric Carlson.
+
+        PlatformTimeRanges will now use MediaTime, so operations at the platform level won't
+        lose precision when converting to and from doubles and rational time values like CMTime.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::currentTimeFudgeFactor):
+        (WebCore::SourceBuffer::hasCurrentTime):
+        (WebCore::SourceBuffer::hasFutureTime):
+        (WebCore::SourceBuffer::canPlayThrough):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/TimeRanges.cpp:
+        (WebCore::TimeRanges::TimeRanges):
+        (WebCore::TimeRanges::start):
+        (WebCore::TimeRanges::end):
+        (WebCore::TimeRanges::add):
+        (WebCore::TimeRanges::contain):
+        (WebCore::TimeRanges::find):
+        (WebCore::TimeRanges::nearest):
+        (WebCore::TimeRanges::totalDuration):
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::seekable):
+        * platform/graphics/PlatformTimeRanges.cpp:
+        (WebCore::PlatformTimeRanges::create):
+        (WebCore::PlatformTimeRanges::PlatformTimeRanges):
+        (WebCore::PlatformTimeRanges::invert):
+        (WebCore::PlatformTimeRanges::start):
+        (WebCore::PlatformTimeRanges::end):
+        (WebCore::PlatformTimeRanges::add):
+        (WebCore::PlatformTimeRanges::contain):
+        (WebCore::PlatformTimeRanges::find):
+        (WebCore::PlatformTimeRanges::nearest):
+        (WebCore::PlatformTimeRanges::totalDuration):
+        * platform/graphics/PlatformTimeRanges.h:
+        (WebCore::PlatformTimeRanges::Range::Range):
+        (WebCore::PlatformTimeRanges::Range::isPointInRange):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::extraMemoryCost):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformBufferedTimeRanges):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformBufferedTimeRanges):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekable):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::buffered): Deleted.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::buffered):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::buffered):
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::MockMediaPlayerMediaSource::advanceCurrentTime):
+
 2014-06-03  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Align the highlight rects with device pixels

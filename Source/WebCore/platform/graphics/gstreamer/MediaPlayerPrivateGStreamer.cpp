@@ -865,21 +865,21 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamer::buffered() cons
     for (guint index = 0; index < gst_query_get_n_buffering_ranges(query); index++) {
         gint64 rangeStart = 0, rangeStop = 0;
         if (gst_query_parse_nth_buffering_range(query, index, &rangeStart, &rangeStop))
-            timeRanges->add(static_cast<float>((rangeStart * mediaDuration) / GST_FORMAT_PERCENT_MAX),
-                static_cast<float>((rangeStop * mediaDuration) / GST_FORMAT_PERCENT_MAX));
+            timeRanges->add(MediaTime::createWithDouble((rangeStart * mediaDuration) / GST_FORMAT_PERCENT_MAX),
+                MediaTime::createWithDouble((rangeStop * mediaDuration) / GST_FORMAT_PERCENT_MAX));
     }
 
     // Fallback to the more general maxTimeLoaded() if no range has
     // been found.
     if (!timeRanges->length())
         if (float loaded = maxTimeLoaded())
-            timeRanges->add(0, loaded);
+            timeRanges->add(MediaTime::zeroTime(), MediaTime::createWithDouble(loaded));
 
     gst_query_unref(query);
 #else
     float loaded = maxTimeLoaded();
     if (!m_errorOccured && !isLiveStream() && loaded > 0)
-        timeRanges->add(0, loaded);
+        timeRanges->add(MediaTime::zeroTime(), MediaTime::createWithDouble(loaded));
 #endif
     return timeRanges;
 }

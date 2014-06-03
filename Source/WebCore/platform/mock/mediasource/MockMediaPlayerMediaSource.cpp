@@ -216,12 +216,12 @@ void MockMediaPlayerMediaSource::advanceCurrentTime()
         return;
 
     auto buffered = m_mediaSource->buffered();
-    size_t pos = buffered->find(m_currentTime.toDouble());
+    size_t pos = buffered->find(m_currentTime);
     if (pos == notFound)
         return;
 
     bool ignoreError;
-    m_currentTime = std::min(m_duration, MediaTime::createWithDouble(buffered->end(pos, ignoreError)));
+    m_currentTime = std::min(m_duration, buffered->end(pos, ignoreError));
     m_player->timeChanged();
 }
 

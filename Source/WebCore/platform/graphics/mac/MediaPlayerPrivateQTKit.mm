@@ -922,7 +922,7 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateQTKit::buffered() const
     auto timeRanges = PlatformTimeRanges::create();
     float loaded = maxTimeLoaded();
     if (loaded > 0)
-        timeRanges->add(0, loaded);
+        timeRanges->add(MediaTime::zeroTime(), MediaTime::createWithDouble(loaded));
     return timeRanges;
 }
 

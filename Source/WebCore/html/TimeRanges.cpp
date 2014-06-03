@@ -52,7 +52,7 @@ TimeRanges::TimeRanges()
 }
 
 TimeRanges::TimeRanges(double start, double end)
-    : m_ranges(PlatformTimeRanges(start, end))
+    : m_ranges(PlatformTimeRanges(MediaTime::createWithDouble(start), MediaTime::createWithDouble(end)))
 {
 }
 
@@ -64,25 +64,25 @@ TimeRanges::TimeRanges(const PlatformTimeRanges& other)
 double TimeRanges::start(unsigned index, ExceptionCode& ec) const
 {
     bool valid;
-    double result = m_ranges.start(index, valid);
+    MediaTime result = m_ranges.start(index, valid);
 
     if (!valid) {
         ec = INDEX_SIZE_ERR;
         return 0;
     }
-    return result;
+    return result.toDouble();
 }
 
 double TimeRanges::end(unsigned index, ExceptionCode& ec) const 
 { 
     bool valid;
-    double result = m_ranges.end(index, valid);
+    MediaTime result = m_ranges.end(index, valid);
 
     if (!valid) {
         ec = INDEX_SIZE_ERR;
         return 0;
     }
-    return result;
+    return result.toDouble();
 }
 
 void TimeRanges::invert()
@@ -112,27 +112,27 @@ unsigned TimeRanges::length() const
 
 void TimeRanges::add(double start, double end)
 {
-    m_ranges.add(start, end);
+    m_ranges.add(MediaTime::createWithDouble(start), MediaTime::createWithDouble(end));
 }
 
 bool TimeRanges::contain(double time) const
 {
-    return m_ranges.contain(time);
+    return m_ranges.contain(MediaTime::createWithDouble(time));
 }
 
 size_t TimeRanges::find(double time) const
 {
-    return m_ranges.find(time);
+    return m_ranges.find(MediaTime::createWithDouble(time));
 }
 
 double TimeRanges::nearest(double time) const
 {
-    return m_ranges.nearest(time);
+    return m_ranges.nearest(MediaTime::createWithDouble(time)).toDouble();
 }
 
 double TimeRanges::totalDuration() const
 {
-    return m_ranges.totalDuration();
+    return m_ranges.totalDuration().toDouble();
 }
 
 }
