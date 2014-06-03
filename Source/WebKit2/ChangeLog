@@ -1,3 +1,25 @@
+2014-06-02  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION (iOS WebKit2): Single tap in pages with focus on load will clear the selection after the keyboard appears.
+        https://bugs.webkit.org/show_bug.cgi?id=133465
+        <rdar://problem/17059189>
+
+        Reviewed by Benjamin Poulain.
+
+        If a page focuses an input field on load we don't bring the keyboard on screen
+        since the keyboard is only shown when the user interacts with the page with gestures.
+        Still the WebProcess sets the focus and the selection according to the rules.
+        We need to make sure the UI process doesn't accidentally clear this selection
+        when the user starts the interaction with the page.
+        This patch also improves the function that retrieves the autocorrection data
+        to be returned to the keyboard, making sure that we always send back a reply
+        even when we don't have a valid selection.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _singleTapCommited:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestAutocorrectionData):
+
 2014-05-31  Anders Carlsson  <andersca@apple.com>
 
         Change DeferrableOneShotTimer to use std::function instead of being a class template

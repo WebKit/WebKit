@@ -790,6 +790,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
 
+    if (![self isFirstResponder])
+        [self becomeFirstResponder];
+
     if (_webSelectionAssistant && ![_webSelectionAssistant shouldHandleSingleTapAtPoint:gestureRecognizer.location]) {
         [self _singleTapDidReset:gestureRecognizer];
         return;
@@ -797,7 +800,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
     ASSERT(_potentialTapInProgress);
 
-    [_webSelectionAssistant clearSelection];
+    // We don't want to clear the selection if it is in editable content.
+    // The selection could have been set by autofocusing on page load and not
+    // reflected in the UI process since the user was not interacting with the page.
+    if (!_page->editorState().isContentEditable)
+        [_webSelectionAssistant clearSelection];
 
     _lastInteractionLocation = gestureRecognizer.location;
 

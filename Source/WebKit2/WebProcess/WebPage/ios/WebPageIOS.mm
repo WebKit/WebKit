@@ -1454,7 +1454,11 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, uin
 {
     RefPtr<Range> range;
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-    ASSERT(frame.selection().isCaret());
+    if (!frame.selection().isCaret()) {
+        send(Messages::WebPageProxy::AutocorrectionDataCallback(Vector<FloatRect>(), String(), 0, 0, callbackID));
+        return;
+    }
+
     VisiblePosition position = frame.selection().selection().start();
     Vector<SelectionRect> selectionRects;
 
