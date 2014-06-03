@@ -1,3 +1,14 @@
+2014-06-02  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] WebCore fails to build: platform/network/mac/ResourceHandleMac.mm:729:62: error: use of undeclared identifier '_CFURLConnectionCopyTimingData'
+        <http://webkit.org/b/133445>
+        <rdar://problem/17090035>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/network/mac/ResourceHandleMac.mm: Attempt to fix the
+        build by including a private header and local declaration.
+
 2014-05-31  Anders Carlsson  <andersca@apple.com>
 
         Change DeferrableOneShotTimer to use std::function instead of being a class template

@@ -54,6 +54,16 @@
 #import <wtf/text/Base64.h>
 #import <wtf/text/CString.h>
 
+#if USE(CFNETWORK)
+#if __has_include(<CFNetwork/CFURLConnectionPriv.h>)
+#import <CFNetwork/CFURLConnectionPriv.h>
+#endif
+typedef struct _CFURLConnection* CFURLConnectionRef;
+extern "C" {
+CFDictionaryRef _CFURLConnectionCopyTimingData(CFURLConnectionRef);
+}
+#endif // USE(CFNETWORK)
+
 #if __has_include(<Foundation/NSURLConnectionPrivate.h>)
 #import <Foundation/NSURLConnectionPrivate.h>
 #else
