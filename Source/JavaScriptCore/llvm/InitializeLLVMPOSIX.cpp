@@ -60,6 +60,7 @@ void initializeLLVMPOSIX(const char* libraryName)
     if (!initializer) {
         if (verbose)
             dataLog("Failed to find ", symbolName, " in ", libraryName, ": ", dlerror());
+        return;
     }
     
     llvm = initializer(WTFLogAlwaysAndCrash);

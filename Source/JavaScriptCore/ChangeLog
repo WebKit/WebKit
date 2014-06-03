@@ -1,3 +1,13 @@
+2014-06-03  Filip Pizlo  <fpizlo@apple.com>
+
+        LLVM soft-linking should be truly fail-silent
+        https://bugs.webkit.org/show_bug.cgi?id=133482
+
+        Reviewed by Mark Lam.
+
+        * llvm/InitializeLLVMPOSIX.cpp:
+        (JSC::initializeLLVMPOSIX): Missing return statement in the dlsym() returning null case.
+
 2014-06-03  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         REGRESSION(r169092 and r169102): Skip failing JSC tests poperly on non-x86 Darwin platforms
