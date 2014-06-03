@@ -404,7 +404,12 @@ void setViewportFeature(const String& keyString, const String& valueString, Docu
 #if PLATFORM(IOS)
 void finalizeViewportArguments(ViewportArguments& arguments, const FloatSize& screenSize)
 {
-    if (arguments.width == ViewportArguments::ValueDeviceWidth)
+    if (arguments.width == ViewportArguments::ValueDeviceWidth && (arguments.zoom == 1 || arguments.minZoom == 1)) {
+        // A large amount of pages are using the viewport width=device-width + scaling parameters incorrectly.
+        // This has become so pervasive that the vast majority of those pages render better without viewport meta tag than with it.
+        // Clearing the width is a workaround for the most common incorrect viewports. :(
+        arguments.width = ViewportArguments::ValueAuto;
+    } else if (arguments.width == ViewportArguments::ValueDeviceWidth)
         arguments.width = screenSize.width();
     else if (arguments.width == ViewportArguments::ValueDeviceHeight)
         arguments.width = screenSize.height();

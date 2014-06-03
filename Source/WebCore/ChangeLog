@@ -1,3 +1,18 @@
+2014-06-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS] Start ignoring common bogus viewport parameters
+        https://bugs.webkit.org/show_bug.cgi?id=133466
+        <rdar://problem/16203396>
+
+        Reviewed by Sam Weinig.
+
+        Incorrect viewports are spreading really quickly lately. We have to start ignoring
+        some combinations of arguments as they are almost always used incorrectly, causing
+        a poor user experience on those websites.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::finalizeViewportArguments):
+
 2014-06-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: add support for the "any" pseudo class
