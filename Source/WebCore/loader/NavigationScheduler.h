@@ -33,7 +33,10 @@
 
 #include "Timer.h"
 #include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
@@ -41,9 +44,10 @@ class FormSubmission;
 class Frame;
 class ScheduledNavigation;
 class SecurityOrigin;
-class KURL;
 
 class NavigationDisablerForBeforeUnload {
+    WTF_MAKE_NONCOPYABLE(NavigationDisablerForBeforeUnload);
+
 public:
     NavigationDisablerForBeforeUnload()
     {
@@ -61,6 +65,8 @@ private:
 };
 
 class NavigationScheduler {
+    WTF_MAKE_NONCOPYABLE(NavigationScheduler);
+
 public:
     explicit NavigationScheduler(Frame*);
     ~NavigationScheduler();
@@ -68,8 +74,8 @@ public:
     bool redirectScheduledDuringLoad();
     bool locationChangePending();
 
-    void scheduleRedirect(double delay, const KURL& url);
-    void scheduleLocationChange(SecurityOrigin*, const KURL& url, const String& referrer, bool lockHistory = true, bool lockBackForwardList = true);
+    void scheduleRedirect(double delay, const String& url);
+    void scheduleLocationChange(SecurityOrigin*, const String& url, const String& referrer, bool lockHistory = true, bool lockBackForwardList = true);
     void scheduleFormSubmission(PassRefPtr<FormSubmission>);
     void scheduleRefresh();
     void scheduleHistoryNavigation(int steps);
@@ -81,7 +87,7 @@ public:
 
 private:
     bool shouldScheduleNavigation() const;
-    bool shouldScheduleNavigation(const KURL&) const;
+    bool shouldScheduleNavigation(const String& url) const;
 
     void timerFired(Timer<NavigationScheduler>*);
     void schedule(PassOwnPtr<ScheduledNavigation>);

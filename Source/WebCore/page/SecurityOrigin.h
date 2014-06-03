@@ -205,7 +205,7 @@ public:
     // (and whether it was set) but considering the host. It is used for postMessage.
     bool isSameSchemeHostPort(const SecurityOrigin*) const;
 
-    static KURL urlWithUniqueSecurityOrigin();
+    static String urlWithUniqueSecurityOrigin();
 
 private:
     SecurityOrigin();
