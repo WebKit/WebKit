@@ -104,6 +104,17 @@ private:
     enum class CoverageType { PrimaryTiles, SecondaryTiles };
     IntRect ensureTilesForRect(const FloatRect&, CoverageType);
 
+    struct TileCohortInfo {
+        TileCohort cohort;
+        double creationTime; // in monotonicallyIncreasingTime().
+        TileCohortInfo(TileCohort inCohort, double inTime)
+            : cohort(inCohort)
+            , creationTime(inTime)
+        { }
+
+        double timeUntilExpiration();
+    };
+
     void removeAllSecondaryTiles();
     void removeTilesInCohort(TileCohort);
 
@@ -136,14 +147,6 @@ private:
 
     float m_scale;
 
-    struct TileCohortInfo {
-        TileCohort cohort;
-        double creationTime; // in monotonicallyIncreasingTime().
-        TileCohortInfo(TileCohort inCohort, double inTime)
-            : cohort(inCohort)
-            , creationTime(inTime)
-        { }
-    };
     typedef Deque<TileCohortInfo> TileCohortList;
     TileCohortList m_cohortList;
 

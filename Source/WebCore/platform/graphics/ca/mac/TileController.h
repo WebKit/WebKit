@@ -50,6 +50,8 @@ typedef Vector<RetainPtr<PlatformLayer>> PlatformLayerList;
 
 class TileController final : public TiledBacking {
     WTF_MAKE_NONCOPYABLE(TileController); WTF_MAKE_FAST_ALLOCATED;
+    friend class TileCoverageMap;
+    friend class TileGrid;
 public:
     static PassOwnPtr<TileController> create(PlatformCALayer*);
     ~TileController();
@@ -83,10 +85,6 @@ public:
     unsigned numberOfUnparentedTiles() const;
     void removeUnparentedTilesNow();
 #endif
-
-public:
-    // Public for TileGrid and TileCoverageMap
-    bool isInWindow() const { return m_isInWindow; }
 
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
 
@@ -126,6 +124,10 @@ public:
 
     Vector<RefPtr<PlatformCALayer>> containerLayers();
 
+protected:
+    void scheduleTileRevalidation(double interval);
+
+    bool isInWindow() const { return m_isInWindow; }
     float topContentInset() const { return m_topContentInset; }
 
 private:
@@ -154,7 +156,7 @@ private:
     virtual void setZoomedOutContentsScale(float) override;
     virtual float zoomedOutContentsScale() const override;
 
-    void scheduleTileRevalidation(double interval);
+
     void tileRevalidationTimerFired(Timer<TileController>*);
 
     void setNeedsRevalidateTiles();

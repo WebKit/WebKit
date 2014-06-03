@@ -1,5 +1,26 @@
 2014-06-03  Timothy Horton  <timothy_horton@apple.com>
 
+        Prepopulated tiles may never be unparented from TileGrids with aggressive tile retention on
+        https://bugs.webkit.org/show_bug.cgi?id=133471
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/ca/mac/TileController.h:
+        * platform/graphics/ca/mac/TileGrid.h:
+        (WebCore::TileGrid::TileCohortInfo::TileCohortInfo):
+        * platform/graphics/ca/mac/TileGrid.mm:
+        (WebCore::TileGrid::TileCohortInfo::timeUntilExpiration):
+        (WebCore::TileGrid::cohortRemovalTimerFired):
+        Factor timeUntilExpiration() out of cohortRemovalTimerFired().
+
+        (WebCore::TileGrid::revalidateTiles):
+        Ensure that secondary tiles that never touch the primary coverage rect
+        are still unparented eventually (after 2 seconds, the same lifetime we use
+        for cohorts in non-aggressive retention).
+        Schedule another revalidateTiles if we left parented secondary tiles behind.
+
+2014-06-03  Timothy Horton  <timothy_horton@apple.com>
+
         TileGrid::prepopulateRect populates the wrong tiles if scale != 1
         https://bugs.webkit.org/show_bug.cgi?id=133470
 
