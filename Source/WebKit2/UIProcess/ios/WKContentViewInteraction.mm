@@ -401,6 +401,7 @@ static inline bool highlightedQuadsAreSmallerThanRect(const Vector<FloatQuad>& q
     }
 
     bool allHighlightRectsAreRectilinear = true;
+    float deviceScaleFactor = _page->deviceScaleFactor();
     const size_t quadCount = highlightedQuads.size();
     RetainPtr<NSMutableArray> rects = adoptNS([[NSMutableArray alloc] initWithCapacity:static_cast<const NSUInteger>(quadCount)]);
     for (size_t i = 0; i < quadCount; ++i) {
@@ -408,8 +409,9 @@ static inline bool highlightedQuadsAreSmallerThanRect(const Vector<FloatQuad>& q
         if (quad.isRectilinear()) {
             FloatRect boundingBox = quad.boundingBox();
             boundingBox.scale(selfScale);
-            CGRect rect = CGRectInset(boundingBox, -UIWebViewMinimumHighlightRadius, -UIWebViewMinimumHighlightRadius);
-            [rects addObject:[NSValue valueWithCGRect:rect]];
+            boundingBox.inflate(UIWebViewMinimumHighlightRadius);
+            CGRect pixelAlignedRect = static_cast<CGRect>(enclosingRectExtendedToDevicePixels(boundingBox, deviceScaleFactor));
+            [rects addObject:[NSValue valueWithCGRect:pixelAlignedRect]];
         } else {
             allHighlightRectsAreRectilinear = false;
             rects.clear();

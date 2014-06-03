@@ -246,6 +246,7 @@ inline bool FloatRect::isInfinite() const
     return *this == infiniteRect();
 }
 
+FloatRect enclosingRectExtendedToDevicePixels(const FloatRect&, float deviceScaleFactor);
 IntRect enclosingIntRect(const FloatRect&);
 
 // Returns a valid IntRect contained within the given FloatRect.

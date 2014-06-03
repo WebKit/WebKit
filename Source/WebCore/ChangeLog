@@ -1,3 +1,20 @@
+2014-06-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Align the highlight rects with device pixels
+        https://bugs.webkit.org/show_bug.cgi?id=133464
+
+        Reviewed by Enrica Casucci.
+
+        Add utility functions to pixel align points and rects.
+
+        * WebCore.exp.in:
+        * platform/graphics/FloatPoint.h:
+        (WebCore::flooredToDevicePixels):
+        (WebCore::ceiledToDevicePixels):
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::enclosingRectExtendedToDevicePixels):
+        * platform/graphics/FloatRect.h:
+
 2014-06-03  Timothy Horton  <timothy_horton@apple.com>
 
         Prepopulated tiles may never be unparented from TileGrids with aggressive tile retention on
