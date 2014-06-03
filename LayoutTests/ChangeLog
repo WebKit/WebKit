@@ -1,3 +1,13 @@
+2014-06-02  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Added expectation result after r167684, r169257, and r169390.
+
+        * fast/events/ghostly-mousemoves-in-subframe-expected.txt: Added.
+        * platform/efl/fast/box-shadow/hidpi-webkit-box-shadow-subpixel-position-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination/nested-transforms-expected.txt: Added.
+
 2014-06-02  Benjamin Poulain  <benjamin@webkit.org>
 
         Make pseudo element matching for style resolution more JIT friendly
