@@ -399,6 +399,8 @@ public:
     {
     }
 
+    void addFragment(PassRefPtr<DocumentFragment>);
+
     Frame& frame;
     Range& context;
     const bool allowPlainText;
@@ -415,7 +417,6 @@ private:
     virtual bool readImage(PassRefPtr<SharedBuffer>, const String& type) override;
     virtual bool readURL(const URL&, const String& title) override;
     virtual bool readPlainText(const String&) override;
-    void addFragment(PassRefPtr<DocumentFragment>);
 };
 
 void Editor::WebContentReader::addFragment(PassRefPtr<DocumentFragment> newFragment)
@@ -554,11 +555,21 @@ PassRefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard& pasteb
 void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText, MailBlockquoteHandling mailBlockquoteHandling)
 {
     RefPtr<Range> range = selectedRange();
+    WebContentReader reader(m_frame, *range, allowPlainText);
+    int numberOfPasteboardItems = client()->getPasteboardItemsCount();
+    for (int i = 0; i < numberOfPasteboardItems; ++i) {
+        RefPtr<DocumentFragment> fragment = client()->documentFragmentFromDelegate(i);
+        if (!fragment)
+            continue;
 
-    bool chosePlainText;
-    RefPtr<DocumentFragment> fragment = client()->documentFragmentFromDelegate(0);
-    if (!fragment)
-        fragment = webContentFromPasteboard(*pasteboard, *range, allowPlainText, chosePlainText);
+        reader.addFragment(fragment);
+    }
+
+    RefPtr<DocumentFragment> fragment = reader.fragment;
+    if (!fragment) {
+        bool chosePlainTextIgnored;
+        fragment = webContentFromPasteboard(*pasteboard, *range, allowPlainText, chosePlainTextIgnored);
+    }
 
     if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
         pasteAsFragment(fragment, canSmartReplaceWithPasteboard(*pasteboard), false, mailBlockquoteHandling);
