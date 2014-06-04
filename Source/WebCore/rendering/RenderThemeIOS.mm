@@ -569,7 +569,11 @@ static void adjustInputElementButtonStyle(RenderStyle* style, HTMLInputElement* 
 
     // Enforce the width and set the box-sizing to content-box to not conflict with the padding.
     Font font = style->font();
-    float maximumWidth = inputElement->locale().maximumWidthForDateType(dateType, font);
+    FontCachePurgePreventer fontCachePurgePreventer;
+    // FIXME: Choose an appropriate width for these elements when
+    // styled with SVG fonts (rather than simply 0).
+    // https://bugs.webkit.org/show_bug.cgi?id=133524
+    float maximumWidth = font.isSVGFont() ? 0 : inputElement->locale().maximumWidthForDateType(dateType, font);
     if (maximumWidth > 0) {    
         int width = static_cast<int>(maximumWidth + MenuListButtonPaddingRight);
         style->setWidth(Length(width, Fixed));

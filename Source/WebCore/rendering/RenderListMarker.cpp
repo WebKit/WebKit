@@ -1536,8 +1536,10 @@ void RenderListMarker::computePreferredLogicalWidths()
         case NoneListStyle:
             break;
         case Asterisks:
-        case Footnotes:
-            logicalWidth = font.width(m_text); // no suffix for these types
+        case Footnotes: {
+            TextRun run = RenderBlock::constructTextRun(this, font, m_text, style(), TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion, DefaultTextRunFlags);
+            logicalWidth = font.width(run); // no suffix for these types
+        }
             break;
         case Circle:
         case Disc:
@@ -1622,7 +1624,8 @@ void RenderListMarker::computePreferredLogicalWidths()
             if (m_text.isEmpty())
                 logicalWidth = 0;
             else {
-                LayoutUnit itemWidth = font.width(m_text);
+                TextRun run = RenderBlock::constructTextRun(this, font, m_text, style(), TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion, DefaultTextRunFlags);
+                LayoutUnit itemWidth = font.width(run);
                 UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem.value()), ' ' };
                 LayoutUnit suffixSpaceWidth = font.width(RenderBlock::constructTextRun(this, font, suffixSpace, 2, style()));
                 logicalWidth = itemWidth + suffixSpaceWidth;
@@ -1754,7 +1757,8 @@ IntRect RenderListMarker::getRelativeMarkerRect()
         case Asterisks:
         case Footnotes: {
             const Font& font = style().font();
-            relativeRect = IntRect(0, 0, font.width(m_text), font.fontMetrics().height());
+            TextRun run = RenderBlock::constructTextRun(this, font, m_text, style(), TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion, DefaultTextRunFlags);
+            relativeRect = IntRect(0, 0, font.width(run), font.fontMetrics().height());
             break;
         }
         case Disc:
@@ -1847,7 +1851,8 @@ IntRect RenderListMarker::getRelativeMarkerRect()
             if (m_text.isEmpty())
                 return IntRect();
             const Font& font = style().font();
-            int itemWidth = font.width(m_text);
+            TextRun run = RenderBlock::constructTextRun(this, font, m_text, style(), TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion, DefaultTextRunFlags);
+            int itemWidth = font.width(run);
             UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem.value()), ' ' };
             int suffixSpaceWidth = font.width(RenderBlock::constructTextRun(this, font, suffixSpace, 2, style()));
             relativeRect = IntRect(0, 0, itemWidth + suffixSpaceWidth, font.fontMetrics().height());

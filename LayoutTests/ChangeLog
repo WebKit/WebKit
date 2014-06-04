@@ -1,3 +1,19 @@
+2014-05-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Lists styled with SVG fonts are not rendered as expected
+        https://bugs.webkit.org/show_bug.cgi?id=133198
+
+        Reviewed by Simon Fraser.
+
+        See per-file comments.
+
+        * platform/ios-sim/fonts/input-style-with-svg-font-crash.html: Added. Make sure
+        that iOS input elements don't crash when styled with SVG fonts.
+        * platform/ios-sim/fonts/resources/graffiti.svg: Added. SVG font for above test.
+        * svg/custom/list-items-with-svg-font-family-expected.txt: Added.
+        * svg/custom/list-items-with-svg-font-family.html: Added. Make sure there is
+        no crash when styling list elements with SVG fonts.
+
 2014-06-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.

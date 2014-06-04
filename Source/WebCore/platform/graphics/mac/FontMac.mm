@@ -543,7 +543,7 @@ DashArray Font::dashesForIntersectionsWithRect(const TextRun& run, const FloatPo
 bool Font::primaryFontDataIsSystemFont() const
 {
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED > 1090
-    return CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(primaryFont()->platformData().ctFont())).get());
+    return !isSVGFont() && CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(primaryFont()->platformData().ctFont())).get());
 #else
     // System fonts are hidden by having a name that begins with a period, so simply search
     // for that here rather than try to keep the list up to date.

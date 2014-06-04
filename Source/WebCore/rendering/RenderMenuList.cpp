@@ -224,11 +224,17 @@ void RenderMenuList::updateOptionsWidth()
             float optionWidth = 0;
             if (RenderStyle* optionStyle = element->renderStyle())
                 optionWidth += minimumValueForLength(optionStyle->textIndent(), 0);
-            if (!text.isEmpty())
-                optionWidth += style().font().width(text);
+            if (!text.isEmpty()) {
+                const Font& font = style().font();
+                TextRun run = RenderBlock::constructTextRun(this, font, text, style(), TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion, DefaultTextRunFlags);
+                optionWidth += font.width(run);
+            }
             maxOptionWidth = std::max(maxOptionWidth, optionWidth);
-        } else if (!text.isEmpty())
-            maxOptionWidth = std::max(maxOptionWidth, style().font().width(text));
+        } else if (!text.isEmpty()) {
+            const Font& font = style().font();
+            TextRun run = RenderBlock::constructTextRun(this, font, text, style(), TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion, DefaultTextRunFlags);
+            maxOptionWidth = std::max(maxOptionWidth, font.width(run));
+        }
     }
 
     int width = static_cast<int>(ceilf(maxOptionWidth));
