@@ -1,3 +1,20 @@
+2014-06-04  Andreas Kling  <akling@apple.com>
+
+        WebKit should adopt journal_mode=wal for all SQLite databases.
+        <https://webkit.org/b/133496>
+        <rdar://problem/15600186>
+
+        We already had code to enable write-ahead logging, but it didn't work
+        since calling SQLiteStatement::step() without first calling prepare()
+        is a no-op.
+
+        Converted it to use into a simple executeCommand() instead.
+
+        Reviewed by Brady Eidson.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open):
+
 2014-06-04  Radu Stavila  <stavila@adobe.com>
 
         REGRESSION: [CSS Regions] Regions with overflow:auto generate scrollbars even if the content flows into the following regions and as such, should not be scrolled
