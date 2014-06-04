@@ -1,3 +1,17 @@
+2014-06-04  Alex Christensen  <achristensen@webkit.org>
+
+        Enable WebGL on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=133503
+
+        Reviewed by Brent Fulgham.
+
+        * WebKit.vcxproj/WebKit.sln:
+        Build ANGLE projects and add them as a dependency for linking WebKit.dll.
+        * WebKit.vcxproj/WebKit/WebKitCommon.props:
+        Link to ANGLE libraries to get EGL, GLESv2, and GLSL translator symbols.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        Added 64-bit linker symbol.
+
 2014-05-28  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Roll r168668 back in.

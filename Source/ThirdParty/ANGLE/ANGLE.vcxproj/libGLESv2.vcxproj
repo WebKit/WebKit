@@ -250,6 +250,7 @@
     <ClCompile Include="..\src\libGLESv2\Uniform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\GLES2\gl2softlinking.h" />
     <ClInclude Include="..\src\common\debug.h" />
     <ClInclude Include="..\src\common\event_tracer.h" />
     <ClInclude Include="..\src\common\system.h" />

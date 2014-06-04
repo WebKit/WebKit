@@ -1,3 +1,25 @@
+2014-06-04  Alex Christensen  <achristensen@webkit.org>
+
+        Enable WebGL on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=133503
+
+        Reviewed by Brent Fulgham.
+
+        * changes.diff
+        Recorded additional changes from ANGLE.
+        * ANGLE.vcxproj/libEGL.vcxproj:
+        * ANGLE.vcxproj/libEGL.vcxproj.filters:
+        * ANGLE.vcxproj/libGLESv2.vcxproj:
+        * ANGLE.vcxproj/libGLESv2.vcxproj.filters:
+        * include/EGL/egl.h:
+        * include/EGL/eglsoftlinking.h: Added.
+        * include/GLES2/gl2.h:
+        * include/GLES2/gl2softlinking.h: Added.
+        Resurrected soft linking headers from r153664.
+        * src/libGLESv2/renderer/VertexBuffer.cpp:
+        (rx::VertexBufferInterface::directStoragePossible):
+        Compile fix for Win64.
+
 2014-05-02  Alex Christensen  <achristensen@webkit.org>
 
         Update ANGLE Windows build.

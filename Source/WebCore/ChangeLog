@@ -1,3 +1,21 @@
+2014-06-04  Alex Christensen  <achristensen@webkit.org>
+
+        Enable WebGL on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=133503
+
+        Reviewed by Brent Fulgham.
+
+        No new tests, but we should enable the webgl tests soon.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::markContextChanged):
+        Check if the context and RenderBox are accelerated to use accelerated code path.
+        * html/canvas/WebGLRenderingContext.h:
+        Disable accelerated compositing on WebGL canvases until that works.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        Compile fix after r166563.
+
 2014-06-04  Benjamin Poulain  <benjamin@webkit.org>
 
         Regression(r169547): Crash in WebCore::styleForFirstLetter() while loading http://thenextweb.com/apple/2014/02/21/apple-confirms-acquired-testflight-creator-burstly/

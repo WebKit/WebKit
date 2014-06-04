@@ -166,7 +166,7 @@ bool VertexBufferInterface::directStoragePossible(const gl::VertexAttribute &att
     //  (Undocumented, and experimentally confirmed)
     unsigned int outputElementSize;
     getVertexBuffer()->getSpaceRequired(attrib, 1, 0, &outputElementSize);
-    size_t alignment = std::min(static_cast<size_t>(outputElementSize), 4u);
+    size_t alignment = std::min<size_t>(static_cast<size_t>(outputElementSize), 4);
 
     bool isAligned = (static_cast<size_t>(attrib.stride()) % alignment == 0) &&
                      (static_cast<size_t>(attrib.mOffset) % alignment == 0);

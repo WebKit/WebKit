@@ -88,7 +88,12 @@ public:
     virtual ~WebGLRenderingContext();
 
     virtual bool is3d() const override { return true; }
+#if PLATFORM(WIN)
+    // FIXME: Implement accelerated 3d canvas on Windows.
+    virtual bool isAccelerated() const override { return false; }
+#else
     virtual bool isAccelerated() const override { return true; }
+#endif
 
     int drawingBufferWidth() const;
     int drawingBufferHeight() const;

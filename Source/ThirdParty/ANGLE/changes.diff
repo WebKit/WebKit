@@ -1,3 +1,51 @@
+diff --git a/include/EGL/egl.h b/include/EGL/egl.h
+index b55e6c6..eeb16af 100644
+--- a/include/EGL/egl.h
++++ b/include/EGL/egl.h
+@@ -246,6 +246,10 @@ typedef void *EGLClientBuffer;
+ 
+ /* EGL Functions */
+ 
++#if defined(_MSC_VER) && !defined(ANGLE_WEBKIT_WIN)
++#include <EGL/eglsoftlinking.h>
++#else
++
+ EGLAPI EGLint EGLAPIENTRY eglGetError(void);
+ 
+ EGLAPI EGLDisplay EGLAPIENTRY eglGetDisplay(EGLNativeDisplayType display_id);
+@@ -322,6 +326,8 @@ typedef void (*__eglMustCastToProperFunctionPointerType)(void);
+ EGLAPI __eglMustCastToProperFunctionPointerType EGLAPIENTRY
+        eglGetProcAddress(const char *procname);
+ 
++#endif
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/include/GLES2/gl2.h b/include/GLES2/gl2.h
+index c2d8357..9ab5832 100644
+--- a/include/GLES2/gl2.h
++++ b/include/GLES2/gl2.h
+@@ -470,6 +470,10 @@ typedef khronos_ssize_t  GLsizeiptr;
+  * GL core functions.
+  *-----------------------------------------------------------------------*/
+ 
++#if defined(_MSC_VER) && !defined(ANGLE_WEBKIT_WIN)
++#include <GLES2/gl2softlinking.h>
++#else
++
+ GL_APICALL void         GL_APIENTRY glActiveTexture (GLenum texture);
+ GL_APICALL void         GL_APIENTRY glAttachShader (GLuint program, GLuint shader);
+ GL_APICALL void         GL_APIENTRY glBindAttribLocation (GLuint program, GLuint index, const GLchar* name);
+@@ -613,6 +617,8 @@ GL_APICALL void         GL_APIENTRY glVertexAttrib4fv (GLuint indx, const GLfloa
+ GL_APICALL void         GL_APIENTRY glVertexAttribPointer (GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid* ptr);
+ GL_APICALL void         GL_APIENTRY glViewport (GLint x, GLint y, GLsizei width, GLsizei height);
+ 
++#endif
++
+ #ifdef __cplusplus
+ }
+ #endif
 diff --git a/include/GLSLANG/ShaderLang.h b/include/GLSLANG/ShaderLang.h
 index 7970bfa..b716c6f 100644
 --- a/include/GLSLANG/ShaderLang.h
@@ -391,3 +439,16 @@ index 8a9fb04..46db788 100644
  }
  
  void InfoLog::reset()
+diff --git a/src/libGLESv2/renderer/VertexBuffer.cpp b/src/libGLESv2/renderer/VertexBuffer.cpp
+index 4e732e1..20050e1 100644
+--- a/src/libGLESv2/renderer/VertexBuffer.cpp
++++ b/src/libGLESv2/renderer/VertexBuffer.cpp
+@@ -166,7 +166,7 @@ bool VertexBufferInterface::directStoragePossible(const gl::VertexAttribute &att
+     //  (Undocumented, and experimentally confirmed)
+     unsigned int outputElementSize;
+     getVertexBuffer()->getSpaceRequired(attrib, 1, 0, &outputElementSize);
+-    size_t alignment = std::min(static_cast<size_t>(outputElementSize), 4u);
++    size_t alignment = std::min<size_t>(static_cast<size_t>(outputElementSize), 4);
+ 
+     bool isAligned = (static_cast<size_t>(attrib.stride()) % alignment == 0) &&
+                      (static_cast<size_t>(attrib.mOffset) % alignment == 0);
