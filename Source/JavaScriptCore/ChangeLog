@@ -1,3 +1,17 @@
+2014-06-04  Oliver Hunt  <oliver@apple.com>
+
+        ArrayIterator should not be exposed in Safari 8
+        https://bugs.webkit.org/show_bug.cgi?id=133494
+
+        Reviewed by Michael Saboff.
+
+        Separate out types that require constructor objects, and don't
+        include the iterator types in that list.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSGlobalObject.h:
+
 2014-06-04  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::Safepoint::begin() should set m_didCallBegin before releasing the rightToRun lock, because otherwise, Safepoint::checkLivenessAndVisitChildren() may assert due to a race

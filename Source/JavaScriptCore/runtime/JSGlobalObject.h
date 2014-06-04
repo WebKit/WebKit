@@ -85,7 +85,7 @@ struct HashTable;
 
 #define DEFINE_STANDARD_BUILTIN(macro, upperName, lowerName) macro(upperName, lowerName, lowerName, JS ## upperName, upperName)
     
-#define FOR_EACH_SIMPLE_BUILTIN_TYPE(macro) \
+#define FOR_EACH_SIMPLE_BUILTIN_TYPE_WITH_CONSTRUCTOR(macro) \
     macro(Set, set, set, JSSet, Set) \
     macro(Map, map, map, JSMap, Map) \
     macro(Date, date, date, DateInstance, Date) \
@@ -95,6 +95,9 @@ struct HashTable;
     macro(Error, error, error, ErrorInstance, Error) \
     macro(JSArrayBuffer, arrayBuffer, arrayBuffer, JSArrayBuffer, ArrayBuffer) \
     DEFINE_STANDARD_BUILTIN(macro, WeakMap, weakMap) \
+
+#define FOR_EACH_SIMPLE_BUILTIN_TYPE(macro) \
+    FOR_EACH_SIMPLE_BUILTIN_TYPE_WITH_CONSTRUCTOR(macro) \
     DEFINE_STANDARD_BUILTIN(macro, ArrayIterator, arrayIterator) \
     DEFINE_STANDARD_BUILTIN(macro, ArgumentsIterator, argumentsIterator) \
     DEFINE_STANDARD_BUILTIN(macro, MapIterator, mapIterator) \

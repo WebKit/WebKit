@@ -1,3 +1,15 @@
+2014-06-04  Oliver Hunt  <oliver@apple.com>
+
+        ArrayIterator should not be exposed in Safari 8
+        https://bugs.webkit.org/show_bug.cgi?id=133494
+
+        Reviewed by Michael Saboff.
+
+        Add tests.
+
+        * js/no-iterator-constructors.html: Added.
+        * js/script-tests/no-iterator-constructors.js: Added.
+
 2014-05-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Lists styled with SVG fonts are not rendered as expected
