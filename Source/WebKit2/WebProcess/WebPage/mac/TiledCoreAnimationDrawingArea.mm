@@ -284,7 +284,7 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
     // If we have an active transient zoom, we want the zoom to win over any changes
     // that WebCore makes to the relevant layers, so re-apply our changes after flushing.
     if (m_transientZoomScale != 1)
-        adjustTransientZoom(m_transientZoomScale, m_transientZoomOrigin);
+        applyTransientZoomToLayers(m_transientZoomScale, m_transientZoomOrigin);
 
     [pool drain];
     return returnValue;
@@ -511,11 +511,9 @@ PlatformCALayer* TiledCoreAnimationDrawingArea::shadowLayerForTransientZoom() co
     return nullptr;
 }
 
-void TiledCoreAnimationDrawingArea::adjustTransientZoom(double scale, FloatPoint origin)
+void TiledCoreAnimationDrawingArea::applyTransientZoomToLayers(double scale, FloatPoint origin)
 {
     // FIXME: Scrollbars should stay in-place and change height while zooming.
-    // FIXME: Keep around pageScale=1 tiles so we can zoom out without gaps.
-    // FIXME: Bring in unparented-but-painted tiles when zooming out, to fill in any gaps.
 
     if (!m_hostingLayer)
         return;
@@ -540,6 +538,21 @@ void TiledCoreAnimationDrawingArea::adjustTransientZoom(double scale, FloatPoint
 
     m_transientZoomScale = scale;
     m_transientZoomOrigin = origin;
+}
+
+void TiledCoreAnimationDrawingArea::adjustTransientZoom(double scale, FloatPoint origin)
+{
+    applyTransientZoomToLayers(scale, origin);
+
+    double currentPageScale = m_webPage->pageScaleFactor();
+    if (scale > currentPageScale)
+        return;
+
+    FrameView* frameView = m_webPage->mainFrameView();
+    FloatRect tileCoverageRect = frameView->visibleContentRectIncludingScrollbars();
+    tileCoverageRect.moveBy(-origin);
+    tileCoverageRect.scale(currentPageScale / scale);
+    frameView->renderView()->layer()->backing()->tiledBacking()->prepopulateRect(tileCoverageRect);
 }
 
 static RetainPtr<CABasicAnimation> transientZoomSnapAnimationForKeyPath(String keyPath)

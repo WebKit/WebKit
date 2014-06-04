@@ -1,3 +1,25 @@
+2014-06-03  Timothy Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures (Zoom): Can show unpainted regions when zoom-pinching-out
+        https://bugs.webkit.org/show_bug.cgi?id=133472
+        <rdar://problem/15686848>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::applyTransientZoomToLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::adjustTransientZoom):
+        Use prepopulateRect() when zooming out to ensure that we have tiles for the current exposed area.
+
+        Factor applyTransientZoomToLayers out of adjustTransientZoom, so that
+        flushLayers can call applyTransientZoomToLayers without ending up calling prepopulateRect()
+        during layer flushing, which causes trouble.
+
+        It is OK to populate layers at the current scale even when zooming out, because the overdraw
+        already covers most of the zoomed out area, and we're only adding a few more tiles at worst.
+
 2014-06-03  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Align the highlight rects with device pixels

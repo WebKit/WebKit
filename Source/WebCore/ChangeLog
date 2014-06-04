@@ -1,3 +1,13 @@
+2014-06-03  Timothy Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures (Zoom): Can show unpainted regions when zoom-pinching-out
+        https://bugs.webkit.org/show_bug.cgi?id=133472
+        <rdar://problem/15686848>
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+
 2014-06-03  Yoav Weiss  <yoav@yoav.ws>
 
         Refactor the srcset parser into its own file
