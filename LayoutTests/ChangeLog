@@ -1,3 +1,13 @@
+2014-06-04  Benjamin Poulain  <benjamin@webkit.org>
+
+        Regression(r169547): Crash in WebCore::styleForFirstLetter() while loading http://thenextweb.com/apple/2014/02/21/apple-confirms-acquired-testflight-creator-burstly/
+        https://bugs.webkit.org/show_bug.cgi?id=133500
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/first-letter-on-non-matching-selectors-expected.txt: Added.
+        * fast/css/first-letter-on-non-matching-selectors.html: Added.
+
 2014-06-04  Oliver Hunt  <oliver@apple.com>
 
         ArrayIterator should not be exposed in Safari 8

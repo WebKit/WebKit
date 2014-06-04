@@ -1,3 +1,32 @@
+2014-06-04  Benjamin Poulain  <benjamin@webkit.org>
+
+        Regression(r169547): Crash in WebCore::styleForFirstLetter() while loading http://thenextweb.com/apple/2014/02/21/apple-confirms-acquired-testflight-creator-burstly/
+        https://bugs.webkit.org/show_bug.cgi?id=133500
+
+        Reviewed by Antti Koivisto.
+
+        Unlike the other tree marking optimization, adding HasPseudoStyle() on an element style
+        during style resolution must be conservative and not set the flag unless every other filter
+        matched first.
+
+        After r169547, the SelectorChecker was setting flags on HasPseudoStyle() during the pseudo
+        element matching. If that passed but the remaining filter did not match, the element style
+        could have the flag "FIRST_LETTER" while not being able to resolve a style for "FIRST_LETTER".
+
+        When the layout code was creating the renderer, it would find the FIRST_LETTER flag on the main style
+        and try to get the specific style for FIRST_LETTER. Since no rule would resolve for FIRST_LETTER,
+        the style would be null and the code would be crashing when accessing its parameters.
+
+        This patch fixes the issue by moving the style marking for pseudo element at the end of the matching.
+
+        Test: fast/css/first-letter-on-non-matching-selectors.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::match):
+        (WebCore::SelectorChecker::matchRecursively):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::match): Deleted.
+
 2014-06-04  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] allow UA to specify network interface

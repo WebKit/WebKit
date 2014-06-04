@@ -82,19 +82,7 @@ public:
         bool hasSelectionPseudo;
     };
 
-    bool match(const SelectorCheckingContext& context) const
-    {
-        PseudoId pseudoId = NOPSEUDO;
-        if (matchRecursively(context, pseudoId) != SelectorMatches)
-            return false;
-        if (context.pseudoId != NOPSEUDO && context.pseudoId != pseudoId)
-            return false;
-        if (context.pseudoId == NOPSEUDO && pseudoId != NOPSEUDO) {
-            // For SharingRules testing, any match is good enough, we don't care what is matched.
-            return m_mode == SharingRules || m_mode == StyleInvalidation;
-        }
-        return true;
-    }
+    bool match(const SelectorCheckingContext&) const;
 
     static bool tagMatches(const Element*, const QualifiedName&);
     static bool isCommonPseudoClassSelector(const CSSSelector*);
