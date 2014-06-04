@@ -1,3 +1,14 @@
+2014-06-04  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::Safepoint::begin() should set m_didCallBegin before releasing the rightToRun lock, because otherwise, Safepoint::checkLivenessAndVisitChildren() may assert due to a race
+        https://bugs.webkit.org/show_bug.cgi?id=133525
+        <rdar://problem/16790296>
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGSafepoint.cpp:
+        (JSC::DFG::Safepoint::begin):
+
 2014-06-03  Filip Pizlo  <fpizlo@apple.com>
 
         LLVM soft-linking should be truly fail-silent

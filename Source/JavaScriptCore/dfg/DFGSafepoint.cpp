@@ -75,12 +75,12 @@ void Safepoint::add(Scannable* scannable)
 void Safepoint::begin()
 {
     RELEASE_ASSERT(!m_didCallBegin);
+    m_didCallBegin = true;
     if (ThreadData* data = m_plan.threadData) {
         RELEASE_ASSERT(!data->m_safepoint);
         data->m_safepoint = this;
         data->m_rightToRun.unlock();
     }
-    m_didCallBegin = true;
 }
 
 void Safepoint::checkLivenessAndVisitChildren(SlotVisitor& visitor)
