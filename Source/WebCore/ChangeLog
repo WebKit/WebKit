@@ -1,3 +1,21 @@
+2014-06-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Restore the visual scroll position instead of the dom scroll position when restoring states from the history
+        https://bugs.webkit.org/show_bug.cgi?id=133490
+
+        Reviewed by Tim Horton.
+
+        Expose the WebKit1 parameter "ScaleIsInitial". It is used for a similar concept in WebKit2 (userHasChangedPageScaleFactor).
+
+        Add "exposedContentPosition", which is the scroll position of the exposed rect.
+
+        * history/HistoryItem.h:
+        (WebCore::HistoryItem::exposedContentPosition):
+        (WebCore::HistoryItem::setExposedContentPosition):
+        (WebCore::HistoryItem::setScaleIsInitial):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::saveScrollPositionAndViewStateToItem):
+
 2014-06-04  Alex Christensen  <achristensen@webkit.org>
 
         Enable WebGL on Windows.

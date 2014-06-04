@@ -78,6 +78,9 @@ void HistoryController::saveScrollPositionAndViewStateToItem(HistoryItem* item)
         item->setScrollPoint(m_frame.view()->cachedScrollPosition());
     else
         item->setScrollPoint(m_frame.view()->scrollPosition());
+#if PLATFORM(IOS)
+    item->setExposedContentPosition(m_frame.view()->exposedContentRect().location());
+#endif
 
     Page* page = m_frame.page();
     if (page && m_frame.isMainFrame())

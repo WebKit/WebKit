@@ -1,3 +1,33 @@
+2014-06-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Restore the visual scroll position instead of the dom scroll position when restoring states from the history
+        https://bugs.webkit.org/show_bug.cgi?id=133490
+
+        Reviewed by Tim Horton.
+
+        Instead of restoring the scroll position, restore the visual position. This makes pages appear at the same position
+        on screen ignoring changes in the obscured top inset.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/ios/WebFrameLoaderClientIOS.mm:
+        (WebKit::WebFrameLoaderClient::saveViewStateToItem):
+        (WebKit::WebFrameLoaderClient::restoreViewState):
+        Save and restore userHasChangedPageScaleFactor to handle rescaling correctly.
+        Limit the scale into valid viewport limits in case the viewport meta tag has changed or the device has rotated.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::userHasChangedPageScaleFactor):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::restorePageState):
+        (WebKit::WebPage::updateVisibleContentRects):
+        In updateVisibleContentRects, we keep track or the current difference between the exposed rect and the unobscured rect.
+        When restoring the page position, we use the current top inset and the saved exposed rect to restore the visual
+        scroll position.
+
+        It is not very robust as it does not resolve races between the two processes, but that is not worse than what we is there now.
+
 2014-06-03  Timothy Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures (Zoom): Can show unpainted regions when zoom-pinching-out

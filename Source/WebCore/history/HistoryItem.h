@@ -180,8 +180,12 @@ public:
 #endif
 
 #if PLATFORM(IOS)
+    IntPoint exposedContentPosition() const { return m_exposedContentPosition; }
+    void setExposedContentPosition(IntPoint exposedContentPosition) { m_exposedContentPosition = exposedContentPosition; }
+
     float scale() const { return m_scale; }
     bool scaleIsInitial() const { return m_scaleIsInitial; }
+    void setScaleIsInitial(bool scaleIsInitial) { m_scaleIsInitial = scaleIsInitial; }
     void setScale(float newScale, bool isInitial)
     {
         m_scale = newScale;
@@ -255,6 +259,7 @@ private:
     std::unique_ptr<CachedPage> m_cachedPage;
 
 #if PLATFORM(IOS)
+    IntPoint m_exposedContentPosition;
     float m_scale;
     bool m_scaleIsInitial;
     ViewportArguments m_viewportArguments;

@@ -1119,12 +1119,12 @@ void WebFrameLoaderClient::frameLoadCompleted()
     }
 }
 
+#if !PLATFORM(IOS)
 void WebFrameLoaderClient::saveViewStateToItem(HistoryItem*)
 {
     notImplemented();
 }
 
-#if !PLATFORM(IOS)
 void WebFrameLoaderClient::restoreViewState()
 {
     // Inform the UI process of the scale factor.

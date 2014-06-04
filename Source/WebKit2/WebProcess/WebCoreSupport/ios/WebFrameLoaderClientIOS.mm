@@ -79,18 +79,21 @@ void WebFrameLoaderClient::didCreateQuickLookHandle(WebCore::QuickLookHandle& ha
 }
 #endif
 
+void WebFrameLoaderClient::saveViewStateToItem(HistoryItem* historyItem)
+{
+    if (m_frame->isMainFrame())
+        historyItem->setScaleIsInitial(m_frame->page()->userHasChangedPageScaleFactor());
+}
+
 void WebFrameLoaderClient::restoreViewState()
 {
     Frame& frame = *m_frame->coreFrame();
     HistoryItem* currentItem = frame.loader().history().currentItem();
     if (FrameView* view = frame.view()) {
-        Page* page = frame.page();
-        if (!view->wasScrolledByUser()) {
-            if (page && m_frame->isMainFrame() && currentItem->pageScaleFactor())
-                m_frame->page()->restorePageState(currentItem->pageScaleFactor(), currentItem->scrollPoint());
-            else
-                view->setScrollPosition(currentItem->scrollPoint());
-        }
+        if (m_frame->isMainFrame() && currentItem->pageScaleFactor())
+            m_frame->page()->restorePageState(currentItem->pageScaleFactor(), currentItem->scaleIsInitial(), currentItem->exposedContentPosition());
+        else if (!view->wasScrolledByUser())
+            view->setScrollPosition(currentItem->scrollPoint());
     }
 }
 

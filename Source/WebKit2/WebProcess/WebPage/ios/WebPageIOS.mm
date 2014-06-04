@@ -151,13 +151,17 @@ void WebPage::didReceiveMobileDocType(bool isMobileDoctype)
         resetViewportDefaultConfiguration(m_mainFrame.get());
 }
 
-void WebPage::restorePageState(double scale, const IntPoint& scrollPosition)
+void WebPage::restorePageState(double scale, bool userHasChangedPageScaleFactor, const IntPoint& exposedOrigin)
 {
-    scalePage(scale, scrollPosition);
-    m_page->mainFrame().view()->setScrollPosition(scrollPosition);
+    // FIXME: ideally, we should sync this with the UIProcess. We should not try to change the position if the user is interacting
+    // with the page, and we should send the new scroll position as soon as possible to the UIProcess.
 
-    // FIXME: we should get the value of userHasChangedPageScaleFactor from the history.
-    m_userHasChangedPageScaleFactor = true;
+    float boundedScale = std::min<float>(m_viewportConfiguration.maximumScale(), std::max<float>(m_viewportConfiguration.minimumScale(), scale));
+    float topInsetInPageCoordinates = m_obscuredTopInset / boundedScale;
+    IntPoint scrollPosition(exposedOrigin.x(), exposedOrigin.y() + topInsetInPageCoordinates);
+    scalePage(boundedScale, scrollPosition);
+    m_page->mainFrame().view()->setScrollPosition(scrollPosition);
+    m_userHasChangedPageScaleFactor = userHasChangedPageScaleFactor;
 }
 
 double WebPage::minimumPageScaleFactor() const
@@ -2273,6 +2277,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
 {
     m_hasReceivedVisibleContentRectsAfterDidCommitLoad = true;
     m_lastVisibleContentRectUpdateID = visibleContentRectUpdateInfo.updateID();
+    m_obscuredTopInset = (visibleContentRectUpdateInfo.unobscuredRect().y() - visibleContentRectUpdateInfo.exposedRect().y()) * visibleContentRectUpdateInfo.scale();
 
     double scaleNoiseThreshold = 0.005;
     double filteredScale = visibleContentRectUpdateInfo.scale();

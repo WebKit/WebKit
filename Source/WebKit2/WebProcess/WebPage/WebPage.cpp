@@ -293,6 +293,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
 #if PLATFORM(IOS)
     , m_lastVisibleContentRectUpdateID(0)
+    , m_obscuredTopInset(0)
     , m_hasReceivedVisibleContentRectsAfterDidCommitLoad(false)
     , m_scaleWasSetByUIProcess(false)
     , m_userHasChangedPageScaleFactor(false)
