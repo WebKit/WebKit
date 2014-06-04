@@ -24,6 +24,10 @@ Pass: Valid protocol "urn" allowed.
 Pass: Valid protocol "webcal" allowed.
 Pass: Valid protocol "wtai" allowed.
 Pass: Valid protocol "xmpp" allowed.
+Pass: Invalid scheme "mailto:" failed.
+Pass: Invalid scheme "ssh:/" failed.
+Pass: Invalid scheme "magnet:+" failed.
+Pass: Invalid scheme "tel:sip" failed.
 Pass: Invalid url "" threw SyntaxError exception.
 Pass: Invalid url "%S" threw SyntaxError exception.
 Pass: Valid call succeeded.

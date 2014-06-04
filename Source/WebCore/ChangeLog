@@ -1,3 +1,13 @@
+2014-06-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Need to check invalid scheme in navigator content utils 
+        https://bugs.webkit.org/show_bug.cgi?id=133296
+
+        Reviewed by Darin Adler.
+
+        * Modules/navigatorcontentutils/NavigatorContentUtils.cpp:
+        (WebCore::verifyProtocolHandlerScheme): Just fix a wrong typo.
+
 2014-06-03  Timothy Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures (Zoom): Can show unpainted regions when zoom-pinching-out

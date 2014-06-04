@@ -48,6 +48,21 @@ valid_protocols.forEach(function (protocol) {
         debug('Fail: Valid protocol "' + protocol + '" failed.');
 });
 
+var invalid_schemes = ['mailto:', 'ssh:/', 'magnet:+', 'tel:sip'];
+invalid_schemes.forEach(function (scheme) {
+    var succeeded = false;
+    try {
+        window.navigator.registerProtocolHandler(scheme, 'invalid scheme uri=%s', 'title');
+    } catch (e) {
+        succeeded = true;
+    }
+
+    if (succeeded)
+        debug('Pass: Invalid scheme "' + scheme + '" failed.');
+    else
+        debug('Fail: Invalid scheme "' + scheme + '" allowed.');
+});
+
 var invalid_urls = ["", "%S"];
 invalid_urls.forEach(function (url) {
    var succeeded = false;

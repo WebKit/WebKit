@@ -1,3 +1,22 @@
+2014-06-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Need to check invalid scheme in navigator content utils 
+        https://bugs.webkit.org/show_bug.cgi?id=133296
+
+        Reviewed by Darin Adler.
+
+        Add tests that check that schemes with colons in their names are rejected.
+        Spec: http://www.whatwg.org/specs/web-apps/current-work/#custom-handlers
+
+        * fast/dom/NavigatorContentUtils/is-protocol-handler-registered-expected.txt:
+        * fast/dom/NavigatorContentUtils/is-protocol-handler-registered.html:
+        * fast/dom/NavigatorContentUtils/register-protocol-handler-expected.txt:
+        * fast/dom/NavigatorContentUtils/register-protocol-handler.html:
+        * fast/dom/NavigatorContentUtils/unregister-protocol-handler-expected.txt:
+        * fast/dom/NavigatorContentUtils/unregister-protocol-handler.html:
+        * platform/efl/fast/dom/NavigatorContentUtils/register-protocol-handler-expected.txt:
+        * platform/efl/fast/dom/NavigatorContentUtils/unregister-protocol-handler-expected.txt:
+
 2014-06-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: add support for the "any" pseudo class

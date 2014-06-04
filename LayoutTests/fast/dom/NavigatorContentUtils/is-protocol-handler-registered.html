@@ -28,6 +28,21 @@ if (succeeded)
 else
     debug('FAIL Invalid url "' + invalidUrl + '" allowed.');
 
+var invalid_schemes = ['mailto:', 'ssh:/', 'magnet:+', 'tel:sip'];
+invalid_schemes.forEach(function (scheme) {
+    var succeeded = false;
+    try {
+        window.navigator.isProtocolHandlerRegistered(scheme, 'invalid scheme uri=%s');
+    } catch (e) {
+        succeeded = true;
+    }
+
+    if (succeeded)
+        debug('PASS Invalid scheme "' + scheme + '" failed.');
+    else
+        debug('FAIL Invalid scheme "' + scheme + '" allowed.');
+});
+
 try {
     var state = window.navigator.isProtocolHandlerRegistered("bitcoin", "valid protocol %s");
     if (state == "registered")

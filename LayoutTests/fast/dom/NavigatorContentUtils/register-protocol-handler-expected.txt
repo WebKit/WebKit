@@ -24,6 +24,10 @@ Fail: Valid protocol "urn" failed.
 Fail: Valid protocol "webcal" failed.
 Fail: Valid protocol "wtai" failed.
 Fail: Valid protocol "xmpp" failed.
+Pass: Invalid scheme "mailto:" failed.
+Pass: Invalid scheme "ssh:/" failed.
+Pass: Invalid scheme "magnet:+" failed.
+Pass: Invalid scheme "tel:sip" failed.
 Fail: Invalid url "" allowed.
 Fail: Invalid url "%S" allowed.
 Fail: Invalid call did not succeed.
