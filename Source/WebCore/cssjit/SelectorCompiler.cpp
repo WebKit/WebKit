@@ -132,7 +132,7 @@ struct SelectorFragment {
         , widthFromIndirectAdjacent(0)
         , tagName(nullptr)
         , id(nullptr)
-        , inFunctionalPseudoClass(false)
+        , onlyMatchesLinksInQuirksMode(true)
     {
     }
     FragmentRelation relationToLeftFragment;
@@ -159,7 +159,18 @@ struct SelectorFragment {
     Vector<SelectorFragment> notFilters;
     Vector<Vector<SelectorFragment>> anyFilters;
 
-    bool inFunctionalPseudoClass;
+    // For quirks mode, follow this: http://quirks.spec.whatwg.org/#the-:active-and-:hover-quirk
+    // In quirks mode, a compound selector 'selector' that matches the following conditions must not match elements that would not also match the ':any-link' selector.
+    //
+    //    selector uses the ':active' or ':hover' pseudo-classes.
+    //    selector does not use a type selector.
+    //    selector does not use an attribute selector.
+    //    selector does not use an ID selector.
+    //    selector does not use a class selector.
+    //    selector does not use a pseudo-class selector other than ':active' and ':hover'.
+    //    selector does not use a pseudo-element selector.
+    //    selector is not part of an argument to a functional pseudo-class or pseudo-element.
+    bool onlyMatchesLinksInQuirksMode;
 };
 
 struct TagNamePattern {
@@ -278,7 +289,12 @@ const Assembler::RegisterID SelectorCodeGenerator::elementAddressRegister = JSC:
 const Assembler::RegisterID SelectorCodeGenerator::checkingContextRegister = JSC::GPRInfo::argumentGPR1;
 const Assembler::RegisterID SelectorCodeGenerator::callFrameRegister = JSC::GPRInfo::callFrameRegister;
 
-static FunctionType constructFragments(const CSSSelector* rootSelector, SelectorContext, SelectorFragmentList& selectorFragments);
+enum class FragmentsLevel {
+    Root = 0,
+    InFunctionalPseudoType = 1
+};
+
+static FunctionType constructFragments(const CSSSelector* rootSelector, SelectorContext, SelectorFragmentList& selectorFragments, FragmentsLevel);
 
 static void computeBacktrackingInformation(SelectorFragmentList& selectorFragments, bool& needsAdjacentBacktrackingStart);
 
@@ -419,7 +435,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
                 return FunctionType::CannotMatchAnything;
 
             SelectorFragmentList notFragments;
-            FunctionType functionType = constructFragments(selectorList->first(), selectorContext, notFragments);
+            FunctionType functionType = constructFragments(selectorList->first(), selectorContext, notFragments, FragmentsLevel::InFunctionalPseudoType);
 
             // Since this is not pseudo class filter, CannotMatchAnything implies this filter always passes.
             if (functionType == FunctionType::CannotMatchAnything)
@@ -432,8 +448,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
             if (notFragments.size() != 1)
                 return FunctionType::CannotCompile;
 
-            SelectorFragment subFragment = notFragments.first();
-            subFragment.inFunctionalPseudoClass = true;
+            const SelectorFragment& subFragment = notFragments.first();
 
             // FIXME: Currently we don't support visitedMatchType.
             if (subFragment.pseudoClasses.contains(CSSSelector::PseudoClassLink))
@@ -449,7 +464,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
             FunctionType functionType = FunctionType::SimpleSelectorChecker;
             for (const CSSSelector* rootSelector = selector.selectorList()->first(); rootSelector; rootSelector = CSSSelectorList::next(rootSelector)) {
                 SelectorFragmentList fragmentList;
-                FunctionType subFunctionType = constructFragments(rootSelector, selectorContext, fragmentList);
+                FunctionType subFunctionType = constructFragments(rootSelector, selectorContext, fragmentList, FragmentsLevel::InFunctionalPseudoType);
 
                 // Since this fragment always unmatch against the element, don't insert it to anyFragments.
                 if (subFunctionType == FunctionType::CannotMatchAnything)
@@ -463,8 +478,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
                 if (fragmentList.size() != 1)
                     return FunctionType::CannotCompile;
 
-                SelectorFragment subFragment = fragmentList.first();
-                subFragment.inFunctionalPseudoClass = true;
+                const SelectorFragment& subFragment = fragmentList.first();
                 anyFragments.append(subFragment);
                 functionType = mostRestrictiveFunctionType(functionType, subFunctionType);
             }
@@ -498,12 +512,18 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
     dataLogF("Compiling \"%s\"\n", m_originalSelector->selectorText().utf8().data());
 #endif
 
-    m_functionType = constructFragments(rootSelector, m_selectorContext, m_selectorFragments);
+    m_functionType = constructFragments(rootSelector, m_selectorContext, m_selectorFragments, FragmentsLevel::Root);
     if (m_functionType != FunctionType::CannotCompile && m_functionType != FunctionType::CannotMatchAnything)
         computeBacktrackingInformation(m_selectorFragments, m_needsAdjacentBacktrackingStart);
 }
 
-static FunctionType constructFragments(const CSSSelector* rootSelector, SelectorContext selectorContext, SelectorFragmentList& selectorFragments)
+static bool pseudoClassOnlyMatchesLinksInQuirksMode(const CSSSelector& selector)
+{
+    CSSSelector::PseudoClassType pseudoClassType = selector.pseudoClassType();
+    return pseudoClassType == CSSSelector::PseudoClassHover || pseudoClassType == CSSSelector::PseudoClassActive;
+}
+
+static FunctionType constructFragments(const CSSSelector* rootSelector, SelectorContext selectorContext, SelectorFragmentList& selectorFragments, FragmentsLevel fragmentLevel)
 {
     SelectorFragment fragment;
     FragmentRelation relationToPreviousFragment = FragmentRelation::Rightmost;
@@ -513,51 +533,60 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
         case CSSSelector::Tag:
             ASSERT(!fragment.tagName);
             fragment.tagName = &(selector->tagQName());
+            if (*fragment.tagName != anyQName())
+                fragment.onlyMatchesLinksInQuirksMode = false;
             break;
         case CSSSelector::Id: {
             const AtomicString& id = selector->value();
             if (fragment.id) {
-                if (id != *fragment.id) {
+                if (id != *fragment.id)
                     return FunctionType::CannotMatchAnything;
-                }
             } else
                 fragment.id = &(selector->value());
+            fragment.onlyMatchesLinksInQuirksMode = false;
             break;
         }
         case CSSSelector::Class:
             fragment.classNames.append(selector->value().impl());
+            fragment.onlyMatchesLinksInQuirksMode = false;
             break;
         case CSSSelector::PseudoClass:
             functionType = mostRestrictiveFunctionType(functionType, addPseudoClassType(*selector, fragment, selectorContext));
+            if (!pseudoClassOnlyMatchesLinksInQuirksMode(*selector))
+                fragment.onlyMatchesLinksInQuirksMode = false;
             if (functionType == FunctionType::CannotCompile || functionType == FunctionType::CannotMatchAnything)
                 return functionType;
             break;
+
         case CSSSelector::List:
-            if (selector->value().contains(' ')) {
+            if (selector->value().contains(' '))
                 return FunctionType::CannotMatchAnything;
-            }
             FALLTHROUGH;
         case CSSSelector::Begin:
         case CSSSelector::End:
         case CSSSelector::Contain:
-            if (selector->value().isEmpty()) {
+            if (selector->value().isEmpty())
                 return FunctionType::CannotMatchAnything;
-            }
             FALLTHROUGH;
         case CSSSelector::Exact:
         case CSSSelector::Hyphen:
+            fragment.onlyMatchesLinksInQuirksMode = false;
             fragment.attributes.append(AttributeMatchingInfo(selector, HTMLDocument::isCaseSensitiveAttribute(selector->attribute())));
             break;
+
         case CSSSelector::Set:
+            fragment.onlyMatchesLinksInQuirksMode = false;
             fragment.attributes.append(AttributeMatchingInfo(selector, true));
             break;
         case CSSSelector::PagePseudoClass:
+            fragment.onlyMatchesLinksInQuirksMode = false;
             // Pseudo page class are only relevant for style resolution, they are ignored for matching.
             break;
         case CSSSelector::Unknown:
             ASSERT_NOT_REACHED();
             return FunctionType::CannotMatchAnything;
         case CSSSelector::PseudoElement:
+            fragment.onlyMatchesLinksInQuirksMode = false;
             return FunctionType::CannotCompile;
         }
 
@@ -579,6 +608,8 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
         fragment.relationToRightFragment = relationToPreviousFragment;
         relationToPreviousFragment = fragment.relationToLeftFragment;
 
+        if (fragmentLevel == FragmentsLevel::InFunctionalPseudoType)
+            fragment.onlyMatchesLinksInQuirksMode = false;
         selectorFragments.append(fragment);
         fragment = SelectorFragment();
     }
@@ -1371,45 +1402,6 @@ Assembler::Jump SelectorCodeGenerator::jumpIfNotResolvingStyle(Assembler::Regist
     return m_assembler.branch8(Assembler::NotEqual, Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, resolvingMode)), Assembler::TrustedImm32(SelectorChecker::ResolvingStyle));
 }
 
-static bool fragmentOnlyMatchesLinksInQuirksMode(const SelectorFragment& fragment)
-{
-    // For quirks mode, follow this: http://quirks.spec.whatwg.org/#the-:active-and-:hover-quirk
-    // In quirks mode, a compound selector 'selector' that matches the following conditions must not match elements that would not also match the ':any-link' selector.
-    //
-    //    selector uses the ':active' or ':hover' pseudo-classes.
-    //    selector does not use a type selector.
-    //    selector does not use an attribute selector.
-    //    selector does not use an ID selector.
-    //    selector does not use a class selector.
-    //    selector does not use a pseudo-class selector other than ':active' and ':hover'.
-    //    selector does not use a pseudo-element selector.
-    //    selector is not part of an argument to a functional pseudo-class or pseudo-element.
-    if (fragment.tagName && *fragment.tagName != anyQName())
-        return false;
-
-    if (!fragment.attributes.isEmpty())
-        return false;
-
-    if (fragment.id)
-        return false;
-
-    if (!fragment.classNames.isEmpty())
-        return false;
-
-    if (!fragment.unoptimizedPseudoClasses.isEmpty() || !fragment.nthChildFilters.isEmpty())
-        return false;
-
-    for (unsigned pseudoClassType : fragment.pseudoClasses) {
-        if (pseudoClassType != CSSSelector::PseudoClassHover && pseudoClassType != CSSSelector::PseudoClassActive)
-            return false;
-    }
-
-    if (fragment.inFunctionalPseudoClass)
-        return false;
-
-    return true;
-}
-
 static void getDocument(Assembler& assembler, Assembler::RegisterID element, Assembler::RegisterID output)
 {
     assembler.loadPtr(Assembler::Address(element, Node::treeScopeMemoryOffset()), output);
@@ -1418,7 +1410,7 @@ static void getDocument(Assembler& assembler, Assembler::RegisterID element, Ass
 
 void SelectorCodeGenerator::generateSpecialFailureInQuirksModeForActiveAndHoverIfNeeded(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
-    if (fragmentOnlyMatchesLinksInQuirksMode(fragment)) {
+    if (fragment.onlyMatchesLinksInQuirksMode) {
         // If the element is a link, it can always match :hover or :active.
         Assembler::Jump isLink = m_assembler.branchTest32(Assembler::NonZero, Assembler::Address(elementAddressRegister, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsLink()));
 

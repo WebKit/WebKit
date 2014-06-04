@@ -1,3 +1,17 @@
+2014-06-03  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix some corner cases of :hover and :active in quirks mode
+        https://bugs.webkit.org/show_bug.cgi?id=133493
+
+        Reviewed by Andreas Kling.
+
+        Add test case for the corner cases.
+
+        * fast/selectors/active-hover-quirks-expected.txt:
+        * fast/selectors/active-quirks-expected.txt:
+        * fast/selectors/hover-quirks-expected.txt:
+        * fast/selectors/resources/hover-active-quirks-utility.js:
+
 2014-06-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Need to check invalid scheme in navigator content utils 

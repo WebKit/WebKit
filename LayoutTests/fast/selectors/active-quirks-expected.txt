@@ -93,7 +93,27 @@ PASS document.querySelectorAll(":active:nth-child(n) #target").length is 1
 PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
 PASS document.querySelectorAll(":nth-child(n):active:nth-child(n) #target").length is 1
 PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":active:-webkit-any(*) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
 PASS document.querySelectorAll(":-webkit-any(:active) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":-webkit-any(*):active #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":-webkit-any(*):active:-webkit-any(*) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":active:not(gecko) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(gecko):active #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(gecko):active:not(gecko) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":active:not([webkit^=\"\"]) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not([webkit^=\"\"]):active #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":active:not(:nth-child(-1)) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:nth-child(-1)):active #target").length is 1
 PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
 PASS successfullyParsed is true
 

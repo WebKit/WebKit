@@ -93,7 +93,27 @@ PASS document.querySelectorAll(":active:hover:nth-child(n) #target").length is 1
 PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
 PASS document.querySelectorAll(":nth-child(n):active:hover:nth-child(n) #target").length is 1
 PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":active:hover:-webkit-any(*) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
 PASS document.querySelectorAll(":-webkit-any(:active:hover) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":-webkit-any(*):active:hover #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":-webkit-any(*):active:hover:-webkit-any(*) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":active:hover:not(gecko) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(gecko):active:hover #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(gecko):active:hover:not(gecko) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":active:hover:not([webkit^=\"\"]) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not([webkit^=\"\"]):active:hover #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":active:hover:not(:nth-child(-1)) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:nth-child(-1)):active:hover #target").length is 1
 PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
 PASS successfullyParsed is true
 

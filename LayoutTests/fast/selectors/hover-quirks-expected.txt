@@ -93,7 +93,27 @@ PASS document.querySelectorAll(":hover:nth-child(n) #target").length is 1
 PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
 PASS document.querySelectorAll(":nth-child(n):hover:nth-child(n) #target").length is 1
 PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":hover:-webkit-any(*) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
 PASS document.querySelectorAll(":-webkit-any(:hover) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":-webkit-any(*):hover #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":-webkit-any(*):hover:-webkit-any(*) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":hover:not(gecko) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(gecko):hover #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(gecko):hover:not(gecko) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":hover:not([webkit^=\"\"]) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not([webkit^=\"\"]):hover #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":hover:not(:nth-child(-1)) #target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:nth-child(-1)):hover #target").length is 1
 PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
 PASS successfullyParsed is true
 

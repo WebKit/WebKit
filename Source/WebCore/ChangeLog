@@ -1,3 +1,35 @@
+2014-06-03  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix some corner cases of :hover and :active in quirks mode
+        https://bugs.webkit.org/show_bug.cgi?id=133493
+
+        Reviewed by Andreas Kling.
+
+        Previously, the quirks mode of :hover and :active were evaluated from the SelectorFragment
+        in fragmentOnlyMatchesLinksInQuirksMode(). There were two problems with that approach:
+        1) The FragmentGenerator optimizes out some filter when they always match or can never match.
+           Those fragment should still qualify :hover and :active, but they were lost
+           for fragmentOnlyMatchesLinksInQuirksMode().
+        2) Explicitely listing every attribute of SelectorFragment in fragmentOnlyMatchesLinksInQuirksMode()
+           was extremly fragile. When :not() and :-webkit-any() were added, we forgot to update the quirks
+           exceptions.
+
+        This patch moves the quirks mode exception code from the code generator to the Fragment generator.
+        The useless filters are no longer ignored for the quirks, and we don't need to update the quirks mode detection
+        with every change of SelectorFragment.
+
+        It is inefficient and ugly, but that is how that quirks is defined. It is only a problem for compilation,
+        execution time remains unchanged.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorFragment::SelectorFragment):
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::SelectorCodeGenerator):
+        (WebCore::SelectorCompiler::pseudoClassOnlyMatchesLinksInQuirksMode):
+        (WebCore::SelectorCompiler::constructFragments):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSpecialFailureInQuirksModeForActiveAndHoverIfNeeded):
+        (WebCore::SelectorCompiler::fragmentOnlyMatchesLinksInQuirksMode): Deleted.
+
 2014-06-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Need to check invalid scheme in navigator content utils 

@@ -66,7 +66,20 @@ var testCases = [
     ["PLACEHOLDER:nth-child(n) #target", true],
     [":nth-child(n)PLACEHOLDER:nth-child(n) #target", true],
 
+    ["PLACEHOLDER:-webkit-any(*) #target", true],
     [":-webkit-any(PLACEHOLDER) #target", true],
+    [":-webkit-any(*)PLACEHOLDER #target", true],
+    [":-webkit-any(*)PLACEHOLDER:-webkit-any(*) #target", true],
+
+    ["PLACEHOLDER:not(gecko) #target", true],
+    [":not(gecko)PLACEHOLDER #target", true],
+    [":not(gecko)PLACEHOLDER:not(gecko) #target", true],
+
+    // A :not() functional pseudo class that cannot match anything should still qualify.
+    ["PLACEHOLDER:not([webkit^=\\\"\\\"]) #target", true],
+    [":not([webkit^=\\\"\\\"])PLACEHOLDER #target", true],
+    ["PLACEHOLDER:not(:nth-child(-1)) #target", true],
+    [":not(:nth-child(-1))PLACEHOLDER #target", true],
 ];
 
 function testQuerySelector(selector, shouldMatch) {
