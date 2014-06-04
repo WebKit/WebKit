@@ -1,3 +1,17 @@
+2014-06-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        Add the new HiDPI tests to the bug that tracks support for this
+        feature on GTK.
+        Mark and report the new tests introduced on r169407 that timeout.
+        Mark and report the new accesibility test introduced on r169427
+        that fails.
+        Move the reported timeout tests to the timeout section of the
+        TestExpectations file.
+
+        * platform/gtk/TestExpectations:
+
 2014-06-04  Radu Stavila  <stavila@adobe.com>
 
         REGRESSION: [CSS Regions] Regions with overflow:auto generate scrollbars even if the content flows into the following regions and as such, should not be scrolled

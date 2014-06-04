@@ -405,10 +405,22 @@ webkit.org/b/131347 fast/borders/hidpi-border-image-gradient-on-subpixels.html [
 webkit.org/b/131347 fast/borders/hidpi-double-border-with-border-radius-always-produce-solid-line.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-rounded-border-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-simple-hairline-border-painting.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/box-shadow/hidpi-webkit-box-shadow-subpixel-position.html [ Missing ]
+webkit.org/b/131347 fast/forms/hidpi-fieldset-on-subpixel-position-when-legend-is-present.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/hidpi/clip-text-in-hidpi.html [ Failure Pass Missing ]
+webkit.org/b/131347 fast/hidpi/image-set-background-dynamic.html [ Failure Pass Missing ]
+webkit.org/b/131347 fast/hidpi/image-set-border-image-dynamic.html [ Failure Pass Missing ]
+webkit.org/b/131347 fast/hidpi/image-srcset-change-dynamically-from-js-2x.html [ Failure ]
+webkit.org/b/131347 fast/hidpi/image-srcset-fraction-1.5x.html [ Failure ]
+webkit.org/b/131347 fast/hidpi/image-srcset-fraction.html [ Failure ]
+webkit.org/b/131347 fast/hidpi/image-srcset-invalid-inputs-except-one.html [ Failure ]
+webkit.org/b/131347 fast/hidpi/image-srcset-simple-2x.html [ Failure ]
+webkit.org/b/131347 fast/hidpi/image-srcset-src-selection-2x.html [ Failure ]
 webkit.org/b/131347 fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlines.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-select-inline-on-subpixel-position.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/inline/hidpi-selection-gap-and-inline-selection-have-gap-rtl.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-selection-gap-on-subpixel-position.html [ ImageOnlyFailure ]
-webkit.org/b/131347 fast/forms/hidpi-fieldset-on-subpixel-position-when-legend-is-present.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/inline/hidpi-selection-gap-overlaps-inline-selection.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]
 webkit.org/b/131347 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.html [ Failure ]
@@ -984,7 +996,19 @@ Bug(GTK) fast/media/media-query-list-04.html [ Timeout ]
 
 webkit.org/b/131545 media/media-event-listeners.html [ Timeout ]
 
+webkit.org/b/132128 fast/text/international/embed-bidi-style-in-isolate-crash.html [ Timeout Pass ]
+
 webkit.org/b/132266 js/slow-stress/emscripten-memops.html [ Timeout ]
+
+webkit.org/b/133148 accessibility/content-editable-as-textarea.html [ Timeout ]
+webkit.org/b/133148 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Timeout ]
+
+webkit.org/b/133151 js/cached-window-properties.html [ Timeout Pass ]
+
+webkit.org/b/133517 css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html [ Timeout ]
+webkit.org/b/133517 css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Timeout ]
+webkit.org/b/133517 css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Timeout ]
+webkit.org/b/133517 css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -1914,9 +1938,6 @@ webkit.org/b/132126 media/track/track-cues-enter-exit.html [ Timeout Pass ]
 webkit.org/b/132126 media/video-poster-background.html [ ImageOnlyFailure ]
 webkit.org/b/132126 media/restore-from-page-cache.html [ Crash ]
 
-# This test gives timeout sometimes.
-webkit.org/b/132128 fast/text/international/embed-bidi-style-in-isolate-crash.html [ Timeout Pass ]
-
 webkit.org/b/132232 fast/forms/textarea-placeholder-wrapping.html [ ImageOnlyFailure ]
 
 webkit.org/b/132233 fast/regions/clip-to-padding-box-vertical-lr.html [ ImageOnlyFailure ]
@@ -1950,10 +1971,7 @@ webkit.org/b/133146 fast/sub-pixel/client-rect-has-subpixel-precision.html  [ Im
 webkit.org/b/133147 fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-large-radius.html [ ImageOnlyFailure ]
 webkit.org/b/133147 fast/shapes/shape-outside-floats/shape-outside-rounded-inset.html [ ImageOnlyFailure ]
 
-webkit.org/b/133148 accessibility/content-editable-as-textarea.html [ Timeout ]
-webkit.org/b/133148 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Timeout ]
-
-webkit.org/b/133151 js/cached-window-properties.html [ Timeout Pass ]
+webkit.org/b/133519 accessibility/table-fallback-roles-expose-element-attributes.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
