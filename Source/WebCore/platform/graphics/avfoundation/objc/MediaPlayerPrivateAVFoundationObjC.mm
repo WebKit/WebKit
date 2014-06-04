@@ -244,6 +244,12 @@ SOFT_LINK_POINTER(AVFoundation, AVMetadataKeySpaceID3, NSString*)
 #define AVMetadataKeySpaceID3 getAVMetadataKeySpaceID3()
 #endif
 
+#if PLATFORM(IOS)
+SOFT_LINK_POINTER(AVFoundation, AVURLAssetBoundNetworkInterfaceName, NSString *)
+
+#define AVURLAssetBoundNetworkInterfaceName getAVURLAssetBoundNetworkInterfaceName()
+#endif
+
 #define kCMTimeZero getkCMTimeZero()
 
 using namespace WebCore;
@@ -699,7 +705,13 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
         [options.get() setObject: outOfBandTracks forKey: AVURLAssetOutOfBandAlternateTracksKey];
     }
 #endif
-    
+
+#if PLATFORM(IOS)
+    String networkInterfaceName = player()->mediaPlayerNetworkInterfaceName();
+    if (!networkInterfaceName.isEmpty())
+        [options setObject:networkInterfaceName forKey:AVURLAssetBoundNetworkInterfaceName];
+#endif
+
     NSURL *cocoaURL = URL(ParsedURLString, url);
     m_avAsset = adoptNS([[AVURLAsset alloc] initWithURL:cocoaURL options:options.get()]);
 

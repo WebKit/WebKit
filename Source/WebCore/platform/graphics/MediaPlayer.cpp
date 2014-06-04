@@ -1410,6 +1410,16 @@ bool MediaPlayer::doesHaveAttribute(const AtomicString& attribute, AtomicString*
     return m_mediaPlayerClient->doesHaveAttribute(attribute, value);
 }
 
+#if PLATFORM(IOS)
+String MediaPlayer::mediaPlayerNetworkInterfaceName() const
+{
+    if (!m_mediaPlayerClient)
+        return emptyString();
+
+    return m_mediaPlayerClient->mediaPlayerNetworkInterfaceName();
+}
+#endif
+
 }
 
 #endif

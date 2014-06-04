@@ -572,6 +572,10 @@ private:
     virtual void mediaPlayerHandlePlaybackCommand(MediaSession::RemoteControlCommandType command) override { didReceiveRemoteControlCommand(command); }
     virtual String mediaPlayerSourceApplicationIdentifier() const;
 
+#if PLATFORM(IOS)
+    virtual String mediaPlayerNetworkInterfaceName() const;
+#endif
+
     void loadTimerFired(Timer<HTMLMediaElement>&);
     void progressEventTimerFired(Timer<HTMLMediaElement>&);
     void playbackProgressTimerFired(Timer<HTMLMediaElement>&);

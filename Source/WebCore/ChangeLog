@@ -1,3 +1,23 @@
+2014-06-04  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] allow UA to specify network interface
+        https://bugs.webkit.org/show_bug.cgi?id=133396
+
+        Reviewed by Jer Noble.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerInterfaceName): Return settings->networkInterfaceName.
+        * html/HTMLMediaElement.h:
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::mediaPlayerNetworkInterfaceName): Pass through the media element.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerNetworkInterfaceName):
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL): If the media player
+            wants to use a specific netork interface name, pass it to the AVAsset allocator.
+
 2014-06-03  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Pasting multiple photos on iOS only pastes one photo

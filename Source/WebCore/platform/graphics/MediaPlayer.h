@@ -262,6 +262,10 @@ public:
 #endif
 #endif
 
+#if PLATFORM(IOS)
+    virtual String mediaPlayerNetworkInterfaceName() const { return String(); }
+#endif
+    
     virtual bool mediaPlayerShouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&) { return false; }
     virtual void mediaPlayerHandlePlaybackCommand(MediaSession::RemoteControlCommandType) { }
 
@@ -549,6 +553,10 @@ public:
     void notifyTrackModeChanged();
     Vector<RefPtr<PlatformTextTrack>> outOfBandTrackSources();
 #endif
+#endif
+
+#if PLATFORM(IOS)
+    String mediaPlayerNetworkInterfaceName() const;
 #endif
 
     static void resetMediaEngines();
