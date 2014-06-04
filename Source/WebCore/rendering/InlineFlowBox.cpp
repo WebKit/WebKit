@@ -518,10 +518,10 @@ void InlineFlowBox::adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent, i
     }
 }
 
-void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox* rootBox, LayoutUnit& maxPositionTop, LayoutUnit& maxPositionBottom,
-                                             int& maxAscent, int& maxDescent, bool& setMaxAscent, bool& setMaxDescent,
-                                             bool strictMode, GlyphOverflowAndFallbackFontsMap& textBoxDataMap,
-                                             FontBaseline baselineType, VerticalPositionCache& verticalPositionCache)
+void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox& rootBox, LayoutUnit& maxPositionTop, LayoutUnit& maxPositionBottom,
+    int& maxAscent, int& maxDescent, bool& setMaxAscent, bool& setMaxDescent,
+    bool strictMode, GlyphOverflowAndFallbackFontsMap& textBoxDataMap,
+    FontBaseline baselineType, VerticalPositionCache& verticalPositionCache)
 {
     // The primary purpose of this function is to compute the maximal ascent and descent values for
     // a line. These values are computed based off the block's line-box-contain property, which indicates
@@ -546,7 +546,7 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox* rootBox, LayoutUnit&
         // Examine our root box.
         int ascent = 0;
         int descent = 0;
-        rootBox->ascentAndDescentForBox(rootBox, textBoxDataMap, ascent, descent, affectsAscent, affectsDescent);
+        rootBox.ascentAndDescentForBox(rootBox, textBoxDataMap, ascent, descent, affectsAscent, affectsDescent);
         if (strictMode || hasTextChildren() || (!checkChildren && hasTextDescendants())) {
             if (maxAscent < ascent || !setMaxAscent) {
                 maxAscent = ascent;
@@ -574,11 +574,11 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox* rootBox, LayoutUnit&
         // The verticalPositionForBox function returns the distance between the child box's baseline
         // and the root box's baseline.  The value is negative if the child box's baseline is above the
         // root box's baseline, and it is positive if the child box's baseline is below the root box's baseline.
-        curr->setLogicalTop(rootBox->verticalPositionForBox(curr, verticalPositionCache));
+        curr->setLogicalTop(rootBox.verticalPositionForBox(curr, verticalPositionCache));
         
         int ascent = 0;
         int descent = 0;
-        rootBox->ascentAndDescentForBox(curr, textBoxDataMap, ascent, descent, affectsAscent, affectsDescent);
+        rootBox.ascentAndDescentForBox(*curr, textBoxDataMap, ascent, descent, affectsAscent, affectsDescent);
 
         LayoutUnit boxHeight = ascent + descent;
         if (curr->verticalAlign() == TOP && verticalAlignApplies(curr->renderer())) {
@@ -616,7 +616,7 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox* rootBox, LayoutUnit&
 }
 
 void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHeight, int maxAscent, bool strictMode, LayoutUnit& lineTop, LayoutUnit& lineBottom, bool& setLineTop,
-                                               LayoutUnit& lineTopIncludingMargins, LayoutUnit& lineBottomIncludingMargins, bool& hasAnnotationsBefore, bool& hasAnnotationsAfter, FontBaseline baselineType)
+    LayoutUnit& lineTopIncludingMargins, LayoutUnit& lineBottomIncludingMargins, bool& hasAnnotationsBefore, bool& hasAnnotationsAfter, FontBaseline baselineType)
 {
     bool isRootBox = isRootInlineBox();
     if (isRootBox) {
@@ -851,14 +851,14 @@ inline void InlineFlowBox::addBorderOutsetVisualOverflow(LayoutRect& logicalVisu
                                        logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
 }
 
-inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox* textBox, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, LayoutRect& logicalVisualOverflow)
+inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox& textBox, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, LayoutRect& logicalVisualOverflow)
 {
-    if (textBox->knownToHaveNoOverflow())
+    if (textBox.knownToHaveNoOverflow())
         return;
 
     const RenderStyle& lineStyle = this->lineStyle();
     
-    GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(textBox);
+    GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(&textBox);
     GlyphOverflow* glyphOverflow = it == textBoxDataMap.end() ? 0 : &it->value.second;
     bool isFlippedLine = lineStyle.isFlippedLinesWritingMode();
 
@@ -874,7 +874,7 @@ inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox* textBox, Glyp
     int rightGlyphOverflow = strokeOverflow + rightGlyphEdge;
 
     bool emphasisMarkIsAbove;
-    if (lineStyle.textEmphasisMark() != TextEmphasisMarkNone && textBox->emphasisMarkExistsAndIsAbove(lineStyle, emphasisMarkIsAbove)) {
+    if (lineStyle.textEmphasisMark() != TextEmphasisMarkNone && textBox.emphasisMarkExistsAndIsAbove(lineStyle, emphasisMarkIsAbove)) {
         int emphasisMarkHeight = lineStyle.font().emphasisMarkHeight(lineStyle.textEmphasisMarkString());
         if (emphasisMarkIsAbove == !lineStyle.isFlippedLinesWritingMode())
             topGlyphOverflow = std::min(topGlyphOverflow, -emphasisMarkHeight);
@@ -900,15 +900,15 @@ inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox* textBox, Glyp
     LayoutUnit childOverflowLogicalLeft = std::min<LayoutUnit>(textShadowLogicalLeft + leftGlyphOverflow, leftGlyphOverflow);
     LayoutUnit childOverflowLogicalRight = std::max<LayoutUnit>(textShadowLogicalRight + rightGlyphOverflow, rightGlyphOverflow);
 
-    LayoutUnit logicalTopVisualOverflow = std::min(textBox->pixelSnappedLogicalTop() + childOverflowLogicalTop, logicalVisualOverflow.y());
-    LayoutUnit logicalBottomVisualOverflow = std::max(textBox->pixelSnappedLogicalBottom() + childOverflowLogicalBottom, logicalVisualOverflow.maxY());
-    LayoutUnit logicalLeftVisualOverflow = std::min(textBox->pixelSnappedLogicalLeft() + childOverflowLogicalLeft, logicalVisualOverflow.x());
-    LayoutUnit logicalRightVisualOverflow = std::max(textBox->pixelSnappedLogicalRight() + childOverflowLogicalRight, logicalVisualOverflow.maxX());
+    LayoutUnit logicalTopVisualOverflow = std::min(textBox.pixelSnappedLogicalTop() + childOverflowLogicalTop, logicalVisualOverflow.y());
+    LayoutUnit logicalBottomVisualOverflow = std::max(textBox.pixelSnappedLogicalBottom() + childOverflowLogicalBottom, logicalVisualOverflow.maxY());
+    LayoutUnit logicalLeftVisualOverflow = std::min(textBox.pixelSnappedLogicalLeft() + childOverflowLogicalLeft, logicalVisualOverflow.x());
+    LayoutUnit logicalRightVisualOverflow = std::max(textBox.pixelSnappedLogicalRight() + childOverflowLogicalRight, logicalVisualOverflow.maxX());
     
     logicalVisualOverflow = LayoutRect(logicalLeftVisualOverflow, logicalTopVisualOverflow,
                                        logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
                                     
-    textBox->setLogicalOverflowRect(logicalVisualOverflow);
+    textBox.setLogicalOverflowRect(logicalVisualOverflow);
 }
 
 inline void InlineFlowBox::addReplacedChildOverflow(const InlineBox* inlineBox, LayoutRect& logicalLayoutOverflow, LayoutRect& logicalVisualOverflow)
@@ -959,7 +959,7 @@ void InlineFlowBox::computeOverflow(LayoutUnit lineTop, LayoutUnit lineBottom, G
         if (curr->renderer().isText()) {
             InlineTextBox* text = toInlineTextBox(curr);
             LayoutRect textBoxOverflow(enclosingLayoutRect(text->logicalFrameRect()));
-            addTextBoxVisualOverflow(text, textBoxDataMap, textBoxOverflow);
+            addTextBoxVisualOverflow(*text, textBoxDataMap, textBoxOverflow);
             logicalVisualOverflow.unite(textBoxOverflow);
         } else if (curr->renderer().isRenderInline()) {
             InlineFlowBox* flow = toInlineFlowBox(curr);

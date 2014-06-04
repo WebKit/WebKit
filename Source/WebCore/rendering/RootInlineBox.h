@@ -158,12 +158,8 @@ public:
 
     LayoutRect paddedLayoutOverflowRect(LayoutUnit endPadding) const;
 
-    void ascentAndDescentForBox(InlineBox*, GlyphOverflowAndFallbackFontsMap&, int& ascent, int& descent, bool& affectsAscent, bool& affectsDescent) const;
+    void ascentAndDescentForBox(InlineBox&, GlyphOverflowAndFallbackFontsMap&, int& ascent, int& descent, bool& affectsAscent, bool& affectsDescent) const;
     LayoutUnit verticalPositionForBox(InlineBox*, VerticalPositionCache&);
-    bool includeLeadingForBox(InlineBox*) const;
-    bool includeFontForBox(InlineBox*) const;
-    bool includeGlyphsForBox(InlineBox*) const;
-    bool includeMarginForBox(InlineBox*) const;
     bool fitsToGlyphs() const;
     bool includesRootLineBoxFontOrLeading() const;
     
@@ -195,6 +191,11 @@ public:
 #endif
 private:
     virtual bool isRootInlineBox() const override final { return true; }
+
+    bool includeLeadingForBox(InlineBox&) const;
+    bool includeFontForBox(InlineBox&) const;
+    bool includeGlyphsForBox(InlineBox&) const;
+    bool includeMarginForBox(InlineBox&) const;
 
     LayoutUnit lineSnapAdjustment(LayoutUnit delta = 0) const;
 

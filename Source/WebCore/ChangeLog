@@ -1,3 +1,37 @@
+2014-06-04  Myles C. Maxfield  <litherum@gmail.com>
+
+        Use references instead of pointers for non-optional arguments during text layout
+        https://bugs.webkit.org/show_bug.cgi?id=133501
+
+        Reviewed by Tim Horton.
+
+        This patch applies some cleanup to InlineBox layout functions to take
+        references instead of pointers where appropriate.
+
+        No new tests are necessary because there is no behavior change.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights): Make the function take a
+        reference to the RootInlineBox instead of a pointer. This function does some
+        rounding.
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow): Make the function take a
+        reference to the InlineTextBox instead of a pointer.
+        (WebCore::InlineFlowBox::computeOverflow): Update call to addTextBoxVisualOverflow
+        to pass a reference instead of a pointer.
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::alignBoxesInBlockDirection): Update call to
+        computeLogicalBoxHeights to pass a reference instead of a pointer.
+        (WebCore::RootInlineBox::ascentAndDescentForBox): Make the function take a
+        reference to the InlineBox instead of a pointer.
+        (WebCore::RootInlineBox::includeLeadingForBox): Make the function take a reference
+        instead of a pointer.
+        (WebCore::RootInlineBox::includeFontForBox): Ditto.
+        (WebCore::RootInlineBox::includeGlyphsForBox): Ditto.
+        (WebCore::RootInlineBox::includeMarginForBox): Ditto.
+        * rendering/RootInlineBox.h: Move functions that are not externally called into
+        a private: section. In addition, update function signatures to take references
+        instead of pointers.
+
 2014-05-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Lists styled with SVG fonts are not rendered as expected
