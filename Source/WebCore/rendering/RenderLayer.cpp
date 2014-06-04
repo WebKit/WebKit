@@ -2403,8 +2403,8 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
 #if !PLATFORM(IOS)
             LayoutRect viewRect = frameView.visibleContentRect();
             LayoutRect visibleRectRelativeToDocument = viewRect;
-            IntSize scrollOffsetRelativeToDocument = frameView.scrollOffsetRelativeToDocument();
-            visibleRectRelativeToDocument.setLocation(IntPoint(scrollOffsetRelativeToDocument.width(), scrollOffsetRelativeToDocument.height()));
+            IntSize documentScrollOffsetRelativeToScrollableAreaOrigin = frameView.documentScrollOffsetRelativeToScrollableAreaOrigin();
+            visibleRectRelativeToDocument.setLocation(IntPoint(documentScrollOffsetRelativeToScrollableAreaOrigin.width(), documentScrollOffsetRelativeToScrollableAreaOrigin.height()));
 #else
             LayoutRect viewRect = frameView.unobscuredContentRect();
             LayoutRect visibleRectRelativeToDocument = viewRect;

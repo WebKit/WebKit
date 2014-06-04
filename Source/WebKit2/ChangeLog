@@ -1,3 +1,24 @@
+2014-06-04  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r168763.
+
+    2014-05-13  Beth Dakin  <bdakin@apple.com>
+
+            REGRESSION (topContentInset): Searching through Facebook Messenger's chat causes 
+            scrolling in News Feed
+            https://bugs.webkit.org/show_bug.cgi?id=132889
+            -and corresponding-
+            <rdar://problem/16715716>
+
+            Reviewed by Simon Fraser.
+
+            Re-name scrollOffsetRelativeToDocument() to 
+            documentScrollPositionRelativeToViewOrigin().
+            * WebProcess/WebPage/FindController.cpp:
+            (WebKit::FindController::rectsForTextMatches):
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::determinePrimarySnapshottedPlugIn):
+
 2014-05-21  Dana Burkart  <dburkart@apple.com>
 
         Merge r169170.

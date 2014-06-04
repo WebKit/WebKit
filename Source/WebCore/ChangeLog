@@ -1,3 +1,45 @@
+2014-06-04  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r168763.
+
+    2014-05-13  Beth Dakin  <bdakin@apple.com>
+
+            REGRESSION (topContentInset): Searching through Facebook Messenger's chat causes 
+            scrolling in News Feed
+            https://bugs.webkit.org/show_bug.cgi?id=132889
+            -and corresponding-
+            <rdar://problem/16715716>
+
+            Reviewed by Simon Fraser.
+
+            First of all, scrollOffsetRelativeToDocument() was very poorly named. This patch 
+            re-names it to the much more accurate documentScrollOffsetRelativeToViewOrigin(). 
+            Re-naming it makes it clear that ONE call site was not getting the right offset. 
+            That call site does not want to know the document’s position relative to the view 
+            origin, but rather it wants to know the Document’s position relative to the 
+            scrolling origin.
+
+            Export new name.
+            * WebCore.exp.in:
+
+            Use newly re-named documentScrollPositionRelativeToViewOrigin().
+            * page/FrameView.cpp:
+            (WebCore::FrameView::convertToRenderer):
+            * platform/ScrollView.cpp:
+            (WebCore::ScrollView::documentScrollOffsetRelativeToViewOrigin):
+            (WebCore::ScrollView::documentScrollPositionRelativeToViewOrigin):
+            (WebCore::ScrollView::documentScrollOffsetRelativeToScrollableAreaOrigin):
+            (WebCore::ScrollView::rootViewToContents):
+            (WebCore::ScrollView::windowToContents):
+            (WebCore::ScrollView::scrollOffsetRelativeToDocument): Deleted.
+            (WebCore::ScrollView::scrollPositionRelativeToDocument): Deleted.
+            * platform/ScrollView.h:
+
+            THIS is the spot that needs the new function, 
+            documentScrollOffsetRelativeToScrollableAreaOrigin()()
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::scrollRectToVisible):
+
 2014-05-22  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r169209

@@ -4401,7 +4401,7 @@ void WebPage::determinePrimarySnapshottedPlugIn()
             IntRect plugInRectRelativeToView = plugInImageElement.clientRect();
             if (plugInRectRelativeToView.isEmpty())
                 continue;
-            IntSize scrollOffset = mainFrame.view()->scrollOffsetRelativeToDocument();
+            IntSize scrollOffset = mainFrame.view()->documentScrollOffsetRelativeToViewOrigin();
             IntRect plugInRectRelativeToTopDocument(plugInRectRelativeToView.location() + scrollOffset, plugInRectRelativeToView.size());
             if (!plugInRectRelativeToTopDocument.intersects(searchRect))
                 continue;
