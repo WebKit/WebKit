@@ -1,3 +1,16 @@
+2014-06-04  Radu Stavila  <stavila@adobe.com>
+
+        REGRESSION: [CSS Regions] Regions with overflow:auto generate scrollbars even if the content flows into the following regions and as such, should not be scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=133481
+
+        Reviewed by Antti Koivisto.
+
+        Added test for a large item flowed through two regions with the first region having overflow:auto.
+        The region must NOT scroll.
+
+        * fast/regions/scrollable-first-region-expected.html: Added.
+        * fast/regions/scrollable-first-region.html: Added.
+
 2014-06-03  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix some corner cases of :hover and :active in quirks mode

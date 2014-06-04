@@ -1,3 +1,19 @@
+2014-06-04  Radu Stavila  <stavila@adobe.com>
+
+        REGRESSION: [CSS Regions] Regions with overflow:auto generate scrollbars even if the content flows into the following regions and as such, should not be scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=133481
+
+        Reviewed by Antti Koivisto.
+
+        When enlarging the layout overflow of a scrollable region, the portion of the content that flows
+        in the region must be taken into consideration. If the content continues to flow into the next
+        region, the layout overflow of the current region must not be enlarged.
+
+        Test: fast/regions/scrollable-first-region.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::addRegionsOverflowFromChild):
+
 2014-06-03  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix some corner cases of :hover and :active in quirks mode

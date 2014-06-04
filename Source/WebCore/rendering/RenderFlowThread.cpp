@@ -1424,14 +1424,14 @@ void RenderFlowThread::addRegionsOverflowFromChild(const RenderBox* box, const R
             LayoutUnit spacingAfterLayout = fragmentContainer.paddingAfter() + child->marginAfter();
             if (isHorizontalWritingMode()) {
                 if (fragmentContainer.scrollsOverflowY()) {
-                    LayoutUnit layoutMaxLogicalY = child->frameRect().maxY() + spacingAfterLayout;
+                    LayoutUnit layoutMaxLogicalY = region->rectFlowPortionForBox(child, child->frameRect()).maxY() + spacingAfterLayout;
                     LayoutUnit maxYDiff = layoutMaxLogicalY - childLayoutOverflowRect.maxY();
                     if (maxYDiff > 0)
                         childLayoutOverflowRect.expand(0, maxYDiff);
                 }
             } else {
                 if (fragmentContainer.scrollsOverflowX()) {
-                    LayoutUnit layoutMaxLogicalY = child->frameRect().maxX() + spacingAfterLayout;
+                    LayoutUnit layoutMaxLogicalY = region->rectFlowPortionForBox(child, child->frameRect()).maxX() + spacingAfterLayout;
                     LayoutUnit maxYDiff = layoutMaxLogicalY - childLayoutOverflowRect.maxX();
                     if (maxYDiff > 0)
                         childLayoutOverflowRect.expand(maxYDiff, 0);
