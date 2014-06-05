@@ -1591,11 +1591,6 @@ static NSMutableSet *knownPluginMIMETypes()
         resourceLoadScheduler()->resumePendingRequests();
 }
 
-+ (void)_setAcceleratedImageDecoding:(BOOL)enabled
-{
-    UNUSED_PARAM(enabled);
-}
-
 + (void)_setAllowCookies:(BOOL)allow
 {
     ResourceRequestBase::setDefaultAllowCookies(allow);

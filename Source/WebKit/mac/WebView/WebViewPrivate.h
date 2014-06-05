@@ -444,7 +444,6 @@ Could be worth adding to the API.
 - (void)_setResourceLoadSchedulerSuspended:(BOOL)suspend;
 + (void)_setTileCacheLayerPoolCapacity:(unsigned)capacity;
 
-+ (void)_setAcceleratedImageDecoding:(BOOL)enabled;
 + (void)_setAllowCookies:(BOOL)allow;
 + (BOOL)_allowCookies;
 + (BOOL)_isUnderMemoryPressure;
