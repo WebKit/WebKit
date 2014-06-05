@@ -63,8 +63,8 @@ public:
     StackReference allocateUninitialized()
     {
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
-        m_assembler.addPtrNoFlags(JSC::MacroAssembler::TrustedImm32(-stackUnitInBytes), JSC::MacroAssembler::stackPointerRegister);
-        m_offsetFromTop += stackUnitInBytes;
+        m_assembler.addPtrNoFlags(JSC::MacroAssembler::TrustedImm32(-stackUnitInBytes()), JSC::MacroAssembler::stackPointerRegister);
+        m_offsetFromTop += stackUnitInBytes();
         return StackReference(m_offsetFromTop);
     }
 
@@ -77,21 +77,15 @@ public:
 #if CPU(ARM64)
         for (unsigned i = 0; i < registerCount - 1; i += 2) {
             m_assembler.pushPair(registerIDs[i + 1], registerIDs[i]);
-            m_offsetFromTop += stackUnitInBytes;
-            stackReferences.append(StackReference(m_offsetFromTop - stackUnitInBytes / 2));
+            m_offsetFromTop += stackUnitInBytes();
+            stackReferences.append(StackReference(m_offsetFromTop - stackUnitInBytes() / 2));
             stackReferences.append(StackReference(m_offsetFromTop));
         }
-        if (registerCount % 2) {
-            m_assembler.pushToSave(registerIDs[registerCount - 1]);
-            m_offsetFromTop += stackUnitInBytes;
-            stackReferences.append(StackReference(m_offsetFromTop));
-        }
+        if (registerCount % 2)
+            stackReferences.append(push(registerIDs[registerCount - 1]));
 #else
-        for (auto registerID : registerIDs) {
-            m_assembler.pushToSave(registerID);
-            m_offsetFromTop += stackUnitInBytes;
-            stackReferences.append(StackReference(m_offsetFromTop));
-        }
+        for (auto registerID : registerIDs)
+            stackReferences.append(push(registerID));
 #endif
         return stackReferences;
     }
@@ -100,62 +94,54 @@ public:
     {
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
         m_assembler.pushToSave(registerID);
-        m_offsetFromTop += stackUnitInBytes;
+        m_offsetFromTop += stackUnitInBytes();
         return StackReference(m_offsetFromTop);
     }
 
     void pop(const Vector<StackReference>& stackReferences, const Vector<JSC::MacroAssembler::RegisterID>& registerIDs)
     {
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
-        
+
         unsigned registerCount = registerIDs.size();
         RELEASE_ASSERT(stackReferences.size() == registerCount);
 #if CPU(ARM64)
-        ASSERT(m_offsetFromTop >= stackUnitInBytes * ((registerCount + 1) / 2));
+        ASSERT(m_offsetFromTop >= stackUnitInBytes() * ((registerCount + 1) / 2));
         unsigned registerCountOdd = registerCount % 2;
-        if (registerCountOdd) {
-            RELEASE_ASSERT(stackReferences[registerCount - 1] == m_offsetFromTop);
-            RELEASE_ASSERT(m_offsetFromTop >= stackUnitInBytes);
-            m_offsetFromTop -= stackUnitInBytes;
-            m_assembler.popToRestore(registerIDs[registerCount - 1]);
-        }
+        if (registerCountOdd)
+            pop(stackReferences[registerCount - 1], registerIDs[registerCount - 1]);
         for (unsigned i = registerCount - registerCountOdd; i > 0; i -= 2) {
             RELEASE_ASSERT(stackReferences[i - 1] == m_offsetFromTop);
-            RELEASE_ASSERT(stackReferences[i - 2] == m_offsetFromTop - stackUnitInBytes / 2);
-            RELEASE_ASSERT(m_offsetFromTop >= stackUnitInBytes);
-            m_offsetFromTop -= stackUnitInBytes;
+            RELEASE_ASSERT(stackReferences[i - 2] == m_offsetFromTop - stackUnitInBytes() / 2);
+            RELEASE_ASSERT(m_offsetFromTop >= stackUnitInBytes());
+            m_offsetFromTop -= stackUnitInBytes();
             m_assembler.popPair(registerIDs[i - 1], registerIDs[i - 2]);
         }
 #else
-        ASSERT(m_offsetFromTop >= stackUnitInBytes * registerCount);
-        for (unsigned i = registerCount; i > 0; --i) {
-            RELEASE_ASSERT(stackReferences[i - 1] == m_offsetFromTop);
-            RELEASE_ASSERT(m_offsetFromTop >= stackUnitInBytes);
-            m_offsetFromTop -= stackUnitInBytes;
-            m_assembler.popToRestore(registerIDs[i - 1]);
-        }
+        ASSERT(m_offsetFromTop >= stackUnitInBytes() * registerCount);
+        for (unsigned i = registerCount; i > 0; --i)
+            pop(stackReferences[i - 1], registerIDs[i - 1]);
 #endif
     }
-    
+
     void pop(StackReference stackReference, JSC::MacroAssembler::RegisterID registerID)
     {
         RELEASE_ASSERT(stackReference == m_offsetFromTop);
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
-        RELEASE_ASSERT(m_offsetFromTop >= stackUnitInBytes);
-        m_offsetFromTop -= stackUnitInBytes;
+        RELEASE_ASSERT(m_offsetFromTop >= stackUnitInBytes());
+        m_offsetFromTop -= stackUnitInBytes();
         m_assembler.popToRestore(registerID);
     }
 
     void popAndDiscard(StackReference stackReference)
     {
         RELEASE_ASSERT(stackReference == m_offsetFromTop);
-        m_assembler.addPtr(JSC::MacroAssembler::TrustedImm32(stackUnitInBytes), JSC::MacroAssembler::stackPointerRegister);
-        m_offsetFromTop -= stackUnitInBytes;
+        m_assembler.addPtr(JSC::MacroAssembler::TrustedImm32(stackUnitInBytes()), JSC::MacroAssembler::stackPointerRegister);
+        m_offsetFromTop -= stackUnitInBytes();
     }
 
     void popAndDiscardUpTo(StackReference stackReference)
     {
-        unsigned positionBeforeStackReference = stackReference - stackUnitInBytes;
+        unsigned positionBeforeStackReference = stackReference - stackUnitInBytes();
         RELEASE_ASSERT(positionBeforeStackReference < m_offsetFromTop);
 
         unsigned stackDelta = m_offsetFromTop - positionBeforeStackReference;
@@ -167,10 +153,10 @@ public:
     {
 #if CPU(X86_64)
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
-        unsigned topAlignment = stackUnitInBytes;
+        unsigned topAlignment = stackUnitInBytes();
         if ((topAlignment + m_offsetFromTop) % 16) {
             m_hasFunctionCallPadding = true;
-            m_assembler.addPtrNoFlags(JSC::MacroAssembler::TrustedImm32(-stackUnitInBytes), JSC::MacroAssembler::stackPointerRegister);
+            m_assembler.addPtrNoFlags(JSC::MacroAssembler::TrustedImm32(-stackUnitInBytes()), JSC::MacroAssembler::stackPointerRegister);
         }
 #endif
     }
@@ -179,7 +165,7 @@ public:
     {
 #if CPU(X86_64)
         if (m_hasFunctionCallPadding) {
-            m_assembler.addPtrNoFlags(JSC::MacroAssembler::TrustedImm32(stackUnitInBytes), JSC::MacroAssembler::stackPointerRegister);
+            m_assembler.addPtrNoFlags(JSC::MacroAssembler::TrustedImm32(stackUnitInBytes()), JSC::MacroAssembler::stackPointerRegister);
             m_hasFunctionCallPadding = false;
         }
 #endif
@@ -224,13 +210,10 @@ public:
     }
 
 private:
-#if CPU(ARM64)
-    static const unsigned stackUnitInBytes = 16;
-#elif CPU(X86_64)
-    static const unsigned stackUnitInBytes = 8;
-#else
-#error Stack Unit Size is undefined.
-#endif
+    static unsigned stackUnitInBytes()
+    {
+        return JSC::MacroAssembler::pushToSaveByteOffset();
+    }
 
     void reset()
     {

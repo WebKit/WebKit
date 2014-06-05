@@ -1,3 +1,24 @@
+2014-06-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: Clean up StackAllocator
+        https://bugs.webkit.org/show_bug.cgi?id=133506
+
+        Reviewed by Benjamin Poulain.
+
+        Cleaning up CSS JIt StackAllocator code. Sharing push / pop code and
+        using information provided by MacroAssembler more aggressively
+        to drop ifdefs.
+
+        * cssjit/StackAllocator.h:
+        (WebCore::StackAllocator::allocateUninitialized):
+        (WebCore::StackAllocator::push):
+        (WebCore::StackAllocator::pop):
+        (WebCore::StackAllocator::popAndDiscard):
+        (WebCore::StackAllocator::popAndDiscardUpTo):
+        (WebCore::StackAllocator::alignStackPreFunctionCall):
+        (WebCore::StackAllocator::unalignStackPostFunctionCall):
+        (WebCore::StackAllocator::stackUnitInBytes):
+
 2014-06-05  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: border-radius painting falls back to rectangle when the snapped rounded rect becomes non-renderable.
