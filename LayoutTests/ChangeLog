@@ -1,3 +1,13 @@
+2014-06-05  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [EFL] Add expectations for two accessibility layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=133485
+
+        Unreviewed EFL gardening.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl-wk2/accessibility/lists-expected.txt:
+
 2014-06-05  Frédéric Wang  <fred.wang@free.fr>
 
         MathML operators not stretched horizontally

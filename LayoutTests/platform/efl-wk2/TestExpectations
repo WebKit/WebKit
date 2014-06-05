@@ -562,3 +562,7 @@ webkit.org/b/133302 fast/shapes/shape-outside-floats/shape-outside-floats-inset-
 webkit.org/b/133302 fast/shapes/shape-outside-floats/shape-outside-rounded-inset.html [ ImageOnlyFailure ]
 
 webkit.org/b/133306 fast/canvas/webgl/css-webkit-canvas-repaint.html [ ImageOnlyFailure ]
+
+
+# Failures EFL WK2 since the inception
+webkit.org/b/133484 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure ]
