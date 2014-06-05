@@ -43,23 +43,27 @@ bool RoundedRect::Radii::isZero() const
 
 void RoundedRect::Radii::scale(float factor)
 {
-    if (factor == 1)
+    scale(factor, factor);
+}
+
+void RoundedRect::Radii::scale(float horizontalFactor, float verticalFactor)
+{
+    if (horizontalFactor == 1 && verticalFactor == 1)
         return;
 
     // If either radius on a corner becomes zero, reset both radii on that corner.
-    m_topLeft.scale(factor);
+    m_topLeft.scale(horizontalFactor, verticalFactor);
     if (!m_topLeft.width() || !m_topLeft.height())
         m_topLeft = LayoutSize();
-    m_topRight.scale(factor);
+    m_topRight.scale(horizontalFactor, verticalFactor);
     if (!m_topRight.width() || !m_topRight.height())
         m_topRight = LayoutSize();
-    m_bottomLeft.scale(factor);
+    m_bottomLeft.scale(horizontalFactor, verticalFactor);
     if (!m_bottomLeft.width() || !m_bottomLeft.height())
         m_bottomLeft = LayoutSize();
-    m_bottomRight.scale(factor);
+    m_bottomRight.scale(horizontalFactor, verticalFactor);
     if (!m_bottomRight.width() || !m_bottomRight.height())
         m_bottomRight = LayoutSize();
-
 }
 
 void RoundedRect::Radii::expand(const LayoutUnit& topWidth, const LayoutUnit& bottomWidth, const LayoutUnit& leftWidth, const LayoutUnit& rightWidth)
@@ -240,10 +244,11 @@ bool RoundedRect::intersectsQuad(const FloatQuad& quad) const
 FloatRoundedRect RoundedRect::pixelSnappedRoundedRectForPainting(float deviceScaleFactor) const
 {
     LayoutRect originalRect = rect();
-    FloatRect paintingRect = pixelSnappedForPainting(rect(), deviceScaleFactor);
-    FloatRoundedRect::Radii paintingRadii = radii();
-    paintingRadii.shrink(paintingRect.y() - originalRect.y(), originalRect.maxY() - paintingRect.maxY(), paintingRect.x() - originalRect.x(), originalRect.maxX() - paintingRect.maxX());
-    return FloatRoundedRect(paintingRect, paintingRadii);
+    FloatRect pixelSnappedRect = pixelSnappedForPainting(originalRect, deviceScaleFactor);
+    Radii adjustedRadii = radii();
+    // Snapping usually does not alter size, but when it does, we need to make sure that the final rect is still renderable by distributing the size delta proportionally.
+    adjustedRadii.scale(pixelSnappedRect.width() / originalRect.width(), pixelSnappedRect.height() / originalRect.height());
+    return FloatRoundedRect(pixelSnappedRect, adjustedRadii);
 }
 
 } // namespace WebCore
