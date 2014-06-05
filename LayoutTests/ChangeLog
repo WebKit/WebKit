@@ -1,3 +1,26 @@
+2014-06-05  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Buttons in default media controls shift vertically when controls fade in or out.
+        https://bugs.webkit.org/show_bug.cgi?id=133488
+
+        Reviewed by Simon Fraser.
+
+        Filter effects are not subpixel aware yet. They paint to integrally sized image buffers.
+        In order to ensure that the content is rendered to the the same position on the filter 
+        source context as if there was no filter, the repaint rects need to be adjusted to match with
+        the internal filter snapping (enclosingIntRect).
+        This is a temporary change until after filter effects get subpixelized.
+
+        However, this changeset regresses RenderNameFlow clipping when the content is on subpixel position
+        and filter effect is present. Instead of adding the failing test cases to TestExpectations, I removed
+        the video controls from the <video> to make the tests pass, when possible (they just happen to have <video>)
+        and filed webkit.org/b/133523 to track the regression.
+                
+        * css3/filters/filter-is-on-subpixel-position-expected.html: Added.
+        * css3/filters/filter-is-on-subpixel-position.html: Added.
+        * fast/regions/inline-block-inside-anonymous-overflow.html:
+        * fast/regions/inline-block-overflow.html:
+
 2014-06-05  Andrzej Badowski  <a.badowski@samsung.com>
 
         [EFL] Change expectations for three layout tests.
