@@ -1,5 +1,28 @@
 2014-06-04  Bem Jones-Bey  <bjonesbe@adobe.com>
 
+        [CSS Shapes] Image lifetime is not properly handled for gradient shapes
+        https://bugs.webkit.org/show_bug.cgi?id=133414
+
+        Reviewed by Simon Fraser.
+
+        Refactor computedShape() and it's helpers to be able to properly
+        manage the lifetime of the image returned from StyleImage.
+
+        This is a port of a Blink patch by Hans Muller.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-uncached-gradient.html
+
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::createShapeForImage): Properly handle the
+            lifetime of the image. Changed to use StyleImage::image() to get
+            the image in all cases there's no need to special case cached
+            images.
+        (WebCore::ShapeOutsideInfo::computedShape): Call createShapeForImage.
+        (WebCore::getShapeImageAndRect): Deleted.
+        * rendering/shapes/ShapeOutsideInfo.h:
+
+2014-06-04  Bem Jones-Bey  <bjonesbe@adobe.com>
+
         [CSS Shapes] Fix off by one in creating a RasterShape
         https://bugs.webkit.org/show_bug.cgi?id=133499
 

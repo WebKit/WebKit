@@ -40,6 +40,7 @@ namespace WebCore {
 
 class RenderBlockFlow;
 class RenderBox;
+class StyleImage;
 class FloatingObject;
 
 class ShapeOutsideInfo final {
@@ -93,6 +94,8 @@ public:
     static ShapeOutsideInfo* info(const RenderBox& key) { return infoMap().get(&key); }
 
 private:
+    std::unique_ptr<Shape> createShapeForImage(StyleImage*, float shapeImageThreshold, WritingMode, float margin) const;
+
     SegmentList computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight) const;
 
     LayoutUnit logicalTopOffset() const;
