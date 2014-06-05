@@ -132,7 +132,6 @@ bool ScrollView::setHasVerticalScrollbar(bool hasBar, bool* contentSizeAffected)
     return false;
 }
 
-#if !PLATFORM(GTK)
 PassRefPtr<Scrollbar> ScrollView::createScrollbar(ScrollbarOrientation orientation)
 {
     return Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
@@ -167,7 +166,6 @@ void ScrollView::setScrollbarModes(ScrollbarMode horizontalMode, ScrollbarMode v
     else
         updateScrollbars(scrollOffset());
 }
-#endif
 
 void ScrollView::scrollbarModes(ScrollbarMode& horizontalMode, ScrollbarMode& verticalMode) const
 {
@@ -307,7 +305,6 @@ IntSize ScrollView::unscaledUnobscuredVisibleContentSize(VisibleContentRectInclu
     return visibleContentSize;
 }
 
-#if !PLATFORM(GTK)
 IntRect ScrollView::visibleContentRectInternal(VisibleContentRectIncludesScrollbars scrollbarInclusion, VisibleContentRectBehavior visibleContentRectBehavior) const
 {
 #if PLATFORM(IOS)
@@ -332,7 +329,6 @@ IntRect ScrollView::visibleContentRectInternal(VisibleContentRectIncludesScrollb
 
     return unobscuredContentRect(scrollbarInclusion);
 }
-#endif
 
 IntSize ScrollView::layoutSize() const
 {

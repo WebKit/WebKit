@@ -1,3 +1,21 @@
+2014-06-05  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GTK] Remove ScrollViewGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=133535
+
+        Reviewed by Carlos Garcia Campos.
+
+        Because GTK+ WK1 was removed, we don't have to consider special cases
+        handled in ScrollViewGtk.cpp.
+
+        No new tests are necessary because there is no behavior change.
+
+        * PlatformGTK.cmake:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setScrollbarModes):
+        (WebCore::ScrollView::visibleContentRectInternal):
+        * platform/gtk/ScrollViewGtk.cpp: Removed.
+
 2014-06-05  Frédéric Wang  <fred.wang@free.fr>
 
         MathML operators not stretched horizontally

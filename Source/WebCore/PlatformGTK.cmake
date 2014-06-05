@@ -225,7 +225,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/RenderThemeGtk.cpp
     platform/gtk/RenderThemeGtk2.cpp
     platform/gtk/RenderThemeGtk3.cpp
-    platform/gtk/ScrollViewGtk.cpp
     platform/gtk/ScrollbarThemeGtk.cpp
     platform/gtk/ScrollbarThemeGtk2.cpp
     platform/gtk/ScrollbarThemeGtk3.cpp
