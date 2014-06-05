@@ -1,3 +1,14 @@
+2014-06-05  Oliver Hunt  <oliver@apple.com>
+
+        Enable SANDBOX_EXTENSIONS build flag universally on cocoa
+        https://bugs.webkit.org/show_bug.cgi?id=133556
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove unnecessary iOS exception.
+
+        * WebKit2Prefix.h:
+
 2014-06-05  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Tweak plug-in sandbox profiles
