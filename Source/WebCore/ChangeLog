@@ -1,3 +1,30 @@
+2014-06-05  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r167962): Out of bounds read in JSC::StructureIDTable::get() 
+        https://bugs.webkit.org/show_bug.cgi?id=133463
+        <rdar://problem/17098100>
+
+        Reviewed by Dean Jackson.
+
+        Revise MediaControllerHost implementation so that it holds a Strong
+        reference to the JavaScript 'Controller' object it mirrors. The
+        MediaControllerHost is constructed when we create an HTMLMediaElement,
+        and is the logical place to retain ownership of the JS object so that
+        it does not get garbage collected as long as HTMLMediaElement exists.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::setControllerJSObject): Create a strong
+        reference to the JavaScript Controller object.
+        * Modules/mediacontrols/MediaControlsHost.h: Use JSC::Strong to hold a
+        JSObject, rather than a bare JSValue.
+        (WebCore::MediaControlsHost::controllerJSObject): Change name to reflect
+        that we are working with JSObjects, not JSValues.
+        (WebCore::MediaControlsHost::controllerJSValue): Deleted.
+        (WebCore::MediaControlsHost::setControllerJSValue): Deleted.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute): Revise for changed method
+        signature.
+
 2014-06-05  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Add device orientation

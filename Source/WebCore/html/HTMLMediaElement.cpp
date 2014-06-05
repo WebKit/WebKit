@@ -3662,11 +3662,9 @@ void HTMLMediaElement::updateCaptionContainer()
     JSC::ExecState* exec = globalObject->globalExec();
     JSC::JSLockHolder lock(exec);
 
-    JSC::JSValue controllerValue = m_mediaControlsHost->controllerJSValue();
-    if (controllerValue.isUndefinedOrNull() || !controllerValue.isObject())
+    JSC::JSObject* controllerObject = m_mediaControlsHost->controllerJSObject();
+    if (!controllerObject)
         return;
-
-    JSC::JSObject* controllerObject = controllerValue.toObject(exec);
 
     // The media controls script must provide a method on the Controller object with the following details.
     // Name: updateCaptionContainer
@@ -5792,7 +5790,13 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
         return;
 
     JSC::JSValue controllerValue = JSC::call(exec, function, callType, callData, globalObject, argList);
-    m_mediaControlsHost->setControllerJSValue(controllerValue);
+
+    if (controllerValue.isUndefinedOrNull() || !controllerValue.isObject())
+        return;
+    
+    JSC::JSObject* controllerObject = controllerValue.toObject(exec);
+    
+    m_mediaControlsHost->setControllerJSObject(exec, controllerObject);
 
     setPageScaleFactorProperty(exec, controllerValue, page->pageScaleFactor());
 
@@ -5827,9 +5831,9 @@ void HTMLMediaElement::pageScaleFactorChanged()
     JSC::ExecState* exec = globalObject->globalExec();
     JSC::JSLockHolder lock(exec);
 
-    JSC::JSValue controllerValue = m_mediaControlsHost->controllerJSValue();
+    JSC::JSObject* controllerObject = m_mediaControlsHost->controllerJSObject();
 
-    setPageScaleFactorProperty(exec, controllerValue, page->pageScaleFactor());
+    setPageScaleFactorProperty(exec, controllerObject, page->pageScaleFactor());
 }
 #endif // ENABLE(MEDIA_CONTROLS_SCRIPT)
 
