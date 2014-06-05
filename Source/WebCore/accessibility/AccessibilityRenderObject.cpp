@@ -2651,6 +2651,7 @@ bool AccessibilityRenderObject::inheritsPresentationalRole() const
     // those child elements are also presentational. For example, <li> becomes presentational from <ul>.
     // http://www.w3.org/WAI/PF/aria/complete#presentation
     static NeverDestroyed<HashSet<QualifiedName>> listItemParents;
+    static NeverDestroyed<HashSet<QualifiedName>> tableCellParents;
 
     HashSet<QualifiedName>* possibleParentTagNames = 0;
     switch (roleValue()) {
@@ -2662,6 +2663,11 @@ bool AccessibilityRenderObject::inheritsPresentationalRole() const
             listItemParents.get().add(dlTag);
         }
         possibleParentTagNames = &listItemParents.get();
+        break;
+    case CellRole:
+        if (tableCellParents.get().isEmpty())
+            tableCellParents.get().add(tableTag);
+        possibleParentTagNames = &tableCellParents.get();
         break;
     default:
         break;

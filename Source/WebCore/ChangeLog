@@ -1,3 +1,26 @@
+2014-06-05  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Children of tables and lists with role='presentation' should each be exposed as if they were div elements
+        https://bugs.webkit.org/show_bug.cgi?id=133133
+
+        Reviewed by Chris Fleizach.
+
+        When a table or list has role='presentation', accessibility is "ignored"
+        for that element, but not for the required children. The default roles
+        for the children (CellRole and ListItemRole) do not make sense without
+        the parent, therefore map them to DivRole in ATK if they inherit the
+        presentational role.
+
+        Test: accessibility/aria-inherits-presentational.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::inheritsPresentationalRole):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::inheritsPresentationalRole):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+
 2014-06-05  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r167962): Out of bounds read in JSC::StructureIDTable::get() 

@@ -681,7 +681,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case RowHeaderRole: // Row headers are cells after all.
     case ColumnHeaderRole: // Column headers are cells after all.
     case CellRole:
-        return ATK_ROLE_TABLE_CELL;
+        return coreObject->inheritsPresentationalRole() ? ATK_ROLE_SECTION : ATK_ROLE_TABLE_CELL;
     case LinkRole:
     case WebCoreLinkRole:
     case ImageMapLinkRole:
@@ -704,6 +704,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case ListBoxRole:
         return ATK_ROLE_LIST;
     case ListItemRole:
+        return coreObject->inheritsPresentationalRole() ? ATK_ROLE_SECTION : ATK_ROLE_LIST_ITEM;
     case ListBoxOptionRole:
         return ATK_ROLE_LIST_ITEM;
     case ParagraphRole:

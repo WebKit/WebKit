@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<script>
+    function dumpAccessibilityChildren(element, level) {
+        if (element.stringValue.indexOf('End of test') >= 0)
+            return false;
+
+        var indent = "";
+        for (var k = 0; k < level; k++) { indent += "  "; }
+        debug(indent + element.role + " " + element.stringValue);
+        var childrenCount = element.childrenCount;
+        for (var k = 0; k < childrenCount; k++) {
+            if (!dumpAccessibilityChildren(element.childAtIndex(k), level+1))
+                return false;
+        }
+        return true;
+    }
+</script>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<ul role="presentation" style="list-style-type: none;"><li>item 0</li><li>item 1</li></ul>
+<table role="presentation"><tr><td>item 2</td><td>item 3</td></tr></table>
+<div>End of test</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the hierarchy for required child elements of presentational parents.");
+    if (window.accessibilityController) {
+        document.getElementById("body").focus();
+        dumpAccessibilityChildren(accessibilityController.focusedElement, 0);
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

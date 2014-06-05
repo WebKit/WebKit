@@ -283,7 +283,7 @@ private:
     virtual bool ariaLiveRegionAtomic() const override;
     virtual bool ariaLiveRegionBusy() const override;
 
-    bool inheritsPresentationalRole() const;
+    virtual bool inheritsPresentationalRole() const override;
 
 #if ENABLE(MATHML)
     // All math elements return true for isMathElement().

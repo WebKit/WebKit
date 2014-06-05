@@ -643,6 +643,7 @@ public:
     virtual AccessibilityRole ariaRoleAttribute() const { return UnknownRole; }
     virtual bool isPresentationalChildOfAriaRole() const { return false; }
     virtual bool ariaRoleHasPresentationalChildren() const { return false; }
+    virtual bool inheritsPresentationalRole() const { return false; }
 
     // Accessibility Text
     virtual void accessibilityText(Vector<AccessibilityText>&) { };
