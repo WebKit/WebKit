@@ -1,3 +1,49 @@
+2014-06-05  Frédéric Wang  <fred.wang@free.fr>
+
+        MathML operators not stretched horizontally
+        https://bugs.webkit.org/show_bug.cgi?id=72828
+
+        Reviewed by Chris Fleizach.
+
+        This patch adds basic horizontal stretching rules for operators inside
+        an <munder>, <mover> or <munderover> elements. The stretchy operators
+        in such an element stretch to cover the size of the non-stretchy
+        operators. This only works when fonts that have an OpenType MATH table
+        are used.
+
+        Tests: mathml/opentype/horizontal-LatinModern.html
+               mathml/opentype/opentype-stretchy-horizontal.html
+               mathml/opentype/horizontal-LatinModern-munderover.html
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::MathMLOperatorDictionary::ExtractKeyHorizontal): We add an ordered list of operators that have horizontal stretch direction.
+        (WebCore::RenderMathMLOperator::RenderMathMLOperator): init m_Vertical
+        (WebCore::RenderMathMLOperator::SetOperatorProperties): set m_Vertical by checking whether the operator is in the horizontalOperators list.
+        (WebCore::RenderMathMLOperator::stretchTo): We do not stretch vertically
+        if the operator has horizontal direction.
+        We also add a new version stretchTo(LayoutUnit width) for horizontal stretching only.
+        (WebCore::RenderMathMLOperator::computePreferredLogicalWidths): Handle horizontal stretching: the maximumGlyphWidth is the maximum of
+        the base size or of the stretch size.
+        (WebCore::RenderMathMLOperator::getDisplayStyleLargeOperator): Add an ASSERT to ensure that this function is only called for vertical stretching.
+        (WebCore::RenderMathMLOperator::findStretchyData): Add an ASSERT to ensure that this function is not called to get the maximum width of a horizontal stretchy operator.
+        We take into account m_isVertical when calling getMathVariants or computing sizes.
+        There is not any Unicode-only construction for horizontal stretching, so a MATH table is required for horizontal stretching.
+        (WebCore::RenderMathMLOperator::updateStyle): Ignore some code paths specific to vertical stretching and take into account the m_Vertical parameters.
+        For horizontal stretching, the m_stretch*Baseline parameters are now updated to match the metrics of the size variant or of the maximum of the parts in the glyph assembly.
+        (WebCore::RenderMathMLOperator::computeLogicalHeight): logicalHeight is now explicitely the sum of m_stretchHeightAboveBaseline and m_stretchDepthBelowBaseline, since it can be different from the stretchSize() in horizontal stretching.
+        (WebCore::RenderMathMLOperator::paintGlyph): handle trimming for horizontal stretching.
+        (WebCore::RenderMathMLOperator::fillWithVerticalExtensionGlyph): rename the function and ensure it is only call for m_isVertical.
+        (WebCore::RenderMathMLOperator::fillWithHorizontalExtensionGlyph): same as fillWithVerticalExtensionGlyph, but for horizontal stretching.
+        (WebCore::RenderMathMLOperator::paint): For glyph assembly, choose between paintVerticalGlyphAssembly or paintHorizontalGlyphAssembly.
+        (WebCore::RenderMathMLOperator::paintVerticalGlyphAssembly): rename the function and ensure it is only call for m_isVertical.
+        (WebCore::RenderMathMLOperator::paintHorizontalGlyphAssembly): same as paintVerticalGlyphAssembly but for horizontal stretching.
+        * rendering/mathml/RenderMathMLOperator.h: we add a m_isVertical member to indicate the stretch direction and a m_stretchWidth to indicate the width of the stretchy character.
+        We define the horizontal counterparts of fillWith*ExtensionGlyph, paint*GlyphAssembly, GlyphPaintTrimming  StretchyData.
+        Finally stretchSize() takes into account the stretch direction.
+        * rendering/mathml/RenderMathMLUnderOver.cpp: We override the layout() function to stretch munderover children horizontally.
+        (WebCore::RenderMathMLUnderOver::layout):
+        * rendering/mathml/RenderMathMLUnderOver.h: we declare layout().
+
 2014-06-04  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Image lifetime is not properly handled for gradient shapes

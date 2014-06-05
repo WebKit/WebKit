@@ -64,7 +64,8 @@ public:
     RenderMathMLOperator(Document&, PassRef<RenderStyle>, const String& operatorString, MathMLOperatorDictionary::Form, MathMLOperatorDictionary::Flag);
 
     void stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline);
-    LayoutUnit stretchSize() const { return m_stretchHeightAboveBaseline + m_stretchDepthBelowBaseline; }
+    void stretchTo(LayoutUnit width);
+    LayoutUnit stretchSize() const { return m_isVertical ? m_stretchHeightAboveBaseline + m_stretchDepthBelowBaseline : m_stretchWidth; }
     
     bool hasOperatorFlag(MathMLOperatorDictionary::Flag flag) const { return m_operatorFlags & flag; }
     // FIXME: The displaystyle property is not implemented (https://bugs.webkit.org/show_bug.cgi?id=118737).
@@ -110,6 +111,8 @@ private:
         GlyphData extension() const { return m_data[1]; }
         GlyphData bottom() const { return m_data[2]; }
         GlyphData middle() const { return m_data[3]; }
+        GlyphData left() const { return m_data[2]; }
+        GlyphData right() const { return m_data[0]; }
 
         void setNormalMode()
         {
@@ -157,15 +160,23 @@ private:
         TrimTop,
         TrimBottom,
         TrimTopAndBottom,
+        TrimLeft,
+        TrimRight,
+        TrimLeftAndRight
     };
 
     LayoutRect paintGlyph(PaintInfo&, const GlyphData&, const LayoutPoint& origin, GlyphPaintTrimming);
-    void fillWithExtensionGlyph(PaintInfo&, const LayoutPoint& from, const LayoutPoint& to);
+    void fillWithVerticalExtensionGlyph(PaintInfo&, const LayoutPoint& from, const LayoutPoint& to);
+    void fillWithHorizontalExtensionGlyph(PaintInfo&, const LayoutPoint& from, const LayoutPoint& to);
+    void paintVerticalGlyphAssembly(PaintInfo&, const LayoutPoint&);
+    void paintHorizontalGlyphAssembly(PaintInfo&, const LayoutPoint&);
 
     LayoutUnit m_stretchHeightAboveBaseline;
     LayoutUnit m_stretchDepthBelowBaseline;
+    LayoutUnit m_stretchWidth;
 
     UChar m_operator;
+    bool m_isVertical;
     StretchyData m_stretchyData;
     MathMLOperatorDictionary::Form m_operatorForm;
     unsigned short m_operatorFlags;

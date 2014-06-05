@@ -1,3 +1,25 @@
+2014-06-05  Frédéric Wang  <fred.wang@free.fr>
+
+        MathML operators not stretched horizontally
+        https://bugs.webkit.org/show_bug.cgi?id=72828
+
+        Reviewed by Chris Fleizach.
+
+        Add some tests to verify horizontal stretching with the MATH data.
+
+        * mathml/opentype/horizontal-LatinModern-munderover.html: Added.
+        * mathml/opentype/horizontal-LatinModern.html: Added.
+        * mathml/opentype/opentype-stretchy-horizontal.html: Added.
+        * platform/efl/TestExpectations: mark tests as failing.
+        * platform/gtk/mathml/opentype/horizontal-LatinModern-expected.png: Added.
+        * platform/gtk/mathml/opentype/horizontal-LatinModern-expected.txt: Added.
+        * platform/gtk/mathml/opentype/horizontal-LatinModern-munderover-expected.png: Added.
+        * platform/gtk/mathml/opentype/horizontal-LatinModern-munderover-expected.txt: Added.
+        * platform/gtk/mathml/opentype/opentype-stretchy-horizontal-expected.png: Added.
+        * platform/gtk/mathml/opentype/opentype-stretchy-horizontal-expected.txt: Added.
+        * platform/mac/TestExpectations: mark tests as failing.
+        * platform/win/TestExpectations: ditto.
+
 2014-06-04  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Image lifetime is not properly handled for gradient shapes

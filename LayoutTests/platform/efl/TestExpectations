@@ -1626,3 +1626,11 @@ webkit.org/b/133146 fast/sub-pixel/client-rect-has-subpixel-precision.html [ Ima
 webkit.org/b/133307 fast/forms/number/number-spinbutton-in-multi-column.html [ Failure ]
 
 webkit.org/b/133308 fast/selectors/hover-quirks.html [ Failure ]
+
+# Missing or bad references
+webkit.org/b/130322 mathml/opentype/large-operators-LatinModern.html [ Failure ]
+webkit.org/b/130322 mathml/opentype/opentype-stretchy.html [ Failure ]
+webkit.org/b/130322 mathml/opentype/vertical-LatinModern.html [ Failure ]
+webkit.org/b/72828 mathml/opentype/horizontal-LatinModern.html [ Failure ]
+webkit.org/b/72828 mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]
+webkit.org/b/72828 mathml/opentype/horizontal-LatinModern-munderover.html [ Failure ]

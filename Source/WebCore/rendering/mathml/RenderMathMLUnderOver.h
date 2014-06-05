@@ -40,6 +40,9 @@ public:
 
     virtual int firstLineBaseline() const override;
     
+protected:
+    virtual void layout();
+
 private:
     virtual bool isRenderMathMLUnderOver() const override { return true; }
     virtual const char* renderName() const override { return "RenderMathMLUnderOver"; }

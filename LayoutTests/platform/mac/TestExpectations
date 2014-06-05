@@ -1325,6 +1325,9 @@ webkit.org/b/130693 mathml/presentation/tokenElements-background-color.html [ Im
 webkit.org/b/130322 [ MountainLion Mavericks ] mathml/opentype/large-operators-LatinModern.html [ Failure ]
 webkit.org/b/130322 [ MountainLion Mavericks ] mathml/opentype/opentype-stretchy.html [ Failure ]
 webkit.org/b/130322 [ MountainLion Mavericks ] mathml/opentype/vertical-LatinModern.html [ Failure ]
+webkit.org/b/72828 mathml/opentype/horizontal-LatinModern.html [ Failure ]
+webkit.org/b/72828 mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]
+webkit.org/b/72828 mathml/opentype/horizontal-LatinModern-munderover.html [ Failure ]
 
 # WebKitDataCue is supported, not DataCue
 media/track/track-datacue.html [ Skip ]

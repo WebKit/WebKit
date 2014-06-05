@@ -30,6 +30,9 @@
 #include "RenderMathMLUnderOver.h"
 
 #include "MathMLElement.h"
+#include "MathMLNames.h"
+#include "RenderIterator.h"
+#include "RenderMathMLOperator.h"
 
 namespace WebCore {
 
@@ -66,6 +69,27 @@ int RenderMathMLUnderOver::firstLineBaseline() const
     if (baseline != -1)
         baseline += base->logicalTop();
     return baseline;
+}
+
+void RenderMathMLUnderOver::layout()
+{
+    LayoutUnit stretchWidth = 0;
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (child->needsLayout())
+            toRenderElement(child)->layout();
+        // Skipping the embellished op does not work for nested structures like
+        // <munder><mover><mo>_</mo>...</mover> <mo>_</mo></munder>.
+        if (child->isBox())
+            stretchWidth = std::max<LayoutUnit>(stretchWidth, toRenderBox(child)->logicalWidth());
+    }
+
+    // Set the sizes of (possibly embellished) stretchy operator children.
+    for (auto& child : childrenOfType<RenderMathMLBlock>(*this)) {
+        if (auto renderOperator = child.unembellishedOperator())
+            renderOperator->stretchTo(stretchWidth);
+    }
+
+    RenderMathMLBlock::layout();
 }
 
 }
