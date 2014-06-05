@@ -1,3 +1,10 @@
+2014-06-05  Alexey Proskuryakov  <ap@apple.com>
+
+        media/video-rtl.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=133363
+
+        * platform/mac/TestExpectations: Marked as such.
+
 2014-06-05  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: border-radius painting falls back to rectangle when the snapped rounded rect becomes non-renderable.
