@@ -81,6 +81,7 @@
 #import <CoreGraphics/CGPDFDocumentPrivate.h>
 #import <UIKit/UIApplication.h>
 #import <UIKit/UIPeripheralHost_Private.h>
+#import <UIKit/UIWindow_Private.h>
 #import <QuartzCore/CARenderServer.h>
 #import <QuartzCore/QuartzCorePrivate.h>
 
@@ -150,6 +151,9 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     UIEdgeInsets _obscuredInsets;
     bool _isChangingObscuredInsetsInteractively;
 
+    UIInterfaceOrientation _interfaceOrientationOverride;
+    BOOL _overridesInterfaceOrientation;
+
     BOOL _needsResetViewStateAfterCommitLoadForMainFrame;
     BOOL _isAnimatingResize;
     CATransform3D _resizeAnimationTransformAdjustments;
@@ -179,6 +183,28 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
 {
     return [self initWithFrame:frame configuration:adoptNS([[WKWebViewConfiguration alloc] init]).get()];
 }
+
+#if PLATFORM(IOS)
+static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation orientation)
+{
+    switch (orientation) {
+    case UIInterfaceOrientationUnknown:
+    case UIInterfaceOrientationPortrait:
+        return 0;
+    case UIInterfaceOrientationPortraitUpsideDown:
+        return 180;
+    case UIInterfaceOrientationLandscapeLeft:
+        return -90;
+    case UIInterfaceOrientationLandscapeRight:
+        return 90;
+    }
+}
+
+static int32_t deviceOrientation()
+{
+    return deviceOrientationForUIInterfaceOrientation([[UIApplication sharedApplication] statusBarOrientation]);
+}
+#endif
 
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
 {
@@ -228,6 +254,9 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
 
     _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds context:context configuration:std::move(webPageConfiguration) webView:self]);
     _page = [_contentView page];
+
+    _page->setDeviceOrientation(deviceOrientation());
+
     [_contentView layer].anchorPoint = CGPointZero;
     [_contentView setFrame:bounds];
     [_scrollView addSubview:_contentView.get()];
@@ -240,6 +269,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     [center addObserver:self selector:@selector(_keyboardDidChangeFrame:) name:UIKeyboardDidChangeFrameNotification object:nil];
     [center addObserver:self selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [center addObserver:self selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    [center addObserver:self selector:@selector(_windowDidRotate:) name:UIWindowDidRotateNotification object:nil];
     [center addObserver:self selector:@selector(_contentSizeCategoryDidChange:) name:UIContentSizeCategoryDidChangeNotification object:nil];
     _page->contentSizeCategoryDidChange([self _contentSizeCategory]);
 
@@ -1136,6 +1166,12 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [self _keyboardChangedWithInfo:notification.userInfo adjustScrollView:YES];
 }
 
+- (void)_windowDidRotate:(NSNotification *)notification
+{
+    if (!_overridesInterfaceOrientation)
+        _page->setDeviceOrientation(deviceOrientation());
+}
+
 - (void)_contentSizeCategoryDidChange:(NSNotification *)notification
 {
     _page->contentSizeCategoryDidChange([self _contentSizeCategory]);
@@ -1686,6 +1722,28 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     [_customContentView web_setObscuredInsets:obscuredInsets];
 }
 
+- (void)_setInterfaceOrientationOverride:(UIInterfaceOrientation)interfaceOrientation
+{
+    if (!_overridesInterfaceOrientation)
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIWindowDidRotateNotification object:nil];
+
+    _overridesInterfaceOrientation = YES;
+
+    if (interfaceOrientation == _interfaceOrientationOverride)
+        return;
+
+    _interfaceOrientationOverride = interfaceOrientation;
+
+    if (!_isAnimatingResize)
+        _page->setDeviceOrientation(deviceOrientationForUIInterfaceOrientation(_interfaceOrientationOverride));
+}
+
+- (UIInterfaceOrientation)_interfaceOrientationOverride
+{
+    ASSERT(_overridesInterfaceOrientation);
+    return _interfaceOrientationOverride;
+}
+
 - (CGSize)_maximumUnobscuredSizeOverride
 {
     ASSERT(_overridesMaximumUnobscuredSize);
@@ -1806,7 +1864,13 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     if (_overridesMaximumUnobscuredSize)
         maximumUnobscuredSize = _maximumUnobscuredSizeOverride;
 
-    _page->dynamicViewportSizeUpdate(WebCore::FloatSize(minimumLayoutSize), WebCore::FloatSize(minimumLayoutSizeForMinimalUI), WebCore::FloatSize(maximumUnobscuredSize), visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, futureUnobscuredRectInSelfCoordinates, targetScale);
+    int32_t orientation;
+    if (_overridesInterfaceOrientation)
+        orientation = deviceOrientationForUIInterfaceOrientation(_interfaceOrientationOverride);
+    else
+        orientation = _page->deviceOrientation();
+
+    _page->dynamicViewportSizeUpdate(WebCore::FloatSize(minimumLayoutSize), WebCore::FloatSize(minimumLayoutSizeForMinimalUI), WebCore::FloatSize(maximumUnobscuredSize), visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, futureUnobscuredRectInSelfCoordinates, targetScale, orientation);
 }
 
 - (void)_endAnimatedResize

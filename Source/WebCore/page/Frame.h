@@ -214,8 +214,8 @@ namespace WebCore {
         // Orientation is the interface orientation in degrees. Some examples are:
         //  0 is straight up; -90 is when the device is rotated 90 clockwise;
         //  90 is when rotated counter clockwise.
-        void sendOrientationChangeEvent(int orientation);
-        int orientation() const { return m_orientation; }
+        void orientationChanged();
+        int orientation() const;
 #endif
 
         void clearTimers();
@@ -313,10 +313,6 @@ namespace WebCore {
 
         float m_pageZoomFactor;
         float m_textZoomFactor;
-
-#if ENABLE(ORIENTATION_EVENTS)
-        int m_orientation;
-#endif
 
         int m_activeDOMObjectsAndAnimationsSuspendedCount;
     };

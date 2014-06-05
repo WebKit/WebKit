@@ -129,6 +129,11 @@ void WebChromeClient::showPlaybackTargetPicker(bool hasVideo)
     m_page->send(Messages::WebPageProxy::ShowPlaybackTargetPicker(hasVideo, m_page->rectForElementAtInteractionLocation()));
 }
 
+int WebChromeClient::deviceOrientation() const
+{
+    return m_page->deviceOrientation();
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

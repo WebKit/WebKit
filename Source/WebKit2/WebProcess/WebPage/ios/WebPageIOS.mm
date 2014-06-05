@@ -1957,6 +1957,14 @@ void WebPage::setMaximumUnobscuredSize(const FloatSize& maximumUnobscuredSize)
     updateViewportSizeForCSSViewportUnits();
 }
 
+void WebPage::setDeviceOrientation(int32_t deviceOrientation)
+{
+    if (deviceOrientation == m_deviceOrientation)
+        return;
+    m_deviceOrientation = deviceOrientation;
+    m_page->mainFrame().orientationChanged();
+}
+
 static inline bool withinEpsilon(float a, float b)
 {
     return fabs(a - b) < std::numeric_limits<float>::epsilon();
@@ -1975,7 +1983,7 @@ void WebPage::resetTextAutosizingBeforeLayoutIfNeeded(const FloatSize& oldSize, 
     }
 }
 
-void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, const FloatSize& minimumLayoutSizeForMinimalUI, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, double targetScale)
+void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, const FloatSize& minimumLayoutSizeForMinimalUI, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, double targetScale, int32_t deviceOrientation)
 {
     TemporaryChange<bool> dynamicSizeUpdateGuard(m_inDynamicSizeUpdate, true);
     // FIXME: this does not handle the cases where the content would change the content size or scroll position from JavaScript.
@@ -2157,6 +2165,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
     FloatSize unobscuredContentRectSizeInContentCoordinates = newUnobscuredContentRect.size();
     unobscuredContentRectSizeInContentCoordinates.scale(scale);
     frameView.setCustomSizeForResizeEvent(expandedIntSize(unobscuredContentRectSizeInContentCoordinates));
+    setDeviceOrientation(deviceOrientation);
     frameView.setScrollOffset(roundedUnobscuredContentRect.location());
 
     send(Messages::WebPageProxy::DynamicViewportUpdateChangedTarget(pageScaleFactor(), frameView.scrollPosition()));

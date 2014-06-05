@@ -273,6 +273,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_mainFrame(nullptr)
     , m_userAgent(standardUserAgent())
 #if PLATFORM(IOS)
+    , m_deviceOrientation(0)
     , m_dynamicViewportSizeUpdateInProgress(false)
 #endif
     , m_geolocationPermissionRequestManager(*this)

@@ -1,3 +1,49 @@
+2014-06-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Add device orientation
+        https://bugs.webkit.org/show_bug.cgi?id=133530
+        <rdar://problem/16680041>
+
+        Reviewed by Tim Horton.
+
+        Add device orientation for WebKit2.
+
+        For the public API, WKWebView get the updates through the notification UIWindowDidRotateNotification.
+        We do not have any control over how the API is used, but we can expect the size will be updated before
+        the end of rotation in most cases and the events should be sent in the right order.
+
+        For Safari, we use an override to support animated resize (and some tabs corner cases).
+
+        On the WebProcess side, we just get the new orientation directly or on DynamicViewportSizeUpdate.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (deviceOrientationForUIInterfaceOrientation):
+        (deviceOrientation):
+        (-[WKWebView initWithFrame:configuration:]):
+        (-[WKWebView _windowDidRotate:]):
+        (-[WKWebView _setInterfaceOrientationOverride:]):
+        (-[WKWebView _interfaceOrientationOverride]):
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::deviceOrientation):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::dynamicViewportSizeUpdate):
+        (WebKit::WebPageProxy::setDeviceOrientation):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::deviceOrientation):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::deviceOrientation):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setDeviceOrientation):
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+
 2014-06-05  Oliver Hunt  <oliver@apple.com>
 
         Enable SANDBOX_EXTENSIONS build flag universally on cocoa

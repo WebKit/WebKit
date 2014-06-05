@@ -214,6 +214,10 @@ public:
     virtual void showPlaybackTargetPicker(bool) override { };
 #endif // PLATFORM(IOS)
 
+#if ENABLE(ORIENTATION_EVENTS)
+    virtual int deviceOrientation() const override { return 0; }
+#endif
+
 #if PLATFORM(IOS)
     virtual bool isStopping() override { return false; }
 #endif

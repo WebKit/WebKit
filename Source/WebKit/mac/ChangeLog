@@ -1,3 +1,15 @@
+2014-06-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Add device orientation
+        https://bugs.webkit.org/show_bug.cgi?id=133530
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame deviceOrientationChanged]):
+        (-[WebFrame sendOrientationChangeEvent:]):
+        * WebView/WebFramePrivate.h:
+
 2014-05-31  Anders Carlsson  <andersca@apple.com>
 
         Change DeferrableOneShotTimer to use std::function instead of being a class template

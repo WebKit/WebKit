@@ -3218,7 +3218,7 @@ __ZN7WebCore22NotificationController10clientFromEPNS_4PageE
 #endif
 
 #if ENABLE(ORIENTATION_EVENTS)
-__ZN7WebCore5Frame26sendOrientationChangeEventEi
+__ZN7WebCore5Frame18orientationChangedEv
 #endif
 
 #if USE(PLUGIN_HOST_PROCESS)

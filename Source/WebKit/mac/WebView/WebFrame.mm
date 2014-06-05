@@ -1267,13 +1267,17 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     frameLoader.client().saveViewStateToItem(frameLoader.history().currentItem());
 }
 
-- (void)sendOrientationChangeEvent:(int)newOrientation
+- (void)deviceOrientationChanged
 {
     WebThreadRun(^{
-        WebCore::Frame *frame = core(self);
-        if (frame)
-            frame->sendOrientationChangeEvent(newOrientation);
+        if (WebCore::Frame* frame = core(self))
+            frame->orientationChanged();
     });
+}
+
+- (void)sendOrientationChangeEvent:(int)newOrientation
+{
+    [self deviceOrientationChanged];
 }
 
 - (void)setNeedsLayout

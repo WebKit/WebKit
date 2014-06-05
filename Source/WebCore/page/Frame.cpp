@@ -167,9 +167,6 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient&
 #endif
     , m_pageZoomFactor(parentPageZoomFactor(this))
     , m_textZoomFactor(parentTextZoomFactor(this))
-#if ENABLE(ORIENTATION_EVENTS)
-    , m_orientation(0)
-#endif
     , m_activeDOMObjectsAndAnimationsSuspendedCount(0)
 {
     AtomicString::init();
@@ -288,11 +285,23 @@ void Frame::setDocument(PassRefPtr<Document> newDocument)
 }
 
 #if ENABLE(ORIENTATION_EVENTS)
-void Frame::sendOrientationChangeEvent(int orientation)
+void Frame::orientationChanged()
 {
-    m_orientation = orientation;
-    if (Document* doc = document())
-        doc->dispatchWindowEvent(Event::create(eventNames().orientationchangeEvent, false, false));
+    Vector<Ref<Frame>> frames;
+    for (Frame* frame = this; frame; frame = frame->tree().traverseNext())
+        frames.append(*frame);
+
+    for (unsigned i = 0; i < frames.size(); i++) {
+        if (Document* doc = frames[i]->document())
+            doc->dispatchWindowEvent(Event::create(eventNames().orientationchangeEvent, false, false));
+    }
+}
+
+int Frame::orientation() const
+{
+    if (m_page)
+        return m_page->chrome().client().deviceOrientation();
+    return 0;
 }
 #endif // ENABLE(ORIENTATION_EVENTS)
 

@@ -328,4 +328,11 @@ void WebChromeClientIOS::showPlaybackTargetPicker(bool hasVideo)
     [[webView() _UIKitDelegateForwarder] showPlaybackTargetPicker:hasVideo fromRect:elementRect];
 }
 
+#if ENABLE(ORIENTATION_EVENTS)
+int WebChromeClientIOS::deviceOrientation() const
+{
+    return [[webView() _UIKitDelegateForwarder] deviceOrientation];
+}
+#endif
+
 #endif // PLATFORM(IOS)

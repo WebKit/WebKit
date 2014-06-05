@@ -108,6 +108,10 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 // Define the inset of the scrollview unusable by the web page.
 @property (nonatomic, setter=_setObscuredInsets:) UIEdgeInsets _obscuredInsets;
 
+// Override the interface orientation. Clients using _beginAnimatedResizeWithUpdates: must update the interface orientation
+// in the update block.
+@property (nonatomic, setter=_setInterfaceOrientationOverride:) UIInterfaceOrientation _interfaceOrientationOverride;
+
 @property (nonatomic, setter=_setBackgroundExtendsBeyondPage:) BOOL _backgroundExtendsBeyondPage;
 
 // FIXME: Remove these three properties once we expose WKWebViewContentProvider as API.

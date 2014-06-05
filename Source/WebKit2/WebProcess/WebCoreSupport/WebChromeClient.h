@@ -182,6 +182,10 @@ private:
     virtual void showPlaybackTargetPicker(bool hasVideo) override;
 #endif
 
+#if ENABLE(ORIENTATION_EVENTS)
+    virtual int deviceOrientation() const override;
+#endif
+
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>) override;
     virtual void loadIconForFiles(const Vector<String>&, WebCore::FileIconLoader*) override;
 

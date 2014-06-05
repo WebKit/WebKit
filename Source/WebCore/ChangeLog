@@ -1,3 +1,30 @@
+2014-06-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Add device orientation
+        https://bugs.webkit.org/show_bug.cgi?id=133530
+
+        Reviewed by Tim Horton.
+
+        Previously, WebCore was getting the orientation directly from the WebKit layer.
+        This had to be done during the frame creation and was very fragile.
+
+        Frame is changed to pull the value from the chrome client. That way we avoid races
+        and we can maintain a single value for all frames.
+
+        Sending the values to all the subframes is aslo done here so that we do not have to repeat
+        it in both WebKit layers.
+
+        * WebCore.exp.in:
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::orientationChanged):
+        (WebCore::Frame::orientation):
+        (WebCore::Frame::sendOrientationChangeEvent): Deleted.
+        * page/Frame.h:
+        (WebCore::Frame::orientation): Deleted.
+
 2014-06-05  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the !CACHE_SUBIMAGES build

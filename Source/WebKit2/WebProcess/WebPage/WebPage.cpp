@@ -301,6 +301,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_hasPendingBlurNotification(false)
     , m_screenSize(parameters.screenSize)
     , m_availableScreenSize(parameters.availableScreenSize)
+    , m_deviceOrientation(0)
     , m_inDynamicSizeUpdate(false)
 #endif
     , m_inspectorClient(0)

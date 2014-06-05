@@ -266,6 +266,10 @@ public:
     virtual void showPlaybackTargetPicker(bool hasVideo) = 0;
 #endif
 
+#if ENABLE(ORIENTATION_EVENTS)
+    virtual int deviceOrientation() const = 0;
+#endif
+
 #if ENABLE(INPUT_TYPE_COLOR)
     virtual PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&) = 0;
 #endif

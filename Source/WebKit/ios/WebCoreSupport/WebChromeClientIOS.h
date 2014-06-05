@@ -86,6 +86,10 @@ public:
     virtual void focusedElementChanged(WebCore::Element*) override;
     virtual void showPlaybackTargetPicker(bool hasVideo) override;
 
+#if ENABLE(ORIENTATION_EVENTS)
+    virtual int deviceOrientation() const override;
+#endif
+
 private:
     int m_formNotificationSuppressions;
 };
