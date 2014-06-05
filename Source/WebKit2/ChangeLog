@@ -1,5 +1,22 @@
 2014-06-05  Benjamin Poulain  <bpoulain@apple.com>
 
+        [iOS][WK2] WebPage sometimes forces two resize events on animated resize
+        https://bugs.webkit.org/show_bug.cgi?id=133534
+
+        Reviewed by Enrica Casucci.
+
+        When I updated the patch for resize events (r168556) to use the unobscured rect in scrollview coordinates,
+        I forgot to update a snippet of code in dynamicViewportSizeUpdate(). Since that code was still using
+        the scaled unobscured rect, there was sometimes a difference of 1 pixel between the size set by that
+        call site and the others.
+
+        This path nukes the bad code and use the unobscured rect in scrollview coordinates given by the UIProcess.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+
+2014-06-05  Benjamin Poulain  <bpoulain@apple.com>
+
         [iOS][WK2] Add device orientation
         https://bugs.webkit.org/show_bug.cgi?id=133530
         <rdar://problem/16680041>
