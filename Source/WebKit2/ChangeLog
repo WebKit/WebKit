@@ -1,3 +1,13 @@
+2014-06-05  Tanay C  <tanay.c@samsung.com>
+
+        Resolve compiler error (call of overloaded 'schedule' function is ambiguous) 
+        https://bugs.webkit.org/show_bug.cgi?id=133467
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::DownloadClient::handleResponseLater): Explicitly casting second parameter to std::function<void()>
+
 2014-06-04  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Restore the visual scroll position instead of the dom scroll position when restoring states from the history

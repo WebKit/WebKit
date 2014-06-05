@@ -187,7 +187,7 @@ public:
 
         // Call didReceiveResponse in an idle to make sure the download is added
         // to the DownloadManager downloads map.
-        m_handleResponseLater.schedule("[WebKit] DownloadHandleResponseLater", std::bind(&DownloadClient::handleResponse, this));
+        m_handleResponseLater.schedule("[WebKit] DownloadHandleResponseLater", std::function<void()>(std::bind(&DownloadClient::handleResponse, this)));
     }
 
     Download* m_download;
