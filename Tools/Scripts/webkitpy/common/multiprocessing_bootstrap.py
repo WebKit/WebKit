@@ -53,13 +53,6 @@ def run(*parts):
     module_path = os.path.join(script_dir, *parts)
     cmd = [sys.executable, module_path] + sys.argv[1:]
 
-    # Wrap processes in the jhbuild environment so DRT or WKTR
-    # doesn't need to do it and their process id as reported by
-    # subprocess.Popen is not jhbuild's.
-    if '--gtk' in sys.argv[1:] and os.path.exists(os.path.join(script_dir, '..', '..', 'WebKitBuild', 'Dependencies')):
-        prefix = [os.path.join(script_dir, '..', 'jhbuild', 'jhbuild-wrapper'), '--gtk', 'run']
-        cmd = prefix + cmd
-
     proc = subprocess.Popen(cmd, env=env)
     try:
         proc.wait()

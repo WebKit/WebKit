@@ -735,6 +735,10 @@ class Port(object):
     def get_option(self, name, default_value=None):
         return getattr(self._options, name, default_value)
 
+    def set_option(self, name, value):
+        setattr(self._options, name, value)
+        return self.get_option(name) == value
+
     def set_option_default(self, name, default_value):
         return self._options.ensure_value(name, default_value)
 

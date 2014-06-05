@@ -1,3 +1,22 @@
+2014-06-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] run-perf-tests should run the tests inside the jhbuild shell.
+        https://bugs.webkit.org/show_bug.cgi?id=133533
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/webkitpy/common/multiprocessing_bootstrap.py:
+        (run): Remove the jhbuild-wrapper wrapper from here. It should be
+        on Scripts/webkitpy/port/gtk.py.
+        * Scripts/webkitpy/port/base.py:
+        (Port.set_option): Add a set_option(name, value) function to set
+        the optparse parameter "name" to the value "value", even if the
+        parameter "name" is already initialized.
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.__init__): Set the default wrapper to jhbuild-wrapper.
+        If another wrapper is specified via the option "-l --wrapper=x",
+        then prepend the jhbuild-wrapper to the one specified.
+
 2014-06-04  David Farler  <dfarler@apple.com>
 
         Build ASan WebKit for iOS Simulator

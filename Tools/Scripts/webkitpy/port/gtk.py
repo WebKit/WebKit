@@ -54,6 +54,13 @@ class GtkPort(Port):
             if not self.get_option("wrapper"):
                 raise ValueError('use --wrapper=\"valgrind\" for memory leak detection on GTK')
 
+        if os.path.exists(self.path_from_webkit_base('WebKitBuild', 'Dependencies')):
+            self._jhbuild_wrapper = [self.path_from_webkit_base('Tools', 'jhbuild', 'jhbuild-wrapper'), '--gtk', 'run']
+            if self.get_option('wrapper'):
+                self.set_option('wrapper', ' '.join(self._jhbuild_wrapper) + ' ' + self.get_option('wrapper'))
+            else:
+                self.set_option_default('wrapper', ' '.join(self._jhbuild_wrapper))
+
     def _built_executables_path(self, *path):
         return self._build_path(*(('bin',) + path))
 
