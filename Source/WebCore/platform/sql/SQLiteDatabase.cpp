@@ -99,8 +99,18 @@ bool SQLiteDatabase::open(const String& filename, bool forWebSQLDatabase)
     if (!SQLiteStatement(*this, ASCIILiteral("PRAGMA temp_store = MEMORY;")).executeCommand())
         LOG_ERROR("SQLite database could not set temp_store to memory");
 
-    if (!SQLiteStatement(*this, ASCIILiteral("PRAGMA journal_mode = WAL;")).executeCommand())
+    SQLiteStatement walStatement(*this, ASCIILiteral("PRAGMA journal_mode=WAL;"));
+    int result = walStatement.step();
+    if (result != SQLITE_OK && result != SQLITE_ROW)
         LOG_ERROR("SQLite database failed to set journal_mode to WAL, error: %s",  lastErrorMsg());
+
+#ifndef NDEBUG
+    if (result == SQLITE_ROW) {
+        String mode = walStatement.getColumnText(0);
+        if (!equalIgnoringCase(mode, "wal"))
+            LOG_ERROR("journal_mode of database should be 'wal', but is '%s'", mode.utf8().data());
+    }
+#endif
 
     return isOpen();
 }
