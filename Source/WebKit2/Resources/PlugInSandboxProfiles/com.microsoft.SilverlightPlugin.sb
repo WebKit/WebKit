@@ -52,4 +52,5 @@
 
 (allow network-bind (local ip))
 
+(webkit-powerbox)
 (webkit-printing)

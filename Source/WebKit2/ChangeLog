@@ -1,3 +1,15 @@
+2014-06-05  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Tweak plug-in sandbox profiles
+        https://bugs.webkit.org/show_bug.cgi?id=133549
+
+        Fix <rdar://problem/17068055> and <rdar://problem/17148837>.
+
+        Reviewed by Sam Weinig and Simon Cooper.
+
+        * Resources/PlugInSandboxProfiles/com.apple.ist.ds.appleconnect.webplugin.sb:
+        * Resources/PlugInSandboxProfiles/com.microsoft.SilverlightPlugin.sb:
+
 2014-06-05  Tanay C  <tanay.c@samsung.com>
 
         Resolve compiler error (call of overloaded 'schedule' function is ambiguous) 

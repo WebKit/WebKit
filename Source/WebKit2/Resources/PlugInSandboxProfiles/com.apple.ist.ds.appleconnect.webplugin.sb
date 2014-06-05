@@ -45,6 +45,7 @@
 
 (allow file-read*
     (subpath "/Library/KerberosPlugins/GSSAPI")
+    (subpath "/Library/KerberosPlugins/KerberosFrameworkPlugins")
     (literal "/Library/Preferences/edu.mit.Kerberos")
     (literal "/Library/Preferences/SystemConfiguration/preferences.plist")
     (home-library-preferences-literal "/edu.mit.Kerberos"))
