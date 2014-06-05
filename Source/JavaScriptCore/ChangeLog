@@ -1,3 +1,12 @@
+2014-06-04  Timothy Horton  <timothy_horton@apple.com>
+
+        iOS Debug build fix
+
+        Rubber-stamped by Filip Pizlo.
+
+        * Configurations/LLVMForJSC.xcconfig:
+        Dead-code strip the llvmForJSC library unconditionally, to work around <rdar://problem/16920916>.
+
 2014-06-04  Oliver Hunt  <oliver@apple.com>
 
         ArrayIterator should not be exposed in Safari 8
