@@ -227,7 +227,7 @@ void GraphicsContext::drawNativeImage(PassNativeImagePtr imagePtr, const FloatSi
 #if CACHE_SUBIMAGES
             image = subimageCache().getSubimage(image.get(), subimageRect);
 #else
-            image = adoptCF(CGImageCreateWithImageInRect(image, subimageRect));
+            image = adoptCF(CGImageCreateWithImageInRect(image.get(), subimageRect));
 #endif
             if (currHeight < srcRect.maxY()) {
                 ASSERT(CGImageGetHeight(image.get()) == currHeight - CGRectIntegral(srcRect).origin.y);
