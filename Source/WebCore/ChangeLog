@@ -1,3 +1,23 @@
+2014-06-05  Frédéric Wang  <fred.wang@free.fr>
+
+        Apply Character-level mirroring to stretchy operators in RTL mode.
+        https://bugs.webkit.org/show_bug.cgi?id=130839
+
+        Reviewed by Chris Fleizach.
+
+        We add support for character-level mirroring for stretchy MathML operators in RTL mode.
+        Glyph-level mirroring (via the rtlm OpenType feature) will be handled in bug 130840.
+
+        Test: mathml/presentation/stretchy-rtl.html
+
+        * rendering/mathml/RenderMathMLOperator.cpp: reorganize the Unicode stretchyCharacters table to make mirroring easy.
+        (WebCore::RenderMathMLOperator::computePreferredLogicalWidths): pass the right boolean to glyphDataForCharacter.
+        (WebCore::RenderMathMLOperator::getDisplayStyleLargeOperator): ditto
+        (WebCore::RenderMathMLOperator::findStretchyData): ditto and change the index for the stretchyCharacters fallback.
+        (WebCore::RenderMathMLOperator::updateStyle): pass the right boolean to glyphDataForCharacter.
+        (WebCore::RenderMathMLOperator::paint): remove the FIXME comment.
+        (WebCore::RenderMathMLOperator::paintVerticalGlyphAssembly): switch the leading/trailing space in RTL mode.
+
 2014-06-05  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Buttons in default media controls shift vertically when controls fade in or out.

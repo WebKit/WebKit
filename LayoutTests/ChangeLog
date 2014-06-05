@@ -1,3 +1,15 @@
+2014-06-05  Frédéric Wang  <fred.wang@free.fr>
+
+        Apply Character-level mirroring to stretchy operators in RTL mode.
+        https://bugs.webkit.org/show_bug.cgi?id=130839
+
+        Reviewed by Chris Fleizach.
+
+        Add some tests to verify that stretchy operators are correctly mirrored in RTL mode.
+
+        * mathml/presentation/stretchy-rtl-expected.html: Added.
+        * mathml/presentation/stretchy-rtl.html: Added.
+
 2014-06-05  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Regions][CSS Shapes] Add Shapes tests which flow through multiple regions

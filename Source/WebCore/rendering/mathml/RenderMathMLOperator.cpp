@@ -55,20 +55,22 @@ struct StretchyCharacter {
     UChar bottomChar;
     UChar middleChar;
 };
+// The first leftRightPairsCount pairs correspond to left/right fences that can easily be mirrored in RTL.
+static const short leftRightPairsCount = 5;
 static const StretchyCharacter stretchyCharacters[14] = {
     { 0x28  , 0x239b, 0x239c, 0x239d, 0x0    }, // left parenthesis
     { 0x29  , 0x239e, 0x239f, 0x23a0, 0x0    }, // right parenthesis
     { 0x5b  , 0x23a1, 0x23a2, 0x23a3, 0x0    }, // left square bracket
-    { 0x2308, 0x23a1, 0x23a2, 0x23a2, 0x0    }, // left ceiling
-    { 0x230a, 0x23a2, 0x23a2, 0x23a3, 0x0    }, // left floor
     { 0x5d  , 0x23a4, 0x23a5, 0x23a6, 0x0    }, // right square bracket
-    { 0x2309, 0x23a4, 0x23a5, 0x23a5, 0x0    }, // right ceiling
-    { 0x230b, 0x23a5, 0x23a5, 0x23a6, 0x0    }, // right floor
     { 0x7b  , 0x23a7, 0x23aa, 0x23a9, 0x23a8 }, // left curly bracket
+    { 0x7d  , 0x23ab, 0x23aa, 0x23ad, 0x23ac }, // right curly bracket
+    { 0x2308, 0x23a1, 0x23a2, 0x23a2, 0x0    }, // left ceiling
+    { 0x2309, 0x23a4, 0x23a5, 0x23a5, 0x0    }, // right ceiling
+    { 0x230a, 0x23a2, 0x23a2, 0x23a3, 0x0    }, // left floor
+    { 0x230b, 0x23a5, 0x23a5, 0x23a6, 0x0    }, // right floor
     { 0x7c  , 0x7c,   0x7c,   0x7c,   0x0    }, // vertical bar
     { 0x2016, 0x2016, 0x2016, 0x2016, 0x0    }, // double vertical line
     { 0x2225, 0x2225, 0x2225, 0x2225, 0x0    }, // parallel to
-    { 0x7d  , 0x23ab, 0x23aa, 0x23ad, 0x23ac }, // right curly bracket
     { 0x222b, 0x2320, 0x23ae, 0x2321, 0x0    } // integral sign
 };
 
@@ -1339,7 +1341,7 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
         return;
     }
 
-    GlyphData data = style().font().glyphDataForCharacter(m_operator, false);
+    GlyphData data = style().font().glyphDataForCharacter(m_operator, !style().isLeftToRightDirection());
     float maximumGlyphWidth = advanceForGlyph(data);
     if (!m_isVertical) {
         if (maximumGlyphWidth < stretchSize())
@@ -1514,7 +1516,7 @@ RenderMathMLOperator::StretchyData RenderMathMLOperator::getDisplayStyleLargeOpe
     ASSERT(m_isVertical && isLargeOperatorInDisplayStyle());
 
     const auto& primaryFontData = style().font().primaryFont();
-    GlyphData baseGlyph = style().font().glyphDataForCharacter(character, false);
+    GlyphData baseGlyph = style().font().glyphDataForCharacter(character, !style().isLeftToRightDirection());
     if (!primaryFontData || !primaryFontData->mathData() || baseGlyph.fontData != primaryFontData)
         return data;
 
@@ -1546,7 +1548,7 @@ RenderMathMLOperator::StretchyData RenderMathMLOperator::findStretchyData(UChar 
     StretchyData assemblyData;
 
     const auto& primaryFontData = style().font().primaryFont();
-    GlyphData baseGlyph = style().font().glyphDataForCharacter(character, false);
+    GlyphData baseGlyph = style().font().glyphDataForCharacter(character, !style().isLeftToRightDirection());
     
     if (primaryFontData && primaryFontData->mathData() && baseGlyph.fontData == primaryFontData) {
         Vector<Glyph> sizeVariants;
@@ -1580,6 +1582,10 @@ RenderMathMLOperator::StretchyData RenderMathMLOperator::findStretchyData(UChar 
         for (unsigned index = 0; index < maxIndex; ++index) {
             if (stretchyCharacters[index].character == character) {
                 stretchyCharacter = &stretchyCharacters[index];
+                if (!style().isLeftToRightDirection() && index < leftRightPairsCount * 2) {
+                    // If we are in right-to-left direction we select the mirrored form by adding -1 or +1 according to the parity of index.
+                    index += index % 2 ? -1 : 1;
+                }
                 break;
             }
         }
@@ -1653,7 +1659,7 @@ void RenderMathMLOperator::updateStyle()
         m_stretchyData = getDisplayStyleLargeOperator(m_operator);
     else {
         // We do not stretch if the base glyph is large enough.
-        GlyphData baseGlyph = style().font().glyphDataForCharacter(m_operator, false);
+        GlyphData baseGlyph = style().font().glyphDataForCharacter(m_operator, !style().isLeftToRightDirection());
         float baseSize = m_isVertical ? heightForGlyph(baseGlyph) : advanceForGlyph(baseGlyph);
         if (stretchSize() <= baseSize)
             return;
@@ -1861,8 +1867,6 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
     if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE || m_stretchyData.mode() == DrawNormal)
         return;
 
-    // FIXME: This painting should work in RTL mode too (https://bugs.webkit.org/show_bug.cgi?id=123018).
-
     GraphicsContextStateSaver stateSaver(*info.context);
     info.context->setFillColor(style().visitedDependentColor(CSSPropertyColor), style().colorSpace());
 
@@ -1892,7 +1896,7 @@ void RenderMathMLOperator::paintVerticalGlyphAssembly(PaintInfo& info, const Lay
 
     // We are positioning the glyphs so that the edge of the tight glyph bounds line up exactly with the edges of our paint box.
     LayoutPoint operatorTopLeft = paintOffset + location();
-    operatorTopLeft.move(m_leadingSpace, 0);
+    operatorTopLeft.move(style().isLeftToRightDirection() ? m_leadingSpace : m_trailingSpace, 0);
     operatorTopLeft = ceiledIntPoint(operatorTopLeft);
     FloatRect topGlyphBounds = boundsForGlyph(m_stretchyData.top());
     LayoutPoint topGlyphOrigin(operatorTopLeft.x(), operatorTopLeft.y() - topGlyphBounds.y());
