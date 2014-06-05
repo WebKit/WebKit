@@ -1,3 +1,18 @@
+2014-06-04  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Fix off by one in creating a RasterShape
+        https://bugs.webkit.org/show_bug.cgi?id=133499
+
+        Reviewed by Darin Adler.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-floats-shape-margin-crash.html
+
+        * rendering/shapes/RasterShape.cpp:
+        (WebCore::RasterShapeIntervals::computeShapeMarginIntervals):
+            marginY1 is supposed to be an inclusive endpoint, however, maxY()
+            is an exclusive endpoint. This simply changes marginY1 into an
+            exclusive endpoint.
+
 2014-06-04  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Restore the visual scroll position instead of the dom scroll position when restoring states from the history

@@ -86,7 +86,7 @@ std::unique_ptr<RasterShapeIntervals> RasterShapeIntervals::computeShapeMarginIn
 
         marginIntervalGenerator.set(y, intervalAtY);
         int marginY0 = std::max(minY(), y - shapeMargin);
-        int marginY1 = std::min(maxY(), y + shapeMargin);
+        int marginY1 = std::min(maxY(), y + shapeMargin + 1);
 
         for (int marginY = y - 1; marginY >= marginY0; --marginY) {
             if (marginY > bounds().y() && intervalAt(marginY).contains(intervalAtY))
@@ -96,7 +96,7 @@ std::unique_ptr<RasterShapeIntervals> RasterShapeIntervals::computeShapeMarginIn
 
         result->intervalAt(y).unite(marginIntervalGenerator.intervalAt(y));
 
-        for (int marginY = y + 1; marginY <= marginY1; ++marginY) {
+        for (int marginY = y + 1; marginY < marginY1; ++marginY) {
             if (marginY < bounds().maxY() && intervalAt(marginY).contains(intervalAtY))
                 break;
             result->intervalAt(marginY).unite(marginIntervalGenerator.intervalAt(marginY));
