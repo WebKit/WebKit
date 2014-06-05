@@ -1,0 +1,13 @@
+Test adding tracks to inactive MediaStream.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS stream1.getAudioTracks().length is 1
+PASS stream2.getAudioTracks().length is 1
+PASS audioTrack.readyState is "ended"
+PASS stream2.getAudioTracks().length is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

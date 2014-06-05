@@ -1,3 +1,19 @@
+2014-06-05  Kiran  <kiran.guduru@samsung.com>
+
+        [MediaStream] MediaStream.addTrack should not check for tracks ended state.
+        https://bugs.webkit.org/show_bug.cgi?id=133510
+
+        Reviewed by Eric Carlson.
+
+        Adding and removing of tracks to a MediaStream should not have dependency
+        on tracks state. So the check for MediaStreamTrack's ended state has been
+        removed while adding a track in MediaStreamPrivate.cpp.
+
+        Test: fast/mediastream/MediaStream-add-ended-tracks.html
+
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::addTrack):
+
 2014-06-05  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GTK] Remove ScrollViewGtk.cpp

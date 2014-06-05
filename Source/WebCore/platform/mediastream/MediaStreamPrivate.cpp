@@ -177,9 +177,6 @@ void MediaStreamPrivate::setActive(bool active)
 void MediaStreamPrivate::addTrack(PassRefPtr<MediaStreamTrackPrivate> prpTrack)
 {
     RefPtr<MediaStreamTrackPrivate> track = prpTrack;
-    if (track->ended())
-        return;
-
     Vector<RefPtr<MediaStreamTrackPrivate>>& tracks = track->type() == MediaStreamSource::Audio ? m_audioPrivateTracks : m_videoPrivateTracks;
 
     size_t pos = tracks.find(track);
