@@ -1937,6 +1937,7 @@ webkit.org/b/108370 editing/spelling/editing-multiple-words-with-markers.html [ 
 webkit.org/b/108370 editing/spelling/design-mode-spellcheck-off.html [ Failure ]
 webkit.org/b/108370 editing/spelling/context-menu-suggestions-multiword-selection.html [ Failure ]
 webkit.org/b/108370 editing/spelling/context-menu-suggestions-subword-selection.html [ Failure ]
+webkit.org/b/108370 editing/spelling/move-cursor-around-misspelled-word.html [ Failure ]
 webkit.org/b/108370 editing/spelling/spelling-backward.html [ Failure ]
 webkit.org/b/108370 editing/spelling/spelling-double-clicked-word.html [ Failure ]
 webkit.org/b/108370 editing/spelling/spelling-exactly-selected-word.html [ Failure ]

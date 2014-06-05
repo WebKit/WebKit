@@ -1,3 +1,28 @@
+2014-06-05  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Share platform/mac/editing/spelling/move-cursor-around-misspelled-word.html with other platforms
+        https://bugs.webkit.org/show_bug.cgi?id=133208
+
+        Reviewed by Darin Adler.
+
+        Move the test to common editing/spelling since it just verifies spelling
+        markers and other platforms might be interested in running it as well.
+
+        Due to bug 125688, the test starts using asynchronous spellchecking.
+        Add additional test case which checks spelling marker after typing
+        the text, before any caret change.
+
+        * editing/spelling/move-cursor-around-misspelled-word-expected.txt:
+        Renamed from platform/mac/editing/spelling/move-cursor-around-misspelled-word-expected.txt
+        * editing/spelling/move-cursor-around-misspelled-word.html:
+        Renamed from platform/mac/editing/spelling/move-cursor-around-misspelled-word.html
+
+        * platform/gtk/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+        Add failing expectation for platforms which didn't switch to
+        asynchronous spellchecking.
+
 2014-06-05  Alexey Proskuryakov  <ap@apple.com>
 
         media/video-rtl.html is flaky
