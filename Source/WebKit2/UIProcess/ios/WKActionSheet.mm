@@ -29,15 +29,18 @@
 #if PLATFORM(IOS)
 
 #import "WKContentViewInteraction.h"
-#import <UIKit/UIActionSheet_Private.h>
+#import <UIKit/UIAlertController_Private.h>
 #import <UIKit/UIWindow_Private.h>
 
 @implementation WKActionSheet {
     id <WKActionSheetDelegate> _sheetDelegate;
-    id <UIActionSheetDelegate> _delegateWhileRotating;
     WKContentView *_view;
     UIPopoverArrowDirection _arrowDirections;
     BOOL _isRotating;
+    BOOL _readyToPresentAfterRotation;
+
+    RetainPtr<UIViewController> _presentedViewControllerWhileRotating;
+    RetainPtr<id <UIPopoverPresentationControllerDelegate>> _popoverPresentationControllerDelegateWhileRotating;
 }
 
 - (id)initWithView:(WKContentView *)view
@@ -88,74 +91,140 @@
     if (!view)
         return NO;
 
-    if (UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPhone) {
-        [self presentFromRect:presentationRect
-                       inView:view
-                    direction:_arrowDirections
-    allowInteractionWithViews:nil
-              backgroundStyle:UIPopoverBackgroundStyleDefault
-                     animated:YES];
-    } else
-        [self showInView:view]; 
+    UIViewController *presentedViewController = _presentedViewControllerWhileRotating.get() ? _presentedViewControllerWhileRotating.get() : self;
+    presentedViewController.modalPresentationStyle = UIModalPresentationPopover;
+
+    UIPopoverPresentationController *presentationController = presentedViewController.popoverPresentationController;
+    presentationController.sourceView = view;
+    presentationController.sourceRect = presentationRect;
+    presentationController.permittedArrowDirections = _arrowDirections;
+
+    if (_popoverPresentationControllerDelegateWhileRotating)
+        presentationController.delegate = _popoverPresentationControllerDelegateWhileRotating.get();
+
+    UIViewController *presentingViewController = [view.window rootViewController];
+    [presentingViewController presentViewController:presentedViewController animated:YES completion:NULL];
 
     return YES;
 }
 
 - (void)doneWithSheet
 {
-    _delegateWhileRotating = nil;
+    _presentedViewControllerWhileRotating = nil;
+    _popoverPresentationControllerDelegateWhileRotating = nil;
 
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(didRotate) object:nil];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_didRotateAndLayout) object:nil];
 }
 
 #pragma mark - Rotation handling code
 
 - (void)willRotate
 {
-    ASSERT(UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPhone);
+    // We want to save the view controller that is currently being presented to re-present it after rotation.
+    // Here are the various possible states that we have to handle:
+    // a) topViewController presenting ourselves (alertViewController) -> nominal case.
+    //    There is no need to save the presented view controller, which is self.
+    // b) topViewController presenting ourselves presenting a content view controller ->
+    //    This happens if one of the actions in the action sheet presented a different view controller inside the popover,
+    //    using a current context presentation. This is for example the case with the Data Detectors action "Add to Contacts".
+    // c) topViewController presenting that content view controller directly.
+    //    This happens if we were in the (b) case and then rotated the device. Since we dismiss the popover during the
+    //    rotation, we take this opportunity to simplify the view controller hierarchy and simply re-present the content
+    //    view controller, without re-presenting the alert controller.
+
+    UIView *view = [_sheetDelegate hostViewForSheet];
+    UIViewController *presentingViewController = view.window.rootViewController;
+
+    // topPresentedViewController is either self (cases (a) and (b) above) or an action's view controller
+    // (case (c) above).
+    UIViewController *topPresentedViewController = [presentingViewController presentedViewController];
+
+    // We only have something to do if we're showing a popover (that we have to reposition).
+    // Otherwise the default UIAlertController behaviour is enough.
+    if ([topPresentedViewController presentationController].presentationStyle != UIModalPresentationPopover)
+        return;
 
     if (_isRotating)
         return;
 
-    // Clear the delegate so that the method:
-    // - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
-    // is not called when the ActionSheet is dismissed below. Delegate is re-instated after rotation.
-    _delegateWhileRotating = [self delegate];
-    self.delegate = nil;
     _isRotating = YES;
+    _readyToPresentAfterRotation = NO;
 
-    [self dismissWithClickedButtonIndex:[self cancelButtonIndex] animated:NO];
+    UIViewController *presentedViewController = nil;
+    if ([self presentingViewController] != nil) {
+        // Handle cases (a) and (b) above (we (UIAlertController) are still in the presentation hierarchy).
+        // Save the view controller presented by one of the actions if there is one.
+        // (In the (a) case, presentedViewController will be nil).
+
+        presentedViewController = [self presentedViewController];
+    } else {
+        // Handle case (c) above.
+        // The view controller that we want to save is the top presented view controller, since we
+        // are not presenting it anymore.
+
+        presentedViewController = topPresentedViewController;
+    }
+
+    _presentedViewControllerWhileRotating = presentedViewController;
+
+    // Save the popover presentation controller's delegate, because in case (b) we're going to use
+    // a different popoverPresentationController after rotation to re-present the action view controller,
+    // and that action is still expecting delegate callbacks when the popover is dismissed.
+    _popoverPresentationControllerDelegateWhileRotating = [topPresentedViewController popoverPresentationController].delegate;
+
+    [presentingViewController dismissViewControllerAnimated:NO completion:^{
+        [self updateSheetPosition];
+    }];
 }
 
 - (void)updateSheetPosition
 {
-    ASSERT(UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPhone);
+    UIViewController *presentedViewController = _presentedViewControllerWhileRotating.get() ? _presentedViewControllerWhileRotating.get() : self;
 
-    if (!_isRotating)
+    // There are two asynchronous events which might trigger this call, and we have to wait for both of them before doing something.
+    // - One runloop iteration after rotation (to let the Web content re-layout, see below)
+    // - The completion of the view controller dismissal in willRotate.
+    // (We cannot present something again until the dismissal is done)
+
+    BOOL isBeingPresented = [presentedViewController presentingViewController] || [self presentingViewController];
+
+    if (!_isRotating || !_readyToPresentAfterRotation || isBeingPresented)
         return;
 
-    _isRotating = NO;
-    
-    CGRect presentationRect = [_sheetDelegate presentationRectInHostViewForSheet];
-    if (!CGRectIsEmpty(presentationRect)) {
-        // Re-present the popover only if we are still pointing to content onscreen.
+    CGRect presentationRect = [_sheetDelegate initialPresentationRectInHostViewForSheet];
+    BOOL wasPresentedViewControllerModal = [_presentedViewControllerWhileRotating isModalInPopover];
+
+    if (!CGRectIsEmpty(presentationRect) || wasPresentedViewControllerModal) {
+        // Re-present the popover only if we are still pointing to content onscreen, or if we can't dismiss it without losing information.
+        // (if the view controller is modal)
+
         CGRect intersection = CGRectIntersection([[_sheetDelegate hostViewForSheet] bounds], presentationRect);
-        if (!CGRectIsEmpty(intersection)) {
-            self.delegate = _delegateWhileRotating;
+        if (!CGRectIsEmpty(intersection))
             [self presentSheetFromRect:intersection];
-            return;
-        }
+        else if (wasPresentedViewControllerModal)
+            [self presentSheet];
+
+        _presentedViewControllerWhileRotating = nil;
+        _popoverPresentationControllerDelegateWhileRotating = nil;
     }
-    
-    // Cancel the sheet as there is either no view or the content has now moved off screen.
-    [_delegateWhileRotating actionSheet:self clickedButtonAtIndex:[self cancelButtonIndex]];
+}
+
+- (void)_didRotateAndLayout
+{
+    _isRotating = NO;
+    _readyToPresentAfterRotation = YES;
+    [_view _updatePositionInformation];
+    [self updateSheetPosition];
 }
 
 - (void)didRotate
 {
-    ASSERT(UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPhone);
+    // Handle the rotation on the next run loop interation as this
+    // allows the onOrientationChange event to fire, and the element node may
+    // be removed.
+    // <rdar://problem/9360929> Should re-present popover after layout rather than on the next runloop
 
-    [_view _updatePositionInformation];
+    [self performSelector:@selector(_didRotateAndLayout) withObject:nil afterDelay:0];
 }
 
 @end

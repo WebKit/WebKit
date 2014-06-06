@@ -32,6 +32,7 @@
 #import <WebKit/_WKActivatedElementInfo.h>
 
 typedef void (^WKElementActionHandler)(_WKActivatedElementInfo *);
+typedef BOOL (^WKElementActionDismissalHandler)(void);
 
 typedef NS_ENUM(NSInteger, _WKElementActionType) {
     _WKElementActionTypeCustom,
@@ -51,6 +52,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 @property (nonatomic, readonly) _WKElementActionType type;
 @property (nonatomic, readonly) NSString* title;
+@property (nonatomic, copy) WKElementActionDismissalHandler dismissalHandler;
 
 @end
 

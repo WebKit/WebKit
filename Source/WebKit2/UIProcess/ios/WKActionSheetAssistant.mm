@@ -34,10 +34,11 @@
 #import "WebPageProxy.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKElementActionInternal.h"
+#import <DataDetectorsUI/DDAction.h>
 #import <DataDetectorsUI/DDDetectionController.h>
 #import <SafariServices/SSReadingList.h>
 #import <TCC/TCC.h>
-#import <UIKit/UIActionSheet_Private.h>
+#import <UIKit/UIAlertController_Private.h>
 #import <UIKit/UIView.h>
 #import <UIKit/UIViewController_Private.h>
 #import <UIKit/UIWindow_Private.h>
@@ -66,7 +67,6 @@ using namespace WebKit;
 @implementation WKActionSheetAssistant {
     RetainPtr<WKActionSheet> _interactionSheet;
     RetainPtr<_WKActivatedElementInfo> _elementInfo;
-    RetainPtr<NSArray> _elementActions;
     WKContentView *_view;
 }
 
@@ -159,18 +159,6 @@ using namespace WebKit;
     return [_interactionSheet presentSheetFromRect:presentationRect];
 }
 
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    ASSERT(actionSheet == _interactionSheet);
-    if (actionSheet != _interactionSheet)
-        return;
-
-    if (_elementActions && buttonIndex < (NSInteger)[_elementActions count])
-        [[_elementActions objectAtIndex:buttonIndex] _runActionWithElementInfo:_elementInfo.get() view:_view];
-
-    [self cleanupSheet];
-}
-
 - (void)updateSheetPosition
 {
     [_interactionSheet updateSheetPosition];
@@ -187,8 +175,7 @@ using namespace WebKit;
 
     _interactionSheet = adoptNS([[WKActionSheet alloc] initWithView:_view]);
     _interactionSheet.get().sheetDelegate = self;
-    _interactionSheet.get().actionSheetStyle = UIActionSheetStyleAutomatic;
-    _interactionSheet.get().delegate = self;
+    _interactionSheet.get().preferredStyle = UIAlertControllerStyleActionSheet;
 
     NSString *titleString = nil;
     BOOL titleIsURL = NO;
@@ -204,18 +191,26 @@ using namespace WebKit;
 
     if ([titleString length]) {
         [_interactionSheet setTitle:titleString];
-        if (titleIsURL) {
-            [[_interactionSheet _titleLabel] setLineBreakMode:NSLineBreakByTruncatingMiddle];
-            [_interactionSheet setTitleMaxLineCount:2];
-        } else
-            [[_interactionSheet _titleLabel] setLineBreakMode:NSLineBreakByTruncatingTail];
+        // We should configure the text field's line breaking mode correctly here, based on whether
+        // the title is an URL or not, but the appropriate UIAlertController SPIs are not available yet.
+        // The code that used to do this in the UIActionSheet world has been saved for reference in
+        // <rdar://problem/17049781> Configure the UIAlertController's title appropriately.
     }
 
-    _elementActions = adoptNS([actions copy]);
-    for (_WKElementAction *action in _elementActions.get())
-        [_interactionSheet addButtonWithTitle:[action title]];
+    for (_WKElementAction *action in actions) {
+        [_interactionSheet _addActionWithTitle:[action title] style:UIAlertActionStyleDefault handler:^{
+            [action _runActionWithElementInfo:_elementInfo.get() view:_view];
+            [self cleanupSheet];
+        } shouldDismissHandler:^{
+            return (BOOL)(!action.dismissalHandler || action.dismissalHandler());
+        }];
+    }
 
-    [_interactionSheet setCancelButtonIndex:[_interactionSheet addButtonWithTitle:WEB_UI_STRING_KEY("Cancel", "Cancel button label in button bar", "Title for Cancel button label in button bar")]];
+    [_interactionSheet addAction:[UIAlertAction actionWithTitle:WEB_UI_STRING_KEY("Cancel", "Cancel button label in button bar", "Title for Cancel button label in button bar")
+                                                          style:UIAlertActionStyleCancel
+                                                        handler:^(UIAlertAction *action) {
+                                                            [self cleanupSheet];
+                                                        }]];
     _view.page->startInteractionWithElementAtPosition(_view.positionInformation.point);
 }
 
@@ -252,7 +247,7 @@ using namespace WebKit;
     _elementInfo = std::move(elementInfo);
 
     if (![_interactionSheet presentSheet])
-        [self actionSheet:_interactionSheet.get() clickedButtonAtIndex:[_interactionSheet cancelButtonIndex]];
+        [self cleanupSheet];
 }
 
 - (void)showLinkSheet
@@ -288,7 +283,7 @@ using namespace WebKit;
     _elementInfo = std::move(elementInfo);
 
     if (![_interactionSheet presentSheet])
-        [self actionSheet:_interactionSheet.get() clickedButtonAtIndex:[_interactionSheet cancelButtonIndex]];
+        [self cleanupSheet];
 }
 
 - (void)showDataDetectorsSheet
@@ -308,33 +303,26 @@ using namespace WebKit;
     NSMutableArray *elementActions = [NSMutableArray array];
     for (NSUInteger actionNumber = 0; actionNumber < [dataDetectorsActions count]; actionNumber++) {
         DDAction *action = [dataDetectorsActions objectAtIndex:actionNumber];
-        [elementActions addObject:[_WKElementAction elementActionWithTitle:[action localizedName] actionHandler:^(_WKActivatedElementInfo *actionInfo) {
-            UIPopoverController *popoverController = nil;
-            if (UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPhone) {
-                [_interactionSheet setUserInteractionEnabled:NO];
-                // <rdar://problem/11015751> Action sheet becomes black if a button is clicked twice on iPad
-                // prevent any further tap on the sheet while DD is loading its view controller, otherwise UIActionSheet goes amok
-
-                popoverController = [_interactionSheet _relinquishPopoverController];
-            }
-
+        _WKElementAction *elementAction = [_WKElementAction elementActionWithTitle:[action localizedName] actionHandler:^(_WKActivatedElementInfo *actionInfo) {
             [[getDDDetectionControllerClass() sharedController] performAction:action
-                                                                       inView:[self superviewForSheet]
-                                                        withPopoverController:popoverController
+                                                          fromAlertController:_interactionSheet.get()
                                                           interactionDelegate:self];
-        }]];
+        }];
+        elementAction.dismissalHandler = ^{
+            return (BOOL)!action.hasUserInterface;
+        };
+        [elementActions addObject:elementAction];
     }
 
     [self _createSheetWithElementActions:elementActions showLinkTitle:NO];
     if (!_interactionSheet)
         return;
 
-    // The implicit second button is "cancel", which is swallowed by the popover at presentation time.
-    if (_interactionSheet.get().numberOfButtons <= 2)
+    if (elementActions.count <= 1)
         _interactionSheet.get().arrowDirections = UIPopoverArrowDirectionUp | UIPopoverArrowDirectionDown;
 
     if (![_interactionSheet presentSheet])
-        [self actionSheet:_interactionSheet.get() clickedButtonAtIndex:[_interactionSheet cancelButtonIndex]];
+        [self cleanupSheet];
 }
 
 - (void)cleanupSheet
@@ -343,11 +331,8 @@ using namespace WebKit;
 
     [_interactionSheet doneWithSheet];
     [_interactionSheet setSheetDelegate:nil];
-    [_interactionSheet setDelegate:nil];
     _interactionSheet = nil;
     _elementInfo = nil;
-
-    _elementActions = nil;
 }
 
 @end

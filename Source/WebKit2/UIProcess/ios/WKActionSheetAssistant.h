@@ -27,7 +27,7 @@
 
 #import "WKActionSheet.h"
 
-#import <UIKit/UIActionSheet.h>
+#import <DataDetectorsUI/DDDetectionController.h>
 #import <UIKit/UIPopoverController.h>
 #import <WebKit/WKDeclarationSpecifiers.h>
 #import <wtf/RetainPtr.h>
@@ -39,7 +39,7 @@ namespace WebKit {
 class WebPageProxy;
 }
 
-@interface WKActionSheetAssistant : NSObject <WKActionSheetDelegate>
+@interface WKActionSheetAssistant : NSObject <WKActionSheetDelegate, DDDetectionControllerInteractionDelegate>
 
 - (id)initWithView:(WKContentView *)view;
 - (void)showLinkSheet;

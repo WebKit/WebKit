@@ -47,6 +47,7 @@ typedef void (^WKElementActionHandlerInternal)(WKContentView *, _WKActivatedElem
 @implementation _WKElementAction  {
     RetainPtr<NSString> _title;
     WKElementActionHandlerInternal _actionHandler;
+    WKElementActionDismissalHandler _dismissalHandler;
 }
 
 - (id)_initWithTitle:(NSString *)title actionHandler:(WKElementActionHandlerInternal)handler type:(_WKElementActionType)type
@@ -63,6 +64,7 @@ typedef void (^WKElementActionHandlerInternal)(WKContentView *, _WKActivatedElem
 - (void)dealloc
 {
     [_actionHandler release];
+    [_dismissalHandler release];
 
     [super dealloc];
 }

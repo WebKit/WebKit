@@ -757,8 +757,10 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
     if ([gestureRecognizer state] == UIGestureRecognizerStateBegan) {
         SEL action = [self _actionForLongPress];
-        if (action)
+        if (action) {
             [self performSelector:action];
+            [self _cancelLongPressGestureRecognizer];
+        }
     }
 }
 

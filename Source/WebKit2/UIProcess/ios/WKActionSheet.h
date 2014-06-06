@@ -25,13 +25,13 @@
 
 #if PLATFORM(IOS)
 
-#import <UIKit/UIActionSheet.h>
+#import <UIKit/UIAlertController.h>
 #import <UIKit/UIPopoverController.h>
 
 @protocol WKActionSheetDelegate;
 @class WKContentView;
 
-@interface WKActionSheet : UIActionSheet
+@interface WKActionSheet : UIAlertController
 
 @property (nonatomic, assign) id <WKActionSheetDelegate> sheetDelegate;
 @property (nonatomic) UIPopoverArrowDirection arrowDirections;
@@ -42,7 +42,7 @@
 - (void)updateSheetPosition;
 @end
 
-@protocol WKActionSheetDelegate<UIActionSheetDelegate>
+@protocol WKActionSheetDelegate
 @required
 - (UIView *)hostViewForSheet;
 - (CGRect)initialPresentationRectInHostViewForSheet;
