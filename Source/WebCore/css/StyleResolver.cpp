@@ -1132,6 +1132,7 @@ static inline bool isDisplayGridBox(EDisplay display)
 #if ENABLE(CSS_GRID_LAYOUT)
     return display == GRID || display == INLINE_GRID;
 #else
+    UNUSED_PARAM(display);
     return false;
 #endif
 }
