@@ -1,3 +1,15 @@
+2014-06-06  Brady Eidson  <beidson@apple.com>
+
+        Initialize a char* that needs to be initialized.
+        <rdar://problem/15840022> and https://bugs.webkit.org/show_bug.cgi?id=133585
+
+        Reviewed by Mark Rowe.
+
+        r152134 (erroneously) removed this initialization.
+
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::prepare): tail should start out initialized to 0.
+
 2014-06-06  Alexey Proskuryakov  <ap@apple.com>
 
         [iOS] Support pasting HTML
