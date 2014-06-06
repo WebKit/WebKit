@@ -226,11 +226,6 @@ void MediaControlsHost::setControlsDependOnPageScaleFactor(bool value)
     m_mediaElement->setMediaControlsDependOnPageScaleFactor(value);
 }
 
-void MediaControlsHost::setControllerJSObject(JSC::ExecState* exec, JSC::JSObject* controller)
-{
-    m_controller = JSC::Strong<JSC::JSObject>(exec->vm(), controller);
-}
-
 }
 
 #endif

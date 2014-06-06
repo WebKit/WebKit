@@ -1,3 +1,20 @@
+2014-06-06  Brent Fulgham  <bfulgham@apple.com>
+
+        ROLLOUT: r169630: Caused a retain cycle.
+        https://bugs.webkit.org/show_bug.cgi?id=133463
+        <rdar://problem/17098100>
+
+        Rolling out this change as it introduced a retain cycle.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::setControllerJSObject): Deleted.
+        * Modules/mediacontrols/MediaControlsHost.h:
+        (WebCore::MediaControlsHost::controllerJSValue):
+        (WebCore::MediaControlsHost::setControllerJSValue):
+        (WebCore::MediaControlsHost::controllerJSObject): Deleted.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+
 2014-06-05  Dean Jackson  <dino@apple.com>
 
         StyleResolver doesn't compile without CSS_GRID_LAYOUT enabled

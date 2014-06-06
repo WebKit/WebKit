@@ -30,7 +30,6 @@
 
 #include "ScriptState.h"
 #include <bindings/ScriptObject.h>
-#include <heap/Strong.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -70,15 +69,15 @@ public:
     bool controlsDependOnPageScaleFactor() const;
     void setControlsDependOnPageScaleFactor(bool v);
 
-    JSC::JSObject* controllerJSObject() const { return m_controller.get(); }
-    void setControllerJSObject(JSC::ExecState*, JSC::JSObject*);
+    JSC::JSValue controllerJSValue() const { return m_controller; }
+    void setControllerJSValue(JSC::JSValue controller) { m_controller = controller; }
 
 private:
     MediaControlsHost(HTMLMediaElement*);
 
     HTMLMediaElement* m_mediaElement;
     RefPtr<MediaControlTextTrackContainerElement> m_textTrackContainer;
-    JSC::Strong<JSC::JSObject> m_controller;
+    JSC::JSValue m_controller;
 };
 
 }
