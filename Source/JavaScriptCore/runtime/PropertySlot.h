@@ -52,8 +52,7 @@ class PropertySlot {
         TypeUnset,
         TypeValue,
         TypeGetter,
-        TypeCustom,
-        TypeCustomIndex
+        TypeCustom
     };
 
     enum CacheabilityType {
@@ -72,7 +71,6 @@ public:
     }
 
     typedef EncodedJSValue (*GetValueFunc)(ExecState*, JSObject* slotBase, EncodedJSValue thisValue, PropertyName);
-    typedef EncodedJSValue (*GetIndexValueFunc)(ExecState*, JSObject* slotBase, EncodedJSValue thisValue, unsigned);
 
     JSValue getValue(ExecState*, PropertyName) const;
     JSValue getValue(ExecState*, unsigned propertyName) const;
@@ -180,19 +178,6 @@ public:
         m_offset = !invalidOffset;
     }
 
-    void setCustomIndex(JSObject* slotBase, unsigned attributes, unsigned index, GetIndexValueFunc getIndexValue)
-    {
-        ASSERT(getIndexValue);
-        m_data.customIndex.getIndexValue = getIndexValue;
-        m_data.customIndex.index = index;
-        m_attributes = attributes;
-
-        ASSERT(slotBase);
-        m_slotBase = slotBase;
-        m_propertyType = TypeCustomIndex;
-        m_offset = invalidOffset;
-    }
-
     void setGetterSlot(JSObject* slotBase, unsigned attributes, GetterSetter* getterSetter)
     {
         ASSERT(getterSetter);
@@ -244,10 +229,6 @@ private:
         struct {
             GetValueFunc getValue;
         } custom;
-        struct {
-            GetIndexValueFunc getIndexValue;
-            unsigned index;
-        } customIndex;
     } m_data;
 
     PropertyType m_propertyType;

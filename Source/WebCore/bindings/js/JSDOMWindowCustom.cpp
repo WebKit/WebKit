@@ -75,11 +75,6 @@ static EncodedJSValue childFrameGetter(ExecState* exec, JSObject* slotBase, Enco
     return JSValue::encode(toJS(exec, jsCast<JSDOMWindow*>(slotBase)->impl().frame()->tree().scopedChild(propertyNameToAtomicString(propertyName))->document()->domWindow()));
 }
 
-static EncodedJSValue indexGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, unsigned index)
-{
-    return JSValue::encode(toJS(exec, jsCast<JSDOMWindow*>(slotBase)->impl().frame()->tree().scopedChild(index)->document()->domWindow()));
-}
-
 static EncodedJSValue namedItemGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
 {
     JSDOMWindowBase* thisObj = jsCast<JSDOMWindow*>(slotBase);
@@ -232,7 +227,8 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     unsigned i = propertyName.asIndex();
     if (i < thisObject->impl().frame()->tree().scopedChildCount()) {
         ASSERT(i != PropertyName::NotAnIndex);
-        slot.setCustomIndex(thisObject, ReadOnly | DontDelete | DontEnum, i, indexGetter);
+        slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum,
+            toJS(exec, thisObject->impl().frame()->tree().scopedChild(i)->document()->domWindow()));
         return true;
     }
 
@@ -308,7 +304,8 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
     // allow window[1] or parent[1] etc. (#56983)
     if (index < thisObject->impl().frame()->tree().scopedChildCount()) {
         ASSERT(index != PropertyName::NotAnIndex);
-        slot.setCustomIndex(thisObject, ReadOnly | DontDelete | DontEnum, index, indexGetter);
+        slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum,
+            toJS(exec, thisObject->impl().frame()->tree().scopedChild(index)->document()->domWindow()));
         return true;
     }
 

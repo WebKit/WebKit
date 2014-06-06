@@ -1,3 +1,37 @@
+2014-06-06  Andreas Kling  <akling@apple.com>
+
+        Indexed getters should return values directly on the PropertySlot.
+        <https://webkit.org/b/133586>
+
+        Make indexed getters more efficient by using PropertySlot::setValue()
+        to pass the value directly back through the slot, instead of giving it
+        a function pointer that JSC would then immediately call back through
+        to retrieve the value.
+
+        The function pointer approach would make sense if we did inline caching
+        of indexed getters but since we currently don't, this is pure overhead.
+
+        Reviewed by Darin Adler.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::getOwnPropertySlotDelegate):
+        (WebCore::cssPropertyGetterPixelOrPosPrefixCallback): Deleted.
+        (WebCore::cssPropertyGetterCallback): Deleted.
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex):
+        (WebCore::indexGetter): Deleted.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateHeader):
+        (GetIndexedGetterExpression):
+        (GenerateImplementation):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::getOwnPropertySlot):
+        (JSC::RuntimeArray::getOwnPropertySlotByIndex):
+        (JSC::RuntimeArray::indexGetter): Deleted.
+        * bridge/runtime_array.h:
+
 2014-06-06  Brent Fulgham  <bfulgham@apple.com>
 
         GenericCueData elements prematurely removed

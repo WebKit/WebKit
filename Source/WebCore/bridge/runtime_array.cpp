@@ -68,12 +68,6 @@ EncodedJSValue RuntimeArray::lengthGetter(ExecState* exec, JSObject*, EncodedJSV
     return JSValue::encode(jsNumber(thisObject->getLength()));
 }
 
-EncodedJSValue RuntimeArray::indexGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, unsigned index)
-{
-    RuntimeArray* thisObj = jsCast<RuntimeArray*>(slotBase);
-    return JSValue::encode(thisObj->getConcreteArray()->valueAt(exec, index));
-}
-
 void RuntimeArray::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(object);
@@ -98,7 +92,8 @@ bool RuntimeArray::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
     unsigned index = propertyName.asIndex();
     if (index < thisObject->getLength()) {
         ASSERT(index != PropertyName::NotAnIndex);
-        slot.setCustomIndex(thisObject, DontDelete | DontEnum, index, thisObject->indexGetter);
+        slot.setValue(thisObject, DontDelete | DontEnum,
+            thisObject->getConcreteArray()->valueAt(exec, index));
         return true;
     }
     
@@ -109,7 +104,8 @@ bool RuntimeArray::getOwnPropertySlotByIndex(JSObject* object, ExecState *exec, 
 {
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(object);
     if (index < thisObject->getLength()) {
-        slot.setCustomIndex(thisObject, DontDelete | DontEnum, index, thisObject->indexGetter);
+        slot.setValue(thisObject, DontDelete | DontEnum,
+            thisObject->getConcreteArray()->valueAt(exec, index));
         return true;
     }
     

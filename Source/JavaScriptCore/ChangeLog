@@ -1,3 +1,17 @@
+2014-06-06  Andreas Kling  <akling@apple.com>
+
+        Indexed getters should return values directly on the PropertySlot.
+        <https://webkit.org/b/133586>
+
+        Remove PropertySlot's custom index mode.
+
+        Reviewed by Darin Adler.
+
+        * runtime/JSObject.h:
+        (JSC::PropertySlot::getValue):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::setCustomIndex): Deleted.
+
 2014-06-04  Timothy Horton  <timothy_horton@apple.com>
 
         iOS Debug build fix

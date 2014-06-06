@@ -1560,8 +1560,6 @@ ALWAYS_INLINE JSValue PropertySlot::getValue(ExecState* exec, PropertyName prope
 {
     if (m_propertyType == TypeValue)
         return JSValue::decode(m_data.value);
-    if (m_propertyType == TypeCustomIndex)
-        return JSValue::decode(m_data.customIndex.getIndexValue(exec, slotBase(), JSValue::encode(m_thisValue), m_data.customIndex.index));
     if (m_propertyType == TypeGetter)
         return functionGetter(exec);
     return JSValue::decode(m_data.custom.getValue(exec, slotBase(), JSValue::encode(m_thisValue), propertyName));
@@ -1571,8 +1569,6 @@ ALWAYS_INLINE JSValue PropertySlot::getValue(ExecState* exec, unsigned propertyN
 {
     if (m_propertyType == TypeValue)
         return JSValue::decode(m_data.value);
-    if (m_propertyType == TypeCustomIndex)
-        return JSValue::decode(m_data.customIndex.getIndexValue(exec, slotBase(), JSValue::encode(m_thisValue), m_data.customIndex.index));
     if (m_propertyType == TypeGetter)
         return functionGetter(exec);
     return JSValue::decode(m_data.custom.getValue(exec, slotBase(), JSValue::encode(m_thisValue), Identifier::from(exec, propertyName)));

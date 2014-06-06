@@ -79,7 +79,6 @@ protected:
     }
 
     static const unsigned StructureFlags = JSC::HasImpureGetOwnPropertySlot | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::MasqueradesAsUndefined | JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames | JSC::OverridesVisitChildren | Base::StructureFlags;
-    static JSC::EncodedJSValue indexGetter(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, unsigned);
 private:
     static bool canGetItemsForName(JSC::ExecState*, TestEventTarget*, JSC::PropertyName);
     static JSC::EncodedJSValue nameGetter(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);

@@ -432,7 +432,7 @@ sub GenerateGetOwnPropertySlotBody
         } else {
             push(@getOwnPropertySlotImpl, "        unsigned attributes = ${namespaceMaybe}DontDelete | ${namespaceMaybe}ReadOnly;\n");
         }
-        push(@getOwnPropertySlotImpl, "        slot.setCustomIndex(thisObject, attributes, index, indexGetter);\n");
+        push(@getOwnPropertySlotImpl, "        slot.setValue(thisObject, attributes, " . GetIndexedGetterExpression($indexedGetterFunction) . ");\n");
         push(@getOwnPropertySlotImpl, "        return true;\n");
         push(@getOwnPropertySlotImpl, "    }\n");
     }
@@ -1126,11 +1126,6 @@ sub GenerateHeader
     }
     push(@headerContent, "Base::StructureFlags;\n");
 
-    # Index getter
-    if ($indexedGetterFunction) {
-        push(@headerContent, "    static JSC::EncodedJSValue indexGetter(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, unsigned);\n");
-    }
-
     # Index setter
     if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
         push(@headerContent, "    void indexSetter(JSC::ExecState*, unsigned index, JSC::JSValue);\n");
@@ -1721,6 +1716,15 @@ sub GetCastingHelperForBaseObject
     return "jsCast<JS" . $interface->name . "*>";
 }
 
+sub GetIndexedGetterExpression
+{
+    my $indexedGetterFunction = shift;
+    if ($indexedGetterFunction->signature->type eq "DOMString") {
+        return "jsStringOrUndefined(exec, thisObject->impl().item(index))";
+    }
+    return "toJS(exec, thisObject->globalObject(), thisObject->impl().item(index))";
+}
+
 sub GenerateImplementation
 {
     my ($object, $interface) = @_;
@@ -2107,7 +2111,7 @@ sub GenerateImplementation
                 } else {
                     push(@implContent, "        unsigned attributes = DontDelete | ReadOnly;\n");
                 }
-                push(@implContent, "        slot.setCustomIndex(thisObject, attributes, index, thisObject->indexGetter);\n");
+                push(@implContent, "        slot.setValue(thisObject, attributes, " . GetIndexedGetterExpression($indexedGetterFunction) . ");\n");
                 push(@implContent, "        return true;\n");
                 push(@implContent, "    }\n");
             }
@@ -2889,17 +2893,9 @@ sub GenerateImplementation
     }
 
     if ($indexedGetterFunction) {
-        push(@implContent, "\nEncodedJSValue ${className}::indexGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, unsigned index)\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    ${className}* thisObj = jsCast<$className*>(slotBase);\n");
-        push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObj, info());\n");
         if ($indexedGetterFunction->signature->type eq "DOMString") {
             $implIncludes{"URL.h"} = 1;
-            push(@implContent, "    return JSValue::encode(jsStringOrUndefined(exec, thisObj->impl().item(index)));\n");
-        } else {
-            push(@implContent, "    return JSValue::encode(toJS(exec, thisObj->globalObject(), thisObj->impl().item(index)));\n");
         }
-        push(@implContent, "}\n\n");
         if ($interfaceName =~ /^HTML\w*Collection$/ or $interfaceName eq "RadioNodeList") {
             $implIncludes{"JSNode.h"} = 1;
             $implIncludes{"Node.h"} = 1;

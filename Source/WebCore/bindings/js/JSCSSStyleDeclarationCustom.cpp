@@ -297,14 +297,6 @@ static inline JSValue cssPropertyGetterPixelOrPosPrefix(ExecState* exec, JSCSSSt
     return getPropertyValueFallback(exec, thisObj, propertyID);
 }
 
-static EncodedJSValue cssPropertyGetterPixelOrPosPrefixCallback(ExecState* exec, JSObject*, EncodedJSValue thisValue, unsigned propertyID)
-{
-    JSCSSStyleDeclaration* thisObject = jsDynamicCast<JSCSSStyleDeclaration*>(JSValue::decode(thisValue));
-    if (!thisObject)
-        return throwVMTypeError(exec);
-    return JSValue::encode(cssPropertyGetterPixelOrPosPrefix(exec, thisObject, propertyID));
-}
-
 static inline JSValue cssPropertyGetter(ExecState* exec, JSCSSStyleDeclaration* thisObj, unsigned propertyID)
 {
     RefPtr<CSSValue> v = thisObj->impl().getPropertyCSSValueInternal(static_cast<CSSPropertyID>(propertyID));
@@ -314,24 +306,16 @@ static inline JSValue cssPropertyGetter(ExecState* exec, JSCSSStyleDeclaration* 
     return getPropertyValueFallback(exec, thisObj, propertyID);
 }
 
-static EncodedJSValue cssPropertyGetterCallback(ExecState* exec, JSObject*, EncodedJSValue thisValue, unsigned propertyID)
-{
-    JSCSSStyleDeclaration* thisObject = jsDynamicCast<JSCSSStyleDeclaration*>(JSValue::decode(thisValue));
-    if (!thisObject)
-        return throwVMTypeError(exec);
-    return JSValue::encode(cssPropertyGetter(exec, thisObject, propertyID));
-}
-
-bool JSCSSStyleDeclaration::getOwnPropertySlotDelegate(ExecState*, PropertyName propertyIdentifier, PropertySlot& slot)
+bool JSCSSStyleDeclaration::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyIdentifier, PropertySlot& slot)
 {
     CSSPropertyInfo propertyInfo = cssPropertyIDForJSCSSPropertyName(propertyIdentifier);
     if (!propertyInfo.propertyID)
         return false;
 
     if (propertyInfo.hadPixelOrPosPrefix)
-        slot.setCustomIndex(this, DontDelete, static_cast<unsigned>(propertyInfo.propertyID), cssPropertyGetterPixelOrPosPrefixCallback);
+        slot.setValue(this, DontDelete, cssPropertyGetterPixelOrPosPrefix(exec, this, propertyInfo.propertyID));
     else
-        slot.setCustomIndex(this, DontDelete, static_cast<unsigned>(propertyInfo.propertyID), cssPropertyGetterCallback);
+        slot.setValue(this, DontDelete, cssPropertyGetter(exec, this, propertyInfo.propertyID));
     return true;
 }
 
