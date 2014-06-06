@@ -177,10 +177,10 @@ bool Extensions3DOpenGL::supportsExtension(const String& name)
     if (name == "GL_OES_rgb8_rgba8")
         return true;
 
-    // If GL_ARB_texture_float is available then we report GL_OES_texture_float,
+    // If GL_ARB_texture_float or GL_OES_texture_float is available then we report
     // GL_OES_texture_half_float, GL_OES_texture_float_linear and GL_OES_texture_half_float_linear as available.
     if (name == "GL_OES_texture_float" || name == "GL_OES_texture_half_float" || name == "GL_OES_texture_float_linear" || name == "GL_OES_texture_half_float_linear")
-        return m_availableExtensions.contains("GL_ARB_texture_float");
+        return m_availableExtensions.contains("GL_ARB_texture_float") || m_availableExtensions.contains("GL_OES_texture_float");
 
     // GL_OES_vertex_array_object
     if (name == "GL_OES_vertex_array_object") {

@@ -1,3 +1,24 @@
+2014-06-06  Dean Jackson  <dino@apple.com>
+
+        [iOS WebGL] Float texture extension has a slightly different name
+        https://bugs.webkit.org/show_bug.cgi?id=133580
+        <rdar://problem/17113451>
+
+        Reviewed by Brady Eidson.
+
+        Floating point textures were not available on iOS, because we were
+        looking for the wrong extension.
+
+        Covered by the Khronos test (and in LayoutTests):
+        conformance/extensions/oes-texture-float.html
+
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::supportsExtension): Look for GL_OES_texture_float
+        as well as GL_ARB_texture_float.
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::texImage2D): Increase the set of things skipped
+        on PLATFORM(IOS) since they are supported natively there.
+
 2014-06-05  David Hyatt  <hyatt@apple.com>
 
         REGRESSION: Hit testing of composited elements is broken in new multicolumn layout.
