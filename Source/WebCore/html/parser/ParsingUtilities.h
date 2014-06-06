@@ -72,5 +72,12 @@ void skipWhile(const CharType*& position, const CharType* end)
         ++position;
 }
 
+template<typename CharType, bool characterPredicate(CharType)>
+void reverseSkipWhile(const CharType*& position, const CharType* start)
+{
+    while (position >= start && characterPredicate(*position))
+        --position;
+}
+
 #endif
 

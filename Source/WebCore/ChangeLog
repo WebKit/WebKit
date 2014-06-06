@@ -1,3 +1,75 @@
+2014-06-05  Yoav Weiss  <yoav@yoav.ws>
+
+        Align srcset parser with recent spec changes
+        https://bugs.webkit.org/show_bug.cgi?id=133504
+
+        Reviewed by Darin Adler.
+
+        New tests were added to fast/hidpi/image-srcset-invalid-descriptor.html
+
+        The srcset parser changes align it with the spec:
+        http://picture.responsiveimages.org/#parse-srcset-attr.
+        The spec changes are meant to give the parser better future
+        compatibility, and enable it to work well with the 'w' descriptor, the
+        soon to be added 'h' descriptor and function descriptors (e.g.
+        future-descriptor(a, b, c) ).
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::setBestFitURLAndDPRFromImageCandidate):
+        (WebCore::HTMLImageElement::parseAttribute):
+        * html/HTMLImageElement.h:
+        * html/parser/HTMLParserIdioms.h:
+        (WebCore::isHTMLSpace):
+        (WebCore::isComma):
+        (WebCore::isHTMLSpaceOrComma):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttributes):
+        * html/parser/HTMLSrcsetParser.cpp:
+        (WebCore::compareByDensity):
+        (WebCore::appendDescriptorAndReset):
+        (WebCore::appendCharacter):
+        (WebCore::isEOF):
+        (WebCore::tokenizeDescriptors):
+        (WebCore::stringViewToFloat):
+        (WebCore::stringViewToInt):
+        (WebCore::parseDescriptors):
+        (WebCore::parseImageCandidatesFromSrcsetAttribute):
+        (WebCore::pickBestImageCandidate):
+        (WebCore::bestFitSourceForImageAttributes):
+        (WebCore::compareByScaleFactor): Deleted.
+        (WebCore::parseImagesWithScaleFromSrcsetAttribute): Deleted.
+        * html/parser/HTMLSrcsetParser.h:
+        (WebCore::DescriptorParsingResult::DescriptorParsingResult):
+        (WebCore::DescriptorParsingResult::hasDensity):
+        (WebCore::DescriptorParsingResult::hasWidth):
+        (WebCore::DescriptorParsingResult::hasHeight):
+        (WebCore::DescriptorParsingResult::density):
+        (WebCore::DescriptorParsingResult::resourceWidth):
+        (WebCore::DescriptorParsingResult::resourceHeight):
+        (WebCore::DescriptorParsingResult::setResourceWidth):
+        (WebCore::DescriptorParsingResult::setResourceHeight):
+        (WebCore::DescriptorParsingResult::setDensity):
+        (WebCore::ImageCandidate::ImageCandidate):
+        (WebCore::ImageCandidate::toString):
+        (WebCore::ImageCandidate::url):
+        (WebCore::ImageCandidate::setDensity):
+        (WebCore::ImageCandidate::density):
+        (WebCore::ImageCandidate::resourceWidth):
+        (WebCore::ImageCandidate::srcOrigin):
+        (WebCore::ImageCandidate::isEmpty):
+        (WebCore::ImageWithScale::ImageWithScale): Deleted.
+        (WebCore::ImageWithScale::imageURL): Deleted.
+        (WebCore::ImageWithScale::scaleFactor): Deleted.
+        * html/parser/ParsingUtilities.h: Renamed from Source/WebCore/html/track/ParsingUtilities.h.
+        (skipExactly):
+        (skipUntil):
+        (skipWhile):
+        (reverseSkipWhile):
+
 2014-06-05 Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Current media controls look different from previous media controls. Adjusted CSS to make media elements more similar by adding padding, adjusting hues/svg, resizing elements, etc.

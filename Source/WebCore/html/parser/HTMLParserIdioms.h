@@ -34,7 +34,6 @@ namespace WebCore {
 class Decimal;
 
 // Space characters as defined by the HTML specification.
-bool isHTMLSpace(UChar);
 bool isHTMLLineBreak(UChar);
 bool isNotHTMLSpace(UChar);
 bool isHTMLSpaceButNotLineBreak(UChar character);
@@ -66,8 +65,8 @@ bool parseHTMLInteger(const String&, int&);
 bool parseHTMLNonNegativeInteger(const String&, unsigned int&);
 
 // Inline implementations of some of the functions declared above.
-
-inline bool isHTMLSpace(UChar character)
+template<typename CharType>
+inline bool isHTMLSpace(CharType character)
 {
     // Histogram from Apple's page load test combined with some ad hoc browsing some other test suites.
     //
@@ -85,6 +84,18 @@ inline bool isHTMLSpace(UChar character)
 inline bool isHTMLLineBreak(UChar character)
 {
     return character <= '\r' && (character == '\n' || character == '\r');
+}
+
+template<typename CharType>
+inline bool isComma(CharType character)
+{
+    return character == ',';
+}
+
+template<typename CharType>
+inline bool isHTMLSpaceOrComma(CharType character)
+{
+    return isComma(character) || isHTMLSpace<CharType>(character);
 }
 
 inline bool isNotHTMLSpace(UChar character)

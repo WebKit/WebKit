@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class HTMLFormElement;
+struct ImageCandidate;
 
 class HTMLImageElement : public HTMLElement, public FormNamedItem {
     friend class HTMLFormElement;
@@ -99,6 +100,7 @@ private:
 
     virtual void didAttachRenderers() override;
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    void setBestFitURLAndDPRFromImageCandidate(const ImageCandidate&);
 
     virtual bool canStartSelection() const override;
 

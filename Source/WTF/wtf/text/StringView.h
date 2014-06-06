@@ -142,6 +142,20 @@ public:
         return String(characters16(), length());
     }
 
+    float toFloat(bool& isValid)
+    {
+        if (is8Bit())
+            return charactersToFloat(characters8(), length(), &isValid);
+        return charactersToFloat(characters16(), length(), &isValid);
+    }
+
+    int toInt(bool& isValid)
+    {
+        if (is8Bit())
+            return charactersToInt(characters8(), length(), &isValid);
+        return charactersToInt(characters16(), length(), &isValid);
+    }
+
     String toStringWithoutCopying() const
     {
         if (is8Bit())

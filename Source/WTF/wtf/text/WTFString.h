@@ -50,7 +50,7 @@ uint64_t charactersToUInt64Strict(const UChar*, size_t, bool* ok = 0, int base =
 intptr_t charactersToIntPtrStrict(const LChar*, size_t, bool* ok = 0, int base = 10);
 intptr_t charactersToIntPtrStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
 
-int charactersToInt(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
+WTF_EXPORT_STRING_API int charactersToInt(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
 WTF_EXPORT_STRING_API int charactersToInt(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
 unsigned charactersToUInt(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
 unsigned charactersToUInt(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage

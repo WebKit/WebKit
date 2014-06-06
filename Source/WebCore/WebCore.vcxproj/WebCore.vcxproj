@@ -20674,6 +20674,7 @@
     <ClInclude Include="..\html\parser\HTMLTreeBuilder.h" />
     <ClInclude Include="..\html\parser\InputStreamPreprocessor.h" />
     <ClInclude Include="..\html\parser\NestingLevelIncrementer.h" />
+    <ClInclude Include="..\html\parser\ParsingUtilities.h" />
     <ClInclude Include="..\html\parser\TextDocumentParser.h" />
     <ClInclude Include="..\html\parser\XSSAuditor.h" />
     <ClInclude Include="..\html\parser\XSSAuditorDelegate.h" />
@@ -20696,7 +20697,6 @@
     <ClInclude Include="..\html\track\InbandTextTrack.h" />
     <ClInclude Include="..\html\track\InbandWebVTTTextTrack.h" />
     <ClInclude Include="..\html\track\LoadableTextTrack.h" />
-    <ClInclude Include="..\html\track\ParsingUtilities.h" />
     <ClInclude Include="..\html\track\TextTrack.h" />
     <ClInclude Include="..\html\track\TextTrackCue.h" />
     <ClInclude Include="..\html\track\TextTrackCueList.h" />

@@ -123,19 +123,23 @@ const AtomicString& HTMLImageElement::imageSourceURL() const
     return m_bestFitImageURL.isEmpty() ? fastGetAttribute(srcAttr) : m_bestFitImageURL;
 }
 
+void HTMLImageElement::setBestFitURLAndDPRFromImageCandidate(const ImageCandidate& candidate)
+{
+    m_bestFitImageURL = candidate.string.toString();
+    if (candidate.density >= 0)
+        m_imageDevicePixelRatio = 1 / candidate.density;
+    if (renderer() && renderer()->isImage())
+        toRenderImage(renderer())->setImageDevicePixelRatio(m_imageDevicePixelRatio);
+}
+
 void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == altAttr) {
         if (renderer() && renderer()->isRenderImage())
             toRenderImage(renderer())->updateAltText();
     } else if (name == srcAttr || name == srcsetAttr) {
-        ImageWithScale candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), fastGetAttribute(srcAttr), fastGetAttribute(srcsetAttr));
-        m_bestFitImageURL = candidate.imageURL(fastGetAttribute(srcAttr), fastGetAttribute(srcsetAttr));
-        float candidateScaleFactor = candidate.scaleFactor();
-        if (candidateScaleFactor > 0)
-            m_imageDevicePixelRatio = 1 / candidateScaleFactor;
-        if (renderer() && renderer()->isImage())
-            toRenderImage(renderer())->setImageDevicePixelRatio(m_imageDevicePixelRatio);
+        ImageCandidate candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), fastGetAttribute(srcAttr), fastGetAttribute(srcsetAttr));
+        setBestFitURLAndDPRFromImageCandidate(candidate);
         m_imageLoader.updateFromElementIgnoringPreviousError();
     } else if (name == usemapAttr) {
         setIsLink(!value.isNull() && !shouldProhibitLinks(this));

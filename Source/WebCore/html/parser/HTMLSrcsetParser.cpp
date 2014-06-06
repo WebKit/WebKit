@@ -1,158 +1,268 @@
 /*
  * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- * 2.  Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
+ * modification, are permitted provided that the following conditions are
+ * met:
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
 #include "HTMLSrcsetParser.h"
 
+#include "HTMLParserIdioms.h"
+#include "ParsingUtilities.h"
+
 namespace WebCore {
 
-typedef Vector<ImageWithScale> ImageCandidates;
-
-static inline bool compareByScaleFactor(const ImageWithScale& first, const ImageWithScale& second)
+static inline bool compareByDensity(const ImageCandidate& first, const ImageCandidate& second)
 {
-    return first.scaleFactor() < second.scaleFactor();
+    return first.density < second.density;
 }
 
-static bool parseDescriptors(const String& attribute, size_t start, size_t end, float& imageScaleFactor)
-{
-    size_t descriptorStart;
-    size_t descriptorEnd;
-    size_t position = start;
-    bool isFoundScaleFactor = false;
-    bool isEmptyDescriptor = !(end > start);
-    bool isValid = false;
+enum DescriptorTokenizerState {
+    Start,
+    InParenthesis,
+    AfterToken,
+};
 
-    while (position < end) {
-        while (isHTMLSpace(attribute[position]) && position < end)
-            ++position;
+template<typename CharType>
+static void appendDescriptorAndReset(const CharType*& descriptorStart, const CharType* position, Vector<StringView>& descriptors)
+{
+    if (position > descriptorStart)
+        descriptors.append(StringView(descriptorStart, position - descriptorStart));
+    descriptorStart = nullptr;
+}
+
+// The following is called appendCharacter to match the spec's terminology.
+template<typename CharType>
+static void appendCharacter(const CharType* descriptorStart, const CharType* position)
+{
+    // Since we don't copy the tokens, this just set the point where the descriptor tokens start.
+    if (!descriptorStart)
         descriptorStart = position;
-        while (isNotHTMLSpace(attribute[position]) && position < end)
-            ++position;
-        descriptorEnd = position;
-
-        // Leave if there is only whitespace at the end of the descriptors
-        if (descriptorEnd <= descriptorStart)
-            break;
-
-        --descriptorEnd;
-        // This part differs from the spec as the current implementation only supports pixel density descriptors.
-        if (attribute[descriptorEnd] != 'x')
-            continue;
-
-        if (isFoundScaleFactor)
-            return false;
-
-        if (attribute.is8Bit())
-            imageScaleFactor = charactersToFloat(attribute.characters8() + descriptorStart, descriptorEnd - descriptorStart, &isValid);
-        else
-            imageScaleFactor = charactersToFloat(attribute.characters16() + descriptorStart, descriptorEnd - descriptorStart, &isValid);
-        isFoundScaleFactor = true;
-    }
-
-    return isEmptyDescriptor || isValid;
 }
 
-// See the specifications for more details about the algorithm to follow.
-// http://www.w3.org/TR/2013/WD-html-srcset-20130228/#processing-the-image-candidates.
-static void parseImagesWithScaleFromSrcsetAttribute(const String& srcsetAttribute, ImageCandidates& imageCandidates)
+template<typename CharType>
+static bool isEOF(const CharType* position, const CharType* end)
 {
-    ASSERT(imageCandidates.isEmpty());
+    return position >= end;
+}
 
-    size_t imageCandidateStart = 0;
-    unsigned srcsetAttributeLength = srcsetAttribute.length();
-
-    while (imageCandidateStart < srcsetAttributeLength) {
-        float imageScaleFactor = 1;
-        size_t separator;
-
-        // 4. Splitting loop: Skip whitespace.
-        size_t imageURLStart = srcsetAttribute.find(isNotHTMLSpace, imageCandidateStart);
-        if (imageURLStart == notFound)
-            break;
-        // If The current candidate is either totally empty or only contains space, skipping.
-        if (srcsetAttribute[imageURLStart] == ',') {
-            imageCandidateStart = imageURLStart + 1;
-            continue;
-        }
-        // 5. Collect a sequence of characters that are not space characters, and let that be url.
-        size_t imageURLEnd = srcsetAttribute.find(isHTMLSpace, imageURLStart + 1);
-        if (imageURLEnd == notFound) {
-            imageURLEnd = srcsetAttributeLength;
-            separator = srcsetAttributeLength;
-        } else if (srcsetAttribute[imageURLEnd - 1] == ',') {
-            --imageURLEnd;
-            separator = imageURLEnd;
-        } else {
-            // 7. Collect a sequence of characters that are not "," (U+002C) characters, and let that be descriptors.
-            size_t imageScaleStart = srcsetAttribute.find(isNotHTMLSpace, imageURLEnd + 1);
-            imageScaleStart = (imageScaleStart == notFound) ? srcsetAttributeLength : imageScaleStart;
-            size_t imageScaleEnd = srcsetAttribute.find(',' , imageScaleStart + 1);
-            imageScaleEnd = (imageScaleEnd == notFound) ? srcsetAttributeLength : imageScaleEnd;
-
-            if (!parseDescriptors(srcsetAttribute, imageScaleStart, imageScaleEnd, imageScaleFactor)) {
-                imageCandidateStart = imageScaleEnd + 1;
-                continue;
+template<typename CharType>
+static void tokenizeDescriptors(const CharType*& position, const CharType* attributeEnd, Vector<StringView>& descriptors)
+{
+    DescriptorTokenizerState state = Start;
+    const CharType* descriptorsStart = position;
+    const CharType* currentDescriptorStart = descriptorsStart;
+    for (; ; ++position) {
+        switch (state) {
+        case Start:
+            if (isEOF(position, attributeEnd)) {
+                appendDescriptorAndReset(currentDescriptorStart, attributeEnd, descriptors);
+                return;
             }
-            separator = imageScaleEnd;
+            if (isComma(*position)) {
+                appendDescriptorAndReset(currentDescriptorStart, position, descriptors);
+                ++position;
+                return;
+            }
+            if (isHTMLSpace(*position)) {
+                appendDescriptorAndReset(currentDescriptorStart, position, descriptors);
+                currentDescriptorStart = position + 1;
+                state = AfterToken;
+            } else if (*position == '(') {
+                appendCharacter(currentDescriptorStart, position);
+                state = InParenthesis;
+            } else
+                appendCharacter(currentDescriptorStart, position);
+            break;
+        case InParenthesis:
+            if (isEOF(position, attributeEnd)) {
+                appendDescriptorAndReset(currentDescriptorStart, attributeEnd, descriptors);
+                return;
+            }
+            if (*position == ')') {
+                appendCharacter(currentDescriptorStart, position);
+                state = Start;
+            } else
+                appendCharacter(currentDescriptorStart, position);
+            break;
+        case AfterToken:
+            if (isEOF(position, attributeEnd))
+                return;
+            if (!isHTMLSpace(*position)) {
+                state = Start;
+                currentDescriptorStart = position;
+                --position;
+            }
+            break;
         }
-        ImageWithScale image(imageURLStart, imageURLEnd - imageURLStart, imageScaleFactor);
-        imageCandidates.append(image);
-        // 11. Return to the step labeled splitting loop.
-        imageCandidateStart = separator + 1;
     }
 }
 
-ImageWithScale bestFitSourceForImageAttributes(float deviceScaleFactor, const String& srcAttribute, const String& srcsetAttribute)
+static bool parseDescriptors(Vector<StringView>& descriptors, DescriptorParsingResult& result)
 {
-    ImageCandidates imageCandidates;
-
-    parseImagesWithScaleFromSrcsetAttribute(srcsetAttribute, imageCandidates);
-
-    if (!srcAttribute.isEmpty()) {
-        ImageWithScale srcPlaceholderImage;
-        imageCandidates.append(srcPlaceholderImage);
+    for (auto& descriptor : descriptors) {
+        if (descriptor.isEmpty())
+            continue;
+        unsigned descriptorCharPosition = descriptor.length() - 1;
+        UChar descriptorChar = descriptor[descriptorCharPosition];
+        descriptor = descriptor.substring(0, descriptorCharPosition);
+        bool isValid = false;
+        if (descriptorChar == 'x') {
+            if (result.hasDensity() || result.hasHeight() || result.hasWidth())
+                return false;
+            float density = descriptor.toFloat(isValid);
+            if (!isValid || density < 0)
+                return false;
+            result.setDensity(density);
+        } else if (descriptorChar == 'w') {
+            if (result.hasDensity() || result.hasWidth())
+                return false;
+            int resourceWidth = descriptor.toInt(isValid);
+            if (!isValid || resourceWidth <= 0)
+                return false;
+        } else if (descriptorChar == 'h') {
+            // This is here only for future compat purposes.
+            // The value of the 'h' descriptor is not used.
+            if (result.hasDensity() || result.hasHeight())
+                return false;
+            int resourceHeight = descriptor.toInt(isValid);
+            if (!isValid || resourceHeight <= 0)
+                return false;
+            result.setResourceHeight(resourceHeight);
+        }
     }
+    return true;
+}
 
+// http://picture.responsiveimages.org/#parse-srcset-attr
+template<typename CharType>
+static void parseImageCandidatesFromSrcsetAttribute(const CharType* attributeStart, unsigned length, Vector<ImageCandidate>& imageCandidates)
+{
+    const CharType* attributeEnd = attributeStart + length;
+
+    for (const CharType* position = attributeStart; position < attributeEnd;) {
+        // 4. Splitting loop: Collect a sequence of characters that are space characters or U+002C COMMA characters.
+        skipWhile<CharType, isHTMLSpaceOrComma<CharType> >(position, attributeEnd);
+        if (position == attributeEnd) {
+            // Contrary to spec language - descriptor parsing happens on each candidate, so when we reach the attributeEnd, we can exit.
+            break;
+        }
+        const CharType* imageURLStart = position;
+        // 6. Collect a sequence of characters that are not space characters, and let that be url.
+
+        skipUntil<CharType, isHTMLSpace<CharType> >(position, attributeEnd);
+        const CharType* imageURLEnd = position;
+
+        DescriptorParsingResult result;
+
+        // 8. If url ends with a U+002C COMMA character (,)
+        if (isComma(*(position - 1))) {
+            // Remove all trailing U+002C COMMA characters from url.
+            imageURLEnd = position - 1;
+            reverseSkipWhile<CharType, isComma>(imageURLEnd, imageURLStart);
+            ++imageURLEnd;
+            // If url is empty, then jump to the step labeled splitting loop.
+            if (imageURLStart == imageURLEnd)
+                continue;
+        } else {
+            // Advancing position here (contrary to spec) to avoid an useless extra state machine step.
+            // Filed a spec bug: https://github.com/ResponsiveImagesCG/picture-element/issues/189
+            ++position;
+            Vector<StringView> descriptorTokens;
+            tokenizeDescriptors(position, attributeEnd, descriptorTokens);
+            // Contrary to spec language - descriptor parsing happens on each candidate.
+            // This is a black-box equivalent, to avoid storing descriptor lists for each candidate.
+            if (!parseDescriptors(descriptorTokens, result))
+                continue;
+        }
+
+        ASSERT(imageURLEnd > imageURLStart);
+        unsigned imageURLLength = imageURLEnd - imageURLStart;
+        imageCandidates.append(ImageCandidate(StringView(imageURLStart, imageURLLength), result, ImageCandidate::SrcsetOrigin));
+        // 11. Return to the step labeled splitting loop.
+    }
+}
+
+static void parseImageCandidatesFromSrcsetAttribute(StringView attribute, Vector<ImageCandidate>& imageCandidates)
+{
+    // FIXME: We should consider replacing the direct pointers in the parsing process with StringView and positions.
+    if (attribute.is8Bit())
+        parseImageCandidatesFromSrcsetAttribute<LChar>(attribute.characters8(), attribute.length(), imageCandidates);
+    else
+        parseImageCandidatesFromSrcsetAttribute<UChar>(attribute.characters16(), attribute.length(), imageCandidates);
+}
+
+static ImageCandidate pickBestImageCandidate(float deviceScaleFactor, Vector<ImageCandidate>& imageCandidates)
+{
     if (imageCandidates.isEmpty())
-        return ImageWithScale();
+        return ImageCandidate();
 
-    std::stable_sort(imageCandidates.begin(), imageCandidates.end(), compareByScaleFactor);
-
-    for (size_t i = 0; i < imageCandidates.size() - 1; ++i) {
-        if (imageCandidates[i].scaleFactor() >= deviceScaleFactor)
-            return imageCandidates[i];
+    // http://picture.responsiveimages.org/#normalize-source-densities
+    for (auto& candidate : imageCandidates) {
+        if (candidate.density < 0)
+            candidate.density = DefaultDensityValue;
     }
 
+    std::stable_sort(imageCandidates.begin(), imageCandidates.end(), compareByDensity);
+
+    unsigned i;
+    for (i = 0; i < imageCandidates.size() - 1; ++i) {
+        if ((imageCandidates[i].density >= deviceScaleFactor))
+            break;
+    }
+
+    float winningDensity = imageCandidates[i].density;
+
+    unsigned winner = i;
     // 16. If an entry b in candidates has the same associated ... pixel density as an earlier entry a in candidates,
     // then remove entry b
-    size_t winner = imageCandidates.size() - 1;
-    size_t previousCandidate = winner;
-    float winningScaleFactor = imageCandidates.last().scaleFactor();
-    while ((previousCandidate > 0) && (imageCandidates[--previousCandidate].scaleFactor() == winningScaleFactor))
-        winner = previousCandidate;
+    while ((i > 0) && (imageCandidates[--i].density == winningDensity))
+        winner = i;
 
     return imageCandidates[winner];
+}
+
+ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const AtomicString& srcAttribute, const AtomicString& srcsetAttribute)
+{
+    if (srcsetAttribute.isNull()) {
+        if (srcAttribute.isNull())
+            return ImageCandidate();
+        return ImageCandidate(StringView(srcAttribute), DescriptorParsingResult(), ImageCandidate::SrcOrigin);
+    }
+
+    Vector<ImageCandidate> imageCandidates;
+
+    parseImageCandidatesFromSrcsetAttribute(StringView(srcsetAttribute), imageCandidates);
+
+    if (!srcAttribute.isEmpty())
+        imageCandidates.append(ImageCandidate(StringView(srcAttribute), DescriptorParsingResult(), ImageCandidate::SrcOrigin));
+
+    return pickBestImageCandidate(deviceScaleFactor, imageCandidates);
 }
 
 } // namespace WebCore

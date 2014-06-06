@@ -11227,6 +11227,9 @@
     <ClInclude Include="..\html\parser\NestingLevelIncrementer.h">
       <Filter>html\parser</Filter>
     </ClInclude>
+    <ClInclude Include="..\html\parser\ParsingUtilities.h">
+      <Filter>html\parser</Filter>
+    </ClInclude>
     <ClInclude Include="..\html\parser\TextDocumentParser.h">
       <Filter>html\parser</Filter>
     </ClInclude>
@@ -11291,9 +11294,6 @@
       <Filter>html\track</Filter>
     </ClInclude>
     <ClInclude Include="..\html\track\LoadableTextTrack.h">
-      <Filter>html\track</Filter>
-    </ClInclude>
-    <ClInclude Include="..\html\track\ParsingUtilities.h">
       <Filter>html\track</Filter>
     </ClInclude>
     <ClInclude Include="..\html\track\TextTrack.h">
