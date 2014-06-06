@@ -1,3 +1,19 @@
+2014-06-06  Brent Fulgham  <bfulgham@apple.com>
+
+        GenericCueData elements prematurely removed
+        https://bugs.webkit.org/show_bug.cgi?id=133588
+
+        Reviewed by Eric Carlson.
+
+        Add a 'removeCompletedCues' method instead of using the 'resetCueValues' method
+        after processing new cues. We do not want to reset cue state if we have pending
+        cues that are being extended by future updates (such as paint-on cues).
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::processCue):  Call new 'removeCompletedCues' method.
+        (WebCore::InbandTextTrackPrivateAVF::removeCompletedCues): Added.
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h:
+
 2014-06-06  Brady Eidson  <beidson@apple.com>
 
         Initialize a char* that needs to be initialized.

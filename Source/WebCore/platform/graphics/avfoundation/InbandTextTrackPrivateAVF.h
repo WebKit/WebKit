@@ -75,6 +75,7 @@ protected:
     InbandTextTrackPrivateAVF(AVFInbandTrackParent*);
 
     void processCueAttributes(CFAttributedStringRef, GenericCueData*);
+    void removeCompletedCues();
 
     double m_currentCueStartTime;
     double m_currentCueEndTime;
