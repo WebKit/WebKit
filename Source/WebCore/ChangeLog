@@ -1,3 +1,28 @@
+2014-06-05  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(169440): Repro crash when playing a video with captions
+        https://bugs.webkit.org/show_bug.cgi?id=133459
+        <rdar://problem/17079081>
+
+        Reviewed by Eric Carlson.
+
+        The change I made in r169440 introduced a crash for paint-on captions. This
+        resolves the problem as follows:
+        1. No longer attempt to modify the start/endTime in the TextTrack implementation.
+        2. Check for extensions to existing cues when we are about to add new arriving
+           cues. If they extend a current pending cue, don't set an end-time for the
+           pending cue, and throw away the new duplicate. Otherwise set the end time
+           as previously and continue.
+
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::hasCue): Remove 'doesExtendCue' case since this is
+        no longer possible.
+        * platform/graphics/InbandTextTrackPrivateClient.h:
+        (WebCore::GenericCueData::doesExtendCueData): Added.
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::processCue): Check for cues extending
+        other cues and handle appropriately.
+
 2014-06-06  Brent Fulgham  <bfulgham@apple.com>
 
         ROLLOUT: r169630: Caused a retain cycle.

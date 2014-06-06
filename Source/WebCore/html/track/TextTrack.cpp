@@ -522,11 +522,6 @@ bool TextTrack::hasCue(TextTrackCue* cue, TextTrackCue::CueMatchRules match)
                 if (!existingCue)
                     return false;
 
-                if (existingCue->doesExtendCue(*cue)) {
-                    existingCue->setEndTime(cue->endTime(), IGNORE_EXCEPTION);
-                    return true;
-                }
-
                 if (cue->startTime() > (existingCue->startTime() + startTimeVariance()))
                     return false;
 

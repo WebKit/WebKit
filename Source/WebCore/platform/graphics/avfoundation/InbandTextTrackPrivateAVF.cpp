@@ -360,20 +360,64 @@ void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, double 
 
     LOG(Media, "InbandTextTrackPrivateAVF::processCue - %li cues at time %.2f\n", attributedStrings ? CFArrayGetCount(attributedStrings) : 0, time);
 
+    Vector<RefPtr<GenericCueData>> arrivingCues;
+    if (attributedStrings) {
+        CFIndex count = CFArrayGetCount(attributedStrings);
+        for (CFIndex i = 0; i < count; i++) {
+            CFAttributedStringRef attributedString = static_cast<CFAttributedStringRef>(CFArrayGetValueAtIndex(attributedStrings, i));
+            
+            if (!attributedString || !CFAttributedStringGetLength(attributedString))
+                continue;
+            
+            RefPtr<GenericCueData> cueData = GenericCueData::create();
+            processCueAttributes(attributedString, cueData.get());
+            if (!cueData->content().length())
+                continue;
+            
+            arrivingCues.append(cueData);
+            
+            cueData->setStartTime(time);
+            cueData->setEndTime(std::numeric_limits<double>::infinity());
+            
+            // AVFoundation cue "position" is to the center of the text so adjust relative to the edge because we will use it to
+            // set CSS "left".
+            if (cueData->position() >= 0 && cueData->size() > 0)
+                cueData->setPosition(cueData->position() - cueData->size() / 2);
+            
+            LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) - considering cue for time = %.2f, position =  %.2f, line =  %.2f", this, cueData->startTime(), cueData->position(), cueData->line());
+            
+            cueData->setStatus(GenericCueData::Partial);
+        }
+    }
+
     if (m_pendingCueStatus != None) {
         // Cues do not have an explicit duration, they are displayed until the next "cue" (which might be empty) is emitted.
         m_currentCueEndTime = time;
 
         if (m_currentCueEndTime >= m_currentCueStartTime) {
-            for (size_t i = 0; i < m_cues.size(); i++) {
-                GenericCueData* cueData = m_cues[i].get();
+            for (auto& cueData : m_cues) {
+                // See if one of the newly-arrived cues is an extension of this cue.
+                Vector<RefPtr<GenericCueData>> nonExtensionCues;
+                for (auto& arrivingCue : arrivingCues) {
+                    if (!arrivingCue->doesExtendCueData(*cueData))
+                        nonExtensionCues.append(arrivingCue);
+                    else
+                        LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) - found an extension cue for time = %.2f, position =  %.2f, line =  %.2f", this, arrivingCue->startTime(), arrivingCue->position(), arrivingCue->line());
+                }
+
+                bool currentCueIsExtended = (arrivingCues.size() != nonExtensionCues.size());
+
+                arrivingCues = nonExtensionCues;
+                
+                if (currentCueIsExtended)
+                    continue;
 
                 if (m_pendingCueStatus == Valid) {
                     cueData->setEndTime(m_currentCueEndTime);
                     cueData->setStatus(GenericCueData::Complete);
 
                     LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) - updating cue: start=%.2f, end=%.2f, content=\"%s\"", this, cueData->startTime(), m_currentCueEndTime, cueData->content().utf8().data());
-                    client()->updateGenericCue(this, cueData);
+                    client()->updateGenericCue(this, cueData.get());
                 } else {
                     // We have to assume that the implicit duration is invalid for cues delivered during a seek because the AVF decode pipeline may not
                     // see every cue, so DO NOT update cue duration while seeking.
@@ -386,38 +430,17 @@ void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, double 
         resetCueValues();
     }
 
-    if (!attributedStrings)
+    if (arrivingCues.isEmpty())
         return;
 
-    CFIndex count = CFArrayGetCount(attributedStrings);
-    if (!count)
-        return;
+    m_currentCueStartTime = time;
 
-    for (CFIndex i = 0; i < count; i++) {
-        CFAttributedStringRef attributedString = static_cast<CFAttributedStringRef>(CFArrayGetValueAtIndex(attributedStrings, i));
-
-        if (!attributedString || !CFAttributedStringGetLength(attributedString))
-            continue;
-
-        RefPtr<GenericCueData> cueData = GenericCueData::create();
-        processCueAttributes(attributedString, cueData.get());
-        if (!cueData->content().length())
-            continue;
+    for (auto& cueData : arrivingCues) {
 
         m_cues.append(cueData);
-
-        m_currentCueStartTime = time;
-        cueData->setStartTime(m_currentCueStartTime);
-        cueData->setEndTime(std::numeric_limits<double>::infinity());
-        
-        // AVFoundation cue "position" is to the center of the text so adjust relative to the edge because we will use it to
-        // set CSS "left".
-        if (cueData->position() >= 0 && cueData->size() > 0)
-            cueData->setPosition(cueData->position() - cueData->size() / 2);
         
         LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) - adding cue for time = %.2f, position =  %.2f, line =  %.2f", this, cueData->startTime(), cueData->position(), cueData->line());
 
-        cueData->setStatus(GenericCueData::Partial);
         client()->addGenericCue(this, cueData.release());
 
         m_pendingCueStatus = seeking() ? DeliveredDuringSeek : Valid;

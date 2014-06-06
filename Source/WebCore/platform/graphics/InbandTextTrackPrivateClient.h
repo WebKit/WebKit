@@ -100,7 +100,9 @@ public:
     };
     Status status() { return m_status; }
     void setStatus(Status status) { m_status = status; }
-    
+
+    bool doesExtendCueData(const GenericCueData&) const;
+
 private:
     GenericCueData()
         : m_startTime(0)
@@ -132,6 +134,36 @@ private:
     Status m_status;
 };
 
+inline bool GenericCueData::doesExtendCueData(const GenericCueData& other) const
+{
+    if (m_relativeFontSize != other.m_relativeFontSize)
+        return false;
+    if (m_baseFontSize != other.m_baseFontSize)
+        return false;
+    if (m_position != other.m_position)
+        return false;
+    if (m_line != other.m_line)
+        return false;
+    if (m_size != other.m_size)
+        return false;
+    if (m_align != other.m_align)
+        return false;
+    if (m_foregroundColor != other.m_foregroundColor)
+        return false;
+    if (m_backgroundColor != other.m_backgroundColor)
+        return false;
+    if (m_highlightColor != other.m_highlightColor)
+        return false;
+    if (m_fontName != other.m_fontName)
+        return false;
+    if (m_id != other.m_id)
+        return false;
+    if (m_content != other.m_content)
+        return false;
+    
+    return true;
+}
+    
 class InbandTextTrackPrivateClient : public TrackPrivateBaseClient {
 public:
     virtual ~InbandTextTrackPrivateClient() { }
