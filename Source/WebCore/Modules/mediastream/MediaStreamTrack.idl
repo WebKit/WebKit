@@ -46,11 +46,11 @@ enum MediaStreamTrackState { "new", "live", "ended" };
 
     [CallWith=ScriptExecutionContext, RaisesException] static void getSources(MediaStreamTrackSourcesCallback callback);
 
-    MediaTrackConstraints constraints();
+    MediaTrackConstraints getConstraints();
 
     MediaSourceStates states();
 
-    MediaStreamCapabilities capabilities(); // returns either AllVideoCapabilities or AllAudioCapabilities
+    MediaStreamCapabilities getCapabilities(); // returns either AllVideoCapabilities or AllAudioCapabilities
 
     void applyConstraints(Dictionary constraints);
 

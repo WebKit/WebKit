@@ -83,8 +83,8 @@
 
             function checkCapabilities(track)
             {
-                debug("checking track.capabilities()");
-                capabilities = track.capabilities();
+                debug("checking track.getCapabilities()");
+                capabilities = track.getCapabilities();
                 logCapabilityList("sourceId", capabilities.sourceId);
                 if (track.kind == "video") {
                     logCapabilityList("sourceType", capabilities.sourceType);
@@ -100,7 +100,7 @@
             function checkStates(track)
             {
                 debug("checking track.states()");
-                capabilities = track.capabilities();
+                capabilities = track.getCapabilities();
                 states = track.states();
                 shouldBe('states.sourceId', 'capabilities.sourceId[0]');
                 if (track.kind == "video")
@@ -122,6 +122,7 @@
                 shouldBeEqualToString('track.readyState', 'live');
                 checkCapabilities(track);
                 checkStates(track);
+                shouldNotThrow('track.getConstraints();');
             }
 
             function gotStream(stream)

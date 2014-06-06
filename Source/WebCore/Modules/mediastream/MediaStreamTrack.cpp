@@ -155,7 +155,7 @@ void MediaStreamTrack::getSources(ScriptExecutionContext* context, PassRefPtr<Me
         ec = NOT_SUPPORTED_ERR;
 }
 
-RefPtr<MediaTrackConstraints> MediaStreamTrack::constraints() const
+RefPtr<MediaTrackConstraints> MediaStreamTrack::getConstraints() const
 {
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=122428
     notImplemented();
@@ -167,7 +167,7 @@ RefPtr<MediaSourceStates> MediaStreamTrack::states() const
     return MediaSourceStates::create(m_privateTrack->states());
 }
 
-RefPtr<MediaStreamCapabilities> MediaStreamTrack::capabilities() const
+RefPtr<MediaStreamCapabilities> MediaStreamTrack::getCapabilities() const
 {
     // The source may be shared by multiple tracks, so its states is not necessarily
     // in sync with the track state. A track that is new or has ended always has a source

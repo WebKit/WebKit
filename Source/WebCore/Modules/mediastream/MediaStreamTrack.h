@@ -75,9 +75,9 @@ public:
 
     static void getSources(ScriptExecutionContext*, PassRefPtr<MediaStreamTrackSourcesCallback>, ExceptionCode&);
 
-    RefPtr<MediaTrackConstraints> constraints() const;
+    RefPtr<MediaTrackConstraints> getConstraints() const;
     RefPtr<MediaSourceStates> states() const;
-    RefPtr<MediaStreamCapabilities> capabilities() const;
+    RefPtr<MediaStreamCapabilities> getCapabilities() const;
     void applyConstraints(const Dictionary&);
     void applyConstraints(PassRefPtr<MediaConstraints>);
 

@@ -1,3 +1,13 @@
+2014-06-06  Kiran  <kiran.guduru@samsung.com>
+
+        [MediaStream] 'get' prefix is missing for capabilities and constraints.
+        https://bugs.webkit.org/show_bug.cgi?id=133573
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/MediaStreamTrack-expected.txt:
+        * fast/mediastream/MediaStreamTrack.html:
+
 2014-06-06  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Layout Test accessibility/table-fallback-roles-expose-element-attributes.html is failing

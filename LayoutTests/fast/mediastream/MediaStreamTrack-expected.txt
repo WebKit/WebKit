@@ -7,7 +7,7 @@ PASS getUserMedia succeeded.
 
 videoTrack = mediaStream.getVideoTracks()[0]
 PASS track.readyState is "live"
-checking track.capabilities()
+checking track.getCapabilities()
   sourceId
     0 : 239c24b0-2b15-11e3-8224-0800200c9a66
   sourceType
@@ -43,10 +43,11 @@ PASS states.sourceType is "camera"
   states.volume = undefined
   states.sourceType = camera
   states.sourceId = 239c24b0-2b15-11e3-8224-0800200c9a66
+PASS track.getConstraints(); did not throw exception.
 
 audioTrack = mediaStream.getAudioTracks()[0]
 PASS track.readyState is "live"
-checking track.capabilities()
+checking track.getCapabilities()
   sourceId
     0 : 239c24b1-2b15-11e3-8224-0800200c9a66
   volume
@@ -64,10 +65,11 @@ PASS states.sourceType is "microphone"
   states.volume = 50
   states.sourceType = microphone
   states.sourceId = 239c24b1-2b15-11e3-8224-0800200c9a66
+PASS track.getConstraints(); did not throw exception.
 
 videoTrack2 = videoTrack.clone()
 PASS track.readyState is "live"
-checking track.capabilities()
+checking track.getCapabilities()
   sourceId
     0 : 239c24b0-2b15-11e3-8224-0800200c9a66
   sourceType
@@ -103,6 +105,7 @@ PASS states.sourceType is "camera"
   states.volume = undefined
   states.sourceType = camera
   states.sourceId = 239c24b0-2b15-11e3-8224-0800200c9a66
+PASS track.getConstraints(); did not throw exception.
 PASS videoTrack.id is not videoTrack2.id
 PASS videoTrack.kind is videoTrack2.kind
 PASS videoTrack.label is videoTrack2.label

@@ -1,3 +1,23 @@
+2014-06-06  Kiran  <kiran.guduru@samsung.com>
+
+        [MediaStream] 'get' prefix is missing for capabilities and constraints.
+        https://bugs.webkit.org/show_bug.cgi?id=133573
+
+        Reviewed by Eric Carlson.
+
+        Modified the existing MediaStreamTrack.html to test the changes.
+
+        As per the Media Capture and Streams spec method names constreaints and
+        capabilities should be prefixed by 'get'. So updated the method names.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::getConstraints):
+        (WebCore::MediaStreamTrack::getCapabilities):
+        (WebCore::MediaStreamTrack::constraints): Deleted.
+        (WebCore::MediaStreamTrack::capabilities): Deleted.
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/MediaStreamTrack.idl:
+
 2014-06-05  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(169440): Repro crash when playing a video with captions
