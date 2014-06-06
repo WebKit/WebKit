@@ -221,7 +221,7 @@ void EventSenderProxy::mouseMoveTo(double x, double y)
         [targetView mouseMoved:event];
         [NSApp _setCurrentEvent:nil];
     } else {
-        CGPoint windowLocation = [event locationInWindow];
+        NSPoint windowLocation = [event locationInWindow];
         WTFLogAlways("mouseMoveTo failed to find a target view at %f,%f\n", windowLocation.x, windowLocation.y);
     }
 }
@@ -495,7 +495,7 @@ void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int
         [targetView scrollWheel:event];
         [NSApp _setCurrentEvent:nil];
     } else {
-        CGPoint windowLocation = [event locationInWindow];
+        NSPoint windowLocation = [event locationInWindow];
         WTFLogAlways("mouseScrollByWithWheelAndMomentumPhases failed to find the target view at %f,%f\n", windowLocation.x, windowLocation.y);
     }
 }

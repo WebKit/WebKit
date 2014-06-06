@@ -1,5 +1,13 @@
 2014-06-06  Simon Fraser  <simon.fraser@apple.com>
 
+        32-bit build fix.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseMoveTo):
+        (WTR::EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases):
+
+2014-06-06  Simon Fraser  <simon.fraser@apple.com>
+
         Fix builds on 10.8; -firstObject isn't declared on NSArray there.
 
         * DumpRenderTree/mac/DumpRenderTree.mm:
