@@ -3,6 +3,20 @@
         Add test references for horizontal stretchy operators.
         https://bugs.webkit.org/show_bug.cgi?id=72828
 
+        Unreviewed Win and EFL gardening.
+
+        * platform/efl/mathml/opentype/horizontal-LatinModern-expected.txt: Added.
+        * platform/efl/mathml/opentype/horizontal-LatinModern-munderover-expected.txt: Added.
+        * platform/efl/mathml/opentype/opentype-stretchy-horizontal-expected.txt: Added.
+        * platform/win/mathml/opentype/horizontal-LatinModern-expected.txt: Added.
+        * platform/win/mathml/opentype/horizontal-LatinModern-munderover-expected.txt: Added.
+        * platform/win/mathml/opentype/opentype-stretchy-horizontal-expected.txt: Added.
+
+2014-06-06  Frédéric Wang  <fred.wang@free.fr>
+
+        Add test references for horizontal stretchy operators.
+        https://bugs.webkit.org/show_bug.cgi?id=72828
+
         Unreviewed Mac gardening.
 
         * platform/mac/mathml/horizontal-LatinModern-expected.txt: Added.
