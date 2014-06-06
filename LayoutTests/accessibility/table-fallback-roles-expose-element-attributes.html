@@ -28,11 +28,14 @@
 
         for (var k = 1; k < 4; k++) {
            var grid = accessibilityController.accessibleElementById("grid" + k);
-           var cellChild = grid.cellForColumnAndRow(0, 0).childAtIndex(0);
-           debug("cellChild: " + cellChild.role + ", " + cellChild.stringValue + "\n");
+           var cell = grid.cellForColumnAndRow(0, 0);
+           debug("cell: " + cell.role + ", " + cell.stringValue + "\n");
+           if (accessibilityController.platformName != "atk") {
+              var cellChild = cell.childAtIndex(0);
+              debug("cellChild: " + cellChild.role + ", " + cellChild.stringValue + "\n");
+          }
         }
     }
-
 </script>
 
 <script src="../resources/js-test-post.js"></script>

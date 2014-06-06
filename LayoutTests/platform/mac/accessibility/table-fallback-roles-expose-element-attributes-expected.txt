@@ -6,11 +6,17 @@ This tests if an element is using fallback role tokens, it will still become the
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-cell: AXRole: AXCell, AXValue: item1
+cell: AXRole: AXCell, AXValue: 
 
-cell: AXRole: AXCell, AXValue: item1
+cellChild: AXRole: AXStaticText, AXValue: item1
 
-cell: AXRole: AXCell, AXValue: item1
+cell: AXRole: AXCell, AXValue: 
+
+cellChild: AXRole: AXStaticText, AXValue: item1
+
+cell: AXRole: AXCell, AXValue: 
+
+cellChild: AXRole: AXStaticText, AXValue: item1
 
 PASS successfullyParsed is true
 

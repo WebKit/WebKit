@@ -1972,8 +1972,6 @@ webkit.org/b/133146 fast/sub-pixel/client-rect-has-subpixel-precision.html  [ Im
 webkit.org/b/133147 fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-large-radius.html [ ImageOnlyFailure ]
 webkit.org/b/133147 fast/shapes/shape-outside-floats/shape-outside-rounded-inset.html [ ImageOnlyFailure ]
 
-webkit.org/b/133519 accessibility/table-fallback-roles-expose-element-attributes.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,24 @@
+2014-06-06  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Layout Test accessibility/table-fallback-roles-expose-element-attributes.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=133519
+
+        Reviewed by Chris Fleizach.
+
+        Adapted test to play nicely with the different types of
+        accessibility hierarchies exposed for Mac and ATK.
+
+        * accessibility/table-fallback-roles-expose-element-attributes.html:
+        Updated text to print information of cells from every platform but
+        only print information of their children in the Mac.
+
+        * accessibility/table-fallback-roles-expose-element-attributes-expected.txt:
+        Updated expectation to match ATK platforms (GTK & EFL).
+        * platform/mac/accessibility/table-fallback-roles-expose-element-attributes-expected.txt:
+        Copied from LayoutTests/accessibility/table-fallback-roles-expose-element-attributes-expected.txt.
+
+        * platform/gtk/TestExpectations: Removed expected failure.
+
 2014-06-06  Frédéric Wang  <fred.wang@free.fr>
 
         Add test references for horizontal stretchy operators.
