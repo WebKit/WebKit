@@ -1,5 +1,26 @@
 2014-06-06  Alexey Proskuryakov  <ap@apple.com>
 
+        [iOS] Support pasting HTML
+        https://bugs.webkit.org/show_bug.cgi?id=133581
+        <rdar://problem/17070305>
+
+        Reviewed by Enrica Casucci.
+
+        We can probably share a lot of code between Mac and iOS here, but for now, just
+        implement the unimplemented functions.
+
+        * editing/ios/EditorIOS.mm: (WebCore::Editor::WebContentReader::readHTML):
+        Implemented based on WebArchive reading code above, and on Mac version of readHTML.
+        Unlike on Mac, we don't need to support Microsoft CF_HTML format, as nothing
+        generates it.
+
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::read):
+        (WebCore::Pasteboard::supportedPasteboardTypes):
+        Added HTML support, as the second preferred format after WebArchive.
+
+2014-06-06  Alexey Proskuryakov  <ap@apple.com>
+
         Try to fix the build after http://trac.webkit.org/changeset/169655
 
         Unfortunately, the fix is very fragile, and will likely not work for some SDKs

@@ -463,9 +463,13 @@ bool Editor::WebContentReader::readFilenames(const Vector<String>&)
     return false;
 }
 
-bool Editor::WebContentReader::readHTML(const String&)
+bool Editor::WebContentReader::readHTML(const String& string)
 {
-    return false;
+    if (!frame.document())
+        return false;
+
+    addFragment(createFragmentFromMarkup(*frame.document(), string, emptyString(), DisallowScriptingAndPluginContent));
+    return true;
 }
 
 bool Editor::WebContentReader::readRTFD(PassRefPtr<SharedBuffer> buffer)

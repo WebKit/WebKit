@@ -77,6 +77,7 @@ SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeTIFF, CFStringRef)
 SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeGIF, CFStringRef)
 SOFT_LINK_CONSTANT(MobileCoreServices, kUTTagClassMIMEType, CFStringRef)
 SOFT_LINK_CONSTANT(MobileCoreServices, kUTTagClassFilenameExtension, CFStringRef)
+SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeHTML, CFStringRef)
 SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeRTFD, CFStringRef)
 SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeRTF, CFStringRef)
 
@@ -88,6 +89,7 @@ SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeRTF, CFStringRef)
 #define kUTTypeGIF  getkUTTypeGIF()
 #define kUTTagClassMIMEType getkUTTagClassMIMEType()
 #define kUTTagClassFilenameExtension getkUTTagClassFilenameExtension()
+#define kUTTypeHTML getkUTTypeHTML()
 #define kUTTypeRTFD getkUTTypeRTFD()
 #define kUTTypeRTF getkUTTypeRTF()
 
@@ -197,6 +199,12 @@ void Pasteboard::read(PasteboardWebContentReader& reader)
                 }
             }
 
+            if ([type isEqualToString:(NSString *)kUTTypeHTML]) {
+                String htmlString = strategy.readStringFromPasteboard(i, kUTTypeHTML);
+                if (!htmlString.isNull() && reader.readHTML(htmlString))
+                    break;
+            }
+
              if ([type isEqualToString:(NSString *)kUTTypeRTFD]) {
                 if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(i, kUTTypeRTFD)) {
                     if (reader.readRTFD(buffer.release()))
@@ -236,7 +244,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader)
 
 NSArray* Pasteboard::supportedPasteboardTypes()
 {
-    return @[(id)WebArchivePboardType, (id)kUTTypePNG, (id)kUTTypeTIFF, (id)kUTTypeJPEG, (id)kUTTypeGIF, (id)kUTTypeURL, (id)kUTTypeText, (id)kUTTypeRTFD, (id)kUTTypeRTF];
+    return @[(id)WebArchivePboardType, (id)kUTTypeHTML, (id)kUTTypePNG, (id)kUTTypeTIFF, (id)kUTTypeJPEG, (id)kUTTypeGIF, (id)kUTTypeURL, (id)kUTTypeText, (id)kUTTypeRTFD, (id)kUTTypeRTF];
 }
 
 bool Pasteboard::hasData()
