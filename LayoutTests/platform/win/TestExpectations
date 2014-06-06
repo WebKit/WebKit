@@ -1351,17 +1351,84 @@ webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
 # Unskip after implementing LayoutTestController::setDefersLoading and ::goBack.
 loader/navigation-while-deferring-loads.html
 
-# ENABLE(WEBGL) is disabled
-compositing/backface-visibility/backface-visibility-webgl.html
-compositing/visibility/visibility-simple-webgl-layer.html
-compositing/webgl
-fast/canvas/webgl
-fast/events/constructors/webgl-context-event-constructor.html
+# crashing webgl tests
+webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html
+webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video.html
+webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html
+webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html
+webgl/1.0.2/conformance/extensions/oes-texture-float-with-video.html
+webgl/1.0.2/conformance/more/functions/uniformiBadArgs.html
+webgl/1.0.1/conformance/textures/tex-image-and-sub-image-2d-with-video.html
+
+# failing webgl tests
+webgl/1.0.1/conformance/context/context-lost-restored.html
+webgl/1.0.1/conformance/glsl/misc/shader-with-conditional-scoping.html
+webgl/1.0.1/conformance/glsl/misc/shader-with-do-scoping.html
+webgl/1.0.1/conformance/glsl/misc/shader-with-for-scoping.html
+webgl/1.0.1/conformance/glsl/misc/shader-with-functional-scoping.html
+webgl/1.0.1/conformance/glsl/samplers/glsl-function-texture2dlod.html
+webgl/1.0.1/conformance/glsl/samplers/glsl-function-texture2dproj.html
+webgl/1.0.1/conformance/more/functions/readPixelsBadArgs.html
+webgl/1.0.1/conformance/more/functions/texImage2DHTML.html
+webgl/1.0.1/conformance/more/functions/texSubImage2DHTML.html
+webgl/1.0.1/conformance/reading/read-pixels-pack-alignment.html
+webgl/1.0.1/conformance/reading/read-pixels-test.html
+webgl/1.0.1/conformance/textures/origin-clean-conformance.html
+webgl/1.0.1/conformance/textures/texture-npot-video.html
+webgl/1.0.1/conformance/uniforms/uniform-location.html
+webgl/1.0.2/conformance/context/context-attributes-alpha-depth-stencil-antialias.html
+webgl/1.0.2/conformance/context/context-creation-and-destruction.html
+webgl/1.0.2/conformance/glsl/misc/large-loop-compile.html
+webgl/1.0.2/conformance/more/functions/uniformfArrayLen1.html
+webgl/1.0.2/conformance/ogles/GL/build/build_009_to_016.html
+webgl/1.0.2/conformance/reading/read-pixels-pack-alignment.html
+webgl/1.0.2/conformance/reading/read-pixels-test.html
+webgl/1.0.2/conformance/rendering/multisample-corruption.html
+webgl/1.0.2/conformance/textures/texture-npot-video.html
+webgl/1.0.2/conformance/uniforms/uniform-location.html
+webgl/conformance/context/context-attributes-alpha-depth-stencil-antialias.html
+webgl/conformance/context/context-creation-and-destruction.html
+webgl/conformance/context/context-lost-restored.html
+webgl/conformance/extensions/oes-texture-float-with-video.html
+webgl/conformance/more/functions/readPixelsBadArgs.html
+webgl/conformance/more/functions/texImage2DHTML.html
+webgl/conformance/more/functions/texSubImage2DHTML.html
+webgl/conformance/more/functions/uniformfArrayLen1.html
+webgl/conformance/reading/read-pixels-pack-alignment.html
+webgl/conformance/reading/read-pixels-test.html
+webgl/conformance/rendering/more-than-65536-indices.html
+webgl/conformance/rendering/multisample-corruption.html
+webgl/conformance/rendering/point-size.html
+webgl/conformance/textures/origin-clean-conformance.html
+webgl/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html
+webgl/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html
+webgl/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html
+webgl/conformance/textures/tex-image-and-sub-image-2d-with-video.html
+webgl/conformance/textures/texture-npot-video.html
+webgl/conformance/typedarrays/data-view-test.html
+webgl/conformance/uniforms/uniform-location.html
+fast/canvas/webgl/canvas-supports-context.html
+fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html
+fast/canvas/webgl/drawingbuffer-test.html
+fast/canvas/webgl/framebuffer-object-attachment.html
+fast/canvas/webgl/gl-get-calls.html
+fast/canvas/webgl/glsl-conformance.html
+fast/canvas/webgl/oes-element-index-uint.html
+fast/canvas/webgl/oes-texture-half-float-with-video.html
+fast/canvas/webgl/oes-vertex-array-object.html
+fast/canvas/webgl/read-pixels-pack-alignment.html
+fast/canvas/webgl/read-pixels-test.html
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html
+fast/canvas/webgl/uniform-location.html
+fast/canvas/webgl/webgl-compressed-texture-size-limit.html
+fast/canvas/webgl/webgl-depth-texture.html
+fast/canvas/webgl/webgl-draw-buffers.html
 http/tests/security/webgl-remote-read-remote-image-allowed.html
 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
-fast/images/webgl-teximage2d.html
-webgl
 
 # CSS Grid Layout is not yet enabled.
 webkit.org/b/60731 fast/css-grid-layout

@@ -1,3 +1,13 @@
+2014-06-06  Alex Christensen  <achristensen@webkit.org>
+
+        Run passing WebGL tests on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=133563
+
+        Reviewed by Brent Fulgham.
+
+        * platform/win/TestExpectations:
+        Replaced all WebGL tests with lists of failing and crashing tests to fix.
+
 2014-06-06  Kiran  <kiran.guduru@samsung.com>
 
         [MediaStream] 'get' prefix is missing for capabilities and constraints.
