@@ -1,3 +1,12 @@
+2014-06-06  David Hyatt  <hyatt@apple.com>
+
+        REGRESSION: Hit testing of composited elements is broken in new multicolumn layout.
+        https://bugs.webkit.org/show_bug.cgi?id=133522 (<rdar://problem/17060556>)
+        
+        Reviewed by Simon Fraser.
+
+        * compositing/columns/hittest-composited-in-paginated-expected.txt:
+
 2014-06-06  Simon Fraser  <simon.fraser@apple.com>
 
         Latched scrolling tests are flakey on Mavericks

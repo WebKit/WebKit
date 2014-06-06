@@ -514,8 +514,15 @@ public:
     void updateLayerPositionsAfterDocumentScroll();
 
     void positionNewlyCreatedOverflowControls();
-    
-    RenderLayer* enclosingPaginationLayer() const { return m_enclosingPaginationLayer; }
+
+    enum PaginationInclusionMode { ExcludeCompositedPaginatedLayers, IncludeCompositedPaginatedLayers };
+    RenderLayer* enclosingPaginationLayer(PaginationInclusionMode mode) const
+    {
+        if (mode == ExcludeCompositedPaginatedLayers && m_enclosingLayerIsPaginatedAndComposited)
+            return nullptr;
+        return m_enclosingPaginationLayer;
+    }
+    bool enclosingLayerIsPaginatedAndComposited() const { return m_enclosingLayerIsPaginatedAndComposited; }
 
     void updateTransform();
     
@@ -719,8 +726,9 @@ public:
         ExcludeHiddenDescendants = 1 << 3,
         DontConstrainForMask = 1 << 4,
         IncludeCompositedDescendants = 1 << 5,
-        UseFragmentBoxes = 1 << 6,
-        DefaultCalculateLayerBoundsFlags =  IncludeSelfTransform | UseLocalClipRectIfPossible | IncludeLayerFilterOutsets | UseFragmentBoxes
+        UseFragmentBoxesExcludingCompositing = 1 << 6,
+        UseFragmentBoxesIncludingCompositing = 1 << 7,
+        DefaultCalculateLayerBoundsFlags =  IncludeSelfTransform | UseLocalClipRectIfPossible | IncludeLayerFilterOutsets | UseFragmentBoxesExcludingCompositing
     };
     typedef unsigned CalculateLayerBoundsFlags;
 
@@ -945,7 +953,7 @@ private:
 
     IntSize clampScrollOffset(const IntSize&) const;
 
-    RenderLayer* enclosingPaginationLayerInSubtree(const RenderLayer* rootLayer) const;
+    RenderLayer* enclosingPaginationLayerInSubtree(const RenderLayer* rootLayer, PaginationInclusionMode) const;
 
     void setNextSibling(RenderLayer* next) { m_next = next; }
     void setPreviousSibling(RenderLayer* prev) { m_previous = prev; }
@@ -993,6 +1001,7 @@ private:
     void paintList(Vector<RenderLayer*>*, GraphicsContext*, const LayerPaintingInfo&, PaintLayerFlags);
 
     void collectFragments(LayerFragments&, const RenderLayer* rootLayer, const LayoutRect& dirtyRect,
+        PaginationInclusionMode,
         ClipRectsType, OverlayScrollbarSizeRelevancy inOverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize,
         ShouldRespectOverflowClip = RespectOverflowClip, const LayoutPoint* offsetFromRoot = nullptr, const LayoutRect* layerBoundingBox = nullptr, ShouldApplyRootOffsetToFragments = IgnoreRootOffsetForFragments);
     void updatePaintingInfoForFragments(LayerFragments&, const LayerPaintingInfo&, PaintLayerFlags, bool shouldPaintContent, const LayoutPoint* offsetFromRoot);
@@ -1332,6 +1341,7 @@ private:
 
     // Pointer to the enclosing RenderLayer that caused us to be paginated. It is 0 if we are not paginated.
     RenderLayer* m_enclosingPaginationLayer;
+    bool m_enclosingLayerIsPaginatedAndComposited;
 
     IntRect m_blockSelectionGapsBounds;
 

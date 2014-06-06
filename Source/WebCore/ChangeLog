@@ -1,3 +1,40 @@
+2014-06-05  David Hyatt  <hyatt@apple.com>
+
+        REGRESSION: Hit testing of composited elements is broken in new multicolumn layout.
+        https://bugs.webkit.org/show_bug.cgi?id=133522 (<rdar://problem/17060556>)
+        
+        Reviewed by Simon Fraser.
+
+        Hit testing for the new columns doesn't care about compositing but does still
+        need a pagination layer set to work. The old column code didn't care about this
+        because it was top down (and wrong). The new code lets each layer paint and hit
+        test its own fragments, so having a pagination layer set suddenly becomes relevant
+        for composited layers.
+    
+        The solution is to cache whether or not the pagination layer crosses a compositing
+        boundary, and then to force call sites of enclosingPaginationLayer to pass an argument
+        indicating whether compositing layers should be included. Typically painting wants to
+        exclude them but hit testing wants to include them.
+
+        * page/FrameView.cpp:
+        (WebCore::updateLayerPositionFlags):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::updatePagination):
+        (WebCore::transparencyClipBox):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::enclosingPaginationLayerInSubtree):
+        (WebCore::RenderLayer::collectFragments):
+        (WebCore::RenderLayer::paintTransformedLayerIntoFragments):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::hitTestTransformedLayerInFragments):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition):
+
 2014-06-06  Kiran  <kiran.guduru@samsung.com>
 
         [MediaStream] 'get' prefix is missing for capabilities and constraints.

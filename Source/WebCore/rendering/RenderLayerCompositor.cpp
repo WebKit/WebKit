@@ -2656,7 +2656,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
 
     // Fixed position elements that are invisible in the current view don't get their own layer.
     LayoutRect viewBounds = m_renderView.frameView().viewportConstrainedVisibleContentRect();
-    LayoutRect layerBounds = layer.calculateLayerBounds(&layer, 0, RenderLayer::UseLocalClipRectIfPossible | RenderLayer::IncludeLayerFilterOutsets | RenderLayer::UseFragmentBoxes
+    LayoutRect layerBounds = layer.calculateLayerBounds(&layer, 0, RenderLayer::UseLocalClipRectIfPossible | RenderLayer::IncludeLayerFilterOutsets | RenderLayer::UseFragmentBoxesExcludingCompositing
         | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask | RenderLayer::IncludeCompositedDescendants);
     // Map to m_renderView to ignore page scale.
     FloatRect absoluteBounds = layer.renderer().localToContainerQuad(FloatRect(layerBounds), &m_renderView).boundingBox();

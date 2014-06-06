@@ -199,6 +199,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_staticInlinePosition(0)
     , m_staticBlockPosition(0)
     , m_enclosingPaginationLayer(0)
+    , m_enclosingLayerIsPaginatedAndComposited(false)
 {
     m_isNormalFlowOnly = shouldBeNormalFlowOnly();
     m_isSelfPaintingLayer = shouldBeSelfPaintingLayer();
@@ -403,9 +404,11 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
 
     if (flags & UpdatePagination)
         updatePagination();
-    else
-        m_enclosingPaginationLayer = 0;
-
+    else {
+        m_enclosingPaginationLayer = nullptr;
+        m_enclosingLayerIsPaginatedAndComposited = false;
+    }
+    
     if (m_hasVisibleContent) {
         // FIXME: LayoutState does not work with RenderLayers as there is not a 1-to-1
         // mapping between them and the RenderObjects. It would be neat to enable
@@ -937,18 +940,19 @@ RenderLayer* RenderLayer::enclosingOverflowClipLayer(IncludeSelfOrNot includeSel
 
 void RenderLayer::updatePagination()
 {
-    m_enclosingPaginationLayer = 0;
-
-    if (isComposited() || !parent())
-        return; // FIXME: We will have to deal with paginated compositing layers someday.
-                // FIXME: For now the RenderView can't be paginated.  Eventually printing will move to a model where it is though.
-
+    m_enclosingPaginationLayer = nullptr;
+    m_enclosingLayerIsPaginatedAndComposited = false;
+    
+    if (!parent())
+        return;
+    
     // Each layer that is inside a multicolumn flow thread has to be checked individually and
     // genuinely know if it is going to have to split itself up when painting only its contents (and not any other descendant
     // layers). We track an enclosingPaginationLayer instead of using a simple bit, since we want to be able to get back
     // to that layer easily.
     if (renderer().isInFlowRenderFlowThread()) {
         m_enclosingPaginationLayer = this;
+        m_enclosingLayerIsPaginatedAndComposited = isComposited();
         return;
     }
 
@@ -956,9 +960,13 @@ void RenderLayer::updatePagination()
         // Content inside a transform is not considered to be paginated, since we simply
         // paint the transform multiple times in each column, so we don't have to use
         // fragments for the transformed content.
-        m_enclosingPaginationLayer = parent()->enclosingPaginationLayer();
-        if (parent()->hasTransform())
-            m_enclosingPaginationLayer = 0;
+        if (parent()->hasTransform()) {
+            m_enclosingPaginationLayer = nullptr;
+            m_enclosingLayerIsPaginatedAndComposited = false;
+        } else {
+            m_enclosingPaginationLayer = parent()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers);
+            m_enclosingLayerIsPaginatedAndComposited = isComposited() ? true : parent()->enclosingLayerIsPaginatedAndComposited();
+        }
         return;
     }
 
@@ -971,9 +979,13 @@ void RenderLayer::updatePagination()
             // Content inside a transform is not considered to be paginated, since we simply
             // paint the transform multiple times in each column, so we don't have to use
             // fragments for the transformed content.
-            m_enclosingPaginationLayer = containingBlock->layer()->enclosingPaginationLayer();
-            if (containingBlock->layer()->hasTransform())
-                m_enclosingPaginationLayer = 0;
+            if (containingBlock->layer()->hasTransform()) {
+                m_enclosingPaginationLayer = nullptr;
+                m_enclosingLayerIsPaginatedAndComposited = false;
+            } else {
+                m_enclosingPaginationLayer = containingBlock->layer()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers);
+                m_enclosingLayerIsPaginatedAndComposited = isComposited() ? true : containingBlock->layer()->enclosingLayerIsPaginatedAndComposited();
+            }
             return;
         }
     }
@@ -1622,7 +1634,8 @@ static LayoutRect transparencyClipBox(const RenderLayer* layer, const RenderLaye
         || (transparencyBehavior == HitTestingTransparencyClipBox && layer->hasTransform()))) {
         // The best we can do here is to use enclosed bounding boxes to establish a "fuzzy" enough clip to encompass
         // the transformed layer and all of its children.
-        const RenderLayer* paginationLayer = transparencyMode == DescendantsOfTransparencyClipBox ? layer->enclosingPaginationLayer() : 0;
+        RenderLayer::PaginationInclusionMode mode = transparencyBehavior == HitTestingTransparencyClipBox ? RenderLayer::IncludeCompositedPaginatedLayers : RenderLayer::ExcludeCompositedPaginatedLayers;
+        const RenderLayer* paginationLayer = transparencyMode == DescendantsOfTransparencyClipBox ? layer->enclosingPaginationLayer(mode) : 0;
         const RenderLayer* rootLayerForTransform = paginationLayer ? paginationLayer : rootLayer;
         LayoutPoint delta;
         layer->convertToLayerCoords(rootLayerForTransform, delta);
@@ -1654,7 +1667,7 @@ static LayoutRect transparencyClipBox(const RenderLayer* layer, const RenderLaye
         return result;
     }
     
-    LayoutRect clipRect = layer->boundingBox(rootLayer, RenderLayer::UseFragmentBoxes);
+    LayoutRect clipRect = layer->boundingBox(rootLayer, transparencyBehavior == HitTestingTransparencyClipBox ? RenderLayer::UseFragmentBoxesIncludingCompositing : RenderLayer::UseFragmentBoxesExcludingCompositing);
     expandClipRectForDescendantsAndReflection(clipRect, layer, rootLayer, transparencyBehavior, paintBehavior);
 #if ENABLE(CSS_FILTERS)
     layer->renderer().style().filterOutsets().expandRect(clipRect);
@@ -3676,7 +3689,7 @@ void RenderLayer::paintLayer(GraphicsContext* context, const LayerPaintingInfo& 
 
     // Disable named flow region information for in flow threads such as multi-col.
     std::unique_ptr<CurrentRenderFlowThreadDisabler> flowThreadDisabler;
-    if (enclosingPaginationLayer())
+    if (enclosingPaginationLayer(ExcludeCompositedPaginatedLayers))
         flowThreadDisabler = std::make_unique<CurrentRenderFlowThreadDisabler>(&renderer().view());
 
     RenderNamedFlowFragment* namedFlowFragment = currentRenderNamedFlowFragment();
@@ -3705,7 +3718,7 @@ void RenderLayer::paintLayer(GraphicsContext* context, const LayerPaintingInfo& 
                 beginTransparencyLayers(context, paintingInfo.rootLayer, paintingInfo.paintDirtyRect, paintingInfo.paintBehavior);
         }
 
-        if (enclosingPaginationLayer()) {
+        if (enclosingPaginationLayer(ExcludeCompositedPaginatedLayers)) {
             paintTransformedLayerIntoFragments(context, paintingInfo, paintFlags);
             return;
         }
@@ -4045,7 +4058,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
             localPaintingInfo.clipToDirtyRect = true;
             paintDirtyRect = selfClipRect();
         }
-        collectFragments(layerFragments, localPaintingInfo.rootLayer, paintDirtyRect,
+        collectFragments(layerFragments, localPaintingInfo.rootLayer, paintDirtyRect, ExcludeCompositedPaginatedLayers,
             (localPaintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects, IgnoreOverlayScrollbarSize,
             (isPaintingOverflowContents) ? IgnoreOverflowClip : RespectOverflowClip, &offsetFromRoot);
         updatePaintingInfoForFragments(layerFragments, localPaintingInfo, localPaintFlags, shouldPaintContent, &offsetFromRoot);
@@ -4166,12 +4179,13 @@ void RenderLayer::paintList(Vector<RenderLayer*>* list, GraphicsContext* context
     }
 }
 
-RenderLayer* RenderLayer::enclosingPaginationLayerInSubtree(const RenderLayer* rootLayer) const
+RenderLayer* RenderLayer::enclosingPaginationLayerInSubtree(const RenderLayer* rootLayer, PaginationInclusionMode mode) const
 {
     // If we don't have an enclosing layer, or if the root layer is the same as the enclosing layer,
     // then just return the enclosing pagination layer (it will be 0 in the former case and the rootLayer in the latter case).
-    if (!m_enclosingPaginationLayer || rootLayer == m_enclosingPaginationLayer)
-        return m_enclosingPaginationLayer;
+    RenderLayer* paginationLayer = enclosingPaginationLayer(mode);
+    if (!paginationLayer || rootLayer == paginationLayer)
+        return paginationLayer;
     
     // Walk up the layer tree and see which layer we hit first. If it's the root, then the enclosing pagination
     // layer isn't in our subtree and we return 0. If we hit the enclosing pagination layer first, then
@@ -4179,8 +4193,8 @@ RenderLayer* RenderLayer::enclosingPaginationLayerInSubtree(const RenderLayer* r
     for (const RenderLayer* layer = this; layer; layer = layer->parent()) {
         if (layer == rootLayer)
             return 0;
-        if (layer == m_enclosingPaginationLayer)
-            return m_enclosingPaginationLayer;
+        if (layer == paginationLayer)
+            return paginationLayer;
     }
     
     // This should never be reached, since an enclosing layer should always either be the rootLayer or be
@@ -4189,11 +4203,11 @@ RenderLayer* RenderLayer::enclosingPaginationLayerInSubtree(const RenderLayer* r
     return 0;
 }
 
-void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer* rootLayer, const LayoutRect& dirtyRect,
+void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer* rootLayer, const LayoutRect& dirtyRect, PaginationInclusionMode inclusionMode,
     ClipRectsType clipRectsType, OverlayScrollbarSizeRelevancy inOverlayScrollbarSizeRelevancy, ShouldRespectOverflowClip respectOverflowClip, const LayoutPoint* offsetFromRoot,
     const LayoutRect* layerBoundingBox, ShouldApplyRootOffsetToFragments applyRootOffsetToFragments)
 {
-    RenderLayer* paginationLayer = enclosingPaginationLayerInSubtree(rootLayer);
+    RenderLayer* paginationLayer = enclosingPaginationLayerInSubtree(rootLayer, inclusionMode);
     if (!paginationLayer || hasTransform()) {
         // For unpaginated layers, there is only one fragment.
         LayerFragment fragment;
@@ -4222,7 +4236,7 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
     layerBoundingBoxInFlowThread.intersect(backgroundRectInFlowThread.rect());
     
     RenderFlowThread& enclosingFlowThread = toRenderFlowThread(paginationLayer->renderer());
-    RenderLayer* parentPaginationLayer = paginationLayer->parent()->enclosingPaginationLayerInSubtree(rootLayer);
+    RenderLayer* parentPaginationLayer = paginationLayer->parent()->enclosingPaginationLayerInSubtree(rootLayer, inclusionMode);
     LayerFragments ancestorFragments;
     if (parentPaginationLayer) {
         // Compute a bounding box accounting for fragments.
@@ -4234,7 +4248,7 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
         layerFragmentBoundingBoxInParentPaginationLayer.moveBy(offsetWithinParentPaginatedLayer);
         
         // Now collect ancestor fragments.
-        parentPaginationLayer->collectFragments(ancestorFragments, rootLayer, dirtyRect, clipRectsType, inOverlayScrollbarSizeRelevancy, respectOverflowClip, nullptr, &layerFragmentBoundingBoxInParentPaginationLayer, ApplyRootOffsetToFragments);
+        parentPaginationLayer->collectFragments(ancestorFragments, rootLayer, dirtyRect, inclusionMode, clipRectsType, inOverlayScrollbarSizeRelevancy, respectOverflowClip, nullptr, &layerFragmentBoundingBoxInParentPaginationLayer, ApplyRootOffsetToFragments);
         
         if (ancestorFragments.isEmpty())
             return;
@@ -4282,7 +4296,7 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
     
     // Shift the dirty rect into flow thread coordinates.
     LayoutPoint offsetOfPaginationLayerFromRoot;
-    enclosingPaginationLayer()->convertToLayerCoords(rootLayer, offsetOfPaginationLayerFromRoot);
+    enclosingPaginationLayer(inclusionMode)->convertToLayerCoords(rootLayer, offsetOfPaginationLayerFromRoot);
     LayoutRect dirtyRectInFlowThread(dirtyRect);
     dirtyRectInFlowThread.moveBy(-offsetOfPaginationLayerFromRoot);
 
@@ -4341,8 +4355,9 @@ void RenderLayer::paintTransformedLayerIntoFragments(GraphicsContext* context, c
 {
     LayerFragments enclosingPaginationFragments;
     LayoutPoint offsetOfPaginationLayerFromRoot;
-    LayoutRect transformedExtent = transparencyClipBox(this, enclosingPaginationLayer(), PaintingTransparencyClipBox, RootOfTransparencyClipBox, paintingInfo.paintBehavior);
-    enclosingPaginationLayer()->collectFragments(enclosingPaginationFragments, paintingInfo.rootLayer, paintingInfo.paintDirtyRect,
+    RenderLayer* paginatedLayer = enclosingPaginationLayer(ExcludeCompositedPaginatedLayers);
+    LayoutRect transformedExtent = transparencyClipBox(this, paginatedLayer, PaintingTransparencyClipBox, RootOfTransparencyClipBox, paintingInfo.paintBehavior);
+    paginatedLayer->collectFragments(enclosingPaginationFragments, paintingInfo.rootLayer, paintingInfo.paintDirtyRect, ExcludeCompositedPaginatedLayers,
         (paintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects, IgnoreOverlayScrollbarSize,
         (paintFlags & PaintLayerPaintingOverflowContents) ? IgnoreOverflowClip : RespectOverflowClip, &offsetOfPaginationLayerFromRoot, &transformedExtent);
     
@@ -4354,10 +4369,10 @@ void RenderLayer::paintTransformedLayerIntoFragments(GraphicsContext* context, c
         LayoutRect clipRect = fragment.backgroundRect.rect();
         
         // Now compute the clips within a given fragment
-        if (parent() != enclosingPaginationLayer()) {
-            enclosingPaginationLayer()->convertToLayerCoords(paintingInfo.rootLayer, offsetOfPaginationLayerFromRoot);
+        if (parent() != paginatedLayer) {
+            paginatedLayer->convertToLayerCoords(paintingInfo.rootLayer, offsetOfPaginationLayerFromRoot);
     
-            ClipRectsContext clipRectsContext(enclosingPaginationLayer(), (paintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects,
+            ClipRectsContext clipRectsContext(paginatedLayer, (paintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects,
                 IgnoreOverlayScrollbarSize, (paintFlags & PaintLayerPaintingOverflowContents) ? IgnoreOverflowClip : RespectOverflowClip);
             LayoutRect parentClipRect = backgroundClipRect(clipRectsContext).rect();
             parentClipRect.moveBy(fragment.paginationOffset + offsetOfPaginationLayerFromRoot);
@@ -4741,7 +4756,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
 
     // Apply a transform if we have one.
     if (transform() && !appliedTransform) {
-        if (enclosingPaginationLayer())
+        if (enclosingPaginationLayer(IncludeCompositedPaginatedLayers))
             return hitTestTransformedLayerInFragments(rootLayer, containerLayer, request, result, hitTestRect, hitTestLocation, transformState, zOffset);
 
         // Make sure the parent's clip rects have been calculated.
@@ -4836,7 +4851,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
 
     // Collect the fragments. This will compute the clip rectangles for each layer fragment.
     LayerFragments layerFragments;
-    collectFragments(layerFragments, rootLayer, hitTestRect, RootRelativeClipRects, IncludeOverlayScrollbarSize);
+    collectFragments(layerFragments, rootLayer, hitTestRect, IncludeCompositedPaginatedLayers, RootRelativeClipRects, IncludeOverlayScrollbarSize);
 
     if (canResize() && hitTestResizerInFragments(layerFragments, hitTestLocation)) {
         renderer().updateHitTestResult(result, hitTestLocation.point());
@@ -4940,8 +4955,9 @@ RenderLayer* RenderLayer::hitTestTransformedLayerInFragments(RenderLayer* rootLa
 {
     LayerFragments enclosingPaginationFragments;
     LayoutPoint offsetOfPaginationLayerFromRoot;
-    LayoutRect transformedExtent = transparencyClipBox(this, enclosingPaginationLayer(), HitTestingTransparencyClipBox, RootOfTransparencyClipBox);
-    enclosingPaginationLayer()->collectFragments(enclosingPaginationFragments, rootLayer, hitTestRect,
+    RenderLayer* paginatedLayer = enclosingPaginationLayer(IncludeCompositedPaginatedLayers);
+    LayoutRect transformedExtent = transparencyClipBox(this, paginatedLayer, HitTestingTransparencyClipBox, RootOfTransparencyClipBox);
+    paginatedLayer->collectFragments(enclosingPaginationFragments, rootLayer, hitTestRect, IncludeCompositedPaginatedLayers,
         RootRelativeClipRects, IncludeOverlayScrollbarSize, RespectOverflowClip, &offsetOfPaginationLayerFromRoot, &transformedExtent);
 
     for (int i = enclosingPaginationFragments.size() - 1; i >= 0; --i) {
@@ -4952,10 +4968,10 @@ RenderLayer* RenderLayer::hitTestTransformedLayerInFragments(RenderLayer* rootLa
         LayoutRect clipRect = fragment.backgroundRect.rect();
         
         // Now compute the clips within a given fragment
-        if (parent() != enclosingPaginationLayer()) {
-            enclosingPaginationLayer()->convertToLayerCoords(rootLayer, offsetOfPaginationLayerFromRoot);
+        if (parent() != paginatedLayer) {
+            paginatedLayer->convertToLayerCoords(rootLayer, offsetOfPaginationLayerFromRoot);
     
-            ClipRectsContext clipRectsContext(enclosingPaginationLayer(), RootRelativeClipRects, IncludeOverlayScrollbarSize);
+            ClipRectsContext clipRectsContext(paginatedLayer, RootRelativeClipRects, IncludeOverlayScrollbarSize);
             LayoutRect parentClipRect = backgroundClipRect(clipRectsContext).rect();
             parentClipRect.moveBy(fragment.paginationOffset + offsetOfPaginationLayerFromRoot);
             clipRect.intersect(parentClipRect);
@@ -5259,7 +5275,7 @@ ClipRect RenderLayer::backgroundClipRect(const ClipRectsContext& clipRectsContex
 
     // If we cross into a different pagination context, then we can't rely on the cache.
     // Just switch over to using TemporaryClipRects.
-    if (clipRectsContext.clipRectsType != TemporaryClipRects && parent()->enclosingPaginationLayer() != enclosingPaginationLayer()) {
+    if (clipRectsContext.clipRectsType != TemporaryClipRects && parent()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers) != enclosingPaginationLayer(IncludeCompositedPaginatedLayers)) {
         ClipRectsContext tempContext(clipRectsContext);
         tempContext.clipRectsType = TemporaryClipRects;
         parentClipRects(tempContext, parentRects);
@@ -5567,10 +5583,15 @@ LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer, CalculateL
     else
         renderer().containingBlock()->flipForWritingMode(result);
     
-    const RenderLayer* paginationLayer = (flags & UseFragmentBoxes) ? enclosingPaginationLayerInSubtree(ancestorLayer) : 0;
+    PaginationInclusionMode inclusionMode = ExcludeCompositedPaginatedLayers;
+    if (flags & UseFragmentBoxesIncludingCompositing)
+        inclusionMode = IncludeCompositedPaginatedLayers;
+    const RenderLayer* paginationLayer = nullptr;
+    if (flags & UseFragmentBoxesExcludingCompositing || flags & UseFragmentBoxesIncludingCompositing)
+        paginationLayer = enclosingPaginationLayerInSubtree(ancestorLayer, inclusionMode);
+    
     const RenderLayer* childLayer = this;
     bool isPaginated = paginationLayer;
-    
     while (paginationLayer) {
         // Split our box up into the actual fragment boxes that render in the columns/pages and unite those together to
         // get our true bounding box.
@@ -5582,7 +5603,7 @@ LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer, CalculateL
         result = enclosingFlowThread.fragmentsBoundingBox(result);
         
         childLayer = paginationLayer;
-        paginationLayer = paginationLayer->parent()->enclosingPaginationLayerInSubtree(ancestorLayer);
+        paginationLayer = paginationLayer->parent()->enclosingPaginationLayerInSubtree(ancestorLayer, inclusionMode);
     }
 
     if (isPaginated) {

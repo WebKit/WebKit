@@ -1,4 +1,4 @@
-Element at 500, 200: 
+Element at 500, 200: composited box
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 810.00 585.00)
