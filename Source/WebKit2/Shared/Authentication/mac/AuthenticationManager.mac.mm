@@ -36,6 +36,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
+// FIXME: This function creates an identity from a certificate, which should not be needed. We should pass an identity over IPC (as we do on iOS).
 bool AuthenticationManager::tryUseCertificateInfoForChallenge(const AuthenticationChallenge& challenge, const CertificateInfo& certificateInfo)
 {
     CFArrayRef chain = certificateInfo.certificateChain();

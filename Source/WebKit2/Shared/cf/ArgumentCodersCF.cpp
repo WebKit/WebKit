@@ -36,6 +36,7 @@
 #import <Foundation/Foundation.h>
 #endif
 
+#if PLATFORM(IOS)
 #if defined(__has_include) && __has_include(<Security/SecIdentityPriv.h>)
 #include <Security/SecIdentityPriv.h>
 #endif
@@ -48,6 +49,7 @@ extern "C" SecIdentityRef SecIdentityCreate(CFAllocatorRef allocator, SecCertifi
 
 extern "C" OSStatus SecKeyCopyPersistentRef(SecKeyRef key, CFDataRef* persistentRef);
 extern "C" OSStatus SecKeyFindWithPersistentRef(CFDataRef persistentRef, SecKeyRef* lookedUpData);
+#endif
 
 using namespace WebCore;
 
@@ -70,7 +72,9 @@ enum CFType {
     CFString,
     CFURL,
     SecCertificate,
+#if PLATFORM(IOS)
     SecIdentity,
+#endif
 #if HAVE(SEC_KEYCHAIN)
     SecKeychainItem,
 #endif
@@ -106,8 +110,10 @@ static CFType typeFromCFTypeRef(CFTypeRef type)
         return CFURL;
     if (typeID == SecCertificateGetTypeID())
         return SecCertificate;
+#if PLATFORM(IOS)
     if (typeID == SecIdentityGetTypeID())
         return SecIdentity;
+#endif
 #if HAVE(SEC_KEYCHAIN)
     if (typeID == SecKeychainItemGetTypeID())
         return SecKeychainItem;
@@ -152,9 +158,11 @@ void encode(ArgumentEncoder& encoder, CFTypeRef typeRef)
     case SecCertificate:
         encode(encoder, (SecCertificateRef)typeRef);
         return;
+#if PLATFORM(IOS)
     case SecIdentity:
         encode(encoder, (SecIdentityRef)(typeRef));
         return;
+#endif
 #if HAVE(SEC_KEYCHAIN)
     case SecKeychainItem:
         encode(encoder, (SecKeychainItemRef)typeRef);
@@ -242,6 +250,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFTypeRef>& result)
         result = adoptCF(certificate.leakRef());
         return true;
     }
+#if PLATFORM(IOS)
     case SecIdentity: {
         RetainPtr<SecIdentityRef> identity;
         if (!decode(decoder, identity))
@@ -249,6 +258,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFTypeRef>& result)
         result = adoptCF(identity.leakRef());
         return true;
     }
+#endif
 #if HAVE(SEC_KEYCHAIN)
     case SecKeychainItem: {
         RetainPtr<SecKeychainItemRef> keychainItem;
@@ -581,6 +591,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<SecCertificateRef>& result)
     return true;
 }
 
+#if PLATFORM(IOS)
 void encode(ArgumentEncoder& encoder, SecIdentityRef identity)
 {
     SecCertificateRef certificate = nullptr;
@@ -628,6 +639,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<SecIdentityRef>& result)
 
     return true;
 }
+#endif
 
 #if HAVE(SEC_KEYCHAIN)
 void encode(ArgumentEncoder& encoder, SecKeychainItemRef keychainItem)

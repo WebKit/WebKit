@@ -471,7 +471,7 @@ bool ArgumentCoder<ProtectionSpace>::decode(ArgumentDecoder& decoder, Protection
 
 void ArgumentCoder<Credential>::encode(ArgumentEncoder& encoder, const Credential& credential)
 {
-#if CERTIFICATE_CREDENTIALS_SUPPORTED
+#if CERTIFICATE_CREDENTIALS_SUPPORTED && PLATFORM(IOS)
     encoder.encodeEnum(credential.type());
 
     if (credential.type() == CredentialTypeClientCertificate) {
@@ -492,7 +492,7 @@ void ArgumentCoder<Credential>::encode(ArgumentEncoder& encoder, const Credentia
 
 bool ArgumentCoder<Credential>::decode(ArgumentDecoder& decoder, Credential& credential)
 {
-#if CERTIFICATE_CREDENTIALS_SUPPORTED
+#if CERTIFICATE_CREDENTIALS_SUPPORTED && PLATFORM(IOS)
     CredentialType type;
 
     if (!decoder.decodeEnum(type))

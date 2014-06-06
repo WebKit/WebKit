@@ -1,3 +1,19 @@
+2014-06-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix after <http://trac.webkit.org/changeset/169655>.
+
+        The SPIs used do not exist on Mac, limit the code to iOS.
+
+        * Shared/Authentication/mac/AuthenticationManager.mac.mm:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Credential>::encode):
+        (IPC::ArgumentCoder<Credential>::decode):
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::typeFromCFTypeRef):
+        (IPC::encode):
+        (IPC::decode):
+        * Shared/cf/ArgumentCodersCF.h:
+
 2014-06-06  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/17095692> [iOS] Client-certificate authentication isn’t working
