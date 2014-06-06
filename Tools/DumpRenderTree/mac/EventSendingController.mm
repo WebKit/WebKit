@@ -676,7 +676,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     // Set the CGEvent location in flipped coords relative to the first screen, which
     // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has
     // no associated window. See <rdar://problem/17180591>.
-    CGPoint lastGlobalMousePosition = CGPointMake(lastMousePosition.x, [[[NSScreen screens] firstObject] frame].size.height - lastMousePosition.y);
+    CGPoint lastGlobalMousePosition = CGPointMake(lastMousePosition.x, [[[NSScreen screens] objectAtIndex:0] frame].size.height - lastMousePosition.y);
     CGEventSetLocation(cgScrollEvent, lastGlobalMousePosition);
 
     NSEvent *scrollEvent = [NSEvent eventWithCGEvent:cgScrollEvent];
@@ -737,7 +737,7 @@ const uint32_t kCGScrollWheelEventMomentumPhase = 123;
     // Set the CGEvent location in flipped coords relative to the first screen, which
     // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has
     // no associated window. See <rdar://problem/17180591>.
-    CGPoint lastGlobalMousePosition = CGPointMake(lastMousePosition.x, [[[NSScreen screens] firstObject] frame].size.height - lastMousePosition.y);
+    CGPoint lastGlobalMousePosition = CGPointMake(lastMousePosition.x, [[[NSScreen screens] objectAtIndex:0] frame].size.height - lastMousePosition.y);
     CGEventSetLocation(cgScrollEvent, lastGlobalMousePosition);
     CGEventSetIntegerValueField(cgScrollEvent, kCGScrollWheelEventIsContinuous, 1);
     CGEventSetIntegerValueField(cgScrollEvent, kCGScrollWheelEventScrollPhase, phase);

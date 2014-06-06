@@ -1,5 +1,18 @@
 2014-06-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix builds on 10.8; -firstObject isn't declared on NSArray there.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController mouseScrollByX:andY:continuously:]):
+        (-[EventSendingController mouseScrollByX:andY:withWheel:andMomentumPhases:]):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseScrollBy):
+        (WTR::EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases):
+
+2014-06-06  Simon Fraser  <simon.fraser@apple.com>
+
         Latched scrolling tests are flakey on Mavericks
         https://bugs.webkit.org/show_bug.cgi?id=133578
         <rdar://problem/17180591>

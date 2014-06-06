@@ -449,7 +449,7 @@ void EventSenderProxy::mouseScrollBy(int x, int y)
     // Set the CGEvent location in flipped coords relative to the first screen, which
     // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has
     // no associated window. See <rdar://problem/17180591>.
-    CGPoint lastGlobalMousePosition = CGPointMake(m_position.x, [[[NSScreen screens] firstObject] frame].size.height - m_position.y);
+    CGPoint lastGlobalMousePosition = CGPointMake(m_position.x, [[[NSScreen screens] objectAtIndex:0] frame].size.height - m_position.y);
     CGEventSetLocation(cgScrollEvent.get(), lastGlobalMousePosition);
 
     NSEvent *event = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
@@ -480,7 +480,7 @@ void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int
     // Set the CGEvent location in flipped coords relative to the first screen, which
     // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has
     // no associated window. See <rdar://problem/17180591>.
-    CGPoint lastGlobalMousePosition = CGPointMake(m_position.x, [[[NSScreen screens] firstObject] frame].size.height - m_position.y);
+    CGPoint lastGlobalMousePosition = CGPointMake(m_position.x, [[[NSScreen screens] objectAtIndex:0] frame].size.height - m_position.y);
     CGEventSetLocation(cgScrollEvent.get(), lastGlobalMousePosition);
 
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventIsContinuous, 1);
