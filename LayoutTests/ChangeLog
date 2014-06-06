@@ -1,3 +1,14 @@
+2014-06-05  Michael Timbrook  <timbrook@apple.com>
+
+        AX: Add support for ARIA 1.1 'none' role
+        https://bugs.webkit.org/show_bug.cgi?id=133367
+
+        Reviewed by Chris Fleizach.
+
+        Added the tests to cover the behavior of the 'none' role
+        * accessibility/aria-none-role-expected.txt: Added.
+        * accessibility/aria-none-role.html: Added.
+
 2014-06-05  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Children of tables and lists with role='presentation' should each be exposed as if they were div elements

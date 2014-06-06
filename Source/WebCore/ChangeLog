@@ -1,3 +1,16 @@
+2014-06-05  Michael Timbrook  <timbrook@apple.com>
+
+        AX: Add support for ARIA 1.1 'none' role
+        https://bugs.webkit.org/show_bug.cgi?id=133367
+
+        Reviewed by Chris Fleizach.
+
+        Added support for the 'none' role by added a lookup for it to go to PresentationalRole
+        Test: accessibility/aria-none-role.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::initializeRoleMap):
+
 2014-06-05  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Children of tables and lists with role='presentation' should each be exposed as if they were div elements

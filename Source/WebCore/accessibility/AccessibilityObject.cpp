@@ -1781,6 +1781,7 @@ static void initializeRoleMap()
         { "menuitem", MenuItemRole },
         { "menuitemcheckbox", MenuItemCheckboxRole },
         { "menuitemradio", MenuItemRadioRole },
+        { "none", PresentationalRole },
         { "note", DocumentNoteRole },
         { "navigation", LandmarkNavigationRole },
         { "option", ListBoxOptionRole },
