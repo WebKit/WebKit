@@ -1,3 +1,17 @@
+2014-06-05  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Region box incorrectly overlaps floating box
+        https://bugs.webkit.org/show_bug.cgi?id=133545
+
+        Reviewed by David Hyatt.
+
+        A region box creates a BFC and it should not overlap a floating box in the same formatting context: http://www.w3.org/TR/CSS21/visuren.html#bfc-next-to-float
+
+        Test: fast/regions/region-as-bfc-avoids-float.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::avoidsFloats):
+
 2014-06-05  Yoav Weiss  <yoav@yoav.ws>
 
         Align srcset parser with recent spec changes

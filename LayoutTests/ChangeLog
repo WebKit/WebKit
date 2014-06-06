@@ -1,3 +1,16 @@
+2014-06-05  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Region box incorrectly overlaps floating box
+        https://bugs.webkit.org/show_bug.cgi?id=133545
+
+        Reviewed by David Hyatt.
+
+        Add test to check that a region does not incorrectly overlap a floating
+        element in the same formatting context.
+
+        * fast/regions/region-as-bfc-avoids-float-expected.html: Added.
+        * fast/regions/region-as-bfc-avoids-float.html: Added.
+
 2014-06-05  Yoav Weiss  <yoav@yoav.ws>
 
         Align srcset parser with recent spec changes

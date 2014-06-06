@@ -2467,7 +2467,10 @@ LayoutUnit RenderBlock::adjustLogicalRightOffsetForLine(LayoutUnit offsetFromFlo
 bool RenderBlock::avoidsFloats() const
 {
     // Floats can't intrude into our box if we have a non-auto column count or width.
-    return RenderBox::avoidsFloats() || !style().hasAutoColumnCount() || !style().hasAutoColumnWidth();
+    return RenderBox::avoidsFloats()
+        || !style().hasAutoColumnCount()
+        || !style().hasAutoColumnWidth()
+        || style().hasFlowFrom();
 }
 
 bool RenderBlock::isPointInOverflowControl(HitTestResult& result, const LayoutPoint& locationInContainer, const LayoutPoint& accumulatedOffset)
