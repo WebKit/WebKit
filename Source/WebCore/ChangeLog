@@ -1,3 +1,15 @@
+2014-06-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Try to fix the build after http://trac.webkit.org/changeset/169655
+
+        Unfortunately, the fix is very fragile, and will likely not work for some SDKs
+        or possibly local headers - all OS versions have multiple SecBsse.h headers with
+        different definitions for SecIdentityRef.
+
+        We'll see.
+
+        * WebCore.exp.in:
+
 2014-06-06  Dan Bernstein  <mitz@apple.com>
 
         WebCore part of <rdar://problem/17095692> [iOS] Client-certificate authentication isn’t working
