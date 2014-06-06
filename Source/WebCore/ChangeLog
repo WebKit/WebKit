@@ -1,3 +1,27 @@
+2013-08-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        [Soup] WebTiming information not shown in the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=118395
+
+        Reviewed by Martin Robinson.
+
+        WebTiming information was not correctly provided to WebCore
+        because the gotHeadersCallback was incorrectly resetting the
+        original ResourceResponse (which had the ResourceLoadTiming
+        object) instead of simply updating their contents using the
+        SoupMessage.
+
+        No new test required as this feature is already covered by the
+        existing webtiming tests. In any case this change includes a fix
+        for the http/tests/misc/webtiming-ssl.php test which was not
+        failing even if it should because it was not correct.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::gotHeadersCallback):
+        (WebCore::restartedCallback): restartedCallback should be
+        available only if WEB_TIMING is defined.
+        (WebCore::createSoupMessageForHandleAndRequest): Ditto.
+
 2014-03-26  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r162679): Poster image visible under the video

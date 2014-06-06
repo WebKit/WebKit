@@ -1,3 +1,24 @@
+2013-08-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        [Soup] WebTiming information not shown in the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=118395
+
+        Reviewed by Martin Robinson.
+
+        Fixed the webiming-ssl.php test that was incorrectly considering a
+        FAIL as the expected result. It was probably just a legacy
+        decision which came from the times where DRT was responsible of
+        reporting WebTiming information.
+
+        Also added a new test that fails due to wkb.ug/103927. It was not
+        detected before because there were no timing information in the
+        response.
+
+        * http/tests/misc/resources/webtiming-ssl.html:
+        * http/tests/misc/webtiming-ssl-expected.txt:
+        * platform/gtk/TestExpectations: added
+        http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_attribute_order.html.
+
 2014-03-21  Oliver Hunt  <oliver@apple.com>
 
         Fix semantics of JS execution when assigning an object to document.location
