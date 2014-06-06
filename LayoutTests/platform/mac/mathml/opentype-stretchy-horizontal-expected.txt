@@ -1,0 +1,38 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x118
+  RenderBlock {HTML} at (0,0) size 800x118
+    RenderBody {BODY} at (8,16) size 784x86
+      RenderBlock {P} at (0,0) size 784x18
+        RenderMathMLMath {math} at (0,11) size 16x5 [padding: 0 1 0 1]
+          RenderMathMLRow {mstyle} at (1,0) size 14x5
+            RenderMathMLUnderOver {mover} at (0,0) size 14x5
+              RenderMathMLOperator {mo} at (-3,1) size 19x4
+                RenderMathMLBlock (anonymous, flex) at (2,0) size 14x4
+                  RenderBlock (anonymous) at (0,0) size 2x4
+                    RenderText at (0,-3) size 2x10
+                      text run at (0,-3) width 2: "\x{219C}"
+              RenderMathMLSpace {mspace} at (2,0) size 9x1
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,34) size 784x18
+        RenderMathMLMath {math} at (0,11) size 23x5 [padding: 0 1 0 1]
+          RenderMathMLRow {mstyle} at (1,0) size 21x5
+            RenderMathMLUnderOver {mover} at (0,0) size 21x5
+              RenderMathMLOperator {mo} at (-3,1) size 27x4
+                RenderMathMLBlock (anonymous, flex) at (2,0) size 22x4
+                  RenderBlock (anonymous) at (0,0) size 2x4
+                    RenderText at (0,-3) size 2x10
+                      text run at (0,-3) width 2: "\x{219C}"
+              RenderMathMLSpace {mspace} at (2,0) size 16x1
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,68) size 784x18
+        RenderMathMLMath {math} at (0,11) size 158x5 [padding: 0 1 0 1]
+          RenderMathMLRow {mstyle} at (1,0) size 156x5
+            RenderMathMLUnderOver {mover} at (0,0) size 156x5
+              RenderMathMLOperator {mo} at (-3,1) size 162x4
+                RenderMathMLBlock (anonymous, flex) at (2,0) size 157x4
+                  RenderBlock (anonymous) at (0,0) size 2x4
+                    RenderText at (0,-3) size 2x10
+                      text run at (0,-3) width 2: "\x{219C}"
+              RenderMathMLSpace {mspace} at (2,0) size 151x1
+        RenderText {#text} at (0,0) size 0x0
