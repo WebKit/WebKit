@@ -1,3 +1,36 @@
+2014-06-05 Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Current media controls look different from previous media controls. Adjusted CSS to make media elements more similar by adding padding, adjusting hues/svg, resizing elements, etc.
+
+        https://bugs.webkit.org/show_bug.cgi?id=133521
+
+        Reviewed by Eric Carlson.
+
+        The main issues:
+        - The widths between elements of both audio and video players are incorrect.
+        - The hues of audio player elements are incorrect.
+        - The hues of video player elements are content dependent (refer to full-screen mode), and this cannot be exactly replicated using just css. This patch only attempts to make them more similar.
+        - The height of the audio player is incorrect.
+
+        Test: platform/ios-sim/media/audio-width.html
+
+        * Modules/mediacontrols/mediaControlsiOS.css: Updated style elements for audio/video elements.
+        (::-webkit-media-controls): Enforce a minimum width on audio/video controls.
+        (audio): Enforce a minimum width on audio elements.
+        (audio::-webkit-media-controls): see below
+        (audio::-webkit-media-controls-wireless-playback-picker-button): modified SVG, hue and width/height.
+        (audio::-webkit-media-controls-panel): adjusted hue, added left/right padding.
+        (audio::-webkit-media-controls-fullscreen-button): removed. There's no fullscreen for audio anyways.
+        (audio::-webkit-media-controls-current-time-display): adjusted font size, added left padding.
+        (audio::-webkit-media-controls-time-remaining-display): adjusted font size, added right padding.
+
+        (video::-webkit-media-controls-panel): adjusted hue, added left/right padding.
+        (video::-webkit-media-controls-current-time-display): added left padding.
+        (video::-webkit-media-controls-time-remaining-display): added right padding.
+        (video::-webkit-media-controls-wireless-playback-picker-button): modified SVG, hue, opacity and width/height.
+        (video::-webkit-media-controls-fullscreen-button): modified SVG, hue, opacity, and width/height. In particular, made the svg seem sharper.
+        (video::-webkit-media-controls-play-button): modified SVG, hue, opacity, and width/height.
+
 2014-06-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r169570.
