@@ -1,3 +1,34 @@
+2014-06-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Latched scrolling tests are flakey on Mavericks
+        https://bugs.webkit.org/show_bug.cgi?id=133578
+        <rdar://problem/17180591>
+
+        Reviewed by Brent Fulgham.
+        
+        The latched scrolling tests rely on synthetic mousewheel events whose coordinates can
+        be wrong on machines with more than one screen. This is because we use
+        [NSScreen mainScreen] when computing the global coordinates of the events, but
+        [NSScreen mainScreen] returns the screen with the key window, not the first screen.
+        
+        So replace calls to [NSScreen mainScreen] with [[NSScreen screens] firstObject]. Also
+        add comments clarifying why the coordinate math works (which is not obvious given
+        the events have no target window).
+        
+        Some scrolling tests also dispatched events outside the 800x600 test window, so
+        fix those tests, and add logging that will appear in test output when this happens.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController mouseScrollByX:andY:continuously:]):
+        (-[EventSendingController mouseScrollByX:andY:withWheel:andMomentumPhases:]):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseMoveTo):
+        (WTR::EventSenderProxy::mouseScrollBy):
+        (WTR::EventSenderProxy::continuousMouseScrollBy):
+        (WTR::EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases):
+
 2014-06-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] run-perf-tests should run the tests inside the jhbuild shell.

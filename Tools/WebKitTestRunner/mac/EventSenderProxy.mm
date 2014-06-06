@@ -220,6 +220,9 @@ void EventSenderProxy::mouseMoveTo(double x, double y)
         [NSApp _setCurrentEvent:event];
         [targetView mouseMoved:event];
         [NSApp _setCurrentEvent:nil];
+    } else {
+        CGPoint windowLocation = [event locationInWindow];
+        WTFLogAlways("mouseMoveTo failed to find a target view at %f,%f\n", windowLocation.x, windowLocation.y);
     }
 }
 
@@ -443,8 +446,10 @@ void EventSenderProxy::mouseScrollBy(int x, int y)
 {
     RetainPtr<CGEventRef> cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent(0, kCGScrollEventUnitLine, 2, y, x));
 
-    // CGEvent locations are in global display coordinates.
-    CGPoint lastGlobalMousePosition = CGPointMake(m_position.x, [[NSScreen mainScreen] frame].size.height - m_position.y);
+    // Set the CGEvent location in flipped coords relative to the first screen, which
+    // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has
+    // no associated window. See <rdar://problem/17180591>.
+    CGPoint lastGlobalMousePosition = CGPointMake(m_position.x, [[[NSScreen screens] firstObject] frame].size.height - m_position.y);
     CGEventSetLocation(cgScrollEvent.get(), lastGlobalMousePosition);
 
     NSEvent *event = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
@@ -452,12 +457,15 @@ void EventSenderProxy::mouseScrollBy(int x, int y)
         [NSApp _setCurrentEvent:event];
         [targetView scrollWheel:event];
         [NSApp _setCurrentEvent:nil];
+    } else {
+        NSPoint location = [event locationInWindow];
+        WTFLogAlways("mouseScrollByWithWheelAndMomentumPhases failed to find the target view at %f,%f\n", location.x, location.y);
     }
 }
 
 void EventSenderProxy::continuousMouseScrollBy(int x, int y, bool paged)
 {
-    // FIXME: Implement this.
+    WTFLogAlways("EventSenderProxy::continuousMouseScrollBy is not implemented\n");
     return;
 }
 
@@ -469,21 +477,26 @@ void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int
 {
     RetainPtr<CGEventRef> cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent(0, kCGScrollEventUnitLine, 2, y, x));
 
-    // CGEvent locations are in global display coordinates.
-    CGPoint lastGlobalMousePosition = CGPointMake(m_position.x, [[NSScreen mainScreen] frame].size.height - m_position.y);
+    // Set the CGEvent location in flipped coords relative to the first screen, which
+    // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has
+    // no associated window. See <rdar://problem/17180591>.
+    CGPoint lastGlobalMousePosition = CGPointMake(m_position.x, [[[NSScreen screens] firstObject] frame].size.height - m_position.y);
     CGEventSetLocation(cgScrollEvent.get(), lastGlobalMousePosition);
 
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventIsContinuous, 1);
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventScrollPhase, phase);
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventMomentumPhase, momentum);
 
-    NSEvent* event = [NSEvent eventWithCGEvent: cgScrollEvent.get()];
+    NSEvent* event = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
 
     // Our event should have the correct settings:
-    if (NSView *targetView = [m_testController->mainWebView()->platformView() hitTest: [event locationInWindow]]) {
-        [NSApp _setCurrentEvent: event];
-        [targetView scrollWheel: event];
-        [NSApp _setCurrentEvent: nil];
+    if (NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]]) {
+        [NSApp _setCurrentEvent:event];
+        [targetView scrollWheel:event];
+        [NSApp _setCurrentEvent:nil];
+    } else {
+        CGPoint windowLocation = [event locationInWindow];
+        WTFLogAlways("mouseScrollByWithWheelAndMomentumPhases failed to find the target view at %f,%f\n", windowLocation.x, windowLocation.y);
     }
 }
 

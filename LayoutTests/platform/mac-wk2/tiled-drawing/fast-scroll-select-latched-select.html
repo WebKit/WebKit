@@ -63,7 +63,6 @@ function checkForScroll() {
 }
 
 function scrollTest() {
-    // See where our IFrame lives:
     pageScrollPositionBefore = document.body.scrollTop;
 
     selectTarget = document.getElementById('target');
@@ -74,8 +73,8 @@ function scrollTest() {
     // Scroll the #source until we reach the #target.
     var startPosX = Math.round(selectTarget.offsetLeft) + 20;
     debug("div display height = " + Math.round(selectTarget.clientHeight));
-    var startPosY = Math.round(selectTarget.offsetTop) + Math.round(selectTarget.clientHeight) - 42; // One wheel turn before end.
-    eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
+    var startPosY = Math.round(selectTarget.offsetTop) + Math.round(selectTarget.clientHeight) - 42;
+    eventSender.mouseMoveTo(startPosX, startPosY);
     debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none', true);
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none', true);
@@ -111,7 +110,7 @@ function setupTopLevel() {
 </script>
 <div id="parent" style="height: 2000px; width: 2000px;">
     <div id="source" style="height: 100px; width: 500px;">
-        Put mouse here and flick downwards
+        Put mouse near the bottom of the select and scroll downwards.
     </div>
         <div class="scrollable_region">
             <h3>Scrollable Select</h3>

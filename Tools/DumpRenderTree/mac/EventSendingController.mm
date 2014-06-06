@@ -667,17 +667,16 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
 #endif
 }
 
-- (void)mouseScrollByX:(int)x andY:(int)y continuously:(BOOL)c
+- (void)mouseScrollByX:(int)x andY:(int)y continuously:(BOOL)continuously
 {
 #if !PLATFORM(IOS)
-    CGScrollEventUnit unit = c?kCGScrollEventUnitPixel:kCGScrollEventUnitLine;
+    CGScrollEventUnit unit = continuously ? kCGScrollEventUnitPixel : kCGScrollEventUnitLine;
     CGEventRef cgScrollEvent = CGEventCreateScrollWheelEvent(NULL, unit, 2, y, x);
     
-    // CGEvent locations are in global display coordinates.
-    CGPoint lastGlobalMousePosition = {
-        lastMousePosition.x,
-        [[NSScreen mainScreen] frame].size.height - lastMousePosition.y
-    };
+    // Set the CGEvent location in flipped coords relative to the first screen, which
+    // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has
+    // no associated window. See <rdar://problem/17180591>.
+    CGPoint lastGlobalMousePosition = CGPointMake(lastMousePosition.x, [[[NSScreen screens] firstObject] frame].size.height - lastMousePosition.y);
     CGEventSetLocation(cgScrollEvent, lastGlobalMousePosition);
 
     NSEvent *scrollEvent = [NSEvent eventWithCGEvent:cgScrollEvent];
@@ -735,8 +734,10 @@ const uint32_t kCGScrollWheelEventMomentumPhase = 123;
 
     CGEventRef cgScrollEvent = CGEventCreateScrollWheelEvent(NULL, kCGScrollEventUnitLine, 2, y, x);
 
-    // CGEvent locations are in global display coordinates.
-    CGPoint lastGlobalMousePosition = CGPointMake(lastMousePosition.x, [[NSScreen mainScreen] frame].size.height - lastMousePosition.y);
+    // Set the CGEvent location in flipped coords relative to the first screen, which
+    // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has
+    // no associated window. See <rdar://problem/17180591>.
+    CGPoint lastGlobalMousePosition = CGPointMake(lastMousePosition.x, [[[NSScreen screens] firstObject] frame].size.height - lastMousePosition.y);
     CGEventSetLocation(cgScrollEvent, lastGlobalMousePosition);
     CGEventSetIntegerValueField(cgScrollEvent, kCGScrollWheelEventIsContinuous, 1);
     CGEventSetIntegerValueField(cgScrollEvent, kCGScrollWheelEventScrollPhase, phase);

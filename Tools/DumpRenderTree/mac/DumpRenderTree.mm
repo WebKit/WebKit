@@ -710,7 +710,7 @@ WebView *createWebViewAndOffscreenWindow()
     NSRect windowRect = NSOffsetRect(rect, -10000, [(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame].size.height - rect.size.height + 10000);
     DumpRenderTreeWindow *window = [[DumpRenderTreeWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
 
-    [window setColorSpace:[[NSScreen mainScreen] colorSpace]];
+    [window setColorSpace:[[[NSScreen screens] firstObject] colorSpace]];
     [window setCollectionBehavior:NSWindowCollectionBehaviorStationary];
     [[window contentView] addSubview:webView];
     [window orderBack:nil];

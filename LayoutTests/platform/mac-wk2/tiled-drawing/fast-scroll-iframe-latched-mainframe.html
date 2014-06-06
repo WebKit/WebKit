@@ -35,7 +35,6 @@ function checkForScroll() {
 }
 
 function scrollTest() {
-    // See where our IFrame lives:
     pageScrollPositionBefore = document.body.scrollTop;
     iFrameScrollPositionBefore = window.frames['target'].document.body.scrollTop;
 
@@ -44,7 +43,7 @@ function scrollTest() {
     // Scroll the #source until we reach the #target.
     var startPosX = iframeTarget.offsetLeft + 20;
     var startPosY = iframeTarget.offsetTop - 42; // Slightly more than one wheel scroll away from the IFrame
-    eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
+    eventSender.mouseMoveTo(startPosX, startPosY);
     debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none', true);
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none', true);
@@ -71,8 +70,8 @@ function setupTopLevel() {
         var message = document.createElement('div');
         message.innerHTML = "<p>This test is better run under DumpRenderTree. To manually test it, place the mouse pointer<br/>"
             + "at the top of the page, and then use the mouse wheel or a two-finger swipe to scroll the<br/>"
-            + "down past the IFrame.<br/><br/>"
-            + "You should not see the row of END labels if this test is successful.</p>";
+            + "down past the iframe.<br/><br/>"
+            + "The iframe should not scroll.</p>";
         messageLocation.appendChild(message);
     }
 }
@@ -82,7 +81,7 @@ function setupTopLevel() {
     <div id="source" style="height: 100px">
         Put mouse here and flick downwards
     </div>
-    <iframe id="target" name="target" style="border:solid 1px green; height: 500px; width: 500px;" 
+    <iframe id="target" name="target" style="border:solid 1px green; height: 300px; width: 500px;" 
      src= "data:text/html,
      <div id='notToBeScrolled' style='height: 1000px; width: 1000px;'>
      TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP<br/><br/>
