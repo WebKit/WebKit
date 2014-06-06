@@ -1,3 +1,14 @@
+2014-06-06  Gavin Barraclough  <baraclough@apple.com>
+
+        Should boost ChildProcesses on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=133583
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::connectToService):
+            - boost all child processes on iOS.
+
 2014-06-06  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix after <http://trac.webkit.org/changeset/169655>.

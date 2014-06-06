@@ -169,7 +169,22 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
 #endif
     }
 }
-
+    
+static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
+{
+#if PLATFORM(IOS)
+    // On iOS, leak a boost onto all child processes
+    UNUSED_PARAM(launchOptions);
+    return true;
+#elif ENABLE(NETWORK_PROCESS)
+    // On Mac, leak a boost onto the NetworkProcess.
+    return launchOptions.processType == ProcessLauncher::NetworkProcess;
+#else
+    UNUSED_PARAM(launchOptions);
+    return false;
+#endif
+}
+    
 static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions, bool forDevelopment, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction, UUIDHolder* instanceUUID)
 {
     // Create a connection to the WebKit XPC service.
@@ -179,16 +194,13 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     // XPC requires having an event handler, even if it is not used.
     xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t event) { });
     xpc_connection_resume(connection.get());
-
-#if ENABLE(NETWORK_PROCESS) && !PLATFORM(IOS)
-    // Leak a boost onto the NetworkProcess.
-    if (launchOptions.processType == ProcessLauncher::NetworkProcess) {
+    
+    if (shouldLeakBoost(launchOptions)) {
         auto preBootstrapMessage = IPC::adoptXPC(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_string(preBootstrapMessage.get(), "message-name", "pre-bootstrap");
         xpc_connection_send_message(connection.get(), preBootstrapMessage.get());
     }
-#endif
-
+    
     // Create the listening port.
     mach_port_t listeningPort;
     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
