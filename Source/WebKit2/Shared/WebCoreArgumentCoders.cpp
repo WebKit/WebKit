@@ -69,6 +69,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
+#if PLATFORM(COCOA)
+#include "ArgumentCodersCF.h"
+#endif
+
 #if PLATFORM(IOS)
 #include <WebCore/FloatQuad.h>
 #include <WebCore/Pasteboard.h>
@@ -467,12 +471,57 @@ bool ArgumentCoder<ProtectionSpace>::decode(ArgumentDecoder& decoder, Protection
 
 void ArgumentCoder<Credential>::encode(ArgumentEncoder& encoder, const Credential& credential)
 {
+#if CERTIFICATE_CREDENTIALS_SUPPORTED
+    encoder.encodeEnum(credential.type());
+
+    if (credential.type() == CredentialTypeClientCertificate) {
+        IPC::encode(encoder, credential.identity());
+
+        encoder << !!credential.certificates();
+        if (credential.certificates())
+            IPC::encode(encoder, credential.certificates());
+
+        encoder.encodeEnum(credential.persistence());
+        return;
+    }
+#endif
     encoder << credential.user() << credential.password();
+
     encoder.encodeEnum(credential.persistence());
 }
 
 bool ArgumentCoder<Credential>::decode(ArgumentDecoder& decoder, Credential& credential)
 {
+#if CERTIFICATE_CREDENTIALS_SUPPORTED
+    CredentialType type;
+
+    if (!decoder.decodeEnum(type))
+        return false;
+
+    if (type == CredentialTypeClientCertificate) {
+        RetainPtr<SecIdentityRef> identity;
+        if (!IPC::decode(decoder, identity))
+            return false;
+
+        bool hasCertificates;
+        if (!decoder.decode(hasCertificates))
+            return false;
+
+        RetainPtr<CFArrayRef> certificates;
+        if (hasCertificates) {
+            if (!IPC::decode(decoder, certificates))
+                return false;
+        }
+
+        CredentialPersistence persistence;
+        if (!decoder.decodeEnum(persistence))
+            return false;
+
+        credential = Credential(identity.get(), certificates.get(), persistence);
+        return true;
+    }
+#endif
+
     String user;
     if (!decoder.decode(user))
         return false;

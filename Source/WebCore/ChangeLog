@@ -1,3 +1,12 @@
+2014-06-06  Dan Bernstein  <mitz@apple.com>
+
+        WebCore part of <rdar://problem/17095692> [iOS] Client-certificate authentication isn’t working
+        https://bugs.webkit.org/show_bug.cgi?id=133527
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in: Exported some Credential member functions.
+
 2014-06-06  Dean Jackson  <dino@apple.com>
 
         [iOS WebGL] Float texture extension has a slightly different name

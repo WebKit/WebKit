@@ -4,5 +4,9 @@
 <dict>
 	<key>com.apple.private.network.socket-delegate</key>
 	<true/>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>com.apple.identities</string>
+	</array>
 </dict>
 </plist>

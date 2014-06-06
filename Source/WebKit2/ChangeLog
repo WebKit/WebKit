@@ -1,3 +1,28 @@
+2014-06-06  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/17095692> [iOS] Client-certificate authentication isn’t working
+        https://bugs.webkit.org/show_bug.cgi?id=133527
+
+        Reviewed by Darin Adler.
+
+        * Configurations/Network-iOS.entitlements: Enabled the Network process to access the keys
+        needed to create identities to authenticate with.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Credential>::encode): Encode the credential type, and if it is a client
+        certificate, encode the identity and the certificates.
+        (IPC::ArgumentCoder<Credential>::decode): Decode the credential type. If it is a client
+        certificate, decode the identity and the certificates and use the proper Credential
+        constructor.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::typeFromCFTypeRef): Handle SecIdentityRef.
+        (IPC::encode): Encode an identity by encoding its certificate and a persistent reference to
+        its key.
+        (IPC::decode): Decode a certificate and a persistent reference to a key, find the key, and
+        create an identity.
+        * Shared/cf/ArgumentCodersCF.h:
+
 2014-06-05  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] WebPage sometimes forces two resize events on animated resize

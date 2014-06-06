@@ -78,6 +78,10 @@ bool decode(ArgumentDecoder&, RetainPtr<CFURLRef>& result);
 void encode(ArgumentEncoder&, SecCertificateRef);
 bool decode(ArgumentDecoder&, RetainPtr<SecCertificateRef>& result);
 
+// SecIdentityRef
+void encode(ArgumentEncoder&, SecIdentityRef);
+bool decode(ArgumentDecoder&, RetainPtr<SecIdentityRef>& result);
+
 #if HAVE(SEC_KEYCHAIN)
 // SecKeychainItemRef
 void encode(ArgumentEncoder&, SecKeychainItemRef);
