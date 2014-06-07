@@ -1,3 +1,13 @@
+2014-06-07  Alexey Proskuryakov  <ap@apple.com>
+
+        [iOS] Fix a path used for sandbox profiles
+        https://bugs.webkit.org/show_bug.cgi?id=133602
+        <rdar://problem/17212011>
+
+        Reviewed by David Kilzer.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-06-06  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION (iOS WebKit2): backspace key does not repeat beyond a single word.

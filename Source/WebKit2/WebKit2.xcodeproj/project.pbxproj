@@ -1927,7 +1927,7 @@
 		A7AADA1519395CC3003EA1C7 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = /usr/local/share/sandbox/embedded/profiles/builtin;
+			dstPath = /usr/local/share/sandbox/profiles/embedded/builtin;
 			dstSubfolderSpec = 0;
 			files = (
 				A78CCDDA193AC9F4005ECC25 /* com.apple.WebKit.Databases.sb in CopyFiles */,
