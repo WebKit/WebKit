@@ -1364,6 +1364,18 @@ void WebPage::extendSelection(uint32_t granularity)
     frame.selection().setSelectedRange(wordRangeFromPosition(position).get(), position.affinity(), true);
 }
 
+void WebPage::selectWordBackward()
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame.selection().isCaret())
+        return;
+
+    VisiblePosition position = frame.selection().selection().start();
+    VisiblePosition startPosition = positionOfNextBoundaryOfGranularity(position, WordGranularity, DirectionBackward);
+    if (startPosition.isNotNull() && startPosition != position)
+        frame.selection().setSelectedRange(Range::create(*frame.document(), startPosition, position).get(), position.affinity(), true);
+}
+
 void WebPage::convertSelectionRectsToRootView(FrameView* view, Vector<SelectionRect>& selectionRects)
 {
     for (size_t i = 0; i < selectionRects.size(); ++i) {

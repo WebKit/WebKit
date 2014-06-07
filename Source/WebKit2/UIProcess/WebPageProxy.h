@@ -610,6 +610,7 @@ public:
     void selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, PassRefPtr<GestureCallback>);
     void updateBlockSelectionWithTouch(const WebCore::IntPoint, uint32_t touch, uint32_t handlePosition);
     void extendSelection(WebCore::TextGranularity);
+    void selectWordBackward();
     void requestAutocorrectionData(const String& textForAutocorrection, PassRefPtr<AutocorrectionDataCallback>);
     void applyAutocorrection(const String& correction, const String& originalText, PassRefPtr<StringCallback>);
     bool applyAutocorrection(const String& correction, const String& originalText);

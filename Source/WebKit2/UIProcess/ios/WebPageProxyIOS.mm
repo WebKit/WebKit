@@ -476,6 +476,11 @@ void WebPageProxy::extendSelection(WebCore::TextGranularity granularity)
     m_process->send(Messages::WebPage::ExtendSelection(static_cast<uint32_t>(granularity)), m_pageID);
 }
 
+void WebPageProxy::selectWordBackward()
+{
+    m_process->send(Messages::WebPage::SelectWordBackward(), m_pageID);
+}
+
 void WebPageProxy::interpretKeyEvent(const EditorState& state, bool isCharEvent, bool& handled)
 {
     m_editorState = state;

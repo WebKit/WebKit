@@ -990,6 +990,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     _page->replaceSelectedText(text, word);
 }
 
+- (void)selectWordBackward
+{
+    _page->selectWordBackward();
+}
+
 - (void)_promptForReplace:(id)sender
 {
     if (_page->editorState().wordAtSelection.isEmpty())
@@ -1509,6 +1514,11 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
     default:
         return 0;
     }
+}
+
+- (BOOL)_selectionAtDocumentStart
+{
+    return !_page->editorState().characterBeforeSelection;
 }
 
 - (CGRect)textFirstRect
