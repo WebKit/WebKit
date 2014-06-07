@@ -1,3 +1,19 @@
+2014-06-07  Frédéric Wang  <fred.wang@free.fr>
+
+        Add tests for dynamic changes in msqrt/mroot
+        https://bugs.webkit.org/show_bug.cgi?id=133557
+
+        Reviewed by Chris Fleizach.
+
+        This patch adds some tests to verify that a MathML msqrt/mroot element to which we applied dynamic additions and removals of children renders the same as its static equivalent and that no crashes happen.
+        Unfortunately, the existing code does not handle them very well so they are skipped until we do the refactoring of bug 119038.
+
+        * TestExpectations: skip the tests.
+        * mathml/roots-addChild-expected.html: Added.
+        * mathml/roots-addChild.html: Added.
+        * mathml/roots-removeChild-expected.html: Added.
+        * mathml/roots-removeChild.html: Added.
+
 2014-06-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Scheme of content utils should be compared in an ASCII case-insensitive manner
