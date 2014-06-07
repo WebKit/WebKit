@@ -31,7 +31,6 @@
 #ifndef FileThread_h
 #define FileThread_h
 
-#include "CrossThreadCopier.h"
 #include <functional>
 #include <wtf/MessageQueue.h>
 #include <wtf/PassRefPtr.h>
@@ -56,10 +55,16 @@ public:
     class Task {
         WTF_MAKE_NONCOPYABLE(Task);
     public:
-        template<typename T, typename Method, typename... Parameters>
-        Task(T* instance, Method method, const Parameters&... parameters)
-            : m_task(std::bind(method, instance, typename CrossThreadCopier<Parameters>::Type(CrossThreadCopier<Parameters>::copy(parameters))...))
+        template<typename T, typename U, typename = typename std::enable_if<!std::is_base_of<Task, U>::value && std::is_convertible<U, std::function<void ()>>::value>::type>
+        Task(T* instance, U method)
+            : m_task(std::move(method))
             , m_instance(instance)
+        {
+        }
+
+        Task(Task&& other)
+            : m_task(std::move(other.m_task))
+            , m_instance(other.m_instance)
         {
         }
 
@@ -74,7 +79,7 @@ public:
         void* m_instance;
     };
 
-    void postTask(std::unique_ptr<Task>);
+    void postTask(Task&&);
 
     void unscheduleTasks(const void* instance);
 

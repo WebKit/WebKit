@@ -1,5 +1,62 @@
 2014-06-07  Zan Dobersek  <zdobersek@igalia.com>
 
+        Use C++11 lambdas to construct FileThread::Task objects
+        https://bugs.webkit.org/show_bug.cgi?id=133079
+
+        Reviewed by Darin Adler.
+
+        Have FileThread::Task constructor take in a std::function<void ()>-like object
+        as the second parameter. Much like with ScriptExecutionContext::Task, the idea here
+        is to use inlined C++11 lambdas in FileThread::postTask() calls. Because FileThread::Task
+        also requires an instance pointer, a brace-init list is passed to these calls, passing
+        in the instance pointer as the first parameter and the C++11 lambda as the second.
+
+        FileThread::postTask() now takes in a FileThread::Task rvalue and moves it onto the heap
+        and into the queue.
+
+        In AsyncFileStream.cpp, calls to FileThread::postTask() are updated to use C++11 lambdas.
+        Uses of MainThreadTask are also replaced by C++11 lambdas. This modernizes the code and
+        removes a lot of helper functions.
+
+        FileThread::Task doesn't use CrossThreadCopier anymore. Instead, we manually produce
+        thread-safe copies as necessary. At the moment this approach produces another copy when
+        passing the freshly-copied object into the lambda, but this will be avoidable once we
+        make C++14 and the lambda capture expression support mandatory.
+
+        * fileapi/AsyncFileStream.cpp:
+        (WebCore::AsyncFileStream::create):
+        (WebCore::AsyncFileStream::stop):
+        (WebCore::AsyncFileStream::getSize):
+        (WebCore::AsyncFileStream::openForRead):
+        (WebCore::AsyncFileStream::openForWrite):
+        (WebCore::AsyncFileStream::close):
+        (WebCore::AsyncFileStream::read):
+        (WebCore::AsyncFileStream::write):
+        (WebCore::AsyncFileStream::truncate):
+        (WebCore::didStart): Deleted.
+        (WebCore::AsyncFileStream::startOnFileThread): Deleted.
+        (WebCore::derefProxyOnMainThread): Deleted.
+        (WebCore::AsyncFileStream::stopOnFileThread): Deleted.
+        (WebCore::didGetSize): Deleted.
+        (WebCore::AsyncFileStream::getSizeOnFileThread): Deleted.
+        (WebCore::didOpen): Deleted.
+        (WebCore::AsyncFileStream::openForReadOnFileThread): Deleted.
+        (WebCore::AsyncFileStream::openForWriteOnFileThread): Deleted.
+        (WebCore::AsyncFileStream::closeOnFileThread): Deleted.
+        (WebCore::didRead): Deleted.
+        (WebCore::AsyncFileStream::readOnFileThread): Deleted.
+        (WebCore::didWrite): Deleted.
+        (WebCore::AsyncFileStream::writeOnFileThread): Deleted.
+        (WebCore::didTruncate): Deleted.
+        (WebCore::AsyncFileStream::truncateOnFileThread): Deleted.
+        * fileapi/AsyncFileStream.h:
+        * fileapi/FileThread.cpp:
+        (WebCore::FileThread::postTask):
+        * fileapi/FileThread.h:
+        (WebCore::FileThread::Task::Task):
+
+2014-06-07  Zan Dobersek  <zdobersek@igalia.com>
+
         Pass C++11 lambdas to callOnMainThread() calls in IconDatabase
         https://bugs.webkit.org/show_bug.cgi?id=133374
 

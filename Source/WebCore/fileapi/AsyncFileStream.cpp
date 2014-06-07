@@ -37,7 +37,6 @@
 #include "FileStream.h"
 #include "FileStreamClient.h"
 #include "FileThread.h"
-#include "MainThreadTask.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
 
@@ -77,7 +76,18 @@ PassRefPtr<AsyncFileStream> AsyncFileStream::create(FileStreamClient* client)
     // This is balanced by the deref in derefProxyOnContext below.
     proxy->ref();
 
-    fileThread()->postTask(std::make_unique<FileThread::Task>(proxy.get(), &AsyncFileStream::startOnFileThread));
+    AsyncFileStream* proxyPtr = proxy.get();
+    fileThread()->postTask({ proxyPtr, [=] {
+        // FIXME: It is not correct to check m_client from a secondary thread - stop() could be racing with this check.
+        if (!proxyPtr->client())
+            return;
+
+        proxyPtr->m_stream->start();
+        callOnMainThread([proxyPtr] {
+            if (proxyPtr->client())
+                proxyPtr->client()->didStart();
+        });
+    } });
 
     return proxy.release();
 }
@@ -86,146 +96,96 @@ AsyncFileStream::~AsyncFileStream()
 {
 }
 
-static void didStart(AsyncFileStream* proxy)
-{
-    if (proxy->client())
-        proxy->client()->didStart();
-}
-
-void AsyncFileStream::startOnFileThread()
-{
-    // FIXME: It is not correct to check m_client from a secondary thread - stop() could be racing with this check.
-    if (!m_client)
-        return;
-    m_stream->start();
-    callOnMainThread(MainThreadTask(didStart, AllowCrossThreadAccess(this)));
-}
-
 void AsyncFileStream::stop()
 {
     // Clear the client so that we won't be invoking callbacks on the client.
     setClient(0);
 
     fileThread()->unscheduleTasks(m_stream.get());
-    fileThread()->postTask(std::make_unique<FileThread::Task>(this, &AsyncFileStream::stopOnFileThread));
-}
-
-static void derefProxyOnMainThread(AsyncFileStream* proxy)
-{
-    ASSERT(proxy->hasOneRef());
-    proxy->deref();
-}
-
-void AsyncFileStream::stopOnFileThread()
-{
-    m_stream->stop();
-    callOnMainThread(MainThreadTask(derefProxyOnMainThread, AllowCrossThreadAccess(this)));
-}
-
-static void didGetSize(AsyncFileStream* proxy, long long size)
-{
-    if (proxy->client())
-        proxy->client()->didGetSize(size);
+    fileThread()->postTask({ this, [this] {
+        m_stream->stop();
+        callOnMainThread([this] {
+            ASSERT(hasOneRef());
+            deref();
+        });
+    } });
 }
 
 void AsyncFileStream::getSize(const String& path, double expectedModificationTime)
 {
-    fileThread()->postTask(std::make_unique<FileThread::Task>(this, &AsyncFileStream::getSizeOnFileThread, path, expectedModificationTime));
-}
-
-void AsyncFileStream::getSizeOnFileThread(const String& path, double expectedModificationTime)
-{
-    long long size = m_stream->getSize(path, expectedModificationTime);
-    callOnMainThread(MainThreadTask(didGetSize, AllowCrossThreadAccess(this), size));
-}
-
-static void didOpen(AsyncFileStream* proxy, bool success)
-{
-    if (proxy->client())
-        proxy->client()->didOpen(success);
+    String pathCopy = path.isolatedCopy();
+    fileThread()->postTask({ this, [this, pathCopy, expectedModificationTime] {
+        long long size = m_stream->getSize(pathCopy, expectedModificationTime);
+        callOnMainThread([this, size] {
+            if (client())
+                client()->didGetSize(size);
+        });
+    } });
 }
 
 void AsyncFileStream::openForRead(const String& path, long long offset, long long length)
 {
-    fileThread()->postTask(std::make_unique<FileThread::Task>(this, &AsyncFileStream::openForReadOnFileThread, path, offset, length));
-}
-
-void AsyncFileStream::openForReadOnFileThread(const String& path, long long offset, long long length)
-{
-    bool success = m_stream->openForRead(path, offset, length);
-    callOnMainThread(MainThreadTask(didOpen, AllowCrossThreadAccess(this), success));
+    String pathCopy = path.isolatedCopy();
+    fileThread()->postTask({ this, [this, pathCopy, offset, length] {
+        bool success = m_stream->openForRead(pathCopy, offset, length);
+        callOnMainThread([this, success] {
+            if (client())
+                client()->didOpen(success);
+        });
+    } });
 }
 
 void AsyncFileStream::openForWrite(const String& path)
 {
-    fileThread()->postTask(std::make_unique<FileThread::Task>(this, &AsyncFileStream::openForWriteOnFileThread, path));
-}
-
-void AsyncFileStream::openForWriteOnFileThread(const String& path)
-{
-    bool success = m_stream->openForWrite(path);
-    callOnMainThread(MainThreadTask(didOpen, AllowCrossThreadAccess(this), success));
+    String pathCopy = path.isolatedCopy();
+    fileThread()->postTask({ this, [this, pathCopy] {
+        bool success = m_stream->openForWrite(pathCopy);
+        callOnMainThread([this, success] {
+            if (client())
+                client()->didOpen(success);
+        });
+    } });
 }
 
 void AsyncFileStream::close()
 {
-    fileThread()->postTask(std::make_unique<FileThread::Task>(this, &AsyncFileStream::closeOnFileThread));
-}
-
-void AsyncFileStream::closeOnFileThread()
-{
-    m_stream->close();
-}
-
-static void didRead(AsyncFileStream* proxy, int bytesRead)
-{
-    if (proxy->client())
-        proxy->client()->didRead(bytesRead);
+    fileThread()->postTask({this, [this] {
+        m_stream->close();
+    } });
 }
 
 void AsyncFileStream::read(char* buffer, int length)
 {
-    fileThread()->postTask(std::make_unique<FileThread::Task>(this, &AsyncFileStream::readOnFileThread, AllowCrossThreadAccess(buffer), length));
-}
-
-void AsyncFileStream::readOnFileThread(char* buffer, int length)
-{
-    int bytesRead = m_stream->read(buffer, length);
-    callOnMainThread(MainThreadTask(didRead, AllowCrossThreadAccess(this), bytesRead));
-}
-
-static void didWrite(AsyncFileStream* proxy, int bytesWritten)
-{
-    if (proxy->client())
-        proxy->client()->didWrite(bytesWritten);
+    fileThread()->postTask({ this, [this, buffer, length] {
+        int bytesRead = m_stream->read(buffer, length);
+        callOnMainThread([this, bytesRead] {
+            if (client())
+                client()->didRead(bytesRead);
+        });
+    } });
 }
 
 void AsyncFileStream::write(const URL& blobURL, long long position, int length)
 {
-    fileThread()->postTask(std::make_unique<FileThread::Task>(this, &AsyncFileStream::writeOnFileThread, blobURL, position, length));
-}
-
-void AsyncFileStream::writeOnFileThread(const URL& blobURL, long long position, int length)
-{
-    int bytesWritten = m_stream->write(blobURL, position, length);
-    callOnMainThread(MainThreadTask(didWrite, AllowCrossThreadAccess(this), bytesWritten));
-}
-
-static void didTruncate(AsyncFileStream* proxy, bool success)
-{
-    if (proxy->client())
-        proxy->client()->didTruncate(success);
+    URL blobURLCopy = blobURL.copy();
+    fileThread()->postTask({ this, [this, blobURLCopy, position, length] {
+        int bytesWritten = m_stream->write(blobURLCopy, position, length);
+        callOnMainThread([this, bytesWritten] {
+            if (client())
+                client()->didWrite(bytesWritten);
+        });
+    } });
 }
 
 void AsyncFileStream::truncate(long long position)
 {
-    fileThread()->postTask(std::make_unique<FileThread::Task>(this, &AsyncFileStream::truncateOnFileThread, position));
-}
-
-void AsyncFileStream::truncateOnFileThread(long long position)
-{
-    bool success = m_stream->truncate(position);
-    callOnMainThread(MainThreadTask(didTruncate, AllowCrossThreadAccess(this), success));
+    fileThread()->postTask({ this, [this, position] {
+        bool success = m_stream->truncate(position);
+        callOnMainThread([this, success] {
+            if (client())
+                client()->didTruncate(success);
+        });
+    } });
 }
 
 } // namespace WebCore

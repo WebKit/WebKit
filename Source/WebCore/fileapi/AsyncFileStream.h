@@ -65,19 +65,7 @@ public:
 private:
     AsyncFileStream(FileStreamClient*);
 
-    // Called on File thread.
-    void startOnFileThread();
-    void stopOnFileThread();
-    void getSizeOnFileThread(const String& path, double expectedModificationTime);
-    void openForReadOnFileThread(const String& path, long long offset, long long length);
-    void openForWriteOnFileThread(const String& path);
-    void closeOnFileThread();
-    void readOnFileThread(char* buffer, int length);
-    void writeOnFileThread(const URL& blobURL, long long position, int length);
-    void truncateOnFileThread(long long position);
-
     RefPtr<FileStream> m_stream;
-
     FileStreamClient* m_client;
 };
 
