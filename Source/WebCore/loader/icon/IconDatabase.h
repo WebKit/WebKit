@@ -111,7 +111,6 @@ public:
 private:
     friend IconDatabaseBase& iconDatabase();
 
-    static void notifyPendingLoadDecisionsOnMainThread(void*);
     void notifyPendingLoadDecisions();
 
     void wakeSyncThread();
@@ -125,9 +124,6 @@ private:
     HashSet<RefPtr<DocumentLoader>> m_loadersPendingDecision;
 
     RefPtr<IconRecord> m_defaultIconRecord;
-
-    static void performScheduleOrDeferSyncTimerOnMainThread(void*);
-    void performScheduleOrDeferSyncTimer();
 
     bool m_scheduleOrDeferSyncTimerRequested;
     std::unique_ptr<SuddenTerminationDisabler> m_disableSuddenTerminationWhileSyncTimerScheduled;

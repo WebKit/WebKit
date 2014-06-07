@@ -804,11 +804,6 @@ IconDatabase::~IconDatabase()
     ASSERT(!isOpen());
 }
 
-void IconDatabase::notifyPendingLoadDecisionsOnMainThread(void* context)
-{
-    static_cast<IconDatabase*>(context)->notifyPendingLoadDecisions();
-}
-
 void IconDatabase::notifyPendingLoadDecisions()
 {
     ASSERT_NOT_SYNC_THREAD();
@@ -838,17 +833,6 @@ void IconDatabase::wakeSyncThread()
     m_syncCondition.signal();
 }
 
-void IconDatabase::performScheduleOrDeferSyncTimer()
-{
-    m_syncTimer.startOneShot(updateTimerDelay);
-    m_scheduleOrDeferSyncTimerRequested = false;
-}
-
-void IconDatabase::performScheduleOrDeferSyncTimerOnMainThread(void* context)
-{
-    static_cast<IconDatabase*>(context)->performScheduleOrDeferSyncTimer();
-}
-
 void IconDatabase::scheduleOrDeferSyncTimer()
 {
     ASSERT_NOT_SYNC_THREAD();
@@ -860,7 +844,10 @@ void IconDatabase::scheduleOrDeferSyncTimer()
         m_disableSuddenTerminationWhileSyncTimerScheduled = std::make_unique<SuddenTerminationDisabler>();
 
     m_scheduleOrDeferSyncTimerRequested = true;
-    callOnMainThread(performScheduleOrDeferSyncTimerOnMainThread, this);
+    callOnMainThread([this] {
+        m_syncTimer.startOneShot(updateTimerDelay);
+        m_scheduleOrDeferSyncTimerRequested = false;
+    });
 }
 
 void IconDatabase::syncTimerFired(Timer<IconDatabase>&)
@@ -1337,7 +1324,9 @@ void IconDatabase::performURLImport()
     dispatchDidFinishURLImportOnMainThread();
     
     // Notify all DocumentLoaders that were waiting for an icon load decision on the main thread
-    callOnMainThread(notifyPendingLoadDecisionsOnMainThread, this);
+    callOnMainThread([this] {
+        notifyPendingLoadDecisions();
+    });
 }
 
 void IconDatabase::syncThreadMainLoop()
@@ -2077,130 +2066,42 @@ void IconDatabase::setWasExcludedFromBackup()
     SQLiteStatement(m_syncDB, "INSERT INTO IconDatabaseInfo (key, value) VALUES ('ExcludedFromBackup', 1)").executeCommand();
 }
 
-class ClientWorkItem {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    ClientWorkItem(IconDatabaseClient* client)
-        : m_client(client)
-    { }
-    virtual void performWork() = 0;
-    virtual ~ClientWorkItem() { }
-
-protected:
-    IconDatabaseClient* m_client;
-};
-
-class ImportedIconURLForPageURLWorkItem : public ClientWorkItem {
-public:
-    ImportedIconURLForPageURLWorkItem(IconDatabaseClient* client, const String& pageURL)
-        : ClientWorkItem(client)
-        , m_pageURL(new String(pageURL.isolatedCopy()))
-    { }
-    
-    virtual ~ImportedIconURLForPageURLWorkItem()
-    {
-        delete m_pageURL;
-    }
-
-    virtual void performWork()
-    {
-        ASSERT(m_client);
-        m_client->didImportIconURLForPageURL(*m_pageURL);
-        m_client = 0;
-    }
-    
-private:
-    String* m_pageURL;
-};
-
-class ImportedIconDataForPageURLWorkItem : public ClientWorkItem {
-public:
-    ImportedIconDataForPageURLWorkItem(IconDatabaseClient* client, const String& pageURL)
-        : ClientWorkItem(client)
-        , m_pageURL(new String(pageURL.isolatedCopy()))
-    { }
-    
-    virtual ~ImportedIconDataForPageURLWorkItem()
-    {
-        delete m_pageURL;
-    }
-
-    virtual void performWork()
-    {
-        ASSERT(m_client);
-        m_client->didImportIconDataForPageURL(*m_pageURL);
-        m_client = 0;
-    }
-    
-private:
-    String* m_pageURL;
-};
-
-class RemovedAllIconsWorkItem : public ClientWorkItem {
-public:
-    RemovedAllIconsWorkItem(IconDatabaseClient* client)
-        : ClientWorkItem(client)
-    { }
-
-    virtual void performWork()
-    {
-        ASSERT(m_client);
-        m_client->didRemoveAllIcons();
-        m_client = 0;
-    }
-};
-
-class FinishedURLImport : public ClientWorkItem {
-public:
-    FinishedURLImport(IconDatabaseClient* client)
-        : ClientWorkItem(client)
-    { }
-
-    virtual void performWork()
-    {
-        ASSERT(m_client);
-        m_client->didFinishURLImport();
-        m_client = 0;
-    }
-};
-
-static void performWorkItem(void* context)
-{
-    ClientWorkItem* item = static_cast<ClientWorkItem*>(context);
-    item->performWork();
-    delete item;
-}
-
 void IconDatabase::dispatchDidImportIconURLForPageURLOnMainThread(const String& pageURL)
 {
     ASSERT_ICON_SYNC_THREAD();
 
-    ImportedIconURLForPageURLWorkItem* work = new ImportedIconURLForPageURLWorkItem(m_client, pageURL);
-    callOnMainThread(performWorkItem, work);
+    String pageURLCopy = pageURL.isolatedCopy();
+    callOnMainThread([this, pageURLCopy] {
+        m_client->didImportIconURLForPageURL(pageURLCopy);
+    });
 }
 
 void IconDatabase::dispatchDidImportIconDataForPageURLOnMainThread(const String& pageURL)
 {
     ASSERT_ICON_SYNC_THREAD();
 
-    ImportedIconDataForPageURLWorkItem* work = new ImportedIconDataForPageURLWorkItem(m_client, pageURL);
-    callOnMainThread(performWorkItem, work);
+    String pageURLCopy = pageURL.isolatedCopy();
+    callOnMainThread([this, pageURLCopy] {
+        m_client->didImportIconDataForPageURL(pageURLCopy);
+    });
 }
 
 void IconDatabase::dispatchDidRemoveAllIconsOnMainThread()
 {
     ASSERT_ICON_SYNC_THREAD();
 
-    RemovedAllIconsWorkItem* work = new RemovedAllIconsWorkItem(m_client);
-    callOnMainThread(performWorkItem, work);
+    callOnMainThread([this] {
+        m_client->didRemoveAllIcons();
+    });
 }
 
 void IconDatabase::dispatchDidFinishURLImportOnMainThread()
 {
     ASSERT_ICON_SYNC_THREAD();
 
-    FinishedURLImport* work = new FinishedURLImport(m_client);
-    callOnMainThread(performWorkItem, work);
+    callOnMainThread([this] {
+        m_client->didFinishURLImport();
+    });
 }
 
 

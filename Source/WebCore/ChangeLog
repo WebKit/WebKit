@@ -1,5 +1,41 @@
 2014-06-07  Zan Dobersek  <zdobersek@igalia.com>
 
+        Pass C++11 lambdas to callOnMainThread() calls in IconDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=133374
+
+        Reviewed by Darin Adler.
+
+        Use C++11 lambads to inline the main thread tasks into the calling code,
+        modernizing the look of the code and removing a few static methods and
+        classes that were used as helpers.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::scheduleOrDeferSyncTimer):
+        (WebCore::IconDatabase::performURLImport):
+        (WebCore::IconDatabase::dispatchDidImportIconURLForPageURLOnMainThread):
+        (WebCore::IconDatabase::dispatchDidImportIconDataForPageURLOnMainThread):
+        (WebCore::IconDatabase::dispatchDidRemoveAllIconsOnMainThread):
+        (WebCore::IconDatabase::dispatchDidFinishURLImportOnMainThread):
+        (WebCore::IconDatabase::notifyPendingLoadDecisionsOnMainThread): Deleted.
+        (WebCore::IconDatabase::performScheduleOrDeferSyncTimer): Deleted.
+        (WebCore::IconDatabase::performScheduleOrDeferSyncTimerOnMainThread): Deleted.
+        (WebCore::ClientWorkItem::ClientWorkItem): Deleted.
+        (WebCore::ClientWorkItem::~ClientWorkItem): Deleted.
+        (WebCore::ImportedIconURLForPageURLWorkItem::ImportedIconURLForPageURLWorkItem): Deleted.
+        (WebCore::ImportedIconURLForPageURLWorkItem::~ImportedIconURLForPageURLWorkItem): Deleted.
+        (WebCore::ImportedIconURLForPageURLWorkItem::performWork): Deleted.
+        (WebCore::ImportedIconDataForPageURLWorkItem::ImportedIconDataForPageURLWorkItem): Deleted.
+        (WebCore::ImportedIconDataForPageURLWorkItem::~ImportedIconDataForPageURLWorkItem): Deleted.
+        (WebCore::ImportedIconDataForPageURLWorkItem::performWork): Deleted.
+        (WebCore::RemovedAllIconsWorkItem::RemovedAllIconsWorkItem): Deleted.
+        (WebCore::RemovedAllIconsWorkItem::performWork): Deleted.
+        (WebCore::FinishedURLImport::FinishedURLImport): Deleted.
+        (WebCore::FinishedURLImport::performWork): Deleted.
+        (WebCore::performWorkItem): Deleted.
+        * loader/icon/IconDatabase.h:
+
+2014-06-07  Zan Dobersek  <zdobersek@igalia.com>
+
         Replace uses of CrossThreadTask in DefaultSharedWorkerRepository, WorkerMessagingProxy with C++11 lambdas
         https://bugs.webkit.org/show_bug.cgi?id=133375
 
