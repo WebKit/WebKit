@@ -43,35 +43,38 @@ HTTPHeaderMap::~HTTPHeaderMap()
 {
 }
 
-PassOwnPtr<CrossThreadHTTPHeaderMapData> HTTPHeaderMap::copyData() const
+std::unique_ptr<CrossThreadHTTPHeaderMapData> HTTPHeaderMap::copyData() const
 {
-    OwnPtr<CrossThreadHTTPHeaderMapData> data = adoptPtr(new CrossThreadHTTPHeaderMapData());
-    data->reserveInitialCapacity(size());
+    auto data = std::make_unique<CrossThreadHTTPHeaderMapData>();
+    data->reserveInitialCapacity(m_headers.size());
 
     for (const auto& header : *this)
         data->uncheckedAppend(std::make_pair(header.key.string().isolatedCopy(), header.value.isolatedCopy()));
 
-    return data.release();
+    return data;
 }
 
-void HTTPHeaderMap::adopt(PassOwnPtr<CrossThreadHTTPHeaderMapData> data)
+void HTTPHeaderMap::adopt(std::unique_ptr<CrossThreadHTTPHeaderMapData> data)
 {
-    clear();
-    size_t dataSize = data->size();
-    for (size_t index = 0; index < dataSize; ++index) {
-        std::pair<String, String>& header = (*data)[index];
-        set(header.first, header.second);
-    }
+    m_headers.clear();
+
+    for (auto& header : *data)
+        m_headers.add(std::move(header.first), std::move(header.second));
 }
 
 String HTTPHeaderMap::get(const AtomicString& name) const
 {
-    return HashMap<AtomicString, String, CaseFoldingHash>::get(name);
+    return m_headers.get(name);
+}
+
+HTTPHeaderMap::AddResult HTTPHeaderMap::set(const AtomicString& name, const String& value)
+{
+    return m_headers.set(name, value);
 }
 
 HTTPHeaderMap::AddResult HTTPHeaderMap::add(const AtomicString& name, const String& value)
 {
-    return HashMap<AtomicString, String, CaseFoldingHash>::add(name, value);
+    return m_headers.add(name, value);
 }
 
 // Adapter that allows the HashMap to take C strings as keys.
@@ -94,20 +97,46 @@ struct CaseFoldingCStringTranslator {
 
 String HTTPHeaderMap::get(const char* name) const
 {
-    const_iterator i = find<CaseFoldingCStringTranslator>(name);
-    if (i == end())
+    auto it = find(name);
+    if (it == end())
         return String();
-    return i->value;
+    return it->value;
 }
     
 bool HTTPHeaderMap::contains(const char* name) const
 {
-    return find<CaseFoldingCStringTranslator>(name) != end();
+    return find(name) != end();
+}
+
+HTTPHeaderMap::iterator HTTPHeaderMap::find(const char* name)
+{
+    return m_headers.find<CaseFoldingCStringTranslator>(name);
+}
+
+HTTPHeaderMap::const_iterator HTTPHeaderMap::find(const char* name) const
+{
+    return m_headers.find<CaseFoldingCStringTranslator>(name);
 }
 
 HTTPHeaderMap::AddResult HTTPHeaderMap::add(const char* name, const String& value)
 {
-    return HashMap<AtomicString, String, CaseFoldingHash>::add<CaseFoldingCStringTranslator>(name, value);
+    return m_headers.add<CaseFoldingCStringTranslator>(name, value);
 }
+
+void HTTPHeaderMap::remove(const char* name)
+{
+    remove(find(name));
+}
+
+void HTTPHeaderMap::remove(iterator it)
+{
+    m_headers.remove(it);
+}
+
+WTF::IteratorRange<HTTPHeaderMap::const_iterator::Keys> HTTPHeaderMap::keys() const
+{
+    return m_headers.keys();
+}
+
 
 } // namespace WebCore

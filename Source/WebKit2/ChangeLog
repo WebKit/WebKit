@@ -1,3 +1,14 @@
+2014-05-29  Anders Carlsson  <andersca@apple.com>
+
+        HTTPHeaderMap should not derive from HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=133392
+
+        Reviewed by Darin Adler.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<HTTPHeaderMap>::encode):
+        (IPC::ArgumentCoder<HTTPHeaderMap>::decode):
+
 2014-06-07  Alexey Proskuryakov  <ap@apple.com>
 
         [iOS] Fix a path used for sandbox profiles

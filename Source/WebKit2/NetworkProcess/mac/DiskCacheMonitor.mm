@@ -30,6 +30,7 @@
 #import "NetworkProcessConnectionMessages.h"
 #import "NetworkResourceLoader.h"
 #import "WebCoreArgumentCoders.h"
+#import <wtf/PassOwnPtr.h>
 
 #ifdef __has_include
 #if __has_include(<CFNetwork/CFURLCachePriv.h>)

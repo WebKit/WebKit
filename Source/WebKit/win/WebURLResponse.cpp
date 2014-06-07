@@ -360,7 +360,11 @@ HRESULT STDMETHODCALLTYPE WebURLResponse::allHeaderFields(
 {
     ASSERT(m_response.isHTTP());
 
-    *headerFields = COMPropertyBag<String, AtomicString, CaseFoldingHash>::createInstance(m_response.httpHeaderFields());
+    HashMap<String, String, CaseFoldingHash> fields;
+    for (const auto& keyValuePair : m_response.httpHeaderFields())
+        fields.add(keyValuePair.key, keyValuePair.value);
+
+    *headerFields = COMPropertyBag<String, String, CaseFoldingHash>::adopt(fields);
     return S_OK;
 }
 

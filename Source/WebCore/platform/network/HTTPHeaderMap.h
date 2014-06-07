@@ -29,7 +29,6 @@
 
 #include <utility>
 #include <wtf/HashMap.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
@@ -37,29 +36,62 @@
 
 namespace WebCore {
 
-    typedef Vector<std::pair<String, String>> CrossThreadHTTPHeaderMapData;
+typedef Vector<std::pair<String, String>> CrossThreadHTTPHeaderMapData;
 
-    // FIXME: Not every header fits into a map. Notably, multiple Set-Cookie header fields are needed to set multiple cookies.
-    class HTTPHeaderMap : public HashMap<AtomicString, String, CaseFoldingHash> {
-    public:
-        HTTPHeaderMap();
-        ~HTTPHeaderMap();
+// FIXME: Not every header fits into a map. Notably, multiple Set-Cookie header fields are needed to set multiple cookies.
 
-        // Gets a copy of the data suitable for passing to another thread.
-        PassOwnPtr<CrossThreadHTTPHeaderMapData> copyData() const;
+class HTTPHeaderMap {
+    typedef HashMap<AtomicString, String, CaseFoldingHash> HashMapType;
+public:
+    typedef HashMapType::const_iterator const_iterator;
+    typedef HashMapType::iterator iterator;
+    typedef HashMapType::AddResult AddResult;
 
-        void adopt(PassOwnPtr<CrossThreadHTTPHeaderMapData>);
-        
-        String get(const AtomicString& name) const;
+    HTTPHeaderMap();
+    ~HTTPHeaderMap();
 
-        AddResult add(const AtomicString& name, const String& value);
+    // Gets a copy of the data suitable for passing to another thread.
+    std::unique_ptr<CrossThreadHTTPHeaderMapData> copyData() const;
+    void adopt(std::unique_ptr<CrossThreadHTTPHeaderMapData>);
 
-        // Alternate accessors that are faster than converting the char* to AtomicString first.
-        bool contains(const char*) const;
-        String get(const char*) const;
-        AddResult add(const char* name, const String& value);
-        
-    };
+    bool isEmpty() const { return m_headers.isEmpty(); }
+    int size() const { return m_headers.size(); }
+
+    void clear() { m_headers.clear(); }
+
+    String get(const AtomicString& name) const;
+
+    AddResult set(const AtomicString& name, const String& value);
+    AddResult add(const AtomicString& name, const String& value);
+
+    // Alternate accessors that are faster than converting the char* to AtomicString first.
+    bool contains(const char*) const;
+    String get(const char*) const;
+    const_iterator find(const char*) const;
+    iterator find(const char*);
+    AddResult add(const char* name, const String& value);
+
+    void remove(const char*);
+    void remove(iterator);
+
+    const_iterator begin() const { return m_headers.begin(); }
+    const_iterator end() const { return m_headers.end(); }
+
+    WTF::IteratorRange<const_iterator::Keys> keys() const;
+
+    friend bool operator==(const HTTPHeaderMap& a, const HTTPHeaderMap& b)
+    {
+        return a.m_headers == b.m_headers;
+    }
+
+    friend bool operator!=(const HTTPHeaderMap& a, const HTTPHeaderMap& b)
+    {
+        return !(a == b);
+    }
+
+private:
+    HashMap<AtomicString, String, CaseFoldingHash> m_headers;
+};
 
 } // namespace WebCore
 

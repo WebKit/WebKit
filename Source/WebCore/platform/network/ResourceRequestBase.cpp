@@ -27,6 +27,7 @@
 #include "ResourceRequestBase.h"
 
 #include "ResourceRequest.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -58,7 +59,7 @@ PassOwnPtr<ResourceRequest> ResourceRequestBase::adopt(PassOwnPtr<CrossThreadRes
     request->setPriority(data->m_priority);
 
     request->updateResourceRequest();
-    request->m_httpHeaderFields.adopt(data->m_httpHeaders.release());
+    request->m_httpHeaderFields.adopt(std::move(data->m_httpHeaders));
 
     size_t encodingCount = data->m_responseContentDispositionEncodingFallbackArray.size();
     if (encodingCount > 0) {

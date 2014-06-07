@@ -758,7 +758,7 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
         request.setHTTPBody(m_requestEntityBody.release());
     }
 
-    if (m_requestHeaders.size() > 0)
+    if (!m_requestHeaders.isEmpty())
         request.addHTTPHeaderFields(m_requestHeaders);
 
     ThreadableLoaderOptions options;

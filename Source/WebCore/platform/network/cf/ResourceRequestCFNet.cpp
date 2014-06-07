@@ -27,6 +27,7 @@
 #include "ResourceRequestCFNet.h"
 
 #include "ResourceRequest.h"
+#include <wtf/PassOwnPtr.h>
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
 #include "PublicSuffix.h"

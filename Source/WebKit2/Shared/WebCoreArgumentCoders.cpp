@@ -395,12 +395,35 @@ bool ArgumentCoder<PluginInfo>::decode(ArgumentDecoder& decoder, PluginInfo& plu
 
 void ArgumentCoder<HTTPHeaderMap>::encode(ArgumentEncoder& encoder, const HTTPHeaderMap& headerMap)
 {
-    encoder << static_cast<const HashMap<AtomicString, String, CaseFoldingHash>&>(headerMap);
+    encoder << static_cast<uint64_t>(headerMap.size());
+    for (auto& keyValuePair : headerMap) {
+        encoder << keyValuePair.key;
+        encoder << keyValuePair.value;
+    }
 }
 
 bool ArgumentCoder<HTTPHeaderMap>::decode(ArgumentDecoder& decoder, HTTPHeaderMap& headerMap)
 {
-    return decoder.decode(static_cast<HashMap<AtomicString, String, CaseFoldingHash>&>(headerMap));
+    uint64_t size;
+    if (!decoder.decode(size))
+        return false;
+
+    for (size_t i = 0; i < size; ++i) {
+        AtomicString name;
+        if (!decoder.decode(name))
+            return false;
+
+        String value;
+        if (!decoder.decode(value))
+            return false;
+
+        if (!headerMap.add(name, value).isNewEntry) {
+            decoder.markInvalid();
+            return false;
+        }
+    }
+
+    return true;
 }
 
 

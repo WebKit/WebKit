@@ -195,7 +195,7 @@ public:
     String m_suggestedFilename;
     int m_httpStatusCode;
     String m_httpStatusText;
-    OwnPtr<CrossThreadHTTPHeaderMapData> m_httpHeaders;
+    std::unique_ptr<CrossThreadHTTPHeaderMapData> m_httpHeaders;
     ResourceLoadTiming m_resourceLoadTiming;
 };
 

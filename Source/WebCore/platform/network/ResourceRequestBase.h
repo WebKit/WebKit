@@ -33,8 +33,6 @@
 #include "URL.h"
 #include "ResourceLoadPriority.h"
 
-#include <wtf/OwnPtr.h>
-
 namespace WebCore {
 
     enum ResourceRequestCachePolicy {
@@ -248,7 +246,7 @@ namespace WebCore {
         URL m_firstPartyForCookies;
 
         String m_httpMethod;
-        OwnPtr<CrossThreadHTTPHeaderMapData> m_httpHeaders;
+        std::unique_ptr<CrossThreadHTTPHeaderMapData> m_httpHeaders;
         Vector<String> m_responseContentDispositionEncodingFallbackArray;
         RefPtr<FormData> m_httpBody;
         bool m_allowCookies;
