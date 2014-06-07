@@ -35,7 +35,6 @@
 #include "DefaultSharedWorkerRepository.h"
 
 #include "ActiveDOMObject.h"
-#include "CrossThreadTask.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
@@ -179,28 +178,28 @@ GroupSettings* SharedWorkerProxy::groupSettings() const
     return 0;
 }
 
-static void postExceptionTask(ScriptExecutionContext* context, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
-{
-    context->reportException(errorMessage, lineNumber, columnNumber, sourceURL, 0);
-}
-
 void SharedWorkerProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
 {
     MutexLocker lock(m_workerDocumentsLock);
-    for (auto& document : m_workerDocuments)
-        document->postTask(CrossThreadTask(&postExceptionTask, errorMessage, lineNumber, columnNumber, sourceURL));
-}
+    String errorMessageCopy = errorMessage.isolatedCopy();
+    String sourceURLCopy = sourceURL.isolatedCopy();
 
-static void postConsoleMessageTask(ScriptExecutionContext* document, MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber)
-{
-    document->addConsoleMessage(source, level, message, sourceURL, lineNumber, columnNumber);
+    for (auto& document : m_workerDocuments)
+        document->postTask([=] (ScriptExecutionContext* context) {
+            context->reportException(errorMessageCopy, lineNumber, columnNumber, sourceURLCopy, nullptr);
+        });
 }
 
 void SharedWorkerProxy::postConsoleMessageToWorkerObject(MessageSource source, MessageLevel level, const String& message, int lineNumber, int columnNumber, const String& sourceURL)
 {
     MutexLocker lock(m_workerDocumentsLock);
+    String messageCopy = message.isolatedCopy();
+    String sourceURLCopy = sourceURL.isolatedCopy();
+
     for (auto& document : m_workerDocuments)
-        document->postTask(CrossThreadTask(&postConsoleMessageTask, source, level, message, sourceURL, lineNumber, columnNumber));
+        document->postTask([=] (ScriptExecutionContext* context) {
+            context->addConsoleMessage(source, level, messageCopy, sourceURLCopy, lineNumber, columnNumber);
+        });
 }
 
 #if ENABLE(INSPECTOR)

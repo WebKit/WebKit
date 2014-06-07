@@ -29,7 +29,6 @@
 #include "WorkerMessagingProxy.h"
 
 #include "ContentSecurityPolicy.h"
-#include "CrossThreadTask.h"
 #include "DOMWindow.h"
 #include "DedicatedWorkerGlobalScope.h"
 #include "DedicatedWorkerThread.h"
@@ -99,7 +98,7 @@ void WorkerMessagingProxy::postMessageToWorkerObject(PassRefPtr<SerializedScript
     MessagePortChannelArray* channelsPtr = channels.release();
     m_scriptExecutionContext->postTask([=] (ScriptExecutionContext* context) {
         Worker* workerObject = this->workerObject();
-        if (!workerObject || this->askedToTerminate())
+        if (!workerObject || askedToTerminate())
             return;
 
         std::unique_ptr<MessagePortArray> ports = MessagePort::entanglePorts(*context, std::unique_ptr<MessagePortChannelArray>(channelsPtr));
@@ -163,16 +162,15 @@ void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessag
     });
 }
 
-static void postConsoleMessageTask(ScriptExecutionContext* context, WorkerMessagingProxy* messagingProxy, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceURL)
-{
-    if (messagingProxy->askedToTerminate())
-        return;
-    context->addConsoleMessage(source, level, message, sourceURL, lineNumber, columnNumber);
-}
-
 void WorkerMessagingProxy::postConsoleMessageToWorkerObject(MessageSource source, MessageLevel level, const String& message, int lineNumber, int columnNumber, const String& sourceURL)
 {
-    m_scriptExecutionContext->postTask(CrossThreadTask(&postConsoleMessageTask, AllowCrossThreadAccess(this), source, level, message, lineNumber, columnNumber, sourceURL));
+    String messageCopy = message.isolatedCopy();
+    String sourceURLCopy = sourceURL.isolatedCopy();
+    m_scriptExecutionContext->postTask([=] (ScriptExecutionContext* context) {
+        if (askedToTerminate())
+            return;
+        context->addConsoleMessage(source, level, messageCopy, sourceURLCopy, lineNumber, columnNumber);
+    });
 }
 
 void WorkerMessagingProxy::workerThreadCreated(PassRefPtr<DedicatedWorkerThread> workerThread)
@@ -196,7 +194,13 @@ void WorkerMessagingProxy::workerThreadCreated(PassRefPtr<DedicatedWorkerThread>
 void WorkerMessagingProxy::workerObjectDestroyed()
 {
     m_workerObject = 0;
-    m_scriptExecutionContext->postTask(CrossThreadTask(&workerObjectDestroyedInternal, AllowCrossThreadAccess(this)));
+    m_scriptExecutionContext->postTask([this] (ScriptExecutionContext*) {
+        m_mayBeDestroyed = true;
+        if (m_workerThread)
+            terminateWorkerGlobalScope();
+        else
+            workerGlobalScopeDestroyedInternal();
+    });
 }
 
 void WorkerMessagingProxy::notifyNetworkStateChange(bool isOnline)
@@ -208,38 +212,20 @@ void WorkerMessagingProxy::notifyNetworkStateChange(bool isOnline)
         return;
 
     m_workerThread->runLoop().postTask([=] (ScriptExecutionContext* context) {
-        WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(context);
-        workerGlobalScope->dispatchEvent(Event::create(isOnline ? eventNames().onlineEvent : eventNames().offlineEvent, false, false));
+        toWorkerGlobalScope(context)->dispatchEvent(Event::create(isOnline ? eventNames().onlineEvent : eventNames().offlineEvent, false, false));
     });
 }
 
-void WorkerMessagingProxy::workerObjectDestroyedInternal(ScriptExecutionContext*, WorkerMessagingProxy* proxy)
-{
-    proxy->m_mayBeDestroyed = true;
-    if (proxy->m_workerThread)
-        proxy->terminateWorkerGlobalScope();
-    else
-        proxy->workerGlobalScopeDestroyedInternal();
-}
-
 #if ENABLE(INSPECTOR)
-static void connectToWorkerGlobalScopeInspectorTask(ScriptExecutionContext* context, bool)
-{
-    toWorkerGlobalScope(context)->workerInspectorController().connectFrontend();
-}
-
 void WorkerMessagingProxy::connectToInspector(WorkerGlobalScopeProxy::PageInspector* pageInspector)
 {
     if (m_askedToTerminate)
         return;
     ASSERT(!m_pageInspector);
     m_pageInspector = pageInspector;
-    m_workerThread->runLoop().postTaskForMode(CrossThreadTask(connectToWorkerGlobalScopeInspectorTask, true), WorkerDebuggerAgent::debuggerTaskMode);
-}
-
-static void disconnectFromWorkerGlobalScopeInspectorTask(ScriptExecutionContext* context, bool)
-{
-    toWorkerGlobalScope(context)->workerInspectorController().disconnectFrontend(Inspector::InspectorDisconnectReason::InspectorDestroyed);
+    m_workerThread->runLoop().postTaskForMode([] (ScriptExecutionContext* context) {
+        toWorkerGlobalScope(context)->workerInspectorController().connectFrontend();
+    }, WorkerDebuggerAgent::debuggerTaskMode);
 }
 
 void WorkerMessagingProxy::disconnectFromInspector()
@@ -247,19 +233,19 @@ void WorkerMessagingProxy::disconnectFromInspector()
     m_pageInspector = 0;
     if (m_askedToTerminate)
         return;
-    m_workerThread->runLoop().postTaskForMode(CrossThreadTask(disconnectFromWorkerGlobalScopeInspectorTask, true), WorkerDebuggerAgent::debuggerTaskMode);
-}
-
-static void dispatchOnInspectorBackendTask(ScriptExecutionContext* context, const String& message)
-{
-    toWorkerGlobalScope(context)->workerInspectorController().dispatchMessageFromFrontend(message);
+    m_workerThread->runLoop().postTaskForMode([] (ScriptExecutionContext* context) {
+        toWorkerGlobalScope(context)->workerInspectorController().disconnectFrontend(Inspector::InspectorDisconnectReason::InspectorDestroyed);
+    }, WorkerDebuggerAgent::debuggerTaskMode);
 }
 
 void WorkerMessagingProxy::sendMessageToInspector(const String& message)
 {
     if (m_askedToTerminate)
         return;
-    m_workerThread->runLoop().postTaskForMode(CrossThreadTask(dispatchOnInspectorBackendTask, String(message)), WorkerDebuggerAgent::debuggerTaskMode);
+    String messageCopy = message.isolatedCopy();
+    m_workerThread->runLoop().postTaskForMode([messageCopy] (ScriptExecutionContext* context) {
+        toWorkerGlobalScope(context)->workerInspectorController().dispatchMessageFromFrontend(messageCopy);
+    }, WorkerDebuggerAgent::debuggerTaskMode);
     WorkerDebuggerAgent::interruptAndDispatchInspectorCommands(m_workerThread.get());
 }
 #endif
@@ -310,7 +296,7 @@ void WorkerMessagingProxy::postMessageToPageInspector(const String& message)
 {
     String messageCopy = message.isolatedCopy();
     m_scriptExecutionContext->postTask([=] (ScriptExecutionContext*) {
-        this->m_pageInspector->dispatchMessageFromWorker(messageCopy);
+        m_pageInspector->dispatchMessageFromWorker(messageCopy);
     });
 }
 #endif
@@ -318,7 +304,7 @@ void WorkerMessagingProxy::postMessageToPageInspector(const String& message)
 void WorkerMessagingProxy::confirmMessageFromWorkerObject(bool hasPendingActivity)
 {
     m_scriptExecutionContext->postTask([=] (ScriptExecutionContext*) {
-        this->reportPendingActivityInternal(true, hasPendingActivity);
+        reportPendingActivityInternal(true, hasPendingActivity);
     });
     // Will execute reportPendingActivityInternal() on context's thread.
 }
@@ -326,7 +312,7 @@ void WorkerMessagingProxy::confirmMessageFromWorkerObject(bool hasPendingActivit
 void WorkerMessagingProxy::reportPendingActivity(bool hasPendingActivity)
 {
     m_scriptExecutionContext->postTask([=] (ScriptExecutionContext*) {
-        this->reportPendingActivityInternal(false, hasPendingActivity);
+        reportPendingActivityInternal(false, hasPendingActivity);
     });
     // Will execute reportPendingActivityInternal() on context's thread.
 }

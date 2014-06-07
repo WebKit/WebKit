@@ -98,7 +98,6 @@ namespace WebCore {
         friend class WorkerThreadActivityReportTask;
 
         void workerGlobalScopeDestroyedInternal();
-        static void workerObjectDestroyedInternal(ScriptExecutionContext*, WorkerMessagingProxy*);
         void reportPendingActivityInternal(bool confirmingMessage, bool hasPendingActivity);
         Worker* workerObject() const { return m_workerObject; }
 
