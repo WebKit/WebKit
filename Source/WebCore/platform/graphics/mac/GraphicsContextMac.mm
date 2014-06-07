@@ -65,9 +65,10 @@ static void drawFocusRingToContext(CGContextRef context, CGPathRef focusRingPath
 
 static bool drawFocusRingToContextAtTime(CGContextRef context, CGPathRef focusRingPath, double timeOffset)
 {
+    UNUSED_PARAM(timeOffset);
     CGContextBeginPath(context);
     CGContextAddPath(context, focusRingPath);
-    return wkDrawFocusRingAtTime(context, timeOffset);
+    return wkDrawFocusRingAtTime(context, std::numeric_limits<double>::max());
 }
 #endif // !PLATFORM(IOS)
 

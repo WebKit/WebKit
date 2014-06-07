@@ -282,15 +282,9 @@ static const int* checkboxMargins(NSControlSize controlSize)
 {
     static const int margins[3][4] =
     {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
-        { 7, 8, 8, 6 },
-        { 8, 7, 7, 7 },
-        { 8, 7, 7, 7 },
-#else
         { 3, 4, 4, 2 },
         { 4, 3, 3, 3 },
         { 4, 3, 3, 3 },
-#endif
     };
     return margins[controlSize];
 }
@@ -317,15 +311,9 @@ static const int* radioMargins(NSControlSize controlSize)
 {
     static const int margins[3][4] =
     {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
-        { 6, 6, 8, 6 },
-        { 7, 6, 7, 6 },
-        { 5, 4, 6, 4 },
-#else
         { 2, 2, 4, 2 },
         { 3, 2, 3, 2 },
         { 1, 0, 2, 0 },
-#endif
     };
     return margins[controlSize];
 }
@@ -385,7 +373,13 @@ static NSButtonCell *sharedCheckboxCell(const ControlStates* states, const IntRe
     configureToggleButton(checkboxCell, CheckboxPart, states, zoomedRect, zoomFactor, false);
     return checkboxCell;
 }
-    
+
+static bool drawCellFocusRing(NSCell *cell, NSRect cellFrame, NSView *controlView)
+{
+    wkDrawCellFocusRingWithFrameAtTime(cell, cellFrame, controlView, std::numeric_limits<double>::max());
+    return false;
+}
+
 static void paintToggleButton(ControlPart buttonType, ControlStates* controlStates, GraphicsContext* context, const IntRect& zoomedRect, float zoomFactor, ScrollView* scrollView)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -417,7 +411,7 @@ static void paintToggleButton(ControlPart buttonType, ControlStates* controlStat
     zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
     const int* controlMargins = buttonType == CheckboxPart ? checkboxMargins(controlSize) : radioMargins(controlSize);
     IntRect inflatedRect = inflateRect(zoomedRect, zoomedSize, controlMargins, zoomFactor);
-    
+
     if (zoomFactor != 1.0f) {
         inflatedRect.setWidth(inflatedRect.width() / zoomFactor);
         inflatedRect.setHeight(inflatedRect.height() / zoomFactor);
@@ -445,9 +439,9 @@ static void paintToggleButton(ControlPart buttonType, ControlStates* controlStat
     }
     bool needsRepaint = false;
     if (controlStates->states() & ControlStates::FocusState)
-        needsRepaint = wkDrawCellFocusRingWithFrameAtTime(toggleButtonCell, inflatedRect, view, controlStates->timeSinceControlWasFocused());
+        needsRepaint = drawCellFocusRing(toggleButtonCell, inflatedRect, view);
     [toggleButtonCell setControlView:nil];
-    
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
     needsRepaint |= [toggleButtonCell _stateAnimationRunning];
 #endif
@@ -457,7 +451,7 @@ static void paintToggleButton(ControlPart buttonType, ControlStates* controlStat
 
     END_BLOCK_OBJC_EXCEPTIONS
 }
-    
+
 // Buttons
 
 // Buttons really only constrain height. They respect width.
@@ -471,15 +465,9 @@ static const int* buttonMargins(NSControlSize controlSize)
 {
     static const int margins[3][4] =
     {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
-        { 8, 10, 11, 10 },
-        { 8, 9, 10, 9 },
-        { 4, 5, 5, 5 },
-#else
         { 4, 6, 7, 6 },
         { 4, 5, 6, 5 },
         { 0, 1, 1, 1 },
-#endif
     };
     return margins[controlSize];
 }
@@ -575,7 +563,7 @@ static void paintButton(ControlPart part, ControlStates* controlStates, Graphics
     [buttonCell drawWithFrame:NSRect(inflatedRect) inView:view];
     bool needsRepaint = false;
     if (states & ControlStates::FocusState)
-        needsRepaint = wkDrawCellFocusRingWithFrameAtTime(buttonCell, inflatedRect, view, controlStates->timeSinceControlWasFocused());
+        needsRepaint = drawCellFocusRing(buttonCell, inflatedRect, view);
 
     controlStates->setNeedsRepaint(needsRepaint);
 

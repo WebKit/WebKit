@@ -302,15 +302,6 @@ Color RenderThemeMac::platformFocusRingColor() const
     return systemColor(CSSValueWebkitFocusRingColor);
 }
 
-int RenderThemeMac::platformFocusRingMaxWidth() const
-{
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
-    return 9;
-#else
-    return 0;
-#endif
-}
-
 Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor() const
 {
     return platformInactiveSelectionBackgroundColor();
@@ -934,8 +925,7 @@ bool RenderThemeMac::paintMenuList(const RenderObject& o, const PaintInfo& paint
     NSView *view = documentViewFor(o);
     [popupButton drawWithFrame:inflatedRect inView:view];
     if (isFocused(o) && o.style().outlineStyleIsAuto()) {
-        double timeSinceFocused = o.document().page()->focusController().timeSinceFocusWasSet();
-        if (wkDrawCellFocusRingWithFrameAtTime(popupButton, inflatedRect, view, timeSinceFocused))
+        if (wkDrawCellFocusRingWithFrameAtTime(popupButton, inflatedRect, view, std::numeric_limits<double>::max()))
             o.document().page()->focusController().setFocusedElementNeedsRepaint();
     }
 
