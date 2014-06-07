@@ -1,3 +1,19 @@
+2014-06-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Scheme of content utils should be compared in an ASCII case-insensitive manner
+        https://bugs.webkit.org/show_bug.cgi?id=133502
+
+        Reviewed by Darin Adler.
+
+        Tests are updated to compare protocol in ASCII case-insensitive manner.
+
+        * fast/dom/NavigatorContentUtils/register-protocol-handler-expected.txt:
+        * fast/dom/NavigatorContentUtils/register-protocol-handler.html:
+        * fast/dom/NavigatorContentUtils/unregister-protocol-handler-expected.txt:
+        * fast/dom/NavigatorContentUtils/unregister-protocol-handler.html:
+        * platform/efl/fast/dom/NavigatorContentUtils/register-protocol-handler-expected.txt:
+        * platform/efl/fast/dom/NavigatorContentUtils/unregister-protocol-handler-expected.txt:
+
 2014-06-06  David Hyatt  <hyatt@apple.com>
 
         REGRESSION: Hit testing of composited elements is broken in new multicolumn layout.

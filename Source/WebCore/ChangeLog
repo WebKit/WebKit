@@ -1,3 +1,17 @@
+2014-06-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Scheme of content utils should be compared in an ASCII case-insensitive manner
+        https://bugs.webkit.org/show_bug.cgi?id=133502
+
+        Reviewed by Darin Adler.
+
+        According to spec, scheme must be compared in an ASCII case-insensitive manner by user agents.
+
+        Covered by existing tests.
+
+        * Modules/navigatorcontentutils/NavigatorContentUtils.cpp:
+        (WebCore::isProtocolWhitelisted):
+
 2014-06-06  Andreas Kling  <akling@apple.com>
 
         Indexed getters should return values directly on the PropertySlot.

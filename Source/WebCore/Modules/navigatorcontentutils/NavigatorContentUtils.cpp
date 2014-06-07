@@ -98,7 +98,7 @@ static bool isProtocolWhitelisted(const String& scheme)
 {
     if (!protocolWhitelist)
         initProtocolHandlerWhitelist();
-    return protocolWhitelist->contains(scheme);
+    return protocolWhitelist->contains(scheme.convertToASCIILowercase());
 }
 
 static bool verifyProtocolHandlerScheme(const String& scheme, ExceptionCode& ec)
