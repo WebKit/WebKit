@@ -1,3 +1,20 @@
+2014-06-08  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/17208234> [Mac] Client-certificate authentication isn’t working when using the modern API
+        https://bugs.webkit.org/show_bug.cgi?id=133617
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Credential>::encode): Encode certificate credentials on Mac as well.
+        (IPC::ArgumentCoder<Credential>::decode): Decode certificate credentials on Mac as well.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::encode): Use OS X API for getting a persistent reference to a key.
+        (IPC::decode): Use OS X API for getting a key from a persistent reference.
+
+        * Shared/cf/ArgumentCodersCF.h: Make identity coding available on Mac as well.
+
 2014-06-07  Anders Carlsson  <andersca@apple.com>
 
         Get rid of _WKScriptWorld
