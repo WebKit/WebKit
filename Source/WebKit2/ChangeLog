@@ -1,5 +1,14 @@
 2014-06-08  Dan Bernstein  <mitz@apple.com>
 
+        [Cococa] WKWindowFeatures.h is missing from WebKit.framework
+        https://bugs.webkit.org/show_bug.cgi?id=133622
+
+        Reviewed by Sam Weinig.
+
+        * WebKit2.xcodeproj/project.pbxproj: Promoted WKWindowFeatures.h to Public.
+
+2014-06-08  Dan Bernstein  <mitz@apple.com>
+
         <rdar://problem/17208234> [Mac] Client-certificate authentication isn’t working when using the modern API
         https://bugs.webkit.org/show_bug.cgi?id=133617
 

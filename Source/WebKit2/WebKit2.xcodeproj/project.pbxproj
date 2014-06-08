@@ -413,7 +413,7 @@
 		1AD3306E16B1D991004F60E7 /* StorageAreaImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD3306C16B1D991004F60E7 /* StorageAreaImpl.cpp */; };
 		1AD3306F16B1D991004F60E7 /* StorageAreaImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD3306D16B1D991004F60E7 /* StorageAreaImpl.h */; };
 		1AD60F5D18E20F4C0020C034 /* WKWindowFeatures.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AD60F5B18E20F4C0020C034 /* WKWindowFeatures.mm */; };
-		1AD60F5E18E20F4C0020C034 /* WKWindowFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD60F5C18E20F4C0020C034 /* WKWindowFeatures.h */; };
+		1AD60F5E18E20F4C0020C034 /* WKWindowFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD60F5C18E20F4C0020C034 /* WKWindowFeatures.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AD60F6018E20F740020C034 /* WKWindowFeaturesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD60F5F18E20F740020C034 /* WKWindowFeaturesInternal.h */; };
 		1AD8790A18B6C38A006CAFD7 /* WKUIDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD8790918B6C38A006CAFD7 /* WKUIDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1ADAE12E1919A5B400F48E21 /* WKPreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ADAE12D1919A5B400F48E21 /* WKPreferences.h */; settings = {ATTRIBUTES = (Private, ); }; };
