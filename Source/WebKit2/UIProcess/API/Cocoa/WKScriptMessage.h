@@ -29,6 +29,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class WKFrameInfo;
 @class WKWebView;
 
 /*! A WKScriptMessage object contains information about a message sent from
@@ -45,6 +46,9 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract The web view sending the message. */
 @property (nonatomic, readonly, weak) WKWebView *webView;
+
+/*! @abstract The frame sending the message. */
+@property (nonatomic, readonly) WKFrameInfo *frameInfo;
 
 /*! @abstract The name of the message handler to which the message is sent.
  */

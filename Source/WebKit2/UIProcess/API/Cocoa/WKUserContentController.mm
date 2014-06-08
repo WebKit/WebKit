@@ -28,6 +28,7 @@
 
 #if WK_API_ENABLED
 
+#import "WKFrameInfoInternal.h"
 #import "WKScriptMessageHandler.h"
 #import "WKScriptMessageInternal.h"
 #import "WKUserScriptInternal.h"
@@ -102,14 +103,16 @@ public:
     {
     }
     
-    virtual void didPostMessage(WebKit::WebPageProxy& page, WebKit::WebFrameProxy&, WebCore::SerializedScriptValue& serializedScriptValue)
+    virtual void didPostMessage(WebKit::WebPageProxy& page, WebKit::WebFrameProxy& frame, WebCore::SerializedScriptValue& serializedScriptValue)
     {
+        RetainPtr<WKFrameInfo> frameInfo = adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:frame]);
+
         RetainPtr<JSContext> context = adoptNS([[JSContext alloc] init]);
         JSValueRef valueRef = serializedScriptValue.deserialize([context JSGlobalContextRef], 0);
         JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:context.get()];
         id body = [value toObject];
 
-        RetainPtr<WKScriptMessage> message = adoptNS([[WKScriptMessage alloc] _initWithBody:body webView:fromWebPageProxy(page) name:m_name.get()]);
+        RetainPtr<WKScriptMessage> message = adoptNS([[WKScriptMessage alloc] _initWithBody:body webView:fromWebPageProxy(page) frameInfo:frameInfo.get() name:m_name.get()]);
     
         [m_handler userContentController:m_controller.get() didReceiveScriptMessage:message.get()];
     }

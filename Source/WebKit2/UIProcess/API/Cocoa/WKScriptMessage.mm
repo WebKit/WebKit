@@ -28,22 +28,25 @@
 
 #if WK_API_ENABLED
 
+#import "WKFrameInfo.h"
 #import "WeakObjCPtr.h"
 #import <wtf/RetainPtr.h>
 
 @implementation WKScriptMessage {
     RetainPtr<id> _body;
     WebKit::WeakObjCPtr<WKWebView> _webView;
+    RetainPtr<WKFrameInfo> _frameInfo;
     RetainPtr<NSString> _name;
 }
 
-- (instancetype)_initWithBody:(id)body webView:(WKWebView *)webView name:(NSString *)name
+- (instancetype)_initWithBody:(id)body webView:(WKWebView *)webView frameInfo:(WKFrameInfo *)frameInfo name:(NSString *)name
 {
     if (!(self = [super init]))
         return nil;
 
     _body = [body copy];
     _webView = webView;
+    _frameInfo = frameInfo;
     _name = adoptNS([name copy]);
 
     return self;
@@ -58,6 +61,11 @@
 - (WKWebView *)webView
 {
     return _webView.getAutoreleased();
+}
+
+- (WKFrameInfo *)frameInfo
+{
+    return _frameInfo.get();
 }
 
 - (NSString *)name

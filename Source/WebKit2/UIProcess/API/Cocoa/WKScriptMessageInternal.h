@@ -29,7 +29,7 @@
 
 @interface WKScriptMessage ()
 
-- (instancetype)_initWithBody:(id)body webView:(WKWebView *)webView name:(NSString *)name;
+- (instancetype)_initWithBody:(id)body webView:(WKWebView *)webView frameInfo:(WKFrameInfo *)frameInfo name:(NSString *)name;
 
 @end
 

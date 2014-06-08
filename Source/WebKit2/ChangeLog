@@ -1,3 +1,27 @@
+2014-06-08  Sam Weinig  <sam@webkit.org>
+
+        [Cocoa] WKScriptMessage should include the frame the message is from
+        <rdar://problem/17210226>
+        https://bugs.webkit.org/show_bug.cgi?id=133623
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKScriptMessage.h:
+        Add WKFrameInfo property.
+
+        * UIProcess/API/Cocoa/WKScriptMessage.mm:
+        (-[WKScriptMessage _initWithBody:webView:frameInfo:name:]):
+        Add WKFrameInfo to the initializer.
+
+        (-[WKScriptMessage frameInfo]):
+        Implement frameInfo accessor.
+
+        * UIProcess/API/Cocoa/WKScriptMessageInternal.h:
+        Add WKFrameInfo to the initializer.
+
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        Pass the WKFrameInfo to the WKScriptMessage initializer.
+
 2014-06-08  Dan Bernstein  <mitz@apple.com>
 
         [Cococa] WKWindowFeatures.h is missing from WebKit.framework
