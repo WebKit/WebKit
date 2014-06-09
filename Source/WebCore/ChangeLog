@@ -1,3 +1,34 @@
+2014-06-09  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r169681): Three tests are broken
+        https://bugs.webkit.org/show_bug.cgi?id=133646
+
+        Reviewed by Tim Horton.
+
+        r169681 removed platformFocusRingMaxWidth() override, which returned either 0 or 9
+        on Mac. But the cross-platform default is 3, so this changed Mac behavior.
+
+        I'm not entirely sure why the cross-platform default is 3 (it was also added in r168397),
+        but restoring the override to return 0 fixes test cases.
+
+        While at it, also added final/override, and removed some functions that were only
+        needed by subclasses, which we now have none.
+
+        * rendering/RenderThemeMac.h:
+        (WebCore::RenderThemeMac::supportsControlTints): Deleted.
+        (WebCore::RenderThemeMac::scrollbarControlSizeForPart): Deleted.
+        (WebCore::RenderThemeMac::supportsSelectionForegroundColors): Deleted.
+        (WebCore::RenderThemeMac::supportsClosedCaptioning): Deleted.
+        (WebCore::RenderThemeMac::updateActiveState): Deleted.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::platformFocusRingMaxWidth):
+        (WebCore::RenderThemeMac::setPopupButtonCellState):
+        (WebCore::RenderThemeMac::paintSliderThumb):
+        (WebCore::RenderThemeMac::setSearchCellState):
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsDecorationPart):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton):
+
 2014-06-09  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Bound RasterShapeInterval size to int

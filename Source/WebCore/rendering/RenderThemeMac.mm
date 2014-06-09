@@ -302,6 +302,13 @@ Color RenderThemeMac::platformFocusRingColor() const
     return systemColor(CSSValueWebkitFocusRingColor);
 }
 
+int RenderThemeMac::platformFocusRingMaxWidth() const
+{
+    // FIXME: Shouldn't this function be named platformFocusRingMinWidth? But also, I'm not sure if this function is needed - looks like
+    // all platforms just used 0 for this before <http://trac.webkit.org/changeset/168397>.
+    return 0;
+}
+
 Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor() const
 {
     return platformInactiveSelectionBackgroundColor();
@@ -1434,7 +1441,6 @@ void RenderThemeMac::setPopupButtonCellState(const RenderObject& o, const IntRec
     setControlSize(popupButton, popupButtonSizes(), r.size(), o.style().effectiveZoom());
 
     // Update the various states we respond to.
-    updateActiveState(popupButton, o);
     updateCheckedState(popupButton, o);
     updateEnabledState(popupButton, o);
     updatePressedState(popupButton, o);
@@ -1517,7 +1523,6 @@ bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& pa
     LocalCurrentGraphicsContext localContext(paintInfo.context);
 
     // Update the various states we respond to.
-    updateActiveState(sliderThumbCell, o);
     updateEnabledState(sliderThumbCell, o);
         Element* focusDelegate = (o.node() && o.node()->isElementNode()) ? toElement(o.node())->focusDelegate() : 0;
     if (focusDelegate)
@@ -1606,7 +1611,6 @@ void RenderThemeMac::setSearchCellState(const RenderObject& o, const IntRect&)
     [search setControlSize:controlSizeForFont(&o.style())];
 
     // Update the various states we respond to.
-    updateActiveState(search, o);
     updateEnabledState(search, o);
     updateFocusedState(search, o);
 }
@@ -1672,10 +1676,8 @@ bool RenderThemeMac::paintSearchFieldCancelButton(const RenderObject& o, const P
 
     NSSearchFieldCell* search = this->search();
 
-    if (!input->isDisabledFormControl() && (input->isTextFormControl() && !toHTMLTextFormControlElement(input)->isReadOnly())) {
-        updateActiveState([search cancelButtonCell], o);
+    if (!input->isDisabledFormControl() && (input->isTextFormControl() && !toHTMLTextFormControlElement(input)->isReadOnly()))
         updatePressedState([search cancelButtonCell], o);
-    }
     else if ([[search cancelButtonCell] isHighlighted])
         [[search cancelButtonCell] setHighlighted:NO];
 
@@ -1768,8 +1770,6 @@ bool RenderThemeMac::paintSearchFieldResultsDecorationPart(const RenderObject& o
     if ([search searchMenuTemplate] != nil)
         [search setSearchMenuTemplate:nil];
 
-    updateActiveState([search searchButtonCell], o);
-
     FloatRect localBounds = [search searchButtonRectForBounds:NSRect(input->renderBox()->pixelSnappedBorderBoxRect())];
     localBounds = convertToPaintingRect(*input->renderer(), o, localBounds, r);
 
@@ -1799,8 +1799,6 @@ bool RenderThemeMac::paintSearchFieldResultsButton(const RenderObject& o, const 
     setSearchCellState(*input->renderer(), r);
 
     NSSearchFieldCell* search = this->search();
-
-    updateActiveState([search searchButtonCell], o);
 
     if (![search searchMenuTemplate])
         [search setSearchMenuTemplate:searchMenuTemplate()];
