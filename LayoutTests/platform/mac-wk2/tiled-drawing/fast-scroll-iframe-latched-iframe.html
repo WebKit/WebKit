@@ -12,9 +12,8 @@ var pageScrollPositionBefore;
 var iFrameScrollPositionBefore;
 var continueCount = 5;
 
-function checkForScroll() {
-
-    // The IFrame should not have scrolled at all.
+function checkForScroll()
+{
     var pageScrollPositionAfter = document.body.scrollTop;
     var iFrameScrollPositionAfter = window.frames['target'].document.body.scrollTop;
 
@@ -34,8 +33,8 @@ function checkForScroll() {
     testRunner.notifyDone();
 }
 
-function scrollTest() {
-    // See where our IFrame lives:
+function scrollTest()
+{
     pageScrollPositionBefore = document.body.scrollTop;
 
     iframeTarget = document.getElementById('target');
@@ -45,32 +44,31 @@ function scrollTest() {
 
     iFrameScrollPositionBefore = iFrameBody.scrollTop;
 
-    // Scroll the #source until we reach the #target.
     var startPosX = iframeTarget.offsetLeft + 20;
     debug("IFrame display height = " + iframeTarget.clientHeight);
-    var startPosY = iframeTarget.offsetTop + iframeTarget.clientHeight - 42; // One wheel turn before end.
-    eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
+    var startPosY = iframeTarget.offsetTop + iframeTarget.clientHeight - 42;
+    eventSender.mouseMoveTo(startPosX, startPosY);
     debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end', true);
-    setTimeout(checkForScroll, 100);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+    checkForScroll();
 }
 
-function setupTopLevel() {
-
+function setupTopLevel()
+{
     if (window.eventSender) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
 
-        setTimeout(scrollTest, 1000);
+        setTimeout(scrollTest, 0);
     } else {
         var messageLocation = document.getElementById('parent');
         var message = document.createElement('div');

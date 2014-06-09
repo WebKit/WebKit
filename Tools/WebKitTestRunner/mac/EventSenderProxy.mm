@@ -32,6 +32,7 @@
 #import "TestController.h"
 #import <Carbon/Carbon.h>
 #import <WebKit/WKString.h>
+#import <WebKit/WKPagePrivate.h>
 #import <wtf/RetainPtr.h>
 
 @interface NSApplication (Details)
@@ -218,7 +219,9 @@ void EventSenderProxy::mouseMoveTo(double x, double y)
     NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
     if (targetView) {
         [NSApp _setCurrentEvent:event];
+        WKPageSetShouldSendEventsSynchronously(m_testController->mainWebView()->page(), true);
         [targetView mouseMoved:event];
+        WKPageSetShouldSendEventsSynchronously(m_testController->mainWebView()->page(), false);
         [NSApp _setCurrentEvent:nil];
     } else {
         NSPoint windowLocation = [event locationInWindow];
@@ -455,11 +458,13 @@ void EventSenderProxy::mouseScrollBy(int x, int y)
     NSEvent *event = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
     if (NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]]) {
         [NSApp _setCurrentEvent:event];
+        WKPageSetShouldSendEventsSynchronously(m_testController->mainWebView()->page(), true);
         [targetView scrollWheel:event];
+        WKPageSetShouldSendEventsSynchronously(m_testController->mainWebView()->page(), false);
         [NSApp _setCurrentEvent:nil];
     } else {
         NSPoint location = [event locationInWindow];
-        WTFLogAlways("mouseScrollByWithWheelAndMomentumPhases failed to find the target view at %f,%f\n", location.x, location.y);
+        WTFLogAlways("mouseScrollBy failed to find the target view at %f,%f\n", location.x, location.y);
     }
 }
 
@@ -492,7 +497,9 @@ void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int
     // Our event should have the correct settings:
     if (NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]]) {
         [NSApp _setCurrentEvent:event];
+        WKPageSetShouldSendEventsSynchronously(m_testController->mainWebView()->page(), true);
         [targetView scrollWheel:event];
+        WKPageSetShouldSendEventsSynchronously(m_testController->mainWebView()->page(), false);
         [NSApp _setCurrentEvent:nil];
     } else {
         NSPoint windowLocation = [event locationInWindow];

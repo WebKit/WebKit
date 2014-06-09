@@ -1879,6 +1879,9 @@ void WebPage::wheelEventSyncForTesting(const WebWheelEvent& wheelEvent, bool& ha
 {
     CurrentEvent currentEvent(wheelEvent);
 
+    if (ScrollingCoordinator* scrollingCoordinator = m_page->scrollingCoordinator())
+        scrollingCoordinator->commitTreeStateIfNeeded();
+
     handled = handleWheelEvent(wheelEvent, m_page.get());
 }
 

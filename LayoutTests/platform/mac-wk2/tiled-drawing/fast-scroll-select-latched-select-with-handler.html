@@ -46,8 +46,8 @@ var pageScrollPositionBefore;
 var selectScrollPositionBefore;
 var continueCount = 5;
 
-function checkForScroll() {
-
+function checkForScroll()
+{
     // The page should not have scrolled at all.
     var pageScrollPositionAfter = document.body.scrollTop;
     var selectScrollPositionAfter = selectTarget.scrollTop;
@@ -70,7 +70,8 @@ function checkForScroll() {
     testRunner.notifyDone();
 }
 
-function scrollTest() {
+function scrollTest()
+{
     pageScrollPositionBefore = document.body.scrollTop;
 
     selectTarget = document.getElementById('target');
@@ -83,26 +84,26 @@ function scrollTest() {
     var startPosY = Math.round(selectTarget.offsetTop) + Math.round(selectTarget.clientHeight) - 42;
     eventSender.mouseMoveTo(startPosX, startPosY);
     debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end', true);
-    setTimeout(checkForScroll, 100);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+    checkForScroll();
 }
 
-function setupTopLevel() {
-
+function setupTopLevel()
+{
     if (window.eventSender) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
 
-        setTimeout(scrollTest, 1000);
+        setTimeout(scrollTest, 0);
     } else {
         var messageLocation = document.getElementById('parent');
         var message = document.createElement('div');

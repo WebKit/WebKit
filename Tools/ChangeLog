@@ -1,3 +1,27 @@
+2014-06-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix more latched scrolling test flakiness and slowness
+        https://bugs.webkit.org/show_bug.cgi?id=133601
+
+        Reviewed by Brent Fulgham.
+        
+        Latched scrolling tests were flakey for two reasons. First, the EventSender
+        wheel events were async from the web to the UI process, and the resulting
+        synthetic events also async from the UI to the web process. Make them sync
+        for testing.
+        
+        Secondly, the timer-based scrolling tree commit could result in the scrolling
+        tree (specifically the frame node's notion of the scrollable area and content
+        size) not being updated before the scrolling thread starts getting wheel events.
+        Fix by having WebPage::wheelEventSyncForTesting() commit if necessary.
+        
+        Finally remove all the now-unnecessary timeouts from the tests.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseMoveTo):
+        (WTR::EventSenderProxy::mouseScrollBy):
+        (WTR::EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases):
+
 2014-06-09  Andrzej Badowski  <a.badowski@samsung.com>
 
         [EFL] Add parameter to MiniBrowser to disable web security
