@@ -94,6 +94,8 @@ public:
     bool handlesPageScaleFactor() const;
 
     void pageScaleFactorDidChange();
+    void topContentInsetDidChange();
+
     void webPageDestroyed();
 
     bool handleEditingCommand(const String& commandName, const String& argument);

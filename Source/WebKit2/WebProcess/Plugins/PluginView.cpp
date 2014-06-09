@@ -470,6 +470,11 @@ void PluginView::pageScaleFactorDidChange()
     viewGeometryDidChange();
 }
 
+void PluginView::topContentInsetDidChange()
+{
+    viewGeometryDidChange();
+}
+
 void PluginView::setPageScaleFactor(double scaleFactor, IntPoint)
 {
     m_pageScaleFactor = scaleFactor;

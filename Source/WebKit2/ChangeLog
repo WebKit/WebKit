@@ -1,3 +1,23 @@
+2014-06-09  Beth Dakin  <bdakin@apple.com>
+
+        Flash video controls hit-test incorrectly after changing topContentInset
+        https://bugs.webkit.org/show_bug.cgi?id=133658
+        -and corresponding-
+        <rdar://problem/16978590>
+
+        Reviewed by Anders Carlsson.
+
+        When the topContent changes, the PluginView needs to be informed.
+
+        New function PluginView::topContentInsetDidChange() calls viewGeometryDidChange().
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::topContentInsetDidChange):
+        * WebProcess/Plugins/PluginView.h:
+
+        Call topContentInsetDidChange() after setting an inset only if it is a new inset.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setTopContentInset):
+
 2014-06-09  Daniel Bates  <dabates@apple.com>
 
         Another attempt to fix the EFL and GTK builds after <http://trac.webkit.org/changeset/169711>

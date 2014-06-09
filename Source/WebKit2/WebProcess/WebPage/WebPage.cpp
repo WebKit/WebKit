@@ -2104,7 +2104,13 @@ void WebPage::setDrawsTransparentBackground(bool drawsTransparentBackground)
 
 void WebPage::setTopContentInset(float contentInset)
 {
+    if (contentInset == m_page->topContentInset())
+        return;
+
     m_page->setTopContentInset(contentInset);
+
+    for (auto* pluginView : m_pluginViews)
+        pluginView->topContentInsetDidChange();
 }
 
 void WebPage::viewWillStartLiveResize()
