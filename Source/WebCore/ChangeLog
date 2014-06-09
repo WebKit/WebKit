@@ -1,3 +1,26 @@
+2014-06-09  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Amazon app: Cannot interact with product page after tapping on product image
+        https://bugs.webkit.org/show_bug.cgi?id=133559
+        <rdar://problem/16332749>
+
+        Reviewed by Oliver Hunt.
+
+        As a workaround for issues in the Amazon app, mark the attribute navigator.geolocation as
+        replaceable so that we don't throw a JavaScript type error when assigning to an instance
+        attribute that shadows it. At the time of writing the first such assignment to is ignored.
+        See <https://bugs.webkit.org/show_bug.cgi?id=133648> for more details.
+
+        When loading a product page in the Amazon app it overwrites the readonly property geolocation
+        on an object that extends the Navigator object. In strict mode, this operation is not honored
+        and is treated as a JavaScript type error, which stops JavaScript execution. Therefore, the
+        product page does not behave as intended. In contrast, this operation would not be honored in
+        non-strict mode and would not be treated as a JavaScript type error.
+
+        Test: js/dom/shadow-navigator-geolocation-in-strict-mode-does-not-throw.html
+
+        * Modules/geolocation/NavigatorGeolocation.idl:
+
 2014-06-09  Andreas Kling  <akling@apple.com>
 
         HTML*ListElement wrappers have custom getOwnPropertySlot()s for no good reason.
