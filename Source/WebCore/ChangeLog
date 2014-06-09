@@ -1,3 +1,17 @@
+2014-06-09  Enrica Casucci  <enrica@apple.com>
+
+        iOS WebKit: Crash in charactersAroundPosition.
+        https://bugs.webkit.org/show_bug.cgi?id=133659
+        <rdar://problem/17220870>
+
+        Reviewed by Benjamin Poulain.
+
+        Ensure that we stay within the vector boundaries
+        when returning the characters around the position.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::charactersAroundPosition):
+
 2014-06-09  Alexey Proskuryakov  <ap@apple.com>
 
         Properly reset UStringSearch object in SearchBuffer constructor.

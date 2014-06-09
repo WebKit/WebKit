@@ -715,7 +715,8 @@ EditorState WebPage::editorState() const
         // FIXME: The following check should take into account writing direction.
         result.isReplaceAllowed = result.isContentEditable && atBoundaryOfGranularity(selection.start(), WordGranularity, DirectionForward);
         result.wordAtSelection = plainTextReplacingNoBreakSpace(wordRangeFromPosition(selection.start()).get());
-        charactersAroundPosition(selection.start(), result.characterAfterSelection, result.characterBeforeSelection, result.twoCharacterBeforeSelection);
+        if (selection.isContentEditable())
+            charactersAroundPosition(selection.start(), result.characterAfterSelection, result.characterBeforeSelection, result.twoCharacterBeforeSelection);
     } else if (selection.isRange()) {
         result.caretRectAtStart = view->contentsToRootView(VisiblePosition(selection.start()).absoluteCaretBounds());
         result.caretRectAtEnd = view->contentsToRootView(VisiblePosition(selection.end()).absoluteCaretBounds());
