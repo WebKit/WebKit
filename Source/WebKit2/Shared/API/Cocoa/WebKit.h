@@ -40,4 +40,5 @@
 #import <WebKit/WKUserScript.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWindowFeatures.h>
 #import <WebKit/WebKitLegacy.h>
