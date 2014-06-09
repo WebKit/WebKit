@@ -244,6 +244,9 @@ bool RoundedRect::intersectsQuad(const FloatQuad& quad) const
 FloatRoundedRect RoundedRect::pixelSnappedRoundedRectForPainting(float deviceScaleFactor) const
 {
     LayoutRect originalRect = rect();
+    if (originalRect.isEmpty())
+        return FloatRoundedRect(originalRect, radii());
+
     FloatRect pixelSnappedRect = pixelSnappedForPainting(originalRect, deviceScaleFactor);
     Radii adjustedRadii = radii();
     // Snapping usually does not alter size, but when it does, we need to make sure that the final rect is still renderable by distributing the size delta proportionally.

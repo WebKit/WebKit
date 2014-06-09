@@ -1,3 +1,17 @@
+2014-06-09  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Pixelsnapping empty rounded rect results in NaN radii width/height.
+        https://bugs.webkit.org/show_bug.cgi?id=133654
+
+        Reviewed by Simon Fraser.
+
+        Empty rounded rects don't need snapping.
+
+        Not testable.
+
+        * platform/graphics/RoundedRect.cpp:
+        (WebCore::RoundedRect::pixelSnappedRoundedRectForPainting):
+
 2014-05-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION: missing underline under CJK text
