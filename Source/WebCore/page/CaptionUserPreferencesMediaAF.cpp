@@ -770,6 +770,10 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
         TextTrack* track = trackList->item(i);
         String language = displayNameForLanguageLocale(track->language());
 
+        const AtomicString& kind = track->kind();
+        if (kind != TextTrack::captionsKeyword() && kind != TextTrack::descriptionsKeyword() && kind != TextTrack::subtitlesKeyword())
+            continue;
+
         if (track->containsOnlyForcedSubtitles()) {
             LOG(Media, "CaptionUserPreferencesMac::sortedTrackListForMenu - skipping '%s' track with language '%s' because it contains only forced subtitles", track->kind().string().utf8().data(), language.utf8().data());
             continue;
@@ -823,6 +827,10 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
     for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
         TextTrack* track = trackList->item(i);
         String language = displayNameForLanguageLocale(track->language());
+
+        const AtomicString& kind = track->kind();
+        if (kind != TextTrack::captionsKeyword() && kind != TextTrack::descriptionsKeyword() && kind != TextTrack::subtitlesKeyword())
+            continue;
 
         // All candidates with no languge were added the first time through.
         if (language.isEmpty())

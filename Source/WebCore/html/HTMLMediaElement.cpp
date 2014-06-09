@@ -3552,6 +3552,15 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
     RefPtr<TextTrack> forcedSubitleTrack;
     int highestTrackScore = 0;
     int highestForcedScore = 0;
+
+    // If there is a visible track, it has already been configured so it won't be considered in the loop below. We don't want to choose another
+    // track if it is less suitable, and we do want to disable it if another track is more suitable.
+    int alreadyVisibleTrackScore = 0;
+    if (group.visibleTrack && captionPreferences) {
+        alreadyVisibleTrackScore = captionPreferences->textTrackSelectionScore(group.visibleTrack.get(), this);
+        currentlyEnabledTracks.append(group.visibleTrack);
+    }
+
     for (size_t i = 0; i < group.tracks.size(); ++i) {
         RefPtr<TextTrack> textTrack = group.tracks[i];
 
@@ -3572,7 +3581,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
             // to believe is appropriate for the user, and there is no other text track in the media element's list of
             // text tracks with a text track kind of chapters whose text track mode is showing
             //    Let the text track mode be showing.
-            if (trackScore > highestTrackScore) {
+            if (trackScore > highestTrackScore && trackScore > alreadyVisibleTrackScore) {
                 highestTrackScore = trackScore;
                 trackToEnable = textTrack;
             }

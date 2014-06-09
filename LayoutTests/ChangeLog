@@ -1,3 +1,15 @@
+2014-06-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Automatic text track selection can select more than one track
+        https://bugs.webkit.org/show_bug.cgi?id=133590
+
+        Reviewed by Brent Fulgham.
+
+        * media/video-trackmenu-selection-expected.txt: Added.
+        * media/video-trackmenu-selection.html: Added.
+
+        * platform/efl/TestExpectations: New test skipped.
+
 2014-05-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION: missing underline under CJK text

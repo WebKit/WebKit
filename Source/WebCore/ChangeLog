@@ -1,3 +1,20 @@
+2014-06-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Automatic text track selection can select more than one track
+        https://bugs.webkit.org/show_bug.cgi?id=133590
+
+        Reviewed by Brent Fulgham.
+
+        Test: media/video-trackmenu-selection.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::configureTextTrack): Consider the currently selected
+            track, if any.
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::sortedTrackListForMenu): Drive-by change
+            to make sure no non-visible text tracks are included in the track menu.
+
 2014-06-09  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Hang when painting media before compositing mode activated
