@@ -1,3 +1,14 @@
+2014-06-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Group the methods in InternalSettings.idl
+        https://bugs.webkit.org/show_bug.cgi?id=133652
+
+        Reviewed by Tim Horton.
+
+        Group methods by topic.
+
+        * testing/InternalSettings.idl:
+
 2014-06-05  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Eagerly reify DOM prototype attributes
