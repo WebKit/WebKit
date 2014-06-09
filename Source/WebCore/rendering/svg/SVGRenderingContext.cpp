@@ -298,7 +298,7 @@ void SVGRenderingContext::renderSubtreeToImageBuffer(ImageBuffer* image, RenderE
     ASSERT(image);
     ASSERT(image->context());
 
-    PaintInfo info(image->context(), IntRect::infiniteRect(), PaintPhaseForeground, PaintBehaviorNormal);
+    PaintInfo info(image->context(), LayoutRect::infiniteRect(), PaintPhaseForeground, PaintBehaviorNormal);
 
     AffineTransform& contentTransformation = currentContentTransformation();
     AffineTransform savedContentTransformation = contentTransformation;

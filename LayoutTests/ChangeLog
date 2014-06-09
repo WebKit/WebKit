@@ -1,3 +1,18 @@
+2014-06-09  Zalan Bujtas  <zalan@apple.com>
+
+        [SVG] Subpixel rendering: Mask with transformed text does not render.
+        https://bugs.webkit.org/show_bug.cgi?id=133626
+        <rdar://problem/17123070>
+
+        Reviewed by Simon Fraser.
+
+        Replace IntRect::infiniteRect() with Layout::infiniteRect(). A transformed IntRect::infiniteRect()
+        overflows and produces invalid repaint rect. -also remove IntRect::infiniteRect() as no one calls
+        it anymore.
+
+        * svg/masking/mask-transformed-text-missing-expected.svg: Added.
+        * svg/masking/mask-transformed-text-missing.svg: Added.
+
 2014-06-05  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Share mac/editing/spelling/editing-word-with-marker-2.html with other platforms
