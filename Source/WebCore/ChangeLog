@@ -1,3 +1,28 @@
+2014-06-08  Dean Jackson  <dino@apple.com>
+
+        [Mac] checkboxes and radio buttons animate incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=133619
+        <rdar://problem/16478676>
+
+        Reviewed by Sam Weinig.
+
+        As many people have noticed, the new checkboxes and radio
+        buttons jump around during their animation. To fix this
+        I've added yet another magic set of numbers to our
+        native form positioning - this time the placement
+        of the controls when rendering on the animated path.
+        This is quite annoying, since there doesn't appear
+        to be any pattern to the offsets (or margins) given
+        a control size, and this case also needed a sub-pixel
+        offset to display correctly on retina machines.
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::checkboxMargins): Add comment so I know what the values mean.
+        (WebCore::checkboxOffsets): Add the magic translation values for animated states.
+        (WebCore::radioMargins): Ditto.
+        (WebCore::radioOffsets):
+        (WebCore::paintToggleButton): Paint with these new offsets.
+
 2014-06-07  Dean Jackson  <dino@apple.com>
 
         Regression r168397 - Form layout is incorrect on OS X Yosemite
