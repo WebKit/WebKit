@@ -249,7 +249,7 @@ set(WebKit2_SOURCES
     Shared/API/c/WKData.cpp
     Shared/API/c/WKDeprecatedFunctions.cpp
     Shared/API/c/WKDictionary.cpp
-    Shared/API/c/WKError.cpp
+    Shared/API/c/WKErrorRef.cpp
     Shared/API/c/WKGeometry.cpp
     Shared/API/c/WKImage.cpp
     Shared/API/c/WKMutableArray.cpp
