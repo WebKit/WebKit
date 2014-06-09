@@ -983,7 +983,7 @@ void WebPage::loadRequest(uint64_t navigationID, const ResourceRequest& request,
     ASSERT(!m_pendingNavigationID);
 }
 
-void WebPage::loadDataImpl(PassRefPtr<SharedBuffer> sharedBuffer, const String& MIMEType, const String& encodingName, const URL& baseURL, const URL& unreachableURL, IPC::MessageDecoder& decoder)
+void WebPage::loadDataImpl(uint64_t navigationID, PassRefPtr<SharedBuffer> sharedBuffer, const String& MIMEType, const String& encodingName, const URL& baseURL, const URL& unreachableURL, IPC::MessageDecoder& decoder)
 {
     SendStopResponsivenessTimer stopper(this);
 
@@ -991,6 +991,8 @@ void WebPage::loadDataImpl(PassRefPtr<SharedBuffer> sharedBuffer, const String& 
     InjectedBundleUserMessageDecoder userMessageDecoder(userData);
     if (!decoder.decode(userMessageDecoder))
         return;
+
+    m_pendingNavigationID = navigationID;
 
     ResourceRequest request(baseURL);
     SubstituteData substituteData(sharedBuffer, MIMEType, encodingName, unreachableURL);
@@ -1003,14 +1005,14 @@ void WebPage::loadDataImpl(PassRefPtr<SharedBuffer> sharedBuffer, const String& 
     m_mainFrame->coreFrame()->loader().load(FrameLoadRequest(m_mainFrame->coreFrame(), request, substituteData));
 }
 
-void WebPage::loadString(const String& htmlString, const String& MIMEType, const URL& baseURL, const URL& unreachableURL, IPC::MessageDecoder& decoder)
+void WebPage::loadString(uint64_t navigationID, const String& htmlString, const String& MIMEType, const URL& baseURL, const URL& unreachableURL, IPC::MessageDecoder& decoder)
 {
     if (!htmlString.isNull() && htmlString.is8Bit()) {
         RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(htmlString.characters8()), htmlString.length() * sizeof(LChar));
-        loadDataImpl(sharedBuffer, MIMEType, ASCIILiteral("latin1"), baseURL, unreachableURL, decoder);
+        loadDataImpl(navigationID, sharedBuffer, MIMEType, ASCIILiteral("latin1"), baseURL, unreachableURL, decoder);
     } else {
         RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(htmlString.characters16()), htmlString.length() * sizeof(UChar));
-        loadDataImpl(sharedBuffer, MIMEType, ASCIILiteral("utf-16"), baseURL, unreachableURL, decoder);
+        loadDataImpl(navigationID, sharedBuffer, MIMEType, ASCIILiteral("utf-16"), baseURL, unreachableURL, decoder);
     }
 }
 
@@ -1018,31 +1020,31 @@ void WebPage::loadData(const IPC::DataReference& data, const String& MIMEType, c
 {
     RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(data.data()), data.size());
     URL baseURL = baseURLString.isEmpty() ? blankURL() : URL(URL(), baseURLString);
-    loadDataImpl(sharedBuffer, MIMEType, encodingName, baseURL, URL(), decoder);
+    loadDataImpl(0, sharedBuffer, MIMEType, encodingName, baseURL, URL(), decoder);
 }
 
-void WebPage::loadHTMLString(const String& htmlString, const String& baseURLString, IPC::MessageDecoder& decoder)
+void WebPage::loadHTMLString(uint64_t navigationID, const String& htmlString, const String& baseURLString, IPC::MessageDecoder& decoder)
 {
     URL baseURL = baseURLString.isEmpty() ? blankURL() : URL(URL(), baseURLString);
-    loadString(htmlString, ASCIILiteral("text/html"), baseURL, URL(), decoder);
+    loadString(navigationID, htmlString, ASCIILiteral("text/html"), baseURL, URL(), decoder);
 }
 
 void WebPage::loadAlternateHTMLString(const String& htmlString, const String& baseURLString, const String& unreachableURLString, IPC::MessageDecoder& decoder)
 {
     URL baseURL = baseURLString.isEmpty() ? blankURL() : URL(URL(), baseURLString);
     URL unreachableURL = unreachableURLString.isEmpty() ? URL() : URL(URL(), unreachableURLString);
-    loadString(htmlString, ASCIILiteral("text/html"), baseURL, unreachableURL, decoder);
+    loadString(0, htmlString, ASCIILiteral("text/html"), baseURL, unreachableURL, decoder);
 }
 
 void WebPage::loadPlainTextString(const String& string, IPC::MessageDecoder& decoder)
 {
-    loadString(string, ASCIILiteral("text/plain"), blankURL(), URL(), decoder);
+    loadString(0, string, ASCIILiteral("text/plain"), blankURL(), URL(), decoder);
 }
 
 void WebPage::loadWebArchiveData(const IPC::DataReference& webArchiveData, IPC::MessageDecoder& decoder)
 {
     RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(webArchiveData.data()), webArchiveData.size() * sizeof(uint8_t));
-    loadDataImpl(sharedBuffer, ASCIILiteral("application/x-webarchive"), ASCIILiteral("utf-16"), blankURL(), URL(), decoder);
+    loadDataImpl(0, sharedBuffer, ASCIILiteral("application/x-webarchive"), ASCIILiteral("utf-16"), blankURL(), URL(), decoder);
 }
 
 void WebPage::stopLoadingFrame(uint64_t frameID)

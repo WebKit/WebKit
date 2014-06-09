@@ -863,8 +863,8 @@ private:
 
     String sourceForFrame(WebFrame*);
 
-    void loadDataImpl(PassRefPtr<WebCore::SharedBuffer>, const String& MIMEType, const String& encodingName, const WebCore::URL& baseURL, const WebCore::URL& failingURL, IPC::MessageDecoder&);
-    void loadString(const String&, const String& MIMEType, const WebCore::URL& baseURL, const WebCore::URL& failingURL, IPC::MessageDecoder&);
+    void loadDataImpl(uint64_t navigationID, PassRefPtr<WebCore::SharedBuffer>, const String& MIMEType, const String& encodingName, const WebCore::URL& baseURL, const WebCore::URL& failingURL, IPC::MessageDecoder&);
+    void loadString(uint64_t navigationID, const String&, const String& MIMEType, const WebCore::URL& baseURL, const WebCore::URL& failingURL, IPC::MessageDecoder&);
 
     bool platformHasLocalDataForURL(const WebCore::URL&);
 
@@ -872,7 +872,7 @@ private:
     void tryClose();
     void loadRequest(uint64_t navigationID, const WebCore::ResourceRequest&, const SandboxExtension::Handle&, IPC::MessageDecoder&);
     void loadData(const IPC::DataReference&, const String& MIMEType, const String& encodingName, const String& baseURL, IPC::MessageDecoder&);
-    void loadHTMLString(const String& htmlString, const String& baseURL, IPC::MessageDecoder&);
+    void loadHTMLString(uint64_t navigationID, const String& htmlString, const String& baseURL, IPC::MessageDecoder&);
     void loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL, IPC::MessageDecoder&);
     void loadPlainTextString(const String&, IPC::MessageDecoder&);
     void loadWebArchiveData(const IPC::DataReference&, IPC::MessageDecoder&);

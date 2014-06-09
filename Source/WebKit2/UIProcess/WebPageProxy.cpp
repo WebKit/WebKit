@@ -749,14 +749,23 @@ void WebPageProxy::loadData(API::Data* data, const String& MIMEType, const Strin
     m_process->responsivenessTimer()->start();
 }
 
-void WebPageProxy::loadHTMLString(const String& htmlString, const String& baseURL, API::Object* userData)
+uint64_t WebPageProxy::loadHTMLString(const String& htmlString, const String& baseURL, API::Object* userData)
 {
+    uint64_t navigationID = generateNavigationID();
+
+    auto transaction = m_pageLoadState.transaction();
+
+    String pendingAPIRequestURL = baseURL.isEmpty() ? baseURL : ASCIILiteral("about:blank");
+    m_pageLoadState.setPendingAPIRequestURL(transaction, pendingAPIRequestURL);
+
     if (!isValid())
         reattachToWebProcess();
 
     m_process->assumeReadAccessToBaseURL(baseURL);
-    m_process->send(Messages::WebPage::LoadHTMLString(htmlString, baseURL, WebContextUserMessageEncoder(userData, process())), m_pageID);
+    m_process->send(Messages::WebPage::LoadHTMLString(navigationID, htmlString, baseURL, WebContextUserMessageEncoder(userData, process())), m_pageID);
     m_process->responsivenessTimer()->start();
+
+    return navigationID;
 }
 
 void WebPageProxy::loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL, API::Object* userData)

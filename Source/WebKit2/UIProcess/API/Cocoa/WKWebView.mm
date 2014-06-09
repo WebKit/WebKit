@@ -357,6 +357,14 @@ static int32_t deviceOrientation()
     return [navigation.leakRef() autorelease];
 }
 
+- (WKNavigation *)loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL
+{
+    uint64_t navigationID = _page->loadHTMLString(string, baseURL.absoluteString);
+    auto navigation = _navigationState->createLoadDataNavigation(navigationID);
+
+    return [navigation.leakRef() autorelease];
+}
+
 - (WKNavigation *)goToBackForwardListItem:(WKBackForwardListItem *)item
 {
     uint64_t navigationID = _page->goToBackForwardItem(&item._item);
