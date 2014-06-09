@@ -89,9 +89,9 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 - (WKNavigation *)loadRequest:(NSURLRequest *)request;
 
-/*! @abstract Set the page contents and base URL.
- @param string The string to use as the main page for the document.
- @param baseURL A file that is used to resolve relative URLs within the document.
+/*! @abstract Sets the webpage contents and base URL.
+ @param string The string to use as the contents of the webpage.
+ @param baseURL A URL that is used to resolve relative URLs within the document.
  @result A new navigation.
  */
 - (WKNavigation *)loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL;

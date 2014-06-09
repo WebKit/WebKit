@@ -1,5 +1,11 @@
 2014-06-09  Anders Carlsson  <andersca@apple.com>
 
+        Address review feedback.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+
+2014-06-09  Anders Carlsson  <andersca@apple.com>
+
         Add a WKError.h header and rename the existing WKError.h to WKErrorRef.h
         https://bugs.webkit.org/show_bug.cgi?id=133657
 
