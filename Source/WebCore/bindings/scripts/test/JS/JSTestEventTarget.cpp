@@ -115,10 +115,10 @@ JSObject* JSTestEventTargetPrototype::self(VM& vm, JSGlobalObject* globalObject)
     return getDOMPrototype<JSTestEventTarget>(vm, globalObject);
 }
 
-bool JSTestEventTargetPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+void JSTestEventTargetPrototype::finishCreation(VM& vm)
 {
-    JSTestEventTargetPrototype* thisObject = jsCast<JSTestEventTargetPrototype*>(object);
-    return getStaticFunctionSlot<JSObject>(exec, JSTestEventTargetPrototypeTable, thisObject, propertyName, slot);
+    Base::finishCreation(vm);
+    reifyStaticProperties(vm, JSTestEventTargetPrototypeTable, this);
 }
 
 const ClassInfo JSTestEventTarget::s_info = { "TestEventTarget", &Base::s_info, &JSTestEventTargetTable, 0 , CREATE_METHOD_TABLE(JSTestEventTarget) };

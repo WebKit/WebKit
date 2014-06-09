@@ -110,10 +110,10 @@ JSObject* JSTestSerializedScriptValueInterfacePrototype::self(VM& vm, JSGlobalOb
     return getDOMPrototype<JSTestSerializedScriptValueInterface>(vm, globalObject);
 }
 
-bool JSTestSerializedScriptValueInterfacePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+void JSTestSerializedScriptValueInterfacePrototype::finishCreation(VM& vm)
 {
-    JSTestSerializedScriptValueInterfacePrototype* thisObject = jsCast<JSTestSerializedScriptValueInterfacePrototype*>(object);
-    return getStaticPropertySlot<JSTestSerializedScriptValueInterfacePrototype, JSObject>(exec, JSTestSerializedScriptValueInterfacePrototypeTable, thisObject, propertyName, slot);
+    Base::finishCreation(vm);
+    reifyStaticProperties(vm, JSTestSerializedScriptValueInterfacePrototypeTable, this);
 }
 
 const ClassInfo JSTestSerializedScriptValueInterface::s_info = { "TestSerializedScriptValueInterface", &Base::s_info, 0, 0 , CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterface) };
@@ -138,13 +138,6 @@ void JSTestSerializedScriptValueInterface::destroy(JSC::JSCell* cell)
 JSTestSerializedScriptValueInterface::~JSTestSerializedScriptValueInterface()
 {
     releaseImplIfNotNull();
-}
-
-bool JSTestSerializedScriptValueInterface::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    JSTestSerializedScriptValueInterface* thisObject = jsCast<JSTestSerializedScriptValueInterface*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 EncodedJSValue jsTestSerializedScriptValueInterfaceValue(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)

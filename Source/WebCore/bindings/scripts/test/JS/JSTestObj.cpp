@@ -969,10 +969,10 @@ JSObject* JSTestObjPrototype::self(VM& vm, JSGlobalObject* globalObject)
     return getDOMPrototype<JSTestObj>(vm, globalObject);
 }
 
-bool JSTestObjPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+void JSTestObjPrototype::finishCreation(VM& vm)
 {
-    JSTestObjPrototype* thisObject = jsCast<JSTestObjPrototype*>(object);
-    return getStaticPropertySlot<JSTestObjPrototype, JSObject>(exec, JSTestObjPrototypeTable, thisObject, propertyName, slot);
+    Base::finishCreation(vm);
+    reifyStaticProperties(vm, JSTestObjPrototypeTable, this);
 }
 
 const ClassInfo JSTestObj::s_info = { "TestObject", &Base::s_info, &JSTestObjTable, 0 , CREATE_METHOD_TABLE(JSTestObj) };

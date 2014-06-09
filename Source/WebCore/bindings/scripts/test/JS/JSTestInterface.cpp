@@ -374,10 +374,10 @@ JSObject* JSTestInterfacePrototype::self(VM& vm, JSGlobalObject* globalObject)
     return getDOMPrototype<JSTestInterface>(vm, globalObject);
 }
 
-bool JSTestInterfacePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+void JSTestInterfacePrototype::finishCreation(VM& vm)
 {
-    JSTestInterfacePrototype* thisObject = jsCast<JSTestInterfacePrototype*>(object);
-    return getStaticPropertySlot<JSTestInterfacePrototype, JSObject>(exec, JSTestInterfacePrototypeTable, thisObject, propertyName, slot);
+    Base::finishCreation(vm);
+    reifyStaticProperties(vm, JSTestInterfacePrototypeTable, this);
 }
 
 const ClassInfo JSTestInterface::s_info = { "TestInterface", &Base::s_info, &JSTestInterfaceTable, 0 , CREATE_METHOD_TABLE(JSTestInterface) };

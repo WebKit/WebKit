@@ -99,10 +99,10 @@ JSObject* JSTestExceptionPrototype::self(VM& vm, JSGlobalObject* globalObject)
     return getDOMPrototype<JSTestException>(vm, globalObject);
 }
 
-bool JSTestExceptionPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+void JSTestExceptionPrototype::finishCreation(VM& vm)
 {
-    JSTestExceptionPrototype* thisObject = jsCast<JSTestExceptionPrototype*>(object);
-    return getStaticPropertySlot<JSTestExceptionPrototype, JSObject>(exec, JSTestExceptionPrototypeTable, thisObject, propertyName, slot);
+    Base::finishCreation(vm);
+    reifyStaticProperties(vm, JSTestExceptionPrototypeTable, this);
 }
 
 const ClassInfo JSTestException::s_info = { "TestException", &Base::s_info, &JSTestExceptionTable, 0 , CREATE_METHOD_TABLE(JSTestException) };

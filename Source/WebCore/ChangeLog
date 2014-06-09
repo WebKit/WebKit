@@ -1,3 +1,86 @@
+2014-06-09  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rebaseline bindings tests after r169703
+
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::JSTestActiveDOMObjectPrototype::finishCreation):
+        (WebCore::JSTestActiveDOMObjectPrototype::getOwnPropertySlot): Deleted.
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::JSTestCustomNamedGetterPrototype::finishCreation):
+        (WebCore::JSTestCustomNamedGetterPrototype::getOwnPropertySlot): Deleted.
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructorPrototype::finishCreation):
+        (WebCore::JSTestEventConstructorPrototype::getOwnPropertySlot): Deleted.
+        (WebCore::JSTestEventConstructor::getOwnPropertySlot): Deleted.
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTargetPrototype::finishCreation):
+        (WebCore::JSTestEventTargetPrototype::getOwnPropertySlot): Deleted.
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::JSTestExceptionPrototype::finishCreation):
+        (WebCore::JSTestExceptionPrototype::getOwnPropertySlot): Deleted.
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::JSTestGenerateIsReachablePrototype::finishCreation):
+        (WebCore::JSTestGenerateIsReachablePrototype::getOwnPropertySlot): Deleted.
+        (WebCore::JSTestGenerateIsReachable::getOwnPropertySlot): Deleted.
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.h:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfacePrototype::finishCreation):
+        (WebCore::JSTestInterfacePrototype::getOwnPropertySlot): Deleted.
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListenerPrototype::finishCreation):
+        (WebCore::JSTestMediaQueryListListenerPrototype::getOwnPropertySlot): Deleted.
+        (WebCore::JSTestMediaQueryListListener::getOwnPropertySlot): Deleted.
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorPrototype::finishCreation):
+        (WebCore::JSTestNamedConstructorPrototype::getOwnPropertySlot): Deleted.
+        (WebCore::JSTestNamedConstructor::getOwnPropertySlot): Deleted.
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNodePrototype::finishCreation):
+        (WebCore::JSTestNodePrototype::getOwnPropertySlot): Deleted.
+        (WebCore::JSTestNode::getOwnPropertySlot): Deleted.
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        (WebCore::JSTestNondeterministicPrototype::finishCreation):
+        (WebCore::JSTestNondeterministicPrototype::getOwnPropertySlot): Deleted.
+        (WebCore::JSTestNondeterministic::getOwnPropertySlot): Deleted.
+        * bindings/scripts/test/JS/JSTestNondeterministic.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjPrototype::finishCreation):
+        (WebCore::JSTestObjPrototype::getOwnPropertySlot): Deleted.
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::JSTestOverloadedConstructorsPrototype::finishCreation):
+        (WebCore::JSTestOverloadedConstructorsPrototype::getOwnPropertySlot): Deleted.
+        (WebCore::JSTestOverloadedConstructors::getOwnPropertySlot): Deleted.
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterfacePrototype::finishCreation):
+        (WebCore::JSTestSerializedScriptValueInterfacePrototype::getOwnPropertySlot): Deleted.
+        (WebCore::JSTestSerializedScriptValueInterface::getOwnPropertySlot): Deleted.
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsPrototype::finishCreation):
+        (WebCore::JSTestTypedefsPrototype::getOwnPropertySlot): Deleted.
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        (WebCore::JSattributePrototype::finishCreation):
+        (WebCore::JSattributePrototype::getOwnPropertySlot): Deleted.
+        (WebCore::JSattribute::getOwnPropertySlot): Deleted.
+        * bindings/scripts/test/JS/JSattribute.h:
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+        (WebCore::JSreadonlyPrototype::finishCreation):
+        (WebCore::JSreadonlyPrototype::getOwnPropertySlot): Deleted.
+        (WebCore::JSreadonly::getOwnPropertySlot): Deleted.
+        * bindings/scripts/test/JS/JSreadonly.h:
+
 2014-06-09  Simon Fraser  <simon.fraser@apple.com>
 
         Group the methods in InternalSettings.idl

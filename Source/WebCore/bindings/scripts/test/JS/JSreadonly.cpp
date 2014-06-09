@@ -82,10 +82,10 @@ JSObject* JSreadonlyPrototype::self(VM& vm, JSGlobalObject* globalObject)
     return getDOMPrototype<JSreadonly>(vm, globalObject);
 }
 
-bool JSreadonlyPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+void JSreadonlyPrototype::finishCreation(VM& vm)
 {
-    JSreadonlyPrototype* thisObject = jsCast<JSreadonlyPrototype*>(object);
-    return getStaticPropertySlot<JSreadonlyPrototype, JSObject>(exec, JSreadonlyPrototypeTable, thisObject, propertyName, slot);
+    Base::finishCreation(vm);
+    reifyStaticProperties(vm, JSreadonlyPrototypeTable, this);
 }
 
 const ClassInfo JSreadonly::s_info = { "readonly", &Base::s_info, 0, 0 , CREATE_METHOD_TABLE(JSreadonly) };
@@ -110,13 +110,6 @@ void JSreadonly::destroy(JSC::JSCell* cell)
 JSreadonly::~JSreadonly()
 {
     releaseImplIfNotNull();
-}
-
-bool JSreadonly::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    JSreadonly* thisObject = jsCast<JSreadonly*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 EncodedJSValue jsreadonlyConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue, PropertyName)

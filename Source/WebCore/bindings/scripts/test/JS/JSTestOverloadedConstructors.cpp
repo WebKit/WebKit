@@ -157,10 +157,10 @@ JSObject* JSTestOverloadedConstructorsPrototype::self(VM& vm, JSGlobalObject* gl
     return getDOMPrototype<JSTestOverloadedConstructors>(vm, globalObject);
 }
 
-bool JSTestOverloadedConstructorsPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+void JSTestOverloadedConstructorsPrototype::finishCreation(VM& vm)
 {
-    JSTestOverloadedConstructorsPrototype* thisObject = jsCast<JSTestOverloadedConstructorsPrototype*>(object);
-    return getStaticPropertySlot<JSTestOverloadedConstructorsPrototype, JSObject>(exec, JSTestOverloadedConstructorsPrototypeTable, thisObject, propertyName, slot);
+    Base::finishCreation(vm);
+    reifyStaticProperties(vm, JSTestOverloadedConstructorsPrototypeTable, this);
 }
 
 const ClassInfo JSTestOverloadedConstructors::s_info = { "TestOverloadedConstructors", &Base::s_info, 0, 0 , CREATE_METHOD_TABLE(JSTestOverloadedConstructors) };
@@ -185,13 +185,6 @@ void JSTestOverloadedConstructors::destroy(JSC::JSCell* cell)
 JSTestOverloadedConstructors::~JSTestOverloadedConstructors()
 {
     releaseImplIfNotNull();
-}
-
-bool JSTestOverloadedConstructors::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    JSTestOverloadedConstructors* thisObject = jsCast<JSTestOverloadedConstructors*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 EncodedJSValue jsTestOverloadedConstructorsConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue, PropertyName)

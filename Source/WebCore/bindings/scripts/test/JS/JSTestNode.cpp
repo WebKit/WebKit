@@ -98,10 +98,10 @@ JSObject* JSTestNodePrototype::self(VM& vm, JSGlobalObject* globalObject)
     return getDOMPrototype<JSTestNode>(vm, globalObject);
 }
 
-bool JSTestNodePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+void JSTestNodePrototype::finishCreation(VM& vm)
 {
-    JSTestNodePrototype* thisObject = jsCast<JSTestNodePrototype*>(object);
-    return getStaticPropertySlot<JSTestNodePrototype, JSObject>(exec, JSTestNodePrototypeTable, thisObject, propertyName, slot);
+    Base::finishCreation(vm);
+    reifyStaticProperties(vm, JSTestNodePrototypeTable, this);
 }
 
 const ClassInfo JSTestNode::s_info = { "TestNode", &Base::s_info, 0, 0 , CREATE_METHOD_TABLE(JSTestNode) };
@@ -114,13 +114,6 @@ JSTestNode::JSTestNode(Structure* structure, JSDOMGlobalObject* globalObject, Pa
 JSObject* JSTestNode::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSTestNodePrototype::create(vm, globalObject, JSTestNodePrototype::createStructure(vm, globalObject, JSNodePrototype::self(vm, globalObject)));
-}
-
-bool JSTestNode::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    JSTestNode* thisObject = jsCast<JSTestNode*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 EncodedJSValue jsTestNodeConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue, PropertyName)

@@ -82,10 +82,10 @@ JSObject* JSTestGenerateIsReachablePrototype::self(VM& vm, JSGlobalObject* globa
     return getDOMPrototype<JSTestGenerateIsReachable>(vm, globalObject);
 }
 
-bool JSTestGenerateIsReachablePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+void JSTestGenerateIsReachablePrototype::finishCreation(VM& vm)
 {
-    JSTestGenerateIsReachablePrototype* thisObject = jsCast<JSTestGenerateIsReachablePrototype*>(object);
-    return getStaticPropertySlot<JSTestGenerateIsReachablePrototype, JSObject>(exec, JSTestGenerateIsReachablePrototypeTable, thisObject, propertyName, slot);
+    Base::finishCreation(vm);
+    reifyStaticProperties(vm, JSTestGenerateIsReachablePrototypeTable, this);
 }
 
 const ClassInfo JSTestGenerateIsReachable::s_info = { "TestGenerateIsReachable", &Base::s_info, 0, 0 , CREATE_METHOD_TABLE(JSTestGenerateIsReachable) };
@@ -110,13 +110,6 @@ void JSTestGenerateIsReachable::destroy(JSC::JSCell* cell)
 JSTestGenerateIsReachable::~JSTestGenerateIsReachable()
 {
     releaseImplIfNotNull();
-}
-
-bool JSTestGenerateIsReachable::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    JSTestGenerateIsReachable* thisObject = jsCast<JSTestGenerateIsReachable*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 EncodedJSValue jsTestGenerateIsReachableConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue, PropertyName)

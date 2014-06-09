@@ -100,10 +100,10 @@ JSObject* JSTestCustomNamedGetterPrototype::self(VM& vm, JSGlobalObject* globalO
     return getDOMPrototype<JSTestCustomNamedGetter>(vm, globalObject);
 }
 
-bool JSTestCustomNamedGetterPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+void JSTestCustomNamedGetterPrototype::finishCreation(VM& vm)
 {
-    JSTestCustomNamedGetterPrototype* thisObject = jsCast<JSTestCustomNamedGetterPrototype*>(object);
-    return getStaticFunctionSlot<JSObject>(exec, JSTestCustomNamedGetterPrototypeTable, thisObject, propertyName, slot);
+    Base::finishCreation(vm);
+    reifyStaticProperties(vm, JSTestCustomNamedGetterPrototypeTable, this);
 }
 
 const ClassInfo JSTestCustomNamedGetter::s_info = { "TestCustomNamedGetter", &Base::s_info, &JSTestCustomNamedGetterTable, 0 , CREATE_METHOD_TABLE(JSTestCustomNamedGetter) };

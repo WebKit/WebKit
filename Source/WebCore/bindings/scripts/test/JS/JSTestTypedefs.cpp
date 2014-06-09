@@ -213,10 +213,10 @@ JSObject* JSTestTypedefsPrototype::self(VM& vm, JSGlobalObject* globalObject)
     return getDOMPrototype<JSTestTypedefs>(vm, globalObject);
 }
 
-bool JSTestTypedefsPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+void JSTestTypedefsPrototype::finishCreation(VM& vm)
 {
-    JSTestTypedefsPrototype* thisObject = jsCast<JSTestTypedefsPrototype*>(object);
-    return getStaticPropertySlot<JSTestTypedefsPrototype, JSObject>(exec, JSTestTypedefsPrototypeTable, thisObject, propertyName, slot);
+    Base::finishCreation(vm);
+    reifyStaticProperties(vm, JSTestTypedefsPrototypeTable, this);
 }
 
 const ClassInfo JSTestTypedefs::s_info = { "TestTypedefs", &Base::s_info, &JSTestTypedefsTable, 0 , CREATE_METHOD_TABLE(JSTestTypedefs) };

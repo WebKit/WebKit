@@ -88,10 +88,10 @@ JSObject* JSattributePrototype::self(VM& vm, JSGlobalObject* globalObject)
     return getDOMPrototype<JSattribute>(vm, globalObject);
 }
 
-bool JSattributePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+void JSattributePrototype::finishCreation(VM& vm)
 {
-    JSattributePrototype* thisObject = jsCast<JSattributePrototype*>(object);
-    return getStaticPropertySlot<JSattributePrototype, JSObject>(exec, JSattributePrototypeTable, thisObject, propertyName, slot);
+    Base::finishCreation(vm);
+    reifyStaticProperties(vm, JSattributePrototypeTable, this);
 }
 
 const ClassInfo JSattribute::s_info = { "attribute", &Base::s_info, 0, 0 , CREATE_METHOD_TABLE(JSattribute) };
@@ -116,13 +116,6 @@ void JSattribute::destroy(JSC::JSCell* cell)
 JSattribute::~JSattribute()
 {
     releaseImplIfNotNull();
-}
-
-bool JSattribute::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    JSattribute* thisObject = jsCast<JSattribute*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 EncodedJSValue jsattributeReadonly(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)

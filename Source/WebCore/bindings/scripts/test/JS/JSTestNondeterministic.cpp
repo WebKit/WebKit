@@ -115,10 +115,10 @@ JSObject* JSTestNondeterministicPrototype::self(VM& vm, JSGlobalObject* globalOb
     return getDOMPrototype<JSTestNondeterministic>(vm, globalObject);
 }
 
-bool JSTestNondeterministicPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+void JSTestNondeterministicPrototype::finishCreation(VM& vm)
 {
-    JSTestNondeterministicPrototype* thisObject = jsCast<JSTestNondeterministicPrototype*>(object);
-    return getStaticPropertySlot<JSTestNondeterministicPrototype, JSObject>(exec, JSTestNondeterministicPrototypeTable, thisObject, propertyName, slot);
+    Base::finishCreation(vm);
+    reifyStaticProperties(vm, JSTestNondeterministicPrototypeTable, this);
 }
 
 const ClassInfo JSTestNondeterministic::s_info = { "TestNondeterministic", &Base::s_info, 0, 0 , CREATE_METHOD_TABLE(JSTestNondeterministic) };
@@ -143,13 +143,6 @@ void JSTestNondeterministic::destroy(JSC::JSCell* cell)
 JSTestNondeterministic::~JSTestNondeterministic()
 {
     releaseImplIfNotNull();
-}
-
-bool JSTestNondeterministic::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    JSTestNondeterministic* thisObject = jsCast<JSTestNondeterministic*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 EncodedJSValue jsTestNondeterministicNondeterministicReadonlyAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)

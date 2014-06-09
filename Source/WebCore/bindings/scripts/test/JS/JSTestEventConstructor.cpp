@@ -140,10 +140,10 @@ JSObject* JSTestEventConstructorPrototype::self(VM& vm, JSGlobalObject* globalOb
     return getDOMPrototype<JSTestEventConstructor>(vm, globalObject);
 }
 
-bool JSTestEventConstructorPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+void JSTestEventConstructorPrototype::finishCreation(VM& vm)
 {
-    JSTestEventConstructorPrototype* thisObject = jsCast<JSTestEventConstructorPrototype*>(object);
-    return getStaticPropertySlot<JSTestEventConstructorPrototype, JSObject>(exec, JSTestEventConstructorPrototypeTable, thisObject, propertyName, slot);
+    Base::finishCreation(vm);
+    reifyStaticProperties(vm, JSTestEventConstructorPrototypeTable, this);
 }
 
 const ClassInfo JSTestEventConstructor::s_info = { "TestEventConstructor", &Base::s_info, 0, 0 , CREATE_METHOD_TABLE(JSTestEventConstructor) };
@@ -168,13 +168,6 @@ void JSTestEventConstructor::destroy(JSC::JSCell* cell)
 JSTestEventConstructor::~JSTestEventConstructor()
 {
     releaseImplIfNotNull();
-}
-
-bool JSTestEventConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    JSTestEventConstructor* thisObject = jsCast<JSTestEventConstructor*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 EncodedJSValue jsTestEventConstructorAttr1(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
