@@ -1,3 +1,14 @@
+2014-06-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Disable button animations in regression tests
+        https://bugs.webkit.org/show_bug.cgi?id=133647
+        <rdar://problem/16677530>
+
+        Reviewed by Tim Horton.
+
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::InjectedBundle::platformInitialize):
+
 2014-06-09  Simon Fraser  <simon.fraser@apple.com>
 
         Move scrolling-related tests to tiled-drawing/scrolling subdirectory, and minor cleanup

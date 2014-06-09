@@ -54,6 +54,7 @@ void InjectedBundle::platformInitialize(WKTypeRef)
         @"NSScrollAnimationEnabled": @NO,
         @"NSOverlayScrollersEnabled": @NO,
         @"AppleShowScrollBars": @"Always",
+        @"NSButtonAnimationsEnabled": @NO, // Ideally, we should find a way to test animations, but for now, make sure that the dumped snapshot matches actual state.
         // FIXME (<rdar://problem/13396515>): It is too late to set AppleLanguages here, as loaded frameworks localizations cannot be changed.
         // This breaks some accessibility tests on machines with non-English user language.
         @"AppleLanguages": @[ @"en" ],
