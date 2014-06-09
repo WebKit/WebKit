@@ -1,3 +1,20 @@
+2014-06-09  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [EFL] Add parameter to MiniBrowser to disable web security
+        https://bugs.webkit.org/show_bug.cgi?id=121095
+
+        Reviewed by Gyuyoung Kim.
+
+        -w (--web-security) commandline allows to disable/enable web security (enabled by default).
+        The reason for this is to test and debug (using, for example, MiniBrowser) scripts accessing
+        resources from other domains (cross-domain requests) such as access map location on another server.
+        Another possibility is to launch in a webkit browser local file tests that will refer to the links
+        in the http website loaded in an iframe. It will not be possible without deactivation of web security.
+
+        * MiniBrowser/efl/main.c:
+        (window_create):
+        (elm_main):
+
 2014-06-06  Simon Fraser  <simon.fraser@apple.com>
 
         32-bit build fix.

@@ -53,6 +53,7 @@ static Eina_Bool frame_flattening_enabled = EINA_FALSE;
 static Eina_Bool local_storage_enabled = EINA_TRUE;
 static Eina_Bool fullscreen_enabled = EINA_FALSE;
 static Eina_Bool spell_checking_enabled = EINA_FALSE;
+static Eina_Bool web_security_enabled = EINA_TRUE;
 static Eina_Bool touch_events_enabled = EINA_FALSE;
 static Eina_Bool fixed_layout_enabled = EINA_FALSE;
 static Eina_Bool separated_process_enabled = EINA_FALSE;
@@ -170,6 +171,8 @@ static const Ecore_Getopt options = {
             ('L', "fixed-layout", "Enable/disable fixed layout.", EINA_FALSE),
         ECORE_GETOPT_STORE_DEF_STR
             ('p', "policy-cookies", "Cookies policy:\n  always - always accept,\n  never - never accept,\n  no-third-party - don't accept third-party cookies.", "no-third-party"),
+        ECORE_GETOPT_STORE_DEF_BOOL
+            ('w', "web-security", "enable/disable web security.", EINA_TRUE),
         ECORE_GETOPT_STORE_DEF_BOOL
             ('S', "separate-process", "Create new window in separated web process.", EINA_TRUE),
         ECORE_GETOPT_VERSION
@@ -1864,6 +1867,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     ewk_settings_developer_extras_enabled_set(settings, EINA_TRUE);
     ewk_settings_preferred_minimum_contents_width_set(settings, 0);
     ewk_text_checker_continuous_spell_checking_enabled_set(spell_checking_enabled);
+    ewk_settings_web_security_enabled_set(settings, web_security_enabled);
 
     evas_object_smart_callback_add(window->ewk_view, "authentication,request", on_authentication_request, window);
     evas_object_smart_callback_add(window->ewk_view, "download,failed", on_download_failed, window);
@@ -1962,6 +1966,7 @@ elm_main(int argc, char *argv[])
         ECORE_GETOPT_VALUE_BOOL(touch_events_enabled),
         ECORE_GETOPT_VALUE_BOOL(fixed_layout_enabled),
         ECORE_GETOPT_VALUE_STR(cookies_policy_string),
+        ECORE_GETOPT_VALUE_BOOL(web_security_enabled),
         ECORE_GETOPT_VALUE_BOOL(separated_process_enabled),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(quitOption),

@@ -327,6 +327,22 @@ Eina_Bool ewk_settings_text_autosizing_enabled_get(const Ewk_Settings* settings)
 #endif
 }
 
+Eina_Bool ewk_settings_web_security_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
+
+    WKPreferencesSetWebSecurityEnabled(settings->preferences(), enable);
+
+    return true;
+}
+
+Eina_Bool ewk_settings_web_security_enabled_get(const Ewk_Settings* settings)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
+
+    return WKPreferencesGetWebSecurityEnabled(settings->preferences());
+}
+
 Eina_Bool ewk_settings_spatial_navigation_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);

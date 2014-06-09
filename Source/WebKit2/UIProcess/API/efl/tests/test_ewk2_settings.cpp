@@ -302,6 +302,20 @@ TEST_F(EWK2UnitTestBase, ewk_settings_text_autosizing_enabled)
 #endif
 }
 
+TEST_F(EWK2UnitTestBase, ewk_settings_web_security_enabled)
+{
+    Ewk_Settings* settings = ewk_view_settings_get(webView());
+
+    // Web security should be enabled by default.
+    ASSERT_TRUE(ewk_settings_web_security_enabled_get(settings));
+
+    ASSERT_TRUE(ewk_settings_web_security_enabled_set(settings, false));
+    ASSERT_FALSE(ewk_settings_web_security_enabled_get(settings));
+
+    ASSERT_TRUE(ewk_settings_web_security_enabled_set(settings, true));
+    ASSERT_TRUE(ewk_settings_web_security_enabled_get(settings));
+}
+
 TEST_F(EWK2UnitTestBase, ewk_settings_spatial_navigation_enabled)
 {
     Ewk_Settings* settings = ewk_view_settings_get(webView());

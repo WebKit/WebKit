@@ -466,6 +466,31 @@ EAPI Eina_Bool ewk_settings_text_autosizing_enabled_set(Ewk_Settings *settings, 
 EAPI Eina_Bool ewk_settings_text_autosizing_enabled_get(const Ewk_Settings *settings);
 
 /**
+ * Enables/disables web security.
+ *
+ * By default, the web security is enabled.
+ *
+ * @param settings settings object to set the web security
+ * @param enable @c EINA_TRUE to enable the web security
+ *               @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ *
+ * @see ewk_settings_web_security_enabled_get()
+ */
+EAPI Eina_Bool ewk_settings_web_security_enabled_set(Ewk_Settings *settings, Eina_Bool enable);
+
+/**
+ * Returns whether the web security is enabled.
+ *
+ * @param settings settings object to query whether web security is enabled
+ *
+ * @return @c EINA_TRUE if the web security is enabled
+ *         @c EINA_FALSE if not or on failure
+ */
+EAPI Eina_Bool ewk_settings_web_security_enabled_get(const Ewk_Settings *settings);
+
+/**
  * Changes spatial navigation state.
  *
  * @param settings settings object to enable/disable spatial navigation
