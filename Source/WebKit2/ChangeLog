@@ -1,3 +1,13 @@
+2014-06-09  Brady Eidson  <beidson@apple.com>
+
+        Use different AppKit API for all services menus
+        <rdar://problem/16874403> and https://bugs.webkit.org/show_bug.cgi?id=133649
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+
 2014-06-09  Anders Carlsson  <andersca@apple.com>
 
         Add WKWindowFeatures.h to the umbrella header.
