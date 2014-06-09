@@ -63,6 +63,8 @@ public:
     bool supportsFullscreen();
     bool userGestureRequired() const;
 
+    void updateCaptionDisplaySizes();
+
     String externalDeviceDisplayName() const;
     String externalDeviceType() const;
 

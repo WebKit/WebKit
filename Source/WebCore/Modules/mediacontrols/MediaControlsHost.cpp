@@ -150,6 +150,12 @@ void MediaControlsHost::updateTextTrackContainer()
         m_textTrackContainer->updateDisplay();
 }
 
+void MediaControlsHost::updateCaptionDisplaySizes()
+{
+    if (m_textTrackContainer)
+        m_textTrackContainer->updateSizes(true);
+}
+    
 bool MediaControlsHost::mediaPlaybackAllowsInline() const
 {
     return !m_mediaElement->mediaSession().requiresFullscreenForVideoPlayback(*m_mediaElement);

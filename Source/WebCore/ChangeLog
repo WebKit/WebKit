@@ -1,3 +1,17 @@
+2014-06-09  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] caption size is not update immediately when system preferences change
+        https://bugs.webkit.org/show_bug.cgi?id=133598
+
+        Reviewed by Brent Fulgham.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::updateCaptionDisplaySizes): New.
+        * Modules/mediacontrols/MediaControlsHost.h:
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::captionPreferencesChanged): Tell the controls host to update sizes.
+
 2014-06-09  Daniel Bates  <dabates@apple.com>
 
         [iOS] Amazon app: Cannot interact with product page after tapping on product image
