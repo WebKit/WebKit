@@ -165,8 +165,10 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
     CMNotificationCenterRef nc = CMNotificationCenterGetDefaultLocalCenter();
     CMNotificationCenterRemoveListener(nc, this, CMTimebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase);
 
-    [m_synchronizer removeTimeObserver:m_timeJumpedObserver.get()];
-    [m_synchronizer removeTimeObserver:m_durationObserver.get()];
+    if (m_timeJumpedObserver)
+        [m_synchronizer removeTimeObserver:m_timeJumpedObserver.get()];
+    if (m_durationObserver)
+        [m_synchronizer removeTimeObserver:m_durationObserver.get()];
 }
 
 #pragma mark -

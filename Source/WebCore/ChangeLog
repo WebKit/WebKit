@@ -1,3 +1,16 @@
+2014-06-09  Jer Noble  <jer.noble@apple.com>
+
+        [Mac][MSE] Exception thrown from ~MediaPlayerPrivateMediaSourceAVFObjC().
+        https://bugs.webkit.org/show_bug.cgi?id=133656
+
+        Reviewed by Eric Carlson.
+
+        AVSampleBufferRenderSynchronizer can't handle being passed a NULL observer, so only attempt
+        to remove the time jumped or duration observer if one was actually created.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC):
+
 2014-06-09  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Pixelsnapping empty rounded rect results in NaN radii width/height.
