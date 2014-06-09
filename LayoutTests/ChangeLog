@@ -1,3 +1,14 @@
+2014-06-09  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [EFL] Change expectations for four layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=133643
+
+        Unreviewed EFL gardening.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/fullscreen/video-controls-override-expected.txt: Added.
+        * platform/efl/inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt: Added.
+
 2014-06-09  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Gaps below and to the right of the video controls on devour.com

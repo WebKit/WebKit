@@ -190,7 +190,7 @@ webkit.org/b/127109 media/video-object-fit-change.html [ ImageOnlyFailure Pass ]
 webkit.org/b/127109 media/video-object-fit.html [ ImageOnlyFailure Pass ]
 
 # Started to crash after r160991
-webkit.org/b/127914 fast/canvas/webgl/oes-texture-half-float-with-image.html [ Crash Pass ]
+webkit.org/b/127914 fast/canvas/webgl/oes-texture-half-float-with-image.html [ Failure Crash ]
 webkit.org/b/127914 fast/canvas/webgl/oes-texture-half-float.html [ Crash Pass ]
 webkit.org/b/127914 fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgb565.html [ Crash Pass ]
 webkit.org/b/127914 fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgba5551.html [ Crash Pass ]
@@ -561,7 +561,7 @@ webkit.org/b/132049 fast/css3-text/css3-text-decoration/text-decoration-skip/gly
 webkit.org/b/133302 fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-large-radius.html [ ImageOnlyFailure ]
 webkit.org/b/133302 fast/shapes/shape-outside-floats/shape-outside-rounded-inset.html [ ImageOnlyFailure ]
 
-webkit.org/b/133306 fast/canvas/webgl/css-webkit-canvas-repaint.html [ ImageOnlyFailure ]
+webkit.org/b/133306 fast/canvas/webgl/css-webkit-canvas-repaint.html [ Failure ]
 
 
 # Failures EFL WK2 since the inception
