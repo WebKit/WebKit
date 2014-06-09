@@ -1,3 +1,10 @@
+2014-06-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL gardening. Skip a test which generates "No bad fd found." error.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/http/tests/misc/slow-loading-mask-expected.txt:
+
 2014-06-07  Frédéric Wang  <fred.wang@free.fr>
 
         Add tests for dynamic changes in msqrt/mroot

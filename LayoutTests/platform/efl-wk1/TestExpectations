@@ -297,6 +297,7 @@ Bug(EFL) http/tests/websocket/tests/hybi/workers/multiple-subprotocols.html [ Ti
 
 # EFL specific error : (_ecore_main_fd_handlers_bads_rem() No bad fd found)
 webkit.org/b/116587 http/tests/websocket/tests/hybi/compressed-control-frame.html [ Skip ]
+webkit.org/b/116587 http/tests/websocket/tests/hybi/no-subprotocol.html [ Skip ]
 
 # DRT does not implement setAudioResult
 webkit.org/b/105881 webaudio/audiobuffersource-loop-points.html [ Skip ]
