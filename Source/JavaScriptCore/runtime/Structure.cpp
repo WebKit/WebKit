@@ -211,7 +211,7 @@ Structure::Structure(VM& vm)
     ASSERT(hasGetterSetterProperties() || !m_classInfo->hasStaticSetterOrReadonlyProperties(vm));
 }
 
-Structure::Structure(VM& vm, const Structure* previous)
+Structure::Structure(VM& vm, Structure* previous)
     : JSCell(vm, vm.structureStructure.get())
     , m_prototype(vm, this, previous->storedPrototype())
     , m_classInfo(previous->m_classInfo)
@@ -236,8 +236,7 @@ Structure::Structure(VM& vm, const Structure* previous)
     ASSERT(!previous->typeInfo().structureIsImmortal());
     if (previous->typeInfo().structureHasRareData() && previous->rareData()->needsCloning())
         cloneRareDataFrom(vm, previous);
-    else if (previous->previousID())
-        m_previousOrRareData.set(vm, this, previous->previousID());
+    setPreviousID(vm, this, previous);
 
     previous->notifyTransitionFromThisStructure();
     if (previous->m_globalObject)
@@ -459,7 +458,6 @@ Structure* Structure::addPropertyTransition(VM& vm, Structure* structure, Proper
     Structure* transition = create(vm, structure);
 
     transition->m_cachedPrototypeChain.setMayBeNull(vm, transition, structure->m_cachedPrototypeChain.get());
-    transition->setPreviousID(vm, transition, structure);
     transition->m_nameInPrevious = propertyName.uid();
     transition->m_attributesInPrevious = attributes;
     transition->m_specificValueInPrevious.setMayBeNull(vm, transition, specificValue);
@@ -672,7 +670,6 @@ Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, NonPro
     }
     
     Structure* transition = create(vm, structure);
-    transition->setPreviousID(vm, transition, structure);
     transition->m_attributesInPrevious = attributes;
     transition->m_blob.setIndexingType(indexingType);
     transition->propertyTable().set(vm, transition, structure->takePropertyTableOrCloneIfPinned(vm, transition));

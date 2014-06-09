@@ -49,7 +49,7 @@ inline Structure* Structure::createStructure(VM& vm)
     return structure;
 }
 
-inline Structure* Structure::create(VM& vm, const Structure* structure)
+inline Structure* Structure::create(VM& vm, Structure* structure)
 {
     ASSERT(vm.structureStructure);
     Structure* newStructure = new (NotNull, allocateCell<Structure>(vm.heap)) Structure(vm, structure);

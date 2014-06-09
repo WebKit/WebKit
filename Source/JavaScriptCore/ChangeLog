@@ -1,3 +1,29 @@
+2014-06-07  Mark Lam  <mark.lam@apple.com>
+
+        Structure should initialize its previousID in its constructor.
+        <https://webkit.org/b/133606>
+
+        Reviewed by Mark Hahnenberg.
+
+        Currently, the Structure constructor that takes a previous structure will
+        initialize its previousID to point to the previous structure's previousID.
+        This is incorrect.  However, the caller of the Structure::create() factory
+        method (which instantiated the Structure) will later call setPreviousID()
+        to set the previousID to the correct previous structure.  This makes the
+        code confusing to read and more error prone in that the structure relies
+        on client code to fix its invalid previousID.
+
+        This patch fixes this by making the Structure constructor initialize
+        previousID correctly.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::nonPropertyTransition):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::create):
+
 2014-06-06  Andreas Kling  <akling@apple.com>
 
         Indexed getters should return values directly on the PropertySlot.

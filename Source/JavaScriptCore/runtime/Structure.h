@@ -389,9 +389,9 @@ private:
 
     JS_EXPORT_PRIVATE Structure(VM&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType, unsigned inlineCapacity);
     Structure(VM&);
-    Structure(VM&, const Structure*);
+    Structure(VM&, Structure*);
 
-    static Structure* create(VM&, const Structure*);
+    static Structure* create(VM&, Structure*);
     
     static Structure* addPropertyTransitionToExistingStructureImpl(Structure*, StringImpl* uid, unsigned attributes, JSCell* specificValue, PropertyOffset&);
 
