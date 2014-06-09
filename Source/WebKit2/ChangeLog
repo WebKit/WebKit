@@ -1,5 +1,16 @@
 2014-06-09  Daniel Bates  <dabates@apple.com>
 
+        Another attempt to fix the EFL and GTK builds after <http://trac.webkit.org/changeset/169711>
+        (https://bugs.webkit.org/show_bug.cgi?id=133657)
+
+        Substitute WKErrorRef.h for WKError.h.
+
+        * UIProcess/API/efl/ewk_error.cpp:
+        * WebProcess/WebCoreSupport/efl/WebErrorsEfl.cpp:
+        * WebProcess/WebCoreSupport/gtk/WebErrorsGtk.cpp:
+
+2014-06-09  Daniel Bates  <dabates@apple.com>
+
         Attempt to fix the EFL and GTK builds after <http://trac.webkit.org/changeset/169711>
         (https://bugs.webkit.org/show_bug.cgi?id=133657)
 

@@ -27,7 +27,7 @@
 #include "ewk_error.h"
 
 #include "ErrorsEfl.h"
-#include "WKError.h"
+#include "WKErrorRef.h"
 #include "WKString.h"
 #include "WKURL.h"
 #include "ewk_error_private.h"
