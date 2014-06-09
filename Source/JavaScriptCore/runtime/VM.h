@@ -262,6 +262,7 @@ namespace JSC {
         Strong<Structure> notAnObjectStructure;
         Strong<Structure> propertyNameIteratorStructure;
         Strong<Structure> getterSetterStructure;
+        Strong<Structure> customGetterSetterStructure;
         Strong<Structure> apiWrapperStructure;
         Strong<Structure> JSScopeStructure;
         Strong<Structure> executableStructure;

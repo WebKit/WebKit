@@ -168,6 +168,7 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     , m_dictionaryKind(NoneDictionaryKind)
     , m_isPinnedPropertyTable(false)
     , m_hasGetterSetterProperties(classInfo->hasStaticSetterOrReadonlyProperties(vm))
+    , m_hasCustomGetterSetterProperties(false)
     , m_hasReadOnlyOrGetterSetterPropertiesExcludingProto(classInfo->hasStaticSetterOrReadonlyProperties(vm))
     , m_hasNonEnumerableProperties(false)
     , m_attributesInPrevious(0)
@@ -195,6 +196,7 @@ Structure::Structure(VM& vm)
     , m_dictionaryKind(NoneDictionaryKind)
     , m_isPinnedPropertyTable(false)
     , m_hasGetterSetterProperties(m_classInfo->hasStaticSetterOrReadonlyProperties(vm))
+    , m_hasCustomGetterSetterProperties(false)
     , m_hasReadOnlyOrGetterSetterPropertiesExcludingProto(m_classInfo->hasStaticSetterOrReadonlyProperties(vm))
     , m_hasNonEnumerableProperties(false)
     , m_attributesInPrevious(0)
@@ -221,6 +223,7 @@ Structure::Structure(VM& vm, Structure* previous)
     , m_dictionaryKind(previous->m_dictionaryKind)
     , m_isPinnedPropertyTable(false)
     , m_hasGetterSetterProperties(previous->m_hasGetterSetterProperties)
+    , m_hasCustomGetterSetterProperties(previous->m_hasCustomGetterSetterProperties)
     , m_hasReadOnlyOrGetterSetterPropertiesExcludingProto(previous->m_hasReadOnlyOrGetterSetterPropertiesExcludingProto)
     , m_hasNonEnumerableProperties(previous->m_hasNonEnumerableProperties)
     , m_attributesInPrevious(0)
@@ -316,18 +319,6 @@ void Structure::materializePropertyMap(VM& vm)
     checkOffsetConsistency();
 }
 
-inline size_t nextOutOfLineStorageCapacity(size_t currentCapacity)
-{
-    if (!currentCapacity)
-        return initialOutOfLineCapacity;
-    return currentCapacity * outOfLineGrowthFactor;
-}
-
-size_t Structure::suggestedNewOutOfLineStorageCapacity()
-{
-    return nextOutOfLineStorageCapacity(outOfLineCapacity());
-}
- 
 void Structure::despecifyDictionaryFunction(VM& vm, PropertyName propertyName)
 {
     StringImpl* rep = propertyName.uid();
@@ -893,25 +884,6 @@ PropertyOffset Structure::getConcurrently(VM&, StringImpl* uid, unsigned& attrib
     }
     
     return invalidOffset;
-}
-
-PropertyOffset Structure::get(VM& vm, PropertyName propertyName, unsigned& attributes, JSCell*& specificValue)
-{
-    ASSERT(!isCompilationThread());
-    ASSERT(structure()->classInfo() == info());
-
-    DeferGC deferGC(vm.heap);
-    materializePropertyMapIfNecessary(vm, deferGC);
-    if (!propertyTable())
-        return invalidOffset;
-
-    PropertyMapEntry* entry = propertyTable()->get(propertyName.uid());
-    if (!entry)
-        return invalidOffset;
-
-    attributes = entry->attributes;
-    specificValue = entry->specificValue.get();
-    return entry->offset;
 }
 
 bool Structure::despecifyFunction(VM& vm, PropertyName propertyName)

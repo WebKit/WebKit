@@ -35,6 +35,7 @@ enum JSType : uint8_t {
     // The CompoundType value must come before any JSType that may have children.
     CompoundType,
     GetterSetterType,
+    CustomGetterSetterType,
     APIValueWrapperType,
 
     EvalExecutableType,

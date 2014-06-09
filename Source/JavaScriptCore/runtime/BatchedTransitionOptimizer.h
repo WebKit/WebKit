@@ -38,6 +38,8 @@ public:
         : m_vm(&vm)
         , m_object(object)
     {
+        if (!m_object->structure(vm)->isDictionary())
+            m_object->convertToDictionary(vm);
     }
 
     ~BatchedTransitionOptimizer()

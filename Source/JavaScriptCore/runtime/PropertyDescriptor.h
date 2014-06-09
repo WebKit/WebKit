@@ -48,6 +48,7 @@ namespace JSC {
         {
             ASSERT(m_value);
             ASSERT(!m_value.isGetterSetter());
+            ASSERT(!m_value.isCustomGetterSetter());
         }
         JS_EXPORT_PRIVATE bool writable() const;
         JS_EXPORT_PRIVATE bool enumerable() const;

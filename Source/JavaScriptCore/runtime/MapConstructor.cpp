@@ -32,6 +32,7 @@
 #include "JSGlobalObject.h"
 #include "JSMap.h"
 #include "MapPrototype.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

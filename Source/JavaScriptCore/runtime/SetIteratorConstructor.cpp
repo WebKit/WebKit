@@ -31,6 +31,7 @@
 #include "JSGlobalObject.h"
 #include "JSSetIterator.h"
 #include "SetIteratorPrototype.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

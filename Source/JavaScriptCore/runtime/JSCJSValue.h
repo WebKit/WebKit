@@ -214,6 +214,7 @@ public:
     bool isString() const;
     bool isPrimitive() const;
     bool isGetterSetter() const;
+    bool isCustomGetterSetter() const;
     bool isObject() const;
     bool inherits(const ClassInfo*) const;
         

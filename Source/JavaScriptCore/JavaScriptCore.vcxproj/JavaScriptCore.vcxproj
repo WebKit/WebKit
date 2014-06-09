@@ -612,6 +612,7 @@
     <ClCompile Include="..\runtime\ConsoleClient.cpp" />
     <ClCompile Include="..\runtime\ConsolePrototype.cpp" />
     <ClCompile Include="..\runtime\ConstructData.cpp" />
+    <ClCompile Include="..\runtime\CustomGetterSetter.cpp" />
     <ClCompile Include="..\runtime\DataView.cpp" />
     <ClCompile Include="..\runtime\DateConstructor.cpp" />
     <ClCompile Include="..\runtime\DateConversion.cpp" />
@@ -1264,6 +1265,7 @@
     <ClInclude Include="..\runtime\ConsoleTypes.h" />
     <ClInclude Include="..\runtime\ConstantMode.h" />
     <ClInclude Include="..\runtime\ConstructData.h" />
+    <ClInclude Include="..\runtime\CustomGetterSetter.h" />
     <ClInclude Include="..\runtime\DataView.h" />
     <ClInclude Include="..\runtime\DateConstructor.h" />
     <ClInclude Include="..\runtime\DateConversion.h" />

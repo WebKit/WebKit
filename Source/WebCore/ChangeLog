@@ -1,3 +1,29 @@
+2014-06-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Eagerly reify DOM prototype attributes
+        https://bugs.webkit.org/show_bug.cgi?id=133558
+
+        Reviewed by Oliver Hunt.
+
+        No new tests.
+
+        This allows us to get rid of a lot of the additional overhead of pushing DOM attributes up into the prototype. 
+        By eagerly reifying the custom getters and setters into the actual JSObject we avoid having to override 
+        getOwnPropertySlot for all of the DOM prototypes, which is a lot of the overhead of doing property lookups on 
+        DOM wrappers.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (prototypeHashTableAccessor): Changed to pass along the VM.
+        (AttributeShouldBeOnInstanceForCompatibility): We were being overly conservative in regard to touch events. 
+        This caused us to store the touch event handler getters and setters on the JSElement instance, which caused
+        us to override getOwnPropertySlot for every JSElement subclass.
+        (InstanceOverridesGetOwnPropertySlot): This was being overly paranoid about generate a getOwnPropertySlot if
+        there was going to be a "constructor" property, even though we handled this in another place already.
+        (GenerateHeader): Generate a finishCreation for prototypes unless it's the JSDOMWindow. We can't correctly 
+        handle the DOMWindow in this version of the patch because reifying the static properties requires a global object,
+        which hasn't been created yet when the prototype for the window object is being created.
+        (GenerateImplementation): Generate the finishCreation calls to reifyStaticProperties.
+
 2014-06-09  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r169681): Three tests are broken

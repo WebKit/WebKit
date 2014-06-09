@@ -21,7 +21,10 @@
 #ifndef Lookup_h
 #define Lookup_h
 
+#include "BatchedTransitionOptimizer.h"
 #include "CallFrame.h"
+#include "CustomGetterSetter.h"
+#include "IdentifierInlines.h"
 #include "Intrinsic.h"
 #include "Identifier.h"
 #include "JSGlobalObject.h"
@@ -290,6 +293,34 @@ namespace JSC {
         putEntry(exec, entry, base, propertyName, value, slot);
         return true;
     }
+
+    inline void reifyStaticProperties(VM& vm, const HashTable& table, JSObject* thisObj)
+    {
+        BatchedTransitionOptimizer transitionOptimizer(vm, thisObj);
+        for (auto iter = table.begin(vm); iter != table.end(vm); ++iter) {
+            Identifier propertyName(&vm, iter.key());
+            const HashTableValue* entry = iter.value();
+            if (iter->attributes() & Builtin) {
+                thisObj->putDirectBuiltinFunction(vm, thisObj->globalObject(), propertyName, entry->builtinGenerator()(vm), entry->attributes());
+                continue;
+            }
+
+            if (iter->attributes() & Function) {
+                thisObj->putDirectNativeFunction(vm, thisObj->globalObject(), propertyName, entry->functionLength(),
+                    entry->function(), entry->intrinsic(), entry->attributes());
+                continue;
+            }
+
+            if (iter->attributes() & Accessor) {
+                RELEASE_ASSERT_NOT_REACHED();
+                continue;
+            }
+
+            CustomGetterSetter* customGetterSetter = CustomGetterSetter::create(vm, entry->propertyGetter(), entry->propertyPutter());
+            thisObj->putDirectCustomAccessor(vm, propertyName, customGetterSetter, entry->attributes());
+        }
+    }
+
 } // namespace JSC
 
 #endif // Lookup_h

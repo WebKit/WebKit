@@ -118,7 +118,7 @@ public:
     JS_EXPORT_PRIVATE static Structure* changePrototypeTransition(VM&, Structure*, JSValue prototype);
     JS_EXPORT_PRIVATE static Structure* despecifyFunctionTransition(VM&, Structure*, PropertyName);
     static Structure* attributeChangeTransition(VM&, Structure*, PropertyName, unsigned attributes);
-    static Structure* toCacheableDictionaryTransition(VM&, Structure*);
+    JS_EXPORT_PRIVATE static Structure* toCacheableDictionaryTransition(VM&, Structure*);
     static Structure* toUncacheableDictionaryTransition(VM&, Structure*);
     static Structure* sealTransition(VM&, Structure*);
     static Structure* freezeTransition(VM&, Structure*);
@@ -130,9 +130,9 @@ public:
     bool isExtensible() const { return !m_preventExtensions; }
     bool didTransition() const { return m_didTransition; }
     bool putWillGrowOutOfLineStorage();
-    JS_EXPORT_PRIVATE size_t suggestedNewOutOfLineStorageCapacity(); 
+    size_t suggestedNewOutOfLineStorageCapacity(); 
 
-    Structure* flattenDictionaryStructure(VM&, JSObject*);
+    JS_EXPORT_PRIVATE Structure* flattenDictionaryStructure(VM&, JSObject*);
 
     static const bool needsDestruction = true;
     static const bool hasImmortalStructure = true;
@@ -264,7 +264,7 @@ public:
 
     PropertyOffset get(VM&, PropertyName);
     PropertyOffset get(VM&, const WTF::String& name);
-    JS_EXPORT_PRIVATE PropertyOffset get(VM&, PropertyName, unsigned& attributes, JSCell*& specificValue);
+    PropertyOffset get(VM&, PropertyName, unsigned& attributes, JSCell*& specificValue);
 
     PropertyOffset getConcurrently(VM&, StringImpl* uid);
     PropertyOffset getConcurrently(VM&, StringImpl* uid, unsigned& attributes, JSCell*& specificValue);
@@ -277,6 +277,10 @@ public:
         if (!is__proto__)
             m_hasReadOnlyOrGetterSetterPropertiesExcludingProto = true;
     }
+
+    bool hasCustomGetterSetterProperties() const { return m_hasCustomGetterSetterProperties; }
+    void setHasCustomGetterSetterProperties() { m_hasCustomGetterSetterProperties = true; }
+
     void setContainsReadOnlyProperties()
     {
         m_hasReadOnlyOrGetterSetterPropertiesExcludingProto = true;
@@ -522,6 +526,7 @@ private:
     unsigned m_dictionaryKind : 2;
     bool m_isPinnedPropertyTable : 1;
     bool m_hasGetterSetterProperties : 1;
+    bool m_hasCustomGetterSetterProperties : 1;
     bool m_hasReadOnlyOrGetterSetterPropertiesExcludingProto : 1;
     bool m_hasNonEnumerableProperties : 1;
     unsigned m_attributesInPrevious : 14;

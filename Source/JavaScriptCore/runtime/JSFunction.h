@@ -148,8 +148,8 @@ namespace JSC {
             return m_allocationProfileWatchpoint;
         }
 
-        JS_EXPORT_PRIVATE bool isHostOrBuiltinFunction() const;
-        JS_EXPORT_PRIVATE bool isBuiltinFunction() const;
+        bool isHostOrBuiltinFunction() const;
+        bool isBuiltinFunction() const;
         JS_EXPORT_PRIVATE bool isHostFunctionNonInline() const;
 
     protected:

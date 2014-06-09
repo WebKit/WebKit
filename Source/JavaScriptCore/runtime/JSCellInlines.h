@@ -156,6 +156,11 @@ inline bool JSCell::isGetterSetter() const
     return m_type == GetterSetterType;
 }
 
+inline bool JSCell::isCustomGetterSetter() const
+{
+    return m_type == CustomGetterSetterType;
+}
+
 inline bool JSCell::isProxy() const
 {
     return m_type == ImpureProxyType || m_type == PureForwardingProxyType;
@@ -221,7 +226,9 @@ ALWAYS_INLINE JSValue JSCell::fastGetOwnProperty(VM& vm, Structure& structure, c
 
 inline bool JSCell::canUseFastGetOwnProperty(const Structure& structure)
 {
-    return !structure.hasGetterSetterProperties() && !structure.typeInfo().overridesGetOwnPropertySlot();
+    return !structure.hasGetterSetterProperties() 
+        && !structure.hasCustomGetterSetterProperties()
+        && !structure.typeInfo().overridesGetOwnPropertySlot();
 }
 
 inline bool JSCell::toBoolean(ExecState* exec) const

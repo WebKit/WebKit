@@ -174,16 +174,6 @@ const SourceCode* JSFunction::sourceCode() const
     return &jsExecutable()->source();
 }
     
-bool JSFunction::isHostOrBuiltinFunction() const
-{
-    return isHostFunction() || isBuiltinFunction();
-}
-
-bool JSFunction::isBuiltinFunction() const
-{
-    return !isHostFunction() && jsExecutable()->isBuiltinFunction();
-}
-
 void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSFunction* thisObject = jsCast<JSFunction*>(cell);

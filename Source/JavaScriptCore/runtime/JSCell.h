@@ -90,6 +90,7 @@ public:
     bool isString() const;
     bool isObject() const;
     bool isGetterSetter() const;
+    bool isCustomGetterSetter() const;
     bool isProxy() const;
     bool inherits(const ClassInfo*) const;
     bool isAPIValueWrapper() const;

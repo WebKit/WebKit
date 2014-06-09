@@ -550,6 +550,11 @@ inline bool JSValue::isGetterSetter() const
     return isCell() && asCell()->isGetterSetter();
 }
 
+inline bool JSValue::isCustomGetterSetter() const
+{
+    return isCell() && asCell()->isCustomGetterSetter();
+}
+
 inline bool JSValue::isObject() const
 {
     return isCell() && asCell()->isObject();

@@ -366,6 +366,7 @@ set(JavaScriptCore_SOURCES
     runtime/ConsoleClient.cpp
     runtime/ConsolePrototype.cpp
     runtime/ConstructData.cpp
+    runtime/CustomGetterSetter.cpp
     runtime/DataView.cpp
     runtime/DataView.h
     runtime/DateConstructor.cpp

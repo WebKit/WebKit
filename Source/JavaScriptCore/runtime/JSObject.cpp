@@ -28,6 +28,7 @@
 #include "CopiedSpaceInlines.h"
 #include "CopyVisitor.h"
 #include "CopyVisitorInlines.h"
+#include "CustomGetterSetter.h"
 #include "DatePrototype.h"
 #include "ErrorConstructor.h"
 #include "Executable.h"
@@ -387,8 +388,13 @@ void JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSV
                 if (!thisObject->structure()->isDictionary())
                     slot.setCacheableSetter(obj, offset);
                 return;
-            } else
-                ASSERT(!(attributes & Accessor));
+            }
+            if (gs.isCustomGetterSetter()) {
+                callCustomSetter(exec, gs, obj, slot.thisValue(), value);
+                slot.setCustomProperty(obj, jsCast<CustomGetterSetter*>(gs.asCell())->setter());
+                return;
+            }
+            ASSERT(!(attributes & Accessor));
 
             // If there's an existing property on the object or one of its 
             // prototypes it should be replaced, so break here.
@@ -1224,6 +1230,21 @@ void JSObject::putDirectAccessor(ExecState* exec, PropertyName propertyName, JSV
     putDirectNonIndexAccessor(exec->vm(), propertyName, value, attributes);
 }
 
+void JSObject::putDirectCustomAccessor(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
+{
+    ASSERT(propertyName.asIndex() == PropertyName::NotAnIndex);
+
+    PutPropertySlot slot(this);
+    putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot, getCallableObject(value));
+
+    ASSERT(slot.type() == PutPropertySlot::NewProperty);
+
+    Structure* structure = this->structure(vm);
+    if (attributes & ReadOnly)
+        structure->setContainsReadOnlyProperties();
+    structure->setHasCustomGetterSetterProperties();
+}
+
 void JSObject::putDirectNonIndexAccessor(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
 {
     PutPropertySlot slot(this);
@@ -1666,8 +1687,16 @@ NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue g
         slot.setGetterSlot(this, attributes, jsCast<GetterSetter*>(getterSetter));
         return;
     }
-
     slot.setCacheableGetterSlot(this, attributes, jsCast<GetterSetter*>(getterSetter), offset);
+}
+
+NEVER_INLINE void JSObject::fillCustomGetterPropertySlot(PropertySlot& slot, JSValue customGetterSetter, unsigned attributes)
+{
+    if (structure()->isDictionary()) {
+        slot.setCustom(this, attributes, jsCast<CustomGetterSetter*>(customGetterSetter)->getter());
+        return;
+    }
+    slot.setCacheableCustom(this, attributes, jsCast<CustomGetterSetter*>(customGetterSetter)->getter());
 }
 
 void JSObject::putIndexedDescriptor(ExecState* exec, SparseArrayEntry* entryInMap, const PropertyDescriptor& descriptor, PropertyDescriptor& oldDescriptor)
@@ -2658,14 +2687,6 @@ bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName
     }
     
     return object->defineOwnNonIndexProperty(exec, propertyName, descriptor, throwException);
-}
-
-bool JSObject::getOwnPropertySlotSlow(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    unsigned i = propertyName.asIndex();
-    if (i != PropertyName::NotAnIndex)
-        return getOwnPropertySlotByIndex(this, exec, i, slot);
-    return false;
 }
 
 JSObject* throwTypeError(ExecState* exec, const String& message)

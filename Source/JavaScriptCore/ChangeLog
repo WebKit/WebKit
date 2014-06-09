@@ -1,3 +1,85 @@
+2014-06-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Eagerly reify DOM prototype attributes
+        https://bugs.webkit.org/show_bug.cgi?id=133558
+
+        Reviewed by Oliver Hunt.
+
+        This allows us to get rid of a lot of the additional overhead of pushing DOM attributes up into the prototype. 
+        By eagerly reifying the custom getters and setters into the actual JSObject we avoid having to override 
+        getOwnPropertySlot for all of the DOM prototypes, which is a lot of the overhead of doing property lookups on 
+        DOM wrappers.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/BatchedTransitionOptimizer.h:
+        (JSC::BatchedTransitionOptimizer::BatchedTransitionOptimizer):
+        * runtime/CustomGetterSetter.cpp: Added.
+        (JSC::callCustomSetter):
+        * runtime/CustomGetterSetter.h: Added.
+        (JSC::CustomGetterSetter::create):
+        (JSC::CustomGetterSetter::getter):
+        (JSC::CustomGetterSetter::setter):
+        (JSC::CustomGetterSetter::createStructure):
+        (JSC::CustomGetterSetter::CustomGetterSetter):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::isCustomGetterSetter):
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::isCustomGetterSetter):
+        (JSC::JSCell::canUseFastGetOwnProperty):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::isHostOrBuiltinFunction): Deleted.
+        (JSC::JSFunction::isBuiltinFunction): Deleted.
+        * runtime/JSFunction.h:
+        * runtime/JSFunctionInlines.h: Inlined some random functions that appeared hot during profiling.
+        (JSC::JSFunction::isBuiltinFunction):
+        (JSC::JSFunction::isHostOrBuiltinFunction):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC::JSObject::putDirectCustomAccessor):
+        (JSC::JSObject::fillGetterPropertySlot):
+        (JSC::JSObject::fillCustomGetterPropertySlot):
+        (JSC::JSObject::getOwnPropertySlotSlow): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::hasCustomGetterSetterProperties):
+        (JSC::JSObject::convertToDictionary):
+        (JSC::JSObject::inlineGetOwnPropertySlot):
+        (JSC::JSObject::getOwnPropertySlotSlow): Inlined because it looked hot during profiling.
+        (JSC::JSObject::putOwnDataProperty):
+        (JSC::JSObject::putDirect):
+        (JSC::JSObject::putDirectWithoutTransition):
+        * runtime/JSType.h:
+        * runtime/Lookup.h:
+        (JSC::reifyStaticProperties):
+        * runtime/PropertyDescriptor.h:
+        (JSC::PropertyDescriptor::PropertyDescriptor):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::nextOutOfLineStorageCapacity): Deleted.
+        (JSC::Structure::suggestedNewOutOfLineStorageCapacity): Deleted.
+        (JSC::Structure::get): Deleted.
+        * runtime/Structure.h:
+        (JSC::Structure::hasCustomGetterSetterProperties):
+        (JSC::Structure::setHasCustomGetterSetterProperties):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::get): Inlined due to hotness.
+        (JSC::nextOutOfLineStorageCapacity): Inlined due to hotness.
+        (JSC::Structure::suggestedNewOutOfLineStorageCapacity): Inlined due to hotness.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase<Unknown>::isCustomGetterSetter):
+
 2014-06-07  Mark Lam  <mark.lam@apple.com>
 
         Structure should initialize its previousID in its constructor.

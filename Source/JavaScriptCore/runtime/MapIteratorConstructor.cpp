@@ -31,6 +31,7 @@
 #include "JSGlobalObject.h"
 #include "JSMapIterator.h"
 #include "MapIteratorPrototype.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

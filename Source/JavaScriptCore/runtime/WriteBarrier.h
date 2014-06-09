@@ -152,6 +152,7 @@ public:
     bool isObject() const { return get().isObject(); }
     bool isNull() const { return get().isNull(); }
     bool isGetterSetter() const { return get().isGetterSetter(); }
+    bool isCustomGetterSetter() const { return get().isCustomGetterSetter(); }
     
     JSValue* slot()
     { 

@@ -33,6 +33,7 @@
 #include "JSSet.h"
 #include "MapData.h"
 #include "SetPrototype.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

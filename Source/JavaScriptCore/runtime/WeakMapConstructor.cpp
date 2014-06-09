@@ -30,6 +30,7 @@
 #include "JSCellInlines.h"
 #include "JSGlobalObject.h"
 #include "JSWeakMap.h"
+#include "StructureInlines.h"
 #include "WeakMapPrototype.h"
 
 namespace JSC {

@@ -35,6 +35,7 @@
 #include "JSPromiseConstructor.h"
 #include "JSPromiseDeferred.h"
 #include "NumberObject.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

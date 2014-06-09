@@ -25,6 +25,7 @@
 
 #include "BooleanConstructor.h"
 #include "BooleanPrototype.h"
+#include "CustomGetterSetter.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
@@ -151,6 +152,11 @@ void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
             JSValue gs = obj->getDirect(offset);
             if (gs.isGetterSetter()) {
                 callSetter(exec, *this, gs, value, slot.isStrictMode() ? StrictMode : NotStrictMode);
+                return;
+            }
+
+            if (gs.isCustomGetterSetter()) {
+                callCustomSetter(exec, gs, obj, slot.thisValue(), value);
                 return;
             }
 

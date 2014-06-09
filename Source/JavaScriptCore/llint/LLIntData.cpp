@@ -134,8 +134,8 @@ void Data::performAssertions(VM& vm)
     ASSERT(maxFrameExtentForSlowPathCall == 40);
 #endif
     ASSERT(StringType == 5);
-    ASSERT(ObjectType == 17);
-    ASSERT(FinalObjectType == 18);
+    ASSERT(ObjectType == 18);
+    ASSERT(FinalObjectType == 19);
     ASSERT(MasqueradesAsUndefined == 1);
     ASSERT(ImplementsHasInstance == 2);
     ASSERT(ImplementsDefaultHasInstance == 8);

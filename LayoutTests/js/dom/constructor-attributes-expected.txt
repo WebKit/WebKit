@@ -78,7 +78,7 @@ PASS x = URIError.prototype; delete x.constructor; x.hasOwnProperty('constructor
 PASS document.createTextNode('').__proto__.hasOwnProperty('constructor') is true
 PASS canEnum(document.createTextNode('').__proto__, 'constructor') is false
 FAIL x = document.createTextNode('').__proto__; x.constructor = 4; x.constructor should be 4 (of type number). Was [object TextConstructor] (of type object).
-FAIL x = document.createTextNode('').__proto__; delete x.constructor; x.hasOwnProperty('constructor') should be false. Was true.
+PASS x = document.createTextNode('').__proto__; delete x.constructor; x.hasOwnProperty('constructor') is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

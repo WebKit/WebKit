@@ -350,7 +350,7 @@ sub prototypeHashTableAccessor
     my $noStaticTables = shift;
     my $className = shift;
     if ($noStaticTables) {
-        return "get${className}PrototypeTable(exec->vm())";
+        return "get${className}PrototypeTable(vm)";
     } else {
         return "${className}PrototypeTable";
     }
@@ -659,7 +659,6 @@ sub AttributeShouldBeOnInstanceForCompatibility
     my $interface = shift;
     my $attribute = shift;
     my $interfaceName = $interface->name;
-    return 1 if ($attribute->signature->name =~ "touch");
     return 0;
 }
 
@@ -746,7 +745,7 @@ sub InstanceOverridesGetOwnPropertySlot
         || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"}
         || $hasImpureNamedGetter;
 
-    return $numInstanceAttributes > 0 || !$interface->extendedAttributes->{"NoInterfaceObject"} || $hasComplexGetter;
+    return $numInstanceAttributes > 0 || $hasComplexGetter;
 
 }
 
@@ -1203,8 +1202,12 @@ sub GenerateHeader
 
     push(@headerContent, "    DECLARE_INFO;\n");
     if (PrototypeOverridesGetOwnPropertySlot($interface)) {
-        push(@headerContent, "    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
-        $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
+        if (IsDOMGlobalObject($interface)) {
+            push(@headerContent, "    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
+            $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
+        } else {
+            push(@headerContent, "    void finishCreation(JSC::VM&);\n");
+        }
     }
     if ($interface->extendedAttributes->{"JSCustomMarkFunction"} or $needsVisitChildren) {
         $structureFlags{"JSC::OverridesVisitChildren"} = 1;
@@ -1952,21 +1955,36 @@ sub GenerateImplementation
     }
 
     if (PrototypeOverridesGetOwnPropertySlot($interface)) {
-        push(@implContent, "bool ${className}Prototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    ${className}Prototype* thisObject = jsCast<${className}Prototype*>(object);\n");
-
         my $numPrototypeAttributes = PrototypeAttributeCount($interface);
-        if ($numConstants eq 0 && $numFunctions eq 0 && $numPrototypeAttributes eq 0) {
-            push(@implContent, "    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);\n");        
-        } elsif ($numConstants eq 0 && $numPrototypeAttributes eq 0) {
-            push(@implContent, "    return getStaticFunctionSlot<JSObject>(exec, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
-        } elsif ($numFunctions eq 0 && $numPrototypeAttributes eq 0) {
-            push(@implContent, "    return getStaticValueSlot<${className}Prototype, JSObject>(exec, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
+        if (IsDOMGlobalObject($interface)) {
+            push(@implContent, "bool ${className}Prototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    VM& vm = exec->vm();\n");
+            push(@implContent, "    UNUSED_PARAM(vm);\n");
+            push(@implContent, "    ${className}Prototype* thisObject = jsCast<${className}Prototype*>(object);\n");
+
+            if ($numConstants eq 0 && $numFunctions eq 0 && $numPrototypeAttributes eq 0) {
+                push(@implContent, "    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);\n");        
+            } elsif ($numConstants eq 0 && $numPrototypeAttributes eq 0) {
+                push(@implContent, "    return getStaticFunctionSlot<JSObject>(exec, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
+            } elsif ($numFunctions eq 0 && $numPrototypeAttributes eq 0) {
+                push(@implContent, "    return getStaticValueSlot<${className}Prototype, JSObject>(exec, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
+            } else {
+                push(@implContent, "    return getStaticPropertySlot<${className}Prototype, JSObject>(exec, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
+            }
+            push(@implContent, "}\n\n");
+        } elsif ($numConstants > 0 || $numFunctions > 0 || $numPrototypeAttributes > 0) {
+            push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    Base::finishCreation(vm);\n");
+            push(@implContent, "    reifyStaticProperties(vm, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", this);\n");
+            push(@implContent, "}\n\n");
         } else {
-            push(@implContent, "    return getStaticPropertySlot<${className}Prototype, JSObject>(exec, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
+            push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    Base::finishCreation(vm);\n");
+            push(@implContent, "}\n\n");
         }
-        push(@implContent, "}\n\n");
     }
 
     if ($interface->extendedAttributes->{"JSCustomNamedGetterOnPrototype"}) {

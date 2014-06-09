@@ -1,3 +1,14 @@
+2014-06-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Eagerly reify DOM prototype attributes
+        https://bugs.webkit.org/show_bug.cgi?id=133558
+
+        Reviewed by Oliver Hunt.
+
+        Updating a test expectation after this fix.
+
+        * js/dom/constructor-attributes-expected.txt:
+
 2014-06-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r169693.
