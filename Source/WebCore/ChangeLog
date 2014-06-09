@@ -1,3 +1,26 @@
+2014-06-09  Alex Christensen  <achristensen@webkit.org>
+
+        [iOS WebGL] Implement OES_vertex_array_object for iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=133629
+
+        Reviewed by Brady Eidson.
+
+        Covered by the Khronos test (and in LayoutTests):
+        conformance/extensions/oes-vertex-array-object.html
+
+        * platform/graphics/ios/GraphicsContext3DIOS.h:
+        Added OpenGL vertex array function renaming for iOS adding the OES suffix.
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::createVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::deleteVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::isVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::bindVertexArrayOES):
+        Added isVertexArrayObjectSupported and support for iOS.
+        (WebCore::Extensions3DOpenGL::supportsExtension):
+        Added iOS name for GL_OES_vertex_array_object extension.
+        * platform/graphics/opengl/Extensions3DOpenGL.h:
+        Added isVertexArrayObjectSupported for iOS.        
+
 2014-06-09  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] caption size is not update immediately when system preferences change

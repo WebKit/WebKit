@@ -63,7 +63,7 @@ protected:
 
     virtual bool supportsExtension(const WTF::String&);
     virtual String getExtensions();
-#if (PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN))
+#if (PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN) || PLATFORM(IOS))
 private:
     bool isVertexArrayObjectSupported();
 #endif

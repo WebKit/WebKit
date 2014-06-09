@@ -47,6 +47,11 @@
 #define glDrawElementsInstancedARB glDrawElementsInstancedEXT
 #define glVertexAttribDivisorARB glVertexAttribDivisorEXT
 
+#define glBindVertexArray glBindVertexArrayOES
+#define glDeleteVertexArrays glDeleteVertexArraysOES
+#define glGenVertexArrays glGenVertexArraysOES
+#define glIsVertexArray glIsVertexArrayOES
+
 #define GL_COLOR_ATTACHMENT0_EXT GL_COLOR_ATTACHMENT0
 #define GL_DEPTH24_STENCIL8_EXT GL_DEPTH24_STENCIL8_OES
 #define GL_DEPTH_ATTACHMENT_EXT  GL_DEPTH_ATTACHMENT
