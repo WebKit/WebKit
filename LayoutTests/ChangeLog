@@ -1,3 +1,31 @@
+2014-06-05  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Share mac/editing/spelling/editing-word-with-marker-2.html with other platforms
+        https://bugs.webkit.org/show_bug.cgi?id=133544
+
+        Reviewed by Darin Adler.
+
+        Move mac/editing/spelling/editing-word-with-marker-2.html into
+        common editing/spelling to be available for other platforms.
+
+        Additionally, verify spelling markers asynchronously as the sync
+        path it's likely to be removed.
+
+        Add test case which tests spelling markers without any
+        selection change.
+
+        * editing/spelling/editing-word-with-marker-2-expected.txt:
+        Renamed from platform/mac/editing/spelling/editing-word-with-marker-2-expected.txt.
+
+        * editing/spelling/editing-word-with-marker-2.html:
+        Renamed from platform/mac/editing/spelling/editing-word-with-marker-2.html.
+
+        * platform/gtk/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+        Mark editing/spelling/editing-word-with-marker-2.html as failing since those
+        platforms didn't turn on asynchronous spellchecking.
+
 2014-06-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed EFL gardening. Skip a test which generates "No bad fd found." error.

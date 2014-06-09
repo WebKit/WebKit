@@ -1133,6 +1133,7 @@ webkit.org/b/42194 http/tests/security/drag-drop-same-unique-origin.html [ Failu
 # Missing TextChecker::requestCheckingOfString() implementation for Gtk.
 webkit.org/b/73003 editing/spelling/delete-into-misspelled-word.html [ Skip ]
 webkit.org/b/73003 editing/spelling/editing-multiple-words-with-markers.html [ Skip ]
+webkit.org/b/73003 editing/spelling/editing-word-with-marker-2.html [ Skip ]
 webkit.org/b/73003 editing/spelling/move-cursor-around-misspelled-word.html [ Skip ]
 webkit.org/b/73003 editing/spelling/spellcheck-async-mutation.html [ Skip ]
 webkit.org/b/73003 editing/spelling/spellcheck-async-remove-frame.html [ Skip ]
