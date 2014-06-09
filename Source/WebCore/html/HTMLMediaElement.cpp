@@ -708,7 +708,8 @@ void HTMLMediaElement::removedFrom(ContainerNode& insertionPoint)
 
     m_inActiveDocument = false;
     if (insertionPoint.inDocument()) {
-        configureMediaControls();
+        if (hasMediaControls())
+            mediaControls()->hide();
         if (m_networkState > NETWORK_EMPTY)
             pause();
         if (m_isFullscreen)

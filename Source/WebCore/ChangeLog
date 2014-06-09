@@ -1,3 +1,18 @@
+2014-06-09  Jer Noble  <jer.noble@apple.com>
+
+        ASSERT(!m_inRemovedLastRefFunction) in Element::addShadowRoot while destroying a document
+        https://bugs.webkit.org/show_bug.cgi?id=133450
+
+        Reviewed by Eric Carlson.
+
+        ensureUserAgentShadowRoot() is being called when a media element is removed from its document
+        in HTMLMediaElement::removedFrom() because Node::removedFrom() has not yet run and removed the
+        InDocument flag from the node.  Rather than calling configureMediaControls() at this point
+        just expilictly remove the media controls if present.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+
 2014-06-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rebaseline bindings tests after r169703
