@@ -1,3 +1,18 @@
+2014-06-09  Alex Christensen  <achristensen@webkit.org>
+
+        [iOS WebGL] Fix EXT_shader_texture_lod.
+        https://bugs.webkit.org/show_bug.cgi?id=133633
+
+        Reviewed by Brady Eidson.
+
+        Covered by the Khronos test (and in LayoutTests):
+        conformance/extensions/ext-shader-texture-lod.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        Added shader texture lod name to match value from glGetString(GL_EXTENSIONS) on iOS.
+
 2014-06-09  Benjamin Poulain  <bpoulain@apple.com>
 
         Document::updateStyleIfNeededForNode can get very expensive

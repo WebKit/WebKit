@@ -2431,7 +2431,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         return nullptr;
 
     if (equalIgnoringCase(name, "EXT_shader_texture_lod")
-        && m_context->getExtensions()->supports("GL_ARB_shader_texture_lod")) {
+        && (m_context->getExtensions()->supports("GL_EXT_shader_texture_lod") || m_context->getExtensions()->supports("GL_ARB_shader_texture_lod"))) {
         if (!m_extShaderTextureLOD) {
             m_context->getExtensions()->ensureEnabled("GL_EXT_shader_texture_lod");
             m_extShaderTextureLOD = std::make_unique<EXTShaderTextureLOD>(this);
@@ -3048,7 +3048,7 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
         result.append("OES_texture_half_float_linear");
     if (m_context->getExtensions()->supports("GL_OES_standard_derivatives"))
         result.append("OES_standard_derivatives");
-    if (m_context->getExtensions()->supports("GL_ARB_shader_texture_lod"))
+    if (m_context->getExtensions()->supports("GL_EXT_shader_texture_lod") || m_context->getExtensions()->supports("GL_ARB_shader_texture_lod"))
         result.append("EXT_shader_texture_lod");
     if (m_context->getExtensions()->supports("GL_EXT_texture_filter_anisotropic"))
         result.append("WEBKIT_EXT_texture_filter_anisotropic");
