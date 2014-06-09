@@ -25,9 +25,16 @@
 }
 
 </style>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test-pre.js"></script>
 <script>
+var wheelCount = 0;
+function onScrollWheel(evt) {
+    wheelCount = wheelCount + 1;
+}
+
 function onLoad() {
+    document.addEventListener("mousewheel", onScrollWheel);
+    window.addEventListener("scroll", onPageScroll);
     setupTopLevel();
 }
 </script>
@@ -40,6 +47,12 @@ var pageScrollPositionBefore;
 var divScrollPositionBefore;
 var continueCount = 5;
 
+function onPageScroll()
+{
+    if (document.body.scrollTop >= 70)
+        checkForScroll();
+}
+
 function checkForScroll()
 {
     // The div should not have scrolled at all.
@@ -49,10 +62,12 @@ function checkForScroll()
     debug("Page before: " + pageScrollPositionBefore + ", div before: " + divScrollPositionBefore);
     debug("Page after:  " + pageScrollPositionAfter + ", div after: " + divScrollPositionAfter);
 
-    if (pageScrollPositionBefore != pageScrollPositionAfter)
-        testFailed("Page received wheel events.");
+    if (divScrollPositionBefore != divScrollPositionAfter)
+        testFailed("Scrollable div consumed wheel events.");
     else
-        testPassed("Page did not receive wheel events.");
+        testPassed("Scrollable div did not receive wheel events.");
+
+    debug("Document was initial target for " + wheelCount + " of the wheel events.");
 
     if (window.internals) {
         document.getElementById('layers').innerText = internals.layerTreeAsText(document,
@@ -67,14 +82,12 @@ function scrollTest()
     pageScrollPositionBefore = document.body.scrollTop;
 
     divTarget = document.getElementById('target');
-    divTarget.scrollTop = divTarget.scrollHeight - divTarget.clientHeight - 100;
 
     divScrollPositionBefore = divTarget.scrollTop;
 
     // Scroll the #source until we reach the #target.
     var startPosX = Math.round(divTarget.offsetLeft) + 20;
-    debug("div display height = " + Math.round(divTarget.clientHeight));
-    var startPosY = Math.round(divTarget.offsetTop) + Math.round(divTarget.clientHeight) - 42; // One wheel turn before end.
+    var startPosY = Math.round(divTarget.offsetTop) - 42;
     eventSender.mouseMoveTo(startPosX, startPosY);
     debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
@@ -87,7 +100,9 @@ function scrollTest()
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-    checkForScroll();
+
+    // We should finish via the scroll event; this will fire in the case of failure when the page doesn't scroll.
+    setTimeout(checkForScroll, 500);
 }
 
 function setupTopLevel()
@@ -101,8 +116,9 @@ function setupTopLevel()
         var messageLocation = document.getElementById('parent');
         var message = document.createElement('div');
         message.innerHTML = "<p>This test is better run under DumpRenderTree. To manually test it, place the mouse pointer<br/>"
-            + "near the bottom of the scrollable region and scroll up.<br/><br/>"
-            + "The page should not scroll.</p>";
+            + "at the top of the page, and then use the mouse wheel or a two-finger swipe to scroll the<br/>"
+            + "down past the div.<br/><br/>"
+            + "The scrollable region should not scroll.</p>";
         messageLocation.appendChild(message);
     }
 }
@@ -114,7 +130,7 @@ function setupTopLevel()
     </div>
     <div class="scrollable_region">
         <h3>Scrollable Region</h3>
-        <div id="target" style='overflow-y: auto; overflow-x: hidden; max-height: 350px;'>
+        <div id="target" style='overflow-y: auto; overflow-x: hidden; height: 350px;'>
             <table class="table" style='width: 99%'>
                 <tr><th>Count</th><th>DATA</th><th>Rev Count</th></tr>
                 <tr><td>TOP TOP TOP TOP TOP</td><td>TOP TOP TOP TOP TOP</td><td>TOP TOP TOP TOP TOP</td></tr>
@@ -165,9 +181,9 @@ function setupTopLevel()
 </div>
 <div id="console"></div>
 <script>
-description("Tests that a scrollable div doesn't pass wheel events to main frame when scrolling at bottom");
+description("Tests that a scrollable div doesn't consume wheel events when scroll is latched to main frame.");
 </script>
 <pre id="layers">Layer tree goes here</p>
-<script src="../../../resources/js-test-post.js"></script>
+<script src="../../../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -25,17 +25,11 @@
 }
 
 </style>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test-pre.js"></script>
 <script>
-var wheelCount = 0;
-function onScrollWheel(evt) {
-    wheelCount = wheelCount + 1;
-}
-
 function onLoad() {
-    document.addEventListener("mousewheel", onScrollWheel);
-    window.addEventListener("scroll", onPageScroll);
     setupTopLevel();
+    window.addEventListener("scroll", onPageScroll);
 }
 </script>
 </head>
@@ -66,8 +60,6 @@ function checkForScroll()
         testFailed("Scrollable div consumed wheel events.");
     else
         testPassed("Scrollable div did not receive wheel events.");
-
-    debug("Document was initial target for " + wheelCount + " of the wheel events.");
 
     if (window.internals) {
         document.getElementById('layers').innerText = internals.layerTreeAsText(document,
@@ -184,6 +176,6 @@ function setupTopLevel()
 description("Tests that a scrollable div doesn't consume wheel events when scroll is latched to main frame.");
 </script>
 <pre id="layers">Layer tree goes here</p>
-<script src="../../../resources/js-test-post.js"></script>
+<script src="../../../../resources/js-test-post.js"></script>
 </body>
 </html>

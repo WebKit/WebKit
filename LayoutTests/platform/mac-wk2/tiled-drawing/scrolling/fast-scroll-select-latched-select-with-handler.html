@@ -25,9 +25,15 @@
 }
 
 </style>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test-pre.js"></script>
 <script>
+var wheelCount = 0;
+function onScrollWheel(evt) {
+    wheelCount = wheelCount + 1;
+}
+
 function onLoad() {
+    document.addEventListener("mousewheel", onScrollWheel);
     setupTopLevel();
 }
 </script>
@@ -54,6 +60,8 @@ function checkForScroll()
     else
         testPassed("Page did not receive wheel events.");
 
+    debug("Document was initial target for " + wheelCount + " of the wheel events.");
+
     if (window.internals) {
         document.getElementById('layers').innerText = internals.layerTreeAsText(document,
             internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
@@ -71,7 +79,6 @@ function scrollTest()
 
     selectScrollPositionBefore = selectTarget.scrollTop;
 
-    // Scroll the #source until we reach the #target.
     var startPosX = Math.round(selectTarget.offsetLeft) + 20;
     debug("div display height = " + Math.round(selectTarget.clientHeight));
     var startPosY = Math.round(selectTarget.offsetTop) + Math.round(selectTarget.clientHeight) - 42;
@@ -146,6 +153,6 @@ function setupTopLevel()
 description("Tests that a select doesn't pass wheel events to main frame when scrolling at bottom");
 </script>
 <pre id="layers">Layer tree goes here</p>
-<script src="../../../resources/js-test-post.js"></script>
+<script src="../../../../resources/js-test-post.js"></script>
 </body>
 </html>

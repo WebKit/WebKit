@@ -1,5 +1,5 @@
-(Scrolling node
-  (viewport rect 0 0 785 585)
+(Frame scrolling node
+  (scrollable area size 785 585)
   (contents size 1805 5108)
   (frame scale factor 2.30)
   (children 4
@@ -27,49 +27,49 @@
 )
 
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 1805.00 5108.00)
   (visible rect 0.00, 0.00 785.00 x 585.00)
+  (contentsScale 1.00)
   (children 1
     (GraphicsLayer
       (anchor 0.00 0.00)
       (bounds 785.00 2221.00)
       (contentsOpaque 1)
-      (drawsContent 1)
-      (backgroundColor #FFFFFF)
       (transform [2.30 0.00 0.00 0.00] [0.00 2.30 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
       (visible rect 0.00, 0.00 341.30 x 254.35)
-      (tile cache coverage 0, 0 784 x 890)
+      (contentsScale 2.30)
+      (tile cache coverage 0, 0 445 x 445)
       (tile size 512 x 512)
-      (top left tile 0, 0 tiles grid 4 x 4)
-      (children 1
+      (top left tile 0, 0 tiles grid 2 x 2)
+      (children 4
         (GraphicsLayer
+          (position -4.00 -4.00)
+          (bounds 786.00 82.00)
+          (drawsContent 1)
+          (visible rect 4.00, 4.00 341.30 x 78.00)
+          (contentsScale 2.30)
+        )
+        (GraphicsLayer
+          (position 6.00 196.00)
+          (bounds 182.00 332.00)
+          (drawsContent 1)
+          (visible rect 0.00, 0.00 182.00 x 58.35)
+          (contentsScale 2.30)
+        )
+        (GraphicsLayer
+          (position 597.00 196.00)
+          (bounds 182.00 332.00)
+          (drawsContent 1)
           (visible rect 0.00, 0.00 0.00 x 0.00)
-          (children 4
-            (GraphicsLayer
-              (position -4.00 -4.00)
-              (bounds 786.00 82.00)
-              (drawsContent 1)
-              (visible rect 4.00, 4.00 341.30 x 78.00)
-            )
-            (GraphicsLayer
-              (position 6.00 196.00)
-              (bounds 182.00 332.00)
-              (drawsContent 1)
-              (visible rect 0.00, 0.00 182.00 x 58.35)
-            )
-            (GraphicsLayer
-              (position 597.00 196.00)
-              (bounds 182.00 332.00)
-              (drawsContent 1)
-              (visible rect 0.00, 0.00 0.00 x 0.00)
-            )
-            (GraphicsLayer
-              (position -4.00 497.00)
-              (bounds 786.00 82.00)
-              (drawsContent 1)
-              (visible rect 0.00, 0.00 0.00 x 0.00)
-            )
-          )
+          (contentsScale 2.30)
+        )
+        (GraphicsLayer
+          (position -4.00 497.00)
+          (bounds 786.00 82.00)
+          (drawsContent 1)
+          (visible rect 0.00, 0.00 0.00 x 0.00)
+          (contentsScale 2.30)
         )
       )
     )

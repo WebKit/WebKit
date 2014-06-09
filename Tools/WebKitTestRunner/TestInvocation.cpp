@@ -147,7 +147,7 @@ static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
 #if PLATFORM(COCOA)
 static bool shouldUseThreadedScrolling(const char* pathOrURL)
 {
-    return strstr(pathOrURL, "tiled-drawing/") || strstr(pathOrURL, "tiled-drawing\\");
+    return strstr(pathOrURL, "tiled-drawing/");
 }
 #endif
 
