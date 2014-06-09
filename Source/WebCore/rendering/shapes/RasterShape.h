@@ -43,7 +43,7 @@ public:
     RasterShapeIntervals(unsigned size, int offset = 0)
         : m_offset(offset)
     {
-        m_intervals.resize(size);
+        m_intervals.resize(clampTo<int>(size));
     }
 
     void initializeBounds();

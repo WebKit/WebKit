@@ -1,3 +1,18 @@
+2014-06-09  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Bound RasterShapeInterval size to int
+        https://bugs.webkit.org/show_bug.cgi?id=133576
+
+        Reviewed by Simon Fraser.
+
+        Everything in the code assumes that the interval size will always fit
+        in an int. However, to make sure there are no negatives, the
+        RasterShapeInterval constructor takes an unsigned. This clamps that
+        value to make sure we can't overflow an int later.
+
+        * rendering/shapes/RasterShape.h:
+        (WebCore::RasterShapeIntervals::RasterShapeIntervals):
+
 2014-06-09  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Gaps below and to the right of the video controls on devour.com
