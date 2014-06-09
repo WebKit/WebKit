@@ -1252,6 +1252,10 @@ void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext* context, const I
     if (currentRenderingMode() == MediaRenderingToLayer)
         return;
 
+    // paint() is best effort, so only paint if we already have an image generator or video output available.
+    if (!hasContextRenderer())
+        return;
+
     paintCurrentFrameInContext(context, rect);
 }
 

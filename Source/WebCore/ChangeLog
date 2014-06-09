@@ -1,5 +1,21 @@
 2014-06-09  Jer Noble  <jer.noble@apple.com>
 
+        [Mac] Hang when painting media before compositing mode activated
+        https://bugs.webkit.org/show_bug.cgi?id=133655
+
+        Reviewed by Eric Carlson.
+
+        When asked to paint(), MediaPlayerPrivateAVFoundationObjC should not create an image generator
+        or a video output. These operations are synchronous, and will block the drawing thread and cause
+        a spin. paint() as opposed to paintImageInContext() is only called when painting the layer tree
+        and MediaPlayerPrivateAVFoundationObjC will paint by creating a AVPlayerLayer, not by painting
+        frames directly into the tree.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paint):
+
+2014-06-09  Jer Noble  <jer.noble@apple.com>
+
         [Mac][MSE] Exception thrown from ~MediaPlayerPrivateMediaSourceAVFObjC().
         https://bugs.webkit.org/show_bug.cgi?id=133656
 
