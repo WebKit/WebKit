@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKError_h
-#define WKError_h
+#ifndef WKErrorRef_h
+#define WKErrorRef_h
 
 #include <WebKit/WKBase.h>
 
@@ -60,4 +60,4 @@ WK_EXPORT WKStringRef WKErrorCopyLocalizedDescription(WKErrorRef error);
 }
 #endif
 
-#endif // WKError_h
+#endif // WKErrorRef_h

@@ -27,7 +27,7 @@
 #import "WebErrors.h"
 
 #import "APIError.h"
-#import "WKError.h"
+#import "WKErrorRef.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>

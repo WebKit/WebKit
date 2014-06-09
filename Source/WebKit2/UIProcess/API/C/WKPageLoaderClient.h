@@ -27,7 +27,7 @@
 #define WKPageLoaderClient_h
 
 #include <WebKit/WKBase.h>
-#include <WebKit/WKError.h>
+#include <WebKit/WKErrorRef.h>
 #include <WebKit/WKPageLoadTypes.h>
 
 #ifdef __cplusplus

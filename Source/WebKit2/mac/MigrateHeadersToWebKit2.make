@@ -1,6 +1,6 @@
 PRIVATE_HEADERS_DIR = $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)
 
-WEBKIT2_HEADERS = $(addprefix $(PRIVATE_HEADERS_DIR)/, $(notdir $(wildcard $(BUILT_PRODUCTS_DIR)/WebKit.framework/PrivateHeaders/*.h))) $(addprefix $(PRIVATE_HEADERS_DIR)/, $(filter-out WKPreferences.h, $(notdir $(wildcard $(BUILT_PRODUCTS_DIR)/WebKit.framework/Headers/*.h))))
+WEBKIT2_HEADERS = $(addprefix $(PRIVATE_HEADERS_DIR)/, $(notdir $(wildcard $(BUILT_PRODUCTS_DIR)/WebKit.framework/PrivateHeaders/*.h))) $(addprefix $(PRIVATE_HEADERS_DIR)/, $(filter-out WKPreferences.h WKError.h, $(notdir $(wildcard $(BUILT_PRODUCTS_DIR)/WebKit.framework/Headers/*.h))))
 
 all : $(WEBKIT2_HEADERS)
 

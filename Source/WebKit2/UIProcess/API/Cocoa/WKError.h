@@ -23,23 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKBackForwardList.h>
-#import <WebKit/WKBackForwardListItem.h>
-#import <WebKit/WKError.h>
 #import <WebKit/WKFoundation.h>
-#import <WebKit/WKFrameInfo.h>
-#import <WebKit/WKNavigation.h>
-#import <WebKit/WKNavigationAction.h>
-#import <WebKit/WKNavigationDelegate.h>
-#import <WebKit/WKNavigationResponse.h>
-#import <WebKit/WKPreferences.h>
-#import <WebKit/WKProcessPool.h>
-#import <WebKit/WKScriptMessage.h>
-#import <WebKit/WKScriptMessageHandler.h>
-#import <WebKit/WKUIDelegate.h>
-#import <WebKit/WKUserContentController.h>
-#import <WebKit/WKUserScript.h>
-#import <WebKit/WKWebView.h>
-#import <WebKit/WKWebViewConfiguration.h>
-#import <WebKit/WKWindowFeatures.h>
-#import <WebKit/WebKitLegacy.h>
+
+#if WK_API_ENABLED
+
+#import <Foundation/Foundation.h>
+
+WK_EXTERN NSString * const WKErrorDomain WK_AVAILABLE(10_0, 8_0);
+
+#endif

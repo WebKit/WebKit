@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKError.h"
+#import "config.h"
+#import "WKError.h"
 
-#include "APIError.h"
-#include "WKAPICast.h"
+#if WK_API_ENABLED
 
-using namespace WebKit;
+NSString * const WKErrorDomain = @"WKErrorDomain";
 
-WKTypeID WKErrorGetTypeID()
-{
-    return toAPI(API::Error::APIType);
-}
-
-WKStringRef WKErrorCopyWKErrorDomain()
-{
-    return toCopiedAPI(API::Error::webKitErrorDomain());
-}
-
-WKStringRef WKErrorCopyDomain(WKErrorRef errorRef)
-{
-    return toCopiedAPI(toImpl(errorRef)->domain());
-}
-
-int WKErrorGetErrorCode(WKErrorRef errorRef)
-{
-    return toImpl(errorRef)->errorCode();
-}
-
-WKURLRef WKErrorCopyFailingURL(WKErrorRef errorRef)
-{
-    return toCopiedURLAPI(toImpl(errorRef)->failingURL());
-}
-
-WKStringRef WKErrorCopyLocalizedDescription(WKErrorRef errorRef)
-{
-    return toCopiedAPI(toImpl(errorRef)->localizedDescription());
-}
+#endif

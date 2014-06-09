@@ -23,45 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKit2_C_h
-#define WebKit2_C_h
+#include "config.h"
+#include "WKErrorRef.h"
 
-#include <WebKit/WKBase.h>
-#include <WebKit/WKType.h>
+#include "APIError.h"
+#include "WKAPICast.h"
 
-#include <WebKit/WKArray.h>
-#include <WebKit/WKBackForwardListRef.h>
-#include <WebKit/WKBackForwardListItemRef.h>
-#include <WebKit/WKConnectionRef.h>
-#include <WebKit/WKContext.h>
-#include <WebKit/WKData.h>
-#include <WebKit/WKDictionary.h>
-#include <WebKit/WKErrorRef.h>
-#include <WebKit/WKFormSubmissionListener.h>
-#include <WebKit/WKFrame.h>
-#include <WebKit/WKFramePolicyListener.h>
-#include <WebKit/WKGeolocationManager.h>
-#include <WebKit/WKGeolocationPermissionRequest.h>
-#include <WebKit/WKGeolocationPosition.h>
-#include <WebKit/WKHitTestResult.h>
-#include <WebKit/WKMutableArray.h>
-#include <WebKit/WKMutableDictionary.h>
-#include <WebKit/WKNavigationDataRef.h>
-#include <WebKit/WKNumber.h>
-#include <WebKit/WKOpenPanelParameters.h>
-#include <WebKit/WKOpenPanelResultListener.h>
-#include <WebKit/WKPage.h>
-#include <WebKit/WKPageGroup.h>
-#include <WebKit/WKPreferencesRef.h>
-#include <WebKit/WKString.h>
-#include <WebKit/WKURL.h>
-#include <WebKit/WKURLRequest.h>
-#include <WebKit/WKURLResponse.h>
+using namespace WebKit;
 
-#if defined(__OBJC__) && __OBJC__
-#import <WebKit/WKView.h>
-#elif !(defined(__APPLE__) && __APPLE__)
-#include <WebKit/WKView.h>
-#endif
+WKTypeID WKErrorGetTypeID()
+{
+    return toAPI(API::Error::APIType);
+}
 
-#endif /* WebKit2_C_h */
+WKStringRef WKErrorCopyWKErrorDomain()
+{
+    return toCopiedAPI(API::Error::webKitErrorDomain());
+}
+
+WKStringRef WKErrorCopyDomain(WKErrorRef errorRef)
+{
+    return toCopiedAPI(toImpl(errorRef)->domain());
+}
+
+int WKErrorGetErrorCode(WKErrorRef errorRef)
+{
+    return toImpl(errorRef)->errorCode();
+}
+
+WKURLRef WKErrorCopyFailingURL(WKErrorRef errorRef)
+{
+    return toCopiedURLAPI(toImpl(errorRef)->failingURL());
+}
+
+WKStringRef WKErrorCopyLocalizedDescription(WKErrorRef errorRef)
+{
+    return toCopiedAPI(toImpl(errorRef)->localizedDescription());
+}

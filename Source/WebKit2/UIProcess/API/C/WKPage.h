@@ -27,7 +27,7 @@
 #define WKPage_h
 
 #include <WebKit/WKBase.h>
-#include <WebKit/WKError.h>
+#include <WebKit/WKErrorRef.h>
 #include <WebKit/WKEvent.h>
 #include <WebKit/WKFindOptions.h>
 #include <WebKit/WKGeometry.h>
