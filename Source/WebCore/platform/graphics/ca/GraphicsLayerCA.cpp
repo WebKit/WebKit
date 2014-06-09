@@ -1481,9 +1481,7 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
 
     // FIXME: figure out if we really need to pixel align the graphics layer here.
     if (m_client.needsPixelAligment() && !isIntegral(pageScaleFactor) && m_drawsContent && !m_masksToBounds)
-        computePixelAlignment(pageScaleFactor, positionRelativeToBase, scaledPosition, scaledSize, scaledAnchorPoint, pixelAlignmentOffset);
-
-    FloatRect adjustedBounds(m_boundsOrigin - pixelAlignmentOffset, scaledSize);
+        computePixelAlignment(pageScaleFactor, positionRelativeToBase, scaledPosition, scaledAnchorPoint, pixelAlignmentOffset);
 
     // Update position.
     // Position is offset on the layer by the layer anchor point.
@@ -1520,7 +1518,9 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
         adjustedPosition = FloatPoint(scaledAnchorPoint.x() * scaledSize.width() - pixelAlignmentOffset.width(), scaledAnchorPoint.y() * scaledSize.height() - pixelAlignmentOffset.height());
     }
 
+    // Push the layer to device pixel boundary (setPosition()), but move the content back to its original position (setBounds())
     m_layer->setPosition(adjustedPosition);
+    FloatRect adjustedBounds = FloatRect(FloatPoint(m_boundsOrigin - pixelAlignmentOffset), m_size);
     m_layer->setBounds(adjustedBounds);
     m_layer->setAnchorPoint(scaledAnchorPoint);
 
@@ -3319,29 +3319,22 @@ void GraphicsLayerCA::noteChangesForScaleSensitiveProperties()
     noteLayerPropertyChanged(GeometryChanged | ContentsScaleChanged | ContentsOpaqueChanged);
 }
 
-void GraphicsLayerCA::computePixelAlignment(float contentsScale, const FloatPoint& positionRelativeToBase,
-    FloatPoint& position, FloatSize& size, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const
+void GraphicsLayerCA::computePixelAlignment(float pageScale, const FloatPoint& positionRelativeToBase,
+    FloatPoint& position, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const
 {
     FloatRect baseRelativeBounds(positionRelativeToBase, m_size);
     FloatRect scaledBounds = baseRelativeBounds;
+    float contentsScale = pageScale * deviceScaleFactor();
     // Scale by the page scale factor to compute the screen-relative bounds.
     scaledBounds.scale(contentsScale);
     // Round to integer boundaries.
-    FloatRect alignedBounds = enclosingIntRect(scaledBounds);
+    FloatRect alignedBounds = enclosingRectForPainting(LayoutRect(scaledBounds), deviceScaleFactor());
     
     // Convert back to layer coordinates.
     alignedBounds.scale(1 / contentsScale);
 
-#if !PLATFORM(IOS)
-    // Epsilon is necessary to ensure that backing store size computation in CA, which involves integer truncation,
-    // will match our aligned bounds.
-    const float epsilon = 1e-5f;
-    alignedBounds.expand(epsilon, epsilon);
-#endif
-
     alignmentOffset = baseRelativeBounds.location() - alignedBounds.location();
     position = m_position - alignmentOffset;
-    size = alignedBounds.size();
 
     // Now we have to compute a new anchor point which compensates for rounding.
     float anchorPointX = m_anchorPoint.x();
