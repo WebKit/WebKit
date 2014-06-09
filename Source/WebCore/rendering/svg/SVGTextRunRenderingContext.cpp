@@ -103,16 +103,21 @@ bool SVGTextRunRenderingContext::applySVGKerning(const SimpleFontData* fontData,
 
 class SVGGlyphToPathTranslator final : public GlyphToPathTranslator {
 public:
-    SVGGlyphToPathTranslator(const GlyphBuffer& glyphBuffer, const FloatPoint& point, const SVGFontData& svgFontData, SVGFontElement& fontElement, const int from, const int numGlyphs, float scale, bool isVerticalText);
+    SVGGlyphToPathTranslator(const TextRun* const, const GlyphBuffer&, const FloatPoint&, const SVGFontData&, SVGFontElement&, const int from, const int numGlyphs, float scale, bool isVerticalText);
 private:
     virtual bool containsMorePaths() override
     {
         return m_index != m_stoppingPoint;
     }
-    virtual Path nextPath() override;
-    void moveToNextValidGlyph();
-    void incrementIndex();
 
+    virtual Path path() override;
+    virtual std::pair<float, float> extents() override;
+    virtual GlyphUnderlineType underlineType() override;
+    virtual void advance() override;
+    void moveToNextValidGlyph();
+    AffineTransform transform();
+
+    const TextRun* const m_textRun;
     const GlyphBuffer& m_glyphBuffer;
     const SVGFontData& m_svgFontData;
     FloatPoint m_currentPoint;
@@ -126,8 +131,9 @@ private:
     const bool m_isVerticalText;
 };
 
-SVGGlyphToPathTranslator::SVGGlyphToPathTranslator(const GlyphBuffer& glyphBuffer, const FloatPoint& point, const SVGFontData& svgFontData, SVGFontElement& fontElement, const int from, const int numGlyphs, float scale, bool isVerticalText)
-    : m_glyphBuffer(glyphBuffer)
+SVGGlyphToPathTranslator::SVGGlyphToPathTranslator(const TextRun* const textRun, const GlyphBuffer& glyphBuffer, const FloatPoint& point, const SVGFontData& svgFontData, SVGFontElement& fontElement, const int from, const int numGlyphs, float scale, bool isVerticalText)
+    : m_textRun(textRun)
+    , m_glyphBuffer(glyphBuffer)
     , m_svgFontData(svgFontData)
     , m_currentPoint(point)
     , m_glyphOrigin(m_svgFontData.horizontalOriginX() * scale, m_svgFontData.horizontalOriginY() * scale)
@@ -148,31 +154,43 @@ SVGGlyphToPathTranslator::SVGGlyphToPathTranslator(const GlyphBuffer& glyphBuffe
     moveToNextValidGlyph();
 }
 
-Path SVGGlyphToPathTranslator::nextPath()
+AffineTransform SVGGlyphToPathTranslator::transform()
 {
-    if (m_isVerticalText) {
-        m_glyphOrigin.setX(m_svgGlyph.verticalOriginX * m_scale);
-        m_glyphOrigin.setY(m_svgGlyph.verticalOriginY * m_scale);
-    }
-
     AffineTransform glyphPathTransform;
     glyphPathTransform.translate(m_currentPoint.x() + m_glyphOrigin.x(), m_currentPoint.y() + m_glyphOrigin.y());
     glyphPathTransform.scale(m_scale, -m_scale);
+    return glyphPathTransform;
+}
 
+Path SVGGlyphToPathTranslator::path()
+{
     Path glyphPath = m_svgGlyph.pathData;
-    glyphPath.transform(glyphPathTransform);
-    incrementIndex();
+    glyphPath.transform(transform());
     return glyphPath;
+}
+
+std::pair<float, float> SVGGlyphToPathTranslator::extents()
+{
+    AffineTransform glyphPathTransform = transform();
+    FloatPoint beginning = glyphPathTransform.mapPoint(m_currentPoint);
+    FloatSize end = glyphPathTransform.mapSize(FloatSize(m_glyphBuffer.advanceAt(m_index)));
+    return std::make_pair(beginning.x(), beginning.x() + end.width());
+}
+
+auto SVGGlyphToPathTranslator::underlineType() -> GlyphUnderlineType
+{
+    ASSERT(m_textRun);
+    return computeUnderlineType(*m_textRun, m_glyphBuffer, m_index);
 }
 
 void SVGGlyphToPathTranslator::moveToNextValidGlyph()
 {
     if (m_glyph && !m_svgGlyph.pathData.isEmpty())
         return;
-    incrementIndex();
+    advance();
 }
 
-void SVGGlyphToPathTranslator::incrementIndex()
+void SVGGlyphToPathTranslator::advance()
 {
     do {
         if (m_glyph) {
@@ -194,6 +212,11 @@ void SVGGlyphToPathTranslator::incrementIndex()
         ASSERT(m_svgGlyph.tableEntry == m_glyph);
         SVGGlyphElement::inheritUnspecifiedAttributes(m_svgGlyph, &m_svgFontData);
     } while ((!m_glyph || m_svgGlyph.pathData.isEmpty()) && m_index < m_stoppingPoint);
+
+    if (containsMorePaths() && m_isVerticalText) {
+        m_glyphOrigin.setX(m_svgGlyph.verticalOriginX * m_scale);
+        m_glyphOrigin.setY(m_svgGlyph.verticalOriginY * m_scale);
+    }
 }
 
 class DummyGlyphToPathTranslator final : public GlyphToPathTranslator {
@@ -201,13 +224,24 @@ class DummyGlyphToPathTranslator final : public GlyphToPathTranslator {
     {
         return false;
     }
-    virtual Path nextPath() override
+    virtual Path path() override
     {
         return Path();
     }
+    virtual std::pair<float, float> extents() override
+    {
+        return std::make_pair(0.f, 0.f);
+    }
+    virtual GlyphUnderlineType underlineType() override
+    {
+        return GlyphUnderlineType::DrawOverGlyph;
+    }
+    virtual void advance() override
+    {
+    }
 };
 
-std::unique_ptr<GlyphToPathTranslator> SVGTextRunRenderingContext::createGlyphToPathTranslator(const SimpleFontData& fontData, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
+std::unique_ptr<GlyphToPathTranslator> SVGTextRunRenderingContext::createGlyphToPathTranslator(const SimpleFontData& fontData, const TextRun* textRun, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
 {
     SVGFontElement* fontElement = 0;
     SVGFontFaceElement* fontFaceElement = 0;
@@ -222,7 +256,7 @@ std::unique_ptr<GlyphToPathTranslator> SVGTextRunRenderingContext::createGlyphTo
 
     float scale = scaleEmToUnits(fontData.platformData().size(), fontFaceElement->unitsPerEm());
 
-    return std::make_unique<SVGGlyphToPathTranslator>(glyphBuffer, point, *svgFontData, *fontElement, from, numGlyphs, scale, isVerticalText);
+    return std::make_unique<SVGGlyphToPathTranslator>(textRun, glyphBuffer, point, *svgFontData, *fontElement, from, numGlyphs, scale, isVerticalText);
 }
 
 void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const SimpleFontData* fontData, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
@@ -241,9 +275,8 @@ void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const S
     ASSERT(activePaintingResource);
 
     RenderSVGResourceMode resourceMode = context->textDrawingMode() == TextModeStroke ? ApplyToStrokeMode : ApplyToFillMode;
-    auto translator(createGlyphToPathTranslator(*fontData, glyphBuffer, from, numGlyphs, point));
-    while (translator->containsMorePaths()) {
-        Path glyphPath = translator->nextPath();
+    for (auto translator = createGlyphToPathTranslator(*fontData, nullptr, glyphBuffer, from, numGlyphs, point); translator->containsMorePaths(); translator->advance()) {
+        Path glyphPath = translator->path();
         if (activePaintingResource->applyResource(elementRenderer, style, context, resourceMode)) {
             float strokeThickness = context->strokeThickness();
             if (renderer().isSVGInlineText())

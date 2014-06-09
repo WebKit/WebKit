@@ -1,3 +1,81 @@
+2014-05-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION: missing underline under CJK text
+        https://bugs.webkit.org/show_bug.cgi?id=128145
+
+        Reviewed by Darin Adler.
+
+        This patch refactors the GlyphToPathTranslator which is used to find intersections of
+        glyphs and underlines. It was modified to allow for querying these pieces of
+        information:
+        1) The extents of the glyph. This can be used to make the underlines skip an entire
+        glyph, wholesale
+        2) What kind of skipping behavior should be used
+        3) The Path which represents the glyph
+        There are three skipping behaviors:
+        1) (SkipDescenders) The previous behavior
+        2) (SkipGlyph) Make the underline skip over the entire glyph, using the extents() function
+        3) (DrawOverGlyph) Make the underline plow through the glyph, ignoring any descenders
+
+        Calculating which underlining behavior to use depends on what the base codepoint that
+        originated that glyph is. This means that we have to map from glyphs to characters,
+        something which is nontrivial to do. In order to solve this problem, this patch adds
+        an optional vector to GlyphBuffer which represents the location in the original string
+        from which a particular glyph originated. Then, when our WidthIterator code adds
+        glyphs to the GlyphBuffer, we can include the extra information about where we are
+        in the input string. Once this data is available, the GlyphPathTranslator can look up
+        the base codepoint from which this glyph originates, and can run ICU functions on that
+        codepoint.
+
+        We can use the ICU ublock_getCode() function to find which Unicode block a particular
+        codepoint comes from. If the codepoint comes from a CJK block, we will use
+        DrawOverGlyph; otherwise, we will use SkipDescenders.
+
+        Test: fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-cjk.html
+
+        * platform/graphics/Font.cpp:
+        (WebCore::sharedUnderlineType): Look up the base codepoint from which this glyph
+        originates, call ublock_getCode to get its Unicode block, then return
+        a GlyphUnderlineType accordingly. This code is shared between SVG and non-SVG.
+        * platform/graphics/Font.h: New virtual functions in GlyphToPathTranslator, as well as
+        function signatures for the above two functions.
+        * platform/graphics/GlyphBuffer.h: Add an optional instance member for the location
+        from within the original string from which a particular glyph originates.
+        (WebCore::GlyphBuffer::clear): Updated for new member.
+        (WebCore::GlyphBuffer::add): Ditto.
+        (WebCore::GlyphBuffer::saveOffsetsInString): Opt-in to using the new variable
+        (WebCore::GlyphBuffer::offsetInString): New variable accessor.
+        * platform/graphics/TextRun.h: SVG needs the TextRun to use sharedUnderlineType.
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advanceInternal): Use GlyphBuffer's new variable (if present).
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::advance): Use GlyphBuffer's new variable (if present).
+        * platform/graphics/mac/FontMac.mm: Implement new GlyphToPathTranslator functions.
+        (WebCore::MacGlyphToPathTranslator::path):
+        (WebCore::MacGlyphToPathTranslator::extents):
+        (WebCore::MacGlyphToPathTranslator::underlineType): Calls sharedUnderlineType().
+        (WebCore::MacGlyphToPathTranslator::moveToNextValidGlyph):
+        (WebCore::MacGlyphToPathTranslator::increment):
+        (WebCore::Font::dashesForIntersectionsWithRect): Ask the translator what kind of underline
+        behavior should be used. React accordingly.
+        (WebCore::MacGlyphToPathTranslator::nextPath): Deleted.
+        (WebCore::MacGlyphToPathTranslator::incrementIndex): Deleted.
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::shapeAndPlaceItem): Update to new signature of GlyphBuffer::add()
+        * rendering/svg/SVGTextRunRenderingContext.cpp: Implement new GlyphToPathTranslator functions.
+        (WebCore::SVGGlyphToPathTranslator::SVGGlyphToPathTranslator):
+        (WebCore::SVGGlyphToPathTranslator::getCurrentTransform):
+        (WebCore::SVGGlyphToPathTranslator::path):
+        (WebCore::SVGGlyphToPathTranslator::extents):
+        (WebCore::MacGlyphToPathTranslator::underlineType): Calls sharedUnderlineType().
+        (WebCore::SVGGlyphToPathTranslator::moveToNextValidGlyph):
+        (WebCore::SVGGlyphToPathTranslator::increment):
+        (WebCore::SVGTextRunRenderingContext::createGlyphToPathTranslator):
+        (WebCore::SVGTextRunRenderingContext::drawSVGGlyphs):
+        (WebCore::SVGGlyphToPathTranslator::nextPath): Deleted.
+        (WebCore::SVGGlyphToPathTranslator::incrementIndex): Deleted.
+        * rendering/svg/SVGTextRunRenderingContext.h: SVG needs the TextRun to use sharedUnderlineType.
+
 2014-06-09  Alex Christensen  <achristensen@webkit.org>
 
         [iOS WebGL] Implement OES_vertex_array_object for iOS.

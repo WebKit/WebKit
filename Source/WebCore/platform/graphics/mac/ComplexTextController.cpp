@@ -529,7 +529,7 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, G
                 return;
 
             if (glyphBuffer && !m_characterInCurrentGlyph)
-                glyphBuffer->add(m_adjustedGlyphs[k], complexTextRun.fontData(), adjustedAdvance);
+                glyphBuffer->add(m_adjustedGlyphs[k], complexTextRun.fontData(), adjustedAdvance, complexTextRun.indexAt(m_glyphInCurrentRun));
 
             unsigned oldCharacterInCurrentGlyph = m_characterInCurrentGlyph;
             m_characterInCurrentGlyph = std::min(m_currentCharacter - complexTextRun.stringLocation(), glyphEndOffset) - glyphStartOffset;

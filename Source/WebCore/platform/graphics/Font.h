@@ -96,10 +96,15 @@ struct GlyphOverflow {
 
 class GlyphToPathTranslator {
 public:
+    enum class GlyphUnderlineType {SkipDescenders, SkipGlyph, DrawOverGlyph};
     virtual bool containsMorePaths() = 0;
-    virtual Path nextPath() = 0;
+    virtual Path path() = 0;
+    virtual std::pair<float, float> extents() = 0;
+    virtual GlyphUnderlineType underlineType() = 0;
+    virtual void advance() = 0;
     virtual ~GlyphToPathTranslator() { }
 };
+GlyphToPathTranslator::GlyphUnderlineType computeUnderlineType(const TextRun&, const GlyphBuffer&, int index);
 
 class Font {
 public:

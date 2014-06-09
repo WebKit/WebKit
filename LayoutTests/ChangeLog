@@ -1,3 +1,15 @@
+2014-05-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION: missing underline under CJK text
+        https://bugs.webkit.org/show_bug.cgi?id=128145
+
+        Reviewed by Darin Adler.
+
+        This test makes sure that underlines under CJK text don't skip over descenders.
+
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-cjk-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-cjk.html: Added.
+
 2014-06-09  Daniel Bates  <dabates@apple.com>
 
         [iOS] Amazon app: Cannot interact with product page after tapping on product image

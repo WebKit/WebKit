@@ -1053,5 +1053,58 @@ bool Font::canReceiveTextEmphasis(UChar32 c)
 
     return true;
 }
+    
+GlyphToPathTranslator::GlyphUnderlineType computeUnderlineType(const TextRun& textRun, const GlyphBuffer& glyphBuffer, int index)
+{
+    // In general, we want to skip descenders. However, skipping descenders on CJK characters leads to undesirable renderings,
+    // so we want to draw through CJK characters (on a character-by-character basis).
+    UChar32 baseCharacter;
+    int offsetInString = glyphBuffer.offsetInString(index);
+
+    if (offsetInString == GlyphBuffer::kNoOffset) {
+        // We have no idea which character spawned this glyph. Bail.
+        return GlyphToPathTranslator::GlyphUnderlineType::DrawOverGlyph;
+    }
+    
+    if (textRun.is8Bit())
+        baseCharacter = textRun.characters8()[offsetInString];
+    else {
+        U16_NEXT(textRun.characters16(), offsetInString, textRun.length(), baseCharacter);
+    }
+    
+    // u_getIntPropertyValue with UCHAR_IDEOGRAPHIC doesn't return true for Japanese or Korean codepoints.
+    // Instead, we can use the "Unicode allocation block" for the character.
+    UBlockCode blockCode = ublock_getCode(baseCharacter);
+    switch (blockCode) {
+    case UBLOCK_CJK_RADICALS_SUPPLEMENT:
+    case UBLOCK_CJK_SYMBOLS_AND_PUNCTUATION:
+    case UBLOCK_ENCLOSED_CJK_LETTERS_AND_MONTHS:
+    case UBLOCK_CJK_COMPATIBILITY:
+    case UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A:
+    case UBLOCK_CJK_UNIFIED_IDEOGRAPHS:
+    case UBLOCK_CJK_COMPATIBILITY_IDEOGRAPHS:
+    case UBLOCK_CJK_COMPATIBILITY_FORMS:
+    case UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B:
+    case UBLOCK_CJK_COMPATIBILITY_IDEOGRAPHS_SUPPLEMENT:
+    case UBLOCK_CJK_STROKES:
+    case UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_C:
+    case UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_D:
+    case UBLOCK_IDEOGRAPHIC_DESCRIPTION_CHARACTERS:
+    case UBLOCK_LINEAR_B_IDEOGRAMS:
+    case UBLOCK_ENCLOSED_IDEOGRAPHIC_SUPPLEMENT:
+    case UBLOCK_HIRAGANA:
+    case UBLOCK_KATAKANA:
+    case UBLOCK_BOPOMOFO:
+    case UBLOCK_BOPOMOFO_EXTENDED:
+    case UBLOCK_HANGUL_JAMO:
+    case UBLOCK_HANGUL_COMPATIBILITY_JAMO:
+    case UBLOCK_HANGUL_SYLLABLES:
+    case UBLOCK_HANGUL_JAMO_EXTENDED_A:
+    case UBLOCK_HANGUL_JAMO_EXTENDED_B:
+        return GlyphToPathTranslator::GlyphUnderlineType::DrawOverGlyph;
+    default:
+        return GlyphToPathTranslator::GlyphUnderlineType::SkipDescenders;
+    }
+}
 
 }

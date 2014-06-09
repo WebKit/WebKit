@@ -448,8 +448,9 @@ static void findPathIntersections(void* stateAsVoidPointer, const CGPathElement*
 
 class MacGlyphToPathTranslator final : public GlyphToPathTranslator {
 public:
-    MacGlyphToPathTranslator(const GlyphBuffer& glyphBuffer, const FloatPoint& textOrigin)
+    MacGlyphToPathTranslator(const TextRun& textRun, const GlyphBuffer& glyphBuffer, const FloatPoint& textOrigin)
         : m_index(0)
+        , m_textRun(textRun)
         , m_glyphBuffer(glyphBuffer)
         , m_fontData(glyphBuffer.fontDataAt(m_index))
         , m_translation(CGAffineTransformScale(CGAffineTransformMakeTranslation(textOrigin.x(), textOrigin.y()), 1, -1))
@@ -461,31 +462,45 @@ private:
     {
         return m_index != m_glyphBuffer.size();
     }
-    virtual Path nextPath() override;
+    virtual Path path() override;
+    virtual std::pair<float, float> extents() override;
+    virtual GlyphUnderlineType underlineType() override;
+    virtual void advance() override;
     void moveToNextValidGlyph();
-    void incrementIndex();
 
     int m_index;
+    const TextRun& m_textRun;
     const GlyphBuffer& m_glyphBuffer;
     const SimpleFontData* m_fontData;
     CGAffineTransform m_translation;
 };
 
-Path MacGlyphToPathTranslator::nextPath()
+Path MacGlyphToPathTranslator::path()
 {
     RetainPtr<CGPathRef> result = adoptCF(CTFontCreatePathForGlyph(m_fontData->platformData().ctFont(), m_glyphBuffer.glyphAt(m_index), &m_translation));
-    incrementIndex();
     return adoptCF(CGPathCreateMutableCopy(result.get()));
+}
+
+std::pair<float, float> MacGlyphToPathTranslator::extents()
+{
+    CGPoint beginning = CGPointApplyAffineTransform(CGPointMake(0, 0), m_translation);
+    CGSize end = CGSizeApplyAffineTransform(m_glyphBuffer.advanceAt(m_index), m_translation);
+    return std::make_pair(static_cast<float>(beginning.x), static_cast<float>(beginning.x + end.width));
+}
+
+auto MacGlyphToPathTranslator::underlineType() -> GlyphUnderlineType
+{
+    return computeUnderlineType(m_textRun, m_glyphBuffer, m_index);
 }
 
 void MacGlyphToPathTranslator::moveToNextValidGlyph()
 {
     if (!m_fontData->isSVGFont())
         return;
-    incrementIndex();
+    advance();
 }
 
-void MacGlyphToPathTranslator::incrementIndex()
+void MacGlyphToPathTranslator::advance()
 {
     do {
         GlyphBufferAdvance advance = m_glyphBuffer.advanceAt(m_index);
@@ -503,6 +518,7 @@ DashArray Font::dashesForIntersectionsWithRect(const TextRun& run, const FloatPo
         return DashArray();
 
     GlyphBuffer glyphBuffer;
+    glyphBuffer.saveOffsetsInString();
     float deltaX;
     if (codePath(run) != Font::Complex)
         deltaX = getGlyphsAndAdvancesForSimpleText(run, 0, run.length(), glyphBuffer);
@@ -518,22 +534,36 @@ DashArray Font::dashesForIntersectionsWithRect(const TextRun& run, const FloatPo
     bool isSVG = false;
     FloatPoint origin = FloatPoint(textOrigin.x() + deltaX, textOrigin.y());
     if (!fontData->isSVGFont())
-        translator = std::move(std::make_unique<MacGlyphToPathTranslator>(glyphBuffer, origin));
+        translator = std::move(std::make_unique<MacGlyphToPathTranslator>(run, glyphBuffer, origin));
     else {
-        translator = std::move(run.renderingContext()->createGlyphToPathTranslator(*fontData, glyphBuffer, 0, glyphBuffer.size(), origin));
+        translator = std::move(run.renderingContext()->createGlyphToPathTranslator(*fontData, &run, glyphBuffer, 0, glyphBuffer.size(), origin));
         isSVG = true;
     }
     DashArray result;
-    for (int index = 0; translator->containsMorePaths(); ++index) {
+    for (int index = 0; translator->containsMorePaths(); ++index, translator->advance()) {
         GlyphIterationState info = GlyphIterationState(CGPointMake(0, 0), CGPointMake(0, 0), lineExtents.y(), lineExtents.y() + lineExtents.height(), lineExtents.x() + lineExtents.width(), lineExtents.x());
         const SimpleFontData* localFontData = glyphBuffer.fontDataAt(index);
         if (!localFontData || (!isSVG && localFontData->isSVGFont()) || (isSVG && localFontData != fontData))
             break; // The advances will get all messed up if we do anything other than bail here.
-        Path path = translator->nextPath();
-        CGPathApply(path.platformPath(), &info, &findPathIntersections);
-        if (info.minX < info.maxX) {
-            result.append(info.minX - lineExtents.x());
-            result.append(info.maxX - lineExtents.x());
+        switch (translator->underlineType()) {
+        case GlyphToPathTranslator::GlyphUnderlineType::SkipDescenders: {
+            Path path = translator->path();
+            CGPathApply(path.platformPath(), &info, &findPathIntersections);
+            if (info.minX < info.maxX) {
+                result.append(info.minX - lineExtents.x());
+                result.append(info.maxX - lineExtents.x());
+            }
+            break;
+        }
+        case GlyphToPathTranslator::GlyphUnderlineType::SkipGlyph: {
+            std::pair<float, float> extents = translator->extents();
+            result.append(extents.first - lineExtents.x());
+            result.append(extents.second - lineExtents.x());
+            break;
+        }
+        case GlyphToPathTranslator::GlyphUnderlineType::DrawOverGlyph:
+            // Nothing to do
+            break;
         }
     }
     return result;
