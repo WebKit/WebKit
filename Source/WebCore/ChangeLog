@@ -1,3 +1,26 @@
+2014-06-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        Document::updateStyleIfNeededForNode can get very expensive
+        https://bugs.webkit.org/show_bug.cgi?id=133599
+
+        Reviewed by Andreas Kling.
+
+        When pages are querying their style, we first run through
+        Document::updateStyleIfNeededForNode() to find if that particular node needs style recalc.
+
+        The problem was that updateStyleIfNeededForNode() could get really expensive. For each node,
+        it needs to check the whole parent chain to find if any needs style recalc.
+        When web pages get a bunch of nodes and querying their style, we ended up going over a lot
+        of nodes just to find there is nothing to do.
+
+        This patch adds two tweaks to reduce the problem:
+        First, before querying nodeOrItsAncestorNeedsStyleRecalc() we check if the Document is dirty at all.
+        The other part is making nodeOrItsAncestorNeedsStyleRecalc() faster by removing useless elements check.
+
+        * dom/Document.cpp:
+        (WebCore::nodeOrItsAncestorNeedsStyleRecalc):
+        (WebCore::Document::updateStyleIfNeededForNode):
+
 2014-06-09  Enrica Casucci  <enrica@apple.com>
 
         iOS WebKit: Crash in charactersAroundPosition.

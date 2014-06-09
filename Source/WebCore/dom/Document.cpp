@@ -6111,7 +6111,7 @@ bool Document::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t
 
 static inline bool nodeOrItsAncestorNeedsStyleRecalc(const Node& node)
 {
-    for (const Node* n = &node; n; n = n->parentOrShadowHostElement()) {
+    for (const Node* n = &node; n; n = n->parentOrShadowHostNode()) {
         if (n->needsStyleRecalc())
             return true;
     }
@@ -6120,7 +6120,7 @@ static inline bool nodeOrItsAncestorNeedsStyleRecalc(const Node& node)
 
 bool Document::updateStyleIfNeededForNode(const Node& node)
 {
-    if (!hasPendingForcedStyleRecalc() && !nodeOrItsAncestorNeedsStyleRecalc(node))
+    if (!hasPendingForcedStyleRecalc() && !(childNeedsStyleRecalc() && nodeOrItsAncestorNeedsStyleRecalc(node)))
         return false;
     updateStyleIfNeeded();
     return true;
