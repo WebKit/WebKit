@@ -1,3 +1,9 @@
+2014-06-09  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Build fix after r169703
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2014-06-05  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Eagerly reify DOM prototype attributes
