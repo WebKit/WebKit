@@ -642,7 +642,7 @@ sub InterfaceRequiresAttributesOnInstance
     return 1 if InterfaceRequiresAttributesOnInstanceForCompatibility($interface);
 
     #FIXME: We currently clobber performance for a number of the list types
-    return 1 if $interfaceName =~ "List";
+    return 1 if $interfaceName =~ "List" && !($interfaceName =~ "Element");
 
     return 0;
 }

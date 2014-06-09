@@ -1,3 +1,18 @@
+2014-06-09  Andreas Kling  <akling@apple.com>
+
+        HTML*ListElement wrappers have custom getOwnPropertySlot()s for no good reason.
+        <https://webkit.org/b/133653>
+
+        The JavaScript bindings generator was a bit overzealous in forcing every
+        interface with "List" in the name to have its attributes on the instance.
+        This caused some elements (HTMLUListElement, etc.) to automatically opt out
+        of eager prototype attribute reification.
+
+        Reviewed by Mark Hahnenberg.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (InterfaceRequiresAttributesOnInstance):
+
 2014-06-09  Jer Noble  <jer.noble@apple.com>
 
         ASSERT(!m_inRemovedLastRefFunction) in Element::addShadowRoot while destroying a document
