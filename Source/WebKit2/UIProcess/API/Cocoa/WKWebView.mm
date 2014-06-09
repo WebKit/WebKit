@@ -70,12 +70,13 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
+#import "_WKFrameHandleInternal.h"
+#import "_WKWebViewPrintFormatter.h"
 #import "PrintInfo.h"
 #import "ProcessThrottler.h"
 #import "WKPDFView.h"
 #import "WKScrollView.h"
 #import "WKWebViewContentProviderRegistry.h"
-#import "WKWebViewPrintFormatter.h"
 #import "WebPageMessages.h"
 #import <CoreGraphics/CGFloat.h>
 #import <CoreGraphics/CGPDFDocumentPrivate.h>
@@ -2017,6 +2018,13 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return _viewportMetaTagWidth;
 }
 
+- (_WKWebViewPrintFormatter *)_webViewPrintFormatter
+{
+    UIViewPrintFormatter *viewPrintFormatter = self.viewPrintFormatter;
+    ASSERT([viewPrintFormatter isKindOfClass:[_WKWebViewPrintFormatter class]]);
+    return (_WKWebViewPrintFormatter *)viewPrintFormatter;
+}
+
 #else
 
 #pragma mark - OS X-specific methods
@@ -2111,21 +2119,22 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 #endif
 
 #if PLATFORM(IOS)
-@implementation WKWebView (WKWebViewPrintFormatter)
+@implementation WKWebView (_WKWebViewPrintFormatter)
 
 - (Class)_printFormatterClass
 {
-    return [WKWebViewPrintFormatter class];
+    return [_WKWebViewPrintFormatter class];
 }
 
-- (NSInteger)_computePageCountAndStartDrawingToPDFWithPrintInfo:(const WebKit::PrintInfo&)printInfo firstPage:(uint32_t)firstPage computedTotalScaleFactor:(double&)totalScaleFactor
+- (NSInteger)_computePageCountAndStartDrawingToPDFForFrame:(_WKFrameHandle *)frame printInfo:(const WebKit::PrintInfo&)printInfo firstPage:(uint32_t)firstPage computedTotalScaleFactor:(double&)totalScaleFactor
 {
     if ([self _isDisplayingPDF])
         return CGPDFDocumentGetNumberOfPages([(WKPDFView *)_customContentView pdfDocument]);
 
     _pageIsPrintingToPDF = YES;
     Vector<WebCore::IntRect> pageRects;
-    if (!_page->sendSync(Messages::WebPage::ComputePagesForPrintingAndStartDrawingToPDF(_page->mainFrame()->frameID(), printInfo, firstPage), Messages::WebPage::ComputePagesForPrintingAndStartDrawingToPDF::Reply(pageRects, totalScaleFactor)))
+    uint64_t frameID = frame ? frame._frameID : _page->mainFrame()->frameID();
+    if (!_page->sendSync(Messages::WebPage::ComputePagesForPrintingAndStartDrawingToPDF(frameID, printInfo, firstPage), Messages::WebPage::ComputePagesForPrintingAndStartDrawingToPDF::Reply(pageRects, totalScaleFactor)))
         return 0;
     return pageRects.size();
 }

@@ -54,6 +54,7 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 
 @class WKBrowsingContextHandle;
 @class _WKRemoteObjectRegistry;
+@class _WKWebViewPrintFormatter;
 
 @protocol WKHistoryDelegatePrivate;
 @protocol _WKFindDelegate;
@@ -122,6 +123,8 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 
 // The viewport meta tag width is negative if the value is not defined.
 @property (nonatomic, readonly) CGFloat _viewportMetaTagWidth;
+
+@property (nonatomic, readonly) _WKWebViewPrintFormatter *_webViewPrintFormatter;
 
 - (void)_beginInteractiveObscuredInsetsChange;
 - (void)_endInteractiveObscuredInsetsChange;

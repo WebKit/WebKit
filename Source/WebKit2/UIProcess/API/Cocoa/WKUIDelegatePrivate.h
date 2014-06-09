@@ -29,9 +29,13 @@
 
 #import <WebKit/_WKActivatedElementInfo.h>
 
+@class _WKFrameHandle;
+
 @protocol WKUIDelegatePrivate <WKUIDelegate>
 
 @optional
+
+- (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame;
 
 #if TARGET_OS_IPHONE
 - (NSArray *)_webView:(WKWebView *)webView actionsForElement:(_WKActivatedElementInfo *)element defaultActions:(NSArray *)defaultActions;

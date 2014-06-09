@@ -51,7 +51,7 @@ struct PrintInfo;
 struct ViewSnapshot;
 }
 
-@class WKWebViewPrintFormatter;
+@class _WKFrameHandle;
 
 @interface WKWebView () WK_WEB_VIEW_PROTOCOLS {
 
@@ -92,8 +92,8 @@ struct ViewSnapshot;
 WKWebView* fromWebPageProxy(WebKit::WebPageProxy&);
 
 #if PLATFORM(IOS)
-@interface WKWebView (WKWebViewPrintFormatter)
-- (NSInteger)_computePageCountAndStartDrawingToPDFWithPrintInfo:(const WebKit::PrintInfo&)printInfo firstPage:(uint32_t)firstPage computedTotalScaleFactor:(double&)totalScaleFactor;
+@interface WKWebView (_WKWebViewPrintFormatter)
+- (NSInteger)_computePageCountAndStartDrawingToPDFForFrame:(_WKFrameHandle *)frame printInfo:(const WebKit::PrintInfo&)printInfo firstPage:(uint32_t)firstPage computedTotalScaleFactor:(double&)totalScaleFactor;
 - (void)_endPrinting;
 @property (nonatomic, setter=_setPrintedDocument:) CGPDFDocumentRef _printedDocument;
 @end

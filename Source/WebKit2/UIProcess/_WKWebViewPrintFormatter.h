@@ -23,13 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if TARGET_OS_IPHONE
 
 #import <UIKit/UIPrintFormatter.h>
-#import <WebCore/IntRect.h>
-#import <wtf/Vector.h>
 
-@interface WKWebViewPrintFormatter : UIViewPrintFormatter
+@class _WKFrameHandle;
+
+@interface _WKWebViewPrintFormatter : UIViewPrintFormatter
+
+@property (nonatomic, strong) _WKFrameHandle *frameToPrint;
+
 @end
 
 #endif

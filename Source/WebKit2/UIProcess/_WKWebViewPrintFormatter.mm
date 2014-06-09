@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WKWebViewPrintFormatter.h"
+#import "_WKWebViewPrintFormatter.h"
 
 #if PLATFORM(IOS)
 
@@ -37,11 +37,11 @@
 - (void)_recalcIfNecessary;
 @end
 
-@interface WKWebViewPrintFormatter ()
+@interface _WKWebViewPrintFormatter ()
 @property (nonatomic, readonly) WKWebView *webView;
 @end
 
-@implementation WKWebViewPrintFormatter {
+@implementation _WKWebViewPrintFormatter {
     double _totalScaleFactor;
     WebKit::PrintInfo _printInfo;
 }
@@ -76,7 +76,7 @@
     _printInfo.availablePaperWidth = nextRect.size.width;
     _printInfo.availablePaperHeight = nextRect.size.height - (firstRect.origin.y - nextRect.origin.y);
 
-    return [self.webView _computePageCountAndStartDrawingToPDFWithPrintInfo:_printInfo firstPage:self.startPage computedTotalScaleFactor:_totalScaleFactor];
+    return [self.webView _computePageCountAndStartDrawingToPDFForFrame:_frameToPrint printInfo:_printInfo firstPage:self.startPage computedTotalScaleFactor:_totalScaleFactor];
 }
 
 - (CGRect)rectForPageAtIndex:(NSInteger)pageIndex
