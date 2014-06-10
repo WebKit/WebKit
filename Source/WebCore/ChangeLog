@@ -1,3 +1,39 @@
+2014-06-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        Improve CSSPrimitiveValue::customCSSText for ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=133597
+
+        Reviewed by Andreas Kling.
+
+        On imgur, some script is updating some layout on timers and on scroll.
+
+        It looks like CSSPrimitiveValue::customCSSText() is a little constrained
+        by the instruction cache on ARMv7. This patch improve the situation a bit.
+
+        First, the creation of the string itself is changed to go from two allocation to one.
+        Previously, we would allocate a StringBuffer and adopt it. Now we allocate a StringImpl
+        directly with the inline buffer.
+
+        The second issue is that the compiler was generating a real copy constructor for every
+        assignment of the "text" variable (likely because the variable span is so large).
+        This was solved by moving the string creating into a separate function (to fix the span)
+        and being careful with passing PassRef<StringImpl> around.
+
+        Then there was the problem that the compiler was a little too aggressive with inlining
+        which caused each "case" to repeat the same prologue and epilogue before formatValue().
+        This was solved by adding formatNumberValue() with NEVER_INLINE to have the prologue/epilogue
+        in a single place.
+
+        On older device, that's about 3% improvement on style access. On modern ARM64/x86_64
+        there is no noticeable difference.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::formatNumberValue):
+        (WebCore::CSSPrimitiveValue::formatNumberForcustomCSSText):
+        (WebCore::CSSPrimitiveValue::customCSSText):
+        (WebCore::formatNumber): Deleted.
+        * css/CSSPrimitiveValue.h:
+
 2014-06-09  Alex Christensen  <achristensen@webkit.org>
 
         [iOS WebGL] Fix EXT_shader_texture_lod.

@@ -46,7 +46,7 @@ namespace WTF {
         // See comments in PassRefPtr.h for an explanation of why this takes a const reference.
         template<typename U> RefPtr(const PassRefPtr<U>&);
 
-        template<typename U> RefPtr(PassRef<U>);
+        template<typename U> RefPtr(PassRef<U>&&);
 
         // Hash table deleted values, which are only constructed and never copied or destroyed.
         RefPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
@@ -91,7 +91,7 @@ namespace WTF {
     {
     }
 
-    template<typename T> template<typename U> inline RefPtr<T>::RefPtr(PassRef<U> reference)
+    template<typename T> template<typename U> inline RefPtr<T>::RefPtr(PassRef<U>&& reference)
         : m_ptr(&reference.leakRef())
     {
     }

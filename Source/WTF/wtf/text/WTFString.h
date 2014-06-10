@@ -115,7 +115,7 @@ public:
     String(StringImpl& impl) : m_impl(&impl) { }
     String(StringImpl* impl) : m_impl(impl) { }
     String(PassRefPtr<StringImpl> impl) : m_impl(impl) { }
-    String(PassRef<StringImpl> impl) : m_impl(std::move(impl)) { }
+    String(PassRef<StringImpl>&& impl) : m_impl(std::forward<PassRef<StringImpl>>(impl)) { }
     String(RefPtr<StringImpl>&& impl) : m_impl(impl) { }
 
     // Construct a string from a constant string literal.

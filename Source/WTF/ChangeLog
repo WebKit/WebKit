@@ -1,3 +1,15 @@
+2014-06-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        Improve CSSPrimitiveValue::customCSSText for ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=133597
+
+        Reviewed by Andreas Kling.
+
+        * wtf/RefPtr.h:
+        (WTF::RefPtr<T>::RefPtr):
+        * wtf/text/WTFString.h:
+        (WTF::String::String):
+
 2014-06-05  Yoav Weiss  <yoav@yoav.ws>
 
         Align srcset parser with recent spec changes
