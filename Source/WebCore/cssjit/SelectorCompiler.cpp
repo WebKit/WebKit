@@ -2052,7 +2052,7 @@ void SelectorCodeGenerator::generateElementAttributeValueExactMatching(Assembler
         FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
         functionCall.setFunctionAddress(WTF::equalIgnoringCaseNonNull);
         functionCall.setTwoArguments(expectedValueRegister, valueStringImpl);
-        failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+        failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
 
         skipCaseInsensitiveComparison.link(&m_assembler);
     }
@@ -2067,7 +2067,7 @@ void SelectorCodeGenerator::generateElementAttributeFunctionCallValueMatching(As
         FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
         functionCall.setFunctionAddress(caseSensitiveTest);
         functionCall.setTwoArguments(currentAttributeAddress, expectedValueRegister);
-        failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+        failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
     } else {
         Assembler::JumpList shouldUseCaseSensitiveComparison;
         shouldUseCaseSensitiveComparison.append(testIsHTMLFlagOnNode(Assembler::Zero, m_assembler, elementAddressRegister));
@@ -2084,7 +2084,7 @@ void SelectorCodeGenerator::generateElementAttributeFunctionCallValueMatching(As
             FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
             functionCall.setFunctionAddress(caseInsensitiveTest);
             functionCall.setTwoArguments(currentAttributeAddress, expectedValueRegister);
-            failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+            failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
         }
 
         Assembler::Jump skipCaseSensitiveCase = m_assembler.jump();
@@ -2094,7 +2094,7 @@ void SelectorCodeGenerator::generateElementAttributeFunctionCallValueMatching(As
             FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
             functionCall.setFunctionAddress(caseSensitiveTest);
             functionCall.setTwoArguments(currentAttributeAddress, expectedValueRegister);
-            failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+            failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
         }
 
         skipCaseSensitiveCase.link(&m_assembler);
@@ -2107,7 +2107,7 @@ void SelectorCodeGenerator::generateElementFunctionCallTest(Assembler::JumpList&
     FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
     functionCall.setFunctionAddress(testFunction);
     functionCall.setOneArgument(elementAddress);
-    failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+    failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
 }
 
 static void setFirstChildState(Element* element)
@@ -2135,7 +2135,7 @@ void SelectorCodeGenerator::generateElementIsActive(Assembler::JumpList& failure
         FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
         functionCall.setFunctionAddress(elementIsActive);
         functionCall.setOneArgument(elementAddressRegister);
-        failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+        failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
     } else {
         if (fragment.relationToRightFragment == FragmentRelation::Rightmost) {
             LocalRegister checkingContext(m_registerAllocator);
@@ -2146,7 +2146,7 @@ void SelectorCodeGenerator::generateElementIsActive(Assembler::JumpList& failure
             FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
             functionCall.setFunctionAddress(elementIsActive);
             functionCall.setOneArgument(elementAddressRegister);
-            failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+            failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
         } else {
             unsigned offsetToCheckingContext = m_stackAllocator.offsetToStackReference(m_checkingContextStackReference);
             Assembler::RegisterID checkingContext = m_registerAllocator.allocateRegister();
@@ -2156,7 +2156,7 @@ void SelectorCodeGenerator::generateElementIsActive(Assembler::JumpList& failure
             FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
             functionCall.setFunctionAddress(elementIsActiveForStyleResolution);
             functionCall.setTwoArguments(elementAddressRegister, checkingContext);
-            failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+            failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
         }
     }
 }
@@ -2231,7 +2231,7 @@ void SelectorCodeGenerator::generateElementIsHovered(Assembler::JumpList& failur
         FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
         functionCall.setFunctionAddress(elementIsHovered);
         functionCall.setOneArgument(elementAddressRegister);
-        failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+        failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
     } else {
         if (fragment.relationToRightFragment == FragmentRelation::Rightmost) {
             LocalRegister checkingContext(m_registerAllocator);
@@ -2242,7 +2242,7 @@ void SelectorCodeGenerator::generateElementIsHovered(Assembler::JumpList& failur
             FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
             functionCall.setFunctionAddress(elementIsHovered);
             functionCall.setOneArgument(elementAddressRegister);
-            failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+            failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
         } else {
             unsigned offsetToCheckingContext = m_stackAllocator.offsetToStackReference(m_checkingContextStackReference);
             Assembler::RegisterID checkingContext = m_registerAllocator.allocateRegister();
@@ -2252,7 +2252,7 @@ void SelectorCodeGenerator::generateElementIsHovered(Assembler::JumpList& failur
             FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
             functionCall.setFunctionAddress(elementIsHoveredForStyleResolution);
             functionCall.setTwoArguments(elementAddressRegister, checkingContext);
-            failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+            failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
         }
     }
 }

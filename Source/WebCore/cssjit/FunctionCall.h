@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,15 +72,26 @@ public:
         cleanupPostCall();
     }
 
-    JSC::MacroAssembler::Jump callAndBranchOnCondition(JSC::MacroAssembler::ResultCondition condition)
+    JSC::MacroAssembler::Jump callAndBranchOnBooleanReturnValue(JSC::MacroAssembler::ResultCondition condition)
+    {
+#if CPU(X86) || CPU(X86_64)
+        return callAndBranchOnCondition(condition, JSC::MacroAssembler::TrustedImm32(0xff));
+#elif CPU(ARM64) || CPU(ARM)
+        return callAndBranchOnCondition(condition, JSC::MacroAssembler::TrustedImm32(-1));
+#else
+#error Missing implementationg for matching boolean return values.
+#endif
+    }
+
+private:
+    JSC::MacroAssembler::Jump callAndBranchOnCondition(JSC::MacroAssembler::ResultCondition condition, JSC::MacroAssembler::TrustedImm32 mask)
     {
         prepareAndCall();
-        m_assembler.test32(condition, JSC::GPRInfo::returnValueGPR, JSC::MacroAssembler::TrustedImm32(0xff));
+        m_assembler.test32(condition, JSC::GPRInfo::returnValueGPR, mask);
         cleanupPostCall();
         return m_assembler.branch(condition);
     }
 
-private:
     void swapArguments()
     {
         JSC::MacroAssembler::RegisterID a = m_firstArgument;
