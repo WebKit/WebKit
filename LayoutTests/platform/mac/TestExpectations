@@ -1384,3 +1384,5 @@ webkit.org/b/132491 [ MountainLion ] http/tests/media/hls/video-controls-live-st
 fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Failure ]
 
 webkit.org/b/133363 media/video-rtl.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/133694 compositing/iframes/become-composited-nested-iframes.html [ Failure ]
