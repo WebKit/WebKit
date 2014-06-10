@@ -1,3 +1,59 @@
+2014-06-10  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: recording is overused as both noun and verb in TimelineManager
+        https://bugs.webkit.org/show_bug.cgi?id=132878
+
+        Reviewed by Joseph Pecoraro.
+
+        Rename most uses of the verb 'recording' to the verb 'capturing' for timelines.
+        Rename getter for the recording to activeRecording, and recordingEnabled to isCapturing().
+
+        When the timeline manager can handle multiple timeline data sets (i.e., 'recordings'),
+        it will be very confusing to have 'recording' as a plural noun and verb in the model.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager):
+        (WebInspector.TimelineManager.prototype.get activeRecording):
+        (WebInspector.TimelineManager.prototype.isCapturing):
+        (WebInspector.TimelineManager.prototype.startCapturing):
+        (WebInspector.TimelineManager.prototype.stopCapturing):
+        (WebInspector.TimelineManager.prototype.eventRecorded.processRecord):
+        (WebInspector.TimelineManager.prototype.eventRecorded):
+        (WebInspector.TimelineManager.prototype._addRecord):
+        (WebInspector.TimelineManager.prototype._startAutoCapturing):
+        (WebInspector.TimelineManager.prototype._stopAutoRecordingSoon):
+        (WebInspector.TimelineManager.prototype._resetAutoRecordingDeadTimeTimeout):
+        (WebInspector.TimelineManager.prototype._mainResourceDidChange):
+        (WebInspector.TimelineManager.prototype._resourceWasAdded):
+        (WebInspector.TimelineManager.prototype.get recording): Deleted.
+        (WebInspector.TimelineManager.prototype.get recordingEnabled): Deleted.
+        (WebInspector.TimelineManager.prototype.startRecording): Deleted.
+        (WebInspector.TimelineManager.prototype.stopRecording): Deleted.
+        (WebInspector.TimelineManager.prototype._startAutoRecording): Deleted.
+        * UserInterface/Models/DefaultDashboard.js:
+        (WebInspector.DefaultDashboard):
+        (WebInspector.DefaultDashboard.prototype._mainResourceDidChange):
+        (WebInspector.DefaultDashboard.prototype._capturingStopped):
+        (WebInspector.DefaultDashboard.prototype._recordingStopped): Deleted.
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.isTimelineProfilingEnabled):
+        (InspectorFrontendAPI.setTimelineProfilingEnabled):
+        * UserInterface/Views/TimelineContentView.js:
+        (WebInspector.TimelineContentView.prototype._capturingStarted):
+        (WebInspector.TimelineContentView.prototype._capturingStopped):
+        (WebInspector.TimelineContentView.prototype._recordingStarted): Deleted.
+        (WebInspector.TimelineContentView.prototype._recordingStopped): Deleted.
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype.initialize):
+        (WebInspector.TimelineSidebarPanel.prototype._capturingStarted):
+        (WebInspector.TimelineSidebarPanel.prototype._capturingStopped):
+        (WebInspector.TimelineSidebarPanel.prototype._recordGlyphMousedOver):
+        (WebInspector.TimelineSidebarPanel.prototype._recordGlyphMousedOut):
+        (WebInspector.TimelineSidebarPanel.prototype._recordGlyphClicked):
+        (WebInspector.TimelineSidebarPanel.prototype._replayCaptureButtonClicked):
+        (WebInspector.TimelineSidebarPanel.prototype._recordingStarted): Deleted.
+        (WebInspector.TimelineSidebarPanel.prototype._recordingStopped): Deleted.
+
 2014-06-09  Jono Wells  <jonowells@apple.com>
 
         REGRESSION: Web Inspector: Exception showing the DOM tree for a node with too many children

@@ -30,7 +30,7 @@ WebInspector.DefaultDashboard = function() {
 
     // Necessary event required to track page load time and resource sizes.
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.RecordingStopped, this._recordingStopped, this);
+    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, this._capturingStopped, this);
 
     // Necessary events required to track load of resources.
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
@@ -145,7 +145,7 @@ WebInspector.DefaultDashboard.prototype = {
         this._resourcesSize = WebInspector.frameResourceManager.mainFrame.mainResource.size || 0;
 
         // Only update the time if we are recording the timeline.
-        if (!WebInspector.timelineManager.recordingEnabled) {
+        if (!WebInspector.timelineManager.isCapturing()) {
             this._time = 0;
             return;
         }
@@ -160,7 +160,7 @@ WebInspector.DefaultDashboard.prototype = {
         this._startUpdatingTime();
     },
 
-    _recordingStopped: function(event)
+    _capturingStopped: function(event)
     {
         // If recording stops, we should stop the timer if it hasn't stopped already.
         this._stopUpdatingTime();

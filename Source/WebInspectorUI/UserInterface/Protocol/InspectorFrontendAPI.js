@@ -51,7 +51,7 @@ InspectorFrontendAPI = {
 
     isTimelineProfilingEnabled: function()
     {
-        return WebInspector.timelineManager.recordingEnabled;
+        return WebInspector.timelineManager.isCapturing();
     },
 
     setTimelineProfilingEnabled: function(enabled)
@@ -59,9 +59,9 @@ InspectorFrontendAPI = {
         if (enabled) {
             WebInspector.navigationSidebar.selectedSidebarPanel = WebInspector.timelineSidebarPanel;
             WebInspector.timelineSidebarPanel.showTimelineOverview();
-            WebInspector.timelineManager.startRecording();
+            WebInspector.timelineManager.startCapturing();
         } else {
-            WebInspector.timelineManager.stopRecording();
+            WebInspector.timelineManager.stopCapturing();
         }
     },
 

@@ -86,8 +86,8 @@ WebInspector.TimelineContentView = function(recording)
 
     recording.addEventListener(WebInspector.TimelineRecording.Event.Reset, this._recordingReset, this);
 
-    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.RecordingStarted, this._recordingStarted, this);
-    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.RecordingStopped, this._recordingStopped, this);
+    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStarted, this._capturingStarted, this);
+    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, this._capturingStopped, this);
 
     this.showOverviewTimelineView();
 };
@@ -348,12 +348,12 @@ WebInspector.TimelineContentView.prototype = {
         this._updating = false;
     },
 
-    _recordingStarted: function(event)
+    _capturingStarted: function(event)
     {
         this._startUpdatingCurrentTime();
     },
 
-    _recordingStopped: function(event)
+    _capturingStopped: function(event)
     {
         this._stopUpdatingCurrentTime();
     },

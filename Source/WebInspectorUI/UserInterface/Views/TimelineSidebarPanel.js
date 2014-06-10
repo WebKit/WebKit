@@ -109,7 +109,7 @@ WebInspector.TimelineSidebarPanel = function()
     for (var timelineTreeElement of this._timelineTreeElementMap.values())
         this._timelinesTreeOutline.appendChild(timelineTreeElement);
 
-    this._timelineOverviewTreeElement = new WebInspector.GeneralTreeElement(WebInspector.TimelineSidebarPanel.StopwatchIconStyleClass, WebInspector.UIString("Timelines"), null, WebInspector.timelineManager.recording);
+    this._timelineOverviewTreeElement = new WebInspector.GeneralTreeElement(WebInspector.TimelineSidebarPanel.StopwatchIconStyleClass, WebInspector.UIString("Timelines"), null, WebInspector.timelineManager.activeRecording);
     this._timelineOverviewTreeElement.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.showTimelineOverview, this);
 
     this._stripeBackgroundElement = document.createElement("div");
@@ -117,8 +117,8 @@ WebInspector.TimelineSidebarPanel = function()
     this.contentElement.insertBefore(this._stripeBackgroundElement, this.contentElement.firstChild);
 
     WebInspector.contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
-    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.RecordingStarted, this._recordingStarted, this);
-    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.RecordingStopped, this._recordingStopped, this);
+    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStarted, this._capturingStarted, this);
+    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, this._capturingStopped, this);
 };
 
 WebInspector.TimelineSidebarPanel.HiddenStyleClassName = "hidden";
@@ -152,7 +152,7 @@ WebInspector.TimelineSidebarPanel.prototype = {
     initialize: function()
     {
         // Prime the creation of the singleton TimelineContentView since it needs to listen for events.
-        this._timelineContentView = WebInspector.contentBrowser.contentViewForRepresentedObject(WebInspector.timelineManager.recording);
+        this._timelineContentView = WebInspector.contentBrowser.contentViewForRepresentedObject(WebInspector.timelineManager.activeRecording);
     },
 
     showDefaultContentView: function()
@@ -334,13 +334,13 @@ WebInspector.TimelineSidebarPanel.prototype = {
             this.element.classList.remove(WebInspector.TimelineSidebarPanel.TimelineContentViewShowingStyleClass);
     },
 
-    _recordingStarted: function(event)
+    _capturingStarted: function(event)
     {
         this._recordStatusElement.textContent = WebInspector.UIString("Recording");
         this._recordGlyphElement.classList.add(WebInspector.TimelineSidebarPanel.RecordGlyphRecordingStyleClass);
     },
 
-    _recordingStopped: function(event)
+    _capturingStopped: function(event)
     {
         this._recordStatusElement.textContent = "";
         this._recordGlyphElement.classList.remove(WebInspector.TimelineSidebarPanel.RecordGlyphRecordingStyleClass);
@@ -350,7 +350,7 @@ WebInspector.TimelineSidebarPanel.prototype = {
     {
         this._recordGlyphElement.classList.remove(WebInspector.TimelineSidebarPanel.RecordGlyphRecordingForcedStyleClass);
 
-        if (WebInspector.timelineManager.recordingEnabled)
+        if (WebInspector.timelineManager.isCapturing())
             this._recordStatusElement.textContent = WebInspector.UIString("Stop Recording");
         else
             this._recordStatusElement.textContent = WebInspector.UIString("Start Recording");
@@ -360,7 +360,7 @@ WebInspector.TimelineSidebarPanel.prototype = {
     {
         this._recordGlyphElement.classList.remove(WebInspector.TimelineSidebarPanel.RecordGlyphRecordingForcedStyleClass);
 
-        if (WebInspector.timelineManager.recordingEnabled)
+        if (WebInspector.timelineManager.isCapturing())
             this._recordStatusElement.textContent = WebInspector.UIString("Recording");
         else
             this._recordStatusElement.textContent = "";
@@ -371,10 +371,10 @@ WebInspector.TimelineSidebarPanel.prototype = {
         // Add forced class to prevent the glyph from showing a confusing status after click.
         this._recordGlyphElement.classList.add(WebInspector.TimelineSidebarPanel.RecordGlyphRecordingForcedStyleClass);
 
-        if (WebInspector.timelineManager.recordingEnabled)
-            WebInspector.timelineManager.stopRecording();
+        if (WebInspector.timelineManager.isCapturing())
+            WebInspector.timelineManager.stopCapturing();
         else
-            WebInspector.timelineManager.startRecording();
+            WebInspector.timelineManager.startCapturing();
     },
 
     // These methods are only used when ReplayAgent is available.
@@ -408,14 +408,14 @@ WebInspector.TimelineSidebarPanel.prototype = {
     {
         if (!this._replayCaptureButtonItem.activated) {
             WebInspector.replayManager.startCapturing();
-            WebInspector.timelineManager.startRecording();
+            WebInspector.timelineManager.startCapturing();
 
             // De-bounce further presses until the backend has begun capturing.
             this._replayCaptureButtonItem.activated = true;
             this._replayCaptureButtonItem.enabled = false;
         } else {
             WebInspector.replayManager.stopCapturing();
-            WebInspector.timelineManager.stopRecording();
+            WebInspector.timelineManager.stopCapturing();
 
             this._replayCaptureButtonItem.enabled = false;
         }
