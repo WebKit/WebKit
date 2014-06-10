@@ -1,3 +1,10 @@
+2014-06-09  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetState):
+
 2014-06-09  Simon Fraser  <simon.fraser@apple.com>
 
         Work towards having frames in the scrolling tree

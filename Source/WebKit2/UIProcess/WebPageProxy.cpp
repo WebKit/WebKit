@@ -4227,7 +4227,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
         break;
 
     case ResetStateReason::WebProcessExited:
-        error = CallbackBase::Error::ProcessDidClose;
+        error = CallbackBase::Error::ProcessExited;
         break;
     }
 
