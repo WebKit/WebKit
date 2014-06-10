@@ -3364,23 +3364,45 @@ void Editor::scanSelectionForTelephoneNumbers()
 
     Vector<RefPtr<Range>> markedRanges;
 
-    RefPtr<Range> selectedRange = m_frame.selection().toNormalizedRange();
-    if (!selectedRange || (selectedRange->startContainer() == selectedRange->endContainer() && selectedRange->startOffset() == selectedRange->endOffset())) {
+    FrameSelection& frameSelection = m_frame.selection();
+    if (!frameSelection.isRange()) {
         client()->selectedTelephoneNumberRangesChanged(markedRanges);
         return;
     }
 
+    // Extend the range a few characters in each direction to detect incompletely selected phone numbers.
+    static const int charactersToExtend = 15;
+    Position base = frameSelection.selection().base();
+    Position extent = frameSelection.selection().extent();
+    for (int i = 0; i < charactersToExtend; ++i) {
+        base = base.previous(Character);
+        extent = extent.next(Character);
+    }
+
+    FrameSelection extendedSelection;
+    extendedSelection.setBase(base);
+    extendedSelection.setExtent(extent);
+    RefPtr<Range> extendedRange = extendedSelection.toNormalizedRange();
+
     // FIXME: This won't work if a phone number spans multiple chunks of text from the perspective of the TextIterator
     // (By a style change, image, line break, etc.)
     // One idea to handle this would be a model like text search that uses a rotating window.
-    for (TextIterator textChunk(selectedRange.get()); !textChunk.atEnd(); textChunk.advance()) {
+    for (TextIterator textChunk(extendedRange.get()); !textChunk.atEnd(); textChunk.advance()) {
         // TextIterator is supposed to never returns a Range that spans multiple Nodes.
         ASSERT(textChunk.range()->startContainer() == textChunk.range()->endContainer());
 
         scanRangeForTelephoneNumbers(*textChunk.range(), textChunk.text(), markedRanges);
     }
 
-    client()->selectedTelephoneNumberRangesChanged(markedRanges);
+    // Only consider ranges with a detected telephone number if they overlap with the actual selection range.
+    Vector<RefPtr<Range>> extendedMarkedRanges;
+    RefPtr<Range> selectedRange = frameSelection.toNormalizedRange();
+    for (auto& range : markedRanges) {
+        if (rangesOverlap(range.get(), selectedRange.get()))
+            extendedMarkedRanges.append(range);
+    }
+
+    client()->selectedTelephoneNumberRangesChanged(extendedMarkedRanges);
 }
 
 void Editor::scanRangeForTelephoneNumbers(Range& range, const StringView& stringView, Vector<RefPtr<Range>>& markedRanges)

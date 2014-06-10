@@ -1,3 +1,18 @@
+2014-06-10  Brady Eidson  <beidson@apple.com>
+
+        Send more context about text selection to telephone number scanner
+        <rdar://problem/16874385> and https://bugs.webkit.org/show_bug.cgi?id=133684
+
+        Reviewed by Enrica Casucci.
+
+        * dom/Range.cpp:
+        (WebCore::rangesOverlap):Add a utility to check if two ranges overlap.
+        * dom/Range.h:
+        
+        * editing/Editor.cpp:
+        (WebCore::Editor::scanSelectionForTelephoneNumbers): Create a range that is wider than the 
+          actual selection to search for phone numbers that are not completely selected yet.
+
 2014-06-10  Alex Christensen  <achristensen@webkit.org>
 
         [iOS] Another unreviewed build fix after r169746.

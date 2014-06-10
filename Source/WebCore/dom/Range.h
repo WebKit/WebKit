@@ -189,6 +189,7 @@ private:
 PassRefPtr<Range> rangeOfContents(Node&);
 
 bool areRangesEqual(const Range*, const Range*);
+bool rangesOverlap(const Range*, const Range*);
 
 } // namespace
 
