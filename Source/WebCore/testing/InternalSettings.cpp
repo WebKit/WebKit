@@ -486,4 +486,10 @@ void InternalSettings::setShouldConvertPositionStyleOnCopy(bool convert, Excepti
     settings()->setShouldConvertPositionStyleOnCopy(convert);
 }
 
+void InternalSettings::setScrollingTreeIncludesFrames(bool enabled, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setScrollingTreeIncludesFrames(enabled);
+}
+
 }

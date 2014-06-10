@@ -804,7 +804,7 @@ uint64_t FrameView::scrollLayerID() const
     if (!backing)
         return 0;
 
-    return backing->scrollingNodeID();
+    return backing->scrollingNodeIDForRole(FrameScrollingNode);
 }
 
 ScrollableArea* FrameView::scrollableAreaForScrollLayerID(uint64_t nodeID) const

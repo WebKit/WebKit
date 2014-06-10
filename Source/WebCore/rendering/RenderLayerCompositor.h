@@ -395,7 +395,6 @@ private:
     PassRefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const;
 #endif
 
-    // Whether a running transition or animation enforces the need for a compositing layer.
     bool requiresCompositingForAnimation(RenderLayerModelObject&) const;
     bool requiresCompositingForTransform(RenderLayerModelObject&) const;
     bool requiresCompositingForBackfaceVisibility(RenderLayerModelObject&) const;
@@ -424,9 +423,12 @@ private:
     };
     typedef unsigned ScrollCoordinationReasons;
 
+    void updateScrollCoordinationForThisFrame(ScrollingNodeID);
+    ScrollingNodeID attachScrollingNode(RenderLayer&, ScrollingNodeType, ScrollingNodeID parentNodeID);
     void updateScrollCoordinatedLayer(RenderLayer&, ScrollCoordinationReasons);
     void detachScrollCoordinatedLayer(RenderLayer&);
-
+    void reattachSubframeScrollLayers();
+    
     FixedPositionViewportConstraints computeFixedViewportConstraints(RenderLayer&) const;
     StickyPositionViewportConstraints computeStickyViewportConstraints(RenderLayer&) const;
 
@@ -439,7 +441,12 @@ private:
     bool requiresContentShadowLayer() const;
 #endif
 
+    // True if the FrameView uses a ScrollingCoordinator.
     bool hasCoordinatedScrolling() const;
+
+    bool isAsyncScrollableStickyLayer(const RenderLayer&, const RenderLayer** enclosingAcceleratedOverflowLayer = nullptr) const;
+    bool isViewportConstrainedFixedOrStickyLayer(const RenderLayer&) const;
+    
     bool shouldCompositeOverflowControls() const;
 
     void scheduleLayerFlushNow();
@@ -480,6 +487,7 @@ private:
     bool m_shouldFlushOnReattach;
     bool m_forceCompositingMode;
     bool m_inPostLayoutUpdate; // true when it's OK to trust layout information (e.g. layer sizes and positions)
+    bool m_subframeScrollLayersNeedReattach;
 
     bool m_isTrackingRepaints; // Used for testing.
 

@@ -132,6 +132,7 @@ shouldDisplaySubtitles initial=false, conditional=VIDEO_TRACK
 shouldDisplayCaptions initial=false, conditional=VIDEO_TRACK
 shouldDisplayTextDescriptions initial=false, conditional=VIDEO_TRACK
 scrollingCoordinatorEnabled initial=false
+scrollingTreeIncludesFrames initial=defaultScrollingTreeIncludesFrames
 scrollAnimatorEnabled initial=true, conditional=SMOOTH_SCROLLING
 notificationsEnabled initial=true
 

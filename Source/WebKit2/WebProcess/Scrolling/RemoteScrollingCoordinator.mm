@@ -74,6 +74,12 @@ PassOwnPtr<ScrollingTreeNode> RemoteScrollingCoordinator::createScrollingTreeNod
     return nullptr;
 }
 
+bool RemoteScrollingCoordinator::coordinatesScrollingForFrameView(FrameView* frameView) const
+{
+    RenderView* renderView = frameView->renderView();
+    return renderView && renderView->usesCompositing();
+}
+
 bool RemoteScrollingCoordinator::isRubberBandInProgress() const
 {
     // FIXME: need to maintain state in the web process?

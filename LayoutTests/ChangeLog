@@ -1,3 +1,18 @@
+2014-06-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Work towards having frames in the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=133665
+
+        Reviewed by Tim Horton.
+        
+        Tests that dump the scrolling tree with subframes.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/coordinated-frame-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/coordinated-frame-in-fixed-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/coordinated-frame-in-fixed.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/coordinated-frame.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/resources/doc-with-sticky.html: Added.
+
 2014-06-09  Eric Carlson  <eric.carlson@apple.com>
 
         Automatic text track selection can select more than one track

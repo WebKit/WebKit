@@ -108,12 +108,33 @@ public:
     GraphicsLayer* scrollingContentsLayer() const { return m_scrollingContentsLayer.get(); }
 
     void detachFromScrollingCoordinator();
-
-    ScrollingNodeID viewportConstrainedNodeID() const { return m_viewportConstrainedNodeID; }
-    void setViewportConstrainedNodeID(ScrollingNodeID nodeID) { m_viewportConstrainedNodeID = nodeID; }
-
-    ScrollingNodeID scrollingNodeID() const { return m_scrollingNodeID; }
-    void setScrollingNodeID(ScrollingNodeID nodeID) { m_scrollingNodeID = nodeID; }
+    
+    ScrollingNodeID scrollingNodeIDForRole(ScrollingNodeType nodeType) const
+    {
+        switch (nodeType) {
+        case FrameScrollingNode:
+        case OverflowScrollingNode:
+            return m_scrollingNodeID;
+        case FixedNode:
+        case StickyNode:
+            return m_viewportConstrainedNodeID;
+        }
+        return 0;
+    }
+    
+    void setScrollingNodeIDForRole(ScrollingNodeID nodeID, ScrollingNodeType nodeType)
+    {
+        switch (nodeType) {
+        case FrameScrollingNode:
+        case OverflowScrollingNode:
+            m_scrollingNodeID = nodeID;
+            break;
+        case FixedNode:
+        case StickyNode:
+            m_viewportConstrainedNodeID = nodeID;
+            break;
+        }
+    }
     
     ScrollingNodeID scrollingNodeIDForChildren() const { return m_scrollingNodeID ? m_scrollingNodeID : m_viewportConstrainedNodeID; }
 

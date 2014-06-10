@@ -61,6 +61,7 @@ private:
     virtual bool isRemoteScrollingCoordinator() const override { return true; }
     
     // ScrollingCoordinator
+    virtual bool coordinatesScrollingForFrameView(WebCore::FrameView*) const override;
     virtual void scheduleTreeStateCommit() override;
 
     virtual PassOwnPtr<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) override;

@@ -68,6 +68,7 @@
     [RaisesException] void setUseLegacyBackgroundSizeShorthandBehavior(boolean enabled);
     [RaisesException] void setAutoscrollForDragAndDropEnabled(boolean enabled);
     [RaisesException] void setBackgroundShouldExtendBeyondPage(boolean hasExtendedBackground);
+    [RaisesException] void setScrollingTreeIncludesFrames(boolean enabled);
 
     [RaisesException] void setMinimumTimerInterval(unrestricted double intervalInSeconds);
 };

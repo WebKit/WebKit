@@ -1,3 +1,90 @@
+2014-06-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Work towards having frames in the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=133665
+
+        Reviewed by Tim Horton.
+        
+        Optionally (based on Setting) create nodes in the scrolling tree for frames which
+        contain async-scrollable content. This will be used on iOS/WK2 to support accelerated
+        overflow-scroll in iframes. The setting allows for testing on OS X.
+        
+        The change breaks an assumption in ScrollingCoordinator/AsyncScrollingCoordinator
+        that we're always dealing with the main frame, and changes logic in RenderLayerCompositor
+        so that we can connect the scrolling tree across frame boundaries. RenderLayerCompositor
+        maintains a m_subframeScrollLayersNeedReattach flag that gets set whenever we add or remove
+        scroll-coordinated layers in the current frame. When set, after updating compositing
+        layers we walk child frames, and, if they have scrolling nodes, re-attach them to the
+        scrolling tree (which will find the new ancestor node).
+
+        Tests: platform/mac-wk2/tiled-drawing/scrolling/frames/coordinated-frame-in-fixed.html
+               platform/mac-wk2/tiled-drawing/scrolling/frames/coordinated-frame.html
+
+        * WebCore.exp.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollLayerID): Use the new "for role" way of getting the node ID.
+        * page/Settings.cpp:
+        * page/Settings.in: Add scrollingTreeIncludesFrames.
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        (WebCore::AsyncScrollingCoordinator::frameViewNonFastScrollableRegionChanged): Only set
+        the region for the main frame.
+        (WebCore::AsyncScrollingCoordinator::frameViewForScrollingNode): updateScrollPositionAfterAsyncScroll()
+        needs to know which FrameView a given nodeID is hosted in; doing a walk of the frame tree for
+        non-main frames seems to be the safest way.
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+        (WebCore::AsyncScrollingCoordinator::syncChildPositions):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::coordinatesScrollingForFrameView): Consult the new setting.
+        (WebCore::ScrollingCoordinator::frameViewHasSlowRepaintObjectsDidChange):
+        (WebCore::ScrollingCoordinator::frameViewFixedObjectsDidChange):
+        (WebCore::ScrollingCoordinator::frameViewRootLayerDidChange):
+        (WebCore::ScrollingCoordinator::synchronousScrollingReasons):
+        (WebCore::ScrollingCoordinator::updateSynchronousScrollingReasons):
+        (WebCore::ScrollingCoordinator::setForceSynchronousScrollLayerPositionUpdates):
+        (WebCore::ScrollingCoordinator::shouldUpdateScrollLayerPositionSynchronously):
+        (WebCore::ScrollingCoordinator::replaySessionStateDidChange):
+        (WebCore::ScrollingCoordinator::synchronousScrollingReasonsAsText):
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::shouldUpdateScrollLayerPositionSynchronously): Deleted.
+        * rendering/RenderLayerBacking.h: Rather than separate functions to get the two scrolling
+        node IDs, having one scrollingNodeIDForRole() makes calling code cleaner.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor):
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):  call reattachSubframeScrollLayers()
+        after a compositing tree update.
+        (WebCore::RenderLayerCompositor::isAsyncScrollableStickyLayer): Deals with the various configurations
+        in which we can do async scrolling of sticky elements.
+        (WebCore::RenderLayerCompositor::isViewportConstrainedFixedOrStickyLayer):
+        (WebCore::useCoordinatedScrollingForLayer):
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition):
+        (WebCore::RenderLayerCompositor::requiresCompositingForScrolling): Moved.
+        (WebCore::RenderLayerCompositor::notifyIFramesOfCompositingChange): This is a bug fix;
+        we only need to notify child frames, not all descendant frames.
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedStatus):
+        (WebCore::RenderLayerCompositor::removeFromScrollCoordinatedLayers):
+        (WebCore::enclosingScrollingNodeID):
+        (WebCore::scrollCoordinatedAncestorInParentOfFrame):
+        (WebCore::RenderLayerCompositor::reattachSubframeScrollLayers):
+        (WebCore::RenderLayerCompositor::attachScrollingNode):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinationForThisFrame):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+        (WebCore::RenderLayerCompositor::detachScrollCoordinatedLayer):
+        (WebCore::RenderLayerCompositor::registerAllViewportConstrainedLayers):
+        (WebCore::RenderLayerCompositor::willRemoveScrollingLayer):
+        (WebCore::isStickyInAcceleratedScrollingLayerOrViewport): Deleted.
+        (WebCore::isViewportConstrainedFixedOrStickyLayer): Deleted.
+        (WebCore::isMainFrameScrollingOrOverflowScrolling): Deleted.
+        (WebCore::nearestScrollCoordinatedAncestor): Deleted.
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::setSelection): Added comment.
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setScrollingTreeIncludesFrames):
+        * testing/InternalSettings.h: Removed some useless parameter names.
+        * testing/InternalSettings.idl: Added setScrollingTreeIncludesFrames() setting.
+
 2014-06-09  Benjamin Poulain  <bpoulain@apple.com>
 
         Improve CSSPrimitiveValue::customCSSText for ARMv7

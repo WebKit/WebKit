@@ -72,7 +72,8 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
     // frame view whose layout was updated is not the main frame.
     // In the future, we may want to have the ability to set non-fast scrolling regions for more than
     // just the root node. But right now, this concept only applies to the root.
-    m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(computeNonFastScrollableRegion(&m_page->mainFrame(), IntPoint()));
+    if (frameView->frame().isMainFrame())
+        m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(computeNonFastScrollableRegion(&frameView->frame(), IntPoint()));
 
     if (!coordinatesScrollingForFrameView(frameView))
         return;
@@ -105,12 +106,13 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
     node->setScrollableAreaParameters(scrollParameters);
 }
 
-void AsyncScrollingCoordinator::frameViewNonFastScrollableRegionChanged(FrameView*)
+void AsyncScrollingCoordinator::frameViewNonFastScrollableRegionChanged(FrameView* frameView)
 {
     if (!m_scrollingStateTree->rootStateNode())
         return;
 
-    m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(computeNonFastScrollableRegion(&m_page->mainFrame(), IntPoint()));
+    if (frameView->frame().isMainFrame())
+        m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(computeNonFastScrollableRegion(&frameView->frame(), IntPoint()));
 }
 
 void AsyncScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView)
@@ -193,6 +195,35 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScrollTimerFired(T
     updateScrollPositionAfterAsyncScroll(m_scheduledScrollUpdate.nodeID, m_scheduledScrollUpdate.scrollPosition, m_scheduledScrollUpdate.isProgrammaticScroll, m_scheduledScrollUpdate.updateLayerPositionAction);
 }
 
+FrameView* AsyncScrollingCoordinator::frameViewForScrollingNode(ScrollingNodeID scrollingNodeID) const
+{
+    if (scrollingNodeID == m_scrollingStateTree->rootStateNode()->scrollingNodeID())
+        return m_page->mainFrame().view();
+
+    ScrollingStateNode* stateNode = m_scrollingStateTree->stateNodeForID(scrollingNodeID);
+    if (!stateNode)
+        return nullptr;
+
+    // Find the enclosing frame scrolling node.
+    ScrollingStateNode* parentNode = stateNode;
+    while (parentNode && parentNode->nodeType() != FrameScrollingNode)
+        parentNode = parentNode->parent();
+    
+    if (!parentNode)
+        return nullptr;
+    
+    // Walk the frame tree to find the matching FrameView. This is not ideal, but avoids back pointers to FrameViews
+    // from ScrollingTreeStateNodes.
+    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (FrameView* view = frame->view()) {
+            if (view->scrollLayerID() == parentNode->scrollingNodeID())
+                return view;
+        }
+    }
+
+    return nullptr;
+}
+
 void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNodeID scrollingNodeID, const FloatPoint& scrollPosition, bool programmaticScroll, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
 {
     ASSERT(isMainThread());
@@ -200,11 +231,10 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
     if (!m_page)
         return;
 
-    FrameView* frameView = m_page->mainFrame().view();
+    FrameView* frameView = frameViewForScrollingNode(scrollingNodeID);
     if (!frameView)
         return;
 
-    // Main frame.
     if (scrollingNodeID == frameView->scrollLayerID()) {
         bool oldProgrammaticScroll = frameView->inProgrammaticScroll();
         frameView->setInProgrammaticScroll(programmaticScroll);
@@ -316,11 +346,8 @@ void AsyncScrollingCoordinator::syncChildPositions(const LayoutRect& viewportRec
         return;
 
     // FIXME: We'll have to traverse deeper into the tree at some point.
-    size_t size = children->size();
-    for (size_t i = 0; i < size; ++i) {
-        ScrollingStateNode* child = children->at(i).get();
+    for (auto& child : *children)
         child->syncLayerPositionForViewportRect(viewportRect);
-    }
 }
 
 void AsyncScrollingCoordinator::ensureRootStateNodeForFrameView(FrameView* frameView)

@@ -110,7 +110,7 @@ public:
     virtual bool isRemoteScrollingCoordinator() const { return false; }
 
     // Return whether this scrolling coordinator handles scrolling for the given frame view.
-    bool coordinatesScrollingForFrameView(FrameView*) const;
+    virtual bool coordinatesScrollingForFrameView(FrameView*) const;
 
     // Should be called whenever the given frame view has been laid out.
     virtual void frameViewLayoutUpdated(FrameView*) { }
@@ -183,8 +183,8 @@ public:
         IsImageDocument = 1 << 4
     };
 
-    SynchronousScrollingReasons synchronousScrollingReasons() const;
-    bool shouldUpdateScrollLayerPositionSynchronously() const { return synchronousScrollingReasons(); }
+    SynchronousScrollingReasons synchronousScrollingReasons(FrameView*) const;
+    bool shouldUpdateScrollLayerPositionSynchronously() const;
 
     virtual void willDestroyScrollableArea(ScrollableArea*) { }
     virtual void scrollableAreaScrollLayerDidChange(ScrollableArea*) { }
@@ -218,7 +218,7 @@ private:
     virtual void setSynchronousScrollingReasons(SynchronousScrollingReasons) { }
 
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(FrameView*) const;
-    void updateSynchronousScrollingReasons();
+    void updateSynchronousScrollingReasons(FrameView*);
     
     bool m_forceSynchronousScrollLayerPositionUpdates;
 };

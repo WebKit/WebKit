@@ -1,3 +1,17 @@
+2014-06-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Work towards having frames in the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=133665
+
+        Reviewed by Tim Horton.
+        
+        Override coordinatesScrollingForFrameView() to always return true for composited
+        frames, for iOS WK2 (eventually this class will have to be specialized for iOS and OS X).
+
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.h:
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::coordinatesScrollingForFrameView):
+
 2014-06-09  Anders Carlsson  <andersca@apple.com>
 
         Give callbacks real status codes

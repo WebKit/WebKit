@@ -70,6 +70,8 @@ protected:
 
     void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, bool programmaticScroll, SetOrSyncScrollingLayerPosition);
 
+    virtual String scrollingStateTreeAsText() const override;
+
 private:
     virtual bool isAsyncScrollingCoordinator() const override { return true; }
 
@@ -91,7 +93,6 @@ private:
     virtual void updateFrameScrollingNode(ScrollingNodeID, GraphicsLayer* scrollLayer, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer, GraphicsLayer* insetClipLayer, const ScrollingGeometry* = nullptr);
     virtual void updateOverflowScrollingNode(ScrollingNodeID, GraphicsLayer* scrollLayer, GraphicsLayer* scrolledContentsLayer, const ScrollingGeometry* = nullptr);
     
-    virtual String scrollingStateTreeAsText() const override;
     virtual bool isRubberBandInProgress() const override;
     virtual void setScrollPinningBehavior(ScrollPinningBehavior) override;
 
@@ -107,6 +108,8 @@ private:
     void updateMainFrameScrollLayerPosition();
 
     void updateScrollPositionAfterAsyncScrollTimerFired(Timer<AsyncScrollingCoordinator>*);
+    
+    FrameView* frameViewForScrollingNode(ScrollingNodeID) const;
 
     Timer<AsyncScrollingCoordinator> m_updateNodeScrollPositionTimer;
 
