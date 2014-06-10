@@ -839,9 +839,8 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
     if ((start && !end) || (end && !start))
         return;
 
-    // FIXME: view() is just *this here.
-    bool caretChanged = m_selectionWasCaret != view().frame().selection().isCaret();
-    m_selectionWasCaret = view().frame().selection().isCaret();
+    bool caretChanged = m_selectionWasCaret != frame().selection().isCaret();
+    m_selectionWasCaret = frame().selection().isCaret();
     // Just return if the selection hasn't changed.
     if (m_selectionStart == start && m_selectionStartPos == startPos &&
         m_selectionEnd == end && m_selectionEndPos == endPos && !caretChanged)

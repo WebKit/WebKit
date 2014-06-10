@@ -1,3 +1,15 @@
+2014-06-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove use of view() in RenderView code
+        https://bugs.webkit.org/show_bug.cgi?id=133669
+
+        Reviewed by Andreas Kling.
+
+        view() in RenderView just returns *this, so no need to use it.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::setSelection):
+
 2014-06-09  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Wireless route picker control should use touch event handlers
