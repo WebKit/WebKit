@@ -143,6 +143,12 @@ namespace WebCore {
         void setHiddenFromInspector(bool hiddenFromInspector) { m_hiddenFromInspector = hiddenFromInspector; }
 #endif
 
+#if !PLATFORM(COCOA)
+        bool encodingRequiresPlatformData() const { return true; }
+#endif
+        template<class Encoder> void encodeWithoutPlatformData(Encoder&) const;
+        template<class Decoder> bool decodeWithoutPlatformData(Decoder&);
+
         static double defaultTimeoutInterval(); // May return 0 when using platform default.
         static void setDefaultTimeoutInterval(double);
 
@@ -257,6 +263,66 @@ namespace WebCore {
 #if PLATFORM(IOS)
     void initializeHTTPConnectionSettingsOnStartup();
 #endif
+
+template<class Encoder>
+void ResourceRequestBase::encodeWithoutPlatformData(Encoder& encoder) const
+{
+    ASSERT(!m_httpBody);
+    ASSERT(!m_platformRequestUpdated);
+    encoder << m_url.string();
+    encoder << m_timeoutInterval;
+    encoder << m_firstPartyForCookies.string();
+    encoder << m_httpMethod;
+    encoder << m_httpHeaderFields;
+    encoder << m_responseContentDispositionEncodingFallbackArray;
+    encoder.encodeEnum(m_cachePolicy);
+    encoder << m_allowCookies;
+    encoder.encodeEnum(m_priority);
+}
+
+template<class Decoder>
+bool ResourceRequestBase::decodeWithoutPlatformData(Decoder& decoder)
+{
+    String url;
+    if (!decoder.decode(url))
+        return false;
+    m_url = URL(ParsedURLString, url);
+
+    if (!decoder.decode(m_timeoutInterval))
+        return false;
+
+    String firstPartyForCookies;
+    if (!decoder.decode(firstPartyForCookies))
+        return false;
+    m_firstPartyForCookies = URL(ParsedURLString, firstPartyForCookies);
+
+    if (!decoder.decode(m_httpMethod))
+        return false;
+
+    if (!decoder.decode(m_httpHeaderFields))
+        return false;
+
+    if (!decoder.decode(m_responseContentDispositionEncodingFallbackArray))
+        return false;
+
+    ResourceRequestCachePolicy cachePolicy;
+    if (!decoder.decodeEnum(cachePolicy))
+        return false;
+    m_cachePolicy = cachePolicy;
+
+    bool allowCookies;
+    if (!decoder.decode(allowCookies))
+        return false;
+    m_allowCookies = allowCookies;
+
+    ResourceLoadPriority priority;
+    if (!decoder.decodeEnum(priority))
+        return false;
+    m_priority = priority;
+
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // ResourceRequestBase_h

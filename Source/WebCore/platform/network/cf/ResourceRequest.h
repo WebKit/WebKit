@@ -108,6 +108,7 @@ namespace WebCore {
         void applyWebArchiveHackForMail();
 #endif
 #if PLATFORM(COCOA)
+        bool encodingRequiresPlatformData() const { return m_httpBody || m_nsRequest; }
         NSURLRequest *nsURLRequest(HTTPBodyUpdatePolicy) const;
 #endif
 

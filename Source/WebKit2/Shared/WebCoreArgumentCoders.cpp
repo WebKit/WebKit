@@ -675,7 +675,13 @@ void ArgumentCoder<ResourceRequest>::encode(ArgumentEncoder& encoder, const Reso
     encoder << resourceRequest.hiddenFromInspector();
 #endif
 
-    encodePlatformData(encoder, resourceRequest);
+    if (resourceRequest.encodingRequiresPlatformData()) {
+        encoder << true;
+        encodePlatformData(encoder, resourceRequest);
+        return;
+    }
+    encoder << false;
+    resourceRequest.encodeWithoutPlatformData(encoder);
 }
 
 bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder& decoder, ResourceRequest& resourceRequest)
@@ -730,7 +736,13 @@ bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder& decoder, ResourceRe
     resourceRequest.setHiddenFromInspector(isHiddenFromInspector);
 #endif
 
-    return decodePlatformData(decoder, resourceRequest);
+    bool hasPlatformData;
+    if (!decoder.decode(hasPlatformData))
+        return false;
+    if (hasPlatformData)
+        return decodePlatformData(decoder, resourceRequest);
+
+    return resourceRequest.decodeWithoutPlatformData(decoder);
 }
 
 void ArgumentCoder<ResourceResponse>::encode(ArgumentEncoder& encoder, const ResourceResponse& resourceResponse)
