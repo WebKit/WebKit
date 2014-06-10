@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LayerFlushScheduler_h
-#define LayerFlushScheduler_h
+#ifndef RunLoopObserver_h
+#define RunLoopObserver_h
 
-#include "LayerFlushSchedulerClient.h"
-#include "RunLoopObserver.h"
+#include <CoreFoundation/CoreFoundation.h>
+#include <functional>
 #include <wtf/Noncopyable.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
-    
-class LayerFlushScheduler {
-    WTF_MAKE_NONCOPYABLE(LayerFlushScheduler);
-public:
-    LayerFlushScheduler(LayerFlushSchedulerClient*);
-    virtual ~LayerFlushScheduler();
 
-    void schedule();
+class RunLoopObserver {
+    WTF_MAKE_NONCOPYABLE(RunLoopObserver);
+public:
+    typedef std::function<void ()> RunLoopObserverCallback;
+
+    static std::unique_ptr<RunLoopObserver> create(CFIndex order, RunLoopObserverCallback callback);
+
+    ~RunLoopObserver();
+
+    void schedule(CFRunLoopRef = nullptr);
     void invalidate();
 
-    void suspend();
-    void resume();
+    bool isScheduled() const { return m_runLoopObserver; }
 
-    bool isSuspended() const { return m_isSuspended; }
+    enum class WellKnownRunLoopOrders : CFIndex {
+        CoreAnimationCommit = 2000000
+    };
 
-#if PLATFORM(COCOA)
-    virtual void layerFlushCallback();
-#endif
+protected:
+    RunLoopObserver(CFIndex order, RunLoopObserverCallback callback)
+        : m_order(order)
+        , m_callback(callback)
+    { }
+
+    void runLoopObserverFired();
 
 private:
-    bool m_isSuspended;
-    LayerFlushSchedulerClient* m_client;
-    
-#if PLATFORM(COCOA)
-    std::unique_ptr<RunLoopObserver> m_runLoopObserver;
-#endif
+    static void runLoopObserverFired(CFRunLoopObserverRef, CFRunLoopActivity, void* context);
+
+    CFIndex m_order;
+    RunLoopObserverCallback m_callback;
+    RetainPtr<CFRunLoopObserverRef> m_runLoopObserver;
 };
 
 } // namespace WebCore
 
-#endif // LayerFlushScheduler_h
+#endif // RunLoopObserver_h

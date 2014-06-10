@@ -1,3 +1,33 @@
+2014-06-10  Timothy Horton  <timothy_horton@apple.com>
+
+        Factor repeated CFRunLoopObserver code out
+        https://bugs.webkit.org/show_bug.cgi?id=133690
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cf/RunLoopObserver.cpp: Added.
+        (WebCore::RunLoopObserver::create):
+        (WebCore::RunLoopObserver::~RunLoopObserver):
+        (WebCore::RunLoopObserver::runLoopObserverFired):
+        (WebCore::RunLoopObserver::schedule):
+        (WebCore::RunLoopObserver::invalidate):
+        * platform/cf/RunLoopObserver.h: Added.
+        (WebCore::RunLoopObserver::isScheduled):
+        (WebCore::RunLoopObserver::RunLoopObserver):
+        Factor CFRunLoopObserver management code out of LayerFlushScheduler and WebKit2.
+
+        * platform/graphics/ca/LayerFlushScheduler.h:
+        * platform/graphics/ca/mac/LayerFlushSchedulerMac.cpp:
+        (WebCore::LayerFlushScheduler::LayerFlushScheduler):
+        (WebCore::LayerFlushScheduler::~LayerFlushScheduler):
+        (WebCore::LayerFlushScheduler::layerFlushCallback):
+        (WebCore::LayerFlushScheduler::schedule):
+        (WebCore::LayerFlushScheduler::invalidate):
+        (WebCore::LayerFlushScheduler::runLoopObserverCallback): Deleted.
+        Make use of WebCore::RunLoopObserver.
+
 2014-06-10  Simon Fraser  <simon.fraser@apple.com>
 
         Modernize loop code in scrolling tree code

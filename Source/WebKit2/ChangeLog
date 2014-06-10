@@ -1,3 +1,21 @@
+2014-06-10  Timothy Horton  <timothy_horton@apple.com>
+
+        Factor repeated CFRunLoopObserver code out
+        https://bugs.webkit.org/show_bug.cgi?id=133690
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::showDebugIndicator):
+        (WebKit::coreAnimationDidCommitLayersCallback): Deleted.
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::scheduleCoreAnimationLayerCommitObserver): Deleted.
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::coreAnimationDidCommitLayers): Deleted.
+        Make use of WebCore::RunLoopObserver.
+
 2014-06-10  Anders Carlsson  <andersca@apple.com>
 
         Fix availability declaration.

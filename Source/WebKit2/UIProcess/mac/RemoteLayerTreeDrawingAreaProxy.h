@@ -31,6 +31,7 @@
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/RunLoopObserver.h>
 
 namespace WebKit {
 
@@ -75,8 +76,6 @@ private:
     
     void sendUpdateGeometry();
 
-    void scheduleCoreAnimationLayerCommitObserver();
-
     RemoteLayerTreeHost m_remoteLayerTreeHost;
     bool m_isWaitingForDidUpdateGeometry;
 
@@ -87,7 +86,7 @@ private:
     RetainPtr<CALayer> m_tileMapHostLayer;
     RetainPtr<CALayer> m_exposedRectIndicatorLayer;
 
-    RetainPtr<CFRunLoopObserverRef> m_layerCommitObserver;
+    std::unique_ptr<WebCore::RunLoopObserver> m_layerCommitObserver;
 };
 
 DRAWING_AREA_PROXY_TYPE_CASTS(RemoteLayerTreeDrawingAreaProxy, type() == DrawingAreaTypeRemoteLayerTree);

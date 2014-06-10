@@ -37,10 +37,9 @@
 #import <WebCore/IOSurfacePool.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
 
-static const CFIndex CoreAnimationCommitRunLoopOrder = 2000000;
-static const CFIndex DidCommitLayersRunLoopOrder = CoreAnimationCommitRunLoopOrder + 1;
-
 using namespace WebCore;
+
+static const CFIndex didCommitLayersRunLoopOrder = (CFIndex)RunLoopObserver::WellKnownRunLoopOrders::CoreAnimationCommit + 1;
 
 namespace WebKit {
 
@@ -56,16 +55,15 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy* w
 #endif
 
     m_webPageProxy->process().addMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_webPageProxy->pageID(), *this);
+
+    m_layerCommitObserver = RunLoopObserver::create(didCommitLayersRunLoopOrder, [this]() {
+        this->coreAnimationDidCommitLayers();
+    });
 }
 
 RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy()
 {
     m_webPageProxy->process().removeMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_webPageProxy->pageID());
-
-    if (m_layerCommitObserver) {
-        CFRunLoopObserverInvalidate(m_layerCommitObserver.get());
-        m_layerCommitObserver = nullptr;
-    }
 }
 
 void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
@@ -150,7 +148,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
         asLayer(m_debugIndicatorLayerTreeHost->rootLayer()).name = @"Indicator host root";
     }
 
-    scheduleCoreAnimationLayerCommitObserver();
+    m_layerCommitObserver->schedule();
 }
 
 void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(uint64_t layerID, const String& key, double startTime)
@@ -296,33 +294,9 @@ void RemoteLayerTreeDrawingAreaProxy::showDebugIndicator(bool show)
     }
 }
 
-static void coreAnimationDidCommitLayersCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context)
-{
-    static_cast<RemoteLayerTreeDrawingAreaProxy*>(context)->coreAnimationDidCommitLayers();
-}
-
-void RemoteLayerTreeDrawingAreaProxy::scheduleCoreAnimationLayerCommitObserver()
-{
-    if (m_layerCommitObserver)
-        return;
-
-    CFRunLoopRef runLoop = CFRunLoopGetCurrent();
-
-    // Make sure we wake up the loop or the observer could be delayed until some other source fires.
-    CFRunLoopWakeUp(runLoop);
-
-    CFRunLoopObserverContext context = { 0, this, 0, 0, 0 };
-    m_layerCommitObserver = adoptCF(CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting | kCFRunLoopExit, true, DidCommitLayersRunLoopOrder, coreAnimationDidCommitLayersCallback, &context));
-
-    CFRunLoopAddObserver(runLoop, m_layerCommitObserver.get(), kCFRunLoopCommonModes);
-}
-
 void RemoteLayerTreeDrawingAreaProxy::coreAnimationDidCommitLayers()
 {
-    if (m_layerCommitObserver) {
-        CFRunLoopObserverInvalidate(m_layerCommitObserver.get());
-        m_layerCommitObserver = nullptr;
-    }
+    m_layerCommitObserver->invalidate();
 
     if (!m_webPageProxy->isValid())
         return;

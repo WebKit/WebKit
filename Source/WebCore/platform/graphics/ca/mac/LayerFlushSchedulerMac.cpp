@@ -37,8 +37,7 @@
 
 namespace WebCore {
 
-static const CFIndex CoreAnimationRunLoopOrder = 2000000;
-static const CFIndex LayerFlushRunLoopOrder = CoreAnimationRunLoopOrder - 1;
+static const CFIndex layerFlushRunLoopOrder = (CFIndex)RunLoopObserver::WellKnownRunLoopOrders::CoreAnimationCommit - 1;
 
 static CFRunLoopRef currentRunLoop()
 {
@@ -59,21 +58,20 @@ LayerFlushScheduler::LayerFlushScheduler(LayerFlushSchedulerClient* client)
     , m_client(client)
 {
     ASSERT_ARG(client, client);
+
+    m_runLoopObserver = RunLoopObserver::create(layerFlushRunLoopOrder, [this]() {
+        if (this->isSuspended())
+            return;
+        this->layerFlushCallback();
+    });
 }
 
 LayerFlushScheduler::~LayerFlushScheduler()
 {
-    ASSERT(!m_runLoopObserver);
 }
 
-void LayerFlushScheduler::runLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context)
+void LayerFlushScheduler::layerFlushCallback()
 {
-    static_cast<LayerFlushScheduler*>(context)->runLoopObserverCallback();
-}
-
-void LayerFlushScheduler::runLoopObserverCallback()
-{
-    ASSERT(m_runLoopObserver);
     ASSERT(!m_isSuspended);
 
     AutodrainedPool pool;
@@ -86,26 +84,12 @@ void LayerFlushScheduler::schedule()
     if (m_isSuspended)
         return;
 
-    CFRunLoopRef runLoop = currentRunLoop();
-
-    // Make sure we wake up the loop or the observer could be delayed until some other source fires.
-    CFRunLoopWakeUp(runLoop);
-
-    if (m_runLoopObserver)
-        return;
-
-    CFRunLoopObserverContext context = { 0, this, 0, 0, 0 };
-    m_runLoopObserver = adoptCF(CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting | kCFRunLoopExit, true, LayerFlushRunLoopOrder, runLoopObserverCallback, &context));
-
-    CFRunLoopAddObserver(runLoop, m_runLoopObserver.get(), kCFRunLoopCommonModes);
+    m_runLoopObserver->schedule(currentRunLoop());
 }
 
 void LayerFlushScheduler::invalidate()
 {
-    if (m_runLoopObserver) {
-        CFRunLoopObserverInvalidate(m_runLoopObserver.get());
-        m_runLoopObserver = nullptr;   
-    }
+    m_runLoopObserver->invalidate();
 }
     
 } // namespace WebCore
