@@ -26,14 +26,14 @@
 
 namespace JSC {
 
-void HashTable::createTable(VM& vm) const
+void HashTable::createTable(VM&) const
 {
     ASSERT(!keys);
-    keys = static_cast<StringImpl**>(fastMalloc(sizeof(StringImpl*) * numberOfValues));
+    keys = static_cast<const char**>(fastMalloc(sizeof(char*) * numberOfValues));
 
     for (int i = 0; i < numberOfValues; ++i) {
         if (values[i].m_key)
-            keys[i] = &Identifier::add(&vm, values[i].m_key).leakRef();
+            keys[i] = values[i].m_key;
         else
             keys[i] = 0;
     }
@@ -42,10 +42,6 @@ void HashTable::createTable(VM& vm) const
 void HashTable::deleteTable() const
 {
     if (keys) {
-        for (int i = 0; i != numberOfValues; ++i) {
-            if (keys[i])
-                keys[i]->deref();
-        }
         fastFree(keys);
         keys = nullptr;
     }

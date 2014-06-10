@@ -86,7 +86,7 @@ static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* class
 
         for (auto iter = table->begin(vm); iter != table->end(vm); ++iter) {
             if ((!(iter->attributes() & DontEnum) || (mode == IncludeDontEnumProperties)) && !((iter->attributes() & BuiltinOrFunction) && didReify))
-                propertyNames.add(iter.key());
+                propertyNames.add(Identifier(&vm, iter.key()));
         }
     }
 }

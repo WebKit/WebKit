@@ -1,5 +1,26 @@
 2014-06-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Global HashTables contain references to atomic StringImpls
+        https://bugs.webkit.org/show_bug.cgi?id=133661
+
+        Reviewed by Geoffrey Garen.
+
+        This was a long-standing bug revealed by bug 133558. The issue is that the global static HashTables 
+        cache their set of keys as StringImpls that are associated with a particular VM.  This is obviously 
+        incompatible with using multiple VMs on multiple threads (e.g. when using workers). The fix is to 
+        change the "keys" field of the static HashTables to be char** instead of StringImpl**.
+
+        * runtime/JSObject.cpp:
+        (JSC::getClassPropertyNames):
+        * runtime/Lookup.cpp:
+        (JSC::HashTable::createTable):
+        (JSC::HashTable::deleteTable):
+        * runtime/Lookup.h:
+        (JSC::HashTable::ConstIterator::key):
+        (JSC::HashTable::entry):
+
+2014-06-09  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Build fix after r169703
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
