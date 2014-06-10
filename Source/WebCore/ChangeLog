@@ -1,3 +1,31 @@
+2014-06-09  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r167962): Out of bounds read in JSC::StructureIDTable::get()
+        https://bugs.webkit.org/show_bug.cgi?id=133463
+        <rdar://problem/17098100>
+
+        Reviewed by Geoffrey Garen.
+
+        Revise MediaControllerHost implementation so that instead of holding its
+        own pointer to the JS Controller object, it uses new properties added to
+        the internal media controls DOM hierarchy. This allows the GC to see the
+        needed lifecycle of the various media control objects and avoids the
+        premature deallocation that caused this bug.
+ 
+        * Modules/mediacontrols/MediaControlsHost.h:
+        (WebCore::MediaControlsHost::controllerJSValue): Deleted.
+        (WebCore::MediaControlsHost::setControllerJSValue): Deleted.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::controllerJSValue): Added convenience function
+        to share logic for retrieving the controller object.
+        (WebCore::HTMLMediaElement::updateCaptionContainer): Revise to use new method
+        for accessing the controller.
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot): Connect the media
+        elements JS wrapper object to the MediaControlsHost JS wrapper. Then connect
+        the MediaControlsHost JS wrapper to the Controller JS object.
+        (WebCore::HTMLMediaElement::pageScaleFactorChanged): Revise to use new method
+        for accessing the controller.
+
 2014-06-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Japanese text in Google search is rendered too low and clipped

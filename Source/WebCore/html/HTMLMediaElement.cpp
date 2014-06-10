@@ -3649,6 +3649,32 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
     m_processingPreferenceChange = false;
 }
 
+static JSC::JSValue controllerJSValue(JSC::ExecState& exec, JSDOMGlobalObject& globalObject, HTMLMediaElement& media)
+{
+    auto mediaJSWrapper = toJS(&exec, &globalObject, &media);
+    
+    // Retrieve the controller through the JS object graph
+    JSC::JSObject* mediaJSWrapperObject = JSC::jsDynamicCast<JSC::JSObject*>(mediaJSWrapper);
+    if (!mediaJSWrapperObject)
+        return JSC::jsNull();
+    
+    JSC::Identifier controlsHost(&exec.vm(), "controlsHost");
+    JSC::JSValue controlsHostJSWrapper = mediaJSWrapperObject->get(&exec, controlsHost);
+    if (exec.hadException())
+        return JSC::jsNull();
+
+    JSC::JSObject* controlsHostJSWrapperObject = JSC::jsDynamicCast<JSC::JSObject*>(controlsHostJSWrapper);
+    if (!controlsHostJSWrapperObject)
+        return JSC::jsNull();
+
+    JSC::Identifier controllerID(&exec.vm(), "controller");
+    JSC::JSValue controllerJSWrapper = controlsHostJSWrapperObject->get(&exec, controllerID);
+    if (exec.hadException())
+        return JSC::jsNull();
+
+    return controllerJSWrapper;
+}
+    
 void HTMLMediaElement::updateCaptionContainer()
 {
     LOG(Media, "HTMLMediaElement::updateCaptionContainer");
@@ -3672,11 +3698,10 @@ void HTMLMediaElement::updateCaptionContainer()
     JSC::ExecState* exec = globalObject->globalExec();
     JSC::JSLockHolder lock(exec);
 
-    JSC::JSValue controllerValue = m_mediaControlsHost->controllerJSValue();
-    if (controllerValue.isUndefinedOrNull() || !controllerValue.isObject())
+    JSC::JSValue controllerValue = controllerJSValue(*exec, *globalObject, *this);
+    JSC::JSObject* controllerObject = JSC::jsDynamicCast<JSC::JSObject*>(controllerValue);
+    if (!controllerObject)
         return;
-
-    JSC::JSObject* controllerObject = controllerValue.toObject(exec);
 
     // The media controls script must provide a method on the Controller object with the following details.
     // Name: updateCaptionContainer
@@ -3685,10 +3710,9 @@ void HTMLMediaElement::updateCaptionContainer()
     // Return value:
     //     None
     JSC::JSValue methodValue = controllerObject->get(exec, JSC::Identifier(exec, "updateCaptionContainer"));
-    if (methodValue.isUndefinedOrNull() || !methodValue.isObject())
+    JSC::JSObject* methodObject = JSC::jsDynamicCast<JSC::JSObject*>(methodValue);
+    if (!methodObject)
         return;
-
-    JSC::JSObject* methodObject = methodValue.toObject(exec);
 
     JSC::CallData callData;
     JSC::CallType callType = methodObject->methodTable()->getCallData(methodObject, callData);
@@ -5795,10 +5819,13 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     if (!m_mediaControlsHost)
         m_mediaControlsHost = MediaControlsHost::create(this);
 
+    auto mediaJSWrapper = toJS(exec, globalObject, this);
+    auto mediaControlsHostJSWrapper = toJS(exec, globalObject, m_mediaControlsHost.get());
+    
     JSC::MarkedArgumentBuffer argList;
     argList.append(toJS(exec, globalObject, root));
-    argList.append(toJS(exec, globalObject, this));
-    argList.append(toJS(exec, globalObject, m_mediaControlsHost.get()));
+    argList.append(mediaJSWrapper);
+    argList.append(mediaControlsHostJSWrapper);
 
     JSC::JSObject* function = functionValue.toObject(exec);
     JSC::CallData callData;
@@ -5807,7 +5834,27 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
         return;
 
     JSC::JSValue controllerValue = JSC::call(exec, function, callType, callData, globalObject, argList);
-    m_mediaControlsHost->setControllerJSValue(controllerValue);
+    JSC::JSObject* controllerObject = JSC::jsDynamicCast<JSC::JSObject*>(controllerValue);
+    if (!controllerObject)
+        return;
+
+    // Connect the Media, MediaControllerHost, and Controller so the GC knows about their relationship
+    JSC::JSObject* mediaJSWrapperObject = mediaJSWrapper.toObject(exec);
+    JSC::Identifier controlsHost(&exec->vm(), "controlsHost");
+    
+    ASSERT(!mediaJSWrapperObject->hasProperty(exec, controlsHost));
+
+    mediaJSWrapperObject->putDirect(exec->vm(), controlsHost, mediaControlsHostJSWrapper, JSC::DontDelete | JSC::DontEnum | JSC::ReadOnly);
+
+    JSC::JSObject* mediaControlsHostJSWrapperObject = JSC::jsDynamicCast<JSC::JSObject*>(mediaControlsHostJSWrapper);
+    if (!mediaControlsHostJSWrapperObject)
+        return;
+    
+    JSC::Identifier controller(&exec->vm(), "controller");
+
+    ASSERT(!controllerObject->hasProperty(exec, controller));
+
+    mediaControlsHostJSWrapperObject->putDirect(exec->vm(), controller, controllerValue, JSC::DontDelete | JSC::DontEnum | JSC::ReadOnly);
 
     setPageScaleFactorProperty(exec, controllerValue, page->pageScaleFactor());
 
@@ -5842,7 +5889,7 @@ void HTMLMediaElement::pageScaleFactorChanged()
     JSC::ExecState* exec = globalObject->globalExec();
     JSC::JSLockHolder lock(exec);
 
-    JSC::JSValue controllerValue = m_mediaControlsHost->controllerJSValue();
+    JSC::JSValue controllerValue = controllerJSValue(*exec, *globalObject, *this);
 
     setPageScaleFactorProperty(exec, controllerValue, page->pageScaleFactor());
 }
