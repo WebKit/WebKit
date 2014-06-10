@@ -203,6 +203,7 @@
     [RaisesException] DOMString pageSizeAndMarginsInPixels(long pageIndex, long width, long height, long marginTop, long marginRight, long marginBottom, long marginLeft);
 
     [RaisesException] void setPageScaleFactor(unrestricted float scaleFactor, long x, long y);
+    [RaisesException] void setPageZoomFactor(unrestricted float zoomFactor);
 
     void setHeaderHeight(unrestricted float height);
     void setFooterHeight(unrestricted float height);

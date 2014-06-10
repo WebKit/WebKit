@@ -727,7 +727,7 @@ bool MediaQueryEvaluator::eval(const MediaQueryExp* expr) const
     if (func) {
         CSSToLengthConversionData conversionData(m_style.get(),
             m_frame->document()->documentElement()->renderStyle(),
-            m_frame->document()->renderView());
+            m_frame->document()->renderView(), 1, false);
         return func(expr->value(), conversionData, m_frame, NoPrefix);
     }
 

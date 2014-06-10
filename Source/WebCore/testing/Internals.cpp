@@ -1780,6 +1780,17 @@ void Internals::setPageScaleFactor(float scaleFactor, int x, int y, ExceptionCod
     page->setPageScaleFactor(scaleFactor, IntPoint(x, y));
 }
 
+void Internals::setPageZoomFactor(float zoomFactor, ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    Frame* frame = document->frame();
+    frame->setPageZoomFactor(zoomFactor);
+}
+
 void Internals::setHeaderHeight(float height)
 {
     Document* document = contextDocument();

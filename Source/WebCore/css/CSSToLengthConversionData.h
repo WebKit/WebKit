@@ -51,14 +51,17 @@ public:
     {
         ASSERT(zoom > 0);
     }
+
     CSSToLengthConversionData(RenderStyle* style, const RenderStyle* rootStyle, const RenderView* renderView, bool computingFontSize = false)
         : m_style(style)
         , m_rootStyle(rootStyle)
         , m_renderView(renderView)
+        , m_zoom(1)
         , m_useEffectiveZoom(true)
         , m_computingFontSize(computingFontSize)
     {
     }
+
     CSSToLengthConversionData()
         : CSSToLengthConversionData(nullptr, nullptr, nullptr)
     {

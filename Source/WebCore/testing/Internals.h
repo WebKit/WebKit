@@ -246,6 +246,7 @@ public:
     String pageSizeAndMarginsInPixels(int, int, int, int, int, int, int, ExceptionCode& = ASSERT_NO_EXCEPTION) const;
 
     void setPageScaleFactor(float scaleFactor, int x, int y, ExceptionCode&);
+    void setPageZoomFactor(float zoomFactor, ExceptionCode&);
 
     void setHeaderHeight(float);
     void setFooterHeight(float);

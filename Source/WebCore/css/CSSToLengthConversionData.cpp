@@ -47,7 +47,11 @@ double CSSToLengthConversionData::viewportWidthFactor() const
 {
     if (m_style && !m_computingFontSize)
         m_style->setHasViewportUnits();
-    return m_renderView ? m_renderView->viewportSizeForCSSViewportUnits().width() / 100.0 : 0.0;
+
+    if (!m_renderView)
+        return 0;
+
+    return m_renderView->viewportSizeForCSSViewportUnits().width() / 100.0;
 }
 
 double CSSToLengthConversionData::viewportHeightFactor() const
@@ -56,9 +60,9 @@ double CSSToLengthConversionData::viewportHeightFactor() const
         m_style->setHasViewportUnits();
 
     if (!m_renderView)
-        return 0.0;
+        return 0;
 
-    return m_renderView ? m_renderView->viewportSizeForCSSViewportUnits().height() / 100.0 : 0.0;
+    return m_renderView->viewportSizeForCSSViewportUnits().height() / 100.0;
 }
 
 double CSSToLengthConversionData::viewportMinFactor() const
@@ -67,7 +71,7 @@ double CSSToLengthConversionData::viewportMinFactor() const
         m_style->setHasViewportUnits();
 
     if (!m_renderView)
-        return 0.0;
+        return 0;
 
     IntSize viewportSizeForCSSViewportUnits = m_renderView->viewportSizeForCSSViewportUnits();
     return std::min(viewportSizeForCSSViewportUnits.width(), viewportSizeForCSSViewportUnits.height()) / 100.0;
@@ -79,7 +83,7 @@ double CSSToLengthConversionData::viewportMaxFactor() const
         m_style->setHasViewportUnits();
 
     if (!m_renderView)
-        return 0.0;
+        return 0;
 
     IntSize viewportSizeForCSSViewportUnits = m_renderView->viewportSizeForCSSViewportUnits();
     return std::max(viewportSizeForCSSViewportUnits.width(), viewportSizeForCSSViewportUnits.height()) / 100.0;
