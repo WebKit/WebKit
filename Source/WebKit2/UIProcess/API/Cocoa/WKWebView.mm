@@ -494,9 +494,8 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
         if (errorCode != WebKit::ScriptValueCallback::Error::None) {
             auto error = createNSError(callbackErrorCode(errorCode));
             if (errorCode == WebKit::ScriptValueCallback::Error::OwnerWasInvalidated) {
-                // We don't want to call the block from within the call that invalidates the web view,
-                // since that can lead to client code re-entrency bugs (Since calling -[WKWebView _close]
-                // invalidates the callback.
+                // The OwnerWasInvalidated callback is synchronous. We don't want to call the block from within it
+                // because that can trigger re-entrancy bugs in WebKit.
                 // FIXME: It would be even better if GenericCallback did this for us.
                 dispatch_async(dispatch_get_main_queue(), [completionHandler, error] {
                     completionHandler(nil, error.get());
