@@ -94,6 +94,7 @@
 #include "PseudoElement.h"
 #include "QuotesData.h"
 #include "Rect.h"
+#include "RenderGrid.h"
 #include "RenderRegion.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarTheme.h"
@@ -1857,6 +1858,23 @@ bool StyleResolver::useSVGZoomRules()
 }
 
 #if ENABLE(CSS_GRID_LAYOUT)
+static void createImplicitNamedGridLinesFromGridArea(const NamedGridAreaMap& namedGridAreas, NamedGridLinesMap& namedGridLines, GridTrackSizingDirection direction)
+{
+    for (auto& area : namedGridAreas) {
+        GridSpan areaSpan = direction == ForRows ? area.value.rows : area.value.columns;
+        {
+            auto& startVector = namedGridLines.add(area.key + "-start", Vector<size_t>()).iterator->value;
+            startVector.append(areaSpan.initialPositionIndex);
+            std::sort(startVector.begin(), startVector.end());
+        }
+        {
+            auto& endVector = namedGridLines.add(area.key + "-end", Vector<size_t>()).iterator->value;
+            endVector.append(areaSpan.finalPositionIndex + 1);
+            std::sort(endVector.begin(), endVector.end());
+        }
+    }
+}
+
 static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, const StyleResolver::State& state, GridLength& workingLength)
 {
     if (primitiveValue->getValueID() == CSSValueWebkitMinContent) {
@@ -2663,6 +2681,10 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         OrderedNamedGridLinesMap orderedNamedGridLines;
         if (!createGridTrackList(value, trackSizes, namedGridLines, orderedNamedGridLines, state))
             return;
+        const NamedGridAreaMap& namedGridAreas = state.style()->namedGridArea();
+        if (!namedGridAreas.isEmpty())
+            createImplicitNamedGridLinesFromGridArea(namedGridAreas, namedGridLines, ForColumns);
+
         state.style()->setGridColumns(trackSizes);
         state.style()->setNamedGridColumnLines(namedGridLines);
         state.style()->setOrderedNamedGridColumnLines(orderedNamedGridLines);
@@ -2686,6 +2708,10 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         OrderedNamedGridLinesMap orderedNamedGridLines;
         if (!createGridTrackList(value, trackSizes, namedGridLines, orderedNamedGridLines, state))
             return;
+        const NamedGridAreaMap& namedGridAreas = state.style()->namedGridArea();
+        if (!namedGridAreas.isEmpty())
+            createImplicitNamedGridLinesFromGridArea(namedGridAreas, namedGridLines, ForRows);
+
         state.style()->setGridRows(trackSizes);
         state.style()->setNamedGridRowLines(namedGridLines);
         state.style()->setOrderedNamedGridRowLines(orderedNamedGridLines);
@@ -2744,10 +2770,19 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             return;
         }
 
-        CSSGridTemplateAreasValue* gridTemplateValue = toCSSGridTemplateAreasValue(value);
-        state.style()->setNamedGridArea(gridTemplateValue->gridAreaMap());
-        state.style()->setNamedGridAreaRowCount(gridTemplateValue->rowCount());
-        state.style()->setNamedGridAreaColumnCount(gridTemplateValue->columnCount());
+        CSSGridTemplateAreasValue* gridTemplateAreasValue = toCSSGridTemplateAreasValue(value);
+        const NamedGridAreaMap& newNamedGridAreas = gridTemplateAreasValue->gridAreaMap();
+
+        NamedGridLinesMap namedGridColumnLines = state.style()->namedGridColumnLines();
+        NamedGridLinesMap namedGridRowLines = state.style()->namedGridRowLines();
+        createImplicitNamedGridLinesFromGridArea(newNamedGridAreas, namedGridColumnLines, ForColumns);
+        createImplicitNamedGridLinesFromGridArea(newNamedGridAreas, namedGridRowLines, ForRows);
+        state.style()->setNamedGridColumnLines(namedGridColumnLines);
+        state.style()->setNamedGridRowLines(namedGridRowLines);
+
+        state.style()->setNamedGridArea(gridTemplateAreasValue->gridAreaMap());
+        state.style()->setNamedGridAreaRowCount(gridTemplateAreasValue->rowCount());
+        state.style()->setNamedGridAreaColumnCount(gridTemplateAreasValue->columnCount());
         return;
     }
 #endif /* ENABLE(CSS_GRID_LAYOUT) */

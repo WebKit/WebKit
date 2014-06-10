@@ -46,6 +46,11 @@
       -webkit-grid-template-rows: 50px (c-end) 100px (c-end) 200px (c-end);
   }
 
+  .gridImplicitArea {
+      -webkit-grid-template-columns: 50px (z-start) 100px (z-end) 200px;
+      -webkit-grid-template-rows: 50px (z-start) 100px 200px (z-end);
+  }
+
 </style>
 <script src="../../resources/check-layout.js"></script>
 </head>
@@ -237,6 +242,15 @@
     <div class="sizedToGridArea" style="-webkit-grid-row: -end;" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="100"></div>
     <div class="sizedToGridArea" style="-webkit-grid-column-end: -start; -webkit-grid-row-start: -end;" data-offset-x="50" data-offset-y="50" data-expected-width="100" data-expected-height="100"></div>
 
+  </div>
+</div>
+
+<!-- Check that <custom-ident>-{start|end} named lines define implicit named areas -->
+<div style="position: relative">
+  <div class="grid gridAreas gridImplicitArea">
+    <div class="sizedToGridArea" style="-webkit-grid-column: z;" data-offset-x="50" data-offset-y="0" data-expected-width="100" data-expected-height="50"></div>
+    <div class="sizedToGridArea" style="-webkit-grid-row: z;" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="300"></div>
+    <div class="sizedToGridArea" style="-webkit-grid-column-end: z; -webkit-grid-row-start: z;" data-offset-x="50" data-offset-y="50" data-expected-width="100" data-expected-height="100"></div>
   </div>
 </div>
 

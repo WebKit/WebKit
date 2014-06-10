@@ -1,3 +1,29 @@
+2014-06-05  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Simplify the named grid lines resolution algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=133543
+
+        Reviewed by Darin Adler.
+
+        Added a new test that checks that named grid lines and areas are
+        correctly set after dynamically changing them with JS. It also
+        verifies that we properly recompute the resolution of named grid
+        lines/areas when the positioning properties change.
+
+        Also appended a new test case to verify that explicitly adding
+        named lines of the form <foo-start>/<foo-end> effectively creates
+        implicit named grid areas so that we could use them in grid
+        placement properties (for example -webkit-grid-column: foo).
+
+        No need to add more tests for named grid lines/areas resolution as
+        we already have a quite good coverage (the feature was already
+        there, we're simplifying/improving the implementation).
+
+        * fast/css-grid-layout/named-grid-lines-with-named-grid-areas-dynamic-get-set-expected.txt: Added.
+        * fast/css-grid-layout/named-grid-lines-with-named-grid-areas-dynamic-get-set.html: Added.
+        * fast/css-grid-layout/named-grid-lines-with-named-grid-areas-resolution-expected.txt:
+        * fast/css-grid-layout/named-grid-lines-with-named-grid-areas-resolution.html:
+
 2014-06-10  Kiran  <kiran.guduru@samsung.com>
 
         [MediaStream] Add getTracks() support to MediaStream.
