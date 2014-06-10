@@ -1,5 +1,11 @@
 2014-06-10  Andy Estes  <aestes@apple.com>
 
+        Use [ Pass Failure ] instead of [ Skip ] for the tests skipped in r169767.
+
+        * platform/mac/TestExpectations:
+
+2014-06-10  Andy Estes  <aestes@apple.com>
+
         REGRESSION (6/9/2014): Several TextTrackCue tests became very flaky
         https://bugs.webkit.org/show_bug.cgi?id=133686
 
