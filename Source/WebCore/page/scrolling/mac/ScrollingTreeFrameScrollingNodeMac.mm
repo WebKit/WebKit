@@ -411,9 +411,8 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition(const FloatPoint
 
     viewportRect.setLocation(FloatPoint() + scrollOffsetForFixedChildren);
 
-    size_t size = m_children->size();
-    for (size_t i = 0; i < size; ++i)
-        m_children->at(i)->updateLayersAfterAncestorChange(*this, viewportRect, FloatSize());
+    for (auto& child : *m_children)
+        child->updateLayersAfterAncestorChange(*this, viewportRect, FloatSize());
 }
 
 void ScrollingTreeFrameScrollingNodeMac::updateLayersAfterViewportChange(const FloatRect&, double)

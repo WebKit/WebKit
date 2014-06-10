@@ -88,9 +88,8 @@ void ScrollingStateNode::cloneAndResetChildren(ScrollingStateNode& clone, Scroll
     if (!m_children)
         return;
 
-    size_t size = m_children->size();
-    for (size_t i = 0; i < size; ++i)
-        clone.appendChild(m_children->at(i)->cloneAndReset(adoptiveTree));
+    for (auto& child : *m_children)
+        clone.appendChild(child->cloneAndReset(adoptiveTree));
 }
 
 void ScrollingStateNode::appendChild(PassOwnPtr<ScrollingStateNode> childNode)
@@ -118,9 +117,8 @@ void ScrollingStateNode::removeChild(ScrollingStateNode* node)
         return;
     }
 
-    size_t size = m_children->size();
-    for (size_t i = 0; i < size; ++i)
-        m_children->at(i)->removeChild(node);
+    for (auto& child : *m_children)
+        child->removeChild(node);
 }
 
 void ScrollingStateNode::willBeRemovedFromStateTree()
@@ -130,9 +128,8 @@ void ScrollingStateNode::willBeRemovedFromStateTree()
     if (!m_children)
         return;
 
-    size_t size = m_children->size();
-    for (size_t i = 0; i < size; ++i)
-        m_children->at(i)->willBeRemovedFromStateTree();
+    for (auto& child : *m_children)
+        child->willBeRemovedFromStateTree();
 }
 
 void ScrollingStateNode::setLayer(const LayerRepresentation& layerRepresentation)
@@ -152,11 +149,10 @@ void ScrollingStateNode::dump(TextStream& ts, int indent) const
 
     if (m_children) {
         writeIndent(ts, indent + 1);
-        size_t size = children()->size();
-        ts << "(children " << size << "\n";
+        ts << "(children " << children()->size() << "\n";
         
-        for (size_t i = 0; i < size; i++)
-            m_children->at(i)->dump(ts, indent + 2);
+        for (auto& child : *m_children)
+            child->dump(ts, indent + 2);
         writeIndent(ts, indent + 1);
         ts << ")\n";
     }

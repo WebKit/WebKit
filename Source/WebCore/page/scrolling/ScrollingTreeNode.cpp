@@ -68,9 +68,8 @@ void ScrollingTreeNode::removeChild(ScrollingTreeNode* node)
         return;
     }
 
-    size_t size = m_children->size();
-    for (size_t i = 0; i < size; ++i)
-        m_children->at(i)->removeChild(node);
+    for (auto& child : *m_children)
+        child->removeChild(node);
 }
 
 } // namespace WebCore

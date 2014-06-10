@@ -1,3 +1,22 @@
+2014-06-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Modernize loop code in scrolling tree code
+        https://bugs.webkit.org/show_bug.cgi?id=133688
+
+        Reviewed by Anders Carlsson.
+
+        Use new loop syntax for walking children.
+
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::cloneAndResetChildren):
+        (WebCore::ScrollingStateNode::removeChild):
+        (WebCore::ScrollingStateNode::willBeRemovedFromStateTree):
+        (WebCore::ScrollingStateNode::dump):
+        * page/scrolling/ScrollingTreeNode.cpp:
+        (WebCore::ScrollingTreeNode::removeChild):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition):
+
 2014-06-10  Anders Carlsson  <andersca@apple.com>
 
         Add -[WKWebView evaluateJavaScript:completionHandler:]
