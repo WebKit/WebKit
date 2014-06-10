@@ -1,3 +1,17 @@
+2014-06-09  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Wireless route picker control should use touch event handlers
+        https://bugs.webkit.org/show_bug.cgi?id=133672
+
+        Reviewed by Brent Fulgham.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.createControls): Listen for touch events.
+        (ControllerIOS.prototype.handleWirelessPickerButtonTouchStart): New, handle touch start.
+        (ControllerIOS.prototype.handleWirelessPickerButtonTouchEnd): New, handle touch end.
+        (ControllerIOS.prototype.handleWirelessPickerButtonTouchCancel): New, handle touch cancel.
+        (ControllerIOS.prototype.handleWirelessPickerButtonClicked): Deleted.
+
 2014-06-09  Benjamin Poulain  <benjamin@webkit.org>
 
         Do not use a mask when matching the return value of a function call on ARM

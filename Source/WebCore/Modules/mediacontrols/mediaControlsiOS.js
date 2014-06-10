@@ -144,7 +144,10 @@ ControllerIOS.prototype = {
         var wirelessTargetPicker = this.controls.wirelessTargetPicker = document.createElement('button');
         wirelessTargetPicker.setAttribute('pseudo', '-webkit-media-controls-wireless-playback-picker-button');
         wirelessTargetPicker.setAttribute('aria-label', this.UIString('Choose Wireless Display'));
-        this.listenFor(wirelessTargetPicker, 'click', this.handleWirelessPickerButtonClicked);
+        this.listenFor(wirelessTargetPicker, 'touchstart', this.handleWirelessPickerButtonTouchStart);
+        this.listenFor(wirelessTargetPicker, 'touchend', this.handleWirelessPickerButtonTouchEnd);
+        this.listenFor(wirelessTargetPicker, 'touchcancel', this.handleWirelessPickerButtonTouchCancel);
+
         if (!ControllerIOS.gSimulateWirelessPlaybackTarget)
             wirelessTargetPicker.classList.add(this.ClassNames.hidden);
 
@@ -393,8 +396,18 @@ ControllerIOS.prototype = {
         this.updateWirelessTargetAvailable();
     },
 
-    handleWirelessPickerButtonClicked: function(event) {
+    handleWirelessPickerButtonTouchStart: function() {
+        this.controls.wirelessTargetPicker.classList.add('active');
+    },
+
+    handleWirelessPickerButtonTouchEnd: function(event) {
+        this.controls.wirelessTargetPicker.classList.remove('active');
         this.video.webkitShowPlaybackTargetPicker();
+        return true;
+    },
+
+    handleWirelessPickerButtonTouchCancel: function(event) {
+        this.controls.wirelessTargetPicker.classList.remove('active');
         return true;
     },
 
