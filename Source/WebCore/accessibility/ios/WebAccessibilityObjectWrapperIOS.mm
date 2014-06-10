@@ -1479,6 +1479,11 @@ static RenderObject* rendererForView(WAKView* view)
     // The UIKit accessibility wrapper will override and post appropriate notification.        
 }
 
+- (void)postValueChangedNotification
+{
+    // The UIKit accessibility wrapper will override and post appropriate notification.
+}
+
 - (void)postScrollStatusChangeNotification
 {
     // The UIKit accessibility wrapper will override and post appropriate notification.
@@ -2028,6 +2033,25 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 - (NSAttributedString *)attributedStringForRange:(NSRange)range
 {
     return [self _stringForRange:range attributed:YES];
+}
+
+- (NSRange)_accessibilitySelectedTextRange
+{
+    if (![self _prepareAccessibilityCall] || !m_object->isTextControl())
+        return NSMakeRange(NSNotFound, 0);
+    
+    PlainTextRange textRange = m_object->selectedTextRange();
+    if (textRange.isNull())
+        return NSMakeRange(NSNotFound, 0);
+    return NSMakeRange(textRange.start, textRange.length);    
+}
+
+- (void)_accessibilitySetSelectedTextRange:(NSRange)range
+{
+    if (![self _prepareAccessibilityCall] || !m_object->isTextControl())
+        return;
+    
+    m_object->setSelectedTextRange(PlainTextRange(range.location, range.length));
 }
 
 // A convenience method for getting the accessibility objects of a NSRange. Currently used only by DRT.

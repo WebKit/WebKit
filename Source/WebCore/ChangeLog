@@ -1,3 +1,21 @@
+2014-06-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WK2: iOS: text editing does not work
+        https://bugs.webkit.org/show_bug.cgi?id=133666
+
+        Reviewed by Mario Sanchez Prada.
+
+        In WK2, all the text editing is handled by the WebProcess, so selectedTextRange and setSelectedTextRange
+        need to be implemented, as well as posting the right value change notification.
+
+        * accessibility/ios/AXObjectCacheIOS.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper postValueChangedNotification]):
+        (-[WebAccessibilityObjectWrapper _accessibilitySelectedTextRange]):
+        (-[WebAccessibilityObjectWrapper _accessibilitySetSelectedTextRange:]):
+
 2014-06-10  Andreas Kling  <akling@apple.com>
 
         [iOS WebKit2] Stay in "memory pressure" mode until told otherwise.
