@@ -70,7 +70,9 @@ static int _notifyToken;
 // These value seems reasonable and testing verifies that it throttles frequent
 // low memory events, greatly reducing CPU usage.
 static const unsigned s_minimumHoldOffTime = 5;
+#if !PLATFORM(IOS)
 static const unsigned s_holdOffMultiplier = 20;
+#endif
 
 void MemoryPressureHandler::install()
 {

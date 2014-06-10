@@ -1,5 +1,12 @@
 2014-06-10  Alex Christensen  <achristensen@webkit.org>
 
+        [iOS] Another unreviewed build fix after r169746.
+
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        Prevent another unused value error.
+
+2014-06-10  Alex Christensen  <achristensen@webkit.org>
+
         [iOS] Unreviewed build fix after r169746.
 
         * platform/cocoa/MemoryPressureHandlerCocoa.mm:
