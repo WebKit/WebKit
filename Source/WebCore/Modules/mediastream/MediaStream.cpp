@@ -249,6 +249,17 @@ MediaStreamTrack* MediaStream::getTrackById(String id)
     return nullptr;
 }
 
+Vector<RefPtr<MediaStreamTrack>> MediaStream::getTracks()
+{
+    Vector<RefPtr<MediaStreamTrack>> tracks;
+    for (auto it = m_audioTracks.begin(), end = m_audioTracks.end(); it != end; ++it)
+        tracks.append((*it).get());
+    for (auto it = m_videoTracks.begin(), end = m_videoTracks.end(); it != end; ++it)
+        tracks.append((*it).get());
+
+    return tracks;
+}
+
 void MediaStream::trackDidEnd()
 {
     for (auto it = m_audioTracks.begin(), end = m_audioTracks.end(); it != end; ++it) {

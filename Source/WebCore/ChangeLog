@@ -1,3 +1,20 @@
+2014-06-10  Kiran  <kiran.guduru@samsung.com>
+
+        [MediaStream] Add getTracks() support to MediaStream.
+        https://bugs.webkit.org/show_bug.cgi?id=133641
+
+        Reviewed by Eric Carlson.
+
+        A new method named getTracks is proposed to retrieve all the tracks
+        of a MediaStream irrespective of the type. This method has been implementd.
+
+        Test: fast/mediastream/MediaStream-getTracks.html
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::getTracks):
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStream.idl:
+
 2014-06-09  Simon Fraser  <simon.fraser@apple.com>
 
         Remove use of view() in RenderView code
