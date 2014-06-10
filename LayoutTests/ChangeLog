@@ -1,3 +1,11 @@
+2014-06-10  Simon Fraser  <simon.fraser@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=133694
+
+        Revert the part of r169733 that caused this test to start failing.
+
+        * platform/mac/TestExpectations:
+
 2014-06-10  Andy Estes  <aestes@apple.com>
 
         Use [ Pass Failure ] instead of [ Skip ] for the tests skipped in r169767.
