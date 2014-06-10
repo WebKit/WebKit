@@ -166,7 +166,9 @@ void MemoryPressureHandler::respondToMemoryPressure(bool critical)
 {
     uninstall();
 
+#if !PLATFORM(IOS)
     double startTime = monotonicallyIncreasingTime();
+#endif
 
     m_lowMemoryHandler(critical);
 

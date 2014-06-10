@@ -1,3 +1,11 @@
+2014-06-10  Alex Christensen  <achristensen@webkit.org>
+
+        [iOS] Unreviewed build fix after r169746.
+
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::respondToMemoryPressure):
+        Protect startTime with !PLATFORM(IOS) to prevent a unused variable build error.
+
 2014-06-10  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WK2: iOS: text editing does not work
