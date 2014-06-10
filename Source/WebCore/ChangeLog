@@ -1,5 +1,12 @@
 2014-06-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Remove the bogus assertion that didn't even build.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::formatNumberValue):
+
+2014-06-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         Commit the right fix.
 
         * css/CSSPrimitiveValue.cpp:

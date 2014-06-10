@@ -930,7 +930,6 @@ NEVER_INLINE PassRef<StringImpl> CSSPrimitiveValue::formatNumberValue(const char
     PassRef<StringImpl> string = StringImpl::createUninitialized(bufferLength, buffer);
 
     unsigned length = decimal.toStringDecimal(buffer, bufferLength);
-    ASSERT(length == string.get().length());
 
     for (unsigned i = 0; i < suffixLength; ++i)
         buffer[length + i] = static_cast<LChar>(suffix[i]);
