@@ -1,3 +1,19 @@
+2014-06-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Japanese text in Google search is rendered too low and clipped
+        https://bugs.webkit.org/show_bug.cgi?id=133595
+
+        Reviewed by Simon Fraser.
+
+        This is a revert of r155324.
+
+        * fast/dom/HTMLInputElement/input-line-height-expected.txt: Removed.
+        * fast/dom/HTMLInputElement/input-line-height.html: Removed.
+        * fast/forms/placeholder-position-expected.txt:
+        * platform/mac/fast/forms/placeholder-position-expected.png:
+        * platform/mac/fast/forms/placeholder-position-expected.txt:
+        * platform/mac-mountainlion/fast/forms/placeholder-position-expected.txt:
+
 2014-06-10  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r167937): Do not use effective zoom factor while resolving media query's min-, max-(device)width/height values.

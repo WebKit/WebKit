@@ -1,3 +1,24 @@
+2014-06-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Japanese text in Google search is rendered too low and clipped
+        https://bugs.webkit.org/show_bug.cgi?id=133595
+
+        Reviewed by Simon Fraser.
+
+        This is a revert of r155324.
+
+        By forcing line-height to be normal, r155324 was forcing WebKit to inspect font metrics
+        to determine the height of a line. This means that if a fallback font was required to
+        draw a line of text, and the fallback font had a higher ascent than the primary font,
+        the entire line of text would be pushed down. If we don't force line-height to be normal,
+        then we use the line-height value instead, which short circuits this mechanism, thereby
+        not pushing text down.
+
+        No new tests (because this is simply a revert)
+
+        * css/html.css:
+        (input): Deleted.
+
 2014-06-10  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r167937): Do not use effective zoom factor while resolving media query's min-, max-(device)width/height values.
