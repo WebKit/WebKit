@@ -137,7 +137,7 @@ void MemoryPressureHandler::releaseMemory(bool critical)
 void MemoryPressureHandler::install() { }
 void MemoryPressureHandler::uninstall() { }
 void MemoryPressureHandler::holdOff(unsigned) { }
-void MemoryPressureHandler::respondToMemoryPressure() { }
+void MemoryPressureHandler::respondToMemoryPressure(bool) { }
 void MemoryPressureHandler::platformReleaseMemory(bool) { }
 void MemoryPressureHandler::ReliefLogger::platformLog() { }
 size_t MemoryPressureHandler::ReliefLogger::platformMemoryUsage() { return 0; }

@@ -1,3 +1,31 @@
+2014-06-10  Andreas Kling  <akling@apple.com>
+
+        [iOS WebKit2] Stay in "memory pressure" mode until told otherwise.
+        <https://webkit.org/b/133671>
+
+        When we receive the first memory pressure signal, flip the flag in
+        MemoryPressureHandler so that isUnderMemoryPressure() returns true
+        from then on, until the system tells us pressure levels are back
+        to normal.
+
+        The hold-off mechanism is disabled for iOS, that wasn't actually
+        needed in the first place, since the system is not going to spam
+        you with tons of notifications.
+
+        Also propagate the "critical" flag all the way from the system
+        to the pressure handler. Note that we don't actually do anything
+        differently based on the flag yet.
+
+        Reviewed by Sam Weinig.
+
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::respondToMemoryPressure):
+        * platform/MemoryPressureHandler.h:
+        (WebCore::MemoryPressureHandler::setUnderMemoryPressure):
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::install):
+        (WebCore::MemoryPressureHandler::respondToMemoryPressure):
+
 2014-06-10  Simon Fraser  <simon.fraser@apple.com>
 
         Fix logging of sticky scrolling tree nodes

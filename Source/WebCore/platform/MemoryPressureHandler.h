@@ -60,6 +60,7 @@ public:
     }
 
     bool isUnderMemoryPressure() const { return m_underMemoryPressure; }
+    void setUnderMemoryPressure(bool b) { m_underMemoryPressure = b; }
 
 #if PLATFORM(IOS)
     // FIXME: Can we share more of this with OpenSource?
@@ -107,7 +108,7 @@ private:
     MemoryPressureHandler();
     ~MemoryPressureHandler();
 
-    void respondToMemoryPressure();
+    void respondToMemoryPressure(bool critical);
     static void platformReleaseMemory(bool critical);
 
     bool m_installed;
