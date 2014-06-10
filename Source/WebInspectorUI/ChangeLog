@@ -1,3 +1,18 @@
+2014-06-09  Jono Wells  <jonowells@apple.com>
+
+        REGRESSION: Web Inspector: Exception showing the DOM tree for a node with too many children
+        https://bugs.webkit.org/show_bug.cgi?id=129696
+
+        Fix issue where sometimes inspecting an element will try to attach the "show all nodes" button
+        before the expand function is called in TreeElement before _childrenListNode has been set.
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TreeOutline.js:
+        (TreeOutline.prototype.appendChild):
+        (TreeOutline.prototype.insertChild):
+        Added check for existance of this._childrenListNode.
+
 2014-05-29  Timothy Hatcher  <timothy@apple.com>
 
         Fix an exception in InspectorBackend.Command.prototype.supports.
