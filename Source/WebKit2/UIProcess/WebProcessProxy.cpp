@@ -201,6 +201,7 @@ void WebProcessProxy::removeWebPage(uint64_t pageID)
 {
     m_pageMap.remove(pageID);
     globalPageMap().remove(pageID);
+
 #if PLATFORM(COCOA)
     m_processSuppressiblePages.remove(pageID);
     updateProcessSuppressionState();
@@ -208,15 +209,20 @@ void WebProcessProxy::removeWebPage(uint64_t pageID)
 
     // If this was the last WebPage open in that web process, and we have no other reason to keep it alive, let it go.
     // We only allow this when using a network process, as otherwise the WebProcess needs to preserve its session state.
-    if (m_context->usesNetworkProcess() && canTerminateChildProcess()) {
-        abortProcessLaunchIfNeeded();
+    if (!m_context->usesNetworkProcess() || !canTerminateChildProcess())
+        return;
+
+    abortProcessLaunchIfNeeded();
+
 #if PLATFORM(IOS)
+    if (state() == State::Running) {
         // On iOS deploy a watchdog in the UI process, since the content may be suspended.
         // 30s should be sufficient for any outstanding activity to complete cleanly.
         connection()->terminateSoon(30);
-#endif
-        disconnect();
     }
+#endif
+
+    disconnect();
 }
 
 WebBackForwardListItem* WebProcessProxy::webBackForwardItem(uint64_t itemID) const
