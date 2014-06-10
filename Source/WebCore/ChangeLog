@@ -1,3 +1,10 @@
+2014-06-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Debug build fix after r169731.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::formatNumberValue):
+
 2014-06-09  Simon Fraser  <simon.fraser@apple.com>
 
         Work towards having frames in the scrolling tree
