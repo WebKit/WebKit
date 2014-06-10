@@ -244,6 +244,10 @@ webkit.org/b/133685 fast/dom/beforeload/remove-frame-in-beforeload-listener.html
 webkit.org/b/133685 fast/parser/remove-misnested-iframe-in-beforeload.html [ Skip ]
 webkit.org/b/133685 fast/parser/remove-misnested-iframe-parent-in-beforeload.html [ Skip ]
 
+webkit.org/b/133696 fast/frames/iframe-onload-remove-self-no-crash.html [ Skip ]
+webkit.org/b/133696 fast/loader/create-frame-in-DOMContentLoaded.html [ Skip ]
+webkit.org/b/133696 fast/loader/frame-creation-removal.html [ Skip ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
