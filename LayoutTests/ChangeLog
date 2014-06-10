@@ -1,3 +1,18 @@
+2014-06-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix logging of sticky scrolling tree nodes
+        https://bugs.webkit.org/show_bug.cgi?id=133670
+
+        Reviewed by Sam Weinig.
+        
+        Rebaselined.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/coordinated-frame-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/coordinated-frame-in-fixed-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/sticky/negative-scroll-offset-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/sticky/sticky-horizontal-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/sticky/sticky-vertical-expected.txt:
+
 2014-06-05  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Simplify the named grid lines resolution algorithm

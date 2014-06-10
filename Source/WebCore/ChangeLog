@@ -1,3 +1,16 @@
+2014-06-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix logging of sticky scrolling tree nodes
+        https://bugs.webkit.org/show_bug.cgi?id=133670
+
+        Reviewed by Sam Weinig.
+
+        ScrollingStateStickyNode::dumpProperties() dumped stickyBoxRect() twice and
+        didn't dump constrainingRectAtLastLayout(), so fix that.
+
+        * page/scrolling/ScrollingStateStickyNode.cpp:
+        (WebCore::ScrollingStateStickyNode::dumpProperties):
+
 2014-06-05  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Simplify the named grid lines resolution algorithm

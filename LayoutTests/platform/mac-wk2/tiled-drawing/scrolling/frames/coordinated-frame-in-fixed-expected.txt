@@ -16,7 +16,7 @@
               (top offset 10.00)
               (containing block rect 8.00, 10.00 469.00 x 1850.00)
               (sticky box rect 8.00 830.00 100.00 100.00)
-              (sticky box rect 8.00 830.00 100.00 100.00)
+              (constraining rect 0.00 0.00 485.00 300.00)
               (sticky offset at last layout 0.00 0.00)
               (layer position at last layout 8.00 830.00)
             )

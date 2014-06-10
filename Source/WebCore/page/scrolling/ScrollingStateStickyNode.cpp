@@ -120,8 +120,8 @@ void ScrollingStateStickyNode::dumpProperties(TextStream& ts, int indent) const
     ts << "(sticky box rect " << r.x() << " " << r.y() << " " << r.width() << " " << r.height() << ")\n";
 
     writeIndent(ts, indent + 1);
-    r = m_constraints.stickyBoxRect();
-    ts << "(sticky box rect " << r.x() << " " << r.y() << " " << r.width() << " " << r.height() << ")\n";
+    r = m_constraints.constrainingRectAtLastLayout();
+    ts << "(constraining rect " << r.x() << " " << r.y() << " " << r.width() << " " << r.height() << ")\n";
 
     writeIndent(ts, indent + 1);
     ts << "(sticky offset at last layout " << m_constraints.stickyOffsetAtLastLayout().width() << " " << m_constraints.stickyOffsetAtLastLayout().height() << ")\n";
