@@ -1,3 +1,15 @@
+2014-06-10  Michael Saboff  <msaboff@apple.com>
+
+        In a certain app state, Array.prototype.filter() returns incorrect results
+        https://bugs.webkit.org/show_bug.cgi?id=133577
+
+        Reviewed by Oliver Hunt.
+
+        Fixed the LLInt processing of op_put_by_val_direct to have the same hole check as op_put_by_val.
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2014-06-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Global HashTables contain references to atomic StringImpls

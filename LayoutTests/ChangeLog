@@ -1,3 +1,18 @@
+2014-06-10  Michael Saboff  <msaboff@apple.com>
+
+        In a certain app state, Array.prototype.filter() returns incorrect results
+        https://bugs.webkit.org/show_bug.cgi?id=133577
+
+        Reviewed by Oliver Hunt.
+
+        New test to check that the llint handles writing to an array hole from a built-in
+        function.
+
+        * js/regress/put-by-val-direct-expected.txt: Added.
+        * js/regress/put-by-val-direct.html: Added.
+        * js/regress/script-tests/put-by-val-direct.js: Added.
+        (test):
+
 2014-06-10  Simon Fraser  <simon.fraser@apple.com>
 
         Fix logging of sticky scrolling tree nodes

@@ -1495,7 +1495,7 @@ macro contiguousPutByVal(storeCallback)
     jmp .storeResult
 end
 
-macro putByVal(holeCheck, slowPath)
+macro putByVal(slowPath)
     traceExecution()
     writeBarrierOnOperands(1, 3)
     loadisFromInstruction(1, t0)
@@ -1543,7 +1543,7 @@ macro putByVal(holeCheck, slowPath)
 .opPutByValNotContiguous:
     bineq t2, ArrayStorageShape, .opPutByValSlow
     biaeq t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t0], .opPutByValOutOfBounds
-    holeCheck(ArrayStorage::m_vector[t0, t3, 8], .opPutByValArrayStorageEmpty)
+    btqz ArrayStorage::m_vector[t0, t3, 8], .opPutByValArrayStorageEmpty
 .opPutByValArrayStorageStoreResult:
     loadisFromInstruction(3, t2)
     loadConstantOrVariable(t2, t1)
@@ -1568,13 +1568,10 @@ macro putByVal(holeCheck, slowPath)
 end
 
 _llint_op_put_by_val:
-    putByVal(macro(slot, slowPath)
-        btqz slot, slowPath
-    end, _llint_slow_path_put_by_val)
+    putByVal(_llint_slow_path_put_by_val)
 
 _llint_op_put_by_val_direct:
-    putByVal(macro(slot, slowPath)
-    end, _llint_slow_path_put_by_val_direct)
+    putByVal(_llint_slow_path_put_by_val_direct)
 
 
 _llint_op_jmp:
