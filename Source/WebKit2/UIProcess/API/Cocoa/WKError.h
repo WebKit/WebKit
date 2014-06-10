@@ -29,6 +29,21 @@
 
 #import <Foundation/Foundation.h>
 
+/*! @constant WKErrorDomain Indicates a WebKit error. */
 WK_EXTERN NSString * const WKErrorDomain WK_AVAILABLE(10_0, 8_0);
+
+/*! @enum WKErrorCode
+ @abstract Constants used by NSError to indicate errors in the WebKit domain.
+ @constant WKErrorUnknown                       Indicates that an unknown error occurred.
+ @constant WKErrorWebContentProcessTerminated   Indicates that the Web Content process was terminated.
+ @constant WKErrorWebViewInvalidated            Indicates that the WKWebView was invalidated.
+ @constant WKErrorJavaScriptExceptionOccurred   Indicates that a JavaScript exception occurred.
+ */
+typedef NS_ENUM(NSInteger, WKErrorCode) {
+    WKErrorUnknown = 1,
+    WKErrorWebContentProcessTerminated,
+    WKErrorWebViewInvalidated,
+    WKErrorJavaScriptExceptionOccurred,
+} WK_ENUM_AVAILABLE(10_10, 8_0);
 
 #endif

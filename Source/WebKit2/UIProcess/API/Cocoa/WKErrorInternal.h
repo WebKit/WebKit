@@ -23,39 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKErrorInternal.h"
+#import "WKError.h"
 
 #if WK_API_ENABLED
 
-#import <WebCore/LocalizedStrings.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/text/WTFString.h>
+#import "GenericCallback.h"
 
-NSString * const WKErrorDomain = @"WKErrorDomain";
-
-static NSString *localizedDescriptionForErrorCode(WKErrorCode errorCode)
-{
-    switch (errorCode) {
-    case WKErrorUnknown:
-        return WEB_UI_STRING("An unknown error occurred", "WKErrorUnknown description");
-
-    case WKErrorWebContentProcessTerminated:
-        return WEB_UI_STRING("The Web Content process was terminated", "WKErrorWebContentProcessTerminated description");
-
-    case WKErrorWebViewInvalidated:
-        return WEB_UI_STRING("The WKWebView was invalidated", "WKErrorWebViewInvalidated description");
-
-    case WKErrorJavaScriptExceptionOccurred:
-        return WEB_UI_STRING("A JavaScript exception occurred", "WKErrorJavaScriptExceptionOccurred description");
-    }
-}
-
-RetainPtr<NSError> createNSError(WKErrorCode errorCode)
-{
-    auto userInfo = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:localizedDescriptionForErrorCode(errorCode), NSLocalizedDescriptionKey, nil]);
-
-    return adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:errorCode userInfo:userInfo.get()]);
-}
+RetainPtr<NSError> createNSError(WKErrorCode);
 
 #endif

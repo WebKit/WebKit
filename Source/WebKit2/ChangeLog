@@ -1,5 +1,49 @@
 2014-06-10  Anders Carlsson  <andersca@apple.com>
 
+        Add -[WKWebView evaluateJavaScript:completionHandler:]
+        https://bugs.webkit.org/show_bug.cgi?id=133689
+        <rdar://problem/17152685>
+
+        Reviewed by Geoffrey Garen.
+
+        * Shared/API/c/WKErrorRef.h:
+        Remove WKErrorCode typedef from here.
+
+        * UIProcess/API/C/WKPageLoaderClient.h:
+        Use uint32_t instead of WKErrorCode.
+
+        * UIProcess/API/Cocoa/WKError.h:
+        (NS_ENUM):
+        Add a WKErrorDomain and a WKErrorCode enum.
+
+        * UIProcess/API/Cocoa/WKError.mm:
+        (localizedDescriptionForErrorCode):
+        Helper that returns the localized description given an error code.
+
+        (createNSError):
+        Helper that creates an NSError with the correct localized description given an error code.
+
+        * UIProcess/API/Cocoa/WKErrorInternal.h:
+        Add helpers.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        Add evaluateJavaScript:completionHandler: method.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (callbackErrorCode):
+        Helper that returns a WKErrorCode from a WebKit::CallbackBase::Error enum.
+
+        (-[WKWebView evaluateJavaScript:completionHandler:]):
+        Run the JavaScript code and handle all the error cases.
+
+        (-[WKWebView _runJavaScriptInMainFrame:]):
+        Reimplement this using the API method.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+2014-06-10  Anders Carlsson  <andersca@apple.com>
+
         Don't call Connection::terminateSoon if the connection is null
         https://bugs.webkit.org/show_bug.cgi?id=133695
         <rdar://problem/17069024>

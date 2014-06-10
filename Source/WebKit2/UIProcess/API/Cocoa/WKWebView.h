@@ -183,6 +183,13 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 - (void)stopLoading;
 
+/* @abstract Evaluates the given JavaScript string.
+ @param javaScriptString The JavaScript string to evaluate.
+ @param completionHandler A block to invoke when script evaluation completes or fails.
+ @discussion The completionHandler is passed the result of the script evaluation or an error.
+*/
+- (void)evaluateJavaScript:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler;
+
 /*! @abstract A Boolean value indicating whether horizontal swipe gestures
  will trigger back-forward list navigations.
  @discussion The default value is NO.

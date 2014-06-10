@@ -40,6 +40,7 @@
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
+#import "WKErrorInternal.h"
 #import "WKHistoryDelegatePrivate.h"
 #import "WKNSData.h"
 #import "WKNSURLExtras.h"
@@ -60,11 +61,14 @@
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import "WebSerializedScriptValue.h"
 #import "_WKFindDelegate.h"
 #import "_WKFormDelegate.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKVisitedLinkProviderInternal.h"
 #import "_WKWebsiteDataStoreInternal.h"
+#import <JavaScriptCore/JSContext.h>
+#import <JavaScriptCore/JSValue.h>
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
@@ -457,6 +461,64 @@ static int32_t deviceOrientation()
 - (void)stopLoading
 {
     _page->stopLoading();
+}
+
+static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
+{
+    switch (error) {
+    case WebKit::CallbackBase::Error::None:
+        ASSERT_NOT_REACHED();
+        return WKErrorUnknown;
+
+    case WebKit::CallbackBase::Error::Unknown:
+        return WKErrorUnknown;
+
+    case WebKit::CallbackBase::Error::ProcessExited:
+        return WKErrorWebContentProcessTerminated;
+
+    case WebKit::CallbackBase::Error::OwnerWasInvalidated:
+        return WKErrorWebViewInvalidated;
+    }
+}
+
+- (void)evaluateJavaScript:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler
+{
+    auto handler = adoptNS([completionHandler copy]);
+
+    _page->runJavaScriptInMainFrame(javaScriptString, WebKit::ScriptValueCallback::create([handler](WebKit::WebSerializedScriptValue* serializedScriptValue, WebKit::ScriptValueCallback::Error errorCode) {
+        if (!handler)
+            return;
+
+        auto completionHandler = (void (^)(id, NSError *))handler.get();
+
+        if (errorCode != WebKit::ScriptValueCallback::Error::None) {
+            auto error = createNSError(callbackErrorCode(errorCode));
+            if (errorCode == WebKit::ScriptValueCallback::Error::OwnerWasInvalidated) {
+                // We don't want to call the block from within the call that invalidates the web view,
+                // since that can lead to client code re-entrency bugs (Since calling -[WKWebView _close]
+                // invalidates the callback.
+                // FIXME: It would be even better if GenericCallback did this for us.
+                dispatch_async(dispatch_get_main_queue(), [completionHandler, error] {
+                    completionHandler(nil, error.get());
+                });
+                return;
+            }
+
+            completionHandler(nil, error.get());
+            return;
+        }
+
+        if (!serializedScriptValue) {
+            completionHandler(nil, createNSError(WKErrorJavaScriptExceptionOccurred).get());
+            return;
+        }
+
+        auto context = adoptNS([[JSContext alloc] init]);
+        JSValueRef valueRef = serializedScriptValue->deserialize([context JSGlobalContextRef], 0);
+        JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:context.get()];
+
+        completionHandler([value toObject], nil);
+    }));
 }
 
 #pragma mark iOS-specific methods
@@ -1435,7 +1497,7 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
 
 - (void)_runJavaScriptInMainFrame:(NSString *)scriptString
 {
-    _page->runJavaScriptInMainFrame(scriptString, WebKit::ScriptValueCallback::create([](bool, WebKit::WebSerializedScriptValue*){}));
+    [self evaluateJavaScript:scriptString completionHandler:^(id, NSError *) { }];
 }
 
 - (void)_getWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler

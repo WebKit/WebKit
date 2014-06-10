@@ -49,14 +49,14 @@
 /* Visible name of the web process. The argument is the application name. */
 "%@ Web Content" = "%@ Web Content";
 
-/* Label for PDF page number indicator. The arguments are the current page number and total page count (iOS only) */
-"%d of %d" = "%d of %d";
-
 /* Name of application's single WebCrypto master key in Keychain */
 "%@ WebCrypto Master Key" = "%@ WebCrypto Master Key";
 
 /* Label to describe the number of files selected in a file upload control that allows multiple files */
 "%d files" = "%d files";
+
+/* Label for PDF page number indicator. */
+"%d of %d" = "%d of %d";
 
 /* Present the number of selected <option> items in a <select multiple> element (iOS only) */
 "%zu Items" = "%zu Items";
@@ -85,6 +85,9 @@
 /* window title for a standalone image (uses multiplication symbol, not x) */
 "<filename> %d×%d pixels" = "<filename> %d×%d pixels";
 
+/* WKErrorJavaScriptExceptionOccurred description */
+"A JavaScript exception occurred" = "A JavaScript exception occurred";
+
 /* Title for Add to Reading List action button */
 "Add to Reading List" = "Add to Reading List";
 
@@ -93,6 +96,9 @@
 
 /* Undo action name */
 "Align Right (Undo action name)" = "Align Right";
+
+/* WKErrorUnknown description */
+"An unknown error occurred" = "An unknown error occurred";
 
 /* Menu item label for automatic track selection behavior */
 "Auto (Recommended)" = "Auto (Recommended)";
@@ -564,6 +570,12 @@
 
 /* WebKitErrorCannotShowURL description */
 "The URL can’t be shown" = "The URL can’t be shown";
+
+/* WKErrorWebViewInvalidated description */
+"The WKWebView was invalidated" = "The WKWebView was invalidated";
+
+/* WKErrorWebContentProcessTerminated description */
+"The Web Content process was terminated" = "The Web Content process was terminated";
 
 /* WebKitErrorGeolocationLocationUnknown description */
 "The current location cannot be found." = "The current location cannot be found.";

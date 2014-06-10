@@ -45,7 +45,6 @@ enum {
     kWKErrorCodeInsecurePlugInVersion =                          205,
     kWKErrorInternal =                                           300,
 };
-typedef uint32_t WKErrorCode;
 
 WK_EXPORT WKTypeID WKErrorGetTypeID();
 
