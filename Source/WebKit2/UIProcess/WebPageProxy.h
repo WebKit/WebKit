@@ -1108,8 +1108,12 @@ private:
 
     void updateViewState(WebCore::ViewState::Flags flagsToUpdate = WebCore::ViewState::AllFlags);
     void updateActivityToken();
-        
-    void resetState();
+
+    enum class ResetStateReason {
+        PageInvalidated,
+        WebProcessExited,
+    };
+    void resetState(ResetStateReason);
     void resetStateAfterProcessExited();
 
     void setUserAgent(const String&);

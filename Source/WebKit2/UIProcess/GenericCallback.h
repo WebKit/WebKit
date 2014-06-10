@@ -39,6 +39,13 @@ namespace WebKit {
 
 class CallbackBase : public RefCounted<CallbackBase> {
 public:
+    enum class Error {
+        None,
+        Unknown,
+        ProcessExited,
+        OwnerWasInvalidated,
+    };
+
     virtual ~CallbackBase()
     {
     }
@@ -120,11 +127,20 @@ public:
 template<typename T>
 class GenericCallback : public CallbackBase {
 public:
-    typedef std::function<void (bool, T)> CallbackFunction;
+    typedef std::function<void (T, Error)> CallbackFunction;
 
     static PassRefPtr<GenericCallback> create(CallbackFunction callback)
     {
         return adoptRef(new GenericCallback(callback));
+    }
+
+    // FIXME: Get rid of this legacy version.
+    typedef std::function<void (bool, T)> LegacyCallbackFunction;
+    static PassRefPtr<GenericCallback> create(LegacyCallbackFunction callback)
+    {
+        return adoptRef(new GenericCallback([callback](T t, Error error) {
+            callback(error != Error::None, std::move(t));
+        }));
     }
 
     virtual ~GenericCallback()
@@ -137,17 +153,17 @@ public:
         if (!m_callback)
             return;
 
-        m_callback(false, returnValue);
+        m_callback(returnValue, Error::None);
 
         m_callback = nullptr;
     }
     
-    void invalidate()
+    void invalidate(Error error = Error::Unknown)
     {
         if (!m_callback)
             return;
 
-        m_callback(true, T());
+        m_callback(T(), error);
 
         m_callback = nullptr;
     }
@@ -262,7 +278,7 @@ private:
 };
 
 template<typename T>
-void invalidateCallbackMap(HashMap<uint64_t, T>& map)
+void invalidateCallbackMap(HashMap<uint64_t, T>& map, CallbackBase::Error error = CallbackBase::Error::Unknown)
 {
     Vector<T> callbacksVector;
     copyValuesToVector(map, callbacksVector);

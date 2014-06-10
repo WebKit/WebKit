@@ -642,7 +642,7 @@ void WebPageProxy::close()
 
     m_process->disconnectFramesFromPage(this);
 
-    resetState();
+    resetState(ResetStateReason::PageInvalidated);
 
     m_loaderClient = std::make_unique<API::LoaderClient>();
     m_policyClient = std::make_unique<API::PolicyClient>();
@@ -4153,7 +4153,7 @@ void WebPageProxy::processDidCrash()
     m_loaderClient->processDidCrash(this);
 }
 
-void WebPageProxy::resetState()
+void WebPageProxy::resetState(ResetStateReason resetStateReason)
 {
     m_mainFrame = nullptr;
     m_drawingArea = nullptr;
@@ -4220,12 +4220,23 @@ void WebPageProxy::resetState()
     m_dynamicViewportSizeUpdateInProgress = false;
 #endif
 
+    CallbackBase::Error error;
+    switch (resetStateReason) {
+    case ResetStateReason::PageInvalidated:
+        error = CallbackBase::Error::OwnerWasInvalidated;
+        break;
+
+    case ResetStateReason::WebProcessExited:
+        error = CallbackBase::Error::ProcessDidClose;
+        break;
+    }
+
     invalidateCallbackMap(m_voidCallbacks);
     invalidateCallbackMap(m_dataCallbacks);
     invalidateCallbackMap(m_imageCallbacks);
     invalidateCallbackMap(m_stringCallbacks);
     m_loadDependentStringCallbackIDs.clear();
-    invalidateCallbackMap(m_scriptValueCallbacks);
+    invalidateCallbackMap(m_scriptValueCallbacks, error);
     invalidateCallbackMap(m_computedPagesCallbacks);
     invalidateCallbackMap(m_validateCommandCallbacks);
     invalidateCallbackMap(m_unsignedCallbacks);
@@ -4283,7 +4294,7 @@ void WebPageProxy::resetStateAfterProcessExited()
         m_loadStateAtProcessExit = m_mainFrame->frameLoadState().m_state;
     }
 
-    resetState();
+    resetState(ResetStateReason::WebProcessExited);
 
     m_pageClient.processDidExit();
 

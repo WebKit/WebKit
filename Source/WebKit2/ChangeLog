@@ -1,3 +1,24 @@
+2014-06-09  Anders Carlsson  <andersca@apple.com>
+
+        Give callbacks real status codes
+        https://bugs.webkit.org/show_bug.cgi?id=133668
+
+        Reviewed by Dan Bernstein.
+
+        This makes it possible to know whether a callback was invalidated due to the webpage being closed,
+        or whether it was due the a web process crash.
+
+        * UIProcess/GenericCallback.h:
+        (WebKit::GenericCallback::create):
+        (WebKit::GenericCallback::performCallbackWithReturnValue):
+        (WebKit::GenericCallback::invalidate):
+        (WebKit::invalidateCallbackMap):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        * UIProcess/WebPageProxy.h:
+
 2014-06-09  Enrica Casucci  <enrica@apple.com>
 
         iOS WebKit: Crash in charactersAroundPosition.
