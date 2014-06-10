@@ -654,7 +654,8 @@ Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, NonPro
         }
     }
     
-    if (Structure* existingTransition = structure->m_transitionTable.get(0, attributes)) {
+    Structure* existingTransition;
+    if (!structure->isDictionary() && (existingTransition = structure->m_transitionTable.get(0, attributes))) {
         ASSERT(existingTransition->m_attributesInPrevious == attributes);
         ASSERT(existingTransition->indexingTypeIncludingHistory() == indexingType);
         return existingTransition;
@@ -667,7 +668,9 @@ Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, NonPro
     transition->m_offset = structure->m_offset;
     checkOffset(transition->m_offset, transition->inlineCapacity());
     
-    {
+    if (structure->isDictionary())
+        transition->pin();
+    else {
         ConcurrentJITLocker locker(structure->m_lock);
         structure->m_transitionTable.add(vm, transition);
     }

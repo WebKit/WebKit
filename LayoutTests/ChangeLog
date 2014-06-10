@@ -1,3 +1,14 @@
+2014-06-10  Mark Lam  <mark.lam@apple.com>
+
+        Assertion failure at JSC::Structure::checkOffsetConsistency() const + 234.
+        <https://webkit.org/b/133356>
+
+        Reviewed by Mark Hahnenberg.
+
+        * TestExpectations:
+        - Undoing expectation for js/primitive-property-access-edge-cases.html now
+          that the bug is fixed.
+
 2014-06-10  Alexey Proskuryakov  <ap@apple.com>
 
         platform/mac-wk2/plugins/destroy-during-async-npp-new.html is flaky
