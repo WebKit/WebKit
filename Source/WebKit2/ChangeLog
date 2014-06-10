@@ -1,3 +1,20 @@
+2014-06-10  Oliver Hunt  <oliver@apple.com>
+
+        Add process entitlements
+        https://bugs.webkit.org/show_bug.cgi?id=133693
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add entitlements description for Database process, and
+        ensure that we reference the correct seatbelt profiles.
+
+        * Configurations/DatabaseService.Development.xcconfig:
+        * Configurations/DatabaseService.xcconfig:
+        * Configurations/Databases-iOS.entitlements:
+        * Configurations/Network-iOS.entitlements:
+        * Configurations/WebContent-iOS.entitlements:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-06-10  Alexey Proskuryakov  <ap@apple.com>
 
         Fix crashes on some plug-in tests.

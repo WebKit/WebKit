@@ -3119,6 +3119,7 @@
 		A78CCDD7193AC9E3005ECC25 /* com.apple.WebKit.Databases.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.Databases.sb; sourceTree = "<group>"; };
 		A78CCDD8193AC9E3005ECC25 /* com.apple.WebKit.Networking.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.Networking.sb; sourceTree = "<group>"; };
 		A78CCDD9193AC9E3005ECC25 /* com.apple.WebKit.WebContent.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.WebContent.sb; sourceTree = "<group>"; };
+		A7BD9863194653D400D35698 /* Databases-iOS.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "Databases-iOS.entitlements"; sourceTree = "<group>"; };
 		A7D792D41767CB0900881CBE /* ActivityAssertion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActivityAssertion.h; sourceTree = "<group>"; };
 		A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ActivityAssertion.cpp; sourceTree = "<group>"; };
 		A7E93CEB192531AA00A1DC48 /* ChildProcessIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ChildProcessIOS.mm; path = ios/ChildProcessIOS.mm; sourceTree = "<group>"; };
@@ -4123,6 +4124,7 @@
 				51A60B27180CCD9000F3BF50 /* DatabaseProcess.xcconfig */,
 				51A60B28180CCD9000F3BF50 /* DatabaseService.Development.xcconfig */,
 				51A60B29180CCD9000F3BF50 /* DatabaseService.xcconfig */,
+				A7BD9863194653D400D35698 /* Databases-iOS.entitlements */,
 				1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */,
 				1A4F976C100E7B6600637A18 /* FeatureDefines.xcconfig */,
 				7C0BB9A718DCDE890006C086 /* iOS.xcconfig */,

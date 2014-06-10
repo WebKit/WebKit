@@ -10,6 +10,10 @@
 	<true/>
 	<key>com.apple.private.webinspector.proxy-application</key>
 	<true/>
+	<key>seatbelt-profiles</key>
+	<array>
+		<string>com.apple.WebKit.WebContent</string>
+	</array>
 	<key>dynamic-codesigning</key>
 	<true/>
 </dict>
