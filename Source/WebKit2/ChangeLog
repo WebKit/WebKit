@@ -1,5 +1,11 @@
 2014-06-10  Anders Carlsson  <andersca@apple.com>
 
+        Fix availability declaration.
+
+        * UIProcess/API/Cocoa/WKError.h:
+
+2014-06-10  Anders Carlsson  <andersca@apple.com>
+
         Address a comment about a comment.
 
         * UIProcess/API/Cocoa/WKWebView.mm:

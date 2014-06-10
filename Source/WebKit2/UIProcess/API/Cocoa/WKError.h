@@ -30,7 +30,7 @@
 #import <Foundation/Foundation.h>
 
 /*! @constant WKErrorDomain Indicates a WebKit error. */
-WK_EXTERN NSString * const WKErrorDomain WK_AVAILABLE(10_0, 8_0);
+WK_EXTERN NSString * const WKErrorDomain WK_AVAILABLE(10_10, 8_0);
 
 /*! @enum WKErrorCode
  @abstract Constants used by NSError to indicate errors in the WebKit domain.
