@@ -283,7 +283,12 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
 }
 @end
 
-@interface WebAVSampleBufferErrorListener : NSObject
+@interface WebAVSampleBufferErrorListener : NSObject {
+    WebCore::SourceBufferPrivateAVFObjC* _parent;
+    Vector<RetainPtr<AVSampleBufferDisplayLayer>> _layers;
+    Vector<RetainPtr<AVSampleBufferAudioRenderer>> _renderers;
+}
+
 - (id)initWithParent:(WebCore::SourceBufferPrivateAVFObjC*)parent;
 - (void)invalidate;
 - (void)beginObservingLayer:(AVSampleBufferDisplayLayer *)layer;
@@ -292,11 +297,7 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
 - (void)stopObservingRenderer:(AVSampleBufferAudioRenderer *)renderer;
 @end
 
-@implementation WebAVSampleBufferErrorListener {
-    WebCore::SourceBufferPrivateAVFObjC* _parent;
-    Vector<RetainPtr<AVSampleBufferDisplayLayer>> _layers;
-    Vector<RetainPtr<AVSampleBufferAudioRenderer>> _renderers;
-}
+@implementation WebAVSampleBufferErrorListener
 
 - (id)initWithParent:(WebCore::SourceBufferPrivateAVFObjC*)parent
 {

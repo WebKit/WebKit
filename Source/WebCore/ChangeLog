@@ -1,3 +1,10 @@
+2014-06-11  Andy Estes  <aestes@apple.com>
+
+        Fix the Mac build.
+
+        * WebCore.exp.in: Exported __ZN7WebCore19ResourceRequestBase15setHTTPReferrerERKN3WTF6StringE
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm: Moved ivar declarations to @interface to account for the 32-bit legacy runtime.
+
 2014-06-11  Simon Fraser  <simon.fraser@apple.com>
 
         Make FrameView 8 bytes smaller
