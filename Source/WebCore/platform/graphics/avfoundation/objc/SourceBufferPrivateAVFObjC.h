@@ -47,6 +47,8 @@ OBJC_CLASS NSData;
 OBJC_CLASS NSError;
 OBJC_CLASS NSObject;
 OBJC_CLASS WebAVStreamDataParserListener;
+OBJC_CLASS WebAVSampleBufferErrorListener;
+
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
 
@@ -58,6 +60,13 @@ class AudioTrackPrivate;
 class VideoTrackPrivate;
 class AudioTrackPrivateMediaSourceAVFObjC;
 class VideoTrackPrivateMediaSourceAVFObjC;
+
+class SourceBufferPrivateAVFObjCErrorClient {
+public:
+    virtual ~SourceBufferPrivateAVFObjCErrorClient() { }
+    virtual void layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *) = 0;
+    virtual void rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *) = 0;
+};
 
 class SourceBufferPrivateAVFObjC final : public SourceBufferPrivate {
 public:
@@ -87,6 +96,11 @@ public:
 
     int protectedTrackID() const { return m_protectedTrackID; }
     AVStreamDataParser* parser() const { return m_parser.get(); }
+
+    void registerForErrorNotifications(SourceBufferPrivateAVFObjCErrorClient*);
+    void unregisterForErrorNotifications(SourceBufferPrivateAVFObjCErrorClient*);
+    void layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *);
+    void rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *);
 
 private:
     explicit SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC*);
@@ -118,6 +132,7 @@ private:
 
     Vector<RefPtr<VideoTrackPrivateMediaSourceAVFObjC>> m_videoTracks;
     Vector<RefPtr<AudioTrackPrivateMediaSourceAVFObjC>> m_audioTracks;
+    Vector<SourceBufferPrivateAVFObjCErrorClient*> m_errorClients;
 
     WeakPtrFactory<SourceBufferPrivateAVFObjC> m_weakFactory;
 
@@ -126,6 +141,7 @@ private:
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
     std::map<int, RetainPtr<AVSampleBufferAudioRenderer>> m_audioRenderers;
     RetainPtr<WebAVStreamDataParserListener> m_delegate;
+    RetainPtr<WebAVSampleBufferErrorListener> m_errorListener;
 
     MediaSourcePrivateAVFObjC* m_mediaSource;
     SourceBufferPrivateClient* m_client;

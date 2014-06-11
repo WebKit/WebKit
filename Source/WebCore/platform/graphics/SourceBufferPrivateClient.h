@@ -84,6 +84,7 @@ public:
         ParsingFailed,
     };
     virtual void sourceBufferPrivateAppendComplete(SourceBufferPrivate*, AppendResult) = 0;
+    virtual void sourceBufferPrivateDidReceiveRenderingError(SourceBufferPrivate*, int errocCode) = 0;
 };
 
 }

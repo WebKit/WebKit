@@ -79,6 +79,8 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMSampleBufferAttachmentKey_DisplayEmptyMediaImme
 SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicVisual, NSString*)
 SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicAudible, NSString*)
 SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicLegible, NSString*)
+SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotification, NSString*)
+SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey, NSString*)
 
 SOFT_LINK(CoreMedia, CMFormatDescriptionGetMediaType, CMMediaType, (CMFormatDescriptionRef desc), (desc))
 SOFT_LINK(CoreMedia, CMSampleBufferCreate, OSStatus, (CFAllocatorRef allocator, CMBlockBufferRef dataBuffer, Boolean dataReady, CMSampleBufferMakeDataReadyCallback makeDataReadyCallback, void *makeDataReadyRefcon, CMFormatDescriptionRef formatDescription, CMItemCount numSamples, CMItemCount numSampleTimingEntries, const CMSampleTimingInfo *sampleTimingArray, CMItemCount numSampleSizeEntries, const size_t *sampleSizeArray, CMSampleBufferRef *sBufOut), (allocator, dataBuffer, dataReady, makeDataReadyCallback, makeDataReadyRefcon, formatDescription, numSamples, numSampleTimingEntries, sampleTimingArray, numSampleSizeEntries, sampleSizeArray, sBufOut))
@@ -97,6 +99,8 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
 #define AVMediaTypeVideo getAVMediaTypeVideo()
 #define AVMediaTypeAudio getAVMediaTypeAudio()
 #define AVMediaTypeText getAVMediaTypeText()
+#define AVSampleBufferDisplayLayerFailedToDecodeNotification getAVSampleBufferDisplayLayerFailedToDecodeNotification()
+#define AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey getAVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey()
 #define kCMTimeZero getkCMTimeZero()
 #define kCMTimeInvalid getkCMTimeInvalid()
 #define kCMSampleAttachmentKey_NotSync getkCMSampleAttachmentKey_NotSync()
@@ -279,6 +283,137 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
 }
 @end
 
+@interface WebAVSampleBufferErrorListener : NSObject
+- (id)initWithParent:(WebCore::SourceBufferPrivateAVFObjC*)parent;
+- (void)invalidate;
+- (void)beginObservingLayer:(AVSampleBufferDisplayLayer *)layer;
+- (void)stopObservingLayer:(AVSampleBufferDisplayLayer *)layer;
+- (void)beginObservingRenderer:(AVSampleBufferAudioRenderer *)renderer;
+- (void)stopObservingRenderer:(AVSampleBufferAudioRenderer *)renderer;
+@end
+
+@implementation WebAVSampleBufferErrorListener {
+    WebCore::SourceBufferPrivateAVFObjC* _parent;
+    Vector<RetainPtr<AVSampleBufferDisplayLayer>> _layers;
+    Vector<RetainPtr<AVSampleBufferAudioRenderer>> _renderers;
+}
+
+- (id)initWithParent:(WebCore::SourceBufferPrivateAVFObjC*)parent
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _parent = parent;
+    return self;
+}
+
+- (void)dealloc
+{
+    [self invalidate];
+    [super dealloc];
+}
+
+- (void)invalidate
+{
+    if (!_parent && !_layers.size() && !_renderers.size())
+        return;
+
+    for (auto& layer : _layers)
+        [layer removeObserver:self forKeyPath:@"error"];
+    _layers.clear();
+
+    for (auto& renderer : _renderers)
+        [renderer removeObserver:self forKeyPath:@"error"];
+    _renderers.clear();
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    _parent = nullptr;
+}
+
+- (void)beginObservingLayer:(AVSampleBufferDisplayLayer*)layer
+{
+    ASSERT(_parent);
+    ASSERT(!_layers.contains(layer));
+
+    _layers.append(layer);
+    [layer addObserver:self forKeyPath:@"error" options:NSKeyValueObservingOptionNew context:nullptr];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(layerFailedToDecode:) name:AVSampleBufferDisplayLayerFailedToDecodeNotification object:layer];
+}
+
+- (void)stopObservingLayer:(AVSampleBufferDisplayLayer*)layer
+{
+    ASSERT(_parent);
+    ASSERT(_layers.contains(layer));
+
+    [layer removeObserver:self forKeyPath:@"error"];
+    _layers.remove(_layers.find(layer));
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVSampleBufferDisplayLayerFailedToDecodeNotification object:layer];
+}
+
+- (void)beginObservingRenderer:(AVSampleBufferAudioRenderer*)renderer
+{
+    ASSERT(_parent);
+    ASSERT(!_renderers.contains(renderer));
+
+    _renderers.append(renderer);
+    [renderer addObserver:self forKeyPath:@"error" options:NSKeyValueObservingOptionNew context:nullptr];
+}
+
+- (void)stopObservingRenderer:(AVSampleBufferAudioRenderer*)renderer
+{
+    ASSERT(_parent);
+    ASSERT(_renderers.contains(renderer));
+
+    [renderer removeObserver:self forKeyPath:@"error"];
+    _renderers.remove(_renderers.find(renderer));
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    UNUSED_PARAM(context);
+    ASSERT(_parent);
+
+    RetainPtr<WebAVSampleBufferErrorListener> strongSelf = self;
+    if ([object isKindOfClass:getAVSampleBufferDisplayLayerClass()]) {
+        RetainPtr<AVSampleBufferDisplayLayer> layer = (AVSampleBufferDisplayLayer *)object;
+        RetainPtr<NSError> error = [change valueForKey:NSKeyValueChangeNewKey];
+
+        ASSERT(_layers.contains(layer.get()));
+        ASSERT([keyPath isEqualTo:@"error"]);
+
+        callOnMainThread([strongSelf, layer, error] {
+            strongSelf->_parent->layerDidReceiveError(layer.get(), error.get());
+        });
+    } else if ([object isKindOfClass:getAVSampleBufferAudioRendererClass()]) {
+        RetainPtr<AVSampleBufferAudioRenderer> renderer = (AVSampleBufferAudioRenderer *)object;
+        RetainPtr<NSError> error = [change valueForKey:NSKeyValueChangeNewKey];
+
+        ASSERT(_renderers.contains(renderer.get()));
+        ASSERT([keyPath isEqualTo:@"error"]);
+
+        callOnMainThread([strongSelf, renderer, error] {
+            strongSelf->_parent->rendererDidReceiveError(renderer.get(), error.get());
+        });
+    } else
+        ASSERT_NOT_REACHED();
+}
+
+- (void)layerFailedToDecode:(NSNotification*)note
+{
+    RetainPtr<AVSampleBufferDisplayLayer> layer = (AVSampleBufferDisplayLayer *)[note object];
+    ASSERT(_layers.contains(layer.get()));
+
+    RetainPtr<NSError> error = [[note userInfo] valueForKey:AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey];
+
+    RetainPtr<WebAVSampleBufferErrorListener> strongSelf = self;
+    callOnMainThread([strongSelf, layer, error] {
+        strongSelf->_parent->layerDidReceiveError(layer.get(), error.get());
+    });
+}
+@end
+
 namespace WebCore {
 
 #pragma mark -
@@ -400,6 +535,7 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
     : m_weakFactory(this)
     , m_parser(adoptNS([[getAVStreamDataParserClass() alloc] init]))
     , m_delegate(adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:createWeakPtr()]))
+    , m_errorListener(adoptNS([[WebAVSampleBufferErrorListener alloc] initWithParent:this]))
     , m_mediaSource(parent)
     , m_client(0)
     , m_parsingSucceeded(true)
@@ -659,6 +795,7 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(VideoTrackPrivateMediaSou
             [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
                 didBecomeReadyForMoreSamples(trackID);
             }];
+            [m_errorListener beginObservingLayer:m_displayLayer.get()];
         }
         if (m_mediaSource)
             m_mediaSource->player()->addDisplayLayer(m_displayLayer.get());
@@ -683,12 +820,44 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivateMediaSou
                 didBecomeReadyForMoreSamples(trackID);
             }];
             m_audioRenderers[trackID] = renderer;
+            [m_errorListener beginObservingRenderer:renderer.get()];
         } else
             renderer = m_audioRenderers[trackID].get();
 
         if (m_mediaSource)
             m_mediaSource->player()->addAudioRenderer(renderer.get());
     }
+}
+
+void SourceBufferPrivateAVFObjC::registerForErrorNotifications(SourceBufferPrivateAVFObjCErrorClient* client)
+{
+    ASSERT(!m_errorClients.contains(client));
+    m_errorClients.append(client);
+}
+
+void SourceBufferPrivateAVFObjC::unregisterForErrorNotifications(SourceBufferPrivateAVFObjCErrorClient* client)
+{
+    ASSERT(m_errorClients.contains(client));
+    m_errorClients.remove(m_errorClients.find(client));
+}
+
+void SourceBufferPrivateAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer *layer, NSError *error)
+{
+    LOG(Media, "SourceBufferPrivateAVFObjC::layerDidReceiveError(%p): layer(%p), error(%@)", this, layer, [error description]);
+    for (auto& client : m_errorClients)
+        client->layerDidReceiveError(layer, error);
+
+    int errorCode = [[[error userInfo] valueForKey:@"OSStatus"] intValue];
+
+    if (m_client)
+        m_client->sourceBufferPrivateDidReceiveRenderingError(this, errorCode);
+}
+
+void SourceBufferPrivateAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRenderer *renderer, NSError *error)
+{
+    LOG(Media, "SourceBufferPrivateAVFObjC::rendererDidReceiveError(%p): renderer(%p), error(%@)", this, renderer, [error description]);
+    for (auto& client : m_errorClients)
+        client->rendererDidReceiveError(renderer, error);
 }
 
 static RetainPtr<CMSampleBufferRef> createNonDisplayingCopy(CMSampleBufferRef sampleBuffer)

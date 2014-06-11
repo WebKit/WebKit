@@ -27,6 +27,7 @@
 #define CDMSessionMediaSourceAVFObjC_h
 
 #include "CDMSession.h"
+#include "SourceBufferPrivateAVFObjC.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
 
@@ -34,12 +35,10 @@
 
 namespace WebCore {
 
-class SourceBufferPrivateAVFObjC;
-
-class CDMSessionMediaSourceAVFObjC : public CDMSession {
+class CDMSessionMediaSourceAVFObjC : public CDMSession, public SourceBufferPrivateAVFObjCErrorClient {
 public:
     CDMSessionMediaSourceAVFObjC(SourceBufferPrivateAVFObjC* parent);
-    virtual ~CDMSessionMediaSourceAVFObjC() { }
+    virtual ~CDMSessionMediaSourceAVFObjC();
 
     virtual void setClient(CDMSessionClient* client) override { m_client = client; }
     virtual const String& sessionId() const override { return m_sessionId; }
@@ -47,8 +46,11 @@ public:
     virtual void releaseKeys() override;
     virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode) override;
 
+    virtual void layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *);
+    virtual void rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *);
+
 protected:
-    SourceBufferPrivateAVFObjC* m_parent;
+    RefPtr<SourceBufferPrivateAVFObjC> m_parent;
     CDMSessionClient* m_client;
     RefPtr<Uint8Array> m_initData;
     RefPtr<Uint8Array> m_certificate;

@@ -39,6 +39,17 @@ class CDMSessionClient {
 public:
     virtual ~CDMSessionClient() { };
     virtual void sendMessage(Uint8Array*, String destinationURL) = 0;
+
+    enum {
+        MediaKeyErrorUnknown = 1,
+        MediaKeyErrorClient,
+        MediaKeyErrorService,
+        MediaKeyErrorOutput,
+        MediaKeyErrorHardwareChange,
+        MediaKeyErrorDomain,
+    };
+    typedef unsigned short MediaKeyErrorCode;
+    virtual void sendError(MediaKeyErrorCode, unsigned long systemCode) = 0;
 };
 
 class CDMSession {

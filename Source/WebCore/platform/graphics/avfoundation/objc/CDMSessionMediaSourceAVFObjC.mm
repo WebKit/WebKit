@@ -58,6 +58,14 @@ CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC(SourceBufferPrivateAV
     , m_client(nullptr)
     , m_sessionId(createCanonicalUUIDString())
 {
+    ASSERT(parent);
+    parent->registerForErrorNotifications(this);
+}
+
+CDMSessionMediaSourceAVFObjC::~CDMSessionMediaSourceAVFObjC()
+{
+    m_parent->unregisterForErrorNotifications(this);
+    m_client = nullptr;
 }
 
 PassRefPtr<Uint8Array> CDMSessionMediaSourceAVFObjC::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode)
@@ -135,6 +143,22 @@ bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& n
     RetainPtr<NSData> keyData = adoptNS([[NSData alloc] initWithBytes:key->data() length:key->length()]);
     [m_parent->parser() processContentKeyResponseData:keyData.get() forTrackID:m_parent->protectedTrackID()];
     return true;
+}
+
+void CDMSessionMediaSourceAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *error)
+{
+    if (!m_client)
+        return;
+
+    m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, [error code]);
+}
+
+void CDMSessionMediaSourceAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *error)
+{
+    if (!m_client)
+        return;
+
+    m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, [error code]);
 }
 
 }

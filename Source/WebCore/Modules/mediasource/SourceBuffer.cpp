@@ -535,6 +535,11 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(SourceBufferPrivate*, Appen
     reportExtraMemoryCost();
 }
 
+void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(SourceBufferPrivate*, int)
+{
+    m_source->streamEndedWithError(decodeError(), IgnorableExceptionCode());
+}
+
 void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& end)
 {
     // 3.5.9 Coded Frame Removal Algorithm

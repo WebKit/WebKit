@@ -29,6 +29,7 @@
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 
 #include "ActiveDOMObject.h"
+#include "CDMSession.h"
 #include "EventTarget.h"
 #include "ExceptionCode.h"
 #include "GenericEventQueue.h"
@@ -43,9 +44,8 @@ namespace WebCore {
 
 class MediaKeyError;
 class MediaKeys;
-class CDMSession;
 
-class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ActiveDOMObject {
+class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ActiveDOMObject, public CDMSessionClient {
 public:
     static PassRefPtr<MediaKeySession> create(ScriptExecutionContext*, MediaKeys*, const String& keySystem);
     ~MediaKeySession();
@@ -84,6 +84,10 @@ protected:
     MediaKeySession(ScriptExecutionContext*, MediaKeys*, const String& keySystem);
     void keyRequestTimerFired(Timer<MediaKeySession>&);
     void addKeyTimerFired(Timer<MediaKeySession>&);
+
+    // CDMSessionClient
+    virtual void sendMessage(Uint8Array*, String destinationURL);
+    virtual void sendError(MediaKeyErrorCode, unsigned long systemCode);
 
     MediaKeys* m_keys;
     String m_keySystem;
