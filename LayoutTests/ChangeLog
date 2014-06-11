@@ -1,3 +1,14 @@
+2014-06-11  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK] Unreviewed GTK gardening
+
+        Add missing GTK expectations file after test added at r169390, and removed specific
+        ones for tests now passing with default ones after r169403.
+
+        * platform/gtk/fast/dom/webtiming-document-open-expected.txt: Removed.
+        * platform/gtk/fast/dom/webtiming-navigate-within-document-expected.txt: Removed.
+        * platform/gtk/fast/multicol/pagination/nested-transforms-expected.txt: Added.
+
 2014-06-11  Rohit Kumar  <kumar.rohit@samsung.com>
 
         [EFL] Updated expectations for accessibility/lists.html test
