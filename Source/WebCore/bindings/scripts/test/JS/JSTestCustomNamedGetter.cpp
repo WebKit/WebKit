@@ -81,12 +81,19 @@ bool JSTestCustomNamedGetterConstructor::getOwnPropertySlot(JSObject* object, Ex
 
 /* Hash table for prototype */
 
+static const struct CompactHashIndex JSTestCustomNamedGetterPrototypeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
+
 static const HashTableValue JSTestCustomNamedGetterPrototypeTableValues[] =
 {
     { "anotherFunction", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestCustomNamedGetterPrototypeFunctionAnotherFunction), (intptr_t) (1) },
 };
 
-const ClassInfo JSTestCustomNamedGetterPrototype::s_info = { "TestCustomNamedGetterPrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestCustomNamedGetterPrototype) };
+static const HashTable JSTestCustomNamedGetterPrototypeTable = { 1, 1, false, JSTestCustomNamedGetterPrototypeTableValues, 0, JSTestCustomNamedGetterPrototypeTableIndex };
+const ClassInfo JSTestCustomNamedGetterPrototype::s_info = { "TestCustomNamedGetterPrototype", &Base::s_info, &JSTestCustomNamedGetterPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestCustomNamedGetterPrototype) };
 
 JSObject* JSTestCustomNamedGetterPrototype::self(VM& vm, JSGlobalObject* globalObject)
 {

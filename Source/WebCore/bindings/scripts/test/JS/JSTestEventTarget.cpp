@@ -87,6 +87,18 @@ bool JSTestEventTargetConstructor::getOwnPropertySlot(JSObject* object, ExecStat
 
 /* Hash table for prototype */
 
+static const struct CompactHashIndex JSTestEventTargetPrototypeTableIndex[8] = {
+    { 2, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 3, -1 },
+    { 1, -1 },
+    { 0, -1 },
+};
+
+
 static const HashTableValue JSTestEventTargetPrototypeTableValues[] =
 {
     { "item", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestEventTargetPrototypeFunctionItem), (intptr_t) (1) },
@@ -95,7 +107,8 @@ static const HashTableValue JSTestEventTargetPrototypeTableValues[] =
     { "dispatchEvent", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestEventTargetPrototypeFunctionDispatchEvent), (intptr_t) (1) },
 };
 
-const ClassInfo JSTestEventTargetPrototype::s_info = { "TestEventTargetPrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestEventTargetPrototype) };
+static const HashTable JSTestEventTargetPrototypeTable = { 4, 7, false, JSTestEventTargetPrototypeTableValues, 0, JSTestEventTargetPrototypeTableIndex };
+const ClassInfo JSTestEventTargetPrototype::s_info = { "TestEventTargetPrototype", &Base::s_info, &JSTestEventTargetPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestEventTargetPrototype) };
 
 JSObject* JSTestEventTargetPrototype::self(VM& vm, JSGlobalObject* globalObject)
 {

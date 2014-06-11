@@ -138,12 +138,19 @@ ConstructType JSTestOverloadedConstructorsConstructor::getConstructData(JSCell*,
 
 /* Hash table for prototype */
 
+static const struct CompactHashIndex JSTestOverloadedConstructorsPrototypeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
+
 static const HashTableValue JSTestOverloadedConstructorsPrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestOverloadedConstructorsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
-const ClassInfo JSTestOverloadedConstructorsPrototype::s_info = { "TestOverloadedConstructorsPrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsPrototype) };
+static const HashTable JSTestOverloadedConstructorsPrototypeTable = { 1, 1, true, JSTestOverloadedConstructorsPrototypeTableValues, 0, JSTestOverloadedConstructorsPrototypeTableIndex };
+const ClassInfo JSTestOverloadedConstructorsPrototype::s_info = { "TestOverloadedConstructorsPrototype", &Base::s_info, &JSTestOverloadedConstructorsPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsPrototype) };
 
 JSObject* JSTestOverloadedConstructorsPrototype::self(VM& vm, JSGlobalObject* globalObject)
 {

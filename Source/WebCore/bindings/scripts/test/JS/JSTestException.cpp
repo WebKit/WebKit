@@ -80,12 +80,19 @@ bool JSTestExceptionConstructor::getOwnPropertySlot(JSObject* object, ExecState*
 
 /* Hash table for prototype */
 
+static const struct CompactHashIndex JSTestExceptionPrototypeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
+
 static const HashTableValue JSTestExceptionPrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestExceptionConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
-const ClassInfo JSTestExceptionPrototype::s_info = { "TestExceptionPrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestExceptionPrototype) };
+static const HashTable JSTestExceptionPrototypeTable = { 1, 1, true, JSTestExceptionPrototypeTableValues, 0, JSTestExceptionPrototypeTableIndex };
+const ClassInfo JSTestExceptionPrototype::s_info = { "TestExceptionPrototype", &Base::s_info, &JSTestExceptionPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestExceptionPrototype) };
 
 JSObject* JSTestExceptionPrototype::self(VM& vm, JSGlobalObject* globalObject)
 {

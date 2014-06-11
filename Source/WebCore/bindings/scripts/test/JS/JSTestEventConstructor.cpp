@@ -112,6 +112,19 @@ ConstructType JSTestEventConstructorConstructor::getConstructData(JSCell*, Const
 
 /* Hash table for prototype */
 
+static const struct CompactHashIndex JSTestEventConstructorPrototypeTableIndex[9] = {
+    { -1, -1 },
+    { 0, 8 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
+};
+
+
 static const HashTableValue JSTestEventConstructorPrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestEventConstructorConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
@@ -119,7 +132,8 @@ static const HashTableValue JSTestEventConstructorPrototypeTableValues[] =
     { "attr2", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestEventConstructorAttr2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
-const ClassInfo JSTestEventConstructorPrototype::s_info = { "TestEventConstructorPrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestEventConstructorPrototype) };
+static const HashTable JSTestEventConstructorPrototypeTable = { 3, 7, true, JSTestEventConstructorPrototypeTableValues, 0, JSTestEventConstructorPrototypeTableIndex };
+const ClassInfo JSTestEventConstructorPrototype::s_info = { "TestEventConstructorPrototype", &Base::s_info, &JSTestEventConstructorPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestEventConstructorPrototype) };
 
 JSObject* JSTestEventConstructorPrototype::self(VM& vm, JSGlobalObject* globalObject)
 {

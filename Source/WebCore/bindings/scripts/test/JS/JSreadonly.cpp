@@ -63,12 +63,19 @@ bool JSreadonlyConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec
 
 /* Hash table for prototype */
 
+static const struct CompactHashIndex JSreadonlyPrototypeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
+
 static const HashTableValue JSreadonlyPrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsreadonlyConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
-const ClassInfo JSreadonlyPrototype::s_info = { "readonlyPrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSreadonlyPrototype) };
+static const HashTable JSreadonlyPrototypeTable = { 1, 1, true, JSreadonlyPrototypeTableValues, 0, JSreadonlyPrototypeTableIndex };
+const ClassInfo JSreadonlyPrototype::s_info = { "readonlyPrototype", &Base::s_info, &JSreadonlyPrototypeTable, 0, CREATE_METHOD_TABLE(JSreadonlyPrototype) };
 
 JSObject* JSreadonlyPrototype::self(VM& vm, JSGlobalObject* globalObject)
 {

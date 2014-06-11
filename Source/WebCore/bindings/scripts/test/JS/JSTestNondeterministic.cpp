@@ -75,6 +75,27 @@ bool JSTestNondeterministicConstructor::getOwnPropertySlot(JSObject* object, Exe
 
 /* Hash table for prototype */
 
+static const struct CompactHashIndex JSTestNondeterministicPrototypeTableIndex[17] = {
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 3, -1 },
+    { -1, -1 },
+    { 6, -1 },
+    { -1, -1 },
+    { 0, -1 },
+    { -1, -1 },
+    { 1, 16 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
+    { 5, -1 },
+    { 4, -1 },
+};
+
+
 static const HashTableValue JSTestNondeterministicPrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNondeterministicConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
@@ -86,7 +107,8 @@ static const HashTableValue JSTestNondeterministicPrototypeTableValues[] =
     { "nondeterministicZeroArgFunction", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestNondeterministicPrototypeFunctionNondeterministicZeroArgFunction), (intptr_t) (0) },
 };
 
-const ClassInfo JSTestNondeterministicPrototype::s_info = { "TestNondeterministicPrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestNondeterministicPrototype) };
+static const HashTable JSTestNondeterministicPrototypeTable = { 7, 15, true, JSTestNondeterministicPrototypeTableValues, 0, JSTestNondeterministicPrototypeTableIndex };
+const ClassInfo JSTestNondeterministicPrototype::s_info = { "TestNondeterministicPrototype", &Base::s_info, &JSTestNondeterministicPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestNondeterministicPrototype) };
 
 JSObject* JSTestNondeterministicPrototype::self(VM& vm, JSGlobalObject* globalObject)
 {

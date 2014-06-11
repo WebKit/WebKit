@@ -1933,16 +1933,12 @@ sub GenerateImplementation
         }
     }
 
-    my $justGenerateValueArray = !(IsDOMGlobalObject($interface) || $interface->name eq "Location" || $interface->name eq "History");
-
     $object->GenerateHashTable($hashName, $hashSize,
                                \@hashKeys, \@hashSpecials,
                                \@hashValue1, \@hashValue2,
-                               \%conditionals, $justGenerateValueArray);
+                               \%conditionals, 0);
 
-    if ($justGenerateValueArray) { 
-        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
-    } elsif ($interface->extendedAttributes->{"JSNoStaticTables"}) {
+    if ($interface->extendedAttributes->{"JSNoStaticTables"}) {
         push(@implContent, "static const HashTable& get${className}PrototypeTable(VM& vm)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return getHashTableForGlobalData(vm, ${className}PrototypeTable);\n");
