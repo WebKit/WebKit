@@ -4472,14 +4472,12 @@ void WebPage::determinePrimarySnapshottedPlugIn()
             if (!pluginRenderer || !pluginRenderer->isBox())
                 continue;
             auto& pluginRenderBox = toRenderBox(*pluginRenderer);
-            IntRect plugInRectRelativeToView = plugInImageElement.clientRect();
-            if (plugInRectRelativeToView.isEmpty())
-                continue;
-            IntSize scrollOffset = mainFrame.view()->documentScrollOffsetRelativeToViewOrigin();
-            IntRect plugInRectRelativeToTopDocument(plugInRectRelativeToView.location() + scrollOffset, plugInRectRelativeToView.size());
-            if (!plugInRectRelativeToTopDocument.intersects(searchRect))
+            if (!plugInIntersectsSearchRect(plugInImageElement))
                 continue;
 
+            IntRect plugInRectRelativeToView = plugInImageElement.clientRect();
+            IntSize scrollOffset = mainFrame.view()->documentScrollOffsetRelativeToViewOrigin();
+            IntRect plugInRectRelativeToTopDocument(plugInRectRelativeToView.location() + scrollOffset, plugInRectRelativeToView.size());
             HitTestResult hitTestResult(plugInRectRelativeToTopDocument.center());
             mainRenderView.hitTest(request, hitTestResult);
 
@@ -4504,14 +4502,9 @@ void WebPage::determinePrimarySnapshottedPlugIn()
                 LOG(Plugins, "Primary Plug-In Detection: Plug-in is hidden by an image that is roughly aligned with it, autoplaying regardless of whether or not it's actually the primary plug-in.");
                 plugInImageElement.restartSnapshottedPlugIn();
             }
-            if (pluginRenderBox.contentWidth() < primarySnapshottedPlugInMinimumWidth || pluginRenderBox.contentHeight() < primarySnapshottedPlugInMinimumHeight)
-                continue;
 
-            LayoutUnit contentArea = pluginRenderBox.contentWidth() * pluginRenderBox.contentHeight();
-            if (contentArea > candidatePlugInArea * primarySnapshottedPlugInSearchBucketSize) {
+            if (plugInIsPrimarySize(plugInImageElement, candidatePlugInArea))
                 candidatePlugIn = &plugInImageElement;
-                candidatePlugInArea = contentArea;
-            }
         }
     }
     if (!candidatePlugIn) {
@@ -4546,6 +4539,40 @@ bool WebPage::matchesPrimaryPlugIn(const String& pageOrigin, const String& plugi
         return false;
 
     return (pageOrigin == m_primaryPlugInPageOrigin && pluginOrigin == m_primaryPlugInOrigin && mimeType == m_primaryPlugInMimeType);
+}
+
+bool WebPage::plugInIntersectsSearchRect(HTMLPlugInImageElement& plugInImageElement)
+{
+    MainFrame& mainFrame = corePage()->mainFrame();
+    if (!mainFrame.view())
+        return false;
+    if (!mainFrame.view()->renderView())
+        return false;
+
+    IntRect searchRect = IntRect(IntPoint(), corePage()->mainFrame().view()->contentsSize());
+    searchRect.intersect(IntRect(IntPoint(), IntSize(primarySnapshottedPlugInSearchLimit, primarySnapshottedPlugInSearchLimit)));
+
+    IntRect plugInRectRelativeToView = plugInImageElement.clientRect();
+    if (plugInRectRelativeToView.isEmpty())
+        return false;
+    IntSize scrollOffset = mainFrame.view()->documentScrollOffsetRelativeToViewOrigin();
+    IntRect plugInRectRelativeToTopDocument(plugInRectRelativeToView.location() + scrollOffset, plugInRectRelativeToView.size());
+
+    return plugInRectRelativeToTopDocument.intersects(searchRect);
+}
+
+bool WebPage::plugInIsPrimarySize(WebCore::HTMLPlugInImageElement& plugInImageElement, unsigned& candidatePlugInArea)
+{
+    auto& pluginRenderBox = toRenderBox(*(plugInImageElement.renderer()));
+    if (pluginRenderBox.contentWidth() < primarySnapshottedPlugInMinimumWidth || pluginRenderBox.contentHeight() < primarySnapshottedPlugInMinimumHeight)
+        return false;
+
+    LayoutUnit contentArea = pluginRenderBox.contentWidth() * pluginRenderBox.contentHeight();
+    if (contentArea > candidatePlugInArea * primarySnapshottedPlugInSearchBucketSize) {
+        candidatePlugInArea = contentArea;
+        return true;
+    }
+    return false;
 }
 #endif // ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
 

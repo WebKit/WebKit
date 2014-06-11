@@ -118,6 +118,7 @@ class GraphicsContext;
 class Frame;
 class FrameView;
 class HTMLPlugInElement;
+class HTMLPlugInImageElement;
 class IntPoint;
 class KeyboardEvent;
 class Page;
@@ -791,6 +792,8 @@ public:
     void determinePrimarySnapshottedPlugInTimerFired();
     void resetPrimarySnapshottedPlugIn();
     bool matchesPrimaryPlugIn(const String& pageOrigin, const String& pluginOrigin, const String& mimeType) const;
+    bool plugInIntersectsSearchRect(WebCore::HTMLPlugInImageElement& pluginImageElement);
+    bool plugInIsPrimarySize(WebCore::HTMLPlugInImageElement& pluginImageElement, unsigned &pluginArea);
 #endif
 
     unsigned extendIncrementalRenderingSuppression();

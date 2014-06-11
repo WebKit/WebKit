@@ -1,3 +1,25 @@
+2014-06-11  Roger Fong  <roger_fong@apple.com>
+
+        Don't snapshot offscreen plugins that would normally be considered primary plugins after they are moved in view.
+        https://bugs.webkit.org/show_bug.cgi?id=133667.
+        <rdar://problem/16743250>
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::PluginView):
+        (WebKit::PluginView::pluginSnapshotTimerFired):
+        Set the display state to Playing if the following is true:
+        The plugin in question is large enough to be considered the primary snapshot and either:
+        a) The maximum number of snapshot retries has been reached and no good snapshot has been found.
+        b) The plugin is moved to be on-screen while the snapshot attempts are in progress.
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::plugInIntersectsSearchRect): Re-factor out intersection logic.
+        (WebKit::WebPage::plugInIsPrimarySize): Re-factor out primary plugin size logic.
+        (WebKit::WebPage::determinePrimarySnapshottedPlugIn): Use the above two methods here.
+        * WebProcess/WebPage/WebPage.h:
+
 2014-06-11  Anders Carlsson  <andersca@apple.com>
 
         Move more WKPreferences to WKWebViewConfiguration
