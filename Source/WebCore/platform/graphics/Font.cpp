@@ -215,7 +215,7 @@ struct FontGlyphsCacheKey {
 struct FontGlyphsCacheEntry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FontGlyphsCacheEntry(FontGlyphsCacheKey&& k, PassRef<FontGlyphs> g) : key(k), glyphs(std::move(g)) { }
+    FontGlyphsCacheEntry(FontGlyphsCacheKey&& k, PassRef<FontGlyphs> g) : key(std::move(k)), glyphs(std::move(g)) { }
     FontGlyphsCacheKey key;
     Ref<FontGlyphs> glyphs;
 };

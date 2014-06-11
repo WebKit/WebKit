@@ -1,3 +1,15 @@
+2014-06-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        Avoid FontGlyphsCacheKey copy in FontGlyphsCacheEntry constructor
+        https://bugs.webkit.org/show_bug.cgi?id=133674
+
+        Reviewed by Andreas Kling.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::FontGlyphsCacheEntry::FontGlyphsCacheEntry): The FontGlyphsCacheKey
+        variable is already passed-in as an rvalue reference, so it should be moved
+        into the constructor of the corresponding member variable instead of copied.
+
 2014-06-11  Andy Estes  <aestes@apple.com>
 
         Fix the build after after r169789 on platforms that build with -Wunused-const-variable
