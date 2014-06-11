@@ -108,11 +108,6 @@ bool HTTPHeaderMap::contains(const char* name) const
     return find(name) != end();
 }
 
-HTTPHeaderMap::iterator HTTPHeaderMap::find(const char* name)
-{
-    return m_headers.find<CaseFoldingCStringTranslator>(name);
-}
-
 HTTPHeaderMap::const_iterator HTTPHeaderMap::find(const char* name) const
 {
     return m_headers.find<CaseFoldingCStringTranslator>(name);
@@ -127,11 +122,5 @@ bool HTTPHeaderMap::remove(const char* name)
 {
     return m_headers.remove(m_headers.find<CaseFoldingCStringTranslator>(name));
 }
-
-WTF::IteratorRange<HTTPHeaderMap::const_iterator::Keys> HTTPHeaderMap::keys() const
-{
-    return m_headers.keys();
-}
-
 
 } // namespace WebCore

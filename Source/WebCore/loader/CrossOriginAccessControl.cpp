@@ -116,13 +116,13 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
         StringBuilder headerBuffer;
         
         bool appendComma = false;
-        for (const auto& headerName : requestHeaderFields.keys()) {
+        for (const auto& headerField : requestHeaderFields) {
             if (appendComma)
                 headerBuffer.appendLiteral(", ");
             else
                 appendComma = true;
             
-            headerBuffer.append(headerName);
+            headerBuffer.append(headerField.key);
         }
 
         preflightRequest.setHTTPHeaderField("Access-Control-Request-Headers", headerBuffer.toString().lower());

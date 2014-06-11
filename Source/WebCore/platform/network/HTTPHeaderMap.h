@@ -44,7 +44,6 @@ class HTTPHeaderMap {
     typedef HashMap<AtomicString, String, CaseFoldingHash> HashMapType;
 public:
     typedef HashMapType::const_iterator const_iterator;
-    typedef HashMapType::iterator iterator;
     typedef HashMapType::AddResult AddResult;
 
     HTTPHeaderMap();
@@ -68,14 +67,11 @@ public:
     bool contains(const char*) const;
     String get(const char*) const;
     const_iterator find(const char*) const;
-    iterator find(const char*);
     AddResult add(const char* name, const String& value);
     bool remove(const char*);
 
     const_iterator begin() const { return m_headers.begin(); }
     const_iterator end() const { return m_headers.end(); }
-
-    WTF::IteratorRange<const_iterator::Keys> keys() const;
 
     friend bool operator==(const HTTPHeaderMap& a, const HTTPHeaderMap& b)
     {
