@@ -1,3 +1,24 @@
+2014-06-11  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Enable fast/viewport tests
+        <http://webkit.org/b/133754>
+
+        Reviewed by Andy Estes.
+
+        * platform/ios-sim/Skipped:
+        - Stop skipping fast/viewport tests.
+
+        * platform/ios-sim/fast/viewport/viewport-legacy-handheldfriendly-expected.txt: Added.
+        * platform/ios-sim/fast/viewport/viewport-legacy-mobileoptimized-2-expected.txt: Added.
+        * platform/ios-sim/fast/viewport/viewport-legacy-mobileoptimized-3-expected.txt: Added.
+        * platform/ios-sim/fast/viewport/viewport-legacy-mobileoptimized-expected.txt: Added.
+        * platform/ios-sim/fast/viewport/viewport-legacy-ordering-5-expected.txt: Added.
+        * platform/ios-sim/fast/viewport/viewport-legacy-ordering-6-expected.txt: Added.
+        * platform/ios-sim/fast/viewport/viewport-legacy-xhtmlmp-expected.txt: Added.
+        * platform/ios-sim/fast/viewport/viewport-legacy-xhtmlmp-remove-and-add-expected.txt: Added.
+        - iOS never supported these "legacy" viewport modes, so add
+          platform-specific results with current behavior.
+
 2014-06-11  Alexey Proskuryakov  <ap@apple.com>
 
         inspector-protocol/debugger/breakpoint-action-detach.html is flaky

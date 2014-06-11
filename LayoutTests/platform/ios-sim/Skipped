@@ -854,9 +854,6 @@ media/video-playbackrate.html
 media/video-seek-by-small-increment.html
 media/video-src-invalid-poster.html
 
-# FIXME: <rdar://problem/9002724> DRT: For fast/viewport implement layoutTestController.dumpConfigurationForViewport
-fast/viewport
-
 # Skip asynchronous plugin tests that will timeout because we don't implement <embed> plugins.
 plugins/get-javascript-url.html
 plugins/plugin-initiate-popup-window.html
