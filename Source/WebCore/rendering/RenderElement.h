@@ -23,6 +23,7 @@
 #ifndef RenderElement_h
 #define RenderElement_h
 
+#include "AnimationController.h"
 #include "RenderObject.h"
 
 namespace WebCore {
@@ -243,6 +244,11 @@ private:
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderElement, isRenderElement())
+
+inline void RenderElement::setAnimatableStyle(PassRef<RenderStyle> style)
+{
+    setStyle(animation().updateAnimations(*this, std::move(style)));
+}
 
 inline RenderStyle& RenderElement::firstLineStyle() const
 {

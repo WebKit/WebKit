@@ -456,11 +456,6 @@ private:
     RenderView* m_view;
 };
 
-inline Frame& RenderObject::frame() const
-{
-    return view().frameView().frame();
-}
-
 } // namespace WebCore
 
 #endif // RenderView_h

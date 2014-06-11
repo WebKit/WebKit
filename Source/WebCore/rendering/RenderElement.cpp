@@ -26,7 +26,6 @@
 #include "RenderElement.h"
 
 #include "AXObjectCache.h"
-#include "AnimationController.h"
 #include "ContentData.h"
 #include "ControlStates.h"
 #include "CursorList.h"
@@ -461,11 +460,6 @@ void RenderElement::setStyle(PassRef<RenderStyle> style)
         // not having an outline to having an outline.
         repaint();
     }
-}
-
-void RenderElement::setAnimatableStyle(PassRef<RenderStyle> style)
-{
-    setStyle(animation().updateAnimations(*this, std::move(style)));
 }
 
 void RenderElement::addChild(RenderObject* newChild, RenderObject* beforeChild)

@@ -1,3 +1,32 @@
+2014-06-10  Benjamin Poulain  <benjamin@webkit.org>
+
+        Reduce the overhead of updating the animatable style on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=133618
+
+        Reviewed by Simon Fraser.
+
+        While updating the style for animations, most of the time spent was pure calling overhead.
+
+        This patch should reduce this a bit on ARMv7:
+        1) Get the frame directly from the document instead of document->view->framview->frame.
+        2) Inline RenderObject::animation(). This is just 3 loads, setting up the registers on the call
+           site is more expensive than loading the values directly.
+        3) Inline RenderElement::setAnimatableStyle(). It has only one call site and the call is mostly
+           overhead.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::setAnimatableStyle): Deleted.
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::setAnimatableStyle):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::adjustRectForOutlineAndShadow):
+        (WebCore::RenderObject::animation): Deleted.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::animation):
+        * rendering/RenderView.h:
+        (WebCore::RenderObject::frame):
+
 2014-06-10  Sam Weinig  <sam@webkit.org>
 
         Don't create a HashTable for JSObjects that use eager reification

@@ -30,6 +30,7 @@
 #include "DocumentStyleSheetCollection.h"
 #include "Element.h"
 #include "FloatQuad.h"
+#include "Frame.h"
 #include "LayoutRect.h"
 #include "PaintPhase.h"
 #include "RenderStyle.h"
@@ -1032,6 +1033,16 @@ private:
 
 template <typename Type> bool isRendererOfType(const RenderObject&);
 template <> inline bool isRendererOfType<const RenderObject>(const RenderObject&) { return true; }
+
+inline Frame& RenderObject::frame() const
+{
+    return *document().frame();
+}
+
+inline AnimationController& RenderObject::animation() const
+{
+    return frame().animation();
+}
 
 inline bool RenderObject::documentBeingDestroyed() const
 {

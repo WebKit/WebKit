@@ -33,7 +33,6 @@
 #include "FloatQuad.h"
 #include "FlowThreadController.h"
 #include "FocusController.h"
-#include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
 #include "GeometryUtilities.h"
@@ -2313,11 +2312,6 @@ void RenderObject::adjustRectForOutlineAndShadow(LayoutRect& rect) const
     }
 
     rect.inflate(outlineSize);
-}
-
-AnimationController& RenderObject::animation() const
-{
-    return frame().animation();
 }
 
 void RenderObject::imageChanged(CachedImage* image, const IntRect* rect)
