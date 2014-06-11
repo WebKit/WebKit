@@ -1061,7 +1061,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     if (scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateBegan) {
         _page->willStartUserTriggeredZooming();
-        [_contentView willStartPanOrPinchGesture];
+        [_contentView scrollViewWillStartPanOrPinchGesture];
     }
     [_contentView willStartZoomOrScroll];
 }
@@ -1072,7 +1072,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return;
 
     if (scrollView.panGestureRecognizer.state == UIGestureRecognizerStateBegan)
-        [_contentView willStartPanOrPinchGesture];
+        [_contentView scrollViewWillStartPanOrPinchGesture];
     [_contentView willStartZoomOrScroll];
 }
 

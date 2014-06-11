@@ -151,7 +151,7 @@ struct WKAutoCorrectionData {
 - (void)setupInteraction;
 - (void)cleanupInteraction;
 
-- (void)willStartPanOrPinchGesture;
+- (void)scrollViewWillStartPanOrPinchGesture;
 
 - (void)_webTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent preventsNativeGestures:(BOOL)preventsDefault;
 - (void)_commitPotentialTapFailed;

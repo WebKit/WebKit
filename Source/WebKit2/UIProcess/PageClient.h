@@ -264,6 +264,7 @@ public:
     virtual void setUsesMinimalUI(bool) = 0;
     virtual double minimumZoomScale() const = 0;
     virtual WebCore::FloatSize contentsSize() const = 0;
+    virtual void scrollViewWillStartPanGesture() = 0;
     virtual void didFinishDrawingPagesToPDF(const IPC::DataReference&) = 0;
 
 #if ENABLE(INSPECTOR)

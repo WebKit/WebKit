@@ -98,6 +98,11 @@ FloatRect RemoteScrollingCoordinatorProxy::customFixedPositionRect() const
     return m_webPageProxy.computeCustomFixedPositionRect(m_webPageProxy.unobscuredContentRect(), m_webPageProxy.displayedContentScale());
 }
 
+void RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartPanGesture()
+{
+    m_webPageProxy.scrollViewWillStartPanGesture();
+}
+
 } // namespace WebKit
 
 

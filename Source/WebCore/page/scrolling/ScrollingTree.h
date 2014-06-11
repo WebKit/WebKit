@@ -90,6 +90,7 @@ public:
     
 #if PLATFORM(IOS)
     virtual FloatRect fixedPositionRect() = 0;
+    virtual void scrollingTreeNodeWillStartPanGesture() { }
 #endif
 
     bool isPointInNonFastScrollableRegion(IntPoint);

@@ -1,3 +1,32 @@
+2014-06-10  Benjamin Poulain  <benjamin@webkit.org>
+
+        [iOS][WK2] ScrollingTreeOverflowScrollingNode does not use asynchronous touch dispatch
+        https://bugs.webkit.org/show_bug.cgi?id=133702
+        <rdar://problem/17259261>
+
+        Reviewed by Simon Fraser.
+
+        Notify the WKWebView and the TouchGestureRecognizer when on of the internal UIScrollView
+        starts scrolling in response to a gesture.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/Scrolling/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::scrollingTreeNodeWillStartPanGesture):
+        * UIProcess/Scrolling/RemoteScrollingTree.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (-[WKOverflowScrollViewDelegate scrollViewWillBeginDragging:]):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::scrollViewWillStartPanGesture):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::scrollViewWillStartPanGesture):
+        * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartPanGesture):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::scrollViewWillStartPanGesture):
+
 2014-06-10  Dan Bernstein  <mitz@apple.com>
 
         WebKit2 part of [Cocoa] Handling authentication challenges should not require multiple delegate methods

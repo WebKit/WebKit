@@ -58,6 +58,7 @@ private:
 
 #if PLATFORM(IOS)
     virtual WebCore::FloatRect fixedPositionRect() override;
+    virtual void scrollingTreeNodeWillStartPanGesture() override;
 #endif
 
     virtual PassOwnPtr<WebCore::ScrollingTreeNode> createNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);

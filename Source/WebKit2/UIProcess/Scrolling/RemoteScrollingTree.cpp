@@ -82,6 +82,11 @@ WebCore::FloatRect RemoteScrollingTree::fixedPositionRect()
 {
     return m_scrollingCoordinatorProxy.customFixedPositionRect();
 }
+
+void RemoteScrollingTree::scrollingTreeNodeWillStartPanGesture()
+{
+    m_scrollingCoordinatorProxy.scrollingTreeNodeWillStartPanGesture();
+}
 #endif
 
 void RemoteScrollingTree::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)

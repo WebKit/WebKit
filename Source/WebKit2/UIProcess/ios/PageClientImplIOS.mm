@@ -528,6 +528,11 @@ void PageClientImpl::zoomToRect(FloatRect rect, double minimumScale, double maxi
     [m_contentView _zoomToRect:rect withOrigin:rect.center() fitEntireRect:YES minimumScale:minimumScale maximumScale:maximumScale minimumScrollDistance:0];
 }
 
+void PageClientImpl::scrollViewWillStartPanGesture()
+{
+    [m_contentView scrollViewWillStartPanOrPinchGesture];
+}
+
 void PageClientImpl::didFinishDrawingPagesToPDF(const IPC::DataReference& pdfData)
 {
     RetainPtr<CFDataRef> data = adoptCF(CFDataCreate(kCFAllocatorDefault, pdfData.data(), pdfData.size()));

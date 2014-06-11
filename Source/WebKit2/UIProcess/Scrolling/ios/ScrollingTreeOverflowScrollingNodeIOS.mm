@@ -33,6 +33,7 @@
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/ScrollingStateOverflowScrollingNode.h>
 #import <WebCore/ScrollingTree.h>
+#import <UIKit/UIPanGestureRecognizer.h>
 #import <UIKit/UIScrollView.h>
 
 using namespace WebCore;
@@ -65,6 +66,9 @@ using namespace WebCore;
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
     _inUserInteraction = YES;
+
+    if (scrollView.panGestureRecognizer.state == UIGestureRecognizerStateBegan)
+        _scrollingTreeNode->scrollViewWillStartPanGesture();
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)willDecelerate
@@ -189,6 +193,11 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateChildNodesAfterScroll(const Fl
 
     for (auto& child : *m_children)
         child->updateLayersAfterAncestorChange(*this, fixedPositionRect, scrollDelta);
+}
+
+void ScrollingTreeOverflowScrollingNodeIOS::scrollViewWillStartPanGesture()
+{
+    scrollingTree().scrollingTreeNodeWillStartPanGesture();
 }
 
 void ScrollingTreeOverflowScrollingNodeIOS::scrollViewDidScroll(const FloatPoint& scrollPosition, bool inUserInteration)
