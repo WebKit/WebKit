@@ -630,9 +630,6 @@ private:
     bool m_isOverlapped;
     bool m_contentIsOpaque;
 
-    int m_borderX;
-    int m_borderY;
-
     Timer<FrameView> m_layoutTimer;
     bool m_delayedLayout;
     RenderElement* m_layoutRoot;
