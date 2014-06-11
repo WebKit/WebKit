@@ -1,5 +1,16 @@
 2014-06-11  David Kilzer  <ddkilzer@apple.com>
 
+        Viewport arguments should ignore invalid characters in values
+        <http://webkit.org/b/133555>
+        <rdar://problem/17179650>
+
+        Reviewed by Daniel Bates.
+
+        * fast/viewport/viewport-warnings-7-expected.txt: Added.
+        * fast/viewport/viewport-warnings-7.html: Added.
+
+2014-06-11  David Kilzer  <ddkilzer@apple.com>
+
         [iOS] Enable fast/viewport tests
         <http://webkit.org/b/133754>
 

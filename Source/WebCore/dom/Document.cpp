@@ -2858,13 +2858,12 @@ static bool isSeparator(UChar c)
 void Document::processArguments(const String& features, void* data, ArgumentsCallback callback)
 {
     // Tread lightly in this code -- it was specifically designed to mimic Win IE's parsing behavior.
-    int keyBegin, keyEnd;
-    int valueBegin, valueEnd;
+    unsigned keyBegin, keyEnd;
+    unsigned valueBegin, valueEnd;
 
-    int i = 0;
-    int length = features.length();
     String buffer = features.lower();
-    while (i < length) {
+    unsigned length = buffer.length();
+    for (unsigned i = 0; i < length; ) {
         // skip to first non-separator, but don't skip past the end of the string
         while (isSeparator(buffer[i])) {
             if (i >= length)
