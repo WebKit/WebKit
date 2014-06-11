@@ -484,9 +484,8 @@ void InspectorResourceAgent::documentThreadableLoaderStartedLoadingForClient(uns
 
 void InspectorResourceAgent::willLoadXHR(ThreadableLoaderClient* client, const String& method, const URL& url, bool async, PassRefPtr<FormData> formData, const HTTPHeaderMap& headers, bool includeCredentials)
 {
-    RefPtr<XHRReplayData> xhrReplayData = XHRReplayData::create(method, url, async, formData, includeCredentials);
-    for (const auto& header : headers)
-        xhrReplayData->addHeader(header.key, header.value);
+    RefPtr<XHRReplayData> xhrReplayData = XHRReplayData::create(method, url, async, formData, headers, includeCredentials);
+
     m_pendingXHRReplayData.set(client, xhrReplayData);
 }
 

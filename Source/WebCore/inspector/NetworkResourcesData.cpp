@@ -51,21 +51,18 @@ using namespace Inspector;
 namespace WebCore {
 
 
-PassRefPtr<XHRReplayData> XHRReplayData::create(const String &method, const URL& url, bool async, PassRefPtr<FormData> formData, bool includeCredentials)
+PassRefPtr<XHRReplayData> XHRReplayData::create(const String &method, const URL& url, bool async, PassRefPtr<FormData> formData, const HTTPHeaderMap& headers, bool includeCredentials)
 {
-    return adoptRef(new XHRReplayData(method, url, async, formData, includeCredentials));
+    return adoptRef(new XHRReplayData(method, url, async, formData, headers, includeCredentials));
 }
 
-void XHRReplayData::addHeader(const AtomicString& key, const String& value)
-{
-    m_headers.set(key, value);
-}
 
-XHRReplayData::XHRReplayData(const String &method, const URL& url, bool async, PassRefPtr<FormData> formData, bool includeCredentials)
+XHRReplayData::XHRReplayData(const String &method, const URL& url, bool async, PassRefPtr<FormData> formData, const HTTPHeaderMap& headers, bool includeCredentials)
     : m_method(method)
     , m_url(url)
     , m_async(async)
     , m_formData(formData)
+    , m_headers(headers)
     , m_includeCredentials(includeCredentials)
 {
 }

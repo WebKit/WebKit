@@ -1,3 +1,20 @@
+2014-06-11  Anders Carlsson  <andersca@apple.com>
+
+        Remove XHRReplayData::addHeader
+        https://bugs.webkit.org/show_bug.cgi?id=133776
+
+        Reviewed by Antti Koivisto.
+
+        Just pass the HTTP header map to XHRReplayData::create directly.
+
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::willLoadXHR):
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::XHRReplayData::create):
+        (WebCore::XHRReplayData::XHRReplayData):
+        (WebCore::XHRReplayData::addHeader): Deleted.
+        * inspector/NetworkResourcesData.h:
+
 2014-06-11  Andy Estes  <aestes@apple.com>
 
         Fix the Mac build.

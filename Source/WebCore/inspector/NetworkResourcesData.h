@@ -51,9 +51,8 @@ class TextResourceDecoder;
 
 class XHRReplayData : public RefCounted<XHRReplayData> {
 public:
-    static PassRefPtr<XHRReplayData> create(const String &method, const URL&, bool async, PassRefPtr<FormData>, bool includeCredentials);
+    static PassRefPtr<XHRReplayData> create(const String &method, const URL&, bool async, PassRefPtr<FormData>, const HTTPHeaderMap& headers, bool includeCredentials);
 
-    void addHeader(const AtomicString& key, const String& value);
     const String& method() const { return m_method; }
     const URL& url() const { return m_url; }
     bool async() const { return m_async; }
@@ -61,13 +60,13 @@ public:
     const HTTPHeaderMap& headers() const { return m_headers; }
     bool includeCredentials() const { return m_includeCredentials; }
 private:
-    XHRReplayData(const String &method, const URL&, bool async, PassRefPtr<FormData>, bool includeCredentials);
+    XHRReplayData(const String &method, const URL&, bool async, PassRefPtr<FormData>, const HTTPHeaderMap& headers, bool includeCredentials);
 
     String m_method;
     URL m_url;
     bool m_async;
     RefPtr<FormData> m_formData;
-    HTTPHeaderMap m_headers;
+    const HTTPHeaderMap m_headers;
     bool m_includeCredentials;
 };
 
