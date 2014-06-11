@@ -1,5 +1,14 @@
 2014-06-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Remove an unnecessary asObject(this) call inside JSObject::fastGetOwnPropertySlot.
+
+        Rubber-stamped by Andreas Kling.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::fastGetOwnPropertySlot):
+
+2014-06-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         Turning on DUMP_PROPERTYMAP_STATS causes a build failure
         https://bugs.webkit.org/show_bug.cgi?id=133673
 
