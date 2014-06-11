@@ -1,5 +1,11 @@
 2014-06-11  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [CMake] One more URTBF after r169826.
+
+        * CMakeLists.txt: Generate files to the proper place.
+
+2014-06-11  Csaba Osztrogonác  <ossy@webkit.org>
+
         [CMake]URTBF after r169826.
 
         * CMakeLists.txt: Typo fix.

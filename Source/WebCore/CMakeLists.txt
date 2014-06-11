@@ -3323,6 +3323,7 @@ add_custom_command(
     OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/HTTPHeaderNames.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/HTTPHeaderNames.gperf ${DERIVED_SOURCES_WEBCORE_DIR}/HTTPHeaderNames.h
     MAIN_DEPENDENCY ${WEBCORE_DIR}/platform/network/HTTPHeaderNames.in
     DEPENDS ${WEBCORE_DIR}/platform/network/create-http-header-name-table
+    WORKING_DIRECTORY ${DERIVED_SOURCES_WEBCORE_DIR}
     COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/platform/network/create-http-header-name-table ${WEBCORE_DIR}/platform/network/HTTPHeaderNames.in
     VERBATIM)
 list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/HTTPHeaderNames.cpp)
