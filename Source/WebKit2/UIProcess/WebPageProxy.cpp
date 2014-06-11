@@ -132,6 +132,7 @@
 
 #if PLATFORM(COCOA)
 #include "ViewSnapshotStore.h"
+#include <WebCore/RunLoopObserver.h>
 #endif
 
 #if PLATFORM(IOS)
@@ -365,6 +366,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_scrollPinningBehavior(DoNotPin)
     , m_navigationID(0)
     , m_configurationPreferenceValues(configuration.preferenceValues)
+    , m_potentiallyChangedViewStateFlags(ViewState::NoFlags)
+    , m_viewStateChangeWantsReply(WantsReplyOrNot::DoesNotWantReply)
 {
     if (m_process->state() == WebProcessProxy::State::Running) {
         if (m_userContentController)
@@ -409,6 +412,13 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     IPC::Connection* connection = m_process->state() == WebProcessProxy::State::Running ? m_process->connection() : nullptr;
     m_process->context().storageManager().createSessionStorageNamespace(m_pageID, connection, std::numeric_limits<unsigned>::max());
     setSession(*configuration.session);
+
+#if PLATFORM(COCOA)
+    const CFIndex viewStateChangeRunLoopOrder = (CFIndex)RunLoopObserver::WellKnownRunLoopOrders::CoreAnimationCommit - 1;
+    m_viewStateChangeDispatcher = RunLoopObserver::create(viewStateChangeRunLoopOrder, [this]() {
+        this->dispatchViewStateChange();
+    });
+#endif
 }
 
 WebPageProxy::~WebPageProxy()
@@ -1092,25 +1102,41 @@ void WebPageProxy::updateViewState(ViewState::Flags flagsToUpdate)
 
 void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsReplyOrNot wantsReply)
 {
+    m_potentiallyChangedViewStateFlags |= mayHaveChanged;
+    m_viewStateChangeWantsReply = (wantsReply == WantsReplyOrNot::DoesWantReply || m_viewStateChangeWantsReply == WantsReplyOrNot::DoesWantReply) ? WantsReplyOrNot::DoesWantReply : WantsReplyOrNot::DoesNotWantReply;
+
+#if PLATFORM(COCOA)
+    m_viewStateChangeDispatcher->schedule();
+#else
+    dispatchViewStateChange();
+#endif
+}
+
+void WebPageProxy::dispatchViewStateChange()
+{
+#if PLATFORM(COCOA)
+    m_viewStateChangeDispatcher->invalidate();
+#endif
+
     if (!isValid())
         return;
 
     // If the visibility state may have changed, then so may the visually idle & occluded agnostic state.
-    if (mayHaveChanged & ViewState::IsVisible)
-        mayHaveChanged |= ViewState::IsVisibleOrOccluded | ViewState::IsVisuallyIdle;
+    if (m_potentiallyChangedViewStateFlags & ViewState::IsVisible)
+        m_potentiallyChangedViewStateFlags |= ViewState::IsVisibleOrOccluded | ViewState::IsVisuallyIdle;
 
     // Record the prior view state, update the flags that may have changed,
     // and check which flags have actually changed.
     ViewState::Flags previousViewState = m_viewState;
-    updateViewState(mayHaveChanged);
+    updateViewState(m_potentiallyChangedViewStateFlags);
     ViewState::Flags changed = m_viewState ^ previousViewState;
 
     if (changed)
-        m_process->send(Messages::WebPage::SetViewState(m_viewState, wantsReply == WantsReplyOrNot::DoesWantReply), m_pageID);
-    
+        m_process->send(Messages::WebPage::SetViewState(m_viewState, m_viewStateChangeWantsReply == WantsReplyOrNot::DoesWantReply), m_pageID);
+
     // This must happen after the SetViewState message is sent, to ensure the page visibility event can fire.
     updateActivityToken();
-    
+
     if (changed & ViewState::IsVisuallyIdle)
         m_process->pageSuppressibilityChanged(this);
 
@@ -1120,7 +1146,7 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsRepl
     if ((changed & ViewState::IsVisible) && !isViewVisible())
         m_process->responsivenessTimer()->stop();
 
-    if ((mayHaveChanged & ViewState::IsInWindow) && (m_viewState & ViewState::IsInWindow)) {
+    if ((m_potentiallyChangedViewStateFlags & ViewState::IsInWindow) && (m_viewState & ViewState::IsInWindow)) {
         LayerHostingMode layerHostingMode = m_pageClient.viewLayerHostingMode();
         if (m_layerHostingMode != layerHostingMode) {
             m_layerHostingMode = layerHostingMode;
@@ -1128,7 +1154,7 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsRepl
         }
     }
 
-    if ((mayHaveChanged & ViewState::IsInWindow) && !(m_viewState & ViewState::IsInWindow)) {
+    if ((m_potentiallyChangedViewStateFlags & ViewState::IsInWindow) && !(m_viewState & ViewState::IsInWindow)) {
 #if ENABLE(INPUT_TYPE_COLOR_POPOVER)
         // When leaving the current page, close the popover color well.
         if (m_colorPicker)
@@ -1142,8 +1168,11 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsRepl
     }
 
     updateBackingStoreDiscardableState();
+
+    m_potentiallyChangedViewStateFlags = ViewState::NoFlags;
+    m_viewStateChangeWantsReply = WantsReplyOrNot::DoesNotWantReply;
 }
-    
+
 void WebPageProxy::updateActivityToken()
 {
 #if PLATFORM(IOS)

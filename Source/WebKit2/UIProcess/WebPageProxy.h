@@ -125,6 +125,7 @@ class FloatRect;
 class GraphicsLayer;
 class IntSize;
 class ProtectionSpace;
+class RunLoopObserver;
 class SharedBuffer;
 struct FileChooserSettings;
 struct TextAlternativeWithRange;
@@ -1458,6 +1459,8 @@ private:
 
     WebPreferencesStore preferencesStore() const;
 
+    void dispatchViewStateChange();
+
     PageClient& m_pageClient;
     std::unique_ptr<API::LoaderClient> m_loaderClient;
     std::unique_ptr<API::PolicyClient> m_policyClient;
@@ -1716,6 +1719,7 @@ private:
         
 #if PLATFORM(COCOA)
     HashMap<String, String> m_temporaryPDFFiles;
+    std::unique_ptr<WebCore::RunLoopObserver> m_viewStateChangeDispatcher;
 #endif
         
     WebCore::ScrollPinningBehavior m_scrollPinningBehavior;
@@ -1723,6 +1727,8 @@ private:
     uint64_t m_navigationID;
 
     WebPreferencesStore::ValueMap m_configurationPreferenceValues;
+    WebCore::ViewState::Flags m_potentiallyChangedViewStateFlags;
+    WantsReplyOrNot m_viewStateChangeWantsReply;
 };
 
 } // namespace WebKit

@@ -1,5 +1,23 @@
 2014-06-11  Timothy Horton  <timothy_horton@apple.com>
 
+        [wk2] Don't dispatch view state changes immediately
+        https://bugs.webkit.org/show_bug.cgi?id=133713
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::viewStateDidChange):
+        (WebKit::WebPageProxy::dispatchViewStateChange):
+        (WebKit::WebPageProxy::updateViewState): Deleted.
+        * UIProcess/WebPageProxy.h:
+        On PLATFORM(COCOA), wait until just before CA is going to commit the UI process layer
+        tree to dispatch view state changes to the Web process. This avoids sending multiple
+        view state change messages to the Web process within one run-loop cycle, for example
+        when a view is moved around in the view hierarchy but the view state otherwise remains the same.
+
+2014-06-11  Timothy Horton  <timothy_horton@apple.com>
+
         Make it possible for waitForAndDispatchImmediately to bail if a sync message comes in from the other direction
         https://bugs.webkit.org/show_bug.cgi?id=133708
 
