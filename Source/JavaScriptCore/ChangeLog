@@ -1,3 +1,32 @@
+2014-06-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Structure::get should instantiate DeferGC only when materializing property map
+        https://bugs.webkit.org/show_bug.cgi?id=133727
+
+        Reviewed by Geoffrey Garen.
+
+        DeferGC instances in Structure::get was added in http://trac.webkit.org/r157539 in order to avoid
+        collecting the property table newly created by materializePropertyMapIfNecessary since GC can happen
+        when GCSafeConcurrentJITLocker goes out of scope.
+
+        However, always instantiating DeferGC inside Structure::get introduced a new performance bottleneck
+        in JSObject::getPropertySlot because frequently incrementing and decrementing a counter in vm.m_heap
+        and running a release assertion inside Heap::incrementDeferralDepth() is expensive.
+
+        Work around this by instantiating DeferGC only when we're actually calling materializePropertyMap,
+        and immediately storing a pointer to the newly created property table in the stack before DeferGC
+        goes out of scope so that the property table will be marked.
+
+        This shows 13-16% improvement on the microbenchmark attached in the bug.
+
+        * runtime/JSCJSValue.cpp:
+        * runtime/JSObject.h:
+        (JSC::JSObject::fastGetOwnPropertySlot):
+        * runtime/Structure.h:
+        (JSC::Structure::materializePropertyMapIfNecessary):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::get):
+
 2014-06-11  Andreas Kling  <akling@apple.com>
 
         Some JSValue::get() micro-optimzations.

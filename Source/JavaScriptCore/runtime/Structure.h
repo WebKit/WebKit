@@ -434,6 +434,18 @@ private:
         if (!propertyTable() && previousID())
             materializePropertyMap(vm);
     }
+    void materializePropertyMapIfNecessary(VM& vm, PropertyTable*& table)
+    {
+        ASSERT(!isCompilationThread());
+        ASSERT(structure()->classInfo() == info());
+        ASSERT(checkOffsetConsistency());
+        table = propertyTable().get();
+        if (!table && previousID()) {
+            DeferGC deferGC(vm.heap);
+            materializePropertyMap(vm);
+            table = propertyTable().get();
+        }
+    }
     void materializePropertyMapIfNecessaryForPinning(VM& vm, DeferGC&)
     {
         ASSERT(structure()->classInfo() == info());

@@ -34,6 +34,7 @@
 #include "JSGlobalObject.h"
 #include "JSNotAnObject.h"
 #include "NumberObject.h"
+#include "StructureInlines.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>
 

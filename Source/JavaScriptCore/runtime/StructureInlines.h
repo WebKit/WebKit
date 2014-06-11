@@ -77,12 +77,12 @@ inline PropertyOffset Structure::get(VM& vm, PropertyName propertyName)
 {
     ASSERT(!isCompilationThread());
     ASSERT(structure()->classInfo() == info());
-    DeferGC deferGC(vm.heap);
-    materializePropertyMapIfNecessary(vm, deferGC);
-    if (!propertyTable())
+    PropertyTable* propertyTable;
+    materializePropertyMapIfNecessary(vm, propertyTable);
+    if (!propertyTable)
         return invalidOffset;
 
-    PropertyMapEntry* entry = propertyTable()->get(propertyName.uid());
+    PropertyMapEntry* entry = propertyTable->get(propertyName.uid());
     return entry ? entry->offset : invalidOffset;
 }
 
@@ -90,12 +90,12 @@ inline PropertyOffset Structure::get(VM& vm, const WTF::String& name)
 {
     ASSERT(!isCompilationThread());
     ASSERT(structure()->classInfo() == info());
-    DeferGC deferGC(vm.heap);
-    materializePropertyMapIfNecessary(vm, deferGC);
-    if (!propertyTable())
+    PropertyTable* propertyTable;
+    materializePropertyMapIfNecessary(vm, propertyTable);
+    if (!propertyTable)
         return invalidOffset;
 
-    PropertyMapEntry* entry = propertyTable()->findWithString(name.impl()).first;
+    PropertyMapEntry* entry = propertyTable->findWithString(name.impl()).first;
     return entry ? entry->offset : invalidOffset;
 }
     
@@ -104,12 +104,12 @@ inline PropertyOffset Structure::get(VM& vm, PropertyName propertyName, unsigned
     ASSERT(!isCompilationThread());
     ASSERT(structure()->classInfo() == info());
 
-    DeferGC deferGC(vm.heap);
-    materializePropertyMapIfNecessary(vm, deferGC);
-    if (!propertyTable())
+    PropertyTable* propertyTable;
+    materializePropertyMapIfNecessary(vm, propertyTable);
+    if (!propertyTable)
         return invalidOffset;
 
-    PropertyMapEntry* entry = propertyTable()->get(propertyName.uid());
+    PropertyMapEntry* entry = propertyTable->get(propertyName.uid());
     if (!entry)
         return invalidOffset;
 
