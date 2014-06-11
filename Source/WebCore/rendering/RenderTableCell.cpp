@@ -1136,31 +1136,6 @@ void RenderTableCell::sortBorderValues(RenderTable::CollapsedBorderValues& borde
         compareBorderValuesForQSort);
 }
 
-bool RenderTableCell::alignLeftRightBorderPaintRect(int& leftXOffset, int& rightXOffset)
-{
-    const RenderStyle& styleForTopCell = styleForCellFlow();
-    int left = cachedCollapsedLeftBorder(&styleForTopCell).width();
-    int right = cachedCollapsedRightBorder(&styleForTopCell).width();
-    leftXOffset = std::max<int>(leftXOffset, left);
-    rightXOffset = std::max<int>(rightXOffset, right);
-    if (colSpan() > 1)
-        return false;
-    return true;
-}
-
-bool RenderTableCell::alignTopBottomBorderPaintRect(int& topYOffset, int& bottomYOffset)
-{
-    const RenderStyle& styleForBottomCell = styleForCellFlow();
-    int top = cachedCollapsedTopBorder(&styleForBottomCell).width();
-    int bottom = cachedCollapsedBottomBorder(&styleForBottomCell).width();
-    topYOffset = std::max<int>(topYOffset, top);
-    bottomYOffset = std::max<int>(bottomYOffset, bottom);
-    if (rowSpan() > 1)
-        return false;
-    return true;
-}
-
-
 void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     ASSERT(paintInfo.phase == PaintPhaseCollapsedTableBorders);
@@ -1194,36 +1169,6 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
     int leftWidth = leftVal.width();
     int rightWidth = rightVal.width();
 
-    int leftXOffsetTop = leftWidth;
-    int leftXOffsetBottom = leftWidth;
-    int rightXOffsetTop = rightWidth;
-    int rightXOffsetBottom = rightWidth;
-    int topYOffsetLeft = topWidth;
-    int topYOffsetRight = topWidth;
-    int bottomYOffsetLeft = bottomWidth;
-    int bottomYOffsetRight = bottomWidth;
-
-    bool shouldDrawTopBorder = true;
-    bool shouldDrawLeftBorder = true;
-    bool shouldDrawRightBorder = true;
-
-    if (RenderTableCell* top = cellAtTop(&styleForCellFlow)) {
-        shouldDrawTopBorder = top->alignLeftRightBorderPaintRect(leftXOffsetTop, rightXOffsetTop);
-        if (this->colSpan() > 1)
-            shouldDrawTopBorder = false;
-    }
-
-    if (RenderTableCell* bottom = cellAtBottom(&styleForCellFlow))
-        bottom->alignLeftRightBorderPaintRect(leftXOffsetBottom, rightXOffsetBottom);
-
-    if (RenderTableCell* left = cellAtLeft(&styleForCellFlow))
-        shouldDrawLeftBorder = left->alignTopBottomBorderPaintRect(topYOffsetLeft, bottomYOffsetLeft);
-
-    if (RenderTableCell* right = cellAtRight(&styleForCellFlow))
-        shouldDrawRightBorder = right->alignTopBottomBorderPaintRect(topYOffsetRight, bottomYOffsetRight);
-
-    IntRect cellRect = pixelSnappedIntRect(paintRect.x(), paintRect.y(), paintRect.width(), paintRect.height());
-
     IntRect borderRect = pixelSnappedIntRect(paintRect.x() - leftWidth / 2,
         paintRect.y() - topWidth / 2,
         paintRect.width() + leftWidth / 2 + (rightWidth + 1) / 2,
@@ -1234,33 +1179,18 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
     EBorderStyle leftStyle = collapsedBorderStyle(leftVal.style());
     EBorderStyle rightStyle = collapsedBorderStyle(rightVal.style());
     
-    bool renderTop = topStyle > BHIDDEN && !topVal.isTransparent() && shouldDrawTopBorder;
+    bool renderTop = topStyle > BHIDDEN && !topVal.isTransparent();
     bool renderBottom = bottomStyle > BHIDDEN && !bottomVal.isTransparent();
-    bool renderLeft = leftStyle > BHIDDEN && !leftVal.isTransparent() && shouldDrawLeftBorder;
-    bool renderRight = rightStyle > BHIDDEN && !rightVal.isTransparent() && shouldDrawRightBorder;
+    bool renderLeft = leftStyle > BHIDDEN && !leftVal.isTransparent();
+    bool renderRight = rightStyle > BHIDDEN && !rightVal.isTransparent();
 
     // We never paint diagonals at the joins.  We simply let the border with the highest
     // precedence paint on top of borders with lower precedence.  
     CollapsedBorders borders;
-    if (topVal.style() == DOTTED)
-        borders.addBorder(topVal, BSTop, renderTop, cellRect.x() - leftXOffsetTop / 2, cellRect.y() - topWidth / 2, cellRect.maxX() + rightXOffsetTop / 2, cellRect.y() + topWidth / 2 + topWidth % 2, topStyle);
-    else
-        borders.addBorder(topVal, BSTop, renderTop, borderRect.x(), borderRect.y(), borderRect.maxX(), borderRect.y() + topWidth, topStyle);
-
-    if (bottomVal.style() == DOTTED)
-        borders.addBorder(bottomVal, BSBottom, renderBottom, cellRect.x() - leftXOffsetBottom / 2, cellRect.maxY() - bottomWidth / 2, cellRect.maxX() + rightXOffsetBottom / 2, cellRect.maxY() + bottomWidth / 2 + bottomWidth % 2, bottomStyle);
-    else
-        borders.addBorder(bottomVal, BSBottom, renderBottom, borderRect.x(), borderRect.maxY() - bottomWidth, borderRect.maxX(), borderRect.maxY(), bottomStyle);
-
-    if (leftVal.style() == DOTTED)
-        borders.addBorder(leftVal, BSLeft, renderLeft, cellRect.x() - leftWidth / 2, cellRect.y() - topYOffsetLeft / 2, cellRect.x() + leftWidth / 2 + leftWidth % 2, cellRect.maxY() + bottomYOffsetLeft / 2 + bottomYOffsetLeft % 2, leftStyle);
-    else
-        borders.addBorder(leftVal, BSLeft, renderLeft, borderRect.x(), borderRect.y(), borderRect.x() + leftWidth, borderRect.maxY(), leftStyle);
-
-    if (rightVal.style() == DOTTED)
-        borders.addBorder(rightVal, BSRight, renderRight, cellRect.maxX() - rightWidth / 2, cellRect.y()  - topYOffsetRight / 2, cellRect.maxX() + rightWidth / 2 + rightWidth % 2, cellRect.maxY()  + bottomYOffsetRight / 2 + bottomYOffsetRight % 2, rightStyle);
-    else
-        borders.addBorder(rightVal, BSRight, renderRight, borderRect.maxX() - rightWidth, borderRect.y(), borderRect.maxX(), borderRect.maxY(), rightStyle);
+    borders.addBorder(topVal, BSTop, renderTop, borderRect.x(), borderRect.y(), borderRect.maxX(), borderRect.y() + topWidth, topStyle);
+    borders.addBorder(bottomVal, BSBottom, renderBottom, borderRect.x(), borderRect.maxY() - bottomWidth, borderRect.maxX(), borderRect.maxY(), bottomStyle);
+    borders.addBorder(leftVal, BSLeft, renderLeft, borderRect.x(), borderRect.y(), borderRect.x() + leftWidth, borderRect.maxY(), leftStyle);
+    borders.addBorder(rightVal, BSRight, renderRight, borderRect.maxX() - rightWidth, borderRect.y(), borderRect.maxX(), borderRect.maxY(), rightStyle);
 
     bool antialias = shouldAntialiasLines(graphicsContext);
     

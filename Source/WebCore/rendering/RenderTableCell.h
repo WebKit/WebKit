@@ -126,8 +126,6 @@ public:
 
     virtual void paint(PaintInfo&, const LayoutPoint&) override;
 
-    bool alignLeftRightBorderPaintRect(int& leftXOffset, int& rightXOffset);
-    bool alignTopBottomBorderPaintRect(int& topYOffset, int& bottomYOffset);
     void paintCollapsedBorders(PaintInfo&, const LayoutPoint&);
     void paintBackgroundsBehindCell(PaintInfo&, const LayoutPoint&, RenderElement* backgroundObject);
 
