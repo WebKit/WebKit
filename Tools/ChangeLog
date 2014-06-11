@@ -1,3 +1,18 @@
+2014-06-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Always switch to an sRGB screen color profile when running tests
+        https://bugs.webkit.org/show_bug.cgi?id=133712
+
+        Reviewed by Tim Horton.
+        
+        Switch the screen color profile to sRGB when running tests, because even ref
+        tests need the screen to use the correct color profile.
+
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        (installLayoutTestColorProfile):
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.start_helper):
+
 2014-06-10  Martin Hodovan  <mhodovan@partner.samsung.com>
 
         [EFL] Bump EFL libraries to 1.9

@@ -278,9 +278,7 @@ class MacPort(ApplePort):
         helper_path = self._path_to_helper()
         if helper_path:
             _log.debug("Starting layout helper %s" % helper_path)
-            arguments = [helper_path]
-            if pixel_tests:
-                arguments.append('--install-color-profile')
+            arguments = [helper_path, '--install-color-profile']
             self._helper = self._executive.popen(arguments,
                 stdin=self._executive.PIPE, stdout=self._executive.PIPE, stderr=None)
             is_ready = self._helper.stdout.readline()

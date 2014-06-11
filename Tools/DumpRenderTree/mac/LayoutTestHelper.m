@@ -81,9 +81,9 @@ static void installLayoutTestColorProfile()
         CFRelease(deviceInfo);
     }
 
-    ColorSyncProfileRef genericRGBProfile = ColorSyncProfileCreateWithName(kColorSyncGenericRGBProfile);
+    ColorSyncProfileRef sRGBProfile = ColorSyncProfileCreateWithName(kColorSyncSRGBProfile);
     CFErrorRef error;
-    CFURLRef profileURL = ColorSyncProfileGetURL(genericRGBProfile, &error);
+    CFURLRef profileURL = ColorSyncProfileGetURL(sRGBProfile, &error);
     if (!profileURL) {
         NSLog(@"Failed to get URL of Generic RGB color profile! Many pixel tests may fail as a result. Error: %@", error);
         
@@ -92,7 +92,7 @@ static void installLayoutTestColorProfile()
             sUserColorProfileURL = 0;
         }
         
-        CFRelease(genericRGBProfile);
+        CFRelease(sRGBProfile);
         CFRelease(mainDisplayID);
         return;
     }
@@ -110,7 +110,7 @@ static void installLayoutTestColorProfile()
     }
     
     CFRelease(profileInfo);
-    CFRelease(genericRGBProfile);
+    CFRelease(sRGBProfile);
     CFRelease(mainDisplayID);
 }
 
