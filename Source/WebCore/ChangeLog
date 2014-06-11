@@ -1,5 +1,21 @@
 2014-06-11  David Kilzer  <ddkilzer@apple.com>
 
+        WindowFeatures arguments shoud ignore invalid characters in values
+        <http://webkit.org/b/133703>
+        <rdar://problem/17254118>
+
+        Reviewed by Andy Estes.
+
+        Test: fast/dom/Window/window-property-invalid-characters-ignored.html
+
+        * page/WindowFeatures.cpp:
+        (WebCore::WindowFeatures::WindowFeatures): Set |length| based on
+        |buffer|, not |features|.  Switch to using a for loop.  Switch
+        to unsigned types since we are working with positive offsets
+        into a String.
+
+2014-06-11  David Kilzer  <ddkilzer@apple.com>
+
         Viewport arguments should ignore invalid characters in values
         <http://webkit.org/b/133555>
         <rdar://problem/17179650>

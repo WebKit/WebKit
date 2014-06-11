@@ -1,5 +1,17 @@
 2014-06-11  David Kilzer  <ddkilzer@apple.com>
 
+        WindowFeatures arguments shoud ignore invalid characters in values
+        <http://webkit.org/b/133703>
+        <rdar://problem/17254118>
+
+        Reviewed by Andy Estes.
+
+        * fast/dom/Window/resources/window-property-invalid-characters-ignored.html: Added.
+        * fast/dom/Window/window-property-invalid-characters-ignored-expected.txt: Added.
+        * fast/dom/Window/window-property-invalid-characters-ignored.html: Added.
+
+2014-06-11  David Kilzer  <ddkilzer@apple.com>
+
         Viewport arguments should ignore invalid characters in values
         <http://webkit.org/b/133555>
         <rdar://problem/17179650>
