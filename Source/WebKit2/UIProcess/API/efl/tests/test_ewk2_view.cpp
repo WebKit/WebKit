@@ -252,6 +252,8 @@ TEST_F(EWK2ViewTest, ewk_view_add)
 {
     Evas_Object* view = ewk_view_add(canvas());
     ASSERT_EQ(ewk_context_default_get(), ewk_view_context_get(view));
+
+    EXPECT_TRUE(ewk_view_stop(view));
     evas_object_del(view);
 }
 
@@ -291,6 +293,10 @@ TEST_F(EWK2ViewTest, ewk_view_html_string_load)
     ewk_view_html_string_load(webView(), "<html><head><title>Bar</title></head><body>Foo</body></html>", 0, 0);
     ASSERT_TRUE(waitUntilTitleChangedTo("Bar"));
     ASSERT_STREQ("Bar", ewk_view_title_get(webView()));
+
+    // Checking in case of null for html and webview
+    ASSERT_FALSE(ewk_view_html_string_load(0, "<html><head><title>Foo</title></head><body>Bar</body></html>", 0, 0));
+    ASSERT_FALSE(ewk_view_html_string_load(webView(), 0, 0, 0));
 }
 
 TEST_F(EWK2ViewTest, ewk_view_navigation)
@@ -403,6 +409,8 @@ TEST_F(EWK2ViewTest, ewk_view_theme_set)
     ewk_view_theme_set(webView(), environment->pathForTheme("big_button_theme.edj").data());
     ewk_view_html_string_load(webView(), buttonHTML, "file:///", 0);
     EXPECT_TRUE(waitUntilTitleChangedTo("299")); // button of big button theme has 299px as padding (15 to -285)
+
+    EXPECT_STREQ(environment->pathForTheme("big_button_theme.edj").data(), ewk_view_theme_get(webView()));
 }
 
 TEST_F(EWK2ViewTest, ewk_view_mouse_events_enabled)
@@ -720,6 +728,10 @@ TEST_F(EWK2ViewTest, ewk_view_feed_touch_event)
     ASSERT_TRUE(ewk_view_feed_touch_event(webView(), EWK_TOUCH_CANCEL, points, evas_key_modifier_get(evas_object_evas_get(webView()))));
     points = eina_list_remove(points, &point1);
 
+    // Checking in case of null for points and webview
+    EXPECT_FALSE(ewk_view_feed_touch_event(0, EWK_TOUCH_CANCEL, points, evas_key_modifier_get(evas_object_evas_get(webView()))));
+    EXPECT_FALSE(ewk_view_feed_touch_event(webView(), EWK_TOUCH_CANCEL, 0, evas_key_modifier_get(evas_object_evas_get(webView()))));
+
     eina_list_free(points);
 }
 
@@ -741,11 +753,23 @@ TEST_F(EWK2ViewTest, ewk_view_text_find)
         ecore_main_loop_iterate();
     EXPECT_EQ(3, matchCount);
 
+    EXPECT_TRUE(ewk_view_text_find_highlight_clear(webView()));
+
     matchCount = -1;
     ewk_view_text_find(webView(), "mango", EWK_FIND_OPTIONS_SHOW_OVERLAY, 100);
     while (matchCount < 0)
         ecore_main_loop_iterate();
     EXPECT_EQ(0, matchCount);
+
+    matchCount = -1;
+    ewk_view_text_find(webView(), "banana", EWK_FIND_OPTIONS_SHOW_HIGHLIGHT, 100);
+    while (matchCount < 0)
+        ecore_main_loop_iterate();
+    EXPECT_EQ(2, matchCount);
+
+    // Checking in case of null for text and webview
+    ASSERT_FALSE(ewk_view_text_find(0, "apple", EWK_FIND_OPTIONS_SHOW_OVERLAY, 100));
+    ASSERT_FALSE(ewk_view_text_find(webView(), 0, EWK_FIND_OPTIONS_SHOW_OVERLAY, 100));
 
     evas_object_smart_callback_del(webView(), "text,found", onTextFound);
 }
@@ -798,6 +822,10 @@ TEST_F(EWK2ViewTest, ewk_view_text_matches_count)
     while (matchCount < -1)
         ecore_main_loop_iterate();
     EXPECT_EQ(-1, matchCount);
+
+    // Checking in case of null for text and webview
+    EXPECT_FALSE(ewk_view_text_matches_count(0, "apple", EWK_FIND_OPTIONS_NONE, 100));
+    EXPECT_FALSE(ewk_view_text_matches_count(webView(), 0, EWK_FIND_OPTIONS_NONE, 100));
 
     evas_object_smart_callback_del(webView(), "text,found", onTextFound);
 }
@@ -1016,6 +1044,11 @@ TEST_F(EWK2ViewTest, ewk_view_page_contents_get)
     obtainedPageContents = false;
     ASSERT_TRUE(ewk_view_page_contents_get(webView(), EWK_PAGE_CONTENTS_TYPE_STRING, PageContentsAsStringCallback, 0));
     waitUntilTrue(obtainedPageContents);
+
+    // Checking in case of null for callback and webview
+    EXPECT_FALSE(ewk_view_page_contents_get(webView(), EWK_PAGE_CONTENTS_TYPE_STRING, 0, 0));
+    EXPECT_FALSE(ewk_view_page_contents_get(0, EWK_PAGE_CONTENTS_TYPE_STRING, PageContentsAsStringCallback, 0));
+    EXPECT_FALSE(ewk_view_page_contents_get(webView(), static_cast<Ewk_Page_Contents_Type>(2), PageContentsAsStringCallback, 0));
 }
 
 TEST_F(EWK2ViewTest, ewk_view_user_agent)
@@ -1075,6 +1108,10 @@ TEST_F(EWK2UnitTestBase, ewk_view_script_execute)
     ASSERT_TRUE(ewk_view_script_execute(webView(), getDataScript, scriptExecuteCallback, static_cast<void*>(result)));
     waitUntilTrue(scriptExecuteCallbackCalled);
     ASSERT_STREQ("test", eina_strbuf_string_get(result));
+
+    // Checking in case of null for script and webview
+    EXPECT_FALSE(ewk_view_script_execute(0, getDataScript, scriptExecuteCallback, static_cast<void*>(result)));
+    EXPECT_FALSE(ewk_view_script_execute(webView(), 0, scriptExecuteCallback, static_cast<void*>(result)));
 
     eina_strbuf_free(result);
 

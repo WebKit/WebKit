@@ -1,3 +1,18 @@
+2014-06-11  Shivakumar JM  <shiva.jm@samsung.com>
+
+        [EFL][WK2] Add missing test cases for EWK2ViewTest.
+        https://bugs.webkit.org/show_bug.cgi?id=133715
+
+        Reviewed by Gyuyoung Kim.
+
+        Add missing test cases for ewk_view.h APIs, ewk_view_stop(), ewk_view_html_string_load(), ewk_view_theme_get(), 
+        ewk_view_feed_touch_event(), ewk_view_text_find_highlight_clear(), ewk_view_text_find(), ewk_view_text_matches_count(),
+        ewk_view_page_contents_get(), ewk_view_script_execute().
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2014-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use a different user agent string depending on the site
