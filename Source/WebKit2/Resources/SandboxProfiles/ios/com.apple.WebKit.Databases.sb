@@ -4,10 +4,10 @@
 ; modification, are permitted provided that the following conditions
 ; are met:
 ; 1. Redistributions of source code must retain the above copyright
-; notice, this list of conditions and the following disclaimer.
+;    notice, this list of conditions and the following disclaimer.
 ; 2. Redistributions in binary form must reproduce the above copyright
-; notice, this list of conditions and the following disclaimer in the
-; documentation and/or other materials provided with the distribution.
+;    notice, this list of conditions and the following disclaimer in the
+;    documentation and/or other materials provided with the distribution.
 ;
 ; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
 ; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
@@ -22,7 +22,26 @@
 ; THE POSSIBILITY OF SUCH DAMAGE.
 
 (version 1)
-(allow default)
+(deny default (with partial-symbolication))
+(allow system-audit file-read-metadata)
 
 (import "common.sb")
 (import "removed-dev-nodes.sb")
+
+;; Sandbox extensions
+(define (apply-read-and-issue-extension op path-filter)
+    (op file-read* path-filter)
+    (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") path-filter)))
+(define (apply-write-and-issue-extension op path-filter)
+    (op file-write* path-filter)
+    (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read-write") path-filter)))
+(define (read-only-and-issue-extensions path-filter)
+    (apply-read-and-issue-extension allow path-filter))
+(define (read-write-and-issue-extensions path-filter)
+    (apply-read-and-issue-extension allow path-filter)
+    (apply-write-and-issue-extension allow path-filter))
+(read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
+(read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
+
+(if (defined? 'vnode-type)
+    (deny file-write-create (vnode-type SYMLINK)))

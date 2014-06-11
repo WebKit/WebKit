@@ -1,3 +1,14 @@
+2014-06-11  Oliver Hunt  <oliver@apple.com>
+
+        Restrict database process profile
+        https://bugs.webkit.org/show_bug.cgi?id=133750
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make the sandbox profile much more restrictive.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Databases.sb:
+
 2014-06-11  Roger Fong  <roger_fong@apple.com>
 
         Don't snapshot offscreen plugins that would normally be considered primary plugins after they are moved in view.
