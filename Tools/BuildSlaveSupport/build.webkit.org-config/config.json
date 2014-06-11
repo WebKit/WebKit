@@ -45,7 +45,6 @@
 
                     { "name": "efl-linux-slave-1", "platform": "efl" },
                     { "name": "efl-linux-slave-2", "platform": "efl" },
-                    { "name": "efl-linux-slave-3", "platform": "efl" },
                     { "name": "efl-linux-szeged-slave-1", "platform": "efl" },
                     { "name": "efl-linux-szeged-slave-2", "platform": "efl" },
                     { "name": "efl-linux-szeged-slave-3", "platform": "efl" }
@@ -207,11 +206,6 @@
                       "slavenames": ["efl-linux-slave-2"]
                     },
                     {
-                      "name": "EFL Linux 32-bit Release (Build)", "type": "Build", "builddir": "efl-linux-32-release",
-                      "platform": "efl", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["efl-linux-slave-3"]
-                    },
-                    {
                       "name": "EFL Linux ARMv7 Thumb2 Release (Build)", "type": "Build", "builddir": "efl-linux-armv7-thumb2-release",
                       "platform": "efl", "configuration": "release", "architectures": ["armv7"],
                       "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
@@ -233,7 +227,7 @@
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
                       "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release (Build)", "GTK Linux 64-bit Debug (Build)", "GTK Linux ARM Release",
-                                       "EFL Linux 64-bit Release WK1", "EFL Linux 64-bit Release WK2", "EFL Linux 32-bit Release (Build)",
+                                       "EFL Linux 64-bit Release WK1", "EFL Linux 64-bit Release WK2", 
                                        "EFL Linux ARMv7 Thumb2 Release (Build)", "EFL Linux ARMv7 Traditional Release (Build)",
                                        "EFL Linux 64-bit Release WK2 (Perf)", "WinCairo Release"]
                     },
