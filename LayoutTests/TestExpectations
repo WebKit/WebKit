@@ -87,11 +87,11 @@ webkit.org/b/129113 fast/multicol/newmulticol/clipping.html [ ImageOnlyFailure ]
 #subpixel rotation
 webkit.org/b/130556 compositing/hidpi-absolute-subpixel-positioned-transformed-elements.html [ ImageOnlyFailure ]
 
-webkit.org/b/129327 inspector-protocol/indexeddb/basics.html [ Pass Failure ]
-
-webkit.org/b/129331 inspector-protocol/page/deny-X-FrameOption.html [ Pass Failure ]
-
+webkit.org/b/133761 inspector-protocol/debugger/breakpoint-action-detach.html [ Skip ]
 webkit.org/b/129639 inspector-protocol/dom/dom-search-crash.html [ Skip ]
+webkit.org/b/129327 inspector-protocol/indexeddb/basics.html [ Pass Failure ]
+webkit.org/b/127414 inspector-protocol/page/deny-X-FrameOption.html [ Pass Failure ]
+
 webkit.org/b/129642 inspector [ Skip ]
 
 # These tests cause assertion failures in subsequent tests
