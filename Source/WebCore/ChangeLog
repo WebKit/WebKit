@@ -1,3 +1,10 @@
+2014-06-11  Jer Noble  <jer.noble@apple.com>
+
+        Unreviwed Mac release build fix; mark the keyPath parameter as unused.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebAVSampleBufferErrorListener observeValueForKeyPath:ofObject:change:context:]):
+
 2014-06-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Avoid deadlock with AVFoundation

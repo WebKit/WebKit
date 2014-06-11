@@ -373,6 +373,7 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     UNUSED_PARAM(context);
+    UNUSED_PARAM(keyPath);
     ASSERT(_parent);
 
     RetainPtr<WebAVSampleBufferErrorListener> strongSelf = self;
