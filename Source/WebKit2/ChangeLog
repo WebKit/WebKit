@@ -1,3 +1,26 @@
+2014-06-11  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Move CompletionHandlerCallChecker into a separate file
+        https://bugs.webkit.org/show_bug.cgi?id=133774
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/Cocoa/CompletionHandlerCallChecker.h: Added.
+        * Shared/Cocoa/CompletionHandlerCallChecker.mm: Added.
+        (WebKit::CompletionHandlerCallChecker::create):
+        (WebKit::CompletionHandlerCallChecker::CompletionHandlerCallChecker):
+        (WebKit::CompletionHandlerCallChecker::~CompletionHandlerCallChecker):
+        (WebKit::CompletionHandlerCallChecker::didCallCompletionHandler):
+        (WebKit::CompletionHandlerCallChecker::classImplementingDelegateMethod):
+
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::CompletionHandlerCallChecker::create): Deleted.
+        (WebKit::CompletionHandlerCallChecker::~CompletionHandlerCallChecker): Deleted.
+        (WebKit::CompletionHandlerCallChecker::didCallCompletionHandler): Deleted.
+        (WebKit::CompletionHandlerCallChecker::CompletionHandlerCallChecker): Deleted.
+        (WebKit::CompletionHandlerCallChecker::classImplementingDelegateMethod): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-06-11  Martin Hock  <mhock@apple.com>
 
         [iOS] Clear UIProcess visual state after WebProcess crash
