@@ -45,13 +45,14 @@
 
 namespace WebCore {
 
-CurlCacheEntry::CurlCacheEntry(const String& url, const String& cacheDir)
+CurlCacheEntry::CurlCacheEntry(const String& url, ResourceHandle* job, const String& cacheDir)
     : m_headerFilename(cacheDir)
     , m_contentFilename(cacheDir)
     , m_contentFile(invalidPlatformFileHandle)
     , m_entrySize(0)
     , m_expireDate(-1)
     , m_headerParsed(false)
+    , m_job(job)
 {
     generateBaseFilename(url.latin1());
 
@@ -65,6 +66,11 @@ CurlCacheEntry::CurlCacheEntry(const String& url, const String& cacheDir)
 CurlCacheEntry::~CurlCacheEntry()
 {
     closeContentFile();
+}
+
+bool CurlCacheEntry::isLoading()
+{
+    return isHandleValid(m_contentFile);
 }
 
 // Cache manager should invalidate the entry on false
@@ -112,7 +118,7 @@ bool CurlCacheEntry::readCachedData(ResourceHandle* job)
     return true;
 }
 
-bool CurlCacheEntry::saveResponseHeaders(ResourceResponse& response)
+bool CurlCacheEntry::saveResponseHeaders(const ResourceResponse& response)
 {
     PlatformFileHandle headerFile = openFile(m_headerFilename, OpenForWrite);
     if (!isHandleValid(headerFile)) {
@@ -130,6 +136,7 @@ bool CurlCacheEntry::saveResponseHeaders(ResourceResponse& response)
         headerField.append("\n");
         CString headerFieldLatin1 = headerField.latin1();
         writeToFile(headerFile, headerFieldLatin1.data(), headerFieldLatin1.length());
+        m_cachedResponse.setHTTPHeaderField(it->key, it->value);
         ++it;
     }
 
@@ -253,12 +260,13 @@ bool CurlCacheEntry::loadFileToBuffer(const String& filepath, Vector<char>& buff
 
 void CurlCacheEntry::invalidate()
 {
+    closeContentFile();
     deleteFile(m_headerFilename);
     deleteFile(m_contentFilename);
     LOG(Network, "Cache: invalidated %s\n", m_basename.latin1().data());
 }
 
-bool CurlCacheEntry::parseResponseHeaders(ResourceResponse& response)
+bool CurlCacheEntry::parseResponseHeaders(const ResourceResponse& response)
 {
     double fileTime;
     time_t fileModificationDate;

@@ -325,7 +325,7 @@ static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* data)
         d->m_multipartHandle->contentReceived(static_cast<const char*>(ptr), totalSize);
     else if (d->client()) {
         d->client()->didReceiveData(job, static_cast<char*>(ptr), totalSize, 0);
-        CurlCacheManager::getInstance().didReceiveData(job->firstRequest().url().string(), static_cast<char*>(ptr), totalSize);
+        CurlCacheManager::getInstance().didReceiveData(*job, static_cast<char*>(ptr), totalSize);
     }
 
     return totalSize;
@@ -537,7 +537,7 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
                 CurlCacheManager::getInstance().getCachedResponse(url, d->m_response);
             }
             client->didReceiveResponse(job, d->m_response);
-            CurlCacheManager::getInstance().didReceiveResponse(job, d->m_response);
+            CurlCacheManager::getInstance().didReceiveResponse(*job, d->m_response);
         }
         d->m_response.setResponseFired(true);
 
@@ -689,7 +689,7 @@ void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* 
 
             if (d->client()) {
                 d->client()->didFinishLoading(job, 0);
-                CurlCacheManager::getInstance().didFinishLoading(job->firstRequest().url().string());
+                CurlCacheManager::getInstance().didFinishLoading(*job);
             }
         } else {
             char* url = 0;
@@ -701,7 +701,7 @@ void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* 
                 ResourceError resourceError(String(), msg->data.result, String(url), String(curl_easy_strerror(msg->data.result)));
                 resourceError.setSSLErrors(d->m_sslErrors);
                 d->client()->didFail(job, resourceError);
-                CurlCacheManager::getInstance().didFail(job->firstRequest().url().string());
+                CurlCacheManager::getInstance().didFail(*job);
             }
         }
 

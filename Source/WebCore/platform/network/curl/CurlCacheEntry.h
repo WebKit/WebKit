@@ -41,24 +41,27 @@ namespace WebCore {
 class CurlCacheEntry {
 
 public:
-    CurlCacheEntry(const String& url, const String& cacheDir);
+    CurlCacheEntry(const String& url, ResourceHandle* job, const String& cacheDir);
     ~CurlCacheEntry();
 
     bool isCached();
+    bool isLoading();
     size_t entrySize();
     HTTPHeaderMap& requestHeaders() { return m_requestHeaders; }
 
     bool saveCachedData(const char* data, size_t);
     bool readCachedData(ResourceHandle*);
 
-    bool saveResponseHeaders(ResourceResponse&);
+    bool saveResponseHeaders(const ResourceResponse&);
     void setResponseFromCachedHeaders(ResourceResponse&);
 
     void invalidate();
     void didFail();
     void didFinishLoading();
 
-    bool parseResponseHeaders(ResourceResponse&);
+    bool parseResponseHeaders(const ResourceResponse&);
+
+    const ResourceHandle* getJob() const { return m_job; }
 
 private:
     String m_basename;
@@ -73,6 +76,8 @@ private:
 
     ResourceResponse m_cachedResponse;
     HTTPHeaderMap m_requestHeaders;
+
+    ResourceHandle* m_job;
 
     void generateBaseFilename(const CString& url);
     bool loadFileToBuffer(const String& filepath, Vector<char>& buffer);

@@ -49,10 +49,10 @@ public:
     HTTPHeaderMap& requestHeaders(const String&); // Load headers
     bool getCachedResponse(const String& url, ResourceResponse&);
 
-    void didReceiveResponse(ResourceHandle*, ResourceResponse&);
-    void didReceiveData(const String&, const char*, size_t); // Save data
-    void didFinishLoading(const String&);
-    void didFail(const String&);
+    void didReceiveResponse(ResourceHandle&, ResourceResponse&);
+    void didReceiveData(ResourceHandle&, const char*, size_t); // Save data
+    void didFinishLoading(ResourceHandle&);
+    void didFail(ResourceHandle&);
 
 private:
     CurlCacheManager();

@@ -1,3 +1,38 @@
+2014-06-11  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Empty headers in request response.
+        https://bugs.webkit.org/show_bug.cgi?id=133483
+
+        Reviewed by Brent Fulgham.
+
+        When a request is taken from the cache, its cached response headers are empty, if the cache entry was created in the same session.
+        It is only when the cache entry is loaded from disc, that the response headers are properly set.
+        We need to set the cached response headers in both cases.
+        There is also an issue if two jobs are loading the same url at the same time.
+        Both jobs will then write to the cache content file, and create invalid content.
+        This can be fixed by only letting the first request write to the content file.
+
+        * platform/network/curl/CurlCacheEntry.cpp:
+        (WebCore::CurlCacheEntry::CurlCacheEntry):
+        (WebCore::CurlCacheEntry::isLoading): Added method to check if cache entry is loading the content.
+        (WebCore::CurlCacheEntry::saveResponseHeaders): Set the cached response headers when response is saved.
+        (WebCore::CurlCacheEntry::invalidate): To be on the safe side, close content file when entry is invalidated.
+        (WebCore::CurlCacheEntry::parseResponseHeaders): Made parameter const.
+        * platform/network/curl/CurlCacheEntry.h: Keep track of which job is creating this cache entry.
+        (WebCore::CurlCacheEntry::getJob):
+        * platform/network/curl/CurlCacheManager.cpp:
+        (WebCore::CurlCacheManager::loadIndex): When cache entry is loaded from disc, there is no associated job.
+        (WebCore::CurlCacheManager::didReceiveResponse): Bail out if cache entry is already currently loading,
+        otherwise associate this job with the new cache entry.
+        (WebCore::CurlCacheManager::didFinishLoading): Changed parameter type.
+        (WebCore::CurlCacheManager::isCached): Don't report the url as cached if it's currently loading content.
+        (WebCore::CurlCacheManager::didReceiveData): Don't write to the content file if the entry is not associated with the job.
+        (WebCore::CurlCacheManager::didFail): Changed parameter type.
+        * platform/network/curl/CurlCacheManager.h: Changed parameter type.
+        * platform/network/curl/ResourceHandleManager.cpp: Ditto.
+        (WebCore::writeCallback):
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+
 2014-06-11  Sam Weinig  <sam@webkit.org>
 
         REGRESSION (r133705): Layout Test js/dom/webidl-type-mapping.html is failing

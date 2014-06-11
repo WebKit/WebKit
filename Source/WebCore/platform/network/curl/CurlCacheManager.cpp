@@ -139,7 +139,7 @@ void CurlCacheManager::loadIndex()
         --end; // Last line is empty
     while (it != end) {
         String url = it->stripWhiteSpace();
-        std::unique_ptr<CurlCacheEntry> cacheEntry(new CurlCacheEntry(url, m_cacheDir));
+        auto cacheEntry = std::make_unique<CurlCacheEntry>(url, nullptr, m_cacheDir);
 
         if (cacheEntry->isCached() && cacheEntry->entrySize() < m_storageSizeLimit) {
             m_currentStorageSize += cacheEntry->entrySize();
@@ -191,25 +191,29 @@ void CurlCacheManager::makeRoomForNewEntry()
     }
 }
 
-void CurlCacheManager::didReceiveResponse(ResourceHandle* job, ResourceResponse& response)
+void CurlCacheManager::didReceiveResponse(ResourceHandle& job, ResourceResponse& response)
 {
     if (m_disabled)
         return;
 
-    ResourceHandleInternal* d = job->getInternal();
+    ResourceHandleInternal* d = job.getInternal();
     if (d->m_cancelled)
         return;
 
-    String url = job->firstRequest().url().string();
+    const String& url = job.firstRequest().url().string();
 
     if (response.httpStatusCode() == 304) {
-        readCachedData(url, job, response);
+        readCachedData(url, &job, response);
         m_LRUEntryList.prependOrMoveToFirst(url);
     }
     else if (response.httpStatusCode() == 200) {
+        auto it = m_index.find(url);
+        if (it != m_index.end() && it->value->isLoading())
+            return;
+
         invalidateCacheEntry(url); // Invalidate existing entry on 200
 
-        std::unique_ptr<CurlCacheEntry> cacheEntry(new CurlCacheEntry(url, m_cacheDir));
+        auto cacheEntry = std::make_unique<CurlCacheEntry>(url, &job, m_cacheDir);
         bool cacheable = cacheEntry->parseResponseHeaders(response);
         if (cacheable) {
             m_LRUEntryList.prependOrMoveToFirst(url);
@@ -220,12 +224,14 @@ void CurlCacheManager::didReceiveResponse(ResourceHandle* job, ResourceResponse&
         invalidateCacheEntry(url);
 }
 
-void CurlCacheManager::didFinishLoading(const String& url)
+void CurlCacheManager::didFinishLoading(ResourceHandle& job)
 {
     if (m_disabled)
         return;
 
-    HashMap<String, std::unique_ptr<CurlCacheEntry>>::iterator it = m_index.find(url);
+    const String& url = job.firstRequest().url().string();
+
+    auto it = m_index.find(url);
     if (it != m_index.end())
         it->value->didFinishLoading();
 }
@@ -235,10 +241,10 @@ bool CurlCacheManager::isCached(const String& url)
     if (m_disabled)
         return false;
 
-    HashMap<String, std::unique_ptr<CurlCacheEntry>>::iterator it = m_index.find(url);
+    auto it = m_index.find(url);
     if (it != m_index.end()) {
         if (it->value->isCached())
-            return true;
+            return !it->value->isLoading();
 
         invalidateCacheEntry(url);
     }
@@ -253,7 +259,7 @@ HTTPHeaderMap& CurlCacheManager::requestHeaders(const String& url)
 
 bool CurlCacheManager::getCachedResponse(const String& url, ResourceResponse& response)
 {
-    HashMap<String, std::unique_ptr<CurlCacheEntry>>::iterator it = m_index.find(url);
+    auto it = m_index.find(url);
     if (it != m_index.end()) {
         it->value->setResponseFromCachedHeaders(response);
         return true;
@@ -261,13 +267,18 @@ bool CurlCacheManager::getCachedResponse(const String& url, ResourceResponse& re
     return false;
 }
 
-void CurlCacheManager::didReceiveData(const String& url, const char* data, size_t size)
+void CurlCacheManager::didReceiveData(ResourceHandle& job, const char* data, size_t size)
 {
     if (m_disabled)
         return;
 
-    HashMap<String, std::unique_ptr<CurlCacheEntry>>::iterator it = m_index.find(url);
+    const String& url = job.firstRequest().url().string();
+
+    auto it = m_index.find(url);
     if (it != m_index.end()) {
+        if (it->value->getJob() != &job)
+            return;
+
         if (!it->value->saveCachedData(data, size))
             invalidateCacheEntry(url);
 
@@ -284,7 +295,7 @@ void CurlCacheManager::saveResponseHeaders(const String& url, ResourceResponse& 
     if (m_disabled)
         return;
 
-    HashMap<String, std::unique_ptr<CurlCacheEntry>>::iterator it = m_index.find(url);
+    auto it = m_index.find(url);
     if (it != m_index.end())
         if (!it->value->saveResponseHeaders(response))
             invalidateCacheEntry(url);
@@ -295,7 +306,7 @@ void CurlCacheManager::invalidateCacheEntry(const String& url)
     if (m_disabled)
         return;
 
-    HashMap<String, std::unique_ptr<CurlCacheEntry>>::iterator it = m_index.find(url);
+    auto it = m_index.find(url);
     if (it != m_index.end()) {
         if (m_currentStorageSize < it->value->entrySize())
             m_currentStorageSize = 0;
@@ -308,8 +319,10 @@ void CurlCacheManager::invalidateCacheEntry(const String& url)
     m_LRUEntryList.remove(url);
 }
 
-void CurlCacheManager::didFail(const String& url)
+void CurlCacheManager::didFail(ResourceHandle &job)
 {
+    const String& url = job.firstRequest().url().string();
+
     invalidateCacheEntry(url);
 }
 
@@ -318,7 +331,7 @@ void CurlCacheManager::readCachedData(const String& url, ResourceHandle* job, Re
     if (m_disabled)
         return;
 
-    HashMap<String, std::unique_ptr<CurlCacheEntry>>::iterator it = m_index.find(url);
+    auto it = m_index.find(url);
     if (it != m_index.end()) {
         it->value->setResponseFromCachedHeaders(response);
         m_LRUEntryList.prependOrMoveToFirst(url);
