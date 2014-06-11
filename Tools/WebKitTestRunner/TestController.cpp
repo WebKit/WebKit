@@ -668,6 +668,70 @@ bool TestController::resetStateToConsistentValues()
     return m_doneResetting;
 }
 
+
+void TestController::updateWebViewSizeForTest(const TestInvocation& test)
+{
+    bool isSVGW3CTest = strstr(test.pathOrURL(), "svg/W3C-SVG-1.1") || strstr(test.pathOrURL(), "svg\\W3C-SVG-1.1");
+
+    unsigned width = viewWidth;
+    unsigned height = viewHeight;
+    if (isSVGW3CTest) {
+        width = w3cSVGViewWidth;
+        height = w3cSVGViewHeight;
+    }
+
+    mainWebView()->resizeTo(width, height);
+}
+
+void TestController::updateWindowScaleForTest(const TestInvocation& test)
+{
+    WTF::String localPathOrUrl = String(test.pathOrURL());
+    bool needsHighDPIWindow = localPathOrUrl.findIgnoringCase("hidpi-") != notFound;
+    mainWebView()->changeWindowScaleIfNeeded(needsHighDPIWindow ? 2 : 1);
+}
+
+// FIXME: move into relevant platformConfigureViewForTest()?
+static bool shouldUseFixedLayout(const char* pathOrURL)
+{
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    if (strstr(pathOrURL, "device-adapt/") || strstr(pathOrURL, "device-adapt\\"))
+        return true;
+#endif
+
+#if USE(TILED_BACKING_STORE) && PLATFORM(EFL)
+    if (strstr(pathOrURL, "sticky/") || strstr(pathOrURL, "sticky\\"))
+        return true;
+#endif
+    return false;
+
+    UNUSED_PARAM(pathOrURL);
+}
+
+void TestController::updateLayoutTypeForTest(const TestInvocation& test)
+{
+    auto viewOptions = adoptWK(WKMutableDictionaryCreate());
+    auto useFixedLayoutKey = adoptWK(WKStringCreateWithUTF8CString("UseFixedLayout"));
+    auto useFixedLayoutValue = adoptWK(WKBooleanCreate(shouldUseFixedLayout(test.pathOrURL())));
+    WKDictionarySetItem(viewOptions.get(), useFixedLayoutKey.get(), useFixedLayoutValue.get());
+
+    ensureViewSupportsOptions(viewOptions.get());
+}
+
+#if !PLATFORM(COCOA)
+void TestController::platformConfigureViewForTest(const TestInvocation&)
+{
+}
+#endif
+
+void TestController::configureViewForTest(const TestInvocation& test)
+{
+    updateWebViewSizeForTest(test);
+    updateWindowScaleForTest(test);
+    updateLayoutTypeForTest(test);
+
+    platformConfigureViewForTest(test);
+}
+
 struct TestCommand {
     TestCommand() : shouldDumpPixels(false), timeout(0) { }
 

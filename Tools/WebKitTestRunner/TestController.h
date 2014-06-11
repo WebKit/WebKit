@@ -72,6 +72,8 @@ public:
     bool useWaitToDumpWatchdogTimer() { return m_useWaitToDumpWatchdogTimer; }
     void runUntil(bool& done, TimeoutDuration);
     void notifyDone();
+    
+    void configureViewForTest(const TestInvocation&);
 
     int getCustomTimeout();
     
@@ -116,11 +118,16 @@ private:
     void platformInitialize();
     void platformDestroy();
     void platformInitializeContext();
+    void platformConfigureViewForTest(const TestInvocation&);
     void platformWillRunTest(const TestInvocation&);
     void platformRunUntil(bool& done, double timeout);
     void platformDidCommitLoadForFrame(WKPageRef, WKFrameRef);
     void initializeInjectedBundlePath();
     void initializeTestPluginDirectory();
+
+    void updateWebViewSizeForTest(const TestInvocation&);
+    void updateWindowScaleForTest(const TestInvocation&);
+    void updateLayoutTypeForTest(const TestInvocation&);
 
     void decidePolicyForGeolocationPermissionRequestIfPossible();
 

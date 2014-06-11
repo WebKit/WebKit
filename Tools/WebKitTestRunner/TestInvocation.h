@@ -40,6 +40,7 @@ public:
     ~TestInvocation();
 
     WKURLRef url() const;
+    const char* pathOrURL() const { return m_pathOrURL.c_str(); }
 
     void setIsPixelTest(const std::string& expectedPixelHash);
 

@@ -122,91 +122,19 @@ void TestInvocation::setCustomTimeout(int timeout)
     m_timeout = timeout;
 }
 
-static void sizeWebViewForCurrentTest(const char* pathOrURL)
-{
-    bool isSVGW3CTest = strstr(pathOrURL, "svg/W3C-SVG-1.1") || strstr(pathOrURL, "svg\\W3C-SVG-1.1");
-
-    if (isSVGW3CTest)
-        TestController::shared().mainWebView()->resizeTo(TestController::w3cSVGViewWidth, TestController::w3cSVGViewHeight);
-    else
-        TestController::shared().mainWebView()->resizeTo(TestController::viewWidth, TestController::viewHeight);
-}
-
-static void changeWindowScaleIfNeeded(const char* pathOrURL)
-{
-    WTF::String localPathOrUrl = String(pathOrURL);
-    bool needsHighDPIWindow = localPathOrUrl.findIgnoringCase("hidpi-") != notFound;
-    TestController::shared().mainWebView()->changeWindowScaleIfNeeded(needsHighDPIWindow ? 2 : 1);
-}
-
 static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
 {
     return strstr(pathOrURL, "loading/");
 }
-
-#if PLATFORM(COCOA)
-static bool shouldUseThreadedScrolling(const char* pathOrURL)
-{
-    return strstr(pathOrURL, "tiled-drawing/");
-}
-#endif
 
 static bool shouldLogHistoryClientCallbacks(const char* pathOrURL)
 {
     return strstr(pathOrURL, "globalhistory/");
 }
 
-static void updateThreadedScrollingForCurrentTest(const char* pathOrURL)
-{
-#if PLATFORM(COCOA)
-    WKRetainPtr<WKMutableDictionaryRef> viewOptions = adoptWK(WKMutableDictionaryCreate());
-    WKRetainPtr<WKStringRef> useThreadedScrollingKey = adoptWK(WKStringCreateWithUTF8CString("ThreadedScrolling"));
-    WKRetainPtr<WKBooleanRef> useThreadedScrollingValue = adoptWK(WKBooleanCreate(shouldUseThreadedScrolling(pathOrURL)));
-    WKDictionarySetItem(viewOptions.get(), useThreadedScrollingKey.get(), useThreadedScrollingValue.get());
-
-    WKRetainPtr<WKStringRef> useRemoteLayerTreeKey = adoptWK(WKStringCreateWithUTF8CString("RemoteLayerTree"));
-    WKRetainPtr<WKBooleanRef> useRemoteLayerTreeValue = adoptWK(WKBooleanCreate(TestController::shared().shouldUseRemoteLayerTree()));
-    WKDictionarySetItem(viewOptions.get(), useRemoteLayerTreeKey.get(), useRemoteLayerTreeValue.get());
-
-    TestController::shared().ensureViewSupportsOptions(viewOptions.get());
-#else
-    UNUSED_PARAM(pathOrURL);
-#endif
-}
-
-static bool shouldUseFixedLayout(const char* pathOrURL)
-{
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    if (strstr(pathOrURL, "device-adapt/") || strstr(pathOrURL, "device-adapt\\"))
-        return true;
-#endif
-
-#if USE(TILED_BACKING_STORE) && PLATFORM(EFL)
-    if (strstr(pathOrURL, "sticky/") || strstr(pathOrURL, "sticky\\"))
-        return true;
-#endif
-    return false;
-
-    UNUSED_PARAM(pathOrURL);
-}
-
-static void updateLayoutType(const char* pathOrURL)
-{
-    WKRetainPtr<WKMutableDictionaryRef> viewOptions = adoptWK(WKMutableDictionaryCreate());
-    WKRetainPtr<WKStringRef> useFixedLayoutKey = adoptWK(WKStringCreateWithUTF8CString("UseFixedLayout"));
-    WKRetainPtr<WKBooleanRef> useFixedLayoutValue = adoptWK(WKBooleanCreate(shouldUseFixedLayout(pathOrURL)));
-    WKDictionarySetItem(viewOptions.get(), useFixedLayoutKey.get(), useFixedLayoutValue.get());
-
-    TestController::shared().ensureViewSupportsOptions(viewOptions.get());
-}
-
 void TestInvocation::invoke()
 {
-    TestController::TimeoutDuration timeoutToUse = TestController::LongTimeout;
-    changeWindowScaleIfNeeded(m_pathOrURL.c_str());
-    sizeWebViewForCurrentTest(m_pathOrURL.c_str());
-    updateLayoutType(m_pathOrURL.c_str());
-    updateThreadedScrollingForCurrentTest(m_pathOrURL.c_str());
+    TestController::shared().configureViewForTest(*this);
 
     WKPageSetAddsVisitedLinks(TestController::shared().mainWebView()->page(), false);
 
@@ -234,6 +162,8 @@ void TestInvocation::invoke()
     WKDictionarySetItem(beginTestMessageBody.get(), timeoutKey.get(), timeoutValue.get());
 
     WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), beginTestMessageBody.get());
+
+    TestController::TimeoutDuration timeoutToUse = TestController::LongTimeout;
 
     TestController::shared().runUntil(m_gotInitialResponse, TestController::ShortTimeout);
     if (!m_gotInitialResponse) {

@@ -62,6 +62,22 @@ void TestController::platformWillRunTest(const TestInvocation& testInvocation)
     setCrashReportApplicationSpecificInformationToURL(testInvocation.url());
 }
 
+static bool shouldMakeViewportFlexible(const char* pathOrURL)
+{
+    return strstr(pathOrURL, "viewport/");
+}
+
+void TestController::platformConfigureViewForTest(const TestInvocation& test)
+{
+    if (shouldMakeViewportFlexible(test.pathOrURL())) {
+        const unsigned phoneViewHeight = 480;
+        const unsigned phoneViewWidth = 320;
+
+        mainWebView()->resizeTo(phoneViewWidth, phoneViewHeight);
+        // FIXME: more viewport config to do here.
+    }
+}
+
 void TestController::platformRunUntil(bool& done, double timeout)
 {
     NSDate *endDate = (timeout > 0) ? [NSDate dateWithTimeIntervalSinceNow:timeout] : [NSDate distantFuture];

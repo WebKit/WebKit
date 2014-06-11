@@ -1,3 +1,39 @@
+2014-06-11  Simon Fraser  <simon.fraser@apple.com>
+
+        WTR cleanup: push per-test viewport configuration into TestController, where platforms can customize it
+        https://bugs.webkit.org/show_bug.cgi?id=133770
+
+        Reviewed by Anders Carlsson.
+        
+        Push the per-test view configuration up to TestController, so that platforms
+        can modify the behavior. This also allows platform-specific changes (e.g.
+        for threaded scrolling) to made without #ifefs.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::updateWebViewSizeForTest):
+        (WTR::TestController::updateWindowScaleForTest):
+        (WTR::shouldUseFixedLayout):
+        (WTR::TestController::updateLayoutTypeForTest):
+        (WTR::TestController::platformConfigureViewForTest):
+        (WTR::TestController::configureViewForTest):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        (WTR::sizeWebViewForCurrentTest): Deleted.
+        (WTR::changeWindowScaleIfNeeded): Deleted.
+        (WTR::shouldUseThreadedScrolling): Deleted.
+        (WTR::updateThreadedScrollingForCurrentTest): Deleted.
+        (WTR::shouldUseFixedLayout): Deleted.
+        (WTR::updateLayoutType): Deleted.
+        * WebKitTestRunner/TestInvocation.h:
+        (WTR::TestInvocation::pathOrURL):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::shouldMakeViewportFlexible):
+        (WTR::TestController::platformConfigureViewForTest):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::shouldUseThreadedScrolling):
+        (WTR::TestController::platformConfigureViewForTest):
+
 2014-06-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Add dependencies packages to efl install-dependencies file
