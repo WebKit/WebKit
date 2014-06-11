@@ -1174,6 +1174,24 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
     _data->_page->handleWheelEvent(webEvent);
 }
 
+- (void)swipeWithEvent:(NSEvent *)event
+{
+    if ([self shouldIgnoreMouseEvents])
+        return;
+
+    if (!_data->_allowsBackForwardNavigationGestures) {
+        [super swipeWithEvent:event];
+        return;
+    }
+
+    if (event.deltaX > 0.0)
+        _data->_page->goBack();
+    else if (event.deltaX < 0.0)
+        _data->_page->goForward();
+    else
+        [super swipeWithEvent:event];
+}
+
 - (void)mouseMoved:(NSEvent *)event
 {
     if ([self shouldIgnoreMouseEvents])
