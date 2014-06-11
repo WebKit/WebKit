@@ -2502,7 +2502,12 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
             return RadioButtonRole;
         if (input->isTextButton())
             return buttonRoleType();
-
+        // On iOS, the date field is a popup button. On other platforms this is a text field.
+#if PLATFORM(IOS)
+        if (input->isDateField())
+            return PopUpButtonRole;
+#endif
+        
 #if ENABLE(INPUT_TYPE_COLOR)
         const AtomicString& type = input->getAttribute(typeAttr);
         if (equalIgnoringCase(type, "color"))
