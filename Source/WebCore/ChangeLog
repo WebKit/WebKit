@@ -1,5 +1,12 @@
 2014-06-10  Sam Weinig  <sam@webkit.org>
 
+        Actually only generate tables for History and Location.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+
+2014-06-10  Sam Weinig  <sam@webkit.org>
+
         Attempt to fix the tests.
 
         * bindings/scripts/CodeGeneratorJS.pm:
