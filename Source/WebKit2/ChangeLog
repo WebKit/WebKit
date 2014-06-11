@@ -1,3 +1,13 @@
+2014-06-11  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Xcode cannot infer that the WebKit target implicitly depends on WebCore.framework
+        https://bugs.webkit.org/show_bug.cgi?id=133765
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/WebKit.xcconfig: Move linking against WebCore from OTHER_LDFLAGS here...
+        * WebKit2.xcodeproj/project.pbxproj: ...to the Link Binary With Libraries build phase here.
+
 2014-06-11  Timothy Horton  <timothy_horton@apple.com>
 
         [wk2] Don't dispatch view state changes immediately

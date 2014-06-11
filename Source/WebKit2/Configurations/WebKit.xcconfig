@@ -38,9 +38,9 @@ FRAMEWORK_AND_LIBRARY_LDFLAGS_macosx = -framework ApplicationServices -framework
 UNEXPORTED_SYMBOL_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTISt9exception -Wl,-unexported_symbol -Wl,__ZTSSt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTSSt9exception -Wl,-unexported_symbol -Wl,__ZdlPvS_ -Wl,-unexported_symbol -Wl,__ZnwmPv -Wl,-unexported_symbol -Wl,__Znwm -Wl,-unexported_symbol, -Wl,__ZNSt3__18functionIFvN7WebCore12PolicyActionEEEC2EOS4_ -Wl,-unexported_symbol, -Wl,__ZNSt3__18functionIFvN7WebCore12PolicyActionEEEC1EOS4_ -Wl,-unexported_symbol, -Wl,__ZNSt3__18functionIFvN7WebCore12PolicyActionEEEaSEDn -Wl,-unexported_symbol, -Wl,__ZNKSt3__18functionIFvN7WebCore12PolicyActionEEEclES2_ -Wl,-unexported_symbol, -Wl,__ZNSt3__18functionIFvN7WebCore12PolicyActionEEE4swapERS4_ -Wl,-unexported_symbol, -Wl,__ZNSt3__18functionIFvN7WebCore12PolicyActionEEEC1ERKS4_ -Wl,-unexported_symbol, -Wl,__ZNSt3__18functionIFvN7WebCore12PolicyActionEEEC2ERKS4_ -Wl,-unexported_symbol, -Wl,__ZNSt3__18functionIFvN7WebCore12PolicyActionEEED1Ev -Wl,-unexported_symbol, -Wl,__ZNSt3__18functionIFvN7WebCore12PolicyActionEEED2Ev -Wl,-unexported_symbol, -Wl,__ZNSt3__18functionIFvN7WebCore12PolicyActionEEEaSERKS4_ -Wl,-unexported_symbol, -Wl,__ZTVNSt3__117bad_function_callE;
 
 OTHER_LDFLAGS = $(inherited) $(UNEXPORTED_SYMBOL_LDFLAGS) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
-OTHER_LDFLAGS_iphoneos = $(FRAMEWORK_AND_LIBRARY_LDFLAGS) -framework WebCore -framework WebKitLegacy -sub_umbrella WebKitLegacy;
+OTHER_LDFLAGS_iphoneos = $(FRAMEWORK_AND_LIBRARY_LDFLAGS) -framework WebKitLegacy -sub_umbrella WebKitLegacy;
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
-OTHER_LDFLAGS_macosx = $(ASAN_OTHER_LDFLAGS) $(FRAMEWORK_AND_LIBRARY_LDFLAGS) -framework WebCore -sub_umbrella WebCore -framework WebKitLegacy -sub_umbrella WebKitLegacy;
+OTHER_LDFLAGS_macosx = $(ASAN_OTHER_LDFLAGS) $(FRAMEWORK_AND_LIBRARY_LDFLAGS) -sub_umbrella WebCore -framework WebKitLegacy -sub_umbrella WebKitLegacy;
 
 EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(PLATFORM_NAME));
 EXCLUDED_SOURCE_FILE_NAMES_iphoneos = *.pdf com.apple.WebKit.Databases.sb com.apple.WebKit.NetworkProcess.sb com.apple.WebProcess.sb PlugInSandboxProfiles/*.sb;

@@ -725,6 +725,7 @@
 		37A5E01418BBF93F000A081E /* _WKActivatedElementInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A5E01218BBF937000A081E /* _WKActivatedElementInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37A64E5518F38E3C00EB30F1 /* _WKFormDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A64E5418F38E3C00EB30F1 /* _WKFormDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37A64E5718F38F4600EB30F1 /* _WKFormInputSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A64E5618F38F4600EB30F1 /* _WKFormInputSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		37BEC4DD1948FC6A008B4286 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C79A100E7FC50078DEBC /* WebCore.framework */; };
 		37BF2F061947DEB400723C48 /* WKNSURLRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 37BF2F041947DEB400723C48 /* WKNSURLRequest.h */; };
 		37BF2F071947DEB400723C48 /* WKNSURLRequest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37BF2F051947DEB400723C48 /* WKNSURLRequest.mm */; };
 		37C4C08618149C5B003688B9 /* WKBackForwardListItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37C4C08418149C5B003688B9 /* WKBackForwardListItem.mm */; };
@@ -3771,6 +3772,7 @@
 				3766F9F1189A1254003CF19B /* libicucore.dylib in Frameworks */,
 				3766F9EF189A1244003CF19B /* QuartzCore.framework in Frameworks */,
 				37694525184FC6B600CDE21F /* Security.framework in Frameworks */,
+				37BEC4DD1948FC6A008B4286 /* WebCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
