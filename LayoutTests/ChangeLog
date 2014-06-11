@@ -1,3 +1,12 @@
+2014-06-11  Rohit Kumar  <kumar.rohit@samsung.com>
+
+        [EFL] Updated expectations for accessibility/lists.html test
+        https://bugs.webkit.org/show_bug.cgi?id=132818
+
+        Reviewed by Mario Sanchez Prada.
+
+        * platform/efl-wk1/accessibility/lists-expected.txt:
+
 2014-06-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Japanese text in Google search is rendered too low and clipped
