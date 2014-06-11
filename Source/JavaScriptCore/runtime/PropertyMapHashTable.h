@@ -21,6 +21,7 @@
 #ifndef PropertyMapHashTable_h
 #define PropertyMapHashTable_h
 
+#include "JSExportMacros.h"
 #include "PropertyOffset.h"
 #include "Structure.h"
 #include "WriteBarrier.h"
@@ -32,24 +33,29 @@
 #include <wtf/text/StringImpl.h>
 
 
-#ifndef NDEBUG
 #define DUMP_PROPERTYMAP_STATS 0
-#else
-#define DUMP_PROPERTYMAP_STATS 0
-#endif
-
-#if DUMP_PROPERTYMAP_STATS
-
-extern int numProbes;
-extern int numCollisions;
-extern int numRehashes;
-extern int numRemoves;
-
-#endif
+#define DUMP_PROPERTYMAP_COLLISIONS 0
 
 #define PROPERTY_MAP_DELETED_ENTRY_KEY ((StringImpl*)1)
 
 namespace JSC {
+
+#if DUMP_PROPERTYMAP_STATS
+
+struct PropertyMapHashTableStats {
+    std::atomic<unsigned> numFinds;
+    std::atomic<unsigned> numCollisions;
+    std::atomic<unsigned> numLookups;
+    std::atomic<unsigned> numLookupProbing;
+    std::atomic<unsigned> numAdds;
+    std::atomic<unsigned> numRemoves;
+    std::atomic<unsigned> numRehashes;
+    std::atomic<unsigned> numReinserts;
+};
+
+JS_EXPORTDATA extern PropertyMapHashTableStats* propertyMapHashTableStats;
+
+#endif
 
 inline bool isPowerOf2(unsigned v)
 {
@@ -289,7 +295,7 @@ inline PropertyTable::find_iterator PropertyTable::find(const KeyType& key)
     unsigned step = 0;
 
 #if DUMP_PROPERTYMAP_STATS
-    ++numProbes;
+    ++propertyMapHashTableStats->numFinds;
 #endif
 
     while (true) {
@@ -299,17 +305,19 @@ inline PropertyTable::find_iterator PropertyTable::find(const KeyType& key)
         if (key == table()[entryIndex - 1].key)
             return std::make_pair(&table()[entryIndex - 1], hash & m_indexMask);
 
-#if DUMP_PROPERTYMAP_STATS
-        ++numCollisions;
-#endif
-
         if (!step)
             step = WTF::doubleHash(key->existingHash()) | 1;
-        hash += step;
 
 #if DUMP_PROPERTYMAP_STATS
-        ++numRehashes;
+        ++propertyMapHashTableStats->numCollisions;
 #endif
+
+#if DUMP_PROPERTYMAP_COLLISIONS
+        dataLog("PropertyTable collision for ", key, " (", hash, ") with step ", step, "\n");
+        dataLog("Collided with ", table()[entryIndex - 1].key, "(", table()[entryIndex - 1].key->existingHash(), ")\n");
+#endif
+
+        hash += step;
     }
 }
 
@@ -325,7 +333,7 @@ inline PropertyTable::ValueType* PropertyTable::get(const KeyType& key)
     unsigned step = 0;
 
 #if DUMP_PROPERTYMAP_STATS
-    ++numProbes;
+    ++propertyMapHashTableStats->numLookups;
 #endif
 
     while (true) {
@@ -336,16 +344,12 @@ inline PropertyTable::ValueType* PropertyTable::get(const KeyType& key)
             return &table()[entryIndex - 1];
 
 #if DUMP_PROPERTYMAP_STATS
-        ++numCollisions;
+        ++propertyMapHashTableStats->numLookupProbing;
 #endif
 
         if (!step)
             step = WTF::doubleHash(key->existingHash()) | 1;
         hash += step;
-
-#if DUMP_PROPERTYMAP_STATS
-        ++numRehashes;
-#endif
     }
 }
 
@@ -357,7 +361,7 @@ inline PropertyTable::find_iterator PropertyTable::findWithString(const KeyType&
     unsigned step = 0;
 
 #if DUMP_PROPERTYMAP_STATS
-    ++numProbes;
+    ++propertyMapHashTableStats->numLookups;
 #endif
 
     while (true) {
@@ -369,16 +373,12 @@ inline PropertyTable::find_iterator PropertyTable::findWithString(const KeyType&
             return std::make_pair(&table()[entryIndex - 1], hash & m_indexMask);
 
 #if DUMP_PROPERTYMAP_STATS
-        ++numCollisions;
+        ++propertyMapHashTableStats->numLookupProbing;
 #endif
 
         if (!step)
             step = WTF::doubleHash(key->existingHash()) | 1;
         hash += step;
-
-#if DUMP_PROPERTYMAP_STATS
-        ++numRehashes;
-#endif
     }
 }
 
@@ -390,6 +390,10 @@ inline std::pair<PropertyTable::find_iterator, bool> PropertyTable::add(const Va
         RELEASE_ASSERT(iter.first->offset <= offset);
         return std::make_pair(iter, false);
     }
+
+#if DUMP_PROPERTYMAP_STATS
+    ++propertyMapHashTableStats->numAdds;
+#endif
 
     // Ref the key
     entry.key->ref();
@@ -424,7 +428,7 @@ inline void PropertyTable::remove(const find_iterator& iter)
         return;
 
 #if DUMP_PROPERTYMAP_STATS
-    ++numRemoves;
+    ++propertyMapHashTableStats->numRemoves;
 #endif
 
     // Replace this one element with the deleted sentinel. Also clear out
@@ -517,6 +521,10 @@ inline size_t PropertyTable::sizeInMemory()
 
 inline void PropertyTable::reinsert(const ValueType& entry)
 {
+#if DUMP_PROPERTYMAP_STATS
+    ++propertyMapHashTableStats->numReinserts;
+#endif
+
     // Used to insert a value known not to be in the table, and where
     // we know capacity to be available.
     ASSERT(canInsert());
@@ -532,6 +540,10 @@ inline void PropertyTable::reinsert(const ValueType& entry)
 
 inline void PropertyTable::rehash(unsigned newCapacity)
 {
+#if DUMP_PROPERTYMAP_STATS
+    ++propertyMapHashTableStats->numRehashes;
+#endif
+
     unsigned* oldEntryIndices = m_index;
     iterator iter = this->begin();
     iterator end = this->end();

@@ -37,6 +37,7 @@
 #include "StructureChain.h"
 #include "StructureRareDataInlines.h"
 #include <wtf/CommaPrinter.h>
+#include <wtf/ProcessID.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
@@ -51,15 +52,6 @@
 
 using namespace std;
 using namespace WTF;
-
-#if DUMP_PROPERTYMAP_STATS
-
-int numProbes;
-int numCollisions;
-int numRehashes;
-int numRemoves;
-
-#endif
 
 namespace JSC {
 
@@ -816,19 +808,33 @@ void Structure::cloneRareDataFrom(VM& vm, const Structure* other)
 
 #if DUMP_PROPERTYMAP_STATS
 
+PropertyMapHashTableStats* propertyMapHashTableStats = 0;
+
 struct PropertyMapStatisticsExitLogger {
+    PropertyMapStatisticsExitLogger();
     ~PropertyMapStatisticsExitLogger();
 };
 
-static PropertyMapStatisticsExitLogger logger;
+DEFINE_GLOBAL_FOR_LOGGING(PropertyMapStatisticsExitLogger, logger, );
+
+PropertyMapStatisticsExitLogger::PropertyMapStatisticsExitLogger()
+{
+    propertyMapHashTableStats = adoptPtr(new PropertyMapHashTableStats()).leakPtr();
+}
 
 PropertyMapStatisticsExitLogger::~PropertyMapStatisticsExitLogger()
 {
-    dataLogF("\nJSC::PropertyMap statistics\n\n");
-    dataLogF("%d probes\n", numProbes);
-    dataLogF("%d collisions (%.1f%%)\n", numCollisions, 100.0 * numCollisions / numProbes);
-    dataLogF("%d rehashes\n", numRehashes);
-    dataLogF("%d removes\n", numRemoves);
+    unsigned finds = propertyMapHashTableStats->numFinds;
+    unsigned collisions = propertyMapHashTableStats->numCollisions;
+    dataLogF("\nJSC::PropertyMap statistics for process %d\n\n", getCurrentProcessID());
+    dataLogF("%d finds\n", finds);
+    dataLogF("%d collisions (%.1f%%)\n", collisions, 100.0 * collisions / finds);
+    dataLogF("%d lookups\n", propertyMapHashTableStats->numLookups.load());
+    dataLogF("%d lookup probings\n", propertyMapHashTableStats->numLookupProbing.load());
+    dataLogF("%d adds\n", propertyMapHashTableStats->numAdds.load());
+    dataLogF("%d removes\n", propertyMapHashTableStats->numRemoves.load());
+    dataLogF("%d rehashes\n", propertyMapHashTableStats->numRehashes.load());
+    dataLogF("%d reinserts\n", propertyMapHashTableStats->numReinserts.load());
 }
 
 #endif

@@ -1,3 +1,30 @@
+2014-06-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Turning on DUMP_PROPERTYMAP_STATS causes a build failure
+        https://bugs.webkit.org/show_bug.cgi?id=133673
+
+        Reviewed by Andreas Kling.
+
+        Rewrote the property map statistics code because the old code wasn't building,
+        and it was also mixing numbers for lookups and insertions/removals.
+
+        New logging code records the number of calls to PropertyTable::find (finds) and
+        PropertyTable::get/PropertyTable::findWithString separately so that we can quantify
+        the number of probing during updates and lookups.
+
+        * jsc.cpp:
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::find):
+        (JSC::PropertyTable::get):
+        (JSC::PropertyTable::findWithString):
+        (JSC::PropertyTable::add):
+        (JSC::PropertyTable::remove):
+        (JSC::PropertyTable::reinsert):
+        (JSC::PropertyTable::rehash):
+        * runtime/Structure.cpp:
+        (JSC::PropertyMapStatisticsExitLogger::PropertyMapStatisticsExitLogger):
+        (JSC::PropertyMapStatisticsExitLogger::~PropertyMapStatisticsExitLogger):
+
 2014-06-11  Andreas Kling  <akling@apple.com>
 
         Always inline JSValue::get() and Structure::get().

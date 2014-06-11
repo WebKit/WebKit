@@ -40,6 +40,7 @@
 #include "ProfilerDatabase.h"
 #include "SamplingTool.h"
 #include "StackVisitor.h"
+#include "StructureInlines.h"
 #include "StructureRareDataInlines.h"
 #include "TestRunnerUtils.h"
 #include <math.h>
