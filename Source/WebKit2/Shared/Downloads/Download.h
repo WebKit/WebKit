@@ -100,6 +100,8 @@ public:
     static void receivedCredential(const WebCore::AuthenticationChallenge&, const WebCore::Credential&);
     static void receivedRequestToContinueWithoutCredential(const WebCore::AuthenticationChallenge&);
     static void receivedCancellation(const WebCore::AuthenticationChallenge&);
+    static void receivedRequestToPerformDefaultHandling(const WebCore::AuthenticationChallenge&);
+    static void receivedChallengeRejection(const WebCore::AuthenticationChallenge&);
 
     void useCredential(const WebCore::AuthenticationChallenge&, const WebCore::Credential&);
     void continueWithoutCredential(const WebCore::AuthenticationChallenge&);

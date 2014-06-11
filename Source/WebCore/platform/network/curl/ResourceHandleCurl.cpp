@@ -282,6 +282,16 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
         client()->receivedCancellation(this, challenge);
 }
 
+void ResourceHandle::receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge&)
+{
+    ASSERT_NOT_REACHED();
+}
+
 } // namespace WebCore
 
 #endif

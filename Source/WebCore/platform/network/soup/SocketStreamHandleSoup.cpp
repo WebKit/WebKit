@@ -228,6 +228,16 @@ void SocketStreamHandle::receivedCancellation(const AuthenticationChallenge&)
     notImplemented();
 }
 
+void SocketStreamHandle::receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&)
+{
+    notImplemented();
+}
+
+void SocketStreamHandle::receivedChallengeRejection(const AuthenticationChallenge&)
+{
+    notImplemented();
+}
+
 void SocketStreamHandle::beginWaitingForSocketWritability()
 {
     if (m_writeReadySource) // Already waiting.

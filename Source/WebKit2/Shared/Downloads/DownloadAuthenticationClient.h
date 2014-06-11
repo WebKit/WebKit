@@ -54,6 +54,8 @@ private:
     virtual void receivedCredential(const WebCore::AuthenticationChallenge&, const WebCore::Credential&);
     virtual void receivedRequestToContinueWithoutCredential(const WebCore::AuthenticationChallenge&);
     virtual void receivedCancellation(const WebCore::AuthenticationChallenge&);
+    virtual void receivedRequestToPerformDefaultHandling(const WebCore::AuthenticationChallenge&) override;
+    virtual void receivedChallengeRejection(const WebCore::AuthenticationChallenge&) override;
 
     virtual void refAuthenticationClient() { ref(); }
     virtual void derefAuthenticationClient() { deref(); }

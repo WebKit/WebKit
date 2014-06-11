@@ -169,6 +169,16 @@ void Download::receivedCancellation(const AuthenticationChallenge&)
     notImplemented();
 }
 
+void Download::receivedRequestToPerformDefaultHandling(const WebCore::AuthenticationChallenge&)
+{
+    notImplemented();
+}
+
+void Download::receivedChallengeRejection(const WebCore::AuthenticationChallenge&)
+{
+    notImplemented();
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

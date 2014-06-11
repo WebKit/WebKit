@@ -123,6 +123,8 @@ public:
     virtual void receivedCredential(const AuthenticationChallenge&, const Credential&) override;
     virtual void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&) override;
     virtual void receivedCancellation(const AuthenticationChallenge&) override;
+    virtual void receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&) override;
+    virtual void receivedChallengeRejection(const AuthenticationChallenge&) override;
 #endif
 
 #if PLATFORM(COCOA) && USE(PROTECTION_SPACE_AUTH_CALLBACK)

@@ -1,3 +1,67 @@
+2014-06-10  Dan Bernstein  <mitz@apple.com>
+
+        WebKit2 part of [Cocoa] Handling authentication challenges should not require multiple delegate methods
+        https://bugs.webkit.org/show_bug.cgi?id=133697
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::performDefaultHandling): Added. Calls the new
+        AuthenticationClient function receivedRequestToPerformDefaultHandling.
+        (WebKit::AuthenticationManager::rejectProtectionSpaceAndContinue): Added. Calls the new
+        AuthenticationClient function receivedChallengeRejection.
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/Authentication/AuthenticationManager.messages.in: Added new messages
+        PerformDefaultHandling and RejectProtectionSpaceAndContinue.
+
+        * Shared/Downloads/DownloadAuthenticationClient.h: Override new AuthenticationClient member
+        functions.
+
+        * Shared/Downloads/ios/DownloadIOS.mm:
+        (WebKit::Download::receivedRequestToPerformDefaultHandling): Added empty implementation.
+        (WebKit::Download::receivedChallengeRejection): Ditto.
+
+        * Shared/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::receivedRequestToPerformDefaultHandling): Added. Forwards to the sender.
+        (WebKit::Download::receivedChallengeRejection): Ditto.
+
+        * UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.mm:
+        (checkChallenge): Factored out a bit of code into this helper function.
+        (-[WKNSURLAuthenticationChallengeSender cancelAuthenticationChallenge:]): Use new helper.
+        (-[WKNSURLAuthenticationChallengeSender continueWithoutCredentialForAuthenticationChallenge:]):
+        Ditto.
+        (-[WKNSURLAuthenticationChallengeSender useCredential:forAuthenticationChallenge:]): Ditto.
+        (-[WKNSURLAuthenticationChallengeSender performDefaultHandlingForAuthenticationChallenge:]):
+        Implemented this optional NSURLAuthenticationChallengeSender protocol method by forwarding
+        to the decision listener.
+        (-[WKNSURLAuthenticationChallengeSender rejectProtectionSpaceAndContinueWithChallenge:]):
+        Ditto.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h: Declared new delegate method.
+
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp:
+        (WebKit::AuthenticationChallengeProxy::performDefaultHandling): Added. Sends a message to
+        the authentication manager.
+        (WebKit::AuthenticationChallengeProxy::rejectProtectionSpaceAndContinue): Ditto.
+        * UIProcess/Authentication/AuthenticationChallengeProxy.h:
+
+        * UIProcess/Authentication/AuthenticationDecisionListener.cpp:
+        (WebKit::AuthenticationDecisionListener::performDefaultHandling): Added. Forwards to the
+        authentication challenge proxy.
+        (WebKit::AuthenticationDecisionListener::rejectProtectionSpaceAndContinue): Ditto.
+        * UIProcess/Authentication/AuthenticationDecisionListener.h:
+
+        * UIProcess/Cocoa/NavigationState.h: Added flag in m_navigationDelegateMethods struct.
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate): Initialize
+        webViewWillSendRequestForAuthenticationChallenge flag in the delegate methods struct.
+        (WebKit::NavigationState::LoaderClient::canAuthenticateAgainstProtectionSpaceInFrame): If
+        the delegate implements -_webView:willSendRequestForAuthenticationChallenge:, return true
+        here; the delegate will respond with -rejectProtectionSpaceAndContinueWithChallenge: if
+        it cannot authenticate.
+        (WebKit::NavigationState::LoaderClient::didReceiveAuthenticationChallengeInFrame): If the
+        delegate implements -_webView:willSendRequestForAuthenticationChallenge:, send that message.
+
 2014-06-10  Timothy Horton  <timothy_horton@apple.com>
 
         Factor repeated CFRunLoopObserver code out

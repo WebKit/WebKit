@@ -125,6 +125,16 @@ void Download::receivedCancellation(const AuthenticationChallenge& authenticatio
     [authenticationChallenge.sender() cancelAuthenticationChallenge:authenticationChallenge.nsURLAuthenticationChallenge()];
 }
 
+void Download::receivedRequestToPerformDefaultHandling(const AuthenticationChallenge& authenticationChallenge)
+{
+    [authenticationChallenge.sender() performDefaultHandlingForAuthenticationChallenge:authenticationChallenge.nsURLAuthenticationChallenge()];
+}
+
+void Download::receivedChallengeRejection(const AuthenticationChallenge& authenticationChallenge)
+{
+    [authenticationChallenge.sender() rejectProtectionSpaceAndContinueWithChallenge:authenticationChallenge.nsURLAuthenticationChallenge()];
+}
+
 } // namespace WebKit
 
 @implementation WKDownloadAsDelegate

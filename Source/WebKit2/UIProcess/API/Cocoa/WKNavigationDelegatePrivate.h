@@ -44,6 +44,7 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 
 - (void)_webView:(WKWebView *)webView renderingProgressDidChange:(_WKRenderingProgressEvents)progressEvents;
 
+- (void)_webView:(WKWebView *)webView willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 - (BOOL)_webView:(WKWebView *)webView canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace;
 - (void)_webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 

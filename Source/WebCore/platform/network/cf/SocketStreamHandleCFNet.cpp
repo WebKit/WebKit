@@ -663,6 +663,14 @@ void SocketStreamHandle::receivedCancellation(const AuthenticationChallenge&)
 {
 }
 
+void SocketStreamHandle::receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&)
+{
+}
+
+void SocketStreamHandle::receivedChallengeRejection(const AuthenticationChallenge&)
+{
+}
+
 unsigned short SocketStreamHandle::port() const
 {
     if (unsigned short urlPort = m_url.port())

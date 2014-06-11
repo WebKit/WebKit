@@ -44,7 +44,9 @@ public:
     
     void useCredential(WebCredential*);
     void cancel();
-    
+    void performDefaultHandling();
+    void rejectProtectionSpaceAndContinue();
+
     void detachChallenge();
 
 private:

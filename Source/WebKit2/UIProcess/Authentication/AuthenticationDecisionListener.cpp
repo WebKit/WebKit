@@ -52,6 +52,18 @@ void AuthenticationDecisionListener::cancel()
         m_challengeProxy->cancel();
 }
 
+void AuthenticationDecisionListener::performDefaultHandling()
+{
+    if (m_challengeProxy)
+        m_challengeProxy->performDefaultHandling();
+}
+
+void AuthenticationDecisionListener::rejectProtectionSpaceAndContinue()
+{
+    if (m_challengeProxy)
+        m_challengeProxy->rejectProtectionSpaceAndContinue();
+}
+
 void AuthenticationDecisionListener::detachChallenge()
 {
     m_challengeProxy = 0;

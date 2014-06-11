@@ -1194,6 +1194,16 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     clearAuthentication();
 }
 
+void ResourceHandle::receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge&)
+{
+    ASSERT_NOT_REACHED();
+}
+
 static bool waitingToSendRequest(ResourceHandle* handle)
 {
     // We need to check for d->m_soupRequest because the request may have raised a failure

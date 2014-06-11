@@ -454,6 +454,32 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
         client()->receivedCancellation(this, challenge);
 }
 
+void ResourceHandle::receivedRequestToPerformDefaultHandling(const AuthenticationChallenge& challenge)
+{
+    LOG(Network, "CFNet - receivedRequestToPerformDefaultHandling()");
+    ASSERT(!challenge.isNull());
+    ASSERT(challenge.cfURLAuthChallengeRef());
+    if (challenge != d->m_currentWebChallenge)
+        return;
+
+    CFURLConnectionPerformDefaultHandlingForChallenge(d->m_connection.get(), challenge.cfURLAuthChallengeRef());
+
+    clearAuthentication();
+}
+
+void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge& challenge)
+{
+    LOG(Network, "CFNet - receivedChallengeRejection()");
+    ASSERT(!challenge.isNull());
+    ASSERT(challenge.cfURLAuthChallengeRef());
+    if (challenge != d->m_currentWebChallenge)
+        return;
+
+    CFURLConnectionRejectChallenge(d->m_connection.get(), challenge.cfURLAuthChallengeRef());
+
+    clearAuthentication();
+}
+
 CFURLStorageSessionRef ResourceHandle::storageSession() const
 {
     return d->m_storageSession.get();

@@ -689,6 +689,32 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
         client()->receivedCancellation(this, challenge);
 }
 
+void ResourceHandle::receivedRequestToPerformDefaultHandling(const AuthenticationChallenge& challenge)
+{
+    LOG(Network, "Handle %p receivedRequestToPerformDefaultHandling", this);
+
+    ASSERT(!challenge.isNull());
+    if (challenge != d->m_currentWebChallenge)
+        return;
+
+    [[d->m_currentMacChallenge sender] performDefaultHandlingForAuthenticationChallenge:d->m_currentMacChallenge];
+
+    clearAuthentication();
+}
+
+void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge& challenge)
+{
+    LOG(Network, "Handle %p receivedChallengeRejection", this);
+
+    ASSERT(!challenge.isNull());
+    if (challenge != d->m_currentWebChallenge)
+        return;
+
+    [[d->m_currentMacChallenge sender] rejectProtectionSpaceAndContinueWithChallenge:d->m_currentMacChallenge];
+
+    clearAuthentication();
+}
+
 void ResourceHandle::continueWillCacheResponse(NSCachedURLResponse *response)
 {
     ASSERT(client());

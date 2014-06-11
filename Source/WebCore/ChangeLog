@@ -1,3 +1,24 @@
+2014-06-10  Dan Bernstein  <mitz@apple.com>
+
+        WebCore part of [Cocoa] Handling authentication challenges should not require multiple delegate methods
+        https://bugs.webkit.org/show_bug.cgi?id=133697
+
+        Reviewed by Anders Carlsson.
+
+        * platform/network/AuthenticationClient.h: Declared new virtual member functions for
+        requesting default handling of a challenge and rejecting a challenge.
+        * platform/network/ResourceHandle.h: Override new AuthenticationClient functions.
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::receivedRequestToPerformDefaultHandling): Added. Calls
+        CFURLConnectionPerformDefaultHandlingForChallenge.
+        (WebCore::ResourceHandle::receivedChallengeRejection): Added. Calls
+        CFURLConnectionRejectChallenge.
+        * platform/network/cf/SocketStreamHandle.h: Override new AuthenticationClient functions.
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::receivedRequestToPerformDefaultHandling): Added empty
+        override.
+        (WebCore::SocketStreamHandle::receivedChallengeRejection): Ditto.
+
 2014-06-09  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r167962): Out of bounds read in JSC::StructureIDTable::get()

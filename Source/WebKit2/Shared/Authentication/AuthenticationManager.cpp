@@ -156,4 +156,36 @@ void AuthenticationManager::cancelChallenge(uint64_t challengeID)
     coreClient->receivedCancellation(challenge);
 }
 
+void AuthenticationManager::performDefaultHandling(uint64_t challengeID)
+{
+    ASSERT(RunLoop::isMain());
+
+    AuthenticationChallenge challenge = m_challenges.take(challengeID);
+    ASSERT(!challenge.isNull());
+    AuthenticationClient* coreClient = challenge.authenticationClient();
+    if (!coreClient) {
+        // This authentication challenge comes from a download.
+        Download::receivedRequestToPerformDefaultHandling(challenge);
+        return;
+    }
+
+    coreClient->receivedRequestToPerformDefaultHandling(challenge);
+}
+
+void AuthenticationManager::rejectProtectionSpaceAndContinue(uint64_t challengeID)
+{
+    ASSERT(RunLoop::isMain());
+
+    AuthenticationChallenge challenge = m_challenges.take(challengeID);
+    ASSERT(!challenge.isNull());
+    AuthenticationClient* coreClient = challenge.authenticationClient();
+    if (!coreClient) {
+        // This authentication challenge comes from a download.
+        Download::receivedChallengeRejection(challenge);
+        return;
+    }
+
+    coreClient->receivedChallengeRejection(challenge);
+}
+
 } // namespace WebKit

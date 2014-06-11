@@ -63,32 +63,45 @@ using namespace WebKit;
 
 @implementation WKNSURLAuthenticationChallengeSender
 
-- (void)cancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+static void checkChallenge(NSURLAuthenticationChallenge *challenge)
 {
     if ([challenge class] != [WKNSURLAuthenticationChallenge class])
         [NSException raise:NSInvalidArgumentException format:@"The challenge was not sent by the receiver."];
+}
 
+- (void)cancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    checkChallenge(challenge);
     AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
     webChallenge.listener()->cancel();
 }
 
 - (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    if ([challenge class] != [WKNSURLAuthenticationChallenge class])
-        [NSException raise:NSInvalidArgumentException format:@"The challenge was not sent by the receiver."];
-
+    checkChallenge(challenge);
     AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
     webChallenge.listener()->useCredential(nullptr);
 }
 
 - (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    if ([challenge class] != [WKNSURLAuthenticationChallenge class])
-        [NSException raise:NSInvalidArgumentException format:@"The challenge was not sent by the receiver."];
-
+    checkChallenge(challenge);
     AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
-
     webChallenge.listener()->useCredential(WebCredential::create(core(credential)).get());
+}
+
+- (void)performDefaultHandlingForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    checkChallenge(challenge);
+    AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
+    webChallenge.listener()->performDefaultHandling();
+}
+
+- (void)rejectProtectionSpaceAndContinueWithChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    checkChallenge(challenge);
+    AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
+    webChallenge.listener()->rejectProtectionSpaceAndContinue();
 }
 
 @end

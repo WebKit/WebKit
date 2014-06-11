@@ -83,6 +83,26 @@ void AuthenticationChallengeProxy::cancel()
     m_challengeID = 0;
 }
 
+void AuthenticationChallengeProxy::performDefaultHandling()
+{
+    if (!m_challengeID)
+        return;
+
+    m_connection->send(Messages::AuthenticationManager::PerformDefaultHandling(m_challengeID), 0);
+
+    m_challengeID = 0;
+}
+
+void AuthenticationChallengeProxy::rejectProtectionSpaceAndContinue()
+{
+    if (!m_challengeID)
+        return;
+
+    m_connection->send(Messages::AuthenticationManager::RejectProtectionSpaceAndContinue(m_challengeID), 0);
+
+    m_challengeID = 0;
+}
+
 WebCredential* AuthenticationChallengeProxy::proposedCredential() const
 {
     if (!m_webCredential)

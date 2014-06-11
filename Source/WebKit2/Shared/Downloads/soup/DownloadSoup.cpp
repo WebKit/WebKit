@@ -282,4 +282,14 @@ void Download::cancelAuthenticationChallenge(const AuthenticationChallenge&)
     notImplemented();
 }
 
+void Download::receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&)
+{
+    notImplemented();
+}
+
+void Download::receivedChallengeRejection(const AuthenticationChallenge&)
+{
+    notImplemented();
+}
+
 } // namespace WebKit

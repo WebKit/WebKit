@@ -53,4 +53,14 @@ void DownloadAuthenticationClient::receivedCancellation(const AuthenticationChal
     // FIXME (119667): This can probably be just removed.
 }
 
+void DownloadAuthenticationClient::receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&)
+{
+    // FIXME (119667): This can probably be just removed.
+}
+
+void DownloadAuthenticationClient::receivedChallengeRejection(const AuthenticationChallenge&)
+{
+    // FIXME (119667): This can probably be just removed.
+}
+
 } // namespace WebKit

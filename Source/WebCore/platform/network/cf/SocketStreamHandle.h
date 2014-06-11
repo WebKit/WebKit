@@ -88,6 +88,8 @@ private:
     virtual void receivedCredential(const AuthenticationChallenge&, const Credential&);
     virtual void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
     virtual void receivedCancellation(const AuthenticationChallenge&);
+    virtual void receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&);
+    virtual void receivedChallengeRejection(const AuthenticationChallenge&);
 
     virtual void refAuthenticationClient() { ref(); }
     virtual void derefAuthenticationClient() { deref(); }

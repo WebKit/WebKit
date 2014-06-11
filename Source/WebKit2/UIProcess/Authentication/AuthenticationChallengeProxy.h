@@ -52,6 +52,8 @@ public:
     
     void useCredential(WebCredential*);
     void cancel();
+    void performDefaultHandling();
+    void rejectProtectionSpaceAndContinue();
 
     AuthenticationDecisionListener* listener() const { return m_listener.get(); }
     WebCredential* proposedCredential() const;

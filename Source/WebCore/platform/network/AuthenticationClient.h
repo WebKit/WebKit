@@ -36,6 +36,8 @@ public:
     virtual void receivedCredential(const AuthenticationChallenge&, const Credential&) = 0;
     virtual void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&) = 0;
     virtual void receivedCancellation(const AuthenticationChallenge&) = 0;
+    virtual void receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&) = 0;
+    virtual void receivedChallengeRejection(const AuthenticationChallenge&) = 0;
 
     void ref() { refAuthenticationClient(); }
     void deref() { derefAuthenticationClient(); }
