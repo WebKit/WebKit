@@ -1,3 +1,10 @@
+2014-06-11  Andy Estes  <aestes@apple.com>
+
+        Fix the build after after r169789 on platforms that build with -Wunused-const-variable
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHashTable): Don't create the value array if it'll never be used.
+
 2014-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use a different user agent string depending on the site
