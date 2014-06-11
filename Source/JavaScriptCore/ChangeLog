@@ -1,3 +1,9 @@
+2014-06-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] URTBF after r169823.
+
+        * bindings/ScriptValue.cpp: Missing include added.
+
 2014-06-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove an unnecessary asObject(this) call inside JSObject::fastGetOwnPropertySlot.
