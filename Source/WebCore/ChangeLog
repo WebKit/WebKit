@@ -1,3 +1,9 @@
+2014-06-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [CMake]URTBF after r169826.
+
+        * CMakeLists.txt: Typo fix.
+
 2014-06-11  Anders Carlsson  <andersca@apple.com>
 
         Get rid of an unneeded HTTPHeaderMap::remove overload
