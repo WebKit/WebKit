@@ -146,6 +146,8 @@ public:
     bool isDictionary() const { return m_dictionaryKind != NoneDictionaryKind; }
     bool isUncacheableDictionary() const { return m_dictionaryKind == UncachedDictionaryKind; }
 
+    bool hasBeenFlattenedBefore() const { return m_hasBeenFlattenedBefore; }
+
     bool propertyAccessesAreCacheable() { return m_dictionaryKind != UncachedDictionaryKind && !typeInfo().prohibitsPropertyCaching(); }
 
     // We use SlowPath in GetByIdStatus for structures that may get new impure properties later to prevent
@@ -536,6 +538,7 @@ private:
     ConcurrentJITLock m_lock;
     
     unsigned m_dictionaryKind : 2;
+    bool m_hasBeenFlattenedBefore : 1;
     bool m_isPinnedPropertyTable : 1;
     bool m_hasGetterSetterProperties : 1;
     bool m_hasCustomGetterSetterProperties : 1;

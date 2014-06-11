@@ -158,6 +158,7 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     , m_offset(invalidOffset)
     , m_inlineCapacity(inlineCapacity)
     , m_dictionaryKind(NoneDictionaryKind)
+    , m_hasBeenFlattenedBefore(false)
     , m_isPinnedPropertyTable(false)
     , m_hasGetterSetterProperties(classInfo->hasStaticSetterOrReadonlyProperties(vm))
     , m_hasCustomGetterSetterProperties(false)
@@ -186,6 +187,7 @@ Structure::Structure(VM& vm)
     , m_offset(invalidOffset)
     , m_inlineCapacity(0)
     , m_dictionaryKind(NoneDictionaryKind)
+    , m_hasBeenFlattenedBefore(false)
     , m_isPinnedPropertyTable(false)
     , m_hasGetterSetterProperties(m_classInfo->hasStaticSetterOrReadonlyProperties(vm))
     , m_hasCustomGetterSetterProperties(false)
@@ -213,6 +215,7 @@ Structure::Structure(VM& vm, Structure* previous)
     , m_offset(invalidOffset)
     , m_inlineCapacity(previous->m_inlineCapacity)
     , m_dictionaryKind(previous->m_dictionaryKind)
+    , m_hasBeenFlattenedBefore(previous->m_hasBeenFlattenedBefore)
     , m_isPinnedPropertyTable(false)
     , m_hasGetterSetterProperties(previous->m_hasGetterSetterProperties)
     , m_hasCustomGetterSetterProperties(previous->m_hasCustomGetterSetterProperties)
@@ -740,6 +743,7 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
     }
 
     m_dictionaryKind = NoneDictionaryKind;
+    m_hasBeenFlattenedBefore = true;
 
     // If the object had a Butterfly but after flattening/compacting we no longer have need of it,
     // we need to zero it out because the collector depends on the Structure to know the size for copying.

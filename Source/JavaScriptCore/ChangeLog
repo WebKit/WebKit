@@ -1,3 +1,40 @@
+2014-06-11  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Inline caching should try to flatten uncacheable dictionaries
+        https://bugs.webkit.org/show_bug.cgi?id=133683
+
+        Reviewed by Geoffrey Garen.
+
+        There exists a body of JS code that deletes properties off of objects (especially function/constructor objects), 
+        which puts them into an uncacheable dictionary state. This prevents all future inline caching for these objects. 
+        If properties are deleted out of the object during its initialization, we can enable caching for that object by 
+        attempting to flatten it when we see we're trying to do inline caching with that object. We then record that we 
+        performed this flattening optimization in the object's Structure. If it ever re-enters the uncacheable dictionary 
+        state then we can just give up on caching that object.
+
+        In refactoring some of the code in tryCacheGetById and tryBuildGetByIdList to reduce some duplication, I added
+        the InlineCacheAction enum, a new way to indicate the success or failure of an inline caching attempt. I changed
+        the other inline caching functions to return this enum rather than the opaque booleans that we were previously 
+        returning.
+
+        * jit/Repatch.cpp:
+        (JSC::actionForCell):
+        (JSC::tryCacheGetByID):
+        (JSC::repatchGetByID):
+        (JSC::tryBuildGetByIDList):
+        (JSC::buildGetByIDList):
+        (JSC::tryCachePutByID):
+        (JSC::repatchPutByID):
+        (JSC::tryBuildPutByIdList):
+        (JSC::buildPutByIdList):
+        (JSC::tryRepatchIn):
+        (JSC::repatchIn):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::flattenDictionaryStructure):
+        * runtime/Structure.h:
+        (JSC::Structure::hasBeenFlattenedBefore):
+
 2014-06-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] URTBF after r169823.

@@ -594,10 +594,39 @@ static void generateByIdStub(
         stubRoutine = createJITStubRoutine(code, *vm, codeBlock->ownerExecutable(), true);
 }
 
-static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
+enum InlineCacheAction {
+    GiveUpOnCache,
+    RetryCacheLater,
+    AttemptToCache
+};
+
+static InlineCacheAction actionForCell(VM& vm, JSCell* cell)
+{
+    Structure* structure = cell->structure(vm);
+
+    TypeInfo typeInfo = structure->typeInfo();
+    if (typeInfo.prohibitsPropertyCaching())
+        return GiveUpOnCache;
+
+    if (structure->isUncacheableDictionary()) {
+        if (structure->hasBeenFlattenedBefore())
+            return GiveUpOnCache;
+        // Flattening could have changed the offset, so return early for another try.
+        asObject(cell)->flattenDictionaryObject(vm);
+        return RetryCacheLater;
+    }
+    ASSERT(!structure->isUncacheableDictionary());
+    
+    if (typeInfo.hasImpureGetOwnPropertySlot() && !typeInfo.newImpurePropertyFiresWatchpoints())
+        return GiveUpOnCache;
+
+    return AttemptToCache;
+}
+
+static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
     if (Options::forceICFailure())
-        return false;
+        return GiveUpOnCache;
     
     // FIXME: Write a test that proves we need to check for recursion here just
     // like the interpreter does, then add a check for recursion.
@@ -663,7 +692,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
             replaceWithJump(repatchBuffer, stubInfo, stubInfo.stubRoutine->code().code());
             repatchCall(repatchBuffer, stubInfo.callReturnLocation, operationGetById);
 
-            return true;
+            return RetryCacheLater;
         }
 
         // String.length case
@@ -694,21 +723,20 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         replaceWithJump(repatchBuffer, stubInfo, stubInfo.stubRoutine->code().code());
         repatchCall(repatchBuffer, stubInfo.callReturnLocation, operationGetById);
 
-        return true;
+        return RetryCacheLater;
     }
 
     // FIXME: Cache property access for immediates.
     if (!baseValue.isCell())
-        return false;
+        return GiveUpOnCache;
     JSCell* baseCell = baseValue.asCell();
     Structure* structure = baseCell->structure();
     if (!slot.isCacheable())
-        return false;
-    if (!structure->propertyAccessesAreCacheable())
-        return false;
-    TypeInfo typeInfo = structure->typeInfo();
-    if (typeInfo.hasImpureGetOwnPropertySlot() && !typeInfo.newImpurePropertyFiresWatchpoints())
-        return false;
+        return GiveUpOnCache;
+
+    InlineCacheAction action = actionForCell(*vm, baseCell);
+    if (action != AttemptToCache)
+        return action;
 
     // Optimize self access.
     if (slot.slotBase() == baseValue
@@ -717,19 +745,18 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         && MacroAssembler::isCompactPtrAlignedAddressOffset(maxOffsetRelativeToPatchedStorage(slot.cachedOffset()))) {
             repatchByIdSelfAccess(*vm, codeBlock, stubInfo, structure, propertyName, slot.cachedOffset(), operationGetByIdBuildList, true);
             stubInfo.initGetByIdSelf(*vm, codeBlock->ownerExecutable(), structure);
-            return true;
+            return RetryCacheLater;
     }
 
     repatchCall(codeBlock, stubInfo.callReturnLocation, operationGetByIdBuildList);
-    return true;
+    return RetryCacheLater;
 }
 
 void repatchGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
     GCSafeConcurrentJITLocker locker(exec->codeBlock()->m_lock, exec->vm().heap);
     
-    bool cached = tryCacheGetByID(exec, baseValue, propertyName, slot, stubInfo);
-    if (!cached)
+    if (tryCacheGetByID(exec, baseValue, propertyName, slot, stubInfo) == GiveUpOnCache)
         repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationGetById);
 }
 
@@ -748,11 +775,11 @@ static void patchJumpToGetByIdStub(CodeBlock* codeBlock, StructureStubInfo& stub
     replaceWithJump(repatchBuffer, stubInfo, stubRoutine->code().code());
 }
 
-static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identifier& ident, const PropertySlot& slot, StructureStubInfo& stubInfo)
+static InlineCacheAction tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identifier& ident, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
     if (!baseValue.isCell()
         || !slot.isCacheable())
-        return false;
+        return GiveUpOnCache;
 
     JSCell* baseCell = baseValue.asCell();
     bool loadTargetFromProxy = false;
@@ -764,21 +791,20 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
 
     VM* vm = &exec->vm();
     CodeBlock* codeBlock = exec->codeBlock();
+
+    InlineCacheAction action = actionForCell(*vm, baseCell);
+    if (action != AttemptToCache)
+        return action;
+
     Structure* structure = baseCell->structure(*vm);
-
-    if (!structure->propertyAccessesAreCacheable())
-        return false;
-
     TypeInfo typeInfo = structure->typeInfo();
-    if (typeInfo.hasImpureGetOwnPropertySlot() && !typeInfo.newImpurePropertyFiresWatchpoints())
-        return false;
 
     if (stubInfo.patch.spillMode == NeedToSpill) {
         // We cannot do as much inline caching if the registers were not flushed prior to this GetById. In particular,
         // non-Value cached properties require planting calls, which requires registers to have been flushed. Thus,
         // if registers were not flushed, don't do non-Value caching.
         if (!slot.isCacheableValue())
-            return false;
+            return GiveUpOnCache;
     }
     
     PropertyOffset offset = slot.cachedOffset();
@@ -787,19 +813,19 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
     
     if (slot.slotBase() != baseValue) {
         if (typeInfo.prohibitsPropertyCaching() || structure->isDictionary())
-            return false;
+            return GiveUpOnCache;
         
         count = normalizePrototypeChainForChainAccess(
             exec, baseValue, slot.slotBase(), ident, offset);
         if (count == InvalidPrototypeChain)
-            return false;
+            return GiveUpOnCache;
         prototypeChain = structure->prototypeChain(exec);
     }
     
     PolymorphicGetByIdList* list = PolymorphicGetByIdList::from(stubInfo);
     if (list->isFull()) {
         // We need this extra check because of recursion.
-        return false;
+        return GiveUpOnCache;
     }
     
     RefPtr<JITStubRoutine> stubRoutine;
@@ -823,15 +849,14 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
     
     patchJumpToGetByIdStub(codeBlock, stubInfo, stubRoutine.get());
     
-    return !list->isFull();
+    return list->isFull() ? GiveUpOnCache : RetryCacheLater;
 }
 
 void buildGetByIDList(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
     GCSafeConcurrentJITLocker locker(exec->codeBlock()->m_lock, exec->vm().heap);
     
-    bool dontChangeCall = tryBuildGetByIDList(exec, baseValue, propertyName, slot, stubInfo);
-    if (!dontChangeCall)
+    if (tryBuildGetByIDList(exec, baseValue, propertyName, slot, stubInfo) == GiveUpOnCache)
         repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationGetById);
 }
 
@@ -1136,47 +1161,47 @@ static void emitPutTransitionStub(
             structure);
 }
 
-static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier& ident, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
+static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier& ident, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
 {
     if (Options::forceICFailure())
-        return false;
+        return GiveUpOnCache;
     
     CodeBlock* codeBlock = exec->codeBlock();
     VM* vm = &exec->vm();
 
     if (!baseValue.isCell())
-        return false;
+        return GiveUpOnCache;
     JSCell* baseCell = baseValue.asCell();
     Structure* structure = baseCell->structure();
     Structure* oldStructure = structure->previousID();
     
     if (!slot.isCacheablePut() && !slot.isCacheableCustom() && !slot.isCacheableSetter())
-        return false;
+        return GiveUpOnCache;
     if (!structure->propertyAccessesAreCacheable())
-        return false;
+        return GiveUpOnCache;
 
     // Optimize self access.
     if (slot.base() == baseValue && slot.isCacheablePut()) {
         if (slot.type() == PutPropertySlot::NewProperty) {
             if (structure->isDictionary())
-                return false;
+                return GiveUpOnCache;
             
             // Skip optimizing the case where we need a realloc, if we don't have
             // enough registers to make it happen.
             if (GPRInfo::numberOfRegisters < 6
                 && oldStructure->outOfLineCapacity() != structure->outOfLineCapacity()
                 && oldStructure->outOfLineCapacity())
-                return false;
+                return GiveUpOnCache;
             
             // Skip optimizing the case where we need realloc, and the structure has
             // indexing storage.
             // FIXME: We shouldn't skip this!  Implement it!
             // https://bugs.webkit.org/show_bug.cgi?id=130914
             if (oldStructure->couldHaveIndexingHeader())
-                return false;
+                return GiveUpOnCache;
             
             if (normalizePrototypeChain(exec, baseCell) == InvalidPrototypeChain)
-                return false;
+                return GiveUpOnCache;
             
             StructureChain* prototypeChain = structure->prototypeChain(exec);
             
@@ -1195,15 +1220,15 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
             
             stubInfo.initPutByIdTransition(*vm, codeBlock->ownerExecutable(), oldStructure, structure, prototypeChain, putKind == Direct);
             
-            return true;
+            return RetryCacheLater;
         }
 
         if (!MacroAssembler::isPtrAlignedAddressOffset(offsetRelativeToPatchedStorage(slot.cachedOffset())))
-            return false;
+            return GiveUpOnCache;
 
         repatchByIdSelfAccess(*vm, codeBlock, stubInfo, structure, ident, slot.cachedOffset(), appropriateListBuildingPutByIdFunction(slot, putKind), false);
         stubInfo.initPutByIdReplace(*vm, codeBlock->ownerExecutable(), structure);
-        return true;
+        return RetryCacheLater;
     }
     if ((slot.isCacheableCustom() || slot.isCacheableSetter())
         && stubInfo.patch.spillMode == DontSpill) {
@@ -1215,7 +1240,7 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
         if (baseValue != slot.base()) {
             count = normalizePrototypeChainForChainAccess(exec, baseCell, slot.base(), ident, offset);
             if (count == InvalidPrototypeChain)
-                return false;
+                return GiveUpOnCache;
 
             prototypeChain = structure->prototypeChain(exec);
         }
@@ -1238,38 +1263,37 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
         repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.deltaCallToJump), CodeLocationLabel(stubRoutine->code().code()));
         repatchCall(repatchBuffer, stubInfo.callReturnLocation, appropriateListBuildingPutByIdFunction(slot, putKind));
         RELEASE_ASSERT(!list->isFull());
-        return true;
+        return RetryCacheLater;
     }
 
-    return false;
+    return GiveUpOnCache;
 }
 
 void repatchPutByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
 {
     GCSafeConcurrentJITLocker locker(exec->codeBlock()->m_lock, exec->vm().heap);
     
-    bool cached = tryCachePutByID(exec, baseValue, propertyName, slot, stubInfo, putKind);
-    if (!cached)
+    if (tryCachePutByID(exec, baseValue, propertyName, slot, stubInfo, putKind) == GiveUpOnCache)
         repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, appropriateGenericPutByIdFunction(slot, putKind));
 }
 
-static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
+static InlineCacheAction tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
 {
     CodeBlock* codeBlock = exec->codeBlock();
     VM* vm = &exec->vm();
 
     if (!baseValue.isCell())
-        return false;
+        return GiveUpOnCache;
     JSCell* baseCell = baseValue.asCell();
     Structure* structure = baseCell->structure();
     Structure* oldStructure = structure->previousID();
     
     
     if (!slot.isCacheablePut() && !slot.isCacheableCustom() && !slot.isCacheableSetter())
-        return false;
+        return GiveUpOnCache;
 
     if (!structure->propertyAccessesAreCacheable())
-        return false;
+        return GiveUpOnCache;
 
     // Optimize self access.
     if (slot.base() == baseValue && slot.isCacheablePut()) {
@@ -1278,28 +1302,28 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
         
         if (slot.type() == PutPropertySlot::NewProperty) {
             if (structure->isDictionary())
-                return false;
+                return GiveUpOnCache;
             
             // Skip optimizing the case where we need a realloc, if we don't have
             // enough registers to make it happen.
             if (GPRInfo::numberOfRegisters < 6
                 && oldStructure->outOfLineCapacity() != structure->outOfLineCapacity()
                 && oldStructure->outOfLineCapacity())
-                return false;
+                return GiveUpOnCache;
             
             // Skip optimizing the case where we need realloc, and the structure has
             // indexing storage.
             if (oldStructure->couldHaveIndexingHeader())
-                return false;
+                return GiveUpOnCache;
             
             if (normalizePrototypeChain(exec, baseCell) == InvalidPrototypeChain)
-                return false;
+                return GiveUpOnCache;
             
             StructureChain* prototypeChain = structure->prototypeChain(exec);
             
             list = PolymorphicPutByIdList::from(putKind, stubInfo);
             if (list->isFull())
-                return false; // Will get here due to recursion.
+                return GiveUpOnCache; // Will get here due to recursion.
             
             // We're now committed to creating the stub. Mogrify the meta-data accordingly.
             emitPutTransitionStub(
@@ -1316,7 +1340,7 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
         } else {
             list = PolymorphicPutByIdList::from(putKind, stubInfo);
             if (list->isFull())
-                return false; // Will get here due to recursion.
+                return GiveUpOnCache; // Will get here due to recursion.
             
             // We're now committed to creating the stub. Mogrify the meta-data accordingly.
             emitPutReplaceStub(
@@ -1335,7 +1359,7 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
         if (list->isFull())
             repatchCall(repatchBuffer, stubInfo.callReturnLocation, appropriateGenericPutByIdFunction(slot, putKind));
         
-        return true;
+        return RetryCacheLater;
     }
 
     if ((slot.isCacheableCustom() || slot.isCacheableSetter())
@@ -1347,7 +1371,7 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
         if (baseValue != slot.base()) {
             count = normalizePrototypeChainForChainAccess(exec, baseCell, slot.base(), propertyName, offset);
             if (count == InvalidPrototypeChain)
-                return false;
+                return GiveUpOnCache;
 
             prototypeChain = structure->prototypeChain(exec);
         }
@@ -1371,33 +1395,32 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
         if (list->isFull())
             repatchCall(repatchBuffer, stubInfo.callReturnLocation, appropriateGenericPutByIdFunction(slot, putKind));
 
-        return true;
+        return RetryCacheLater;
     }
-    return false;
+    return GiveUpOnCache;
 }
 
 void buildPutByIdList(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
 {
     GCSafeConcurrentJITLocker locker(exec->codeBlock()->m_lock, exec->vm().heap);
     
-    bool cached = tryBuildPutByIdList(exec, baseValue, propertyName, slot, stubInfo, putKind);
-    if (!cached)
+    if (tryBuildPutByIdList(exec, baseValue, propertyName, slot, stubInfo, putKind) == GiveUpOnCache)
         repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, appropriateGenericPutByIdFunction(slot, putKind));
 }
 
-static bool tryRepatchIn(
+static InlineCacheAction tryRepatchIn(
     ExecState* exec, JSCell* base, const Identifier& ident, bool wasFound,
     const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
     if (Options::forceICFailure())
-        return false;
+        return GiveUpOnCache;
     
     if (!base->structure()->propertyAccessesAreCacheable())
-        return false;
+        return GiveUpOnCache;
     
     if (wasFound) {
         if (!slot.isCacheable())
-            return false;
+            return GiveUpOnCache;
     }
     
     CodeBlock* codeBlock = exec->codeBlock();
@@ -1407,7 +1430,7 @@ static bool tryRepatchIn(
     PropertyOffset offsetIgnored;
     size_t count = normalizePrototypeChainForChainAccess(exec, base, wasFound ? slot.slotBase() : JSValue(), ident, offsetIgnored);
     if (count == InvalidPrototypeChain)
-        return false;
+        return GiveUpOnCache;
     
     PolymorphicAccessStructureList* polymorphicStructureList;
     int listIndex;
@@ -1428,7 +1451,7 @@ static bool tryRepatchIn(
         slowCaseLabel = CodeLocationLabel(polymorphicStructureList->list[listIndex - 1].stubRoutine->code().code());
         
         if (listIndex == POLYMORPHIC_LIST_CACHE_SIZE)
-            return false;
+            return GiveUpOnCache;
     }
     
     StructureChain* chain = structure->prototypeChain(exec);
@@ -1502,16 +1525,15 @@ static bool tryRepatchIn(
     RepatchBuffer repatchBuffer(codeBlock);
     repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.deltaCallToJump), CodeLocationLabel(stubRoutine->code().code()));
     
-    return listIndex < (POLYMORPHIC_LIST_CACHE_SIZE - 1);
+    return listIndex < (POLYMORPHIC_LIST_CACHE_SIZE - 1) ? RetryCacheLater : GiveUpOnCache;
 }
 
 void repatchIn(
     ExecState* exec, JSCell* base, const Identifier& ident, bool wasFound,
     const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
-    if (tryRepatchIn(exec, base, ident, wasFound, slot, stubInfo))
-        return;
-    repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationIn);
+    if (tryRepatchIn(exec, base, ident, wasFound, slot, stubInfo) == GiveUpOnCache)
+        repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationIn);
 }
 
 static void linkSlowFor(
