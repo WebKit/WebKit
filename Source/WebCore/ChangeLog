@@ -1,5 +1,37 @@
 2014-06-11  Anders Carlsson  <andersca@apple.com>
 
+        Move some HTTP header field accessors to ResourceRequestBase.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=133773
+
+        Reviewed by Andreas Kling.
+
+        This will avoid having to include HTTPHeaderNames.h from ResourceRequestBase.h.
+
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::httpContentType):
+        (WebCore::ResourceRequestBase::setHTTPContentType):
+        (WebCore::ResourceRequestBase::httpReferrer):
+        (WebCore::ResourceRequestBase::setHTTPReferrer):
+        (WebCore::ResourceRequestBase::httpOrigin):
+        (WebCore::ResourceRequestBase::setHTTPOrigin):
+        (WebCore::ResourceRequestBase::httpUserAgent):
+        (WebCore::ResourceRequestBase::setHTTPUserAgent):
+        (WebCore::ResourceRequestBase::httpAccept):
+        (WebCore::ResourceRequestBase::setHTTPAccept):
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::httpContentType): Deleted.
+        (WebCore::ResourceRequestBase::setHTTPContentType): Deleted.
+        (WebCore::ResourceRequestBase::httpReferrer): Deleted.
+        (WebCore::ResourceRequestBase::setHTTPReferrer): Deleted.
+        (WebCore::ResourceRequestBase::httpOrigin): Deleted.
+        (WebCore::ResourceRequestBase::setHTTPOrigin): Deleted.
+        (WebCore::ResourceRequestBase::httpUserAgent): Deleted.
+        (WebCore::ResourceRequestBase::setHTTPUserAgent): Deleted.
+        (WebCore::ResourceRequestBase::httpAccept): Deleted.
+        (WebCore::ResourceRequestBase::setHTTPAccept): Deleted.
+
+2014-06-11  Anders Carlsson  <andersca@apple.com>
+
         Remove some more unneeded member functions from HTTPHeaderMap
         https://bugs.webkit.org/show_bug.cgi?id=133768
 

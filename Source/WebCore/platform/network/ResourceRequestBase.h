@@ -89,24 +89,24 @@ namespace WebCore {
         
         void clearHTTPAuthorization();
 
-        String httpContentType() const { return httpHeaderField("Content-Type");  }
-        void setHTTPContentType(const String& httpContentType) { setHTTPHeaderField("Content-Type", httpContentType); }
+        String httpContentType() const;
+        void setHTTPContentType(const String&);
         void clearHTTPContentType();
 
-        String httpReferrer() const { return httpHeaderField("Referer"); }
-        void setHTTPReferrer(const String& httpReferrer) { setHTTPHeaderField("Referer", httpReferrer); }
+        String httpReferrer() const;
+        void setHTTPReferrer(const String&);
         void clearHTTPReferrer();
         
-        String httpOrigin() const { return httpHeaderField("Origin"); }
-        void setHTTPOrigin(const String& httpOrigin) { setHTTPHeaderField("Origin", httpOrigin); }
+        String httpOrigin() const;
+        void setHTTPOrigin(const String&);
         void clearHTTPOrigin();
 
-        String httpUserAgent() const { return httpHeaderField("User-Agent"); }
-        void setHTTPUserAgent(const String& httpUserAgent) { setHTTPHeaderField("User-Agent", httpUserAgent); }
+        String httpUserAgent() const;
+        void setHTTPUserAgent(const String&);
         void clearHTTPUserAgent();
 
-        String httpAccept() const { return httpHeaderField("Accept"); }
-        void setHTTPAccept(const String& httpAccept) { setHTTPHeaderField("Accept", httpAccept); }
+        String httpAccept() const;
+        void setHTTPAccept(const String&);
         void clearHTTPAccept();
 
         const Vector<String>& responseContentDispositionEncodingFallbackArray() const { return m_responseContentDispositionEncodingFallbackArray; }

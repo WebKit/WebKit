@@ -271,6 +271,16 @@ void ResourceRequestBase::clearHTTPAuthorization()
         m_platformRequestUpdated = false;
 }
 
+String ResourceRequestBase::httpContentType() const
+{
+    return httpHeaderField("Content-Type");
+}
+
+void ResourceRequestBase::setHTTPContentType(const String& httpContentType)
+{
+    setHTTPHeaderField("Content-Type", httpContentType);
+}
+
 void ResourceRequestBase::clearHTTPContentType()
 {
     updateResourceRequest(); 
@@ -279,6 +289,16 @@ void ResourceRequestBase::clearHTTPContentType()
 
     if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
+}
+
+String ResourceRequestBase::httpReferrer() const
+{
+    return httpHeaderField("Referer");
+}
+
+void ResourceRequestBase::setHTTPReferrer(const String& httpReferrer)
+{
+    setHTTPHeaderField("Referer", httpReferrer);
 }
 
 void ResourceRequestBase::clearHTTPReferrer()
@@ -291,6 +311,16 @@ void ResourceRequestBase::clearHTTPReferrer()
         m_platformRequestUpdated = false;
 }
 
+String ResourceRequestBase::httpOrigin() const
+{
+    return httpHeaderField("Origin");
+}
+
+void ResourceRequestBase::setHTTPOrigin(const String& httpOrigin)
+{
+    setHTTPHeaderField("Origin", httpOrigin);
+}
+
 void ResourceRequestBase::clearHTTPOrigin()
 {
     updateResourceRequest(); 
@@ -301,6 +331,16 @@ void ResourceRequestBase::clearHTTPOrigin()
         m_platformRequestUpdated = false;
 }
 
+String ResourceRequestBase::httpUserAgent() const
+{
+    return httpHeaderField("User-Agent");
+}
+
+void ResourceRequestBase::setHTTPUserAgent(const String& httpUserAgent)
+{
+    setHTTPHeaderField("User-Agent", httpUserAgent);
+}
+
 void ResourceRequestBase::clearHTTPUserAgent()
 {
     updateResourceRequest(); 
@@ -309,6 +349,16 @@ void ResourceRequestBase::clearHTTPUserAgent()
 
     if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
+}
+
+String ResourceRequestBase::httpAccept() const
+{
+    return httpHeaderField("Accept");
+}
+
+void ResourceRequestBase::setHTTPAccept(const String& httpAccept)
+{
+    setHTTPHeaderField("Accept", httpAccept);
 }
 
 void ResourceRequestBase::clearHTTPAccept()
