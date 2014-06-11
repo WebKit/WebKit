@@ -676,7 +676,7 @@ sub AttributeShouldBeOnInstance
     # objects which also have magic named attributes that can end up being named "length"
     # and so interfere with lookup ordering.  I'm not sure what the correct solution is
     # here.
-    return 1 if ($attribute->signature->name eq "length");
+    return 1 if ($attribute->signature->name eq "length") && $interface->name ne "CharacterData";
     
     # It becomes hard to reason about attributes that require security checks if we push
     # them down the prototype chain, so before we do these we'll need to carefully consider

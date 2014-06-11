@@ -1,3 +1,18 @@
+2014-06-11  Andreas Kling  <akling@apple.com>
+
+        Don't force CharacterData to override getOwnPropertySlot.
+        <https://webkit.org/b/133717>
+
+        This was preventing us from taking the GetByVal fast path for Text nodes
+        since they inherit from CharacterData and having a "length" attribute
+        meant we gave them a custom getOwnPropertySlot, despite not actually
+        needing it for anything.
+
+        Reviewed by Anders Carlsson.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AttributeShouldBeOnInstance):
+
 2014-06-11  Anders Carlsson  <andersca@apple.com>
 
         Add a script that generates a gperf hash for HTTP header names
