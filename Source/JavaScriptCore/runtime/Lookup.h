@@ -294,30 +294,33 @@ namespace JSC {
         return true;
     }
 
-    inline void reifyStaticProperties(VM& vm, const HashTable& table, JSObject* thisObj)
+    template<unsigned numberOfValues>
+    inline void reifyStaticProperties(VM& vm, const HashTableValue (&values)[numberOfValues], JSObject& thisObj)
     {
-        BatchedTransitionOptimizer transitionOptimizer(vm, thisObj);
-        for (auto iter = table.begin(vm); iter != table.end(vm); ++iter) {
-            Identifier propertyName(&vm, iter.key());
-            const HashTableValue* entry = iter.value();
-            if (iter->attributes() & Builtin) {
-                thisObj->putDirectBuiltinFunction(vm, thisObj->globalObject(), propertyName, entry->builtinGenerator()(vm), entry->attributes());
+        BatchedTransitionOptimizer transitionOptimizer(vm, &thisObj);
+        for (auto& value : values) {
+            if (!value.m_key)
+                continue;                
+        
+            Identifier propertyName(&vm, reinterpret_cast<const LChar*>(value.m_key), strlen(value.m_key));
+            if (value.attributes() & Builtin) {
+                thisObj.putDirectBuiltinFunction(vm, thisObj.globalObject(), propertyName, value.builtinGenerator()(vm), value.attributes());
                 continue;
             }
 
-            if (iter->attributes() & Function) {
-                thisObj->putDirectNativeFunction(vm, thisObj->globalObject(), propertyName, entry->functionLength(),
-                    entry->function(), entry->intrinsic(), entry->attributes());
+            if (value.attributes() & Function) {
+                thisObj.putDirectNativeFunction(vm, thisObj.globalObject(), propertyName, value.functionLength(),
+                    value.function(), value.intrinsic(), value.attributes());
                 continue;
             }
 
-            if (iter->attributes() & Accessor) {
+            if (value.attributes() & Accessor) {
                 RELEASE_ASSERT_NOT_REACHED();
                 continue;
             }
 
-            CustomGetterSetter* customGetterSetter = CustomGetterSetter::create(vm, entry->propertyGetter(), entry->propertyPutter());
-            thisObj->putDirectCustomAccessor(vm, propertyName, customGetterSetter, entry->attributes());
+            CustomGetterSetter* customGetterSetter = CustomGetterSetter::create(vm, value.propertyGetter(), value.propertyPutter());
+            thisObj.putDirectCustomAccessor(vm, propertyName, customGetterSetter, value.attributes());
         }
     }
 

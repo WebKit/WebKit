@@ -138,19 +138,12 @@ ConstructType JSTestOverloadedConstructorsConstructor::getConstructData(JSCell*,
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestOverloadedConstructorsPrototypeTableIndex[2] = {
-    { -1, -1 },
-    { 0, -1 },
-};
-
-
 static const HashTableValue JSTestOverloadedConstructorsPrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestOverloadedConstructorsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
-static const HashTable JSTestOverloadedConstructorsPrototypeTable = { 1, 1, true, JSTestOverloadedConstructorsPrototypeTableValues, 0, JSTestOverloadedConstructorsPrototypeTableIndex };
-const ClassInfo JSTestOverloadedConstructorsPrototype::s_info = { "TestOverloadedConstructorsPrototype", &Base::s_info, &JSTestOverloadedConstructorsPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsPrototype) };
+const ClassInfo JSTestOverloadedConstructorsPrototype::s_info = { "TestOverloadedConstructorsPrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsPrototype) };
 
 JSObject* JSTestOverloadedConstructorsPrototype::self(VM& vm, JSGlobalObject* globalObject)
 {
@@ -160,7 +153,7 @@ JSObject* JSTestOverloadedConstructorsPrototype::self(VM& vm, JSGlobalObject* gl
 void JSTestOverloadedConstructorsPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestOverloadedConstructorsPrototypeTable, this);
+    reifyStaticProperties(vm, JSTestOverloadedConstructorsPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestOverloadedConstructors::s_info = { "TestOverloadedConstructors", &Base::s_info, 0, 0 , CREATE_METHOD_TABLE(JSTestOverloadedConstructors) };

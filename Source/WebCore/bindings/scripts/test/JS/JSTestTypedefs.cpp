@@ -114,76 +114,6 @@ ConstructType JSTestTypedefsConstructor::getConstructData(JSCell*, ConstructData
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestTypedefsPrototypeTableIndex[66] = {
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 9, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 16, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 2, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 0, 64 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 11, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 5, -1 },
-    { -1, -1 },
-    { 8, -1 },
-    { -1, -1 },
-    { 12, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 15, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 14, -1 },
-    { -1, -1 },
-    { 1, -1 },
-    { 3, -1 },
-    { 4, 65 },
-    { -1, -1 },
-    { -1, -1 },
-    { 10, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 13, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 6, -1 },
-    { 7, -1 },
-};
-
-
 static const HashTableValue JSTestTypedefsPrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
@@ -205,8 +135,7 @@ static const HashTableValue JSTestTypedefsPrototypeTableValues[] =
     { "methodWithException", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionMethodWithException), (intptr_t) (0) },
 };
 
-static const HashTable JSTestTypedefsPrototypeTable = { 17, 63, true, JSTestTypedefsPrototypeTableValues, 0, JSTestTypedefsPrototypeTableIndex };
-const ClassInfo JSTestTypedefsPrototype::s_info = { "TestTypedefsPrototype", &Base::s_info, &JSTestTypedefsPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestTypedefsPrototype) };
+const ClassInfo JSTestTypedefsPrototype::s_info = { "TestTypedefsPrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestTypedefsPrototype) };
 
 JSObject* JSTestTypedefsPrototype::self(VM& vm, JSGlobalObject* globalObject)
 {
@@ -216,7 +145,7 @@ JSObject* JSTestTypedefsPrototype::self(VM& vm, JSGlobalObject* globalObject)
 void JSTestTypedefsPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestTypedefsPrototypeTable, this);
+    reifyStaticProperties(vm, JSTestTypedefsPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestTypedefs::s_info = { "TestTypedefs", &Base::s_info, &JSTestTypedefsTable, 0 , CREATE_METHOD_TABLE(JSTestTypedefs) };

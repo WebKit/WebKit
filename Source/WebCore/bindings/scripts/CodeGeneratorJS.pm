@@ -1776,7 +1776,7 @@ sub GenerateImplementation
     $object->GenerateHashTable($hashName, $numInstanceAttributes,
         \@hashKeys, \@hashSpecials,
         \@hashValue1, \@hashValue2,
-        \%conditionals) if $numInstanceAttributes > 0;
+        \%conditionals, 0) if $numInstanceAttributes > 0;
 
     # - Add all constants
     if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
@@ -1864,7 +1864,7 @@ sub GenerateImplementation
         $object->GenerateHashTable($hashName, $hashSize,
                                    \@hashKeys, \@hashSpecials,
                                    \@hashValue1, \@hashValue2,
-                                   \%conditionals);
+                                   \%conditionals, 0);
 
         push(@implContent, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($interface));
 
@@ -1933,12 +1933,16 @@ sub GenerateImplementation
         }
     }
 
+    my $justGenerateValueArray = !IsDOMGlobalObject($interface);
+
     $object->GenerateHashTable($hashName, $hashSize,
                                \@hashKeys, \@hashSpecials,
                                \@hashValue1, \@hashValue2,
-                               \%conditionals);
+                               \%conditionals, $justGenerateValueArray);
 
-    if ($interface->extendedAttributes->{"JSNoStaticTables"}) {
+    if ($justGenerateValueArray) { 
+        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
+    } elsif ($interface->extendedAttributes->{"JSNoStaticTables"}) {
         push(@implContent, "static const HashTable& get${className}PrototypeTable(VM& vm)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return getHashTableForGlobalData(vm, ${className}PrototypeTable);\n");
@@ -1977,7 +1981,7 @@ sub GenerateImplementation
             push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
             push(@implContent, "{\n");
             push(@implContent, "    Base::finishCreation(vm);\n");
-            push(@implContent, "    reifyStaticProperties(vm, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", this);\n");
+            push(@implContent, "    reifyStaticProperties(vm, ${className}PrototypeTableValues, *this);\n");
             push(@implContent, "}\n\n");
         } else {
             push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
@@ -4050,6 +4054,56 @@ sub ceilingToPowerOf2
 }
 
 # Internal Helper
+sub GenerateHashTableValueArray
+{
+    my $keys = shift;
+    my $specials = shift;
+    my $value1 = shift;
+    my $value2 = shift;
+    my $conditionals = shift;
+    my $nameEntries = shift;
+
+    my $packedSize = scalar @{$keys};
+    push(@implContent, "\nstatic const HashTableValue $nameEntries\[\] =\n\{\n");
+
+    my $hasSetter = "false";
+
+    my $i = 0;
+    foreach my $key (@{$keys}) {
+        my $conditional;
+        my $firstTargetType;
+        my $secondTargetType = "";
+
+        if ($conditionals) {
+            $conditional = $conditionals->{$key};
+        }
+        if ($conditional) {
+            my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
+            push(@implContent, "#if ${conditionalString}\n");
+        }
+        
+        if ("@$specials[$i]" =~ m/Function/) {
+            $firstTargetType = "static_cast<NativeFunction>";
+        } else {
+            $firstTargetType = "static_cast<PropertySlot::GetValueFunc>";
+            $secondTargetType = "static_cast<PutPropertySlot::PutValueFunc>";
+            $hasSetter = "true";
+        }
+        push(@implContent, "    { \"$key\", @$specials[$i], NoIntrinsic, (intptr_t)" . $firstTargetType . "(@$value1[$i]), (intptr_t) " . $secondTargetType . "(@$value2[$i]) },\n");
+        if ($conditional) {
+            push(@implContent, "#else\n") ;
+            push(@implContent, "    { 0, 0, NoIntrinsic, 0, 0 },\n");
+            push(@implContent, "#endif\n") ;
+        }
+        ++$i;
+    }
+
+    push(@implContent, "    { 0, 0, NoIntrinsic, 0, 0 }\n") if (!$packedSize);
+    push(@implContent, "};\n\n");
+
+    return $hasSetter;
+}
+
 sub GenerateHashTable
 {
     my $object = shift;
@@ -4061,6 +4115,34 @@ sub GenerateHashTable
     my $value1 = shift;
     my $value2 = shift;
     my $conditionals = shift;
+    my $justGenerateValueArray = shift;
+
+    my $nameEntries = "${name}Values";
+    $nameEntries =~ s/:/_/g;
+    my $nameIndex = "${name}Index";
+    $nameIndex =~ s/:/_/g;
+
+    if (($name =~ /Prototype/) or ($name =~ /Constructor/)) {
+        my $type = $name;
+        my $implClass;
+
+        if ($name =~ /Prototype/) {
+            $type =~ s/Prototype.*//;
+            $implClass = $type; $implClass =~ s/Wrapper$//;
+            push(@implContent, "/* Hash table for prototype */\n");
+        } else {
+            $type =~ s/Constructor.*//;
+            $implClass = $type; $implClass =~ s/Constructor$//;
+            push(@implContent, "/* Hash table for constructor */\n");
+        }
+    } else {
+        push(@implContent, "/* Hash table */\n");
+    }
+
+    if ($justGenerateValueArray) {
+        GenerateHashTableValueArray($keys, $specials, $value1, $value2, $conditionals, $nameEntries);
+        return;
+    }
 
     # Generate size data for compact' size hash table
 
@@ -4096,30 +4178,6 @@ sub GenerateHashTable
         $maxDepth = $depth if ($depth > $maxDepth);
     }
 
-    # Start outputing the hashtables
-    my $nameEntries = "${name}Values";
-    $nameEntries =~ s/:/_/g;
-    my $nameIndex = "${name}Index";
-    $nameIndex =~ s/:/_/g;
-    my $hasSetter = "false";
-
-    if (($name =~ /Prototype/) or ($name =~ /Constructor/)) {
-        my $type = $name;
-        my $implClass;
-
-        if ($name =~ /Prototype/) {
-            $type =~ s/Prototype.*//;
-            $implClass = $type; $implClass =~ s/Wrapper$//;
-            push(@implContent, "/* Hash table for prototype */\n");
-        } else {
-            $type =~ s/Constructor.*//;
-            $implClass = $type; $implClass =~ s/Constructor$//;
-            push(@implContent, "/* Hash table for constructor */\n");
-        }
-    } else {
-        push(@implContent, "/* Hash table */\n");
-    }
-
     push(@implContent, "\nstatic const struct CompactHashIndex ${nameIndex}\[$compactSize\] = {\n");
     for (my $i = 0; $i < $compactSize; $i++) {
         my $T = -1;
@@ -4131,40 +4189,9 @@ sub GenerateHashTable
     push(@implContent, "};\n\n");
 
     # Dump the hash table
+    my $hasSetter = GenerateHashTableValueArray($keys, $specials, $value1, $value2, $conditionals, $nameEntries);
     my $packedSize = scalar @{$keys};
-    push(@implContent, "\nstatic const HashTableValue $nameEntries\[\] =\n\{\n");
-    $i = 0;
-    foreach my $key (@{$keys}) {
-        my $conditional;
-        my $firstTargetType;
-        my $secondTargetType = "";
 
-        if ($conditionals) {
-            $conditional = $conditionals->{$key};
-        }
-        if ($conditional) {
-            my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
-            push(@implContent, "#if ${conditionalString}\n");
-        }
-        
-        if ("@$specials[$i]" =~ m/Function/) {
-            $firstTargetType = "static_cast<NativeFunction>";
-        } else {
-            $firstTargetType = "static_cast<PropertySlot::GetValueFunc>";
-            $secondTargetType = "static_cast<PutPropertySlot::PutValueFunc>";
-            $hasSetter = "true";
-        }
-        push(@implContent, "    { \"$key\", @$specials[$i], NoIntrinsic, (intptr_t)" . $firstTargetType . "(@$value1[$i]), (intptr_t) " . $secondTargetType . "(@$value2[$i]) },\n");
-        if ($conditional) {
-            push(@implContent, "#else\n") ;
-            push(@implContent, "    { 0, 0, NoIntrinsic, 0, 0 },\n");
-            push(@implContent, "#endif\n") ;
-        }
-        ++$i;
-    }
-
-    push(@implContent, "    { 0, 0, NoIntrinsic, 0, 0 }\n") if (!$packedSize);
-    push(@implContent, "};\n\n");
     my $compactSizeMask = $numEntries - 1;
     push(@implContent, "static const HashTable $name = { $packedSize, $compactSizeMask, $hasSetter, $nameEntries, 0, $nameIndex };\n");
 }

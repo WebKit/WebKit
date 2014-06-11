@@ -67,22 +67,13 @@ bool JSTestMediaQueryListListenerConstructor::getOwnPropertySlot(JSObject* objec
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestMediaQueryListListenerPrototypeTableIndex[4] = {
-    { 1, -1 },
-    { 0, -1 },
-    { -1, -1 },
-    { -1, -1 },
-};
-
-
 static const HashTableValue JSTestMediaQueryListListenerPrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestMediaQueryListListenerConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { "method", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestMediaQueryListListenerPrototypeFunctionMethod), (intptr_t) (1) },
 };
 
-static const HashTable JSTestMediaQueryListListenerPrototypeTable = { 2, 3, true, JSTestMediaQueryListListenerPrototypeTableValues, 0, JSTestMediaQueryListListenerPrototypeTableIndex };
-const ClassInfo JSTestMediaQueryListListenerPrototype::s_info = { "TestMediaQueryListListenerPrototype", &Base::s_info, &JSTestMediaQueryListListenerPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerPrototype) };
+const ClassInfo JSTestMediaQueryListListenerPrototype::s_info = { "TestMediaQueryListListenerPrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerPrototype) };
 
 JSObject* JSTestMediaQueryListListenerPrototype::self(VM& vm, JSGlobalObject* globalObject)
 {
@@ -92,7 +83,7 @@ JSObject* JSTestMediaQueryListListenerPrototype::self(VM& vm, JSGlobalObject* gl
 void JSTestMediaQueryListListenerPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestMediaQueryListListenerPrototypeTable, this);
+    reifyStaticProperties(vm, JSTestMediaQueryListListenerPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestMediaQueryListListener::s_info = { "TestMediaQueryListListener", &Base::s_info, 0, 0 , CREATE_METHOD_TABLE(JSTestMediaQueryListListener) };

@@ -71,27 +71,6 @@ bool JSTestSerializedScriptValueInterfaceConstructor::getOwnPropertySlot(JSObjec
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestSerializedScriptValueInterfacePrototypeTableIndex[17] = {
-    { -1, -1 },
-    { -1, -1 },
-    { 3, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 2, 16 },
-    { -1, -1 },
-    { 4, -1 },
-    { -1, -1 },
-    { 0, -1 },
-    { -1, -1 },
-    { 1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 5, -1 },
-};
-
-
 static const HashTableValue JSTestSerializedScriptValueInterfacePrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
@@ -102,8 +81,7 @@ static const HashTableValue JSTestSerializedScriptValueInterfacePrototypeTableVa
     { "cachedReadonlyValue", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceCachedReadonlyValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
-static const HashTable JSTestSerializedScriptValueInterfacePrototypeTable = { 6, 15, true, JSTestSerializedScriptValueInterfacePrototypeTableValues, 0, JSTestSerializedScriptValueInterfacePrototypeTableIndex };
-const ClassInfo JSTestSerializedScriptValueInterfacePrototype::s_info = { "TestSerializedScriptValueInterfacePrototype", &Base::s_info, &JSTestSerializedScriptValueInterfacePrototypeTable, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterfacePrototype) };
+const ClassInfo JSTestSerializedScriptValueInterfacePrototype::s_info = { "TestSerializedScriptValueInterfacePrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterfacePrototype) };
 
 JSObject* JSTestSerializedScriptValueInterfacePrototype::self(VM& vm, JSGlobalObject* globalObject)
 {
@@ -113,7 +91,7 @@ JSObject* JSTestSerializedScriptValueInterfacePrototype::self(VM& vm, JSGlobalOb
 void JSTestSerializedScriptValueInterfacePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestSerializedScriptValueInterfacePrototypeTable, this);
+    reifyStaticProperties(vm, JSTestSerializedScriptValueInterfacePrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestSerializedScriptValueInterface::s_info = { "TestSerializedScriptValueInterface", &Base::s_info, 0, 0 , CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterface) };

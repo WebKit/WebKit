@@ -79,19 +79,12 @@ ConstructType JSTestNodeConstructor::getConstructData(JSCell*, ConstructData& co
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestNodePrototypeTableIndex[2] = {
-    { -1, -1 },
-    { 0, -1 },
-};
-
-
 static const HashTableValue JSTestNodePrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNodeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
-static const HashTable JSTestNodePrototypeTable = { 1, 1, true, JSTestNodePrototypeTableValues, 0, JSTestNodePrototypeTableIndex };
-const ClassInfo JSTestNodePrototype::s_info = { "TestNodePrototype", &Base::s_info, &JSTestNodePrototypeTable, 0, CREATE_METHOD_TABLE(JSTestNodePrototype) };
+const ClassInfo JSTestNodePrototype::s_info = { "TestNodePrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestNodePrototype) };
 
 JSObject* JSTestNodePrototype::self(VM& vm, JSGlobalObject* globalObject)
 {
@@ -101,7 +94,7 @@ JSObject* JSTestNodePrototype::self(VM& vm, JSGlobalObject* globalObject)
 void JSTestNodePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestNodePrototypeTable, this);
+    reifyStaticProperties(vm, JSTestNodePrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestNode::s_info = { "TestNode", &Base::s_info, 0, 0 , CREATE_METHOD_TABLE(JSTestNode) };

@@ -1,3 +1,15 @@
+2014-06-10  Sam Weinig  <sam@webkit.org>
+
+        Don't create a HashTable for JSObjects that use eager reification
+        https://bugs.webkit.org/show_bug.cgi?id=133705
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/Lookup.h:
+        (JSC::reifyStaticProperties):
+        Add a version of reifyStaticProperties that takes an array of HashTableValues
+        rather than a HashTable.
+
 2014-06-10  Filip Pizlo  <fpizlo@apple.com>
 
         Prediction propagator should make sure everyone knows that a variable that is in an argument position where other versions of that variable are not MachineInts cannot possibly be flushed as Int52
