@@ -1,3 +1,12 @@
+2014-06-10  Sam Weinig  <sam@webkit.org>
+
+        Attempt to fix the tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        Keep generating HashTables for History and Location, since they use them in
+        their custom getOwnPropertySlot delegates.
+
 2014-06-10  Benjamin Poulain  <benjamin@webkit.org>
 
         [iOS][WK2] ScrollingTreeOverflowScrollingNode does not use asynchronous touch dispatch

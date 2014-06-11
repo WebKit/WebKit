@@ -1933,7 +1933,7 @@ sub GenerateImplementation
         }
     }
 
-    my $justGenerateValueArray = !IsDOMGlobalObject($interface);
+    my $justGenerateValueArray = !IsDOMGlobalObject($interface) && $interface->name != "Location" && $interface->name != "History";
 
     $object->GenerateHashTable($hashName, $hashSize,
                                \@hashKeys, \@hashSpecials,
