@@ -1,3 +1,10 @@
+2014-06-11  Alex Christensen  <achristensen@webkit.org>
+
+        [Win] Unreviewed build fix.
+
+        * platform/network/curl/ResourceRequest.h:
+        Include missing PassOwnPtr.h.
+
 2014-06-10  Sam Weinig  <sam@webkit.org>
 
         Actually only generate tables for History and Location.
