@@ -1,3 +1,24 @@
+2014-06-11  Andreas Kling  <akling@apple.com>
+
+        Always inline JSValue::get() and Structure::get().
+        <https://webkit.org/b/133755>
+
+        Reviewed by Ryosuke Niwa.
+
+        These functions get really hot, so ask the compiler to be more
+        aggressive about inlining them.
+
+        ~28% speed-up on Ryosuke's microbenchmark for accessing nextSibling
+        through GetByVal.
+
+        * runtime/JSArrayIterator.cpp:
+        * runtime/JSCJSValue.cpp:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::get):
+        * runtime/JSPromiseDeferred.cpp:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::get):
+
 2014-06-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Structure::get should instantiate DeferGC only when materializing property map

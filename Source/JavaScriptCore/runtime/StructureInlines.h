@@ -73,7 +73,7 @@ inline Structure* Structure::storedPrototypeStructure() const
     return object->structure();
 }
 
-inline PropertyOffset Structure::get(VM& vm, PropertyName propertyName)
+ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName)
 {
     ASSERT(!isCompilationThread());
     ASSERT(structure()->classInfo() == info());
@@ -86,7 +86,7 @@ inline PropertyOffset Structure::get(VM& vm, PropertyName propertyName)
     return entry ? entry->offset : invalidOffset;
 }
 
-inline PropertyOffset Structure::get(VM& vm, const WTF::String& name)
+ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, const WTF::String& name)
 {
     ASSERT(!isCompilationThread());
     ASSERT(structure()->classInfo() == info());
@@ -99,7 +99,7 @@ inline PropertyOffset Structure::get(VM& vm, const WTF::String& name)
     return entry ? entry->offset : invalidOffset;
 }
     
-inline PropertyOffset Structure::get(VM& vm, PropertyName propertyName, unsigned& attributes, JSCell*& specificValue)
+ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName, unsigned& attributes, JSCell*& specificValue)
 {
     ASSERT(!isCompilationThread());
     ASSERT(structure()->classInfo() == info());
