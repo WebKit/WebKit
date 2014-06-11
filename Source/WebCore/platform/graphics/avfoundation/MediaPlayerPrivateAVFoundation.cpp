@@ -792,7 +792,11 @@ void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification
     // so always go through the queue because notifications happen on different threads.
     m_queuedNotifications.append(notification);
 
+#if OS(WINDOWS)
+    bool delayDispatch = true;
+#else
     bool delayDispatch = m_delayCallbacks || !isMainThread();
+#endif
     if (delayDispatch && !m_mainThreadCallPending) {
         m_mainThreadCallPending = true;
         callOnMainThread(mainThreadCallback, this);

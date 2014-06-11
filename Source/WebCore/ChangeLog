@@ -1,3 +1,20 @@
+2014-06-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Avoid deadlock with AVFoundation
+        https://bugs.webkit.org/show_bug.cgi?id=133762
+        <rdar://problem/17128248>
+
+        Reviewed by Eric Carlson.
+
+        Always invoke our notifications asynchronously so that we do not
+        execute long-running code while holding the AVFWrapper map mutex
+        lock. AVFoundationCF callbacks can deadlock if we call into AVF
+        while holding this lock.
+
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification):
+
 2014-06-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [CMake] One more URTBF after r169826.
