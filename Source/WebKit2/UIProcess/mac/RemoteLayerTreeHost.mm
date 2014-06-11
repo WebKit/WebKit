@@ -51,6 +51,7 @@ RemoteLayerTreeHost::RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy& drawin
 
 RemoteLayerTreeHost::~RemoteLayerTreeHost()
 {
+    clearLayers();
 }
 
 bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& transaction, float indicatorScaleFactor)
@@ -133,6 +134,19 @@ void RemoteLayerTreeHost::animationDidStart(WebCore::GraphicsLayer::PlatformLaye
     }
 
     m_drawingArea.acceleratedAnimationDidStart(layerID, animationKey, startTime);
+}
+
+void RemoteLayerTreeHost::clearLayers()
+{
+    for (auto& idLayer : m_layers) {
+        m_animationDelegates.remove(idLayer.key);
+        asLayer(idLayer.value.get()).contents = nullptr;
+    }
+
+    m_layers.clear();
+
+    if (m_rootLayer)
+        m_rootLayer = nullptr;
 }
 
 static NSString* const WKLayerIDPropertyKey = @"WKLayerID";

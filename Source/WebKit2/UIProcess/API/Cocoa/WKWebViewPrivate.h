@@ -144,6 +144,7 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 - (void)_setOverlaidAccessoryViewsInset:(CGSize)inset;
 
 - (void)_killWebContentProcess;
+- (void)_didRelaunchProcess;
 
 #else
 @property (readonly) NSColor *_pageExtendedBackgroundColor;

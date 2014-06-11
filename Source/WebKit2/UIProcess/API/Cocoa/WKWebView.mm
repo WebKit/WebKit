@@ -1425,6 +1425,16 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     _page->process().terminate();
 }
 
+- (void)_didRelaunchProcess
+{
+#if PLATFORM(IOS)
+    WebCore::FloatSize boundsSize(self.bounds.size);
+    _page->setViewportConfigurationMinimumLayoutSize(_overridesMinimumLayoutSize ? WebCore::FloatSize(_minimumLayoutSizeOverride) : boundsSize);
+    _page->setViewportConfigurationMinimumLayoutSizeForMinimalUI(_overridesMinimumLayoutSizeForMinimalUI ? WebCore::FloatSize(_minimumLayoutSizeOverrideForMinimalUI) : boundsSize);
+    _page->setMaximumUnobscuredSize(_overridesMaximumUnobscuredSize ? WebCore::FloatSize(_maximumUnobscuredSizeOverride) : boundsSize);
+#endif
+}
+
 - (NSData *)_sessionState
 {
     return [wrapper(*_page->sessionStateData(nullptr, nullptr).leakRef()) autorelease];

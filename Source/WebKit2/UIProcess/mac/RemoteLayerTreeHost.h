@@ -61,6 +61,8 @@ public:
 
     void animationDidStart(WebCore::GraphicsLayer::PlatformLayerID, CAAnimation *, double startTime);
 
+    void clearLayers();
+
 private:
     LayerOrView *createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeTransaction::LayerProperties*);
     static void setLayerID(CALayer *, WebCore::GraphicsLayer::PlatformLayerID);
