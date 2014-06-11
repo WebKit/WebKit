@@ -70,9 +70,7 @@ public:
     const_iterator find(const char*) const;
     iterator find(const char*);
     AddResult add(const char* name, const String& value);
-
-    void remove(const char*);
-    void remove(iterator);
+    bool remove(const char*);
 
     const_iterator begin() const { return m_headers.begin(); }
     const_iterator end() const { return m_headers.end(); }

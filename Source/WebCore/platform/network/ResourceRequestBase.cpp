@@ -264,11 +264,8 @@ void ResourceRequestBase::clearHTTPAuthorization()
 {
     updateResourceRequest(); 
 
-    HTTPHeaderMap::iterator iter = m_httpHeaderFields.find("Authorization");
-    if (iter == m_httpHeaderFields.end())
+    if (!m_httpHeaderFields.remove("Authorization"))
         return;
-
-    m_httpHeaderFields.remove(iter);
 
     if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;

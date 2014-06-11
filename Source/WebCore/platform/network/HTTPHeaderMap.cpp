@@ -123,14 +123,9 @@ HTTPHeaderMap::AddResult HTTPHeaderMap::add(const char* name, const String& valu
     return m_headers.add<CaseFoldingCStringTranslator>(name, value);
 }
 
-void HTTPHeaderMap::remove(const char* name)
+bool HTTPHeaderMap::remove(const char* name)
 {
-    remove(find(name));
-}
-
-void HTTPHeaderMap::remove(iterator it)
-{
-    m_headers.remove(it);
+    return m_headers.remove(m_headers.find<CaseFoldingCStringTranslator>(name));
 }
 
 WTF::IteratorRange<HTTPHeaderMap::const_iterator::Keys> HTTPHeaderMap::keys() const

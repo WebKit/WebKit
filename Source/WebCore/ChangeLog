@@ -1,3 +1,19 @@
+2014-06-11  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of an unneeded HTTPHeaderMap::remove overload
+        https://bugs.webkit.org/show_bug.cgi?id=133763
+
+        Reviewed by Andreas Kling.
+
+        Change HTTPHeaderMap::remove to return whether an entry was removed or not and simplify
+        ResourceRequestBase::clearHTTPAuthorization.
+
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::remove):
+        * platform/network/HTTPHeaderMap.h:
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::clearHTTPAuthorization):
+
 2014-06-11  Jer Noble  <jer.noble@apple.com>
 
         [EME][Mac] Propagate errors from AVSampleBufferDisplayLayer through to MSE
