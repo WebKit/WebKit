@@ -1,3 +1,17 @@
+2014-06-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        Avoid Vector copies in WebNotificationManagerProxy::providerDidCloseNotifications(), FindController::findStringMatches()
+        https://bugs.webkit.org/show_bug.cgi?id=133676
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::providerDidCloseNotifications): Move the newly-created
+        Vector object into the HashMap<>::add() call.
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::findStringMatches): Movethe newly-create Vector object into the
+        Vector<>::append() call.
+
 2014-06-11  Shivakumar JM  <shiva.jm@samsung.com>
 
         [EFL][WK2] Add missing test cases for EWK2ViewTest.

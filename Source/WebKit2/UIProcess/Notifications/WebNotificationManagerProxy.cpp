@@ -217,7 +217,7 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
             if (pageIt == pageNotificationIDs.end()) {
                 Vector<uint64_t> newVector;
                 newVector.reserveInitialCapacity(size);
-                pageIt = pageNotificationIDs.add(webPage, newVector).iterator;
+                pageIt = pageNotificationIDs.add(webPage, std::move(newVector)).iterator;
             }
 
             uint64_t pageNotificationID = it->value.second;
