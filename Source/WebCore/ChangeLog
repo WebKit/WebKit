@@ -1,3 +1,16 @@
+2014-06-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: iOS: Return the language for attributed text marker queries
+        https://bugs.webkit.org/show_bug.cgi?id=133682
+
+        Reviewed by Mario Sanchez Prada.
+
+        Add language to the list of objects being returned for attributed text.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (AXAttributeStringSetLanguage):
+        (AXAttributedStringAppendText):
+
 2014-06-10  Dan Bernstein  <mitz@apple.com>
 
         WebCore part of [Cocoa] Handling authentication challenges should not require multiple delegate methods

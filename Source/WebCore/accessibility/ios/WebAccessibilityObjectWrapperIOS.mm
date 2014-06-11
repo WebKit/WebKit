@@ -104,6 +104,7 @@ static NSString * const UIAccessibilityTokenFontSize = @"UIAccessibilityTokenFon
 static NSString * const UIAccessibilityTokenBold = @"UIAccessibilityTokenBold";
 static NSString * const UIAccessibilityTokenItalic = @"UIAccessibilityTokenItalic";
 static NSString * const UIAccessibilityTokenUnderline = @"UIAccessibilityTokenUnderline";
+static NSString * const UIAccessibilityTokenLanguage = @"UIAccessibilityTokenLanguage";
 
 static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityObjectWrapper *wrapper)
 {
@@ -1660,6 +1661,19 @@ static int blockquoteLevel(RenderObject* renderer)
     return result;
 }
 
+static void AXAttributeStringSetLanguage(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
+{
+    if (!renderer)
+        return;
+    
+    AccessibilityObject* axObject = renderer->document().axObjectCache()->getOrCreate(renderer);
+    NSString *language = axObject->language();
+    if ([language length])
+        [attrString addAttribute:UIAccessibilityTokenLanguage value:language range:range];
+    else
+        [attrString removeAttribute:UIAccessibilityTokenLanguage range:range];
+}
+
 static void AXAttributeStringSetBlockquoteLevel(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
 {
     int quoteLevel = blockquoteLevel(renderer);
@@ -1751,6 +1765,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     AXAttributeStringSetStyle(attrString, node->renderer(), attrStringRange);
     AXAttributeStringSetHeadingLevel(attrString, node->renderer(), attrStringRange);
     AXAttributeStringSetBlockquoteLevel(attrString, node->renderer(), attrStringRange);    
+    AXAttributeStringSetLanguage(attrString, node->renderer(), attrStringRange);
 }
 
 
