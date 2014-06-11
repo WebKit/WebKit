@@ -128,6 +128,7 @@ class ResourceRequest;
 class SharedBuffer;
 class SubstituteData;
 class TextCheckingRequest;
+class URL;
 class VisibleSelection;
 struct KeypressCommand;
 struct TextCheckingResult;
@@ -252,7 +253,8 @@ public:
     void didFinishDocumentLoad(WebFrame*);
     void didFinishLoad(WebFrame*);
     void show();
-    String userAgent() const { return m_userAgent; }
+    String userAgent(const WebCore::URL&) const;
+    String platformUserAgent(const WebCore::URL&) const;
     WebCore::IntRect windowResizerRect() const;
     WebCore::KeyboardUIMode keyboardUIMode();
 

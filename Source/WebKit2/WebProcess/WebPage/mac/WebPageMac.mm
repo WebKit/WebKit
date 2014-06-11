@@ -761,7 +761,7 @@ WKAccessibilityWebPageObject* WebPage::accessibilityRemoteObject()
 bool WebPage::platformHasLocalDataForURL(const WebCore::URL& url)
 {
     NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:url];
-    [request setValue:(NSString*)userAgent() forHTTPHeaderField:@"User-Agent"];
+    [request setValue:(NSString*)userAgent(url) forHTTPHeaderField:@"User-Agent"];
     NSCachedURLResponse *cachedResponse;
     if (CFURLStorageSessionRef storageSession = corePage()->mainFrame().loader().networkingContext()->storageSession().platformSession())
         cachedResponse = WKCachedResponseForRequest(storageSession, request);
@@ -775,7 +775,7 @@ bool WebPage::platformHasLocalDataForURL(const WebCore::URL& url)
 static NSCachedURLResponse *cachedResponseForURL(WebPage* webPage, const URL& url)
 {
     RetainPtr<NSMutableURLRequest> request = adoptNS([[NSMutableURLRequest alloc] initWithURL:url]);
-    [request setValue:(NSString *)webPage->userAgent() forHTTPHeaderField:@"User-Agent"];
+    [request setValue:(NSString *)webPage->userAgent(url) forHTTPHeaderField:@"User-Agent"];
 
     if (CFURLStorageSessionRef storageSession = webPage->corePage()->mainFrame().loader().networkingContext()->storageSession().platformSession())
         return WKCachedResponseForRequest(storageSession, request.get());
@@ -1042,6 +1042,11 @@ void WebPage::handleSelectionServiceClick(FrameSelection& selection, const IntPo
     send(Messages::WebPageProxy::ShowSelectionServiceMenu(data, isEditable, point));
 }
 #endif
+
+String WebPage::platformUserAgent(const URL&) const
+{
+    return String();
+}
 
 } // namespace WebKit
 

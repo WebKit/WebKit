@@ -2406,6 +2406,11 @@ void WebPage::contentSizeCategoryDidChange(const String& contentSizeCategory)
     Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 }
 
+String WebPage::platformUserAgent(const URL&) const
+{
+    return String();
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

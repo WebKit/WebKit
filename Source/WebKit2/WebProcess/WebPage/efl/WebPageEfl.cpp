@@ -220,4 +220,9 @@ void WebPage::cancelComposition()
     frame.editor().cancelComposition();
 }
 
+String WebPage::platformUserAgent(const URL&) const
+{
+    return String();
+}
+
 } // namespace WebKit

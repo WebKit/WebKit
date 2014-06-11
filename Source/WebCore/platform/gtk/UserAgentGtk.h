@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2012, 2014 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,13 @@
 #ifndef UserAgentGtk_h
 #define UserAgentGtk_h
 
-#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+class URL;
 
-String standardUserAgent(const String& applicationName = "", const String& applicationVersion = "");
+String standardUserAgent(const String& applicationName = emptyString(), const String& applicationVersion = emptyString());
+String standardUserAgentForURL(const URL&);
 
 }
 
