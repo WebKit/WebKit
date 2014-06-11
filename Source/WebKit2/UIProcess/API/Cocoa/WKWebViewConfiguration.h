@@ -62,6 +62,26 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 @property (nonatomic) BOOL suppressesIncrementalRendering;
 
+#if TARGET_OS_IPHONE
+/*! @abstract A Boolean value indicating whether HTML5 videos play inline
+ (YES) or use the native full-screen controller (NO).
+ @discussion The default value is NO.
+ */
+@property (nonatomic) BOOL allowsInlineMediaPlayback;
+
+/*! @abstract A Boolean value indicating whether HTML5 videos require the
+ user to start playing them (YES) or can play automatically (NO).
+ @discussion The default value is YES.
+ */
+@property (nonatomic) BOOL mediaPlaybackRequiresUserAction;
+
+/*! @abstract A Boolean value indicating whether AirPlay is allowed.
+ @discussion The default value is YES.
+ */
+@property (nonatomic) BOOL mediaPlaybackAllowsAirPlay;
+
+#endif
+
 @end
 
 #endif

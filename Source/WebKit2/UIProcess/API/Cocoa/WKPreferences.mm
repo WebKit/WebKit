@@ -62,6 +62,11 @@
     return _preferences->minimumFontSize();
 }
 
+- (void)setMinimumFontSize:(CGFloat)minimumFontSize
+{
+    _preferences->setMinimumFontSize(minimumFontSize);
+}
+
 - (BOOL)isJavaScriptEnabled
 {
     return _preferences->javaScriptEnabled();
@@ -81,57 +86,6 @@
 {
     _preferences->setJavaScriptCanOpenWindowsAutomatically(javaScriptCanOpenWindowsAutomatically);
 }
-
-- (BOOL)suppressesIncrementalRendering
-{
-    return _preferences->suppressesIncrementalRendering();
-}
-
-- (void)setSuppressesIncrementalRendering:(BOOL)suppressesIncrementalRendering
-{
-    _preferences->setSuppressesIncrementalRendering(suppressesIncrementalRendering);
-}
-
-- (void)setMinimumFontSize:(CGFloat)minimumFontSize
-{
-    _preferences->setMinimumFontSize(minimumFontSize);
-}
-
-#pragma mark iOS-specific methods
-
-#if PLATFORM(IOS)
-
-- (BOOL)allowsInlineMediaPlayback
-{
-    return _preferences->mediaPlaybackAllowsInline();
-}
-
-- (void)setAllowsInlineMediaPlayback:(BOOL)allowsInlineMediaPlayback
-{
-    _preferences->setMediaPlaybackAllowsInline(allowsInlineMediaPlayback);
-}
-
-- (BOOL)mediaPlaybackRequiresUserAction
-{
-    return _preferences->mediaPlaybackRequiresUserGesture();
-}
-
-- (void)setMediaPlaybackRequiresUserAction:(BOOL)mediaPlaybackRequiresUserAction
-{
-    _preferences->setMediaPlaybackRequiresUserGesture(mediaPlaybackRequiresUserAction);
-}
-
-- (BOOL)mediaPlaybackAllowsAirPlay
-{
-    return _preferences->mediaPlaybackAllowsAirPlay();
-}
-
-- (void)setMediaPlaybackAllowsAirPlay:(BOOL)mediaPlaybackAllowsAirPlay
-{
-    _preferences->setMediaPlaybackAllowsAirPlay(mediaPlaybackAllowsAirPlay);
-}
-
-#endif
 
 #pragma mark OS X-specific methods
 

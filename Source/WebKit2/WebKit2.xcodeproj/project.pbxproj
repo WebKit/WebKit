@@ -171,7 +171,6 @@
 		1A2A4B0E1586A2240090C9E9 /* ColorSpaceData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A2A4AFD158693920090C9E9 /* ColorSpaceData.mm */; };
 		1A2BB6D014117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2BB6CE14117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp */; };
 		1A2BB6D114117B4D000F35D4 /* PluginProcessConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2BB6CF14117B4D000F35D4 /* PluginProcessConnectionMessages.h */; };
-		1A2D252B194688FD004537B0 /* WKErrorInternal.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 1A2D252A194688FD004537B0 /* WKErrorInternal.h */; };
 		1A2D82A4127F4EAB001EB962 /* NPObjectMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1FA35C127A45BF0050E709 /* NPObjectMessageReceiver.cpp */; };
 		1A2D82A5127F4EAB001EB962 /* NPObjectMessageReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1FA35B127A45BF0050E709 /* NPObjectMessageReceiver.h */; };
 		1A2D82A6127F4EAB001EB962 /* NPObjectProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1FA284127A13BC0050E709 /* NPObjectProxy.cpp */; };
@@ -1892,7 +1891,6 @@
 			dstPath = WebKit.framework;
 			dstSubfolderSpec = 1;
 			files = (
-				1A2D252B194688FD004537B0 /* WKErrorInternal.h in Copy Files */,
 				510CC8491613C85C00D03ED3 /* NetworkProcess.app in Copy Files */,
 				BCDE0ABF13272708001259FB /* PluginProcess.app in Copy Files */,
 				51A60B2A180CCEB500F3BF50 /* DatabaseProcess.app in Copy Files */,

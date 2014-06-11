@@ -1,3 +1,29 @@
+2014-06-11  Anders Carlsson  <andersca@apple.com>
+
+        Move more WKPreferences to WKWebViewConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=133756
+        <rdar://problem/17271468>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences setMinimumFontSize:]):
+        (-[WKPreferences suppressesIncrementalRendering]): Deleted.
+        (-[WKPreferences setSuppressesIncrementalRendering:]): Deleted.
+        (-[WKPreferences allowsInlineMediaPlayback]): Deleted.
+        (-[WKPreferences setAllowsInlineMediaPlayback:]): Deleted.
+        (-[WKPreferences mediaPlaybackRequiresUserAction]): Deleted.
+        (-[WKPreferences setMediaPlaybackRequiresUserAction:]): Deleted.
+        (-[WKPreferences mediaPlaybackAllowsAirPlay]): Deleted.
+        (-[WKPreferences setMediaPlaybackAllowsAirPlay:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-06-11  Enrica Casucci  <enrica@apple.com>
 
         WebKit2 iOS: Unable to open UI menu for "open in new tab" for links on yahoo.com.
