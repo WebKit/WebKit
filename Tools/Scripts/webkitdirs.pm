@@ -1117,6 +1117,57 @@ sub isAppleWinWebKit()
     return (isCygwin() || isWindows()) && !isWinCairo() && !isGtk() && !isWinCE();
 }
 
+sub iOSSimulatorDevicesPath
+{
+    return "$ENV{HOME}/Library/Developer/CoreSimulator/Devices";
+}
+
+sub iOSSimulatorDevices
+{
+    eval "require Foundation";
+    my $devicesPath = iOSSimulatorDevicesPath();
+    opendir(DEVICES, $devicesPath);
+    my @udids = grep {
+        $_ =~ m/[0-9A-F]{8}-([0-9A-F]{4}-){3}[0-9A-F]{12}/;
+    } readdir(DEVICES);
+    close(DEVICES);
+
+    my @devices = map {
+        Foundation::perlRefFromObjectRef(NSDictionary->dictionaryWithContentsOfFile_("$devicesPath/$_/device.plist"));
+    } @udids;
+
+    return @devices;
+}
+
+sub createiOSSimulatorDevice
+{
+    my $name = shift;
+    my $deviceTypeId = shift;
+    my $runtimeId = shift;
+
+    my $created = system("xcrun", "--sdk", "iphonesimulator", "simctl", "create", $name, $deviceTypeId, $runtimeId) == 0;
+    die "Couldn't create simulator device: $name $deviceTypeId $runtimeId" if not $created;
+
+    system("xcrun", "--sdk", "iphonesimulator", "simctl", "list");
+
+    print "Waiting for device to be created ...\n";
+    sleep 5;
+    for (my $tries = 0; $tries < 5; $tries++){
+        my @devices = iOSSimulatorDevices();
+        foreach my $device (@devices) {
+            return $device if $device->{name} eq $name and $device->{deviceType} eq $deviceTypeId and $device->{runtime} eq $runtimeId;
+        }
+        sleep 5;
+    }
+    die "Device $name $deviceTypeId $runtimeId wasn't found in " . iOSSimulatorDevicesPath();
+}
+
+sub deleteiOSSimulatorDevice
+{
+    my $udid = shift;
+    return system("xcrun", "--sdk", "iphonesimulator", "simctl", "delete", $udid);
+}
+
 sub willUseIOSDeviceSDKWhenBuilding()
 {
     return xcodeSDKPlatformName() eq "iphoneos";

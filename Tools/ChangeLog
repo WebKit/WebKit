@@ -1,3 +1,22 @@
+2014-06-10  David Farler  <dfarler@apple.com>
+
+        old-run-webkit-tests: Create CoreSimulator device on demand and find it by name
+        https://bugs.webkit.org/show_bug.cgi?id=133663
+
+        Reviewed by David Kilzer.
+
+        * Scripts/old-run-webkit-tests:
+        (installAndLaunchDumpToolAppUsingNotification):
+        - Remove obsolete notification keys
+        - Key off of mandatory device UDID (a UUID)
+        - Create a device on demand via CoreSimulator if necessary
+        -- Grab the UDID from the created device plist.
+        * Scripts/webkitdirs.pm:
+        (iOSSimulatorDevicesPath): Added
+        (iOSSimulatorDevices): Added
+        (createiOSSimulatorDevice): Added
+        (deleteiOSSimulatorDevice): Added
+
 2014-06-10  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GTK][gtkdoc] remove -Wcast-align

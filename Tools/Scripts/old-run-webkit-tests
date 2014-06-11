@@ -1384,10 +1384,30 @@ sub installAndLaunchDumpToolAppUsingNotification($$)
         return $result->autorelease();
     };
 
-    my $deviceName = architecture() eq 'i386' ? "iPhone 5" : "iPhone 5s";
+    my $deviceName = "iPhone 5 WebKit Tester";
+    my $deviceType = "com.apple.CoreSimulator.SimDeviceType.iPhone-5";
 
-    my $sdkRoot = `xcrun --sdk iphonesimulator --show-sdk-path`;
-    chomp $sdkRoot;
+    if (architecture() eq 'x86_64') {
+        $deviceName = "iPhone 5s WebKit Tester";
+        $deviceType = "com.apple.CoreSimulator.SimDeviceType.iPhone-5s";
+    }
+
+    chomp(my $sdkVersion = `xcrun --sdk iphonesimulator --show-sdk-version`);
+    $sdkVersion =~ s/\./-/;
+
+    my $runtime = "com.apple.CoreSimulator.SimRuntime.iOS-$sdkVersion";
+
+    my @devices = iOSSimulatorDevices();
+    my $device = (grep {
+        $_->{name} eq $deviceName and $_->{runtime} eq $runtime and $_->{deviceType} eq $deviceType;
+    } @devices)[0];
+
+    if (not $device) {
+        print "Creating simulator device: $deviceName\n";
+        $device = createiOSSimulatorDevice($deviceName, $deviceType, $runtime);
+    } else {
+        print "Found simulator device with properties: " . Dumper($device);
+    }
 
     my $identifier = iOSDumpToolAppIdentifier();
     my $applicationPath;
@@ -1398,18 +1418,13 @@ sub installAndLaunchDumpToolAppUsingNotification($$)
         $applicationPath = "$productDir/DumpRenderTree.app";
     }
 
-    chomp(my $sdkVersion = `xcrun --sdk iphonesimulator --show-sdk-version`);
-
     my $dict = {
         applicationArguments => &$makeNSArrayFromArray($args),
         applicationEnvironment => &$makeNSDictionaryFromHash($cleanEnv),
         applicationIdentifier => NSString->stringWithCString_($identifier),
         applicationPath => NSString->stringWithCString_($applicationPath),
-        deviceInfo => NSString->stringWithCString_($deviceName),
-        runtimeIdentifier => NSString->stringWithCString_($sdkVersion),
-        sessionOwner => NSString->stringWithCString_($programName),
+        deviceUDID => NSString->stringWithCString_($device->{UDID}),
         sessionUUID => NSString->stringWithCString_(simulatorSessionUUID()),
-        sdkRoot => NSString->stringWithCString_($sdkRoot),
     };
     $iPhoneSimulatorNotification->postStartSessionNotification($dict);
 
