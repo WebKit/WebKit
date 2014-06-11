@@ -30,6 +30,7 @@ function installDependenciesWithApt {
     apt-get install \
         bison \
         cmake \
+        doxygen \
         flex \
         g++ \
         gperf \
@@ -53,6 +54,7 @@ function installDependenciesWithApt {
         libpng-dev \
         libpulse-dev \
         libsqlite3-dev \
+        libssl-dev \
         libtheora-dev \
         libtiff4-dev \
         libudev-dev \

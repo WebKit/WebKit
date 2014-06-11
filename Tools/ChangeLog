@@ -1,3 +1,15 @@
+2014-06-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Add dependencies packages to efl install-dependencies file
+        https://bugs.webkit.org/show_bug.cgi?id=133720
+
+        Reviewed by Csaba Osztrogonác.
+
+        After r169785, EFL port starts to use efl 1.9 ver. EFL port needs to
+        install doxygen and libssl-dev because efl 1.9 depends on those libraries.
+
+        * efl/install-dependencies:
+
 2014-06-11  Zoltan Horvath  <zoltan@webkit.org>
 
         Unreviewed. Moving myself to the list of reviewers.
