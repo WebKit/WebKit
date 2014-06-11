@@ -1,3 +1,9 @@
+2014-06-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL build fix. Treat literal-suffix error as build warning.
+
+        * Source/cmake/WebKitHelpers.cmake:
+
 2014-05-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Make it possible to build with FTL enabled
