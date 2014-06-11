@@ -3,6 +3,21 @@
         Structure::get should instantiate DeferGC only when materializing property map
         https://bugs.webkit.org/show_bug.cgi?id=133727
 
+        Rubber-stamped by Andreas Kling.
+
+        Make materializePropertyMapIfNecessary always inline.
+
+        This is ~12% improvement on the microbenchmark attached in the bug.
+
+        * runtime/Structure.h:
+        (JSC::Structure::materializePropertyMapIfNecessary):
+        (JSC::Structure::materializePropertyMapIfNecessaryForPinning):
+
+2014-06-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Structure::get should instantiate DeferGC only when materializing property map
+        https://bugs.webkit.org/show_bug.cgi?id=133727
+
         Reviewed by Geoffrey Garen.
 
         DeferGC instances in Structure::get was added in http://trac.webkit.org/r157539 in order to avoid

@@ -426,7 +426,7 @@ private:
     PropertyTable* copyPropertyTable(VM&, Structure* owner);
     PropertyTable* copyPropertyTableForPinning(VM&, Structure* owner);
     JS_EXPORT_PRIVATE void materializePropertyMap(VM&);
-    void materializePropertyMapIfNecessary(VM& vm, DeferGC&)
+    ALWAYS_INLINE void materializePropertyMapIfNecessary(VM& vm, DeferGC&)
     {
         ASSERT(!isCompilationThread());
         ASSERT(structure()->classInfo() == info());
@@ -434,7 +434,7 @@ private:
         if (!propertyTable() && previousID())
             materializePropertyMap(vm);
     }
-    void materializePropertyMapIfNecessary(VM& vm, PropertyTable*& table)
+    ALWAYS_INLINE void materializePropertyMapIfNecessary(VM& vm, PropertyTable*& table)
     {
         ASSERT(!isCompilationThread());
         ASSERT(structure()->classInfo() == info());
