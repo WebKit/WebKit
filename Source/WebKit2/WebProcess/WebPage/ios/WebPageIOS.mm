@@ -1695,7 +1695,7 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
                 elementIsLinkOrImage = true;
             }
             if (linkElement)
-                info.url = linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr)));
+                info.url = [(NSURL *)linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr))) absoluteString];
             info.title = element->fastGetAttribute(HTMLNames::titleAttr).string();
             if (element->renderer())
                 info.bounds = element->renderer()->absoluteBoundingBoxRect(true);

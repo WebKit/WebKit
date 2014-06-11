@@ -1,3 +1,16 @@
+2014-06-11  Enrica Casucci  <enrica@apple.com>
+
+        WebKit2 iOS: Unable to open UI menu for "open in new tab" for links on yahoo.com.
+        https://bugs.webkit.org/show_bug.cgi?id=133749
+        <rdar://problem/17165992>
+
+        Reviewed by Brady Eidson.
+
+        The URL returned to the UIProcess as string needs to be encoded.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2014-06-10  Anders Carlsson  <andersca@apple.com>
 
         Move suppressesIncrementalRendering to WKWebViewConfiguration
