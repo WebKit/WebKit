@@ -38,6 +38,7 @@
 #import "WKDOMInternals.h"
 #import "WKNSDictionary.h"
 #import "WKNSError.h"
+#import "WKNSURLRequest.h"
 #import "WKRenderingProgressEventsInternal.h"
 #import "WKRetainPtr.h"
 #import "WKURLRequestNS.h"
@@ -205,7 +206,7 @@ static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef
     auto loadDelegate = pluginContextController->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:frame:willSendRequest:redirectResponse:)]) {
-        NSURLRequest *originalRequest = toImpl(request)->resourceRequest().nsURLRequest(DoNotUpdateHTTPBody);
+        NSURLRequest *originalRequest = wrapper(*toImpl(request));
         RetainPtr<NSURLRequest> substituteRequest = [loadDelegate webProcessPlugInBrowserContextController:pluginContextController frame:wrapper(*toImpl(frame)) willSendRequest:originalRequest
             redirectResponse:toImpl(redirectResponse)->resourceResponse().nsURLResponse()];
 
@@ -226,7 +227,7 @@ static void didInitiateLoadForResource(WKBundlePageRef, WKBundleFrameRef frame, 
         [loadDelegate webProcessPlugInBrowserContextController:pluginContextController
                                                          frame:wrapper(*toImpl(frame))
                                     didInitiateLoadForResource:resourceIdentifier
-                                                       request:toImpl(request)->resourceRequest().nsURLRequest(DoNotUpdateHTTPBody)];
+                                                       request:wrapper(*toImpl(request))];
     }
 }
 

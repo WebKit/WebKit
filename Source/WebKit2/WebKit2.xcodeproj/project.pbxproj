@@ -726,6 +726,8 @@
 		37A5E01418BBF93F000A081E /* _WKActivatedElementInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A5E01218BBF937000A081E /* _WKActivatedElementInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37A64E5518F38E3C00EB30F1 /* _WKFormDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A64E5418F38E3C00EB30F1 /* _WKFormDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37A64E5718F38F4600EB30F1 /* _WKFormInputSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A64E5618F38F4600EB30F1 /* _WKFormInputSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		37BF2F061947DEB400723C48 /* WKNSURLRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 37BF2F041947DEB400723C48 /* WKNSURLRequest.h */; };
+		37BF2F071947DEB400723C48 /* WKNSURLRequest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37BF2F051947DEB400723C48 /* WKNSURLRequest.mm */; };
 		37C4C08618149C5B003688B9 /* WKBackForwardListItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37C4C08418149C5B003688B9 /* WKBackForwardListItem.mm */; };
 		37C4C08718149C5B003688B9 /* WKBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C4C08518149C5B003688B9 /* WKBackForwardListItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		37C4C08918149F23003688B9 /* WKBackForwardListItemInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C4C08818149F23003688B9 /* WKBackForwardListItemInternal.h */; };
@@ -2707,6 +2709,8 @@
 		37A5E01218BBF937000A081E /* _WKActivatedElementInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKActivatedElementInfo.h; sourceTree = "<group>"; };
 		37A64E5418F38E3C00EB30F1 /* _WKFormDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFormDelegate.h; sourceTree = "<group>"; };
 		37A64E5618F38F4600EB30F1 /* _WKFormInputSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFormInputSession.h; sourceTree = "<group>"; };
+		37BF2F041947DEB400723C48 /* WKNSURLRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSURLRequest.h; sourceTree = "<group>"; };
+		37BF2F051947DEB400723C48 /* WKNSURLRequest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSURLRequest.mm; sourceTree = "<group>"; };
 		37C4C08418149C5B003688B9 /* WKBackForwardListItem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKBackForwardListItem.mm; sourceTree = "<group>"; };
 		37C4C08518149C5B003688B9 /* WKBackForwardListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBackForwardListItem.h; sourceTree = "<group>"; };
 		37C4C08818149F23003688B9 /* WKBackForwardListItemInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBackForwardListItemInternal.h; sourceTree = "<group>"; };
@@ -5036,6 +5040,8 @@
 				37183D54182F4E700080C811 /* WKNSURLExtras.mm */,
 				371B32DC184D67490013E2B2 /* WKNSURLProtectionSpace.h */,
 				371B32DB184D67480013E2B2 /* WKNSURLProtectionSpace.mm */,
+				37BF2F041947DEB400723C48 /* WKNSURLRequest.h */,
+				37BF2F051947DEB400723C48 /* WKNSURLRequest.mm */,
 				378E1A3F181EDA010031007A /* WKObject.h */,
 				374436871820E7240049579F /* WKObject.mm */,
 			);
@@ -7324,6 +7330,7 @@
 				CEDA12E3152CD1B300D9E08D /* WebAlternativeTextClient.h in Headers */,
 				512E352F130B55AF00ABD19A /* WebApplicationCacheManager.h in Headers */,
 				1A256E3A18A1A7DF006FB922 /* WKNavigationActionInternal.h in Headers */,
+				37BF2F061947DEB400723C48 /* WKNSURLRequest.h in Headers */,
 				512E356B130B57F000ABD19A /* WebApplicationCacheManagerMessages.h in Headers */,
 				512E3525130B550600ABD19A /* WebApplicationCacheManagerProxy.h in Headers */,
 				512E35F9130B642E00ABD19A /* WebApplicationCacheManagerProxyMessages.h in Headers */,
@@ -9211,6 +9218,7 @@
 				BC646C1A11DD399F006455B0 /* WKBackForwardListRef.cpp in Sources */,
 				BC646C1C11DD399F006455B0 /* WKBackForwardListItemRef.cpp in Sources */,
 				1A256E3718A1A788006FB922 /* WKNavigationAction.mm in Sources */,
+				37BF2F071947DEB400723C48 /* WKNSURLRequest.mm in Sources */,
 				BCBAAC72144E61990053F82F /* WKBrowsingContextController.mm in Sources */,
 				BCBAACF51452324F0053F82F /* WKBrowsingContextGroup.mm in Sources */,
 				51290992183ACEAF005522A6 /* WebIDBServerConnection.cpp in Sources */,

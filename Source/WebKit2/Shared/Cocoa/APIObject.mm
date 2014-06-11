@@ -41,6 +41,7 @@
 #import "WKNSURL.h"
 #import "WKNSURLAuthenticationChallenge.h"
 #import "WKNSURLProtectionSpace.h"
+#import "WKNSURLRequest.h"
 #import "WKNavigationDataInternal.h"
 #import "WKProcessPoolInternal.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
@@ -149,6 +150,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::URL:
         wrapper = NSAllocateObject([WKNSURL class], size, nullptr);
+        break;
+
+    case Type::URLRequest:
+        wrapper = NSAllocateObject([WKNSURLRequest class], size, nullptr);
         break;
 
     case Type::BundleFrame:

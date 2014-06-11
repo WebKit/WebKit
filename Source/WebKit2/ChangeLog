@@ -1,3 +1,31 @@
+2014-06-11  Antti Koivisto  <antti@apple.com>
+
+        Wrap NSURLRequest in bundle API
+        https://bugs.webkit.org/show_bug.cgi?id=133732
+        <rdar://problem/17267217>
+
+        Reviewed by Andreas Kling.
+        
+        Patch by Dan Bernstein.
+
+        We don't want to construct actual NSURLRequests in the web process side unless really needed as it is slow.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * Shared/Cocoa/WKNSURLRequest.h: Added.
+        (WebKit::wrapper):
+        * Shared/Cocoa/WKNSURLRequest.mm: Added.
+        
+            Add a wrapper object that initializes the underlying NSURLRequest on-demand.
+
+        (-[WKNSURLRequest _web_createTarget]):
+        (-[WKNSURLRequest URL]):
+        (-[WKNSURLRequest copyWithZone:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (willSendRequestForFrame):
+        (didInitiateLoadForResource):
+
 2014-06-11  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/17218629> [Cocoa] WKWebView’s canGoBack and canGoForward properties are not KVO-compliant
