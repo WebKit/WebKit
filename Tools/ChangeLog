@@ -1,3 +1,9 @@
+2014-06-11  Zoltan Horvath  <zoltan@webkit.org>
+
+        Unreviewed. Moving myself to the list of reviewers.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-06-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Drop to maintain EFL 32bit release bot

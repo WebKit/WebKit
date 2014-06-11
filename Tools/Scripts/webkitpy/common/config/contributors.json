@@ -2758,18 +2758,6 @@
             "azbest_hu"
          ]
       },
-      "Zoltan Horvath" : {
-         "emails" : [
-            "zoltan@webkit.org",
-            "zoltan@adobe.com",
-            "hzoltan@inf.u-szeged.hu",
-            "horvath.zoltan.6@stud.u-szeged.hu"
-         ],
-         "expertise" : "CSS Shapes, Line layout, Custom Allocation Framework, PerformanceTests, QtWebKit",
-         "nicks" : [
-            "zoltan"
-         ]
-      },
       "\u017dan Dober\u0161ek" : {
          "emails" : [
             "zandobersek@gmail.com",
@@ -4605,6 +4593,18 @@
          "expertise" : "The QtWebKit Port, JIT (ARM), SVG, optimizations (SMP, SIMD), Graphics",
          "nicks" : [
             "zherczeg"
+         ]
+      },
+      "Zoltan Horvath" : {
+         "emails" : [
+            "zoltan@webkit.org",
+            "zoltan@adobe.com",
+            "hzoltan@inf.u-szeged.hu",
+            "horvath.zoltan.6@stud.u-szeged.hu"
+         ],
+         "expertise" : "CSS Shapes, Line layout, Custom Allocation Framework, PerformanceTests, QtWebKit",
+         "nicks" : [
+            "zoltan"
          ]
       }
    }
