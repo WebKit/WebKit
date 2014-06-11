@@ -153,8 +153,7 @@ private:
         case GetLocal: {
             VariableAccessData* variable = node->variableAccessData();
             SpeculatedType prediction = variable->prediction();
-            if ((variable->shouldNeverUnbox() || variable->local().isArgument())
-                && (prediction & SpecInt52))
+            if (!variable->couldRepresentInt52() && (prediction & SpecInt52))
                 prediction = (prediction | SpecInt52AsDouble) & ~SpecInt52;
             if (prediction)
                 changed |= mergePrediction(prediction);

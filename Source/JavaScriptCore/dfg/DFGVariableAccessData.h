@@ -212,12 +212,16 @@ public:
     
     FlushFormat flushFormat();
     
+    bool couldRepresentInt52();
+    
     FlushedAt flushedAt()
     {
         return FlushedAt(flushFormat(), machineLocal());
     }
 
 private:
+    bool couldRepresentInt52Impl();
+    
     // This is slightly space-inefficient, since anything we're unified with
     // will have the same operand and should have the same prediction. But
     // putting them here simplifies the code, and we don't expect DFG space

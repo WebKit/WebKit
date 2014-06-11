@@ -171,6 +171,29 @@ bool VariableAccessData::makePredictionForDoubleFormat()
     return checkAndSet(m_prediction, type);
 }
 
+bool VariableAccessData::couldRepresentInt52()
+{
+    if (shouldNeverUnbox())
+        return false;
+    
+    return couldRepresentInt52Impl();
+}
+
+bool VariableAccessData::couldRepresentInt52Impl()
+{
+    // The hardware has to support it.
+    if (!enableInt52())
+        return false;
+    
+    // We punt for machine arguments.
+    if (m_local.isArgument())
+        return false;
+    
+    // The argument-aware prediction -- which merges all of an (inlined or machine)
+    // argument's variable access datas' predictions -- must possibly be MachineInt.
+    return !(argumentAwarePrediction() & ~SpecMachineInt);
+}
+
 FlushFormat VariableAccessData::flushFormat()
 {
     ASSERT(find() == this);
@@ -185,10 +208,16 @@ FlushFormat VariableAccessData::flushFormat()
         return FlushedDouble;
     
     SpeculatedType prediction = argumentAwarePrediction();
+    
+    // This guard is here to protect the call to couldRepresentInt52(), which will return
+    // true for !prediction.
+    if (!prediction)
+        return FlushedJSValue;
+    
     if (isInt32Speculation(prediction))
         return FlushedInt32;
     
-    if (enableInt52() && !m_local.isArgument() && isMachineIntSpeculation(prediction))
+    if (couldRepresentInt52Impl())
         return FlushedInt52;
     
     if (isCellSpeculation(prediction))
