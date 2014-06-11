@@ -1,3 +1,25 @@
+2014-06-11  Timothy Horton  <timothy_horton@apple.com>
+
+        Make it possible for waitForAndDispatchImmediately to bail if a sync message comes in from the other direction
+        https://bugs.webkit.org/show_bug.cgi?id=133708
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::WaitForMessageState):
+        (IPC::Connection::Connection):
+        (IPC::Connection::waitForMessage):
+        (IPC::Connection::processIncomingMessage):
+        (IPC::Connection::connectionDidClose):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::waitForAndDispatchImmediately):
+        Remove the waitForMessageMap, and assert that we're only ever waiting for one message at a time.
+        This simplifies this code a bit, and we never wait on more than one message at a time, so it was unnecessary.
+
+        Add a flag to waitForAndDispatchImmediately, InterruptWaitingIfSyncMessageArrives, which will cause
+        waitForAndDispatchImmediately to bail if a sync message arrives, to avoid pointlessly blocking both processes
+        for the entire timeout.
+
 2014-06-11  Oliver Hunt  <oliver@apple.com>
 
         Restrict database process profile

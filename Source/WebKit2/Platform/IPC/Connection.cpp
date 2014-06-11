@@ -36,6 +36,25 @@
 
 namespace IPC {
 
+struct WaitForMessageState {
+    WaitForMessageState(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, unsigned waitForMessageFlags)
+        : messageReceiverName(messageReceiverName)
+        , messageName(messageName)
+        , destinationID(destinationID)
+        , waitForMessageFlags(waitForMessageFlags)
+    {
+    }
+
+    StringReference messageReceiverName;
+    StringReference messageName;
+    uint64_t destinationID;
+
+    unsigned waitForMessageFlags;
+    bool messageWaitingInterrupted = false;
+
+    std::unique_ptr<MessageDecoder> decoder;
+};
+
 class Connection::SyncMessageState : public ThreadSafeRefCounted<Connection::SyncMessageState> {
 public:
     static PassRefPtr<SyncMessageState> getOrCreate(RunLoop&);
@@ -225,7 +244,7 @@ Connection::Connection(Identifier identifier, bool isServer, Client* client, Run
     , m_inDispatchMessageCount(0)
     , m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount(0)
     , m_didReceiveInvalidMessage(false)
-    , m_messageWaitingInterruptedByClosedConnection(false)
+    , m_waitingForMessage(nullptr)
     , m_syncMessageState(SyncMessageState::getOrCreate(clientRunLoop))
     , m_shouldWaitForSyncReplies(true)
 {
@@ -371,8 +390,10 @@ bool Connection::sendSyncReply(std::unique_ptr<MessageEncoder> encoder)
     return sendMessage(std::move(encoder));
 }
 
-std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, std::chrono::milliseconds timeout)
+std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, std::chrono::milliseconds timeout, unsigned waitForMessageFlags)
 {
+    ASSERT(&m_clientRunLoop == &RunLoop::current());
+
     // First, check if this message is already in the incoming messages queue.
     {
         MutexLocker locker(m_incomingMessagesLock);
@@ -389,44 +410,35 @@ std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messa
         }
     }
 
-    std::pair<std::pair<StringReference, StringReference>, uint64_t> messageAndDestination(std::make_pair(std::make_pair(messageReceiverName, messageName), destinationID));
-    
+    WaitForMessageState waitingForMessage(messageReceiverName, messageName, destinationID, waitForMessageFlags);
+
     {
         std::lock_guard<std::mutex> lock(m_waitForMessageMutex);
 
-        // We don't support having multiple clients wait for the same message.
-        ASSERT(!m_waitForMessageMap.contains(messageAndDestination));
-    
-        // Insert our pending wait.
-        m_waitForMessageMap.set(messageAndDestination, nullptr);
+        // We don't support having multiple clients waiting for messages.
+        ASSERT(!m_waitingForMessage);
+
+        m_waitingForMessage = &waitingForMessage;
     }
     
     // Now wait for it to be set.
     while (true) {
         std::unique_lock<std::mutex> lock(m_waitForMessageMutex);
 
-        auto it = m_waitForMessageMap.find(messageAndDestination);
-        if (it->value) {
-            std::unique_ptr<MessageDecoder> decoder = std::move(it->value);
-            m_waitForMessageMap.remove(it);
-
+        if (m_waitingForMessage->decoder) {
+            auto decoder = std::move(m_waitingForMessage->decoder);
+            m_waitingForMessage = nullptr;
             return decoder;
         }
 
         // Now we wait.
         std::cv_status status = m_waitForMessageCondition.wait_for(lock, timeout);
-        if (status == std::cv_status::timeout || m_messageWaitingInterruptedByClosedConnection) {
-            // We timed out or lost our connection, now remove the pending wait.
-            m_waitForMessageMap.remove(messageAndDestination);
-
-            // If there are no more waiters, reset m_messageWaitingInterruptedByClosedConnection while we already hold
-            // the necessary lock in case the connection is later reopened.
-            if (m_waitForMessageMap.isEmpty())
-                m_messageWaitingInterruptedByClosedConnection = false;
-
+        // We timed out, lost our connection, or a sync message came in with InterruptWaitingIfSyncMessageArrives, so stop waiting.
+        if (status == std::cv_status::timeout || m_waitingForMessage->messageWaitingInterrupted)
             break;
-        }
     }
+
+    m_waitingForMessage = nullptr;
 
     return nullptr;
 }
@@ -647,13 +659,16 @@ void Connection::processIncomingMessage(std::unique_ptr<MessageDecoder> message)
     {
         std::lock_guard<std::mutex> lock(m_waitForMessageMutex);
 
-        auto it = m_waitForMessageMap.find(std::make_pair(std::make_pair(message->messageReceiverName(), message->messageName()), message->destinationID()));
-        if (it != m_waitForMessageMap.end()) {
-            it->value = std::move(message);
-            ASSERT(it->value);
-        
+        if (m_waitingForMessage && m_waitingForMessage->messageReceiverName == message->messageReceiverName() && m_waitingForMessage->messageName == message->messageName() && m_waitingForMessage->destinationID == message->destinationID()) {
+            m_waitingForMessage->decoder = std::move(message);
+            ASSERT(m_waitingForMessage->decoder);
             m_waitForMessageCondition.notify_one();
             return;
+        }
+
+        if (m_waitingForMessage && (m_waitingForMessage->waitForMessageFlags & InterruptWaitingIfSyncMessageArrives) && message->isSyncMessage()) {
+            m_waitingForMessage->messageWaitingInterrupted = true;
+            m_waitForMessageCondition.notify_one();
         }
     }
 
@@ -685,7 +700,8 @@ void Connection::connectionDidClose()
 
     {
         std::lock_guard<std::mutex> lock(m_waitForMessageMutex);
-        m_messageWaitingInterruptedByClosedConnection = true;
+        if (m_waitingForMessage)
+            m_waitingForMessage->messageWaitingInterrupted = true;
     }
     m_waitForMessageCondition.notify_all();
 

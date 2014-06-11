@@ -55,6 +55,8 @@ class RunLoop;
 
 namespace IPC {
 
+struct WaitForMessageState;
+
 enum MessageSendFlags {
     // Whether this message should be dispatched when waiting for a sync reply.
     // This is the default for synchronous messages.
@@ -67,6 +69,11 @@ enum SyncMessageSendFlags {
     // Some platform accessibility clients can't suspend gracefully and need to spin the run loop so WebProcess doesn't hang.
     // FIXME (126021): Remove when no platforms need to support this.
     SpinRunLoopWhileWaitingForReply = 1 << 1,
+};
+
+enum WaitForMessageFlags {
+    // Use this to make waitForMessage be interrupted immediately by any incoming sync messages.
+    InterruptWaitingIfSyncMessageArrives = 1 << 0,
 };
     
 #define MESSAGE_CHECK_BASE(assertion, connection) do \
@@ -164,7 +171,7 @@ public:
 
     template<typename T> bool send(T&& message, uint64_t destinationID, unsigned messageSendFlags = 0);
     template<typename T> bool sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, std::chrono::milliseconds timeout = std::chrono::milliseconds::max(), unsigned syncSendFlags = 0);
-    template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, std::chrono::milliseconds timeout);
+    template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, std::chrono::milliseconds timeout, unsigned waitForMessageFlags = 0);
 
     std::unique_ptr<MessageEncoder> createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID);
     bool sendMessage(std::unique_ptr<MessageEncoder>, unsigned messageSendFlags = 0);
@@ -193,7 +200,7 @@ private:
     
     bool isValid() const { return m_client; }
     
-    std::unique_ptr<MessageDecoder> waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, std::chrono::milliseconds timeout);
+    std::unique_ptr<MessageDecoder> waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, std::chrono::milliseconds timeout, unsigned waitForMessageFlags);
     
     std::unique_ptr<MessageDecoder> waitForSyncReply(uint64_t syncRequestID, std::chrono::milliseconds timeout, unsigned syncSendFlags);
 
@@ -253,8 +260,8 @@ private:
     
     std::condition_variable m_waitForMessageCondition;
     std::mutex m_waitForMessageMutex;
-    bool m_messageWaitingInterruptedByClosedConnection;
-    HashMap<std::pair<std::pair<StringReference, StringReference>, uint64_t>, std::unique_ptr<MessageDecoder>> m_waitForMessageMap;
+
+    WaitForMessageState* m_waitingForMessage;
 
     // Represents a sync request for which we're waiting on a reply.
     struct PendingSyncReply {
@@ -357,9 +364,9 @@ template<typename T> bool Connection::sendSync(T&& message, typename T::Reply&& 
     return replyDecoder->decode(reply);
 }
 
-template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t destinationID, std::chrono::milliseconds timeout)
+template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t destinationID, std::chrono::milliseconds timeout, unsigned waitForMessageFlags)
 {
-    std::unique_ptr<MessageDecoder> decoder = waitForMessage(T::receiverName(), T::name(), destinationID, timeout);
+    std::unique_ptr<MessageDecoder> decoder = waitForMessage(T::receiverName(), T::name(), destinationID, timeout, waitForMessageFlags);
     if (!decoder)
         return false;
 
