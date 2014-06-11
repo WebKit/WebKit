@@ -31,6 +31,7 @@
 #include "ClassInfo.h"
 #include "CommonIdentifiers.h"
 #include "CopyWriteBarrier.h"
+#include "CustomGetterSetter.h"
 #include "DeferGC.h"
 #include "Heap.h"
 #include "HeapInlines.h"
@@ -957,9 +958,9 @@ private:
     template<PutMode>
     bool putDirectInternal(VM&, PropertyName, JSValue, unsigned attr, PutPropertySlot&, JSCell*);
 
-    bool inlineGetOwnPropertySlot(ExecState*, VM&, Structure&, PropertyName, PropertySlot&);
+    bool inlineGetOwnPropertySlot(VM&, Structure&, PropertyName, PropertySlot&);
     JS_EXPORT_PRIVATE void fillGetterPropertySlot(PropertySlot&, JSValue, unsigned, PropertyOffset);
-    JS_EXPORT_PRIVATE void fillCustomGetterPropertySlot(PropertySlot&, JSValue, unsigned);
+    void fillCustomGetterPropertySlot(PropertySlot&, JSValue, unsigned, Structure&);
 
     const HashTableValue* findPropertyHashEntry(VM&, PropertyName) const;
         
@@ -972,8 +973,6 @@ private:
     unsigned getNewVectorLength(unsigned currentVectorLength, unsigned currentLength, unsigned desiredLength);
     unsigned getNewVectorLength(unsigned desiredLength);
 
-    bool getOwnPropertySlotSlow(ExecState*, PropertyName, PropertySlot&);
-        
     ArrayStorage* constructConvertedArrayStorageWithoutCopyingElements(VM&, unsigned neededLength);
         
     JS_EXPORT_PRIVATE void setIndexQuicklyToUndecided(VM&, unsigned index, JSValue);
@@ -1212,31 +1211,32 @@ inline JSValue JSObject::prototype() const
     return structure()->storedPrototype();
 }
 
-ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(ExecState* exec, VM& vm, Structure& structure, PropertyName propertyName, PropertySlot& slot)
+ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(VM& vm, Structure& structure, PropertyName propertyName, PropertySlot& slot)
 {
     unsigned attributes;
     JSCell* specific;
     PropertyOffset offset = structure.get(vm, propertyName, attributes, specific);
-    if (LIKELY(isValidOffset(offset))) {
-        JSValue value = getDirect(offset);
-        if (structure.hasGetterSetterProperties() && value.isGetterSetter())
-            fillGetterPropertySlot(slot, value, attributes, offset);
-        else if (structure.hasCustomGetterSetterProperties() && value.isCustomGetterSetter())
-            fillCustomGetterPropertySlot(slot, value, attributes);
-        else
-            slot.setValue(this, attributes, value, offset);
-        return true;
-    }
+    if (!isValidOffset(offset))
+        return false;
 
-    return getOwnPropertySlotSlow(exec, propertyName, slot);
+    JSValue value = getDirect(offset);
+    if (structure.hasGetterSetterProperties() && value.isGetterSetter())
+        fillGetterPropertySlot(slot, value, attributes, offset);
+    else if (structure.hasCustomGetterSetterProperties() && value.isCustomGetterSetter())
+        fillCustomGetterPropertySlot(slot, value, attributes, structure);
+    else
+        slot.setValue(this, attributes, value, offset);
+
+    return true;
 }
 
-inline bool JSObject::getOwnPropertySlotSlow(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+ALWAYS_INLINE void JSObject::fillCustomGetterPropertySlot(PropertySlot& slot, JSValue customGetterSetter, unsigned attributes, Structure& structure)
 {
-    unsigned i = propertyName.asIndex();
-    if (i != PropertyName::NotAnIndex)
-        return getOwnPropertySlotByIndex(this, exec, i, slot);
-    return false;
+    if (structure.isDictionary()) {
+        slot.setCustom(this, attributes, jsCast<CustomGetterSetter*>(customGetterSetter)->getter());
+        return;
+    }
+    slot.setCacheableCustom(this, attributes, jsCast<CustomGetterSetter*>(customGetterSetter)->getter());
 }
 
 // It may seem crazy to inline a function this large, especially a virtual function,
@@ -1246,13 +1246,18 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlot(JSObject* object, ExecState* exe
 {
     VM& vm = exec->vm();
     Structure& structure = *object->structure(vm);
-    return object->inlineGetOwnPropertySlot(exec, vm, structure, propertyName, slot);
+    if (object->inlineGetOwnPropertySlot(vm, structure, propertyName, slot))
+        return true;
+    unsigned index = propertyName.asIndex();
+    if (index != PropertyName::NotAnIndex)
+        return getOwnPropertySlotByIndex(object, exec, index, slot);
+    return false;
 }
 
 ALWAYS_INLINE bool JSObject::fastGetOwnPropertySlot(ExecState* exec, VM& vm, Structure& structure, PropertyName propertyName, PropertySlot& slot)
 {
     if (!TypeInfo::overridesGetOwnPropertySlot(inlineTypeFlags()))
-        return asObject(this)->inlineGetOwnPropertySlot(exec, vm, structure, propertyName, slot);
+        return asObject(this)->inlineGetOwnPropertySlot(vm, structure, propertyName, slot);
     return structure.classInfo()->methodTable.getOwnPropertySlot(this, exec, propertyName, slot);
 }
 
@@ -1261,24 +1266,31 @@ ALWAYS_INLINE bool JSObject::fastGetOwnPropertySlot(ExecState* exec, VM& vm, Str
 ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = exec->vm();
+    auto& structureIDTable = vm.heap.structureIDTable();
     JSObject* object = this;
     while (true) {
-        Structure& structure = *object->structure(vm);
+        Structure& structure = *structureIDTable.get(object->structureID());
         if (object->fastGetOwnPropertySlot(exec, vm, structure, propertyName, slot))
             return true;
         JSValue prototype = structure.storedPrototype();
         if (!prototype.isObject())
-            return false;
+            break;
         object = asObject(prototype);
     }
+
+    unsigned index = propertyName.asIndex();
+    if (index != PropertyName::NotAnIndex)
+        return getPropertySlot(exec, index, slot);
+    return false;
 }
 
 ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     VM& vm = exec->vm();
+    auto& structureIDTable = vm.heap.structureIDTable();
     JSObject* object = this;
     while (true) {
-        Structure& structure = *object->structure(vm);
+        Structure& structure = *structureIDTable.get(object->structureID());
         if (structure.classInfo()->methodTable.getOwnPropertySlotByIndex(object, exec, propertyName, slot))
             return true;
         JSValue prototype = structure.storedPrototype();
