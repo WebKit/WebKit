@@ -95,12 +95,18 @@ void PageLoadState::commitChanges()
 
     m_mayHaveUncommittedChanges = false;
 
+    bool canGoBackChanged = m_committedState.canGoBack != m_uncommittedState.canGoBack;
+    bool canGoForwardChanged = m_committedState.canGoForward != m_uncommittedState.canGoForward;
     bool titleChanged = m_committedState.title != m_uncommittedState.title;
     bool isLoadingChanged = isLoading(m_committedState) != isLoading(m_uncommittedState);
     bool activeURLChanged = activeURL(m_committedState) != activeURL(m_uncommittedState);
     bool hasOnlySecureContentChanged = hasOnlySecureContent(m_committedState) != hasOnlySecureContent(m_uncommittedState);
     bool estimatedProgressChanged = estimatedProgress(m_committedState) != estimatedProgress(m_uncommittedState);
 
+    if (canGoBackChanged)
+        callObserverCallback(&Observer::willChangeCanGoBack);
+    if (canGoForwardChanged)
+        callObserverCallback(&Observer::willChangeCanGoForward);
     if (titleChanged)
         callObserverCallback(&Observer::willChangeTitle);
     if (isLoadingChanged)
@@ -125,6 +131,10 @@ void PageLoadState::commitChanges()
         callObserverCallback(&Observer::didChangeIsLoading);
     if (titleChanged)
         callObserverCallback(&Observer::didChangeTitle);
+    if (canGoForwardChanged)
+        callObserverCallback(&Observer::didChangeCanGoForward);
+    if (canGoBackChanged)
+        callObserverCallback(&Observer::didChangeCanGoBack);
 }
 
 void PageLoadState::reset(const Transaction::Token& token)
@@ -316,6 +326,28 @@ void PageLoadState::setTitle(const Transaction::Token& token, const String& titl
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
     m_uncommittedState.title = title;
+}
+
+bool PageLoadState::canGoBack() const
+{
+    return m_committedState.canGoBack;
+}
+
+void PageLoadState::setCanGoBack(const Transaction::Token& token, bool canGoBack)
+{
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    m_uncommittedState.canGoBack = canGoBack;
+}
+
+bool PageLoadState::canGoForward() const
+{
+    return m_committedState.canGoForward;
+}
+
+void PageLoadState::setCanGoForward(const Transaction::Token& token, bool canGoForward)
+{
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    m_uncommittedState.canGoForward = canGoForward;
 }
 
 void PageLoadState::didStartProgress(const Transaction::Token& token)

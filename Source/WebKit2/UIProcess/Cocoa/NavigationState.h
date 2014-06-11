@@ -127,6 +127,10 @@ private:
     virtual void didChangeHasOnlySecureContent() override;
     virtual void willChangeEstimatedProgress() override;
     virtual void didChangeEstimatedProgress() override;
+    virtual void willChangeCanGoBack() override;
+    virtual void didChangeCanGoBack() override;
+    virtual void willChangeCanGoForward() override;
+    virtual void didChangeCanGoForward() override;
 
     WKWebView *m_webView;
     WeakObjCPtr<id <WKNavigationDelegate> > m_navigationDelegate;

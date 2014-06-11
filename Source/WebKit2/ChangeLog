@@ -1,3 +1,42 @@
+2014-06-11  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/17218629> [Cocoa] WKWebView’s canGoBack and canGoForward properties are not KVO-compliant
+        https://bugs.webkit.org/show_bug.cgi?id=133722
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm: Added no-op overrides of new
+        PageLoadStateObserver member functions.
+
+        * UIProcess/API/Cocoa/WKWebView.h: Documented the canGoBack and canGoForward properties as
+        being KVO-compliant.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView canGoBack]): Changed to get the return value from the page load state.
+        (-[WKWebView canGoForward]): Ditto.
+
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::willChangeCanGoBack): Override this new PageLoadStateObserver
+        member function by sending the appropriate KVO change message to the WKWebView.
+        (WebKit::NavigationState::didChangeCanGoBack): Ditto.
+        (WebKit::NavigationState::willChangeCanGoForward): Ditto.
+        (WebKit::NavigationState::didChangeCanGoForward): Ditto.
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::commitChanges): Check for changes to canGoBack and canGoForward
+        and call the observers if needed.
+        (WebKit::PageLoadState::canGoBack): Added. Returns the value from the committed state.
+        (WebKit::PageLoadState::setCanGoBack): Added. Sets the value in the uncommitted state.
+        (WebKit::PageLoadState::canGoForward): Added. Returns the value from the committed state.
+        (WebKit::PageLoadState::setCanGoForward): Added. Sets the value in the uncommitted state.
+        * UIProcess/PageLoadState.h:
+        (WebKit::PageLoadState::Data::Data): Added canGoBack and canGoForward boolean members.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeBackForwardList): Update the page load state with the new
+        state of canGoBack and canGoForward.
+        * UIProcess/WebPageProxy.h: Removed unused member variables m_canGoBack and m_canGoForward.
+
 2014-06-11  Zan Dobersek  <zdobersek@igalia.com>
 
         Avoid Vector copies in WebNotificationManagerProxy::providerDidCloseNotifications(), FindController::findStringMatches()

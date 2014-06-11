@@ -732,6 +732,26 @@ void NavigationState::didChangeEstimatedProgress()
     [m_webView didChangeValueForKey:@"estimatedProgress"];
 }
 
+void NavigationState::willChangeCanGoBack()
+{
+    [m_webView willChangeValueForKey:@"canGoBack"];
+}
+
+void NavigationState::didChangeCanGoBack()
+{
+    [m_webView didChangeValueForKey:@"canGoBack"];
+}
+
+void NavigationState::willChangeCanGoForward()
+{
+    [m_webView willChangeValueForKey:@"canGoForward"];
+}
+
+void NavigationState::didChangeCanGoForward()
+{
+    [m_webView didChangeValueForKey:@"canGoForward"];
+}
+
 } // namespace WebKit
 
 #endif

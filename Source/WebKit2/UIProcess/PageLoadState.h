@@ -61,6 +61,12 @@ public:
 
         virtual void willChangeEstimatedProgress() = 0;
         virtual void didChangeEstimatedProgress() = 0;
+
+        virtual void willChangeCanGoBack() = 0;
+        virtual void didChangeCanGoBack() = 0;
+
+        virtual void willChangeCanGoForward() = 0;
+        virtual void didChangeCanGoForward() = 0;
     };
 
     class Transaction {
@@ -134,6 +140,12 @@ public:
     const String& title() const;
     void setTitle(const Transaction::Token&, const String&);
 
+    bool canGoBack() const;
+    void setCanGoBack(const Transaction::Token&, bool);
+
+    bool canGoForward() const;
+    void setCanGoForward(const Transaction::Token&, bool);
+
     void didStartProgress(const Transaction::Token&);
     void didChangeProgress(const Transaction::Token&, double);
     void didFinishProgress(const Transaction::Token&);
@@ -150,6 +162,8 @@ private:
         Data()
             : state(State::Finished)
             , hasInsecureContent(false)
+            , canGoBack(false)
+            , canGoForward(false)
             , estimatedProgress(0)
         {
         }
@@ -165,6 +179,9 @@ private:
         String unreachableURL;
 
         String title;
+
+        bool canGoBack;
+        bool canGoForward;
 
         double estimatedProgress;
     };

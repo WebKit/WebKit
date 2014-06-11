@@ -146,12 +146,16 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract A Boolean value indicating whether there is a back item in
  the back-forward list that can be navigated to.
+ @discussion @link WKWebView @/link is key-value observing (KVO) compliant
+ for this property.
  @seealso backForwardList.
  */
 @property (nonatomic, readonly) BOOL canGoBack;
 
 /*! @abstract A Boolean value indicating whether there is a forward item in
  the back-forward list that can be navigated to.
+ @discussion @link WKWebView @/link is key-value observing (KVO) compliant
+ for this property.
  @seealso backForwardList.
  */
 @property (nonatomic, readonly) BOOL canGoForward;

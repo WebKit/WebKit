@@ -925,6 +925,11 @@ void WebPageProxy::didChangeBackForwardList(WebBackForwardListItem* added, Vecto
 {
     m_loaderClient->didChangeBackForwardList(this, added, std::move(removed));
 
+    auto transaction = m_pageLoadState.transaction();
+
+    m_pageLoadState.setCanGoBack(transaction, m_backForwardList->backItem());
+    m_pageLoadState.setCanGoForward(transaction, m_backForwardList->forwardItem());
+
 #if PLATFORM(MAC)
     m_pageClient.clearCustomSwipeViews();
 #endif

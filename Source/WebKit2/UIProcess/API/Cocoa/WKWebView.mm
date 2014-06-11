@@ -404,16 +404,14 @@ static int32_t deviceOrientation()
     return _page->pageLoadState().hasOnlySecureContent();
 }
 
-// FIXME: This should be KVO compliant.
 - (BOOL)canGoBack
 {
-    return !!_page->backForwardList().backItem();
+    return _page->pageLoadState().canGoBack();
 }
 
-// FIXME: This should be KVO compliant.
 - (BOOL)canGoForward
 {
-    return !!_page->backForwardList().forwardItem();
+    return _page->pageLoadState().canGoForward();
 }
 
 - (WKNavigation *)goBack

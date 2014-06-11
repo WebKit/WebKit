@@ -1552,8 +1552,6 @@ private:
     std::unique_ptr<ProcessThrottler::ForegroundActivityToken> m_activityToken;
 #endif
         
-    bool m_canGoBack;
-    bool m_canGoForward;
     Ref<WebBackForwardList> m_backForwardList;
         
     bool m_maintainsInactiveSelection;

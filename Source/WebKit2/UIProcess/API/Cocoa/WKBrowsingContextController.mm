@@ -120,6 +120,11 @@ private:
         [m_controller didChangeValueForKey:@"estimatedProgress"];
     }
 
+    virtual void willChangeCanGoBack() override { }
+    virtual void didChangeCanGoBack() override { }
+    virtual void willChangeCanGoForward() override { }
+    virtual void didChangeCanGoForward() override { }
+
     WKBrowsingContextController *m_controller;
 };
 
