@@ -58,6 +58,7 @@ VPATH = \
     $(WebCore)/inspector \
     $(WebCore)/loader/appcache \
     $(WebCore)/page \
+    $(WebCore)/platform/network \
     $(WebCore)/plugins \
     $(WebCore)/storage \
     $(WebCore)/xml \
@@ -760,6 +761,7 @@ all : \
     HTMLElementFactory.cpp \
     HTMLEntityTable.cpp \
     HTMLNames.cpp \
+    HTTPHeaderNames.h \
     JSHTMLElementWrapperFactory.cpp \
     JSSVGElementWrapperFactory.cpp \
     PlugInsResources.h \
@@ -843,10 +845,17 @@ XMLViewerJS.h : xml/XMLViewer.js
 
 # --------
 
+# --------
+
 # HTML entity names
 
 HTMLEntityTable.cpp : html/parser/HTMLEntityNames.in $(WebCore)/html/parser/create-html-entity-table
 	$(PYTHON) $(WebCore)/html/parser/create-html-entity-table -o HTMLEntityTable.cpp $(WebCore)/html/parser/HTMLEntityNames.in
+
+# HTTP header names
+
+HTTPHeaderNames.h : platform/network/HTTPHeaderNames.in $(WebCore)/platform/network/create-http-header-name-table
+	$(PYTHON) $(WebCore)/platform/network/create-http-header-name-table $(WebCore)/platform/network/HTTPHeaderNames.in
 
 # --------
 

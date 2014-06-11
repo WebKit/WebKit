@@ -1,3 +1,20 @@
+2014-06-11  Anders Carlsson  <andersca@apple.com>
+
+        Add a script that generates a gperf hash for HTTP header names
+        https://bugs.webkit.org/show_bug.cgi?id=133760
+
+        Reviewed by Andreas Kling.
+
+        This is the first step towards getting rid of AtomicString from HTTPHeaderMap.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/network/HTTPHeaderNames.in: Added.
+        * platform/network/create-http-header-name-table: Added.
+        (HTTPHeaderName):
+
 2014-06-11  Brent Fulgham  <bfulgham@apple.com>
 
         ROLLOUT: r153510: Broke Table borders on Wikipedia
