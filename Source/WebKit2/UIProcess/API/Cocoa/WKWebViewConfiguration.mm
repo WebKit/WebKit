@@ -98,6 +98,8 @@ private:
     configuration._contentProviderRegistry = self._contentProviderRegistry;
 #endif
 
+    configuration->_suppressesIncrementalRendering = self->_suppressesIncrementalRendering;
+
     return configuration;
 }
 

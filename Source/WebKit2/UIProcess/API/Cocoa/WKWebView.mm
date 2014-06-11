@@ -60,6 +60,7 @@
 #import "WebKitSystemInterface.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
+#import "WebPreferencesKeys.h"
 #import "WebProcessProxy.h"
 #import "WebSerializedScriptValue.h"
 #import "_WKFindDelegate.h"
@@ -248,6 +249,8 @@ static int32_t deviceOrientation()
         pageGroup = WebKit::WebPageGroup::create(configuration._groupIdentifier);
         webPageConfiguration.pageGroup = pageGroup.get();
     }
+
+    webPageConfiguration.preferenceValues.set(WebKit::WebPreferencesKey::suppressesIncrementalRenderingKey(), WebKit::WebPreferencesStore::Value(!![_configuration suppressesIncrementalRendering]));
 
 #if PLATFORM(IOS)
     _scrollView = adoptNS([[WKScrollView alloc] initWithFrame:bounds]);

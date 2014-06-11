@@ -67,12 +67,6 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 @property (nonatomic) BOOL javaScriptCanOpenWindowsAutomatically;
 
-/*! @abstract A Boolean value indicating whether the web view suppresses
- content rendering until it is fully loaded into memory.
- @discussion The default value is NO.
- */
-@property (nonatomic) BOOL suppressesIncrementalRendering;
-
 #if TARGET_OS_IPHONE
 /*! @abstract A Boolean value indicating whether HTML5 videos play inline
  (YES) or use the native full-screen controller (NO).

@@ -364,6 +364,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_waitingForDidUpdateViewState(false)
     , m_scrollPinningBehavior(DoNotPin)
     , m_navigationID(0)
+    , m_configurationPreferenceValues(configuration.preferenceValues)
 {
     if (m_process->state() == WebProcessProxy::State::Running) {
         if (m_userContentController)
@@ -1498,6 +1499,18 @@ uint64_t WebPageProxy::generateNavigationID()
     return ++m_navigationID;
 }
 
+WebPreferencesStore WebPageProxy::preferencesStore() const
+{
+    if (m_configurationPreferenceValues.isEmpty())
+        return m_preferences->store();
+
+    WebPreferencesStore store = m_preferences->store();
+    for (const auto& preference : m_configurationPreferenceValues)
+        store.m_values.set(preference.key, preference.value);
+
+    return store;
+}
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, const String& urlString, const String& frameURLString, const String& pageURLString, bool allowOnlyApplicationPlugins, uint64_t& pluginProcessToken, String& newMimeType, uint32_t& pluginLoadPolicy, String& unavailabilityDescription)
 {
@@ -2322,7 +2335,7 @@ void WebPageProxy::preferencesDidChange()
     // even if nothing changed in UI process, so that overrides get removed.
 
     // Preferences need to be updated during synchronous printing to make "print backgrounds" preference work when toggled from a print dialog checkbox.
-    m_process->send(Messages::WebPage::PreferencesDidChange(m_preferences->store()), m_pageID, m_isPerformingDOMPrintOperation ? IPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
+    m_process->send(Messages::WebPage::PreferencesDidChange(preferencesStore()), m_pageID, m_isPerformingDOMPrintOperation ? IPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
 
 void WebPageProxy::didCreateMainFrame(uint64_t frameID)
@@ -4339,7 +4352,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.viewSize = m_pageClient.viewSize();
     parameters.viewState = m_viewState;
     parameters.drawingAreaType = m_drawingArea->type();
-    parameters.store = m_preferences->store();
+    parameters.store = preferencesStore();
     parameters.pageGroupData = m_pageGroup->data();
     parameters.drawsBackground = m_drawsBackground;
     parameters.drawsTransparentBackground = m_drawsTransparentBackground;

@@ -56,6 +56,12 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 */
 @property (nonatomic, strong) WKUserContentController *userContentController;
 
+/*! @abstract A Boolean value indicating whether the web view suppresses
+ content rendering until it is fully loaded into memory.
+ @discussion The default value is NO.
+ */
+@property (nonatomic) BOOL suppressesIncrementalRendering;
+
 @end
 
 #endif

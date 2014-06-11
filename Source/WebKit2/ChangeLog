@@ -1,3 +1,41 @@
+2014-06-10  Anders Carlsson  <andersca@apple.com>
+
+        Move suppressesIncrementalRendering to WKWebViewConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=133707
+        <rdar://problem/17271468>
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        Get rid of suppressesIncrementalRendering.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        Set the suppressesIncrementalRenderingKey key in webPageConfiguration.preferenceValues.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        Add suppressesIncrementalRendering.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        Assign suppressesIncrementalRendering.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        Copy webPageConfiguration.preferenceValues to m_configurationPreferenceValues.
+
+        (WebKit::WebPageProxy::preferencesStore):
+        If m_configurationPreferenceValues is empty, just return m_preferences->store(). Otherwise,
+        copy the store and apply the configuration preference values.
+
+        (WebKit::WebPageProxy::preferencesDidChange):
+        Call preferencesStore() so we'll get the configuration preference values as well.
+
+        (WebKit::WebPageProxy::creationParameters):
+        Ditto.
+
+        * UIProcess/WebPageProxy.h:
+
 2014-06-11  Antti Koivisto  <antti@apple.com>
 
         Wrap NSURLRequest in bundle API

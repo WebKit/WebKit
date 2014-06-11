@@ -433,6 +433,8 @@ struct WebPageConfiguration {
 
     API::Session* session = nullptr;
     WebPageProxy* relatedPage = nullptr;
+
+    WebPreferencesStore::ValueMap preferenceValues;
 };
 
 class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
@@ -1454,6 +1456,8 @@ private:
 
     uint64_t generateNavigationID();
 
+    WebPreferencesStore preferencesStore() const;
+
     PageClient& m_pageClient;
     std::unique_ptr<API::LoaderClient> m_loaderClient;
     std::unique_ptr<API::PolicyClient> m_policyClient;
@@ -1717,6 +1721,8 @@ private:
     WebCore::ScrollPinningBehavior m_scrollPinningBehavior;
 
     uint64_t m_navigationID;
+
+    WebPreferencesStore::ValueMap m_configurationPreferenceValues;
 };
 
 } // namespace WebKit
