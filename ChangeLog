@@ -1,3 +1,16 @@
+2014-06-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r169877.
+        https://bugs.webkit.org/show_bug.cgi?id=133784
+
+        rollout wrong build fix approach for EFL port (Requested by
+        gyuyoung on #webkit).
+
+        Reverted changeset:
+
+        "Unreviewed, EFL build fix since r169869."
+        http://trac.webkit.org/changeset/169877
+
 2014-06-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL build fix since r169869.
