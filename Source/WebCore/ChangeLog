@@ -1,3 +1,16 @@
+2014-06-12  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] Crash in MediaSourcePrivateAVFObjC::naturalSize()
+        https://bugs.webkit.org/show_bug.cgi?id=133789
+
+        Reviewed by Eric Carlson.
+
+        Add null-check to proctect against being queried for the naturalSize before we have a
+        m_mediaSourcePrivate.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::naturalSize):
+
 2014-06-12  Alberto Garcia  <berto@igalia.com>
 
         [GTK] fails to build with --disable-webgl --disable-accelerated-compositing

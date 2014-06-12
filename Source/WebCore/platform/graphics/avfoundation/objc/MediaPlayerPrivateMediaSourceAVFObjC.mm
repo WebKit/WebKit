@@ -368,6 +368,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setMuted(bool muted)
 
 IntSize MediaPlayerPrivateMediaSourceAVFObjC::naturalSize() const
 {
+    if (!m_mediaSourcePrivate)
+        return IntSize();
+
     return m_mediaSourcePrivate->naturalSize();
 }
 
