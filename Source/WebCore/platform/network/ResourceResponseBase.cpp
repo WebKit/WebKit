@@ -323,9 +323,7 @@ void ResourceResponseBase::addHTTPHeaderField(const AtomicString& name, const St
 
     updateHeaderParsedState(name);
 
-    HTTPHeaderMap::AddResult result = m_httpHeaderFields.add(name, value);
-    if (!result.isNewEntry)
-        result.iterator->value = result.iterator->value + ", " + value;
+    m_httpHeaderFields.add(name, value);
 }
 
 const HTTPHeaderMap& ResourceResponseBase::httpHeaderFields() const

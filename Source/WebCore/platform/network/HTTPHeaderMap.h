@@ -44,7 +44,6 @@ class HTTPHeaderMap {
     typedef HashMap<AtomicString, String, CaseFoldingHash> HashMapType;
 public:
     typedef HashMapType::const_iterator const_iterator;
-    typedef HashMapType::AddResult AddResult;
 
     HTTPHeaderMap();
     ~HTTPHeaderMap();
@@ -60,14 +59,13 @@ public:
 
     String get(const AtomicString& name) const;
 
-    AddResult set(const AtomicString& name, const String& value);
-    AddResult add(const AtomicString& name, const String& value);
+    void set(const AtomicString& name, const String& value);
+    void add(const AtomicString& name, const String& value);
 
     // Alternate accessors that are faster than converting the char* to AtomicString first.
     bool contains(const char*) const;
     String get(const char*) const;
     const_iterator find(const char*) const;
-    AddResult add(const char* name, const String& value);
     bool remove(const char*);
 
     const_iterator begin() const { return m_headers.begin(); }
