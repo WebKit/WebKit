@@ -79,7 +79,6 @@ WebKitWebView
 WebKitLoadEvent
 WebKitPolicyDecisionType
 WebKitSaveMode
-WebKitViewMode
 WebKitInsecureContentEvent
 WebKitSnapshotOptions
 WebKitSnapshotRegion
@@ -142,8 +141,6 @@ webkit_web_view_save_finish
 webkit_web_view_save_to_file
 webkit_web_view_save_to_file_finish
 webkit_web_view_download_uri
-webkit_web_view_set_view_mode
-webkit_web_view_get_view_mode
 webkit_web_view_get_tls_info
 webkit_web_view_get_snapshot
 webkit_web_view_get_snapshot_finish

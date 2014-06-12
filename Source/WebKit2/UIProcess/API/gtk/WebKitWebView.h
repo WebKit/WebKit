@@ -150,19 +150,6 @@ typedef enum {
 } WebKitInsecureContentEvent;
 
 /**
- * WebKitViewMode:
- * @WEBKIT_VIEW_MODE_WEB: The normal view mode to display web contents.
- * @WEBKIT_VIEW_MODE_SOURCE: The source mode to display web source code. Deprecated: 2.6.
- *
- * Enum values to specify the different ways in which a #WebKitWebView
- * can display a web page.
- */
-typedef enum {
-    WEBKIT_VIEW_MODE_WEB,
-    WEBKIT_VIEW_MODE_SOURCE
-} WebKitViewMode;
-
-/**
  * WebKitSnapshotOptions:
  * @WEBKIT_SNAPSHOT_OPTIONS_NONE: Do not include any special options.
  * @WEBKIT_SNAPSHOT_OPTIONS_INCLUDE_SELECTION_HIGHLIGHTING: Whether to include in the
@@ -449,13 +436,6 @@ webkit_web_view_save_to_file_finish                  (WebKitWebView             
 WEBKIT_API WebKitDownload *
 webkit_web_view_download_uri                         (WebKitWebView             *web_view,
                                                       const char                *uri);
-
-WEBKIT_API void
-webkit_web_view_set_view_mode                        (WebKitWebView             *web_view,
-                                                      WebKitViewMode             view_mode);
-
-WEBKIT_API WebKitViewMode
-webkit_web_view_get_view_mode                        (WebKitWebView             *web_view);
 
 WEBKIT_API gboolean
 webkit_web_view_get_tls_info                         (WebKitWebView             *web_view,
