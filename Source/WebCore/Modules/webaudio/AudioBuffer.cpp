@@ -38,6 +38,9 @@
 #include "ExceptionCode.h"
 #include "ExceptionCodePlaceholder.h"
 
+#include <runtime/JSCInlines.h>
+#include <runtime/TypedArrayInlines.h>
+
 namespace WebCore {
 
 PassRefPtr<AudioBuffer> AudioBuffer::create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
