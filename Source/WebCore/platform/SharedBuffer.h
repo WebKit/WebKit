@@ -171,6 +171,7 @@ public:
     void createPurgeableBuffer() const;
 
     void tryReplaceContentsWithPlatformBuffer(SharedBuffer*);
+    bool hasPlatformData() const;
 
 private:
     SharedBuffer();
@@ -187,7 +188,6 @@ private:
 
     void clearPlatformData();
     void maybeTransferPlatformData();
-    bool hasPlatformData() const;
 
     void copyBufferAndClear(char* destination, unsigned bytesToCopy) const;
 

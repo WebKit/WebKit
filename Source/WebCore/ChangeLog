@@ -1,3 +1,17 @@
+2014-06-12  Pratik Solanki  <psolanki@apple.com>
+
+        Avoid creating a CFData when checking if a resource is file backed
+        https://bugs.webkit.org/show_bug.cgi?id=133783
+
+        Reviewed by Andreas Kling.
+
+        Export SharedBuffer::hasPlatformData().
+
+        No new tests because no functional changes.
+
+        * WebCore.exp.in:
+        * platform/SharedBuffer.h:
+
 2014-06-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         SVGGlyphToPathTranslator ASSERTs when encountering a missing glyph in an SVG font
