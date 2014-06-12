@@ -1,3 +1,28 @@
+2014-06-12  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
+
+        Allow enum guards to be generated from the replay json files
+        https://bugs.webkit.org/show_bug.cgi?id=133399
+
+        Reviewed by Csaba Osztrogonác.
+
+        * replay/scripts/CodeGeneratorReplayInputs.py:
+        (Type.__init__):
+        (InputsModel.parse_type_with_framework_name):
+        (Generator.generate_header):
+        (Generator.generate_implementation):
+        * replay/scripts/tests/expected/generate-enum-with-guard.json-TestReplayInputs.cpp: Added.
+        (Test::HandleWheelEvent::HandleWheelEvent):
+        (Test::HandleWheelEvent::~HandleWheelEvent):
+        (JSC::InputTraits<Test::HandleWheelEvent>::type):
+        (JSC::InputTraits<Test::HandleWheelEvent>::encode):
+        (JSC::InputTraits<Test::HandleWheelEvent>::decode):
+        (JSC::EncodingTraits<WebCore::PlatformWheelEventPhase>::encodeValue):
+        (JSC::EncodingTraits<WebCore::PlatformWheelEventPhase>::decodeValue):
+        * replay/scripts/tests/expected/generate-enum-with-guard.json-TestReplayInputs.h: Added.
+        (JSC::InputTraits<Test::HandleWheelEvent>::queue):
+        (Test::HandleWheelEvent::platformEvent):
+        * replay/scripts/tests/generate-enum-with-guard.json: Added.
+
 2014-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r169823.

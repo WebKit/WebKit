@@ -281,7 +281,7 @@ class TypeModes:
 
 
 class Type:
-    def __init__(self, name, mode, framework, header, enclosing_class, values, guard_values_map, underlying_storage, flags):
+    def __init__(self, name, mode, framework, header, enclosing_class, values, guard_values_map, underlying_storage, flags, guard=None):
         self._name = name
         self.mode = mode
         self.framework = framework
@@ -291,6 +291,7 @@ class Type:
         self.guard_values_map = guard_values_map
         self.underlying_storage = underlying_storage
         self._flags = flags
+        self.guard = guard
 
     def __eq__(self, other):
         return self.type_name() == other.type_name() and self.mode == other.mode
@@ -449,7 +450,8 @@ class InputsModel:
         guarded_enum_values = json.get('guarded_values', {})
         type_storage = json.get('storage')
         type_flags = json.get('flags', [])
-        _type = Type(type_name, type_mode, framework, header, enclosing_class, enum_values, guarded_enum_values, type_storage, type_flags)
+        guard = json.get('guard', None)
+        _type = Type(type_name, type_mode, framework, header, enclosing_class, enum_values, guarded_enum_values, type_storage, type_flags, guard)
         if _type.is_enum() or _type.is_enum_class():
             check_for_required_properties(['values'], json, 'enum')
             if not isinstance(json['values'], list) or len(_type.values) == 0:
@@ -597,7 +599,7 @@ class Generator:
             'inputForwardDeclarations': "\n".join([wrap_with_guard("class %s;", _input.guard) % _input.name for _input in self._model.inputs]),
             'inputClassDeclarations': "\n\n".join([self.generate_class_declaration(_input) for _input in self._model.inputs]),
             'inputTraitDeclarations': "\n\n".join([self.generate_input_trait_declaration(_input) for _input in self._model.inputs]),
-            'enumTraitDeclarations': "\n\n".join([self.generate_enum_trait_declaration(_type) for _type in self._model.enum_types()]),
+            'enumTraitDeclarations': "\n\n".join([wrap_with_guard(self.generate_enum_trait_declaration(_type), _type.guard) for _type in self._model.enum_types()]),
             'forEachMacro': self.generate_for_each_macro(),
         }
 
@@ -613,7 +615,7 @@ class Generator:
             'includes': self.generate_includes(defaults=self.setting('implIncludes'), includes_for_types=True),
             'inputClassImplementations': "\n\n".join([self.generate_class_implementation(_input) for _input in self._model.inputs]),
             'inputTraitImplementations': "\n\n".join([self.generate_input_trait_implementation(_input) for _input in self._model.inputs]),
-            'enumTraitImplementations': "\n\n".join([self.generate_enum_trait_implementation(_type) for _type in self._model.enum_types()]),
+            'enumTraitImplementations': "\n\n".join([wrap_with_guard(self.generate_enum_trait_implementation(_type), _type.guard) for _type in self._model.enum_types()]),
         }
 
         return Template(Templates.ImplementationSkeleton).substitute(template_arguments)

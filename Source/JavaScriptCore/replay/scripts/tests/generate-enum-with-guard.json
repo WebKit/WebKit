@@ -1,0 +1,31 @@
+{
+    "types": {
+        "Global": [
+            { "name": "uint64_t", "mode": "SCALAR" }
+        ],
+        "WebCore": [
+            {
+                "name": "PlatformWheelEvent", "mode": "OWNED",
+                "header": "platform/PlatformWheelEvent.h"
+            },
+            {
+                "name": "PlatformWheelEventPhase", "mode": "SCALAR", "storage": "uint64_t",
+                "flags": ["ENUM"],
+                "guard": "ENABLE(DUMMY_FEATURE)",
+                "values": ["PlatformWheelEventPhaseNone"],
+                "header": "platform/PlatformWheelEvent.h"
+            }
+        ]
+    },
+
+    "inputs": [
+        {
+            "name": "HandleWheelEvent",
+            "description": "",
+            "queue": "EVENT_LOOP",
+            "members": [
+                { "name": "platformEvent", "type": "PlatformWheelEvent" }
+            ]
+        }
+    ]
+}
