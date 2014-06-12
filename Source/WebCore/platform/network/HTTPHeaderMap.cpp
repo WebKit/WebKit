@@ -76,7 +76,7 @@ void HTTPHeaderMap::add(const AtomicString& name, const String& value)
 {
     auto result = m_headers.add(name, value);
     if (!result.isNewEntry)
-        result.iterator->value = result.iterator->value + ',' + value;
+        result.iterator->value = result.iterator->value + ", " + value;
 }
 
 // Adapter that allows the HashMap to take C strings as keys.

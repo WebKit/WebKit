@@ -1,5 +1,12 @@
 2014-06-12  Anders Carlsson  <andersca@apple.com>
 
+        Add a space after the comma.
+
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::add):
+
+2014-06-12  Anders Carlsson  <andersca@apple.com>
+
         Move header value merging to HTTPHeaderMap
         https://bugs.webkit.org/show_bug.cgi?id=133815
 
