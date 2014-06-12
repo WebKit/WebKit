@@ -197,6 +197,9 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScrollTimerFired(T
 
 FrameView* AsyncScrollingCoordinator::frameViewForScrollingNode(ScrollingNodeID scrollingNodeID) const
 {
+    if (!m_scrollingStateTree->rootStateNode())
+        return nullptr;
+    
     if (scrollingNodeID == m_scrollingStateTree->rootStateNode()->scrollingNodeID())
         return m_page->mainFrame().view();
 

@@ -1,3 +1,26 @@
+2014-06-12  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Fix crash on back/foward swipe
+        https://bugs.webkit.org/show_bug.cgi?id=133826
+        <rdar://problem/17032752>
+
+        Reviewed by Tim Horton.
+
+        AsyncScrollingCoordinator::frameViewForScrollingNode() would crash with a null root
+        state node, because HistoryController::restoreScrollPositionAndViewState() tried
+        to restore scroll position (via restoreViewState()) before hooking up the scrolling
+        coordinator.
+        
+        Fix by doing the scrollingCoordinator->frameViewRootLayerDidChange() before
+        calling restoreViewState().
+        
+        Also add a defensive null-check on the root state node in updateScrollPositionAfterAsyncScrollTimerFired().
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::restoreScrollPositionAndViewState):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewForScrollingNode):
+
 2014-06-12  Anders Carlsson  <andersca@apple.com>
 
         Add a space after the comma.
