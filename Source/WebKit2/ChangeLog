@@ -1,3 +1,13 @@
+2014-06-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Fix build break on EFL port since r169869
+        https://bugs.webkit.org/show_bug.cgi?id=133785
+
+        Unreviewed, fix a build break on EFL port.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp: Use defined(TARGET_OS_IPHONE).
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h: ditto.
+
 2014-06-11  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Give WebKitTestRunner a viewport configuration with initial scale=1 for testing
