@@ -1,3 +1,17 @@
+2014-06-11  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: RenderBox's content clipping should clip on device pixel boundary.
+        https://bugs.webkit.org/show_bug.cgi?id=133767
+        <rdar://problem/17272365>
+
+        Reviewed by Simon Fraser.
+
+        Push RenderBox's content clipping to device pixel boundaries. Integral snapping makes
+        content cut off prematurely.
+
+        * fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden-expected.html: Added.
+        * fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html: Added.
+
 2014-06-11  David Kilzer  <ddkilzer@apple.com>
 
         WindowFeatures arguments shoud ignore invalid characters in values
