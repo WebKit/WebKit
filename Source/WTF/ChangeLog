@@ -1,3 +1,12 @@
+2014-06-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL][GTK] Ultimate fix not to have build failures
+        in the future because of "#if TARGET_OS_IPHONE" guards.
+
+        Unreviewed buildfix.
+
+        * wtf/Platform.h: Define TARGET_OS_IPHONE to 0 on EFL and GTK.
+
 2014-06-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Turning on DUMP_PROPERTYMAP_STATS causes a build failure

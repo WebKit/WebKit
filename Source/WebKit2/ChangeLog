@@ -1,3 +1,15 @@
+2014-06-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL][GTK] Ultimate fix not to have build failures
+        in the future because of "#if TARGET_OS_IPHONE" guards.
+
+        Unreviewed buildfix.
+
+        Revert the previous wrong fix attempt r169879.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+
 2014-06-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Fix build break on EFL port since r169869
