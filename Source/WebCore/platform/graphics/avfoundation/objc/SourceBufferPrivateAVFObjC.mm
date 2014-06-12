@@ -719,6 +719,7 @@ void SourceBufferPrivateAVFObjC::destroyRenderers()
             m_mediaSource->player()->removeDisplayLayer(m_displayLayer.get());
         [m_displayLayer flush];
         [m_displayLayer stopRequestingMediaData];
+        [m_errorListener stopObservingLayer:m_displayLayer.get()];
         m_displayLayer = nullptr;
     }
 
@@ -728,6 +729,7 @@ void SourceBufferPrivateAVFObjC::destroyRenderers()
             m_mediaSource->player()->removeAudioRenderer(renderer);
         [renderer flush];
         [renderer stopRequestingMediaData];
+        [m_errorListener stopObservingLayer:renderer];
     }
 
     m_audioRenderers.clear();

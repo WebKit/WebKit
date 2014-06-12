@@ -1,3 +1,16 @@
+2014-06-12  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] Stop observing the sample buffer renderers when destroying them.
+        https://bugs.webkit.org/show_bug.cgi?id=133831
+
+        Reviewed by Beth Dakin.
+
+        Release our retain on our AVSampleBufferDisplayLayer and AVSampleBufferAudioRenderer by stopping
+        our observation of its properties when removing them from the SourceBufferPrivateAVFObjC object.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::destroyRenderers):
+
 2014-06-12  Brent Fulgham  <bfulgham@apple.com>
 
         Correct file locations after r169914. These should have been
