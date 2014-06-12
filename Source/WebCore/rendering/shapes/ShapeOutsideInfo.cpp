@@ -75,7 +75,7 @@ FloatSize ShapeOutsideInfo::shapeToRendererSize(const FloatSize& size) const
 static inline CSSBoxType referenceBox(const ShapeValue& shapeValue)
 {
     if (shapeValue.cssBox() == BoxMissing) {
-        if (shapeValue.type() == ShapeValue::Image)
+        if (shapeValue.type() == ShapeValue::Type::Image)
             return ContentBox;
         return MarginBox;
     }
@@ -175,15 +175,15 @@ const Shape& ShapeOutsideInfo::computedShape() const
     const ShapeValue& shapeValue = *style.shapeOutside();
 
     switch (shapeValue.type()) {
-    case ShapeValue::Shape:
+    case ShapeValue::Type::Shape:
         ASSERT(shapeValue.shape());
         m_shape = Shape::createShape(shapeValue.shape(), m_referenceBoxLogicalSize, writingMode, margin);
         break;
-    case ShapeValue::Image:
+    case ShapeValue::Type::Image:
         ASSERT(shapeValue.isImageValid());
         m_shape = createShapeForImage(shapeValue.image(), shapeImageThreshold, writingMode, margin);
         break;
-    case ShapeValue::Box: {
+    case ShapeValue::Type::Box: {
         RoundedRect shapeRect = computeRoundedRectForBoxShape(referenceBox(shapeValue), m_renderer);
         if (!containingBlockStyle.isHorizontalWritingMode())
             shapeRect = shapeRect.transposedRect();
@@ -294,9 +294,9 @@ bool ShapeOutsideInfo::isEnabledFor(const RenderBox& box)
         return false;
 
     switch (shapeValue->type()) {
-    case ShapeValue::Shape: return shapeValue->shape();
-    case ShapeValue::Image: return shapeValue->isImageValid() && checkShapeImageOrigin(box.document(), *(shapeValue->image()));
-    case ShapeValue::Box: return true;
+    case ShapeValue::Type::Shape: return shapeValue->shape();
+    case ShapeValue::Type::Image: return shapeValue->isImageValid() && checkShapeImageOrigin(box.document(), *(shapeValue->image()));
+    case ShapeValue::Type::Box: return true;
     }
 
     ASSERT_NOT_REACHED();

@@ -2790,6 +2790,9 @@
     <ClCompile Include="..\rendering\style\ShadowData.cpp">
       <Filter>rendering\style</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\style\ShapeValue.cpp">
+      <Filter>rendering\style</Filter>
+    </ClCompile>
     <ClCompile Include="..\rendering\style\StyleAllInOne.cpp">
       <Filter>rendering\style</Filter>
     </ClCompile>

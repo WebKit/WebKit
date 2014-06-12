@@ -791,6 +791,7 @@
 		1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AB1AE780C051FDE00139F4F /* zoomInCursor.png */; };
 		1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AB1AE790C051FDE00139F4F /* zoomOutCursor.png */; };
 		1AB33DA512551E320024457A /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AB33DA412551E320024457A /* IOKit.framework */; };
+		1AB5EBD0194A1D170059AC70 /* ShapeValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB5EBCF194A1D170059AC70 /* ShapeValue.cpp */; };
 		1AB7FC680A8B92EC00D9D37B /* XPathEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC470A8B92EC00D9D37B /* XPathEvaluator.cpp */; };
 		1AB7FC690A8B92EC00D9D37B /* XPathEvaluator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC480A8B92EC00D9D37B /* XPathEvaluator.h */; };
 		1AB7FC6B0A8B92EC00D9D37B /* XPathExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC4A0A8B92EC00D9D37B /* XPathExpression.cpp */; };
@@ -7717,6 +7718,7 @@
 		1AB1AE780C051FDE00139F4F /* zoomInCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoomInCursor.png; sourceTree = "<group>"; };
 		1AB1AE790C051FDE00139F4F /* zoomOutCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoomOutCursor.png; sourceTree = "<group>"; };
 		1AB33DA412551E320024457A /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		1AB5EBCF194A1D170059AC70 /* ShapeValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShapeValue.cpp; path = style/ShapeValue.cpp; sourceTree = "<group>"; };
 		1AB7FC470A8B92EC00D9D37B /* XPathEvaluator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathEvaluator.cpp; sourceTree = "<group>"; };
 		1AB7FC480A8B92EC00D9D37B /* XPathEvaluator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathEvaluator.h; sourceTree = "<group>"; };
 		1AB7FC490A8B92EC00D9D37B /* XPathEvaluator.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XPathEvaluator.idl; sourceTree = "<group>"; };
@@ -20868,6 +20870,7 @@
 				BC5EB6670E81CB7100B25965 /* RenderStyleConstants.h */,
 				BC5EB8C10E82031B00B25965 /* ShadowData.cpp */,
 				BC5EB8C20E82031B00B25965 /* ShadowData.h */,
+				1AB5EBCF194A1D170059AC70 /* ShapeValue.cpp */,
 				FD1AF14E1656F12100C6D4F7 /* ShapeValue.h */,
 				BC5EB6A00E81DC4F00B25965 /* StyleBackgroundData.cpp */,
 				BC5EB6A10E81DC4F00B25965 /* StyleBackgroundData.h */,
@@ -29702,6 +29705,7 @@
 				B10B6981140C174000BC1C26 /* WebVTTTokenizer.cpp in Sources */,
 				CD8203111395ACE700F956C6 /* WebWindowAnimation.mm in Sources */,
 				F55B3DDF1251F12D003EF269 /* WeekInputType.cpp in Sources */,
+				1AB5EBD0194A1D170059AC70 /* ShapeValue.cpp in Sources */,
 				85031B500A44EFC700F992E0 /* WheelEvent.cpp in Sources */,
 				93EC44A1188F4BB800661DF1 /* WheelEventDeltaTracker.cpp in Sources */,
 				9380F47309A11AB4001FDB34 /* Widget.cpp in Sources */,

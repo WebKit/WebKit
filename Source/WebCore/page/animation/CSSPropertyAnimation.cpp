@@ -145,7 +145,7 @@ static inline PassRefPtr<ShapeValue> blendFunc(const AnimationBase*, ShapeValue*
     if (!from || !to)
         return to;
 
-    if (from->type() != ShapeValue::Shape || to->type() != ShapeValue::Shape)
+    if (from->type() != ShapeValue::Type::Shape || to->type() != ShapeValue::Type::Shape)
         return to;
 
     if (from->cssBox() != to->cssBox())

@@ -1,3 +1,35 @@
+2014-06-12  Anders Carlsson  <andersca@apple.com>
+
+        Add ShapeValue.cpp and move ShapeValue::isImageValid() there
+        https://bugs.webkit.org/show_bug.cgi?id=133809
+
+        Reviewed by Antti Koivisto.
+
+        This gets rid of CachedImage.h (and ResourceRequest and friends) from RenderStyle.h.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::shapePropertyValue):
+        * css/CSSCrossfadeValue.cpp:
+        * css/CSSFilterImageValue.cpp:
+        * css/StyleResolver.h:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        * rendering/ShapeValue.cpp: Added.
+        (WebCore::ShapeValue::isImageValid):
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::referenceBox):
+        (WebCore::ShapeOutsideInfo::computedShape):
+        (WebCore::ShapeOutsideInfo::isEnabledFor):
+        * rendering/style/ShapeValue.h:
+        (WebCore::ShapeValue::type):
+        (WebCore::ShapeValue::setImage):
+        (WebCore::ShapeValue::ShapeValue):
+        (WebCore::ShapeValue::isImageValid): Deleted.
+
 2014-06-12  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Make <select> element's decoration subpixel aware.

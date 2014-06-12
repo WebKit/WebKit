@@ -32,7 +32,6 @@
 
 #include "BasicShapes.h"
 #include "CSSValueKeywords.h"
-#include "CachedImage.h"
 #include "StyleImage.h"
 #include <wtf/PassRefPtr.h>
 
@@ -40,7 +39,7 @@ namespace WebCore {
 
 class ShapeValue : public RefCounted<ShapeValue> {
 public:
-    enum ShapeValueType {
+    enum class Type {
         // The None value is defined by a null ShapeValue*
         Shape,
         Box,
@@ -62,24 +61,17 @@ public:
         return adoptRef(new ShapeValue(image));
     }
 
-    ShapeValueType type() const { return m_type; }
+    Type type() const { return m_type; }
     BasicShape* shape() const { return m_shape.get(); }
     CSSBoxType cssBox() const { return m_cssBox; }
 
     StyleImage* image() const { return m_image.get(); }
 
-    bool isImageValid() const
-    {
-        if (!image())
-            return false;
-        if (image()->isCachedImage() || image()->isCachedImageSet())
-            return image()->cachedImage() && image()->cachedImage()->hasImage();
-        return image()->isGeneratedImage();
-    }
+    bool isImageValid() const;
 
     void setImage(PassRefPtr<StyleImage> image)
     {
-        ASSERT(type() == Image);
+        ASSERT(type() == Type::Image);
         if (m_image != image)
             m_image = image;
     }
@@ -88,29 +80,30 @@ public:
 
 private:
     ShapeValue(PassRefPtr<BasicShape> shape, CSSBoxType cssBox)
-        : m_type(Shape)
+        : m_type(Type::Shape)
         , m_shape(shape)
         , m_cssBox(cssBox)
     {
     }
-    ShapeValue(ShapeValueType type)
+    ShapeValue(Type type)
         : m_type(type)
         , m_cssBox(BoxMissing)
     {
     }
     ShapeValue(PassRefPtr<StyleImage> image)
-        : m_type(Image)
+        : m_type(Type::Image)
         , m_image(image)
         , m_cssBox(BoxMissing)
     {
     }
+
     ShapeValue(CSSBoxType cssBox)
-        : m_type(Box)
+        : m_type(Type::Box)
         , m_cssBox(cssBox)
     {
     }
 
-    ShapeValueType m_type;
+    Type m_type;
     RefPtr<BasicShape> m_shape;
     RefPtr<StyleImage> m_image;
     CSSBoxType m_cssBox;

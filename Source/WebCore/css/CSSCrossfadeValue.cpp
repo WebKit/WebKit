@@ -29,6 +29,7 @@
 
 #include "AnimationUtilities.h"
 #include "CSSImageValue.h"
+#include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "CrossfadeGeneratedImage.h"
 #include "ImageBuffer.h"
