@@ -1,3 +1,18 @@
+2014-06-11  Pratik Solanki  <psolanki@apple.com>
+
+        Keep CFDataRefs in SharedBuffer instead of merging them
+        https://bugs.webkit.org/show_bug.cgi?id=133775
+
+        Reviewed by Alexey Proskuryakov.
+
+        Instead of merging the CFDataRefs into one buffer, save them in as CFDataRefs in
+        SharedBuffer. They will get merged when code calls buffer() later on.
+
+        No new tests because no functional changes.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::handleDataArray):
+
 2014-06-11  Alexey Proskuryakov  <ap@apple.com>
 
         editing/selection/selection-in-iframe-removed-crash.html or selection-invalid-offset.html crashes intermittently

@@ -640,18 +640,11 @@ void ResourceHandle::handleDataArray(CFArrayRef dataArray)
         return;
     }
 
-    CFIndex totalSize = 0;
-    CFIndex index;
-    for (index = 0; index < count; index++)
-        totalSize += CFDataGetLength(static_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, index)));
+    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create();
+    for (CFIndex index = 0; index < count; index++)
+        sharedBuffer->append(static_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, index)));
 
-    RetainPtr<CFMutableDataRef> mergedData = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, totalSize));
-    for (index = 0; index < count; index++) {
-        CFDataRef data = static_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, index));
-        CFDataAppendBytes(mergedData.get(), CFDataGetBytePtr(data), CFDataGetLength(data));
-    }
-
-    client()->didReceiveBuffer(this, SharedBuffer::wrapCFData(mergedData.get()), -1);
+    client()->didReceiveBuffer(this, sharedBuffer, -1);
 }
 #endif
 
