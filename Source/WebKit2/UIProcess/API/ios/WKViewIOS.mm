@@ -131,7 +131,7 @@ using namespace WebKit;
 
     _allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures;
     
-    WebPageProxy *webPageProxy = [_contentView page];
+    WebPageProxy* webPageProxy = [_contentView page];
     
     if (allowsBackForwardNavigationGestures) {
         if (!_gestureController) {
@@ -243,6 +243,13 @@ using namespace WebKit;
 - (void)_frameOrBoundsChanged
 {
     CGRect bounds = [self bounds];
+
+    WebPageProxy* webPageProxy = [_contentView page];
+    WebCore::FloatSize size(bounds.size);
+    webPageProxy->setViewportConfigurationMinimumLayoutSize(size);
+    webPageProxy->setViewportConfigurationMinimumLayoutSizeForMinimalUI(size);
+    webPageProxy->setMaximumUnobscuredSize(size);
+
     [_scrollView setFrame:bounds];
     [_contentView setMinimumSize:bounds.size];
     [self _updateVisibleContentRects];

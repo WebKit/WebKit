@@ -93,6 +93,10 @@ typedef unsigned WKRenderingSuppressionToken;
 WK_EXPORT WKRenderingSuppressionToken WKBundlePageExtendIncrementalRenderingSuppression(WKBundlePageRef);
 WK_EXPORT void WKBundlePageStopExtendingIncrementalRenderingSuppression(WKBundlePageRef, WKRenderingSuppressionToken);
 
+#if TARGET_OS_IPHONE
+WK_EXPORT void WKBundlePageSetUseTestingViewportConfiguration(WKBundlePageRef, bool);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

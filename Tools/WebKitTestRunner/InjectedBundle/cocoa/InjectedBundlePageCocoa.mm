@@ -28,6 +28,7 @@
 
 #import "CrashReporterInfo.h"
 #import <WebKit/WKBundleFrame.h>
+#import <WebKit/WKBundlePagePrivate.h>
 #import <WebKit/WKURLCF.h>
 
 namespace WTR {
@@ -41,6 +42,10 @@ void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRe
 
     WKRetainPtr<WKURLRef> mainFrameURL = adoptWK(WKBundleFrameCopyProvisionalURL(frame));
     setCrashReportApplicationSpecificInformationToURL(mainFrameURL.get());
+
+#if PLATFORM(IOS)
+    WKBundlePageSetUseTestingViewportConfiguration(page(), true);
+#endif
 }
 
 } // namespace WTR

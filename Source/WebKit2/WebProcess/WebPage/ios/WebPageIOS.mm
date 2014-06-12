@@ -2189,6 +2189,11 @@ void WebPage::synchronizeDynamicViewportUpdate(double& newTargetScale, FloatPoin
 
 void WebPage::resetViewportDefaultConfiguration(WebFrame* frame)
 {
+    if (m_useTestingViewportConfiguration) {
+        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::testingParameters());
+        return;
+    }
+
     if (!frame) {
         m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::webpageParameters());
         return;

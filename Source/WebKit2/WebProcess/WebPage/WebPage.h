@@ -459,6 +459,9 @@ public:
     void didReceiveMobileDocType(bool);
     void restorePageState(double scale, bool userHasChangedPageScaleFactor, const WebCore::IntPoint& exposedOrigin);
 
+    void setUseTestingViewportConfiguration(bool useTestingViewport) { m_useTestingViewportConfiguration = useTestingViewport; }
+    bool isUsingTestingViewportConfiguration() const { return m_useTestingViewportConfiguration; }
+
     double minimumPageScaleFactor() const;
     double maximumPageScaleFactor() const;
     bool allowsUserScaling() const;
@@ -1220,6 +1223,7 @@ private:
     bool m_userHasChangedPageScaleFactor;
     bool m_userIsInteracting;
     bool m_hasPendingBlurNotification;
+    bool m_useTestingViewportConfiguration;
     WebCore::FloatSize m_screenSize;
     WebCore::FloatSize m_availableScreenSize;
     RefPtr<WebCore::Range> m_currentBlockSelection;

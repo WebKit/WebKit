@@ -96,6 +96,7 @@ public:
     static Parameters textDocumentParameters();
     static Parameters imageDocumentParameters();
     static Parameters xhtmlMobileParameters();
+    static Parameters testingParameters();
     
 #ifndef NDEBUG
     WTF::CString description() const;

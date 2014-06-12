@@ -218,6 +218,16 @@ ViewportConfiguration::Parameters ViewportConfiguration::xhtmlMobileParameters()
     return parameters;
 }
 
+ViewportConfiguration::Parameters ViewportConfiguration::testingParameters()
+{
+    Parameters parameters;
+    parameters.initialScale = 1;
+    parameters.initialScaleIsSet = true;
+    parameters.minimumScale = 1;
+    parameters.maximumScale = 5;
+    return parameters;
+}
+
 static inline bool viewportArgumentValueIsValid(float value)
 {
     return value > 0;

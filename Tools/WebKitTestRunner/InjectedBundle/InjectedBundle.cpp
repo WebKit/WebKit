@@ -157,7 +157,9 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
 
         beginTesting(messageBodyDictionary);
         return;
-    } else if (WKStringIsEqualToUTF8CString(messageName, "Reset")) {
+    }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "Reset")) {
         ASSERT(messageBody);
         ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
         WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
@@ -178,22 +180,27 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
 
         return;
     }
+
     if (WKStringIsEqualToUTF8CString(messageName, "CallAddChromeInputFieldCallback")) {
         m_testRunner->callAddChromeInputFieldCallback();
         return;
     }
+
     if (WKStringIsEqualToUTF8CString(messageName, "CallRemoveChromeInputFieldCallback")) {
         m_testRunner->callRemoveChromeInputFieldCallback();
         return;
     }
+
     if (WKStringIsEqualToUTF8CString(messageName, "CallFocusWebViewCallback")) {
         m_testRunner->callFocusWebViewCallback();
         return;
     }
+
     if (WKStringIsEqualToUTF8CString(messageName, "CallSetBackingScaleFactorCallback")) {
         m_testRunner->callSetBackingScaleFactorCallback();
         return;
     }   
+
     if (WKStringIsEqualToUTF8CString(messageName, "WorkQueueProcessedCallback")) {
         if (!topLoadingFrame() && !m_testRunner->waitToDump())
             page()->dump();
