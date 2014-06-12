@@ -1,3 +1,9 @@
+2014-06-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] One more URTBF after r169823 to make ARM64 build happy too.
+
+        * runtime/JSMap.cpp:
+
 2014-06-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Inline caching should try to flatten uncacheable dictionaries

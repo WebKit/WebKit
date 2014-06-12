@@ -29,6 +29,7 @@
 #include "JSCJSValueInlines.h"
 #include "MapData.h"
 #include "SlotVisitorInlines.h"
+#include "StructureInlines.h"
 
 namespace JSC {
     
