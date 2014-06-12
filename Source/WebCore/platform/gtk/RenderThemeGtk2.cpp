@@ -365,8 +365,10 @@ int RenderThemeGtk::popupInternalPaddingBottom(RenderStyle* style) const
     return bottom;
 }
 
-bool RenderThemeGtk::paintMenuList(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeGtk::paintMenuList(const RenderObject& object, const PaintInfo& info, const FloatRect& r)
 {
+    // FIXME: adopt subpixel themes.
+    IntRect rect = IntRect(r);   
     if (paintButton(object, info, rect))
         return true;
 

@@ -278,6 +278,7 @@ bool RenderTheme::paint(const RenderObject& o, ControlStates* controlStates, con
 
     ControlPart part = o.style().appearance();
     IntRect integralSnappedRect = pixelSnappedIntRect(r);
+    FloatRect devicePixelSnappedRect = pixelSnappedForPainting(r, o.document().deviceScaleFactor());
 
 #if USE(NEW_THEME)
     switch (part) {
@@ -314,7 +315,7 @@ bool RenderTheme::paint(const RenderObject& o, ControlStates* controlStates, con
         return paintInnerSpinButton(o, paintInfo, integralSnappedRect);
 #endif
     case MenulistPart:
-        return paintMenuList(o, paintInfo, integralSnappedRect);
+        return paintMenuList(o, paintInfo, devicePixelSnappedRect);
 #if ENABLE(METER_ELEMENT)
     case MeterPart:
     case RelevancyLevelIndicatorPart:

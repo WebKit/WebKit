@@ -243,7 +243,7 @@ void RenderThemeGtk::adjustMenuListButtonStyle(StyleResolver* styleResolver, Ren
 
 bool RenderThemeGtk::paintMenuListButtonDecorations(const RenderObject& object, const PaintInfo& info, const FloatRect& rect)
 {
-    return paintMenuList(object, info, IntRect(rect));
+    return paintMenuList(object, info, rect);
 }
 
 bool RenderThemeGtk::paintTextArea(const RenderObject& o, const PaintInfo& i, const FloatRect& r)

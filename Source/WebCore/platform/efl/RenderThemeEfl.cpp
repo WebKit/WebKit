@@ -842,9 +842,9 @@ void RenderThemeEfl::adjustMenuListStyle(StyleResolver* styleResolver, RenderSty
     style->setLineHeight(RenderStyle::initialLineHeight());
 }
 
-bool RenderThemeEfl::paintMenuList(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintMenuList(const RenderObject& object, const PaintInfo& info, const FloatRect& rect)
 {
-    return paintThemePart(object, ComboBox, info, rect);
+    return paintThemePart(object, ComboBox, info, IntRect(rect));
 }
 
 void RenderThemeEfl::adjustMenuListButtonStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
@@ -865,7 +865,7 @@ void RenderThemeEfl::adjustMenuListButtonStyle(StyleResolver* styleResolver, Ren
 
 bool RenderThemeEfl::paintMenuListButtonDecorations(const RenderObject& object, const PaintInfo& info, const FloatRect& rect)
 {
-    return paintMenuList(object, info, IntRect(rect));
+    return paintMenuList(object, info, rect);
 }
 
 void RenderThemeEfl::adjustTextFieldStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const

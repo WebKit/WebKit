@@ -1,3 +1,31 @@
+2014-06-12  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make <select> element's decoration subpixel aware.
+        https://bugs.webkit.org/show_bug.cgi?id=133781
+        <rdar://problem/17272083>
+
+        Reviewed by Simon Fraser.
+
+        Enable <select> decoration painting on subpixel positions.
+        The theme size is still integral, but its position is snapped to device pixels.
+        Theme's label, the InlineTextBox is already subpixel position aware.
+        webkit.org/b/132005 tracks the rest of the themes.
+
+        Not testable.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::paintMenuList):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::inflateRect):
+        (WebCore::RenderThemeMac::adjustRepaintRect):
+        (WebCore::RenderThemeMac::paintMenuList):
+        (WebCore::RenderThemeMac::progressBarRectForBounds):
+        (WebCore::RenderThemeMac::setPopupButtonCellState):
+        (WebCore::RenderThemeMac::inflateRect): Deleted.
+
 2014-06-12  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] Crash in MediaSourcePrivateAVFObjC::naturalSize()

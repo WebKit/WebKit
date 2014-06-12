@@ -130,7 +130,7 @@ protected:
     virtual bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     virtual void adjustTextAreaStyle(StyleResolver*, RenderStyle*, Element*) const override;
 
-    virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const override;
 
     virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
@@ -173,8 +173,6 @@ protected:
 private:
     virtual String fileListNameForWidth(const FileList*, const Font&, int width, bool multipleFilesAllowed) const override;
 
-    IntRect inflateRect(const IntRect&, const IntSize&, const int* margins, float zoomLevel = 1.0f) const;
-
     FloatRect convertToPaintingRect(const RenderObject& inputRenderer, const RenderObject& partRenderer, const FloatRect& inputRect, const IntRect&) const;
 
     // Get the control size based off the font. Used by some of the controls (like buttons).
@@ -194,7 +192,7 @@ private:
 
     // Helpers for adjusting appearance and for painting
 
-    void setPopupButtonCellState(const RenderObject&, const IntRect&);
+    void setPopupButtonCellState(const RenderObject&, const IntSize&);
     const IntSize* popupButtonSizes() const;
     const int* popupButtonMargins() const;
     const int* popupButtonPadding(NSControlSize) const;

@@ -299,7 +299,7 @@ protected:
     virtual bool paintTextAreaDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
 
     virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
+    virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
     virtual bool paintMenuListDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
     virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;

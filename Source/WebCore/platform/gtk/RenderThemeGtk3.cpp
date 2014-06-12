@@ -464,8 +464,11 @@ int RenderThemeGtk::popupInternalPaddingBottom(RenderStyle* style) const
     return borderWidth.bottom + focusWidth;
 }
 
-bool RenderThemeGtk::paintMenuList(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeGtk::paintMenuList(const RenderObject& renderObject, const PaintInfo& paintInfo, const FloatRect& r)
 {
+    // FIXME: adopt subpixel themes.
+    IntRect rect = IntRect(r);   
+
     cairo_t* cairoContext = paintInfo.context->platformContext()->cr();
     GtkTextDirection direction = static_cast<GtkTextDirection>(gtkTextDirection(renderObject.style().direction()));
 
