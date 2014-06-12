@@ -1,3 +1,25 @@
+2014-06-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Convert TileController and TileGrid from ObjC to C++
+        https://bugs.webkit.org/show_bug.cgi?id=133819
+        <rdar://problem/17291841>
+
+        Reviewed by Tim Horton.
+
+        Convert TileGrid.mm and TileController.mm into C++ implementations. This required creating a 'frameForLayer'
+        wrapper to call the 'frame' method of the CALayer object.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/ca/mac/TileController.cpp: Copied from platform/graphics/ca/mac/TileController.mm.
+        (WebCore::TileController::blankPixelCountForTiles):
+        * platform/graphics/ca/mac/TileController.mm: Removed.
+        * platform/graphics/ca/mac/TileGrid.cpp: Copied from platform/graphics/ca/mac/TileGrid.mm.
+        * platform/graphics/ca/mac/TileGrid.h:
+        * platform/graphics/ca/mac/TileGrid.mm: Removed.
+        * platform/graphics/mac/WebLayer.h:
+        * platform/graphics/mac/WebLayer.mm:
+        (WebCore::frameForLayer): Wrapper function to hide ObjC call from C++ compilation unit.
+
 2014-06-12  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Fix crash on back/foward swipe

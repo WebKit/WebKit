@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "TileController.h"
+#include "config.h"
+#include "TileController.h"
 
-#import "IntRect.h"
-#import "PlatformCALayer.h"
-#import "Region.h"
-#import "TileCoverageMap.h"
-#import "TileGrid.h"
-#import "WebLayer.h"
-#import "LayerPool.h"
-#import <wtf/MainThread.h>
-#import <utility>
+#include "IntRect.h"
+#include "LayerPool.h"
+#include "PlatformCALayer.h"
+#include "Region.h"
+#include "TileCoverageMap.h"
+#include "TileGrid.h"
+#include "WebLayer.h"
+#include <utility>
+#include <wtf/MainThread.h>
 
 #if PLATFORM(IOS)
-#import "TileControllerMemoryHandlerIOS.h"
+#include "TileControllerMemoryHandlerIOS.h"
 #endif
 
 namespace WebCore {
@@ -383,7 +383,7 @@ unsigned TileController::blankPixelCountForTiles(const PlatformLayerList& tiles,
     for (PlatformLayerList::const_iterator it = tiles.begin(), end = tiles.end(); it != end; ++it) {
         const PlatformLayer* tileLayer = it->get();
 
-        FloatRect visiblePart(CGRectOffset([tileLayer frame], tileTranslation.x(), tileTranslation.y()));
+        FloatRect visiblePart(CGRectOffset(frameForLayer(tileLayer), tileTranslation.x(), tileTranslation.y()));
         visiblePart.intersect(visibleRect);
 
         if (!visiblePart.isEmpty())

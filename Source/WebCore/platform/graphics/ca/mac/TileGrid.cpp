@@ -23,18 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "TileGrid.h"
+#include "config.h"
+#include "TileGrid.h"
 
-#import "GraphicsContext.h"
-#import "LayerPool.h"
-#import "PlatformCALayer.h"
-#import "TileController.h"
-#import "WebLayer.h"
-#import <wtf/MainThread.h>
+#include "GraphicsContext.h"
+#include "LayerPool.h"
+#include "PlatformCALayer.h"
+#include "TileController.h"
+#include "WebLayer.h"
+#include <wtf/MainThread.h>
 
 #if PLATFORM(IOS)
-#import "TileControllerMemoryHandlerIOS.h"
+#include "TileControllerMemoryHandlerIOS.h"
 #endif
 
 namespace WebCore {
@@ -256,7 +256,7 @@ unsigned TileGrid::blankPixelCount() const
             tiles.append(layer);
     }
 
-    return TileController::blankPixelCountForTiles(tiles, m_controller.visibleRect(), IntPoint(0,0));
+    return TileController::blankPixelCountForTiles(tiles, m_controller.visibleRect(), IntPoint(0, 0));
 }
 
 void TileGrid::removeTiles(Vector<TileGrid::TileIndex>& toRemove)

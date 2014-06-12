@@ -26,18 +26,21 @@
 #ifndef WebLayer_h
 #define WebLayer_h
 
-#import <QuartzCore/QuartzCore.h>
-#import <WebCore/FloatRect.h>
-#import <wtf/Vector.h>
+#include "FloatRect.h"
+#include "PlatformLayer.h"
+#include <QuartzCore/QuartzCore.h>
+#include <wtf/Vector.h>
 
 const unsigned webLayerMaxRectsToPaint = 5;
 const float webLayerWastedSpaceThreshold = 0.75f;
 
+#ifdef __OBJC__
 @interface WebSimpleLayer : CALayer
 @end
 
 @interface WebLayer : WebSimpleLayer
 @end
+#endif
 
 namespace WebCore {
 class GraphicsLayer;
@@ -50,6 +53,7 @@ typedef Vector<FloatRect, webLayerMaxRectsToPaint> RepaintRectList;
 RepaintRectList collectRectsToPaint(CGContextRef, PlatformCALayer*);
 void drawLayerContents(CGContextRef, PlatformCALayer*, RepaintRectList& dirtyRects);
 void drawRepaintIndicator(CGContextRef, PlatformCALayer*, int repaintCount, CGColorRef customBackgroundColor);
+CGRect frameForLayer(const PlatformLayer*);
 }
 
 #endif // WebLayer_h

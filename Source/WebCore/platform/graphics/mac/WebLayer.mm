@@ -195,6 +195,11 @@ void drawRepaintIndicator(CGContextRef context, PlatformCALayer* platformCALayer
     CGContextRestoreGState(context);
 }
 
+CGRect frameForLayer(const PlatformLayer* tileLayer)
+{
+    return [tileLayer frame];
+}
+
 }
 
 @implementation WebLayer
