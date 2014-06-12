@@ -812,6 +812,10 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
         if (!isMultipartReplacingLoad())
             frameLoader()->receivedFirstData();
 
+        // The load could be canceled under receivedFirstData(), which makes delegate calls and even sometimes dispatches DOM events.
+        if (!isLoading())
+            return;
+
         bool userChosen;
         String encoding;
 #if USE(CONTENT_FILTERING)

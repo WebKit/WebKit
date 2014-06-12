@@ -1,3 +1,13 @@
+2014-06-11  Alexey Proskuryakov  <ap@apple.com>
+
+        editing/selection/selection-in-iframe-removed-crash.html or selection-invalid-offset.html crashes intermittently
+        https://bugs.webkit.org/show_bug.cgi?id=111521
+        <rdar://problem/15159351>
+
+        Reviewed by Brady Eidson.
+
+        * platform/mac/TestExpectations: Removed expectations for the tests.
+
 2014-06-11  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: RenderBox's content clipping should clip on device pixel boundary.
