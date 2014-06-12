@@ -1,3 +1,12 @@
+2014-06-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Report and mark new failures and
+        timeouts.
+        * platform/gtk/fast/forms/placeholder-position-expected.txt:
+        Rebaseline test after r169780.
+
 2014-06-12  Andrzej Badowski  <a.badowski@samsung.com>
 
         [EFL] Change expectations for three failing js/dom layout tests.

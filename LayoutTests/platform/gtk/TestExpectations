@@ -402,6 +402,7 @@ webkit.org/b/128172 fast/events/touch/send-oncancel-event.html [ Timeout ]
 webkit.org/b/131347 fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-border-image-gradient-on-subpixels.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/borders/hidpi-border-radius-with-subpixel-margin-not-renderable.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-double-border-with-border-radius-always-produce-solid-line.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-rounded-border-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-simple-hairline-border-painting.html [ ImageOnlyFailure ]
@@ -416,6 +417,7 @@ webkit.org/b/131347 fast/hidpi/image-srcset-fraction.html [ Failure ]
 webkit.org/b/131347 fast/hidpi/image-srcset-invalid-inputs-except-one.html [ Failure ]
 webkit.org/b/131347 fast/hidpi/image-srcset-simple-2x.html [ Failure ]
 webkit.org/b/131347 fast/hidpi/image-srcset-src-selection-2x.html [ Failure ]
+webkit.org/b/131347 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlines.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-select-inline-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-selection-gap-and-inline-selection-have-gap-rtl.html [ ImageOnlyFailure ]
@@ -427,6 +429,8 @@ webkit.org/b/131347 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.
 webkit.org/b/131347 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
 webkit.org/b/131347 svg/custom/hidpi-masking-clipping.svg [ Failure ImageOnlyFailure Timeout ]
 webkit.org/b/131347 svg/text/hidpi-text-selection-rect-position.html [ ImageOnlyFailure ]
+
+webkit.org/b/133806 svg/masking/mask-transformed-text-missing.svg [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -509,6 +513,7 @@ webkit.org/b/105870 [ Debug ] webaudio/audiobuffersource-loop-points.html [ Cras
 webkit.org/b/105870 [ Debug ] webaudio/audionode-channel-rules.html [ Crash Pass ]
 webkit.org/b/105870 [ Debug ] webaudio/audionode-connect-order.html [ Crash ]
 
+webkit.org/b/133797 fast/dom/NavigatorContentUtils/register-protocol-handler.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -846,6 +851,7 @@ webkit.org/b/132999 html5lib/generated/run-tests16-write.html [ Pass Timeout ]
 webkit.org/b/133000 js/slow-stress/call-spread.html [ Pass Timeout ]
 webkit.org/b/133001 fast/workers/worker-context-gc.html [ Pass Timeout ]
 
+webkit.org/b/133807 fast/dynamic/window-resize-scrollbars-test.html [ Failure Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -873,7 +879,7 @@ Bug(GTK) css3/flexbox/position-absolute-child.html [ Pass Slow ]
 Bug(GTK) css3/flexbox/multiline-justify-content.html [ Pass Slow ]
 Bug(GTK) [ Debug ] editing/selection/move-by-word-visually-crash-test-5.html [ Pass Slow ]
 Bug(GTK) [ Debug ] fast/css/visited-link-hang.html [ Pass Slow ]
-Bug(GTK) js/dom/create-lots-of-workers.html [ Pass Slow ]
+Bug(GTK) js/dom/create-lots-of-workers.html [ Pass Timeout ]
 Bug(GTK) [ Debug ] js/dfg-double-vote-fuzz.html [ Pass Slow ]
 Bug(GTK) js/dfg-float32array.html [ Pass Slow ]
 Bug(GTK) js/dfg-float64array.html [ Pass Slow ]
@@ -1009,6 +1015,8 @@ webkit.org/b/133517 css3/viewport-percentage-lengths/viewport-percentage-lengths
 webkit.org/b/133517 css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Timeout ]
 webkit.org/b/133517 css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Timeout ]
 webkit.org/b/133517 css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Timeout ]
+
+webkit.org/b/133808 media/video-trackmenu-selection.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -1191,7 +1199,6 @@ Bug(GTK) editing/selection/inactive-selection.html [ Failure ]
 Bug(GTK) fast/css/disabled-author-styles.html [ Failure ]
 Bug(GTK) fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Failure ]
 Bug(GTK) fast/dom/Window/window-postmessage-clone.html [ Failure Timeout ]
-Bug(GTK) fast/dynamic/window-resize-scrollbars-test.html [ Failure ]
 Bug(GTK) fast/events/backspace-navigates-back.html [ Failure ]
 Bug(GTK) fast/events/keydown-leftright-keys.html [ Failure ]
 Bug(GTK) fast/events/keydown-numpad-keys.html [ Failure ]
@@ -1972,6 +1979,12 @@ webkit.org/b/133146 fast/sub-pixel/client-rect-has-subpixel-precision.html  [ Im
 
 webkit.org/b/133147 fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-large-radius.html [ ImageOnlyFailure ]
 webkit.org/b/133147 fast/shapes/shape-outside-floats/shape-outside-rounded-inset.html [ ImageOnlyFailure ]
+
+webkit.org/b/133803 editing/deleting/delete-by-word-001.html [ Failure ]
+webkit.org/b/133803 editing/deleting/delete-by-word-002.html [ Failure ]
+webkit.org/b/133803 editing/input/option-page-up-down.html [ Failure ]
+webkit.org/b/133803 editing/input/scroll-viewport-page-up-down.html [ Failure ]
+webkit.org/b/133803 editing/undo/undo-deleteWord.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
