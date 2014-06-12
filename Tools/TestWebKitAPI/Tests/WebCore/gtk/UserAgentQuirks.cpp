@@ -43,10 +43,6 @@ TEST(WebCore, UserAgentQuirksTest)
     EXPECT_TRUE(uaString.contains("Macintosh"));
     EXPECT_TRUE(uaString.contains("Mac OS X"));
     EXPECT_FALSE(uaString.contains("Linux"));
-
-    // www.globalforestwatch.org requires Safari Version 6.
-    uaString = standardUserAgentForURL(URL(ParsedURLString, "http://www.globalforestwatch.org"));
-    EXPECT_TRUE(uaString.endsWith("Version/6.0"));
 }
 
 } // namespace TestWebKitAPI

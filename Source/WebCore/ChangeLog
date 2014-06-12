@@ -1,3 +1,31 @@
+2014-06-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] Unsupported browser in www.icloud.com
+        https://bugs.webkit.org/show_bug.cgi?id=133403
+
+        Reviewed by Martin Robinson.
+
+        We claim to be Safari (among others) to ensure maximum
+        compatibility with existing web sites. Valid Safari UA strings do
+        always (since Safari 3.0) contain the string "Version/X" before
+        the "Safari/X" part. We were wrongly only adding it in very
+        specific cases and we were placing it at the wrong position as it
+        must precede the "Safari/X" part.
+
+        From now on we unconditionally prepend the "Version/X" string to
+        the "Safari/X" part as we always claim to be Safari. This makes
+        the NeedsSafariVersion6 quirk invalid. This not only fixes
+        "unsupported browser" issues in icloud.com, but also in
+        globalforestwatch.com and live.com among many others.
+
+        Apart from that I'm bumping the Safari Version in the UA to 8.0 as
+        we're already claiming to be "Safari/538.35"" which corresponds to
+        Safari 8 beta.
+
+        * platform/gtk/UserAgentGtk.cpp:
+        (WebCore::buildUserAgentString):
+        (WebCore::standardUserAgentForURL):
+
 2014-06-12  Pratik Solanki  <psolanki@apple.com>
 
         Avoid creating a CFData when checking if a resource is file backed

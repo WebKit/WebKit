@@ -39,7 +39,6 @@ namespace WebCore {
 class UserAgentQuirks {
 public:
     enum UserAgentQuirk {
-        NeedsSafariVersion6,
         NeedsMacintoshPlatform,
 
         NumUserAgentQuirks
@@ -139,11 +138,10 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
 
     uaString.appendLiteral(") AppleWebKit/");
     uaString.append(versionForUAString());
-    uaString.appendLiteral(" (KHTML, like Gecko) Safari/");
+    // Version/X is mandatory *before* Safari/X to be a valid Safari UA. See
+    // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
+    uaString.appendLiteral(" (KHTML, like Gecko) Version/8.0 Safari/");
     uaString.append(versionForUAString());
-
-    if (quirks.contains(UserAgentQuirks::NeedsSafariVersion6))
-        uaString.appendLiteral(" Version/6.0");
 
     return uaString.toString();
 }
@@ -182,10 +180,6 @@ String standardUserAgentForURL(const URL& url)
         // www.yahoo.com redirects to the mobile version when Linux is present in the UA,
         // use always Macintosh as platform. See https://bugs.webkit.org/show_bug.cgi?id=125444.
         quirks.add(UserAgentQuirks::NeedsMacintoshPlatform);
-    } else if (url.host().endsWith(".globalforestwatch.org")) {
-        // www.globalforestwatch.org fails to redirect when Safari Version 6 is not present in the UA.
-        // See https://bugs.webkit.org/show_bug.cgi?id=129681.
-        quirks.add(UserAgentQuirks::NeedsSafariVersion6);
     }
 
     // The null string means we don't need a specific UA for the given URL.
