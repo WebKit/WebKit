@@ -777,8 +777,6 @@
 		1A927FD31416A15B003A83C8 /* npruntime.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A927FD01416A15B003A83C8 /* npruntime.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A927FD41416A15B003A83C8 /* nptypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A927FD11416A15B003A83C8 /* nptypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A98956B0AA78F80005EF5EF /* URLCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A98956A0AA78F80005EF5EF /* URLCF.cpp */; };
-		1AA7160A149BC4DB0016EC19 /* TileController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA71608149BC4DA0016EC19 /* TileController.cpp */; };
-		1AA7160B149BC4DB0016EC19 /* TileController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA71609149BC4DB0016EC19 /* TileController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AA84F04143BA7BD0051D153 /* ScrollElasticityController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA84F02143BA7BD0051D153 /* ScrollElasticityController.mm */; };
 		1AA84F05143BA7BD0051D153 /* ScrollElasticityController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA84F03143BA7BD0051D153 /* ScrollElasticityController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AA8799011CBE846003C664F /* PluginStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA8798F11CBE846003C664F /* PluginStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2346,6 +2344,10 @@
 		7A74ECBD101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A74ECBC101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp */; };
 		7A93868518DCC14500B8263D /* VTTScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A93868218DCC14500B8263D /* VTTScanner.cpp */; };
 		7A93868618DCC14500B8263D /* VTTScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A93868318DCC14500B8263D /* VTTScanner.h */; };
+		7AA3A699194A64E7001CBD24 /* TileController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AA3A695194A64E7001CBD24 /* TileController.cpp */; };
+		7AA3A69A194A64E7001CBD24 /* TileController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA3A696194A64E7001CBD24 /* TileController.h */; };
+		7AA3A69B194A64E7001CBD24 /* TileGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AA3A697194A64E7001CBD24 /* TileGrid.cpp */; };
+		7AA3A69C194A64E7001CBD24 /* TileGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA3A698194A64E7001CBD24 /* TileGrid.h */; };
 		7AABA25914BC613300AA9A11 /* DOMEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AABA25714BC613300AA9A11 /* DOMEditor.cpp */; };
 		7AABA25A14BC613300AA9A11 /* DOMEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AABA25814BC613300AA9A11 /* DOMEditor.h */; };
 		7AB0B1C01211A62200A76940 /* InspectorDatabaseAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB0B1BE1211A62200A76940 /* InspectorDatabaseAgent.cpp */; };
@@ -6145,8 +6147,6 @@
 		E4BBED4D14FCDBA1003F0B98 /* StyleRule.h in Headers */ = {isa = PBXBuildFile; fileRef = E4BBED4B14FCDBA1003F0B98 /* StyleRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4C1789A0EE6903800824D69 /* CSSSelectorList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4C178950EE6903800824D69 /* CSSSelectorList.cpp */; };
 		E4C1789B0EE6903800824D69 /* CSSSelectorList.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C178960EE6903800824D69 /* CSSSelectorList.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E4C274CA18E988EA00602C76 /* TileGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4C274C918E988EA00602C76 /* TileGrid.cpp */; };
-		E4C274CC18E988F500602C76 /* TileGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C274CB18E988F500602C76 /* TileGrid.h */; };
 		E4C279580CF9741900E97B98 /* RenderMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4C279560CF9741900E97B98 /* RenderMedia.cpp */; };
 		E4C279590CF9741900E97B98 /* RenderMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C279570CF9741900E97B98 /* RenderMedia.h */; };
 		E4C3B1FA0F0E4161009693F6 /* LegacyTileCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C3B1F90F0E4161009693F6 /* LegacyTileCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7704,8 +7704,6 @@
 		1A927FD01416A15B003A83C8 /* npruntime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = npruntime.h; sourceTree = "<group>"; };
 		1A927FD11416A15B003A83C8 /* nptypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nptypes.h; sourceTree = "<group>"; };
 		1A98956A0AA78F80005EF5EF /* URLCF.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = URLCF.cpp; sourceTree = "<group>"; };
-		1AA71608149BC4DA0016EC19 /* TileController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TileController.cpp; path = ca/mac/TileController.cpp; sourceTree = "<group>"; };
-		1AA71609149BC4DB0016EC19 /* TileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileController.h; path = ca/mac/TileController.h; sourceTree = "<group>"; };
 		1AA84F02143BA7BD0051D153 /* ScrollElasticityController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollElasticityController.mm; sourceTree = "<group>"; };
 		1AA84F03143BA7BD0051D153 /* ScrollElasticityController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollElasticityController.h; sourceTree = "<group>"; };
 		1AA8798F11CBE846003C664F /* PluginStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginStrategy.h; sourceTree = "<group>"; };
@@ -9450,6 +9448,10 @@
 		7A74ECBC101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInspectorFrontendHostCustom.cpp; sourceTree = "<group>"; };
 		7A93868218DCC14500B8263D /* VTTScanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VTTScanner.cpp; sourceTree = "<group>"; };
 		7A93868318DCC14500B8263D /* VTTScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VTTScanner.h; sourceTree = "<group>"; };
+		7AA3A695194A64E7001CBD24 /* TileController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TileController.cpp; path = ca/TileController.cpp; sourceTree = "<group>"; };
+		7AA3A696194A64E7001CBD24 /* TileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileController.h; path = ca/TileController.h; sourceTree = "<group>"; };
+		7AA3A697194A64E7001CBD24 /* TileGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TileGrid.cpp; path = ca/TileGrid.cpp; sourceTree = "<group>"; };
+		7AA3A698194A64E7001CBD24 /* TileGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileGrid.h; path = ca/TileGrid.h; sourceTree = "<group>"; };
 		7AABA25714BC613300AA9A11 /* DOMEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMEditor.cpp; sourceTree = "<group>"; };
 		7AABA25814BC613300AA9A11 /* DOMEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMEditor.h; sourceTree = "<group>"; };
 		7AB0B1BE1211A62200A76940 /* InspectorDatabaseAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorDatabaseAgent.cpp; sourceTree = "<group>"; };
@@ -13622,8 +13624,6 @@
 		E4BBED4B14FCDBA1003F0B98 /* StyleRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleRule.h; sourceTree = "<group>"; };
 		E4C178950EE6903800824D69 /* CSSSelectorList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSSelectorList.cpp; sourceTree = "<group>"; };
 		E4C178960EE6903800824D69 /* CSSSelectorList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSSelectorList.h; sourceTree = "<group>"; };
-		E4C274C918E988EA00602C76 /* TileGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TileGrid.cpp; path = ca/mac/TileGrid.cpp; sourceTree = "<group>"; };
-		E4C274CB18E988F500602C76 /* TileGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileGrid.h; path = ca/mac/TileGrid.h; sourceTree = "<group>"; };
 		E4C279560CF9741900E97B98 /* RenderMedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMedia.cpp; sourceTree = "<group>"; };
 		E4C279570CF9741900E97B98 /* RenderMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMedia.h; sourceTree = "<group>"; };
 		E4C3B1F90F0E4161009693F6 /* LegacyTileCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegacyTileCache.h; path = ios/LegacyTileCache.h; sourceTree = "<group>"; };
@@ -15832,10 +15832,10 @@
 				2D70BA1418074F850001908A /* PlatformCALayer.cpp */,
 				499B3EC3128CCC4700E726C2 /* PlatformCALayer.h */,
 				493E5E0812D6420500020081 /* PlatformCALayerClient.h */,
-				1AA71609149BC4DB0016EC19 /* TileController.h */,
-				1AA71608149BC4DA0016EC19 /* TileController.cpp */,
-				E4C274CB18E988F500602C76 /* TileGrid.h */,
-				E4C274C918E988EA00602C76 /* TileGrid.cpp */,
+				7AA3A695194A64E7001CBD24 /* TileController.cpp */,
+				7AA3A696194A64E7001CBD24 /* TileController.h */,
+				7AA3A697194A64E7001CBD24 /* TileGrid.cpp */,
+				7AA3A698194A64E7001CBD24 /* TileGrid.h */,
 				494BC40C12AEDD9E00743BD2 /* TransformationMatrixCA.cpp */,
 			);
 			name = ca;
@@ -24697,7 +24697,6 @@
 				C585A68D11D4FB08004C3E4B /* JSIDBKeyRange.h in Headers */,
 				C585A68F11D4FB08004C3E4B /* JSIDBObjectStore.h in Headers */,
 				C585A69111D4FB08004C3E4B /* JSIDBRequest.h in Headers */,
-				E4C274CC18E988F500602C76 /* TileGrid.h in Headers */,
 				B6566270120B1227006EA85C /* JSIDBTransaction.h in Headers */,
 				269239961505E1AA009E57FC /* JSIDBVersionChangeEvent.h in Headers */,
 				BC6C49F40D7DBA0500FFA558 /* JSImageConstructor.h in Headers */,
@@ -24849,6 +24848,7 @@
 				B2FA3D510AB75A6F000E5AC4 /* JSSVGAnimatedTransformList.h in Headers */,
 				B2FA3D530AB75A6F000E5AC4 /* JSSVGAnimateElement.h in Headers */,
 				4496E39E1398136C003EE32A /* JSSVGAnimateMotionElement.h in Headers */,
+				7AA3A69C194A64E7001CBD24 /* TileGrid.h in Headers */,
 				B2FA3D550AB75A6F000E5AC4 /* JSSVGAnimateTransformElement.h in Headers */,
 				B2FA3D570AB75A6F000E5AC4 /* JSSVGAnimationElement.h in Headers */,
 				B2FA3D590AB75A6F000E5AC4 /* JSSVGCircleElement.h in Headers */,
@@ -25238,6 +25238,7 @@
 				656D37430ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h in Headers */,
 				628D214C12131ED10055DCFC /* NetworkingContext.h in Headers */,
 				59C27F07138D28CF0079B7E2 /* NetworkResourcesData.h in Headers */,
+				7AA3A69A194A64E7001CBD24 /* TileController.h in Headers */,
 				1A7FA6190DDA3B3A0028F8A5 /* NetworkStateNotifier.h in Headers */,
 				E13EF3441684ECF40034C83F /* NetworkStorageSession.h in Headers */,
 				BCEF43DD0E674012001C1287 /* NinePieceImage.h in Headers */,
@@ -26229,7 +26230,6 @@
 				E1FF57A30F01255B00891EBB /* ThreadGlobalData.h in Headers */,
 				185BCF290F3279CE000EA262 /* ThreadTimers.h in Headers */,
 				E4C3B1FA0F0E4161009693F6 /* LegacyTileCache.h in Headers */,
-				1AA7160B149BC4DB0016EC19 /* TileController.h in Headers */,
 				1F72BF0B187FD45C0009BCB3 /* TileControllerMemoryHandlerIOS.h in Headers */,
 				1AF89A421518FDEA00E547B5 /* TiledBacking.h in Headers */,
 				E4B65A58132FA8E70070E7BE /* LegacyTileGrid.h in Headers */,
@@ -28519,7 +28519,6 @@
 				516BB7940CE91E6800512F79 /* JSTreeWalkerCustom.cpp in Sources */,
 				A86629D009DA2B48009633A5 /* JSUIEvent.cpp in Sources */,
 				AAA4FAD3175D5CB300743873 /* JSUIRequestEvent.cpp in Sources */,
-				E4C274CA18E988EA00602C76 /* TileGrid.cpp in Sources */,
 				15C77094100D3CA8005BA267 /* JSValidityState.cpp in Sources */,
 				CDE83DB6183D352A0031EAA3 /* JSVideoPlaybackQuality.cpp in Sources */,
 				07C59B5F17F4B208000FBCBB /* JSVideoStreamTrack.cpp in Sources */,
@@ -29435,6 +29434,7 @@
 				B2227AA20D00BF220071B782 /* SVGScriptElement.cpp in Sources */,
 				B2227AA50D00BF220071B782 /* SVGSetElement.cpp in Sources */,
 				E4AFD00F0DAF335500F5F55C /* SVGSMILElement.cpp in Sources */,
+				7AA3A699194A64E7001CBD24 /* TileController.cpp in Sources */,
 				B2227AA80D00BF220071B782 /* SVGStopElement.cpp in Sources */,
 				B2227AAB0D00BF220071B782 /* SVGStringList.cpp in Sources */,
 				B2227AB70D00BF220071B782 /* SVGStyleElement.cpp in Sources */,
@@ -29474,6 +29474,7 @@
 				CE7B2DB61586ABAD0098B3FA /* TextAlternativeWithRange.mm in Sources */,
 				0F54DCE51881051D003EEDBB /* TextAutoSizing.cpp in Sources */,
 				372C00C4129611F1005C9575 /* TextBoundaries.cpp in Sources */,
+				7AA3A69B194A64E7001CBD24 /* TileGrid.cpp in Sources */,
 				B2AFFC970D00A5DF0030074D /* TextBoundaries.mm in Sources */,
 				BCD8A5F015F56F2C0098D071 /* TextBreakIterator.cpp in Sources */,
 				B2AFFC980D00A5DF0030074D /* TextBreakIteratorInternalICUMac.mm in Sources */,
@@ -29525,7 +29526,6 @@
 				E1FF57A60F01256B00891EBB /* ThreadGlobalData.cpp in Sources */,
 				185BCF280F3279CE000EA262 /* ThreadTimers.cpp in Sources */,
 				E4C3B1FC0F0E4170009693F6 /* LegacyTileCache.mm in Sources */,
-				1AA7160A149BC4DB0016EC19 /* TileController.cpp in Sources */,
 				1F72BF0A187FD4490009BCB3 /* TileControllerMemoryHandlerIOS.cpp in Sources */,
 				E4B65A5A132FAAF90070E7BE /* LegacyTileGrid.mm in Sources */,
 				E424A3A01330DF1E00CF6DC9 /* LegacyTileGridTile.mm in Sources */,

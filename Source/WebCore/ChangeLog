@@ -1,3 +1,20 @@
+2014-06-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct file locations after r169914. These should have been
+        in platform/graphics/ca.
+
+        Rubberstamped by Tim Horton.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/ca/TileController.cpp: Copied from platform/graphics/ca/mac/TileController.cpp.
+        * platform/graphics/ca/TileController.h: Copied from platform/graphics/ca/mac/TileController.h.
+        * platform/graphics/ca/TileGrid.cpp: Copied from platform/graphics/ca/mac/TileGrid.cpp.
+        * platform/graphics/ca/TileGrid.h: Copied from platform/graphics/ca/mac/TileGrid.h.
+        * platform/graphics/ca/mac/TileController.cpp: Removed.
+        * platform/graphics/ca/mac/TileController.h: Removed.
+        * platform/graphics/ca/mac/TileGrid.cpp: Removed.
+        * platform/graphics/ca/mac/TileGrid.h: Removed.
+
 2014-06-12  Andy Estes  <aestes@apple.com>
 
         Fix the build after r169913.
