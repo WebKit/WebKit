@@ -1,3 +1,23 @@
+2014-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r169823.
+
+        Include StructureInlines.h in a few more files to fix linking
+        issues due to JSC::Structure::get undefined symbol.
+
+        * runtime/ArrayIteratorConstructor.cpp:
+        * runtime/ArrayIteratorPrototype.cpp:
+        * runtime/JSConsole.cpp:
+        * runtime/JSMapIterator.cpp:
+        * runtime/JSSet.cpp:
+        * runtime/JSSetIterator.cpp:
+        * runtime/JSWeakMap.cpp:
+        * runtime/MapIteratorPrototype.cpp:
+        * runtime/MapPrototype.cpp:
+        * runtime/SetIteratorPrototype.cpp:
+        * runtime/SetPrototype.cpp:
+        * runtime/WeakMapPrototype.cpp:
+
 2014-06-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] One more URTBF after r169823 to make ARM64 build happy too.

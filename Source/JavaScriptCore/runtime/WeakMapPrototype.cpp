@@ -28,6 +28,7 @@
 
 #include "JSCJSValueInlines.h"
 #include "JSWeakMap.h"
+#include "StructureInlines.h"
 #include "WeakMapData.h"
 
 namespace JSC {

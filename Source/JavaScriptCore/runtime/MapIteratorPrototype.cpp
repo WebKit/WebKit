@@ -29,6 +29,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "JSMapIterator.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

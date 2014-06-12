@@ -31,6 +31,7 @@
 #include "JSCellInlines.h"
 #include "JSGlobalObject.h"
 #include "ObjectConstructor.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

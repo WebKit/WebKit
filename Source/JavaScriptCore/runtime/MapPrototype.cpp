@@ -35,6 +35,7 @@
 #include "JSMap.h"
 #include "JSMapIterator.h"
 #include "MapData.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

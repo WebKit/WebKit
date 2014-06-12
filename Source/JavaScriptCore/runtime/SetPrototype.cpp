@@ -35,6 +35,7 @@
 #include "JSSet.h"
 #include "JSSetIterator.h"
 #include "MapData.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

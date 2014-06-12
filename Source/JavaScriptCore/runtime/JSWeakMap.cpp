@@ -28,6 +28,7 @@
 
 #include "JSCJSValueInlines.h"
 #include "SlotVisitorInlines.h"
+#include "StructureInlines.h"
 #include "WeakMapData.h"
 #include "WriteBarrierInlines.h"
 

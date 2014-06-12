@@ -27,6 +27,7 @@
 #include "JSConsole.h"
 
 #include "JSCJSValueInlines.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 
