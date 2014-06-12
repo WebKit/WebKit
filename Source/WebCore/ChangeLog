@@ -1,3 +1,21 @@
+2014-06-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        SVGGlyphToPathTranslator ASSERTs when encountering a missing glyph in an SVG font
+        https://bugs.webkit.org/show_bug.cgi?id=133528
+
+        Reviewed by Simon Fraser.
+
+        Turns out this assertion is benign. We can take an early out of advance() (which
+        is then handled properly by Font::dashesForIntersectionsWithRect()
+
+        Test: svg/custom/skip-underline-missing-glyph.html
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::dashesForIntersectionsWithRect): Rather than skip partial results,
+        don't skip anything at all to be consistent.
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::SVGGlyphToPathTranslator::advance): Take an early out to avoid an ASSERT.
+
 2014-06-11  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Give WebKitTestRunner a viewport configuration with initial scale=1 for testing

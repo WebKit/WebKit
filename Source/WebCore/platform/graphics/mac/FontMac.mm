@@ -528,7 +528,7 @@ DashArray Font::dashesForIntersectionsWithRect(const TextRun& run, const FloatPo
     if (!glyphBuffer.size())
         return DashArray();
     
-    // FIXME: Handle SVG + non-SVG interleaved runs
+    // FIXME: Handle SVG + non-SVG interleaved runs. https://bugs.webkit.org/show_bug.cgi?id=133778
     const SimpleFontData* fontData = glyphBuffer.fontDataAt(0);
     std::unique_ptr<GlyphToPathTranslator> translator;
     bool isSVG = false;
@@ -543,8 +543,11 @@ DashArray Font::dashesForIntersectionsWithRect(const TextRun& run, const FloatPo
     for (int index = 0; translator->containsMorePaths(); ++index, translator->advance()) {
         GlyphIterationState info = GlyphIterationState(CGPointMake(0, 0), CGPointMake(0, 0), lineExtents.y(), lineExtents.y() + lineExtents.height(), lineExtents.x() + lineExtents.width(), lineExtents.x());
         const SimpleFontData* localFontData = glyphBuffer.fontDataAt(index);
-        if (!localFontData || (!isSVG && localFontData->isSVGFont()) || (isSVG && localFontData != fontData))
-            break; // The advances will get all messed up if we do anything other than bail here.
+        if (!localFontData || (!isSVG && localFontData->isSVGFont()) || (isSVG && localFontData != fontData)) {
+            // The advances will get all messed up if we do anything other than bail here.
+            result.clear();
+            break;
+        }
         switch (translator->underlineType()) {
         case GlyphToPathTranslator::GlyphUnderlineType::SkipDescenders: {
             Path path = translator->path();

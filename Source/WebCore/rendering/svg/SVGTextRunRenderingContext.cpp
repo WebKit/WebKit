@@ -202,7 +202,7 @@ void SVGGlyphToPathTranslator::advance()
         }
 
         ++m_index;
-        if (m_index >= m_stoppingPoint)
+        if (m_index >= m_stoppingPoint || !m_glyphBuffer.fontDataAt(m_index)->isSVGFont())
             break;
         m_glyph = m_glyphBuffer.glyphAt(m_index);
         if (!m_glyph)

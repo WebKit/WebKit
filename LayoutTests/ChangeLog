@@ -1,3 +1,17 @@
+2014-06-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        SVGGlyphToPathTranslator ASSERTs when encountering a missing glyph in an SVG font
+        https://bugs.webkit.org/show_bug.cgi?id=133528
+
+        Reviewed by Simon Fraser.
+
+        Make sure that no ASSERT occurs in this situation. In addition, make sure that the
+        whole element doesn't get skip:ink gaps. This will need to be updated when we
+        support SVG + non-SVG mixed runs.
+
+        * svg/custom/skip-underline-missing-glyph-expected.html: Added
+        * svg/custom/skip-underline-missing-glyph.html: Added
+
 2014-06-11  Alexey Proskuryakov  <ap@apple.com>
 
         editing/selection/selection-in-iframe-removed-crash.html or selection-invalid-offset.html crashes intermittently
