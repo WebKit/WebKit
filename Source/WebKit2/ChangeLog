@@ -1,3 +1,17 @@
+2014-06-12  Brady Eidson  <beidson@apple.com>
+
+        Add SPI for image controls and service controls preferences.
+        <rdar://problem/17292209> and https://bugs.webkit.org/show_bug.cgi?id=133820
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetServiceControlsEnabled):
+        (WKPreferencesGetServiceControlsEnabled):
+        (WKPreferencesSetImageControlsEnabled):
+        (WKPreferencesGetImageControlsEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
 2014-06-12  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Allow reading com.apple.universalaccess preferences

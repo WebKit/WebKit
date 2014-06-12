@@ -1255,3 +1255,23 @@ bool WKPreferencesGetEnableInheritURIQueryComponent(WKPreferencesRef preferences
 {
     return toImpl(preferencesRef)->enableInheritURIQueryComponent();
 }
+
+void WKPreferencesSetServiceControlsEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setServiceControlsEnabled(enabled);
+}
+
+bool WKPreferencesGetServiceControlsEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->serviceControlsEnabled();
+}
+
+void WKPreferencesSetImageControlsEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setImageControlsEnabled(enabled);
+}
+
+bool WKPreferencesGetImageControlsEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->imageControlsEnabled();
+}
