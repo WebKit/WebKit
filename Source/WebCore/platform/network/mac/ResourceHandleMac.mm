@@ -734,7 +734,7 @@ void ResourceHandle::getConnectionTimingData(NSDictionary *timingData, ResourceL
 
     // This is not the navigationStart time in monotonic time, but the other times are relative to this time
     // and only the differences between times are stored.
-    double referenceStart = [[timingData valueForKey:@"_kCFNTimingDataTimingDataInit"] doubleValue];
+    double referenceStart = [[timingData valueForKey:@"_kCFNTimingDataFetchStart"] doubleValue];
             
     double domainLookupStart = [[timingData valueForKey:@"_kCFNTimingDataDomainLookupStart"] doubleValue];
     double domainLookupEnd = [[timingData valueForKey:@"_kCFNTimingDataDomainLookupEnd"] doubleValue];
