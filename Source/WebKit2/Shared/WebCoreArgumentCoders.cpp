@@ -417,10 +417,7 @@ bool ArgumentCoder<HTTPHeaderMap>::decode(ArgumentDecoder& decoder, HTTPHeaderMa
         if (!decoder.decode(value))
             return false;
 
-        if (!headerMap.add(name, value).isNewEntry) {
-            decoder.markInvalid();
-            return false;
-        }
+        headerMap.set(name, value);
     }
 
     return true;
