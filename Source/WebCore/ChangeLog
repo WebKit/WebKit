@@ -1,3 +1,17 @@
+2014-06-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        WorkerRunLoop::Task::performTask should take in WorkerGlobalScope* to avoid downcasting
+        https://bugs.webkit.org/show_bug.cgi?id=133616
+
+        Reviewed by Andreas Kling.
+
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::Task::performTask): Demand the context parameter to be a pointer
+        to WorkerGlobalScope instead of ScriptExecutionContext, avoiding an unnecessary downcast.
+        In the future this complete code path should use a reference to WorkerGlobalScope instead
+        of a pointer.
+        * workers/WorkerRunLoop.h:
+
 2014-06-12  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] Unsupported browser in www.icloud.com

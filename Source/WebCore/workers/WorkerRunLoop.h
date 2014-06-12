@@ -71,7 +71,7 @@ namespace WebCore {
             static std::unique_ptr<Task> create(ScriptExecutionContext::Task, const String& mode);
             ~Task() { }
             const String& mode() const { return m_mode; }
-            void performTask(const WorkerRunLoop&, ScriptExecutionContext*);
+            void performTask(const WorkerRunLoop&, WorkerGlobalScope*);
 
         private:
             Task(ScriptExecutionContext::Task task, const String& mode);
