@@ -1,3 +1,37 @@
+2014-06-11  Timothy Horton  <timothy_horton@apple.com>
+
+        Remove unused VisibleContentRectUpdateInfo update ID
+        https://bugs.webkit.org/show_bug.cgi?id=133777
+
+        Reviewed by Benjamin Poulain.
+
+        Remove some unused code.
+
+        * Shared/VisibleContentRectUpdateInfo.cpp:
+        (WebKit::VisibleContentRectUpdateInfo::encode):
+        (WebKit::VisibleContentRectUpdateInfo::decode):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        (WebKit::operator==):
+        (WebKit::VisibleContentRectUpdateInfo::updateID): Deleted.
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::setLastVisibleContentRectUpdateID): Deleted.
+        (WebKit::RemoteLayerTreeTransaction::lastVisibleContentRectUpdateID): Deleted.
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::nextVisibleContentRectUpdateID): Deleted.
+        (WebKit::WebPageProxy::lastVisibleContentRectUpdateID): Deleted.
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::willCommitLayerTree):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2014-06-11  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Move CompletionHandlerCallChecker into a separate file

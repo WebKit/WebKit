@@ -302,7 +302,7 @@ private:
         _historicalKinematicData.clear();
 
     FloatRect fixedPositionRectForLayout = _page->computeCustomFixedPositionRect(unobscuredRect, zoomScale, WebPageProxy::UnobscuredRectConstraint::ConstrainedToDocumentRect);
-    _page->updateVisibleContentRects(VisibleContentRectUpdateInfo(_page->nextVisibleContentRectUpdateID(), visibleRect, unobscuredRect, unobscuredRectInScrollViewCoordinates, fixedPositionRectForLayout,
+    _page->updateVisibleContentRects(VisibleContentRectUpdateInfo(visibleRect, unobscuredRect, unobscuredRectInScrollViewCoordinates, fixedPositionRectForLayout,
         zoomScale, isStableState, isChangingObscuredInsetsInteractively, timestamp, velocityData.horizontalVelocity, velocityData.verticalVelocity, velocityData.scaleChangeRate));
 
     RemoteScrollingCoordinatorProxy* scrollingCoordinator = _page->scrollingCoordinatorProxy();

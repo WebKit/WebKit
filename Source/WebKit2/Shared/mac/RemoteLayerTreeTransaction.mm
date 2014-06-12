@@ -460,7 +460,6 @@ void RemoteLayerTreeTransaction::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_minimumScaleFactor;
     encoder << m_maximumScaleFactor;
 
-    encoder << m_lastVisibleContentRectUpdateID;
     encoder << m_renderTreeSize;
 
     encoder << m_scaleWasSetByUIProcess;
@@ -525,9 +524,6 @@ bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLay
         return false;
 
     if (!decoder.decode(result.m_maximumScaleFactor))
-        return false;
-
-    if (!decoder.decode(result.m_lastVisibleContentRectUpdateID))
         return false;
 
     if (!decoder.decode(result.m_renderTreeSize))

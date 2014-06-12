@@ -592,8 +592,6 @@ public:
     const WebCore::FloatRect& unobscuredContentRect() const { return m_lastVisibleContentRectUpdate.unobscuredRect(); }
 
     bool updateVisibleContentRects(const VisibleContentRectUpdateInfo&);
-    uint64_t nextVisibleContentRectUpdateID() const { return m_lastVisibleContentRectUpdate.updateID() + 1; }
-    uint64_t lastVisibleContentRectUpdateID() const { return m_lastVisibleContentRectUpdate.updateID(); }
 
     enum class UnobscuredRectConstraint { ConstrainedToDocumentRect, Unconstrained };
     WebCore::FloatRect computeCustomFixedPositionRect(const WebCore::FloatRect& unobscuredContentRect, double displayedContentScale, UnobscuredRectConstraint = UnobscuredRectConstraint::Unconstrained) const;

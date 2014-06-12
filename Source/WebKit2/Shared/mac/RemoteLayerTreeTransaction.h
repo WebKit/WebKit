@@ -189,9 +189,6 @@ public:
 
     double pageScaleFactor() const { return m_pageScaleFactor; }
     void setPageScaleFactor(double pageScaleFactor) { m_pageScaleFactor = pageScaleFactor; }
-    
-    void setLastVisibleContentRectUpdateID(uint64_t lastVisibleContentRectUpdateID) { m_lastVisibleContentRectUpdateID = lastVisibleContentRectUpdateID; }
-    uint64_t lastVisibleContentRectUpdateID() const { return m_lastVisibleContentRectUpdateID; }
 
     bool scaleWasSetByUIProcess() const { return m_scaleWasSetByUIProcess; }
     void setScaleWasSetByUIProcess(bool scaleWasSetByUIProcess) { m_scaleWasSetByUIProcess = scaleWasSetByUIProcess; }
@@ -223,7 +220,6 @@ private:
     double m_pageScaleFactor;
     double m_minimumScaleFactor;
     double m_maximumScaleFactor;
-    uint64_t m_lastVisibleContentRectUpdateID;
     uint64_t m_renderTreeSize;
     bool m_scaleWasSetByUIProcess;
     bool m_allowsUserScaling;

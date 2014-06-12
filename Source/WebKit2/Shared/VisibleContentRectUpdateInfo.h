@@ -39,19 +39,17 @@ class VisibleContentRectUpdateInfo {
 public:
     VisibleContentRectUpdateInfo()
         : m_scale(-1)
-        , m_updateID(0)
         , m_inStableState(false)
         , m_isChangingObscuredInsetsInteractively(false)
     {
     }
 
-    VisibleContentRectUpdateInfo(uint64_t updateID, const WebCore::FloatRect& exposedRect, const WebCore::FloatRect& unobscuredRect, const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& customFixedPositionRect, double scale, bool inStableState, bool isChangingObscuredInsetsInteractively, double timestamp, double horizontalVelocity, double verticalVelocity, double scaleChangeRate)
+    VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedRect, const WebCore::FloatRect& unobscuredRect, const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& customFixedPositionRect, double scale, bool inStableState, bool isChangingObscuredInsetsInteractively, double timestamp, double horizontalVelocity, double verticalVelocity, double scaleChangeRate)
         : m_exposedRect(exposedRect)
         , m_unobscuredRect(unobscuredRect)
         , m_unobscuredRectInScrollViewCoordinates(unobscuredRectInScrollViewCoordinates)
         , m_customFixedPositionRect(customFixedPositionRect)
         , m_scale(scale)
-        , m_updateID(updateID)
         , m_inStableState(inStableState)
         , m_isChangingObscuredInsetsInteractively(isChangingObscuredInsetsInteractively)
         , m_timestamp(timestamp)
@@ -66,7 +64,6 @@ public:
     const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates() const { return m_unobscuredRectInScrollViewCoordinates; }
     const WebCore::FloatRect& customFixedPositionRect() const { return m_customFixedPositionRect; }
     double scale() const { return m_scale; }
-    uint64_t updateID() const { return m_updateID; }
     bool inStableState() const { return m_inStableState; }
     bool isChangingObscuredInsetsInteractively() const { return m_isChangingObscuredInsetsInteractively; }
 
@@ -84,7 +81,6 @@ private:
     WebCore::FloatRect m_unobscuredRectInScrollViewCoordinates;
     WebCore::FloatRect m_customFixedPositionRect;
     double m_scale;
-    uint64_t m_updateID;
     bool m_inStableState;
     bool m_isChangingObscuredInsetsInteractively;
     double m_timestamp;
@@ -95,8 +91,7 @@ private:
 
 inline bool operator==(const VisibleContentRectUpdateInfo& a, const VisibleContentRectUpdateInfo& b)
 {
-    // Note: the comparison doesn't include updateID since we care about equality based on the other data.
-    // The timestamp and velocity are also irrelevant for comparing updates.
+    // Note: the comparison doesn't include timestamp and velocity since we care about equality based on the other data.
     return a.scale() == b.scale()
         && a.exposedRect() == b.exposedRect()
         && a.unobscuredRect() == b.unobscuredRect()

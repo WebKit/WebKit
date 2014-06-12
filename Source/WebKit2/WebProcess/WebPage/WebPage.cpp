@@ -292,7 +292,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_isShowingContextMenu(false)
 #endif
 #if PLATFORM(IOS)
-    , m_lastVisibleContentRectUpdateID(0)
     , m_obscuredTopInset(0)
     , m_hasReceivedVisibleContentRectsAfterDidCommitLoad(false)
     , m_scaleWasSetByUIProcess(false)
@@ -2787,7 +2786,6 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
     layerTransaction.setRenderTreeSize(corePage()->renderTreeSize());
     layerTransaction.setPageExtendedBackgroundColor(corePage()->pageExtendedBackgroundColor());
 #if PLATFORM(IOS)
-    layerTransaction.setLastVisibleContentRectUpdateID(m_lastVisibleContentRectUpdateID);
     layerTransaction.setScaleWasSetByUIProcess(scaleWasSetByUIProcess());
     layerTransaction.setMinimumScaleFactor(minimumPageScaleFactor());
     layerTransaction.setMaximumScaleFactor(maximumPageScaleFactor());

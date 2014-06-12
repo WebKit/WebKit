@@ -1214,7 +1214,6 @@ private:
     WebCore::FloatPoint m_potentialTapLocation;
 
     WebCore::ViewportConfiguration m_viewportConfiguration;
-    uint64_t m_lastVisibleContentRectUpdateID;
     float m_obscuredTopInset;
     bool m_hasReceivedVisibleContentRectsAfterDidCommitLoad;
     bool m_scaleWasSetByUIProcess;

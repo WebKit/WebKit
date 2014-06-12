@@ -2295,7 +2295,6 @@ static inline void adjustVelocityDataForBoundedScale(double& horizontalVelocity,
 void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo)
 {
     m_hasReceivedVisibleContentRectsAfterDidCommitLoad = true;
-    m_lastVisibleContentRectUpdateID = visibleContentRectUpdateInfo.updateID();
     m_obscuredTopInset = (visibleContentRectUpdateInfo.unobscuredRect().y() - visibleContentRectUpdateInfo.exposedRect().y()) * visibleContentRectUpdateInfo.scale();
 
     double scaleNoiseThreshold = 0.005;
