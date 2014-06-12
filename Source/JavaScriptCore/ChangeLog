@@ -1,3 +1,10 @@
+2014-06-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix. (Merge r167685)
+
+        * DerivedSources.make: Specify path to Perl/Python to avoid
+        build failures under Python 2.7+.
+
 2013-11-07  Roger Fong  <roger_fong@apple.com>
 
         Rollout part of r146669 which caused a performance regression.

@@ -1,3 +1,10 @@
+2014-06-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix. (Merge r167685)
+
+        * DerivedSources.make: Specify path to Perl/Python to avoid
+        build failures under Python 2.7+.
+
 2014-06-11  Brent Fulgham  <bfulgham@apple.com>
 
         Merge r169842.

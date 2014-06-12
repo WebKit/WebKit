@@ -9,7 +9,7 @@
 # 2.  Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
 #     documentation and/or other materials provided with the distribution. 
-# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
 #     its contributors may be used to endorse or promote products derived
 #     from this software without specific prior written permission. 
 #
@@ -59,6 +59,15 @@ all : \
     udis86_itab.h \
 #
 
+# Windows has specific needs for specifying the path to its interpreters
+ifeq ($(OS),Windows_NT)
+    PYTHON = /usr/bin/python
+    PERL = /usr/bin/perl
+else
+    PYTHON = python
+    PERL = perl
+endif
+# --------
 # lookup tables for classes
 
 %.lut.h: create_hash_table %.cpp
@@ -67,17 +76,17 @@ Lexer.lut.h: create_hash_table Keywords.table
 	$^ > $@
 
 docs/bytecode.html: make-bytecode-docs.pl Interpreter.cpp 
-	perl $^ $@
+	$(PERL) $^ $@
 
 # character tables for Yarr
 
 RegExpJitTables.h: create_regex_tables
-	python $^ > $@
+	$(PYTHON) $^ > $@
 
 KeywordLookup.h: KeywordLookupGenerator.py Keywords.table
-	python $^ > $@
+	$(PYTHON) $^ > $@
 
 # udis86 instruction tables
 
 udis86_itab.h: $(JavaScriptCore)/disassembler/udis86/itab.py $(JavaScriptCore)/disassembler/udis86/optable.xml
-	(PYTHONPATH=$(JavaScriptCore)/disassembler/udis86 python $(JavaScriptCore)/disassembler/udis86/itab.py $(JavaScriptCore)/disassembler/udis86/optable.xml || exit 1)
+	(PYTHONPATH=$(JavaScriptCore)/disassembler/udis86 $(PYTHON) $(JavaScriptCore)/disassembler/udis86/itab.py $(JavaScriptCore)/disassembler/udis86/optable.xml || exit 1)
