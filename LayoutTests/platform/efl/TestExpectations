@@ -1635,3 +1635,9 @@ webkit.org/b/130322 mathml/opentype/vertical-LatinModern.html [ Failure ]
 webkit.org/b/72828 mathml/opentype/horizontal-LatinModern.html [ Failure ]
 webkit.org/b/72828 mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]
 webkit.org/b/72828 mathml/opentype/horizontal-LatinModern-munderover.html [ Failure ]
+
+# Failures EFL since the inception
+webkit.org/b/133734 css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html [ Failure ]
+webkit.org/b/133735 css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Failure ]
+webkit.org/b/133737 css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Failure ]
+
