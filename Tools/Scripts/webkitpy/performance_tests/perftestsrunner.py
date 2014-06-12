@@ -65,6 +65,11 @@ class PerfTestsRunner(object):
         else:
             self._host = Host()
             self._port = self._host.port_factory.get(self._options.platform, self._options)
+
+        # The GTK+ port only supports WebKit2, so it always uses WKTR.
+        if self._port.name().startswith("gtk"):
+            self._options.webkit_test_runner = True
+
         self._host.initialize_scm()
         self._webkit_base_dir_len = len(self._port.webkit_base())
         self._base_path = self._port.perf_tests_dir()

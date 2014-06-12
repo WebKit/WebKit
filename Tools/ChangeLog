@@ -1,3 +1,14 @@
+2014-06-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Performance tests should be always ran with WKTR.
+        https://bugs.webkit.org/show_bug.cgi?id=133780
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner.__init__): Enable webkit_test_runner when port
+        is GTK.
+
 2014-06-12  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] REGRESSION: application name is not correctly appended to the UA
