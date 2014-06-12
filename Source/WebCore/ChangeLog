@@ -1,3 +1,10 @@
+2014-06-12  Andy Estes  <aestes@apple.com>
+
+        Fix the build after r169913.
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::restoreScrollPositionAndViewState):
+
 2014-06-12  Alex Christensen  <achristensen@webkit.org>
 
         Collect correct web timing data from CFNetwork.

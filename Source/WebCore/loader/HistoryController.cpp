@@ -147,6 +147,7 @@ void HistoryController::restoreScrollPositionAndViewState()
 #if !PLATFORM(IOS)
     // Don't restore scroll point on iOS as FrameLoaderClient::restoreViewState() does that.
     if (view && !view->wasScrolledByUser()) {
+        Page* page = m_frame.page();
         if (page && m_frame.isMainFrame() && m_currentItem->pageScaleFactor())
             page->setPageScaleFactor(m_currentItem->pageScaleFactor(), m_currentItem->scrollPoint());
         else
