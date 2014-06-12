@@ -1061,8 +1061,6 @@
 #define ENABLE_OPENTYPE_MATH 1
 #endif
 
-// There are many occurences of "#if TARGET_OS_IPHONE" guard which cause build failures if TARGET_OS_IPHONE isn't defined.
-// #if defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE won't help, because GCC's preprocessor doesn't do short circuit macro evaluation.
 #if PLATFORM(EFL) || PLATFORM(GTK)
 #define TARGET_OS_IPHONE 0
 #endif

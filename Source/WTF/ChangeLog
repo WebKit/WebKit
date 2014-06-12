@@ -1,3 +1,15 @@
+2014-06-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix Mac after r169880.
+
+        This revision added a C++ comment to Platform.h, which breaks sandbox profile
+        preprocessing.
+
+        Also, I do not believe that this comment was entirely accurate - we've always used
+        this technique with GCC, so there has to be more to it. So, I just removed the comment.
+
+        * wtf/Platform.h:
+
 2014-06-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL][GTK] Ultimate fix not to have build failures
