@@ -30,7 +30,7 @@ fi
 
 TIMESTAMP_PATH=${TARGET_TEMP_DIR}/${0##*/}
 
-if [[ $0 -nt $TIMESTAMP_PATH ]]; then
+if [[ -e $TIMESTAMP_PATH && $0 -nt $TIMESTAMP_PATH ]]; then
     rm "${TIMESTAMP_PATH}";
 fi
 
