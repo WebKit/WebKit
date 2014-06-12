@@ -106,7 +106,7 @@ RetainPtr<CFDataRef> WebFrameNetworkingContext::sourceApplicationAuditData() con
 
 String WebFrameNetworkingContext::sourceApplicationIdentifier() const
 {
-    return [[NSBundle mainBundle] bundleIdentifier];
+    return @"";
 }
 
 ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& request) const

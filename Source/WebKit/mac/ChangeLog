@@ -1,3 +1,15 @@
+2014-06-11  Jeremy Jones  <jeremyj@apple.com>
+
+        WebFrameNetworkContext should not have a sourceApplicationIdentifier in WK1.
+        https://bugs.webkit.org/show_bug.cgi?id=133772
+
+        Reviewed by Jer Noble.
+
+        Return empty string from sourceApplicationIdentifier for WK1.
+
+        * WebCoreSupport/WebFrameNetworkingContext.mm:
+        (WebFrameNetworkingContext::sourceApplicationIdentifier):
+
 2014-06-10  Timothy Horton  <timothy_horton@apple.com>
 
         Factor repeated CFRunLoopObserver code out
