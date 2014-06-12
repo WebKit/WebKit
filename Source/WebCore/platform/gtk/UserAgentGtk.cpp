@@ -169,7 +169,7 @@ String standardUserAgent(const String& applicationName, const String& applicatio
     if (finalApplicationVersion.isEmpty())
         finalApplicationVersion = versionForUAString();
 
-    return standardUserAgentStatic() + applicationName + '/' + finalApplicationVersion;
+    return standardUserAgentStatic() + ' ' + applicationName + '/' + finalApplicationVersion;
 }
 
 String standardUserAgentForURL(const URL& url)
