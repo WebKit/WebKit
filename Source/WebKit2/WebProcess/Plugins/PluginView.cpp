@@ -1689,6 +1689,7 @@ void PluginView::pluginSnapshotTimerFired()
 {
     ASSERT(m_plugin);
 
+#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(m_pluginElement.get());
     bool isPlugInOnScreen = m_webPage->plugInIntersectsSearchRect(*plugInImageElement);
     if (!m_countSnapshotRetries)
@@ -1696,6 +1697,7 @@ void PluginView::pluginSnapshotTimerFired()
 
     bool plugInCameOnScreen = isPlugInOnScreen && m_didPlugInStartOffScreen;
     bool snapshotFound = false;
+#endif
 
     if (m_plugin->supportsSnapshotting()) {
         // Snapshot might be 0 if plugin size is 0x0.
@@ -1704,8 +1706,10 @@ void PluginView::pluginSnapshotTimerFired()
         if (snapshot)
             snapshotImage = snapshot->createImage();
         m_pluginElement->updateSnapshot(snapshotImage.get());
+#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
         bool snapshotIsAlmostSolidColor = isAlmostSolidColor(toBitmapImage(snapshotImage.get()));
         snapshotFound = snapshotImage && !snapshotIsAlmostSolidColor;
+#endif
 
 #if PLATFORM(COCOA)
         unsigned maximumSnapshotRetries = frame() ? frame()->settings().maximumPlugInSnapshotAttempts() : 0;
@@ -1716,12 +1720,15 @@ void PluginView::pluginSnapshotTimerFired()
         }
 #endif
     }
+
+#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     unsigned candidateArea = 0;
     bool noSnapshotFoundAfterMaxRetries = m_countSnapshotRetries == frame()->settings().maximumPlugInSnapshotAttempts() && !isPlugInOnScreen && !snapshotFound;
     if (m_webPage->plugInIsPrimarySize(*plugInImageElement, candidateArea)
         && (noSnapshotFoundAfterMaxRetries || plugInCameOnScreen))
         m_pluginElement->setDisplayState(HTMLPlugInElement::Playing);
     else
+#endif
         m_pluginElement->setDisplayState(HTMLPlugInElement::DisplayingSnapshot);
 }
 
