@@ -196,7 +196,7 @@ public:
     Structure* previousID() const
     {
         ASSERT(structure()->classInfo() == info());
-        if (typeInfo().structureHasRareData())
+        if (m_hasRareData)
             return rareData()->previousID();
         return previous();
     }
@@ -305,14 +305,14 @@ public:
 
     JSString* objectToStringValue()
     {
-        if (!typeInfo().structureHasRareData())
+        if (!m_hasRareData)
             return 0;
         return rareData()->objectToStringValue();
     }
 
     void setObjectToStringValue(VM& vm, const JSCell* owner, JSString* value)
     {
-        if (!typeInfo().structureHasRareData())
+        if (!m_hasRareData)
             allocateRareData(vm);
         rareData()->setObjectToStringValue(vm, owner, value);
     }
@@ -458,7 +458,7 @@ private:
 
     void setPreviousID(VM& vm, Structure* transition, Structure* structure)
     {
-        if (typeInfo().structureHasRareData())
+        if (m_hasRareData)
             rareData()->setPreviousID(vm, transition, structure);
         else
             m_previousOrRareData.set(vm, transition, structure);
@@ -466,7 +466,7 @@ private:
 
     void clearPreviousID()
     {
-        if (typeInfo().structureHasRareData())
+        if (m_hasRareData)
             rareData()->clearPreviousID();
         else
             m_previousOrRareData.clear();
@@ -485,13 +485,13 @@ private:
 
     Structure* previous() const
     {
-        ASSERT(!typeInfo().structureHasRareData());
+        ASSERT(!m_hasRareData);
         return static_cast<Structure*>(m_previousOrRareData.get());
     }
 
     StructureRareData* rareData() const
     {
-        ASSERT(typeInfo().structureHasRareData());
+        ASSERT(m_hasRareData);
         return static_cast<StructureRareData*>(m_previousOrRareData.get());
     }
         
@@ -549,6 +549,7 @@ private:
     unsigned m_preventExtensions : 1;
     unsigned m_didTransition : 1;
     unsigned m_staticFunctionReified : 1;
+    bool m_hasRareData : 1;
 };
 
 } // namespace JSC

@@ -49,8 +49,7 @@ namespace JSC {
     static const unsigned ProhibitsPropertyCaching = 1 << 9;
     static const unsigned HasImpureGetOwnPropertySlot = 1 << 10;
     static const unsigned NewImpurePropertyFiresWatchpoints = 1 << 11;
-    static const unsigned StructureHasRareData = 1 << 12;
-    static const unsigned StructureIsImmortal = 1 << 13;
+    static const unsigned StructureIsImmortal = 1 << 12;
 
     class TypeInfo {
     public:
@@ -96,7 +95,6 @@ namespace JSC {
         bool prohibitsPropertyCaching() const { return isSetOnFlags2(ProhibitsPropertyCaching); }
         bool hasImpureGetOwnPropertySlot() const { return isSetOnFlags2(HasImpureGetOwnPropertySlot); }
         bool newImpurePropertyFiresWatchpoints() const { return isSetOnFlags2(NewImpurePropertyFiresWatchpoints); }
-        bool structureHasRareData() const { return isSetOnFlags2(StructureHasRareData); }
         bool structureIsImmortal() const { return isSetOnFlags2(StructureIsImmortal); }
 
         static ptrdiff_t flagsOffset()

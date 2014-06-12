@@ -169,10 +169,11 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     , m_preventExtensions(false)
     , m_didTransition(false)
     , m_staticFunctionReified(false)
+    , m_hasRareData(false)
 {
     ASSERT(inlineCapacity <= JSFinalObject::maxInlineCapacity());
     ASSERT(static_cast<PropertyOffset>(inlineCapacity) < firstOutOfLineOffset);
-    ASSERT(!typeInfo.structureHasRareData());
+    ASSERT(!m_hasRareData);
     ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticSetterOrReadonlyProperties(vm));
     ASSERT(hasGetterSetterProperties() || !m_classInfo->hasStaticSetterOrReadonlyProperties(vm));
 }
@@ -198,6 +199,7 @@ Structure::Structure(VM& vm)
     , m_preventExtensions(false)
     , m_didTransition(false)
     , m_staticFunctionReified(false)
+    , m_hasRareData(false)
 {
     TypeInfo typeInfo = TypeInfo(CompoundType, OverridesVisitChildren | StructureIsImmortal);
     m_blob = StructureIDBlob(vm.heap.structureIDTable().allocateID(this), 0, typeInfo);
@@ -226,13 +228,14 @@ Structure::Structure(VM& vm, Structure* previous)
     , m_preventExtensions(previous->m_preventExtensions)
     , m_didTransition(true)
     , m_staticFunctionReified(previous->m_staticFunctionReified)
+    , m_hasRareData(false)
 {
-    TypeInfo typeInfo = TypeInfo(previous->typeInfo().type(), previous->typeInfo().flags() & ~StructureHasRareData);
+    TypeInfo typeInfo = previous->typeInfo();
     m_blob = StructureIDBlob(vm.heap.structureIDTable().allocateID(this), previous->indexingTypeIncludingHistory(), typeInfo);
     m_outOfLineTypeFlags = typeInfo.outOfLineTypeFlags();
 
     ASSERT(!previous->typeInfo().structureIsImmortal());
-    if (previous->typeInfo().structureHasRareData() && previous->rareData()->needsCloning())
+    if (previous->m_hasRareData && previous->rareData()->needsCloning())
         cloneRareDataFrom(vm, previous);
     setPreviousID(vm, this, previous);
 
@@ -790,24 +793,21 @@ void Structure::pin()
 
 void Structure::allocateRareData(VM& vm)
 {
-    ASSERT(!typeInfo().structureHasRareData());
+    ASSERT(!m_hasRareData);
     StructureRareData* rareData = StructureRareData::create(vm, previous());
-    TypeInfo oldTypeInfo = typeInfo();
-    TypeInfo newTypeInfo = TypeInfo(oldTypeInfo.type(), oldTypeInfo.flags() | StructureHasRareData);
-    m_outOfLineTypeFlags = newTypeInfo.outOfLineTypeFlags();
     m_previousOrRareData.set(vm, this, rareData);
-    ASSERT(typeInfo().structureHasRareData());
+    m_hasRareData = true;
+    ASSERT(m_hasRareData);
 }
 
 void Structure::cloneRareDataFrom(VM& vm, const Structure* other)
 {
-    ASSERT(other->typeInfo().structureHasRareData());
+    ASSERT(!m_hasRareData);
+    ASSERT(other->m_hasRareData);
     StructureRareData* newRareData = StructureRareData::clone(vm, other->rareData());
-    TypeInfo oldTypeInfo = typeInfo();
-    TypeInfo newTypeInfo = TypeInfo(oldTypeInfo.type(), oldTypeInfo.flags() | StructureHasRareData);
-    m_outOfLineTypeFlags = newTypeInfo.outOfLineTypeFlags();
     m_previousOrRareData.set(vm, this, newRareData);
-    ASSERT(typeInfo().structureHasRareData());
+    m_hasRareData = true;
+    ASSERT(m_hasRareData);
 }
 
 #if DUMP_PROPERTYMAP_STATS

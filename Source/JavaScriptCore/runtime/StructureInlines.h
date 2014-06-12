@@ -154,14 +154,14 @@ inline bool Structure::transitivelyTransitionedFrom(Structure* structureToFind)
 inline void Structure::setEnumerationCache(VM& vm, JSPropertyNameIterator* enumerationCache)
 {
     ASSERT(!isDictionary());
-    if (!typeInfo().structureHasRareData())
+    if (!m_hasRareData)
         allocateRareData(vm);
     rareData()->setEnumerationCache(vm, this, enumerationCache);
 }
 
 inline JSPropertyNameIterator* Structure::enumerationCache()
 {
-    if (!typeInfo().structureHasRareData())
+    if (!m_hasRareData)
         return 0;
     return rareData()->enumerationCache();
 }
