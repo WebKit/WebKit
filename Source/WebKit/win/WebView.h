@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Apple Inc.  All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  * Copyright (C) 2011 Brent Fulgham. All rights reserved.
  *
@@ -41,7 +41,6 @@
 #include <WebCore/SuspendableTimer.h>
 #include <WebCore/WindowMessageListener.h>
 #include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
 #if ENABLE(FULLSCREEN_API)
@@ -1126,11 +1125,11 @@ protected:
     static bool s_allowSiteSpecificHacks;
 
     WebCore::SuspendableTimer* m_closeWindowTimer;
-    OwnPtr<TRACKMOUSEEVENT> m_mouseOutTracker;
+    std::unique_ptr<TRACKMOUSEEVENT> m_mouseOutTracker;
 
     HWND m_topLevelParent;
 
-    OwnPtr<HashSet<WTF::String> > m_embeddedViewMIMETypes;
+    std::unique_ptr<HashSet<WTF::String>> m_embeddedViewMIMETypes;
 
     //Variables needed to store gesture information
     RefPtr<WebCore::Node> m_gestureTargetNode;
@@ -1140,7 +1139,7 @@ protected:
     long m_yOverpan;
 
 #if ENABLE(VIDEO)
-    OwnPtr<FullscreenVideoController> m_fullScreenVideoController;
+    std::unique_ptr<FullscreenVideoController> m_fullScreenVideoController;
 #endif
 
     bool isAcceleratedCompositing() const { return m_isAcceleratedCompositing; }
@@ -1161,7 +1160,7 @@ protected:
 
 #if ENABLE(FULLSCREEN_API)
     RefPtr<WebCore::Element> m_fullScreenElement;
-    OwnPtr<WebCore::FullScreenController> m_fullscreenController;
+    std::unique_ptr<WebCore::FullScreenController> m_fullscreenController;
     WebCore::IntPoint m_scrollPosition;
 #endif
 };

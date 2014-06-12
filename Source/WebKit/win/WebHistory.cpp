@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -425,6 +425,8 @@ HRESULT WebHistory::removeItem(IWebHistoryItem* entry)
         return hr;
 
     String urlString(urlBStr, SysStringLen(urlBStr));
+    if (urlString.isEmpty())
+        return E_FAIL;
 
     auto it = m_entriesByURL.find(urlString);
     if (it == m_entriesByURL.end())
@@ -460,6 +462,8 @@ HRESULT WebHistory::addItem(IWebHistoryItem* entry, bool discardDuplicate, bool*
         return hr;
 
     String urlString(urlBStr, SysStringLen(urlBStr));
+    if (urlString.isEmpty())
+        return E_FAIL;
 
     COMPtr<IWebHistoryItem> oldEntry(m_entriesByURL.get(urlString));
 
@@ -496,7 +500,11 @@ HRESULT WebHistory::addItem(IWebHistoryItem* entry, bool discardDuplicate, bool*
 
 void WebHistory::visitedURL(const URL& url, const String& title, const String& httpMethod, bool wasFailure, bool increaseVisitCount)
 {
-    IWebHistoryItem* entry = m_entriesByURL.get(url.string()).get();
+    const String& urlString = url.string();
+    if (urlString.isEmpty())
+        return;
+
+    IWebHistoryItem* entry = m_entriesByURL.get(urlString).get();
     if (!entry) {
         COMPtr<WebHistoryItem> item(AdoptCOM, WebHistoryItem::createInstance());
         if (!item)
@@ -510,10 +518,10 @@ void WebHistory::visitedURL(const URL& url, const String& title, const String& h
         if (!SystemTimeToVariantTime(&currentTime, &lastVisited))
             return;
 
-        if (FAILED(entry->initWithURLString(BString(url.string()), BString(title), lastVisited)))
+        if (FAILED(entry->initWithURLString(BString(urlString), BString(title), lastVisited)))
             return;
         
-        m_entriesByURL.set(url.string(), entry);
+        m_entriesByURL.set(urlString, entry);
     }
 
     COMPtr<IWebHistoryItemPrivate> entryPrivate(Query, entry);
@@ -530,13 +538,17 @@ void WebHistory::visitedURL(const URL& url, const String& title, const String& h
     postNotification(kWebHistoryItemsAddedNotification, userInfo.get());
 }
 
-HRESULT WebHistory::itemForURL(BSTR url, IWebHistoryItem** item)
+HRESULT WebHistory::itemForURL(BSTR urlBStr, IWebHistoryItem** item)
 {
     if (!item)
         return E_FAIL;
     *item = 0;
 
-    auto it = m_entriesByURL.find(url);
+    String urlString(urlBStr, SysStringLen(urlBStr));
+    if (urlString.isEmpty())
+        return E_FAIL;
+
+    auto it = m_entriesByURL.find(urlString);
     if (it == m_entriesByURL.end())
         return E_FAIL;
 
@@ -546,6 +558,9 @@ HRESULT WebHistory::itemForURL(BSTR url, IWebHistoryItem** item)
 
 HRESULT WebHistory::removeItemForURLString(const WTF::String& urlString)
 {
+    if (urlString.isEmpty())
+        return E_FAIL;
+
     auto it = m_entriesByURL.find(urlString);
     if (it == m_entriesByURL.end())
         return E_FAIL;
@@ -558,8 +573,8 @@ HRESULT WebHistory::removeItemForURLString(const WTF::String& urlString)
 
 COMPtr<IWebHistoryItem> WebHistory::itemForURLString(const String& urlString) const
 {
-    if (!urlString)
-        return 0;
+    if (urlString.isEmpty())
+        return nullptr;
     return m_entriesByURL.get(urlString);
 }
 

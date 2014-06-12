@@ -1,3 +1,33 @@
+2014-06-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Avoid crashes in code that converted CFDictionaries to HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=133813
+        <rdar://problem/17291647>
+
+        Reviewed by Tim Horton.
+
+        * WebHistory.cpp: Add empty string checks to avoid crashes in
+        hash function.
+        (WebHistory::removeItem):
+        (WebHistory::addItem):
+        (WebHistory::visitedURL):
+        (WebHistory::itemForURL):
+        (WebHistory::removeItemForURLString):
+        (WebHistory::itemForURLString):
+        * WebPreferences.cpp: Ditto.
+        (WebPreferences::getInstanceForIdentifier):
+        (WebPreferences::setInstance):
+        (WebPreferences::removeReferenceForIdentifier):
+        * WebView.cpp: Ditto. Also convert OwnPtr uses in this file
+        to std::unique_ptr.
+        (WebView::close):
+        (WebView::handleMouseEvent):
+        (WebView::registerEmbeddedViewMIMEType):
+        (WebView::shouldUseEmbeddedView):
+        (WebView::enterFullscreenForNode):
+        (WebView::fullScreenController):
+        * WebView.h:
+
 2014-05-07  Hyowon Kim  <hw1008.kim@samsung.com>
 
         GraphicsLayer::client() should return a reference.

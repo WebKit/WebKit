@@ -96,6 +96,7 @@
 #include <WebCore/FrameTree.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/FrameWin.h>
+#include <WebCore/FullScreenController.h>
 #include <WebCore/GDIObjectCounter.h>
 #include <WebCore/GeolocationController.h>
 #include <WebCore/GeolocationError.h>
@@ -717,7 +718,7 @@ HRESULT STDMETHODCALLTYPE WebView::close()
     if (m_mouseOutTracker) {
         m_mouseOutTracker->dwFlags = TME_CANCEL;
         ::TrackMouseEvent(m_mouseOutTracker.get());
-        m_mouseOutTracker.clear();
+        m_mouseOutTracker.reset();
     }
     
     revokeDragDrop();
@@ -1539,7 +1540,7 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
     } else if (message == WM_MOUSELEAVE && m_mouseOutTracker) {
         // Once WM_MOUSELEAVE is fired windows clears this tracker
         // so there is no need to disable it ourselves.
-        m_mouseOutTracker.clear();
+        m_mouseOutTracker.reset();
         m_page->mainFrame().eventHandler().mouseMoved(mouseEvent);
         handled = true;
     } else if (message == WM_MOUSEMOVE) {
@@ -1548,7 +1549,7 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
         mouseEvent.setClickCount(globalClickCount);
         handled = m_page->mainFrame().eventHandler().mouseMoved(mouseEvent);
         if (!m_mouseOutTracker) {
-            m_mouseOutTracker = adoptPtr(new TRACKMOUSEEVENT);
+            m_mouseOutTracker = std::make_unique<TRACKMOUSEEVENT>();
             m_mouseOutTracker->cbSize = sizeof(TRACKMOUSEEVENT);
             m_mouseOutTracker->dwFlags = TME_LEAVE;
             m_mouseOutTracker->hwndTrack = m_viewWindow;
@@ -6195,13 +6196,13 @@ HRESULT STDMETHODCALLTYPE WebView::alwaysUsesComplexTextCodePath(BOOL* complex)
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::registerEmbeddedViewMIMEType(BSTR mimeType)
+HRESULT WebView::registerEmbeddedViewMIMEType(BSTR mimeType)
 {
     if (!mimeType)
         return E_POINTER;
 
     if (!m_embeddedViewMIMETypes)
-        m_embeddedViewMIMETypes = adoptPtr(new HashSet<String>);
+        m_embeddedViewMIMETypes = std::make_unique<HashSet<String>>();
 
     m_embeddedViewMIMETypes->add(toString(mimeType));
     return S_OK;
@@ -6210,6 +6211,9 @@ HRESULT STDMETHODCALLTYPE WebView::registerEmbeddedViewMIMEType(BSTR mimeType)
 bool WebView::shouldUseEmbeddedView(const WTF::String& mimeType) const
 {
     if (!m_embeddedViewMIMETypes)
+        return false;
+
+    if (mimeType.isEmpty())
         return false;
 
     return m_embeddedViewMIMETypes->contains(mimeType);
@@ -6299,7 +6303,7 @@ void WebView::enterFullscreenForNode(Node* node)
         ASSERT(!m_fullScreenVideoController);
     }
 
-    m_fullScreenVideoController = adoptPtr(new FullscreenVideoController);
+    m_fullScreenVideoController = std::make_unique<FullscreenVideoController>();
     m_fullScreenVideoController->setMediaElement(videoElement);
     m_fullScreenVideoController->enterFullscreen();
 #endif
@@ -6902,7 +6906,7 @@ bool WebView::isFullScreen() const
 FullScreenController* WebView::fullScreenController()
 {
     if (!m_fullscreenController)
-        m_fullscreenController = adoptPtr(new FullScreenController(this));
+        m_fullscreenController = std::unique_ptr<FullScreenController>(new FullScreenController(this));
     return m_fullscreenController.get();
 }
 
