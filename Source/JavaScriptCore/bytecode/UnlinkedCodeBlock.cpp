@@ -82,13 +82,12 @@ unsigned UnlinkedCodeBlock::addOrFindConstant(JSValue v)
     return addConstant(v);
 }
 
-UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* structure, const SourceCode& source, FunctionBodyNode* node, bool isFromGlobalCode, UnlinkedFunctionKind kind)
+UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* structure, const SourceCode& source, FunctionBodyNode* node, UnlinkedFunctionKind kind)
     : Base(*vm, structure)
     , m_numCapturedVariables(node->capturedVariableCount())
     , m_forceUsesArguments(node->usesArguments())
     , m_isInStrictContext(node->isStrictMode())
     , m_hasCapturedVariables(node->hasCapturedVariables())
-    , m_isFromGlobalCode(isFromGlobalCode)
     , m_isBuiltinFunction(kind == UnlinkedBuiltinFunction)
     , m_name(node->ident())
     , m_inferredName(node->inferredName())

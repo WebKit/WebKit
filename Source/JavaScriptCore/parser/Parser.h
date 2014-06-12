@@ -88,23 +88,6 @@ enum DeconstructionKind {
 template <typename T> inline bool isEvalNode() { return false; }
 template <> inline bool isEvalNode<EvalNode>() { return true; }
 
-struct DepthManager {
-    DepthManager(int* depth)
-        : m_originalDepth(*depth)
-        , m_depth(depth)
-    {
-    }
-
-    ~DepthManager()
-    {
-        *m_depth = m_originalDepth;
-    }
-
-private:
-    int m_originalDepth;
-    int* m_depth;
-};
-
 struct ScopeLabelInfo {
     ScopeLabelInfo(StringImpl* ident, bool isLoop)
         : m_ident(ident)

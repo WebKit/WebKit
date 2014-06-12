@@ -163,7 +163,7 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(VM& v
     RELEASE_ASSERT(body);
     RELEASE_ASSERT(body->ident().isNull());
 
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, body, true, UnlinkedNormalFunction);
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, body, UnlinkedNormalFunction);
     functionExecutable->m_nameValue.set(vm, functionExecutable, jsString(&vm, name.string()));
 
     addResult.iterator->value = SourceCodeValue(vm, functionExecutable, m_sourceCode.age());

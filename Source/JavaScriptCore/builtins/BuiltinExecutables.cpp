@@ -78,7 +78,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createBuiltinExecutable(const So
         RELEASE_ASSERT(closedVariable->isEmptyUnique());
     }
     body->overrideName(name);
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&m_vm, source, body, true, UnlinkedBuiltinFunction);
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&m_vm, source, body, UnlinkedBuiltinFunction);
     functionExecutable->m_nameValue.set(m_vm, functionExecutable, jsString(&m_vm, name.string()));
     return functionExecutable;
 }

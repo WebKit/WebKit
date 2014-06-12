@@ -547,7 +547,7 @@ namespace JSC {
         
         UnlinkedFunctionExecutable* makeFunction(FunctionBodyNode* body)
         {
-            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), body, false, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction);
+            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), body, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction);
         }
 
         RegisterID* emitInitLazyRegister(RegisterID*);
