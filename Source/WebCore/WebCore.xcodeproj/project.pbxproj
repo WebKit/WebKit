@@ -2349,6 +2349,10 @@
 		7AA3A69A194A64E7001CBD24 /* TileController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA3A696194A64E7001CBD24 /* TileController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AA3A69B194A64E7001CBD24 /* TileGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AA3A697194A64E7001CBD24 /* TileGrid.cpp */; };
 		7AA3A69C194A64E7001CBD24 /* TileGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA3A698194A64E7001CBD24 /* TileGrid.h */; };
+		7AA3A69F194B59B6001CBD24 /* LayerPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AA3A69D194B59B6001CBD24 /* LayerPool.cpp */; };
+		7AA3A6A0194B59B6001CBD24 /* LayerPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA3A69E194B59B6001CBD24 /* LayerPool.h */; };
+		7AA3A6A3194B5C22001CBD24 /* TileCoverageMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AA3A6A1194B5C22001CBD24 /* TileCoverageMap.cpp */; };
+		7AA3A6A4194B5C22001CBD24 /* TileCoverageMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA3A6A2194B5C22001CBD24 /* TileCoverageMap.h */; };
 		7AABA25914BC613300AA9A11 /* DOMEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AABA25714BC613300AA9A11 /* DOMEditor.cpp */; };
 		7AABA25A14BC613300AA9A11 /* DOMEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AABA25814BC613300AA9A11 /* DOMEditor.h */; };
 		7AB0B1C01211A62200A76940 /* InspectorDatabaseAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB0B1BE1211A62200A76940 /* InspectorDatabaseAgent.cpp */; };
@@ -3346,8 +3350,6 @@
 		93F1D5C112D5335600832BEC /* JSWebGLLoseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F1D5BF12D5335600832BEC /* JSWebGLLoseContext.h */; };
 		93F6F1ED127F70B10055CB06 /* WebGLContextEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F6F1EA127F70B10055CB06 /* WebGLContextEvent.cpp */; };
 		93F6F1EE127F70B10055CB06 /* WebGLContextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F6F1EB127F70B10055CB06 /* WebGLContextEvent.h */; };
-		93F72AF31666EDFC002A02BD /* LayerPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F72AF11666EDFC002A02BD /* LayerPool.h */; };
-		93F72AF41666EDFC002A02BD /* LayerPool.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93F72AF21666EDFC002A02BD /* LayerPool.mm */; };
 		93F925430F7EF5B8007E37C9 /* CheckedRadioButtons.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F925410F7EF5B8007E37C9 /* CheckedRadioButtons.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F925440F7EF5B8007E37C9 /* CheckedRadioButtons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F925420F7EF5B8007E37C9 /* CheckedRadioButtons.cpp */; };
 		93F9B6570BA0F35E00854064 /* DOMHTMLCanvasElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93F9B6540BA0F35E00854064 /* DOMHTMLCanvasElement.mm */; };
@@ -6123,8 +6125,6 @@
 		E47B4BE90E71241600038854 /* CachedResourceHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47B4BE70E71241600038854 /* CachedResourceHandle.cpp */; };
 		E47E276516036ED200EE2AFB /* DocumentStyleSheetCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = E47E276416036ED200EE2AFB /* DocumentStyleSheetCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E47E276816036EDC00EE2AFB /* DocumentStyleSheetCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47E276716036EDC00EE2AFB /* DocumentStyleSheetCollection.cpp */; };
-		E4830A3918F4C59400154A1B /* TileCoverageMap.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4830A3818F4C59400154A1B /* TileCoverageMap.mm */; };
-		E4830A3D18F4C5B700154A1B /* TileCoverageMap.h in Headers */ = {isa = PBXBuildFile; fileRef = E4830A3C18F4C5B700154A1B /* TileCoverageMap.h */; };
 		E48944A2180B57D800F165D8 /* SimpleLineLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */; };
 		E48944A3180B57D800F165D8 /* SimpleLineLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = E48944A1180B57D800F165D8 /* SimpleLineLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4946EAE156E64DD00D3297F /* StyleRuleImport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4946EAC156E64DD00D3297F /* StyleRuleImport.cpp */; };
@@ -9455,6 +9455,10 @@
 		7AA3A696194A64E7001CBD24 /* TileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileController.h; path = ca/TileController.h; sourceTree = "<group>"; };
 		7AA3A697194A64E7001CBD24 /* TileGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TileGrid.cpp; path = ca/TileGrid.cpp; sourceTree = "<group>"; };
 		7AA3A698194A64E7001CBD24 /* TileGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileGrid.h; path = ca/TileGrid.h; sourceTree = "<group>"; };
+		7AA3A69D194B59B6001CBD24 /* LayerPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerPool.cpp; path = ca/LayerPool.cpp; sourceTree = "<group>"; };
+		7AA3A69E194B59B6001CBD24 /* LayerPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerPool.h; path = ca/LayerPool.h; sourceTree = "<group>"; };
+		7AA3A6A1194B5C22001CBD24 /* TileCoverageMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TileCoverageMap.cpp; path = ca/TileCoverageMap.cpp; sourceTree = "<group>"; };
+		7AA3A6A2194B5C22001CBD24 /* TileCoverageMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileCoverageMap.h; path = ca/TileCoverageMap.h; sourceTree = "<group>"; };
 		7AABA25714BC613300AA9A11 /* DOMEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMEditor.cpp; sourceTree = "<group>"; };
 		7AABA25814BC613300AA9A11 /* DOMEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMEditor.h; sourceTree = "<group>"; };
 		7AB0B1BE1211A62200A76940 /* InspectorDatabaseAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorDatabaseAgent.cpp; sourceTree = "<group>"; };
@@ -10434,8 +10438,6 @@
 		93F6F1EA127F70B10055CB06 /* WebGLContextEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLContextEvent.cpp; path = canvas/WebGLContextEvent.cpp; sourceTree = "<group>"; };
 		93F6F1EB127F70B10055CB06 /* WebGLContextEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLContextEvent.h; path = canvas/WebGLContextEvent.h; sourceTree = "<group>"; };
 		93F6F1EC127F70B10055CB06 /* WebGLContextEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLContextEvent.idl; path = canvas/WebGLContextEvent.idl; sourceTree = "<group>"; };
-		93F72AF11666EDFC002A02BD /* LayerPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerPool.h; path = ca/mac/LayerPool.h; sourceTree = "<group>"; };
-		93F72AF21666EDFC002A02BD /* LayerPool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LayerPool.mm; path = ca/mac/LayerPool.mm; sourceTree = "<group>"; };
 		93F8B3050A300FE100F61AB8 /* CodeGenerator.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = CodeGenerator.pm; path = scripts/CodeGenerator.pm; sourceTree = "<group>"; };
 		93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = CodeGeneratorJS.pm; path = ../scripts/CodeGeneratorJS.pm; sourceTree = "<group>"; wrapsLines = 0; };
 		93F8B3070A300FEA00F61AB8 /* generate-bindings.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = "generate-bindings.pl"; path = "scripts/generate-bindings.pl"; sourceTree = "<group>"; };
@@ -13585,8 +13587,6 @@
 		E47B4BE70E71241600038854 /* CachedResourceHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedResourceHandle.cpp; sourceTree = "<group>"; };
 		E47E276416036ED200EE2AFB /* DocumentStyleSheetCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentStyleSheetCollection.h; sourceTree = "<group>"; };
 		E47E276716036EDC00EE2AFB /* DocumentStyleSheetCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentStyleSheetCollection.cpp; sourceTree = "<group>"; };
-		E4830A3818F4C59400154A1B /* TileCoverageMap.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TileCoverageMap.mm; path = ca/mac/TileCoverageMap.mm; sourceTree = "<group>"; };
-		E4830A3C18F4C5B700154A1B /* TileCoverageMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileCoverageMap.h; path = ca/mac/TileCoverageMap.h; sourceTree = "<group>"; };
 		E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayout.cpp; sourceTree = "<group>"; };
 		E48944A1180B57D800F165D8 /* SimpleLineLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayout.h; sourceTree = "<group>"; };
 		E4946EAC156E64DD00D3297F /* StyleRuleImport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleRuleImport.cpp; sourceTree = "<group>"; };
@@ -15784,16 +15784,12 @@
 			isa = PBXGroup;
 			children = (
 				2917B565147349950052C9D0 /* LayerFlushSchedulerMac.cpp */,
-				93F72AF11666EDFC002A02BD /* LayerPool.h */,
-				93F72AF21666EDFC002A02BD /* LayerPool.mm */,
 				0F5E200518E771FC003EC3E5 /* PlatformCAAnimationMac.h */,
 				4958781F12A57DDF007238AC /* PlatformCAAnimationMac.mm */,
 				D66B2D5B186830050073C4DD /* PlatformCAFiltersMac.h */,
 				0F13163F16ED0CDE0035CC04 /* PlatformCAFiltersMac.mm */,
 				2D70BA1218074DDF0001908A /* PlatformCALayerMac.h */,
 				4958782012A57DDF007238AC /* PlatformCALayerMac.mm */,
-				E4830A3C18F4C5B700154A1B /* TileCoverageMap.h */,
-				E4830A3818F4C59400154A1B /* TileCoverageMap.mm */,
 				0F580FA11496939100FB5BD8 /* WebTiledBackingLayer.h */,
 				0F580FA21496939100FB5BD8 /* WebTiledBackingLayer.mm */,
 			);
@@ -15832,6 +15828,8 @@
 				2917B55E1473496C0052C9D0 /* LayerFlushScheduler.cpp */,
 				2917B55F1473496C0052C9D0 /* LayerFlushScheduler.h */,
 				2917B5601473496C0052C9D0 /* LayerFlushSchedulerClient.h */,
+				7AA3A69D194B59B6001CBD24 /* LayerPool.cpp */,
+				7AA3A69E194B59B6001CBD24 /* LayerPool.h */,
 				499B3EDC128DB50100E726C2 /* PlatformCAAnimation.h */,
 				0F13163D16ED0CC80035CC04 /* PlatformCAFilters.h */,
 				2D70BA1418074F850001908A /* PlatformCALayer.cpp */,
@@ -15839,6 +15837,8 @@
 				493E5E0812D6420500020081 /* PlatformCALayerClient.h */,
 				7AA3A695194A64E7001CBD24 /* TileController.cpp */,
 				7AA3A696194A64E7001CBD24 /* TileController.h */,
+				7AA3A6A1194B5C22001CBD24 /* TileCoverageMap.cpp */,
+				7AA3A6A2194B5C22001CBD24 /* TileCoverageMap.h */,
 				7AA3A697194A64E7001CBD24 /* TileGrid.cpp */,
 				7AA3A698194A64E7001CBD24 /* TileGrid.h */,
 				494BC40C12AEDD9E00743BD2 /* TransformationMatrixCA.cpp */,
@@ -23749,6 +23749,7 @@
 				85BA4D0F0AA688680088052D /* DOMHTMLDListElement.h in Headers */,
 				85E711A50AC5D5350053270F /* DOMHTMLDListElementInternal.h in Headers */,
 				85BCBC130ABBA87D00381160 /* DOMHTMLDocument.h in Headers */,
+				7AA3A6A4194B5C22001CBD24 /* TileCoverageMap.h in Headers */,
 				85E711A60AC5D5350053270F /* DOMHTMLDocumentInternal.h in Headers */,
 				85DF2EED0AA387CB00AD64C5 /* DOMHTMLElement.h in Headers */,
 				85E711A70AC5D5350053270F /* DOMHTMLElementInternal.h in Headers */,
@@ -24932,7 +24933,6 @@
 				B2FA3DB70AB75A6F000E5AC4 /* JSSVGPathSeg.h in Headers */,
 				B2FA3DB90AB75A6F000E5AC4 /* JSSVGPathSegArcAbs.h in Headers */,
 				B2FA3DBB0AB75A6F000E5AC4 /* JSSVGPathSegArcRel.h in Headers */,
-				E4830A3D18F4C5B700154A1B /* TileCoverageMap.h in Headers */,
 				B2FA3DBD0AB75A6F000E5AC4 /* JSSVGPathSegClosePath.h in Headers */,
 				B2FA3DBF0AB75A6F000E5AC4 /* JSSVGPathSegCurvetoCubicAbs.h in Headers */,
 				B2FA3DC10AB75A6F000E5AC4 /* JSSVGPathSegCurvetoCubicRel.h in Headers */,
@@ -25073,7 +25073,6 @@
 				85EC9AFB0A71A2C600EEEAED /* Language.h in Headers */,
 				2917B5621473496C0052C9D0 /* LayerFlushScheduler.h in Headers */,
 				2917B5631473496C0052C9D0 /* LayerFlushSchedulerClient.h in Headers */,
-				93F72AF31666EDFC002A02BD /* LayerPool.h in Headers */,
 				141DC050164834B900371E5A /* LayoutBoxExtent.h in Headers */,
 				931D72F615FE695300C4C07E /* LayoutMilestones.h in Headers */,
 				141DC051164834B900371E5A /* LayoutPoint.h in Headers */,
@@ -26197,6 +26196,7 @@
 				C105DA640F3AA6B8001DD44F /* TextEncodingDetector.h in Headers */,
 				B2C3DA490D006C1D00EF6F26 /* TextEncodingRegistry.h in Headers */,
 				933A14300B7D188600A53FFD /* TextEvent.h in Headers */,
+				7AA3A6A0194B59B6001CBD24 /* LayerPool.h in Headers */,
 				A77B41A012E675A90054343D /* TextEventInputType.h in Headers */,
 				F55B3DD81251F12D003EF269 /* TextFieldInputType.h in Headers */,
 				93309E18099E64920056E581 /* TextGranularity.h in Headers */,
@@ -27133,7 +27133,6 @@
 				E19AC3F9182566F700349426 /* CryptoKeyMac.cpp in Sources */,
 				E1F80B8718317252007885C3 /* CryptoKeyPair.cpp in Sources */,
 				2D3EF4491917915C00034184 /* WebActionDisablingCALayerDelegate.mm in Sources */,
-				E4830A3918F4C59400154A1B /* TileCoverageMap.mm in Sources */,
 				E164FAA518315E1A00DB4E61 /* CryptoKeyRSAMac.cpp in Sources */,
 				E125F859182C1AA600D84CD9 /* CryptoKeySerializationRaw.cpp in Sources */,
 				CAE9F90F146441F000C245B0 /* CSSAspectRatioValue.cpp in Sources */,
@@ -27347,6 +27346,7 @@
 				85BCBC140ABBA87D00381160 /* DOMHTMLDocument.mm in Sources */,
 				85DF2EEE0AA387CB00AD64C5 /* DOMHTMLElement.mm in Sources */,
 				85C050BB0AD84F5E005532E7 /* DOMHTMLEmbedElement.mm in Sources */,
+				7AA3A6A3194B5C22001CBD24 /* TileCoverageMap.cpp in Sources */,
 				85BA4CE00AA6861B0088052D /* DOMHTMLFieldSetElement.mm in Sources */,
 				85ECBEF00AA7626900544F0B /* DOMHTMLFontElement.mm in Sources */,
 				85DF2C5D0AA341F600AD64C5 /* DOMHTMLFormElement.mm in Sources */,
@@ -28613,7 +28613,6 @@
 				9352084509BD43B900F2038D /* Language.mm in Sources */,
 				2917B5611473496C0052C9D0 /* LayerFlushScheduler.cpp in Sources */,
 				2917B566147349950052C9D0 /* LayerFlushSchedulerMac.cpp in Sources */,
-				93F72AF41666EDFC002A02BD /* LayerPool.mm in Sources */,
 				141DC04F164834B900371E5A /* LayoutBoxExtent.cpp in Sources */,
 				141DC052164834B900371E5A /* LayoutRect.cpp in Sources */,
 				A120ACA413F998CA00FE4AC7 /* LayoutRepainter.cpp in Sources */,
@@ -29069,6 +29068,7 @@
 				078E090A17D14CEE00420AA1 /* RTCIceCandidateEvent.cpp in Sources */,
 				078E090B17D14CEE00420AA1 /* RTCPeerConnection.cpp in Sources */,
 				073BE35017D181A6002BD431 /* RTCPeerConnectionHandler.cpp in Sources */,
+				7AA3A69F194B59B6001CBD24 /* LayerPool.cpp in Sources */,
 				078E090C17D14CEE00420AA1 /* RTCSessionDescription.cpp in Sources */,
 				073BE34E17D180B2002BD431 /* RTCSessionDescriptionDescriptor.cpp in Sources */,
 				078E090D17D14CEE00420AA1 /* RTCSessionDescriptionRequestImpl.cpp in Sources */,

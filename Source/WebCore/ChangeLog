@@ -1,3 +1,24 @@
+2014-06-13  Brent Fulgham  <bfulgham@apple.com>
+
+        Convert LayerPool and TileCoverageMap from ObjC to C++
+        https://bugs.webkit.org/show_bug.cgi?id=133862
+        <rdar://problem/17302883>
+
+        Reviewed by Simon Fraser.
+
+        This just moves two ObjC files from the mac subdirectory to the parent and
+        revises the project to build them as C++.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/ca/LayerPool.cpp: Copied from platform/graphics/ca/mac/LayerPool.mm.
+        * platform/graphics/ca/LayerPool.h: Copied from platform/graphics/ca/mac/LayerPool.h.
+        * platform/graphics/ca/TileCoverageMap.cpp: Copied from platform/graphics/ca/mac/TileCoverageMap.mm.
+        * platform/graphics/ca/TileCoverageMap.h: Copied from platform/graphics/ca/mac/TileCoverageMap.h.
+        * platform/graphics/ca/mac/LayerPool.h: Removed.
+        * platform/graphics/ca/mac/LayerPool.mm: Removed.
+        * platform/graphics/ca/mac/TileCoverageMap.h: Removed.
+        * platform/graphics/ca/mac/TileCoverageMap.mm: Removed.
+
 2014-06-13  Alex Christensen  <achristensen@webkit.org>
 
         Make css jit compile for armv7.
