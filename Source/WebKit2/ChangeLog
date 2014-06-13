@@ -1,3 +1,14 @@
+2014-06-12  Anders Carlsson  <andersca@apple.com>
+
+        Add overloads of HTTPHeaderMap::find and remove that take enums
+        https://bugs.webkit.org/show_bug.cgi?id=133823
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::parsePostBuffer):
+        Update for WebCore changes.
+
 2014-06-12  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Do not update the viewport configuration on load until the first viewport arguments is received

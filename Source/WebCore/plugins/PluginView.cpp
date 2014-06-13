@@ -44,6 +44,7 @@
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
+#include "HTTPHeaderNames.h"
 #include "Image.h"
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
@@ -1165,7 +1166,7 @@ NPError PluginView::handlePost(const char* url, const char* target, uint32_t len
 
                 if (!contentLength.isNull())
                     dataLength = min(contentLength.toInt(), (int)dataLength);
-                headerFields.remove("Content-Length");
+                headerFields.remove(HTTPHeaderName::ContentLength);
 
                 postData += location;
                 postDataLength = dataLength;

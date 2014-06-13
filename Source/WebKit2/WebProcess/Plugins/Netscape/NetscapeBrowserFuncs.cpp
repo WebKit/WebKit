@@ -32,6 +32,7 @@
 #include "NetscapePlugin.h"
 #include "PluginController.h"
 #include <WebCore/HTTPHeaderMap.h>
+#include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/IdentifierRep.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ProtectionSpace.h>
@@ -249,11 +250,10 @@ static NPError parsePostBuffer(bool isFile, const char *buffer, uint32_t length,
                 
                 if (!contentLength.isNull())
                     dataLength = std::min(contentLength.toInt(), (int)dataLength);
-                headerFields.remove("Content-Length");
+                headerFields.remove(HTTPHeaderName::ContentLength);
                 
                 postBuffer += location;
                 postBufferSize = dataLength;
-                
             }
         }
     }

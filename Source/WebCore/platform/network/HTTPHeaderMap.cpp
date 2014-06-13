@@ -31,7 +31,9 @@
 #include "config.h"
 #include "HTTPHeaderMap.h"
 
+#include "HTTPHeaderNames.h"
 #include <utility>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -97,6 +99,11 @@ struct CaseFoldingCStringTranslator {
     }
 };
 
+bool HTTPHeaderMap::contains(HTTPHeaderName name) const
+{
+    return m_headers.contains(httpHeaderNameString(name).toStringWithoutCopying());
+}
+
 String HTTPHeaderMap::get(const char* name) const
 {
     auto it = find(name);
@@ -104,20 +111,15 @@ String HTTPHeaderMap::get(const char* name) const
         return String();
     return it->value;
 }
-    
-bool HTTPHeaderMap::contains(const char* name) const
-{
-    return find(name) != end();
-}
 
 HTTPHeaderMap::const_iterator HTTPHeaderMap::find(const char* name) const
 {
     return m_headers.find<CaseFoldingCStringTranslator>(name);
 }
 
-bool HTTPHeaderMap::remove(const char* name)
+bool HTTPHeaderMap::remove(HTTPHeaderName name)
 {
-    return m_headers.remove(m_headers.find<CaseFoldingCStringTranslator>(name));
+    return m_headers.remove(httpHeaderNameString(name).toStringWithoutCopying());
 }
 
 } // namespace WebCore

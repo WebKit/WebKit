@@ -1,3 +1,42 @@
+2014-06-12  Anders Carlsson  <andersca@apple.com>
+
+        Add overloads of HTTPHeaderMap::find and remove that take enums
+        https://bugs.webkit.org/show_bug.cgi?id=133823
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+        Update symbols.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Make HTTPHeaderNames.h private.
+
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::contains):
+        Convert the enum value to a string and call the contains overload that takes a string.
+
+        (WebCore::HTTPHeaderMap::remove):
+        Convert the enum value to a string and call the remove overload that takes a string.
+
+        * platform/network/HTTPHeaderMap.h:
+        Add new overloads taking HTTPHeaderName and mark the versions taking string literals as deleted.
+
+        * platform/network/HTTPHeaderNames.in:
+        Add new header names.
+
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::clearHTTPAuthorization):
+        (WebCore::ResourceRequestBase::clearHTTPContentType):
+        (WebCore::ResourceRequestBase::clearHTTPReferrer):
+        (WebCore::ResourceRequestBase::clearHTTPOrigin):
+        (WebCore::ResourceRequestBase::clearHTTPUserAgent):
+        (WebCore::ResourceRequestBase::clearHTTPAccept):
+        Update functions to use HTTPHeaderName enums.
+
+        (WebCore::ResourceRequestBase::isConditional):
+        (WebCore::ResourceRequestBase::makeUnconditional):
+        Simplify these.
+
 2014-06-13  Jarek Czekalski  <jarekczek@poczta.onet.pl>
 
         [ATK] Fix text inside "span" block in "a" block was not accessible.

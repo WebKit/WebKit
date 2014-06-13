@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+enum class HTTPHeaderName;
+
 typedef Vector<std::pair<String, String>> CrossThreadHTTPHeaderMapData;
 
 // FIXME: Not every header fits into a map. Notably, multiple Set-Cookie header fields are needed to set multiple cookies.
@@ -58,15 +60,17 @@ public:
     void clear() { m_headers.clear(); }
 
     String get(const AtomicString& name) const;
-
     void set(const AtomicString& name, const String& value);
     void add(const AtomicString& name, const String& value);
 
-    // Alternate accessors that are faster than converting the char* to AtomicString first.
-    bool contains(const char*) const;
+    bool contains(HTTPHeaderName) const;
     String get(const char*) const;
     const_iterator find(const char*) const;
-    bool remove(const char*);
+    bool remove(HTTPHeaderName);
+
+    // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
+    template<size_t length> bool contains(const char (&)[length]) = delete;
+    template<size_t length> bool remove(const char (&)[length]) = delete;
 
     const_iterator begin() const { return m_headers.begin(); }
     const_iterator end() const { return m_headers.end(); }
@@ -82,7 +86,7 @@ public:
     }
 
 private:
-    HashMap<AtomicString, String, CaseFoldingHash> m_headers;
+    HashMapType m_headers;
 };
 
 } // namespace WebCore

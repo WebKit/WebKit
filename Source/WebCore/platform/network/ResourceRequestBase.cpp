@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ResourceRequestBase.h"
 
+#include "HTTPHeaderNames.h"
 #include "ResourceRequest.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -264,7 +265,7 @@ void ResourceRequestBase::clearHTTPAuthorization()
 {
     updateResourceRequest(); 
 
-    if (!m_httpHeaderFields.remove("Authorization"))
+    if (!m_httpHeaderFields.remove(HTTPHeaderName::Authorization))
         return;
 
     if (url().protocolIsInHTTPFamily())
@@ -285,7 +286,7 @@ void ResourceRequestBase::clearHTTPContentType()
 {
     updateResourceRequest(); 
 
-    m_httpHeaderFields.remove("Content-Type");
+    m_httpHeaderFields.remove(HTTPHeaderName::ContentType);
 
     if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
@@ -305,7 +306,7 @@ void ResourceRequestBase::clearHTTPReferrer()
 {
     updateResourceRequest(); 
 
-    m_httpHeaderFields.remove("Referer");
+    m_httpHeaderFields.remove(HTTPHeaderName::Referer);
 
     if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
@@ -325,7 +326,7 @@ void ResourceRequestBase::clearHTTPOrigin()
 {
     updateResourceRequest(); 
 
-    m_httpHeaderFields.remove("Origin");
+    m_httpHeaderFields.remove(HTTPHeaderName::Origin);
 
     if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
@@ -345,7 +346,7 @@ void ResourceRequestBase::clearHTTPUserAgent()
 {
     updateResourceRequest(); 
 
-    m_httpHeaderFields.remove("User-Agent");
+    m_httpHeaderFields.remove(HTTPHeaderName::UserAgent);
 
     if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
@@ -365,7 +366,7 @@ void ResourceRequestBase::clearHTTPAccept()
 {
     updateResourceRequest(); 
 
-    m_httpHeaderFields.remove("Accept");
+    m_httpHeaderFields.remove(HTTPHeaderName::Accept);
 
     if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
@@ -511,22 +512,28 @@ bool ResourceRequestBase::compare(const ResourceRequest& a, const ResourceReques
     return ResourceRequest::platformCompare(a, b);
 }
 
+static const HTTPHeaderName conditionalHeaderNames[] = {
+    HTTPHeaderName::IfMatch,
+    HTTPHeaderName::IfModifiedSince,
+    HTTPHeaderName::IfNoneMatch,
+    HTTPHeaderName::IfRange,
+    HTTPHeaderName::IfUnmodifiedSince
+};
+
 bool ResourceRequestBase::isConditional() const
 {
-    return (m_httpHeaderFields.contains("If-Match") ||
-            m_httpHeaderFields.contains("If-Modified-Since") ||
-            m_httpHeaderFields.contains("If-None-Match") ||
-            m_httpHeaderFields.contains("If-Range") ||
-            m_httpHeaderFields.contains("If-Unmodified-Since"));
+    for (auto headerName : conditionalHeaderNames) {
+        if (m_httpHeaderFields.contains(headerName))
+            return true;
+    }
+
+    return false;
 }
 
 void ResourceRequestBase::makeUnconditional()
 {
-    m_httpHeaderFields.remove("If-Match");
-    m_httpHeaderFields.remove("If-Modified-Since");
-    m_httpHeaderFields.remove("If-None-Match");
-    m_httpHeaderFields.remove("If-Range");
-    m_httpHeaderFields.remove("If-Unmodified-Since");
+    for (auto headerName : conditionalHeaderNames)
+        m_httpHeaderFields.remove(headerName);
 }
 
 double ResourceRequestBase::defaultTimeoutInterval()

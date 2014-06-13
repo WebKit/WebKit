@@ -24,4 +24,15 @@
 //
 
 Accept
+Authorization
+Content-Length
+Content-Type
+If-Match
+If-Modified-Since
+If-None-Match
+If-Range
+If-Unmodified-Since
 Location
+Origin
+Referer
+User-Agent
