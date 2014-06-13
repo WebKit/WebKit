@@ -1,3 +1,13 @@
+2014-06-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Create MSE and EME watchlist
+        https://bugs.webkit.org/show_bug.cgi?id=133810
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/webkitpy/common/config/watchlist: Create MSEEME
+        definition and add Eric Carlson and myself to it.
+
 2014-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove all deprecated API from GObject DOM bindings

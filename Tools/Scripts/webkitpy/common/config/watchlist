@@ -286,6 +286,12 @@
                         r"|LayoutTests/platform/.*/fast/css-grid-layout/"
                         r"|LayoutTests/platform/.*/ietestcenter/css3/grid/",
         },
+        "MSEEME": {
+            "filename": r"Source/WebCore/Modules/encryptedmedia/"
+                        r"|Source/WebCore/Modules/mediasource/"
+                        r"|LayoutTests/media/encrypted-media/"
+                        r"|LayoutTests/media/media-source/",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -325,6 +331,7 @@
         "Loader": [ "japhet@chromium.org" ],
         "MathML": [ "dbarton@mathscribe.com", "mrobinson@webkit.org", "fred.wang@free.fr" ],
         "Media": [ "eric.carlson@apple.com", "jer.noble@apple.com", "glenn@skynav.com", "philipj@opera.com", "sergio.correia@openbossa.org" ],
+        "MSEEME": [ "eric.carlson@apple.com", "calvaris@igalia.com" ],
         "Track": [ "eric.carlson@apple.com", "philipj@opera.com", "calvaris@igalia.com" ],
         "MediaStream": [ "tommyw@google.com", "hta@google.com", "sergio.correia@openbossa.org" ],
         "NetworkInfo": [ "gyuyoung.kim@webkit.org", "dchris@gmail.com" ],
