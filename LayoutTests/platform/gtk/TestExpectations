@@ -780,6 +780,7 @@ webkit.org/b/132184 fast/multicol/span/span-as-immediate-columns-child-dynamic.h
 webkit.org/b/132185 platform/gtk/editing/pasteboard/middle-button-paste.html [ Failure Pass ]
 
 #Some media fragment tests are flaky
+webkit.org/b/132864 media/media-fragments/TC0005.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0037.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0078.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0079.html [ Failure Pass ]
@@ -852,6 +853,12 @@ webkit.org/b/133000 js/slow-stress/call-spread.html [ Pass Timeout ]
 webkit.org/b/133001 fast/workers/worker-context-gc.html [ Pass Timeout ]
 
 webkit.org/b/133807 fast/dynamic/window-resize-scrollbars-test.html [ Failure Timeout ]
+
+webkit.org/b/133865 media/W3C/video/networkState/networkState_during_progress.html [ Failure Pass ]
+webkit.org/b/133866 media/media-controls-cancel-events.html [ Failure Pass ]
+webkit.org/b/133867 webaudio/audioprocessingevent.html [ Failure Pass ]
+webkit.org/b/133868 js/dom/dom-static-property-for-in-iteration.html [ Failure Pass ]
+webkit.org/b/133869 media/video-seek-after-end.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
