@@ -83,6 +83,12 @@ public:
         {
             return m_node == other.m_node;
         }
+
+        bool operator!=(const iterator& other) const
+        {
+            return !(*this == other);
+        }
+
     private:
         template<typename U> friend class WTF::Bag;
         Node* m_node;

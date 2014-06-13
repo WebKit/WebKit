@@ -199,13 +199,16 @@ static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
 void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit)
 {
 #if ENABLE(GGC) 
-    // 11) Write barrier the owner executable because we're jumping into a different block.
-    for (CodeOrigin codeOrigin = exit.m_codeOrigin; ; codeOrigin = codeOrigin.inlineCallFrame->caller) {
-        CodeBlock* baselineCodeBlock = jit.baselineCodeBlockFor(codeOrigin);
-        jit.move(AssemblyHelpers::TrustedImmPtr(baselineCodeBlock->ownerExecutable()), GPRInfo::nonArgGPR0); 
-        osrWriteBarrier(jit, GPRInfo::nonArgGPR0, GPRInfo::nonArgGPR1);
-        if (!codeOrigin.inlineCallFrame)
-            break;
+    // 11) Write barrier the owner executables because we're jumping into a different block.
+    jit.move(AssemblyHelpers::TrustedImmPtr(jit.codeBlock()->ownerExecutable()), GPRInfo::nonArgGPR0);
+    osrWriteBarrier(jit, GPRInfo::nonArgGPR0, GPRInfo::nonArgGPR1);
+    InlineCallFrameSet* inlineCallFrames = jit.codeBlock()->jitCode()->dfgCommon()->inlineCallFrames.get();
+    if (inlineCallFrames) {
+        for (InlineCallFrame* inlineCallFrame : *inlineCallFrames) {
+            ScriptExecutable* ownerExecutable = inlineCallFrame->executable.get();
+            jit.move(AssemblyHelpers::TrustedImmPtr(ownerExecutable), GPRInfo::nonArgGPR0); 
+            osrWriteBarrier(jit, GPRInfo::nonArgGPR0, GPRInfo::nonArgGPR1);
+        }
     }
 #endif
 
