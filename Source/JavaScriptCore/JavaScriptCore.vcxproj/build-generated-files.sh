@@ -1,6 +1,11 @@
 #!/usr/bin/bash
 
-NUMCPUS=`../../../Tools/Scripts/num-cpus`
+NUMCPUPATH="../../Tools/Scripts/num-cpus"
+if [ -x $NUMCPUPATH ]; then
+    NUMCPUS=`$NUMCPUPATH`
+else
+    NUMCPUS=8
+fi
 
 XSRCROOT="`pwd`/.."
 XSRCROOT=`realpath "$XSRCROOT"`
