@@ -1,3 +1,31 @@
+2014-06-13  Alex Christensen  <achristensen@webkit.org>
+
+        Make css jit allocator smarter.
+        https://bugs.webkit.org/show_bug.cgi?id=133834
+
+        Reviewed by Benjamin Poulain.
+
+        * cssjit/RegisterAllocator.h:
+        (WebCore::RegisterAllocator::allocateRegister):
+        (WebCore::RegisterAllocator::deallocateRegister):
+        (WebCore::RegisterAllocator::reserveCalleeSavedRegisters):
+        (WebCore::LocalRegister::LocalRegister):
+        (WebCore::RegisterAllocator::RegisterAllocator):
+        Use a Deque for the registers.  Allocate from the front and deallocate to the back to cycle the register usage.
+        (WebCore::RegisterAllocator::allocateRegisterWithPreference):
+        (WebCore::LocalRegisterWithPreference::LocalRegisterWithPreference):
+        Added the ability to specify that we prefer a certain register if it is available while allocating.
+        These functions always return a register.  It is just a different register than preferred if the preferred register is not available.
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeValueExactMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeFunctionCallValueMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsActive):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsHovered):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChild):
+        Whenever we are allocating a register for the second argument, we should specify that we 
+        prefer to have argumentGPR1 to reduce register swapping when preparing for a function call.
+        This cannot be done for argumentGPR0 because elementAddressRegister is argumentGPR0 and it is always allocated.
+
 2014-06-13  Jeremy Jones  <jeremyj@apple.com>
 
         set setUsesExternalPlaybackWhileExternalScreenIsActive based on fullscreen mode

@@ -2064,7 +2064,7 @@ static inline Assembler::Jump testIsHTMLClassOnDocument(Assembler::ResultConditi
 
 void SelectorCodeGenerator::generateElementAttributeValueExactMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomicString& expectedValue, bool canDefaultToCaseSensitiveValueMatch)
 {
-    LocalRegister expectedValueRegister(m_registerAllocator);
+    LocalRegisterWithPreference expectedValueRegister(m_registerAllocator, JSC::GPRInfo::argumentGPR1);
     m_assembler.move(Assembler::TrustedImmPtr(expectedValue.impl()), expectedValueRegister);
 
     if (canDefaultToCaseSensitiveValueMatch)
@@ -2088,7 +2088,7 @@ void SelectorCodeGenerator::generateElementAttributeValueExactMatching(Assembler
 
         FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
         functionCall.setFunctionAddress(WTF::equalIgnoringCaseNonNull);
-        functionCall.setTwoArguments(expectedValueRegister, valueStringImpl);
+        functionCall.setTwoArguments(valueStringImpl, expectedValueRegister);
         failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
 
         skipCaseInsensitiveComparison.link(&m_assembler);
@@ -2097,7 +2097,7 @@ void SelectorCodeGenerator::generateElementAttributeValueExactMatching(Assembler
 
 void SelectorCodeGenerator::generateElementAttributeFunctionCallValueMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomicString& expectedValue, bool canDefaultToCaseSensitiveValueMatch, JSC::FunctionPtr caseSensitiveTest, JSC::FunctionPtr caseInsensitiveTest)
 {
-    LocalRegister expectedValueRegister(m_registerAllocator);
+    LocalRegisterWithPreference expectedValueRegister(m_registerAllocator, JSC::GPRInfo::argumentGPR1);
     m_assembler.move(Assembler::TrustedImmPtr(expectedValue.impl()), expectedValueRegister);
 
     if (canDefaultToCaseSensitiveValueMatch) {
@@ -2186,7 +2186,7 @@ void SelectorCodeGenerator::generateElementIsActive(Assembler::JumpList& failure
             failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
         } else {
             unsigned offsetToCheckingContext = m_stackAllocator.offsetToStackReference(m_checkingContextStackReference);
-            Assembler::RegisterID checkingContext = m_registerAllocator.allocateRegister();
+            Assembler::RegisterID checkingContext = m_registerAllocator.allocateRegisterWithPreference(JSC::GPRInfo::argumentGPR1);
             m_assembler.loadPtr(Assembler::Address(Assembler::stackPointerRegister, offsetToCheckingContext), checkingContext);
             m_registerAllocator.deallocateRegister(checkingContext);
 
@@ -2271,7 +2271,7 @@ void SelectorCodeGenerator::generateElementIsHovered(Assembler::JumpList& failur
         failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
     } else {
         if (fragment.relationToRightFragment == FragmentRelation::Rightmost) {
-            LocalRegister checkingContext(m_registerAllocator);
+            LocalRegisterWithPreference checkingContext(m_registerAllocator, JSC::GPRInfo::argumentGPR1);
             Assembler::Jump notResolvingStyle = jumpIfNotResolvingStyle(checkingContext);
             addFlagsToElementStyleFromContext(checkingContext, RenderStyle::NonInheritedFlags::flagIsaffectedByHover());
             notResolvingStyle.link(&m_assembler);
@@ -2282,7 +2282,7 @@ void SelectorCodeGenerator::generateElementIsHovered(Assembler::JumpList& failur
             failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
         } else {
             unsigned offsetToCheckingContext = m_stackAllocator.offsetToStackReference(m_checkingContextStackReference);
-            Assembler::RegisterID checkingContext = m_registerAllocator.allocateRegister();
+            Assembler::RegisterID checkingContext = m_registerAllocator.allocateRegisterWithPreference(JSC::GPRInfo::argumentGPR1);
             m_assembler.loadPtr(Assembler::Address(Assembler::stackPointerRegister, offsetToCheckingContext), checkingContext);
             m_registerAllocator.deallocateRegister(checkingContext);
 
@@ -2542,7 +2542,7 @@ void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failu
         m_registerAllocator.deallocateRegister(parentElement);
 
     // Setup the counter at 1.
-    LocalRegister elementCounter(m_registerAllocator);
+    LocalRegisterWithPreference elementCounter(m_registerAllocator, JSC::GPRInfo::argumentGPR1);
     m_assembler.move(Assembler::TrustedImm32(1), elementCounter);
 
     // Loop over the previous adjacent elements and increment the counter.
