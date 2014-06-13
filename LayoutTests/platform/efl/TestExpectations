@@ -1640,4 +1640,5 @@ webkit.org/b/72828 mathml/opentype/horizontal-LatinModern-munderover.html [ Fail
 webkit.org/b/133734 css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html [ Failure ]
 webkit.org/b/133735 css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Failure ]
 webkit.org/b/133737 css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Failure ]
+webkit.org/b/133734 css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Failure ]
 
