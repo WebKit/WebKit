@@ -1,3 +1,26 @@
+2014-06-12  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Do not update the viewport configuration on load until the first viewport arguments is received
+        https://bugs.webkit.org/show_bug.cgi?id=133719
+        <rdar://problem/17008149>
+
+        Reviewed by Simon Fraser.
+
+        When pages are loaded from the page cache, we were updating the viewport to the initial values
+        in WebPage::dynamicViewportSizeUpdate(), then update the viewport again when the page's viewport argument
+        are received.
+
+        The problem is that was messing up with text autosizing. The page would relayout with the default viewport
+        configuration, adopt the text autosizing parameters from that size, then remain in that state when
+        the actual viewport configuration would be set.
+
+        With this patch, the viewport configuration is updated from the values in WebCore instead of with default values.
+        For new documents, this is strictly equivalent. For documents coming from the page cache, the values are from
+        the previous state of the page, which ensure we do not restart negotiating a viewport configuration from scratch.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+
 2014-06-12  Gavin Barraclough  <barraclough@apple.com>
 
         Add support for thread/WorkQueue QoS
