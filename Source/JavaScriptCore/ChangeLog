@@ -1,3 +1,29 @@
+2014-06-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Even better diagnostics from DFG traps
+        https://bugs.webkit.org/show_bug.cgi?id=133836
+
+        Reviewed by Oliver Hunt.
+        
+        We now stuff the DFG::NodeType into a register before bailing. Also made the
+        DFGBailed abort reason a bit more specific. As planned, the new abort reasons use
+        different numbers than any previous abort reasons.
+
+        * assembler/AbortReason.h:
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::abortWithReason):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::abortWithReason):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::abortWithReason):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::abortWithReason):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::bail):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        * dfg/DFGSpeculativeJIT.h:
+
 2014-06-12  Simon Fraser  <simon.fraser@apple.com>
 
         Fix assertions under JSC::setNeverInline() when running js tests in WebKitTestRunner

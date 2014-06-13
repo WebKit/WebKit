@@ -47,6 +47,7 @@ SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     : m_compileOkay(true)
     , m_jit(jit)
     , m_currentNode(0)
+    , m_lastGeneratedNode(LastNodeType)
     , m_indexInBlock(0)
     , m_generationInfo(m_jit.graph().frameRegisterCount())
     , m_state(m_jit.graph())
@@ -1338,10 +1339,10 @@ void SpeculativeJIT::compileMovHint(Node* node)
     m_stream->appendAndLog(VariableEvent::movHint(MinifiedID(child), node->unlinkedLocal()));
 }
 
-void SpeculativeJIT::bail()
+void SpeculativeJIT::bail(AbortReason reason)
 {
     m_compileOkay = true;
-    m_jit.abortWithReason(DFGBailed);
+    m_jit.abortWithReason(reason, m_lastGeneratedNode);
     clearGenerationInfo();
 }
 
@@ -1397,10 +1398,10 @@ void SpeculativeJIT::compileCurrentBlock()
     for (m_indexInBlock = 0; m_indexInBlock < m_block->size(); ++m_indexInBlock) {
         m_currentNode = m_block->at(m_indexInBlock);
         
-        // We may have his a contradiction that the CFA was aware of but that the JIT
+        // We may have hit a contradiction that the CFA was aware of but that the JIT
         // didn't cause directly.
         if (!m_state.isValid()) {
-            bail();
+            bail(DFGBailedAtTopOfBlock);
             return;
         }
         
@@ -1409,6 +1410,7 @@ void SpeculativeJIT::compileCurrentBlock()
         m_jit.setForNode(m_currentNode);
         m_codeOriginForExitTarget = m_currentNode->origin.forExit;
         m_codeOriginForExitProfile = m_currentNode->origin.semantic;
+        m_lastGeneratedNode = m_currentNode->op();
         if (!m_currentNode->shouldGenerate()) {
             switch (m_currentNode->op()) {
             case JSConstant:
@@ -1455,7 +1457,7 @@ void SpeculativeJIT::compileCurrentBlock()
 #endif
 
             if (!m_compileOkay) {
-                bail();
+                bail(DFGBailedAtEndOfNode);
                 return;
             }
             

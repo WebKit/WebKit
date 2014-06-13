@@ -321,7 +321,7 @@ public:
     
     void compile(Node*);
     void noticeOSRBirth(Node*);
-    void bail();
+    void bail(AbortReason);
     void compileCurrentBlock();
 
     void checkArgumentTypes();
@@ -2309,6 +2309,7 @@ public:
     // The current node being generated.
     BasicBlock* m_block;
     Node* m_currentNode;
+    NodeType m_lastGeneratedNode;
     bool m_canExit;
     unsigned m_indexInBlock;
     // Virtual and physical register maps.

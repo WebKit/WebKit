@@ -635,6 +635,12 @@ public:
         breakpoint();
     }
 
+    void abortWithReason(AbortReason reason, intptr_t misc)
+    {
+        move(TrustedImm64(misc), X86Registers::r10);
+        abortWithReason(reason);
+    }
+
     ConvertibleLoadLabel convertibleLoadPtr(Address address, RegisterID dest)
     {
         ConvertibleLoadLabel result = ConvertibleLoadLabel(this);
