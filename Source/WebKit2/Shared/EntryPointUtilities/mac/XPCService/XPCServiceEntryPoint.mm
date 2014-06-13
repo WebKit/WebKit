@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "ArgumentCodersCF.h"
 #import "SandboxUtilities.h"
 #import "XPCServiceEntryPoint.h"
 
@@ -41,9 +42,9 @@ XPCServiceInitializerDelegate::~XPCServiceInitializerDelegate()
 {
 }
 
-#if PLATFORM(MAC)
 bool XPCServiceInitializerDelegate::checkEntitlements()
 {
+#if PLATFORM(MAC)
     if (!isClientSandboxed())
         return true;
 
@@ -52,10 +53,22 @@ bool XPCServiceInitializerDelegate::checkEntitlements()
         NSLog(@"Application does not have the 'com.apple.security.network.client' entitlement.");
         return false;
     }
+#endif
+#if PLATFORM(IOS)
+    auto value = IPC::adoptXPC(xpc_connection_copy_entitlement_value(m_connection.get(), "keychain-access-groups"));
+    if (value && xpc_get_type(value.get()) == XPC_TYPE_ARRAY) {
+        xpc_array_apply(value.get(), ^bool(size_t index, xpc_object_t object) {
+            if (xpc_get_type(object) == XPC_TYPE_STRING && !strcmp(xpc_string_get_string_ptr(object), "com.apple.identities")) {
+                IPC::setAllowsDecodingSecKeyRef(true);
+                return false;
+            }
+            return true;
+        });
+    }
+#endif
 
     return true;
 }
-#endif
 
 bool XPCServiceInitializerDelegate::getConnectionIdentifier(IPC::Connection::Identifier& identifier)
 {

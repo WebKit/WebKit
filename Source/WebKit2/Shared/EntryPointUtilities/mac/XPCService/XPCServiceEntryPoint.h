@@ -50,9 +50,7 @@ public:
 
     virtual ~XPCServiceInitializerDelegate();
 
-#if PLATFORM(MAC)
     virtual bool checkEntitlements();
-#endif
 
     virtual bool getConnectionIdentifier(IPC::Connection::Identifier& identifier);
     virtual bool getClientIdentifier(String& clientIdentifier);
@@ -78,10 +76,8 @@ void XPCServiceInitializer(IPC::XPCPtr<xpc_connection_t> connection, xpc_object_
 
     InitializeWebKit2();
 
-#if PLATFORM(MAC)
     if (!delegate.checkEntitlements())
         exit(EXIT_FAILURE);
-#endif
 
     ChildProcessInitializationParameters parameters;
     if (!delegate.getConnectionIdentifier(parameters.connectionIdentifier))

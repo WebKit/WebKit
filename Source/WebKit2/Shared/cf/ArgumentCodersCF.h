@@ -88,6 +88,10 @@ void encode(ArgumentEncoder&, SecKeychainItemRef);
 bool decode(ArgumentDecoder&, RetainPtr<SecKeychainItemRef>& result);
 #endif
 
+#if PLATFORM(IOS)
+void setAllowsDecodingSecKeyRef(bool);
+#endif
+
 CFTypeRef tokenNullTypeRef();
 
 } // namespace IPC

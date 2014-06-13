@@ -591,6 +591,15 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<SecCertificateRef>& result)
     return true;
 }
 
+#if PLATFORM(IOS)
+static bool secKeyRefDecodingAllowed;
+
+void setAllowsDecodingSecKeyRef(bool allowsDecodingSecKeyRef)
+{
+    secKeyRefDecodingAllowed = allowsDecodingSecKeyRef;
+}
+#endif
+
 void encode(ArgumentEncoder& encoder, SecIdentityRef identity)
 {
     SecCertificateRef certificate = nullptr;
@@ -636,7 +645,8 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<SecIdentityRef>& result)
 
     SecKeyRef key = nullptr;
 #if PLATFORM(IOS)
-    SecKeyFindWithPersistentRef(keyData.get(), &key);
+    if (secKeyRefDecodingAllowed)
+        SecKeyFindWithPersistentRef(keyData.get(), &key);
 #endif
 #if PLATFORM(MAC)
     SecKeychainItemCopyFromPersistentReference(keyData.get(), (SecKeychainItemRef*)&key);

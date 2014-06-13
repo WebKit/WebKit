@@ -1,3 +1,21 @@
+2014-06-13  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Networking process always decodes keys
+        https://bugs.webkit.org/show_bug.cgi?id=133863
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer): Call checkEntitlements on iOS, too.
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::checkEntitlements): On iOS, allow decoding keys
+        if the application has the appropriate keychain access group.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::setAllowsDecodingSecKeyRef): Added. Sets static bool.
+        (IPC::decode): Check the secKeyRefDecodingAllowed bool before decoding a key.
+        * Shared/cf/ArgumentCodersCF.h:
+
 2014-06-12  Anders Carlsson  <andersca@apple.com>
 
         Add overloads of HTTPHeaderMap::find and remove that take enums
