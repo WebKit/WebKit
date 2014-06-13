@@ -640,7 +640,7 @@ public:
 
     void abortWithReason(AbortReason reason, intptr_t misc)
     {
-        move(TrustedImm32(misc), memoryTempRegister);
+        move(TrustedImm32(misc), addressTempRegister);
         abortWithReason(reason);
     }
 
