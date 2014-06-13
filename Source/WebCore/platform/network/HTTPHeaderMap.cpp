@@ -99,6 +99,15 @@ struct CaseFoldingCStringTranslator {
     }
 };
 
+String HTTPHeaderMap::get(HTTPHeaderName name) const
+{
+    auto it = find(name);
+    if (it == end())
+        return String();
+
+    return it->value;
+}
+
 void HTTPHeaderMap::set(HTTPHeaderName name, const String& value)
 {
     m_headers.set(httpHeaderNameString(name).toStringWithoutCopying(), value);
@@ -107,14 +116,6 @@ void HTTPHeaderMap::set(HTTPHeaderName name, const String& value)
 bool HTTPHeaderMap::contains(HTTPHeaderName name) const
 {
     return m_headers.contains(httpHeaderNameString(name).toStringWithoutCopying());
-}
-
-String HTTPHeaderMap::get(const char* name) const
-{
-    auto it = m_headers.find<CaseFoldingCStringTranslator>(name);
-    if (it == end())
-        return String();
-    return it->value;
 }
 
 HTTPHeaderMap::const_iterator HTTPHeaderMap::find(HTTPHeaderName name) const

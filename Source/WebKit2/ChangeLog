@@ -1,3 +1,13 @@
+2014-06-13  Anders Carlsson  <andersca@apple.com>
+
+        Add a HTTPHeaderMap::get overload that takes an HTTPHeaderName
+        https://bugs.webkit.org/show_bug.cgi?id=133877
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::parsePostBuffer):
+
 2014-06-13  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Networking process always decodes keys

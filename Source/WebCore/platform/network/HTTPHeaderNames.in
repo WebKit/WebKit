@@ -25,6 +25,7 @@
 
 Accept
 Authorization
+Connection
 Content-Length
 Content-Type
 If-Match
@@ -35,5 +36,10 @@ If-Unmodified-Since
 Location
 Origin
 Referer
+Sec-WebSocket-Accept
+Sec-WebSocket-Protocol
+Set-Cookie
+Set-Cookie2
+Upgrade
 User-Agent
 X-Frame-Options

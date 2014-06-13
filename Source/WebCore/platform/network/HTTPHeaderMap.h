@@ -63,13 +63,14 @@ public:
     void set(const AtomicString& name, const String& value);
     void add(const AtomicString& name, const String& value);
 
+    String get(HTTPHeaderName) const;
     void set(HTTPHeaderName, const String& value);
     bool contains(HTTPHeaderName) const;
-    String get(const char*) const;
     const_iterator find(HTTPHeaderName) const;
     bool remove(HTTPHeaderName);
 
     // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
+    template<size_t length> String get(const char (&)[length]) const = delete;
     template<size_t length> void set(const char (&)[length], const String&) = delete;
     template<size_t length> void add(const char (&)[length], const String&) = delete;
     template<size_t length> bool contains(const char (&)[length]) = delete;

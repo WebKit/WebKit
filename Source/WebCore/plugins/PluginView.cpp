@@ -1162,7 +1162,7 @@ NPError PluginView::handlePost(const char* url, const char* target, uint32_t len
                 // Sometimes plugins like to set Content-Length themselves when they post,
                 // but WebFoundation does not like that. So we will remove the header
                 // and instead truncate the data to the requested length.
-                String contentLength = headerFields.get("Content-Length");
+                String contentLength = headerFields.get(HTTPHeaderName::ContentLength);
 
                 if (!contentLength.isNull())
                     dataLength = min(contentLength.toInt(), (int)dataLength);

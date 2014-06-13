@@ -40,6 +40,7 @@
 #include "CookieJar.h"
 #include "Document.h"
 #include "HTTPHeaderMap.h"
+#include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "URL.h"
 #include "Logging.h"
@@ -337,32 +338,32 @@ String WebSocketHandshake::failureReason() const
 
 String WebSocketHandshake::serverWebSocketProtocol() const
 {
-    return m_serverHandshakeResponse.httpHeaderFields().get("sec-websocket-protocol");
+    return m_serverHandshakeResponse.httpHeaderFields().get(HTTPHeaderName::SecWebSocketProtocol);
 }
 
 String WebSocketHandshake::serverSetCookie() const
 {
-    return m_serverHandshakeResponse.httpHeaderFields().get("set-cookie");
+    return m_serverHandshakeResponse.httpHeaderFields().get(HTTPHeaderName::SetCookie);
 }
 
 String WebSocketHandshake::serverSetCookie2() const
 {
-    return m_serverHandshakeResponse.httpHeaderFields().get("set-cookie2");
+    return m_serverHandshakeResponse.httpHeaderFields().get(HTTPHeaderName::SetCookie2);
 }
 
 String WebSocketHandshake::serverUpgrade() const
 {
-    return m_serverHandshakeResponse.httpHeaderFields().get("upgrade");
+    return m_serverHandshakeResponse.httpHeaderFields().get(HTTPHeaderName::Upgrade);
 }
 
 String WebSocketHandshake::serverConnection() const
 {
-    return m_serverHandshakeResponse.httpHeaderFields().get("connection");
+    return m_serverHandshakeResponse.httpHeaderFields().get(HTTPHeaderName::Connection);
 }
 
 String WebSocketHandshake::serverWebSocketAccept() const
 {
-    return m_serverHandshakeResponse.httpHeaderFields().get("sec-websocket-accept");
+    return m_serverHandshakeResponse.httpHeaderFields().get(HTTPHeaderName::SecWebSocketAccept);
 }
 
 String WebSocketHandshake::acceptedExtensions() const
