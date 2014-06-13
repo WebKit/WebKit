@@ -2345,7 +2345,7 @@
 		7A93868518DCC14500B8263D /* VTTScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A93868218DCC14500B8263D /* VTTScanner.cpp */; };
 		7A93868618DCC14500B8263D /* VTTScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A93868318DCC14500B8263D /* VTTScanner.h */; };
 		7AA3A699194A64E7001CBD24 /* TileController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AA3A695194A64E7001CBD24 /* TileController.cpp */; };
-		7AA3A69A194A64E7001CBD24 /* TileController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA3A696194A64E7001CBD24 /* TileController.h */; };
+		7AA3A69A194A64E7001CBD24 /* TileController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA3A696194A64E7001CBD24 /* TileController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AA3A69B194A64E7001CBD24 /* TileGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AA3A697194A64E7001CBD24 /* TileGrid.cpp */; };
 		7AA3A69C194A64E7001CBD24 /* TileGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA3A698194A64E7001CBD24 /* TileGrid.h */; };
 		7AABA25914BC613300AA9A11 /* DOMEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AABA25714BC613300AA9A11 /* DOMEditor.cpp */; };

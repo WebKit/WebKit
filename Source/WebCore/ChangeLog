@@ -1,3 +1,9 @@
+2014-06-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Build fix after r169919.
+
+        * WebCore.xcodeproj/project.pbxproj: The 'TileController.h' file must be a private header.
+
 2014-06-12  Andy Estes  <aestes@apple.com>
 
         [Mac] Speculative build fix after r169921.
