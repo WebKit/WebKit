@@ -1,3 +1,16 @@
+2014-06-12  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Fix the view being half offscreen in WebKitTestRunner on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=133835
+
+        Reviewed by Tim Horton.
+        
+        Don't do the _fakeOrigin stuff when -initWithFrame: is calling -setFrame:
+
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (-[WebKitTestRunnerWindow initWithFrame:]):
+        (-[WebKitTestRunnerWindow setFrame:]):
+
 2014-06-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Performance tests should be always ran with WKTR.

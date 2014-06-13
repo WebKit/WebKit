@@ -35,6 +35,7 @@
 @interface WebKitTestRunnerWindow : UIWindow {
     WTR::PlatformWebView* _platformWebView;
     CGPoint _fakeOrigin;
+    BOOL _initialized;
 }
 @property (nonatomic, assign) WTR::PlatformWebView* platformWebView;
 @end
@@ -68,6 +69,13 @@
 @implementation WebKitTestRunnerWindow
 @synthesize platformWebView = _platformWebView;
 
+- (id)initWithFrame:(CGRect)frame
+{
+    if ((self = [super initWithFrame:frame]))
+        _initialized = YES;
+
+    return self;
+}
 - (BOOL)isKeyWindow
 {
     return _platformWebView ? _platformWebView->windowIsKey() : YES;
@@ -78,9 +86,13 @@
     _fakeOrigin = point;
 }
 
-// FIXME: these frame gyrations cause the window to go half offscreen.
 - (void)setFrame:(CGRect)windowFrame
 {
+    if (!_initialized) {
+        [super setFrame:windowFrame];
+        return;
+    }
+
     CGRect currentFrame = [super frame];
 
     _fakeOrigin = windowFrame.origin;
