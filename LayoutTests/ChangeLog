@@ -1,3 +1,30 @@
+2014-06-13  Frédéric Wang  <fred.wang@free.fr>
+
+        Draw radicals with glyphs for better rendering
+        https://bugs.webkit.org/show_bug.cgi?id=119038
+
+        Reviewed by Chris Fleizach.
+
+        We update the reference for some tests with radicals and enable the tests for addition/removal of children in an msqrt/mroot element.
+        We also add a test for bug 126516 (SVG transforms not applied to mroot) and a new test for radical drawing using an OpenType MATH table.
+
+        * TestExpectations: enable the tests for addition/removal of children.
+        * mathml/opentype/roots-LatinModern.html: Added.
+        * mathml/presentation/mroot-transform-expected.html: Added.
+        * mathml/presentation/mroot-transform.html: Added.
+        * platform/efl/TestExpectations: mark failures for bad references.
+        * platform/efl/mathml/opentype/roots-LatinModern-expected.txt: Added.
+        * platform/gtk/mathml/opentype/roots-LatinModern-expected.png: Added.
+        * platform/gtk/mathml/opentype/roots-LatinModern-expected.txt: Added.
+        * platform/gtk/mathml/presentation/mo-stretch-expected.png: update reference.
+        * platform/gtk/mathml/presentation/mo-stretch-expected.txt: update reference.
+        * platform/gtk/mathml/presentation/roots-expected.png: update reference.
+        * platform/gtk/mathml/presentation/roots-expected.txt: update reference.
+        * platform/mac/TestExpectations: mark failures for bad references.
+        * platform/mac/mathml/opentype/roots-LatinModern-expected.txt: Added.
+        * platform/win/TestExpectations: mark failures for bad references.
+        * platform/win/mathml/opentype/roots-LatinModern-expected.txt: Added.
+
 2014-06-13  Jarek Czekalski  <jarekczek@poczta.onet.pl>
 
         [ATK] Add test for accessibility of text inside "span" block in "a" block.

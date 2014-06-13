@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x260
-  RenderBlock {HTML} at (0,0) size 800x260
-    RenderBody {BODY} at (8,8) size 784x244
+layer at (0,0) size 800x259
+  RenderBlock {HTML} at (0,0) size 800x259
+    RenderBody {BODY} at (8,8) size 784x243
       RenderMathMLMath {math} at (0,0) size 126x24 [padding: 0 1 0 1]
         RenderMathMLRow {mrow} at (1,0) size 124x24
           RenderMathMLOperator {mo} at (0,5) size 7x14
@@ -305,8 +305,14 @@ layer at (0,0) size 800x260
         text run at (383,85) width 5: " "
       RenderBR {BR} at (0,0) size 0x0
       RenderMathMLMath {math} at (0,166) size 138x78 [padding: 0 1 0 1]
-        RenderMathMLSquareRoot {msqrt} at (1,0) size 136x78 [intrinsic padding: 3 0 3 12]
-          RenderMathMLRow (anonymous) at (12,3) size 124x72
+        RenderMathMLSquareRoot {msqrt} at (1,0) size 136x78
+          RenderMathMLBlock (anonymous, flex) at (0,0) size 12x78
+            RenderMathMLRadicalOperator (anonymous) at (0,0) size 12x78
+              RenderMathMLBlock (anonymous, flex) at (0,0) size 12x78
+                RenderBlock (anonymous) at (0,0) size 12x78
+                  RenderText at (0,-1) size 15x25
+                    text run at (0,-1) width 15: "\x{221A}"
+          RenderMathMLRootWrapper at (12,3) size 124x75
             RenderMathMLOperator {mo} at (0,0) size 7x72
               RenderMathMLBlock (anonymous, flex) at (0,0) size 7x14
                 RenderBlock (anonymous) at (0,0) size 5x14
