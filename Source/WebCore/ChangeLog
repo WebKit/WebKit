@@ -1,3 +1,32 @@
+2014-06-13  Alex Christensen  <achristensen@webkit.org>
+
+        Make css jit compile for armv7.
+        https://bugs.webkit.org/show_bug.cgi?id=133596
+
+        Reviewed by Benjamin Poulain.
+
+        * cssjit/FunctionCall.h:
+        (WebCore::FunctionCall::swapArguments):
+        Implemented for ARM_THUMB2 and removed allocator hack.
+        * cssjit/RegisterAllocator.h:
+        Added list of ARM_THUMB2 general purpose registers.
+        (WebCore::RegisterAllocator::isValidRegister):
+        Added ARM register range and corrected ARM64 register range now that r15 is tempRegister.
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::compile):
+        Return CannotCompile if compiling fails because of lack of registers.
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generatePrologue):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateEpilogue):
+        Implemented for ARM_THUMB2.
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+        Return false if the selector cannot be compiled because of lack of registers.
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::addFlagsToElementStyleFromContext):
+        Added code using 32-bit operations and used macro assembler for 64-bit operations.
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::modulo):
+        Implemented for APPLE_ARMV7S, where sdiv is not a template in the assembler.
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributesMatching):
+        Use addPtr instead of add64.
+
 2014-06-13  Anders Carlsson  <andersca@apple.com>
 
         Add a HTTPHeaderMap::get overload that takes an HTTPHeaderName

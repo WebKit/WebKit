@@ -1,3 +1,20 @@
+2014-06-13  Alex Christensen  <achristensen@webkit.org>
+
+        Make css jit compile for armv7.
+        https://bugs.webkit.org/show_bug.cgi?id=133596
+
+        Reviewed by Benjamin Poulain.
+
+        * assembler/MacroAssembler.h:
+        Use branchPtr on ARM_THUMB2.
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::addPtrNoFlags):
+        (JSC::MacroAssemblerARMv7::or32):
+        (JSC::MacroAssemblerARMv7::test32):
+        (JSC::MacroAssemblerARMv7::branch):
+        (JSC::MacroAssemblerARMv7::branchPtr):
+        Added macros necessary for css jit.
+
 2014-06-13  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix ARMv7.

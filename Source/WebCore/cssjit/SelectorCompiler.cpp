@@ -198,7 +198,7 @@ private:
     static const Assembler::RegisterID checkingContextRegister;
     static const Assembler::RegisterID callFrameRegister;
 
-    void generateSelectorChecker();
+    bool generateSelectorChecker();
 
     // Element relations tree walker.
     void generateWalkToParentNode(Assembler::RegisterID targetRegister);
@@ -692,7 +692,8 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::VM* vm, JSC
     switch (m_functionType) {
     case FunctionType::SimpleSelectorChecker:
     case FunctionType::SelectorCheckerWithCheckingContext:
-        generateSelectorChecker();
+        if (!generateSelectorChecker())
+            return SelectorCompilationStatus::CannotCompile;
         break;
     case FunctionType::CannotMatchAnything:
         m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
@@ -1088,6 +1089,12 @@ inline bool SelectorCodeGenerator::generatePrologue()
     prologueRegisters.append(JSC::ARM64Registers::fp);
     m_prologueStackReferences = m_stackAllocator.push(prologueRegisters);
     return true;
+#elif CPU(ARM_THUMB2)
+    Vector<JSC::MacroAssembler::RegisterID, 2> prologueRegisters;
+    prologueRegisters.append(JSC::ARMRegisters::lr);
+    prologueRegisters.append(JSC::ARMRegisters::fp); // fp is used as a caller saved register because we always have a prologue for now.
+    m_prologueStackReferences = m_stackAllocator.push(prologueRegisters);
+    return true;
 #elif CPU(X86_64) && CSS_SELECTOR_JIT_DEBUGGING
     Vector<JSC::MacroAssembler::RegisterID, 1> prologueRegister;
     prologueRegister.append(callFrameRegister);
@@ -1104,6 +1111,11 @@ inline void SelectorCodeGenerator::generateEpilogue()
     prologueRegisters.append(JSC::ARM64Registers::lr);
     prologueRegisters.append(JSC::ARM64Registers::fp);
     m_stackAllocator.pop(m_prologueStackReferences, prologueRegisters);
+#elif CPU(ARM_THUMB2)
+    Vector<JSC::MacroAssembler::RegisterID, 2> prologueRegisters;
+    prologueRegisters.append(JSC::ARMRegisters::lr);
+    prologueRegisters.append(JSC::ARMRegisters::fp);
+    m_stackAllocator.pop(m_prologueStackReferences, prologueRegisters);
 #elif CPU(X86_64) && CSS_SELECTOR_JIT_DEBUGGING
     Vector<JSC::MacroAssembler::RegisterID, 1> prologueRegister;
     prologueRegister.append(callFrameRegister);
@@ -1111,17 +1123,29 @@ inline void SelectorCodeGenerator::generateEpilogue()
 #endif
 }
 
-void SelectorCodeGenerator::generateSelectorChecker()
+bool SelectorCodeGenerator::generateSelectorChecker()
 {
-    bool needsEpilogue = generatePrologue();
-
     Vector<StackAllocator::StackReference> calleeSavedRegisterStackReferences;
     bool reservedCalleeSavedRegisters = false;
     unsigned availableRegisterCount = m_registerAllocator.availableRegisterCount();
     unsigned minimumRegisterCountForAttributes = minimumRegisterRequirements(m_selectorFragments);
+    if (minimumRegisterCountForAttributes > registerCount) {
+#if !CPU(ARM_THUMB2)
+        // ARM_THUMB2 does not have enough registers to compile complicated selectors.
+        // Compiling should always succeed on non-ARM_THUMB2 CPUs.
+        ASSERT_NOT_REACHED();
+#endif
+#if CSS_SELECTOR_JIT_DEBUGGING
+        dataLogF("Failed to compile because it would have required %u registers\n", minimumRegisterCountForAttributes);
+#endif
+        return false;
+    }
 #if CSS_SELECTOR_JIT_DEBUGGING
     dataLogF("Compiling with minimum required register count %u\n", minimumRegisterCountForAttributes);
 #endif
+    
+    bool needsEpilogue = generatePrologue();
+    
     ASSERT(minimumRegisterCountForAttributes <= registerCount);
     if (availableRegisterCount < minimumRegisterCountForAttributes) {
         reservedCalleeSavedRegisters = true;
@@ -1215,6 +1239,7 @@ void SelectorCodeGenerator::generateSelectorChecker()
             generateEpilogue();
         m_assembler.ret();
     }
+    return true;
 }
 
 static inline Assembler::Jump testIsElementFlagOnNode(Assembler::ResultCondition condition, Assembler& assembler, Assembler::RegisterID nodeAddress)
@@ -1362,14 +1387,22 @@ void SelectorCodeGenerator::addFlagsToElementStyleFromContext(Assembler::Registe
     LocalRegister childStyle(m_registerAllocator);
     m_assembler.loadPtr(Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, elementStyle)), childStyle);
 
+    Assembler::Address flagAddress(childStyle, RenderStyle::noninheritedFlagsMemoryOffset() + RenderStyle::NonInheritedFlags::flagsMemoryOffset());
+#if CPU(ARM_THUMB2)
+    Assembler::Address flagLowAddress(childStyle, RenderStyle::noninheritedFlagsMemoryOffset() + RenderStyle::NonInheritedFlags::flagsMemoryOffset() + 4);
+    m_assembler.or32(Assembler::TrustedImm32(newFlag >> 32), flagAddress);
+    m_assembler.or32(Assembler::TrustedImm32(newFlag & 0xFFFFFFFF), flagLowAddress);
+#elif CPU(X86_64) || CPU(ARM)
     // FIXME: We should look into doing something smart in MacroAssembler instead.
     LocalRegister flags(m_registerAllocator);
-    Assembler::Address flagAddress(childStyle, RenderStyle::noninheritedFlagsMemoryOffset() + RenderStyle::NonInheritedFlags::flagsMemoryOffset());
     m_assembler.load64(flagAddress, flags);
     LocalRegister isFirstChildStateFlagImmediate(m_registerAllocator);
     m_assembler.move(Assembler::TrustedImm64(newFlag), isFirstChildStateFlagImmediate);
     m_assembler.or64(isFirstChildStateFlagImmediate, flags);
     m_assembler.store64(flags, flagAddress);
+#else
+#error SelectorCodeGenerator::addFlagsToElementStyleFromContext not implemented for this architecture.
+#endif
 }
 
 Assembler::JumpList SelectorCodeGenerator::jumpIfNoPreviousAdjacentElement()
@@ -1428,12 +1461,16 @@ void SelectorCodeGenerator::generateSpecialFailureInQuirksModeForActiveAndHoverI
 Assembler::Jump SelectorCodeGenerator::modulo(Assembler::ResultCondition condition, Assembler::RegisterID inputDividend, int divisor)
 {
     RELEASE_ASSERT(divisor);
-#if CPU(ARM64)
+#if CPU(ARM64) || CPU(APPLE_ARMV7S)
     LocalRegister divisorRegister(m_registerAllocator);
     m_assembler.move(Assembler::TrustedImm32(divisor), divisorRegister);
 
     LocalRegister resultRegister(m_registerAllocator);
+#if CPU(APPLE_ARMV7S)
+    m_assembler.m_assembler.sdiv(resultRegister, inputDividend, divisorRegister);
+#elif CPU(ARM64)
     m_assembler.m_assembler.sdiv<32>(resultRegister, inputDividend, divisorRegister);
+#endif
     m_assembler.mul32(divisorRegister, resultRegister);
     return m_assembler.branchSub32(condition, inputDividend, resultRegister, resultRegister);
 #elif CPU(X86_64)
@@ -1817,7 +1854,7 @@ void SelectorCodeGenerator::generateElementAttributesMatching(Assembler::JumpLis
     {
         isShareableElementData.link(&m_assembler);
         m_assembler.urshift32(elementDataArraySizeAndFlags, Assembler::TrustedImm32(ElementData::arraySizeOffset()), attributeArrayLength);
-        m_assembler.add64(Assembler::TrustedImm32(ShareableElementData::attributeArrayMemoryOffset()), elementDataAddress, attributeArrayPointer);
+        m_assembler.addPtr(Assembler::TrustedImm32(ShareableElementData::attributeArrayMemoryOffset()), elementDataAddress, attributeArrayPointer);
     }
 
     skipShareable.link(&m_assembler);

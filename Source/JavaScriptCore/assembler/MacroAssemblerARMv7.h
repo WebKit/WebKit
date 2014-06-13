@@ -226,6 +226,11 @@ public:
         store32(dataTempRegister, address.m_ptr);
     }
 
+    void addPtrNoFlags(TrustedImm32 imm, RegisterID srcDest)
+    {
+        add32(imm, srcDest);
+    }
+    
     void add64(TrustedImm32 imm, AbsoluteAddress address)
     {
         move(TrustedImmPtr(address.m_ptr), addressTempRegister);
@@ -335,6 +340,13 @@ public:
         load32(addressTempRegister, dataTempRegister);
         or32(src, dataTempRegister);
         store32(dataTempRegister, addressTempRegister);
+    }
+
+    void or32(TrustedImm32 imm, Address address)
+    {
+        load32(address, dataTempRegister);
+        or32(imm, dataTempRegister, dataTempRegister);
+        store32(dataTempRegister, address);
     }
 
     void or32(TrustedImm32 imm, RegisterID dest)
@@ -1336,6 +1348,16 @@ private:
     }
 
 public:
+    void test32(ResultCondition, RegisterID reg, TrustedImm32 mask)
+    {
+        test32(reg, mask);
+    }
+    
+    Jump branch(ResultCondition cond)
+    {
+        return Jump(makeBranch(cond));
+    }
+
     Jump branch32(RelationalCondition cond, RegisterID left, RegisterID right)
     {
         m_assembler.cmp(left, right);
@@ -1392,6 +1414,12 @@ public:
         // use addressTempRegister incase the branch32 we call uses dataTempRegister. :-/
         load32(left.m_ptr, addressTempRegister);
         return branch32(cond, addressTempRegister, right);
+    }
+
+    Jump branchPtr(RelationalCondition cond, BaseIndex left, RegisterID right)
+    {
+        load32(left, dataTempRegister);
+        return branch32(cond, dataTempRegister, right);
     }
 
     Jump branch8(RelationalCondition cond, RegisterID left, TrustedImm32 right)

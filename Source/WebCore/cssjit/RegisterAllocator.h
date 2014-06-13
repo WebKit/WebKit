@@ -56,6 +56,19 @@ static const JSC::MacroAssembler::RegisterID calleeSavedRegisters[] = {
     JSC::ARM64Registers::x19
 };
 static const JSC::MacroAssembler::RegisterID tempRegister = JSC::ARM64Registers::x15;
+#elif CPU(ARM_THUMB2)
+static const JSC::MacroAssembler::RegisterID callerSavedRegisters[] {
+    JSC::ARMRegisters::r0,
+    JSC::ARMRegisters::r1,
+    JSC::ARMRegisters::r2,
+    JSC::ARMRegisters::r3,
+    JSC::ARMRegisters::r7, // r7 is fp, and it's pushed in the prologue and popped in the epilogue so we can use it without saving it as long as we have a prologue.
+};
+static const JSC::MacroAssembler::RegisterID calleeSavedRegisters[] = {
+    JSC::ARMRegisters::r4,
+    JSC::ARMRegisters::r5,
+};
+static const JSC::MacroAssembler::RegisterID tempRegister = JSC::ARMRegisters::r12; // ip
 #elif CPU(X86_64)
 static const JSC::MacroAssembler::RegisterID callerSavedRegisters[] = {
     JSC::X86Registers::eax,
@@ -138,8 +151,10 @@ public:
     {
 #if CPU(ARM64)
         return registerID >= JSC::ARM64Registers::x0 && registerID <= JSC::ARM64Registers::x15;
+#elif CPU(ARM_THUMB2)
+        return registerID >= JSC::ARMRegisters::r0 && registerID <= JSC::ARMRegisters::r7 && registerID != JSC::ARMRegisters::r6;
 #elif CPU(X86_64)
-        return registerID >= JSC::X86Registers::eax && registerID <= JSC::X86Registers::r15;
+        return registerID >= JSC::X86Registers::eax && registerID <= JSC::X86Registers::r14;
 #else
 #error RegisterAllocator does not define the valid register range for the current architecture.
 #endif

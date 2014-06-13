@@ -99,32 +99,12 @@ private:
         // x86 can swap without a temporary register. On other architectures, we need allocate a temporary register to switch the values.
 #if CPU(X86) || CPU(X86_64)
         m_assembler.swap(a, b);
-#elif CPU(ARM64)
+#elif CPU(ARM64) || CPU(ARM_THUMB2)
         m_assembler.move(a, tempRegister);
         m_assembler.move(b, a);
         m_assembler.move(tempRegister, b);
 #else
-        if (m_registerAllocator.availableRegisterCount()) {
-            // Usually we can just use a free register.
-            // FIXME: We need to make sure that tempValue is not a or b.
-            LocalRegister tempValue(m_registerAllocator);
-            m_assembler.move(a, tempValue);
-            m_assembler.move(b, a);
-            m_assembler.move(tempValue, b);
-        } else {
-            // If there is no free register, everything should be on the stack at this point. We can take
-            // the first of those saved registers and use it as a temporary.
-            JSC::MacroAssembler::RegisterID pushedRegister;
-            for (unsigned i = 0; i < m_registerAllocator.allocatedRegisters().size(); ++i) {
-                pushedRegister = m_registerAllocator.allocatedRegisters()[i];
-                if (pushedRegister != a && pushedRegister != b)
-                    break;
-            }
-            ASSERT(pushedRegister != a && pushedRegister != b);
-            m_assembler.move(a, pushedRegister);
-            m_assembler.move(b, a);
-            m_assembler.move(pushedRegister, b);
-        }
+#error Missing implementationg for matching swapping argument registers.
 #endif
     }
 

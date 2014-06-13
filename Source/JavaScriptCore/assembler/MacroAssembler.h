@@ -117,9 +117,9 @@ public:
     using MacroAssemblerBase::and32;
     using MacroAssemblerBase::branchAdd32;
     using MacroAssemblerBase::branchMul32;
-#if CPU(ARM64) || CPU(X86_64)
+#if CPU(ARM64) || CPU(ARM_THUMB2) || CPU(X86_64)
     using MacroAssemblerBase::branchPtr;
-#endif // CPU(X86_64)
+#endif
     using MacroAssemblerBase::branchSub32;
     using MacroAssemblerBase::lshift32;
     using MacroAssemblerBase::or32;
