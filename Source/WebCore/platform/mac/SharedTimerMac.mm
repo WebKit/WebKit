@@ -43,16 +43,10 @@ class PowerObserver {
     WTF_MAKE_NONCOPYABLE(PowerObserver);
     
 public:
-    static PassOwnPtr<PowerObserver> create()
-    {
-        return adoptPtr(new PowerObserver);
-    }
+    PowerObserver();
     ~PowerObserver();
 
 private:
-    PowerObserver();
-
-    static void didReceiveSystemPowerNotification(void* context, io_service_t, uint32_t messageType, void* messageArgument);
     void didReceiveSystemPowerNotification(io_service_t, uint32_t messageType, void* messageArgument);
 
     void restartSharedTimer();
@@ -65,11 +59,13 @@ private:
 
 PowerObserver::PowerObserver()
     : m_powerConnection(0)
-    , m_notificationPort(0)
+    , m_notificationPort(nullptr)
     , m_notifierReference(0)
     , m_dispatchQueue(dispatch_queue_create("com.apple.WebKit.PowerObserver", 0))
 {
-    m_powerConnection = IORegisterForSystemPower(this, &m_notificationPort, didReceiveSystemPowerNotification, &m_notifierReference);
+    m_powerConnection = IORegisterForSystemPower(this, &m_notificationPort, [](void* context, io_service_t service, uint32_t messageType, void* messageArgument) {
+        static_cast<PowerObserver*>(context)->didReceiveSystemPowerNotification(service, messageType, messageArgument);
+    }, &m_notifierReference);
     if (!m_powerConnection)
         return;
 
@@ -86,11 +82,6 @@ PowerObserver::~PowerObserver()
     IODeregisterForSystemPower(&m_notifierReference);
     IOServiceClose(m_powerConnection);
     IONotificationPortDestroy(m_notificationPort);
-}
-
-void PowerObserver::didReceiveSystemPowerNotification(void* context, io_service_t service, uint32_t messageType, void* messageArgument)
-{
-    static_cast<PowerObserver*>(context)->didReceiveSystemPowerNotification(service, messageType, messageArgument);
 }
 
 void PowerObserver::didReceiveSystemPowerNotification(io_service_t, uint32_t messageType, void* messageArgument)
@@ -118,7 +109,7 @@ void PowerObserver::restartSharedTimer()
     timerFired(0, 0);
 }
 
-static PowerObserver* PowerObserver;
+static PowerObserver* powerObserver;
 
 void setSharedTimerFiredFunction(void (*f)())
 {
@@ -129,9 +120,9 @@ void setSharedTimerFiredFunction(void (*f)())
 
 static void timerFired(CFRunLoopTimerRef, void*)
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    sharedTimerFiredFunction();
-    [pool drain];
+    @autoreleasepool {
+        sharedTimerFiredFunction();
+    }
 }
 
 void setSharedTimerFireInterval(double interval)
@@ -147,8 +138,8 @@ void setSharedTimerFireInterval(double interval)
     sharedTimer = CFRunLoopTimerCreate(0, fireDate, 0, 0, 0, timerFired, 0);
     CFRunLoopAddTimer(CFRunLoopGetCurrent(), sharedTimer, kCFRunLoopCommonModes);
     
-    if (!PowerObserver)
-        PowerObserver = PowerObserver::create().leakPtr();
+    if (!powerObserver)
+        powerObserver = std::make_unique<PowerObserver>().release();
 }
 
 void stopSharedTimer()

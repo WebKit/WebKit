@@ -1,3 +1,25 @@
+2014-06-13  Anders Carlsson  <andersca@apple.com>
+
+        Use the callOnMainThread version that takes an std::function in BlobResourceHandle::start()
+        https://bugs.webkit.org/show_bug.cgi?id=133886
+
+        Reviewed by Andreas Kling.
+
+        Also replace a couple of NSAutoreleasePools with @autoreleasepool and an OwnPtr with an std::unique_ptr.
+
+        * page/scrolling/mac/ScrollingThreadMac.mm:
+        (WebCore::ScrollingThread::threadRunLoopSourceCallback):
+        * platform/mac/SharedTimerMac.mm:
+        (WebCore::PowerObserver::PowerObserver):
+        (WebCore::timerFired):
+        (WebCore::setSharedTimerFireInterval):
+        (WebCore::PowerObserver::create): Deleted.
+        (WebCore::PowerObserver::didReceiveSystemPowerNotification): Deleted.
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::start):
+        (WebCore::delayedStartBlobResourceHandle): Deleted.
+        * platform/network/BlobResourceHandle.h:
+
 2014-06-12  Sam Weinig  <sam@webkit.org>
 
         Constructors should eagerly reify their properties too

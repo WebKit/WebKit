@@ -205,24 +205,19 @@ void BlobResourceHandle::continueDidReceiveResponse()
     // BlobResourceHandle doesn't wait for didReceiveResponse, and it currently cannot be used for downloading.
 }
 
-void delayedStartBlobResourceHandle(void* context)
-{
-    RefPtr<BlobResourceHandle> handle = adoptRef(static_cast<BlobResourceHandle*>(context));
-    handle->doStart();
-}
-
 void BlobResourceHandle::start()
 {
-    if (m_async) {
-        // Keep BlobResourceHandle alive until delayedStartBlobResourceHandle runs.
-        ref();
-
-        // Finish this async call quickly and return.
-        callOnMainThread(delayedStartBlobResourceHandle, this);
+    if (!m_async) {
+        doStart();
         return;
     }
 
-    doStart();
+    RefPtr<BlobResourceHandle> handle(this);
+
+    // Finish this async call quickly and return.
+    callOnMainThread([handle] {
+        handle->doStart();
+    });
 }
 
 void BlobResourceHandle::doStart()

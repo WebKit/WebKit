@@ -58,8 +58,6 @@ public:
     bool aborted() const { return m_aborted; }
 
 private:
-    friend void delayedStartBlobResourceHandle(void*);
-
     BlobResourceHandle(BlobData*, const ResourceRequest&, ResourceHandleClient*, bool async);
     virtual ~BlobResourceHandle();
 
