@@ -124,12 +124,16 @@ bool PageClientImpl::isViewFocused()
 
 bool PageClientImpl::isViewVisible()
 {
-    return [m_webView window] && [UIApplication sharedApplication].applicationState != UIApplicationStateBackground;
+    return isViewInWindow() && [UIApplication sharedApplication].applicationState != UIApplicationStateBackground;
 }
 
 bool PageClientImpl::isViewInWindow()
 {
-    return [m_webView window];
+    // FIXME: in WebKitTestRunner, m_webView is nil, so check the content view instead.
+    if (m_webView)
+        return [m_webView window];
+
+    return [m_contentView window];
 }
 
 bool PageClientImpl::isViewVisibleOrOccluded()
