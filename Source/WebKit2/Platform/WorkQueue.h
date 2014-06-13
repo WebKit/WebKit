@@ -53,7 +53,15 @@
 
 class WorkQueue : public ThreadSafeRefCounted<WorkQueue> {
 public:
-    static PassRefPtr<WorkQueue> create(const char* name);
+    enum class QOS {
+        UserInteractive,
+        UserInitiated,
+        Default,
+        Utility,
+        Background
+    };
+    
+    static PassRefPtr<WorkQueue> create(const char* name, QOS = QOS::Default);
     ~WorkQueue();
 
     void dispatch(std::function<void ()>);
@@ -70,9 +78,9 @@ public:
 #endif
 
 private:
-    explicit WorkQueue(const char* name);
+    explicit WorkQueue(const char* name, QOS);
 
-    void platformInitialize(const char* name);
+    void platformInitialize(const char* name, QOS);
     void platformInvalidate();
 
 #if OS(DARWIN)

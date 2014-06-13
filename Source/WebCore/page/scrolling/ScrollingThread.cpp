@@ -91,6 +91,7 @@ void ScrollingThread::createThreadIfNeeded()
 
 void ScrollingThread::threadCallback(void* scrollingThread)
 {
+    WTF::setCurrentThreadIsUserInteractive();
     static_cast<ScrollingThread*>(scrollingThread)->threadBody();
 }
 

@@ -1,3 +1,16 @@
+2014-06-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Add support for thread/WorkQueue QoS
+        https://bugs.webkit.org/show_bug.cgi?id=130688
+
+        Reviewed by Anders Carlson & Simon Fraser.
+
+        WebCore's ScrollingThread should be UserInteractive.
+
+        * page/scrolling/ScrollingThread.cpp:
+        (WebCore::ScrollingThread::threadCallback):
+            - ScrollingThread should be UserInteractive
+
 2014-06-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Build fix after r169919.

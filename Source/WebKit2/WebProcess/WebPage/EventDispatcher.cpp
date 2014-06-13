@@ -52,7 +52,7 @@ PassRefPtr<EventDispatcher> EventDispatcher::create()
 }
 
 EventDispatcher::EventDispatcher()
-    : m_queue(WorkQueue::create("com.apple.WebKit.EventDispatcher"))
+    : m_queue(WorkQueue::create("com.apple.WebKit.EventDispatcher", WorkQueue::QOS::UserInteractive))
     , m_recentWheelEventDeltaTracker(std::make_unique<WheelEventDeltaTracker>())
 #if ENABLE(IOS_TOUCH_EVENTS)
     , m_touchEventsLock(SPINLOCK_INITIALIZER)

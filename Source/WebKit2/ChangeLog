@@ -1,3 +1,36 @@
+2014-06-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Add support for thread/WorkQueue QoS
+        https://bugs.webkit.org/show_bug.cgi?id=130688
+
+        Reviewed by Anders Carlson & Simon Fraser.
+
+        The EventDispatcher's WorkQueue should be UserInteractive.
+
+        * Platform/WorkQueue.cpp:
+        (WorkQueue::create):
+            - pass QOS to constructor.
+        (WorkQueue::WorkQueue):
+            - pass QOS to platformInitialize.
+        * Platform/WorkQueue.h:
+            - added enum, arguments.
+        * Platform/efl/WorkQueueEfl.cpp:
+        (WorkQueue::platformInitialize):
+            - has extra argument.
+        * Platform/gtk/WorkQueueGtk.cpp:
+        (WorkQueue::platformInitialize):
+            - has extra argument.
+        * Platform/mac/WorkQueueMac.cpp:
+        (platformQOS):
+            - map from enum to platform type.
+        (WorkQueue::platformInitialize):
+            - set the QoS of the dispatch queue.
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::EventDispatcher):
+            - EventDispatcher's WorkQueue should be UserInteractive.
+        * config.h:
+            - added HAVE_QOS_CLASSES
+
 2014-06-12  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] Tiny hack to fix WebKitTestRunner view visibility

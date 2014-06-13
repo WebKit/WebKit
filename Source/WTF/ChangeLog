@@ -1,3 +1,18 @@
+2014-06-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Add support for thread/WorkQueue QoS
+        https://bugs.webkit.org/show_bug.cgi?id=130688
+
+        Reviewed by Anders Carlson & Simon Fraser.
+
+        Add the ability to mark threads as UserInteractive.
+
+        * wtf/Threading.cpp:
+        (WTF::setCurrentThreadIsUserInteractive):
+            - added method to set QoS of current thread to UserInteractive.
+        * wtf/Threading.h:
+            - added declaration.
+
 2014-06-12  Alexey Proskuryakov  <ap@apple.com>
 
         Fix Mac after r169880.

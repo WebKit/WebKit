@@ -44,9 +44,31 @@ void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, std::function<v
     });
 }
 
-void WorkQueue::platformInitialize(const char* name)
+#if HAVE(QOS_CLASSES)
+static dispatch_qos_class_t dispatchQOSClass(WorkQueue::QOS qos)
 {
-    m_dispatchQueue = dispatch_queue_create(name, 0);
+    switch (qos) {
+    case WorkQueue::QOS::UserInteractive:
+        return QOS_CLASS_USER_INTERACTIVE;
+    case WorkQueue::QOS::UserInitiated:
+        return QOS_CLASS_USER_INITIATED;
+    case WorkQueue::QOS::Default:
+        return QOS_CLASS_DEFAULT;
+    case WorkQueue::QOS::Utility:
+        return QOS_CLASS_UTILITY;
+    case WorkQueue::QOS::Background:
+        return QOS_CLASS_BACKGROUND;
+    }
+}
+#endif
+
+void WorkQueue::platformInitialize(const char* name, QOS qos)
+{
+    dispatch_queue_attr_t attr = 0;
+#if HAVE(QOS_CLASSES)
+    attr = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, dispatchQOSClass(qos), 0);
+#endif
+    m_dispatchQueue = dispatch_queue_create(name, attr);
     dispatch_set_context(m_dispatchQueue, this);
 }
 

@@ -84,6 +84,13 @@ ThreadIdentifier createThread(ThreadFunction entryPoint, void* data, const char*
     return createThreadInternal(threadEntryPoint, context, name);
 }
 
+void setCurrentThreadIsUserInteractive()
+{
+#if HAVE(QOS_CLASSES)
+    pthread_set_qos_class_self_np(QOS_CLASS_USER_INTERACTIVE, 0);
+#endif
+}
+
 #if PLATFORM(MAC) || PLATFORM(WIN)
 
 // For ABI compatibility with Safari on Mac / Windows: Safari uses the private

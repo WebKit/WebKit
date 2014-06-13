@@ -26,14 +26,14 @@
 #include "config.h"
 #include "WorkQueue.h"
 
-PassRefPtr<WorkQueue> WorkQueue::create(const char* name)
+PassRefPtr<WorkQueue> WorkQueue::create(const char* name, QOS qos)
 {
-    return adoptRef(new WorkQueue(name));
+    return adoptRef(new WorkQueue(name, qos));
 }
 
-WorkQueue::WorkQueue(const char* name)
+WorkQueue::WorkQueue(const char* name, QOS qos)
 {
-    platformInitialize(name);
+    platformInitialize(name, qos);
 }
 
 WorkQueue::~WorkQueue()
