@@ -37,8 +37,11 @@ mi, mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, n
     display: -webkit-inline-flex !important;
 }
 
-math, mrow, mfenced, merror, mphantom, mstyle, menclose {
+math, mrow, mfenced, msqrt, mroot, merror, mphantom, mstyle, menclose {
     -webkit-align-items: baseline;
+}
+msqrt > * { /* This rule is needed because of <msqrt>'s anonymous <mrow>. */
+    -webkit-align-self: baseline;
 }
 
 mo, mfrac, munder, mover, munderover {
@@ -82,9 +85,6 @@ mover > :last-child, munderover > :last-child {
 msub > * + *, msup > * + *, msubsup > * + *, mmultiscripts > * + *, munder > * + *, mover > * + *, munderover > * + * {
     font-size: 0.75em; /* FIXME: MathML standard is 0.71em */
 }
-mroot > *:last-child {
-    font-size: 0.5625em; /* This 0.75^2 since the scriptlevel is incremented by 2 in the index. */
-}
 
 mi {
     -webkit-padding-end: 0.1em;
@@ -94,6 +94,19 @@ msub > mi:first-child, msubsup > mi:first-child {
 }
 msubsup > mi:first-child + * + * {
     -webkit-margin-start: 0.14em; /* This is larger than 0.1em because the child's font-size is smaller than the <msubsup>'s. */
+}
+
+mroot {
+    position: relative;
+}
+mroot > * + * {
+    font-size: 0.75em;
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding-right: 0.4em;
+    padding-left: 0.2em;
+    padding-bottom: 0.35em;
 }
 
 math[mathvariant="normal"], mstyle[mathvariant="normal"], mo[mathvariant="normal"], mn[mathvariant="normal"], mi[mathvariant="normal"], mtext[mathvariant="normal"], mspace[mathvariant="normal"], ms[mathvariant="normal"] {

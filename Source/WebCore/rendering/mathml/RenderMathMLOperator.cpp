@@ -1145,21 +1145,21 @@ RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, PassRef<Rende
     updateTokenContent();
 }
 
-RenderMathMLOperator::RenderMathMLOperator(Document& document, PassRef<RenderStyle> style, const String& operatorString, MathMLOperatorDictionary::Form form, unsigned short flags)
+RenderMathMLOperator::RenderMathMLOperator(Document& document, PassRef<RenderStyle> style, const String& operatorString, MathMLOperatorDictionary::Form form, MathMLOperatorDictionary::Flag flag)
     : RenderMathMLToken(document, std::move(style))
     , m_stretchHeightAboveBaseline(0)
     , m_stretchDepthBelowBaseline(0)
     , m_operator(0)
     , m_isVertical(true)
     , m_operatorForm(form)
-    , m_operatorFlags(flags)
+    , m_operatorFlags(flag)
 {
     updateTokenContent(operatorString);
 }
 
 void RenderMathMLOperator::setOperatorFlagFromAttribute(MathMLOperatorDictionary::Flag flag, const QualifiedName& name)
 {
-    ASSERT(!isAnonymous());
+    ASSERT(!isFencedOperator());
     const AtomicString& attributeValue = element().fastGetAttribute(name);
     if (attributeValue == "true")
         m_operatorFlags |= flag;
@@ -1170,8 +1170,8 @@ void RenderMathMLOperator::setOperatorFlagFromAttribute(MathMLOperatorDictionary
 
 void RenderMathMLOperator::setOperatorPropertiesFromOpDictEntry(const MathMLOperatorDictionary::Entry* entry)
 {
-    // If this operator is anonymous, we preserve the Fence and Separator properties. This is to handle the case of RenderMathMLFenced.
-    if (isAnonymous())
+    // If this operator has been created by RenderMathMLFenced, we preserve the Fence and Separator properties.
+    if (isFencedOperator())
         m_operatorFlags = (m_operatorFlags & (MathMLOperatorDictionary::Fence | MathMLOperatorDictionary::Separator)) | entry->flags;
     else
         m_operatorFlags = entry->flags;
@@ -1188,7 +1188,7 @@ void RenderMathMLOperator::SetOperatorProperties()
 
     // We determine the form of the operator.
     bool explicitForm = true;
-    if (!isAnonymous()) {
+    if (!isFencedOperator()) {
         const AtomicString& form = element().fastGetAttribute(MathMLNames::formAttr);
         if (form == "prefix")
             m_operatorForm = MathMLOperatorDictionary::Prefix;
@@ -1211,7 +1211,7 @@ void RenderMathMLOperator::SetOperatorProperties()
     // We determine the default values of the operator properties.
 
     // First we initialize with the default values for unknown operators.
-    if (isAnonymous())
+    if (isFencedOperator())
         m_operatorFlags &= MathMLOperatorDictionary::Fence | MathMLOperatorDictionary::Separator; // This resets all but the Fence and Separator properties.
     else
         m_operatorFlags = 0; // This resets all the operator properties.
@@ -1238,7 +1238,7 @@ void RenderMathMLOperator::SetOperatorProperties()
     }
 #undef MATHML_OPDICT_SIZE
 
-    if (!isAnonymous()) {
+    if (!isFencedOperator()) {
         // Finally, we make the attribute values override the default.
 
         setOperatorFlagFromAttribute(MathMLOperatorDictionary::Fence, MathMLNames::fenceAttr);
@@ -1386,13 +1386,13 @@ void RenderMathMLOperator::rebuildTokenContent(const String& operatorString)
 
 void RenderMathMLOperator::updateTokenContent(const String& operatorString)
 {
-    ASSERT(isAnonymous());
+    ASSERT(isFencedOperator());
     rebuildTokenContent(operatorString);
 }
 
 void RenderMathMLOperator::updateTokenContent()
 {
-    ASSERT(!isAnonymous());
+    ASSERT(!isFencedOperator());
     rebuildTokenContent(element().textContent());
 }
 
