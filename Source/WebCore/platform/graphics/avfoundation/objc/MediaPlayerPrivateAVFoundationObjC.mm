@@ -737,7 +737,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     [m_avPlayer.get() addObserver:m_objcObserver.get() forKeyPath:@"rate" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
 #if ENABLE(IOS_AIRPLAY)
     [m_avPlayer.get() addObserver:m_objcObserver.get() forKeyPath:@"externalPlaybackActive" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
-    [m_avPlayer.get() setUsesExternalPlaybackWhileExternalScreenIsActive:YES];
+    updateDisableExternalPlayback();
 #endif
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
@@ -899,6 +899,9 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* 
         syncTextTrackBounds();
         [m_videoFullscreenLayer addSublayer:m_textTrackRepresentationLayer.get()];
     }
+#if ENABLE(IOS_AIRPLAY)
+    updateDisableExternalPlayback();
+#endif
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame(FloatRect frame)
@@ -2310,6 +2313,14 @@ void MediaPlayerPrivateAVFoundationObjC::setWirelessVideoPlaybackDisabled(bool d
         return;
     
     [m_avPlayer.get() setAllowsExternalPlayback:!disabled];
+}
+
+void MediaPlayerPrivateAVFoundationObjC::updateDisableExternalPlayback()
+{
+    if (!m_avPlayer)
+        return;
+
+    [m_avPlayer setUsesExternalPlaybackWhileExternalScreenIsActive:m_videoFullscreenLayer != nil];
 }
 #endif
 

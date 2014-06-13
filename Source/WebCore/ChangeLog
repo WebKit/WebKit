@@ -1,3 +1,22 @@
+2014-06-13  Jeremy Jones  <jeremyj@apple.com>
+
+        set setUsesExternalPlaybackWhileExternalScreenIsActive based on fullscreen mode
+        https://bugs.webkit.org/show_bug.cgi?id=133829
+
+        Reviewed by Eric Carlson.
+
+        When playing inline and external screen is active, don't use external playback.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        declare updateDisableExternalPlayback()
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        call updateDisableExternalPlayback when player is created
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer):
+        call updateDisableExternalPlayback when fullscreen mode changes
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateDisableExternalPlayback):
+        update setUsesExternalPlaybackWhileExternalScreenIsActive based on fullscreen mode
+
 2014-06-13  Brent Fulgham  <bfulgham@apple.com>
 
         Convert LayerPool and TileCoverageMap from ObjC to C++

@@ -263,6 +263,7 @@ private:
     virtual MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const override;
     virtual bool wirelessVideoPlaybackDisabled() const override;
     virtual void setWirelessVideoPlaybackDisabled(bool) override;
+    void updateDisableExternalPlayback();
 #endif
 
     WeakPtrFactory<MediaPlayerPrivateAVFoundationObjC> m_weakPtrFactory;
