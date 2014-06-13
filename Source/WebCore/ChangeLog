@@ -1,3 +1,10 @@
+2014-06-12  Andy Estes  <aestes@apple.com>
+
+        [Mac] Speculative build fix after r169921.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::destroyRenderers):
+
 2014-06-12  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] Stop observing the sample buffer renderers when destroying them.

@@ -729,7 +729,7 @@ void SourceBufferPrivateAVFObjC::destroyRenderers()
             m_mediaSource->player()->removeAudioRenderer(renderer);
         [renderer flush];
         [renderer stopRequestingMediaData];
-        [m_errorListener stopObservingLayer:renderer];
+        [m_errorListener stopObservingRenderer:renderer];
     }
 
     m_audioRenderers.clear();
