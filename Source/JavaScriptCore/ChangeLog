@@ -1,3 +1,17 @@
+2014-06-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix assertions under JSC::setNeverInline() when running js tests in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=133840
+
+        Reviewed by Filip Pizlo.
+        
+        Fix ASSERT(exec->vm().currentThreadIsHoldingAPILock()); under JSC::setNeverInline()
+        when running DFG tests.
+
+        * API/JSCTestRunnerUtils.cpp:
+        (JSC::numberOfDFGCompiles):
+        (JSC::setNeverInline):
+
 2014-06-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Avoid fork bomb during build
