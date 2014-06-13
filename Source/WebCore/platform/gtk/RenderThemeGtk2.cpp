@@ -97,7 +97,7 @@ void RenderThemeGtk::initMediaColors()
 }
 #endif
 
-static void adjustRectForFocus(GtkWidget* widget, IntRect& rect, bool ignoreInteriorFocusProperty = false)
+static void adjustRectForFocus(GtkWidget* widget, FloatRect& rect, bool ignoreInteriorFocusProperty = false)
 {
     gint focusWidth, focusPad;
     gboolean interiorFocus = 0;
@@ -110,7 +110,7 @@ static void adjustRectForFocus(GtkWidget* widget, IntRect& rect, bool ignoreInte
     rect.inflate(focusWidth + focusPad);
 }
 
-void RenderThemeGtk::adjustRepaintRect(const RenderObject& renderObject, IntRect& rect)
+void RenderThemeGtk::adjustRepaintRect(const RenderObject& renderObject, FloatRect& rect)
 {
     ControlPart part = renderObject.style().appearance();
     switch (part) {
@@ -187,9 +187,10 @@ static void paintToggle(RenderThemeGtk* theme, const RenderObject& renderObject,
     }
 
     if (theme->isFocused(renderObject)) {
-        IntRect focusRect(buttonRect);
+        FloatRect focusRect(buttonRect);
         adjustRectForFocus(widget, focusRect, true);
-        widgetContext.gtkPaintFocus(focusRect, widget, toggleState, detail);
+        // FIXME: adopt device pixel positioned themes.
+        widgetContext.gtkPaintFocus(IntRect(focusRect), widget, toggleState, detail);
     }
 }
 

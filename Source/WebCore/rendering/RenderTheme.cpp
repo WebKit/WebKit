@@ -290,7 +290,7 @@ bool RenderTheme::paint(const RenderObject& o, ControlStates* controlStates, con
     case ButtonPart:
     case InnerSpinButtonPart:
         updateControlStatesForRenderer(o, controlStates);
-        m_theme->paint(part, controlStates, const_cast<GraphicsContext*>(paintInfo.context), integralSnappedRect, o.style().effectiveZoom(), &o.view().frameView());
+        m_theme->paint(part, controlStates, const_cast<GraphicsContext*>(paintInfo.context), devicePixelSnappedRect, o.style().effectiveZoom(), &o.view().frameView());
         return false;
     default:
         break;
@@ -720,14 +720,14 @@ bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& bo
     }
 }
 
-void RenderTheme::adjustRepaintRect(const RenderObject& o, IntRect& r)
+void RenderTheme::adjustRepaintRect(const RenderObject& renderer, FloatRect& rect)
 {
 #if USE(NEW_THEME)
-    ControlStates states(extractControlStatesForRenderer(o));
-    m_theme->inflateControlPaintRect(o.style().appearance(), &states, r, o.style().effectiveZoom());
+    ControlStates states(extractControlStatesForRenderer(renderer));
+    m_theme->inflateControlPaintRect(renderer.style().appearance(), &states, rect, renderer.style().effectiveZoom());
 #else
-    UNUSED_PARAM(o);
-    UNUSED_PARAM(r);
+    UNUSED_PARAM(renderer);
+    UNUSED_PARAM(rect);
 #endif
 }
 

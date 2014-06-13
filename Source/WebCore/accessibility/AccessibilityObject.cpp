@@ -726,16 +726,16 @@ IntRect AccessibilityObject::boundingBoxForQuads(RenderObject* obj, const Vector
     if (!obj)
         return IntRect();
     
-    IntRect result;
+    FloatRect result;
     for (const auto& quad : quads) {
-        IntRect r = quad.enclosingBoundingBox();
+        FloatRect r = quad.enclosingBoundingBox();
         if (!r.isEmpty()) {
             if (obj->style().hasAppearance())
                 obj->theme().adjustRepaintRect(*obj, r);
             result.unite(r);
         }
     }
-    return result;
+    return pixelSnappedIntRect(LayoutRect(result));
 }
     
 bool AccessibilityObject::press()

@@ -1,3 +1,19 @@
+2014-06-12  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make <input type=> and <button> elements' decoration subpixel aware.
+        https://bugs.webkit.org/show_bug.cgi?id=133812
+        <rdar://problem/17286309>
+
+        Reviewed by Simon Fraser.
+
+        Enable <input type=> and <button> decoration painting on subpixel positions.
+        The theme size is still integral, but its position is snapped to device pixels.
+        Theme's label, the InlineTextBox is already subpixel position aware.
+        webkit.org/b/132005 tracks the rest of the themes.
+
+        * platform/mac-mountainlion/compositing/contents-opaque/control-layer-expected.txt:
+        * platform/mac/compositing/contents-opaque/control-layer-expected.txt:
+
 2014-06-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.

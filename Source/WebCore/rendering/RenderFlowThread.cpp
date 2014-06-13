@@ -1381,10 +1381,10 @@ void RenderFlowThread::addRegionsVisualOverflowFromTheme(const RenderBlock* bloc
         LayoutRect borderBox = block->borderBoxRectInRegion(region);
         borderBox = region->rectFlowPortionForBox(block, borderBox);
 
-        IntRect inflatedRect = pixelSnappedIntRect(borderBox);
+        FloatRect inflatedRect = borderBox;
         block->theme().adjustRepaintRect(*block, inflatedRect);
 
-        region->addVisualOverflowForBox(block, inflatedRect);
+        region->addVisualOverflowForBox(block, pixelSnappedIntRect(LayoutRect(inflatedRect)));
         if (region == endRegion)
             break;
     }

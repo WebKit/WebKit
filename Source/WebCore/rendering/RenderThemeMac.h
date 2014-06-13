@@ -49,7 +49,7 @@ public:
     // A general method asking if any control tinting is supported at all.
     virtual bool supportsControlTints() const override { return true; }
 
-    virtual void adjustRepaintRect(const RenderObject&, IntRect&) override;
+    virtual void adjustRepaintRect(const RenderObject&, FloatRect&) override;
 
     virtual bool isControlStyled(const RenderStyle*, const BorderData&, const FillLayer&, const Color& backgroundColor) const override;
 

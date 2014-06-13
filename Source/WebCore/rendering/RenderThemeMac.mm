@@ -633,9 +633,9 @@ static FloatRect inflateRect(const FloatRect& rect, const IntSize& size, const i
     return result;
 }
 
-void RenderThemeMac::adjustRepaintRect(const RenderObject& o, IntRect& r)
+void RenderThemeMac::adjustRepaintRect(const RenderObject& renderer, FloatRect& rect)
 {
-    ControlPart part = o.style().appearance();
+    ControlPart part = renderer.style().appearance();
 
 #if USE(NEW_THEME)
     switch (part) {
@@ -646,20 +646,20 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject& o, IntRect& r)
         case DefaultButtonPart:
         case ButtonPart:
         case InnerSpinButtonPart:
-            return RenderTheme::adjustRepaintRect(o, r);
+            return RenderTheme::adjustRepaintRect(renderer, rect);
         default:
             break;
     }
 #endif
 
-    float zoomLevel = o.style().effectiveZoom();
+    float zoomLevel = renderer.style().effectiveZoom();
 
     if (part == MenulistPart) {
-        setPopupButtonCellState(o, r.size());
+        setPopupButtonCellState(renderer, IntSize(rect.size()));
         IntSize size = popupButtonSizes()[[popupButton() controlSize]];
         size.setHeight(size.height() * zoomLevel);
-        size.setWidth(r.width());
-        r = IntRect(inflateRect(r, size, popupButtonMargins(), zoomLevel));
+        size.setWidth(rect.width());
+        rect = inflateRect(rect, size, popupButtonMargins(), zoomLevel);
     }
 }
 

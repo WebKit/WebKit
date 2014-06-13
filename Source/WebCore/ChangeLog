@@ -1,3 +1,48 @@
+2014-06-12  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make <input type=> and <button> elements' decoration subpixel aware.
+        https://bugs.webkit.org/show_bug.cgi?id=133812
+        <rdar://problem/17286309>
+
+        Reviewed by Simon Fraser.
+
+        Enable <input type=> and <button> decoration painting on subpixel positions.
+        The theme size is still integral, but its position is snapped to device pixels.
+        Theme's label, the InlineTextBox is already subpixel position aware.
+        webkit.org/b/132005 tracks the rest of the themes.
+
+        Not testable.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::boundingBoxForQuads): Keep integral snapping for now.
+        * platform/Theme.h:
+        (WebCore::Theme::paint):
+        (WebCore::Theme::inflateControlPaintRect):
+        * platform/mac/ThemeMac.h:
+        * platform/mac/ThemeMac.mm:
+        (WebCore::inflateRect):
+        (WebCore::configureToggleButton):
+        (WebCore::sharedRadioCell):
+        (WebCore::sharedCheckboxCell):
+        (WebCore::paintToggleButton):
+        (WebCore::setUpButtonCell):
+        (WebCore::button):
+        (WebCore::paintButton):
+        (WebCore::paintStepper):
+        (WebCore::ThemeMac::inflateControlPaintRect):
+        (WebCore::ThemeMac::paint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addVisualOverflowFromTheme): Keep integral snapping for now.
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::addRegionsVisualOverflowFromTheme): Keep integral snapping for now.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::adjustRepaintRect):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustRepaintRect):
+
 2014-06-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Avoid fork bomb during build

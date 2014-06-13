@@ -1171,9 +1171,9 @@ void RenderBlock::addVisualOverflowFromTheme()
     if (!style().hasAppearance())
         return;
 
-    IntRect inflatedRect = pixelSnappedBorderBoxRect();
+    FloatRect inflatedRect = borderBoxRect();
     theme().adjustRepaintRect(*this, inflatedRect);
-    addVisualOverflow(inflatedRect);
+    addVisualOverflow(pixelSnappedIntRect(LayoutRect(inflatedRect)));
 
     if (RenderFlowThread* flowThread = flowThreadContainingBlock())
         flowThread->addRegionsVisualOverflowFromTheme(this);

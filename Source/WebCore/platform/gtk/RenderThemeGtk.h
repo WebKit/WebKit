@@ -55,7 +55,7 @@ public:
     // A general method asking if any control tinting is supported at all.
     virtual bool supportsControlTints() const override { return true; }
 
-    virtual void adjustRepaintRect(const RenderObject&, IntRect&) override;
+    virtual void adjustRepaintRect(const RenderObject&, FloatRect&) override;
 
     // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
