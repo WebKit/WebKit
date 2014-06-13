@@ -1457,6 +1457,14 @@ void SelectorCodeGenerator::generateSpecialFailureInQuirksModeForActiveAndHoverI
     }
 }
 
+#if CPU(ARM_THUMB2) && !CPU(APPLE_ARMV7S)
+// FIXME: This could be implemented in assembly to avoid a function call, and we know the divisor at jit-compile time.
+static int moduloHelper(int dividend, int divisor)
+{
+    return dividend % divisor;
+}
+#endif
+
 // The value in inputDividend is destroyed by the modulo operation.
 Assembler::Jump SelectorCodeGenerator::modulo(Assembler::ResultCondition condition, Assembler::RegisterID inputDividend, int divisor)
 {
@@ -1473,6 +1481,13 @@ Assembler::Jump SelectorCodeGenerator::modulo(Assembler::ResultCondition conditi
 #endif
     m_assembler.mul32(divisorRegister, resultRegister);
     return m_assembler.branchSub32(condition, inputDividend, resultRegister, resultRegister);
+#elif CPU(ARM_THUMB2) && !CPU(APPLE_ARMV7S)
+    LocalRegisterWithPreference divisorRegister(m_registerAllocator, , JSC::GPRInfo::argumentGPR1);
+    m_assembler.move(Assembler::TrustedImm32(divisor), divisorRegister);
+    FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+    functionCall.setFunctionAddress(moduloHelper);
+    functionCall.setTwoArguments(inputDividend, divisorRegister);
+    return functionCall.callAndBranchOnBooleanReturnValue(condition);
 #elif CPU(X86_64)
     // idiv takes RAX + an arbitrary register, and return RAX + RDX. Most of this code is about doing
     // an efficient allocation of those registers. If a register is already in use and is not the inputDividend,

@@ -1,3 +1,15 @@
+2014-06-13  Alex Christensen  <achristensen@webkit.org>
+
+        Make css jit compile on armv7.
+        https://bugs.webkit.org/show_bug.cgi?id=133889
+
+        Reviewed by Benjamin Poulain.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::moduloHelper):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::modulo):
+        Implement modulo using a function call for now.
+
 2014-06-13  Anders Carlsson  <andersca@apple.com>
 
         Use the callOnMainThread version that takes an std::function in BlobResourceHandle::start()
