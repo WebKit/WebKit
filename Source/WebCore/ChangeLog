@@ -1,3 +1,18 @@
+2014-06-13  Anders Carlsson  <andersca@apple.com>
+
+        Add a HTTPHeaderMap::find overload that takes a HTTPHeaderName
+        https://bugs.webkit.org/show_bug.cgi?id=133872
+
+        Reviewed by Andreas Kling.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived):
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::get):
+        (WebCore::HTTPHeaderMap::find):
+        * platform/network/HTTPHeaderMap.h:
+        * platform/network/HTTPHeaderNames.in:
+
 2014-06-13  Frédéric Wang  <fred.wang@free.fr>
 
         Draw radicals with glyphs for better rendering

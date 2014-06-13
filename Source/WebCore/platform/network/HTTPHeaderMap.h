@@ -65,11 +65,12 @@ public:
 
     bool contains(HTTPHeaderName) const;
     String get(const char*) const;
-    const_iterator find(const char*) const;
+    const_iterator find(HTTPHeaderName) const;
     bool remove(HTTPHeaderName);
 
     // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
     template<size_t length> bool contains(const char (&)[length]) = delete;
+    template<size_t length> const_iterator find(const char(&)[length]) = delete;
     template<size_t length> bool remove(const char (&)[length]) = delete;
 
     const_iterator begin() const { return m_headers.begin(); }

@@ -106,15 +106,15 @@ bool HTTPHeaderMap::contains(HTTPHeaderName name) const
 
 String HTTPHeaderMap::get(const char* name) const
 {
-    auto it = find(name);
+    auto it = m_headers.find<CaseFoldingCStringTranslator>(name);
     if (it == end())
         return String();
     return it->value;
 }
 
-HTTPHeaderMap::const_iterator HTTPHeaderMap::find(const char* name) const
+HTTPHeaderMap::const_iterator HTTPHeaderMap::find(HTTPHeaderName name) const
 {
-    return m_headers.find<CaseFoldingCStringTranslator>(name);
+    return m_headers.find(httpHeaderNameString(name).toStringWithoutCopying());
 }
 
 bool HTTPHeaderMap::remove(HTTPHeaderName name)

@@ -46,6 +46,7 @@
 #include "FrameTree.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTTPHeaderNames.h"
 #include "HistoryItem.h"
 #include "IconController.h"
 #include "InspectorInstrumentation.h"
@@ -604,7 +605,7 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
     if (willLoadFallback)
         return;
 
-    auto it = response.httpHeaderFields().find("x-frame-options");
+    auto it = response.httpHeaderFields().find(HTTPHeaderName::XFrameOptions);
     if (it != response.httpHeaderFields().end()) {
         String content = it->value;
         ASSERT(m_mainResource);
