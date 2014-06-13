@@ -1,3 +1,14 @@
+2014-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove all deprecated API from GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=133728
+
+        Reviewed by Martin Robinson.
+
+        * gtk/webkitdom.py:
+        (WebKitDOMDocGenerator): Remove all deleted classes from the list.
+        (WebKitDOMDocGeneratorSections.__init__): Fix a typo in member initialization.
+
 2014-06-12  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] Fix the view being half offscreen in WebKitTestRunner on iOS

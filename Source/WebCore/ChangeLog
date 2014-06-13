@@ -1,3 +1,29 @@
+2014-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove all deprecated API from GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=133728
+
+        Reviewed by Martin Robinson.
+
+        Remove all deprecated symbols from the GObject DOM bindings,
+        keeping the deprecation infraestructure for future API breaks.
+
+        * PlatformGTK.cmake: Remove WebKitDOMDeprecated files from the
+        build.
+        * bindings/gobject/WebKitDOMDeprecated.cpp: Removed.
+        * bindings/gobject/WebKitDOMDeprecated.h: Removed.
+        * bindings/gobject/WebKitDOMDeprecated.symbols: Removed.
+        * bindings/gobject/webkitdom.symbols: Updated to the current API.
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (SkipFunction): Remove exceptions for deprecated API.
+        (GetFunctionDeprecationInformation): Ditto.
+        (GetEffectiveFunctionName): Ditto.
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.cpp:
+        (webkit_dom_test_event_target_dispatch_event): Deleted.
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.symbols:
+        * dom/Element.idl: Remove GObject exception.
+
 2014-06-12  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Make <input type=> and <button> elements' decoration subpixel aware.

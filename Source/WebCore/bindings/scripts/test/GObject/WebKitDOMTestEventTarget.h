@@ -59,21 +59,6 @@ webkit_dom_test_event_target_get_type (void);
 WEBKIT_API WebKitDOMNode*
 webkit_dom_test_event_target_item(WebKitDOMTestEventTarget* self, gulong index);
 
-#if !defined(WEBKIT_DISABLE_DEPRECATED)
-/**
- * webkit_dom_test_event_target_dispatch_event:
- * @self: A #WebKitDOMTestEventTarget
- * @evt: A #WebKitDOMEvent
- * @error: #GError
- *
- * Returns: A #gboolean
- *
- * Deprecated: 2.4: Use webkit_dom_event_target_dispatch_event() instead.
-**/
-WEBKIT_DEPRECATED_FOR(webkit_dom_event_target_dispatch_event) gboolean
-webkit_dom_test_event_target_dispatch_event(WebKitDOMTestEventTarget* self, WebKitDOMEvent* evt, GError** error);
-#endif /* WEBKIT_DISABLE_DEPRECATED */
-
 G_END_DECLS
 
 #endif /* WebKitDOMTestEventTarget_h */

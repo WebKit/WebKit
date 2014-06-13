@@ -436,7 +436,6 @@ list(APPEND GObjectDOMBindings_SOURCES
     bindings/gobject/DOMObjectCache.cpp
     bindings/gobject/GObjectEventListener.cpp
     bindings/gobject/WebKitDOMCustom.cpp
-    bindings/gobject/WebKitDOMDeprecated.cpp
     bindings/gobject/WebKitDOMEventTarget.cpp
     bindings/gobject/WebKitDOMHTMLPrivate.cpp
     bindings/gobject/WebKitDOMObject.cpp
@@ -623,12 +622,11 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     )
 endif ()
 
-set(GObjectDOMBindings_CLASS_LIST Custom EventTarget Object Deprecated)
+set(GObjectDOMBindings_CLASS_LIST Custom EventTarget Object)
 set(GObjectDOMBindings_INSTALLED_HEADERS
      ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
      ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
      ${WEBCORE_DIR}/bindings/gobject/WebKitDOMCustom.h
-     ${WEBCORE_DIR}/bindings/gobject/WebKitDOMDeprecated.h
      ${WEBCORE_DIR}/bindings/gobject/WebKitDOMEventTarget.h
      ${WEBCORE_DIR}/bindings/gobject/WebKitDOMObject.h
 )
@@ -709,7 +707,6 @@ install(FILES ${GObjectDOMBindings_INSTALLED_HEADERS}
 # Some installed headers are not on the list of headers used for gir generation.
 set(GObjectDOMBindings_GIR_HEADERS ${GObjectDOMBindings_INSTALLED_HEADERS})
 list(REMOVE_ITEM GObjectDOMBindings_GIR_HEADERS
-     bindings/gobject/WebKitDOMDeprecated.h
      bindings/gobject/WebKitDOMEventTarget.h
      bindings/gobject/WebKitDOMObject.h
 )
