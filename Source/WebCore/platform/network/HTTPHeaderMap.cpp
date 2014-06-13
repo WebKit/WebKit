@@ -99,6 +99,11 @@ struct CaseFoldingCStringTranslator {
     }
 };
 
+void HTTPHeaderMap::set(HTTPHeaderName name, const String& value)
+{
+    m_headers.set(httpHeaderNameString(name).toStringWithoutCopying(), value);
+}
+
 bool HTTPHeaderMap::contains(HTTPHeaderName name) const
 {
     return m_headers.contains(httpHeaderNameString(name).toStringWithoutCopying());

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ResourceRequestCFNet.h"
 
+#include "HTTPHeaderNames.h"
 #include "ResourceRequest.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -219,12 +220,11 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
 
     if (RetainPtr<CFReadStreamRef> bodyStream = adoptCF(CFURLRequestCopyHTTPRequestBodyStream(cfRequest))) {
         // For streams, provide a Content-Length to avoid using chunked encoding, and to get accurate total length in callbacks.
-        RetainPtr<CFStringRef> lengthString = adoptCF(static_cast<CFStringRef>(CFReadStreamCopyProperty(bodyStream.get(), formDataStreamLengthPropertyName())));
-        if (lengthString) {
+        if (RetainPtr<CFStringRef> lengthString = adoptCF(static_cast<CFStringRef>(CFReadStreamCopyProperty(bodyStream.get(), formDataStreamLengthPropertyName())))) {
             CFURLRequestSetHTTPHeaderFieldValue(cfRequest, CFSTR("Content-Length"), lengthString.get());
             // Since resource request is already marked updated, we need to keep it up to date too.
             ASSERT(m_resourceRequestUpdated);
-            m_httpHeaderFields.set("Content-Length", lengthString.get());
+            m_httpHeaderFields.set(HTTPHeaderName::ContentLength, lengthString.get());
         }
     }
 

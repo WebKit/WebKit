@@ -27,6 +27,7 @@
 #import "ResourceRequest.h"
 
 #import "FormDataStreamMac.h"
+#import "HTTPHeaderNames.h"
 #import "ResourceRequestCFNet.h"
 #import "RuntimeApplicationChecks.h"
 #import "WebCoreSystemInterface.h"
@@ -235,7 +236,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
             [nsRequest setValue:lengthString forHTTPHeaderField:@"Content-Length"];
             // Since resource request is already marked updated, we need to keep it up to date too.
             ASSERT(m_resourceRequestUpdated);
-            m_httpHeaderFields.set("Content-Length", lengthString);
+            m_httpHeaderFields.set(HTTPHeaderName::ContentLength, lengthString);
         }
     }
 

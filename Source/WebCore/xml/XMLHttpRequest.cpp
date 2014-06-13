@@ -33,6 +33,7 @@
 #include "ExceptionCode.h"
 #include "File.h"
 #include "HTMLDocument.h"
+#include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMBinding.h"
@@ -632,7 +633,7 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
                 setRequestHeaderInternal("Content-Type", "application/xml");
         } else {
             replaceCharsetInMediaType(contentType, "UTF-8");
-            m_requestHeaders.set("Content-Type", contentType);
+            m_requestHeaders.set(HTTPHeaderName::ContentType, contentType);
         }
 
         m_requestEntityBody = FormData::create(UTF8Encoding().encode(body, EntitiesForUnencodables));

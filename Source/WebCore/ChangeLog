@@ -1,5 +1,22 @@
 2014-06-13  Anders Carlsson  <andersca@apple.com>
 
+        Add a HTTPHeaderMap::set overload that takes a HTTPHeaderName
+        https://bugs.webkit.org/show_bug.cgi?id=133874
+
+        Reviewed by Tim Horton.
+
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::set):
+        * platform/network/HTTPHeaderMap.h:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformHTTPBody):
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdatePlatformHTTPBody):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
+2014-06-13  Anders Carlsson  <andersca@apple.com>
+
         Add a HTTPHeaderMap::find overload that takes a HTTPHeaderName
         https://bugs.webkit.org/show_bug.cgi?id=133872
 
