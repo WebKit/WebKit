@@ -11472,6 +11472,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\rendering\style\GridResolvedPosition.cpp" />
     <ClCompile Include="..\rendering\style\KeyframeList.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -20153,6 +20154,7 @@
     <ClInclude Include="..\rendering\style\GridCoordinate.h" />
     <ClInclude Include="..\rendering\style\GridLength.h" />
     <ClInclude Include="..\rendering\style\GridPosition.h" />
+    <ClInclude Include="..\rendering\style\GridResolvedPosition.h" />
     <ClInclude Include="..\rendering\style\GridTrackSize.h" />
     <ClInclude Include="..\rendering\style\KeyframeList.h" />
     <ClInclude Include="..\rendering\style\NinePieceImage.h" />

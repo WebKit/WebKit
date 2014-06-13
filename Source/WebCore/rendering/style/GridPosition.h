@@ -45,33 +45,12 @@ enum GridPositionType {
     NamedGridAreaPosition // <ident>
 };
 
-enum GridPositionSide {
-    ColumnStartSide,
-    ColumnEndSide,
-    RowStartSide,
-    RowEndSide
-};
-
 class GridPosition {
 public:
     GridPosition()
         : m_type(AutoPosition)
         , m_integerPosition(0)
     {
-    }
-
-    static inline size_t adjustGridPositionForRowEndColumnEndSide(size_t resolvedPosition)
-    {
-        return resolvedPosition ? resolvedPosition - 1 : 0;
-    }
-
-    static size_t adjustGridPositionForSide(size_t resolvedPosition, GridPositionSide side)
-    {
-        // An item finishing on the N-th line belongs to the N-1-th cell.
-        if (side == ColumnEndSide || side == RowEndSide)
-            return adjustGridPositionForRowEndColumnEndSide(resolvedPosition);
-
-        return resolvedPosition;
     }
 
     bool isPositive() const { return integerPosition() > 0; }

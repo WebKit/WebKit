@@ -2775,6 +2775,9 @@
     <ClCompile Include="..\rendering\style\FillLayer.cpp">
       <Filter>rendering\style</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\style\GridResolvedPosition.cpp">
+      <Filter>rendering\style</Filter>
+    </ClCompile>
     <ClCompile Include="..\rendering\style\KeyframeList.cpp">
       <Filter>rendering\style</Filter>
     </ClCompile>
@@ -9710,6 +9713,9 @@
       <Filter>rendering\style</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\style\GridPosition.h">
+      <Filter>rendering\style</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\style\GridResolvedPosition.h">
       <Filter>rendering\style</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\style\GridTrackSize.h">

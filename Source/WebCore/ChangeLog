@@ -1,3 +1,101 @@
+2014-06-13  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Introduce an explicit type for resolved grid positions
+        https://bugs.webkit.org/show_bug.cgi?id=131732
+
+        Reviewed by Sergio Villar Senin.
+
+        We were using simple size_t integers to represent resolved grid
+        positions in our internal data structures. This change allows us to
+        clarify the code, avoid potential off by one mistakes, and move the
+        resolving code to a central place.
+
+        A new class GridResolvedPosition has been created and the related
+        methods have been moved there from RenderGrid.
+        GridSpan is now defined by two GridResolvedPosition, so all the code
+        using it has been modified to adapt it to GridResolvedPosition.
+
+        No new tests as it is already covered by current tests
+        (fast/css-grid-layout/).
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSGridTemplateAreasValue.cpp:
+        (WebCore::stringForPosition):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTemplateAreasRow):
+        * css/StyleResolver.cpp:
+        (WebCore::createImplicitNamedGridLinesFromGridArea):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::computeNormalizedFractionBreadth):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForItems):
+        (WebCore::RenderGrid::insertItemIntoGrid):
+        (WebCore::RenderGrid::placeItemsOnGrid):
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator):
+        (WebCore::RenderGrid::placeSpecifiedMajorAxisItemsOnGrid):
+        (WebCore::RenderGrid::placeAutoMajorAxisItemOnGrid):
+        (WebCore::RenderGrid::autoPlacementMajorAxisDirection):
+        (WebCore::RenderGrid::autoPlacementMinorAxisDirection):
+        (WebCore::RenderGrid::gridAreaBreadthForChild):
+        (WebCore::RenderGrid::findChildLogicalPosition):
+        (WebCore::RenderGrid::explicitGridColumnCount): Deleted.
+        (WebCore::RenderGrid::explicitGridRowCount): Deleted.
+        (WebCore::isColumnSide): Deleted.
+        (WebCore::isStartSide): Deleted.
+        (WebCore::RenderGrid::explicitGridSizeForSide): Deleted.
+        (WebCore::RenderGrid::resolveGridPositionsFromAutoPlacementPosition): Deleted.
+        (WebCore::gridLinesForSide): Deleted.
+        (WebCore::implicitNamedGridLineForSide): Deleted.
+        (WebCore::isNonExistentNamedLineOrArea): Deleted.
+        (WebCore::RenderGrid::adjustGridPositionsFromStyle): Deleted.
+        (WebCore::RenderGrid::resolveGridPositionsFromStyle): Deleted.
+        (WebCore::RenderGrid::resolveNamedGridLinePositionFromStyle): Deleted.
+        (WebCore::RenderGrid::resolveGridPositionFromStyle): Deleted.
+        (WebCore::RenderGrid::resolveGridPositionAgainstOppositePosition): Deleted.
+        (WebCore::RenderGrid::resolveNamedGridLinePositionAgainstOppositePosition): Deleted.
+        (WebCore::firstNamedGridLineBeforePosition): Deleted.
+        (WebCore::RenderGrid::resolveRowStartColumnStartNamedGridLinePositionAgainstOppositePosition): Deleted.
+        (WebCore::RenderGrid::resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition): Deleted.
+        * rendering/RenderGrid.h:
+        * rendering/style/GridCoordinate.h:
+        (WebCore::GridSpan::GridSpan):
+        (WebCore::GridSpan::operator==):
+        * rendering/style/GridPosition.h:
+        (WebCore::GridPosition::adjustGridPositionForRowEndColumnEndSide): Deleted.
+        (WebCore::GridPosition::adjustGridPositionForSide): Deleted.
+        * rendering/style/GridResolvedPosition.cpp: Added.
+        (WebCore::isColumnSide):
+        (WebCore::isStartSide):
+        (WebCore::explicitGridSizeForSide):
+        (WebCore::GridResolvedPosition::resolveGridPositionsFromAutoPlacementPosition):
+        (WebCore::gridLinesForSide):
+        (WebCore::implicitNamedGridLineForSide):
+        (WebCore::isNonExistentNamedLineOrArea):
+        (WebCore::GridResolvedPosition::adjustGridPositionsFromStyle):
+        (WebCore::GridResolvedPosition::resolveGridPositionsFromStyle):
+        (WebCore::GridResolvedPosition::resolveNamedGridLinePositionFromStyle):
+        (WebCore::GridResolvedPosition::resolveGridPositionFromStyle):
+        (WebCore::GridResolvedPosition::resolveGridPositionAgainstOppositePosition):
+        (WebCore::GridResolvedPosition::resolveNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::firstNamedGridLineBeforePosition):
+        (WebCore::GridResolvedPosition::resolveRowStartColumnStartNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::GridResolvedPosition::resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition):
+        * rendering/style/GridResolvedPosition.h: Added.
+        (WebCore::GridResolvedPosition::adjustGridPositionForRowEndColumnEndSide):
+        (WebCore::GridResolvedPosition::adjustGridPositionForSide):
+        (WebCore::GridResolvedPosition::GridResolvedPosition):
+        (WebCore::GridResolvedPosition::operator++):
+        (WebCore::GridResolvedPosition::operator==):
+        (WebCore::GridResolvedPosition::operator<):
+        (WebCore::GridResolvedPosition::operator>):
+        (WebCore::GridResolvedPosition::operator<=):
+        (WebCore::GridResolvedPosition::operator>=):
+        (WebCore::GridResolvedPosition::toInt):
+        (WebCore::GridResolvedPosition::next):
+
 2014-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove all deprecated API from GObject DOM bindings

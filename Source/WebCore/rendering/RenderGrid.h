@@ -29,6 +29,7 @@
 
 #if ENABLE(CSS_GRID_LAYOUT)
 
+#include "GridResolvedPosition.h"
 #include "OrderIterator.h"
 #include "RenderBlock.h"
 
@@ -37,11 +38,6 @@ namespace WebCore {
 class GridCoordinate;
 class GridSpan;
 class GridTrack;
-
-enum GridTrackSizingDirection {
-    ForColumns,
-    ForRows
-};
 
 class RenderGrid final : public RenderBlock {
 public:
@@ -66,7 +62,6 @@ private:
 
     class GridIterator;
     class GridSizingData;
-    enum GridTrackSizingDirection { ForColumns, ForRows };
     void computeUsedBreadthOfGridTracks(GridTrackSizingDirection, GridSizingData&);
     void computeUsedBreadthOfGridTracks(GridTrackSizingDirection, GridSizingData&, LayoutUnit& availableLogicalSpace);
     bool gridElementIsShrinkToFit();
@@ -76,7 +71,7 @@ private:
     void resolveContentBasedTrackSizingFunctions(GridTrackSizingDirection, GridSizingData&);
 
     void growGrid(GridTrackSizingDirection);
-    void insertItemIntoGrid(RenderBox*, size_t rowTrack, size_t columnTrack);
+    void insertItemIntoGrid(RenderBox*, const GridResolvedPosition& rowTrack, const GridResolvedPosition& columnTrack);
     void insertItemIntoGrid(RenderBox*, const GridCoordinate&);
     void placeItemsOnGrid();
     void populateExplicitGridAndOrderIterator();
@@ -100,26 +95,12 @@ private:
     double computeNormalizedFractionBreadth(Vector<GridTrack>&, const GridSpan& tracksSpan, GridTrackSizingDirection, LayoutUnit availableLogicalSpace) const;
 
     const GridTrackSize& gridTrackSize(GridTrackSizingDirection, size_t) const;
-    size_t explicitGridColumnCount() const;
-    size_t explicitGridRowCount() const;
-    size_t explicitGridSizeForSide(GridPositionSide) const;
 
     LayoutUnit logicalContentHeightForChild(RenderBox*, Vector<GridTrack>&);
     LayoutUnit minContentForChild(RenderBox*, GridTrackSizingDirection, Vector<GridTrack>& columnTracks);
     LayoutUnit maxContentForChild(RenderBox*, GridTrackSizingDirection, Vector<GridTrack>& columnTracks);
     LayoutPoint findChildLogicalPosition(RenderBox*, const GridSizingData&);
     GridCoordinate cachedGridCoordinate(const RenderBox*) const;
-
-    GridSpan resolveGridPositionsFromAutoPlacementPosition(const RenderBox*, GridTrackSizingDirection, size_t) const;
-    void adjustNamedGridItemPosition(GridPosition&, GridPositionSide) const;
-    void adjustGridPositionsFromStyle(GridPosition& initialPosition, GridPosition& finalPosition, GridPositionSide initialPositionSide, GridPositionSide finalPositionSide) const;
-    std::unique_ptr<GridSpan> resolveGridPositionsFromStyle(const RenderBox*, GridTrackSizingDirection) const;
-    size_t resolveNamedGridLinePositionFromStyle(const GridPosition&, GridPositionSide) const;
-    size_t resolveGridPositionFromStyle(const GridPosition&, GridPositionSide) const;
-    std::unique_ptr<GridSpan> resolveGridPositionAgainstOppositePosition(size_t resolvedOppositePosition, const GridPosition&, GridPositionSide) const;
-    std::unique_ptr<GridSpan> resolveNamedGridLinePositionAgainstOppositePosition(size_t resolvedOppositePosition, const GridPosition&, GridPositionSide) const;
-    std::unique_ptr<GridSpan> resolveRowStartColumnStartNamedGridLinePositionAgainstOppositePosition(size_t resolvedOppositePosition, const GridPosition&, const Vector<size_t>&) const;
-    std::unique_ptr<GridSpan> resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition(size_t resolvedOppositePosition, const GridPosition&, const Vector<size_t>&) const;
 
     LayoutUnit gridAreaBreadthForChild(const RenderBox* child, GridTrackSizingDirection, const Vector<GridTrack>&) const;
 

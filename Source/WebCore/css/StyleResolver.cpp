@@ -1864,12 +1864,12 @@ static void createImplicitNamedGridLinesFromGridArea(const NamedGridAreaMap& nam
         GridSpan areaSpan = direction == ForRows ? area.value.rows : area.value.columns;
         {
             auto& startVector = namedGridLines.add(area.key + "-start", Vector<size_t>()).iterator->value;
-            startVector.append(areaSpan.initialPositionIndex);
+            startVector.append(areaSpan.resolvedInitialPosition.toInt());
             std::sort(startVector.begin(), startVector.end());
         }
         {
             auto& endVector = namedGridLines.add(area.key + "-end", Vector<size_t>()).iterator->value;
-            endVector.append(areaSpan.finalPositionIndex + 1);
+            endVector.append(areaSpan.resolvedFinalPosition.next().toInt());
             std::sort(endVector.begin(), endVector.end());
         }
     }

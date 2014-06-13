@@ -34,30 +34,31 @@
 
 #if ENABLE(CSS_GRID_LAYOUT)
 
+#include "GridResolvedPosition.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-// A span in a single direction (either rows or columns). Note that |initialPositionIndex|
-// and |finalPositionIndex| are grid areas' indexes, NOT grid lines'. Iterating over the
-// span should include both |initialPositionIndex| and |finalPositionIndex| to be correct.
+// A span in a single direction (either rows or columns). Note that |resolvedInitialPosition|
+// and |resolvedFinalPosition| are grid areas' indexes, NOT grid lines'. Iterating over the
+// span should include both |resolvedInitialPosition| and |resolvedFinalPosition| to be correct.
 class GridSpan {
 public:
-    GridSpan(size_t initialPosition, size_t finalPosition)
-        : initialPositionIndex(initialPosition)
-        , finalPositionIndex(finalPosition)
+    GridSpan(const GridResolvedPosition& resolvedInitialPosition, const GridResolvedPosition& resolvedFinalPosition)
+        : resolvedInitialPosition(resolvedInitialPosition)
+        , resolvedFinalPosition(resolvedFinalPosition)
     {
-        ASSERT(initialPositionIndex <= finalPositionIndex);
+        ASSERT(resolvedInitialPosition <= resolvedFinalPosition);
     }
 
     bool operator==(const GridSpan& o) const
     {
-        return initialPositionIndex == o.initialPositionIndex && finalPositionIndex == o.finalPositionIndex;
+        return resolvedInitialPosition == o.resolvedInitialPosition && resolvedFinalPosition == o.resolvedFinalPosition;
     }
 
-    size_t initialPositionIndex;
-    size_t finalPositionIndex;
+    GridResolvedPosition resolvedInitialPosition;
+    GridResolvedPosition resolvedFinalPosition;
 };
 
 // This represents a grid area that spans in both rows' and columns' direction.

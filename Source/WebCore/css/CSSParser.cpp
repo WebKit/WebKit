@@ -5352,18 +5352,18 @@ bool CSSParser::parseGridTemplateAreasRow(NamedGridAreaMap& gridAreaMap, const u
 
             // The following checks test that the grid area is a single filled-in rectangle.
             // 1. The new row is adjacent to the previously parsed row.
-            if (rowCount != gridCoordinate.rows.finalPositionIndex + 1)
+            if (rowCount != gridCoordinate.rows.resolvedFinalPosition.next().toInt())
                 return 0;
 
             // 2. The new area starts at the same position as the previously parsed area.
-            if (currentColumn != gridCoordinate.columns.initialPositionIndex)
+            if (currentColumn != gridCoordinate.columns.resolvedInitialPosition.toInt())
                 return 0;
 
             // 3. The new area ends at the same position as the previously parsed area.
-            if (lookAheadColumn != gridCoordinate.columns.finalPositionIndex)
+            if (lookAheadColumn != gridCoordinate.columns.resolvedFinalPosition.toInt())
                 return 0;
 
-            ++gridCoordinate.rows.finalPositionIndex;
+            ++gridCoordinate.rows.resolvedFinalPosition;
         }
         currentColumn = lookAheadColumn;
     }

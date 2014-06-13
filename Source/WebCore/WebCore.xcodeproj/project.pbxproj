@@ -5715,6 +5715,8 @@
 		CDF2B0191820540700F2B424 /* MockTracks.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF2B00F1820540600F2B424 /* MockTracks.h */; };
 		CDF65CC8145B1E7500C4C7AA /* MediaController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD27F6E4145767870078207D /* MediaController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDF65CCA145B448800C4C7AA /* MediaControllerInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF65CC9145B43A700C4C7AA /* MediaControllerInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDF7483E18FEBCEC0006ECC0 /* GridResolvedPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF7483C18FEBCEC0006ECC0 /* GridResolvedPosition.cpp */; };
+		CDF7483F18FEBCEC0006ECC0 /* GridResolvedPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF7483D18FEBCEC0006ECC0 /* GridResolvedPosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDFC360518CA61C20026E56F /* RemoteCommandListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDFC360318CA61C20026E56F /* RemoteCommandListener.cpp */; };
 		CDFC360618CA61C20026E56F /* RemoteCommandListener.h in Headers */ = {isa = PBXBuildFile; fileRef = CDFC360418CA61C20026E56F /* RemoteCommandListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDFC360718CA696C0026E56F /* RemoteCommandListenerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDFC360218CA61630026E56F /* RemoteCommandListenerIOS.mm */; };
@@ -13151,6 +13153,8 @@
 		CDF2B00F1820540600F2B424 /* MockTracks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockTracks.h; sourceTree = "<group>"; };
 		CDF65CC9145B43A700C4C7AA /* MediaControllerInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControllerInterface.h; sourceTree = "<group>"; };
 		CDF65CCC145B6AFE00C4C7AA /* JSHTMLMediaElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLMediaElementCustom.cpp; sourceTree = "<group>"; };
+		CDF7483C18FEBCEC0006ECC0 /* GridResolvedPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GridResolvedPosition.cpp; path = style/GridResolvedPosition.cpp; sourceTree = "<group>"; };
+		CDF7483D18FEBCEC0006ECC0 /* GridResolvedPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridResolvedPosition.h; path = style/GridResolvedPosition.h; sourceTree = "<group>"; };
 		CDFC360118CA61630026E56F /* RemoteCommandListenerIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteCommandListenerIOS.h; path = ios/RemoteCommandListenerIOS.h; sourceTree = "<group>"; };
 		CDFC360218CA61630026E56F /* RemoteCommandListenerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RemoteCommandListenerIOS.mm; path = ios/RemoteCommandListenerIOS.mm; sourceTree = "<group>"; };
 		CDFC360318CA61C20026E56F /* RemoteCommandListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCommandListener.cpp; sourceTree = "<group>"; };
@@ -20856,6 +20860,8 @@
 				CD3E251B18046B0600E27F56 /* GridCoordinate.h */,
 				CDEF4FD617E85C8F00AEE24B /* GridLength.h */,
 				A12705C21656BD6500C2E27C /* GridPosition.h */,
+				CDF7483C18FEBCEC0006ECC0 /* GridResolvedPosition.cpp */,
+				CDF7483D18FEBCEC0006ECC0 /* GridResolvedPosition.h */,
 				A12A104E166444DC008FA311 /* GridTrackSize.h */,
 				BC5EBA0E0E823E4700B25965 /* KeyframeList.cpp */,
 				BC5EBA0F0E823E4700B25965 /* KeyframeList.h */,
@@ -24620,6 +24626,7 @@
 				A80E7E9F0A1A83E3007FB8C5 /* JSHTMLButtonElement.h in Headers */,
 				938E666209F09B87008A48EC /* JSHTMLCanvasElement.h in Headers */,
 				BCCBAD410C18C14200CE890F /* JSHTMLCollection.h in Headers */,
+				CDF7483F18FEBCEC0006ECC0 /* GridResolvedPosition.h in Headers */,
 				F5C041E70FFCA96D00839D4A /* JSHTMLDataListElement.h in Headers */,
 				D359D8BF129CA55C0006E5D2 /* JSHTMLDetailsElement.h in Headers */,
 				76808B50159DADFA002B5233 /* JSHTMLDialogElement.h in Headers */,
@@ -27371,6 +27378,7 @@
 				A4226E961163D73A008B8397 /* DOMHTMLProgressElement.mm in Sources */,
 				85183B4B0AA6926100F19FA3 /* DOMHTMLQuoteElement.mm in Sources */,
 				85DF819C0AA77E4B00486AD7 /* DOMHTMLScriptElement.mm in Sources */,
+				CDF7483E18FEBCEC0006ECC0 /* GridResolvedPosition.cpp in Sources */,
 				85F32AF10AA63B8700FF3184 /* DOMHTMLSelectElement.mm in Sources */,
 				859A9C500AA5E3BD00B694B2 /* DOMHTMLStyleElement.mm in Sources */,
 				85DF821E0AA7849E00486AD7 /* DOMHTMLTableCaptionElement.mm in Sources */,
