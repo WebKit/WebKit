@@ -36,6 +36,10 @@
 #endif
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
+// cairo-gl.h includes some definitions from GLX that conflict with
+// the ones provided by us. Since GLContextEGL doesn't use any GLX
+// functions we can safely disable them.
+#undef CAIRO_HAS_GLX_FUNCTIONS
 #include <cairo-gl.h>
 #endif
 
