@@ -78,11 +78,6 @@ void JSTestActiveDOMObjectConstructor::finishCreation(VM& vm, JSDOMGlobalObject*
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 
-bool JSTestActiveDOMObjectConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticValueSlot<JSTestActiveDOMObjectConstructor, JSDOMWrapper>(exec, JSTestActiveDOMObjectConstructorTable, jsCast<JSTestActiveDOMObjectConstructor*>(object), propertyName, slot);
-}
-
 /* Hash table for prototype */
 
 static const struct CompactHashIndex JSTestActiveDOMObjectPrototypeTableIndex[4] = {

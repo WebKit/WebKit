@@ -195,11 +195,7 @@ void JSTestInterfaceConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globa
     ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->prototype, JSTestInterfacePrototype::self(vm, globalObject), DontDelete | ReadOnly);
     putDirect(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
-}
-
-bool JSTestInterfaceConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticPropertySlot<JSTestInterfaceConstructor, JSDOMWrapper>(exec, JSTestInterfaceConstructorTable, jsCast<JSTestInterfaceConstructor*>(object), propertyName, slot);
+    reifyStaticProperties(vm, JSTestInterfaceConstructorTableValues, *this);
 }
 
 #if ENABLE(TEST_INTERFACE)

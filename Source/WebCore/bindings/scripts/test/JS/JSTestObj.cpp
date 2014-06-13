@@ -244,11 +244,7 @@ void JSTestObjConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObjec
     ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->prototype, JSTestObjPrototype::self(vm, globalObject), DontDelete | ReadOnly);
     putDirect(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
-}
-
-bool JSTestObjConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticPropertySlot<JSTestObjConstructor, JSDOMWrapper>(exec, JSTestObjConstructorTable, jsCast<JSTestObjConstructor*>(object), propertyName, slot);
+    reifyStaticProperties(vm, JSTestObjConstructorTableValues, *this);
 }
 
 ConstructType JSTestObjConstructor::getConstructData(JSCell*, ConstructData& constructData)

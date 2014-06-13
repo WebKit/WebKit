@@ -80,11 +80,6 @@ void JSTestEventTargetConstructor::finishCreation(VM& vm, JSDOMGlobalObject* glo
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 
-bool JSTestEventTargetConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticValueSlot<JSTestEventTargetConstructor, JSDOMWrapper>(exec, JSTestEventTargetConstructorTable, jsCast<JSTestEventTargetConstructor*>(object), propertyName, slot);
-}
-
 /* Hash table for prototype */
 
 static const struct CompactHashIndex JSTestEventTargetPrototypeTableIndex[8] = {

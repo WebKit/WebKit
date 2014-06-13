@@ -60,11 +60,6 @@ void JSTestMediaQueryListListenerConstructor::finishCreation(VM& vm, JSDOMGlobal
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 
-bool JSTestMediaQueryListListenerConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticValueSlot<JSTestMediaQueryListListenerConstructor, JSDOMWrapper>(exec, JSTestMediaQueryListListenerConstructorTable, jsCast<JSTestMediaQueryListListenerConstructor*>(object), propertyName, slot);
-}
-
 /* Hash table for prototype */
 
 static const struct CompactHashIndex JSTestMediaQueryListListenerPrototypeTableIndex[4] = {

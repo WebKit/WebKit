@@ -4304,7 +4304,6 @@ sub GenerateConstructorDeclaration
     push(@$outputArray, "        return ptr;\n");
     push(@$outputArray, "    }\n\n");
 
-    push(@$outputArray, "    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
     push(@$outputArray, "    DECLARE_INFO;\n");
 
     push(@$outputArray, "    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n");
@@ -4585,6 +4584,27 @@ END
     }
 }
 
+sub ConstructorHasProperties
+{
+    my $interface = shift;
+
+    foreach my $constant (@{$interface->constants}) {
+        return 1;
+    }
+
+    foreach my $attribute (@{$interface->attributes}) {
+        next unless ($attribute->isStatic);
+        return 1;
+    }
+
+    foreach my $function (@{$interface->functions}) {
+        next unless ($function->isStatic);
+        return 1;
+    }
+
+    return 0;
+}
+
 sub GenerateConstructorHelperMethods
 {
     my $outputArray = shift;
@@ -4627,7 +4647,6 @@ sub GenerateConstructorHelperMethods
         } else {
             push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}Constructor\", &Base::s_info, &${constructorClassName}Table, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
         }
-
         push(@$outputArray, "${constructorClassName}::${constructorClassName}(Structure* structure, JSDOMGlobalObject* globalObject)\n");
         push(@$outputArray, "    : DOMConstructorObject(structure, globalObject)\n");
         push(@$outputArray, "{\n}\n\n");
@@ -4649,24 +4668,9 @@ sub GenerateConstructorHelperMethods
         push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${protoClassName}::self(vm, globalObject), DontDelete | ReadOnly);\n");
     }
     push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(${leastConstructorLength}), ReadOnly | DontDelete | DontEnum);\n") if defined $leastConstructorLength;
+    push(@$outputArray, "    reifyStaticProperties(vm, ${className}ConstructorTableValues, *this);\n") if ConstructorHasProperties($interface);
+
     push(@$outputArray, "}\n\n");
-
-    if (!$generatingNamedConstructor) {
-        my $hasStaticFunctions = 0;
-        foreach my $function (@{$interface->functions}) {
-            if ($function->isStatic) {
-                $hasStaticFunctions = 1;
-                last;
-            }
-        }
-
-        my $kind = $hasStaticFunctions ? "Property" : "Value";
-
-        push(@$outputArray, "bool ${constructorClassName}::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)\n");
-        push(@$outputArray, "{\n");
-        push(@$outputArray, "    return getStatic${kind}Slot<${constructorClassName}, JSDOMWrapper>(exec, " . constructorHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $constructorClassName) . ", jsCast<${constructorClassName}*>(object), propertyName, slot);\n");
-        push(@$outputArray, "}\n\n");
-    }
 
     if (IsConstructable($interface)) {
         if (!$interface->extendedAttributes->{"NamedConstructor"} || $generatingNamedConstructor) {

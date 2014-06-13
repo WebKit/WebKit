@@ -56,11 +56,6 @@ void JSTestGenerateIsReachableConstructor::finishCreation(VM& vm, JSDOMGlobalObj
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 
-bool JSTestGenerateIsReachableConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticValueSlot<JSTestGenerateIsReachableConstructor, JSDOMWrapper>(exec, JSTestGenerateIsReachableConstructorTable, jsCast<JSTestGenerateIsReachableConstructor*>(object), propertyName, slot);
-}
-
 /* Hash table for prototype */
 
 static const struct CompactHashIndex JSTestGenerateIsReachablePrototypeTableIndex[2] = {

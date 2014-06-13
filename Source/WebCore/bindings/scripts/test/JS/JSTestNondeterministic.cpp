@@ -68,11 +68,6 @@ void JSTestNondeterministicConstructor::finishCreation(VM& vm, JSDOMGlobalObject
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 
-bool JSTestNondeterministicConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticValueSlot<JSTestNondeterministicConstructor, JSDOMWrapper>(exec, JSTestNondeterministicConstructorTable, jsCast<JSTestNondeterministicConstructor*>(object), propertyName, slot);
-}
-
 /* Hash table for prototype */
 
 static const struct CompactHashIndex JSTestNondeterministicPrototypeTableIndex[17] = {

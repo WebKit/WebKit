@@ -59,11 +59,6 @@ void JSattributeConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObj
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 
-bool JSattributeConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticValueSlot<JSattributeConstructor, JSDOMWrapper>(exec, JSattributeConstructorTable, jsCast<JSattributeConstructor*>(object), propertyName, slot);
-}
-
 /* Hash table for prototype */
 
 static const struct CompactHashIndex JSattributePrototypeTableIndex[4] = {

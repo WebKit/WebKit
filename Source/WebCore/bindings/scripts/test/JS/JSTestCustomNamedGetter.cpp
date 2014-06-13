@@ -74,11 +74,6 @@ void JSTestCustomNamedGetterConstructor::finishCreation(VM& vm, JSDOMGlobalObjec
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 
-bool JSTestCustomNamedGetterConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticValueSlot<JSTestCustomNamedGetterConstructor, JSDOMWrapper>(exec, JSTestCustomNamedGetterConstructorTable, jsCast<JSTestCustomNamedGetterConstructor*>(object), propertyName, slot);
-}
-
 /* Hash table for prototype */
 
 static const struct CompactHashIndex JSTestCustomNamedGetterPrototypeTableIndex[2] = {

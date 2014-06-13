@@ -56,11 +56,6 @@ void JSreadonlyConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObje
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 
-bool JSreadonlyConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticValueSlot<JSreadonlyConstructor, JSDOMWrapper>(exec, JSreadonlyConstructorTable, jsCast<JSreadonlyConstructor*>(object), propertyName, slot);
-}
-
 /* Hash table for prototype */
 
 static const struct CompactHashIndex JSreadonlyPrototypeTableIndex[2] = {

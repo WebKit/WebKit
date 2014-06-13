@@ -99,11 +99,7 @@ void JSTestTypedefsConstructor::finishCreation(VM& vm, JSDOMGlobalObject* global
     ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->prototype, JSTestTypedefsPrototype::self(vm, globalObject), DontDelete | ReadOnly);
     putDirect(vm, vm.propertyNames->length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
-}
-
-bool JSTestTypedefsConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticValueSlot<JSTestTypedefsConstructor, JSDOMWrapper>(exec, JSTestTypedefsConstructorTable, jsCast<JSTestTypedefsConstructor*>(object), propertyName, slot);
+    reifyStaticProperties(vm, JSTestTypedefsConstructorTableValues, *this);
 }
 
 ConstructType JSTestTypedefsConstructor::getConstructData(JSCell*, ConstructData& constructData)

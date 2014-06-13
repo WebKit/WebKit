@@ -66,11 +66,6 @@ void JSTestNodeConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObje
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 
-bool JSTestNodeConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticValueSlot<JSTestNodeConstructor, JSDOMWrapper>(exec, JSTestNodeConstructorTable, jsCast<JSTestNodeConstructor*>(object), propertyName, slot);
-}
-
 ConstructType JSTestNodeConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructJSTestNode;
