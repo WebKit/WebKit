@@ -190,7 +190,7 @@ void invalidateCallbackMap(HashMap<uint64_t, T>& map, CallbackBase::Error error 
     Vector<T> callbacksVector;
     copyValuesToVector(map, callbacksVector);
     for (size_t i = 0, size = callbacksVector.size(); i < size; ++i)
-        callbacksVector[i]->invalidate();
+        callbacksVector[i]->invalidate(error);
     map.clear();
 }
 

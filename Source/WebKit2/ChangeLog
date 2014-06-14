@@ -1,3 +1,10 @@
+2014-06-14  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the GTK build.
+
+        * UIProcess/GenericCallback.h:
+        (WebKit::invalidateCallbackMap):
+
 2014-06-14  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
