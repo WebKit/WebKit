@@ -1,3 +1,20 @@
+2014-06-14  Michael Saboff  <msaboff@apple.com>
+
+        operationCreateArguments could cause a GC during OSR exit
+        https://bugs.webkit.org/show_bug.cgi?id=133905
+
+        Reviewed by Filip Pizlo.
+
+        Defer GC via new wrapper functions for operationCreateArguments and operationCreateInlinedArguments
+        for use by OSR exit stubs.
+
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::ArgumentsRecoveryGenerator::generateFor):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+
 2014-06-13  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         OSR exit should barrier the Executables for all InlineCallFrames, not just those on the stack at the time of exit

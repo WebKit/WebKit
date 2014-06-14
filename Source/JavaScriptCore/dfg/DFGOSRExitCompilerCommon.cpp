@@ -264,7 +264,7 @@ void ArgumentsRecoveryGenerator::generateFor(
             jit.setupArgumentsExecState();
         jit.move(
             AssemblyHelpers::TrustedImmPtr(
-                bitwise_cast<void*>(operationCreateArguments)),
+                bitwise_cast<void*>(operationCreateArgumentsDuringOSRExit)),
             GPRInfo::nonArgGPR0);
         jit.call(GPRInfo::nonArgGPR0);
         jit.store64(GPRInfo::returnValueGPR, AssemblyHelpers::addressFor(argumentsRegister));
@@ -278,13 +278,13 @@ void ArgumentsRecoveryGenerator::generateFor(
                 AssemblyHelpers::TrustedImmPtr(inlineCallFrame));
             jit.move(
                 AssemblyHelpers::TrustedImmPtr(
-                    bitwise_cast<void*>(operationCreateInlinedArguments)),
+                    bitwise_cast<void*>(operationCreateInlinedArgumentsDuringOSRExit)),
                 GPRInfo::nonArgGPR0);
         } else {
             jit.setupArgumentsExecState();
             jit.move(
                 AssemblyHelpers::TrustedImmPtr(
-                    bitwise_cast<void*>(operationCreateArguments)),
+                    bitwise_cast<void*>(operationCreateArgumentsDuringOSRExit)),
                 GPRInfo::nonArgGPR0);
         }
         jit.call(GPRInfo::nonArgGPR0);

@@ -1391,6 +1391,12 @@ JSCell* JIT_OPERATION operationCreateArguments(ExecState* exec)
     return result;
 }
 
+JSCell* JIT_OPERATION operationCreateArgumentsDuringOSRExit(ExecState* exec)
+{
+    DeferGCForAWhile(exec->vm().heap);
+    return operationCreateArguments(exec);
+}
+
 EncodedJSValue JIT_OPERATION operationGetArgumentsLength(ExecState* exec, int32_t argumentsRegister)
 {
     VM& vm = exec->vm();
