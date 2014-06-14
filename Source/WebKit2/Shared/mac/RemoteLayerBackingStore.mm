@@ -279,7 +279,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
     IntRect dirtyBounds = m_dirtyRegion.bounds();
 
     Vector<IntRect> dirtyRects = m_dirtyRegion.rects();
-    if (dirtyRects.size() > webLayerMaxRectsToPaint || m_dirtyRegion.totalArea() > webLayerWastedSpaceThreshold * dirtyBounds.width() * dirtyBounds.height()) {
+    if (dirtyRects.size() > PlatformCALayer::webLayerMaxRectsToPaint || m_dirtyRegion.totalArea() > PlatformCALayer::webLayerWastedSpaceThreshold * dirtyBounds.width() * dirtyBounds.height()) {
         dirtyRects.clear();
         dirtyRects.append(dirtyBounds);
     }
@@ -293,7 +293,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
         m_paintingRects.append(scaledRect);
     }
 
-    CGRect cgPaintingRects[webLayerMaxRectsToPaint];
+    CGRect cgPaintingRects[PlatformCALayer::webLayerMaxRectsToPaint];
     for (size_t i = 0, dirtyRectCount = m_paintingRects.size(); i < dirtyRectCount; ++i) {
         FloatRect scaledPaintingRect = m_paintingRects[i];
         scaledPaintingRect.scale(m_scale);
@@ -324,7 +324,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
         m_layer->owner()->platformCALayerPaintContents(m_layer, context, dirtyBounds);
         break;
     case PlatformCALayer::LayerTypeWebLayer:
-        drawLayerContents(cgContext, m_layer, m_paintingRects);
+        PlatformCALayer::drawLayerContents(cgContext, m_layer, m_paintingRects);
         break;
     case PlatformCALayer::LayerTypeLayer:
     case PlatformCALayer::LayerTypeTransformLayer:

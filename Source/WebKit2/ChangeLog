@@ -1,3 +1,10 @@
+2014-06-13  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed; fix the build.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+
 2014-06-13  Martin Hock  <mhock@apple.com>
 
         Clean up layers in RemoteLayerTreeHost::clearLayers().
