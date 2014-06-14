@@ -1,3 +1,32 @@
+2014-06-13  Sam Weinig  <sam@webkit.org>
+
+        Store DOM constants directly in the JS object rather than jumping through a custom accessor
+        https://bugs.webkit.org/show_bug.cgi?id=133898
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/Lookup.h:
+        (JSC::HashTableValue::attributes):
+        Switch attributes to be stored as an unsigned rather than an unsigned char, since there is no difference in memory use
+        and will make adding more flags possibles.
+
+        (JSC::HashTableValue::propertyGetter):
+        (JSC::HashTableValue::propertyPutter):
+        Change assertion to use BuiltinOrFunctionOrConstant.
+
+        (JSC::HashTableValue::constantInteger):
+        Added.
+
+        (JSC::getStaticPropertySlot):
+        (JSC::getStaticValueSlot):
+        Use PropertySlot::setValue() for constants during static lookup.
+
+        (JSC::reifyStaticProperties):
+        Put the constant directly on the object when eagerly reifying.
+
+        * runtime/PropertySlot.h:
+        Add ConstantInteger flag and BuiltinOrFunctionOrConstant helper.
+
 2014-06-14  Michael Saboff  <msaboff@apple.com>
 
         operationCreateArguments could cause a GC during OSR exit

@@ -1,3 +1,46 @@
+2014-06-13  Sam Weinig  <sam@webkit.org>
+
+        Store DOM constants directly in the JS object rather than jumping through a custom accessor
+        https://bugs.webkit.org/show_bug.cgi?id=133898
+
+        Reviewed by Oliver Hunt.
+
+        Instead of implementing constants as custom accessors that just happen to return a value,
+        we now store the constant directly in the HashTableValue array (where the GetValueFunc used
+        to be). 
+        
+        - For the case where the constant is accessed via the static table (still in use for instances 
+          and some prototypes), the static lookup function will set the value on the property slot,
+          instead of passing a function pointer.
+        - For the case where the constant is eagerly reified (most prototypes and all constructors) the
+          constant is put directly in the object.
+
+        In micro benchmarks this looks to be around a 4x speedup on the use of DOM constants.
+
+        This also removes support for constant strings in IDL, which we had no uses of.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        Remove code to generate forward declaration of constant accessor functions.
+
+        (GenerateImplementation):
+        Remove code to generate implementation of constant accessor functions.
+
+        (GenerateHashTableValueArray):
+        Plant the constant directly in the value array.
+
+        * bindings/scripts/IDLParser.pm:
+        (parseConstValue):
+        Remove support for constant strings.
+
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/TestObj.idl:
+        Update test results.
+
 2014-06-14  Anders Carlsson  <andersca@apple.com>
 
         Simplify Document::processHttpEquiv

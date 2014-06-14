@@ -122,10 +122,10 @@ static const HashTableValue JSTestObjTableValues[] =
 static const HashTable JSTestObjTable = { 6, 15, true, JSTestObjTableValues, 0, JSTestObjTableIndex };
 /* Hash table for constructor */
 
-static const struct CompactHashIndex JSTestObjConstructorTableIndex[39] = {
+static const struct CompactHashIndex JSTestObjConstructorTableIndex[38] = {
     { -1, -1 },
-    { 9, 34 },
-    { 21, -1 },
+    { 8, 34 },
+    { 20, -1 },
     { 2, -1 },
     { 1, -1 },
     { -1, -1 },
@@ -133,8 +133,8 @@ static const struct CompactHashIndex JSTestObjConstructorTableIndex[39] = {
     { -1, -1 },
     { -1, -1 },
     { 0, -1 },
-    { 12, -1 },
-    { 16, -1 },
+    { 11, -1 },
+    { 15, -1 },
     { 5, 32 },
     { -1, -1 },
     { -1, -1 },
@@ -142,49 +142,47 @@ static const struct CompactHashIndex JSTestObjConstructorTableIndex[39] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 10, -1 },
-    { 7, 36 },
-    { 15, -1 },
+    { 9, -1 },
+    { 18, 37 },
+    { 14, -1 },
     { 3, -1 },
     { -1, -1 },
-    { 11, 33 },
+    { 10, 33 },
     { -1, -1 },
     { -1, -1 },
-    { 8, 37 },
-    { 18, -1 },
+    { 7, 36 },
+    { 17, -1 },
     { -1, -1 },
     { -1, -1 },
     { 4, -1 },
     { 6, -1 },
-    { 13, -1 },
-    { 14, 35 },
-    { 17, -1 },
-    { 19, 38 },
-    { 20, -1 },
-    { 22, -1 },
+    { 12, -1 },
+    { 13, 35 },
+    { 16, -1 },
+    { 19, -1 },
+    { 21, -1 },
 };
 
 
 static const HashTableValue JSTestObjConstructorTableValues[] =
 {
 #if ENABLE(Condition1)
-    { "CONDITIONAL_CONST", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONDITIONAL_CONST), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "CONDITIONAL_CONST", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(0), (intptr_t) (0) },
 #else
     { 0, 0, NoIntrinsic, 0, 0 },
 #endif
-    { "CONST_VALUE_0", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_0), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_1", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_2", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_4", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_4), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_8", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_8), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_9", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_9), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_10", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_10), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_11", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_11), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_12", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_12), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_13", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_13), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_14", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_14), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_JAVASCRIPT", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_JAVASCRIPT), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "readonly", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadonly), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "CONST_VALUE_0", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(0), (intptr_t) (0) },
+    { "CONST_VALUE_1", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(1), (intptr_t) (0) },
+    { "CONST_VALUE_2", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(2), (intptr_t) (0) },
+    { "CONST_VALUE_4", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(4), (intptr_t) (0) },
+    { "CONST_VALUE_8", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(8), (intptr_t) (0) },
+    { "CONST_VALUE_9", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(-1), (intptr_t) (0) },
+    { "CONST_VALUE_11", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(0xffffffff), (intptr_t) (0) },
+    { "CONST_VALUE_12", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(0x01), (intptr_t) (0) },
+    { "CONST_VALUE_13", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(0X20), (intptr_t) (0) },
+    { "CONST_VALUE_14", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(0x1abc), (intptr_t) (0) },
+    { "CONST_JAVASCRIPT", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(15), (intptr_t) (0) },
+    { "readonly", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(0), (intptr_t) (0) },
     { "staticReadOnlyLongAttr", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConstructorStaticReadOnlyLongAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { "staticStringAttr", DontDelete, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConstructorStaticStringAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjConstructorStaticStringAttr) },
     { "TestSubObj", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConstructorTestSubObj), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
@@ -200,7 +198,7 @@ static const HashTableValue JSTestObjConstructorTableValues[] =
 #endif
 };
 
-static const HashTable JSTestObjConstructorTable = { 23, 31, true, JSTestObjConstructorTableValues, 0, JSTestObjConstructorTableIndex };
+static const HashTable JSTestObjConstructorTable = { 22, 31, true, JSTestObjConstructorTableValues, 0, JSTestObjConstructorTableIndex };
 
 #if ENABLE(Condition1)
 COMPILE_ASSERT(0 == TestObj::CONDITIONAL_CONST, TestObjEnumCONDITIONAL_CONSTIsWrongUseDoNotCheckConstants);
@@ -211,7 +209,6 @@ COMPILE_ASSERT(2 == TestObj::CONST_VALUE_2, TestObjEnumCONST_VALUE_2IsWrongUseDo
 COMPILE_ASSERT(4 == TestObj::CONST_VALUE_4, TestObjEnumCONST_VALUE_4IsWrongUseDoNotCheckConstants);
 COMPILE_ASSERT(8 == TestObj::CONST_VALUE_8, TestObjEnumCONST_VALUE_8IsWrongUseDoNotCheckConstants);
 COMPILE_ASSERT(-1 == TestObj::CONST_VALUE_9, TestObjEnumCONST_VALUE_9IsWrongUseDoNotCheckConstants);
-COMPILE_ASSERT("my constant string" == TestObj::CONST_VALUE_10, TestObjEnumCONST_VALUE_10IsWrongUseDoNotCheckConstants);
 COMPILE_ASSERT(0xffffffff == TestObj::CONST_VALUE_11, TestObjEnumCONST_VALUE_11IsWrongUseDoNotCheckConstants);
 COMPILE_ASSERT(0x01 == TestObj::CONST_VALUE_12, TestObjEnumCONST_VALUE_12IsWrongUseDoNotCheckConstants);
 COMPILE_ASSERT(0X20 == TestObj::CONST_VALUE_13, TestObjEnumCONST_VALUE_13IsWrongUseDoNotCheckConstants);
@@ -280,7 +277,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { 47, -1 },
-    { 73, -1 },
+    { 72, -1 },
     { -1, -1 },
     { 41, -1 },
     { -1, -1 },
@@ -292,7 +289,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 102, -1 },
+    { 101, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -301,7 +298,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 110, -1 },
+    { 109, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -318,12 +315,12 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 126, -1 },
+    { 125, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 101, -1 },
     { 100, -1 },
+    { 99, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -336,7 +333,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { 5, -1 },
-    { 134, -1 },
+    { 133, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -350,8 +347,8 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 93, -1 },
-    { 87, -1 },
+    { 92, -1 },
+    { 86, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -367,11 +364,11 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 117, -1 },
+    { 116, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 78, -1 },
-    { 70, -1 },
+    { 77, -1 },
+    { 69, -1 },
     { -1, -1 },
     { 25, -1 },
     { -1, -1 },
@@ -385,11 +382,11 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 96, -1 },
+    { 95, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 114, -1 },
+    { 113, -1 },
     { -1, -1 },
     { 6, -1 },
     { -1, -1 },
@@ -399,7 +396,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 86, -1 },
+    { 85, -1 },
     { -1, -1 },
     { -1, -1 },
     { 1, -1 },
@@ -408,6 +405,24 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { 33, -1 },
     { 51, -1 },
     { -1, -1 },
+    { 70, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 91, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 126, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
     { 71, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -415,28 +430,10 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 92, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { -1, -1 },
-    { 127, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 72, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 67, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -460,7 +457,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 89, -1 },
+    { 88, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -481,7 +478,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 82, -1 },
+    { 81, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -491,7 +488,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { 45, -1 },
     { -1, -1 },
-    { 77, -1 },
+    { 76, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -503,10 +500,10 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { 8, 512 },
     { -1, -1 },
-    { 130, -1 },
+    { 129, -1 },
     { -1, -1 },
     { 58, 528 },
-    { 135, -1 },
+    { 134, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -515,9 +512,9 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 131, -1 },
+    { 130, -1 },
     { -1, -1 },
-    { 103, -1 },
+    { 102, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -530,9 +527,9 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { 39, 515 },
     { -1, -1 },
     { -1, -1 },
-    { 113, -1 },
-    { 90, -1 },
-    { 120, -1 },
+    { 112, -1 },
+    { 89, -1 },
+    { 119, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -561,8 +558,8 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 128, -1 },
-    { 123, -1 },
+    { 127, -1 },
+    { 122, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -571,7 +568,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 76, -1 },
+    { 75, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -580,7 +577,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 84, -1 },
+    { 83, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -603,7 +600,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { 0, -1 },
     { -1, -1 },
-    { 99, -1 },
+    { 98, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -612,7 +609,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { 28, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 124, -1 },
+    { 123, -1 },
     { -1, -1 },
     { 35, -1 },
     { -1, -1 },
@@ -626,14 +623,14 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 88, -1 },
+    { 87, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { 46, 521 },
-    { 80, -1 },
+    { 79, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -641,7 +638,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 69, -1 },
+    { 68, -1 },
     { -1, -1 },
     { 62, -1 },
     { -1, -1 },
@@ -651,7 +648,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 95, -1 },
+    { 94, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -667,12 +664,12 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { 57, -1 },
-    { 68, -1 },
+    { 67, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 107, 527 },
+    { 106, 527 },
     { -1, -1 },
-    { 108, -1 },
+    { 107, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -692,7 +689,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 112, -1 },
+    { 111, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -701,7 +698,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 118, -1 },
+    { 117, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -709,26 +706,26 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 79, -1 },
+    { 78, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { 60, -1 },
     { 52, -1 },
     { -1, -1 },
-    { 74, -1 },
-    { 132, -1 },
+    { 73, -1 },
+    { 131, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { 54, 516 },
     { -1, -1 },
-    { 85, -1 },
+    { 84, -1 },
     { 9, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 105, -1 },
+    { 104, -1 },
     { 29, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -749,23 +746,23 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 109, -1 },
+    { 108, -1 },
     { 13, 514 },
     { 40, -1 },
-    { 111, -1 },
+    { 110, -1 },
     { -1, -1 },
     { 7, 525 },
     { -1, -1 },
-    { 125, -1 },
-    { 106, -1 },
-    { 75, 520 },
+    { 124, -1 },
+    { 105, -1 },
+    { 74, 520 },
     { -1, -1 },
-    { 122, -1 },
-    { 83, -1 },
+    { 121, -1 },
+    { 82, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 119, -1 },
+    { 118, -1 },
     { -1, -1 },
     { 10, 519 },
     { 11, -1 },
@@ -775,17 +772,17 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { 56, -1 },
     { 63, -1 },
     { 66, -1 },
-    { 81, -1 },
-    { 91, -1 },
-    { 94, -1 },
+    { 80, -1 },
+    { 90, -1 },
+    { 93, -1 },
+    { 96, -1 },
     { 97, -1 },
-    { 98, -1 },
-    { 104, -1 },
+    { 103, -1 },
+    { 114, -1 },
     { 115, -1 },
-    { 116, -1 },
-    { 121, -1 },
-    { 129, -1 },
-    { 133, -1 },
+    { 120, -1 },
+    { 128, -1 },
+    { 132, -1 },
 };
 
 
@@ -864,23 +861,22 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "attribute", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { "attributeWithReservedEnumType", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttributeWithReservedEnumType), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttributeWithReservedEnumType) },
 #if ENABLE(Condition1)
-    { "CONDITIONAL_CONST", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONDITIONAL_CONST), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "CONDITIONAL_CONST", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(0), (intptr_t) (0) },
 #else
     { 0, 0, NoIntrinsic, 0, 0 },
 #endif
-    { "CONST_VALUE_0", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_0), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_1", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_2", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_4", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_4), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_8", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_8), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_9", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_9), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_10", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_10), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_11", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_11), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_12", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_12), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_13", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_13), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_VALUE_14", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_14), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "CONST_JAVASCRIPT", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_JAVASCRIPT), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "readonly", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadonly), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "CONST_VALUE_0", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(0), (intptr_t) (0) },
+    { "CONST_VALUE_1", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(1), (intptr_t) (0) },
+    { "CONST_VALUE_2", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(2), (intptr_t) (0) },
+    { "CONST_VALUE_4", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(4), (intptr_t) (0) },
+    { "CONST_VALUE_8", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(8), (intptr_t) (0) },
+    { "CONST_VALUE_9", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(-1), (intptr_t) (0) },
+    { "CONST_VALUE_11", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(0xffffffff), (intptr_t) (0) },
+    { "CONST_VALUE_12", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(0x01), (intptr_t) (0) },
+    { "CONST_VALUE_13", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(0X20), (intptr_t) (0) },
+    { "CONST_VALUE_14", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(0x1abc), (intptr_t) (0) },
+    { "CONST_JAVASCRIPT", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(15), (intptr_t) (0) },
+    { "readonly", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(0), (intptr_t) (0) },
     { "voidMethod", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethod), (intptr_t) (0) },
     { "voidMethodWithArgs", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethodWithArgs), (intptr_t) (3) },
     { "byteMethod", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionByteMethod), (intptr_t) (0) },
@@ -957,7 +953,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "any", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionAny), (intptr_t) (2) },
 };
 
-static const HashTable JSTestObjPrototypeTable = { 136, 511, true, JSTestObjPrototypeTableValues, 0, JSTestObjPrototypeTableIndex };
+static const HashTable JSTestObjPrototypeTable = { 135, 511, true, JSTestObjPrototypeTableValues, 0, JSTestObjPrototypeTableIndex };
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjectPrototype", &Base::s_info, &JSTestObjPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestObjPrototype) };
 
 JSObject* JSTestObjPrototype::self(VM& vm, JSGlobalObject* globalObject)
@@ -4656,80 +4652,6 @@ void JSTestObj::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_cachedAttribute1);
     visitor.append(&thisObject->m_cachedAttribute2);
-}
-
-// Constant getters
-
-#if ENABLE(Condition1)
-EncodedJSValue jsTestObjCONDITIONAL_CONST(ExecState*, JSObject*, EncodedJSValue, PropertyName)
-{
-    return JSValue::encode(jsNumber(0));
-}
-
-#endif
-EncodedJSValue jsTestObjCONST_VALUE_0(ExecState*, JSObject*, EncodedJSValue, PropertyName)
-{
-    return JSValue::encode(jsNumber(0));
-}
-
-EncodedJSValue jsTestObjCONST_VALUE_1(ExecState*, JSObject*, EncodedJSValue, PropertyName)
-{
-    return JSValue::encode(jsNumber(1));
-}
-
-EncodedJSValue jsTestObjCONST_VALUE_2(ExecState*, JSObject*, EncodedJSValue, PropertyName)
-{
-    return JSValue::encode(jsNumber(2));
-}
-
-EncodedJSValue jsTestObjCONST_VALUE_4(ExecState*, JSObject*, EncodedJSValue, PropertyName)
-{
-    return JSValue::encode(jsNumber(4));
-}
-
-EncodedJSValue jsTestObjCONST_VALUE_8(ExecState*, JSObject*, EncodedJSValue, PropertyName)
-{
-    return JSValue::encode(jsNumber(8));
-}
-
-EncodedJSValue jsTestObjCONST_VALUE_9(ExecState*, JSObject*, EncodedJSValue, PropertyName)
-{
-    return JSValue::encode(jsNumber(-1));
-}
-
-EncodedJSValue jsTestObjCONST_VALUE_10(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
-{
-    return JSValue::encode(jsStringOrNull(exec, String("my constant string")));
-}
-
-EncodedJSValue jsTestObjCONST_VALUE_11(ExecState*, JSObject*, EncodedJSValue, PropertyName)
-{
-    return JSValue::encode(jsNumber(0xffffffff));
-}
-
-EncodedJSValue jsTestObjCONST_VALUE_12(ExecState*, JSObject*, EncodedJSValue, PropertyName)
-{
-    return JSValue::encode(jsNumber(0x01));
-}
-
-EncodedJSValue jsTestObjCONST_VALUE_13(ExecState*, JSObject*, EncodedJSValue, PropertyName)
-{
-    return JSValue::encode(jsNumber(0X20));
-}
-
-EncodedJSValue jsTestObjCONST_VALUE_14(ExecState*, JSObject*, EncodedJSValue, PropertyName)
-{
-    return JSValue::encode(jsNumber(0x1abc));
-}
-
-EncodedJSValue jsTestObjCONST_JAVASCRIPT(ExecState*, JSObject*, EncodedJSValue, PropertyName)
-{
-    return JSValue::encode(jsNumber(15));
-}
-
-EncodedJSValue jsTestObjReadonly(ExecState*, JSObject*, EncodedJSValue, PropertyName)
-{
-    return JSValue::encode(jsNumber(0));
 }
 
 bool JSTestObjOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

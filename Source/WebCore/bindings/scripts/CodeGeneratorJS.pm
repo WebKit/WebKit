@@ -1297,17 +1297,6 @@ sub GenerateHeader
         }
     }
 
-    if ($numConstants > 0) {
-        push(@headerContent,"// Constants\n\n");
-        foreach my $constant (@{$interface->constants}) {
-            my $conditionalString = $codeGenerator->GenerateConditionalString($constant);
-            push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
-            my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($constant->name);
-            push(@headerContent, "JSC::EncodedJSValue ${getter}(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);\n");
-            push(@headerContent, "#endif\n") if $conditionalString;
-        }
-    }
-
     my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
     push(@headerContent, "\n} // namespace WebCore\n\n");
     push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditionalString;
@@ -1789,14 +1778,12 @@ sub GenerateImplementation
         my @hashSpecials = ();
         my %conditionals = ();
 
-        # FIXME: we should not need a function for every constant.
         foreach my $constant (@{$interface->constants}) {
             my $name = $constant->name;
             push(@hashKeys, $name);
-            my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($name);
-            push(@hashValue1, $getter);
+            push(@hashValue1, $constant->value);
             push(@hashValue2, "0");
-            push(@hashSpecials, "DontDelete | ReadOnly");
+            push(@hashSpecials, "DontDelete | ReadOnly | ConstantInteger");
 
             my $implementedBy = $constant->extendedAttributes->{"ImplementedBy"};
             if ($implementedBy) {
@@ -1892,14 +1879,13 @@ sub GenerateImplementation
         \%conditionals);
     my $hashSize = $numFunctions + $numConstants + $numPrototypeAttributes;
 
-    # FIXME: we should not need a function for every constant.
     foreach my $constant (@{$interface->constants}) {
         my $name = $constant->name;
+
         push(@hashKeys, $name);
-        my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($name);
-        push(@hashValue1, $getter);
+        push(@hashValue1, $constant->value);
         push(@hashValue2, "0");
-        push(@hashSpecials, "DontDelete | ReadOnly");
+        push(@hashSpecials, "DontDelete | ReadOnly | ConstantInteger");
 
         my $conditional = $constant->extendedAttributes->{"Conditional"};
         if ($conditional) {
@@ -2883,32 +2869,6 @@ sub GenerateImplementation
     # The custom function must make sure to account for the cached attribute.
     # Uncomment the below line to temporarily enforce generated mark functions when cached attributes are present.
     # die "Can't generate binding for class with cached attribute and custom mark." if (($numCachedAttributes > 0) and ($interface->extendedAttributes->{"JSCustomMarkFunction"}));
-
-    if ($numConstants > 0) {
-        push(@implContent, "// Constant getters\n\n");
-
-        foreach my $constant (@{$interface->constants}) {
-            my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($constant->name);
-            my $conditional = $constant->extendedAttributes->{"Conditional"};
-
-            if ($conditional) {
-                my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
-                push(@implContent, "#if ${conditionalString}\n");
-            }
-
-            if ($constant->type eq "DOMString") {
-                push(@implContent, "EncodedJSValue ${getter}(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)\n");
-                push(@implContent, "{\n");
-                push(@implContent, "    return JSValue::encode(jsStringOrNull(exec, String(" . $constant->value . ")));\n");
-            } else {
-                push(@implContent, "EncodedJSValue ${getter}(ExecState*, JSObject*, EncodedJSValue, PropertyName)\n");
-                push(@implContent, "{\n");
-                push(@implContent, "    return JSValue::encode(jsNumber(" . $constant->value . "));\n");
-            }
-            push(@implContent, "}\n\n");
-            push(@implContent, "#endif\n") if $conditional;
-        }
-    }
 
     if ($indexedGetterFunction) {
         if ($indexedGetterFunction->signature->type eq "DOMString") {
@@ -4080,6 +4040,8 @@ sub GenerateHashTableValueArray
         
         if ("@$specials[$i]" =~ m/Function/) {
             $firstTargetType = "static_cast<NativeFunction>";
+        } elsif ("@$specials[$i]" =~ m/ConstantInteger/) {
+            $firstTargetType = "";
         } else {
             $firstTargetType = "static_cast<PropertySlot::GetValueFunc>";
             $secondTargetType = "static_cast<PutPropertySlot::PutValueFunc>";

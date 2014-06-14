@@ -93,22 +93,22 @@ static const struct CompactHashIndex JSTestInterfaceConstructorTableIndex[11] = 
 static const HashTableValue JSTestInterfaceConstructorTableValues[] =
 {
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "IMPLEMENTSCONSTANT1", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceIMPLEMENTSCONSTANT1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "IMPLEMENTSCONSTANT1", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(1), (intptr_t) (0) },
 #else
     { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "IMPLEMENTSCONSTANT2", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceIMPLEMENTSCONSTANT2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "IMPLEMENTSCONSTANT2", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(2), (intptr_t) (0) },
 #else
     { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    { "SUPPLEMENTALCONSTANT1", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSUPPLEMENTALCONSTANT1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "SUPPLEMENTALCONSTANT1", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(1), (intptr_t) (0) },
 #else
     { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    { "SUPPLEMENTALCONSTANT2", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSUPPLEMENTALCONSTANT2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "SUPPLEMENTALCONSTANT2", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(2), (intptr_t) (0) },
 #else
     { 0, 0, NoIntrinsic, 0, 0 },
 #endif
@@ -311,22 +311,22 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "IMPLEMENTSCONSTANT1", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceIMPLEMENTSCONSTANT1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "IMPLEMENTSCONSTANT1", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(1), (intptr_t) (0) },
 #else
     { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "IMPLEMENTSCONSTANT2", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceIMPLEMENTSCONSTANT2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "IMPLEMENTSCONSTANT2", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(2), (intptr_t) (0) },
 #else
     { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    { "SUPPLEMENTALCONSTANT1", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSUPPLEMENTALCONSTANT1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "SUPPLEMENTALCONSTANT1", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(1), (intptr_t) (0) },
 #else
     { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    { "SUPPLEMENTALCONSTANT2", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSUPPLEMENTALCONSTANT2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "SUPPLEMENTALCONSTANT2", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, (intptr_t)(2), (intptr_t) (0) },
 #else
     { 0, 0, NoIntrinsic, 0, 0 },
 #endif
@@ -900,36 +900,6 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionSupplementalMetho
 
 #endif
 
-// Constant getters
-
-#if ENABLE(Condition22) || ENABLE(Condition23)
-EncodedJSValue jsTestInterfaceIMPLEMENTSCONSTANT1(ExecState*, JSObject*, EncodedJSValue, PropertyName)
-{
-    return JSValue::encode(jsNumber(1));
-}
-
-#endif
-#if ENABLE(Condition22) || ENABLE(Condition23)
-EncodedJSValue jsTestInterfaceIMPLEMENTSCONSTANT2(ExecState*, JSObject*, EncodedJSValue, PropertyName)
-{
-    return JSValue::encode(jsNumber(2));
-}
-
-#endif
-#if ENABLE(Condition11) || ENABLE(Condition12)
-EncodedJSValue jsTestInterfaceSUPPLEMENTALCONSTANT1(ExecState*, JSObject*, EncodedJSValue, PropertyName)
-{
-    return JSValue::encode(jsNumber(1));
-}
-
-#endif
-#if ENABLE(Condition11) || ENABLE(Condition12)
-EncodedJSValue jsTestInterfaceSUPPLEMENTALCONSTANT2(ExecState*, JSObject*, EncodedJSValue, PropertyName)
-{
-    return JSValue::encode(jsNumber(2));
-}
-
-#endif
 bool JSTestInterfaceOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     JSTestInterface* jsTestInterface = jsCast<JSTestInterface*>(handle.slot()->asCell());

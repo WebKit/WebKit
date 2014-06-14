@@ -247,20 +247,6 @@ JSC::EncodedJSValue jsTestInterfaceSupplementalNode(JSC::ExecState*, JSC::JSObje
 void setJSTestInterfaceSupplementalNode(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 JSC::EncodedJSValue jsTestInterfaceConstructor(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
-// Constants
-
-#if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestInterfaceIMPLEMENTSCONSTANT1(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
-#endif
-#if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestInterfaceIMPLEMENTSCONSTANT2(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
-#endif
-#if ENABLE(Condition11) || ENABLE(Condition12)
-JSC::EncodedJSValue jsTestInterfaceSUPPLEMENTALCONSTANT1(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
-#endif
-#if ENABLE(Condition11) || ENABLE(Condition12)
-JSC::EncodedJSValue jsTestInterfaceSUPPLEMENTALCONSTANT2(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
-#endif
 
 } // namespace WebCore
 

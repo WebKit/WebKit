@@ -905,10 +905,6 @@ sub parseConstValue
     if ($next->type() == FloatToken || $next->value() =~ /$nextConstValue_2/) {
         return $self->parseFloatLiteral();
     }
-    # backward compatibility
-    if ($next->type() == StringToken) {
-        return $self->getToken()->value();
-    }
     if ($next->type() == IntegerToken) {
         return $self->getToken()->value();
     }
