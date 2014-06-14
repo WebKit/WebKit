@@ -1,3 +1,10 @@
+2014-06-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after r169960.
+
+        * platform/graphics/ca/PlatformCALayer.cpp: Add missing include
+        for snprintf on Windows.
+
 2014-06-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r169943 and r169946.

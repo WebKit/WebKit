@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "PlatformCALayer.h"
+#include <wtf/StringExtras.h>
 
 #if USE(CA)
 
