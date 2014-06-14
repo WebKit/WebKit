@@ -37,6 +37,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "HTTPHeaderNames.h"
 #include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "ProgressTracker.h"
@@ -57,7 +58,7 @@ void PingLoader::loadImage(Frame& frame, const URL& url)
     }
 
     ResourceRequest request(url);
-    request.setHTTPHeaderField("Cache-Control", "max-age=0");
+    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "max-age=0");
     String referrer = SecurityPolicy::generateReferrerHeader(frame.document()->referrerPolicy(), request.url(), frame.loader().outgoingReferrer());
     if (!referrer.isEmpty())
         request.setHTTPReferrer(referrer);
@@ -73,15 +74,15 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
     request.setHTTPMethod("POST");
     request.setHTTPContentType("text/ping");
     request.setHTTPBody(FormData::create("PING"));
-    request.setHTTPHeaderField("Cache-Control", "max-age=0");
+    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "max-age=0");
     frame.loader().addExtraFieldsToSubresourceRequest(request);
 
     SecurityOrigin* sourceOrigin = frame.document()->securityOrigin();
     RefPtr<SecurityOrigin> pingOrigin = SecurityOrigin::create(pingURL);
     FrameLoader::addHTTPOriginIfNeeded(request, sourceOrigin->toString());
-    request.setHTTPHeaderField("Ping-To", destinationURL);
+    request.setHTTPHeaderField(HTTPHeaderName::PingTo, destinationURL);
     if (!SecurityPolicy::shouldHideReferrer(pingURL, frame.loader().outgoingReferrer())) {
-        request.setHTTPHeaderField("Ping-From", frame.document()->url());
+        request.setHTTPHeaderField(HTTPHeaderName::PingFrom, frame.document()->url());
         if (!sourceOrigin->isSameSchemeHostPort(pingOrigin.get())) {
             String referrer = SecurityPolicy::generateReferrerHeader(frame.document()->referrerPolicy(), pingURL, frame.loader().outgoingReferrer());
             if (!referrer.isEmpty())

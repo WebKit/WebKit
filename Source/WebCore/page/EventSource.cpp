@@ -41,6 +41,7 @@
 #include "EventException.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "HTTPHeaderNames.h"
 #include "MemoryCache.h"
 #include "MessageEvent.h"
 #include "ResourceError.h"
@@ -119,10 +120,10 @@ void EventSource::connect()
 
     ResourceRequest request(m_url);
     request.setHTTPMethod("GET");
-    request.setHTTPHeaderField("Accept", "text/event-stream");
-    request.setHTTPHeaderField("Cache-Control", "no-cache");
+    request.setHTTPHeaderField(HTTPHeaderName::Accept, "text/event-stream");
+    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "no-cache");
     if (!m_lastEventId.isEmpty())
-        request.setHTTPHeaderField("Last-Event-ID", m_lastEventId);
+        request.setHTTPHeaderField(HTTPHeaderName::LastEventID, m_lastEventId);
 
     SecurityOrigin* origin = scriptExecutionContext()->securityOrigin();
 

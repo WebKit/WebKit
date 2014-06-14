@@ -35,6 +35,7 @@
 #include "Blob.h"
 #include "BlobURL.h"
 #include "FileReaderLoaderClient.h"
+#include "HTTPHeaderNames.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
@@ -88,7 +89,7 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, Blo
     ResourceRequest request(m_urlForReading);
     request.setHTTPMethod("GET");
     if (m_hasRange)
-        request.setHTTPHeaderField("Range", String::format("bytes=%d-%d", m_rangeStart, m_rangeEnd));
+        request.setHTTPHeaderField(HTTPHeaderName::Range, String::format("bytes=%d-%d", m_rangeStart, m_rangeEnd));
 
     ThreadableLoaderOptions options;
     options.sendLoadCallbacks = SendCallbacks;

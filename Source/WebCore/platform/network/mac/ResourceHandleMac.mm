@@ -35,6 +35,7 @@
 #import "FormDataStreamMac.h"
 #import "Frame.h"
 #import "FrameLoader.h"
+#import "HTTPHeaderNames.h"
 #import "Logging.h"
 #import "MIMETypeRegistry.h"
 #import "NetworkingContext.h"
@@ -455,7 +456,7 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
 
             String originalContentType = d->m_firstRequest.httpContentType();
             if (!originalContentType.isEmpty())
-                request.setHTTPHeaderField("Content-Type", originalContentType);
+                request.setHTTPHeaderField(HTTPHeaderName::ContentType, originalContentType);
         }
     }
 

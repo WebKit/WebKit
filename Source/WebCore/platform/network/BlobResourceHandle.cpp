@@ -36,6 +36,7 @@
 #include "BlobData.h"
 #include "FileStream.h"
 #include "FileSystem.h"
+#include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "URL.h"
 #include "ResourceError.h"
@@ -236,7 +237,7 @@ void BlobResourceHandle::doStart()
     }
 
     // Parse the "Range" header we care about.
-    String range = firstRequest().httpHeaderField("Range");
+    String range = firstRequest().httpHeaderField(HTTPHeaderName::Range);
     if (!range.isEmpty() && !parseRange(range, m_rangeOffset, m_rangeEnd, m_rangeSuffixLength)) {
         m_errorCode = rangeError;
         notifyResponse();

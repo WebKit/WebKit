@@ -1,3 +1,48 @@
+2014-06-13  Anders Carlsson  <andersca@apple.com>
+
+        Add a ResourceRequestBase::setHTTPHeaderField overload that takes a HTTPHeaderName
+        https://bugs.webkit.org/show_bug.cgi?id=133881
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::start):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::createAccessControlPreflightRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage):
+        (WebCore::PingLoader::sendPing):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::createResourceHandle):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::connect):
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::doStart):
+        * platform/network/HTTPHeaderNames.in:
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::httpHeaderField):
+        (WebCore::ResourceRequestBase::setHTTPHeaderField):
+        (WebCore::ResourceRequestBase::httpContentType):
+        (WebCore::ResourceRequestBase::setHTTPContentType):
+        (WebCore::ResourceRequestBase::httpReferrer):
+        (WebCore::ResourceRequestBase::setHTTPReferrer):
+        (WebCore::ResourceRequestBase::httpOrigin):
+        (WebCore::ResourceRequestBase::setHTTPOrigin):
+        (WebCore::ResourceRequestBase::httpUserAgent):
+        (WebCore::ResourceRequestBase::setHTTPUserAgent):
+        (WebCore::ResourceRequestBase::httpAccept):
+        (WebCore::ResourceRequestBase::setHTTPAccept):
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::willSendRequest):
+
 2014-06-14  Simon Fraser  <simon.fraser@apple.com>
 
         Masks disappear when layers become tiled

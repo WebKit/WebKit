@@ -43,6 +43,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTTPHeaderMap.h"
+#include "HTTPHeaderNames.h"
 #include "IconController.h"
 #include "InspectorClient.h"
 #include "InspectorPageAgent.h"
@@ -311,9 +312,9 @@ void InspectorResourceAgent::willSendRequest(unsigned long identifier, DocumentL
     request.setReportRawHeaders(true);
 
     if (m_cacheDisabled) {
-        request.setHTTPHeaderField("Pragma", "no-cache");
+        request.setHTTPHeaderField(HTTPHeaderName::Pragma, "no-cache");
         request.setCachePolicy(ReloadIgnoringCacheData);
-        request.setHTTPHeaderField("Cache-Control", "no-cache");
+        request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "no-cache");
     }
 
     Inspector::TypeBuilder::Page::ResourceType::Enum resourceType = InspectorPageAgent::resourceTypeJson(type);
