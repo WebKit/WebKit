@@ -1,3 +1,15 @@
+2014-06-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Remove duplicated compiler flag
+        https://bugs.webkit.org/show_bug.cgi?id=133838
+
+        Reviewed by Anders Carlsson.
+
+        In r169798, literal-suffix was added for EFL port in order to fix build break. However,
+        it added to common compiler options. So, it is duplicated.
+
+        * Source/cmake/WebKitHelpers.cmake:
+
 2014-06-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r169877.
