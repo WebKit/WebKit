@@ -1,3 +1,13 @@
+2014-06-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r169943 and r169946, use the format of set/get.
+
+        * UIProcess/InspectorServer/WebInspectorServer.cpp:
+        (WebKit::WebInspectorServer::didReceiveUnrecognizedHTTPRequest):
+        * UIProcess/InspectorServer/WebSocketServerConnection.cpp:
+        (WebKit::WebSocketServerConnection::readHTTPMessage):
+        (WebKit::WebSocketServerConnection::upgradeToWebSocketServerConnection):
+
 2014-06-13  Andreas Kling  <akling@apple.com>
 
         REGRESSION (r167635): Reference leak in NetworkResourceLoader while loads are being deferred.

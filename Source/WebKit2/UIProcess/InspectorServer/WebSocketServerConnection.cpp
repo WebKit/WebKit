@@ -30,6 +30,7 @@
 
 #include "WebSocketServerConnection.h"
 
+#include "HTTPHeaderNames.h"
 #include "HTTPRequest.h"
 #include "WebSocketServer.h"
 #include "WebSocketServerClient.h"
@@ -177,7 +178,7 @@ void WebSocketServerConnection::readHTTPMessage()
 
     // If this is a WebSocket request, perform the WebSocket Handshake.
     const HTTPHeaderMap& headers = request->headerFields();
-    String upgradeHeaderValue = headers.get("Upgrade");
+    String upgradeHeaderValue = headers.get(HTTPHeaderName::Upgrade);
     if (upgradeHeaderValue == "websocket") {
         upgradeToWebSocketServerConnection(request);
         return;
@@ -206,10 +207,10 @@ void WebSocketServerConnection::upgradeToWebSocketServerConnection(PassRefPtr<HT
 
     // Build and send the WebSocket handshake response.
     const HTTPHeaderMap& requestHeaders = protectedRequest->headerFields();
-    String accept = WebSocketHandshake::getExpectedWebSocketAccept(requestHeaders.get("Sec-WebSocket-Key"));
+    String accept = WebSocketHandshake::getExpectedWebSocketAccept(requestHeaders.get(HTTPHeaderName::SecWebSocketKey));
     HTTPHeaderMap responseHeaders;
-    responseHeaders.add("Upgrade", requestHeaders.get("Upgrade"));
-    responseHeaders.add("Connection", requestHeaders.get("Connection"));
+    responseHeaders.add("Upgrade", requestHeaders.get(HTTPHeaderName::Upgrade));
+    responseHeaders.add("Connection", requestHeaders.get(HTTPHeaderName::Connection));
     responseHeaders.add("Sec-WebSocket-Accept", accept);
 
     sendHTTPResponseHeader(101, "WebSocket Protocol Handshake", responseHeaders);

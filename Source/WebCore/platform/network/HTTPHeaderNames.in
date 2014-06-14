@@ -37,6 +37,7 @@ Location
 Origin
 Referer
 Sec-WebSocket-Accept
+Sec-WebSocket-Key
 Sec-WebSocket-Protocol
 Set-Cookie
 Set-Cookie2

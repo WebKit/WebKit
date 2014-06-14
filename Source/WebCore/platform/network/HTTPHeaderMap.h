@@ -72,7 +72,6 @@ public:
     // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
     template<size_t length> String get(const char (&)[length]) const = delete;
     template<size_t length> void set(const char (&)[length], const String&) = delete;
-    template<size_t length> void add(const char (&)[length], const String&) = delete;
     template<size_t length> bool contains(const char (&)[length]) = delete;
     template<size_t length> const_iterator find(const char(&)[length]) = delete;
     template<size_t length> bool remove(const char (&)[length]) = delete;

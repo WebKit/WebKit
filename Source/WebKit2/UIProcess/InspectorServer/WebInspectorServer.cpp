@@ -30,6 +30,7 @@
 
 #include "WebInspectorServer.h"
 
+#include "HTTPHeaderNames.h"
 #include "HTTPRequest.h"
 #include "WebInspectorProxy.h"
 #include "WebSocketServerConnection.h"
@@ -124,10 +125,10 @@ void WebInspectorServer::didReceiveUnrecognizedHTTPRequest(WebSocketServerConnec
     bool found = platformResourceForPath(path, body, contentType);
 
     HTTPHeaderMap headerFields;
-    headerFields.set("Connection", "close");
-    headerFields.set("Content-Length", String::number(body.size()));
+    headerFields.set(HTTPHeaderName::Connection, "close");
+    headerFields.set(HTTPHeaderName::ContentLength, String::number(body.size()));
     if (found)
-        headerFields.set("Content-Type", contentType);
+        headerFields.set(HTTPHeaderName::ContentType, contentType);
 
     // Send when ready and close immediately afterwards.
     connection->sendHTTPResponseHeader(found ? 200 : 404, found ? "OK" : "Not Found", headerFields);
