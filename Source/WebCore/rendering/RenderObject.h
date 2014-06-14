@@ -410,13 +410,11 @@ public:
     virtual bool isRenderMathMLBlock() const { return false; }
     virtual bool isRenderMathMLTable() const { return false; }
     virtual bool isRenderMathMLOperator() const { return false; }
-    virtual bool isRenderMathMLRadicalOperator() const { return false; }
     virtual bool isRenderMathMLRow() const { return false; }
     virtual bool isRenderMathMLMath() const { return false; }
     virtual bool isRenderMathMLFenced() const { return false; }
     virtual bool isRenderMathMLFraction() const { return false; }
     virtual bool isRenderMathMLRoot() const { return false; }
-    virtual bool isRenderMathMLRootWrapper() const { return false; }
     virtual bool isRenderMathMLSpace() const { return false; }
     virtual bool isRenderMathMLSquareRoot() const { return false; }
     virtual bool isRenderMathMLScripts() const { return false; }

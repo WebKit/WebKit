@@ -11422,7 +11422,6 @@
     <ClCompile Include="..\rendering\mathml\RenderMathMLMath.cpp" />
     <ClCompile Include="..\rendering\mathml\RenderMathMLMenclose.cpp" />
     <ClCompile Include="..\rendering\mathml\RenderMathMLOperator.cpp" />
-    <ClCompile Include="..\rendering\mathml\RenderMathMLRadicalOperator.cpp" />
     <ClCompile Include="..\rendering\mathml\RenderMathMLRoot.cpp" />
     <ClCompile Include="..\rendering\mathml\RenderMathMLRow.cpp" />
     <ClCompile Include="..\rendering\mathml\RenderMathMLSpace.cpp" />
@@ -20134,7 +20133,6 @@
     <ClInclude Include="..\rendering\mathml\RenderMathMLMath.h" />
     <ClInclude Include="..\rendering\mathml\RenderMathMLMenclose.h" />
     <ClInclude Include="..\rendering\mathml\RenderMathMLOperator.h" />
-    <ClInclude Include="..\rendering\mathml\RenderMathMLRadicalOperator.h" />
     <ClInclude Include="..\rendering\mathml\RenderMathMLRoot.h" />
     <ClInclude Include="..\rendering\mathml\RenderMathMLRow.h" />
     <ClInclude Include="..\rendering\mathml\RenderMathMLSpace.h" />
