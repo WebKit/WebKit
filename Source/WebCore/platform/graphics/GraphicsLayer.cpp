@@ -90,6 +90,7 @@ GraphicsLayer::GraphicsLayer(GraphicsLayerClient& client)
     , m_appliesPageScale(false)
     , m_showDebugBorder(false)
     , m_showRepaintCounter(false)
+    , m_isMaskLayer(false)
     , m_paintingPhase(GraphicsLayerPaintAllWithOverflowClip)
     , m_contentsOrientation(CompositingCoordinatesTopDown)
     , m_parent(0)
@@ -260,8 +261,25 @@ void GraphicsLayer::removeFromParent()
             }
         }
 
-        setParent(0);
+        setParent(nullptr);
     }
+}
+
+void GraphicsLayer::setMaskLayer(GraphicsLayer* layer)
+{
+    if (layer == m_maskLayer)
+        return;
+
+    if (layer) {
+        layer->removeFromParent();
+        layer->setParent(this);
+        layer->setIsMaskLayer(true);
+    } else if (m_maskLayer) {
+        m_maskLayer->setParent(nullptr);
+        m_maskLayer->setIsMaskLayer(false);
+    }
+    
+    m_maskLayer = layer;
 }
 
 void GraphicsLayer::noteDeviceOrPageScaleFactorChangedIncludingDescendants()

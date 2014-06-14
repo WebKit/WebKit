@@ -261,8 +261,12 @@ public:
     void removeAllChildren();
     virtual void removeFromParent();
 
+    // The parent() of a maskLayer is set to the layer being masked.
     GraphicsLayer* maskLayer() const { return m_maskLayer; }
-    virtual void setMaskLayer(GraphicsLayer* layer) { m_maskLayer = layer; }
+    virtual void setMaskLayer(GraphicsLayer*);
+
+    void setIsMaskLayer(bool isMask) { m_isMaskLayer = isMask; }
+    bool isMaskLayer() const { return m_isMaskLayer; }
     
     // The given layer will replicate this layer and its children; the replica renders behind this layer.
     virtual void setReplicatedByLayer(GraphicsLayer*);
@@ -593,6 +597,7 @@ protected:
     bool m_appliesPageScale : 1; // Set for the layer which has the page scale applied to it.
     bool m_showDebugBorder : 1;
     bool m_showRepaintCounter : 1;
+    bool m_isMaskLayer : 1;
     
     GraphicsLayerPaintingPhase m_paintingPhase;
     CompositingCoordinatesOrientation m_contentsOrientation; // affects orientation of layer contents

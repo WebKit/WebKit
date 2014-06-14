@@ -1,3 +1,65 @@
+2014-06-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Masks disappear when layers become tiled
+        https://bugs.webkit.org/show_bug.cgi?id=133892
+        <rdar://problem/17309793>
+
+        Reviewed by Tim Horton.
+        
+        There were several problems with tiled mask layers.
+        
+        First, when a layer became tiled it failed to re-apply the platform layer
+        for its mask; fixed by adding MaskLayerChanged to the set of flags in
+        swapFromOrToTiledLayer().
+        
+        Secondly, in CA, a mask layer's superlayer is the layer which is it masking,
+        so the if (oldLayer->superlayer())... code in swapFromOrToTiledLayer() would
+        erroneously try to swap out a sublayer on the superlayer with the mask.
+        
+        Thirdly, the mask layer is updated after its host layer, but when the mask layer
+        become tiled, there was no code that updated the mask platform layer on its
+        host layer. Fix by:
+            1. setting a bit on a layer to note that it's being used as a mask.
+            2. setting the parent of such a layer to its host layer (mimicking CA)
+            3. when the mask becomes tiled, dirtying the MaskLayerChanged bit on
+               its parent and adding a clause to commitLayerChangesAfterSublayers()
+               to update the mask layer.
+        
+        Finally, ASSERTION FAILED: owningGraphicsLayer()->isCommittingChanges() would
+        fire because we failed to set the m_isCommittingChanges flag while committing
+        the mask layer. Fix by moving the TemporaryChange<bool> that sets this flag
+        into commitLayerChangesBeforeSublayers() and commitLayerChangesAfterSublayers().
+        
+        Also used safe casts in more places in GraphicsLayerCA.
+
+        Tests: compositing/masks/become-tiled-mask.html
+               compositing/masks/cease-tiled-mask.html
+               compositing/masks/tiled-mask.html
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        (WebCore::GraphicsLayer::removeFromParent):
+        (WebCore::GraphicsLayer::setMaskLayer):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setIsMaskLayer):
+        (WebCore::GraphicsLayer::isMaskLayer):
+        (WebCore::GraphicsLayer::setMaskLayer): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::removeFromParent):
+        (WebCore::GraphicsLayerCA::setMaskLayer):
+        (WebCore::GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush):
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::commitLayerChangesAfterSublayers):
+        (WebCore::GraphicsLayerCA::updateSublayerList):
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+        (WebCore::GraphicsLayerCA::updateMaskLayer):
+        (WebCore::GraphicsLayerCA::replicatedLayerRoot):
+        (WebCore::GraphicsLayerCA::createFilterAnimationsFromKeyframes):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        (WebCore::GraphicsLayerCA::propagateLayerChangeToReplicas):
+        (WebCore::GraphicsLayerCA::fetchCloneLayers):
+
 2014-06-14  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] Compile errors related to http headers.
