@@ -36,10 +36,6 @@
 
 using namespace WebKit;
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-typedef GenericAPICallback<WKArrayRef> ArrayAPICallback;
-#endif
-
 WKTypeID WKPluginSiteDataManagerGetTypeID()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -52,7 +48,7 @@ WKTypeID WKPluginSiteDataManagerGetTypeID()
 void WKPluginSiteDataManagerGetSitesWithData(WKPluginSiteDataManagerRef managerRef, void* context, WKPluginSiteDataManagerGetSitesWithDataFunction callback)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    toImpl(managerRef)->getSitesWithData(ArrayAPICallback::create(context, callback));
+    toImpl(managerRef)->getSitesWithData(ArrayCallback::create(toGenericCallbackFunction(context, callback)));
 #else
     UNUSED_PARAM(managerRef);
     UNUSED_PARAM(context);

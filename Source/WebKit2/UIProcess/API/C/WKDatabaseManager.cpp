@@ -31,10 +31,6 @@
 
 using namespace WebKit;
 
-#if ENABLE(SQL_DATABASE)
-typedef GenericAPICallback<WKArrayRef> ArrayAPICallback;
-#endif
-
 WKTypeID WKDatabaseManagerGetTypeID()
 {
 #if ENABLE(SQL_DATABASE)
@@ -159,7 +155,7 @@ void WKDatabaseManagerSetClient(WKDatabaseManagerRef databaseManagerRef, const W
 void WKDatabaseManagerGetDatabasesByOrigin(WKDatabaseManagerRef databaseManagerRef, void* context, WKDatabaseManagerGetDatabasesByOriginFunction callback)
 {
 #if ENABLE(SQL_DATABASE)
-    toImpl(databaseManagerRef)->getDatabasesByOrigin(ArrayAPICallback::create(context, callback));
+    toImpl(databaseManagerRef)->getDatabasesByOrigin(ArrayCallback::create(toGenericCallbackFunction(context, callback)));
 #else
     UNUSED_PARAM(databaseManagerRef);
     UNUSED_PARAM(context);
@@ -170,7 +166,7 @@ void WKDatabaseManagerGetDatabasesByOrigin(WKDatabaseManagerRef databaseManagerR
 void WKDatabaseManagerGetDatabaseOrigins(WKDatabaseManagerRef databaseManagerRef, void* context, WKDatabaseManagerGetDatabaseOriginsFunction callback)
 {
 #if ENABLE(SQL_DATABASE)
-    toImpl(databaseManagerRef)->getDatabaseOrigins(ArrayAPICallback::create(context, callback));
+    toImpl(databaseManagerRef)->getDatabaseOrigins(ArrayCallback::create(toGenericCallbackFunction(context, callback)));
 #else
     UNUSED_PARAM(databaseManagerRef);
     UNUSED_PARAM(context);

@@ -30,9 +30,6 @@
 
 using namespace WebKit;
 
-typedef GenericAPICallback<WKArrayRef> ArrayAPICallback;
-typedef GenericAPICallback<WKHTTPCookieAcceptPolicy, HTTPCookieAcceptPolicy> HTTPCookieAcceptPolicyAPICallback;
-
 /**
  * SECTION: WebKitCookieManager
  * @Short_description: Defines how to handle cookies in a #WebKitWebContext
@@ -214,7 +211,7 @@ void webkit_cookie_manager_get_accept_policy(WebKitCookieManager* manager, GCanc
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
 
     GTask* task = g_task_new(manager, cancellable, callback, userData);
-    manager->priv->webCookieManager->getHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyAPICallback::create(task, webkitCookieManagerGetAcceptPolicyCallback));
+    manager->priv->webCookieManager->getHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyCallback::create(toGenericCallbackFunction<WKHTTPCookieAcceptPolicy, HTTPCookieAcceptPolicy>(task, webkitCookieManagerGetAcceptPolicyCallback)));
 }
 
 /**
@@ -272,7 +269,7 @@ void webkit_cookie_manager_get_domains_with_cookies(WebKitCookieManager* manager
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
 
     GTask* task = g_task_new(manager, cancellable, callback, userData);
-    manager->priv->webCookieManager->getHostnamesWithCookies(ArrayAPICallback::create(task, webkitCookieManagerGetDomainsWithCookiesCallback));
+    manager->priv->webCookieManager->getHostnamesWithCookies(ArrayCallback::create(toGenericCallbackFunction(task, webkitCookieManagerGetDomainsWithCookiesCallback)));
 }
 
 /**

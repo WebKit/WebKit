@@ -1,5 +1,56 @@
 2014-06-14  Dan Bernstein  <mitz@apple.com>
 
+        Get rid of GenericAPICallback
+        https://bugs.webkit.org/show_bug.cgi?id=133909
+
+        Reviewed by Sam Weinig.
+
+        In preparation for passing callbacks as functions, replace GenericAPICallback::create, which
+        returned a GenericCallback, with a function template that returns an appropriate callback
+        function.
+
+        * UIProcess/API/C/WKApplicationCacheManager.cpp:
+        (WKApplicationCacheManagerGetApplicationCacheOrigins):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetStatistics):
+        (WKContextGetStatisticsWithOptions):
+        * UIProcess/API/C/WKCookieManager.cpp:
+        (WKCookieManagerGetHostnamesWithCookies):
+        (WKCookieManagerGetHTTPCookieAcceptPolicy):
+        * UIProcess/API/C/WKDatabaseManager.cpp:
+        (WKDatabaseManagerGetDatabasesByOrigin):
+        (WKDatabaseManagerGetDatabaseOrigins):
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameGetMainResourceData):
+        (WKFrameGetResourceData):
+        (WKFrameGetWebArchive):
+        * UIProcess/API/C/WKKeyValueStorageManager.cpp:
+        (WKKeyValueStorageManagerGetKeyValueStorageOrigins):
+        (WKKeyValueStorageManagerGetStorageDetailsByOrigin):
+        * UIProcess/API/C/WKMediaCacheManager.cpp:
+        (WKMediaCacheManagerGetHostnamesWithMediaCache):
+        * UIProcess/API/C/WKOriginDataManager.cpp:
+        (WKOriginDataManagerGetOrigins):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageRunJavaScriptInMainFrame):
+        (WKPageRenderTreeExternalRepresentation):
+        (WKPageGetSourceForFrame):
+        (WKPageGetContentsAsString):
+        (WKPageGetBytecodeProfile):
+        (WKPageGetSelectionAsWebArchiveData):
+        (WKPageGetContentsAsMHTMLData):
+        (WKPageDrawPagesToPDF):
+        * UIProcess/API/C/WKPluginSiteDataManager.cpp:
+        (WKPluginSiteDataManagerGetSitesWithData):
+        * UIProcess/API/C/WKResourceCacheManager.cpp:
+        (WKResourceCacheManagerGetCacheOrigins):
+
+        * UIProcess/GenericCallback.h:
+        (WebKit::toGenericCallbackFunction): Added. Given a C SPI callback function, returns a generic
+        callback function that wraps it.
+
+2014-06-14  Dan Bernstein  <mitz@apple.com>
+
         Reverted the last change, which broken the Mac build.
 
         * UIProcess/GenericCallback.h:

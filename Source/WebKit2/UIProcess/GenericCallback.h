@@ -169,17 +169,12 @@ private:
 };
 
 template<typename APIReturnValueType, typename InternalReturnValueType = typename APITypeInfo<APIReturnValueType>::ImplType>
-class GenericAPICallback : public CallbackBase {
-public:
-    typedef void (*CallbackFunction)(APIReturnValueType, WKErrorRef, void*);
-
-    static PassRefPtr<GenericCallback<InternalReturnValueType>> create(void* context, CallbackFunction callback)
-    {
-        return GenericCallback<InternalReturnValueType>::create([context, callback](InternalReturnValueType returnValue, CallbackBase::Error error) {
-            callback(toAPI(returnValue), error != CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
-        });
-    }
-};
+static typename GenericCallback<InternalReturnValueType>::CallbackFunction toGenericCallbackFunction(void* context, void (*callback)(APIReturnValueType, WKErrorRef, void*))
+{
+    return [context, callback](InternalReturnValueType returnValue, CallbackBase::Error error) {
+        callback(toAPI(returnValue), error != CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
+    };
+}
 
 typedef GenericCallback<const Vector<WebCore::IntRect>&, double> ComputedPagesCallback;
 typedef GenericCallback<const ShareableBitmap::Handle&> ImageCallback;

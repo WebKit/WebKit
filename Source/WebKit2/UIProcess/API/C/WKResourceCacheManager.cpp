@@ -31,8 +31,6 @@
 
 using namespace WebKit;
 
-typedef GenericAPICallback<WKArrayRef> ArrayAPICallback;
-
 WKTypeID WKResourceCacheManagerGetTypeID()
 {
     return toAPI(WebResourceCacheManagerProxy::APIType);
@@ -40,7 +38,7 @@ WKTypeID WKResourceCacheManagerGetTypeID()
 
 void WKResourceCacheManagerGetCacheOrigins(WKResourceCacheManagerRef cacheManagerRef, void* context, WKResourceCacheManagerGetCacheOriginsFunction callback)
 {
-    toImpl(cacheManagerRef)->getCacheOrigins(ArrayAPICallback::create(context, callback));
+    toImpl(cacheManagerRef)->getCacheOrigins(ArrayCallback::create(toGenericCallbackFunction(context, callback)));
 }
 
 void WKResourceCacheManagerClearCacheForOrigin(WKResourceCacheManagerRef cacheManagerRef, WKSecurityOriginRef originRef, WKResourceCachesToClear cachesToClear)

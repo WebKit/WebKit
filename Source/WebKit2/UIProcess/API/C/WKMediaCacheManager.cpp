@@ -31,8 +31,6 @@
 
 using namespace WebKit;
 
-typedef GenericAPICallback<WKArrayRef> ArrayAPICallback;
-
 WKTypeID WKMediaCacheManagerGetTypeID()
 {
     return toAPI(WebMediaCacheManagerProxy::APIType);
@@ -40,7 +38,7 @@ WKTypeID WKMediaCacheManagerGetTypeID()
 
 void WKMediaCacheManagerGetHostnamesWithMediaCache(WKMediaCacheManagerRef mediaCacheManagerRef, void* context, WKMediaCacheManagerGetHostnamesWithMediaCacheFunction callback)
 {
-    toImpl(mediaCacheManagerRef)->getHostnamesWithMediaCache(ArrayAPICallback::create(context, callback));
+    toImpl(mediaCacheManagerRef)->getHostnamesWithMediaCache(ArrayCallback::create(toGenericCallbackFunction(context, callback)));
 }
 
 void WKMediaCacheManagerClearCacheForHostname(WKMediaCacheManagerRef mediaCacheManagerRef, WKStringRef hostname)
