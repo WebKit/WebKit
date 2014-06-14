@@ -1,5 +1,13 @@
 2014-06-13  Alex Christensen  <achristensen@webkit.org>
 
+        Unreviewed disabling css jit on armv7.  It's not quite ready yet.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::modulo):
+        Removed extra comma.
+
+2014-06-13  Alex Christensen  <achristensen@webkit.org>
+
         Make css jit compile on armv7.
         https://bugs.webkit.org/show_bug.cgi?id=133889
 
