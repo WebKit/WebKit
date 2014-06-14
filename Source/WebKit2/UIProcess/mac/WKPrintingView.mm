@@ -265,7 +265,7 @@ static void pageDidDrawToImage(const ShareableBitmap::Handle& imageHandle, IPCCa
     _webFrame->page()->beginPrinting(_webFrame.get(), printInfo);
 
     IPCCallbackContext* context = new IPCCallbackContext;
-    RefPtr<DataCallback> callback = DataCallback::create([context](bool, API::Data* data) {
+    RefPtr<DataCallback> callback = DataCallback::create([context](API::Data* data, CallbackBase::Error) {
         ASSERT(RunLoop::isMain());
 
         OwnPtr<IPCCallbackContext> contextDeleter = adoptPtr(context);
@@ -340,7 +340,7 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
     ASSERT(!_expectedComputedPagesCallback);
 
     IPCCallbackContext* context = new IPCCallbackContext;
-    RefPtr<ComputedPagesCallback> callback = ComputedPagesCallback::create([context](bool, const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting) {
+    RefPtr<ComputedPagesCallback> callback = ComputedPagesCallback::create([context](const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, CallbackBase::Error) {
         OwnPtr<IPCCallbackContext> contextDeleter = adoptPtr(context);
         pageDidComputePageRects(pageRects, totalScaleFactorForPrinting, context);
     });
@@ -492,7 +492,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
                 _webFrame->page()->beginPrinting(_webFrame.get(), PrintInfo([_printOperation printInfo]));
 
                 IPCCallbackContext* context = new IPCCallbackContext;
-                RefPtr<ImageCallback> callback = ImageCallback::create([context](bool, const ShareableBitmap::Handle& imageHandle) {
+                RefPtr<ImageCallback> callback = ImageCallback::create([context](const ShareableBitmap::Handle& imageHandle, CallbackBase::Error) {
                     OwnPtr<IPCCallbackContext> contextDeleter = adoptPtr(context);
                     pageDidDrawToImage(imageHandle, context);
                 });

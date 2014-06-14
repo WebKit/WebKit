@@ -1477,7 +1477,7 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
     }
 
     _autocorrectionData.autocorrectionHandler = [completionHandler copy];
-    _page->requestAutocorrectionData(input, AutocorrectionDataCallback::create([self](bool, const Vector<FloatRect>& rects, const String& fontName, double fontSize, uint64_t traits) {
+    _page->requestAutocorrectionData(input, AutocorrectionDataCallback::create([self](const Vector<FloatRect>& rects, const String& fontName, double fontSize, uint64_t traits, CallbackBase::Error) {
         CGRect firstRect = CGRectZero;
         CGRect lastRect = CGRectZero;
         if (rects.size()) {
@@ -1540,7 +1540,7 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 {
     UIWKDictationContextHandler dictationHandler = [completionHandler copy];
 
-    _page->requestDictationContext(DictationContextCallback::create([dictationHandler](bool /*error*/, const String& selectedText, const String& beforeText, const String& afterText) {
+    _page->requestDictationContext(DictationContextCallback::create([dictationHandler](const String& selectedText, const String& beforeText, const String& afterText, CallbackBase::Error) {
         dictationHandler(selectedText, beforeText, afterText);
         [dictationHandler release];
     }));
@@ -1580,7 +1580,7 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
         completionHandler([WKAutocorrectionContext autocorrectionContextWithData:beforeText markedText:markedText selectedText:selectedText afterText:afterText selectedRangeInMarkedText:NSMakeRange(location, length)]);
     } else {
         _autocorrectionData.autocorrectionContextHandler = [completionHandler copy];
-        _page->requestAutocorrectionContext(AutocorrectionContextCallback::create([self](bool /*error*/, const String& beforeText, const String& markedText, const String& selectedText, const String& afterText, uint64_t location, uint64_t length) {
+        _page->requestAutocorrectionContext(AutocorrectionContextCallback::create([self](const String& beforeText, const String& markedText, const String& selectedText, const String& afterText, uint64_t location, uint64_t length, CallbackBase::Error) {
             _autocorrectionData.autocorrectionContextHandler([WKAutocorrectionContext autocorrectionContextWithData:beforeText markedText:markedText selectedText:selectedText afterText:afterText selectedRangeInMarkedText:NSMakeRange(location, length)]);
         }));
     }

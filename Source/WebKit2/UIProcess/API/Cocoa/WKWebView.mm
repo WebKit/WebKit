@@ -1520,9 +1520,9 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
 {
     auto handler = adoptNS([completionHandler copy]);
 
-    _page->getWebArchiveOfFrame(_page->mainFrame(), WebKit::DataCallback::create([handler](bool isError, API::Data* data) {
+    _page->getWebArchiveOfFrame(_page->mainFrame(), WebKit::DataCallback::create([handler](API::Data* data, WebKit::CallbackBase::Error error) {
         void (^completionHandlerBlock)(NSData *, NSError *) = (void (^)(NSData *, NSError *))handler.get();
-        if (isError) {
+        if (error != WebKit::CallbackBase::Error::None) {
             // FIXME: Pipe a proper error in from the WebPageProxy.
             RetainPtr<NSError> error = adoptNS([[NSError alloc] init]);
             completionHandlerBlock(nil, error.get());
@@ -2030,7 +2030,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 #endif
     
     void(^copiedCompletionHandler)(CGImageRef) = [completionHandler copy];
-    _page->takeSnapshot(WebCore::enclosingIntRect(snapshotRectInContentCoordinates), WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebKit::SnapshotOptionsExcludeDeviceScaleFactor, [=](bool, const WebKit::ShareableBitmap::Handle& imageHandle) {
+    _page->takeSnapshot(WebCore::enclosingIntRect(snapshotRectInContentCoordinates), WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebKit::SnapshotOptionsExcludeDeviceScaleFactor, [=](const WebKit::ShareableBitmap::Handle& imageHandle, CallbackBase::Error) {
 #if PLATFORM(IOS)
         // Automatically delete when this goes out of scope.
         auto uniqueActivityToken = std::unique_ptr<WebKit::ProcessThrottler::BackgroundActivityToken>(activityToken);

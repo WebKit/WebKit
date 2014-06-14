@@ -129,7 +129,7 @@ using namespace WebKit;
     IntSize bitmapSize = snapshotRect.size();
     bitmapSize.scale(_scale * _webPageProxy->deviceScaleFactor());
     _lastSnapshotScale = _scale;
-    _webPageProxy->takeSnapshot(snapshotRect, bitmapSize, options, [thumbnailView](bool, const ShareableBitmap::Handle& imageHandle) {
+    _webPageProxy->takeSnapshot(snapshotRect, bitmapSize, options, [thumbnailView](const ShareableBitmap::Handle& imageHandle, CallbackBase::Error) {
         RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(imageHandle, SharedMemory::ReadOnly);
         RetainPtr<CGImageRef> cgImage = bitmap ? bitmap->makeCGImage() : nullptr;
         [thumbnailView _didTakeSnapshot:cgImage.get()];

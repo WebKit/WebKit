@@ -835,9 +835,9 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
         // If we are not already awaiting validation for this command, start the asynchronous validation process.
         // FIXME: Theoretically, there is a race here; when we get the answer it might be old, from a previous time
         // we asked for the same command; there is no guarantee the answer is still valid.
-        _data->_page->validateCommand(commandName, ValidateCommandCallback::create([self](bool error, StringImpl* commandName, bool isEnabled, int32_t state) {
+        _data->_page->validateCommand(commandName, ValidateCommandCallback::create([self](StringImpl* commandName, bool isEnabled, int32_t state, CallbackBase::Error error) {
             // If the process exits before the command can be validated, we'll be called back with an error.
-            if (error)
+            if (error != CallbackBase::Error::None)
                 return;
             
             [self _setUserInterfaceItemState:nsStringFromWebCoreString(commandName) enabled:isEnabled state:state];
@@ -852,8 +852,8 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
 
 - (IBAction)startSpeaking:(id)sender
 {
-    _data->_page->getSelectionOrContentsAsString(StringCallback::create([self](bool error, StringImpl* string) {
-        if (error)
+    _data->_page->getSelectionOrContentsAsString(StringCallback::create([self](StringImpl* string, CallbackBase::Error error) {
+        if (error != CallbackBase::Error::None)
             return;
         if (!string)
             return;

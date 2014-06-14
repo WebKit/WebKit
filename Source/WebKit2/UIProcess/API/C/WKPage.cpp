@@ -1657,8 +1657,8 @@ WKStringRef WKPageCopyStandardUserAgentWithApplicationName(WKStringRef applicati
 
 void WKPageValidateCommand(WKPageRef pageRef, WKStringRef command, void* context, WKPageValidateCommandCallback callback)
 {
-    toImpl(pageRef)->validateCommand(toImpl(command)->string(), ValidateCommandCallback::create([context, callback](bool error, StringImpl* commandName, bool isEnabled, int32_t state) {
-        callback(toAPI(commandName), isEnabled, state, error ? toAPI(API::Error::create().get()) : 0, context);
+    toImpl(pageRef)->validateCommand(toImpl(command)->string(), ValidateCommandCallback::create([context, callback](StringImpl* commandName, bool isEnabled, int32_t state, CallbackBase::Error error) {
+        callback(toAPI(commandName), isEnabled, state, error != CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
     }));
 }
 
@@ -1679,11 +1679,11 @@ static PrintInfo printInfoFromWKPrintInfo(const WKPrintInfo& printInfo)
 
 void WKPageComputePagesForPrinting(WKPageRef page, WKFrameRef frame, WKPrintInfo printInfo, WKPageComputePagesForPrintingFunction callback, void* context)
 {
-    toImpl(page)->computePagesForPrinting(toImpl(frame), printInfoFromWKPrintInfo(printInfo), ComputedPagesCallback::create([context, callback](bool error, const Vector<WebCore::IntRect>& rects, double scaleFactor) {
+    toImpl(page)->computePagesForPrinting(toImpl(frame), printInfoFromWKPrintInfo(printInfo), ComputedPagesCallback::create([context, callback](const Vector<WebCore::IntRect>& rects, double scaleFactor, CallbackBase::Error error) {
         Vector<WKRect> wkRects(rects.size());
         for (size_t i = 0; i < rects.size(); ++i)
             wkRects[i] = toAPI(rects[i]);
-        callback(wkRects.data(), wkRects.size(), scaleFactor, error ? toAPI(API::Error::create().get()) : 0, context);
+        callback(wkRects.data(), wkRects.size(), scaleFactor, error != CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
     }));
 }
 

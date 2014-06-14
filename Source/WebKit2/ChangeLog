@@ -1,3 +1,66 @@
+2014-06-13  Dan Bernstein  <mitz@apple.com>
+
+        Make GenericCallback variadic
+        https://bugs.webkit.org/show_bug.cgi?id=133897
+
+        Reviewed by Sam Weinig.
+
+        Also eliminated legacy callback functions and all CallbackBase derived classes outside of
+        GenericCallback.h.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageValidateCommand): Changed legacy callback (with leading bool parameter) into modern
+        callback (with trailing error parameter).
+        (WKPageComputePagesForPrinting): Ditto.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _getWebArchiveDataWithCompletionHandler:]): Ditto.
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]): Ditto.
+
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        (-[_WKThumbnailView _requestSnapshotIfNeeded]): Ditto.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validateUserInterfaceItem:]): Ditto.
+        (-[WKView startSpeaking:]): Ditto.
+
+        * UIProcess/AutoCorrectionCallback.h: Replaced CallbackBase derived classes with
+        GenericCallback specializations.
+
+        * UIProcess/GenericCallback.h:
+        - Made GenericCallback variadic:
+        (WebKit::GenericCallback::performCallbackWithReturnValue):
+        (WebKit::GenericCallback::invalidate):
+        (WebKit::GenericAPICallback::create):
+
+        - Replaced CallbackBase derived classes with GenericCallback specializations:
+        (WebKit::GenericCallback::create): Deleted.
+        (WebKit::ComputedPagesCallback::create): Deleted.
+        (WebKit::ComputedPagesCallback::~ComputedPagesCallback): Deleted.
+        (WebKit::ComputedPagesCallback::performCallbackWithReturnValue): Deleted.
+        (WebKit::ComputedPagesCallback::invalidate): Deleted.
+        (WebKit::ComputedPagesCallback::ComputedPagesCallback): Deleted.
+        (WebKit::ImageCallback::create): Deleted.
+        (WebKit::ImageCallback::~ImageCallback): Deleted.
+        (WebKit::ImageCallback::performCallbackWithReturnValue): Deleted.
+        (WebKit::ImageCallback::invalidate): Deleted.
+        (WebKit::ImageCallback::ImageCallback): Deleted.
+
+        * UIProcess/WebPageProxy.h: Replaced CallbackBase derived classes with GenericCallback
+        specializations.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView requestAutocorrectionRectsForString:withCompletionHandler:]): Changed
+        legacy callback (with leading bool parameter) into modern callback (with trailing error
+        parameter).
+        (-[WKContentView requestDictationContext:]): Ditto.
+        (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]): Ditto.
+
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _preparePDFDataForPrintingOnSecondaryThread]): Ditto.
+        (-[WKPrintingView _askPageToComputePageRects]): Ditto.
+        (-[WKPrintingView _drawPreview:]): Ditto.
+
 2014-06-13  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed; fix the build.
