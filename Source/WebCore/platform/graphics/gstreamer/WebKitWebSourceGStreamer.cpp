@@ -30,6 +30,7 @@
 #include "CrossOriginAccessControl.h"
 #include "GRefPtrGStreamer.h"
 #include "GStreamerUtilities.h"
+#include "HTTPHeaderNames.h"
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
 #include "ResourceHandle.h"
@@ -484,15 +485,15 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
 
     if (priv->requestedOffset) {
         GUniquePtr<gchar> val(g_strdup_printf("bytes=%" G_GUINT64_FORMAT "-", priv->requestedOffset));
-        request.setHTTPHeaderField("Range", val.get());
+        request.setHTTPHeaderField(HTTPHeaderName::Range, val.get());
     }
     priv->offset = priv->requestedOffset;
 
     // We always request Icecast/Shoutcast metadata, just in case ...
-    request.setHTTPHeaderField("icy-metadata", "1");
+    request.setHTTPHeaderField(HTTPHeaderName::IcyMetadata, "1");
 
     // Needed to use DLNA streaming servers
-    request.setHTTPHeaderField("transferMode.dlna", "Streaming");
+    request.setHTTPHeaderField(HTTPHeaderName::TransferModeDLNA, "Streaming");
 
     if (priv->player) {
         if (CachedResourceLoader* loader = priv->player->cachedResourceLoader())

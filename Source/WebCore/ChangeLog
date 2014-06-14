@@ -1,3 +1,20 @@
+2014-06-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Generate HTTP header names that are required by WebKitWebSrc
+        https://bugs.webkit.org/show_bug.cgi?id=133906
+
+        Reviewed by Anders Carlsson.
+
+        WebKitWebSrc implementation sets icy-metadata and transferMode.dlna HTTP headers
+        on ResourceRequest objects. The two headers are added to HTTPHeaderNames.in, and
+        a small tweak is added to the generator script to avoid the dot in the second
+        header's name (which would otherwise generate invalid C++).
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcStart):
+        * platform/network/HTTPHeaderNames.in:
+        * platform/network/create-http-header-name-table:
+
 2014-06-14  Anders Carlsson  <andersca@apple.com>
 
         Replace some uses of ResourceRequestBase::addHTTPHeaderField with setHTTPHeaderField

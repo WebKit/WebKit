@@ -57,3 +57,7 @@ Set-Cookie2
 Upgrade
 User-Agent
 X-Frame-Options
+
+// These headers are specific to GStreamer.
+Icy-Metadata
+TransferMode.DLNA
