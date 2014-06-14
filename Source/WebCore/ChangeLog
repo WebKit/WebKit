@@ -1,3 +1,77 @@
+2014-06-14  Frédéric Wang  <fred.wang@free.fr>
+
+        Draw radicals with glyphs for better rendering
+        https://bugs.webkit.org/show_bug.cgi?id=119038
+
+        Reviewed by Chris Fleizach.
+
+        We rewrite RenderMathMLRoot in order to fix bugs with SVG transforms and dynamic modification of children and allow drawing with an OpenType MATH table.
+        The drawing of the radical sign (without the top bar) is now moved to a RenderMathMLRadicalOperator class inheriting from RenderMathMLOperator.
+        This class fallbacks to the original drawing with graphic primitives if an OpenType MATH table is not available.
+
+        Tests: mathml/opentype/roots-LatinModern.html
+               mathml/presentation/mroot-transform.html
+
+        * CMakeLists.txt: add files to build system.
+        * WebCore.vcxproj/WebCore.vcxproj: ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: ditto.
+        * WebCore.xcodeproj/project.pbxproj: ditto
+        * css/mathml.css: remove rules for msqrt/mroot. The "script level" in mroot is not incremented by 2 as specified in the spec.
+        (math, mrow, mfenced, merror, mphantom, mstyle, menclose):
+        (mroot > *:last-child):
+        (math, mrow, mfenced, msqrt, mroot, merror, mphantom, mstyle, menclose): Deleted.
+        (msqrt > *): Deleted.
+        (mroot): Deleted. This rule was causing bug 126516.
+        (mroot > * + *): Deleted.
+        * rendering/RenderObject.h: Add two new isRenderMathML* functions for dynamic casting.
+        (WebCore::RenderObject::isRenderMathMLRadicalOperator):
+        (WebCore::RenderObject::isRenderMathMLRootWrapper):
+        * rendering/mathml/RenderMathMLOperator.cpp: Accept a set of operator dictionary flags, all disabled by default. This is to allow anonymous radicas, which don't have any flag.
+        isFencedOperator() is now replaced with the more general isAnonymous() since we allow anonymous radical operator fors msqrt/mroot.
+        (WebCore::RenderMathMLOperator::RenderMathMLOperator):
+        (WebCore::RenderMathMLOperator::setOperatorFlagFromAttribute):
+        (WebCore::RenderMathMLOperator::setOperatorPropertiesFromOpDictEntry):
+        (WebCore::RenderMathMLOperator::SetOperatorProperties):
+        (WebCore::RenderMathMLOperator::updateTokenContent):
+        * rendering/mathml/RenderMathMLOperator.h: Allow class to be overriden, redefine the anonymous constructor, remove isFencedOperator().
+        * rendering/mathml/RenderMathMLRadicalOperator.cpp: Added.
+        (WebCore::RenderMathMLRadicalOperator::RenderMathMLRadicalOperator):
+        (WebCore::RenderMathMLRadicalOperator::stretchTo):
+        (WebCore::RenderMathMLRadicalOperator::SetOperatorProperties):
+        (WebCore::RenderMathMLRadicalOperator::computePreferredLogicalWidths):
+        (WebCore::RenderMathMLRadicalOperator::computeLogicalHeight):
+        (WebCore::RenderMathMLRadicalOperator::paint):
+        (WebCore::RenderMathMLRadicalOperator::trailingSpaceError):
+        * rendering/mathml/RenderMathMLRadicalOperator.h: Added.
+        * rendering/mathml/RenderMathMLRoot.cpp: Rewritten. Some parts to use graphic primitives are moved to RenderMathMLRadicalOperator.cpp.
+        (WebCore::RenderMathMLRoot::RenderMathMLRoot):
+        (WebCore::RenderMathMLRoot::baseWrapper):
+        (WebCore::RenderMathMLRoot::radicalWrapper):
+        (WebCore::RenderMathMLRoot::indexWrapper):
+        (WebCore::RenderMathMLRoot::radicalOperator):
+        (WebCore::RenderMathMLRoot::restructureWrappers):
+        (WebCore::RenderMathMLRoot::addChild):
+        (WebCore::RenderMathMLRoot::styleDidChange):
+        (WebCore::RenderMathMLRoot::updateFromElement):
+        (WebCore::RenderMathMLRoot::updateStyle):
+        (WebCore::RenderMathMLRoot::firstLineBaseline):
+        (WebCore::RenderMathMLRoot::layout):
+        (WebCore::RenderMathMLRoot::paint):
+        (WebCore::RenderMathMLRootWrapper::createAnonymousWrapper):
+        (WebCore::RenderMathMLRootWrapper::removeChildWithoutRestructuring):
+        (WebCore::RenderMathMLRootWrapper::removeChild):
+        (WebCore::RenderMathMLRoot::paddingTop): Deleted.
+        (WebCore::RenderMathMLRoot::paddingBottom): Deleted.
+        (WebCore::RenderMathMLRoot::paddingLeft): Deleted.
+        (WebCore::RenderMathMLRoot::paddingRight): Deleted.
+        (WebCore::RenderMathMLRoot::paddingBefore): Deleted.
+        (WebCore::RenderMathMLRoot::paddingAfter): Deleted.
+        (WebCore::RenderMathMLRoot::paddingStart): Deleted.
+        (WebCore::RenderMathMLRoot::paddingEnd): Deleted.
+        (WebCore::RenderMathMLRoot::index): Deleted.
+        * rendering/mathml/RenderMathMLRoot.h: Rewritten.
+        (WebCore::RenderMathMLRootWrapper::RenderMathMLRootWrapper):
+
 2014-06-13  Brent Fulgham  <bfulgham@apple.com>
 
         Move utility functions from WebLayer to PlatformCALayer

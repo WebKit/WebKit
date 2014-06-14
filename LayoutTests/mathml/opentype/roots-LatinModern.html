@@ -1,0 +1,80 @@
+<!doctype html>
+<html> 
+  <head>
+    <title>Roots Latin Modern</title>
+    <meta charset="utf-8"/>
+    <style type="text/css">
+      @font-face {
+      font-family: "Latin Modern Math";
+      src: local("Latin Modern Math"), local("LatinModernMath-Regular"), url("latinmodern-math.woff");
+      }
+      math {
+      font-family: "Latin Modern Math";
+      }      
+    </style>
+  </head>
+  <body>
+
+    <!-- We test the rendering roots with the Latin Modern Math font -->
+
+    <!-- nested square roots of various sizes -->
+    <math display="block">
+      <mrow>
+        <msqrt>
+          <mn>1</mn>
+          <mo>+</mo>
+          <msqrt>
+            <mn>1</mn>
+            <mo>+</mo>
+            <msqrt>
+              <mn>1</mn>
+              <mo>+</mo>
+              <msqrt>
+                <mn>1</mn>
+                <mo>+</mo>
+                <msqrt>
+                  <mn>1</mn>
+                  <mo>+</mo>
+                  <msqrt>
+                    <mn>1</mn>
+                    <mo>+</mo>
+                    <msqrt>
+                      <mn>1</mn>
+                      <mo>+</mo>
+                      <mi>x</mi>
+                    </msqrt>
+                  </msqrt>
+                </msqrt>
+              </msqrt>
+            </msqrt>
+          </msqrt>
+        </msqrt>
+      </mrow>
+    </math>
+
+    <!-- mroot with short index -->
+    <math display="block">
+      <mroot>
+        <mspace width="20px" height="50px" mathbackground="red"/>
+        <mspace width="20px" height="10px" mathbackground="green"/>
+      </mroot>
+      <mroot>
+        <mspace width="20px" height="20px" mathbackground="red"/>
+        <mspace width="20px" height="5px" mathbackground="blue"/>
+      </mroot>
+    </math>
+
+    <!-- mroot with tall index -->
+    <math display="block">
+      <mroot>
+        <mspace width="20px" height="50px" mathbackground="red"/>
+        <mspace width="20px" height="50px" mathbackground="green"/>
+      </mroot>
+      <mroot>
+        <mspace width="20px" height="20px" mathbackground="red"/>
+        <mspace width="20px" height="20px" mathbackground="blue"/>
+      </mroot>
+    </math>
+
+  </body>
+</html>
