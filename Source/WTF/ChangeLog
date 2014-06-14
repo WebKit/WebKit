@@ -1,3 +1,14 @@
+2014-06-13  Alex Christensen  <achristensen@webkit.org>
+
+        Enable css jit for armv7 on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=133890
+        <rdar://problem/17310631>
+
+        Reviewed by Andreas Kling.
+
+        * wtf/Platform.h:
+        Enable css jit for ARM thumb on iOS.
+
 2014-06-13  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         OSR exit should barrier the Executables for all InlineCallFrames, not just those on the stack at the time of exit
