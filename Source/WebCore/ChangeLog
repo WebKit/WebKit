@@ -1,3 +1,17 @@
+2014-06-14  Andreas Kling  <akling@apple.com>
+
+        GCController should return FastMalloc memory to the system.
+        <https://webkit.org/b/133884>
+
+        Reviewed by Anders Carlsson.
+
+        Speculative test fix; I'm kinda suspecting that some tests are reporting
+        more memory used because we did a GC but didn't get around to returning
+        free pages to the system yet.
+
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::garbageCollectNow):
+
 2014-06-14  Zan Dobersek  <zdobersek@igalia.com>
 
         Generate HTTP header names that are required by WebKitWebSrc

@@ -31,6 +31,7 @@
 #include <runtime/JSLock.h>
 #include <heap/Heap.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/FastMalloc.h>
 
 using namespace JSC;
 
@@ -81,8 +82,10 @@ void GCController::gcTimerFired(Timer<GCController>*)
 void GCController::garbageCollectNow()
 {
     JSLockHolder lock(JSDOMWindow::commonVM());
-    if (!JSDOMWindow::commonVM().heap.isBusy())
+    if (!JSDOMWindow::commonVM().heap.isBusy()) {
         JSDOMWindow::commonVM().heap.collectAllGarbage();
+        WTF::releaseFastMallocFreeMemory();
+    }
 }
 
 void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone)
