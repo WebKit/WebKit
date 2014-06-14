@@ -1,3 +1,13 @@
+2014-06-14  Anders Carlsson  <andersca@apple.com>
+
+        Simplify ResourceRequest constructors
+        https://bugs.webkit.org/show_bug.cgi?id=133911
+
+        Reviewed by Sam Weinig.
+
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+
 2014-06-14  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix the ARM64 build
