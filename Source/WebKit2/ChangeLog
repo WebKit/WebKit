@@ -1,5 +1,12 @@
 2014-06-14  Dan Bernstein  <mitz@apple.com>
 
+        Reverted the last change, which broken the Mac build.
+
+        * UIProcess/GenericCallback.h:
+        (WebKit::invalidateCallbackMap):
+
+2014-06-14  Dan Bernstein  <mitz@apple.com>
+
         Tried to fix the GTK build.
 
         * UIProcess/GenericCallback.h:
