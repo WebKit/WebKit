@@ -29,9 +29,13 @@ Access-Control-Request-Method
 Authorization
 Cache-Control
 Connection
+Content-Language
 Content-Length
+Content-Security-Policy
+Content-Security-Policy-Report-Only
 Content-Type
 Cookie
+Default-Style
 Host
 If-Match
 If-Modified-Since
@@ -47,6 +51,7 @@ Purpose
 Pragma
 Range
 Referer
+Refresh
 Sec-WebSocket-Accept
 Sec-WebSocket-Extensions
 Sec-WebSocket-Key
@@ -56,7 +61,10 @@ Set-Cookie
 Set-Cookie2
 Upgrade
 User-Agent
+X-DNS-Prefetch-Control
 X-Frame-Options
+X-WebKit-CSP
+X-WebKit-CSP-Report-Only
 
 // These headers are specific to GStreamer.
 Icy-Metadata

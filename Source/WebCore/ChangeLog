@@ -1,3 +1,14 @@
+2014-06-14  Anders Carlsson  <andersca@apple.com>
+
+        Simplify Document::processHttpEquiv
+        https://bugs.webkit.org/show_bug.cgi?id=133910
+
+        Reviewed by Andreas Kling.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+        * platform/network/HTTPHeaderNames.in:
+
 2014-06-14  Andreas Kling  <akling@apple.com>
 
         GCController should return FastMalloc memory to the system.
