@@ -274,7 +274,7 @@ static void webkitPrintOperationPrintPagesForFrame(WebKitPrintOperation* printOp
     PrintInfo printInfo(printSettings, pageSetup, printOperation->priv->printMode);
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(printOperation->priv->webView));
     g_object_ref(printOperation);
-    page->drawPagesForPrinting(webFrame, printInfo, PrintFinishedCallback::create([printOperation](bool /*error*/, API::Error* printError) {
+    page->drawPagesForPrinting(webFrame, printInfo, PrintFinishedCallback::create([printOperation](API::Error* printError, CallbackBase::Error) {
         drawPagesForPrintingCompleted(printError, adoptGRef(printOperation).get());
     }));
 }

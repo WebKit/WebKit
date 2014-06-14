@@ -1,3 +1,19 @@
+2014-06-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix for the GTK+ port.
+        Fixing the callback lambda parameters after r169962.
+
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (webkitPrintOperationPrintPagesForFrame):
+        * UIProcess/API/gtk/WebKitWebResource.cpp:
+        (webkit_web_resource_get_data):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_can_execute_editing_command):
+        (webkit_web_view_run_javascript):
+        (resourcesStreamReadCallback):
+        (webkit_web_view_save):
+        (webkit_web_view_save_to_file):
+
 2014-06-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r169943 and r169946, use the format of set/get.
