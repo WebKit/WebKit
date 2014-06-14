@@ -1,3 +1,19 @@
+2014-06-13  Andreas Kling  <akling@apple.com>
+
+        REGRESSION (r167635): Reference leak in NetworkResourceLoader while loads are being deferred.
+        <https://webkit.org/b/133894>
+        <rdar://problem/17312299>
+
+        Don't self-ref() in start() until we actually start; if page loads are being
+        deferred, start() will be called again once deferral stops.
+
+        This was causing us to leak the entire NetworkResourceLoader object graph.
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+
 2014-06-13  Dan Bernstein  <mitz@apple.com>
 
         Make GenericCallback variadic

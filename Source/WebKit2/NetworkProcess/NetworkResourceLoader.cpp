@@ -121,16 +121,16 @@ void NetworkResourceLoader::start()
 {
     ASSERT(RunLoop::isMain());
 
+    if (m_defersLoading) {
+        m_deferredRequest = m_request;
+        return;
+    }
+
     // Explicit ref() balanced by a deref() in NetworkResourceLoader::cleanup()
     ref();
 
     // FIXME (NetworkProcess): Set platform specific settings.
     m_networkingContext = RemoteNetworkingContext::create(m_sessionID, m_shouldClearReferrerOnHTTPSToHTTPRedirect);
-
-    if (m_defersLoading) {
-        m_deferredRequest = m_request;
-        return;
-    }
 
     consumeSandboxExtensions();
 
