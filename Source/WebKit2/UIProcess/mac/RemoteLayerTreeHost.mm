@@ -32,11 +32,14 @@
 #import "ShareableBitmap.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import <QuartzCore/QuartzCore.h>
 #import <WebCore/PlatformLayer.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <WebKitSystemInterface.h>
 
-#import <QuartzCore/QuartzCore.h>
+#if PLATFORM(IOS)
+#import <UIKit/UIView.h>
+#endif
 
 using namespace WebCore;
 
@@ -140,7 +143,11 @@ void RemoteLayerTreeHost::clearLayers()
 {
     for (auto& idLayer : m_layers) {
         m_animationDelegates.remove(idLayer.key);
-        asLayer(idLayer.value.get()).contents = nullptr;
+#if PLATFORM(IOS)
+        [idLayer.value.get() removeFromSuperview];
+#else
+        [asLayer(idLayer.value.get()) removeFromSuperlayer];
+#endif
     }
 
     m_layers.clear();

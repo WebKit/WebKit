@@ -1,3 +1,13 @@
+2014-06-13  Martin Hock  <mhock@apple.com>
+
+        Clean up layers in RemoteLayerTreeHost::clearLayers().
+        https://bugs.webkit.org/show_bug.cgi?id=133888
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::clearLayers):
+
 2014-06-13  Anders Carlsson  <andersca@apple.com>
 
         Add a HTTPHeaderMap::get overload that takes an HTTPHeaderName
