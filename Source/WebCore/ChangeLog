@@ -1,3 +1,35 @@
+2014-06-13  Brent Fulgham  <bfulgham@apple.com>
+
+        Move utility functions from WebLayer to PlatformCALayer
+        https://bugs.webkit.org/show_bug.cgi?id=133887
+        <rdar://problem/17309622>
+
+        Reviewed by Simon Fraser.
+
+        Move some utility functions from WebLayer.h/.mm to PlatformCALayer.
+        Provide ObjC implementation in PlatformCALayerMac. A future patch will
+        provide corresponding Windows versions.
+
+        * WebCore.exp.in:
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::PlatformCALayer::drawRepaintIndicator):
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::blankPixelCountForTiles):
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::platformCALayerPaintContents):
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::collectRectsToPaint):
+        (PlatformCALayer::drawLayerContents):
+        (PlatformCALayer::frameForLayer):
+        * platform/graphics/mac/WebLayer.h:
+        * platform/graphics/mac/WebLayer.mm:
+        (-[WebLayer drawInContext:]):
+        (WebCore::collectRectsToPaint): Deleted.
+        (WebCore::drawLayerContents): Deleted.
+        (WebCore::drawRepaintIndicator): Deleted.
+        (WebCore::frameForLayer): Deleted.
+
 2014-06-13  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed disabling css jit on armv7.  It's not quite ready yet.

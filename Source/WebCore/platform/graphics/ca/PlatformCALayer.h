@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -226,7 +226,18 @@ public:
 
 #if PLATFORM(COCOA)
     virtual void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) = 0;
+
+    static const unsigned webLayerMaxRectsToPaint = 5;
+    constexpr static const float webLayerWastedSpaceThreshold = 0.75f;
+
+    typedef Vector<FloatRect, webLayerMaxRectsToPaint> RepaintRectList;
+        
+    // Functions allows us to share implementation across WebTiledLayer and WebLayer
+    static RepaintRectList collectRectsToPaint(CGContextRef, PlatformCALayer*);
+    static void drawLayerContents(CGContextRef, PlatformCALayer*, RepaintRectList& dirtyRects);
 #endif
+    static void drawRepaintIndicator(CGContextRef, PlatformCALayer*, int repaintCount, CGColorRef customBackgroundColor);
+    static CGRect frameForLayer(const PlatformLayer*);
 
 protected:
     PlatformCALayer(LayerType, PlatformCALayerClient* owner);

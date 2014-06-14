@@ -51,11 +51,16 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
+#import "WAKWindow.h"
+#import "WKGraphics.h"
 #import "WebCoreThread.h"
 #import "WebTiledLayer.h"
 #import <Foundation/NSGeometry.h>
 #import <QuartzCore/CATiledLayerPrivate.h>
+#else
+#import "ThemeMac.h"
 #endif
+
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
@@ -842,6 +847,116 @@ void PlatformCALayer::setTileSize(const IntSize& tileSize)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 #endif // PLATFORM(IOS)
+
+PlatformCALayer::RepaintRectList PlatformCALayer::collectRectsToPaint(CGContextRef context, PlatformCALayer* platformCALayer)
+{
+    __block double totalRectArea = 0;
+    __block unsigned rectCount = 0;
+    __block RepaintRectList dirtyRects;
+    
+    platformCALayer->enumerateRectsBeingDrawn(context, ^(CGRect rect) {
+        if (++rectCount > webLayerMaxRectsToPaint)
+            return;
+        
+        totalRectArea += rect.size.width * rect.size.height;
+        dirtyRects.append(rect);
+    });
+    
+    FloatRect clipBounds = CGContextGetClipBoundingBox(context);
+    double clipArea = clipBounds.width() * clipBounds.height();
+    
+    if (rectCount >= webLayerMaxRectsToPaint || totalRectArea >= clipArea * webLayerWastedSpaceThreshold) {
+        dirtyRects.clear();
+        dirtyRects.append(clipBounds);
+    }
+    
+    return dirtyRects;
+}
+
+void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformCALayer* platformCALayer, RepaintRectList& dirtyRects)
+{
+    WebCore::PlatformCALayerClient* layerContents = platformCALayer->owner();
+    if (!layerContents)
+        return;
+    
+#if PLATFORM(IOS)
+    WKSetCurrentGraphicsContext(context);
+#endif
+    
+    CGContextSaveGState(context);
+    
+    // We never use CompositingCoordinatesBottomUp on Mac.
+    ASSERT(layerContents->platformCALayerContentsOrientation() == GraphicsLayer::CompositingCoordinatesTopDown);
+    
+#if PLATFORM(IOS)
+    WKFontAntialiasingStateSaver fontAntialiasingState(context, [platformCALayer->platformLayer() isOpaque]);
+    fontAntialiasingState.setup([WAKWindow hasLandscapeOrientation]);
+#else
+    [NSGraphicsContext saveGraphicsState];
+    
+    // Set up an NSGraphicsContext for the context, so that parts of AppKit that rely on
+    // the current NSGraphicsContext (e.g. NSCell drawing) get the right one.
+    NSGraphicsContext* layerContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:YES];
+    [NSGraphicsContext setCurrentContext:layerContext];
+#endif
+    
+    GraphicsContext graphicsContext(context);
+    graphicsContext.setIsCALayerContext(true);
+    graphicsContext.setIsAcceleratedContext(platformCALayer->acceleratesDrawing());
+    
+    if (!layerContents->platformCALayerContentsOpaque()) {
+        // Turn off font smoothing to improve the appearance of text rendered onto a transparent background.
+        graphicsContext.setShouldSmoothFonts(false);
+    }
+    
+#if !PLATFORM(IOS)
+    // It's important to get the clip from the context, because it may be significantly
+    // smaller than the layer bounds (e.g. tiled layers)
+    FloatRect clipBounds = CGContextGetClipBoundingBox(context);
+    
+    FloatRect focusRingClipRect = clipBounds;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
+    // Set the focus ring clip rect which needs to be in base coordinates.
+    AffineTransform transform = CGContextGetCTM(context);
+    focusRingClipRect = transform.mapRect(clipBounds);
+#endif
+    ThemeMac::setFocusRingClipRect(focusRingClipRect);
+#endif // !PLATFORM(IOS)
+    
+    for (const auto& rect : dirtyRects) {
+        GraphicsContextStateSaver stateSaver(graphicsContext);
+        graphicsContext.clip(rect);
+        
+        layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, rect);
+    }
+    
+#if PLATFORM(IOS)
+    fontAntialiasingState.restore();
+#else
+    ThemeMac::setFocusRingClipRect(FloatRect());
+    
+    [NSGraphicsContext restoreGraphicsState];
+#endif
+    
+    // Re-fetch the layer owner, since <rdar://problem/9125151> indicates that it might have been destroyed during painting.
+    layerContents = platformCALayer->owner();
+    ASSERT(layerContents);
+    
+    CGContextRestoreGState(context);
+    
+    // Always update the repaint count so that it's accurate even if the count itself is not shown. This will be useful
+    // for the Web Inspector feeding this information through the LayerTreeAgent.
+    int repaintCount = layerContents->platformCALayerIncrementRepaintCount(platformCALayer);
+    
+    if (!platformCALayer->usesTiledBackingLayer() && layerContents && layerContents->platformCALayerShowRepaintCounter(platformCALayer))
+        drawRepaintIndicator(context, platformCALayer, repaintCount, nullptr);
+}
+
+CGRect PlatformCALayer::frameForLayer(const PlatformLayer* tileLayer)
+{
+    return [tileLayer frame];
+}
+
 
 PassRefPtr<PlatformCALayer> PlatformCALayerMac::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
 {

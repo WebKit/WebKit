@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,7 @@
 #ifndef WebLayer_h
 #define WebLayer_h
 
-#include "FloatRect.h"
-#include "PlatformLayer.h"
 #include <QuartzCore/QuartzCore.h>
-#include <wtf/Vector.h>
-
-const unsigned webLayerMaxRectsToPaint = 5;
-const float webLayerWastedSpaceThreshold = 0.75f;
 
 #ifdef __OBJC__
 @interface WebSimpleLayer : CALayer
@@ -41,19 +35,5 @@ const float webLayerWastedSpaceThreshold = 0.75f;
 @interface WebLayer : WebSimpleLayer
 @end
 #endif
-
-namespace WebCore {
-class GraphicsLayer;
-class PlatformCALayer;
-class PlatformCALayerClient;
-
-typedef Vector<FloatRect, webLayerMaxRectsToPaint> RepaintRectList;
-
-// Functions allows us to share implementation across WebTiledLayer and WebLayer
-RepaintRectList collectRectsToPaint(CGContextRef, PlatformCALayer*);
-void drawLayerContents(CGContextRef, PlatformCALayer*, RepaintRectList& dirtyRects);
-void drawRepaintIndicator(CGContextRef, PlatformCALayer*, int repaintCount, CGColorRef customBackgroundColor);
-CGRect frameForLayer(const PlatformLayer*);
-}
 
 #endif // WebLayer_h

@@ -30,7 +30,6 @@
 #include "LayerPool.h"
 #include "PlatformCALayer.h"
 #include "TileController.h"
-#include "WebLayer.h"
 #include <wtf/MainThread.h>
 
 #if PLATFORM(IOS)
@@ -651,13 +650,13 @@ void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, Gr
         context.translate(-layerOrigin.x(), -layerOrigin.y());
         context.scale(FloatSize(m_scale, m_scale));
 
-        RepaintRectList dirtyRects = collectRectsToPaint(context.platformContext(), platformCALayer);
-        drawLayerContents(context.platformContext(), &m_controller.rootLayer(), dirtyRects);
+        PlatformCALayer::RepaintRectList dirtyRects = PlatformCALayer::collectRectsToPaint(context.platformContext(), platformCALayer);
+        PlatformCALayer::drawLayerContents(context.platformContext(), &m_controller.rootLayer(), dirtyRects);
     }
 
     int repaintCount = platformCALayerIncrementRepaintCount(platformCALayer);
     if (m_controller.rootLayer().owner()->platformCALayerShowRepaintCounter(0))
-        drawRepaintIndicator(context.platformContext(), platformCALayer, repaintCount, cachedCGColor(m_controller.tileDebugBorderColor(), ColorSpaceDeviceRGB));
+        PlatformCALayer::drawRepaintIndicator(context.platformContext(), platformCALayer, repaintCount, cachedCGColor(m_controller.tileDebugBorderColor(), ColorSpaceDeviceRGB));
 
     if (m_controller.scrollingPerformanceLoggingEnabled()) {
         FloatRect visiblePart(platformCALayer->position().x(), platformCALayer->position().y(), platformCALayer->bounds().size().width(), platformCALayer->bounds().size().height());
