@@ -1,3 +1,18 @@
+2014-06-14  Anders Carlsson  <andersca@apple.com>
+
+        Replace some uses of ResourceRequestBase::addHTTPHeaderField with setHTTPHeaderField
+        https://bugs.webkit.org/show_bug.cgi?id=133907
+
+        Reviewed by Andreas Kling.
+
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::clientHandshakeRequest):
+        * platform/network/HTTPHeaderNames.in:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::applyBasicAuthorizationHeader):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::applyBasicAuthorizationHeader):
+
 2014-06-13  Anders Carlsson  <andersca@apple.com>
 
         Add a ResourceRequestBase::setHTTPHeaderField overload that takes a HTTPHeaderName

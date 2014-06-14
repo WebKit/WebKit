@@ -34,6 +34,7 @@
 #include "FormDataStreamCFNet.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "HTTPHeaderNames.h"
 #include "Logging.h"
 #include "NetworkingContext.h"
 #include "ResourceError.h"
@@ -95,8 +96,8 @@ static HashMap<String, RetainPtr<CFDataRef>>& clientCerts()
 static void applyBasicAuthorizationHeader(ResourceRequest& request, const Credential& credential)
 {
     String authenticationHeader = "Basic " + base64Encode(String(credential.user() + ":" + credential.password()).utf8());
-    request.clearHTTPAuthorization(); // FIXME: Should addHTTPHeaderField be smart enough to not build comma-separated lists in headers like Authorization?
-    request.addHTTPHeaderField("Authorization", authenticationHeader);
+
+    request.setHTTPHeaderField(HTTPHeaderName::Authorization, authenticationHeader);
 }
 
 ResourceHandleInternal::~ResourceHandleInternal()

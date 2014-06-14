@@ -31,6 +31,7 @@ Cache-Control
 Connection
 Content-Length
 Content-Type
+Cookie
 Host
 If-Match
 If-Modified-Since

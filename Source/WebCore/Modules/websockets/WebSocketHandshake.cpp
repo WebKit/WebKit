@@ -240,32 +240,32 @@ ResourceRequest WebSocketHandshake::clientHandshakeRequest() const
     ResourceRequest request(m_url);
     request.setHTTPMethod("GET");
 
-    request.addHTTPHeaderField("Connection", "Upgrade");
-    request.addHTTPHeaderField("Host", hostName(m_url, m_secure));
-    request.addHTTPHeaderField("Origin", clientOrigin());
+    request.setHTTPHeaderField(HTTPHeaderName::Connection, "Upgrade");
+    request.setHTTPHeaderField(HTTPHeaderName::Host, hostName(m_url, m_secure));
+    request.setHTTPHeaderField(HTTPHeaderName::Origin, clientOrigin());
     if (!m_clientProtocol.isEmpty())
-        request.addHTTPHeaderField("Sec-WebSocket-Protocol", m_clientProtocol);
+        request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketProtocol, m_clientProtocol);
 
     URL url = httpURLForAuthenticationAndCookies();
     if (m_context->isDocument()) {
         Document* document = toDocument(m_context);
         String cookie = cookieRequestHeaderFieldValue(document, url);
         if (!cookie.isEmpty())
-            request.addHTTPHeaderField("Cookie", cookie);
+            request.setHTTPHeaderField(HTTPHeaderName::Cookie, cookie);
         // Set "Cookie2: <cookie>" if cookies 2 exists for url?
     }
 
-    request.addHTTPHeaderField("Pragma", "no-cache");
-    request.addHTTPHeaderField("Cache-Control", "no-cache");
+    request.setHTTPHeaderField(HTTPHeaderName::Pragma, "no-cache");
+    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "no-cache");
 
-    request.addHTTPHeaderField("Sec-WebSocket-Key", m_secWebSocketKey);
-    request.addHTTPHeaderField("Sec-WebSocket-Version", "13");
+    request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketKey, m_secWebSocketKey);
+    request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketVersion, "13");
     const String extensionValue = m_extensionDispatcher.createHeaderValue();
     if (extensionValue.length())
-        request.addHTTPHeaderField("Sec-WebSocket-Extensions", extensionValue);
+        request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketExtensions, extensionValue);
 
     // Add a User-Agent header.
-    request.addHTTPHeaderField("User-Agent", m_context->userAgent(m_context->url()));
+    request.setHTTPHeaderField(HTTPHeaderName::UserAgent, m_context->userAgent(m_context->url()));
 
     return request;
 }
