@@ -1,3 +1,15 @@
+2014-06-14  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView selectedRangeWithCompletionHandler:]):
+        (-[WKView markedRangeWithCompletionHandler:]):
+        (-[WKView hasMarkedTextWithCompletionHandler:]):
+        (-[WKView attributedSubstringForProposedRange:completionHandler:]):
+        (-[WKView firstRectForCharacterRange:completionHandler:]):
+        (-[WKView characterIndexForPoint:completionHandler:]):
+
 2014-06-14  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed build fix for the GTK+ port.

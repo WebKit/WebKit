@@ -1464,9 +1464,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     RetainPtr<id> completionHandler = adoptNS([completionHandlerPtr copy]);
 
     LOG(TextInput, "selectedRange");
-    _data->_page->getSelectedRangeAsync(EditingRangeCallback::create([completionHandler](bool error, const EditingRange& editingRangeResult) {
+    _data->_page->getSelectedRangeAsync(EditingRangeCallback::create([completionHandler](const EditingRange& editingRangeResult, CallbackBase::Error error) {
         void (^completionHandlerBlock)(NSRange) = (void (^)(NSRange))completionHandler.get();
-        if (error) {
+        if (error != CallbackBase::Error::None) {
             LOG(TextInput, "    ...selectedRange failed.");
             completionHandlerBlock(NSMakeRange(NSNotFound, 0));
             return;
@@ -1485,9 +1485,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     RetainPtr<id> completionHandler = adoptNS([completionHandlerPtr copy]);
 
     LOG(TextInput, "markedRange");
-    _data->_page->getMarkedRangeAsync(EditingRangeCallback::create([completionHandler](bool error, const EditingRange& editingRangeResult) {
+    _data->_page->getMarkedRangeAsync(EditingRangeCallback::create([completionHandler](const EditingRange& editingRangeResult, CallbackBase::Error error) {
         void (^completionHandlerBlock)(NSRange) = (void (^)(NSRange))completionHandler.get();
-        if (error) {
+        if (error != CallbackBase::Error::None) {
             LOG(TextInput, "    ...markedRange failed.");
             completionHandlerBlock(NSMakeRange(NSNotFound, 0));
             return;
@@ -1506,9 +1506,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     RetainPtr<id> completionHandler = adoptNS([completionHandlerPtr copy]);
 
     LOG(TextInput, "hasMarkedText");
-    _data->_page->getMarkedRangeAsync(EditingRangeCallback::create([completionHandler](bool error, const EditingRange& editingRangeResult) {
+    _data->_page->getMarkedRangeAsync(EditingRangeCallback::create([completionHandler](const EditingRange& editingRangeResult, CallbackBase::Error error) {
         void (^completionHandlerBlock)(BOOL) = (void (^)(BOOL))completionHandler.get();
-        if (error) {
+        if (error != CallbackBase::Error::None) {
             LOG(TextInput, "    ...hasMarkedText failed.");
             completionHandlerBlock(NO);
             return;
@@ -1524,9 +1524,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     RetainPtr<id> completionHandler = adoptNS([completionHandlerPtr copy]);
 
     LOG(TextInput, "attributedSubstringFromRange:(%u, %u)", nsRange.location, nsRange.length);
-    _data->_page->attributedSubstringForCharacterRangeAsync(nsRange, AttributedStringForCharacterRangeCallback::create([completionHandler](bool error, const AttributedString& string, const EditingRange& actualRange) {
+    _data->_page->attributedSubstringForCharacterRangeAsync(nsRange, AttributedStringForCharacterRangeCallback::create([completionHandler](const AttributedString& string, const EditingRange& actualRange, CallbackBase::Error error) {
         void (^completionHandlerBlock)(NSAttributedString *, NSRange) = (void (^)(NSAttributedString *, NSRange))completionHandler.get();
-        if (error) {
+        if (error != CallbackBase::Error::None) {
             LOG(TextInput, "    ...attributedSubstringFromRange failed.");
             completionHandlerBlock(0, NSMakeRange(NSNotFound, 0));
             return;
@@ -1554,9 +1554,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         return;
     }
 
-    _data->_page->firstRectForCharacterRangeAsync(theRange, RectForCharacterRangeCallback::create([self, completionHandler](bool error, const IntRect& rect, const EditingRange& actualRange) {
+    _data->_page->firstRectForCharacterRangeAsync(theRange, RectForCharacterRangeCallback::create([self, completionHandler](const IntRect& rect, const EditingRange& actualRange, CallbackBase::Error error) {
         void (^completionHandlerBlock)(NSRect, NSRange) = (void (^)(NSRect, NSRange))completionHandler.get();
-        if (error) {
+        if (error != CallbackBase::Error::None) {
             LOG(TextInput, "    ...firstRectForCharacterRange failed.");
             completionHandlerBlock(NSZeroRect, NSMakeRange(NSNotFound, 0));
             return;
@@ -1585,9 +1585,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 #pragma clang diagnostic pop
     thePoint = [self convertPoint:thePoint fromView:nil];  // the point is relative to the main frame
 
-    _data->_page->characterIndexForPointAsync(IntPoint(thePoint), UnsignedCallback::create([completionHandler](bool error, uint64_t result) {
+    _data->_page->characterIndexForPointAsync(IntPoint(thePoint), UnsignedCallback::create([completionHandler](uint64_t result, CallbackBase::Error error) {
         void (^completionHandlerBlock)(NSUInteger) = (void (^)(NSUInteger))completionHandler.get();
-        if (error) {
+        if (error != CallbackBase::Error::None) {
             LOG(TextInput, "    ...characterIndexForPoint failed.");
             completionHandlerBlock(0);
             return;
