@@ -28,6 +28,7 @@
 
 #if USE(CURL)
 
+#include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
@@ -347,7 +348,7 @@ void MultipartHandle::didReceiveResponse()
         for (HTTPHeaderMap::const_iterator it = m_headers.begin(); it != end; ++it)
             response->setHTTPHeaderField(it->key, it->value);
 
-        String contentType = m_headers.get("Content-Type");
+        String contentType = m_headers.get(HTTPHeaderName::ContentType);
         String mimeType = extractMIMETypeFromMediaType(contentType);
 
         response->setMimeType(mimeType.lower());

@@ -31,6 +31,7 @@
 #include "CurlCacheEntry.h"
 
 #include "HTTPHeaderMap.h"
+#include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "Logging.h"
 #include "ResourceHandle.h"
@@ -333,11 +334,11 @@ bool CurlCacheEntry::parseResponseHeaders(const ResourceResponse& response)
 
     String etag = response.httpHeaderField("ETag");
     if (!etag.isNull())
-        m_requestHeaders.set("If-None-Match", etag);
+        m_requestHeaders.set(HTTPHeaderName::IfNoneMatch, etag);
 
     String lastModified = response.httpHeaderField("Last-Modified");
     if (!lastModified.isNull())
-        m_requestHeaders.set("If-Modified-Since", lastModified);
+        m_requestHeaders.set(HTTPHeaderName::IfModifiedSince, lastModified);
 
     if (etag.isNull() && lastModified.isNull())
         return false;

@@ -1,3 +1,17 @@
+2014-06-14  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Compile errors related to http headers.
+        https://bugs.webkit.org/show_bug.cgi?id=133901
+
+        Reviewed by Brent Fulgham.
+
+        Http headers should now be specified with an enum, not a string.
+
+        * platform/network/curl/CurlCacheEntry.cpp:
+        (WebCore::CurlCacheEntry::parseResponseHeaders):
+        * platform/network/curl/MultipartHandle.cpp:
+        (WebCore::MultipartHandle::didReceiveResponse):
+
 2014-06-14  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix after r169960.
