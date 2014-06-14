@@ -1,3 +1,10 @@
+2014-06-14  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix the ARM64 build
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::addFlagsToElementStyleFromContext):
+
 2014-06-13  Sam Weinig  <sam@webkit.org>
 
         Store DOM constants directly in the JS object rather than jumping through a custom accessor

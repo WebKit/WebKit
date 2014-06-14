@@ -1387,13 +1387,13 @@ void SelectorCodeGenerator::addFlagsToElementStyleFromContext(Assembler::Registe
     LocalRegister childStyle(m_registerAllocator);
     m_assembler.loadPtr(Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, elementStyle)), childStyle);
 
+    // FIXME: We should look into doing something smart in MacroAssembler instead.
     Assembler::Address flagAddress(childStyle, RenderStyle::noninheritedFlagsMemoryOffset() + RenderStyle::NonInheritedFlags::flagsMemoryOffset());
 #if CPU(ARM_THUMB2)
     Assembler::Address flagLowAddress(childStyle, RenderStyle::noninheritedFlagsMemoryOffset() + RenderStyle::NonInheritedFlags::flagsMemoryOffset() + 4);
     m_assembler.or32(Assembler::TrustedImm32(newFlag >> 32), flagAddress);
     m_assembler.or32(Assembler::TrustedImm32(newFlag & 0xFFFFFFFF), flagLowAddress);
-#elif CPU(X86_64) || CPU(ARM)
-    // FIXME: We should look into doing something smart in MacroAssembler instead.
+#elif CPU(X86_64) || CPU(ARM64)
     LocalRegister flags(m_registerAllocator);
     m_assembler.load64(flagAddress, flags);
     LocalRegister isFirstChildStateFlagImmediate(m_registerAllocator);
