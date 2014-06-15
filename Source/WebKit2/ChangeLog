@@ -1,3 +1,28 @@
+2014-06-15  Dan Bernstein  <mitz@apple.com>
+
+        Get rid of VoidAPICallback
+        https://bugs.webkit.org/show_bug.cgi?id=133928
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageForceRepaint): Wrap the API callback in a generic callback here.
+
+        * UIProcess/API/C/WKPluginSiteDataManager.cpp:
+        (WKPluginSiteDataManagerClearSiteData): Ditto.
+        (WKPluginSiteDataManagerClearAllSiteData): Ditto.
+
+        * UIProcess/GenericCallback.h:
+        (WebKit::GenericCallback::performCallback): Added this helper for 0-argument callbacks.
+        (WebKit::VoidCallback::create): Deleted.
+        (WebKit::VoidCallback::~VoidCallback): Deleted.
+        (WebKit::VoidCallback::performCallback): Deleted.
+        (WebKit::VoidCallback::invalidate): Deleted.
+        (WebKit::VoidCallback::VoidCallback): Deleted.
+        (WebKit::VoidAPICallback::create): Deleted.
+
+        * UIProcess/mac/WKFullScreenWindowController.h:
+
 2014-06-15  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed build fix for the GTK+ port after r169990.

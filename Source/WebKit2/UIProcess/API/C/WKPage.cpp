@@ -1611,7 +1611,9 @@ void WKPageGetContentsAsMHTMLData(WKPageRef pageRef, bool useBinaryEncoding, voi
 
 void WKPageForceRepaint(WKPageRef pageRef, void* context, WKPageForceRepaintFunction callback)
 {
-    toImpl(pageRef)->forceRepaint(VoidAPICallback::create(context, callback));
+    toImpl(pageRef)->forceRepaint(VoidCallback::create([context, callback](CallbackBase::Error error) {
+        callback(error == CallbackBase::Error::None ? nullptr : toAPI(API::Error::create().get()), context);
+    }));
 }
 
 WK_EXPORT WKURLRef WKPageCopyPendingAPIRequestURL(WKPageRef pageRef)

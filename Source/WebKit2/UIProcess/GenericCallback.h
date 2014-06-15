@@ -69,61 +69,6 @@ private:
     uint64_t m_callbackID;
 };
 
-class VoidCallback : public CallbackBase {
-public:
-    typedef std::function<void (Error)> CallbackFunction;
-
-    static PassRefPtr<VoidCallback> create(CallbackFunction callback)
-    {
-        return adoptRef(new VoidCallback(callback));
-    }
-
-    virtual ~VoidCallback()
-    {
-        ASSERT(!m_callback);
-    }
-
-    void performCallback()
-    {
-        if (!m_callback)
-            return;
-
-        m_callback(Error::None);
-
-        m_callback = nullptr;
-    }
-    
-    void invalidate(Error error)
-    {
-        if (!m_callback)
-            return;
-
-        m_callback(error);
-
-        m_callback = nullptr;
-    }
-
-private:
-    VoidCallback(CallbackFunction callback)
-        : m_callback(callback)
-    {
-    }
-
-    CallbackFunction m_callback;
-};
-
-class VoidAPICallback : public CallbackBase {
-public:
-    typedef void (*CallbackFunction)(WKErrorRef, void*);
-
-    static PassRefPtr<VoidCallback> create(void* context, CallbackFunction callback)
-    {
-        return VoidCallback::create([context, callback](Error error) {
-            callback(error != Error::None ? toAPI(API::Error::create().get()) : 0, context);
-        });
-    }
-};
-
 template<typename... T>
 class GenericCallback : public CallbackBase {
 public:
@@ -148,7 +93,12 @@ public:
 
         m_callback = nullptr;
     }
-    
+
+    void performCallback()
+    {
+        performCallbackWithReturnValue();
+    }
+
     void invalidate(Error error = Error::Unknown)
     {
         if (!m_callback)
@@ -176,6 +126,7 @@ static typename GenericCallback<InternalReturnValueType>::CallbackFunction toGen
     };
 }
 
+typedef GenericCallback<> VoidCallback;
 typedef GenericCallback<const Vector<WebCore::IntRect>&, double> ComputedPagesCallback;
 typedef GenericCallback<const ShareableBitmap::Handle&> ImageCallback;
 

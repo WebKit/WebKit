@@ -25,12 +25,12 @@
 
 #if ENABLE(FULLSCREEN_API)
 
+#import "GenericCallback.h"
 #import <wtf/OwnPtr.h>
 #import <wtf/RetainPtr.h>
 
 namespace WebKit { 
 class LayerTreeContext;
-class VoidCallback;
 }
 
 namespace WebCore {
