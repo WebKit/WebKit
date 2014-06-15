@@ -186,7 +186,7 @@ class QuickLookDocumentData;
 
 typedef GenericCallback<uint64_t> UnsignedCallback;
 typedef GenericCallback<EditingRange> EditingRangeCallback;
-typedef GenericCallback<StringImpl*> StringCallback;
+typedef GenericCallback<const String&> StringCallback;
 typedef GenericCallback<WebSerializedScriptValue*> ScriptValueCallback;
 
 #if PLATFORM(GTK)
@@ -204,7 +204,7 @@ struct QueuedTouchEvents {
 };
 #endif
 
-typedef GenericCallback<StringImpl*, bool, int32_t> ValidateCommandCallback;
+typedef GenericCallback<const String&, bool, int32_t> ValidateCommandCallback;
 typedef GenericCallback<const WebCore::IntRect&, const EditingRange&> RectForCharacterRangeCallback;
 
 #if PLATFORM(MAC)

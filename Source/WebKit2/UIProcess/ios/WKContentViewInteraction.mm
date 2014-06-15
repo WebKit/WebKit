@@ -1210,14 +1210,13 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (void)_define:(id)sender
 {
-    _page->getSelectionOrContentsAsString(StringCallback::create([self](StringImpl* string, CallbackBase::Error error) {
+    _page->getSelectionOrContentsAsString(StringCallback::create([self](const String& string, CallbackBase::Error error) {
         if (error != CallbackBase::Error::None)
             return;
         if (!string)
             return;
 
-        NSString *convertedString = *string;
-        [self _showDictionary:convertedString];
+        [self _showDictionary:string];
     }));
 }
 
@@ -1557,8 +1556,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         return;
     }
     _autocorrectionData.autocorrectionHandler = [completionHandler copy];
-    _page->applyAutocorrection(correction, input, StringCallback::create([self](StringImpl* string, CallbackBase::Error error) {
-        _autocorrectionData.autocorrectionHandler(string ? [WKAutocorrectionRects autocorrectionRectsWithRects:_autocorrectionData.textFirstRect lastRect:_autocorrectionData.textLastRect] : nil);
+    _page->applyAutocorrection(correction, input, StringCallback::create([self](const String& string, CallbackBase::Error error) {
+        _autocorrectionData.autocorrectionHandler(!string.isNull() ? [WKAutocorrectionRects autocorrectionRectsWithRects:_autocorrectionData.textFirstRect lastRect:_autocorrectionData.textLastRect] : nil);
         [_autocorrectionData.autocorrectionHandler release];
         _autocorrectionData.autocorrectionHandler = nil;
     }));
