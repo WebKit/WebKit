@@ -1,3 +1,9 @@
+2014-06-15  Dan Bernstein  <mitz@apple.com>
+
+        Set the svn:ignore property on an Xcode project to ignore user and workspace data.
+
+        * jsc-cli/jsc-cli.xcodeproj: Added property svn:ignore.
+
 2014-06-15  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
