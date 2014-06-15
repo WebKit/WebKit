@@ -104,6 +104,20 @@ static void expectScriptValueIsUndefined(WKSerializedScriptValueRef serializedSc
     JSGlobalContextRelease(scriptContext);
 }
 
+typedef void (^RunJavaScriptBlock)(WKSerializedScriptValueRef, WKErrorRef);
+
+static void callRunJavaScriptBlockAndRelease(WKSerializedScriptValueRef resultValue, WKErrorRef error, void* context)
+{
+    auto block = (RunJavaScriptBlock)context;
+    block(resultValue, error);
+    Block_release(block);
+}
+
+static void runJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, RunJavaScriptBlock block)
+{
+    WKPageRunJavaScriptInMainFrame(pageRef, scriptRef, Block_copy(block), callRunJavaScriptBlockAndRelease);
+}
+
 TEST_F(WebKit2UserContentTest, AddUserStyleSheetBeforeCreatingView)
 {
     testFinished = false;
@@ -112,7 +126,7 @@ TEST_F(WebKit2UserContentTest, AddUserStyleSheetBeforeCreatingView)
     WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
     WKStringRef backgroundColorQuery = WKStringCreateWithUTF8CString(backgroundColorScript);
     wkView.browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
-        WKPageRunJavaScriptInMainFrame_b(wkView.pageRef, backgroundColorQuery, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
+        runJavaScriptInMainFrame(wkView.pageRef, backgroundColorQuery, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
             expectScriptValueIsString(serializedScriptValue, greenInRGB);
             testFinished = true;
             WKRelease(backgroundColorQuery);
@@ -131,7 +145,7 @@ TEST_F(WebKit2UserContentTest, AddUserStyleSheetAfterCreatingView)
     WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
     WKStringRef backgroundColorQuery = WKStringCreateWithUTF8CString(backgroundColorScript);
     wkView.browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
-        WKPageRunJavaScriptInMainFrame_b(wkView.pageRef, backgroundColorQuery, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
+        runJavaScriptInMainFrame(wkView.pageRef, backgroundColorQuery, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
             expectScriptValueIsString(serializedScriptValue, greenInRGB);
             testFinished = true;
             WKRelease(backgroundColorQuery);
@@ -153,7 +167,7 @@ TEST_F(WebKit2UserContentTest, RemoveAllUserStyleSheets)
     WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
     WKStringRef backgroundColorQuery = WKStringCreateWithUTF8CString(backgroundColorScript);
     wkView.browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
-        WKPageRunJavaScriptInMainFrame_b(wkView.pageRef, backgroundColorQuery, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
+        runJavaScriptInMainFrame(wkView.pageRef, backgroundColorQuery, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
             expectScriptValueIsString(serializedScriptValue, redInRGB);
             testFinished = true;
             WKRelease(backgroundColorQuery);
@@ -175,7 +189,7 @@ TEST_F(WebKit2UserContentTest, AddUserScriptBeforeCreatingView)
     WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
     WKStringRef userScriptTestPropertyString = WKStringCreateWithUTF8CString(userScriptTestProperty);
     wkView.browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
-        WKPageRunJavaScriptInMainFrame_b(wkView.pageRef, userScriptTestPropertyString, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
+        runJavaScriptInMainFrame(wkView.pageRef, userScriptTestPropertyString, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
             expectScriptValueIsBoolean(serializedScriptValue, true);
             testFinished = true;
             WKRelease(userScriptTestPropertyString);
@@ -194,7 +208,7 @@ TEST_F(WebKit2UserContentTest, AddUserScriptAfterCreatingView)
     WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
     WKStringRef userScriptTestPropertyString = WKStringCreateWithUTF8CString(userScriptTestProperty);
     wkView.browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
-        WKPageRunJavaScriptInMainFrame_b(wkView.pageRef, userScriptTestPropertyString, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
+        runJavaScriptInMainFrame(wkView.pageRef, userScriptTestPropertyString, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
             expectScriptValueIsBoolean(serializedScriptValue, true);
             testFinished = true;
             WKRelease(userScriptTestPropertyString);
@@ -216,7 +230,7 @@ TEST_F(WebKit2UserContentTest, RemoveAllUserScripts)
     WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
     WKStringRef userScriptTestPropertyString = WKStringCreateWithUTF8CString(userScriptTestProperty);
     wkView.browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
-        WKPageRunJavaScriptInMainFrame_b(wkView.pageRef, userScriptTestPropertyString, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
+        runJavaScriptInMainFrame(wkView.pageRef, userScriptTestPropertyString, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
             expectScriptValueIsUndefined(serializedScriptValue);
             testFinished = true;
             WKRelease(userScriptTestPropertyString);

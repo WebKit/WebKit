@@ -1,3 +1,12 @@
+2014-06-15  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * TestWebKitAPI/Tests/WebKit2ObjC/UserContentTest.mm:
+        (callRunJavaScriptBlockAndRelease):
+        (runJavaScriptInMainFrame):
+        (TEST_F):
+
 2014-06-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Create MSE and EME watchlist
