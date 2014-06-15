@@ -1,3 +1,11 @@
+2014-06-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix for the GTK+ port after r169987.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_can_execute_editing_command): The first passed-in parameter
+        is now a reference to a const String object.
+
 2014-06-14  Dan Bernstein  <mitz@apple.com>
 
         Replace StringImpl* callback parameters with const String&

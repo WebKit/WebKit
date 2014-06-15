@@ -2513,7 +2513,7 @@ void webkit_web_view_can_execute_editing_command(WebKitWebView* webView, const c
     g_return_if_fail(command);
 
     GTask* task = g_task_new(webView, cancellable, callback, userData);
-    getPage(webView)->validateCommand(String::fromUTF8(command), ValidateCommandCallback::create([task](StringImpl*, bool isEnabled, int32_t, CallbackBase::Error) {
+    getPage(webView)->validateCommand(String::fromUTF8(command), ValidateCommandCallback::create([task](const String&, bool isEnabled, int32_t, CallbackBase::Error) {
         g_task_return_boolean(adoptGRef(task).get(), isEnabled);        
     }));
 }
