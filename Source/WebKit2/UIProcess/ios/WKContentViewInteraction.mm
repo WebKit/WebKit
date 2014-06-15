@@ -1210,8 +1210,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (void)_define:(id)sender
 {
-    _page->getSelectionOrContentsAsString(StringCallback::create([self](bool error, StringImpl* string) {
-        if (error)
+    _page->getSelectionOrContentsAsString(StringCallback::create([self](StringImpl* string, CallbackBase::Error error) {
+        if (error != CallbackBase::Error::None)
             return;
         if (!string)
             return;
@@ -1396,9 +1396,9 @@ static inline SelectionHandlePosition toSelectionHandlePosition(UIWKHandlePositi
     }
 }
 
-static void selectionChangedWithGesture(bool error, WKContentView *view, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags)
+static void selectionChangedWithGesture(WKContentView *view, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, CallbackBase::Error error)
 {
-    if (error) {
+    if (error != CallbackBase::Error::None) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -1408,9 +1408,9 @@ static void selectionChangedWithGesture(bool error, WKContentView *view, const W
         [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((GestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<GestureRecognizerState>(gestureState)) withFlags:(toUIWKSelectionFlags((SelectionFlags)flags))];
 }
 
-static void selectionChangedWithTouch(bool error, WKContentView *view, const WebCore::IntPoint& point, uint32_t touch)
+static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoint& point, uint32_t touch, CallbackBase::Error error)
 {
-    if (error) {
+    if (error != CallbackBase::Error::None) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -1430,8 +1430,8 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state
 {
     _usingGestureForSelection = YES;
-    _page->selectWithGesture(WebCore::IntPoint(point), CharacterGranularity, static_cast<uint32_t>(toGestureType(gestureType)), static_cast<uint32_t>(toGestureRecognizerState(state)), GestureCallback::create([self, state](bool error, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags) {
-        selectionChangedWithGesture(error, self, point, gestureType, gestureState, flags);
+    _page->selectWithGesture(WebCore::IntPoint(point), CharacterGranularity, static_cast<uint32_t>(toGestureType(gestureType)), static_cast<uint32_t>(toGestureRecognizerState(state)), GestureCallback::create([self, state](const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, CallbackBase::Error error) {
+        selectionChangedWithGesture(self, point, gestureType, gestureState, flags, error);
         if (state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled)
             _usingGestureForSelection = NO;
     }));
@@ -1440,8 +1440,8 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 - (void)changeSelectionWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch baseIsStart:(BOOL)baseIsStart
 {
     _usingGestureForSelection = YES;
-    _page->updateSelectionWithTouches(WebCore::IntPoint(point), static_cast<uint32_t>(toSelectionTouch(touch)), baseIsStart, TouchesCallback::create([self, touch](bool error, const WebCore::IntPoint& point, uint32_t touch) {
-        selectionChangedWithTouch(error, self, point, touch);
+    _page->updateSelectionWithTouches(WebCore::IntPoint(point), static_cast<uint32_t>(toSelectionTouch(touch)), baseIsStart, TouchesCallback::create([self, touch](const WebCore::IntPoint& point, uint32_t touch, CallbackBase::Error error) {
+        selectionChangedWithTouch(self, point, touch, error);
         if (touch != UIWKSelectionTouchStarted && touch != UIWKSelectionTouchMoved)
             _usingGestureForSelection = NO;
     }));
@@ -1450,8 +1450,8 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 - (void)changeSelectionWithTouchesFrom:(CGPoint)from to:(CGPoint)to withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState
 {
     _usingGestureForSelection = YES;
-    _page->selectWithTwoTouches(WebCore::IntPoint(from), WebCore::IntPoint(to), static_cast<uint32_t>(toGestureType(gestureType)), static_cast<uint32_t>(toGestureRecognizerState(gestureState)), GestureCallback::create([self, gestureState](bool error, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags) {
-        selectionChangedWithGesture(error, self, point, gestureType, gestureState, flags);
+    _page->selectWithTwoTouches(WebCore::IntPoint(from), WebCore::IntPoint(to), static_cast<uint32_t>(toGestureType(gestureType)), static_cast<uint32_t>(toGestureRecognizerState(gestureState)), GestureCallback::create([self, gestureState](const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, CallbackBase::Error error) {
+        selectionChangedWithGesture(self, point, gestureType, gestureState, flags, error);
         if (gestureState == UIGestureRecognizerStateEnded || gestureState == UIGestureRecognizerStateCancelled)
             _usingGestureForSelection = NO;
     }));
@@ -1557,7 +1557,7 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
         return;
     }
     _autocorrectionData.autocorrectionHandler = [completionHandler copy];
-    _page->applyAutocorrection(correction, input, StringCallback::create([self](bool /*error*/, StringImpl* string) {
+    _page->applyAutocorrection(correction, input, StringCallback::create([self](StringImpl* string, CallbackBase::Error error) {
         _autocorrectionData.autocorrectionHandler(string ? [WKAutocorrectionRects autocorrectionRectsWithRects:_autocorrectionData.textFirstRect lastRect:_autocorrectionData.textLastRect] : nil);
         [_autocorrectionData.autocorrectionHandler release];
         _autocorrectionData.autocorrectionHandler = nil;

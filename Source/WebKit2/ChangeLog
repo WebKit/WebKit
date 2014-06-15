@@ -1,5 +1,18 @@
 2014-06-14  Dan Bernstein  <mitz@apple.com>
 
+        Additional iOS build fix.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _define:]):
+        (selectionChangedWithGesture):
+        (selectionChangedWithTouch):
+        (-[WKContentView changeSelectionWithGestureAt:withGesture:withState:]):
+        (-[WKContentView changeSelectionWithTouchAt:withSelectionTouch:baseIsStart:]):
+        (-[WKContentView changeSelectionWithTouchesFrom:to:withGesture:withState:]):
+        (-[WKContentView applyAutocorrection:toString:withCompletionHandler:]):
+
+2014-06-14  Dan Bernstein  <mitz@apple.com>
+
         iOS build fix.
 
         * UIProcess/API/Cocoa/WKWebView.mm:
