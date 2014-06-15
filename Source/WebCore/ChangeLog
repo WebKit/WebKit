@@ -1,5 +1,27 @@
 2014-06-14  Anders Carlsson  <andersca@apple.com>
 
+        Adopt HTTPHeaderName in ResourceResponseBase
+        https://bugs.webkit.org/show_bug.cgi?id=133919
+
+        Reviewed by Sam Weinig.
+
+        * platform/network/HTTPHeaderNames.in:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::updateHeaderParsedState):
+        (WebCore::ResourceResponseBase::setHTTPHeaderField):
+        (WebCore::ResourceResponseBase::addHTTPHeaderField):
+        (WebCore::ResourceResponseBase::parseCacheControlDirectives):
+        (WebCore::ResourceResponseBase::hasCacheValidatorFields):
+        (WebCore::parseDateValueInHeader):
+        (WebCore::ResourceResponseBase::date):
+        (WebCore::ResourceResponseBase::age):
+        (WebCore::ResourceResponseBase::expires):
+        (WebCore::ResourceResponseBase::lastModified):
+        (WebCore::ResourceResponseBase::isAttachment):
+        * platform/network/ResourceResponseBase.h:
+
+2014-06-14  Anders Carlsson  <andersca@apple.com>
+
         Simplify ResourceRequest constructors
         https://bugs.webkit.org/show_bug.cgi?id=133911
 

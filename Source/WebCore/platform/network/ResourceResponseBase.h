@@ -168,7 +168,7 @@ public:
 private:
     const ResourceResponse& asResourceResponse() const;
     void parseCacheControlDirectives() const;
-    void updateHeaderParsedState(const AtomicString& name);
+    void updateHeaderParsedState(HTTPHeaderName);
 
     mutable bool m_haveParsedCacheControlHeader : 1;
     mutable bool m_haveParsedAgeHeader : 1;

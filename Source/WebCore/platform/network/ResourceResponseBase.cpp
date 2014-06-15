@@ -27,11 +27,13 @@
 #include "config.h"
 #include "ResourceResponseBase.h"
 
+#include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "ResourceResponse.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -285,32 +287,42 @@ String ResourceResponseBase::httpHeaderField(const char* name) const
     return m_httpHeaderFields.get(name); 
 }
 
-void ResourceResponseBase::updateHeaderParsedState(const AtomicString& name)
+void ResourceResponseBase::updateHeaderParsedState(HTTPHeaderName name)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, ageHeader, ("age", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, cacheControlHeader, ("cache-control", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, dateHeader, ("date", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, expiresHeader, ("expires", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, lastModifiedHeader, ("last-modified", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, pragmaHeader, ("pragma", AtomicString::ConstructFromLiteral));
-
-    if (equalIgnoringCase(name, ageHeader))
+    switch (name) {
+    case HTTPHeaderName::Age:
         m_haveParsedAgeHeader = false;
-    else if (equalIgnoringCase(name, cacheControlHeader) || equalIgnoringCase(name, pragmaHeader))
+        break;
+
+    case HTTPHeaderName::CacheControl:
+    case HTTPHeaderName::Pragma:
         m_haveParsedCacheControlHeader = false;
-    else if (equalIgnoringCase(name, dateHeader))
+        break;
+
+    case HTTPHeaderName::Date:
         m_haveParsedDateHeader = false;
-    else if (equalIgnoringCase(name, expiresHeader))
+        break;
+
+    case HTTPHeaderName::Expires:
         m_haveParsedExpiresHeader = false;
-    else if (equalIgnoringCase(name, lastModifiedHeader))
+        break;
+
+    case HTTPHeaderName::LastModified:
         m_haveParsedLastModifiedHeader = false;
+        break;
+
+    default:
+        break;
+    }
 }
 
 void ResourceResponseBase::setHTTPHeaderField(const AtomicString& name, const String& value)
 {
     lazyInit(CommonAndUncommonFields);
 
-    updateHeaderParsedState(name);
+    HTTPHeaderName headerName;
+    if (findHTTPHeaderName(name.string(), headerName))
+        updateHeaderParsedState(headerName);
 
     m_httpHeaderFields.set(name, value);
 
@@ -321,7 +333,9 @@ void ResourceResponseBase::addHTTPHeaderField(const AtomicString& name, const St
 {
     lazyInit(CommonAndUncommonFields);
 
-    updateHeaderParsedState(name);
+    HTTPHeaderName headerName;
+    if (findHTTPHeaderName(name.string(), headerName))
+        updateHeaderParsedState(headerName);
 
     m_httpHeaderFields.add(name, value);
 }
@@ -345,13 +359,7 @@ void ResourceResponseBase::parseCacheControlDirectives() const
     m_cacheControlContainsNoCache = false;
     m_cacheControlMaxAge = std::numeric_limits<double>::quiet_NaN();
 
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, cacheControlString, ("cache-control", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, noCacheDirective, ("no-cache", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, noStoreDirective, ("no-store", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, mustRevalidateDirective, ("must-revalidate", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, maxAgeDirective, ("max-age", AtomicString::ConstructFromLiteral));
-
-    String cacheControlValue = m_httpHeaderFields.get(cacheControlString);
+    String cacheControlValue = m_httpHeaderFields.get(HTTPHeaderName::CacheControl);
     if (!cacheControlValue.isEmpty()) {
         Vector<std::pair<String, String>> directives;
         parseCacheHeader(cacheControlValue, directives);
@@ -360,13 +368,13 @@ void ResourceResponseBase::parseCacheControlDirectives() const
         for (size_t i = 0; i < directivesSize; ++i) {
             // RFC2616 14.9.1: A no-cache directive with a value is only meaningful for proxy caches.
             // It should be ignored by a browser level cache.
-            if (equalIgnoringCase(directives[i].first, noCacheDirective) && directives[i].second.isEmpty())
+            if (equalIgnoringCase(directives[i].first, "no-cache") && directives[i].second.isEmpty())
                 m_cacheControlContainsNoCache = true;
-            else if (equalIgnoringCase(directives[i].first, noStoreDirective))
+            else if (equalIgnoringCase(directives[i].first, "no-store"))
                 m_cacheControlContainsNoStore = true;
-            else if (equalIgnoringCase(directives[i].first, mustRevalidateDirective))
+            else if (equalIgnoringCase(directives[i].first, "must-revalidate"))
                 m_cacheControlContainsMustRevalidate = true;
-            else if (equalIgnoringCase(directives[i].first, maxAgeDirective)) {
+            else if (equalIgnoringCase(directives[i].first, "max-age")) {
                 if (!std::isnan(m_cacheControlMaxAge)) {
                     // First max-age directive wins if there are multiple ones.
                     continue;
@@ -383,10 +391,9 @@ void ResourceResponseBase::parseCacheControlDirectives() const
         // Handle Pragma: no-cache
         // This is deprecated and equivalent to Cache-control: no-cache
         // Don't bother tokenizing the value, it is not important
-        DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, pragmaHeader, ("pragma", AtomicString::ConstructFromLiteral));
-        String pragmaValue = m_httpHeaderFields.get(pragmaHeader);
+        String pragmaValue = m_httpHeaderFields.get(HTTPHeaderName::Pragma);
 
-        m_cacheControlContainsNoCache = pragmaValue.lower().contains(noCacheDirective);
+        m_cacheControlContainsNoCache = pragmaValue.contains("no-cache", false);
     }
 }
     
@@ -415,9 +422,7 @@ bool ResourceResponseBase::hasCacheValidatorFields() const
 {
     lazyInit(CommonFieldsOnly);
 
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, lastModifiedHeader, ("last-modified", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, eTagHeader, ("etag", AtomicString::ConstructFromLiteral));
-    return !m_httpHeaderFields.get(lastModifiedHeader).isEmpty() || !m_httpHeaderFields.get(eTagHeader).isEmpty();
+    return !m_httpHeaderFields.get(HTTPHeaderName::LastModified).isEmpty() || !m_httpHeaderFields.get(HTTPHeaderName::ETag).isEmpty();
 }
 
 double ResourceResponseBase::cacheControlMaxAge() const
@@ -427,7 +432,7 @@ double ResourceResponseBase::cacheControlMaxAge() const
     return m_cacheControlMaxAge;
 }
 
-static double parseDateValueInHeader(const HTTPHeaderMap& headers, const AtomicString& headerName)
+static double parseDateValueInHeader(const HTTPHeaderMap& headers, HTTPHeaderName headerName)
 {
     String headerValue = headers.get(headerName);
     if (headerValue.isEmpty())
@@ -447,8 +452,7 @@ double ResourceResponseBase::date() const
     lazyInit(CommonFieldsOnly);
 
     if (!m_haveParsedDateHeader) {
-        DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("date", AtomicString::ConstructFromLiteral));
-        m_date = parseDateValueInHeader(m_httpHeaderFields, headerName);
+        m_date = parseDateValueInHeader(m_httpHeaderFields, HTTPHeaderName::Date);
         m_haveParsedDateHeader = true;
     }
     return m_date;
@@ -459,8 +463,7 @@ double ResourceResponseBase::age() const
     lazyInit(CommonFieldsOnly);
 
     if (!m_haveParsedAgeHeader) {
-        DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("age", AtomicString::ConstructFromLiteral));
-        String headerValue = m_httpHeaderFields.get(headerName);
+        String headerValue = m_httpHeaderFields.get(HTTPHeaderName::Age);
         bool ok;
         m_age = headerValue.toDouble(&ok);
         if (!ok)
@@ -475,8 +478,7 @@ double ResourceResponseBase::expires() const
     lazyInit(CommonFieldsOnly);
 
     if (!m_haveParsedExpiresHeader) {
-        DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("expires", AtomicString::ConstructFromLiteral));
-        m_expires = parseDateValueInHeader(m_httpHeaderFields, headerName);
+        m_expires = parseDateValueInHeader(m_httpHeaderFields, HTTPHeaderName::Expires);
         m_haveParsedExpiresHeader = true;
     }
     return m_expires;
@@ -487,8 +489,7 @@ double ResourceResponseBase::lastModified() const
     lazyInit(CommonFieldsOnly);
 
     if (!m_haveParsedLastModifiedHeader) {
-        DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("last-modified", AtomicString::ConstructFromLiteral));
-        m_lastModified = parseDateValueInHeader(m_httpHeaderFields, headerName);
+        m_lastModified = parseDateValueInHeader(m_httpHeaderFields, HTTPHeaderName::LastModified);
         m_haveParsedLastModifiedHeader = true;
     }
     return m_lastModified;
@@ -498,14 +499,13 @@ bool ResourceResponseBase::isAttachment() const
 {
     lazyInit(CommonAndUncommonFields);
 
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("content-disposition", AtomicString::ConstructFromLiteral));
-    String value = m_httpHeaderFields.get(headerName);
+    String value = m_httpHeaderFields.get(HTTPHeaderName::ContentDisposition);
     size_t loc = value.find(';');
     if (loc != notFound)
         value = value.left(loc);
     value = value.stripWhiteSpace();
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, attachmentString, ("attachment", AtomicString::ConstructFromLiteral));
-    return equalIgnoringCase(value, attachmentString);
+
+    return equalIgnoringCase(value, "attachment");
 }
   
 bool ResourceResponseBase::wasCached() const
