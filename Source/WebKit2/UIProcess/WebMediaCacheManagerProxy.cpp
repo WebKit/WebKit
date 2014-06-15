@@ -58,12 +58,12 @@ WebMediaCacheManagerProxy::~WebMediaCacheManagerProxy()
 
 void WebMediaCacheManagerProxy::contextDestroyed()
 {
-    invalidateCallbackMap(m_arrayCallbacks);
+    invalidateCallbackMap(m_arrayCallbacks, CallbackBase::Error::OwnerWasInvalidated);
 }
 
 void WebMediaCacheManagerProxy::processDidClose(WebProcessProxy*)
 {
-    invalidateCallbackMap(m_arrayCallbacks);
+    invalidateCallbackMap(m_arrayCallbacks, CallbackBase::Error::ProcessExited);
 }
 
 bool WebMediaCacheManagerProxy::shouldTerminate(WebProcessProxy*) const

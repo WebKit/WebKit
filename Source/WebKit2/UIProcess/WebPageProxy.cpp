@@ -2335,7 +2335,8 @@ void WebPageProxy::forceRepaint(PassRefPtr<VoidCallback> prpCallback)
 {
     RefPtr<VoidCallback> callback = prpCallback;
     if (!isValid()) {
-        callback->invalidate();
+        // FIXME: If the page is invalid we should not call the callback. It'd be better to just return false from forceRepaint.
+        callback->invalidate(CallbackBase::Error::OwnerWasInvalidated);
         return;
     }
 
@@ -4278,19 +4279,19 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
         break;
     }
 
-    invalidateCallbackMap(m_voidCallbacks);
-    invalidateCallbackMap(m_dataCallbacks);
-    invalidateCallbackMap(m_imageCallbacks);
-    invalidateCallbackMap(m_stringCallbacks);
+    invalidateCallbackMap(m_voidCallbacks, error);
+    invalidateCallbackMap(m_dataCallbacks, error);
+    invalidateCallbackMap(m_imageCallbacks, error);
+    invalidateCallbackMap(m_stringCallbacks, error);
     m_loadDependentStringCallbackIDs.clear();
     invalidateCallbackMap(m_scriptValueCallbacks, error);
-    invalidateCallbackMap(m_computedPagesCallbacks);
-    invalidateCallbackMap(m_validateCommandCallbacks);
-    invalidateCallbackMap(m_unsignedCallbacks);
-    invalidateCallbackMap(m_editingRangeCallbacks);
-    invalidateCallbackMap(m_rectForCharacterRangeCallbacks);
+    invalidateCallbackMap(m_computedPagesCallbacks, error);
+    invalidateCallbackMap(m_validateCommandCallbacks, error);
+    invalidateCallbackMap(m_unsignedCallbacks, error);
+    invalidateCallbackMap(m_editingRangeCallbacks, error);
+    invalidateCallbackMap(m_rectForCharacterRangeCallbacks, error);
 #if PLATFORM(MAC)
-    invalidateCallbackMap(m_attributedStringForCharacterRangeCallbacks);
+    invalidateCallbackMap(m_attributedStringForCharacterRangeCallbacks, error);
 #endif
 #if PLATFORM(IOS)
     invalidateCallbackMap(m_gestureCallbacks);

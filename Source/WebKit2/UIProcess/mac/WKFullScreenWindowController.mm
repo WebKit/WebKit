@@ -111,7 +111,7 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     if (_repaintCallback) {
-        _repaintCallback->invalidate();
+        _repaintCallback->invalidate(CallbackBase::Error::OwnerWasInvalidated);
         // invalidate() calls completeFinishExitFullScreenAnimationAfterRepaint, which
         // clears _repaintCallback.
         ASSERT(!_repaintCallback);
@@ -409,12 +409,12 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     [self _manager]->restoreScrollPosition();
 
     if (_repaintCallback) {
-        _repaintCallback->invalidate();
+        _repaintCallback->invalidate(CallbackBase::Error::OwnerWasInvalidated);
         // invalidate() calls completeFinishExitFullScreenAnimationAfterRepaint, which
         // clears _repaintCallback.
         ASSERT(!_repaintCallback);
     }
-    _repaintCallback = VoidCallback::create([self](bool) {
+    _repaintCallback = VoidCallback::create([self](CallbackBase::Error) {
         [self completeFinishExitFullScreenAnimationAfterRepaint];
     });
     [self _page]->forceRepaint(_repaintCallback);

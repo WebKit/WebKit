@@ -57,12 +57,12 @@ WebOriginDataManagerProxy::~WebOriginDataManagerProxy()
 
 void WebOriginDataManagerProxy::contextDestroyed()
 {
-    invalidateCallbackMap(m_arrayCallbacks);
+    invalidateCallbackMap(m_arrayCallbacks, CallbackBase::Error::OwnerWasInvalidated);
 }
 
 void WebOriginDataManagerProxy::processDidClose(WebProcessProxy*)
 {
-    invalidateCallbackMap(m_arrayCallbacks);
+    invalidateCallbackMap(m_arrayCallbacks, CallbackBase::Error::ProcessExited);
 }
 
 bool WebOriginDataManagerProxy::shouldTerminate(WebProcessProxy*) const

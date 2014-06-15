@@ -71,7 +71,7 @@ private:
 
 class VoidCallback : public CallbackBase {
 public:
-    typedef std::function<void (bool)> CallbackFunction;
+    typedef std::function<void (Error)> CallbackFunction;
 
     static PassRefPtr<VoidCallback> create(CallbackFunction callback)
     {
@@ -88,17 +88,17 @@ public:
         if (!m_callback)
             return;
 
-        m_callback(false);
+        m_callback(Error::None);
 
         m_callback = nullptr;
     }
     
-    void invalidate()
+    void invalidate(Error error)
     {
         if (!m_callback)
             return;
 
-        m_callback(true);
+        m_callback(error);
 
         m_callback = nullptr;
     }
@@ -118,8 +118,8 @@ public:
 
     static PassRefPtr<VoidCallback> create(void* context, CallbackFunction callback)
     {
-        return VoidCallback::create([context, callback](bool error) {
-            callback(error ? toAPI(API::Error::create().get()) : 0, context);
+        return VoidCallback::create([context, callback](Error error) {
+            callback(error != Error::None ? toAPI(API::Error::create().get()) : 0, context);
         });
     }
 };
@@ -180,13 +180,14 @@ typedef GenericCallback<const Vector<WebCore::IntRect>&, double> ComputedPagesCa
 typedef GenericCallback<const ShareableBitmap::Handle&> ImageCallback;
 
 template<typename T>
-void invalidateCallbackMap(HashMap<uint64_t, T>& map, CallbackBase::Error error = CallbackBase::Error::Unknown)
+void invalidateCallbackMap(HashMap<uint64_t, T>& callbackMap, CallbackBase::Error error)
 {
-    Vector<T> callbacksVector;
-    copyValuesToVector(map, callbacksVector);
-    for (size_t i = 0, size = callbacksVector.size(); i < size; ++i)
-        callbacksVector[i]->invalidate();
-    map.clear();
+    Vector<T> callbacks;
+    copyValuesToVector(callbackMap, callbacks);
+    for (auto& callback : callbacks)
+        callback->invalidate(error);
+
+    callbackMap.clear();
 }
 
 } // namespace WebKit

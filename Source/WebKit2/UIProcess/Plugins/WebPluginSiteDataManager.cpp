@@ -132,7 +132,7 @@ WebPluginSiteDataManager::~WebPluginSiteDataManager()
 
 void WebPluginSiteDataManager::invalidate()
 {
-    invalidateCallbackMap(m_arrayCallbacks);
+    invalidateCallbackMap(m_arrayCallbacks, CallbackBase::Error::OwnerWasInvalidated);
 
     m_pendingGetSitesWithData.clear();
     m_pendingClearSiteData.clear();
@@ -172,7 +172,8 @@ void WebPluginSiteDataManager::clearSiteData(API::Array* sites, uint64_t flags, 
 {
     RefPtr<VoidCallback> callback = prpCallback;
     if (!m_webContext) {
-        callback->invalidate();
+        // FIXME: If the context is invalid we should not call the callback. It'd be better to just return false from clearSiteData.
+        callback->invalidate(CallbackBase::Error::OwnerWasInvalidated);
         return;
     }
 

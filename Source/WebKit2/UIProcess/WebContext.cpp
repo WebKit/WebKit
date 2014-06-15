@@ -262,7 +262,7 @@ WebContext::~WebContext()
     m_pluginSiteDataManager->clearContext();
 #endif
 
-    invalidateCallbackMap(m_dictionaryCallbacks);
+    invalidateCallbackMap(m_dictionaryCallbacks, CallbackBase::Error::OwnerWasInvalidated);
 
     platformInvalidateContext();
 

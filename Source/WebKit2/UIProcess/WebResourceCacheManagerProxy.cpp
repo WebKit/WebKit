@@ -65,12 +65,12 @@ WebResourceCacheManagerProxy::~WebResourceCacheManagerProxy()
 
 void WebResourceCacheManagerProxy::contextDestroyed()
 {
-    invalidateCallbackMap(m_arrayCallbacks);
+    invalidateCallbackMap(m_arrayCallbacks, CallbackBase::Error::OwnerWasInvalidated);
 }
 
 void WebResourceCacheManagerProxy::processDidClose(WebProcessProxy*)
 {
-    invalidateCallbackMap(m_arrayCallbacks);
+    invalidateCallbackMap(m_arrayCallbacks, CallbackBase::Error::ProcessExited);
 }
 
 bool WebResourceCacheManagerProxy::shouldTerminate(WebProcessProxy*) const

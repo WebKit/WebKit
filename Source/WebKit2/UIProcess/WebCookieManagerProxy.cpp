@@ -67,20 +67,20 @@ void WebCookieManagerProxy::initializeClient(const WKCookieManagerClientBase* cl
 
 void WebCookieManagerProxy::contextDestroyed()
 {
-    invalidateCallbackMap(m_arrayCallbacks);
-    invalidateCallbackMap(m_httpCookieAcceptPolicyCallbacks);
+    invalidateCallbackMap(m_arrayCallbacks, CallbackBase::Error::OwnerWasInvalidated);
+    invalidateCallbackMap(m_httpCookieAcceptPolicyCallbacks, CallbackBase::Error::OwnerWasInvalidated);
 }
 
 void WebCookieManagerProxy::processDidClose(WebProcessProxy*)
 {
-    invalidateCallbackMap(m_arrayCallbacks);
-    invalidateCallbackMap(m_httpCookieAcceptPolicyCallbacks);
+    invalidateCallbackMap(m_arrayCallbacks, CallbackBase::Error::ProcessExited);
+    invalidateCallbackMap(m_httpCookieAcceptPolicyCallbacks, CallbackBase::Error::ProcessExited);
 }
 
 void WebCookieManagerProxy::processDidClose(NetworkProcessProxy*)
 {
-    invalidateCallbackMap(m_arrayCallbacks);
-    invalidateCallbackMap(m_httpCookieAcceptPolicyCallbacks);
+    invalidateCallbackMap(m_arrayCallbacks, CallbackBase::Error::ProcessExited);
+    invalidateCallbackMap(m_httpCookieAcceptPolicyCallbacks, CallbackBase::Error::ProcessExited);
 }
 
 bool WebCookieManagerProxy::shouldTerminate(WebProcessProxy*) const

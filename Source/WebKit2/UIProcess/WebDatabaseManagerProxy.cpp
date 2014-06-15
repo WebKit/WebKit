@@ -129,12 +129,12 @@ void WebDatabaseManagerProxy::initializeClient(const WKDatabaseManagerClientBase
 
 void WebDatabaseManagerProxy::contextDestroyed()
 {
-    invalidateCallbackMap(m_arrayCallbacks);
+    invalidateCallbackMap(m_arrayCallbacks, CallbackBase::Error::OwnerWasInvalidated);
 }
 
 void WebDatabaseManagerProxy::processDidClose(WebProcessProxy*)
 {
-    invalidateCallbackMap(m_arrayCallbacks);
+    invalidateCallbackMap(m_arrayCallbacks, CallbackBase::Error::ProcessExited);
 }
 
 bool WebDatabaseManagerProxy::shouldTerminate(WebProcessProxy*) const
