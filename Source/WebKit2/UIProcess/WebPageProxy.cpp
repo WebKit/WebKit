@@ -4294,14 +4294,14 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     invalidateCallbackMap(m_attributedStringForCharacterRangeCallbacks, error);
 #endif
 #if PLATFORM(IOS)
-    invalidateCallbackMap(m_gestureCallbacks);
-    invalidateCallbackMap(m_touchesCallbacks);
-    invalidateCallbackMap(m_autocorrectionCallbacks);
-    invalidateCallbackMap(m_autocorrectionContextCallbacks);
-    invalidateCallbackMap(m_dictationContextCallbacks);
+    invalidateCallbackMap(m_gestureCallbacks, error);
+    invalidateCallbackMap(m_touchesCallbacks, error);
+    invalidateCallbackMap(m_autocorrectionCallbacks, error);
+    invalidateCallbackMap(m_autocorrectionContextCallbacks, error);
+    invalidateCallbackMap(m_dictationContextCallbacks, error);
 #endif
 #if PLATFORM(GTK)
-    invalidateCallbackMap(m_printFinishedCallbacks);
+    invalidateCallbackMap(m_printFinishedCallbacks, error);
 #endif
 
     Vector<WebEditCommandProxy*> editCommandVector;
