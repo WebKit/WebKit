@@ -1,3 +1,26 @@
+2014-06-15  Anders Carlsson  <andersca@apple.com>
+
+        Add an autorelease() member function to RetainPtr
+        https://bugs.webkit.org/show_bug.cgi?id=133929
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (-[_WKRemoteObjectRegistry remoteObjectProxyWithInterface:]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView navigationDelegate]):
+        (-[WKWebView UIDelegate]):
+        (-[WKWebView loadRequest:]):
+        (-[WKWebView loadHTMLString:baseURL:]):
+        (-[WKWebView goToBackForwardListItem:]):
+        (-[WKWebView goBack]):
+        (-[WKWebView goForward]):
+        (-[WKWebView reload]):
+        (-[WKWebView reloadFromOrigin]):
+        (-[WKWebView _historyDelegate]):
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm:
+        (WebKit::animationValueFromKeyframeValue):
+
 2014-06-15  Dan Bernstein  <mitz@apple.com>
 
         Get rid of VoidAPICallback

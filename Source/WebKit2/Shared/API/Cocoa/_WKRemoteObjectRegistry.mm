@@ -77,10 +77,10 @@ using namespace WebKit;
         return remoteObjectProxy;
 
     RetainPtr<NSString> identifier = adoptNS([interface.identifier copy]);
-    RetainPtr<WKRemoteObject> remoteObject = adoptNS([[WKRemoteObject alloc] _initWithObjectRegistry:self interface:interface]);
+    auto remoteObject = adoptNS([[WKRemoteObject alloc] _initWithObjectRegistry:self interface:interface]);
     [_remoteObjectProxies setObject:remoteObject.get() forKey:identifier.get()];
 
-    return [remoteObject.leakRef() autorelease];
+    return remoteObject.autorelease();
 }
 
 - (id)_initWithMessageSender:(IPC::MessageSender&)messageSender

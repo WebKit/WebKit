@@ -2025,9 +2025,10 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
     if (!coreFrame)
         return nil;
 
-    NSImage *dragImage = [createDragImageForSelection(*coreFrame).leakRef() autorelease];
+    auto dragImage = createDragImageForSelection(*coreFrame);
     [dragImage _web_dissolveToFraction:WebDragImageAlpha];
-    return dragImage;
+
+    return dragImage.autorelease();
 }
 
 - (NSRect)_selectionDraggingRect
@@ -6654,7 +6655,7 @@ static CGImageRef selectionImage(Frame* frame, bool forceBlackText)
 #if PLATFORM(IOS)
     return selectionImage(coreFrame, forceBlackText);
 #else
-    return [createDragImageForSelection(*coreFrame, forceBlackText).leakRef() autorelease];
+    return createDragImageForSelection(*coreFrame, forceBlackText).autorelease();
 #endif
 }
 

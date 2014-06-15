@@ -483,8 +483,8 @@ using WebCore::VisiblePosition;
     }
     if (!data)
         return nil;
-    
-    return [data->createNSData().leakRef() autorelease];
+
+    return data->createNSData().autorelease();
 }
 
 - (NSString *)mimeType

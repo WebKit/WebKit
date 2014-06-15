@@ -555,7 +555,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     WebCore::Frame* frame = node->document().frame();
     if (!frame)
         return nil;
-    return [createDragImageForNode(*frame, *node).leakRef() autorelease];
+    return createDragImageForNode(*frame, *node).autorelease();
 }
 #endif
 
@@ -610,12 +610,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     if (!frame)
         return nil;
 
-#if PLATFORM(IOS)
-    CGImageRef dragImage = createDragImageForRange(*frame, *range, forceBlackText).leakRef();
-    return dragImage ? (CGImageRef)CFAutorelease(dragImage) : nil;
-#else
-    return [createDragImageForRange(*frame, *range, forceBlackText).leakRef() autorelease];
-#endif
+    return createDragImageForRange(*frame, *range, forceBlackText).autorelease();
 }
 
 - (NSArray *)textRects

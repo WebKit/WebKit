@@ -131,7 +131,7 @@ using namespace WebCore;
     });
 
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
-    return [m_requestResult.leakRef() autorelease];
+    return m_requestResult.autorelease();
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
@@ -333,7 +333,7 @@ using namespace WebCore;
     });
 
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
-    return [m_cachedResponseResult.leakRef() autorelease];
+    return m_cachedResponseResult.autorelease();
 }
 
 @end

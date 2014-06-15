@@ -688,7 +688,7 @@ static NSObject* animationValueFromKeyframeValue(const PlatformCAAnimationRemote
         return [NSValue valueWithCATransform3D:keyframeValue.transformValue()];
             
     case PlatformCAAnimationRemote::KeyframeValue::FilterKeyType:
-        return [PlatformCAFilters::filterValueForOperation(keyframeValue.filterValue(), 0 /* unused */).leakRef() autorelease];
+        return PlatformCAFilters::filterValueForOperation(keyframeValue.filterValue(), 0 /* unused */).autorelease();
     }
 }
 

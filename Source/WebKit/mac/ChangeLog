@@ -1,3 +1,18 @@
+2014-06-15  Anders Carlsson  <andersca@apple.com>
+
+        Add an autorelease() member function to RetainPtr
+        https://bugs.webkit.org/show_bug.cgi?id=133929
+
+        Reviewed by Dan Bernstein.
+
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource data]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _selectionDraggingImage]):
+        (-[WebHTMLView selectionImageForcingBlackText:selectionImageForcingBlackText:]):
+        * WebView/WebResource.mm:
+        (-[WebResource data]):
+
 2014-06-11  Jeremy Jones  <jeremyj@apple.com>
 
         WebFrameNetworkContext should not have a sourceApplicationIdentifier in WK1.

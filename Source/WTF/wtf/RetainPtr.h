@@ -77,6 +77,7 @@ namespace WTF {
 
         void clear();
         PtrType leakRef() WARN_UNUSED_RETURN;
+        PtrType autorelease();
 
         PtrType get() const { return fromStorageType(m_ptr); }
         PtrType operator->() const { return fromStorageType(m_ptr); }
@@ -158,6 +159,13 @@ namespace WTF {
         m_ptr = nullptr;
         return ptr;
     }
+
+#ifdef __OBJC__
+    template<typename T> inline auto RetainPtr<T>::autorelease() -> PtrType
+    {
+        return CFBridgingRelease(leakRef());
+    }
+#endif
 
     template<typename T> inline RetainPtr<T>& RetainPtr<T>::operator=(const RetainPtr& o)
     {

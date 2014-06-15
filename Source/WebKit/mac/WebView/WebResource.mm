@@ -211,7 +211,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return nil;
     if (!_private->coreResource->data())
         return nil;
-    return [_private->coreResource->data()->createNSData().leakRef() autorelease];
+    return _private->coreResource->data()->createNSData().autorelease();
 }
 
 - (NSURL *)URL

@@ -345,7 +345,7 @@ static int32_t deviceOrientation()
 
 - (id <WKNavigationDelegate>)navigationDelegate
 {
-    return [_navigationState->navigationDelegate().leakRef() autorelease];
+    return _navigationState->navigationDelegate().autorelease();
 }
 
 - (void)setNavigationDelegate:(id <WKNavigationDelegate>)navigationDelegate
@@ -355,7 +355,7 @@ static int32_t deviceOrientation()
 
 - (id <WKUIDelegate>)UIDelegate
 {
-    return [_uiDelegate->delegate().leakRef() autorelease];
+    return _uiDelegate->delegate().autorelease();
 }
 
 - (void)setUIDelegate:(id<WKUIDelegate>)UIDelegate
@@ -368,7 +368,7 @@ static int32_t deviceOrientation()
     uint64_t navigationID = _page->loadRequest(request);
     auto navigation = _navigationState->createLoadRequestNavigation(navigationID, request);
 
-    return [navigation.leakRef() autorelease];
+    return navigation.autorelease();
 }
 
 - (WKNavigation *)loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL
@@ -376,7 +376,7 @@ static int32_t deviceOrientation()
     uint64_t navigationID = _page->loadHTMLString(string, baseURL.absoluteString);
     auto navigation = _navigationState->createLoadDataNavigation(navigationID);
 
-    return [navigation.leakRef() autorelease];
+    return navigation.autorelease();
 }
 
 - (WKNavigation *)goToBackForwardListItem:(WKBackForwardListItem *)item
@@ -385,7 +385,7 @@ static int32_t deviceOrientation()
 
     auto navigation = _navigationState->createBackForwardNavigation(navigationID, item._item);
 
-    return [navigation.leakRef() autorelease];
+    return navigation.autorelease();
 }
 
 - (NSString *)title
@@ -432,7 +432,7 @@ static int32_t deviceOrientation()
     ASSERT(_page->backForwardList().currentItem());
     auto navigation = _navigationState->createBackForwardNavigation(navigationID, *_page->backForwardList().currentItem());
 
-    return [navigation.leakRef() autorelease];
+    return navigation.autorelease();
 }
 
 - (WKNavigation *)goForward
@@ -444,7 +444,7 @@ static int32_t deviceOrientation()
     ASSERT(_page->backForwardList().currentItem());
     auto navigation = _navigationState->createBackForwardNavigation(navigationID, *_page->backForwardList().currentItem());
 
-    return [navigation.leakRef() autorelease];
+    return navigation.autorelease();
 }
 
 - (WKNavigation *)reload
@@ -453,7 +453,7 @@ static int32_t deviceOrientation()
     ASSERT(navigationID);
 
     auto navigation = _navigationState->createReloadNavigation(navigationID);
-    return [navigation.leakRef() autorelease];
+    return navigation.autorelease();
 }
 
 - (WKNavigation *)reloadFromOrigin
@@ -462,7 +462,7 @@ static int32_t deviceOrientation()
     ASSERT(navigationID);
 
     auto navigation = _navigationState->createReloadNavigation(navigationID);
-    return [navigation.leakRef() autorelease];
+    return navigation.autorelease();
 }
 
 - (void)stopLoading
@@ -1356,7 +1356,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (id <WKHistoryDelegatePrivate>)_historyDelegate
 {
-    return [_navigationState->historyDelegate().leakRef() autorelease];
+    return _navigationState->historyDelegate().autorelease();
 }
 
 - (void)_setHistoryDelegate:(id <WKHistoryDelegatePrivate>)historyDelegate
