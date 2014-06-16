@@ -1,3 +1,15 @@
+2014-06-16  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Platform support for WebSpeech feature.
+        https://bugs.webkit.org/show_bug.cgi?id=116438
+
+        Reviewed by Gyuyoung Kim.
+
+        Add ENABLE_SPEECH_SYNTHESIS flag to have Speech Synthesis in EFL.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2014-06-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Remove duplicated compiler flag
