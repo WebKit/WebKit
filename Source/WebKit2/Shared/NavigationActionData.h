@@ -46,6 +46,7 @@ struct NavigationActionData {
     WebEvent::Modifiers modifiers;
     WebMouseEvent::Button mouseButton;
     bool isProcessingUserGesture;
+    bool canHandleRequest;
 };
 
 }

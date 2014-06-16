@@ -210,6 +210,7 @@ Page* WebChromeClient::createWindow(Frame* frame, const FrameLoadRequest& reques
     navigationActionData.modifiers = InjectedBundleNavigationAction::modifiersForNavigationAction(navigationAction);
     navigationActionData.mouseButton = InjectedBundleNavigationAction::mouseButtonForNavigationAction(navigationAction);
     navigationActionData.isProcessingUserGesture = navigationAction.processingUserGesture();
+    navigationActionData.canHandleRequest = m_page->canHandleRequest(request.resourceRequest());
 
     uint64_t newPageID = 0;
     WebPageCreationParameters parameters;

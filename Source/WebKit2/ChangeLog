@@ -1,3 +1,30 @@
+2014-06-15  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/17291697> [Cocoa] Can’t tell at policy decision time whether WebKit can handle the request
+        https://bugs.webkit.org/show_bug.cgi?id=133930
+
+        Reviewed by Sam Weinig.
+
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::NavigationActionData): Initialize new member canHandleRequest
+        to false.
+        (WebKit::NavigationActionData::encode): Encode canHandleRequest.
+        (WebKit::NavigationActionData::decode): Decode it.
+        * Shared/NavigationActionData.h: Declared new boolean member canHandleRequest.
+
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (-[WKNavigationAction _initWithNavigationActionData:]): Set new ivar _canHandleRequest from
+        the action data.
+        (-[WKNavigationAction _canHandleRequest]): Added this getter.
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h: Declared new property _canHandleRequest.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow): Set canHandleRequest in the NavigationActionData.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction): Ditto.
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction): Ditto.
+
 2014-06-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Change ewk_view_settings_get to ewk_page_group_settings_get

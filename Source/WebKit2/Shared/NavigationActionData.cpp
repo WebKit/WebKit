@@ -38,6 +38,7 @@ NavigationActionData::NavigationActionData()
     , modifiers()
     , mouseButton(WebMouseEvent::NoButton)
     , isProcessingUserGesture(false)
+    , canHandleRequest(false)
 {
 }
 
@@ -47,6 +48,7 @@ void NavigationActionData::encode(IPC::ArgumentEncoder& encoder) const
     encoder.encodeEnum(modifiers);
     encoder.encodeEnum(mouseButton);
     encoder << isProcessingUserGesture;
+    encoder << canHandleRequest;
 }
 
 bool NavigationActionData::decode(IPC::ArgumentDecoder& decoder, NavigationActionData& result)
@@ -58,6 +60,8 @@ bool NavigationActionData::decode(IPC::ArgumentDecoder& decoder, NavigationActio
     if (!decoder.decodeEnum(result.mouseButton))
         return false;
     if (!decoder.decode(result.isProcessingUserGesture))
+        return false;
+    if (!decoder.decode(result.canHandleRequest))
         return false;
 
     return true;

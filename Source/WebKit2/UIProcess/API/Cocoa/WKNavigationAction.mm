@@ -37,6 +37,7 @@
     RetainPtr<NSURLRequest> _request;
     RetainPtr<NSURL> _originalURL;
     BOOL _userInitiated;
+    BOOL _canHandleRequest;
 }
 
 static WKNavigationType toWKNavigationType(WebCore::NavigationType navigationType)
@@ -115,6 +116,7 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
 #endif
 
     _userInitiated = navigationActionData.isProcessingUserGesture;
+    _canHandleRequest = navigationActionData.canHandleRequest;
 
     return self;
 }
@@ -165,9 +167,18 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
     return _originalURL.get();
 }
 
+@end
+
+@implementation WKNavigationAction (WKPrivate)
+
 - (BOOL)_isUserInitiated
 {
     return _userInitiated;
+}
+
+- (BOOL)_canHandleRequest
+{
+    return _canHandleRequest;
 }
 
 @end

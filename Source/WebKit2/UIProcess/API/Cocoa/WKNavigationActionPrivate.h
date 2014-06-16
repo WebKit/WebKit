@@ -31,6 +31,7 @@
 
 @property (nonatomic, readonly) NSURL *_originalURL;
 @property (nonatomic, readonly, getter=_isUserInitiated) BOOL _userInitiated;
+@property (nonatomic, readonly) BOOL _canHandleRequest;
 
 @end
 
