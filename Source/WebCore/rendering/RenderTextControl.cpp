@@ -69,7 +69,6 @@ void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* 
         innerTextRenderer->style().setHeight(Length());
         innerTextRenderer->style().setWidth(Length());
         innerTextRenderer->setStyle(createInnerTextStyle(&style()));
-        innerText->setNeedsStyleRecalc();
     }
     textFormControlElement().updatePlaceholderVisibility(false);
 }

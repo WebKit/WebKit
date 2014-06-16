@@ -1,3 +1,19 @@
+2014-06-16  Andreas Kling  <akling@apple.com>
+
+        Remove unnecessary style invalidation in RenderTextControl::styleDidChange().
+        <https://webkit.org/b/133949>
+
+        This explicit invalidation of the text control's inner text element
+        was hacked in to fix an editing test back in 2011, long before lazy
+        render tree construction.
+
+        It should be safe to remove, since doing so doesn't affect any tests.
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::styleDidChange):
+
 2014-06-16  Anders Carlsson  <andersca@apple.com>
 
         Fix iOS build.
