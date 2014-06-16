@@ -24,6 +24,8 @@
 //
 
 Accept
+Accept-Charset
+Accept-Encoding
 Access-Control-Allow-Credentials
 Access-Control-Allow-Headers
 Access-Control-Allow-Methods
@@ -43,10 +45,14 @@ Content-Length
 Content-Security-Policy
 Content-Security-Policy-Report-Only
 Content-Type
+Content-Transfer-Encoding
 Cookie
+Cookie2
 Date
+DNT
 Default-Style
 ETag
+Expect
 Expires
 Host
 If-Match
@@ -54,6 +60,7 @@ If-Modified-Since
 If-None-Match
 If-Range
 If-Unmodified-Since
+Keep-Alive
 Last-Event-ID
 Last-Modified
 Location
@@ -72,9 +79,13 @@ Sec-WebSocket-Protocol
 Sec-WebSocket-Version
 Set-Cookie
 Set-Cookie2
+TE
 Timing-Allow-Origin
+Trailer
+Transfer-Encoding
 Upgrade
 User-Agent
+Via
 X-DNS-Prefetch-Control
 X-Frame-Options
 X-WebKit-CSP

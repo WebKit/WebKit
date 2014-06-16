@@ -1,5 +1,22 @@
 2014-06-16  Anders Carlsson  <andersca@apple.com>
 
+        Use HTTPHeaderName in more places
+        https://bugs.webkit.org/show_bug.cgi?id=133948
+
+        Reviewed by Andreas Kling.
+
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::shouldIgnoreHeaderForCacheReuse):
+        * platform/network/HTTPHeaderNames.in:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::isSetCookieHeader):
+        (WebCore::isForbiddenRequestHeader):
+        (WebCore::XMLHttpRequest::isAllowedHTTPHeader):
+        (WebCore::XMLHttpRequestStaticData::XMLHttpRequestStaticData): Deleted.
+        (WebCore::staticData): Deleted.
+
+2014-06-16  Anders Carlsson  <andersca@apple.com>
+
         Add HTTPHeaderName overloads on ResourceResponseBase
         https://bugs.webkit.org/show_bug.cgi?id=133946
 

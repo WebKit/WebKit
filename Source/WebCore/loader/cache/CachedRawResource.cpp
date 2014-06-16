@@ -29,10 +29,11 @@
 #include "CachedRawResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceLoader.h"
+#include "HTTPHeaderNames.h"
 #include "ResourceBuffer.h"
 #include "SubresourceLoader.h"
-#include <wtf/NeverDestroyed.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -199,20 +200,25 @@ void CachedRawResource::setDataBufferingPolicy(DataBufferingPolicy dataBuffering
     m_options.dataBufferingPolicy = dataBufferingPolicy;
 }
 
-static bool shouldIgnoreHeaderForCacheReuse(AtomicString headerName)
+static bool shouldIgnoreHeaderForCacheReuse(const String& headerName)
 {
+    HTTPHeaderName name;
+    if (!findHTTPHeaderName(headerName, name))
+        return false;
+
+    switch (name) {
     // FIXME: This list of headers that don't affect cache policy almost certainly isn't complete.
-    static NeverDestroyed<HashSet<AtomicString>> m_headers;
-    if (m_headers.get().isEmpty()) {
-        m_headers.get().add("Accept");
-        m_headers.get().add("Cache-Control");
-        m_headers.get().add("Origin");
-        m_headers.get().add("Pragma");
-        m_headers.get().add("Purpose");
-        m_headers.get().add("Referer");
-        m_headers.get().add("User-Agent");
+    case HTTPHeaderName::Accept:
+    case HTTPHeaderName::CacheControl:
+    case HTTPHeaderName::Pragma:
+    case HTTPHeaderName::Purpose:
+    case HTTPHeaderName::Referer:
+    case HTTPHeaderName::UserAgent:
+        return true;
+
+    default:
+        return false;
     }
-    return m_headers.get().contains(headerName);
 }
 
 bool CachedRawResource::canReuse(const ResourceRequest& newRequest) const

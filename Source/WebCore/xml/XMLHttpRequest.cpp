@@ -78,58 +78,7 @@ enum XMLHttpRequestSendArrayBufferOrView {
     XMLHttpRequestSendArrayBufferOrViewMax,
 };
 
-struct XMLHttpRequestStaticData {
-    WTF_MAKE_NONCOPYABLE(XMLHttpRequestStaticData); WTF_MAKE_FAST_ALLOCATED;
-public:
-    XMLHttpRequestStaticData();
-    const String m_proxyHeaderPrefix;
-    const String m_secHeaderPrefix;
-    const HashSet<String, CaseFoldingHash> m_forbiddenRequestHeaders;
-};
-
-XMLHttpRequestStaticData::XMLHttpRequestStaticData()
-    : m_proxyHeaderPrefix("proxy-")
-    , m_secHeaderPrefix("sec-")
-    , m_forbiddenRequestHeaders({
-        "accept-charset",
-        "accept-encoding",
-        "access-control-request-headers",
-        "access-control-request-method",
-        "connection",
-        "content-length",
-        "content-transfer-encoding",
-        "cookie",
-        "cookie2",
-        "date",
-        "dnt",
-        "expect",
-        "host",
-        "keep-alive",
-        "origin",
-        "referer",
-        "te",
-        "trailer",
-        "transfer-encoding",
-        "upgrade",
-        "user-agent",
-        "via",
-    })
-{
-}
-
-static const XMLHttpRequestStaticData& staticData()
-{
-    static std::once_flag onceFlag;
-    static LazyNeverDestroyed<XMLHttpRequestStaticData> staticData;
-
-    std::call_once(onceFlag, [] {
-        staticData.construct();
-    });
-
-    return staticData;
-}
-
-static bool isSetCookieHeader(const AtomicString& name)
+static bool isSetCookieHeader(const String& name)
 {
     return equalIgnoringCase(name, "set-cookie") || equalIgnoringCase(name, "set-cookie2");
 }
@@ -457,10 +406,54 @@ String XMLHttpRequest::uppercaseKnownHTTPMethod(const String& method)
     return method;
 }
 
+static bool isForbiddenRequestHeader(const String& name)
+{
+    HTTPHeaderName headerName;
+    if (!findHTTPHeaderName(name, headerName))
+        return false;
+
+    switch (headerName) {
+    case HTTPHeaderName::AcceptCharset:
+    case HTTPHeaderName::AcceptEncoding:
+    case HTTPHeaderName::AccessControlRequestHeaders:
+    case HTTPHeaderName::AccessControlRequestMethod:
+    case HTTPHeaderName::Connection:
+    case HTTPHeaderName::ContentLength:
+    case HTTPHeaderName::ContentTransferEncoding:
+    case HTTPHeaderName::Cookie:
+    case HTTPHeaderName::Cookie2:
+    case HTTPHeaderName::Date:
+    case HTTPHeaderName::DNT:
+    case HTTPHeaderName::Expect:
+    case HTTPHeaderName::Host:
+    case HTTPHeaderName::KeepAlive:
+    case HTTPHeaderName::Origin:
+    case HTTPHeaderName::Referer:
+    case HTTPHeaderName::TE:
+    case HTTPHeaderName::Trailer:
+    case HTTPHeaderName::TransferEncoding:
+    case HTTPHeaderName::Upgrade:
+    case HTTPHeaderName::UserAgent:
+    case HTTPHeaderName::Via:
+        return true;
+
+    default:
+        return false;
+    }
+}
+
 bool XMLHttpRequest::isAllowedHTTPHeader(const String& name)
 {
-    return !staticData().m_forbiddenRequestHeaders.contains(name) && !name.startsWith(staticData().m_proxyHeaderPrefix, false)
-        && !name.startsWith(staticData().m_secHeaderPrefix, false);
+    if (isForbiddenRequestHeader(name))
+        return false;
+
+    if (name.startsWith("proxy-", false))
+        return false;
+
+    if (name.startsWith("sec-", false))
+        return false;
+
+    return true;
 }
 
 void XMLHttpRequest::open(const String& method, const URL& url, ExceptionCode& ec)
