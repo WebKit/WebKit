@@ -1216,14 +1216,14 @@ bool WebContext::httpPipeliningEnabled() const
 #endif
 }
 
-void WebContext::getStatistics(uint32_t statisticsMask, PassRefPtr<DictionaryCallback> callback)
+void WebContext::getStatistics(uint32_t statisticsMask, std::function<void (ImmutableDictionary*, CallbackBase::Error)> callbackFunction)
 {
     if (!statisticsMask) {
-        callback->invalidate();
+        callbackFunction(nullptr, CallbackBase::Error::Unknown);
         return;
     }
 
-    RefPtr<StatisticsRequest> request = StatisticsRequest::create(callback);
+    RefPtr<StatisticsRequest> request = StatisticsRequest::create(DictionaryCallback::create(std::move(callbackFunction)));
 
     if (statisticsMask & StatisticsRequestTypeWebContent)
         requestWebContentStatistics(request.get());

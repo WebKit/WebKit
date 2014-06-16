@@ -99,9 +99,9 @@ static void didGetKeyValueStorageOrigins(const Vector<RefPtr<SecurityOrigin>>& s
     callback->performCallbackWithReturnValue(API::Array::create(std::move(webSecurityOrigins)).get());
 }
 
-void WebKeyValueStorageManager::getKeyValueStorageOrigins(PassRefPtr<ArrayCallback> prpCallback)
+void WebKeyValueStorageManager::getKeyValueStorageOrigins(std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
 {
-    context()->storageManager().getOrigins(RunLoop::main(), prpCallback.leakRef(), didGetKeyValueStorageOrigins);
+    context()->storageManager().getOrigins(RunLoop::main(), ArrayCallback::create(std::move(callbackFunction)).leakRef(), didGetKeyValueStorageOrigins);
 }
 
 static void didGetStorageDetailsByOrigin(const Vector<LocalStorageDetails>& storageDetails, void* context)
@@ -128,9 +128,9 @@ static void didGetStorageDetailsByOrigin(const Vector<LocalStorageDetails>& stor
     callback->performCallbackWithReturnValue(API::Array::create(std::move(result)).get());
 }
 
-void WebKeyValueStorageManager::getStorageDetailsByOrigin(PassRefPtr<ArrayCallback> prpCallback)
+void WebKeyValueStorageManager::getStorageDetailsByOrigin(std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
 {
-    context()->storageManager().getStorageDetailsByOrigin(RunLoop::main(), prpCallback.leakRef(), didGetStorageDetailsByOrigin);
+    context()->storageManager().getStorageDetailsByOrigin(RunLoop::main(), ArrayCallback::create(std::move(callbackFunction)).leakRef(), didGetStorageDetailsByOrigin);
 }
 
 void WebKeyValueStorageManager::deleteEntriesForOrigin(WebSecurityOrigin* origin)

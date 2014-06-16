@@ -38,7 +38,7 @@ WKTypeID WKResourceCacheManagerGetTypeID()
 
 void WKResourceCacheManagerGetCacheOrigins(WKResourceCacheManagerRef cacheManagerRef, void* context, WKResourceCacheManagerGetCacheOriginsFunction callback)
 {
-    toImpl(cacheManagerRef)->getCacheOrigins(ArrayCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(cacheManagerRef)->getCacheOrigins(toGenericCallbackFunction(context, callback));
 }
 
 void WKResourceCacheManagerClearCacheForOrigin(WKResourceCacheManagerRef cacheManagerRef, WKSecurityOriginRef originRef, WKResourceCachesToClear cachesToClear)

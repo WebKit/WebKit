@@ -397,9 +397,9 @@ public:
     int32_t deviceOrientation() const { return m_deviceOrientation; }
     void didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction&);
 
-    void selectWithGesture(const WebCore::IntPoint, WebCore::TextGranularity, uint32_t gestureType, uint32_t gestureState, PassRefPtr<GestureCallback>);
+    void selectWithGesture(const WebCore::IntPoint, WebCore::TextGranularity, uint32_t gestureType, uint32_t gestureState, std::function<void (const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)>);
     void updateSelectionWithTouches(const WebCore::IntPoint, uint32_t touches, bool baseIsStart, PassRefPtr<TouchesCallback>);
-    void selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, PassRefPtr<GestureCallback>);
+    void selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, std::function<void (const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)>);
     void updateBlockSelectionWithTouch(const WebCore::IntPoint, uint32_t touch, uint32_t handlePosition);
     void extendSelection(WebCore::TextGranularity);
     void selectWordBackward();
@@ -480,7 +480,7 @@ public:
 
 #if PLATFORM(MAC)
     void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::TextAlternativeWithRange>& dictationAlternatives);
-    void attributedSubstringForCharacterRangeAsync(const EditingRange&, PassRefPtr<AttributedStringForCharacterRangeCallback>);
+    void attributedSubstringForCharacterRangeAsync(const EditingRange&, std::function<void (const AttributedString&, const EditingRange&, CallbackBase::Error)>);
 
 #if !USE(ASYNC_NSTEXTINPUTCLIENT)
     bool insertText(const String& text, const EditingRange& replacementRange);
@@ -657,13 +657,13 @@ public:
 #if ENABLE(MHTML)
     void getContentsAsMHTMLData(PassRefPtr<DataCallback>, bool useBinaryEncoding);
 #endif
-    void getMainResourceDataOfFrame(WebFrameProxy*, PassRefPtr<DataCallback>);
-    void getResourceDataFromFrame(WebFrameProxy*, API::URL*, PassRefPtr<DataCallback>);
+    void getMainResourceDataOfFrame(WebFrameProxy*, std::function<void (API::Data*, CallbackBase::Error)>);
+    void getResourceDataFromFrame(WebFrameProxy*, API::URL*, std::function<void (API::Data*, CallbackBase::Error)>);
     void getRenderTreeExternalRepresentation(PassRefPtr<StringCallback>);
     void getSelectionOrContentsAsString(PassRefPtr<StringCallback>);
     void getSelectionAsWebArchiveData(PassRefPtr<DataCallback>);
     void getSourceForFrame(WebFrameProxy*, PassRefPtr<StringCallback>);
-    void getWebArchiveOfFrame(WebFrameProxy*, PassRefPtr<DataCallback>);
+    void getWebArchiveOfFrame(WebFrameProxy*, std::function<void (API::Data*, CallbackBase::Error)>);
     void runJavaScriptInMainFrame(const String&, PassRefPtr<ScriptValueCallback>);
     void forceRepaint(PassRefPtr<VoidCallback>);
 

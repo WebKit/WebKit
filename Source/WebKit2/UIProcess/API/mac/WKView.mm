@@ -1524,7 +1524,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     RetainPtr<id> completionHandler = adoptNS([completionHandlerPtr copy]);
 
     LOG(TextInput, "attributedSubstringFromRange:(%u, %u)", nsRange.location, nsRange.length);
-    _data->_page->attributedSubstringForCharacterRangeAsync(nsRange, AttributedStringForCharacterRangeCallback::create([completionHandler](const AttributedString& string, const EditingRange& actualRange, CallbackBase::Error error) {
+    _data->_page->attributedSubstringForCharacterRangeAsync(nsRange, [completionHandler](const AttributedString& string, const EditingRange& actualRange, CallbackBase::Error error) {
         void (^completionHandlerBlock)(NSAttributedString *, NSRange) = (void (^)(NSAttributedString *, NSRange))completionHandler.get();
         if (error != CallbackBase::Error::None) {
             LOG(TextInput, "    ...attributedSubstringFromRange failed.");
@@ -1533,7 +1533,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         }
         LOG(TextInput, "    -> attributedSubstringFromRange returned %@", [string.string.get() string]);
         completionHandlerBlock([[string.string.get() retain] autorelease], actualRange);
-    }));
+    });
 }
 
 - (void)firstRectForCharacterRange:(NSRange)theRange completionHandler:(void(^)(NSRect firstRect, NSRange actualRange))completionHandlerPtr

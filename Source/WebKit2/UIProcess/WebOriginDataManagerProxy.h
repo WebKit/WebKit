@@ -54,7 +54,7 @@ public:
     static PassRefPtr<WebOriginDataManagerProxy> create(WebContext*);
     virtual ~WebOriginDataManagerProxy();
 
-    void getOrigins(WKOriginDataTypes, PassRefPtr<ArrayCallback>);
+    void getOrigins(WKOriginDataTypes, std::function<void (API::Array*, CallbackBase::Error)>);
     void deleteEntriesForOrigin(WKOriginDataTypes, WebSecurityOrigin*);
     void deleteAllEntries(WKOriginDataTypes);
 

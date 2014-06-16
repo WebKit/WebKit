@@ -152,9 +152,9 @@ void WebDatabaseManagerProxy::derefWebContextSupplement()
     API::Object::deref();
 }
 
-void WebDatabaseManagerProxy::getDatabasesByOrigin(PassRefPtr<ArrayCallback> prpCallback)
+void WebDatabaseManagerProxy::getDatabasesByOrigin(std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<ArrayCallback> callback = prpCallback;
+    RefPtr<ArrayCallback> callback = ArrayCallback::create(std::move(callbackFunction));
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
 
@@ -205,9 +205,9 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
     callback->performCallbackWithReturnValue(API::Array::create(std::move(result)).get());
 }
 
-void WebDatabaseManagerProxy::getDatabaseOrigins(PassRefPtr<ArrayCallback> prpCallback)
+void WebDatabaseManagerProxy::getDatabaseOrigins(std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<ArrayCallback> callback = prpCallback;
+    RefPtr<ArrayCallback> callback = ArrayCallback::create(std::move(callbackFunction));
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
 

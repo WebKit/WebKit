@@ -1520,7 +1520,7 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
 {
     auto handler = adoptNS([completionHandler copy]);
 
-    _page->getWebArchiveOfFrame(_page->mainFrame(), WebKit::DataCallback::create([handler](API::Data* data, WebKit::CallbackBase::Error error) {
+    _page->getWebArchiveOfFrame(_page->mainFrame(), [handler](API::Data* data, WebKit::CallbackBase::Error error) {
         void (^completionHandlerBlock)(NSData *, NSError *) = (void (^)(NSData *, NSError *))handler.get();
         if (error != WebKit::CallbackBase::Error::None) {
             // FIXME: Pipe a proper error in from the WebPageProxy.
@@ -1528,7 +1528,7 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
             completionHandlerBlock(nil, error.get());
         } else
             completionHandlerBlock(wrapper(*data), nil);
-    }));
+    });
 }
 
 - (_WKPaginationMode)_paginationMode

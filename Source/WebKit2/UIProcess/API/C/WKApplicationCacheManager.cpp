@@ -38,7 +38,7 @@ WKTypeID WKApplicationCacheManagerGetTypeID()
 
 void WKApplicationCacheManagerGetApplicationCacheOrigins(WKApplicationCacheManagerRef applicationCacheManagerRef, void* context, WKApplicationCacheManagerGetApplicationCacheOriginsFunction callback)
 {
-    toImpl(applicationCacheManagerRef)->getApplicationCacheOrigins(ArrayCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(applicationCacheManagerRef)->getApplicationCacheOrigins(toGenericCallbackFunction(context, callback));
 }
 
 void WKApplicationCacheManagerDeleteEntriesForOrigin(WKApplicationCacheManagerRef applicationCacheManagerRef, WKSecurityOriginRef originRef)

@@ -50,7 +50,7 @@ public:
     void invalidate();
     void clearContext() { m_webContext = 0; }
 
-    void getSitesWithData(PassRefPtr<ArrayCallback>);
+    void getSitesWithData(std::function<void (API::Array*, CallbackBase::Error)>);
     void didGetSitesWithData(const Vector<String>& sites, uint64_t callbackID);
 
     void clearSiteData(API::Array* sites, uint64_t flags, uint64_t maxAgeInSeconds, PassRefPtr<VoidCallback>);

@@ -267,7 +267,7 @@ public:
     void setHTTPPipeliningEnabled(bool);
     bool httpPipeliningEnabled() const;
 
-    void getStatistics(uint32_t statisticsMask, PassRefPtr<DictionaryCallback>);
+    void getStatistics(uint32_t statisticsMask, std::function<void (ImmutableDictionary*, CallbackBase::Error)>);
     
     void garbageCollectJavaScriptObjects();
     void setJavaScriptGarbageCollectorTimerEnabled(bool flag);

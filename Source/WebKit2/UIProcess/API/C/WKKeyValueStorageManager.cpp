@@ -56,12 +56,12 @@ WKStringRef WKKeyValueStorageManagerGetModificationTimeKey()
 
 void WKKeyValueStorageManagerGetKeyValueStorageOrigins(WKKeyValueStorageManagerRef keyValueStorageManagerRef, void* context, WKKeyValueStorageManagerGetKeyValueStorageOriginsFunction callback)
 {
-    toImpl(keyValueStorageManagerRef)->getKeyValueStorageOrigins(ArrayCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(keyValueStorageManagerRef)->getKeyValueStorageOrigins(toGenericCallbackFunction(context, callback));
 }
 
 void WKKeyValueStorageManagerGetStorageDetailsByOrigin(WKKeyValueStorageManagerRef keyValueStorageManagerRef, void* context, WKKeyValueStorageManagerGetStorageDetailsByOriginFunction callback)
 {
-    toImpl(keyValueStorageManagerRef)->getStorageDetailsByOrigin(ArrayCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(keyValueStorageManagerRef)->getStorageDetailsByOrigin(toGenericCallbackFunction(context, callback));
 }
 
 void WKKeyValueStorageManagerDeleteEntriesForOrigin(WKKeyValueStorageManagerRef keyValueStorageManagerRef, WKSecurityOriginRef originRef)

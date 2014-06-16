@@ -303,8 +303,10 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
     m_pageClient.didCommitLayerTree(layerTreeTransaction);
 }
 
-void WebPageProxy::selectWithGesture(const WebCore::IntPoint point, WebCore::TextGranularity granularity, uint32_t gestureType, uint32_t gestureState, PassRefPtr<GestureCallback> callback)
+void WebPageProxy::selectWithGesture(const WebCore::IntPoint point, WebCore::TextGranularity granularity, uint32_t gestureType, uint32_t gestureState, std::function<void (const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)> callbackFunction)
 {
+    RefPtr<GestureCallback> callback = GestureCallback::create(std::move(callbackFunction));
+
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -397,8 +399,10 @@ void WebPageProxy::getAutocorrectionContext(String& beforeContext, String& marke
     m_process->sendSync(Messages::WebPage::GetAutocorrectionContext(), Messages::WebPage::GetAutocorrectionContext::Reply(beforeContext, markedText, selectedText, afterContext, location, length), m_pageID);
 }
 
-void WebPageProxy::selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, PassRefPtr<GestureCallback> callback)
+void WebPageProxy::selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, std::function<void (const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)> callbackFunction)
 {
+    RefPtr<GestureCallback> callback = GestureCallback::create(std::move(callbackFunction));
+
     if (!isValid()) {
         callback->invalidate();
         return;

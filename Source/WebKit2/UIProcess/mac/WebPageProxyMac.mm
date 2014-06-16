@@ -325,8 +325,10 @@ void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRang
 #endif
 }
 
-void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange& range, PassRefPtr<AttributedStringForCharacterRangeCallback> callback)
+void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange& range, std::function<void (const AttributedString&, const EditingRange&, CallbackBase::Error)> callbackFunction)
 {
+    RefPtr<AttributedStringForCharacterRangeCallback> callback = AttributedStringForCharacterRangeCallback::create(std::move(callbackFunction));
+
     if (!isValid()) {
         callback->invalidate();
         return;

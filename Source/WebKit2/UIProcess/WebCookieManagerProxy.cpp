@@ -99,9 +99,9 @@ void WebCookieManagerProxy::derefWebContextSupplement()
     API::Object::deref();
 }
 
-void WebCookieManagerProxy::getHostnamesWithCookies(PassRefPtr<ArrayCallback> prpCallback)
+void WebCookieManagerProxy::getHostnamesWithCookies(std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<ArrayCallback> callback = prpCallback;
+    RefPtr<ArrayCallback> callback = ArrayCallback::create(std::move(callbackFunction));
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
 
@@ -161,9 +161,9 @@ void WebCookieManagerProxy::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy pol
     context()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(policy));
 }
 
-void WebCookieManagerProxy::getHTTPCookieAcceptPolicy(PassRefPtr<HTTPCookieAcceptPolicyCallback> prpCallback)
+void WebCookieManagerProxy::getHTTPCookieAcceptPolicy(std::function<void (HTTPCookieAcceptPolicy, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<HTTPCookieAcceptPolicyCallback> callback = prpCallback;
+    RefPtr<HTTPCookieAcceptPolicyCallback> callback = HTTPCookieAcceptPolicyCallback::create(std::move(callbackFunction));
 
     uint64_t callbackID = callback->callbackID();
     m_httpCookieAcceptPolicyCallbacks.set(callbackID, callback.release());

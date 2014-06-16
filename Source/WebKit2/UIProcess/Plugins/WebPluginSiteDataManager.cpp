@@ -138,9 +138,9 @@ void WebPluginSiteDataManager::invalidate()
     m_pendingClearSiteData.clear();
 }
 
-void WebPluginSiteDataManager::getSitesWithData(PassRefPtr<ArrayCallback> prpCallback)
+void WebPluginSiteDataManager::getSitesWithData(std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<ArrayCallback> callback = prpCallback;
+    RefPtr<ArrayCallback> callback = ArrayCallback::create(std::move(callbackFunction));
 
     if (!m_webContext) {
         callback->invalidate();

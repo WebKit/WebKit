@@ -155,7 +155,7 @@ void WKDatabaseManagerSetClient(WKDatabaseManagerRef databaseManagerRef, const W
 void WKDatabaseManagerGetDatabasesByOrigin(WKDatabaseManagerRef databaseManagerRef, void* context, WKDatabaseManagerGetDatabasesByOriginFunction callback)
 {
 #if ENABLE(SQL_DATABASE)
-    toImpl(databaseManagerRef)->getDatabasesByOrigin(ArrayCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(databaseManagerRef)->getDatabasesByOrigin(toGenericCallbackFunction(context, callback));
 #else
     UNUSED_PARAM(databaseManagerRef);
     UNUSED_PARAM(context);
@@ -166,7 +166,7 @@ void WKDatabaseManagerGetDatabasesByOrigin(WKDatabaseManagerRef databaseManagerR
 void WKDatabaseManagerGetDatabaseOrigins(WKDatabaseManagerRef databaseManagerRef, void* context, WKDatabaseManagerGetDatabaseOriginsFunction callback)
 {
 #if ENABLE(SQL_DATABASE)
-    toImpl(databaseManagerRef)->getDatabaseOrigins(ArrayCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(databaseManagerRef)->getDatabaseOrigins(toGenericCallbackFunction(context, callback));
 #else
     UNUSED_PARAM(databaseManagerRef);
     UNUSED_PARAM(context);

@@ -45,8 +45,8 @@ public:
     static PassRefPtr<WebKeyValueStorageManager> create(WebContext*);
     virtual ~WebKeyValueStorageManager();
 
-    void getKeyValueStorageOrigins(PassRefPtr<ArrayCallback>);
-    void getStorageDetailsByOrigin(PassRefPtr<ArrayCallback>);
+    void getKeyValueStorageOrigins(std::function<void (API::Array*, CallbackBase::Error)>);
+    void getStorageDetailsByOrigin(std::function<void (API::Array*, CallbackBase::Error)>);
     void deleteEntriesForOrigin(WebSecurityOrigin*);
     void deleteAllEntries();
 

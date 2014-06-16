@@ -124,17 +124,17 @@ bool WKFrameIsFrameSet(WKFrameRef frameRef)
 
 void WKFrameGetMainResourceData(WKFrameRef frameRef, WKFrameGetResourceDataFunction callback, void* context)
 {
-    toImpl(frameRef)->getMainResourceData(DataCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(frameRef)->getMainResourceData(toGenericCallbackFunction(context, callback));
 }
 
 void WKFrameGetResourceData(WKFrameRef frameRef, WKURLRef resourceURL, WKFrameGetResourceDataFunction callback, void* context)
 {
-    toImpl(frameRef)->getResourceData(toImpl(resourceURL), DataCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(frameRef)->getResourceData(toImpl(resourceURL), toGenericCallbackFunction(context, callback));
 }
 
 void WKFrameGetWebArchive(WKFrameRef frameRef, WKFrameGetWebArchiveFunction callback, void* context)
 {
-    toImpl(frameRef)->getWebArchive(DataCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(frameRef)->getWebArchive(toGenericCallbackFunction(context, callback));
 }
 
 // NOTE: These are deprecated and should be removed. They currently do nothing.

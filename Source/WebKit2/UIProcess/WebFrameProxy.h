@@ -95,9 +95,9 @@ public:
     bool isDisplayingMarkupDocument() const;
     bool isDisplayingPDFDocument() const;
 
-    void getWebArchive(PassRefPtr<DataCallback>);
-    void getMainResourceData(PassRefPtr<DataCallback>);
-    void getResourceData(API::URL*, PassRefPtr<DataCallback>);
+    void getWebArchive(std::function<void (API::Data*, CallbackBase::Error)>);
+    void getMainResourceData(std::function<void (API::Data*, CallbackBase::Error)>);
+    void getResourceData(API::URL*, std::function<void (API::Data*, CallbackBase::Error)>);
 
     void didStartProvisionalLoad(const String& url);
     void didReceiveServerRedirectForProvisionalLoad(const String& url);

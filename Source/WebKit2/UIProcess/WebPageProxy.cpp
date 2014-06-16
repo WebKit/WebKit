@@ -2292,9 +2292,9 @@ void WebPageProxy::getSelectionAsWebArchiveData(PassRefPtr<DataCallback> prpCall
     m_process->send(Messages::WebPage::GetSelectionAsWebArchiveData(callbackID), m_pageID);
 }
 
-void WebPageProxy::getMainResourceDataOfFrame(WebFrameProxy* frame, PassRefPtr<DataCallback> prpCallback)
+void WebPageProxy::getMainResourceDataOfFrame(WebFrameProxy* frame, std::function<void (API::Data*, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<DataCallback> callback = prpCallback;
+    RefPtr<DataCallback> callback = DataCallback::create(std::move(callbackFunction));
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -2305,9 +2305,9 @@ void WebPageProxy::getMainResourceDataOfFrame(WebFrameProxy* frame, PassRefPtr<D
     m_process->send(Messages::WebPage::GetMainResourceDataOfFrame(frame->frameID(), callbackID), m_pageID);
 }
 
-void WebPageProxy::getResourceDataFromFrame(WebFrameProxy* frame, API::URL* resourceURL, PassRefPtr<DataCallback> prpCallback)
+void WebPageProxy::getResourceDataFromFrame(WebFrameProxy* frame, API::URL* resourceURL, std::function<void (API::Data*, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<DataCallback> callback = prpCallback;
+    RefPtr<DataCallback> callback = DataCallback::create(std::move(callbackFunction));
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -2318,9 +2318,9 @@ void WebPageProxy::getResourceDataFromFrame(WebFrameProxy* frame, API::URL* reso
     m_process->send(Messages::WebPage::GetResourceDataFromFrame(frame->frameID(), resourceURL->string(), callbackID), m_pageID);
 }
 
-void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, PassRefPtr<DataCallback> prpCallback)
+void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, std::function<void (API::Data*, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<DataCallback> callback = prpCallback;
+    RefPtr<DataCallback> callback = DataCallback::create(std::move(callbackFunction));
     if (!isValid()) {
         callback->invalidate();
         return;

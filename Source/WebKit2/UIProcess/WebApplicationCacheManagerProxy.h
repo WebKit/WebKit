@@ -52,7 +52,7 @@ public:
     static PassRefPtr<WebApplicationCacheManagerProxy> create(WebContext*);
     virtual ~WebApplicationCacheManagerProxy();
 
-    void getApplicationCacheOrigins(PassRefPtr<ArrayCallback>);
+    void getApplicationCacheOrigins(std::function<void (API::Array*, CallbackBase::Error)>);
     void deleteEntriesForOrigin(WebSecurityOrigin*);
     void deleteAllEntries();
 

@@ -517,12 +517,12 @@ void WKContextWarmInitialProcess(WKContextRef contextRef)
 
 void WKContextGetStatistics(WKContextRef contextRef, void* context, WKContextGetStatisticsFunction callback)
 {
-    toImpl(contextRef)->getStatistics(0xFFFFFFFF, DictionaryCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(contextRef)->getStatistics(0xFFFFFFFF, toGenericCallbackFunction(context, callback));
 }
 
 void WKContextGetStatisticsWithOptions(WKContextRef contextRef, WKStatisticsOptions optionsMask, void* context, WKContextGetStatisticsFunction callback)
 {
-    toImpl(contextRef)->getStatistics(optionsMask, DictionaryCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(contextRef)->getStatistics(optionsMask, toGenericCallbackFunction(context, callback));
 }
 
 void WKContextGarbageCollectJavaScriptObjects(WKContextRef contextRef)

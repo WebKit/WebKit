@@ -51,7 +51,7 @@ public:
     static PassRefPtr<WebResourceCacheManagerProxy> create(WebContext*);
     virtual ~WebResourceCacheManagerProxy();
 
-    void getCacheOrigins(PassRefPtr<ArrayCallback>);
+    void getCacheOrigins(std::function<void (API::Array*, CallbackBase::Error)>);
     void clearCacheForOrigin(WebSecurityOrigin*, ResourceCachesToClear);
     void clearCacheForAllOrigins(ResourceCachesToClear);
 

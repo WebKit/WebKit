@@ -60,13 +60,13 @@ public:
 
     void initializeClient(const WKCookieManagerClientBase*);
     
-    void getHostnamesWithCookies(PassRefPtr<ArrayCallback>);
+    void getHostnamesWithCookies(std::function<void (API::Array*, CallbackBase::Error)>);
     void deleteCookiesForHostname(const String& hostname);
     void deleteAllCookies();
     void deleteAllCookiesModifiedAfterDate(double);
 
     void setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
-    void getHTTPCookieAcceptPolicy(PassRefPtr<HTTPCookieAcceptPolicyCallback>);
+    void getHTTPCookieAcceptPolicy(std::function<void (HTTPCookieAcceptPolicy, CallbackBase::Error)>);
 
     void startObservingCookieChanges();
     void stopObservingCookieChanges();

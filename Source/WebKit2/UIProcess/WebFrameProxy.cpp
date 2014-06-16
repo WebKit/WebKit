@@ -195,34 +195,34 @@ WebFormSubmissionListenerProxy* WebFrameProxy::setUpFormSubmissionListenerProxy(
     return static_cast<WebFormSubmissionListenerProxy*>(m_activeListener.get());
 }
 
-void WebFrameProxy::getWebArchive(PassRefPtr<DataCallback> callback)
+void WebFrameProxy::getWebArchive(std::function<void (API::Data*, CallbackBase::Error)> callbackFunction)
 {
     if (!m_page) {
-        callback->invalidate();
+        callbackFunction(nullptr, CallbackBase::Error::Unknown);
         return;
     }
 
-    m_page->getWebArchiveOfFrame(this, callback);
+    m_page->getWebArchiveOfFrame(this, callbackFunction);
 }
 
-void WebFrameProxy::getMainResourceData(PassRefPtr<DataCallback> callback)
+void WebFrameProxy::getMainResourceData(std::function<void (API::Data*, CallbackBase::Error)> callbackFunction)
 {
     if (!m_page) {
-        callback->invalidate();
+        callbackFunction(nullptr, CallbackBase::Error::Unknown);
         return;
     }
 
-    m_page->getMainResourceDataOfFrame(this, callback);
+    m_page->getMainResourceDataOfFrame(this, callbackFunction);
 }
 
-void WebFrameProxy::getResourceData(API::URL* resourceURL, PassRefPtr<DataCallback> callback)
+void WebFrameProxy::getResourceData(API::URL* resourceURL, std::function<void (API::Data*, CallbackBase::Error)> callbackFunction)
 {
     if (!m_page) {
-        callback->invalidate();
+        callbackFunction(nullptr, CallbackBase::Error::Unknown);
         return;
     }
 
-    m_page->getResourceDataFromFrame(this, resourceURL, callback);
+    m_page->getResourceDataFromFrame(this, resourceURL, callbackFunction);
 }
 
 void WebFrameProxy::setUnreachableURL(const String& unreachableURL)

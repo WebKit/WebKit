@@ -38,7 +38,7 @@ WKTypeID WKOriginDataManagerGetTypeID()
 
 void WKOriginDataManagerGetOrigins(WKOriginDataManagerRef originDataManagerRef, WKOriginDataTypes types, void* context, WKOriginDataManagerGetOriginsFunction callback)
 {
-    toImpl(originDataManagerRef)->getOrigins(types, ArrayCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(originDataManagerRef)->getOrigins(types, toGenericCallbackFunction(context, callback));
 }
 
 void WKOriginDataManagerDeleteEntriesForOrigin(WKOriginDataManagerRef originDataManagerRef, WKOriginDataTypes types, WKSecurityOriginRef originRef)
