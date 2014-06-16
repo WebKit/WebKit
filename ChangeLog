@@ -1,3 +1,16 @@
+2014-06-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r170003.
+        https://bugs.webkit.org/show_bug.cgi?id=133938
+
+        This patch broke GTK build (Requested by kczech on #webkit).
+
+        Reverted changeset:
+
+        "[EFL] Platform support for WebSpeech feature."
+        https://bugs.webkit.org/show_bug.cgi?id=116438
+        http://trac.webkit.org/changeset/170003
+
 2014-06-16  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Platform support for WebSpeech feature.
