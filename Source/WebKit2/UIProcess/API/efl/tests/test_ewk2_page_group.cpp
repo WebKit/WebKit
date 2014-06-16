@@ -49,6 +49,18 @@ TEST_F(EWK2UnitTestBase, ewk_page_group)
     ewk_object_unref(pageGroup);
 }
 
+TEST_F(EWK2UnitTestBase, ewk_page_group_settings_get)
+{
+    Ewk_Page_Group* pageGroup = ewk_view_page_group_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(pageGroup);
+    ASSERT_TRUE(settings);
+    ASSERT_EQ(settings, ewk_page_group_settings_get(pageGroup));
+
+    Evas_Object* newWebView = ewk_view_add(canvas());
+    Ewk_Page_Group* newPageGroup = ewk_view_page_group_get(newWebView);
+    ASSERT_NE(settings, ewk_page_group_settings_get(newPageGroup));
+}
+
 TEST_F(EWK2UnitTestBase, ewk_page_group_user_style_sheet_add_before_creating_view)
 {
     Evas_Smart* smart = evas_smart_class_new(&(ewkViewClass()->sc));

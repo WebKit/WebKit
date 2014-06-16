@@ -33,7 +33,7 @@ extern EWK2UnitTestEnvironment* environment;
 
 TEST_F(EWK2UnitTestBase, ewk_settings_fullscreen_enabled)
 {
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
 #if ENABLE(FULLSCREEN_API)
     ASSERT_TRUE(ewk_settings_fullscreen_enabled_get(settings));
@@ -56,7 +56,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_fullscreen_enabled)
 
 TEST_F(EWK2UnitTestBase, ewk_settings_javascript_enabled)
 {
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
     ASSERT_TRUE(ewk_settings_javascript_enabled_set(settings, EINA_TRUE));
     ASSERT_TRUE(ewk_settings_javascript_enabled_get(settings));
@@ -70,7 +70,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_javascript_enabled)
 
 TEST_F(EWK2UnitTestBase, ewk_settings_loads_images_automatically)
 {
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
     ASSERT_TRUE(ewk_settings_loads_images_automatically_set(settings, EINA_TRUE));
     ASSERT_TRUE(ewk_settings_loads_images_automatically_get(settings));
@@ -84,7 +84,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_loads_images_automatically)
 
 TEST_F(EWK2UnitTestBase, ewk_settings_developer_extras_enabled)
 {
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
     ASSERT_TRUE(ewk_settings_developer_extras_enabled_set(settings, EINA_TRUE));
     ASSERT_TRUE(ewk_settings_developer_extras_enabled_get(settings));
@@ -99,7 +99,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_developer_extras_enabled)
 TEST_F(EWK2UnitTestBase, ewk_settings_file_access_from_file_urls_allowed)
 {
     CString testURL = environment->urlForResource("local_file_access.html");
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
     ASSERT_FALSE(ewk_settings_file_access_from_file_urls_allowed_get(settings));
 
@@ -120,7 +120,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_file_access_from_file_urls_allowed)
 
 TEST_F(EWK2UnitTestBase, ewk_settings_frame_flattening_enabled_set)
 {
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
     ASSERT_TRUE(settings);
 
     // The frame flattening is disabled by default.
@@ -144,7 +144,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_frame_flattening_enabled_set)
 
 TEST_F(EWK2UnitTestBase, ewk_settings_dns_prefetching_enabled)
 {
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
     // DNS prefeching is disabled by default.
     ASSERT_FALSE(ewk_settings_dns_prefetching_enabled_get(settings));
@@ -157,7 +157,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_dns_prefetching_enabled)
 
 TEST_F(EWK2UnitTestBase, ewk_settings_encoding_detector_enabled)
 {
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
     // The encoding detector is disabled by default.
     ASSERT_FALSE(ewk_settings_encoding_detector_enabled_get(settings));
@@ -171,7 +171,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_encoding_detector_enabled)
 
 TEST_F(EWK2UnitTestBase, ewk_settings_default_text_encoding_name)
 {
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
     // The default encoding name is ISO-8859-1.
     ASSERT_STREQ("ISO-8859-1", ewk_settings_default_text_encoding_name_get(settings));
@@ -185,7 +185,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_default_text_encoding_name)
 
 TEST_F(EWK2UnitTestBase, ewk_settings_preferred_minimum_contents_width)
 {
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
     // 980 by default.
     ASSERT_EQ(980, ewk_settings_preferred_minimum_contents_width_get(settings));
@@ -196,7 +196,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_preferred_minimum_contents_width)
 
 TEST_F(EWK2UnitTestBase, ewk_settings_offline_web_application_cache_enabled)
 {
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
     // The offline web application cache is enabled by default.
     ASSERT_TRUE(ewk_settings_offline_web_application_cache_enabled_get(settings));
@@ -210,7 +210,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_offline_web_application_cache_enabled)
 
 TEST_F(EWK2UnitTestBase, ewk_settings_scripts_can_open_windows)
 {
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
     // The scripts can open new windows by default.
     ASSERT_TRUE(ewk_settings_scripts_can_open_windows_get(settings));
@@ -224,7 +224,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_scripts_can_open_windows)
 
 TEST_F(EWK2UnitTestBase, ewk_settings_local_storage_enabled)
 {
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
     // HTML5 local storage should be enabled by default.
     ASSERT_TRUE(ewk_settings_local_storage_enabled_get(settings));
@@ -238,7 +238,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_local_storage_enabled)
 
 TEST_F(EWK2UnitTestBase, ewk_settings_plugins_enabled)
 {
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
     // Plug-ins support is enabled by default.
     ASSERT_TRUE(ewk_settings_plugins_enabled_get(settings));
@@ -252,7 +252,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_plugins_enabled)
 
 TEST_F(EWK2UnitTestBase, ewk_settings_default_font_size)
 {
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
     // 16 by default.
     ASSERT_EQ(16, ewk_settings_default_font_size_get(settings));
@@ -266,7 +266,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_default_font_size)
 
 TEST_F(EWK2UnitTestBase, ewk_settings_private_browsing_enabled)
 {
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
     // Private browsing is disabled by default.
     ASSERT_FALSE(ewk_settings_private_browsing_enabled_get(settings));
@@ -280,7 +280,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_private_browsing_enabled)
 
 TEST_F(EWK2UnitTestBase, ewk_settings_text_autosizing_enabled)
 {
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
 #if ENABLE(TEXT_AUTOSIZING)
     // Text autosizing should be disabled by default.
@@ -304,7 +304,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_text_autosizing_enabled)
 
 TEST_F(EWK2UnitTestBase, ewk_settings_web_security_enabled)
 {
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
     // Web security should be enabled by default.
     ASSERT_TRUE(ewk_settings_web_security_enabled_get(settings));
@@ -318,7 +318,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_web_security_enabled)
 
 TEST_F(EWK2UnitTestBase, ewk_settings_spatial_navigation_enabled)
 {
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
     // Spatial navigation is disabled by default.
     ASSERT_FALSE(ewk_settings_spatial_navigation_enabled_get(settings));

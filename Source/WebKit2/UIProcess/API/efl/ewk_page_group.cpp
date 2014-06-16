@@ -103,6 +103,13 @@ Ewk_Page_Group* ewk_page_group_create(const char* identifier)
     return EwkPageGroup::create(identifier).leakRef();
 }
 
+Ewk_Settings* ewk_page_group_settings_get(const Ewk_Page_Group* ewkPageGroup)
+{
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkPageGroup, ewkPageGroup, impl, nullptr);
+
+    return impl->settings();
+}
+
 Eina_Bool ewk_page_group_user_style_sheet_add(Ewk_Page_Group* ewkPageGroup, const char* source, const char* baseURL, Eina_List* whiteList, Eina_List* blackList, Eina_Bool mainFrameOnly)
 {
     EWK_OBJ_GET_IMPL_OR_RETURN(EwkPageGroup, ewkPageGroup, impl, false);

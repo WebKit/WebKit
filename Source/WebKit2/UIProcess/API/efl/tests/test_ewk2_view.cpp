@@ -382,13 +382,6 @@ TEST_F(EWK2ViewTest, ewk_view_form_submission_request)
     evas_object_smart_callback_del(webView(), "form,submission,request", onFormAboutToBeSubmitted);
 }
 
-TEST_F(EWK2ViewTest, ewk_view_settings_get)
-{
-    Ewk_Settings* settings = ewk_view_settings_get(webView());
-    ASSERT_TRUE(settings);
-    ASSERT_EQ(settings, ewk_view_settings_get(webView()));
-}
-
 TEST_F(EWK2ViewTest, ewk_view_theme_set)
 {
     const char* buttonHTML = "<html><body><input type='button' id='btn'>"

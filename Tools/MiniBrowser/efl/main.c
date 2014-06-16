@@ -1857,7 +1857,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     /* Set the zoom level to default */
     window->current_zoom_level = DEFAULT_ZOOM_LEVEL;
 
-    Ewk_Settings *settings = ewk_view_settings_get(window->ewk_view);
+    Ewk_Settings *settings = ewk_page_group_settings_get(pageGroup);
     ewk_settings_file_access_from_file_urls_allowed_set(settings, EINA_TRUE);
     ewk_settings_encoding_detector_enabled_set(settings, encoding_detector_enabled);
     ewk_settings_frame_flattening_enabled_set(settings, frame_flattening_enabled);

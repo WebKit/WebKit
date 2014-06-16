@@ -31,6 +31,7 @@
 #ifndef ewk_page_group_h
 #define ewk_page_group_h
 
+#include "ewk_settings.h"
 #include <Eina.h>
 
 #ifdef __cplusplus
@@ -54,6 +55,15 @@ typedef struct EwkObject Ewk_Page_Group;
  * @see ewk_object_unref
  */
 EAPI Ewk_Page_Group *ewk_page_group_create(const char *identifier);
+
+/**
+ * Gets the Ewk_Settings of this @a page_group.
+ *
+ * @param page_group Ewk_Page_Group object to get Ewk_Settings
+ *
+ * @return the Ewk_Settings instance or @c NULL on failure
+ */
+EAPI Ewk_Settings *ewk_page_group_settings_get(const Ewk_Page_Group *page_group);
 
 /**
  * Adds the user style sheet to this page group.

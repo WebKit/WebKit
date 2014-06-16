@@ -27,7 +27,6 @@
 #include "ewk_context_private.h"
 #include "ewk_page_group_private.h"
 #include "ewk_private.h"
-#include "ewk_settings_private.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit/WKAPICast.h>
 #include <WebKit/WKData.h>
@@ -181,13 +180,6 @@ Eina_Bool ewk_view_stop(Evas_Object* ewkView)
     WKPageStopLoading(impl->wkPage());
 
     return true;
-}
-
-Ewk_Settings* ewk_view_settings_get(const Evas_Object* ewkView)
-{
-    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, nullptr);
-
-    return impl->ewkPageGroup()->settings();
 }
 
 const char* ewk_view_title_get(const Evas_Object* ewkView)

@@ -1,3 +1,26 @@
+2014-06-15  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Change ewk_view_settings_get to ewk_page_group_settings_get
+        https://bugs.webkit.org/show_bug.cgi?id=133841
+
+        Reviewed by Gyuyoung Kim.
+
+        Ewk_Settings object is a member of Ewk_Page_Group.
+        So, Ewk_Page_Group is better place for the getter of Ewk_Settings.
+
+        * UIProcess/API/efl/ewk_page_group.cpp:
+        (ewk_page_group_settings_get): Added instead of ewk_view_settings_get.
+        * UIProcess/API/efl/ewk_page_group.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_settings_get): Deleted.
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_page_group.cpp:
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_settings.cpp:
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F): Deleted.
+
 2014-06-15  Anders Carlsson  <andersca@apple.com>
 
         Add an autorelease() member function to RetainPtr
