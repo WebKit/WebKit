@@ -1,3 +1,13 @@
+2014-06-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Use TileController on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=133895
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h: Remove
+        unneeded overload.
+
 2014-06-16  Timothy Horton  <timothy_horton@apple.com>
 
         [iOS][wk2] Swipe snapshots are removed too quickly if there is no saved render tree size

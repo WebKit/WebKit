@@ -32,7 +32,6 @@
 #include "Region.h"
 #include "TileCoverageMap.h"
 #include "TileGrid.h"
-#include "WebLayer.h"
 #include <utility>
 #include <wtf/MainThread.h>
 

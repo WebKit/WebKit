@@ -93,7 +93,7 @@ public:
 
     virtual PlatformLayer* platformLayer() const { return m_layer.get(); }
 
-    virtual bool usesTiledBackingLayer() const = 0;
+    bool usesTiledBackingLayer() const { return layerType() == LayerTypePageTiledBackingLayer || layerType() == LayerTypeTiledBackingLayer; }
 
     PlatformCALayerClient* owner() const { return m_owner; }
     virtual void setOwner(PlatformCALayerClient* owner) { m_owner = owner; }
@@ -226,16 +226,20 @@ public:
 
 #if PLATFORM(COCOA)
     virtual void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) = 0;
+#endif
 
     static const unsigned webLayerMaxRectsToPaint = 5;
+#if COMPILER(MSVC)
+    static const float webLayerWastedSpaceThreshold;
+#else
     constexpr static const float webLayerWastedSpaceThreshold = 0.75f;
+#endif
 
     typedef Vector<FloatRect, webLayerMaxRectsToPaint> RepaintRectList;
         
     // Functions allows us to share implementation across WebTiledLayer and WebLayer
     static RepaintRectList collectRectsToPaint(CGContextRef, PlatformCALayer*);
     static void drawLayerContents(CGContextRef, PlatformCALayer*, RepaintRectList& dirtyRects);
-#endif
     static void drawRepaintIndicator(CGContextRef, PlatformCALayer*, int repaintCount, CGColorRef customBackgroundColor);
     static CGRect frameForLayer(const PlatformLayer*);
 

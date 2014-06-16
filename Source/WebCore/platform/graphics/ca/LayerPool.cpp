@@ -81,10 +81,10 @@ void LayerPool::addLayer(const RefPtr<PlatformCALayer>& layer)
 RefPtr<PlatformCALayer> LayerPool::takeLayerWithSize(const IntSize& size)
 {
     if (!canReuseLayerWithSize(size))
-        return nil;
+        return nullptr;
     LayerList& reuseList = listOfLayersWithSize(size, MarkAsUsed);
     if (reuseList.isEmpty())
-        return nil;
+        return nullptr;
     m_totalBytes -= backingStoreBytesForSize(size);
     return reuseList.takeFirst();
 }

@@ -2998,11 +2998,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
     ASSERT(useTiledLayer != m_usingTiledBacking);
     RefPtr<PlatformCALayer> oldLayer = m_layer;
 
-#if PLATFORM(WIN)
-    PlatformCALayer::LayerType layerType = useTiledLayer ? PlatformCALayer::LayerTypeWebTiledLayer : PlatformCALayer::LayerTypeWebLayer;
-#else
     PlatformCALayer::LayerType layerType = useTiledLayer ? PlatformCALayer::LayerTypeTiledBackingLayer : PlatformCALayer::LayerTypeWebLayer;
-#endif
 
     m_layer = createPlatformCALayer(layerType, this);
 

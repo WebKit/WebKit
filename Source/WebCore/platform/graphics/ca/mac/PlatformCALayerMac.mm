@@ -957,7 +957,6 @@ CGRect PlatformCALayer::frameForLayer(const PlatformLayer* tileLayer)
     return [tileLayer frame];
 }
 
-
 PassRefPtr<PlatformCALayer> PlatformCALayerMac::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
 {
     return PlatformCALayerMac::create(layerType, client);

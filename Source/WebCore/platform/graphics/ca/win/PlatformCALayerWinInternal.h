@@ -37,6 +37,8 @@ namespace WebCore {
 
 class FloatRect;
 class PlatformCALayer;
+class TileController;
+class TiledBacking;
 
 typedef Vector<RefPtr<PlatformCALayer> > PlatformCALayerList;
 
@@ -59,6 +61,9 @@ public:
     void setBounds(const FloatRect&);
     void setFrame(const FloatRect&);
 
+    TileController* createTileController(PlatformCALayer* rootLayer);
+    TiledBacking* tiledBacking();
+
 private:
     void internalSetNeedsDisplay(const FloatRect*);
     PlatformCALayer* sublayerAtIndex(int) const;
@@ -78,6 +83,7 @@ private:
     CGSize m_tileSize;
     CGSize m_constrainedSize;
     RetainPtr<CACFLayerRef> m_tileParent;
+    OwnPtr<TileController> m_tileController;
 };
 
 }

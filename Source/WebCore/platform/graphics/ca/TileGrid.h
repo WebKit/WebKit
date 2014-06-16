@@ -35,7 +35,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
 
-#if PLATFORM(COCOA)
+#if USE(CG)
 typedef struct CGContext *CGContextRef;
 #endif
 

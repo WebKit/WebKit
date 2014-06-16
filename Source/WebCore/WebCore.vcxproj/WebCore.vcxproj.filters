@@ -6829,9 +6829,6 @@
     <ClCompile Include="..\rendering\shapes\Shape.cpp">
       <Filter>rendering\shapes</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\shapes\ShapeInsideInfo.cpp">
-      <Filter>rendering\shapes</Filter>
-    </ClCompile>
     <ClCompile Include="..\rendering\shapes\ShapeOutsideInfo.cpp">
       <Filter>rendering\shapes</Filter>
     </ClCompile>
@@ -7114,6 +7111,25 @@
     </ClCompile>
     <ClCompile Include="..\html\track\VTTRegionList.cpp">
       <Filter>html\track</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HTTPHeaderNames.cpp" />
+    <ClCompile Include="..\platform\DisplaySleepDisabler.cpp" />
+    <ClCompile Include="..\platform\SystemSleepListener.cpp" />
+    <ClCompile Include="..\platform\network\BlobRegistry.cpp" />
+    <ClCompile Include="..\platform\network\BlobRegistryImpl.cpp" />
+    <ClCompile Include="..\css\CSSToLengthConversionData.cpp" />
+    <ClCompile Include="..\html\PublicURLManager.cpp" />
+    <ClCompile Include="..\platform\graphics\ca\TileController.cpp">
+      <Filter>platform\graphics\ca</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\ca\TileGrid.cpp">
+      <Filter>platform\graphics\ca</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\ca\LayerPool.cpp">
+      <Filter>platform\graphics\ca</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\ca\TileCoverageMap.cpp">
+      <Filter>platform\graphics\ca</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -8644,9 +8660,6 @@
     <ClInclude Include="..\platform\graphics\avfoundation\MediaPlayerPrivateAVFoundation.h">
       <Filter>platform\graphics\avfoundation</Filter>
     </ClInclude>
-    <ClCompile Include="..\platform\graphics\win\MediaPlayerPrivateMediaFoundation.h">
-      <Filter>platform\graphics\win</Filter>
-    </ClCompile>
     <ClInclude Include="..\platform\graphics\avfoundation\cf\AVFoundationCFSoftLinking.h">
       <Filter>platform\graphics\avfoundation\cf</Filter>
     </ClInclude>
@@ -14685,9 +14698,6 @@
     <ClInclude Include="..\rendering\shapes\Shape.h">
       <Filter>rendering\shapes</Filter>
     </ClInclude>
-    <ClInclude Include="..\rendering\shapes\ShapeInsideInfo.h">
-      <Filter>rendering\shapes</Filter>
-    </ClInclude>
     <ClInclude Include="..\rendering\shapes\ShapeInterval.h">
       <Filter>rendering\shapes</Filter>
     </ClInclude>
@@ -14997,6 +15007,23 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSVTTRegion.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSVTTRegionList.cpp" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSVTTRegionList.h" />
+    <ClInclude Include="..\platform\DisplaySleepDisabler.h" />
+    <ClInclude Include="..\platform\graphics\ca\win\PlatformCAAnimationWin.h" />
+    <ClInclude Include="..\platform\graphics\win\MediaPlayerPrivateMediaFoundation.h" />
+    <ClInclude Include="..\platform\SystemSleepListener.h" />
+    <ClInclude Include="..\css\CSSToLengthConversionData.h" />
+    <ClInclude Include="..\platform\graphics\ca\TileController.h">
+      <Filter>platform\graphics\ca</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\ca\TileGrid.h">
+      <Filter>platform\graphics\ca</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\ca\LayerPool.h">
+      <Filter>platform\graphics\ca</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\ca\TileCoverageMap.h">
+      <Filter>platform\graphics\ca</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">
@@ -15070,6 +15097,7 @@
     <None Include="..\Modules\mediacontrols\mediaControlsApple.js">
       <Filter>Modules\mediacontrols</Filter>
     </None>
+    <None Include="..\platform\network\HTTPHeaderNames.in" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuildStep Include="..\platform\graphics\win\MediaPlayerPrivateFullscreenWindow.h">

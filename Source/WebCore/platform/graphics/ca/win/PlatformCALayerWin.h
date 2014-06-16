@@ -37,8 +37,6 @@ public:
     
     ~PlatformCALayerWin();
 
-    virtual bool usesTiledBackingLayer() const override { return false; }
-
     virtual void setNeedsDisplay(const FloatRect* dirtyRect = 0) override;
 
     virtual void setContentsChanged() override;
@@ -50,7 +48,7 @@ public:
     virtual void appendSublayer(PlatformCALayer*) override;
     virtual void insertSublayer(PlatformCALayer*, size_t index) override;
     virtual void replaceSublayer(PlatformCALayer* reference, PlatformCALayer*) override;
-    virtual const PlatformCALayerList* customSublayers() const override { return nullptr; }
+    virtual const PlatformCALayerList* customSublayers() const override { return m_customSublayers.get(); }
     virtual void adoptSublayers(PlatformCALayer* source) override;
 
     virtual void addAnimationForKey(const String& key, PlatformCAAnimation*) override;
@@ -124,7 +122,7 @@ public:
     virtual float contentsScale() const override;
     virtual void setContentsScale(float) override;
 
-    virtual void setEdgeAntialiasingMask(unsigned) override { ASSERT_NOT_REACHED(); }
+    virtual void setEdgeAntialiasingMask(unsigned) override;
 
     virtual GraphicsLayer::CustomAppearance customAppearance() const override { return m_customAppearance; }
     virtual void updateCustomAppearance(GraphicsLayer::CustomAppearance customAppearance) override { m_customAppearance = customAppearance; }
@@ -132,7 +130,7 @@ public:
     virtual GraphicsLayer::CustomBehavior customBehavior() const override { return m_customBehavior; }
     virtual void updateCustomBehavior(GraphicsLayer::CustomBehavior customBehavior) override { m_customBehavior = customBehavior; }
 
-    virtual TiledBacking* tiledBacking() override { return nullptr; }
+    virtual TiledBacking* tiledBacking() override;
     
     virtual PlatformCALayer* rootLayer() const override;
     virtual void setNeedsLayout() override;
@@ -150,6 +148,7 @@ private:
     PlatformCALayerWin(LayerType, PlatformLayer*, PlatformCALayerClient* owner);
 
     HashMap<String, RefPtr<PlatformCAAnimation>> m_animations;
+    std::unique_ptr<PlatformCALayerList> m_customSublayers;
     GraphicsLayer::CustomAppearance m_customAppearance;
     GraphicsLayer::CustomBehavior m_customBehavior;
 };

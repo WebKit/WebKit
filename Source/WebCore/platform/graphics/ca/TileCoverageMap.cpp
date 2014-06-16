@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "TileCoverageMap.h"
+#include "config.h"
+#include "TileCoverageMap.h"
 
-#import "GraphicsContext.h"
-#import "TileController.h"
-#import "TileGrid.h"
+#include "GraphicsContext.h"
+#include "TileController.h"
+#include "TileGrid.h"
 
 namespace WebCore {
 

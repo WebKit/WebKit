@@ -1,3 +1,61 @@
+2014-06-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Use TileController on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=133895
+
+        Reviewed by Tim Horton.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Add Tiled Drawing files.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * platform/graphics/TiledBacking.h: No longer Cocoa-only.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer): Windows
+        now uses the same layer type as Mac.
+        * platform/graphics/ca/LayerPool.cpp:
+        (WebCore::LayerPool::takeLayerWithSize): Use nullptr
+        rather than nil for C++ code.
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        * platform/graphics/ca/PlatformCALayer.h: Expose necessary
+        drawing functions for Windows port.
+        * platform/graphics/ca/TileController.cpp: Remove unneeded
+        header include for WebLayer.
+        * platform/graphics/ca/TileCoverageMap.cpp: Correct #includes.
+        * platform/graphics/ca/TileGrid.h: Not just for Cococa.
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm: Remove
+        extra whitespace.
+        * platform/graphics/ca/mac/PlatformCALayerMac.h: Remove
+        unneeded overload.
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayer::collectRectsToPaint): Added stub.
+        (PlatformCALayer::drawLayerContents): Added.
+        (PlatformCALayer::frameForLayer): Added.
+        (PlatformCALayerWin::PlatformCALayerWin): Remove unneeded
+        assert now that we support these types. Add TileController
+        support.
+        (PlatformCALayerWin::setEdgeAntialiasingMask): Added.
+        (printLayer): Add newly-supported tile types.
+        (PlatformCALayerWin::tiledBacking): Added.
+        * platform/graphics/ca/win/PlatformCALayerWin.h: Update to
+        support Tiled Drawing.
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+        (PlatformCALayerWinInternal::PlatformCALayerWinInternal): Update to
+        recognize newly-supported layer types.
+        (PlatformCALayerWinInternal::setNeedsDisplay): Ditto.
+        (PlatformCALayerWinInternal::setSublayers): Ditto.
+        (PlatformCALayerWinInternal::getSublayers): Ditto.
+        (PlatformCALayerWinInternal::removeAllSublayers): Ditto.
+        (PlatformCALayerWinInternal::insertSublayer): Ditto.
+        (PlatformCALayerWinInternal::sublayerCount): Ditto.
+        (PlatformCALayerWinInternal::indexOfSublayer): Ditto.
+        (PlatformCALayerWinInternal::sublayerAtIndex): Ditto.
+        (PlatformCALayerWinInternal::setBounds): Ditto.
+        (PlatformCALayerWinInternal::setFrame): Ditto.
+        (PlatformCALayerWinInternal::drawTile): Ditto.
+        (PlatformCALayerWinInternal::createTileController): Ditto.
+        (PlatformCALayerWinInternal::tiledBacking): Ditto.
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.h: Update to use
+        TileController.
+
 2014-06-16  Andreas Kling  <akling@apple.com>
 
         Remove unnecessary style invalidation in RenderTextControl::styleDidChange().

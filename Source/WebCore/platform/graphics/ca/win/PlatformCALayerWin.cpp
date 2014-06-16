@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "GraphicsContext.h"
 #include "PlatformCAAnimationWin.h"
 #include "PlatformCALayerWinInternal.h"
+#include "TileController.h"
 #include <QuartzCore/CoreAnimationCF.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/CurrentTime.h>
@@ -93,6 +94,24 @@ PlatformCALayer* PlatformCALayer::platformCALayer(void* platformLayer)
     return layerIntern ? layerIntern->owner() : 0;
 }
 
+PlatformCALayer::RepaintRectList PlatformCALayer::collectRectsToPaint(CGContextRef, PlatformCALayer*)
+{
+    // FIXME: We should actually collect rects to use instead of defaulting to Windows'
+    // normal drawing path.
+    PlatformCALayer::RepaintRectList dirtyRects;
+    return dirtyRects;
+}
+
+void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformCALayer* platformCALayer, RepaintRectList&)
+{
+    intern(platformCALayer)->displayCallback(platformCALayer->platformLayer(), context);
+}
+
+CGRect PlatformCALayer::frameForLayer(const PlatformLayer* tileLayer)
+{
+    return CACFLayerGetFrame(static_cast<CACFLayerRef>(const_cast<PlatformLayer*>(tileLayer)));
+}
+
 static void displayCallback(CACFLayerRef caLayer, CGContextRef context)
 {
     ASSERT_ARG(caLayer, CACFLayerGetUserData(caLayer));
@@ -116,7 +135,6 @@ PlatformCALayerWin::PlatformCALayerWin(LayerType layerType, PlatformLayer* layer
         return;
     }
 
-    ASSERT((layerType != LayerTypeTiledBackingLayer) && (layerType != LayerTypePageTiledBackingLayer));
     m_layer = adoptCF(CACFLayerCreate(toCACFLayerType(layerType)));
 
     // Create the PlatformCALayerWinInternal object and point to it in the userdata.
@@ -126,6 +144,11 @@ PlatformCALayerWin::PlatformCALayerWin(LayerType layerType, PlatformLayer* layer
     // Set the display callback
     CACFLayerSetDisplayCallback(m_layer.get(), displayCallback);
     CACFLayerSetLayoutCallback(m_layer.get(), layoutSublayersProc);
+
+    if (usesTiledBackingLayer()) {
+        TileController* tileController = intern->createTileController(this);
+        m_customSublayers = std::make_unique<PlatformCALayerList>(tileController->containerLayers());
+    }
 }
 
 PlatformCALayerWin::~PlatformCALayerWin()
@@ -541,6 +564,12 @@ void PlatformCALayerWin::setTimeOffset(CFTimeInterval value)
     setNeedsCommit();
 }
 
+void PlatformCALayerWin::setEdgeAntialiasingMask(unsigned mask)
+{
+    CACFLayerSetEdgeAntialiasingMask(m_layer.get(), mask);
+    setNeedsCommit();
+}
+
 float PlatformCALayerWin::contentsScale() const
 {
     return 1;
@@ -579,6 +608,7 @@ static void printLayer(const PlatformCALayer* layer, int indent)
     case PlatformCALayer::LayerTypeWebLayer: layerTypeName = "web-layer"; break;
     case PlatformCALayer::LayerTypeTransformLayer: layerTypeName = "transform-layer"; break;
     case PlatformCALayer::LayerTypeWebTiledLayer: layerTypeName = "web-tiled-layer"; break;
+    case PlatformCALayer::LayerTypeTiledBackingLayer: layerTypeName = "tiled-backing-layer"; break;
     case PlatformCALayer::LayerTypeRootLayer: layerTypeName = "root-layer"; break;
     case PlatformCALayer::LayerTypeCustom: layerTypeName = "custom-layer"; break;
     }
@@ -674,4 +704,12 @@ void PlatformCALayerWin::printTree() const
 PassRefPtr<PlatformCALayer> PlatformCALayerWin::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
 {
     return PlatformCALayerWin::create(layerType, client);
+}
+
+TiledBacking* PlatformCALayerWin::tiledBacking()
+{
+    if (!usesTiledBackingLayer())
+        return nullptr;
+
+    return intern(this)->tiledBacking();
 }

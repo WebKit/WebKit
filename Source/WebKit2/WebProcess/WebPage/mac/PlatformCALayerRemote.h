@@ -43,8 +43,6 @@ public:
 
     virtual ~PlatformCALayerRemote();
 
-    virtual bool usesTiledBackingLayer() const override { return layerType() == LayerTypePageTiledBackingLayer || layerType() == LayerTypeTiledBackingLayer; }
-
     virtual PlatformLayer* platformLayer() const override { return nullptr; }
 
     void recursiveBuildTransaction(RemoteLayerTreeTransaction&);

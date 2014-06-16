@@ -32,9 +32,7 @@ static const int defaultTileWidth = 512;
 static const int defaultTileHeight = 512;
 
 class IntRect;
-#if PLATFORM(COCOA)
 class PlatformCALayer;
-#endif
 
 enum ScrollingModeIndication {
     SynchronousScrollingBecauseOfStyleIndication,
@@ -103,7 +101,7 @@ public:
     virtual IntRect tileGridExtent() const = 0;
     virtual void setScrollingModeIndication(ScrollingModeIndication) = 0;
 
-#if PLATFORM(COCOA)
+#if USE(CA)
     virtual PlatformCALayer* tiledScrollingIndicatorLayer() = 0;
 #endif
 };

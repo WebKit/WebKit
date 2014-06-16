@@ -37,6 +37,10 @@ static GraphicsLayer::PlatformLayerID generateLayerID()
     return ++layerID;
 }
 
+#if COMPILER(MSVC)
+const float PlatformCALayer::webLayerWastedSpaceThreshold = 0.75f;
+#endif
+
 PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformCALayerClient* owner)
     : m_layerType(layerType)
     , m_layerID(generateLayerID())
