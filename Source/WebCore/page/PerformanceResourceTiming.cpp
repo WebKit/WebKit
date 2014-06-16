@@ -37,6 +37,7 @@
 #include "Document.h"
 #include "DocumentLoadTiming.h"
 #include "DocumentLoader.h"
+#include "HTTPHeaderNames.h"
 #include "URL.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -57,7 +58,7 @@ static bool passesTimingAllowCheck(const ResourceResponse& response, Document* r
     if (resourceOrigin->isSameSchemeHostPort(requestingDocument->securityOrigin()))
         return true;
 
-    const String& timingAllowOriginString = response.httpHeaderField("timing-allow-origin");
+    const String& timingAllowOriginString = response.httpHeaderField(HTTPHeaderName::TimingAllowOrigin);
     if (timingAllowOriginString.isEmpty() || equalIgnoringCase(timingAllowOriginString, "null"))
         return false;
 

@@ -484,8 +484,8 @@ PassRefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const URL
     request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "max-age=0");
 
     if (newestCachedResource) {
-        const String& lastModified = newestCachedResource->response().httpHeaderField("Last-Modified");
-        const String& eTag = newestCachedResource->response().httpHeaderField("ETag");
+        const String& lastModified = newestCachedResource->response().httpHeaderField(HTTPHeaderName::LastModified);
+        const String& eTag = newestCachedResource->response().httpHeaderField(HTTPHeaderName::ETag);
         if (!lastModified.isEmpty() || !eTag.isEmpty()) {
             if (!lastModified.isEmpty())
                 request.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);

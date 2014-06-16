@@ -3907,7 +3907,7 @@ String Document::lastModified() const
     if (m_frame) {
         String httpLastModified;
         if (DocumentLoader* documentLoader = loader()) 
-            httpLastModified = documentLoader->response().httpHeaderField("Last-Modified");
+            httpLastModified = documentLoader->response().httpHeaderField(HTTPHeaderName::LastModified);
         if (!httpLastModified.isEmpty()) {
             date.setMillisecondsSinceEpochForDateTime(parseDate(httpLastModified));
             foundDate = true;

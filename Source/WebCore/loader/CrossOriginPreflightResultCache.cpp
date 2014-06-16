@@ -28,6 +28,7 @@
 #include "CrossOriginPreflightResultCache.h"
 
 #include "CrossOriginAccessControl.h"
+#include "HTTPHeaderNames.h"
 #include "ResourceResponse.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -92,19 +93,19 @@ static bool parseAccessControlAllowList(const String& string, HashSet<String, Ha
 bool CrossOriginPreflightResultCacheItem::parse(const ResourceResponse& response, String& errorDescription)
 {
     m_methods.clear();
-    if (!parseAccessControlAllowList(response.httpHeaderField("Access-Control-Allow-Methods"), m_methods)) {
+    if (!parseAccessControlAllowList(response.httpHeaderField(HTTPHeaderName::AccessControlAllowMethods), m_methods)) {
         errorDescription = "Cannot parse Access-Control-Allow-Methods response header field.";
         return false;
     }
 
     m_headers.clear();
-    if (!parseAccessControlAllowList(response.httpHeaderField("Access-Control-Allow-Headers"), m_headers)) {
+    if (!parseAccessControlAllowList(response.httpHeaderField(HTTPHeaderName::AccessControlAllowHeaders), m_headers)) {
         errorDescription = "Cannot parse Access-Control-Allow-Headers response header field.";
         return false;
     }
 
     std::chrono::seconds expiryDelta;
-    if (parseAccessControlMaxAge(response.httpHeaderField("Access-Control-Max-Age"), expiryDelta)) {
+    if (parseAccessControlMaxAge(response.httpHeaderField(HTTPHeaderName::AccessControlMaxAge), expiryDelta)) {
         if (expiryDelta > maxPreflightCacheTimeout)
             expiryDelta = maxPreflightCacheTimeout;
     } else

@@ -30,6 +30,7 @@
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "HTTPHeaderNames.h"
 #include "PluginDebug.h"
 #include "ResourceLoadScheduler.h"
 #include "SharedBuffer.h"
@@ -168,7 +169,7 @@ void PluginStream::startStream()
         // If the content is encoded (most likely compressed), then don't send its length to the plugin,
         // which is only interested in the decoded length, not yet known at the moment.
         // <rdar://problem/4470599> tracks a request for -[NSURLResponse expectedContentLength] to incorporate this logic.
-        String contentEncoding = m_resourceResponse.httpHeaderField("Content-Encoding");
+        String contentEncoding = m_resourceResponse.httpHeaderField(HTTPHeaderName::ContentEncoding);
         if (!contentEncoding.isNull() && contentEncoding != "identity")
             expectedContentLength = -1;
     }

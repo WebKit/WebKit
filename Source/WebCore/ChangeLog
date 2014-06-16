@@ -1,3 +1,39 @@
+2014-06-16  Anders Carlsson  <andersca@apple.com>
+
+        Add HTTPHeaderName overloads on ResourceResponseBase
+        https://bugs.webkit.org/show_bug.cgi?id=133946
+
+        Reviewed by Andreas Kling.
+
+        * WebCore.exp.in:
+        * dom/Document.cpp:
+        (WebCore::Document::lastModified):
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::passesAccessControlCheck):
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::CrossOriginPreflightResultCacheItem::parse):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedFirstData):
+        (WebCore::FrameLoader::didBeginDocument):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::createResourceHandle):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::canUseSheet):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::mimeType):
+        * platform/network/HTTPHeaderNames.in:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::httpHeaderField):
+        (WebCore::ResourceResponseBase::setHTTPHeaderField):
+        * platform/network/ResourceResponseBase.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::getAllResponseHeaders):
+        (WebCore::XMLHttpRequest::getResponseHeader):
+        (WebCore::XMLHttpRequest::responseMIMEType):
+        (WebCore::XMLHttpRequest::didReceiveResponse):
+
 2014-04-05  Antonio Gomes  <a1.gomes@sisa.samsung.com>
 
         [Bindings] "nullable" sequence support is incomplete (i.e. sequence<NativeType>?)

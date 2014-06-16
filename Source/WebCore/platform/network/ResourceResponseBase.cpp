@@ -273,7 +273,7 @@ String ResourceResponseBase::httpHeaderField(const AtomicString& name) const
     return m_httpHeaderFields.get(name); 
 }
 
-String ResourceResponseBase::httpHeaderField(const char* name) const
+String ResourceResponseBase::httpHeaderField(HTTPHeaderName name) const
 {
     lazyInit(CommonFieldsOnly);
 
@@ -323,6 +323,17 @@ void ResourceResponseBase::setHTTPHeaderField(const AtomicString& name, const St
     HTTPHeaderName headerName;
     if (findHTTPHeaderName(name.string(), headerName))
         updateHeaderParsedState(headerName);
+
+    m_httpHeaderFields.set(name, value);
+
+    // FIXME: Should invalidate or update platform response if present.
+}
+
+void ResourceResponseBase::setHTTPHeaderField(HTTPHeaderName name, const String& value)
+{
+    lazyInit(CommonAndUncommonFields);
+
+    updateHeaderParsedState(name);
 
     m_httpHeaderFields.set(name, value);
 

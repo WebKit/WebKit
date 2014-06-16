@@ -24,6 +24,7 @@
 
 #include "ResourceResponse.h"
 
+#include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include <wtf/text/CString.h>
@@ -98,7 +99,7 @@ void ResourceResponse::updateFromSoupMessageHeaders(const SoupMessageHeaders* me
     setTextEncodingName(extractCharsetFromMediaType(contentType));
 
     setExpectedContentLength(soup_message_headers_get_content_length(headers));
-    setSuggestedFilename(filenameFromHTTPContentDisposition(httpHeaderField("Content-Disposition")));}
+    setSuggestedFilename(filenameFromHTTPContentDisposition(httpHeaderField(HTTPHeaderName::ContentDisposition)));}
 
 }
 

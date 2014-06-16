@@ -1,3 +1,13 @@
+2014-06-16  Anders Carlsson  <andersca@apple.com>
+
+        Add HTTPHeaderName overloads on ResourceResponseBase
+        https://bugs.webkit.org/show_bug.cgi?id=133946
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::buildHTTPHeaders):
+
 2014-06-16  Dan Bernstein  <mitz@apple.com>
 
         Fixed a typo in the last change.
