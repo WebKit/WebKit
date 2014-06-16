@@ -87,7 +87,7 @@ private:
     RenderObject* removeChildWithoutRestructuring(RenderObject&);
     RenderObject* removeChild(RenderObject&) override;
     static RenderPtr<RenderMathMLRootWrapper> createAnonymousWrapper(RenderMathMLRoot* renderObject);
-    virtual bool isRenderMathMLRoot() const override final { return true; }
+    virtual bool isRenderMathMLRootWrapper() const override final { return true; }
     virtual const char* renderName() const override { return "RenderMathMLRootWrapper"; }
 };
 

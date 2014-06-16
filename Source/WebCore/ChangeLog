@@ -1,5 +1,14 @@
 2014-06-16  Frédéric Wang  <fred.wang@free.fr>
 
+        Draw radicals with glyphs for better rendering.
+        https://bugs.webkit.org/show_bug.cgi?id=119038
+
+        Unreviewed ASSERT fix.
+
+        * rendering/mathml/RenderMathMLRoot.h:
+
+2014-06-16  Frédéric Wang  <fred.wang@free.fr>
+
         Draw radicals with glyphs for better rendering
         https://bugs.webkit.org/show_bug.cgi?id=119038
 
