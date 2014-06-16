@@ -152,7 +152,7 @@ private:
         static void setWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, Peer*, PassRefPtr<ThreadableWebSocketChannelClientWrapper>);
 
         // Executed on the main thread to create a Peer for this bridge.
-        static void mainThreadInitialize(ScriptExecutionContext*, WorkerLoaderProxy*, PassRefPtr<ThreadableWebSocketChannelClientWrapper>, const String& taskMode);
+        static void mainThreadInitialize(ScriptExecutionContext&, WorkerLoaderProxy*, PassRefPtr<ThreadableWebSocketChannelClientWrapper>, const String& taskMode);
 
         // Executed on the worker context's thread.
         void clearClientWrapper();
@@ -169,16 +169,16 @@ private:
 
     WorkerThreadableWebSocketChannel(WorkerGlobalScope*, WebSocketChannelClient*, const String& taskMode);
 
-    static void mainThreadConnect(ScriptExecutionContext*, Peer*, const URL&, const String& protocol);
-    static void mainThreadSend(ScriptExecutionContext*, Peer*, const String& message);
-    static void mainThreadSendArrayBuffer(ScriptExecutionContext*, Peer*, PassOwnPtr<Vector<char>>);
-    static void mainThreadSendBlob(ScriptExecutionContext*, Peer*, const URL&, const String& type, long long size);
-    static void mainThreadBufferedAmount(ScriptExecutionContext*, Peer*);
-    static void mainThreadClose(ScriptExecutionContext*, Peer*, int code, const String& reason);
-    static void mainThreadFail(ScriptExecutionContext*, Peer*, const String& reason);
-    static void mainThreadDestroy(ScriptExecutionContext*, Peer*);
-    static void mainThreadSuspend(ScriptExecutionContext*, Peer*);
-    static void mainThreadResume(ScriptExecutionContext*, Peer*);
+    static void mainThreadConnect(ScriptExecutionContext&, Peer*, const URL&, const String& protocol);
+    static void mainThreadSend(ScriptExecutionContext&, Peer*, const String& message);
+    static void mainThreadSendArrayBuffer(ScriptExecutionContext&, Peer*, PassOwnPtr<Vector<char>>);
+    static void mainThreadSendBlob(ScriptExecutionContext&, Peer*, const URL&, const String& type, long long size);
+    static void mainThreadBufferedAmount(ScriptExecutionContext&, Peer*);
+    static void mainThreadClose(ScriptExecutionContext&, Peer*, int code, const String& reason);
+    static void mainThreadFail(ScriptExecutionContext&, Peer*, const String& reason);
+    static void mainThreadDestroy(ScriptExecutionContext&, Peer*);
+    static void mainThreadSuspend(ScriptExecutionContext&, Peer*);
+    static void mainThreadResume(ScriptExecutionContext&, Peer*);
 
     class WorkerGlobalScopeDidInitializeTask;
 

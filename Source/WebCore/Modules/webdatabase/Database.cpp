@@ -32,7 +32,6 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "ChangeVersionData.h"
-#include "CrossThreadTask.h"
 #include "DatabaseBackendContext.h"
 #include "DatabaseCallback.h"
 #include "DatabaseContext.h"
@@ -92,8 +91,8 @@ Database::~Database()
         // Grab a pointer to the script execution here because we're releasing it when we pass it to
         // DerefContextTask::create.
         PassRefPtr<ScriptExecutionContext> passedContext = m_scriptExecutionContext.release();
-        passedContext->postTask({ScriptExecutionContext::Task::CleanupTask, [=] (ScriptExecutionContext* context) {
-            ASSERT_UNUSED(context, context == passedContext);
+        passedContext->postTask({ScriptExecutionContext::Task::CleanupTask, [=] (ScriptExecutionContext& context) {
+            ASSERT_UNUSED(context, &context == passedContext);
             RefPtr<ScriptExecutionContext> scriptExecutionContext(passedContext);
         }});
     }
@@ -171,7 +170,7 @@ void Database::runTransaction(PassRefPtr<SQLTransactionCallback> callback, PassR
 
     RefPtr<SQLTransactionBackend> transactionBackend(backend()->runTransaction(transaction.release(), readOnly, changeVersionData));
     if (!transactionBackend && errorCallbackProtector)
-        scriptExecutionContext()->postTask([=] (ScriptExecutionContext*) {
+        scriptExecutionContext()->postTask([=] (ScriptExecutionContext&) {
             errorCallbackProtector->handleEvent(SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed").get());
         });
 }
@@ -179,7 +178,7 @@ void Database::runTransaction(PassRefPtr<SQLTransactionCallback> callback, PassR
 void Database::scheduleTransactionCallback(SQLTransaction* transaction)
 {
     RefPtr<SQLTransaction> transactionProtector(transaction);
-    m_scriptExecutionContext->postTask([=] (ScriptExecutionContext*) {
+    m_scriptExecutionContext->postTask([=] (ScriptExecutionContext&) {
         transactionProtector->performPendingCallback();
     });
 }

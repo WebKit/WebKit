@@ -877,16 +877,16 @@ void MemoryCache::removeRequestFromSessionCachesImpl(ScriptExecutionContext*, co
     }
 }
 
-void MemoryCache::crossThreadRemoveRequestFromCache(ScriptExecutionContext* context, PassOwnPtr<WebCore::CrossThreadResourceRequestData> requestData, SessionID sessionID)
+void MemoryCache::crossThreadRemoveRequestFromCache(ScriptExecutionContext& context, PassOwnPtr<WebCore::CrossThreadResourceRequestData> requestData, SessionID sessionID)
 {
     OwnPtr<ResourceRequest> request(ResourceRequest::adopt(requestData));
-    MemoryCache::removeRequestFromCacheImpl(context, *request, sessionID);
+    MemoryCache::removeRequestFromCacheImpl(&context, *request, sessionID);
 }
 
-void MemoryCache::crossThreadRemoveRequestFromSessionCaches(ScriptExecutionContext* context, PassOwnPtr<WebCore::CrossThreadResourceRequestData> requestData)
+void MemoryCache::crossThreadRemoveRequestFromSessionCaches(ScriptExecutionContext& context, PassOwnPtr<WebCore::CrossThreadResourceRequestData> requestData)
 {
     OwnPtr<ResourceRequest> request(ResourceRequest::adopt(requestData));
-    MemoryCache::removeRequestFromSessionCaches(context, *request);
+    MemoryCache::removeRequestFromSessionCaches(&context, *request);
 }
 
 void MemoryCache::TypeStatistic::addResource(CachedResource* o)

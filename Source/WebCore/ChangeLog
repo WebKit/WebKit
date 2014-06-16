@@ -1,5 +1,125 @@
 2014-06-16  Zan Dobersek  <zdobersek@igalia.com>
 
+        Have ScriptExecutionContext::Task functions take in a ScriptExecutionContext reference
+        https://bugs.webkit.org/show_bug.cgi?id=133795
+
+        Reviewed by Andreas Kling.
+
+        The pointer to the ScriptExecutionContext object that is passed to the C++11 lambdas or
+        helper functions wrapped in ScriptExecutionContext::Task is never null, so that parameter
+        should be a reference instead.
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::~Database):
+        (WebCore::Database::runTransaction):
+        (WebCore::Database::scheduleTransactionCallback):
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::openDatabase):
+        * Modules/webdatabase/SQLCallbackWrapper.h:
+        (WebCore::SQLCallbackWrapper::clear):
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::processPendingTasksCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::processPendingTasks): Dereference the
+        member variable that holds a never-null pointer to the ScriptExecutionContext. This should
+        similarly be a reference.
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didConnectCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessageCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveBinaryDataCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didUpdateBufferedAmountCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didStartClosingHandshakeCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didCloseCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessageErrorCallback):
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::workerGlobalScopeDidSend):
+        (WebCore::workerGlobalScopeDidGetBufferedAmount):
+        (WebCore::workerGlobalScopeDidConnect):
+        (WebCore::workerGlobalScopeDidReceiveMessage):
+        (WebCore::workerGlobalScopeDidReceiveBinaryData):
+        (WebCore::workerGlobalScopeDidUpdateBufferedAmount):
+        (WebCore::workerGlobalScopeDidStartClosingHandshake):
+        (WebCore::workerGlobalScopeDidClose):
+        (WebCore::workerGlobalScopeDidReceiveMessageError):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadConnect):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadSend):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadSendArrayBuffer):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadSendBlob):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadBufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadClose):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadFail):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadDestroy):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadSuspend):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadResume):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        * bindings/js/JSCallbackData.h:
+        (WebCore::DeleteCallbackDataTask::DeleteCallbackDataTask):
+        * bindings/js/JSDOMGlobalObjectTask.cpp:
+        (WebCore::JSGlobalObjectTask::JSGlobalObjectTask):
+        * dom/Document.cpp:
+        (WebCore::Document::postTask):
+        (WebCore::Document::pendingTasksTimerFired):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::processMessagePortMessagesSoon):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::Task::performTask):
+        (WebCore::ScriptExecutionContext::AddConsoleMessageTask::AddConsoleMessageTask):
+        * dom/StringCallback.cpp:
+        (WebCore::StringCallback::scheduleCallback):
+        * fileapi/FileReader.cpp:
+        (WebCore::delayedAbort):
+        (WebCore::FileReader::abort):
+        (WebCore::FileReader::doAbort): Deleted.
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::mainThreadDestroy):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::mainThreadCancel):
+        (WebCore::workerGlobalScopeDidSendData):
+        (WebCore::workerGlobalScopeDidReceiveResponse):
+        (WebCore::workerGlobalScopeDidReceiveData):
+        (WebCore::workerGlobalScopeDidFinishLoading):
+        (WebCore::workerGlobalScopeDidFail):
+        (WebCore::workerGlobalScopeDidFailAccessControlCheck):
+        (WebCore::workerGlobalScopeDidFailRedirectCheck):
+        * loader/WorkerThreadableLoader.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::postListenerTask):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::crossThreadRemoveRequestFromCache):
+        (WebCore::MemoryCache::crossThreadRemoveRequestFromSessionCaches):
+        * loader/cache/MemoryCache.h:
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerProxy::postExceptionToWorkerObject):
+        (WebCore::SharedWorkerProxy::postConsoleMessageToWorkerObject):
+        (WebCore::SharedWorkerConnectTask::SharedWorkerConnectTask):
+        * workers/WorkerEventQueue.cpp:
+        (WebCore::WorkerEventQueue::enqueueEvent):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::close):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerObject):
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerGlobalScope):
+        (WebCore::WorkerMessagingProxy::postExceptionToWorkerObject):
+        (WebCore::WorkerMessagingProxy::postConsoleMessageToWorkerObject):
+        (WebCore::WorkerMessagingProxy::workerObjectDestroyed):
+        (WebCore::WorkerMessagingProxy::notifyNetworkStateChange):
+        (WebCore::WorkerMessagingProxy::connectToInspector):
+        (WebCore::WorkerMessagingProxy::disconnectFromInspector):
+        (WebCore::WorkerMessagingProxy::sendMessageToInspector):
+        (WebCore::WorkerMessagingProxy::workerGlobalScopeDestroyed):
+        (WebCore::WorkerMessagingProxy::workerGlobalScopeClosed):
+        (WebCore::WorkerMessagingProxy::postMessageToPageInspector):
+        (WebCore::WorkerMessagingProxy::confirmMessageFromWorkerObject):
+        (WebCore::WorkerMessagingProxy::reportPendingActivity):
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::Task::performTask):
+        * workers/WorkerScriptLoader.cpp:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::stop):
+        (WebCore::WorkerThread::releaseFastMallocFreeMemoryInAllThreads):
+
+2014-06-16  Zan Dobersek  <zdobersek@igalia.com>
+
         Page::findStringMatchingRanges() should take Vector<RefPtr<Range>> by reference instead of pointer
         https://bugs.webkit.org/show_bug.cgi?id=133677
 

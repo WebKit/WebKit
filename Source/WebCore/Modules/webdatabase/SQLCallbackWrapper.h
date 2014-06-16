@@ -73,8 +73,8 @@ public:
             scriptExecutionContextPtr = m_scriptExecutionContext.release().leakRef();
             callback = m_callback.release().leakRef();
         }
-        scriptExecutionContextPtr->postTask({ ScriptExecutionContext::Task::CleanupTask, [=] (ScriptExecutionContext* context) {
-            ASSERT_UNUSED(context, context == scriptExecutionContextPtr && context->isContextThread());
+        scriptExecutionContextPtr->postTask({ ScriptExecutionContext::Task::CleanupTask, [=] (ScriptExecutionContext& context) {
+            ASSERT_UNUSED(context, &context == scriptExecutionContextPtr && context.isContextThread());
             callback->deref();
             scriptExecutionContextPtr->deref();
         } });

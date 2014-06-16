@@ -29,7 +29,6 @@
 
 #include "WorkerScriptLoader.h"
 
-#include "CrossThreadTask.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"

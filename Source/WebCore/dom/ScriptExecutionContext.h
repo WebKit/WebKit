@@ -117,14 +117,14 @@ public:
     public:
         enum CleanupTaskTag { CleanupTask };
 
-        template<typename T, typename = typename std::enable_if<!std::is_base_of<Task, T>::value && std::is_convertible<T, std::function<void (ScriptExecutionContext*)>>::value>::type>
+        template<typename T, typename = typename std::enable_if<!std::is_base_of<Task, T>::value && std::is_convertible<T, std::function<void (ScriptExecutionContext&)>>::value>::type>
         Task(T task)
             : m_task(std::move(task))
             , m_isCleanupTask(false)
         {
         }
 
-        template<typename T, typename = typename std::enable_if<std::is_convertible<T, std::function<void (ScriptExecutionContext*)>>::value>::type>
+        template<typename T, typename = typename std::enable_if<std::is_convertible<T, std::function<void (ScriptExecutionContext&)>>::value>::type>
         Task(CleanupTaskTag, T task)
             : m_task(std::move(task))
             , m_isCleanupTask(true)
@@ -137,11 +137,11 @@ public:
         {
         }
 
-        void performTask(ScriptExecutionContext* context) { m_task(context); }
+        void performTask(ScriptExecutionContext& context) { m_task(context); }
         bool isCleanupTask() const { return m_isCleanupTask; }
 
     protected:
-        std::function<void (ScriptExecutionContext*)> m_task;
+        std::function<void (ScriptExecutionContext&)> m_task;
         bool m_isCleanupTask;
     };
 
@@ -178,8 +178,8 @@ protected:
     class AddConsoleMessageTask : public Task {
     public:
         AddConsoleMessageTask(MessageSource source, MessageLevel level, const String& message)
-            : Task([=] (ScriptExecutionContext* context) {
-                context->addConsoleMessage(source, level, message);
+            : Task([=] (ScriptExecutionContext& context) {
+                context.addConsoleMessage(source, level, message);
             })
         {
         }

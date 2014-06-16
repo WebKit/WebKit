@@ -132,8 +132,8 @@ ScriptExecutionContext::~ScriptExecutionContext()
 
 void ScriptExecutionContext::processMessagePortMessagesSoon()
 {
-    postTask([] (ScriptExecutionContext* context) {
-        context->dispatchMessagePortEvents();
+    postTask([] (ScriptExecutionContext& context) {
+        context.dispatchMessagePortEvents();
     });
 }
 

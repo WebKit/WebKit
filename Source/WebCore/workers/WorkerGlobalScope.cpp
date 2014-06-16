@@ -132,9 +132,9 @@ void WorkerGlobalScope::close()
     // After m_closing is set, all the tasks in the queue continue to be fetched but only
     // tasks with isCleanupTask()==true will be executed.
     m_closing = true;
-    postTask({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext* context) {
-        ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerGlobalScope());
-        WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(context);
+    postTask({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context) {
+        ASSERT_WITH_SECURITY_IMPLICATION(context.isWorkerGlobalScope());
+        WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(&context);
         // Notify parent that this context is closed. Parent is responsible for calling WorkerThread::stop().
         workerGlobalScope->thread().workerReportingProxy().workerGlobalScopeClosed();
     } });

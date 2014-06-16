@@ -4922,7 +4922,7 @@ void Document::postTask(Task task)
         if ((page && page->defersLoading()) || !document->m_pendingTasks.isEmpty())
             document->m_pendingTasks.append(std::move(*task.release()));
         else
-            task->performTask(document);
+            task->performTask(*document);
     });
 }
 
@@ -4930,7 +4930,7 @@ void Document::pendingTasksTimerFired(Timer<Document>&)
 {
     Vector<Task> pendingTasks = std::move(m_pendingTasks);
     for (auto& task : pendingTasks)
-        task.performTask(this);
+        task.performTask(*this);
 }
 
 void Document::suspendScheduledTasks(ActiveDOMObject::ReasonForSuspension reason)

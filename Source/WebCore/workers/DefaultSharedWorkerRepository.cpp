@@ -185,8 +185,8 @@ void SharedWorkerProxy::postExceptionToWorkerObject(const String& errorMessage, 
     String sourceURLCopy = sourceURL.isolatedCopy();
 
     for (auto& document : m_workerDocuments)
-        document->postTask([=] (ScriptExecutionContext* context) {
-            context->reportException(errorMessageCopy, lineNumber, columnNumber, sourceURLCopy, nullptr);
+        document->postTask([=] (ScriptExecutionContext& context) {
+            context.reportException(errorMessageCopy, lineNumber, columnNumber, sourceURLCopy, nullptr);
         });
 }
 
@@ -197,8 +197,8 @@ void SharedWorkerProxy::postConsoleMessageToWorkerObject(MessageSource source, M
     String sourceURLCopy = sourceURL.isolatedCopy();
 
     for (auto& document : m_workerDocuments)
-        document->postTask([=] (ScriptExecutionContext* context) {
-            context->addConsoleMessage(source, level, messageCopy, sourceURLCopy, lineNumber, columnNumber);
+        document->postTask([=] (ScriptExecutionContext& context) {
+            context.addConsoleMessage(source, level, messageCopy, sourceURLCopy, lineNumber, columnNumber);
         });
 }
 
@@ -255,11 +255,11 @@ void SharedWorkerProxy::close()
 class SharedWorkerConnectTask : public ScriptExecutionContext::Task {
 public:
     SharedWorkerConnectTask(MessagePortChannel* channel)
-        : ScriptExecutionContext::Task([=] (ScriptExecutionContext* context) {
-            RefPtr<MessagePort> port = MessagePort::create(*context);
+        : ScriptExecutionContext::Task([=] (ScriptExecutionContext& context) {
+            RefPtr<MessagePort> port = MessagePort::create(context);
             port->entangle(std::unique_ptr<MessagePortChannel>(channel));
-            ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerGlobalScope());
-            WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(context);
+            ASSERT_WITH_SECURITY_IMPLICATION(context.isWorkerGlobalScope());
+            WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(&context);
             // Since close() stops the thread event loop, this should not ever get called while closing.
             ASSERT(!workerGlobalScope->isClosing());
             ASSERT_WITH_SECURITY_IMPLICATION(workerGlobalScope->isSharedWorkerGlobalScope());

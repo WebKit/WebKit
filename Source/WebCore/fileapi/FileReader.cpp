@@ -32,7 +32,6 @@
 
 #include "FileReader.h"
 
-#include "CrossThreadTask.h"
 #include "ExceptionCode.h"
 #include "File.h"
 #include "Logging.h"
@@ -144,11 +143,6 @@ void FileReader::readInternal(Blob* blob, FileReaderLoader::ReadType type, Excep
     m_loader->start(scriptExecutionContext(), m_blob.get());
 }
 
-static void delayedAbort(ScriptExecutionContext*, FileReader* reader)
-{
-    reader->doAbort();
-}
-
 void FileReader::abort()
 {
     LOG(FileAPI, "FileReader: aborting\n");
@@ -158,24 +152,21 @@ void FileReader::abort()
     m_aborting = true;
 
     // Schedule to have the abort done later since abort() might be called from the event handler and we do not want the resource loading code to be in the stack.
-    scriptExecutionContext()->postTask(CrossThreadTask(&delayedAbort, AllowAccessLater(this)));
-}
+    scriptExecutionContext()->postTask([=](ScriptExecutionContext&) {
+        ASSERT(m_state != DONE);
 
-void FileReader::doAbort()
-{
-    ASSERT(m_state != DONE);
+        terminate();
+        m_aborting = false;
 
-    terminate();
-    m_aborting = false;
+        m_error = FileError::create(FileError::ABORT_ERR);
 
-    m_error = FileError::create(FileError::ABORT_ERR);
+        fireEvent(eventNames().errorEvent);
+        fireEvent(eventNames().abortEvent);
+        fireEvent(eventNames().loadendEvent);
 
-    fireEvent(eventNames().errorEvent);
-    fireEvent(eventNames().abortEvent);
-    fireEvent(eventNames().loadendEvent);
-
-    // All possible events have fired and we're done, no more pending activity.
-    unsetPendingActivity(this);
+        // All possible events have fired and we're done, no more pending activity.
+        unsetPendingActivity(this);
+    });
 }
 
 void FileReader::terminate()

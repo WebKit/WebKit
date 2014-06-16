@@ -39,7 +39,7 @@ namespace WebCore {
 void StringCallback::scheduleCallback(ScriptExecutionContext* context, const String& data)
 {
     RefPtr<StringCallback> protector(this);
-    context->postTask([=] (ScriptExecutionContext*) {
+    context->postTask([=] (ScriptExecutionContext&) {
         this->handleEvent(data);
     });
 }

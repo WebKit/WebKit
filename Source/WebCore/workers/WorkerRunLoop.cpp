@@ -215,7 +215,7 @@ std::unique_ptr<WorkerRunLoop::Task> WorkerRunLoop::Task::create(ScriptExecution
 void WorkerRunLoop::Task::performTask(const WorkerRunLoop& runLoop, WorkerGlobalScope* context)
 {
     if ((!context->isClosing() && !runLoop.terminated()) || m_task.isCleanupTask())
-        m_task.performTask(context);
+        m_task.performTask(*context);
 }
 
 WorkerRunLoop::Task::Task(ScriptExecutionContext::Task task, const String& mode)

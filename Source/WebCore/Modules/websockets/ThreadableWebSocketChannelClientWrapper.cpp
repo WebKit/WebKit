@@ -214,9 +214,9 @@ void ThreadableWebSocketChannelClientWrapper::resume()
     processPendingTasks();
 }
 
-void ThreadableWebSocketChannelClientWrapper::processPendingTasksCallback(ScriptExecutionContext* context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> wrapper)
+void ThreadableWebSocketChannelClientWrapper::processPendingTasksCallback(ScriptExecutionContext& context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> wrapper)
 {
-    ASSERT_UNUSED(context, context->isWorkerGlobalScope());
+    ASSERT_UNUSED(context, context.isWorkerGlobalScope());
     wrapper->processPendingTasks();
 }
 
@@ -233,54 +233,54 @@ void ThreadableWebSocketChannelClientWrapper::processPendingTasks()
 
     Vector<std::unique_ptr<ScriptExecutionContext::Task>> pendingTasks = std::move(m_pendingTasks);
     for (auto& task : pendingTasks)
-        task->performTask(nullptr);
+        task->performTask(*m_context);
 }
 
-void ThreadableWebSocketChannelClientWrapper::didConnectCallback(ScriptExecutionContext* context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> wrapper)
+void ThreadableWebSocketChannelClientWrapper::didConnectCallback(ScriptExecutionContext& context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> wrapper)
 {
-    ASSERT_UNUSED(context, !context);
+    UNUSED_PARAM(context);
     if (wrapper->m_client)
         wrapper->m_client->didConnect();
 }
 
-void ThreadableWebSocketChannelClientWrapper::didReceiveMessageCallback(ScriptExecutionContext* context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> wrapper, const String& message)
+void ThreadableWebSocketChannelClientWrapper::didReceiveMessageCallback(ScriptExecutionContext& context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> wrapper, const String& message)
 {
-    ASSERT_UNUSED(context, !context);
+    UNUSED_PARAM(context);
     if (wrapper->m_client)
         wrapper->m_client->didReceiveMessage(message);
 }
 
-void ThreadableWebSocketChannelClientWrapper::didReceiveBinaryDataCallback(ScriptExecutionContext* context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> wrapper, PassOwnPtr<Vector<char>> binaryData)
+void ThreadableWebSocketChannelClientWrapper::didReceiveBinaryDataCallback(ScriptExecutionContext& context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> wrapper, PassOwnPtr<Vector<char>> binaryData)
 {
-    ASSERT_UNUSED(context, !context);
+    UNUSED_PARAM(context);
     if (wrapper->m_client)
         wrapper->m_client->didReceiveBinaryData(binaryData);
 }
 
-void ThreadableWebSocketChannelClientWrapper::didUpdateBufferedAmountCallback(ScriptExecutionContext* context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> wrapper, unsigned long bufferedAmount)
+void ThreadableWebSocketChannelClientWrapper::didUpdateBufferedAmountCallback(ScriptExecutionContext& context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> wrapper, unsigned long bufferedAmount)
 {
-    ASSERT_UNUSED(context, !context);
+    UNUSED_PARAM(context);
     if (wrapper->m_client)
         wrapper->m_client->didUpdateBufferedAmount(bufferedAmount);
 }
 
-void ThreadableWebSocketChannelClientWrapper::didStartClosingHandshakeCallback(ScriptExecutionContext* context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> wrapper)
+void ThreadableWebSocketChannelClientWrapper::didStartClosingHandshakeCallback(ScriptExecutionContext& context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> wrapper)
 {
-    ASSERT_UNUSED(context, !context);
+    UNUSED_PARAM(context);
     if (wrapper->m_client)
         wrapper->m_client->didStartClosingHandshake();
 }
 
-void ThreadableWebSocketChannelClientWrapper::didCloseCallback(ScriptExecutionContext* context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> wrapper, unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, const String& reason)
+void ThreadableWebSocketChannelClientWrapper::didCloseCallback(ScriptExecutionContext& context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> wrapper, unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, const String& reason)
 {
-    ASSERT_UNUSED(context, !context);
+    UNUSED_PARAM(context);
     if (wrapper->m_client)
         wrapper->m_client->didClose(unhandledBufferedAmount, closingHandshakeCompletion, code, reason);
 }
 
-void ThreadableWebSocketChannelClientWrapper::didReceiveMessageErrorCallback(ScriptExecutionContext* context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> wrapper)
+void ThreadableWebSocketChannelClientWrapper::didReceiveMessageErrorCallback(ScriptExecutionContext& context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> wrapper)
 {
-    ASSERT_UNUSED(context, !context);
+    UNUSED_PARAM(context);
     if (wrapper->m_client)
         wrapper->m_client->didReceiveMessageError();
 }

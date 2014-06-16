@@ -213,8 +213,8 @@ void WorkerThread::stop()
 #if ENABLE(SQL_DATABASE)
         DatabaseManager::manager().interruptAllDatabasesForContext(m_workerGlobalScope.get());
 #endif
-        m_runLoop.postTaskAndTerminate({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext* context ) {
-            WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(context);
+        m_runLoop.postTaskAndTerminate({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context ) {
+            WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(&context);
 
 #if ENABLE(SQL_DATABASE)
             // FIXME: Should we stop the databases as part of stopActiveDOMObjects() below?
@@ -238,8 +238,8 @@ void WorkerThread::stop()
 
             // Stick a shutdown command at the end of the queue, so that we deal
             // with all the cleanup tasks the databases post first.
-            workerGlobalScope->postTask({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext* context) {
-                WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(context);
+            workerGlobalScope->postTask({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context) {
+                WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(&context);
                 // It's not safe to call clearScript until all the cleanup tasks posted by functions initiated by WorkerThreadShutdownStartTask have completed.
                 workerGlobalScope->clearScript();
             } });
@@ -255,7 +255,7 @@ void WorkerThread::releaseFastMallocFreeMemoryInAllThreads()
     std::lock_guard<std::mutex> lock(threadSetMutex());
 
     for (auto* workerThread : workerThreads())
-        workerThread->runLoop().postTask([] (ScriptExecutionContext*) {
+        workerThread->runLoop().postTask([] (ScriptExecutionContext&) {
             WTF::releaseFastMallocFreeMemory();
         });
 }
