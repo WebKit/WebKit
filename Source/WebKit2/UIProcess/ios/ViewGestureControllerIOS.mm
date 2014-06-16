@@ -236,11 +236,6 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     ViewSnapshotStore::shared().disableSnapshotting();
     m_webPageProxy.goToBackForwardItem(targetItem);
     ViewSnapshotStore::shared().enableSnapshotting();
-    
-    if (!m_snapshotRemovalTargetRenderTreeSize) {
-        removeSwipeSnapshot();
-        return;
-    }
 
     m_swipeWatchdogTimer.startOneShot(swipeSnapshotRemovalWatchdogDuration.count());
 }
@@ -253,7 +248,7 @@ void ViewGestureController::setRenderTreeSize(uint64_t renderTreeSize)
     // Don't remove the swipe snapshot until we get a drawing area transaction more recent than the navigation,
     // and we hit the render tree size threshold. This avoids potentially removing the snapshot early,
     // when receiving commits from the previous (pre-navigation) page.
-    if (m_snapshotRemovalTargetRenderTreeSize && renderTreeSize > m_snapshotRemovalTargetRenderTreeSize && m_webPageProxy.drawingArea()->lastVisibleTransactionID() >= m_snapshotRemovalTargetTransactionID)
+    if ((!m_snapshotRemovalTargetRenderTreeSize || renderTreeSize > m_snapshotRemovalTargetRenderTreeSize) && m_webPageProxy.drawingArea()->lastVisibleTransactionID() >= m_snapshotRemovalTargetTransactionID)
         removeSwipeSnapshot();
 }
 
