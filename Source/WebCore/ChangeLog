@@ -1,5 +1,12 @@
 2014-06-16  Anders Carlsson  <andersca@apple.com>
 
+        Fix iOS build.
+
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::setHeaderFields):
+
+2014-06-16  Anders Carlsson  <andersca@apple.com>
+
         Accept-Ranges is not specific to GStreamer.
 
         * platform/network/HTTPHeaderNames.in:
