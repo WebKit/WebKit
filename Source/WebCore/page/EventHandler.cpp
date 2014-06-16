@@ -289,10 +289,10 @@ static inline bool scrollNode(float delta, ScrollGranularity granularity, Scroll
         return false;
     if (!node->renderer())
         return false;
-    RenderBox* enclosingBox = node->renderer()->enclosingBox();
+    RenderBox& enclosingBox = node->renderer()->enclosingBox();
     float absDelta = delta > 0 ? delta : -delta;
 
-    return enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, granularity, absDelta, stopElement, enclosingBox, wheelEventAbsolutePoint);
+    return enclosingBox.scroll(delta < 0 ? negativeDirection : positiveDirection, granularity, absDelta, stopElement, &enclosingBox, wheelEventAbsolutePoint);
 }
 
 #if (ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS))
@@ -1106,7 +1106,7 @@ bool EventHandler::scrollOverflow(ScrollDirection direction, ScrollGranularity g
     
     if (node) {
         auto r = node->renderer();
-        if (r && !r->isListBox() && r->enclosingBox()->scroll(direction, granularity)) {
+        if (r && !r->isListBox() && r->enclosingBox().scroll(direction, granularity)) {
             setFrameWasScrolledByUser();
             return true;
         }
@@ -1127,7 +1127,7 @@ bool EventHandler::logicalScrollOverflow(ScrollLogicalDirection direction, Scrol
     
     if (node) {
         auto r = node->renderer();
-        if (r && !r->isListBox() && r->enclosingBox()->logicalScroll(direction, granularity)) {
+        if (r && !r->isListBox() && r->enclosingBox().logicalScroll(direction, granularity)) {
             setFrameWasScrolledByUser();
             return true;
         }

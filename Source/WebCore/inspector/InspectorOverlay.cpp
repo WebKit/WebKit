@@ -511,10 +511,9 @@ static PassRefPtr<InspectorArray> buildObjectForRendererFragments(RenderObject* 
         buildRendererHighlight(renderer, nullptr, config, &highlight);
         fragmentsArray->pushObject(buildObjectForHighlight(highlight));
     } else {
-        RenderBox* enclosingBox = renderer->enclosingBox();
         RenderRegion* startRegion = nullptr;
         RenderRegion* endRegion = nullptr;
-        if (!containingFlowThread->getRegionRangeForBox(enclosingBox, startRegion, endRegion)) {
+        if (!containingFlowThread->getRegionRangeForBox(&renderer->enclosingBox(), startRegion, endRegion)) {
             // The flow has no visible regions. The renderer is not visible on screen.
             return nullptr;
         }

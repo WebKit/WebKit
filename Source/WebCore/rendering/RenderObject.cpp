@@ -490,10 +490,9 @@ bool RenderObject::scrollRectToVisible(const LayoutRect& rect, const ScrollAlign
     return true;
 }
 
-RenderBox* RenderObject::enclosingBox() const
+RenderBox& RenderObject::enclosingBox() const
 {
-    // FIXME: This should return a reference; it can always find the root RenderView.
-    return lineageOfType<RenderBox>(const_cast<RenderObject&>(*this)).first();
+    return *lineageOfType<RenderBox>(const_cast<RenderObject&>(*this)).first();
 }
 
 RenderBoxModelObject* RenderObject::enclosingBoxModelObject() const

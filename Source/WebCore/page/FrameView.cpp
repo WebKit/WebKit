@@ -1189,7 +1189,7 @@ void FrameView::layout(bool allowSubtree)
                 if (body->hasTagName(framesetTag) && !frameFlatteningEnabled()) {
                     body->renderer()->setChildNeedsLayout();
                 } else if (body->hasTagName(bodyTag)) {
-                    if (!m_firstLayout && m_size.height() != layoutHeight() && body->renderer()->enclosingBox()->stretchesToViewport())
+                    if (!m_firstLayout && m_size.height() != layoutHeight() && body->renderer()->enclosingBox().stretchesToViewport())
                         body->renderer()->setChildNeedsLayout();
                 }
             }

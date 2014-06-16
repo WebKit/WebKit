@@ -1,3 +1,40 @@
+2014-06-16  Jeongeun Kim  <je_julie.kim@samsung.com>
+
+        Use references instead of pointers to RenderBlock in RenderObject::enclosingBox().
+        https://bugs.webkit.org/show_bug.cgi?id=133902
+
+        Reviewed by Andreas Kling.
+
+        Just a straightforward conversion from pointers to references.
+
+        No new tests, no behavior change.
+
+        * bindings/objc/DOMUIKitExtensions.mm:
+        (-[DOMHTMLElement structuralComplexityContribution]):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForRendererFragments):
+        * page/EventHandler.cpp:
+        (WebCore::scrollNode):
+        (WebCore::EventHandler::scrollOverflow):
+        (WebCore::EventHandler::logicalScrollOverflow):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/RenderBox.cpp:
+        (WebCore::computeInlineStaticDistance):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::computedRegionRangeForBox):
+        (WebCore::RenderFlowThread::objectShouldFragmentInFlowRegion):
+        (WebCore::RenderFlowThread::objectInFlowRegion):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::enclosingBox): Removed FIXME comment
+        * rendering/RenderObject.h:
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::owningRenderer):
+
 2014-06-16  Anders Carlsson  <andersca@apple.com>
 
         Use HTTPHeaderName in more places

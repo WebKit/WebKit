@@ -823,7 +823,7 @@ bool RenderFlowThread::computedRegionRangeForBox(const RenderBox* box, RenderReg
         // (e.g. if we use containingBlock() the shadow controls of a video element won't get the range from the
         // video box because it's not a block; they need to be patched separately).
         ASSERT(cb->parent());
-        cb = cb->parent()->enclosingBox();
+        cb = &cb->parent()->enclosingBox();
         ASSERT(cb);
 
         // If a box doesn't have a cached region range it usually means the box belongs to a line so startRegion should be equal with endRegion.
@@ -865,12 +865,11 @@ bool RenderFlowThread::objectShouldFragmentInFlowRegion(const RenderObject* obje
     if (!m_regionList.contains(const_cast<RenderRegion*>(region)))
         return false;
     
-    RenderBox* enclosingBox = object->enclosingBox();
     RenderRegion* enclosingBoxStartRegion = nullptr;
     RenderRegion* enclosingBoxEndRegion = nullptr;
     // If the box has no range, do not check regionInRange. Boxes inside inlines do not get ranges.
     // Instead, the containing RootInlineBox will abort when trying to paint inside the wrong region.
-    if (computedRegionRangeForBox(enclosingBox, enclosingBoxStartRegion, enclosingBoxEndRegion)
+    if (computedRegionRangeForBox(&object->enclosingBox(), enclosingBoxStartRegion, enclosingBoxEndRegion)
         && !regionInRange(region, enclosingBoxStartRegion, enclosingBoxEndRegion))
         return false;
     
@@ -889,10 +888,9 @@ bool RenderFlowThread::objectInFlowRegion(const RenderObject* object, const Rend
     if (!m_regionList.contains(const_cast<RenderRegion*>(region)))
         return false;
 
-    RenderBox* enclosingBox = object->enclosingBox();
     RenderRegion* enclosingBoxStartRegion = nullptr;
     RenderRegion* enclosingBoxEndRegion = nullptr;
-    if (!getRegionRangeForBox(enclosingBox, enclosingBoxStartRegion, enclosingBoxEndRegion))
+    if (!getRegionRangeForBox(&object->enclosingBox(), enclosingBoxStartRegion, enclosingBoxEndRegion))
         return false;
 
     if (!regionInRange(region, enclosingBoxStartRegion, enclosingBoxEndRegion))

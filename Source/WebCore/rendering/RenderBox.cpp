@@ -3163,14 +3163,14 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
         }
         logicalLeft.setValue(Fixed, staticPosition);
     } else {
-        RenderBox* enclosingBox = child->parent()->enclosingBox();
+        RenderBox& enclosingBox = child->parent()->enclosingBox();
         LayoutUnit staticPosition = child->layer()->staticInlinePosition() + containerLogicalWidth + containerBlock->borderLogicalLeft();
-        for (RenderElement* curr = enclosingBox; curr; curr = curr->container()) {
+        for (RenderElement* curr = &enclosingBox; curr; curr = curr->container()) {
             if (curr->isBox()) {
                 if (curr != containerBlock)
                     staticPosition -= toRenderBox(curr)->logicalLeft();
-                if (curr == enclosingBox)
-                    staticPosition -= enclosingBox->logicalWidth();
+                if (curr == &enclosingBox)
+                    staticPosition -= enclosingBox.logicalWidth();
                 if (region && curr->isRenderBlock()) {
                     const RenderBlock* cb = toRenderBlock(curr);
                     region = cb->clampToStartAndEndRegions(region);
@@ -3178,8 +3178,8 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
                     if (boxInfo) {
                         if (curr != containerBlock)
                             staticPosition -= cb->logicalWidth() - (boxInfo->logicalLeft() + boxInfo->logicalWidth());
-                        if (curr == enclosingBox)
-                            staticPosition += enclosingBox->logicalWidth() - boxInfo->logicalWidth();
+                        if (curr == &enclosingBox)
+                            staticPosition += enclosingBox.logicalWidth() - boxInfo->logicalWidth();
                     }
                 }
             }

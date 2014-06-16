@@ -77,7 +77,9 @@ RenderBox* RenderScrollbar::owningRenderer() const
         return currentRenderer;
     }
     ASSERT(m_ownerElement);
-    return m_ownerElement->renderer() ? m_ownerElement->renderer()->enclosingBox() : nullptr;
+    if (m_ownerElement->renderer())
+        return &m_ownerElement->renderer()->enclosingBox();
+    return nullptr;
 }
 
 void RenderScrollbar::setParent(ScrollView* parent)

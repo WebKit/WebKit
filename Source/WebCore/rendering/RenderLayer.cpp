@@ -5334,7 +5334,7 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
             else
                 layerBoundsWithVisualOverflow.moveBy(LayoutPoint(flowThread->width(), 0));
         } else {
-            RenderBlock* rendererContainingBlock = boxModelObject.enclosingBox()->isRenderBlock() ? toRenderBlock(boxModelObject.enclosingBox()) : 0;
+            RenderBlock* rendererContainingBlock = boxModelObject.enclosingBox().isRenderBlock() ? toRenderBlock(&boxModelObject.enclosingBox()) : 0;
             if (rendererContainingBlock)
                 rendererContainingBlock->flipForWritingMode(layerBoundsWithVisualOverflow);
         }

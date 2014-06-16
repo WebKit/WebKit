@@ -349,10 +349,10 @@ using WebCore::VisiblePosition;
         } else if (renderer->isRenderBlockFlow() || (renderer->isRenderBlock() && toRenderBlock(renderer)->inlineElementContinuation() != 0)) {
             BOOL noCost = NO;
             if (renderer->isBox()) {
-                RenderBox *asBox = renderer->enclosingBox();
-                RenderObject *parent = asBox->parent();
+                RenderBox &asBox = renderer->enclosingBox();
+                RenderObject *parent = asBox.parent();
                 RenderBox *parentRenderBox = (parent && parent->isBox()) ? toRenderBox(parent) : 0;
-                if (parentRenderBox && asBox && asBox->width() == parentRenderBox->width()) {
+                if (parentRenderBox && asBox.width() == parentRenderBox->width()) {
                     noCost = YES;
                 }
             }

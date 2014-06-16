@@ -5611,7 +5611,7 @@ bool HTMLMediaElement::mediaPlayerIsVideo() const
 LayoutRect HTMLMediaElement::mediaPlayerContentBoxRect() const
 {
     if (renderer())
-        return renderer()->enclosingBox()->contentBoxRect();
+        return renderer()->enclosingBox().contentBoxRect();
     return LayoutRect();
 }
 
