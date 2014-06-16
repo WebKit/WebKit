@@ -92,5 +92,11 @@ X-WebKit-CSP
 X-WebKit-CSP-Report-Only
 
 // These headers are specific to GStreamer.
+Accept-Ranges
+Icy-Genre
+Icy-MetaInt
 Icy-Metadata
+Icy-Name
+Icy-Title
+Icy-URL
 TransferMode.DLNA

@@ -1,3 +1,12 @@
+2014-06-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Add more GStreamer-specific header names that are required
+        after changes in r170021, fixing the build for ports using GStreamer.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (StreamingClient::handleResponseReceived):
+        * platform/network/HTTPHeaderNames.in:
+
 2014-06-16  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash at WebCore::AXObjectCache::textChanged

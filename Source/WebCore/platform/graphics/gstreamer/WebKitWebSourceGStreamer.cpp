@@ -847,34 +847,34 @@ void StreamingClient::handleResponseReceived(const ResourceResponse& response, C
         length += priv->requestedOffset;
 
     priv->size = length >= 0 ? length : 0;
-    priv->seekable = length > 0 && g_ascii_strcasecmp("none", response.httpHeaderField("Accept-Ranges").utf8().data());
+    priv->seekable = length > 0 && g_ascii_strcasecmp("none", response.httpHeaderField(HTTPHeaderName::AcceptRanges).utf8().data());
 
     // Wait until we unlock to send notifications
     g_object_freeze_notify(G_OBJECT(src));
 
     GstTagList* tags = gst_tag_list_new_empty();
-    String value = response.httpHeaderField("icy-name");
+    String value = response.httpHeaderField(HTTPHeaderName::IcyName);
     if (!value.isEmpty()) {
         g_free(priv->iradioName);
         priv->iradioName = g_strdup(value.utf8().data());
         g_object_notify(G_OBJECT(src), "iradio-name");
         gst_tag_list_add(tags, GST_TAG_MERGE_REPLACE, GST_TAG_ORGANIZATION, priv->iradioName, NULL);
     }
-    value = response.httpHeaderField("icy-genre");
+    value = response.httpHeaderField(HTTPHeaderName::IcyGenre);
     if (!value.isEmpty()) {
         g_free(priv->iradioGenre);
         priv->iradioGenre = g_strdup(value.utf8().data());
         g_object_notify(G_OBJECT(src), "iradio-genre");
         gst_tag_list_add(tags, GST_TAG_MERGE_REPLACE, GST_TAG_GENRE, priv->iradioGenre, NULL);
     }
-    value = response.httpHeaderField("icy-url");
+    value = response.httpHeaderField(HTTPHeaderName::IcyURL);
     if (!value.isEmpty()) {
         g_free(priv->iradioUrl);
         priv->iradioUrl = g_strdup(value.utf8().data());
         g_object_notify(G_OBJECT(src), "iradio-url");
         gst_tag_list_add(tags, GST_TAG_MERGE_REPLACE, GST_TAG_LOCATION, priv->iradioUrl, NULL);
     }
-    value = response.httpHeaderField("icy-title");
+    value = response.httpHeaderField(HTTPHeaderName::IcyTitle);
     if (!value.isEmpty()) {
         g_free(priv->iradioTitle);
         priv->iradioTitle = g_strdup(value.utf8().data());
@@ -892,7 +892,7 @@ void StreamingClient::handleResponseReceived(const ResourceResponse& response, C
         gst_app_src_set_size(priv->appsrc, -1);
 
     // icecast stuff
-    value = response.httpHeaderField("icy-metaint");
+    value = response.httpHeaderField(HTTPHeaderName::IcyMetaInt);
     if (!value.isEmpty()) {
         gchar* endptr = 0;
         gint64 icyMetaInt = g_ascii_strtoll(value.utf8().data(), &endptr, 10);
