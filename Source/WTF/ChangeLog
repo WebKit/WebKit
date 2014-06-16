@@ -1,3 +1,9 @@
+2014-06-15  Dan Bernstein  <mitz@apple.com>
+
+        iOS build fix after r169995.
+
+        * wtf/RetainPtr.h:
+
 2014-06-15  Anders Carlsson  <andersca@apple.com>
 
         Add an autorelease() member function to RetainPtr

@@ -163,7 +163,7 @@ namespace WTF {
 #ifdef __OBJC__
     template<typename T> inline auto RetainPtr<T>::autorelease() -> PtrType
     {
-        return CFBridgingRelease(leakRef());
+        return (__bridge PtrType)CFBridgingRelease(leakRef());
     }
 #endif
 
