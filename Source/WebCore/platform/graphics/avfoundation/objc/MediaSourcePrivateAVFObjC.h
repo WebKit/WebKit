@@ -68,7 +68,7 @@ public:
     bool hasVideo() const;
 
     void seekToTime(MediaTime);
-    MediaTime seekToTime(MediaTime, MediaTime negativeThreshold, MediaTime positiveThreshold);
+    MediaTime fastSeekTimeForMediaTime(MediaTime, MediaTime negativeThreshold, MediaTime positiveThreshold);
     IntSize naturalSize() const;
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)

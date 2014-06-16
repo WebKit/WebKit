@@ -184,7 +184,7 @@ void MediaSourcePrivateAVFObjC::seekToTime(MediaTime time)
         buffer->seekToTime(time);
 }
 
-MediaTime MediaSourcePrivateAVFObjC::seekToTime(MediaTime targetTime, MediaTime negativeThreshold, MediaTime positiveThreshold)
+MediaTime MediaSourcePrivateAVFObjC::fastSeekTimeForMediaTime(MediaTime targetTime, MediaTime negativeThreshold, MediaTime positiveThreshold)
 {
     MediaTime seekTime = targetTime;
 
@@ -193,8 +193,6 @@ MediaTime MediaSourcePrivateAVFObjC::seekToTime(MediaTime targetTime, MediaTime 
         if (abs(targetTime - sourceSeekTime) > abs(targetTime - seekTime))
             seekTime = sourceSeekTime;
     }
-
-    seekToTime(seekTime);
 
     return seekTime;
 }

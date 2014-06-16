@@ -436,13 +436,14 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal(double time, double nega
     if (!m_mediaSourcePrivate)
         return;
 
-    MediaTime seekTime = MediaTime::createWithDouble(time);
+    MediaTime seekTime;
     if (!negativeThreshold && !positiveThreshold)
-        m_mediaSourcePrivate->seekToTime(seekTime);
+        seekTime = MediaTime::createWithDouble(time);
     else
-        seekTime = m_mediaSourcePrivate->seekToTime(seekTime, MediaTime::createWithDouble(positiveThreshold), MediaTime::createWithDouble(negativeThreshold));
+        seekTime = m_mediaSourcePrivate->fastSeekTimeForMediaTime(MediaTime::createWithDouble(time), MediaTime::createWithDouble(positiveThreshold), MediaTime::createWithDouble(negativeThreshold));
 
     [m_synchronizer setRate:(m_playing ? m_rate : 0) time:toCMTime(seekTime)];
+    m_mediaSourcePrivate->seekToTime(seekTime);
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::seeking() const

@@ -1,3 +1,25 @@
+2014-06-16  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] Occasional image corruption after seeking
+        https://bugs.webkit.org/show_bug.cgi?id=133879
+
+        Reviewed by Eric Carlson.
+
+        Change the order of operations for seeks: change the current time of the AVSampleBufferRenderSynchronizer
+        before flushing and appending non-displaying samples.
+
+        Rather than having a single function which retrieves the fast seek time and then seeks, split this out
+        into two functions: one which gets the fast seek time, and one which seeks. (The later of course already
+        exists: seekToTime()).
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekInternal):
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+        (WebCore::MediaSourcePrivateAVFObjC::fastSeekTimeForMediaTime): Renamed from seekToTime()
+        (WebCore::MediaSourcePrivateAVFObjC::seekToTime): Deleted.
+
 2014-06-16  Zan Dobersek  <zdobersek@igalia.com>
 
         Have ScriptExecutionContext::Task functions take in a ScriptExecutionContext reference
