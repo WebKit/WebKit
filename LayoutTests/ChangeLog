@@ -1,3 +1,12 @@
+2014-06-16  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [EFL] Change expectations for three failing or flaky layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=133861
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations:
+
 2014-06-15  Benjamin Poulain  <benjamin@webkit.org>
 
         CSS JIT: add support for the :lang() pseudo class

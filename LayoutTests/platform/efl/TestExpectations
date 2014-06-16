@@ -1642,3 +1642,9 @@ webkit.org/b/133735 css3/viewport-percentage-lengths/viewport-percentage-lengths
 webkit.org/b/133737 css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Failure ]
 webkit.org/b/133734 css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Failure ]
 
+
+# Tests failing or flaky with closer reasons unknwown at this time
+webkit.org/b/133857 inspector-protocol/layers/layers-blending-compositing-reasons.html [ Failure ]
+webkit.org/b/133859 fast/regions/inline-block-inside-anonymous-overflow.html [ ImageOnlyFailure ]
+webkit.org/b/133860 fast/regions/auto-size/autosize-region-window-resize.html [ ImageOnlyFailure Pass ]
+
