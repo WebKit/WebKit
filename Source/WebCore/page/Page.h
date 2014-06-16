@@ -251,7 +251,7 @@ public:
     // the index of the first range after the user selection
     // NoMatchAfterUserSelection if there is no matching text after the user selection.
     enum { NoMatchAfterUserSelection = -1 };
-    void findStringMatchingRanges(const String&, FindOptions, int maxCount, Vector<RefPtr<Range>>*, int& indexForSelection);
+    void findStringMatchingRanges(const String&, FindOptions, int maxCount, Vector<RefPtr<Range>>&, int& indexForSelection);
 #if PLATFORM(COCOA)
     void addSchedulePair(PassRefPtr<SchedulePair>);
     void removeSchedulePair(PassRefPtr<SchedulePair>);

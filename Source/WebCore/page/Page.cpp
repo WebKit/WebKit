@@ -539,35 +539,35 @@ bool Page::findString(const String& target, FindOptions options)
     return false;
 }
 
-void Page::findStringMatchingRanges(const String& target, FindOptions options, int limit, Vector<RefPtr<Range>>* matchRanges, int& indexForSelection)
+void Page::findStringMatchingRanges(const String& target, FindOptions options, int limit, Vector<RefPtr<Range>>& matchRanges, int& indexForSelection)
 {
     indexForSelection = 0;
 
     Frame* frame = &mainFrame();
     Frame* frameWithSelection = 0;
     do {
-        frame->editor().countMatchesForText(target, 0, options, limit ? (limit - matchRanges->size()) : 0, true, matchRanges);
+        frame->editor().countMatchesForText(target, 0, options, limit ? (limit - matchRanges.size()) : 0, true, &matchRanges);
         if (frame->selection().isRange())
             frameWithSelection = frame;
         frame = incrementFrame(frame, true, false);
     } while (frame);
 
-    if (matchRanges->isEmpty())
+    if (matchRanges.isEmpty())
         return;
 
     if (frameWithSelection) {
         indexForSelection = NoMatchAfterUserSelection;
         RefPtr<Range> selectedRange = frameWithSelection->selection().selection().firstRange();
         if (options & Backwards) {
-            for (size_t i = matchRanges->size(); i > 0; --i) {
-                if (selectedRange->compareBoundaryPoints(Range::END_TO_START, matchRanges->at(i - 1).get(), IGNORE_EXCEPTION) > 0) {
+            for (size_t i = matchRanges.size(); i > 0; --i) {
+                if (selectedRange->compareBoundaryPoints(Range::END_TO_START, matchRanges[i - 1].get(), IGNORE_EXCEPTION) > 0) {
                     indexForSelection = i - 1;
                     break;
                 }
             }
         } else {
-            for (size_t i = 0; i < matchRanges->size(); ++i) {
-                if (selectedRange->compareBoundaryPoints(Range::START_TO_END, matchRanges->at(i).get(), IGNORE_EXCEPTION) < 0) {
+            for (size_t i = 0, size = matchRanges.size(); i < size; ++i) {
+                if (selectedRange->compareBoundaryPoints(Range::START_TO_END, matchRanges[i].get(), IGNORE_EXCEPTION) < 0) {
                     indexForSelection = i;
                     break;
                 }
@@ -575,7 +575,7 @@ void Page::findStringMatchingRanges(const String& target, FindOptions options, i
         }
     } else {
         if (options & Backwards)
-            indexForSelection = matchRanges->size() - 1;
+            indexForSelection = matchRanges.size() - 1;
         else
             indexForSelection = 0;
     }

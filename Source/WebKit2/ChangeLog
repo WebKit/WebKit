@@ -1,5 +1,17 @@
 2014-06-16  Zan Dobersek  <zdobersek@igalia.com>
 
+        Page::findStringMatchingRanges() should take Vector<RefPtr<Range>> by reference instead of pointer
+        https://bugs.webkit.org/show_bug.cgi?id=133677
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::findString): Update the call to Page::findStringMatchingRanges() to pass
+        in a Vector<RefPtr<Range>> reference instead of a pointer.
+        (WebKit::FindController::findStringMatches): Ditto.
+
+2014-06-16  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed build fixes for the EFL and GTK+ ports after r169994 and 170000.
 
         * UIProcess/API/C/WKPluginSiteDataManager.cpp: Undefine the None macro under X11.
