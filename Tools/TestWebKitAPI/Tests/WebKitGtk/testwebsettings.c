@@ -100,6 +100,9 @@ static void test_webkit_web_settings_user_agent(void)
     settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webView));
     defaultUserAgent = g_strdup(webkit_web_settings_get_user_agent(settings));
 
+    g_assert(g_strstr_len(defaultUserAgent, -1, "Version/8.0 Safari/"));
+    g_assert(g_strstr_len(defaultUserAgent, -1, "Version/8.0") < g_strstr_len(defaultUserAgent, -1, "Safari/"));
+
     test_non_quirky_user_agents(settings, defaultUserAgent);
 
     /* Test quirky google domains */

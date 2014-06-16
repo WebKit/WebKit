@@ -1,3 +1,19 @@
+2014-06-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        [Gtk] [Stable] Fix the "Safari" part of the UA
+        https://bugs.webkit.org/show_bug.cgi?id=133855
+
+        Reviewed by Martin Robinson.
+
+        Added a couple of tests to verify that the Safari part of our UA
+        looks like "Version/X Safari/Y" instead of "Safari/Y Version/X"
+        which is causing "unsupported browser" issues.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitSettings.cpp:
+        (testWebKitSettingsUserAgent):
+        * TestWebKitAPI/Tests/WebKitGtk/testwebsettings.c:
+        (test_webkit_web_settings_user_agent):
+
 2014-05-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebProcess leaked when closing pages with network process enabled

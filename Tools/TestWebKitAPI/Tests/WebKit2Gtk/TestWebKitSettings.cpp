@@ -336,6 +336,9 @@ static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
     const char* newUserAgent = webkit_settings_get_user_agent(settings.get());
     g_assert(g_strstr_len(newUserAgent, -1, "3.4.5"));
     g_assert(g_strstr_len(newUserAgent, -1, "WebCatGTK+"));
+
+    GUniquePtr<char> applicationUserAgent(g_strdup_printf("%s %s", defaultUserAgent.data(), "WebCatGTK+/3.4.5"));
+    g_assert_cmpstr(applicationUserAgent.get(), ==, webkit_settings_get_user_agent(settings.get()));
 }
 
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)

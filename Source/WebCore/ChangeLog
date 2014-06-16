@@ -1,3 +1,25 @@
+2014-06-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        [Gtk] [Stable] Fix the "Safari" part of the UA
+        https://bugs.webkit.org/show_bug.cgi?id=133855
+
+        Reviewed by Martin Robinson.
+
+        We claim to be Safari (among others) to ensure maximum
+        compatibility with existing web sites. Since Safari 3.0 valid
+        Safari UA strings look like this "Version/X Safari/Y" while in our
+        UA it's "Safari/Y Version/6.0".
+
+        This is wrong and is causing "unsupported browser" issues in
+        many important sites as live.com our icloud.com.
+
+        Apart from that I'm bumping the Safari Version in the UA to 8.0 as
+        we're already claiming to be "Safari/538.15" which should be
+        pretty equivalent to Safari 8 in terms of features.
+
+        * platform/gtk/UserAgentGtk.cpp:
+        (WebCore::standardUserAgent):
+
 2014-05-25  Milan Crha  <mcrha@redhat.com>
 
         [Stable] [GTK] GdiObject.h missing in WebKitGTK 2.4.1 tarball
