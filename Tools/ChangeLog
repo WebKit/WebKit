@@ -1,3 +1,18 @@
+2014-06-16  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Missing 'selection-changed' signal when navigating a combo box with keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=133512
+
+        Reviewed by Chris Fleizach.
+
+        Added support for connecting to AtkSelection's 'selection-changed'
+        signal, and print it out as AXSelectedChildrenChanged in the tests.
+
+        Also removed some dead code, that became useless after r169487.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp:
+        (WTR::AccessibilityNotificationHandler::connectAccessibilityCallbacks): Updated.
+
 2014-06-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Change ewk_view_settings_get to ewk_page_group_settings_get

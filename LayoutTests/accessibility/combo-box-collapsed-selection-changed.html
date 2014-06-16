@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+
+</script>
+</head>
+<body>
+<form>
+<select id="combo">
+<option selected value='foo'>foo</option>
+<option value='bar'>bar</option>
+<option value='baz'>baz</option>
+</select>
+</form>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+window.jsTestIsAsync = true;
+
+description("This tests that a combo box notifies when the selected child has changed while arrowing through the options of a combobox while collapsed.");
+
+var selectionChangedNotifications = 0;
+
+if (window.testRunner && window.accessibilityController) {
+    testRunner.dumpAsText();
+
+    // Focus in the combobox and move around the options. The signal
+    // 'state-change:selected' should be emitted with every change.
+    document.getElementById("combo").focus();
+
+    axCombo = accessibilityController.focusedElement;
+    axCombo.addNotificationListener(function (notification) {
+        if (notification == "AXSelectedChildrenChanged")
+            selectionChangedNotifications++;
+    });
+
+    eventSender.keyDown("downArrow");
+    eventSender.keyDown("downArrow");
+    eventSender.keyDown("upArrow");
+    eventSender.keyDown("upArrow");
+
+    window.setTimeout(function() {
+        if (window.accessibilityController)
+            axCombo.removeNotificationListener();
+
+        shouldBe("selectionChangedNotifications", "4");
+        finishJSTest();
+    }, 0);
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

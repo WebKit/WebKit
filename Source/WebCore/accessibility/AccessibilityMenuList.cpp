@@ -113,7 +113,14 @@ void AccessibilityMenuList::didUpdateActiveOption(int optionIndex)
         ASSERT(childObjects.size() == 1);
         ASSERT(childObjects[0]->isMenuListPopup());
 
-        if (childObjects[0]->isMenuListPopup()) {
+        // We might be calling this method in situations where the renderers for list items
+        // associated to the menu list have not been created (e.g. they might be rendered
+        // in the UI process, as it's the case in the GTK+ port, which uses GtkMenuItem).
+        // So, we need to make sure that the accessibility popup object has some children
+        // before asking it to update its active option, or it will read invalid memory.
+        // You can reproduce the issue in the GTK+ port by removing this check and running
+        // accessibility/insert-selected-option-into-select-causes-crash.html (will crash).
+        if (childObjects[0]->isMenuListPopup() && childObjects[0]->children().size()) {
             if (AccessibilityMenuListPopup* popup = toAccessibilityMenuListPopup(childObjects[0].get()))
                 popup->didUpdateActiveOption(optionIndex);
         }

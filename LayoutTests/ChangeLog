@@ -1,3 +1,36 @@
+2014-06-16  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Missing 'selection-changed' signal when navigating a combo box with keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=133512
+
+        Reviewed by Chris Fleizach.
+
+        Re-implemented test for combo boxes in terms of addNotificationListener()
+        instead of using the (already deprecated) logAccessibilityEvents method,
+        and made the test cross platform (as the fix is not platform specific).
+
+        * accessibility/combo-box-collapsed-selection-changed.html:
+        Implemented based on the former gtk-only test, and made it cross-platform.
+        * accessibility/combo-box-collapsed-selection-changed-expected.txt: New.
+        * platform/gtk/accessibility/combo-box-collapsed-selection-changed.html: Removed.
+        * platform/gtk/accessibility/combo-box-collapsed-selection-changed-expected.txt: Removed.
+
+        Updated expectation for test that checks that a notification is
+        sent when navigating through a multiselection list box, now that
+        we are actually printing such a notification.
+
+        * accessibility/multiselect-list-reports-active-option-expected.txt: Updated.
+
+        Removed two expected failures from TestExpectations for tests that
+        are now passing, one for the combo box test mentioned above and
+        another one for a test that is passing as well now, after applying
+        this fix: accessibility/menu-list-sends-change-notification.html
+
+        * platform/gtk/TestExpectations: Removed two 'failure' expectations.
+
+        * platform/mac/TestExpectations: Skip accessiblity test timing out, probably because
+        those kind of notifications while navigating a combo box are not needed in the Mac.
+
 2014-06-16  Frédéric Wang  <fred.wang@free.fr>
 
         Draw radicals with glyphs for better rendering

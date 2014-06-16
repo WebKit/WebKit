@@ -22,6 +22,8 @@ PASS accessibleTwo.isSelected is true
 PASS accessibleTwo.isSelectedOptionActive is false
 PASS accessibleThree.isSelected is true
 PASS accessibleThree.isSelectedOptionActive is true
+List notification: AXSelectedChildrenChanged
+List notification: AXSelectedChildrenChanged
 
 TEST COMPLETE
 
