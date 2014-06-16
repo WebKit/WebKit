@@ -1,5 +1,21 @@
 2014-06-16  Juergen Ributzka  <juergen@apple.com>
 
+        Change the order of the alias analysis passes to align with the opt pipeline of LLVM
+        https://bugs.webkit.org/show_bug.cgi?id=133753
+
+        Reviewed by Geoffrey Garen.
+
+        The order in which the alias analysis passes are added affects also the
+        order in which they are utilized. Change the order to align with the
+        one use by LLVM itself. The last alias analysis pass added will be
+        evaluated first. With this change we first perform a basic alias
+        analysis and then use the type-based alias analysis (if required).
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+
+2014-06-16  Juergen Ributzka  <juergen@apple.com>
+
         Fix the arguments passed to the LLVM dylib
         https://bugs.webkit.org/show_bug.cgi?id=133757
 

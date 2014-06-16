@@ -526,8 +526,8 @@ void compile(State& state, Safepoint::Result& safepointResult)
             llvm->AddPromoteMemoryToRegisterPass(modulePasses);
             llvm->AddConstantPropagationPass(modulePasses);
             llvm->AddInstructionCombiningPass(modulePasses);
-            llvm->AddBasicAliasAnalysisPass(modulePasses);
             llvm->AddTypeBasedAliasAnalysisPass(modulePasses);
+            llvm->AddBasicAliasAnalysisPass(modulePasses);
             llvm->AddGVNPass(modulePasses);
             llvm->AddCFGSimplificationPass(modulePasses);
             llvm->AddDeadStoreEliminationPass(modulePasses);
