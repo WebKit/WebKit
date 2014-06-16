@@ -204,6 +204,9 @@ public:
 
     bool allowsUserScaling() const { return m_allowsUserScaling; }
     void setAllowsUserScaling(bool allowsUserScaling) { m_allowsUserScaling = allowsUserScaling; }
+
+    uint64_t transactionID() const { return m_transactionID; }
+    void setTransactionID(uint64_t transactionID) { m_transactionID = transactionID; }
     
 private:
     WebCore::GraphicsLayer::PlatformLayerID m_rootLayerID;
@@ -221,6 +224,7 @@ private:
     double m_minimumScaleFactor;
     double m_maximumScaleFactor;
     uint64_t m_renderTreeSize;
+    uint64_t m_transactionID;
     bool m_scaleWasSetByUIProcess;
     bool m_allowsUserScaling;
 };

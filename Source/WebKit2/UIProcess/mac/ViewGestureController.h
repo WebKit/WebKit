@@ -183,7 +183,8 @@ private:
     RetainPtr<UIView> m_snapshotView;
     RetainPtr<UIView> m_transitionContainerView;
     RetainPtr<WKSwipeTransitionController> m_swipeInteractiveTransitionDelegate;
-    uint64_t m_targetRenderTreeSize;
+    uint64_t m_snapshotRemovalTargetRenderTreeSize;
+    uint64_t m_snapshotRemovalTargetTransactionID;
 #endif
 };
 

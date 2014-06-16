@@ -47,6 +47,7 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy* w
     : DrawingAreaProxy(DrawingAreaTypeRemoteLayerTree, webPageProxy)
     , m_remoteLayerTreeHost(*this)
     , m_isWaitingForDidUpdateGeometry(false)
+    , m_lastVisibleTransactionID(0)
 {
 #if USE(IOSURFACE)
     // We don't want to pool surfaces in the UI process.
@@ -118,6 +119,9 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 {
     LOG(RemoteLayerTree, "%s", layerTreeTransaction.description().data());
     LOG(RemoteLayerTree, "%s", scrollingTreeTransaction.description().data());
+
+    ASSERT(layerTreeTransaction.transactionID() == m_lastVisibleTransactionID + 1);
+    m_transactionIDForPendingCACommit = layerTreeTransaction.transactionID();
 
     if (m_remoteLayerTreeHost.updateLayerTree(layerTreeTransaction))
         m_webPageProxy->setAcceleratedCompositingRootLayer(m_remoteLayerTreeHost.rootLayer());
@@ -305,6 +309,8 @@ void RemoteLayerTreeDrawingAreaProxy::coreAnimationDidCommitLayers()
     // using our backing store. We can improve this by waiting for the render server to commit
     // if we find API to do so, but for now we will make extra buffers if need be.
     m_webPageProxy->process().send(Messages::DrawingArea::DidUpdate(), m_webPageProxy->pageID());
+
+    m_lastVisibleTransactionID = m_transactionIDForPendingCACommit;
 }
 
 } // namespace WebKit

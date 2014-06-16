@@ -76,6 +76,8 @@ private:
     
     void sendUpdateGeometry();
 
+    virtual uint64_t lastVisibleTransactionID() const override { return m_lastVisibleTransactionID; }
+
     RemoteLayerTreeHost m_remoteLayerTreeHost;
     bool m_isWaitingForDidUpdateGeometry;
 
@@ -87,6 +89,9 @@ private:
     RetainPtr<CALayer> m_exposedRectIndicatorLayer;
 
     std::unique_ptr<WebCore::RunLoopObserver> m_layerCommitObserver;
+
+    uint64_t m_lastVisibleTransactionID;
+    uint64_t m_transactionIDForPendingCACommit;
 };
 
 DRAWING_AREA_PROXY_TYPE_CASTS(RemoteLayerTreeDrawingAreaProxy, type() == DrawingAreaTypeRemoteLayerTree);

@@ -62,6 +62,7 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage* webPage, const W
     , m_waitingForBackingStoreSwap(false)
     , m_hadFlushDeferredWhileWaitingForBackingStoreSwap(false)
     , m_displayRefreshMonitorsToNotify(nullptr)
+    , m_currentTransactionID(0)
 {
     webPage->corePage()->settings().setForceCompositingMode(true);
 #if PLATFORM(IOS)
@@ -275,6 +276,7 @@ void RemoteLayerTreeDrawingArea::flushLayers()
 
     // FIXME: Minimize these transactions if nothing changed.
     RemoteLayerTreeTransaction layerTransaction;
+    layerTransaction.setTransactionID(takeNextTransactionID());
     m_remoteLayerTreeContext->buildTransaction(layerTransaction, *toGraphicsLayerCARemote(m_rootLayer.get())->platformCALayer());
     backingStoreCollection.willCommitLayerTree(layerTransaction);
     m_webPage->willCommitLayerTree(layerTransaction);

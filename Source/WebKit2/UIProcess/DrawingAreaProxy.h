@@ -85,6 +85,8 @@ public:
     virtual void showDebugIndicator(bool) { }
     virtual bool isShowingDebugIndicator() const { return false; }
 
+    virtual uint64_t lastVisibleTransactionID() const { ASSERT_NOT_REACHED(); return 0; }
+
 protected:
     explicit DrawingAreaProxy(DrawingAreaType, WebPageProxy*);
 

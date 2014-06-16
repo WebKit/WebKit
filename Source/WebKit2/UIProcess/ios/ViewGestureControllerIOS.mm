@@ -127,7 +127,7 @@ ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
     , m_activeGestureType(ViewGestureType::None)
     , m_swipeWatchdogTimer(this, &ViewGestureController::swipeSnapshotWatchdogTimerFired)
-    , m_targetRenderTreeSize(0)
+    , m_snapshotRemovalTargetRenderTreeSize(0)
 {
 }
 
@@ -225,9 +225,10 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     }
 
     ViewSnapshot snapshot;
-    m_targetRenderTreeSize = 0;
+    m_snapshotRemovalTargetRenderTreeSize = 0;
     if (ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot))
-        m_targetRenderTreeSize = snapshot.renderTreeSize * swipeSnapshotRemovalRenderTreeSizeTargetFraction;
+        m_snapshotRemovalTargetRenderTreeSize = snapshot.renderTreeSize * swipeSnapshotRemovalRenderTreeSizeTargetFraction;
+    m_snapshotRemovalTargetTransactionID = m_webPageProxy.drawingArea()->lastVisibleTransactionID() + 1;
 
     // We don't want to replace the current back-forward item's snapshot
     // like we normally would when going back or forward, because we are
@@ -236,7 +237,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     m_webPageProxy.goToBackForwardItem(targetItem);
     ViewSnapshotStore::shared().enableSnapshotting();
     
-    if (!m_targetRenderTreeSize) {
+    if (!m_snapshotRemovalTargetRenderTreeSize) {
         removeSwipeSnapshot();
         return;
     }
@@ -249,7 +250,10 @@ void ViewGestureController::setRenderTreeSize(uint64_t renderTreeSize)
     if (m_activeGestureType != ViewGestureType::Swipe)
         return;
 
-    if (m_targetRenderTreeSize && renderTreeSize > m_targetRenderTreeSize)
+    // Don't remove the swipe snapshot until we get a drawing area transaction more recent than the navigation,
+    // and we hit the render tree size threshold. This avoids potentially removing the snapshot early,
+    // when receiving commits from the previous (pre-navigation) page.
+    if (m_snapshotRemovalTargetRenderTreeSize && renderTreeSize > m_snapshotRemovalTargetRenderTreeSize && m_webPageProxy.drawingArea()->lastVisibleTransactionID() >= m_snapshotRemovalTargetTransactionID)
         removeSwipeSnapshot();
 }
 
@@ -274,7 +278,7 @@ void ViewGestureController::removeSwipeSnapshot()
     [m_snapshotView removeFromSuperview];
     m_snapshotView = nullptr;
     
-    m_targetRenderTreeSize = 0;
+    m_snapshotRemovalTargetRenderTreeSize = 0;
     m_activeGestureType = ViewGestureType::None;
 }
 

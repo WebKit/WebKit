@@ -1,3 +1,47 @@
+2014-06-16  Timothy Horton  <timothy_horton@apple.com>
+
+        [iOS][wk2] Swiping back briefly shows the previous page before loading the new one
+        https://bugs.webkit.org/show_bug.cgi?id=133885
+
+        Reviewed by Simon Fraser.
+
+        Remove a race between the UI and Web processes when removing the swipe snapshot.
+        Previously, it was possible to get a commit from the Web process with layer content
+        (and render tree size) from the previous page *after* sending the navigation request
+        to the page, because of the asynchronicity of layer tree commits. This could cause
+        the snapshot to be removed early (if the previous fully-loaded page had a sufficiently
+        large render tree size), revealing the old tiles underneath the snapshot.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::transactionID):
+        (WebKit::RemoteLayerTreeTransaction::setTransactionID):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::lastVisibleTransactionID):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::coreAnimationDidCommitLayers):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        (WebKit::RemoteLayerTreeDrawingArea::didUpdate):
+        Keep track of an ever-increasing transaction ID in RemoteLayerTreeDrawingArea(Proxy).
+        It increments in the UI process at didUpdate time, because the Web process cannot
+        have started on a new layer tree commit until didUpdate is sent.
+        It increments in the Web process at commit time.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::endSwipeGesture):
+        (WebKit::ViewGestureController::setRenderTreeSize):
+        * UIProcess/mac/ViewGestureController.h:
+        Adopt transaction IDs; don't remove the snapshot until the commit
+        that includes the navigation arrives.
+
 2014-06-16  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/17327707> [Cocoa] Expose WebPreferences::storageBlockingPolicy
