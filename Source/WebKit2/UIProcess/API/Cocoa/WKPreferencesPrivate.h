@@ -31,9 +31,16 @@
 
 #if WK_API_ENABLED
 
+typedef NS_ENUM(NSInteger, _WKStorageBlockingPolicy) {
+    _WKStorageBlockingPolicyAllowAll,
+    _WKStorageBlockingPolicyBlockThirdParty,
+    _WKStorageBlockingPolicyBlockAll,
+} WK_ENUM_AVAILABLE(10_10, 8_0);
+
 @interface WKPreferences (WKPrivate)
 
 @property (nonatomic, setter=_setTelephoneNumberDetectionIsEnabled:) BOOL _telephoneNumberDetectionIsEnabled;
+@property (nonatomic, setter=_setStorageBlockingPolicy:) _WKStorageBlockingPolicy _storageBlockingPolicy;
 
 @end
 

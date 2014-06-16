@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 #import "WebPreferences.h"
+#import <WebCore/SecurityOrigin.h>
 #import <wtf/RetainPtr.h>
 
 @implementation WKPreferences
@@ -110,6 +111,46 @@
 - (void)_setTelephoneNumberDetectionIsEnabled:(BOOL)telephoneNumberDetectionIsEnabled
 {
     _preferences->setTelephoneNumberParsingEnabled(telephoneNumberDetectionIsEnabled);
+}
+
+static WebCore::SecurityOrigin::StorageBlockingPolicy toStorageBlockingPolicy(_WKStorageBlockingPolicy policy)
+{
+    switch (policy) {
+    case _WKStorageBlockingPolicyAllowAll:
+        return WebCore::SecurityOrigin::AllowAllStorage;
+    case _WKStorageBlockingPolicyBlockThirdParty:
+        return WebCore::SecurityOrigin::BlockThirdPartyStorage;
+    case _WKStorageBlockingPolicyBlockAll:
+        return WebCore::SecurityOrigin::BlockAllStorage;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebCore::SecurityOrigin::AllowAllStorage;
+}
+
+static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPolicy policy)
+{
+    switch (policy) {
+    case WebCore::SecurityOrigin::AllowAllStorage:
+        return _WKStorageBlockingPolicyAllowAll;
+    case WebCore::SecurityOrigin::BlockThirdPartyStorage:
+        return _WKStorageBlockingPolicyBlockThirdParty;
+    case WebCore::SecurityOrigin::BlockAllStorage:
+        return _WKStorageBlockingPolicyBlockAll;
+    }
+
+    ASSERT_NOT_REACHED();
+    return _WKStorageBlockingPolicyAllowAll;
+}
+
+- (_WKStorageBlockingPolicy)_storageBlockingPolicy
+{
+    return toAPI(static_cast<WebCore::SecurityOrigin::StorageBlockingPolicy>(_preferences->storageBlockingPolicy()));
+}
+
+- (void)_setStorageBlockingPolicy:(_WKStorageBlockingPolicy)policy
+{
+    _preferences->setStorageBlockingPolicy(toStorageBlockingPolicy(policy));
 }
 
 @end
