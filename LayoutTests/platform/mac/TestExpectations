@@ -1325,6 +1325,11 @@ webkit.org/b/130322 [ MountainLion Mavericks ] mathml/opentype/vertical-LatinMod
 webkit.org/b/72828 mathml/opentype/horizontal-LatinModern.html [ Failure ]
 webkit.org/b/72828 mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]
 webkit.org/b/72828 mathml/opentype/horizontal-LatinModern-munderover.html [ Failure ]
+webkit.org/b/119038 mathml/opentype/roots-LatinModern.html [ Failure ]
+
+# Missing references
+webkit.org/b/119038 mathml/presentation/mo-stretch.html [ Failure ]
+webkit.org/b/119038 mathml/presentation/roots.xhtml [ Failure ]
 
 # WebKitDataCue is supported, not DataCue
 media/track/track-datacue.html [ Skip ]

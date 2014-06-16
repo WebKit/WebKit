@@ -58,12 +58,12 @@ struct Entry {
 
 }
 
-class RenderMathMLOperator final : public RenderMathMLToken {
+class RenderMathMLOperator : public RenderMathMLToken {
 public:
     RenderMathMLOperator(MathMLElement&, PassRef<RenderStyle>);
-    RenderMathMLOperator(Document&, PassRef<RenderStyle>, const String& operatorString, MathMLOperatorDictionary::Form, MathMLOperatorDictionary::Flag);
+    RenderMathMLOperator(Document&, PassRef<RenderStyle>, const String& operatorString, MathMLOperatorDictionary::Form, unsigned short flags = 0);
 
-    void stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline);
+    virtual void stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline);
     void stretchTo(LayoutUnit width);
     LayoutUnit stretchSize() const { return m_isVertical ? m_stretchHeightAboveBaseline + m_stretchDepthBelowBaseline : m_stretchWidth; }
     
@@ -73,17 +73,16 @@ public:
 
     void updateStyle() override final;
 
-    void paint(PaintInfo&, const LayoutPoint&);
+    virtual void paint(PaintInfo&, const LayoutPoint&);
 
     void updateTokenContent(const String& operatorString);
     void updateTokenContent() override final;
     void updateOperatorProperties();
 
-private:
+protected:
     virtual const char* renderName() const override { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
     virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
     virtual bool isRenderMathMLOperator() const override { return true; }
-    bool isFencedOperator() { return isAnonymous(); }
     // The following operators are invisible: U+2061 FUNCTION APPLICATION, U+2062 INVISIBLE TIMES, U+2063 INVISIBLE SEPARATOR, U+2064 INVISIBLE PLUS.
     bool isInvisibleOperator() const { return 0x2061 <= m_operator && m_operator <= 0x2064; }
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
@@ -187,7 +186,7 @@ private:
 
     void setOperatorFlagFromAttribute(MathMLOperatorDictionary::Flag, const QualifiedName&);
     void setOperatorPropertiesFromOpDictEntry(const MathMLOperatorDictionary::Entry*);
-    void SetOperatorProperties();
+    virtual void SetOperatorProperties();
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderMathMLOperator, isRenderMathMLOperator())

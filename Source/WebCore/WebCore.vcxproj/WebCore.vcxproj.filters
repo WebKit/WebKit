@@ -2742,6 +2742,9 @@
     <ClCompile Include="..\rendering\mathml\RenderMathMLOperator.cpp">
       <Filter>rendering\mathml</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\mathml\RenderMathMLRadicalOperator.cpp">
+      <Filter>rendering\mathml</Filter>
+    </ClCompile>
     <ClCompile Include="..\rendering\mathml\RenderMathMLRoot.cpp">
       <Filter>rendering\mathml</Filter>
     </ClCompile>
@@ -9650,6 +9653,9 @@
       <Filter>rendering\mathml</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\mathml\RenderMathMLOperator.h">
+      <Filter>rendering\mathml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\mathml\RenderMathMLRadicalOperator.h">
       <Filter>rendering\mathml</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\mathml\RenderMathMLRoot.h">
