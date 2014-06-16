@@ -132,6 +132,7 @@ struct SelectorFragment {
         , widthFromIndirectAdjacent(0)
         , tagName(nullptr)
         , id(nullptr)
+        , langFilter(nullptr)
         , onlyMatchesLinksInQuirksMode(true)
     {
     }
@@ -151,6 +152,7 @@ struct SelectorFragment {
 
     const QualifiedName* tagName;
     const AtomicString* id;
+    const AtomicString* langFilter;
     Vector<const AtomicStringImpl*, 1> classNames;
     HashSet<unsigned> pseudoClasses;
     Vector<JSC::FunctionPtr> unoptimizedPseudoClasses;
@@ -226,6 +228,7 @@ private:
     void generateElementIsActive(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsFirstChild(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsHovered(Assembler::JumpList& failureCases, const SelectorFragment&);
+    void generateElementIsInLanguage(Assembler::JumpList& failureCases, const AtomicString&);
     void generateElementIsLastChild(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsOnlyChild(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateSynchronizeStyleAttribute(Assembler::RegisterID elementDataArraySizeAndFlags);
@@ -491,6 +494,25 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
             fragment.anyFilters.append(anyFragments);
 
             return functionType;
+        }
+    case CSSSelector::PseudoClassLang:
+        {
+            const AtomicString& argument = selector.argument();
+            if (argument.isEmpty())
+                return FunctionType::CannotMatchAnything;
+
+            if (!fragment.langFilter)
+                fragment.langFilter = &argument;
+            else if (*fragment.langFilter != argument) {
+                // If there are multiple definition, we only care about the most restrictive one.
+                if (argument.startsWith(*fragment.langFilter, false))
+                    fragment.langFilter = &argument;
+                else if (fragment.langFilter->startsWith(argument, false))
+                    { } // The existing filter is more restrictive.
+                else
+                    return FunctionType::CannotMatchAnything;
+            }
+            return FunctionType::SimpleSelectorChecker;
         }
 
     default:
@@ -1747,6 +1769,8 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& matchin
         generateElementMatchesNotPseudoClass(matchingPostTagNameFailureCases, fragment);
     if (!fragment.anyFilters.isEmpty())
         generateElementMatchesAnyPseudoClass(matchingPostTagNameFailureCases, fragment);
+    if (fragment.langFilter)
+        generateElementIsInLanguage(matchingPostTagNameFailureCases, *fragment.langFilter);
 }
 
 void SelectorCodeGenerator::generateElementDataMatching(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
@@ -2307,6 +2331,18 @@ void SelectorCodeGenerator::generateElementIsHovered(Assembler::JumpList& failur
             failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
         }
     }
+}
+
+void SelectorCodeGenerator::generateElementIsInLanguage(Assembler::JumpList& failureCases, const AtomicString& langFilter)
+{
+    LocalRegisterWithPreference langFilterRegister(m_registerAllocator, JSC::GPRInfo::argumentGPR1);
+    m_assembler.move(Assembler::TrustedImmPtr(langFilter.impl()), langFilterRegister);
+
+    Assembler::RegisterID elementAddress = elementAddressRegister;
+    FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+    functionCall.setFunctionAddress(matchesLangPseudoClass);
+    functionCall.setTwoArguments(elementAddress, langFilterRegister);
+    failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
 }
 
 static void setLastChildState(Element* element)

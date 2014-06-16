@@ -1,3 +1,19 @@
+2014-06-15  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS JIT: add support for the :lang() pseudo class
+        https://bugs.webkit.org/show_bug.cgi?id=133913
+
+        Reviewed by Andreas Kling.
+
+        * fast/selectors/lang-conflict-expected.txt: Added.
+        * fast/selectors/lang-conflict.html: Added.
+        * fast/selectors/lang-empty-expected.txt: Added.
+        * fast/selectors/lang-empty.html: Added.
+        * fast/selectors/lang-specificity-expected.txt: Added.
+        * fast/selectors/lang-specificity-xml-expected.txt: Added.
+        * fast/selectors/lang-specificity-xml.xhtml: Added.
+        * fast/selectors/lang-specificity.html: Added.
+
 2014-06-14  Simon Fraser  <simon.fraser@apple.com>
 
         Masks disappear when layers become tiled

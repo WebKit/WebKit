@@ -99,6 +99,30 @@ ALWAYS_INLINE bool isValid(const Element* element)
     return element->willValidate() && element->isValidFormControlElement();
 }
 
+inline bool matchesLangPseudoClass(const Element* element, AtomicStringImpl* filter)
+{
+    AtomicString value;
+#if ENABLE(VIDEO_TRACK)
+    if (element->isWebVTTElement())
+        value = toWebVTTElement(element)->language();
+    else
+#endif
+        value = element->computeInheritedLanguage();
+
+    if (value.isNull())
+        return false;
+
+    if (value.impl() == filter)
+        return true;
+
+    if (value.impl()->startsWith(filter, false)) {
+        if (value.length() == filter->length())
+            return true;
+        return value[filter->length()] == '-';
+    }
+    return false;
+}
+
 ALWAYS_INLINE bool matchesReadOnlyPseudoClass(const Element* element)
 {
     return element->matchesReadOnlyPseudoClass();

@@ -105,6 +105,7 @@ public:
     unsigned findAttributeIndexByName(const QualifiedName&) const;
     unsigned findAttributeIndexByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
     unsigned findAttributeIndexByNameForAttributeNode(const Attr*, bool shouldIgnoreAttributeCase = false) const;
+    const Attribute* findLanguageAttribute() const;
 
     bool hasID() const { return !m_idForStyleResolution.isNull(); }
     bool hasClass() const { return !m_classNames.isEmpty(); }

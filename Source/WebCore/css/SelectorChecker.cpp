@@ -740,19 +740,10 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             break;
         case CSSSelector::PseudoClassLang:
             {
-                AtomicString value;
-#if ENABLE(VIDEO_TRACK)
-                if (element->isWebVTTElement())
-                    value = toWebVTTElement(element)->language();
-                else
-#endif
-                    value = element->computeInheritedLanguage();
                 const AtomicString& argument = selector->argument();
-                if (value.isEmpty() || !value.startsWith(argument, false))
-                    break;
-                if (value.length() != argument.length() && value[argument.length()] != '-')
-                    break;
-                return true;
+                if (argument.isNull())
+                    return false;
+                return matchesLangPseudoClass(element, argument.impl());
             }
 #if ENABLE(FULLSCREEN_API)
         case CSSSelector::PseudoClassFullScreen:

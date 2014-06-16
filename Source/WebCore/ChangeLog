@@ -1,3 +1,35 @@
+2014-06-15  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS JIT: add support for the :lang() pseudo class
+        https://bugs.webkit.org/show_bug.cgi?id=133913
+
+        Reviewed by Andreas Kling.
+
+        The selector is already very expensive to begin with, just implement it with
+        a function call.
+
+        It is also done after every other filter since it is so inefficient.
+
+        Tests: fast/selectors/lang-conflict.html
+               fast/selectors/lang-empty.html
+               fast/selectors/lang-specificity-xml.xhtml
+               fast/selectors/lang-specificity.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::matchesLangPseudoClass):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorFragment::SelectorFragment):
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsInLanguage):
+        * dom/Element.cpp:
+        (WebCore::Element::computeInheritedLanguage):
+        * dom/ElementData.cpp:
+        (WebCore::ElementData::findLanguageAttribute):
+        * dom/ElementData.h:
+
 2014-06-15  Anders Carlsson  <andersca@apple.com>
 
         Add an autorelease() member function to RetainPtr

@@ -2207,27 +2207,26 @@ RegionOversetState Element::regionOversetState() const
 
 AtomicString Element::computeInheritedLanguage() const
 {
-    const Node* n = this;
-    AtomicString value;
+    if (const ElementData* elementData = this->elementData()) {
+        if (const Attribute* attribute = elementData->findLanguageAttribute())
+            return attribute->value();
+    }
+
     // The language property is inherited, so we iterate over the parents to find the first language.
-    do {
-        if (n->isElementNode()) {
-            if (const ElementData* elementData = toElement(n)->elementData()) {
-                // Spec: xml:lang takes precedence -- http://www.w3.org/TR/xhtml1/#C_7
-                if (const Attribute* attribute = elementData->findAttributeByName(XMLNames::langAttr))
-                    value = attribute->value();
-                else if (const Attribute* attribute = elementData->findAttributeByName(HTMLNames::langAttr))
-                    value = attribute->value();
+    const Node* currentNode = this;
+    while ((currentNode = currentNode->parentNode())) {
+        if (currentNode->isElementNode()) {
+            if (const ElementData* elementData = toElement(*currentNode).elementData()) {
+                if (const Attribute* attribute = elementData->findLanguageAttribute())
+                    return attribute->value();
             }
-        } else if (n->isDocumentNode()) {
+        } else if (currentNode->isDocumentNode()) {
             // checking the MIME content-language
-            value = toDocument(n)->contentLanguage();
+            return toDocument(currentNode)->contentLanguage();
         }
+    }
 
-        n = n->parentNode();
-    } while (n && value.isNull());
-
-    return value;
+    return nullAtom;
 }
 
 Locale& Element::locale() const
