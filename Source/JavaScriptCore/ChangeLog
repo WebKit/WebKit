@@ -1,3 +1,15 @@
+2014-06-16  Michael Saboff  <msaboff@apple.com>
+
+        Convert ASSERT in inlineFunctionForCapabilityLevel to early return
+        https://bugs.webkit.org/show_bug.cgi?id=133903
+
+        Reviewed by Mark Hahnenberg.
+
+        Hardened code by Converting ASSERT to return CannotCompile.
+
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::inlineFunctionForCapabilityLevel):
+
 2014-06-13  Sam Weinig  <sam@webkit.org>
 
         Store DOM constants directly in the JS object rather than jumping through a custom accessor

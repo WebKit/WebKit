@@ -149,7 +149,8 @@ inline bool mightInlineFunction(CodeBlock* codeBlock)
 inline CapabilityLevel inlineFunctionForCapabilityLevel(CodeBlock* codeBlock, CodeSpecializationKind kind, bool isClosureCall)
 {
     if (isClosureCall) {
-        ASSERT(kind == CodeForCall);
+        if (kind != CodeForCall)
+            return CannotCompile;
         return inlineFunctionForClosureCallCapabilityLevel(codeBlock);
     }
     if (kind == CodeForCall)
