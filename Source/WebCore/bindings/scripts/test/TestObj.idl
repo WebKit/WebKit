@@ -207,6 +207,9 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     void methodWithUnsignedLongSequence(sequence<unsigned long> unsignedLongSequence);
     [RaisesException] DOMString[] stringArrayFunction(DOMString[] values);
     [RaisesException] DOMStringList domStringListFunction(DOMStringList values);
+
+    void methodWithAndWithoutNullableSequence(sequence<unsigned long> arrayArg, sequence<unsigned long>? nullableArrayArg);
+    void methodWithAndWithoutNullableSequence2(unsigned long[] arrayArg, unsigned long[]? nullableArrayArg);
 #endif
 
     [CheckSecurityForNode] readonly attribute Document contentDocument;

@@ -315,7 +315,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 125, -1 },
+    { 127, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -333,7 +333,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { 5, -1 },
-    { 133, -1 },
+    { 135, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -418,8 +418,8 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 126, -1 },
-    { -1, -1 },
+    { 128, -1 },
+    { 121, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -500,10 +500,10 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { 8, 512 },
     { -1, -1 },
-    { 129, -1 },
+    { 131, -1 },
     { -1, -1 },
     { 58, 528 },
-    { 134, -1 },
+    { 136, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -512,7 +512,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 130, -1 },
+    { 132, -1 },
     { -1, -1 },
     { 102, -1 },
     { -1, -1 },
@@ -558,8 +558,8 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 127, -1 },
-    { 122, -1 },
+    { 129, -1 },
+    { 124, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -586,7 +586,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { 43, -1 },
     { -1, -1 },
     { -1, -1 },
-    { -1, -1 },
+    { 120, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -609,7 +609,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { 28, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 123, -1 },
+    { 125, -1 },
     { -1, -1 },
     { 35, -1 },
     { -1, -1 },
@@ -714,7 +714,7 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { 52, -1 },
     { -1, -1 },
     { 73, -1 },
-    { 131, -1 },
+    { 133, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -753,11 +753,11 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { -1, -1 },
     { 7, 525 },
     { -1, -1 },
-    { 124, -1 },
+    { 126, -1 },
     { 105, -1 },
     { 74, 520 },
     { -1, -1 },
-    { 121, -1 },
+    { 123, -1 },
     { 82, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -780,9 +780,9 @@ static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
     { 103, -1 },
     { 114, -1 },
     { 115, -1 },
-    { 120, -1 },
-    { 128, -1 },
-    { 132, -1 },
+    { 122, -1 },
+    { 130, -1 },
+    { 134, -1 },
 };
 
 
@@ -936,6 +936,8 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "methodWithUnsignedLongSequence", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithUnsignedLongSequence), (intptr_t) (1) },
     { "stringArrayFunction", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionStringArrayFunction), (intptr_t) (1) },
     { "domStringListFunction", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionDomStringListFunction), (intptr_t) (1) },
+    { "methodWithAndWithoutNullableSequence", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequence), (intptr_t) (2) },
+    { "methodWithAndWithoutNullableSequence2", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequence2), (intptr_t) (2) },
     { "getSVGDocument", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionGetSVGDocument), (intptr_t) (0) },
     { "convert1", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionConvert1), (intptr_t) (1) },
     { "convert2", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionConvert2), (intptr_t) (1) },
@@ -953,7 +955,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "any", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionAny), (intptr_t) (2) },
 };
 
-static const HashTable JSTestObjPrototypeTable = { 135, 511, true, JSTestObjPrototypeTableValues, 0, JSTestObjPrototypeTableIndex };
+static const HashTable JSTestObjPrototypeTable = { 137, 511, true, JSTestObjPrototypeTableValues, 0, JSTestObjPrototypeTableIndex };
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjectPrototype", &Base::s_info, &JSTestObjPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestObjPrototype) };
 
 JSObject* JSTestObjPrototype::self(VM& vm, JSGlobalObject* globalObject)
@@ -4361,6 +4363,46 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionDomStringListFunction(Exe
 
     setDOMException(exec, ec);
     return JSValue::encode(result);
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequence(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*exec, "TestObj", "methodWithAndWithoutNullableSequence");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    TestObj& impl = castedThis->impl();
+    if (exec->argumentCount() < 2)
+        return throwVMError(exec, createNotEnoughArgumentsError(exec));
+    Vector<unsigned> arrayArg(toNativeArray<unsigned>(exec, exec->argument(0)));
+    if (UNLIKELY(exec->hadException()))
+        return JSValue::encode(jsUndefined());
+    Vector<unsigned> nullableArrayArg(toNativeArray<unsigned>(exec, exec->argument(1)));
+    if (UNLIKELY(exec->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.methodWithAndWithoutNullableSequence(arrayArg, nullableArrayArg);
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequence2(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*exec, "TestObj", "methodWithAndWithoutNullableSequence2");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    TestObj& impl = castedThis->impl();
+    if (exec->argumentCount() < 2)
+        return throwVMError(exec, createNotEnoughArgumentsError(exec));
+    Vector<unsigned> arrayArg(toNativeArray<unsigned>(exec, exec->argument(0)));
+    if (UNLIKELY(exec->hadException()))
+        return JSValue::encode(jsUndefined());
+    Vector<unsigned> nullableArrayArg(toNativeArray<unsigned>(exec, exec->argument(1)));
+    if (UNLIKELY(exec->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.methodWithAndWithoutNullableSequence2(arrayArg, nullableArrayArg);
+    return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetSVGDocument(ExecState* exec)

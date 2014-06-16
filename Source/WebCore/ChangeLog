@@ -1,3 +1,35 @@
+2014-04-05  Antonio Gomes  <a1.gomes@sisa.samsung.com>
+
+        [Bindings] "nullable" sequence support is incomplete (i.e. sequence<NativeType>?)
+        https://bugs.webkit.org/show_bug.cgi?id=131240
+
+        Reviewed by Darin Adler.
+
+        Nullable sequences are not fully supported in WebKit's
+        code generator machinery. Although the generated code
+        does add "is nullable" check to the evaluation condition
+        (i.e. if (arg.isNull() || ...)), when the JSValue
+        that holds a "null" JSObject is actually to be "converted"
+        to a native Vector<T>, it fails.
+
+        The reason for the failure is in JSDOMBindings::toNativeArray.
+        This method verifies that JSValue does not hold a "non-null"
+        object, and it bails out.
+        Analogly, the "ref ptr" variant of this method (toRefPtrNativeArray)
+        does support nullables.
+
+        Patch fixes it be checking for a "null" JSValue check before hand.
+
+        Tests: Binding tests updated.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toNativeArray):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (JSValueToNative):
+        * Modules/websocket/WebSocket.idl:
+        Removed one overload ctor now that
+        we can use nullable sequences.
+
 2014-06-16  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] Occasional image corruption after seeking
