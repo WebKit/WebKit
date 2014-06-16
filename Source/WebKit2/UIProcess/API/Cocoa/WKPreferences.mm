@@ -38,7 +38,7 @@
     if (!(self = [super init]))
         return nil;
 
-    _preferences = WebKit::WebPreferences::create("WebKit", String());
+    _preferences = WebKit::WebPreferences::create(String(), "WebKit");
     return self;
 }
 
