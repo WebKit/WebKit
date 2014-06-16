@@ -340,14 +340,14 @@ void webkit_web_resource_get_data(WebKitWebResource* resource, GCancellable* can
     GTask* task = g_task_new(resource, cancellable, callback, userData);
     g_task_set_task_data(task, createResourceGetDataAsyncData(), reinterpret_cast<GDestroyNotify>(destroyResourceGetDataAsyncData));
     if (resource->priv->isMainResource)
-        resource->priv->frame->getMainResourceData(DataCallback::create([task](API::Data* data, CallbackBase::Error) {
+        resource->priv->frame->getMainResourceData([task](API::Data* data, CallbackBase::Error) {
             resourceDataCallback(data, adoptGRef(task).get());
-        }));
+        });
     else {
         String url = String::fromUTF8(resource->priv->uri.data());
-        resource->priv->frame->getResourceData(API::URL::create(url).get(), DataCallback::create([task](API::Data* data, CallbackBase::Error) {
+        resource->priv->frame->getResourceData(API::URL::create(url).get(), [task](API::Data* data, CallbackBase::Error) {
             resourceDataCallback(data, adoptGRef(task).get());
-        }));
+        });
     }
 }
 

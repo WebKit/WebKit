@@ -32,6 +32,9 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #include <WebCore/npapi.h>
+#if defined(MOZ_X11)
+#undef None
+#endif
 #endif
 
 using namespace WebKit;

@@ -1,3 +1,14 @@
+2014-06-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fixes for the EFL and GTK+ ports after r169994 and 170000.
+
+        * UIProcess/API/C/WKPluginSiteDataManager.cpp: Undefine the None macro under X11.
+        * UIProcess/API/gtk/WebKitCookieManager.cpp:
+        (webkit_cookie_manager_get_accept_policy): Remove unnecessary ::create() wrappings.
+        (webkit_cookie_manager_get_domains_with_cookies): Ditto.
+        * UIProcess/API/gtk/WebKitWebResource.cpp:
+        (webkit_web_resource_get_data): Ditto.
+
 2014-06-15  Dan Bernstein  <mitz@apple.com>
 
         Part 1 of Change GenericCallback<> function parameters into std::function<>
