@@ -43,7 +43,7 @@ typedef Vector<std::pair<String, String>> CrossThreadHTTPHeaderMapData;
 // FIXME: Not every header fits into a map. Notably, multiple Set-Cookie header fields are needed to set multiple cookies.
 
 class HTTPHeaderMap {
-    typedef HashMap<AtomicString, String, CaseFoldingHash> HashMapType;
+    typedef HashMap<String, String, CaseFoldingHash> HashMapType;
 public:
     typedef HashMapType::const_iterator const_iterator;
 
@@ -59,9 +59,9 @@ public:
 
     void clear() { m_headers.clear(); }
 
-    String get(const AtomicString& name) const;
-    void set(const AtomicString& name, const String& value);
-    void add(const AtomicString& name, const String& value);
+    String get(const String& name) const;
+    void set(const String& name, const String& value);
+    void add(const String& name, const String& value);
 
     String get(HTTPHeaderName) const;
     void set(HTTPHeaderName, const String& value);
@@ -90,6 +90,9 @@ public:
     }
 
 private:
+    // FIXME: Instead of having a HashMap<String, String>, we could have two hash maps,
+    // one HashMap<HTTPHeaderName, String> for common headers and another HashMap<String, String> for
+    // less common headers.
     HashMapType m_headers;
 };
 

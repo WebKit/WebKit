@@ -131,7 +131,7 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
             
             for (unsigned i = 0; i < WTF_ARRAY_LENGTH(commonHeaderFields); ++i) {
                 if (NSString* headerValue = [headers objectForKey:commonHeaderFields[i]])
-                    m_httpHeaderFields.set([commonHeaderFields[i] UTF8String], headerValue);
+                    m_httpHeaderFields.set(String(commonHeaderFields[i]), headerValue);
             }
         } else
             m_httpStatusCode = 0;
@@ -154,7 +154,7 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
             NSDictionary *headers = [httpResponse allHeaderFields];
             NSEnumerator *e = [headers keyEnumerator];
             while (NSString *name = [e nextObject])
-                m_httpHeaderFields.set(name, [headers objectForKey:name]);
+                m_httpHeaderFields.set(String(name), [headers objectForKey:name]);
             
             [pool drain];
         }

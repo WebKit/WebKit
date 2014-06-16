@@ -92,7 +92,7 @@ const char* const headerPrefixesToIgnoreAfterRevalidation[] = {
     "x-webkit-"
 };
 
-static inline bool shouldUpdateHeaderAfterRevalidation(const AtomicString& header)
+static inline bool shouldUpdateHeaderAfterRevalidation(const String& header)
 {
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(headersToIgnoreAfterRevalidation); i++) {
         if (equalIgnoringCase(header, headersToIgnoreAfterRevalidation[i]))

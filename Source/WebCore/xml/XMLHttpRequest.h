@@ -102,11 +102,11 @@ public:
     void send(JSC::ArrayBuffer*, ExceptionCode&);
     void send(JSC::ArrayBufferView*, ExceptionCode&);
     void abort();
-    void setRequestHeader(const AtomicString& name, const String& value, ExceptionCode&);
+    void setRequestHeader(const String& name, const String& value, ExceptionCode&);
     void overrideMimeType(const String& override);
     bool doneWithoutErrors() const { return !m_error && m_state == DONE; }
     String getAllResponseHeaders() const;
-    String getResponseHeader(const AtomicString& name) const;
+    String getResponseHeader(const String& name) const;
     String responseText(ExceptionCode&);
     String responseTextIgnoringResponseType() const { return m_responseBuilder.toStringPreserveCapacity(); }
     String responseMIMEType() const;
@@ -189,8 +189,8 @@ private:
     bool initSend(ExceptionCode&);
     void sendBytesData(const void*, size_t, ExceptionCode&);
 
-    String getRequestHeader(const AtomicString& name) const;
-    void setRequestHeaderInternal(const AtomicString& name, const String& value);
+    String getRequestHeader(const String& name) const;
+    void setRequestHeaderInternal(const String& name, const String& value);
 
     void changeState(State newState);
     void callReadyStateChangeListener();

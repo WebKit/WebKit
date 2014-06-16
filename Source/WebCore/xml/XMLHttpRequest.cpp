@@ -913,7 +913,7 @@ void XMLHttpRequest::overrideMimeType(const String& override)
     m_mimeTypeOverride = override;
 }
 
-void XMLHttpRequest::setRequestHeader(const AtomicString& name, const String& value, ExceptionCode& ec)
+void XMLHttpRequest::setRequestHeader(const String& name, const String& value, ExceptionCode& ec)
 {
     if (m_state != OPENED || m_loader) {
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -939,12 +939,12 @@ void XMLHttpRequest::setRequestHeader(const AtomicString& name, const String& va
     setRequestHeaderInternal(name, value);
 }
 
-void XMLHttpRequest::setRequestHeaderInternal(const AtomicString& name, const String& value)
+void XMLHttpRequest::setRequestHeaderInternal(const String& name, const String& value)
 {
     m_requestHeaders.add(name, value);
 }
 
-String XMLHttpRequest::getRequestHeader(const AtomicString& name) const
+String XMLHttpRequest::getRequestHeader(const String& name) const
 {
     return m_requestHeaders.get(name);
 }
@@ -983,7 +983,7 @@ String XMLHttpRequest::getAllResponseHeaders() const
     return stringBuilder.toString();
 }
 
-String XMLHttpRequest::getResponseHeader(const AtomicString& name) const
+String XMLHttpRequest::getResponseHeader(const String& name) const
 {
     if (m_state < HEADERS_RECEIVED || m_error)
         return String();

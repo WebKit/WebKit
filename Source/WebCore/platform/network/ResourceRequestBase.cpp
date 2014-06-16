@@ -232,7 +232,7 @@ const HTTPHeaderMap& ResourceRequestBase::httpHeaderFields() const
     return m_httpHeaderFields; 
 }
 
-String ResourceRequestBase::httpHeaderField(const AtomicString& name) const
+String ResourceRequestBase::httpHeaderField(const String& name) const
 {
     updateResourceRequest(); 
     
@@ -246,7 +246,7 @@ String ResourceRequestBase::httpHeaderField(HTTPHeaderName name) const
     return m_httpHeaderFields.get(name);
 }
 
-void ResourceRequestBase::setHTTPHeaderField(const AtomicString& name, const String& value)
+void ResourceRequestBase::setHTTPHeaderField(const String& name, const String& value)
 {
     updateResourceRequest();
 
@@ -453,7 +453,7 @@ void ResourceRequestBase::setPriority(ResourceLoadPriority priority)
         m_platformRequestUpdated = false;
 }
 
-void ResourceRequestBase::addHTTPHeaderField(const AtomicString& name, const String& value) 
+void ResourceRequestBase::addHTTPHeaderField(const String& name, const String& value) 
 {
     updateResourceRequest();
 

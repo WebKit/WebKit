@@ -409,7 +409,7 @@ bool ArgumentCoder<HTTPHeaderMap>::decode(ArgumentDecoder& decoder, HTTPHeaderMa
         return false;
 
     for (size_t i = 0; i < size; ++i) {
-        AtomicString name;
+        String name;
         if (!decoder.decode(name))
             return false;
 

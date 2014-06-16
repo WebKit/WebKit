@@ -259,7 +259,7 @@ void ResourceResponseBase::setHTTPStatusText(const String& statusText)
     // FIXME: Should invalidate or update platform response if present.
 }
 
-String ResourceResponseBase::httpHeaderField(const AtomicString& name) const
+String ResourceResponseBase::httpHeaderField(const String& name) const
 {
     lazyInit(CommonFieldsOnly);
 
@@ -316,12 +316,12 @@ void ResourceResponseBase::updateHeaderParsedState(HTTPHeaderName name)
     }
 }
 
-void ResourceResponseBase::setHTTPHeaderField(const AtomicString& name, const String& value)
+void ResourceResponseBase::setHTTPHeaderField(const String& name, const String& value)
 {
     lazyInit(CommonAndUncommonFields);
 
     HTTPHeaderName headerName;
-    if (findHTTPHeaderName(name.string(), headerName))
+    if (findHTTPHeaderName(name, headerName))
         updateHeaderParsedState(headerName);
 
     m_httpHeaderFields.set(name, value);
@@ -340,12 +340,12 @@ void ResourceResponseBase::setHTTPHeaderField(HTTPHeaderName name, const String&
     // FIXME: Should invalidate or update platform response if present.
 }
 
-void ResourceResponseBase::addHTTPHeaderField(const AtomicString& name, const String& value)
+void ResourceResponseBase::addHTTPHeaderField(const String& name, const String& value)
 {
     lazyInit(CommonAndUncommonFields);
 
     HTTPHeaderName headerName;
-    if (findHTTPHeaderName(name.string(), headerName))
+    if (findHTTPHeaderName(name, headerName))
         updateHeaderParsedState(headerName);
 
     m_httpHeaderFields.add(name, value);

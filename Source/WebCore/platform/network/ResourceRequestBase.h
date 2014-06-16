@@ -82,11 +82,11 @@ namespace WebCore {
         const HTTPHeaderMap& httpHeaderFields() const;
         void setHTTPHeaderFields(HTTPHeaderMap);
 
-        String httpHeaderField(const AtomicString& name) const;
+        String httpHeaderField(const String& name) const;
         String httpHeaderField(HTTPHeaderName) const;
-        void setHTTPHeaderField(const AtomicString& name, const String& value);
+        void setHTTPHeaderField(const String& name, const String& value);
         void setHTTPHeaderField(HTTPHeaderName, const String& value);
-        void addHTTPHeaderField(const AtomicString& name, const String& value);
+        void addHTTPHeaderField(const String& name, const String& value);
 
         // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
         template<size_t length> String httpHeaderField(const char (&)[length]) const = delete;

@@ -197,7 +197,7 @@ static PassRefPtr<InspectorObject> buildObjectForHeaders(const HTTPHeaderMap& he
     RefPtr<InspectorObject> headersObject = InspectorObject::create();
     
     for (const auto& header : headers)
-        headersObject->setString(header.key.string(), header.value);
+        headersObject->setString(header.key, header.value);
     return headersObject;
 }
 

@@ -605,7 +605,7 @@ size_t parseHTTPRequestLine(const char* data, size_t length, String& failureReas
     return end - data;
 }
 
-size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, AtomicString& nameStr, String& valueStr, bool strict)
+size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, String& nameStr, String& valueStr, bool strict)
 {
     const char* p = start;
     const char* end = start + length;
@@ -665,7 +665,7 @@ size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, 
         failureReason = "CR doesn't follow LF after value at " + trimInputSample(p, end - p);
         return 0;
     }
-    nameStr = AtomicString::fromUTF8(name.data(), name.size());
+    nameStr = String::fromUTF8(name.data(), name.size());
     valueStr = String::fromUTF8(value.data(), value.size());
     if (nameStr.isNull()) {
         failureReason = "Invalid UTF-8 sequence in header name";

@@ -116,7 +116,7 @@ void ResourceRequest::doUpdateResourceRequest()
     NSString *name;
     m_httpHeaderFields.clear();
     while ((name = [e nextObject]))
-        m_httpHeaderFields.set(name, [headers objectForKey:name]);
+        m_httpHeaderFields.set(String(name), [headers objectForKey:name]);
 
     m_responseContentDispositionEncodingFallbackArray.clear();
     NSArray *encodingFallbacks = [m_nsRequest.get() contentDispositionEncodingFallbackArray];

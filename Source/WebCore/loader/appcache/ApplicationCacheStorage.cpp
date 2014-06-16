@@ -1094,7 +1094,7 @@ static inline void parseHeader(const CharacterType* header, size_t headerLength,
     size_t pos = find(header, headerLength, ':');
     ASSERT(pos != notFound);
     
-    AtomicString headerName = AtomicString(header, pos);
+    String headerName = AtomicString(header, pos);
     String headerValue = String(header + pos + 1, headerLength - pos - 1);
     
     response.setHTTPHeaderField(headerName, headerValue);
