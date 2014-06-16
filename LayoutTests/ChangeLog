@@ -1,3 +1,13 @@
+2014-06-16  Radu Stavila  <stavila@adobe.com>
+
+        REGRESSION (r168046): Incorrect layout for multicol spanners when moving from one thread to another
+        https://bugs.webkit.org/show_bug.cgi?id=133589
+
+        Reviewed by Antti Koivisto.
+
+        * fast/multicol/newmulticol/spanner-crash-expected.txt: Added.
+        * fast/multicol/newmulticol/spanner-crash.html: Added.
+
 2014-06-16  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Missing 'selection-changed' signal when navigating a combo box with keyboard

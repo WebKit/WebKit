@@ -290,9 +290,6 @@ void RenderMultiColumnFlowThread::flowThreadDescendantInserted(RenderObject* des
                 // becoming our spanner instead, but for it to do that we first have to nuke the original spanner,
                 // and get the spanner content back into this flow thread.
                 RenderBox* spanner = placeholder->spanner();
-
-                // Advance, since we're about to delete the descendant.
-                descendant = descendant->nextInPreOrder(subtreeRoot);
                 
                 // Get info for the move of the original content back into our flow thread.
                 RenderBoxModelObject* placeholderParent = toRenderBoxModelObject(placeholder->parent());
@@ -309,12 +306,12 @@ void RenderMultiColumnFlowThread::flowThreadDescendantInserted(RenderObject* des
                 // on the new content only, and everything will get set up properly.
                 ancestorBlock->moveChildTo(placeholderParent, spanner, placeholderNextSibling, true);
                 
+                // Advance descendant.
+                descendant = placeholderNextSibling;
+                
                 // If the spanner was the subtree root, then we're done, since there is nothing else left to insert.
                 if (!descendant)
                     return;
-                
-                if (!placeholderNextSibling)
-                    descendant = nullptr;
 
                 // Now that we have done this, we can continue past the spanning content, since we advanced
                 // descendant already.

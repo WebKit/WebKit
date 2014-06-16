@@ -1,3 +1,18 @@
+2014-06-16  Radu Stavila  <stavila@adobe.com>
+
+        REGRESSION (r168046): Incorrect layout for multicol spanners when moving from one thread to another
+        https://bugs.webkit.org/show_bug.cgi?id=133589
+
+        Reviewed by Antti Koivisto.
+
+        When a spanner is moved from a multicol thread to another, its placeholder
+        must be properly repositioned.
+
+        Test: fast/multicol/newmulticol/spanner-crash.html
+
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::flowThreadDescendantInserted):
+
 2014-06-16  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Missing 'selection-changed' signal when navigating a combo box with keyboard

@@ -1,0 +1,35 @@
+<!-- This test passes if it doesn't crash - https://bugs.webkit.org/show_bug.cgi?id=133589 -->
+
+<style>
+	h2 { 
+		-webkit-column-span: all;
+	}
+
+	* {
+		visibility: hidden;
+	}
+</style>
+
+<div>
+	<h2 id="base">Y</h2>
+</div>
+<div id="four">
+	XX<span id="beforetwo"></p>
+
+<script>
+	if (window.testRunner)
+        testRunner.dumpAsText();
+
+	four.insertBefore(document.getElementById('base').cloneNode(true), document.getElementById('beforetwo'));
+	var head = document.getElementsByTagName("head")[0];
+	var style = document.createElement("style");
+	style.innerHTML="* { \n\
+		-webkit-animation-name: name9; \n\
+		-webkit-animation-duration: 3s; \n\
+		} \n\
+		@-webkit-keyframes name9 { \n\
+		  from { \n\
+		    -webkit-column-count: 18446744073709551615; \n\
+		";
+	head.appendChild(style);
+</script>
