@@ -1,3 +1,18 @@
+2014-06-16  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Remove WKPreferences persistence in user defaults
+        https://bugs.webkit.org/show_bug.cgi?id=133945
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKPreferences.h: Removed userDefaultsKeyPrefix property and
+        initializer with userDefaultsKeyPrefix parameter.
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences init]): Changed to initialize an instance with an empty identifier, which
+        means that it won’t persist to user defaults.
+        (-[WKPreferences initWithUserDefaultsKeyPrefix:]): Deleted.
+        (-[WKPreferences userDefaultsKeyPrefix]): Deleted.
+
 2014-06-16  Zan Dobersek  <zdobersek@igalia.com>
 
         Page::findStringMatchingRanges() should take Vector<RefPtr<Range>> by reference instead of pointer

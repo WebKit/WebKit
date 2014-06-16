@@ -37,20 +37,6 @@
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKPreferences : NSObject
 
-/*! @abstract Returns an initialized preferences object.
- @param userDefaultsKeyPrefix The user defaults key prefix.
- @result An initialized preferences object.
- @discussion If the userDefaultsKeyPrefix parameter is not nil, it is
- prepended to the keys used to store preferences in the user defaults
- database. If the parameter is nil, the preferences object will not save
- anything to the user defaults database.
- */
-- (instancetype)initWithUserDefaultsKeyPrefix:(NSString *)userDefaultsKeyPrefix WK_DESIGNATED_INITIALIZER;
-
-/*! @abstract The user defaults key prefix.
- */
-@property (nonatomic, readonly) NSString *userDefaultsKeyPrefix;
-
 /*! @abstract The minimum font size in points.
  @discussion The default value is 0.
  */
