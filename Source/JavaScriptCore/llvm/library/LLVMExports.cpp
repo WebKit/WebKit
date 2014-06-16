@@ -91,6 +91,7 @@ extern "C" JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(void (*callback)(const char*
 #endif
     
     const char* args[] = {
+        "llvmForJSC.dylib",
         "-enable-stackmap-liveness=true",
         "-enable-patchpoint-liveness=true"
     };

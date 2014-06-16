@@ -1,3 +1,17 @@
+2014-06-16  Juergen Ributzka  <juergen@apple.com>
+
+        Fix the arguments passed to the LLVM dylib
+        https://bugs.webkit.org/show_bug.cgi?id=133757
+
+        Reviewed by Geoffrey Garen.
+
+        The LLVM command line argument parser assumes that the first argument
+        is the program name. We need to add a fake program name, otherwise the
+        first argument will be parsed as program name and ignored.
+
+        * llvm/library/LLVMExports.cpp:
+        (initializeAndGetJSCLLVMAPI):
+
 2014-06-16  Michael Saboff  <msaboff@apple.com>
 
         Convert ASSERT in inlineFunctionForCapabilityLevel to early return
