@@ -463,10 +463,14 @@ void ResourceRequestBase::addHTTPHeaderField(const AtomicString& name, const Str
         m_platformRequestUpdated = false;
 }
 
-void ResourceRequestBase::addHTTPHeaderFields(const HTTPHeaderMap& headerFields)
+void ResourceRequestBase::setHTTPHeaderFields(HTTPHeaderMap headerFields)
 {
-    for (const auto& header : headerFields)
-        addHTTPHeaderField(header.key, header.value);
+    updateResourceRequest();
+
+    m_httpHeaderFields = std::move(headerFields);
+
+    if (url().protocolIsInHTTPFamily())
+        m_platformRequestUpdated = false;
 }
 
 bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceRequestBase& b)

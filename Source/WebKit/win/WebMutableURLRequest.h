@@ -164,7 +164,6 @@ public:
     void setFormData(const PassRefPtr<WebCore::FormData> data);
     const PassRefPtr<WebCore::FormData> formData() const;
     
-    void addHTTPHeaderFields(const WebCore::HTTPHeaderMap& headerFields);
     const WebCore::HTTPHeaderMap& httpHeaderFields() const;
 
     const WebCore::ResourceRequest& resourceRequest() const;

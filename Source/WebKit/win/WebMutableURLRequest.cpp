@@ -411,11 +411,6 @@ const PassRefPtr<FormData> WebMutableURLRequest::formData() const
     return m_request.httpBody();
 }
 
-void WebMutableURLRequest::addHTTPHeaderFields(const HTTPHeaderMap& headerFields)
-{
-    m_request.addHTTPHeaderFields(headerFields);
-}
-
 const HTTPHeaderMap& WebMutableURLRequest::httpHeaderFields() const
 {
     return m_request.httpHeaderFields();

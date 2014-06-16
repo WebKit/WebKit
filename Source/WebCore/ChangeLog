@@ -1,3 +1,20 @@
+2014-06-15  Anders Carlsson  <andersca@apple.com>
+
+        Change ResourceRequestBase::addHTTPHeaderFields to setHTTPHeaderFields instead
+        https://bugs.webkit.org/show_bug.cgi?id=133925
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::setHTTPHeaderFields):
+        (WebCore::ResourceRequestBase::addHTTPHeaderFields): Deleted.
+        * platform/network/ResourceRequestBase.h:
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::handlePost):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+
 2014-06-16  Jeongeun Kim  <je_julie.kim@samsung.com>
 
         Use references instead of pointers to RenderBlock in RenderObject::enclosingBox().

@@ -1,3 +1,19 @@
+2014-06-15  Anders Carlsson  <andersca@apple.com>
+
+        Change ResourceRequestBase::addHTTPHeaderFields to setHTTPHeaderFields instead
+        https://bugs.webkit.org/show_bug.cgi?id=133925
+
+        Reviewed by Sam Weinig.
+
+        * PluginProcess/PluginControllerProxy.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceRequest>::decode):
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_PostURL):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::loadURL):
+        * WebProcess/Plugins/PluginView.h:
+
 2014-06-16  Anders Carlsson  <andersca@apple.com>
 
         Add HTTPHeaderName overloads on ResourceResponseBase

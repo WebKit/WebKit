@@ -1176,7 +1176,7 @@ NPError PluginView::handlePost(const char* url, const char* target, uint32_t len
 
     frameLoadRequest.resourceRequest().setHTTPMethod("POST");
     frameLoadRequest.resourceRequest().setURL(makeURL(m_parentFrame->document()->baseURL(), url));
-    frameLoadRequest.resourceRequest().addHTTPHeaderFields(headerFields);
+    frameLoadRequest.resourceRequest().setHTTPHeaderFields(std::move(headerFields));
     frameLoadRequest.resourceRequest().setHTTPBody(FormData::create(postData, postDataLength));
     frameLoadRequest.setFrameName(target);
 

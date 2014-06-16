@@ -753,7 +753,7 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
     }
 
     if (!m_requestHeaders.isEmpty())
-        request.addHTTPHeaderFields(m_requestHeaders);
+        request.setHTTPHeaderFields(m_requestHeaders);
 
     ThreadableLoaderOptions options;
     options.sendLoadCallbacks = SendCallbacks;

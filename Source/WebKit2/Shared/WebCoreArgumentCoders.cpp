@@ -699,7 +699,7 @@ bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder& decoder, ResourceRe
         HTTPHeaderMap headers;
         if (!decoder.decode(headers))
             return false;
-        request.addHTTPHeaderFields(headers);
+        request.setHTTPHeaderFields(std::move(headers));
 
         bool hasHTTPBody;
         if (!decoder.decode(hasHTTPBody))
