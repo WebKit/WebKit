@@ -223,7 +223,7 @@ PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
     ProfilerMode profilerMode = globalObject->hasProfiler() ? ProfilerOn : ProfilerOff;
     UnlinkedFunctionCodeBlock* unlinkedCodeBlock =
         executable->m_unlinkedExecutable->codeBlockFor(
-            *vm, executable->m_source, kind, debuggerMode, profilerMode, error);
+            *vm, executable->m_source, kind, debuggerMode, profilerMode, executable->bodyIncludesBraces(), error);
     recordParse(executable->m_unlinkedExecutable->features(), executable->m_unlinkedExecutable->hasCapturedVariables(), lineNo(), lastLine(), startColumn(), endColumn()); 
     if (!unlinkedCodeBlock) {
         exception = vm->throwException(

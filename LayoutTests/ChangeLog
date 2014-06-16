@@ -1,3 +1,17 @@
+2014-06-12  Mark Lam  <mark.lam@apple.com>
+
+        Parser statementDepth accounting needs to account for when a function body excludes its braces.
+        <https://webkit.org/b/133832>
+
+        Reviewed by Oliver Hunt.
+
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+          - Added cases for declaring functions in strict mode.
+          - Added caught error to the test result logging if it's not a SyntaxError.
+            This helps catch the issue in this bug which was erroneously throwing
+            RangeErrors.
+
 2014-06-16  Radu Stavila  <stavila@adobe.com>
 
         REGRESSION (r168046): Incorrect layout for multicol spanners when moving from one thread to another

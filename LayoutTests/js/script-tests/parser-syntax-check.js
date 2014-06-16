@@ -2,27 +2,32 @@ description(
 "This test checks that the following expressions or statements are valid ECMASCRIPT code or should throw parse error"
 );
 
-function runTest(_a, errorType)
+function runTest(_a, expectSyntaxError)
 {
-    var success;
+    var error;
+
     if (typeof _a != "string")
         testFailed("runTest expects string argument: " + _a);
     try {
         eval(_a);
-        success = true;
     } catch (e) {
-        success = !(e instanceof SyntaxError);
+        error = e;
     }
-    if ((!!errorType) == !success) {
-        if (errorType)
+
+    if (expectSyntaxError) {
+        if (error && error instanceof SyntaxError)
             testPassed('Invalid: "' + _a + '"');
+        else if (error)
+            testFailed('Invalid: "' + _a + '" should throw SyntaxError but got ' + (error.name || error));
         else
-            testPassed('Valid:   "' + _a + '"');
+            testFailed('Invalid: "' + _a + '" but did not throw');
     } else {
-        if (errorType)
-            testFailed('Invalid: "' + _a + '" should throw ' + errorType.name);
+        if (!error)
+            testPassed('Valid:   "' + _a + '"');
+        else if (!(error instanceof SyntaxError))
+            testPassed('Valid:   "' + _a + '" with ' + (error.name || error));
         else
-            testFailed('Valid:   "' + _a + '" should NOT throw ');
+            testFailed('Valid:   "' + _a + '" should NOT throw but got ' + (error.name || error));
     }
 }
 
@@ -33,9 +38,8 @@ function valid(_a)
     runTest("function f() { " + _a + " }", false);
 }
 
-function invalid(_a, _type)
+function invalid(_a)
 {
-    _type = _type || SyntaxError;
     // Test both the grammar and the syntax checker
     runTest(_a, true);
     runTest("function f() { " + _a + " }", true);
@@ -365,6 +369,16 @@ valid("function __proto__(){}")
 valid("(function __proto__(){})")
 valid("'use strict'; function __proto__(){}")
 valid("'use strict'; (function __proto__(){})")
+
+valid("'use strict'; function f1(a) { function f2(b) { return b; } return f2(a); } f1(5);")
+valid("'use strict'; function f1(a) { function f2(b) { function f3(c) { return c; } return f3(b); } return f2(a); } f1(5);")
+invalid("'use strict'; function f1(a) { if (a) { function f2(b) { return b; } return f2(a); } else return a; } f1(5);")
+invalid("'use strict'; function f1(a) { function f2(b) { if (b) { function f3(c) { return c; } return f3(b); } else return b; } return f2(a); } f1(5);")
+
+valid("var str = \"'use strict'; function f1(a) { function f2(b) { return b; } return f2(a); } return f1(arguments[0]);\"; var foo = new Function(str); foo(5);")
+valid("var str = \"'use strict'; function f1(a) { function f2(b) { function f3(c) { return c; } return f3(b); } return f2(a); } return f1(arguments[0]);\"; var foo = new Function(str); foo(5);")
+invalid("var str = \"'use strict'; function f1(a) { if (a) { function f2(b) { return b; } return f2(a); } else return a; } return f1(arguments[0]);\"; var foo = new Function(str); foo(5);", SyntaxError, undefined)
+invalid("var str = \"'use strict'; function f1(a) { function f2(b) { if (b) { function f3(c) { return c; } return f3(b); } else return b; } return f2(a); } return f1(arguments[0]);\"; var foo = new Function(str); foo(5);", SyntaxError, undefined)
 
 valid("if (0) $foo; ")
 valid("if (0) _foo; ")

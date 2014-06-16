@@ -398,7 +398,7 @@ public:
     ~Parser();
 
     template <class ParsedNode>
-    PassRefPtr<ParsedNode> parse(ParserError&);
+    PassRefPtr<ParsedNode> parse(ParserError&, bool needReparsingAdjustment);
 
     JSTextPosition positionBeforeLastNewline() const { return m_lexer->positionBeforeLastNewline(); }
     const Vector<RefPtr<StringImpl>>&& closedVariables() { return std::move(m_closedVariables); }
@@ -857,12 +857,12 @@ private:
 
 template <typename LexerType>
 template <class ParsedNode>
-PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
+PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error, bool needReparsingAdjustment)
 {
     int errLine;
     String errMsg;
 
-    if (ParsedNode::scopeIsFunction)
+    if (ParsedNode::scopeIsFunction && needReparsingAdjustment)
         m_lexer->setIsReparsing();
 
     m_sourceElements = 0;
@@ -937,14 +937,14 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
 }
 
 template <class ParsedNode>
-PassRefPtr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode, ParserError& error, JSTextPosition* positionBeforeLastNewline = 0)
+PassRefPtr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode, ParserError& error, JSTextPosition* positionBeforeLastNewline = 0, bool needReparsingAdjustment = false)
 {
     SamplingRegion samplingRegion("Parsing");
 
     ASSERT(!source.provider()->source().isNull());
     if (source.provider()->source().is8Bit()) {
         Parser<Lexer<LChar>> parser(vm, source, parameters, name, strictness, parserMode);
-        RefPtr<ParsedNode> result = parser.parse<ParsedNode>(error);
+        RefPtr<ParsedNode> result = parser.parse<ParsedNode>(error, needReparsingAdjustment);
         if (positionBeforeLastNewline)
             *positionBeforeLastNewline = parser.positionBeforeLastNewline();
         if (strictness == JSParseBuiltin) {
@@ -956,7 +956,7 @@ PassRefPtr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionParameter
         return result.release();
     }
     Parser<Lexer<UChar>> parser(vm, source, parameters, name, strictness, parserMode);
-    RefPtr<ParsedNode> result = parser.parse<ParsedNode>(error);
+    RefPtr<ParsedNode> result = parser.parse<ParsedNode>(error, needReparsingAdjustment);
     if (positionBeforeLastNewline)
         *positionBeforeLastNewline = parser.positionBeforeLastNewline();
     return result.release();

@@ -1,3 +1,28 @@
+2014-06-16  Mark Lam  <mark.lam@apple.com>
+
+        Parser statementDepth accounting needs to account for when a function body excludes its braces.
+        <https://webkit.org/b/133832>
+
+        Reviewed by Oliver Hunt.
+
+        In some cases (e.g. when a Function object is instantiated from a string), the
+        function body source may not include its braces.  The parser needs to account
+        for this when calculating its statementDepth.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::generateFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::codeBlockFor):
+        * bytecode/UnlinkedCodeBlock.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseStatement):
+        - Also fixed the error message for declaring nested functions in strict mode
+          to be more accurate.
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+        (JSC::parse):
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+
 2014-06-16  Juergen Ributzka  <juergen@apple.com>
 
         Change the order of the alias analysis passes to align with the opt pipeline of LLVM

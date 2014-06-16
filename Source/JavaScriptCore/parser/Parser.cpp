@@ -1126,7 +1126,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
     case CONSTTOKEN:
         return parseConstDeclaration(context);
     case FUNCTION:
-        failIfFalseIfStrict(m_statementDepth == 1, "Nested functions cannot be declared in strict mode");
+        failIfFalseIfStrict(m_statementDepth == 1, "Strict mode does not allow function declarations in a lexically nested statement");
         return parseFunctionDeclaration(context);
     case SEMICOLON: {
         JSTokenLocation location(tokenLocation());
