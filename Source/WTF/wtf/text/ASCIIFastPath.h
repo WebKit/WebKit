@@ -160,7 +160,7 @@ inline void copyLCharsFromUCharSource(LChar* destination, const UChar* source, s
 
     while (destination != end)
         *destination++ = static_cast<LChar>(*source++);
-#elif COMPILER(GCC) && CPU(ARM_NEON) && !(PLATFORM(BIG_ENDIAN) || PLATFORM(MIDDLE_ENDIAN)) && defined(NDEBUG)
+#elif COMPILER(GCC) && CPU(ARM_NEON) && !(CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN)) && defined(NDEBUG)
     const LChar* const end = destination + length;
     const uintptr_t memoryAccessSize = 8;
 
