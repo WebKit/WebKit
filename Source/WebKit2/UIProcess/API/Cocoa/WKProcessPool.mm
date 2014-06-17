@@ -32,6 +32,7 @@
 #import "DownloadClient.h"
 #import "HistoryClient.h"
 #import "ProcessModel.h"
+#import "SandboxUtilities.h"
 #import "WKObject.h"
 #import "WeakObjCPtr.h"
 #import "WebCertificateInfo.h"
@@ -104,6 +105,13 @@ enum : NSUInteger {
 
 @implementation WKProcessPool (WKPrivate)
 
++ (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL
+{
+    NSURL *url = [containerURL URLByAppendingPathComponent:@"Library" isDirectory:YES];
+    url = [url URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
+    return [url URLByAppendingPathComponent:@"WebsiteData" isDirectory:YES];
+}
+
 static NSURL *websiteDataDirectoryURL(NSString *directoryName)
 {
     static dispatch_once_t onceToken;
@@ -116,11 +124,12 @@ static NSURL *websiteDataDirectoryURL(NSString *directoryName)
 
         url = [url URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
 
-        NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
-        if (!bundleIdentifier)
-            bundleIdentifier = [NSProcessInfo processInfo].processName;
-
-        url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
+        if (!WebKit::processHasContainer()) {
+            NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
+            if (!bundleIdentifier)
+                bundleIdentifier = [NSProcessInfo processInfo].processName;
+            url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
+        }
 
         websiteDataURL = [[url URLByAppendingPathComponent:@"WebsiteData" isDirectory:YES] retain];
     });

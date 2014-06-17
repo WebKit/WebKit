@@ -1,3 +1,21 @@
+2014-06-17  Anders Carlsson  <andersca@apple.com>
+
+        Expose the location of website data
+        https://bugs.webkit.org/show_bug.cgi?id=134000
+        <rdar://problem/17350498>
+
+        Reviewed by Dan Bernstein.
+
+        Also, remove the bundle ID from the website data path for containerized apps.
+
+        * Shared/mac/SandboxUtilities.cpp:
+        (WebKit::processIsAppSandboxed):
+        * Shared/mac/SandboxUtilities.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (+[WKProcessPool _websiteDataURLForContainerWithURL:]):
+        (websiteDataDirectoryURL):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+
 2014-06-17  Jeremy Jones  <jeremyj@apple.com>
 
         Improve enter and exit fullscreen transition by using two step transition.

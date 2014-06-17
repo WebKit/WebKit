@@ -26,14 +26,18 @@
 #include "config.h"
 #include "SandboxUtilities.h"
 
+#include <array>
+
 #if __has_include(<sandbox/private.h>)
 #import <sandbox/private.h>
 #else
 enum sandbox_filter_type {
     SANDBOX_FILTER_NONE,
 };
-extern "C"
+extern "C" {
 int sandbox_check(pid_t, const char *operation, enum sandbox_filter_type, ...);
+int sandbox_container_path_for_pid(pid_t, char *buffer, size_t bufsize);
+}
 #endif
 
 namespace WebKit {
@@ -41,6 +45,26 @@ namespace WebKit {
 bool processIsSandboxed(pid_t pid)
 {
     return sandbox_check(pid, nullptr, SANDBOX_FILTER_NONE);
+}
+
+static bool processHasContainer(pid_t pid)
+{
+    std::array<char, MAXPATHLEN> path;
+
+    if (sandbox_container_path_for_pid(pid, path.data(), path.size()))
+        return false;
+
+    if (!path[0])
+        return false;
+
+    return true;
+}
+
+bool processHasContainer()
+{
+    static bool hasContainer = processHasContainer(getpid());
+
+    return hasContainer;
 }
 
 }

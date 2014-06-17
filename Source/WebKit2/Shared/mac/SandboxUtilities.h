@@ -31,6 +31,7 @@
 namespace WebKit {
 
 bool processIsSandboxed(pid_t);
+bool processHasContainer();
 
 }
 

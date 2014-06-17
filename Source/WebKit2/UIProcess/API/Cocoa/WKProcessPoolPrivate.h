@@ -44,6 +44,8 @@
 
 @property (nonatomic, weak, setter=_setDownloadDelegate:) id <_WKDownloadDelegate> _downloadDelegate;
 
++ (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL;
+
 @end
 
 #endif
