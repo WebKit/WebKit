@@ -68,8 +68,8 @@ static inline double solveStepsFunction(int numSteps, bool stepAtStart, double t
     return floor(numSteps * t) / numSteps;
 }
 
-AnimationBase::AnimationBase(const Animation& transition, RenderElement* renderer, CompositeAnimation* compAnim)
-    : m_animState(AnimationStateNew)
+AnimationBase::AnimationBase(const Animation& transition, RenderElement* renderer, CompositeAnimation* compositeAnimation)
+    : m_animationState(AnimationState::New)
     , m_isAccelerated(false)
     , m_transformFunctionListValid(false)
 #if ENABLE(CSS_FILTERS)
@@ -82,7 +82,7 @@ AnimationBase::AnimationBase(const Animation& transition, RenderElement* rendere
     , m_nextIterationDuration(-1)
     , m_object(renderer)
     , m_animation(const_cast<Animation*>(&transition))
-    , m_compAnim(compAnim)
+    , m_compositeAnimation(compositeAnimation)
 {
     // Compute the total duration
     if (m_animation->iterationCount() > 0)
@@ -112,38 +112,38 @@ bool AnimationBase::animationsMatch(const Animation* anim) const
 }
 
 #if !LOG_DISABLED
-static const char* nameForState(AnimationBase::AnimState state)
+static const char* nameForState(AnimationBase::AnimationState state)
 {
     switch (state) {
-    case AnimationBase::AnimationStateNew: return "New";
-    case AnimationBase::AnimationStateStartWaitTimer: return "StartWaitTimer";
-    case AnimationBase::AnimationStateStartWaitStyleAvailable: return "StartWaitStyleAvailable";
-    case AnimationBase::AnimationStateStartWaitResponse: return "StartWaitResponse";
-    case AnimationBase::AnimationStateLooping: return "Looping";
-    case AnimationBase::AnimationStateEnding: return "Ending";
-    case AnimationBase::AnimationStatePausedNew: return "PausedNew";
-    case AnimationBase::AnimationStatePausedWaitTimer: return "PausedWaitTimer";
-    case AnimationBase::AnimationStatePausedWaitStyleAvailable: return "PausedWaitStyleAvailable";
-    case AnimationBase::AnimationStatePausedWaitResponse: return "PausedWaitResponse";
-    case AnimationBase::AnimationStatePausedRun: return "PausedRun";
-    case AnimationBase::AnimationStateDone: return "Done";
-    case AnimationBase::AnimationStateFillingForwards: return "FillingForwards";
+    case AnimationBase::AnimationState::New: return "New";
+    case AnimationBase::AnimationState::StartWaitTimer: return "StartWaitTimer";
+    case AnimationBase::AnimationState::StartWaitStyleAvailable: return "StartWaitStyleAvailable";
+    case AnimationBase::AnimationState::StartWaitResponse: return "StartWaitResponse";
+    case AnimationBase::AnimationState::Looping: return "Looping";
+    case AnimationBase::AnimationState::Ending: return "Ending";
+    case AnimationBase::AnimationState::PausedNew: return "PausedNew";
+    case AnimationBase::AnimationState::PausedWaitTimer: return "PausedWaitTimer";
+    case AnimationBase::AnimationState::PausedWaitStyleAvailable: return "PausedWaitStyleAvailable";
+    case AnimationBase::AnimationState::PausedWaitResponse: return "PausedWaitResponse";
+    case AnimationBase::AnimationState::PausedRun: return "PausedRun";
+    case AnimationBase::AnimationState::Done: return "Done";
+    case AnimationBase::AnimationState::FillingForwards: return "FillingForwards";
     }
     return "";
 }
 #endif
 
-void AnimationBase::updateStateMachine(AnimStateInput input, double param)
+void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
 {
-    if (!m_compAnim)
+    if (!m_compositeAnimation)
         return;
 
-    // If we get AnimationStateInputRestartAnimation then we force a new animation, regardless of state.
-    if (input == AnimationStateInputMakeNew) {
-        if (m_animState == AnimationStateStartWaitStyleAvailable)
-            m_compAnim->animationController()->removeFromAnimationsWaitingForStyle(this);
-        LOG(Animations, "%p AnimationState %s -> New", this, nameForState(m_animState));
-        m_animState = AnimationStateNew;
+    // If we get AnimationStateInput::RestartAnimation then we force a new animation, regardless of state.
+    if (input == AnimationStateInput::MakeNew) {
+        if (m_animationState == AnimationState::StartWaitStyleAvailable)
+            m_compositeAnimation->animationController()->removeFromAnimationsWaitingForStyle(this);
+        LOG(Animations, "%p AnimationState %s -> New", this, nameForState(m_animationState));
+        m_animationState = AnimationState::New;
         m_startTime = 0;
         m_pauseTime = -1;
         m_requestedStartTime = 0;
@@ -152,11 +152,11 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
         return;
     }
 
-    if (input == AnimationStateInputRestartAnimation) {
-        if (m_animState == AnimationStateStartWaitStyleAvailable)
-            m_compAnim->animationController()->removeFromAnimationsWaitingForStyle(this);
-        LOG(Animations, "%p AnimationState %s -> New", this, nameForState(m_animState));
-        m_animState = AnimationStateNew;
+    if (input == AnimationStateInput::RestartAnimation) {
+        if (m_animationState == AnimationState::StartWaitStyleAvailable)
+            m_compositeAnimation->animationController()->removeFromAnimationsWaitingForStyle(this);
+        LOG(Animations, "%p AnimationState %s -> New", this, nameForState(m_animationState));
+        m_animationState = AnimationState::New;
         m_startTime = 0;
         m_pauseTime = -1;
         m_requestedStartTime = 0;
@@ -164,31 +164,31 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
         endAnimation();
 
         if (!paused())
-            updateStateMachine(AnimationStateInputStartAnimation, -1);
+            updateStateMachine(AnimationStateInput::StartAnimation, -1);
         return;
     }
 
-    if (input == AnimationStateInputEndAnimation) {
-        if (m_animState == AnimationStateStartWaitStyleAvailable)
-            m_compAnim->animationController()->removeFromAnimationsWaitingForStyle(this);
-        LOG(Animations, "%p AnimationState %s -> Done", this, nameForState(m_animState));
-        m_animState = AnimationStateDone;
+    if (input == AnimationStateInput::EndAnimation) {
+        if (m_animationState == AnimationState::StartWaitStyleAvailable)
+            m_compositeAnimation->animationController()->removeFromAnimationsWaitingForStyle(this);
+        LOG(Animations, "%p AnimationState %s -> Done", this, nameForState(m_animationState));
+        m_animationState = AnimationState::Done;
         endAnimation();
         return;
     }
 
-    if (input == AnimationStateInputPauseOverride) {
-        if (m_animState == AnimationStateStartWaitResponse) {
-            // If we are in AnimationStateStartWaitResponse, the animation will get canceled before 
+    if (input == AnimationStateInput::PauseOverride) {
+        if (m_animationState == AnimationState::StartWaitResponse) {
+            // If we are in AnimationState::StartWaitResponse, the animation will get canceled before 
             // we get a response, so move to the next state.
             endAnimation();
-            updateStateMachine(AnimationStateInputStartTimeSet, beginAnimationUpdateTime());
+            updateStateMachine(AnimationStateInput::StartTimeSet, beginAnimationUpdateTime());
         }
         return;
     }
 
-    if (input == AnimationStateInputResumeOverride) {
-        if (m_animState == AnimationStateLooping || m_animState == AnimationStateEnding) {
+    if (input == AnimationStateInput::ResumeOverride) {
+        if (m_animationState == AnimationState::Looping || m_animationState == AnimationState::Ending) {
             // Start the animation
             startAnimation(beginAnimationUpdateTime() - m_startTime);
         }
@@ -196,47 +196,47 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
     }
 
     // Execute state machine
-    switch (m_animState) {
-        case AnimationStateNew:
-            ASSERT(input == AnimationStateInputStartAnimation || input == AnimationStateInputPlayStateRunning || input == AnimationStateInputPlayStatePaused);
-            if (input == AnimationStateInputStartAnimation || input == AnimationStateInputPlayStateRunning) {
+    switch (m_animationState) {
+        case AnimationState::New:
+            ASSERT(input == AnimationStateInput::StartAnimation || input == AnimationStateInput::PlayStateRunning || input == AnimationStateInput::PlayStatePaused);
+            if (input == AnimationStateInput::StartAnimation || input == AnimationStateInput::PlayStateRunning) {
                 m_requestedStartTime = beginAnimationUpdateTime();
-                LOG(Animations, "%p AnimationState %s -> StartWaitTimer", this, nameForState(m_animState));
-                m_animState = AnimationStateStartWaitTimer;
+                LOG(Animations, "%p AnimationState %s -> StartWaitTimer", this, nameForState(m_animationState));
+                m_animationState = AnimationState::StartWaitTimer;
             } else {
                 // We are pausing before we even started.
-                LOG(Animations, "%p AnimationState %s -> AnimationStatePausedNew", this, nameForState(m_animState));
-                m_animState = AnimationStatePausedNew;
+                LOG(Animations, "%p AnimationState %s -> AnimationState::PausedNew", this, nameForState(m_animationState));
+                m_animationState = AnimationState::PausedNew;
             }
             break;
-        case AnimationStateStartWaitTimer:
-            ASSERT(input == AnimationStateInputStartTimerFired || input == AnimationStateInputPlayStatePaused);
+        case AnimationState::StartWaitTimer:
+            ASSERT(input == AnimationStateInput::StartTimerFired || input == AnimationStateInput::PlayStatePaused);
 
-            if (input == AnimationStateInputStartTimerFired) {
+            if (input == AnimationStateInput::StartTimerFired) {
                 ASSERT(param >= 0);
                 // Start timer has fired, tell the animation to start and wait for it to respond with start time
-                LOG(Animations, "%p AnimationState %s -> StartWaitStyleAvailable", this, nameForState(m_animState));
-                m_animState = AnimationStateStartWaitStyleAvailable;
-                m_compAnim->animationController()->addToAnimationsWaitingForStyle(this);
+                LOG(Animations, "%p AnimationState %s -> StartWaitStyleAvailable", this, nameForState(m_animationState));
+                m_animationState = AnimationState::StartWaitStyleAvailable;
+                m_compositeAnimation->animationController()->addToAnimationsWaitingForStyle(this);
 
                 // Trigger a render so we can start the animation
                 if (m_object && m_object->element())
-                    m_compAnim->animationController()->addElementChangeToDispatch(*m_object->element());
+                    m_compositeAnimation->animationController()->addElementChangeToDispatch(*m_object->element());
             } else {
                 ASSERT(!paused());
                 // We're waiting for the start timer to fire and we got a pause. Cancel the timer, pause and wait
                 m_pauseTime = beginAnimationUpdateTime();
-                LOG(Animations, "%p AnimationState %s -> PausedWaitTimer", this, nameForState(m_animState));
-                m_animState = AnimationStatePausedWaitTimer;
+                LOG(Animations, "%p AnimationState %s -> PausedWaitTimer", this, nameForState(m_animationState));
+                m_animationState = AnimationState::PausedWaitTimer;
             }
             break;
-        case AnimationStateStartWaitStyleAvailable:
-            ASSERT(input == AnimationStateInputStyleAvailable || input == AnimationStateInputPlayStatePaused);
+        case AnimationState::StartWaitStyleAvailable:
+            ASSERT(input == AnimationStateInput::StyleAvailable || input == AnimationStateInput::PlayStatePaused);
 
-            if (input == AnimationStateInputStyleAvailable) {
+            if (input == AnimationStateInput::StyleAvailable) {
                 // Start timer has fired, tell the animation to start and wait for it to respond with start time
-                LOG(Animations, "%p AnimationState %s -> StartWaitResponse", this, nameForState(m_animState));
-                m_animState = AnimationStateStartWaitResponse;
+                LOG(Animations, "%p AnimationState %s -> StartWaitResponse", this, nameForState(m_animationState));
+                m_animationState = AnimationState::StartWaitResponse;
 
                 overrideAnimations();
 
@@ -244,10 +244,10 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 if (overridden()) {
                     // We won't try to start accelerated animations if we are overridden and
                     // just move on to the next state.
-                    LOG(Animations, "%p AnimationState %s -> StartWaitResponse", this, nameForState(m_animState));
-                    m_animState = AnimationStateStartWaitResponse;
+                    LOG(Animations, "%p AnimationState %s -> StartWaitResponse", this, nameForState(m_animationState));
+                    m_animationState = AnimationState::StartWaitResponse;
                     m_isAccelerated = false;
-                    updateStateMachine(AnimationStateInputStartTimeSet, beginAnimationUpdateTime());
+                    updateStateMachine(AnimationStateInput::StartTimeSet, beginAnimationUpdateTime());
                 } else {
                     double timeOffset = 0;
                     // If the value for 'animation-delay' is negative then the animation appears to have started in the past.
@@ -255,20 +255,20 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                         timeOffset = -m_animation->delay();
                     bool started = startAnimation(timeOffset);
 
-                    m_compAnim->animationController()->addToAnimationsWaitingForStartTimeResponse(this, started);
+                    m_compositeAnimation->animationController()->addToAnimationsWaitingForStartTimeResponse(this, started);
                     m_isAccelerated = started;
                 }
             } else {
                 // We're waiting for the style to be available and we got a pause. Pause and wait
                 m_pauseTime = beginAnimationUpdateTime();
-                LOG(Animations, "%p AnimationState %s -> PausedWaitStyleAvailable", this, nameForState(m_animState));
-                m_animState = AnimationStatePausedWaitStyleAvailable;
+                LOG(Animations, "%p AnimationState %s -> PausedWaitStyleAvailable", this, nameForState(m_animationState));
+                m_animationState = AnimationState::PausedWaitStyleAvailable;
             }
             break;
-        case AnimationStateStartWaitResponse:
-            ASSERT(input == AnimationStateInputStartTimeSet || input == AnimationStateInputPlayStatePaused);
+        case AnimationState::StartWaitResponse:
+            ASSERT(input == AnimationStateInput::StartTimeSet || input == AnimationStateInput::PlayStatePaused);
 
-            if (input == AnimationStateInputStartTimeSet) {
+            if (input == AnimationStateInput::StartTimeSet) {
                 ASSERT(param >= 0);
                 // We have a start time, set it, unless the startTime is already set
                 if (m_startTime <= 0) {
@@ -286,20 +286,20 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
 
                 // Dispatch updateStyleIfNeeded so we can start the animation
                 if (m_object && m_object->element())
-                    m_compAnim->animationController()->addElementChangeToDispatch(*m_object->element());
+                    m_compositeAnimation->animationController()->addElementChangeToDispatch(*m_object->element());
             } else {
                 // We are pausing while waiting for a start response. Cancel the animation and wait. When 
                 // we unpause, we will act as though the start timer just fired
                 m_pauseTime = beginAnimationUpdateTime();
                 pauseAnimation(beginAnimationUpdateTime() - m_startTime);
-                LOG(Animations, "%p AnimationState %s -> PausedWaitResponse", this, nameForState(m_animState));
-                m_animState = AnimationStatePausedWaitResponse;
+                LOG(Animations, "%p AnimationState %s -> PausedWaitResponse", this, nameForState(m_animationState));
+                m_animationState = AnimationState::PausedWaitResponse;
             }
             break;
-        case AnimationStateLooping:
-            ASSERT(input == AnimationStateInputLoopTimerFired || input == AnimationStateInputPlayStatePaused);
+        case AnimationState::Looping:
+            ASSERT(input == AnimationStateInput::LoopTimerFired || input == AnimationStateInput::PlayStatePaused);
 
-            if (input == AnimationStateInputLoopTimerFired) {
+            if (input == AnimationStateInput::LoopTimerFired) {
                 ASSERT(param >= 0);
                 // Loop timer fired, loop again or end.
                 onAnimationIteration(param);
@@ -310,131 +310,131 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 // We are pausing while running. Cancel the animation and wait
                 m_pauseTime = beginAnimationUpdateTime();
                 pauseAnimation(beginAnimationUpdateTime() - m_startTime);
-                LOG(Animations, "%p AnimationState %s -> PausedRun", this, nameForState(m_animState));
-                m_animState = AnimationStatePausedRun;
+                LOG(Animations, "%p AnimationState %s -> PausedRun", this, nameForState(m_animationState));
+                m_animationState = AnimationState::PausedRun;
             }
             break;
-        case AnimationStateEnding:
+        case AnimationState::Ending:
 #if !LOG_DISABLED
-            if (input != AnimationStateInputEndTimerFired && input != AnimationStateInputPlayStatePaused)
-                LOG_ERROR("State is AnimationStateEnding, but input is not AnimationStateInputEndTimerFired or AnimationStateInputPlayStatePaused. It is %d.", input);
+            if (input != AnimationStateInput::EndTimerFired && input != AnimationStateInput::PlayStatePaused)
+                LOG_ERROR("State is AnimationState::Ending, but input is not AnimationStateInput::EndTimerFired or AnimationStateInput::PlayStatePaused. It is %d.", input);
 #endif
-            if (input == AnimationStateInputEndTimerFired) {
+            if (input == AnimationStateInput::EndTimerFired) {
 
                 ASSERT(param >= 0);
                 // End timer fired, finish up
                 onAnimationEnd(param);
 
-                LOG(Animations, "%p AnimationState %s -> Done", this, nameForState(m_animState));
-                m_animState = AnimationStateDone;
+                LOG(Animations, "%p AnimationState %s -> Done", this, nameForState(m_animationState));
+                m_animationState = AnimationState::Done;
                 
                 if (m_object) {
                     if (m_animation->fillsForwards()) {
-                        LOG(Animations, "%p AnimationState %s -> FillingForwards", this, nameForState(m_animState));
-                        m_animState = AnimationStateFillingForwards;
+                        LOG(Animations, "%p AnimationState %s -> FillingForwards", this, nameForState(m_animationState));
+                        m_animationState = AnimationState::FillingForwards;
                     } else
                         resumeOverriddenAnimations();
 
                     // Fire off another style change so we can set the final value
                     if (m_object->element())
-                        m_compAnim->animationController()->addElementChangeToDispatch(*m_object->element());
+                        m_compositeAnimation->animationController()->addElementChangeToDispatch(*m_object->element());
                 }
             } else {
                 // We are pausing while running. Cancel the animation and wait
                 m_pauseTime = beginAnimationUpdateTime();
                 pauseAnimation(beginAnimationUpdateTime() - m_startTime);
-                LOG(Animations, "%p AnimationState %s -> PausedRun", this, nameForState(m_animState));
-                m_animState = AnimationStatePausedRun;
+                LOG(Animations, "%p AnimationState %s -> PausedRun", this, nameForState(m_animationState));
+                m_animationState = AnimationState::PausedRun;
             }
             // |this| may be deleted here
             break;
-        case AnimationStatePausedWaitTimer:
-            ASSERT(input == AnimationStateInputPlayStateRunning);
+        case AnimationState::PausedWaitTimer:
+            ASSERT(input == AnimationStateInput::PlayStateRunning);
             ASSERT(paused());
             // Update the times
             m_startTime += beginAnimationUpdateTime() - m_pauseTime;
             m_pauseTime = -1;
 
             // we were waiting for the start timer to fire, go back and wait again
-            LOG(Animations, "%p AnimationState %s -> New", this, nameForState(m_animState));
-            m_animState = AnimationStateNew;
-            updateStateMachine(AnimationStateInputStartAnimation, 0);
+            LOG(Animations, "%p AnimationState %s -> New", this, nameForState(m_animationState));
+            m_animationState = AnimationState::New;
+            updateStateMachine(AnimationStateInput::StartAnimation, 0);
             break;
-        case AnimationStatePausedNew:
-        case AnimationStatePausedWaitResponse:
-        case AnimationStatePausedWaitStyleAvailable:
-        case AnimationStatePausedRun:
+        case AnimationState::PausedNew:
+        case AnimationState::PausedWaitResponse:
+        case AnimationState::PausedWaitStyleAvailable:
+        case AnimationState::PausedRun:
             // We treat these two cases the same. The only difference is that, when we are in
-            // AnimationStatePausedWaitResponse, we don't yet have a valid startTime, so we send 0 to startAnimation.
-            // When the AnimationStateInputStartTimeSet comes in and we were in AnimationStatePausedRun, we will notice
+            // AnimationState::PausedWaitResponse, we don't yet have a valid startTime, so we send 0 to startAnimation.
+            // When the AnimationStateInput::StartTimeSet comes in and we were in AnimationState::PausedRun, we will notice
             // that we have already set the startTime and will ignore it.
-            ASSERT(input == AnimationStateInputPlayStateRunning || input == AnimationStateInputStartTimeSet || input == AnimationStateInputStyleAvailable || input == AnimationStateInputStartAnimation);
+            ASSERT(input == AnimationStateInput::PlayStateRunning || input == AnimationStateInput::StartTimeSet || input == AnimationStateInput::StyleAvailable || input == AnimationStateInput::StartAnimation);
             ASSERT(paused());
 
-            if (input == AnimationStateInputPlayStateRunning) {
-                if (m_animState == AnimationStatePausedNew) {
+            if (input == AnimationStateInput::PlayStateRunning) {
+                if (m_animationState == AnimationState::PausedNew) {
                     // We were paused before we even started, and now we're supposed
                     // to start, so jump back to the New state and reset.
-                    LOG(Animations, "%p AnimationState %s -> AnimationStateNew", this, nameForState(m_animState));
-                    m_animState = AnimationStateNew;
+                    LOG(Animations, "%p AnimationState %s -> AnimationState::New", this, nameForState(m_animationState));
+                    m_animationState = AnimationState::New;
                     updateStateMachine(input, param);
                     break;
                 }
 
                 // Update the times
-                if (m_animState == AnimationStatePausedRun)
+                if (m_animationState == AnimationState::PausedRun)
                     m_startTime += beginAnimationUpdateTime() - m_pauseTime;
                 else
                     m_startTime = 0;
                 m_pauseTime = -1;
 
-                if (m_animState == AnimationStatePausedWaitStyleAvailable) {
-                    LOG(Animations, "%p AnimationState %s -> StartWaitStyleAvailable", this, nameForState(m_animState));
-                    m_animState = AnimationStateStartWaitStyleAvailable;
+                if (m_animationState == AnimationState::PausedWaitStyleAvailable) {
+                    LOG(Animations, "%p AnimationState %s -> StartWaitStyleAvailable", this, nameForState(m_animationState));
+                    m_animationState = AnimationState::StartWaitStyleAvailable;
                 } else {
                     // We were either running or waiting for a begin time response from the animation.
                     // Either way we need to restart the animation (possibly with an offset if we
                     // had already been running) and wait for it to start.
-                    LOG(Animations, "%p AnimationState %s -> StartWaitResponse", this, nameForState(m_animState));
-                    m_animState = AnimationStateStartWaitResponse;
+                    LOG(Animations, "%p AnimationState %s -> StartWaitResponse", this, nameForState(m_animationState));
+                    m_animationState = AnimationState::StartWaitResponse;
 
                     // Start the animation
                     if (overridden()) {
                         // We won't try to start accelerated animations if we are overridden and
                         // just move on to the next state.
-                        updateStateMachine(AnimationStateInputStartTimeSet, beginAnimationUpdateTime());
+                        updateStateMachine(AnimationStateInput::StartTimeSet, beginAnimationUpdateTime());
                         m_isAccelerated = true;
                     } else {
                         bool started = startAnimation(beginAnimationUpdateTime() - m_startTime);
-                        m_compAnim->animationController()->addToAnimationsWaitingForStartTimeResponse(this, started);
+                        m_compositeAnimation->animationController()->addToAnimationsWaitingForStartTimeResponse(this, started);
                         m_isAccelerated = started;
                     }
                 }
                 break;
             }
             
-            if (input == AnimationStateInputStartTimeSet) {
-                ASSERT(m_animState == AnimationStatePausedWaitResponse);
+            if (input == AnimationStateInput::StartTimeSet) {
+                ASSERT(m_animationState == AnimationState::PausedWaitResponse);
                 
                 // We are paused but we got the callback that notifies us that an accelerated animation started.
                 // We ignore the start time and just move into the paused-run state.
-                LOG(Animations, "%p AnimationState %s -> PausedRun", this, nameForState(m_animState));
-                m_animState = AnimationStatePausedRun;
+                LOG(Animations, "%p AnimationState %s -> PausedRun", this, nameForState(m_animationState));
+                m_animationState = AnimationState::PausedRun;
                 ASSERT(m_startTime == 0);
                 m_startTime = param;
                 m_pauseTime += m_startTime;
                 break;
             }
 
-            ASSERT(m_animState == AnimationStatePausedWaitStyleAvailable);
+            ASSERT(m_animationState == AnimationState::PausedWaitStyleAvailable);
             // We are paused but we got the callback that notifies us that style has been updated.
-            // We move to the AnimationStatePausedWaitResponse state
-            LOG(Animations, "%p AnimationState %s -> PausedWaitResponse", this, nameForState(m_animState));
-            m_animState = AnimationStatePausedWaitResponse;
+            // We move to the AnimationState::PausedWaitResponse state
+            LOG(Animations, "%p AnimationState %s -> PausedWaitResponse", this, nameForState(m_animationState));
+            m_animationState = AnimationState::PausedWaitResponse;
             overrideAnimations();
             break;
-        case AnimationStateFillingForwards:
-        case AnimationStateDone:
+        case AnimationState::FillingForwards:
+        case AnimationState::Done:
             // We're done. Stay in this state until we are deleted
             break;
     }
@@ -442,11 +442,11 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
     
 void AnimationBase::fireAnimationEventsIfNeeded()
 {
-    if (!m_compAnim)
+    if (!m_compositeAnimation)
         return;
 
     // If we are waiting for the delay time to expire and it has, go to the next state
-    if (m_animState != AnimationStateStartWaitTimer && m_animState != AnimationStateLooping && m_animState != AnimationStateEnding)
+    if (m_animationState != AnimationState::StartWaitTimer && m_animationState != AnimationState::Looping && m_animationState != AnimationState::Ending)
         return;
 
     // We have to make sure to keep a ref to the this pointer, because it could get destroyed
@@ -454,12 +454,12 @@ void AnimationBase::fireAnimationEventsIfNeeded()
     // and it ref counts this object, we will keep a ref to that instead. That way the AnimationBase
     // can still access the resources of its CompositeAnimation as needed.
     Ref<AnimationBase> protect(*this);
-    Ref<CompositeAnimation> protectCompositeAnimation(*m_compAnim);
+    Ref<CompositeAnimation> protectCompositeAnimation(*m_compositeAnimation);
     
     // Check for start timeout
-    if (m_animState == AnimationStateStartWaitTimer) {
+    if (m_animationState == AnimationState::StartWaitTimer) {
         if (beginAnimationUpdateTime() - m_requestedStartTime >= m_animation->delay())
-            updateStateMachine(AnimationStateInputStartTimerFired, 0);
+            updateStateMachine(AnimationStateInput::StartTimerFired, 0);
         return;
     }
     
@@ -471,13 +471,13 @@ void AnimationBase::fireAnimationEventsIfNeeded()
     
     // Check for end timeout
     if (m_totalDuration >= 0 && elapsedDuration >= m_totalDuration) {
-        // We may still be in AnimationStateLooping if we've managed to skip a
+        // We may still be in AnimationState::Looping if we've managed to skip a
         // whole iteration, in which case we should jump to the end state.
-        LOG(Animations, "%p AnimationState %s -> Ending", this, nameForState(m_animState));
-        m_animState = AnimationStateEnding;
+        LOG(Animations, "%p AnimationState %s -> Ending", this, nameForState(m_animationState));
+        m_animationState = AnimationState::Ending;
 
         // Fire an end event
-        updateStateMachine(AnimationStateInputEndTimerFired, m_totalDuration);
+        updateStateMachine(AnimationStateInput::EndTimerFired, m_totalDuration);
     } else {
         // Check for iteration timeout
         if (m_nextIterationDuration < 0) {
@@ -493,35 +493,35 @@ void AnimationBase::fireAnimationEventsIfNeeded()
             m_nextIterationDuration = elapsedDuration + durationLeft;
             
             // Send the event
-            updateStateMachine(AnimationStateInputLoopTimerFired, previous);
+            updateStateMachine(AnimationStateInput::LoopTimerFired, previous);
         }
     }
 }
 
 void AnimationBase::updatePlayState(EAnimPlayState playState)
 {
-    if (!m_compAnim)
+    if (!m_compositeAnimation)
         return;
 
     // When we get here, we can have one of 4 desired states: running, paused, suspended, paused & suspended.
     // The state machine can be in one of two states: running, paused.
     // Set the state machine to the desired state.
-    bool pause = playState == AnimPlayStatePaused || m_compAnim->isSuspended();
+    bool pause = playState == AnimPlayStatePaused || m_compositeAnimation->isSuspended();
 
     if (pause == paused() && !isNew())
         return;
 
-    updateStateMachine(pause ?  AnimationStateInputPlayStatePaused : AnimationStateInputPlayStateRunning, -1);
+    updateStateMachine(pause ?  AnimationStateInput::PlayStatePaused : AnimationStateInput::PlayStateRunning, -1);
 }
 
 double AnimationBase::timeToNextService()
 {
     // Returns the time at which next service is required. -1 means no service is required. 0 means 
     // service is required now, and > 0 means service is required that many seconds in the future.
-    if (paused() || isNew() || m_animState == AnimationStateFillingForwards)
+    if (paused() || isNew() || m_animationState == AnimationState::FillingForwards)
         return -1;
     
-    if (m_animState == AnimationStateStartWaitTimer) {
+    if (m_animationState == AnimationState::StartWaitTimer) {
         double timeFromNow = m_animation->delay() - (beginAnimationUpdateTime() - m_requestedStartTime);
         return std::max(timeFromNow, 0.0);
     }
@@ -637,19 +637,19 @@ void AnimationBase::goIntoEndingOrLoopingState()
     double t;
     bool isLooping;
     getTimeToNextEvent(t, isLooping);
-    LOG(Animations, "%p AnimationState %s -> %s", this, nameForState(m_animState), isLooping ? "Looping" : "Ending");
-    m_animState = isLooping ? AnimationStateLooping : AnimationStateEnding;
+    LOG(Animations, "%p AnimationState %s -> %s", this, nameForState(m_animationState), isLooping ? "Looping" : "Ending");
+    m_animationState = isLooping ? AnimationState::Looping : AnimationState::Ending;
 }
   
 void AnimationBase::freezeAtTime(double t)
 {
-    if (!m_compAnim)
+    if (!m_compositeAnimation)
         return;
 
     if (!m_startTime) {
         // If we haven't started yet, make it as if we started.
-        LOG(Animations, "%p AnimationState %s -> StartWaitResponse", this, nameForState(m_animState));
-        m_animState = AnimationStateStartWaitResponse;
+        LOG(Animations, "%p AnimationState %s -> StartWaitResponse", this, nameForState(m_animationState));
+        m_animationState = AnimationState::StartWaitResponse;
         onAnimationStartResponse(monotonicallyIncreasingTime());
     }
 
@@ -665,10 +665,10 @@ void AnimationBase::freezeAtTime(double t)
 
 double AnimationBase::beginAnimationUpdateTime() const
 {
-    if (!m_compAnim)
+    if (!m_compositeAnimation)
         return 0;
 
-    return m_compAnim->animationController()->beginAnimationUpdateTime();
+    return m_compositeAnimation->animationController()->beginAnimationUpdateTime();
 }
 
 double AnimationBase::getElapsedTime() const

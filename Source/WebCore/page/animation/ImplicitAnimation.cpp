@@ -131,7 +131,7 @@ void ImplicitAnimation::onAnimationEnd(double elapsedTime)
     // running. But now that the transition has completed, we need to update this style with its new
     // destination. If we didn't, the next time through we would think a transition had started
     // (comparing the old unanimated style with the new final style of the transition).
-    RefPtr<KeyframeAnimation> keyframeAnim = m_compAnim->getAnimationForProperty(m_animatingProperty);
+    RefPtr<KeyframeAnimation> keyframeAnim = m_compositeAnimation->getAnimationForProperty(m_animatingProperty);
     if (keyframeAnim)
         keyframeAnim->setUnanimatedStyle(m_toStyle);
     
@@ -155,7 +155,7 @@ bool ImplicitAnimation::sendTransitionEvent(const AtomicString& eventType, doubl
                 return false;
 
             // Schedule event handling
-            m_compAnim->animationController()->addEventToDispatch(element, eventType, propertyName, elapsedTime);
+            m_compositeAnimation->animationController()->addEventToDispatch(element, eventType, propertyName, elapsedTime);
 
             // Restore the original (unanimated) style
             if (eventType == eventNames().transitionendEvent && element->renderer())
@@ -177,7 +177,7 @@ void ImplicitAnimation::reset(RenderStyle* to)
 
     // Restart the transition
     if (m_fromStyle && m_toStyle)
-        updateStateMachine(AnimationStateInputRestartAnimation, -1);
+        updateStateMachine(AnimationStateInput::RestartAnimation, -1);
         
     // set the transform animation list
     validateTransformFunctionList();
@@ -192,7 +192,7 @@ void ImplicitAnimation::setOverridden(bool b)
         return;
 
     m_overridden = b;
-    updateStateMachine(m_overridden ? AnimationStateInputPauseOverride : AnimationStateInputResumeOverride, -1);
+    updateStateMachine(m_overridden ? AnimationStateInput::PauseOverride : AnimationStateInput::ResumeOverride, -1);
 }
 
 bool ImplicitAnimation::affectsProperty(CSSPropertyID property) const

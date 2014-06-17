@@ -40,8 +40,8 @@
 
 namespace WebCore {
 
-KeyframeAnimation::KeyframeAnimation(const Animation& animation, RenderElement* renderer, int index, CompositeAnimation* compAnim, RenderStyle* unanimatedStyle)
-    : AnimationBase(animation, renderer, compAnim)
+KeyframeAnimation::KeyframeAnimation(const Animation& animation, RenderElement* renderer, int index, CompositeAnimation* compositeAnimation, RenderStyle* unanimatedStyle)
+    : AnimationBase(animation, renderer, compositeAnimation)
     , m_keyframes(animation.name())
     , m_index(index)
     , m_startEventDispatched(false)
@@ -127,7 +127,7 @@ void KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderEl
     
     // If we have not yet started, we will not have a valid start time, so just start the animation if needed.
     if (isNew() && m_animation->playState() == AnimPlayStatePlaying && !compositeAnimation->isSuspended())
-        updateStateMachine(AnimationStateInputStartAnimation, -1);
+        updateStateMachine(AnimationStateInput::StartAnimation, -1);
 
     // If we get this far and the animation is done, it means we are cleaning up a just finished animation.
     // If so, we need to send back the targetStyle.
@@ -147,7 +147,7 @@ void KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderEl
     
     // If we have no keyframes, don't animate.
     if (!m_keyframes.size()) {
-        updateStateMachine(AnimationStateInputEndAnimation, -1);
+        updateStateMachine(AnimationStateInput::EndAnimation, -1);
         return;
     }
 
@@ -287,7 +287,7 @@ bool KeyframeAnimation::sendAnimationEvent(const AtomicString& eventType, double
             return false;
 
         // Schedule event handling
-        m_compAnim->animationController()->addEventToDispatch(element, eventType, m_keyframes.animationName(), elapsedTime);
+        m_compositeAnimation->animationController()->addEventToDispatch(element, eventType, m_keyframes.animationName(), elapsedTime);
 
         // Restore the original (unanimated) style
         if (eventType == eventNames().webkitAnimationEndEvent && element->renderer())

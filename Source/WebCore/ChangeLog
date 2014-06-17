@@ -1,3 +1,45 @@
+2014-06-17  Anders Carlsson  <andersca@apple.com>
+
+        Use strongly typed enums for AnimationState and AnimationInputState
+        https://bugs.webkit.org/show_bug.cgi?id=133988
+
+        Reviewed by Tim Horton.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::AnimationBase):
+        (WebCore::nameForState):
+        (WebCore::AnimationBase::updateStateMachine):
+        (WebCore::AnimationBase::fireAnimationEventsIfNeeded):
+        (WebCore::AnimationBase::updatePlayState):
+        (WebCore::AnimationBase::timeToNextService):
+        (WebCore::AnimationBase::goIntoEndingOrLoopingState):
+        (WebCore::AnimationBase::freezeAtTime):
+        (WebCore::AnimationBase::beginAnimationUpdateTime):
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::clear):
+        (WebCore::AnimationBase::onAnimationStartResponse):
+        (WebCore::AnimationBase::waitingToStart):
+        (WebCore::AnimationBase::preActive):
+        (WebCore::AnimationBase::postActive):
+        (WebCore::AnimationBase::fillingForwards):
+        (WebCore::AnimationBase::paused):
+        (WebCore::AnimationBase::inPausedState):
+        (WebCore::AnimationBase::isNew):
+        (WebCore::AnimationBase::waitingForStartTime):
+        (WebCore::AnimationBase::waitingForStyleAvailable):
+        (WebCore::AnimationBase::isAnimatingProperty):
+        (WebCore::AnimationBase::styleAvailable):
+        (WebCore::AnimationBase::compositeAnimation):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::onAnimationEnd):
+        (WebCore::ImplicitAnimation::sendTransitionEvent):
+        (WebCore::ImplicitAnimation::reset):
+        (WebCore::ImplicitAnimation::setOverridden):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        (WebCore::KeyframeAnimation::animate):
+        (WebCore::KeyframeAnimation::sendAnimationEvent):
+
 2014-06-17  Andreas Kling  <akling@apple.com>
 
         Avoid synchronous layout in window.scrollTo(0,0) when already at (0,0)

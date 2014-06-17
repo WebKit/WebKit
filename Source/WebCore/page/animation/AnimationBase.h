@@ -39,14 +39,12 @@
 
 namespace WebCore {
 
-class AnimationBase;
 class AnimationController;
 class CompositeAnimation;
 class Element;
 class RenderElement;
 class RenderStyle;
 class TimingFunction;
-
 class AnimationBase : public RefCounted<AnimationBase> {
     friend class CompositeAnimation;
     friend class CSSPropertyAnimation;
@@ -58,9 +56,9 @@ public:
     RenderElement* renderer() const { return m_object; }
     void clear()
     {
-      endAnimation();
-      m_object = 0;
-      m_compAnim = 0;
+        endAnimation();
+        m_object = nullptr;
+        m_compositeAnimation = nullptr;
     }
 
     double duration() const;
@@ -68,68 +66,68 @@ public:
     // Animations and Transitions go through the states below. When entering the STARTED state
     // the animation is started. This may or may not require deferred response from the animator.
     // If so, we stay in this state until that response is received (and it returns the start time).
-    // Otherwise, we use the current time as the start time and go immediately to AnimationStateLooping
-    // or AnimationStateEnding.
-    enum AnimState { 
-        AnimationStateNew,                  // animation just created, animation not running yet
-        AnimationStateStartWaitTimer,       // start timer running, waiting for fire
-        AnimationStateStartWaitStyleAvailable,   // waiting for style setup so we can start animations
-        AnimationStateStartWaitResponse,    // animation started, waiting for response
-        AnimationStateLooping,              // response received, animation running, loop timer running, waiting for fire
-        AnimationStateEnding,               // received, animation running, end timer running, waiting for fire
-        AnimationStatePausedNew,            // in pause mode when animation was created
-        AnimationStatePausedWaitTimer,      // in pause mode when animation started
-        AnimationStatePausedWaitStyleAvailable, // in pause mode when waiting for style setup
-        AnimationStatePausedWaitResponse,   // animation paused when in STARTING state
-        AnimationStatePausedRun,            // animation paused when in LOOPING or ENDING state
-        AnimationStateDone,                 // end timer fired, animation finished and removed
-        AnimationStateFillingForwards       // animation has ended and is retaining its final value
+    // Otherwise, we use the current time as the start time and go immediately to AnimationState::Looping
+    // or AnimationState::Ending.
+    enum class AnimationState {
+        New,                        // animation just created, animation not running yet
+        StartWaitTimer,             // start timer running, waiting for fire
+        StartWaitStyleAvailable,    // waiting for style setup so we can start animations
+        StartWaitResponse,          // animation started, waiting for response
+        Looping,                    // response received, animation running, loop timer running, waiting for fire
+        Ending,                     // received, animation running, end timer running, waiting for fire
+        PausedNew,                  // in pause mode when animation was created
+        PausedWaitTimer,            // in pause mode when animation started
+        PausedWaitStyleAvailable,   // in pause mode when waiting for style setup
+        PausedWaitResponse,         // animation paused when in STARTING state
+        PausedRun,                  // animation paused when in LOOPING or ENDING state
+        Done,                       // end timer fired, animation finished and removed
+        FillingForwards             // animation has ended and is retaining its final value
     };
 
-    enum AnimStateInput {
-        AnimationStateInputMakeNew,           // reset back to new from any state
-        AnimationStateInputStartAnimation,    // animation requests a start
-        AnimationStateInputRestartAnimation,  // force a restart from any state
-        AnimationStateInputStartTimerFired,   // start timer fired
-        AnimationStateInputStyleAvailable,    // style is setup, ready to start animating
-        AnimationStateInputStartTimeSet,      // m_startTime was set
-        AnimationStateInputLoopTimerFired,    // loop timer fired
-        AnimationStateInputEndTimerFired,     // end timer fired
-        AnimationStateInputPauseOverride,     // pause an animation due to override
-        AnimationStateInputResumeOverride,    // resume an overridden animation
-        AnimationStateInputPlayStateRunning,  // play state paused -> running
-        AnimationStateInputPlayStatePaused,   // play state running -> paused
-        AnimationStateInputEndAnimation       // force an end from any state
+    enum class AnimationStateInput {
+        MakeNew,           // reset back to new from any state
+        StartAnimation,    // animation requests a start
+        RestartAnimation,  // force a restart from any state
+        StartTimerFired,   // start timer fired
+        StyleAvailable,    // style is setup, ready to start animating
+        StartTimeSet,      // m_startTime was set
+        LoopTimerFired,    // loop timer fired
+        EndTimerFired,     // end timer fired
+        PauseOverride,     // pause an animation due to override
+        ResumeOverride,    // resume an overridden animation
+        PlayStateRunning,  // play state paused -> running
+        PlayStatePaused,   // play state running -> paused
+        EndAnimation       // force an end from any state
     };
 
-    // Called when animation is in AnimationStateNew to start animation
-    void updateStateMachine(AnimStateInput, double param);
+    // Called when animation is in AnimationState::New to start animation
+    void updateStateMachine(AnimationStateInput, double param);
 
     // Animation has actually started, at passed time
     void onAnimationStartResponse(double startTime)
     {
-        updateStateMachine(AnimationBase::AnimationStateInputStartTimeSet, startTime);
+        updateStateMachine(AnimationStateInput::StartTimeSet, startTime);
     }
 
     // Called to change to or from paused state
     void updatePlayState(EAnimPlayState);
     bool playStatePlaying() const;
 
-    bool waitingToStart() const { return m_animState == AnimationStateNew || m_animState == AnimationStateStartWaitTimer || m_animState == AnimationStatePausedNew; }
+    bool waitingToStart() const { return m_animationState == AnimationState::New || m_animationState == AnimationState::StartWaitTimer || m_animationState == AnimationState::PausedNew; }
     bool preActive() const
     {
-        return m_animState == AnimationStateNew || m_animState == AnimationStateStartWaitTimer || m_animState == AnimationStateStartWaitStyleAvailable || m_animState == AnimationStateStartWaitResponse;
+        return m_animationState == AnimationState::New || m_animationState == AnimationState::StartWaitTimer || m_animationState == AnimationState::StartWaitStyleAvailable || m_animationState == AnimationState::StartWaitResponse;
     }
 
-    bool postActive() const { return m_animState == AnimationStateDone; }
-    bool fillingForwards() const { return m_animState == AnimationStateFillingForwards; }
+    bool postActive() const { return m_animationState == AnimationState::Done; }
+    bool fillingForwards() const { return m_animationState == AnimationState::FillingForwards; }
     bool active() const { return !postActive() && !preActive(); }
     bool running() const { return !isNew() && !postActive(); }
-    bool paused() const { return m_pauseTime >= 0 || m_animState == AnimationStatePausedNew; }
-    bool inPausedState() const { return m_animState >= AnimationStatePausedNew && m_animState <= AnimationStatePausedRun; }
-    bool isNew() const { return m_animState == AnimationStateNew || m_animState == AnimationStatePausedNew; }
-    bool waitingForStartTime() const { return m_animState == AnimationStateStartWaitResponse; }
-    bool waitingForStyleAvailable() const { return m_animState == AnimationStateStartWaitStyleAvailable; }
+    bool paused() const { return m_pauseTime >= 0 || m_animationState == AnimationState::PausedNew; }
+    bool inPausedState() const { return m_animationState >= AnimationState::PausedNew && m_animationState <= AnimationState::PausedRun; }
+    bool isNew() const { return m_animationState == AnimationState::New || m_animationState == AnimationState::PausedNew; }
+    bool waitingForStartTime() const { return m_animationState == AnimationState::StartWaitResponse; }
+    bool waitingForStyleAvailable() const { return m_animationState == AnimationState::StartWaitStyleAvailable; }
 
     virtual double timeToNextService();
 
@@ -149,7 +147,7 @@ public:
     // Return true if this animation is overridden. This will only be the case for
     // ImplicitAnimations and is used to determine whether or not we should force
     // set the start time. If an animation is overridden, it will probably not get
-    // back the AnimationStateInputStartTimeSet input.
+    // back the AnimationStateInput::StartTimeSet input.
     virtual bool overridden() const { return false; }
 
     // Does this animation/transition involve the given property?
@@ -176,10 +174,10 @@ public:
         if ((runningState & Paused) && inPausedState())
             return true;
 
-        if ((runningState & Running) && !inPausedState() && (m_animState >= AnimationStateStartWaitStyleAvailable && m_animState <= AnimationStateDone))
+        if ((runningState & Running) && !inPausedState() && (m_animationState >= AnimationState::StartWaitStyleAvailable && m_animationState <= AnimationState::Done))
             return true;
 
-        if ((runningState & FillingFowards) && m_animState == AnimationStateFillingForwards)
+        if ((runningState & FillingFowards) && m_animationState == AnimationState::FillingForwards)
             return true;
 
         return false;
@@ -207,7 +205,7 @@ public:
     void styleAvailable() 
     {
         ASSERT(waitingForStyleAvailable());
-        updateStateMachine(AnimationBase::AnimationStateInputStyleAvailable, -1);
+        updateStateMachine(AnimationStateInput::StyleAvailable, -1);
     }
 
     const Animation& animation() const { return *m_animation; }
@@ -216,7 +214,7 @@ protected:
     virtual void overrideAnimations() { }
     virtual void resumeOverriddenAnimations() { }
 
-    CompositeAnimation* compositeAnimation() { return m_compAnim; }
+    CompositeAnimation* compositeAnimation() { return m_compositeAnimation; }
 
     // These are called when the corresponding timer fires so subclasses can do any extra work
     virtual void onAnimationStart(double /*elapsedTime*/) { }
@@ -240,7 +238,7 @@ protected:
 
     double fractionalTime(double scale, double elapsedTime, double offset) const;
 
-    AnimState m_animState;
+    AnimationState m_animationState;
 
     bool m_isAccelerated;
     bool m_transformFunctionListValid;
@@ -257,7 +255,7 @@ protected:
     RenderElement* m_object;
 
     RefPtr<Animation> m_animation;
-    CompositeAnimation* m_compAnim;
+    CompositeAnimation* m_compositeAnimation;
 };
 
 } // namespace WebCore
