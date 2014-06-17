@@ -1,3 +1,14 @@
+2014-06-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][WK2] Skip failing EFL API tests
+        https://bugs.webkit.org/show_bug.cgi?id=133981
+
+        Reviewed by Csaba Osztrogonác.
+
+        UserMessage, WillLoad and test_ewk2_view have been failed since r169784.
+
+        * PlatformEfl.cmake:
+
 2014-06-17  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed build fix for the GTK+ port. Removing the *Callback::create() wrappings

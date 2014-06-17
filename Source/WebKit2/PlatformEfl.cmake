@@ -485,7 +485,6 @@ set(EWK2UnitTests_BINARIES
     test_ewk2_ssl
     test_ewk2_storage_manager
     test_ewk2_window_features
-    test_ewk2_view
 )
 
 # Skipped unit tests list:

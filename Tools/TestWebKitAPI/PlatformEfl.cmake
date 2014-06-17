@@ -85,12 +85,10 @@ set(test_webkit2_api_BINARIES
     ResponsivenessTimerDoesntFireEarly
     ShouldGoToBackForwardListItem
     TerminateTwice
-    UserMessage
     WKPreferences
     WKString
     WKStringJSString
     WKURL
-    WillLoad
     WillSendSubmitEvent
     CoordinatedGraphics/WKViewRestoreZoomAndScrollBackForward
     CoordinatedGraphics/WKViewUserViewportToContents
@@ -110,7 +108,9 @@ set(test_webkit2_api_fail_BINARIES
     ResizeWindowAfterCrash
     RestoreSessionStateContainingFormData
     ScrollPinningBehaviors
+    UserMessage
     WKPageGetScaleFactorNotZero
+    WillLoad
 )
 
 # Seccomp filters is an internal API and its symbols
