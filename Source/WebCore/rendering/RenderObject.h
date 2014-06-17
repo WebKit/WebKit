@@ -207,7 +207,7 @@ public:
 
     // Convenience function for getting to the nearest enclosing box of a RenderObject.
     RenderBox& enclosingBox() const;
-    RenderBoxModelObject* enclosingBoxModelObject() const;
+    RenderBoxModelObject& enclosingBoxModelObject() const;
 
     bool fixedPositionedWithNamedFlowContainingBlock() const;
     // Function to return our enclosing flow thread if we are contained inside one. This

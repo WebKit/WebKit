@@ -1134,7 +1134,7 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
                         containingBlockPaintsContinuationOutline = false;
                     else {
                         cb = enclosingAnonymousBlock->containingBlock();
-                        for (auto box = &renderer(); box != cb; box = box->parent()->enclosingBoxModelObject()) {
+                        for (auto box = &renderer(); box != cb; box = &box->parent()->enclosingBoxModelObject()) {
                             if (box->hasSelfPaintingLayer()) {
                                 containingBlockPaintsContinuationOutline = false;
                                 break;

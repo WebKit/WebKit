@@ -1,3 +1,22 @@
+2014-06-17  Miyoung Shin  <myid.shin@samsung.com>
+
+        Use references instead of pointers to RenderBlock in enclosingBoxModelObject()
+        https://bugs.webkit.org/show_bug.cgi?id=133978
+
+        Reviewed by Andreas Kling.
+
+        Just a straightforward conversion from pointers to references.
+
+        No new tests, no behavior change.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::enclosingBoxModelObject):
+        * rendering/RenderObject.h:
+
 2014-06-17  Zan Dobersek  <zdobersek@igalia.com>
 
         Cache the gst_query_get_n_buffering_ranges() return value for the for-loop conditional

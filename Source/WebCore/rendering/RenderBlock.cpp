@@ -1703,7 +1703,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
             RenderBlock* cb = containingBlock();
 
             bool inlineEnclosedInSelfPaintingLayer = false;
-            for (RenderBoxModelObject* box = inlineRenderer; box != cb; box = box->parent()->enclosingBoxModelObject()) {
+            for (RenderBoxModelObject* box = inlineRenderer; box != cb; box = &box->parent()->enclosingBoxModelObject()) {
                 if (box->hasSelfPaintingLayer()) {
                     inlineEnclosedInSelfPaintingLayer = true;
                     break;
