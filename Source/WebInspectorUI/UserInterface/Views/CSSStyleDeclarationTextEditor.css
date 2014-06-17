@@ -39,13 +39,13 @@
 .css-style-text-editor > .CodeMirror .CodeMirror-placeholder {
     font-family: "Lucida Grande", sans-serif;
     color: rgb(128, 128, 128);
-    padding: 0 5px 0 39px;
-    text-indent: -14px;
+    padding: 0 5px 0 25px;
 }
 
 .css-style-text-editor > .CodeMirror pre {
-    padding: 1px 5px 1px 39px;
-    text-indent: -35px;
+    /* Compensate for the checkboxes so properties line up with readonly styles that do not have checkboxes. */
+    padding: 1px 5px 1px 25px;
+    text-indent: -21px;
 }
 
 .css-style-text-editor > .CodeMirror pre * {
@@ -53,8 +53,7 @@
 }
 
 .css-style-text-editor.read-only > .CodeMirror pre {
-    /* Compensate for the missing checkboxes so properties line up with editable styles that have checkboxes. */
-    text-indent: -14px;
+    text-indent: 0;
 }
 
 .css-style-text-editor.read-only > .CodeMirror .CodeMirror-cursor {

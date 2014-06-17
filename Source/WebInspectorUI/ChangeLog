@@ -1,3 +1,19 @@
+2014-06-17  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: style declaration editor: visual highlight doesn't match actual selected text
+        https://bugs.webkit.org/show_bug.cgi?id=133965
+
+        Reviewed by Joseph Pecoraro.
+
+        Update styles for css style editor to fix highlighting visual mismatch glitch.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        (.css-style-text-editor > .CodeMirror .CodeMirror-placeholder):
+        (.css-style-text-editor > .CodeMirror pre):
+        (.css-style-text-editor.read-only > .CodeMirror pre):
+        Updated styles to eliminate highlight mismatch by adjusting the padding and
+        text-indent values.
+
 2014-06-10  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: recording is overused as both noun and verb in TimelineManager
