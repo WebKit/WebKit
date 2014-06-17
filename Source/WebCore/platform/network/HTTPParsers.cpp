@@ -612,7 +612,7 @@ size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, 
 
     Vector<char> name;
     Vector<char> value;
-    nameStr = AtomicString();
+    nameStr = String();
     valueStr = String();
 
     for (; p < end; p++) {

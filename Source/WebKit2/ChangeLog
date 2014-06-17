@@ -1,3 +1,12 @@
+2014-06-16  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Unreviewed build fix after r170029
+
+        Use String() instead of AtomicString().
+
+        * UIProcess/InspectorServer/HTTPRequest.cpp:
+        (WebKit::HTTPRequest::parseHeaders):
+
 2014-06-16  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Use TileController on Windows

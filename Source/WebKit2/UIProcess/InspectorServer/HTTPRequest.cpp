@@ -82,7 +82,7 @@ size_t HTTPRequest::parseHeaders(const char* data, size_t length, String& failur
 {
     const char* p = data;
     const char* end = data + length;
-    AtomicString name;
+    String name;
     String value;
     for (; p < data + length; p++) {
         size_t consumedLength = parseHTTPHeader(p, end - p, failureReason, name, value);
