@@ -1158,16 +1158,16 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
 
             RefPtr<TimeRanges> erasedRanges = TimeRanges::create();
             for (auto erasedIt = erasedSamples.begin(), end = erasedSamples.end(); erasedIt != end; ++erasedIt) {
-                double startTime = erasedIt->first.toDouble();
-                double endTime = ((erasedIt->first + erasedIt->second->duration()) + microsecond).toDouble();
-                erasedRanges->add(startTime, endTime);
+                MediaTime startTime = erasedIt->second->presentationTime();
+                MediaTime endTime = startTime + erasedIt->second->duration() + microsecond;
+                erasedRanges->add(startTime.toDouble(), endTime.toDouble());
                 trackBuffer.samples.removeSample(erasedIt->second.get());
             }
 
             for (auto dependentIt = dependentSamples.begin(), end = dependentSamples.end(); dependentIt != end; ++dependentIt) {
-                double startTime = dependentIt->first.toDouble();
-                double endTime = ((dependentIt->first + dependentIt->second->duration()) + microsecond).toDouble();
-                erasedRanges->add(startTime, endTime);
+                MediaTime startTime = dependentIt->second->presentationTime();
+                MediaTime endTime = startTime + dependentIt->second->duration() + microsecond;
+                erasedRanges->add(startTime.toDouble(), endTime.toDouble());
                 trackBuffer.samples.removeSample(dependentIt->second.get());
             }
 

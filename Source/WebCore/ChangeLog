@@ -1,3 +1,19 @@
+2014-06-17  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Overwritten samples are removed from buffered ranges using decode times; added samples using presentation times
+        https://bugs.webkit.org/show_bug.cgi?id=133959
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-overlapping-append-buffered.html
+
+        Explicitly call presentationTime() on removed samples, rather than implicitly asking for the iterator's "first"
+        member. When iterating over samples, "first" can either be presentation time, or decode time, depending on which
+        iteration method is called. In the case of removing samples, this was using the decode time incorrectly.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+
 2014-06-16  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Region with border radius and overflow:hidden does not clip content

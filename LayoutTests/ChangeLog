@@ -1,3 +1,13 @@
+2014-06-17  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Overwritten samples are removed from buffered ranges using decode times; added samples using presentation times
+        https://bugs.webkit.org/show_bug.cgi?id=133959
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-overlapping-append-buffered-expected.txt: Added.
+        * media/media-source/media-source-overlapping-append-buffered.html: Added.
+
 2014-06-16  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Move the overflow tests to a separate folder
