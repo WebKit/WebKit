@@ -148,7 +148,7 @@ void PlatformCALayerWinInternal::displayCallback(CACFLayerRef caLayer, CGContext
 
     CGContextRestoreGState(context);
 
-    owner()->owner()->platformCALayerLayerDidDisplay(caLayer);
+    owner()->owner()->platformCALayerLayerDidDisplay(owner());
 }
 
 void PlatformCALayerWinInternal::internalSetNeedsDisplay(const FloatRect* dirtyRect)

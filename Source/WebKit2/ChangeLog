@@ -1,3 +1,47 @@
+2014-06-17  Simon Fraser  <simon.fraser@apple.com>
+
+        [UI-side compositing] fix reflections on composited layers
+        https://bugs.webkit.org/show_bug.cgi?id=133942
+
+        Reviewed by Tim Horton.
+        
+        Fix reflections on composited layers. There are two main set of changes.
+        
+        First, a PlatformCALayerRemote which is a clone has to track the layer
+        it is a clone of, so it knows where to grab the contents from in the UI process.
+        This layer may be told that its contents need updating out of order during
+        recursiveBuildTransaction(), so we need some small changes in RemoteLayerTreeContext
+        to allow a layer to add itself to the set of layers requiring commit.
+        
+        In the UI process, a new step is added to RemoteLayerTreeHost::updateLayerTree()
+        to go through clones, and copy their contents from the origin layer.
+        
+        The second set of changes makes platformCALayerLayerDidDisplay() work for
+        UI-side compositing by not taking a PlatformLayer*, but instead a PlatformCALayer*.
+        PlatformCALayer::setContentsChanged() changed to copyContentsFromLayer() so we know
+        what the origin layer is.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::display): Remove the early return so we can always
+        call platformCALayerLayerDidDisplay().
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::LayerProperties):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::dumpChangedLayers):
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::updateLayerTree):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::clone):
+        (WebKit::PlatformCALayerRemote::recursiveBuildTransaction):
+        (WebKit::PlatformCALayerRemote::copyContentsFromLayer):
+        (WebKit::PlatformCALayerRemote::setClonedLayer):
+        (WebKit::PlatformCALayerRemote::setContentsChanged): Deleted.
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        (WebKit::PlatformCALayerRemote::properties):
+        (WebKit::PlatformCALayerRemote::context):
+
 2014-06-17  Anders Carlsson  <andersca@apple.com>
 
         Remove session state methods from WKBrowsingContextController

@@ -144,8 +144,6 @@ public:
     virtual void setCustomAppearance(CustomAppearance) override;
     virtual void setCustomBehavior(CustomBehavior) override;
 
-    virtual void layerDidDisplay(PlatformLayer*) override;
-
     virtual void deviceOrPageScaleFactorChanged() override;
 
     struct CommitState {
@@ -188,7 +186,7 @@ private:
 
     virtual bool platformCALayerContentsOpaque() const override { return contentsOpaque(); }
     virtual bool platformCALayerDrawsContent() const override { return drawsContent(); }
-    virtual void platformCALayerLayerDidDisplay(PlatformLayer* layer) override { return layerDidDisplay(layer); }
+    virtual void platformCALayerLayerDidDisplay(PlatformCALayer* layer) override { return layerDidDisplay(layer); }
     virtual void platformCALayerSetNeedsToRevalidateTiles() override;
     virtual float platformCALayerDeviceScaleFactor() const override;
     virtual float platformCALayerContentsScaleMultiplierForNewTiles(PlatformCALayer*) const override;
@@ -201,6 +199,7 @@ private:
 
     virtual bool shouldRepaintOnSizeChange() const override;
 
+    void layerDidDisplay(PlatformCALayer*);
     void updateOpacityOnLayer();
     
 #if ENABLE(CSS_FILTERS)

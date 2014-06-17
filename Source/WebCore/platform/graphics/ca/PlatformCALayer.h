@@ -102,7 +102,7 @@ public:
 
     virtual void setNeedsDisplay(const FloatRect* dirtyRect = 0) = 0;
 
-    virtual void setContentsChanged() = 0;
+    virtual void copyContentsFromLayer(PlatformCALayer*) = 0;
 
     LayerType layerType() const { return m_layerType; }
 

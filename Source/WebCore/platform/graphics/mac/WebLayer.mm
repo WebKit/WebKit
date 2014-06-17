@@ -110,7 +110,7 @@ using namespace WebCore;
     [super display];
     PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
     if (layer && layer->owner())
-        layer->owner()->platformCALayerLayerDidDisplay(self);
+        layer->owner()->platformCALayerLayerDidDisplay(layer);
 }
 
 - (void)drawInContext:(CGContextRef)context

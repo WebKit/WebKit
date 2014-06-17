@@ -48,7 +48,7 @@ public:
     
     virtual bool platformCALayerContentsOpaque() const = 0;
     virtual bool platformCALayerDrawsContent() const = 0;
-    virtual void platformCALayerLayerDidDisplay(PlatformLayer*)  { }
+    virtual void platformCALayerLayerDidDisplay(PlatformCALayer*)  { }
 
     virtual void platformCALayerSetNeedsToRevalidateTiles() { }
     virtual float platformCALayerDeviceScaleFactor() const = 0;

@@ -240,19 +240,20 @@ bool RemoteLayerBackingStore::display()
         drawInContext(context, backImage.get());
 
         m_frontBuffer.surface->releaseGraphicsContext();
-
-        return true;
-    }
+    } else
 #endif
+    {
+        ASSERT(!m_acceleratesDrawing);
+        std::unique_ptr<GraphicsContext> context = m_frontBuffer.bitmap->createGraphicsContext();
 
-    ASSERT(!m_acceleratesDrawing);
-    std::unique_ptr<GraphicsContext> context = m_frontBuffer.bitmap->createGraphicsContext();
+        RetainPtr<CGImageRef> backImage;
+        if (m_backBuffer.bitmap && !willPaintEntireBackingStore)
+            backImage = m_backBuffer.bitmap->makeCGImage();
 
-    RetainPtr<CGImageRef> backImage;
-    if (m_backBuffer.bitmap && !willPaintEntireBackingStore)
-        backImage = m_backBuffer.bitmap->makeCGImage();
-
-    drawInContext(*context, backImage.get());
+        drawInContext(*context, backImage.get());
+    }
+    
+    m_layer->owner()->platformCALayerLayerDidDisplay(m_layer);
     
     return true;
 }

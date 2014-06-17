@@ -104,6 +104,7 @@ PassRefPtr<PlatformCALayer> PlatformCALayerRemote::clone(PlatformCALayerClient* 
 
     clone->m_properties.notePropertiesChanged(static_cast<RemoteLayerTreeTransaction::LayerChange>(m_properties.everChangedProperties & ~RemoteLayerTreeTransaction::BackingStoreChanged));
 
+    clone->setClonedLayer(this);
     return clone.release();
 }
 
@@ -141,7 +142,7 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeTransaction
             return;
         }
 
-        transaction.layerPropertiesChanged(this, m_properties);
+        transaction.layerPropertiesChanged(this);
     }
 
     for (size_t i = 0; i < m_children.size(); ++i) {
@@ -192,8 +193,14 @@ void PlatformCALayerRemote::setNeedsDisplay(const FloatRect* rect)
     m_properties.backingStore->setNeedsDisplay(enclosingIntRect(*rect));
 }
 
-void PlatformCALayerRemote::setContentsChanged()
+void PlatformCALayerRemote::copyContentsFromLayer(PlatformCALayer* layer)
 {
+    ASSERT(m_properties.clonedLayerID == layer->layerID());
+    
+    if (!m_properties.changedProperties)
+        m_context->layerPropertyChangedWhileBuildingTransaction(this);
+
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ClonedContentsChanged);
 }
 
 PlatformCALayer* PlatformCALayerRemote::superlayer() const
@@ -335,6 +342,16 @@ void PlatformCALayerRemote::setMask(PlatformCALayer* layer)
     }
 
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::MaskLayerChanged);
+}
+
+void PlatformCALayerRemote::setClonedLayer(const PlatformCALayer* layer)
+{
+    if (layer)
+        m_properties.clonedLayerID = layer->layerID();
+    else
+        m_properties.clonedLayerID = 0;
+
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ClonedContentsChanged);
 }
 
 bool PlatformCALayerRemote::isOpaque() const

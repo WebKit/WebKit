@@ -56,6 +56,8 @@ public:
 
     void buildTransaction(RemoteLayerTreeTransaction&, WebCore::PlatformCALayer& rootLayer);
 
+    void layerPropertyChangedWhileBuildingTransaction(PlatformCALayerRemote*);
+
     // From the UI process
     void animationDidStart(WebCore::GraphicsLayer::PlatformLayerID, const String& key, double startTime);
 
@@ -76,6 +78,8 @@ private:
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, PlatformCALayerRemote*> m_layersAwaitingAnimationStart;
 
     RemoteLayerBackingStoreCollection m_backingStoreCollection;
+    
+    RemoteLayerTreeTransaction* m_currentTransaction;
 };
 
 } // namespace WebKit

@@ -419,8 +419,6 @@ public:
 
     // Callback from the underlying graphics system to draw layer contents.
     void paintGraphicsLayerContents(GraphicsContext&, const FloatRect& clip);
-    // Callback from the underlying graphics system when the layer has been displayed
-    virtual void layerDidDisplay(PlatformLayer*) { }
     
     // For hosting this GraphicsLayer in a native layer hierarchy.
     virtual PlatformLayer* platformLayer() const { return 0; }

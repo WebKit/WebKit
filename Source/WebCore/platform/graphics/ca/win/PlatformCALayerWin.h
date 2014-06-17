@@ -39,7 +39,7 @@ public:
 
     virtual void setNeedsDisplay(const FloatRect* dirtyRect = 0) override;
 
-    virtual void setContentsChanged() override;
+    virtual void copyContentsFromLayer(PlatformCALayer*) override;
 
     virtual PlatformCALayer* superlayer() const override;
     virtual void removeFromSuperlayer() override;

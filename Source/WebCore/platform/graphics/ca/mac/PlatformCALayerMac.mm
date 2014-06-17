@@ -323,17 +323,21 @@ void PlatformCALayerMac::setNeedsDisplay(const FloatRect* dirtyRect)
         [m_layer.get() setNeedsDisplay];
     END_BLOCK_OBJC_EXCEPTIONS
 }
-    
-void PlatformCALayerMac::setContentsChanged()
+
+void PlatformCALayerMac::copyContentsFromLayer(PlatformCALayer* layer)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer.get() setContentsChanged];
+    CALayer* caLayer = layer->m_layer.get();
+    if ([m_layer contents] != [caLayer contents])
+        [m_layer setContents:[caLayer contents]];
+    else
+        [m_layer setContentsChanged];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
 PlatformCALayer* PlatformCALayerMac::superlayer() const
 {
-    return platformCALayer([m_layer.get() superlayer]);
+    return platformCALayer([m_layer superlayer]);
 }
 
 void PlatformCALayerMac::removeFromSuperlayer()

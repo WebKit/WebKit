@@ -68,19 +68,20 @@ public:
         MasksToBoundsChanged = 1 << 15,
         OpaqueChanged = 1 << 16,
         MaskLayerChanged = 1 << 17,
-        ContentsRectChanged = 1 << 18,
-        ContentsScaleChanged = 1 << 19,
-        MinificationFilterChanged = 1 << 20,
-        MagnificationFilterChanged = 1 << 21,
-        BlendModeChanged = 1 << 22,
-        SpeedChanged = 1 << 23,
-        TimeOffsetChanged = 1 << 24,
-        BackingStoreChanged = 1 << 25,
-        FiltersChanged = 1 << 26,
-        AnimationsChanged = 1 << 27,
-        EdgeAntialiasingMaskChanged = 1 << 28,
-        CustomAppearanceChanged = 1 << 29,
-        CustomBehaviorChanged = 1 << 30
+        ClonedContentsChanged = 1 << 18,
+        ContentsRectChanged = 1 << 19,
+        ContentsScaleChanged = 1 << 20,
+        MinificationFilterChanged = 1 << 21,
+        MagnificationFilterChanged = 1 << 22,
+        BlendModeChanged = 1 << 23,
+        SpeedChanged = 1 << 24,
+        TimeOffsetChanged = 1 << 25,
+        BackingStoreChanged = 1 << 26,
+        FiltersChanged = 1 << 27,
+        AnimationsChanged = 1 << 28,
+        EdgeAntialiasingMaskChanged = 1 << 29,
+        CustomAppearanceChanged = 1 << 30,
+        CustomBehaviorChanged = 1 << 31
     };
     typedef unsigned LayerChange;
 
@@ -132,6 +133,7 @@ public:
         std::unique_ptr<RemoteLayerBackingStore> backingStore;
         std::unique_ptr<WebCore::FilterOperations> filters;
         WebCore::GraphicsLayer::PlatformLayerID maskLayerID;
+        WebCore::GraphicsLayer::PlatformLayerID clonedLayerID;
         double timeOffset;
         float speed;
         float contentsScale;
@@ -160,7 +162,7 @@ public:
 
     WebCore::GraphicsLayer::PlatformLayerID rootLayerID() const { return m_rootLayerID; }
     void setRootLayerID(WebCore::GraphicsLayer::PlatformLayerID);
-    void layerPropertiesChanged(PlatformCALayerRemote*, LayerProperties&);
+    void layerPropertiesChanged(PlatformCALayerRemote*);
     void setCreatedLayers(Vector<LayerCreationProperties>);
     void setDestroyedLayerIDs(Vector<WebCore::GraphicsLayer::PlatformLayerID>);
     void setLayerIDsWithNewlyUnreachableBackingStore(Vector<WebCore::GraphicsLayer::PlatformLayerID>);

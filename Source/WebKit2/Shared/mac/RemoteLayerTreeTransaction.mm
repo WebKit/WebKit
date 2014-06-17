@@ -81,6 +81,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
     , anchorPoint(0.5, 0.5, 0)
     , contentsRect(FloatPoint(), FloatSize(1, 1))
     , maskLayerID(0)
+    , clonedLayerID(0)
     , timeOffset(0)
     , speed(1)
     , contentsScale(1)
@@ -114,6 +115,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , bounds(other.bounds)
     , contentsRect(other.contentsRect)
     , maskLayerID(other.maskLayerID)
+    , clonedLayerID(other.clonedLayerID)
     , timeOffset(other.timeOffset)
     , speed(other.speed)
     , contentsScale(other.contentsScale)
@@ -205,6 +207,9 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::ArgumentEncoder& e
 
     if (changedProperties & MaskLayerChanged)
         encoder << maskLayerID;
+
+    if (changedProperties & ClonedContentsChanged)
+        encoder << clonedLayerID;
 
     if (changedProperties & ContentsRectChanged)
         encoder << contentsRect;
@@ -353,6 +358,11 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
 
     if (result.changedProperties & MaskLayerChanged) {
         if (!decoder.decode(result.maskLayerID))
+            return false;
+    }
+
+    if (result.changedProperties & ClonedContentsChanged) {
+        if (!decoder.decode(result.clonedLayerID))
             return false;
     }
 
@@ -549,7 +559,7 @@ void RemoteLayerTreeTransaction::setRootLayerID(GraphicsLayer::PlatformLayerID r
     m_rootLayerID = rootLayerID;
 }
 
-void RemoteLayerTreeTransaction::layerPropertiesChanged(PlatformCALayerRemote* remoteLayer, RemoteLayerTreeTransaction::LayerProperties& properties)
+void RemoteLayerTreeTransaction::layerPropertiesChanged(PlatformCALayerRemote* remoteLayer)
 {
     m_changedLayers.append(remoteLayer);
 }
@@ -1057,6 +1067,9 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const RemoteLayerTr
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged)
             dumpProperty(ts, "maskLayer", layerProperties.maskLayerID);
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ClonedContentsChanged)
+            dumpProperty(ts, "clonedLayer", layerProperties.clonedLayerID);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ContentsRectChanged)
             dumpProperty(ts, "contentsRect", layerProperties.contentsRect);

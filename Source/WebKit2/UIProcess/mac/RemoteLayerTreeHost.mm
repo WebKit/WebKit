@@ -71,6 +71,9 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
         rootLayerChanged = true;
     }
 
+    typedef std::pair<GraphicsLayer::PlatformLayerID, GraphicsLayer::PlatformLayerID> LayerIDPair;
+    Vector<LayerIDPair> clonesToUpdate;
+    
     for (auto& changedLayer : transaction.changedLayerProperties()) {
         auto layerID = changedLayer.key;
         const RemoteLayerTreeTransaction::LayerProperties& properties = *changedLayer.value;
@@ -87,6 +90,9 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
         if (properties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged && properties.maskLayerID)
             relatedLayers.set(properties.maskLayerID, getLayer(properties.maskLayerID));
 
+        if (properties.changedProperties & RemoteLayerTreeTransaction::ClonedContentsChanged && properties.clonedLayerID)
+            clonesToUpdate.append(LayerIDPair(layerID, properties.clonedLayerID));
+
         if (m_isDebugLayerTreeHost) {
             RemoteLayerTreePropertyApplier::applyProperties(layer, this, properties, relatedLayers);
 
@@ -95,6 +101,12 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
             asLayer(layer).masksToBounds = false;
         } else
             RemoteLayerTreePropertyApplier::applyProperties(layer, this, properties, relatedLayers);
+    }
+    
+    for (const auto& layerPair : clonesToUpdate) {
+        LayerOrView *layer = getLayer(layerPair.first);
+        LayerOrView *clonedLayer = getLayer(layerPair.second);
+        asLayer(layer).contents = asLayer(clonedLayer).contents;
     }
 
     for (auto& destroyedLayer : transaction.destroyedLayers())

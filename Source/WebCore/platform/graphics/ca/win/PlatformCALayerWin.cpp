@@ -220,14 +220,14 @@ void PlatformCALayerWin::setNeedsCommit()
         host->layerTreeDidChange();
 }
 
-void PlatformCALayerWin::setContentsChanged()
+void PlatformCALayerWin::copyContentsFromLayer(PlatformCALayer* source)
 {
-    // FIXME: There is no equivalent of setContentsChanged in CACF. For now I will
-    // set contents to 0 and then back to its original value to see if that
-    // kicks CACF into redisplaying.
-    RetainPtr<CFTypeRef> contents = CACFLayerGetContents(m_layer.get());
-    CACFLayerSetContents(m_layer.get(), 0);
-    CACFLayerSetContents(m_layer.get(), contents.get());
+    if (source) {
+        RetainPtr<CFTypeRef> contents = CACFLayerGetContents(source->platformLayer());
+        CACFLayerSetContents(m_layer.get(), contents.get());
+    } else
+        CACFLayerSetContents(m_layer.get(), nullptr);
+
     setNeedsCommit();
 }
 

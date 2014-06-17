@@ -949,19 +949,15 @@ void GraphicsLayerCA::setContentsToCanvas(PlatformLayer* canvasLayer)
     noteLayerPropertyChanged(ContentsCanvasLayerChanged);
 }
     
-void GraphicsLayerCA::layerDidDisplay(PlatformLayer* layer)
+void GraphicsLayerCA::layerDidDisplay(PlatformCALayer* layer)
 {
-    PlatformCALayer* currentLayer = PlatformCALayer::platformCALayer(layer);
-    PlatformCALayer* sourceLayer;
     LayerMap* layerCloneMap;
 
-    if (currentLayer == m_layer) {
-        sourceLayer = m_layer.get();
+    if (layer == m_layer)
         layerCloneMap = m_layerClones.get();
-    } else if (currentLayer == m_contentsLayer) {
-        sourceLayer = m_contentsLayer.get();
+    else if (layer == m_contentsLayer)
         layerCloneMap = m_contentsLayerClones.get();
-    } else
+    else
         return;
 
     if (layerCloneMap) {
@@ -971,10 +967,7 @@ void GraphicsLayerCA::layerDidDisplay(PlatformLayer* layer)
             if (!currClone)
                 continue;
 
-            if (currClone->contents() != sourceLayer->contents())
-                currClone->setContents(sourceLayer->contents());
-            else
-                currClone->setContentsChanged();
+            currClone->copyContentsFromLayer(layer);
         }
     }
 }
@@ -3101,7 +3094,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(CloneID cloneID, Pl
     } else {
         resultLayer = cloneLayer(sourceLayer, cloneLevel);
 #ifndef NDEBUG
-        resultLayer->setName(String::format("Clone %d of layer %p", cloneID[0U], sourceLayer->platformLayer()));
+        resultLayer->setName(String::format("Clone %d of layer %llu", cloneID[0U], sourceLayer->layerID()));
 #endif
         addResult.iterator->value = resultLayer;
     }

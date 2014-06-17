@@ -44,6 +44,7 @@ namespace WebKit {
 RemoteLayerTreeContext::RemoteLayerTreeContext(WebPage* webPage)
     : m_webPage(webPage)
     , m_backingStoreCollection(this)
+    , m_currentTransaction(nullptr)
 {
 }
 
@@ -101,10 +102,18 @@ void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transa
     PlatformCALayerRemote& rootLayerRemote = toPlatformCALayerRemote(rootLayer);
     transaction.setRootLayerID(rootLayerRemote.layerID());
 
+    m_currentTransaction = &transaction;
     rootLayerRemote.recursiveBuildTransaction(transaction);
+    m_currentTransaction = nullptr;
 
     transaction.setCreatedLayers(std::move(m_createdLayers));
     transaction.setDestroyedLayerIDs(std::move(m_destroyedLayers));
+}
+
+void RemoteLayerTreeContext::layerPropertyChangedWhileBuildingTransaction(PlatformCALayerRemote* layer)
+{
+    if (m_currentTransaction)
+        m_currentTransaction->layerPropertiesChanged(layer);
 }
 
 void RemoteLayerTreeContext::willStartAnimationOnLayer(PlatformCALayerRemote* layer)
