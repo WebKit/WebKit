@@ -109,6 +109,7 @@ function installDependenciesWithApt {
         libtiff5-dev \
         libxfont-dev \
         libxkbfile-dev \
+        llvm \
         python-dev \
         ragel \
         x11proto-bigreqs-dev \
@@ -206,6 +207,7 @@ function installDependenciesWithYum {
         libpciaccess-devel \
         libtiff-devel \
         libxkbfile-devel \
+        llvm \
         mesa-libEGL-devel \
         ragel \
         xorg-x11-font-utils \
