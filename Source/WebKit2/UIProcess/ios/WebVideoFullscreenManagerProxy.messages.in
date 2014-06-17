@@ -30,7 +30,9 @@ messages -> WebVideoFullscreenManagerProxy {
     SetExternalPlaybackProperties(bool enabled, uint32_t targetType, String localizedDeviceName);
     SetDuration(double duration)
     SetRate(bool isPlaying, double rate)
-    EnterFullscreenWithID(uint32_t videoLayerID, WebCore::IntRect initialRect)
+    SetupFullscreenWithID(uint32_t videoLayerID, WebCore::IntRect initialRect)
+    EnterFullscreen()
     ExitFullscreen(WebCore::IntRect finalRect)
+    CleanupFullscreen()
 }
 #endif

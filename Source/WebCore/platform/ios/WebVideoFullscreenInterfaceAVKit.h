@@ -49,8 +49,10 @@ class WebVideoFullscreenModel;
 class WebVideoFullscreenChangeObserver {
 public:
     virtual ~WebVideoFullscreenChangeObserver() { };
+    virtual void didSetupFullscreen() = 0;
     virtual void didEnterFullscreen() = 0;
     virtual void didExitFullscreen() = 0;
+    virtual void didCleanupFullscreen() = 0;
 };
     
 class WebVideoFullscreenInterfaceAVKit
@@ -85,8 +87,10 @@ public:
     virtual void setLegibleMediaSelectionOptions(const Vector<String>& options, uint64_t selectedIndex) override;
     virtual void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, String localizedDeviceName) override;
 
-    virtual void enterFullscreen(PlatformLayer&, WebCore::IntRect initialRect);
+    virtual void setupFullscreen(PlatformLayer&, WebCore::IntRect initialRect);
+    virtual void enterFullscreen();
     virtual void exitFullscreen(WebCore::IntRect finalRect);
+    virtual void cleanupFullscreen();
     virtual void invalidate();
     virtual void requestHideAndExitFullscreen();
 };

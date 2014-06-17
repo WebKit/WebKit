@@ -76,8 +76,10 @@ protected:
     virtual void setExternalPlayback(bool enabled, WebVideoFullscreenInterface::ExternalPlaybackTargetType, String localizedDeviceName) override;
 
     // additional incoming
+    virtual void didSetupFullscreen();
     virtual void didEnterFullscreen();
     virtual void didExitFullscreen();
+    virtual void didCleanupFullscreen();
     virtual void setVideoLayerGravityEnum(unsigned);
     
     WebPage* m_page;

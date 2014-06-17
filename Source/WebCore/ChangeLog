@@ -1,3 +1,37 @@
+2014-06-17  Jeremy Jones  <jeremyj@apple.com>
+
+        Improve enter and exit fullscreen transition by using two step transition.
+        https://bugs.webkit.org/show_bug.cgi?id=133706
+
+        Reviewed by Simon Fraser.
+
+        setupFullscreen, creates the fullscreen views ready to receive the video layer.
+        Once they are in place, didSetupFullscreen will move the video layer into the 
+        new view hierarchy and initiate enterFullscreen to animate.
+
+        Reverse process for exit fullscreen.
+
+        * WebCore.exp.in: Add exports.
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (-[WebVideoFullscreenController enterFullscreen:]):
+        Refactor into didSetupFullscreen.
+        (-[WebVideoFullscreenController didSetupFullscreen]):
+        Move the video layer once fullscreen is ready to receive it.
+        (-[WebVideoFullscreenController didExitFullscreen]):
+        Move the video layer back into we the web page, and initiate cleanup.
+        (-[WebVideoFullscreenController didCleanupFullscreen]):
+        Refactord cleanup from didExitFullscreen.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h: Add delcarations.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::setupFullscreen):
+        Refactored from enterFullscreen. Builds views ready to receive video layer.
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreen):
+        Animates into fullscreen.
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreen):
+        Animates from fullscreen. Cleanup is refactored into cleanupFullscreen()
+        (WebVideoFullscreenInterfaceAVKit::cleanupFullscreen):
+        Refactored from exitFullscreen(), removes views.
+
 2014-06-17  Sam Weinig  <sam@webkit.org>
 
         Remove unnecessary Structure flags from generated bindings

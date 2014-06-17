@@ -63,16 +63,20 @@ using namespace WebCore;
 #else
 
 @interface WebVideoFullscreenController (FullscreenObservation)
+- (void)didSetupFullscreen;
 - (void)didEnterFullscreen;
 - (void)didExitFullscreen;
+- (void)didCleanupFullscreen;
 @end
 
 class WebVideoFullscreenControllerChangeObserver : public WebVideoFullscreenChangeObserver {
     WebVideoFullscreenController* _target;
 public:
     void setTarget(WebVideoFullscreenController* target) { _target = target; }
+    virtual void didSetupFullscreen() override { [_target didSetupFullscreen]; }
     virtual void didEnterFullscreen() override { [_target didEnterFullscreen]; }
     virtual void didExitFullscreen() override { [_target didExitFullscreen]; }
+    virtual void didCleanupFullscreen() override { [_target didCleanupFullscreen]; }
 };
 
 @implementation WebVideoFullscreenController
@@ -115,15 +119,14 @@ public:
     [self retain]; // Balanced by -release in didExitFullscreen:
     
     UNUSED_PARAM(screen);
-    _videoFullscreenLayer = [CALayer layer];
     _interface = adoptRef(new WebVideoFullscreenInterfaceAVKit);
     _interface->setWebVideoFullscreenChangeObserver(&_changeObserver);
     _model = adoptRef(new WebVideoFullscreenModelMediaElement);
     _model->setWebVideoFullscreenInterface(_interface.get());
     _interface->setWebVideoFullscreenModel(_model.get());
     _model->setMediaElement(_mediaElement.get());
-    _model->setVideoFullscreenLayer(_videoFullscreenLayer.get());
-    _interface->enterFullscreen(*_videoFullscreenLayer.get(), _mediaElement->screenRect());
+    _videoFullscreenLayer = [CALayer layer];
+    _interface->setupFullscreen(*_videoFullscreenLayer.get(), _mediaElement->screenRect());
 }
 
 - (void)exitFullscreen
@@ -137,6 +140,12 @@ public:
         _interface->requestHideAndExitFullscreen();
 }
 
+- (void)didSetupFullscreen
+{
+    _model->setVideoFullscreenLayer(_videoFullscreenLayer.get());
+    _interface->enterFullscreen();
+}
+
 - (void)didEnterFullscreen
 {
 }
@@ -144,9 +153,17 @@ public:
 - (void)didExitFullscreen
 {
     WebThreadRun(^{
+        _model->setVideoFullscreenLayer(nil);
+        _interface->cleanupFullscreen();
+    });
+}
+
+- (void)didCleanupFullscreen
+{
+    WebThreadRun(^{
         _interface->setWebVideoFullscreenModel(nullptr);
         _model->setWebVideoFullscreenInterface(nullptr);
-        _model->setVideoFullscreenLayer(nullptr);
+        _model->setVideoFullscreenLayer(nil);
         _model->setMediaElement(nullptr);
         _interface->setWebVideoFullscreenChangeObserver(nullptr);
         _model = nullptr;

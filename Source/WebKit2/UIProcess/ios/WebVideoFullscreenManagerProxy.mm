@@ -71,11 +71,11 @@ void WebVideoFullscreenManagerProxy::invalidate()
     m_layerHost.clear();
 }
 
-void WebVideoFullscreenManagerProxy::enterFullscreenWithID(uint32_t videoLayerID, WebCore::IntRect initialRect)
+void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint32_t videoLayerID, WebCore::IntRect initialRect)
 {
     ASSERT(videoLayerID);
     m_layerHost = WKMakeRenderLayer(videoLayerID);
-    enterFullscreen(*m_layerHost.get(), initialRect);
+    setupFullscreen(*m_layerHost.get(), initialRect);
 }
     
 void WebVideoFullscreenManagerProxy::setSeekableRangesVector(Vector<std::pair<double, double>>& ranges)
@@ -111,6 +111,16 @@ void WebVideoFullscreenManagerProxy::didExitFullscreen()
     m_page->send(Messages::WebVideoFullscreenManager::DidExitFullscreen(), m_page->pageID());
     [m_layerHost removeFromSuperlayer];
     m_layerHost.clear();
+}
+    
+void WebVideoFullscreenManagerProxy::didCleanupFullscreen()
+{
+    m_page->send(Messages::WebVideoFullscreenManager::DidCleanupFullscreen(), m_page->pageID());
+}
+
+void WebVideoFullscreenManagerProxy::didSetupFullscreen()
+{
+    m_page->send(Messages::WebVideoFullscreenManager::DidSetupFullscreen(), m_page->pageID());
 }
 
 void WebVideoFullscreenManagerProxy::didEnterFullscreen()

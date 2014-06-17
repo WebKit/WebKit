@@ -55,13 +55,15 @@ private:
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
     // Translate to FullscreenInterface
-    void enterFullscreenWithID(uint32_t, WebCore::IntRect initialRect);
+    void setupFullscreenWithID(uint32_t, WebCore::IntRect initialRect);
     void setSeekableRangesVector(Vector<std::pair<double, double>>&);
     void setExternalPlaybackProperties(bool enabled, uint32_t targetType, String localizedDeviceName);
     
     // Fullscreen Observer
-    virtual void didExitFullscreen() override;
+    virtual void didSetupFullscreen() override;
     virtual void didEnterFullscreen() override;
+    virtual void didExitFullscreen() override;
+    virtual void didCleanupFullscreen() override;
     
     // FullscreenModel
     virtual void play() override;

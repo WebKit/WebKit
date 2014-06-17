@@ -22,28 +22,28 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "config.h"
-#include "WebVideoFullscreenManager.h"
+#import "config.h"
+#import "WebVideoFullscreenManager.h"
 
 #if PLATFORM(IOS)
 
-#include "WebCoreArgumentCoders.h"
-#include "WebPage.h"
-#include "WebProcess.h"
-#include "WebVideoFullscreenManagerMessages.h"
-#include "WebVideoFullscreenManagerProxyMessages.h"
-#include <QuartzCore/CoreAnimation.h>
-#include <WebCore/Event.h>
-#include <WebCore/EventNames.h>
-#include <WebCore/FrameView.h>
-#include <WebCore/HTMLVideoElement.h>
-#include <WebCore/PlatformCALayer.h>
-#include <WebCore/RenderLayer.h>
-#include <WebCore/RenderLayerBacking.h>
-#include <WebCore/RenderView.h>
-#include <WebCore/Settings.h>
-#include <WebCore/TimeRanges.h>
-#include <WebCore/WebCoreThreadRun.h>
+#import "WebCoreArgumentCoders.h"
+#import "WebPage.h"
+#import "WebProcess.h"
+#import "WebVideoFullscreenManagerMessages.h"
+#import "WebVideoFullscreenManagerProxyMessages.h"
+#import <QuartzCore/CoreAnimation.h>
+#import <WebCore/Event.h>
+#import <WebCore/EventNames.h>
+#import <WebCore/FrameView.h>
+#import <WebCore/HTMLVideoElement.h>
+#import <WebCore/PlatformCALayer.h>
+#import <WebCore/RenderLayer.h>
+#import <WebCore/RenderLayerBacking.h>
+#import <WebCore/RenderView.h>
+#import <WebCore/Settings.h>
+#import <WebCore/TimeRanges.h>
+#import <WebCore/WebCoreThreadRun.h>
 
 using namespace WebCore;
 
@@ -94,15 +94,9 @@ void WebVideoFullscreenManager::enterFullscreenForNode(Node* node)
     m_isAnimating = true;
     setMediaElement(toHTMLMediaElement(node));
 
-    PlatformLayer* videoLayer = [CALayer layer];
-#ifndef NDEBUG
-    [videoLayer setName:@"Web video fullscreen manager layer"];
-#endif
     m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess();
-    m_layerHostingContext->setRootLayer(videoLayer);
-    setVideoFullscreenLayer(videoLayer);
-
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::EnterFullscreenWithID(m_layerHostingContext->contextID(), screenRectForNode(node)), m_page->pageID());
+    
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetupFullscreenWithID(m_layerHostingContext->contextID(), screenRectForNode(node)), m_page->pageID());
 }
 
 void WebVideoFullscreenManager::exitFullscreenForNode(Node* node)
@@ -165,7 +159,19 @@ void WebVideoFullscreenManager::setExternalPlayback(bool enabled, WebVideoFullsc
 {
     m_page->send(Messages::WebVideoFullscreenManagerProxy::SetExternalPlaybackProperties(enabled, static_cast<uint32_t>(targetType), localizedDeviceName), m_page->pageID());
 }
-
+    
+void WebVideoFullscreenManager::didSetupFullscreen()
+{
+    PlatformLayer* videoLayer = [CALayer layer];
+#ifndef NDEBUG
+    [videoLayer setName:@"Web video fullscreen manager layer"];
+#endif
+    
+    m_layerHostingContext->setRootLayer(videoLayer);
+    setVideoFullscreenLayer(videoLayer);
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::EnterFullscreen(), m_page->pageID());
+}
+    
 void WebVideoFullscreenManager::didEnterFullscreen()
 {
     m_isAnimating = false;
@@ -184,13 +190,22 @@ void WebVideoFullscreenManager::didEnterFullscreen()
 
 void WebVideoFullscreenManager::didExitFullscreen()
 {
+    setVideoFullscreenLayer(nil);
+    __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        m_layerHostingContext->setRootLayer(nullptr);
+        m_layerHostingContext = nullptr;
+        m_page->send(Messages::WebVideoFullscreenManagerProxy::CleanupFullscreen(), m_page->pageID());
+        protect.clear();
+    });
+}
+    
+void WebVideoFullscreenManager::didCleanupFullscreen()
+{
     m_isAnimating = false;
     m_isFullscreen = false;
-
-    m_layerHostingContext->setRootLayer(nullptr);
-    m_layerHostingContext = nullptr;
-    setVideoFullscreenLayer(nullptr);
-
+    
     setMediaElement(nullptr);
 
     if (!m_targetIsFullscreen)
