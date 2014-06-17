@@ -1,3 +1,22 @@
+2014-06-17  Rebecca Hauck  <rhauck@adobe.com>
+
+        Update import-w3c-tests to reflect current W3C test repo directory structure
+        https://bugs.webkit.org/show_bug.cgi?id=133460
+
+        Reviewed by Bem Jones-Bey.
+
+        Removed all references to test status, which are no longer reflected in the
+        directory names in the W3C CSS test repo.  No tests are required for this 
+        change, the existing tests pass.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (main):
+        (TestImporter.__init__):
+        (TestImporter.find_importable_tests):
+        (TestImporter.setup_destination_directory):
+        (TestImporter.write_import_log):
+        (TestImporter.update_test_status): Deleted.
+
 2014-06-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Fix the handling of resize events after r169505.

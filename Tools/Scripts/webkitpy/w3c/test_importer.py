@@ -34,24 +34,11 @@
 
  This script will import the tests into WebKit following these rules:
 
-    - Only tests that are approved or officially submitted awaiting review are imported
+    - All tests are imported into LayoutTests/w3c
 
-    - All tests are imported into LayoutTests/csswg
-
-    - If the tests are approved, they'll be imported into a directory tree that
-      mirrors the CSS Mercurial repo. For example, <csswg_repo_root>/approved/css2.1 is brought in
-      as LayoutTests/csswg/approved/css2.1, maintaining the entire directory structure under that
-
-    - If the tests are submitted, they'll maintain their directory structure under
-      LayoutTests/csswg. For example, everything under
-      <csswg_repo_root>/contributors/adobe/submitted is brought into
-      LayoutTests/csswg/contributors/adobe/submitted, mirroring its directory structure in the
-      csswg repo
-
-    - If the import directory specified is just a contributor folder, only the submitted folder
-      for that contributor is brought in. For example, to import all of Mozilla's tests, either
-      <csswg_repo_root>/contributors/mozilla or <csswg_repo_root>/contributors/mozilla/submitted
-      will work and are equivalent.
+    - Tests will be imported into a directory tree that
+      mirrors the CSS Mercurial repo. For example, <csswg_repo_root>/css2.1 is brought in
+      as LayoutTests/csswg/css2.1, maintaining the entire directory structure under that
 
     - By default, only reftests and jstest are imported. This can be overridden with a -a or --all
       argument
@@ -98,16 +85,7 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.w3c.test_parser import TestParser
 from webkitpy.w3c.test_converter import convert_for_webkit
 
-
-TEST_STATUS_UNKNOWN = 'unknown'
-TEST_STATUS_APPROVED = 'approved'
-TEST_STATUS_SUBMITTED = 'submitted'
-VALID_TEST_STATUSES = [TEST_STATUS_APPROVED, TEST_STATUS_SUBMITTED]
-
-CONTRIBUTOR_DIR_NAME = 'contributors'
-
 CHANGESET_NOT_AVAILABLE = 'Not Available'
-
 
 _log = logging.getLogger(__name__)
 
@@ -116,13 +94,7 @@ def main(_argv, _stdout, _stderr):
     options, args = parse_args()
     import_dir = args[0]
     if len(args) == 1:
-        repo_dir_parts = []
-        for part in import_dir.split(os.path.sep):
-            if part in VALID_TEST_STATUSES:
-                break
-            else:
-                repo_dir_parts.append(part)
-        repo_dir = os.path.sep.join(repo_dir_parts)
+        repo_dir = import_dir
     else:
         repo_dir = args[1]
 
@@ -187,7 +159,6 @@ class TestImporter(object):
         self.destination_directory = webkit_finder.path_from_webkit_base("LayoutTests", options.destination)
 
         self.changeset = CHANGESET_NOT_AVAILABLE
-        self.test_status = TEST_STATUS_UNKNOWN
 
         self.import_list = []
 
@@ -211,10 +182,7 @@ class TestImporter(object):
             reftests = 0
             jstests = 0
 
-            # "archive" and "data" dirs are internal csswg things that live in every approved directory.
-            # FIXME: skip 'incoming' tests for now, but we should rework the 'test_status' concept and
-            # support reading them as well.
-            DIRS_TO_SKIP = ('.git', '.hg', 'data', 'archive', 'incoming')
+            DIRS_TO_SKIP = ('.git', '.hg', 'work-in-progress', 'tools', 'support')
             for d in DIRS_TO_SKIP:
                 if d in dirs:
                     dirs.remove(d)
@@ -384,11 +352,8 @@ class TestImporter(object):
             _log.info('  %s: %s', prefixed_property, total_prefixed_properties[prefixed_property])
 
     def setup_destination_directory(self):
-        """ Creates a destination directory that mirrors that of the source approved or submitted directory """
+        """ Creates a destination directory that mirrors that of the source directory """
 
-        self.update_test_status()
-
-        start = self.source_directory.find(self.test_status)
         new_subpath = self.source_directory[len(self.repo_dir):]
 
         destination_directory = os.path.join(self.destination_directory, new_subpath)
@@ -397,18 +362,6 @@ class TestImporter(object):
             os.makedirs(destination_directory)
 
         _log.info('Tests will be imported into: %s', destination_directory)
-
-    def update_test_status(self):
-        """ Sets the test status to either 'approved' or 'submitted' """
-
-        status = TEST_STATUS_UNKNOWN
-
-        directory_parts = self.source_directory.split(os.path.sep)
-        for test_status in VALID_TEST_STATUSES:
-            if test_status in directory_parts:
-                status = test_status
-
-        self.test_status = status
 
     def remove_deleted_files(self, import_directory, new_file_list):
         """ Reads an import log in |import_directory|, compares it to the |new_file_list|, and removes files not in the new list."""
@@ -448,7 +401,6 @@ class TestImporter(object):
         import_log.write('------------------------------------------------------------------------\n')
         import_log.write('Last Import: ' + now.strftime('%Y-%m-%d %H:%M') + '\n')
         import_log.write('W3C Mercurial changeset: ' + self.changeset + '\n')
-        import_log.write('Test status at time of import: ' + self.test_status + '\n')
         import_log.write('------------------------------------------------------------------------\n')
         import_log.write('Properties requiring vendor prefixes:\n')
         if prop_list:
