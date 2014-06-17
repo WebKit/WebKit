@@ -133,14 +133,6 @@ String LocaleMac::formatDateTime(const DateComponents& dateComponents, FormatTyp
     NSDateFormatter *dateFormatter = localizedDateCache().formatterForDateType(type);
     return [dateFormatter stringFromDate:date];
 }
-
-float LocaleMac::maximumWidthForDateType(DateComponents::Type type, const Font& font)
-{
-    ASSERT(type != DateComponents::Invalid);
-    ASSERT(type != DateComponents::Week);
-
-    return localizedDateCache().maximumWidthForDateType(type, font);
-}
 #endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)

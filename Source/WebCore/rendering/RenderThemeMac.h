@@ -134,7 +134,7 @@ protected:
     virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const override;
 
     virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
-    virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const override;
+    virtual void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element&) const override;
 
 #if ENABLE(PROGRESS_ELEMENT)
     virtual void adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*) const override;

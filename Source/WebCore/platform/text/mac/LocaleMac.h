@@ -51,7 +51,6 @@ public:
     ~LocaleMac();
 
 #if PLATFORM(IOS)
-    virtual float maximumWidthForDateType(DateComponents::Type, const Font&) override;
     virtual String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified) override;
 #endif
 

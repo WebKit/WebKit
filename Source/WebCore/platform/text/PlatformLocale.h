@@ -124,12 +124,6 @@ public:
 #endif // !PLATFORM(IOS)
 #endif
 
-#if PLATFORM(IOS)
-    // FIXME: This code should be merged with Open Source in a way that is future compatible.
-    // Maximum width for a formatted date string with a specified font.
-    virtual float maximumWidthForDateType(DateComponents::Type, const Font&) = 0;
-#endif
-
     virtual ~Locale();
 
 protected:

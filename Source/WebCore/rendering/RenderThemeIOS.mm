@@ -44,6 +44,7 @@
 #import "HTMLNames.h"
 #import "HTMLSelectElement.h"
 #import "Icon.h"
+#import "LocalizedDateCache.h"
 #import "NodeRenderStyle.h"
 #import "Page.h"
 #import "PlatformLocale.h"
@@ -536,67 +537,91 @@ void RenderThemeIOS::adjustRoundBorderRadius(RenderStyle& style, RenderBox* box)
     style.setBorderRadius(LengthSize(radiusWidth, radiusHeight));
 }
 
-static void applyCommonButtonPaddingToStyle(RenderStyle* style, Element* element)
+static void applyCommonButtonPaddingToStyle(RenderStyle& style, Element& element)
 {
-    Document& document = element->document();
+    Document& document = element.document();
     RefPtr<CSSPrimitiveValue> emSize = CSSPrimitiveValue::create(0.5, CSSPrimitiveValue::CSS_EMS);
-    int pixels = emSize->computeLength<int>(CSSToLengthConversionData(style, document.renderStyle(), document.renderView(), document.frame()->pageZoomFactor()));
-    style->setPaddingBox(LengthBox(0, pixels, 0, pixels));
+    int pixels = emSize->computeLength<int>(CSSToLengthConversionData(&style, document.renderStyle(), document.renderView(), document.frame()->pageZoomFactor()));
+    style.setPaddingBox(LengthBox(0, pixels, 0, pixels));
 }
 
-static void adjustSelectListButtonStyle(RenderStyle* style, Element* element)
+static void adjustSelectListButtonStyle(RenderStyle& style, Element& element)
 {
     // Enforce "padding: 0 0.5em".
     applyCommonButtonPaddingToStyle(style, element);
 
     // Enforce "line-height: normal".
-    style->setLineHeight(Length(-100.0, Percent));
+    style.setLineHeight(Length(-100.0, Percent));
 }
+    
+class RenderThemeMeasureTextClient : public MeasureTextClient {
+public:
+    RenderThemeMeasureTextClient(const Font& font, RenderObject& renderObject, const RenderStyle& style)
+        : m_font(font)
+        , m_renderObject(renderObject)
+        , m_style(style)
+    {
+    }
+    virtual float measureText(const String& string) const override
+    {
+        TextRun run = RenderBlock::constructTextRun(&m_renderObject, m_font, string, m_style, TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion, DefaultTextRunFlags);
+        return m_font.width(run);
+    }
+private:
+    const Font& m_font;
+    RenderObject& m_renderObject;
+    const RenderStyle& m_style;
+};
 
-static void adjustInputElementButtonStyle(RenderStyle* style, HTMLInputElement* inputElement)
+static void adjustInputElementButtonStyle(RenderStyle& style, HTMLInputElement& inputElement)
 {
     // Always Enforce "padding: 0 0.5em".
     applyCommonButtonPaddingToStyle(style, inputElement);
 
     // Don't adjust the style if the width is specified.
-    if (style->width().isFixed() && style->width().value() > 0)
+    if (style.width().isFixed() && style.width().value() > 0)
         return;
 
     // Don't adjust for unsupported date input types.
-    DateComponents::Type dateType = inputElement->dateType();
+    DateComponents::Type dateType = inputElement.dateType();
     if (dateType == DateComponents::Invalid || dateType == DateComponents::Week)
         return;
 
     // Enforce the width and set the box-sizing to content-box to not conflict with the padding.
-    Font font = style->font();
+    Font font = style.font();
+    
+    RenderObject* renderer = inputElement.renderer();
+    if (font.isSVGFont() && !renderer)
+        return;
+    
     FontCachePurgePreventer fontCachePurgePreventer;
-    // FIXME: Choose an appropriate width for these elements when
-    // styled with SVG fonts (rather than simply 0).
-    // https://bugs.webkit.org/show_bug.cgi?id=133524
-    float maximumWidth = font.isSVGFont() ? 0 : inputElement->locale().maximumWidthForDateType(dateType, font);
+    float maximumWidth = localizedDateCache().maximumWidthForDateType(dateType, font, RenderThemeMeasureTextClient(font, *renderer, style));
+
+    ASSERT(maximumWidth >= 0);
+
     if (maximumWidth > 0) {    
         int width = static_cast<int>(maximumWidth + MenuListButtonPaddingRight);
-        style->setWidth(Length(width, Fixed));
-        style->setBoxSizing(CONTENT_BOX);
+        style.setWidth(Length(width, Fixed));
+        style.setBoxSizing(CONTENT_BOX);
     }
 }
 
-void RenderThemeIOS::adjustMenuListButtonStyle(StyleResolver*, RenderStyle* style, Element* element) const
+void RenderThemeIOS::adjustMenuListButtonStyle(StyleResolver&, RenderStyle& style, Element& element) const
 {
     // Set the min-height to be at least MenuListMinHeight.
-    if (style->height().isAuto())
-        style->setMinHeight(Length(std::max(MenuListMinHeight, static_cast<int>(MenuListBaseHeight / MenuListBaseFontSize * style->fontDescription().computedSize())), Fixed));
+    if (style.height().isAuto())
+        style.setMinHeight(Length(std::max(MenuListMinHeight, static_cast<int>(MenuListBaseHeight / MenuListBaseFontSize * style.fontDescription().computedSize())), Fixed));
     else
-        style->setMinHeight(Length(MenuListMinHeight, Fixed));
+        style.setMinHeight(Length(MenuListMinHeight, Fixed));
 
     // Enforce some default styles in the case that this is a non-multiple <select> element,
     // or a date input. We don't force these if this is just an element with
     // "-webkit-appearance: menulist-button".
-    if (element->hasTagName(HTMLNames::selectTag) && !element->hasAttribute(HTMLNames::multipleAttr))
+    if (element.hasTagName(HTMLNames::selectTag) && !element.hasAttribute(HTMLNames::multipleAttr))
         adjustSelectListButtonStyle(style, element);
-    else if (element->hasTagName(HTMLNames::inputTag)) {
-        HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(element);
-        adjustInputElementButtonStyle(style, inputElement);
+    else if (element.hasTagName(HTMLNames::inputTag)) {
+        HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(&element);
+        adjustInputElementButtonStyle(style, *inputElement);
     }
 }
 
@@ -1046,7 +1071,7 @@ bool RenderThemeIOS::paintFileUploadIconDecorations(const RenderObject&, const R
 
     return false;
 }
-    
+
 Color RenderThemeIOS::platformActiveSelectionBackgroundColor() const
 {
     return Color::transparent;

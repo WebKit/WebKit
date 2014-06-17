@@ -36,11 +36,17 @@
 #if PLATFORM(IOS)
 
 namespace WebCore {
+    
+class MeasureTextClient {
+public:
+    virtual float measureText(const String&) const = 0;
+    virtual ~MeasureTextClient() { }
+};
 
 class LocalizedDateCache {
 public:
     NSDateFormatter *formatterForDateType(DateComponents::Type);
-    float maximumWidthForDateType(DateComponents::Type, const Font&);
+    float maximumWidthForDateType(DateComponents::Type, const Font&, const MeasureTextClient&);
     void localeChanged();
 
 private:
@@ -48,7 +54,7 @@ private:
     ~LocalizedDateCache();
 
     NSDateFormatter *createFormatterForType(DateComponents::Type);
-    float calculateMaximumWidth(DateComponents::Type, const Font&);
+    float calculateMaximumWidth(DateComponents::Type, const MeasureTextClient&);
 
     // Using int instead of DateComponents::Type for the key because the enum
     // does not have a default hash and hash traits. Usage of the maps

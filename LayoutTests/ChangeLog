@@ -1,3 +1,16 @@
+2014-06-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Input type=time elements styled with SVG fonts have 0 width
+        https://bugs.webkit.org/show_bug.cgi?id=133524
+
+        Reviewed by Simon Fraser.
+
+        Simply render a variety of input elements with SVG fonts, and make sure they have sane widths. Note that this
+        test is not platform-specific, even though the bug is.
+
+        * fast/forms/time-input-svg-font-expected.txt: Added.
+        * fast/forms/time-input-svg-font.html: Added.
+
 2014-06-17  Simon Fraser  <simon.fraser@apple.com>
 
         [UI-side compositing] fix reflections on composited layers

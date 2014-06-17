@@ -210,7 +210,7 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
     case MenulistPart:
         return adjustMenuListStyle(&styleResolver, &style, e);
     case MenulistButtonPart:
-        return adjustMenuListButtonStyle(&styleResolver, &style, e);
+        return adjustMenuListButtonStyle(styleResolver, style, *e);
     case MediaPlayButtonPart:
     case MediaCurrentTimePart:
     case MediaTimeRemainingPart:
@@ -1119,7 +1119,7 @@ bool RenderTheme::shouldHaveSpinButton(HTMLInputElement* inputElement) const
     return inputElement->isSteppable() && !inputElement->isRangeControl();
 }
 
-void RenderTheme::adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const
+void RenderTheme::adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element&) const
 {
 }
 

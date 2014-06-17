@@ -128,7 +128,7 @@ public:
     virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const override;
     virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
-    virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const override;
+    virtual void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element&) const override;
     virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
     virtual void adjustSearchFieldResultsDecorationPartStyle(StyleResolver*, RenderStyle*, Element*) const override;

@@ -136,7 +136,7 @@ private:
     // Aqua themed controls whenever possible. We always want to use GTK+ theming, so
     // we don't maintain this differentiation.
     virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const override;
-    virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const override;
+    virtual void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element&) const override;
     virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 

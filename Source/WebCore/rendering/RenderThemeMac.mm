@@ -1420,17 +1420,17 @@ PopupMenuStyle::PopupMenuSize RenderThemeMac::popupMenuSize(const RenderStyle* s
     }
 }
 
-void RenderThemeMac::adjustMenuListButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
+void RenderThemeMac::adjustMenuListButtonStyle(StyleResolver&, RenderStyle& style, Element&) const
 {
-    float fontScale = style->fontSize() / baseFontSize;
+    float fontScale = style.fontSize() / baseFontSize;
 
-    style->resetPadding();
-    style->setBorderRadius(IntSize(int(baseBorderRadius + fontScale - 1), int(baseBorderRadius + fontScale - 1))); // FIXME: Round up?
+    style.resetPadding();
+    style.setBorderRadius(IntSize(int(baseBorderRadius + fontScale - 1), int(baseBorderRadius + fontScale - 1))); // FIXME: Round up?
 
     const int minHeight = 15;
-    style->setMinHeight(Length(minHeight, Fixed));
+    style.setMinHeight(Length(minHeight, Fixed));
 
-    style->setLineHeight(RenderStyle::initialLineHeight());
+    style.setLineHeight(RenderStyle::initialLineHeight());
 }
 
 void RenderThemeMac::setPopupButtonCellState(const RenderObject& o, const IntSize& buttonSize)

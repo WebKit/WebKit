@@ -1,3 +1,35 @@
+2014-06-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Input type=time elements styled with SVG fonts have 0 width
+        https://bugs.webkit.org/show_bug.cgi?id=133524
+
+        Reviewed by Simon Fraser.
+
+        Refactor how the LocalizedDateCache returns maximum widths for input elements. Currently,
+        measuring the width of an SVG font requires a RenderObject for context, which the
+        LocalizedDateCache can't know about (it would be a platform violation). Instead, the
+        LocalizedDateCache can return the strings that it would use to measure the width, and the
+        caller can actually run the width computation.
+
+        Test: fast/forms/time-input-svg-font.html
+
+        * platform/text/PlatformLocale.h:
+        * platform/text/ios/LocalizedDateCache.h:
+        * platform/text/ios/LocalizedDateCache.mm:
+        (WebCore::LocalizedDateCache::maximumWidthForDateType): Take a delegate which can
+        measure text
+        (WebCore::LocalizedDateCache::calculateMaximumWidth): Perform maximum width
+        computation using delegate.
+        * platform/text/mac/LocaleMac.h:
+        * platform/text/mac/LocaleMac.mm:
+        (WebCore::LocaleMac::formatDateTime):
+        (WebCore::LocaleMac::maximumWidthForDateType): Deleted. Short-circuit this and go
+        directly to the LocalizedDateCache. This makes sense because we have to explicitly
+        insert computed values back into the cache in this new model.
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::adjustInputElementButtonStyle): Create a delegate and pass it to the
+        LocalizedDateCache
+
 2014-06-17  Simon Fraser  <simon.fraser@apple.com>
 
         [UI-side compositing] fix reflections on composited layers

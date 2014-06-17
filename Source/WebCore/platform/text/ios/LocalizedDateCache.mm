@@ -84,7 +84,7 @@ NSDateFormatter *LocalizedDateCache::formatterForDateType(DateComponents::Type t
     return dateFormatter;
 }
 
-float LocalizedDateCache::maximumWidthForDateType(DateComponents::Type type, const Font& font)
+float LocalizedDateCache::maximumWidthForDateType(DateComponents::Type type, const Font& font, const MeasureTextClient& measurer)
 {
     int key = static_cast<int>(type);
     if (m_font == font) {
@@ -95,7 +95,7 @@ float LocalizedDateCache::maximumWidthForDateType(DateComponents::Type type, con
         m_maxWidthMap.clear();
     }
 
-    float calculatedMaximum = calculateMaximumWidth(type, font);
+    float calculatedMaximum = calculateMaximumWidth(type, measurer);
     m_maxWidthMap.set(key, calculatedMaximum);
     return calculatedMaximum;
 }
@@ -144,7 +144,7 @@ NSDateFormatter *LocalizedDateCache::createFormatterForType(DateComponents::Type
 
 // NOTE: This does not check for the widest day of the week.
 // We assume no formatter option shows that information.
-float LocalizedDateCache::calculateMaximumWidth(DateComponents::Type type, const Font& font)
+float LocalizedDateCache::calculateMaximumWidth(DateComponents::Type type, const MeasureTextClient& measurer)
 {
     float maximumWidth = 0;
 
@@ -182,8 +182,7 @@ float LocalizedDateCache::calculateMaximumWidth(DateComponents::Type type, const
         [components.get() setMonth:(i + 1)];
         NSDate *date = [gregorian.get() dateFromComponents:components.get()];
         NSString *formattedDate = [dateFormatter stringFromDate:date];
-        String str = String(formattedDate);
-        maximumWidth = max(maximumWidth, font.width(str));
+        maximumWidth = max(maximumWidth, measurer.measureText(String(formattedDate)));
     }
 
     return maximumWidth;
