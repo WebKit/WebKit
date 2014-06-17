@@ -808,6 +808,10 @@ webkit.org/b/132279 perf/mouse-event.html [ Failure Pass ]
 webkit.org/b/132281 fast/workers/worker-constructor.html [ Timeout Pass ]
 webkit.org/b/132282 fast/inline-block/14498-positionForCoordinates.html [ Failure Pass ]
 
+#fast/dom/Window
+webkit.org/b/132255 fast/dom/Window/window-resize-and-move-sub-frame.html [ Timeout Pass ]
+webkit.org/b/132255 fast/dom/Window/window-resize-contents.html [ Timeout Pass ]
+
 #Fast overflow
 webkit.org/b/132258 fast/overflow/hit-test-overflow-controls.html [ Failure ImageOnlyFailure Pass ]
 webkit.org/b/132258 fast/overflow/overflow-text-hit-testing.html [ Failure Pass ]
@@ -847,6 +851,8 @@ webkit.org/b/132998 media/track/track-change-event.html [ Pass Timeout ]
 webkit.org/b/132999 html5lib/generated/run-tests16-write.html [ Pass Timeout ]
 webkit.org/b/133000 js/slow-stress/call-spread.html [ Pass Timeout ]
 webkit.org/b/133001 fast/workers/worker-context-gc.html [ Pass Timeout ]
+
+webkit.org/b/133807 fast/dynamic/window-resize-scrollbars-test.html [ Failure Timeout ]
 
 webkit.org/b/133865 media/W3C/video/networkState/networkState_during_progress.html [ Failure Pass ]
 webkit.org/b/133866 media/media-controls-cancel-events.html [ Failure Pass ]
@@ -1011,6 +1017,11 @@ webkit.org/b/133148 accessibility/content-editable-as-textarea.html [ Timeout ]
 webkit.org/b/133148 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Timeout ]
 
 webkit.org/b/133151 js/cached-window-properties.html [ Timeout Pass ]
+
+webkit.org/b/133517 css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html [ Timeout ]
+webkit.org/b/133517 css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Timeout ]
+webkit.org/b/133517 css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Timeout ]
+webkit.org/b/133517 css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Timeout ]
 
 webkit.org/b/133808 media/video-trackmenu-selection.html [ Timeout ]
 
@@ -1193,6 +1204,7 @@ webkit.org/b/122535 fast/dom/Window/open-window-min-size.html [ Failure ]
 Bug(GTK) editing/selection/5136696.html [ Failure ]
 Bug(GTK) editing/selection/inactive-selection.html [ Failure ]
 Bug(GTK) fast/css/disabled-author-styles.html [ Failure ]
+Bug(GTK) fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Failure ]
 Bug(GTK) fast/dom/Window/window-postmessage-clone.html [ Failure Timeout ]
 Bug(GTK) fast/events/backspace-navigates-back.html [ Failure ]
 Bug(GTK) fast/events/keydown-leftright-keys.html [ Failure ]
@@ -1317,6 +1329,7 @@ webkit.org/b/53964 fast/forms/listbox-onchange.html [ Failure ]
 webkit.org/b/53964 fast/forms/option-mouseevents.html [ Failure ]
 
 # Probably failing because resizing is asynchronous.
+webkit.org/b/53959 fast/dom/Window/window-resize-and-move-arguments.html [ Failure Timeout ]
 webkit.org/b/53959 fast/dom/Window/window-resize.html [ Failure Timeout ]
 
 # keygen element rendering is broken
@@ -1573,6 +1586,9 @@ webkit.org/b/93976 fast/css-generated-content/quotes-lang.html [ ImageOnlyFailur
 webkit.org/b/94009 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
 
 webkit.org/b/80129 fast/frames/flattening/frameset-flattening-advanced.html [ Failure ]
+webkit.org/b/131793 fast/frames/frame-programmatic-noresize.html [ Failure Pass ]
+webkit.org/b/131794 fast/frames/frame-with-noresize-can-be-resized-after-removal-of-noresize.html [ Failure Pass ]
+webkit.org/b/131794 fast/frames/frame-with-noresize-can-be-resized-after-setting-noResize-to-false.html [ Failure Pass ]
 
 webkit.org/b/89663 editing/deleting/delete-3800834-fix.html [ Failure ]
 

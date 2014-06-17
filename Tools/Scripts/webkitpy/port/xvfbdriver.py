@@ -84,7 +84,7 @@ class XvfbDriver(Driver):
         if llvmpipe_libgl_path:
             environment['LD_LIBRARY_PATH'] = '%s:%s' % (llvmpipe_libgl_path, os.environ.get('LD_LIBRARY_PATH', ''))
 
-        run_xvfb = ["Xvfb", ":%d" % display_id, "-screen",  "0", "1024x768x%s" % self._xvfb_screen_depth(), "-nolisten", "tcp"]
+        run_xvfb = ["Xvfb", ":%d" % display_id, "-screen",  "0", "800x600x%s" % self._xvfb_screen_depth(), "-nolisten", "tcp"]
         with open(os.devnull, 'w') as devnull:
             self._xvfb_process = self._port.host.executive.popen(run_xvfb, stderr=devnull)
 
