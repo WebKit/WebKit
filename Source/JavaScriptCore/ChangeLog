@@ -1,3 +1,16 @@
+2014-06-17  Matthew Mirman  <mmirman@apple.com>
+
+        Fixes bug where building JSC sometimes crashes at build-symbol-table-index.py. Also adds licenses. 
+        https://bugs.webkit.org/show_bug.cgi?id=133814
+
+        Reviewed by Filip Pizlo.
+        
+        Adds the "shopt -s nullglob" line necessary to prevent the loop in the shell 
+        script from using "*.o" as a file when no other files in the directory exist. 
+        
+        * build-symbol-table-index.sh: Added license.
+        * copy-llvm-ir-to-derived-sources.sh: Added license and "shopt -s nullglob" line.
+
 2014-06-16  Sam Weinig  <sam@webkit.org>
 
         Move forward declaration of bindings static functions into their implementation files
