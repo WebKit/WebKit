@@ -39,9 +39,9 @@
 ] interface Location {
     [DoNotCheckSecurityOnSetter, CustomSetter] attribute DOMString href;
 
-    [Custom] void assign([Default=Undefined] optional DOMString url);
-    [Custom] void replace([Default=Undefined] optional DOMString url);
-    [Custom] void reload();
+    [Custom, ForwardDeclareInHeader] void assign([Default=Undefined] optional DOMString url);
+    [Custom, ForwardDeclareInHeader] void replace([Default=Undefined] optional DOMString url);
+    [Custom, ForwardDeclareInHeader] void reload();
 
     // URI decomposition attributes
     [CustomSetter] attribute DOMString protocol;

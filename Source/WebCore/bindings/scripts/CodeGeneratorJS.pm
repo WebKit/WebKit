@@ -1008,6 +1008,9 @@ sub GenerateHeader
     my $numCustomFunctions = 0;
     my $numCustomAttributes = 0;
 
+    my $hasForwardDeclaringFunctions = 0;
+    my $hasForwardDeclaringAttributes = 0;
+
     # Attribute and function enums
     if ($numAttributes > 0) {
         foreach (@{$interface->attributes}) {
@@ -1021,6 +1024,10 @@ sub GenerateHeader
                 $numCachedAttributes++;
                 $needsVisitChildren = 1;
                 push(@headerContent, "#endif\n") if $conditionalString;
+            }
+
+            if ($attribute->signature->extendedAttributes->{"ForwardDeclareInHeader"}) {
+                $hasForwardDeclaringAttributes = 1;
             }
         }
     }
@@ -1054,6 +1061,10 @@ sub GenerateHeader
 
     foreach my $function (@{$interface->functions}) {
         $numCustomFunctions++ if HasCustomMethod($function->signature->extendedAttributes);
+
+        if ($function->signature->extendedAttributes->{"ForwardDeclareInHeader"}) {
+            $hasForwardDeclaringFunctions = 1;
+        }
     }
 
     if ($numCustomFunctions > 0) {
@@ -1246,11 +1257,13 @@ sub GenerateHeader
         GenerateConstructorDeclaration(\@headerContent, $className, $interface, $interfaceName);
     }
 
-    if ($numFunctions > 0) {
+    if ($hasForwardDeclaringFunctions) {
         my $inAppleCopyright = 0;
         push(@headerContent,"// Functions\n\n");
         foreach my $function (@{$interface->functions}) {
             next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
+            next unless $function->signature->extendedAttributes->{"ForwardDeclareInHeader"};
+
             my $needsAppleCopyright = $function->signature->extendedAttributes->{"AppleCopyright"};
             if ($needsAppleCopyright) {
                 if (!$inAppleCopyright) {
@@ -1272,9 +1285,11 @@ sub GenerateHeader
         push(@headerContent, $endAppleCopyright) if $inAppleCopyright;
     }
 
-    if ($numAttributes > 0 || !$interface->extendedAttributes->{"NoInterfaceObject"}) {
+    if ($hasForwardDeclaringAttributes) {
         push(@headerContent,"// Attributes\n\n");
         foreach my $attribute (@{$interface->attributes}) {
+            next unless $attribute->signature->extendedAttributes->{"ForwardDeclareInHeader"};
+
             my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             my $getter = GetAttributeGetterName($interfaceName, $className, $attribute);
@@ -1284,16 +1299,6 @@ sub GenerateHeader
                 push(@headerContent, "void ${setter}(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
             }
             push(@headerContent, "#endif\n") if $conditionalString;
-        }
-        
-        if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
-            my $getter = "js" . $interfaceName . "Constructor";
-            push(@headerContent, "JSC::EncodedJSValue ${getter}(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);\n");
-        }
-
-        if ($interface->extendedAttributes->{"ReplaceableConstructor"}) {
-            my $constructorFunctionName = "setJS" . $interfaceName . "Constructor";
-            push(@headerContent, "void ${constructorFunctionName}(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
         }
     }
 
@@ -1748,6 +1753,65 @@ sub GenerateImplementation
     push(@implContent, "\nusing namespace JSC;\n\n");
     push(@implContent, "namespace WebCore {\n\n");
 
+    my $numConstants = @{$interface->constants};
+    my $numFunctions = @{$interface->functions};
+    my $numAttributes = @{$interface->attributes};
+
+    if ($numFunctions > 0) {
+        my $inAppleCopyright = 0;
+        push(@implContent,"// Functions\n\n");
+        foreach my $function (@{$interface->functions}) {
+            next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
+            next if $function->signature->extendedAttributes->{"ForwardDeclareInHeader"};
+
+            my $needsAppleCopyright = $function->signature->extendedAttributes->{"AppleCopyright"};
+            if ($needsAppleCopyright) {
+                if (!$inAppleCopyright) {
+                    push(@implContent, $beginAppleCopyrightForHeaderFiles);
+                    $inAppleCopyright = 1;
+                }
+            } elsif ($inAppleCopyright) {
+                push(@implContent, $endAppleCopyright);
+                $inAppleCopyright = 0;
+            }
+
+            my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
+            push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
+            my $functionName = GetFunctionName($className, $function);
+            push(@implContent, "JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState*);\n");
+            push(@implContent, "#endif\n") if $conditionalString;
+        }
+
+        push(@implContent, $endAppleCopyright) if $inAppleCopyright;
+    }
+
+    if ($numAttributes > 0 || !$interface->extendedAttributes->{"NoInterfaceObject"}) {
+        push(@implContent,"// Attributes\n\n");
+        foreach my $attribute (@{$interface->attributes}) {
+            next if $attribute->signature->extendedAttributes->{"ForwardDeclareInHeader"};
+
+            my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
+            push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
+            my $getter = GetAttributeGetterName($interfaceName, $className, $attribute);
+            push(@implContent, "JSC::EncodedJSValue ${getter}(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);\n");
+            if (!IsReadonly($attribute)) {
+                my $setter = GetAttributeSetterName($interfaceName, $className, $attribute);
+                push(@implContent, "void ${setter}(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
+            }
+            push(@implContent, "#endif\n") if $conditionalString;
+        }
+        
+        if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
+            my $getter = "js" . $interfaceName . "Constructor";
+            push(@implContent, "JSC::EncodedJSValue ${getter}(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);\n");
+        }
+
+        if ($interface->extendedAttributes->{"ReplaceableConstructor"}) {
+            my $constructorFunctionName = "setJS" . $interfaceName . "Constructor";
+            push(@implContent, "void ${constructorFunctionName}(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
+        }
+    }
+
     my @hashKeys = ();
     my @hashValue1 = ();
     my @hashValue2 = ();
@@ -1760,8 +1824,6 @@ sub GenerateImplementation
         \@hashValue1, \@hashValue2,
         \%conditionals);
 
-    my $numConstants = @{$interface->constants};
-    my $numFunctions = @{$interface->functions};
     $object->GenerateHashTable($hashName, $numInstanceAttributes,
         \@hashKeys, \@hashSpecials,
         \@hashValue1, \@hashValue2,
@@ -2140,7 +2202,6 @@ sub GenerateImplementation
         }
 
     }
-    my $numAttributes = @{$interface->attributes};
     $numAttributes = $numAttributes + 1 if !$interface->extendedAttributes->{"NoInterfaceObject"};
     if ($numAttributes > 0) {
         foreach my $attribute (@{$interface->attributes}) {

@@ -38,21 +38,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-static EncodedJSValue nonCachingStaticBackFunctionGetter(ExecState* exec, JSObject*, EncodedJSValue, PropertyName propertyName)
-{
-    return JSValue::encode(JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 0, propertyName.publicName(), jsHistoryPrototypeFunctionBack));
-}
-
-static EncodedJSValue nonCachingStaticForwardFunctionGetter(ExecState* exec, JSObject*, EncodedJSValue, PropertyName propertyName)
-{
-    return JSValue::encode(JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 0, propertyName.publicName(), jsHistoryPrototypeFunctionForward));
-}
-
-static EncodedJSValue nonCachingStaticGoFunctionGetter(ExecState* exec, JSObject*, EncodedJSValue, PropertyName propertyName)
-{
-    return JSValue::encode(JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 1, propertyName.publicName(), jsHistoryPrototypeFunctionGo));
-}
-
 bool JSHistory::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     // When accessing History cross-domain, functions are always the native built-in ones.
@@ -66,27 +51,22 @@ bool JSHistory::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propert
 
     // Check for the few functions that we allow, even when called cross-domain.
     // Make these read-only / non-configurable to prevent writes via defineProperty.
-    const HashTableValue* entry = JSHistoryPrototype::info()->propHashTable(exec)->entry(exec, propertyName);
-    if (entry) {
-        // Allow access to back(), forward() and go() from any frame.
-        if (entry->attributes() & JSC::Function) {
-            if (entry->function() == jsHistoryPrototypeFunctionBack) {
-                slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticBackFunctionGetter);
-                return true;
-            } else if (entry->function() == jsHistoryPrototypeFunctionForward) {
-                slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticForwardFunctionGetter);
-                return true;
-            } else if (entry->function() == jsHistoryPrototypeFunctionGo) {
-                slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticGoFunctionGetter);
-                return true;
-            }
-        }
-    } else {
-        // Allow access to toString() cross-domain, but always Object.toString.
-        if (propertyName == exec->propertyNames().toString) {
-            slot.setCustom(this, ReadOnly | DontDelete | DontEnum, objectToStringFunctionGetter);
-            return true;
-        }
+    if (propertyName == exec->propertyNames().back) {
+        slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsHistoryPrototypeFunctionBack, 0>);
+        return true;
+    }
+    if (propertyName == exec->propertyNames().forward) {
+        slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsHistoryPrototypeFunctionForward, 0>);
+        return true;
+    }
+    if (propertyName == exec->propertyNames().go) {
+        slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsHistoryPrototypeFunctionGo, 1>);
+        return true;
+    }
+    // Allow access to toString() cross-domain, but always Object.toString.
+    if (propertyName == exec->propertyNames().toString) {
+        slot.setCustom(this, ReadOnly | DontDelete | DontEnum, objectToStringFunctionGetter);
+        return true;
     }
 
     printErrorMessageForFrame(impl().frame(), message);

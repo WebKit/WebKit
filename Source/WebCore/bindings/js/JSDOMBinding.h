@@ -589,6 +589,12 @@ template<> inline const JSC::HashTableValue* getStaticValueSlotEntryWithoutCachi
     return nullptr;
 }
 
+template<JSC::NativeFunction nativeFunction, int length>
+JSC::EncodedJSValue nonCachingStaticFunctionGetter(JSC::ExecState* exec, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName propertyName)
+{
+    return JSC::JSValue::encode(JSC::JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), length, propertyName.publicName(), nativeFunction));
+}
+
 enum SecurityReportingOption {
     DoNotReportSecurityError,
     ReportSecurityError,

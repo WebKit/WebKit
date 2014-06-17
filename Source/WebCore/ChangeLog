@@ -1,3 +1,47 @@
+2014-06-16  Sam Weinig  <sam@webkit.org>
+
+        Move forward declaration of bindings static functions into their implementation files
+        https://bugs.webkit.org/show_bug.cgi?id=133943
+
+        Reviewed by Geoffrey Garen.
+
+        - Moves the forward declaration of static functions for generated files to the implementation.
+        - Adds a new extended attribute, ForwardDeclareInHeader, for functions that still need a 
+          forward declaration in the header.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::nonCachingStaticFunctionGetter):
+        Move this helper here from JSDOMWindowCustom.cpp.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        Switch to comparing the property name directly rather than looking up in the static table and
+        comparing function pointers.
+
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::getOwnPropertySlotDelegate):
+        Switch to comparing the property name directly rather than looking up in the static table and
+        comparing function pointers and start using the nonCachingStaticFunctionGetter<> helper.
+
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::getOwnPropertySlotDelegate):
+        (WebCore::JSLocation::putDelegate):
+        Switch to comparing the property name directly rather than looking up in the static table and
+        comparing function pointers and start using the nonCachingStaticFunctionGetter<> helper.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        Move forward declaration creation to the implementation file where possible.
+
+        * bindings/scripts/IDLAttributes.txt:
+        Add ForwardDeclareInHeader.
+
+        * page/DOMWindow.idl:
+        * page/History.idl:
+        * page/Location.idl:
+        Add ForwardDeclareInHeader where necessary.
+
 2014-06-16  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Unreviewed build fix after r170029

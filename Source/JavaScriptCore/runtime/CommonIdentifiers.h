@@ -64,7 +64,10 @@
     macro(add) \
     macro(anonymous) \
     macro(arguments) \
+    macro(assign) \
+    macro(back) \
     macro(bind) \
+    macro(blur) \
     macro(buffer) \
     macro(byteLength) \
     macro(byteOffset) \
@@ -76,6 +79,8 @@
     macro(caller) \
     macro(cast) \
     macro(clear) \
+    macro(close) \
+    macro(closed) \
     macro(compilationKind) \
     macro(compilations) \
     macro(compile) \
@@ -94,14 +99,18 @@
     macro(exec) \
     macro(executionCount) \
     macro(exitKind) \
+    macro(focus) \
     macro(forEach) \
+    macro(forward) \
     macro(fromCharCode) \
     macro(get) \
     macro(global) \
+    macro(go) \
     macro(has) \
     macro(hasOwnProperty) \
     macro(hash) \
     macro(header) \
+    macro(href) \
     macro(id) \
     macro(ignoreCase) \
     macro(index) \
@@ -131,10 +140,14 @@
     macro(osrExitSites) \
     macro(osrExits) \
     macro(parse) \
+    macro(postMessage) \
     macro(profiledBytecodes) \
     macro(propertyIsEnumerable) \
     macro(prototype) \
+    macro(reload) \
+    macro(replace) \
     macro(set) \
+    macro(showModalDialog) \
     macro(size) \
     macro(slice) \
     macro(source) \
@@ -151,8 +164,8 @@
     macro(toPrecision) \
     macro(toString) \
     macro(value) \
-    macro(values) \
     macro(valueOf) \
+    macro(values) \
     macro(window) \
     macro(writable)
 

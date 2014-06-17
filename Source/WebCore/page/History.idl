@@ -33,9 +33,9 @@
     readonly attribute unsigned long length;
     [CachedAttribute, Custom] readonly attribute SerializedScriptValue state;
 
-    [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void back();
-    [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void forward();
-    [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void go([Default=Undefined] optional long distance);
+    [DoNotCheckSecurity, CallWith=ScriptExecutionContext, ForwardDeclareInHeader] void back();
+    [DoNotCheckSecurity, CallWith=ScriptExecutionContext, ForwardDeclareInHeader] void forward();
+    [DoNotCheckSecurity, CallWith=ScriptExecutionContext, ForwardDeclareInHeader] void go([Default=Undefined] optional long distance);
 
     [Custom, RaisesException] void pushState(any data, DOMString title, optional DOMString url);
     [Custom, RaisesException] void replaceState(any data, DOMString title, optional DOMString url);

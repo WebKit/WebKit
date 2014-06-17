@@ -30,21 +30,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-static EncodedJSValue nonCachingStaticReplaceFunctionGetter(ExecState* exec, JSObject*, EncodedJSValue, PropertyName propertyName)
-{
-    return JSValue::encode(JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 1, propertyName.publicName(), jsLocationPrototypeFunctionReplace));
-}
-
-static EncodedJSValue nonCachingStaticReloadFunctionGetter(ExecState* exec, JSObject*, EncodedJSValue, PropertyName propertyName)
-{
-    return JSValue::encode(JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 0, propertyName.publicName(), jsLocationPrototypeFunctionReload));
-}
-
-static EncodedJSValue nonCachingStaticAssignFunctionGetter(ExecState* exec, JSObject*, EncodedJSValue, PropertyName propertyName)
-{
-    return JSValue::encode(JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 1, propertyName.publicName(), jsLocationPrototypeFunctionAssign));
-}
-
 bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     Frame* frame = impl().frame();
@@ -64,18 +49,17 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName proper
 
     // Check for the few functions that we allow, even when called cross-domain.
     // Make these read-only / non-configurable to prevent writes via defineProperty.
-    const HashTableValue* entry = JSLocationPrototype::info()->propHashTable(exec)->entry(exec, propertyName);
-    if (entry && (entry->attributes() & JSC::Function)) {
-        if (entry->function() == jsLocationPrototypeFunctionReplace) {
-            slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticReplaceFunctionGetter);
-            return true;
-        } else if (entry->function() == jsLocationPrototypeFunctionReload) {
-            slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticReloadFunctionGetter);
-            return true;
-        } else if (entry->function() == jsLocationPrototypeFunctionAssign) {
-            slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticAssignFunctionGetter);
-            return true;
-        }
+    if (propertyName == exec->propertyNames().replace) {
+        slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsLocationPrototypeFunctionReplace, 1>);
+        return true;
+    }
+    if (propertyName == exec->propertyNames().reload) {
+        slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsLocationPrototypeFunctionReload, 0>);
+        return true;
+    }
+    if (propertyName == exec->propertyNames().assign) {
+        slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsLocationPrototypeFunctionAssign, 1>);
+        return true;
     }
 
     // FIXME: Other implementers of the Window cross-domain scheme (Window, History) allow toString,
@@ -108,7 +92,7 @@ bool JSLocation::putDelegate(ExecState* exec, PropertyName propertyName, JSValue
     // Cross-domain access to the location is allowed when assigning the whole location,
     // but not when assigning the individual pieces, since that might inadvertently
     // disclose other parts of the original location.
-    if (entry->propertyPutter() != setJSLocationHref && !sameDomainAccess)
+    if (propertyName != exec->propertyNames().href && !sameDomainAccess)
         return true;
 
     return false;

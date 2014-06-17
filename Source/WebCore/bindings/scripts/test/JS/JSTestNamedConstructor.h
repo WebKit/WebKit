@@ -169,9 +169,6 @@ private:
     void finishCreation(JSC::VM&, JSDOMGlobalObject*);
 };
 
-// Attributes
-
-JSC::EncodedJSValue jsTestNamedConstructorConstructor(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
 } // namespace WebCore
 

@@ -1,3 +1,13 @@
+2014-06-16  Sam Weinig  <sam@webkit.org>
+
+        Move forward declaration of bindings static functions into their implementation files
+        https://bugs.webkit.org/show_bug.cgi?id=133943
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/CommonIdentifiers.h:
+        Add a few identifiers that are needed by the DOM.
+
 2014-06-16  Mark Lam  <mark.lam@apple.com>
 
         Parser statementDepth accounting needs to account for when a function body excludes its braces.
