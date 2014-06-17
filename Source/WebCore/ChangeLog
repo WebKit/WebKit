@@ -1,3 +1,19 @@
+2014-06-17  Andreas Kling  <akling@apple.com>
+
+        Avoid synchronous layout in window.scrollTo(0,0) when already at (0,0)
+        <https://webkit.org/b/133893>
+
+        Going from 0,0 to 0,0 is a no-op since there is no way a layout will
+        affect the current scroll position.
+
+        We don't send scroll events when moving to the previous position,
+        so this change is not observable.
+
+        Reviewed by Anders Carlsson.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::scrollTo):
+
 2014-06-17  Alex Christensen  <achristensen@webkit.org>
 
         Fix css jit register usage on armv7.
