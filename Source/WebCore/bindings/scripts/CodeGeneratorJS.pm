@@ -1196,58 +1196,7 @@ sub GenerateHeader
     push(@headerContent, "\n");
 
     # Add prototype declaration.
-    %structureFlags = ();
-    push(@headerContent, "class ${className}Prototype : public JSC::JSNonFinalObject {\n");
-    push(@headerContent, "public:\n");
-    push(@headerContent, "    typedef JSC::JSNonFinalObject Base;\n");
-    unless (IsDOMGlobalObject($interface)) {
-        push(@headerContent, "    static JSC::JSObject* self(JSC::VM&, JSC::JSGlobalObject*);\n");
-    }
-
-    push(@headerContent, "    static ${className}Prototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)\n");
-    push(@headerContent, "    {\n");
-    push(@headerContent, "        ${className}Prototype* ptr = new (NotNull, JSC::allocateCell<${className}Prototype>(vm.heap)) ${className}Prototype(vm, globalObject, structure);\n");
-    push(@headerContent, "        ptr->finishCreation(vm);\n");
-    push(@headerContent, "        return ptr;\n");
-    push(@headerContent, "    }\n\n");
-
-    push(@headerContent, "    DECLARE_INFO;\n");
-    if (PrototypeOverridesGetOwnPropertySlot($interface)) {
-        if (IsDOMGlobalObject($interface)) {
-            push(@headerContent, "    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
-            $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
-        } else {
-            push(@headerContent, "    void finishCreation(JSC::VM&);\n");
-        }
-    }
-    if ($interface->extendedAttributes->{"JSCustomMarkFunction"} or $needsVisitChildren) {
-        $structureFlags{"JSC::OverridesVisitChildren"} = 1;
-    }
-    push(@headerContent,
-        "    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n" .
-        "    {\n" .
-        "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());\n" .
-        "    }\n");
-    if ($interface->extendedAttributes->{"JSCustomNamedGetterOnPrototype"}) {
-        push(@headerContent, "    static void put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
-        push(@headerContent, "    bool putDelegate(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
-    }
-
-    # Custom defineOwnProperty function
-    push(@headerContent, "    static bool defineOwnProperty(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, const JSC::PropertyDescriptor&, bool shouldThrow);\n") if $interface->extendedAttributes->{"JSCustomDefineOwnPropertyOnPrototype"};
-
-    push(@headerContent, "\nprivate:\n");
-    push(@headerContent, "    ${className}Prototype(JSC::VM& vm, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(vm, structure) { }\n");
-
-    # structure flags
-    push(@headerContent, "protected:\n");
-    push(@headerContent, "    static const unsigned StructureFlags = ");
-    foreach my $structureFlag (sort (keys %structureFlags)) {
-        push(@headerContent, $structureFlag . " | ");
-    }
-    push(@headerContent, "Base::StructureFlags;\n");
-
-    push(@headerContent, "};\n\n");
+    GeneratePrototypeDeclaration(\@headerContent, $className, $interface, $interfaceName, $needsVisitChildren);
 
     if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
         $headerIncludes{"JSDOMBinding.h"} = 1;
@@ -4302,6 +4251,71 @@ sub WriteData
 
         @depsContent = ();
     }
+}
+
+sub GeneratePrototypeDeclaration
+{
+    my $outputArray = shift;
+    my $className = shift;
+    my $interface = shift;
+    my $interfaceName = shift;
+    my $needsVisitChildren = shift;
+
+    my $prototypeClassName = "${className}Prototype";
+
+    my %structureFlags = ();
+    push(@$outputArray, "class ${prototypeClassName} : public JSC::JSNonFinalObject {\n");
+    push(@$outputArray, "public:\n");
+    push(@$outputArray, "    typedef JSC::JSNonFinalObject Base;\n");
+    unless (IsDOMGlobalObject($interface)) {
+        push(@$outputArray, "    static JSC::JSObject* self(JSC::VM&, JSC::JSGlobalObject*);\n");
+    }
+
+    push(@$outputArray, "    static ${prototypeClassName}* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)\n");
+    push(@$outputArray, "    {\n");
+    push(@$outputArray, "        ${className}Prototype* ptr = new (NotNull, JSC::allocateCell<${className}Prototype>(vm.heap)) ${className}Prototype(vm, globalObject, structure);\n");
+    push(@$outputArray, "        ptr->finishCreation(vm);\n");
+    push(@$outputArray, "        return ptr;\n");
+    push(@$outputArray, "    }\n\n");
+
+    push(@$outputArray, "    DECLARE_INFO;\n");
+
+    if (PrototypeOverridesGetOwnPropertySlot($interface)) {
+        if (IsDOMGlobalObject($interface)) {
+            push(@$outputArray, "    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
+            $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
+        } else {
+            push(@$outputArray, "    void finishCreation(JSC::VM&);\n");
+        }
+    }
+    if ($interface->extendedAttributes->{"JSCustomMarkFunction"} or $needsVisitChildren) {
+        $structureFlags{"JSC::OverridesVisitChildren"} = 1;
+    }
+    push(@$outputArray,
+        "    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n" .
+        "    {\n" .
+        "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());\n" .
+        "    }\n");
+    if ($interface->extendedAttributes->{"JSCustomNamedGetterOnPrototype"}) {
+        push(@$outputArray, "    static void put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
+        push(@$outputArray, "    bool putDelegate(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
+    }
+
+    # Custom defineOwnProperty function
+    push(@$outputArray, "    static bool defineOwnProperty(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, const JSC::PropertyDescriptor&, bool shouldThrow);\n") if $interface->extendedAttributes->{"JSCustomDefineOwnPropertyOnPrototype"};
+
+    push(@$outputArray, "\nprivate:\n");
+    push(@$outputArray, "    ${prototypeClassName}(JSC::VM& vm, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(vm, structure) { }\n");
+
+    # structure flags
+    push(@$outputArray, "protected:\n");
+    push(@$outputArray, "    static const unsigned StructureFlags = ");
+    foreach my $structureFlag (sort (keys %structureFlags)) {
+        push(@$outputArray, $structureFlag . " | ");
+    }
+    push(@$outputArray, "Base::StructureFlags;\n");
+
+    push(@$outputArray, "};\n\n");
 }
 
 sub GenerateConstructorDeclaration

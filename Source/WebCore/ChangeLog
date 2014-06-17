@@ -1,5 +1,16 @@
 2014-06-16  Sam Weinig  <sam@webkit.org>
 
+        Extract prototype declaration generation into a helper function
+        https://bugs.webkit.org/show_bug.cgi?id=133969
+
+        Reviewed by Dan Bernstein.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GeneratePrototypeDeclaration):
+
+2014-06-16  Sam Weinig  <sam@webkit.org>
+
         Move forward declaration of bindings static functions into their implementation files
         https://bugs.webkit.org/show_bug.cgi?id=133943
 
