@@ -375,7 +375,7 @@ public:
     void addMIMETypeWithCustomContentProvider(const String& mimeType);
 
     void executeEditCommand(const String& commandName);
-    void validateCommand(const String& commandName, PassRefPtr<ValidateCommandCallback>);
+    void validateCommand(const String& commandName, std::function<void (const String&, bool, int32_t, CallbackBase::Error)>);
 #if PLATFORM(IOS)
     double displayedContentScale() const { return m_lastVisibleContentRectUpdate.scale(); }
     const WebCore::FloatRect& exposedContentRect() const { return m_lastVisibleContentRectUpdate.exposedRect(); }
@@ -398,17 +398,17 @@ public:
     void didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction&);
 
     void selectWithGesture(const WebCore::IntPoint, WebCore::TextGranularity, uint32_t gestureType, uint32_t gestureState, std::function<void (const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)>);
-    void updateSelectionWithTouches(const WebCore::IntPoint, uint32_t touches, bool baseIsStart, PassRefPtr<TouchesCallback>);
+    void updateSelectionWithTouches(const WebCore::IntPoint, uint32_t touches, bool baseIsStart, std::function<void (const WebCore::IntPoint&, uint32_t, CallbackBase::Error)>);
     void selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, std::function<void (const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)>);
     void updateBlockSelectionWithTouch(const WebCore::IntPoint, uint32_t touch, uint32_t handlePosition);
     void extendSelection(WebCore::TextGranularity);
     void selectWordBackward();
-    void requestAutocorrectionData(const String& textForAutocorrection, PassRefPtr<AutocorrectionDataCallback>);
-    void applyAutocorrection(const String& correction, const String& originalText, PassRefPtr<StringCallback>);
+    void requestAutocorrectionData(const String& textForAutocorrection, std::function<void (const Vector<WebCore::FloatRect>&, const String&, double, uint64_t, CallbackBase::Error)>);
+    void applyAutocorrection(const String& correction, const String& originalText, std::function<void (const String&, CallbackBase::Error)>);
     bool applyAutocorrection(const String& correction, const String& originalText);
-    void requestAutocorrectionContext(PassRefPtr<AutocorrectionContextCallback>);
+    void requestAutocorrectionContext(std::function<void (const String&, const String&, const String&, const String&, uint64_t, uint64_t, CallbackBase::Error)>);
     void getAutocorrectionContext(String& contextBefore, String& markedText, String& selectedText, String& contextAfter, uint64_t& location, uint64_t& length);
-    void requestDictationContext(PassRefPtr<DictationContextCallback>);
+    void requestDictationContext(std::function<void (const String&, const String&, const String&, CallbackBase::Error)>);
     void replaceDictatedText(const String& oldText, const String& newText);
     void replaceSelectedText(const String& oldText, const String& newText);
     void didReceivePositionInformation(const InteractionInformationAtPosition&);
@@ -471,10 +471,10 @@ public:
     LayerOrView* acceleratedCompositingRootLayer() const;
 
     void insertTextAsync(const String& text, const EditingRange& replacementRange);
-    void getMarkedRangeAsync(PassRefPtr<EditingRangeCallback>);
-    void getSelectedRangeAsync(PassRefPtr<EditingRangeCallback>);
-    void characterIndexForPointAsync(const WebCore::IntPoint&, PassRefPtr<UnsignedCallback>);
-    void firstRectForCharacterRangeAsync(const EditingRange&, PassRefPtr<RectForCharacterRangeCallback>);
+    void getMarkedRangeAsync(std::function<void (EditingRange, CallbackBase::Error)>);
+    void getSelectedRangeAsync(std::function<void (EditingRange, CallbackBase::Error)>);
+    void characterIndexForPointAsync(const WebCore::IntPoint&, std::function<void (uint64_t, CallbackBase::Error)>);
+    void firstRectForCharacterRangeAsync(const EditingRange&, std::function<void (const WebCore::IntRect&, const EditingRange&, CallbackBase::Error)>);
     void setCompositionAsync(const String& text, Vector<WebCore::CompositionUnderline> underlines, const EditingRange& selectionRange, const EditingRange& replacementRange);
     void confirmCompositionAsync();
 
@@ -651,20 +651,20 @@ public:
     void didFailToFindString(const String&);
     void didFindStringMatches(const String&, const Vector<Vector<WebCore::IntRect>>& matchRects, int32_t firstIndexAfterSelection);
 
-    void getContentsAsString(PassRefPtr<StringCallback>);
-    void getBytecodeProfile(PassRefPtr<StringCallback>);
+    void getContentsAsString(std::function<void (const String&, CallbackBase::Error)>);
+    void getBytecodeProfile(std::function<void (const String&, CallbackBase::Error)>);
 
 #if ENABLE(MHTML)
-    void getContentsAsMHTMLData(PassRefPtr<DataCallback>, bool useBinaryEncoding);
+    void getContentsAsMHTMLData(std::function<void (API::Data*, CallbackBase::Error)>, bool useBinaryEncoding);
 #endif
     void getMainResourceDataOfFrame(WebFrameProxy*, std::function<void (API::Data*, CallbackBase::Error)>);
     void getResourceDataFromFrame(WebFrameProxy*, API::URL*, std::function<void (API::Data*, CallbackBase::Error)>);
-    void getRenderTreeExternalRepresentation(PassRefPtr<StringCallback>);
-    void getSelectionOrContentsAsString(PassRefPtr<StringCallback>);
-    void getSelectionAsWebArchiveData(PassRefPtr<DataCallback>);
-    void getSourceForFrame(WebFrameProxy*, PassRefPtr<StringCallback>);
+    void getRenderTreeExternalRepresentation(std::function<void (const String&, CallbackBase::Error)>);
+    void getSelectionOrContentsAsString(std::function<void (const String&, CallbackBase::Error)>);
+    void getSelectionAsWebArchiveData(std::function<void (API::Data*, CallbackBase::Error)>);
+    void getSourceForFrame(WebFrameProxy*, std::function<void (const String&, CallbackBase::Error)>);
     void getWebArchiveOfFrame(WebFrameProxy*, std::function<void (API::Data*, CallbackBase::Error)>);
-    void runJavaScriptInMainFrame(const String&, PassRefPtr<ScriptValueCallback>);
+    void runJavaScriptInMainFrame(const String&, std::function<void (WebSerializedScriptValue*, CallbackBase::Error)> callbackFunction);
     void forceRepaint(PassRefPtr<VoidCallback>);
 
     float headerHeight(WebFrameProxy*);
@@ -892,7 +892,7 @@ public:
 
     void setThumbnailScale(double);
 
-    void takeSnapshot(WebCore::IntRect, WebCore::IntSize bitmapSize, SnapshotOptions, ImageCallback::CallbackFunction);
+    void takeSnapshot(WebCore::IntRect, WebCore::IntSize bitmapSize, SnapshotOptions, std::function<void (const ShareableBitmap::Handle&, CallbackBase::Error)>);
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);

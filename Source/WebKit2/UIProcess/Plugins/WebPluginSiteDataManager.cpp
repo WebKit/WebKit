@@ -168,9 +168,9 @@ void WebPluginSiteDataManager::didGetSitesWithData(const Vector<String>& sites, 
     callback->performCallbackWithReturnValue(API::Array::createStringArray(sites).get());
 }
 
-void WebPluginSiteDataManager::clearSiteData(API::Array* sites, uint64_t flags, uint64_t maxAgeInSeconds, PassRefPtr<VoidCallback> prpCallback)
+void WebPluginSiteDataManager::clearSiteData(API::Array* sites, uint64_t flags, uint64_t maxAgeInSeconds, std::function<void (CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<VoidCallback> callback = prpCallback;
+    RefPtr<VoidCallback> callback = VoidCallback::create(std::move(callbackFunction));
     if (!m_webContext) {
         // FIXME: If the context is invalid we should not call the callback. It'd be better to just return false from clearSiteData.
         callback->invalidate(CallbackBase::Error::OwnerWasInvalidated);

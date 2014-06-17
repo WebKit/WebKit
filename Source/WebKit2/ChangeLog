@@ -1,3 +1,64 @@
+2014-06-16  Dan Bernstein  <mitz@apple.com>
+
+        Part 2 of: Change GenericCallback<> function parameters into std::function<>
+        https://bugs.webkit.org/show_bug.cgi?id=133927
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageRunJavaScriptInMainFrame):
+        (WKPageRenderTreeExternalRepresentation):
+        (WKPageGetSourceForFrame):
+        (WKPageGetContentsAsString):
+        (WKPageGetBytecodeProfile):
+        (WKPageGetSelectionAsWebArchiveData):
+        (WKPageValidateCommand):
+        * UIProcess/API/C/WKPluginSiteDataManager.cpp:
+        (WKPluginSiteDataManagerClearSiteData):
+        (WKPluginSiteDataManagerClearAllSiteData):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView evaluateJavaScript:completionHandler:]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validateUserInterfaceItem:]):
+        (-[WKView startSpeaking:]):
+        (-[WKView selectedRangeWithCompletionHandler:]):
+        (-[WKView markedRangeWithCompletionHandler:]):
+        (-[WKView hasMarkedTextWithCompletionHandler:]):
+        (-[WKView firstRectForCharacterRange:completionHandler:]):
+        (-[WKView characterIndexForPoint:completionHandler:]):
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp:
+        (WebKit::WebPluginSiteDataManager::clearSiteData):
+        * UIProcess/Plugins/WebPluginSiteDataManager.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::validateCommand):
+        (WebKit::WebPageProxy::runJavaScriptInMainFrame):
+        (WebKit::WebPageProxy::getRenderTreeExternalRepresentation):
+        (WebKit::WebPageProxy::getSourceForFrame):
+        (WebKit::WebPageProxy::getContentsAsString):
+        (WebKit::WebPageProxy::getBytecodeProfile):
+        (WebKit::WebPageProxy::getContentsAsMHTMLData):
+        (WebKit::WebPageProxy::getSelectionOrContentsAsString):
+        (WebKit::WebPageProxy::getSelectionAsWebArchiveData):
+        (WebKit::WebPageProxy::getMarkedRangeAsync):
+        (WebKit::WebPageProxy::getSelectedRangeAsync):
+        (WebKit::WebPageProxy::characterIndexForPointAsync):
+        (WebKit::WebPageProxy::firstRectForCharacterRangeAsync):
+        (WebKit::WebPageProxy::takeSnapshot):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _define:]):
+        (-[WKContentView changeSelectionWithTouchAt:withSelectionTouch:baseIsStart:]):
+        (-[WKContentView requestAutocorrectionRectsForString:withCompletionHandler:]):
+        (-[WKContentView requestDictationContext:]):
+        (-[WKContentView applyAutocorrection:toString:withCompletionHandler:]):
+        (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::updateSelectionWithTouches):
+        (WebKit::WebPageProxy::requestAutocorrectionData):
+        (WebKit::WebPageProxy::applyAutocorrection):
+        (WebKit::WebPageProxy::requestDictationContext):
+        (WebKit::WebPageProxy::requestAutocorrectionContext):
+
 2014-06-16  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Unreviewed build fix after r170029
@@ -175,7 +236,7 @@
 
 2014-06-15  Dan Bernstein  <mitz@apple.com>
 
-        Part 1 of Change GenericCallback<> function parameters into std::function<>
+        Part 1 of: Change GenericCallback<> function parameters into std::function<>
         https://bugs.webkit.org/show_bug.cgi?id=133927
 
         Reviewed by Sam Weinig.

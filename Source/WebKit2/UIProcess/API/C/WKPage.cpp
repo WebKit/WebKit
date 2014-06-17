@@ -1562,7 +1562,7 @@ void WKPageSetSession(WKPageRef pageRef, WKSessionRef session)
 
 void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageRunJavaScriptFunction callback)
 {
-    toImpl(pageRef)->runJavaScriptInMainFrame(toImpl(scriptRef)->string(), ScriptValueCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(pageRef)->runJavaScriptInMainFrame(toImpl(scriptRef)->string(), toGenericCallbackFunction(context, callback));
 }
 
 static std::function<void (const String&, CallbackBase::Error)> toGenericCallbackFunction(void* context, void (*callback)(WKStringRef, WKErrorRef, void*))
@@ -1574,27 +1574,27 @@ static std::function<void (const String&, CallbackBase::Error)> toGenericCallbac
 
 void WKPageRenderTreeExternalRepresentation(WKPageRef pageRef, void* context, WKPageRenderTreeExternalRepresentationFunction callback)
 {
-    toImpl(pageRef)->getRenderTreeExternalRepresentation(StringCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(pageRef)->getRenderTreeExternalRepresentation(toGenericCallbackFunction(context, callback));
 }
 
 void WKPageGetSourceForFrame(WKPageRef pageRef, WKFrameRef frameRef, void* context, WKPageGetSourceForFrameFunction callback)
 {
-    toImpl(pageRef)->getSourceForFrame(toImpl(frameRef), StringCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(pageRef)->getSourceForFrame(toImpl(frameRef), toGenericCallbackFunction(context, callback));
 }
 
 void WKPageGetContentsAsString(WKPageRef pageRef, void* context, WKPageGetContentsAsStringFunction callback)
 {
-    toImpl(pageRef)->getContentsAsString(StringCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(pageRef)->getContentsAsString(toGenericCallbackFunction(context, callback));
 }
 
 void WKPageGetBytecodeProfile(WKPageRef pageRef, void* context, WKPageGetBytecodeProfileFunction callback)
 {
-    toImpl(pageRef)->getBytecodeProfile(StringCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(pageRef)->getBytecodeProfile(toGenericCallbackFunction(context, callback));
 }
 
 void WKPageGetSelectionAsWebArchiveData(WKPageRef pageRef, void* context, WKPageGetSelectionAsWebArchiveDataFunction callback)
 {
-    toImpl(pageRef)->getSelectionAsWebArchiveData(DataCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(pageRef)->getSelectionAsWebArchiveData(toGenericCallbackFunction(context, callback));
 }
 
 void WKPageGetContentsAsMHTMLData(WKPageRef pageRef, bool useBinaryEncoding, void* context, WKPageGetContentsAsMHTMLDataFunction callback)
@@ -1648,9 +1648,9 @@ WKStringRef WKPageCopyStandardUserAgentWithApplicationName(WKStringRef applicati
 
 void WKPageValidateCommand(WKPageRef pageRef, WKStringRef command, void* context, WKPageValidateCommandCallback callback)
 {
-    toImpl(pageRef)->validateCommand(toImpl(command)->string(), ValidateCommandCallback::create([context, callback](const String& commandName, bool isEnabled, int32_t state, CallbackBase::Error error) {
+    toImpl(pageRef)->validateCommand(toImpl(command)->string(), [context, callback](const String& commandName, bool isEnabled, int32_t state, CallbackBase::Error error) {
         callback(toAPI(API::String::create(commandName).get()), isEnabled, state, error != CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
-    }));
+    });
 }
 
 void WKPageExecuteCommand(WKPageRef pageRef, WKStringRef command)

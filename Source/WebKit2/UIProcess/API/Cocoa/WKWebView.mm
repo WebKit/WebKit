@@ -492,7 +492,7 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 {
     auto handler = adoptNS([completionHandler copy]);
 
-    _page->runJavaScriptInMainFrame(javaScriptString, WebKit::ScriptValueCallback::create([handler](WebKit::WebSerializedScriptValue* serializedScriptValue, WebKit::ScriptValueCallback::Error errorCode) {
+    _page->runJavaScriptInMainFrame(javaScriptString, [handler](WebKit::WebSerializedScriptValue* serializedScriptValue, WebKit::ScriptValueCallback::Error errorCode) {
         if (!handler)
             return;
 
@@ -524,7 +524,7 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
         JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:context.get()];
 
         completionHandler([value toObject], nil);
-    }));
+    });
 }
 
 #pragma mark iOS-specific methods

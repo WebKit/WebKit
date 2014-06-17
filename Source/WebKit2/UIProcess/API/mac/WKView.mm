@@ -835,13 +835,13 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
         // If we are not already awaiting validation for this command, start the asynchronous validation process.
         // FIXME: Theoretically, there is a race here; when we get the answer it might be old, from a previous time
         // we asked for the same command; there is no guarantee the answer is still valid.
-        _data->_page->validateCommand(commandName, ValidateCommandCallback::create([self](const String& commandName, bool isEnabled, int32_t state, CallbackBase::Error error) {
+        _data->_page->validateCommand(commandName, [self](const String& commandName, bool isEnabled, int32_t state, CallbackBase::Error error) {
             // If the process exits before the command can be validated, we'll be called back with an error.
             if (error != CallbackBase::Error::None)
                 return;
             
             [self _setUserInterfaceItemState:commandName enabled:isEnabled state:state];
-        }));
+        });
     }
 
     // Treat as enabled until we get the result back from the web process and _setUserInterfaceItemState is called.
@@ -852,14 +852,14 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
 
 - (IBAction)startSpeaking:(id)sender
 {
-    _data->_page->getSelectionOrContentsAsString(StringCallback::create([self](const String& string, CallbackBase::Error error) {
+    _data->_page->getSelectionOrContentsAsString([self](const String& string, CallbackBase::Error error) {
         if (error != CallbackBase::Error::None)
             return;
         if (!string)
             return;
 
         [NSApp speakString:string];
-    }));
+    });
 }
 
 - (IBAction)stopSpeaking:(id)sender
@@ -1464,7 +1464,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     RetainPtr<id> completionHandler = adoptNS([completionHandlerPtr copy]);
 
     LOG(TextInput, "selectedRange");
-    _data->_page->getSelectedRangeAsync(EditingRangeCallback::create([completionHandler](const EditingRange& editingRangeResult, CallbackBase::Error error) {
+    _data->_page->getSelectedRangeAsync([completionHandler](const EditingRange& editingRangeResult, CallbackBase::Error error) {
         void (^completionHandlerBlock)(NSRange) = (void (^)(NSRange))completionHandler.get();
         if (error != CallbackBase::Error::None) {
             LOG(TextInput, "    ...selectedRange failed.");
@@ -1477,7 +1477,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         else
             LOG(TextInput, "    -> selectedRange returned (%llu, %llu)", result.location, result.length);
         completionHandlerBlock(result);
-    }));
+    });
 }
 
 - (void)markedRangeWithCompletionHandler:(void(^)(NSRange markedRange))completionHandlerPtr
@@ -1485,7 +1485,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     RetainPtr<id> completionHandler = adoptNS([completionHandlerPtr copy]);
 
     LOG(TextInput, "markedRange");
-    _data->_page->getMarkedRangeAsync(EditingRangeCallback::create([completionHandler](const EditingRange& editingRangeResult, CallbackBase::Error error) {
+    _data->_page->getMarkedRangeAsync([completionHandler](const EditingRange& editingRangeResult, CallbackBase::Error error) {
         void (^completionHandlerBlock)(NSRange) = (void (^)(NSRange))completionHandler.get();
         if (error != CallbackBase::Error::None) {
             LOG(TextInput, "    ...markedRange failed.");
@@ -1498,7 +1498,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         else
             LOG(TextInput, "    -> markedRange returned (%llu, %llu)", result.location, result.length);
         completionHandlerBlock(result);
-    }));
+    });
 }
 
 - (void)hasMarkedTextWithCompletionHandler:(void(^)(BOOL hasMarkedText))completionHandlerPtr
@@ -1506,7 +1506,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     RetainPtr<id> completionHandler = adoptNS([completionHandlerPtr copy]);
 
     LOG(TextInput, "hasMarkedText");
-    _data->_page->getMarkedRangeAsync(EditingRangeCallback::create([completionHandler](const EditingRange& editingRangeResult, CallbackBase::Error error) {
+    _data->_page->getMarkedRangeAsync([completionHandler](const EditingRange& editingRangeResult, CallbackBase::Error error) {
         void (^completionHandlerBlock)(BOOL) = (void (^)(BOOL))completionHandler.get();
         if (error != CallbackBase::Error::None) {
             LOG(TextInput, "    ...hasMarkedText failed.");
@@ -1516,7 +1516,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         BOOL hasMarkedText = editingRangeResult.location != notFound;
         LOG(TextInput, "    -> hasMarkedText returned %u", hasMarkedText);
         completionHandlerBlock(hasMarkedText);
-    }));
+    });
 }
 
 - (void)attributedSubstringForProposedRange:(NSRange)nsRange completionHandler:(void(^)(NSAttributedString *attrString, NSRange actualRange))completionHandlerPtr
@@ -1554,7 +1554,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         return;
     }
 
-    _data->_page->firstRectForCharacterRangeAsync(theRange, RectForCharacterRangeCallback::create([self, completionHandler](const IntRect& rect, const EditingRange& actualRange, CallbackBase::Error error) {
+    _data->_page->firstRectForCharacterRangeAsync(theRange, [self, completionHandler](const IntRect& rect, const EditingRange& actualRange, CallbackBase::Error error) {
         void (^completionHandlerBlock)(NSRect, NSRange) = (void (^)(NSRect, NSRange))completionHandler.get();
         if (error != CallbackBase::Error::None) {
             LOG(TextInput, "    ...firstRectForCharacterRange failed.");
@@ -1567,7 +1567,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
         LOG(TextInput, "    -> firstRectForCharacterRange returned (%f, %f, %f, %f)", resultRect.origin.x, resultRect.origin.y, resultRect.size.width, resultRect.size.height);
         completionHandlerBlock(resultRect, actualRange);
-    }));
+    });
 }
 
 - (void)characterIndexForPoint:(NSPoint)thePoint completionHandler:(void(^)(NSUInteger))completionHandlerPtr
@@ -1585,7 +1585,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 #pragma clang diagnostic pop
     thePoint = [self convertPoint:thePoint fromView:nil];  // the point is relative to the main frame
 
-    _data->_page->characterIndexForPointAsync(IntPoint(thePoint), UnsignedCallback::create([completionHandler](uint64_t result, CallbackBase::Error error) {
+    _data->_page->characterIndexForPointAsync(IntPoint(thePoint), [completionHandler](uint64_t result, CallbackBase::Error error) {
         void (^completionHandlerBlock)(NSUInteger) = (void (^)(NSUInteger))completionHandler.get();
         if (error != CallbackBase::Error::None) {
             LOG(TextInput, "    ...characterIndexForPoint failed.");
@@ -1596,7 +1596,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
             result = NSNotFound;
         LOG(TextInput, "    -> characterIndexForPoint returned %lu", result);
         completionHandlerBlock(result);
-    }));
+    });
 }
 
 - (NSTextInputContext *)inputContext

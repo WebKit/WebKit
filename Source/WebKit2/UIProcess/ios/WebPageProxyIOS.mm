@@ -317,8 +317,10 @@ void WebPageProxy::selectWithGesture(const WebCore::IntPoint point, WebCore::Tex
     m_process->send(Messages::WebPage::SelectWithGesture(point, (uint32_t)granularity, gestureType, gestureState, callbackID), m_pageID);
 }
 
-void WebPageProxy::updateSelectionWithTouches(const WebCore::IntPoint point, uint32_t touches, bool baseIsStart, PassRefPtr<TouchesCallback> callback)
+void WebPageProxy::updateSelectionWithTouches(const WebCore::IntPoint point, uint32_t touches, bool baseIsStart, std::function<void (const WebCore::IntPoint&, uint32_t, CallbackBase::Error)> callbackFunction)
 {
+    RefPtr<TouchesCallback> callback = TouchesCallback::create(std::move(callbackFunction));
+
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -339,8 +341,10 @@ void WebPageProxy::replaceSelectedText(const String& oldText, const String& newT
     m_process->send(Messages::WebPage::ReplaceSelectedText(oldText, newText), m_pageID);
 }
 
-void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection, PassRefPtr<AutocorrectionDataCallback> callback)
+void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection, std::function<void (const Vector<WebCore::FloatRect>&, const String&, double, uint64_t, CallbackBase::Error)> callbackFunction)
 {
+    RefPtr<AutocorrectionDataCallback> callback = AutocorrectionDataCallback::create(std::move(callbackFunction));
+
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -351,8 +355,10 @@ void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection
     m_process->send(Messages::WebPage::RequestAutocorrectionData(textForAutocorrection, callbackID), m_pageID);
 }
 
-void WebPageProxy::applyAutocorrection(const String& correction, const String& originalText, PassRefPtr<StringCallback> callback)
+void WebPageProxy::applyAutocorrection(const String& correction, const String& originalText, std::function<void (const String&, CallbackBase::Error)> callbackFunction)
 {
+    RefPtr<StringCallback> callback = StringCallback::create(std::move(callbackFunction));
+
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -370,8 +376,10 @@ bool WebPageProxy::applyAutocorrection(const String& correction, const String& o
     return autocorrectionApplied;
 }
 
-void WebPageProxy::requestDictationContext(PassRefPtr<DictationContextCallback> callback)
+void WebPageProxy::requestDictationContext(std::function<void (const String&, const String&, const String&, CallbackBase::Error)> callbackFunction)
 {
+    RefPtr<DictationContextCallback> callback = DictationContextCallback::create(std::move(callbackFunction));
+
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -382,8 +390,10 @@ void WebPageProxy::requestDictationContext(PassRefPtr<DictationContextCallback> 
     m_process->send(Messages::WebPage::RequestDictationContext(callbackID), m_pageID);
 }
 
-void WebPageProxy::requestAutocorrectionContext(PassRefPtr<AutocorrectionContextCallback> callback)
+void WebPageProxy::requestAutocorrectionContext(std::function<void (const String&, const String&, const String&, const String&, uint64_t, uint64_t, CallbackBase::Error)> callbackFunction)
 {
+    RefPtr<AutocorrectionContextCallback> callback = AutocorrectionContextCallback::create(std::move(callbackFunction));
+
     if (!isValid()) {
         callback->invalidate();
         return;

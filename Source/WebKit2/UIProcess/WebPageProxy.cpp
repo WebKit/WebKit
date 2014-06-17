@@ -1239,8 +1239,10 @@ void WebPageProxy::clearSelection()
     m_process->send(Messages::WebPage::ClearSelection(), m_pageID);
 }
 
-void WebPageProxy::validateCommand(const String& commandName, PassRefPtr<ValidateCommandCallback> callback)
+void WebPageProxy::validateCommand(const String& commandName, std::function<void (const String&, bool, int32_t, CallbackBase::Error)> callbackFunction)
 {
+    RefPtr<ValidateCommandCallback> callback = ValidateCommandCallback::create(std::move(callbackFunction));
+
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -2183,9 +2185,9 @@ void WebPageProxy::countStringMatches(const String& string, FindOptions options,
     m_process->send(Messages::WebPage::CountStringMatches(string, options, maxMatchCount), m_pageID);
 }
 
-void WebPageProxy::runJavaScriptInMainFrame(const String& script, PassRefPtr<ScriptValueCallback> prpCallback)
+void WebPageProxy::runJavaScriptInMainFrame(const String& script, std::function<void (WebSerializedScriptValue*, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<ScriptValueCallback> callback = prpCallback;
+    RefPtr<ScriptValueCallback> callback = ScriptValueCallback::create(std::move(callbackFunction));
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -2196,9 +2198,9 @@ void WebPageProxy::runJavaScriptInMainFrame(const String& script, PassRefPtr<Scr
     m_process->send(Messages::WebPage::RunJavaScriptInMainFrame(script, callbackID), m_pageID);
 }
 
-void WebPageProxy::getRenderTreeExternalRepresentation(PassRefPtr<StringCallback> prpCallback)
+void WebPageProxy::getRenderTreeExternalRepresentation(std::function<void (const String&, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<StringCallback> callback = prpCallback;
+    RefPtr<StringCallback> callback = StringCallback::create(std::move(callbackFunction));
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -2209,9 +2211,9 @@ void WebPageProxy::getRenderTreeExternalRepresentation(PassRefPtr<StringCallback
     m_process->send(Messages::WebPage::GetRenderTreeExternalRepresentation(callbackID), m_pageID);
 }
 
-void WebPageProxy::getSourceForFrame(WebFrameProxy* frame, PassRefPtr<StringCallback> prpCallback)
+void WebPageProxy::getSourceForFrame(WebFrameProxy* frame, std::function<void (const String&, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<StringCallback> callback = prpCallback;
+    RefPtr<StringCallback> callback = StringCallback::create(std::move(callbackFunction));
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -2223,9 +2225,9 @@ void WebPageProxy::getSourceForFrame(WebFrameProxy* frame, PassRefPtr<StringCall
     m_process->send(Messages::WebPage::GetSourceForFrame(frame->frameID(), callbackID), m_pageID);
 }
 
-void WebPageProxy::getContentsAsString(PassRefPtr<StringCallback> prpCallback)
+void WebPageProxy::getContentsAsString(std::function<void (const String&, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<StringCallback> callback = prpCallback;
+    RefPtr<StringCallback> callback = StringCallback::create(std::move(callbackFunction));
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -2237,9 +2239,9 @@ void WebPageProxy::getContentsAsString(PassRefPtr<StringCallback> prpCallback)
     m_process->send(Messages::WebPage::GetContentsAsString(callbackID), m_pageID);
 }
 
-void WebPageProxy::getBytecodeProfile(PassRefPtr<StringCallback> prpCallback)
+void WebPageProxy::getBytecodeProfile(std::function<void (const String&, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<StringCallback> callback = prpCallback;
+    RefPtr<StringCallback> callback = StringCallback::create(std::move(callbackFunction));
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -2252,9 +2254,9 @@ void WebPageProxy::getBytecodeProfile(PassRefPtr<StringCallback> prpCallback)
 }
     
 #if ENABLE(MHTML)
-void WebPageProxy::getContentsAsMHTMLData(PassRefPtr<DataCallback> prpCallback, bool useBinaryEncoding)
+void WebPageProxy::getContentsAsMHTMLData(std::function<void (API::Data*, CallbackBase::Error)> callbackFunction, bool useBinaryEncoding)
 {
-    RefPtr<DataCallback> callback = prpCallback;
+    RefPtr<DataCallback> callback = DataCallback::create(std::move(callbackFunction));
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -2266,9 +2268,9 @@ void WebPageProxy::getContentsAsMHTMLData(PassRefPtr<DataCallback> prpCallback, 
 }
 #endif
 
-void WebPageProxy::getSelectionOrContentsAsString(PassRefPtr<StringCallback> prpCallback)
+void WebPageProxy::getSelectionOrContentsAsString(std::function<void (const String&, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<StringCallback> callback = prpCallback;
+    RefPtr<StringCallback> callback = StringCallback::create(std::move(callbackFunction));
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -2279,9 +2281,9 @@ void WebPageProxy::getSelectionOrContentsAsString(PassRefPtr<StringCallback> prp
     m_process->send(Messages::WebPage::GetSelectionOrContentsAsString(callbackID), m_pageID);
 }
 
-void WebPageProxy::getSelectionAsWebArchiveData(PassRefPtr<DataCallback> prpCallback)
+void WebPageProxy::getSelectionAsWebArchiveData(std::function<void (API::Data*, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<DataCallback> callback = prpCallback;
+    RefPtr<DataCallback> callback = DataCallback::create(std::move(callbackFunction));
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -4986,8 +4988,10 @@ void WebPageProxy::insertTextAsync(const String& text, const EditingRange& repla
     process().send(Messages::WebPage::InsertTextAsync(text, replacementRange), m_pageID);
 }
 
-void WebPageProxy::getMarkedRangeAsync(PassRefPtr<EditingRangeCallback> callback)
+void WebPageProxy::getMarkedRangeAsync(std::function<void (EditingRange, CallbackBase::Error)> callbackFunction)
 {
+    RefPtr<EditingRangeCallback> callback = EditingRangeCallback::create(std::move(callbackFunction));
+
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -4999,8 +5003,10 @@ void WebPageProxy::getMarkedRangeAsync(PassRefPtr<EditingRangeCallback> callback
     process().send(Messages::WebPage::GetMarkedRangeAsync(callbackID), m_pageID);
 }
 
-void WebPageProxy::getSelectedRangeAsync(PassRefPtr<EditingRangeCallback> callback)
+void WebPageProxy::getSelectedRangeAsync(std::function<void (EditingRange, CallbackBase::Error)> callbackFunction)
 {
+    RefPtr<EditingRangeCallback> callback = EditingRangeCallback::create(std::move(callbackFunction));
+
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -5012,8 +5018,10 @@ void WebPageProxy::getSelectedRangeAsync(PassRefPtr<EditingRangeCallback> callba
     process().send(Messages::WebPage::GetSelectedRangeAsync(callbackID), m_pageID);
 }
 
-void WebPageProxy::characterIndexForPointAsync(const WebCore::IntPoint& point, PassRefPtr<UnsignedCallback> callback)
+void WebPageProxy::characterIndexForPointAsync(const WebCore::IntPoint& point, std::function<void (uint64_t, CallbackBase::Error)> callbackFunction)
 {
+    RefPtr<UnsignedCallback> callback = UnsignedCallback::create(std::move(callbackFunction));
+
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -5025,8 +5033,10 @@ void WebPageProxy::characterIndexForPointAsync(const WebCore::IntPoint& point, P
     process().send(Messages::WebPage::CharacterIndexForPointAsync(point, callbackID), m_pageID);
 }
 
-void WebPageProxy::firstRectForCharacterRangeAsync(const EditingRange& range, PassRefPtr<RectForCharacterRangeCallback> callback)
+void WebPageProxy::firstRectForCharacterRangeAsync(const EditingRange& range, std::function<void (const WebCore::IntRect&, const EditingRange&, CallbackBase::Error)> callbackFunction)
 {
+    RefPtr<RectForCharacterRangeCallback> callback = RectForCharacterRangeCallback::create(std::move(callbackFunction));
+
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -5059,9 +5069,9 @@ void WebPageProxy::confirmCompositionAsync()
 
 #endif
 
-void WebPageProxy::takeSnapshot(IntRect rect, IntSize bitmapSize, SnapshotOptions options, ImageCallback::CallbackFunction callbackFunction)
+void WebPageProxy::takeSnapshot(IntRect rect, IntSize bitmapSize, SnapshotOptions options, std::function<void (const ShareableBitmap::Handle&, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<ImageCallback> callback = ImageCallback::create(callbackFunction);
+    RefPtr<ImageCallback> callback = ImageCallback::create(std::move(callbackFunction));
 
     if (!isValid()) {
         callback->invalidate();

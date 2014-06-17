@@ -1210,14 +1210,14 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (void)_define:(id)sender
 {
-    _page->getSelectionOrContentsAsString(StringCallback::create([self](const String& string, CallbackBase::Error error) {
+    _page->getSelectionOrContentsAsString([self](const String& string, CallbackBase::Error error) {
         if (error != CallbackBase::Error::None)
             return;
         if (!string)
             return;
 
         [self _showDictionary:string];
-    }));
+    });
 }
 
 // UIWKInteractionViewProtocol
@@ -1439,11 +1439,11 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)changeSelectionWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch baseIsStart:(BOOL)baseIsStart
 {
     _usingGestureForSelection = YES;
-    _page->updateSelectionWithTouches(WebCore::IntPoint(point), static_cast<uint32_t>(toSelectionTouch(touch)), baseIsStart, TouchesCallback::create([self, touch](const WebCore::IntPoint& point, uint32_t touch, CallbackBase::Error error) {
+    _page->updateSelectionWithTouches(WebCore::IntPoint(point), static_cast<uint32_t>(toSelectionTouch(touch)), baseIsStart, [self, touch](const WebCore::IntPoint& point, uint32_t touch, CallbackBase::Error error) {
         selectionChangedWithTouch(self, point, touch, error);
         if (touch != UIWKSelectionTouchStarted && touch != UIWKSelectionTouchMoved)
             _usingGestureForSelection = NO;
-    }));
+    });
 }
 
 - (void)changeSelectionWithTouchesFrom:(CGPoint)from to:(CGPoint)to withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState
@@ -1476,7 +1476,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     }
 
     _autocorrectionData.autocorrectionHandler = [completionHandler copy];
-    _page->requestAutocorrectionData(input, AutocorrectionDataCallback::create([self](const Vector<FloatRect>& rects, const String& fontName, double fontSize, uint64_t traits, CallbackBase::Error) {
+    _page->requestAutocorrectionData(input, [self](const Vector<FloatRect>& rects, const String& fontName, double fontSize, uint64_t traits, CallbackBase::Error) {
         CGRect firstRect = CGRectZero;
         CGRect lastRect = CGRectZero;
         if (rects.size()) {
@@ -1493,7 +1493,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         _autocorrectionData.autocorrectionHandler(rects.size() ? [WKAutocorrectionRects autocorrectionRectsWithRects:firstRect lastRect:lastRect] : nil);
         [_autocorrectionData.autocorrectionHandler release];
         _autocorrectionData.autocorrectionHandler = nil;
-    }));
+    });
 }
 
 - (UTF32Char)_characterBeforeCaretSelection
@@ -1539,10 +1539,10 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     UIWKDictationContextHandler dictationHandler = [completionHandler copy];
 
-    _page->requestDictationContext(DictationContextCallback::create([dictationHandler](const String& selectedText, const String& beforeText, const String& afterText, CallbackBase::Error) {
+    _page->requestDictationContext([dictationHandler](const String& selectedText, const String& beforeText, const String& afterText, CallbackBase::Error) {
         dictationHandler(selectedText, beforeText, afterText);
         [dictationHandler release];
-    }));
+    });
 }
 
 // The completion handler should pass the rect of the correction text after replacing the input text, or nil if the replacement could not be performed.
@@ -1556,11 +1556,11 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         return;
     }
     _autocorrectionData.autocorrectionHandler = [completionHandler copy];
-    _page->applyAutocorrection(correction, input, StringCallback::create([self](const String& string, CallbackBase::Error error) {
+    _page->applyAutocorrection(correction, input, [self](const String& string, CallbackBase::Error error) {
         _autocorrectionData.autocorrectionHandler(!string.isNull() ? [WKAutocorrectionRects autocorrectionRectsWithRects:_autocorrectionData.textFirstRect lastRect:_autocorrectionData.textLastRect] : nil);
         [_autocorrectionData.autocorrectionHandler release];
         _autocorrectionData.autocorrectionHandler = nil;
-    }));
+    });
 }
 
 - (void)requestAutocorrectionContextWithCompletionHandler:(void (^)(UIWKAutocorrectionContext *autocorrectionContext))completionHandler
@@ -1579,9 +1579,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         completionHandler([WKAutocorrectionContext autocorrectionContextWithData:beforeText markedText:markedText selectedText:selectedText afterText:afterText selectedRangeInMarkedText:NSMakeRange(location, length)]);
     } else {
         _autocorrectionData.autocorrectionContextHandler = [completionHandler copy];
-        _page->requestAutocorrectionContext(AutocorrectionContextCallback::create([self](const String& beforeText, const String& markedText, const String& selectedText, const String& afterText, uint64_t location, uint64_t length, CallbackBase::Error) {
+        _page->requestAutocorrectionContext([self](const String& beforeText, const String& markedText, const String& selectedText, const String& afterText, uint64_t location, uint64_t length, CallbackBase::Error) {
             _autocorrectionData.autocorrectionContextHandler([WKAutocorrectionContext autocorrectionContextWithData:beforeText markedText:markedText selectedText:selectedText afterText:afterText selectedRangeInMarkedText:NSMakeRange(location, length)]);
-        }));
+        });
     }
 }
 
