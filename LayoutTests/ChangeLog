@@ -1,5 +1,96 @@
 2014-06-16  Mihnea Ovidenie  <mihnea@adobe.com>
 
+        [CSS Regions] Move the overflow tests to a separate folder
+        https://bugs.webkit.org/show_bug.cgi?id=130089
+
+        Reviewed by Andrei Bucur.
+
+        Move the overflow tests inside fast/regions/overflow folder.
+        Adjust tests paths and TestExpectations files accordingly.
+
+        * fast/regions/overflow/overflow-3dtransformed-region-expected.txt: Renamed from LayoutTests/fast/regions/overflow-3dtransformed-region-expected.txt.
+        * fast/regions/overflow/overflow-3dtransformed-region.html: Renamed from LayoutTests/fast/regions/overflow-3dtransformed-region.html.
+        * fast/regions/overflow/overflow-auto-after-float-expected.html: Renamed from LayoutTests/fast/regions/overflow-auto-after-float-expected.html.
+        * fast/regions/overflow/overflow-auto-after-float.html: Renamed from LayoutTests/fast/regions/overflow-auto-after-float.html.
+        * fast/regions/overflow/overflow-content-transform-rotate-expected.html: Renamed from LayoutTests/fast/regions/overflow-content-transform-rotate-expected.html.
+        * fast/regions/overflow/overflow-content-transform-rotate.html: Renamed from LayoutTests/fast/regions/overflow-content-transform-rotate.html.
+        * fast/regions/overflow/overflow-content-zero-height-region-expected.html: Renamed from LayoutTests/fast/regions/overflow-content-zero-height-region-expected.html.
+        * fast/regions/overflow/overflow-content-zero-height-region.html: Renamed from LayoutTests/fast/regions/overflow-content-zero-height-region.html.
+        * fast/regions/overflow/overflow-first-and-last-regions-expected.html: Renamed from LayoutTests/fast/regions/overflow-first-and-last-regions-expected.html.
+        * fast/regions/overflow/overflow-first-and-last-regions-in-container-hidden-expected.html: Renamed from LayoutTests/fast/regions/overflow-first-and-last-regions-in-container-hidden-expected.html.
+        * fast/regions/overflow/overflow-first-and-last-regions-in-container-hidden.html: Renamed from LayoutTests/fast/regions/overflow-first-and-last-regions-in-container-hidden.html.
+        * fast/regions/overflow/overflow-first-and-last-regions.html: Renamed from LayoutTests/fast/regions/overflow-first-and-last-regions.html.
+        * fast/regions/overflow/overflow-in-uniform-regions-dynamic-expected.html: Renamed from LayoutTests/fast/regions/overflow-in-uniform-regions-dynamic-expected.html.
+        * fast/regions/overflow/overflow-in-uniform-regions-dynamic.html: Renamed from LayoutTests/fast/regions/overflow-in-uniform-regions-dynamic.html.
+        * fast/regions/overflow/overflow-in-uniform-regions-expected.html: Renamed from LayoutTests/fast/regions/overflow-in-uniform-regions-expected.html.
+        * fast/regions/overflow/overflow-in-uniform-regions.html: Renamed from LayoutTests/fast/regions/overflow-in-uniform-regions.html.
+        * fast/regions/overflow/overflow-in-variable-width-regions-expected.html: Renamed from LayoutTests/fast/regions/overflow-in-variable-width-regions-expected.html.
+        * fast/regions/overflow/overflow-in-variable-width-regions-inline-bt-expected.html: Renamed from LayoutTests/fast/regions/overflow-in-variable-width-regions-inline-bt-expected.html.
+        * fast/regions/overflow/overflow-in-variable-width-regions-inline-bt.html: Renamed from LayoutTests/fast/regions/overflow-in-variable-width-regions-inline-bt.html.
+        * fast/regions/overflow/overflow-in-variable-width-regions-inline-continuation-expected.html: Renamed from LayoutTests/fast/regions/overflow-in-variable-width-regions-inline-continuation-expected.html.
+        * fast/regions/overflow/overflow-in-variable-width-regions-inline-continuation.html: Renamed from LayoutTests/fast/regions/overflow-in-variable-width-regions-inline-continuation.html.
+        * fast/regions/overflow/overflow-in-variable-width-regions-inline-expected.html: Renamed from LayoutTests/fast/regions/overflow-in-variable-width-regions-inline-expected.html.
+        * fast/regions/overflow/overflow-in-variable-width-regions-inline-lr-expected.html: Renamed from LayoutTests/fast/regions/overflow-in-variable-width-regions-inline-lr-expected.html.
+        * fast/regions/overflow/overflow-in-variable-width-regions-inline-lr.html: Renamed from LayoutTests/fast/regions/overflow-in-variable-width-regions-inline-lr.html.
+        * fast/regions/overflow/overflow-in-variable-width-regions-inline-rl-expected.html: Renamed from LayoutTests/fast/regions/overflow-in-variable-width-regions-inline-rl-expected.html.
+        * fast/regions/overflow/overflow-in-variable-width-regions-inline-rl.html: Renamed from LayoutTests/fast/regions/overflow-in-variable-width-regions-inline-rl.html.
+        * fast/regions/overflow/overflow-in-variable-width-regions-inline.html: Renamed from LayoutTests/fast/regions/overflow-in-variable-width-regions-inline.html.
+        * fast/regions/overflow/overflow-in-variable-width-regions.html: Renamed from LayoutTests/fast/regions/overflow-in-variable-width-regions.html.
+        * fast/regions/overflow/overflow-last-region-horiz-bt-expected.html: Renamed from LayoutTests/fast/regions/overflow-last-region-horiz-bt-expected.html.
+        * fast/regions/overflow/overflow-last-region-horiz-bt.html: Renamed from LayoutTests/fast/regions/overflow-last-region-horiz-bt.html.
+        * fast/regions/overflow/overflow-last-region-vert-lr-expected.html: Renamed from LayoutTests/fast/regions/overflow-last-region-vert-lr-expected.html.
+        * fast/regions/overflow/overflow-last-region-vert-lr.html: Renamed from LayoutTests/fast/regions/overflow-last-region-vert-lr.html.
+        * fast/regions/overflow/overflow-last-region-vert-rl-expected.html: Renamed from LayoutTests/fast/regions/overflow-last-region-vert-rl-expected.html.
+        * fast/regions/overflow/overflow-last-region-vert-rl.html: Renamed from LayoutTests/fast/regions/overflow-last-region-vert-rl.html.
+        * fast/regions/overflow/overflow-moving-below-floats-in-variable-width-regions-expected.html: Renamed from LayoutTests/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.html.
+        * fast/regions/overflow/overflow-moving-below-floats-in-variable-width-regions.html: Renamed from LayoutTests/fast/regions/overflow-moving-below-floats-in-variable-width-regions.html.
+        * fast/regions/overflow/overflow-nested-regions-expected.html: Renamed from LayoutTests/fast/regions/overflow-nested-regions-expected.html.
+        * fast/regions/overflow/overflow-nested-regions.html: Renamed from LayoutTests/fast/regions/overflow-nested-regions.html.
+        * fast/regions/overflow/overflow-not-moving-below-floats-in-variable-width-regions-expected.html: Renamed from LayoutTests/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.html.
+        * fast/regions/overflow/overflow-not-moving-below-floats-in-variable-width-regions.html: Renamed from LayoutTests/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions.html.
+        * fast/regions/overflow/overflow-region-float-expected.html: Renamed from LayoutTests/fast/regions/overflow-region-float-expected.html.
+        * fast/regions/overflow/overflow-region-float.html: Renamed from LayoutTests/fast/regions/overflow-region-float.html.
+        * fast/regions/overflow/overflow-region-inline-expected.html: Renamed from LayoutTests/fast/regions/overflow-region-inline-expected.html.
+        * fast/regions/overflow/overflow-region-inline.html: Renamed from LayoutTests/fast/regions/overflow-region-inline.html.
+        * fast/regions/overflow/overflow-region-transform-expected.html: Renamed from LayoutTests/fast/regions/overflow-region-transform-expected.html.
+        * fast/regions/overflow/overflow-region-transform.html: Renamed from LayoutTests/fast/regions/overflow-region-transform.html.
+        * fast/regions/overflow/overflow-rtl-in-variable-width-regions-expected.html: Renamed from LayoutTests/fast/regions/overflow-rtl-in-variable-width-regions-expected.html.
+        * fast/regions/overflow/overflow-rtl-in-variable-width-regions.html: Renamed from LayoutTests/fast/regions/overflow-rtl-in-variable-width-regions.html.
+        * fast/regions/overflow/overflow-scrollable-1-expected.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-1-expected.html.
+        * fast/regions/overflow/overflow-scrollable-1.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-1.html.
+        * fast/regions/overflow/overflow-scrollable-2-expected.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-2-expected.html.
+        * fast/regions/overflow/overflow-scrollable-2.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-2.html.
+        * fast/regions/overflow/overflow-scrollable-3-expected.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-3-expected.html.
+        * fast/regions/overflow/overflow-scrollable-3.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-3.html.
+        * fast/regions/overflow/overflow-scrollable-fit-complex-expected.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-fit-complex-expected.html.
+        * fast/regions/overflow/overflow-scrollable-fit-complex.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-fit-complex.html.
+        * fast/regions/overflow/overflow-scrollable-fit-expected.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-fit-expected.html.
+        * fast/regions/overflow/overflow-scrollable-fit.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-fit.html.
+        * fast/regions/overflow/overflow-scrollable-nested-expected.txt: Renamed from LayoutTests/fast/regions/overflow-scrollable-nested-expected.txt.
+        * fast/regions/overflow/overflow-scrollable-nested.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-nested.html.
+        * fast/regions/overflow/overflow-scrollable-rel-pos-fragment-expected.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-rel-pos-fragment-expected.html.
+        * fast/regions/overflow/overflow-scrollable-rel-pos-fragment.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-rel-pos-fragment.html.
+        * fast/regions/overflow/overflow-scrollable-rotated-fragment-expected.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-rotated-fragment-expected.html.
+        * fast/regions/overflow/overflow-scrollable-rotated-fragment.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-rotated-fragment.html.
+        * fast/regions/overflow/overflow-scrollable-unsplittable-fragment-expected.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-unsplittable-fragment-expected.html.
+        * fast/regions/overflow/overflow-scrollable-unsplittable-fragment.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-unsplittable-fragment.html.
+        * fast/regions/overflow/overflow-scrollable-varying-width-1-expected.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-varying-width-1-expected.html.
+        * fast/regions/overflow/overflow-scrollable-varying-width-1.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-varying-width-1.html.
+        * fast/regions/overflow/overflow-scrollable-varying-width-2-expected.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-varying-width-2-expected.html.
+        * fast/regions/overflow/overflow-scrollable-varying-width-2.html: Renamed from LayoutTests/fast/regions/overflow-scrollable-varying-width-2.html.
+        * fast/regions/overflow/overflow-size-change-in-variable-width-regions-expected.html: Renamed from LayoutTests/fast/regions/overflow-size-change-in-variable-width-regions-expected.html.
+        * fast/regions/overflow/overflow-size-change-in-variable-width-regions.html: Renamed from LayoutTests/fast/regions/overflow-size-change-in-variable-width-regions.html.
+        * fast/regions/overflow/overflow-size-change-with-stacking-context-expected.html: Renamed from LayoutTests/fast/regions/overflow-size-change-with-stacking-context-expected.html.
+        * fast/regions/overflow/overflow-size-change-with-stacking-context-rtl-expected.html: Renamed from LayoutTests/fast/regions/overflow-size-change-with-stacking-context-rtl-expected.html.
+        * fast/regions/overflow/overflow-size-change-with-stacking-context-rtl.html: Renamed from LayoutTests/fast/regions/overflow-size-change-with-stacking-context-rtl.html.
+        * fast/regions/overflow/overflow-size-change-with-stacking-context.html: Renamed from LayoutTests/fast/regions/overflow-size-change-with-stacking-context.html.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
+2014-06-16  Mihnea Ovidenie  <mihnea@adobe.com>
+
         [CSSRegions] Region with border radius and overflow:hidden does not clip content
         https://bugs.webkit.org/show_bug.cgi?id=133476
 

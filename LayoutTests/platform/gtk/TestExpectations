@@ -1741,8 +1741,8 @@ webkit.org/b/120836 fast/regions/text-region-split-vertical-rl.html [ Failure ]
 
 webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
-webkit.org/b/120842 fast/regions/overflow-in-uniform-regions-dynamic.html [ ImageOnlyFailure ]
-webkit.org/b/120842 fast/regions/overflow-moving-below-floats-in-variable-width-regions.html [ ImageOnlyFailure ]
+webkit.org/b/120842 fast/regions/overflow/overflow-in-uniform-regions-dynamic.html [ ImageOnlyFailure ]
+webkit.org/b/120842 fast/regions/overflow/overflow-moving-below-floats-in-variable-width-regions.html [ ImageOnlyFailure ]
 
 webkit.org/b/121593 accessibility/radio-button-title-label.html  [ Failure ]
 
@@ -1774,11 +1774,11 @@ webkit.org/b/124770 fast/forms/legend-access-key.html [ Failure ]
 webkit.org/b/124770 fast/forms/select-accesskey.html [ Failure ]
 
 webkit.org/b/124834 fast/block/float/clear-negative-margin-top.html [ ImageOnlyFailure ]
-webkit.org/b/124834 fast/regions/overflow-in-variable-width-regions-inline-bt.html [ ImageOnlyFailure ]
-webkit.org/b/124834 fast/regions/overflow-in-variable-width-regions-inline-continuation.html [ ImageOnlyFailure ]
-webkit.org/b/124834 fast/regions/overflow-in-variable-width-regions-inline-lr.html [ ImageOnlyFailure ]
-webkit.org/b/124834 fast/regions/overflow-in-variable-width-regions-inline-rl.html [ ImageOnlyFailure ]
-webkit.org/b/124834 fast/regions/overflow-in-variable-width-regions-inline.html [ ImageOnlyFailure ]
+webkit.org/b/124834 fast/regions/overflow/overflow-in-variable-width-regions-inline-bt.html [ ImageOnlyFailure ]
+webkit.org/b/124834 fast/regions/overflow/overflow-in-variable-width-regions-inline-continuation.html [ ImageOnlyFailure ]
+webkit.org/b/124834 fast/regions/overflow/overflow-in-variable-width-regions-inline-lr.html [ ImageOnlyFailure ]
+webkit.org/b/124834 fast/regions/overflow/overflow-in-variable-width-regions-inline-rl.html [ ImageOnlyFailure ]
+webkit.org/b/124834 fast/regions/overflow/overflow-in-variable-width-regions-inline.html [ ImageOnlyFailure ]
 
 webkit.org/b/125348 accessibility/document-attributes.html [ Failure ]
 
@@ -1837,9 +1837,9 @@ webkit.org/b/118459 media/track/track-legacyapi-with-automatic-mode.html [ Skip 
 # Some tests will fail after the visual overflow patch, they will be fixed shortly.
 webkit.org/b/118665 fast/regions/counters/extract-ordered-lists-in-regions-explicit-counters-005.html [ ImageOnlyFailure Pass ]
 webkit.org/b/118665 fast/regions/floats-basic-in-variable-width-regions.html [ ImageOnlyFailure Pass ]
-webkit.org/b/118665 fast/regions/overflow-nested-regions.html [ ImageOnlyFailure Pass ]
-webkit.org/b/118665 fast/regions/overflow-not-moving-below-floats-in-variable-width-regions.html [ ImageOnlyFailure Pass ]
-webkit.org/b/118665 fast/regions/overflow-region-transform.html [ ImageOnlyFailure Pass ]
+webkit.org/b/118665 fast/regions/overflow/overflow-nested-regions.html [ ImageOnlyFailure Pass ]
+webkit.org/b/118665 fast/regions/overflow/overflow-not-moving-below-floats-in-variable-width-regions.html [ ImageOnlyFailure Pass ]
+webkit.org/b/118665 fast/regions/overflow/overflow-region-transform.html [ ImageOnlyFailure Pass ]
 webkit.org/b/118665 fast/regions/top-overflow-out-of-second-region.html [ ImageOnlyFailure Pass Missing ]
 webkit.org/b/118665 fast/regions/webkit-flow-float-unable-to-push.html [ ImageOnlyFailure Pass ]
 

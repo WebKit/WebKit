@@ -794,7 +794,7 @@ Bug(EFL) fast/images/pdf-as-tiled-background.html
 Bug(EFL) fast/replaced/pdf-as-image.html
 
 # Started failing after sub-pixel layout was enabled.
-Bug(EFL) fast/regions/overflow-last-region-vert-lr.html [ ImageOnlyFailure Pass ]
+Bug(EFL) fast/regions/overflow/overflow-last-region-vert-lr.html [ ImageOnlyFailure Pass ]
 
 # Missing showModalDialog implementation
 webkit.org/b/84589 fast/events/show-modal-dialog-onblur-onfocus.html [ Failure ]
@@ -1348,8 +1348,8 @@ webkit.org/b/118378 vibration/cancelVibration-after-pagevisibility-changed-to-hi
 # Some tests will fail after the visual overflow patch, they will be fixed shortly.
 webkit.org/b/118665 fast/regions/floats-basic-in-variable-width-regions.html [ ImageOnlyFailure Pass ]
 webkit.org/b/118665 fast/regions/hover-in-second-region.html [ ImageOnlyFailure Pass ]
-webkit.org/b/118665 fast/regions/overflow-not-moving-below-floats-in-variable-width-regions.html [ ImageOnlyFailure Pass ]
-webkit.org/b/118665 fast/regions/overflow-region-transform.html [ ImageOnlyFailure Pass ]
+webkit.org/b/118665 fast/regions/overflow/overflow-not-moving-below-floats-in-variable-width-regions.html [ ImageOnlyFailure Pass ]
+webkit.org/b/118665 fast/regions/overflow/overflow-region-transform.html [ ImageOnlyFailure Pass ]
 webkit.org/b/118665 fast/regions/top-overflow-out-of-second-region.html [ ImageOnlyFailure Pass Missing ]
 webkit.org/b/118665 fast/regions/webkit-flow-float-unable-to-push.html [ ImageOnlyFailure Pass ]
 
@@ -1513,11 +1513,11 @@ webkit.org/b/125573 compositing/backgrounds/fixed-backgrounds.html [ ImageOnlyFa
 webkit.org/b/125578 compositing/images/positioned-image-content-rect.html [ ImageOnlyFailure ]
 
 # Added in r161626, failing due insigificant pixel differences
-webkit.org/b/127054 fast/regions/overflow-in-variable-width-regions-inline-bt.html [ ImageOnlyFailure ]
-webkit.org/b/127054 fast/regions/overflow-in-variable-width-regions-inline-continuation.html [ ImageOnlyFailure ]
-webkit.org/b/127054 fast/regions/overflow-in-variable-width-regions-inline-lr.html [ ImageOnlyFailure ]
-webkit.org/b/127054 fast/regions/overflow-in-variable-width-regions-inline-rl.html [ ImageOnlyFailure ]
-webkit.org/b/127054 fast/regions/overflow-in-variable-width-regions-inline.html [ ImageOnlyFailure ]
+webkit.org/b/127054 fast/regions/overflow/overflow-in-variable-width-regions-inline-bt.html [ ImageOnlyFailure ]
+webkit.org/b/127054 fast/regions/overflow/overflow-in-variable-width-regions-inline-continuation.html [ ImageOnlyFailure ]
+webkit.org/b/127054 fast/regions/overflow/overflow-in-variable-width-regions-inline-lr.html [ ImageOnlyFailure ]
+webkit.org/b/127054 fast/regions/overflow/overflow-in-variable-width-regions-inline-rl.html [ ImageOnlyFailure ]
+webkit.org/b/127054 fast/regions/overflow/overflow-in-variable-width-regions-inline.html [ ImageOnlyFailure ]
 
 webkit.org/b/127106 media/video-canvas-drawing-output.html [ Failure ]
 
