@@ -104,9 +104,6 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 @property(readonly) WKBackForwardList *backForwardList;
 
-@property (readonly) NSData *sessionState;
-- (void)restoreFromSessionState:(NSData *)sessionState;
-
 #pragma mark Active Load Introspection
 
 @property (readonly, getter=isLoading) BOOL loading;

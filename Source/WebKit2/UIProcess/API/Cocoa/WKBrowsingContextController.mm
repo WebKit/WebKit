@@ -324,17 +324,6 @@ static void releaseNSData(unsigned char*, const void* data)
     return wrapper(_page->backForwardList());
 }
 
-- (NSData *)sessionState
-{
-    return [wrapper(*_page->sessionStateData(nullptr, nullptr).leakRef()) autorelease];
-}
-
-- (void)restoreFromSessionState:(NSData *)sessionState
-{
-    [sessionState retain];
-    _page->restoreFromSessionStateData(API::Data::createWithoutCopying((const unsigned char*)sessionState.bytes, sessionState.length, releaseNSData, sessionState).get());
-}
-
 #pragma mark Active Load Introspection
 
 - (BOOL)isLoading

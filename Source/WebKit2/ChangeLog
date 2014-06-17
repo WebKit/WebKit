@@ -1,3 +1,15 @@
+2014-06-17  Anders Carlsson  <andersca@apple.com>
+
+        Remove session state methods from WKBrowsingContextController
+        https://bugs.webkit.org/show_bug.cgi?id=133995
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController sessionState]): Deleted.
+        (-[WKBrowsingContextController restoreFromSessionState:]): Deleted.
+
 2014-06-17  Brady Eidson  <beidson@apple.com>
 
         Only show telephone number highlights if only one number is selected
