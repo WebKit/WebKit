@@ -50,7 +50,6 @@ SOFT_LINK(DataDetectors, DDHighlightCreateWithRectsInVisibleRect, DDHighlightRef
 SOFT_LINK(DataDetectors, DDHighlightGetLayerWithContext, CGLayerRef, (DDHighlightRef highlight, CGContextRef context), (highlight, context))
 SOFT_LINK(DataDetectors, DDHighlightGetBoundingRect, CGRect, (DDHighlightRef highlight), (highlight))
 SOFT_LINK(DataDetectors, DDHighlightPointIsOnHighlight, Boolean, (DDHighlightRef highlight, CGPoint point, Boolean* onButton), (highlight, point, onButton))
-SOFT_LINK(DataDetectors, DDHighlightSetButtonPressed, void, (DDHighlightRef highlight, Boolean buttonPressed), (highlight, buttonPressed))
 
 using namespace WebCore;
 
@@ -68,66 +67,65 @@ static IntRect textQuadsToBoundingRectForRange(Range& range)
 
 void TelephoneNumberOverlayController::drawRect(PageOverlay* overlay, WebCore::GraphicsContext& graphicsContext, const WebCore::IntRect& dirtyRect)
 {
-    if (m_currentSelectionRanges.isEmpty()) {
+    // Only draw an individual telephone number highlight if there is precisely one telephone number selected.
+    if (m_currentSelectionRanges.isEmpty() || m_currentSelectionRanges.size() > 1) {
         clearHighlights();
         return;
     }
 
     CGContextRef cgContext = graphicsContext.platformContext();
+    auto& range = m_currentSelectionRanges[0];
+
+    // FIXME: This will choke if the range wraps around the edge of the view.
+    // What should we do in that case?
+    IntRect rect = textQuadsToBoundingRectForRange(*range);
+
+    // Convert to the main document's coordinate space.
+    // FIXME: It's a little crazy to call contentsToWindow and then windowToContents in order to get the right coordinate space.
+    // We should consider adding conversion functions to ScrollView for contentsToDocument(). Right now, contentsToRootView() is
+    // not equivalent to what we need when you have a topContentInset or a header banner.
+    FrameView* viewForRange = range->ownerDocument().view();
+    if (!viewForRange)
+        return;
+    FrameView& mainFrameView = *m_webPage->corePage()->mainFrame().view();
+    rect.setLocation(mainFrameView.windowToContents(viewForRange->contentsToWindow(rect.location())));
+
+    // If the selection rect is completely outside this drawing tile, don't process it further
+    if (!rect.intersects(dirtyRect))
+        return;
+
+    CGRect cgRects[] = { (CGRect)rect };
+
+    RetainPtr<DDHighlightRef> highlight = adoptCF(DDHighlightCreateWithRectsInVisibleRect(nullptr, cgRects, 1, viewForRange->boundsRect(), true));
+    m_highlightedTelephoneNumberData = TelephoneNumberData::create(range.get(), highlight.get());
+
+    Boolean onButton;
+    bool onHighlight = DDHighlightPointIsOnHighlight(highlight.get(), (CGPoint)m_lastMouseMovePosition, &onButton);
+
+    m_highlightedTelephoneNumberData->setHovered(onHighlight);
+
+    // Don't draw the highlight if the mouse is not hovered over it.
+    if (!onHighlight)
+        return;
+
+    // Check and see if the mouse is currently down inside this highlight's button.
+    if (m_mouseDownPosition != IntPoint() && onButton)
+        m_currentMouseDownNumber = m_highlightedTelephoneNumberData;
     
-    for (auto& range : m_currentSelectionRanges) {
-        // FIXME: This will choke if the range wraps around the edge of the view.
-        // What should we do in that case?
-        IntRect rect = textQuadsToBoundingRectForRange(*range);
+    CGLayerRef highlightLayer = DDHighlightGetLayerWithContext(highlight.get(), cgContext);
+    CGRect highlightBoundingRect = DDHighlightGetBoundingRect(highlight.get());
+    
+    GraphicsContextStateSaver stateSaver(graphicsContext);
 
-        // Convert to the main document's coordinate space.
-        // FIXME: It's a little crazy to call contentsToWindow and then windowToContents in order to get the right coordinate space.
-        // We should consider adding conversion functions to ScrollView for contentsToDocument(). Right now, contentsToRootView() is
-        // not equivalent to what we need when you have a topContentInset or a header banner.
-        FrameView* viewForRange = range->ownerDocument().view();
-        if (!viewForRange)
-            return;
-        FrameView& mainFrameView = *m_webPage->corePage()->mainFrame().view();
-        rect.setLocation(mainFrameView.windowToContents(viewForRange->contentsToWindow(rect.location())));
-
-        // If the selection rect is completely outside this drawing tile, don't process it further
-        if (!rect.intersects(dirtyRect))
-            continue;
-
-        CGRect cgRects[] = { (CGRect)rect };
-
-        RetainPtr<DDHighlightRef> highlight = adoptCF(DDHighlightCreateWithRectsInVisibleRect(nullptr, cgRects, 1, viewForRange->boundsRect(), true));
-        RefPtr<TelephoneNumberData> telephoneNumberData = TelephoneNumberData::create(range.get(), highlight.get());
-        m_telephoneNumberDatas.append(telephoneNumberData);
-        
-        // Check and see if the mouse is currently down inside this highlight's button.
-        if (m_mouseDownPosition != IntPoint()) {
-            Boolean onButton;
-            if (DDHighlightPointIsOnHighlight(highlight.get(), (CGPoint)m_mouseDownPosition, &onButton)) {
-                if (onButton) {
-                    m_currentMouseDownNumber = telephoneNumberData;
-                    
-                    // FIXME: We need to do the following, but SOFT_LINK isn't working for this method.
-                    // DDHighlightSetButtonPressed(highlight, true);
-                }
-            }
-        }
-        
-        CGLayerRef highlightLayer = DDHighlightGetLayerWithContext(highlight.get(), cgContext);
-        CGRect highlightBoundingRect = DDHighlightGetBoundingRect(highlight.get());
-        
-        GraphicsContextStateSaver stateSaver(graphicsContext);
-
-        graphicsContext.translate(toFloatSize(highlightBoundingRect.origin));
-        graphicsContext.scale(FloatSize(1, -1));
-        graphicsContext.translate(FloatSize(0, -highlightBoundingRect.size.height));
-        
-        CGRect highlightDrawRect = highlightBoundingRect;
-        highlightDrawRect.origin.x = 0;
-        highlightDrawRect.origin.y = 0;
-        
-        CGContextDrawLayerInRect(cgContext, highlightDrawRect, highlightLayer);
-    }
+    graphicsContext.translate(toFloatSize(highlightBoundingRect.origin));
+    graphicsContext.scale(FloatSize(1, -1));
+    graphicsContext.translate(FloatSize(0, -highlightBoundingRect.size.height));
+    
+    CGRect highlightDrawRect = highlightBoundingRect;
+    highlightDrawRect.origin.x = 0;
+    highlightDrawRect.origin.y = 0;
+    
+    CGContextDrawLayerInRect(cgContext, highlightDrawRect, highlightLayer);
 }
     
 void TelephoneNumberOverlayController::handleTelephoneClick(TelephoneNumberData* number, const IntPoint& point)
@@ -139,7 +137,17 @@ void TelephoneNumberOverlayController::handleTelephoneClick(TelephoneNumberData*
     
 bool TelephoneNumberOverlayController::mouseEvent(PageOverlay*, const WebMouseEvent& event)
 {
-    IntPoint mousePosition = m_webPage->corePage()->mainFrame().view()->rootViewToContents(event.position());
+    m_lastMouseMovePosition = m_webPage->corePage()->mainFrame().view()->rootViewToContents(event.position());
+
+    if (m_highlightedTelephoneNumberData) {
+        Boolean onButton;
+        bool hovered = DDHighlightPointIsOnHighlight(m_highlightedTelephoneNumberData->highlight(), (CGPoint)m_lastMouseMovePosition, &onButton);
+
+        if (hovered != m_highlightedTelephoneNumberData->isHovered())
+            m_telephoneNumberOverlay->setNeedsDisplay();
+
+        m_highlightedTelephoneNumberData->setHovered(hovered);
+    }
 
     // If this event has nothing to do with the left button, it clears the current mouse down tracking and we're done processing it.
     if (event.button() != WebMouseEvent::LeftButton) {
@@ -155,8 +163,8 @@ bool TelephoneNumberOverlayController::mouseEvent(PageOverlay*, const WebMouseEv
         
         // If the mouse lifted while still over the highlight button that it went down on, then that is a click.
         Boolean onButton;
-        if (DDHighlightPointIsOnHighlight(currentNumber->highlight(), (CGPoint)mousePosition, &onButton) && onButton) {
-            handleTelephoneClick(currentNumber.get(), m_webPage->corePage()->mainFrame().view()->contentsToWindow(mousePosition));
+        if (DDHighlightPointIsOnHighlight(currentNumber->highlight(), (CGPoint)m_lastMouseMovePosition, &onButton) && onButton) {
+            handleTelephoneClick(currentNumber.get(), m_webPage->corePage()->mainFrame().view()->contentsToWindow(m_lastMouseMovePosition));
             
             return true;
         }
@@ -169,7 +177,7 @@ bool TelephoneNumberOverlayController::mouseEvent(PageOverlay*, const WebMouseEv
         Boolean onButton;
         
         // Moving with the mouse button down is okay as long as the mouse never leaves the highlight button.
-        if (DDHighlightPointIsOnHighlight(currentNumber->highlight(), (CGPoint)mousePosition, &onButton) && onButton)
+        if (DDHighlightPointIsOnHighlight(currentNumber->highlight(), (CGPoint)m_lastMouseMovePosition, &onButton) && onButton)
             return true;
         
         clearMouseDownInformation();
@@ -181,20 +189,15 @@ bool TelephoneNumberOverlayController::mouseEvent(PageOverlay*, const WebMouseEv
     if (event.type() == WebEvent::MouseDown) {
         ASSERT(!m_currentMouseDownNumber);
         
-        for (auto& telephoneNumberData : m_telephoneNumberDatas) {
-            Boolean onButton;
-            if (DDHighlightPointIsOnHighlight(telephoneNumberData->highlight(), (CGPoint)mousePosition, &onButton) && onButton) {
-                m_mouseDownPosition = mousePosition;
-                m_currentMouseDownNumber = telephoneNumberData;
-                
-                // FIXME: We need to do the following, but SOFT_LINK isn't working for this method.
-                // DDHighlightSetButtonPressed(highlight.get(), true);
-                
-                m_telephoneNumberOverlay->setNeedsDisplay();
-                return true;
-            }
+        Boolean onButton;
+        if (DDHighlightPointIsOnHighlight(m_highlightedTelephoneNumberData->highlight(), (CGPoint)m_lastMouseMovePosition, &onButton) && onButton) {
+            m_mouseDownPosition = m_lastMouseMovePosition;
+            m_currentMouseDownNumber = m_highlightedTelephoneNumberData;
+            
+            m_telephoneNumberOverlay->setNeedsDisplay();
+            return true;
         }
-        
+
         return false;
     }
         
@@ -209,7 +212,7 @@ void TelephoneNumberOverlayController::clearMouseDownInformation()
     
 void TelephoneNumberOverlayController::clearHighlights()
 {
-    m_telephoneNumberDatas.clear();
+    m_highlightedTelephoneNumberData = nullptr;
     m_currentMouseDownNumber = nullptr;
 }
     

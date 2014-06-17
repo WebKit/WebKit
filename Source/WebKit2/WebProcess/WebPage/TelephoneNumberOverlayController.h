@@ -53,13 +53,18 @@ public:
     WebCore::Range* range() const { return m_range.get(); }
     DDHighlightRef highlight() const { return m_highlight.get(); }
 
+    bool isHovered() const { return m_hovered; }
+    void setHovered(bool hovered) { m_hovered = hovered; }
+
 private:
     TelephoneNumberData(WebCore::Range* range, DDHighlightRef highlight)
-        : m_range(range)
+        : m_hovered(false)
+        , m_range(range)
         , m_highlight(highlight)
     {
     }
 
+    bool m_hovered;
     RefPtr<WebCore::Range> m_range;
     RetainPtr<DDHighlightRef> m_highlight;
 };
@@ -99,10 +104,11 @@ private:
     Vector<RefPtr<WebCore::Range>> m_currentSelectionRanges;
     
 #if PLATFORM(MAC)
-    Vector<RefPtr<TelephoneNumberData>> m_telephoneNumberDatas;
+    RefPtr<TelephoneNumberData> m_highlightedTelephoneNumberData;
     RefPtr<TelephoneNumberData> m_currentMouseDownNumber;
 #endif
-    
+
+    WebCore::IntPoint m_lastMouseMovePosition;
     WebCore::IntPoint m_mouseDownPosition;
 };
 

@@ -1,3 +1,23 @@
+2014-06-17  Brady Eidson  <beidson@apple.com>
+
+        Only show telephone number highlights if only one number is selected
+        <rdar://problem/16874568> and https://bugs.webkit.org/show_bug.cgi?id=133989
+
+        Reviewed by Tim Horton.
+
+        Add a flag to TelephoneNumberData to remember if it was hovered over:
+        * WebProcess/WebPage/TelephoneNumberOverlayController.h:
+        (WebKit::TelephoneNumberData::hovered):
+        (WebKit::TelephoneNumberData::setHovered):
+        (WebKit::TelephoneNumberData::TelephoneNumberData):
+
+        * WebProcess/WebPage/mac/TelephoneNumberOverlayControllerMac.mm:
+        (WebKit::TelephoneNumberOverlayController::drawRect): Only draw the highlight if one
+          phone number is selected.
+        (WebKit::TelephoneNumberOverlayController::mouseEvent): Update the hover state of the
+          current phone number, and setNeedsDisplay if the hover state changes.
+        (WebKit::TelephoneNumberOverlayController::clearHighlights):
+
 2014-06-17  Tim Horton  <timothy_horton@apple.com>
 
         Remove WKContentView _setFindIndicator:fadeOut:animate:
