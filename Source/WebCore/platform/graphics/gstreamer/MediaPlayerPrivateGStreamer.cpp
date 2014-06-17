@@ -862,7 +862,8 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamer::buffered() cons
         return timeRanges;
     }
 
-    for (guint index = 0; index < gst_query_get_n_buffering_ranges(query); index++) {
+    guint numBufferingRanges = gst_query_get_n_buffering_ranges(query);
+    for (guint index = 0; index < numBufferingRanges; index++) {
         gint64 rangeStart = 0, rangeStop = 0;
         if (gst_query_parse_nth_buffering_range(query, index, &rangeStart, &rangeStop))
             timeRanges->add(MediaTime::createWithDouble((rangeStart * mediaDuration) / GST_FORMAT_PERCENT_MAX),
