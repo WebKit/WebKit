@@ -1,3 +1,14 @@
+2014-06-16  Tanay C  <tanay.c@samsung.com>
+
+        Remove deprecated API warnings in WebKit/Tools/MiniBrowser/efl/main.c
+        https://bugs.webkit.org/show_bug.cgi?id=133792
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/main.c: replaced the deprecated API's with the latest ones
+        (show_file_entry_dialog):
+        (window_create):
+
 2014-06-16  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Missing 'selection-changed' signal when navigating a combo box with keyboard
