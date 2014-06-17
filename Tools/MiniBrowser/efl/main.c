@@ -308,11 +308,7 @@ update_view_favicon(Browser_Window *window, Evas_Object *icon)
 
     /* Show new icon in URL bar */
     if (icon) {
-        /* Workaround for icon display bug:
-         * http://trac.enlightenment.org/e/ticket/1616 */
-        evas_object_size_hint_min_set(icon, 48, 24);
-        evas_object_image_filled_set(icon, EINA_FALSE);
-        evas_object_image_fill_set(icon, 24, 0, 24, 24);
+        evas_object_size_hint_min_set(icon, 32, 32);
         elm_object_part_content_set(window->url_bar, "icon", icon);
         evas_object_ref(icon);
     }

@@ -1,3 +1,15 @@
+2014-06-16  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Remove workaround for icon display bug in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=133962
+
+        Reviewed by Gyuyoung Kim.
+
+        Since we bumped EFL to 1.9, this workaround is unnecessary.
+
+        * MiniBrowser/efl/main.c:
+        (update_view_favicon):
+
 2014-06-16  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GTK] Add llvmpipe (Mesa) to the JHBuild moduleset and force it when running layout tests
