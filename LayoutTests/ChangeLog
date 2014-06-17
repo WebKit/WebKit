@@ -1,3 +1,15 @@
+2014-06-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Fix the handling of resize events after r169505.
+        https://bugs.webkit.org/show_bug.cgi?id=133517
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk/TestExpectations: Remove the expectations for the tests
+        that now pass.
+        * platform/gtk/fast/dom/rtl-scroll-to-leftmost-and-resize-expected.txt:
+        Rebaseline results.
+
 2014-06-17  Andrzej Badowski  <a.badowski@samsung.com>
 
         [EFL] Add expectations for three failing/flaky layout tests.
