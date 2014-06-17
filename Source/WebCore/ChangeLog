@@ -1,3 +1,15 @@
+2014-06-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        Avoid Vector<char> copies in the OffsetBuffer constructor
+        https://bugs.webkit.org/show_bug.cgi?id=133956
+
+        Reviewed by Andreas Kling.
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::OffsetBuffer::OffsetBuffer): Take the Vector parameter by value and
+        move it into the member variable.
+        (WebCore::openFunc): Move the Vector object into the OffsetBuffer constructor.
+
 2014-06-17  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Overwritten samples are removed from buffered ranges using decode times; added samples using presentation times

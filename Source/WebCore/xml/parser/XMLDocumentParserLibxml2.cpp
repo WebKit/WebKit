@@ -361,7 +361,11 @@ static int matchFunc(const char*)
 class OffsetBuffer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    OffsetBuffer(const Vector<char>& b) : m_buffer(b), m_currentOffset(0) { }
+    OffsetBuffer(Vector<char> buffer)
+        : m_buffer(std::move(buffer))
+        , m_currentOffset(0)
+    {
+    }
 
     int readOutBytes(char* outputBuffer, unsigned askedToRead)
     {
@@ -465,7 +469,7 @@ static void* openFunc(const char* uri)
     if (!shouldAllowExternalLoad(response.url()))
         return &globalDescriptor;
 
-    return new OffsetBuffer(data);
+    return new OffsetBuffer(std::move(data));
 }
 
 static int readFunc(void* context, char* buffer, int len)
