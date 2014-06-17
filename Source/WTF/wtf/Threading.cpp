@@ -91,6 +91,13 @@ void setCurrentThreadIsUserInteractive()
 #endif
 }
 
+void setCurrentThreadIsUserInitiated()
+{
+#if HAVE(QOS_CLASSES)
+    pthread_set_qos_class_self_np(QOS_CLASS_USER_INITIATED, 0);
+#endif
+}
+
 #if PLATFORM(MAC) || PLATFORM(WIN)
 
 // For ABI compatibility with Safari on Mac / Windows: Safari uses the private

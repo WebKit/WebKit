@@ -84,6 +84,8 @@ WTF_EXPORT_PRIVATE ThreadIdentifier createThread(ThreadFunction, void*, const ch
 // Mark the current thread as requiring UI responsiveness.
 WTF_EXPORT_PRIVATE void setCurrentThreadIsUserInteractive();
 
+WTF_EXPORT_PRIVATE void setCurrentThreadIsUserInitiated();
+
 // Internal platform-specific createThread implementation.
 ThreadIdentifier createThreadInternal(ThreadFunction, void*, const char* threadName);
 

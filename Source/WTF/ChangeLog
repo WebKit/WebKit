@@ -1,3 +1,22 @@
+2014-06-17  Andreas Kling  <akling@apple.com>
+
+        Web process main thread priority is lower than some network process threads.
+        <https://webkit.org/b/133987>
+        <rdar://problem/17330300>
+
+        Bring all of our threads to the appropriate priority level by opting in to the
+        threading QoS APIs. By marking them "user initiated", they still yield to UI
+        interaction, but take priority over background tasks.
+
+        Reviewed by Maciej Stachowiak.
+
+        * wtf/Platform.h:
+        * wtf/Threading.cpp:
+        (WTF::setCurrentThreadIsUserInitiated):
+        * wtf/Threading.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::createThreadInternal):
+
 2014-06-17  Alex Christensen  <achristensen@webkit.org>
 
         Enable css jit for armv7 on iOS.

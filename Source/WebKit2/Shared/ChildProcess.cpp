@@ -61,6 +61,8 @@ void ChildProcess::initialize(const ChildProcessInitializationParameters& parame
 {
     platformInitialize();
 
+    WTF::setCurrentThreadIsUserInitiated();
+
     initializeProcess(parameters);
     initializeProcessName(parameters);
 

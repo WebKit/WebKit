@@ -1,3 +1,16 @@
+2014-06-17  Andreas Kling  <akling@apple.com>
+
+        Web process main thread priority is lower than some network process threads.
+        <https://webkit.org/b/133987>
+        <rdar://problem/17330300>
+
+        Mark the main thread as "user initiated" in process entry.
+
+        Reviewed by Maciej Stachowiak.
+
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::initialize):
+
 2014-06-17  Anders Carlsson  <andersca@apple.com>
 
         Add SPI to get the NSURLRequest from a WKNavigationResponse
