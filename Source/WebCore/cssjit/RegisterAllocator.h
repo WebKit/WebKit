@@ -62,13 +62,14 @@ static const JSC::MacroAssembler::RegisterID callerSavedRegisters[] {
     JSC::ARMRegisters::r1,
     JSC::ARMRegisters::r2,
     JSC::ARMRegisters::r3,
-    JSC::ARMRegisters::r7, // r7 is fp, and it's pushed in the prologue and popped in the epilogue so we can use it without saving it as long as we have a prologue.
 };
 static const JSC::MacroAssembler::RegisterID calleeSavedRegisters[] = {
     JSC::ARMRegisters::r4,
     JSC::ARMRegisters::r5,
+    JSC::ARMRegisters::r7,
 };
-static const JSC::MacroAssembler::RegisterID tempRegister = JSC::ARMRegisters::r12; // ip
+// r6 is also used as addressTempRegister in the macro assembler. It is saved in the prologue and restored in the epilogue.
+static const JSC::MacroAssembler::RegisterID tempRegister = JSC::ARMRegisters::r6;
 #elif CPU(X86_64)
 static const JSC::MacroAssembler::RegisterID callerSavedRegisters[] = {
     JSC::X86Registers::eax,

@@ -1114,7 +1114,8 @@ inline bool SelectorCodeGenerator::generatePrologue()
 #elif CPU(ARM_THUMB2)
     Vector<JSC::MacroAssembler::RegisterID, 2> prologueRegisters;
     prologueRegisters.append(JSC::ARMRegisters::lr);
-    prologueRegisters.append(JSC::ARMRegisters::fp); // fp is used as a caller saved register because we always have a prologue for now.
+    // r6 is tempRegister in RegisterAllocator.h and addressTempRegister in MacroAssemblerARMv7.h and must be preserved by the callee.
+    prologueRegisters.append(JSC::ARMRegisters::r6);
     m_prologueStackReferences = m_stackAllocator.push(prologueRegisters);
     return true;
 #elif CPU(X86_64) && CSS_SELECTOR_JIT_DEBUGGING
@@ -1136,7 +1137,7 @@ inline void SelectorCodeGenerator::generateEpilogue()
 #elif CPU(ARM_THUMB2)
     Vector<JSC::MacroAssembler::RegisterID, 2> prologueRegisters;
     prologueRegisters.append(JSC::ARMRegisters::lr);
-    prologueRegisters.append(JSC::ARMRegisters::fp);
+    prologueRegisters.append(JSC::ARMRegisters::r6);
     m_stackAllocator.pop(m_prologueStackReferences, prologueRegisters);
 #elif CPU(X86_64) && CSS_SELECTOR_JIT_DEBUGGING
     Vector<JSC::MacroAssembler::RegisterID, 1> prologueRegister;
