@@ -1196,7 +1196,7 @@ sub GenerateHeader
     push(@headerContent, "\n");
 
     # Add prototype declaration.
-    GeneratePrototypeDeclaration(\@headerContent, $className, $interface, $interfaceName, $needsVisitChildren);
+    GeneratePrototypeDeclaration(\@headerContent, $className, $interface, $interfaceName);
 
     if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
         $headerIncludes{"JSDOMBinding.h"} = 1;
@@ -4259,7 +4259,6 @@ sub GeneratePrototypeDeclaration
     my $className = shift;
     my $interface = shift;
     my $interfaceName = shift;
-    my $needsVisitChildren = shift;
 
     my $prototypeClassName = "${className}Prototype";
 
@@ -4288,9 +4287,6 @@ sub GeneratePrototypeDeclaration
             push(@$outputArray, "    void finishCreation(JSC::VM&);\n");
         }
     }
-    if ($interface->extendedAttributes->{"JSCustomMarkFunction"} or $needsVisitChildren) {
-        $structureFlags{"JSC::OverridesVisitChildren"} = 1;
-    }
     push(@$outputArray,
         "    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n" .
         "    {\n" .
@@ -4308,12 +4304,14 @@ sub GeneratePrototypeDeclaration
     push(@$outputArray, "    ${prototypeClassName}(JSC::VM& vm, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(vm, structure) { }\n");
 
     # structure flags
-    push(@$outputArray, "protected:\n");
-    push(@$outputArray, "    static const unsigned StructureFlags = ");
-    foreach my $structureFlag (sort (keys %structureFlags)) {
-        push(@$outputArray, $structureFlag . " | ");
+    if (%structureFlags) {
+        push(@$outputArray, "protected:\n");
+        push(@$outputArray, "    static const unsigned StructureFlags = ");
+        foreach my $structureFlag (sort (keys %structureFlags)) {
+            push(@$outputArray, $structureFlag . " | ");
+        }
+        push(@$outputArray, "Base::StructureFlags;\n");
     }
-    push(@$outputArray, "Base::StructureFlags;\n");
 
     push(@$outputArray, "};\n\n");
 }
@@ -4348,10 +4346,8 @@ sub GenerateConstructorDeclaration
     push(@$outputArray, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());\n");
     push(@$outputArray, "    }\n");
 
-    push(@$outputArray, "protected:\n");
-    push(@$outputArray, "    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | DOMConstructorObject::StructureFlags;\n");
-
     if (IsConstructable($interface) && !$interface->extendedAttributes->{"NamedConstructor"}) {
+        push(@$outputArray, "protected:\n");
         push(@$outputArray, "    static JSC::EncodedJSValue JSC_HOST_CALL construct${className}(JSC::ExecState*);\n");
 
         if (!HasCustomConstructor($interface)) {

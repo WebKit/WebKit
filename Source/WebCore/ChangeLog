@@ -1,3 +1,67 @@
+2014-06-17  Sam Weinig  <sam@webkit.org>
+
+        Remove unnecessary Structure flags from generated bindings
+        https://bugs.webkit.org/show_bug.cgi?id=133992
+
+        Reviewed by Daniel Bates.
+
+        - Remove OverridesVisitChildren flag from DOM prototype objects. They never
+          implement visitChildren.
+        - Remove OverridesGetOwnPropertySlot and ImplementsHasInstance from DOM constructor
+          objects. getOwnPropertySlot is never implemented and ImplementsHasInstance is inherited
+          automatically from DOMConstructorObject.
+        - If we are not changing any flags, we now don't emit StructureFlags at all for the class.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GeneratePrototypeDeclaration):
+        (GenerateConstructorDeclaration):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        (WebCore::JSTestActiveDOMObjectPrototype::JSTestActiveDOMObjectPrototype):
+        (WebCore::JSTestActiveDOMObjectConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        (WebCore::JSTestCustomNamedGetterPrototype::JSTestCustomNamedGetterPrototype):
+        (WebCore::JSTestCustomNamedGetterConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        (WebCore::JSTestEventConstructorPrototype::JSTestEventConstructorPrototype):
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        (WebCore::JSTestEventTargetPrototype::JSTestEventTargetPrototype):
+        (WebCore::JSTestEventTargetConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestException.h:
+        (WebCore::JSTestExceptionPrototype::JSTestExceptionPrototype):
+        (WebCore::JSTestExceptionConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.h:
+        (WebCore::JSTestGenerateIsReachablePrototype::JSTestGenerateIsReachablePrototype):
+        (WebCore::JSTestGenerateIsReachableConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        (WebCore::JSTestInterfacePrototype::JSTestInterfacePrototype):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        (WebCore::JSTestMediaQueryListListenerPrototype::JSTestMediaQueryListListenerPrototype):
+        (WebCore::JSTestMediaQueryListListenerConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        (WebCore::JSTestNamedConstructorPrototype::JSTestNamedConstructorPrototype):
+        (WebCore::JSTestNamedConstructorConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestNode.h:
+        (WebCore::JSTestNodePrototype::JSTestNodePrototype):
+        * bindings/scripts/test/JS/JSTestNondeterministic.h:
+        (WebCore::JSTestNondeterministicPrototype::JSTestNondeterministicPrototype):
+        (WebCore::JSTestNondeterministicConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (WebCore::JSTestObjPrototype::JSTestObjPrototype):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        (WebCore::JSTestOverloadedConstructorsPrototype::JSTestOverloadedConstructorsPrototype):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        (WebCore::JSTestSerializedScriptValueInterfacePrototype::JSTestSerializedScriptValueInterfacePrototype):
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        (WebCore::JSTestTypedefsPrototype::JSTestTypedefsPrototype):
+        * bindings/scripts/test/JS/JSattribute.h:
+        (WebCore::JSattributePrototype::JSattributePrototype):
+        (WebCore::JSattributeConstructor::createStructure):
+        * bindings/scripts/test/JS/JSreadonly.h:
+        (WebCore::JSreadonlyPrototype::JSreadonlyPrototype):
+        (WebCore::JSreadonlyConstructor::createStructure):
+
 2014-06-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Input type=time elements styled with SVG fonts have 0 width
