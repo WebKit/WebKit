@@ -1,3 +1,14 @@
+2014-06-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove the USE_GTK2=1 branch in OptionsGTK.cmake. This used to determine
+        GTK+ and GDK libraries and include directories for the GTK+ 2 dependency,
+        but we now only support GTK+ 3. The GTK+ 2 dependency is still required
+        by the plugin process, but it is searched and utilized separately.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2014-06-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r170003.
