@@ -30,6 +30,7 @@
 @interface WKNavigationResponse (WKPrivate)
 
 @property (nonatomic, readonly) WKFrameInfo *_frame;
+@property (nonatomic, readonly) NSURLRequest *_request;
 
 @end
 

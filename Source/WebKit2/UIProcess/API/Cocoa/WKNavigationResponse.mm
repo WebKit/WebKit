@@ -64,6 +64,11 @@
     return _frame.get();
 }
 
+- (NSURLRequest *)_request
+{
+    return _request.get();
+}
+
 @end
 
 

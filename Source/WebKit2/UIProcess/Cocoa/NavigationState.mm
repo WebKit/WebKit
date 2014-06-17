@@ -356,6 +356,7 @@ void NavigationState::PolicyClient::decidePolicyForResponse(WebPageProxy*, WebFr
     auto navigationResponse = adoptNS([[WKNavigationResponse alloc] init]);
 
     navigationResponse->_frame = adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*frame]);
+    navigationResponse->_request = resourceRequest.nsURLRequest(WebCore::DoNotUpdateHTTPBody);
     [navigationResponse setResponse:resourceResponse.nsURLResponse()];
     [navigationResponse setCanShowMIMEType:canShowMIMEType];
 

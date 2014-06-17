@@ -1,3 +1,18 @@
+2014-06-17  Anders Carlsson  <andersca@apple.com>
+
+        Add SPI to get the NSURLRequest from a WKNavigationResponse
+        https://bugs.webkit.org/show_bug.cgi?id=133984
+        <rdar://problem/17006399>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKNavigationResponse.mm:
+        (-[WKNavigationResponse _request]):
+        * UIProcess/API/Cocoa/WKNavigationResponseInternal.h:
+        * UIProcess/API/Cocoa/WKNavigationResponsePrivate.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::PolicyClient::decidePolicyForResponse):
+
 2014-06-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL][WK2] Skip failing EFL API tests

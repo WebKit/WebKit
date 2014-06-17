@@ -32,6 +32,7 @@
 @interface WKNavigationResponse () {
 @package
     RetainPtr<WKFrameInfo> _frame;
+    RetainPtr<NSURLRequest> _request;
 }
 
 @property (nonatomic, readwrite, copy) NSURLResponse *response;
