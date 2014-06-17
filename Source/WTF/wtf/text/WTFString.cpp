@@ -688,7 +688,7 @@ String String::isolatedCopy() const &
     return m_impl->isolatedCopy();
 }
 
-String String::isolatedCopy() const &&
+String String::isolatedCopy() &&
 {
     if (isSafeToSendToAnotherThread()) {
         // Since we know that our string is a temporary that will be destroyed

@@ -373,7 +373,7 @@ public:
 
 #if COMPILER_SUPPORTS(CXX_REFERENCE_QUALIFIED_FUNCTIONS)
     WTF_EXPORT_STRING_API String isolatedCopy() const &;
-    WTF_EXPORT_STRING_API String isolatedCopy() const &&;
+    WTF_EXPORT_STRING_API String isolatedCopy() &&;
 #else
     WTF_EXPORT_STRING_API String isolatedCopy() const;
 #endif

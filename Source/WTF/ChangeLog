@@ -1,3 +1,17 @@
+2014-06-17  Dan Bernstein  <mitz@apple.com>
+
+        String::isolatedCopy doesn’t return an isolated copy when used on an rvalue reference
+        https://bugs.webkit.org/show_bug.cgi?id=133968
+
+        Reviewed by Anders Carlsson.
+
+        Made the rvalue reference overload of isolatedCopy() non-const, so that std::move(*this) is
+        an rvalue reference that can be moved, rather than copied, into the returned String.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::isolatedCopy):
+        * wtf/text/WTFString.h:
+
 2014-06-15  Dan Bernstein  <mitz@apple.com>
 
         iOS build fix after r169995.

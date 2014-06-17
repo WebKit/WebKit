@@ -153,5 +153,11 @@ TEST(WTF, StringReplaceWithLiteral)
     ASSERT_STREQ("résumé", testString.utf8().data());
 }
 
+TEST(WTF, StringIsolatedCopy)
+{
+    String original = "1234";
+    auto copy = std::move(original).isolatedCopy();
+    ASSERT_FALSE(original.impl() == copy.impl());
+}
 
 } // namespace TestWebKitAPI
