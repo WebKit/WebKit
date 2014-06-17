@@ -1,3 +1,13 @@
+2014-06-16  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Region with border radius and overflow:hidden does not clip content
+        https://bugs.webkit.org/show_bug.cgi?id=133476
+
+        Reviewed by Andrei Bucur.
+
+        * fast/regions/region-border-radius-overflow-clip-expected.html: Added.
+        * fast/regions/region-border-radius-overflow-clip.html: Added.
+
 2014-06-12  Mark Lam  <mark.lam@apple.com>
 
         Parser statementDepth accounting needs to account for when a function body excludes its braces.
