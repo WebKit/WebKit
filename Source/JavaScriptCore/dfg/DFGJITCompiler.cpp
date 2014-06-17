@@ -443,8 +443,8 @@ void* JITCompiler::addressOfDoubleConstant(Node* node)
     JSValue jsvalue = node->valueOfJSConstant(codeBlock());
     ASSERT(jsvalue.isDouble());
 
-    double value = jsvalue.asDouble();
-    auto it = m_graph.m_doubleConstantsMap.find(value);
+    int64_t valueBits = jsvalue.asMachineInt();
+    auto it = m_graph.m_doubleConstantsMap.find(valueBits);
     if (it != m_graph.m_doubleConstantsMap.end())
         return it->value;
 
@@ -452,8 +452,8 @@ void* JITCompiler::addressOfDoubleConstant(Node* node)
         m_graph.m_doubleConstants = std::make_unique<Bag<double>>();
 
     double* addressInConstantPool = m_graph.m_doubleConstants->add();
-    *addressInConstantPool = value;
-    m_graph.m_doubleConstantsMap.add(value, addressInConstantPool);
+    *addressInConstantPool = jsvalue.asDouble();
+    m_graph.m_doubleConstantsMap[valueBits] = addressInConstantPool;
     return addressInConstantPool;
 }
 #endif
