@@ -1,3 +1,28 @@
+2014-06-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Fix the handling of resize events after r169505.
+        https://bugs.webkit.org/show_bug.cgi?id=133517
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitpy/port/xvfbdriver.py:
+        (XvfbDriver._start): Set the resolution of Xvfb to XGA (1024x768).
+        The tests css3/viewport-percentage-lengths/viewport-percentage-lengths-*.html
+        need at least 900x640 pixels to pass.
+        * Scripts/webkitpy/port/xvfbdriver_unittest.py:
+        (XvfbDriverTest.test_start_no_pixel_tests): Update resolution.
+        (XvfbDriverTest.test_start_pixel_tests): Update resolution.
+        (XvfbDriverTest.test_start_arbitrary_worker_number): Update resolution.
+        (XvfbDriverTest.test_start_next_worker): Update resolution.
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::PlatformWebView): gtk_widget_size_allocate should
+        be requested over the main widget instead of the window.
+        (WTR::PlatformWebView::resizeTo): Changed this to call setWindowFrame like
+        the Mac port.
+        (WTR::PlatformWebView::windowFrame): Remove legacy ifdef for GTK2.
+        (WTR::PlatformWebView::setWindowFrame): Set the size and position
+        of the Window and the web view.
+
 2014-06-17  Matthew Mirman <mmirman@apple.com>
 
         Unreviewed. Added myself to list of contributors.
