@@ -1,3 +1,20 @@
+2014-06-17  Tim Horton  <timothy_horton@apple.com>
+
+        Remove WKContentView _setFindIndicator:fadeOut:animate:
+        https://bugs.webkit.org/show_bug.cgi?id=133976
+
+        Reviewed by Anders Carlsson.
+
+        Find indicators are totally internal to FindController on iOS,
+        we don't need to push them to the content view via PageClient,
+        so this code was unused.
+
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::setFindIndicator):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _setFindIndicator:WebKit::fadeOut:animate:]): Deleted.
+
 2014-06-17  Andreas Kling  <akling@apple.com>
 
         Web process main thread priority is lower than some network process threads.

@@ -465,11 +465,6 @@ private:
     _page->applicationDidBecomeActive();
 }
 
-- (void)_setFindIndicator:(PassRefPtr<WebKit::FindIndicator>)findIndicator fadeOut:(BOOL)fadeOut animate:(BOOL)animate
-{
-    notImplemented();
-}
-
 @end
 
 #endif // PLATFORM(IOS)
