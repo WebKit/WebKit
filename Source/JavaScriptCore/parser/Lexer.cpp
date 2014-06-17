@@ -1646,20 +1646,32 @@ start:
         goto inNumberAfterDecimalPoint;
     case CharacterZero:
         shift();
-        if ((m_current | 0x20) == 'x' && isASCIIHexDigit(peek(1))) {
+        if ((m_current | 0x20) == 'x') {
+            if (!isASCIIHexDigit(peek(1))) {
+                m_lexErrorMessage = "No hexadecimal digits after '0x'";
+                token = INVALID_HEX_NUMBER_ERRORTOK;
+                goto returnError;
+            }
             parseHex(tokenData->doubleValue);
+            if (isIdentStart(m_current)) {
+                m_lexErrorMessage = "No space between hexadecimal literal and identifier";
+                token = INVALID_HEX_NUMBER_ERRORTOK;
+                goto returnError;
+            }
             token = NUMBER;
-        } else {
-            record8('0');
-            if (isASCIIOctalDigit(m_current)) {
-                if (parseOctal(tokenData->doubleValue)) {
-                    if (strictMode) {
-                        m_lexErrorMessage = "Octal escapes are forbidden in strict mode";
-                        token = INVALID_OCTAL_NUMBER_ERRORTOK;
-                        goto returnError;
-                    }
-                    token = NUMBER;
+            m_buffer8.resize(0);
+            break;
+        }
+
+        record8('0');
+        if (isASCIIOctalDigit(m_current)) {
+            if (parseOctal(tokenData->doubleValue)) {
+                if (strictMode) {
+                    m_lexErrorMessage = "Octal escapes are forbidden in strict mode";
+                    token = INVALID_OCTAL_NUMBER_ERRORTOK;
+                    goto returnError;
                 }
+                token = NUMBER;
             }
         }
         FALLTHROUGH;
