@@ -1,3 +1,10 @@
+2014-06-16  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Unreviewed build fix when MHTML is enabled after r170041
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetContentsAsMHTMLData):
+
 2014-06-16  Dan Bernstein  <mitz@apple.com>
 
         Part 2 of: Change GenericCallback<> function parameters into std::function<>

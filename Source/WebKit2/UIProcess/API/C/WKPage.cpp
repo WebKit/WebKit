@@ -1600,7 +1600,7 @@ void WKPageGetSelectionAsWebArchiveData(WKPageRef pageRef, void* context, WKPage
 void WKPageGetContentsAsMHTMLData(WKPageRef pageRef, bool useBinaryEncoding, void* context, WKPageGetContentsAsMHTMLDataFunction callback)
 {
 #if ENABLE(MHTML)
-    toImpl(pageRef)->getContentsAsMHTMLData(DataCallback::create(toGenericCallbackFunction(context, callback)), useBinaryEncoding);
+    toImpl(pageRef)->getContentsAsMHTMLData(toGenericCallbackFunction(context, callback), useBinaryEncoding);
 #else
     UNUSED_PARAM(pageRef);
     UNUSED_PARAM(useBinaryEncoding);
