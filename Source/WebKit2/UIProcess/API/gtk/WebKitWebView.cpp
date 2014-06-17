@@ -2513,9 +2513,9 @@ void webkit_web_view_can_execute_editing_command(WebKitWebView* webView, const c
     g_return_if_fail(command);
 
     GTask* task = g_task_new(webView, cancellable, callback, userData);
-    getPage(webView)->validateCommand(String::fromUTF8(command), ValidateCommandCallback::create([task](const String&, bool isEnabled, int32_t, CallbackBase::Error) {
+    getPage(webView)->validateCommand(String::fromUTF8(command), [task](const String&, bool isEnabled, int32_t, CallbackBase::Error) {
         g_task_return_boolean(adoptGRef(task).get(), isEnabled);        
-    }));
+    });
 }
 
 /**
@@ -2628,9 +2628,9 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
     g_return_if_fail(script);
 
     GTask* task = g_task_new(webView, cancellable, callback, userData);
-    getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(script), ScriptValueCallback::create([task](WebSerializedScriptValue* serializedScriptValue, CallbackBase::Error) {
+    getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(script), [task](WebSerializedScriptValue* serializedScriptValue, CallbackBase::Error) {
         webkitWebViewRunJavaScriptCallback(serializedScriptValue, adoptGRef(task).get());
-    }));
+    });
 }
 
 /**
@@ -2719,9 +2719,9 @@ static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, g
     WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
     gpointer outputStreamData = g_memory_output_stream_get_data(G_MEMORY_OUTPUT_STREAM(object));
     getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)),
-        ScriptValueCallback::create([task](WebSerializedScriptValue* serializedScriptValue, CallbackBase::Error) {
-        webkitWebViewRunJavaScriptCallback(serializedScriptValue, task.get());
-    }));
+        [task](WebSerializedScriptValue* serializedScriptValue, CallbackBase::Error) {
+            webkitWebViewRunJavaScriptCallback(serializedScriptValue, task.get());
+        });
 }
 
 /**
@@ -2897,9 +2897,9 @@ void webkit_web_view_save(WebKitWebView* webView, WebKitSaveMode saveMode, GCanc
     GTask* task = g_task_new(webView, cancellable, callback, userData);
     g_task_set_source_tag(task, reinterpret_cast<gpointer>(webkit_web_view_save));
     g_task_set_task_data(task, createViewSaveAsyncData(), reinterpret_cast<GDestroyNotify>(destroyViewSaveAsyncData));
-    getPage(webView)->getContentsAsMHTMLData(DataCallback::create([task](API::Data* data, CallbackBase::Error) {
+    getPage(webView)->getContentsAsMHTMLData([task](API::Data* data, CallbackBase::Error) {
         getContentsAsMHTMLDataCallback(data, task);
-    }), false);
+    }, false);
 }
 
 /**
@@ -2962,9 +2962,9 @@ void webkit_web_view_save_to_file(WebKitWebView* webView, GFile* file, WebKitSav
     data->file = file;
     g_task_set_task_data(task, data, reinterpret_cast<GDestroyNotify>(destroyViewSaveAsyncData));
 
-    getPage(webView)->getContentsAsMHTMLData(DataCallback::create([task](API::Data* data, CallbackBase::Error) {
+    getPage(webView)->getContentsAsMHTMLData([task](API::Data* data, CallbackBase::Error) {
         getContentsAsMHTMLDataCallback(data, task);
-    }), false);
+    }, false);
 }
 
 /**

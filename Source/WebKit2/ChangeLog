@@ -1,3 +1,15 @@
+2014-06-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix for the GTK+ port. Removing the *Callback::create() wrappings
+        for lambda callbacks that aren't required anymore after the changes in r170041.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_can_execute_editing_command):
+        (webkit_web_view_run_javascript):
+        (resourcesStreamReadCallback):
+        (webkit_web_view_save):
+        (webkit_web_view_save_to_file):
+
 2014-06-16  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Unreviewed build fix when MHTML is enabled after r170041
