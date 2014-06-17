@@ -1644,10 +1644,13 @@ webkit.org/b/133734 css3/viewport-percentage-lengths/viewport-percentage-lengths
 webkit.org/b/133735 css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Failure ]
 webkit.org/b/133737 css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Failure ]
 webkit.org/b/133734 css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Failure ]
+webkit.org/b/133972 mathml/presentation/foreign-element-in-token.html [ Failure ]
+webkit.org/b/133973 fast/borders/hidpi-border-radius-with-subpixel-margin-not-renderable.html [ ImageOnlyFailure ]
 
 
 # Tests failing or flaky with closer reasons unknwown at this time
 webkit.org/b/133857 inspector-protocol/layers/layers-blending-compositing-reasons.html [ Failure ]
 webkit.org/b/133859 fast/regions/inline-block-inside-anonymous-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/133860 fast/regions/auto-size/autosize-region-window-resize.html [ ImageOnlyFailure Pass ]
+webkit.org/b/133974 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-svg.html [ ImageOnlyFailure Pass ]
 

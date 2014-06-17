@@ -1,3 +1,12 @@
+2014-06-17  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [EFL] Add expectations for three failing/flaky layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=133977
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations:
+
 2014-06-17  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Overwritten samples are removed from buffered ranges using decode times; added samples using presentation times
