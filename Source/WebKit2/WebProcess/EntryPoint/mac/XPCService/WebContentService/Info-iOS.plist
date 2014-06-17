@@ -37,5 +37,9 @@
 	</dict>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>	
 </dict>
 </plist>

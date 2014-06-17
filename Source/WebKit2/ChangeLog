@@ -1,3 +1,14 @@
+2014-06-17  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] enable background audio in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=133996
+
+        Reviewed by Jer Noble.
+
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/Info-iOS.plist: Mark as
+            allowed to play audio when in the background.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-iOS.plist: Ditto.
+
 2014-06-17  Simon Fraser  <simon.fraser@apple.com>
 
         [UI-side compositing] fix reflections on composited layers
