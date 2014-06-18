@@ -1,3 +1,15 @@
+2014-06-18  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Compile errors when trying to compile CA code.
+        https://bugs.webkit.org/show_bug.cgi?id=134030
+
+        Reviewed by Simon Fraser.
+
+        WinCairo does not USE(CA).
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * platform/graphics/ca/TileController.h:
+
 2014-06-17  Tim Horton  <timothy_horton@apple.com>
 
         [iOS][wk2] Use ImageDocument to display subframe PDFs

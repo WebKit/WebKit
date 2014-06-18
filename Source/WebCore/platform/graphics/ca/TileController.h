@@ -150,7 +150,9 @@ private:
     virtual void setUnparentsOffscreenTiles(bool flag) override { m_unparentsOffscreenTiles = flag; }
     virtual double retainedTileBackingStoreMemory() const override;
     virtual IntRect tileCoverageRect() const override;
+#if USE(CA)
     virtual PlatformCALayer* tiledScrollingIndicatorLayer() override;
+#endif
     virtual void setScrollingModeIndication(ScrollingModeIndication) override;
     virtual void setTileMargins(int marginTop, int marginBottom, int marginLeft, int marginRight) override;
     virtual void setZoomedOutContentsScale(float) override;
