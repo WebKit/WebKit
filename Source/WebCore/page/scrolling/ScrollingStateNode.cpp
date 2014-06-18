@@ -102,32 +102,6 @@ void ScrollingStateNode::appendChild(PassRefPtr<ScrollingStateNode> childNode)
     m_children->append(childNode);
 }
 
-void ScrollingStateNode::removeDescendant(ScrollingStateNode* node)
-{
-    if (!m_children)
-        return;
-
-    size_t index = m_children->find(node);
-    if (index != notFound) {
-        node->willBeRemovedFromStateTree();
-        m_children->remove(index);
-        return;
-    }
-
-    for (auto& child : *m_children)
-        child->removeDescendant(node);
-}
-
-void ScrollingStateNode::willBeRemovedFromStateTree()
-{
-    scrollingStateTree().willRemoveNode(this);
-    if (!m_children)
-        return;
-
-    for (auto& child : *m_children)
-        child->willBeRemovedFromStateTree();
-}
-
 void ScrollingStateNode::setLayer(const LayerRepresentation& layerRepresentation)
 {
     if (layerRepresentation == m_layer)

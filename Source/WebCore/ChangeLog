@@ -1,3 +1,30 @@
+2014-06-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Move the removeNode() tree walking from ScrollingStateNote into ScrollingStateTree
+        https://bugs.webkit.org/show_bug.cgi?id=134043
+
+        Reviewed by Beth Dakin.
+
+        It's cleaner if ScrollingStateTree does the descendant walk when removing nodes.
+        We can simply start the "willBeRemoved" walk at the node in question.
+        
+        Have willRemoveNode() just remove the node from the m_stateNodeMap directly, rather
+        than this happening in a separate walk of m_nodesRemovedSinceLastCommit.
+
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::removeDescendant): Deleted.
+        (WebCore::ScrollingStateNode::willBeRemovedFromStateTree): Deleted.
+        * page/scrolling/ScrollingStateNode.h:
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::attachNode):
+        (WebCore::ScrollingStateTree::detachNode):
+        (WebCore::ScrollingStateTree::clear):
+        (WebCore::ScrollingStateTree::removeNodeAndAllDescendants):
+        (WebCore::ScrollingStateTree::recursiveNodeWillBeRemoved):
+        (WebCore::ScrollingStateTree::willRemoveNode):
+        (WebCore::ScrollingStateTree::removeNode): Deleted.
+        * page/scrolling/ScrollingStateTree.h:
+
 2014-06-18  Alex Christensen  <achristensen@webkit.org>
 
         [iOS WebGL] Fixed WEBGL_compressed_texture_pvrtc.

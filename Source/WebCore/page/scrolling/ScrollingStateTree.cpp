@@ -83,7 +83,7 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
             return newNodeID;
 
         // The node is being re-parented. To do that, we'll remove it, and then re-create a new node.
-        removeNode(node);
+        removeNodeAndAllDescendants(node);
     }
 
     ScrollingStateNode* newNode = nullptr;
@@ -141,12 +141,13 @@ void ScrollingStateTree::detachNode(ScrollingNodeID nodeID)
     if (!node)
         return;
 
-    removeNode(node);
+    removeNodeAndAllDescendants(node);
 }
 
 void ScrollingStateTree::clear()
 {
-    removeNode(rootStateNode());
+    removeNodeAndAllDescendants(rootStateNode());
+    ASSERT(m_stateNodeMap.isEmpty());
     m_stateNodeMap.clear();
 }
 
@@ -177,29 +178,39 @@ void ScrollingStateTree::addNode(ScrollingStateNode* node)
     m_stateNodeMap.add(node->scrollingNodeID(), node);
 }
 
-void ScrollingStateTree::removeNode(ScrollingStateNode* node)
+void ScrollingStateTree::removeNodeAndAllDescendants(ScrollingStateNode* node)
 {
     if (!node)
         return;
 
-    if (node == m_rootStateNode) {
-        willRemoveNode(node);
+    recursiveNodeWillBeRemoved(node);
+
+    if (node == m_rootStateNode)
         m_rootStateNode = nullptr;
-        return;
+    else if (ScrollingStateNode* parent = node->parent()) {
+        ASSERT(parent->children() && parent->children()->find(node) != notFound);
+        if (auto children = parent->children()) {
+            size_t index = children->find(node);
+            if (index != notFound)
+                children->remove(index);
+        }
     }
+}
 
-    ASSERT(m_rootStateNode);
-    m_rootStateNode->removeDescendant(node);
+void ScrollingStateTree::recursiveNodeWillBeRemoved(ScrollingStateNode* currNode)
+{
+    willRemoveNode(currNode);
 
-    // ScrollingStateTree::removeDescendant() will destroy children, so we have to make sure we remove those children
-    // from the HashMap.
-    for (auto removedNodeID : m_nodesRemovedSinceLastCommit)
-        m_stateNodeMap.remove(removedNodeID);
+    if (auto children = currNode->children()) {
+        for (auto& child : *children)
+            recursiveNodeWillBeRemoved(child.get());
+    }
 }
 
 void ScrollingStateTree::willRemoveNode(ScrollingStateNode* node)
 {
     m_nodesRemovedSinceLastCommit.append(node->scrollingNodeID());
+    m_stateNodeMap.remove(node->scrollingNodeID());
     setHasChangedProperties();
 }
 

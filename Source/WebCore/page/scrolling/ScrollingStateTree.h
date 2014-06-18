@@ -81,7 +81,9 @@ private:
 
     void setRootStateNode(PassRefPtr<ScrollingStateFrameScrollingNode> rootStateNode) { m_rootStateNode = rootStateNode; }
     void addNode(ScrollingStateNode*);
-    void removeNode(ScrollingStateNode*);
+    void removeNodeAndAllDescendants(ScrollingStateNode*);
+
+    void recursiveNodeWillBeRemoved(ScrollingStateNode* currNode);
     void willRemoveNode(ScrollingStateNode*);
 
     AsyncScrollingCoordinator* m_scrollingCoordinator;

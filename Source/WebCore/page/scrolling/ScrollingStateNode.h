@@ -198,7 +198,6 @@ public:
     Vector<RefPtr<ScrollingStateNode>>* children() const { return m_children.get(); }
 
     void appendChild(PassRefPtr<ScrollingStateNode>);
-    void removeDescendant(ScrollingStateNode*);
 
     String scrollingStateTreeAsText() const;
 
@@ -209,7 +208,6 @@ private:
     void dump(TextStream&, int indent) const;
 
     virtual void dumpProperties(TextStream&, int indent) const = 0;
-    void willBeRemovedFromStateTree();
 
     const ScrollingNodeType m_nodeType;
     ScrollingNodeID m_nodeID;
