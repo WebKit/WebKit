@@ -1,3 +1,19 @@
+2014-06-18  Alex Christensen  <achristensen@webkit.org>
+
+        [iOS WebGL] Fixed WEBGL_compressed_texture_pvrtc.
+        https://bugs.webkit.org/show_bug.cgi?id=133561
+        
+        Based on Blink r153971 by bajones@chromium.org.
+
+        Reviewed by Dean Jackson.
+
+        No new tests, but this should fix webgl-compressed-texture-pvrtc.html.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateCompressedTexDimensions):
+        (WebCore::WebGLRenderingContext::validateCompressedTexSubDimensions):
+        Added checks for pvrtc.
+
 2014-06-18  Anders Carlsson  <andersca@apple.com>
 
         Work around a Windows compiler crash.

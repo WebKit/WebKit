@@ -5446,6 +5446,17 @@ bool WebGLRenderingContext::validateCompressedTexDimensions(const char* function
         }
         return true;
     }
+    case Extensions3D::COMPRESSED_RGB_PVRTC_4BPPV1_IMG:
+    case Extensions3D::COMPRESSED_RGB_PVRTC_2BPPV1_IMG:
+    case Extensions3D::COMPRESSED_RGBA_PVRTC_4BPPV1_IMG:
+    case Extensions3D::COMPRESSED_RGBA_PVRTC_2BPPV1_IMG:
+            return false;
+        // Height and width must be powers of 2.
+        if ((width & (width - 1)) || (height & (height - 1))) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "width or height invalid for level");
+            return false;
+        }
+        return true;
     default:
         return false;
     }
@@ -5473,6 +5484,21 @@ bool WebGLRenderingContext::validateCompressedTexSubDimensions(const char* funct
         if (width - xoffset > tex->getWidth(target, level)
             || height - yoffset > tex->getHeight(target, level)) {
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "dimensions out of range");
+            return false;
+        }
+        return validateCompressedTexDimensions(functionName, target, level, width, height, format);
+    }
+    case Extensions3D::COMPRESSED_RGB_PVRTC_4BPPV1_IMG:
+    case Extensions3D::COMPRESSED_RGB_PVRTC_2BPPV1_IMG:
+    case Extensions3D::COMPRESSED_RGBA_PVRTC_4BPPV1_IMG:
+    case Extensions3D::COMPRESSED_RGBA_PVRTC_2BPPV1_IMG: {
+        if (xoffset || yoffset) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "xoffset and yoffset must be zero");
+            return false;
+        }
+        if (width != tex->getWidth(target, level)
+            || height != tex->getHeight(target, level)) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "dimensions must match existing level");
             return false;
         }
         return validateCompressedTexDimensions(functionName, target, level, width, height, format);
