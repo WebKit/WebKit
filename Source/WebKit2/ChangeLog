@@ -1,3 +1,11 @@
+2014-06-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove stale include, header was removed in r170101.
+
+        Unreviewed build fix.
+
+        * Shared/API/Cocoa/WebKitPrivate.h:
+
 2014-06-18  Anders Carlsson  <andersca@apple.com>
 
         Add CF type cast function templates and use them in KeyedDecoder in WebKit2
