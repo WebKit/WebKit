@@ -43,7 +43,7 @@ public:
     static PassRefPtr<LegacyWebArchive> create();
     static PassRefPtr<LegacyWebArchive> create(SharedBuffer*);
     static PassRefPtr<LegacyWebArchive> create(const URL&, SharedBuffer*);
-    static PassRefPtr<LegacyWebArchive> create(PassRefPtr<ArchiveResource> mainResource, Vector<PassRefPtr<ArchiveResource>>& subresources, Vector<PassRefPtr<LegacyWebArchive>>& subframeArchives);
+    static PassRefPtr<LegacyWebArchive> create(PassRefPtr<ArchiveResource> mainResource, Vector<RefPtr<ArchiveResource>> subresources, Vector<RefPtr<LegacyWebArchive>> subframeArchives);
     static PassRefPtr<LegacyWebArchive> create(Node*, std::function<bool (Frame&)> frameFilter = nullptr);
     static PassRefPtr<LegacyWebArchive> create(Frame*);
     static PassRefPtr<LegacyWebArchive> createFromSelection(Frame*);

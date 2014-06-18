@@ -140,16 +140,13 @@ void XMLHttpRequestProgressEventThrottle::dispatchDeferredEvents(Timer<XMLHttpRe
     m_deferEvents = false;
 
     // Take over the deferred events before dispatching them which can potentially add more.
-    Vector<RefPtr<Event>> deferredEvents;
-    m_deferredEvents.swap(deferredEvents);
+    auto deferredEvents = std::move(m_deferredEvents);
 
     RefPtr<Event> deferredProgressEvent = m_deferredProgressEvent;
-    m_deferredProgressEvent = 0;
+    m_deferredProgressEvent = nullptr;
 
-    Vector<RefPtr<Event>>::const_iterator it = deferredEvents.begin();
-    const Vector<RefPtr<Event>>::const_iterator end = deferredEvents.end();
-    for (; it != end; ++it)
-        dispatchEvent(*it);
+    for (auto& deferredEvent : deferredEvents)
+        dispatchEvent(deferredEvent.release());
 
     // The progress event will be in the m_deferredEvents vector if the load was finished while suspended.
     // If not, just send the most up-to-date progress on resume.

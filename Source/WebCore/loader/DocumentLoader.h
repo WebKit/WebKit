@@ -162,8 +162,7 @@ namespace WebCore {
         // Return an ArchiveResource for the URL, either creating from live data or
         // pulling from the ArchiveResourceCollection
         PassRefPtr<ArchiveResource> subresource(const URL&) const;
-        void getSubresources(Vector<PassRefPtr<ArchiveResource>>&) const;
-
+        Vector<RefPtr<ArchiveResource>> subresources() const;
 
 #ifndef NDEBUG
         bool isSubstituteLoadPending(ResourceLoader*) const;

@@ -286,15 +286,17 @@ void ApplicationCacheHost::fillResourceList(ResourceInfoList* resources)
     ApplicationCache* cache = applicationCache();
     if (!cache || !cache->isComplete())
         return;
-    
-    for (const auto& urlAndResource : *cache) {
-        RefPtr<ApplicationCacheResource> resource = urlAndResource.value;
+
+    for (const auto& urlAndResource : cache->resources()) {
+        ApplicationCacheResource* resource = urlAndResource.value.get();
+
         unsigned type = resource->type();
-        bool isMaster   = type & ApplicationCacheResource::Master;
+        bool isMaster = type & ApplicationCacheResource::Master;
         bool isManifest = type & ApplicationCacheResource::Manifest;
         bool isExplicit = type & ApplicationCacheResource::Explicit;
-        bool isForeign  = type & ApplicationCacheResource::Foreign;
+        bool isForeign = type & ApplicationCacheResource::Foreign;
         bool isFallback = type & ApplicationCacheResource::Fallback;
+
         resources->append(ResourceInfo(resource->url(), isMaster, isManifest, isFallback, isForeign, isExplicit, resource->estimatedSizeInStorage()));
     }
 }

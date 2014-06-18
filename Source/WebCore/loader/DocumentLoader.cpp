@@ -1105,20 +1105,19 @@ PassRefPtr<ArchiveResource> DocumentLoader::subresource(const URL& url) const
     return ArchiveResource::create(data->sharedBuffer(), url, resource->response());
 }
 
-void DocumentLoader::getSubresources(Vector<PassRefPtr<ArchiveResource>>& subresources) const
+Vector<RefPtr<ArchiveResource>> DocumentLoader::subresources() const
 {
     if (!isCommitted())
-        return;
+        return { };
 
-    const CachedResourceLoader::DocumentResourceMap& allResources = m_cachedResourceLoader->allCachedResources();
-    CachedResourceLoader::DocumentResourceMap::const_iterator end = allResources.end();
-    for (CachedResourceLoader::DocumentResourceMap::const_iterator it = allResources.begin(); it != end; ++it) {
-        RefPtr<ArchiveResource> subresource = this->subresource(URL(ParsedURLString, it->value->url()));
-        if (subresource)
-            subresources.append(subresource.release());
+    Vector<RefPtr<ArchiveResource>> subresources;
+
+    for (auto& cachedResourceHandle : m_cachedResourceLoader->allCachedResources().values()) {
+        if (RefPtr<ArchiveResource> subresource = this->subresource(URL(ParsedURLString, cachedResourceHandle->url())))
+            subresources.append(std::move(subresource));
     }
 
-    return;
+    return subresources;
 }
 
 void DocumentLoader::deliverSubstituteResourcesAfterDelay()

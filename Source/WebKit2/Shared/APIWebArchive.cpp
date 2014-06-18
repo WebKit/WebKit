@@ -65,21 +65,24 @@ WebArchive::WebArchive(WebArchiveResource* mainResource, PassRefPtr<API::Array> 
 {
     RefPtr<ArchiveResource> coreMainResource = m_cachedMainResource->coreArchiveResource();
 
-    Vector<PassRefPtr<ArchiveResource>> coreArchiveResources;
+    Vector<RefPtr<ArchiveResource>> coreArchiveResources;
+    coreArchiveResources.reserveInitialCapacity(m_cachedSubresources->size());
     for (size_t i = 0; i < m_cachedSubresources->size(); ++i) {
         RefPtr<WebArchiveResource> resource = m_cachedSubresources->at<WebArchiveResource>(i);
         ASSERT(resource);
-        coreArchiveResources.append(resource->coreArchiveResource());
+        coreArchiveResources.uncheckedAppend(resource->coreArchiveResource());
     }
 
-    Vector<PassRefPtr<LegacyWebArchive>> coreSubframeLegacyWebArchives;
+    Vector<RefPtr<LegacyWebArchive>> coreSubframeLegacyWebArchives;
+    coreSubframeLegacyWebArchives.reserveInitialCapacity(m_cachedSubframeArchives->size());
+
     for (size_t i = 0; i < m_cachedSubframeArchives->size(); ++i) {
         RefPtr<WebArchive> subframeWebArchive = m_cachedSubframeArchives->at<WebArchive>(i);
         ASSERT(subframeWebArchive);
-        coreSubframeLegacyWebArchives.append(subframeWebArchive->coreLegacyWebArchive());
+        coreSubframeLegacyWebArchives.uncheckedAppend(subframeWebArchive->coreLegacyWebArchive());
     }
 
-    m_legacyWebArchive = LegacyWebArchive::create(coreMainResource.release(), coreArchiveResources, coreSubframeLegacyWebArchives);
+    m_legacyWebArchive = LegacyWebArchive::create(coreMainResource.release(), std::move(coreArchiveResources), std::move(coreSubframeLegacyWebArchives));
 }
 
 WebArchive::WebArchive(API::Data* data)

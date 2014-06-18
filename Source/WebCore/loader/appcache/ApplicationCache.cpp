@@ -222,11 +222,9 @@ int64_t ApplicationCache::diskUsageForOrigin(SecurityOrigin* origin)
 #ifndef NDEBUG
 void ApplicationCache::dump()
 {
-    HashMap<String, RefPtr<ApplicationCacheResource>>::const_iterator end = m_resources.end();
-    
-    for (HashMap<String, RefPtr<ApplicationCacheResource>>::const_iterator it = m_resources.begin(); it != end; ++it) {
-        printf("%s ", it->key.ascii().data());
-        ApplicationCacheResource::dumpType(it->value->type());
+    for (const auto& urlAndResource : m_resources) {
+        printf("%s ", urlAndResource.key.utf8().data());
+        ApplicationCacheResource::dumpType(urlAndResource.value->type());
     }
 }
 #endif

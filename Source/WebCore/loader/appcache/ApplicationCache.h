@@ -81,8 +81,7 @@ public:
 #endif
 
     typedef HashMap<String, RefPtr<ApplicationCacheResource>> ResourceMap;
-    ResourceMap::const_iterator begin() const { return m_resources.begin(); }
-    ResourceMap::const_iterator end() const { return m_resources.end(); }
+    const ResourceMap& resources() const { return m_resources; }
     
     void setStorageID(unsigned storageID) { m_storageID = storageID; }
     unsigned storageID() const { return m_storageID; }

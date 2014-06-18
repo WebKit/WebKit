@@ -1,3 +1,15 @@
+2014-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Adopt modern C++11 loops and fix WebArchive creation functions
+        https://bugs.webkit.org/show_bug.cgi?id=134032
+
+        Reviewed by Andreas Kling.
+
+        * WebView/WebArchive.mm:
+        (-[WebArchive initWithMainResource:subresources:subframeArchives:]):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource subresources]):
+
 2014-06-15  Anders Carlsson  <andersca@apple.com>
 
         Add an autorelease() member function to RetainPtr

@@ -765,7 +765,7 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
     ASSERT(m_pendingEntries.isEmpty());
 
     if (isUpgradeAttempt) {
-        for (const auto& urlAndResource : *m_newestCache) {
+        for (const auto& urlAndResource : m_newestCache->resources()) {
             unsigned type = urlAndResource.value->type();
             if (type & ApplicationCacheResource::Master)
                 addEntry(urlAndResource.key, type);

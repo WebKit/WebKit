@@ -606,19 +606,15 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSArray *)subresources
 {
-    Vector<PassRefPtr<ArchiveResource>> coreSubresources;
-    toPrivate(_private)->loader->getSubresources(coreSubresources);
+    auto coreSubresources = toPrivate(_private)->loader->subresources();
 
-    NSMutableArray *subresources = [[NSMutableArray alloc] initWithCapacity:coreSubresources.size()];
-    for (unsigned i = 0; i < coreSubresources.size(); ++i) {
-        WebResource *resource = [[WebResource alloc] _initWithCoreResource:coreSubresources[i]];
-        if (resource) {
-            [subresources addObject:resource];
-            [resource release];
-        }
+    auto subresources = adoptNS([[NSMutableArray alloc] initWithCapacity:coreSubresources.size()]);
+    for (const auto& coreSubresource : coreSubresources) {
+        if (auto resource = adoptNS([[WebResource alloc] _initWithCoreResource:coreSubresource]))
+            [subresources addObject:resource.get()];
     }
 
-    return [subresources autorelease];
+    return subresources.autorelease();
 }
 
 - (WebResource *)subresourceForURL:(NSURL *)URL

@@ -178,23 +178,21 @@ static BOOL isArrayOfClass(id object, Class elementClass)
     
     RefPtr<ArchiveResource> coreMainResource = mainResource ? [mainResource _coreResource] : 0;
 
-    Vector<PassRefPtr<ArchiveResource>> coreResources;
-    NSEnumerator *enumerator = [subresources objectEnumerator];
-    WebResource *subresource;
-    while ((subresource = [enumerator nextObject]) != nil)
+    Vector<RefPtr<ArchiveResource>> coreResources;
+    for (WebResource *subresource in subresources)
         coreResources.append([subresource _coreResource]);
 
-    Vector<PassRefPtr<LegacyWebArchive>> coreArchives;
-    enumerator = [subframeArchives objectEnumerator];
-    WebArchive *subframeArchive;
-    while ((subframeArchive = [enumerator nextObject]) != nil)
+    Vector<RefPtr<LegacyWebArchive>> coreArchives;
+    for (WebArchive *subframeArchive in subframeArchives)
         coreArchives.append([subframeArchive->_private coreArchive]);
 
-    [_private setCoreArchive:LegacyWebArchive::create(coreMainResource.release(), coreResources, coreArchives)];
-    if (![_private coreArchive]) {
+    RefPtr<LegacyWebArchive> coreArchive = LegacyWebArchive::create(coreMainResource.release(), std::move(coreResources), std::move(coreArchives));
+    if (!coreArchive) {
         [self release];
         return nil;
     }
+
+    [_private setCoreArchive:coreArchive.release()];
 
     return self;
 }

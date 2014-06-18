@@ -275,10 +275,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const U
     ASSERT(!url.hasFragmentIdentifier());
 
     // Check if an appropriate cache already exists in memory.
-    CacheGroupMap::const_iterator end = m_cachesInMemory.end();
-    for (CacheGroupMap::const_iterator it = m_cachesInMemory.begin(); it != end; ++it) {
-        ApplicationCacheGroup* group = it->value;
-        
+    for (auto group : m_cachesInMemory.values()) {
         ASSERT(!group->isObsolete());
 
         if (ApplicationCache* cache = group->newestCache()) {
@@ -741,17 +738,14 @@ bool ApplicationCacheStorage::store(ApplicationCache* cache, ResourceStorageIDJo
     unsigned cacheStorageID = static_cast<unsigned>(m_database.lastInsertRowID());
 
     // Store all resources
-    {
-        ApplicationCache::ResourceMap::const_iterator end = cache->end();
-        for (ApplicationCache::ResourceMap::const_iterator it = cache->begin(); it != end; ++it) {
-            unsigned oldStorageID = it->value->storageID();
-            if (!store(it->value.get(), cacheStorageID))
-                return false;
+    for (auto& resource : cache->resources().values()) {
+        unsigned oldStorageID = resource->storageID();
+        if (!store(resource.get(), cacheStorageID))
+            return false;
 
-            // Storing the resource succeeded. Log its old storageID in case
-            // it needs to be restored later.
-            storageIDJournal->add(it->value.get(), oldStorageID);
-        }
+        // Storing the resource succeeded. Log its old storageID in case
+        // it needs to be restored later.
+        storageIDJournal->add(resource.get(), oldStorageID);
     }
     
     // Store the online whitelist
@@ -1293,10 +1287,9 @@ void ApplicationCacheStorage::empty()
     // Clear the storage IDs for the caches in memory.
     // The caches will still work, but cached resources will not be saved to disk 
     // until a cache update process has been initiated.
-    CacheGroupMap::const_iterator end = m_cachesInMemory.end();
-    for (CacheGroupMap::const_iterator it = m_cachesInMemory.begin(); it != end; ++it)
-        it->value->clearStorageID();
-    
+    for (auto group : m_cachesInMemory.values())
+        group->clearStorageID();
+
     checkForDeletedResources();
 }
     
@@ -1357,10 +1350,7 @@ bool ApplicationCacheStorage::storeCopyOfCache(const String& cacheDirectory, App
     cacheCopy->setFallbackURLs(cache->fallbackURLs());
 
     // Traverse the cache and add copies of all resources.
-    ApplicationCache::ResourceMap::const_iterator end = cache->end();
-    for (ApplicationCache::ResourceMap::const_iterator it = cache->begin(); it != end; ++it) {
-        ApplicationCacheResource* resource = it->value.get();
-        
+    for (auto& resource : cache->resources().values()) {
         RefPtr<ApplicationCacheResource> resourceCopy = ApplicationCacheResource::create(resource->url(), resource->response(), resource->type(), resource->data(), resource->path());
         
         cacheCopy->addResource(resourceCopy.release());
