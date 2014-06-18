@@ -1,3 +1,16 @@
+2014-06-18  Benjamin Poulain  <benjamin@webkit.org>
+
+        [iOS][WK2] Do not add padding when magnifying replaced elements
+        https://bugs.webkit.org/show_bug.cgi?id=134019
+
+        Reviewed by Tim Horton.
+
+        Having margins for regular blocks make sense to improve readability. For replaced elements,
+        we should follow iOS's UI and display edge to edge.
+
+        * UIProcess/ios/SmartMagnificationController.mm:
+        (WebKit::SmartMagnificationController::didCollectGeometryForSmartMagnificationGesture):
+
 2014-06-18  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Re-sync didCommitLoadForMainFrame with its corresponding tile update

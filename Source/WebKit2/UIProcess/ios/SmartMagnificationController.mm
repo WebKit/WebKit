@@ -87,8 +87,10 @@ void SmartMagnificationController::didCollectGeometryForSmartMagnificationGestur
         return;
     }
 
-    targetRect.inflateX(smartMagnificationElementPadding * targetRect.width());
-    targetRect.inflateY(smartMagnificationElementPadding * targetRect.height());
+    if (!isReplacedElement) {
+        targetRect.inflateX(smartMagnificationElementPadding * targetRect.width());
+        targetRect.inflateY(smartMagnificationElementPadding * targetRect.height());
+    }
 
     double maximumScale = std::min(viewportMaximumScale, smartMagnificationMaximumScale);
     double minimumScale = std::max(viewportMinimumScale, smartMagnificationMinimumScale);
