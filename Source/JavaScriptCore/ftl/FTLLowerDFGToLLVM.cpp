@@ -1436,7 +1436,7 @@ private:
                 m_node->op() == ArithMin
                     ? m_out.doubleGreaterThanOrEqual(left, right)
                     : m_out.doubleLessThanOrEqual(left, right),
-                right, m_out.constDouble(0.0 / 0.0))));
+                right, m_out.constDouble(PNaN))));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);

@@ -1,3 +1,13 @@
+2014-06-18  Alex Christensen  <achristensen@webkit.org>
+
+        Add FTL to Windows build.
+        https://bugs.webkit.org/show_bug.cgi?id=134015
+
+        Reviewed by Filip Pizlo.
+
+        * WebKit.vcxproj/WebKit.sln:
+        Added libllvmForJSC with a dependency on JavaScriptCoreGenerated, but don't build it yet.
+
 2014-06-11  Alex Christensen  <achristensen@webkit.org>
 
         [Win] Unreviewed build fix.
