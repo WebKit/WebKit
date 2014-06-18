@@ -1,3 +1,14 @@
+2014-06-17  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Turn on NOSNIFF in FeatureList.pm
+        https://bugs.webkit.org/show_bug.cgi?id=134010
+
+        Reviewed by Csaba Osztrogonác.
+
+        r164848 enabled NOSNIFF feature for EFL port but missed to change FeatureList.pm.
+
+        * Scripts/webkitperl/FeatureList.pm: Turn on NOSNIFF for the EFL port.
+
 2014-06-17  Tim Horton  <timothy_horton@apple.com>
 
         MiniBrowser should show Web Content process pids in the window title
