@@ -1,3 +1,43 @@
+2014-06-18  Benjamin Poulain  <benjamin@webkit.org>
+
+        Subtrees with :first-child and :last-child are not invalidated when siblings are added/removed
+        https://bugs.webkit.org/show_bug.cgi?id=133934
+
+        Reviewed by Antti Koivisto.
+
+        When adding/removing nodes on an element, we try to invalidate only the elements that are
+        affected. In the case of :first-child and :last-child, that optimizations is implemented
+        through two types of flags that are updated during style resolution.
+
+        The first flag is childrenAffectedByFirstChildRules (childrenAffectedByLastChildRules),
+        set on the parent of any element that could be affected by :first-child (:last-child).
+
+        The other part of the optimization is marking the style itself with firstChildState (lastChildState)
+        to further reduce invalidations.
+
+        The problem in this case happen with a subtree of element is detached. Since there is no renderer,
+        the computed style is resolved ad-hoc and stored directly on the element. When the element is moved,
+        the computed style was never cleared because the invalidation optimizations were not handling
+        elements without style.
+
+        Credit to Yusuke Suzuki for discovering the issue and creating test cases.
+
+        Tests: fast/css/getComputedStyle/empty-update-without-renderer.html
+               fast/css/getComputedStyle/first-child-update-without-renderer.html
+               fast/css/getComputedStyle/last-child-update-without-renderer.html
+
+        * dom/Element.cpp:
+        (WebCore::checkForEmptyStyleChange):
+        Clean up: pull the style directly from the function instead of expection the call sites to do that.
+        Refine the checks to avoid invalidation.
+
+        (WebCore::checkForSiblingStyleChanges):
+        Do not early return if the parent is detached, the children may still need invalidation.
+
+        When there is no renderer, assume the worst first-child/last-child and force the invalidation.
+
+        (WebCore::Element::childrenChanged):
+
 2014-06-18  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r167856): Unable to log into HSBC app

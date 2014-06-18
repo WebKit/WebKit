@@ -1,3 +1,17 @@
+2014-06-18  Benjamin Poulain  <benjamin@webkit.org>
+
+        Subtrees with :first-child and :last-child are not invalidated when siblings are added/removed
+        https://bugs.webkit.org/show_bug.cgi?id=133934
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/getComputedStyle/empty-update-without-renderer-expected.txt: Added.
+        * fast/css/getComputedStyle/empty-update-without-renderer.html: Added.
+        * fast/css/getComputedStyle/first-child-update-without-renderer-expected.txt: Added.
+        * fast/css/getComputedStyle/first-child-update-without-renderer.html: Added.
+        * fast/css/getComputedStyle/last-child-update-without-renderer-expected.txt: Added.
+        * fast/css/getComputedStyle/last-child-update-without-renderer.html: Added.
+
 2014-06-18  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r167856): Unable to log into HSBC app

@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<style>
+target {
+    color:rgb(0, 0, 0);
+}
+target:empty {
+    color:rgb(1, 2, 3);
+}
+</style>
+</head>
+<body>
+<div style="display:none">
+    <target id=target>
+        <filling></filling>
+    </target>
+</div>
+</body>
+<script>
+description("When updating the tree, the style needs to be invalidated when the :empty state, even if there is no renderer.");
+
+shouldBeEqualToString('getComputedStyle(document.getElementById("target")).color', 'rgb(0, 0, 0)');
+
+var target = document.getElementById('target');
+while (target.firstChild)
+    target.removeChild(target.firstChild);
+shouldBeEqualToString('getComputedStyle(document.getElementById("target")).color', 'rgb(1, 2, 3)');
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</html>
