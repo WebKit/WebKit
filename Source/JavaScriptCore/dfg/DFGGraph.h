@@ -41,6 +41,7 @@
 #include "DFGScannable.h"
 #include "JSStack.h"
 #include "MethodOfGettingAValueProfile.h"
+#include <unordered_map>
 #include <wtf/BitVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
@@ -854,7 +855,7 @@ public:
     std::unique_ptr<SlowArgument[]> m_slowArguments;
 
 #if USE(JSVALUE32_64)
-    HashMap<double, double*> m_doubleConstantsMap;
+    std::unordered_map<int64_t, double*> m_doubleConstantsMap;
     std::unique_ptr<Bag<double>> m_doubleConstants;
 #endif
     

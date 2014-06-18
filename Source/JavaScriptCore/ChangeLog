@@ -1,3 +1,24 @@
+2014-06-18  Mark Lam  <mark.lam@apple.com>
+
+        DFGGraph::m_doubleConstantMap will not map 0 values correctly.
+        <https://webkit.org/b/133994>
+
+        Reviewed by Geoffrey Garen.
+
+        DFGGraph::m_doubleConstantsMap should not use a double as a key to its HashMap,
+        because it means two unfortunate things:
+        - It will probably break for zero.
+        - It will think that -0 is the same as +0 under some circumstances, size
+          -0==+0 even though they are distinct values (for example 1/-0 != 1/+0).
+
+        The fix is to use std::unordered_map which does not require special empty
+        and deleted values, and to use the raw bits instead of the double value as
+        the key.
+
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::addressOfDoubleConstant):
+
 2014-06-18  Alex Christensen  <achristensen@webkit.org>
 
         Remove duplicate code using sdiv.
