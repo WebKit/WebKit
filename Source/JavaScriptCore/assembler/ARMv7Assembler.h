@@ -1514,8 +1514,10 @@ public:
     }
 
 #if CPU(APPLE_ARMV7S)
+    template<int datasize>
     ALWAYS_INLINE void sdiv(RegisterID rd, RegisterID rn, RegisterID rm)
     {
+        static_assert(datasize == 32, "sdiv datasize must be 32 for armv7s");        
         ASSERT(!BadReg(rd));
         ASSERT(!BadReg(rn));
         ASSERT(!BadReg(rm));

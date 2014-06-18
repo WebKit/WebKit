@@ -1497,11 +1497,7 @@ Assembler::Jump SelectorCodeGenerator::modulo(Assembler::ResultCondition conditi
     m_assembler.move(Assembler::TrustedImm32(divisor), divisorRegister);
 
     LocalRegister resultRegister(m_registerAllocator);
-#if CPU(APPLE_ARMV7S)
-    m_assembler.m_assembler.sdiv(resultRegister, inputDividend, divisorRegister);
-#elif CPU(ARM64)
     m_assembler.m_assembler.sdiv<32>(resultRegister, inputDividend, divisorRegister);
-#endif
     m_assembler.mul32(divisorRegister, resultRegister);
     return m_assembler.branchSub32(condition, inputDividend, resultRegister, resultRegister);
 #elif CPU(ARM_THUMB2) && !CPU(APPLE_ARMV7S)

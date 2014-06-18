@@ -1,3 +1,14 @@
+2014-06-18  Alex Christensen  <achristensen@webkit.org>
+
+        Remove duplicate code using sdiv.
+        https://bugs.webkit.org/show_bug.cgi?id=133764
+
+        Reviewed by Daniel Bates.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::modulo):
+        Use template sdiv for apple armv7s and arm64.
+
 2014-06-18  Zan Dobersek  <zdobersek@igalia.com>
 
         ScriptExecutionContext::Task parameters should always be rvalue references

@@ -3220,33 +3220,7 @@ void SpeculativeJIT::compileArithDiv(Node* node)
         
         done.link(&m_jit);
         int32Result(eax.gpr(), node);
-#elif CPU(APPLE_ARMV7S)
-        SpeculateInt32Operand op1(this, node->child1());
-        SpeculateInt32Operand op2(this, node->child2());
-        GPRReg op1GPR = op1.gpr();
-        GPRReg op2GPR = op2.gpr();
-        GPRTemporary quotient(this);
-        GPRTemporary multiplyAnswer(this);
-
-        // If the user cares about negative zero, then speculate that we're not about
-        // to produce negative zero.
-        if (shouldCheckNegativeZero(node->arithMode())) {
-            MacroAssembler::Jump numeratorNonZero = m_jit.branchTest32(MacroAssembler::NonZero, op1GPR);
-            speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, op2GPR, TrustedImm32(0)));
-            numeratorNonZero.link(&m_jit);
-        }
-
-        m_jit.assembler().sdiv(quotient.gpr(), op1GPR, op2GPR);
-
-        // Check that there was no remainder. If there had been, then we'd be obligated to
-        // produce a double result instead.
-        if (shouldCheckOverflow(node->arithMode())) {
-            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchMul32(JITCompiler::Overflow, quotient.gpr(), op2GPR, multiplyAnswer.gpr()));
-            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::NotEqual, multiplyAnswer.gpr(), op1GPR));
-        }
-
-        int32Result(quotient.gpr(), node);
-#elif CPU(ARM64)
+#elif CPU(APPLE_ARMV7S) || CPU(ARM64)
         SpeculateInt32Operand op1(this, node->child1());
         SpeculateInt32Operand op2(this, node->child2());
         GPRReg op1GPR = op1.gpr();
@@ -3499,46 +3473,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
         done.link(&m_jit);
         int32Result(edx.gpr(), node);
 
-#elif CPU(APPLE_ARMV7S)
-        GPRTemporary temp(this);
-        GPRTemporary quotientThenRemainder(this);
-        GPRTemporary multiplyAnswer(this);
-        GPRReg dividendGPR = op1.gpr();
-        GPRReg divisorGPR = op2.gpr();
-        GPRReg quotientThenRemainderGPR = quotientThenRemainder.gpr();
-        GPRReg multiplyAnswerGPR = multiplyAnswer.gpr();
-
-        JITCompiler::JumpList done;
-        
-        if (shouldCheckOverflow(node->arithMode()))
-            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, divisorGPR));
-        else {
-            JITCompiler::Jump denominatorNotZero = m_jit.branchTest32(JITCompiler::NonZero, divisorGPR);
-            m_jit.move(divisorGPR, quotientThenRemainderGPR);
-            done.append(m_jit.jump());
-            denominatorNotZero.link(&m_jit);
-        }
-
-        m_jit.assembler().sdiv(quotientThenRemainderGPR, dividendGPR, divisorGPR);
-        // FIXME: It seems like there are cases where we don't need this? What if we have
-        // arithMode() == Arith::Unchecked?
-        // https://bugs.webkit.org/show_bug.cgi?id=126444
-        speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchMul32(JITCompiler::Overflow, quotientThenRemainderGPR, divisorGPR, multiplyAnswerGPR));
-        m_jit.assembler().sub(quotientThenRemainderGPR, dividendGPR, multiplyAnswerGPR);
-
-        // If the user cares about negative zero, then speculate that we're not about
-        // to produce negative zero.
-        if (shouldCheckNegativeZero(node->arithMode())) {
-            // Check that we're not about to create negative zero.
-            JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, dividendGPR, TrustedImm32(0));
-            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, quotientThenRemainderGPR));
-            numeratorPositive.link(&m_jit);
-        }
-
-        done.link(&m_jit);
-        
-        int32Result(quotientThenRemainderGPR, node);
-#elif CPU(ARM64)
+#elif CPU(ARM64) || CPU(APPLE_ARMV7S)
         GPRTemporary temp(this);
         GPRTemporary quotientThenRemainder(this);
         GPRTemporary multiplyAnswer(this);
