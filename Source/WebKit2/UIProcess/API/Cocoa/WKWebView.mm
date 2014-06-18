@@ -86,6 +86,7 @@
 #import <CoreGraphics/CGFloat.h>
 #import <CoreGraphics/CGPDFDocumentPrivate.h>
 #import <UIKit/UIApplication.h>
+#import <UIKit/UIDevice_Private.h>
 #import <UIKit/UIPeripheralHost_Private.h>
 #import <UIKit/UIWindow_Private.h>
 #import <QuartzCore/CARenderServer.h>
@@ -267,8 +268,9 @@ static int32_t deviceOrientation()
     [_scrollView setBackgroundColor:[UIColor whiteColor]];
 
     _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds context:context configuration:std::move(webPageConfiguration) webView:self]);
-    _page = [_contentView page];
 
+    _page = [_contentView page];
+    _page->setApplicationNameForUserAgent([@"Mobile/" stringByAppendingString:[UIDevice currentDevice].buildVersion]);
     _page->setDeviceOrientation(deviceOrientation());
 
     [_contentView layer].anchorPoint = CGPointZero;
