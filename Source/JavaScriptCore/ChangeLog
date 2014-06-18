@@ -1,3 +1,17 @@
+2014-06-17  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r170082.
+        https://bugs.webkit.org/show_bug.cgi?id=134006
+
+        Breaks build. (Requested by mlam on #webkit).
+
+        Reverted changeset:
+
+        "DFGGraph::m_doubleConstantMap will not map 0 values
+        correctly."
+        https://bugs.webkit.org/show_bug.cgi?id=133994
+        http://trac.webkit.org/changeset/170082
+
 2014-06-17  Mark Lam  <mark.lam@apple.com>
 
         DFGGraph::m_doubleConstantMap will not map 0 values correctly.
