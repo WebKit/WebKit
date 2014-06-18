@@ -1,3 +1,18 @@
+2014-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Add CF type cast function templates and use them in KeyedDecoder in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=134033
+
+        Reviewed by Sam Weinig.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/cf/TypeCasts.h: Added.
+        (WTF::dynamic_cf_cast):
+        Returns null if the given CFTypeRef object doesn't have the right type.
+
+        (WTF::checked_cf_cast):
+        ASSERTs (with security implication) if the given CFTypeRef object is null or doesn't have the right type.
+
 2014-06-17  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         Misused PLATFORM(MIDDLE_ENDIAN) and PLATFORM(BIG_ENDIAN).

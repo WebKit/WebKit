@@ -1,3 +1,23 @@
+2014-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Add CF type cast function templates and use them in KeyedDecoder in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=134033
+
+        Reviewed by Sam Weinig.
+
+        * Shared/cf/KeyedDecoder.cpp:
+        (WebKit::KeyedDecoder::KeyedDecoder):
+        (WebKit::KeyedDecoder::decodeBytes):
+        (WebKit::KeyedDecoder::decodeBool):
+        (WebKit::KeyedDecoder::decodeInt32):
+        (WebKit::KeyedDecoder::decodeInt64):
+        (WebKit::KeyedDecoder::decodeFloat):
+        (WebKit::KeyedDecoder::decodeDouble):
+        (WebKit::KeyedDecoder::decodeString):
+        (WebKit::KeyedDecoder::beginObject):
+        (WebKit::KeyedDecoder::beginArray):
+        (WebKit::KeyedDecoder::beginArrayElement):
+
 2014-06-18  Dan Bernstein  <mitz@apple.com>
 
         Remove the unused _WKBackForwardListDidChangeNotification.
