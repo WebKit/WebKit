@@ -40,6 +40,7 @@
     font-family: "Lucida Grande", sans-serif;
     color: rgb(128, 128, 128);
     padding: 0 5px 0 25px;
+    text-indent: 0;
 }
 
 .css-style-text-editor > .CodeMirror pre {

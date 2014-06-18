@@ -1,3 +1,18 @@
+2014-06-18  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: REGRESSION: Style declaration editor: placeholder misaligned
+        https://bugs.webkit.org/show_bug.cgi?id=134012
+
+        Reviewed by Timothy Hatcher.
+
+        Removed a rule needed to align the placeholder for selectors in 
+        the style declation text editors with no rules declared in
+        http://trac.webkit.org/changeset/170077. The necessary
+        rule has been added back to fix the issue.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        (.css-style-text-editor > .CodeMirror .CodeMirror-placeholder):
+
 2014-06-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: PrettyPrinting regression on "var a=1"
