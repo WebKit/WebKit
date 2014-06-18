@@ -1,3 +1,13 @@
+2014-06-18  Frédéric Wang  <fred.wang@free.fr>
+
+        Mark mathml/wbr-in-mroot-crash.html as "Timeout Pass"
+        https://bugs.webkit.org/show_bug.cgi?id=130353
+
+        Unreviewed gardening.
+
+        * platform/efl/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2014-06-17  Zalan Bujtas  <zalan@apple.com>
 
         Fix 'lint-test-files' warnings on run-webkit-test -2

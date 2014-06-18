@@ -1312,7 +1312,7 @@ webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Skip ]
 # This test fails because the structure of mfenced/mo operators was changed in bug 124838.
 webkit.org/b/124836 platform/mac/accessibility/mathml-elements.html [ Failure ]
 
-webkit.org/b/130353 mathml/wbr-in-mroot-crash.html [ Crash ]
+webkit.org/b/130353 mathml/wbr-in-mroot-crash.html [ Timeout Pass ]
 
 # This test frequently fails on the bots 
 webkit.org/b/130490 media/video-remote-control-playpause.html [ Pass Failure ]
