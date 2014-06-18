@@ -32,6 +32,7 @@
 #import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKUIDelegate.h>
 #import <WebKit/WKWebView.h>
+#import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
 
 static void* keyValueObservingContext = &keyValueObservingContext;
@@ -48,7 +49,10 @@ static NSString * const WebKit2SubpixelCSSOMElementMetricsEnabledKey = @"WebKitS
 
 - (void)awakeFromNib
 {
-    _webView = [[WKWebView alloc] initWithFrame:[containerView bounds]];
+    static WKWebViewConfiguration *configuration;
+    if (!configuration)
+        configuration = [[WKWebViewConfiguration alloc] init];
+    _webView = [[WKWebView alloc] initWithFrame:[containerView bounds] configuration:configuration];
 
     _webView.allowsMagnification = YES;
     _webView.allowsBackForwardNavigationGestures = YES;

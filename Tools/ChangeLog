@@ -1,3 +1,16 @@
+2014-06-18  Tim Horton  <timothy_horton@apple.com>
+
+        All of MiniBrowser's WKWebViews should share a configuration
+        https://bugs.webkit.org/show_bug.cgi?id=134017
+
+        Reviewed by Anders Carlsson.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]):
+        Share a single WKWebViewConfiguration between all of MiniBrowser's views.
+        This means that they'll share things like preferences, visited links, etc.
+        It also means that we'll properly share processes once we hit the process limit.
+
 2014-06-18  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Bump the GLib and GTK+ dependencies in jhbuild-wayland.modules
