@@ -654,7 +654,7 @@ webkit.org/b/128736 inspector-protocol/debugger/setBreakpoint-dfg.html [ Failure
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure Pass ]
 
-webkit.org/b/130353 mathml/wbr-in-mroot-crash.html [ Timeout Pass ]
+webkit.org/b/130353 mathml/wbr-in-mroot-crash.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
