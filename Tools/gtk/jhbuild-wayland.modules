@@ -25,9 +25,9 @@
       <dep package="at-spi2-atk"/>
       <dep package="gdk-pixbuf"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/gtk+/3.10/gtk+-3.10.0.tar.xz" version="3.10.0"
+    <branch module="/pub/GNOME/sources/gtk+/3.12/gtk+-3.12.0.tar.xz" version="3.12.0"
             repo="ftp.gnome.org"
-            hash="sha256:6559feb360cd935d341cd7a0b69a72f8f4346ed6ee9b7c4040c02b73b75c53fe"/>
+            hash="sha256:eb69741cd4029b5a1ac9cf04d9de55dcf9e30777a63891750f5d20cc554b6e4b"/>
   </autotools>
 
   <autotools id="glib"
@@ -36,8 +36,8 @@
     <dependencies>
       <dep package="libffi"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/glib/2.37/glib-2.37.6.tar.xz" version="2.37.6"
+    <branch module="/pub/GNOME/sources/glib/2.40/glib-2.40.0.tar.xz" version="2.40.0"
             repo="ftp.gnome.org"
-            hash="sha256:01e1de3179cc58dafc0c950363530fccdefc6dda32a25aed96dd24dc23b83165"/>
+            hash="sha256:0d27f195966ecb1995dcce0754129fd66ebe820c7cd29200d264b02af1aa28b5"/>
   </autotools>
 </moduleset>

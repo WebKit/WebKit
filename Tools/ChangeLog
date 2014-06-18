@@ -1,3 +1,15 @@
+2014-06-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Bump the GLib and GTK+ dependencies in jhbuild-wayland.modules
+        https://bugs.webkit.org/show_bug.cgi?id=133971
+
+        Reviewed by Martin Robinson.
+
+        * gtk/jhbuild-wayland.modules: Bump the GTK+ dependency that's required for
+        building for the Wayland target. The latest 3.12 version is required to match
+        the xdg_shell protocol version used in Weston 1.5. GLib dependency is bumped
+        as well due to GTK+ depending on a newer version.
+
 2014-06-17  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Turn on NOSNIFF in FeatureList.pm
