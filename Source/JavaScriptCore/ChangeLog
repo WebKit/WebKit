@@ -1,3 +1,19 @@
+2014-06-18  David Kilzer  <ddkilzer@apple.com>
+
+        -[JSContext setName:] leaks NSString
+        <http://webkit.org/b/134038>
+
+        Reviewed by Joseph Pecoraro.
+
+        Fixes the following static analyzer warning:
+
+            JavaScriptCore/API/JSContext.mm:200:73: warning: Potential leak of an object
+                JSStringRef nameJS = name ? JSStringCreateWithCFString((CFStringRef)[name copy]) : nullptr;
+                                                                                    ^
+
+        * API/JSContext.mm:
+        (-[JSContext setName:]): Autorelease the copy of |name|.
+
 2014-06-18  Mark Lam  <mark.lam@apple.com>
 
         DFGGraph::m_doubleConstantMap will not map 0 values correctly.

@@ -197,7 +197,7 @@
 
 - (void)setName:(NSString *)name
 {
-    JSStringRef nameJS = name ? JSStringCreateWithCFString((CFStringRef)[name copy]) : nullptr;
+    JSStringRef nameJS = name ? JSStringCreateWithCFString((CFStringRef)[[name copy] autorelease]) : nullptr;
     JSGlobalContextSetName(m_context, nameJS);
     if (nameJS)
         JSStringRelease(nameJS);
