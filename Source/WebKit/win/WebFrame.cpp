@@ -950,24 +950,6 @@ HRESULT STDMETHODCALLTYPE WebFrame::firstLayoutDone(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebFrame::loadType( 
-    /* [retval][out] */ WebFrameLoadType* type)
-{
-    if (!type) {
-        ASSERT_NOT_REACHED();
-        return E_POINTER;
-    }
-
-    *type = (WebFrameLoadType)0;
-
-    Frame* coreFrame = core(this);
-    if (!coreFrame)
-        return E_FAIL;
-
-    *type = (WebFrameLoadType)coreFrame->loader().loadType();
-    return S_OK;
-}
-
 HRESULT STDMETHODCALLTYPE WebFrame::pendingFrameUnloadEventCount( 
     /* [retval][out] */ UINT* result)
 {
@@ -984,11 +966,6 @@ HRESULT STDMETHODCALLTYPE WebFrame::pendingFrameUnloadEventCount(
 
     *result = coreFrame->document()->domWindow()->pendingUnloadEventListeners();
     return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE WebFrame::unused2()
-{
-    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::hasSpellingMarker(

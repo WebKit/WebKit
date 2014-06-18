@@ -1,3 +1,16 @@
+2014-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Remove IWebFramePrivate::loadType
+        https://bugs.webkit.org/show_bug.cgi?id=134044
+
+        Reviewed by Tim Horton.
+
+        * Interfaces/IWebFramePrivate.idl:
+        * WebFrame.cpp:
+        (WebFrame::loadType): Deleted.
+        (WebFrame::unused2): Deleted.
+        * WebFrame.h:
+
 2014-06-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Avoid crashes in code that converted CFDictionaries to HashMap

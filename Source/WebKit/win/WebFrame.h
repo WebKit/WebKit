@@ -157,7 +157,7 @@ public:
     virtual /* [local] */ JSGlobalContextRef STDMETHODCALLTYPE globalContext();
 
     // IWebFramePrivate
-    virtual HRESULT STDMETHODCALLTYPE unused1(BSTR*) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE unused1() { return E_NOTIMPL; }
     virtual HRESULT STDMETHODCALLTYPE renderTreeAsExternalRepresentation(BOOL forPrinting, BSTR *result);
 
     virtual HRESULT STDMETHODCALLTYPE pageNumberForElementById(
@@ -179,13 +179,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE firstLayoutDone(
         /* [retval][out] */ BOOL* result);
 
-    virtual HRESULT STDMETHODCALLTYPE loadType( 
-        /* [retval][out] */ WebFrameLoadType* type);
+    virtual HRESULT STDMETHODCALLTYPE unused2() { return E_NOTIMPL; }
 
     virtual HRESULT STDMETHODCALLTYPE pendingFrameUnloadEventCount( 
         /* [retval][out] */ UINT* result);
 
-    virtual HRESULT STDMETHODCALLTYPE unused2();
+    virtual HRESULT STDMETHODCALLTYPE unused3();
     
     virtual HRESULT STDMETHODCALLTYPE setInPrintingMode( 
         /* [in] */ BOOL value,
@@ -277,7 +276,7 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE setTextDirection(BSTR);
 
-    virtual HRESULT STDMETHODCALLTYPE unused3(BSTR, BSTR*) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE unused4() { return E_NOTIMPL; }
 
     virtual HRESULT STDMETHODCALLTYPE resumeAnimations();
 
