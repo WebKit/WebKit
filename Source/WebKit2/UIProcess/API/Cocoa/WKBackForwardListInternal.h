@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKBackForwardListPrivate.h"
+#import "WKBackForwardList.h"
 
 #if WK_API_ENABLED
 

@@ -31,12 +31,6 @@
 #import "WKBackForwardListItemInternal.h"
 #import "WKNSArray.h"
 
-// FIXME: Remove this when nobody depends on it.
-WK_EXTERN NSString * const WKBackForwardListDidChangeNotification;
-NSString * const WKBackForwardListDidChangeNotification = @"_WKBackForwardListDidChangeNotification";
-
-NSString * const _WKBackForwardListDidChangeNotification = @"_WKBackForwardListDidChangeNotification";
-
 using namespace WebKit;
 
 @implementation WKBackForwardList {
