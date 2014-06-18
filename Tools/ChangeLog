@@ -1,3 +1,13 @@
+2014-06-17  Tim Horton  <timothy_horton@apple.com>
+
+        MiniBrowser should show Web Content process pids in the window title
+        https://bugs.webkit.org/show_bug.cgi?id=134016
+
+        Reviewed by Sam Weinig.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController observeValueForKeyPath:ofObject:change:context:]):
+
 2014-06-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Fix the handling of resize events after r169505.

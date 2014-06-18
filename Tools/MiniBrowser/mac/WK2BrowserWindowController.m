@@ -325,7 +325,7 @@ static NSString * const WebKit2SubpixelCSSOMElementMetricsEnabledKey = @"WebKitS
         return;
 
     if ([keyPath isEqualToString:@"title"])
-        self.window.title = [_webView.title stringByAppendingString:@" [WK2]"];
+        self.window.title = [_webView.title stringByAppendingFormat:@" [WK2, %d]", _webView._webProcessIdentifier];
     else if ([keyPath isEqualToString:@"URL"])
         [self updateTextFieldFromURL:_webView.URL];
 }
