@@ -967,7 +967,7 @@
          "emails" : [
             "k.gurpreet@samsung.com",
 			"k.gurpreet@webkit.org"
-         ],         
+         ],
          "nicks" : [
             "k.gurpreet"
          ]
@@ -1342,6 +1342,15 @@
          "expertise" : "The BlackBerry Port",
          "nicks" : [
             "jondong"
+         ]
+      },
+      "Jono Wells" : {
+         "emails" : [
+            "jonowells@apple.com"
+         ],
+         "expertise" : "Developer Tools, Web Inspector",
+         "nicks" : [
+            "jonowells"
          ]
       },
       "Joone Hur" : {
