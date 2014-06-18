@@ -49,14 +49,9 @@ WebCertificateInfo* WebCredential::certificateInfo()
     return m_certificateInfo.get();
 }
 
-const WebCore::Credential& WebCredential::core()
+const WebCore::Credential& WebCredential::credential()
 {
     return m_coreCredential;
-}
-
-const String& WebCredential::user() const
-{
-    return m_coreCredential.user();
 }
 
 } // namespace WebKit

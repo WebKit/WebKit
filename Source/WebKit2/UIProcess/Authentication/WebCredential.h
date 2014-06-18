@@ -44,11 +44,6 @@ public:
         return adoptRef(new WebCredential(credential));
     }
     
-    static PassRefPtr<WebCredential> create(API::String* username, API::String* password, WebCore::CredentialPersistence persistence)
-    {
-        return adoptRef(new WebCredential(WebCore::Credential(username->string(), password->string(), persistence)));
-    }
-
     static PassRefPtr<WebCredential> create(WebCertificateInfo* certificateInfo)
     {
         return adoptRef(new WebCredential(certificateInfo));
@@ -56,10 +51,8 @@ public:
     
     WebCertificateInfo* certificateInfo();
 
-    const WebCore::Credential& core();
+    const WebCore::Credential& credential();
 
-    const String& user() const;
-    
 private:
     explicit WebCredential(const WebCore::Credential&);
     explicit WebCredential(WebCertificateInfo*);

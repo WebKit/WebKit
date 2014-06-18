@@ -1,5 +1,25 @@
 2014-06-18  Anders Carlsson  <andersca@apple.com>
 
+        Simplify WebCredential
+        https://bugs.webkit.org/show_bug.cgi?id=134036
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/API/C/WKCredential.cpp:
+        (WKCredentialCreate):
+        (WKCredentialCreateWithCertificateInfo):
+        (WKCredentialCopyUser):
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp:
+        (WebKit::AuthenticationChallengeProxy::useCredential):
+        * UIProcess/Authentication/WebCredential.cpp:
+        (WebKit::WebCredential::credential):
+        (WebKit::WebCredential::core): Deleted.
+        (WebKit::WebCredential::user): Deleted.
+        * UIProcess/Authentication/WebCredential.h:
+        (WebKit::WebCredential::create): Deleted.
+
+2014-06-18  Anders Carlsson  <andersca@apple.com>
+
         Adopt modern C++11 loops and fix WebArchive creation functions
         https://bugs.webkit.org/show_bug.cgi?id=134032
 

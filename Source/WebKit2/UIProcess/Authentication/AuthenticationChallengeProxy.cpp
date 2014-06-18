@@ -62,15 +62,19 @@ void AuthenticationChallengeProxy::useCredential(WebCredential* credential)
     if (!m_challengeID)
         return;
 
-    if (!credential)
-        m_connection->send(Messages::AuthenticationManager::ContinueWithoutCredentialForChallenge(m_challengeID), 0);
-    else {
-        WebCertificateInfo* certificateInfo = credential->certificateInfo();
-        WebCore::CertificateInfo platformInfo = certificateInfo ? certificateInfo->certificateInfo() : WebCore::CertificateInfo();
-        m_connection->send(Messages::AuthenticationManager::UseCredentialForChallenge(m_challengeID, credential->core(), platformInfo), 0);
+    uint64_t challengeID = m_challengeID;
+    m_challengeID = 0;
+
+    if (!credential) {
+        m_connection->send(Messages::AuthenticationManager::ContinueWithoutCredentialForChallenge(challengeID), 0);
+        return;
     }
 
-    m_challengeID = 0;
+    WebCore::CertificateInfo certificateInfo;
+    if (credential->certificateInfo())
+        certificateInfo = credential->certificateInfo()->certificateInfo();
+
+    m_connection->send(Messages::AuthenticationManager::UseCredentialForChallenge(challengeID, credential->credential(), certificateInfo), 0);
 }
 
 void AuthenticationChallengeProxy::cancel()
