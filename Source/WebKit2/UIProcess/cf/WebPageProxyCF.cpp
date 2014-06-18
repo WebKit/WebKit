@@ -33,9 +33,9 @@
 #include "WebBackForwardList.h"
 #include "WebPageMessages.h"
 #include "WebProcessProxy.h"
-
-#include <wtf/RetainPtr.h>
 #include <CoreFoundation/CFPropertyList.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/cf/TypeCasts.h>
 
 using namespace WebCore;
 
@@ -186,15 +186,18 @@ static RetainPtr<CFStringRef> autosaveKey(const String& name)
 
 void WebPageProxy::saveRecentSearches(const String& name, const Vector<String>& searchItems)
 {
-    // The WebProcess shouldn't have bothered to send this message if the name was empty.
-    ASSERT(!name.isEmpty());
+    if (!name) {
+        // FIXME: This should be a message check.
+        return;
+    }
 
     RetainPtr<CFMutableArrayRef> items;
 
-    if (size_t size = searchItems.size()) {
-        items = adoptCF(CFArrayCreateMutable(0, size, &kCFTypeArrayCallBacks));
-        for (size_t i = 0; i < size; ++i)
-            CFArrayAppendValue(items.get(), searchItems[i].createCFString().get());
+    if (!searchItems.isEmpty()) {
+        items = adoptCF(CFArrayCreateMutable(0, searchItems.size(), &kCFTypeArrayCallBacks));
+
+        for (const auto& searchItem : searchItems)
+            CFArrayAppendValue(items.get(), searchItem.createCFString().get());
     }
 
     CFPreferencesSetAppValue(autosaveKey(name).get(), items.get(), kCFPreferencesCurrentApplication);
@@ -203,19 +206,17 @@ void WebPageProxy::saveRecentSearches(const String& name, const Vector<String>& 
 
 void WebPageProxy::loadRecentSearches(const String& name, Vector<String>& searchItems)
 {
-    // The WebProcess shouldn't have bothered to send this message if the name was empty.
-    ASSERT(!name.isEmpty());
+    if (!name) {
+        // FIXME: This should be a message check.
+        return;
+    }
 
-    searchItems.clear();
-    RetainPtr<CFArrayRef> items = adoptCF(reinterpret_cast<CFArrayRef>(CFPreferencesCopyAppValue(autosaveKey(name).get(), kCFPreferencesCurrentApplication)));
-
-    if (!items || CFGetTypeID(items.get()) != CFArrayGetTypeID())
+    auto items = adoptCF(dynamic_cf_cast<CFArrayRef>(CFPreferencesCopyAppValue(autosaveKey(name).get(), kCFPreferencesCurrentApplication)));
+    if (!items)
         return;
 
-    size_t size = CFArrayGetCount(items.get());
-    for (size_t i = 0; i < size; ++i) {
-        CFStringRef item = (CFStringRef)CFArrayGetValueAtIndex(items.get(), i);
-        if (CFGetTypeID(item) == CFStringGetTypeID())
+    for (size_t i = 0, size = CFArrayGetCount(items.get()); i < size; ++i) {
+        if (auto item = dynamic_cf_cast<CFStringRef>(CFArrayGetValueAtIndex(items.get(), i)))
             searchItems.append(item);
     }
 }

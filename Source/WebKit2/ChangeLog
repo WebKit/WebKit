@@ -1,3 +1,14 @@
+2014-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Simplify WebPageProxy::saveRecentSearches and WebPageProxy::loadRecentSearches
+        https://bugs.webkit.org/show_bug.cgi?id=134041
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::WebPageProxy::saveRecentSearches):
+        (WebKit::WebPageProxy::loadRecentSearches):
+
 2014-06-18  Simon Fraser  <simon.fraser@apple.com>
 
         Make ScrollingStateNodes refcounted, and other minor cleanup
