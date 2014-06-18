@@ -1,3 +1,30 @@
+2014-06-18  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r167856): Unable to log into HSBC app
+        https://bugs.webkit.org/show_bug.cgi?id=133991
+        <rdar://problem/17044839>
+
+        Reviewed by David Kilzer.
+
+        Following <http://trac.webkit.org/changeset/167856> we disallow "navigation to any URL that is
+        invalid, except for JavaScript URLs, which need not be valid." A byproduct of this policy
+        decision is that we no longer notify the WebKit client to about a navigation if the destination
+        URL is invalid. And some apps, including the HSBC app for iOS, have logic to intercept URLs
+        as a means to pass data from their WebView-embedded web app to the WebView. We should expose a
+        setting called allowNavigationToInvalidURL (disabled by default on all ports and conditionally
+        enabled on iOS) to toggle whether WebCore allows navigation to any URL, even if its invalid,
+        so as to not break clients that intercept URLs and have custom logic to handle them.
+
+        Tests: fast/loader/allow-redirect-to-invalid-url-using-javascript.html
+               fast/loader/allow-redirect-to-invalid-url-using-meta-refresh.html
+               fast/loader/disallow-redirect-to-invalid-url-using-javascript.html
+               fast/loader/disallow-redirect-to-invalid-url-using-meta-refresh.html
+
+        * loader/NavigationScheduler.cpp:
+        (WebCore::NavigationScheduler::shouldScheduleNavigation): Modified to only validate
+        the URL when the setting allowNavigationToInvalidURL is disabled.
+        * page/Settings.in: Added setting allowNavigationToInvalidURL (disabled by default).
+
 2014-06-18  Simon Fraser  <simon.fraser@apple.com>
 
         Make ScrollingStateNodes refcounted, and other minor cleanup
