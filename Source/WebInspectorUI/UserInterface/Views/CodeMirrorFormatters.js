@@ -35,13 +35,17 @@ CodeMirror.extendMode("javascript", {
                 return lastToken && /\bkeyword\b/.test(lastToken) && (lastContent !== "function" && lastContent !== "typeof" && lastContent !== "instanceof");
             if (content === ":") // Ternary.
                 return (state.lexical.type === "stat" || state.lexical.type === ")");
-            if (content === "!") // Unary ! should not be confused with "!=".
-                return false;
-            return "+-/*&&||!===+=-=>=<=?".indexOf(content) >= 0; // Operators.
+            return false;
         }
 
         if (isComment)
             return true;
+
+        if (/\boperator\b/.test(token)) {
+            if (content === "!") // Unary ! should not be confused with "!=".
+                return false;
+            return "+-/*&&||!===+=-=>=<=?".indexOf(content) >= 0; // Operators.
+        }
 
         if (/\bkeyword\b/.test(token)) { // Most keywords require spaces before them, unless a '}' can come before it.
             if (content === "else" || content === "catch" || content === "finally")
