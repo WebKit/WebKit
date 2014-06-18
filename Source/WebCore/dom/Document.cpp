@@ -4905,7 +4905,7 @@ SecurityOrigin* Document::topOrigin() const
     return topDocument().securityOrigin();
 }
 
-void Document::postTask(Task task)
+void Document::postTask(Task&& task)
 {
     Task* taskPtr = std::make_unique<Task>(std::move(task)).release();
     WeakPtr<Document> documentReference(m_weakFactory.createWeakPtr());

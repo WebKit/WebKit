@@ -78,7 +78,7 @@ namespace WebCore {
 
         using ScriptExecutionContext::hasPendingActivity;
 
-        virtual void postTask(Task) override; // Executes the task on context's thread asynchronously.
+        virtual void postTask(Task&&) override; // Executes the task on context's thread asynchronously.
 
         // WorkerGlobalScope
         WorkerGlobalScope* self() { return this; }

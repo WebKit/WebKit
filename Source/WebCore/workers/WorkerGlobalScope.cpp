@@ -147,7 +147,7 @@ WorkerNavigator* WorkerGlobalScope::navigator() const
     return m_navigator.get();
 }
 
-void WorkerGlobalScope::postTask(Task task)
+void WorkerGlobalScope::postTask(Task&& task)
 {
     thread().runLoop().postTask(std::move(task));
 }

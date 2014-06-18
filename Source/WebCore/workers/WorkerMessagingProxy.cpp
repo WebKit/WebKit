@@ -127,7 +127,14 @@ void WorkerMessagingProxy::postMessageToWorkerGlobalScope(PassRefPtr<SerializedS
         m_queuedEarlyTasks.append(std::make_unique<ScriptExecutionContext::Task>(std::move(task)));
 }
 
-bool WorkerMessagingProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task task, const String& mode)
+void WorkerMessagingProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
+{
+    // FIXME: In case of nested workers, this should go directly to the root Document context.
+    ASSERT(m_scriptExecutionContext->isDocument());
+    m_scriptExecutionContext->postTask(std::move(task));
+}
+
+bool WorkerMessagingProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
 {
     if (m_askedToTerminate)
         return false;
@@ -135,13 +142,6 @@ bool WorkerMessagingProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionCon
     ASSERT(m_workerThread);
     m_workerThread->runLoop().postTaskForMode(std::move(task), mode);
     return true;
-}
-
-void WorkerMessagingProxy::postTaskToLoader(ScriptExecutionContext::Task task)
-{
-    // FIXME: In case of nested workers, this should go directly to the root Document context.
-    ASSERT(m_scriptExecutionContext->isDocument());
-    m_scriptExecutionContext->postTask(std::move(task));
 }
 
 void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)

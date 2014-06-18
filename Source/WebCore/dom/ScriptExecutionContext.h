@@ -145,7 +145,7 @@ public:
         bool m_isCleanupTask;
     };
 
-    virtual void postTask(Task) = 0; // Executes the task on context's thread asynchronously.
+    virtual void postTask(Task&&) = 0; // Executes the task on context's thread asynchronously.
 
     // Gets the next id in a circular sequence from 1 to 2^31-1.
     int circularSequentialID();
