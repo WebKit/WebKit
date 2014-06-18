@@ -34,10 +34,12 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
+#include "HTMLBodyElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "LocalizedStrings.h"
+#include "MIMETypeRegistry.h"
 #include "MainFrame.h"
 #include "MouseEvent.h"
 #include "Page.h"
@@ -151,8 +153,6 @@ void ImageDocument::finishedParsing()
         cachedImage.finishLoading(data.get());
         cachedImage.finish();
 
-        cachedImage.setResponse(loader()->response());
-
         // Report the natural image size in the page title, regardless of zoom level.
         // At a zoom level of 1 the image is guaranteed to have an integer size.
         updateStyleIfNeeded();
@@ -217,6 +217,8 @@ void ImageDocument::createDocumentStructure()
 
     RefPtr<Element> body = Document::createElement(bodyTag, false);
     body->setAttribute(styleAttr, "margin: 0px");
+    if (MIMETypeRegistry::isPDFMIMEType(document().loader()->responseMIMEType()))
+        toHTMLBodyElement(body.get())->setInlineStyleProperty(CSSPropertyBackgroundColor, "white", CSSPrimitiveValue::CSS_IDENT);
     rootElement->appendChild(body);
     
     RefPtr<ImageDocumentElement> imageElement = ImageDocumentElement::create(*this);
@@ -226,6 +228,7 @@ void ImageDocument::createDocumentStructure()
         imageElement->setAttribute(styleAttr, "-webkit-user-select:none;");
     imageElement->setLoadManually(true);
     imageElement->setSrc(url().string());
+    imageElement->cachedImage()->setResponse(loader()->response());
     body->appendChild(imageElement);
     
     if (m_shouldShrinkImage) {

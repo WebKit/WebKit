@@ -221,3 +221,5 @@ enableInheritURIQueryComponent initial=false
 
 aggressiveTileRetentionEnabled initial=false
 temporaryTileCohortRetentionEnabled initial=true
+
+useImageDocumentForSubframePDF initial=false

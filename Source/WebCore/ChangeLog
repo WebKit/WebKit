@@ -1,3 +1,42 @@
+2014-06-17  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS][wk2] Use ImageDocument to display subframe PDFs
+        https://bugs.webkit.org/show_bug.cgi?id=133944
+        <rdar://problem/17205983>
+
+        Reviewed by Dan Bates.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        Make a ImageDocument to show our subframe PDF, if the setting is enabled.
+
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::finishedParsing):
+        (WebCore::ImageDocument::createDocumentStructure):
+        Set the ResourceResponse on the ImageElement upon creation, instead of
+        when the load finishes. This way, when the internal CachedImage creates
+        its Image, it can have the correct MIME type for the response, and can
+        make a PDFDocumentImage if necessary.
+
+        We never noticed this before because CachedImage falls back to making a
+        BitmapImage, and that was the only case that was normally used.
+
+        Throw an explicit white background behind PDF ImageDocuments; PDFDocumentImage
+        paints with a transparent background, but when used as an ImageDocument
+        it seems reasonable to assume that there should be a white page background
+        (similar to what PDFPlugin and friends do).
+
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::createDocument):
+        Don't make a PDFDocument if we want to use an ImageDocument for this subframe PDF.
+
+        * page/Settings.in:
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::isPDFMIMEType):
+        * platform/MIMETypeRegistry.h:
+        Expose the already implemented pdfMIMETypes table just like all the rest.
+
 2014-06-17  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix with ENABLE_NOSNIFF after r170021

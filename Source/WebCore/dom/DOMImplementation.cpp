@@ -37,6 +37,7 @@
 #include "HTMLDocument.h"
 #include "Image.h"
 #include "ImageDocument.h"
+#include "MainFrame.h"
 #include "MediaDocument.h"
 #include "MediaList.h"
 #include "MIMETypeRegistry.h"
@@ -314,6 +315,10 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
         return FTPDirectoryDocument::create(frame, url);
 #endif
 
+    // If we want to useImageDocumentForSubframePDF, we'll let that override plugin support.
+    if (frame && !frame->isMainFrame() && MIMETypeRegistry::isPDFMIMEType(type) && frame->settings().useImageDocumentForSubframePDF())
+        return ImageDocument::create(*frame, url);
+
     PluginData* pluginData = 0;
     PluginData::AllowedPluginTypes allowedPluginTypes = PluginData::OnlyApplicationPlugins;
     if (frame && frame->page()) {
@@ -325,7 +330,7 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
 
     // PDF is one image type for which a plugin can override built-in support.
     // We do not want QuickTime to take over all image types, obviously.
-    if ((MIMETypeRegistry::isPDFOrPostScriptMIMEType(type)) && pluginData && pluginData->supportsMimeType(type, allowedPluginTypes))
+    if (MIMETypeRegistry::isPDFOrPostScriptMIMEType(type) && pluginData && pluginData->supportsMimeType(type, allowedPluginTypes))
         return PluginDocument::create(frame, url);
     if (Image::supportsType(type))
         return ImageDocument::create(*frame, url);

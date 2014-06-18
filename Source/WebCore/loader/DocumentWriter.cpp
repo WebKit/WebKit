@@ -36,6 +36,8 @@
 #include "FrameLoaderClient.h"
 #include "FrameLoaderStateMachine.h"
 #include "FrameView.h"
+#include "MIMETypeRegistry.h"
+#include "MainFrame.h"
 #include "PluginDocument.h"
 #include "RawDataDocumentParser.h"
 #include "ScriptController.h"
@@ -107,7 +109,7 @@ PassRefPtr<Document> DocumentWriter::createDocument(const URL& url)
     if (!m_frame->loader().stateMachine().isDisplayingInitialEmptyDocument() && m_frame->loader().client().shouldAlwaysUsePluginDocument(m_mimeType))
         return PluginDocument::create(m_frame, url);
 #if PLATFORM(IOS)
-    if (equalIgnoringCase(m_mimeType, "application/pdf"))
+    if (MIMETypeRegistry::isPDFMIMEType(m_mimeType) && (m_frame->isMainFrame() || !m_frame->settings().useImageDocumentForSubframePDF()))
         return PDFDocument::create(m_frame, url);
 #endif
     if (!m_frame->loader().client().hasHTMLView())

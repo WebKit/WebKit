@@ -561,6 +561,15 @@ bool MIMETypeRegistry::isPDFOrPostScriptMIMEType(const String& mimeType)
     return pdfAndPostScriptMIMETypes->contains(mimeType);
 }
 
+bool MIMETypeRegistry::isPDFMIMEType(const String& mimeType)
+{
+    if (mimeType.isEmpty())
+        return false;
+    if (!pdfMIMETypes)
+        initializeMIMETypeRegistry();
+    return pdfMIMETypes->contains(mimeType);
+}
+
 bool MIMETypeRegistry::canShowMIMEType(const String& mimeType)
 {
     if (isSupportedImageMIMEType(mimeType) || isSupportedNonImageMIMEType(mimeType) || isSupportedMediaMIMEType(mimeType))
