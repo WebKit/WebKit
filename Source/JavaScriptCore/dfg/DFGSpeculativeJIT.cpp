@@ -3498,7 +3498,11 @@ void SpeculativeJIT::compileArithMod(Node* node)
         // arithMode() == Arith::Unchecked?
         // https://bugs.webkit.org/show_bug.cgi?id=126444
         speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchMul32(JITCompiler::Overflow, quotientThenRemainderGPR, divisorGPR, multiplyAnswerGPR));
+#if CPU(APPLE_ARMV7S)
+        m_jit.assembler().sub(quotientThenRemainderGPR, dividendGPR, multiplyAnswerGPR);
+#else
         m_jit.assembler().sub<32>(quotientThenRemainderGPR, dividendGPR, multiplyAnswerGPR);
+#endif
 
         // If the user cares about negative zero, then speculate that we're not about
         // to produce negative zero.
