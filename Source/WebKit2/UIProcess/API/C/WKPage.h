@@ -212,6 +212,10 @@ WK_EXPORT void WKPageSetSession(WKPageRef page, WKSessionRef session);
 
 typedef void (*WKPageRunJavaScriptFunction)(WKSerializedScriptValueRef, WKErrorRef, void*);
 WK_EXPORT void WKPageRunJavaScriptInMainFrame(WKPageRef page, WKStringRef script, void* context, WKPageRunJavaScriptFunction function);
+#ifdef __BLOCKS__
+typedef void (^WKPageRunJavaScriptBlock)(WKSerializedScriptValueRef, WKErrorRef);
+WK_EXPORT void WKPageRunJavaScriptInMainFrame_b(WKPageRef page, WKStringRef script, WKPageRunJavaScriptBlock block);
+#endif
 
 typedef void (*WKPageGetSourceForFrameFunction)(WKStringRef, WKErrorRef, void*);
 WK_EXPORT void WKPageGetSourceForFrame(WKPageRef page, WKFrameRef frame, void* context, WKPageGetSourceForFrameFunction function);
