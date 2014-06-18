@@ -1,3 +1,15 @@
+2014-06-17  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] WKWebView's _privateBrowsingEnabled property is unused
+        https://bugs.webkit.org/show_bug.cgi?id=134013
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _privateBrowsingEnabled]): Deleted.
+        (-[WKWebView _setPrivateBrowsingEnabled:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2014-06-17  Tim Horton  <timothy_horton@apple.com>
 
         [iOS][wk2] Use ImageDocument to display subframe PDFs

@@ -87,8 +87,6 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 @property (nonatomic, readonly) NSData *_sessionState;
 - (void)_restoreFromSessionState:(NSData *)sessionState;
 
-@property (nonatomic, setter=_setPrivateBrowsingEnabled:) BOOL _privateBrowsingEnabled;
-
 @property (nonatomic, setter=_setAllowsRemoteInspection:) BOOL _allowsRemoteInspection;
 
 @property (nonatomic, setter=_setAddsVisitedLinks:) BOOL _addsVisitedLinks;

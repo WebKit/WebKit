@@ -1456,16 +1456,6 @@ static void releaseNSData(unsigned char*, const void* data)
     _page->close();
 }
 
-- (BOOL)_privateBrowsingEnabled
-{
-    return [_configuration preferences]->_preferences->privateBrowsingEnabled();
-}
-
-- (void)_setPrivateBrowsingEnabled:(BOOL)privateBrowsingEnabled
-{
-    [_configuration preferences]->_preferences->setPrivateBrowsingEnabled(privateBrowsingEnabled);
-}
-
 - (BOOL)_allowsRemoteInspection
 {
 #if ENABLE(REMOTE_INSPECTOR)
