@@ -1,3 +1,22 @@
+2014-06-18  Andreas Kling  <akling@apple.com>
+
+        Set main thread QoS policies after IPC initialization.
+        <https://webkit.org/b/134014>
+
+        Something was flipping the QoS level back to "unspecified" after
+        setting it in the ChildProcess initialization code. Pending a better
+        understanding of what really happens, move the code to a later stage,
+        after IPC channels are up and running. Now the priority sticks.
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::initialize):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2014-06-17  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] WKWebView's _privateBrowsingEnabled property is unused

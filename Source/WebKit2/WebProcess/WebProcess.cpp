@@ -270,6 +270,8 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 
     platformInitializeWebProcess(parameters, decoder);
 
+    WTF::setCurrentThreadIsUserInitiated();
+
     memoryPressureHandler().install();
 
     RefPtr<API::Object> injectedBundleInitializationUserData;

@@ -157,6 +157,8 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
 {
     platformInitializeNetworkProcess(parameters);
 
+    WTF::setCurrentThreadIsUserInitiated();
+
     memoryPressureHandler().setLowMemoryHandler(lowMemoryHandler);
     memoryPressureHandler().install();
 
