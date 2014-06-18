@@ -1,3 +1,33 @@
+2014-06-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Re-sync didCommitLoadForMainFrame with its corresponding tile update
+        https://bugs.webkit.org/show_bug.cgi?id=134009
+
+        Reviewed by Tim Horton.
+
+        WKWebView assumed the first _didCommitLayerTree: after _didCommitLoadForMainFrame
+        had the state of the page being loaded.
+
+        This is not always true. Sometimes, a set of tiles can be rendering asynchronously while the next
+        page is loaded, and does not flush the queue until after didCommitLoadForMainFrame is executed.
+
+        Tim introduced a transactionID with each layer tree update. This patch uses that to synchronize
+        WKWebView with the right set of tiles.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLoadForMainFrame]):
+        (-[WKWebView _didCommitLayerTree:WebKit::]):
+        (-[WKWebView _updateVisibleContentRects]):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::nextLayerTreeTransactionID):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.messages.in:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::willCommitLayerTree):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+
 2014-06-18  Anders Carlsson  <andersca@apple.com>
 
         Simplify WebCredential

@@ -47,6 +47,7 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy* w
     : DrawingAreaProxy(DrawingAreaTypeRemoteLayerTree, webPageProxy)
     , m_remoteLayerTreeHost(*this)
     , m_isWaitingForDidUpdateGeometry(false)
+    , m_pendingLayerTreeTransactionID(0)
     , m_lastVisibleTransactionID(0)
 {
 #if USE(IOSURFACE)
@@ -113,6 +114,11 @@ void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
     m_lastSentLayerPosition = m_layerPosition;
     m_webPageProxy->process().send(Messages::DrawingArea::UpdateGeometry(m_size, m_layerPosition), m_webPageProxy->pageID());
     m_isWaitingForDidUpdateGeometry = true;
+}
+
+void RemoteLayerTreeDrawingAreaProxy::willCommitLayerTree(uint64_t transactionID)
+{
+    m_pendingLayerTreeTransactionID = transactionID;
 }
 
 void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTransaction& layerTreeTransaction, const RemoteScrollingCoordinatorTransaction& scrollingTreeTransaction)

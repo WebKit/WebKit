@@ -49,6 +49,8 @@ public:
 
     void coreAnimationDidCommitLayers();
 
+    uint64_t nextLayerTreeTransactionID() const { return m_pendingLayerTreeTransactionID + 1; }
+
 private:
     virtual void sizeDidChange() override;
     virtual void deviceScaleFactorDidChange() override;
@@ -72,6 +74,7 @@ private:
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
     // Message handlers
+    void willCommitLayerTree(uint64_t transactionID);
     void commitLayerTree(const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&);
     
     void sendUpdateGeometry();
@@ -90,6 +93,7 @@ private:
 
     std::unique_ptr<WebCore::RunLoopObserver> m_layerCommitObserver;
 
+    uint64_t m_pendingLayerTreeTransactionID;
     uint64_t m_lastVisibleTransactionID;
     uint64_t m_transactionIDForPendingCACommit;
 };

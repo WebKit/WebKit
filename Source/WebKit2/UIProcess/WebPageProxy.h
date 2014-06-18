@@ -395,6 +395,7 @@ public:
     void setMaximumUnobscuredSize(const WebCore::FloatSize&);
     void setDeviceOrientation(int32_t);
     int32_t deviceOrientation() const { return m_deviceOrientation; }
+    void willCommitLayerTree(uint64_t transactionID);
     void didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction&);
 
     void selectWithGesture(const WebCore::IntPoint, WebCore::TextGranularity, uint32_t gestureType, uint32_t gestureState, std::function<void (const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)>);

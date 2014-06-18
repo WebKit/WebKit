@@ -79,6 +79,7 @@
 #import "_WKWebViewPrintFormatter.h"
 #import "PrintInfo.h"
 #import "ProcessThrottler.h"
+#import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "WKPDFView.h"
 #import "WKScrollView.h"
 #import "WKWebViewContentProviderRegistry.h"
@@ -162,6 +163,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     BOOL _overridesInterfaceOrientation;
 
     BOOL _needsResetViewStateAfterCommitLoadForMainFrame;
+    uint64_t _firstPaintAfterCommitLoadTransactionID;
     BOOL _isAnimatingResize;
     CATransform3D _resizeAnimationTransformAdjustments;
     RetainPtr<UIView> _resizeAnimationView;
@@ -705,6 +707,8 @@ static CGFloat contentZoomScale(WKWebView* webView)
 
 - (void)_didCommitLoadForMainFrame
 {
+    _firstPaintAfterCommitLoadTransactionID = toRemoteLayerTreeDrawingAreaProxy(_page->drawingArea())->nextLayerTreeTransactionID();
+
     _needsResetViewStateAfterCommitLoadForMainFrame = YES;
     _usesMinimalUI = NO;
 }
@@ -739,9 +743,10 @@ static CGFloat contentZoomScale(WKWebView* webView)
             [static_cast<id <WKUIDelegatePrivate>>(delegate.get()) _webView:self usesMinimalUI:_usesMinimalUI];
     }
 
-    if (_needsResetViewStateAfterCommitLoadForMainFrame) {
+    if (_needsResetViewStateAfterCommitLoadForMainFrame && layerTreeTransaction.transactionID() >= _firstPaintAfterCommitLoadTransactionID) {
         _needsResetViewStateAfterCommitLoadForMainFrame = NO;
         [_scrollView setContentOffset:CGPointMake(-_obscuredInsets.left, -_obscuredInsets.top)];
+        [self _updateVisibleContentRects];
     }
 }
 
@@ -1179,6 +1184,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     }
 
     if (_isAnimatingResize)
+        return;
+
+    if (_needsResetViewStateAfterCommitLoadForMainFrame)
         return;
 
     CGRect fullViewRect = self.bounds;

@@ -289,6 +289,8 @@ void RemoteLayerTreeDrawingArea::flushLayers()
 
     m_waitingForBackingStoreSwap = true;
 
+    m_webPage->send(Messages::RemoteLayerTreeDrawingAreaProxy::WillCommitLayerTree(layerTransaction.transactionID()));
+
     Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree message(layerTransaction, scrollingTransaction);
     auto commitEncoder = std::make_unique<IPC::MessageEncoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::receiverName(), Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_webPage->pageID());
     commitEncoder->encode(message.arguments());
