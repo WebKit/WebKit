@@ -1,3 +1,13 @@
+2014-06-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Make ScrollingStateNodes refcounted, and other minor cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=134040
+
+        Reviewed by Beth Dakin.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (WebKit::encodeNodeAndDescendants):
+
 2014-06-18  Benjamin Poulain  <benjamin@webkit.org>
 
         [iOS][WK2] Do not add padding when magnifying replaced elements

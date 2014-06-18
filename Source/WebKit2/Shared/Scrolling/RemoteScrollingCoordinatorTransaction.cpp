@@ -337,10 +337,8 @@ static void encodeNodeAndDescendants(IPC::ArgumentEncoder& encoder, const Scroll
     if (!stateNode.children())
         return;
 
-    for (size_t i = 0; i < stateNode.children()->size(); ++i) {
-        const OwnPtr<ScrollingStateNode>& child = stateNode.children()->at(i);
+    for (const auto& child : *stateNode.children())
         encodeNodeAndDescendants(encoder, *child.get());
-    }
 }
 
 void RemoteScrollingCoordinatorTransaction::encode(IPC::ArgumentEncoder& encoder) const

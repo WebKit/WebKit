@@ -197,11 +197,9 @@ void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode)
     }
 
     // Now update the children if we have any.
-    Vector<OwnPtr<ScrollingStateNode>>* stateNodeChildren = stateNode->children();
-    if (stateNodeChildren) {
-        size_t size = stateNodeChildren->size();
-        for (size_t i = 0; i < size; ++i)
-            updateTreeFromStateNode(stateNodeChildren->at(i).get());
+    if (auto children = stateNode->children()) {
+        for (auto& child : *children)
+            updateTreeFromStateNode(child.get());
     }
     node->updateAfterChildren(*stateNode);
 }

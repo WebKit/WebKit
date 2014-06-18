@@ -344,7 +344,7 @@ void AsyncScrollingCoordinator::syncChildPositions(const LayoutRect& viewportRec
     if (!m_scrollingStateTree->rootStateNode())
         return;
 
-    Vector<OwnPtr<ScrollingStateNode>>* children = m_scrollingStateTree->rootStateNode()->children();
+    auto children = m_scrollingStateTree->rootStateNode()->children();
     if (!children)
         return;
 

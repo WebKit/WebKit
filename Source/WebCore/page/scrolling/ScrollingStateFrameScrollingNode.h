@@ -33,7 +33,6 @@
 #include "ScrollbarThemeComposite.h"
 #include "ScrollingCoordinator.h"
 #include "ScrollingStateScrollingNode.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -41,9 +40,9 @@ class Scrollbar;
 
 class ScrollingStateFrameScrollingNode final : public ScrollingStateScrollingNode {
 public:
-    static PassOwnPtr<ScrollingStateFrameScrollingNode> create(ScrollingStateTree&, ScrollingNodeID);
+    static PassRefPtr<ScrollingStateFrameScrollingNode> create(ScrollingStateTree&, ScrollingNodeID);
 
-    virtual PassOwnPtr<ScrollingStateNode> clone(ScrollingStateTree&);
+    virtual PassRefPtr<ScrollingStateNode> clone(ScrollingStateTree&);
 
     virtual ~ScrollingStateFrameScrollingNode();
 

@@ -1,3 +1,55 @@
+2014-06-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Make ScrollingStateNodes refcounted, and other minor cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=134040
+
+        Reviewed by Beth Dakin.
+
+        Prepare for future scrolling frame gyrations by making
+        ScrollingStateNodes refcounted.
+        
+        Rename ScrollingStateNode::removeChild() to removeDescendant()
+        since that's what it does. Also rename didRemoveNode() to willRemoveNode()
+        to better match the behavior.
+        
+        Use 'auto' in more places.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::syncChildPositions):
+        * page/scrolling/ScrollingStateFixedNode.cpp:
+        (WebCore::ScrollingStateFixedNode::create):
+        (WebCore::ScrollingStateFixedNode::clone):
+        * page/scrolling/ScrollingStateFixedNode.h:
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+        (WebCore::ScrollingStateFrameScrollingNode::create):
+        (WebCore::ScrollingStateFrameScrollingNode::clone):
+        * page/scrolling/ScrollingStateFrameScrollingNode.h:
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::cloneAndReset):
+        (WebCore::ScrollingStateNode::appendChild):
+        (WebCore::ScrollingStateNode::removeDescendant):
+        (WebCore::ScrollingStateNode::willBeRemovedFromStateTree):
+        (WebCore::ScrollingStateNode::removeChild): Deleted.
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::ScrollingStateNode::children):
+        * page/scrolling/ScrollingStateOverflowScrollingNode.cpp:
+        (WebCore::ScrollingStateOverflowScrollingNode::create):
+        (WebCore::ScrollingStateOverflowScrollingNode::clone):
+        * page/scrolling/ScrollingStateOverflowScrollingNode.h:
+        * page/scrolling/ScrollingStateStickyNode.cpp:
+        (WebCore::ScrollingStateStickyNode::create):
+        (WebCore::ScrollingStateStickyNode::clone):
+        * page/scrolling/ScrollingStateStickyNode.h:
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::attachNode):
+        (WebCore::ScrollingStateTree::removeNode):
+        (WebCore::ScrollingStateTree::willRemoveNode):
+        (WebCore::ScrollingStateTree::didRemoveNode): Deleted.
+        * page/scrolling/ScrollingStateTree.h:
+        (WebCore::ScrollingStateTree::setRootStateNode):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::updateTreeFromStateNode):
+
 2014-06-18  Anders Carlsson  <andersca@apple.com>
 
         Adopt modern C++11 loops and fix WebArchive creation functions

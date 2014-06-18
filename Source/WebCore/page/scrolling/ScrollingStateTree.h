@@ -79,14 +79,14 @@ public:
 private:
     ScrollingStateTree(AsyncScrollingCoordinator*);
 
-    void setRootStateNode(PassOwnPtr<ScrollingStateFrameScrollingNode> rootStateNode) { m_rootStateNode = rootStateNode; }
+    void setRootStateNode(PassRefPtr<ScrollingStateFrameScrollingNode> rootStateNode) { m_rootStateNode = rootStateNode; }
     void addNode(ScrollingStateNode*);
     void removeNode(ScrollingStateNode*);
-    void didRemoveNode(ScrollingNodeID);
+    void willRemoveNode(ScrollingStateNode*);
 
     AsyncScrollingCoordinator* m_scrollingCoordinator;
     StateNodeMap m_stateNodeMap;
-    OwnPtr<ScrollingStateFrameScrollingNode> m_rootStateNode;
+    RefPtr<ScrollingStateFrameScrollingNode> m_rootStateNode;
     Vector<ScrollingNodeID> m_nodesRemovedSinceLastCommit;
     bool m_hasChangedProperties;
     bool m_hasNewRootStateNode;

@@ -34,9 +34,9 @@
 
 namespace WebCore {
 
-PassOwnPtr<ScrollingStateFrameScrollingNode> ScrollingStateFrameScrollingNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
+PassRefPtr<ScrollingStateFrameScrollingNode> ScrollingStateFrameScrollingNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
 {
-    return adoptPtr(new ScrollingStateFrameScrollingNode(stateTree, nodeID));
+    return adoptRef(new ScrollingStateFrameScrollingNode(stateTree, nodeID));
 }
 
 ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
@@ -96,9 +96,9 @@ ScrollingStateFrameScrollingNode::~ScrollingStateFrameScrollingNode()
 {
 }
 
-PassOwnPtr<ScrollingStateNode> ScrollingStateFrameScrollingNode::clone(ScrollingStateTree& adoptiveTree)
+PassRefPtr<ScrollingStateNode> ScrollingStateFrameScrollingNode::clone(ScrollingStateTree& adoptiveTree)
 {
-    return adoptPtr(new ScrollingStateFrameScrollingNode(*this, adoptiveTree));
+    return adoptRef(new ScrollingStateFrameScrollingNode(*this, adoptiveTree));
 }
 
 void ScrollingStateFrameScrollingNode::setFrameScaleFactor(float scaleFactor)

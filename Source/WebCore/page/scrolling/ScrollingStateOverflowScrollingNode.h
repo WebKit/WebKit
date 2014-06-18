@@ -34,9 +34,9 @@ namespace WebCore {
 
 class ScrollingStateOverflowScrollingNode : public ScrollingStateScrollingNode {
 public:
-    static PassOwnPtr<ScrollingStateOverflowScrollingNode> create(ScrollingStateTree&, ScrollingNodeID);
+    static PassRefPtr<ScrollingStateOverflowScrollingNode> create(ScrollingStateTree&, ScrollingNodeID);
 
-    virtual PassOwnPtr<ScrollingStateNode> clone(ScrollingStateTree&);
+    virtual PassRefPtr<ScrollingStateNode> clone(ScrollingStateTree&);
 
     virtual ~ScrollingStateOverflowScrollingNode();
 

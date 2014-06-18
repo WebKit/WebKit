@@ -31,7 +31,7 @@
 #include "GraphicsLayer.h"
 #include "ScrollingCoordinator.h"
 #include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -150,7 +150,7 @@ private:
     Type m_representation;
 };
 
-class ScrollingStateNode {
+class ScrollingStateNode : public RefCounted<ScrollingStateNode> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ScrollingStateNode(ScrollingNodeType, ScrollingStateTree&, ScrollingNodeID);
@@ -164,8 +164,8 @@ public:
     bool isFrameScrollingNode() const { return m_nodeType == FrameScrollingNode; }
     bool isOverflowScrollingNode() const { return m_nodeType == OverflowScrollingNode; }
 
-    virtual PassOwnPtr<ScrollingStateNode> clone(ScrollingStateTree& adoptiveTree) = 0;
-    PassOwnPtr<ScrollingStateNode> cloneAndReset(ScrollingStateTree& adoptiveTree);
+    virtual PassRefPtr<ScrollingStateNode> clone(ScrollingStateTree& adoptiveTree) = 0;
+    PassRefPtr<ScrollingStateNode> cloneAndReset(ScrollingStateTree& adoptiveTree);
     void cloneAndResetChildren(ScrollingStateNode&, ScrollingStateTree& adoptiveTree);
 
     enum {
@@ -195,10 +195,10 @@ public:
     void setParent(ScrollingStateNode* parent) { m_parent = parent; }
     ScrollingNodeID parentNodeID() const { return m_parent ? m_parent->scrollingNodeID() : 0; }
 
-    Vector<OwnPtr<ScrollingStateNode>>* children() const { return m_children.get(); }
+    Vector<RefPtr<ScrollingStateNode>>* children() const { return m_children.get(); }
 
-    void appendChild(PassOwnPtr<ScrollingStateNode>);
-    void removeChild(ScrollingStateNode*);
+    void appendChild(PassRefPtr<ScrollingStateNode>);
+    void removeDescendant(ScrollingStateNode*);
 
     String scrollingStateTreeAsText() const;
 
@@ -218,7 +218,7 @@ private:
     ScrollingStateTree& m_scrollingStateTree;
 
     ScrollingStateNode* m_parent;
-    OwnPtr<Vector<OwnPtr<ScrollingStateNode>>> m_children;
+    OwnPtr<Vector<RefPtr<ScrollingStateNode>>> m_children;
 
     LayerRepresentation m_layer;
 };

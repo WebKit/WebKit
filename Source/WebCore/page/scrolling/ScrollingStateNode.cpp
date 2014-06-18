@@ -72,9 +72,9 @@ void ScrollingStateNode::setPropertyChanged(unsigned propertyBit)
     m_scrollingStateTree.setHasChangedProperties();
 }
 
-PassOwnPtr<ScrollingStateNode> ScrollingStateNode::cloneAndReset(ScrollingStateTree& adoptiveTree)
+PassRefPtr<ScrollingStateNode> ScrollingStateNode::cloneAndReset(ScrollingStateTree& adoptiveTree)
 {
-    OwnPtr<ScrollingStateNode> clone = this->clone(adoptiveTree);
+    RefPtr<ScrollingStateNode> clone = this->clone(adoptiveTree);
 
     // Now that this node is cloned, reset our change properties.
     resetChangedProperties();
@@ -92,25 +92,22 @@ void ScrollingStateNode::cloneAndResetChildren(ScrollingStateNode& clone, Scroll
         clone.appendChild(child->cloneAndReset(adoptiveTree));
 }
 
-void ScrollingStateNode::appendChild(PassOwnPtr<ScrollingStateNode> childNode)
+void ScrollingStateNode::appendChild(PassRefPtr<ScrollingStateNode> childNode)
 {
     childNode->setParent(this);
 
     if (!m_children)
-        m_children = adoptPtr(new Vector<OwnPtr<ScrollingStateNode>>);
+        m_children = adoptPtr(new Vector<RefPtr<ScrollingStateNode>>);
 
     m_children->append(childNode);
 }
 
-void ScrollingStateNode::removeChild(ScrollingStateNode* node)
+void ScrollingStateNode::removeDescendant(ScrollingStateNode* node)
 {
     if (!m_children)
         return;
 
     size_t index = m_children->find(node);
-
-    // The index will be notFound if the node to remove is a deeper-than-1-level descendant or
-    // if node is the root state node.
     if (index != notFound) {
         node->willBeRemovedFromStateTree();
         m_children->remove(index);
@@ -118,13 +115,12 @@ void ScrollingStateNode::removeChild(ScrollingStateNode* node)
     }
 
     for (auto& child : *m_children)
-        child->removeChild(node);
+        child->removeDescendant(node);
 }
 
 void ScrollingStateNode::willBeRemovedFromStateTree()
 {
-    scrollingStateTree().didRemoveNode(scrollingNodeID());
-
+    scrollingStateTree().willRemoveNode(this);
     if (!m_children)
         return;
 
