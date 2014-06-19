@@ -283,7 +283,7 @@ void HistoryController::goToItem(HistoryItem* targetItem, FrameLoadType type)
     }
 
     // Set the BF cursor before commit, which lets the user quickly click back/forward again.
-    // - plus, it only makes sense for the top level of the operation through the frametree,
+    // - plus, it only makes sense for the top level of the operation through the frame tree,
     // as opposed to happening for some/one of the page commits that might happen soon
     RefPtr<HistoryItem> currentItem = page->backForward().currentItem();
     page->backForward().setCurrentItem(targetItem);
@@ -293,7 +293,8 @@ void HistoryController::goToItem(HistoryItem* targetItem, FrameLoadType type)
     // This must be done before trying to navigate the desired frame, because some
     // navigations can commit immediately (such as about:blank).  We must be sure that
     // all frames have provisional items set before the commit.
-    recursiveSetProvisionalItem(targetItem, currentItem.get(), type);
+    recursiveSetProvisionalItem(targetItem, currentItem.get());
+
     // Now that all other frames have provisional items, do the actual navigation.
     recursiveGoToItem(targetItem, currentItem.get(), type);
 }
@@ -705,26 +706,25 @@ PassRefPtr<HistoryItem> HistoryController::createItemTree(Frame& targetFrame, bo
 // tracking whether each frame already has the content the item requests.  If there is
 // a match, we set the provisional item and recurse.  Otherwise we will reload that
 // frame and all its kids in recursiveGoToItem.
-void HistoryController::recursiveSetProvisionalItem(HistoryItem* item, HistoryItem* fromItem, FrameLoadType type)
+void HistoryController::recursiveSetProvisionalItem(HistoryItem* item, HistoryItem* fromItem)
 {
     ASSERT(item);
 
-    if (itemsAreClones(item, fromItem)) {
-        // Set provisional item, which will be committed in recursiveUpdateForCommit.
-        m_provisionalItem = item;
+    if (!itemsAreClones(item, fromItem))
+        return;
 
-        const HistoryItemVector& childItems = item->children();
+    // Set provisional item, which will be committed in recursiveUpdateForCommit.
+    m_provisionalItem = item;
 
-        int size = childItems.size();
+    for (const auto& childItem : item->children()) {
+        const String& childFrameName = childItem->target();
 
-        for (int i = 0; i < size; ++i) {
-            String childFrameName = childItems[i]->target();
-            HistoryItem* fromChildItem = fromItem->childItemWithTarget(childFrameName);
-            ASSERT(fromChildItem);
-            Frame* childFrame = m_frame.tree().child(childFrameName);
-            ASSERT(childFrame);
-            childFrame->loader().history().recursiveSetProvisionalItem(childItems[i].get(), fromChildItem, type);
-        }
+        HistoryItem* fromChildItem = fromItem->childItemWithTarget(childFrameName);
+        ASSERT(fromChildItem);
+        Frame* childFrame = m_frame.tree().child(childFrameName);
+        ASSERT(childFrame);
+
+        childFrame->loader().history().recursiveSetProvisionalItem(childItem.get(), fromChildItem);
     }
 }
 
@@ -734,21 +734,20 @@ void HistoryController::recursiveGoToItem(HistoryItem* item, HistoryItem* fromIt
 {
     ASSERT(item);
 
-    if (itemsAreClones(item, fromItem)) {
-        // Just iterate over the rest, looking for frames to navigate.
-        const HistoryItemVector& childItems = item->children();
-
-        int size = childItems.size();
-        for (int i = 0; i < size; ++i) {
-            String childFrameName = childItems[i]->target();
-            HistoryItem* fromChildItem = fromItem->childItemWithTarget(childFrameName);
-            ASSERT(fromChildItem);
-            Frame* childFrame = m_frame.tree().child(childFrameName);
-            ASSERT(childFrame);
-            childFrame->loader().history().recursiveGoToItem(childItems[i].get(), fromChildItem, type);
-        }
-    } else {
+    if (!itemsAreClones(item, fromItem)) {
         m_frame.loader().loadItem(item, type);
+        return;
+    }
+
+    // Just iterate over the rest, looking for frames to navigate.
+    for (const auto& childItem : item->children()) {
+        const String& childFrameName = childItem->target();
+
+        HistoryItem* fromChildItem = fromItem->childItemWithTarget(childFrameName);
+        ASSERT(fromChildItem);
+        Frame* childFrame = m_frame.tree().child(childFrameName);
+        ASSERT(childFrame);
+        childFrame->loader().history().recursiveGoToItem(childItem.get(), fromChildItem, type);
     }
 }
 

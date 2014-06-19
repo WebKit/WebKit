@@ -98,7 +98,7 @@ private:
     PassRefPtr<HistoryItem> createItem();
     PassRefPtr<HistoryItem> createItemTree(Frame& targetFrame, bool clipAtTarget);
 
-    void recursiveSetProvisionalItem(HistoryItem*, HistoryItem*, FrameLoadType);
+    void recursiveSetProvisionalItem(HistoryItem*, HistoryItem*);
     void recursiveGoToItem(HistoryItem*, HistoryItem*, FrameLoadType);
     bool isReplaceLoadTypeWithProvisionalItem(FrameLoadType);
     bool isReloadTypeWithProvisionalItem(FrameLoadType);
