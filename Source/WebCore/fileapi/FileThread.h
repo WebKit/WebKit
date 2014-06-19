@@ -79,7 +79,7 @@ public:
         void* m_instance;
     };
 
-    void postTask(Task&&);
+    void postTask(Task);
 
     void unscheduleTasks(const void* instance);
 

@@ -127,14 +127,14 @@ void WorkerMessagingProxy::postMessageToWorkerGlobalScope(PassRefPtr<SerializedS
         m_queuedEarlyTasks.append(std::make_unique<ScriptExecutionContext::Task>(std::move(task)));
 }
 
-void WorkerMessagingProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
+void WorkerMessagingProxy::postTaskToLoader(ScriptExecutionContext::Task task)
 {
     // FIXME: In case of nested workers, this should go directly to the root Document context.
     ASSERT(m_scriptExecutionContext->isDocument());
     m_scriptExecutionContext->postTask(std::move(task));
 }
 
-bool WorkerMessagingProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
+bool WorkerMessagingProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task task, const String& mode)
 {
     if (m_askedToTerminate)
         return false;

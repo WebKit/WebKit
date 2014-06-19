@@ -1,3 +1,41 @@
+2014-06-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        ScriptExecutionContext::Task, FileThread::Task parameters should be values
+        https://bugs.webkit.org/show_bug.cgi?id=134035
+
+        Reviewed by Anders Carlsson.
+
+        r170106 and similar previous changesets enforced ScriptExecutionContext::Task and
+        FileThread::Task parameters as rvalue references. There's technically nothing wrong
+        with that, but since both classes are move-only it is also not strictly required.
+        Accepting these parameters as values is more common in C++ value semantics as well.
+
+        * dom/Document.cpp:
+        (WebCore::Document::postTask):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * fileapi/FileThread.cpp:
+        (WebCore::FileThread::postTask):
+        * fileapi/FileThread.h:
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerProxy::postTaskToLoader):
+        (WebCore::SharedWorkerProxy::postTaskForModeToWorkerGlobalScope):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::postTask):
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerLoaderProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postTaskToLoader):
+        (WebCore::WorkerMessagingProxy::postTaskForModeToWorkerGlobalScope):
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::postTask):
+        (WebCore::WorkerRunLoop::postTaskAndTerminate):
+        (WebCore::WorkerRunLoop::postTaskForMode):
+        (WebCore::WorkerRunLoop::Task::create):
+        (WebCore::WorkerRunLoop::Task::Task):
+        * workers/WorkerRunLoop.h:
+
 2014-06-18  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: expose aria-relevant

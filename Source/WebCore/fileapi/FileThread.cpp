@@ -62,7 +62,7 @@ void FileThread::stop()
     m_queue.kill();
 }
 
-void FileThread::postTask(Task&& task)
+void FileThread::postTask(Task task)
 {
     m_queue.append(std::make_unique<FileThread::Task>(std::move(task)));
 }

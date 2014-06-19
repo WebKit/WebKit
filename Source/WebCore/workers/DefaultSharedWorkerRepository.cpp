@@ -80,8 +80,8 @@ public:
     bool matches(const String& name, PassRefPtr<SecurityOrigin> origin, const URL& urlToMatch) const;
 
     // WorkerLoaderProxy
-    virtual void postTaskToLoader(ScriptExecutionContext::Task&&);
-    virtual bool postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&&, const String&);
+    virtual void postTaskToLoader(ScriptExecutionContext::Task);
+    virtual bool postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task, const String&);
 
     // WorkerReportingProxy
     virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL);
@@ -140,7 +140,7 @@ bool SharedWorkerProxy::matches(const String& name, PassRefPtr<SecurityOrigin> o
     return name == m_name;
 }
 
-void SharedWorkerProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
+void SharedWorkerProxy::postTaskToLoader(ScriptExecutionContext::Task task)
 {
     MutexLocker lock(m_workerDocumentsLock);
 
@@ -156,7 +156,7 @@ void SharedWorkerProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
     document->postTask(std::move(task));
 }
 
-bool SharedWorkerProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
+bool SharedWorkerProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task task, const String& mode)
 {
     if (isClosing())
         return false;

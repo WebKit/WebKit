@@ -1008,7 +1008,7 @@ public:
     bool isDNSPrefetchEnabled() const { return m_isDNSPrefetchEnabled; }
     void parseDNSPrefetchControlHeader(const String&);
 
-    virtual void postTask(Task&&) override; // Executes the task on context's thread asynchronously.
+    virtual void postTask(Task) override; // Executes the task on context's thread asynchronously.
 
     void suspendScriptedAnimationControllerCallbacks();
     void resumeScriptedAnimationControllerCallbacks();

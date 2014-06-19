@@ -192,22 +192,22 @@ void WorkerRunLoop::terminate()
     m_messageQueue.kill();
 }
 
-void WorkerRunLoop::postTask(ScriptExecutionContext::Task&& task)
+void WorkerRunLoop::postTask(ScriptExecutionContext::Task task)
 {
     postTaskForMode(std::move(task), defaultMode());
 }
 
-void WorkerRunLoop::postTaskAndTerminate(ScriptExecutionContext::Task&& task)
+void WorkerRunLoop::postTaskAndTerminate(ScriptExecutionContext::Task task)
 {
     m_messageQueue.appendAndKill(Task::create(std::move(task), defaultMode().isolatedCopy()));
 }
 
-void WorkerRunLoop::postTaskForMode(ScriptExecutionContext::Task&& task, const String& mode)
+void WorkerRunLoop::postTaskForMode(ScriptExecutionContext::Task task, const String& mode)
 {
     m_messageQueue.append(Task::create(std::move(task), mode.isolatedCopy()));
 }
 
-std::unique_ptr<WorkerRunLoop::Task> WorkerRunLoop::Task::create(ScriptExecutionContext::Task&& task, const String& mode)
+std::unique_ptr<WorkerRunLoop::Task> WorkerRunLoop::Task::create(ScriptExecutionContext::Task task, const String& mode)
 {
     return std::unique_ptr<Task>(new Task(std::move(task), mode));
 }
@@ -218,7 +218,7 @@ void WorkerRunLoop::Task::performTask(const WorkerRunLoop& runLoop, WorkerGlobal
         m_task.performTask(*context);
 }
 
-WorkerRunLoop::Task::Task(ScriptExecutionContext::Task&& task, const String& mode)
+WorkerRunLoop::Task::Task(ScriptExecutionContext::Task task, const String& mode)
     : m_task(std::move(task))
     , m_mode(mode.isolatedCopy())
 {
