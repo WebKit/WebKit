@@ -26,7 +26,10 @@
 #include "config.h"
 
 #if ENABLE(VIDEO_TRACK)
+
 #include "JSDataCue.h"
+
+#include "JSDOMBinding.h"
 
 using namespace JSC;
 
@@ -44,9 +47,9 @@ void JSDataCue::setValue(ExecState* exec, JSValue value)
 }
 #endif
 
-EncodedJSValue JSC_HOST_CALL JSDataCueConstructor::constructJSDataCue(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL constructJSDataCue(ExecState* exec)
 {
-    JSDataCueConstructor* castedThis = jsCast<JSDataCueConstructor*>(exec->callee());
+    DOMConstructorObject* castedThis = jsCast<DOMConstructorObject*>(exec->callee());
     if (exec->argumentCount() < 3)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
 

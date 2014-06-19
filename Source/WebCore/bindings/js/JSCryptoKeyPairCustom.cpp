@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSCryptoKeyPair.h"
 
+#include <heap/SlotVisitorInlines.h>
+
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {

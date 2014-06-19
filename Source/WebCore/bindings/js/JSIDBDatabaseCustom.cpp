@@ -35,6 +35,7 @@
 #include "IDBDatabase.h"
 #include "IDBKeyPath.h"
 #include "IDBObjectStore.h"
+#include "JSDOMBinding.h"
 #include "JSIDBObjectStore.h"
 #include <runtime/Error.h>
 #include <runtime/JSString.h>

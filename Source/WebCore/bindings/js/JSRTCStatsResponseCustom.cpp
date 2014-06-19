@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_STREAM)
 #include "JSRTCStatsResponse.h"
 
+#include "JSDOMBinding.h"
 #include "JSRTCStatsReport.h"
 #include <wtf/text/AtomicString.h>
 

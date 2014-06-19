@@ -21,6 +21,7 @@
 #include "JSDOMPluginArray.h"
 
 #include "DOMPluginArray.h"
+#include "JSDOMBinding.h"
 #include "JSDOMPlugin.h"
 #include <wtf/text/AtomicString.h>
 

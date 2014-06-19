@@ -46,9 +46,9 @@ static HTMLFormElement* toHTMLFormElement(JSC::JSValue value)
     return value.inherits(JSHTMLFormElement::info()) ? &jsCast<JSHTMLFormElement*>(asObject(value))->impl() : 0;
 }
 
-EncodedJSValue JSC_HOST_CALL JSDOMFormDataConstructor::constructJSDOMFormData(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL constructJSDOMFormData(ExecState* exec)
 {
-    JSDOMFormDataConstructor* jsConstructor = jsCast<JSDOMFormDataConstructor*>(exec->callee());
+    DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec->callee());
 
     HTMLFormElement* form = 0;
     if (exec->argumentCount() > 0)

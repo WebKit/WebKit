@@ -1,3 +1,119 @@
+2014-06-18  Sam Weinig  <sam@webkit.org>
+
+        Move generate prototype and constructor classes into the generated implementation files
+        https://bugs.webkit.org/show_bug.cgi?id=134054
+
+        Reviewed by Oliver Hunt.
+
+        In an effort to reduce the size of the generated bindings headers, which is important
+        as the generated headers get included in a lot of places, this patch moves the prototype
+        and constructor declarations from the header to implementation file. This works because,
+        for the most part, no code cares about the prototype or constructors except the instance.
+
+        There are a few exceptions which had to be accounted for:
+        - The global objects (JSDOMWindow and JSWorkerGlobalScope) need to have their prototypes
+          available during initialization, so they remain in the header.
+        - JSLocation requires customizing some aspects of the prototype behavior, so its prototype,
+          and any future class that uses JSCustomNamedGetterOnPrototype or JSCustomDefineOwnPropertyOnPrototype,
+          remains in the header.
+        - A few classes had custom constructor functions. Instead of keeping the entire constructor
+          in the header, I opted for pulling just the static constructor function into the header, and
+          modifying the custom constructors to use the DOMConstructorObject type as the callee, since the
+          more specific type was unnecessary.
+
+        As a result of making these changes, I was also able to remove the #include of JSDOMBinding.h from
+        all the headers, which brought in quite a bit.
+
+        * bindings/js/JSAudioContextCustom.cpp:
+        (WebCore::constructJSAudioContext):
+        (WebCore::JSAudioContextConstructor::constructJSAudioContext): Deleted.
+        * bindings/js/JSBlobCustom.cpp:
+        (WebCore::constructJSBlob):
+        (WebCore::JSBlobConstructor::constructJSBlob): Deleted.
+        * bindings/js/JSCryptoCustom.cpp:
+        * bindings/js/JSDOMFormDataCustom.cpp:
+        (WebCore::constructJSDOMFormData):
+        (WebCore::JSDOMFormDataConstructor::constructJSDOMFormData): Deleted.
+        * bindings/js/JSDOMMimeTypeArrayCustom.cpp:
+        * bindings/js/JSDOMPluginArrayCustom.cpp:
+        * bindings/js/JSDOMPluginCustom.cpp:
+        * bindings/js/JSDataCueCustom.cpp:
+        (WebCore::constructJSDataCue):
+        (WebCore::JSDataCueConstructor::constructJSDataCue): Deleted.
+        * bindings/js/JSDataTransferCustom.cpp:
+        * bindings/js/JSEventCustom.cpp:
+        * bindings/js/JSFileReaderCustom.cpp:
+        * bindings/js/JSHistoryCustom.cpp:
+        * bindings/js/JSIDBAnyCustom.cpp:
+        * bindings/js/JSIDBDatabaseCustom.cpp:
+        * bindings/js/JSIDBObjectStoreCustom.cpp:
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::finishCreation):
+        * bindings/js/JSImageDataCustom.cpp:
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        * bindings/js/JSLocationCustom.cpp:
+        * bindings/js/JSMessagePortCustom.cpp:
+        * bindings/js/JSMutationObserverCustom.cpp:
+        (WebCore::constructJSMutationObserver):
+        (WebCore::JSMutationObserverConstructor::constructJSMutationObserver): Deleted.
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        * bindings/js/JSSQLTransactionSyncCustom.cpp:
+        * bindings/js/JSSVGLengthCustom.cpp:
+        * bindings/js/JSSharedWorkerCustom.cpp:
+        (WebCore::constructJSSharedWorker):
+        (WebCore::JSSharedWorkerConstructor::constructJSSharedWorker): Deleted.
+        * bindings/js/JSStorageCustom.cpp:
+        * bindings/js/JSUserMessageHandlersNamespaceCustom.cpp:
+        * bindings/js/JSWebKitPointCustom.cpp:
+        (WebCore::constructJSWebKitPoint):
+        (WebCore::JSWebKitPointConstructor::constructJSWebKitPoint): Deleted.
+        * bindings/js/JSWorkerCustom.cpp:
+        (WebCore::constructJSWorker):
+        (WebCore::JSWorkerConstructor::constructJSWorker): Deleted.
+        * bindings/js/SerializedScriptValue.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GeneratePrototypeDeclaration):
+        (GenerateConstructorDeclaration):
+        (GenerateConstructorHelperMethods):
+        (HeaderNeedsPrototypeDeclaration):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.h:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        * bindings/scripts/test/JS/JSTestNondeterministic.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        * bindings/scripts/test/JS/JSattribute.h:
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+        * bindings/scripts/test/JS/JSreadonly.h:
+
+
 2014-06-19  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] Compile errors related to http header field names.

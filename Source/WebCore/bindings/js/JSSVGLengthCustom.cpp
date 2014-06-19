@@ -21,6 +21,7 @@
 #include "JSSVGLength.h"
 
 #include "ExceptionCode.h"
+#include "JSDOMBinding.h"
 #include "SVGAnimatedProperty.h"
 #include "SVGException.h"
 #include "SVGLengthContext.h"

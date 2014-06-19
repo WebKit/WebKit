@@ -33,9 +33,9 @@
 #include "JSSQLTransactionSync.h"
 
 #include "ExceptionCode.h"
+#include "JSDOMBinding.h"
 #include "JSSQLResultSet.h"
 #include "SQLResultSet.h"
-#include "SQLTransactionSync.h"
 #include "SQLValue.h"
 
 using namespace JSC;

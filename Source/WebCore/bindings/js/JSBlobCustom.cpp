@@ -59,9 +59,9 @@ JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, Blob* blob)
     return wrap<JSBlob>(globalObject, blob);
 }
 
-EncodedJSValue JSC_HOST_CALL JSBlobConstructor::constructJSBlob(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState* exec)
 {
-    JSBlobConstructor* jsConstructor = jsCast<JSBlobConstructor*>(exec->callee());
+    DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec->callee());
     ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
     if (!context)
         return throwVMError(exec, createReferenceError(exec, "Blob constructor associated document is unavailable"));

@@ -30,7 +30,7 @@
 
 #include "JSTouch.h"
 
-#include "Touch.h"
+#include "JSDOMBinding.h"
 
 using namespace JSC;
 

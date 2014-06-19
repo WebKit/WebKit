@@ -33,6 +33,7 @@
 #include "AudioBufferSourceNode.h"
 #include "JSAudioBuffer.h"
 #include <runtime/Error.h>
+#include <runtime/JSCJSValueInlines.h>
 
 using namespace JSC;
 

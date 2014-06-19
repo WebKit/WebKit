@@ -39,6 +39,7 @@
 #include "ContextMenuItem.h"
 #include "InspectorController.h"
 #include "InspectorFrontendHost.h"
+#include "JSDOMBinding.h"
 #include "JSEvent.h"
 #include "MouseEvent.h"
 #include <runtime/JSArray.h>

@@ -29,7 +29,7 @@
 #include "config.h"
 #include "JSDataTransfer.h"
 
-#include "DataTransfer.h"
+#include "JSDOMBinding.h"
 
 using namespace JSC;
 

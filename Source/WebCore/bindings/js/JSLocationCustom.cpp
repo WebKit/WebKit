@@ -23,7 +23,7 @@
 #include "config.h"
 #include "JSLocation.h"
 
-#include "Location.h"
+#include "JSDOMBinding.h"
 #include <runtime/JSFunction.h>
 
 using namespace JSC;

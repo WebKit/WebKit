@@ -31,12 +31,13 @@
 
 #include "Dictionary.h"
 #include "ExceptionCode.h"
+#include "JSDOMBinding.h"
 
 using namespace JSC;
 
 namespace WebCore {
 
-EncodedJSValue JSC_HOST_CALL JSRTCIceCandidateConstructor::constructJSRTCIceCandidate(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL constructJSRTCIceCandidate(ExecState* exec)
 {
     ExceptionCode ec = 0;
     Dictionary sessionInit;
@@ -49,7 +50,7 @@ EncodedJSValue JSC_HOST_CALL JSRTCIceCandidateConstructor::constructJSRTCIceCand
             return JSValue::encode(jsUndefined());
     }
 
-    JSRTCIceCandidateConstructor* jsConstructor = jsCast<JSRTCIceCandidateConstructor*>(exec->callee());
+    DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec->callee());
     RefPtr<RTCIceCandidate> iceCandidate = RTCIceCandidate::create(sessionInit, ec);
     if (ec == TYPE_MISMATCH_ERR) {
         setDOMException(exec, ec);

@@ -21,6 +21,7 @@
 #include "JSDOMMimeTypeArray.h"
 
 #include "DOMMimeTypeArray.h"
+#include "JSDOMBinding.h"
 #include "JSDOMMimeType.h"
 #include <wtf/text/AtomicString.h>
 

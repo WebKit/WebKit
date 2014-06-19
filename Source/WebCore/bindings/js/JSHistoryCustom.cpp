@@ -30,7 +30,7 @@
 #include "JSHistory.h"
 
 #include "Frame.h"
-#include "History.h"
+#include "JSDOMBinding.h"
 #include "SerializedScriptValue.h"
 #include <runtime/JSFunction.h>
 

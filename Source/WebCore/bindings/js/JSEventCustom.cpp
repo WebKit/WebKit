@@ -34,6 +34,7 @@
 #include "EventHeaders.h"
 #include "EventInterfaces.h"
 #include "EventNames.h"
+#include "JSDOMBinding.h"
 #include "JSDataTransfer.h"
 #include <runtime/JSLock.h>
 #include <wtf/HashMap.h>

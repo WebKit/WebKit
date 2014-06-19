@@ -39,6 +39,7 @@
 #include "ImageData.h"
 #include "JSBlob.h"
 #include "JSCryptoKey.h"
+#include "JSDOMBinding.h"
 #include "JSDOMGlobalObject.h"
 #include "JSFile.h"
 #include "JSFileList.h"

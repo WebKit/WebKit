@@ -21,6 +21,7 @@
 #include "JSTreeWalker.h"
 
 #include "Node.h"
+#include <heap/SlotVisitorInlines.h>
 
 namespace WebCore {
 

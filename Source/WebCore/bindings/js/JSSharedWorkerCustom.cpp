@@ -50,9 +50,9 @@ void JSSharedWorker::visitAdditionalChildren(SlotVisitor& visitor)
         visitor.addOpaqueRoot(port);
 }
 
-EncodedJSValue JSC_HOST_CALL JSSharedWorkerConstructor::constructJSSharedWorker(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL constructJSSharedWorker(ExecState* exec)
 {
-    JSSharedWorkerConstructor* jsConstructor = jsCast<JSSharedWorkerConstructor*>(exec->callee());
+    DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec->callee());
 
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));

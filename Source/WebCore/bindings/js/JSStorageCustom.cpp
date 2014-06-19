@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JSStorage.h"
 
-#include "Storage.h"
+#include "JSDOMBinding.h"
 #include <runtime/IdentifierInlines.h>
 #include <runtime/PropertyNameArray.h>
 #include <wtf/text/WTFString.h>

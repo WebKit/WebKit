@@ -27,6 +27,7 @@
 #include "JSImageData.h"
 
 #include "ImageData.h"
+#include "JSDOMBinding.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 

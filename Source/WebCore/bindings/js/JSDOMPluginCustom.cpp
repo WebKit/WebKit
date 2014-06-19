@@ -19,7 +19,7 @@
 #include "config.h"
 #include "JSDOMPlugin.h"
 
-#include "DOMPlugin.h"
+#include "JSDOMBinding.h"
 #include "JSDOMMimeType.h"
 #include <wtf/text/AtomicString.h>
 

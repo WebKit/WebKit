@@ -29,10 +29,10 @@
  */
 
 #include "config.h"
-
-#include "History.h"
-#include "JSHistory.h"
 #include "JSPopStateEvent.h"
+
+#include "JSHistory.h"
+#include <runtime/JSCJSValueInlines.h>
 
 using namespace JSC;
 

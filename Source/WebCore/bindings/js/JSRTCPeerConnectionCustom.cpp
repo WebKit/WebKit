@@ -30,12 +30,13 @@
 #include "JSRTCPeerConnection.h"
 
 #include "ExceptionCode.h"
+#include "JSDOMBinding.h"
 
 using namespace JSC;
 
 namespace WebCore {
 
-EncodedJSValue JSC_HOST_CALL JSRTCPeerConnectionConstructor::constructJSRTCPeerConnection(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL constructJSRTCPeerConnection(ExecState* exec)
 {
     // Spec says that we must have at least one arument, the RTCConfiguration.
     if (exec->argumentCount() < 1)
@@ -49,7 +50,7 @@ EncodedJSValue JSC_HOST_CALL JSRTCPeerConnectionConstructor::constructJSRTCPeerC
     if (!rtcConfiguration.isObject())
         return throwVMError(exec, createTypeError(exec, "RTCPeerConnection argument must be a valid Dictionary"));
 
-    JSRTCPeerConnectionConstructor* jsConstructor = jsCast<JSRTCPeerConnectionConstructor*>(exec->callee());
+    DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec->callee());
     ScriptExecutionContext* scriptExecutionContext = jsConstructor->scriptExecutionContext();
     if (!scriptExecutionContext)
         return throwVMError(exec, createReferenceError(exec, "RTCPeerConnection constructor associated document is unavailable"));

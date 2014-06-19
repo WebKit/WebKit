@@ -31,6 +31,7 @@
 #include "BiquadFilterNode.h"
 #include "ExceptionCode.h"
 #include <runtime/Error.h>
+#include <runtime/JSCJSValueInlines.h>
 
 using namespace JSC;
 

@@ -38,6 +38,7 @@
 #include "IDBFactory.h"
 #include "IDBIndex.h"
 #include "IDBObjectStore.h"
+#include "JSDOMBinding.h"
 #include "JSDOMStringList.h"
 #include "JSIDBCursor.h"
 #include "JSIDBCursorWithValue.h"

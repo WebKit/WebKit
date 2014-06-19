@@ -29,7 +29,7 @@
 
 #include "JSMediaSourceStates.h"
 
-#include "MediaSourceStates.h"
+#include "JSDOMBinding.h"
 
 using namespace JSC;
 

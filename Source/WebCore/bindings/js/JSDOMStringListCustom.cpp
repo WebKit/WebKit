@@ -19,6 +19,8 @@
 #include "config.h"
 #include "JSDOMStringList.h"
 
+#include <runtime/JSCJSValueInlines.h>
+
 using namespace JSC;
 
 namespace WebCore {

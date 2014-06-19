@@ -26,15 +26,15 @@
 #include "config.h"
 #include "JSWebKitPoint.h"
 
-#include "WebKitPoint.h"
+#include "JSDOMBinding.h"
 
 using namespace JSC;
 
 namespace WebCore {
 
-EncodedJSValue JSC_HOST_CALL JSWebKitPointConstructor::constructJSWebKitPoint(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL constructJSWebKitPoint(ExecState* exec)
 {
-    JSWebKitPointConstructor* jsConstructor = jsCast<JSWebKitPointConstructor*>(exec->callee());
+    DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec->callee());
 
     float x = 0;
     float y = 0;

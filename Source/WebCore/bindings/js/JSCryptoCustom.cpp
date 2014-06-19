@@ -26,7 +26,7 @@
 #include "JSCrypto.h"
 
 #include "ExceptionCode.h"
-
+#include "JSDOMBinding.h"
 #include <runtime/ArrayBufferView.h>
 #include <runtime/Error.h>
 #include <runtime/JSArrayBufferView.h>

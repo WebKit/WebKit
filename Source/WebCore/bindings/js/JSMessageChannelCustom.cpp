@@ -28,6 +28,7 @@
 #if ENABLE(CHANNEL_MESSAGING)
 
 #include "JSMessageChannel.h"
+#include <heap/SlotVisitorInlines.h>
 
 namespace WebCore {
 

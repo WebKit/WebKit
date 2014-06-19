@@ -31,7 +31,7 @@
 
 #include "JSAllAudioCapabilities.h"
 #include "JSAllVideoCapabilities.h"
-#include "MediaStreamCapabilities.h"
+#include "JSDOMBinding.h"
 
 using namespace JSC;
 

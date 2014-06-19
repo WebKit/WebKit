@@ -28,6 +28,7 @@
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 
+#include "JSDOMBinding.h"
 #include "JSUserMessageHandler.h"
 
 using namespace JSC;

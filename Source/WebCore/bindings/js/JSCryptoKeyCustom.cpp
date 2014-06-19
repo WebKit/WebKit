@@ -29,6 +29,7 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "JSCryptoAlgorithmBuilder.h"
+#include <runtime/JSCJSValueInlines.h>
 
 using namespace JSC;
 

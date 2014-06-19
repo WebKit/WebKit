@@ -33,8 +33,8 @@
 #include "JSSQLResultSetRowList.h"
 
 #include "ExceptionCode.h"
+#include "JSDOMBinding.h"
 #include "SQLValue.h"
-#include "SQLResultSetRowList.h"
 #include <runtime/IdentifierInlines.h>
 #include <runtime/ObjectConstructor.h>
 

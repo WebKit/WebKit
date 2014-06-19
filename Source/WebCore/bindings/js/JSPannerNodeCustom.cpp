@@ -31,6 +31,7 @@
 #include "ExceptionCode.h"
 #include "PannerNode.h"
 #include <runtime/Error.h>
+#include <runtime/JSCJSValueInlines.h>
 
 using namespace JSC;
 

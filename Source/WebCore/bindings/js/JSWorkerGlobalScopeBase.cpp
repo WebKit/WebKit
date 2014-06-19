@@ -34,6 +34,7 @@
 #include "JSDedicatedWorkerGlobalScope.h"
 #include "JSWorkerGlobalScope.h"
 #include "WorkerGlobalScope.h"
+#include <runtime/JSCJSValueInlines.h>
 #include <runtime/Microtask.h>
 
 #if ENABLE(SHARED_WORKERS)

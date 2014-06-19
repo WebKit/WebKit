@@ -803,12 +803,9 @@ sub GenerateHeader
     if ($hasParent) {
         $headerIncludes{"$parentClassName.h"} = 1;
     } else {
-        $headerIncludes{"JSDOMBinding.h"} = 1;
-        $headerIncludes{"<runtime/JSGlobalObject.h>"} = 1;
+        $headerIncludes{"JSDOMWrapper.h"} = 1;
         if ($interface->isException) {
             $headerIncludes{"<runtime/ErrorPrototype.h>"} = 1;
-        } else {
-            $headerIncludes{"<runtime/ObjectPrototype.h>"} = 1;
         }
     }
 
@@ -820,7 +817,6 @@ sub GenerateHeader
         $headerIncludes{"$interfaceName.h"} = 1;
     }
     
-    $headerIncludes{"<runtime/JSObject.h>"} = 1;
     $headerIncludes{"SVGElement.h"} = 1 if $className =~ /^JSSVG/;
 
     my $implType = $interfaceName;
@@ -895,7 +891,10 @@ sub GenerateHeader
     }
 
     # Prototype
-    push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);\n") unless IsDOMGlobalObject($interface);
+    unless (IsDOMGlobalObject($interface)) {
+        push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);\n");
+        push(@headerContent, "    static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);\n");
+    }
 
     $headerTrailingIncludes{"${className}Custom.h"} = 1 if $interface->extendedAttributes->{"JSCustomHeader"};
 
@@ -1114,6 +1113,7 @@ sub GenerateHeader
     }
 
     push(@headerContent, "protected:\n");
+
     # Constructor
     if ($interfaceName eq "DOMWindow") {
         push(@headerContent, "    $className(JSC::VM&, JSC::Structure*, PassRefPtr<$implType>, JSDOMWindowShell*);\n");
@@ -1126,15 +1126,16 @@ sub GenerateHeader
         push(@headerContent, "        Base::finishCreation(vm);\n");
         push(@headerContent, "        ASSERT(inherits(info()));\n");
         push(@headerContent, "    }\n\n");
-
     }
 
     # structure flags
-    push(@headerContent, "    static const unsigned StructureFlags = ");
-    foreach my $structureFlag (sort (keys %structureFlags)) {
-        push(@headerContent, $structureFlag . " | ");
+    if (%structureFlags) {
+        push(@headerContent, "    static const unsigned StructureFlags = ");
+        foreach my $structureFlag (sort (keys %structureFlags)) {
+            push(@headerContent, $structureFlag . " | ");
+        }
+        push(@headerContent, "Base::StructureFlags;\n");
     }
-    push(@headerContent, "Base::StructureFlags;\n");
 
     # Index setter
     if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
@@ -1196,14 +1197,8 @@ sub GenerateHeader
     push(@headerContent, "\n");
 
     # Add prototype declaration.
-    GeneratePrototypeDeclaration(\@headerContent, $className, $interface, $interfaceName);
-
-    if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
-        $headerIncludes{"JSDOMBinding.h"} = 1;
-        if ($interface->extendedAttributes->{"NamedConstructor"}) {
-            $headerIncludes{"DOMConstructorWithDocument.h"} = 1;
-        }
-        GenerateConstructorDeclaration(\@headerContent, $className, $interface, $interfaceName);
+    if (HeaderNeedsPrototypeDeclaration($interface)) {
+        GeneratePrototypeDeclaration(\@headerContent, $className, $interface, $interfaceName);
     }
 
     if ($hasForwardDeclaringFunctions) {
@@ -1249,6 +1244,15 @@ sub GenerateHeader
             }
             push(@headerContent, "#endif\n") if $conditionalString;
         }
+    }
+
+    if (HasCustomConstructor($interface)) {
+        push(@headerContent, "// Custom constructor\n");
+        push(@headerContent, "JSC::EncodedJSValue JSC_HOST_CALL construct${className}(JSC::ExecState*);\n\n");
+    }
+
+    if ($codeGenerator->IsConstructorTemplate($interface, "Event")) {
+        push(@headerContent, "bool fill${interfaceName}Init(${interfaceName}Init&, JSDictionary&);\n\n");
     }
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
@@ -1692,6 +1696,7 @@ sub GenerateImplementation
     # - Add default header template
     push(@implContentHeader, GenerateImplementationContentHeader($interface));
 
+    $implIncludes{"JSDOMBinding.h"} = 1;
     $implIncludes{"<wtf/GetPtr.h>"} = 1;
     $implIncludes{"<runtime/PropertyNameArray.h>"} = 1 if $indexedGetterFunction;
 
@@ -1732,10 +1737,12 @@ sub GenerateImplementation
         }
 
         push(@implContent, $endAppleCopyright) if $inAppleCopyright;
+
+        push(@implContent, "\n");
     }
 
     if ($numAttributes > 0 || !$interface->extendedAttributes->{"NoInterfaceObject"}) {
-        push(@implContent,"// Attributes\n\n");
+        push(@implContent, "// Attributes\n\n");
         foreach my $attribute (@{$interface->attributes}) {
             next if $attribute->signature->extendedAttributes->{"ForwardDeclareInHeader"};
 
@@ -1759,7 +1766,24 @@ sub GenerateImplementation
             my $constructorFunctionName = "setJS" . $interfaceName . "Constructor";
             push(@implContent, "void ${constructorFunctionName}(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
         }
+
+        push(@implContent, "\n");
     }
+
+    # Add prototype declaration.
+    if (!HeaderNeedsPrototypeDeclaration($interface)) {
+        GeneratePrototypeDeclaration(\@implContent, $className, $interface, $interfaceName);
+    }
+
+    # Add constructor declaration
+    if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
+        $implIncludes{"JSDOMBinding.h"} = 1;
+        if ($interface->extendedAttributes->{"NamedConstructor"}) {
+            $implIncludes{"DOMConstructorWithDocument.h"} = 1;
+        }
+        GenerateConstructorDeclaration(\@implContent, $className, $interface, $interfaceName);
+    }
+
 
     my @hashKeys = ();
     my @hashValue1 = ();
@@ -1944,12 +1968,6 @@ sub GenerateImplementation
     } else {
         push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, &${className}PrototypeTable, 0, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
     }
-    unless (IsDOMGlobalObject($interface)) {
-        push(@implContent, "JSObject* ${className}Prototype::self(VM& vm, JSGlobalObject* globalObject)\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    return getDOMPrototype<${className}>(vm, globalObject);\n");
-        push(@implContent, "}\n\n");
-    }
 
     if (PrototypeOverridesGetOwnPropertySlot($interface)) {
         my $numPrototypeAttributes = PrototypeAttributeCount($interface);
@@ -2053,11 +2071,16 @@ sub GenerateImplementation
         push(@implContent, "JSObject* ${className}::createPrototype(VM& vm, JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
         if ($hasParent && $parentClassName ne "JSC::DOMNodeFilter") {
-            push(@implContent, "    return ${className}Prototype::create(vm, globalObject, ${className}Prototype::createStructure(vm, globalObject, ${parentClassName}Prototype::self(vm, globalObject)));\n");
+            push(@implContent, "    return ${className}Prototype::create(vm, globalObject, ${className}Prototype::createStructure(vm, globalObject, ${parentClassName}::getPrototype(vm, globalObject)));\n");
         } else {
             my $prototype = $interface->isException ? "errorPrototype" : "objectPrototype";
             push(@implContent, "    return ${className}Prototype::create(vm, globalObject, ${className}Prototype::createStructure(vm, globalObject, globalObject->${prototype}()));\n");
         }
+        push(@implContent, "}\n\n");
+
+        push(@implContent, "JSObject* ${className}::getPrototype(VM& vm, JSGlobalObject* globalObject)\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    return getDOMPrototype<${className}>(vm, globalObject);\n");
         push(@implContent, "}\n\n");
     }
 
@@ -4266,9 +4289,6 @@ sub GeneratePrototypeDeclaration
     push(@$outputArray, "class ${prototypeClassName} : public JSC::JSNonFinalObject {\n");
     push(@$outputArray, "public:\n");
     push(@$outputArray, "    typedef JSC::JSNonFinalObject Base;\n");
-    unless (IsDOMGlobalObject($interface)) {
-        push(@$outputArray, "    static JSC::JSObject* self(JSC::VM&, JSC::JSGlobalObject*);\n");
-    }
 
     push(@$outputArray, "    static ${prototypeClassName}* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)\n");
     push(@$outputArray, "    {\n");
@@ -4279,7 +4299,20 @@ sub GeneratePrototypeDeclaration
 
     push(@$outputArray, "    DECLARE_INFO;\n");
 
+    push(@$outputArray,
+        "    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n" .
+        "    {\n" .
+        "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());\n" .
+        "    }\n");
+
+    push(@$outputArray, "\nprivate:\n");
+    push(@$outputArray, "    ${prototypeClassName}(JSC::VM& vm, JSC::JSGlobalObject*, JSC::Structure* structure)\n");
+    push(@$outputArray, "        : JSC::JSNonFinalObject(vm, structure)\n");
+    push(@$outputArray, "    {\n");
+    push(@$outputArray, "    }\n");
+
     if (PrototypeOverridesGetOwnPropertySlot($interface)) {
+        push(@$outputArray, "\n");
         if (IsDOMGlobalObject($interface)) {
             push(@$outputArray, "    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
             $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
@@ -4287,21 +4320,18 @@ sub GeneratePrototypeDeclaration
             push(@$outputArray, "    void finishCreation(JSC::VM&);\n");
         }
     }
-    push(@$outputArray,
-        "    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n" .
-        "    {\n" .
-        "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());\n" .
-        "    }\n");
+
     if ($interface->extendedAttributes->{"JSCustomNamedGetterOnPrototype"}) {
+        push(@$outputArray, "\n");
         push(@$outputArray, "    static void put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
         push(@$outputArray, "    bool putDelegate(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
     }
 
     # Custom defineOwnProperty function
-    push(@$outputArray, "    static bool defineOwnProperty(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, const JSC::PropertyDescriptor&, bool shouldThrow);\n") if $interface->extendedAttributes->{"JSCustomDefineOwnPropertyOnPrototype"};
-
-    push(@$outputArray, "\nprivate:\n");
-    push(@$outputArray, "    ${prototypeClassName}(JSC::VM& vm, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(vm, structure) { }\n");
+    if ($interface->extendedAttributes->{"JSCustomDefineOwnPropertyOnPrototype"}) {
+        push(@$outputArray, "\n");
+        push(@$outputArray, "    static bool defineOwnProperty(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, const JSC::PropertyDescriptor&, bool shouldThrow);\n");
+    }
 
     # structure flags
     if (%structureFlags) {
@@ -4347,10 +4377,9 @@ sub GenerateConstructorDeclaration
     push(@$outputArray, "    }\n");
 
     if (IsConstructable($interface) && !$interface->extendedAttributes->{"NamedConstructor"}) {
-        push(@$outputArray, "protected:\n");
-        push(@$outputArray, "    static JSC::EncodedJSValue JSC_HOST_CALL construct${className}(JSC::ExecState*);\n");
-
         if (!HasCustomConstructor($interface)) {
+            push(@$outputArray, "protected:\n");
+            push(@$outputArray, "    static JSC::EncodedJSValue JSC_HOST_CALL construct${className}(JSC::ExecState*);\n");
             my @constructors = @{$interface->constructors};
             if (@constructors > 1) {
                 foreach my $constructor (@constructors) {
@@ -4366,10 +4395,6 @@ sub GenerateConstructorDeclaration
         push(@$outputArray, "#endif // $conditionalString\n") if $conditionalString;
     }
     push(@$outputArray, "};\n\n");
-
-    if ($codeGenerator->IsConstructorTemplate($interface, "Event")) {
-        push(@$outputArray, "bool fill${interfaceName}Init(${interfaceName}Init&, JSDictionary&);\n\n");
-    }
 
     if ($interface->extendedAttributes->{"NamedConstructor"}) {
         push(@$outputArray, <<END);
@@ -4694,11 +4719,11 @@ sub GenerateConstructorHelperMethods
     } elsif ($generatingNamedConstructor) {
         push(@$outputArray, "    Base::finishCreation(globalObject);\n");
         push(@$outputArray, "    ASSERT(inherits(info()));\n");
-        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}Prototype::self(vm, globalObject), None);\n");
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::getPrototype(vm, globalObject), None);\n");
     } else {
         push(@$outputArray, "    Base::finishCreation(vm);\n");
         push(@$outputArray, "    ASSERT(inherits(info()));\n");
-        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${protoClassName}::self(vm, globalObject), DontDelete | ReadOnly);\n");
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::getPrototype(vm, globalObject), DontDelete | ReadOnly);\n");
     }
     push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(${leastConstructorLength}), ReadOnly | DontDelete | DontEnum);\n") if defined $leastConstructorLength;
     push(@$outputArray, "    reifyStaticProperties(vm, ${className}ConstructorTableValues, *this);\n") if ConstructorHasProperties($interface);
@@ -4750,6 +4775,13 @@ sub IsConstructable
     my $interface = shift;
 
     return HasCustomConstructor($interface) || $interface->extendedAttributes->{"Constructor"} || $interface->extendedAttributes->{"NamedConstructor"} || $interface->extendedAttributes->{"ConstructorTemplate"};
+}
+
+sub HeaderNeedsPrototypeDeclaration
+{
+    my $interface = shift;
+
+    return IsDOMGlobalObject($interface) || $interface->extendedAttributes->{"JSCustomNamedGetterOnPrototype"} || $interface->extendedAttributes->{"JSCustomDefineOwnPropertyOnPrototype"};
 }
 
 1;
