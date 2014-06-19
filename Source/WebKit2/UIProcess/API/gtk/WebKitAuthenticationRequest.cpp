@@ -185,7 +185,7 @@ WebKitCredential* webkit_authentication_request_get_proposed_credential(WebKitAu
 {
     g_return_val_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request), 0);
 
-    const WebCore::Credential& credential = request->priv->authenticationChallenge->proposedCredential()->core();
+    const WebCore::Credential& credential = request->priv->authenticationChallenge->proposedCredential()->credential();
     if (credential.isEmpty())
         return 0;
 
