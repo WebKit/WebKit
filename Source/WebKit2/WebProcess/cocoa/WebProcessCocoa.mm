@@ -171,7 +171,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
     // When the network process is enabled, each web process wants a stand-alone
     // NSURLCache, which it can disable to save memory.
-    if (!usesNetworkProcess()) {
+    if (!parameters.usesNetworkProcess) {
 #if PLATFORM(IOS)
         if (!parameters.uiProcessBundleIdentifier.isNull()) {
             [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
