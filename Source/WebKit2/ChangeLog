@@ -1,3 +1,13 @@
+2014-06-19  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Legacy processes are installed inside WebKit.framework
+        https://bugs.webkit.org/show_bug.cgi?id=134079
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/All.xcconfig: Exclude the legacy processes on iOS so they don’t get copied.
+        * Configurations/BaseLegacyProcess.xcconfig: Set SKIP_INSTALL to YES on iOS.
+
 2014-06-19  Anders Carlsson  <andersca@apple.com>
 
         It's OS X, not OSX...
