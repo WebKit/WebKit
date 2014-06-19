@@ -1,3 +1,12 @@
+2014-06-19  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed GTK gardening.
+
+        Updated text expectations after r170138.
+
+        * platform/gtk/accessibility/image-map2-expected.txt: Updated.
+        * platform/gtk/inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt: Updated.
+
 2014-06-19  Rohit Kumar  <kumar.rohit@samsung.com>
 
         [EFL] Add expectations for failing svg/wicd/rightsizing-grid.xhtml layout test

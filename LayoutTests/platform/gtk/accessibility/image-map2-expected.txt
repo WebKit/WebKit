@@ -26,6 +26,7 @@ AXPosition: { 18.000000, 53.000000 }
 AXSize: { 123.000000, 62.000000 }
 AXTitle: 
 AXDescription: Link1
+AXValue: 
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -45,6 +46,7 @@ AXPosition: { 20.000000, 117.000000 }
 AXSize: { 122.000000, 14.000000 }
 AXTitle: 
 AXDescription: Link2
+AXValue: 
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0

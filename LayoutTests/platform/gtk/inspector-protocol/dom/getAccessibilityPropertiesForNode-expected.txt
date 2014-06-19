@@ -433,6 +433,7 @@ Total elements to be tested: 65.
     label: 
     role: group
     liveRegionAtomic: true
+    liveRegionRelevant: additions,text
     liveRegionStatus: assertive
     parentNodeId: exists
 
@@ -441,6 +442,7 @@ Total elements to be tested: 65.
     label: 
     role: group
     liveRegionAtomic: false
+    liveRegionRelevant: additions,text
     liveRegionStatus: polite
     parentNodeId: exists
 
