@@ -845,12 +845,12 @@ XMLViewerJS.h : xml/XMLViewer.js
 
 # --------
 
-# --------
-
 # HTML entity names
 
 HTMLEntityTable.cpp : html/parser/HTMLEntityNames.in $(WebCore)/html/parser/create-html-entity-table
 	$(PYTHON) $(WebCore)/html/parser/create-html-entity-table -o HTMLEntityTable.cpp $(WebCore)/html/parser/HTMLEntityNames.in
+
+# --------
 
 # HTTP header names
 

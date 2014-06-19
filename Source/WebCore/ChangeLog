@@ -1,5 +1,11 @@
 2014-06-19  Anders Carlsson  <andersca@apple.com>
 
+        Put the divider in the right place.
+
+        * DerivedSources.make:
+
+2014-06-19  Anders Carlsson  <andersca@apple.com>
+
         Address a review comment from Darin.
 
         * inspector/InspectorResourceAgent.cpp:
