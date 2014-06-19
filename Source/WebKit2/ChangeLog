@@ -1,3 +1,17 @@
+2014-06-19  Antti Koivisto  <antti@apple.com>
+
+        Unfreeze the layer tree on DidFirstVisuallyNonEmptyLayout
+        https://bugs.webkit.org/show_bug.cgi?id=134073
+
+        Reviewed by Simon Fraser.
+        
+        DidFirstLayout is too early and we usually get a blank page. This doesn't match the existing iOS behavior either.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidLayout):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2014-06-19  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the Mavericks build.

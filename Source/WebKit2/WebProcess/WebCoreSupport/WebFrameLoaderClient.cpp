@@ -90,7 +90,7 @@ namespace WebKit {
 WebFrameLoaderClient::WebFrameLoaderClient()
     : m_frame(0)
     , m_hasSentResponseToPluginView(false)
-    , m_didCompletePageTransitionAlready(false)
+    , m_didCompletePageTransition(false)
     , m_frameHasCustomContentProvider(false)
     , m_frameCameFromPageCache(false)
 {
@@ -538,7 +538,7 @@ void WebFrameLoaderClient::dispatchDidFinishLoad()
 
 void WebFrameLoaderClient::forcePageTransitionIfNeeded()
 {
-    if (m_didCompletePageTransitionAlready)
+    if (m_didCompletePageTransition)
         return;
 
     WebPage* webPage = m_frame->page();
@@ -546,7 +546,7 @@ void WebFrameLoaderClient::forcePageTransitionIfNeeded()
         return;
 
     webPage->didCompletePageTransition();
-    m_didCompletePageTransitionAlready = true;
+    m_didCompletePageTransition = true;
 }
 
 void WebFrameLoaderClient::dispatchDidLayout(LayoutMilestones milestones)
@@ -563,13 +563,6 @@ void WebFrameLoaderClient::dispatchDidLayout(LayoutMilestones milestones)
         webPage->injectedBundleLoaderClient().didFirstLayoutForFrame(webPage, m_frame, userData);
         webPage->send(Messages::WebPageProxy::DidFirstLayoutForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
 
-        if (m_frame == m_frame->page()->mainWebFrame()) {
-            if (!webPage->corePage()->settings().suppressesIncrementalRendering() && !m_didCompletePageTransitionAlready) {
-                webPage->didCompletePageTransition();
-                m_didCompletePageTransitionAlready = true;
-            }
-        }
-    
 #if USE(TILED_BACKING_STORE)
         // Make sure viewport properties are dispatched on the main frame by the time the first layout happens.
         ASSERT(!webPage->useFixedLayout() || m_frame != m_frame->page()->mainWebFrame() || m_frame->coreFrame()->document()->didDispatchViewportPropertiesChanged());
@@ -581,6 +574,11 @@ void WebFrameLoaderClient::dispatchDidLayout(LayoutMilestones milestones)
     webPage->send(Messages::WebPageProxy::DidLayout(milestones, InjectedBundleUserMessageEncoder(userData.get())));
 
     if (milestones & DidFirstVisuallyNonEmptyLayout) {
+        if (m_frame->isMainFrame() && !m_didCompletePageTransition && !webPage->corePage()->settings().suppressesIncrementalRendering()) {
+            webPage->didCompletePageTransition();
+            m_didCompletePageTransition = true;
+        }
+
         // FIXME: We should consider removing the old didFirstVisuallyNonEmptyLayoutForFrame API since this is doing
         // double duty with the new didLayout API.
         webPage->injectedBundleLoaderClient().didFirstVisuallyNonEmptyLayoutForFrame(webPage, m_frame, userData);
@@ -1115,9 +1113,9 @@ void WebFrameLoaderClient::frameLoadCompleted()
     if (!webPage)
         return;
 
-    if (m_frame == m_frame->page()->mainWebFrame() && !m_didCompletePageTransitionAlready) {
+    if (m_frame->isMainFrame() && !m_didCompletePageTransition) {
         webPage->didCompletePageTransition();
-        m_didCompletePageTransitionAlready = true;
+        m_didCompletePageTransition = true;
     }
 }
 
@@ -1149,9 +1147,9 @@ void WebFrameLoaderClient::provisionalLoadStarted()
     if (!webPage)
         return;
 
-    if (m_frame == m_frame->page()->mainWebFrame()) {
+    if (m_frame->isMainFrame()) {
         webPage->didStartPageTransition();
-        m_didCompletePageTransitionAlready = false;
+        m_didCompletePageTransition = false;
     }
 }
 
