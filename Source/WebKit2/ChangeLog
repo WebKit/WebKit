@@ -1,3 +1,11 @@
+2014-06-18  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix the Mountain Lion build.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::LoaderClient::didReceiveAuthenticationChallengeInFrame):
+
 2014-06-18  Tim Horton  <timothy_horton@apple.com>
 
         Remove RemoteLayerBackingStore’s RemoteLayerTreeContext pointer

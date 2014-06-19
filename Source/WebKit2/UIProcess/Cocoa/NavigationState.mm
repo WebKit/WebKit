@@ -602,6 +602,7 @@ bool NavigationState::LoaderClient::canAuthenticateAgainstProtectionSpaceInFrame
 
 void NavigationState::LoaderClient::didReceiveAuthenticationChallengeInFrame(WebPageProxy*, WebFrameProxy*, AuthenticationChallengeProxy* authenticationChallenge)
 {
+#if !defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     if (m_navigationState.m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallengeCompletionHandler) {
         ASSERT(authenticationChallenge->protectionSpace()->authenticationScheme() != WebCore::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested);
         auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
@@ -645,6 +646,7 @@ void NavigationState::LoaderClient::didReceiveAuthenticationChallengeInFrame(Web
         ];
         return;
     }
+#endif
 
     if (!m_navigationState.m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallenge)
         return;
