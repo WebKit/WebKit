@@ -4490,7 +4490,7 @@ void WebPageProxy::exceededDatabaseQuota(uint64_t frameID, const String& originI
         WebFrameProxy* frame = m_process->webFrame(record->frameID);
         MESSAGE_CHECK(frame);
 
-        RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::createFromDatabaseIdentifier(record->originIdentifier);
+        RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(record->originIdentifier));
 
         uint64_t newQuota = m_uiClient->exceededDatabaseQuota(this, frame, origin.get(),
             record->databaseName, record->displayName, record->currentQuota,
@@ -4507,7 +4507,7 @@ void WebPageProxy::requestGeolocationPermissionForFrame(uint64_t geolocationID, 
     MESSAGE_CHECK(frame);
 
     // FIXME: Geolocation should probably be using toString() as its string representation instead of databaseIdentifier().
-    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
+    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
     RefPtr<GeolocationPermissionRequestProxy> request = m_geolocationPermissionRequestManager.createRequest(geolocationID);
 
     if (m_uiClient->decidePolicyForGeolocationPermissionRequest(this, frame, origin.get(), request.get()))

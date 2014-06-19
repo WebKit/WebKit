@@ -108,9 +108,9 @@ void WebOriginDataManagerProxy::deleteEntriesForOrigin(WKOriginDataTypes types, 
         return;
 
     SecurityOriginData securityOriginData;
-    securityOriginData.protocol = origin->protocol();
-    securityOriginData.host = origin->host();
-    securityOriginData.port = origin->port();
+    securityOriginData.protocol = origin->securityOrigin().protocol();
+    securityOriginData.host = origin->securityOrigin().host();
+    securityOriginData.port = origin->securityOrigin().port();
 
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> Make manipulating cache information work with per-tab WebProcess.
     context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebOriginDataManager::DeleteEntriesForOrigin(types, securityOriginData));

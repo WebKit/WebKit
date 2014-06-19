@@ -648,7 +648,7 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
     uint64_t currentQuota = dbManager.quotaForOrigin(origin);
     uint64_t currentOriginUsage = dbManager.usageForOrigin(origin);
     uint64_t newQuota = 0;
-    RefPtr<WebSecurityOrigin> webSecurityOrigin = WebSecurityOrigin::createFromDatabaseIdentifier(origin->databaseIdentifier());
+    RefPtr<WebSecurityOrigin> webSecurityOrigin = WebSecurityOrigin::create(WebCore::SecurityOrigin::createFromDatabaseIdentifier(origin->databaseIdentifier()));
     newQuota = m_page->injectedBundleUIClient().didExceedDatabaseQuota(m_page, webSecurityOrigin.get(), databaseName, details.displayName(), currentQuota, currentOriginUsage, details.currentUsage(), details.expectedUsage());
 
     if (!newQuota) {

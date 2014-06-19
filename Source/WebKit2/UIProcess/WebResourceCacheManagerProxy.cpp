@@ -107,9 +107,9 @@ void WebResourceCacheManagerProxy::didGetCacheOrigins(const Vector<SecurityOrigi
 void WebResourceCacheManagerProxy::clearCacheForOrigin(WebSecurityOrigin* origin, ResourceCachesToClear cachesToClear)
 {
     SecurityOriginData securityOrigin;
-    securityOrigin.protocol = origin->protocol();
-    securityOrigin.host = origin->host();
-    securityOrigin.port = origin->port();
+    securityOrigin.protocol = origin->securityOrigin().protocol();
+    securityOrigin.host = origin->securityOrigin().host();
+    securityOrigin.port = origin->securityOrigin().port();
 
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> There is no need to relaunch all processes. One process to take care of persistent cache is enough.
     context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::ClearCacheForOrigin(securityOrigin, cachesToClear));

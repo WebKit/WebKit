@@ -39,11 +39,6 @@ public:
         return create(WebCore::SecurityOrigin::createFromString(string));
     }
 
-    static PassRefPtr<WebSecurityOrigin> createFromDatabaseIdentifier(const String& identifier)
-    {
-        return create(WebCore::SecurityOrigin::createFromDatabaseIdentifier(identifier));
-    }
-
     static PassRefPtr<WebSecurityOrigin> create(const String& protocol, const String& host, int port)
     {
         return create(WebCore::SecurityOrigin::create(protocol, host, port));
@@ -56,18 +51,7 @@ public:
         return adoptRef(new WebSecurityOrigin(securityOrigin));
     }
 
-    String protocol() const { return m_securityOrigin->protocol(); }
-    String host() const { return m_securityOrigin->host(); }
-    unsigned short port() const { return m_securityOrigin->port(); }
-
-    String databaseIdentifier() const { return m_securityOrigin->databaseIdentifier(); }
-    String toString() const { return m_securityOrigin->toString(); }
-
-    WebCore::SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
-
-#if PLATFORM(IOS)
-    WebCore::SecurityOrigin* securityOrigin() { return m_securityOrigin.get(); }
-#endif // PLATFORM(IOS)
+    const WebCore::SecurityOrigin& securityOrigin() const { return *m_securityOrigin; }
 
 private:
     WebSecurityOrigin(PassRefPtr<WebCore::SecurityOrigin> securityOrigin)

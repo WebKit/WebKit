@@ -154,7 +154,7 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
 {
     // Step 1: ask the user if the app can use Geolocation.
     GeolocationRequestData geolocationRequestData;
-    geolocationRequestData.origin = toImpl(origin)->securityOrigin();
+    geolocationRequestData.origin = const_cast<WebCore::SecurityOrigin*>(&toImpl(origin)->securityOrigin());
     geolocationRequestData.frame = toImpl(frame);
     geolocationRequestData.permissionRequest = toImpl(permissionRequest);
     geolocationRequestData.window = window;

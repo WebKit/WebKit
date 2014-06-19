@@ -427,9 +427,9 @@ void StorageManager::getStorageDetailsByOrigin(FunctionDispatcher& callbackDispa
     m_queue->dispatch(bind(&StorageManager::getStorageDetailsByOriginInternal, this, RefPtr<FunctionDispatcher>(&callbackDispatcher), context, callback));
 }
 
-void StorageManager::deleteEntriesForOrigin(SecurityOrigin* securityOrigin)
+void StorageManager::deleteEntriesForOrigin(const SecurityOrigin& securityOrigin)
 {
-    m_queue->dispatch(bind(&StorageManager::deleteEntriesForOriginInternal, this, RefPtr<SecurityOrigin>(securityOrigin)));
+    m_queue->dispatch(bind(&StorageManager::deleteEntriesForOriginInternal, this, RefPtr<SecurityOrigin>(const_cast<SecurityOrigin*>(&securityOrigin))));
 }
 
 void StorageManager::deleteAllEntries()

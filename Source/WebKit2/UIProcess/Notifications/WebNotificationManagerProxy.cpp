@@ -237,7 +237,7 @@ void WebNotificationManagerProxy::providerDidUpdateNotificationPolicy(const WebS
     if (!context())
         return;
 
-    context()->sendToAllProcesses(Messages::WebNotificationManager::DidUpdateNotificationDecision(origin->toString(), allowed));
+    context()->sendToAllProcesses(Messages::WebNotificationManager::DidUpdateNotificationDecision(origin->securityOrigin().toString(), allowed));
 }
 
 void WebNotificationManagerProxy::providerDidRemoveNotificationPolicies(API::Array* origins)
@@ -253,7 +253,7 @@ void WebNotificationManagerProxy::providerDidRemoveNotificationPolicies(API::Arr
     originStrings.reserveInitialCapacity(size);
     
     for (size_t i = 0; i < size; ++i)
-        originStrings.append(origins->at<WebSecurityOrigin>(i)->toString());
+        originStrings.append(origins->at<WebSecurityOrigin>(i)->securityOrigin().toString());
     
     context()->sendToAllProcesses(Messages::WebNotificationManager::DidRemoveNotificationDecisions(originStrings));
 }

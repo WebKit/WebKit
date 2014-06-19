@@ -114,7 +114,7 @@ static void didGetStorageDetailsByOrigin(const Vector<LocalStorageDetails>& stor
     for (const LocalStorageDetails& originDetails : storageDetails) {
         HashMap<String, RefPtr<API::Object>> detailsMap;
 
-        RefPtr<API::Object> origin = WebSecurityOrigin::createFromDatabaseIdentifier(originDetails.originIdentifier);
+        RefPtr<API::Object> origin = WebSecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(originDetails.originIdentifier));
 
         detailsMap.set(WebKeyValueStorageManager::originKey(), origin);
         if (originDetails.creationTime)

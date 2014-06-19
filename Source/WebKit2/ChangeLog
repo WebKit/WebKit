@@ -1,5 +1,58 @@
 2014-06-18  Anders Carlsson  <andersca@apple.com>
 
+        Simplify WebSecurityOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=134049
+
+        Reviewed by Andreas Kling.
+
+        * Shared/API/c/WKSecurityOrigin.cpp:
+        (WKSecurityOriginCreateFromString):
+        (WKSecurityOriginCreateFromDatabaseIdentifier):
+        (WKSecurityOriginCopyDatabaseIdentifier):
+        (WKSecurityOriginCopyToString):
+        (WKSecurityOriginCopyProtocol):
+        (WKSecurityOriginCopyHost):
+        (WKSecurityOriginGetPort):
+        * Shared/WebSecurityOrigin.h:
+        (WebKit::WebSecurityOrigin::securityOrigin):
+        (WebKit::WebSecurityOrigin::createFromDatabaseIdentifier): Deleted.
+        (WebKit::WebSecurityOrigin::protocol): Deleted.
+        (WebKit::WebSecurityOrigin::host): Deleted.
+        (WebKit::WebSecurityOrigin::port): Deleted.
+        (WebKit::WebSecurityOrigin::databaseIdentifier): Deleted.
+        (WebKit::WebSecurityOrigin::toString): Deleted.
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::providerDidUpdateNotificationPolicy):
+        (WebKit::WebNotificationManagerProxy::providerDidRemoveNotificationPolicies):
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::deleteEntriesForOrigin):
+        * UIProcess/Storage/StorageManager.h:
+        * UIProcess/WebApplicationCacheManagerProxy.cpp:
+        (WebKit::WebApplicationCacheManagerProxy::deleteEntriesForOrigin):
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        (WebKit::WebDatabaseManagerProxy::didGetDatabasesByOrigin):
+        (WebKit::WebDatabaseManagerProxy::didGetDatabaseOrigins):
+        (WebKit::WebDatabaseManagerProxy::deleteDatabaseWithNameForOrigin):
+        (WebKit::WebDatabaseManagerProxy::deleteDatabasesForOrigin):
+        (WebKit::WebDatabaseManagerProxy::setQuotaForOrigin):
+        (WebKit::WebDatabaseManagerProxy::didModifyOrigin):
+        (WebKit::WebDatabaseManagerProxy::didModifyDatabase):
+        * UIProcess/WebKeyValueStorageManager.cpp:
+        (WebKit::didGetStorageDetailsByOrigin):
+        * UIProcess/WebOriginDataManagerProxy.cpp:
+        (WebKit::WebOriginDataManagerProxy::deleteEntriesForOrigin):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::exceededDatabaseQuota):
+        (WebKit::WebPageProxy::requestGeolocationPermissionForFrame):
+        * UIProcess/WebResourceCacheManagerProxy.cpp:
+        (WebKit::WebResourceCacheManagerProxy::clearCacheForOrigin):
+        * UIProcess/ios/WKGeolocationProviderIOS.mm:
+        (-[WKGeolocationProviderIOS decidePolicyForGeolocationRequestFromOrigin:frame:request:window:]):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::exceededDatabaseQuota):
+
+2014-06-18  Anders Carlsson  <andersca@apple.com>
+
         Add back WKPageRunJavaScriptInMainFrame_b for now
         https://bugs.webkit.org/show_bug.cgi?id=134045
         <rdar://problem/17368879>

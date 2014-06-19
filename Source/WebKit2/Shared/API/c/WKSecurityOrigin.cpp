@@ -38,14 +38,12 @@ WKTypeID WKSecurityOriginGetTypeID()
 
 WKSecurityOriginRef WKSecurityOriginCreateFromString(WKStringRef string)
 {
-    RefPtr<WebSecurityOrigin> securityOrigin = WebSecurityOrigin::createFromString(toImpl(string)->string());
-    return toAPI(securityOrigin.release().leakRef());
+    return toAPI(WebSecurityOrigin::create(WebCore::SecurityOrigin::createFromString(toImpl(string)->string())).leakRef());
 }
 
 WKSecurityOriginRef WKSecurityOriginCreateFromDatabaseIdentifier(WKStringRef identifier)
 {
-    RefPtr<WebSecurityOrigin> securityOrigin = WebSecurityOrigin::createFromDatabaseIdentifier(toImpl(identifier)->string());
-    return toAPI(securityOrigin.release().leakRef());
+    return toAPI(WebSecurityOrigin::create(WebCore::SecurityOrigin::createFromDatabaseIdentifier((toImpl(identifier)->string()))).leakRef());
 }
 
 WKSecurityOriginRef WKSecurityOriginCreate(WKStringRef protocol, WKStringRef host, int port)
@@ -56,27 +54,27 @@ WKSecurityOriginRef WKSecurityOriginCreate(WKStringRef protocol, WKStringRef hos
 
 WKStringRef WKSecurityOriginCopyDatabaseIdentifier(WKSecurityOriginRef securityOrigin)
 {
-    return toCopiedAPI(toImpl(securityOrigin)->databaseIdentifier());
+    return toCopiedAPI(toImpl(securityOrigin)->securityOrigin().databaseIdentifier());
 }
 
 WKStringRef WKSecurityOriginCopyToString(WKSecurityOriginRef securityOrigin)
 {
-    return toCopiedAPI(toImpl(securityOrigin)->toString());
+    return toCopiedAPI(toImpl(securityOrigin)->securityOrigin().toString());
 }
 
 WKStringRef WKSecurityOriginCopyProtocol(WKSecurityOriginRef securityOrigin)
 {
-    return toCopiedAPI(toImpl(securityOrigin)->protocol());
+    return toCopiedAPI(toImpl(securityOrigin)->securityOrigin().protocol());
 }
 
 WKStringRef WKSecurityOriginCopyHost(WKSecurityOriginRef securityOrigin)
 {
-    return toCopiedAPI(toImpl(securityOrigin)->host());
+    return toCopiedAPI(toImpl(securityOrigin)->securityOrigin().host());
 }
 
 unsigned short WKSecurityOriginGetPort(WKSecurityOriginRef securityOrigin)
 {
-    return toImpl(securityOrigin)->port();
+    return toImpl(securityOrigin)->securityOrigin().port();
 }
 
 // For backwards ABI compatibility.

@@ -173,7 +173,7 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
     result.reserveInitialCapacity(originAndDatabasesVector.size());
 
     for (const auto& originAndDatabases : originAndDatabasesVector) {
-        RefPtr<API::Object> origin = WebSecurityOrigin::createFromDatabaseIdentifier(originAndDatabases.originIdentifier);
+        RefPtr<API::Object> origin = WebSecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(originAndDatabases.originIdentifier));
 
         Vector<RefPtr<API::Object>> databases;
         databases.reserveInitialCapacity(originAndDatabases.databases.size());
@@ -226,19 +226,19 @@ void WebDatabaseManagerProxy::didGetDatabaseOrigins(const Vector<String>& origin
     securityOrigins.reserveInitialCapacity(originIdentifiers.size());
 
     for (const auto& originIdentifier : originIdentifiers)
-        securityOrigins.uncheckedAppend(WebSecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
+        securityOrigins.uncheckedAppend(WebSecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(originIdentifier)));
 
     callback->performCallbackWithReturnValue(API::Array::create(std::move(securityOrigins)).get());
 }
 
 void WebDatabaseManagerProxy::deleteDatabaseWithNameForOrigin(const String& databaseIdentifier, WebSecurityOrigin* origin)
 {
-    context()->sendToOneProcess(Messages::WebDatabaseManager::DeleteDatabaseWithNameForOrigin(databaseIdentifier, origin->databaseIdentifier()));
+    context()->sendToOneProcess(Messages::WebDatabaseManager::DeleteDatabaseWithNameForOrigin(databaseIdentifier, origin->securityOrigin().databaseIdentifier()));
 }
 
 void WebDatabaseManagerProxy::deleteDatabasesForOrigin(WebSecurityOrigin* origin)
 {
-    context()->sendToOneProcess(Messages::WebDatabaseManager::DeleteDatabasesForOrigin(origin->databaseIdentifier()));
+    context()->sendToOneProcess(Messages::WebDatabaseManager::DeleteDatabasesForOrigin(origin->securityOrigin().databaseIdentifier()));
 }
 
 void WebDatabaseManagerProxy::deleteAllDatabases()
@@ -248,18 +248,18 @@ void WebDatabaseManagerProxy::deleteAllDatabases()
 
 void WebDatabaseManagerProxy::setQuotaForOrigin(WebSecurityOrigin* origin, uint64_t quota)
 {
-    context()->sendToOneProcess(Messages::WebDatabaseManager::SetQuotaForOrigin(origin->databaseIdentifier(), quota));
+    context()->sendToOneProcess(Messages::WebDatabaseManager::SetQuotaForOrigin(origin->securityOrigin().databaseIdentifier(), quota));
 }
 
 void WebDatabaseManagerProxy::didModifyOrigin(const String& originIdentifier)
 {
-    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
+    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
     m_client.didModifyOrigin(this, origin.get());
 }
 
 void WebDatabaseManagerProxy::didModifyDatabase(const String& originIdentifier, const String& databaseIdentifier)
 {
-    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
+    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
     m_client.didModifyDatabase(this, origin.get(), databaseIdentifier);
 }
 
