@@ -1098,7 +1098,7 @@ void WebPage::goForward(uint64_t navigationID, uint64_t backForwardItemID)
     if (!item->isInPageCache())
         m_pendingNavigationID = navigationID;
 
-    m_page->goToItem(item, FrameLoadTypeForward);
+    m_page->goToItem(item, FrameLoadType::Forward);
 }
 
 void WebPage::goBack(uint64_t navigationID, uint64_t backForwardItemID)
@@ -1114,7 +1114,7 @@ void WebPage::goBack(uint64_t navigationID, uint64_t backForwardItemID)
     if (!item->isInPageCache())
         m_pendingNavigationID = navigationID;
 
-    m_page->goToItem(item, FrameLoadTypeBack);
+    m_page->goToItem(item, FrameLoadType::Back);
 }
 
 void WebPage::goToBackForwardItem(uint64_t navigationID, uint64_t backForwardItemID)
@@ -1130,7 +1130,7 @@ void WebPage::goToBackForwardItem(uint64_t navigationID, uint64_t backForwardIte
     if (!item->isInPageCache())
         m_pendingNavigationID = navigationID;
 
-    m_page->goToItem(item, FrameLoadTypeIndexedBackForward);
+    m_page->goToItem(item, FrameLoadType::IndexedBackForward);
 }
 
 void WebPage::tryRestoreScrollPosition()
@@ -3489,7 +3489,7 @@ static bool shouldReuseCommittedSandboxExtension(WebFrame* frame)
     FrameLoadType frameLoadType = frameLoader.loadType();
 
     // If the page is being reloaded, it should reuse whatever extension is committed.
-    if (frameLoadType == FrameLoadTypeReload || frameLoadType == FrameLoadTypeReloadFromOrigin)
+    if (frameLoadType == FrameLoadType::Reload || frameLoadType == FrameLoadType::ReloadFromOrigin)
         return true;
 
     DocumentLoader* documentLoader = frameLoader.documentLoader();
@@ -4342,7 +4342,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
         reportUsedFeatures();
 
     // Only restore the scale factor for standard frame loads (of the main frame).
-    if (frame->coreFrame()->loader().loadType() == FrameLoadTypeStandard) {
+    if (frame->coreFrame()->loader().loadType() == FrameLoadType::Standard) {
         Page* page = frame->coreFrame()->page();
 
         if (page) {

@@ -154,7 +154,7 @@ void IconController::startLoader()
 
     // If we're reloading the page, always start the icon load now.
     // FIXME: How can this condition ever be true?
-    if (m_frame.loader().loadType() == FrameLoadTypeReload && m_frame.loader().loadType() == FrameLoadTypeReloadFromOrigin) {
+    if (m_frame.loader().loadType() == FrameLoadType::Reload && m_frame.loader().loadType() == FrameLoadType::ReloadFromOrigin) {
         continueLoadWithDecision(IconLoadYes);
         return;
     }

@@ -1,3 +1,17 @@
+2014-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Make FrameLoadType a strongly typed enum
+        https://bugs.webkit.org/show_bug.cgi?id=134047
+
+        Reviewed by Andreas Kling.
+
+        * WebView/WebFrame.mm:
+        (toWebFrameLoadType):
+        (-[WebFrame _loadType]):
+        * WebView/WebView.mm:
+        (-[WebView _loadBackForwardListFromOtherView:]):
+        (-[WebView goToBackForwardItem:]):
+
 2014-06-18  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r167856): Unable to log into HSBC app

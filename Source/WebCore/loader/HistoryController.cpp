@@ -205,18 +205,18 @@ void HistoryController::saveDocumentAndScrollState()
 void HistoryController::restoreDocumentState()
 {
     switch (m_frame.loader().loadType()) {
-        case FrameLoadTypeReload:
-        case FrameLoadTypeReloadFromOrigin:
-        case FrameLoadTypeSame:
-        case FrameLoadTypeReplace:
-            // Not restoring the document state.
-            return;
-        case FrameLoadTypeBack:
-        case FrameLoadTypeForward:
-        case FrameLoadTypeIndexedBackForward:
-        case FrameLoadTypeRedirectWithLockedBackForwardList:
-        case FrameLoadTypeStandard:
-            break;
+    case FrameLoadType::Reload:
+    case FrameLoadType::ReloadFromOrigin:
+    case FrameLoadType::Same:
+    case FrameLoadType::Replace:
+        // Not restoring the document state.
+        return;
+    case FrameLoadType::Back:
+    case FrameLoadType::Forward:
+    case FrameLoadType::IndexedBackForward:
+    case FrameLoadType::RedirectWithLockedBackForwardList:
+    case FrameLoadType::Standard:
+        break;
     }
     
     if (!m_currentItem)
@@ -333,7 +333,7 @@ void HistoryController::updateForReload()
     if (m_currentItem) {
         pageCache()->remove(m_currentItem.get());
     
-        if (m_frame.loader().loadType() == FrameLoadTypeReload || m_frame.loader().loadType() == FrameLoadTypeReloadFromOrigin)
+        if (m_frame.loader().loadType() == FrameLoadType::Reload || m_frame.loader().loadType() == FrameLoadType::ReloadFromOrigin)
             saveScrollPositionAndViewStateToItem(m_currentItem.get());
     }
 
@@ -478,14 +478,14 @@ void HistoryController::updateForCommit()
 
 bool HistoryController::isReplaceLoadTypeWithProvisionalItem(FrameLoadType type)
 {
-    // Going back to an error page in a subframe can trigger a FrameLoadTypeReplace
+    // Going back to an error page in a subframe can trigger a FrameLoadType::Replace
     // while m_provisionalItem is set, so we need to commit it.
-    return type == FrameLoadTypeReplace && m_provisionalItem;
+    return type == FrameLoadType::Replace && m_provisionalItem;
 }
 
 bool HistoryController::isReloadTypeWithProvisionalItem(FrameLoadType type)
 {
-    return (type == FrameLoadTypeReload || type == FrameLoadTypeReloadFromOrigin) && m_provisionalItem;
+    return (type == FrameLoadType::Reload || type == FrameLoadType::ReloadFromOrigin) && m_provisionalItem;
 }
 
 void HistoryController::recursiveUpdateForCommit()

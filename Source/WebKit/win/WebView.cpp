@@ -3109,7 +3109,7 @@ HRESULT STDMETHODCALLTYPE WebView::goToBackForwardItem(
     if (FAILED(hr))
         return hr;
 
-    m_page->goToItem(webHistoryItem->historyItem(), FrameLoadTypeIndexedBackForward);
+    m_page->goToItem(webHistoryItem->historyItem(), FrameLoadType::IndexedBackForward);
     *succeeded = TRUE;
 
     return S_OK;
@@ -5428,7 +5428,7 @@ HRESULT STDMETHODCALLTYPE WebView::loadBackForwardListFromOtherView(
     }
     
     ASSERT(newItemToGoTo);
-    m_page->goToItem(newItemToGoTo, FrameLoadTypeIndexedBackForward);
+    m_page->goToItem(newItemToGoTo, FrameLoadType::IndexedBackForward);
     return S_OK;
 }
 

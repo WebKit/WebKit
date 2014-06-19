@@ -1,3 +1,54 @@
+2014-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Make FrameLoadType a strongly typed enum
+        https://bugs.webkit.org/show_bug.cgi?id=134047
+
+        Reviewed by Andreas Kling.
+
+        * history/BackForwardController.cpp:
+        (WebCore::BackForwardController::goBackOrForward):
+        (WebCore::BackForwardController::goBack):
+        (WebCore::BackForwardController::goForward):
+        * history/PageCache.cpp:
+        (WebCore::logCanCachePageDecision):
+        (WebCore::PageCache::canCache):
+        * loader/FrameLoader.cpp:
+        (WebCore::isBackForwardLoadType):
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::loadURLIntoChildFrame):
+        (WebCore::FrameLoader::prepareForLoadStart):
+        (WebCore::FrameLoader::loadFrameRequest):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::reloadWithOverrideEncoding):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::isReplacing):
+        (WebCore::FrameLoader::setReplacing):
+        (WebCore::FrameLoader::subresourceCachePolicy):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+        (WebCore::FrameLoader::shouldPerformFragmentNavigation):
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        * loader/FrameLoaderTypes.h:
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::restoreDocumentState):
+        (WebCore::HistoryController::updateForReload):
+        (WebCore::HistoryController::isReplaceLoadTypeWithProvisionalItem):
+        (WebCore::HistoryController::isReloadTypeWithProvisionalItem):
+        * loader/NavigationAction.cpp:
+        (WebCore::navigationType):
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::PolicyChecker):
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::cachePolicy):
+        * loader/icon/IconController.cpp:
+        (WebCore::IconController::startLoader):
+
 2014-06-18  Alex Christensen  <achristensen@webkit.org>
 
         [curl] Unreviewed speculative build fix after r170021.

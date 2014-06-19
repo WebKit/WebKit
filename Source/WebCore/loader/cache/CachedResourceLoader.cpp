@@ -718,7 +718,7 @@ CachePolicy CachedResourceLoader::cachePolicy(CachedResource::Type type) const
     if (type != CachedResource::MainResource)
         return frame()->loader().subresourceCachePolicy();
     
-    if (frame()->loader().loadType() == FrameLoadTypeReloadFromOrigin || frame()->loader().loadType() == FrameLoadTypeReload)
+    if (frame()->loader().loadType() == FrameLoadType::ReloadFromOrigin || frame()->loader().loadType() == FrameLoadType::Reload)
         return CachePolicyReload;
     return CachePolicyVerify;
 }

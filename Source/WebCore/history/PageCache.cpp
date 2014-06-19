@@ -242,15 +242,15 @@ static void logCanCachePageDecision(Page* page)
     }
 #endif
     FrameLoadType loadType = page->mainFrame().loader().loadType();
-    if (loadType == FrameLoadTypeReload) {
+    if (loadType == FrameLoadType::Reload) {
         PCLOG("   -Load type is: Reload");
         rejectReasons |= 1 << IsReload;
     }
-    if (loadType == FrameLoadTypeReloadFromOrigin) {
+    if (loadType == FrameLoadType::ReloadFromOrigin) {
         PCLOG("   -Load type is: Reload from origin");
         rejectReasons |= 1 << IsReloadFromOrigin;
     }
-    if (loadType == FrameLoadTypeSame) {
+    if (loadType == FrameLoadType::Same) {
         PCLOG("   -Load type is: Same");
         rejectReasons |= 1 << IsSameLoad;
     }
@@ -345,10 +345,10 @@ bool PageCache::canCache(Page* page) const
 #if ENABLE(PROXIMITY_EVENTS)
         && !DeviceProximityController::isActiveAt(page)
 #endif
-        && (loadType == FrameLoadTypeStandard
-            || loadType == FrameLoadTypeBack
-            || loadType == FrameLoadTypeForward
-            || loadType == FrameLoadTypeIndexedBackForward);
+        && (loadType == FrameLoadType::Standard
+            || loadType == FrameLoadType::Back
+            || loadType == FrameLoadType::Forward
+            || loadType == FrameLoadType::IndexedBackForward);
 }
 
 void PageCache::pruneToCapacityNow(int capacity)

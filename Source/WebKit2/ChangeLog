@@ -1,5 +1,23 @@
 2014-06-18  Anders Carlsson  <andersca@apple.com>
 
+        Make FrameLoadType a strongly typed enum
+        https://bugs.webkit.org/show_bug.cgi?id=134047
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::goForward):
+        (WebKit::WebPage::goBack):
+        (WebKit::WebPage::goToBackForwardItem):
+        (WebKit::shouldReuseCommittedSandboxExtension):
+        (WebKit::WebPage::didCommitLoad):
+
+2014-06-18  Anders Carlsson  <andersca@apple.com>
+
         Simplify WebSecurityOrigin
         https://bugs.webkit.org/show_bug.cgi?id=134049
 

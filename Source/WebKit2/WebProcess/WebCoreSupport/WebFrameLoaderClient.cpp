@@ -447,7 +447,7 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
 
     // Notify the UIProcess.
 
-    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(m_frame->frameID(), documentLoader.navigationID(), documentLoader.response().mimeType(), m_frameHasCustomContentProvider, m_frame->coreFrame()->loader().loadType(), CertificateInfo(documentLoader.response()), InjectedBundleUserMessageEncoder(userData.get())));
+    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(m_frame->frameID(), documentLoader.navigationID(), documentLoader.response().mimeType(), m_frameHasCustomContentProvider, static_cast<uint32_t>(m_frame->coreFrame()->loader().loadType()), CertificateInfo(documentLoader.response()), InjectedBundleUserMessageEncoder(userData.get())));
     webPage->didCommitLoad(m_frame);
 }
 

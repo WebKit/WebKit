@@ -2002,7 +2002,7 @@ static bool fastDocumentTeardownEnabled()
     }
     
     ASSERT(newItemToGoTo);
-    _private->page->goToItem(newItemToGoTo, FrameLoadTypeIndexedBackForward);
+    _private->page->goToItem(newItemToGoTo, FrameLoadType::IndexedBackForward);
 }
 
 - (void)_setFormDelegate: (id<WebFormDelegate>)delegate
@@ -5609,7 +5609,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     if (!_private->page)
         return NO;
 
-    _private->page->goToItem(core(item), FrameLoadTypeIndexedBackForward);
+    _private->page->goToItem(core(item), FrameLoadType::IndexedBackForward);
     return YES;
 }
 

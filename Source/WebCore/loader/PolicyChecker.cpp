@@ -56,7 +56,7 @@ PolicyChecker::PolicyChecker(Frame& frame)
     : m_frame(frame)
     , m_delegateIsDecidingNavigationPolicy(false)
     , m_delegateIsHandlingUnimplementablePolicy(false)
-    , m_loadType(FrameLoadTypeStandard)
+    , m_loadType(FrameLoadType::Standard)
 {
 }
 
@@ -85,7 +85,7 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, Docume
     // treat it like a reload so it maintains the right state for b/f list.
     if (loader->substituteData().isValid() && !loader->substituteData().failingURL().isEmpty()) {
         if (isBackForwardLoadType(m_loadType))
-            m_loadType = FrameLoadTypeReload;
+            m_loadType = FrameLoadType::Reload;
         function(request, 0, true);
         return;
     }

@@ -2554,7 +2554,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
     // WebPageProxy's cache of the value can get out of sync (e.g. in the case where a
     // plugin is handling page scaling itself) so we should reset it to the default
     // for standard main frame loads.
-    if (frame->isMainFrame() && static_cast<FrameLoadType>(opaqueFrameLoadType) == FrameLoadTypeStandard)
+    if (frame->isMainFrame() && static_cast<FrameLoadType>(opaqueFrameLoadType) == FrameLoadType::Standard)
         m_pageScaleFactor = 1;
 
     m_pageLoadState.commitChanges();
