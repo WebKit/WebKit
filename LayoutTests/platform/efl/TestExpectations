@@ -1210,6 +1210,7 @@ webkit.org/b/105030 fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
 # Rendering issues.
 webkit.org/b/105029 fast/canvas/webgl/webgl-composite-modes.html [ ImageOnlyFailure Pass ]
 webkit.org/b/105029 fast/canvas/webgl/webgl-composite-modes-repaint.html [ ImageOnlyFailure Pass ]
+webkit.org/b/133979 svg/wicd/rightsizing-grid.xhtml [ Failure ]
 
 # Failing touch events case
 webkit.org/b/105406 fast/events/touch/touch-input-element-change-documents.html [ Failure ]

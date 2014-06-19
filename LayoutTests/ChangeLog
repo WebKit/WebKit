@@ -1,3 +1,12 @@
+2014-06-19  Rohit Kumar  <kumar.rohit@samsung.com>
+
+        [EFL] Add expectations for failing svg/wicd/rightsizing-grid.xhtml layout test
+        https://bugs.webkit.org/show_bug.cgi?id=133982
+
+        Unreviewed gardening.
+
+        * platform/efl/TestExpectations:
+
 2014-06-18  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: expose aria-relevant
