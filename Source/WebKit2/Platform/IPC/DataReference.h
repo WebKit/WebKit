@@ -26,6 +26,7 @@
 #ifndef DataReference_h
 #define DataReference_h
 
+#include <WebCore/SharedBuffer.h>
 #include <wtf/Vector.h>
 
 namespace IPC {
@@ -72,12 +73,32 @@ public:
         return result;
     }
 
-    void encode(ArgumentEncoder&) const;
+    virtual void encode(ArgumentEncoder&) const;
     static bool decode(ArgumentDecoder&, DataReference&);
+
+    virtual ~DataReference() { }
 
 private:
     const uint8_t* m_data;
     size_t m_size;
+};
+
+class SharedBufferDataReference: public DataReference {
+public:
+    SharedBufferDataReference(WebCore::SharedBuffer* buffer)
+    {
+        m_buffer = buffer;
+    }
+
+    size_t size() const { return m_buffer->size(); }
+    const uint8_t* data() const = delete;
+    Vector<uint8_t> vector() const = delete;
+
+    void encode(ArgumentEncoder&) const override;
+    virtual ~SharedBufferDataReference() { m_buffer = 0; }
+
+private:
+    RefPtr<WebCore::SharedBuffer> m_buffer;
 };
 
 } // namespace IPC

@@ -1,3 +1,26 @@
+2014-06-19  Pratik Solanki  <psolanki@apple.com>
+
+        Copy SharedBuffer data into IPC message directly
+        https://bugs.webkit.org/show_bug.cgi?id=133920
+
+        Reviewed by Anders Carlsson.
+
+        When data array callbacks are enabled, we currently merge all the CFDataRefs in SharedBuffer
+        into one contiguous memory buffer when creating IPC::DataReference. This patch creates a
+        subclass of DataReference that uses SharedBuffer::getSomeData() to copy the data directly
+        into the IPC message.
+
+        * NetworkProcess/AsynchronousNetworkLoaderClient.cpp:
+        (WebKit::AsynchronousNetworkLoaderClient::didReceiveBuffer):
+        * Platform/IPC/ArgumentEncoder.cpp:
+        (IPC::ArgumentEncoder::reserve): Added.
+        (IPC::ArgumentEncoder::grow):
+        * Platform/IPC/ArgumentEncoder.h:
+        * Platform/IPC/DataReference.cpp:
+        (IPC::SharedBufferDataReference::encode):
+        * Platform/IPC/DataReference.h:
+        (IPC::DataReference::~DataReference):
+
 2014-06-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Fixing the GTK+ build after r170114.

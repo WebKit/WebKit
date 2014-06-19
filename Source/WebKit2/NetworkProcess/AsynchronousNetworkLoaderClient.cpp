@@ -75,7 +75,7 @@ void AsynchronousNetworkLoaderClient::didReceiveBuffer(NetworkResourceLoader* lo
     }
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 
-    IPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
+    IPC::SharedBufferDataReference dataReference(buffer);
     loader->sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength));
 }
 

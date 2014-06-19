@@ -67,6 +67,7 @@ public:
 
     void addAttachment(const Attachment&);
     Vector<Attachment> releaseAttachments();
+    void reserve(size_t);
 
 private:
     void encode(bool);

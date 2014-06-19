@@ -81,27 +81,32 @@ static inline size_t roundUpToAlignment(size_t value, unsigned alignment)
     return ((value + alignment - 1) / alignment) * alignment;
 }
 
+void ArgumentEncoder::reserve(size_t size)
+{
+    if (size <= m_bufferCapacity)
+        return;
+
+    size_t newCapacity = roundUpToAlignment(m_bufferCapacity * 2, 4096);
+    while (newCapacity < size)
+        newCapacity *= 2;
+
+    uint8_t* newBuffer = static_cast<uint8_t*>(allocBuffer(newCapacity));
+    if (!newBuffer)
+        CRASH();
+
+    memcpy(newBuffer, m_buffer, m_bufferSize);
+
+    if (m_buffer != m_inlineBuffer)
+        freeBuffer(m_buffer, m_bufferCapacity);
+
+    m_buffer = newBuffer;
+    m_bufferCapacity = newCapacity;
+}
+
 uint8_t* ArgumentEncoder::grow(unsigned alignment, size_t size)
 {
     size_t alignedSize = roundUpToAlignment(m_bufferSize, alignment);
-    
-    if (alignedSize + size > m_bufferCapacity) {
-        size_t newCapacity = roundUpToAlignment(m_bufferCapacity * 2, 4096);
-        while (newCapacity < alignedSize + size)
-            newCapacity *= 2;
-
-        uint8_t* newBuffer = static_cast<uint8_t*>(allocBuffer(newCapacity));
-        if (!newBuffer)
-            CRASH();
-
-        memcpy(newBuffer, m_buffer, m_bufferSize);
-
-        if (m_buffer != m_inlineBuffer)
-            freeBuffer(m_buffer, m_bufferCapacity);
-
-        m_buffer = newBuffer;
-        m_bufferCapacity = newCapacity;
-    }
+    reserve(alignedSize + size);
 
     m_bufferSize = alignedSize + size;
     m_bufferPointer = m_buffer + alignedSize + size;

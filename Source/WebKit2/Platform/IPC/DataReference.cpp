@@ -41,4 +41,19 @@ bool DataReference::decode(ArgumentDecoder& decoder, DataReference& dataReferenc
     return decoder.decodeVariableLengthByteArray(dataReference);
 }
 
+void SharedBufferDataReference::encode(ArgumentEncoder& encoder) const
+{
+    uint64_t bufferSize = static_cast<uint64_t>(m_buffer->size());
+    encoder.reserve(bufferSize + sizeof(uint64_t));
+    encoder << bufferSize;
+
+    const char* partialData;
+    unsigned position = 0;
+    while (position < bufferSize) {
+        unsigned bytesToWrite = m_buffer->getSomeData(partialData, position);
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(partialData), bytesToWrite, 1);
+        position += bytesToWrite;
+    }
+}
+
 } // namespace IPC
