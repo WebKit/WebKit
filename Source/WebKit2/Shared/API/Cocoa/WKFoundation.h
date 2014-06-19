@@ -53,6 +53,7 @@
 #ifdef __OBJC__
 #import <Foundation/Foundation.h>
 typedef NSUInteger NSEventModifierFlags;
+typedef NSInteger NSURLSessionAuthChallengeDisposition;
 #endif
 
 #else

@@ -1,3 +1,20 @@
+2014-06-19  Anders Carlsson  <andersca@apple.com>
+
+        No way to handle HTTP Authentication with WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=134067
+        <rdar://problem/17317874>
+
+        Reviewed by Dan Bernstein.
+
+        Add a public webView:didReceiveAuthenticationChallenge:completionHandler: delegate method and get rid of the SPI.
+        
+        * Shared/API/Cocoa/WKFoundation.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::LoaderClient::didReceiveAuthenticationChallengeInFrame):
+
 2014-06-18  Roger Fong  <roger_fong@apple.com>
 
         Don't kill the UIProcess until all local storage transactions have been committed.

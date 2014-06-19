@@ -123,6 +123,17 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
  */
 - (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error;
 
+/*! @abstract Invoked when the web view needs to respond to an authentication challenge.
+ @param webView The web view that received the authentication challenge.
+ @param challenge The authentication challenge.
+ @param completionHandler The completion handler you must invoke to respond to the challenge. The
+ disposition argument is one of the constants of the enumerated type
+ NSURLSessionAuthChallengeDisposition. When disposition is NSURLSessionAuthChallengeUseCredential,
+ the credential argument is the credential to use, or nil to indicate continuing without a
+ credential.
+ */
+- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler;
+
 @end
 
 #endif
