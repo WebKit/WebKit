@@ -184,7 +184,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE pendingFrameUnloadEventCount( 
         /* [retval][out] */ UINT* result);
 
-    virtual HRESULT STDMETHODCALLTYPE unused3();
+    virtual HRESULT STDMETHODCALLTYPE unused3() { return E_NOTIMPL; }
     
     virtual HRESULT STDMETHODCALLTYPE setInPrintingMode( 
         /* [in] */ BOOL value,

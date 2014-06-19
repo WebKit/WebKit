@@ -1,3 +1,9 @@
+2014-06-19  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix Windows build.
+
+        * WebFrame.h:
+
 2014-06-18  Anders Carlsson  <andersca@apple.com>
 
         Make FrameLoadType a strongly typed enum
