@@ -55,7 +55,7 @@
 typedef NSUInteger NSEventModifierFlags;
 #endif
 
-#if __MAC_OSX_VERSION_MIN_REQUIRED < 1090
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
 typedef NSInteger NSURLSessionAuthChallengeDisposition;
 #endif
 

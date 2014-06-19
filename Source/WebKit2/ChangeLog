@@ -1,3 +1,9 @@
+2014-06-19  Anders Carlsson  <andersca@apple.com>
+
+        It's OS X, not OSX...
+
+        * Shared/API/Cocoa/WKFoundation.h:
+
 2014-06-19  Antti Koivisto  <antti@apple.com>
 
         Unfreeze the layer tree on DidFirstVisuallyNonEmptyLayout
