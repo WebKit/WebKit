@@ -1766,11 +1766,7 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
     instructions().append(func->index());
     instructions().append(callArguments.argumentCountIncludingThis());
     instructions().append(callArguments.stackOffset());
-#if ENABLE(LLINT)
     instructions().append(m_codeBlock->addLLIntCallLinkInfo());
-#else
-    instructions().append(0);
-#endif
     instructions().append(0);
     instructions().append(arrayProfile);
     instructions().append(profile);
@@ -1905,11 +1901,7 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
     instructions().append(func->index());
     instructions().append(callArguments.argumentCountIncludingThis());
     instructions().append(callArguments.stackOffset());
-#if ENABLE(LLINT)
     instructions().append(m_codeBlock->addLLIntCallLinkInfo());
-#else
-    instructions().append(0);
-#endif
     instructions().append(0);
     instructions().append(0);
     instructions().append(profile);

@@ -25,9 +25,6 @@
 
 #include "config.h"
 #include "LLIntSlowPaths.h"
-
-#if ENABLE(LLINT)
-
 #include "Arguments.h"
 #include "ArrayConstructor.h"
 #include "CallFrame.h"
@@ -476,7 +473,7 @@ LLINT_SLOW_PATH_DECL(stack_check)
     // For JIT enabled builds which uses the C stack, the stack is not growable.
     // Hence, if we get here, then we know a stack overflow is imminent. So, just
     // throw the StackOverflowError unconditionally.
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
     ASSERT(!vm.interpreter->stack().containsAddress(exec->topOfFrame()));
     if (LIKELY(vm.interpreter->stack().ensureCapacityFor(exec->topOfFrame())))
         LLINT_RETURN_TWO(pc, 0);
@@ -1464,7 +1461,7 @@ extern "C" SlowPathReturnType llint_throw_stack_overflow_error(VM* vm, ProtoCall
     return encodeResult(0, 0);
 }
 
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
 extern "C" SlowPathReturnType llint_stack_check_at_vm_entry(VM* vm, Register* newTopOfStack)
 {
     bool success = vm->interpreter->stack().ensureCapacityFor(newTopOfStack);
@@ -1484,5 +1481,3 @@ extern "C" NO_RETURN_DUE_TO_CRASH void llint_crash()
 }
 
 } } // namespace JSC::LLInt
-
-#endif // ENABLE(LLINT)

@@ -26,7 +26,7 @@
 #ifndef LLIntCLoop_h
 #define LLIntCLoop_h
 
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
 
 #include "CallFrame.h"
 #include "JSCJSValue.h"
@@ -46,6 +46,6 @@ public:
 
 using JSC::LLInt::CLoop;
 
-#endif // ENABLE(LLINT_C_LOOP)
+#endif // !ENABLE(JIT)
 
 #endif // LLIntCLoop_h

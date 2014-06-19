@@ -25,9 +25,6 @@
 
 #include "config.h"
 #include "LLIntData.h"
-
-#if ENABLE(LLINT)
-
 #include "BytecodeConventions.h"
 #include "CodeType.h"
 #include "Instruction.h"
@@ -42,7 +39,7 @@ namespace JSC { namespace LLInt {
 Instruction* Data::s_exceptionInstructions = 0;
 Opcode Data::s_opcodeMap[numOpcodeIDs] = { };
 
-#if !ENABLE(LLINT_C_LOOP)
+#if ENABLE(JIT)
 extern "C" void llint_entry(void*);
 #endif
 
@@ -50,16 +47,16 @@ void initialize()
 {
     Data::s_exceptionInstructions = new Instruction[maxOpcodeLength + 1];
 
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
     CLoop::initialize();
 
-#else // !ENABLE(LLINT_C_LOOP)
+#else // ENABLE(JIT)
     llint_entry(&Data::s_opcodeMap);
 
     for (int i = 0; i < maxOpcodeLength + 1; ++i)
         Data::s_exceptionInstructions[i].u.pointer =
             LLInt::getCodePtr(llint_throw_from_slow_path_trampoline);
-#endif // !ENABLE(LLINT_C_LOOP)
+#endif // ENABLE(JIT)
 }
 
 #if COMPILER(CLANG)
@@ -126,7 +123,7 @@ void Data::performAssertions(VM& vm)
     ASSERT(ValueUndefined == (TagBitTypeOther | TagBitUndefined));
     ASSERT(ValueNull == TagBitTypeOther);
 #endif
-#if CPU(X86_64) || CPU(ARM64) || ENABLE(LLINT_C_LOOP)
+#if CPU(X86_64) || CPU(ARM64) || !ENABLE(JIT)
     ASSERT(!maxFrameExtentForSlowPathCall);
 #elif CPU(ARM) || CPU(SH4)
     ASSERT(maxFrameExtentForSlowPathCall == 24);
@@ -171,5 +168,3 @@ void Data::performAssertions(VM& vm)
 #endif
 
 } } // namespace JSC::LLInt
-
-#endif // ENABLE(LLINT)

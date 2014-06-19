@@ -46,19 +46,15 @@ JITThunks::~JITThunks()
 
 MacroAssemblerCodePtr JITThunks::ctiNativeCall(VM* vm)
 {
-#if ENABLE(LLINT)
     if (!vm->canUseJIT())
         return MacroAssemblerCodePtr::createLLIntCodePtr(llint_native_call_trampoline);
-#endif
     return ctiStub(vm, nativeCallGenerator).code();
 }
 
 MacroAssemblerCodePtr JITThunks::ctiNativeConstruct(VM* vm)
 {
-#if ENABLE(LLINT)
     if (!vm->canUseJIT())
         return MacroAssemblerCodePtr::createLLIntCodePtr(llint_native_construct_trampoline);
-#endif
     return ctiStub(vm, nativeConstructGenerator).code();
 }
 

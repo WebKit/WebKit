@@ -25,9 +25,6 @@
 
 #include "config.h"
 #include "LLIntExceptions.h"
-
-#if ENABLE(LLINT)
-
 #include "CallFrame.h"
 #include "CodeBlock.h"
 #include "Instruction.h"
@@ -64,5 +61,3 @@ void* callToThrow(ExecState* exec)
 }
 
 } } // namespace JSC::LLInt
-
-#endif // ENABLE(LLINT)

@@ -84,7 +84,7 @@
 #include "JIT.h"
 #endif
 
-#define WTF_USE_GCC_COMPUTED_GOTO_WORKAROUND (ENABLE(LLINT) && !defined(__llvm__))
+#define WTF_USE_GCC_COMPUTED_GOTO_WORKAROUND (!defined(__llvm__))
 
 using namespace std;
 
@@ -299,7 +299,7 @@ void Interpreter::initialize(bool canUseJIT)
 {
     UNUSED_PARAM(canUseJIT);
 
-#if ENABLE(COMPUTED_GOTO_OPCODES) && ENABLE(LLINT)
+#if ENABLE(COMPUTED_GOTO_OPCODES)
     m_opcodeTable = LLInt::opcodeMap();
     for (int i = 0; i < numOpcodeIDs; ++i)
         m_opcodeIDTable.add(m_opcodeTable[i], static_cast<OpcodeID>(i));
@@ -428,13 +428,9 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
 bool Interpreter::isOpcode(Opcode opcode)
 {
 #if ENABLE(COMPUTED_GOTO_OPCODES)
-#if !ENABLE(LLINT)
-    return static_cast<OpcodeID>(bitwise_cast<uintptr_t>(opcode)) <= op_end;
-#else
     return opcode != HashTraits<Opcode>::emptyValue()
         && !HashTraits<Opcode>::isDeletedValue(opcode)
         && m_opcodeIDTable.contains(opcode);
-#endif
 #else
     return opcode >= 0 && opcode <= op_end;
 #endif

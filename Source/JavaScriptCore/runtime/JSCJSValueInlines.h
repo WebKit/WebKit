@@ -312,7 +312,7 @@ inline JSValue::JSValue(int i)
     u.asBits.payload = i;
 }
 
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
 inline JSValue::JSValue(int32_t tag, int32_t payload)
 {
     u.asBits.tag = tag;

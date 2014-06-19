@@ -26,8 +26,6 @@
 #ifndef LLIntEntrypoint_h
 #define LLIntEntrypoint_h
 
-#if ENABLE(LLINT)
-
 #include "CodeSpecializationKind.h"
 
 namespace JSC {
@@ -42,7 +40,5 @@ void setEntrypoint(VM&, CodeBlock*);
 unsigned frameRegisterCountFor(CodeBlock*);
 
 } } // namespace JSC::LLInt
-
-#endif // ENABLE(LLINT)
 
 #endif // LLIntEntrypoint_h

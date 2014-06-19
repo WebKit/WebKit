@@ -1,3 +1,106 @@
+2014-06-19  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        Remove ENABLE(LLINT) and ENABLE(LLINT_C_LOOP) guards
+        https://bugs.webkit.org/show_bug.cgi?id=130389
+
+        Reviewed by Mark Lam.
+
+        Removed ENABLE(LLINT) since we always build with it, and changed ENABLE(LLINT_C_LOOP)
+        into !ENABLE(JIT) since they are mutually exclusive.
+
+        * CMakeLists.txt:
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodePtr::createLLIntCodePtr):
+        (JSC::MacroAssemblerCodeRef::createLLIntCodeRef):
+        * assembler/MaxFrameExtentForSlowPathCall.h:
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFromLLInt):
+        * bytecode/CodeBlock.cpp:
+        (JSC::dumpStructure):
+        (JSC::CodeBlock::printGetByIdCacheStatus):
+        (JSC::CodeBlock::printCallOp):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::unlinkCalls):
+        (JSC::CodeBlock::unlinkIncomingCalls):
+        (JSC::CodeBlock::linkIncomingCall):
+        (JSC::CodeBlock::frameRegisterCount):
+        * bytecode/CodeBlock.h:
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitConstruct):
+        * heap/Heap.cpp:
+        (JSC::Heap::gatherJSStackRoots):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::initialize):
+        (JSC::Interpreter::isOpcode):
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::getOpcodeID):
+        * interpreter/JSStack.cpp:
+        (JSC::JSStack::JSStack):
+        (JSC::JSStack::committedByteCount):
+        * interpreter/JSStack.h:
+        * interpreter/JSStackInlines.h:
+        (JSC::JSStack::ensureCapacityFor):
+        (JSC::JSStack::topOfFrameFor):
+        (JSC::JSStack::setStackLimit):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::FixedVMPoolExecutableAllocator):
+        * jit/JIT.h:
+        (JSC::JIT::compileCTINativeCall):
+        * jit/JITExceptions.h:
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::ctiNativeCall):
+        (JSC::JITThunks::ctiNativeConstruct):
+        * llint/LLIntCLoop.cpp:
+        * llint/LLIntCLoop.h:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntData.h:
+        (JSC::LLInt::Data::performAssertions): Deleted.
+        * llint/LLIntEntrypoint.cpp:
+        * llint/LLIntEntrypoint.h:
+        * llint/LLIntExceptions.cpp:
+        * llint/LLIntExceptions.h:
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LLIntOffsetsExtractor.cpp:
+        (JSC::LLIntOffsetsExtractor::dummy):
+        * llint/LLIntOpcode.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LLIntThunks.cpp:
+        * llint/LLIntThunks.h:
+        * llint/LowLevelInterpreter.cpp:
+        * llint/LowLevelInterpreter.h:
+        * runtime/CommonSlowPaths.cpp:
+        * runtime/CommonSlowPaths.h:
+        * runtime/ErrorHandlingScope.cpp:
+        (JSC::ErrorHandlingScope::ErrorHandlingScope):
+        (JSC::ErrorHandlingScope::~ErrorHandlingScope):
+        * runtime/Executable.cpp:
+        (JSC::setupLLInt):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::sanitizeStackForVM):
+        * runtime/VM.h:
+        (JSC::VM::canUseJIT): Deleted.
+
 2014-06-18  Alex Christensen  <achristensen@webkit.org>
 
         Add FTL to Windows build.

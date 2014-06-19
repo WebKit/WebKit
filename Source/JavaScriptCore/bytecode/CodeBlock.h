@@ -232,9 +232,7 @@ public:
     }
 #endif // ENABLE(JIT)
 
-#if ENABLE(LLINT)
     void linkIncomingCall(ExecState* callerFrame, LLIntCallLinkInfo*);
-#endif // ENABLE(LLINT)
 
     void setJITCodeMap(PassOwnPtr<CompactJITCodeMap> jitCodeMap)
     {
@@ -1040,10 +1038,8 @@ private:
     unsigned m_firstLineColumnOffset;
     unsigned m_codeType;
 
-#if ENABLE(LLINT)
     Vector<LLIntCallLinkInfo> m_llintCallLinkInfos;
     SentinelLinkedList<LLIntCallLinkInfo, BasicRawSentinelNode<LLIntCallLinkInfo>> m_incomingLLIntCalls;
-#endif
     RefPtr<JITCode> m_jitCode;
 #if ENABLE(JIT)
     Bag<StructureStubInfo> m_stubInfos;

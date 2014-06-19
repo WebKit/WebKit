@@ -25,9 +25,6 @@
 
 #include "config.h"
 #include "CommonSlowPaths.h"
-
-#if ENABLE(JIT) || ENABLE(LLINT)
-
 #include "Arguments.h"
 #include "ArityCheckFailReturnThunks.h"
 #include "ArrayConstructor.h"
@@ -73,11 +70,7 @@ namespace JSC {
     } while (false)
 #endif
 
-#if ENABLE(LLINT)
 #define RETURN_TO_THROW(exec, pc)   pc = LLInt::returnToThrow(exec)
-#else
-#define RETURN_TO_THROW(exec, pc)
-#endif
 
 #define BEGIN()                           \
     BEGIN_NO_SET_PC();                    \
@@ -535,5 +528,3 @@ SLOW_PATH_DECL(slow_path_enter)
 }
 
 } // namespace JSC
-
-#endif // ENABLE(JIT) || ENABLE(LLINT)

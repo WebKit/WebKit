@@ -219,7 +219,7 @@ VM::VM(VMType vmType, HeapType heapType)
 #endif
     , m_stackPointerAtVMEntry(0)
     , m_stackLimit(0)
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
     , m_jsStackLimit(0)
 #endif
 #if ENABLE(FTL_JIT)
@@ -234,7 +234,7 @@ VM::VM(VMType vmType, HeapType heapType)
     interpreter = new Interpreter(*this);
     StackBounds stack = wtfThreadData().stack();
     updateReservedZoneSize(Options::reservedZoneSize());
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
     interpreter->stack().setReservedZoneSize(Options::reservedZoneSize());
 #endif
     setLastStackTop(stack.origin());
@@ -917,7 +917,7 @@ void VM::setEnabledProfiler(LegacyProfiler* profiler)
 void sanitizeStackForVM(VM* vm)
 {
     logSanitizeStack(vm);
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
     vm->interpreter->stack().sanitizeStack();
 #else
     sanitizeStackForVMImpl(vm);

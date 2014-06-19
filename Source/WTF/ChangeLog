@@ -1,3 +1,17 @@
+2014-06-19  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        Remove ENABLE(LLINT) and ENABLE(LLINT_C_LOOP) guards
+        https://bugs.webkit.org/show_bug.cgi?id=130389
+
+        Reviewed by Mark Lam.
+
+        Removed ENABLE(LLINT) since we always build with it, and changed ENABLE(LLINT_C_LOOP)
+        into !ENABLE(JIT) since they are mutually exclusive.
+
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserveAndCommit):
+        * wtf/Platform.h:
+
 2014-06-18  Anders Carlsson  <andersca@apple.com>
 
         Add CF type cast function templates and use them in KeyedDecoder in WebKit2

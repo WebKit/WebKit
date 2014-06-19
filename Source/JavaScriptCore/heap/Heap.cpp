@@ -567,7 +567,7 @@ void Heap::gatherStackRoots(ConservativeRoots& roots, void** dummy)
 
 void Heap::gatherJSStackRoots(ConservativeRoots& roots)
 {
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
     GCPHASE(GatherJSStackRoots);
     stack().gatherConservativeRoots(roots, m_jitStubRoutines, m_codeBlocks);
 #else

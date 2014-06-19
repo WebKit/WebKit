@@ -55,7 +55,7 @@ class OSRExitCompiler;
 class SpeculativeJIT;
 }
 #endif
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
 namespace LLInt {
 class CLoop;
 }
@@ -134,7 +134,7 @@ class JSValue {
     friend class DFG::OSRExitCompiler;
     friend class DFG::SpeculativeJIT;
 #endif
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
     friend class LLInt::CLoop;
 #endif
 
@@ -313,7 +313,7 @@ public:
     uint32_t tag() const;
     int32_t payload() const;
 
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
     // This should only be used by the LLInt C Loop interpreter who needs
     // synthesize JSValue from its "register"s holding tag and payload
     // values.

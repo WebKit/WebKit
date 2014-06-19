@@ -25,13 +25,10 @@
 
 #include "config.h"
 #include "LowLevelInterpreter.h"
-
-#if ENABLE(LLINT)
-
 #include "LLIntOfflineAsmConfig.h"
 #include <wtf/InlineASM.h>
 
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
 #include "CodeBlock.h"
 #include "CommonSlowPaths.h"
 #include "LLIntCLoop.h"
@@ -530,6 +527,4 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 // for the interpreter, as compiled from LowLevelInterpreter.asm.
 #include "LLIntAssembly.h"
 
-#endif // !ENABLE(LLINT_C_LOOP)
-
-#endif // ENABLE(LLINT)
+#endif // ENABLE(JIT)

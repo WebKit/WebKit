@@ -89,7 +89,6 @@ CallLinkStatus CallLinkStatus::computeFromLLInt(const ConcurrentJITLocker& locke
 {
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
-#if ENABLE(LLINT)
 #if ENABLE(DFG_JIT)
     if (profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadFunction))) {
         // We could force this to be a closure call, but instead we'll just assume that it
@@ -110,9 +109,6 @@ CallLinkStatus CallLinkStatus::computeFromLLInt(const ConcurrentJITLocker& locke
     LLIntCallLinkInfo* callLinkInfo = instruction[5].u.callLinkInfo;
     
     return CallLinkStatus(callLinkInfo->lastSeenCallee.get());
-#else
-    return CallLinkStatus();
-#endif
 }
 
 CallLinkStatus CallLinkStatus::computeFor(

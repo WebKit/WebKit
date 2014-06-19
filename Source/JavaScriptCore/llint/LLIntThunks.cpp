@@ -42,7 +42,6 @@
 namespace JSC {
 
 #if ENABLE(JIT)
-#if ENABLE(LLINT)
 
 namespace LLInt {
 
@@ -90,7 +89,6 @@ MacroAssemblerCodeRef programEntryThunkGenerator(VM* vm)
 
 } // namespace LLInt
 
-#endif // ENABLE(LLINT)
 #else // ENABLE(JIT)
 
 // Non-JIT (i.e. C Loop LLINT) case:

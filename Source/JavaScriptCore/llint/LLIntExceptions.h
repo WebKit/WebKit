@@ -27,9 +27,6 @@
 #define LLIntExceptions_h
 
 #include <wtf/StdLibExtras.h>
-
-#if ENABLE(LLINT)
-
 #include "MacroAssemblerCodeRef.h"
 
 namespace JSC {
@@ -52,7 +49,5 @@ Instruction* returnToThrow(ExecState*);
 void* callToThrow(ExecState*);
 
 } } // namespace JSC::LLInt
-
-#endif // ENABLE(LLINT)
 
 #endif // LLIntExceptions_h

@@ -61,7 +61,6 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(uid);
-#if ENABLE(LLINT)
     Instruction* instruction = profiledBlock->instructions().begin() + bytecodeIndex;
     
     if (instruction[0].u.opcode == LLInt::getOpcode(op_get_array_length))
@@ -84,9 +83,6 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
         return GetByIdStatus(NoInformation, false);
     
     return GetByIdStatus(Simple, false, GetByIdVariant(StructureSet(structure), offset, specificValue));
-#else
-    return GetByIdStatus(NoInformation, false);
-#endif
 }
 
 bool GetByIdStatus::computeForChain(CodeBlock* profiledBlock, StringImpl* uid, PassRefPtr<IntendedStructureChain> passedChain)

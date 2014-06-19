@@ -67,9 +67,7 @@ void initializeThreading()
         ExecutableAllocator::initializeAllocator();
 #endif
         JSStack::initializeThreading();
-#if ENABLE(LLINT)
         LLInt::initialize();
-#endif
 #ifndef NDEBUG
         DisallowGC::initialize();
 #endif

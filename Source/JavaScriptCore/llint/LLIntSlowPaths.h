@@ -29,8 +29,6 @@
 #include "CommonSlowPaths.h"
 #include <wtf/StdLibExtras.h>
 
-#if ENABLE(LLINT)
-
 namespace JSC {
 
 class ExecState;
@@ -125,14 +123,12 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_resolve_scope);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_from_scope);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_put_to_scope);
 extern "C" SlowPathReturnType llint_throw_stack_overflow_error(VM*, ProtoCallFrame*) WTF_INTERNAL;
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
 extern "C" SlowPathReturnType llint_stack_check_at_vm_entry(VM*, Register*) WTF_INTERNAL;
 #endif
 extern "C" NO_RETURN_DUE_TO_CRASH void llint_crash() WTF_INTERNAL;
 
 } } // namespace JSC::LLInt
-
-#endif // ENABLE(LLINT)
 
 #endif // LLIntSlowPaths_h
 

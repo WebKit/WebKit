@@ -1,3 +1,18 @@
+2014-06-19  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        Remove ENABLE(LLINT) and ENABLE(LLINT_C_LOOP) guards
+        https://bugs.webkit.org/show_bug.cgi?id=130389
+
+        Reviewed by Mark Lam.
+
+        Removed ENABLE(LLINT) since we always build with it, and changed ENABLE(LLINT_C_LOOP)
+        into !ENABLE(JIT) since they are mutually exclusive.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2014-06-17  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove the USE_GTK2=1 branch in OptionsGTK.cmake. This used to determine

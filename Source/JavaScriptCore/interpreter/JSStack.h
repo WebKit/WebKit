@@ -79,7 +79,7 @@ namespace JSC {
         bool containsAddress(Register* address) { return (lowAddress() <= address && address < highAddress()); }
         static size_t committedByteCount();
 
-#if !ENABLE(LLINT_C_LOOP)
+#if ENABLE(JIT)
         void gatherConservativeRoots(ConservativeRoots&) { }
         void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&) { }
         void sanitizeStack() { }
@@ -103,11 +103,11 @@ namespace JSC {
         void setReservedZoneSize(size_t);
 
         inline Register* topOfStack();
-#endif // ENABLE(LLINT_C_LOOP)
+#endif // ENABLE(JIT)
 
     private:
 
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
         Register* lowAddress() const
         {
             return m_end + 1;
@@ -120,9 +120,9 @@ namespace JSC {
 #else
         Register* lowAddress() const;
         Register* highAddress() const;
-#endif // ENABLE(LLINT_C_LOOP)
+#endif // !ENABLE(JIT)
 
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
         inline Register* topOfFrameFor(CallFrame*);
 
         Register* reservationTop() const
@@ -138,17 +138,17 @@ namespace JSC {
         void addToCommittedByteCount(long);
 
         void setStackLimit(Register* newTopOfStack);
-#endif // ENABLE(LLINT_C_LOOP)
+#endif // !ENABLE(JIT)
 
         VM& m_vm;
         CallFrame*& m_topCallFrame;
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
         Register* m_end;
         Register* m_commitTop;
         PageReservation m_reservation;
         Register* m_lastStackTop;
         ptrdiff_t m_reservedZoneSizeInRegisters;
-#endif // ENABLE(LLINT_C_LOOP)
+#endif // !ENABLE(JIT)
 
         friend class LLIntOffsetsExtractor;
     };

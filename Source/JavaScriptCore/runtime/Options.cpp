@@ -216,9 +216,6 @@ static void recomputeDependentOptions()
     Options::useDFGJIT() = false;
     Options::useFTLJIT() = false;
 #endif
-#if !ENABLE(LLINT)
-    Options::useLLInt() = false;
-#endif
 #if !ENABLE(YARR_JIT)
     Options::useRegExpJIT() = false;
 #endif

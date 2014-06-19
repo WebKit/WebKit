@@ -63,7 +63,6 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(uid);
-#if ENABLE(LLINT)
     Instruction* instruction = profiledBlock->instructions().begin() + bytecodeIndex;
 
     Structure* structure = instruction[4].u.structure.get();
@@ -99,9 +98,6 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
         structure, newStructure,
         chain ? adoptRef(new IntendedStructureChain(profiledBlock, structure, chain)) : 0,
         offset);
-#else
-    return PutByIdStatus(NoInformation);
-#endif
 }
 
 PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& map, unsigned bytecodeIndex, StringImpl* uid)

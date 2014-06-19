@@ -35,8 +35,6 @@
 #include "VM.h"
 #include <wtf/StdLibExtras.h>
 
-#if ENABLE(JIT) || ENABLE(LLINT)
-
 namespace JSC {
 
 // The purpose of this namespace is to include slow paths that are shared
@@ -201,7 +199,5 @@ SLOW_PATH_HIDDEN_DECL(slow_path_strcat);
 SLOW_PATH_HIDDEN_DECL(slow_path_to_primitive);
 
 } // namespace JSC
-
-#endif // ENABLE(JIT) || ENABLE(LLINT)
 
 #endif // CommonSlowPaths_h

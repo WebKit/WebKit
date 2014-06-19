@@ -26,8 +26,6 @@
 #ifndef LLIntThunks_h
 #define LLIntThunks_h
 
-#if ENABLE(LLINT)
-
 #include "MacroAssemblerCodeRef.h"
 
 namespace JSC {
@@ -50,7 +48,5 @@ MacroAssemblerCodeRef evalEntryThunkGenerator(VM*);
 MacroAssemblerCodeRef programEntryThunkGenerator(VM*);
 
 } } // namespace JSC::LLInt
-
-#endif // ENABLE(LLINT)
 
 #endif // LLIntThunks_h

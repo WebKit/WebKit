@@ -285,13 +285,7 @@ PassRefPtr<CodeBlock> ScriptExecutable::newReplacementCodeBlockFor(
 
 static void setupLLInt(VM& vm, CodeBlock* codeBlock)
 {
-#if ENABLE(LLINT)
     LLInt::setEntrypoint(vm, codeBlock);
-#else
-    UNUSED_PARAM(vm);
-    UNUSED_PARAM(codeBlock);
-    UNREACHABLE_FOR_PLATFORM();
-#endif
 }
 
 static void setupJIT(VM& vm, CodeBlock* codeBlock)

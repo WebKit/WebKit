@@ -315,10 +315,8 @@ namespace JSC {
 
         void* enabledProfilerAddress() { return &m_enabledProfiler; }
 
-#if ENABLE(JIT) && ENABLE(LLINT)
+#if ENABLE(JIT)
         bool canUseJIT() { return m_canUseJIT; }
-#elif ENABLE(JIT)
-        bool canUseJIT() { return true; } // jit only
 #else
         bool canUseJIT() { return false; } // interpreter only
 #endif
@@ -392,7 +390,7 @@ namespace JSC {
         void** addressOfFTLStackLimit() { return &m_ftlStackLimit; }
 #endif
 
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
         void* jsStackLimit() { return m_jsStackLimit; }
         void setJSStackLimit(void* limit) { m_jsStackLimit = limit; }
 #endif
@@ -536,7 +534,7 @@ namespace JSC {
 #endif
         void* m_stackPointerAtVMEntry;
         size_t m_reservedZoneSize;
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
         struct {
             void* m_stackLimit;
             void* m_jsStackLimit;
@@ -578,7 +576,7 @@ namespace JSC {
         return &m_vm->heap;
     }
 
-#if !ENABLE(LLINT_C_LOOP)
+#if ENABLE(JIT)
     extern "C" void sanitizeStackForVMImpl(VM*);
 #endif
 

@@ -36,7 +36,7 @@
 
 namespace JSC {
 
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
 static size_t committedBytesCount = 0;
 
 static Mutex& stackStatisticsMutex()
@@ -44,17 +44,17 @@ static Mutex& stackStatisticsMutex()
     DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, staticMutex, ());
     return staticMutex;
 }    
-#endif // ENABLE(LLINT_C_LOOP)
+#endif // !ENABLE(JIT)
 
 JSStack::JSStack(VM& vm)
     : m_vm(vm)
     , m_topCallFrame(vm.topCallFrame)
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
     , m_end(0)
     , m_reservedZoneSizeInRegisters(0)
 #endif
 {
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
     size_t capacity = Options::maxPerThreadStackUsage();
     ASSERT(capacity && isPageAligned(capacity));
 
@@ -63,12 +63,12 @@ JSStack::JSStack(VM& vm)
     m_commitTop = highAddress();
     
     m_lastStackTop = baseOfStack();
-#endif // ENABLE(LLINT_C_LOOP)
+#endif // !ENABLE(JIT)
 
     m_topCallFrame = 0;
 }
 
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
 JSStack::~JSStack()
 {
     ptrdiff_t sizeToDecommit = reinterpret_cast<char*>(highAddress()) - reinterpret_cast<char*>(m_commitTop);
@@ -158,9 +158,9 @@ void JSStack::setReservedZoneSize(size_t reservedZoneSize)
     if (m_commitTop >= (m_end + 1) - m_reservedZoneSizeInRegisters)
         growSlowCase(m_end + 1);
 }
-#endif // ENABLE(LLINT_C_LOOP)
+#endif // !ENABLE(JIT)
 
-#if !ENABLE(LLINT_C_LOOP)
+#if ENABLE(JIT)
 Register* JSStack::lowAddress() const
 {
     ASSERT(wtfThreadData().stack().isGrowingDownward());
@@ -172,11 +172,11 @@ Register* JSStack::highAddress() const
     ASSERT(wtfThreadData().stack().isGrowingDownward());
     return reinterpret_cast<Register*>(wtfThreadData().stack().origin());
 }
-#endif // !ENABLE(LLINT_C_LOOP)
+#endif // ENABLE(JIT)
 
 size_t JSStack::committedByteCount()
 {
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
     MutexLocker locker(stackStatisticsMutex());
     return committedBytesCount;
 #else

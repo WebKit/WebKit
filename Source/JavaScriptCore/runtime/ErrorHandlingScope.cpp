@@ -38,7 +38,7 @@ ErrorHandlingScope::ErrorHandlingScope(VM& vm)
     RELEASE_ASSERT(m_vm.stackPointerAtVMEntry());
     size_t newReservedZoneSize = Options::errorModeReservedZoneSize();
     m_savedReservedZoneSize = m_vm.updateReservedZoneSize(newReservedZoneSize);
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
     m_vm.interpreter->stack().setReservedZoneSize(newReservedZoneSize);
 #endif
 }
@@ -47,7 +47,7 @@ ErrorHandlingScope::~ErrorHandlingScope()
 {
     RELEASE_ASSERT(m_vm.stackPointerAtVMEntry());
     m_vm.updateReservedZoneSize(m_savedReservedZoneSize);
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
     m_vm.interpreter->stack().setReservedZoneSize(m_savedReservedZoneSize);
 #endif
 }

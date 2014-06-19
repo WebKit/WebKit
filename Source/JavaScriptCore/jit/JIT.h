@@ -230,11 +230,7 @@ namespace JSC {
         static CodeRef compileCTINativeCall(VM* vm, NativeFunction func)
         {
             if (!vm->canUseJIT()) {
-#if ENABLE(LLINT)
                 return CodeRef::createLLIntCodeRef(llint_native_call_trampoline);
-#else
-                return CodeRef();
-#endif
             }
             JIT jit(vm, 0);
             return jit.privateCompileCTINativeCall(vm, func);

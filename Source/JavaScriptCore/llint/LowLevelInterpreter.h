@@ -26,11 +26,9 @@
 #ifndef LowLevelInterpreter_h
 #define LowLevelInterpreter_h
 
-#if ENABLE(LLINT)
-
 #include "Opcode.h"
 
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
 
 namespace JSC {
 
@@ -47,8 +45,6 @@ FOR_EACH_CORE_OPCODE_ID(LLINT_OPCODE_ALIAS)
 
 } // namespace JSC
 
-#endif // ENABLE(LLINT_C_LOOP)
-
-#endif // ENABLE(LLINT)
+#endif // !ENABLE(JIT)
 
 #endif // LowLevelInterpreter_h

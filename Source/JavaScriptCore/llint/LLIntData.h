@@ -34,15 +34,13 @@ namespace JSC {
 class VM;
 struct Instruction;
 
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
 typedef OpcodeID LLIntCode;
 #else
 typedef void (*LLIntCode)();
 #endif
 
 namespace LLInt {
-
-#if ENABLE(LLINT)
 
 class Data {
 public:
@@ -92,24 +90,6 @@ ALWAYS_INLINE LLIntCode getCodeFunctionPtr(OpcodeID codeId)
     return reinterpret_cast<LLIntCode>(getCodePtr(codeId));
 }
 #endif
-
-#else // !ENABLE(LLINT)
-
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
-#endif
-
-class Data {
-public:
-    static void performAssertions(VM&) { }
-};
-
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
-
-#endif // !ENABLE(LLINT)
 
 ALWAYS_INLINE void* getCodePtr(JSC::EncodedJSValue glueHelper())
 {

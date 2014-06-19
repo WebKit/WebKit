@@ -283,7 +283,6 @@ void CodeBlock::printGetByIdOp(PrintStream& out, ExecState* exec, int location, 
     it += 4; // Increment up to the value profiler.
 }
 
-#if ENABLE(JIT) || ENABLE(LLINT) // unused in some configurations
 static void dumpStructure(PrintStream& out, const char* name, ExecState* exec, Structure* structure, const Identifier& ident)
 {
     if (!structure)
@@ -295,7 +294,6 @@ static void dumpStructure(PrintStream& out, const char* name, ExecState* exec, S
     if (offset != invalidOffset)
         out.printf(" (offset = %d)", offset);
 }
-#endif
 
 #if ENABLE(JIT) // unused when not ENABLE(JIT), leading to silly warnings
 static void dumpChain(PrintStream& out, ExecState* exec, StructureChain* chain, const Identifier& ident)
@@ -323,7 +321,6 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
     
     UNUSED_PARAM(ident); // tell the compiler to shut up in certain platform configurations.
     
-#if ENABLE(LLINT)
     if (exec->interpreter()->getOpcodeID(instruction[0].u.opcode) == op_get_array_length)
         out.printf(" llint(array_length)");
     else if (Structure* structure = instruction[4].u.structure.get()) {
@@ -331,7 +328,6 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
         dumpStructure(out, "struct", exec, structure, ident);
         out.printf(")");
     }
-#endif
 
 #if ENABLE(JIT)
     if (StructureStubInfo* stubPtr = map.get(CodeOrigin(location))) {
@@ -416,7 +412,6 @@ void CodeBlock::printCallOp(PrintStream& out, ExecState* exec, int location, con
     printLocationAndOp(out, exec, location, it, op);
     out.printf("%s, %s, %d, %d", registerName(dst).data(), registerName(func).data(), argCount, registerOffset);
     if (cacheDumpMode == DumpCaches) {
-#if ENABLE(LLINT)
         LLIntCallLinkInfo* callLinkInfo = it[1].u.callLinkInfo;
         if (callLinkInfo->lastSeenCallee) {
             out.printf(
@@ -424,7 +419,6 @@ void CodeBlock::printCallOp(PrintStream& out, ExecState* exec, int location, con
                 callLinkInfo->lastSeenCallee.get(),
                 callLinkInfo->lastSeenCallee->executable());
         }
-#endif
 #if ENABLE(JIT)
         if (CallLinkInfo* info = map.get(CodeOrigin(location))) {
             JSFunction* target = info->lastSeenCallee.get();
@@ -1583,7 +1577,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
                 m_rareData->m_exceptionHandlers[i].end = handler.end;
                 m_rareData->m_exceptionHandlers[i].target = handler.target;
                 m_rareData->m_exceptionHandlers[i].scopeDepth = nonLocalScopeDepth + handler.scopeDepth;
-#if ENABLE(JIT) && ENABLE(LLINT)
+#if ENABLE(JIT)
                 m_rareData->m_exceptionHandlers[i].nativeCode = CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(LLInt::getCodePtr(op_catch)));
 #endif
             }
@@ -1614,10 +1608,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     }
 
     // Allocate metadata buffers for the bytecode
-#if ENABLE(LLINT)
     if (size_t size = unlinkedCodeBlock->numberOfLLintCallLinkInfos())
         m_llintCallLinkInfos.resizeToFit(size);
-#endif
     if (size_t size = unlinkedCodeBlock->numberOfArrayProfiles())
         m_arrayProfiles.grow(size);
     if (size_t size = unlinkedCodeBlock->numberOfArrayAllocationProfiles())
@@ -1701,15 +1693,11 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             int arrayProfileIndex = pc[opLength - 2].u.operand;
             m_arrayProfiles[arrayProfileIndex] = ArrayProfile(i);
             instructions[i + opLength - 2] = &m_arrayProfiles[arrayProfileIndex];
-#if ENABLE(LLINT)
             instructions[i + 5] = &m_llintCallLinkInfos[pc[5].u.operand];
-#endif
             break;
         }
         case op_construct: {
-#if ENABLE(LLINT)
             instructions[i + 5] = &m_llintCallLinkInfos[pc[5].u.operand];
-#endif
             ValueProfile* profile = &m_valueProfiles[pc[opLength - 1].u.operand];
             ASSERT(profile->m_bytecodeOffset == -1);
             profile->m_bytecodeOffset = i;
@@ -1837,11 +1825,8 @@ CodeBlock::~CodeBlock()
 #if ENABLE(VERBOSE_VALUE_PROFILE)
     dumpValueProfiles();
 #endif
-
-#if ENABLE(LLINT)    
     while (m_incomingLLIntCalls.begin() != m_incomingLLIntCalls.end())
         m_incomingLLIntCalls.begin()->remove();
-#endif // ENABLE(LLINT)
 #if ENABLE(JIT)
     // We may be destroyed before any CodeBlocks that refer to us are destroyed.
     // Consider that two CodeBlocks become unreachable at the same time. There
@@ -2024,7 +2009,6 @@ void CodeBlock::propagateTransitions(SlotVisitor& visitor)
 
     bool allAreMarkedSoFar = true;
         
-#if ENABLE(LLINT)
     Interpreter* interpreter = m_vm->interpreter;
     if (jitType() == JITCode::InterpreterThunk) {
         const Vector<unsigned>& propertyAccessInstructions = m_unlinkedCode->propertyAccessInstructions();
@@ -2046,7 +2030,6 @@ void CodeBlock::propagateTransitions(SlotVisitor& visitor)
             }
         }
     }
-#endif // ENABLE(LLINT)
 
 #if ENABLE(JIT)
     if (JITCode::isJIT(jitType())) {
@@ -2243,7 +2226,6 @@ void CodeBlock::finalizeUnconditionally()
             }
         }
 
-#if ENABLE(LLINT)
         for (unsigned i = 0; i < m_llintCallLinkInfos.size(); ++i) {
             if (m_llintCallLinkInfos[i].isLinked() && !Heap::isMarked(m_llintCallLinkInfos[i].callee.get())) {
                 if (Options::verboseOSR())
@@ -2253,7 +2235,6 @@ void CodeBlock::finalizeUnconditionally()
             if (!!m_llintCallLinkInfos[i].lastSeenCallee && !Heap::isMarked(m_llintCallLinkInfos[i].lastSeenCallee.get()))
                 m_llintCallLinkInfos[i].lastSeenCallee.clear();
         }
-#endif // ENABLE(LLINT)
     }
 
 #if ENABLE(DFG_JIT)
@@ -2649,12 +2630,10 @@ void CodeBlock::unlinkCalls()
 {
     if (!!m_alternative)
         m_alternative->unlinkCalls();
-#if ENABLE(LLINT)
     for (size_t i = 0; i < m_llintCallLinkInfos.size(); ++i) {
         if (m_llintCallLinkInfos[i].isLinked())
             m_llintCallLinkInfos[i].unlink();
     }
-#endif
     if (m_callLinkInfos.isEmpty())
         return;
     if (!m_vm->canUseJIT())
@@ -2677,10 +2656,8 @@ void CodeBlock::linkIncomingCall(ExecState* callerFrame, CallLinkInfo* incoming)
 
 void CodeBlock::unlinkIncomingCalls()
 {
-#if ENABLE(LLINT)
     while (m_incomingLLIntCalls.begin() != m_incomingLLIntCalls.end())
         m_incomingLLIntCalls.begin()->unlink();
-#endif // ENABLE(LLINT)
 #if ENABLE(JIT)
     if (m_incomingCalls.isEmpty())
         return;
@@ -2690,13 +2667,11 @@ void CodeBlock::unlinkIncomingCalls()
 #endif // ENABLE(JIT)
 }
 
-#if ENABLE(LLINT)
 void CodeBlock::linkIncomingCall(ExecState* callerFrame, LLIntCallLinkInfo* incoming)
 {
     noticeIncomingCall(callerFrame);
     m_incomingLLIntCalls.push(incoming);
 }
-#endif // ENABLE(LLINT)
 
 void CodeBlock::clearEvalCache()
 {
@@ -3371,10 +3346,8 @@ void CodeBlock::dumpValueProfiles()
 unsigned CodeBlock::frameRegisterCount()
 {
     switch (jitType()) {
-#if ENABLE(LLINT)
     case JITCode::InterpreterThunk:
         return LLInt::frameRegisterCountFor(this);
-#endif // ENABLE(LLINT)
 
 #if ENABLE(JIT)
     case JITCode::BaselineJIT:

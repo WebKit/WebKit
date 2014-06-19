@@ -219,7 +219,7 @@ namespace JSC {
         OpcodeID getOpcodeID(Opcode opcode)
         {
             ASSERT(m_initialized);
-#if ENABLE(COMPUTED_GOTO_OPCODES) && ENABLE(LLINT)
+#if ENABLE(COMPUTED_GOTO_OPCODES)
             ASSERT(isOpcode(opcode));
             return m_opcodeIDTable.get(opcode);
 #else
@@ -274,7 +274,7 @@ namespace JSC {
         JSStack m_stack;
         int m_errorHandlingModeReentry;
         
-#if ENABLE(COMPUTED_GOTO_OPCODES) && ENABLE(LLINT)
+#if ENABLE(COMPUTED_GOTO_OPCODES)
         Opcode* m_opcodeTable; // Maps OpcodeID => Opcode for compiling
         HashMap<Opcode, OpcodeID> m_opcodeIDTable; // Maps Opcode => OpcodeID for decompiling
 #endif

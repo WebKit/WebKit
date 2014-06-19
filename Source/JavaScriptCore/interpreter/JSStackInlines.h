@@ -35,7 +35,7 @@ namespace JSC {
 
 inline bool JSStack::ensureCapacityFor(Register* newTopOfStack)
 {
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
     return grow(newTopOfStack);
 #else
     ASSERT(wtfThreadData().stack().isGrowingDownward());
@@ -43,14 +43,12 @@ inline bool JSStack::ensureCapacityFor(Register* newTopOfStack)
 #endif
 }
 
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
 
 inline Register* JSStack::topOfFrameFor(CallFrame* frame)
 {
-#if ENABLE(LLINT_C_LOOP)
     if (UNLIKELY(!frame))
         return baseOfStack();
-#endif
     return frame->topOfFrame() - 1;
 }
 
@@ -86,12 +84,10 @@ inline void JSStack::setStackLimit(Register* newTopOfStack)
 {
     Register* newEnd = newTopOfStack - 1;
     m_end = newEnd;
-#if ENABLE(LLINT_C_LOOP)
     m_vm.setJSStackLimit(newTopOfStack);
-#endif
 }
 
-#endif // ENABLE(LLINT_C_LOOP)
+#endif // !ENABLE(JIT)
 
 } // namespace JSC
 

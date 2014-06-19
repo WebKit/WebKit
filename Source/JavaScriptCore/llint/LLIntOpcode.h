@@ -26,19 +26,17 @@
 #ifndef LLIntOpcode_h
 #define LLIntOpcode_h
 
-#if ENABLE(LLINT)
-
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
 
 #define FOR_EACH_LLINT_NOJIT_NATIVE_HELPER(macro) \
     FOR_EACH_CLOOP_BYTECODE_HELPER_ID(macro)
 
-#else // !ENABLE(LLINT_C_LOOP)
+#else // ENABLE(JIT)
 
 #define FOR_EACH_LLINT_NOJIT_NATIVE_HELPER(macro) \
     // Nothing to do here. Use the JIT impl instead.
 
-#endif // !ENABLE(LLINT_C_LOOP)
+#endif // !ENABLE(JIT)
 
 
 #define FOR_EACH_LLINT_NATIVE_HELPER(macro) \
@@ -49,11 +47,5 @@
 
 
 #define FOR_EACH_LLINT_OPCODE_EXTENSION(macro) FOR_EACH_LLINT_NATIVE_HELPER(macro)
-
-#else // !ENABLE(LLINT)
-
-#define FOR_EACH_LLINT_OPCODE_EXTENSION(macro) // Nothing to add.
-
-#endif // !ENABLE(LLINT)
 
 #endif // LLIntOpcode_h

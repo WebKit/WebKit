@@ -30,7 +30,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/InlineASM.h>
 
-#if ENABLE(LLINT_C_LOOP)
+#if !ENABLE(JIT)
 #define OFFLINE_ASM_C_LOOP 1
 #define OFFLINE_ASM_X86 0
 #define OFFLINE_ASM_X86_WIN 0
@@ -43,7 +43,7 @@
 #define OFFLINE_ASM_MIPS 0
 #define OFFLINE_ASM_SH4 0
 
-#else // !ENABLE(LLINT_C_LOOP)
+#else // ENABLE(JIT)
 
 #define OFFLINE_ASM_C_LOOP 0
 
@@ -121,7 +121,7 @@
 #endif
 #endif
 
-#endif // !ENABLE(LLINT_C_LOOP)
+#endif // ENABLE(JIT)
 
 #if USE(JSVALUE64)
 #define OFFLINE_ASM_JSVALUE64 1
