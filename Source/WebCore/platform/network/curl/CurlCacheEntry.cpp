@@ -184,17 +184,17 @@ void CurlCacheEntry::setResponseFromCachedHeaders(ResourceResponse& response)
 
     // Try to parse expected content length
     long long contentLength = -1;
-    if (!response.httpHeaderField("Content-Length").isNull()) {
+    if (!response.httpHeaderField(HTTPHeaderName::ContentLength).isNull()) {
         bool success = false;
-        long long parsedContentLength = response.httpHeaderField("Content-Length").toInt64(&success);
+        long long parsedContentLength = response.httpHeaderField(HTTPHeaderName::ContentLength).toInt64(&success);
         if (success)
             contentLength = parsedContentLength;
     }
     response.setExpectedContentLength(contentLength); // -1 on parse error or null
 
-    response.setMimeType(extractMIMETypeFromMediaType(response.httpHeaderField("Content-Type")));
-    response.setTextEncodingName(extractCharsetFromMediaType(response.httpHeaderField("Content-Type")));
-    response.setSuggestedFilename(filenameFromHTTPContentDisposition(response.httpHeaderField("Content-Disposition")));
+    response.setMimeType(extractMIMETypeFromMediaType(response.httpHeaderField(HTTPHeaderName::ContentType)));
+    response.setTextEncodingName(extractCharsetFromMediaType(response.httpHeaderField(HTTPHeaderName::ContentType)));
+    response.setSuggestedFilename(filenameFromHTTPContentDisposition(response.httpHeaderField(HTTPHeaderName::ContentDisposition)));
 }
 
 void CurlCacheEntry::didFail()
@@ -332,11 +332,11 @@ bool CurlCacheEntry::parseResponseHeaders(const ResourceResponse& response)
             m_expireDate = 0;
     }
 
-    String etag = response.httpHeaderField("ETag");
+    String etag = response.httpHeaderField(HTTPHeaderName::ETag);
     if (!etag.isNull())
         m_requestHeaders.set(HTTPHeaderName::IfNoneMatch, etag);
 
-    String lastModified = response.httpHeaderField("Last-Modified");
+    String lastModified = response.httpHeaderField(HTTPHeaderName::LastModified);
     if (!lastModified.isNull())
         m_requestHeaders.set(HTTPHeaderName::IfModifiedSince, lastModified);
 

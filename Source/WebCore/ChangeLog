@@ -1,3 +1,17 @@
+2014-06-18  Alex Christensen  <achristensen@webkit.org>
+
+        [curl] Unreviewed speculative build fix after r170021.
+
+        * platform/network/curl/CurlCacheEntry.cpp:
+        (WebCore::CurlCacheEntry::setResponseFromCachedHeaders):
+        (WebCore::CurlCacheEntry::parseResponseHeaders):
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::didReceiveHeader):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::getProtectionSpace):
+        (WebCore::headerCallback):
+        Use HTTPHeaderName constants.
+
 2014-06-18  Simon Fraser  <simon.fraser@apple.com>
 
         Move the removeNode() tree walking from ScrollingStateNote into ScrollingStateTree
