@@ -1,3 +1,17 @@
+2014-06-19  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style does not understand Obj-C literal syntax for NSDictionary
+        <http://webkit.org/b/134061>
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_spacing): Ignore '@' immediately before '{'.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_spacing_before_braces): Add unit test for
+        '^{' block syntax and '@{' Objective-C liternal NSDitionary
+        syntax.
+
 2014-06-18  Tim Horton  <timothy_horton@apple.com>
 
         All of MiniBrowser's WKWebViews should share a configuration
