@@ -378,6 +378,7 @@ WebInspector.DOMNode.prototype = {
                     hidden: accessibilityProperties.hidden,
                     label: accessibilityProperties.label,
                     liveRegionAtomic: accessibilityProperties.liveRegionAtomic,
+                    liveRegionRelevant: accessibilityProperties.liveRegionRelevant,
                     liveRegionStatus: accessibilityProperties.liveRegionStatus,
                     mouseEventNodeId: accessibilityProperties.mouseEventNodeId,
                     nodeId: accessibilityProperties.nodeId,

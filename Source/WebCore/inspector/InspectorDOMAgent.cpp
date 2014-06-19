@@ -1458,6 +1458,7 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
     bool hidden = false;
     String label; // FIXME: Waiting on http://webkit.org/b/121134
     bool liveRegionAtomic = false;
+    RefPtr<Inspector::TypeBuilder::Array<String>> liveRegionRelevant;
     TypeBuilder::DOM::AccessibilityProperties::LiveRegionStatus::Enum liveRegionStatus = TypeBuilder::DOM::AccessibilityProperties::LiveRegionStatus::Off;
     Node* mouseEventNode = nullptr;
     RefPtr<Inspector::TypeBuilder::Array<int>> ownedNodeIds;
@@ -1553,6 +1554,31 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             if (axObject->supportsARIALiveRegion()) {
                 supportsLiveRegion = true;
                 liveRegionAtomic = axObject->ariaLiveRegionAtomic();
+
+                String ariaRelevantAttrValue = axObject->ariaLiveRegionRelevant();
+                if (!ariaRelevantAttrValue.isEmpty()) {
+                    // FIXME: Pass enum values rather than strings once unblocked. http://webkit.org/b/133711
+                    String ariaRelevantAdditions = TypeBuilder::getWebEnumConstantValue(TypeBuilder::DOM::LiveRegionRelevant::Additions);
+                    String ariaRelevantRemovals = TypeBuilder::getWebEnumConstantValue(TypeBuilder::DOM::LiveRegionRelevant::Removals);
+                    String ariaRelevantText = TypeBuilder::getWebEnumConstantValue(TypeBuilder::DOM::LiveRegionRelevant::Text);
+                    liveRegionRelevant = Inspector::TypeBuilder::Array<String>::create();
+                    const SpaceSplitString& values = SpaceSplitString(ariaRelevantAttrValue, true);
+                    // @aria-relevant="all" is exposed as ["additions","removals","text"], in order.
+                    // This order is controlled in WebCore and expected in WebInspectorUI.
+                    if (values.contains("all")) {
+                        liveRegionRelevant->addItem(ariaRelevantAdditions);
+                        liveRegionRelevant->addItem(ariaRelevantRemovals);
+                        liveRegionRelevant->addItem(ariaRelevantText);
+                    } else {
+                        if (values.contains(ariaRelevantAdditions))
+                            liveRegionRelevant->addItem(ariaRelevantAdditions);
+                        if (values.contains(ariaRelevantRemovals))
+                            liveRegionRelevant->addItem(ariaRelevantRemovals);
+                        if (values.contains(ariaRelevantText))
+                            liveRegionRelevant->addItem(ariaRelevantText);
+                    }
+                }
+
                 String ariaLive = axObject->ariaLiveRegionStatus();
                 if (ariaLive == "assertive")
                     liveRegionStatus = TypeBuilder::DOM::AccessibilityProperties::LiveRegionStatus::Assertive;
@@ -1637,6 +1663,8 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             value->setHidden(hidden);
         if (supportsLiveRegion) {
             value->setLiveRegionAtomic(liveRegionAtomic);
+            if (liveRegionRelevant->length())
+                value->setLiveRegionRelevant(liveRegionRelevant);
             value->setLiveRegionStatus(liveRegionStatus);
         }
         if (mouseEventNode)

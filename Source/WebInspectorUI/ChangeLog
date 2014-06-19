@@ -1,3 +1,17 @@
+2014-06-18  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: expose aria-relevant
+        https://bugs.webkit.org/show_bug.cgi?id=130913
+
+        Reviewed by Joseph Pecoraro.
+
+        Expose ARIA live region relevance in Web Inspector.
+        E.g. "Live: Assertive (Additions, Text)"
+
+        * Localizations/en.lproj/localizedStrings.js: New strings.
+        * UserInterface/Models/DOMNode.js: One additional property passed.
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js: UI updates to support new property.
+
 2014-06-18  Simon Fraser  <simon.fraser@apple.com>
 
         Add rebeccapurple to CSS named color list

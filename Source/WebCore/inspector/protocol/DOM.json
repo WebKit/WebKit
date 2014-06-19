@@ -13,6 +13,12 @@
             "description": "Unique DOM node identifier used to reference a node that may not have been pushed to the front-end."
         },
         {
+            "id": "LiveRegionRelevant",
+            "type": "string",
+            "enum": ["additions", "removals", "text"],
+            "description": "Token values of @aria-relevant attribute."
+        },
+        {
             "id": "Node",
             "type": "object",
             "properties": [
@@ -76,6 +82,7 @@
                 { "name": "hidden", "type": "boolean", "optional": true, "description": "Hidden state. True if node or an ancestor is hidden via CSS or explicit @aria-hidden, to clarify why the element is ignored." },
                 { "name": "label", "type": "string", "description": "Computed label value for the node, sometimes calculated by referencing other nodes." },
                 { "name": "liveRegionAtomic", "type": "boolean", "optional": true, "description": "Value of @aria-atomic." },
+                { "name": "liveRegionRelevant", "type": "array", "items": { "type": "string" }, "optional": true, "description": "Token value(s) of element's @aria-relevant attribute. Array of string values matching $ref LiveRegionRelevant. FIXME: Enum values blocked by http://webkit.org/b/133711" },
                 { "name": "liveRegionStatus", "type": "string", "optional": true, "enum": ["assertive", "polite", "off"], "description": "Value of element's @aria-live attribute." },
                 { "name": "mouseEventNodeId", "$ref": "NodeId", "optional": true, "description": "<code>DOMNode</code> id of node or closest ancestor node that has a mousedown, mouseup, or click event handler." },
                 { "name": "nodeId", "$ref": "NodeId", "description": "Target <code>DOMNode</code> id." },

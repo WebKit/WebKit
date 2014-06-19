@@ -27,6 +27,21 @@
 	<div class="ex" role="status" aria-live="off">off</div>
 	<div class="ex" role="timer">off (default)</div>
 
+    <div class="ex" role="alert">relevant: additions text (implicit)</div>
+    <div class="ex" role="alert" aria-relevant="additions text">relevant: additions text (explicit)</div>
+    <div class="ex" role="alert" aria-relevant="text additions">relevant: additions text (order should be normalized)</div>
+    <div class="ex" role="alert" aria-relevant="additions removals">relevant: additions removals</div>
+    <div class="ex" role="alert" aria-relevant="removals text">relevant: removals text</div>
+    <div class="ex" role="alert" aria-relevant="removals">relevant: removals</div>
+    <div class="ex" role="alert" aria-relevant="text">relevant: text</div>
+    <div class="ex" role="alert" aria-relevant="additions">relevant: additions</div>
+    <div class="ex" role="alert" aria-relevant="all">relevant: all (explicit)</div>
+    <div class="ex" role="alert" aria-relevant="additions removals text">relevant: all (implicit)</div>
+    <div class="ex" role="alert" aria-relevant="text additions removals">relevant: all (implicit)</div>
+    <div class="ex" role="alert" aria-relevant="text removals additions">relevant: all (implicit)</div>
+    <div class="ex" role="alert" aria-relevant="additions removals removals">relevant: additions removals (duplicate)</div>
+    <div class="ex" role="alert" aria-relevant="text text">relevant: text (duplicate)</div>
+
 </div>
 
 <script type="text/javascript">
@@ -89,6 +104,7 @@ function test() {
             case "busy":
             case "exists":
             case "liveRegionAtomic":
+            case "liveRegionRelevant":
             case "liveRegionStatus":
                 InspectorTest.log("    " + key + ": " + value);
                 break;

@@ -373,15 +373,45 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                 default:
                     liveRegionStatus = "";
                 }
-                if (liveRegionStatus && accessibilityProperties.liveRegionAtomic === true) {
-                    liveRegionStatusNode = document.createElement("div");
-                    liveRegionStatusNode.className = "value-with-clarification";
-                    liveRegionStatusNode.setAttribute("role", "text");
-                    liveRegionStatusNode.appendChild(document.createTextNode(liveRegionStatus));
-                    var clarificationNode = document.createElement("div");
-                    clarificationNode.className = "clarification";
-                    clarificationNode.appendChild(document.createTextNode(WebInspector.UIString("Region announced in its entirety.")));
-                    liveRegionStatusNode.appendChild(clarificationNode);
+                if (liveRegionStatus) {
+                    var liveRegionRelevant = accessibilityProperties.liveRegionRelevant;
+                    // Append @aria-relevant values. E.g. "Live: Assertive (Additions, Text)".
+                    if (liveRegionRelevant && liveRegionRelevant.length) {
+                        // @aria-relevant="all" is exposed as ["additions","removals","text"], in order.
+                        // This order is controlled in WebCore and expected in WebInspectorUI.
+                        if (liveRegionRelevant.length === 3 
+                            && liveRegionRelevant[0] === DOMAgent.LiveRegionRelevant.Additions
+                            && liveRegionRelevant[1] === DOMAgent.LiveRegionRelevant.Removals
+                            && liveRegionRelevant[2] === DOMAgent.LiveRegionRelevant.Text)
+                            liveRegionRelevant = [WebInspector.UIString("All Changes")];
+                        else {
+                            // Reassign localized strings in place: ["additions","text"] becomes ["Additions","Text"].
+                            liveRegionRelevant = liveRegionRelevant.map(function(value) {
+                                switch (value) {
+                                case DOMAgent.LiveRegionRelevant.Additions:
+                                    return WebInspector.UIString("Additions");
+                                case DOMAgent.LiveRegionRelevant.Removals:
+                                    return WebInspector.UIString("Removals");
+                                case DOMAgent.LiveRegionRelevant.Text:
+                                    return WebInspector.UIString("Text");
+                                default: // If WebCore sends a new unhandled value, display as a String.
+                                    return "\"" + value + "\"";
+                                }
+                            });
+                        }
+                        liveRegionStatus += " (" + liveRegionRelevant.join(", ") + ")";
+                    }
+                    // Clarify @aria-atomic if necessary.
+                    if (accessibilityProperties.liveRegionAtomic) {
+                        liveRegionStatusNode = document.createElement("div");
+                        liveRegionStatusNode.className = "value-with-clarification";
+                        liveRegionStatusNode.setAttribute("role", "text");
+                        liveRegionStatusNode.appendChild(document.createTextNode(liveRegionStatus));
+                        var clarificationNode = document.createElement("div");
+                        clarificationNode.className = "clarification";
+                        clarificationNode.appendChild(document.createTextNode(WebInspector.UIString("Region announced in its entirety.")));
+                        liveRegionStatusNode.appendChild(clarificationNode);
+                    }
                 }
 
                 var mouseEventNodeId = accessibilityProperties.mouseEventNodeId;
