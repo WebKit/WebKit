@@ -1750,6 +1750,13 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         _page->setFormClient(nullptr);
 }
 
+- (BOOL)_isDisplayingStandaloneImageDocument
+{
+    if (auto* mainFrame = _page->mainFrame())
+        return mainFrame->isDisplayingStandaloneImageDocument();
+    return NO;
+}
+
 #pragma mark iOS-specific methods
 
 #if PLATFORM(IOS)

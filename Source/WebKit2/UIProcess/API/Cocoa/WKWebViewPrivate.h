@@ -174,6 +174,8 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 
 @property (nonatomic, weak, setter=_setFormDelegate:) id <_WKFormDelegate> _formDelegate;
 
+@property (nonatomic, readonly, getter=_isDisplayingStandaloneImageDocument) BOOL _displayingStandaloneImageDocument;
+
 @end
 
 #endif

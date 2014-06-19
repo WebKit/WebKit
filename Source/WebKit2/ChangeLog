@@ -1,3 +1,14 @@
+2014-06-19  Sam Weinig  <sam@webkit.org>
+
+        [Cocoa] Need SPI to determine if the WKWebView is displaying a standalone image
+        https://bugs.webkit.org/show_bug.cgi?id=134071
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _isDisplayingStandaloneImageDocument]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2014-06-19  Dan Bernstein  <mitz@apple.com>
 
         Use a single map for all callback types in WebPageProxy
