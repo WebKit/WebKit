@@ -1,3 +1,13 @@
+2014-06-11  Jeffrey Pfau  <jpfau@apple.com>
+
+        Fix flaky beforeload tests
+        https://bugs.webkit.org/show_bug.cgi?id=133685
+
+        Reviewed by David Kilzer.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+
 2014-06-18  Anders Carlsson  <andersca@apple.com>
 
         Make FrameLoadType a strongly typed enum
