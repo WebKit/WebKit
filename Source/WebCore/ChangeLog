@@ -1,3 +1,21 @@
+2014-06-19  David Kilzer  <ddkilzer@apple.com>
+
+        MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL() leaks an NSMutableArray
+        <http://webkit.org/b/134052>
+
+        Reviewed by Eric Carlson.
+
+        Fixes the following static analyzer warning:
+
+            WebCore/platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:688:43: warning: Potential leak of an object stored into 'outOfBandTracks'
+                    NSMutableArray* outOfBandTracks = [[NSMutableArray alloc] init];
+                                                      ^
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL):
+        Use RetainPtr<NSMutableArray> to prevent a leak.  Use
+        Objective-C literals to clean up the code.
+
 2014-06-18  Zan Dobersek  <zdobersek@igalia.com>
 
         ScriptExecutionContext::Task, FileThread::Task parameters should be values

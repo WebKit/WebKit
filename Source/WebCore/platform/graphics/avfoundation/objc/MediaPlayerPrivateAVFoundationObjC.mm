@@ -685,24 +685,23 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
 #if ENABLE(AVF_CAPTIONS)
     const Vector<RefPtr<PlatformTextTrack>>& outOfBandTrackSources = player()->outOfBandTrackSources();
     if (!outOfBandTrackSources.isEmpty()) {
-        NSMutableArray* outOfBandTracks = [[NSMutableArray alloc] init];
+        RetainPtr<NSMutableArray> outOfBandTracks = adoptNS([[NSMutableArray alloc] init]);
         for (auto& trackSource : outOfBandTrackSources) {
             RetainPtr<CFStringRef> label = trackSource->label().createCFString();
             RetainPtr<CFStringRef> language = trackSource->language().createCFString();
             RetainPtr<CFStringRef> uniqueID = String::number(trackSource->uniqueId()).createCFString();
             RetainPtr<CFStringRef> url = trackSource->url().createCFString();
-            [outOfBandTracks addObject:
-                [NSDictionary dictionaryWithObjectsAndKeys:
-                    reinterpret_cast<const NSString*>(label.get()), AVOutOfBandAlternateTrackDisplayNameKey,
-                    reinterpret_cast<const NSString*>(language.get()), AVOutOfBandAlternateTrackExtendedLanguageTagKey,
-                    [NSNumber numberWithBool: (trackSource->isDefault() ? YES : NO)], AVOutOfBandAlternateTrackIsDefaultKey,
-                    reinterpret_cast<const NSString*>(uniqueID.get()), AVOutOfBandAlternateTrackIdentifierKey,
-                    reinterpret_cast<const NSString*>(url.get()), AVOutOfBandAlternateTrackSourceKey,
-                    mediaDescriptionForKind(trackSource->kind()), AVOutOfBandAlternateTrackMediaCharactersticsKey,
-                    nil]];
+            [outOfBandTracks.get() addObject:@{
+                AVOutOfBandAlternateTrackDisplayNameKey: reinterpret_cast<const NSString*>(label.get()),
+                AVOutOfBandAlternateTrackExtendedLanguageTagKey: reinterpret_cast<const NSString*>(language.get()),
+                AVOutOfBandAlternateTrackIsDefaultKey: trackSource->isDefault() ? @YES : @NO,
+                AVOutOfBandAlternateTrackIdentifierKey: reinterpret_cast<const NSString*>(uniqueID.get()),
+                AVOutOfBandAlternateTrackSourceKey: reinterpret_cast<const NSString*>(url.get()),
+                AVOutOfBandAlternateTrackMediaCharactersticsKey: mediaDescriptionForKind(trackSource->kind()),
+            }];
         }
 
-        [options.get() setObject: outOfBandTracks forKey: AVURLAssetOutOfBandAlternateTracksKey];
+        [options.get() setObject:outOfBandTracks.get() forKey:AVURLAssetOutOfBandAlternateTracksKey];
     }
 #endif
 
