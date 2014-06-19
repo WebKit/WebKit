@@ -117,6 +117,7 @@ PASS pink is 255,192,203
 PASS plum is 221,160,221
 PASS powderblue is 176,224,230
 PASS purple is 128,0,128
+PASS rebeccapurple is 102,51,153
 PASS red is 255,0,0
 PASS rosybrown is 188,143,143
 PASS royalblue is 65,105,225

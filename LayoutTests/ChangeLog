@@ -1,3 +1,15 @@
+2014-06-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Add rebeccapurple to CSS named color list
+        https://bugs.webkit.org/show_bug.cgi?id=133804
+
+        Reviewed by Jer Noble.
+
+        Add the named color "rebeccapurple" (#639).
+
+        * fast/css/named-colors-expected.txt:
+        * fast/css/named-colors.html:
+
 2014-06-11  Jeffrey Pfau  <jpfau@apple.com>
 
         Fix flaky beforeload tests

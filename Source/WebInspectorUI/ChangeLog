@@ -1,3 +1,16 @@
+2014-06-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Add rebeccapurple to CSS named color list
+        https://bugs.webkit.org/show_bug.cgi?id=133804
+
+        Reviewed by Jer Noble.
+        
+        Add the named color "rebeccapurple" (#639).
+
+        * UserInterface/External/CodeMirror/css.js:
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        * UserInterface/Models/Color.js:
+
 2014-06-18  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: REGRESSION: Style declaration editor: placeholder misaligned
