@@ -53,6 +53,9 @@
 #ifdef __OBJC__
 #import <Foundation/Foundation.h>
 typedef NSUInteger NSEventModifierFlags;
+#endif
+
+#if __MAC_OSX_VERSION_MIN_REQUIRED < 1090
 typedef NSInteger NSURLSessionAuthChallengeDisposition;
 #endif
 
