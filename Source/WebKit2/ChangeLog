@@ -1,3 +1,71 @@
+2014-06-19  Dan Bernstein  <mitz@apple.com>
+
+        Use a single map for all callback types in WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=134069
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/GenericCallback.h:
+        (WebKit::CallbackBase::as): Added. Performs a dynamic cast to a specific callback type.
+        (WebKit::CallbackBase::CallbackBase): Added a type parameter, which is used to initialize
+        the new m_type member.
+        (WebKit::GenericCallback::GenericCallback): Pass the type to the base class constructor.
+        (WebKit::GenericCallback::type): Added. Returns a unique type.
+        (WebKit::GenericCallback::invalidate): Now virtual.
+
+        (WebKit::CallbackMap::put): Adds the callback to the map.
+        (WebKit::CallbackMap::take): Removes the callback from the map, and dynamically casts it to
+        the specified type.
+        (WebKit::CallbackMap::invalidate): Invalidates the map.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::validateCommand):
+        (WebKit::WebPageProxy::runJavaScriptInMainFrame):
+        (WebKit::WebPageProxy::getRenderTreeExternalRepresentation):
+        (WebKit::WebPageProxy::getSourceForFrame):
+        (WebKit::WebPageProxy::getContentsAsString):
+        (WebKit::WebPageProxy::getBytecodeProfile):
+        (WebKit::WebPageProxy::getSelectionOrContentsAsString):
+        (WebKit::WebPageProxy::getSelectionAsWebArchiveData):
+        (WebKit::WebPageProxy::getMainResourceDataOfFrame):
+        (WebKit::WebPageProxy::getResourceDataFromFrame):
+        (WebKit::WebPageProxy::getWebArchiveOfFrame):
+        (WebKit::WebPageProxy::forceRepaint):
+        (WebKit::WebPageProxy::clearLoadDependentCallbacks):
+        (WebKit::WebPageProxy::voidCallback):
+        (WebKit::WebPageProxy::dataCallback):
+        (WebKit::WebPageProxy::imageCallback):
+        (WebKit::WebPageProxy::stringCallback):
+        (WebKit::WebPageProxy::scriptValueCallback):
+        (WebKit::WebPageProxy::computedPagesCallback):
+        (WebKit::WebPageProxy::validateCommandCallback):
+        (WebKit::WebPageProxy::unsignedCallback):
+        (WebKit::WebPageProxy::editingRangeCallback):
+        (WebKit::WebPageProxy::rectForCharacterRangeCallback):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::computePagesForPrinting):
+        (WebKit::WebPageProxy::drawRectToImage):
+        (WebKit::WebPageProxy::drawPagesToPDF):
+        (WebKit::WebPageProxy::getMarkedRangeAsync):
+        (WebKit::WebPageProxy::getSelectedRangeAsync):
+        (WebKit::WebPageProxy::characterIndexForPointAsync):
+        (WebKit::WebPageProxy::firstRectForCharacterRangeAsync):
+        (WebKit::WebPageProxy::takeSnapshot):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::gestureCallback):
+        (WebKit::WebPageProxy::touchesCallback):
+        (WebKit::WebPageProxy::autocorrectionDataCallback):
+        (WebKit::WebPageProxy::dictationContextCallback):
+        (WebKit::WebPageProxy::autocorrectionContextCallback):
+        (WebKit::WebPageProxy::selectWithGesture):
+        (WebKit::WebPageProxy::updateSelectionWithTouches):
+        (WebKit::WebPageProxy::requestAutocorrectionData):
+        (WebKit::WebPageProxy::applyAutocorrection):
+        (WebKit::WebPageProxy::requestDictationContext):
+        (WebKit::WebPageProxy::requestAutocorrectionContext):
+        (WebKit::WebPageProxy::selectWithTwoTouches):
+
 2014-06-19  Anders Carlsson  <andersca@apple.com>
 
         No way to handle HTTP Authentication with WKWebView

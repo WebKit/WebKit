@@ -1302,26 +1302,10 @@ private:
     RefPtr<WebVibrationProxy> m_vibration;
 #endif
 
-    HashMap<uint64_t, RefPtr<VoidCallback>> m_voidCallbacks;
-    HashMap<uint64_t, RefPtr<DataCallback>> m_dataCallbacks;
-    HashMap<uint64_t, RefPtr<ImageCallback>> m_imageCallbacks;
-    HashMap<uint64_t, RefPtr<StringCallback>> m_stringCallbacks;
+    CallbackMap m_callbacks;
     HashSet<uint64_t> m_loadDependentStringCallbackIDs;
-    HashMap<uint64_t, RefPtr<ScriptValueCallback>> m_scriptValueCallbacks;
-    HashMap<uint64_t, RefPtr<ComputedPagesCallback>> m_computedPagesCallbacks;
-    HashMap<uint64_t, RefPtr<ValidateCommandCallback>> m_validateCommandCallbacks;
-    HashMap<uint64_t, RefPtr<UnsignedCallback>> m_unsignedCallbacks;
-    HashMap<uint64_t, RefPtr<EditingRangeCallback>> m_editingRangeCallbacks;
-    HashMap<uint64_t, RefPtr<RectForCharacterRangeCallback>> m_rectForCharacterRangeCallbacks;
 #if PLATFORM(MAC)
     HashMap<uint64_t, RefPtr<AttributedStringForCharacterRangeCallback>> m_attributedStringForCharacterRangeCallbacks;
-#endif
-#if PLATFORM(IOS)
-    HashMap<uint64_t, RefPtr<GestureCallback>> m_gestureCallbacks;
-    HashMap<uint64_t, RefPtr<TouchesCallback>> m_touchesCallbacks;
-    HashMap<uint64_t, RefPtr<AutocorrectionDataCallback>> m_autocorrectionCallbacks;
-    HashMap<uint64_t, RefPtr<AutocorrectionContextCallback>> m_autocorrectionContextCallbacks;
-    HashMap<uint64_t, RefPtr<DictationContextCallback>> m_dictationContextCallbacks;
 #endif
 #if PLATFORM(GTK)
     HashMap<uint64_t, RefPtr<PrintFinishedCallback>> m_printFinishedCallbacks;

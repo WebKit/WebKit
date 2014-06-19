@@ -133,7 +133,7 @@ void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint&)
 
 void WebPageProxy::gestureCallback(const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, uint64_t callbackID)
 {
-    RefPtr<GestureCallback> callback = m_gestureCallbacks.take(callbackID);
+    auto callback = m_callbacks.take<GestureCallback>(callbackID);
     if (!callback) {
         ASSERT_NOT_REACHED();
         return;
@@ -144,7 +144,7 @@ void WebPageProxy::gestureCallback(const WebCore::IntPoint& point, uint32_t gest
 
 void WebPageProxy::touchesCallback(const WebCore::IntPoint& point, uint32_t touches, uint64_t callbackID)
 {
-    RefPtr<TouchesCallback> callback = m_touchesCallbacks.take(callbackID);
+    auto callback = m_callbacks.take<TouchesCallback>(callbackID);
     if (!callback) {
         ASSERT_NOT_REACHED();
         return;
@@ -155,7 +155,7 @@ void WebPageProxy::touchesCallback(const WebCore::IntPoint& point, uint32_t touc
 
 void WebPageProxy::autocorrectionDataCallback(const Vector<WebCore::FloatRect>& rects, const String& fontName, float fontSize, uint64_t fontTraits, uint64_t callbackID)
 {
-    RefPtr<AutocorrectionDataCallback> callback = m_autocorrectionCallbacks.take(callbackID);
+    auto callback = m_callbacks.take<AutocorrectionDataCallback>(callbackID);
     if (!callback) {
         ASSERT_NOT_REACHED();
         return;
@@ -166,7 +166,7 @@ void WebPageProxy::autocorrectionDataCallback(const Vector<WebCore::FloatRect>& 
 
 void WebPageProxy::dictationContextCallback(const String& selectedText, const String& beforeText, const String& afterText, uint64_t callbackID)
 {
-    RefPtr<DictationContextCallback> callback = m_dictationContextCallbacks.take(callbackID);
+    auto callback = m_callbacks.take<DictationContextCallback>(callbackID);
     if (!callback) {
         ASSERT_NOT_REACHED();
         return;
@@ -177,7 +177,7 @@ void WebPageProxy::dictationContextCallback(const String& selectedText, const St
 
 void WebPageProxy::autocorrectionContextCallback(const String& beforeText, const String& markedText, const String& selectedText, const String& afterText, uint64_t location, uint64_t length, uint64_t callbackID)
 {
-    RefPtr<AutocorrectionContextCallback> callback = m_autocorrectionContextCallbacks.take(callbackID);
+    auto callback = m_callbacks.take<AutocorrectionContextCallback>(callbackID);
     if (!callback) {
         ASSERT_NOT_REACHED();
         return;
@@ -313,7 +313,7 @@ void WebPageProxy::selectWithGesture(const WebCore::IntPoint point, WebCore::Tex
     }
     
     uint64_t callbackID = callback->callbackID();
-    m_gestureCallbacks.set(callbackID, callback);
+    m_callbacks.put(callback);
     m_process->send(Messages::WebPage::SelectWithGesture(point, (uint32_t)granularity, gestureType, gestureState, callbackID), m_pageID);
 }
 
@@ -327,7 +327,7 @@ void WebPageProxy::updateSelectionWithTouches(const WebCore::IntPoint point, uin
     }
 
     uint64_t callbackID = callback->callbackID();
-    m_touchesCallbacks.set(callbackID, callback);
+    m_callbacks.put(callback);
     m_process->send(Messages::WebPage::UpdateSelectionWithTouches(point, touches, baseIsStart, callbackID), m_pageID);
 }
     
@@ -351,7 +351,7 @@ void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection
     }
 
     uint64_t callbackID = callback->callbackID();
-    m_autocorrectionCallbacks.set(callbackID, callback);
+    m_callbacks.put(callback);
     m_process->send(Messages::WebPage::RequestAutocorrectionData(textForAutocorrection, callbackID), m_pageID);
 }
 
@@ -365,7 +365,7 @@ void WebPageProxy::applyAutocorrection(const String& correction, const String& o
     }
 
     uint64_t callbackID = callback->callbackID();
-    m_stringCallbacks.set(callbackID, callback);
+    m_callbacks.put(callback);
     m_process->send(Messages::WebPage::ApplyAutocorrection(correction, originalText, callbackID), m_pageID);
 }
 
@@ -386,7 +386,7 @@ void WebPageProxy::requestDictationContext(std::function<void (const String&, co
     }
 
     uint64_t callbackID = callback->callbackID();
-    m_dictationContextCallbacks.set(callbackID, callback);
+    m_callbacks.put(callback);
     m_process->send(Messages::WebPage::RequestDictationContext(callbackID), m_pageID);
 }
 
@@ -400,7 +400,7 @@ void WebPageProxy::requestAutocorrectionContext(std::function<void (const String
     }
 
     uint64_t callbackID = callback->callbackID();
-    m_autocorrectionContextCallbacks.set(callbackID, callback);
+    m_callbacks.put(callback);
     m_process->send(Messages::WebPage::RequestAutocorrectionContext(callbackID), m_pageID);
 }
 
@@ -419,7 +419,7 @@ void WebPageProxy::selectWithTwoTouches(const WebCore::IntPoint from, const WebC
     }
 
     uint64_t callbackID = callback->callbackID();
-    m_gestureCallbacks.set(callbackID, callback);
+    m_callbacks.put(callback);
     m_process->send(Messages::WebPage::SelectWithTwoTouches(from, to, gestureType, gestureState, callbackID), m_pageID);
 }
 
