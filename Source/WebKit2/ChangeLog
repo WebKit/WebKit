@@ -1,3 +1,23 @@
+2014-06-18  Roger Fong  <roger_fong@apple.com>
+
+        Don't kill the UIProcess until all local storage transactions have been committed.
+        https://bugs.webkit.org/show_bug.cgi?id=134042.
+        <rdar://problem/16660724>.
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm: Add a listener for the application will terminate notification.
+        (-[WKView _applicationWillTerminate:]):
+        (-[WKView initWithFrame:context:configuration:webView:]):
+        * UIProcess/WebContext.cpp: Calls code in StorageManager to cleanup local storage transactions upon application termination.
+        (WebKit::WebContext::applicationWillTerminate):
+        * UIProcess/WebContext.h:
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::applicationWillTerminate):
+        Dispatch local storage cleanup task to background thread and make sure the UIProcess can't exit early.
+        * UIProcess/Storage/StorageManager.h:
+
 2014-06-19  Oliver Hunt  <oliver@apple.com>
 
         Switch to using the process parameters during initialisation

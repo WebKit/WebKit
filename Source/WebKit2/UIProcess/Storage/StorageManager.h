@@ -57,6 +57,7 @@ public:
 
     void processWillOpenConnection(WebProcessProxy*);
     void processWillCloseConnection(WebProcessProxy*);
+    void applicationWillTerminate();
 
     // FIXME: Instead of a context + C function, this should take a WTF::Function, but we currently don't
     // support arguments in functions.

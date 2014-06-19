@@ -720,6 +720,11 @@ void WebContext::processWillCloseConnection(WebProcessProxy* process)
     m_storageManager->processWillCloseConnection(process);
 }
 
+void WebContext::applicationWillTerminate()
+{
+    m_storageManager->applicationWillTerminate();
+}
+
 void WebContext::processDidFinishLaunching(WebProcessProxy* process)
 {
     ASSERT(m_processes.contains(process));

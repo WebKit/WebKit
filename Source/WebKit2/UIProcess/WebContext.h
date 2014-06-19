@@ -165,6 +165,7 @@ public:
     void processWillCloseConnection(WebProcessProxy*);
     void processDidFinishLaunching(WebProcessProxy*);
 
+    void applicationWillTerminate();
     // Disconnect the process from the context.
     void disconnectProcess(WebProcessProxy*);
 
