@@ -408,7 +408,7 @@ static bool getProtectionSpace(CURL* h, const ResourceResponse& response, Protec
 
     String realm;
 
-    const String authHeader = response.httpHeaderField(HTTPHeaderName::WWWAuthenticate);
+    const String authHeader = response.httpHeaderField(HTTPHeaderName::Authorization);
     const String realmString = "realm=";
     int realmPos = authHeader.find(realmString);
     if (realmPos > 0) {

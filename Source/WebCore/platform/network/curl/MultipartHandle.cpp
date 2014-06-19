@@ -143,7 +143,7 @@ bool MultipartHandle::parseHeadersIfPossible()
 
     // Parse the HTTP headers.
     String value;
-    AtomicString name;
+    String name;
     char* p = const_cast<char*>(content);
     const char* end = content + contentLength;
     size_t totalConsumedLength = 0;
@@ -353,7 +353,7 @@ void MultipartHandle::didReceiveResponse()
 
         response->setMimeType(mimeType.lower());
         response->setTextEncodingName(extractCharsetFromMediaType(contentType));
-        response->setSuggestedFilename(filenameFromHTTPContentDisposition(response->httpHeaderField("Content-Disposition")));
+        response->setSuggestedFilename(filenameFromHTTPContentDisposition(response->httpHeaderField(HTTPHeaderName::ContentDisposition)));
 
         d->client()->didReceiveResponse(m_resourceHandle, *response);
         response->setResponseFired(true);

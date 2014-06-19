@@ -1,3 +1,17 @@
+2014-06-19  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Compile errors related to http header field names.
+        https://bugs.webkit.org/show_bug.cgi?id=134029
+
+        Reviewed by Brent Fulgham.
+
+        Http header field names should now be specified with an enum, not a string.
+
+        * platform/network/curl/MultipartHandle.cpp:
+        (WebCore::MultipartHandle::didReceiveResponse):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::getProtectionSpace):
+
 2014-06-19  Anders Carlsson  <andersca@apple.com>
 
         Put the divider in the right place.
