@@ -487,7 +487,7 @@ void InspectorResourceAgent::willLoadXHR(ThreadableLoaderClient* client, const S
 {
     RefPtr<XHRReplayData> xhrReplayData = XHRReplayData::create(method, url, async, formData, headers, includeCredentials);
 
-    m_pendingXHRReplayData.set(client, xhrReplayData);
+    m_pendingXHRReplayData.set(client, std::move(xhrReplayData));
 }
 
 void InspectorResourceAgent::didFailXHRLoading(ThreadableLoaderClient* client)
