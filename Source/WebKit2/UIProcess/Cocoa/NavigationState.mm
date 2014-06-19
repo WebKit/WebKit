@@ -28,11 +28,11 @@
 
 #if WK_API_ENABLED
 
-#import "_WKErrorRecoveryAttempting.h"
-#import "_WKFrameHandleInternal.h"
 #import "APINavigationData.h"
-#import "APIURL.h"
 #import "APIString.h"
+#import "APIURL.h"
+#import "AuthenticationDecisionListener.h"
+#import "CompletionHandlerCallChecker.h"
 #import "NavigationActionData.h"
 #import "PageLoadState.h"
 #import "WKBackForwardListInternal.h"
@@ -49,9 +49,13 @@
 #import "WKNavigationResponseInternal.h"
 #import "WKReloadFrameErrorRecoveryAttempter.h"
 #import "WKWebViewInternal.h"
+#import "WebCredential.h"
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import "_WKErrorRecoveryAttempting.h"
+#import "_WKFrameHandleInternal.h"
+#import <WebCore/AuthenticationMac.h>
 #import <wtf/NeverDestroyed.h>
 
 #if USE(QUICK_LOOK)
@@ -126,7 +130,7 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewNavigationDidFailProvisionalLoadInSubframeWithError = [delegate respondsToSelector:@selector(_webView:navigation:didFailProvisionalLoadInSubframe:withError:)];
     m_navigationDelegateMethods.webViewNavigationDidFinishDocumentLoad = [delegate respondsToSelector:@selector(_webView:navigationDidFinishDocumentLoad:)];
     m_navigationDelegateMethods.webViewRenderingProgressDidChange = [delegate respondsToSelector:@selector(_webView:renderingProgressDidChange:)];
-    m_navigationDelegateMethods.webViewWillSendRequestForAuthenticationChallenge = [delegate respondsToSelector:@selector(_webView:willSendRequestForAuthenticationChallenge:)];
+    m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallengeCompletionHandler = [delegate respondsToSelector:@selector(_webView:didReceiveAuthenticationChallenge:completionHandler:)];
     m_navigationDelegateMethods.webViewCanAuthenticateAgainstProtectionSpace = [delegate respondsToSelector:@selector(_webView:canAuthenticateAgainstProtectionSpace:)];
     m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallenge = [delegate respondsToSelector:@selector(_webView:didReceiveAuthenticationChallenge:)];
     m_navigationDelegateMethods.webViewWebProcessDidCrash = [delegate respondsToSelector:@selector(_webViewWebProcessDidCrash:)];
@@ -583,8 +587,8 @@ void NavigationState::LoaderClient::didLayout(WebKit::WebPageProxy*, WebCore::La
 
 bool NavigationState::LoaderClient::canAuthenticateAgainstProtectionSpaceInFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebProtectionSpace* protectionSpace)
 {
-    if (m_navigationState.m_navigationDelegateMethods.webViewWillSendRequestForAuthenticationChallenge)
-        return true;
+    if (m_navigationState.m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallengeCompletionHandler)
+        return protectionSpace->authenticationScheme() != WebCore::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
 
     if (!m_navigationState.m_navigationDelegateMethods.webViewCanAuthenticateAgainstProtectionSpace)
         return false;
@@ -596,14 +600,49 @@ bool NavigationState::LoaderClient::canAuthenticateAgainstProtectionSpaceInFrame
     return [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView canAuthenticateAgainstProtectionSpace:wrapper(*protectionSpace)];
 }
 
-void NavigationState::LoaderClient::didReceiveAuthenticationChallengeInFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::AuthenticationChallengeProxy* authenticationChallenge)
+void NavigationState::LoaderClient::didReceiveAuthenticationChallengeInFrame(WebPageProxy*, WebFrameProxy*, AuthenticationChallengeProxy* authenticationChallenge)
 {
-    if (m_navigationState.m_navigationDelegateMethods.webViewWillSendRequestForAuthenticationChallenge) {
+    if (m_navigationState.m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallengeCompletionHandler) {
+        ASSERT(authenticationChallenge->protectionSpace()->authenticationScheme() != WebCore::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested);
         auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
-        if (!navigationDelegate)
+        if (!navigationDelegate) {
+            authenticationChallenge->listener()->performDefaultHandling();
             return;
+        }
 
-        [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView willSendRequestForAuthenticationChallenge:wrapper(*authenticationChallenge)];
+        RefPtr<AuthenticationChallengeProxy> challenge = authenticationChallenge;
+        RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(_webView:didReceiveAuthenticationChallenge:completionHandler:));
+        [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView didReceiveAuthenticationChallenge:wrapper(*authenticationChallenge)
+            completionHandler:[challenge, checker](NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) {
+                checker->didCallCompletionHandler();
+
+                switch (disposition) {
+                case NSURLSessionAuthChallengeUseCredential: {
+                    RefPtr<WebCredential> webCredential;
+                    if (credential)
+                        webCredential = WebCredential::create(WebCore::core(credential));
+
+                    challenge->listener()->useCredential(webCredential.get());
+                    break;
+                }
+
+                case NSURLSessionAuthChallengePerformDefaultHandling:
+                    challenge->listener()->performDefaultHandling();
+                    break;
+
+                case NSURLSessionAuthChallengeCancelAuthenticationChallenge:
+                    challenge->listener()->cancel();
+                    break;
+
+                case NSURLSessionAuthChallengeRejectProtectionSpace:
+                    challenge->listener()->rejectProtectionSpaceAndContinue();
+                    break;
+
+                default:
+                    [NSException raise:NSInvalidArgumentException format:@"Invalid NSURLSessionAuthChallengeDisposition (%ld)", (long)disposition];
+                }
+            }
+        ];
         return;
     }
 

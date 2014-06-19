@@ -1,3 +1,30 @@
+2014-06-18  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Modernize one-method authentication
+        https://bugs.webkit.org/show_bug.cgi?id=134051
+
+        Reviewed by Anders Carlsson.
+
+        Instead of an NSURLConnection-style delegate method that takes a challenge and responds to
+        its sender, provide an NSURLSession-style method that takes a challenge and a completion
+        handler.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h: Declared new delegate method, replacing
+        old unused method.
+        * UIProcess/Cocoa/NavigationState.h: Renamed flag in m_navigationDelegateMethods struct.
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate): Check for new delegate method and update
+        new flag.
+
+        (WebKit::NavigationState::LoaderClient::canAuthenticateAgainstProtectionSpaceInFrame): If
+        the delegate implements the new method, return true (if it cannot handle the protection
+        space, it can reject it through the completion handler), except for server-trust
+        authentication, which is not supported yet.
+        (WebKit::NavigationState::LoaderClient::didReceiveAuthenticationChallengeInFrame): If the
+        delegate implements the new method, call it, passing a completion handler that calls the
+        right AuthenticationDecisionListener function based on its disposition and credential
+        parameters.
+
 2014-06-18  Anders Carlsson  <andersca@apple.com>
 
         Make FrameLoadType a strongly typed enum

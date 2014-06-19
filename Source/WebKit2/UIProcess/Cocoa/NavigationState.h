@@ -148,7 +148,7 @@ private:
         bool webViewDidFailNavigationWithError : 1;
 
         bool webViewRenderingProgressDidChange : 1;
-        bool webViewWillSendRequestForAuthenticationChallenge : 1;
+        bool webViewDidReceiveAuthenticationChallengeCompletionHandler : 1;
         bool webViewCanAuthenticateAgainstProtectionSpace : 1;
         bool webViewDidReceiveAuthenticationChallenge : 1;
         bool webViewWebProcessDidCrash : 1;
