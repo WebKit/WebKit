@@ -1,3 +1,27 @@
+2014-06-18  Tim Horton  <timothy_horton@apple.com>
+
+        Remove RemoteLayerBackingStore’s RemoteLayerTreeContext pointer
+        https://bugs.webkit.org/show_bug.cgi?id=134055
+
+        Reviewed by Simon Fraser.
+
+        * Shared/mac/RemoteLayerBackingStore.h:
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::RemoteLayerBackingStore):
+        (WebKit::RemoteLayerBackingStore::~RemoteLayerBackingStore):
+        (WebKit::RemoteLayerBackingStore::ensureBackingStore):
+        (WebKit::RemoteLayerBackingStore::display):
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+        Remove RemoteLayerBackingStore's RemoteLayerTreeContext pointer. Instead, use the PlatformCALayer's.
+        Pass the PlatformCALayer in to the constructor, and remove it from ensureBackingStore();
+        RemoteLayerBackingStore is (for now) strictly tied to a single layer.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::ensureBackingStore):
+        (WebKit::PlatformCALayerRemote::updateBackingStore):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        (WebKit::PlatformCALayerRemote::context):
+
 2014-06-18  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Modernize one-method authentication

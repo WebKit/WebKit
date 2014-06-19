@@ -42,16 +42,15 @@ typedef Vector<WebCore::FloatRect, 5> RepaintRectList;
 namespace WebKit {
 
 class PlatformCALayerRemote;
-class RemoteLayerTreeContext;
 
 class RemoteLayerBackingStore {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStore);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteLayerBackingStore(RemoteLayerTreeContext*);
+    RemoteLayerBackingStore(PlatformCALayerRemote*);
     ~RemoteLayerBackingStore();
 
-    void ensureBackingStore(PlatformCALayerRemote*, WebCore::FloatSize, float scale, bool acceleratesDrawing, bool isOpaque);
+    void ensureBackingStore(WebCore::FloatSize, float scale, bool acceleratesDrawing, bool isOpaque);
 
     void setNeedsDisplay(const WebCore::IntRect);
     void setNeedsDisplay();
@@ -127,8 +126,6 @@ private:
     bool m_acceleratesDrawing;
 
     WebCore::RepaintRectList m_paintingRects;
-
-    RemoteLayerTreeContext* m_context;
 
     std::chrono::steady_clock::time_point m_lastDisplayTime;
 };

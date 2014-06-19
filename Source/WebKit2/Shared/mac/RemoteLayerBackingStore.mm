@@ -55,30 +55,32 @@ using namespace WebCore;
 
 namespace WebKit {
 
-RemoteLayerBackingStore::RemoteLayerBackingStore(RemoteLayerTreeContext* context)
-    : m_layer(nullptr)
+RemoteLayerBackingStore::RemoteLayerBackingStore(PlatformCALayerRemote* layer)
+    : m_layer(layer)
     , m_isOpaque(false)
-    , m_context(context)
     , m_lastDisplayTime(std::chrono::steady_clock::time_point::min())
 {
-    if (m_context)
-        m_context->backingStoreWasCreated(this);
+    if (!m_layer)
+        return;
+    if (RemoteLayerTreeContext* context = m_layer->context())
+        context->backingStoreWasCreated(this);
 }
 
 RemoteLayerBackingStore::~RemoteLayerBackingStore()
 {
     clearBackingStore();
 
-    if (m_context)
-        m_context->backingStoreWillBeDestroyed(this);
+    if (!m_layer)
+        return;
+    if (RemoteLayerTreeContext* context = m_layer->context())
+        context->backingStoreWillBeDestroyed(this);
 }
 
-void RemoteLayerBackingStore::ensureBackingStore(PlatformCALayerRemote* layer, FloatSize size, float scale, bool acceleratesDrawing, bool isOpaque)
+void RemoteLayerBackingStore::ensureBackingStore(FloatSize size, float scale, bool acceleratesDrawing, bool isOpaque)
 {
-    if (m_layer == layer && m_size == size && m_scale == scale && m_acceleratesDrawing == acceleratesDrawing && m_isOpaque == isOpaque)
+    if (m_size == size && m_scale == scale && m_acceleratesDrawing == acceleratesDrawing && m_isOpaque == isOpaque)
         return;
 
-    m_layer = layer;
     m_size = size;
     m_scale = scale;
     m_acceleratesDrawing = acceleratesDrawing;
@@ -201,8 +203,8 @@ bool RemoteLayerBackingStore::display()
 
     m_lastDisplayTime = std::chrono::steady_clock::now();
 
-    if (m_context)
-        m_context->backingStoreWillBeDisplayed(this);
+    if (RemoteLayerTreeContext* context = m_layer->context())
+        context->backingStoreWillBeDisplayed(this);
 
     // Make the previous front buffer non-volatile early, so that we can dirty the whole layer if it comes back empty.
     setBufferVolatility(BufferType::Front, false);
@@ -319,6 +321,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
 
     context.scale(FloatSize(m_scale, m_scale));
 
+    // FIXME: This should be moved to PlatformCALayerRemote for better layering.
     switch (m_layer->layerType()) {
     case PlatformCALayer::LayerTypeSimpleLayer:
     case PlatformCALayer::LayerTypeTiledBackingTileLayer:

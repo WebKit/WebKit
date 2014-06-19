@@ -161,12 +161,11 @@ public:
     void didCommit();
 
     void clearContext() { m_context = nullptr; }
+    RemoteLayerTreeContext* context() const { return m_context; }
 
 protected:
     PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext* context);
     PlatformCALayerRemote(const PlatformCALayerRemote&, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext*);
-
-    RemoteLayerTreeContext* context() const { return m_context; }
 
 private:
     virtual bool isPlatformCALayerRemote() const override { return true; }

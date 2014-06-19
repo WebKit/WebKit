@@ -167,7 +167,7 @@ void PlatformCALayerRemote::ensureBackingStore()
     ASSERT(owner());
     
     if (!m_properties.backingStore)
-        m_properties.backingStore = std::make_unique<RemoteLayerBackingStore>(m_context);
+        m_properties.backingStore = std::make_unique<RemoteLayerBackingStore>(this);
 
     updateBackingStore();
 }
@@ -177,7 +177,7 @@ void PlatformCALayerRemote::updateBackingStore()
     if (!m_properties.backingStore)
         return;
 
-    m_properties.backingStore->ensureBackingStore(this, m_properties.bounds.size(), m_properties.contentsScale, m_acceleratesDrawing, m_properties.opaque);
+    m_properties.backingStore->ensureBackingStore(m_properties.bounds.size(), m_properties.contentsScale, m_acceleratesDrawing, m_properties.opaque);
 }
 
 void PlatformCALayerRemote::setNeedsDisplay(const FloatRect* rect)
