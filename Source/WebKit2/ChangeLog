@@ -1,3 +1,21 @@
+2014-06-19  Dan Bernstein  <mitz@apple.com>
+
+        Use a single map for all callback types in WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=134069
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/GenericCallback.h:
+        (WebKit::CallbackMap::take):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::printFinishedCallback):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::drawPagesForPrinting):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::attributedSubstringForCharacterRangeAsync):
+        (WebKit::WebPageProxy::attributedStringForCharacterRangeCallback):
+
 2014-06-19  Anders Carlsson  <andersca@apple.com>
 
         Another build fix attempt.

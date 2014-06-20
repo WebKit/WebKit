@@ -1304,12 +1304,6 @@ private:
 
     CallbackMap m_callbacks;
     HashSet<uint64_t> m_loadDependentStringCallbackIDs;
-#if PLATFORM(MAC)
-    HashMap<uint64_t, RefPtr<AttributedStringForCharacterRangeCallback>> m_attributedStringForCharacterRangeCallbacks;
-#endif
-#if PLATFORM(GTK)
-    HashMap<uint64_t, RefPtr<PrintFinishedCallback>> m_printFinishedCallbacks;
-#endif
 
     HashSet<WebEditCommandProxy*> m_editCommandSet;
 

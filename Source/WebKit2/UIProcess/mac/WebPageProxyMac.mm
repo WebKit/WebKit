@@ -335,7 +335,7 @@ void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange&
     }
 
     uint64_t callbackID = callback->callbackID();
-    m_attributedStringForCharacterRangeCallbacks.set(callbackID, callback);
+    m_callbacks.put(callback);
 
     process().send(Messages::WebPage::AttributedSubstringForCharacterRangeAsync(range, callbackID), m_pageID);
 }
@@ -344,7 +344,7 @@ void WebPageProxy::attributedStringForCharacterRangeCallback(const AttributedStr
 {
     MESSAGE_CHECK(actualRange.isValid());
 
-    RefPtr<AttributedStringForCharacterRangeCallback> callback = m_attributedStringForCharacterRangeCallbacks.take(callbackID);
+    auto callback = m_callbacks.take<AttributedStringForCharacterRangeCallback>(callbackID);
     if (!callback) {
         // FIXME: Log error or assert.
         // this can validly happen if a load invalidated the callback, though

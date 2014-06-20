@@ -4125,7 +4125,7 @@ void WebPageProxy::rectForCharacterRangeCallback(const IntRect& rect, const Edit
 #if PLATFORM(GTK)
 void WebPageProxy::printFinishedCallback(const ResourceError& printError, uint64_t callbackID)
 {
-    RefPtr<PrintFinishedCallback> callback = m_printFinishedCallbacks.take(callbackID);
+    auto callback = m_callbacks.take<PrintFinishedCallback>(callbackID);
     if (!callback) {
         // FIXME: Log error or assert.
         return;
@@ -4283,12 +4283,6 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
     m_callbacks.invalidate(error);
     m_loadDependentStringCallbackIDs.clear();
-#if PLATFORM(MAC)
-    invalidateCallbackMap(m_attributedStringForCharacterRangeCallbacks, error);
-#endif
-#if PLATFORM(GTK)
-    invalidateCallbackMap(m_printFinishedCallbacks, error);
-#endif
 
     Vector<WebEditCommandProxy*> editCommandVector;
     copyToVector(m_editCommandSet, editCommandVector);
@@ -4743,7 +4737,7 @@ void WebPageProxy::drawPagesForPrinting(WebFrameProxy* frame, const PrintInfo& p
     }
 
     uint64_t callbackID = callback->callbackID();
-    m_printFinishedCallbacks.set(callbackID, callback);
+    m_callbacks.put(callback);
     m_isInPrintingMode = true;
     m_process->send(Messages::WebPage::DrawPagesForPrinting(frame->frameID(), printInfo, callbackID), m_pageID, m_isPerformingDOMPrintOperation ? IPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }

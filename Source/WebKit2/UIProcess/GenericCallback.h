@@ -174,7 +174,7 @@ public:
     }
 
     template<class T>
-    typename std::enable_if<std::is_base_of<CallbackBase, T>::value, RefPtr<T>>::type take(uint64_t callbackID)
+    RefPtr<T> take(uint64_t callbackID)
     {
         RefPtr<CallbackBase> base = m_map.take(callbackID);
         if (!base)
