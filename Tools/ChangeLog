@@ -1,3 +1,9 @@
+2014-06-20  Ion Rosca  <rosca@adobe.com>
+
+        Unreviewed. Adding myself to Committers list.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-06-20  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         [EFL] Add gstreamer as dependecy of EFL after r169785
