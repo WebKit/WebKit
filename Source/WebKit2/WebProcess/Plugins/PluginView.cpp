@@ -1336,7 +1336,12 @@ void PluginView::loadURL(uint64_t requestID, const String& method, const String&
     frameLoadRequest.resourceRequest().setHTTPMethod(method);
     frameLoadRequest.resourceRequest().setURL(m_pluginElement->document().completeURL(urlString));
     frameLoadRequest.resourceRequest().setHTTPHeaderFields(headerFields);
-    frameLoadRequest.resourceRequest().setHTTPBody(FormData::create(httpBody.data(), httpBody.size()));
+    if (!httpBody.isEmpty()) {
+        frameLoadRequest.resourceRequest().setHTTPBody(FormData::create(httpBody.data(), httpBody.size()));
+        if (frameLoadRequest.resourceRequest().httpContentType().isEmpty())
+            frameLoadRequest.resourceRequest().setHTTPContentType("application/x-www-form-urlencoded");
+    }
+
     frameLoadRequest.setFrameName(target);
 
     String referrer = SecurityPolicy::generateReferrerHeader(frame()->document()->referrerPolicy(), frameLoadRequest.resourceRequest().url(), frame()->loader().outgoingReferrer());

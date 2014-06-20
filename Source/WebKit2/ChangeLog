@@ -1,3 +1,13 @@
+2014-06-20  Anders Carlsson  <andersca@apple.com>
+
+        Give NPAPI post requests a default content type
+        https://bugs.webkit.org/show_bug.cgi?id=134120
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::loadURL):
+
 2014-06-20  Simon Fraser  <simon.fraser@apple.com>
 
         Always commit the scrolling tree when we flush layers
