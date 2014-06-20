@@ -1,5 +1,11 @@
 2014-06-20  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * Shared/SessionState.cpp:
+
+2014-06-20  Anders Carlsson  <andersca@apple.com>
+
         Add ArgumentEncoder support to PageState and friends
         https://bugs.webkit.org/show_bug.cgi?id=134128
 

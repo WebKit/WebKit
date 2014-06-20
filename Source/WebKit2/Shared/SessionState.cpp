@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SessionState.h"
 
-#include "ArgumentCoders.h"
+#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 
