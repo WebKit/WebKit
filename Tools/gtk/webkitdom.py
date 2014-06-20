@@ -92,6 +92,7 @@ class WebKitDOMDocGeneratorSections(WebKitDOMDocGenerator):
         self._second_decamelize_re = re.compile('([a-z0-9])([A-Z])')
         self._dom_class_re = re.compile('(^WebKitDOM)(.+)$')
         self._function_re = re.compile('^.+ (.+)\((.+)\)$')
+        self._constant_re = re.compile('^[A-Z_]+$')
 
     def _dom_class(self, class_name):
         return self._dom_class_re.sub(r'\2', class_name)
@@ -111,6 +112,11 @@ class WebKitDOMDocGeneratorSections(WebKitDOMDocGenerator):
         retval = []
         f = open(symbol_file, 'r')
         for line in f.readlines():
+            match = self._constant_re.match(line)
+            if match:
+                retval.append(line.strip('\n'))
+                continue
+
             match = self._function_re.match(line)
             if not match or match.group(1).endswith('get_type'):
                 continue
@@ -121,7 +127,7 @@ class WebKitDOMDocGeneratorSections(WebKitDOMDocGenerator):
     def write_section(self, symbol_file):
         class_name = os.path.basename(symbol_file).replace(".symbols", "")
         is_custom = class_name == 'WebKitDOMCustom'
-        is_interface = class_name == 'WebKitDOMEventTarget'
+        is_interface = class_name in ['WebKitDOMEventTarget', 'WebKitDOMNodeFilter']
         is_object = class_name == 'WebKitDOMObject'
         self.write('<SECTION>\n')
         self.write('<FILE>%s</FILE>\n<TITLE>%s</TITLE>\n' % (class_name, class_name))

@@ -153,6 +153,7 @@ _PATH_RULES_SPECIFIER = [
       "Source/WebCore/bindings/gobject/WebKitDOMCustom.h",
       "Source/WebCore/bindings/gobject/WebKitDOMDeprecated.h",
       "Source/WebCore/bindings/gobject/WebKitDOMEventTarget.h",
+      "Source/WebCore/bindings/gobject/WebKitDOMNodeFilter.h",
       "Source/WebCore/bindings/scripts/test/GObject",
       "Source/WebKit/gtk/webkit/",
       "Tools/DumpRenderTree/gtk/"],
@@ -160,6 +161,8 @@ _PATH_RULES_SPECIFIER = [
       "-readability/parameter_name",
       "-readability/null",
       "-readability/enum_casing",
+      "-whitespace/declaration",
+      "-whitespace/indent",
       "-whitespace/parens"]),
 
     ([# The GTK+ API use upper case, underscore separated, words in
@@ -221,6 +224,7 @@ _PATH_RULES_SPECIFIER = [
       "Source/WebCore/bindings/gobject/WebKitDOMCustom.cpp",
       "Source/WebCore/bindings/gobject/WebKitDOMDeprecated.cpp",
       "Source/WebCore/bindings/gobject/WebKitDOMEventTarget.cpp",
+      "Source/WebCore/bindings/gobject/WebKitDOMNodeFilter.cpp",
       "Source/WebCore/platform/graphics/gstreamer/VideoSinkGStreamer1.cpp",
       "Source/WebCore/platform/graphics/gstreamer/VideoSinkGStreamer.cpp",
       "Source/WebCore/platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp",

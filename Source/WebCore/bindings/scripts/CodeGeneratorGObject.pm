@@ -54,6 +54,8 @@ my $canBeNullParams = {
     'webkit_dom_document_create_attribute_ns' => ['namespaceURI'],
     'webkit_dom_document_create_element_ns' => ['namespaceURI'],
     'webkit_dom_document_create_entity_reference' => ['name'],
+    'webkit_dom_document_create_node_iterator' => ['filter'],
+    'webkit_dom_document_create_tree_walker' => ['filter'],
     'webkit_dom_document_evaluate' => ['inResult', 'resolver'],
     'webkit_dom_document_get_override_style' => ['pseudoElement'],
     'webkit_dom_dom_implementation_create_document' => ['namespaceURI', 'doctype'],
@@ -956,6 +958,9 @@ sub GenerateFunction {
         if ($paramIsGDOMType || ($paramIDLType eq "DOMString") || ($paramIDLType eq "CompareHow")) {
             $paramName = "converted" . $codeGenerator->WK_ucfirst($paramName);
         }
+        if ($paramIDLType eq "NodeFilter") {
+            $paramName = "WTF::getPtr(" . $paramName . ")";
+        }
         push(@callImplParams, $paramName);
     }
 
@@ -1057,6 +1062,8 @@ sub GenerateFunction {
             push(@cBody, "    WTF::String ${convertedParamName} = WTF::String::fromUTF8($paramName);\n");
         } elsif ($paramIDLType eq "CompareHow") {
             push(@cBody, "    WebCore::Range::CompareHow ${convertedParamName} = static_cast<WebCore::Range::CompareHow>($paramName);\n");
+        } elsif ($paramIDLType eq "NodeFilter") {
+            push(@cBody, "    RefPtr<WebCore::$paramIDLType> ${convertedParamName} = WebKit::core($paramName);\n");
         } elsif ($paramIsGDOMType) {
             push(@cBody, "    WebCore::${paramIDLType}* ${convertedParamName} = WebKit::core($paramName);\n");
         }

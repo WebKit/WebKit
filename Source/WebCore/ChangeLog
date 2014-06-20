@@ -1,5 +1,43 @@
 2014-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] webkit_dom_document_create_tree_walker impossible to use due to WebKitDOMNodeFilter
+        https://bugs.webkit.org/show_bug.cgi?id=93002
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add custom implementation of WebKitDOMNodeFilter to expose it as
+        an interface instead of a class.
+
+        * PlatformGTK.cmake: Add new files to compilation.
+        * bindings/gobject/GObjectNodeFilterCondition.cpp: Added.
+        (WebCore::GObjectNodeFilterCondition::~GObjectNodeFilterCondition):
+        Reset the NodeFilter WebCore object associated to the
+        WebKitDOMNodeFilter object.
+        (WebCore::GObjectNodeFilterCondition::acceptNode): Call webkit_dom_node_filter_accept_node().
+        * bindings/gobject/GObjectNodeFilterCondition.h: Added.
+        (WebCore::GObjectNodeFilterCondition::create): Create a new
+        GObjectNodeFilterCondition for the given WebKitDOMNodeFilter.
+        (WebCore::GObjectNodeFilterCondition::GObjectNodeFilterCondition):
+        * bindings/gobject/WebKitDOMNodeFilter.cpp: Added.
+        (webkit_dom_node_filter_default_init):
+        (webkit_dom_node_filter_accept_node):
+        (WebKit::nodeFilterMap): Map NodeFilter WebCore objects to
+        WebKitDOMNodeFilter objects.
+        (WebKit::nodeFilterObjectDestroyedCallback): Remove the node
+        filter form the map when the WebKitDOMNodeFilter objecrt is destroyed.
+        (WebKit::kit): Return the WebKitDOMNodeFilter object for the given
+        NodeFilter WebCore object.
+        (WebKit::core): Get or create a NodeFilter WebCore object
+        associated to the given WebKitDOMNodeFilter.
+        * bindings/gobject/WebKitDOMNodeFilter.h: Added.
+        * bindings/gobject/WebKitDOMNodeFilter.symbols: Added.
+        * bindings/gobject/WebKitDOMNodeFilterPrivate.h: Added.
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateFunction): Add exceptions for NodeFilter parameters since
+        the core method returns a PassRefPtr.
+
+2014-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Limit the amount of API exposed to GObject DOM bindings API
         https://bugs.webkit.org/show_bug.cgi?id=133726
 

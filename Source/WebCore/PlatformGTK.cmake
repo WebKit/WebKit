@@ -435,9 +435,11 @@ list(APPEND GObjectDOMBindings_SOURCES
     bindings/gobject/ConvertToUTF8String.cpp
     bindings/gobject/DOMObjectCache.cpp
     bindings/gobject/GObjectEventListener.cpp
+    bindings/gobject/GObjectNodeFilterCondition.cpp
     bindings/gobject/WebKitDOMCustom.cpp
     bindings/gobject/WebKitDOMEventTarget.cpp
     bindings/gobject/WebKitDOMHTMLPrivate.cpp
+    bindings/gobject/WebKitDOMNodeFilter.cpp
     bindings/gobject/WebKitDOMObject.cpp
     bindings/gobject/WebKitDOMPrivate.cpp
     ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
@@ -470,7 +472,6 @@ list(APPEND GObjectDOMBindingsStable_IDL_FILES
     dom/MouseEvent.idl
     dom/NamedNodeMap.idl
     dom/Node.idl
-    dom/NodeFilter.idl
     dom/NodeIterator.idl
     dom/NodeList.idl
     dom/ProcessingInstruction.idl
@@ -629,12 +630,13 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     )
 endif ()
 
-set(GObjectDOMBindingsStable_CLASS_LIST Custom EventTarget Object)
+set(GObjectDOMBindingsStable_CLASS_LIST Custom EventTarget NodeFilter Object)
 set(GObjectDOMBindingsStable_INSTALLED_HEADERS
      ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
      ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
      ${WEBCORE_DIR}/bindings/gobject/WebKitDOMCustom.h
      ${WEBCORE_DIR}/bindings/gobject/WebKitDOMEventTarget.h
+     ${WEBCORE_DIR}/bindings/gobject/WebKitDOMNodeFilter.h
      ${WEBCORE_DIR}/bindings/gobject/WebKitDOMObject.h
 )
 
@@ -732,6 +734,7 @@ install(FILES ${GObjectDOMBindings_INSTALLED_HEADERS}
 set(GObjectDOMBindings_GIR_HEADERS ${GObjectDOMBindings_INSTALLED_HEADERS})
 list(REMOVE_ITEM GObjectDOMBindings_GIR_HEADERS
      bindings/gobject/WebKitDOMEventTarget.h
+     bindings/gobject/WebKitDOMNodeFilter.h
      bindings/gobject/WebKitDOMObject.h
 )
 

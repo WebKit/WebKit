@@ -1,5 +1,40 @@
 2014-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] webkit_dom_document_create_tree_walker impossible to use due to WebKitDOMNodeFilter
+        https://bugs.webkit.org/show_bug.cgi?id=93002
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add unit tests to check WebKitDOMNodefilter API used from both
+        TreeWalker and NodeIterator.
+
+        * Scripts/webkitpy/style/checker.py: Add exceptions for GTK+
+        public headers and add WebKitDOMNodeFilter to the list of exceptions.
+        * TestWebKitAPI/Tests/WebKit2Gtk/CMakeLists.txt: Add new files to compilation.
+        * TestWebKitAPI/Tests/WebKit2Gtk/DOMNodeFilterTest.cpp: Added.
+        (webkitNodeFilterAcceptNode):
+        (webkitNodeFilterDOMNodeFilterIfaceInit):
+        (webkit_node_filter_init):
+        (webkit_node_filter_class_init):
+        (WebKitDOMNodeFilterTest::create):
+        (WebKitDOMNodeFilterTest::webPageFromArgs):
+        (WebKitDOMNodeFilterTest::testTreeWalker):
+        (WebKitDOMNodeFilterTest::testNodeIterator):
+        (WebKitDOMNodeFilterTest::runTest):
+        (registerTests):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDOMNodeFilter.cpp: Added.
+        (runTest):
+        (testWebKitDOMNodeFilterTreeWalker):
+        (testWebKitDOMNodeFilterNodeIterator):
+        (beforeAll):
+        (afterAll):
+        * gtk/webkitdom.py:
+        (WebKitDOMDocGeneratorSections.__init__):
+        (WebKitDOMDocGeneratorSections._symbol_list):
+        (WebKitDOMDocGeneratorSections.write_section):
+
+2014-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Limit the amount of API exposed to GObject DOM bindings API
         https://bugs.webkit.org/show_bug.cgi?id=133726
 
