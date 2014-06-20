@@ -31,6 +31,8 @@
 
 #include "DeviceOrientationData.h"
 #include "DeviceOrientationEvent.h"
+#include <runtime/JSCJSValueInlines.h>
+#include <runtime/StructureInlines.h>
 
 using namespace JSC;
 
