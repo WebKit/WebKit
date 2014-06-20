@@ -25,8 +25,13 @@
 
 @interface BrowserAppDelegate : NSObject <NSApplicationDelegate> {
     NSMutableSet *_browserWindowControllers;
+
+    IBOutlet NSMenuItem *_newWebKit1WindowItem;
+    IBOutlet NSMenuItem *_newWebKit2WindowItem;
 }
 
 - (void)browserWindowWillClose:(NSWindow *)window;
+
+- (IBAction)toggleUseWebKit2ByDefault:(id)sender;
 
 @end

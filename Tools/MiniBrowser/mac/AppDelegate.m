@@ -31,6 +31,7 @@
 #import <WebKit/WebKit2.h>
 
 static NSString *defaultURL = @"http://www.webkit.org/";
+static NSString *useWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault";
 
 enum {
     WebKit1NewWindowTag = 1,
@@ -52,11 +53,18 @@ enum {
 - (IBAction)newWindow:(id)sender
 {
     BrowserWindowController *controller = nil;
+
+    BOOL useWebKit2 = NO;
+
+    if (![sender respondsToSelector:@selector(tag)])
+        useWebKit2 = [self _useWebKit2ByDefault];
+    else
+        useWebKit2 = [sender tag] == WebKit2NewWindowTag;
     
-    if (![sender respondsToSelector:@selector(tag)] || [sender tag] == WebKit1NewWindowTag)
+    if (!useWebKit2)
         controller = [[WK1BrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
 #if WK_API_ENABLED
-    else if ([sender tag] == WebKit2NewWindowTag)
+    else
         controller = [[WK2BrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
 #endif
     if (!controller)
@@ -79,6 +87,7 @@ enum {
     [WebHistory setOptionalSharedHistory:webHistory];
     [webHistory release];
 
+    [self _updateNewWindowKeyEquivalents];
     [self newWindow:self];
 }
 
@@ -131,6 +140,40 @@ enum {
         NSURL *url = [openPanel.URLs objectAtIndex:0];
         [newBrowserWindowController loadURLString:[url absoluteString]];
     }];
+}
+
+- (IBAction)toggleUseWebKit2ByDefault:(id)sender
+{
+    BOOL newUseWebKit2ByDefault = ![self _useWebKit2ByDefault];
+    if (!newUseWebKit2ByDefault)
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:useWebKit2ByDefaultPreferenceKey];
+    else
+        [[NSUserDefaults standardUserDefaults] setBool:newUseWebKit2ByDefault forKey:useWebKit2ByDefaultPreferenceKey];
+    [self _updateNewWindowKeyEquivalents];
+}
+
+- (BOOL)_useWebKit2ByDefault
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:useWebKit2ByDefaultPreferenceKey];
+}
+
+- (void)_updateNewWindowKeyEquivalents
+{
+    if ([self _useWebKit2ByDefault]) {
+        [_newWebKit1WindowItem setKeyEquivalentModifierMask:NSCommandKeyMask | NSAlternateKeyMask];
+        [_newWebKit2WindowItem setKeyEquivalentModifierMask:NSCommandKeyMask];
+    } else {
+        [_newWebKit1WindowItem setKeyEquivalentModifierMask:NSCommandKeyMask];
+        [_newWebKit2WindowItem setKeyEquivalentModifierMask:NSCommandKeyMask | NSAlternateKeyMask];
+    }
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+{
+    if ([menuItem action] == @selector(toggleUseWebKit2ByDefault:))
+        [menuItem setState:[self _useWebKit2ByDefault] ? NSOnState : NSOffState];
+
+    return YES;
 }
 
 @end

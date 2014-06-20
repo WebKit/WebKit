@@ -132,13 +132,13 @@ static NSString * const WebKit2SubpixelCSSOMElementMetricsEnabledKey = @"WebKitS
         [menuItem setTitle:[_webView window] ? @"Remove Web View" : @"Insert Web View"];
     else if (action == @selector(toggleZoomMode:))
         [menuItem setState:_zoomTextOnly ? NSOnState : NSOffState];
-    else if ([menuItem action] == @selector(togglePaginationMode:))
+    else if (action == @selector(togglePaginationMode:))
         [menuItem setState:[self isPaginated] ? NSOnState : NSOffState];
-    else if ([menuItem action] == @selector(toggleTransparentWindow:))
+    else if (action == @selector(toggleTransparentWindow:))
         [menuItem setState:[[self window] isOpaque] ? NSOffState : NSOnState];
-    else if ([menuItem action] == @selector(toggleUISideCompositing:))
+    else if (action == @selector(toggleUISideCompositing:))
         [menuItem setState:[self isUISideCompositingEnabled] ? NSOnState : NSOffState];
-    else if ([menuItem action] == @selector(toggleSubpixelCSSOMElementMetricsEnabled:))
+    else if (action == @selector(toggleSubpixelCSSOMElementMetricsEnabled:))
         [menuItem setState:[self isSubpixelCSSOMElementMetricsEnabled] ? NSOnState : NSOffState];
 
     return YES;

@@ -34,9 +34,6 @@
 - (id)initWithWindow:(NSWindow *)window
 {
     self = [super initWithWindow:window];
-    if (self) {
-    }
-    
     return self;
 }
 

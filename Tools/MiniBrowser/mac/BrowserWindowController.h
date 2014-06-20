@@ -66,7 +66,7 @@
     IBOutlet NSView *containerView;
     
     IBOutlet NSWindow *findPanelWindow;
-    
+
     BOOL _zoomTextOnly;
 }
 
