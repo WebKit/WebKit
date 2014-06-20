@@ -60,6 +60,9 @@ public:
     ScrollingTreeNode* parent() const { return m_parent; }
     void setParent(ScrollingTreeNode* parent) { m_parent = parent; }
 
+    typedef Vector<RefPtr<ScrollingTreeNode>> ScrollingTreeChildrenVector;
+    ScrollingTreeChildrenVector* children() { return m_children.get(); }
+    
     void appendChild(PassRefPtr<ScrollingTreeNode>);
     void removeChild(ScrollingTreeNode*);
 
@@ -67,7 +70,6 @@ protected:
     ScrollingTreeNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
     ScrollingTree& scrollingTree() const { return m_scrollingTree; }
 
-    typedef Vector<RefPtr<ScrollingTreeNode>> ScrollingTreeChildrenVector;
     OwnPtr<ScrollingTreeChildrenVector> m_children;
 
 private:

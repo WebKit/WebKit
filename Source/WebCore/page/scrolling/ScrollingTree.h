@@ -131,7 +131,9 @@ protected:
 
 private:
     void removeDestroyedNodes(const ScrollingStateTree&);
-    void updateTreeFromStateNode(const ScrollingStateNode*);
+    
+    typedef HashMap<ScrollingNodeID, RefPtr<ScrollingTreeNode>> OrphanScrollingNodeMap;
+    void updateTreeFromStateNode(const ScrollingStateNode*, OrphanScrollingNodeMap&);
 
     virtual PassRefPtr<ScrollingTreeNode> createNode(ScrollingNodeType, ScrollingNodeID) = 0;
 

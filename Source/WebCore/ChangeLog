@@ -1,5 +1,40 @@
 2014-06-19  Simon Fraser  <simon.fraser@apple.com>
 
+        Handle scrolling tree modifications which remove intermediate nodes
+        https://bugs.webkit.org/show_bug.cgi?id=134082
+
+        Reviewed by Tim Horton.
+
+        When updating the scrolling tree from the state tree, we failed to maintain
+        the children arrays correctly. Fix by removing all children on scrolling nodes,
+        and allowing the calls on children to add them back. A temporary hash map
+        keeps the nodes alive.
+        
+        The state tree's m_nodesRemovedSinceLastCommit was also made into a HashSet,
+        to make it easier to handle removal followed by re-insertion.
+
+        * WebCore.exp.in:
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::attachNode): If a node is (possibly re-)added,
+        remove it from m_nodesRemovedSinceLastCommit.remove.
+        (WebCore::ScrollingStateTree::willRemoveNode):
+        (WebCore::ScrollingStateTree::setRemovedNodes):
+        * page/scrolling/ScrollingStateTree.h:
+        (WebCore::ScrollingStateTree::removedNodes):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitNewTreeState):
+        (WebCore::ScrollingTree::updateTreeFromStateNode): Clean up to have only one call
+        to updateBeforeChildren(), and remove all children from the scrolling node
+        before visiting state children.
+        (WebCore::ScrollingTree::removeDestroyedNodes): It was very wrong to assume
+        that all non-root nodes were parented in the root! Now we don't need to
+        remove from the parent anyway.
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeNode.h:
+        (WebCore::ScrollingTreeNode::children):
+
+2014-06-19  Simon Fraser  <simon.fraser@apple.com>
+
         Make ScrollingTreeNodes refounted, for easier tree reconfiguration
         https://bugs.webkit.org/show_bug.cgi?id=134075
 

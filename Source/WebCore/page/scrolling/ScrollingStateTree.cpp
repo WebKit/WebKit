@@ -70,7 +70,6 @@ void ScrollingStateTree::setHasChangedProperties(bool changedProperties)
 ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID)
 {
     ASSERT(newNodeID);
-
     if (ScrollingStateNode* node = stateNodeForID(newNodeID)) {
         if (!parentID)
             return newNodeID;
@@ -128,6 +127,7 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
     }
 
     m_stateNodeMap.set(newNodeID, newNode);
+    m_nodesRemovedSinceLastCommit.remove(newNodeID);
     return newNodeID;
 }
 
@@ -209,12 +209,12 @@ void ScrollingStateTree::recursiveNodeWillBeRemoved(ScrollingStateNode* currNode
 
 void ScrollingStateTree::willRemoveNode(ScrollingStateNode* node)
 {
-    m_nodesRemovedSinceLastCommit.append(node->scrollingNodeID());
+    m_nodesRemovedSinceLastCommit.add(node->scrollingNodeID());
     m_stateNodeMap.remove(node->scrollingNodeID());
     setHasChangedProperties();
 }
 
-void ScrollingStateTree::setRemovedNodes(Vector<ScrollingNodeID> nodes)
+void ScrollingStateTree::setRemovedNodes(HashSet<ScrollingNodeID> nodes)
 {
     m_nodesRemovedSinceLastCommit = std::move(nodes);
 }
