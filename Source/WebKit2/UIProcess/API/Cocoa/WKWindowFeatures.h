@@ -50,19 +50,19 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 @property (nonatomic, readonly) NSNumber *allowsResizing;
 
-/*! @abstract The x coordinate of the containing window. nil if the x coordinate was not specified.
+/*! @abstract CGFloat. The x coordinate of the containing window. nil if the x coordinate was not specified.
  */
 @property (nonatomic, readonly) NSNumber *x;
 
-/*! @abstract The y coordinate of the containing window. nil if the y coordinate was not specified.
+/*! @abstract CGFloat. The y coordinate of the containing window. nil if the y coordinate was not specified.
  */
 @property (nonatomic, readonly) NSNumber *y;
 
-/*! @abstract The width coordinate of the containing window. nil if the width was not specified.
+/*! @abstract CGFloat. The width coordinate of the containing window. nil if the width was not specified.
  */
 @property (nonatomic, readonly) NSNumber *width;
 
-/*! @abstract The height coordinate of the containing window. nil if the height was not specified.
+/*! @abstract CGFloat. The height coordinate of the containing window. nil if the height was not specified.
  */
 @property (nonatomic, readonly) NSNumber *height;
 
