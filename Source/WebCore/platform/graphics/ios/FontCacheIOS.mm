@@ -99,10 +99,103 @@ PassRefPtr<SimpleFontData> FontCache::getSystemFontFallbackForCharacters(const F
     return getCachedFontData(&alternateFont, DoNotRetain);
 }
 
-PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescription& description, const SimpleFontData* originalFontData, bool, const UChar* characters, int length)
+enum class LanguageSpecificFont {
+    None,
+    ChineseJapanese,
+    Korean,
+    Cyrillic,
+    Arabic,
+    Hebrew,
+    Indic,
+    Thai,
+    Lao,
+    Tibetan,
+    CanadianAboriginalSyllabic,
+    Khmer,
+    Emoji,
+};
+
+static LanguageSpecificFont languageSpecificFallbackFont(UChar32 c)
 {
     static bool isGB18030ComplianceRequired = wkIsGB18030ComplianceRequired();
 
+    // The following ranges are Korean Hangul and should be rendered by AppleSDGothicNeo
+    // U+1100 - U+11FF
+    // U+3130 - U+318F
+    // U+AC00 - U+D7A3
+
+    // These are Cyrillic and should be rendered by Helvetica Neue
+    // U+0400 - U+052F
+
+    if (c < 0x400)
+        return LanguageSpecificFont::None;
+    if (c <= 0x52F)
+        return LanguageSpecificFont::Cyrillic;
+    if (c < 0x590)
+        return LanguageSpecificFont::None;
+    if (c < 0x600)
+        return LanguageSpecificFont::Hebrew;
+    if (c <= 0x6FF)
+        return LanguageSpecificFont::Arabic;
+    if (c < 0x900)
+        return LanguageSpecificFont::None;
+    if (c < 0xE00)
+        return LanguageSpecificFont::Arabic;
+    if (c <= 0xE7F)
+        return LanguageSpecificFont::Thai;
+    if (c < 0x0F00)
+        return LanguageSpecificFont::Lao;
+    if (c <= 0x0FFF)
+        return LanguageSpecificFont::Tibetan;
+    if (c < 0x1100)
+        return LanguageSpecificFont::None;
+    if (c <= 0x11FF)
+        return LanguageSpecificFont::Korean;
+    if (c > 0x1400 && c < 0x1780)
+        return LanguageSpecificFont::CanadianAboriginalSyllabic;
+    if (c < 0x1800)
+        return LanguageSpecificFont::Khmer;
+    if (c < 0x2E80)
+        return LanguageSpecificFont::None;
+    if (c < 0x3130)
+        return LanguageSpecificFont::ChineseJapanese;
+    if (c <= 0x318F)
+        return LanguageSpecificFont::Korean;
+    if (c < 0xAC00)
+        return LanguageSpecificFont::ChineseJapanese;
+    if (c <= 0xD7A3)
+        return LanguageSpecificFont::Korean;
+    if (c <= 0xDFFF)
+        return LanguageSpecificFont::ChineseJapanese;
+    if (c < 0xE000)
+        return LanguageSpecificFont::None;
+    if (c < 0xE600)
+        return isGB18030ComplianceRequired ? LanguageSpecificFont::ChineseJapanese : LanguageSpecificFont::Emoji;
+    if (c <= 0xE864 && isGB18030ComplianceRequired)
+        return LanguageSpecificFont::ChineseJapanese;
+    if (c <= 0xF8FF)
+        return LanguageSpecificFont::None;
+    if (c < 0xFB00)
+        return LanguageSpecificFont::ChineseJapanese;
+    if (c < 0xFB50)
+        return LanguageSpecificFont::None;
+    if (c <= 0xFDFF)
+        return LanguageSpecificFont::Arabic;
+    if (c < 0xFE20)
+        return LanguageSpecificFont::None;
+    if (c < 0xFE70)
+        return LanguageSpecificFont::ChineseJapanese;
+    if (c < 0xFF00)
+        return LanguageSpecificFont::Arabic;
+    if (c < 0xFFF0)
+        return LanguageSpecificFont::ChineseJapanese;
+    if (c >=0x20000 && c <= 0x2FFFF)
+        return LanguageSpecificFont::ChineseJapanese;
+    return LanguageSpecificFont::None;
+}
+
+PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescription& description, const SimpleFontData* originalFontData, bool, const UChar* characters, int length)
+{
     // Unlike OS X, our fallback font on iPhone is Arial Unicode, which doesn't have some apple-specific glyphs like F8FF.
     // Fall back to the Apple Fallback font in this case.
     if (length > 0 && requiresCustomFallbackFont(*characters))
@@ -119,139 +212,14 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
             return getSystemFontFallbackForCharacters(description, originalFontData, characters, length);
     }
 
-    bool useCJFont = false;
-    bool useKoreanFont = false;
-    bool useCyrillicFont = false;
-    bool useArabicFont = false;
-    bool useHebrewFont = false;
-    bool useIndicFont = false;
-    bool useThaiFont = false;
-    bool useTibetanFont = false;
-    bool useCanadianAboriginalSyllabicsFont = false;
-    bool useEmojiFont = false;
-    if (length > 0) {
-        do {
-            // This isn't a loop but a way to efficiently check for ranges of characters.
-
-            // The following ranges are Korean Hangul and should be rendered by AppleSDGothicNeo
-            // U+1100 - U+11FF
-            // U+3130 - U+318F
-            // U+AC00 - U+D7A3
-
-            // These are Cyrillic and should be rendered by Helvetica Neue
-            // U+0400 - U+052F
-
-            if (c < 0x400)
-                break;
-            if (c <= 0x52F) {
-                useCyrillicFont = true;
-                break;
-            }
-            if (c < 0x590)
-                break;
-            if (c < 0x600) {
-                useHebrewFont = true;
-                break;
-            }
-            if (c <= 0x6FF) {
-                useArabicFont = true;
-                break;
-            }
-            if (c < 0x900)
-                break;
-            if (c < 0xE00) {
-                useIndicFont = true;
-                break;
-            }
-            if (c <= 0xE7F) {
-                useThaiFont = true;
-                break;
-            }
-            if (c < 0x0F00)
-                break;
-            if (c <= 0x0FFF) {
-                useTibetanFont = true;
-                break;
-            }
-            if (c < 0x1100)
-                break;
-            if (c <= 0x11FF) {
-                useKoreanFont = true;
-                break;
-            }
-            if (c > 0x1400 && c < 0x1780) {
-                useCanadianAboriginalSyllabicsFont = true;
-                break;
-            }
-            if (c < 0x2E80)
-                break;
-            if (c < 0x3130) {
-                useCJFont = true;
-                break;
-            }
-            if (c <= 0x318F) {
-                useKoreanFont = true;
-                break;
-            }
-            if (c < 0xAC00) {
-                useCJFont = true;
-                break;
-            }
-            if (c <= 0xD7A3) {
-                useKoreanFont = true;
-                break;
-            }
-            if ( c <= 0xDFFF) {
-                useCJFont = true;
-                break;
-            }
-            if ( c < 0xE000)
-                break;
-            if ( c < 0xE600) {
-                if (isGB18030ComplianceRequired)
-                    useCJFont = true;
-                else
-                    useEmojiFont = true;
-                break;
-            }
-            if ( c <= 0xE864 && isGB18030ComplianceRequired) {
-                useCJFont = true;
-                break;
-            }
-            if (c <= 0xF8FF)
-                break;
-            if (c < 0xFB00) {
-                useCJFont = true;
-                break;
-            }
-            if (c < 0xFB50)
-                break;
-            if (c <= 0xFDFF) {
-                useArabicFont = true;
-                break;
-            }
-            if (c < 0xFE20)
-                break;
-            if (c < 0xFE70) {
-                useCJFont = true;
-                break;
-            }
-            if (c < 0xFF00) {
-                useArabicFont = true;
-                break;
-            }
-            if (c < 0xFFF0) {
-                useCJFont = true;
-                break;
-            }
-            if (c >=0x20000 && c <= 0x2FFFF)
-                useCJFont = true;
-        } while (0);
-    }
+    LanguageSpecificFont languageSpecificFont = LanguageSpecificFont::None;
+    if (length > 0)
+        languageSpecificFont = languageSpecificFallbackFont(c);
 
     RefPtr<SimpleFontData> simpleFontData;
 
-    if (useCJFont) {
+    switch (languageSpecificFont) {
+    case LanguageSpecificFont::ChineseJapanese: {
         // By default, Chinese font is preferred, fall back on Japanese.
 
         enum CJKFontVariant {
@@ -339,23 +307,33 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
 
         if (useSecondaryFont)
             simpleFontData = getCachedFontData(description, isFontWeightBold(description.weight()) ? *cjkBold[secondaryCJKFont] : *cjkPlain[secondaryCJKFont], false, DoNotRetain);
-    } else if (useKoreanFont) {
+        break;
+    }
+    case LanguageSpecificFont::Korean: {
         static NeverDestroyed<AtomicString> koreanPlain("AppleSDGothicNeo-Medium", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> koreanBold("AppleSDGothicNeo-Bold", AtomicString::ConstructFromLiteral);
         simpleFontData = getCachedFontData(description, isFontWeightBold(description.weight()) ? koreanBold : koreanPlain, false, DoNotRetain);
-    } else if (useCyrillicFont) {
+        break;
+    }
+    case LanguageSpecificFont::Cyrillic: {
         static NeverDestroyed<AtomicString> cyrillicPlain("HelveticaNeue", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> cyrillicBold("HelveticaNeue-Bold", AtomicString::ConstructFromLiteral);
         simpleFontData = getCachedFontData(description, isFontWeightBold(description.weight()) ? cyrillicBold : cyrillicPlain, false, DoNotRetain);
-    } else if (useArabicFont) {
+        break;
+    }
+    case LanguageSpecificFont::Arabic: {
         static NeverDestroyed<AtomicString> arabicPlain("GeezaPro", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> arabicBold("GeezaPro-Bold", AtomicString::ConstructFromLiteral);
         simpleFontData = getCachedFontData(description, isFontWeightBold(description.weight()) ? arabicBold : arabicPlain, false, DoNotRetain);
-    } else if (useHebrewFont) {
+        break;
+    }
+    case LanguageSpecificFont::Hebrew: {
         static NeverDestroyed<AtomicString> hebrewPlain("ArialHebrew", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> hebrewBold("ArialHebrew-Bold", AtomicString::ConstructFromLiteral);
         simpleFontData = getCachedFontData(description, isFontWeightBold(description.weight()) ? hebrewBold : hebrewPlain, false, DoNotRetain);
-    } else if (useIndicFont) {
+        break;
+    }
+    case LanguageSpecificFont::Indic: {
         static NeverDestroyed<AtomicString> devanagariFont("KohinoorDevanagari-Book", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> bengaliFont("BanglaSangamMN", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> gurmukhiFont("GurmukhiMN", AtomicString::ConstructFromLiteral); // Might be replaced in a future release with a Sangam version.
@@ -410,26 +388,47 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
             if (indicFontString)
                 simpleFontData = getCachedFontData(description, *indicFontString, false, DoNotRetain);
         }
-    } else if (useThaiFont) {
+        break;
+    }
+    case LanguageSpecificFont::Thai: {
         static NeverDestroyed<AtomicString> thaiPlain("Thonburi", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> thaiBold("Thonburi-Bold", AtomicString::ConstructFromLiteral);
         simpleFontData = getCachedFontData(description, isFontWeightBold(description.weight()) ? thaiBold : thaiPlain, false, DoNotRetain);
-    } else if (useTibetanFont) {
+        break;
+    }
+    case LanguageSpecificFont::Tibetan: {
         static NeverDestroyed<AtomicString> tibetanPlain("Kailasa", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> tibetanBold("Kailasa-Bold", AtomicString::ConstructFromLiteral);
         simpleFontData = getCachedFontData(description, isFontWeightBold(description.weight()) ? tibetanBold : tibetanPlain, false, DoNotRetain);
-    } else if (useCanadianAboriginalSyllabicsFont) {
+        break;
+    }
+    case LanguageSpecificFont::CanadianAboriginalSyllabic: {
         static NeverDestroyed<AtomicString> casPlain("EuphemiaUCAS", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> casBold("EuphemiaUCAS-Bold", AtomicString::ConstructFromLiteral);
         simpleFontData = getCachedFontData(description, isFontWeightBold(description.weight()) ? casBold : casPlain, false, DoNotRetain);
-    } else {
+        break;
+    }
+    case LanguageSpecificFont::Khmer: {
+        static NeverDestroyed<AtomicString> khmer("KhmerSangamMN", AtomicString::ConstructFromLiteral);
+        simpleFontData = getCachedFontData(description, khmer, false, DoNotRetain);
+        break;
+    }
+    case LanguageSpecificFont::Lao: {
+        static NeverDestroyed<AtomicString> lao("LaoSangamMN", AtomicString::ConstructFromLiteral);
+        simpleFontData = getCachedFontData(description, lao, false, DoNotRetain);
+        break;
+    }
+    default: {
         static NeverDestroyed<AtomicString> appleColorEmoji("AppleColorEmoji", AtomicString::ConstructFromLiteral);
+        bool useEmojiFont = languageSpecificFont == LanguageSpecificFont::Emoji;
         if (!useEmojiFont) {
             if (!CFCharacterSetIsLongCharacterMember(phoneFallbackCharacterSet(), c))
                 useEmojiFont = CFCharacterSetIsLongCharacterMember(appleColorEmojiCharacterSet(), c);
         }
         if (useEmojiFont)
             simpleFontData = getCachedFontData(description, appleColorEmoji, false, DoNotRetain);
+        break;
+    }
     }
 
     if (simpleFontData)
