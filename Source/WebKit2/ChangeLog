@@ -1,3 +1,13 @@
+2014-06-20  Geoffrey Garen  <ggaren@apple.com>
+
+        WebKit delegate methods should document their default behaviors
+        https://bugs.webkit.org/show_bug.cgi?id=134132
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+
 2014-06-20  Simon Fraser  <simon.fraser@apple.com>
 
         Fix lots of WK2 test crashes.

@@ -49,6 +49,8 @@
  @param windowFeatures Window features requested by the webpage.
  @result A new web view or nil.
  @discussion The web view returned must be created with the specified configuration. WebKit will load the request in the returned web view.
+
+ If you do not implement this method, the web view will cancel the navigation.
  */
 - (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures;
 
@@ -63,6 +65,8 @@
  that a specific website controls the content in this panel. A simple forumla
  for identifying the controlling website is frame.request.URL.host.
  The panel should have a single OK button.
+
+ If you do not implement this method, the web view will behave as if the user selected the OK button.
  */
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)())completionHandler;
 
@@ -77,6 +81,8 @@
  that a specific website controls the content in this panel. A simple forumla
  for identifying the controlling website is frame.request.URL.host.
  The panel should have two buttons, such as OK and Cancel.
+
+ If you do not implement this method, the web view will behave as if the user selected the Cancel button.
  */
 - (void)webView:(WKWebView *)webView runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL result))completionHandler;
 
@@ -93,6 +99,8 @@
  for identifying the controlling website is frame.request.URL.host.
  The panel should have two buttons, such as OK and Cancel, and a field in
  which to enter text.
+
+ If you do not implement this method, the web view will behave as if the user selected the Cancel button.
  */
 - (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSString *result))completionHandler;
 
