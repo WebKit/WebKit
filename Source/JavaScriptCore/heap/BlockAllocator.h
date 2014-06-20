@@ -62,6 +62,8 @@ public:
     template <typename T> void deallocate(T*);
     template <typename T> void deallocateCustomSize(T*);
 
+    JS_EXPORT_PRIVATE void releaseFreeRegions();
+
 private:
     void waitForDuration(std::chrono::milliseconds);
 
@@ -90,7 +92,6 @@ private:
     DeadBlock* tryAllocateFromRegion(RegionSet&, DoublyLinkedList<Region>&, size_t&);
 
     bool allRegionSetsAreEmpty() const;
-    void releaseFreeRegions();
 
     template <typename T> RegionSet& regionSetFor();
 

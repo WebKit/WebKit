@@ -28,6 +28,7 @@
 
 #import "IOSurfacePool.h"
 #import "GCController.h"
+#import "JSDOMWindowBase.h"
 #import "LayerPool.h"
 #import "Logging.h"
 #import "WebCoreSystemInterface.h"
@@ -114,6 +115,9 @@ void MemoryPressureHandler::install()
         // We only do a synchronous GC when *simulating* memory pressure.
         // This gives us a more consistent picture of live objects at the end of testing.
         gcController().garbageCollectNow();
+
+        // Release any freed up blocks from the JS heap back to the system.
+        JSDOMWindowBase::commonVM().heap.blockAllocator().releaseFreeRegions();
 
         malloc_zone_pressure_relief(nullptr, 0);
     });

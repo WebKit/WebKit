@@ -1,3 +1,13 @@
+2014-06-20  Andreas Kling  <akling@apple.com>
+
+        [Cocoa] Release freed up blocks from the JS heap after simulated memory pressure.
+        <https://webkit.org/b/134112>
+
+        Reviewed by Mark Hahnenberg.
+
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::install):
+
 2014-06-20  Zalan Bujtas  <zalan@apple.com>
 
         Remove redundant RenderLayer::computeOffsetFromRoot() function.
