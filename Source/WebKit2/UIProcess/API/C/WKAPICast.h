@@ -53,6 +53,7 @@
 namespace API {
 class ContextConfiguration;
 class NavigationData;
+class SessionState;
 }
 
 namespace WebKit {
@@ -143,6 +144,7 @@ WK_ADD_API_MAPPING(WKPreferencesRef, WebPreferences)
 WK_ADD_API_MAPPING(WKProtectionSpaceRef, WebProtectionSpace)
 WK_ADD_API_MAPPING(WKRenderLayerRef, WebRenderLayer)
 WK_ADD_API_MAPPING(WKRenderObjectRef, WebRenderObject)
+WK_ADD_API_MAPPING(WKSessionStateRef, API::SessionState)
 WK_ADD_API_MAPPING(WKTextCheckerRef, WebTextChecker)
 WK_ADD_API_MAPPING(WKVibrationRef, WebVibrationProxy)
 WK_ADD_API_MAPPING(WKViewportAttributesRef, WebViewportAttributes)

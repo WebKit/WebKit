@@ -24,59 +24,25 @@
  */
 
 #include "config.h"
-#include "SessionState.h"
-
-#include "WebCoreArgumentCoders.h"
+#include "LegacySessionStateCoding.h"
 
 namespace WebKit {
 
-void HTTPBody::Element::encode(IPC::ArgumentEncoder& encoder) const
+LegacySessionStateDecoder::LegacySessionStateDecoder(API::Data* data)
+    : m_data(data)
 {
-    encoder.encodeEnum(type);
-    encoder << data;
-    encoder << filePath;
-    encoder << fileStart;
-    encoder << fileLength;
-    encoder << expectedFileModificationTime;
-    encoder << blobURLString;
 }
 
-void HTTPBody::encode(IPC::ArgumentEncoder& encoder) const
+LegacySessionStateDecoder::~LegacySessionStateDecoder()
 {
-    encoder << contentType;
-    encoder << elements;
 }
 
-void FrameState::encode(IPC::ArgumentEncoder& encoder) const
+bool LegacySessionStateDecoder::decodeSessionState(SessionState& sessionState) const
 {
-    encoder << urlString;
-    encoder << originalURLString;
-    encoder << referrer;
-    encoder << target;
+    // FIXME: Implement this.
+    (void)m_data;
 
-    encoder << documentState;
-    encoder << stateObjectData;
-
-    encoder << documentSequenceNumber;
-    encoder << itemSequenceNumber;
-
-    encoder << scrollPoint;
-    encoder << pageScaleFactor;
-
-    encoder << httpBody;
-
-    encoder << children;
-}
-
-void PageState::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << mainFrameState;
-}
-
-void SessionState::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << backForwardListItems;
-    encoder << currentIndex;
+    return false;
 }
 
 } // namespace WebKit

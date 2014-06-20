@@ -73,6 +73,7 @@ public:
         RenderLayer,
         RenderObject,
         SecurityOrigin,
+        SessionState,
         SerializedScriptValue,
         String,
         URL,

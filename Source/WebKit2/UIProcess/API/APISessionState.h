@@ -23,60 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef APISessionState_h
+#define APISessionState_h
+
+#include "APIObject.h"
 #include "SessionState.h"
 
-#include "WebCoreArgumentCoders.h"
+namespace API {
 
-namespace WebKit {
+class SessionState final : public ObjectImpl<Object::Type::SessionState> {
+public:
+    static PassRefPtr<SessionState> create(WebKit::SessionState);
+    virtual ~SessionState();
 
-void HTTPBody::Element::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder.encodeEnum(type);
-    encoder << data;
-    encoder << filePath;
-    encoder << fileStart;
-    encoder << fileLength;
-    encoder << expectedFileModificationTime;
-    encoder << blobURLString;
-}
+private:
+    explicit SessionState(WebKit::SessionState);
 
-void HTTPBody::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << contentType;
-    encoder << elements;
-}
+    const WebKit::SessionState m_sessionState;
+};
 
-void FrameState::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << urlString;
-    encoder << originalURLString;
-    encoder << referrer;
-    encoder << target;
+} // namespace API
 
-    encoder << documentState;
-    encoder << stateObjectData;
-
-    encoder << documentSequenceNumber;
-    encoder << itemSequenceNumber;
-
-    encoder << scrollPoint;
-    encoder << pageScaleFactor;
-
-    encoder << httpBody;
-
-    encoder << children;
-}
-
-void PageState::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << mainFrameState;
-}
-
-void SessionState::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << backForwardListItems;
-    encoder << currentIndex;
-}
-
-} // namespace WebKit
+#endif // APISessionState_h

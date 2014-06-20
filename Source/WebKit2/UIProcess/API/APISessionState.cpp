@@ -24,59 +24,22 @@
  */
 
 #include "config.h"
-#include "SessionState.h"
+#include "APISessionState.h"
 
-#include "WebCoreArgumentCoders.h"
+namespace API {
 
-namespace WebKit {
-
-void HTTPBody::Element::encode(IPC::ArgumentEncoder& encoder) const
+PassRefPtr<SessionState> SessionState::create(WebKit::SessionState sessionState)
 {
-    encoder.encodeEnum(type);
-    encoder << data;
-    encoder << filePath;
-    encoder << fileStart;
-    encoder << fileLength;
-    encoder << expectedFileModificationTime;
-    encoder << blobURLString;
+    return adoptRef(new SessionState(std::move(sessionState)));
 }
 
-void HTTPBody::encode(IPC::ArgumentEncoder& encoder) const
+SessionState::SessionState(WebKit::SessionState sessionState)
+    : m_sessionState(std::move(sessionState))
 {
-    encoder << contentType;
-    encoder << elements;
 }
 
-void FrameState::encode(IPC::ArgumentEncoder& encoder) const
+SessionState::~SessionState()
 {
-    encoder << urlString;
-    encoder << originalURLString;
-    encoder << referrer;
-    encoder << target;
-
-    encoder << documentState;
-    encoder << stateObjectData;
-
-    encoder << documentSequenceNumber;
-    encoder << itemSequenceNumber;
-
-    encoder << scrollPoint;
-    encoder << pageScaleFactor;
-
-    encoder << httpBody;
-
-    encoder << children;
 }
 
-void PageState::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << mainFrameState;
-}
-
-void SessionState::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << backForwardListItems;
-    encoder << currentIndex;
-}
-
-} // namespace WebKit
+} // namespace API

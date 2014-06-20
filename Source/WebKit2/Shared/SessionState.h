@@ -97,6 +97,13 @@ struct PageState {
     FrameState mainFrameState;
 };
 
+struct SessionState {
+    void encode(IPC::ArgumentEncoder&) const;
+
+    Vector<PageState> backForwardListItems;
+    uint32_t currentIndex;
+};
+
 } // namespace WebKit
 
 #endif // SessionState_h

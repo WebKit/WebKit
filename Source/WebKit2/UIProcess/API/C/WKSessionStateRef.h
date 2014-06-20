@@ -23,60 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SessionState.h"
+#ifndef WKSessionStateRef_h
+#define WKSessionStateRef_h
 
-#include "WebCoreArgumentCoders.h"
+#include <WebKit/WKBase.h>
 
-namespace WebKit {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-void HTTPBody::Element::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder.encodeEnum(type);
-    encoder << data;
-    encoder << filePath;
-    encoder << fileStart;
-    encoder << fileLength;
-    encoder << expectedFileModificationTime;
-    encoder << blobURLString;
+WK_EXPORT WKSessionStateRef WKSessionStateCreateFromData(WKDataRef data);
+
+#ifdef __cplusplus
 }
+#endif
 
-void HTTPBody::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << contentType;
-    encoder << elements;
-}
-
-void FrameState::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << urlString;
-    encoder << originalURLString;
-    encoder << referrer;
-    encoder << target;
-
-    encoder << documentState;
-    encoder << stateObjectData;
-
-    encoder << documentSequenceNumber;
-    encoder << itemSequenceNumber;
-
-    encoder << scrollPoint;
-    encoder << pageScaleFactor;
-
-    encoder << httpBody;
-
-    encoder << children;
-}
-
-void PageState::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << mainFrameState;
-}
-
-void SessionState::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << backForwardListItems;
-    encoder << currentIndex;
-}
-
-} // namespace WebKit
+#endif // WKSessionStateRef_h

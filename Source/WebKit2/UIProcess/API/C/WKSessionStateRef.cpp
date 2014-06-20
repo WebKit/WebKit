@@ -24,59 +24,20 @@
  */
 
 #include "config.h"
+#include "WKSessionStateRef.h"
+
+#include "APISessionState.h"
+#include "LegacySessionStateCoding.h"
 #include "SessionState.h"
+#include "WKAPICast.h"
 
-#include "WebCoreArgumentCoders.h"
-
-namespace WebKit {
-
-void HTTPBody::Element::encode(IPC::ArgumentEncoder& encoder) const
+WKSessionStateRef WKSessionStateCreateFromData(WKDataRef data)
 {
-    encoder.encodeEnum(type);
-    encoder << data;
-    encoder << filePath;
-    encoder << fileStart;
-    encoder << fileLength;
-    encoder << expectedFileModificationTime;
-    encoder << blobURLString;
+    WebKit::LegacySessionStateDecoder decoder { WebKit::toImpl(data) };
+
+    WebKit::SessionState sessionState;
+    if (!decoder.decodeSessionState(sessionState))
+        return nullptr;
+
+    return WebKit::toAPI(API::SessionState::create(std::move(sessionState)).leakRef());
 }
-
-void HTTPBody::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << contentType;
-    encoder << elements;
-}
-
-void FrameState::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << urlString;
-    encoder << originalURLString;
-    encoder << referrer;
-    encoder << target;
-
-    encoder << documentState;
-    encoder << stateObjectData;
-
-    encoder << documentSequenceNumber;
-    encoder << itemSequenceNumber;
-
-    encoder << scrollPoint;
-    encoder << pageScaleFactor;
-
-    encoder << httpBody;
-
-    encoder << children;
-}
-
-void PageState::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << mainFrameState;
-}
-
-void SessionState::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << backForwardListItems;
-    encoder << currentIndex;
-}
-
-} // namespace WebKit
