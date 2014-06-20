@@ -212,7 +212,5 @@ def get_all_webkitdom_symbol_files():
         if os.path.exists(path):
             symbol_files.append(path)
             continue
-        sys.stderr.write("Could not find symbol file for header: %s\n" % header_name)
-        sys.exit(1)
 
     return symbol_files

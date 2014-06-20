@@ -1,3 +1,16 @@
+2014-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Limit the amount of API exposed to GObject DOM bindings API
+        https://bugs.webkit.org/show_bug.cgi?id=133726
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Don't make fatal finding files without a .symbols file, since now
+        only the stable DOM API has .symbols files.
+
+        * gtk/webkitdom.py:
+        (get_all_webkitdom_symbol_files):
+
 2014-06-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Remove efl wk1 buildbot and ews

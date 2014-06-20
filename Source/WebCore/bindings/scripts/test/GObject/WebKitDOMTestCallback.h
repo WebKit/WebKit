@@ -18,16 +18,14 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#if !defined(__WEBKITDOM_H_INSIDE__) && !defined(BUILDING_WEBKIT)
-#error "Only <webkitdom/webkitdom.h> can be included directly."
-#endif
-
 #ifndef WebKitDOMTestCallback_h
 #define WebKitDOMTestCallback_h
 
+#ifdef WEBKIT_DOM_USE_UNSTABLE_API
+
 #include <glib-object.h>
 #include <webkitdom/WebKitDOMObject.h>
-#include <webkitdom/webkitdomdefines.h>
+#include <webkitdom/webkitdomdefines-unstable.h>
 
 G_BEGIN_DECLS
 
@@ -47,13 +45,15 @@ struct _WebKitDOMTestCallbackClass {
 };
 
 WEBKIT_API GType
-webkit_dom_test_callback_get_type (void);
+webkit_dom_test_callback_get_type(void);
 
 /**
  * webkit_dom_test_callback_callback_with_no_param:
  * @self: A #WebKitDOMTestCallback
  *
  * Returns: A #gboolean
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gboolean
 webkit_dom_test_callback_callback_with_no_param(WebKitDOMTestCallback* self);
@@ -64,6 +64,8 @@ webkit_dom_test_callback_callback_with_no_param(WebKitDOMTestCallback* self);
  * @arrayParam: A #WebKitDOMFloat32Array
  *
  * Returns: A #gboolean
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gboolean
 webkit_dom_test_callback_callback_with_array_param(WebKitDOMTestCallback* self, WebKitDOMFloat32Array* arrayParam);
@@ -75,6 +77,8 @@ webkit_dom_test_callback_callback_with_array_param(WebKitDOMTestCallback* self, 
  * @strArg: A #gchar
  *
  * Returns: A #gboolean
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gboolean
 webkit_dom_test_callback_callback_with_serialized_script_value_param(WebKitDOMTestCallback* self, WebKitDOMSerializedScriptValue* srzParam, const gchar* strArg);
@@ -85,6 +89,8 @@ webkit_dom_test_callback_callback_with_serialized_script_value_param(WebKitDOMTe
  * @strArg: A #gchar
  *
  * Returns: A #glong
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API glong
 webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallback* self, const gchar* strArg);
@@ -95,6 +101,8 @@ webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallbac
  * @listParam: A #WebKitDOMDOMStringList
  *
  * Returns: A #gboolean
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gboolean
 webkit_dom_test_callback_callback_with_string_list(WebKitDOMTestCallback* self, WebKitDOMDOMStringList* listParam);
@@ -105,6 +113,8 @@ webkit_dom_test_callback_callback_with_string_list(WebKitDOMTestCallback* self, 
  * @boolParam: A #gboolean
  *
  * Returns: A #gboolean
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gboolean
 webkit_dom_test_callback_callback_with_boolean(WebKitDOMTestCallback* self, gboolean boolParam);
@@ -116,10 +126,13 @@ webkit_dom_test_callback_callback_with_boolean(WebKitDOMTestCallback* self, gboo
  * @testNodeParam: A #WebKitDOMTestNode
  *
  * Returns: A #gboolean
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gboolean
 webkit_dom_test_callback_callback_requires_this_to_pass(WebKitDOMTestCallback* self, glong longParam, WebKitDOMTestNode* testNodeParam);
 
 G_END_DECLS
 
+#endif /* WEBKIT_DOM_USE_UNSTABLE_API */
 #endif /* WebKitDOMTestCallback_h */

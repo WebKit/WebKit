@@ -18,16 +18,14 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#if !defined(__WEBKITDOM_H_INSIDE__) && !defined(BUILDING_WEBKIT)
-#error "Only <webkitdom/webkitdom.h> can be included directly."
-#endif
-
 #ifndef WebKitDOMTestTypedefs_h
 #define WebKitDOMTestTypedefs_h
 
+#ifdef WEBKIT_DOM_USE_UNSTABLE_API
+
 #include <glib-object.h>
 #include <webkitdom/WebKitDOMObject.h>
-#include <webkitdom/webkitdomdefines.h>
+#include <webkitdom/webkitdomdefines-unstable.h>
 
 G_BEGIN_DECLS
 
@@ -47,13 +45,14 @@ struct _WebKitDOMTestTypedefsClass {
 };
 
 WEBKIT_API GType
-webkit_dom_test_typedefs_get_type (void);
+webkit_dom_test_typedefs_get_type(void);
 
 /**
  * webkit_dom_test_typedefs_func:
  * @self: A #WebKitDOMTestTypedefs
  * @x: A #WebKitDOMlong[]
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_typedefs_func(WebKitDOMTestTypedefs* self, WebKitDOMlong[]* x);
@@ -67,6 +66,7 @@ webkit_dom_test_typedefs_func(WebKitDOMTestTypedefs* self, WebKitDOMlong[]* x);
  * @color: A #gchar
  * @alpha: A #gfloat
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_typedefs_set_shadow(WebKitDOMTestTypedefs* self, gfloat width, gfloat height, gfloat blur, const gchar* color, gfloat alpha);
@@ -76,6 +76,7 @@ webkit_dom_test_typedefs_set_shadow(WebKitDOMTestTypedefs* self, gfloat width, g
  * @self: A #WebKitDOMTestTypedefs
  * @arrayArg: A #WebKitDOMDOMString[]
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_typedefs_nullable_array_arg(WebKitDOMTestTypedefs* self, WebKitDOMDOMString[]* arrayArg);
@@ -85,6 +86,8 @@ webkit_dom_test_typedefs_nullable_array_arg(WebKitDOMTestTypedefs* self, WebKitD
  * @self: A #WebKitDOMTestTypedefs
  *
  * Returns: (transfer none): A #WebKitDOMSVGPoint
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API WebKitDOMSVGPoint*
 webkit_dom_test_typedefs_immutable_point_function(WebKitDOMTestTypedefs* self);
@@ -96,6 +99,8 @@ webkit_dom_test_typedefs_immutable_point_function(WebKitDOMTestTypedefs* self);
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMDOMString[]
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API WebKitDOMDOMString[]*
 webkit_dom_test_typedefs_string_array_function(WebKitDOMTestTypedefs* self, WebKitDOMDOMString[]* values, GError** error);
@@ -107,6 +112,8 @@ webkit_dom_test_typedefs_string_array_function(WebKitDOMTestTypedefs* self, WebK
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMDOMString[]
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API WebKitDOMDOMString[]*
 webkit_dom_test_typedefs_string_array_function2(WebKitDOMTestTypedefs* self, WebKitDOMDOMString[]* values, GError** error);
@@ -116,6 +123,7 @@ webkit_dom_test_typedefs_string_array_function2(WebKitDOMTestTypedefs* self, Web
  * @self: A #WebKitDOMTestTypedefs
  * @error: #GError
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_typedefs_method_with_exception(WebKitDOMTestTypedefs* self, GError** error);
@@ -125,6 +133,8 @@ webkit_dom_test_typedefs_method_with_exception(WebKitDOMTestTypedefs* self, GErr
  * @self: A #WebKitDOMTestTypedefs
  *
  * Returns: A #guint64
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API guint64
 webkit_dom_test_typedefs_get_unsigned_long_long_attr(WebKitDOMTestTypedefs* self);
@@ -134,6 +144,7 @@ webkit_dom_test_typedefs_get_unsigned_long_long_attr(WebKitDOMTestTypedefs* self
  * @self: A #WebKitDOMTestTypedefs
  * @value: A #guint64
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_typedefs_set_unsigned_long_long_attr(WebKitDOMTestTypedefs* self, guint64 value);
@@ -143,6 +154,8 @@ webkit_dom_test_typedefs_set_unsigned_long_long_attr(WebKitDOMTestTypedefs* self
  * @self: A #WebKitDOMTestTypedefs
  *
  * Returns: (transfer none): A #WebKitDOMSerializedScriptValue
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API WebKitDOMSerializedScriptValue*
 webkit_dom_test_typedefs_get_immutable_serialized_script_value(WebKitDOMTestTypedefs* self);
@@ -152,6 +165,7 @@ webkit_dom_test_typedefs_get_immutable_serialized_script_value(WebKitDOMTestType
  * @self: A #WebKitDOMTestTypedefs
  * @value: A #WebKitDOMSerializedScriptValue
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_typedefs_set_immutable_serialized_script_value(WebKitDOMTestTypedefs* self, WebKitDOMSerializedScriptValue* value);
@@ -162,6 +176,8 @@ webkit_dom_test_typedefs_set_immutable_serialized_script_value(WebKitDOMTestType
  * @error: #GError
  *
  * Returns: A #glong
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API glong
 webkit_dom_test_typedefs_get_attr_with_getter_exception(WebKitDOMTestTypedefs* self, GError** error);
@@ -171,6 +187,7 @@ webkit_dom_test_typedefs_get_attr_with_getter_exception(WebKitDOMTestTypedefs* s
  * @self: A #WebKitDOMTestTypedefs
  * @value: A #glong
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_typedefs_set_attr_with_getter_exception(WebKitDOMTestTypedefs* self, glong value);
@@ -180,6 +197,8 @@ webkit_dom_test_typedefs_set_attr_with_getter_exception(WebKitDOMTestTypedefs* s
  * @self: A #WebKitDOMTestTypedefs
  *
  * Returns: A #glong
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API glong
 webkit_dom_test_typedefs_get_attr_with_setter_exception(WebKitDOMTestTypedefs* self);
@@ -190,6 +209,7 @@ webkit_dom_test_typedefs_get_attr_with_setter_exception(WebKitDOMTestTypedefs* s
  * @value: A #glong
  * @error: #GError
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_typedefs_set_attr_with_setter_exception(WebKitDOMTestTypedefs* self, glong value, GError** error);
@@ -200,6 +220,8 @@ webkit_dom_test_typedefs_set_attr_with_setter_exception(WebKitDOMTestTypedefs* s
  * @error: #GError
  *
  * Returns: A #gchar
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gchar*
 webkit_dom_test_typedefs_get_string_attr_with_getter_exception(WebKitDOMTestTypedefs* self, GError** error);
@@ -209,6 +231,7 @@ webkit_dom_test_typedefs_get_string_attr_with_getter_exception(WebKitDOMTestType
  * @self: A #WebKitDOMTestTypedefs
  * @value: A #gchar
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_typedefs_set_string_attr_with_getter_exception(WebKitDOMTestTypedefs* self, const gchar* value);
@@ -218,6 +241,8 @@ webkit_dom_test_typedefs_set_string_attr_with_getter_exception(WebKitDOMTestType
  * @self: A #WebKitDOMTestTypedefs
  *
  * Returns: A #gchar
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gchar*
 webkit_dom_test_typedefs_get_string_attr_with_setter_exception(WebKitDOMTestTypedefs* self);
@@ -228,10 +253,12 @@ webkit_dom_test_typedefs_get_string_attr_with_setter_exception(WebKitDOMTestType
  * @value: A #gchar
  * @error: #GError
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_typedefs_set_string_attr_with_setter_exception(WebKitDOMTestTypedefs* self, const gchar* value, GError** error);
 
 G_END_DECLS
 
+#endif /* WEBKIT_DOM_USE_UNSTABLE_API */
 #endif /* WebKitDOMTestTypedefs_h */

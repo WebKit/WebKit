@@ -34,48 +34,12 @@ G_BEGIN_DECLS
 WEBKIT_API gboolean webkit_dom_html_text_area_element_is_edited(WebKitDOMHTMLTextAreaElement* input);
 
 /**
- * webkit_dom_html_media_element_set_current_time:
- * @self: A #WebKitDOMHTMLMediaElement
- * @value: A #gdouble
- * @error: #GError
- *
- */
-WEBKIT_API void webkit_dom_html_media_element_set_current_time(WebKitDOMHTMLMediaElement* self, gdouble value, GError** error);
-
-/**
  * webkit_dom_html_input_element_is_edited:
  * @input: A #WebKitDOMHTMLInputElement
  *
  * Returns: A #gboolean
  */
 WEBKIT_API gboolean webkit_dom_html_input_element_is_edited(WebKitDOMHTMLInputElement* input);
-
-/**
- * webkit_dom_text_track_get_kind:
- * @self: A #WebKitDOMTextTrack
- *
- * Returns: A #gchar
- */
-WEBKIT_API gchar*
-webkit_dom_text_track_get_kind(WebKitDOMTextTrack* self);
-
-/**
- * webkit_dom_text_track_get_mode:
- * @self: A #WebKitDOMTextTrack
- *
- * Returns: A #gchar
- */
-WEBKIT_API gchar*
-webkit_dom_text_track_get_mode(WebKitDOMTextTrack* self);
-
-/**
- * webkit_dom_text_track_set_mode:
- * @self: A #WebKitDOMTextTrack
- * @value: A #gchar
- *
- */
-WEBKIT_API void
-webkit_dom_text_track_set_mode(WebKitDOMTextTrack* self, const gchar* value);
 
 G_END_DECLS
 

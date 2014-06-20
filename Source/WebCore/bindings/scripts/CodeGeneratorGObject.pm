@@ -23,10 +23,14 @@
 package CodeGeneratorGObject;
 
 use constant FileNamePrefix => "WebKitDOM";
+use File::Basename;
+use FindBin;
 
 # Global Variables
 my %implIncludes = ();
 my %hdrIncludes = ();
+
+my @stableSymbols = ();
 
 my $defineTypeMacro = "G_DEFINE_TYPE";
 my $defineTypeInterfaceImplementation = ")";
@@ -282,11 +286,6 @@ sub SkipFunction {
             $codeGenerator->GetSequenceType($param->type)) {
             return 1;
         }
-    }
-
-    # Skip functions for which we have a custom implementation due to API breaks
-    if ($functionName eq "webkit_dom_html_media_element_set_current_time") {
-        return 1;
     }
 
     # This is for DataTransferItemList.idl add(File) method
@@ -813,14 +812,18 @@ sub GenerateHeader {
     @hPrefix = split("\r", $licenceTemplate);
     push(@hPrefix, "\n");
 
-    # Force single header include.
-    my $headerCheck = << "EOF";
+    my $isStableClass = scalar(@stableSymbols);
+
+    if ($isStableClass) {
+        # Force single header include.
+        my $headerCheck = << "EOF";
 #if !defined(__WEBKITDOM_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error "Only <webkitdom/webkitdom.h> can be included directly."
 #endif
 
 EOF
-    push(@hPrefix, $headerCheck);
+        push(@hPrefix, $headerCheck);
+    }
 
     # Header guard
     my $guard = $className . "_h";
@@ -830,6 +833,9 @@ EOF
 #define $guard
 
 EOF
+    if (!$isStableClass) {
+        push(@hPrefixGuard, "#ifdef WEBKIT_DOM_USE_UNSTABLE_API\n\n");
+    }
 
     $implContent = << "EOF";
 G_BEGIN_DECLS
@@ -858,12 +864,15 @@ struct _${className}Class {
     ${parentClassName}Class parent_class;
 };
 
-WEBKIT_API GType
-${lowerCaseIfaceName}_get_type (void);
-
 EOF
 
     push(@hBody, $implContent);
+
+    if ($isStableClass) {
+        push(@symbols, "GType ${lowerCaseIfaceName}_get_type(void)\n");
+    }
+    push(@hBody, "WEBKIT_API GType\n${lowerCaseIfaceName}_get_type(void);\n");
+    push(@hBody, "\n");
 }
 
 sub GetGReturnMacro {
@@ -957,12 +966,18 @@ sub GenerateFunction {
     $functionSig .= ", GError** error" if $raisesException;
     $symbolSig .= ", GError**" if $raisesException;
 
-    push(@symbols, "$returnType $functionName($symbolSig)\n");
+    my $symbol = "$returnType $functionName($symbolSig)";
+    my $isStableClass = scalar(@stableSymbols);
+    my $isStableSymbol = grep {$_ eq $symbol} @stableSymbols;
+    if ($isStableSymbol and $isStableClass) {
+        push(@symbols, "$symbol\n");
+    }
 
+    my @functionHeader = ();
     # Insert introspection annotations
-    push(@hBody, "/**\n");
-    push(@hBody, " * ${functionName}:\n");
-    push(@hBody, " * \@self: A #${className}\n");
+    push(@functionHeader, "/**");
+    push(@functionHeader, " * ${functionName}:");
+    push(@functionHeader, " * \@self: A #${className}");
 
     foreach my $param (@{$function->parameters}) {
         my $paramType = GetGlibTypeName($param->type);
@@ -973,21 +988,35 @@ sub GenerateFunction {
         if (ParamCanBeNull($functionName, $paramName)) {
             $paramAnnotations = " (allow-none):";
         }
-        push(@hBody, " * \@${paramName}:${paramAnnotations} A #${paramType}\n");
+        push(@functionHeader, " * \@${paramName}:${paramAnnotations} A #${paramType}");
     }
-    push(@hBody, " * \@error: #GError\n") if $raisesException;
-    push(@hBody, " *\n");
+    push(@functionHeader, " * \@error: #GError") if $raisesException;
+    push(@functionHeader, " *");
     my $returnTypeName = $returnType;
+    my $hasReturnTag = 0;
     $returnTypeName =~ s/\*$//;
     if ($returnValueIsGDOMType) {
-        push(@hBody, " * Returns: (transfer none): A #${returnTypeName}\n");
+        push(@functionHeader, " * Returns: (transfer none): A #${returnTypeName}");
+        $hasReturnTag = 1;
     } elsif ($returnType ne "void") {
-        push(@hBody, " * Returns: A #${returnTypeName}\n");
+        push(@functionHeader, " * Returns: A #${returnTypeName}");
+        $hasReturnTag = 1;
     }
-    push(@hBody, "**/\n");
+    if (!$isStableSymbol) {
+        if ($hasReturnTag) {
+            push(@functionHeader, " *");
+        }
+        push(@functionHeader, " * Stability: Unstable");
+    }
+    push(@functionHeader, "**/");
 
-    push(@hBody, "WEBKIT_API $returnType\n$functionName($functionSig);\n");
-    push(@hBody, "\n");
+    push(@functionHeader, "WEBKIT_API $returnType\n$functionName($functionSig);");
+    push(@functionHeader, "\n");
+    if ($isStableSymbol or !$isStableClass) {
+        push(@hBody, join("\n", @functionHeader));
+    } else {
+        push(@hBodyUnstable, join("\n", @functionHeader));
+    }
 
     push(@cBody, "$returnType $functionName($functionSig)\n{\n");
     push(@cBody, "#if ${parentConditionalString}\n") if $parentConditionalString;
@@ -1387,6 +1416,11 @@ EOF
 sub GenerateEndHeader {
     my ($object) = @_;
 
+    my $isStableClass = scalar(@stableSymbols);
+    if (!$isStableClass) {
+        push(@hPrefixGuardEnd, "#endif /* WEBKIT_DOM_USE_UNSTABLE_API */\n");
+    }
+
     #Header guard
     my $guard = $className . "_h";
 
@@ -1509,6 +1543,8 @@ sub WriteData {
     my $outputDir = shift;
     mkdir $outputDir;
 
+    my $isStableClass = scalar(@stableSymbols);
+
     # Write a private header.
     my $interfaceName = $interface->name;
     my $filename = "$outputDir/" . $className . "Private.h";
@@ -1565,12 +1601,49 @@ EOF
     print HEADER @hPrefixGuard;
     print HEADER "#include <glib-object.h>\n";
     print HEADER map { "#include <$_>\n" } sort keys(%hdrIncludes);
-    print HEADER "#include <webkitdom/webkitdomdefines.h>\n\n";
+    if ($isStableClass) {
+        print HEADER "#include <webkitdom/webkitdomdefines.h>\n\n";
+    } else {
+        print HEADER "#include <webkitdom/webkitdomdefines-unstable.h>\n\n";
+    }
     print HEADER @hBodyPre;
     print HEADER @hBody;
     print HEADER @hPrefixGuardEnd;
 
     close(HEADER);
+
+    # Write the unstable header if needed.
+    if ($isStableClass and scalar(@hBodyUnstable)) {
+        my $fullUnstableHeaderFilename = "$outputDir/" . $className . "Unstable.h";
+        open(UNSTABLE, ">$fullUnstableHeaderFilename") or die "Couldn't open file $fullUnstableHeaderFilename";
+
+        print UNSTABLE split("\r", $licenceTemplate);
+        print UNSTABLE "\n";
+
+        $guard = "${className}Unstable_h";
+        $text = << "EOF";
+#ifndef $guard
+#define $guard
+
+#include <webkitdom/${className}.h>
+EOF
+
+        print UNSTABLE $text;
+        print UNSTABLE "\n";
+        print UNSTABLE "#ifdef WEBKIT_DOM_USE_UNSTABLE_API\n\n";
+        print UNSTABLE "#if ${conditionalString}\n\n" if $conditionalString;
+        print UNSTABLE "G_BEGIN_DECLS\n";
+        print UNSTABLE "\n";
+        print UNSTABLE @hBodyUnstable;
+        print UNSTABLE "\n";
+        print UNSTABLE "G_END_DECLS\n";
+        print UNSTABLE "\n";
+        print UNSTABLE "#endif /* ${conditionalString} */\n\n" if $conditionalString;
+        print UNSTABLE "#endif /* WEBKIT_DOM_USE_UNSTABLE_API */\n";
+        print UNSTABLE "#endif /* ${guard} */\n";
+
+        close(UNSTABLE);
+    }
 
     # Write the implementation sources
     my $implFileName = "$outputDir/" . $basename . ".cpp";
@@ -1600,15 +1673,18 @@ EOF
     close(IMPL);
 
     # Write a symbols file.
-    my $symbolsFileName = "$outputDir/" . $basename . ".symbols";
-    open(SYM, ">$symbolsFileName") or die "Couldn't open file $symbolsFileName";
-    print SYM @symbols;
-    close(SYM);
+    if ($isStableClass) {
+        my $symbolsFileName = "$outputDir/" . $basename . ".symbols";
+        open(SYM, ">$symbolsFileName") or die "Couldn't open file $symbolsFileName";
+        print SYM @symbols;
+        close(SYM);
+    }
 
     %implIncludes = ();
     %hdrIncludes = ();
     @hPrefix = ();
     @hBody = ();
+    @hBodyUnstable = ();
 
     @cPrefix = ();
     @cBody = ();
@@ -1617,6 +1693,42 @@ EOF
     @cStructPriv = ();
 
     @symbols = ();
+    @stableSymbols = ();
+}
+
+sub ReadStableSymbols {
+    my $interfaceName = shift;
+
+    @stableSymbols = ();
+
+    my $bindingsDir = dirname($FindBin::Bin);
+    my $fileName = "$bindingsDir/gobject/webkitdom.symbols";
+    open FILE, "<", $fileName or die "Could not open $fileName";
+    my @lines = <FILE>;
+    close FILE;
+
+    my $decamelize = decamelize($interfaceName);
+    my $lowerCaseIfaceName = "webkit_dom_$decamelize";
+
+    foreach $line (@lines) {
+        $line =~ s/\n$//;
+
+        if ($line eq "GType ${lowerCaseIfaceName}_get_type(void)") {
+            push(@stableSymbols, $line);
+            next;
+        }
+
+        if (scalar(@stableSymbols) and $line =~ /^[a-zA-Z0-9\*]+\s${lowerCaseIfaceName}_.+$/ and $line !~ /^GType/) {
+            push(@stableSymbols, $line);
+            next;
+        }
+
+        if (scalar(@stableSymbols) and $line !~ /^GType/) {
+            warn "Symbol %line found, but a get_type was expected";
+        }
+
+        last if scalar(@stableSymbols);
+    }
 }
 
 sub GenerateInterface {
@@ -1624,6 +1736,8 @@ sub GenerateInterface {
 
     # Set up some global variables
     $className = GetClassName($interface->name);
+
+    ReadStableSymbols($interface->name);
 
     $object->Generate($interface);
 }

@@ -18,16 +18,14 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#if !defined(__WEBKITDOM_H_INSIDE__) && !defined(BUILDING_WEBKIT)
-#error "Only <webkitdom/webkitdom.h> can be included directly."
-#endif
-
 #ifndef WebKitDOMTestNondeterministic_h
 #define WebKitDOMTestNondeterministic_h
 
+#ifdef WEBKIT_DOM_USE_UNSTABLE_API
+
 #include <glib-object.h>
 #include <webkitdom/WebKitDOMObject.h>
-#include <webkitdom/webkitdomdefines.h>
+#include <webkitdom/webkitdomdefines-unstable.h>
 
 G_BEGIN_DECLS
 
@@ -47,13 +45,15 @@ struct _WebKitDOMTestNondeterministicClass {
 };
 
 WEBKIT_API GType
-webkit_dom_test_nondeterministic_get_type (void);
+webkit_dom_test_nondeterministic_get_type(void);
 
 /**
  * webkit_dom_test_nondeterministic_nondeterministic_zero_arg_function:
  * @self: A #WebKitDOMTestNondeterministic
  *
  * Returns: A #gboolean
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gboolean
 webkit_dom_test_nondeterministic_nondeterministic_zero_arg_function(WebKitDOMTestNondeterministic* self);
@@ -63,6 +63,8 @@ webkit_dom_test_nondeterministic_nondeterministic_zero_arg_function(WebKitDOMTes
  * @self: A #WebKitDOMTestNondeterministic
  *
  * Returns: A #glong
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API glong
 webkit_dom_test_nondeterministic_get_nondeterministic_readonly_attr(WebKitDOMTestNondeterministic* self);
@@ -72,6 +74,8 @@ webkit_dom_test_nondeterministic_get_nondeterministic_readonly_attr(WebKitDOMTes
  * @self: A #WebKitDOMTestNondeterministic
  *
  * Returns: A #gchar
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gchar*
 webkit_dom_test_nondeterministic_get_nondeterministic_writeable_attr(WebKitDOMTestNondeterministic* self);
@@ -81,6 +85,7 @@ webkit_dom_test_nondeterministic_get_nondeterministic_writeable_attr(WebKitDOMTe
  * @self: A #WebKitDOMTestNondeterministic
  * @value: A #gchar
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_nondeterministic_set_nondeterministic_writeable_attr(WebKitDOMTestNondeterministic* self, const gchar* value);
@@ -91,6 +96,8 @@ webkit_dom_test_nondeterministic_set_nondeterministic_writeable_attr(WebKitDOMTe
  * @error: #GError
  *
  * Returns: A #gchar
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gchar*
 webkit_dom_test_nondeterministic_get_nondeterministic_exception_attr(WebKitDOMTestNondeterministic* self, GError** error);
@@ -100,6 +107,7 @@ webkit_dom_test_nondeterministic_get_nondeterministic_exception_attr(WebKitDOMTe
  * @self: A #WebKitDOMTestNondeterministic
  * @value: A #gchar
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_nondeterministic_set_nondeterministic_exception_attr(WebKitDOMTestNondeterministic* self, const gchar* value);
@@ -110,6 +118,8 @@ webkit_dom_test_nondeterministic_set_nondeterministic_exception_attr(WebKitDOMTe
  * @error: #GError
  *
  * Returns: A #gchar
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gchar*
 webkit_dom_test_nondeterministic_get_nondeterministic_getter_exception_attr(WebKitDOMTestNondeterministic* self, GError** error);
@@ -119,6 +129,7 @@ webkit_dom_test_nondeterministic_get_nondeterministic_getter_exception_attr(WebK
  * @self: A #WebKitDOMTestNondeterministic
  * @value: A #gchar
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_nondeterministic_set_nondeterministic_getter_exception_attr(WebKitDOMTestNondeterministic* self, const gchar* value);
@@ -128,6 +139,8 @@ webkit_dom_test_nondeterministic_set_nondeterministic_getter_exception_attr(WebK
  * @self: A #WebKitDOMTestNondeterministic
  *
  * Returns: A #gchar
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gchar*
 webkit_dom_test_nondeterministic_get_nondeterministic_setter_exception_attr(WebKitDOMTestNondeterministic* self);
@@ -138,10 +151,12 @@ webkit_dom_test_nondeterministic_get_nondeterministic_setter_exception_attr(WebK
  * @value: A #gchar
  * @error: #GError
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_nondeterministic_set_nondeterministic_setter_exception_attr(WebKitDOMTestNondeterministic* self, const gchar* value, GError** error);
 
 G_END_DECLS
 
+#endif /* WEBKIT_DOM_USE_UNSTABLE_API */
 #endif /* WebKitDOMTestNondeterministic_h */

@@ -18,16 +18,14 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#if !defined(__WEBKITDOM_H_INSIDE__) && !defined(BUILDING_WEBKIT)
-#error "Only <webkitdom/webkitdom.h> can be included directly."
-#endif
-
 #ifndef WebKitDOMTestGenerateIsReachable_h
 #define WebKitDOMTestGenerateIsReachable_h
 
+#ifdef WEBKIT_DOM_USE_UNSTABLE_API
+
 #include <glib-object.h>
 #include <webkitdom/WebKitDOMObject.h>
-#include <webkitdom/webkitdomdefines.h>
+#include <webkitdom/webkitdomdefines-unstable.h>
 
 G_BEGIN_DECLS
 
@@ -47,8 +45,9 @@ struct _WebKitDOMTestGenerateIsReachableClass {
 };
 
 WEBKIT_API GType
-webkit_dom_test_generate_is_reachable_get_type (void);
+webkit_dom_test_generate_is_reachable_get_type(void);
 
 G_END_DECLS
 
+#endif /* WEBKIT_DOM_USE_UNSTABLE_API */
 #endif /* WebKitDOMTestGenerateIsReachable_h */

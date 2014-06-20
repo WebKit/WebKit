@@ -18,16 +18,14 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#if !defined(__WEBKITDOM_H_INSIDE__) && !defined(BUILDING_WEBKIT)
-#error "Only <webkitdom/webkitdom.h> can be included directly."
-#endif
-
 #ifndef WebKitDOMattribute_h
 #define WebKitDOMattribute_h
 
+#ifdef WEBKIT_DOM_USE_UNSTABLE_API
+
 #include <glib-object.h>
 #include <webkitdom/WebKitDOMObject.h>
-#include <webkitdom/webkitdomdefines.h>
+#include <webkitdom/webkitdomdefines-unstable.h>
 
 G_BEGIN_DECLS
 
@@ -49,18 +47,22 @@ struct _WebKitDOMattributeClass {
 };
 
 WEBKIT_API GType
-webkit_dom_attribute_get_type (void);
+webkit_dom_attribute_get_type(void);
 
 /**
  * webkit_dom_attribute_get_readonly:
  * @self: A #WebKitDOMattribute
  *
  * Returns: A #gchar
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gchar*
 webkit_dom_attribute_get_readonly(WebKitDOMattribute* self);
 
 G_END_DECLS
 
+#endif /* WEBKIT_DOM_USE_UNSTABLE_API */
 #endif /* WebKitDOMTestException_h */
+#endif /* WEBKIT_DOM_USE_UNSTABLE_API */
 #endif /* WebKitDOMattribute_h */

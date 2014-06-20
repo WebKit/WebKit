@@ -18,16 +18,14 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#if !defined(__WEBKITDOM_H_INSIDE__) && !defined(BUILDING_WEBKIT)
-#error "Only <webkitdom/webkitdom.h> can be included directly."
-#endif
-
 #ifndef WebKitDOMTestSerializedScriptValueInterface_h
 #define WebKitDOMTestSerializedScriptValueInterface_h
 
+#ifdef WEBKIT_DOM_USE_UNSTABLE_API
+
 #include <glib-object.h>
 #include <webkitdom/WebKitDOMObject.h>
-#include <webkitdom/webkitdomdefines.h>
+#include <webkitdom/webkitdomdefines-unstable.h>
 
 G_BEGIN_DECLS
 
@@ -47,13 +45,15 @@ struct _WebKitDOMTestSerializedScriptValueInterfaceClass {
 };
 
 WEBKIT_API GType
-webkit_dom_test_serialized_script_value_interface_get_type (void);
+webkit_dom_test_serialized_script_value_interface_get_type(void);
 
 /**
  * webkit_dom_test_serialized_script_value_interface_get_value:
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
  *
  * Returns: (transfer none): A #WebKitDOMSerializedScriptValue
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API WebKitDOMSerializedScriptValue*
 webkit_dom_test_serialized_script_value_interface_get_value(WebKitDOMTestSerializedScriptValueInterface* self);
@@ -63,6 +63,7 @@ webkit_dom_test_serialized_script_value_interface_get_value(WebKitDOMTestSeriali
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
  * @value: A #WebKitDOMSerializedScriptValue
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_serialized_script_value_interface_set_value(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* value);
@@ -72,6 +73,8 @@ webkit_dom_test_serialized_script_value_interface_set_value(WebKitDOMTestSeriali
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
  *
  * Returns: (transfer none): A #WebKitDOMSerializedScriptValue
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API WebKitDOMSerializedScriptValue*
 webkit_dom_test_serialized_script_value_interface_get_readonly_value(WebKitDOMTestSerializedScriptValueInterface* self);
@@ -81,6 +84,8 @@ webkit_dom_test_serialized_script_value_interface_get_readonly_value(WebKitDOMTe
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
  *
  * Returns: (transfer none): A #WebKitDOMSerializedScriptValue
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API WebKitDOMSerializedScriptValue*
 webkit_dom_test_serialized_script_value_interface_get_cached_value(WebKitDOMTestSerializedScriptValueInterface* self);
@@ -90,6 +95,7 @@ webkit_dom_test_serialized_script_value_interface_get_cached_value(WebKitDOMTest
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
  * @value: A #WebKitDOMSerializedScriptValue
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_serialized_script_value_interface_set_cached_value(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* value);
@@ -99,10 +105,13 @@ webkit_dom_test_serialized_script_value_interface_set_cached_value(WebKitDOMTest
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
  *
  * Returns: (transfer none): A #WebKitDOMSerializedScriptValue
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API WebKitDOMSerializedScriptValue*
 webkit_dom_test_serialized_script_value_interface_get_cached_readonly_value(WebKitDOMTestSerializedScriptValueInterface* self);
 
 G_END_DECLS
 
+#endif /* WEBKIT_DOM_USE_UNSTABLE_API */
 #endif /* WebKitDOMTestSerializedScriptValueInterface_h */

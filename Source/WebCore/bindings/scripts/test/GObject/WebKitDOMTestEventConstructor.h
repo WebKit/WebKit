@@ -18,16 +18,14 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#if !defined(__WEBKITDOM_H_INSIDE__) && !defined(BUILDING_WEBKIT)
-#error "Only <webkitdom/webkitdom.h> can be included directly."
-#endif
-
 #ifndef WebKitDOMTestEventConstructor_h
 #define WebKitDOMTestEventConstructor_h
 
+#ifdef WEBKIT_DOM_USE_UNSTABLE_API
+
 #include <glib-object.h>
 #include <webkitdom/WebKitDOMObject.h>
-#include <webkitdom/webkitdomdefines.h>
+#include <webkitdom/webkitdomdefines-unstable.h>
 
 G_BEGIN_DECLS
 
@@ -47,13 +45,15 @@ struct _WebKitDOMTestEventConstructorClass {
 };
 
 WEBKIT_API GType
-webkit_dom_test_event_constructor_get_type (void);
+webkit_dom_test_event_constructor_get_type(void);
 
 /**
  * webkit_dom_test_event_constructor_get_attr1:
  * @self: A #WebKitDOMTestEventConstructor
  *
  * Returns: A #gchar
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gchar*
 webkit_dom_test_event_constructor_get_attr1(WebKitDOMTestEventConstructor* self);
@@ -63,10 +63,13 @@ webkit_dom_test_event_constructor_get_attr1(WebKitDOMTestEventConstructor* self)
  * @self: A #WebKitDOMTestEventConstructor
  *
  * Returns: A #gchar
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gchar*
 webkit_dom_test_event_constructor_get_attr2(WebKitDOMTestEventConstructor* self);
 
 G_END_DECLS
 
+#endif /* WEBKIT_DOM_USE_UNSTABLE_API */
 #endif /* WebKitDOMTestEventConstructor_h */

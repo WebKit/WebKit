@@ -441,33 +441,17 @@ list(APPEND GObjectDOMBindings_SOURCES
     bindings/gobject/WebKitDOMObject.cpp
     bindings/gobject/WebKitDOMPrivate.cpp
     ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
+    ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines-unstable.h
     ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
 )
 
-list(APPEND GObjectDOMBindings_IDL_FILES
-    Modules/battery/BatteryManager.idl
-
-    Modules/gamepad/Gamepad.idl
-    Modules/gamepad/GamepadList.idl
-
-    Modules/geolocation/Geolocation.idl
-
-    Modules/mediasource/VideoPlaybackQuality.idl
-
-    Modules/quota/StorageInfo.idl
-    Modules/quota/StorageQuota.idl
-
-    Modules/webdatabase/Database.idl
-
+list(APPEND GObjectDOMBindingsStable_IDL_FILES
     css/CSSRule.idl
     css/CSSRuleList.idl
     css/CSSStyleDeclaration.idl
     css/CSSStyleSheet.idl
     css/CSSValue.idl
-    css/DOMWindowCSS.idl
     css/MediaList.idl
-    css/MediaQueryList.idl
-    css/StyleMedia.idl
     css/StyleSheet.idl
     css/StyleSheetList.idl
 
@@ -476,9 +460,6 @@ list(APPEND GObjectDOMBindings_IDL_FILES
     dom/CharacterData.idl
     dom/Comment.idl
     dom/DOMImplementation.idl
-    dom/DOMNamedFlowCollection.idl
-    dom/DOMStringList.idl
-    dom/DOMStringMap.idl
     dom/Document.idl
     dom/DocumentFragment.idl
     dom/DocumentType.idl
@@ -486,7 +467,6 @@ list(APPEND GObjectDOMBindings_IDL_FILES
     dom/EntityReference.idl
     dom/Event.idl
     dom/KeyboardEvent.idl
-    dom/MessagePort.idl
     dom/MouseEvent.idl
     dom/NamedNodeMap.idl
     dom/Node.idl
@@ -496,18 +476,14 @@ list(APPEND GObjectDOMBindings_IDL_FILES
     dom/ProcessingInstruction.idl
     dom/Range.idl
     dom/Text.idl
-    dom/Touch.idl
     dom/TreeWalker.idl
     dom/UIEvent.idl
-    dom/WebKitNamedFlow.idl
     dom/WheelEvent.idl
 
     fileapi/Blob.idl
     fileapi/File.idl
     fileapi/FileList.idl
 
-    html/DOMSettableTokenList.idl
-    html/DOMTokenList.idl
     html/HTMLAnchorElement.idl
     html/HTMLAppletElement.idl
     html/HTMLAreaElement.idl
@@ -519,7 +495,6 @@ list(APPEND GObjectDOMBindings_IDL_FILES
     html/HTMLCanvasElement.idl
     html/HTMLCollection.idl
     html/HTMLDListElement.idl
-    html/HTMLDetailsElement.idl
     html/HTMLDirectoryElement.idl
     html/HTMLDivElement.idl
     html/HTMLDocument.idl
@@ -537,14 +512,12 @@ list(APPEND GObjectDOMBindings_IDL_FILES
     html/HTMLIFrameElement.idl
     html/HTMLImageElement.idl
     html/HTMLInputElement.idl
-    html/HTMLKeygenElement.idl
     html/HTMLLIElement.idl
     html/HTMLLabelElement.idl
     html/HTMLLegendElement.idl
     html/HTMLLinkElement.idl
     html/HTMLMapElement.idl
     html/HTMLMarqueeElement.idl
-    html/HTMLMediaElement.idl
     html/HTMLMenuElement.idl
     html/HTMLMetaElement.idl
     html/HTMLModElement.idl
@@ -569,6 +542,45 @@ list(APPEND GObjectDOMBindings_IDL_FILES
     html/HTMLTextAreaElement.idl
     html/HTMLTitleElement.idl
     html/HTMLUListElement.idl
+
+    page/DOMWindow.idl
+
+    xml/XPathExpression.idl
+    xml/XPathNSResolver.idl
+    xml/XPathResult.idl
+)
+
+list(APPEND GObjectDOMBindingsUnstable_IDL_FILES
+    Modules/battery/BatteryManager.idl
+
+    Modules/gamepad/Gamepad.idl
+    Modules/gamepad/GamepadList.idl
+
+    Modules/geolocation/Geolocation.idl
+
+    Modules/mediasource/VideoPlaybackQuality.idl
+
+    Modules/quota/StorageInfo.idl
+    Modules/quota/StorageQuota.idl
+
+    Modules/webdatabase/Database.idl
+
+    css/DOMWindowCSS.idl
+    css/MediaQueryList.idl
+    css/StyleMedia.idl
+
+    dom/DOMNamedFlowCollection.idl
+    dom/DOMStringList.idl
+    dom/DOMStringMap.idl
+    dom/MessagePort.idl
+    dom/Touch.idl
+    dom/WebKitNamedFlow.idl
+
+    html/DOMSettableTokenList.idl
+    html/DOMTokenList.idl
+    html/HTMLDetailsElement.idl
+    html/HTMLKeygenElement.idl
+    html/HTMLMediaElement.idl
     html/MediaController.idl
     html/MediaError.idl
     html/TimeRanges.idl
@@ -579,7 +591,6 @@ list(APPEND GObjectDOMBindings_IDL_FILES
     page/BarProp.idl
     page/DOMSecurityPolicy.idl
     page/DOMSelection.idl
-    page/DOMWindow.idl
     page/History.idl
     page/Location.idl
     page/Navigator.idl
@@ -597,14 +608,10 @@ list(APPEND GObjectDOMBindings_IDL_FILES
     plugins/DOMPluginArray.idl
 
     storage/Storage.idl
-
-    xml/XPathExpression.idl
-    xml/XPathNSResolver.idl
-    xml/XPathResult.idl
 )
 
 if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
-    list(APPEND GObjectDOMBindings_IDL_FILES
+    list(APPEND GObjectDOMBindingsUnstable_IDL_FILES
         html/HTMLAudioElement.idl
         html/HTMLVideoElement.idl
 
@@ -622,23 +629,32 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     )
 endif ()
 
-set(GObjectDOMBindings_CLASS_LIST Custom EventTarget Object)
-set(GObjectDOMBindings_INSTALLED_HEADERS
+set(GObjectDOMBindingsStable_CLASS_LIST Custom EventTarget Object)
+set(GObjectDOMBindingsStable_INSTALLED_HEADERS
      ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
      ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
      ${WEBCORE_DIR}/bindings/gobject/WebKitDOMCustom.h
      ${WEBCORE_DIR}/bindings/gobject/WebKitDOMEventTarget.h
      ${WEBCORE_DIR}/bindings/gobject/WebKitDOMObject.h
 )
-file(GLOB GObjectDOMBindingsSymbolsFiles
-    "${WEBCORE_DIR}/bindings/gobject/WebKitDOM*.symbols"
+
+set(GObjectDOMBindingsUnstable_INSTALLED_HEADERS
+     ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines-unstable.h
 )
 
-foreach (file ${GObjectDOMBindings_IDL_FILES})
+foreach (file ${GObjectDOMBindingsStable_IDL_FILES})
     get_filename_component(classname ${file} NAME_WE)
-    list(APPEND GObjectDOMBindings_CLASS_LIST ${classname})
-    list(APPEND GObjectDOMBindings_INSTALLED_HEADERS ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/WebKitDOM${classname}.h)
-    list(APPEND GObjectDOMBindingsSymbolsFiles ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/WebKitDOM${classname}.symbols)
+    list(APPEND GObjectDOMBindingsStable_CLASS_LIST ${classname})
+    list(APPEND GObjectDOMBindingsStable_INSTALLED_HEADERS ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/WebKitDOM${classname}.h)
+    if (EXISTS "${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/WebKitDOM${classname}Unstable.h")
+        list(APPEND GObjectDOMBindingsUnstable_INSTALLED_HEADERS ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/WebKitDOM${classname}Unstable.h)
+    endif ()
+endforeach ()
+
+foreach (file ${GObjectDOMBindingsUnstable_IDL_FILES})
+    get_filename_component(classname ${file} NAME_WE)
+    list(APPEND GObjectDOMBindingsUnstable_CLASS_LIST ${classname})
+    list(APPEND GObjectDOMBindingsUnstable_INSTALLED_HEADERS ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/WebKitDOM${classname}.h)
 endforeach ()
 
 set(GOBJECT_DOM_BINDINGS_FEATURES_DEFINES "LANGUAGE_GOBJECT=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
@@ -649,18 +665,24 @@ file(MAKE_DIRECTORY ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR})
 
 add_custom_command(
     OUTPUT ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
-    COMMAND echo ${GObjectDOMBindings_CLASS_LIST} | ${PERL_EXECUTABLE} ${WEBCORE_DIR}/bindings/scripts/gobject-generate-headers.pl defines > ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
+    COMMAND echo ${GObjectDOMBindingsStable_CLASS_LIST} | ${PERL_EXECUTABLE} ${WEBCORE_DIR}/bindings/scripts/gobject-generate-headers.pl defines > ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
+)
+
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines-unstable.h
+    COMMAND echo ${GObjectDOMBindingsUnstable_CLASS_LIST} | ${PERL_EXECUTABLE} ${WEBCORE_DIR}/bindings/scripts/gobject-generate-headers.pl defines-unstable > ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines-unstable.h
 )
 
 add_custom_command(
     OUTPUT ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
-    COMMAND echo ${GObjectDOMBindings_CLASS_LIST} | ${PERL_EXECUTABLE} ${WEBCORE_DIR}/bindings/scripts/gobject-generate-headers.pl gdom > ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
+    COMMAND echo ${GObjectDOMBindingsStable_CLASS_LIST} | ${PERL_EXECUTABLE} ${WEBCORE_DIR}/bindings/scripts/gobject-generate-headers.pl gdom > ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
 )
 
 add_custom_target(fake-installed-webkitdom-headers
     COMMAND ln -n -s -f ${WEBCORE_DIR}/bindings/gobject/*.h ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}
 )
 
+set(GObjectDOMBindings_IDL_FILES ${GObjectDOMBindingsStable_IDL_FILES} ${GObjectDOMBindingsUnstable_IDL_FILES})
 GENERATE_BINDINGS(GObjectDOMBindings_SOURCES
     "${GObjectDOMBindings_IDL_FILES}"
     "${WEBCORE_DIR}"
@@ -676,6 +698,7 @@ GENERATE_BINDINGS(GObjectDOMBindings_SOURCES
     ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE})
 
 add_definitions(-DBUILDING_WEBKIT)
+add_definitions(-DWEBKIT_DOM_USE_UNSTABLE_API)
 
 add_library(GObjectDOMBindings STATIC ${GObjectDOMBindings_SOURCES})
 
@@ -697,9 +720,10 @@ file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkitdom.cfg
     "doc_dir=${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/docs\n"
     "source_dirs=${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}\n"
     "            ${WEBCORE_DIR}/bindings/gobject\n"
-    "headers=${GObjectDOMBindings_INSTALLED_HEADERS}\n"
+    "headers=${GObjectDOMBindingsStable_INSTALLED_HEADERS}\n"
 )
 
+set(GObjectDOMBindings_INSTALLED_HEADERS ${GObjectDOMBindingsStable_INSTALLED_HEADERS} ${GObjectDOMBindingsUnstable_INSTALLED_HEADERS})
 install(FILES ${GObjectDOMBindings_INSTALLED_HEADERS}
         DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/webkitdom"
 )

@@ -18,16 +18,14 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#if !defined(__WEBKITDOM_H_INSIDE__) && !defined(BUILDING_WEBKIT)
-#error "Only <webkitdom/webkitdom.h> can be included directly."
-#endif
-
 #ifndef WebKitDOMTestInterface_h
 #define WebKitDOMTestInterface_h
 
+#ifdef WEBKIT_DOM_USE_UNSTABLE_API
+
 #include <glib-object.h>
 #include <webkitdom/WebKitDOMObject.h>
-#include <webkitdom/webkitdomdefines.h>
+#include <webkitdom/webkitdomdefines-unstable.h>
 
 G_BEGIN_DECLS
 
@@ -47,12 +45,13 @@ struct _WebKitDOMTestInterfaceClass {
 };
 
 WEBKIT_API GType
-webkit_dom_test_interface_get_type (void);
+webkit_dom_test_interface_get_type(void);
 
 /**
  * webkit_dom_test_interface_implements_method1:
  * @self: A #WebKitDOMTestInterface
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_interface_implements_method1(WebKitDOMTestInterface* self);
@@ -65,6 +64,8 @@ webkit_dom_test_interface_implements_method1(WebKitDOMTestInterface* self);
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMTestObj
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_interface_implements_method2(WebKitDOMTestInterface* self, const gchar* strArg, WebKitDOMTestObj* objArg, GError** error);
@@ -73,6 +74,7 @@ webkit_dom_test_interface_implements_method2(WebKitDOMTestInterface* self, const
  * webkit_dom_test_interface_implements_method4:
  * @self: A #WebKitDOMTestInterface
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_interface_implements_method4(WebKitDOMTestInterface* self);
@@ -81,6 +83,7 @@ webkit_dom_test_interface_implements_method4(WebKitDOMTestInterface* self);
  * webkit_dom_test_interface_supplemental_method1:
  * @self: A #WebKitDOMTestInterface
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_interface_supplemental_method1(WebKitDOMTestInterface* self);
@@ -93,6 +96,8 @@ webkit_dom_test_interface_supplemental_method1(WebKitDOMTestInterface* self);
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMTestObj
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_interface_supplemental_method2(WebKitDOMTestInterface* self, const gchar* strArg, WebKitDOMTestObj* objArg, GError** error);
@@ -101,6 +106,7 @@ webkit_dom_test_interface_supplemental_method2(WebKitDOMTestInterface* self, con
  * webkit_dom_test_interface_supplemental_method4:
  * @self: A #WebKitDOMTestInterface
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_interface_supplemental_method4(WebKitDOMTestInterface* self);
@@ -110,6 +116,8 @@ webkit_dom_test_interface_supplemental_method4(WebKitDOMTestInterface* self);
  * @self: A #WebKitDOMTestInterface
  *
  * Returns: A #gchar
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gchar*
 webkit_dom_test_interface_get_implements_str1(WebKitDOMTestInterface* self);
@@ -119,6 +127,8 @@ webkit_dom_test_interface_get_implements_str1(WebKitDOMTestInterface* self);
  * @self: A #WebKitDOMTestInterface
  *
  * Returns: A #gchar
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gchar*
 webkit_dom_test_interface_get_implements_str2(WebKitDOMTestInterface* self);
@@ -128,6 +138,7 @@ webkit_dom_test_interface_get_implements_str2(WebKitDOMTestInterface* self);
  * @self: A #WebKitDOMTestInterface
  * @value: A #gchar
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_interface_set_implements_str2(WebKitDOMTestInterface* self, const gchar* value);
@@ -137,6 +148,8 @@ webkit_dom_test_interface_set_implements_str2(WebKitDOMTestInterface* self, cons
  * @self: A #WebKitDOMTestInterface
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API WebKitDOMNode*
 webkit_dom_test_interface_get_implements_node(WebKitDOMTestInterface* self);
@@ -146,6 +159,7 @@ webkit_dom_test_interface_get_implements_node(WebKitDOMTestInterface* self);
  * @self: A #WebKitDOMTestInterface
  * @value: A #WebKitDOMNode
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_interface_set_implements_node(WebKitDOMTestInterface* self, WebKitDOMNode* value);
@@ -155,6 +169,8 @@ webkit_dom_test_interface_set_implements_node(WebKitDOMTestInterface* self, WebK
  * @self: A #WebKitDOMTestInterface
  *
  * Returns: A #gchar
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gchar*
 webkit_dom_test_interface_get_supplemental_str1(WebKitDOMTestInterface* self);
@@ -164,6 +180,8 @@ webkit_dom_test_interface_get_supplemental_str1(WebKitDOMTestInterface* self);
  * @self: A #WebKitDOMTestInterface
  *
  * Returns: A #gchar
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API gchar*
 webkit_dom_test_interface_get_supplemental_str2(WebKitDOMTestInterface* self);
@@ -173,6 +191,7 @@ webkit_dom_test_interface_get_supplemental_str2(WebKitDOMTestInterface* self);
  * @self: A #WebKitDOMTestInterface
  * @value: A #gchar
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_interface_set_supplemental_str2(WebKitDOMTestInterface* self, const gchar* value);
@@ -182,6 +201,8 @@ webkit_dom_test_interface_set_supplemental_str2(WebKitDOMTestInterface* self, co
  * @self: A #WebKitDOMTestInterface
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Stability: Unstable
 **/
 WEBKIT_API WebKitDOMNode*
 webkit_dom_test_interface_get_supplemental_node(WebKitDOMTestInterface* self);
@@ -191,10 +212,12 @@ webkit_dom_test_interface_get_supplemental_node(WebKitDOMTestInterface* self);
  * @self: A #WebKitDOMTestInterface
  * @value: A #WebKitDOMNode
  *
+ * Stability: Unstable
 **/
 WEBKIT_API void
 webkit_dom_test_interface_set_supplemental_node(WebKitDOMTestInterface* self, WebKitDOMNode* value);
 
 G_END_DECLS
 
+#endif /* WEBKIT_DOM_USE_UNSTABLE_API */
 #endif /* WebKitDOMTestInterface_h */
