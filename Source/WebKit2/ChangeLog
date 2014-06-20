@@ -1,5 +1,26 @@
 2014-06-20  Anders Carlsson  <andersca@apple.com>
 
+        Begin stubbing out new session state classes
+        https://bugs.webkit.org/show_bug.cgi?id=134110
+
+        Reviewed by Geoffrey Garen.
+
+        The basic idea is that these classes will replace the data blobs representing HistoryItems
+        that we currently send back and forth between the web and UI processes.
+        
+        * Shared/SessionState.cpp: Added.
+        (WebKit::HTTPBody::Element::Element):
+        (WebKit::HTTPBody::Element::~Element):
+        (WebKit::FrameState::FrameState):
+        (WebKit::FrameState::~FrameState):
+        (WebKit::PageState::PageState):
+        (WebKit::PageState::~PageState):
+        * Shared/SessionState.h: Added.
+        (WebKit::HTTPBody::Element::type):
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2014-06-20  Anders Carlsson  <andersca@apple.com>
+
         Rename SessionState to LegacySessionState
         https://bugs.webkit.org/show_bug.cgi?id=134107
 

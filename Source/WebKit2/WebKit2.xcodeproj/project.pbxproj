@@ -462,6 +462,8 @@
 		1AFDD3171891C94700153970 /* WKPreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFDD3161891C94700153970 /* WKPreferences.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AFDD3191891CA1200153970 /* WKPreferences.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AFDD3181891CA1200153970 /* WKPreferences.mm */; };
 		1AFDE64519510B5500C48FFA /* LegacyBundleForClass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AFDE64319510B5500C48FFA /* LegacyBundleForClass.mm */; };
+		1AFDE6591954A42B00C48FFA /* SessionState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AFDE6571954A42B00C48FFA /* SessionState.cpp */; };
+		1AFDE65A1954A42B00C48FFA /* SessionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFDE6581954A42B00C48FFA /* SessionState.h */; };
 		1AFE436518B6C081009C7A48 /* UIDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AFE436318B6C081009C7A48 /* UIDelegate.mm */; };
 		1AFE436618B6C081009C7A48 /* UIDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFE436418B6C081009C7A48 /* UIDelegate.h */; };
 		1AFF49001833DE78009AB15A /* WKDeprecatedFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AFF48FE1833DE78009AB15A /* WKDeprecatedFunctions.cpp */; };
@@ -2418,6 +2420,8 @@
 		1AFDD3161891C94700153970 /* WKPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferences.h; sourceTree = "<group>"; };
 		1AFDD3181891CA1200153970 /* WKPreferences.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPreferences.mm; sourceTree = "<group>"; };
 		1AFDE64319510B5500C48FFA /* LegacyBundleForClass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyBundleForClass.mm; sourceTree = "<group>"; };
+		1AFDE6571954A42B00C48FFA /* SessionState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionState.cpp; sourceTree = "<group>"; };
+		1AFDE6581954A42B00C48FFA /* SessionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionState.h; sourceTree = "<group>"; };
 		1AFE436318B6C081009C7A48 /* UIDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIDelegate.mm; sourceTree = "<group>"; };
 		1AFE436418B6C081009C7A48 /* UIDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIDelegate.h; sourceTree = "<group>"; };
 		1AFF48FE1833DE78009AB15A /* WKDeprecatedFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKDeprecatedFunctions.cpp; sourceTree = "<group>"; };
@@ -4392,6 +4396,8 @@
 				33152974130D0CB200ED2483 /* SecurityOriginData.h */,
 				518D2CC812D51DFB003BB93B /* LegacySessionState.cpp */,
 				518D2CC912D51DFB003BB93B /* LegacySessionState.h */,
+				1AFDE6571954A42B00C48FFA /* SessionState.cpp */,
+				1AFDE6581954A42B00C48FFA /* SessionState.h */,
 				753E3E0B1887397300188496 /* SessionTracker.cpp */,
 				753E3E091887394B00188496 /* SessionTracker.h */,
 				1A6420E212DCE2FF00CAAE2C /* ShareableBitmap.cpp */,
@@ -7674,6 +7680,7 @@
 				BC4075FE124FF0270068F20A /* WKMutableArray.h in Headers */,
 				BC407600124FF0270068F20A /* WKMutableDictionary.h in Headers */,
 				C09AE5E9125257C20025825D /* WKNativeEvent.h in Headers */,
+				1AFDE65A1954A42B00C48FFA /* SessionState.h in Headers */,
 				BCF69FA91176D1CB00471A52 /* WKNavigationDataRef.h in Headers */,
 				318BE17914743E6F00A8FBB2 /* WKNotification.h in Headers */,
 				3769079A18F31CB2001DFF04 /* APIInjectedBundlePageUIClient.h in Headers */,
@@ -8718,6 +8725,7 @@
 				1A64230812DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp in Sources */,
 				5DA6ED0B1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm in Sources */,
 				8CFECE941490F140002AAA32 /* EditorState.cpp in Sources */,
+				1AFDE6591954A42B00C48FFA /* SessionState.cpp in Sources */,
 				93FC67BF12D3CCF200A60610 /* EncoderAdapter.cpp in Sources */,
 				2DA944AD1884E9BA00ED86DB /* TextCheckerIOS.mm in Sources */,
 				2DA944A21884E4F000ED86DB /* WebPlatformTouchPointIOS.cpp in Sources */,
