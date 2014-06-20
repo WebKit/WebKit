@@ -3515,7 +3515,8 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     else
         [self _setAcceleratedCompositingModeRootLayer:_data->_rootLayer.get()];
 
-    _data->_page->viewStateDidChange(ViewState::WindowIsActive | ViewState::IsInWindow | ViewState::IsVisible);
+    if (!thumbnailView.usesSnapshot)
+        _data->_page->viewStateDidChange(ViewState::WindowIsActive | ViewState::IsInWindow | ViewState::IsVisible);
 }
 
 - (_WKThumbnailView *)_thumbnailView

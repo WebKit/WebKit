@@ -1,5 +1,19 @@
 2014-06-20  Timothy Horton  <timothy_horton@apple.com>
 
+        Snapshotting WKThumbnailViews should not tell Web processes backing unparented WKViews that they're in window
+        https://bugs.webkit.org/show_bug.cgi?id=134134
+        <rdar://problem/17402119>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setThumbnailView:]):
+        Re-evaluating our in-window state is only useful if we're going to use the live layer tree;
+        snapshots can be taken of unparented views with no trouble. Plus, doing so sets off a chain of
+        expensive things in the Web process which we can avoid if using snapshots.
+
+2014-06-20  Timothy Horton  <timothy_horton@apple.com>
+
         WKThumbnailView should only use live layer trees before the snapshot arrives for parented WKViews
         https://bugs.webkit.org/show_bug.cgi?id=134129
         <rdar://problem/17401591>
