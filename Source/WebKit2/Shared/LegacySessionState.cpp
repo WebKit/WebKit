@@ -24,7 +24,8 @@
  */
 
 #include "config.h"
-#include "SessionState.h"
+#include "LegacySessionState.h"
+
 #include "WebCoreArgumentCoders.h"
 
 namespace IPC {
@@ -47,31 +48,31 @@ template<typename T> struct ArgumentCoder<RefPtr<T>> {
 
 namespace WebKit {
 
-SessionState::SessionState()
+LegacySessionState::LegacySessionState()
     : m_currentIndex(0)
 {
 }
 
-SessionState::SessionState(const BackForwardListItemVector& list, uint32_t currentIndex)
+LegacySessionState::LegacySessionState(const BackForwardListItemVector& list, uint32_t currentIndex)
     : m_list(list)
     , m_currentIndex(currentIndex)
 {
 }
 
-bool SessionState::isEmpty() const
+bool LegacySessionState::isEmpty() const
 {
     // Because this might change later, callers should use this instead of
     // calling list().isEmpty() directly themselves.
     return m_list.isEmpty();
 }
     
-void SessionState::encode(IPC::ArgumentEncoder& encoder) const
+void LegacySessionState::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_list;
     encoder << m_currentIndex;
 }
 
-bool SessionState::decode(IPC::ArgumentDecoder& decoder, SessionState& state)
+bool LegacySessionState::decode(IPC::ArgumentDecoder& decoder, LegacySessionState& state)
 {
     if (!decoder.decode(state.m_list))
         return false;

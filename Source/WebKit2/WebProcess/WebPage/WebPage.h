@@ -143,8 +143,8 @@ class NotificationPermissionRequestManager;
 class PageBanner;
 class PageOverlay;
 class PluginView;
+class LegacySessionState;
 class SelectionOverlayController;
-class SessionState;
 class VisibleContentRectUpdateInfo;
 class WebColorChooser;
 class WebContextMenu;
@@ -919,8 +919,8 @@ private:
 
     void loadURLInFrame(const String&, uint64_t frameID);
 
-    uint64_t restoreSession(const SessionState&);
-    void restoreSessionAndNavigateToCurrentItem(uint64_t navigationID, const SessionState&);
+    uint64_t restoreSession(const LegacySessionState&);
+    void restoreSessionAndNavigateToCurrentItem(uint64_t navigationID, const LegacySessionState&);
 
     void didRemoveBackForwardItem(uint64_t);
 

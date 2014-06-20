@@ -28,8 +28,8 @@
 
 #include "APIData.h"
 #include "DataReference.h"
+#include "LegacySessionState.h"
 #include "Logging.h"
-#include "SessionState.h"
 #include "WebBackForwardList.h"
 #include "WebPageMessages.h"
 #include "WebProcessProxy.h"
@@ -162,7 +162,7 @@ void WebPageProxy::restoreFromSessionStateData(API::Data* apiData)
                 for (size_t i = 0; i < size; ++i)
                     process().registerNewWebBackForwardListItem(entries[i].get());
 
-                SessionState state(m_backForwardList->entries(), m_backForwardList->currentIndex());
+                LegacySessionState state(m_backForwardList->entries(), m_backForwardList->currentIndex());
                 if (provisionalURL)
                     process().send(Messages::WebPage::RestoreSession(state), m_pageID);
                 else {

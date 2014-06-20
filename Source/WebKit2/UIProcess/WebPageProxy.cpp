@@ -42,6 +42,7 @@
 #include "DrawingAreaProxyMessages.h"
 #include "EventDispatcherMessages.h"
 #include "FindIndicator.h"
+#include "LegacySessionState.h"
 #include "Logging.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
@@ -53,7 +54,6 @@
 #include "PluginInformation.h"
 #include "PluginProcessManager.h"
 #include "PrintInfo.h"
-#include "SessionState.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
 #include "WKContextPrivate.h"
@@ -4375,7 +4375,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.pageLength = m_pageLength;
     parameters.gapBetweenPages = m_gapBetweenPages;
     parameters.userAgent = userAgent();
-    parameters.sessionState = SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex());
+    parameters.sessionState = LegacySessionState(m_backForwardList->entries(), m_backForwardList->currentIndex());
     parameters.sessionID = m_session->getID();
     parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
     parameters.userContentControllerID = m_userContentController ? m_userContentController->identifier() : 0;

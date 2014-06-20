@@ -22,23 +22,23 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#ifndef SessionState_h
-#define SessionState_h
+
+#ifndef LegacySessionState_h
+#define LegacySessionState_h
 
 #include "WebBackForwardListItem.h"
 
 namespace IPC {
-    class ArgumentDecoder;
-    class ArgumentEncoder;
+class ArgumentDecoder;
+class ArgumentEncoder;
 }
 
 namespace WebKit {
 
-class SessionState {
+class LegacySessionState {
 public:
-    SessionState();
-    SessionState(const BackForwardListItemVector&, uint32_t currentIndex);
+    LegacySessionState();
+    LegacySessionState(const BackForwardListItemVector&, uint32_t currentIndex);
 
     const BackForwardListItemVector& list() const { return m_list; }
     uint32_t currentIndex() const { return m_currentIndex; }
@@ -46,7 +46,7 @@ public:
     bool isEmpty() const;
 
     void encode(IPC::ArgumentEncoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, SessionState&);
+    static bool decode(IPC::ArgumentDecoder&, LegacySessionState&);
 
 private:
     BackForwardListItemVector m_list;
@@ -55,4 +55,4 @@ private:
 
 } // namespace WebKit
 
-#endif // SessionState_h
+#endif // LegacySessionState_h

@@ -41,6 +41,7 @@
 #include "InjectedBundleBackForwardList.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "LayerTreeHost.h"
+#include "LegacySessionState.h"
 #include "Logging.h"
 #include "NetscapePlugin.h"
 #include "NotificationPermissionRequestManager.h"
@@ -50,7 +51,6 @@
 #include "PluginView.h"
 #include "PrintInfo.h"
 #include "SelectionOverlayController.h"
-#include "SessionState.h"
 #include "SessionTracker.h"
 #include "ShareableBitmap.h"
 #include "TelephoneNumberOverlayController.h"
@@ -1949,7 +1949,7 @@ void WebPage::executeEditCommand(const String& commandName)
     executeEditingCommand(commandName, String());
 }
 
-uint64_t WebPage::restoreSession(const SessionState& sessionState)
+uint64_t WebPage::restoreSession(const LegacySessionState& sessionState)
 {
     const BackForwardListItemVector& list = sessionState.list();
     size_t size = list.size();
@@ -1973,7 +1973,7 @@ uint64_t WebPage::restoreSession(const SessionState& sessionState)
     return currentItemID;
 }
 
-void WebPage::restoreSessionAndNavigateToCurrentItem(uint64_t navigationID, const SessionState& sessionState)
+void WebPage::restoreSessionAndNavigateToCurrentItem(uint64_t navigationID, const LegacySessionState& sessionState)
 {
     if (uint64_t currentItemID = restoreSession(sessionState))
         goToBackForwardItem(navigationID, currentItemID);

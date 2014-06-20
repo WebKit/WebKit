@@ -28,7 +28,7 @@
 
 #include "DrawingAreaInfo.h"
 #include "LayerTreeContext.h"
-#include "SessionState.h"
+#include "LegacySessionState.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPageGroupData.h"
 #include "WebPreferencesStore.h"
@@ -81,7 +81,7 @@ struct WebPageCreationParameters {
 
     String userAgent;
 
-    SessionState sessionState;
+    LegacySessionState sessionState;
     WebCore::SessionID sessionID;
     uint64_t highestUsedBackForwardItemID;
 
