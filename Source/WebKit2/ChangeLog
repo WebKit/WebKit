@@ -1,5 +1,16 @@
 2014-06-20  Anders Carlsson  <andersca@apple.com>
 
+        Add encoding and decoding support for WTF::Optional
+        https://bugs.webkit.org/show_bug.cgi?id=134125
+
+        Reviewed by Andreas Kling.
+
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::ArgumentCoder<WTF::Optional<T>>::encode):
+        (IPC::ArgumentCoder<WTF::Optional<T>>::decode):
+
+2014-06-20  Anders Carlsson  <andersca@apple.com>
+
         Give NPAPI post requests a default content type
         https://bugs.webkit.org/show_bug.cgi?id=134120
 

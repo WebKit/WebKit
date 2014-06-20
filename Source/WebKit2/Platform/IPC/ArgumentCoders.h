@@ -32,6 +32,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace IPC {
@@ -46,6 +47,38 @@ template<typename T> struct SimpleArgumentCoder {
     static bool decode(ArgumentDecoder& decoder, T& t)
     {
         return decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(&t), sizeof(T), alignof(T));
+    }
+};
+
+template<typename T> struct ArgumentCoder<WTF::Optional<T>> {
+    static void encode(ArgumentEncoder& encoder, const WTF::Optional<T>& optional)
+    {
+        if (!optional) {
+            encoder << false;
+            return;
+        }
+
+        encoder << true;
+        encoder << optional.value();
+    }
+
+    static bool decode(ArgumentDecoder& decoder, WTF::Optional<T>& optional)
+    {
+        bool isEngaged;
+        if (!decoder.decode(isEngaged))
+            return false;
+
+        if (!isEngaged) {
+            optional = Nullopt;
+            return true;
+        }
+
+        T value;
+        if (!decoder.decode(value))
+            return false;
+
+        optional = std::move(value);
+        return true;
     }
 };
 

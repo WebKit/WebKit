@@ -91,6 +91,15 @@ public:
             m_value.~T();
     }
 
+    Optional& operator=(NulloptTag)
+    {
+        if (m_isEngaged) {
+            m_value.~T();
+            m_isEngaged = false;
+        }
+        return *this;
+    }
+
     Optional& operator=(const Optional& other)
     {
         if (m_isEngaged == other.m_isEngaged) {
