@@ -318,7 +318,7 @@ class TestRebaselineExpectations(_BaseTestCase):
         # FIXME: change this to use the test- ports.
         calls = self.tool.executive.calls
         self.assertEqual(len(calls), 1)
-        self.assertEqual(len(calls[0]), 22)
+        self.assertEqual(len(calls[0]), 20)
 
     def test_rebaseline_expectations_noop(self):
         self._zero_out_test_expectations()

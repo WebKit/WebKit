@@ -1,3 +1,17 @@
+2014-06-19  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Fix webkitpy tests after EFL WK1 buildbot and EWS removal - r170172.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+        (DeprecatedPortTest.test_gtk_wk2_port):
+        (DeprecatedPortTest.test_efl_port): Deleted.
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        (TestExpectationsTestCase.test_determine_port_from_expectations_path):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaselineExpectations.test_rebaseline_expectations):
+
 2014-06-19  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][CMAKE] Disable WebKit1 build as a default
