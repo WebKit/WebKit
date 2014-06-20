@@ -156,6 +156,10 @@
 
   <autotools id="efl" autogen-sh="configure"
              autogenargs="--disable-fribidi --disable-audio --disable-libmount --disable-physics --enable-lua-old --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aaa">
+    <dependencies>
+      <dep package="gstreamer"/>
+      <dep package="gst-plugins-base"/>
+    </dependencies>
     <branch module="rel/libs/efl/efl-1.9.2.tar.bz2" version="1.9.2"
             repo="download.enlightenment.org"
             hash="sha256:5dbeb99e1d26ccc74c9d054de5607a7e1020052b313c4b60c9a9794b45307501"
