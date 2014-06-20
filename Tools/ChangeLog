@@ -1,3 +1,44 @@
+2014-06-20  Daniel Bates  <dabates@apple.com>
+
+        Teach run-{safari, webkit-app} about iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=133986
+
+        Reviewed by David Kilzer.
+
+        Extract the logic from old-run-webkit-tests to install and launch {DumpRenderTree, WebKitTestRunnerApp}.app
+        into general-purpose routines in webkitdirs.pm so that they can be used both by script old-run-webkit-tests
+        and run-safari.
+
+        * Scripts/old-run-webkit-tests:
+        (installAndLaunchDumpToolAppUsingNotification): Extracted logic to install and launch {DumpRenderTree,
+        WebKitTestRunnerApp}.app into webkitdirs::installAndLaunchIOSWebKitAppInSimulator() and modified code
+        to call it.
+        (openIPhoneSimulator): Deleted; moved logic to webkitdirs::openIOSSimulator().
+        (quitIPhoneSimulator): Deleted; moved logic to webkitdirs::quitIOSSimulator().
+        * Scripts/run-webkit-app: Modified to call runIOSWebKitApp() when the iOS simulator SDK is used
+        (say, by specifying the optional command-line argument --simulator). For now, die() with an error
+        when the iOS device SDK is used as we don't support launching an app on the device at this time.
+        * Scripts/webkitdirs.pm:
+        (xcodeSDKVersion): Added.
+        (setupIOSWebKitEnvironment): Added.
+        (installedMobileSafariBundle): Added.
+        (mobileSafariBundle): Added.
+        (plistPathFromBundle): Added.
+        (appIdentiferFromBundle): Added.
+        (appDisplayNameFromBundle): Added.
+        (loadIPhoneSimulatorNotificationIfNeeded): Added.
+        (openIOSSimulator): Added.
+        (quitIOSSimulator): Added.
+        (iosSimulatorDeviceByName): Added.
+        (iosSimulatorRuntime): Added.
+        (findOrCreateSimulatorForIOSDevice): Added.
+        (runIOSWebKitAppInSimulator): Added.
+        (installAndLaunchIOSWebKitAppInSimulator): Added.
+        (runIOSWebKitApp): Added.
+        (runSafari): Modified to call runIOSWebKitAppInSimulator() the iOS simulator SDK is used. For now,
+        die() with an error when the iOS device SDK is used as we don't support launching Safari on the
+        device at this time.
+
 2014-06-19  Anders Carlsson  <andersca@apple.com>
 
         Add WTF::Optional class

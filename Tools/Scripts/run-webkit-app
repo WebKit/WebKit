@@ -43,4 +43,7 @@ die "Did not specify an application to open (e.g. run-webkit-app AppName).\n" un
 checkFrameworks();
 
 my $appPath = shift(@ARGV);
+if (isIOSWebKit()) {
+    exit exitStatus(runIOSWebKitApp($appPath));
+}
 exit exitStatus(runMacWebKitApp($appPath, USE_OPEN_COMMAND));

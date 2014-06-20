@@ -52,6 +52,7 @@ BEGIN {
        &XcodeOptionString
        &XcodeOptionStringNoConfig
        &XcodeOptions
+       &appDisplayNameFromBundle
        &baseProductDir
        &chdirWebKit
        &checkFrameworks
@@ -59,10 +60,16 @@ BEGIN {
        &cmakeBasedPortName
        &currentSVNRevision
        &debugSafari
+       &findOrCreateSimulatorForIOSDevice
+       &installAndLaunchIOSWebKitAppInSimulator
+       &iosSimulatorDeviceByName
        &nmPath
+       &openIOSSimulator
        &passedConfiguration
        &printHelpAndExitForRunAndDebugWebKitAppIfNeeded
        &productDir
+       &quitIOSSimulator
+       &runIOSWebKitApp
        &runMacWebKitApp
        &safariPath
        &setConfiguration
@@ -93,6 +100,7 @@ my $sourceDir;
 my $currentSVNRevision;
 my $debugger;
 my $iPhoneSimulatorVersion;
+my $didLoadIPhoneSimulatorNotification;
 my $nmPath;
 my $osXVersion;
 my $generateDsym;
@@ -437,6 +445,17 @@ sub XcodeSDKPath
     return $sdkPath;
 }
 
+sub xcodeSDKVersion
+{
+    determineXcodeSDK();
+
+    die "Can't find the SDK version because no Xcode SDK was specified" if !$xcodeSDK;
+
+    chomp(my $sdkVersion = `xcrun --sdk $xcodeSDK --show-sdk-version`);
+    die "Failed to get SDK version from xcrun" if exitStatus($?);
+
+    return $sdkVersion;
+}
 
 sub programFilesPath
 {
@@ -2116,6 +2135,229 @@ sub setupMacWebKitEnvironment($)
     setUpGuardMallocIfNeeded();
 }
 
+sub setupIOSWebKitEnvironment($)
+{
+    my ($dyldFrameworkPath) = @_;
+    $dyldFrameworkPath = File::Spec->rel2abs($dyldFrameworkPath);
+
+    $ENV{DYLD_FRAMEWORK_PATH} = $dyldFrameworkPath;
+    $ENV{DYLD_LIBRARY_PATH} = $dyldFrameworkPath;
+
+    setUpGuardMallocIfNeeded();
+}
+
+sub installedMobileSafariBundle()
+{
+    return File::Spec->catfile(XcodeSDKPath(), "Applications", "MobileSafari.app");
+}
+
+sub mobileSafariBundle()
+{
+    determineConfigurationProductDir();
+
+    # Use MobileSafari.app in product directory if present.
+    if (isAppleMacWebKit() && -d "$configurationProductDir/MobileSafari.app") {
+        return "$configurationProductDir/MobileSafari.app";
+    }
+    return installedMobileSafariBundle();
+}
+
+sub plistPathFromBundle($)
+{
+    my ($appBundle) = @_;
+    return "$appBundle/Info.plist" if -f "$appBundle/Info.plist"; # iOS app bundle
+    return "$appBundle/Contents/Info.plist" if "$appBundle/Contents/Info.plist"; # Mac app bundle
+    return "";
+}
+
+sub appIdentiferFromBundle($)
+{
+    my ($appBundle) = @_;
+    my $plistPath = plistPathFromBundle($appBundle);
+    chomp(my $bundleIdentifer = `defaults read '$plistPath' CFBundleIdentifier 2> /dev/null`);
+    return $bundleIdentifer;
+}
+
+sub appDisplayNameFromBundle($)
+{
+    my ($appBundle) = @_;
+    my $plistPath = plistPathFromBundle($appBundle);
+    chomp(my $bundleDisplayName = `defaults read '$plistPath' CFBundleDisplayName 2> /dev/null`);
+    return $bundleDisplayName;
+}
+
+sub loadIPhoneSimulatorNotificationIfNeeded()
+{
+    return if $didLoadIPhoneSimulatorNotification;
+    push(@INC, productDir() . "/lib/perl5/darwin-thread-multi-2level");
+    require IPhoneSimulatorNotification;
+    $didLoadIPhoneSimulatorNotification = 1;
+}
+
+sub openIOSSimulator()
+{
+    chomp(my $developerDirectory = $ENV{DEVELOPER_DIR} || `xcode-select --print-path`);
+    my $iosSimulatorPath = File::Spec->catfile($developerDirectory, "Applications", "iOS Simulator.app");
+
+    loadIPhoneSimulatorNotificationIfNeeded();
+
+    my $iPhoneSimulatorNotification = new IPhoneSimulatorNotification;
+    $iPhoneSimulatorNotification->startObservingReadyNotification();
+    system("open", "-a", $iosSimulatorPath, "--args", "-SessionOnLaunch", "NO") == 0 or die "Failed to open $iosSimulatorPath: $!";
+    while (!$iPhoneSimulatorNotification->hasReceivedReadyNotification()) {
+        my $date = NSDate->alloc()->initWithTimeIntervalSinceNow_(0.1);
+        NSRunLoop->currentRunLoop->runUntilDate_($date);
+        $date->release();
+    }
+    $iPhoneSimulatorNotification->stopObservingReadyNotification();
+}
+
+sub quitIOSSimulator()
+{
+    return system {"osascript"} "osascript", "-e", 'tell application "iOS Simulator" to quit';
+}
+
+sub iosSimulatorDeviceByName($)
+{
+    my ($simulatorName) = @_;
+    my @devices = grep {$_->{name} eq $simulatorName} iOSSimulatorDevices();
+    my $deviceToUse = $devices[0];
+    if (@devices > 1) {
+        print "Warning: Found more than one simulator device named '$simulatorName'.\n";
+        print "         Using simulator device with UDID: $deviceToUse->{UDID}.\n";
+        print "         To see the list of simulator devices, run:\n";
+        print "         xcrun --sdk iphonesimulator simctl list\n";
+    }
+    return $deviceToUse;
+}
+
+sub iosSimulatorRuntime()
+{
+    my $xcodeSDKVersion = xcodeSDKVersion();
+    $xcodeSDKVersion =~ s/\./-/;
+    return "com.apple.CoreSimulator.SimRuntime.iOS-$xcodeSDKVersion";
+}
+
+sub findOrCreateSimulatorForIOSDevice($)
+{
+    my ($simulatorNameSuffix) = @_;
+    my $simulatorName;
+    my $simulatorDeviceType;
+    if (architecture() eq "x86_64") {
+        $simulatorName = "iPhone 5s " . $simulatorNameSuffix;
+        $simulatorDeviceType = "com.apple.CoreSimulator.SimDeviceType.iPhone-5s";
+    } else {
+        $simulatorName = "iPhone 5 " . $simulatorNameSuffix;
+        $simulatorDeviceType = "com.apple.CoreSimulator.SimDeviceType.iPhone-5";
+    }
+    my $simulatedDevice = iosSimulatorDeviceByName($simulatorName);
+    return $simulatedDevice if $simulatedDevice;
+    return createiOSSimulatorDevice($simulatorName, $simulatorDeviceType, iosSimulatorRuntime());
+}
+
+sub runIOSWebKitAppInSimulator($;$)
+{
+    my ($appBundle, $simulatorOptions) = @_;
+    my $productDir = productDir();
+    my $appDisplayName = appDisplayNameFromBundle($appBundle);
+    print "Starting $appDisplayName with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
+
+    $simulatorOptions = {} unless $simulatorOptions;
+
+    my %simulatorENV;
+    %simulatorENV = %{$simulatorOptions->{applicationEnvironment}} if $simulatorOptions->{applicationEnvironment};
+    {
+        local %ENV; # Shadow global-scope %ENV so that changes to it will not be seen outside of this scope.
+        setupIOSWebKitEnvironment($productDir);
+        %simulatorENV = %ENV;
+    }
+    $simulatorOptions->{applicationEnvironment} = \%simulatorENV;
+    return installAndLaunchIOSWebKitAppInSimulator($appBundle, findOrCreateSimulatorForIOSDevice("For WebKit Development"), $simulatorOptions) <= 0;
+}
+
+# Launches the iOS WebKit-based application in the specified simulator device and dynamically
+# linked against the built WebKit. The application will be installed if applicable.
+#
+# Args:
+#   $appBundle: the path to the app bundle to launch.
+#   $simulatedDevice: the simulator device to use to run the app.
+#   $simulatorOptions: a hash reference representing optional simulator options.
+#     sessionUUID: a unique identifer to use for the iOS Simulator session. Defaults to an identifer
+#                  of the form "theAwesomeUniqueSessionIdentifierForX" where X is the display name of
+#                  the specified app.
+#     applicationArguments: an array reference representing the arguments to pass to the app (defaults to \@ARGV).
+#     applicationEnvironment: a hash reference representing the environment variables to use when launching the app (defaults to {}).
+#
+# Returns the process identifier of the launched app.
+sub installAndLaunchIOSWebKitAppInSimulator($$;$)
+{
+    my ($appBundle, $simulatedDevice, $simulatorOptions) = @_;
+
+    loadIPhoneSimulatorNotificationIfNeeded();
+
+    my $makeNSDictionaryFromHash = sub {
+        my ($dict) = @_;
+        my $result = NSMutableDictionary->alloc()->initWithCapacity_(scalar(keys %{$dict}));
+        for my $key (keys %{$dict}) {
+            $result->setObject_forKey_(NSString->stringWithCString_($dict->{$key}), NSString->stringWithCString_($key));
+        }
+        return $result->autorelease();
+    };
+    my $makeNSArrayFromArray = sub {
+        my ($array) = @_;
+        my $result = NSMutableArray->alloc()->initWithCapacity_(scalar(@{$array}));
+        for my $item (@{$array}) {
+            $result->addObject_(NSString->stringWithCString_($item));
+        }
+        return $result->autorelease();
+    };
+
+    my $simulatorENVHashRef = {};
+    $simulatorENVHashRef = $simulatorOptions->{applicationEnvironment} if $simulatorOptions && $simulatorOptions->{applicationEnvironment};
+    my $applicationArguments = \@ARGV;
+    $applicationArguments = $simulatorOptions->{applicationArguments} if $simulatorOptions && $simulatorOptions->{applicationArguments};
+    my $sessionUUID;
+    if ($simulatorOptions && $simulatorOptions->{sessionUUID}) {
+        $sessionUUID = $simulatorOptions->{sessionUUID};
+    } else {
+        $sessionUUID = "theAwesomeUniqueSessionIdentifierFor" . appDisplayNameFromBundle($appBundle);
+    }
+    # FIXME: We should have the iOS application adopt the files descriptors for our standard output and error streams.
+    my $sessionInfo = {
+        applicationArguments => &$makeNSArrayFromArray($applicationArguments),
+        applicationEnvironment => &$makeNSDictionaryFromHash($simulatorENVHashRef),
+        applicationIdentifier => NSString->stringWithCString_(appIdentiferFromBundle($appBundle)),
+        applicationPath => NSString->stringWithCString_($appBundle),
+        deviceUDID => NSString->stringWithCString_($simulatedDevice->{UDID}),
+        sessionUUID => NSString->stringWithCString_($sessionUUID),
+    };
+
+    openIOSSimulator();
+
+    my $iPhoneSimulatorNotification = new IPhoneSimulatorNotification;
+    $iPhoneSimulatorNotification->startObservingApplicationLaunchedNotification();
+    $iPhoneSimulatorNotification->postStartSessionNotification($sessionInfo);
+    while (!$iPhoneSimulatorNotification->hasReceivedApplicationLaunchedNotification()) {
+        my $date = NSDate->alloc()->initWithTimeIntervalSinceNow_(0.1);
+        NSRunLoop->currentRunLoop->runUntilDate_($date);
+        $date->release();
+    }
+    $iPhoneSimulatorNotification->stopObservingApplicationLaunchedNotification();
+    return $iPhoneSimulatorNotification->applicationLaunchedApplicationPID();
+}
+
+sub runIOSWebKitApp($)
+{
+    my ($appBundle) = @_;
+    if (willUseIOSDeviceSDKWhenBuilding()) {
+        die "Only running Safari in iOS Simulator is supported now.";
+    }
+    if (willUseIOSSimulatorSDKWhenBuilding()) {
+        return runIOSWebKitAppInSimulator($appBundle);
+    }
+    die "Not using an iOS SDK."
+}
+
 sub runMacWebKitApp($;$)
 {
     my ($appPath, $useOpenCommand) = @_;
@@ -2189,6 +2431,9 @@ sub debugSafari
 
 sub runSafari
 {
+    if (isIOSWebKit()) {
+        return runIOSWebKitApp(mobileSafariBundle());
+    }
 
     if (isAppleMacWebKit()) {
         return runMacWebKitApp(safariPath());

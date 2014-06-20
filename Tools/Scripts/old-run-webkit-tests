@@ -128,9 +128,7 @@ sub toWindowsPath($);
 sub validateSkippedArg($$;$);
 sub writeToFile($$);
 sub installAndLaunchDumpToolAppUsingNotification($$);
-sub openIPhoneSimulator();
 sub quitDumpToolUsingNotification();
-sub quitIPhoneSimulator();
 sub simulatorSessionUUID();
 
 # Argument handling
@@ -460,7 +458,7 @@ setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
 my $productDir = productDir();
 $productDir .= "/Programs" if isGtk();
 
-quitIPhoneSimulator() if isIOSWebKit();
+quitIOSSimulator() if isIOSWebKit();
 
 # Save the current directory before chaging it via chdirWebKit
 my $currentDir = cwd();
@@ -503,7 +501,7 @@ if (isAppleMacWebKit()) {
     eval 'use DumpRenderTreeSupport;';
 }
 
-openIPhoneSimulator() if isIOSWebKit();
+openIOSSimulator() if isIOSWebKit();
 
 if (isAppleMacWebKit()) {
     push @INC, $productDir;
@@ -1164,7 +1162,7 @@ printf "\n%0.2fs total testing time\n", $totalTestingTime . "";
 
 !$isDumpToolOpen || die "Failed to close $dumpToolName.\n";
 
-quitIPhoneSimulator() if isIOSWebKit();
+quitIOSSimulator() if isIOSWebKit();
 
 $isHttpdOpen = !closeHTTPD();
 closeWebSocketServer();
@@ -1362,103 +1360,17 @@ sub writeToFile($$)
 sub installAndLaunchDumpToolAppUsingNotification($$)
 {
     my ($args, $cleanEnv) = @_;
-
-    my $iPhoneSimulatorNotification = new IPhoneSimulatorNotification;
-    $iPhoneSimulatorNotification->startObservingApplicationLaunchedNotification();
-
-    my $makeNSDictionaryFromHash = sub {
-        my ($dict) = @_;
-        my $result = NSMutableDictionary->alloc()->initWithCapacity_(scalar(keys %{$dict}));
-        for my $key (keys %{$dict}) {
-            $result->setObject_forKey_(NSString->stringWithCString_($dict->{$key}), NSString->stringWithCString_($key));
-        }
-        return $result->autorelease();
-    };
-
-    my $makeNSArrayFromArray = sub {
-        my ($array) = @_;
-        my $result = NSMutableArray->alloc()->initWithCapacity_(scalar(@{$array}));
-        for my $item (@{$array}) {
-            $result->addObject_(NSString->stringWithCString_($item));
-        }
-        return $result->autorelease();
-    };
-
-    my $deviceName = "iPhone 5 WebKit Tester";
-    my $deviceType = "com.apple.CoreSimulator.SimDeviceType.iPhone-5";
-
-    if (architecture() eq 'x86_64') {
-        $deviceName = "iPhone 5s WebKit Tester";
-        $deviceType = "com.apple.CoreSimulator.SimDeviceType.iPhone-5s";
-    }
-
-    chomp(my $sdkVersion = `xcrun --sdk iphonesimulator --show-sdk-version`);
-    $sdkVersion =~ s/\./-/;
-
-    my $runtime = "com.apple.CoreSimulator.SimRuntime.iOS-$sdkVersion";
-
-    my @devices = iOSSimulatorDevices();
-    my $device = (grep {
-        $_->{name} eq $deviceName and $_->{runtime} eq $runtime and $_->{deviceType} eq $deviceType;
-    } @devices)[0];
-
-    if (not $device) {
-        print "Creating simulator device: $deviceName\n";
-        $device = createiOSSimulatorDevice($deviceName, $deviceType, $runtime);
-    } else {
-        print "Found simulator device with properties: " . Dumper($device);
-    }
-
-    my $identifier = iOSDumpToolAppIdentifier();
-    my $applicationPath;
-
+    my $productDir = productDir();
+    my $appBundle;
     if ($useWebKitTestRunner) {
-        $applicationPath = "$productDir/WebKitTestRunnerApp.app";
+        $appBundle = "$productDir/WebKitTestRunnerApp.app";
     } else {
-        $applicationPath = "$productDir/DumpRenderTree.app";
+        $appBundle = "$productDir/DumpRenderTree.app";
     }
-
-    my $dict = {
-        applicationArguments => &$makeNSArrayFromArray($args),
-        applicationEnvironment => &$makeNSDictionaryFromHash($cleanEnv),
-        applicationIdentifier => NSString->stringWithCString_($identifier),
-        applicationPath => NSString->stringWithCString_($applicationPath),
-        deviceUDID => NSString->stringWithCString_($device->{UDID}),
-        sessionUUID => NSString->stringWithCString_(simulatorSessionUUID()),
-    };
-    $iPhoneSimulatorNotification->postStartSessionNotification($dict);
-
-    while (!$iPhoneSimulatorNotification->hasReceivedApplicationLaunchedNotification()) {
-        my $date = NSDate->alloc()->initWithTimeIntervalSinceNow_(0.1);
-        NSRunLoop->currentRunLoop->runUntilDate_($date);
-        $date->release();
-    }
-
-    print "$identifier has launched.\n";
-
-    $iPhoneSimulatorNotification->stopObservingApplicationLaunchedNotification();
-
-    return $iPhoneSimulatorNotification->applicationLaunchedApplicationPID();
-}
-
-sub openIPhoneSimulator()
-{
-    my $iPhoneSimulatorNotification = new IPhoneSimulatorNotification;
-    $iPhoneSimulatorNotification->startObservingReadyNotification();
-
-    my $deviceName = architecture() eq 'i386' ? "iPhone 5" : "iPhone 5s";
-
-    system "open", "-a", $simulatorApp, "--args", "-SessionOnLaunch", "NO", "-SimulateDevice", $deviceName;
-
-    die $! if exitStatus($?);
-
-    while (!$iPhoneSimulatorNotification->hasReceivedReadyNotification()) {
-        my $date = NSDate->alloc()->initWithTimeIntervalSinceNow_(0.1);
-        NSRunLoop->currentRunLoop->runUntilDate_($date);
-        $date->release();
-    }
-
-    $iPhoneSimulatorNotification->stopObservingReadyNotification();
+    my $simulatorOptions = {applicationArguments => $args, applicationEnvironment => $cleanEnv, sessionUUID => simulatorSessionUUID()};
+    my $pid = installAndLaunchIOSWebKitAppInSimulator($appBundle, findOrCreateSimulatorForIOSDevice("WebKit Tester"), $simulatorOptions);
+    print appDisplayNameFromBundle($appBundle) . " has launched.\n";
+    return $pid;
 }
 
 sub quitDumpToolUsingNotification()
@@ -1486,11 +1398,6 @@ sub quitDumpToolUsingNotification()
     }
 
     $iPhoneSimulatorNotification->stopObservingApplicationQuitNotification();
-}
-
-sub quitIPhoneSimulator()
-{
-    system "osascript", "-e", "tell application \"iOS Simulator\" to quit";
 }
 
 sub simulatorSessionUUID()
