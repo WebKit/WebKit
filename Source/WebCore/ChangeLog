@@ -1,3 +1,31 @@
+2014-06-20  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Add GridSpan::iterator
+        https://bugs.webkit.org/show_bug.cgi?id=134058
+
+        Reviewed by Bem Jones-Bey.
+
+        Once that GridResolvedPosition has been introduced in r169934, this
+        patch adds a GridSpan::iterator which allows to simplify the loops over
+        GridResolvedPositions.
+        From now on we could use range-based for loops.
+
+        No new tests as it is already covered by current tests
+        (fast/css-grid-layout/).
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeNormalizedFractionBreadth): Change loop to
+        ranged-based for.
+        (WebCore::RenderGrid::insertItemIntoGrid): Ditto.
+        (WebCore::RenderGrid::gridAreaBreadthForChild): Ditto.
+        * rendering/style/GridCoordinate.h: Define GridSpan::iterator.
+        (WebCore::GridSpan::begin): Return resolved initial position.
+        (WebCore::GridSpan::end): Return next to resolved final position.
+        * rendering/style/GridResolvedPosition.h:
+        (WebCore::GridResolvedPosition::operator*): Add operator required by
+        range-based for loops.
+        (WebCore::GridResolvedPosition::operator!=): Add not equal operator.
+
 2014-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ debug build after r170174.

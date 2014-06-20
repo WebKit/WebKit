@@ -95,6 +95,11 @@ public:
         m_integerPosition = adjustGridPositionForSide(integerPosition, side).m_integerPosition;
     }
 
+    GridResolvedPosition& operator*()
+    {
+        return *this;
+    }
+
     GridResolvedPosition& operator++()
     {
         m_integerPosition++;
@@ -104,6 +109,11 @@ public:
     bool operator==(const GridResolvedPosition& other) const
     {
         return m_integerPosition == other.m_integerPosition;
+    }
+
+    bool operator!=(const GridResolvedPosition& other) const
+    {
+        return m_integerPosition != other.m_integerPosition;
     }
 
     bool operator<(const GridResolvedPosition& other) const
