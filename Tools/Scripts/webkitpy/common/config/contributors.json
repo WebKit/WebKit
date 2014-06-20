@@ -2801,6 +2801,14 @@
          "nicks" : [
             "zdobersek"
          ]
+      },
+      "Javier Fernandez" : {
+         "emails" : [
+            "jfernandez@igalia.com"
+         ],
+         "nicks" : [
+            "lajava"
+         ]
       }
    },
    "Contributors" : {
@@ -3052,14 +3060,6 @@
          ],
          "nicks" : [
             "hixie"
-         ]
-      },
-      "Javier Fernandez" : {
-         "emails" : [
-            "jfernandez@igalia.com"
-         ],
-         "nicks" : [
-            "lajava"
          ]
       },
       "Jeff Timanus" : {
