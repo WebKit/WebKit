@@ -1,3 +1,17 @@
+2014-06-20  Zalan Bujtas  <zalan@apple.com>
+
+        Remove redundant RenderLayer::computeOffsetFromRoot() function.
+        https://bugs.webkit.org/show_bug.cgi?id=134088
+
+        Reviewed by Benjamin Poulain.
+
+        No change in functionality.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::computeOffsetFromRoot): Deleted.
+        * rendering/RenderLayer.h:
+
 2014-06-19  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WebKit2] Make -webkit-overflow-scrolling:touch work in iframes (breaks MSWord previews)

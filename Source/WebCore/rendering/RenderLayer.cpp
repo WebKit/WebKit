@@ -347,28 +347,6 @@ FilterEffectRenderer* RenderLayer::filterRenderer() const
 
 #endif
 
-LayoutPoint RenderLayer::computeOffsetFromRoot(bool& hasLayerOffset) const
-{
-    hasLayerOffset = true;
-
-    if (!parent())
-        return LayoutPoint();
-
-    // This is similar to root() but we check if an ancestor layer would
-    // prevent the optimization from working.
-    const RenderLayer* rootLayer = 0;
-    for (const RenderLayer* parentLayer = parent(); parentLayer; rootLayer = parentLayer, parentLayer = parentLayer->parent()) {
-        hasLayerOffset = parentLayer->canUseConvertToLayerCoords();
-        if (!hasLayerOffset)
-            return LayoutPoint();
-    }
-    ASSERT(rootLayer == root());
-
-    LayoutPoint offset;
-    parent()->convertToLayerCoords(rootLayer, offset);
-    return offset;
-}
-
 void RenderLayer::updateLayerPositionsAfterLayout(const RenderLayer* rootLayer, UpdateLayerPositionsFlags flags)
 {
     RenderGeometryMap geometryMap(UseTransforms);
@@ -5306,7 +5284,6 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
         offset = *offsetFromRoot;
     else
         convertToLayerCoords(clipRectsContext.rootLayer, offset);
-
 
     RenderNamedFlowFragment* namedFlowFragment = currentRenderNamedFlowFragment();
     // If the view is scrolled, the flow thread is not scrolled with it and we should
