@@ -37,6 +37,7 @@
 #include "SharedBuffer.h"
 #include "WebCoreSystemInterface.h"
 #include "WebCoreURLResponse.h"
+#include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -64,6 +65,9 @@ bool ResourceHandleCFURLConnectionDelegateWithOperationQueue::hasHandle() const
 
 void ResourceHandleCFURLConnectionDelegateWithOperationQueue::setupRequest(CFMutableURLRequestRef request)
 {
+#if PLATFORM(IOS)
+    CFURLRequestSetShouldStartSynchronously(request, 1);
+#endif
     CFURLRef requestURL = CFURLRequestGetURL(request);
     if (!requestURL)
         return;
@@ -85,6 +89,8 @@ CFURLRequestRef ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSen
             return cfRequest;
         }
     }
+
+    ASSERT(!isMainThread());
 
     RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
 

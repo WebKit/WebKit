@@ -1,3 +1,21 @@
+2014-06-19  Pratik Solanki  <psolanki@apple.com>
+
+        Enable synchronous willSendRequest on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=134081
+        <rdar://problem/17350927>
+
+        Reviewed by Andreas Kling.
+
+        We lost the call to make willSendrequest callbacks be synchronous if possible during code
+        refactoring. The call is present in ResourceHandleMac.mm but that code is not called when
+        we use the CFNetwork based loader. Call the SPI in setupRequest().
+
+        No new tests because existing tests should cover this functionality.
+
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::setupRequest):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSendRequest):
+
 2014-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Do not build quota files when QUOTA is disabled
