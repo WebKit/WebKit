@@ -1,3 +1,16 @@
+2014-06-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS]: Overrelease of RetainPtr object in file upload
+        https://bugs.webkit.org/show_bug.cgi?id=134072
+
+        Reviewed by Brady Eidson.
+
+        This ivar is a RetainPtr, the release will be done automatically
+        for us when we assign to nil or destruct.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView fileUploadPanelDidDismiss:]):
+
 2014-06-20  Anders Carlsson  <andersca@apple.com>
 
         Begin stubbing out new session state classes

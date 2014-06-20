@@ -2304,7 +2304,6 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     ASSERT(_fileUploadPanel.get() == fileUploadPanel);
 
     [_fileUploadPanel setDelegate:nil];
-    [_fileUploadPanel release];
     _fileUploadPanel = nil;
 }
 
