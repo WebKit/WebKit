@@ -1,5 +1,16 @@
 2014-06-20  Anders Carlsson  <andersca@apple.com>
 
+        Always use XPC on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=134130
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        (WebKit::WebProcessProxy::platformGetLaunchOptions):
+        (WebKit::shouldUseXPC): Deleted.
+
+2014-06-20  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * Shared/SessionState.cpp:
