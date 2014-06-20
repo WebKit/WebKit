@@ -91,7 +91,11 @@ public:
             return false;
 
         if (!strcmp(argv[1], "-scanPlugin"))
+#if PLUGIN_ARCHITECTURE(X11)
             exit(NetscapePluginModule::scanPlugin(argv[2]) ? EXIT_SUCCESS : EXIT_FAILURE);
+#else
+            exit(EXIT_FAILURE);
+#endif
 
 #if defined(XP_UNIX)
         programName = WebCore::pathGetFileName(argv[0]).utf8();
