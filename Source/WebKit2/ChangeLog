@@ -1,3 +1,18 @@
+2014-06-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Always commit the scrolling tree when we flush layers
+        https://bugs.webkit.org/show_bug.cgi?id=134115
+
+        Reviewed by Beth Dakin.
+        
+        The scrolling state tree contains bare pointers to GraphicsLayers, which get
+        converted to CALayers at commit time. To avoid a window of time where those
+        GraphicsLayer pointers go stale, commit the scrolling tree whenever we flush the
+        compositing layer tree.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+
 2014-06-19  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WebKit2] Make -webkit-overflow-scrolling:touch work in iframes (breaks MSWord previews)

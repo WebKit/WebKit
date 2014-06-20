@@ -280,6 +280,7 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
     m_webPage->pageOverlayController().flushPageOverlayLayers(visibleRect);
 
     bool returnValue = m_webPage->corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes();
+    m_webPage->corePage()->scrollingCoordinator()->commitTreeStateIfNeeded();
 
     // If we have an active transient zoom, we want the zoom to win over any changes
     // that WebCore makes to the relevant layers, so re-apply our changes after flushing.
