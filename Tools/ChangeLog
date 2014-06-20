@@ -1,3 +1,24 @@
+2014-06-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Remove efl wk1 buildbot and ews
+        https://bugs.webkit.org/show_bug.cgi?id=134089
+
+        Reviewed by Benjamin Poulain.
+
+        EFL WK1 is not supported anymore. Removed all bots for EFL WK1 bots.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * QueueStatusServer/config/queues.py:
+        * Scripts/webkitpy/common/config/ews.json:
+        * Scripts/webkitpy/common/config/ports.py:
+        (DeprecatedPort.port):
+        (QtWK2Port.run_webkit_tests_command):
+        (EflPort): Deleted.
+        (EflPort.build_webkit_command): Deleted.
+        * Scripts/webkitpy/port/builders.py:
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        * TestResultServer/static-dashboards/loader_unittests.js:
+
 2014-06-19  David Kilzer  <ddkilzer@apple.com>
 
         check-webkit-style does not understand Obj-C literal syntax for NSDictionary

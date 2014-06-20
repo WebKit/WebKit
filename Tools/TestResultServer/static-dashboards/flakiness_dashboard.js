@@ -82,7 +82,6 @@ var PLATFORMS = {
         subPlatforms: {
             'LINUX': {
                 subPlatforms: {
-                    'WK1': { fallbackPlatforms: ['EFL'], expectationsDirectory: 'efl-wk1' },
                     'WK2': { fallbackPlatforms: ['EFL', 'WK2'], expectationsDirectory: 'efl-wk2' }
                 }
             }
