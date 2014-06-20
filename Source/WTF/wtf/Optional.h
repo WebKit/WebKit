@@ -28,6 +28,7 @@
 
 #include <type_traits>
 #include <wtf/Assertions.h>
+#include <wtf/StdLibExtras.h>
 
 // WTF::Optional is a class based on std::optional, described here:
 // http://www.open-std.org/JTC1/SC22/WG21/docs/papers/2013/n3527.html
@@ -57,6 +58,20 @@ public:
     {
     }
 
+    Optional(const Optional& other)
+        : m_isEngaged(other.m_isEngaged)
+    {
+        if (m_isEngaged)
+            new (NotNull, std::addressof(m_value)) T(other.m_value);
+    }
+
+    Optional(Optional&& other)
+        : m_isEngaged(other.m_isEngaged)
+    {
+        if (m_isEngaged)
+            new (NotNull, std::addressof(m_value)) T(std::move(other.m_value));
+    }
+
     Optional(T&& value)
         : m_isEngaged(true)
         , m_value(std::move(value))
@@ -68,13 +83,59 @@ public:
         : m_isEngaged(true)
         , m_value(std::forward<Args>(args)...)
     {
-
     }
 
     ~Optional()
     {
         if (m_isEngaged)
             m_value.~T();
+    }
+
+    Optional& operator=(const Optional& other)
+    {
+        if (m_isEngaged == other.m_isEngaged) {
+            if (m_isEngaged)
+                m_value = other.m_value;
+            return *this;
+        }
+
+        if (m_isEngaged)
+            m_value.~T();
+        else
+            new (NotNull, std::addressof(m_value)) T(other.m_value);
+        m_isEngaged = other.m_isEngaged;
+
+        return *this;
+    }
+
+    Optional& operator=(Optional&& other)
+    {
+        if (m_isEngaged == other.m_isEngaged) {
+            if (m_isEngaged)
+                m_value = std::move(other.m_value);
+            return *this;
+        }
+
+        if (m_isEngaged)
+            m_value.~T();
+        else
+            new (NotNull, std::addressof(m_value)) T(std::move(other.m_value));
+        m_isEngaged = other.m_isEngaged;
+
+        return *this;
+    }
+
+    template<typename U>
+    Optional& operator=(U&& u)
+    {
+        if (m_isEngaged) {
+            m_value = std::forward<U>(u);
+            return *this;
+        }
+
+        new (NotNull, std::addressof(m_value)) T(std::forward<U>(u));
+        m_isEngaged = true;
+        return *this;
     }
 
     explicit operator bool() const { return m_isEngaged; }
