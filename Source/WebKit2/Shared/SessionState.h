@@ -27,6 +27,7 @@
 #define SessionState_h
 
 #include <WebCore/IntPoint.h>
+#include <WebCore/URL.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -97,11 +98,16 @@ struct PageState {
     FrameState mainFrameState;
 };
 
-struct SessionState {
+struct BackForwardListState {
     void encode(IPC::ArgumentEncoder&) const;
 
-    Vector<PageState> backForwardListItems;
+    Vector<PageState> items;
     uint32_t currentIndex;
+};
+
+struct SessionState {
+    BackForwardListState backForwardListState;
+    WebCore::URL provisionalURL;
 };
 
 } // namespace WebKit

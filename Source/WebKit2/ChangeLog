@@ -1,3 +1,23 @@
+2014-06-20  Anders Carlsson  <andersca@apple.com>
+
+        Implement more of LegacySessionStateDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=134144
+
+        Reviewed by Sam Weinig.
+
+        * Shared/SessionState.cpp:
+        (WebKit::BackForwardListState::encode):
+        (WebKit::SessionState::encode): Deleted.
+        * Shared/SessionState.h:
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::LegacySessionStateDecoder::decodeSessionState):
+        (WebKit::LegacySessionStateDecoder::decodeSessionHistory):
+        (WebKit::LegacySessionStateDecoder::decodeV0SessionHistory):
+        (WebKit::LegacySessionStateDecoder::decodeV1SessionHistory):
+        (WebKit::LegacySessionStateDecoder::decodeSessionHistoryEntries):
+        (WebKit::LegacySessionStateDecoder::decodeSessionHistoryEntry):
+        * UIProcess/mac/LegacySessionStateCoding.h:
+
 2014-06-20  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed. build fix for the cmake based ports since r170188

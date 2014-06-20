@@ -26,13 +26,17 @@
 #ifndef LegacySessionStateCoding_h
 #define LegacySessionStateCoding_h
 
+#include <wtf/Vector.h>
+
 namespace API {
 class Data;
 }
 
 namespace WebKit {
 
+struct BackForwardListState;
 struct SessionState;
+struct PageState;
 
 class LegacySessionStateDecoder {
 public:
@@ -42,6 +46,13 @@ public:
     bool decodeSessionState(SessionState&) const;
 
 private:
+    bool decodeSessionHistory(CFDictionaryRef, BackForwardListState&) const;
+    bool decodeV0SessionHistory(CFDictionaryRef, BackForwardListState&) const;
+    bool decodeV1SessionHistory(CFDictionaryRef, BackForwardListState&) const;
+
+    bool decodeSessionHistoryEntries(CFArrayRef, Vector<PageState>&) const;
+    bool decodeSessionHistoryEntry(CFDictionaryRef, PageState&) const;
+
     API::Data* m_data;
 };
 

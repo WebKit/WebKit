@@ -73,9 +73,9 @@ void PageState::encode(IPC::ArgumentEncoder& encoder) const
     encoder << mainFrameState;
 }
 
-void SessionState::encode(IPC::ArgumentEncoder& encoder) const
+void BackForwardListState::encode(IPC::ArgumentEncoder& encoder) const
 {
-    encoder << backForwardListItems;
+    encoder << items;
     encoder << currentIndex;
 }
 
