@@ -26,31 +26,51 @@
 #include "config.h"
 #include "SessionState.h"
 
+#include "ArgumentCoders.h"
+
 namespace WebKit {
 
-HTTPBody::Element::Element()
-    : m_type(Type::Data)
+void HTTPBody::Element::encode(IPC::ArgumentEncoder& encoder) const
 {
+    encoder.encodeEnum(type);
+    encoder << data;
+    encoder << filePath;
+    encoder << fileStart;
+    encoder << fileLength;
+    encoder << expectedFileModificationTime;
+    encoder << blobURLString;
 }
 
-HTTPBody::Element::~Element()
+void HTTPBody::encode(IPC::ArgumentEncoder& encoder) const
 {
+    encoder << contentType;
+    encoder << elements;
 }
 
-FrameState::FrameState()
+void FrameState::encode(IPC::ArgumentEncoder& encoder) const
 {
+    encoder << urlString;
+    encoder << originalURLString;
+    encoder << referrer;
+    encoder << target;
+
+    encoder << documentState;
+    encoder << stateObjectData;
+
+    encoder << documentSequenceNumber;
+    encoder << itemSequenceNumber;
+
+    encoder << scrollPoint;
+    encoder << pageScaleFactor;
+
+    encoder << httpBody;
+
+    encoder << children;
 }
 
-FrameState::~FrameState()
+void PageState::encode(IPC::ArgumentEncoder& encoder) const
 {
-}
-
-PageState::PageState()
-{
-}
-
-PageState::~PageState()
-{
+    encoder << mainFrameState;
 }
 
 } // namespace WebKit

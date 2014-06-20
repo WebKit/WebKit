@@ -1,5 +1,29 @@
 2014-06-20  Anders Carlsson  <andersca@apple.com>
 
+        Add ArgumentEncoder support to PageState and friends
+        https://bugs.webkit.org/show_bug.cgi?id=134128
+
+        Reviewed by Andreas Kling.
+
+        Change the classes to structs, get rid of the constructors/destructors
+        and add encode member functions.
+
+        * Shared/SessionState.cpp:
+        (WebKit::HTTPBody::Element::encode):
+        (WebKit::HTTPBody::encode):
+        (WebKit::FrameState::encode):
+        (WebKit::PageState::encode):
+        (WebKit::HTTPBody::Element::Element): Deleted.
+        (WebKit::HTTPBody::Element::~Element): Deleted.
+        (WebKit::FrameState::FrameState): Deleted.
+        (WebKit::FrameState::~FrameState): Deleted.
+        (WebKit::PageState::PageState): Deleted.
+        (WebKit::PageState::~PageState): Deleted.
+        * Shared/SessionState.h:
+        (WebKit::HTTPBody::Element::type): Deleted.
+
+2014-06-20  Anders Carlsson  <andersca@apple.com>
+
         Add encoding and decoding support for WTF::Optional
         https://bugs.webkit.org/show_bug.cgi?id=134125
 

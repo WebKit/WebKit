@@ -26,51 +26,75 @@
 #ifndef SessionState_h
 #define SessionState_h
 
+#include <WebCore/IntPoint.h>
+#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+namespace IPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
+}
+
 namespace WebKit {
 
-class HTTPBody {
-public:
-    class Element {
-    public:
+struct HTTPBody {
+    struct Element {
+        void encode(IPC::ArgumentEncoder&) const;
+
         enum class Type {
             Data,
             File,
             Blob,
         };
 
-        Element();
-        ~Element();
+        Type type = Type::Data;
 
-        Type type() const { return m_type; }
+        // Data.
+        Vector<char> data;
 
-    private:
-        Type m_type;
+        // File.
+        String filePath;
+        int64_t fileStart;
+        Optional<int64_t> fileLength;
+        Optional<double> expectedFileModificationTime;
+
+        // Blob.
+        String blobURLString;
     };
 
-private:
-    String m_contentType;
-    Vector<Element> m_elements;
+    void encode(IPC::ArgumentEncoder&) const;
+
+    String contentType;
+    Vector<Element> elements;
 };
 
-class FrameState {
-public:
-    FrameState();
-    ~FrameState();
+struct FrameState {
+    void encode(IPC::ArgumentEncoder&) const;
 
-private:
-    Vector<FrameState> m_children;
-    HTTPBody m_httpBody;
+    String urlString;
+    String originalURLString;
+    String referrer;
+    String target;
+
+    Vector<String> documentState;
+    Vector<uint8_t> stateObjectData;
+
+    int64_t documentSequenceNumber;
+    int64_t itemSequenceNumber;
+
+    WebCore::IntPoint scrollPoint;
+    float pageScaleFactor;
+
+    Optional<HTTPBody> httpBody;
+
+    Vector<FrameState> children;
 };
 
-class PageState {
-public:
-    PageState();
-    ~PageState();
+struct PageState {
+    void encode(IPC::ArgumentEncoder&) const;
 
-    FrameState m_mainFrameState;
+    FrameState mainFrameState;
 };
 
 } // namespace WebKit
