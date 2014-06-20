@@ -1519,6 +1519,21 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     _page->listenForLayoutMilestones(layoutMilestones(observedRenderingProgressEvents));
 }
 
+- (void)_getMainResourceDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler
+{
+    auto handler = adoptNS([completionHandler copy]);
+
+    _page->getMainResourceDataOfFrame(_page->mainFrame(), [handler](API::Data* data, WebKit::CallbackBase::Error error) {
+        void (^completionHandlerBlock)(NSData *, NSError *) = (void (^)(NSData *, NSError *))handler.get();
+        if (error != WebKit::CallbackBase::Error::None) {
+            // FIXME: Pipe a proper error in from the WebPageProxy.
+            RetainPtr<NSError> error = adoptNS([[NSError alloc] init]);
+            completionHandlerBlock(nil, error.get());
+        } else
+            completionHandlerBlock(wrapper(*data), nil);
+    });
+}
+
 - (void)_getWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler
 {
     auto handler = adoptNS([completionHandler copy]);

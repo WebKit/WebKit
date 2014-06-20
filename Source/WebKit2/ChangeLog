@@ -1,3 +1,20 @@
+2014-06-20  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] No way to get the main frame’s main resource’s data
+        https://bugs.webkit.org/show_bug.cgi?id=134113
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _getMainResourceDataWithCompletionHandler:]): Added. Calls
+        WebPageProxy::getMainResourceDataOfFrame and invokes the completion handler form the
+        callback.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Declared new method.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getMainResourceDataOfFrame): Made it safe to pass a NULL frame into
+        this function.
+
 2014-06-20  Anders Carlsson  <andersca@apple.com>
 
         Introduce a WKSessionStateRef object

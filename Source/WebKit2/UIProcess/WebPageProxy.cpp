@@ -2297,7 +2297,7 @@ void WebPageProxy::getSelectionAsWebArchiveData(std::function<void (API::Data*, 
 void WebPageProxy::getMainResourceDataOfFrame(WebFrameProxy* frame, std::function<void (API::Data*, CallbackBase::Error)> callbackFunction)
 {
     RefPtr<DataCallback> callback = DataCallback::create(std::move(callbackFunction));
-    if (!isValid()) {
+    if (!isValid() || !frame) {
         callback->invalidate();
         return;
     }
