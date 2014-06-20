@@ -1,3 +1,16 @@
+2014-06-20  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r169972): fix issue when removing masks from compositing layers
+        https://bugs.webkit.org/show_bug.cgi?id=134118
+        <rdar://problem/17366654>
+
+        Reviewed by Dean Jackson.
+        
+        Test that toggles the mask on a composited element.
+
+        * compositing/masks/toggle-mask-expected.txt: Added.
+        * compositing/masks/toggle-mask.html: Added.
+
 2014-06-19  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WebKit2] Make -webkit-overflow-scrolling:touch work in iframes (breaks MSWord previews)

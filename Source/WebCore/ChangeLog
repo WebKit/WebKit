@@ -1,3 +1,23 @@
+2014-06-20  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r169972): fix issue when removing masks from compositing layers
+        https://bugs.webkit.org/show_bug.cgi?id=134118
+        <rdar://problem/17366654>
+
+        Reviewed by Dean Jackson.
+        
+        After r169972 when removing the mask, we could destroy the mask
+        layer before the call into m_graphicsLayer->setMaskLayer(), which would
+        try to call functions on the old mask. Fix by clearing the mask layer
+        on the GraphicsLayer before the mask layer gets destroyed.
+
+        Test: compositing/masks/toggle-mask.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        (WebCore::RenderLayerBacking::updateMaskLayer):
+        * rendering/RenderLayerBacking.h:
+
 2014-06-20  Andreas Kling  <akling@apple.com>
 
         [Cocoa] Release freed up blocks from the JS heap after simulated memory pressure.

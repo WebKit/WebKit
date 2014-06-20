@@ -563,8 +563,7 @@ bool RenderLayerBacking::updateConfiguration()
             m_graphicsLayer->addChild(flatteningLayer);
     }
 
-    if (updateMaskLayer(renderer().hasMask()))
-        m_graphicsLayer->setMaskLayer(m_maskLayer.get());
+    updateMaskLayer(renderer().hasMask());
 
     if (m_owningLayer.hasReflection()) {
         if (m_owningLayer.reflectionLayer()->backing()) {
@@ -1385,7 +1384,7 @@ bool RenderLayerBacking::updateBackgroundLayer(bool needsBackgroundLayer)
     return layerChanged;
 }
 
-bool RenderLayerBacking::updateMaskLayer(bool needsMaskLayer)
+void RenderLayerBacking::updateMaskLayer(bool needsMaskLayer)
 {
     bool layerChanged = false;
     if (needsMaskLayer) {
@@ -1394,8 +1393,10 @@ bool RenderLayerBacking::updateMaskLayer(bool needsMaskLayer)
             m_maskLayer->setDrawsContent(true);
             m_maskLayer->setPaintingPhase(GraphicsLayerPaintMask);
             layerChanged = true;
+            m_graphicsLayer->setMaskLayer(m_maskLayer.get());
         }
     } else if (m_maskLayer) {
+        m_graphicsLayer->setMaskLayer(nullptr);
         willDestroyLayer(m_maskLayer.get());
         m_maskLayer = nullptr;
         layerChanged = true;
@@ -1403,8 +1404,6 @@ bool RenderLayerBacking::updateMaskLayer(bool needsMaskLayer)
 
     if (layerChanged)
         m_graphicsLayer->setPaintingPhase(paintingPhaseForPrimaryLayer());
-
-    return layerChanged;
 }
 
 bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
