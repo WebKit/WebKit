@@ -1,3 +1,12 @@
+2014-06-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix lots of WK2 test crashes.
+
+        We don't always have a ScrollingCoordinator.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+
 2014-06-20  Anders Carlsson  <andersca@apple.com>
 
         Always use XPC on iOS
