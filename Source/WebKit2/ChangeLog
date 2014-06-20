@@ -1,3 +1,22 @@
+2014-06-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Make ScrollingTreeNodes refounted, for easier tree reconfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=134075
+
+        Reviewed by Tim Horton.
+
+        Make ScrollingTreeNode be ref-counted.
+
+        * UIProcess/Scrolling/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::createNode):
+        * UIProcess/Scrolling/RemoteScrollingTree.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::create):
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.h:
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::createScrollingTreeNode):
+
 2014-06-20  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] No way to get the MIME type of the main frame

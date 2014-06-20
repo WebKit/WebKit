@@ -95,7 +95,7 @@ void ScrollingTree::setOrClearLatchedNode(const PlatformWheelEvent& wheelEvent, 
 void ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     if (m_rootNode)
-        m_rootNode->handleWheelEvent(wheelEvent);
+        toScrollingTreeScrollingNode(m_rootNode.get())->handleWheelEvent(wheelEvent);
 }
 
 void ScrollingTree::viewportChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const WebCore::FloatRect& fixedPositionRect, double scale)
@@ -177,12 +177,12 @@ void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode)
             // This is the root node. Nuke the node map.
             m_nodeMap.clear();
 
-            m_rootNode = static_pointer_cast<ScrollingTreeScrollingNode>(createNode(FrameScrollingNode, nodeID));
+            m_rootNode = createNode(FrameScrollingNode, nodeID);
             m_nodeMap.set(nodeID, m_rootNode.get());
             m_rootNode->updateBeforeChildren(*stateNode);
             node = m_rootNode.get();
         } else {
-            OwnPtr<ScrollingTreeNode> newNode = createNode(stateNode->nodeType(), nodeID);
+            RefPtr<ScrollingTreeNode> newNode = createNode(stateNode->nodeType(), nodeID);
             node = newNode.get();
             m_nodeMap.set(nodeID, node);
             ScrollingTreeNodeMap::const_iterator it = m_nodeMap.find(stateNode->parent()->scrollingNodeID());

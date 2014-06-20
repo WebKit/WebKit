@@ -92,7 +92,7 @@ void ScrollingTreeIOS::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const 
     callOnMainThread(bind(&AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll, m_scrollingCoordinator.get(), nodeID, scrollPosition, isHandlingProgrammaticScroll(), scrollingLayerPositionAction));
 }
 
-PassOwnPtr<ScrollingTreeNode> ScrollingTreeIOS::createNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+PassRefPtr<ScrollingTreeNode> ScrollingTreeIOS::createNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     return m_scrollingCoordinator->createScrollingTreeNode(nodeType, nodeID);
 }

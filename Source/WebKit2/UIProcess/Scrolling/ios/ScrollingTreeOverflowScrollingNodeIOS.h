@@ -37,7 +37,7 @@ namespace WebKit {
 
 class ScrollingTreeOverflowScrollingNodeIOS : public WebCore::ScrollingTreeOverflowScrollingNode {
 public:
-    static PassOwnPtr<ScrollingTreeOverflowScrollingNodeIOS> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
+    static PassRefPtr<ScrollingTreeOverflowScrollingNodeIOS> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
     virtual ~ScrollingTreeOverflowScrollingNodeIOS();
 
     void scrollViewWillStartPanGesture();

@@ -142,7 +142,7 @@ void ScrollingCoordinatorMac::updateTiledScrollingIndicator()
     tiledBacking->setScrollingModeIndication(indicatorMode);
 }
 
-PassOwnPtr<ScrollingTreeNode> ScrollingCoordinatorMac::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+PassRefPtr<ScrollingTreeNode> ScrollingCoordinatorMac::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     ASSERT(scrollingTree());
 

@@ -44,12 +44,12 @@ ScrollingTreeNode::~ScrollingTreeNode()
 {
 }
 
-void ScrollingTreeNode::appendChild(PassOwnPtr<ScrollingTreeNode> childNode)
+void ScrollingTreeNode::appendChild(PassRefPtr<ScrollingTreeNode> childNode)
 {
     childNode->setParent(this);
 
     if (!m_children)
-        m_children = adoptPtr(new Vector<OwnPtr<ScrollingTreeNode>>);
+        m_children = adoptPtr(new ScrollingTreeChildrenVector);
 
     m_children->append(childNode);
 }

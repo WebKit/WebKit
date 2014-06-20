@@ -104,7 +104,7 @@ void ScrollingCoordinatorIOS::commitTreeState()
     // FIXME: figure out how to commit.
 }
 
-PassOwnPtr<ScrollingTreeNode> ScrollingCoordinatorIOS::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+PassRefPtr<ScrollingTreeNode> ScrollingCoordinatorIOS::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     ASSERT(scrollingTree());
 

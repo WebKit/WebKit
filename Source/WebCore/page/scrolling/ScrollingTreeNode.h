@@ -31,7 +31,7 @@
 #include "IntRect.h"
 #include "ScrollTypes.h"
 #include "ScrollingCoordinator.h"
-#include <wtf/PassOwnPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -39,7 +39,7 @@ class ScrollingStateFixedNode;
 class ScrollingStateNode;
 class ScrollingStateScrollingNode;
 
-class ScrollingTreeNode {
+class ScrollingTreeNode : public RefCounted<ScrollingTreeNode> {
 public:
     virtual ~ScrollingTreeNode();
 
@@ -60,14 +60,14 @@ public:
     ScrollingTreeNode* parent() const { return m_parent; }
     void setParent(ScrollingTreeNode* parent) { m_parent = parent; }
 
-    void appendChild(PassOwnPtr<ScrollingTreeNode>);
+    void appendChild(PassRefPtr<ScrollingTreeNode>);
     void removeChild(ScrollingTreeNode*);
 
 protected:
     ScrollingTreeNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
     ScrollingTree& scrollingTree() const { return m_scrollingTree; }
 
-    typedef Vector<OwnPtr<ScrollingTreeNode>> ScrollingTreeChildrenVector;
+    typedef Vector<RefPtr<ScrollingTreeNode>> ScrollingTreeChildrenVector;
     OwnPtr<ScrollingTreeChildrenVector> m_children;
 
 private:

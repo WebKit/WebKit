@@ -1,3 +1,46 @@
+2014-06-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Make ScrollingTreeNodes refounted, for easier tree reconfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=134075
+
+        Reviewed by Tim Horton.
+
+        Make ScrollingTreeNode be ref-counted.
+
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::handleWheelEvent):
+        (WebCore::ScrollingTree::updateTreeFromStateNode):
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::rootNode):
+        * page/scrolling/ScrollingTreeNode.cpp:
+        (WebCore::ScrollingTreeNode::appendChild):
+        * page/scrolling/ScrollingTreeNode.h:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::createNode):
+        * page/scrolling/ThreadedScrollingTree.h:
+        * page/scrolling/ios/ScrollingCoordinatorIOS.h:
+        * page/scrolling/ios/ScrollingCoordinatorIOS.mm:
+        (WebCore::ScrollingCoordinatorIOS::createScrollingTreeNode):
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.h:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::create):
+        * page/scrolling/ios/ScrollingTreeIOS.cpp:
+        (WebCore::ScrollingTreeIOS::createNode):
+        * page/scrolling/ios/ScrollingTreeIOS.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::createScrollingTreeNode):
+        * page/scrolling/mac/ScrollingTreeFixedNode.h:
+        * page/scrolling/mac/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::create):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::create):
+        * page/scrolling/mac/ScrollingTreeStickyNode.h:
+        * page/scrolling/mac/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::create):
+
 2014-06-20  Enrica Casucci  <enrica@apple.com>
 
         iOS build fix after http://trac.webkit.org/changeset/170167.

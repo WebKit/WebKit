@@ -50,9 +50,9 @@ static void logThreadedScrollingMode(unsigned synchronousScrollingReasons);
 static void logWheelEventHandlerCountChanged(unsigned);
 
 
-PassOwnPtr<ScrollingTreeFrameScrollingNode> ScrollingTreeFrameScrollingNodeMac::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
+PassRefPtr<ScrollingTreeFrameScrollingNode> ScrollingTreeFrameScrollingNodeMac::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
 {
-    return adoptPtr(new ScrollingTreeFrameScrollingNodeMac(scrollingTree, nodeID));
+    return adoptRef(new ScrollingTreeFrameScrollingNodeMac(scrollingTree, nodeID));
 }
 
 ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)

@@ -116,7 +116,7 @@ void ThreadedScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)
 }
 #endif
 
-PassOwnPtr<ScrollingTreeNode> ThreadedScrollingTree::createNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+PassRefPtr<ScrollingTreeNode> ThreadedScrollingTree::createNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     return m_scrollingCoordinator->createScrollingTreeNode(nodeType, nodeID);
 }

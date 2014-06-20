@@ -54,7 +54,7 @@ private:
     explicit ScrollingTreeIOS(AsyncScrollingCoordinator*);
     virtual bool isScrollingTreeIOS() const override { return true; }
 
-    virtual PassOwnPtr<ScrollingTreeNode> createNode(ScrollingNodeType, ScrollingNodeID) override;
+    virtual PassRefPtr<ScrollingTreeNode> createNode(ScrollingNodeType, ScrollingNodeID) override;
 
     virtual void scrollingTreeNodeDidScroll(ScrollingNodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) override;
 

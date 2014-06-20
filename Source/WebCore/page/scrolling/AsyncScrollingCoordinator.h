@@ -53,7 +53,7 @@ public:
 
     ScrollingTree* scrollingTree() const { return m_scrollingTree.get(); }
 
-    virtual PassOwnPtr<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) = 0;
+    virtual PassRefPtr<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) = 0;
 
     void scrollingStateTreePropertiesChanged();
 

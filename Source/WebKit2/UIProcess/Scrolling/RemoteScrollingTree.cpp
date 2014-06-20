@@ -99,7 +99,7 @@ void RemoteScrollingTree::scrollingTreeNodeRequestsScroll(ScrollingNodeID nodeID
     m_scrollingCoordinatorProxy.scrollingTreeNodeRequestsScroll(nodeID, scrollPosition, representsProgrammaticScroll);
 }
 
-PassOwnPtr<ScrollingTreeNode> RemoteScrollingTree::createNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+PassRefPtr<ScrollingTreeNode> RemoteScrollingTree::createNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     switch (nodeType) {
     case FrameScrollingNode:

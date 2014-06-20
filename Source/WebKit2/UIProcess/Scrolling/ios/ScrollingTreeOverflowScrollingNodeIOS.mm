@@ -91,9 +91,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<ScrollingTreeOverflowScrollingNodeIOS> ScrollingTreeOverflowScrollingNodeIOS::create(WebCore::ScrollingTree& scrollingTree, WebCore::ScrollingNodeID nodeID)
+PassRefPtr<ScrollingTreeOverflowScrollingNodeIOS> ScrollingTreeOverflowScrollingNodeIOS::create(WebCore::ScrollingTree& scrollingTree, WebCore::ScrollingNodeID nodeID)
 {
-    return adoptPtr(new ScrollingTreeOverflowScrollingNodeIOS(scrollingTree, nodeID));
+    return adoptRef(new ScrollingTreeOverflowScrollingNodeIOS(scrollingTree, nodeID));
 }
 
 ScrollingTreeOverflowScrollingNodeIOS::ScrollingTreeOverflowScrollingNodeIOS(WebCore::ScrollingTree& scrollingTree, WebCore::ScrollingNodeID nodeID)

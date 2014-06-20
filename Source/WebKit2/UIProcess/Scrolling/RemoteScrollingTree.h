@@ -61,7 +61,7 @@ private:
     virtual void scrollingTreeNodeWillStartPanGesture() override;
 #endif
 
-    virtual PassOwnPtr<WebCore::ScrollingTreeNode> createNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);
+    virtual PassRefPtr<WebCore::ScrollingTreeNode> createNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);
     
     RemoteScrollingCoordinatorProxy& m_scrollingCoordinatorProxy;
 };

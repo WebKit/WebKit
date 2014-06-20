@@ -39,7 +39,7 @@ namespace WebCore {
 
 class ScrollingTreeFrameScrollingNodeMac : public ScrollingTreeFrameScrollingNode, private ScrollElasticityControllerClient {
 public:
-    static PassOwnPtr<ScrollingTreeFrameScrollingNode> create(ScrollingTree&, ScrollingNodeID);
+    static PassRefPtr<ScrollingTreeFrameScrollingNode> create(ScrollingTree&, ScrollingNodeID);
     virtual ~ScrollingTreeFrameScrollingNodeMac();
 
 private:
