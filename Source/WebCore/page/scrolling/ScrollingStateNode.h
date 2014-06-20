@@ -71,14 +71,32 @@ public:
         : m_platformLayer(platformLayer)
         , m_layerID(0)
         , m_representation(PlatformLayerRepresentation)
-    { }
+    {
+        retainPlatformLayer(platformLayer);
+    }
 
     LayerRepresentation(GraphicsLayer::PlatformLayerID layerID)
         : m_graphicsLayer(nullptr)
         , m_layerID(layerID)
         , m_representation(PlatformLayerIDRepresentation)
-    { }
-    
+    {
+    }
+
+    LayerRepresentation(const LayerRepresentation& other)
+        : m_platformLayer(other.m_platformLayer)
+        , m_layerID(other.m_layerID)
+        , m_representation(other.m_representation)
+    {
+        if (m_representation == PlatformLayerRepresentation)
+            retainPlatformLayer(m_platformLayer);
+    }
+
+    ~LayerRepresentation()
+    {
+        if (m_representation == PlatformLayerRepresentation)
+            releasePlatformLayer(m_platformLayer);
+    }
+
     operator GraphicsLayer*() const
     {
         ASSERT(m_representation == GraphicsLayerRepresentation);
@@ -101,8 +119,20 @@ public:
         ASSERT(m_representation != PlatformLayerRepresentation);
         return m_layerID;
     }
-    
-    bool operator ==(const LayerRepresentation& other) const
+
+    LayerRepresentation& operator=(const LayerRepresentation& other)
+    {
+        m_platformLayer = other.m_platformLayer;
+        m_layerID = other.m_layerID;
+        m_representation = other.m_representation;
+
+        if (m_representation == PlatformLayerRepresentation)
+            retainPlatformLayer(m_platformLayer);
+
+        return *this;
+    }
+
+    bool operator==(const LayerRepresentation& other) const
     {
         if (m_representation != other.m_representation)
             return false;
@@ -141,6 +171,9 @@ public:
     bool representsPlatformLayerID() const { return m_representation == PlatformLayerIDRepresentation; }
     
 private:
+    void retainPlatformLayer(PlatformLayer*);
+    void releasePlatformLayer(PlatformLayer*);
+
     union {
         GraphicsLayer* m_graphicsLayer;
         PlatformLayer *m_platformLayer;

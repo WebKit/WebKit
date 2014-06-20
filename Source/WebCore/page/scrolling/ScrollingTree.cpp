@@ -184,7 +184,7 @@ void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode,
 
     if (parentNodeID) {
         auto parentIt = m_nodeMap.find(parentNodeID);
-        ASSERT(parentIt != m_nodeMap.end());
+        ASSERT_WITH_SECURITY_IMPLICATION(parentIt != m_nodeMap.end());
         if (parentIt != m_nodeMap.end()) {
             ScrollingTreeNode* parent = parentIt->value;
             node->setParent(parent);

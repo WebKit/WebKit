@@ -1,3 +1,39 @@
+2014-06-20  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=134117
+        Unreproducible crashes under WebCore::ScrollingTree::updateTreeFromStateNode() 
+        from messaging a deleted Obj-C object
+        -and corresponding-
+        <rdar://problem/17149252>
+
+        Reviewed by Simon Fraser.
+
+        This is a speculative fix. It makes LayerRepresentation retain m_platformLayer.
+
+        * WebCore.exp.in:
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::LayerRepresentation::LayerRepresentation):
+        (WebCore::LayerRepresentation::~LayerRepresentation):
+        (WebCore::LayerRepresentation::operator=):
+        (WebCore::LayerRepresentation::operator==):
+        (WebCore::LayerRepresentation::operator ==): Deleted.
+
+        Make this ASSERT an ASSERT_WITH_SECURITY_IMPLICATION
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::updateTreeFromStateNode):
+
+        Moved ScrollingStateNodeMac.mm, which was empty anyway, to cocoa/
+        ScrollingStateNode.mm so that iOS can use it too.
+        * page/scrolling/cocoa: Added.
+        * page/scrolling/cocoa/ScrollingStateNode.mm: Copied from page/scrolling/mac/ScrollingStateNodeMac.mm.
+
+        Actual implementation for retain and release.
+        (WebCore::LayerRepresentation::retainPlatformLayer):
+        (WebCore::LayerRepresentation::releasePlatformLayer):
+
+        Deleted.
+        * page/scrolling/mac/ScrollingStateNodeMac.mm: Removed.
+
 2014-06-19  Zalan Bujtas  <zalan@apple.com>
 
         Introduce RenderLayer::offsetFromAncestorLayer() to make convertToLayerCoords() calls with

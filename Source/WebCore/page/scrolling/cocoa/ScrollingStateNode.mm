@@ -33,6 +33,16 @@
 
 namespace WebCore {
 
+void LayerRepresentation::retainPlatformLayer(PlatformLayer* layer)
+{
+    [layer retain];
+}
+
+void LayerRepresentation::releasePlatformLayer(PlatformLayer* layer)
+{
+    [layer release];
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)
