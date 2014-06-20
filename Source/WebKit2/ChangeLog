@@ -1,3 +1,9 @@
+2014-06-20  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed. build fix for the cmake based ports since r170188
+
+        * CMakeLists.txt: Added LegacySessionState.cpp in source list.
+
 2014-06-20  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] No way to get the main frame’s main resource’s data
