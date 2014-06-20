@@ -116,8 +116,6 @@ FloatPoint RenderGeometryMap::mapToContainer(const FloatPoint& p, const RenderLa
 #if !ASSERT_DISABLED
     FloatPoint rendererMappedResult = m_mapping.last().m_renderer->localToAbsolute(p, m_mapCoordinatesFlags);
     ASSERT(roundedIntPoint(rendererMappedResult) == roundedIntPoint(result));
-//    if (roundedIntPoint(rendererMappedResult) != roundedIntPoint(result))
-//        fprintf(stderr, "Mismatched point\n");
 #endif
 
     return result;
@@ -141,8 +139,6 @@ FloatQuad RenderGeometryMap::mapToContainer(const FloatRect& rect, const RenderL
     // Inspector creates renderers with negative width <https://bugs.webkit.org/show_bug.cgi?id=87194>.
     // Taking FloatQuad bounds avoids spurious assertions because of that.
     ASSERT(enclosingIntRect(rendererMappedResult) == enclosingIntRect(FloatQuad(result).boundingBox()));
-//    if (enclosingIntRect(rendererMappedResult) != enclosingIntRect(FloatQuad(result).boundingBox()))
-//        fprintf(stderr, "Mismatched rects\n");
 #endif
 
     return result;
@@ -187,11 +183,8 @@ void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const R
     // from mapping via layers.
     bool canConvertInLayerTree = ancestorLayer ? canMapBetweenRenderers(layer->renderer(), ancestorLayer->renderer()) : false;
 
-//    fprintf(stderr, "RenderGeometryMap::pushMappingsToAncestor from layer %p to layer %p, canConvertInLayerTree=%d\n", layer, ancestorLayer, canConvertInLayerTree);
-
     if (canConvertInLayerTree) {
-        LayoutPoint layerOffset;
-        layer->convertToLayerCoords(ancestorLayer, layerOffset);
+        LayoutSize layerOffset = layer->offsetFromAncestor(ancestorLayer);
         
         // The RenderView must be pushed first.
         if (!m_mapping.size()) {
@@ -200,7 +193,7 @@ void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const R
         }
 
         TemporaryChange<size_t> positionChange(m_insertionPosition, m_mapping.size());
-        push(&renderer, toLayoutSize(layerOffset), /*accumulatingTransform*/ true, /*isNonUniform*/ false, /*isFixedPosition*/ false, /*hasTransform*/ false);
+        push(&renderer, layerOffset, /*accumulatingTransform*/ true, /*isNonUniform*/ false, /*isFixedPosition*/ false, /*hasTransform*/ false);
         return;
     }
     const RenderLayerModelObject* ancestorRenderer = ancestorLayer ? &ancestorLayer->renderer() : 0;
@@ -209,8 +202,6 @@ void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const R
 
 void RenderGeometryMap::push(const RenderObject* renderer, const LayoutSize& offsetFromContainer, bool accumulatingTransform, bool isNonUniform, bool isFixedPosition, bool hasTransform)
 {
-//    fprintf(stderr, "RenderGeometryMap::push %p %d,%d isNonUniform=%d\n", renderer, offsetFromContainer.width().toInt(), offsetFromContainer.height().toInt(), isNonUniform);
-
     ASSERT(m_insertionPosition != notFound);
 
     m_mapping.insert(m_insertionPosition, RenderGeometryMapStep(renderer, accumulatingTransform, isNonUniform, isFixedPosition, hasTransform));

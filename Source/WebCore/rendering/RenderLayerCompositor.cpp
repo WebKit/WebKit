@@ -958,13 +958,8 @@ void RenderLayerCompositor::repaintInCompositedAncestor(RenderLayer& layer, cons
     RenderLayer* compositedAncestor = layer.enclosingCompositingLayerForRepaint(ExcludeSelf);
     if (compositedAncestor) {
         ASSERT(compositedAncestor->backing());
-
-        LayoutPoint offset;
-        layer.convertToLayerCoords(compositedAncestor, offset);
-
         LayoutRect repaintRect = rect;
-        repaintRect.moveBy(offset);
-
+        repaintRect.move(layer.offsetFromAncestor(compositedAncestor));
         compositedAncestor->setBackingNeedsRepaintInRect(repaintRect);
     }
 

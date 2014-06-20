@@ -458,8 +458,7 @@ void RenderLayerBacking::updateCompositedBounds()
         if (&m_owningLayer != rootLayer)
             clippingBounds.intersect(m_owningLayer.backgroundClipRect(RenderLayer::ClipRectsContext(rootLayer, AbsoluteClipRects)).rect()); // FIXME: Incorrect for CSS regions.
 
-        LayoutPoint delta;
-        m_owningLayer.convertToLayerCoords(rootLayer, delta, RenderLayer::AdjustForColumns);
+        LayoutPoint delta = m_owningLayer.convertToLayerCoords(rootLayer, LayoutPoint(), RenderLayer::AdjustForColumns);
         clippingBounds.move(-delta.x(), -delta.y());
 
         layerBounds.intersect(clippingBounds);
@@ -711,8 +710,7 @@ void RenderLayerBacking::updateGeometry()
     LayoutRect localCompositingBounds = compositedBounds();
     LayoutRect relativeCompositingBounds(localCompositingBounds);
 
-    LayoutPoint offsetFromParent;
-    m_owningLayer.convertToLayerCoords(compAncestor, offsetFromParent, RenderLayer::AdjustForColumns);
+    LayoutPoint offsetFromParent = m_owningLayer.convertToLayerCoords(compAncestor, LayoutPoint(), RenderLayer::AdjustForColumns);
     // Device pixel fractions get accumulated through ancestor layers. Our painting offset is layout offset + parent's painting offset.
     offsetFromParent = offsetFromParent + (compAncestor ? compAncestor->backing()->devicePixelFractionFromRenderer() : LayoutSize());
     relativeCompositingBounds.moveBy(offsetFromParent);

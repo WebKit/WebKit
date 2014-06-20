@@ -1,3 +1,47 @@
+2014-06-19  Zalan Bujtas  <zalan@apple.com>
+
+        Introduce RenderLayer::offsetFromAncestorLayer() to make convertToLayerCoords() calls with
+        LayoutPoint(0, 0) as parameter more explicit.
+        https://bugs.webkit.org/show_bug.cgi?id=134092
+
+        Reviewed by Simon Fraser.
+
+        Most of the RenderLayer::convertToLayerCoords() callers are only interested in
+        the offset from the ancestor layer by passing LayoutPoint(0, 0) as the coordinate to convert.
+        Introducing offsetFromAncestorLayer() makes those calls more explicit/self-explanatory.
+        It helps simplifying the callsite's code.
+
+        No change in functionality.
+
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::mapToContainer):
+        (WebCore::RenderGeometryMap::pushMappingsToAncestor):
+        (WebCore::RenderGeometryMap::push):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::computeOffsetFromRoot):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::expandClipRectForRegionAndReflection):
+        (WebCore::expandClipRectForDescendantsAndReflection):
+        (WebCore::transparencyClipBox):
+        (WebCore::RenderLayer::convertToPixelSnappedLayerCoords):
+        (WebCore::accumulateOffsetTowardsAncestor):
+        (WebCore::RenderLayer::convertToLayerCoords):
+        (WebCore::RenderLayer::offsetFromAncestorLayer):
+        (WebCore::RenderLayer::clipToRect):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintLayerByApplyingTransform):
+        (WebCore::RenderLayer::collectFragments):
+        (WebCore::RenderLayer::paintTransformedLayerIntoFragments):
+        (WebCore::RenderLayer::createLocalTransformState):
+        (WebCore::RenderLayer::hitTestTransformedLayerInFragments):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::repaintInCompositedAncestor):
+
 2014-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Removing dead code in platform/graphics/gpu
