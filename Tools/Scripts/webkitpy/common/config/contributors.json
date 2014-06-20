@@ -2754,17 +2754,6 @@
             "yuzo"
          ]
       },
-      "Zalan Bujtas" : {
-         "emails" : [
-            "zalan@apple.com",
-            "zbujtas@gmail.com",
-            "zalan.bujtas@nokia.com"
-         ],
-         "expertise" : "Frame flattening",
-         "nicks" : [
-            "zalan"
-         ]
-      },
       "Zeno Albisser" : {
          "emails" : [
             "zeno@webkit.org",
@@ -4612,6 +4601,17 @@
          "expertise" : "Core KHTML contributor, The QtWebKit Port",
          "nicks" : [
             "zackr"
+         ]
+      },
+      "Zalan Bujtas" : {
+         "emails" : [
+            "zalan@apple.com",
+            "zbujtas@gmail.com",
+            "zalan.bujtas@nokia.com"
+         ],
+         "expertise" : "Layout and Rendering, subpixel positioning, frame flattening",
+         "nicks" : [
+            "zalan"
          ]
       },
       "Zoltan Herczeg" : {
