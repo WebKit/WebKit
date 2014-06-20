@@ -1,3 +1,14 @@
+2014-06-20  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] No way to get the MIME type of the main frame
+        https://bugs.webkit.org/show_bug.cgi?id=134111
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _MIMEType]): Added. Returns the MIME type of the main frame, or nil.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2014-06-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS]: Overrelease of RetainPtr object in file upload

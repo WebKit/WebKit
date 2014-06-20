@@ -1402,6 +1402,14 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return [NSURL _web_URLWithWTFString:_page->pageLoadState().url()];
 }
 
+- (NSString *)_MIMEType
+{
+    if (_page->mainFrame())
+        return _page->mainFrame()->mimeType();
+
+    return nil;
+}
+
 - (NSString *)_applicationNameForUserAgent
 {
     return _page->applicationNameForUserAgent();
