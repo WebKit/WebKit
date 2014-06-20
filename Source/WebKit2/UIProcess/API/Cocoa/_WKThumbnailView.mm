@@ -66,6 +66,7 @@ using namespace WebKit;
         return nil;
 
     self.wantsLayer = YES;
+    self.layer.backgroundColor = [NSColor whiteColor].CGColor;
 
     _wkView = wkView;
     _webPageProxy = toImpl([_wkView pageRef]);

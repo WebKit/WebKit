@@ -3528,7 +3528,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _WKThumbnailView *thumbnailView = _data->_thumbnailView;
     ASSERT(thumbnailView);
 
-    if (!thumbnailView.usesSnapshot || thumbnailView._waitingForSnapshot)
+    if (!thumbnailView.usesSnapshot || (thumbnailView._waitingForSnapshot && self.window))
         [self _reparentLayerTreeInThumbnailView];
 }
 
