@@ -7,7 +7,6 @@ find_package(Ethumb ${EFL_REQUIRED_VERSION} ${EFL_CONFIG_MODE})
 find_package(EthumbClient ${EFL_REQUIRED_VERSION} ${EFL_CONFIG_MODE})
 
 set(MiniBrowser_SOURCES
-    ${TOOLS_DIR}/EWebLauncher/url_utils.c
     ${MiniBrowser_DIR}/main.c
 )
 
@@ -31,7 +30,6 @@ set(MiniBrowser_INCLUDE_DIRECTORIES
     ${ETHUMB_INCLUDE_DIRS}
     ${ETHUMB_CLIENT_INCLUDE_DIRS}
     ${EVAS_INCLUDE_DIRS}
-    ${TOOLS_DIR}/EWebLauncher
     ${WEBKIT2_DIR}/UIProcess/API/efl
     ${WEBKIT2_DIR}
     ${CMAKE_SOURCE_DIR}/Source

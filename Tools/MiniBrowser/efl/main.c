@@ -18,7 +18,6 @@
  */
 
 #include "EWebKit2.h"
-#include "url_utils.h"
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Ecore_Getopt.h>
@@ -880,6 +879,38 @@ quit(Eina_Bool success, const char *msg)
         return EXIT_FAILURE;
 
     return EXIT_SUCCESS;
+}
+
+static Eina_Bool
+has_scheme(const char *url)
+{
+    return !!strstr(url, "://");
+}
+
+static char *
+url_from_user_input(const char *arg)
+{
+    /* If it is already a URL, return the argument as is. */
+    if (has_scheme(arg) || !strcasecmp(arg, "about:blank"))
+        return strdup(arg);
+
+    Eina_Strbuf *buf = eina_strbuf_manage_new(eina_file_path_sanitize(arg));
+
+    /* Check if the path exists. */
+    if (ecore_file_exists(eina_strbuf_string_get(buf))) {
+        /* File exists, convert local path to a URL. */
+        eina_strbuf_prepend(buf, "file://");
+    } else {
+        /* The path does not exist, convert it to a URL by
+           prepending http:// scheme:
+           www.google.com -> http://www.google.com */
+        eina_strbuf_string_free(buf);
+        eina_strbuf_append_printf(buf, "http://%s", arg);
+    }
+    char *url = eina_strbuf_string_steal(buf);
+    eina_strbuf_free(buf);
+
+    return url;
 }
 
 static void

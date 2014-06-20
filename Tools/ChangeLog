@@ -1,3 +1,19 @@
+2014-06-20  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Merge url_utils.c to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=134095
+
+        Reviewed by Csaba Osztrogonác.
+
+        url_utils.c is simple code to share between EWebLauncher and MiniBrowser.
+        This patch removes the dependency of url_utils.c from MiniBrowser to drop WebKit1 EFL port.
+
+        * MiniBrowser/efl/CMakeLists.txt:
+        Remove the EWebLauncher/ from the includes and url_utils.h from the source lists.
+        * MiniBrowser/efl/main.c:
+        (has_scheme): Copied from url_utils.c
+        (url_from_user_input): Ditto.
+
 2014-06-19  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Fix webkitpy tests after EFL WK1 buildbot and EWS removal - r170172.
