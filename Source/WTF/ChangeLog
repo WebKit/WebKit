@@ -1,3 +1,17 @@
+2014-06-19  Anders Carlsson  <andersca@apple.com>
+
+        Add WTF::Optional class
+        https://bugs.webkit.org/show_bug.cgi?id=134083
+
+        Reviewed by Andreas Kling.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Optional.h: Added.
+        (WTF::Optional::Optional):
+        (WTF::Optional::~Optional):
+        (WTF::Optional::operator bool):
+        (WTF::Optional::value):
+
 2014-06-19  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         Remove ENABLE(LLINT) and ENABLE(LLINT_C_LOOP) guards

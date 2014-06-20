@@ -1,3 +1,14 @@
+2014-06-19  Anders Carlsson  <andersca@apple.com>
+
+        Add WTF::Optional class
+        https://bugs.webkit.org/show_bug.cgi?id=134083
+
+        Reviewed by Andreas Kling.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/Optional.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2014-06-20  Ion Rosca  <rosca@adobe.com>
 
         Unreviewed. Adding myself to Committers list.
