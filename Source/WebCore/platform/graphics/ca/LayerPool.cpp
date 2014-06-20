@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -39,12 +40,18 @@ LayerPool::LayerPool()
     , m_pruneTimer(this, &LayerPool::pruneTimerFired)
     , m_lastAddTime(0)
 {
+    allLayerPools().add(this);
 }
 
-LayerPool* LayerPool::sharedPool()
+LayerPool::~LayerPool()
 {
-    static LayerPool* sharedPool = new LayerPool;
-    return sharedPool;
+    allLayerPools().remove(this);
+}
+
+HashSet<LayerPool*>& LayerPool::allLayerPools()
+{
+    static NeverDestroyed<HashSet<LayerPool*>> allLayerPools;
+    return allLayerPools.get();
 }
 
 unsigned LayerPool::backingStoreBytesForSize(const IntSize& size)

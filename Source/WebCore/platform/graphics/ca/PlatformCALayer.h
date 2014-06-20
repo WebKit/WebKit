@@ -46,6 +46,7 @@ typedef struct CGContext *CGContextRef;
 
 namespace WebCore {
 
+class LayerPool;
 class PlatformCALayer;
 class PlatformCAAnimation;
 
@@ -223,6 +224,7 @@ public:
 #endif
 
     virtual PassRefPtr<PlatformCALayer> createCompatibleLayer(LayerType, PlatformCALayerClient*) const = 0;
+    PassRefPtr<PlatformCALayer> createCompatibleLayerOrTakeFromPool(LayerType layerType, PlatformCALayerClient* client, IntSize);
 
 #if PLATFORM(COCOA)
     virtual void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) = 0;
@@ -243,8 +245,12 @@ public:
     static void drawRepaintIndicator(CGContextRef, PlatformCALayer*, int repaintCount, CGColorRef customBackgroundColor);
     static CGRect frameForLayer(const PlatformLayer*);
 
+    void moveToLayerPool();
+
 protected:
     PlatformCALayer(LayerType, PlatformCALayerClient* owner);
+
+    virtual LayerPool& layerPool();
 
     const LayerType m_layerType;
     const GraphicsLayer::PlatformLayerID m_layerID;

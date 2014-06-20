@@ -117,9 +117,10 @@ PlatformCALayerRemote::~PlatformCALayerRemote()
         m_context->layerWillBeDestroyed(this);
 }
 
-void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeTransaction& transaction)
+void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& context, RemoteLayerTreeTransaction& transaction)
 {
     ASSERT(!m_properties.backingStore || owner());
+    ASSERT_WITH_SECURITY_IMPLICATION(&context == m_context);
     
     if (m_properties.backingStore && (!owner() || !owner()->platformCALayerDrawsContent())) {
         m_properties.backingStore = nullptr;
@@ -148,11 +149,11 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeTransaction
     for (size_t i = 0; i < m_children.size(); ++i) {
         PlatformCALayerRemote* child = toPlatformCALayerRemote(m_children[i].get());
         ASSERT(child->superlayer() == this);
-        child->recursiveBuildTransaction(transaction);
+        child->recursiveBuildTransaction(context, transaction);
     }
 
     if (m_maskLayer)
-        m_maskLayer->recursiveBuildTransaction(transaction);
+        m_maskLayer->recursiveBuildTransaction(context, transaction);
 }
 
 void PlatformCALayerRemote::didCommit()
@@ -655,6 +656,11 @@ uint32_t PlatformCALayerRemote::hostingContextID()
 {
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+LayerPool& PlatformCALayerRemote::layerPool()
+{
+    return m_context->layerPool();
 }
 
 } // namespace WebKit

@@ -41,7 +41,10 @@ namespace WebCore {
 class LayerPool {
     WTF_MAKE_NONCOPYABLE(LayerPool);
 public:
-    static LayerPool* sharedPool();
+    LayerPool();
+    ~LayerPool();
+
+    static HashSet<LayerPool*>& allLayerPools();
     
     void addLayer(const RefPtr<PlatformCALayer>&);
     RefPtr<PlatformCALayer> takeLayerWithSize(const IntSize&);
@@ -52,8 +55,6 @@ public:
     unsigned capacity() const { return m_maxBytesForPool; }
 
 private:
-    LayerPool();
-
     typedef Deque<RefPtr<PlatformCALayer>> LayerList;
 
     unsigned decayedCapacity() const;

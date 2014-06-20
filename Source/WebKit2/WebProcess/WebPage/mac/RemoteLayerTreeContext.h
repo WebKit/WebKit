@@ -31,6 +31,7 @@
 #include "RemoteLayerTreeTransaction.h"
 #include "WebPage.h"
 #include <WebCore/GraphicsLayerFactory.h>
+#include <WebCore/LayerPool.h>
 #include <WebCore/PlatformCALayer.h>
 #include <wtf/Vector.h>
 
@@ -51,6 +52,8 @@ public:
     void backingStoreWasCreated(RemoteLayerBackingStore*);
     void backingStoreWillBeDestroyed(RemoteLayerBackingStore*);
     void backingStoreWillBeDisplayed(RemoteLayerBackingStore*);
+
+    WebCore::LayerPool& layerPool() { return m_layerPool; }
 
     LayerHostingMode layerHostingMode() const { return m_webPage->layerHostingMode(); }
 
@@ -80,6 +83,8 @@ private:
     RemoteLayerBackingStoreCollection m_backingStoreCollection;
     
     RemoteLayerTreeTransaction* m_currentTransaction;
+
+    WebCore::LayerPool m_layerPool;
 };
 
 } // namespace WebKit

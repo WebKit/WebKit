@@ -27,7 +27,6 @@
 #include "TileController.h"
 
 #include "IntRect.h"
-#include "LayerPool.h"
 #include "PlatformCALayer.h"
 #include "Region.h"
 #include "TileCoverageMap.h"
@@ -490,15 +489,9 @@ int TileController::rightMarginWidth() const
 
 RefPtr<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect, TileGrid& grid)
 {
-    RefPtr<PlatformCALayer> layer = LayerPool::sharedPool()->takeLayerWithSize(tileRect.size());
-
-    if (layer)
-        layer->setOwner(&grid);
-    else
-        layer = m_tileCacheLayer->createCompatibleLayer(PlatformCALayer::LayerTypeTiledBackingTileLayer, &grid);
+    RefPtr<PlatformCALayer> layer = m_tileCacheLayer->createCompatibleLayerOrTakeFromPool(PlatformCALayer::LayerTypeTiledBackingTileLayer, &grid, tileRect.size());
 
     layer->setAnchorPoint(FloatPoint3D());
-    layer->setBounds(FloatRect(FloatPoint(), tileRect.size()));
     layer->setPosition(tileRect.location());
     layer->setBorderColor(m_tileDebugBorderColor);
     layer->setBorderWidth(m_tileDebugBorderWidth);

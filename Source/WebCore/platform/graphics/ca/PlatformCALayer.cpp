@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "LayerPool.h"
 #include "PlatformCALayer.h"
 #include <wtf/StringExtras.h>
 
@@ -89,6 +90,33 @@ void PlatformCALayer::drawRepaintIndicator(CGContextRef context, PlatformCALayer
     
     CGContextEndTransparencyLayer(context);
     CGContextRestoreGState(context);
+}
+
+PassRefPtr<PlatformCALayer> PlatformCALayer::createCompatibleLayerOrTakeFromPool(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client, IntSize size)
+{
+    RefPtr<PlatformCALayer> layer;
+
+    if ((layer = layerPool().takeLayerWithSize(size))) {
+        layer->setOwner(client);
+        return layer.release();
+    }
+
+    layer = createCompatibleLayer(layerType, client);
+    layer->setBounds(FloatRect(FloatPoint(), size));
+    
+    return layer.release();
+}
+
+void PlatformCALayer::moveToLayerPool()
+{
+    ASSERT(!superlayer());
+    layerPool().addLayer(this);
+}
+
+LayerPool& PlatformCALayer::layerPool()
+{
+    static LayerPool* sharedPool = new LayerPool;
+    return *sharedPool;
 }
 
 }

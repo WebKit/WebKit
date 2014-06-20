@@ -264,7 +264,7 @@ void TileGrid::removeTiles(Vector<TileGrid::TileIndex>& toRemove)
         TileInfo tileInfo = m_tiles.take(toRemove[i]);
         tileInfo.layer->removeFromSuperlayer();
         m_tileRepaintCounts.remove(tileInfo.layer.get());
-        LayerPool::sharedPool()->addLayer(tileInfo.layer);
+        tileInfo.layer->moveToLayerPool();
     }
 }
 

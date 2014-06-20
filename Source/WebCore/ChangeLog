@@ -1,3 +1,40 @@
+2014-06-20  Tim Horton  <timothy_horton@apple.com>
+
+        LayerPool’d PlatformCALayerRemote/RemoteLayerBackingStore can have stale context pointers
+        https://bugs.webkit.org/show_bug.cgi?id=134050
+        <rdar://problem/17315114>
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::platformReleaseMemory):
+        Drain all LayerPools upon memory pressure.
+
+        * platform/graphics/ca/LayerPool.cpp:
+        (WebCore::LayerPool::LayerPool):
+        (WebCore::LayerPool::~LayerPool):
+        (WebCore::LayerPool::allLayerPools):
+        (WebCore::LayerPool::sharedPool): Deleted.
+        * platform/graphics/ca/LayerPool.h:
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::PlatformCALayer::createCompatibleLayerWithSize):
+        Add createCompatibleLayerWithSize, which optionally tries to take said layer from the LayerPool.
+
+        (WebCore::PlatformCALayer::moveToLayerPool):
+        Add moveToLayerPool, which moves the layer to the LayerPool.
+
+        (WebCore::PlatformCALayer::layerPool):
+        The LayerPool for each layer is obtained via PlatformCALayer::layerPool(), which subclasses can override for special behaviors.
+        The base class uses a global LayerPool.
+
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::createTileLayer):
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::removeTiles):
+
 2014-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] webkit_dom_document_create_tree_walker impossible to use due to WebKitDOMNodeFilter

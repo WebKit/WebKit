@@ -1,5 +1,24 @@
 2014-06-20  Tim Horton  <timothy_horton@apple.com>
 
+        LayerPool’d PlatformCALayerRemote/RemoteLayerBackingStore can have stale context pointers
+        https://bugs.webkit.org/show_bug.cgi?id=134050
+        <rdar://problem/17315114>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::recursiveBuildTransaction):
+        (WebKit::PlatformCALayerRemote::layerPool):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        (WebKit::RemoteLayerTreeContext::layerPool):
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::buildTransaction):
+        Ensure that layers being committed are always in the context that is committing them.
+        Use a LayerPool per RemoteLayerTreeContext, to avoid moving layers between contexts.
+
+2014-06-20  Tim Horton  <timothy_horton@apple.com>
+
         WKContentViewInteraction isn't cleaned up when the Web Content process crashes
         https://bugs.webkit.org/show_bug.cgi?id=134080
         <rdar://problem/17387652> and <rdar://problem/16848360>

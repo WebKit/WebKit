@@ -103,7 +103,7 @@ void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transa
     transaction.setRootLayerID(rootLayerRemote.layerID());
 
     m_currentTransaction = &transaction;
-    rootLayerRemote.recursiveBuildTransaction(transaction);
+    rootLayerRemote.recursiveBuildTransaction(*this, transaction);
     m_currentTransaction = nullptr;
 
     transaction.setCreatedLayers(std::move(m_createdLayers));

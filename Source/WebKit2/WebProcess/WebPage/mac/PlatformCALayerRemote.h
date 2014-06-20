@@ -31,6 +31,10 @@
 #include <WebCore/PlatformLayer.h>
 #include <WebCore/TileController.h>
 
+namespace WebCore {
+class LayerPool;
+}
+
 namespace WebKit {
 
 class RemoteLayerTreeContext;
@@ -45,7 +49,7 @@ public:
 
     virtual PlatformLayer* platformLayer() const override { return nullptr; }
 
-    void recursiveBuildTransaction(RemoteLayerTreeTransaction&);
+    void recursiveBuildTransaction(RemoteLayerTreeContext&, RemoteLayerTreeTransaction&);
 
     virtual void setNeedsDisplay(const WebCore::FloatRect* dirtyRect = 0) override;
 
@@ -174,6 +178,8 @@ private:
     void removeSublayer(PlatformCALayerRemote*);
 
     bool requiresCustomAppearanceUpdateOnBoundsChange() const;
+
+    virtual WebCore::LayerPool& layerPool() override;
 
     RemoteLayerTreeTransaction::LayerProperties m_properties;
     WebCore::PlatformCALayerList m_children;
