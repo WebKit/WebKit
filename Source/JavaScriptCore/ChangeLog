@@ -1,3 +1,10 @@
+2014-06-19  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed fix after r170130.
+
+        * JavaScriptCore.vcxproj/libllvmForJSC/libllvmForJSC.vcxproj:
+        Corrected directory so it can find common.props when opening Visual Studio.
+
 2014-06-19  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         Remove ENABLE(LLINT) and ENABLE(LLINT_C_LOOP) guards
