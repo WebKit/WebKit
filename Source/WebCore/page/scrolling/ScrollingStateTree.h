@@ -81,15 +81,23 @@ private:
 
     void setRootStateNode(PassRefPtr<ScrollingStateFrameScrollingNode> rootStateNode) { m_rootStateNode = rootStateNode; }
     void addNode(ScrollingStateNode*);
-    void removeNodeAndAllDescendants(ScrollingStateNode*);
 
-    void recursiveNodeWillBeRemoved(ScrollingStateNode* currNode);
+    PassRefPtr<ScrollingStateNode> createNode(ScrollingNodeType, ScrollingNodeID);
+    
+    enum class SubframeNodeRemoval {
+        Delete,
+        Orphan
+    };
+    void removeNodeAndAllDescendants(ScrollingStateNode*, SubframeNodeRemoval = SubframeNodeRemoval::Delete);
+
+    void recursiveNodeWillBeRemoved(ScrollingStateNode* currNode, SubframeNodeRemoval);
     void willRemoveNode(ScrollingStateNode*);
 
     AsyncScrollingCoordinator* m_scrollingCoordinator;
     StateNodeMap m_stateNodeMap;
     RefPtr<ScrollingStateFrameScrollingNode> m_rootStateNode;
     HashSet<ScrollingNodeID> m_nodesRemovedSinceLastCommit;
+    HashMap<ScrollingNodeID, RefPtr<ScrollingStateNode>> m_orphanedSubframeNodes;
     bool m_hasChangedProperties;
     bool m_hasNewRootStateNode;
     LayerRepresentation::Type m_preferredLayerRepresentation;

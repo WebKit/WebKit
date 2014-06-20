@@ -41,7 +41,7 @@ ScrollingStateNode::ScrollingStateNode(ScrollingNodeType nodeType, ScrollingStat
     , m_nodeID(nodeID)
     , m_changedProperties(0)
     , m_scrollingStateTree(scrollingStateTree)
-    , m_parent(0)
+    , m_parent(nullptr)
 {
 }
 
@@ -52,7 +52,7 @@ ScrollingStateNode::ScrollingStateNode(const ScrollingStateNode& stateNode, Scro
     , m_nodeID(stateNode.scrollingNodeID())
     , m_changedProperties(stateNode.changedProperties())
     , m_scrollingStateTree(adoptiveTree)
-    , m_parent(0)
+    , m_parent(nullptr)
 {
     if (hasChangedProperty(ScrollLayer))
         setLayer(stateNode.layer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));

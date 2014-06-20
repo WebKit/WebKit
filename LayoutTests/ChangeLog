@@ -1,3 +1,22 @@
+2014-06-19  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WebKit2] Make -webkit-overflow-scrolling:touch work in iframes (breaks MSWord previews)
+        https://bugs.webkit.org/show_bug.cgi?id=134085
+
+        Reviewed by Tim Horton.
+        
+        Tests that add and remove a fixed container of a scroll-coordinated iframe.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/coordinated-frame-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/coordinated-frame-gain-scrolling-ancestor-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/coordinated-frame-gain-scrolling-ancestor.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/coordinated-frame-in-fixed-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/coordinated-frame-lose-scrolling-ancestor-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/coordinated-frame-lose-scrolling-ancestor.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/remove-coordinated-frame-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/remove-coordinated-frame.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/resources/doc-with-sticky.html:
+
 2014-06-19  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Unreviewed GTK gardening.

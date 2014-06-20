@@ -5,19 +5,19 @@
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
       (viewport rect at last layout: 0.00 0.00 785.00 600.00)
-      (layer position at last layout 8.00 0.00)
+      (layer position at last layout 8.00 10.00)
       (children 1
         (Frame scrolling node
-          (scrollable area size 485 300)
-          (contents size 485 420)
+          (scrollable area size 500 300)
+          (contents size 500 420)
           (children 1
             (Sticky node
               (anchor edges: AnchorEdgeTop AnchorEdgeBottom)
               (top offset 10.00)
               (bottom offset 10.00)
-              (containing block rect 8.00, 8.00 469.00 x 404.00)
+              (containing block rect 8.00, 8.00 484.00 x 404.00)
               (sticky box rect 8.00 312.00 100.00 100.00)
-              (constraining rect 0.00 0.00 485.00 300.00)
+              (constraining rect 0.00 0.00 500.00 300.00)
               (sticky offset at last layout 0.00 -122.00)
               (layer position at last layout 8.00 190.00)
             )

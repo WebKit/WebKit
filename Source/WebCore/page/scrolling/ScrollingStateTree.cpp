@@ -67,6 +67,22 @@ void ScrollingStateTree::setHasChangedProperties(bool changedProperties)
 #endif
 }
 
+PassRefPtr<ScrollingStateNode> ScrollingStateTree::createNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+{
+    switch (nodeType) {
+    case FixedNode:
+        return ScrollingStateFixedNode::create(*this, nodeID);
+    case StickyNode:
+        return ScrollingStateStickyNode::create(*this, nodeID);
+    case FrameScrollingNode:
+        return ScrollingStateFrameScrollingNode::create(*this, nodeID);
+    case OverflowScrollingNode:
+        return ScrollingStateOverflowScrollingNode::create(*this, nodeID);
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
 ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID)
 {
     ASSERT(newNodeID);
@@ -82,7 +98,7 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
             return newNodeID;
 
         // The node is being re-parented. To do that, we'll remove it, and then re-create a new node.
-        removeNodeAndAllDescendants(node);
+        removeNodeAndAllDescendants(node, SubframeNodeRemoval::Orphan);
     }
 
     ScrollingStateNode* newNode = nullptr;
@@ -98,31 +114,17 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
         if (!parent)
             return 0;
 
-        switch (nodeType) {
-        case FixedNode: {
-            RefPtr<ScrollingStateFixedNode> fixedNode = ScrollingStateFixedNode::create(*this, newNodeID);
-            newNode = fixedNode.get();
-            parent->appendChild(fixedNode.release());
-            break;
+        if (nodeType == FrameScrollingNode && parentID) {
+            if (RefPtr<ScrollingStateNode> orphanedNode = m_orphanedSubframeNodes.take(newNodeID)) {
+                newNode = orphanedNode.get();
+                parent->appendChild(orphanedNode.release());
+            }
         }
-        case StickyNode: {
-            RefPtr<ScrollingStateStickyNode> stickyNode = ScrollingStateStickyNode::create(*this, newNodeID);
-            newNode = stickyNode.get();
-            parent->appendChild(stickyNode.release());
-            break;
-        }
-        case FrameScrollingNode: {
-            RefPtr<ScrollingStateFrameScrollingNode> scrollingNode = ScrollingStateFrameScrollingNode::create(*this, newNodeID);
-            newNode = scrollingNode.get();
-            parent->appendChild(scrollingNode.release());
-            break;
-        }
-        case OverflowScrollingNode: {
-            RefPtr<ScrollingStateOverflowScrollingNode> scrollingNode = ScrollingStateOverflowScrollingNode::create(*this, newNodeID);
-            newNode = scrollingNode.get();
-            parent->appendChild(scrollingNode.release());
-            break;
-        }
+
+        if (!newNode) {
+            RefPtr<ScrollingStateNode> stateNode = createNode(nodeType, newNodeID);
+            newNode = stateNode.get();
+            parent->appendChild(stateNode.release());
         }
     }
 
@@ -141,18 +143,23 @@ void ScrollingStateTree::detachNode(ScrollingNodeID nodeID)
     if (!node)
         return;
 
-    removeNodeAndAllDescendants(node);
+    removeNodeAndAllDescendants(node, SubframeNodeRemoval::Orphan);
 }
 
 void ScrollingStateTree::clear()
 {
-    removeNodeAndAllDescendants(rootStateNode());
+    if (rootStateNode())
+        removeNodeAndAllDescendants(rootStateNode());
+
     ASSERT(m_stateNodeMap.isEmpty());
     m_stateNodeMap.clear();
+    m_orphanedSubframeNodes.clear();
 }
 
 PassOwnPtr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentation::Type preferredLayerRepresentation)
 {
+    m_orphanedSubframeNodes.clear();
+
     // This function clones and resets the current state tree, but leaves the tree structure intact.
     OwnPtr<ScrollingStateTree> treeStateClone = ScrollingStateTree::create();
     treeStateClone->setPreferredLayerRepresentation(preferredLayerRepresentation);
@@ -178,16 +185,15 @@ void ScrollingStateTree::addNode(ScrollingStateNode* node)
     m_stateNodeMap.add(node->scrollingNodeID(), node);
 }
 
-void ScrollingStateTree::removeNodeAndAllDescendants(ScrollingStateNode* node)
+void ScrollingStateTree::removeNodeAndAllDescendants(ScrollingStateNode* node, SubframeNodeRemoval subframeNodeRemoval)
 {
-    if (!node)
-        return;
+    ScrollingStateNode* parent = node->parent();
 
-    recursiveNodeWillBeRemoved(node);
+    recursiveNodeWillBeRemoved(node, subframeNodeRemoval);
 
     if (node == m_rootStateNode)
         m_rootStateNode = nullptr;
-    else if (ScrollingStateNode* parent = node->parent()) {
+    else if (parent) {
         ASSERT(parent->children() && parent->children()->find(node) != notFound);
         if (auto children = parent->children()) {
             size_t index = children->find(node);
@@ -197,13 +203,19 @@ void ScrollingStateTree::removeNodeAndAllDescendants(ScrollingStateNode* node)
     }
 }
 
-void ScrollingStateTree::recursiveNodeWillBeRemoved(ScrollingStateNode* currNode)
+void ScrollingStateTree::recursiveNodeWillBeRemoved(ScrollingStateNode* currNode, SubframeNodeRemoval subframeNodeRemoval)
 {
+    currNode->setParent(nullptr);
+    if (subframeNodeRemoval == SubframeNodeRemoval::Orphan && currNode != m_rootStateNode && currNode->isFrameScrollingNode()) {
+        m_orphanedSubframeNodes.add(currNode->scrollingNodeID(), currNode);
+        return;
+    }
+
     willRemoveNode(currNode);
 
     if (auto children = currNode->children()) {
         for (auto& child : *children)
-            recursiveNodeWillBeRemoved(child.get());
+            recursiveNodeWillBeRemoved(child.get(), subframeNodeRemoval);
     }
 }
 

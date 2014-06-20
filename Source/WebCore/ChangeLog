@@ -1,5 +1,45 @@
 2014-06-19  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS WebKit2] Make -webkit-overflow-scrolling:touch work in iframes (breaks MSWord previews)
+        https://bugs.webkit.org/show_bug.cgi?id=134085
+        <rdar://problem/16440586>
+
+        Reviewed by Tim Horton.
+        
+        When nodes were detached from the scrolling tree, we would previously throw away
+        all descendant nodes, expecting that they would be re-attached as we walk the compositing
+        layer tree in RenderLayerCompositor.
+        
+        However, this doesn't work across frame boundaries; the subframe may never update
+        its compositing layers again, so would lose all its scrolling nodes.
+        
+        Fix by having ScrollingStateTree::detachNode() by default set aside subframe nodes
+        into a hash map. On reattach, we'll look in the hash map and pull out an existing node
+        (with its children intact) if possible.
+
+        Tests: platform/mac-wk2/tiled-drawing/scrolling/frames/coordinated-frame-gain-scrolling-ancestor.html
+               platform/mac-wk2/tiled-drawing/scrolling/frames/coordinated-frame-lose-scrolling-ancestor.html
+               platform/mac-wk2/tiled-drawing/scrolling/frames/remove-coordinated-frame.html
+
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::ScrollingStateNode):
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::attachNode):
+        (WebCore::ScrollingStateTree::detachNode):
+        (WebCore::ScrollingStateTree::clear):
+        (WebCore::ScrollingStateTree::removeNodeAndAllDescendants):
+        (WebCore::ScrollingStateTree::recursiveNodeWillBeRemoved):
+        * page/scrolling/ScrollingStateTree.h:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitNewTreeState): Go back to removing the deleted
+        nodes from m_nodeMap first.
+        (WebCore::ScrollingTree::removeDestroyedNodes): There is no need for this to
+        actually make use of ScrollingTreeNode* any more; the ASSERT(!node->parent())
+        is bogus because it can fire when whole subtrees are removed, and to clear the
+        latched node we just need the ID.
+
+2014-06-19  Simon Fraser  <simon.fraser@apple.com>
+
         Handle scrolling tree modifications which remove intermediate nodes
         https://bugs.webkit.org/show_bug.cgi?id=134082
 

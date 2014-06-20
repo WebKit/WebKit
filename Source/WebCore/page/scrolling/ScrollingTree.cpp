@@ -149,12 +149,10 @@ void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrollingS
     bool scrollRequestIsProgammatic = rootNode ? rootNode->requestedScrollPositionRepresentsProgrammaticScroll() : false;
     TemporaryChange<bool> changeHandlingProgrammaticScroll(m_isHandlingProgrammaticScroll, scrollRequestIsProgammatic);
 
-    {
-        OrphanScrollingNodeMap orphanNodes;
-        updateTreeFromStateNode(rootNode, orphanNodes);
-    }
-
     removeDestroyedNodes(*scrollingStateTree);
+
+    OrphanScrollingNodeMap orphanNodes;
+    updateTreeFromStateNode(rootNode, orphanNodes);
 }
 
 void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode, OrphanScrollingNodeMap& orphanNodes)
@@ -216,16 +214,10 @@ void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode,
 
 void ScrollingTree::removeDestroyedNodes(const ScrollingStateTree& stateTree)
 {
-    for (const auto& removedNode : stateTree.removedNodes()) {
-        ScrollingTreeNode* node = m_nodeMap.take(removedNode);
-        if (!node)
-            continue;
-
-        if (node->scrollingNodeID() == m_latchedNode)
+    for (const auto& removedNodeID : stateTree.removedNodes()) {
+        m_nodeMap.remove(removedNodeID);
+        if (removedNodeID == m_latchedNode)
             clearLatchedNode();
-
-        // We should have unparented this node already via updateTreeFromStateNode().
-        ASSERT(!node->parent());
     }
 }
 

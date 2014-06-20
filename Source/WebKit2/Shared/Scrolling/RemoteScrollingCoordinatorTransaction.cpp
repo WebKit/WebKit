@@ -317,8 +317,10 @@ bool ArgumentCoder<ScrollingStateStickyNode>::decode(ArgumentDecoder& decoder, S
 
 namespace WebKit {
 
-static void encodeNodeAndDescendants(IPC::ArgumentEncoder& encoder, const ScrollingStateNode& stateNode)
+static void encodeNodeAndDescendants(IPC::ArgumentEncoder& encoder, const ScrollingStateNode& stateNode, int& encodedNodeCount)
 {
+    ++encodedNodeCount;
+
     switch (stateNode.nodeType()) {
     case FrameScrollingNode:
         encoder << toScrollingStateFrameScrollingNode(stateNode);
@@ -338,7 +340,7 @@ static void encodeNodeAndDescendants(IPC::ArgumentEncoder& encoder, const Scroll
         return;
 
     for (const auto& child : *stateNode.children())
-        encodeNodeAndDescendants(encoder, *child.get());
+        encodeNodeAndDescendants(encoder, *child.get(), encodedNodeCount);
 }
 
 void RemoteScrollingCoordinatorTransaction::encode(IPC::ArgumentEncoder& encoder) const
@@ -352,9 +354,11 @@ void RemoteScrollingCoordinatorTransaction::encode(IPC::ArgumentEncoder& encoder
     if (m_scrollingStateTree) {
         encoder << m_scrollingStateTree->hasChangedProperties();
 
+        int numNodesEncoded = 0;
         if (const ScrollingStateNode* rootNode = m_scrollingStateTree->rootStateNode())
-            encodeNodeAndDescendants(encoder, *rootNode);
+            encodeNodeAndDescendants(encoder, *rootNode, numNodesEncoded);
 
+        ASSERT_UNUSED(numNodesEncoded, numNodesEncoded == numNodes);
         encoder << m_scrollingStateTree->removedNodes();
     } else
         encoder << Vector<ScrollingNodeID>();
