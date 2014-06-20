@@ -8644,7 +8644,6 @@
 		498391570F1E776900C23782 /* WebKitCSSMatrix.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitCSSMatrix.idl; sourceTree = "<group>"; };
 		498770C21242C535002226BA /* DrawingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DrawingBuffer.cpp; path = gpu/DrawingBuffer.cpp; sourceTree = "<group>"; };
 		498770C31242C535002226BA /* DrawingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DrawingBuffer.h; path = gpu/DrawingBuffer.h; sourceTree = "<group>"; };
-		498770D01242C535002226BA /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Shader.h; path = gpu/Shader.h; sourceTree = "<group>"; };
 		498770D71242C535002226BA /* Texture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Texture.cpp; path = gpu/Texture.cpp; sourceTree = "<group>"; };
 		498770D81242C535002226BA /* Texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Texture.h; path = gpu/Texture.h; sourceTree = "<group>"; };
 		498770D91242C535002226BA /* TilingData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TilingData.cpp; path = gpu/TilingData.cpp; sourceTree = "<group>"; };

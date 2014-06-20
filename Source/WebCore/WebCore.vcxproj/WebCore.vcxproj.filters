@@ -6670,33 +6670,6 @@
     <ClCompile Include="..\platform\graphics\gpu\DrawingBuffer.cpp">
       <Filter>platform\graphics\gpu</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnClassifier.cpp">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnLocalTriangulator.cpp">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnMathUtils.cpp">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnPathCache.cpp">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnShader.cpp">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnSolidFillShader.cpp">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnTextureCoords.cpp">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\gpu\Shader.cpp">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\gpu\SharedGraphicsContext3D.cpp">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\graphics\gpu\Texture.cpp">
       <Filter>platform\graphics\gpu</Filter>
     </ClCompile>
@@ -14522,39 +14495,6 @@
       <Filter>platform\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\gpu\DrawingBuffer.h">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnClassifier.h">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnConstants.h">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnLocalTriangulator.h">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnMathUtils.h">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnPathCache.h">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnPathProcessor.h">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnShader.h">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnSolidFillShader.h">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnTextureCoords.h">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\gpu\Shader.h">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\gpu\SharedGraphicsContext3D.h">
       <Filter>platform\graphics\gpu</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\gpu\Texture.h">

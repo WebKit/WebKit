@@ -7266,15 +7266,6 @@
     </ClCompile>
     <ClCompile Include="..\platform\graphics\egl\GLContextEGL.cpp" />
     <ClCompile Include="..\platform\graphics\gpu\DrawingBuffer.cpp" />
-    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnClassifier.cpp" />
-    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnLocalTriangulator.cpp" />
-    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnMathUtils.cpp" />
-    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnPathCache.cpp" />
-    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnShader.cpp" />
-    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnSolidFillShader.cpp" />
-    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnTextureCoords.cpp" />
-    <ClCompile Include="..\platform\graphics\gpu\Shader.cpp" />
-    <ClCompile Include="..\platform\graphics\gpu\SharedGraphicsContext3D.cpp" />
     <ClCompile Include="..\platform\graphics\gpu\Texture.cpp" />
     <ClCompile Include="..\platform\graphics\gpu\TilingData.cpp" />
     <ClCompile Include="..\platform\graphics\FormatConverter.cpp" />
@@ -19180,17 +19171,6 @@
     </ClInclude>
     <ClInclude Include="..\platform\graphics\egl\GLContextEGL.h" />
     <ClInclude Include="..\platform\graphics\gpu\DrawingBuffer.h" />
-    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnClassifier.h" />
-    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnConstants.h" />
-    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnLocalTriangulator.h" />
-    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnMathUtils.h" />
-    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnPathCache.h" />
-    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnPathProcessor.h" />
-    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnShader.h" />
-    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnSolidFillShader.h" />
-    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnTextureCoords.h" />
-    <ClInclude Include="..\platform\graphics\gpu\Shader.h" />
-    <ClInclude Include="..\platform\graphics\gpu\SharedGraphicsContext3D.h" />
     <ClInclude Include="..\platform\graphics\gpu\Texture.h" />
     <ClInclude Include="..\platform\graphics\gpu\TilingData.h" />
     <ClInclude Include="..\platform\graphics\FormatConverter.h" />

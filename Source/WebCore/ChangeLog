@@ -1,5 +1,49 @@
 2014-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Removing dead code in platform/graphics/gpu
+        https://bugs.webkit.org/show_bug.cgi?id=134065
+
+        Reviewed by Simon Fraser.
+
+        No new tests because there is no behavior change.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/gpu/LoopBlinnClassifier.cpp: Removed.
+        * platform/graphics/gpu/LoopBlinnClassifier.h: Removed.
+        * platform/graphics/gpu/LoopBlinnConstants.h: Removed.
+        * platform/graphics/gpu/LoopBlinnLocalTriangulator.cpp: Removed.
+        * platform/graphics/gpu/LoopBlinnLocalTriangulator.h: Removed.
+        * platform/graphics/gpu/LoopBlinnMathUtils.cpp: Removed.
+        * platform/graphics/gpu/LoopBlinnMathUtils.h: Removed.
+        * platform/graphics/gpu/LoopBlinnPathCache.cpp: Removed.
+        * platform/graphics/gpu/LoopBlinnPathCache.h: Removed.
+        * platform/graphics/gpu/LoopBlinnPathProcessor.h: Removed.
+        * platform/graphics/gpu/LoopBlinnShader.cpp: Removed.
+        * platform/graphics/gpu/LoopBlinnShader.h: Removed.
+        * platform/graphics/gpu/LoopBlinnSolidFillShader.cpp: Removed.
+        * platform/graphics/gpu/LoopBlinnSolidFillShader.h: Removed.
+        * platform/graphics/gpu/LoopBlinnTextureCoords.cpp: Removed.
+        * platform/graphics/gpu/LoopBlinnTextureCoords.h: Removed.
+        * platform/graphics/gpu/Shader.cpp: Removed.
+        * platform/graphics/gpu/Shader.h: Removed.
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp: Removed.
+        * platform/graphics/gpu/SharedGraphicsContext3D.h: Removed.
+        * platform/graphics/gpu/mac/DrawingBufferMac.mm: Removed.
+        * platform/graphics/gpu/opencl/FilterContextOpenCL.cpp: Removed.
+        * platform/graphics/gpu/opencl/FilterContextOpenCL.h: Removed.
+        * platform/graphics/gpu/opencl/OpenCLFEColorMatrix.cpp: Removed.
+        * platform/graphics/gpu/opencl/OpenCLFEFlood.cpp: Removed.
+        * platform/graphics/gpu/opencl/OpenCLFEImage.cpp: Removed.
+        * platform/graphics/gpu/opencl/OpenCLFEMerge.cpp: Removed.
+        * platform/graphics/gpu/opencl/OpenCLFESourceAlpha.cpp: Removed.
+        * platform/graphics/gpu/opencl/OpenCLFESourceGraphic.cpp: Removed.
+        * platform/graphics/gpu/opencl/OpenCLFETurbulence.cpp: Removed.
+        * platform/graphics/gpu/opencl/OpenCLHandle.h: Removed.
+
+2014-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [iOS] Support Khmer and Lao fallback fonts
         https://bugs.webkit.org/show_bug.cgi?id=134114
 
