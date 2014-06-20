@@ -1,3 +1,14 @@
+2014-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Do not build quota files when QUOTA is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=134101
+
+        Reviewed by Philippe Normand.
+
+        * CMakeLists.txt: Remove exception for GTK+ that is no longer
+        required since r170173.
+        * PlatformGTK.cmake: Generate GObject DOM bindings for Quota when enabled.
+
 2014-06-20  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Add GridSpan::iterator

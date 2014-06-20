@@ -630,6 +630,19 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     )
 endif ()
 
+if (ENABLE_QUOTA)
+    list(APPEND GObjectDOMBindingsUnstable_IDL_FILES
+        Modules/quota/DOMWindowQuota.idl
+        Modules/quota/NavigatorStorageQuota.idl
+        Modules/quota/StorageErrorCallback.idl
+        Modules/quota/StorageInfo.idl
+        Modules/quota/StorageQuota.idl
+        Modules/quota/StorageQuotaCallback.idl
+        Modules/quota/StorageUsageCallback.idl
+        Modules/quota/WorkerNavigatorStorageQuota.idl
+    )
+endif ()
+
 set(GObjectDOMBindingsStable_CLASS_LIST Custom EventTarget NodeFilter Object)
 set(GObjectDOMBindingsStable_INSTALLED_HEADERS
      ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h

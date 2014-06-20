@@ -2916,10 +2916,7 @@ if (ENABLE_VIDEO_TRACK)
     )
 endif ()
 
-# On the GTK+ autotools build we used to add these files even if QUOTA is disabled, and
-# because of that we generate GObject bindings for some of the objects. We need to do
-# the same for the cmake build, for now.
-if (ENABLE_QUOTA OR PORT STREQUAL "GTK")
+if (ENABLE_QUOTA)
     list(APPEND WebCore_SOURCES
         Modules/quota/DOMWindowQuota.cpp
         Modules/quota/NavigatorStorageQuota.cpp
