@@ -4322,9 +4322,9 @@ void WebPageProxy::resetStateAfterProcessExited()
         m_loadStateAtProcessExit = m_mainFrame->frameLoadState().m_state;
     }
 
-    resetState(ResetStateReason::WebProcessExited);
-
     m_pageClient.processDidExit();
+
+    resetState(ResetStateReason::WebProcessExited);
 
     m_pageClient.clearAllEditCommands();
     m_pendingLearnOrIgnoreWordMessageCount = 0;

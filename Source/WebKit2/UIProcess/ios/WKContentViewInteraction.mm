@@ -238,22 +238,36 @@ static const float tapAndHoldDelay  = 0.75;
     _webSelectionAssistant = nil;
     _textSelectionAssistant = nil;
     _actionSheetAssistant = nil;
+    _smartMagnificationController = nil;
     [_formInputSession invalidate];
     _formInputSession = nil;
     [_highlightView removeFromSuperview];
     [_highlightRootView removeFromSuperview];
+
     [_touchEventGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
+
     [_singleTapGestureRecognizer setDelegate:nil];
     [_singleTapGestureRecognizer setGestureRecognizedTarget:nil action:nil];
     [_singleTapGestureRecognizer setResetTarget:nil action:nil];
+    [self removeGestureRecognizer:_singleTapGestureRecognizer.get()];
+
+    [_highlightLongPressGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
+
+    [_longPressGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_longPressGestureRecognizer.get()];
 
     [_doubleTapGestureRecognizer setDelegate:nil];
-    [_highlightLongPressGestureRecognizer setDelegate:nil];
-    [_longPressGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_doubleTapGestureRecognizer.get()];
+
+    [_twoFingerDoubleTapGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
 
     if (_fileUploadPanel) {
         [_fileUploadPanel setDelegate:nil];
         [_fileUploadPanel dismiss];
+        _fileUploadPanel = nil;
     }
 }
 

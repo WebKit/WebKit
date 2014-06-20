@@ -379,12 +379,13 @@ private:
 
 - (void)_processDidExit
 {
-    // FIXME: Implement.
+    [self cleanupInteraction];
 }
 
 - (void)_didRelaunchProcess
 {
     [self _accessibilityRegisterUIProcessTokens];
+    [self setupInteraction];
 }
 
 - (void)_didCommitLoadForMainFrame

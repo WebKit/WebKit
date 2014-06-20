@@ -1,3 +1,30 @@
+2014-06-20  Tim Horton  <timothy_horton@apple.com>
+
+        WKContentViewInteraction isn't cleaned up when the Web Content process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=134080
+        <rdar://problem/17387652> and <rdar://problem/16848360>
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _processDidExit]):
+        Tear down WKContentViewInteraction when the process crashes.
+
+        (-[WKContentView _didRelaunchProcess]):
+        Set WKContentViewInteraction back up when the process is relaunched.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        Clear the SmartMagnificationController, which is a message receiver and thus must be re-created with the new page.
+        Remove all gesture recognizers from the content view.
+        Clear _fileUploadPanel, else we'll get an assert the next time we try to open one.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        Give the PageClient a chance to clean up *before* we clean up internals;
+        it is at a higher level and some cleanup depends on WebPageProxy members
+        not having been cleared yet.
+
 2014-06-19  Dan Bernstein  <mitz@apple.com>
 
         Removed unused SPI -[WKWebView _runJavaScriptInMainFrame:].
