@@ -1,3 +1,16 @@
+2014-06-19  Andreas Kling  <akling@apple.com>
+
+        When simulating memory pressure, GC *after* releasing WebCore resources.
+
+        Since clearing the page cache is likely to create lots of garbage, defer the
+        synchronous GC until after the WebCore pressure relief, so we can see the
+        effect of clearing out all those pages.
+
+        Rubber-stamped by Gavin Barraclough.
+
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::install):
+
 2014-06-18  Sam Weinig  <sam@webkit.org>
 
         Move generate prototype and constructor classes into the generated implementation files
