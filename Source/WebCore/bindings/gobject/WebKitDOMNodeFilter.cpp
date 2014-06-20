@@ -54,7 +54,7 @@ static void nodeFilterObjectDestroyedCallback(gpointer coreNodeFilter, GObject* 
 {
     WebKitDOMNodeFilter* filter = nodeFilterMap().take(static_cast<WebCore::NodeFilter*>(coreNodeFilter));
     UNUSED_PARAM(nodeFilter);
-    ASSERT_UNUSED(filter, filter == nodeFilter);
+    ASSERT_UNUSED(filter, reinterpret_cast<GObject*>(filter) == nodeFilter);
 }
 
 WebKitDOMNodeFilter* kit(WebCore::NodeFilter* coreNodeFilter)
