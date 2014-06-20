@@ -100,6 +100,7 @@ struct WKAutoCorrectionData {
     RetainPtr<UIWebFormAccessory> _formAccessoryView;
     RetainPtr<UIView> _highlightRootView;
     RetainPtr<_UIHighlightView> _highlightView;
+    RetainPtr<UIView> _inverseScaleRootView;
     RetainPtr<NSString> _markedText;
     RetainPtr<WKActionSheetAssistant> _actionSheetAssistant;
     RetainPtr<WKAirPlayRoutePicker> _airPlayRoutePicker;
@@ -174,6 +175,7 @@ struct WKAutoCorrectionData {
 - (void)accessoryDone;
 - (void)_didHandleKeyEvent:(WebIOSEvent *)event;
 - (Vector<WebKit::WKOptionItem>&) assistedNodeSelectOptions;
+- (void)_updateUnscaledView;
 @end
 
 #endif // PLATFORM(IOS)

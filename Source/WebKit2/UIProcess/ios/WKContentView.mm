@@ -310,6 +310,7 @@ private:
 
     if (auto drawingArea = _page->drawingArea())
         drawingArea->updateDebugIndicator();
+    [self _updateUnscaledView];
 }
 
 - (void)setMinimumSize:(CGSize)size

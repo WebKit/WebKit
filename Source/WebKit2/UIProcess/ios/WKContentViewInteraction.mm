@@ -191,6 +191,15 @@ static const float tapAndHoldDelay  = 0.75;
 
 - (void)setupInteraction
 {
+    if (!_inverseScaleRootView) {
+        _inverseScaleRootView = adoptNS([[UIView alloc] init]);
+        [_inverseScaleRootView setOpaque:NO];
+        [_inverseScaleRootView layer].anchorPoint = CGPointMake(0, 0);
+    }
+    [self addSubview:_inverseScaleRootView.get()];
+    CGFloat inverseScale = 1 / [[self layer] transform].m11;
+    [_inverseScaleRootView setTransform:CGAffineTransformMakeScale(inverseScale, inverseScale)];
+
     _touchEventGestureRecognizer = adoptNS([[UIWebTouchEventsGestureRecognizer alloc] initWithTarget:self action:@selector(_webTouchEventsRecognized:) touchDelegate:self]);
     [_touchEventGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_touchEventGestureRecognizer.get()];
@@ -243,7 +252,7 @@ static const float tapAndHoldDelay  = 0.75;
     _formInputSession = nil;
     [_highlightView removeFromSuperview];
     [_highlightRootView removeFromSuperview];
-
+    [_inverseScaleRootView removeFromSuperview];
     [_touchEventGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
 
@@ -269,6 +278,34 @@ static const float tapAndHoldDelay  = 0.75;
         [_fileUploadPanel dismiss];
         _fileUploadPanel = nil;
     }
+}
+
+- (UIView*)unscaledView
+{
+    return _inverseScaleRootView.get();
+}
+
+- (CGFloat)inverseScale
+{
+    return [[_inverseScaleRootView layer] transform].m11;
+}
+
+- (void)_updateUnscaledView
+{
+    CGFloat inverseScale = 1 / [[self layer] transform].m11;
+    [_inverseScaleRootView setTransform:CGAffineTransformMakeScale(inverseScale, inverseScale)];
+    _selectionNeedsUpdate = YES;
+    [self _updateChangedSelection];
+}
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(::UIEvent *)event
+{
+    for (UIView *subView in [_inverseScaleRootView.get() subviews]) {
+        UIView *hitView = [subView hitTest:[subView convertPoint:point fromView:self] withEvent:event];
+        if (hitView)
+            return hitView;
+    }
+    return [super hitTest:point withEvent:event];
 }
 
 - (const InteractionInformationAtPosition&)positionInformation
@@ -1670,11 +1707,34 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (UITextRange *)selectedTextRange
 {
+    FloatRect startRect = _page->editorState().caretRectAtStart;
+    FloatRect endRect = _page->editorState().caretRectAtEnd;
+    double inverseScale = [self inverseScale];
+    // We want to keep the original caret width, while the height scales with
+    // the content taking orientation into account.
+    // We achieve this by scaling the width with the inverse
+    // scale factor. This way, when it is converted from the content view
+    // the width remains unchanged.
+    if (startRect.width() < startRect.height())
+        startRect.setWidth(startRect.width() * inverseScale);
+    else
+        startRect.setHeight(startRect.height() * inverseScale);
+    if (endRect.width() < endRect.height()) {
+        double delta = endRect.width();
+        endRect.setWidth(endRect.width() * inverseScale);
+        delta = endRect.width() - delta;
+        endRect.move(delta, 0);
+    } else {
+        double delta = endRect.height();
+        endRect.setHeight(endRect.height() * inverseScale);
+        delta = endRect.height() - delta;
+        endRect.move(0, delta);
+    }
     return [WKTextRange textRangeWithState:_page->editorState().selectionIsNone
                                    isRange:_page->editorState().selectionIsRange
                                 isEditable:_page->editorState().isContentEditable
-                                 startRect:_page->editorState().caretRectAtStart
-                                   endRect:_page->editorState().caretRectAtEnd
+                                 startRect:startRect
+                                   endRect:endRect
                             selectionRects:[self webSelectionRects]
                         selectedTextLength:_page->editorState().selectedTextLength];
 }
