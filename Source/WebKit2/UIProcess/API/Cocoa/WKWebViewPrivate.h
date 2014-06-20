@@ -150,8 +150,6 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 @property (nonatomic, setter=_setTopContentInset:) CGFloat _topContentInset;
 #endif
 
-- (void)_runJavaScriptInMainFrame:(NSString *)scriptString;
-
 - (void)_getWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler;
 
 @property (nonatomic, setter=_setPaginationMode:) _WKPaginationMode _paginationMode;

@@ -1511,11 +1511,6 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     _page->listenForLayoutMilestones(layoutMilestones(observedRenderingProgressEvents));
 }
 
-- (void)_runJavaScriptInMainFrame:(NSString *)scriptString
-{
-    [self evaluateJavaScript:scriptString completionHandler:^(id, NSError *) { }];
-}
-
 - (void)_getWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler
 {
     auto handler = adoptNS([completionHandler copy]);
