@@ -37,14 +37,14 @@ namespace WebKit {
 // Instead of tracking private browsing state as a boolean preference, we should let the client provide storage sessions explicitly.
 static unsigned privateBrowsingPageCount;
 
-PassRefPtr<WebPreferences> WebPreferences::create(const String& identifier, const String& keyPrefix)
+PassRefPtr<WebPreferences> WebPreferences::create(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix)
 {
-    return adoptRef(new WebPreferences(identifier, keyPrefix));
+    return adoptRef(new WebPreferences(identifier, keyPrefix, globalDebugKeyPrefix));
 }
 
-PassRefPtr<WebPreferences> WebPreferences::createWithLegacyDefaults(const String& identifier, const String& keyPrefix)
+PassRefPtr<WebPreferences> WebPreferences::createWithLegacyDefaults(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix)
 {
-    RefPtr<WebPreferences> preferences = adoptRef(new WebPreferences(identifier, keyPrefix));
+    RefPtr<WebPreferences> preferences = adoptRef(new WebPreferences(identifier, keyPrefix, globalDebugKeyPrefix));
     preferences->m_store.setOverrideDefaultsBoolValueForKey(WebPreferencesKey::javaEnabledKey(), true);
     preferences->m_store.setOverrideDefaultsBoolValueForKey(WebPreferencesKey::javaEnabledForLocalFilesKey(), true);
     preferences->m_store.setOverrideDefaultsBoolValueForKey(WebPreferencesKey::pluginsEnabledKey(), true);
@@ -52,15 +52,17 @@ PassRefPtr<WebPreferences> WebPreferences::createWithLegacyDefaults(const String
     return preferences.release();
 }
 
-WebPreferences::WebPreferences(const String& identifier, const String& keyPrefix)
+WebPreferences::WebPreferences(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix)
     : m_identifier(identifier)
     , m_keyPrefix(keyPrefix)
+    , m_globalDebugKeyPrefix(globalDebugKeyPrefix)
 {
     platformInitializeStore();
 }
 
 WebPreferences::WebPreferences(const WebPreferences& other)
     : m_keyPrefix(other.m_keyPrefix)
+    , m_globalDebugKeyPrefix(other.m_globalDebugKeyPrefix)
     , m_store(other.m_store)
 {
     platformInitializeStore();
@@ -181,6 +183,7 @@ void WebPreferences::updatePrivateBrowsingValue(bool value)
     } \
 
 FOR_EACH_WEBKIT_PREFERENCE(DEFINE_PREFERENCE_GETTER_AND_SETTERS)
+FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DEFINE_PREFERENCE_GETTER_AND_SETTERS)
 
 #undef DEFINE_PREFERENCE_GETTER_AND_SETTERS
 

@@ -34,7 +34,7 @@ namespace WebKit {
 
 static inline NSString* makeKey(NSString *identifier, NSString *keyPrefix, NSString *key)
 {
-    ASSERT(identifier);
+    ASSERT(identifier.length);
     ASSERT(keyPrefix);
     ASSERT(key);
 
@@ -85,8 +85,46 @@ static void setDoubleValueIfInUserDefaults(const String& identifier, const Strin
     store.setDoubleValueForKey(key, [object doubleValue]);
 }
 
+
+static id debugUserDefaultsValue(NSString *identifier, NSString *keyPrefix, NSString *globalDebugKeyPrefix, NSString *key)
+{
+    ASSERT(keyPrefix);
+    ASSERT(key);
+
+    NSUserDefaults *standardUserDefaults = [NSUserDefaults standardUserDefaults];
+    id object = nil;
+
+    if (identifier.length)
+        object = [standardUserDefaults objectForKey:[NSString stringWithFormat:@"%@%@%@", identifier, keyPrefix, key]];
+
+    if (!object) {
+        // Allow debug preferences to be set globally, using the debug key prefix.
+        object = [standardUserDefaults objectForKey:[globalDebugKeyPrefix stringByAppendingString:key]];
+    }
+
+    return object;
+}
+
+static void setDebugBoolValueIfInUserDefaults(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix, const String& key, WebPreferencesStore& store)
+{
+    id object = debugUserDefaultsValue(identifier, keyPrefix, globalDebugKeyPrefix, key);
+    if (!object)
+        return;
+    if (![object respondsToSelector:@selector(boolValue)])
+        return;
+
+    store.setBoolValueForKey(key, [object boolValue]);
+}
+
 void WebPreferences::platformInitializeStore()
 {
+#define INITIALIZE_DEBUG_PREFERENCE_FROM_NSUSERDEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) \
+    setDebug##TypeName##ValueIfInUserDefaults(m_identifier, m_keyPrefix, m_globalDebugKeyPrefix, WebPreferencesKey::KeyLower##Key(), m_store);
+
+    FOR_EACH_WEBKIT_DEBUG_PREFERENCE(INITIALIZE_DEBUG_PREFERENCE_FROM_NSUSERDEFAULTS)
+
+#undef INITIALIZE_DEBUG_PREFERENCE_FROM_NSUSERDEFAULTS
+
     if (!m_identifier)
         return;
 

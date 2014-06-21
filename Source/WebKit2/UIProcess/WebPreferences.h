@@ -44,8 +44,8 @@ class WebPageProxy;
 
 class WebPreferences : public API::ObjectImpl<API::Object::Type::Preferences> {
 public:
-    static PassRefPtr<WebPreferences> create(const String& identifier, const String& keyPrefix);
-    static PassRefPtr<WebPreferences> createWithLegacyDefaults(const String& identifier, const String& keyPrefix);
+    static PassRefPtr<WebPreferences> create(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);
+    static PassRefPtr<WebPreferences> createWithLegacyDefaults(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);
 
     virtual ~WebPreferences();
 
@@ -61,6 +61,7 @@ public:
     Type KeyLower() const; \
 
     FOR_EACH_WEBKIT_PREFERENCE(DECLARE_PREFERENCE_GETTER_AND_SETTERS)
+    FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DECLARE_PREFERENCE_GETTER_AND_SETTERS)
 
 #undef DECLARE_PREFERENCE_GETTER_AND_SETTERS
 
@@ -70,7 +71,7 @@ public:
     static bool anyPagesAreUsingPrivateBrowsing();
 
 private:
-    explicit WebPreferences(const String&, const String&);
+    explicit WebPreferences(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);
     WebPreferences(const WebPreferences&);
 
     void platformInitializeStore();
@@ -92,6 +93,7 @@ private:
 
     const String m_identifier;
     const String m_keyPrefix;
+    const String m_globalDebugKeyPrefix;
     WebPreferencesStore m_store;
 
     HashSet<WebPageProxy*> m_pages;

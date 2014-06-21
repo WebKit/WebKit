@@ -82,9 +82,11 @@ static WebPageGroupData pageGroupData(const String& identifier, bool visibleToIn
     return data;
 }
 
+// FIXME: Why does the WebPreferences object here use ".WebKit2" instead of "WebKit2." which all the other constructors use.
+// If it turns out that it's wrong, we can change it to to "WebKit2." and get rid of the globalDebugKeyPrefix from WebPreferences.
 WebPageGroup::WebPageGroup(const String& identifier, bool visibleToInjectedBundle, bool visibleToHistoryClient)
     : m_data(pageGroupData(identifier, visibleToInjectedBundle, visibleToHistoryClient))
-    , m_preferences(WebPreferences::createWithLegacyDefaults(m_data.identifer, ".WebKit2"))
+    , m_preferences(WebPreferences::createWithLegacyDefaults(m_data.identifer, ".WebKit2", "WebKit2."))
 {
     webPageGroupMap().set(m_data.pageGroupID, this);
 }

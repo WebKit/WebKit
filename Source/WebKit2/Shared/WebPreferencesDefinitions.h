@@ -116,9 +116,6 @@
     macro(ForceCompositingMode, forceCompositingMode, Bool, bool, false) \
     macro(AcceleratedDrawingEnabled, acceleratedDrawingEnabled, Bool, bool, DEFAULT_ACCELERATED_DRAWING_ENABLED) \
     macro(CanvasUsesAcceleratedDrawing, canvasUsesAcceleratedDrawing, Bool, bool, DEFAULT_CANVAS_USES_ACCELERATED_DRAWING) \
-    macro(CompositingBordersVisible, compositingBordersVisible, Bool, bool, false) \
-    macro(CompositingRepaintCountersVisible, compositingRepaintCountersVisible, Bool, bool, false) \
-    macro(TiledScrollingIndicatorVisible, tiledScrollingIndicatorVisible, Bool, bool, false) \
     macro(WebGLEnabled, webGLEnabled, Bool, bool, true) \
     macro(MultithreadedWebGLEnabled, multithreadedWebGLEnabled, Bool, bool, false) \
     macro(ForceSoftwareWebGLRendering, forceSoftwareWebGLRendering, Bool, bool, false) \
@@ -237,6 +234,11 @@
     macro(StorageBlockingPolicy, storageBlockingPolicy, UInt32, uint32_t, WebCore::SecurityOrigin::BlockThirdPartyStorage) \
     \
 
+#define FOR_EACH_WEBKIT_DEBUG_BOOL_PREFERENCE(macro) \
+    macro(CompositingBordersVisible, compositingBordersVisible, Bool, bool, false) \
+    macro(CompositingRepaintCountersVisible, compositingRepaintCountersVisible, Bool, bool, false) \
+    macro(TiledScrollingIndicatorVisible, tiledScrollingIndicatorVisible, Bool, bool, false) \
+
 #if PLATFORM(COCOA)
 
 #if PLATFORM(IOS)
@@ -280,6 +282,10 @@
 
 #define FOR_EACH_WEBKIT_STRING_PREFERENCE_NOT_IN_WEBCORE(macro) \
     macro(InspectorWindowFrame, inspectorWindowFrame, String, String, "") \
+    \
+
+#define FOR_EACH_WEBKIT_DEBUG_PREFERENCE(macro) \
+    FOR_EACH_WEBKIT_DEBUG_BOOL_PREFERENCE(macro) \
     \
 
 #define FOR_EACH_WEBKIT_PREFERENCE(macro) \

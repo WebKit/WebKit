@@ -1,5 +1,35 @@
 2014-06-21  Anders Carlsson  <andersca@apple.com>
 
+        Make it possible to override debug preferences on a per-identifier basis as well as globally
+        https://bugs.webkit.org/show_bug.cgi?id=134164
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * Shared/WebPreferencesKeys.cpp:
+        * Shared/WebPreferencesKeys.h:
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::defaults):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesCreate):
+        (WKPreferencesCreateWithIdentifier):
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences init]):
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::WebPageGroup):
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::create):
+        (WebKit::WebPreferences::createWithLegacyDefaults):
+        (WebKit::WebPreferences::WebPreferences):
+        * UIProcess/WebPreferences.h:
+        * UIProcess/mac/WebPreferencesMac.mm:
+        (WebKit::makeKey):
+        (WebKit::debugUserDefaultsValue):
+        (WebKit::setDebugBoolValueIfInUserDefaults):
+        (WebKit::WebPreferences::platformInitializeStore):
+
+2014-06-21  Anders Carlsson  <andersca@apple.com>
+
         Begin work on decoding form data
         https://bugs.webkit.org/show_bug.cgi?id=134163
 

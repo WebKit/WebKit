@@ -163,6 +163,7 @@ static WebPreferencesStore::ValueMap& defaults()
     if (defaults.get().isEmpty()) {
 #define DEFINE_DEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) defaults.get().set(WebPreferencesKey::KeyLower##Key(), WebPreferencesStore::Value((Type)DefaultValue));
         FOR_EACH_WEBKIT_PREFERENCE(DEFINE_DEFAULTS)
+        FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DEFINE_DEFAULTS)
 #undef DEFINE_DEFAULTS
     }
 
