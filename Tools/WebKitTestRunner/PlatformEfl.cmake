@@ -20,7 +20,6 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
 
     ${WEBKIT2_DIR}/UIProcess/API/C/efl
 
-    ${TOOLS_DIR}/DumpRenderTree/efl/
     ${WEBKIT2_DIR}/UIProcess/API/efl
     "${WTF_DIR}/wtf/gobject"
     ${WEBCORE_DIR}/platform/network/soup
@@ -65,13 +64,12 @@ if (ENABLE_ECORE_X)
 endif ()
 
 list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
-    ${TOOLS_DIR}/DumpRenderTree/efl/FontManagement.cpp
-
     ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/atk/AccessibilityControllerAtk.cpp
     ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/atk/AccessibilityNotificationHandlerAtk.cpp
     ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/atk/AccessibilityUIElementAtk.cpp
 
     ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/efl/ActivateFontsEfl.cpp
+    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/efl/FontManagement.cpp
     ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/efl/InjectedBundleEfl.cpp
     ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/efl/TestRunnerEfl.cpp
 )

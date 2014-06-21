@@ -4,7 +4,6 @@ endif ()
 
 if ("${PORT}" STREQUAL "Efl")
     add_subdirectory(ImageDiff)
-    add_subdirectory(EWebLauncher/ControlTheme)
 
     add_subdirectory(MiniBrowser/efl)
     add_subdirectory(DumpRenderTree/TestNetscapePlugIn)
