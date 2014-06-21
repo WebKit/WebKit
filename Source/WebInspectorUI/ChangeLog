@@ -1,3 +1,42 @@
+2014-06-21  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: UI fonts should pull from system fonts automatically to whatever degree possible
+        https://bugs.webkit.org/show_bug.cgi?id=133966
+
+        Reviewed by Timothy Hatcher.
+
+        Updated font families to use -webkit-system-font, and set this on the body to be
+        inherited. Also made sure that popovers use Menlo as the default. Updated 
+        autocompletions with system font names.
+
+        * UserInterface/Models/CSSKeywordCompletions.js: Updated completions with available system fonts.
+
+        * UserInterface/Controllers/CodeMirrorGradientEditingController.css:
+        * UserInterface/Views/Breakpoint.css:
+        * UserInterface/Views/ButtonNavigationItem.css:
+        * UserInterface/Views/ButtonToolbarItem.css:
+        * UserInterface/Views/CSSStyleDeclarationSection.css:
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        * UserInterface/Views/CodeMirrorOverrides.css:
+        * UserInterface/Views/DataGrid.css:
+        * UserInterface/Views/DebuggerDashboardView.css:
+        * UserInterface/Views/DetailsSection.css:
+        * UserInterface/Views/FindBanner.css:
+        * UserInterface/Views/GoToLineDialog.css:
+        * UserInterface/Views/HierarchicalPathComponent.css:
+        * UserInterface/Views/Main.css:
+        * UserInterface/Views/NavigationSidebarPanel.css:
+        * UserInterface/Views/ProbeSetDataGrid.css:
+        * UserInterface/Views/RulesStyleDetailsPanel.css:
+        * UserInterface/Views/ScopeBar.css:
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        * UserInterface/Views/TimelineDataGrid.css:
+        * UserInterface/Views/TimelineRuler.css:
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        Changes to fonts. Set default font stack to -webkit-system-font, sans-serif. Default size is
+        11px. Only changes to this default size or changes to the font (to Menlo, monospace usually) remain.
+
 2014-06-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Esc in quick console no longer toggles console drawer

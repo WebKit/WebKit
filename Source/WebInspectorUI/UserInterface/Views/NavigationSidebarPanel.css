@@ -82,7 +82,6 @@
     display: inline-block;
     white-space: nowrap;
 
-    font-family: "Lucida Grande", sans-serif;
     font-size: 13px;
 
     color: white;
@@ -104,9 +103,6 @@
     outline: none;
 
     list-style: none;
-
-    font-family: "Lucida Grande", "Helvetica", sans-serif;
-    font-size: 11px;
 }
 
 .navigation-sidebar-panel-content-tree-outline .children {

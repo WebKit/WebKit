@@ -89,8 +89,6 @@
 .details-section.probe-set .data-grid th {
     height: 21px;
 
-    font-size: 11px;
-    font-family: "Lucida Grande", sans-serif;
     background-image: linear-gradient(to bottom, rgb(248, 248, 248), rgb(226, 226, 226));
     background-size: 100% 100% !important;
     background-position: center !important;

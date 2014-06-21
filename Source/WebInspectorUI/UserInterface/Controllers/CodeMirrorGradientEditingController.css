@@ -26,8 +26,6 @@
 .gradient-editing-controller {
     width: 260px;
     height: 109px;
-
-    font-family: "Lucida Grande", Helvetica, sans-serif;
 }
 
 .gradient-editing-controller.edits-color {

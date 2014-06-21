@@ -34,9 +34,6 @@
 .data-grid.timeline th {
     height: 22px;
 
-    font-size: 11px;
-    font-family: "Lucida Grande", sans-serif;
-
     background-image: none;
     background-color: white;
 
@@ -176,8 +173,6 @@
     margin: 0;
     outline: none;
     list-style: none;
-    font-family: "Lucida Grande", "Helvetica", sans-serif;
-    font-size: 11px;
 }
 
 .timeline-data-grid-tree-outline .item {

@@ -136,10 +136,9 @@ div:not(.style-declaration-section) + .style-declaration-section,
 
 .style-declaration-section > .header > .origin {
     line-height: 10px;
-    font-family: "Lucida Grande", sans-serif;
 
     color: rgb(128, 128, 128);
-    
+
     word-wrap: break-word;
     white-space: nowrap;
 }

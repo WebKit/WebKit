@@ -26,9 +26,6 @@
 .find-banner {
     border-bottom: 1px solid rgb(153, 153, 153);
 
-    font-family: "Lucida Grande", sans-serif;
-    font-size: 11px;
-
     position: absolute;
     top: -22px;
     left: 0;

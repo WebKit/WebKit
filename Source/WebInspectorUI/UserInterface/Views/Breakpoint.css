@@ -26,9 +26,6 @@
 .popover .edit-breakpoint-popover-content {
     width: 420px;
     padding: 5px 15px;
-    
-    font-family: "Lucida Grande", Helvetica, sans-serif;
-    font-size: 11px;
 }
 
 .popover .edit-breakpoint-popover-content.wide {

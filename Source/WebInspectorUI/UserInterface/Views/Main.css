@@ -31,6 +31,9 @@ body {
     display: -webkit-flex;
     -webkit-flex-direction: column;
 
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 11px;
+
     position: absolute;
     top: 0;
     left: 0;
@@ -164,14 +167,13 @@ body.docked.right #navigation-sidebar.collapsed > .resizer {
 
     -webkit-justify-content: center;
     -webkit-align-items: center;
-    
+
     line-height: 20px;
     white-space: pre-wrap;
     text-align: center;
 
     font-size: 18px;
     font-weight: bold;
-    font-family: Lucida Grande, sans-serif;
 
     color: rgb(75%, 75%, 75%);
     background-color: white;

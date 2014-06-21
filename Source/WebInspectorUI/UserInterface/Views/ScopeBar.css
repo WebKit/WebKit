@@ -24,7 +24,6 @@
  */
 
 .scope-bar {
-    font-family: Lucida Grande, sans-serif;
     padding: 0 3px;
     overflow: hidden;
 }
@@ -35,7 +34,7 @@
     padding: 0 8px 3px;
     font-size: 11px;
     font-weight: bold;
-    line-height: 12px;
+    line-height: 11px;
     color: rgb(46, 46, 46);
     background-color: transparent;
     border: 1px solid transparent;

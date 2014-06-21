@@ -24,9 +24,6 @@
  */
 
 .sidebar > .panel.details.css-style .rules .label {
-    font-size: 11px;
-    font-family: "Lucida Grande", sans-serif;
-
     color: rgb(60%, 60%, 60%);
     text-shadow: white 0 1px 0;
 
@@ -43,7 +40,6 @@
 
 .sidebar > .panel.details.css-style .rules .new-rule {
     font-size: 12px;
-    font-family: "Lucida Grande", sans-serif;
     font-weight: bold;
 
     color: black;

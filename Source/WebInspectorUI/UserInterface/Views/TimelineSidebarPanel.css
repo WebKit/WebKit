@@ -81,8 +81,6 @@
     text-align: center;
 
     line-height: 20px;
-    font-size: 11px;
-    font-family: "Lucida Grande", sans-serif;
     font-weight: bold;
 
     color: rgb(76, 76, 76);
@@ -106,8 +104,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
 
-    font-size: 11px;
-    font-family: "Lucida Grande", sans-serif;
     font-weight: bold;
 
     padding: 4px 9px;

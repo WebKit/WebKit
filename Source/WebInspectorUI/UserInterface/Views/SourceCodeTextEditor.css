@@ -32,7 +32,8 @@
 }
 
 .popover .debugger-popover-content {
-    font-family: monospace;
+    font-family: Menlo, monospace;
+    font-size: 11px;
     white-space: pre;
 }
 
@@ -72,6 +73,6 @@
     width: 16px;
     height: 16px;
     content: -webkit-image-set(url(../Images/ColorIcon.png) 1x, url(../Images/ColorIcon@2x.png) 2x);
-    
+
     -webkit-transform: translateY(1px);
 }

@@ -42,9 +42,6 @@
 }
 
 .sidebar > .panel.details.css-style > .content > .pseudo-classes {
-    font-size: 11px;
-    font-family: "Lucida Grande", sans-serif;
-
     padding: 10px;
 
     display: -webkit-flex;
