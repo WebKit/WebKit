@@ -1,3 +1,12 @@
+2014-06-21  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Removing PAGE_VISIBILITY_API compile guard.
+        https://bugs.webkit.org/show_bug.cgi?id=133844
+
+        Reviewed by Gavin Barraclough.
+
+        * wtf/FeatureDefines.h:
+
 2014-06-20  Anders Carlsson  <andersca@apple.com>
 
         Add encoding and decoding support for WTF::Optional

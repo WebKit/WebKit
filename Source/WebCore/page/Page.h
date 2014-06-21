@@ -355,9 +355,7 @@ public:
     void setEditable(bool isEditable) { m_isEditable = isEditable; }
     bool isEditable() { return m_isEditable; }
 
-#if ENABLE(PAGE_VISIBILITY_API)
     PageVisibilityState visibilityState() const;
-#endif
     void resumeAnimatingImages();
 
     void addLayoutMilestones(LayoutMilestones);
@@ -404,9 +402,7 @@ public:
 
     PageConsole& console() { return *m_console; }
 
-#if ENABLE(PAGE_VISIBILITY_API)
     void hiddenPageCSSAnimationSuspensionStateChanged();
-#endif
 
 #if ENABLE(VIDEO_TRACK)
     void captionPreferencesChanged();

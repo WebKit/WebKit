@@ -1,3 +1,12 @@
+2014-06-21  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Removing PAGE_VISIBILITY_API compile guard.
+        https://bugs.webkit.org/show_bug.cgi?id=133844
+
+        Reviewed by Gavin Barraclough.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2014-06-20  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Remove DumpRenderTree/efl and EWebLauncher

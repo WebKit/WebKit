@@ -1,3 +1,13 @@
+2014-06-21  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Removing PAGE_VISIBILITY_API compile guard.
+        https://bugs.webkit.org/show_bug.cgi?id=133844
+
+        Reviewed by Gavin Barraclough.
+
+        * win/tools/vsprops/FeatureDefines.props:
+        * win/tools/vsprops/FeatureDefinesCairo.props:
+
 2014-06-11  Jer Noble  <jer.noble@apple.com>
 
         Update WKSI for <rdar://problem/17009091>.

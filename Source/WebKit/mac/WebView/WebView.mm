@@ -2404,9 +2404,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setHiddenPageDOMTimerThrottlingEnabled([preferences hiddenPageDOMTimerThrottlingEnabled]);
 #endif
 
-#if ENABLE(PAGE_VISIBILITY_API)
-    settings.setHiddenPageCSSAnimationSuspensionEnabled([preferences hiddenPageCSSAnimationSuspensionEnabled]);
-#endif
+settings.setHiddenPageCSSAnimationSuspensionEnabled([preferences hiddenPageCSSAnimationSuspensionEnabled]);
 
     NSTimeInterval timeout = [preferences incrementalRenderingSuppressionTimeoutInSeconds];
     if (timeout > 0)
@@ -4325,7 +4323,7 @@ static Vector<String> toStringVector(NSArray* patterns)
 
 - (WebPageVisibilityState)_visibilityState
 {
-#if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
     if (_private->page)
         return kit(_private->page->visibilityState());
 #endif

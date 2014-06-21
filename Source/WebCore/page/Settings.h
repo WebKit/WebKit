@@ -236,10 +236,8 @@ public:
     void setTimeWithoutMouseMovementBeforeHidingControls(double time) { m_timeWithoutMouseMovementBeforeHidingControls = time; }
     double timeWithoutMouseMovementBeforeHidingControls() const { return m_timeWithoutMouseMovementBeforeHidingControls; }
 
-#if ENABLE(PAGE_VISIBILITY_API)
     bool hiddenPageCSSAnimationSuspensionEnabled() const { return m_hiddenPageCSSAnimationSuspensionEnabled; }
     void setHiddenPageCSSAnimationSuspensionEnabled(bool);
-#endif
 
     void setFontFallbackPrefersPictographs(bool);
     bool fontFallbackPrefersPictographs() const { return m_fontFallbackPrefersPictographs; }
@@ -315,9 +313,7 @@ private:
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
     bool m_hiddenPageDOMTimerThrottlingEnabled : 1;
 #endif
-#if ENABLE(PAGE_VISIBILITY_API)
     bool m_hiddenPageCSSAnimationSuspensionEnabled : 1;
-#endif
     bool m_fontFallbackPrefersPictographs : 1;
 
     static double gDefaultMinDOMTimerInterval;

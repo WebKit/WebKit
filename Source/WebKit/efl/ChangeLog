@@ -1,3 +1,14 @@
+2014-06-21  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Removing PAGE_VISIBILITY_API compile guard.
+        https://bugs.webkit.org/show_bug.cgi?id=133844
+
+        Reviewed by Gavin Barraclough.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_visibility_state_set):
+        (ewk_view_visibility_state_get):
+
 2014-05-16  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] Improve handling of LIB_INSTALL_DIR, EXEC_INSTALL_DIR, and LIBEXEC_INSTALL_DIR

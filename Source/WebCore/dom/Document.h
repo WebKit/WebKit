@@ -486,11 +486,9 @@ public:
     void setInputCursor(PassRefPtr<JSC::InputCursor>);
 #endif
 
-#if ENABLE(PAGE_VISIBILITY_API)
     void visibilityStateChanged();
     String visibilityState() const;
     bool hidden() const;
-#endif
 
 #if ENABLE(CSP_NEXT)
     DOMSecurityPolicy* securityPolicy();
@@ -1051,10 +1049,8 @@ public:
     void pageScaleFactorChangedAndStable();
 #endif
 
-#if ENABLE(PAGE_VISIBILITY_API)
     void registerForVisibilityStateChangedCallbacks(Element*);
     void unregisterForVisibilityStateChangedCallbacks(Element*);
-#endif
 
     void setShouldCreateRenderers(bool);
     bool shouldCreateRenderers();
@@ -1342,9 +1338,7 @@ private:
     template <typename CharacterType>
     void displayBufferModifiedByEncodingInternal(CharacterType*, unsigned) const;
 
-#if ENABLE(PAGE_VISIBILITY_API)
     PageVisibilityState pageVisibilityState() const;
-#endif
 
     PassRefPtr<HTMLCollection> ensureCachedCollection(CollectionType);
 
@@ -1545,9 +1539,7 @@ private:
     HashSet<HTMLMediaElement*> m_pageScaleFactorChangedElements;
 #endif
 
-#if ENABLE(PAGE_VISIBILITY_API)
     HashSet<Element*> m_visibilityStateCallbackElements;
-#endif
 
     HashMap<StringImpl*, Element*, CaseFoldingHash> m_elementsByAccessKey;
     bool m_accessKeyMapValid;

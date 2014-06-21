@@ -77,9 +77,7 @@ public:
 
     void pauseSession();
     
-#if ENABLE(PAGE_VISIBILITY_API)
     void visibilityChanged();
-#endif
 
     String title() const;
     double duration() const;
@@ -103,9 +101,7 @@ protected:
     MediaSessionClient& client() const { return m_client; }
 
 private:
-#if ENABLE(PAGE_VISIBILITY_API)
     void updateClientDataBuffering();
-#endif
 
     MediaSessionClient& m_client;
     State m_state;

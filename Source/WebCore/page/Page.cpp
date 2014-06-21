@@ -1235,28 +1235,22 @@ void Page::setIsVisibleInternal(bool isVisible)
         if (FrameView* view = mainFrame().view())
             view->show();
 
-#if ENABLE(PAGE_VISIBILITY_API)
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
             mainFrame().animation().resumeAnimations();
-#endif
 
         resumeAnimatingImages();
     }
 
-#if ENABLE(PAGE_VISIBILITY_API)
     Vector<Ref<Document>> documents;
     for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext())
         documents.append(*frame->document());
 
     for (size_t i = 0, size = documents.size(); i < size; ++i)
         documents[i]->visibilityStateChanged();
-#endif
 
     if (!isVisible) {
-#if ENABLE(PAGE_VISIBILITY_API)
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
             mainFrame().animation().suspendAnimations();
-#endif
 
         for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
             if (FrameView* frameView = frame->view())
@@ -1275,7 +1269,6 @@ void Page::setIsPrerender()
     m_isPrerender = true;
 }
 
-#if ENABLE(PAGE_VISIBILITY_API)
 PageVisibilityState Page::visibilityState() const
 {
     if (isVisible())
@@ -1284,7 +1277,6 @@ PageVisibilityState Page::visibilityState() const
         return PageVisibilityStatePrerender;
     return PageVisibilityStateHidden;
 }
-#endif
 
 #if ENABLE(RUBBER_BANDING)
 void Page::addHeaderWithHeight(int headerHeight)
@@ -1532,7 +1524,6 @@ void Page::resetSeenMediaEngines()
     m_seenMediaEngines.clear();
 }
 
-#if (ENABLE_PAGE_VISIBILITY_API)
 void Page::hiddenPageCSSAnimationSuspensionStateChanged()
 {
     if (!isVisible()) {
@@ -1542,7 +1533,6 @@ void Page::hiddenPageCSSAnimationSuspensionStateChanged()
             mainFrame().animation().resumeAnimations();
     }
 }
-#endif
 
 #if ENABLE(VIDEO_TRACK)
 void Page::captionPreferencesChanged()

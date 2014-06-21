@@ -31,7 +31,6 @@
 #include "config.h"
 #include "PageVisibilityState.h"
 
-#if ENABLE(PAGE_VISIBILITY_API)
 
 namespace WebCore {
 
@@ -55,5 +54,3 @@ String pageVisibilityStateString(PageVisibilityState state)
 }
 
 } // namespace WebCore
-
-#endif // if ENABLE(PAGE_VISIBILITY_API)

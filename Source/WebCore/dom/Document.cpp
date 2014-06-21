@@ -1540,7 +1540,6 @@ void Document::removeTitle(Element* titleElement)
         updateTitle(StringWithDirection());
 }
 
-#if ENABLE(PAGE_VISIBILITY_API)
 void Document::registerForVisibilityStateChangedCallbacks(Element* element)
 {
     m_visibilityStateCallbackElements.add(element);
@@ -1578,7 +1577,6 @@ bool Document::hidden() const
 {
     return pageVisibilityState() != PageVisibilityStateVisible;
 }
-#endif
 
 #if ENABLE(CSP_NEXT)
 DOMSecurityPolicy* Document::securityPolicy()

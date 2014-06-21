@@ -43,9 +43,7 @@ enum PageVisibilityState {
     PageVisibilityStatePrerender
 };
 
-#if ENABLE(PAGE_VISIBILITY_API)
 String pageVisibilityStateString(PageVisibilityState);
-#endif
 
 } // namespace WebCore
 

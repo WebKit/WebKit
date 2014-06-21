@@ -309,9 +309,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_completelyLoaded(false)
     , m_havePreparedToPlay(false)
     , m_parsingInProgress(createdByParser)
-#if ENABLE(PAGE_VISIBILITY_API)
     , m_elementIsHidden(document.hidden())
-#endif
 #if PLATFORM(IOS)
     , m_requestingPlay(false)
 #endif
@@ -430,9 +428,7 @@ void HTMLMediaElement::registerWithDocument(Document& document)
 #if !PLATFORM(IOS)
     document.registerForMediaVolumeCallbacks(this);
     document.registerForPrivateBrowsingStateChangedCallbacks(this);
-#if ENABLE(PAGE_VISIBILITY_API)
     document.registerForVisibilityStateChangedCallbacks(this);
-#endif
 #endif
 
 #if ENABLE(VIDEO_TRACK)
@@ -455,9 +451,7 @@ void HTMLMediaElement::unregisterWithDocument(Document& document)
 #if !PLATFORM(IOS)
     document.unregisterForMediaVolumeCallbacks(this);
     document.unregisterForPrivateBrowsingStateChangedCallbacks(this);
-#if ENABLE(PAGE_VISIBILITY_API)
     document.unregisterForVisibilityStateChangedCallbacks(this);
-#endif
 #endif
 
 #if ENABLE(VIDEO_TRACK)
@@ -4738,7 +4732,6 @@ void HTMLMediaElement::mediaVolumeDidChange()
     updateVolume();
 }
 
-#if ENABLE(PAGE_VISIBILITY_API)
 void HTMLMediaElement::visibilityStateChanged()
 {
     LOG(Media, "HTMLMediaElement::visibilityStateChanged");
@@ -4746,7 +4739,6 @@ void HTMLMediaElement::visibilityStateChanged()
     updateSleepDisabling();
     m_mediaSession->visibilityChanged();
 }
-#endif
 
 #if ENABLE(VIDEO_TRACK)
 bool HTMLMediaElement::requiresTextTrackRepresentation() const
@@ -5491,10 +5483,8 @@ bool HTMLMediaElement::shouldDisableSleep() const
     return false;
 #endif
 
-#if ENABLE(PAGE_VISIBILITY_API)
     if (m_elementIsHidden)
         return false;
-#endif
 
     return m_player && !m_player->paused() && hasVideo() && hasAudio() && !loop();
 }

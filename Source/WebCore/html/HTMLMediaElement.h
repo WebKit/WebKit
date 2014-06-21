@@ -194,9 +194,7 @@ public:
     bool webkitClosedCaptionsVisible() const;
     void setWebkitClosedCaptionsVisible(bool);
 
-#if ENABLE(PAGE_VISIBILITY_API)
     virtual bool elementIsHidden() const override { return m_elementIsHidden; }
-#endif
 
 #if ENABLE(MEDIA_STATISTICS)
 // Statistics
@@ -493,9 +491,7 @@ private:
     
     virtual void mediaVolumeDidChange() override;
 
-#if ENABLE(PAGE_VISIBILITY_API)
     virtual void visibilityStateChanged() override;
-#endif
 
     virtual void updateDisplayState() { }
     
@@ -806,9 +802,7 @@ private:
     bool m_completelyLoaded : 1;
     bool m_havePreparedToPlay : 1;
     bool m_parsingInProgress : 1;
-#if ENABLE(PAGE_VISIBILITY_API)
     bool m_elementIsHidden : 1;
-#endif
 
 #if PLATFORM(IOS)
     bool m_requestingPlay : 1;

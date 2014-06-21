@@ -1,3 +1,41 @@
+2014-06-21  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Removing PAGE_VISIBILITY_API compile guard.
+        https://bugs.webkit.org/show_bug.cgi?id=133844
+
+        Reviewed by Gavin Barraclough.
+
+        No new tests because no functional changes.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Modules/vibration/NavigatorVibration.cpp:
+        (WebCore::NavigatorVibration::vibrate):
+        * dom/Document.cpp:
+        (WebCore::Document::hidden):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/Element.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::registerWithDocument):
+        (WebCore::HTMLMediaElement::unregisterWithDocument):
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+        * page/Page.cpp:
+        (WebCore::Page::setIsVisibleInternal):
+        (WebCore::Page::visibilityState):
+        (WebCore::Page::hiddenPageCSSAnimationSuspensionStateChanged):
+        * page/Page.h:
+        * page/PageVisibilityState.cpp:
+        * page/PageVisibilityState.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setHiddenPageCSSAnimationSuspensionEnabled):
+        * page/Settings.h:
+        * platform/audio/MediaSession.cpp:
+        (WebCore::MediaSession::updateClientDataBuffering):
+        * platform/audio/MediaSession.h:
+
 2014-06-21  Frédéric Wang  <fred.wang@free.fr>
 
         [GTK][EFL] Use OpenType MATH fonts by default.
