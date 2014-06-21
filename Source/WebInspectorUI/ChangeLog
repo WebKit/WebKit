@@ -1,3 +1,30 @@
+2014-06-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Esc in quick console no longer toggles console drawer
+        https://bugs.webkit.org/show_bug.cgi?id=134068
+
+        Reviewed by Timothy Hatcher.
+
+        For Escape to toggle console behavior we were relying on the Escape
+        keyboard event to propagate up to the window and be handled by
+        QuickConsole's global keyboard shortcut. With CodeMirror 4, all
+        editors have a default "Esc" key handler to reduce multiple selections
+        to a single selection. Unfortunately this always prevents default,
+        which our keyboard shortcut respects and doesn't toggle the console.
+
+        Workaround this by putting a specific handler for when a Console
+        Prompt is empty and the Escape key is triggered. This does not go
+        through the normal ConsolePrompt delegate because the delegate
+        is never the QuickConsole, it is actually the JavaScript log.
+
+        * UserInterface/Views/ConsolePrompt.js:
+        (WebInspector.ConsolePrompt):
+        (WebInspector.ConsolePrompt.prototype.set escapeKeyHandlerWhenEmpty):
+        (WebInspector.ConsolePrompt.prototype._handleEscapeKey):
+        * UserInterface/Views/QuickConsole.js:
+        (WebInspector.QuickConsole.this.prompt.escapeKeyHandlerWhenEmpty):
+        (WebInspector.QuickConsole):
+
 2014-06-18  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: expose aria-relevant

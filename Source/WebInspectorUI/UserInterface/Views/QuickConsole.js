@@ -43,6 +43,13 @@ WebInspector.QuickConsole = function(element)
     this.prompt.element.classList.add(WebInspector.QuickConsole.TextPromptStyleClassName);
     this._element.appendChild(this.prompt.element);
 
+    // FIXME: CodeMirror 4 has a default "Esc" key handler that always prevents default.
+    // Our keyboard shortcut above will respect the default prevented and ignore the event
+    // and not toggle the console. Install our own Escape key handler that will trigger
+    // when the ConsolePrompt is empty, to restore toggling behavior. A better solution
+    // would be for CodeMirror's event handler to pass if it doesn't do anything.
+    this.prompt.escapeKeyHandlerWhenEmpty = function() { WebInspector.toggleSplitConsole(); };
+
     this.prompt.shown();
 
     this._navigationBar = new WebInspector.QuickConsoleNavigationBar;

@@ -49,7 +49,8 @@ WebInspector.ConsolePrompt = function(delegate, mimeType, element)
         "Ctrl-P": this._handlePreviousKey.bind(this),
         "Ctrl-N": this._handleNextKey.bind(this),
         "Enter": this._handleEnterKey.bind(this),
-        "Cmd-Enter": this._handleCommandEnterKey.bind(this)
+        "Cmd-Enter": this._handleCommandEnterKey.bind(this),
+        "Esc": this._handleEscapeKey.bind(this)
     };
 
     this._codeMirror.addKeyMap(keyMap);
@@ -82,6 +83,11 @@ WebInspector.ConsolePrompt.prototype = {
     set delegate(delegate)
     {
         this._delegate = delegate || null;
+    },
+
+    set escapeKeyHandlerWhenEmpty(handler)
+    {
+        this._escapeKeyHandlerWhenEmpty = handler;
     },
 
     get text()
@@ -152,6 +158,17 @@ WebInspector.ConsolePrompt.prototype = {
     },
 
     // Private
+    
+    _handleEscapeKey: function(codeMirror)
+    {
+        if (this.text)
+            return CodeMirror.Pass;
+
+        if (!this._escapeKeyHandlerWhenEmpty)
+            return CodeMirror.Pass;
+
+        this._escapeKeyHandlerWhenEmpty();
+    },
 
     _handlePreviousKey: function(codeMirror)
     {
