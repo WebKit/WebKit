@@ -1,3 +1,50 @@
+2014-06-20  Dean Jackson  <dino@apple.com>
+
+        [Mac] Margins for new form controls need tweaking
+        https://bugs.webkit.org/show_bug.cgi?id=134135
+        <rdar://problem/17262164>
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline a bunch of results since some <input> dimensions
+        changed slightly.
+
+        * platform/mac/css1/box_properties/acid_test-expected.png:
+        * platform/mac/css1/box_properties/acid_test-expected.txt:
+        * platform/mac/css2.1/t09-c5526c-display-00-e-expected.png:
+        * platform/mac/css2.1/t09-c5526c-display-00-e-expected.txt:
+        * platform/mac/fast/block/basic/011-expected.png:
+        * platform/mac/fast/block/basic/011-expected.txt:
+        * platform/mac/fast/block/margin-collapse/103-expected.png:
+        * platform/mac/fast/block/margin-collapse/103-expected.txt:
+        * platform/mac/fast/forms/basic-inputs-expected.png:
+        * platform/mac/fast/forms/basic-inputs-expected.txt:
+        * platform/mac/fast/forms/box-shadow-override-expected.png:
+        * platform/mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/mac/fast/forms/form-element-geometry-expected.png:
+        * platform/mac/fast/forms/form-element-geometry-expected.txt:
+        * platform/mac/fast/forms/formmove-expected.txt:
+        * platform/mac/fast/forms/formmove2-expected.png:
+        * platform/mac/fast/forms/formmove2-expected.txt:
+        * platform/mac/fast/forms/input-appearance-height-expected.png:
+        * platform/mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/mac/fast/forms/input-value-expected.png:
+        * platform/mac/fast/forms/input-value-expected.txt:
+        * platform/mac/fast/inline/positionedLifetime-expected.txt:
+        * platform/mac/fast/replaced/replaced-breaking-expected.png:
+        * platform/mac/fast/replaced/replaced-breaking-expected.txt:
+        * platform/mac/fast/replaced/width100percent-radio-expected.txt:
+        * platform/mac/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/mac/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/core/captions1-expected.png:
+        * platform/mac/tables/mozilla_expected_failures/core/captions1-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/core/captions2-expected.png:
+        * platform/mac/tables/mozilla_expected_failures/core/captions2-expected.txt:
+
 2014-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Support Khmer and Lao fallback fonts
