@@ -167,10 +167,30 @@ void invalidateCallbackMap(HashMap<uint64_t, T>& callbackMap, CallbackBase::Erro
 
 class CallbackMap {
 public:
-    void put(PassRefPtr<CallbackBase> callback)
+    uint64_t put(PassRefPtr<CallbackBase> callback)
     {
         ASSERT(!m_map.contains(callback->callbackID()));
-        m_map.set(callback->callbackID(), callback);
+
+        uint64_t callbackID = callback->callbackID();
+        m_map.set(callbackID, callback);
+        return callbackID;
+    }
+
+    template<unsigned I, typename T, typename... U>
+    struct GenericCallbackType {
+        typedef typename GenericCallbackType<I - 1, U..., T>::type type;
+    };
+
+    template<typename... U>
+    struct GenericCallbackType<1, CallbackBase::Error, U...> {
+        typedef GenericCallback<U...> type;
+    };
+
+    template<typename... T>
+    uint64_t put(std::function<void (T...)> function)
+    {
+        auto callback = GenericCallbackType<sizeof...(T), T...>::type::create(std::move(function));
+        return put(callback);
     }
 
     template<class T>

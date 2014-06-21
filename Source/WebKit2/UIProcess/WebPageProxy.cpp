@@ -1241,15 +1241,12 @@ void WebPageProxy::clearSelection()
 
 void WebPageProxy::validateCommand(const String& commandName, std::function<void (const String&, bool, int32_t, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<ValidateCommandCallback> callback = ValidateCommandCallback::create(std::move(callbackFunction));
-
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(String(), false, 0, CallbackBase::Error::Unknown);
         return;
     }
 
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
     m_process->send(Messages::WebPage::ValidateCommand(commandName, callbackID), m_pageID);
 }
 
@@ -2187,149 +2184,127 @@ void WebPageProxy::countStringMatches(const String& string, FindOptions options,
 
 void WebPageProxy::runJavaScriptInMainFrame(const String& script, std::function<void (WebSerializedScriptValue*, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<ScriptValueCallback> callback = ScriptValueCallback::create(std::move(callbackFunction));
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(nullptr, CallbackBase::Error::Unknown);
         return;
     }
 
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
     m_process->send(Messages::WebPage::RunJavaScriptInMainFrame(script, callbackID), m_pageID);
 }
 
 void WebPageProxy::getRenderTreeExternalRepresentation(std::function<void (const String&, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<StringCallback> callback = StringCallback::create(std::move(callbackFunction));
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(String(), CallbackBase::Error::Unknown);
         return;
     }
     
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
     m_process->send(Messages::WebPage::GetRenderTreeExternalRepresentation(callbackID), m_pageID);
 }
 
 void WebPageProxy::getSourceForFrame(WebFrameProxy* frame, std::function<void (const String&, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<StringCallback> callback = StringCallback::create(std::move(callbackFunction));
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(String(), CallbackBase::Error::Unknown);
         return;
     }
     
-    uint64_t callbackID = callback->callbackID();
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
     m_loadDependentStringCallbackIDs.add(callbackID);
-    m_callbacks.put(callback);
     m_process->send(Messages::WebPage::GetSourceForFrame(frame->frameID(), callbackID), m_pageID);
 }
 
 void WebPageProxy::getContentsAsString(std::function<void (const String&, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<StringCallback> callback = StringCallback::create(std::move(callbackFunction));
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(String(), CallbackBase::Error::Unknown);
         return;
     }
     
-    uint64_t callbackID = callback->callbackID();
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
     m_loadDependentStringCallbackIDs.add(callbackID);
-    m_callbacks.put(callback);
     m_process->send(Messages::WebPage::GetContentsAsString(callbackID), m_pageID);
 }
 
 void WebPageProxy::getBytecodeProfile(std::function<void (const String&, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<StringCallback> callback = StringCallback::create(std::move(callbackFunction));
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(String(), CallbackBase::Error::Unknown);
         return;
     }
     
-    uint64_t callbackID = callback->callbackID();
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
     m_loadDependentStringCallbackIDs.add(callbackID);
-    m_callbacks.put(callback);
     m_process->send(Messages::WebPage::GetBytecodeProfile(callbackID), m_pageID);
 }
     
 #if ENABLE(MHTML)
 void WebPageProxy::getContentsAsMHTMLData(std::function<void (API::Data*, CallbackBase::Error)> callbackFunction, bool useBinaryEncoding)
 {
-    RefPtr<DataCallback> callback = DataCallback::create(std::move(callbackFunction));
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(nullptr, CallbackBase::Error::Unknown);
         return;
     }
 
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
     m_process->send(Messages::WebPage::GetContentsAsMHTMLData(callbackID, useBinaryEncoding), m_pageID);
 }
 #endif
 
 void WebPageProxy::getSelectionOrContentsAsString(std::function<void (const String&, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<StringCallback> callback = StringCallback::create(std::move(callbackFunction));
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(String(), CallbackBase::Error::Unknown);
         return;
     }
     
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
     m_process->send(Messages::WebPage::GetSelectionOrContentsAsString(callbackID), m_pageID);
 }
 
 void WebPageProxy::getSelectionAsWebArchiveData(std::function<void (API::Data*, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<DataCallback> callback = DataCallback::create(std::move(callbackFunction));
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(nullptr, CallbackBase::Error::Unknown);
         return;
     }
     
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
     m_process->send(Messages::WebPage::GetSelectionAsWebArchiveData(callbackID), m_pageID);
 }
 
 void WebPageProxy::getMainResourceDataOfFrame(WebFrameProxy* frame, std::function<void (API::Data*, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<DataCallback> callback = DataCallback::create(std::move(callbackFunction));
     if (!isValid() || !frame) {
-        callback->invalidate();
+        callbackFunction(nullptr, CallbackBase::Error::Unknown);
         return;
     }
     
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
     m_process->send(Messages::WebPage::GetMainResourceDataOfFrame(frame->frameID(), callbackID), m_pageID);
 }
 
 void WebPageProxy::getResourceDataFromFrame(WebFrameProxy* frame, API::URL* resourceURL, std::function<void (API::Data*, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<DataCallback> callback = DataCallback::create(std::move(callbackFunction));
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(nullptr, CallbackBase::Error::Unknown);
         return;
     }
     
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
     m_process->send(Messages::WebPage::GetResourceDataFromFrame(frame->frameID(), resourceURL->string(), callbackID), m_pageID);
 }
 
 void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, std::function<void (API::Data*, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<DataCallback> callback = DataCallback::create(std::move(callbackFunction));
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(nullptr, CallbackBase::Error::Unknown);
         return;
     }
     
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
     m_process->send(Messages::WebPage::GetWebArchiveOfFrame(frame->frameID(), callbackID), m_pageID);
 }
 
@@ -4968,16 +4943,12 @@ void WebPageProxy::insertTextAsync(const String& text, const EditingRange& repla
 
 void WebPageProxy::getMarkedRangeAsync(std::function<void (EditingRange, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<EditingRangeCallback> callback = EditingRangeCallback::create(std::move(callbackFunction));
-
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(EditingRange(), CallbackBase::Error::Unknown);
         return;
     }
 
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
-
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
     process().send(Messages::WebPage::GetMarkedRangeAsync(callbackID), m_pageID);
 }
 
@@ -4990,39 +4961,29 @@ void WebPageProxy::getSelectedRangeAsync(std::function<void (EditingRange, Callb
         return;
     }
 
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
-
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
     process().send(Messages::WebPage::GetSelectedRangeAsync(callbackID), m_pageID);
 }
 
 void WebPageProxy::characterIndexForPointAsync(const WebCore::IntPoint& point, std::function<void (uint64_t, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<UnsignedCallback> callback = UnsignedCallback::create(std::move(callbackFunction));
-
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(0, CallbackBase::Error::Unknown);
         return;
     }
 
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
-
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
     process().send(Messages::WebPage::CharacterIndexForPointAsync(point, callbackID), m_pageID);
 }
 
 void WebPageProxy::firstRectForCharacterRangeAsync(const EditingRange& range, std::function<void (const WebCore::IntRect&, const EditingRange&, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<RectForCharacterRangeCallback> callback = RectForCharacterRangeCallback::create(std::move(callbackFunction));
-
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(WebCore::IntRect(), EditingRange(), CallbackBase::Error::Unknown);
         return;
     }
 
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
-
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
     process().send(Messages::WebPage::FirstRectForCharacterRangeAsync(range, callbackID), m_pageID);
 }
 
@@ -5049,16 +5010,12 @@ void WebPageProxy::confirmCompositionAsync()
 
 void WebPageProxy::takeSnapshot(IntRect rect, IntSize bitmapSize, SnapshotOptions options, std::function<void (const ShareableBitmap::Handle&, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<ImageCallback> callback = ImageCallback::create(std::move(callbackFunction));
-
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(ShareableBitmap::Handle(), CallbackBase::Error::Unknown);
         return;
     }
 
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
-
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
     m_process->send(Messages::WebPage::TakeSnapshot(rect, bitmapSize, options, callbackID), m_pageID);
 }
 

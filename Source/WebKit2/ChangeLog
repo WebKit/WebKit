@@ -1,3 +1,33 @@
+2014-06-21  Dan Bernstein  <mitz@apple.com>
+
+        CallbackMap::put should be able to take an unwrapped function
+        https://bugs.webkit.org/show_bug.cgi?id=134104
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/GenericCallback.h:
+        (WebKit::CallbackMap::put): Added an overload that takes a function and creates and puts a
+        callback. Changed both overloads of put() to return the callback ID.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::validateCommand):
+        (WebKit::WebPageProxy::runJavaScriptInMainFrame):
+        (WebKit::WebPageProxy::getRenderTreeExternalRepresentation):
+        (WebKit::WebPageProxy::getSourceForFrame):
+        (WebKit::WebPageProxy::getContentsAsString):
+        (WebKit::WebPageProxy::getBytecodeProfile):
+        (WebKit::WebPageProxy::getContentsAsMHTMLData):
+        (WebKit::WebPageProxy::getSelectionOrContentsAsString):
+        (WebKit::WebPageProxy::getSelectionAsWebArchiveData):
+        (WebKit::WebPageProxy::getMainResourceDataOfFrame):
+        (WebKit::WebPageProxy::getResourceDataFromFrame):
+        (WebKit::WebPageProxy::getWebArchiveOfFrame):
+        (WebKit::WebPageProxy::getMarkedRangeAsync):
+        (WebKit::WebPageProxy::getSelectedRangeAsync):
+        (WebKit::WebPageProxy::characterIndexForPointAsync):
+        (WebKit::WebPageProxy::firstRectForCharacterRangeAsync):
+        (WebKit::WebPageProxy::takeSnapshot):
+
 2014-06-21  Anders Carlsson  <andersca@apple.com>
 
         Make it possible to override debug preferences on a per-identifier basis as well as globally
