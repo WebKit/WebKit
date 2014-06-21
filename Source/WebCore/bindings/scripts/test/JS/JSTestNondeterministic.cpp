@@ -103,20 +103,7 @@ public:
     }
 };
 
-/* Hash table for constructor */
-
-static const struct CompactHashIndex JSTestNondeterministicConstructorTableIndex[1] = {
-    { -1, -1 },
-};
-
-
-static const HashTableValue JSTestNondeterministicConstructorTableValues[] =
-{
-    { 0, 0, NoIntrinsic, 0, 0 }
-};
-
-static const HashTable JSTestNondeterministicConstructorTable = { 0, 0, false, JSTestNondeterministicConstructorTableValues, 0, JSTestNondeterministicConstructorTableIndex };
-const ClassInfo JSTestNondeterministicConstructor::s_info = { "TestNondeterministicConstructor", &Base::s_info, &JSTestNondeterministicConstructorTable, 0, CREATE_METHOD_TABLE(JSTestNondeterministicConstructor) };
+const ClassInfo JSTestNondeterministicConstructor::s_info = { "TestNondeterministicConstructor", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestNondeterministicConstructor) };
 
 JSTestNondeterministicConstructor::JSTestNondeterministicConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(structure, globalObject)
@@ -133,27 +120,6 @@ void JSTestNondeterministicConstructor::finishCreation(VM& vm, JSDOMGlobalObject
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestNondeterministicPrototypeTableIndex[17] = {
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 3, -1 },
-    { -1, -1 },
-    { 6, -1 },
-    { -1, -1 },
-    { 0, -1 },
-    { -1, -1 },
-    { 1, 16 },
-    { -1, -1 },
-    { -1, -1 },
-    { 2, -1 },
-    { 5, -1 },
-    { 4, -1 },
-};
-
-
 static const HashTableValue JSTestNondeterministicPrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNondeterministicConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
@@ -165,8 +131,7 @@ static const HashTableValue JSTestNondeterministicPrototypeTableValues[] =
     { "nondeterministicZeroArgFunction", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestNondeterministicPrototypeFunctionNondeterministicZeroArgFunction), (intptr_t) (0) },
 };
 
-static const HashTable JSTestNondeterministicPrototypeTable = { 7, 15, true, JSTestNondeterministicPrototypeTableValues, 0, JSTestNondeterministicPrototypeTableIndex };
-const ClassInfo JSTestNondeterministicPrototype::s_info = { "TestNondeterministicPrototype", &Base::s_info, &JSTestNondeterministicPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestNondeterministicPrototype) };
+const ClassInfo JSTestNondeterministicPrototype::s_info = { "TestNondeterministicPrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestNondeterministicPrototype) };
 
 void JSTestNondeterministicPrototype::finishCreation(VM& vm)
 {

@@ -1242,7 +1242,7 @@ void JSObject::putDirectCustomAccessor(VM& vm, PropertyName propertyName, JSValu
     Structure* structure = this->structure(vm);
     if (attributes & ReadOnly)
         structure->setContainsReadOnlyProperties();
-    structure->setHasCustomGetterSetterProperties();
+    structure->setHasCustomGetterSetterProperties(propertyName == vm.propertyNames->underscoreProto);
 }
 
 void JSObject::putDirectNonIndexAccessor(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)

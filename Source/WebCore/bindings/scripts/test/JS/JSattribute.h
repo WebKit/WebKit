@@ -41,6 +41,7 @@ public:
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static void destroy(JSC::JSCell*);
     ~JSattribute();
+
     DECLARE_INFO;
 
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)

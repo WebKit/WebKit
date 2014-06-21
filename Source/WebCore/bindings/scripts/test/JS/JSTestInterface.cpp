@@ -201,21 +201,6 @@ static const HashTableValue JSTestInterfaceTableValues[] =
 static const HashTable JSTestInterfaceTable = { 2, 3, true, JSTestInterfaceTableValues, 0, JSTestInterfaceTableIndex };
 /* Hash table for constructor */
 
-static const struct CompactHashIndex JSTestInterfaceConstructorTableIndex[11] = {
-    { 8, -1 },
-    { 5, -1 },
-    { -1, -1 },
-    { 0, 9 },
-    { 6, 10 },
-    { 7, -1 },
-    { 2, -1 },
-    { 1, 8 },
-    { 3, -1 },
-    { 4, -1 },
-    { 9, -1 },
-};
-
-
 static const HashTableValue JSTestInterfaceConstructorTableValues[] =
 {
 #if ENABLE(Condition22) || ENABLE(Condition23)
@@ -270,7 +255,6 @@ static const HashTableValue JSTestInterfaceConstructorTableValues[] =
 #endif
 };
 
-static const HashTable JSTestInterfaceConstructorTable = { 10, 7, true, JSTestInterfaceConstructorTableValues, 0, JSTestInterfaceConstructorTableIndex };
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
 COMPILE_ASSERT(1 == TestInterface::IMPLEMENTSCONSTANT1, TestInterfaceEnumIMPLEMENTSCONSTANT1IsWrongUseDoNotCheckConstants);
@@ -308,7 +292,7 @@ EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::constructJSTestInterfac
     return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object.get())));
 }
 
-const ClassInfo JSTestInterfaceConstructor::s_info = { "TestInterfaceConstructor", &Base::s_info, &JSTestInterfaceConstructorTable, 0, CREATE_METHOD_TABLE(JSTestInterfaceConstructor) };
+const ClassInfo JSTestInterfaceConstructor::s_info = { "TestInterfaceConstructor", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestInterfaceConstructor) };
 
 JSTestInterfaceConstructor::JSTestInterfaceConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(structure, globalObject)
@@ -333,75 +317,6 @@ ConstructType JSTestInterfaceConstructor::getConstructData(JSCell*, ConstructDat
 #endif // ENABLE(TEST_INTERFACE)
 
 /* Hash table for prototype */
-
-static const struct CompactHashIndex JSTestInterfacePrototypeTableIndex[65] = {
-    { -1, -1 },
-    { 3, 64 },
-    { 14, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 13, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 10, -1 },
-    { -1, -1 },
-    { 5, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 4, -1 },
-    { -1, -1 },
-    { 0, -1 },
-    { -1, -1 },
-    { 7, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 15, -1 },
-    { 1, -1 },
-    { 6, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 11, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 8, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 16, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 2, -1 },
-    { 9, -1 },
-    { -1, -1 },
-    { 12, -1 },
-};
-
 
 static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 {
@@ -488,8 +403,7 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 #endif
 };
 
-static const HashTable JSTestInterfacePrototypeTable = { 17, 63, true, JSTestInterfacePrototypeTableValues, 0, JSTestInterfacePrototypeTableIndex };
-const ClassInfo JSTestInterfacePrototype::s_info = { "TestInterfacePrototype", &Base::s_info, &JSTestInterfacePrototypeTable, 0, CREATE_METHOD_TABLE(JSTestInterfacePrototype) };
+const ClassInfo JSTestInterfacePrototype::s_info = { "TestInterfacePrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestInterfacePrototype) };
 
 void JSTestInterfacePrototype::finishCreation(VM& vm)
 {

@@ -100,20 +100,7 @@ static const HashTableValue JSTestCustomNamedGetterTableValues[] =
 };
 
 static const HashTable JSTestCustomNamedGetterTable = { 1, 1, true, JSTestCustomNamedGetterTableValues, 0, JSTestCustomNamedGetterTableIndex };
-/* Hash table for constructor */
-
-static const struct CompactHashIndex JSTestCustomNamedGetterConstructorTableIndex[1] = {
-    { -1, -1 },
-};
-
-
-static const HashTableValue JSTestCustomNamedGetterConstructorTableValues[] =
-{
-    { 0, 0, NoIntrinsic, 0, 0 }
-};
-
-static const HashTable JSTestCustomNamedGetterConstructorTable = { 0, 0, false, JSTestCustomNamedGetterConstructorTableValues, 0, JSTestCustomNamedGetterConstructorTableIndex };
-const ClassInfo JSTestCustomNamedGetterConstructor::s_info = { "TestCustomNamedGetterConstructor", &Base::s_info, &JSTestCustomNamedGetterConstructorTable, 0, CREATE_METHOD_TABLE(JSTestCustomNamedGetterConstructor) };
+const ClassInfo JSTestCustomNamedGetterConstructor::s_info = { "TestCustomNamedGetterConstructor", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestCustomNamedGetterConstructor) };
 
 JSTestCustomNamedGetterConstructor::JSTestCustomNamedGetterConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(structure, globalObject)
@@ -130,19 +117,12 @@ void JSTestCustomNamedGetterConstructor::finishCreation(VM& vm, JSDOMGlobalObjec
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestCustomNamedGetterPrototypeTableIndex[2] = {
-    { -1, -1 },
-    { 0, -1 },
-};
-
-
 static const HashTableValue JSTestCustomNamedGetterPrototypeTableValues[] =
 {
     { "anotherFunction", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestCustomNamedGetterPrototypeFunctionAnotherFunction), (intptr_t) (1) },
 };
 
-static const HashTable JSTestCustomNamedGetterPrototypeTable = { 1, 1, false, JSTestCustomNamedGetterPrototypeTableValues, 0, JSTestCustomNamedGetterPrototypeTableIndex };
-const ClassInfo JSTestCustomNamedGetterPrototype::s_info = { "TestCustomNamedGetterPrototype", &Base::s_info, &JSTestCustomNamedGetterPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestCustomNamedGetterPrototype) };
+const ClassInfo JSTestCustomNamedGetterPrototype::s_info = { "TestCustomNamedGetterPrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestCustomNamedGetterPrototype) };
 
 void JSTestCustomNamedGetterPrototype::finishCreation(VM& vm)
 {

@@ -86,20 +86,7 @@ public:
     }
 };
 
-/* Hash table for constructor */
-
-static const struct CompactHashIndex JSTestMediaQueryListListenerConstructorTableIndex[1] = {
-    { -1, -1 },
-};
-
-
-static const HashTableValue JSTestMediaQueryListListenerConstructorTableValues[] =
-{
-    { 0, 0, NoIntrinsic, 0, 0 }
-};
-
-static const HashTable JSTestMediaQueryListListenerConstructorTable = { 0, 0, false, JSTestMediaQueryListListenerConstructorTableValues, 0, JSTestMediaQueryListListenerConstructorTableIndex };
-const ClassInfo JSTestMediaQueryListListenerConstructor::s_info = { "TestMediaQueryListListenerConstructor", &Base::s_info, &JSTestMediaQueryListListenerConstructorTable, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerConstructor) };
+const ClassInfo JSTestMediaQueryListListenerConstructor::s_info = { "TestMediaQueryListListenerConstructor", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerConstructor) };
 
 JSTestMediaQueryListListenerConstructor::JSTestMediaQueryListListenerConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(structure, globalObject)
@@ -116,22 +103,13 @@ void JSTestMediaQueryListListenerConstructor::finishCreation(VM& vm, JSDOMGlobal
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestMediaQueryListListenerPrototypeTableIndex[4] = {
-    { 1, -1 },
-    { 0, -1 },
-    { -1, -1 },
-    { -1, -1 },
-};
-
-
 static const HashTableValue JSTestMediaQueryListListenerPrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestMediaQueryListListenerConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { "method", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestMediaQueryListListenerPrototypeFunctionMethod), (intptr_t) (1) },
 };
 
-static const HashTable JSTestMediaQueryListListenerPrototypeTable = { 2, 3, true, JSTestMediaQueryListListenerPrototypeTableValues, 0, JSTestMediaQueryListListenerPrototypeTableIndex };
-const ClassInfo JSTestMediaQueryListListenerPrototype::s_info = { "TestMediaQueryListListenerPrototype", &Base::s_info, &JSTestMediaQueryListListenerPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerPrototype) };
+const ClassInfo JSTestMediaQueryListListenerPrototype::s_info = { "TestMediaQueryListListenerPrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerPrototype) };
 
 void JSTestMediaQueryListListenerPrototype::finishCreation(VM& vm)
 {

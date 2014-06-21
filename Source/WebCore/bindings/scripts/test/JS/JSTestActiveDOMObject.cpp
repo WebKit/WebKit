@@ -106,20 +106,7 @@ static const HashTableValue JSTestActiveDOMObjectTableValues[] =
 };
 
 static const HashTable JSTestActiveDOMObjectTable = { 2, 3, true, JSTestActiveDOMObjectTableValues, 0, JSTestActiveDOMObjectTableIndex };
-/* Hash table for constructor */
-
-static const struct CompactHashIndex JSTestActiveDOMObjectConstructorTableIndex[1] = {
-    { -1, -1 },
-};
-
-
-static const HashTableValue JSTestActiveDOMObjectConstructorTableValues[] =
-{
-    { 0, 0, NoIntrinsic, 0, 0 }
-};
-
-static const HashTable JSTestActiveDOMObjectConstructorTable = { 0, 0, false, JSTestActiveDOMObjectConstructorTableValues, 0, JSTestActiveDOMObjectConstructorTableIndex };
-const ClassInfo JSTestActiveDOMObjectConstructor::s_info = { "TestActiveDOMObjectConstructor", &Base::s_info, &JSTestActiveDOMObjectConstructorTable, 0, CREATE_METHOD_TABLE(JSTestActiveDOMObjectConstructor) };
+const ClassInfo JSTestActiveDOMObjectConstructor::s_info = { "TestActiveDOMObjectConstructor", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestActiveDOMObjectConstructor) };
 
 JSTestActiveDOMObjectConstructor::JSTestActiveDOMObjectConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(structure, globalObject)
@@ -136,22 +123,13 @@ void JSTestActiveDOMObjectConstructor::finishCreation(VM& vm, JSDOMGlobalObject*
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestActiveDOMObjectPrototypeTableIndex[4] = {
-    { 0, -1 },
-    { 1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-};
-
-
 static const HashTableValue JSTestActiveDOMObjectPrototypeTableValues[] =
 {
     { "excitingFunction", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestActiveDOMObjectPrototypeFunctionExcitingFunction), (intptr_t) (1) },
     { "postMessage", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestActiveDOMObjectPrototypeFunctionPostMessage), (intptr_t) (1) },
 };
 
-static const HashTable JSTestActiveDOMObjectPrototypeTable = { 2, 3, false, JSTestActiveDOMObjectPrototypeTableValues, 0, JSTestActiveDOMObjectPrototypeTableIndex };
-const ClassInfo JSTestActiveDOMObjectPrototype::s_info = { "TestActiveDOMObjectPrototype", &Base::s_info, &JSTestActiveDOMObjectPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestActiveDOMObjectPrototype) };
+const ClassInfo JSTestActiveDOMObjectPrototype::s_info = { "TestActiveDOMObjectPrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestActiveDOMObjectPrototype) };
 
 void JSTestActiveDOMObjectPrototype::finishCreation(VM& vm)
 {

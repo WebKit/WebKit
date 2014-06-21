@@ -944,11 +944,13 @@ sub GenerateHeader
 
     # Class info
     if ($interfaceName eq "Node") {
-        push(@headerContent, "protected:");
+        push(@headerContent, "\n");
+        push(@headerContent, "protected:\n");
         push(@headerContent, "    static WEBKIT_EXPORTDATA const JSC::ClassInfo s_info;\n");
-        push(@headerContent, "public:");
+        push(@headerContent, "public:\n");
         push(@headerContent, "    static const JSC::ClassInfo* info() { return &s_info; }\n\n");
     } else {
+        push(@headerContent, "\n");
         push(@headerContent, "    DECLARE_INFO;\n\n");
     }
     # Structure ID
@@ -1804,7 +1806,7 @@ sub GenerateImplementation
 
     # - Add all constants
     if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
-        my $hashSize = $numConstants;
+        my $hashSize = 0;
         my $hashName = $className . "ConstructorTable";
 
         my @hashKeys = ();
@@ -1812,6 +1814,8 @@ sub GenerateImplementation
         my @hashValue2 = ();
         my @hashSpecials = ();
         my %conditionals = ();
+
+        my $needsConstructorTable = 0;
 
         foreach my $constant (@{$interface->constants}) {
             my $name = $constant->name;
@@ -1828,6 +1832,8 @@ sub GenerateImplementation
             if ($conditional) {
                 $conditionals{$name} = $conditional;
             }
+            
+            $hashSize++;
         }
 
         foreach my $attribute (@{$interface->attributes}) {
@@ -1855,6 +1861,8 @@ sub GenerateImplementation
             if ($conditional) {
                 $conditionals{$name} = $conditional;
             }
+
+            $hashSize++;
         }
 
         foreach my $function (@{$interface->functions}) {
@@ -1881,12 +1889,14 @@ sub GenerateImplementation
             if ($conditional) {
                 $conditionals{$name} = $conditional;
             }
+            
+            $hashSize++;
         }
 
         $object->GenerateHashTable($hashName, $hashSize,
                                    \@hashKeys, \@hashSpecials,
                                    \@hashValue1, \@hashValue2,
-                                   \%conditionals, 0);
+                                   \%conditionals, 1) if $hashSize > 0;
 
         push(@implContent, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($interface));
 
@@ -1912,7 +1922,7 @@ sub GenerateImplementation
         \@hashKeys, \@hashSpecials,
         \@hashValue1, \@hashValue2,
         \%conditionals);
-    my $hashSize = $numFunctions + $numConstants + $numPrototypeAttributes;
+    my $hashSize = $numPrototypeAttributes;
 
     foreach my $constant (@{$interface->constants}) {
         my $name = $constant->name;
@@ -1926,6 +1936,8 @@ sub GenerateImplementation
         if ($conditional) {
             $conditionals{$name} = $conditional;
         }
+        
+        $hashSize++;
     }
 
     foreach my $function (@{$interface->functions}) {
@@ -1952,14 +1964,20 @@ sub GenerateImplementation
         if ($conditional) {
             $conditionals{$name} = $conditional;
         }
+
+        $hashSize++;
     }
+
+    my $justGenerateValueArray = !IsDOMGlobalObject($interface);
 
     $object->GenerateHashTable($hashName, $hashSize,
                                \@hashKeys, \@hashSpecials,
                                \@hashValue1, \@hashValue2,
-                               \%conditionals, 0);
+                               \%conditionals, $justGenerateValueArray);
 
-    if ($interface->extendedAttributes->{"JSNoStaticTables"}) {
+    if ($justGenerateValueArray) {
+        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
+    } elsif ($interface->extendedAttributes->{"JSNoStaticTables"}) {
         push(@implContent, "static const HashTable& get${className}PrototypeTable(VM& vm)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return getHashTableForGlobalData(vm, ${className}PrototypeTable);\n");
@@ -4674,6 +4692,7 @@ sub GenerateConstructorHelperMethods
     my $generatingNamedConstructor = shift;
 
     my $constructorClassName = $generatingNamedConstructor ? "${className}NamedConstructor" : "${className}Constructor";
+    my $constructorParentClassName = $generatingNamedConstructor ? "DOMConstructorWithDocument" : "DOMConstructorObject";
     my $leastConstructorLength = 0;
     if ($codeGenerator->IsConstructorTemplate($interface, "Event")) {
         $leastConstructorLength = 1;
@@ -4689,26 +4708,12 @@ sub GenerateConstructorHelperMethods
         $leastConstructorLength = 0;
     }
 
-    if ($generatingNamedConstructor) {
-        push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}Constructor\", &Base::s_info, 0, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
-        push(@$outputArray, "${constructorClassName}::${constructorClassName}(Structure* structure, JSDOMGlobalObject* globalObject)\n");
-        push(@$outputArray, "    : DOMConstructorWithDocument(structure, globalObject)\n");
-        push(@$outputArray, "{\n");
-        push(@$outputArray, "}\n\n");
-    } else {
-        if ($interface->extendedAttributes->{"JSNoStaticTables"}) {
-            push(@$outputArray, "static const HashTable& get${constructorClassName}Table(VM& vm)\n");
-            push(@$outputArray, "{\n");
-            push(@$outputArray, "    return getHashTableForGlobalData(vm, ${constructorClassName}Table);\n");
-            push(@$outputArray, "}\n\n");
-            push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}Constructor\", &Base::s_info, 0, get${constructorClassName}Table, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
-        } else {
-            push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}Constructor\", &Base::s_info, &${constructorClassName}Table, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
-        }
-        push(@$outputArray, "${constructorClassName}::${constructorClassName}(Structure* structure, JSDOMGlobalObject* globalObject)\n");
-        push(@$outputArray, "    : DOMConstructorObject(structure, globalObject)\n");
-        push(@$outputArray, "{\n}\n\n");
-    }
+    push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}Constructor\", &Base::s_info, 0, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
+
+    push(@$outputArray, "${constructorClassName}::${constructorClassName}(Structure* structure, JSDOMGlobalObject* globalObject)\n");
+    push(@$outputArray, "    : ${constructorParentClassName}(structure, globalObject)\n");
+    push(@$outputArray, "{\n");
+    push(@$outputArray, "}\n\n");
 
     push(@$outputArray, "void ${constructorClassName}::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)\n");
     push(@$outputArray, "{\n");
@@ -4725,8 +4730,14 @@ sub GenerateConstructorHelperMethods
         push(@$outputArray, "    ASSERT(inherits(info()));\n");
         push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::getPrototype(vm, globalObject), DontDelete | ReadOnly);\n");
     }
-    push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(${leastConstructorLength}), ReadOnly | DontDelete | DontEnum);\n") if defined $leastConstructorLength;
-    push(@$outputArray, "    reifyStaticProperties(vm, ${className}ConstructorTableValues, *this);\n") if ConstructorHasProperties($interface);
+
+    if (defined $leastConstructorLength) {
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(${leastConstructorLength}), ReadOnly | DontDelete | DontEnum);\n");
+    }
+
+    if (ConstructorHasProperties($interface)) {
+        push(@$outputArray, "    reifyStaticProperties(vm, ${className}ConstructorTableValues, *this);\n");
+    }
 
     push(@$outputArray, "}\n\n");
 

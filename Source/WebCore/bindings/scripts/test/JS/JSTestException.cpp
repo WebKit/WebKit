@@ -97,20 +97,7 @@ static const HashTableValue JSTestExceptionTableValues[] =
 };
 
 static const HashTable JSTestExceptionTable = { 1, 1, true, JSTestExceptionTableValues, 0, JSTestExceptionTableIndex };
-/* Hash table for constructor */
-
-static const struct CompactHashIndex JSTestExceptionConstructorTableIndex[1] = {
-    { -1, -1 },
-};
-
-
-static const HashTableValue JSTestExceptionConstructorTableValues[] =
-{
-    { 0, 0, NoIntrinsic, 0, 0 }
-};
-
-static const HashTable JSTestExceptionConstructorTable = { 0, 0, false, JSTestExceptionConstructorTableValues, 0, JSTestExceptionConstructorTableIndex };
-const ClassInfo JSTestExceptionConstructor::s_info = { "TestExceptionConstructor", &Base::s_info, &JSTestExceptionConstructorTable, 0, CREATE_METHOD_TABLE(JSTestExceptionConstructor) };
+const ClassInfo JSTestExceptionConstructor::s_info = { "TestExceptionConstructor", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestExceptionConstructor) };
 
 JSTestExceptionConstructor::JSTestExceptionConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(structure, globalObject)
@@ -127,19 +114,12 @@ void JSTestExceptionConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globa
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestExceptionPrototypeTableIndex[2] = {
-    { -1, -1 },
-    { 0, -1 },
-};
-
-
 static const HashTableValue JSTestExceptionPrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestExceptionConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
-static const HashTable JSTestExceptionPrototypeTable = { 1, 1, true, JSTestExceptionPrototypeTableValues, 0, JSTestExceptionPrototypeTableIndex };
-const ClassInfo JSTestExceptionPrototype::s_info = { "TestExceptionPrototype", &Base::s_info, &JSTestExceptionPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestExceptionPrototype) };
+const ClassInfo JSTestExceptionPrototype::s_info = { "TestExceptionPrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestExceptionPrototype) };
 
 void JSTestExceptionPrototype::finishCreation(VM& vm)
 {

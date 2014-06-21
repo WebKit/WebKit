@@ -83,20 +83,7 @@ public:
     }
 };
 
-/* Hash table for constructor */
-
-static const struct CompactHashIndex JSattributeConstructorTableIndex[1] = {
-    { -1, -1 },
-};
-
-
-static const HashTableValue JSattributeConstructorTableValues[] =
-{
-    { 0, 0, NoIntrinsic, 0, 0 }
-};
-
-static const HashTable JSattributeConstructorTable = { 0, 0, false, JSattributeConstructorTableValues, 0, JSattributeConstructorTableIndex };
-const ClassInfo JSattributeConstructor::s_info = { "attributeConstructor", &Base::s_info, &JSattributeConstructorTable, 0, CREATE_METHOD_TABLE(JSattributeConstructor) };
+const ClassInfo JSattributeConstructor::s_info = { "attributeConstructor", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSattributeConstructor) };
 
 JSattributeConstructor::JSattributeConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(structure, globalObject)
@@ -113,22 +100,13 @@ void JSattributeConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObj
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSattributePrototypeTableIndex[4] = {
-    { 1, -1 },
-    { 0, -1 },
-    { -1, -1 },
-    { -1, -1 },
-};
-
-
 static const HashTableValue JSattributePrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsattributeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { "readonly", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsattributeReadonly), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
-static const HashTable JSattributePrototypeTable = { 2, 3, true, JSattributePrototypeTableValues, 0, JSattributePrototypeTableIndex };
-const ClassInfo JSattributePrototype::s_info = { "attributePrototype", &Base::s_info, &JSattributePrototypeTable, 0, CREATE_METHOD_TABLE(JSattributePrototype) };
+const ClassInfo JSattributePrototype::s_info = { "attributePrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSattributePrototype) };
 
 void JSattributePrototype::finishCreation(VM& vm)
 {

@@ -281,7 +281,12 @@ public:
     }
 
     bool hasCustomGetterSetterProperties() const { return m_hasCustomGetterSetterProperties; }
-    void setHasCustomGetterSetterProperties() { m_hasCustomGetterSetterProperties = true; }
+    void setHasCustomGetterSetterProperties(bool is__proto__)
+    {
+        m_hasCustomGetterSetterProperties = true;
+        if (!is__proto__)
+            m_hasReadOnlyOrGetterSetterPropertiesExcludingProto = true;
+    }
 
     void setContainsReadOnlyProperties()
     {

@@ -109,20 +109,7 @@ static const HashTableValue JSTestEventTargetTableValues[] =
 };
 
 static const HashTable JSTestEventTargetTable = { 1, 1, true, JSTestEventTargetTableValues, 0, JSTestEventTargetTableIndex };
-/* Hash table for constructor */
-
-static const struct CompactHashIndex JSTestEventTargetConstructorTableIndex[1] = {
-    { -1, -1 },
-};
-
-
-static const HashTableValue JSTestEventTargetConstructorTableValues[] =
-{
-    { 0, 0, NoIntrinsic, 0, 0 }
-};
-
-static const HashTable JSTestEventTargetConstructorTable = { 0, 0, false, JSTestEventTargetConstructorTableValues, 0, JSTestEventTargetConstructorTableIndex };
-const ClassInfo JSTestEventTargetConstructor::s_info = { "TestEventTargetConstructor", &Base::s_info, &JSTestEventTargetConstructorTable, 0, CREATE_METHOD_TABLE(JSTestEventTargetConstructor) };
+const ClassInfo JSTestEventTargetConstructor::s_info = { "TestEventTargetConstructor", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestEventTargetConstructor) };
 
 JSTestEventTargetConstructor::JSTestEventTargetConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(structure, globalObject)
@@ -139,18 +126,6 @@ void JSTestEventTargetConstructor::finishCreation(VM& vm, JSDOMGlobalObject* glo
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestEventTargetPrototypeTableIndex[8] = {
-    { 2, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 3, -1 },
-    { 1, -1 },
-    { 0, -1 },
-};
-
-
 static const HashTableValue JSTestEventTargetPrototypeTableValues[] =
 {
     { "item", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestEventTargetPrototypeFunctionItem), (intptr_t) (1) },
@@ -159,8 +134,7 @@ static const HashTableValue JSTestEventTargetPrototypeTableValues[] =
     { "dispatchEvent", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestEventTargetPrototypeFunctionDispatchEvent), (intptr_t) (1) },
 };
 
-static const HashTable JSTestEventTargetPrototypeTable = { 4, 7, false, JSTestEventTargetPrototypeTableValues, 0, JSTestEventTargetPrototypeTableIndex };
-const ClassInfo JSTestEventTargetPrototype::s_info = { "TestEventTargetPrototype", &Base::s_info, &JSTestEventTargetPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestEventTargetPrototype) };
+const ClassInfo JSTestEventTargetPrototype::s_info = { "TestEventTargetPrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestEventTargetPrototype) };
 
 void JSTestEventTargetPrototype::finishCreation(VM& vm)
 {

@@ -1,3 +1,19 @@
+2014-06-20  Sam Weinig  <sam@webkit.org>
+
+        Remove static tables for bindings that use eager reification
+        https://bugs.webkit.org/show_bug.cgi?id=134126
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectCustomAccessor):
+        * runtime/Structure.h:
+        (JSC::Structure::setHasCustomGetterSetterProperties):
+        Change setHasCustomGetterSetterProperties to behave like setHasGetterSetterProperties, and set
+        the m_hasReadOnlyOrGetterSetterPropertiesExcludingProto bit if the property is not __proto__.
+        Without this, JSObject::put() won't think there are any setters on the prototype chain of an
+        object that has no static lookup table and uses eagerly reified custom getter/setter properties.
+
 2014-06-21  Brady Eidson  <beidson@apple.com>
 
         Gamepad API - Deprecate the existing implementation
