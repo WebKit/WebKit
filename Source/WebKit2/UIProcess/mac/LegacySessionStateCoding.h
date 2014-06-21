@@ -35,8 +35,9 @@ class Data;
 namespace WebKit {
 
 struct BackForwardListState;
-struct SessionState;
+struct FrameState;
 struct PageState;
+struct SessionState;
 
 class LegacySessionStateDecoder {
 public:
@@ -52,6 +53,7 @@ private:
 
     bool decodeSessionHistoryEntries(CFArrayRef, Vector<PageState>&) const;
     bool decodeSessionHistoryEntry(CFDictionaryRef, PageState&) const;
+    bool decodeSessionHistoryEntryData(CFDataRef, FrameState&) const;
 
     API::Data* m_data;
 };

@@ -43,6 +43,13 @@ static const CFStringRef sessionHistoryVersionKey = CFSTR("SessionHistoryVersion
 static const CFStringRef sessionHistoryCurrentIndexKey = CFSTR("SessionHistoryCurrentIndex");
 static const CFStringRef sessionHistoryEntriesKey = CFSTR("SessionHistoryEntries");
 
+// Session history entry keys.
+static const CFStringRef sessionHistoryEntryURLKey = CFSTR("SessionHistoryEntryURL");
+static CFStringRef sessionHistoryEntryTitleKey = CFSTR("SessionHistoryEntryTitle");
+static CFStringRef sessionHistoryEntryOriginalURLKey = CFSTR("SessionHistoryEntryOriginalURL");
+static CFStringRef sessionHistoryEntrySnapshotUUIDKey = CFSTR("SessionHistoryEntrySnapshotUUID");
+static CFStringRef sessionHistoryEntryDataKey = CFSTR("SessionHistoryEntryData");
+
 LegacySessionStateDecoder::LegacySessionStateDecoder(API::Data* data)
     : m_data(data)
 {
@@ -162,8 +169,54 @@ bool LegacySessionStateDecoder::decodeSessionHistoryEntries(CFArrayRef entriesAr
 
 bool LegacySessionStateDecoder::decodeSessionHistoryEntry(CFDictionaryRef entryDictionary, PageState& pageState) const
 {
+    auto title = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryTitleKey));
+    if (!title)
+        return false;
+
+    auto urlString = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryURLKey));
+    if (!urlString)
+        return false;
+
+    auto originalURLString = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryOriginalURLKey));
+    if (!originalURLString)
+        return false;
+
+    auto historyEntryData = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryDataKey));
+    if (!historyEntryData)
+        return false;
+
+    if (!decodeSessionHistoryEntryData(historyEntryData, pageState.mainFrameState))
+        return false;
+
+    pageState.title = title;
+    pageState.mainFrameState.urlString = urlString;
+    pageState.mainFrameState.originalURLString = originalURLString;
+
+    return true;
+}
+
+class HistoryEntryDataDecoder {
+public:
+    HistoryEntryDataDecoder(const uint8_t* buffer, size_t bufferSize)
+        : m_buffer(buffer)
+        , m_bufferEnd(buffer + bufferSize)
+    {
+    }
+
+    bool finishDecoding() { return m_buffer == m_bufferEnd; }
+
+private:
+    const uint8_t* m_buffer;
+    const uint8_t* m_bufferEnd;
+};
+
+bool LegacySessionStateDecoder::decodeSessionHistoryEntryData(CFDataRef historyEntryData, FrameState& mainFrameState) const
+{
+    HistoryEntryDataDecoder decoder { CFDataGetBytePtr(historyEntryData), static_cast<size_t>(CFDataGetLength(historyEntryData)) };
+
     // FIXME: Implement this.
-    return false;
+
+    return decoder.finishDecoding();
 }
 
 

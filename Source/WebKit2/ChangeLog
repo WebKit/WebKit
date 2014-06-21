@@ -1,6 +1,21 @@
 2014-06-20  Anders Carlsson  <andersca@apple.com>
 
         Implement more of LegacySessionStateDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=134145
+
+        Reviewed by Sam Weinig.
+
+        * Shared/SessionState.h:
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::LegacySessionStateDecoder::decodeSessionHistoryEntry):
+        (WebKit::HistoryEntryDataDecoder::HistoryEntryDataDecoder):
+        (WebKit::HistoryEntryDataDecoder::finishDecoding):
+        (WebKit::LegacySessionStateDecoder::decodeSessionHistoryEntryData):
+        * UIProcess/mac/LegacySessionStateCoding.h:
+
+2014-06-20  Anders Carlsson  <andersca@apple.com>
+
+        Implement more of LegacySessionStateDecoder
         https://bugs.webkit.org/show_bug.cgi?id=134144
 
         Reviewed by Sam Weinig.

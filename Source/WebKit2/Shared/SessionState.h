@@ -95,6 +95,7 @@ struct FrameState {
 struct PageState {
     void encode(IPC::ArgumentEncoder&) const;
 
+    String title;
     FrameState mainFrameState;
 };
 
