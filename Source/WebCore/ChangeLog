@@ -1,3 +1,17 @@
+2014-06-21  Jeremy Jones  <jeremyj@apple.com>
+
+        Implement ios -[WAKWindow convertBaseToScreen:]
+        https://bugs.webkit.org/show_bug.cgi?id=134053
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/wak/WAKWindow.mm:
+        (-[WAKWindow convertBaseToScreen:]):
+        Traverse layer hierarchy and convert point.
+
+        (-[WAKWindow convertScreenToBase:]):
+        Traverse layer hierarchy and convert point.
+
 2014-06-21  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Removing PAGE_VISIBILITY_API compile guard.

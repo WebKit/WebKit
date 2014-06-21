@@ -146,16 +146,20 @@ static id<OrientationProvider> gOrientationProvider;
 
 - (NSPoint)convertBaseToScreen:(NSPoint)aPoint
 {
-    UNUSED_PARAM(aPoint);
-    NSPoint p = { 0, 0 };
-    return p;
+    CALayer* rootLayer = _hostLayer;
+    while (rootLayer.superlayer)
+        rootLayer = rootLayer.superlayer;
+    
+    return [_hostLayer convertPoint:aPoint toLayer:rootLayer];
 }
 
 - (NSPoint)convertScreenToBase:(NSPoint)aPoint
 {
-    UNUSED_PARAM(aPoint);
-    NSPoint p = { 0, 0 };
-    return p;
+    CALayer* rootLayer = _hostLayer;
+    while (rootLayer.superlayer)
+        rootLayer = rootLayer.superlayer;
+    
+    return [_hostLayer convertPoint:aPoint fromLayer:rootLayer];
 }
 
 - (BOOL)isKeyWindow
