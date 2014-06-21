@@ -50,6 +50,9 @@ static CFStringRef sessionHistoryEntryOriginalURLKey = CFSTR("SessionHistoryEntr
 static CFStringRef sessionHistoryEntrySnapshotUUIDKey = CFSTR("SessionHistoryEntrySnapshotUUID");
 static CFStringRef sessionHistoryEntryDataKey = CFSTR("SessionHistoryEntryData");
 
+// Session history entry data.
+const uint32_t sessionHistoryEntryDataVersion = 2;
+
 LegacySessionStateDecoder::LegacySessionStateDecoder(API::Data* data)
     : m_data(data)
 {
@@ -201,11 +204,70 @@ public:
         : m_buffer(buffer)
         , m_bufferEnd(buffer + bufferSize)
     {
+        // Keep format compatibility by decoding an unused uint64_t here.
+        uint64_t value;
+        *this >> value;
+    }
+
+    HistoryEntryDataDecoder& operator>>(uint64_t& value)
+    {
+        value = 0;
+        return decode(value);
+    }
+
+    HistoryEntryDataDecoder& operator>>(uint32_t& value)
+    {
+        value = 0;
+        return decode(value);
     }
 
     bool finishDecoding() { return m_buffer == m_bufferEnd; }
 
 private:
+    template<typename Type>
+    HistoryEntryDataDecoder& decode(Type& value)
+    {
+        decodeFixedLengthData(reinterpret_cast<uint8_t*>(&value), sizeof(value), sizeof(value));
+        return *this;
+    }
+
+    void decodeFixedLengthData(uint8_t* data, size_t size, unsigned alignment)
+    {
+        if (!alignBufferPosition(alignment, size))
+            return;
+
+        memcpy(data, m_buffer, size);
+        m_buffer += size;
+    }
+
+    bool alignBufferPosition(unsigned alignment, size_t size)
+    {
+        const uint8_t* alignedPosition = alignedBuffer(alignment);
+        if (!alignedBufferIsLargeEnoughToContain(alignedPosition, size)) {
+            // We've walked off the end of this buffer.
+            markInvalid();
+            return false;
+        }
+
+        m_buffer = alignedPosition;
+        return true;
+    }
+
+    const uint8_t* alignedBuffer(unsigned alignment) const
+    {
+        ASSERT(alignment && !(alignment & (alignment - 1)));
+
+        uintptr_t alignmentMask = alignment - 1;
+        return reinterpret_cast<uint8_t*>((reinterpret_cast<uintptr_t>(m_buffer) + alignmentMask) & ~alignmentMask);
+    }
+
+    inline bool alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPosition, size_t size) const
+    {
+        return m_bufferEnd >= alignedPosition && static_cast<size_t>(m_bufferEnd - alignedPosition) >= size;
+    }
+
+    void markInvalid() { m_buffer = m_bufferEnd + 1; }
+
     const uint8_t* m_buffer;
     const uint8_t* m_bufferEnd;
 };
@@ -213,6 +275,12 @@ private:
 bool LegacySessionStateDecoder::decodeSessionHistoryEntryData(CFDataRef historyEntryData, FrameState& mainFrameState) const
 {
     HistoryEntryDataDecoder decoder { CFDataGetBytePtr(historyEntryData), static_cast<size_t>(CFDataGetLength(historyEntryData)) };
+
+    uint32_t version;
+    decoder >> version;
+
+    if (version != sessionHistoryEntryDataVersion)
+        return false;
 
     // FIXME: Implement this.
 
