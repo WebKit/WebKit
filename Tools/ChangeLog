@@ -1,3 +1,16 @@
+2014-06-21  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        [Inspector][EFL] Can't resume a special break point on EFL inspector
+        https://bugs.webkit.org/show_bug.cgi?id=129294
+
+        Reviewed by Gyuyoung Kim.
+
+        Patch our EFL 1.9 with the fix landed in upstream EFL 1.10
+        by Ryuan Choi - <https://phab.enlightenment.org/D790>
+
+        * efl/jhbuild.modules:
+        * efl/patches/ecore.patch: Added.
+
 2014-06-21  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Removing PAGE_VISIBILITY_API compile guard.
