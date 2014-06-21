@@ -468,6 +468,10 @@
 #define ENABLE_GAMEPAD 0
 #endif
 
+#if !defined(ENABLE_GAMEPAD_DEPRECATED)
+#define ENABLE_GAMEPAD_DEPRECATED 0
+#endif
+
 #if !defined(ENABLE_GEOLOCATION)
 #define ENABLE_GEOLOCATION 0
 #endif

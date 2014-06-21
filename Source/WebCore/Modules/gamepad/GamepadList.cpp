@@ -26,9 +26,7 @@
 #include "config.h"
 #include "GamepadList.h"
 
-#include "Gamepad.h"
-
-#if ENABLE(GAMEPAD)
+#if ENABLE(GAMEPAD_DEPRECATED)
 
 namespace WebCore {
 
@@ -55,4 +53,4 @@ Gamepad* GamepadList::item(unsigned index)
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD_DEPRECATED)

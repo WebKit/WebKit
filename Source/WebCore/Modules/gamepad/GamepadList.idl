@@ -25,7 +25,7 @@
 
 [
     NoInterfaceObject,
-    Conditional=GAMEPAD,
+    Conditional=GAMEPAD_DEPRECATED,
     ImplementationLacksVTable,
 ] interface GamepadList {
     readonly attribute unsigned long length;

@@ -1,3 +1,15 @@
+2014-06-21  Brady Eidson  <beidson@apple.com>
+
+        Gamepad API - Deprecate the existing implementation
+        https://bugs.webkit.org/show_bug.cgi?id=134108
+
+        Reviewed by Timothy Hatcher.
+
+        -Add new "GAMEPAD_DEPRECATED" build flag, moving the existing implementation to use it
+        -Add the "Deprecated" suffix to some implementation files
+
+        * wtf/FeatureDefines.h:
+
 2014-06-21  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Removing PAGE_VISIBILITY_API compile guard.

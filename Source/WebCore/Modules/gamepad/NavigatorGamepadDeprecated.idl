@@ -18,7 +18,7 @@
  */
 
 [
-    Conditional=GAMEPAD,
+    Conditional=GAMEPAD_DEPRECATED,
 ] partial interface Navigator {
     GamepadList webkitGetGamepads();
 };

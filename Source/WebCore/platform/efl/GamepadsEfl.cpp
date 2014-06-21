@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Gamepads.h"
 
-#if ENABLE(GAMEPAD)
+#if ENABLE(GAMEPAD_DEPRECATED)
 
 #include "GamepadDeviceLinux.h"
 #include "GamepadList.h"
@@ -243,4 +243,4 @@ void sampleGamepads(GamepadList* into)
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD_DEPRECATED)

@@ -1,3 +1,35 @@
+2014-06-21  Brady Eidson  <beidson@apple.com>
+
+        Gamepad API - Deprecate the existing implementation
+        https://bugs.webkit.org/show_bug.cgi?id=134108
+
+        Reviewed by Timothy Hatcher.
+
+        -Add new "GAMEPAD_DEPRECATED" build flag, moving the existing implementation to use it
+        -Add the "Deprecated" suffix to some implementation files
+
+        * CMakeLists.txt:
+        * PlatformGTK.cmake:
+        * Configurations/FeatureDefines.xcconfig:
+        
+        * Modules/gamepad/GamepadDeprecated.cpp: Renamed from Source/WebCore/Modules/gamepad/Gamepad.cpp.
+        * Modules/gamepad/GamepadDeprecated.h: Renamed from Source/WebCore/Modules/gamepad/Gamepad.h.
+        * Modules/gamepad/GamepadDeprecated.idl: Renamed from Source/WebCore/Modules/gamepad/Gamepad.idl.
+
+        * Modules/gamepad/GamepadList.cpp:
+        * Modules/gamepad/GamepadList.h:
+        * Modules/gamepad/GamepadList.idl:
+
+        * Modules/gamepad/NavigatorGamepadDeprecated.cpp: Renamed from Source/WebCore/Modules/gamepad/NavigatorGamepad.cpp.
+        * Modules/gamepad/NavigatorGamepadDeprecated.h: Renamed from Source/WebCore/Modules/gamepad/NavigatorGamepad.h.
+        * Modules/gamepad/NavigatorGamepadDeprecated.idl: Renamed from Source/WebCore/Modules/gamepad/NavigatorGamepad.idl.
+
+        * platform/Gamepads.h:
+        * platform/efl/GamepadsEfl.cpp:
+        * platform/gtk/GamepadsGtk.cpp:
+        * platform/linux/GamepadDeviceLinux.cpp:
+        * platform/linux/GamepadDeviceLinux.h:
+
 2014-06-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r170228.

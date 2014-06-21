@@ -162,9 +162,9 @@ set(WebCore_IDL_FILES
     Modules/battery/BatteryManager.idl
     Modules/battery/NavigatorBattery.idl
 
-    Modules/gamepad/Gamepad.idl
+    Modules/gamepad/GamepadDeprecated.idl
     Modules/gamepad/GamepadList.idl
-    Modules/gamepad/NavigatorGamepad.idl
+    Modules/gamepad/NavigatorGamepadDeprecated.idl
 
     Modules/geolocation/Coordinates.idl
     Modules/geolocation/Geolocation.idl
@@ -772,9 +772,9 @@ set(WebCore_SOURCES
     Modules/battery/BatteryStatus.cpp
     Modules/battery/NavigatorBattery.cpp
 
-    Modules/gamepad/Gamepad.cpp
+    Modules/gamepad/GamepadDeprecated.cpp
     Modules/gamepad/GamepadList.cpp
-    Modules/gamepad/NavigatorGamepad.cpp
+    Modules/gamepad/NavigatorGamepadDeprecated.cpp
 
     Modules/geolocation/Coordinates.cpp
     Modules/geolocation/Geolocation.cpp
