@@ -388,6 +388,7 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_cachedHasEnabledAudio(false)
     , m_shouldBufferData(true)
     , m_cachedIsReadyForDisplay(false)
+    , m_haveBeenAskedToCreateLayer(false)
 #if ENABLE(IOS_AIRPLAY)
     , m_allowsWirelessVideoPlayback(true)
 #endif
@@ -478,7 +479,7 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
 
 bool MediaPlayerPrivateAVFoundationObjC::hasLayerRenderer() const
 {
-    return m_videoLayer;
+    return m_haveBeenAskedToCreateLayer;
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::hasContextRenderer() const
@@ -536,7 +537,7 @@ void MediaPlayerPrivateAVFoundationObjC::destroyImageGenerator()
 
 void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
 {
-    if (!m_avPlayer || m_videoLayer)
+    if (!m_avPlayer || m_haveBeenAskedToCreateLayer)
         return;
 
     auto weakThis = createWeakPtr();
@@ -544,27 +545,40 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
         if (!weakThis)
             return;
 
-        if (!m_avPlayer || m_videoLayer)
+        if (!m_avPlayer || m_haveBeenAskedToCreateLayer)
             return;
+        m_haveBeenAskedToCreateLayer = true;
 
-        m_videoLayer = adoptNS([[AVPlayerLayer alloc] init]);
-        [m_videoLayer.get() setPlayer:m_avPlayer.get()];
-        [m_videoLayer.get() setBackgroundColor:cachedCGColor(Color::black, ColorSpaceDeviceRGB)];
-#ifndef NDEBUG
-        [m_videoLayer.get() setName:@"MediaPlayerPrivate AVPlayerLayer"];
-#endif
-        [m_videoLayer.get() addObserver:m_objcObserver.get() forKeyPath:@"readyForDisplay" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextAVPlayerLayer];
-        updateVideoLayerGravity();
-        LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoLayer(%p) - returning %p", this, m_videoLayer.get());
+        if (!m_videoLayer)
+            createAVPlayerLayer();
 
-#if PLATFORM(IOS)
-        if (m_videoFullscreenLayer) {
-            [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
-            [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
-        }
-#endif
         player()->mediaPlayerClient()->mediaPlayerRenderingModeChanged(player());
     });
+}
+
+void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
+{
+    if (!m_avPlayer)
+        return;
+
+    m_videoLayer = adoptNS([[AVPlayerLayer alloc] init]);
+    [m_videoLayer setPlayer:m_avPlayer.get()];
+    [m_videoLayer setBackgroundColor:cachedCGColor(Color::black, ColorSpaceDeviceRGB)];
+#ifndef NDEBUG
+    [m_videoLayer setName:@"MediaPlayerPrivate AVPlayerLayer"];
+#endif
+    [m_videoLayer addObserver:m_objcObserver.get() forKeyPath:@"readyForDisplay" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextAVPlayerLayer];
+    updateVideoLayerGravity();
+    IntSize defaultSize = player()->mediaPlayerClient() ? player()->mediaPlayerClient()->mediaPlayerContentBoxRect().pixelSnappedSize() : IntSize();
+    [m_videoLayer setFrame:CGRectMake(0, 0, defaultSize.width(), defaultSize.height())];
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoLayer(%p) - returning %p", this, m_videoLayer.get());
+
+#if PLATFORM(IOS)
+    if (m_videoFullscreenLayer) {
+        [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
+        [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
+    }
+#endif
 }
 
 void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
@@ -747,6 +761,9 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     [m_avPlayer.get() setAllowsExternalPlayback:m_allowsWirelessVideoPlayback];
 #endif
 
+    if (player()->mediaPlayerClient() && player()->mediaPlayerClient()->mediaPlayerIsVideo())
+        createAVPlayerLayer();
+
     if (m_avPlayerItem)
         [m_avPlayer.get() replaceCurrentItemWithPlayerItem:m_avPlayerItem.get()];
 
@@ -874,7 +891,7 @@ PlatformMedia MediaPlayerPrivateAVFoundationObjC::platformMedia() const
 
 PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
 {
-    return m_videoLayer.get();
+    return m_haveBeenAskedToCreateLayer ? m_videoLayer.get() : nullptr;
 }
 
 #if PLATFORM(IOS)

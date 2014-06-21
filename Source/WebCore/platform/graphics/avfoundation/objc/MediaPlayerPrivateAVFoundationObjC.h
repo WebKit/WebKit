@@ -170,6 +170,7 @@ private:
 
     virtual void createAVPlayer();
     virtual void createAVPlayerItem();
+    virtual void createAVPlayerLayer();
     virtual void createAVAssetForURL(const String& url);
     virtual MediaPlayerPrivateAVFoundation::ItemStatus playerItemStatus() const;
     virtual MediaPlayerPrivateAVFoundation::AssetStatus assetStatus() const;
@@ -335,6 +336,7 @@ private:
     bool m_cachedHasEnabledAudio;
     bool m_shouldBufferData;
     bool m_cachedIsReadyForDisplay;
+    bool m_haveBeenAskedToCreateLayer;
 #if ENABLE(IOS_AIRPLAY)
     mutable bool m_allowsWirelessVideoPlayback;
 #endif

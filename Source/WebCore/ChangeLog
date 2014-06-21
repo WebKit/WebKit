@@ -1,3 +1,25 @@
+2014-06-21  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Create and attach the AVPlayerLayer to the AVPlayer immediately if the media element is <video>.
+        https://bugs.webkit.org/show_bug.cgi?id=134131
+
+        Reviewed by Eric Carlson.
+
+        The AVPlayer uses the presence of an AVPlayerLayer to decide which alternate to display in the case of
+        HLS streams with audio-only alternates. To give the AVPlayer the most information with which to make its
+        decision, always create and attach an AVPlayerLayer before attaching an AVPlayerItem to the AVPlayerLayer.
+        In addition, retrieve the <video> element bounds and create an AVPlayerLayer with a matching size, so that
+        the AVPlayer can choose an alternate with the correct dimensions.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::hasLayerRenderer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformLayer):
+
 2014-06-21  Jeremy Jones  <jeremyj@apple.com>
 
         Implement ios -[WAKWindow convertBaseToScreen:]
