@@ -43,7 +43,7 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (56,101) size 0x0
         RenderText {#text} at (0,105) size 36x18
           text run at (0,105) width 36: "radio "
-        RenderBlock {INPUT} at (38,109) size 12x12
+        RenderBlock {INPUT} at (38,108) size 12x13
         RenderText {#text} at (52,105) size 4x18
           text run at (52,105) width 4: " "
         RenderBR {BR} at (56,119) size 0x0
