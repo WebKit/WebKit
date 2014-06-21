@@ -26,7 +26,7 @@
 #ifndef GamepadDeviceLinux_h
 #define GamepadDeviceLinux_h
 
-#if ENABLE(GAMEPAD_DEPRECATED)
+#if ENABLE(GAMEPAD)
 
 #include <linux/joystick.h>
 #include <wtf/Vector.h>
@@ -68,6 +68,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD_DEPRECATED)
+#endif // ENABLE(GAMEPAD)
 
 #endif // GamepadDeviceLinux_h

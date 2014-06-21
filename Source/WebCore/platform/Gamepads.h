@@ -26,7 +26,7 @@
 #ifndef Gamepads_h
 #define Gamepads_h
 
-#if ENABLE(GAMEPAD_DEPRECATED)
+#if ENABLE(GAMEPAD)
 
 namespace WebCore {
 
@@ -36,6 +36,6 @@ void sampleGamepads(GamepadList* into);
 
 }
 
-#endif // ENABLE(GAMEPAD_DEPRECATED)
+#endif // ENABLE(GAMEPAD)
 
 #endif // Gamepads_h

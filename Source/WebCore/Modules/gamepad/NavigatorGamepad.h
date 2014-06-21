@@ -23,15 +23,37 @@
  * DAMAGE.
  */
 
-[
-    NoInterfaceObject,
-    Conditional=GAMEPAD_DEPRECATED,
-    ImplementationLacksVTable
-] interface Gamepad {
-    readonly attribute DOMString id;
-    readonly attribute unsigned long index;
-    readonly attribute unsigned long long timestamp;
-    readonly attribute unrestricted float[] axes;
-    readonly attribute unrestricted float[] buttons;
+#ifndef NavigatorGamepad_h
+#define NavigatorGamepad_h
+
+#if ENABLE(GAMEPAD)
+
+#include "Supplementable.h"
+
+namespace WebCore {
+
+class GamepadList;
+class Navigator;
+
+class NavigatorGamepad : public Supplement<Navigator> {
+public:
+    NavigatorGamepad();
+    virtual ~NavigatorGamepad();
+
+    static NavigatorGamepad* from(Navigator*);
+
+    static GamepadList* webkitGetGamepads(Navigator*);
+
+    GamepadList* gamepads();
+
+private:
+    static const char* supplementName();
+
+    RefPtr<GamepadList> m_gamepads;
 };
 
+} // namespace WebCore
+
+#endif // ENABLE(GAMEPAD)
+
+#endif // NavigatorGamepad_h

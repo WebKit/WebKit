@@ -23,39 +23,53 @@
  * DAMAGE.
  */
 
-#include "config.h"
-#include "GamepadDeprecated.h"
+#ifndef Gamepad_h
+#define Gamepad_h
 
-#if ENABLE(GAMEPAD_DEPRECATED)
+#if ENABLE(GAMEPAD)
 
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-Gamepad::Gamepad()
-    : m_index(0)
-    , m_timestamp(0)
-{
-}
+class Gamepad: public RefCounted<Gamepad> {
+public:
+    static PassRefPtr<Gamepad> create()
+    {
+        return adoptRef(new Gamepad);
+    }
+    ~Gamepad();
 
-void Gamepad::axes(unsigned count, float* data)
-{
-    m_axes.resize(count);
-    if (count)
-        std::copy(data, data + count, m_axes.begin());
-}
+    typedef Vector<float> FloatVector;
 
-void Gamepad::buttons(unsigned count, float* data)
-{
-    m_buttons.resize(count);
-    if (count)
-        std::copy(data, data + count, m_buttons.begin());
-}
+    const String& id() const { return m_id; }
+    void id(const String& id) { m_id = id; }
 
-Gamepad::~Gamepad()
-{
-}
+    unsigned index() const { return m_index; }
+    void index(unsigned val) { m_index = val; }
+
+    unsigned long long timestamp() const { return m_timestamp; }
+    void timestamp(unsigned long long val) { m_timestamp = val; }
+
+    const FloatVector& axes() const { return m_axes; }
+    void axes(unsigned count, float* data);
+
+    const FloatVector& buttons() const { return m_buttons; }
+    void buttons(unsigned count, float* data);
+
+private:
+    Gamepad();
+    String m_id;
+    unsigned m_index;
+    unsigned long long m_timestamp;
+    FloatVector m_axes;
+    FloatVector m_buttons;
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD_DEPRECATED)
+#endif // ENABLE(GAMEPAD)
+
+#endif // Gamepad_h

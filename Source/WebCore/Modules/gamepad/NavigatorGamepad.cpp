@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#include "NavigatorGamepadDeprecated.h"
+#include "NavigatorGamepad.h"
 
-#if ENABLE(GAMEPAD_DEPRECATED)
+#if ENABLE(GAMEPAD)
 
 #include "GamepadList.h"
 #include "Gamepads.h"
@@ -73,4 +73,4 @@ GamepadList* NavigatorGamepad::gamepads()
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD_DEPRECATED)
+#endif // ENABLE(GAMEPAD)
