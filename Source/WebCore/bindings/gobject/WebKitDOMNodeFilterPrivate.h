@@ -18,7 +18,7 @@
  */
 
 #ifndef WebKitDOMNodeFilterPrivate_h
-#define WebKitDOMNodeFiltertPrivate_h
+#define WebKitDOMNodeFilterPrivate_h
 
 #include <webkitdom/WebKitDOMNodeFilter.h>
 #include <wtf/PassRefPtr.h>
