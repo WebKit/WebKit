@@ -23,37 +23,36 @@
  * DAMAGE.
  */
 
-#ifndef NavigatorGamepad_h
-#define NavigatorGamepad_h
+#include "config.h"
+#include "GamepadList.h"
 
-#if ENABLE(GAMEPAD)
+#include "Gamepad.h"
 
-#include "Supplementable.h"
+#if ENABLE(GAMEPAD_DEPRECATED)
 
 namespace WebCore {
 
-class GamepadList;
-class Navigator;
+GamepadList::~GamepadList()
+{
+}
 
-class NavigatorGamepad : public Supplement<Navigator> {
-public:
-    NavigatorGamepad();
-    virtual ~NavigatorGamepad();
+void GamepadList::set(unsigned index, PassRefPtr<Gamepad> gamepad)
+{
+    if (index >= kMaximumGamepads)
+        return;
+    m_items[index] = gamepad;
+}
 
-    static NavigatorGamepad* from(Navigator*);
+unsigned GamepadList::length() const
+{
+    return kMaximumGamepads;
+}
 
-    static GamepadList* webkitGetGamepads(Navigator*);
-
-    GamepadList* gamepads();
-
-private:
-    static const char* supplementName();
-
-    RefPtr<GamepadList> m_gamepads;
-};
+Gamepad* GamepadList::item(unsigned index)
+{
+    return index < length() ? m_items[index].get() : 0;
+}
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
-
-#endif // NavigatorGamepad_h
+#endif // ENABLE(GAMEPAD_DEPRECATED)

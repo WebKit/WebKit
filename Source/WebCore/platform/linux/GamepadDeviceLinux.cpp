@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GamepadDeviceLinux.h"
 
-#if ENABLE(GAMEPAD)
+#if ENABLE(GAMEPAD_DEPRECATED)
 
 #include <fcntl.h>
 #include <sys/ioctl.h>
@@ -96,4 +96,4 @@ float GamepadDeviceLinux::normalizeButtonValue(short value)
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD_DEPRECATED)

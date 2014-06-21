@@ -554,8 +554,8 @@ list(APPEND GObjectDOMBindingsStable_IDL_FILES
 list(APPEND GObjectDOMBindingsUnstable_IDL_FILES
     Modules/battery/BatteryManager.idl
 
-    Modules/gamepad/Gamepad.idl
-    Modules/gamepad/GamepadList.idl
+    Modules/gamepad/deprecated/Gamepad.idl
+    Modules/gamepad/deprecated/GamepadList.idl
 
     Modules/geolocation/Geolocation.idl
 

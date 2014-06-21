@@ -23,12 +23,39 @@
  * DAMAGE.
  */
 
-[
-    NoInterfaceObject,
-    Conditional=GAMEPAD,
-    ImplementationLacksVTable,
-] interface GamepadList {
-    readonly attribute unsigned long length;
-    getter Gamepad item([Default=Undefined] optional unsigned long index);
-};
+#include "config.h"
+#include "Gamepad.h"
 
+#if ENABLE(GAMEPAD_DEPRECATED)
+
+#include <wtf/text/WTFString.h>
+
+namespace WebCore {
+
+Gamepad::Gamepad()
+    : m_index(0)
+    , m_timestamp(0)
+{
+}
+
+void Gamepad::axes(unsigned count, float* data)
+{
+    m_axes.resize(count);
+    if (count)
+        std::copy(data, data + count, m_axes.begin());
+}
+
+void Gamepad::buttons(unsigned count, float* data)
+{
+    m_buttons.resize(count);
+    if (count)
+        std::copy(data, data + count, m_buttons.begin());
+}
+
+Gamepad::~Gamepad()
+{
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(GAMEPAD_DEPRECATED)

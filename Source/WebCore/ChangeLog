@@ -1,3 +1,33 @@
+2014-06-21  Brady Eidson  <beidson@apple.com>
+
+        Gamepad API - Deprecate the existing implementation
+        https://bugs.webkit.org/show_bug.cgi?id=134108
+
+        Reviewed by Timothy Hatcher.
+
+        -Add new "GAMEPAD_DEPRECATED" build flag, moving the existing implementation to use it
+        -Move some implementation files into a "deprecated" subdirectory.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * PlatformGTK.cmake:
+
+        * Modules/gamepad/deprecated/Gamepad.cpp: Renamed from Source/WebCore/Modules/gamepad/Gamepad.cpp.
+        * Modules/gamepad/deprecated/Gamepad.h: Renamed from Source/WebCore/Modules/gamepad/Gamepad.h.
+        * Modules/gamepad/deprecated/Gamepad.idl: Renamed from Source/WebCore/Modules/gamepad/Gamepad.idl.
+        * Modules/gamepad/deprecated/GamepadList.cpp: Renamed from Source/WebCore/Modules/gamepad/GamepadList.cpp.
+        * Modules/gamepad/deprecated/GamepadList.h: Renamed from Source/WebCore/Modules/gamepad/GamepadList.h.
+        * Modules/gamepad/deprecated/GamepadList.idl: Renamed from Source/WebCore/Modules/gamepad/GamepadList.idl.
+        * Modules/gamepad/deprecated/NavigatorGamepad.cpp: Renamed from Source/WebCore/Modules/gamepad/NavigatorGamepad.cpp.
+        * Modules/gamepad/deprecated/NavigatorGamepad.h: Renamed from Source/WebCore/Modules/gamepad/NavigatorGamepad.h.
+        * Modules/gamepad/deprecated/NavigatorGamepad.idl: Renamed from Source/WebCore/Modules/gamepad/NavigatorGamepad.idl.
+
+        * platform/Gamepads.h:
+        * platform/efl/GamepadsEfl.cpp:
+        * platform/gtk/GamepadsGtk.cpp:
+        * platform/linux/GamepadDeviceLinux.cpp:
+        * platform/linux/GamepadDeviceLinux.h:
+
 2014-06-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Mark TextRun's constructors as explicit

@@ -26,7 +26,7 @@
 #ifndef GamepadList_h
 #define GamepadList_h
 
-#if ENABLE(GAMEPAD)
+#if ENABLE(GAMEPAD_DEPRECATED)
 
 #include "Gamepad.h"
 #include <wtf/PassRefPtr.h>
@@ -54,6 +54,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD_DEPRECATED)
 
 #endif // GamepadList_h

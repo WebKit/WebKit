@@ -23,36 +23,53 @@
  * DAMAGE.
  */
 
-#include "config.h"
-#include "GamepadList.h"
+#ifndef Gamepad_h
+#define Gamepad_h
 
-#include "Gamepad.h"
+#if ENABLE(GAMEPAD_DEPRECATED)
 
-#if ENABLE(GAMEPAD)
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-GamepadList::~GamepadList()
-{
-}
+class Gamepad: public RefCounted<Gamepad> {
+public:
+    static PassRefPtr<Gamepad> create()
+    {
+        return adoptRef(new Gamepad);
+    }
+    ~Gamepad();
 
-void GamepadList::set(unsigned index, PassRefPtr<Gamepad> gamepad)
-{
-    if (index >= kMaximumGamepads)
-        return;
-    m_items[index] = gamepad;
-}
+    typedef Vector<float> FloatVector;
 
-unsigned GamepadList::length() const
-{
-    return kMaximumGamepads;
-}
+    const String& id() const { return m_id; }
+    void id(const String& id) { m_id = id; }
 
-Gamepad* GamepadList::item(unsigned index)
-{
-    return index < length() ? m_items[index].get() : 0;
-}
+    unsigned index() const { return m_index; }
+    void index(unsigned val) { m_index = val; }
+
+    unsigned long long timestamp() const { return m_timestamp; }
+    void timestamp(unsigned long long val) { m_timestamp = val; }
+
+    const FloatVector& axes() const { return m_axes; }
+    void axes(unsigned count, float* data);
+
+    const FloatVector& buttons() const { return m_buttons; }
+    void buttons(unsigned count, float* data);
+
+private:
+    Gamepad();
+    String m_id;
+    unsigned m_index;
+    unsigned long long m_timestamp;
+    FloatVector m_axes;
+    FloatVector m_buttons;
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD_DEPRECATED)
+
+#endif // Gamepad_h

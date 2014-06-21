@@ -25,13 +25,10 @@
 
 [
     NoInterfaceObject,
-    Conditional=GAMEPAD,
-    ImplementationLacksVTable
-] interface Gamepad {
-    readonly attribute DOMString id;
-    readonly attribute unsigned long index;
-    readonly attribute unsigned long long timestamp;
-    readonly attribute unrestricted float[] axes;
-    readonly attribute unrestricted float[] buttons;
+    Conditional=GAMEPAD_DEPRECATED,
+    ImplementationLacksVTable,
+] interface GamepadList {
+    readonly attribute unsigned long length;
+    getter Gamepad item([Default=Undefined] optional unsigned long index);
 };
 

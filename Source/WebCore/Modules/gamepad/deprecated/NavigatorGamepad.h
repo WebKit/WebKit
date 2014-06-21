@@ -23,39 +23,37 @@
  * DAMAGE.
  */
 
-#include "config.h"
-#include "Gamepad.h"
+#ifndef NavigatorGamepad_h
+#define NavigatorGamepad_h
 
-#if ENABLE(GAMEPAD)
+#if ENABLE(GAMEPAD_DEPRECATED)
 
-#include <wtf/text/WTFString.h>
+#include "Supplementable.h"
 
 namespace WebCore {
 
-Gamepad::Gamepad()
-    : m_index(0)
-    , m_timestamp(0)
-{
-}
+class GamepadList;
+class Navigator;
 
-void Gamepad::axes(unsigned count, float* data)
-{
-    m_axes.resize(count);
-    if (count)
-        std::copy(data, data + count, m_axes.begin());
-}
+class NavigatorGamepad : public Supplement<Navigator> {
+public:
+    NavigatorGamepad();
+    virtual ~NavigatorGamepad();
 
-void Gamepad::buttons(unsigned count, float* data)
-{
-    m_buttons.resize(count);
-    if (count)
-        std::copy(data, data + count, m_buttons.begin());
-}
+    static NavigatorGamepad* from(Navigator*);
 
-Gamepad::~Gamepad()
-{
-}
+    static GamepadList* webkitGetGamepads(Navigator*);
+
+    GamepadList* gamepads();
+
+private:
+    static const char* supplementName();
+
+    RefPtr<GamepadList> m_gamepads;
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD_DEPRECATED)
+
+#endif // NavigatorGamepad_h
