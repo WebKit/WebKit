@@ -1,5 +1,18 @@
 2014-06-21  Anders Carlsson  <andersca@apple.com>
 
+        Only initialize WebPreferences from NSUserDefaults if there's an identifier
+        https://bugs.webkit.org/show_bug.cgi?id=134162
+
+        Reviewed by Sam Weinig.
+
+        We don't want to allow changing preferences by registering user defaults.
+
+        * UIProcess/mac/WebPreferencesMac.mm:
+        (WebKit::makeKey):
+        (WebKit::WebPreferences::platformInitializeStore):
+
+2014-06-21  Anders Carlsson  <andersca@apple.com>
+
         Begin work on decoding the back/forward tree
         https://bugs.webkit.org/show_bug.cgi?id=134161
 

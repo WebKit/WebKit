@@ -34,14 +34,9 @@ namespace WebKit {
 
 static inline NSString* makeKey(NSString *identifier, NSString *keyPrefix, NSString *key)
 {
+    ASSERT(identifier);
     ASSERT(keyPrefix);
     ASSERT(key);
-
-    if (!identifier) {
-        // Allow preferences that don't have a prefix to be overridden by using the keyPrefix.
-        // For the legacy C SPI, this is “WebKit2.” and for the modern API it's “WebKit”.
-        return [keyPrefix stringByAppendingString:key];
-    }
 
     return [NSString stringWithFormat:@"%@%@%@", identifier, keyPrefix, key];
 }
@@ -92,6 +87,9 @@ static void setDoubleValueIfInUserDefaults(const String& identifier, const Strin
 
 void WebPreferences::platformInitializeStore()
 {
+    if (!m_identifier)
+        return;
+
 #define INITIALIZE_PREFERENCE_FROM_NSUSERDEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) \
     set##TypeName##ValueIfInUserDefaults(m_identifier, m_keyPrefix, WebPreferencesKey::KeyLower##Key(), m_store);
 
