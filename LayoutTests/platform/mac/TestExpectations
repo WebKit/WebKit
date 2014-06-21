@@ -1320,13 +1320,12 @@ webkit.org/b/130490 media/video-remote-control-playpause.html [ Pass Failure ]
 webkit.org/b/130693 mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
 
 # OpenType MATH tests failing
-webkit.org/b/130322 [ MountainLion Mavericks ] mathml/opentype/large-operators-LatinModern.html [ Failure ]
+webkit.org/b/130322 [ MountainLion Mavericks ] mathml/opentype/large-operators.html [ Failure ]
 webkit.org/b/130322 [ MountainLion Mavericks ] mathml/opentype/opentype-stretchy.html [ Failure ]
-webkit.org/b/130322 [ MountainLion Mavericks ] mathml/opentype/vertical-LatinModern.html [ Failure ]
-webkit.org/b/72828 mathml/opentype/horizontal-LatinModern.html [ Failure ]
+webkit.org/b/130322 [ MountainLion Mavericks ] mathml/opentype/vertical.html [ Failure ]
+webkit.org/b/72828 mathml/opentype/horizontal.html [ Failure ]
 webkit.org/b/72828 mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]
-webkit.org/b/72828 mathml/opentype/horizontal-LatinModern-munderover.html [ Failure ]
-webkit.org/b/119038 mathml/opentype/roots-LatinModern.html [ Failure ]
+webkit.org/b/72828 mathml/opentype/horizontal-munderover.html [ Failure ]
 
 # Missing references
 webkit.org/b/119038 mathml/presentation/mo-stretch.html [ Failure ]

@@ -1,3 +1,55 @@
+2014-06-21  Frédéric Wang  <fred.wang@free.fr>
+
+        Remove latinmodern-math.woff from LayoutTests/mathml/opentype
+        https://bugs.webkit.org/show_bug.cgi?id=134094
+
+        Reviewed by Martin Robinson.
+
+        We remove latinmodern-math.woff from the source and make mathml/opentype/*LatinModern* tests not font-specific, so that each platform will use whatever OpenType MATH is available.
+        Until bug 133604 is fixed and Latin Modern Math installed on the Linux bots, the tests are marked as failed. More generally, we need to fix bug 133603.
+        The test mathml/opentype/roots-LatinModern is removed since it will duplicate mathml/presentation/roots.xhtml when OpenType MATH fonts are available.
+
+        * mathml/opentype/LICENSE-LatinModern.txt: Removed.
+        * mathml/opentype/horizontal-munderover.html: Renamed from LayoutTests/mathml/opentype/horizontal-LatinModern-munderover.html.
+        * mathml/opentype/horizontal.html: Renamed from LayoutTests/mathml/opentype/horizontal-LatinModern.html.
+        * mathml/opentype/large-operators-LatinModern.html: Removed.
+        * mathml/opentype/large-operators.html: Added.
+        * mathml/opentype/latinmodern-math.woff: Removed.
+        * mathml/opentype/opentype-stretchy-horizontal.html:
+        * mathml/opentype/roots-LatinModern.html: Removed.
+        * mathml/opentype/vertical.html: Renamed from LayoutTests/mathml/opentype/vertical-LatinModern.html.
+        * platform/efl/TestExpectations:
+        * platform/efl/mathml/opentype/horizontal-expected.txt: Renamed from LayoutTests/platform/efl/mathml/opentype/horizontal-LatinModern-expected.txt.
+        * platform/efl/mathml/opentype/horizontal-munderover-expected.txt: Renamed from LayoutTests/platform/efl/mathml/opentype/horizontal-LatinModern-munderover-expected.txt.
+        * platform/efl/mathml/opentype/large-operators-expected.png: Renamed from LayoutTests/platform/gtk/mathml/opentype/large-operators-LatinModern-expected.png.
+        * platform/efl/mathml/opentype/large-operators-expected.txt: Renamed from LayoutTests/platform/efl/mathml/opentype/large-operators-LatinModern-expected.txt.
+        * platform/efl/mathml/opentype/roots-LatinModern-expected.txt: Removed.
+        * platform/efl/mathml/opentype/vertical-expected.png: Renamed from LayoutTests/platform/gtk/mathml/opentype/vertical-LatinModern-expected.png.
+        * platform/efl/mathml/opentype/vertical-expected.txt: Renamed from LayoutTests/platform/efl/mathml/opentype/vertical-LatinModern-expected.txt.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/mathml/opentype/horizontal-expected.png: Renamed from LayoutTests/platform/gtk/mathml/opentype/horizontal-LatinModern-expected.png.
+        * platform/gtk/mathml/opentype/horizontal-expected.txt: Renamed from LayoutTests/platform/gtk/mathml/opentype/horizontal-LatinModern-expected.txt.
+        * platform/gtk/mathml/opentype/horizontal-munderover-expected.png: Renamed from LayoutTests/platform/gtk/mathml/opentype/horizontal-LatinModern-munderover-expected.png.
+        * platform/gtk/mathml/opentype/horizontal-munderover-expected.txt: Renamed from LayoutTests/platform/gtk/mathml/opentype/horizontal-LatinModern-munderover-expected.txt.
+        * platform/gtk/mathml/opentype/large-operators-expected.png: Renamed from LayoutTests/platform/efl/mathml/opentype/large-operators-LatinModern-expected.png.
+        * platform/gtk/mathml/opentype/large-operators-expected.txt: Renamed from LayoutTests/platform/gtk/mathml/opentype/large-operators-LatinModern-expected.txt.
+        * platform/gtk/mathml/opentype/roots-LatinModern-expected.png: Removed.
+        * platform/gtk/mathml/opentype/roots-LatinModern-expected.txt: Removed.
+        * platform/gtk/mathml/opentype/vertical-expected.png: Renamed from LayoutTests/platform/efl/mathml/opentype/vertical-LatinModern-expected.png.
+        * platform/gtk/mathml/opentype/vertical-expected.txt: Renamed from LayoutTests/platform/gtk/mathml/opentype/vertical-LatinModern-expected.txt.
+        * platform/mac-wk2/mathml/opentype/large-operators-LatinModern-expected.txt: Removed.
+        * platform/mac-wk2/mathml/opentype/vertical-LatinModern-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+        * platform/mac/mathml/opentype/horizontal-expected.txt: Renamed from LayoutTests/platform/mac/mathml/opentype/horizontal-LatinModern-expected.txt.
+        * platform/mac/mathml/opentype/horizontal-munderover-expected.txt: Renamed from LayoutTests/platform/mac/mathml/opentype/horizontal-LatinModern-munderover-expected.txt.
+        * platform/mac/mathml/opentype/large-operators-expected.txt: Renamed from LayoutTests/platform/mac/mathml/opentype/large-operators-LatinModern-expected.txt.
+        * platform/mac/mathml/opentype/roots-LatinModern-expected.txt: Removed.
+        * platform/mac/mathml/opentype/vertical-expected.txt: Renamed from LayoutTests/platform/mac/mathml/opentype/vertical-LatinModern-expected.txt.
+        * platform/win/TestExpectations:
+        * platform/win/mathml/opentype/horizontal-expected.txt: Renamed from LayoutTests/platform/win/mathml/opentype/horizontal-LatinModern-expected.txt.
+        * platform/win/mathml/opentype/horizontal-munderover-expected.txt: Renamed from LayoutTests/platform/win/mathml/opentype/horizontal-LatinModern-munderover-expected.txt.
+        * platform/win/mathml/opentype/roots-LatinModern-expected.txt: Removed.
+
 2014-06-20  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Remove WebKit1 test results

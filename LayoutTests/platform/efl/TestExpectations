@@ -1629,14 +1629,15 @@ webkit.org/b/133307 fast/forms/number/number-spinbutton-in-multi-column.html [ F
 
 webkit.org/b/133308 fast/selectors/hover-quirks.html [ Failure ]
 
+# These tests require Latin Modern Math to be installed on the bots.
+webkit.org/b/133604 mathml/opentype/horizontal-munderover.html [ Failure ]
+webkit.org/b/133604 mathml/opentype/horizontal.html [ Failure ]
+webkit.org/b/133604 mathml/opentype/large-operators.html [ Failure ]
+webkit.org/b/133604 mathml/opentype/vertical.html [ Failure ]
+
 # Missing or bad references
-webkit.org/b/130322 mathml/opentype/large-operators-LatinModern.html [ Failure ]
 webkit.org/b/130322 mathml/opentype/opentype-stretchy.html [ Failure ]
-webkit.org/b/130322 mathml/opentype/vertical-LatinModern.html [ Failure ]
-webkit.org/b/72828 mathml/opentype/horizontal-LatinModern.html [ Failure ]
 webkit.org/b/72828 mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]
-webkit.org/b/72828 mathml/opentype/horizontal-LatinModern-munderover.html [ Failure ]
-webkit.org/b/119038 mathml/opentype/roots-LatinModern.html [ Failure ]
 webkit.org/b/119038 mathml/presentation/mo-stretch.html [ Failure ]
 webkit.org/b/119038 mathml/presentation/roots.xhtml [ Failure ]
 

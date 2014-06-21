@@ -1973,6 +1973,12 @@ webkit.org/b/133803 editing/input/option-page-up-down.html [ Failure ]
 webkit.org/b/133803 editing/input/scroll-viewport-page-up-down.html [ Failure ]
 webkit.org/b/133803 editing/undo/undo-deleteWord.html [ Failure ]
 
+# These tests require Latin Modern Math to be installed on the bots.
+webkit.org/b/133604 mathml/opentype/horizontal-munderover.html [ Failure ]
+webkit.org/b/133604 mathml/opentype/horizontal.html [ Failure ]
+webkit.org/b/133604 mathml/opentype/large-operators.html [ Failure ]
+webkit.org/b/133604 mathml/opentype/vertical.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
