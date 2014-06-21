@@ -167,7 +167,7 @@ bool LegacySessionStateDecoder::decodeSessionHistoryEntries(CFArrayRef entriesAr
         entries.append(std::move(entry));
     }
 
-    return false;
+    return true;
 }
 
 bool LegacySessionStateDecoder::decodeSessionHistoryEntry(CFDictionaryRef entryDictionary, PageState& pageState) const
@@ -209,24 +209,79 @@ public:
         *this >> value;
     }
 
-    HistoryEntryDataDecoder& operator>>(uint64_t& value)
+    HistoryEntryDataDecoder& operator>>(bool& value)
     {
-        value = 0;
-        return decode(value);
+        return decodeArithmeticType(value);
     }
 
     HistoryEntryDataDecoder& operator>>(uint32_t& value)
     {
-        value = 0;
-        return decode(value);
+        return decodeArithmeticType(value);
+    }
+
+    HistoryEntryDataDecoder& operator>>(int32_t& value)
+    {
+        return *this >> reinterpret_cast<uint32_t&>(value);
+    }
+
+    HistoryEntryDataDecoder& operator>>(uint64_t& value)
+    {
+        return decodeArithmeticType(value);
+    }
+
+    HistoryEntryDataDecoder& operator>>(int64_t& value)
+    {
+        return *this >> reinterpret_cast<uint64_t&>(value);
+    }
+
+    HistoryEntryDataDecoder& operator>>(float& value)
+    {
+        return decodeArithmeticType(value);
+    }
+
+    HistoryEntryDataDecoder& operator>>(String& value)
+    {
+        value = String();
+
+        uint32_t length;
+        *this >> length;
+
+        if (length == std::numeric_limits<uint32_t>::max()) {
+            // This is the null string.
+            value = String();
+            return *this;
+        }
+
+        uint64_t lengthInBytes;
+        *this >> lengthInBytes;
+
+        if (lengthInBytes % sizeof(UChar) || lengthInBytes / sizeof(UChar) != length) {
+            markInvalid();
+            return *this;
+        }
+
+        if (!bufferIsLargeEnoughToContain<UChar>(length)) {
+            markInvalid();
+            return *this;
+        }
+
+        UChar* buffer;
+        auto string = String::createUninitialized(length, buffer);
+        decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(UChar), alignof(UChar));
+
+        value = string;
+        return *this;
     }
 
     bool finishDecoding() { return m_buffer == m_bufferEnd; }
 
 private:
     template<typename Type>
-    HistoryEntryDataDecoder& decode(Type& value)
+    HistoryEntryDataDecoder& decodeArithmeticType(Type& value)
     {
+        static_assert(std::is_arithmetic<Type>::value, "");
+        value = Type();
+
         decodeFixedLengthData(reinterpret_cast<uint8_t*>(&value), sizeof(value), sizeof(value));
         return *this;
     }
@@ -261,6 +316,22 @@ private:
         return reinterpret_cast<uint8_t*>((reinterpret_cast<uintptr_t>(m_buffer) + alignmentMask) & ~alignmentMask);
     }
 
+    template<typename T>
+    bool bufferIsLargeEnoughToContain(size_t numElements) const
+    {
+        static_assert(std::is_arithmetic<T>::value, "Type T must have a fixed, known encoded size!");
+
+        if (numElements > std::numeric_limits<size_t>::max() / sizeof(T))
+            return false;
+
+        return bufferIsLargeEnoughToContain(alignof(T), numElements * sizeof(T));
+    }
+
+    bool bufferIsLargeEnoughToContain(unsigned alignment, size_t size) const
+    {
+        return alignedBufferIsLargeEnoughToContain(alignedBuffer(alignment), size);
+    }
+
     inline bool alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPosition, size_t size) const
     {
         return m_bufferEnd >= alignedPosition && static_cast<size_t>(m_bufferEnd - alignedPosition) >= size;
@@ -272,6 +343,66 @@ private:
     const uint8_t* m_bufferEnd;
 };
 
+static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameState& frameState)
+{
+    uint64_t childCount;
+    decoder >> childCount;
+
+    for (uint64_t i = 0; i < childCount; ++i) {
+        FrameState childFrameState;
+        decoder >> childFrameState.originalURLString;
+        decoder >> childFrameState.urlString;
+
+        decodeBackForwardTreeNode(decoder, childFrameState);
+        frameState.children.append(std::move(childFrameState));
+    }
+
+    decoder >> frameState.documentSequenceNumber;
+
+    uint64_t documentStateVectorSize;
+    decoder >> documentStateVectorSize;
+
+    for (uint64_t i = 0; i < documentStateVectorSize; ++i) {
+        // FIXME: Implement.
+        ASSERT_NOT_REACHED();
+    }
+
+    String formContentType;
+    decoder >> formContentType;
+
+    bool hasFormData;
+    decoder >> hasFormData;
+
+    if (hasFormData) {
+        // FIXME: Implement.
+        ASSERT_NOT_REACHED();
+    }
+
+    decoder >> frameState.itemSequenceNumber;
+
+    decoder >> frameState.referrer;
+
+    int32_t scrollPointX;
+    decoder >> scrollPointX;
+
+    int32_t scrollPointY;
+    decoder >> scrollPointY;
+
+    frameState.scrollPoint = WebCore::IntPoint(scrollPointX, scrollPointY);
+
+    decoder >> frameState.pageScaleFactor;
+
+    bool hasStateObject;
+    decoder >> hasStateObject;
+
+    if (hasStateObject) {
+        // FIXME: Implement.
+        ASSERT_NOT_REACHED();
+    }
+
+    decoder >> frameState.target;
+}
+
 bool LegacySessionStateDecoder::decodeSessionHistoryEntryData(CFDataRef historyEntryData, FrameState& mainFrameState) const
 {
     HistoryEntryDataDecoder decoder { CFDataGetBytePtr(historyEntryData), static_cast<size_t>(CFDataGetLength(historyEntryData)) };
@@ -282,7 +413,7 @@ bool LegacySessionStateDecoder::decodeSessionHistoryEntryData(CFDataRef historyE
     if (version != sessionHistoryEntryDataVersion)
         return false;
 
-    // FIXME: Implement this.
+    decodeBackForwardTreeNode(decoder, mainFrameState);
 
     return decoder.finishDecoding();
 }

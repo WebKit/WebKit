@@ -1,3 +1,19 @@
+2014-06-21  Anders Carlsson  <andersca@apple.com>
+
+        Begin work on decoding the back/forward tree
+        https://bugs.webkit.org/show_bug.cgi?id=134161
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::LegacySessionStateDecoder::decodeSessionHistoryEntries):
+        (WebKit::HistoryEntryDataDecoder::operator>>):
+        (WebKit::HistoryEntryDataDecoder::decodeArithmeticType):
+        (WebKit::HistoryEntryDataDecoder::bufferIsLargeEnoughToContain):
+        (WebKit::decodeBackForwardTreeNode):
+        (WebKit::LegacySessionStateDecoder::decodeSessionHistoryEntryData):
+        (WebKit::HistoryEntryDataDecoder::decode): Deleted.
+
 2014-06-21  Brady Eidson  <beidson@apple.com>
 
         Gamepad API - Deprecate the existing implementation
