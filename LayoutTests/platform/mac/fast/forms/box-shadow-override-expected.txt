@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (161,1) size 14x11
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,137) size 784x32
-        RenderBlock {INPUT} at (2,12) size 12x13
+        RenderBlock {INPUT} at (2,13) size 12x12
         RenderText {#text} at (16,9) size 4x18
           text run at (16,9) width 4: " "
         RenderBlock {INPUT} at (22,13) size 12x12

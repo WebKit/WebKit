@@ -1,3 +1,32 @@
+2014-06-21  Dean Jackson  <dino@apple.com>
+
+        [Mac] Margins for new form controls need tweaking
+        https://bugs.webkit.org/show_bug.cgi?id=134135
+        <rdar://problem/17262164>
+
+        Reviewed by Sam Weinig.
+
+        Take 2 of this patch. Only the mac-mountainlion LayoutTest
+        results are different from the first attempt.
+
+        With the newer animated controls in OS X Yosemite, we need
+        to tweak the fudge-factor margins for positioning. In a recent
+        patch I added another fudge, which I'm removing with this. I'm
+        not sure where the older values came from, but I've checked with
+        the latest AppKit sources and am using the sizes they implement
+        for the controls.
+
+        This will rebaseline a lot of tests, since I've made small tweaks
+        to the form layout.
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::checkboxMargins): New margin amounts.
+        (WebCore::radioSizes): New sizes.
+        (WebCore::radioMargins): New margin amounts.
+        (WebCore::paintToggleButton): No need to call the positioning fudge any more.
+        (WebCore::checkboxOffsets): Deleted.
+        (WebCore::radioOffsets): Deleted.
+
 2014-06-20  Sam Weinig  <sam@webkit.org>
 
         Remove static tables for bindings that use eager reification
