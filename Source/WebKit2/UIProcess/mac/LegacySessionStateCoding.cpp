@@ -198,6 +198,8 @@ bool LegacySessionStateDecoder::decodeSessionHistoryEntry(CFDictionaryRef entryD
     return true;
 }
 
+template<typename T> void isValidEnum(T);
+
 class HistoryEntryDataDecoder {
 public:
     HistoryEntryDataDecoder(const uint8_t* buffer, size_t bufferSize)
@@ -273,6 +275,56 @@ public:
         return *this;
     }
 
+    HistoryEntryDataDecoder& operator>>(Vector<uint8_t>& value)
+    {
+        value = { };
+
+        uint64_t size;
+        *this >> size;
+
+        if (!alignBufferPosition(1, size))
+            return *this;
+
+        const uint8_t* data = m_buffer;
+        m_buffer += size;
+
+        value.append(data, size);
+        return *this;
+    }
+
+    HistoryEntryDataDecoder& operator>>(Vector<char>& value)
+    {
+        value = { };
+
+        uint64_t size;
+        *this >> size;
+
+        if (!alignBufferPosition(1, size))
+            return *this;
+
+        const uint8_t* data = m_buffer;
+        m_buffer += size;
+
+        value.append(data, size);
+        return *this;
+    }
+
+    template<typename T>
+    auto operator>>(Optional<T>& value) -> typename std::enable_if<std::is_enum<T>::value, HistoryEntryDataDecoder&>::type
+    {
+        uint32_t underlyingEnumValue;
+        *this >> underlyingEnumValue;
+
+        if (!isValid() || !isValidEnum(static_cast<T>(underlyingEnumValue)))
+            value = Nullopt;
+        else
+            value = static_cast<T>(underlyingEnumValue);
+
+        return *this;
+    }
+
+    bool isValid() const { return m_buffer <= m_bufferEnd; }
+
     bool finishDecoding() { return m_buffer == m_bufferEnd; }
 
 private:
@@ -343,6 +395,63 @@ private:
     const uint8_t* m_bufferEnd;
 };
 
+enum class FormDataElementType {
+    Data = 0,
+    EncodedFile = 1,
+    EncodedBlob = 2,
+};
+
+static bool isValidEnum(FormDataElementType type)
+{
+    switch (type) {
+    case FormDataElementType::Data:
+    case FormDataElementType::EncodedFile:
+    case FormDataElementType::EncodedBlob:
+        return true;
+    }
+
+    return false;
+}
+
+static void decodeFormDataElement(HistoryEntryDataDecoder& decoder, HTTPBody::Element& formDataElement)
+{
+    Optional<FormDataElementType> elementType;
+    decoder >> elementType;
+    if (!elementType)
+        return;
+
+    switch (elementType.value()) {
+    case FormDataElementType::Data:
+        formDataElement.type = HTTPBody::Element::Type::Data;
+        decoder >> formDataElement.data;
+        break;
+
+    case FormDataElementType::EncodedFile:
+    case FormDataElementType::EncodedBlob:
+        // FIXME: Implement.
+        ASSERT_NOT_REACHED();
+    }
+}
+
+static void decodeFormData(HistoryEntryDataDecoder& decoder, HTTPBody& formData)
+{
+    bool alwaysStream;
+    decoder >> alwaysStream;
+
+    Vector<uint8_t> boundary;
+    decoder >> boundary;
+
+    uint64_t formDataElementCount;
+    decoder >> formDataElementCount;
+
+    for (uint64_t i = 0; i < formDataElementCount; ++i) {
+        HTTPBody::Element formDataElement;
+        decodeFormDataElement(decoder, formDataElement);
+
+        formData.elements.append(std::move(formDataElement));
+    }
+}
+
 static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameState& frameState)
 {
     uint64_t childCount;
@@ -374,8 +483,12 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
     decoder >> hasFormData;
 
     if (hasFormData) {
-        // FIXME: Implement.
-        ASSERT_NOT_REACHED();
+        HTTPBody httpBody;
+        httpBody.contentType = std::move(formContentType);
+
+        decodeFormData(decoder, httpBody);
+
+        frameState.httpBody = std::move(httpBody);
     }
 
     decoder >> frameState.itemSequenceNumber;

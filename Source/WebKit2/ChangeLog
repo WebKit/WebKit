@@ -1,5 +1,20 @@
 2014-06-21  Anders Carlsson  <andersca@apple.com>
 
+        Begin work on decoding form data
+        https://bugs.webkit.org/show_bug.cgi?id=134163
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::HistoryEntryDataDecoder::operator>>):
+        (WebKit::HistoryEntryDataDecoder::isValid):
+        (WebKit::isValidEnum):
+        (WebKit::decodeFormDataElement):
+        (WebKit::decodeFormData):
+        (WebKit::decodeBackForwardTreeNode):
+
+2014-06-21  Anders Carlsson  <andersca@apple.com>
+
         Only initialize WebPreferences from NSUserDefaults if there's an identifier
         https://bugs.webkit.org/show_bug.cgi?id=134162
 
