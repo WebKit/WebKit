@@ -15,7 +15,7 @@ math {
     /* We explicitly include the font Symbol as it's the iOS equivalent of font STIXGeneral. */
     font-family: STIXGeneral, Symbol, "Times New Roman", sans-serif;
 #else
-    font-family: MathJax_Main, STIXGeneral, STIXSizeOneSym, "DejaVu Sans", "DejaVu Serif", Cambria, "Cambria Math", "Lucida Sans Unicode", "Arial Unicode MS", "Lucida Grande", OpenSymbol, "Standard Symbols L", Times, serif;
+    font-family: "Latin Modern Math", MathJax_Main, STIXGeneral, STIXSizeOneSym, "DejaVu Sans", "DejaVu Serif", Cambria, "Cambria Math", "Lucida Sans Unicode", "Arial Unicode MS", "Lucida Grande", OpenSymbol, "Standard Symbols L", Times, serif;
 #endif
 }
 

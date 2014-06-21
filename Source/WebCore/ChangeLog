@@ -1,3 +1,24 @@
+2014-06-21  Frédéric Wang  <fred.wang@free.fr>
+
+        [GTK][EFL] Use OpenType MATH fonts by default.
+        https://bugs.webkit.org/show_bug.cgi?id=133604
+
+        Reviewed by Chris Fleizach.
+
+        In order to support stretching of horizontal operators and large
+        operators in display mode as well as to improve the drawing of radicals,
+        we need to use an OpenType MATH table. This commit makes the MathML code
+        try "Latin Modern Math" first, which is an OpenType version of Knuth's
+        popular Computer Modern font and is packaged with most TeX
+        distributions (e.g. TeX Live on Linux). This should work well on the
+        EFL & GTK ports for which the initial OpenType MATH support has been
+        tested. Other ports will be handled later.
+
+        No new tests. This is already tested in LayoutTests/mathml/opentype/.
+
+        * css/mathml.css:
+        (math): Add "Latin Modern Math" as the first font-family of the <math> element.
+
 2014-06-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed EFL build fix since r170224.
