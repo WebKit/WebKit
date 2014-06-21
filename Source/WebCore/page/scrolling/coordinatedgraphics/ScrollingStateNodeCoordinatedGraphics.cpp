@@ -34,6 +34,16 @@
 
 namespace WebCore {
 
+void LayerRepresentation::retainPlatformLayer(PlatformLayer*)
+{
+    notImplemented();
+}
+
+void LayerRepresentation::releasePlatformLayer(PlatformLayer*)
+{
+    notImplemented();
+}
+
 } // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)

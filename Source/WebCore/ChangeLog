@@ -1,3 +1,15 @@
+2014-06-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL build fix since r170224.
+
+        Add retainPlatformLayer() and releasePlatformLayer() in ScrollingStateNodeCoordinatedGraphics.cpp
+        as well. Thouse functions were missed in r170224.
+
+        * page/scrolling/ScrollingStateNode.h:
+        * page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp:
+        (WebCore::LayerRepresentation::retainPlatformLayer):
+        (WebCore::LayerRepresentation::releasePlatformLayer):
+
 2014-06-20  Dean Jackson  <dino@apple.com>
 
         [Mac] Margins for new form controls need tweaking
