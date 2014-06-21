@@ -1,3 +1,9 @@
+2014-06-21  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the iOS build after r170235.
+
+        * WebView/WebView.mm:
+
 2014-06-21  Brady Eidson  <beidson@apple.com>
 
         Gamepad API - Deprecate the existing implementation
