@@ -293,6 +293,7 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
     , m_pageViewportControllerClient(this)
     , m_pageViewportController(page(), &m_pageViewportControllerClient)
     , m_isAccelerated(true)
+    , m_isWaitingForNewPage(false)
 {
     ASSERT(m_evasObject);
     ASSERT(m_context);

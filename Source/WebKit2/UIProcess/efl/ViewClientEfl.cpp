@@ -110,23 +110,19 @@ void ViewClientEfl::didChangeContentsPosition(WKViewRef, WKPoint position, const
 void ViewClientEfl::didRenderFrame(WKViewRef, WKSize contentsSize, WKRect coveredRect, const void* clientInfo)
 {
     EwkView* ewkView = toEwkView(clientInfo);
-    if (WKPageUseFixedLayout(ewkView->wkPage())) {
+    if (WKPageUseFixedLayout(ewkView->wkPage()))
         ewkView->pageViewportController().didRenderFrame(toIntSize(contentsSize), toIntRect(coveredRect));
-        return;
-    }
+    else
+        ewkView->scheduleUpdateDisplay();
 
-    ewkView->scheduleUpdateDisplay();
+    ewkView->didCommitNewPage();
 }
 
 void ViewClientEfl::didCompletePageTransition(WKViewRef, const void* clientInfo)
 {
     EwkView* ewkView = toEwkView(clientInfo);
-    if (WKPageUseFixedLayout(ewkView->wkPage())) {
+    if (WKPageUseFixedLayout(ewkView->wkPage()))
         ewkView->pageViewportController().pageTransitionViewportReady();
-        return;
-    }
-
-    ewkView->scheduleUpdateDisplay();
 }
 
 void ViewClientEfl::didChangeViewportAttributes(WKViewRef, WKViewportAttributesRef attributes, const void* clientInfo)

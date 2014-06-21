@@ -184,6 +184,11 @@ public:
 
     void didFindZoomableArea(const WKPoint&, const WKRect&);
 
+    // FIXME: PageViewportController needs to fix a problem that current page is shown in (0,0) position when starting to load new page.
+    // Below functions are to fix this problem for now.
+    void setWaitingForNewPage() { m_isWaitingForNewPage = true; }
+    bool didCommitNewPage() { return m_isWaitingForNewPage = false; }
+
     static const char smartClassName[];
 
 private:
@@ -285,6 +290,7 @@ private:
     WebKit::PageViewportController m_pageViewportController;
 
     bool m_isAccelerated;
+    bool m_isWaitingForNewPage;
 
     static Evas_Smart_Class parentSmartClass;
 };

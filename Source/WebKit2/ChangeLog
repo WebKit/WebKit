@@ -1,3 +1,30 @@
+2014-06-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CoordinatedGraphics][WK2][EFL] Page is moved to (0,0) position before rendering content
+        https://bugs.webkit.org/show_bug.cgi?id=133300
+
+        Reviewed by Csaba Osztrogonác.
+
+        When new page is loaded, PageViewportController::didCommitLoad() calls PageViewportController::syncVisibleContents()
+        with initial position via applyPositionAfterRenderingContents() before starting to render
+        new page by PageViewportController::didRenderFrame(). This call flow causes that webview shows
+        incomplete tiles to the user during a few milliseconds. To fix showing incomplete tiles during
+        the page loading, this patch adds a flag so that we don't show the incomplete tiles until showing
+        new page.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView::setWaitingForNewPage):
+        (EwkView::waitingForNewPage):
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::didCommitLoadForFrame):
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::didChangeVisibleContents):
+        * UIProcess/efl/ViewClientEfl.cpp:
+        (WebKit::ViewClientEfl::didRenderFrame):
+        (WebKit::ViewClientEfl::didCompletePageTransition):
+
 2014-06-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Commit queue has been failing due to a build failure in WKFoundation.h

@@ -60,6 +60,9 @@ void PageViewportControllerClientEfl::setPageScaleFactor(float newScale)
 
 void PageViewportControllerClientEfl::didChangeVisibleContents()
 {
+    if (m_view->didCommitNewPage())
+        return;
+
     m_view->scheduleUpdateDisplay();
 }
 

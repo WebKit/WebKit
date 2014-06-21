@@ -117,12 +117,12 @@ void PageLoadClientEfl::didCommitLoadForFrame(WKPageRef, WKFrameRef frame, WKTyp
         return;
 
     EwkView* view = toPageLoadClientEfl(clientInfo)->view();
-    if (WKPageUseFixedLayout(view->wkPage())) {
+    if (WKPageUseFixedLayout(view->wkPage()))
         view->pageViewportController().didCommitLoad();
-        return;
-    }
+    else
+        view->scheduleUpdateDisplay();
 
-    view->scheduleUpdateDisplay();
+    view->setWaitingForNewPage();
 }
 
 void PageLoadClientEfl::didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void* clientInfo)
