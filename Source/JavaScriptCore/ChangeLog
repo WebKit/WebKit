@@ -1,3 +1,13 @@
+2014-06-21  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        ARM traditional buildfix after r169942.
+        https://bugs.webkit.org/show_bug.cgi?id=134100
+
+        Reviewed by Zoltan Herczeg.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::abortWithReason): Added.
+
 2014-06-20  Andreas Kling  <akling@apple.com>
 
         [Cocoa] Release freed up blocks from the JS heap after simulated memory pressure.
