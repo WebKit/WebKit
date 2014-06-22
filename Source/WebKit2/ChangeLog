@@ -1,3 +1,11 @@
+2014-06-22  Anders Carlsson  <andersca@apple.com>
+
+        Address a review comment.
+
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::HistoryEntryDataDecoder::markInvalid):
+        (WebKit::decodeFormDataElement):
+
 2014-06-21  Anders Carlsson  <andersca@apple.com>
 
         Implement the rest of back forward tree decoding

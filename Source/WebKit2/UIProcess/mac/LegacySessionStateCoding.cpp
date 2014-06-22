@@ -329,6 +329,7 @@ public:
     }
 
     bool isValid() const { return m_buffer <= m_bufferEnd; }
+    void markInvalid() { m_buffer = m_bufferEnd + 1; }
 
     bool finishDecoding() { return m_buffer == m_bufferEnd; }
 
@@ -394,8 +395,6 @@ private:
         return m_bufferEnd >= alignedPosition && static_cast<size_t>(m_bufferEnd - alignedPosition) >= size;
     }
 
-    void markInvalid() { m_buffer = m_bufferEnd + 1; }
-
     const uint8_t* m_buffer;
     const uint8_t* m_bufferEnd;
 };
@@ -441,8 +440,10 @@ static void decodeFormDataElement(HistoryEntryDataDecoder& decoder, HTTPBody::El
         decoder >> shouldGenerateFile;
 
         decoder >> formDataElement.fileStart;
-        if (formDataElement.fileStart < 0)
+        if (formDataElement.fileStart < 0) {
+            decoder.markInvalid();
             return;
+        }
 
         int64_t fileLength;
         decoder >> fileLength;
