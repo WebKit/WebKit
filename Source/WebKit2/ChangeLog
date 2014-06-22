@@ -1,3 +1,11 @@
+2014-06-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Fixing the GTK+ build after r170253.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (_WebKitSettingsPrivate::_WebKitSettingsPrivate): WebPreferences::create()
+        now takes an additional String argument.
+
 2014-06-21  Dan Bernstein  <mitz@apple.com>
 
         CallbackMap::put should be able to take an unwrapped function
