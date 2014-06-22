@@ -1,3 +1,17 @@
+2014-06-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        createCairoGLSurface should take in a FloatSize reference as its first parameter
+        https://bugs.webkit.org/show_bug.cgi?id=134159
+
+        Reviewed by Martin Robinson.
+
+        The ImageBuffer constructor operates with a FloatSize reference, which is also
+        passed to createCairoGLSurface when accelerated 2D canvas support is enabled.
+        That function should take in a reference to the same type.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::createCairoGLSurface):
+
 2014-06-21  Dean Jackson  <dino@apple.com>
 
         [Mac] Margins for new form controls need tweaking

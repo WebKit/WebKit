@@ -64,7 +64,7 @@ ImageBufferData::ImageBufferData(const IntSize& size)
 }
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
-PassRefPtr<cairo_surface_t> createCairoGLSurface(const IntSize& size, uint32_t& texture)
+PassRefPtr<cairo_surface_t> createCairoGLSurface(const FloatSize& size, uint32_t& texture)
 {
     GLContext::sharingContext()->makeContextCurrent();
 
