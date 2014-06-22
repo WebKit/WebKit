@@ -1,3 +1,13 @@
+2014-06-22  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] WKWebViewConfiguration.allowsInlineMediaPlayback has no effect
+        https://bugs.webkit.org/show_bug.cgi?id=134170
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]): Fixed a typo.
+
 2014-06-21  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Fixing the GTK+ build after r170253.
