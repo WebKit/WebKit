@@ -1,3 +1,17 @@
+2014-06-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Disable gamepad feature on EFL and GTK ports by default
+        https://bugs.webkit.org/show_bug.cgi?id=134169
+
+        Reviewed by Brady Eidson.
+
+        EFL and GTK ports disabled Gamepad feature now. Besides current implementation
+        was treated to 'deprecated' status.
+
+        ENABLE_GAMEPAD_DEPRECATED is disabled for now. There is build break on EFL port.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2014-06-21  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         [Inspector][EFL] Can't resume a special break point on EFL inspector
