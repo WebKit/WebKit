@@ -1,3 +1,134 @@
+2014-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Use unsigneds instead of ints for indexes into a string in text layout code
+        https://bugs.webkit.org/show_bug.cgi?id=133592
+
+        Reviewed by Zalan Bujtas.
+
+        Migrate much of the text-handling code to use unsigneds for indexes into a string.
+
+        No new tests because there is no behavior change.
+
+        * WebCore.exp.in:
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::drawText):
+        (WebCore::Font::drawEmphasisMarks):
+        (WebCore::Font::adjustSelectionRectForText):
+        (WebCore::computeUnderlineType):
+        * platform/graphics/Font.h:
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::getGlyphsAndAdvancesForSimpleText):
+        (WebCore::Font::drawSimpleText):
+        (WebCore::Font::drawEmphasisMarksForSimpleText):
+        (WebCore::Font::drawGlyphBuffer):
+        (WebCore::Font::drawEmphasisMarks):
+        (WebCore::Font::adjustSelectionRectForSimpleText):
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::size):
+        (WebCore::GlyphBuffer::glyphs):
+        (WebCore::GlyphBuffer::advances):
+        (WebCore::GlyphBuffer::fontDataAt):
+        (WebCore::GlyphBuffer::advanceAt):
+        (WebCore::GlyphBuffer::offsetAt):
+        (WebCore::GlyphBuffer::reverse):
+        (WebCore::GlyphBuffer::offsetInString):
+        (WebCore::GlyphBuffer::swap):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::TextRunIterator::atEnd):
+        * platform/graphics/Latin1TextIterator.h:
+        (WebCore::Latin1TextIterator::Latin1TextIterator):
+        (WebCore::Latin1TextIterator::currentCharacter):
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/SurrogatePairAwareTextIterator.cpp:
+        (WebCore::SurrogatePairAwareTextIterator::SurrogatePairAwareTextIterator):
+        * platform/graphics/SurrogatePairAwareTextIterator.h:
+        (WebCore::SurrogatePairAwareTextIterator::currentCharacter):
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::length):
+        (WebCore::TextRun::charactersLength):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::glyphDataForCharacter):
+        (WebCore::applyFontTransforms):
+        (WebCore::WidthIterator::advanceInternal):
+        (WebCore::WidthIterator::advance):
+        (WebCore::WidthIterator::advanceOneCharacter):
+        * platform/graphics/WidthIterator.h:
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp:
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::drawEmphasisMarksForComplexText):
+        (WebCore::Font::adjustSelectionRectForComplexText):
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::setNormalizedBuffer):
+        * platform/graphics/mac/FontComplexTextMac.cpp:
+        (WebCore::Font::adjustSelectionRectForComplexText):
+        (WebCore::Font::getGlyphsAndAdvancesForComplexText):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::drawEmphasisMarksForComplexText):
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/win/FontWin.cpp:
+        (WebCore::Font::adjustSelectionRectForComplexText):
+        (WebCore::Font::getGlyphsAndAdvancesForComplexText):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::drawEmphasisMarksForComplexText):
+        * platform/graphics/wince/FontWinCE.cpp:
+        (WebCore::Font::drawGlyphs):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::drawEmphasisMarksForComplexText):
+        (WebCore::Font::selectionRectForComplexText):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::isSelected):
+        (WebCore::InlineTextBox::selectionState):
+        (WebCore::adjustCharactersAndLengthForHyphen):
+        (WebCore::InlineTextBox::localSelectionRect):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::selectionStartEnd):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::InlineTextBox::paintDocumentMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::computeRectForReplacementMarker):
+        (WebCore::InlineTextBox::paintCompositionUnderline):
+        (WebCore::InlineTextBox::positionForOffset):
+        (WebCore::InlineTextBox::constructTextRun):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::getStringToRender):
+        * rendering/RenderCombineText.h:
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::positionForOffset):
+        (WebCore::SVGInlineTextBox::localSelectionRect):
+        (WebCore::SVGInlineTextBox::paintSelectionBackground):
+        (WebCore::SVGInlineTextBox::mapStartEndPositionsIntoFragmentCoordinates):
+        (WebCore::SVGInlineTextBox::paintText):
+        * rendering/svg/SVGInlineTextBox.h:
+        * rendering/svg/SVGTextMetricsBuilder.cpp:
+        (WebCore::SVGTextMetricsBuilder::currentCharacterStartsSurrogatePair):
+        (WebCore::SVGTextMetricsBuilder::advance):
+        * rendering/svg/SVGTextQuery.cpp:
+        (WebCore::SVGTextQuery::mapStartEndPositionsIntoFragmentCoordinates):
+        (WebCore::SVGTextQuery::modifyStartEndPositionsRespectingLigatures):
+        (WebCore::SVGTextQuery::subStringLengthCallback):
+        (WebCore::SVGTextQuery::startPositionOfCharacterCallback):
+        (WebCore::SVGTextQuery::endPositionOfCharacterCallback):
+        (WebCore::SVGTextQuery::rotationOfCharacterCallback):
+        (WebCore::SVGTextQuery::extentOfCharacterCallback):
+        (WebCore::SVGTextQuery::characterNumberAtPositionCallback):
+        * rendering/svg/SVGTextQuery.h:
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::SVGGlyphToPathTranslator::SVGGlyphToPathTranslator):
+        (WebCore::SVGTextRunRenderingContext::glyphDataForCharacter):
+        * rendering/svg/SVGTextRunRenderingContext.h:
+        * svg/SVGFontData.cpp:
+        (WebCore::SVGFontData::applySVGGlyphSelection):
+        * svg/SVGFontData.h:
+
 2014-06-21  Zan Dobersek  <zdobersek@igalia.com>
 
         createCairoGLSurface should take in a FloatSize reference as its first parameter

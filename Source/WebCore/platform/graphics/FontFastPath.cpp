@@ -126,7 +126,7 @@ int Font::emphasisMarkHeight(const AtomicString& mark) const
     return markFontData->fontMetrics().height();
 }
 
-float Font::getGlyphsAndAdvancesForSimpleText(const TextRun& run, int from, int to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
+float Font::getGlyphsAndAdvancesForSimpleText(const TextRun& run, unsigned from, unsigned to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
 {
     float initialAdvance;
 
@@ -156,7 +156,7 @@ float Font::getGlyphsAndAdvancesForSimpleText(const TextRun& run, int from, int 
     return initialAdvance;
 }
 
-float Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
+float Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, unsigned from, unsigned to) const
 {
     // This glyph buffer holds our glyphs+advances+font data for each glyph.
     GlyphBuffer glyphBuffer;
@@ -172,7 +172,7 @@ float Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const F
     return startPoint.x() - startX;
 }
 
-void Font::drawEmphasisMarksForSimpleText(GraphicsContext* context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to) const
+void Font::drawEmphasisMarksForSimpleText(GraphicsContext* context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, unsigned from, unsigned to) const
 {
     GlyphBuffer glyphBuffer;
     float initialAdvance = getGlyphsAndAdvancesForSimpleText(run, from, to, glyphBuffer, ForTextEmphasis);
@@ -195,8 +195,8 @@ void Font::drawGlyphBuffer(GraphicsContext* context, const TextRun& run, const G
     FloatPoint startPoint(point.x(), point.y() - glyphBuffer.initialAdvance().height());
     float nextX = startPoint.x() + glyphBuffer.advanceAt(0).width();
     float nextY = startPoint.y() + glyphBuffer.advanceAt(0).height();
-    int lastFrom = 0;
-    int nextGlyph = 1;
+    unsigned lastFrom = 0;
+    unsigned nextGlyph = 1;
 #if ENABLE(SVG_FONTS)
     TextRun::RenderingContext* renderingContext = run.renderingContext();
 #endif
@@ -210,7 +210,10 @@ void Font::drawGlyphBuffer(GraphicsContext* context, const TextRun& run, const G
                 renderingContext->drawSVGGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
             else
 #endif
+            {
+                ASSERT(nextGlyph >= lastFrom);
                 drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
+            }
 
             lastFrom = nextGlyph;
             fontData = nextFontData;
@@ -269,7 +272,7 @@ void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const
     FloatPoint startPoint(point.x() + middleOfLastGlyph - offsetToMiddleOfGlyph(markFontData, markGlyph), point.y());
 
     GlyphBuffer markBuffer;
-    for (int i = 0; i + 1 < glyphBuffer.size(); ++i) {
+    for (unsigned i = 0; i + 1 < glyphBuffer.size(); ++i) {
         float middleOfNextGlyph = offsetToMiddleOfGlyphAtIndex(glyphBuffer, i + 1);
         float advance = glyphBuffer.advanceAt(i).width() - middleOfLastGlyph + middleOfNextGlyph;
         markBuffer.add(glyphBuffer.glyphAt(i) ? markGlyph : spaceGlyph, markFontData, advance);
@@ -296,7 +299,7 @@ float Font::floatWidthForSimpleText(const TextRun& run, HashSet<const SimpleFont
     return it.m_runWidthSoFar;
 }
 
-void Font::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRect& selectionRect, int from, int to) const
+void Font::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRect& selectionRect, unsigned from, unsigned to) const
 {
     GlyphBuffer glyphBuffer;
     WidthIterator it(this, run);

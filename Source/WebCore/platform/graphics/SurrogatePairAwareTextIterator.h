@@ -30,7 +30,7 @@ class SurrogatePairAwareTextIterator {
 public:
     // The passed in UChar pointer starts at 'currentCharacter'. The iterator operatoes on the range [currentCharacter, lastCharacter].
     // 'endCharacter' denotes the maximum length of the UChar array, which might exceed 'lastCharacter'.
-    SurrogatePairAwareTextIterator(const UChar*, int currentCharacter, int lastCharacter, int endCharacter);
+    SurrogatePairAwareTextIterator(const UChar*, unsigned currentCharacter, unsigned lastCharacter, unsigned endCharacter);
 
     inline bool consume(UChar32& character, unsigned& clusterLength)
     {
@@ -52,7 +52,7 @@ public:
         m_currentCharacter += advanceLength;
     }
 
-    int currentCharacter() const { return m_currentCharacter; }
+    unsigned currentCharacter() const { return m_currentCharacter; }
     const UChar* characters() const { return m_characters; }
 
 private:
@@ -60,9 +60,9 @@ private:
     UChar32 normalizeVoicingMarks();
 
     const UChar* m_characters;
-    int m_currentCharacter;
-    int m_lastCharacter;
-    int m_endCharacter;
+    unsigned m_currentCharacter;
+    unsigned m_lastCharacter;
+    unsigned m_endCharacter;
 };
 
 }

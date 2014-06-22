@@ -43,13 +43,13 @@ public:
     virtual int selectionTop() { return top(); }
     virtual int selectionHeight() { return static_cast<int>(ceilf(m_logicalHeight)); }
     virtual int offsetForPosition(float x, bool includePartialGlyphs = true) const;
-    virtual float positionForOffset(int offset) const;
+    virtual float positionForOffset(unsigned offset) const;
 
     void paintSelectionBackground(PaintInfo&);
     virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom);
-    virtual LayoutRect localSelectionRect(int startPosition, int endPosition) const override;
+    virtual LayoutRect localSelectionRect(unsigned startPosition, unsigned endPosition) const override;
 
-    bool mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment&, int& startPosition, int& endPosition) const;
+    bool mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
 
     virtual FloatRect calculateBoundaries() const;
 
