@@ -1,3 +1,16 @@
+2014-06-21  Anders Carlsson  <andersca@apple.com>
+
+        Implement the rest of back forward tree decoding
+        https://bugs.webkit.org/show_bug.cgi?id=134166
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::HistoryEntryDataDecoder::operator>>):
+        (WebKit::decodeFormDataElement):
+        (WebKit::decodeFormData):
+        (WebKit::decodeBackForwardTreeNode):
+
 2014-06-22  Dan Bernstein  <mitz@apple.com>
 
         [iOS] WKWebViewConfiguration.allowsInlineMediaPlayback has no effect

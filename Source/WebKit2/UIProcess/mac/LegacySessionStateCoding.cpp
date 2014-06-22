@@ -241,6 +241,11 @@ public:
         return decodeArithmeticType(value);
     }
 
+    HistoryEntryDataDecoder& operator>>(double& value)
+    {
+        return decodeArithmeticType(value);
+    }
+
     HistoryEntryDataDecoder& operator>>(String& value)
     {
         value = String();
@@ -426,10 +431,40 @@ static void decodeFormDataElement(HistoryEntryDataDecoder& decoder, HTTPBody::El
         decoder >> formDataElement.data;
         break;
 
-    case FormDataElementType::EncodedFile:
+    case FormDataElementType::EncodedFile: {
+        decoder >> formDataElement.filePath;
+
+        String generatedFilename;
+        decoder >> generatedFilename;
+
+        bool shouldGenerateFile;
+        decoder >> shouldGenerateFile;
+
+        decoder >> formDataElement.fileStart;
+        if (formDataElement.fileStart < 0)
+            return;
+
+        int64_t fileLength;
+        decoder >> fileLength;
+        if (fileLength != -1) {
+            if (fileLength < formDataElement.fileStart)
+                return;
+
+            formDataElement.fileLength = fileLength;
+        }
+
+
+        double expectedFileModificationTime;
+        decoder >> expectedFileModificationTime;
+        if (expectedFileModificationTime != std::numeric_limits<double>::quiet_NaN())
+            formDataElement.expectedFileModificationTime = expectedFileModificationTime;
+
+        break;
+    }
+
     case FormDataElementType::EncodedBlob:
-        // FIXME: Implement.
-        ASSERT_NOT_REACHED();
+        decoder >> formDataElement.blobURLString;
+        break;
     }
 }
 
@@ -450,6 +485,12 @@ static void decodeFormData(HistoryEntryDataDecoder& decoder, HTTPBody& formData)
 
         formData.elements.append(std::move(formDataElement));
     }
+
+    bool hasGeneratedFiles;
+    decoder >> hasGeneratedFiles;
+
+    int64_t identifier;
+    decoder >> identifier;
 }
 
 static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameState& frameState)
@@ -472,8 +513,10 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
     decoder >> documentStateVectorSize;
 
     for (uint64_t i = 0; i < documentStateVectorSize; ++i) {
-        // FIXME: Implement.
-        ASSERT_NOT_REACHED();
+        String state;
+        decoder >> state;
+
+        frameState.documentState.append(std::move(state));
     }
 
     String formContentType;
@@ -508,10 +551,8 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
     bool hasStateObject;
     decoder >> hasStateObject;
 
-    if (hasStateObject) {
-        // FIXME: Implement.
-        ASSERT_NOT_REACHED();
-    }
+    if (hasStateObject)
+        decoder >> frameState.stateObjectData;
 
     decoder >> frameState.target;
 }
