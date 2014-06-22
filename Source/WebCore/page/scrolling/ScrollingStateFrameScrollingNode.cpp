@@ -244,6 +244,20 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, int indent
         writeIndent(ts, indent + 1);
         ts << "(frame scale factor " << m_frameScaleFactor << ")\n";
     }
+    
+    if (!m_nonFastScrollableRegion.isEmpty()) {
+        ++indent;
+        writeIndent(ts, indent);
+        ts << "(non-fast-scrollable region";
+        ++indent;
+        for (auto rect : m_nonFastScrollableRegion.rects()) {
+            ts << "\n";
+            writeIndent(ts, indent);
+            ts << rect;
+        }
+        ts << ")\n";
+        indent -= 2;
+    }
 
     if (m_synchronousScrollingReasons) {
         writeIndent(ts, indent + 1);

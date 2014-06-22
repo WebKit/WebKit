@@ -592,7 +592,22 @@ void RemoteScrollingTreeTextStream::dump(const ScrollingStateFrameScrollingNode&
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::FrameScaleFactor))
         dumpProperty(ts, "frame-scale-factor", node.frameScaleFactor());
 
-    // FIXME: dump nonFastScrollableRegion
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::NonFastScrollableRegion)) {
+        ts << "\n";
+        ts.increaseIndent();
+        ts.writeIndent();
+        ts << "(non-fast-scrollable-region";
+        ts.increaseIndent();
+        for (auto rect : node.nonFastScrollableRegion().rects()) {
+            ts << "\n";
+            ts.writeIndent();
+            ts << rect;
+        }
+        ts << ")\n";
+        ts.decreaseIndent();
+        ts.decreaseIndent();
+    }
+
     // FIXME: dump wheelEventHandlerCount
     // FIXME: dump synchronousScrollingReasons
     // FIXME: dump scrollableAreaParameters

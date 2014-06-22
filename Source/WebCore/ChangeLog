@@ -1,3 +1,16 @@
+2014-06-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Have scrollingTreeAsText() dump the non-fast-scrollable region
+        https://bugs.webkit.org/show_bug.cgi?id=134149
+
+        Reviewed by Sam Weinig.
+
+        Dump the non-fast-scrollable region (as an array of rects).
+
+        * WebCore.exp.in:
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+        (WebCore::ScrollingStateFrameScrollingNode::dumpProperties):
+
 2014-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Use unsigneds instead of ints for indexes into a string in text layout code

@@ -1,6 +1,9 @@
 (Frame scrolling node
   (scrollable area size 785 600)
   (contents size 785 1016)
+  (non-fast-scrollable region
+    at (37,29) size 500x300
+    at (45,329) size 404x12)
   (children 1
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
