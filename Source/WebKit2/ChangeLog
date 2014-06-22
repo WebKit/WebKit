@@ -1,5 +1,21 @@
 2014-06-22  Anders Carlsson  <andersca@apple.com>
 
+        Add IPC decoding support to BackForwardListState
+        https://bugs.webkit.org/show_bug.cgi?id=134171
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/SessionState.cpp:
+        (WebKit::isValidEnum):
+        (WebKit::HTTPBody::Element::decode):
+        (WebKit::HTTPBody::decode):
+        (WebKit::FrameState::decode):
+        (WebKit::PageState::decode):
+        (WebKit::BackForwardListState::decode):
+        * Shared/SessionState.h:
+
+2014-06-22  Anders Carlsson  <andersca@apple.com>
+
         Address a review comment.
 
         * UIProcess/mac/LegacySessionStateCoding.cpp:

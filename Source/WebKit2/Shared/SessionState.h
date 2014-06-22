@@ -42,6 +42,7 @@ namespace WebKit {
 struct HTTPBody {
     struct Element {
         void encode(IPC::ArgumentEncoder&) const;
+        static bool decode(IPC::ArgumentDecoder&, Element&);
 
         enum class Type {
             Data,
@@ -65,6 +66,7 @@ struct HTTPBody {
     };
 
     void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, HTTPBody&);
 
     String contentType;
     Vector<Element> elements;
@@ -72,6 +74,7 @@ struct HTTPBody {
 
 struct FrameState {
     void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, FrameState&);
 
     String urlString;
     String originalURLString;
@@ -94,6 +97,7 @@ struct FrameState {
 
 struct PageState {
     void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, PageState&);
 
     String title;
     FrameState mainFrameState;
@@ -101,6 +105,7 @@ struct PageState {
 
 struct BackForwardListState {
     void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, BackForwardListState&);
 
     Vector<PageState> items;
     uint32_t currentIndex;

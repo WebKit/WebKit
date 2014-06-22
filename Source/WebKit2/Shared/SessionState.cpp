@@ -41,10 +41,52 @@ void HTTPBody::Element::encode(IPC::ArgumentEncoder& encoder) const
     encoder << blobURLString;
 }
 
+static bool isValidEnum(HTTPBody::Element::Type type)
+{
+    switch (type) {
+    case HTTPBody::Element::Type::Data:
+    case HTTPBody::Element::Type::File:
+    case HTTPBody::Element::Type::Blob:
+        return true;
+    }
+
+    return false;
+}
+
+bool HTTPBody::Element::decode(IPC::ArgumentDecoder& decoder, Element& result)
+{
+    if (!decoder.decodeEnum(result.type) || !isValidEnum(result.type))
+        return false;
+    if (!decoder.decode(result.data))
+        return false;
+    if (!decoder.decode(result.filePath))
+        return false;
+    if (!decoder.decode(result.fileStart))
+        return false;
+    if (!decoder.decode(result.fileLength))
+        return false;
+    if (!decoder.decode(result.expectedFileModificationTime))
+        return false;
+    if (!decoder.decode(result.blobURLString))
+        return false;
+
+    return true;
+}
+
 void HTTPBody::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << contentType;
     encoder << elements;
+}
+
+bool HTTPBody::decode(IPC::ArgumentDecoder& decoder, HTTPBody& result)
+{
+    if (!decoder.decode(result.contentType))
+        return false;
+    if (!decoder.decode(result.elements))
+        return false;
+
+    return true;
 }
 
 void FrameState::encode(IPC::ArgumentEncoder& encoder) const
@@ -68,15 +110,68 @@ void FrameState::encode(IPC::ArgumentEncoder& encoder) const
     encoder << children;
 }
 
+bool FrameState::decode(IPC::ArgumentDecoder& decoder, FrameState& result)
+{
+    if (!decoder.decode(result.urlString))
+        return false;
+    if (!decoder.decode(result.originalURLString))
+        return false;
+    if (!decoder.decode(result.referrer))
+        return false;
+    if (!decoder.decode(result.target))
+        return false;
+
+    if (!decoder.decode(result.documentState))
+        return false;
+    if (!decoder.decode(result.stateObjectData))
+        return false;
+
+    if (!decoder.decode(result.documentSequenceNumber))
+        return false;
+    if (!decoder.decode(result.itemSequenceNumber))
+        return false;
+
+    if (!decoder.decode(result.scrollPoint))
+        return false;
+    if (!decoder.decode(result.pageScaleFactor))
+        return false;
+
+    if (!decoder.decode(result.httpBody))
+        return false;
+
+    if (!decoder.decode(result.children))
+        return false;
+
+    return true;
+}
+
 void PageState::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << mainFrameState;
+}
+
+bool PageState::decode(IPC::ArgumentDecoder& decoder, PageState& result)
+{
+    if (!decoder.decode(result.mainFrameState))
+        return false;
+
+    return true;
 }
 
 void BackForwardListState::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << items;
     encoder << currentIndex;
+}
+
+bool BackForwardListState::decode(IPC::ArgumentDecoder& decoder, BackForwardListState& result)
+{
+    if (!decoder.decode(result.items))
+        return false;
+    if (!decoder.decode(result.currentIndex))
+        return false;
+
+    return true;
 }
 
 } // namespace WebKit
