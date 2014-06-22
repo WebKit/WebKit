@@ -241,7 +241,11 @@ void LocalStorageDatabase::scheduleDatabaseUpdate()
         return;
 
     m_didScheduleDatabaseUpdate = true;
-    m_queue->dispatchAfter(databaseUpdateInterval, bind(&LocalStorageDatabase::updateDatabase, this));
+
+    RefPtr<LocalStorageDatabase> localStorageDatabase(this);
+    m_queue->dispatchAfter(databaseUpdateInterval, [localStorageDatabase] {
+        localStorageDatabase->updateDatabase();
+    });
 }
 
 void LocalStorageDatabase::updateDatabase()

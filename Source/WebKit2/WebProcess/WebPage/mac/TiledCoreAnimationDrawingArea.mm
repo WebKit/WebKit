@@ -144,10 +144,10 @@ bool TiledCoreAnimationDrawingArea::forceRepaintAsync(uint64_t callbackID)
     if (m_layerTreeStateIsFrozen)
         return false;
 
-    dispatchAfterEnsuringUpdatedScrollPosition(bind(^{
+    dispatchAfterEnsuringUpdatedScrollPosition([this, callbackID] {
         m_webPage->drawingArea()->forceRepaint();
         m_webPage->send(Messages::WebPageProxy::VoidCallback(callbackID));
-    }));
+    });
     return true;
 }
 
@@ -242,7 +242,7 @@ void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(s
     // (The web page is already kept alive by dispatchAfterEnsuringUpdatedScrollPosition).
     WebPage* webPage = m_webPage;
 
-    ScrollingThread::dispatchBarrier(bind(^{
+    ScrollingThread::dispatchBarrier([this, webPage, function] {
         DrawingArea* drawingArea = webPage->drawingArea();
         if (!drawingArea)
             return;
@@ -253,7 +253,7 @@ void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(s
             m_layerFlushScheduler.resume();
 
         webPage->deref();
-    }));
+    });
 #else
     function();
 #endif

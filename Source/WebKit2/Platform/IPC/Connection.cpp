@@ -677,7 +677,10 @@ void Connection::processIncomingMessage(std::unique_ptr<MessageDecoder> message)
 
 void Connection::postConnectionDidCloseOnConnectionWorkQueue()
 {
-    m_connectionQueue->dispatch(WTF::bind(&Connection::connectionDidClose, this));
+    RefPtr<Connection> connection(this);
+    m_connectionQueue->dispatch([connection] {
+        connection->connectionDidClose();
+    });
 }
 
 void Connection::connectionDidClose()
@@ -708,23 +711,21 @@ void Connection::connectionDidClose()
     if (m_didCloseOnConnectionWorkQueueCallback)
         m_didCloseOnConnectionWorkQueueCallback(this);
 
-    m_clientRunLoop.dispatch(WTF::bind(&Connection::dispatchConnectionDidClose, this));
-}
+    RefPtr<Connection> connection(this);
+    m_clientRunLoop.dispatch([connection] {
+        // If the connection has been explicitly invalidated before dispatchConnectionDidClose was called,
+        // then the client will be null here.
+        if (!connection->m_client)
+            return;
 
-void Connection::dispatchConnectionDidClose()
-{
-    // If the connection has been explicitly invalidated before dispatchConnectionDidClose was called,
-    // then the client will be null here.
-    if (!m_client)
-        return;
+        // Because we define a connection as being "valid" based on wheter it has a null client, we null out
+        // the client before calling didClose here. Otherwise, sendSync will try to send a message to the connection and
+        // will then wait indefinitely for a reply.
+        Client* client = connection->m_client;
+        connection->m_client = nullptr;
 
-    // Because we define a connection as being "valid" based on wheter it has a null client, we null out
-    // the client before calling didClose here. Otherwise, sendSync will try to send a message to the connection and
-    // will then wait indefinitely for a reply.
-    Client* client = m_client;
-    m_client = 0;
-    
-    client->didClose(this);
+        client->didClose(connection.get());
+    });
 }
 
 bool Connection::canSendOutgoingMessages() const
@@ -810,8 +811,6 @@ void Connection::dispatchMessage(MessageDecoder& decoder)
 
 void Connection::dispatchMessage(std::unique_ptr<MessageDecoder> message)
 {
-    // If there's no client, return. We do this after calling releaseArguments so that
-    // the ArgumentDecoder message will be freed.
     if (!m_client)
         return;
 

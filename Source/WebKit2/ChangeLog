@@ -1,3 +1,28 @@
+2014-06-22  Anders Carlsson  <andersca@apple.com>
+
+        Replace a couple of uses of bind with lambdas
+        https://bugs.webkit.org/show_bug.cgi?id=134172
+
+        Reviewed by Sam Weinig.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::postConnectionDidCloseOnConnectionWorkQueue):
+        (IPC::Connection::connectionDidClose):
+        (IPC::Connection::dispatchMessage):
+        (IPC::Connection::dispatchConnectionDidClose): Deleted.
+        * Platform/IPC/Connection.h:
+        * Shared/Plugins/NPObjectProxy.cpp:
+        (WebKit::NPObjectProxy::NP_Deallocate):
+        * UIProcess/Storage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::scheduleDatabaseUpdate):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::pluginThreadAsyncCall):
+        (WebKit::NetscapePlugin::handlePluginThreadAsyncCall): Deleted.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::forceRepaintAsync):
+        (WebKit::TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition):
+
 2014-06-20  Simon Fraser  <simon.fraser@apple.com>
 
         Have scrollingTreeAsText() dump the non-fast-scrollable region

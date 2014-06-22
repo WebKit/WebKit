@@ -217,7 +217,6 @@ private:
     void connectionDidClose();
     
     // Called on the listener thread.
-    void dispatchConnectionDidClose();
     void dispatchOneMessage();
     void dispatchMessage(std::unique_ptr<MessageDecoder>);
     void dispatchMessage(MessageDecoder&);

@@ -304,15 +304,13 @@ void NetscapePlugin::popPopupsEnabledState()
 
 void NetscapePlugin::pluginThreadAsyncCall(void (*function)(void*), void* userData)
 {
-    RunLoop::main().dispatch(WTF::bind(&NetscapePlugin::handlePluginThreadAsyncCall, this, function, userData));
-}
-    
-void NetscapePlugin::handlePluginThreadAsyncCall(void (*function)(void*), void* userData)
-{
-    if (!m_isStarted)
-        return;
+    RefPtr<NetscapePlugin> plugin(this);
+    RunLoop::main().dispatch([plugin, function, userData] {
+        if (!plugin->m_isStarted)
+            return;
 
-    function(userData);
+        function(userData);
+    });
 }
 
 NetscapePlugin::Timer::Timer(NetscapePlugin* netscapePlugin, unsigned timerID, unsigned interval, bool repeat, TimerFunc timerFunc)

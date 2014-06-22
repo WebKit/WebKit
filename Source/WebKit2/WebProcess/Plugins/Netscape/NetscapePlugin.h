@@ -120,9 +120,6 @@ public:
 
     void pluginThreadAsyncCall(void (*function)(void*), void* userData);
 
-    // Called on the plug-in run loop (which is currently the main thread run loop).
-    void handlePluginThreadAsyncCall(void (*function)(void*), void* userData);
-
     unsigned scheduleTimer(unsigned interval, bool repeat, void (*timerFunc)(NPP, unsigned timerID));
     void unscheduleTimer(unsigned timerID);
 
