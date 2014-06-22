@@ -103,7 +103,7 @@ bool SVGTextRunRenderingContext::applySVGKerning(const SimpleFontData* fontData,
 
 class SVGGlyphToPathTranslator final : public GlyphToPathTranslator {
 public:
-    SVGGlyphToPathTranslator(const TextRun* const, const GlyphBuffer&, const FloatPoint&, const SVGFontData&, SVGFontElement&, unsigned from, unsigned numGlyphs, float scale, bool isVerticalText);
+    SVGGlyphToPathTranslator(const TextRun* const, const GlyphBuffer&, const FloatPoint&, const SVGFontData&, SVGFontElement&, const int from, const int numGlyphs, float scale, bool isVerticalText);
 private:
     virtual bool containsMorePaths() override
     {
@@ -123,15 +123,15 @@ private:
     FloatPoint m_currentPoint;
     FloatPoint m_glyphOrigin;
     SVGGlyph m_svgGlyph;
-    unsigned m_index;
+    int m_index;
     Glyph m_glyph;
     SVGFontElement& m_fontElement;
-    const unsigned m_stoppingPoint;
+    const float m_stoppingPoint;
     const float m_scale;
     const bool m_isVerticalText;
 };
 
-SVGGlyphToPathTranslator::SVGGlyphToPathTranslator(const TextRun* const textRun, const GlyphBuffer& glyphBuffer, const FloatPoint& point, const SVGFontData& svgFontData, SVGFontElement& fontElement, unsigned from, unsigned numGlyphs, float scale, bool isVerticalText)
+SVGGlyphToPathTranslator::SVGGlyphToPathTranslator(const TextRun* const textRun, const GlyphBuffer& glyphBuffer, const FloatPoint& point, const SVGFontData& svgFontData, SVGFontElement& fontElement, const int from, const int numGlyphs, float scale, bool isVerticalText)
     : m_textRun(textRun)
     , m_glyphBuffer(glyphBuffer)
     , m_svgFontData(svgFontData)
@@ -287,7 +287,7 @@ void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const S
     }
 }
 
-GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, WidthIterator& iterator, UChar32 character, bool mirror, unsigned currentCharacter, unsigned& advanceLength)
+GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, WidthIterator& iterator, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength)
 {
     const SimpleFontData* primaryFont = font.primaryFont();
     ASSERT(primaryFont);

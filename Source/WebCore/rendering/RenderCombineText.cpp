@@ -72,8 +72,9 @@ void RenderCombineText::adjustTextOrigin(FloatPoint& textOrigin, const FloatRect
         textOrigin.move(boxRect.height() / 2 - ceilf(m_combinedTextWidth) / 2, style().font().pixelSize());
 }
 
-void RenderCombineText::getStringToRender(unsigned start, String& string, unsigned& length) const
+void RenderCombineText::getStringToRender(int start, String& string, int& length) const
 {
+    ASSERT(start >= 0);
     if (m_isCombined) {
         string = originalText();
         length = string.length();
@@ -81,7 +82,7 @@ void RenderCombineText::getStringToRender(unsigned start, String& string, unsign
     }
  
     string = text();
-    string = string.substringSharingImpl(start, length);
+    string = string.substringSharingImpl(static_cast<unsigned>(start), length);
 }
 
 void RenderCombineText::combineText()

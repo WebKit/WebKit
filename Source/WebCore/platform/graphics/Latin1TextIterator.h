@@ -30,7 +30,7 @@ class Latin1TextIterator {
 public:
     // The passed in LChar pointer starts at 'currentCharacter'. The iterator operates on the range [currentCharacter, lastCharacter].
     // 'endCharacter' denotes the maximum length of the UChar array, which might exceed 'lastCharacter'.
-    Latin1TextIterator(const LChar* characters, unsigned currentCharacter, unsigned lastCharacter, unsigned /*endCharacter*/)
+    Latin1TextIterator(const LChar* characters, int currentCharacter, int lastCharacter, int /*endCharacter*/)
         : m_characters(characters)
         , m_currentCharacter(currentCharacter)
         , m_lastCharacter(lastCharacter)
@@ -53,13 +53,13 @@ public:
         m_currentCharacter += advanceLength;
     }
 
-    unsigned currentCharacter() const { return m_currentCharacter; }
+    int currentCharacter() const { return m_currentCharacter; }
     const LChar* characters() const { return m_characters; }
 
 private:
     const LChar* m_characters;
-    unsigned m_currentCharacter;
-    unsigned m_lastCharacter;
+    int m_currentCharacter;
+    int m_lastCharacter;
 };
 
 }

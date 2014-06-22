@@ -130,11 +130,11 @@ float SVGFontData::widthForSVGGlyph(Glyph glyph, float fontSize) const
     return svgGlyph.horizontalAdvanceX * scaleEmToUnits(fontSize, svgFontFaceElement->unitsPerEm());
 }
 
-bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& glyphData, bool mirror, unsigned currentCharacter, unsigned& advanceLength) const
+bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& glyphData, bool mirror, int currentCharacter, unsigned& advanceLength) const
 {
     const TextRun& run = iterator.run();
     Vector<SVGGlyph::ArabicForm>& arabicForms = iterator.arabicForms();
-    ASSERT(run.charactersLength() >= currentCharacter);
+    ASSERT(int(run.charactersLength()) >= currentCharacter);
 
     // Associate text with arabic forms, if needed.
     String remainingTextInRun;

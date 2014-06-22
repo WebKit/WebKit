@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-SurrogatePairAwareTextIterator::SurrogatePairAwareTextIterator(const UChar* characters, unsigned currentCharacter, unsigned lastCharacter, unsigned endCharacter)
+SurrogatePairAwareTextIterator::SurrogatePairAwareTextIterator(const UChar* characters, int currentCharacter, int lastCharacter, int endCharacter)
     : m_characters(characters)
     , m_currentCharacter(currentCharacter)
     , m_lastCharacter(lastCharacter)

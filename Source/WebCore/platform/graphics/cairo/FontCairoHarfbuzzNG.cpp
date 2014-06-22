@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, unsigned, unsigned) const
+float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int, int) const
 {
     GlyphBuffer glyphBuffer;
     HarfBuzzShaper shaper(this, run);
@@ -52,7 +52,7 @@ float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const 
     return 0;
 }
 
-void Font::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const TextRun& /* run */, const AtomicString& /* mark */, const FloatPoint& /* point */, unsigned /* from */, unsigned /* to */) const
+void Font::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const TextRun& /* run */, const AtomicString& /* mark */, const FloatPoint& /* point */, int /* from */, int /* to */) const
 {
     notImplemented();
 }
@@ -85,7 +85,7 @@ int Font::offsetForPositionForComplexText(const TextRun& run, float x, bool) con
     return 0;
 }
 
-void Font::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, unsigned from, unsigned to) const
+void Font::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, int from, int to) const
 {
     HarfBuzzShaper shaper(this, run);
     if (shaper.shape()) {

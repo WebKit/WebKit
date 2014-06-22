@@ -101,7 +101,7 @@ int SVGInlineTextBox::offsetForPositionInFragment(const SVGTextFragment& fragmen
     return fragment.characterOffset - start() + renderer().scaledFont().offsetForPosition(textRun, position * scalingFactor, includePartialGlyphs);
 }
 
-float SVGInlineTextBox::positionForOffset(unsigned) const
+float SVGInlineTextBox::positionForOffset(int) const
 {
     // SVG doesn't use the offset <-> position selection system. 
     ASSERT_NOT_REACHED();
@@ -137,12 +137,11 @@ FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& 
     return snappedSelectionRect;
 }
 
-LayoutRect SVGInlineTextBox::localSelectionRect(unsigned startPosition, unsigned endPosition) const
+LayoutRect SVGInlineTextBox::localSelectionRect(int startPosition, int endPosition) const
 {
-    unsigned boxStart = start();
-    startPosition = startPosition > boxStart ? startPosition - boxStart : 0;
-    ASSERT(endPosition >= boxStart);
-    endPosition = std::min(endPosition - boxStart, len());
+    int boxStart = start();
+    startPosition = std::max(startPosition - boxStart, 0);
+    endPosition = std::min(endPosition - boxStart, static_cast<int>(len()));
     if (startPosition >= endPosition)
         return LayoutRect();
 
@@ -150,8 +149,8 @@ LayoutRect SVGInlineTextBox::localSelectionRect(unsigned startPosition, unsigned
 
     AffineTransform fragmentTransform;
     FloatRect selectionRect;
-    unsigned fragmentStartPosition = 0;
-    unsigned fragmentEndPosition = 0;
+    int fragmentStartPosition = 0;
+    int fragmentEndPosition = 0;
 
     unsigned textFragmentsSize = m_textFragments.size();
     for (unsigned i = 0; i < textFragmentsSize; ++i) {
@@ -214,11 +213,11 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
             selectionStyle = &style;
     }
 
-    unsigned startPosition, endPosition;
+    int startPosition, endPosition;
     selectionStartEnd(startPosition, endPosition);
 
-    unsigned fragmentStartPosition = 0;
-    unsigned fragmentEndPosition = 0;
+    int fragmentStartPosition = 0;
+    int fragmentEndPosition = 0;
     AffineTransform fragmentTransform;
     unsigned textFragmentsSize = m_textFragments.size();
     for (unsigned i = 0; i < textFragmentsSize; ++i) {
@@ -441,24 +440,21 @@ TextRun SVGInlineTextBox::constructTextRun(RenderStyle* style, const SVGTextFrag
     return run;
 }
 
-bool SVGInlineTextBox::mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment& fragment, unsigned& startPosition, unsigned& endPosition) const
+bool SVGInlineTextBox::mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment& fragment, int& startPosition, int& endPosition) const
 {
     if (startPosition >= endPosition)
         return false;
-    
-    ASSERT(fragment.characterOffset >= start());
-    unsigned offset = fragment.characterOffset - start();
-    unsigned length = fragment.length;
+
+    int offset = static_cast<int>(fragment.characterOffset) - start();
+    int length = static_cast<int>(fragment.length);
 
     if (startPosition >= offset + length || endPosition <= offset)
         return false;
 
     if (startPosition < offset)
         startPosition = 0;
-    else {
-        ASSERT(startPosition >= offset);
+    else
         startPosition -= offset;
-    }
 
     if (endPosition > offset + length)
         endPosition = length;
@@ -630,8 +626,8 @@ void SVGInlineTextBox::paintText(GraphicsContext* context, RenderStyle* style, R
     ASSERT(style);
     ASSERT(selectionStyle);
 
-    unsigned startPosition = 0;
-    unsigned endPosition = 0;
+    int startPosition = 0;
+    int endPosition = 0;
     if (hasSelection) {
         selectionStartEnd(startPosition, endPosition);
         hasSelection = mapStartEndPositionsIntoFragmentCoordinates(fragment, startPosition, endPosition);
@@ -659,7 +655,7 @@ void SVGInlineTextBox::paintText(GraphicsContext* context, RenderStyle* style, R
         SVGResourcesCache::clientStyleChanged(parent()->renderer(), StyleDifferenceRepaint, *style);
 
     // Eventually draw text using regular style from the end position of the selection to the end of the current chunk part
-    if (endPosition < fragment.length && !paintSelectedTextOnly)
+    if (endPosition < static_cast<int>(fragment.length) && !paintSelectedTextOnly)
         paintTextWithShadows(context, style, textRun, fragment, endPosition, fragment.length);
 }
 
