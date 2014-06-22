@@ -1,3 +1,12 @@
+2014-06-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Disable gamepad feature on EFL and GTK ports by default
+        https://bugs.webkit.org/show_bug.cgi?id=134169
+
+        Reviewed by Brady Eidson.
+
+        * Source/cmake/OptionsEfl.cmake: Disable ENABLE_GAMEPAD_DEPRECATED.
+
 2014-06-21  Brady Eidson  <beidson@apple.com>
 
         Gamepad API - Deprecate the existing implementation
