@@ -1,3 +1,27 @@
+2014-06-20  Simon Fraser  <simon.fraser@apple.com>
+
+        [WK2] Frameset frames are not scrollable after loading (and should be)
+        https://bugs.webkit.org/show_bug.cgi?id=134151
+        <rdar://problem/17403365>
+
+        Reviewed by Dan Bates.
+        
+        When loading a <frameset>, we could end up with an empty non-fast-scrollable
+        region for the main frame, because after the initial frameset document layout,
+        nothing updated the non-fast scrollable region as the subframes added their
+        scrollable areas to the the main frame's scrollable area set.
+        
+        Fix by having addScrollableArea() and removeScrollableArea() trigger an update
+        of the non-fast scrollable region.
+
+        Test: platform/mac-wk2/tiled-drawing/scrolling/frames/frameset-frame-scrollability.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addScrollableArea):
+        (WebCore::FrameView::removeScrollableArea):
+        (WebCore::FrameView::scrollableAreaSetChanged):
+        * page/FrameView.h:
+
 2014-06-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r170265.

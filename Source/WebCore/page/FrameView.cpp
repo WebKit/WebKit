@@ -4045,17 +4045,35 @@ bool FrameView::addScrollableArea(ScrollableArea* scrollableArea)
 {
     if (!m_scrollableAreas)
         m_scrollableAreas = std::make_unique<ScrollableAreaSet>();
-    return m_scrollableAreas->add(scrollableArea).isNewEntry;
+    
+    if (m_scrollableAreas->add(scrollableArea).isNewEntry) {
+        scrollableAreaSetChanged();
+        return true;
+    }
+
+    return false;
 }
 
 bool FrameView::removeScrollableArea(ScrollableArea* scrollableArea)
 {
-    return m_scrollableAreas && m_scrollableAreas->remove(scrollableArea);
+    if (m_scrollableAreas && m_scrollableAreas->remove(scrollableArea)) {
+        scrollableAreaSetChanged();
+        return true;
+    }
+    return false;
 }
 
 bool FrameView::containsScrollableArea(ScrollableArea* scrollableArea) const
 {
     return m_scrollableAreas && m_scrollableAreas->contains(scrollableArea);
+}
+
+void FrameView::scrollableAreaSetChanged()
+{
+    if (auto* page = frame().page()) {
+        if (auto* scrollingCoordinator = page->scrollingCoordinator())
+            scrollingCoordinator->frameViewNonFastScrollableRegionChanged(this);
+    }
 }
 
 void FrameView::removeChild(Widget* widget)

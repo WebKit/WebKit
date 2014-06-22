@@ -593,6 +593,7 @@ private:
     void updateEmbeddedObject(RenderEmbeddedObject&);
     void scrollToAnchor();
     void scrollPositionChanged(const IntPoint& oldPosition, const IntPoint& newPosition);
+    void scrollableAreaSetChanged();
 
     bool hasCustomScrollbars() const;
 

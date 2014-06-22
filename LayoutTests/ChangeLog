@@ -1,5 +1,18 @@
 2014-06-20  Simon Fraser  <simon.fraser@apple.com>
 
+        [WK2] Frameset frames are not scrollable after loading (and should be)
+        https://bugs.webkit.org/show_bug.cgi?id=134151
+        <rdar://problem/17403365>
+
+        Reviewed by Dan Bates.
+        
+        Frameset test that dumps the scrolling tree.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/frameset-frame-scrollability.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/resources/scrollable-page.html: Added.
+
+2014-06-20  Simon Fraser  <simon.fraser@apple.com>
+
         Have scrollingTreeAsText() dump the non-fast-scrollable region
         https://bugs.webkit.org/show_bug.cgi?id=134149
 
