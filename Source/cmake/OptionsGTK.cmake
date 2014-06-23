@@ -174,7 +174,7 @@ set(GDK_LIBRARIES ${GDK3_LIBRARIES})
 set(GDK_INCLUDE_DIRS ${GDK3_INCLUDE_DIRS})
 
 set(glib_components gio gobject gthread gmodule)
-if (ENABLE_GAMEPAD_DEPRECATED)
+if (ENABLE_GAMEPAD_DEPRECATED OR ENABLE_GEOLOCATION)
     list(APPEND glib_components gio-unix)
 endif ()
 find_package(GLIB 2.33.2 REQUIRED COMPONENTS ${glib_components})
