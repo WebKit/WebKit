@@ -4159,14 +4159,6 @@ AXObjectCache* FrameView::axObjectCache() const
 }
     
 #if PLATFORM(IOS)
-void FrameView::setUseCustomFixedPositionLayoutRect(bool useCustomFixedPositionLayoutRect)
-{
-    if (m_useCustomFixedPositionLayoutRect == useCustomFixedPositionLayoutRect)
-        return;
-    m_useCustomFixedPositionLayoutRect = useCustomFixedPositionLayoutRect;
-    visibleContentsResized();
-}
-
 void FrameView::setCustomFixedPositionLayoutRect(const IntRect& rect)
 {
     if (m_useCustomFixedPositionLayoutRect && m_customFixedPositionLayoutRect == rect)

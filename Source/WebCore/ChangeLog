@@ -1,3 +1,15 @@
+2014-06-23  Andreas Kling  <akling@apple.com>
+
+        Remove unused FrameView::setUseCustomFixedPositionLayoutRect().
+        <https://webkit.org/b/134194>
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setUseCustomFixedPositionLayoutRect): Deleted.
+        * page/FrameView.h:
+
 2014-06-23  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r160908): Unable to unset bold while entering text
