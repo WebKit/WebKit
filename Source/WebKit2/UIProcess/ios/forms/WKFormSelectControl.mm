@@ -46,11 +46,11 @@ using namespace WebKit;
 
 static const CGFloat minimumOptionFontSize = 12;
 
-CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSize, const Vector<WKOptionItem>& items)
+CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSize, const Vector<OptionItem>& items)
 {
     CGFloat adjustedSize = initialFontSize;
     for (size_t i = 0; i < items.size(); ++i) {
-        const WKOptionItem& item = items[i];
+        const OptionItem& item = items[i];
         if (item.text.isEmpty())
             continue;
 

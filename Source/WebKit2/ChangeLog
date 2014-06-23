@@ -1,3 +1,55 @@
+2014-06-23  Anders Carlsson  <andersca@apple.com>
+
+        Don't use the WK prefix for internal C++ types
+        https://bugs.webkit.org/show_bug.cgi?id=134214
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/AssistedNodeInformation.cpp:
+        (WebKit::OptionItem::encode):
+        (WebKit::OptionItem::decode):
+        (WebKit::WKOptionItem::encode): Deleted.
+        (WebKit::WKOptionItem::decode): Deleted.
+        * Shared/AssistedNodeInformation.h:
+        (WebKit::OptionItem::OptionItem):
+        (WebKit::AssistedNodeInformation::AssistedNodeInformation):
+        (WebKit::WKOptionItem::WKOptionItem): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _requiresKeyboardWhenFirstResponder]):
+        (-[WKContentView inputView]):
+        (-[WKContentView requiresAccessoryView]):
+        (-[WKContentView _updateAccessory]):
+        (-[WKContentView textInputTraits]):
+        (-[WKContentView assistedNodeSelectOptions]):
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:userObject:]):
+        (-[WKContentView _stopAssistingNode]):
+        * UIProcess/ios/forms/WKFormInputControl.mm:
+        (-[WKDateTimePicker initWithView:datePickerMode:]):
+        (-[WKFormInputControl initWithView:]):
+        * UIProcess/ios/forms/WKFormSelectControl.h:
+        * UIProcess/ios/forms/WKFormSelectControl.mm:
+        (adjustedFontSize):
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKOptionPickerCell initWithOptionItem:]):
+        (-[WKOptionGroupPickerCell initWithOptionItem:]):
+        (-[WKMultipleSelectPicker initWithView:]):
+        (-[WKMultipleSelectPicker pickerView:viewForRow:forComponent:reusingView:]):
+        (-[WKMultipleSelectPicker pickerView:row:column:checked:]):
+        (-[WKSelectSinglePicker pickerView:attributedTitleForRow:forComponent:]):
+        (-[WKSelectSinglePicker pickerView:didSelectRow:inComponent:]):
+        * UIProcess/ios/forms/WKFormSelectPopover.mm:
+        (-[WKSelectTableViewController initWithView:hasGroups:]):
+        (-[WKSelectTableViewController tableView:numberOfRowsInSection:]):
+        (-[WKSelectTableViewController tableView:titleForHeaderInSection:]):
+        (-[WKSelectTableViewController populateCell:withItem:]):
+        (-[WKSelectTableViewController findItemIndexAt:]):
+        (-[WKSelectTableViewController findItemAt:]):
+        (-[WKSelectTableViewController tableView:cellForRowAtIndexPath:]):
+        (-[WKSelectTableViewController tableView:didSelectRowAtIndexPath:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getAssistedNodeInformation):
+
 2014-06-23  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] No way to grant storage quotas for web application cache

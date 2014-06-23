@@ -1835,7 +1835,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
 
     if (isHTMLSelectElement(m_assistedNode.get())) {
         HTMLSelectElement* element = toHTMLSelectElement(m_assistedNode.get());
-        information.elementType = WKTypeSelect;
+        information.elementType = InputType::Select;
         size_t count = element->listItems().size();
         int parentGroupID = 0;
         // The parent group ID indicates the group the option belongs to and is 0 for group elements.
@@ -1845,11 +1845,11 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
             HTMLElement* item = element->listItems()[i];
             if (isHTMLOptionElement(item)) {
                 HTMLOptionElement* option = toHTMLOptionElement(item);
-                information.selectOptions.append(WKOptionItem(option->text(), false, parentGroupID, option->selected(), option->fastHasAttribute(WebCore::HTMLNames::disabledAttr)));
+                information.selectOptions.append(OptionItem(option->text(), false, parentGroupID, option->selected(), option->fastHasAttribute(WebCore::HTMLNames::disabledAttr)));
             } else if (isHTMLOptGroupElement(item)) {
                 HTMLOptGroupElement* group = toHTMLOptGroupElement(item);
                 parentGroupID++;
-                information.selectOptions.append(WKOptionItem(group->groupLabelText(), true, 0, false, group->fastHasAttribute(WebCore::HTMLNames::disabledAttr)));
+                information.selectOptions.append(OptionItem(group->groupLabelText(), true, 0, false, group->fastHasAttribute(WebCore::HTMLNames::disabledAttr)));
             }
         }
         information.selectedIndex = element->selectedIndex();
@@ -1858,7 +1858,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         HTMLTextAreaElement* element = toHTMLTextAreaElement(m_assistedNode.get());
         information.autocapitalizeType = static_cast<WebAutocapitalizeType>(element->autocapitalizeType());
         information.isAutocorrect = element->autocorrect();
-        information.elementType = WKTypeTextArea;
+        information.elementType = InputType::TextArea;
         information.isReadOnly = element->isReadOnly();
         information.value = element->value();
     } else if (isHTMLInputElement(m_assistedNode.get())) {
@@ -1869,38 +1869,38 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         information.autocapitalizeType = static_cast<WebAutocapitalizeType>(element->autocapitalizeType());
         information.isAutocorrect = element->autocorrect();
         if (element->isPasswordField())
-            information.elementType = WKTypePassword;
+            information.elementType = InputType::Password;
         else if (element->isSearchField())
-            information.elementType = WKTypeSearch;
+            information.elementType = InputType::Search;
         else if (element->isEmailField())
-            information.elementType = WKTypeEmail;
+            information.elementType = InputType::Email;
         else if (element->isTelephoneField())
-            information.elementType = WKTypePhone;
+            information.elementType = InputType::Phone;
         else if (element->isNumberField())
-            information.elementType = element->getAttribute("pattern") == "\\d*" || element->getAttribute("pattern") == "[0-9]*" ? WKTypeNumberPad : WKTypeNumber;
+            information.elementType = element->getAttribute("pattern") == "\\d*" || element->getAttribute("pattern") == "[0-9]*" ? InputType::NumberPad : InputType::Number;
         else if (element->isDateTimeLocalField())
-            information.elementType = WKTypeDateTimeLocal;
+            information.elementType = InputType::DateTimeLocal;
         else if (element->isDateField())
-            information.elementType = WKTypeDate;
+            information.elementType = InputType::Date;
         else if (element->isDateTimeField())
-            information.elementType = WKTypeDateTime;
+            information.elementType = InputType::DateTime;
         else if (element->isTimeField())
-            information.elementType = WKTypeTime;
+            information.elementType = InputType::Time;
         else if (element->isWeekField())
-            information.elementType = WKTypeWeek;
+            information.elementType = InputType::Week;
         else if (element->isMonthField())
-            information.elementType = WKTypeMonth;
+            information.elementType = InputType::Month;
         else if (element->isURLField())
-            information.elementType = WKTypeURL;
+            information.elementType = InputType::URL;
         else if (element->isText()) {
             const AtomicString& pattern = element->fastGetAttribute(HTMLNames::patternAttr);
             if (pattern == "\\d*" || pattern == "[0-9]*")
-                information.elementType = WKTypeNumberPad;
+                information.elementType = InputType::NumberPad;
             else {
-                information.elementType = WKTypeText;
+                information.elementType = InputType::Text;
                 if (!information.formAction.isEmpty()
                     && (element->getNameAttribute().contains("search") || element->getIdAttribute().contains("search") || element->fastGetAttribute(HTMLNames::titleAttr).contains("search")))
-                    information.elementType = WKTypeSearch;
+                    information.elementType = InputType::Search;
             }
         }
 
@@ -1909,7 +1909,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         information.valueAsNumber = element->valueAsNumber();
         information.title = element->title();
     } else if (m_assistedNode->hasEditableStyle()) {
-        information.elementType = WKTypeContentEditable;
+        information.elementType = InputType::ContentEditable;
         information.isAutocorrect = true;   // FIXME: Should we look at the attribute?
         information.autocapitalizeType = WebAutocapitalizeTypeSentences; // FIXME: Should we look at the attribute?
         information.isReadOnly = false;

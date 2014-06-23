@@ -33,30 +33,30 @@
 
 namespace WebKit {
 
-enum WKInputType {
-    WKTypeNone,
-    WKTypeContentEditable,
-    WKTypeText,
-    WKTypePassword,
-    WKTypeTextArea,
-    WKTypeSearch,
-    WKTypeEmail,
-    WKTypeURL,
-    WKTypePhone,
-    WKTypeNumber,
-    WKTypeNumberPad,
-    WKTypeDate,
-    WKTypeDateTime,
-    WKTypeDateTimeLocal,
-    WKTypeMonth,
-    WKTypeWeek,
-    WKTypeTime,
-    WKTypeSelect
+enum class InputType {
+    None,
+    ContentEditable,
+    Text,
+    Password,
+    TextArea,
+    Search,
+    Email,
+    URL,
+    Phone,
+    Number,
+    NumberPad,
+    Date,
+    DateTime,
+    DateTimeLocal,
+    Month,
+    Week,
+    Time,
+    Select
 };
 
 #if PLATFORM(IOS)
-struct WKOptionItem {
-    WKOptionItem()
+struct OptionItem {
+    OptionItem()
         : isGroup(false)
         , isSelected(false)
         , disabled(false)
@@ -64,7 +64,7 @@ struct WKOptionItem {
     {
     }
 
-    WKOptionItem(const WKOptionItem& item)
+    OptionItem(const OptionItem& item)
         : text(item.text)
         , isGroup(item.isGroup)
         , isSelected(item.isSelected)
@@ -73,7 +73,7 @@ struct WKOptionItem {
     {
     }
 
-    WKOptionItem(const String& text, bool isGroup, int parentID, bool selected, bool disabled)
+    OptionItem(const String& text, bool isGroup, int parentID, bool selected, bool disabled)
         : text(text)
         , isGroup(isGroup)
         , isSelected(selected)
@@ -88,7 +88,7 @@ struct WKOptionItem {
     int parentGroupID;
 
     void encode(IPC::ArgumentEncoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, WKOptionItem&);
+    static bool decode(IPC::ArgumentDecoder&, OptionItem&);
 };
 
 struct AssistedNodeInformation {
@@ -103,7 +103,7 @@ struct AssistedNodeInformation {
         , isReadOnly(false)
         , allowsUserScaling(false)
         , autocapitalizeType(WebAutocapitalizeTypeDefault)
-        , elementType(WKTypeNone)
+        , elementType(InputType::None)
         , selectedIndex(-1)
         , valueAsNumber(0)
     {
@@ -121,9 +121,9 @@ struct AssistedNodeInformation {
     bool isReadOnly;
     bool allowsUserScaling;
     WebAutocapitalizeType autocapitalizeType;
-    WKInputType elementType;
+    InputType elementType;
     String formAction;
-    Vector<WKOptionItem> selectOptions;
+    Vector<OptionItem> selectOptions;
     int selectedIndex;
     String value;
     double valueAsNumber;

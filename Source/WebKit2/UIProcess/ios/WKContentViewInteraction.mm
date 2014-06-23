@@ -533,14 +533,14 @@ static inline bool highlightedQuadsAreSmallerThanRect(const Vector<FloatQuad>& q
 {
     // FIXME: We should add the logic to handle keyboard visibility during focus redirects.
     switch (_assistedNodeInformation.elementType) {
-    case WebKit::WKTypeNone:
+    case InputType::None:
         return NO;
-    case WebKit::WKTypeSelect:
+    case InputType::Select:
         return !UICurrentUserInterfaceIdiomIsPad();
-    case WebKit::WKTypeDate:
-    case WebKit::WKTypeMonth:
-    case WebKit::WKTypeDateTimeLocal:
-    case WebKit::WKTypeTime:
+    case InputType::Date:
+    case InputType::Month:
+    case InputType::DateTimeLocal:
+    case InputType::Time:
         return !UICurrentUserInterfaceIdiomIsPad();
     default:
         return !_assistedNodeInformation.isReadOnly;
@@ -567,11 +567,11 @@ static inline bool highlightedQuadsAreSmallerThanRect(const Vector<FloatQuad>& q
 
 - (UIView *)inputView
 {
-    if (_assistedNodeInformation.elementType == WKTypeNone)
+    if (_assistedNodeInformation.elementType == InputType::None)
         return nil;
 
     if (!_inputPeripheral)
-        _inputPeripheral = adoptNS(_assistedNodeInformation.elementType == WKTypeSelect ? [WKFormSelectControl createPeripheralWithView:self] : [WKFormInputControl createPeripheralWithView:self]);
+        _inputPeripheral = adoptNS(_assistedNodeInformation.elementType == InputType::Select ? [WKFormSelectControl createPeripheralWithView:self] : [WKFormInputControl createPeripheralWithView:self]);
     else
         [self _displayFormNodeInputView];
 
@@ -959,27 +959,27 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 - (BOOL)requiresAccessoryView
 {
     switch (_assistedNodeInformation.elementType) {
-    case WKTypeNone:
+    case InputType::None:
         return NO;
-    case WKTypeText:
-    case WKTypePassword:
-    case WKTypeSearch:
-    case WKTypeEmail:
-    case WKTypeURL:
-    case WKTypePhone:
-    case WKTypeNumber:
-    case WKTypeNumberPad:
+    case InputType::Text:
+    case InputType::Password:
+    case InputType::Search:
+    case InputType::Email:
+    case InputType::URL:
+    case InputType::Phone:
+    case InputType::Number:
+    case InputType::NumberPad:
         return YES;
-    case WKTypeContentEditable:
-    case WKTypeTextArea:
+    case InputType::ContentEditable:
+    case InputType::TextArea:
         return YES;
-    case WKTypeSelect:
-    case WKTypeDate:
-    case WKTypeDateTime:
-    case WKTypeDateTimeLocal:
-    case WKTypeMonth:
-    case WKTypeWeek:
-    case WKTypeTime:
+    case InputType::Select:
+    case InputType::Date:
+    case InputType::DateTime:
+    case InputType::DateTimeLocal:
+    case InputType::Month:
+    case InputType::Week:
+    case InputType::Time:
         return !UICurrentUserInterfaceIdiomIsPad();
     }
 }
@@ -1668,10 +1668,10 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         [_formAccessoryView setClearVisible:NO];
     else {
         switch (_assistedNodeInformation.elementType) {
-        case WebKit::WKTypeDate:
-        case WebKit::WKTypeMonth:
-        case WebKit::WKTypeDateTimeLocal:
-        case WebKit::WKTypeTime:
+        case InputType::Date:
+        case InputType::Month:
+        case InputType::DateTimeLocal:
+        case InputType::Time:
             [_formAccessoryView setClearVisible:YES];
             break;
         default:
@@ -1912,13 +1912,13 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     if (!_traits)
         _traits = adoptNS([[UITextInputTraits alloc] init]);
 
-    [_traits setSecureTextEntry:_assistedNodeInformation.elementType == WKTypePassword];
-    [_traits setShortcutConversionType:_assistedNodeInformation.elementType == WKTypePassword ? UITextShortcutConversionTypeNo : UITextShortcutConversionTypeDefault];
+    [_traits setSecureTextEntry:_assistedNodeInformation.elementType == InputType::Password];
+    [_traits setShortcutConversionType:_assistedNodeInformation.elementType == InputType::Password ? UITextShortcutConversionTypeNo : UITextShortcutConversionTypeDefault];
 
     if (!_assistedNodeInformation.formAction.isEmpty())
-        [_traits setReturnKeyType:(_assistedNodeInformation.elementType == WebKit::WKTypeSearch) ? UIReturnKeySearch : UIReturnKeyGo];
+        [_traits setReturnKeyType:(_assistedNodeInformation.elementType == InputType::Search) ? UIReturnKeySearch : UIReturnKeyGo];
 
-    if (_assistedNodeInformation.elementType == WKTypePassword || _assistedNodeInformation.elementType == WKTypeEmail || _assistedNodeInformation.elementType == WKTypeURL || _assistedNodeInformation.formAction.contains("login")) {
+    if (_assistedNodeInformation.elementType == InputType::Password || _assistedNodeInformation.elementType == InputType::Email || _assistedNodeInformation.elementType == InputType::URL || _assistedNodeInformation.formAction.contains("login")) {
         [_traits setAutocapitalizationType:UITextAutocapitalizationTypeNone];
         [_traits setAutocorrectionType:UITextAutocorrectionTypeNo];
     } else {
@@ -1927,19 +1927,19 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     }
 
     switch (_assistedNodeInformation.elementType) {
-    case WebKit::WKTypePhone:
+    case InputType::Phone:
          [_traits setKeyboardType:UIKeyboardTypePhonePad];
          break;
-    case WebKit::WKTypeURL:
+    case InputType::URL:
          [_traits setKeyboardType:UIKeyboardTypeURL];
          break;
-    case WebKit::WKTypeEmail:
+    case InputType::Email:
          [_traits setKeyboardType:UIKeyboardTypeEmailAddress];
           break;
-    case WebKit::WKTypeNumber:
+    case InputType::Number:
          [_traits setKeyboardType:UIKeyboardTypeNumbersAndPunctuation];
          break;
-    case WebKit::WKTypeNumberPad:
+    case InputType::NumberPad:
          [_traits setKeyboardType:UIKeyboardTypeNumberPad];
          break;
     default:
@@ -2243,7 +2243,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     return _assistedNodeInformation;
 }
 
-- (Vector<WKOptionItem>&)assistedNodeSelectOptions
+- (Vector<OptionItem>&)assistedNodeSelectOptions
 {
     return _assistedNodeInformation.selectOptions;
 }
@@ -2274,15 +2274,15 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
         [self becomeFirstResponder];
 
     switch (information.elementType) {
-        case WKTypeSelect:
-        case WKTypeDateTimeLocal:
-        case WKTypeTime:
-        case WKTypeMonth:
-        case WKTypeDate:
-            break;
-        default:
-            [self _startAssistingKeyboard];
-            break;
+    case InputType::Select:
+    case InputType::DateTimeLocal:
+    case InputType::Time:
+    case InputType::Month:
+    case InputType::Date:
+        break;
+    default:
+        [self _startAssistingKeyboard];
+        break;
     }
     [self reloadInputViews];
     [self _displayFormNodeInputView];
@@ -2302,7 +2302,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     [_formInputSession invalidate];
     _formInputSession = nil;
     _isEditable = NO;
-    _assistedNodeInformation.elementType = WKTypeNone;
+    _assistedNodeInformation.elementType = InputType::None;
     _inputPeripheral = nil;
 
     [self _stopAssistingKeyboard];

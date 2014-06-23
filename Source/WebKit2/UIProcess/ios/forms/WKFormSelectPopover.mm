@@ -109,7 +109,7 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
         return nil;
     
     _contentView = view;
-    Vector<WKOptionItem>& selectOptions = [_contentView assistedNodeSelectOptions];
+    Vector<OptionItem>& selectOptions = [_contentView assistedNodeSelectOptions];
     _allowsMultipleSelection = _contentView.assistedNodeInformation.isMultiSelect;
     
     // Even if the select is empty, there is at least one tableview section.
@@ -117,7 +117,7 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     _singleSelectionIndex = NSNotFound;
     NSInteger currentIndex = 0;
     for (size_t i = 0; i < selectOptions.size(); ++i) {
-        const WKOptionItem& item = selectOptions[i];
+        const OptionItem& item = selectOptions[i];
         if (item.isGroup) {
             _numberOfSections++;
             currentIndex = 0;
@@ -164,7 +164,7 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     
     int rowCount = 0;
     for (size_t i = 0; i < [_contentView assistedNodeSelectOptions].size(); ++i) {
-        const WKOptionItem& item = [_contentView assistedNodeSelectOptions][i];
+        const OptionItem& item = [_contentView assistedNodeSelectOptions][i];
         if (item.isGroup)
             continue;
         if (item.parentGroupID == section)
@@ -183,7 +183,7 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     
     int groupCount = 0;
     for (size_t i = 0; i < [_contentView assistedNodeSelectOptions].size(); ++i) {
-        const WKOptionItem& item = [_contentView assistedNodeSelectOptions][i];
+        const OptionItem& item = [_contentView assistedNodeSelectOptions][i];
         if (!item.isGroup)
             continue;
         groupCount++;
@@ -193,12 +193,12 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     return nil;
 }
 
-- (void)populateCell:(UITableViewCell *)cell withItem:(const WKOptionItem *)item
+- (void)populateCell:(UITableViewCell *)cell withItem:(const OptionItem&)item
 {
-    [cell.textLabel setText:item->text];
-    [cell.textLabel setEnabled:!item->disabled];
-    [cell setSelectionStyle:item->disabled ? UITableViewCellSelectionStyleNone : UITableViewCellSelectionStyleBlue];
-    [cell setAccessoryType:item->isSelected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone];
+    [cell.textLabel setText:item.text];
+    [cell.textLabel setEnabled:!item.disabled];
+    [cell setSelectionStyle:item.disabled ? UITableViewCellSelectionStyleNone : UITableViewCellSelectionStyleBlue];
+    [cell setAccessoryType:item.isSelected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone];
 }
 
 - (NSInteger)findItemIndexAt:(NSIndexPath *)indexPath
@@ -209,7 +209,7 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     int optionIndex = 0;
     int rowIndex = 0;
     for (size_t i = 0; i < [_contentView assistedNodeSelectOptions].size(); ++i) {
-        const WKOptionItem& item = [_contentView assistedNodeSelectOptions][i];
+        const OptionItem& item = [_contentView assistedNodeSelectOptions][i];
         if (item.isGroup) {
             rowIndex = 0;
             continue;
@@ -222,14 +222,14 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     return NSNotFound;
 }
 
-- (WKOptionItem *)findItemAt:(NSIndexPath *)indexPath
+- (OptionItem *)findItemAt:(NSIndexPath *)indexPath
 {
     ASSERT(indexPath.row >= 0);
     ASSERT(indexPath.section <= _numberOfSections);
 
     int index = 0;
     for (size_t i = 0; i < [_contentView assistedNodeSelectOptions].size(); ++i) {
-        WKOptionItem& item = [_contentView assistedNodeSelectOptions][i];
+        OptionItem& item = [_contentView assistedNodeSelectOptions][i];
         if (item.isGroup || item.parentGroupID != indexPath.section)
             continue;
         if (index == indexPath.row)
@@ -267,10 +267,10 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
         _fontSize = adjustedFontSize(_maximumTextWidth, font, initialFontSize, _contentView.assistedNodeInformation.selectOptions);
     }
     
-    const WKOptionItem* item = [self findItemAt:indexPath];
+    const OptionItem* item = [self findItemAt:indexPath];
     ASSERT(item);
     
-    [self populateCell:cell withItem:item];
+    [self populateCell:cell withItem:*item];
     [cell.textLabel setFont:[font fontWithSize:_fontSize]];
     [cell.textLabel setLineBreakMode:NSLineBreakByWordWrapping];
     [cell.textLabel setNumberOfLines:2];
@@ -303,7 +303,7 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
         // changes do not trigger "change" events on such selects.
     
         [_contentView page]->setAssistedNodeSelectedIndex(itemIndex, true);
-        WKOptionItem& item = [_contentView assistedNodeSelectOptions][itemIndex];
+        OptionItem& item = [_contentView assistedNodeSelectOptions][itemIndex];
         item.isSelected = newStateIsSelected;
     } else {
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
@@ -336,14 +336,13 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
             _singleSelectionSection = indexPath.section;
  
             [_contentView page]->setAssistedNodeSelectedIndex(itemIndex);
-            WKOptionItem& newItem = [_contentView assistedNodeSelectOptions][itemIndex];
+            OptionItem& newItem = [_contentView assistedNodeSelectOptions][itemIndex];
             newItem.isSelected = true;
         }
         
         // Need to update the model even if there isn't a cell.
         if (oldIndexPath) {
-            WKOptionItem* oldItem = [self findItemAt:oldIndexPath];
-            if (oldItem)
+            if (OptionItem* oldItem = [self findItemAt:oldIndexPath])
                 oldItem->isSelected = false;
         }
         

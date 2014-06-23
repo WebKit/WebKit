@@ -32,7 +32,7 @@
 namespace WebKit {
 
 #if PLATFORM(IOS)
-void WKOptionItem::encode(IPC::ArgumentEncoder& encoder) const
+void OptionItem::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << text;
     encoder << isGroup;
@@ -41,7 +41,7 @@ void WKOptionItem::encode(IPC::ArgumentEncoder& encoder) const
     encoder << parentGroupID;
 }
 
-bool WKOptionItem::decode(IPC::ArgumentDecoder& decoder, WKOptionItem& result)
+bool OptionItem::decode(IPC::ArgumentDecoder& decoder, OptionItem& result)
 {
     if (!decoder.decode(result.text))
         return false;

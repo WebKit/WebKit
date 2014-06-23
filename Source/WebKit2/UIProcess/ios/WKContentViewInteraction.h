@@ -174,7 +174,7 @@ struct WKAutoCorrectionData {
 - (void)_showRunOpenPanel:(WebKit::WebOpenPanelParameters*)parameters resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener;
 - (void)accessoryDone;
 - (void)_didHandleKeyEvent:(WebIOSEvent *)event;
-- (Vector<WebKit::WKOptionItem>&) assistedNodeSelectOptions;
+- (Vector<WebKit::OptionItem>&) assistedNodeSelectOptions;
 - (void)_updateUnscaledView;
 @end
 

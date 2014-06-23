@@ -55,7 +55,7 @@ static const float DisabledOptionAlpha = 0.3;
 
 @property(nonatomic) BOOL disabled;
 
-- (instancetype)initWithOptionItem:(const WKOptionItem&)item;
+- (instancetype)initWithOptionItem:(const OptionItem&)item;
 
 @end
 
@@ -74,7 +74,7 @@ static const float DisabledOptionAlpha = 0.3;
     return self;
 }
 
-- (instancetype)initWithOptionItem:(const WKOptionItem&)item
+- (instancetype)initWithOptionItem:(const OptionItem&)item
 {
     if (!(self = [self init]))
         return nil;
@@ -95,12 +95,12 @@ static const float DisabledOptionAlpha = 0.3;
 
 
 @interface WKOptionGroupPickerCell : WKOptionPickerCell
-- (instancetype)initWithOptionItem:(const WKOptionItem&)item;
+- (instancetype)initWithOptionItem:(const OptionItem&)item;
 @end
 
 @implementation WKOptionGroupPickerCell
 
-- (instancetype)initWithOptionItem:(const WKOptionItem&)item
+- (instancetype)initWithOptionItem:(const OptionItem&)item
 {
     if (!(self = [self init]))
         return nil;
@@ -166,10 +166,10 @@ static const float DisabledOptionAlpha = 0.3;
     [self setSize:[UIKeyboard defaultSizeForInterfaceOrientation:[UIApp interfaceOrientation]]];
     [self reloadAllComponents];
 
-    const Vector<WKOptionItem>& selectOptions = [_view assistedNodeSelectOptions];
+    const Vector<OptionItem>& selectOptions = [_view assistedNodeSelectOptions];
     int currentIndex = 0;
     for (size_t i = 0; i < selectOptions.size(); ++i) {
-        const WKOptionItem& item = selectOptions[i];
+        const OptionItem& item = selectOptions[i];
         if (item.isGroup)
             continue;
 
@@ -222,7 +222,7 @@ static const float DisabledOptionAlpha = 0.3;
 
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)rowIndex forComponent:(NSInteger)columnIndex reusingView:(UIView *)view
 {
-    const WKOptionItem& item = [_view assistedNodeSelectOptions][rowIndex];
+    const OptionItem& item = [_view assistedNodeSelectOptions][rowIndex];
     UIPickerContentView* pickerItem = item.isGroup ? [[[WKOptionGroupPickerCell alloc] initWithOptionItem:item] autorelease] : [[[WKOptionPickerCell alloc] initWithOptionItem:item] autorelease];
 
     // The cell starts out with a null frame. We need to set its frame now so we can find the right font size.
@@ -275,10 +275,11 @@ static const float DisabledOptionAlpha = 0.3;
 
 - (void)pickerView:(UIPickerView *)pickerView row:(int)rowIndex column:(int)columnIndex checked:(BOOL)isChecked
 {
+
     if ((size_t)rowIndex >= [_view assistedNodeSelectOptions].size())
         return;
 
-    WKOptionItem& item = [_view assistedNodeSelectOptions][rowIndex];
+    OptionItem& item = [_view assistedNodeSelectOptions][rowIndex];
 
     if ([self allowsMultipleSelection]) {
         [_view page]->setAssistedNodeSelectedIndex([self findItemIndexAt:rowIndex], isChecked);
@@ -374,7 +375,7 @@ static const float DisabledOptionAlpha = 0.3;
     if (row < 0 || row >= (NSInteger)[_view assistedNodeSelectOptions].size())
         return nil;
 
-    const WKOptionItem& option = [_view assistedNodeSelectOptions][row];
+    const OptionItem& option = [_view assistedNodeSelectOptions][row];
     NSMutableString *trimmedText = [[option.text mutableCopy] autorelease];
     CFStringTrimWhitespace((CFMutableStringRef)trimmedText);
 
@@ -390,13 +391,13 @@ static const float DisabledOptionAlpha = 0.3;
     if (row < 0 || row >= (NSInteger)[_view assistedNodeSelectOptions].size())
         return;
 
-    const WKOptionItem& newSelectedOption = [_view assistedNodeSelectOptions][row];
+    const OptionItem& newSelectedOption = [_view assistedNodeSelectOptions][row];
     if (newSelectedOption.disabled) {
         NSInteger rowToSelect = NSNotFound;
 
         // Search backwards for the previous enabled option.
         for (NSInteger i = row - 1; i >= 0; --i) {
-            const WKOptionItem& earlierOption = [_view assistedNodeSelectOptions][i];
+            const OptionItem& earlierOption = [_view assistedNodeSelectOptions][i];
             if (!earlierOption.disabled) {
                 rowToSelect = i;
                 break;
@@ -406,7 +407,7 @@ static const float DisabledOptionAlpha = 0.3;
         // If nothing previous, search forwards for the next enabled option.
         if (rowToSelect == NSNotFound) {
             for (size_t i = row + 1; i < [_view assistedNodeSelectOptions].size(); ++i) {
-                const WKOptionItem& laterOption = [_view assistedNodeSelectOptions][i];
+                const OptionItem& laterOption = [_view assistedNodeSelectOptions][i];
                 if (!laterOption.disabled) {
                     rowToSelect = i;
                     break;

@@ -31,7 +31,7 @@
 #import <UIKit/UIPickerView.h>
 #import <UIKit/UIPickerView_Private.h>
 
-CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSize, const Vector<WebKit::WKOptionItem>& items);
+CGFloat adjustedFontSize(CGFloat textWidth, UIFont *, CGFloat initialFontSize, const Vector<WebKit::OptionItem>& items);
 
 @class WKContentView;
 

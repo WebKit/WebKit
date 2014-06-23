@@ -90,17 +90,17 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     _shouldRemoveTimeZoneInformation = NO;
     _isTimeInput = NO;
     switch (view.assistedNodeInformation.elementType) {
-    case WebKit::WKTypeDate:
+    case InputType::Date:
         _formatString = kDateFormatString;
         break;
-    case WebKit::WKTypeMonth:
+    case InputType::Month:
         _formatString = kMonthFormatString;
         break;
-    case WebKit::WKTypeTime:
+    case InputType::Time:
         _formatString = kTimeFormatString;
         _isTimeInput = YES;
         break;
-    case WebKit::WKTypeDateTimeLocal:
+    case InputType::DateTimeLocal:
         _shouldRemoveTimeZoneInformation = YES;
         break;
     default:
@@ -236,25 +236,25 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     UIDatePickerMode mode;
 
     switch (view.assistedNodeInformation.elementType) {
-        case WebKit::WKTypeDate:
-            mode = UIDatePickerModeDate;
-            break;
+    case InputType::Date:
+        mode = UIDatePickerModeDate;
+        break;
 
-        case WebKit::WKTypeDateTimeLocal:
-            mode = UIDatePickerModeDateAndTime;
-            break;
+    case InputType::DateTimeLocal:
+        mode = UIDatePickerModeDateAndTime;
+        break;
 
-        case WebKit::WKTypeTime:
-            mode = UIDatePickerModeTime;
-            break;
+    case InputType::Time:
+        mode = UIDatePickerModeTime;
+        break;
 
-        case WebKit::WKTypeMonth:
-            mode = (UIDatePickerMode)UIDatePickerModeYearAndMonth;
-            break;
+    case InputType::Month:
+        mode = (UIDatePickerMode)UIDatePickerModeYearAndMonth;
+        break;
 
-        default:
-            [self release];
-            return nil;
+    default:
+        [self release];
+        return nil;
     }
 
     if (UICurrentUserInterfaceIdiomIsPad())
