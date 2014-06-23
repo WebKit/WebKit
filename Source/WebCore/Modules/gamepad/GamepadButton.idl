@@ -24,7 +24,6 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=GAMEPAD,
     ImplementationLacksVTable
 ] interface GamepadButton {

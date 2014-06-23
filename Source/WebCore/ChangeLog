@@ -3,6 +3,15 @@
         Add skeleton code for updated Gamepad API
         https://bugs.webkit.org/show_bug.cgi?id=134165
 
+        Unreviewed - Forgotten review feedback from http://trac.webkit.org/changeset/170309
+
+        * Modules/gamepad/GamepadButton.idl: Forgot to commit the removal of NoInterfaceObject here.
+
+2014-06-23  Brady Eidson  <beidson@apple.com>
+
+        Add skeleton code for updated Gamepad API
+        https://bugs.webkit.org/show_bug.cgi?id=134165
+
         Reviewed by Dean Jackson.
 
         No new tests (No change in behavior for any tested configuration)
