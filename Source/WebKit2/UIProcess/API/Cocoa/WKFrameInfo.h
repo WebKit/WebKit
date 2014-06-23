@@ -35,7 +35,7 @@
  calls.
  */
 WK_CLASS_AVAILABLE(10_10, 8_0)
-@interface WKFrameInfo : NSObject
+@interface WKFrameInfo : NSObject <NSCopying>
 
 /*! @abstract A Boolean value indicating whether the frame is the main frame
  or a subframe.
@@ -44,7 +44,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract The frame's current request.
  */
-@property (nonatomic, readonly) NSURLRequest *request;
+@property (nonatomic, readonly, copy) NSURLRequest *request;
 
 @end
 

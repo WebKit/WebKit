@@ -42,17 +42,17 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  @discussion Allowed types are NSNumber, NSString, NSDate, NSArray,
  NSDictionary, and NSNull.
  */
-@property (nonatomic, readonly) id body;
+@property (nonatomic, readonly, copy) id body;
 
 /*! @abstract The web view sending the message. */
 @property (nonatomic, readonly, weak) WKWebView *webView;
 
 /*! @abstract The frame sending the message. */
-@property (nonatomic, readonly) WKFrameInfo *frameInfo;
+@property (nonatomic, readonly, copy) WKFrameInfo *frameInfo;
 
 /*! @abstract The name of the message handler to which the message is sent.
  */
-@property (nonatomic, readonly) NSString *name;
+@property (nonatomic, readonly, copy) NSString *name;
 
 @end
 

@@ -56,7 +56,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract A copy of the configuration with which the web view was
  initialized. */
-@property (nonatomic, readonly) WKWebViewConfiguration *configuration;
+@property (nonatomic, readonly, copy) WKWebViewConfiguration *configuration;
 
 /*! @abstract The web view's navigation delegate. */
 @property (nonatomic, weak) id <WKNavigationDelegate> navigationDelegate;
@@ -65,7 +65,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 @property (nonatomic, weak) id <WKUIDelegate> UIDelegate;
 
 /*! @abstract The web view's back-forward list. */
-@property (nonatomic, readonly) WKBackForwardList *backForwardList;
+@property (nonatomic, readonly, strong) WKBackForwardList *backForwardList;
 
 /*! @abstract Returns a web view initialized with a specified frame and
  configuration.
@@ -110,7 +110,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  @discussion @link WKWebView @/link is key-value observing (KVO) compliant
  for this property.
  */
-@property (nonatomic, readonly) NSString *title;
+@property (nonatomic, readonly, copy) NSString *title;
 
 /*! @abstract The active URL.
  @discussion This is the URL that should be reflected in the user
@@ -118,7 +118,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  @link WKWebView @/link is key-value observing (KVO) compliant for this
  property.
  */
-@property (nonatomic, readonly) NSURL *URL;
+@property (nonatomic, readonly, copy) NSURL *URL;
 
 /*! @abstract A Boolean value indicating whether the view is currently
  loading content.
@@ -203,7 +203,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 #if TARGET_OS_IPHONE
 /*! @abstract The scroll view associated with the web view.
  */
-@property (nonatomic, readonly) UIScrollView *scrollView;
+@property (nonatomic, readonly, strong) UIScrollView *scrollView;
 #endif
 
 #if !TARGET_OS_IPHONE

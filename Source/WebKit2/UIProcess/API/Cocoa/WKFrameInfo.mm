@@ -58,9 +58,9 @@
     return _request.get();
 }
 
-- (void)setRequest:(NSURLRequest *)request
+- (id)copyWithZone:(NSZone *)zone
 {
-    _request = adoptNS([request copy]);
+    return [self retain];
 }
 
 @end

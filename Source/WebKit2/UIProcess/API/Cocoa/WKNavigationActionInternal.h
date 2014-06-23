@@ -35,8 +35,8 @@ struct NavigationActionData;
 
 @interface WKNavigationAction ()
 
-@property (nonatomic, readwrite, strong) WKFrameInfo *sourceFrame;
-@property (nonatomic, readwrite, strong) WKFrameInfo *targetFrame;
+@property (nonatomic, readwrite, copy) WKFrameInfo *sourceFrame;
+@property (nonatomic, readwrite, copy) WKFrameInfo *targetFrame;
 
 @property (nonatomic, readwrite, copy) NSURLRequest *request;
 

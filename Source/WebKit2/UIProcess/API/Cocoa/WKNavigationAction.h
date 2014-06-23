@@ -61,11 +61,11 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract The frame requesting the navigation.
  */
-@property (nonatomic, readonly) WKFrameInfo *sourceFrame;
+@property (nonatomic, readonly, copy) WKFrameInfo *sourceFrame;
 
 /*! @abstract The target frame, or nil if this is a new window navigation.
  */
-@property (nonatomic, readonly) WKFrameInfo *targetFrame;
+@property (nonatomic, readonly, copy) WKFrameInfo *targetFrame;
 
 /*! @abstract The type of action that triggered the navigation.
  @discussion The value is one of the constants of the enumerated type WKNavigationType.
@@ -74,7 +74,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract The navigation's request.
  */
-@property (nonatomic, readonly) NSURLRequest *request;
+@property (nonatomic, readonly, copy) NSURLRequest *request;
 
 #if !TARGET_OS_IPHONE
 

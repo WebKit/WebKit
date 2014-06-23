@@ -45,7 +45,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKUserScript : NSObject <NSCopying>
 
 /* @abstract The script source code. */
-@property (nonatomic, readonly) NSString *source;
+@property (nonatomic, readonly, copy) NSString *source;
 
 /* @abstract When the script should be injected. */
 @property (nonatomic, readonly) WKUserScriptInjectionTime injectionTime;

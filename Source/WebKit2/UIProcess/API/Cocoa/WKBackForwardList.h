@@ -37,17 +37,17 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract The current item.
  */
-@property (nonatomic, readonly) WKBackForwardListItem *currentItem;
+@property (nonatomic, readonly, strong) WKBackForwardListItem *currentItem;
 
 /*! @abstract The item immediately preceding the current item, or nil
 if there isn't one.
  */
-@property (nonatomic, readonly) WKBackForwardListItem *backItem;
+@property (nonatomic, readonly, strong) WKBackForwardListItem *backItem;
 
 /*! @abstract The item immediately following the current item, or nil
 if there isn't one.
  */
-@property (nonatomic, readonly) WKBackForwardListItem *forwardItem;
+@property (nonatomic, readonly, strong) WKBackForwardListItem *forwardItem;
 
 /*! @abstract Returns the item at a specified distance from the current
  item.
@@ -63,13 +63,13 @@ if there isn't one.
  @discussion The items are in the order in which they were originally
  visited.
  */
-@property (nonatomic, readonly) NSArray *backList;
+@property (nonatomic, readonly, copy) NSArray *backList;
 
 /*! @abstract The portion of the list following the current item.
  @discussion The items are in the order in which they were originally
  visited.
  */
-@property (nonatomic, readonly) NSArray *forwardList;
+@property (nonatomic, readonly, copy) NSArray *forwardList;
 
 @end
 

@@ -42,7 +42,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract The frame's response.
  */
-@property (nonatomic, readonly) NSURLResponse *response;
+@property (nonatomic, readonly, copy) NSURLResponse *response;
 
 /*! @abstract A Boolean value indicating whether WebKit can display the response's MIME type natively.
  @discussion Allowing a navigation response with a MIME type that can't be shown will cause the navigation to fail.

@@ -134,7 +134,7 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
 
 - (void)setSourceFrame:(WKFrameInfo *)sourceFrame
 {
-    _sourceFrame = sourceFrame;
+    _sourceFrame = adoptNS([sourceFrame copy]);
 }
 
 - (WKFrameInfo *)targetFrame
@@ -144,7 +144,7 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
 
 - (void)setTargetFrame:(WKFrameInfo *)targetFrame
 {
-    _targetFrame = targetFrame;
+    _targetFrame = adoptNS([targetFrame copy]);
 }
 
 - (NSURLRequest *)request

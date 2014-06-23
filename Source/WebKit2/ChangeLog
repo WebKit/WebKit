@@ -1,3 +1,31 @@
+2014-06-23  Anders Carlsson  <andersca@apple.com>
+
+        Give read-only properties proper ownership attributes
+        https://bugs.webkit.org/show_bug.cgi?id=134197
+        <rdar://problem/16830117>
+
+        Reviewed by Dan Bernstein.
+
+        Also, make WKFrameInfo conform to NSCopying since it's a data-only object and thus intended to be copied.
+
+        * UIProcess/API/Cocoa/WKBackForwardList.h:
+        * UIProcess/API/Cocoa/WKBackForwardListItem.h:
+        * UIProcess/API/Cocoa/WKFrameInfo.h:
+        * UIProcess/API/Cocoa/WKFrameInfo.mm:
+        (-[WKFrameInfo copyWithZone:]):
+        (-[WKFrameInfo setRequest:]): Deleted.
+        * UIProcess/API/Cocoa/WKNavigation.h:
+        * UIProcess/API/Cocoa/WKNavigationAction.h:
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (-[WKNavigationAction setSourceFrame:]):
+        (-[WKNavigationAction setTargetFrame:]):
+        * UIProcess/API/Cocoa/WKNavigationActionInternal.h:
+        * UIProcess/API/Cocoa/WKNavigationResponse.h:
+        * UIProcess/API/Cocoa/WKScriptMessage.h:
+        * UIProcess/API/Cocoa/WKUserContentController.h:
+        * UIProcess/API/Cocoa/WKUserScript.h:
+        * UIProcess/API/Cocoa/WKWebView.h:
+
 2014-06-23  Gwang Yoon Hwang  <yoon@igalia.com>
 
         Unreviewed, GTK build fix after r170274.

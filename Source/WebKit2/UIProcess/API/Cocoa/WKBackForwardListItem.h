@@ -36,15 +36,15 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract The URL of the webpage represented by this item.
  */
-@property (readonly) NSURL *URL;
+@property (readonly, copy) NSURL *URL;
 
 /*! @abstract The title of the webpage represented by this item.
  */
-@property (readonly) NSString *title;
+@property (readonly, copy) NSString *title;
 
 /*! @abstract The URL of the initial request that created this item.
  */
-@property (readonly) NSURL *initialURL;
+@property (readonly, copy) NSURL *initialURL;
 
 @end
 
