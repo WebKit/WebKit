@@ -288,8 +288,6 @@ extern bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
 
 extern CFStringRef (*wkCopyDefaultSearchProviderDisplayName)(void);
 
-extern NSURL *(*wkAVAssetResolvedURL)(AVAsset*);
-
 extern NSCursor *(*wkCursor)(const char*);
 #endif // !PLATFORM(IOS)
     

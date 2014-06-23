@@ -148,8 +148,6 @@ bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
 CFStringRef (*wkCopyDefaultSearchProviderDisplayName)(void);
 void (*wkSetCrashReportApplicationSpecificInformation)(CFStringRef);
 
-NSURL *(*wkAVAssetResolvedURL)(AVAsset*);
-
 NSCursor *(*wkCursor)(const char*);
 
 NSArray *(*wkSpeechSynthesisGetVoiceIdentifiers)(void);

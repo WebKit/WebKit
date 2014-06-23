@@ -1,3 +1,18 @@
+2014-06-23  Alex Christensen  <achristensen@webkit.org>
+
+        [iOS] Fix video in WebGL.
+        https://bugs.webkit.org/show_bug.cgi?id=133511
+
+        Reviewed by Jer Noble.
+
+        * WebCore.exp.in:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::hasSingleSecurityOrigin):
+        (WebCore::wkAVAssetResolvedURL): Deleted.
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        Declare and use resolvedURL on AVURLAsset instead of using wkAVAssetResolvedURL through WebKitSystemInterface.
+
 2014-06-23  Radu Stavila  <stavila@adobe.com>
 
         REGRESSION (r168046): Incorrect handling of object information in WebCore::RenderFlowThread::removeLineRegionInfo

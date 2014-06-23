@@ -102,6 +102,10 @@
 @end
 #endif
 
+@interface AVURLAsset (WebKitExtensions)
+@property (nonatomic, readonly) NSURL *resolvedURL;
+@end
+
 typedef AVPlayerItem AVPlayerItemType;
 typedef AVMetadataItem AVMetadataItemType;
 
@@ -1717,21 +1721,13 @@ void MediaPlayerPrivateAVFoundationObjC::sizeChanged()
 
     setNaturalSize(roundedIntSize(m_cachedPresentationSize));
 }
-
-#if PLATFORM(IOS)
-// FIXME: Implement for iOS in WebKit System Interface.
-static inline NSURL *wkAVAssetResolvedURL(AVAsset*)
-{
-    return nil;
-}
-#endif
-
+    
 bool MediaPlayerPrivateAVFoundationObjC::hasSingleSecurityOrigin() const 
 {
     if (!m_avAsset)
         return false;
     
-    RefPtr<SecurityOrigin> resolvedOrigin = SecurityOrigin::create(URL(wkAVAssetResolvedURL(m_avAsset.get())));
+    RefPtr<SecurityOrigin> resolvedOrigin = SecurityOrigin::create(URL([m_avAsset resolvedURL]));
     RefPtr<SecurityOrigin> requestedOrigin = SecurityOrigin::createFromString(assetURL());
     return resolvedOrigin->isSameSchemeHostPort(requestedOrigin.get());
 }
