@@ -106,34 +106,6 @@ bool Editor::insertParagraphSeparatorInQuotedContent()
     return true;
 }
 
-static RenderStyle* styleForSelectionStart(Frame* frame, Node *&nodeToRemove)
-{
-    nodeToRemove = 0;
-
-    if (frame->selection().isNone())
-        return 0;
-
-    Position position = frame->selection().selection().visibleStart().deepEquivalent();
-    if (!position.isCandidate() || position.isNull())
-        return 0;
-
-    RefPtr<EditingStyle> typingStyle = frame->selection().typingStyle();
-    if (!typingStyle || !typingStyle->style())
-        return &position.deprecatedNode()->renderer()->style();
-
-    RefPtr<Element> styleElement = frame->document()->createElement(spanTag, false);
-
-    String styleText = typingStyle->style()->asText() + " display: inline";
-    styleElement->setAttribute(styleAttr, styleText);
-
-    styleElement->appendChild(frame->document()->createEditingTextNode(""), ASSERT_NO_EXCEPTION);
-
-    position.deprecatedNode()->parentNode()->appendChild(styleElement, ASSERT_NO_EXCEPTION);
-
-    nodeToRemove = styleElement.get();
-    return styleElement->renderer() ? &styleElement->renderer()->style() : 0;
-}
-
 const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
 {
     hasMultipleFonts = false;

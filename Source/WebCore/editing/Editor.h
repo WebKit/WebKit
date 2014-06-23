@@ -489,6 +489,8 @@ private:
     PassRefPtr<DocumentFragment> createFragmentForImageResourceAndAddResource(PassRefPtr<ArchiveResource>);
     PassRefPtr<DocumentFragment> createFragmentAndAddResources(NSAttributedString *);
     void fillInUserVisibleForm(PasteboardURL&);
+
+    static RenderStyle* styleForSelectionStart(Frame* , Node *&nodeToRemove);
 #endif
 
     Frame& m_frame;

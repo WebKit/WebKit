@@ -3644,4 +3644,37 @@ Document& Editor::document() const
     return *m_frame.document();
 }
 
+#if PLATFORM(COCOA)
+// FIXME: This figures out the current style by inserting a <span>!
+RenderStyle* Editor::styleForSelectionStart(Frame* frame, Node *&nodeToRemove)
+{
+    nodeToRemove = nullptr;
+
+    if (frame->selection().isNone())
+        return nullptr;
+
+    Position position = frame->selection().selection().visibleStart().deepEquivalent();
+    if (!position.isCandidate() || position.isNull())
+        return nullptr;
+
+    RefPtr<EditingStyle> typingStyle = frame->selection().typingStyle();
+    if (!typingStyle || !typingStyle->style())
+        return &position.deprecatedNode()->renderer()->style();
+
+    RefPtr<Element> styleElement = frame->document()->createElement(spanTag, false);
+
+    String styleText = typingStyle->style()->asText() + " display: inline";
+    styleElement->setAttribute(styleAttr, styleText);
+
+    styleElement->appendChild(frame->document()->createEditingTextNode(""), ASSERT_NO_EXCEPTION);
+
+    position.deprecatedNode()->parentNode()->appendChild(styleElement, ASSERT_NO_EXCEPTION);
+
+    nodeToRemove = styleElement.get();
+
+    frame->document()->updateStyleIfNeeded();
+    return styleElement->renderer() ? &styleElement->renderer()->style() : nullptr;
+}
+#endif
+
 } // namespace WebCore
