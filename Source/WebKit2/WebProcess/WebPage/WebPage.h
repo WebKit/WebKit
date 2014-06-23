@@ -255,6 +255,7 @@ public:
     void didFinishLoad(WebFrame*);
     void show();
     String userAgent(const WebCore::URL&) const;
+    String userAgent(WebFrame*, const WebCore::URL&) const;
     String platformUserAgent(const WebCore::URL&) const;
     WebCore::IntRect windowResizerRect() const;
     WebCore::KeyboardUIMode keyboardUIMode();

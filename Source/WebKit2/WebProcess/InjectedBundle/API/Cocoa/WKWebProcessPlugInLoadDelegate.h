@@ -57,4 +57,6 @@
 - (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller frame:(WKWebProcessPlugInFrame *)frame didFinishLoadForResource:(uint64_t)resource;
 - (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller frame:(WKWebProcessPlugInFrame *)frame didFailLoadForResource:(uint64_t)resource error:(NSError *)error;
 
+- (NSString *)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller frame:(WKWebProcessPlugInFrame *)frame userAgentForURL:(NSURL *)url;
+
 @end

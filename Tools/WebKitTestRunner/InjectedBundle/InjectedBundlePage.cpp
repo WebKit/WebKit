@@ -268,8 +268,8 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
     : m_page(page)
     , m_world(AdoptWK, WKBundleScriptWorldCreateWorld())
 {
-    WKBundlePageLoaderClientV7 loaderClient = {
-        { 7, this },
+    WKBundlePageLoaderClientV8 loaderClient = {
+        { 8, this },
         didStartProvisionalLoadForFrame,
         didReceiveServerRedirectForProvisionalLoadForFrame,
         didFailProvisionalLoadWithErrorForFrame,
@@ -305,6 +305,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, // willLoadURLRequest
         0, // willLoadDataRequest
         0, // willDestroyFrame
+        0, // userAgentForURL
     };
     WKBundlePageSetPageLoaderClient(m_page, &loaderClient.base);
 

@@ -27,6 +27,8 @@
 #define InjectedBundlePageLoaderClient_h
 
 #include "APIClient.h"
+#include "APIString.h"
+#include "APIURL.h"
 #include "SameDocumentNavigationType.h"
 #include "WKBundlePage.h"
 #include <JavaScriptCore/JSBase.h>
@@ -38,7 +40,7 @@ namespace API {
 class Object;
 
 template<> struct ClientTraits<WKBundlePageLoaderClientBase> {
-    typedef std::tuple<WKBundlePageLoaderClientV0, WKBundlePageLoaderClientV1, WKBundlePageLoaderClientV2, WKBundlePageLoaderClientV3, WKBundlePageLoaderClientV4, WKBundlePageLoaderClientV5, WKBundlePageLoaderClientV6, WKBundlePageLoaderClientV7> Versions;
+    typedef std::tuple<WKBundlePageLoaderClientV0, WKBundlePageLoaderClientV1, WKBundlePageLoaderClientV2, WKBundlePageLoaderClientV3, WKBundlePageLoaderClientV4, WKBundlePageLoaderClientV5, WKBundlePageLoaderClientV6, WKBundlePageLoaderClientV7, WKBundlePageLoaderClientV8> Versions;
 };
 }
 
@@ -99,6 +101,7 @@ public:
     void featuresUsedInPage(WebPage*, const Vector<String>&);
 
     void willDestroyFrame(WebPage*, WebFrame*);
+    API::String* userAgentForURL(WebFrame*, API::URL*) const;
 };
 
 } // namespace WebKit

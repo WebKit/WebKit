@@ -36,6 +36,7 @@
 #include "InjectedBundleUserMessageCoders.h"
 #include "NavigationActionData.h"
 #include "PluginView.h"
+#include "WKBundleAPICast.h"
 #include "WebBackForwardListProxy.h"
 #include "WebContextMessages.h"
 #include "WebCoreArgumentCoders.h"
@@ -1187,7 +1188,7 @@ String WebFrameLoaderClient::userAgent(const URL& url)
     if (!webPage)
         return String();
 
-    return webPage->userAgent(url);
+    return webPage->userAgent(m_frame, url);
 }
 
 void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame*)

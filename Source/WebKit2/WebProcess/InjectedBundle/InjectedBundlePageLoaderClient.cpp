@@ -29,11 +29,13 @@
 #include "APIArray.h"
 #include "APIData.h"
 #include "APIError.h"
+#include "APIURL.h"
 #include "APIURLRequest.h"
 #include "InjectedBundleDOMWindowExtension.h"
 #include "InjectedBundleScriptWorld.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "WKSharedAPICast.h"
 #include <WebCore/SharedBuffer.h>
 #include <wtf/text/WTFString.h>
 
@@ -351,5 +353,13 @@ void InjectedBundlePageLoaderClient::willDestroyFrame(WebPage* page, WebFrame* f
 
     m_client.willDestroyFrame(toAPI(page), toAPI(frame), m_client.base.clientInfo);
 }
-
+    
+API::String* InjectedBundlePageLoaderClient::userAgentForURL(WebFrame* frame, API::URL* url) const
+{
+    if (!m_client.userAgentForURL)
+        return nullptr;
+    WKStringRef userAgent = m_client.userAgentForURL(toAPI(frame), toAPI(url), m_client.base.clientInfo);
+    return toImpl(userAgent);
+}
+    
 } // namespace WebKit

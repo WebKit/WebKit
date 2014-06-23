@@ -55,7 +55,10 @@
 #include "ShareableBitmap.h"
 #include "TelephoneNumberOverlayController.h"
 #include "VisitedLinkTableController.h"
+#include "WKBundleAPICast.h"
+#include "WKRetainPtr.h"
 #include "WKSharedAPICast.h"
+#include "WKStringCF.h"
 #include "WebAlternativeTextClient.h"
 #include "WebBackForwardListItem.h"
 #include "WebBackForwardListProxy.h"
@@ -2271,18 +2274,30 @@ void WebPage::show()
     send(Messages::WebPageProxy::ShowPage());
 }
 
+String WebPage::userAgent(const URL& webCoreURL) const
+{
+    return userAgent(nullptr, webCoreURL);
+}
+
+String WebPage::userAgent(WebFrame* frame, const URL& webcoreURL) const
+{
+    if (frame && m_loaderClient.client().userAgentForURL) {
+        RefPtr<API::URL> url = API::URL::create(webcoreURL);
+
+        API::String* apiString = m_loaderClient.userAgentForURL(frame, url.get());
+        if (apiString)
+            return apiString->string();
+    }
+
+    String userAgent = platformUserAgent(webcoreURL);
+    if (!userAgent.isEmpty())
+        return userAgent;
+    return m_userAgent;
+}
+    
 void WebPage::setUserAgent(const String& userAgent)
 {
     m_userAgent = userAgent;
-}
-
-String WebPage::userAgent(const URL& url) const
-{
-    String userAgent = platformUserAgent(url);
-    if (!userAgent.isEmpty())
-        return userAgent;
-
-    return m_userAgent;
 }
 
 void WebPage::suspendActiveDOMObjectsAndAnimations()

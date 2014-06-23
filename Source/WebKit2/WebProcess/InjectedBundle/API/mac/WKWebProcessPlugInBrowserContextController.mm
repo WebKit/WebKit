@@ -38,9 +38,12 @@
 #import "WKDOMInternals.h"
 #import "WKNSDictionary.h"
 #import "WKNSError.h"
+#import "WKNSString.h"
+#import "WKNSURL.h"
 #import "WKNSURLRequest.h"
 #import "WKRenderingProgressEventsInternal.h"
 #import "WKRetainPtr.h"
+#import "WKStringCF.h"
 #import "WKURLRequestNS.h"
 #import "WKWebProcessPluginFrameInternal.h"
 #import "WKWebProcessPlugInInternal.h"
@@ -176,12 +179,31 @@ static void didHandleOnloadEventsForFrame(WKBundlePageRef page, WKBundleFrameRef
     if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:didHandleOnloadEventsForFrame:)])
         [loadDelegate webProcessPlugInBrowserContextController:pluginContextController didHandleOnloadEventsForFrame:wrapper(*toImpl(frame))];
 }
+
+static WKStringRef userAgentForURL(WKBundleFrameRef frame, WKURLRef url, const void* clientInfo)
+{
+    WKWebProcessPlugInBrowserContextController *pluginContextController = (WKWebProcessPlugInBrowserContextController *)clientInfo;
+    auto loadDelegate = pluginContextController->_loadDelegate.get();
+    
+    if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:frame:userAgentForURL:)]) {
+        WKWebProcessPlugInFrame *newFrame = wrapper(*toImpl(frame));
+        NSString *string = [loadDelegate webProcessPlugInBrowserContextController:pluginContextController frame:newFrame userAgentForURL:wrapper(*toImpl(url))];
+        if (!string)
+            return nullptr;
+
+        WKStringRef wkString = WKStringCreateWithCFString((CFStringRef)string);
+        return wkString;
+    }
+    
+    return nullptr;
+}
+
 static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *contextController, WebPage& page)
 {
-    WKBundlePageLoaderClientV7 client;
+    WKBundlePageLoaderClientV8 client;
     memset(&client, 0, sizeof(client));
 
-    client.base.version = 7;
+    client.base.version = 8;
     client.base.clientInfo = contextController;
     client.didStartProvisionalLoadForFrame = didStartProvisionalLoadForFrame;
     client.didCommitLoadForFrame = didCommitLoadForFrame;
@@ -193,6 +215,7 @@ static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *co
     client.didRemoveFrameFromHierarchy = didRemoveFrameFromHierarchy;
     client.didHandleOnloadEventsForFrame = didHandleOnloadEventsForFrame;
     client.didFirstVisuallyNonEmptyLayoutForFrame = didFirstVisuallyNonEmptyLayoutForFrame;
+    client.userAgentForURL = userAgentForURL;
 
     client.didLayoutForFrame = didLayoutForFrame;
     client.didLayout = didLayout;
