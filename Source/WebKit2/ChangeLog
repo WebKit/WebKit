@@ -1,3 +1,10 @@
+2014-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        More build fixing after r170295.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2014-06-23  Anders Carlsson  <andersca@apple.com>
 
         Give read-only properties proper ownership attributes

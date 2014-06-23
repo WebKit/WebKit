@@ -153,7 +153,6 @@ void InitWebCoreSystemInterface(void)
         INIT(RecommendedScrollerStyle);
         INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);
         INIT(CopyDefaultSearchProviderDisplayName);
-        INIT(AVAssetResolvedURL);
         INIT(Cursor);
         INIT(WindowSetScaledFrame);
         INIT(WindowSetAlpha);
