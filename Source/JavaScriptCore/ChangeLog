@@ -1,3 +1,21 @@
+2014-06-23  Andreas Kling  <akling@apple.com>
+
+        Inline the UnlinkedInstructionStream::Reader logic.
+        <https://webkit.org/b/134203>
+
+        This class is only used by CodeBlock to unpack the unlinked instructions,
+        and we were spending 0.5% of total time on PLT calling Reader::next().
+        Move the logic to the header file and mark it ALWAYS_INLINE.
+
+        Reviewed by Geoffrey Garen.
+
+        * bytecode/UnlinkedInstructionStream.cpp:
+        * bytecode/UnlinkedInstructionStream.h:
+        (JSC::UnlinkedInstructionStream::Reader::Reader):
+        (JSC::UnlinkedInstructionStream::Reader::read8):
+        (JSC::UnlinkedInstructionStream::Reader::read32):
+        (JSC::UnlinkedInstructionStream::Reader::next):
+
 2014-06-20  Sam Weinig  <sam@webkit.org>
 
         Remove static tables for bindings that use eager reification
