@@ -741,12 +741,12 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
     // Calculate the clip rects we should use.
     LayoutRect layerBounds;
     ClipRect damageRect, clipRectToApply, outlineRect;
-    l->calculateRects(RenderLayer::ClipRectsContext(rootLayer, TemporaryClipRects), paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect);
+    l->calculateRects(RenderLayer::ClipRectsContext(rootLayer, TemporaryClipRects), paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect, l->offsetFromAncestor(rootLayer));
 
     // Ensure our lists are up-to-date.
     l->updateLayerListsIfNeeded();
 
-    bool shouldPaint = (behavior & RenderAsTextShowAllLayers) ? true : l->intersectsDamageRect(layerBounds, damageRect.rect(), rootLayer);
+    bool shouldPaint = (behavior & RenderAsTextShowAllLayers) ? true : l->intersectsDamageRect(layerBounds, damageRect.rect(), rootLayer, l->offsetFromAncestor(rootLayer));
     Vector<RenderLayer*>* negList = l->negZOrderList();
     bool paintsBackgroundSeparately = negList && negList->size() > 0;
     if (shouldPaint && paintsBackgroundSeparately)

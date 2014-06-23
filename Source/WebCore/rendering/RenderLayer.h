@@ -700,7 +700,7 @@ public:
     // for painting/event handling.
     // Pass offsetFromRoot if known.
     void calculateRects(const ClipRectsContext&, const LayoutRect& paintDirtyRect, LayoutRect& layerBounds,
-        ClipRect& backgroundRect, ClipRect& foregroundRect, ClipRect& outlineRect, const LayoutSize* offsetFromRoot = nullptr) const;
+        ClipRect& backgroundRect, ClipRect& foregroundRect, ClipRect& outlineRect, const LayoutSize& offsetFromRoot) const;
 
     // Compute and cache clip rects computed with the given layer as the root
     void updateClipRects(const ClipRectsContext&);
@@ -719,7 +719,7 @@ public:
     LayoutRect localClipRect(bool& clipExceedsBounds) const; // Returns the background clip rect of the layer in the local coordinate space.
 
     // Pass offsetFromRoot if known.
-    bool intersectsDamageRect(const LayoutRect& layerBounds, const LayoutRect& damageRect, const RenderLayer* rootLayer, const LayoutSize* offsetFromRoot = nullptr, const LayoutRect* cachedBoundingBox = nullptr) const;
+    bool intersectsDamageRect(const LayoutRect& layerBounds, const LayoutRect& damageRect, const RenderLayer* rootLayer, const LayoutSize& offsetFromRoot, const LayoutRect* cachedBoundingBox = nullptr) const;
 
     enum CalculateLayerBoundsFlag {
         IncludeSelfTransform = 1 << 0,
@@ -735,7 +735,7 @@ public:
     typedef unsigned CalculateLayerBoundsFlags;
 
     // Bounding box relative to some ancestor layer. Pass offsetFromRoot if known.
-    LayoutRect boundingBox(const RenderLayer* rootLayer, CalculateLayerBoundsFlags = 0, const LayoutSize* offsetFromRoot = nullptr) const;
+    LayoutRect boundingBox(const RenderLayer* rootLayer, const LayoutSize& offsetFromRoot = LayoutSize(), CalculateLayerBoundsFlags = 0) const;
     // Bounding box in the coordinates of this layer.
     LayoutRect localBoundingBox(CalculateLayerBoundsFlags = 0) const;
     // Deprecated: Pixel snapped bounding box relative to the root.
@@ -744,7 +744,7 @@ public:
     FloatRect absoluteBoundingBoxForPainting() const;
 
     // Bounds used for layer overlap testing in RenderLayerCompositor.
-    LayoutRect overlapBounds() const { return overlapBoundsIncludeChildren() ? calculateLayerBounds(this) : localBoundingBox(); }
+    LayoutRect overlapBounds() const { return overlapBoundsIncludeChildren() ? calculateLayerBounds(this, LayoutSize()) : localBoundingBox(); }
 
 #if ENABLE(CSS_FILTERS)
     // If true, this layer's children are included in its bounds for overlap testing.
@@ -755,7 +755,7 @@ public:
 #endif
 
     // Can pass offsetFromRoot if known.
-    LayoutRect calculateLayerBounds(const RenderLayer* ancestorLayer, const LayoutSize* offsetFromRoot = nullptr, CalculateLayerBoundsFlags = DefaultCalculateLayerBoundsFlags) const;
+    LayoutRect calculateLayerBounds(const RenderLayer* ancestorLayer, const LayoutSize& offsetFromRoot, CalculateLayerBoundsFlags = DefaultCalculateLayerBoundsFlags) const;
     
     // Return a cached repaint rect, computed relative to the layer renderer's containerForRepaint.
     LayoutRect repaintRect() const { return m_repaintRect; }
@@ -1001,9 +1001,9 @@ private:
 
     void collectFragments(LayerFragments&, const RenderLayer* rootLayer, const LayoutRect& dirtyRect,
         PaginationInclusionMode,
-        ClipRectsType, OverlayScrollbarSizeRelevancy inOverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize,
-        ShouldRespectOverflowClip = RespectOverflowClip, const LayoutSize* offsetFromRoot = nullptr, const LayoutRect* layerBoundingBox = nullptr, ShouldApplyRootOffsetToFragments = IgnoreRootOffsetForFragments);
-    void updatePaintingInfoForFragments(LayerFragments&, const LayerPaintingInfo&, PaintLayerFlags, bool shouldPaintContent, const LayoutSize* offsetFromRoot);
+        ClipRectsType, OverlayScrollbarSizeRelevancy inOverlayScrollbarSizeRelevancy, ShouldRespectOverflowClip, const LayoutSize& offsetFromRoot,
+        const LayoutRect* layerBoundingBox = nullptr, ShouldApplyRootOffsetToFragments = IgnoreRootOffsetForFragments);
+    void updatePaintingInfoForFragments(LayerFragments&, const LayerPaintingInfo&, PaintLayerFlags, bool shouldPaintContent, const LayoutSize& offsetFromRoot);
     void paintBackgroundForFragments(const LayerFragments&, GraphicsContext*, GraphicsContext* transparencyLayerContext,
         const LayoutRect& transparencyPaintDirtyRect, bool haveTransparency, const LayerPaintingInfo&, PaintBehavior, RenderObject* paintingRootForRenderer);
     void paintForegroundForFragments(const LayerFragments&, GraphicsContext*, GraphicsContext* transparencyLayerContext,

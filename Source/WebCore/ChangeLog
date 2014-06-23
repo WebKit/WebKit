@@ -1,5 +1,36 @@
 2014-06-22  Zalan Bujtas  <zalan@apple.com>
 
+        Make offset from ancestor computation explicit by moving it to the callers.
+        https://bugs.webkit.org/show_bug.cgi?id=134168.
+
+        Reviewed by Simon Fraser.
+        
+        Explicit offset computation helps code reading and less error-prone than passing
+        the offset pointer and compute it locally when it is null.
+
+        No change in functionality.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::transparencyClipBox):
+        (WebCore::performOverlapTests):
+        (WebCore::RenderLayer::setupClipPath):
+        (WebCore::RenderLayer::setupFilters):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::collectFragments):
+        (WebCore::RenderLayer::updatePaintingInfoForFragments):
+        (WebCore::RenderLayer::paintTransformedLayerIntoFragments):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::hitTestTransformedLayerInFragments):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+
+2014-06-22  Zalan Bujtas  <zalan@apple.com>
+
         Transition layer offsets from LayoutPoint to LayoutSize.
         https://bugs.webkit.org/show_bug.cgi?id=134156
 

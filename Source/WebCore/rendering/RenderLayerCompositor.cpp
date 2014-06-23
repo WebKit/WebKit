@@ -975,7 +975,7 @@ LayoutRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer& l
 {
     if (!canBeComposited(layer))
         return LayoutRect();
-    return layer.calculateLayerBounds(&ancestorLayer, nullptr, RenderLayer::DefaultCalculateLayerBoundsFlags | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask);
+    return layer.calculateLayerBounds(&ancestorLayer, layer.offsetFromAncestor(&ancestorLayer), RenderLayer::DefaultCalculateLayerBoundsFlags | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask);
 }
 
 void RenderLayerCompositor::layerWasAdded(RenderLayer&, RenderLayer&)
@@ -2650,7 +2650,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
 
     // Fixed position elements that are invisible in the current view don't get their own layer.
     LayoutRect viewBounds = m_renderView.frameView().viewportConstrainedVisibleContentRect();
-    LayoutRect layerBounds = layer.calculateLayerBounds(&layer, 0, RenderLayer::UseLocalClipRectIfPossible | RenderLayer::IncludeLayerFilterOutsets | RenderLayer::UseFragmentBoxesExcludingCompositing
+    LayoutRect layerBounds = layer.calculateLayerBounds(&layer, LayoutSize(), RenderLayer::UseLocalClipRectIfPossible | RenderLayer::IncludeLayerFilterOutsets | RenderLayer::UseFragmentBoxesExcludingCompositing
         | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask | RenderLayer::IncludeCompositedDescendants);
     // Map to m_renderView to ignore page scale.
     FloatRect absoluteBounds = layer.renderer().localToContainerQuad(FloatRect(layerBounds), &m_renderView).boundingBox();
