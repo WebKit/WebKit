@@ -1,3 +1,10 @@
+2014-06-23  Jeffrey Pfau  <jpfau@apple.com>
+
+        Fix release build
+
+        * Modules/indexeddb/IDBTransactionCoordinator.cpp:
+        (WebCore::IDBTransactionCoordinator::canRunTransaction):
+
 2014-06-19  Jeffrey Pfau  <jpfau@apple.com>
 
         Database process crashes when multiple transactions attempt to run at once

@@ -145,6 +145,7 @@ bool IDBTransactionCoordinator::canRunTransaction(IDBTransactionBackend* transac
     ASSERT_NOT_REACHED();
     return false;
 #else
+    UNUSED_PARAM(transaction);
     return !m_startedTransactions.size();
 #endif
 }
