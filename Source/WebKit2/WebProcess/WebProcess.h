@@ -29,6 +29,7 @@
 #include "CacheModel.h"
 #include "ChildProcess.h"
 #include "DownloadManager.h"
+#include "DrawingArea.h"
 #include "PluginProcessConnectionManager.h"
 #include "ResourceCachesToClear.h"
 #include "SandboxExtension.h"
@@ -177,6 +178,9 @@ public:
 #if PLATFORM(IOS)
     void resetAllGeolocationPermissions();
     void processWillSuspend();
+    void cancelProcessWillSuspend();
+    bool markAllLayersVolatileIfPossible();
+    void processSuspensionCleanupTimerFired(WebCore::Timer<WebProcess>*);
 #endif // PLATFORM(IOS)
 
     RefPtr<API::Object> apiObjectByConvertingFromHandles(API::Object*);
@@ -286,6 +290,7 @@ private:
     RefPtr<EventDispatcher> m_eventDispatcher;
 #if PLATFORM(IOS)
     RefPtr<ViewUpdateDispatcher> m_viewUpdateDispatcher;
+    WebCore::Timer<WebProcess> m_processSuspensionCleanupTimer;
 #endif
 
     bool m_inDidClose;

@@ -100,7 +100,7 @@ void RemoteLayerBackingStoreCollection::backingStoreWillBeDisplayed(RemoteLayerB
     m_unparentedBackingStore.remove(backingStoreIter);
 }
 
-bool RemoteLayerBackingStoreCollection::markBackingStoreVolatileImmediately(RemoteLayerBackingStore& backingStore)
+bool RemoteLayerBackingStoreCollection::markBackingStoreVolatileImmediately(RemoteLayerBackingStore& backingStore, VolatilityMarkingFlags volatilityMarkingFlags)
 {
     ASSERT(!m_inLayerFlush);
     bool successfullyMadeBackingStoreVolatile = true;
@@ -111,7 +111,7 @@ bool RemoteLayerBackingStoreCollection::markBackingStoreVolatileImmediately(Remo
     if (!backingStore.setBufferVolatility(RemoteLayerBackingStore::BufferType::Back, true))
         successfullyMadeBackingStoreVolatile = false;
 
-    if (!m_reachableBackingStoreInLatestFlush.contains(&backingStore)) {
+    if (!m_reachableBackingStoreInLatestFlush.contains(&backingStore) || (volatilityMarkingFlags & MarkBuffersIgnoringReachability)) {
         if (!backingStore.setBufferVolatility(RemoteLayerBackingStore::BufferType::Front, true))
             successfullyMadeBackingStoreVolatile = false;
     }
@@ -148,6 +148,19 @@ void RemoteLayerBackingStoreCollection::backingStoreBecameUnreachable(RemoteLaye
     // This will not succeed in marking all buffers as volatile, because the commit unparenting the layer hasn't
     // made it to the UI process yet. The volatility timer will finish marking the remaining buffers later.
     markBackingStoreVolatileImmediately(backingStore);
+}
+
+bool RemoteLayerBackingStoreCollection::markAllBackingStoreVolatileImmediatelyIfPossible()
+{
+    bool successfullyMadeBackingStoreVolatile = true;
+
+    for (const auto& backingStore : m_liveBackingStore)
+        successfullyMadeBackingStoreVolatile &= markBackingStoreVolatileImmediately(*backingStore, MarkBuffersIgnoringReachability);
+
+    for (const auto& backingStore : m_unparentedBackingStore)
+        successfullyMadeBackingStoreVolatile &= markBackingStoreVolatileImmediately(*backingStore, MarkBuffersIgnoringReachability);
+
+    return successfullyMadeBackingStoreVolatile;
 }
 
 void RemoteLayerBackingStoreCollection::volatilityTimerFired(WebCore::Timer<RemoteLayerBackingStoreCollection>&)

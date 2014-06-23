@@ -138,6 +138,8 @@ public:
 #if PLATFORM(IOS)
     void sendProcessWillSuspend();
     void processReadyToSuspend();
+    void sendCancelProcessWillSuspend();
+    void didCancelProcessSuspension();
     
     ProcessThrottler& throttler() { return *m_throttler; }
 #endif

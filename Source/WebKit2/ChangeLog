@@ -1,3 +1,67 @@
+2014-06-23  Timothy Horton  <timothy_horton@apple.com>
+
+        [iOS][wk2] Ensure that layers are marked volatile before allowing the process to suspend
+        https://bugs.webkit.org/show_bug.cgi?id=134004
+        <rdar://problem/17186342>
+
+        Reviewed by Simon Fraser.
+
+        WebKit tries to make layers volatile when unparented, but sometimes isn't given
+        a chance to do so before the process gets suspended, so we end up with lots of
+        non-volatile surfaces that should really be volatile.
+
+        * Shared/mac/RemoteLayerBackingStoreCollection.h:
+        * Shared/mac/RemoteLayerBackingStoreCollection.mm:
+        (WebKit::RemoteLayerBackingStoreCollection::markBackingStoreVolatileImmediately):
+        (WebKit::RemoteLayerBackingStoreCollection::markAllBackingStoreVolatileImmediatelyIfPossible):
+        Add markAllBackingStoreVolatileImmediatelyIfPossible, which tries to mark *all*
+        buffers of *all* backing store, (live and unreachable), (front, back, and secondary),
+        volatile right away. It returns false if any buffer isn't marked volatile (because it was in-use).
+
+        * UIProcess/ios/ProcessThrottler.h:
+        * UIProcess/ios/ProcessThrottler.mm:
+        (WebKit::ProcessThrottler::updateAssertion):
+        (WebKit::ProcessThrottler::processReadyToSuspend):
+        (WebKit::ProcessThrottler::didCancelProcessSuspension):
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        (WebKit::WebProcessProxy::sendCancelProcessWillSuspend):
+        (WebKit::WebProcessProxy::didCancelProcessSuspension):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        If the UI process is waiting for the Web process to confirm that it can suspend
+        and something happens (the view is reparented) that cancels the suspension, inform
+        the Web process that this happened, so that it can cancel any cleanup that might still be taking place.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewStateDidChange):
+        If a view goes in-window, dispatch the view state change immediately without delay,
+        to minimize the latency between coming in-window and being ready to go.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::markLayersVolatileImmediatelyIfPossible):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::setRootCompositingLayer):
+        Schedule a flush when we change the root layer; otherwise, we can end up
+        detaching the root layer but changing nothing else, and never committing that change.
+
+        (WebKit::RemoteLayerTreeDrawingArea::markLayersVolatileImmediatelyIfPossible):
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::processWillSuspend):
+        (WebKit::WebProcess::cancelProcessWillSuspend):
+        (WebKit::WebProcess::markAllLayersVolatileIfPossible):
+        (WebKit::WebProcess::processSuspensionCleanupTimerFired):
+        When the UI process is going to suspend the process, it sends us ProcessWillSuspend,
+        and defers the suspension until we send a ProcessReadyToSuspend back.
+        Delay ProcessReadyToSuspend until all layers in our process have been marked volatile.
+        We'll keep trying every 20ms until they're all volatile. For safety, the UI process will eventually
+        stop waiting for us, but the volatility change is usually applied successfully within the first
+        or second timer callback.
+
 2014-06-23  Oliver Hunt  <oliver@apple.com>
 
         Ensure that we always use symlink free paths when specifying cache directories

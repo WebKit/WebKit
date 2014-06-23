@@ -1106,6 +1106,11 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsRepl
     m_viewStateChangeWantsReply = (wantsReply == WantsReplyOrNot::DoesWantReply || m_viewStateChangeWantsReply == WantsReplyOrNot::DoesWantReply) ? WantsReplyOrNot::DoesWantReply : WantsReplyOrNot::DoesNotWantReply;
 
 #if PLATFORM(COCOA)
+    bool isNewlyInWindow = !(m_viewState & ViewState::IsInWindow) && (mayHaveChanged & ViewState::IsInWindow) && m_pageClient.isViewInWindow();
+    if (isNewlyInWindow) {
+        dispatchViewStateChange();
+        return;
+    }
     m_viewStateChangeDispatcher->schedule();
 #else
     dispatchViewStateChange();

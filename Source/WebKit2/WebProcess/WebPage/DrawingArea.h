@@ -117,6 +117,8 @@ public:
     virtual void viewStateDidChange(WebCore::ViewState::Flags) { }
     virtual void setLayerHostingMode(LayerHostingMode) { }
 
+    virtual bool markLayersVolatileImmediatelyIfPossible() { return true; }
+
 protected:
     DrawingArea(DrawingAreaType, WebPage&);
 

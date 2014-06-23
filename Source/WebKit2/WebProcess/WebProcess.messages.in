@@ -95,5 +95,6 @@ messages -> WebProcess LegacyReceiver {
 
 #if PLATFORM(IOS)
     ProcessWillSuspend()
+    CancelProcessWillSuspend()
 #endif
 }

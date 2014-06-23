@@ -61,6 +61,7 @@ public:
     
     void didConnnectToProcess(pid_t);
     void processReadyToSuspend();
+    void didCancelProcessSuspension();
     
 private:
     friend class ForegroundActivityToken;
@@ -78,7 +79,7 @@ private:
     WebCore::Timer<ProcessThrottler> m_suspendTimer;
     unsigned m_foregroundCount;
     unsigned m_backgroundCount;
-    unsigned m_suspendMessageCount;
+    int m_suspendMessageCount;
 };
     
 }

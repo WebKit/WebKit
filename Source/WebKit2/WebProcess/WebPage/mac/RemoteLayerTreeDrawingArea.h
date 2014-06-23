@@ -109,6 +109,8 @@ private:
 
     uint64_t takeNextTransactionID() { return ++m_currentTransactionID; }
 
+    virtual bool markLayersVolatileImmediatelyIfPossible() override;
+
     class BackingStoreFlusher : public ThreadSafeRefCounted<BackingStoreFlusher> {
     public:
         static PassRefPtr<BackingStoreFlusher> create(IPC::Connection*, std::unique_ptr<IPC::MessageEncoder>, Vector<RetainPtr<CGContextRef>>);

@@ -53,11 +53,16 @@ public:
     void didFlushLayers();
 
     void volatilityTimerFired(WebCore::Timer<RemoteLayerBackingStoreCollection>&);
+    bool markAllBackingStoreVolatileImmediatelyIfPossible();
 
     void scheduleVolatilityTimer();
 
 private:
-    bool markBackingStoreVolatileImmediately(RemoteLayerBackingStore&);
+    enum VolatilityMarkingFlag {
+        MarkBuffersIgnoringReachability = 1 << 0
+    };
+    typedef unsigned VolatilityMarkingFlags;
+    bool markBackingStoreVolatileImmediately(RemoteLayerBackingStore&, VolatilityMarkingFlags volatilityMarkingFlags = 0);
     bool markBackingStoreVolatile(RemoteLayerBackingStore&, std::chrono::steady_clock::time_point now);
 
     HashSet<RemoteLayerBackingStore*> m_liveBackingStore;

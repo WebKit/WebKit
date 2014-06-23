@@ -102,8 +102,14 @@ void ProcessThrottler::updateAssertion()
         m_process->sendProcessWillSuspend();
         m_suspendTimer.startOneShot(processSuspensionTimeout);
         m_assertion->setState(AssertionState::Background);
-    } else
-        updateAssertionNow();
+        return;
+    }
+
+    // If we're currently waiting for the Web process to do suspension cleanup, but no longer need to be suspended, tell the Web process to cancel the cleanup.
+    if (m_suspendTimer.isActive() && (m_foregroundCount || m_backgroundCount))
+        m_process->sendCancelProcessWillSuspend();
+
+    updateAssertionNow();
 }
 
 void ProcessThrottler::didConnnectToProcess(pid_t pid)
@@ -121,6 +127,14 @@ void ProcessThrottler::processReadyToSuspend()
 {
     if (!--m_suspendMessageCount)
         updateAssertionNow();
+    ASSERT(m_suspendMessageCount >= 0);
+}
+
+void ProcessThrottler::didCancelProcessSuspension()
+{
+    if (!--m_suspendMessageCount)
+        updateAssertionNow();
+    ASSERT(m_suspendMessageCount >= 0);
 }
 
 }

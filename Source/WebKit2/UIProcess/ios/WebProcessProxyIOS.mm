@@ -66,10 +66,21 @@ void WebProcessProxy::sendProcessWillSuspend()
     if (canSendMessage())
         send(Messages::WebProcess::ProcessWillSuspend(), 0);
 }
+
+void WebProcessProxy::sendCancelProcessWillSuspend()
+{
+    if (canSendMessage())
+        send(Messages::WebProcess::CancelProcessWillSuspend(), 0);
+}
     
 void WebProcessProxy::processReadyToSuspend()
 {
     m_throttler->processReadyToSuspend();
+}
+
+void WebProcessProxy::didCancelProcessSuspension()
+{
+    m_throttler->didCancelProcessSuspension();
 }
     
 } // namespace WebKit
