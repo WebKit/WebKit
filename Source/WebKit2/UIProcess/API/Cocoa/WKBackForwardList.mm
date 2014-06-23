@@ -106,4 +106,13 @@ static WKBackForwardListItem *toWKBackForwardListItem(WebBackForwardListItem* it
 
 @end
 
+@implementation WKBackForwardList (WKPrivate)
+
+- (void)_removeAllItems
+{
+    _list->clear();
+}
+
+@end
+
 #endif // WK_API_ENABLED

@@ -301,6 +301,7 @@
 		1A9E329E1822FEDD00F5D04C /* WKRemoteObjectCoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9E329C1822FEDD00F5D04C /* WKRemoteObjectCoder.mm */; };
 		1A9E329F1822FEDD00F5D04C /* WKRemoteObjectCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9E329D1822FEDD00F5D04C /* WKRemoteObjectCoder.h */; };
 		1A9E32A11823018900F5D04C /* _WKRemoteObjectRegistryInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9E32A01823018900F5D04C /* _WKRemoteObjectRegistryInternal.h */; };
+		1A9F28111958F478008CAC72 /* WKBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9F28101958F478008CAC72 /* WKBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A9FBA8D13FF04E600DEED67 /* PluginComplexTextInputState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9FBA8C13FF04E600DEED67 /* PluginComplexTextInputState.h */; };
 		1AA13212191D5924009C1489 /* WKNavigationResponsePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA13211191D5924009C1489 /* WKNavigationResponsePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AA20D5118AD50E0005D1ED4 /* WKNavigationDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA20D5018AD50E0005D1ED4 /* WKNavigationDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2253,6 +2254,7 @@
 		1A9E329C1822FEDD00F5D04C /* WKRemoteObjectCoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKRemoteObjectCoder.mm; sourceTree = "<group>"; };
 		1A9E329D1822FEDD00F5D04C /* WKRemoteObjectCoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRemoteObjectCoder.h; sourceTree = "<group>"; };
 		1A9E32A01823018900F5D04C /* _WKRemoteObjectRegistryInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKRemoteObjectRegistryInternal.h; sourceTree = "<group>"; };
+		1A9F28101958F478008CAC72 /* WKBackForwardListPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBackForwardListPrivate.h; sourceTree = "<group>"; };
 		1A9FBA8C13FF04E600DEED67 /* PluginComplexTextInputState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginComplexTextInputState.h; sourceTree = "<group>"; };
 		1AA13211191D5924009C1489 /* WKNavigationResponsePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationResponsePrivate.h; sourceTree = "<group>"; };
 		1AA1C79A100E7FC50078DEBC /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5047,6 +5049,7 @@
 				1AD60F5C18E20F4C0020C034 /* WKWindowFeatures.h */,
 				1AD60F5B18E20F4C0020C034 /* WKWindowFeatures.mm */,
 				1AD60F5F18E20F740020C034 /* WKWindowFeaturesInternal.h */,
+				1A9F28101958F478008CAC72 /* WKBackForwardListPrivate.h */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -6991,6 +6994,7 @@
 				1ADAE12E1919A5B400F48E21 /* WKPreferences.h in Headers */,
 				1AF459321946559500F9D4A2 /* WKError.h in Headers */,
 				E19BDA8A193686A400B97F57 /* SandboxUtilities.h in Headers */,
+				1A9F28111958F478008CAC72 /* WKBackForwardListPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
