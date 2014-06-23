@@ -437,3 +437,10 @@ if (ENABLE_ACCESSIBILITY)
         ${ATK_LIBRARIES}
     )
 endif ()
+
+if (ENABLE_SPEECH_SYNTHESIS)
+    list(APPEND WebCore_SOURCES
+        platform/efl/PlatformSpeechSynthesizerEfl.cpp
+        platform/efl/PlatformSpeechSynthesisProviderEfl.cpp
+    )
+endif ()

@@ -564,6 +564,12 @@ list(APPEND GObjectDOMBindingsUnstable_IDL_FILES
     Modules/quota/StorageInfo.idl
     Modules/quota/StorageQuota.idl
 
+    Modules/speech/DOMWindowSpeechSynthesis.idl
+    Modules/speech/SpeechSynthesis.idl
+    Modules/speech/SpeechSynthesisEvent.idl
+    Modules/speech/SpeechSynthesisUtterance.idl
+    Modules/speech/SpeechSynthesisVoice.idl
+
     Modules/webdatabase/Database.idl
 
     css/DOMWindowCSS.idl
