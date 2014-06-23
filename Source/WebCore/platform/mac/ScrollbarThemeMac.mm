@@ -520,8 +520,15 @@ bool ScrollbarThemeMac::paint(ScrollbarThemeClient* scrollbar, GraphicsContext* 
 #if ENABLE(RUBBER_BANDING)
 static RetainPtr<CGColorRef> linenBackgroundColor()
 {
-    NSImage *image = [NSColor _linenPatternImage];
-    CGImageRef cgImage = [image CGImageForProposedRect:NULL context:NULL hints:nil];
+    NSImage *image = nil;
+    CGImageRef cgImage = nullptr;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    image = [NSColor _linenPatternImage];
+    cgImage = [image CGImageForProposedRect:NULL context:NULL hints:nil];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    
+    if (!cgImage)
+        return nullptr;
 
     RetainPtr<CGPatternRef> pattern = adoptCF(wkCGPatternCreateWithImageAndTransform(cgImage, CGAffineTransformIdentity, wkPatternTilingNoDistortion));
     RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreatePattern(0));
