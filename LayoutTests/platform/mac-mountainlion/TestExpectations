@@ -1,0 +1,6 @@
+# These are the layout test expectations for Apple's Mac port of WebKit on MountainLion.
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+
+# https://bugs.webkit.org/show_bug.cgi?id=134182 REGRESSION (r170257) http/tests/navigation/javascriptlink-frames.html fails on MountainLion
+http/tests/navigation/javascriptlink-frames.html [ Failure ]

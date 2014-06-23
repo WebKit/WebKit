@@ -1,3 +1,12 @@
+2014-06-22  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (r170257) http/tests/navigation/javascriptlink-frames.html fails on MountainLion
+        https://bugs.webkit.org/show_bug.cgi?id=134182
+
+        Unreviewed gardening.
+
+        * platform/mac-mountainlion/TestExpectations: Added, skip the test.
+
 2014-06-20  Simon Fraser  <simon.fraser@apple.com>
 
         [WK2] Frameset frames are not scrollable after loading (and should be)
