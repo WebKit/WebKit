@@ -158,8 +158,13 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     m_snapshotView = adoptNS([[UIView alloc] initWithFrame:liveSwipeViewFrame]);
 
     ViewSnapshot snapshot;
-    if (ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot) && snapshot.hasImage())
-        [m_snapshotView layer].contents = snapshot.asLayerContents();
+    if (ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot) && snapshot.hasImage()) {
+        float deviceScaleFactor = m_webPageProxy.deviceScaleFactor();
+        FloatSize swipeLayerSizeInDeviceCoordinates(liveSwipeViewFrame.size);
+        swipeLayerSizeInDeviceCoordinates.scale(deviceScaleFactor);
+        if (snapshot.size == swipeLayerSizeInDeviceCoordinates && deviceScaleFactor == snapshot.deviceScaleFactor)
+            [m_snapshotView layer].contents = snapshot.asLayerContents();
+    }
 
     [m_snapshotView setBackgroundColor:[UIColor whiteColor]];
     [m_snapshotView layer].contentsGravity = kCAGravityTopLeft;
