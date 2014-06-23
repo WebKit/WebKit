@@ -63,7 +63,7 @@ RemoteLayerBackingStore::RemoteLayerBackingStore(PlatformCALayerRemote* layer)
     if (!m_layer)
         return;
     if (RemoteLayerTreeContext* context = m_layer->context())
-        context->backingStoreWasCreated(this);
+        context->backingStoreWasCreated(*this);
 }
 
 RemoteLayerBackingStore::~RemoteLayerBackingStore()
@@ -73,7 +73,7 @@ RemoteLayerBackingStore::~RemoteLayerBackingStore()
     if (!m_layer)
         return;
     if (RemoteLayerTreeContext* context = m_layer->context())
-        context->backingStoreWillBeDestroyed(this);
+        context->backingStoreWillBeDestroyed(*this);
 }
 
 void RemoteLayerBackingStore::ensureBackingStore(FloatSize size, float scale, bool acceleratesDrawing, bool isOpaque)
@@ -204,7 +204,7 @@ bool RemoteLayerBackingStore::display()
     m_lastDisplayTime = std::chrono::steady_clock::now();
 
     if (RemoteLayerTreeContext* context = m_layer->context())
-        context->backingStoreWillBeDisplayed(this);
+        context->backingStoreWillBeDisplayed(*this);
 
     // Make the previous front buffer non-volatile early, so that we can dirty the whole layer if it comes back empty.
     setBufferVolatility(BufferType::Front, false);

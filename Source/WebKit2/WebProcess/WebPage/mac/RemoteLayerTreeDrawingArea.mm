@@ -50,7 +50,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage* webPage, const WebPageCreationParameters&)
+RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const WebPageCreationParameters&)
     : DrawingArea(DrawingAreaTypeRemoteLayerTree, webPage)
     , m_remoteLayerTreeContext(std::make_unique<RemoteLayerTreeContext>(webPage))
     , m_rootLayer(GraphicsLayer::create(graphicsLayerFactory(), *this))
@@ -64,9 +64,9 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage* webPage, const W
     , m_displayRefreshMonitorsToNotify(nullptr)
     , m_currentTransactionID(0)
 {
-    webPage->corePage()->settings().setForceCompositingMode(true);
+    webPage.corePage()->settings().setForceCompositingMode(true);
 #if PLATFORM(IOS)
-    webPage->corePage()->settings().setDelegatesPageScaling(true);
+    webPage.corePage()->settings().setDelegatesPageScaling(true);
 #endif
 
     m_commitQueue = dispatch_queue_create("com.apple.WebKit.WebContent.RemoteLayerTreeDrawingArea.CommitQueue", nullptr);
@@ -115,7 +115,7 @@ void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer* rootLaye
     Vector<GraphicsLayer *> children;
     if (rootLayer) {
         children.append(rootLayer);
-        children.append(m_webPage->pageOverlayController().viewOverlayRootLayer());
+        children.append(m_webPage.pageOverlayController().viewOverlayRootLayer());
     }
     m_rootLayer->setChildren(children);
 }
@@ -123,11 +123,11 @@ void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer* rootLaye
 void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, const IntSize& layerPosition)
 {
     m_viewSize = viewSize;
-    m_webPage->setSize(viewSize);
+    m_webPage.setSize(viewSize);
 
     scheduleCompositingLayerFlush();
 
-    m_webPage->send(Messages::DrawingAreaProxy::DidUpdateGeometry());
+    m_webPage.send(Messages::DrawingAreaProxy::DidUpdateGeometry());
 }
 
 bool RemoteLayerTreeDrawingArea::shouldUseTiledBackingForFrameView(const FrameView* frameView)
@@ -137,7 +137,7 @@ bool RemoteLayerTreeDrawingArea::shouldUseTiledBackingForFrameView(const FrameVi
 
 void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore&)
 {
-    Settings& settings = m_webPage->corePage()->settings();
+    Settings& settings = m_webPage.corePage()->settings();
 
     // Fixed position elements need to be composited and create stacking contexts
     // in order to be scrolled by the ScrollingCoordinator.
@@ -150,7 +150,7 @@ void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore&)
 #if PLATFORM(IOS)
 void RemoteLayerTreeDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)
 {
-    m_webPage->setDeviceScaleFactor(deviceScaleFactor);
+    m_webPage.setDeviceScaleFactor(deviceScaleFactor);
 }
 #endif
 
@@ -172,7 +172,7 @@ void RemoteLayerTreeDrawingArea::forceRepaint()
     if (m_isFlushingSuspended)
         return;
 
-    for (Frame* frame = &m_webPage->corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_webPage.corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         FrameView* frameView = frame->view();
         if (!frameView || !frameView->tiledBacking())
             continue;
@@ -197,7 +197,7 @@ void RemoteLayerTreeDrawingArea::setExposedRect(const FloatRect& exposedRect)
 #if PLATFORM(IOS)
 void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedContentRect)
 {
-    FrameView* frameView = m_webPage->corePage()->mainFrame().view();
+    FrameView* frameView = m_webPage.mainFrameView();
     if (!frameView)
         return;
 
@@ -208,7 +208,7 @@ void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedC
 
 void RemoteLayerTreeDrawingArea::updateScrolledExposedRect()
 {
-    FrameView* frameView = m_webPage->corePage()->mainFrame().view();
+    FrameView* frameView = m_webPage.mainFrameView();
     if (!frameView)
         return;
 
@@ -224,13 +224,13 @@ void RemoteLayerTreeDrawingArea::updateScrolledExposedRect()
     frameView->setExposedRect(m_scrolledExposedRect);
     frameView->adjustTiledBackingCoverage();
 
-    m_webPage->pageOverlayController().didChangeExposedRect();
+    m_webPage.pageOverlayController().didChangeExposedRect();
 }
 
 TiledBacking* RemoteLayerTreeDrawingArea::mainFrameTiledBacking() const
 {
-    FrameView* frameView = m_webPage->corePage()->mainFrame().view();
-    return frameView ? frameView->tiledBacking() : 0;
+    FrameView* frameView = m_webPage.mainFrameView();
+    return frameView ? frameView->tiledBacking() : nullptr;
 }
 
 void RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush()
@@ -266,12 +266,12 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     RemoteLayerBackingStoreCollection& backingStoreCollection = m_remoteLayerTreeContext->backingStoreCollection();
     backingStoreCollection.willFlushLayers();
 
-    m_webPage->layoutIfNeeded();
+    m_webPage.layoutIfNeeded();
 
     FloatRect visibleRect(FloatPoint(), m_viewSize);
     visibleRect.intersect(m_scrolledExposedRect);
-    m_webPage->pageOverlayController().flushPageOverlayLayers(visibleRect);
-    m_webPage->corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes();
+    m_webPage.pageOverlayController().flushPageOverlayLayers(visibleRect);
+    m_webPage.mainFrameView()->flushCompositingStateIncludingSubframes();
     m_rootLayer->flushCompositingStateForThisLayerOnly();
 
     // FIXME: Minimize these transactions if nothing changed.
@@ -279,20 +279,20 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     layerTransaction.setTransactionID(takeNextTransactionID());
     m_remoteLayerTreeContext->buildTransaction(layerTransaction, *toGraphicsLayerCARemote(m_rootLayer.get())->platformCALayer());
     backingStoreCollection.willCommitLayerTree(layerTransaction);
-    m_webPage->willCommitLayerTree(layerTransaction);
+    m_webPage.willCommitLayerTree(layerTransaction);
 
     RemoteScrollingCoordinatorTransaction scrollingTransaction;
 #if ENABLE(ASYNC_SCROLLING)
-    if (m_webPage->scrollingCoordinator())
-        toRemoteScrollingCoordinator(m_webPage->scrollingCoordinator())->buildTransaction(scrollingTransaction);
+    if (m_webPage.scrollingCoordinator())
+        toRemoteScrollingCoordinator(m_webPage.scrollingCoordinator())->buildTransaction(scrollingTransaction);
 #endif
 
     m_waitingForBackingStoreSwap = true;
 
-    m_webPage->send(Messages::RemoteLayerTreeDrawingAreaProxy::WillCommitLayerTree(layerTransaction.transactionID()));
+    m_webPage.send(Messages::RemoteLayerTreeDrawingAreaProxy::WillCommitLayerTree(layerTransaction.transactionID()));
 
     Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree message(layerTransaction, scrollingTransaction);
-    auto commitEncoder = std::make_unique<IPC::MessageEncoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::receiverName(), Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_webPage->pageID());
+    auto commitEncoder = std::make_unique<IPC::MessageEncoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::receiverName(), Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_webPage.pageID());
     commitEncoder->encode(message.arguments());
 
     // FIXME: Move all backing store flushing management to RemoteLayerBackingStoreCollection.
@@ -350,7 +350,7 @@ void RemoteLayerTreeDrawingArea::didUpdate()
 void RemoteLayerTreeDrawingArea::mainFrameContentSizeChanged(const IntSize& contentsSize)
 {
     m_rootLayer->setSize(contentsSize);
-    m_webPage->pageOverlayController().didChangeDocumentSize();
+    m_webPage.pageOverlayController().didChangeDocumentSize();
 }
 
 PassRefPtr<RemoteLayerTreeDrawingArea::BackingStoreFlusher> RemoteLayerTreeDrawingArea::BackingStoreFlusher::create(IPC::Connection* connection, std::unique_ptr<IPC::MessageEncoder> encoder, Vector<RetainPtr<CGContextRef>> contextsToFlush)

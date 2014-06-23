@@ -45,7 +45,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
+PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
     RefPtr<PlatformCALayerRemote> layer;
 
@@ -54,53 +54,53 @@ PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(LayerType layerT
     else
         layer = adoptRef(new PlatformCALayerRemote(layerType, owner, context));
 
-    context->layerWasCreated(layer.get(), layerType);
+    context.layerWasCreated(*layer, layerType);
 
     return layer.release();
 }
 
-PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(PlatformLayer *platformLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
+PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(PlatformLayer *platformLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
     RefPtr<PlatformCALayerRemote> layer = adoptRef(new PlatformCALayerRemoteCustom(static_cast<PlatformLayer*>(platformLayer), owner, context));
 
-    context->layerWasCreated(layer.get(), LayerTypeCustom);
+    context.layerWasCreated(*layer, LayerTypeCustom);
 
     return layer.release();
 }
 
-PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(const PlatformCALayerRemote& other, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
+PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(const PlatformCALayerRemote& other, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
     RefPtr<PlatformCALayerRemote> layer = adoptRef(new PlatformCALayerRemote(other, owner, context));
 
-    context->layerWasCreated(layer.get(), other.layerType());
+    context.layerWasCreated(*layer, other.layerType());
 
     return layer.release();
 }
 
-PlatformCALayerRemote::PlatformCALayerRemote(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
+PlatformCALayerRemote::PlatformCALayerRemote(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
     : PlatformCALayer(layerType, owner)
     , m_superlayer(nullptr)
     , m_maskLayer(nullptr)
     , m_acceleratesDrawing(false)
-    , m_context(context)
+    , m_context(&context)
 {
     if (owner)
         m_properties.contentsScale = owner->platformCALayerDeviceScaleFactor();
 }
 
-PlatformCALayerRemote::PlatformCALayerRemote(const PlatformCALayerRemote& other, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
+PlatformCALayerRemote::PlatformCALayerRemote(const PlatformCALayerRemote& other, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
     : PlatformCALayer(other.layerType(), owner)
     , m_properties(other.m_properties)
     , m_superlayer(nullptr)
     , m_maskLayer(nullptr)
     , m_acceleratesDrawing(other.acceleratesDrawing())
-    , m_context(context)
+    , m_context(&context)
 {
 }
 
 PassRefPtr<PlatformCALayer> PlatformCALayerRemote::clone(PlatformCALayerClient* client) const
 {
-    RefPtr<PlatformCALayerRemote> clone = PlatformCALayerRemote::create(*this, client, m_context);
+    RefPtr<PlatformCALayerRemote> clone = PlatformCALayerRemote::create(*this, client, *m_context);
 
     clone->m_properties.notePropertiesChanged(static_cast<RemoteLayerTreeTransaction::LayerChange>(m_properties.everChangedProperties & ~RemoteLayerTreeTransaction::BackingStoreChanged));
 
@@ -114,7 +114,7 @@ PlatformCALayerRemote::~PlatformCALayerRemote()
         toPlatformCALayerRemote(layer.get())->m_superlayer = nullptr;
 
     if (m_context)
-        m_context->layerWillBeDestroyed(this);
+        m_context->layerWillBeDestroyed(*this);
 }
 
 void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& context, RemoteLayerTreeTransaction& transaction)
@@ -143,7 +143,7 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& co
             return;
         }
 
-        transaction.layerPropertiesChanged(this);
+        transaction.layerPropertiesChanged(*this);
     }
 
     for (size_t i = 0; i < m_children.size(); ++i) {
@@ -199,7 +199,7 @@ void PlatformCALayerRemote::copyContentsFromLayer(PlatformCALayer* layer)
     ASSERT(m_properties.clonedLayerID == layer->layerID());
     
     if (!m_properties.changedProperties)
-        m_context->layerPropertyChangedWhileBuildingTransaction(this);
+        m_context->layerPropertyChangedWhileBuildingTransaction(*this);
 
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ClonedContentsChanged);
 }
@@ -306,7 +306,7 @@ void PlatformCALayerRemote::addAnimationForKey(const String& key, PlatformCAAnim
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::AnimationsChanged);
 
     if (m_context)
-        m_context->willStartAnimationOnLayer(this);
+        m_context->willStartAnimationOnLayer(*this);
 }
 
 void PlatformCALayerRemote::removeAnimationForKey(const String& key)
@@ -644,7 +644,7 @@ void PlatformCALayerRemote::updateCustomBehavior(GraphicsLayer::CustomBehavior c
 
 PassRefPtr<PlatformCALayer> PlatformCALayerRemote::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
 {
-    return PlatformCALayerRemote::create(layerType, client, m_context);
+    return PlatformCALayerRemote::create(layerType, client, *m_context);
 }
 
 void PlatformCALayerRemote::enumerateRectsBeingDrawn(CGContextRef context, void (^block)(CGRect))

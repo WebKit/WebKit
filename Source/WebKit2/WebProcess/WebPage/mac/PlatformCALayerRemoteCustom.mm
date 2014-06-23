@@ -41,10 +41,10 @@ using namespace WebCore;
 namespace WebKit {
 
 static NSString * const platformCALayerPointer = @"WKPlatformCALayer";
-PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(PlatformLayer* customLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
+PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(PlatformLayer* customLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
     : PlatformCALayerRemote(LayerTypeCustom, owner, context)
 {
-    switch (context->layerHostingMode()) {
+    switch (context.layerHostingMode()) {
     case LayerHostingMode::InProcess:
         m_layerHostingContext = LayerHostingContext::createForPort(WebProcess::shared().compositingRenderServerPort());
         break;

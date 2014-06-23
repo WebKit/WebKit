@@ -60,7 +60,7 @@ class DrawingArea {
     WTF_MAKE_NONCOPYABLE(DrawingArea);
 
 public:
-    static std::unique_ptr<DrawingArea> create(WebPage*, const WebPageCreationParameters&);
+    static std::unique_ptr<DrawingArea> create(WebPage&, const WebPageCreationParameters&);
     virtual ~DrawingArea();
     
     DrawingAreaType type() const { return m_type; }
@@ -118,10 +118,10 @@ public:
     virtual void setLayerHostingMode(LayerHostingMode) { }
 
 protected:
-    DrawingArea(DrawingAreaType, WebPage*);
+    DrawingArea(DrawingAreaType, WebPage&);
 
     DrawingAreaType m_type;
-    WebPage* m_webPage;
+    WebPage& m_webPage;
 
 private:
     // Message handlers.

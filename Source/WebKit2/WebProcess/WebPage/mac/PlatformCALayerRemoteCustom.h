@@ -44,7 +44,7 @@ public:
     virtual void setNeedsDisplay(const WebCore::FloatRect* dirtyRect = 0) override;
 
 private:
-    PlatformCALayerRemoteCustom(PlatformLayer*, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext*);
+    PlatformCALayerRemoteCustom(PlatformLayer*, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
 
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     RetainPtr<PlatformLayer> m_platformLayer;

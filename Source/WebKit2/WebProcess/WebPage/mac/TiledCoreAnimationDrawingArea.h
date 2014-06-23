@@ -51,7 +51,7 @@ class LayerHostingContext;
 
 class TiledCoreAnimationDrawingArea : public DrawingArea, WebCore::LayerFlushSchedulerClient {
 public:
-    TiledCoreAnimationDrawingArea(WebPage*, const WebPageCreationParameters&);
+    TiledCoreAnimationDrawingArea(WebPage&, const WebPageCreationParameters&);
     virtual ~TiledCoreAnimationDrawingArea();
 
     virtual void viewStateDidChange(WebCore::ViewState::Flags changed) override;

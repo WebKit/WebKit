@@ -354,7 +354,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     m_page = std::make_unique<Page>(pageClients);
 
-    m_drawingArea = DrawingArea::create(this, parameters);
+    m_drawingArea = DrawingArea::create(*this, parameters);
     m_drawingArea->setPaintingEnabled(false);
     m_pageOverlayController.initialize();
 

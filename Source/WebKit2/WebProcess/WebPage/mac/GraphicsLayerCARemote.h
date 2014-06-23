@@ -35,7 +35,7 @@ class RemoteLayerTreeContext;
 
 class GraphicsLayerCARemote final : public WebCore::GraphicsLayerCA {
 public:
-    GraphicsLayerCARemote(WebCore::GraphicsLayerClient& client, RemoteLayerTreeContext* context)
+    GraphicsLayerCARemote(WebCore::GraphicsLayerClient& client, RemoteLayerTreeContext& context)
         : GraphicsLayerCA(client)
         , m_context(context)
     {
@@ -57,7 +57,7 @@ private:
     // PlatformCALayerRemote can't currently proxy directly composited image contents, so opt out of this optimization.
     virtual bool shouldDirectlyCompositeImage(WebCore::Image*) const override { return false; }
     
-    RemoteLayerTreeContext* m_context;
+    RemoteLayerTreeContext& m_context;
 };
 
 GRAPHICSLAYER_TYPE_CASTS(GraphicsLayerCARemote, isGraphicsLayerCARemote());

@@ -40,14 +40,13 @@ class RemoteLayerBackingStoreCollection {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStoreCollection);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<RemoteLayerBackingStoreCollection> create(RemoteLayerTreeContext*);
-    RemoteLayerBackingStoreCollection(RemoteLayerTreeContext*);
+    RemoteLayerBackingStoreCollection();
 
-    void backingStoreWasCreated(RemoteLayerBackingStore*);
-    void backingStoreWillBeDestroyed(RemoteLayerBackingStore*);
+    void backingStoreWasCreated(RemoteLayerBackingStore&);
+    void backingStoreWillBeDestroyed(RemoteLayerBackingStore&);
 
-    void backingStoreWillBeDisplayed(RemoteLayerBackingStore*);
-    void backingStoreBecameUnreachable(RemoteLayerBackingStore*);
+    void backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
+    void backingStoreBecameUnreachable(RemoteLayerBackingStore&);
 
     void willFlushLayers();
     void willCommitLayerTree(RemoteLayerTreeTransaction&);
@@ -65,7 +64,6 @@ private:
     HashSet<RemoteLayerBackingStore*> m_unparentedBackingStore;
     HashSet<RemoteLayerBackingStore*> m_reachableBackingStoreInLatestFlush;
 
-    RemoteLayerTreeContext* m_context;
     WebCore::Timer<RemoteLayerBackingStoreCollection> m_volatilityTimer;
 
     bool m_inLayerFlush;

@@ -50,7 +50,7 @@ class RemoteLayerTreeDisplayRefreshMonitor;
 class RemoteLayerTreeDrawingArea : public DrawingArea, public WebCore::GraphicsLayerClient {
     friend class RemoteLayerTreeDisplayRefreshMonitor;
 public:
-    RemoteLayerTreeDrawingArea(WebPage*, const WebPageCreationParameters&);
+    RemoteLayerTreeDrawingArea(WebPage&, const WebPageCreationParameters&);
     virtual ~RemoteLayerTreeDrawingArea();
 
 private:

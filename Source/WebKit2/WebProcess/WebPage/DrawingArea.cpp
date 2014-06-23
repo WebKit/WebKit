@@ -47,7 +47,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-std::unique_ptr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreationParameters& parameters)
+std::unique_ptr<DrawingArea> DrawingArea::create(WebPage& webPage, const WebPageCreationParameters& parameters)
 {
     switch (parameters.drawingAreaType) {
 #if PLATFORM(COCOA)
@@ -71,7 +71,7 @@ std::unique_ptr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPage
     return nullptr;
 }
 
-DrawingArea::DrawingArea(DrawingAreaType type, WebPage* webPage)
+DrawingArea::DrawingArea(DrawingAreaType type, WebPage& webPage)
     : m_type(type)
     , m_webPage(webPage)
 {

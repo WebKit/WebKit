@@ -36,7 +36,7 @@ public:
     virtual ~PlatformCALayerRemoteTiledBacking();
 
 private:
-    PlatformCALayerRemoteTiledBacking(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext*);
+    PlatformCALayerRemoteTiledBacking(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
 
     virtual WebCore::TiledBacking* tiledBacking() override { return m_tileController.get(); }
 
