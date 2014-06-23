@@ -42,6 +42,9 @@ typedef NS_ENUM(NSInteger, _WKStorageBlockingPolicy) {
 @property (nonatomic, setter=_setTelephoneNumberDetectionIsEnabled:) BOOL _telephoneNumberDetectionIsEnabled;
 @property (nonatomic, setter=_setStorageBlockingPolicy:) _WKStorageBlockingPolicy _storageBlockingPolicy;
 
+// FIXME: This should be configured on the WKWebsiteDataStore.
+@property (nonatomic, setter=_setOfflineApplicationCacheIsEnabled:) BOOL _offlineApplicationCacheIsEnabled;
+
 @end
 
 #endif

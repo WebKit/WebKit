@@ -153,6 +153,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setStorageBlockingPolicy(toStorageBlockingPolicy(policy));
 }
 
+- (BOOL)_offlineApplicationCacheIsEnabled
+{
+    return _preferences->offlineWebApplicationCacheEnabled();
+}
+
+- (void)_setOfflineApplicationCacheIsEnabled:(BOOL)offlineApplicationCacheIsEnabled
+{
+    _preferences->setOfflineWebApplicationCacheEnabled(offlineApplicationCacheIsEnabled);
+}
+
 @end
 
 #endif // WK_API_ENABLED

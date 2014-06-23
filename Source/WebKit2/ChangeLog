@@ -1,3 +1,16 @@
+2014-06-23  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/17413498> [Cocoa] Expose WebPreferences::offlineWebApplicationCacheEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=134217
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _offlineApplicationCacheIsEnabled]):
+        (-[WKPreferences _setOfflineApplicationCacheIsEnabled:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h: Added _offlineWebApplicationCacheIsEnabled
+        property.
+
 2014-06-23  Grant Kennell  <gkennell@apple.com>
 
         Add SPI for Injected Bundle to provide user agent for a given URL.
