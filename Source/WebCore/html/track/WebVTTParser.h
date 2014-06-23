@@ -49,7 +49,6 @@ namespace WebCore {
 using namespace HTMLNames;
 
 class Document;
-class ISOWebVTTCue;
 class VTTScanner;
 
 class WebVTTParserClient {
@@ -84,20 +83,15 @@ public:
     String settings() const { return m_settings; }
     void setSettings(String settings) { m_settings = settings; }
 
-    double originalStartTime() const { return m_originalStartTime; }
-    void setOriginalStartTime(double time) { m_originalStartTime = time; }
-
 private:
     WebVTTCueData()
         : m_startTime(0)
         , m_endTime(0)
-        , m_originalStartTime(0)
     {
     }
 
     double m_startTime;
     double m_endTime;
-    double m_originalStartTime;
     String m_id;
     String m_content;
     String m_settings;
@@ -146,9 +140,7 @@ public:
 #endif
 
     // Input data to the parser to parse.
-    void parseBytes(const char*, unsigned);
-    void parseFileHeader(const String&);
-    void parseCueData(const ISOWebVTTCue&);
+    void parseBytes(const char* data, unsigned length);
     void flush();
     void fileFinished();
 
@@ -192,7 +184,7 @@ private:
     double m_currentEndTime;
     StringBuilder m_currentContent;
     String m_currentSettings;
-
+    
     WebVTTParserClient* m_client;
 
     Vector<RefPtr<WebVTTCueData>> m_cuelist;

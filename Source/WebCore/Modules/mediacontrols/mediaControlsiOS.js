@@ -320,7 +320,7 @@ ControllerIOS.prototype = {
             if (this.hideTimer)
                 clearTimeout(this.hideTimer);
             this.hideTimer = setTimeout(this.hideControls.bind(this), this.HideControlsDelay);
-        } else if (this.canPlay())
+        } else if (!this.canPlay())
             this.hideControls();
     },
 

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
  * Copyright (C) 2013 Cable Television Labs, Inc.
- * Copyright (C) 2011-2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,7 +36,6 @@
 
 #include "WebVTTParser.h"
 
-#include "ISOVTTCue.h"
 #include "ProcessingInstruction.h"
 #include "Text.h"
 #include "VTTScanner.h"
@@ -109,40 +108,11 @@ void WebVTTParser::getNewRegions(Vector<RefPtr<VTTRegion>>& outputRegions)
 }
 #endif
 
-void WebVTTParser::parseFileHeader(const String& data)
-{
-    m_state = Initial;
-    m_lineReader.reset();
-    m_lineReader.append(data);
-    parse();
-}
-
 void WebVTTParser::parseBytes(const char* data, unsigned length)
 {
     String textData = m_decoder->decode(data, length);
     m_lineReader.append(textData);
     parse();
-}
-
-void WebVTTParser::parseCueData(const ISOWebVTTCue& data)
-{
-    RefPtr<WebVTTCueData> cue = WebVTTCueData::create();
-
-    double startTime = data.presentationTime().toDouble();
-    cue->setStartTime(startTime);
-    cue->setEndTime(startTime + data.duration().toDouble());
-
-    cue->setContent(data.cueText());
-    cue->setId(data.id());
-    cue->setSettings(data.settings());
-
-    double originalStartTime;
-    if (WebVTTParser::collectTimeStamp(data.originalStartTime(), originalStartTime))
-        cue->setOriginalStartTime(originalStartTime);
-
-    m_cuelist.append(cue);
-    if (m_client)
-        m_client->newCuesParsed();
 }
 
 void WebVTTParser::flush()
@@ -301,9 +271,6 @@ WebVTTParser::ParseState WebVTTParser::collectCueId(const String& line)
 
 WebVTTParser::ParseState WebVTTParser::collectTimingsAndSettings(const String& line)
 {
-    if (line.isEmpty())
-        return BadCue;
-
     VTTScanner input(line);
 
     // Collect WebVTT cue timings and settings. (5.3 WebVTT cue timings and settings parsing.)
@@ -467,9 +434,6 @@ void WebVTTParser::createNewRegion(const String& headerValue)
 
 bool WebVTTParser::collectTimeStamp(const String& line, double& timeStamp)
 {
-    if (line.isEmpty())
-        return false;
-
     VTTScanner input(line);
     return collectTimeStamp(input, timeStamp);
 }

@@ -314,8 +314,6 @@
 		07AB996B18DA3C010018771E /* RTCIceServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 07AB996718DA3C010018771E /* RTCIceServer.h */; };
 		07AB996F18DA3C740018771E /* RTCConfigurationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 07AB996D18DA3C740018771E /* RTCConfigurationPrivate.h */; };
 		07AB997018DA3C740018771E /* RTCIceServerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 07AB996E18DA3C740018771E /* RTCIceServerPrivate.h */; };
-		07AC47011952102100EE9723 /* ISOVTTCue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07AC46FF1952102100EE9723 /* ISOVTTCue.cpp */; };
-		07AC47021952102100EE9723 /* ISOVTTCue.h in Headers */ = {isa = PBXBuildFile; fileRef = 07AC47001952102100EE9723 /* ISOVTTCue.h */; };
 		07B0113F1032242200FBDC33 /* AccessibilityMediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */; };
 		07B442D6166C70B000556CAD /* InbandTextTrackPrivateAVF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07B442D4166C70B000556CAD /* InbandTextTrackPrivateAVF.cpp */; };
 		07B442D7166C70B000556CAD /* InbandTextTrackPrivateAVF.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B442D5166C70B000556CAD /* InbandTextTrackPrivateAVF.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7210,8 +7208,6 @@
 		07AB996818DA3C010018771E /* RTCIceServer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCIceServer.idl; sourceTree = "<group>"; };
 		07AB996D18DA3C740018771E /* RTCConfigurationPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCConfigurationPrivate.h; sourceTree = "<group>"; };
 		07AB996E18DA3C740018771E /* RTCIceServerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceServerPrivate.h; sourceTree = "<group>"; };
-		07AC46FF1952102100EE9723 /* ISOVTTCue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ISOVTTCue.cpp; path = ISOVTTCue.cpp; sourceTree = "<group>"; };
-		07AC47001952102100EE9723 /* ISOVTTCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ISOVTTCue.h; path = ISOVTTCue.h; sourceTree = "<group>"; };
 		07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMediaControls.h; sourceTree = "<group>"; };
 		07B442D4166C70B000556CAD /* InbandTextTrackPrivateAVF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InbandTextTrackPrivateAVF.cpp; sourceTree = "<group>"; };
 		07B442D5166C70B000556CAD /* InbandTextTrackPrivateAVF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrackPrivateAVF.h; sourceTree = "<group>"; };
@@ -20414,8 +20410,6 @@
 				2D46F04F17B96FD2005647F0 /* IntSize.cpp */,
 				B27535470B053814002CE64F /* IntSize.h */,
 				B27535480B053814002CE64F /* IntSizeHash.h */,
-				07AC46FF1952102100EE9723 /* ISOVTTCue.cpp */,
-				07AC47001952102100EE9723 /* ISOVTTCue.h */,
 				65CC6BED16014EC0000ED27D /* Latin1TextIterator.h */,
 				141DC049164834B900371E5A /* LayoutBoxExtent.cpp */,
 				141DC04A164834B900371E5A /* LayoutBoxExtent.h */,
@@ -24921,7 +24915,6 @@
 				E1FF8F65180745D800132674 /* JSSubtleCrypto.h in Headers */,
 				B20111080AB7740500DB0E68 /* JSSVGAElement.h in Headers */,
 				24D9129213CA951E00D21915 /* JSSVGAltGlyphDefElement.h in Headers */,
-				07AC47021952102100EE9723 /* ISOVTTCue.h in Headers */,
 				6515EC920D9723FF0063D49A /* JSSVGAltGlyphElement.h in Headers */,
 				24D9129613CA956100D21915 /* JSSVGAltGlyphItemElement.h in Headers */,
 				B222F6990AB771950022EFAD /* JSSVGAngle.h in Headers */,
@@ -29510,7 +29503,6 @@
 				B2227A530D00BF220071B782 /* SVGPaint.cpp in Sources */,
 				B2227A560D00BF220071B782 /* SVGParserUtilities.cpp in Sources */,
 				84C6784C1214814700A92902 /* SVGPathBlender.cpp in Sources */,
-				07AC47011952102100EE9723 /* ISOVTTCue.cpp in Sources */,
 				8476C9EA11DF6A2900555B02 /* SVGPathBuilder.cpp in Sources */,
 				8419D2A8120D92D000141F8F /* SVGPathByteStreamBuilder.cpp in Sources */,
 				8419D2AC120D92FC00141F8F /* SVGPathByteStreamSource.cpp in Sources */,

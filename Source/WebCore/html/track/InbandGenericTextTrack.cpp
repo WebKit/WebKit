@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2012 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,10 +35,6 @@
 #include "Logging.h"
 #include <math.h>
 #include <wtf/text/CString.h>
-
-#if ENABLE(WEBVTT_REGIONS)
-#include "VTTRegionList.h"
-#endif
 
 namespace WebCore {
 
@@ -192,59 +188,6 @@ void InbandGenericTextTrack::removeCue(TextTrackCue* cue, ExceptionCode& ec)
 {
     m_cueMap.remove(cue);
     TextTrack::removeCue(cue, ec);
-}
-
-WebVTTParser& InbandGenericTextTrack::parser()
-{
-    if (!m_webVTTParser)
-        m_webVTTParser = std::make_unique<WebVTTParser>(static_cast<WebVTTParserClient*>(this), scriptExecutionContext());
-    return *m_webVTTParser;
-}
-
-void InbandGenericTextTrack::parseWebVTTCueData(InbandTextTrackPrivate* trackPrivate, const ISOWebVTTCue& cueData)
-{
-    ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
-    parser().parseCueData(cueData);
-}
-
-void InbandGenericTextTrack::parseWebVTTFileHeader(InbandTextTrackPrivate* trackPrivate, String header)
-{
-    ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
-    parser().parseFileHeader(header);
-}
-
-void InbandGenericTextTrack::newCuesParsed()
-{
-    Vector<RefPtr<WebVTTCueData>> cues;
-    parser().getNewCues(cues);
-
-    for (auto& cueData : cues) {
-        RefPtr<VTTCue> vttCue = VTTCue::create(*scriptExecutionContext(), *cueData);
-
-        if (hasCue(vttCue.get(), TextTrackCue::IgnoreDuration)) {
-            LOG(Media, "InbandGenericTextTrack::newCuesParsed ignoring already added cue: start=%.2f, end=%.2f, content=\"%s\"\n", vttCue->startTime(), vttCue->endTime(), vttCue->text().utf8().data());
-            return;
-        }
-        addCue(vttCue.release(), ASSERT_NO_EXCEPTION);
-    }
-}
-
-#if ENABLE(WEBVTT_REGIONS)
-void InbandGenericTextTrack::newRegionsParsed()
-{
-    Vector<RefPtr<VTTRegion>> newRegions;
-    parser().getNewRegions(newRegions);
-
-    for (auto& region : newRegions) {
-        region->setTrack(this);
-        regions()->add(region);
-    }
-}
-#endif
-
-void InbandGenericTextTrack::fileFailedToParse()
-{
-    LOG(Media, "Error parsing WebVTT stream.");
 }
 
 } // namespace WebCore

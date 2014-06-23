@@ -46,13 +46,15 @@ class HTMLSpanElement;
 class ScriptExecutionContext;
 class VTTCue;
 class VTTScanner;
-class WebVTTCueData;
 
 // ----------------------------
 
 class VTTCueBox : public HTMLElement {
 public:
-    static PassRefPtr<VTTCueBox> create(Document&, VTTCue&);
+    static PassRefPtr<VTTCueBox> create(Document& document, VTTCue* cue)
+    {
+        return adoptRef(new VTTCueBox(document, cue));
+    }
 
     VTTCue* getCue() const;
     virtual void applyCSSProperties(const IntSize& videoSize);
@@ -60,19 +62,21 @@ public:
     static const AtomicString& vttCueBoxShadowPseudoId();
 
 protected:
-    VTTCueBox(Document&, VTTCue&);
+    VTTCueBox(Document&, VTTCue*);
 
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 
-    VTTCue& m_cue;
+    VTTCue* m_cue;
 };
 
 // ----------------------------
 
 class VTTCue : public TextTrackCue {
 public:
-    static PassRefPtr<VTTCue> create(ScriptExecutionContext&, double start, double end, const String&);
-    static PassRefPtr<VTTCue> create(ScriptExecutionContext&, const WebVTTCueData&);
+    static PassRefPtr<VTTCue> create(ScriptExecutionContext& context, double start, double end, const String& content)
+    {
+        return adoptRef(new VTTCue(context, start, end, content));
+    }
 
     virtual ~VTTCue();
 
@@ -160,13 +164,11 @@ public:
 
 protected:
     VTTCue(ScriptExecutionContext&, double start, double end, const String& content);
-    VTTCue(ScriptExecutionContext&, const WebVTTCueData&);
 
     virtual PassRefPtr<VTTCueBox> createDisplayTree();
     VTTCueBox* displayTreeInternal();
 
 private:
-    void initialize(ScriptExecutionContext&);
     void createWebVTTNodeTree();
     void copyWebVTTNodeToDOMTree(ContainerNode* WebVTTNode, ContainerNode* root);
 
@@ -208,8 +210,6 @@ private:
     CSSValueID m_displayDirection;
     int m_displaySize;
     std::pair<float, float> m_displayPosition;
-
-    double m_originalStartTime;
 
     bool m_snapToLines : 1;
     bool m_displayTreeShouldChange : 1;

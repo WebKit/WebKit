@@ -76,7 +76,7 @@ public:
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
     RetainPtr<AVPlayerItem> playerItem() const { return m_avPlayerItem; }
-    void processCue(NSArray *, NSArray *, double);
+    void processCue(NSArray *, double);
     void flushCues();
 #endif
     

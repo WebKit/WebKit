@@ -1093,7 +1093,7 @@ void MediaPlayerPrivateAVFoundationCF::processMediaSelectionOptions()
         if (!newTrack)
             continue;
 
-        m_textTracks.append(InbandTextTrackPrivateAVCF::create(this, option, InbandTextTrackPrivate::Generic));
+        m_textTracks.append(InbandTextTrackPrivateAVCF::create(this, option));
     }
 
     processNewAndRemovedTextTracks(removedTextTracks);
@@ -1594,12 +1594,11 @@ void AVFWrapper::seekToTime(double time, double negativeTolerance, double positi
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
 struct LegibleOutputData {
     RetainPtr<CFArrayRef> m_attributedStrings;
-    RetainPtr<CFArrayRef> m_samples;
     double m_time;
     void* m_context;
 
-    LegibleOutputData(CFArrayRef strings, CFArrayRef samples, double time, void* context)
-        : m_attributedStrings(strings), m_samples(samples), m_time(time), m_context(context)
+    LegibleOutputData(CFArrayRef strings, double time, void* context)
+        : m_attributedStrings(strings), m_time(time), m_context(context)
     {
     }
 };
@@ -1624,10 +1623,10 @@ void AVFWrapper::processCue(void* context)
     if (!self->m_currentTextTrack)
         return;
 
-    self->m_currentTextTrack->processCue(legibleOutputData->m_attributedStrings.get(), legibleOutputData->m_samples.get(), legibleOutputData->m_time);
+    self->m_currentTextTrack->processCue(legibleOutputData->m_attributedStrings.get(), legibleOutputData->m_time);
 }
 
-void AVFWrapper::legibleOutputCallback(void* context, AVCFPlayerItemLegibleOutputRef legibleOutput, CFArrayRef attributedStrings, CFArrayRef nativeSampleBuffers, CMTime itemTime)
+void AVFWrapper::legibleOutputCallback(void* context, AVCFPlayerItemLegibleOutputRef legibleOutput, CFArrayRef attributedStrings, CFArrayRef /*nativeSampleBuffers*/, CMTime itemTime)
 {
     ASSERT(dispatch_get_main_queue() != dispatch_get_current_queue());
     MutexLocker locker(mapLock());
@@ -1641,7 +1640,7 @@ void AVFWrapper::legibleOutputCallback(void* context, AVCFPlayerItemLegibleOutpu
 
     ASSERT(legibleOutput == self->m_legibleOutput);
 
-    OwnPtr<LegibleOutputData> legibleOutputData = adoptPtr(new LegibleOutputData(attributedStrings, nativeSampleBuffers, CMTimeGetSeconds(itemTime), context));
+    OwnPtr<LegibleOutputData> legibleOutputData = adoptPtr(new LegibleOutputData(attributedStrings, CMTimeGetSeconds(itemTime), context));
 
     dispatch_async_f(dispatch_get_main_queue(), legibleOutputData.leakPtr(), processCue);
 }

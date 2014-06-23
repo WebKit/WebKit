@@ -2090,7 +2090,6 @@ set(WebCore_SOURCES
     platform/graphics/IntPoint.cpp
     platform/graphics/IntRect.cpp
     platform/graphics/IntSize.cpp
-    platform/graphics/ISOVTTCue.cpp
     platform/graphics/LayoutBoxExtent.cpp
     platform/graphics/LayoutRect.cpp
     platform/graphics/MediaPlayer.cpp

@@ -43,9 +43,7 @@ public:
 private:
     InbandWebVTTTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
 
-    WebVTTParser& parser();
     virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const char* data, unsigned length) override;
-    virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const ISOWebVTTCue&) override;
 
     virtual void newCuesParsed() override;
 #if ENABLE(WEBVTT_REGIONS)

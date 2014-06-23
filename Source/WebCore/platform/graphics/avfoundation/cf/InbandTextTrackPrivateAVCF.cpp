@@ -45,8 +45,8 @@
 
 namespace WebCore {
 
-InbandTextTrackPrivateAVCF::InbandTextTrackPrivateAVCF(AVFInbandTrackParent* player, AVCFMediaSelectionOptionRef selection, InbandTextTrackPrivate::CueFormat format)
-    : InbandTextTrackPrivateAVF(player, format)
+InbandTextTrackPrivateAVCF::InbandTextTrackPrivateAVCF(AVFInbandTrackParent* player, AVCFMediaSelectionOptionRef selection)
+    : InbandTextTrackPrivateAVF(player)
     , m_mediaSelectionOption(selection)
 {
 }

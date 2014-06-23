@@ -7256,7 +7256,6 @@
     <ClCompile Include="..\platform\FileChooser.cpp" />
     <ClCompile Include="..\platform\FileStream.cpp" />
     <ClCompile Include="..\platform\FileSystem.cpp" />
-    <ClCompile Include="..\platform\graphics\ISOVTTCue.cpp" />
     <ClCompile Include="..\platform\audio\AudioSession.cpp" />
     <ClCompile Include="..\platform\audio\MediaSession.cpp" />
     <ClCompile Include="..\platform\audio\MediaSessionManager.cpp" />
@@ -19438,7 +19437,6 @@
     <ClInclude Include="..\platform\graphics\IntRect.h" />
     <ClInclude Include="..\platform\graphics\IntSize.h" />
     <ClInclude Include="..\platform\graphics\IntSizeHash.h" />
-    <ClInclude Include="..\platform\graphics\ISOVTTCue.h" />
     <ClInclude Include="..\platform\graphics\LayoutBoxExtent.h" />
     <ClInclude Include="..\platform\graphics\LayoutPoint.h" />
     <ClInclude Include="..\platform\graphics\LayoutRect.h" />

@@ -34,10 +34,6 @@
 #include "NotImplemented.h"
 #include <wtf/text/CString.h>
 
-#if ENABLE(WEBVTT_REGIONS)
-#include "VTTRegionList.h"
-#endif
-
 namespace WebCore {
 
 PassRefPtr<InbandTextTrack> InbandWebVTTTextTrack::create(ScriptExecutionContext* context, TextTrackClient* client, PassRefPtr<InbandTextTrackPrivate> playerPrivate)
@@ -54,57 +50,42 @@ InbandWebVTTTextTrack::~InbandWebVTTTextTrack()
 {
 }
 
-WebVTTParser& InbandWebVTTTextTrack::parser()
-{
-    if (!m_webVTTParser)
-        m_webVTTParser = std::make_unique<WebVTTParser>(static_cast<WebVTTParserClient*>(this), scriptExecutionContext());
-    return *m_webVTTParser;
-}
-
 void InbandWebVTTTextTrack::parseWebVTTCueData(InbandTextTrackPrivate* trackPrivate, const char* data, unsigned length)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
-    parser().parseBytes(data, length);
-}
-
-void InbandWebVTTTextTrack::parseWebVTTCueData(InbandTextTrackPrivate* trackPrivate, const ISOWebVTTCue& cueData)
-{
-    ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
-    parser().parseCueData(cueData);
+    if (!m_webVTTParser)
+        m_webVTTParser = std::make_unique<WebVTTParser>(static_cast<WebVTTParserClient*>(this), scriptExecutionContext());
+    m_webVTTParser->parseBytes(data, length);
 }
 
 void InbandWebVTTTextTrack::newCuesParsed()
 {
     Vector<RefPtr<WebVTTCueData>> cues;
-    parser().getNewCues(cues);
+    m_webVTTParser->getNewCues(cues);
+    for (size_t i = 0; i < cues.size(); ++i) {
+        RefPtr<WebVTTCueData> cueData = cues[i];
+        RefPtr<VTTCue> cue = VTTCue::create(*scriptExecutionContext(), cueData->startTime(), cueData->endTime(), cueData->content());
+        cue->setId(cueData->id());
+        cue->setCueSettings(cueData->settings());
 
-    for (auto& cueData : cues) {
-        RefPtr<VTTCue> vttCue = VTTCue::create(*scriptExecutionContext(), *cueData);
-
-        if (hasCue(vttCue.get(), TextTrackCue::IgnoreDuration)) {
-            LOG(Media, "InbandWebVTTTextTrack::newCuesParsed ignoring already added cue: start=%.2f, end=%.2f, content=\"%s\"\n", vttCue->startTime(), vttCue->endTime(), vttCue->text().utf8().data());
+        if (hasCue(cue.get(), TextTrackCue::IgnoreDuration)) {
+            LOG(Media, "InbandWebVTTTextTrack::newCuesParsed ignoring already added cue: start=%.2f, end=%.2f, content=\"%s\"\n", cueData->startTime(), cueData->endTime(), cueData->content().utf8().data());
             return;
         }
-        addCue(vttCue.release(), ASSERT_NO_EXCEPTION);
+        addCue(cue.release(), ASSERT_NO_EXCEPTION);
     }
 }
     
 #if ENABLE(WEBVTT_REGIONS)
 void InbandWebVTTTextTrack::newRegionsParsed()
 {
-    Vector<RefPtr<VTTRegion>> newRegions;
-    parser().getNewRegions(newRegions);
-
-    for (auto& region : newRegions) {
-        region->setTrack(this);
-        regions()->add(region);
-    }
+    notImplemented();
 }
 #endif
     
 void InbandWebVTTTextTrack::fileFailedToParse()
 {
-    LOG(Media, "Error parsing WebVTT stream.");
+    LOG(Media, "Unable to parse WebVTT stream.");
 }
 
 } // namespace WebCore

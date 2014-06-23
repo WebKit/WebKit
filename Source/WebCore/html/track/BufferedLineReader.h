@@ -68,8 +68,6 @@ public:
     // Returns true if EOS has been reached proper.
     bool isAtEndOfStream() const { return m_endOfStream && m_buffer.isEmpty(); }
 
-    void reset() { m_buffer.clear(); }
-
 private:
     // Consume the next character the buffer if it is the character |c|.
     void scanCharacter(UChar c)

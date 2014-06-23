@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,6 @@
 namespace WebCore {
 
 class InbandTextTrackPrivate;
-class ISOWebVTTCue;
 
 class GenericCueData : public RefCounted<GenericCueData> {
 public:
@@ -181,9 +180,7 @@ public:
     virtual void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) = 0;
     virtual void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) = 0;
 
-    virtual void parseWebVTTFileHeader(InbandTextTrackPrivate*, String) { ASSERT_NOT_REACHED(); }
     virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const char* data, unsigned length) = 0;
-    virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const ISOWebVTTCue&) = 0;
 };
 
 } // namespace WebCore

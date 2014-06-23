@@ -119,14 +119,7 @@ static const String& verticalGrowingRightKeyword()
 
 // ----------------------------
 
-PassRefPtr<VTTCueBox> VTTCueBox::create(Document& document, VTTCue& cue)
-{
-    VTTCueBox* cueBox = new VTTCueBox(document, cue);
-    cueBox->setPseudo(VTTCueBox::vttCueBoxShadowPseudoId());
-    return adoptRef(cueBox);
-}
-
-VTTCueBox::VTTCueBox(Document& document, VTTCue& cue)
+VTTCueBox::VTTCueBox(Document& document, VTTCue* cue)
     : HTMLElement(divTag, document)
     , m_cue(cue)
 {
@@ -135,14 +128,14 @@ VTTCueBox::VTTCueBox(Document& document, VTTCue& cue)
 
 VTTCue* VTTCueBox::getCue() const
 {
-    return &m_cue;
+    return m_cue;
 }
 
 void VTTCueBox::applyCSSProperties(const IntSize&)
 {
     // FIXME: Apply all the initial CSS positioning properties. http://wkb.ug/79916
 #if ENABLE(WEBVTT_REGIONS)
-    if (!m_cue.regionId().isEmpty()) {
+    if (!m_cue->regionId().isEmpty()) {
         setInlineStyleProperty(CSSPropertyPosition, CSSValueRelative);
         return;
     }
@@ -157,12 +150,12 @@ void VTTCueBox::applyCSSProperties(const IntSize&)
     setInlineStyleProperty(CSSPropertyUnicodeBidi, CSSValueWebkitPlaintext);
 
     // the 'direction' property must be set to direction
-    setInlineStyleProperty(CSSPropertyDirection, m_cue.getCSSWritingDirection());
+    setInlineStyleProperty(CSSPropertyDirection, m_cue->getCSSWritingDirection());
 
     // the 'writing-mode' property must be set to writing-mode
-    setInlineStyleProperty(CSSPropertyWebkitWritingMode, m_cue.getCSSWritingMode(), false);
+    setInlineStyleProperty(CSSPropertyWebkitWritingMode, m_cue->getCSSWritingMode(), false);
 
-    std::pair<float, float> position = m_cue.getCSSPosition();
+    std::pair<float, float> position = m_cue->getCSSPosition();
 
     // the 'top' property must be set to top,
     setInlineStyleProperty(CSSPropertyTop, static_cast<double>(position.second), CSSPrimitiveValue::CSS_PERCENTAGE);
@@ -171,21 +164,21 @@ void VTTCueBox::applyCSSProperties(const IntSize&)
     setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(position.first), CSSPrimitiveValue::CSS_PERCENTAGE);
 
     // the 'width' property must be set to width, and the 'height' property  must be set to height
-    if (m_cue.vertical() == horizontalKeyword()) {
-        setInlineStyleProperty(CSSPropertyWidth, static_cast<double>(m_cue.getCSSSize()), CSSPrimitiveValue::CSS_PERCENTAGE);
+    if (m_cue->vertical() == horizontalKeyword()) {
+        setInlineStyleProperty(CSSPropertyWidth, static_cast<double>(m_cue->getCSSSize()), CSSPrimitiveValue::CSS_PERCENTAGE);
         setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
     } else {
         setInlineStyleProperty(CSSPropertyWidth, CSSValueAuto);
-        setInlineStyleProperty(CSSPropertyHeight, static_cast<double>(m_cue.getCSSSize()),  CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyHeight, static_cast<double>(m_cue->getCSSSize()),  CSSPrimitiveValue::CSS_PERCENTAGE);
     }
 
     // The 'text-align' property on the (root) List of WebVTT Node Objects must
     // be set to the value in the second cell of the row of the table below
     // whose first cell is the value of the corresponding cue's text track cue
     // alignment:
-    setInlineStyleProperty(CSSPropertyTextAlign, m_cue.getCSSAlignment());
+    setInlineStyleProperty(CSSPropertyTextAlign, m_cue->getCSSAlignment());
 
-    if (!m_cue.snapToLines()) {
+    if (!m_cue->snapToLines()) {
         // 10.13.1 Set up x and y:
         // Note: x and y are set through the CSS left and top above.
 
@@ -216,33 +209,23 @@ RenderPtr<RenderElement> VTTCueBox::createElementRenderer(PassRef<RenderStyle> s
 
 // ----------------------------
 
-PassRefPtr<VTTCue> VTTCue::create(ScriptExecutionContext& context, double start, double end, const String& content)
-{
-    return adoptRef(new VTTCue(context, start, end, content));
-}
-
-PassRefPtr<VTTCue> VTTCue::create(ScriptExecutionContext& context, const WebVTTCueData& data)
-{
-    return adoptRef(new VTTCue(context, data));
-}
-
 VTTCue::VTTCue(ScriptExecutionContext& context, double start, double end, const String& content)
     : TextTrackCue(context, start, end)
     , m_content(content)
+    , m_linePosition(undefinedPosition)
+    , m_computedLinePosition(undefinedPosition)
+    , m_textPosition(50)
+    , m_cueSize(100)
+    , m_writingDirection(Horizontal)
+    , m_cueAlignment(Middle)
+    , m_webVTTNodeTree(nullptr)
+    , m_cueBackgroundBox(HTMLSpanElement::create(spanTag, toDocument(context)))
+    , m_displayDirection(CSSValueLtr)
+    , m_displaySize(0)
+    , m_snapToLines(true)
+    , m_displayTreeShouldChange(true)
+    , m_notifyRegion(true)
 {
-    initialize(context);
-}
-
-VTTCue::VTTCue(ScriptExecutionContext& context, const WebVTTCueData& cueData)
-    : TextTrackCue(context, 0, 0)
-{
-    initialize(context);
-    setText(cueData.content());
-    setStartTime(cueData.startTime(), IGNORE_EXCEPTION);
-    setEndTime(cueData.endTime(), IGNORE_EXCEPTION);
-    setId(cueData.id());
-    setCueSettings(cueData.settings());
-    m_originalStartTime = cueData.originalStartTime();
 }
 
 VTTCue::~VTTCue()
@@ -253,27 +236,9 @@ VTTCue::~VTTCue()
     displayTreeInternal()->remove(ASSERT_NO_EXCEPTION);
 }
 
-void VTTCue::initialize(ScriptExecutionContext& context)
-{
-    m_linePosition = undefinedPosition;
-    m_computedLinePosition = undefinedPosition;
-    m_textPosition = 50;
-    m_cueSize = 100;
-    m_writingDirection = Horizontal;
-    m_cueAlignment = Middle;
-    m_webVTTNodeTree = nullptr;
-    m_cueBackgroundBox = HTMLSpanElement::create(spanTag, toDocument(context));
-    m_displayDirection = CSSValueLtr;
-    m_displaySize = 0;
-    m_snapToLines = true;
-    m_displayTreeShouldChange = true;
-    m_notifyRegion = true;
-    m_originalStartTime = 0;
-}
-
 PassRefPtr<VTTCueBox> VTTCue::createDisplayTree()
 {
-    return VTTCueBox::create(ownerDocument(), *this);
+    return VTTCueBox::create(ownerDocument(), this);
 }
 
 VTTCueBox* VTTCue::displayTreeInternal()
@@ -734,7 +699,6 @@ void VTTCue::markFutureAndPastNodes(ContainerNode* root, double previousTimestam
             bool check = WebVTTParser::collectTimeStamp(child->nodeValue(), currentTimestamp);
             ASSERT_UNUSED(check, check);
             
-            currentTimestamp += m_originalStartTime;
             if (currentTimestamp > movieTime)
                 isPastNode = false;
         }
@@ -920,9 +884,6 @@ static bool scanPercentage(VTTScanner& input, const VTTScanner::Run& valueRun, i
 
 void VTTCue::setCueSettings(const String& inputString)
 {
-    if (inputString.isEmpty())
-        return;
-
     VTTScanner input(inputString);
 
     while (!input.isAtEnd()) {
