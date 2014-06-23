@@ -1,3 +1,62 @@
+2014-06-23  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Synchronously wait a short time for a layer tree update after bringing a web view in-window
+        https://bugs.webkit.org/show_bug.cgi?id=134189
+
+        Reviewed by Simon Fraser.
+
+        Make the old behavior of -[WKView endDeferringViewInWindowChangesSync] the default; synchronously wait
+        for a fraction of a second when a page that was previously in-window but currently isn't comes back in-window,
+        until new content is painted (or we hit a timeout).
+        
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::waitForDidUpdateViewState):
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::waitForDidUpdateViewState):
+        Delegate waitForDidUpdateViewState to the DrawingAreaProxys, because behavior is very dependent on them.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::coreAnimationDidCommitLayers):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateViewState):
+        Implement waitForDidUpdateViewState for the RemoteLayerTree; it waits for CommitLayerTree.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::updateViewState):
+        (WebKit::WebPageProxy::viewStateDidChange):
+        (WebKit::WebPageProxy::dispatchViewStateChange):
+        (WebKit::WebPageProxy::waitForDidUpdateViewState):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        (WebKit::WebPageProxy::viewSize): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::didUpdateViewState):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView endDeferringViewInWindowChangesSync]):
+        Always waitForDidUpdateViewState when a page that was previously in-window but currently isn't comes back in-window.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::viewStateDidChange):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::setViewState):
+        (WebKit::WebPage::didUpdateViewStateTimerFired): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        (WebKit::RemoteLayerTreeDrawingArea::viewStateDidChange):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::viewStateDidChange):
+        (WebKit::TiledCoreAnimationDrawingArea::didUpdateViewStateTimerFired):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::didUpdateViewStateTimerFired): Deleted.
+        Delegate sending of didUpdateViewState to the DrawingAreas (RemoteLayerTreeDrawingArea won't send it,
+            because the UI process waits for CommitLayerTree instead).
+
 2014-06-23  Timothy Horton  <timothy_horton@apple.com>
 
         [iOS][wk2] Ensure that layers are marked volatile before allowing the process to suspend

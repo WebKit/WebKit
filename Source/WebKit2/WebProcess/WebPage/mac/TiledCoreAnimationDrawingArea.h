@@ -36,6 +36,7 @@
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/RunLoop.h>
 
 OBJC_CLASS CALayer;
 
@@ -53,8 +54,6 @@ class TiledCoreAnimationDrawingArea : public DrawingArea, WebCore::LayerFlushSch
 public:
     TiledCoreAnimationDrawingArea(WebPage&, const WebPageCreationParameters&);
     virtual ~TiledCoreAnimationDrawingArea();
-
-    virtual void viewStateDidChange(WebCore::ViewState::Flags changed) override;
 
 private:
     // DrawingArea
@@ -80,6 +79,9 @@ private:
     virtual void dispatchAfterEnsuringUpdatedScrollPosition(std::function<void ()>) override;
 
     virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) override;
+
+    virtual void viewStateDidChange(WebCore::ViewState::Flags changed, bool wantsDidUpdateViewState) override;
+    void didUpdateViewStateTimerFired();
 
     // WebCore::LayerFlushSchedulerClient
     virtual bool flushLayers() override;
@@ -136,6 +138,8 @@ private:
     WebCore::FloatPoint m_transientZoomOrigin;
 
     WebCore::TransformationMatrix m_transform;
+
+    RunLoop::Timer<TiledCoreAnimationDrawingArea> m_sendDidUpdateViewStateTimer;
 };
 
 DRAWING_AREA_TYPE_CASTS(TiledCoreAnimationDrawingArea, type() == DrawingAreaTypeTiledCoreAnimation);

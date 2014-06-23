@@ -361,9 +361,10 @@ public:
     bool delegatesScrolling() const { return m_delegatesScrolling; }
 
     enum class WantsReplyOrNot { DoesNotWantReply, DoesWantReply };
-    void viewStateDidChange(WebCore::ViewState::Flags mayHaveChanged, WantsReplyOrNot = WantsReplyOrNot::DoesNotWantReply);
+    void viewStateDidChange(WebCore::ViewState::Flags mayHaveChanged);
     bool isInWindow() const { return m_viewState & WebCore::ViewState::IsInWindow; }
     void waitForDidUpdateViewState();
+    void didUpdateViewState() { m_waitingForDidUpdateViewState = false; }
 
     void layerHostingModeDidChange();
 
@@ -574,8 +575,6 @@ public:
     const WebCore::IntSize& fixedLayoutSize() const { return m_fixedLayoutSize; };
 
     void listenForLayoutMilestones(WebCore::LayoutMilestones);
-
-    void didUpdateViewState() { m_waitingForDidUpdateViewState = false; }
 
     bool hasHorizontalScrollbar() const { return m_mainFrameHasHorizontalScrollbar; }
     bool hasVerticalScrollbar() const { return m_mainFrameHasVerticalScrollbar; }
@@ -1321,6 +1320,7 @@ private:
     NotificationPermissionRequestManagerProxy m_notificationPermissionRequestManager;
 
     WebCore::ViewState::Flags m_viewState;
+    bool m_viewWasEverInWindow;
 
 #if PLATFORM(IOS)
     std::unique_ptr<ProcessThrottler::ForegroundActivityToken> m_activityToken;

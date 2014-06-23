@@ -3756,6 +3756,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 #endif
 }
 
+// FIXME: All of these "DeferringViewInWindowChanges" methods should be able to be removed once clients are weaned off of them.
 - (void)beginDeferringViewInWindowChanges
 {
     if (_data->_shouldDeferViewInWindowChanges) {
@@ -3788,18 +3789,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         return;
     }
 
-    PageClient* pageClient = _data->_pageClient.get();
-    bool hasPendingViewInWindowChange = _data->_viewInWindowChangeWasDeferred && _data->_page->isInWindow() != pageClient->isViewInWindow();
-
     _data->_shouldDeferViewInWindowChanges = NO;
 
     if (_data->_viewInWindowChangeWasDeferred) {
-        _data->_page->viewStateDidChange(ViewState::IsInWindow, hasPendingViewInWindowChange ? WebPageProxy::WantsReplyOrNot::DoesWantReply : WebPageProxy::WantsReplyOrNot::DoesNotWantReply);
+        _data->_page->viewStateDidChange(ViewState::IsInWindow);
         _data->_viewInWindowChangeWasDeferred = NO;
     }
-
-    if (hasPendingViewInWindowChange)
-        _data->_page->waitForDidUpdateViewState();
 }
 
 - (BOOL)isDeferringViewInWindowChanges

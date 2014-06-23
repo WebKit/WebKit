@@ -87,6 +87,8 @@ public:
 
     virtual uint64_t lastVisibleTransactionID() const { ASSERT_NOT_REACHED(); return 0; }
 
+    virtual void waitForDidUpdateViewState() { }
+
 protected:
     explicit DrawingAreaProxy(DrawingAreaType, WebPageProxy*);
 

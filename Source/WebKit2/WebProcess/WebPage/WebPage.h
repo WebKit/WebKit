@@ -1024,7 +1024,6 @@ private:
 
     void changeSelectedIndex(int32_t index);
     void setCanStartMediaTimerFired();
-    void didUpdateViewStateTimerFired();
 
     bool canHandleUserEvents() const;
 
@@ -1128,7 +1127,6 @@ private:
 #endif // !PLATFORM(IOS)
 
     RunLoop::Timer<WebPage> m_setCanStartMediaTimer;
-    RunLoop::Timer<WebPage> m_sendDidUpdateViewStateTimer;
     bool m_mayStartMediaWhenInWindow;
 
     HashMap<uint64_t, RefPtr<WebUndoStep>> m_undoStepMap;

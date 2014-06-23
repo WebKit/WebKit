@@ -989,12 +989,6 @@ void WebPage::drawPagesToPDFFromPDFDocument(CGContextRef context, PDFDocument *p
     }
 }
 
-void WebPage::didUpdateViewStateTimerFired()
-{
-    [CATransaction flush];
-    send(Messages::WebPageProxy::DidUpdateViewState());
-}
-
 #if ENABLE(WEBGL)
 WebCore::WebGLLoadPolicy WebPage::webGLPolicyForURL(WebFrame* frame, const String& url)
 {

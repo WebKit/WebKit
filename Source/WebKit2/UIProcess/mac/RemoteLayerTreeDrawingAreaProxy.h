@@ -67,6 +67,8 @@ private:
     virtual void updateDebugIndicator() override;
     void updateDebugIndicator(WebCore::IntSize contentsSize, bool rootLayerChanged, float scale);
     void updateDebugIndicatorPosition();
+
+    virtual void waitForDidUpdateViewState() override;
     
     WebCore::FloatPoint indicatorLocation() const;
 

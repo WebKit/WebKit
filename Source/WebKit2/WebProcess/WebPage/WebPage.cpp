@@ -266,7 +266,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_accessibilityObject(0)
 #endif
     , m_setCanStartMediaTimer(RunLoop::main(), this, &WebPage::setCanStartMediaTimerFired)
-    , m_sendDidUpdateViewStateTimer(RunLoop::main(), this, &WebPage::didUpdateViewStateTimerFired)
     , m_formClient(std::make_unique<API::InjectedBundle::FormClient>())
     , m_uiClient(std::make_unique<API::InjectedBundle::PageUIClient>())
     , m_findController(this)
@@ -2174,13 +2173,6 @@ void WebPage::setCanStartMediaTimerFired()
         m_page->setCanStartMedia(true);
 }
 
-#if !PLATFORM(MAC)
-void WebPage::didUpdateViewStateTimerFired()
-{
-    send(Messages::WebPageProxy::DidUpdateViewState());
-}
-#endif
-
 inline bool WebPage::canHandleUserEvents() const
 {
 #if USE(TILED_BACKING_STORE)
@@ -2220,16 +2212,14 @@ void WebPage::setViewState(ViewState::Flags viewState, bool wantsDidUpdateViewSt
     ViewState::Flags changed = m_viewState ^ viewState;
     m_viewState = viewState;
 
-    m_drawingArea->viewStateDidChange(changed);
     m_page->setViewState(viewState);
     for (auto* pluginView : m_pluginViews)
         pluginView->viewStateDidChange(changed);
 
+    m_drawingArea->viewStateDidChange(changed, wantsDidUpdateViewState);
+
     if (changed & ViewState::IsInWindow)
         updateIsInWindow();
-
-    if (wantsDidUpdateViewState)
-        m_sendDidUpdateViewStateTimer.startOneShot(0);
 }
 
 void WebPage::setLayerHostingMode(unsigned layerHostingMode)

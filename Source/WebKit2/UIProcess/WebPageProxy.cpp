@@ -280,6 +280,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_geolocationPermissionRequestManager(*this)
     , m_notificationPermissionRequestManager(*this)
     , m_viewState(ViewState::NoFlags)
+    , m_viewWasEverInWindow(false)
     , m_backForwardList(WebBackForwardList::create(*this))
     , m_loadStateAtProcessExit(FrameLoadState::State::Finished)
 #if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
@@ -362,7 +363,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_autoSizingShouldExpandToViewHeight(false)
     , m_mediaVolume(1)
     , m_mayStartMediaWhenInWindow(true)
-    , m_waitingForDidUpdateViewState(false)
     , m_scrollPinningBehavior(DoNotPin)
     , m_navigationID(0)
     , m_configurationPreferenceValues(configuration.preferenceValues)
@@ -1094,19 +1094,22 @@ void WebPageProxy::updateViewState(ViewState::Flags flagsToUpdate)
         m_viewState |= ViewState::IsVisible;
     if (flagsToUpdate & ViewState::IsVisibleOrOccluded && m_pageClient.isViewVisibleOrOccluded())
         m_viewState |= ViewState::IsVisibleOrOccluded;
-    if (flagsToUpdate & ViewState::IsInWindow && m_pageClient.isViewInWindow())
+    if (flagsToUpdate & ViewState::IsInWindow && m_pageClient.isViewInWindow()) {
         m_viewState |= ViewState::IsInWindow;
+        m_viewWasEverInWindow = true;
+    }
     if (flagsToUpdate & ViewState::IsVisuallyIdle && m_pageClient.isVisuallyIdle())
         m_viewState |= ViewState::IsVisuallyIdle;
 }
 
-void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsReplyOrNot wantsReply)
+void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged)
 {
+    bool isNewlyInWindow = !isInWindow() && (mayHaveChanged & ViewState::IsInWindow) && m_pageClient.isViewInWindow();
+
     m_potentiallyChangedViewStateFlags |= mayHaveChanged;
-    m_viewStateChangeWantsReply = (wantsReply == WantsReplyOrNot::DoesWantReply || m_viewStateChangeWantsReply == WantsReplyOrNot::DoesWantReply) ? WantsReplyOrNot::DoesWantReply : WantsReplyOrNot::DoesNotWantReply;
+    m_viewStateChangeWantsReply = ((m_viewWasEverInWindow && isNewlyInWindow) || m_viewStateChangeWantsReply == WantsReplyOrNot::DoesWantReply) ? WantsReplyOrNot::DoesWantReply : WantsReplyOrNot::DoesNotWantReply;
 
 #if PLATFORM(COCOA)
-    bool isNewlyInWindow = !(m_viewState & ViewState::IsInWindow) && (mayHaveChanged & ViewState::IsInWindow) && m_pageClient.isViewInWindow();
     if (isNewlyInWindow) {
         dispatchViewStateChange();
         return;
@@ -1174,6 +1177,9 @@ void WebPageProxy::dispatchViewStateChange()
 
     updateBackingStoreDiscardableState();
 
+    if (m_viewStateChangeWantsReply == WantsReplyOrNot::DoesWantReply)
+        waitForDidUpdateViewState();
+
     m_potentiallyChangedViewStateFlags = ViewState::NoFlags;
     m_viewStateChangeWantsReply = WantsReplyOrNot::DoesNotWantReply;
 }
@@ -1203,19 +1209,19 @@ void WebPageProxy::layerHostingModeDidChange()
 
 void WebPageProxy::waitForDidUpdateViewState()
 {
+    if (!isValid())
+        return;
+
+    if (m_process->state() != WebProcessProxy::State::Running)
+        return;
+
     // If we have previously timed out with no response from the WebProcess, don't block the UIProcess again until it starts responding.
     if (m_waitingForDidUpdateViewState)
         return;
 
-    if (!isValid())
-        return;
-
     m_waitingForDidUpdateViewState = true;
 
-    if (m_process->state() != WebProcessProxy::State::Launching) {
-        auto viewStateUpdateTimeout = std::chrono::milliseconds(250);
-        m_process->connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidUpdateViewState>(m_pageID, viewStateUpdateTimeout);
-    }
+    m_drawingArea->waitForDidUpdateViewState();
 }
 
 IntSize WebPageProxy::viewSize() const
@@ -4295,7 +4301,6 @@ void WebPageProxy::resetStateAfterProcessExited()
 
     m_isValid = false;
     m_isPageSuspended = false;
-    m_waitingForDidUpdateViewState = false;
 
     if (m_mainFrame) {
         m_urlAtProcessExit = m_mainFrame->url();

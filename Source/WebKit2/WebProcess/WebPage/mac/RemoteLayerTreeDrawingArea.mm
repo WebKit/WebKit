@@ -384,4 +384,9 @@ void RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush()
     m_connection->sendMessage(std::move(m_commitEncoder));
 }
 
+void RemoteLayerTreeDrawingArea::viewStateDidChange(ViewState::Flags, bool wantsDidUpdateViewState)
+{
+    // FIXME: Should we suspend painting while not visible, like TiledCoreAnimationDrawingArea? Probably.
+}
+
 } // namespace WebKit

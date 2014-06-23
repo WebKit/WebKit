@@ -75,6 +75,7 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
     , m_exposedRect(FloatRect::infiniteRect())
     , m_scrolledExposedRect(FloatRect::infiniteRect())
     , m_transientZoomScale(1)
+    , m_sendDidUpdateViewStateTimer(RunLoop::main(), this, &TiledCoreAnimationDrawingArea::didUpdateViewStateTimerFired)
 {
     m_webPage.corePage()->settings().setForceCompositingMode(true);
 
@@ -294,7 +295,7 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
     return returnValue;
 }
 
-void TiledCoreAnimationDrawingArea::viewStateDidChange(ViewState::Flags changed)
+void TiledCoreAnimationDrawingArea::viewStateDidChange(ViewState::Flags changed, bool wantsDidUpdateViewState)
 {
     if (changed & ViewState::IsVisible) {
         if (m_webPage.isVisible())
@@ -302,6 +303,15 @@ void TiledCoreAnimationDrawingArea::viewStateDidChange(ViewState::Flags changed)
         else
             suspendPainting();
     }
+
+    if (wantsDidUpdateViewState)
+        m_sendDidUpdateViewStateTimer.startOneShot(0);
+}
+
+void TiledCoreAnimationDrawingArea::didUpdateViewStateTimerFired()
+{
+    [CATransaction flush];
+    m_webPage.send(Messages::WebPageProxy::DidUpdateViewState());
 }
 
 void TiledCoreAnimationDrawingArea::suspendPainting()

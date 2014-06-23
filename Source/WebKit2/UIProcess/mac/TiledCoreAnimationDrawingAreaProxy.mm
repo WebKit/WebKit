@@ -35,6 +35,7 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 
+using namespace IPC;
 using namespace WebCore;
 
 namespace WebKit {
@@ -124,6 +125,12 @@ void TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry()
     // we need to resend the new size here.
     if (m_lastSentSize != m_size || m_lastSentLayerPosition != m_layerPosition || m_lastSentMinimumLayoutSize != minimumLayoutSize)
         sendUpdateGeometry();
+}
+
+void TiledCoreAnimationDrawingAreaProxy::waitForDidUpdateViewState()
+{
+    auto viewStateUpdateTimeout = std::chrono::milliseconds(250);
+    m_webPageProxy->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidUpdateViewState>(m_webPageProxy->pageID(), viewStateUpdateTimeout, InterruptWaitingIfSyncMessageArrives);
 }
 
 void TiledCoreAnimationDrawingAreaProxy::intrinsicContentSizeDidChange(const IntSize& newIntrinsicContentSize)

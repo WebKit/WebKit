@@ -52,6 +52,8 @@ private:
     virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
     virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
 
+    virtual void waitForDidUpdateViewState() override;
+
     // Message handlers.
     virtual void didUpdateGeometry() override;
     virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& newIntrinsicContentSize) override;
