@@ -1,3 +1,9 @@
+2014-06-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Unreviewed, revert an unintentional change committed with r170323.
+
+        * UIProcess/API/Cocoa/WKBackForwardList.mm:
+
 2014-06-23  Anders Carlsson  <andersca@apple.com>
 
         Policy delegate methods should use CompletionHandlerCallChecker
