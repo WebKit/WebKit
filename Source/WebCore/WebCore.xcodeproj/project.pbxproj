@@ -345,8 +345,6 @@
 		07E117071489EBEB00EC5ACE /* JSTextTrackCueCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07E117061489EBEB00EC5ACE /* JSTextTrackCueCustom.cpp */; };
 		07E9E12E18F5E2760011A3A4 /* InbandMetadataTextTrackPrivateAVF.h in Headers */ = {isa = PBXBuildFile; fileRef = 07E9E12D18F5E2760011A3A4 /* InbandMetadataTextTrackPrivateAVF.h */; };
 		07E9E13018F62B370011A3A4 /* InbandMetadataTextTrackPrivateAVF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07E9E12F18F62B370011A3A4 /* InbandMetadataTextTrackPrivateAVF.cpp */; };
-		07ED35A216D6DCC9002248F3 /* InbandTextTrackPrivateAVFIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07357C7716D2DF0D00ED99E7 /* InbandTextTrackPrivateAVFIOS.mm */; };
-		07ED35A316D6DCE2002248F3 /* InbandTextTrackPrivateAVFIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 07357C7616D2DF0D00ED99E7 /* InbandTextTrackPrivateAVFIOS.h */; };
 		07F944161864D046005D31CB /* MediaSessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CDAE8C081746B95700532D78 /* MediaSessionManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07FBDE2C18FED178001A7CFF /* JSDataCueCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07FBDE2B18FED178001A7CFF /* JSDataCueCustom.cpp */; };
 		07FE99DC18807A7D00256648 /* HTMLMediaSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07FE99DA18807A7D00256648 /* HTMLMediaSession.cpp */; };
@@ -7111,8 +7109,6 @@
 		072AE1E3183C0741000A5988 /* QuickTimePluginReplacement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = QuickTimePluginReplacement.idl; path = plugins/QuickTimePluginReplacement.idl; sourceTree = "<group>"; };
 		072AE1E4183C0741000A5988 /* QuickTimePluginReplacement.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = QuickTimePluginReplacement.js; path = plugins/QuickTimePluginReplacement.js; sourceTree = "<group>"; };
 		072CA86016CB4DC3008AE131 /* CaptionUserPreferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CaptionUserPreferences.cpp; sourceTree = "<group>"; };
-		07357C7616D2DF0D00ED99E7 /* InbandTextTrackPrivateAVFIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrackPrivateAVFIOS.h; sourceTree = "<group>"; };
-		07357C7716D2DF0D00ED99E7 /* InbandTextTrackPrivateAVFIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InbandTextTrackPrivateAVFIOS.mm; sourceTree = "<group>"; };
 		0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerProxy.h; sourceTree = "<group>"; };
 		07367DDD172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InbandTextTrackPrivateLegacyAVFObjC.h; path = objc/InbandTextTrackPrivateLegacyAVFObjC.h; sourceTree = "<group>"; };
 		07367DDE172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InbandTextTrackPrivateLegacyAVFObjC.mm; path = objc/InbandTextTrackPrivateLegacyAVFObjC.mm; sourceTree = "<group>"; };
@@ -15639,8 +15635,6 @@
 				C58361A81744523F00173511 /* FontServicesIOS.mm */,
 				31AB4FFF122878A2001A7DB0 /* GraphicsContext3DIOS.h */,
 				FED13D3F0CEA939400D89466 /* IconIOS.mm */,
-				07357C7616D2DF0D00ED99E7 /* InbandTextTrackPrivateAVFIOS.h */,
-				07357C7716D2DF0D00ED99E7 /* InbandTextTrackPrivateAVFIOS.mm */,
 				37E6594F163B10C200EB4574 /* SimpleFontDataIOS.mm */,
 				CEEC6034187DD962003E43BB /* TextTrackRepresentationIOS.h */,
 				CDCA82941679100F00875714 /* TextTrackRepresentationIOS.mm */,
@@ -24490,7 +24484,6 @@
 				07941792166E855F009416C2 /* InbandTextTrack.h in Headers */,
 				07941794166EA04E009416C2 /* InbandTextTrackPrivate.h in Headers */,
 				07B442D7166C70B000556CAD /* InbandTextTrackPrivateAVF.h in Headers */,
-				07ED35A316D6DCE2002248F3 /* InbandTextTrackPrivateAVFIOS.h in Headers */,
 				07AA6B6C166D2C1300D45671 /* InbandTextTrackPrivateAVFObjC.h in Headers */,
 				07CE77D516712A6A00C55A47 /* InbandTextTrackPrivateClient.h in Headers */,
 				07367DDF172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.h in Headers */,
@@ -27930,7 +27923,6 @@
 				BE16C59217CFE17200852C04 /* InbandGenericTextTrack.cpp in Sources */,
 				07941791166E855F009416C2 /* InbandTextTrack.cpp in Sources */,
 				07B442D6166C70B000556CAD /* InbandTextTrackPrivateAVF.cpp in Sources */,
-				07ED35A216D6DCC9002248F3 /* InbandTextTrackPrivateAVFIOS.mm in Sources */,
 				07AA6B6B166D2C0700D45671 /* InbandTextTrackPrivateAVFObjC.mm in Sources */,
 				07367DE0172CA68200D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.mm in Sources */,
 				BE16C59417CFE17200852C04 /* InbandWebVTTTextTrack.cpp in Sources */,
