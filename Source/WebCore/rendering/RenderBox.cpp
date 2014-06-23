@@ -1350,7 +1350,7 @@ bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) c
         return false;
     // FIXME: Check the opaqueness of background images.
 
-    if (hasClipPath())
+    if (hasClip() || hasClipPath())
         return false;
 
     // FIXME: Use rounded rect if border radius is present.
