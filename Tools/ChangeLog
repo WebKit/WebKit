@@ -1,3 +1,15 @@
+2014-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Enable the Web Inspector in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=134148
+
+        Reviewed by Joseph Pecoraro.
+        
+        Set the pref to enable Web Inspector in both WK1 and WK2 windows.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate applicationDidFinishLaunching:]):
+
 2014-06-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Disable gamepad feature on EFL and GTK ports by default

@@ -88,6 +88,8 @@ enum {
     [webHistory release];
 
     [self _updateNewWindowKeyEquivalents];
+    
+    [[NSUserDefaults standardUserDefaults] setBool:@YES forKey:@"WebKitDeveloperExtrasEnabled"];
     [self newWindow:self];
 }
 
