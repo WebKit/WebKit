@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008, 2011, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,9 @@
 #ifndef HistoryItem_h
 #define HistoryItem_h
 
+#include "FloatRect.h"
 #include "IntPoint.h"
+#include "IntRect.h"
 #include "SerializedScriptValue.h"
 #include <memory>
 #include <wtf/RefCounted.h>
@@ -180,8 +182,17 @@ public:
 #endif
 
 #if PLATFORM(IOS)
-    IntPoint exposedContentPosition() const { return m_exposedContentPosition; }
-    void setExposedContentPosition(IntPoint exposedContentPosition) { m_exposedContentPosition = exposedContentPosition; }
+    FloatRect exposedContentRect() const { return m_exposedContentRect; }
+    void setExposedContentRect(FloatRect exposedContentRect) { m_exposedContentRect = exposedContentRect; }
+
+    IntRect unobscuredContentRect() const { return m_unobscuredContentRect; }
+    void setUnobscuredContentRect(IntRect unobscuredContentRect) { m_unobscuredContentRect = unobscuredContentRect; }
+
+    FloatSize minimumLayoutSizeInScrollViewCoordinates() const { return m_minimumLayoutSizeInScrollViewCoordinates; }
+    void setMinimumLayoutSizeInScrollViewCoordinates(FloatSize minimumLayoutSizeInScrollViewCoordinates) { m_minimumLayoutSizeInScrollViewCoordinates = minimumLayoutSizeInScrollViewCoordinates; }
+
+    IntSize contentSize() const { return m_contentSize; }
+    void setContentSize(IntSize contentSize) { m_contentSize = contentSize; }
 
     float scale() const { return m_scale; }
     bool scaleIsInitial() const { return m_scaleIsInitial; }
@@ -259,7 +270,10 @@ private:
     std::unique_ptr<CachedPage> m_cachedPage;
 
 #if PLATFORM(IOS)
-    IntPoint m_exposedContentPosition;
+    FloatRect m_exposedContentRect;
+    IntRect m_unobscuredContentRect;
+    FloatSize m_minimumLayoutSizeInScrollViewCoordinates;
+    IntSize m_contentSize;
     float m_scale;
     bool m_scaleIsInitial;
     ViewportArguments m_viewportArguments;

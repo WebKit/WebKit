@@ -43,6 +43,7 @@ void VisibleContentRectUpdateInfo::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_horizontalVelocity;
     encoder << m_verticalVelocity;
     encoder << m_scaleChangeRate;
+    encoder << m_lastLayerTreeTransactionID;
 }
 
 bool VisibleContentRectUpdateInfo::decode(IPC::ArgumentDecoder& decoder, VisibleContentRectUpdateInfo& result)
@@ -68,6 +69,8 @@ bool VisibleContentRectUpdateInfo::decode(IPC::ArgumentDecoder& decoder, Visible
     if (!decoder.decode(result.m_verticalVelocity))
         return false;
     if (!decoder.decode(result.m_scaleChangeRate))
+        return false;
+    if (!decoder.decode(result.m_lastLayerTreeTransactionID))
         return false;
 
     return true;

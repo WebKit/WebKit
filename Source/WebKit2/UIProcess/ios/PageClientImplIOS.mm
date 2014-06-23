@@ -433,6 +433,16 @@ void PageClientImpl::dynamicViewportUpdateChangedTarget(double newScale, const W
     [m_webView _dynamicViewportUpdateChangedTargetToScale:newScale position:newScrollPosition];
 }
 
+void PageClientImpl::restorePageState(const WebCore::FloatRect& exposedRect, double scale)
+{
+    [m_webView _restorePageStateToExposedRect:exposedRect scale:scale];
+}
+
+void PageClientImpl::restorePageCenterAndScale(const WebCore::FloatPoint& center, double scale)
+{
+    [m_webView _restorePageStateToUnobscuredCenter:center scale:scale];
+}
+
 void PageClientImpl::startAssistingNode(const AssistedNodeInformation& nodeInformation, bool userIsInteracting, bool blurPreviousNode, API::Object* userData)
 {
     MESSAGE_CHECK(!userData || userData->type() == API::Object::Type::Data);

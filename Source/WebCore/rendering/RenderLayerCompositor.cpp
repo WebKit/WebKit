@@ -558,7 +558,7 @@ void RenderLayerCompositor::didChangeVisibleRect()
     const FrameView& frameView = m_renderView.frameView();
 
 #if PLATFORM(IOS)
-    IntRect visibleRect = frameView.exposedContentRect();
+    IntRect visibleRect = enclosingIntRect(frameView.exposedContentRect());
 #else
     IntRect visibleRect = m_clipLayer ? IntRect(IntPoint(), frameView.contentsSize()) : frameView.visibleContentRect();
 #endif

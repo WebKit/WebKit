@@ -1,3 +1,101 @@
+2014-06-23  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Make the state restore from HistoryItem more precise and reliable
+        https://bugs.webkit.org/show_bug.cgi?id=134150
+
+        Reviewed by Tim Horton.
+
+        This patch make several little improvements to improve how we restore the visible content rect and scale
+        from the HistoryItem.
+
+        The biggest architectural change is that the exposed rect is now restored on the UIProcess instead of the WebProcess,
+        this ensure we restore the same position regardless of any modification of obscured areas.
+
+        * Shared/VisibleContentRectUpdateInfo.cpp:
+        (WebKit::VisibleContentRectUpdateInfo::encode):
+        (WebKit::VisibleContentRectUpdateInfo::decode):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        (WebKit::VisibleContentRectUpdateInfo::lastLayerTreeTransactionId):
+        (WebKit::WebPage::updateVisibleContentRects):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        A race between the UIProcess and the WebProcess could cause the viewport of the next page to be influenced by updates
+        of the previous page. To avoid that, VisibleContentRectUpdateInfo keeps track of the last transaction seen at the time
+        of the update.
+
+        The WebProcess updates the size and scale of the content through layer tree updates. If an update was generated for a layer tree
+        update of the old page, none of the information is valid for the current content. Since the UIProcess drives the state in case of conflicts,
+        the WebProcess was updating the scale of the current page based on incorrect information.
+
+        To avoid the problems, we save the layer tree transaction ID when we commit a new page. Only updates after that transaction are useful
+        for the current page.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _processDidExit]):
+        (withinEpsilon):
+        (changeContentOffsetBoundedInValidRange):
+        (-[WKWebView _didCommitLayerTree:WebKit::]):
+        (-[WKWebView _restorePageStateToExposedRect:WebCore::scale:]):
+        (-[WKWebView _restorePageStateToUnobscuredCenter:WebCore::scale:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::restorePageState):
+        (WebKit::PageClientImpl::restorePageCenterAndScale):
+        Restoring the state is now done by WKWebView. The state is only updated on the next layer tree commit,
+        this is done to avoid any jumping if the page has scrolled since we tried to restore its state.
+
+        Both update path end up calling _updateVisibleContentRects. This is because the update on the WebProcess
+        never sets the ScrollPosition (because it does not know the current state of the obscured insets). Pushing
+        a new VisibleContentRect will nicely udpates the exposed rect, scroll position, fixed elements, etc.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::restorePageState):
+        (WebKit::WebPageProxy::restorePageCenterAndScale):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::lastCommittedLayerTreeTransactionID):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy):
+        * WebProcess/WebCoreSupport/ios/WebFrameLoaderClientIOS.mm:
+        (WebKit::WebFrameLoaderClient::saveViewStateToItem):
+        (WebKit::WebFrameLoaderClient::restoreViewState):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        Get rid of m_obscuredTopInset. It was a bad idea. The UIProcess updates the obscured insets a lot during
+        page load, the value we used to restore the scroll position was frequently stale.
+
+        (WebKit::WebPage::userHasChangedPageScaleFactor): Deleted.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::savePageState):
+        (WebKit::scaleAfterViewportWidthChange):
+        (WebKit::relativeCenterAfterContentSizeChange):
+        (WebKit::adjustExposedRectForNewScale):
+        Extract this out of dynamicViewportSizeUpdate(). It is useful to adjust the exposed rect when restoring a HistoryItem
+        to a ViewportConfiguration that is different from when it was saved.
+
+        (WebKit::WebPage::restorePageState):
+        There are two variations of restorePage:
+        1) If the viewport configuration is compatible, restore the exact scale and position of the page.
+        2) Otherwise, restore the scale and position similarily to dynamicViewportSizeUpdate().
+
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::WebPage::viewportConfigurationChanged):
+        (WebKit::adjustExposedRectForBoundedScale):
+        (WebKit::RemoteLayerTreeDrawingArea::currentTransactionID):
+        Expose the transactionID for the race issue on VisibleRectUpdate.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::setExposedContentRect):
+        Store the exposed rect in floating point coordinates. This makes it possible to restore that exact
+        position when needed.
+
 2014-06-23  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed, revert an unintentional change committed with r170323.

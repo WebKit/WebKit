@@ -50,6 +50,7 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy* w
     , m_isWaitingForDidUpdateGeometry(false)
     , m_pendingLayerTreeTransactionID(0)
     , m_lastVisibleTransactionID(0)
+    , m_transactionIDForPendingCACommit(0)
 {
 #if USE(IOSURFACE)
     // We don't want to pool surfaces in the UI process.

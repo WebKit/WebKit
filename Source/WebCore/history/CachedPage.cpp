@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,9 +89,18 @@ void CachedPage::restore(Page& page)
         // We don't want focused nodes changing scroll position when restoring from the cache
         // as it can cause ugly jumps before we manage to restore the cached position.
         page.mainFrame().selection().suppressScrolling();
+
+        bool hadProhibitsScrolling = false;
+        FrameView* frameView = page.mainFrame().view();
+        if (frameView) {
+            hadProhibitsScrolling = frameView->prohibitsScrolling();
+            frameView->setProhibitsScrolling(true);
+        }
 #endif
         element->updateFocusAppearance(true);
 #if PLATFORM(IOS)
+        if (frameView)
+            frameView->setProhibitsScrolling(hadProhibitsScrolling);
         page.mainFrame().selection().restoreScrolling();
 #endif
     }

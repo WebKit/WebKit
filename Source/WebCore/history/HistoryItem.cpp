@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2008, 2011, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -592,6 +592,36 @@ void HistoryItem::encodeBackForwardTree(KeyedEncoder& encoder) const
     });
 }
 
+#if PLATFORM(IOS)
+static void encodeRect(Encoder& encoder, const FloatRect& floatRect)
+{
+    encoder.encodeFloat(floatRect.x());
+    encoder.encodeFloat(floatRect.y());
+    encoder.encodeFloat(floatRect.width());
+    encoder.encodeFloat(floatRect.height());
+}
+
+static void encodeRect(Encoder& encoder, const IntRect& intRect)
+{
+    encoder.encodeInt32(intRect.x());
+    encoder.encodeInt32(intRect.y());
+    encoder.encodeInt32(intRect.width());
+    encoder.encodeInt32(intRect.height());
+}
+
+static void encodeSize(Encoder& encoder, const FloatSize& floatSize)
+{
+    encoder.encodeFloat(floatSize.width());
+    encoder.encodeFloat(floatSize.height());
+}
+
+static void encodeSize(Encoder& encoder, const IntSize& intSize)
+{
+    encoder.encodeInt32(intSize.width());
+    encoder.encodeInt32(intSize.height());
+}
+#endif
+
 void HistoryItem::encodeBackForwardTreeNode(Encoder& encoder) const
 {
     size_t size = m_children.size();
@@ -633,6 +663,14 @@ void HistoryItem::encodeBackForwardTreeNode(Encoder& encoder) const
         encoder.encodeBytes(m_stateObject->data().data(), m_stateObject->data().size());
 
     encoder.encodeString(m_target);
+
+#if PLATFORM(IOS)
+    encodeRect(encoder, m_exposedContentRect);
+    encodeRect(encoder, m_unobscuredContentRect);
+    encodeSize(encoder, m_minimumLayoutSizeInScrollViewCoordinates);
+    encodeSize(encoder, m_contentSize);
+    encoder.encodeBool(m_scaleIsInitial);
+#endif
 }
 
 void HistoryItem::encodeBackForwardTreeNode(KeyedEncoder& encoder) const
@@ -686,6 +724,68 @@ struct DecodeRecursionStackElement {
     {
     }
 };
+
+#if PLATFORM(IOS)
+static bool decodeRect(Decoder& decoder, FloatRect& floatRect)
+{
+    float x;
+    if (!decoder.decodeFloat(x))
+        return false;
+    float y;
+    if (!decoder.decodeFloat(y))
+        return false;
+    float width;
+    if (!decoder.decodeFloat(width))
+        return false;
+    float height;
+    if (!decoder.decodeFloat(height))
+        return false;
+    floatRect = FloatRect(x, y, width, height);
+    return true;
+}
+
+static bool decodeRect(Decoder& decoder, IntRect& intRect)
+{
+    int x;
+    if (!decoder.decodeInt32(x))
+        return false;
+    int y;
+    if (!decoder.decodeInt32(y))
+        return false;
+    int width;
+    if (!decoder.decodeInt32(width))
+        return false;
+    int height;
+    if (!decoder.decodeInt32(height))
+        return false;
+    intRect = IntRect(x, y, width, height);
+    return true;
+}
+
+static bool decodeSize(Decoder& decoder, FloatSize& floatSize)
+{
+    float width;
+    if (!decoder.decodeFloat(width))
+        return false;
+    float height;
+    if (!decoder.decodeFloat(height))
+        return false;
+    floatSize = FloatSize(width, height);
+    return true;
+}
+
+static bool decodeSize(Decoder& decoder, IntSize& intSize)
+{
+    int width;
+    if (!decoder.decodeInt32(width))
+        return false;
+    int height;
+    if (!decoder.decodeInt32(height))
+        return false;
+    intSize = IntSize(width, height);
+    return true;
+}
+#endif
 
 PassRefPtr<HistoryItem> HistoryItem::decodeBackForwardTree(const String& topURLString, const String& topTitle, const String& topOriginalURLString, Decoder& decoder)
 {
@@ -783,6 +883,19 @@ resume:
 
     if (!decoder.decodeString(node->m_target))
         return 0;
+
+#if PLATFORM(IOS)
+    if (!decodeRect(decoder, node->m_exposedContentRect))
+        return nullptr;
+    if (!decodeRect(decoder, node->m_unobscuredContentRect))
+        return nullptr;
+    if (!decodeSize(decoder, node->m_minimumLayoutSizeInScrollViewCoordinates))
+        return nullptr;
+    if (!decodeSize(decoder, node->m_contentSize))
+        return nullptr;
+    if (!decoder.decodeBool(node->m_scaleIsInitial))
+        return nullptr;
+#endif
 
     // Simulate recursion with our own stack.
     if (!recursionStack.isEmpty()) {

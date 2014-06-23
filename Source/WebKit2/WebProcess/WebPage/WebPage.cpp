@@ -187,6 +187,7 @@
 #endif
 
 #if PLATFORM(IOS)
+#include "RemoteLayerTreeDrawingArea.h"
 #include "WebVideoFullscreenManager.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <WebCore/Icon.h>
@@ -291,7 +292,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_isShowingContextMenu(false)
 #endif
 #if PLATFORM(IOS)
-    , m_obscuredTopInset(0)
+    , m_lastLayerTreeTransactionIDBeforeDidCommitLoad(0)
     , m_hasReceivedVisibleContentRectsAfterDidCommitLoad(false)
     , m_scaleWasSetByUIProcess(false)
     , m_userHasChangedPageScaleFactor(false)
@@ -4344,6 +4345,8 @@ void WebPage::didCommitLoad(WebFrame* frame)
     }
 #if PLATFORM(IOS)
     m_hasReceivedVisibleContentRectsAfterDidCommitLoad = false;
+    m_scaleWasSetByUIProcess = false;
+    m_lastLayerTreeTransactionIDBeforeDidCommitLoad = toRemoteLayerTreeDrawingArea(*m_drawingArea).currentTransactionID();
     m_userHasChangedPageScaleFactor = false;
 
     WebProcess::shared().eventDispatcher().clearQueuedTouchEventsForPage(*this);

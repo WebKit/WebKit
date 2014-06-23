@@ -41,10 +41,11 @@ public:
         : m_scale(-1)
         , m_inStableState(false)
         , m_isChangingObscuredInsetsInteractively(false)
+        , m_lastLayerTreeTransactionID(0)
     {
     }
 
-    VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedRect, const WebCore::FloatRect& unobscuredRect, const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& customFixedPositionRect, double scale, bool inStableState, bool isChangingObscuredInsetsInteractively, double timestamp, double horizontalVelocity, double verticalVelocity, double scaleChangeRate)
+    VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedRect, const WebCore::FloatRect& unobscuredRect, const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& customFixedPositionRect, double scale, bool inStableState, bool isChangingObscuredInsetsInteractively, double timestamp, double horizontalVelocity, double verticalVelocity, double scaleChangeRate, uint64_t lastLayerTreeTranscationId)
         : m_exposedRect(exposedRect)
         , m_unobscuredRect(unobscuredRect)
         , m_unobscuredRectInScrollViewCoordinates(unobscuredRectInScrollViewCoordinates)
@@ -56,6 +57,7 @@ public:
         , m_horizontalVelocity(horizontalVelocity)
         , m_verticalVelocity(verticalVelocity)
         , m_scaleChangeRate(scaleChangeRate)
+        , m_lastLayerTreeTransactionID(lastLayerTreeTranscationId)
     {
     }
 
@@ -72,6 +74,8 @@ public:
     double verticalVelocity() const { return m_verticalVelocity; }
     double scaleChangeRate() const { return m_scaleChangeRate; }
 
+    uint64_t lastLayerTreeTransactionID() const { return m_lastLayerTreeTransactionID; }
+
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, VisibleContentRectUpdateInfo&);
 
@@ -87,6 +91,7 @@ private:
     double m_horizontalVelocity;
     double m_verticalVelocity;
     double m_scaleChangeRate;
+    uint64_t m_lastLayerTreeTransactionID;
 };
 
 inline bool operator==(const VisibleContentRectUpdateInfo& a, const VisibleContentRectUpdateInfo& b)

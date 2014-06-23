@@ -169,6 +169,13 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     RetainPtr<UIView> _resizeAnimationView;
     CGFloat _lastAdjustmentForScroller;
 
+    BOOL _needsToRestoreExposedRect;
+    WebCore::FloatRect _exposedRectToRestore;
+    BOOL _needsToRestoreUnobscuredCenter;
+    WebCore::FloatPoint _unobscuredCenterToRestore;
+    uint64_t _firstTransactionIDAfterPageRestore;
+    double _scaleToRestore;
+
     std::unique_ptr<WebKit::ViewGestureController> _gestureController;
     BOOL _allowsBackForwardNavigationGestures;
 
@@ -700,6 +707,8 @@ static CGFloat contentZoomScale(WKWebView* webView)
 
     _viewportMetaTagWidth = -1;
     _needsResetViewStateAfterCommitLoadForMainFrame = NO;
+    _needsToRestoreExposedRect = NO;
+    _needsToRestoreUnobscuredCenter = NO;
     _scrollViewBackgroundColor = WebCore::Color();
     _delayUpdateVisibleContentRects = NO;
     _hadDelayedUpdateVisibleContentRects = NO;
@@ -711,6 +720,30 @@ static CGFloat contentZoomScale(WKWebView* webView)
 
     _needsResetViewStateAfterCommitLoadForMainFrame = YES;
     _usesMinimalUI = NO;
+}
+
+static inline bool withinEpsilon(float a, float b)
+{
+    return fabs(a - b) < std::numeric_limits<float>::epsilon();
+}
+
+static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, WebCore::FloatPoint contentOffset)
+{
+    UIEdgeInsets contentInsets = scrollView.contentInset;
+    CGSize contentSize = scrollView.contentSize;
+    CGSize scrollViewSize = scrollView.bounds.size;
+
+    float maxHorizontalOffset = contentSize.width + contentInsets.right - scrollViewSize.width;
+    if (contentOffset.x() > maxHorizontalOffset)
+        contentOffset.setX(maxHorizontalOffset);
+    float maxVerticalOffset = contentSize.height + contentInsets.bottom - scrollViewSize.height;
+    if (contentOffset.y() > maxVerticalOffset)
+        contentOffset.setY(maxVerticalOffset);
+    if (contentOffset.x() < -contentInsets.left)
+        contentOffset.setX(-contentInsets.left);
+    if (contentOffset.y() < -contentInsets.top)
+        contentOffset.setY(-contentInsets.top);
+    scrollView.contentOffset = contentOffset;
 }
 
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
@@ -748,6 +781,34 @@ static CGFloat contentZoomScale(WKWebView* webView)
         [_scrollView setContentOffset:CGPointMake(-_obscuredInsets.left, -_obscuredInsets.top)];
         [self _updateVisibleContentRects];
     }
+
+    if (_needsToRestoreExposedRect && layerTreeTransaction.transactionID() >= _firstTransactionIDAfterPageRestore) {
+        _needsToRestoreExposedRect = NO;
+
+        if (withinEpsilon(contentZoomScale(self), _scaleToRestore)) {
+            WebCore::FloatPoint exposedPosition = _exposedRectToRestore.location();
+            exposedPosition.scale(_scaleToRestore, _scaleToRestore);
+
+            changeContentOffsetBoundedInValidRange(_scrollView.get(), exposedPosition);
+        }
+        [self _updateVisibleContentRects];
+    }
+
+    if (_needsToRestoreUnobscuredCenter && layerTreeTransaction.transactionID() >= _firstTransactionIDAfterPageRestore) {
+        _needsToRestoreUnobscuredCenter = NO;
+
+        if (withinEpsilon(contentZoomScale(self), _scaleToRestore)) {
+            CGRect unobscuredRect = UIEdgeInsetsInsetRect(self.bounds, _obscuredInsets);
+            WebCore::FloatSize unobscuredContentSizeAtNewScale(unobscuredRect.size.width / _scaleToRestore, unobscuredRect.size.height / _scaleToRestore);
+            WebCore::FloatPoint topLeftInDocumentCoordinate(_unobscuredCenterToRestore.x() - unobscuredContentSizeAtNewScale.width() / 2, _unobscuredCenterToRestore.y() - unobscuredContentSizeAtNewScale.height() / 2);
+
+            topLeftInDocumentCoordinate.scale(_scaleToRestore, _scaleToRestore);
+            topLeftInDocumentCoordinate.moveBy(WebCore::FloatPoint(-_obscuredInsets.left, -_obscuredInsets.top));
+
+            changeContentOffsetBoundedInValidRange(_scrollView.get(), topLeftInDocumentCoordinate);
+        }
+        [self _updateVisibleContentRects];
+    }
 }
 
 - (void)_dynamicViewportUpdateChangedTargetToScale:(double)newScale position:(CGPoint)newScrollPosition
@@ -766,6 +827,36 @@ static CGFloat contentZoomScale(WKWebView* webView)
         _resizeAnimationTransformAdjustments.m41 = (currentContentOffset.x - newContentOffset.x) / animatingScaleTarget;
         _resizeAnimationTransformAdjustments.m42 = (currentContentOffset.y - newContentOffset.y) / animatingScaleTarget;
     }
+}
+
+- (void)_restorePageStateToExposedRect:(WebCore::FloatRect)exposedRect scale:(double)scale
+{
+    if (_isAnimatingResize)
+        return;
+
+    if (_customContentView)
+        return;
+
+    _needsToRestoreUnobscuredCenter = NO;
+    _needsToRestoreExposedRect = YES;
+    _firstTransactionIDAfterPageRestore = toRemoteLayerTreeDrawingAreaProxy(_page->drawingArea())->nextLayerTreeTransactionID();
+    _exposedRectToRestore = exposedRect;
+    _scaleToRestore = scale;
+}
+
+- (void)_restorePageStateToUnobscuredCenter:(WebCore::FloatPoint)center scale:(double)scale
+{
+    if (_isAnimatingResize)
+        return;
+
+    if (_customContentView)
+        return;
+
+    _needsToRestoreExposedRect = NO;
+    _needsToRestoreUnobscuredCenter = YES;
+    _firstTransactionIDAfterPageRestore = toRemoteLayerTreeDrawingAreaProxy(_page->drawingArea())->nextLayerTreeTransactionID();
+    _unobscuredCenterToRestore = center;
+    _scaleToRestore = scale;
 }
 
 - (WebKit::ViewSnapshot)_takeViewSnapshot

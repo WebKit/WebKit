@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008, 2013, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Holger Hans Peter Freyther
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,7 @@
 #ifndef ScrollView_h
 #define ScrollView_h
 
+#include "FloatRect.h"
 #include "IntRect.h"
 #include "Scrollbar.h"
 #include "ScrollableArea.h"
@@ -182,10 +183,10 @@ public:
 
 #if PLATFORM(IOS)
     // This is the area that is partially or fully exposed, and may extend under overlapping UI elements.
-    IntRect exposedContentRect() const;
+    FloatRect exposedContentRect() const;
 
     // The given rects are only used if there is no platform widget.
-    void setExposedContentRect(const IntRect&);
+    void setExposedContentRect(const FloatRect&);
     void setUnobscuredContentSize(const IntSize&);
 
     void setActualScrollPosition(const IntPoint&);
@@ -429,7 +430,7 @@ private:
     // FIXME: exposedContentRect is a very similar concept to fixedVisibleContentRect except it does not differentiate
     // between exposed and unobscured areas. The two attributes should eventually be merged.
 #if PLATFORM(IOS)
-    IntRect m_exposedContentRect;
+    FloatRect m_exposedContentRect;
     IntSize m_unobscuredContentSize;
 #else
     IntRect m_fixedVisibleContentRect;

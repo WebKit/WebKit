@@ -50,6 +50,7 @@ public:
     void coreAnimationDidCommitLayers();
 
     uint64_t nextLayerTreeTransactionID() const { return m_pendingLayerTreeTransactionID + 1; }
+    uint64_t lastCommittedLayerTreeTransactionID() const { return m_transactionIDForPendingCACommit; }
 
 private:
     virtual void sizeDidChange() override;

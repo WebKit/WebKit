@@ -119,7 +119,7 @@ void ScrollView::setUnobscuredContentSize(const IntSize& size)
     m_unobscuredContentSize = size;
 }
 
-IntRect ScrollView::exposedContentRect() const
+FloatRect ScrollView::exposedContentRect() const
 {
     if (NSScrollView *view = static_cast<NSScrollView *>(platformWidget())) {
         CGRect r = CGRectZero;
@@ -132,20 +132,20 @@ IntRect ScrollView::exposedContentRect() const
         }
 
         END_BLOCK_OBJC_EXCEPTIONS;
-        return enclosingIntRect(r);
+        return r;
     }
 
     const ScrollView* parent = this->parent();
     if (!parent)
         return m_exposedContentRect;
 
-    IntRect parentViewExtentContentRect = parent->exposedContentRect();
+    IntRect parentViewExtentContentRect = enclosingIntRect(parent->exposedContentRect());
     IntRect selfExtentContentRect = rootViewToContents(parentViewExtentContentRect);
     selfExtentContentRect.intersect(boundsRect());
     return selfExtentContentRect;
 }
 
-void ScrollView::setExposedContentRect(const IntRect& rect)
+void ScrollView::setExposedContentRect(const FloatRect& rect)
 {
     ASSERT(!platformWidget());
     m_exposedContentRect = rect;

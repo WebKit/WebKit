@@ -129,6 +129,7 @@ public:
     void setCustomFixedPositionLayoutRect(const IntRect&);
     bool updateFixedPositionLayoutRect();
 
+    IntSize customSizeForResizeEvent() const { return m_customSizeForResizeEvent; }
     void setCustomSizeForResizeEvent(IntSize);
 
     void setScrollVelocity(double horizontalVelocity, double verticalVelocity, double scaleChangeRate, double timestamp);

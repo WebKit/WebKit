@@ -203,7 +203,7 @@ void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedC
     if (!frameView)
         return;
 
-    frameView->setExposedContentRect(enclosingIntRect(exposedContentRect));
+    frameView->setExposedContentRect(exposedContentRect);
     scheduleCompositingLayerFlush();
 }
 #endif

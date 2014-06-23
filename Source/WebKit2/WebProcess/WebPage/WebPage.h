@@ -457,7 +457,8 @@ public:
     int32_t deviceOrientation() const { return m_deviceOrientation; }
     void viewportPropertiesDidChange(const WebCore::ViewportArguments&);
     void didReceiveMobileDocType(bool);
-    void restorePageState(double scale, bool userHasChangedPageScaleFactor, const WebCore::IntPoint& exposedOrigin);
+    void savePageState(WebCore::HistoryItem&);
+    void restorePageState(const WebCore::HistoryItem&);
 
     void setUseTestingViewportConfiguration(bool useTestingViewport) { m_useTestingViewportConfiguration = useTestingViewport; }
     bool isUsingTestingViewportConfiguration() const { return m_useTestingViewportConfiguration; }
@@ -465,7 +466,6 @@ public:
     double minimumPageScaleFactor() const;
     double maximumPageScaleFactor() const;
     bool allowsUserScaling() const;
-    bool userHasChangedPageScaleFactor() const { return m_userHasChangedPageScaleFactor; }
 
     void handleTap(const WebCore::IntPoint&);
     void potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoint&);
@@ -1215,7 +1215,7 @@ private:
     WebCore::FloatPoint m_potentialTapLocation;
 
     WebCore::ViewportConfiguration m_viewportConfiguration;
-    float m_obscuredTopInset;
+    uint64_t m_lastLayerTreeTransactionIDBeforeDidCommitLoad;
     bool m_hasReceivedVisibleContentRectsAfterDidCommitLoad;
     bool m_scaleWasSetByUIProcess;
     bool m_userHasChangedPageScaleFactor;

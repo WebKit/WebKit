@@ -1,3 +1,51 @@
+2014-06-23  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Make the state restore from HistoryItem more precise and reliable
+        https://bugs.webkit.org/show_bug.cgi?id=134150
+
+        Reviewed by Tim Horton.
+
+        The two biggest changes for WebCore are:
+        -Store everything we need to handle changes of ViewportConfiguration on HistoryItem.
+        -Store the exposedRect with floating point coordinates.
+
+        * WebCore.exp.in:
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore):
+        We cannot determine a good scroll position from the WebProcess because the obscured insets can change
+        arbitrarily in the UIProcess. When we scroll here from the WebProcess, we would force an invalid position
+        to the UIProcess with the next layer tree update.
+
+        To avoid any problem, we prohibit scrolling when restoring the focus appearance.
+
+        * history/HistoryItem.cpp:
+        (WebCore::encodeRect):
+        (WebCore::encodeSize):
+        (WebCore::HistoryItem::encodeBackForwardTreeNode):
+        (WebCore::decodeRect):
+        (WebCore::decodeSize):
+        (WebCore::HistoryItem::decodeBackForwardTree):
+        * history/HistoryItem.h:
+        (WebCore::HistoryItem::exposedContentRect):
+        (WebCore::HistoryItem::setExposedContentRect):
+        (WebCore::HistoryItem::unobscuredContentRect):
+        (WebCore::HistoryItem::setUnobscuredContentRect):
+        (WebCore::HistoryItem::minimumLayoutSizeInScrollViewCoordinates):
+        (WebCore::HistoryItem::setMinimumLayoutSizeInScrollViewCoordinates):
+        (WebCore::HistoryItem::contentSize):
+        (WebCore::HistoryItem::setContentSize):
+        (WebCore::HistoryItem::exposedContentPosition): Deleted.
+        (WebCore::HistoryItem::setExposedContentPosition): Deleted.
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::saveScrollPositionAndViewStateToItem):
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+        * platform/ios/ScrollViewIOS.mm:
+        (WebCore::ScrollView::exposedContentRect):
+        (WebCore::ScrollView::setExposedContentRect):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::didChangeVisibleRect):
+
 2014-06-23  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] process raw VTT in-band captions

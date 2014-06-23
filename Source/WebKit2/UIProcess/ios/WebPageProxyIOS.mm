@@ -615,6 +615,16 @@ void WebPageProxy::dynamicViewportUpdateChangedTarget(double newScale, const Web
     }
 }
 
+void WebPageProxy::restorePageState(const WebCore::FloatRect& exposedRect, double scale)
+{
+    m_pageClient.restorePageState(exposedRect, scale);
+}
+
+void WebPageProxy::restorePageCenterAndScale(const WebCore::FloatPoint& center, double scale)
+{
+    m_pageClient.restorePageCenterAndScale(center, scale);
+}
+
 void WebPageProxy::didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius)
 {
     m_pageClient.didGetTapHighlightGeometries(requestID, color, highlightedQuads, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
