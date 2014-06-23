@@ -1004,13 +1004,10 @@ private:
 
 #if PLATFORM(COCOA)
     RetainPtr<WebGLLayer> m_webGLLayer;
+    PlatformGraphicsContext3D m_contextObj;
 #endif
 
-#if PLATFORM(IOS)
-    PlatformGraphicsContext3D m_contextObj;
-#elif PLATFORM(MAC)
-    CGLContextObj m_contextObj;
-#elif PLATFORM(WIN) && USE(CA)
+#if PLATFORM(WIN) && USE(CA)
     RefPtr<PlatformCALayer> m_webGLLayer;
 #endif
 

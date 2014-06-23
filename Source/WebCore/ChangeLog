@@ -153,14 +153,25 @@
         [iOS] Use WebGLLayer rather than PlatformLayer in GraphicsContext3D
         https://bugs.webkit.org/show_bug.cgi?id=134183
 
+        Follow-up review from Sam Weinig.
+
+        * platform/graphics/GraphicsContext3D.h: Merge another bit of MAC and IOS
+        code.
+        * ChangeLog: Actually read his review comments this time.
+
+2014-06-23  Dean Jackson  <dino@apple.com>
+
+        [iOS] Use WebGLLayer rather than PlatformLayer in GraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=134183
+
         Reviewed by Sam Weinig.
 
         GraphicsContext3D has a reference to a WebGLLayer that was
         hidden behind a PlatformLayer. This meant we had to cast it
         to use a WebGLLayer method.
 
-        * platform/graphics/GraphicsContext3D.h: Replace RefPtr<PlatformLayer>
-        with RefPtr<WebGLLayer>.
+        * platform/graphics/GraphicsContext3D.h: Replace RetainPtr<PlatformLayer>
+        with RetainPtr<WebGLLayer>.
         * platform/graphics/mac/GraphicsContext3DMac.mm:
         (WebCore::GraphicsContext3D::~GraphicsContext3D): No need to cast.
 
