@@ -56,6 +56,10 @@
 #include "JSSpeechRecognitionResultList.h"
 #endif
 
+#if ENABLE(GAMEPAD)
+#include "JSGamepad.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -262,6 +266,13 @@ void JSDictionary::convertValue(JSC::ExecState* exec, JSC::JSValue value, RefPtr
 void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<SpeechRecognitionResultList>& result)
 {
     result = toSpeechRecognitionResultList(value);
+}
+#endif
+
+#if ENABLE(GAMEPAD)
+void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Gamepad>& result)
+{
+    result = toGamepad(value);
 }
 #endif
 

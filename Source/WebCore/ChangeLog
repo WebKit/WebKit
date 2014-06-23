@@ -1,3 +1,67 @@
+2014-06-23  Brady Eidson  <beidson@apple.com>
+
+        Add skeleton code for updated Gamepad API
+        https://bugs.webkit.org/show_bug.cgi?id=134165
+
+        Reviewed by Dean Jackson.
+
+        No new tests (No change in behavior for any tested configuration)
+
+        Interface and dummy implementation for the Gamepad object:
+        * Modules/gamepad/Gamepad.cpp: Added.
+        (WebCore::Gamepad::Gamepad):
+        (WebCore::Gamepad::~Gamepad):
+        (WebCore::Gamepad::axes):
+        (WebCore::Gamepad::buttons):
+        * Modules/gamepad/Gamepad.h: Added.
+        * Modules/gamepad/Gamepad.idl: Added.
+
+        Interface and dummy implementation for the GamepadButton object:
+        * Modules/gamepad/GamepadButton.cpp: Added.
+        (WebCore::GamepadButton::GamepadButton):
+        (WebCore::GamepadButton::pressed):
+        * Modules/gamepad/GamepadButton.h: Added.
+        (WebCore::GamepadButton::create):
+        (WebCore::GamepadButton::value):
+        (WebCore::GamepadButton::setValue):
+        * Modules/gamepad/GamepadButton.idl: Added.
+
+        Interface and dummy implementation for the GamepadEvent object:
+        * Modules/gamepad/GamepadEvent.cpp: Added.
+        (WebCore::GamepadEvent::GamepadEvent):
+        * Modules/gamepad/GamepadEvent.h: Added.
+        (WebCore::GamepadEventInit::GamepadEventInit):
+        (WebCore::GamepadEvent::~GamepadEvent):
+        (WebCore::GamepadEvent::create):
+        (WebCore::GamepadEvent::gamepad):
+        * Modules/gamepad/GamepadEvent.idl: Added.
+        * dom/EventNames.in:
+
+        Interface and dummy implementation for additions to the Navigator object:
+        * Modules/gamepad/NavigatorGamepad.cpp: Added.
+        (WebCore::NavigatorGamepad::NavigatorGamepad):
+        (WebCore::NavigatorGamepad::supplementName):
+        (WebCore::NavigatorGamepad::from):
+        (WebCore::NavigatorGamepad::getGamepads):
+        (WebCore::NavigatorGamepad::gamepads):
+        * Modules/gamepad/NavigatorGamepad.h: Added.
+        * Modules/gamepad/NavigatorGamepad.idl: Added.
+
+        Bindings additions necessary for these new interfaces:
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::JSValueTraits<double>::arrayJSValue):
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        * bindings/js/JSDictionary.h:
+
+        Project file stuff:
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCoreCommon.props:
+        * WebCore.vcxproj/copyForwardingHeaders.cmd:
+        * WebCore.xcodeproj/project.pbxproj:
+        * DerivedSources.make:
+
 2014-06-23  Simon Fraser  <simon.fraser@apple.com>
 
         Catch Obj-C exceptions thrown by _linenPatternImage

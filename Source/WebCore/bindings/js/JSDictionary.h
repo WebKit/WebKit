@@ -46,6 +46,7 @@ class Dictionary;
 class DOMError;
 class DOMWindow;
 class EventTarget;
+class Gamepad;
 class MediaKeyError;
 class MediaStream;
 class MediaStreamTrack;
@@ -139,6 +140,9 @@ private:
 #endif
 #if ENABLE(SCRIPTED_SPEECH)
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<SpeechRecognitionResultList>&);
+#endif
+#if ENABLE(GAMEPAD)
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<Gamepad>&);
 #endif
 
     JSC::ExecState* m_exec;

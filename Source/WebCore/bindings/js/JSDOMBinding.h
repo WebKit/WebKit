@@ -52,6 +52,17 @@ namespace JSC {
 class HashEntry;
 }
 
+#if ENABLE(GAMEPAD)
+namespace WTF {
+
+template<typename T> inline T* getPtr(const Ref<T>& p)
+{
+    return const_cast<T*>(&p.get());
+}
+
+}
+#endif
+
 namespace WebCore {
 
 class CachedScript;
@@ -413,6 +424,13 @@ template<> struct JSValueTraits<String> {
     static JSC::JSValue arrayJSValue(JSC::ExecState* exec, JSDOMGlobalObject*, const String& value)
     {
         return jsStringWithCache(exec, value);
+    }
+};
+
+template<> struct JSValueTraits<double> {
+    static JSC::JSValue arrayJSValue(JSC::ExecState*, JSDOMGlobalObject*, const double& value)
+    {
+        return JSC::jsNumber(value);
     }
 };
 

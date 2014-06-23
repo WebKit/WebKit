@@ -165,6 +165,11 @@ set(WebCore_IDL_FILES
     Modules/battery/BatteryManager.idl
     Modules/battery/NavigatorBattery.idl
 
+    Modules/gamepad/Gamepad.idl
+    Modules/gamepad/GamepadButton.idl
+    Modules/gamepad/GamepadEvent.idl
+    Modules/gamepad/NavigatorGamepad.idl
+
     Modules/gamepad/deprecated/Gamepad.idl
     Modules/gamepad/deprecated/GamepadList.idl
     Modules/gamepad/deprecated/NavigatorGamepad.idl

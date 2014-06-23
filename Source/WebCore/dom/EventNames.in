@@ -61,4 +61,5 @@ SecurityPolicyViolationEvent conditional=CSP_NEXT
 UIRequestEvent conditional=INDIE_UI
 GestureEvent conditional=IOS_GESTURE_EVENTS
 WebKitPlaybackTargetAvailabilityEvent conditional=IOS_AIRPLAY
+GamepadEvent conditional=GAMEPAD
 
