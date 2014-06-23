@@ -1,5 +1,12 @@
 2014-06-22  Dean Jackson  <dino@apple.com>
 
+        Attempted iOS build fix.
+
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::~GraphicsContext3D): Cast to WebGLLayer.
+
+2014-06-22  Dean Jackson  <dino@apple.com>
+
         [Apple] WebGL layer may use GC3D after free with remote layer hosting
         https://bugs.webkit.org/show_bug.cgi?id=134179
         <rdar://problem/17412931>
