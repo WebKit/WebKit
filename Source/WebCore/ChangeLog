@@ -1,3 +1,33 @@
+2014-06-23  Jeongeun Kim  <je_julie.kim@samsung.com>
+
+        Make it clear to get m_svgExtensions using svgExtensions().
+        https://bugs.webkit.org/show_bug.cgi?id=134186.
+
+        Reviewed by Dirk Schulze.
+
+        This patch makes sure that the purpose of code is to get m_svgExtensions 
+        as changing accessSVGExtensions() to svgExtensions(). 
+        svgExtensions() is a getter API and accessSVGExtensions() checks 
+        the presence of m_svgExtensions and create m_svgExtensions if it does not exist. 
+
+        No new tests, no behavior change.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChild):
+        (WebCore::ContainerNode::removeChildren):
+        * dom/Document.cpp:
+        (WebCore::Document::commonTeardown):
+        (WebCore::Document::implicitClose):
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::startAnimations):
+        (WebCore::SVGDocumentExtensions::pauseAnimations):
+        (WebCore::SVGDocumentExtensions::unpauseAnimations):
+        (WebCore::SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements):
+        (WebCore::SVGDocumentExtensions::rebuildElements):
+        * svg/SVGDocumentExtensions.h:
+
 2014-06-23  Dean Jackson  <dino@apple.com>
 
         [iOS] Use WebGLLayer rather than PlatformLayer in GraphicsContext3D

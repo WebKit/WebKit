@@ -691,7 +691,7 @@ void Document::removedLastRef()
 void Document::commonTeardown()
 {
     if (svgExtensions())
-        accessSVGExtensions()->pauseAnimations();
+        svgExtensions()->pauseAnimations();
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     clearScriptedAnimationController();
@@ -2386,7 +2386,7 @@ void Document::implicitClose()
     // here, instead of doing it from SVGElement::finishedParsingChildren (if externalResourcesRequired="false",
     // which is the default, for ='true' its fired at a later time, once all external resources finished loading).
     if (svgExtensions())
-        accessSVGExtensions()->dispatchSVGLoadEventToOutermostSVGElements();
+        svgExtensions()->dispatchSVGLoadEventToOutermostSVGElements();
 
     dispatchWindowLoadEvent();
     enqueuePageshowEvent(PageshowEventNotPersisted);
@@ -2451,7 +2451,7 @@ void Document::implicitClose()
 #endif
 
     if (svgExtensions())
-        accessSVGExtensions()->startAnimations();
+        svgExtensions()->startAnimations();
 }
 
 void Document::setParsing(bool b)

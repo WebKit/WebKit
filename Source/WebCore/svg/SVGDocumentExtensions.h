@@ -53,10 +53,10 @@ public:
     void removeResource(const AtomicString& id);
     RenderSVGResourceContainer* resourceById(const AtomicString& id) const;
 
-    void startAnimations();
-    void pauseAnimations();
-    void unpauseAnimations();
-    void dispatchSVGLoadEventToOutermostSVGElements();
+    void startAnimations() const;
+    void pauseAnimations() const;
+    void unpauseAnimations() const;
+    void dispatchSVGLoadEventToOutermostSVGElements() const;
 
     void reportWarning(const String&);
     void reportError(const String&);
@@ -70,7 +70,7 @@ public:
     void removeAllElementReferencesForTarget(SVGElement*);
 
     void clearTargetDependencies(SVGElement&);
-    void rebuildElements();
+    void rebuildElements() const;
 
 #if ENABLE(SVG_FONTS)
     const HashSet<SVGFontFaceElement*>& svgFontFaceElements() const { return m_svgFontFaceElements; }

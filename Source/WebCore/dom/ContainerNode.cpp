@@ -573,7 +573,7 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
     if (document().svgExtensions()) {
         Element* shadowHost = this->shadowHost();
         if (!shadowHost || !shadowHost->hasTagName(SVGNames::useTag))
-            document().accessSVGExtensions()->rebuildElements();
+            document().svgExtensions()->rebuildElements();
     }
 
     dispatchSubtreeModifiedEvent();
@@ -670,7 +670,7 @@ void ContainerNode::removeChildren()
     if (document().svgExtensions()) {
         Element* shadowHost = this->shadowHost();
         if (!shadowHost || !shadowHost->hasTagName(SVGNames::useTag))
-            document().accessSVGExtensions()->rebuildElements();
+            document().svgExtensions()->rebuildElements();
     }
 
     dispatchSubtreeModifiedEvent();
