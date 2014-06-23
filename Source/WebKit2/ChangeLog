@@ -1,3 +1,23 @@
+2014-06-23  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        Unreviewed, GTK build fix after r170274.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        Drawing::m_webPage changed to reference.
+
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+        (WebKit::DrawingAreaImpl::setNeedsDisplay):
+        (WebKit::DrawingAreaImpl::setNeedsDisplayInRect):
+        (WebKit::DrawingAreaImpl::forceRepaint):
+        (WebKit::DrawingAreaImpl::updatePreferences):
+        (WebKit::DrawingAreaImpl::layerHostDidFlushLayers):
+        (WebKit::DrawingAreaImpl::updateBackingStoreState):
+        (WebKit::DrawingAreaImpl::sendDidUpdateBackingStoreState):
+        (WebKit::DrawingAreaImpl::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode):
+        (WebKit::DrawingAreaImpl::display):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+
 2014-06-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         REGRESSION(r170163): It made everything crash on EFL

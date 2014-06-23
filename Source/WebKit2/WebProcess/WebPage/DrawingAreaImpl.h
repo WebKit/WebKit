@@ -42,7 +42,7 @@ class UpdateInfo;
 
 class DrawingAreaImpl : public DrawingArea {
 public:
-    DrawingAreaImpl(WebPage*, const WebPageCreationParameters&);
+    DrawingAreaImpl(WebPage&, const WebPageCreationParameters&);
     virtual ~DrawingAreaImpl();
 
     void layerHostDidFlushLayers();
