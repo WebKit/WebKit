@@ -406,7 +406,7 @@ void WebContext::ensureNetworkProcess()
 
     parameters.cacheModel = m_cacheModel;
 
-    parameters.diskCacheDirectory = diskCacheDirectory();
+    parameters.diskCacheDirectory = stringByResolvingSymlinksInPath(diskCacheDirectory());
     if (!parameters.diskCacheDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.diskCacheDirectory, parameters.diskCacheDirectoryExtensionHandle);
 

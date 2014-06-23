@@ -1,3 +1,30 @@
+2014-06-23  Oliver Hunt  <oliver@apple.com>
+
+        Ensure that we always use symlink free paths when specifying cache directories
+        https://bugs.webkit.org/show_bug.cgi?id=134206
+
+        Reviewed by Anders Carlsson.
+
+        Sandboxing will deny symlink based paths, so we use realpath to create extensions.
+        This leaves us in the position of an extension using a visually different path
+        from other parts of the process code.  This patch simply makes sure that we always
+        use the realpath for cache directories, so making debugging easier and also ensuring
+        that we don't ever accidentally try to use a path with symlinks that will thus get
+        denied.
+
+        * Shared/SandboxExtension.h:
+        (WebKit::stringByResolvingSymlinksInPath):
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::stringByResolvingSymlinksInPath):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureNetworkProcess):
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformDefaultApplicationCacheDirectory):
+        (WebKit::WebContext::platformDefaultDiskCacheDirectory):
+        (WebKit::WebContext::platformDefaultWebSQLDatabaseDirectory):
+        (WebKit::WebContext::platformDefaultIconDatabasePath):
+        (WebKit::WebContext::platformDefaultLocalStorageDirectory):
+
 2014-06-23  Roger Fong  <roger_fong@apple.com>
 
         Unregister notification observer registered in r170156.

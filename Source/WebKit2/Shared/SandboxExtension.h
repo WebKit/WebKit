@@ -132,6 +132,9 @@ inline bool SandboxExtension::revoke() { return true; }
 inline bool SandboxExtension::consume() { return true; }
 inline bool SandboxExtension::consumePermanently() { return true; }
 inline bool SandboxExtension::consumePermanently(const Handle&) { return true; }
+inline String stringByResolvingSymlinksInPath(const String& path) { return path; }
+#else
+String stringByResolvingSymlinksInPath(const String& path);
 #endif
 
 } // namespace WebKit

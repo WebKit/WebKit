@@ -207,6 +207,11 @@ static CString resolveSymlinksInPath(const CString& path)
     return resolvedPath;
 }
 
+String stringByResolvingSymlinksInPath(const String& path)
+{
+    return String::fromUTF8(resolveSymlinksInPath(path.utf8()));
+}
+
 void SandboxExtension::createHandle(const String& path, Type type, Handle& handle)
 {
     ASSERT(!handle.m_sandboxExtension);

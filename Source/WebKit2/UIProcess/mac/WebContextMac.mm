@@ -164,7 +164,8 @@ String WebContext::platformDefaultApplicationCacheDirectory() const
 
     NSString *cacheDir = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:cacheDirectory length:cacheDirectoryLen - 1];
 #endif
-    return [cacheDir stringByAppendingPathComponent:appName];
+    NSString* cachePath = [cacheDir stringByAppendingPathComponent:appName];
+    return stringByResolvingSymlinksInPath([cachePath stringByStandardizingPath]);
 }
 
 void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
@@ -263,8 +264,7 @@ String WebContext::platformDefaultDiskCacheDirectory() const
     RetainPtr<NSString> cachePath = adoptNS((NSString *)WKCopyFoundationCacheDirectory());
     if (!cachePath)
         cachePath = @"~/Library/Caches/com.apple.WebKit.WebProcess";
-
-    return [cachePath stringByStandardizingPath];
+    return stringByResolvingSymlinksInPath([cachePath stringByStandardizingPath]);
 }
 
 String WebContext::platformDefaultCookieStorageDirectory() const
@@ -278,7 +278,7 @@ String WebContext::platformDefaultWebSQLDatabaseDirectory()
     NSString *databasesDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebDatabaseDirectoryDefaultsKey];
     if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
         databasesDirectory = @"~/Library/WebKit/Databases";
-    return [databasesDirectory stringByStandardizingPath];
+    return stringByResolvingSymlinksInPath([databasesDirectory stringByStandardizingPath]);
 }
 
 String WebContext::platformDefaultIndexedDBDatabaseDirectory()
@@ -296,7 +296,7 @@ String WebContext::platformDefaultIconDatabasePath() const
     NSString *databasesDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebIconDatabaseDirectoryDefaultsKey];
     if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
         databasesDirectory = @"~/Library/Icons/WebpageIcons.db";
-    return [databasesDirectory stringByStandardizingPath];
+    return stringByResolvingSymlinksInPath([databasesDirectory stringByStandardizingPath]);
 }
 
 String WebContext::platformDefaultLocalStorageDirectory()
@@ -304,7 +304,7 @@ String WebContext::platformDefaultLocalStorageDirectory()
     NSString *localStorageDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebStorageDirectoryDefaultsKey];
     if (!localStorageDirectory || ![localStorageDirectory isKindOfClass:[NSString class]])
         localStorageDirectory = @"~/Library/WebKit/LocalStorage";
-    return [localStorageDirectory stringByStandardizingPath];
+    return stringByResolvingSymlinksInPath([localStorageDirectory stringByStandardizingPath]);
 }
 
 bool WebContext::omitPDFSupport()
