@@ -305,7 +305,10 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
     [navigationAction setRequest:request.nsURLRequest(WebCore::DoNotUpdateHTTPBody)];
     [navigationAction _setOriginalURL:originalRequest.url()];
 
-    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:navigationAction.get() decisionHandler:[listener](WKNavigationActionPolicy actionPolicy) {
+    RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationAction:decisionHandler:));
+    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:navigationAction.get() decisionHandler:[listener, checker](WKNavigationActionPolicy actionPolicy) {
+        checker->didCallCompletionHandler();
+
         switch (actionPolicy) {
         case WKNavigationActionPolicyAllow:
             listener->use();
@@ -364,7 +367,10 @@ void NavigationState::PolicyClient::decidePolicyForResponse(WebPageProxy*, WebFr
     [navigationResponse setResponse:resourceResponse.nsURLResponse()];
     [navigationResponse setCanShowMIMEType:canShowMIMEType];
 
-    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:navigationResponse.get() decisionHandler:[listener](WKNavigationResponsePolicy responsePolicy) {
+    RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationResponse:decisionHandler:));
+    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:navigationResponse.get() decisionHandler:[listener, checker](WKNavigationResponsePolicy responsePolicy) {
+        checker->didCallCompletionHandler();
+
         switch (responsePolicy) {
         case WKNavigationResponsePolicyAllow:
             listener->use();
