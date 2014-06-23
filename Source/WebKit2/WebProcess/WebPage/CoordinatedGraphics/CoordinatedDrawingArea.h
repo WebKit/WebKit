@@ -38,7 +38,7 @@ namespace WebKit {
 
 class CoordinatedDrawingArea : public DrawingArea {
 public:
-    CoordinatedDrawingArea(WebPage*, const WebPageCreationParameters&);
+    CoordinatedDrawingArea(WebPage&, const WebPageCreationParameters&);
     virtual ~CoordinatedDrawingArea();
 
     void layerHostDidFlushLayers();

@@ -52,7 +52,7 @@ CoordinatedDrawingArea::~CoordinatedDrawingArea()
         m_layerTreeHost->invalidate();
 }
 
-CoordinatedDrawingArea::CoordinatedDrawingArea(WebPage* webPage, const WebPageCreationParameters& parameters)
+CoordinatedDrawingArea::CoordinatedDrawingArea(WebPage& webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaTypeCoordinated, webPage)
     , m_backingStoreStateID(0)
     , m_isPaintingEnabled(true)
@@ -81,7 +81,7 @@ void CoordinatedDrawingArea::setNeedsDisplay()
         return;
     }
 
-    setNeedsDisplayInRect(m_webPage->bounds());
+    setNeedsDisplayInRect(m_webPage.bounds());
 }
 
 void CoordinatedDrawingArea::setNeedsDisplayInRect(const IntRect& rect)
@@ -96,7 +96,7 @@ void CoordinatedDrawingArea::setNeedsDisplayInRect(const IntRect& rect)
     }
 
     IntRect dirtyRect = rect;
-    dirtyRect.intersect(m_webPage->bounds());
+    dirtyRect.intersect(m_webPage.bounds());
 
     if (dirtyRect.isEmpty())
         return;
@@ -189,7 +189,7 @@ void CoordinatedDrawingArea::forceRepaint()
 {
     setNeedsDisplay();
 
-    m_webPage->layoutIfNeeded();
+    m_webPage.layoutIfNeeded();
 
     if (m_layerTreeHost) {
         // FIXME: We need to do the same work as the layerHostDidFlushLayers function here,
@@ -222,12 +222,12 @@ void CoordinatedDrawingArea::setPaintingEnabled(bool paintingEnabled)
 
 void CoordinatedDrawingArea::updatePreferences(const WebPreferencesStore& store)
 {
-    m_webPage->corePage()->settings().setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey()));
+    m_webPage.corePage()->settings().setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey()));
 }
 
 void CoordinatedDrawingArea::mainFrameContentSizeChanged(const WebCore::IntSize&)
 {
-    m_webPage->pageOverlayController().didChangeDocumentSize();
+    m_webPage.pageOverlayController().didChangeDocumentSize();
 }
 
 void CoordinatedDrawingArea::layerHostDidFlushLayers()
@@ -246,7 +246,7 @@ void CoordinatedDrawingArea::layerHostDidFlushLayers()
 
     ASSERT(!m_compositingAccordingToProxyMessages);
     if (!exitAcceleratedCompositingModePending()) {
-        m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_backingStoreStateID, m_layerTreeHost->layerTreeContext()));
+        m_webPage.send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_backingStoreStateID, m_layerTreeHost->layerTreeContext()));
         m_compositingAccordingToProxyMessages = true;
     }
 }
@@ -305,19 +305,19 @@ void CoordinatedDrawingArea::updateBackingStoreState(uint64_t stateID, bool resp
         m_backingStoreStateID = stateID;
         m_shouldSendDidUpdateBackingStoreState = true;
 
-        m_webPage->setDeviceScaleFactor(deviceScaleFactor);
-        m_webPage->setSize(size);
-        m_webPage->layoutIfNeeded();
-        m_webPage->scrollMainFrameIfNotAtMaxScrollPosition(scrollOffset);
+        m_webPage.setDeviceScaleFactor(deviceScaleFactor);
+        m_webPage.setSize(size);
+        m_webPage.layoutIfNeeded();
+        m_webPage.scrollMainFrameIfNotAtMaxScrollPosition(scrollOffset);
 
         if (m_layerTreeHost) {
             // Coordinated Graphics sets the size of the root layer to contents size.
-            if (!m_webPage->useFixedLayout())
-                m_layerTreeHost->sizeDidChange(m_webPage->size());
+            if (!m_webPage.useFixedLayout())
+                m_layerTreeHost->sizeDidChange(m_webPage.size());
         } else
-            m_dirtyRegion = m_webPage->bounds();
+            m_dirtyRegion = m_webPage.bounds();
     } else {
-        ASSERT(size == m_webPage->size());
+        ASSERT(size == m_webPage.size());
         if (!m_shouldSendDidUpdateBackingStoreState) {
             // We've already sent a DidUpdateBackingStoreState message for this state. We have nothing more to do.
             m_inUpdateBackingStoreState = false;
@@ -359,8 +359,8 @@ void CoordinatedDrawingArea::sendDidUpdateBackingStoreState()
     LayerTreeContext layerTreeContext;
 
     if (m_isPaintingSuspended || m_layerTreeHost) {
-        updateInfo.viewSize = m_webPage->size();
-        updateInfo.deviceScaleFactor = m_webPage->corePage()->deviceScaleFactor();
+        updateInfo.viewSize = m_webPage.size();
+        updateInfo.deviceScaleFactor = m_webPage.corePage()->deviceScaleFactor();
 
         if (m_layerTreeHost) {
             layerTreeContext = m_layerTreeHost->layerTreeContext();
@@ -374,7 +374,7 @@ void CoordinatedDrawingArea::sendDidUpdateBackingStoreState()
         }
     }
 
-    m_webPage->send(Messages::DrawingAreaProxy::DidUpdateBackingStoreState(m_backingStoreStateID, updateInfo, layerTreeContext));
+    m_webPage.send(Messages::DrawingAreaProxy::DidUpdateBackingStoreState(m_backingStoreStateID, updateInfo, layerTreeContext));
     m_compositingAccordingToProxyMessages = !layerTreeContext.isEmpty();
 }
 
@@ -401,7 +401,7 @@ void CoordinatedDrawingArea::suspendPainting()
     m_isPaintingSuspended = true;
     m_displayTimer.stop();
 
-    m_webPage->corePage()->suspendScriptedAnimations();
+    m_webPage.corePage()->suspendScriptedAnimations();
 }
 
 void CoordinatedDrawingArea::resumePainting()
@@ -420,7 +420,7 @@ void CoordinatedDrawingArea::resumePainting()
     // FIXME: We shouldn't always repaint everything here.
     setNeedsDisplay();
 
-    m_webPage->corePage()->resumeScriptedAnimations();
+    m_webPage.corePage()->resumeScriptedAnimations();
 }
 
 void CoordinatedDrawingArea::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLayer)
@@ -430,7 +430,7 @@ void CoordinatedDrawingArea::enterAcceleratedCompositingMode(GraphicsLayer* grap
 
     ASSERT(!m_layerTreeHost);
 
-    m_layerTreeHost = LayerTreeHost::create(m_webPage);
+    m_layerTreeHost = LayerTreeHost::create(&m_webPage);
     if (!m_inUpdateBackingStoreState)
         m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(true);
 
@@ -507,7 +507,7 @@ void CoordinatedDrawingArea::display()
         return;
     }
 
-    m_webPage->send(Messages::DrawingAreaProxy::Update(m_backingStoreStateID, updateInfo));
+    m_webPage.send(Messages::DrawingAreaProxy::Update(m_backingStoreStateID, updateInfo));
     m_isWaitingForDidUpdate = true;
 }
 
@@ -536,23 +536,23 @@ void CoordinatedDrawingArea::display(UpdateInfo& updateInfo)
 {
     ASSERT(!m_isPaintingSuspended);
     ASSERT(!m_layerTreeHost);
-    ASSERT(!m_webPage->size().isEmpty());
+    ASSERT(!m_webPage.size().isEmpty());
 
-    m_webPage->layoutIfNeeded();
+    m_webPage.layoutIfNeeded();
 
     // The layout may have put the page into accelerated compositing mode. If the LayerTreeHost is
     // in charge of displaying, we have nothing more to do.
     if (m_layerTreeHost)
         return;
 
-    updateInfo.viewSize = m_webPage->size();
-    updateInfo.deviceScaleFactor = m_webPage->corePage()->deviceScaleFactor();
+    updateInfo.viewSize = m_webPage.size();
+    updateInfo.deviceScaleFactor = m_webPage.corePage()->deviceScaleFactor();
 
     IntRect bounds = m_dirtyRegion.bounds();
-    ASSERT(m_webPage->bounds().contains(bounds));
+    ASSERT(m_webPage.bounds().contains(bounds));
 
     IntSize bitmapSize = bounds.size();
-    float deviceScaleFactor = m_webPage->corePage()->deviceScaleFactor();
+    float deviceScaleFactor = m_webPage.corePage()->deviceScaleFactor();
     bitmapSize.scale(deviceScaleFactor);
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bitmapSize, ShareableBitmap::SupportsAlpha);
     if (!bitmap)
@@ -583,7 +583,7 @@ void CoordinatedDrawingArea::display(UpdateInfo& updateInfo)
     graphicsContext->translate(-bounds.x(), -bounds.y());
 
     for (size_t i = 0; i < rects.size(); ++i) {
-        m_webPage->drawRect(*graphicsContext, rects[i]);
+        m_webPage.drawRect(*graphicsContext, rects[i]);
         updateInfo.updateRects.append(rects[i]);
     }
 

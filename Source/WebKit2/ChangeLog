@@ -1,3 +1,23 @@
+2014-06-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL build fix since r170274. Use reference for m_webPage member variable.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp:
+        (WebKit::CoordinatedDrawingArea::CoordinatedDrawingArea):
+        (WebKit::CoordinatedDrawingArea::setNeedsDisplay):
+        (WebKit::CoordinatedDrawingArea::setNeedsDisplayInRect):
+        (WebKit::CoordinatedDrawingArea::forceRepaint):
+        (WebKit::CoordinatedDrawingArea::updatePreferences):
+        (WebKit::CoordinatedDrawingArea::mainFrameContentSizeChanged):
+        (WebKit::CoordinatedDrawingArea::layerHostDidFlushLayers):
+        (WebKit::CoordinatedDrawingArea::updateBackingStoreState):
+        (WebKit::CoordinatedDrawingArea::sendDidUpdateBackingStoreState):
+        (WebKit::CoordinatedDrawingArea::suspendPainting):
+        (WebKit::CoordinatedDrawingArea::resumePainting):
+        (WebKit::CoordinatedDrawingArea::enterAcceleratedCompositingMode):
+        (WebKit::CoordinatedDrawingArea::display):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.h:
+
 2014-06-22  Tim Horton  <timothy_horton@apple.com>
 
         [iOS][wk2] Swiping back sometimes results in a missing (not blank) swipe snapshot
