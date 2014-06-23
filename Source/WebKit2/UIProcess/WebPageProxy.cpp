@@ -4464,6 +4464,14 @@ void WebPageProxy::exceededDatabaseQuota(uint64_t frameID, const String& originI
     }
 }
 
+void WebPageProxy::reachedApplicationCacheOriginQuota(const String& originIdentifier, uint64_t currentQuota, uint64_t totalBytesNeeded, PassRefPtr<Messages::WebPageProxy::ReachedApplicationCacheOriginQuota::DelayedReply> reply)
+{
+    RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
+    MESSAGE_CHECK(securityOrigin);
+
+    m_uiClient->reachedApplicationCacheOriginQuota(this, *securityOrigin.get(), currentQuota, totalBytesNeeded, [reply](unsigned long long newQuota) { reply->send(newQuota); });
+}
+
 void WebPageProxy::requestGeolocationPermissionForFrame(uint64_t geolocationID, uint64_t frameID, String originIdentifier)
 {
     WebFrameProxy* frame = m_process->webFrame(frameID);

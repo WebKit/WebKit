@@ -49,6 +49,7 @@
 #include "WebProcessProxyMessages.h"
 #include "WebSearchPopupMenu.h"
 #include "WebSecurityOrigin.h"
+#include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/ColorChooser.h>
 #include <WebCore/DatabaseManager.h>
@@ -674,7 +675,23 @@ void WebChromeClient::reachedMaxAppCacheSize(int64_t)
 void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin* origin, int64_t totalBytesNeeded)
 {
     RefPtr<WebSecurityOrigin> webSecurityOrigin = WebSecurityOrigin::createFromString(origin->toString());
-    m_page->injectedBundleUIClient().didReachApplicationCacheOriginQuota(m_page, webSecurityOrigin.get(), totalBytesNeeded);
+    if (m_page->injectedBundleUIClient().didReachApplicationCacheOriginQuota(m_page, webSecurityOrigin.get(), totalBytesNeeded))
+        return;
+
+    unsigned syncSendFlags = IPC::InformPlatformProcessWillSuspend;
+    if (WebPage::synchronousMessagesShouldSpinRunLoop())
+        syncSendFlags |= IPC::SpinRunLoopWhileWaitingForReply;
+
+    int64_t currentQuota = 0;
+    if (!cacheStorage().calculateQuotaForOrigin(origin, currentQuota))
+        return;
+
+    uint64_t newQuota = 0;
+    WebProcess::shared().parentProcessConnection()->sendSync(
+        Messages::WebPageProxy::ReachedApplicationCacheOriginQuota(origin->databaseIdentifier(), currentQuota, totalBytesNeeded),
+        Messages::WebPageProxy::ReachedApplicationCacheOriginQuota::Reply(newQuota), m_page->pageID(), std::chrono::milliseconds::max(), syncSendFlags);
+
+    cacheStorage().storeUpdatedQuotaForOrigin(origin, newQuota);
 }
 
 #if ENABLE(DASHBOARD_SUPPORT)

@@ -35,7 +35,7 @@ class SecurityOrigin;
 
 @interface _WKSecurityOrigin ()
 
-- (instancetype)_initWithSecurityOrigin:(PassRefPtr<WebCore::SecurityOrigin>)origin;
+- (instancetype)_initWithSecurityOrigin:(const WebCore::SecurityOrigin&)origin;
 
 @end
 

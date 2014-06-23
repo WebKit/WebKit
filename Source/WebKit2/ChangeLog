@@ -1,3 +1,50 @@
+2014-06-23  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] No way to grant storage quotas for web application cache
+        https://bugs.webkit.org/show_bug.cgi?id=134213
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::reachedApplicationCacheOriginQuota): Added this new client function, with
+        a default implementation that calls the completion handler with the current quota.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h: Declared a new delegate method.
+
+        * UIProcess/API/Cocoa/_WKSecurityOrigin.mm:
+        (-[_WKSecurityOrigin _initWithSecurityOrigin:WebCore::]): Changed the parameter into a const
+        reference, since we copy it.
+        * UIProcess/API/Cocoa/_WKSecurityOriginInternal.h:
+
+        * UIProcess/Cocoa/UIDelegate.h: Override API::UIClient::reachedApplicationCacheOriginQuota.
+        Added flag to m_delegateMethods struct for new delegate method.
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate): Set new flag in m_delegateMethods struct.
+        (WebKit::UIDelegate::UIClient::exceededDatabaseQuota): Updated for change in
+        _WKSecurityOrigin initializer.
+        (WebKit::UIDelegate::UIClient::reachedApplicationCacheOriginQuota): Added. Calls the new
+        delegate method.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reachedApplicationCacheOriginQuota): Added. Forwards the message to
+        the UI client.
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/WebPageProxy.messages.in: Added ReachedApplicationCacheOriginQuota message.
+
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageUIClient.h:
+        (API::InjectedBundle::PageUIClient::didReachApplicationCacheOriginQuota): Changed the return
+        type to bool, indicating whether the client handled the callback.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::didReachApplicationCacheOriginQuota): Return the
+        appropriate value.
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::reachedApplicationCacheOriginQuota): If the bundle client didn’t
+        handle the callback, send a message the the UI process, and update the quota with the reply.
+
 2014-06-23  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Synchronously wait a short time for a layer tree update after bringing a web view in-window

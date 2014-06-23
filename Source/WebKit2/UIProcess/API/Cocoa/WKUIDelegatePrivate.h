@@ -39,6 +39,9 @@
 // FIXME: This should be handled by the WKWebsiteDataStore delegate.
 - (void)_webView:(WKWebView *)webView decideDatabaseQuotaForSecurityOrigin:(_WKSecurityOrigin *)securityOrigin currentQuota:(unsigned long long)currentQuota currentOriginUsage:(unsigned long long)currentOriginUsage currentDatabaseUsage:(unsigned long long)currentUsage expectedUsage:(unsigned long long)expectedUsage decisionHandler:(void (^)(unsigned long long newQuota))decisionHandler;
 
+// FIXME: This should be handled by the WKWebsiteDataStore delegate.
+- (void)_webView:(WKWebView *)webView decideWebApplicationCacheQuotaForSecurityOrigin:(_WKSecurityOrigin *)securityOrigin currentQuota:(unsigned long long)currentQuota totalBytesNeeded:(unsigned long long)totalBytesNeeded decisionHandler:(void (^)(unsigned long long newQuota))decisionHandler;
+
 - (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame;
 
 #if TARGET_OS_IPHONE

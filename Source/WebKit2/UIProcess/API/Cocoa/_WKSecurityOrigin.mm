@@ -35,17 +35,12 @@
     RefPtr<WebCore::SecurityOrigin> _origin;
 }
 
-- (instancetype)_initWithSecurityOrigin:(PassRefPtr<WebCore::SecurityOrigin>)origin
+- (instancetype)_initWithSecurityOrigin:(const WebCore::SecurityOrigin&)origin
 {
     if (!(self = [super init]))
         return nil;
 
-    if (!origin) {
-        [self release];
-        return nil;
-    }
-
-    _origin = origin->isolatedCopy();
+    _origin = origin.isolatedCopy();
     return self;
 }
 

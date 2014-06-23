@@ -115,6 +115,11 @@ public:
         completionHandler(currentQuota);
     }
 
+    virtual void reachedApplicationCacheOriginQuota(WebKit::WebPageProxy*, const WebCore::SecurityOrigin&, uint64_t currentQuota, uint64_t totalBytesNeeded, std::function<void (unsigned long long)> completionHandler)
+    {
+        completionHandler(currentQuota);
+    }
+
     virtual bool runOpenPanel(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebOpenPanelParameters*, WebKit::WebOpenPanelResultListenerProxy*) { return false; }
     virtual bool decidePolicyForGeolocationPermissionRequest(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebSecurityOrigin*, WebKit::GeolocationPermissionRequestProxy*) { return false; }
     virtual bool decidePolicyForNotificationPermissionRequest(WebKit::WebPageProxy*, WebKit::WebSecurityOrigin*, WebKit::NotificationPermissionRequest*) { return false; }
