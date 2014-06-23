@@ -55,7 +55,7 @@ public:
     bool hasBeenReported() const { return m_hasBeenReported; }
     void setHasBeenReported(bool reported) { m_hasBeenReported = reported; }
 
-    virtual void processCue(CFArrayRef, double);
+    virtual void processCue(CFArrayRef attributedStrings, CFArrayRef nativeSamples, double);
     virtual void resetCueValues();
 
     void beginSeeking();
@@ -68,13 +68,15 @@ public:
         InBand
     };
     virtual Category textTrackCategory() const = 0;
-    
+
     virtual double startTimeVariance() const override { return 0.25; }
-    
+
 protected:
-    InbandTextTrackPrivateAVF(AVFInbandTrackParent*);
+    InbandTextTrackPrivateAVF(AVFInbandTrackParent*, CueFormat);
 
     void processCueAttributes(CFAttributedStringRef, GenericCueData*);
+    void processAttributedStrings(CFArrayRef, double);
+    void processNativeSamples(CFArrayRef, double);
     void removeCompletedCues();
 
     double m_currentCueStartTime;
@@ -82,6 +84,8 @@ protected:
 
     Vector<RefPtr<GenericCueData>> m_cues;
     AVFInbandTrackParent* m_owner;
+
+    Vector<char> m_sampleInputBuffer;
 
     enum PendingCueStatus {
         None,
@@ -93,6 +97,7 @@ protected:
     int m_index;
     bool m_hasBeenReported;
     bool m_seeking;
+    bool m_haveReportedVTTHeader;
 };
 
 } // namespace WebCore

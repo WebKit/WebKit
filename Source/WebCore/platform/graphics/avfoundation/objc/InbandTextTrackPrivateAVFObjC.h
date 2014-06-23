@@ -31,15 +31,16 @@
 #include "InbandTextTrackPrivateAVF.h"
 #include <wtf/RetainPtr.h>
 
+OBJC_CLASS AVAsset;
 OBJC_CLASS AVMediaSelectionOption;
 
 namespace WebCore {
 
 class InbandTextTrackPrivateAVFObjC : public InbandTextTrackPrivateAVF {
 public:
-    static PassRefPtr<InbandTextTrackPrivateAVFObjC> create(AVFInbandTrackParent* player,  AVMediaSelectionOption *selection)
+    static PassRefPtr<InbandTextTrackPrivateAVFObjC> create(AVFInbandTrackParent* player,  AVMediaSelectionOption *selection, InbandTextTrackPrivate::CueFormat format)
     {
-        return adoptRef(new InbandTextTrackPrivateAVFObjC(player, selection));
+        return adoptRef(new InbandTextTrackPrivateAVFObjC(player, selection, format));
     }
 
     ~InbandTextTrackPrivateAVFObjC() { }
@@ -61,7 +62,7 @@ public:
     AVMediaSelectionOption *mediaSelectionOption() const { return m_mediaSelectionOption.get(); }
 
 protected:
-    InbandTextTrackPrivateAVFObjC(AVFInbandTrackParent*, AVMediaSelectionOption *);
+    InbandTextTrackPrivateAVFObjC(AVFInbandTrackParent*, AVMediaSelectionOption *, InbandTextTrackPrivate::CueFormat);
     
     RetainPtr<AVMediaSelectionOption> m_mediaSelectionOption;
 };

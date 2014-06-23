@@ -1,3 +1,135 @@
+2014-06-23  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] process raw VTT in-band captions
+        https://bugs.webkit.org/show_bug.cgi?id=134178
+
+        Reviewed by Jer Noble.
+
+        * CMakeLists.txt: Add ISOVTTCue.cpp|h.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * html/track/BufferedLineReader.h:
+        (WebCore::BufferedLineReader::reset): New, empty the input buffer.
+
+        Make it possible to process WebVTT captions. 
+        * html/track/InbandGenericTextTrack.cpp:
+        (WebCore::InbandGenericTextTrack::parser): Allocate, if necessary, and return a WebVTT parser.
+        (WebCore::InbandGenericTextTrack::parseWebVTTCueData): Pass a cue to the parser.
+        (WebCore::InbandGenericTextTrack::parseWebVTTFileHeader): Pass a VTT file header to the parser.
+        (WebCore::InbandGenericTextTrack::newCuesParsed): Parser callback.
+        (WebCore::InbandGenericTextTrack::newRegionsParsed): Ditto.
+        (WebCore::InbandGenericTextTrack::fileFailedToParse): Ditto.
+        * html/track/InbandGenericTextTrack.h:
+
+        * html/track/InbandTextTrack.h:
+
+        * html/track/InbandWebVTTTextTrack.cpp:
+        (WebCore::InbandWebVTTTextTrack::parser): New, parser accessor.
+        (WebCore::InbandWebVTTTextTrack::parseWebVTTCueData): New, parse VTT data in an ISOWebVTTCue
+            object.
+        (WebCore::InbandWebVTTTextTrack::newCuesParsed): Cleanup.
+        (WebCore::InbandWebVTTTextTrack::newRegionsParsed): Implement.
+        (WebCore::InbandWebVTTTextTrack::fileFailedToParse): Change the error message.
+        * html/track/InbandWebVTTTextTrack.h:
+
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGenericBoxElement::TextTrackCueGenericBoxElement): Change cue parameter
+            from a pointer to a reference.
+        (WebCore::TextTrackCueGeneric::createDisplayTree): Ditto.
+
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCueBox::create): Change cue parameter from a pointer to a reference.
+        (WebCore::VTTCueBox::VTTCueBox): Ditto.
+        (WebCore::VTTCueBox::getCue): Return a reference.
+        (WebCore::VTTCueBox::applyCSSProperties): m_cue is a reference, not a pointer.
+        (WebCore::VTTCue::create): New, create a VTTCue from WebVTTCueData.
+        (WebCore::VTTCue::VTTCue): New, internal constructor that takes a WebVTTCueData.
+        (WebCore::VTTCue::initialize): New, shared constructor initialization.
+        (WebCore::VTTCue::createDisplayTree): m_cue is a reference, not a pointer.
+        (WebCore::VTTCue::markFutureAndPastNodes): Ditto.
+        (WebCore::VTTCue::setCueSettings): Ditto.
+        * html/track/VTTCue.h:
+        (WebCore::VTTCueBox::create): Deleted.
+        (WebCore::VTTCue::create): Deleted.
+
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::parseFileHeader): New. Reset the line reader buffer and parser state, 
+            call the parser.
+        (WebCore::WebVTTParser::parseCueData): Create a cue from ISOWebVTTCue.
+        (WebCore::WebVTTParser::collectTimingsAndSettings): Return immediately if the string is empty.
+        (WebCore::WebVTTParser::collectTimeStamp): Ditto.
+        * html/track/WebVTTParser.h:
+        (WebCore::WebVTTCueData::originalStartTime): New.
+        (WebCore::WebVTTCueData::setOriginalStartTime): New.
+        (WebCore::WebVTTCueData::WebVTTCueData):
+
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::getNewCues): Cleanup, use the new VTTCue::create.
+
+        * platform/graphics/InbandTextTrackPrivateClient.h:
+        (WebCore::InbandTextTrackPrivateClient::parseWebVTTFileHeader): New.
+
+        Parse ISO WebVTT cue boxes.
+        * platform/graphics/ISOVTTCue.cpp: Added.
+        (WebCore::ISOBox::ISOBox):
+        (WebCore::ISOBox::peekType):
+        (WebCore::ISOBox::peekLength):
+        (WebCore::ISOBox::peekString):
+        (WebCore::vttCueBoxType):
+        (WebCore::vttIdBoxType):
+        (WebCore::vttSettingsBoxType):
+        (WebCore::vttPayloadBoxType):
+        (WebCore::vttCurrentTimeBoxType):
+        (WebCore::vttCueSourceIDBoxType):
+        (WebCore::ISOWebVTTCue::boxType):
+        (WebCore::ISOWebVTTCue::ISOWebVTTCue):
+        * platform/graphics/ISOVTTCue.h: Added.
+        (WebCore::ISOBox::boxHeaderSize):
+        (WebCore::ISOBox::length):
+        (WebCore::ISOBox::type):
+        (WebCore::ISOWebVTTCue::presentationTime):
+        (WebCore::ISOWebVTTCue::duration):
+        (WebCore::ISOWebVTTCue::sourceID):
+        (WebCore::ISOWebVTTCue::id):
+        (WebCore::ISOWebVTTCue::originalStartTime):
+        (WebCore::ISOWebVTTCue::settings):
+        (WebCore::ISOWebVTTCue::cueText):
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::InbandTextTrackPrivateAVF): Add a cue format parameter.
+        (WebCore::InbandTextTrackPrivateAVF::processCue): Call processNativeSamples.
+        (WebCore::InbandTextTrackPrivateAVF::processAttributedStrings): Add logging. Minor cleanup.
+        (WebCore::InbandTextTrackPrivateAVF::processNativeSamples): New, process an array of 
+            CMSampleBuffers, create ISOWebVTTCue from the sample data.
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h:
+
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.h:
+        (WebCore::InbandTextTrackPrivateAVFObjC::create): Add a cue format parameter.
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm:
+        (WebCore::InbandTextTrackPrivateAVFObjC::InbandTextTrackPrivateAVFObjC): Ditto.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL): Improve logging.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem): Don't leak an NSDictionary.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged): Don't process media selection
+            options until we have tracks.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions): 
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processCue): Pass native samples as well as 
+            attributed strings to track.
+        (-[WebCoreAVFMovieObserver legibleOutput:didOutputAttributedStrings:nativeSampleBuffers:forItemTime:]):
+        * platform/graphics/avfoundation/objc/OutOfBandTextTrackPrivateAVF.h:
+        (WebCore::OutOfBandTextTrackPrivateAVF::OutOfBandTextTrackPrivateAVF):
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateLegacyAVFObjC.cpp:
+        (WebCore::InbandTextTrackPrivateLegacyAVFObjC::InbandTextTrackPrivateLegacyAVFObjC): Pass cue
+            format to base class.
+
+        * platform/graphics/avfoundation/cf/InbandTextTrackPrivateAVCF.cpp:
+        (WebCore::InbandTextTrackPrivateAVCF::InbandTextTrackPrivateAVCF): Ditto.
+        * platform/graphics/avfoundation/cf/InbandTextTrackPrivateAVCF.h:
+
 2014-06-23  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] Crash in SourceBuffer::sourceBufferPrivateDidReceiveRenderingError()

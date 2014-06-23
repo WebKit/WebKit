@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "InbandTextTrack.h"
 #include "TextTrackCueGeneric.h"
+#include "WebVTTParser.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -59,7 +60,7 @@ private:
     CueDataToCueMap m_dataToCueMap;
 };
 
-class InbandGenericTextTrack : public InbandTextTrack {
+class InbandGenericTextTrack : public InbandTextTrack, private WebVTTParserClient {
 public:
     static PassRefPtr<InbandGenericTextTrack> create(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
     virtual ~InbandGenericTextTrack();
@@ -75,7 +76,18 @@ private:
     PassRefPtr<TextTrackCueGeneric> createCue(PassRefPtr<GenericCueData>);
     void updateCueFromCueData(TextTrackCueGeneric*, GenericCueData*);
 
+    WebVTTParser& parser();
+    virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const ISOWebVTTCue&) override;
+    virtual void parseWebVTTFileHeader(InbandTextTrackPrivate*, String) override;
+
+    virtual void newCuesParsed() override;
+#if ENABLE(WEBVTT_REGIONS)
+    virtual void newRegionsParsed() override;
+#endif
+    virtual void fileFailedToParse() override;
+
     GenericTextTrackCueMap m_cueMap;
+    std::unique_ptr<WebVTTParser> m_webVTTParser;
 };
 
 } // namespace WebCore
