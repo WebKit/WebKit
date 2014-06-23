@@ -39,8 +39,10 @@ namespace WebCore {
 @interface WebGLLayer : CAOpenGLLayer
 #endif
 {
-    WebCore::GraphicsContext3D* m_context;
+    WebCore::GraphicsContext3D* _context;
 }
+
+@property (nonatomic) WebCore::GraphicsContext3D* context;
 
 - (id)initWithGraphicsContext3D:(WebCore::GraphicsContext3D*)context;
 

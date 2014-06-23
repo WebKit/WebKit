@@ -223,11 +223,11 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     BEGIN_BLOCK_OBJC_EXCEPTIONS
         m_webGLLayer = adoptNS([[WebGLLayer alloc] initWithGraphicsContext3D:this]);
 #if PLATFORM(IOS)
-        [m_webGLLayer.get() setOpaque:0];
+        [m_webGLLayer setOpaque:0];
 #endif
 #ifndef NDEBUG
-        [m_webGLLayer.get() setName:@"WebGL Layer"];
-#endif    
+        [m_webGLLayer setName:@"WebGL Layer"];
+#endif
     END_BLOCK_OBJC_EXCEPTIONS
 
 #if !PLATFORM(IOS)
@@ -332,6 +332,7 @@ GraphicsContext3D::~GraphicsContext3D()
         CGLSetCurrentContext(0);
         CGLDestroyContext(m_contextObj);
 #endif
+        [m_webGLLayer setContext:nullptr];
         numActiveContexts--;
     }
 }
@@ -339,7 +340,7 @@ GraphicsContext3D::~GraphicsContext3D()
 #if PLATFORM(IOS)
 bool GraphicsContext3D::setRenderbufferStorageFromDrawable(GC3Dsizei width, GC3Dsizei height)
 {
-    [m_webGLLayer.get() setBounds:CGRectMake(0, 0, width, height)];
+    [m_webGLLayer setBounds:CGRectMake(0, 0, width, height)];
     return [m_contextObj renderbufferStorage:GL_RENDERBUFFER fromDrawable:static_cast<NSObject<EAGLDrawable>*>(m_webGLLayer.get())];
 }
 #endif

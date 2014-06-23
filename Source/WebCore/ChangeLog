@@ -1,3 +1,37 @@
+2014-06-22  Dean Jackson  <dino@apple.com>
+
+        [Apple] WebGL layer may use GC3D after free with remote layer hosting
+        https://bugs.webkit.org/show_bug.cgi?id=134179
+        <rdar://problem/17412931>
+
+        Reviewed by Tim Horton.
+
+        With remote layer hosting, a WebGLLayer may attempt to draw after
+        the GraphicsContext3D has been destroyed. We need to make sure
+        the GC3D tells the WebGLLayer that it is no longer valid.
+
+        While here, I changed some return 0 to return nullptr, the
+        name of the ObjC property member from m_context to _context,
+        and removed some unnecessary .get() calls.
+
+        This is tested by run-webkit-tests with the --remote-layer-tree
+        option.
+
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D): No need for .get().
+        (WebCore::GraphicsContext3D::~GraphicsContext3D): Set the context reference on WebGLLayer
+        to be null.
+        (WebCore::GraphicsContext3D::setRenderbufferStorageFromDrawable): No need for .get().
+        * platform/graphics/mac/WebGLLayer.h: Set the context reference on WebGLLayer
+        to be null.
+        * platform/graphics/mac/WebGLLayer.mm:
+        (-[WebGLLayer initWithGraphicsContext3D:]): Rename m_context to _context.
+        (-[WebGLLayer copyCGLPixelFormatForDisplayMask:]): Check for null.
+        (-[WebGLLayer copyCGLContextForPixelFormat:]): Rename to _context.
+        (-[WebGLLayer drawInCGLContext:pixelFormat:forLayerTime:displayTime:]): Check for null.
+        (-[WebGLLayer copyImageSnapshotWithColorSpace:]): Ditto.
+        (-[WebGLLayer display]): Ditto.
+
 2014-06-20  Simon Fraser  <simon.fraser@apple.com>
 
         [WK2] Frameset frames are not scrollable after loading (and should be)
