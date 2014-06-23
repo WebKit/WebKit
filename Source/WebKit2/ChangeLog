@@ -1,3 +1,13 @@
+2014-06-23  Roger Fong  <roger_fong@apple.com>
+
+        Unregister notification observer registered in r170156.
+        https://bugs.webkit.org/show_bug.cgi?id=134204.
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView dealloc]):
+
 2014-06-23  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] No way to grant storage quotas for WebSQL

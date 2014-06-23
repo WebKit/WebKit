@@ -302,6 +302,8 @@ struct WKViewInterpretKeyEventsParameters {
     NSNotificationCenter* workspaceNotificationCenter = [[NSWorkspace sharedWorkspace] notificationCenter];
     [workspaceNotificationCenter removeObserver:self name:NSWorkspaceActiveSpaceDidChangeNotification object:nil];
 
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationWillTerminateNotification object:NSApp];
+
     WebContext::statistics().wkViewCount--;
 
     [super dealloc];
