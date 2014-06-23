@@ -1,3 +1,13 @@
+2014-06-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Remove the WebKit1 EFL code
+        https://bugs.webkit.org/show_bug.cgi?id=134096
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformEfl.cmake: Removed.
+        * efl: Removed entire efl directory.
+
 2014-06-18  Alex Christensen  <achristensen@webkit.org>
 
         Add FTL to Windows build.
