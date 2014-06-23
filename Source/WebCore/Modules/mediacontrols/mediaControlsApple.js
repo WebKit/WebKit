@@ -11,6 +11,7 @@ function Controller(root, video, host)
     this.controls = {};
     this.listeners = {};
     this.isLive = false;
+    this.statusHidden = true;
 
     this.addVideoListeners();
     this.createBase();
@@ -250,6 +251,21 @@ Controller.prototype = {
         return this.video.controls || this.isFullScreen();
     },
 
+    setNeedsTimelineMetricsUpdate: function()
+    {
+        this.timelineMetricsNeedsUpdate = true;
+    },
+
+    updateTimelineMetricsIfNeeded: function()
+    {
+        if (this.timelineMetricsNeedsUpdate) {
+            this.timelineLeft = this.controls.timeline.offsetLeft;
+            this.timelineWidth = this.controls.timeline.offsetWidth;
+            this.timelineHeight = this.controls.timeline.offsetHeight;
+            this.timelineMetricsNeedsUpdate = false;
+        }
+    },
+
     updateBase: function()
     {
         if (this.shouldHaveAnyUI()) {
@@ -480,6 +496,7 @@ Controller.prototype = {
         else
             this.setControlsType(Controller.InlineControls);
 
+        this.setNeedsTimelineMetricsUpdate();
     },
 
     updateStatusDisplay: function(event)
@@ -723,9 +740,10 @@ Controller.prototype = {
         if (this.controls.thumbnail.classList.contains(this.ClassNames.hidden))
             return;
 
+        this.updateTimelineMetricsIfNeeded();
         this.controls.thumbnail.classList.add(this.ClassNames.show);
         var localPoint = webkitConvertPointFromPageToNode(this.controls.timeline, new WebKitPoint(event.clientX, event.clientY));
-        var percent = (localPoint.x - this.controls.timeline.offsetLeft) / this.controls.timeline.offsetWidth;
+        var percent = (localPoint.x - this.timelineLeft) / this.timelineWidth;
         percent = Math.max(Math.min(1, percent), 0);
         this.controls.thumbnail.style.left = percent * 100 + '%';
 
@@ -897,7 +915,7 @@ Controller.prototype = {
 
     progressFillStyle: function(context)
     {
-        var height = this.controls.timeline.offsetHeight;
+        var height = this.timelineHeight;
         var gradient = context.createLinearGradient(0, 0, 0, height);
         gradient.addColorStop(0, 'rgb(2, 2, 2)');
         gradient.addColorStop(1, 'rgb(23, 23, 23)');
@@ -906,8 +924,11 @@ Controller.prototype = {
 
     updateProgress: function()
     {
-        var width = this.controls.timeline.offsetWidth;
-        var height = this.controls.timeline.offsetHeight;
+        this.updateTimelineMetricsIfNeeded();
+
+        var width = this.timelineWidth;
+        var height = this.timelineHeight;
+
         var context = document.getCSSCanvasContext('2d', 'timeline-' + this.timelineID, width, height);
         context.clearRect(0, 0, width, height);
 
@@ -970,6 +991,8 @@ Controller.prototype = {
     {
         this.controls.panel.classList.add(this.ClassNames.show);
         this.controls.panel.classList.remove(this.ClassNames.hidden);
+
+        this.setNeedsTimelineMetricsUpdate();
     },
 
     hideControls: function()
@@ -992,6 +1015,7 @@ Controller.prototype = {
     addControls: function()
     {
         this.base.appendChild(this.controls.panel);
+        this.setNeedsTimelineMetricsUpdate();
     },
 
     updateTime: function()
@@ -1010,11 +1034,17 @@ Controller.prototype = {
 
     setStatusHidden: function(hidden)
     {
+        if (this.statusHidden === hidden)
+            return;
+
+        this.statusHidden = hidden;
+
         if (hidden) {
             this.controls.statusDisplay.classList.add(this.ClassNames.hidden);
             this.controls.currentTime.classList.remove(this.ClassNames.hidden);
             this.controls.timeline.classList.remove(this.ClassNames.hidden);
             this.controls.remainingTime.classList.remove(this.ClassNames.hidden);
+            this.setNeedsTimelineMetricsUpdate();
         } else {
             this.controls.statusDisplay.classList.remove(this.ClassNames.hidden);
             this.controls.currentTime.classList.add(this.ClassNames.hidden);

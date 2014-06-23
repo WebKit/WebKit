@@ -11,6 +11,7 @@ function ControllerIOS(root, video, host)
 
     this.updateWirelessTargetAvailable();
     this.updateWirelessPlaybackStatus();
+    this.setNeedsTimelineMetricsUpdate();
 
     host.controlsDependOnPageScaleFactor = true;
 };
@@ -215,6 +216,7 @@ ControllerIOS.prototype = {
         else
             this.setControlsType(Controller.InlineControls);
 
+        this.setNeedsTimelineMetricsUpdate();
     },
 
     updateTime: function() {
@@ -229,8 +231,8 @@ ControllerIOS.prototype = {
     updateProgress: function() {
         Controller.prototype.updateProgress.call(this);
 
-        var width = this.controls.timeline.offsetWidth;
-        var height = this.controls.timeline.offsetHeight;
+        var width = this.timelineWidth;
+        var height = this.timelineHeight;
 
         // Magic number, matching the value for ::-webkit-media-controls-timeline::-webkit-slider-thumb
         // in mediaControlsiOS.css. Since we cannot ask the thumb for its offsetWidth as it's in its own
@@ -389,11 +391,17 @@ ControllerIOS.prototype = {
 
     handleWirelessPlaybackChange: function(event) {
         this.updateWirelessPlaybackStatus();
+        this.setNeedsTimelineMetricsUpdate();
     },
 
     handleWirelessTargetAvailableChange: function(event) {
-        this.hasWirelessPlaybackTargets = event.availability == "available";
+        var wirelessPlaybackTargetsAvailable = event.availability == "available";
+        if (this.hasWirelessPlaybackTargets === wirelessPlaybackTargetsAvailable)
+            return;
+
+        this.hasWirelessPlaybackTargets = wirelessPlaybackTargetsAvailable;
         this.updateWirelessTargetAvailable();
+        this.setNeedsTimelineMetricsUpdate();
     },
 
     handleWirelessPickerButtonTouchStart: function() {
@@ -416,6 +424,9 @@ ControllerIOS.prototype = {
     },
 
     set pageScaleFactor(newScaleFactor) {
+        if (this._pageScaleFactor === newScaleFactor)
+            return;
+
         this._pageScaleFactor = newScaleFactor;
 
         if (newScaleFactor) {
@@ -425,6 +436,7 @@ ControllerIOS.prototype = {
             if (this.controls.panel) {
                 this.controls.panel.style.width = (newScaleFactor * 100) + "%";
                 this.controls.panel.style.webkitTransform = scaleTransform;
+                this.setNeedsTimelineMetricsUpdate();
                 this.updateProgress();
             }
         }

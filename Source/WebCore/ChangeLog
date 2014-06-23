@@ -1,3 +1,53 @@
+2014-06-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Reduce synchronous layout triggered by JavaScript-based media controls
+        https://bugs.webkit.org/show_bug.cgi?id=134208
+
+        Reviewed by Eric Carlson.
+
+        Avoid always querying the offsetWidth and offsetHeight of the timeline
+        by only calculating these values when the timeline may change size.
+        Also avoid doing work in a few cases where properties did not
+        actually change.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller):
+
+        (Controller.prototype.setNeedsTimelineMetricsUpdate):
+        (Controller.prototype.updateTimelineMetricsIfNeeded):
+        Only update the timeline metrics when they may have changed.
+
+        (Controller.prototype.updateControls):
+        (Controller.prototype.handleTimelineMouseMove):
+        (Controller.prototype.progressFillStyle):
+        (Controller.prototype.showControls):
+        (Controller.prototype.addControls):
+        Mark timeline metrics need update based on various UI changes.
+
+        (Controller.prototype.setStatusHidden):
+        Only do work if the hidden status changed.
+        Mark timeline metrics need update if the timeline is changed.
+
+        (Controller.prototype.updateProgress):
+        Use cached timeline metrics instead of always querying offsetWidth/offsetHeight.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS):
+        (ControllerIOS.prototype.updateControls):
+
+        (ControllerIOS.prototype.updateProgress):
+        Use cached timeline metrics instead of always querying offsetWidth/offsetHeight.
+
+        (ControllerIOS.prototype.handleWirelessPlaybackChange):
+        Mark timeline metrics need update as button may have changed.
+
+        (ControllerIOS.prototype.handleWirelessTargetAvailableChange):
+        Only do work if the availability changed.
+        Mark timeline metrics need update as a new button may have appeared.
+
+        (ControllerIOS.prototype.set pageScaleFactor):
+        Only do work if the page scale factor changed.
+
 2014-06-23  Brady Eidson  <beidson@apple.com>
 
         Add skeleton code for updated Gamepad API
