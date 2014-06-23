@@ -1,3 +1,16 @@
+2014-06-23  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] Crash in SourceBuffer::sourceBufferPrivateDidReceiveRenderingError()
+        https://bugs.webkit.org/show_bug.cgi?id=134211
+
+        Reviewed by Eric Carlson.
+
+        Null-check m_source before dereferencing, as the SourceBuffer may have been removed
+        from its MediaSource before this error was received.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveRenderingError):
+
 2014-06-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Reduce synchronous layout triggered by JavaScript-based media controls

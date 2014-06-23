@@ -537,7 +537,8 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(SourceBufferPrivate*, Appen
 
 void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(SourceBufferPrivate*, int)
 {
-    m_source->streamEndedWithError(decodeError(), IgnorableExceptionCode());
+    if (!isRemoved())
+        m_source->streamEndedWithError(decodeError(), IgnorableExceptionCode());
 }
 
 void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& end)
