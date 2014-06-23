@@ -1,3 +1,33 @@
+2014-06-23  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Writing mode changes on the <html> and RenderView need to
+        be propagated to column sets and flow thread children of those renderers.
+        https://bugs.webkit.org/show_bug.cgi?id=134121
+        <rdar://problem/16884527>
+
+        Reviewed by Dean Jackson.
+
+        * fast/multicol/pagination/RightToLeft-rl-dynamic.html: Added.
+        * platform/mac/fast/multicol/pagination/BottomToTop-bt-expected.png:
+        * platform/mac/fast/multicol/pagination/BottomToTop-lr-expected.png:
+        * platform/mac/fast/multicol/pagination/BottomToTop-rl-expected.png:
+        * platform/mac/fast/multicol/pagination/BottomToTop-tb-expected.png:
+        * platform/mac/fast/multicol/pagination/LeftToRight-bt-expected.png:
+        * platform/mac/fast/multicol/pagination/LeftToRight-lr-expected.png:
+        * platform/mac/fast/multicol/pagination/LeftToRight-rl-expected.png:
+        * platform/mac/fast/multicol/pagination/LeftToRight-tb-expected.png:
+        * platform/mac/fast/multicol/pagination/RightToLeft-bt-expected.png:
+        * platform/mac/fast/multicol/pagination/RightToLeft-lr-expected.png:
+        * platform/mac/fast/multicol/pagination/RightToLeft-rl-dynamic-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/RightToLeft-rl-dynamic-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/RightToLeft-rl-expected.png:
+        * platform/mac/fast/multicol/pagination/RightToLeft-tb-expected.png:
+        * platform/mac/fast/multicol/pagination/TopToBottom-bt-expected.png:
+        * platform/mac/fast/multicol/pagination/TopToBottom-lr-expected.png:
+        * platform/mac/fast/multicol/pagination/TopToBottom-rl-expected.png:
+        * platform/mac/fast/multicol/pagination/TopToBottom-tb-expected.png:
+        * platform/mac/fast/multicol/pagination/nested-transforms-expected.png:
+
 2014-06-23  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL] Move WebKit2 test results into LayoutTests/platform/efl

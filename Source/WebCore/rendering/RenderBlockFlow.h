@@ -386,8 +386,9 @@ public:
 
     void createMultiColumnFlowThread();
     void destroyMultiColumnFlowThread();
-    
+
     void updateColumnProgressionFromStyle(RenderStyle*);
+    void updateStylesForColumnChildren();
 
     virtual bool needsLayoutAfterRegionRangeChange() const override;
 

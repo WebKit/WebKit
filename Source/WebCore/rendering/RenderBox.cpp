@@ -367,21 +367,29 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         // Propagate the new writing mode and direction up to the RenderView.
         RenderStyle& viewStyle = view().style();
         bool viewChangedWritingMode = false;
+        bool rootStyleChanged = false;
+        bool viewStyleChanged = false;
+        RenderObject* rootRenderer = isBodyRenderer ? document().documentElement()->renderer() : nullptr;
         if (viewStyle.direction() != newStyle.direction() && (isRootRenderer || !document().directionSetOnDocumentElement())) {
             viewStyle.setDirection(newStyle.direction());
-            if (isBodyRenderer)
-                document().documentElement()->renderer()->style().setDirection(newStyle.direction());
+            viewStyleChanged = true;
+            if (isBodyRenderer) {
+                rootRenderer->style().setDirection(newStyle.direction());
+                rootStyleChanged = true;
+            }
             setNeedsLayoutAndPrefWidthsRecalc();
         }
 
         if (viewStyle.writingMode() != newStyle.writingMode() && (isRootRenderer || !document().writingModeSetOnDocumentElement())) {
             viewStyle.setWritingMode(newStyle.writingMode());
             viewChangedWritingMode = true;
+            viewStyleChanged = true;
             view().setHorizontalWritingMode(newStyle.isHorizontalWritingMode());
             view().markAllDescendantsWithFloatsForLayout();
             if (isBodyRenderer) {
-                document().documentElement()->renderer()->style().setWritingMode(newStyle.writingMode());
-                document().documentElement()->renderer()->setHorizontalWritingMode(newStyle.isHorizontalWritingMode());
+                rootStyleChanged = true;
+                rootRenderer->style().setWritingMode(newStyle.writingMode());
+                rootRenderer->setHorizontalWritingMode(newStyle.isHorizontalWritingMode());
             }
             setNeedsLayoutAndPrefWidthsRecalc();
         }
@@ -394,6 +402,12 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
             if (view().multiColumnFlowThread())
                 view().updateColumnProgressionFromStyle(&viewStyle);
         }
+        
+        if (viewStyleChanged && view().multiColumnFlowThread())
+            view().updateStylesForColumnChildren();
+        
+        if (rootStyleChanged && rootRenderer && rootRenderer->isRenderBlockFlow() && toRenderBlockFlow(rootRenderer)->multiColumnFlowThread())
+            toRenderBlockFlow(rootRenderer)->updateStylesForColumnChildren();
     }
 
 #if ENABLE(CSS_SHAPES)
