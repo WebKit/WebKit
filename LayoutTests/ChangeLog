@@ -5,6 +5,22 @@
 
         Unreviewed gardening, moving files into LayoutTests/platform/efl after removing EFL WebKit1.
 
+        * platform/efl/webaudio/oscillator-custom-expected.wav: Renamed from LayoutTests/platform/efl-wk2/webaudio/oscillator-custom-expected.wav.
+        * platform/efl/webaudio/oscillator-sawtooth-expected.wav: Renamed from LayoutTests/platform/efl-wk2/webaudio/oscillator-sawtooth-expected.wav.
+        * platform/efl/webaudio/oscillator-sine-expected.wav: Renamed from LayoutTests/platform/efl-wk2/webaudio/oscillator-sine-expected.wav.
+        * platform/efl/webaudio/oscillator-square-expected.wav: Renamed from LayoutTests/platform/efl-wk2/webaudio/oscillator-square-expected.wav.
+        * platform/efl/webaudio/oscillator-triangle-expected.wav: Renamed from LayoutTests/platform/efl-wk2/webaudio/oscillator-triangle-expected.wav.
+        * platform/efl/webaudio/up-mixing-mono-51-expected.wav: Renamed from LayoutTests/platform/efl-wk2/webaudio/up-mixing-mono-51-expected.wav.
+        * platform/efl/webaudio/up-mixing-mono-stereo-expected.wav: Renamed from LayoutTests/platform/efl-wk2/webaudio/up-mixing-mono-stereo-expected.wav.
+        * platform/efl/webaudio/up-mixing-stereo-51-expected.wav: Renamed from LayoutTests/platform/efl-wk2/webaudio/up-mixing-stereo-51-expected.wav.
+
+2014-06-23  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL] Move WebKit2 test results into LayoutTests/platform/efl
+        https://bugs.webkit.org/show_bug.cgi?id=134192
+
+        Unreviewed gardening, moving files into LayoutTests/platform/efl after removing EFL WebKit1.
+
         * platform/efl/webaudio/audiobuffersource-loop-points-expected.wav: Renamed from LayoutTests/platform/efl-wk2/webaudio/audiobuffersource-loop-points-expected.wav.
         * platform/efl/webaudio/audiobuffersource-multi-channels-expected.wav: Renamed from LayoutTests/platform/efl-wk2/webaudio/audiobuffersource-multi-channels-expected.wav.
         * platform/efl/webaudio/audiobuffersource-playbackrate-expected.wav: Renamed from LayoutTests/platform/efl-wk2/webaudio/audiobuffersource-playbackrate-expected.wav.
