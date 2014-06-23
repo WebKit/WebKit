@@ -1,3 +1,29 @@
+2014-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Adding a mask on a simple color compositing layer removes the content
+        https://bugs.webkit.org/show_bug.cgi?id=134127
+
+        Reviewed by Dean Jackson.
+        
+        In r169053 I moved some updateDrawsContent() into updateAfterDescendents(),
+        but this isn't called when a composited layer gains or loses a mask (which
+        doesn't cause a layout). This caused us to fail to allocate backing store
+        when gaining a mask, resulting in missing content.
+        
+        Fix by calling updateAfterDescendents() from RenderLayer::styleChange()
+        when the layer config isn't changing.
+        
+        Also remove a condition in isSimpleContainerCompositingLayer() that caused us
+        to fall off the simple layer path for masked layers, since this works just
+        fine.
+
+        Test: compositing/masks/solid-color-masked.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer):
+
 2014-06-23  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Writing mode changes on the <html> and RenderView need to

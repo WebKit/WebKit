@@ -1,3 +1,14 @@
+2014-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Adding a mask on a simple color compositing layer removes the content
+        https://bugs.webkit.org/show_bug.cgi?id=134127
+
+        Reviewed by Dean Jackson.
+
+        * compositing/masks/mask-layer-size-expected.txt:
+        * compositing/masks/solid-color-masked-expected.html: Added.
+        * compositing/masks/solid-color-masked.html: Added.
+
 2014-06-23  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Writing mode changes on the <html> and RenderView need to
