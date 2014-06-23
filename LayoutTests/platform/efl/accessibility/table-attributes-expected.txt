@@ -11,7 +11,7 @@ South	3333	1111	2222
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 235.000000, 27.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 144.000000, 66.000000 }
 AXTitle: 
 AXDescription: 
@@ -30,7 +30,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 235.000000, 27.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 144.000000, 66.000000 }
 AXTitle: 
 AXDescription: 
@@ -49,7 +49,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 378.000000, 27.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 70.000000, 66.000000 }
 AXTitle: 
 AXDescription: 
@@ -68,7 +68,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 447.000000, 27.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 120.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
@@ -87,7 +87,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 447.000000, 27.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 120.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
@@ -110,7 +110,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 227.000000, 27.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 143.000000, 66.000000 }
 AXTitle: 
 AXDescription: 
@@ -129,7 +129,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 227.000000, 27.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 143.000000, 66.000000 }
 AXTitle: 
 AXDescription: 
@@ -148,7 +148,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 227.000000, 93.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 90.000000, 60.000000 }
 AXTitle: 
 AXDescription: 
@@ -167,7 +167,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 227.000000, 93.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 90.000000, 60.000000 }
 AXTitle: 
 AXDescription: 
@@ -198,7 +198,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 227.000000, 27.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 143.000000, 66.000000 }
 AXTitle: 
 AXDescription: 
@@ -217,7 +217,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 227.000000, 27.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 143.000000, 66.000000 }
 AXTitle: 
 AXDescription: 
@@ -236,7 +236,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 370.000000, 27.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 69.000000, 66.000000 }
 AXTitle: 
 AXDescription: 
@@ -255,7 +255,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 439.000000, 27.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 119.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
@@ -274,7 +274,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 439.000000, 27.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 119.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
@@ -293,7 +293,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 227.000000, 27.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 143.000000, 66.000000 }
 AXTitle: 
 AXDescription: 
@@ -312,7 +312,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 227.000000, 27.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 143.000000, 66.000000 }
 AXTitle: 
 AXDescription: 
@@ -331,7 +331,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 370.000000, 27.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 69.000000, 66.000000 }
 AXTitle: 
 AXDescription: 
@@ -350,7 +350,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 439.000000, 57.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 52.000000, 36.000000 }
 AXTitle: 
 AXDescription: 
@@ -369,7 +369,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 491.000000, 57.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 67.000000, 36.000000 }
 AXTitle: 
 AXDescription: 
@@ -388,7 +388,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 227.000000, 93.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 90.000000, 60.000000 }
 AXTitle: 
 AXDescription: 
@@ -407,7 +407,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 317.000000, 93.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 53.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
@@ -426,7 +426,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 370.000000, 93.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 69.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
@@ -445,7 +445,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 439.000000, 93.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 52.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
@@ -464,7 +464,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 491.000000, 93.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 67.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
@@ -483,7 +483,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 227.000000, 93.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 90.000000, 60.000000 }
 AXTitle: 
 AXDescription: 
@@ -502,7 +502,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 317.000000, 123.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 53.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
@@ -521,7 +521,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 370.000000, 123.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 69.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
@@ -540,7 +540,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 439.000000, 123.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 52.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
@@ -559,7 +559,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
-AXPosition: { 491.000000, 123.000000 }
+AXPosition: { 0.000000, 0.000000 }
 AXSize: { 67.000000, 30.000000 }
 AXTitle: 
 AXDescription: 

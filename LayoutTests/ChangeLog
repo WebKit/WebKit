@@ -1,3 +1,27 @@
+2014-06-23  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL] Move WebKit2 test results into LayoutTests/platform/efl
+
+        Unreviewed gardening, moving files into LayoutTests/platform/efl after removing EFL WebKit1.
+
+        * platform/efl/accessibility/: Renamed from LayoutTests/platform/efl-wk2/accessibility/.
+        * platform/efl/compositing/: Renamed from LayoutTests/platform/efl-wk2/compositing/.
+        * platform/efl/editing/: Renamed from LayoutTests/platform/efl-wk2/editing/.
+        * platform/efl/fast/: Renamed from LayoutTests/platform/efl-wk2/fast/.
+        * platform/efl/http/: Renamed from LayoutTests/platform/efl-wk2/http/.
+        * platform/efl/ietestcenter: Renamed from LayoutTests/platform/efl-wk2/ietestcenter/.
+        * platform/efl/inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local-expected.txt: Renamed from LayoutTests/platform/efl-wk2/inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local-expected.txt.
+        * platform/efl/loader/go-back-cached-main-resource-expected.txt: Renamed from LayoutTests/platform/efl-wk2/loader/go-back-cached-main-resource-expected.txt.
+        * platform/efl/media/video-layer-crash-expected.png: Renamed from LayoutTests/platform/efl-wk2/media/video-layer-crash-expected.png.
+        * platform/efl/media/video-transformed-expected.png: Renamed from LayoutTests/platform/efl-wk2/media/video-transformed-expected.png.
+        * platform/efl/media/video-zoom-controls-expected.png: Renamed from LayoutTests/platform/efl-wk2/media/video-zoom-controls-expected.png.
+        * platform/efl/media/video-zoom-expected.png: Renamed from LayoutTests/platform/efl-wk2/media/video-zoom-expected.png.
+        * platform/efl/plugins/npruntime/object-from-destroyed-plugin-expected.txt: Renamed from LayoutTests/platform/efl-wk2/plugins/npruntime/object-from-destroyed-plugin-expected.txt.
+        * platform/efl/plugins/npruntime/object-from-destroyed-plugin-in-subframe-expected.txt: Renamed from LayoutTests/platform/efl-wk2/plugins/npruntime/object-from-destroyed-plugin-in-subframe-expected.txt.
+        * platform/efl/svg/: Renamed from LayoutTests/platform/efl-wk2/svg/.
+        * platform/efl/transforms/2d/hindi-rotated-expected.png:
+        * platform/efl/transforms/2d/hindi-rotated-expected.txt:
+
 2014-06-23  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r170257) http/tests/navigation/javascriptlink-frames.html fails on MountainLion
