@@ -1,3 +1,13 @@
+2014-06-23  Antti Koivisto  <antti@apple.com>
+
+        Fix a test case failing on WK1 after r170296.
+
+        There is now a non-visual render tree dump difference between WK1 and Wk2 results here due to wk1 requiring an additional style synchronization.
+
+        * platform/mac-wk2/editing/inserting: Added.
+        * platform/mac-wk2/editing/inserting/break-blockquote-after-delete-expected.txt: Copied from LayoutTests/platform/mac/editing/inserting/break-blockquote-after-delete-expected.txt.
+        * platform/mac/editing/inserting/break-blockquote-after-delete-expected.txt:
+
 2014-06-23  Simon Fraser  <simon.fraser@apple.com>
 
         CSS clip property should make layers non-opaque
