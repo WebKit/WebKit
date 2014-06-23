@@ -755,7 +755,7 @@ void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, cons
         
         // We also need to intersect the dirty rect. We have to apply a translation and shift based off
         // our column index.
-        LayoutPoint translationOffset;
+        LayoutSize translationOffset;
         LayoutUnit inlineOffset = progressionIsInline ? i * (colLogicalWidth + colGap) : LayoutUnit();
         
         bool leftToRight = style().isLeftToRightDirection() ^ progressionReversed;
@@ -764,7 +764,7 @@ void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, cons
             if (progressionReversed)
                 inlineOffset += contentLogicalWidth() - colLogicalWidth;
         }
-        translationOffset.setX(inlineOffset);
+        translationOffset.setWidth(inlineOffset);
         LayoutUnit blockOffset = initialBlockOffset + logicalTop() - flowThread()->logicalTop() + (isHorizontalWritingMode() ? -flowThreadPortion.y() : -flowThreadPortion.x());
         if (!progressionIsInline) {
             if (!progressionReversed)
@@ -774,13 +774,13 @@ void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, cons
         }
         if (isFlippedBlocksWritingMode(style().writingMode()))
             blockOffset = -blockOffset;
-        translationOffset.setY(blockOffset);
+        translationOffset.setHeight(blockOffset);
         if (!isHorizontalWritingMode())
-            translationOffset = translationOffset.transposedPoint();
+            translationOffset = translationOffset.transposedSize();
         
         // Shift the dirty rect to be in flow thread coordinates with this translation applied.
         LayoutRect translatedDirtyRect(dirtyRect);
-        translatedDirtyRect.moveBy(-translationOffset);
+        translatedDirtyRect.move(-translationOffset);
         
         // See if we intersect the dirty rect.
         clippedRect = layerBoundingBox;

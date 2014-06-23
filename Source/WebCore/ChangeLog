@@ -1,3 +1,37 @@
+2014-06-22  Zalan Bujtas  <zalan@apple.com>
+
+        Transition layer offsets from LayoutPoint to LayoutSize.
+        https://bugs.webkit.org/show_bug.cgi?id=134156
+
+        Reviewed by Simon Fraser.
+
+        Use better representation for offset values.
+
+        No change in functionality.
+
+        * platform/graphics/LayoutSize.h:
+        (WebCore::roundedForPainting):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::fragmentsBoundingBox):
+        * rendering/RenderLayer.cpp:
+        (WebCore::expandClipRectForDescendantsAndReflection):
+        (WebCore::RenderLayer::convertToLayerCoords):
+        (WebCore::computeReferenceBox):
+        (WebCore::RenderLayer::setupClipPath):
+        (WebCore::RenderLayer::setupFilters):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintLayerByApplyingTransform):
+        (WebCore::RenderLayer::collectFragments):
+        (WebCore::RenderLayer::updatePaintingInfoForFragments):
+        (WebCore::RenderLayer::paintTransformedLayerIntoFragments):
+        (WebCore::RenderLayer::createLocalTransformState):
+        (WebCore::RenderLayer::hitTestTransformedLayerInFragments):
+        (WebCore::RenderLayer::hitTestLayerByApplyingTransform):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::collectLayerFragments):
+
 2014-06-22  Dean Jackson  <dino@apple.com>
 
         Attempted iOS build fix.

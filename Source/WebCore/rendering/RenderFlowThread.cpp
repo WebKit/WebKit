@@ -1159,7 +1159,7 @@ LayoutRect RenderFlowThread::fragmentsBoundingBox(const LayoutRect& layerBoundin
         for (const auto& fragment : fragments) {
             LayoutRect fragmentRect(layerBoundingBox);
             fragmentRect.intersect(fragment.paginationClip);
-            fragmentRect.moveBy(fragment.paginationOffset);
+            fragmentRect.move(fragment.paginationOffset);
             result.unite(fragmentRect);
         }
     }
