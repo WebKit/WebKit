@@ -332,7 +332,7 @@ GraphicsContext3D::~GraphicsContext3D()
         CGLSetCurrentContext(0);
         CGLDestroyContext(m_contextObj);
 #endif
-        [static_cast<WebGLLayer*>(m_webGLLayer) setContext:nullptr];
+        [m_webGLLayer setContext:nullptr];
         numActiveContexts--;
     }
 }
