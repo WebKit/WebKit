@@ -185,6 +185,7 @@ private:
     RetainPtr<WKSwipeTransitionController> m_swipeInteractiveTransitionDelegate;
     uint64_t m_snapshotRemovalTargetRenderTreeSize;
     uint64_t m_snapshotRemovalTargetTransactionID;
+    bool m_shouldRemoveSnapshotWhenTargetRenderTreeSizeHit;
 #endif
 };
 

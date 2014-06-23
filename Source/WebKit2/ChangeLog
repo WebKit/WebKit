@@ -1,5 +1,21 @@
 2014-06-22  Tim Horton  <timothy_horton@apple.com>
 
+        [iOS][wk2] Swiping back sometimes results in a missing (not blank) swipe snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=134181
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::ViewGestureController):
+        (WebKit::ViewGestureController::endSwipeGesture):
+        (WebKit::ViewGestureController::setRenderTreeSize):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        * UIProcess/mac/ViewGestureController.h:
+        Make it explicit that we should only remove the swipe snapshot when a
+        big-enough render tree size arrives *after the swipe ends*.
+
+2014-06-22  Tim Horton  <timothy_horton@apple.com>
+
         Thread some references through the remote layer tree code
         https://bugs.webkit.org/show_bug.cgi?id=134177
 

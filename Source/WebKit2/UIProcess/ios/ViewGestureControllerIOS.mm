@@ -128,6 +128,7 @@ ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     , m_activeGestureType(ViewGestureType::None)
     , m_swipeWatchdogTimer(this, &ViewGestureController::swipeSnapshotWatchdogTimerFired)
     , m_snapshotRemovalTargetRenderTreeSize(0)
+    , m_shouldRemoveSnapshotWhenTargetRenderTreeSizeHit(false)
 {
 }
 
@@ -238,11 +239,16 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     ViewSnapshotStore::shared().enableSnapshotting();
 
     m_swipeWatchdogTimer.startOneShot(swipeSnapshotRemovalWatchdogDuration.count());
+
+    m_shouldRemoveSnapshotWhenTargetRenderTreeSizeHit = true;
 }
     
 void ViewGestureController::setRenderTreeSize(uint64_t renderTreeSize)
 {
     if (m_activeGestureType != ViewGestureType::Swipe)
+        return;
+
+    if (!m_shouldRemoveSnapshotWhenTargetRenderTreeSizeHit)
         return;
 
     // Don't remove the swipe snapshot until we get a drawing area transaction more recent than the navigation,
@@ -259,6 +265,8 @@ void ViewGestureController::swipeSnapshotWatchdogTimerFired(Timer<ViewGestureCon
 
 void ViewGestureController::removeSwipeSnapshot()
 {
+    m_shouldRemoveSnapshotWhenTargetRenderTreeSizeHit = false;
+
     m_swipeWatchdogTimer.stop();
 
     if (m_activeGestureType != ViewGestureType::Swipe)
