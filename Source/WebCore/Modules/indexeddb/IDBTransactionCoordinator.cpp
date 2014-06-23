@@ -105,6 +105,7 @@ void IDBTransactionCoordinator::processStartedTransactions()
     }
 }
 
+#if USE(LEVELDB)
 static bool doScopesOverlap(const HashSet<int64_t>& scope1, const HashSet<int64_t>& scope2)
 {
     for (HashSet<int64_t>::const_iterator it = scope1.begin(); it != scope1.end(); ++it) {
@@ -113,10 +114,13 @@ static bool doScopesOverlap(const HashSet<int64_t>& scope1, const HashSet<int64_
     }
     return false;
 }
+#endif
 
 bool IDBTransactionCoordinator::canRunTransaction(IDBTransactionBackend* transaction)
 {
     ASSERT(m_queuedTransactions.contains(transaction));
+
+#if USE(LEVELDB)
     switch (transaction->mode()) {
     case IndexedDB::TransactionMode::VersionChange:
         ASSERT(m_queuedTransactions.size() == 1);
@@ -140,6 +144,9 @@ bool IDBTransactionCoordinator::canRunTransaction(IDBTransactionBackend* transac
     }
     ASSERT_NOT_REACHED();
     return false;
+#else
+    return !m_startedTransactions.size();
+#endif
 }
 
 };

@@ -1,3 +1,17 @@
+2014-06-19  Jeffrey Pfau  <jpfau@apple.com>
+
+        Database process crashes when multiple transactions attempt to run at once
+        https://bugs.webkit.org/show_bug.cgi?id=134139
+
+        Reviewed by David Kilzer.
+
+        Ensure that only one transaction can be running at a time.
+
+        Test: storage/indexeddb/transaction-overlapping.html
+
+        * Modules/indexeddb/IDBTransactionCoordinator.cpp:
+        (WebCore::IDBTransactionCoordinator::canRunTransaction):
+
 2014-06-23  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Make the state restore from HistoryItem more precise and reliable
