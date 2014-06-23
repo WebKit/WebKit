@@ -420,6 +420,10 @@ MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
     if (m_videoOutputSemaphore)
         dispatch_release(m_videoOutputSemaphore);
 #endif
+
+    if (m_videoLayer)
+        destroyVideoLayer();
+
     cancelLoad();
 }
 

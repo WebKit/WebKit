@@ -1,3 +1,20 @@
+2014-06-23  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Uncaught exception crash when destroying MediaPlayerPrivateAVFoundationObjC
+        https://bugs.webkit.org/show_bug.cgi?id=134198
+
+        Reviewed by Eric Carlson.
+
+        Now that we always create an AVPlayerLayer when creating an AVPlayer, but we don't
+        return that layer from platformLayer() unless we've been asked to, we no longer are
+        asked to destroy our video layer from MediaPlayerPrivateAVFoundation::tearDownVideoRendering().
+
+        Instead, explicitly destroy our video layer (and remove the KVO-observer which is
+        causing this exception) in the MediaPlayerPrivateAVFoundationObjC destructor.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC):
+
 2014-06-23  Andreas Kling  <akling@apple.com>
 
         Remove unused FrameView::setUseCustomFixedPositionLayoutRect().
