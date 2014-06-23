@@ -110,9 +110,9 @@ public:
     virtual void didDraw(WebKit::WebPageProxy*) { }
     virtual void pageDidScroll(WebKit::WebPageProxy*) { }
 
-    virtual unsigned long long exceededDatabaseQuota(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebSecurityOrigin*, const WTF::String&, const WTF::String&, unsigned long long currentQuota, unsigned long long, unsigned long long, unsigned long long)
+    virtual void exceededDatabaseQuota(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebSecurityOrigin*, const WTF::String&, const WTF::String&, unsigned long long currentQuota, unsigned long long, unsigned long long, unsigned long long, std::function<void (unsigned long long)> completionHandler)
     {
-        return currentQuota;
+        completionHandler(currentQuota);
     }
 
     virtual bool runOpenPanel(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebOpenPanelParameters*, WebKit::WebOpenPanelResultListenerProxy*) { return false; }

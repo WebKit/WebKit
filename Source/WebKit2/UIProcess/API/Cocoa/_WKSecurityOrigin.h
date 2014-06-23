@@ -23,30 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKUIDelegate.h>
+#import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-#import <WebKit/_WKActivatedElementInfo.h>
-#import <WebKit/_WKSecurityOrigin.h>
+#import <Foundation/Foundation.h>
 
-@class _WKFrameHandle;
+WK_CLASS_AVAILABLE(10_10, 8_0)
+@interface _WKSecurityOrigin : NSObject
 
-@protocol WKUIDelegatePrivate <WKUIDelegate>
-
-@optional
-
-// FIXME: This should be handled by the WKWebsiteDataStore delegate.
-- (void)_webView:(WKWebView *)webView decideDatabaseQuotaForSecurityOrigin:(_WKSecurityOrigin *)securityOrigin currentQuota:(unsigned long long)currentQuota currentOriginUsage:(unsigned long long)currentOriginUsage currentDatabaseUsage:(unsigned long long)currentUsage expectedUsage:(unsigned long long)expectedUsage decisionHandler:(void (^)(unsigned long long newQuota))decisionHandler;
-
-- (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame;
-
-#if TARGET_OS_IPHONE
-- (NSArray *)_webView:(WKWebView *)webView actionsForElement:(_WKActivatedElementInfo *)element defaultActions:(NSArray *)defaultActions;
-- (void)_webView:(WKWebView *)webView didNotHandleTapAsClickAtPoint:(CGPoint)point;
-- (void)_webView:(WKWebView *)webView usesMinimalUI:(BOOL)wantMinimalUI;
-#endif
+@property (nonatomic, readonly, copy) NSString *protocol;
+@property (nonatomic, readonly, copy) NSString *host;
+@property (nonatomic, readonly) unsigned short port;
 
 @end
 
-#endif // WK_API_ENABLED
+#endif

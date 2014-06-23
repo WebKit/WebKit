@@ -4444,12 +4444,12 @@ void WebPageProxy::exceededDatabaseQuota(uint64_t frameID, const String& originI
         MESSAGE_CHECK(frame);
 
         RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(record->originIdentifier));
-
-        uint64_t newQuota = m_uiClient->exceededDatabaseQuota(this, frame, origin.get(),
+        auto currentReply = record->reply;
+        m_uiClient->exceededDatabaseQuota(this, frame, origin.get(),
             record->databaseName, record->displayName, record->currentQuota,
-            record->currentOriginUsage, record->currentDatabaseUsage, record->expectedUsage);
+            record->currentOriginUsage, record->currentDatabaseUsage, record->expectedUsage,
+            [currentReply](unsigned long long newQuota) { currentReply->send(newQuota); });
 
-        record->reply->send(newQuota);
         record = records.next();
     }
 }

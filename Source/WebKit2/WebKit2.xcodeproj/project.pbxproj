@@ -710,6 +710,9 @@
 		3769079A18F31CB2001DFF04 /* APIInjectedBundlePageUIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3769079818F31CB2001DFF04 /* APIInjectedBundlePageUIClient.h */; };
 		3769079E18F340A2001DFF04 /* APIInjectedBundleFormClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3769079C18F340A2001DFF04 /* APIInjectedBundleFormClient.h */; };
 		37694525184FC6B600CDE21F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCF5068412431861005955AE /* Security.framework */; };
+		376C51191957452E0007B0FA /* _WKSecurityOrigin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 376C51171957452E0007B0FA /* _WKSecurityOrigin.mm */; };
+		376C511A1957452E0007B0FA /* _WKSecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = 376C51181957452E0007B0FA /* _WKSecurityOrigin.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		376C511D19574F5F0007B0FA /* _WKSecurityOriginInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 376C511B195748C20007B0FA /* _WKSecurityOriginInternal.h */; };
 		377EAD4517E2C51A002D193D /* WKDeclarationSpecifiers.h in Headers */ = {isa = PBXBuildFile; fileRef = 377EAD4417E2C51A002D193D /* WKDeclarationSpecifiers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		377EAD4817E2C77B002D193D /* WKUserContentInjectedFrames.h in Headers */ = {isa = PBXBuildFile; fileRef = 377EAD4617E2C77B002D193D /* WKUserContentInjectedFrames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		377EAD4917E2C77B002D193D /* WKUserScriptInjectionTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 377EAD4717E2C77B002D193D /* WKUserScriptInjectionTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2703,6 +2706,9 @@
 		37608821150414F700FC82C7 /* WKRenderObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRenderObject.h; sourceTree = "<group>"; };
 		3769079818F31CB2001DFF04 /* APIInjectedBundlePageUIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = APIInjectedBundlePageUIClient.h; path = API/APIInjectedBundlePageUIClient.h; sourceTree = "<group>"; };
 		3769079C18F340A2001DFF04 /* APIInjectedBundleFormClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInjectedBundleFormClient.h; sourceTree = "<group>"; };
+		376C51171957452E0007B0FA /* _WKSecurityOrigin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKSecurityOrigin.mm; sourceTree = "<group>"; };
+		376C51181957452E0007B0FA /* _WKSecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSecurityOrigin.h; sourceTree = "<group>"; };
+		376C511B195748C20007B0FA /* _WKSecurityOriginInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSecurityOriginInternal.h; sourceTree = "<group>"; };
 		377EAD4417E2C51A002D193D /* WKDeclarationSpecifiers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDeclarationSpecifiers.h; sourceTree = "<group>"; };
 		377EAD4617E2C77B002D193D /* WKUserContentInjectedFrames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserContentInjectedFrames.h; sourceTree = "<group>"; };
 		377EAD4717E2C77B002D193D /* WKUserScriptInjectionTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserScriptInjectionTime.h; sourceTree = "<group>"; };
@@ -4971,6 +4977,9 @@
 				37A64E5618F38F4600EB30F1 /* _WKFormInputSession.h */,
 				1A43E828188F3CDC009E4D30 /* _WKProcessPoolConfiguration.h */,
 				1A43E827188F3CDC009E4D30 /* _WKProcessPoolConfiguration.mm */,
+				376C51181957452E0007B0FA /* _WKSecurityOrigin.h */,
+				376C51171957452E0007B0FA /* _WKSecurityOrigin.mm */,
+				376C511B195748C20007B0FA /* _WKSecurityOriginInternal.h */,
 				2D6B371918A967AD0042AE80 /* _WKThumbnailView.h */,
 				2D6B371A18A967AD0042AE80 /* _WKThumbnailView.mm */,
 				2DACE64D18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h */,
@@ -4988,8 +4997,8 @@
 				37C4C08418149C5B003688B9 /* WKBackForwardListItem.mm */,
 				37C4C08818149F23003688B9 /* WKBackForwardListItemInternal.h */,
 				1AF4592D19464B2000F9D4A2 /* WKError.h */,
-				1A2D252A194688FD004537B0 /* WKErrorInternal.h */,
 				1AF4592C19464B2000F9D4A2 /* WKError.mm */,
+				1A2D252A194688FD004537B0 /* WKErrorInternal.h */,
 				1A4D664A18A3030E00D82E21 /* WKFrameInfo.h */,
 				1A4D664918A3030E00D82E21 /* WKFrameInfo.mm */,
 				1A4D664D18A3031B00D82E21 /* WKFrameInfoInternal.h */,
@@ -7042,6 +7051,7 @@
 				1A43E82A188F3CDC009E4D30 /* _WKProcessPoolConfiguration.h in Headers */,
 				1F7506B31859164500EC0FF7 /* WKWebProcessPlugInNodeHandle.h in Headers */,
 				377EAD4517E2C51A002D193D /* WKDeclarationSpecifiers.h in Headers */,
+				376C511D19574F5F0007B0FA /* _WKSecurityOriginInternal.h in Headers */,
 				1FB00AC7185F76460019142E /* WKWebProcessPlugInPageGroup.h in Headers */,
 				377EAD4917E2C77B002D193D /* WKUserScriptInjectionTime.h in Headers */,
 				263172CF18B469490065B9C3 /* NativeWebTouchEvent.h in Headers */,
@@ -7072,6 +7082,7 @@
 				BC8699B5116AADAA002A925B /* WKView.h in Headers */,
 				BC8F2F2B16273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.h in Headers */,
 				1AD8790A18B6C38A006CAFD7 /* WKUIDelegate.h in Headers */,
+				376C511A1957452E0007B0FA /* _WKSecurityOrigin.h in Headers */,
 				290F4272172A0C7400939FF0 /* ChildProcessSupplement.h in Headers */,
 				1A6F9F9011E13EFC00DB1371 /* CommandLine.h in Headers */,
 				37C4E9F6131C6E7E0029BD5A /* config.h in Headers */,
@@ -8987,6 +8998,7 @@
 				1AB31A9616BC688100F6DBC9 /* StorageManagerMessageReceiver.cpp in Sources */,
 				1A44B95716B737AA00B7BBD8 /* StorageNamespaceImpl.cpp in Sources */,
 				1AFF49001833DE78009AB15A /* WKDeprecatedFunctions.cpp in Sources */,
+				376C51191957452E0007B0FA /* _WKSecurityOrigin.mm in Sources */,
 				517DD5BE180DA7D30081660B /* DatabaseProcessProxy.cpp in Sources */,
 				51654EFD184EF33F007DC837 /* UniqueIDBDatabaseBackingStoreSQLite.cpp in Sources */,
 				296BD85E15019BC30071F424 /* StringUtilities.mm in Sources */,

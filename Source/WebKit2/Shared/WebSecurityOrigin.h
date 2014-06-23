@@ -51,7 +51,7 @@ public:
         return adoptRef(new WebSecurityOrigin(securityOrigin));
     }
 
-    const WebCore::SecurityOrigin& securityOrigin() const { return *m_securityOrigin; }
+    WebCore::SecurityOrigin& securityOrigin() const { return *m_securityOrigin; }
 
 private:
     WebSecurityOrigin(PassRefPtr<WebCore::SecurityOrigin> securityOrigin)

@@ -1,3 +1,44 @@
+2014-06-23  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] No way to grant storage quotas for WebSQL
+        https://bugs.webkit.org/show_bug.cgi?id=134175
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebSecurityOrigin.h:
+        (WebKit::WebSecurityOrigin::securityOrigin): Changed to return a non-const reference.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::exceededDatabaseQuota): Added a completion handler parameter than takes the
+        new quota, and changed the return type to void.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient): Changed the override of exceededDatabaseQuota to call the
+        completion handler with the new quota, or with the existing quota if the client doesn’t
+        implement the callback.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h: Declared new delegate method.
+
+        * UIProcess/API/Cocoa/_WKSecurityOrigin.h: Added.
+        * UIProcess/API/Cocoa/_WKSecurityOrigin.mm: Added.
+        (-[_WKSecurityOrigin _initWithSecurityOrigin:WebCore::]): Store the origin in an ivar.
+        (-[_WKSecurityOrigin protocol]): Added this accessor.
+        (-[_WKSecurityOrigin host]): Ditto.
+        (-[_WKSecurityOrigin port]): Ditto.
+        * UIProcess/API/Cocoa/_WKSecurityOriginInternal.h: Added.
+
+        * UIProcess/Cocoa/UIDelegate.h: Override API::UIClient::exceededDatabaseQuota. Added flag
+        to m_delegateMethods struct for new delegate method.
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate): Set new flag in m_delegateMethods struct.
+        (WebKit::UIDelegate::UIClient::exceededDatabaseQuota): Added. Calls the new delegate method.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::exceededDatabaseQuota): Updated for the new client interface: now
+        passing a completion handler that replies with the new quota.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added references to new files, sorted a group.
+
 2014-06-23  Simon Fraser  <simon.fraser@apple.com>
 
         More build fixing after r170295.

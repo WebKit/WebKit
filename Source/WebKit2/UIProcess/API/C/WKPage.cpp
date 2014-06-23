@@ -1438,12 +1438,12 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.pageDidScroll(toAPI(page), m_client.base.clientInfo);
         }
 
-        virtual unsigned long long exceededDatabaseQuota(WebPageProxy* page, WebFrameProxy* frame, WebSecurityOrigin* origin, const String& databaseName, const String& databaseDisplayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage) override
+        virtual void exceededDatabaseQuota(WebPageProxy* page, WebFrameProxy* frame, WebSecurityOrigin* origin, const String& databaseName, const String& databaseDisplayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, std::function<void (unsigned long long)> completionHandler) override
         {
             if (!m_client.exceededDatabaseQuota)
-                return currentQuota;
+                completionHandler(currentQuota);
 
-            return m_client.exceededDatabaseQuota(toAPI(page), toAPI(frame), toAPI(origin), toAPI(databaseName.impl()), toAPI(databaseDisplayName.impl()), currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage, m_client.base.clientInfo);
+            completionHandler(m_client.exceededDatabaseQuota(toAPI(page), toAPI(frame), toAPI(origin), toAPI(databaseName.impl()), toAPI(databaseDisplayName.impl()), currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage, m_client.base.clientInfo));
         }
 
         virtual bool runOpenPanel(WebPageProxy* page, WebFrameProxy* frame, WebOpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener) override

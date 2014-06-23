@@ -23,29 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKUIDelegate.h>
+#import "config.h"
+#import "_WKSecurityOriginInternal.h"
 
 #if WK_API_ENABLED
 
-#import <WebKit/_WKActivatedElementInfo.h>
-#import <WebKit/_WKSecurityOrigin.h>
+#import <WebCore/SecurityOrigin.h>
+#import <wtf/RefPtr.h>
 
-@class _WKFrameHandle;
+@implementation _WKSecurityOrigin {
+    RefPtr<WebCore::SecurityOrigin> _origin;
+}
 
-@protocol WKUIDelegatePrivate <WKUIDelegate>
+- (instancetype)_initWithSecurityOrigin:(PassRefPtr<WebCore::SecurityOrigin>)origin
+{
+    if (!(self = [super init]))
+        return nil;
 
-@optional
+    if (!origin) {
+        [self release];
+        return nil;
+    }
 
-// FIXME: This should be handled by the WKWebsiteDataStore delegate.
-- (void)_webView:(WKWebView *)webView decideDatabaseQuotaForSecurityOrigin:(_WKSecurityOrigin *)securityOrigin currentQuota:(unsigned long long)currentQuota currentOriginUsage:(unsigned long long)currentOriginUsage currentDatabaseUsage:(unsigned long long)currentUsage expectedUsage:(unsigned long long)expectedUsage decisionHandler:(void (^)(unsigned long long newQuota))decisionHandler;
+    _origin = origin->isolatedCopy();
+    return self;
+}
 
-- (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame;
+- (NSString *)protocol
+{
+    return _origin->protocol();
+}
 
-#if TARGET_OS_IPHONE
-- (NSArray *)_webView:(WKWebView *)webView actionsForElement:(_WKActivatedElementInfo *)element defaultActions:(NSArray *)defaultActions;
-- (void)_webView:(WKWebView *)webView didNotHandleTapAsClickAtPoint:(CGPoint)point;
-- (void)_webView:(WKWebView *)webView usesMinimalUI:(BOOL)wantMinimalUI;
-#endif
+- (NSString *)host
+{
+    return _origin->host();
+}
+
+- (unsigned short)port
+{
+    return _origin->port();
+}
 
 @end
 
