@@ -1,3 +1,11 @@
+2014-06-24  Brady Eidson  <beidson@apple.com>
+
+        Remove references to "Shader.h" which doesn't currently exist in the project.
+
+        Rubberstamped by Andreas Kling.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2014-06-24  Martin Hock  <mhock@apple.com>
 
         [iOS] DOMWindow::outerWidth and outerHeight don't return useful values, so return 0.

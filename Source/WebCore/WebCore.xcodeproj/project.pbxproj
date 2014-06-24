@@ -1608,7 +1608,6 @@
 		498391590F1E776900C23782 /* WebKitCSSMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 498391560F1E776900C23782 /* WebKitCSSMatrix.h */; };
 		498770DB1242C535002226BA /* DrawingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770C21242C535002226BA /* DrawingBuffer.cpp */; };
 		498770DC1242C535002226BA /* DrawingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770C31242C535002226BA /* DrawingBuffer.h */; };
-		498770E91242C535002226BA /* Shader.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770D01242C535002226BA /* Shader.h */; };
 		498770F01242C535002226BA /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770D71242C535002226BA /* Texture.cpp */; };
 		498770F11242C535002226BA /* Texture.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770D81242C535002226BA /* Texture.h */; };
 		498770F21242C535002226BA /* TilingData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770D91242C535002226BA /* TilingData.cpp */; };
@@ -25813,7 +25812,6 @@
 				B8DBDB4C130B0F8A00F5CDB1 /* SetSelectionCommand.h in Headers */,
 				93F1994F08245E59001E9ABC /* Settings.h in Headers */,
 				53EF766B16530A61004CBE49 /* SettingsMacros.h in Headers */,
-				498770E91242C535002226BA /* Shader.h in Headers */,
 				0F3DD45012F5EA1B000D9190 /* ShadowBlur.h in Headers */,
 				BC5EB8C40E82031B00B25965 /* ShadowData.h in Headers */,
 				A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */,
