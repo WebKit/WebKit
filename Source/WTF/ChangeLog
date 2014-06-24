@@ -1,3 +1,12 @@
+2014-06-24  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        [JavaScriptCore] Enable concurrent JIT on EFL.
+        https://bugs.webkit.org/show_bug.cgi?id=134242
+
+        Reviewed by Csaba Osztrogonác.
+
+        * wtf/Platform.h:
+
 2014-06-23  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Replace RefPtr<Evas_Object> with UniquePtrEfl
