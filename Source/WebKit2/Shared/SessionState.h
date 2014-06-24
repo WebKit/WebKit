@@ -82,7 +82,7 @@ struct FrameState {
     String target;
 
     Vector<String> documentState;
-    Vector<uint8_t> stateObjectData;
+    Optional<Vector<uint8_t>> stateObjectData;
 
     int64_t documentSequenceNumber;
     int64_t itemSequenceNumber;

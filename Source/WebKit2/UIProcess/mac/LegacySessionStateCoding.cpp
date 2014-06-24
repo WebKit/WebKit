@@ -552,8 +552,12 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
     bool hasStateObject;
     decoder >> hasStateObject;
 
-    if (hasStateObject)
-        decoder >> frameState.stateObjectData;
+    if (hasStateObject) {
+        Vector<uint8_t> stateObjectData;
+        decoder >> stateObjectData;
+
+        frameState.stateObjectData = std::move(stateObjectData);
+    }
 
     decoder >> frameState.target;
 }

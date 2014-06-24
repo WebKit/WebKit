@@ -1,3 +1,13 @@
+2014-06-24  Anders Carlsson  <andersca@apple.com>
+
+        Add PageState to HistoryItem conversion code
+        https://bugs.webkit.org/show_bug.cgi?id=134259
+
+        Reviewed by Andreas Kling.
+
+        * wtf/Optional.h:
+        (WTF::Optional::valueOr):
+
 2014-06-24  László Langó  <llango.u-szeged@partner.samsung.com>
 
         [JavaScriptCore] Enable concurrent JIT on EFL.

@@ -161,6 +161,15 @@ public:
         return m_value;
     }
 
+    template<typename U>
+    T valueOr(U&& value) const
+    {
+        if (m_isEngaged)
+            return m_value;
+
+        return std::forward<U>(value);
+    }
+
 private:
     bool m_isEngaged;
     union {
