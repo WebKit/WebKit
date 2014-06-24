@@ -498,6 +498,9 @@ void SourceBuffer::appendBufferTimerFired(Timer<SourceBuffer>&)
 
 void SourceBuffer::sourceBufferPrivateAppendComplete(SourceBufferPrivate*, AppendResult result)
 {
+    if (isRemoved())
+        return;
+
     // Section 3.5.5 Buffer Append Algorithm, ctd.
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#sourcebuffer-buffer-append
 
