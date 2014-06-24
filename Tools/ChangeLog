@@ -1,3 +1,15 @@
+2014-06-23  Shivakumar JM  <shiva.jm@samsung.com>
+
+        [EFL][WK2] Search field is not shown properly on doing ctrl+f on Minibrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=134025
+
+        Reviewed by Gyuyoung Kim.
+
+        Use EVAS_HINT_FILL in evas_object_size_hint_align_set() api.
+
+        * MiniBrowser/efl/main.c:
+        (window_create):
+
 2014-06-23  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Replace RefPtr<Evas_Object> with UniquePtrEfl

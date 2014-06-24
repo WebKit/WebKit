@@ -1801,7 +1801,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     window->search.search_bar = elm_box_add(window->elm_window);
     elm_box_horizontal_set(window->search.search_bar, EINA_TRUE);
     evas_object_size_hint_min_set(window->search.search_bar, SEARCH_FIELD_SIZE + 2 * SEARCH_BUTTON_SIZE, 0);
-    evas_object_size_hint_align_set(window->search.search_bar, 0.0, EVAS_HINT_FILL);
+    evas_object_size_hint_align_set(window->search.search_bar, EVAS_HINT_FILL, EVAS_HINT_FILL);
     elm_box_pack_end(vertical_layout, window->search.search_bar);
 
     /* Create Search field */
