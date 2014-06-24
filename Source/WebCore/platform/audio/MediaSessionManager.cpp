@@ -68,6 +68,16 @@ bool MediaSessionManager::has(MediaSession::MediaType type) const
     return false;
 }
 
+bool MediaSessionManager::hasActive() const
+{
+    for (auto* session : m_sessions) {
+        if (session->mediaType() != MediaSession::None && (session->state() == MediaSession::State::Playing || session->state() == MediaSession::State::Paused))
+            return true;
+    }
+    
+    return false;
+}
+
 int MediaSessionManager::count(MediaSession::MediaType type) const
 {
     ASSERT(type >= MediaSession::None && type <= MediaSession::WebAudio);
@@ -89,6 +99,7 @@ void MediaSessionManager::beginInterruption(MediaSession::InterruptionType type)
     Vector<MediaSession*> sessions = m_sessions;
     for (auto* session : sessions)
         session->beginInterruption(type);
+    updateSessionState();
 }
 
 void MediaSessionManager::endInterruption(MediaSession::EndInterruptionFlags flags)
@@ -185,6 +196,8 @@ void MediaSessionManager::sessionWillBeginPlayback(MediaSession& session)
         if (restrictions & ConcurrentPlaybackNotPermitted)
             oneSession->pauseSession();
     }
+    
+    updateSessionState();
 }
     
 void MediaSessionManager::sessionWillEndPlayback(MediaSession& session)

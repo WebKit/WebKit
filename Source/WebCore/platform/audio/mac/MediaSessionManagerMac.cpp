@@ -55,10 +55,7 @@ void MediaSessionManager::updateSessionState()
 #endif
 
 #if PLATFORM(IOS)
-    if (has(MediaSession::WebAudio) || has(MediaSession::Video) || has(MediaSession::Audio))
-        AudioSession::sharedSession().setActive(true);
-    else
-        AudioSession::sharedSession().setActive(false);
+    AudioSession::sharedSession().setActive(hasActive());
 
     if (!Settings::shouldManageAudioSessionCategory())
         return;

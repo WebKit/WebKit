@@ -1,3 +1,21 @@
+2014-06-24  Jeremy Jones  <jeremyj@apple.com>
+
+        Don't set AudioSession active while interrupted.
+        https://bugs.webkit.org/show_bug.cgi?id=134239
+
+        Reviewed by Eric Carlson.
+
+        To activate the AudioSession there must be a session with audio or video
+        and being playing or paused.
+
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::hasActive): added
+        (WebCore::MediaSessionManager::beginInterruption): updateSessionState
+        (WebCore::MediaSessionManager::sessionWillBeginPlayback): updateSessionState
+        * platform/audio/MediaSessionManager.h: declare hasActive()
+        * platform/audio/mac/MediaSessionManagerMac.cpp:
+        (MediaSessionManager::updateSessionState): use hasActive()
+
 2014-06-24  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r170336): Crash in HTMLMediaElement::seekTimerFired()
