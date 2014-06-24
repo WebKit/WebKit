@@ -1,3 +1,25 @@
+2014-06-23  Daniel Bates  <dabates@apple.com>
+
+        [iOS][WK2] REGRESSION (r169324): Page jumps to top when you type into a text field
+        https://bugs.webkit.org/show_bug.cgi?id=134219
+        <rdar://problem/17279113>
+
+        Reviewed by Benjamin Poulain.
+
+        Fixes an issue where typing into a text field may cause a noticeable jump to the top of
+        the page.
+
+        Currently when updating the visual content rectangles we always constrain the scroll offset
+        (s_x, s_y) such that 0 <= s_x <= "content width" - "visible width" and 0 <= s_y <= "content height" - "visible height".
+        However the UIProcess may want to scroll the page by an offset outside of this range to
+        create a visually pleasing result. In particular, on iOS we may scroll the page slightly
+        outside of this range (e.g. s_y > 0 = "content height" - "visible height") when a form
+        control is focused so as to be consistent with platform convention.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects): Temporarily disable content edge constraint when
+        updating scroll offset.
+
 2014-06-23  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/17413374> [iOS] Application cache size per origin is not limited

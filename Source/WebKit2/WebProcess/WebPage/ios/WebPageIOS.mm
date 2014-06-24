@@ -2421,7 +2421,9 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     if (!visibleContentRectUpdateInfo.isChangingObscuredInsetsInteractively())
         frameView.setCustomSizeForResizeEvent(expandedIntSize(visibleContentRectUpdateInfo.unobscuredRectInScrollViewCoordinates().size()));
 
+    frameView.setConstrainsScrollingToContentEdge(false);
     frameView.setScrollOffset(scrollPosition);
+    frameView.setConstrainsScrollingToContentEdge(true);
 }
 
 void WebPage::willStartUserTriggeredZooming()
