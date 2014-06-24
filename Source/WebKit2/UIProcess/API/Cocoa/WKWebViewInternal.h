@@ -88,6 +88,11 @@ struct ViewSnapshot;
 
 - (void)_willInvokeUIScrollViewDelegateCallback;
 - (void)_didInvokeUIScrollViewDelegateCallback;
+
+- (void)_updateVisibleContentRects;
+
+@property (nonatomic, readonly) UIEdgeInsets _computedContentInset;
+
 #endif
 @end
 

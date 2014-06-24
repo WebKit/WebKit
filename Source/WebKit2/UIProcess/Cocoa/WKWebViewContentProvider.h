@@ -32,6 +32,7 @@
 @class NSData;
 @class UIScrollView;
 @class UIView;
+@class WKWebView;
 @protocol NSObject;
 @protocol UIScrollViewDelegate;
 struct CGSize;
@@ -40,11 +41,11 @@ struct UIEdgeInsets;
 // FIXME: This should be API (and probably should not be a UIScrollViewDelegate).
 @protocol WKWebViewContentProvider <NSObject, UIScrollViewDelegate>
 
+- (instancetype)web_initWithFrame:(CGRect) frame webView:(WKWebView *)webView;
 - (void)web_setContentProviderData:(NSData *)data suggestedFilename:(NSString *)filename;
 - (void)web_setMinimumSize:(CGSize)size;
-- (void)web_setScrollView:(UIScrollView *)scrollView;
-- (void)web_setObscuredInsets:(UIEdgeInsets)insets;
 - (void)web_setOverlaidAccessoryViewsInset:(CGSize)inset;
+- (void)web_computedContentInsetDidChange;
 - (void)web_setFixedOverlayView:(UIView *)fixedOverlayView;
 
 @end

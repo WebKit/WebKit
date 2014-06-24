@@ -589,7 +589,7 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
 
         Class representationClass = [[_configuration _contentProviderRegistry] providerForMIMEType:mimeType];
         ASSERT(representationClass);
-        _customContentView = adoptNS([[representationClass alloc] init]);
+        _customContentView = adoptNS([[representationClass alloc] web_initWithFrame:self.bounds webView:self]);
         _customContentFixedOverlayView = adoptNS([[UIView alloc] initWithFrame:self.bounds]);
         [_customContentFixedOverlayView setUserInteractionEnabled:NO];
 
@@ -598,8 +598,6 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
         [self addSubview:_customContentFixedOverlayView.get()];
 
         [_customContentView web_setMinimumSize:self.bounds.size];
-        [_customContentView web_setScrollView:_scrollView.get()];
-        [_customContentView web_setObscuredInsets:_obscuredInsets];
         [_customContentView web_setFixedOverlayView:_customContentFixedOverlayView.get()];
     } else if (_customContentView) {
         [_customContentView removeFromSuperview];
@@ -689,6 +687,25 @@ static CGFloat contentZoomScale(WKWebView* webView)
     return _usesMinimalUI;
 }
 
+- (CGPoint)_adjustedContentOffset:(CGPoint)point
+{
+    CGPoint result = point;
+    UIEdgeInsets contentInset = [self _computedContentInset];
+
+    result.x -= contentInset.left;
+    result.y -= contentInset.top;
+
+    return result;
+}
+
+- (UIEdgeInsets)_computedContentInset
+{
+    if (!UIEdgeInsetsEqualToEdgeInsets(_obscuredInsets, UIEdgeInsetsZero))
+        return _obscuredInsets;
+
+    return [_scrollView contentInset];
+}
+
 - (void)_processDidExit
 {
     if (!_customContentView && _isAnimatingResize) {
@@ -702,7 +719,7 @@ static CGFloat contentZoomScale(WKWebView* webView)
     }
     [_contentView setFrame:self.bounds];
     [_scrollView setBackgroundColor:[UIColor whiteColor]];
-    [_scrollView setContentOffset:CGPointMake(-_obscuredInsets.left, -_obscuredInsets.top)];
+    [_scrollView setContentOffset:[self _adjustedContentOffset:CGPointZero]];
     [_scrollView setZoomScale:1];
 
     _viewportMetaTagWidth = -1;
@@ -778,7 +795,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 
     if (_needsResetViewStateAfterCommitLoadForMainFrame && layerTreeTransaction.transactionID() >= _firstPaintAfterCommitLoadTransactionID) {
         _needsResetViewStateAfterCommitLoadForMainFrame = NO;
-        [_scrollView setContentOffset:CGPointMake(-_obscuredInsets.left, -_obscuredInsets.top)];
+        [_scrollView setContentOffset:[self _adjustedContentOffset:CGPointZero]];
         [self _updateVisibleContentRects];
     }
 
@@ -819,9 +836,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
         double scale = newScale / currentTargetScale;
         _resizeAnimationTransformAdjustments = CATransform3DMakeScale(scale, scale, 0);
 
-        CGPoint newContentOffset = CGPointMake(newScrollPosition.x * newScale, newScrollPosition.y * newScale);
-        newContentOffset.x -= _obscuredInsets.left;
-        newContentOffset.y -= _obscuredInsets.top;
+        CGPoint newContentOffset = [self _adjustedContentOffset:CGPointMake(newScrollPosition.x * newScale, newScrollPosition.y * newScale)];
         CGPoint currentContentOffset = [_scrollView contentOffset];
 
         _resizeAnimationTransformAdjustments.m41 = (currentContentOffset.x - newContentOffset.x) / animatingScaleTarget;
@@ -942,8 +957,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     CGFloat zoomScale = contentZoomScale(self);
     scaledOffset.scale(zoomScale, zoomScale);
 
-    scaledOffset -= WebCore::FloatSize(_obscuredInsets.left, _obscuredInsets.top);
-    [_scrollView setContentOffset:scaledOffset];
+    [_scrollView setContentOffset:[self _adjustedContentOffset:scaledOffset]];
 }
 
 - (BOOL)_scrollToRect:(WebCore::FloatRect)targetRect origin:(WebCore::FloatPoint)origin minimumScrollDistance:(float)minimumScrollDistance
@@ -1267,8 +1281,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_updateVisibleContentRects
 {
-    if (![self usesStandardContentView])
-        return;
+    if (![self usesStandardContentView]) {
+        [_customContentView web_computedContentInsetDidChange];
+        return
+    }
 
     if (_delayUpdateVisibleContentRects) {
         _hadDelayedUpdateVisibleContentRects = YES;
@@ -1284,7 +1300,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     CGRect fullViewRect = self.bounds;
     CGRect visibleRectInContentCoordinates = [self convertRect:fullViewRect toView:_contentView.get()];
 
-    CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, _obscuredInsets);
+    CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, [self _computedContentInset]);
     CGRect unobscuredRectInContentCoordinates = [self convertRect:unobscuredRect toView:_contentView.get()];
 
     CGFloat scaleFactor = contentZoomScale(self);
@@ -1923,7 +1939,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _obscuredInsets = obscuredInsets;
 
     [self _updateVisibleContentRects];
-    [_customContentView web_setObscuredInsets:obscuredInsets];
 }
 
 - (void)_setInterfaceOrientationOverride:(UIInterfaceOrientation)interfaceOrientation

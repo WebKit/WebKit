@@ -191,6 +191,13 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     return [super _rubberBandOffsetForOffset:newOffset maxOffset:maxOffset minOffset:minOffset range:range outside:outside];
 }
 
+- (void)setContentInset:(UIEdgeInsets)contentInset
+{
+    [super setContentInset:contentInset];
+
+    [_internalDelegate _updateVisibleContentRects];
+}
+
 @end
 
 #endif // PLATFORM(IOS)

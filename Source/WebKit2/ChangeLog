@@ -1,3 +1,62 @@
+2014-06-24  Anders Carlsson  <andersca@apple.com>
+
+        WKWebView doesn't respect -[UIScrollView contentInset]
+        https://bugs.webkit.org/show_bug.cgi?id=134230
+        <rdar://problem/17429107>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setHasCustomContentView:loadedMIMEType:WTF::]):
+        Call initWithFrame and pass the WKWebView along.
+
+        (-[WKWebView _adjustedContentOffset:]):
+        New helper method that takes a content offset as a CGPoint and offsets it by the computed content inset.
+
+        (-[WKWebView _computedContentInset]):
+        New helper method that returns the _obscuredInsets, or if it's zero, the scroll view's content inset.
+
+        (-[WKWebView _processDidExit]):
+        Use _computedContentInset.
+
+        (-[WKWebView _didCommitLayerTree:WebKit::]):
+        use _computedContentInset.
+
+        (-[WKWebView _dynamicViewportUpdateChangedTargetToScale:position:]):
+        Use _computedContentInset.
+
+        (-[WKWebView _scrollToContentOffset:WebCore::]):
+        Use _computedContentInset.
+
+        (-[WKWebView _updateVisibleContentRects]):
+        If we have a custom content view, call web_computedContentInsetDidChange.
+
+        (-[WKWebView _setObscuredInsets:]):
+        Don't call web_setObscuredInsets: if we have a custom content view.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        Add new methods.
+
+        * UIProcess/Cocoa/WKWebViewContentProvider.h:
+        Add new methods.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView web_initWithFrame:webView:]):
+        Set the _webView and _scrollView ivars.
+
+        (-[WKPDFView _offsetForPageNumberIndicator]):
+        Get the computed content offset from the WKWebView.
+
+        (-[WKPDFView web_computedContentInsetDidChange]):
+        Update the page indicator.
+        
+        (-[WKPDFView initWithFrame:]): Deleted.
+        (-[WKPDFView web_setObscuredInsets:]): Deleted.
+
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView setContentInset:]):
+        Call _updateVisibleContentRects.
+
 2014-06-23  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Unreviewed, fix build warning.
