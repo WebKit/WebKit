@@ -1,3 +1,17 @@
+2014-06-24  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r170336): Crash in HTMLMediaElement::seekTimerFired()
+        https://bugs.webkit.org/show_bug.cgi?id=134253
+
+        Rubber-stamped by Eric Carlson.
+
+        Now that seekWithTolerance() has been split up into an asyncronous section, the null-checks in seekWithTolerance()
+        need to be re-performed in seekTimerFired(), in case the m_player has been cleared between when the seek was initiated
+        and when the asynchronous section is performed.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::seekTimerFired):
+
 2014-06-24  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Fix unused parameter warnings if inspector is disabled

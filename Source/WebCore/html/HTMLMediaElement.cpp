@@ -2379,6 +2379,11 @@ void HTMLMediaElement::seekWithTolerance(double time, double negativeTolerance, 
 
 void HTMLMediaElement::seekTimerFired(Timer<HTMLMediaElement>&)
 {
+    if (!m_player) {
+        m_seeking = false;
+        return;
+    }
+
     ASSERT(m_pendingSeek);
     double now = m_pendingSeek->now;
     double time = m_pendingSeek->targetTime;
