@@ -1,3 +1,14 @@
+2014-06-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Drop the cross organizational support requirement from reviewer nomination policy
+        https://bugs.webkit.org/show_bug.cgi?id=134240
+
+        Reviewed by Gyuyoung Kim.
+
+        Removed.
+
+        * coding/commit-review-policy.html:
+
 2014-05-13  Filip Pizlo  <fpizlo@apple.com>
 
         Updated the files to have the right width.
