@@ -79,8 +79,6 @@ void webkitAccessibleDetach(WebKitAccessible*);
 
 bool webkitAccessibleIsDetached(WebKitAccessible*);
 
-AtkObject* webkitAccessibleGetFocusedElement(WebKitAccessible*);
-
 WebCore::AccessibilityObject* objectFocusedAndCaretOffsetUnignored(WebCore::AccessibilityObject*, int& offset);
 
 const char* cacheAndReturnAtkProperty(AtkObject*, AtkCachedProperty, String value);

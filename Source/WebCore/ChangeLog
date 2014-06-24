@@ -1,3 +1,16 @@
+2014-06-23  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Remove some unnecessary code from WebKitAccessibleWrapperAtk
+        https://bugs.webkit.org/show_bug.cgi?id=134193
+
+        Reviewed by Gyuyoung Kim.
+
+        It was used along with DRT. Since we have stopped support WK1/DRT, it won't be needed.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetFocusedElement): Deleted.
+        * accessibility/atk/WebKitAccessibleWrapperAtk.h:
+
 2014-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Use unsigneds instead of ints for indexes into a string in text layout code
