@@ -1,3 +1,9 @@
+2014-06-24  Antti Koivisto  <antti@apple.com>
+
+        Try to fix build.
+
+        * WebCore.exp.in: Remove duplicate export, this should be in the iOS section only.
+
 2014-06-24  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] process raw VTT in-band captions
