@@ -1,3 +1,22 @@
+2014-06-23  Dean Jackson  <dino@apple.com>
+
+        [Mac] Don't draw focus rings if we are animating controls
+        https://bugs.webkit.org/show_bug.cgi?id=134232
+        <rdar://problem/17381121>
+
+        Reviewed by Tim Horton.
+
+        Controls in native apps do not draw their focus rings as they
+        animate (in Yosemite). Turn this off for WebKit too. It turns
+        out that when we were drawing them, they were in the wrong
+        place anyway.
+
+        Since we don't animate controls when testing, we can't really test this.
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::paintToggleButton): Only draw the focus ring if the
+        NSButtonCell is not animating.
+
 2014-06-23  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Remove some unnecessary code from WebKitAccessibleWrapperAtk

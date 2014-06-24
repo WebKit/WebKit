@@ -426,6 +426,9 @@ static void paintToggleButton(ControlPart buttonType, ControlStates* controlStat
     LocalCurrentGraphicsContext localContext(context);
     NSView *view = ThemeMac::ensuredView(scrollView, controlStates);
 
+    bool isAnimating = false;
+    bool needsRepaint = false;
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
     if ([toggleButtonCell _stateAnimationRunning]) {
         // AppKit's drawWithFrame appears to render the cell centered in the
@@ -435,20 +438,18 @@ static void paintToggleButton(ControlPart buttonType, ControlStates* controlStat
         context->scale(FloatSize(1, -1));
         context->translate(0, -inflatedRect.height());
         [toggleButtonCell _renderCurrentAnimationFrameInContext:context->platformContext() atLocation:NSMakePoint(0, 0)];
+        isAnimating = [toggleButtonCell _stateAnimationRunning];
     } else
         [toggleButtonCell drawWithFrame:NSRect(inflatedRect) inView:view];
 #else
     [toggleButtonCell drawWithFrame:NSRect(inflatedRect) inView:view];
 #endif
 
-    bool needsRepaint = false;
-    if (controlStates->states() & ControlStates::FocusState)
+    if (!isAnimating && (controlStates->states() & ControlStates::FocusState))
         needsRepaint = drawCellFocusRing(toggleButtonCell, inflatedRect, view);
     [toggleButtonCell setControlView:nil];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
-    needsRepaint |= [toggleButtonCell _stateAnimationRunning];
-#endif
+    needsRepaint |= isAnimating;
     controlStates->setNeedsRepaint(needsRepaint);
     if (needsRepaint)
         controlStates->setPlatformControl(toggleButtonCell);
