@@ -59,6 +59,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 #include "WebResourceCacheManagerProxy.h"
+#include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/Language.h>
 #include <WebCore/LinkHash.h>
 #include <WebCore/Logging.h>
@@ -642,6 +643,9 @@ WebProcessProxy& WebContext::createNewWebProcess()
 
 #if PLATFORM(COCOA)
     process->send(Messages::WebProcess::SetQOS(webProcessLatencyQOS(), webProcessThroughputQOS()), 0);
+#endif
+#if PLATFORM(IOS)
+    cacheStorage().setDefaultOriginQuota(25ULL * 1024 * 1024);
 #endif
 
     if (WebPreferences::anyPagesAreUsingPrivateBrowsing())

@@ -1,3 +1,14 @@
+2014-06-23  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/17413374> [iOS] Application cache size per origin is not limited
+        https://bugs.webkit.org/show_bug.cgi?id=134229
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess): Set the default quota per origin to the same
+        value it is set in Legacy WebKit.
+
 2014-06-23  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed, EFL build fix after r170330.
