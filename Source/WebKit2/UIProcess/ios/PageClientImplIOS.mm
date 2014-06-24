@@ -317,7 +317,8 @@ FloatRect PageClientImpl::convertToDeviceSpace(const FloatRect& rect)
 
 FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
 {
-    return rect;
+    notImplemented();
+    return FloatRect();
 }
 
 IntPoint PageClientImpl::screenToRootView(const IntPoint& point)

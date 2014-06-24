@@ -252,17 +252,6 @@ void UIDelegate::UIClient::didNotHandleTapAsClick(const WebCore::IntPoint& point
 
     [static_cast<id <WKUIDelegatePrivate>>(delegate) _webView:m_uiDelegate.m_webView didNotHandleTapAsClickAtPoint:point];
 }
-
-WebCore::FloatRect UIDelegate::UIClient::windowFrame(WebKit::WebPageProxy*)
-{
-    if (!m_uiDelegate.m_webView)
-        return WebCore::FloatRect();
-
-    if (UIWindow* window = m_uiDelegate.m_webView.window)
-        return WebCore::enclosingIntRect(window.frame);
-
-    return WebCore::enclosingIntRect(m_uiDelegate.m_webView.bounds);
-}
 #endif
 
 } // namespace WebKit

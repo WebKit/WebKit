@@ -1156,6 +1156,9 @@ bool DOMWindow::offscreenBuffering() const
 
 int DOMWindow::outerHeight() const
 {
+#if PLATFORM(IOS)
+    return 0;
+#else
     if (!m_frame)
         return 0;
 
@@ -1164,10 +1167,14 @@ int DOMWindow::outerHeight() const
         return 0;
 
     return static_cast<int>(page->chrome().windowRect().height());
+#endif
 }
 
 int DOMWindow::outerWidth() const
 {
+#if PLATFORM(IOS)
+    return 0;
+#else
     if (!m_frame)
         return 0;
 
@@ -1176,6 +1183,7 @@ int DOMWindow::outerWidth() const
         return 0;
 
     return static_cast<int>(page->chrome().windowRect().width());
+#endif
 }
 
 int DOMWindow::innerHeight() const

@@ -1,3 +1,16 @@
+2014-06-24  Martin Hock  <mhock@apple.com>
+
+        [iOS] DOMWindow::outerWidth and outerHeight don't return useful values, so return 0.
+        Also, revert r169281.
+        https://bugs.webkit.org/show_bug.cgi?id=134233
+        <rdar://problem/17060183>
+
+        Reviewed by Benjamin Poulain.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::outerHeight):
+        (WebCore::DOMWindow::outerWidth):
+
 2014-06-24  Jeremy Jones  <jeremyj@apple.com>
 
         Don't set AudioSession active while interrupted.

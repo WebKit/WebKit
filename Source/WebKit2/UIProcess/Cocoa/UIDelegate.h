@@ -68,7 +68,6 @@ private:
     #if PLATFORM(IOS)
         virtual RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) override;
         virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) override;
-        virtual WebCore::FloatRect windowFrame(WebKit::WebPageProxy*) override;
     #endif
 
         UIDelegate& m_uiDelegate;
