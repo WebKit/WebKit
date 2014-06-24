@@ -215,13 +215,9 @@ void TextTrackLoader::getNewCues(Vector<RefPtr<TextTrackCue>>& outputCues)
     if (m_cueParser) {
         Vector<RefPtr<WebVTTCueData>> newCues;
         m_cueParser->getNewCues(newCues);
-        for (size_t i = 0; i < newCues.size(); ++i) {
-            RefPtr<WebVTTCueData> data = newCues[i];
-            RefPtr<VTTCue> cue = VTTCue::create(*m_scriptExecutionContext, data->startTime(), data->endTime(), data->content());
-            cue->setId(data->id());
-            cue->setCueSettings(data->settings());
-            outputCues.append(cue);
-        }
+
+        for (auto& cueData : newCues)
+            outputCues.append(VTTCue::create(*m_scriptExecutionContext, *cueData));
     }
 }
 

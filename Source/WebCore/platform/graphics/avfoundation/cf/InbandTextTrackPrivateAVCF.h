@@ -36,9 +36,9 @@ namespace WebCore {
 
 class InbandTextTrackPrivateAVCF : public InbandTextTrackPrivateAVF {
 public:
-    static PassRefPtr<InbandTextTrackPrivateAVCF> create(AVFInbandTrackParent* player,  AVCFMediaSelectionOptionRef selection)
+    static PassRefPtr<InbandTextTrackPrivateAVCF> create(AVFInbandTrackParent* player,  AVCFMediaSelectionOptionRef selection, InbandTextTrackPrivate::CueFormat format)
     {
-        return adoptRef(new InbandTextTrackPrivateAVCF(player, selection));
+        return adoptRef(new InbandTextTrackPrivateAVCF(player, selection, format));
     }
 
     ~InbandTextTrackPrivateAVCF() { }
@@ -60,7 +60,7 @@ public:
     AVCFMediaSelectionOptionRef mediaSelectionOption() const { return m_mediaSelectionOption.get(); }
 
 protected:
-    InbandTextTrackPrivateAVCF(AVFInbandTrackParent*, AVCFMediaSelectionOptionRef);
+    InbandTextTrackPrivateAVCF(AVFInbandTrackParent*, AVCFMediaSelectionOptionRef, InbandTextTrackPrivate::CueFormat);
     
     RetainPtr<AVCFMediaSelectionOptionRef> m_mediaSelectionOption;
 };

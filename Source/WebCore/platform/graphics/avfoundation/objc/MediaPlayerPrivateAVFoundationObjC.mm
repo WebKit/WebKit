@@ -676,7 +676,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
     if (m_avAsset)
         return;
 
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(%p)", this);
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(%p) - url = %s", this, url.utf8().data());
 
     setDelayCallbacks(true);
 
@@ -808,7 +808,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
     const NSTimeInterval legibleOutputAdvanceInterval = 2;
 
-    m_legibleOutput = adoptNS([[AVPlayerItemLegibleOutput alloc] initWithMediaSubtypesForNativeRepresentation:[NSArray array]]);
+    RetainPtr<NSArray> subtypes = adoptNS([[NSArray alloc] initWithObjects:[NSNumber numberWithUnsignedInt:kCMSubtitleFormatType_WebVTT], nil]);
+    m_legibleOutput = adoptNS([[AVPlayerItemLegibleOutput alloc] initWithMediaSubtypesForNativeRepresentation:subtypes.get()]);
     [m_legibleOutput.get() setSuppressesPlayerRendering:YES];
 
     [m_legibleOutput.get() setDelegate:m_objcObserver.get() queue:dispatch_get_main_queue()];
@@ -1577,7 +1578,8 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
     }
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
-    if (AVMediaSelectionGroupType *legibleGroup = safeMediaSelectionGroupForLegibleMedia()) {
+    AVMediaSelectionGroupType *legibleGroup = safeMediaSelectionGroupForLegibleMedia();
+    if (legibleGroup && m_cachedTracks) {
         hasCaptions = [[AVMediaSelectionGroup playableMediaSelectionOptionsFromArray:[legibleGroup options]] count];
         if (hasCaptions)
             processMediaSelectionOptions();
@@ -2164,7 +2166,7 @@ void MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions()
         }
 #endif
 
-        m_textTracks.append(InbandTextTrackPrivateAVFObjC::create(this, option));
+        m_textTracks.append(InbandTextTrackPrivateAVFObjC::create(this, option, InbandTextTrackPrivate::Generic));
     }
 
     processNewAndRemovedTextTracks(removedTextTracks);
@@ -2180,12 +2182,12 @@ void MediaPlayerPrivateAVFoundationObjC::processMetadataTrack()
     player()->addTextTrack(m_metadataTrack);
 }
 
-void MediaPlayerPrivateAVFoundationObjC::processCue(NSArray *attributedStrings, double time)
+void MediaPlayerPrivateAVFoundationObjC::processCue(NSArray *attributedStrings, NSArray *nativeSamples, double time)
 {
     if (!m_currentTextTrack)
         return;
 
-    m_currentTextTrack->processCue(reinterpret_cast<CFArrayRef>(attributedStrings), time);
+    m_currentTextTrack->processCue(reinterpret_cast<CFArrayRef>(attributedStrings), reinterpret_cast<CFArrayRef>(nativeSamples), time);
 }
 
 void MediaPlayerPrivateAVFoundationObjC::flushCues()
@@ -2734,11 +2736,12 @@ NSArray* assetTrackMetadataKeyNames()
 
     RetainPtr<WebCoreAVFMovieObserver> strongSelf = self;
     RetainPtr<NSArray> strongStrings = strings;
-    callOnMainThread([strongSelf, strongStrings, itemTime] {
+    RetainPtr<NSArray> strongSamples = nativeSamples;
+    callOnMainThread([strongSelf, strongStrings, strongSamples, itemTime] {
         MediaPlayerPrivateAVFoundationObjC* callback = strongSelf->m_callback;
         if (!callback)
             return;
-        callback->processCue(strongStrings.get(), CMTimeGetSeconds(itemTime));
+        callback->processCue(strongStrings.get(), strongSamples.get(), CMTimeGetSeconds(itemTime));
     });
 }
 

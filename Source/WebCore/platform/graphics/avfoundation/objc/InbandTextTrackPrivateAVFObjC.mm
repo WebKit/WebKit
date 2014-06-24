@@ -76,8 +76,8 @@ SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicEasyToRead, NSString *)
 
 namespace WebCore {
 
-InbandTextTrackPrivateAVFObjC::InbandTextTrackPrivateAVFObjC(AVFInbandTrackParent* player, AVMediaSelectionOption *selection)
-    : InbandTextTrackPrivateAVF(player)
+InbandTextTrackPrivateAVFObjC::InbandTextTrackPrivateAVFObjC(AVFInbandTrackParent* player, AVMediaSelectionOption *selection, InbandTextTrackPrivate::CueFormat format)
+    : InbandTextTrackPrivateAVF(player, format)
     , m_mediaSelectionOption(selection)
 {
 }

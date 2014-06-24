@@ -41,7 +41,7 @@ public:
         return adoptRef(new OutOfBandTextTrackPrivateAVF(player, selection));
     }
     
-    virtual void processCue(CFArrayRef, double) override { }
+    virtual void processCue(CFArrayRef, CFArrayRef, double) override { }
     virtual void resetCueValues() override { }
     
     virtual Category textTrackCategory() const override { return OutOfBand; }
@@ -50,7 +50,7 @@ public:
     
 protected:
     OutOfBandTextTrackPrivateAVF(AVFInbandTrackParent* player, AVMediaSelectionOption* selection)
-        : InbandTextTrackPrivateAVF(player)
+        : InbandTextTrackPrivateAVF(player, InbandTextTrackPrivate::Generic)
         , m_mediaSelectionOption(selection)
     {
     }
