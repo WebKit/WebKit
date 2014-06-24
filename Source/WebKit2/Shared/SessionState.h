@@ -118,7 +118,7 @@ struct BackForwardListState {
     static bool decode(IPC::ArgumentDecoder&, BackForwardListState&);
 
     Vector<PageState> items;
-    uint32_t currentIndex;
+    Optional<uint32_t> currentIndex;
 };
 
 struct SessionState {

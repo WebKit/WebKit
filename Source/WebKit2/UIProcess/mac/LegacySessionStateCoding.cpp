@@ -118,8 +118,38 @@ bool LegacySessionStateDecoder::decodeSessionHistory(CFDictionaryRef backForward
 
 bool LegacySessionStateDecoder::decodeV0SessionHistory(CFDictionaryRef sessionHistoryDictionary, BackForwardListState& backForwardListState) const
 {
-    // FIXME: Implement.
-    return false;
+    auto currentIndexNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(sessionHistoryDictionary, sessionHistoryCurrentIndexKey));
+    if (!currentIndexNumber)
+        return false;
+
+    CFIndex currentIndex;
+    if (!CFNumberGetValue(currentIndexNumber, kCFNumberCFIndexType, &currentIndex))
+        return false;
+
+    if (currentIndex < -1)
+        return false;
+
+    auto historyEntries = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(sessionHistoryDictionary, sessionHistoryEntriesKey));
+    if (!historyEntries)
+        return false;
+
+    // Version 0 session history relied on currentIndex == -1 to represent the same thing as not having a current index.
+    bool hasCurrentIndex = currentIndex != -1;
+
+    if (!decodeSessionHistoryEntries(historyEntries, backForwardListState.items))
+        return false;
+
+    if (!hasCurrentIndex && CFArrayGetCount(historyEntries))
+        return false;
+
+    if (hasCurrentIndex) {
+        if (static_cast<uint32_t>(currentIndex) >= backForwardListState.items.size())
+            return false;
+
+        backForwardListState.currentIndex = static_cast<uint32_t>(currentIndex);
+    }
+
+    return true;
 }
 
 bool LegacySessionStateDecoder::decodeV1SessionHistory(CFDictionaryRef sessionHistoryDictionary, BackForwardListState& backForwardListState) const
@@ -147,7 +177,7 @@ bool LegacySessionStateDecoder::decodeV1SessionHistory(CFDictionaryRef sessionHi
         return false;
 
     backForwardListState.currentIndex = static_cast<uint32_t>(currentIndex);
-    if (backForwardListState.currentIndex >= backForwardListState.items.size())
+    if (static_cast<uint32_t>(currentIndex) >= backForwardListState.items.size())
         return false;
 
     return true;

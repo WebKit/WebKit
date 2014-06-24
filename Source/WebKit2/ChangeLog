@@ -1,5 +1,17 @@
 2014-06-24  Anders Carlsson  <andersca@apple.com>
 
+        Add support for v0 legacy decoding
+        https://bugs.webkit.org/show_bug.cgi?id=134275
+
+        Reviewed by Andreas Kling.
+
+        * Shared/SessionState.h:
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::LegacySessionStateDecoder::decodeV0SessionHistory):
+        (WebKit::LegacySessionStateDecoder::decodeV1SessionHistory):
+
+2014-06-24  Anders Carlsson  <andersca@apple.com>
+
         Add SPI for clearing an entire back-forward list
         https://bugs.webkit.org/show_bug.cgi?id=134274
 
