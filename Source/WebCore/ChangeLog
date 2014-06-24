@@ -1,5 +1,19 @@
 2014-06-24  Jer Noble  <jer.noble@apple.com>
 
+        [Fullscreen][Mac] WKView is not firstResponder after entering fullscreen mode
+        https://bugs.webkit.org/show_bug.cgi?id=134270
+
+        Reviewed by Jon Honeycutt.
+
+        The WebCoreFullScreenWindow's firstResponder is reset when the full screen animation completes and
+        the window's style is changed to a fullscreen style. Save the firstResponder, and if it's still in
+        the window's view hierarchy after the style changes, reset it to the firstResponder.
+
+        * platform/mac/WebCoreFullScreenWindow.mm:
+        (-[WebCoreFullScreenWindow setStyleMask:]):
+
+2014-06-24  Jer Noble  <jer.noble@apple.com>
+
         [MSE][Mac] Pass AVSampleBufferDisplayLayer HDCP status through to EME
         https://bugs.webkit.org/show_bug.cgi?id=134221
 

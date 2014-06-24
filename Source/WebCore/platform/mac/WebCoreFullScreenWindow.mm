@@ -67,6 +67,20 @@
 {
     [[self windowController] performClose:sender];
 }
+
+- (void)setStyleMask:(NSUInteger)styleMask
+{
+    // Changing the styleMask of a NSWindow can reset the firstResponder if the frame view changes,
+    // so save off the existing one, and restore it if necessary after the call to -setStyleMask:.
+    NSResponder* savedFirstResponder = [self firstResponder];
+
+    [super setStyleMask:styleMask];
+
+    if ([self firstResponder] != savedFirstResponder
+        && [savedFirstResponder isKindOfClass:[NSView class]]
+        && [(NSView*)savedFirstResponder isDescendantOf:[self contentView]])
+        [self makeFirstResponder:savedFirstResponder];
+}
 @end
 
 #endif // ENABLE(FULLSCREEN_API)
