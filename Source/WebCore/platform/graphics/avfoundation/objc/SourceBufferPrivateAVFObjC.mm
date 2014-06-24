@@ -351,6 +351,7 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
     ASSERT(_layers.contains(layer));
 
     [layer removeObserver:self forKeyPath:@"error"];
+    [layer removeObserver:self forKeyPath:@"outputObscuredDueToInsufficientExternalProtection"];
     _layers.remove(_layers.find(layer));
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:AVSampleBufferDisplayLayerFailedToDecodeNotification object:layer];
