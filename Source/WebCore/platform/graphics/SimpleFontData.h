@@ -89,7 +89,7 @@ public:
         virtual void initializeFontData(SimpleFontData*, float fontSize) = 0;
         virtual float widthForSVGGlyph(Glyph, float fontSize) const = 0;
         virtual bool fillSVGGlyphPage(GlyphPage*, unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData*) const = 0;
-        virtual bool applySVGGlyphSelection(WidthIterator&, GlyphData&, bool mirror, int currentCharacter, unsigned& advanceLength) const = 0;
+        virtual bool applySVGGlyphSelection(WidthIterator&, GlyphData&, bool mirror, unsigned currentCharacter, unsigned& advanceLength) const = 0;
     };
 
     // Used to create platform fonts.

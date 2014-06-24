@@ -36,7 +36,7 @@ public:
     virtual void initializeFontData(SimpleFontData*, float fontSize) override;
     virtual float widthForSVGGlyph(Glyph, float fontSize) const override;
     virtual bool fillSVGGlyphPage(GlyphPage*, unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData*) const override;
-    virtual bool applySVGGlyphSelection(WidthIterator&, GlyphData&, bool mirror, int currentCharacter, unsigned& advanceLength) const override;
+    virtual bool applySVGGlyphSelection(WidthIterator&, GlyphData&, bool mirror, unsigned currentCharacter, unsigned& advanceLength) const override;
 
     SVGFontFaceElement* svgFontFaceElement() const { return m_svgFontFaceElement; }
 

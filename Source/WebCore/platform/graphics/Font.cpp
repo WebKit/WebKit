@@ -329,7 +329,7 @@ void Font::update(PassRefPtr<FontSelector> fontSelector) const
     m_typesettingFeatures = computeTypesettingFeatures();
 }
 
-float Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to, CustomFontNotReadyAction customFontNotReadyAction) const
+float Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, unsigned from, int initialTo, CustomFontNotReadyAction customFontNotReadyAction) const
 {
     // Don't draw anything while we are using custom fonts that are in the process of loading,
     // except if the 'force' argument is set to true (in which case it will use a fallback
@@ -337,7 +337,7 @@ float Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPo
     if (loadingCustomFonts() && customFontNotReadyAction == DoNotPaintIfFontNotReady)
         return 0;
 
-    to = (to == -1 ? run.length() : to);
+    unsigned to = initialTo < 0 ? run.length() : initialTo;
 
     CodePath codePathToUse = codePath(run);
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
@@ -350,13 +350,12 @@ float Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPo
     return drawComplexText(context, run, point, from, to);
 }
 
-void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to) const
+void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, unsigned from, int initialTo) const
 {
     if (loadingCustomFonts())
         return;
-
-    if (to < 0)
-        to = run.length();
+    
+    unsigned to = initialTo < 0 ? run.length() : initialTo;
 
     CodePath codePathToUse = codePath(run);
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
@@ -507,9 +506,9 @@ bool Font::fastAverageCharWidthIfAvailable(float& width) const
     return success;
 }
 
-void Font::adjustSelectionRectForText(const TextRun& run, LayoutRect& selectionRect, int from, int to) const
+void Font::adjustSelectionRectForText(const TextRun& run, LayoutRect& selectionRect, unsigned from, int initialTo) const
 {
-    to = (to == -1 ? run.length() : to);
+    unsigned to = initialTo < 0 ? run.length() : initialTo;
 
     CodePath codePathToUse = codePath(run);
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
@@ -1054,23 +1053,25 @@ bool Font::canReceiveTextEmphasis(UChar32 c)
     return true;
 }
     
-GlyphToPathTranslator::GlyphUnderlineType computeUnderlineType(const TextRun& textRun, const GlyphBuffer& glyphBuffer, int index)
+GlyphToPathTranslator::GlyphUnderlineType computeUnderlineType(const TextRun& textRun, const GlyphBuffer& glyphBuffer, unsigned index)
 {
     // In general, we want to skip descenders. However, skipping descenders on CJK characters leads to undesirable renderings,
     // so we want to draw through CJK characters (on a character-by-character basis).
     UChar32 baseCharacter;
-    int offsetInString = glyphBuffer.offsetInString(index);
+    int initialOffsetInString = glyphBuffer.offsetInString(index);
 
-    if (offsetInString == GlyphBuffer::kNoOffset) {
+    if (initialOffsetInString == GlyphBuffer::kNoOffset) {
         // We have no idea which character spawned this glyph. Bail.
         return GlyphToPathTranslator::GlyphUnderlineType::DrawOverGlyph;
     }
     
+    ASSERT(initialOffsetInString >= 0);
+    unsigned offsetInString = static_cast<unsigned>(initialOffsetInString);
+    
     if (textRun.is8Bit())
         baseCharacter = textRun.characters8()[offsetInString];
-    else {
+    else
         U16_NEXT(textRun.characters16(), offsetInString, textRun.length(), baseCharacter);
-    }
     
     // u_getIntPropertyValue with UCHAR_IDEOGRAPHIC doesn't return true for Japanese or Korean codepoints.
     // Instead, we can use the "Unicode allocation block" for the character.
