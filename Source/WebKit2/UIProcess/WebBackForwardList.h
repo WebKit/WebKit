@@ -56,6 +56,7 @@ public:
 
     void addItem(WebBackForwardListItem*);
     void goToItem(WebBackForwardListItem*);
+    void removeAllItems();
     void clear();
 
     WebBackForwardListItem* currentItem() const;

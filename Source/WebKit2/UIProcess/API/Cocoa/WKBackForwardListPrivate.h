@@ -31,6 +31,9 @@
 
 - (void)_removeAllItems;
 
+// Removes all items except the current one.
+- (void)_clear;
+
 @end
 
 #endif

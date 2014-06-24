@@ -110,6 +110,11 @@ static WKBackForwardListItem *toWKBackForwardListItem(WebBackForwardListItem* it
 
 - (void)_removeAllItems
 {
+    _list->removeAllItems();
+}
+
+- (void)_clear
+{
     _list->clear();
 }
 

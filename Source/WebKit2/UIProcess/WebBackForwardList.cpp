@@ -289,6 +289,26 @@ PassRefPtr<API::Array> WebBackForwardList::forwardListAsAPIArrayWithLimit(unsign
     return API::Array::create(std::move(vector));
 }
 
+void WebBackForwardList::removeAllItems()
+{
+    ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
+
+    Vector<RefPtr<WebBackForwardListItem>> removedItems;
+
+    for (auto& entry : m_entries) {
+        ASSERT(entry);
+        if (!entry)
+            continue;
+
+        m_page->backForwardRemovedItem(entry->itemID());
+        removedItems.append(std::move(entry));
+    }
+
+    m_entries.clear();
+    m_hasCurrentIndex = false;
+    m_page->didChangeBackForwardList(nullptr, std::move(removedItems));
+}
+
 void WebBackForwardList::clear()
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());

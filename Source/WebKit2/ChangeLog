@@ -1,5 +1,23 @@
 2014-06-24  Anders Carlsson  <andersca@apple.com>
 
+        Add SPI for clearing an entire back-forward list
+        https://bugs.webkit.org/show_bug.cgi?id=134274
+
+        Reviewed by Dan Bernstein.
+
+        Add -[WKBackForwardList _clear] which only clears the back-forward items, and
+        change -[WKBackForwardList _removeAllItems] to remove all items including the current one.
+
+        * UIProcess/API/Cocoa/WKBackForwardList.mm:
+        (-[WKBackForwardList _removeAllItems]):
+        (-[WKBackForwardList _clear]):
+        * UIProcess/API/Cocoa/WKBackForwardListPrivate.h:
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::removeAllItems):
+        * UIProcess/WebBackForwardList.h:
+
+2014-06-24  Anders Carlsson  <andersca@apple.com>
+
         Add iOS specific frame state member variables
         https://bugs.webkit.org/show_bug.cgi?id=134268
 
