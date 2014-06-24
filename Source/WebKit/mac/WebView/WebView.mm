@@ -518,7 +518,6 @@ WebLayoutMilestones kitLayoutMilestones(LayoutMilestones milestones)
         | (milestones & DidHitRelevantRepaintedObjectsAreaThreshold ? WebDidHitRelevantRepaintedObjectsAreaThreshold : 0);
 }
 
-#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
 static WebPageVisibilityState kit(PageVisibilityState visibilityState)
 {
     switch (visibilityState) {
@@ -533,7 +532,6 @@ static WebPageVisibilityState kit(PageVisibilityState visibilityState)
     ASSERT_NOT_REACHED();
     return WebPageVisibilityStateVisible;
 }
-#endif
 
 @interface WebView (WebFileInternal)
 #if !PLATFORM(IOS)
