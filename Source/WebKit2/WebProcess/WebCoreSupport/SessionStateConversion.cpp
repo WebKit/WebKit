@@ -35,6 +35,83 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static HTTPBody toHTTPBody(const FormData& formData)
+{
+    HTTPBody httpBody;
+
+    for (const auto& formDataElement : formData.elements()) {
+        HTTPBody::Element element;
+
+        switch (formDataElement.m_type) {
+        case FormDataElement::Type::Data:
+            element.type = HTTPBody::Element::Type::Data;
+            element.data = formDataElement.m_data;
+            break;
+
+        case FormDataElement::Type::EncodedFile:
+            element.filePath = formDataElement.m_filename;
+            element.fileStart = formDataElement.m_fileStart;
+            if (formDataElement.m_fileLength != BlobDataItem::toEndOfFile)
+                element.fileLength = formDataElement.m_fileLength;
+            if (formDataElement.m_expectedFileModificationTime != invalidFileTime())
+                element.expectedFileModificationTime = formDataElement.m_expectedFileModificationTime;
+            break;
+
+        case FormDataElement::Type::EncodedBlob:
+            element.blobURLString = formDataElement.m_url.string();
+            break;
+        }
+
+        httpBody.elements.append(std::move(element));
+    }
+
+    return httpBody;
+}
+
+static FrameState toFrameState(const HistoryItem& historyItem)
+{
+    FrameState frameState;
+
+    frameState.urlString = historyItem.urlString();
+    frameState.originalURLString = historyItem.originalURLString();
+    frameState.referrer = historyItem.referrer();
+    frameState.target = historyItem.target();
+
+    frameState.documentState = historyItem.documentState();
+    if (RefPtr<SerializedScriptValue> stateObject = historyItem.stateObject())
+        frameState.stateObjectData = stateObject->data();
+
+    frameState.documentSequenceNumber = historyItem.documentSequenceNumber();
+    frameState.itemSequenceNumber = historyItem.itemSequenceNumber();
+
+    frameState.scrollPoint = historyItem.scrollPoint();
+    frameState.pageScaleFactor = historyItem.pageScaleFactor();
+
+    if (FormData* formData = const_cast<HistoryItem&>(historyItem).formData()) {
+        HTTPBody httpBody = toHTTPBody(*formData);
+        httpBody.contentType = historyItem.formContentType();
+
+        frameState.httpBody = std::move(httpBody);
+    }
+
+    for (auto& childHistoryItem : historyItem.children()) {
+        FrameState childFrameState = toFrameState(*childHistoryItem);
+        frameState.children.append(std::move(childFrameState));
+    }
+
+    return frameState;
+}
+
+PageState toPageState(const WebCore::HistoryItem& historyItem)
+{
+    PageState pageState;
+
+    pageState.title = historyItem.title();
+    pageState.mainFrameState = toFrameState(historyItem);
+
+    return pageState;
+}
+
 static PassRefPtr<FormData> toFormData(const HTTPBody& httpBody)
 {
     RefPtr<FormData> formData = FormData::create();
