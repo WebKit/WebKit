@@ -103,7 +103,7 @@ Evas_Object* ewk_favicon_database_icon_get(Ewk_Favicon_Database* ewkIconDatabase
     if (!surface)
         return 0;
 
-    return WebCore::evasObjectFromCairoImageSurface(evas, surface.get()).leakRef();
+    return WebCore::evasObjectFromCairoImageSurface(evas, surface.get()).release();
 }
 
 void ewk_favicon_database_icon_change_callback_add(Ewk_Favicon_Database* ewkIconDatabase, Ewk_Favicon_Database_Icon_Change_Cb callback, void* userData)

@@ -34,7 +34,6 @@
 
 #include <Eina.h>
 #include <cairo.h>
-#include <wtf/efl/RefPtrEfl.h>
 #include <wtf/efl/UniquePtrEfl.h>
 
 namespace WebCore {
@@ -214,7 +213,7 @@ private:
     String m_themePath;
     // Order so that the canvas gets destroyed at last.
     EflUniquePtr<Ecore_Evas> m_canvas;
-    RefPtr<Evas_Object> m_edje;
+    EflUniquePtr<Evas_Object> m_edje;
 
     bool m_supportsSelectionForegroundColor;
 
@@ -241,7 +240,7 @@ private:
     private:
         // Order so that the canvas gets destroyed at last.
         EflUniquePtr<Ecore_Evas> m_canvas;
-        RefPtr<Evas_Object> m_edje;
+        EflUniquePtr<Evas_Object> m_edje;
         RefPtr<cairo_surface_t> m_surface;
     };
 

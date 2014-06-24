@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-PassRefPtr<Evas_Object> evasObjectFromCairoImageSurface(Evas* canvas, cairo_surface_t* surface)
+EflUniquePtr<Evas_Object> evasObjectFromCairoImageSurface(Evas* canvas, cairo_surface_t* surface)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(surface, 0);
@@ -33,21 +33,21 @@ PassRefPtr<Evas_Object> evasObjectFromCairoImageSurface(Evas* canvas, cairo_surf
     cairo_status_t status = cairo_surface_status(surface);
     if (status != CAIRO_STATUS_SUCCESS) {
         EINA_LOG_ERR("cairo surface is invalid: %s", cairo_status_to_string(status));
-        return 0;
+        return nullptr;
     }
 
     cairo_surface_type_t type = cairo_surface_get_type(surface);
     if (type != CAIRO_SURFACE_TYPE_IMAGE) {
         EINA_LOG_ERR("unknown surface type %d, required %d (CAIRO_SURFACE_TYPE_IMAGE).",
             type, CAIRO_SURFACE_TYPE_IMAGE);
-        return 0;
+        return nullptr;
     }
 
     cairo_format_t format = cairo_image_surface_get_format(surface);
     if (format != CAIRO_FORMAT_ARGB32 && format != CAIRO_FORMAT_RGB24) {
         EINA_LOG_ERR("unknown surface format %d, expected %d or %d.",
             format, CAIRO_FORMAT_ARGB32, CAIRO_FORMAT_RGB24);
-        return 0;
+        return nullptr;
     }
 
     int width = cairo_image_surface_get_width(surface);
@@ -55,19 +55,19 @@ PassRefPtr<Evas_Object> evasObjectFromCairoImageSurface(Evas* canvas, cairo_surf
     int stride = cairo_image_surface_get_stride(surface);
     if (width <= 0 || height <= 0 || stride <= 0) {
         EINA_LOG_ERR("invalid image size %dx%d, stride=%d", width, height, stride);
-        return 0;
+        return nullptr;
     }
 
     void* data = cairo_image_surface_get_data(surface);
     if (!data) {
         EINA_LOG_ERR("could not get source data.");
-        return 0;
+        return nullptr;
     }
 
-    RefPtr<Evas_Object> image = adoptRef(evas_object_image_filled_add(canvas));
+    EflUniquePtr<Evas_Object> image = EflUniquePtr<Evas_Object>(evas_object_image_filled_add(canvas));
     if (!image) {
         EINA_LOG_ERR("could not add image to canvas.");
-        return 0;
+        return nullptr;
     }
 
     evas_object_image_colorspace_set(image.get(), EVAS_COLORSPACE_ARGB8888);
@@ -77,12 +77,12 @@ PassRefPtr<Evas_Object> evasObjectFromCairoImageSurface(Evas* canvas, cairo_surf
     if (evas_object_image_stride_get(image.get()) != stride) {
         EINA_LOG_ERR("evas' stride %d diverges from cairo's %d.",
             evas_object_image_stride_get(image.get()), stride);
-        return 0;
+        return nullptr;
     }
 
     evas_object_image_data_copy_set(image.get(), data);
 
-    return image.release();
+    return std::move(image);
 }
 
 PassRefPtr<cairo_surface_t> createSurfaceForBackingStore(Ecore_Evas* ee)

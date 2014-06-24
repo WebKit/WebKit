@@ -413,7 +413,7 @@ void EwkView::updateCursor()
         if (!cursorImage)
             return;
 
-        RefPtr<Evas_Object> cursorObject = adoptRef(cursorImage->getEvasObject(sd->base.evas));
+        EflUniquePtr<Evas_Object> cursorObject = EflUniquePtr<Evas_Object>(cursorImage->getEvasObject(sd->base.evas));
         if (!cursorObject)
             return;
 
@@ -427,7 +427,7 @@ void EwkView::updateCursor()
 
         Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(sd->base.evas);
         // ecore_evas takes care of freeing the cursor object.
-        ecore_evas_object_cursor_set(ecoreEvas, cursorObject.release().leakRef(), EVAS_LAYER_MAX, hotSpot.x(), hotSpot.y());
+        ecore_evas_object_cursor_set(ecoreEvas, cursorObject.release(), EVAS_LAYER_MAX, hotSpot.x(), hotSpot.y());
         return;
     }
 
@@ -435,7 +435,7 @@ void EwkView::updateCursor()
     if (!group)
         return;
 
-    RefPtr<Evas_Object> cursorObject = adoptRef(edje_object_add(sd->base.evas));
+    EflUniquePtr<Evas_Object> cursorObject = EflUniquePtr<Evas_Object>(edje_object_add(sd->base.evas));
 
     Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(sd->base.evas);
     if (!m_theme || !edje_object_file_set(cursorObject.get(), m_theme, group)) {
@@ -470,7 +470,7 @@ void EwkView::updateCursor()
         hotspotY = atoi(data);
 
     // ecore_evas takes care of freeing the cursor object.
-    ecore_evas_object_cursor_set(ecoreEvas, cursorObject.release().leakRef(), EVAS_LAYER_MAX, hotspotX, hotspotY);
+    ecore_evas_object_cursor_set(ecoreEvas, cursorObject.release(), EVAS_LAYER_MAX, hotspotX, hotspotY);
 }
 
 void EwkView::setCursor(const Cursor& cursor)

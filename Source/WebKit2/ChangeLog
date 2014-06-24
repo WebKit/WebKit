@@ -1,3 +1,19 @@
+2014-06-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Replace RefPtr<Evas_Object> with UniquePtrEfl
+        https://bugs.webkit.org/show_bug.cgi?id=134236
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::updateCursor):
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/API/efl/SnapshotImageGL.cpp:
+        * UIProcess/API/efl/ewk_favicon_database.cpp:
+        (ewk_favicon_database_icon_get):
+        * UIProcess/API/efl/tests/test_ewk2_refptr_evas_object.cpp: Removed.
+
 2014-06-23  Daniel Bates  <dabates@apple.com>
 
         [iOS][WK2] REGRESSION (r169324): Page jumps to top when you type into a text field

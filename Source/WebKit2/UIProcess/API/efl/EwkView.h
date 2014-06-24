@@ -25,7 +25,6 @@
 #include "EwkViewCallbacks.h"
 #include "PageViewportController.h"
 #include "PageViewportControllerClientEfl.h"
-#include "RefPtrEfl.h"
 #include "WKEinaSharedString.h"
 #include "WKRetainPtr.h"
 #include "WebViewEfl.h"

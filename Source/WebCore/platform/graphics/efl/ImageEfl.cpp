@@ -66,7 +66,7 @@ PassRefPtr<Image> Image::loadPlatformResource(const char* name)
 Evas_Object* BitmapImage::getEvasObject(Evas* evas)
 {
     RefPtr<cairo_surface_t> surface = nativeImageForCurrentFrame();
-    return surface ? evasObjectFromCairoImageSurface(evas, surface.get()).leakRef() : 0;
+    return surface ? evasObjectFromCairoImageSurface(evas, surface.get()).release() : nullptr;
 }
 
 }

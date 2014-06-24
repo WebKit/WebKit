@@ -1,3 +1,21 @@
+2014-06-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Replace RefPtr<Evas_Object> with UniquePtrEfl
+        https://bugs.webkit.org/show_bug.cgi?id=134236
+
+        Reviewed by Gyuyoung Kim.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::ThemePartCacheEntry::create):
+        (WebCore::RenderThemeEfl::loadTheme):
+        (WebCore::RenderThemeEfl::applyPartDescriptionsFrom):
+        * platform/efl/RenderThemeEfl.h:
+        * platform/graphics/efl/CairoUtilitiesEfl.cpp:
+        (WebCore::evasObjectFromCairoImageSurface):
+        * platform/graphics/efl/CairoUtilitiesEfl.h:
+        * platform/graphics/efl/ImageEfl.cpp:
+        (WebCore::BitmapImage::getEvasObject):
+
 2014-06-23  Jeremy Jones  <jeremyj@apple.com>
 
         Chapter forward/backward should seek to beginning/end.

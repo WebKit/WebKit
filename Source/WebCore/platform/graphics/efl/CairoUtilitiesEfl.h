@@ -21,15 +21,13 @@
 #ifndef CairoUtilitiesEfl_h
 #define CairoUtilitiesEfl_h
 
-#include <Ecore_Evas.h>
-#include <Evas.h>
 #include <cairo.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/efl/RefPtrEfl.h>
+#include <wtf/efl/UniquePtrEfl.h>
 
 namespace WebCore {
 
-PassRefPtr<Evas_Object> evasObjectFromCairoImageSurface(Evas* canvas, cairo_surface_t*);
+EflUniquePtr<Evas_Object> evasObjectFromCairoImageSurface(Evas* canvas, cairo_surface_t*);
 PassRefPtr<cairo_surface_t> createSurfaceForBackingStore(Ecore_Evas* ee);
 PassRefPtr<cairo_surface_t> createSurfaceForImage(Evas_Object* image);
 
