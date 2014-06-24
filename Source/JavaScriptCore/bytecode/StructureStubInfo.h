@@ -200,7 +200,7 @@ struct StructureStubInfo {
     CodeOrigin codeOrigin;
 
     struct {
-        SpillRegistersMode spillMode : 8;
+        unsigned spillMode : 8;
         int8_t baseGPR;
 #if USE(JSVALUE32_64)
         int8_t valueTagGPR;

@@ -64,9 +64,9 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
     ASSERT_WITH_SECURITY_IMPLICATION(scriptExecutionContext->isWorkerGlobalScope());
 
     ThreadableLoaderOptions options;
-    options.allowCredentials = AllowStoredCredentials;
+    options.setAllowCredentials(AllowStoredCredentials);
     options.crossOriginRequestPolicy = crossOriginRequestPolicy;
-    options.sendLoadCallbacks = SendCallbacks;
+    options.setSendLoadCallbacks(SendCallbacks);
 
     WorkerThreadableLoader::loadResourceSynchronously(toWorkerGlobalScope(scriptExecutionContext), *request, *this, options);
 }
@@ -82,9 +82,9 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecut
         return;
 
     ThreadableLoaderOptions options;
-    options.allowCredentials = AllowStoredCredentials;
+    options.setAllowCredentials(AllowStoredCredentials);
     options.crossOriginRequestPolicy = crossOriginRequestPolicy;
-    options.sendLoadCallbacks = SendCallbacks;
+    options.setSendLoadCallbacks(SendCallbacks);
 
     // During create, callbacks may happen which remove the last reference to this object.
     Ref<WorkerScriptLoader> protect(*this);

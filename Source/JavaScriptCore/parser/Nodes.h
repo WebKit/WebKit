@@ -1040,7 +1040,7 @@ namespace JSC {
         ExpressionNode* m_base;
         ExpressionNode* m_subscript;
         ExpressionNode* m_right;
-        Operator m_operator : 30;
+        unsigned m_operator : 30;
         bool m_subscriptHasAssignments : 1;
         bool m_rightHasAssignments : 1;
     };
@@ -1082,7 +1082,7 @@ namespace JSC {
         ExpressionNode* m_base;
         const Identifier& m_ident;
         ExpressionNode* m_right;
-        Operator m_operator : 31;
+        unsigned m_operator : 31;
         bool m_rightHasAssignments : 1;
     };
 

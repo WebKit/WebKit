@@ -128,12 +128,12 @@ void EventSource::connect()
     SecurityOrigin* origin = scriptExecutionContext()->securityOrigin();
 
     ThreadableLoaderOptions options;
-    options.sendLoadCallbacks = SendCallbacks;
-    options.sniffContent = DoNotSniffContent;
-    options.allowCredentials = (origin->canRequest(m_url) || m_withCredentials) ? AllowStoredCredentials : DoNotAllowStoredCredentials;
+    options.setSendLoadCallbacks(SendCallbacks);
+    options.setSniffContent(DoNotSniffContent);
+    options.setAllowCredentials((origin->canRequest(m_url) || m_withCredentials) ? AllowStoredCredentials : DoNotAllowStoredCredentials);
     options.preflightPolicy = PreventPreflight;
     options.crossOriginRequestPolicy = UseAccessControl;
-    options.dataBufferingPolicy = DoNotBufferData;
+    options.setDataBufferingPolicy(DoNotBufferData);
     options.securityOrigin = origin;
 
     m_loader = ThreadableLoader::create(scriptExecutionContext(), this, request, options);

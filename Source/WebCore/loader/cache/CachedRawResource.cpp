@@ -60,7 +60,7 @@ const char* CachedRawResource::calculateIncrementalDataChunk(ResourceBuffer* dat
 void CachedRawResource::addDataBuffer(ResourceBuffer* data)
 {
     CachedResourceHandle<CachedRawResource> protect(this);
-    ASSERT(m_options.dataBufferingPolicy == BufferData);
+    ASSERT(m_options.dataBufferingPolicy() == BufferData);
     m_data = data;
 
     unsigned incrementalDataLength;
@@ -68,7 +68,7 @@ void CachedRawResource::addDataBuffer(ResourceBuffer* data)
     if (data)
         setEncodedSize(data->size());
     notifyClientsDataWasReceived(incrementalData, incrementalDataLength);
-    if (m_options.dataBufferingPolicy == DoNotBufferData) {
+    if (m_options.dataBufferingPolicy() == DoNotBufferData) {
         if (m_loader)
             m_loader->setDataBufferingPolicy(DoNotBufferData);
         clear();
@@ -77,14 +77,14 @@ void CachedRawResource::addDataBuffer(ResourceBuffer* data)
 
 void CachedRawResource::addData(const char* data, unsigned length)
 {
-    ASSERT(m_options.dataBufferingPolicy == DoNotBufferData);
+    ASSERT(m_options.dataBufferingPolicy() == DoNotBufferData);
     notifyClientsDataWasReceived(data, length);
 }
 
 void CachedRawResource::finishLoading(ResourceBuffer* data)
 {
     CachedResourceHandle<CachedRawResource> protect(this);
-    DataBufferingPolicy dataBufferingPolicy = m_options.dataBufferingPolicy;
+    DataBufferingPolicy dataBufferingPolicy = m_options.dataBufferingPolicy();
     if (dataBufferingPolicy == BufferData) {
         m_data = data;
 
@@ -96,7 +96,7 @@ void CachedRawResource::finishLoading(ResourceBuffer* data)
     }
 
     CachedResource::finishLoading(data);
-    if (dataBufferingPolicy == BufferData && m_options.dataBufferingPolicy == DoNotBufferData) {
+    if (dataBufferingPolicy == BufferData && m_options.dataBufferingPolicy() == DoNotBufferData) {
         if (m_loader)
             m_loader->setDataBufferingPolicy(DoNotBufferData);
         clear();
@@ -197,7 +197,7 @@ void CachedRawResource::setDefersLoading(bool defers)
 
 void CachedRawResource::setDataBufferingPolicy(DataBufferingPolicy dataBufferingPolicy)
 {
-    m_options.dataBufferingPolicy = dataBufferingPolicy;
+    m_options.setDataBufferingPolicy(dataBufferingPolicy);
 }
 
 static bool shouldIgnoreHeaderForCacheReuse(const String& headerName)
@@ -223,7 +223,7 @@ static bool shouldIgnoreHeaderForCacheReuse(const String& headerName)
 
 bool CachedRawResource::canReuse(const ResourceRequest& newRequest) const
 {
-    if (m_options.dataBufferingPolicy == DoNotBufferData)
+    if (m_options.dataBufferingPolicy() == DoNotBufferData)
         return false;
 
     if (m_resourceRequest.httpMethod() != newRequest.httpMethod())

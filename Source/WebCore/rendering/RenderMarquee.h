@@ -92,7 +92,7 @@ private:
     bool m_reset: 1;
     bool m_suspended : 1;
     bool m_stopped : 1;
-    EMarqueeDirection m_direction : 4;
+    EMarqueeDirection m_direction : 4; // Not unsigned because EMarqueeDirection has negative values
 };
 
 } // namespace WebCore

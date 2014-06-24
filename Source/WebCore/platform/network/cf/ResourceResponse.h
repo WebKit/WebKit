@@ -111,7 +111,7 @@ private:
 
     static bool platformCompare(const ResourceResponse& a, const ResourceResponse& b);
 
-    InitLevel m_initLevel : 3;
+    unsigned m_initLevel : 3;
     bool m_platformResponseIsUpToDate : 1;
 
 #if USE(CFNETWORK)

@@ -258,7 +258,7 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const Reso
     }
 
     FrameLoader& frameLoader = cachedResourceLoader->frame()->loader();
-    if (options.securityCheck == DoSecurityCheck && (frameLoader.state() == FrameStateProvisional || !frameLoader.activeDocumentLoader() || frameLoader.activeDocumentLoader()->isStopping())) {
+    if (options.securityCheck() == DoSecurityCheck && (frameLoader.state() == FrameStateProvisional || !frameLoader.activeDocumentLoader() || frameLoader.activeDocumentLoader()->isStopping())) {
         failBeforeStarting();
         return;
     }
@@ -336,12 +336,12 @@ void CachedResource::checkNotify()
 
 void CachedResource::addDataBuffer(ResourceBuffer*)
 {
-    ASSERT(m_options.dataBufferingPolicy == BufferData);
+    ASSERT(m_options.dataBufferingPolicy() == BufferData);
 }
 
 void CachedResource::addData(const char*, unsigned)
 {
-    ASSERT(m_options.dataBufferingPolicy == DoNotBufferData);
+    ASSERT(m_options.dataBufferingPolicy() == DoNotBufferData);
 }
 
 void CachedResource::finishLoading(ResourceBuffer*)

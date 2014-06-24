@@ -84,8 +84,8 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const
         else
             request.setInitiator(m_initiatorName);
 
-        if (options.requestOriginPolicy == PotentiallyCrossOriginEnabled)
-            updateRequestForAccessControl(request.mutableResourceRequest(), loader->document()->securityOrigin(), options.allowCredentials);
+        if (options.requestOriginPolicy() == PotentiallyCrossOriginEnabled)
+            updateRequestForAccessControl(request.mutableResourceRequest(), loader->document()->securityOrigin(), options.allowCredentials());
 
         if (CachedResourceHandle<CachedImage> cachedImage = loader->requestImage(request)) {
             detachPendingImage();

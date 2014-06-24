@@ -800,7 +800,7 @@ public:
 
 #if ENABLE(CSS_COMPOSITING)
     bool hasBlendMode() const { return renderer().hasBlendMode(); }
-    BlendMode blendMode() const { return m_blendMode; }
+    BlendMode blendMode() const { return static_cast<BlendMode>(m_blendMode); }
 
     bool isolatesCompositedBlending() const { return m_hasNotIsolatedCompositedBlendingDescendants && isStackingContext(); }
     bool hasNotIsolatedCompositedBlendingDescendants() const { return m_hasNotIsolatedCompositedBlendingDescendants; }
@@ -1272,7 +1272,7 @@ private:
 #endif
 
 #if ENABLE(CSS_COMPOSITING)
-    BlendMode m_blendMode : 5;
+    unsigned m_blendMode : 5;
     bool m_hasNotIsolatedCompositedBlendingDescendants : 1;
     bool m_hasNotIsolatedBlendingDescendants : 1;
     bool m_hasNotIsolatedBlendingDescendantsStatusDirty : 1;

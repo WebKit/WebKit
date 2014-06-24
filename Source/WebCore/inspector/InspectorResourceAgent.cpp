@@ -760,8 +760,8 @@ void InspectorResourceAgent::loadResource(ErrorString* errorString, const String
     request.setHiddenFromInspector(true);
 
     ThreadableLoaderOptions options;
-    options.sendLoadCallbacks = SendCallbacks; // So we remove this from m_hiddenRequestIdentifiers on completion.
-    options.allowCredentials = AllowStoredCredentials;
+    options.setSendLoadCallbacks(SendCallbacks); // So we remove this from m_hiddenRequestIdentifiers on completion.
+    options.setAllowCredentials(AllowStoredCredentials);
     options.crossOriginRequestPolicy = AllowCrossOriginRequests;
 
     // InspectorThreadableLoaderClient deletes itself when the load completes.

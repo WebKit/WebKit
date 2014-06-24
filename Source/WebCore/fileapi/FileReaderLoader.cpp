@@ -92,10 +92,10 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, Blo
         request.setHTTPHeaderField(HTTPHeaderName::Range, String::format("bytes=%d-%d", m_rangeStart, m_rangeEnd));
 
     ThreadableLoaderOptions options;
-    options.sendLoadCallbacks = SendCallbacks;
-    options.sniffContent = DoNotSniffContent;
+    options.setSendLoadCallbacks(SendCallbacks);
+    options.setSniffContent(DoNotSniffContent);
     options.preflightPolicy = ConsiderPreflight;
-    options.allowCredentials = AllowStoredCredentials;
+    options.setAllowCredentials(AllowStoredCredentials);
     options.crossOriginRequestPolicy = DenyCrossOriginRequests;
 
     if (m_client)

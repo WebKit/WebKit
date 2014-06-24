@@ -1,3 +1,20 @@
+2014-06-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] MSVC mishandles enums in bitfields
+        https://bugs.webkit.org/show_bug.cgi?id=134237
+
+        Reviewed by Michael Saboff.
+
+        Replace uses of enum types in bit fields with unsigned to
+        avoid losing a bit to hold the sign value. This can result
+        in Windows interpreting the value of the field improperly.
+
+        * loader/ResourceLoaderOptions.h:
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/cf/ResourceResponse.h:
+        * rendering/RenderLayer.h:
+        * rendering/RenderMarquee.h:
+
 2014-06-24  Antti Koivisto  <antti@apple.com>
 
         Try to fix build.

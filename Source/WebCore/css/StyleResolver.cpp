@@ -3536,8 +3536,8 @@ void StyleResolver::loadPendingShapeImage(ShapeValue* shapeValue)
     auto& pendingImage = toStylePendingImage(*image);
 
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
-    options.requestOriginPolicy = PotentiallyCrossOriginEnabled;
-    options.allowCredentials = DoNotAllowStoredCredentials;
+    options.setRequestOriginPolicy(PotentiallyCrossOriginEnabled);
+    options.setAllowCredentials(DoNotAllowStoredCredentials);
 
     shapeValue->setImage(loadPendingImage(pendingImage, options));
 }

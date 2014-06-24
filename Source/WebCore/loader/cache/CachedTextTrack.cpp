@@ -50,7 +50,7 @@ CachedTextTrack::~CachedTextTrack()
 
 void CachedTextTrack::addDataBuffer(ResourceBuffer* data)
 {
-    ASSERT(m_options.dataBufferingPolicy == BufferData);
+    ASSERT(m_options.dataBufferingPolicy() == BufferData);
     m_data = data;
     setEncodedSize(m_data.get() ? m_data->size() : 0);
 

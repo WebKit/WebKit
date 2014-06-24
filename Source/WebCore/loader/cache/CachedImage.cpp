@@ -416,13 +416,13 @@ void CachedImage::addIncrementalDataBuffer(ResourceBuffer* data)
 
 void CachedImage::addDataBuffer(ResourceBuffer* data)
 {
-    ASSERT(m_options.dataBufferingPolicy == BufferData);
+    ASSERT(m_options.dataBufferingPolicy() == BufferData);
     addIncrementalDataBuffer(data);
 }
 
 void CachedImage::addData(const char* data, unsigned length)
 {
-    ASSERT(m_options.dataBufferingPolicy == DoNotBufferData);
+    ASSERT(m_options.dataBufferingPolicy() == DoNotBufferData);
     addIncrementalDataBuffer(ResourceBuffer::create(data, length).get());
 }
 

@@ -1666,7 +1666,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext* context, const Render
 
 #if ENABLE(CSS_COMPOSITING)
         if (hasBlendMode())
-            context->setCompositeOperation(context->compositeOperation(), m_blendMode);
+            context->setCompositeOperation(context->compositeOperation(), blendMode());
 #endif
 
         context->beginTransparencyLayer(renderer().opacity());

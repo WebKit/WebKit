@@ -219,7 +219,7 @@ namespace WebCore {
         HTTPHeaderMap m_httpHeaderFields;
         Vector<String> m_responseContentDispositionEncodingFallbackArray;
         RefPtr<FormData> m_httpBody;
-        ResourceRequestCachePolicy m_cachePolicy : 3;
+        unsigned m_cachePolicy : 3;
         bool m_allowCookies : 1;
         mutable bool m_resourceRequestUpdated : 1;
         mutable bool m_platformRequestUpdated : 1;
@@ -231,7 +231,7 @@ namespace WebCore {
 #if ENABLE(INSPECTOR)
         bool m_hiddenFromInspector : 1;
 #endif
-        ResourceLoadPriority m_priority : 4;
+        ResourceLoadPriority m_priority : 4; // not unsigned because ResourceLoadPriority has negative values
 
     private:
         const ResourceRequest& asResourceRequest() const;

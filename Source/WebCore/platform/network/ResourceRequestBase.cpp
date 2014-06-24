@@ -150,7 +150,7 @@ ResourceRequestCachePolicy ResourceRequestBase::cachePolicy() const
 {
     updateResourceRequest(); 
     
-    return m_cachePolicy; 
+    return static_cast<ResourceRequestCachePolicy>(m_cachePolicy);
 }
 
 void ResourceRequestBase::setCachePolicy(ResourceRequestCachePolicy cachePolicy)
