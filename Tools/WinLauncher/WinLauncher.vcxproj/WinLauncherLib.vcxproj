@@ -203,6 +203,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\AccessibilityDelegate.cpp" />
+    <ClCompile Include="..\Common.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\DOMDefaultImpl.cpp" />
     <ClCompile Include="..\PrintWebUIDelegate.cpp" />
     <ClCompile Include="..\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -219,6 +228,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\WinLauncher.cpp" />
+    <ClCompile Include="..\WinLauncherWebHost.cpp" />
+    <ClCompile Include="..\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AccessibilityDelegate.h" />
@@ -227,6 +238,7 @@
     <ClInclude Include="..\stdafx.h" />
     <ClInclude Include="..\WinLauncher.h" />
     <ClInclude Include="..\WinLauncherReplace.h" />
+    <ClInclude Include="..\WinLauncherWebHost.h" />
     <ClInclude Include="WinLauncherLibResource.h" />
   </ItemGroup>
   <ItemGroup>

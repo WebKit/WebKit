@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,97 +23,68 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
-
-#include "resource.h"
 #include <WebKit/WebKit.h>
+#include <vector>
 
-class WinLauncherWebHost : public IWebFrameLoadDelegate
+typedef _com_ptr_t<_com_IIID<IWebFrame, &__uuidof(IWebFrame)>> IWebFramePtr;
+typedef _com_ptr_t<_com_IIID<IWebView, &__uuidof(IWebView)>> IWebViewPtr;
+typedef _com_ptr_t<_com_IIID<IWebViewPrivate, &__uuidof(IWebViewPrivate)>> IWebViewPrivatePtr;
+typedef _com_ptr_t<_com_IIID<IWebFrameLoadDelegate, &__uuidof(IWebFrameLoadDelegate)>> IWebFrameLoadDelegatePtr;
+typedef _com_ptr_t<_com_IIID<IWebHistory, &__uuidof(IWebHistory)>> IWebHistoryPtr;
+typedef _com_ptr_t<_com_IIID<IWebHistoryItem, &__uuidof(IWebHistoryItem)>> IWebHistoryItemPtr;
+typedef _com_ptr_t<_com_IIID<IWebPreferences, &__uuidof(IWebPreferences)>> IWebPreferencesPtr;
+typedef _com_ptr_t<_com_IIID<IWebPreferencesPrivate, &__uuidof(IWebPreferencesPrivate)>> IWebPreferencesPrivatePtr;
+typedef _com_ptr_t<_com_IIID<IWebUIDelegate, &__uuidof(IWebUIDelegate)>> IWebUIDelegatePtr;
+typedef _com_ptr_t<_com_IIID<IAccessibilityDelegate, &__uuidof(IAccessibilityDelegate)>> IAccessibilityDelegatePtr;
+typedef _com_ptr_t<_com_IIID<IWebInspector, &__uuidof(IWebInspector)>> IWebInspectorPtr;
+
+class WinLauncher
 {
 public:
-    WinLauncherWebHost() : m_refCount(1) {}
+    WinLauncher(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false);
 
-    // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    HRESULT init();
+    HRESULT prepareViews(HWND mainWnd, const RECT& clientRect, const BSTR& requestedURL, HWND& viewWnd);
 
-    // IWebFrameLoadDelegate
-    virtual HRESULT STDMETHODCALLTYPE didStartProvisionalLoadForFrame( 
-        /* [in] */ IWebView* webView,
-        /* [in] */ IWebFrame* /*frame*/) { return S_OK; }
-    
-    virtual HRESULT STDMETHODCALLTYPE didReceiveServerRedirectForProvisionalLoadForFrame( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IWebFrame *frame) { return S_OK; }
-    
-    virtual HRESULT STDMETHODCALLTYPE didFailProvisionalLoadWithError( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IWebError *error,
-        /* [in] */ IWebFrame*);
-    
-    virtual HRESULT STDMETHODCALLTYPE didCommitLoadForFrame( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IWebFrame *frame) { return updateAddressBar(webView); }
-    
-    virtual HRESULT STDMETHODCALLTYPE didReceiveTitle( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ BSTR title,
-        /* [in] */ IWebFrame *frame) { return S_OK; }
-    
-    virtual HRESULT STDMETHODCALLTYPE didChangeIcons(
-        /* [in] */ IWebView *webView,
-        /* [in] */ IWebFrame *frame) { return S_OK; }
+    HRESULT loadURL(const BSTR& passedURL);
 
-    virtual HRESULT STDMETHODCALLTYPE didReceiveIcon( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ OLE_HANDLE hBitmap,
-        /* [in] */ IWebFrame *frame) { return S_OK; }
-    
-    virtual HRESULT STDMETHODCALLTYPE didFinishLoadForFrame( 
-        /* [in] */ IWebView* webView,
-        /* [in] */ IWebFrame* /*frame*/);
-    
-    virtual HRESULT STDMETHODCALLTYPE didFailLoadWithError( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IWebError *error,
-        /* [in] */ IWebFrame *forFrame) { return S_OK; }
-    
-    virtual HRESULT STDMETHODCALLTYPE didChangeLocationWithinPageForFrame( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IWebFrame *frame) { return S_OK; }
+    void showLastVisitedSites(IWebView& webView);
+    void launchInspector();
+    void navigateForwardOrBackward(HWND hWnd, UINT menuID);
+    void navigateToHistory(HWND hWnd, UINT menuID);
+    bool seedInitialDefaultPreferences();
+    bool setToDefaultPreferences();
 
-    virtual HRESULT STDMETHODCALLTYPE willPerformClientRedirectToURL( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ BSTR url,
-        /* [in] */ double delaySeconds,
-        /* [in] */ DATE fireDate,
-        /* [in] */ IWebFrame *frame) { return S_OK; }
-    
-    virtual HRESULT STDMETHODCALLTYPE didCancelClientRedirectForFrame( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IWebFrame *frame) { return S_OK; }
-    
-    virtual HRESULT STDMETHODCALLTYPE willCloseFrame( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IWebFrame *frame) { return S_OK; }
-    
-    virtual /* [local] */ HRESULT STDMETHODCALLTYPE windowScriptObjectAvailable( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ JSContextRef context,
-        /* [in] */ JSObjectRef windowScriptObject)  { return S_OK; }
+    HRESULT setFrameLoadDelegate(IWebFrameLoadDelegate*);
+    HRESULT setUIDelegate(IWebUIDelegate*);
+    HRESULT setAccessibilityDelegate(IAccessibilityDelegate*);
 
-    virtual /* [local] */ HRESULT STDMETHODCALLTYPE didClearWindowObject( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ JSContextRef context,
-        /* [in] */ JSObjectRef windowScriptObject,
-        /* [in] */ IWebFrame *frame) { return S_OK; }
+    IWebPreferencesPtr standardPreferences() { return m_standardPreferences;  }
+    IWebPreferencesPrivatePtr privatePreferences() { return m_prefsPrivate; }
+    IWebFramePtr mainFrame();
 
-    // WinLauncherWebHost
+    bool hasWebView() const { return !!m_webView; }
+    bool usesLayeredWebView() const { return m_useLayeredWebView; }
+    bool goBack();
+    bool goForward();
 
-protected:
-    HRESULT updateAddressBar(IWebView* webView);
+private:
+    std::vector<IWebHistoryItemPtr> m_historyItems;
 
-protected:
-    ULONG                   m_refCount;
+    IWebViewPtr m_webView;
+    IWebViewPrivatePtr m_webViewPrivate;
+
+    IWebHistoryPtr m_webHistory;
+    IWebInspectorPtr m_inspector;
+    IWebPreferencesPtr m_standardPreferences;
+    IWebPreferencesPrivatePtr m_prefsPrivate;
+
+    IWebFrameLoadDelegatePtr m_frameLoadDelegate;
+    IWebUIDelegatePtr m_uiDelegate;
+    IAccessibilityDelegatePtr m_accessibilityDelegate;
+
+    HWND m_hMainWnd;
+    HWND m_hURLBarWnd;
+
+    bool m_useLayeredWebView;
 };

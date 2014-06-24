@@ -1,3 +1,229 @@
+2014-06-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Clean up and refactor WinLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=134209
+
+        Reviewed by Tim Thorton.
+
+        Relanding r170339 and r170340 with correct WinLauncher.h file.
+
+        * WinLauncher/Common.cpp: Copied from WinLauncher/WinLauncher.cpp.
+        (PrintView):
+        (ToggleMenuItem):
+        (WndProc):
+        (BackButtonProc):
+        (ForwardButtonProc):
+        (loadURL):
+        (shouldUseFullDesktop): Deleted.
+        (SimpleEventListener::SimpleEventListener): Deleted.
+        (SimpleEventListener::handleEvent): Deleted.
+        (WinLauncherWebHost::updateAddressBar): Deleted.
+        (WinLauncherWebHost::didFailProvisionalLoadWithError): Deleted.
+        (WinLauncherWebHost::QueryInterface): Deleted.
+        (WinLauncherWebHost::AddRef): Deleted.
+        (WinLauncherWebHost::Release): Deleted.
+        (updateMenuItemForHistoryItem): Deleted.
+        (showLastVisitedSites): Deleted.
+        (WinLauncherWebHost::didFinishLoadForFrame): Deleted.
+        (resizeSubViews): Deleted.
+        (setToDefaultPreferences): Deleted.
+        (wWinMain): Deleted.
+        (MyRegisterClass): Deleted.
+        (LaunchInspector): Deleted.
+        (NavigateForwardOrBackward): Deleted.
+        (NavigateToHistory): Deleted.
+        * WinLauncher/DOMDefaultImpl.cpp: Copied from WinLauncher/DOMDefaultImpl.h.
+        (DOMEventListener::Release):
+        (WebScriptObject::WebScriptObject): Deleted.
+        (WebScriptObject::~WebScriptObject): Deleted.
+        (WebScriptObject::throwException): Deleted.
+        (WebScriptObject::callWebScriptMethod): Deleted.
+        (WebScriptObject::evaluateWebScript): Deleted.
+        (WebScriptObject::removeWebScriptKey): Deleted.
+        (WebScriptObject::stringRepresentation): Deleted.
+        (WebScriptObject::webScriptValueAtIndex): Deleted.
+        (WebScriptObject::setWebScriptValueAtIndex): Deleted.
+        (WebScriptObject::setException): Deleted.
+        (DOMEventListener::throwException): Deleted.
+        (DOMEventListener::callWebScriptMethod): Deleted.
+        (DOMEventListener::evaluateWebScript): Deleted.
+        (DOMEventListener::removeWebScriptKey): Deleted.
+        (DOMEventListener::stringRepresentation): Deleted.
+        (DOMEventListener::webScriptValueAtIndex): Deleted.
+        (DOMEventListener::setWebScriptValueAtIndex): Deleted.
+        (DOMEventListener::setException): Deleted.
+        (DOMEventListener::handleEvent): Deleted.
+        * WinLauncher/DOMDefaultImpl.h:
+        (WebScriptObject::QueryInterface): Deleted.
+        (WebScriptObject::AddRef): Deleted.
+        (WebScriptObject::Release): Deleted.
+        (DOMObject::QueryInterface): Deleted.
+        (DOMEventListener::QueryInterface): Deleted.
+        (DOMEventListener::AddRef): Deleted.
+        (DOMEventListener::Release): Deleted.
+        * WinLauncher/WinLauncher.cpp:
+        (WinLauncher::WinLauncher):
+        (WinLauncher::init):
+        (WinLauncher::prepareViews):
+        (WinLauncher::setFrameLoadDelegate):
+        (WinLauncher::setUIDelegate):
+        (WinLauncher::setAccessibilityDelegate):
+        (WinLauncher::mainFrame):
+        (WinLauncher::seedInitialDefaultPreferences):
+        (WinLauncher::setToDefaultPreferences):
+        (updateMenuItemForHistoryItem):
+        (WinLauncher::showLastVisitedSites):
+        (WinLauncher::launchInspector):
+        (WinLauncher::navigateForwardOrBackward):
+        (WinLauncher::navigateToHistory):
+        (WinLauncher::goBack):
+        (WinLauncher::goForward):
+        (WinLauncher::loadURL):
+        (shouldUseFullDesktop): Deleted.
+        (SimpleEventListener::SimpleEventListener): Deleted.
+        (SimpleEventListener::handleEvent): Deleted.
+        (WinLauncherWebHost::updateAddressBar): Deleted.
+        (WinLauncherWebHost::didFailProvisionalLoadWithError): Deleted.
+        (WinLauncherWebHost::QueryInterface): Deleted.
+        (WinLauncherWebHost::AddRef): Deleted.
+        (WinLauncherWebHost::Release): Deleted.
+        (showLastVisitedSites): Deleted.
+        (WinLauncherWebHost::didFinishLoadForFrame): Deleted.
+        (resizeSubViews): Deleted.
+        (subclassForLayeredWindow): Deleted.
+        (computeFullDesktopFrame): Deleted.
+        (DllMain): Deleted.
+        (getAppDataFolder): Deleted.
+        (setToDefaultPreferences): Deleted.
+        (setCacheFolder): Deleted.
+        (createCrashReport): Deleted.
+        (wWinMain): Deleted.
+        (MyRegisterClass): Deleted.
+        (AbortProc): Deleted.
+        (getPrinterDC): Deleted.
+        (initDocStruct): Deleted.
+        (PrintView): Deleted.
+        (ToggleMenuItem): Deleted.
+        (LaunchInspector): Deleted.
+        (NavigateForwardOrBackward): Deleted.
+        (NavigateToHistory): Deleted.
+        (WndProc): Deleted.
+        (EditProc): Deleted.
+        (BackButtonProc): Deleted.
+        (ForwardButtonProc): Deleted.
+        (About): Deleted.
+        (loadURL): Deleted.
+        (dllLauncherEntryPoint): Deleted.
+        * WinLauncher/WinLauncher.h:
+        (WinLauncher::standardPreferences):
+        (WinLauncher::privatePreferences):
+        (WinLauncher::hasWebView):
+        (WinLauncher::usesLayeredWebView):
+        (WinLauncherWebHost::WinLauncherWebHost): Deleted.
+        (WinLauncherWebHost::didStartProvisionalLoadForFrame): Deleted.
+        (WinLauncherWebHost::didReceiveServerRedirectForProvisionalLoadForFrame): Deleted.
+        (WinLauncherWebHost::didCommitLoadForFrame): Deleted.
+        (WinLauncherWebHost::didReceiveTitle): Deleted.
+        (WinLauncherWebHost::didChangeIcons): Deleted.
+        (WinLauncherWebHost::didReceiveIcon): Deleted.
+        (WinLauncherWebHost::didFailLoadWithError): Deleted.
+        (WinLauncherWebHost::didChangeLocationWithinPageForFrame): Deleted.
+        (WinLauncherWebHost::willPerformClientRedirectToURL): Deleted.
+        (WinLauncherWebHost::didCancelClientRedirectForFrame): Deleted.
+        (WinLauncherWebHost::willCloseFrame): Deleted.
+        (WinLauncherWebHost::windowScriptObjectAvailable): Deleted.
+        (WinLauncherWebHost::didClearWindowObject): Deleted.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj.filters:
+        * WinLauncher/WinLauncherReplace.h:
+        (processCrashReport):
+        * WinLauncher/WinLauncherWebHost.cpp: Copied from WinLauncher/WinLauncher.cpp.
+        (WinLauncherWebHost::updateAddressBar):
+        (WinLauncherWebHost::QueryInterface):
+        (WinLauncherWebHost::AddRef):
+        (WinLauncherWebHost::Release):
+        (WinLauncherWebHost::didFinishLoadForFrame):
+        (shouldUseFullDesktop): Deleted.
+        (updateMenuItemForHistoryItem): Deleted.
+        (showLastVisitedSites): Deleted.
+        (resizeSubViews): Deleted.
+        (subclassForLayeredWindow): Deleted.
+        (computeFullDesktopFrame): Deleted.
+        (DllMain): Deleted.
+        (getAppDataFolder): Deleted.
+        (setToDefaultPreferences): Deleted.
+        (setCacheFolder): Deleted.
+        (createCrashReport): Deleted.
+        (wWinMain): Deleted.
+        (MyRegisterClass): Deleted.
+        (AbortProc): Deleted.
+        (getPrinterDC): Deleted.
+        (initDocStruct): Deleted.
+        (PrintView): Deleted.
+        (ToggleMenuItem): Deleted.
+        (LaunchInspector): Deleted.
+        (NavigateForwardOrBackward): Deleted.
+        (NavigateToHistory): Deleted.
+        (WndProc): Deleted.
+        (EditProc): Deleted.
+        (BackButtonProc): Deleted.
+        (ForwardButtonProc): Deleted.
+        (About): Deleted.
+        (loadURL): Deleted.
+        (dllLauncherEntryPoint): Deleted.
+        * WinLauncher/WinLauncherWebHost.h: Copied from WinLauncher/WinLauncher.h.
+        (WinLauncherWebHost::WinLauncherWebHost):
+        (WinLauncherWebHost::didStartProvisionalLoadForFrame):
+        (WinLauncherWebHost::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WinLauncherWebHost::didCommitLoadForFrame):
+        (WinLauncherWebHost::didReceiveTitle):
+        (WinLauncherWebHost::didChangeIcons):
+        (WinLauncherWebHost::didReceiveIcon):
+        (WinLauncherWebHost::didFailLoadWithError):
+        (WinLauncherWebHost::didChangeLocationWithinPageForFrame):
+        (WinLauncherWebHost::willPerformClientRedirectToURL):
+        (WinLauncherWebHost::didCancelClientRedirectForFrame):
+        (WinLauncherWebHost::willCloseFrame):
+        (WinLauncherWebHost::windowScriptObjectAvailable):
+        (WinLauncherWebHost::didClearWindowObject):
+        * WinLauncher/WinMain.cpp: Copied from WinLauncher/WinLauncher.cpp.
+        (wWinMain):
+        (MyRegisterClass):
+        (shouldUseFullDesktop): Deleted.
+        (SimpleEventListener::SimpleEventListener): Deleted.
+        (SimpleEventListener::handleEvent): Deleted.
+        (WinLauncherWebHost::updateAddressBar): Deleted.
+        (WinLauncherWebHost::didFailProvisionalLoadWithError): Deleted.
+        (WinLauncherWebHost::QueryInterface): Deleted.
+        (WinLauncherWebHost::AddRef): Deleted.
+        (WinLauncherWebHost::Release): Deleted.
+        (updateMenuItemForHistoryItem): Deleted.
+        (showLastVisitedSites): Deleted.
+        (WinLauncherWebHost::didFinishLoadForFrame): Deleted.
+        (resizeSubViews): Deleted.
+        (subclassForLayeredWindow): Deleted.
+        (computeFullDesktopFrame): Deleted.
+        (DllMain): Deleted.
+        (getAppDataFolder): Deleted.
+        (setToDefaultPreferences): Deleted.
+        (setCacheFolder): Deleted.
+        (createCrashReport): Deleted.
+        (AbortProc): Deleted.
+        (getPrinterDC): Deleted.
+        (initDocStruct): Deleted.
+        (PrintView): Deleted.
+        (ToggleMenuItem): Deleted.
+        (LaunchInspector): Deleted.
+        (NavigateForwardOrBackward): Deleted.
+        (NavigateToHistory): Deleted.
+        (WndProc): Deleted.
+        (EditProc): Deleted.
+        (BackButtonProc): Deleted.
+        (ForwardButtonProc): Deleted.
+        (About): Deleted.
+        (loadURL): Deleted.
+        (dllLauncherEntryPoint): Deleted.
+
 2014-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] getsectdata() is deprecated and we use it in DRT
