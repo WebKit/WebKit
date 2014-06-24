@@ -4325,10 +4325,8 @@ static Vector<String> toStringVector(NSArray* patterns)
 
 - (WebPageVisibilityState)_visibilityState
 {
-#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
     if (_private->page)
         return kit(_private->page->visibilityState());
-#endif
     return WebPageVisibilityStateVisible;
 }
 
