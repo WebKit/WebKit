@@ -1,3 +1,12 @@
+2014-06-24  Antti Koivisto  <antti@apple.com>
+
+        Only flush layers when the exposed rect actually changes
+        https://bugs.webkit.org/show_bug.cgi?id=134248
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+
 2014-06-24  Brady Eidson  <beidson@apple.com>
 
         Remove references to "Shader.h" which doesn't currently exist in the project.

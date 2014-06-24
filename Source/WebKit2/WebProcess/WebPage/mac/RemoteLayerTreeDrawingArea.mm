@@ -202,6 +202,8 @@ void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedC
     FrameView* frameView = m_webPage.mainFrameView();
     if (!frameView)
         return;
+    if (frameView->exposedContentRect() == exposedContentRect)
+        return;
 
     frameView->setExposedContentRect(exposedContentRect);
     scheduleCompositingLayerFlush();

@@ -1,3 +1,13 @@
+2014-06-24  Antti Koivisto  <antti@apple.com>
+
+        Only flush layers when the exposed rect actually changes
+        https://bugs.webkit.org/show_bug.cgi?id=134248
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::setExposedContentRect):
+
 2014-06-24  Martin Hock  <mhock@apple.com>
 
         [iOS] DOMWindow::outerWidth and outerHeight don't return useful values, so return 0.
