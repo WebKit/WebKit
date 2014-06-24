@@ -1,3 +1,154 @@
+2014-06-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Clean up and refactor WinLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=134209
+
+        Reviewed by Tim Horton.
+
+        Make WinLauncher a class, and move all non-class driver functions
+        into "Common.cpp" and "WinMain.cpp". These files are distinct
+        to allow some internal tools to reuse the code in 'Common'.
+
+        * WinLauncher/Common.cpp: Added. Consists of code moved from
+        'WinLauncher.cpp' that can be reused for other tools.
+        (subclassForLayeredWindow):
+        (computeFullDesktopFrame):
+        (DllMain):
+        (getAppDataFolder):
+        (setCacheFolder):
+        (createCrashReport):
+        (AbortProc):
+        (getPrinterDC):
+        (initDocStruct):
+        (PrintView):
+        (ToggleMenuItem):
+        (WndProc):
+        (EditProc):
+        (BackButtonProc):
+        (ForwardButtonProc):
+        (About):
+        (loadURL):
+        (dllLauncherEntryPoint):
+        * WinLauncher/DOMDefaultImpl.cpp: Copied from WinLauncher/DOMDefaultImpl.h.
+        (DOMEventListener::Release):
+        (WebScriptObject::WebScriptObject): Deleted.
+        (WebScriptObject::~WebScriptObject): Deleted.
+        (WebScriptObject::throwException): Deleted.
+        (WebScriptObject::callWebScriptMethod): Deleted.
+        (WebScriptObject::evaluateWebScript): Deleted.
+        (WebScriptObject::removeWebScriptKey): Deleted.
+        (WebScriptObject::stringRepresentation): Deleted.
+        (WebScriptObject::webScriptValueAtIndex): Deleted.
+        (WebScriptObject::setWebScriptValueAtIndex): Deleted.
+        (WebScriptObject::setException): Deleted.
+        (DOMEventListener::throwException): Deleted.
+        (DOMEventListener::callWebScriptMethod): Deleted.
+        (DOMEventListener::evaluateWebScript): Deleted.
+        (DOMEventListener::removeWebScriptKey): Deleted.
+        (DOMEventListener::stringRepresentation): Deleted.
+        (DOMEventListener::webScriptValueAtIndex): Deleted.
+        (DOMEventListener::setWebScriptValueAtIndex): Deleted.
+        (DOMEventListener::setException): Deleted.
+        (DOMEventListener::handleEvent): Deleted.
+        * WinLauncher/DOMDefaultImpl.h:
+        (WebScriptObject::QueryInterface): Deleted.
+        (WebScriptObject::AddRef): Deleted.
+        (WebScriptObject::Release): Deleted.
+        (DOMObject::QueryInterface): Deleted.
+        (DOMEventListener::QueryInterface): Deleted.
+        (DOMEventListener::AddRef): Deleted.
+        (DOMEventListener::Release): Deleted.
+        * WinLauncher/WinLauncher.cpp: Converted stand-alone implementation
+        into a C++ class and removed WinAPI code.
+        (WinLauncher::WinLauncher):
+        (WinLauncher::init):
+        (WinLauncher::prepareViews):
+        (WinLauncher::setFrameLoadDelegate):
+        (WinLauncher::setUIDelegate):
+        (WinLauncher::setAccessibilityDelegate):
+        (WinLauncher::mainFrame):
+        (WinLauncher::seedInitialDefaultPreferences):
+        (WinLauncher::setToDefaultPreferences):
+        (updateMenuItemForHistoryItem):
+        (WinLauncher::showLastVisitedSites):
+        (WinLauncher::launchInspector):
+        (WinLauncher::navigateForwardOrBackward):
+        (WinLauncher::navigateToHistory):
+        (WinLauncher::goBack):
+        (WinLauncher::goForward):
+        (WinLauncher::loadURL):
+        (shouldUseFullDesktop): Deleted.
+        (SimpleEventListener::SimpleEventListener): Deleted.
+        (SimpleEventListener::handleEvent): Deleted.
+        (WinLauncherWebHost::updateAddressBar): Deleted.
+        (WinLauncherWebHost::didFailProvisionalLoadWithError): Deleted.
+        (WinLauncherWebHost::QueryInterface): Deleted.
+        (WinLauncherWebHost::AddRef): Deleted.
+        (WinLauncherWebHost::Release): Deleted.
+        (showLastVisitedSites): Deleted.
+        (WinLauncherWebHost::didFinishLoadForFrame): Deleted.
+        (resizeSubViews): Deleted.
+        (subclassForLayeredWindow): Deleted.
+        (computeFullDesktopFrame): Deleted.
+        (DllMain): Deleted.
+        (getAppDataFolder): Deleted.
+        (setToDefaultPreferences): Deleted.
+        (setCacheFolder): Deleted.
+        (createCrashReport): Deleted.
+        (wWinMain): Deleted.
+        (MyRegisterClass): Deleted.
+        (AbortProc): Deleted.
+        (getPrinterDC): Deleted.
+        (initDocStruct): Deleted.
+        (PrintView): Deleted.
+        (ToggleMenuItem): Deleted.
+        (LaunchInspector): Deleted.
+        (NavigateForwardOrBackward): Deleted.
+        (NavigateToHistory): Deleted.
+        (WndProc): Deleted.
+        (EditProc): Deleted.
+        (BackButtonProc): Deleted.
+        (ForwardButtonProc): Deleted.
+        (About): Deleted.
+        (loadURL): Deleted.
+        (dllLauncherEntryPoint): Deleted.
+        * WinLauncher/WinLauncher.h: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj.filters:
+        * WinLauncher/WinLauncherReplace.h:
+        (processCrashReport):
+        * WinLauncher/WinLauncherWebHost.cpp: Added.
+        (SimpleEventListener::SimpleEventListener):
+        (SimpleEventListener::handleEvent):
+        (WinLauncherWebHost::updateAddressBar):
+        (WinLauncherWebHost::didFailProvisionalLoadWithError):
+        (WinLauncherWebHost::QueryInterface):
+        (WinLauncherWebHost::AddRef):
+        (WinLauncherWebHost::Release):
+        (WinLauncherWebHost::didFinishLoadForFrame):
+        * WinLauncher/WinLauncherWebHost.h: Copied from WinLauncher/WinLauncher.h.
+        Moved WinLauncherWebHost implementation from WinLauncher.cpp into
+        its own set of files.
+        (WinLauncherWebHost::WinLauncherWebHost):
+        (WinLauncherWebHost::didStartProvisionalLoadForFrame):
+        (WinLauncherWebHost::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WinLauncherWebHost::didCommitLoadForFrame):
+        (WinLauncherWebHost::didReceiveTitle):
+        (WinLauncherWebHost::didChangeIcons):
+        (WinLauncherWebHost::didReceiveIcon):
+        (WinLauncherWebHost::didFailLoadWithError):
+        (WinLauncherWebHost::didChangeLocationWithinPageForFrame):
+        (WinLauncherWebHost::willPerformClientRedirectToURL):
+        (WinLauncherWebHost::didCancelClientRedirectForFrame):
+        (WinLauncherWebHost::willCloseFrame):
+        (WinLauncherWebHost::windowScriptObjectAvailable):
+        (WinLauncherWebHost::didClearWindowObject):
+        * WinLauncher/WinMain.cpp: Added. This consists of code from
+        WinLauncher that is unique to the WinLauncher utility, and is
+        not part of the WinLauncher class.
+        (wWinMain):
+        (MyRegisterClass):
+
 2014-06-23  Simon Fraser  <simon.fraser@apple.com>
 
         Enable the Web Inspector in MiniBrowser
