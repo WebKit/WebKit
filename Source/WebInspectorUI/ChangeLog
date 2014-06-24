@@ -1,3 +1,17 @@
+2014-06-24  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: TypeError when hovering over "Show All Nodes" button in the Dom Tree inspector
+        https://bugs.webkit.org/show_bug.cgi?id=133699
+
+        Reviewed by Geoffrey Garen.
+
+        The call to element._createTooltipForNode() was failing because element was sometimes not a 
+        DOMTreeOutline but rather only a TreeElement (in the case of the "Show All Nodes" button specifically).
+        A check for type fixes this issue.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline.prototype._onmousemove): Check for presence of _createTooltipForNode.
+
 2014-06-21  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: UI fonts should pull from system fonts automatically to whatever degree possible

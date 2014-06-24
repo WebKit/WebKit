@@ -309,7 +309,7 @@ WebInspector.DOMTreeOutline.prototype = {
             this._previousHoveredElement = element;
 
             // Lazily compute tag-specific tooltips.
-            if (element.representedObject && !element.tooltip)
+            if (element.representedObject && !element.tooltip && element._createTooltipForNode)
                 element._createTooltipForNode();
         }
 
