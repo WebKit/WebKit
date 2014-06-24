@@ -33,10 +33,8 @@
 
 WKSessionStateRef WKSessionStateCreateFromData(WKDataRef data)
 {
-    WebKit::LegacySessionStateDecoder decoder { WebKit::toImpl(data) };
-
     WebKit::SessionState sessionState;
-    if (!decoder.decodeSessionState(sessionState))
+    if (!WebKit::decodeLegacySessionState(*WebKit::toImpl(data), sessionState))
         return nullptr;
 
     return WebKit::toAPI(API::SessionState::create(std::move(sessionState)).leakRef());

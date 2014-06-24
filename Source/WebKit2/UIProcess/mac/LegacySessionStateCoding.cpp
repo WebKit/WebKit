@@ -53,181 +53,6 @@ static CFStringRef sessionHistoryEntryDataKey = CFSTR("SessionHistoryEntryData")
 // Session history entry data.
 const uint32_t sessionHistoryEntryDataVersion = 2;
 
-LegacySessionStateDecoder::LegacySessionStateDecoder(API::Data* data)
-    : m_data(data)
-{
-}
-
-LegacySessionStateDecoder::~LegacySessionStateDecoder()
-{
-}
-
-bool LegacySessionStateDecoder::decodeSessionState(SessionState& sessionState) const
-{
-    if (!m_data)
-        return false;
-
-    size_t size = m_data->size();
-    const uint8_t* bytes = m_data->bytes();
-
-    if (size < sizeof(uint32_t))
-        return false;
-
-    uint32_t versionNumber = (bytes[0] << 24) + (bytes[1] << 16) + (bytes[2] << 8) + bytes[3];
-
-    if (versionNumber != sessionStateDataVersion)
-        return false;
-
-    auto data = adoptCF(CFDataCreate(kCFAllocatorDefault, bytes + sizeof(uint32_t), size - sizeof(uint32_t)));
-
-    auto sessionStateDictionary = adoptCF(dynamic_cf_cast<CFDictionaryRef>(CFPropertyListCreateWithData(kCFAllocatorDefault, data.get(), kCFPropertyListImmutable, nullptr, nullptr)));
-    if (!sessionStateDictionary)
-        return false;
-
-    if (auto backForwardListDictionary = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(sessionStateDictionary.get(), sessionHistoryKey))) {
-        if (!decodeSessionHistory(backForwardListDictionary, sessionState.backForwardListState))
-            return false;
-    }
-
-    if (auto provisionalURLString = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(sessionStateDictionary.get(), provisionalURLKey))) {
-        sessionState.provisionalURL = WebCore::URL(WebCore::URL(), provisionalURLString);
-        if (!sessionState.provisionalURL.isValid())
-            return false;
-    }
-
-    return true;
-}
-
-bool LegacySessionStateDecoder::decodeSessionHistory(CFDictionaryRef backForwardListDictionary, BackForwardListState& backForwardListState) const
-{
-    auto sessionHistoryVersionNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(backForwardListDictionary, sessionHistoryVersionKey));
-    if (!sessionHistoryVersionNumber) {
-        // Version 0 session history dictionaries did not contain a version number.
-        return decodeV0SessionHistory(backForwardListDictionary, backForwardListState);
-    }
-
-    CFIndex sessionHistoryVersion;
-    if (!CFNumberGetValue(sessionHistoryVersionNumber, kCFNumberCFIndexType, &sessionHistoryVersion))
-        return false;
-
-    if (sessionHistoryVersion == 1)
-        return decodeV1SessionHistory(backForwardListDictionary, backForwardListState);
-
-    return false;
-}
-
-bool LegacySessionStateDecoder::decodeV0SessionHistory(CFDictionaryRef sessionHistoryDictionary, BackForwardListState& backForwardListState) const
-{
-    auto currentIndexNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(sessionHistoryDictionary, sessionHistoryCurrentIndexKey));
-    if (!currentIndexNumber)
-        return false;
-
-    CFIndex currentIndex;
-    if (!CFNumberGetValue(currentIndexNumber, kCFNumberCFIndexType, &currentIndex))
-        return false;
-
-    if (currentIndex < -1)
-        return false;
-
-    auto historyEntries = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(sessionHistoryDictionary, sessionHistoryEntriesKey));
-    if (!historyEntries)
-        return false;
-
-    // Version 0 session history relied on currentIndex == -1 to represent the same thing as not having a current index.
-    bool hasCurrentIndex = currentIndex != -1;
-
-    if (!decodeSessionHistoryEntries(historyEntries, backForwardListState.items))
-        return false;
-
-    if (!hasCurrentIndex && CFArrayGetCount(historyEntries))
-        return false;
-
-    if (hasCurrentIndex) {
-        if (static_cast<uint32_t>(currentIndex) >= backForwardListState.items.size())
-            return false;
-
-        backForwardListState.currentIndex = static_cast<uint32_t>(currentIndex);
-    }
-
-    return true;
-}
-
-bool LegacySessionStateDecoder::decodeV1SessionHistory(CFDictionaryRef sessionHistoryDictionary, BackForwardListState& backForwardListState) const
-{
-    auto currentIndexNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(sessionHistoryDictionary, sessionHistoryCurrentIndexKey));
-    if (!currentIndexNumber) {
-        // No current index means the dictionary represents an empty session.
-        backForwardListState.currentIndex = 0;
-        backForwardListState.items = { };
-        return true;
-    }
-
-    CFIndex currentIndex;
-    if (!CFNumberGetValue(currentIndexNumber, kCFNumberCFIndexType, &currentIndex))
-        return false;
-
-    if (currentIndex < 0)
-        return false;
-
-    auto historyEntries = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(sessionHistoryDictionary, sessionHistoryEntriesKey));
-    if (!historyEntries)
-        return false;
-
-    if (!decodeSessionHistoryEntries(historyEntries, backForwardListState.items))
-        return false;
-
-    backForwardListState.currentIndex = static_cast<uint32_t>(currentIndex);
-    if (static_cast<uint32_t>(currentIndex) >= backForwardListState.items.size())
-        return false;
-
-    return true;
-}
-
-bool LegacySessionStateDecoder::decodeSessionHistoryEntries(CFArrayRef entriesArray, Vector<PageState>& entries) const
-{
-    for (CFIndex i = 0, size = CFArrayGetCount(entriesArray); i < size; ++i) {
-        auto entryDictionary = dynamic_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(entriesArray, i));
-        if (!entryDictionary)
-            return false;
-
-        PageState entry;
-        if (!decodeSessionHistoryEntry(entryDictionary, entry))
-            return false;
-
-        entries.append(std::move(entry));
-    }
-
-    return true;
-}
-
-bool LegacySessionStateDecoder::decodeSessionHistoryEntry(CFDictionaryRef entryDictionary, PageState& pageState) const
-{
-    auto title = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryTitleKey));
-    if (!title)
-        return false;
-
-    auto urlString = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryURLKey));
-    if (!urlString)
-        return false;
-
-    auto originalURLString = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryOriginalURLKey));
-    if (!originalURLString)
-        return false;
-
-    auto historyEntryData = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryDataKey));
-    if (!historyEntryData)
-        return false;
-
-    if (!decodeSessionHistoryEntryData(historyEntryData, pageState.mainFrameState))
-        return false;
-
-    pageState.title = title;
-    pageState.mainFrameState.urlString = urlString;
-    pageState.mainFrameState.originalURLString = originalURLString;
-
-    return true;
-}
-
 template<typename T> void isValidEnum(T);
 
 class HistoryEntryDataDecoder {
@@ -671,7 +496,7 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
 #endif
 }
 
-bool LegacySessionStateDecoder::decodeSessionHistoryEntryData(CFDataRef historyEntryData, FrameState& mainFrameState) const
+static bool decodeSessionHistoryEntryData(CFDataRef historyEntryData, FrameState& mainFrameState)
 {
     HistoryEntryDataDecoder decoder { CFDataGetBytePtr(historyEntryData), static_cast<size_t>(CFDataGetLength(historyEntryData)) };
 
@@ -686,5 +511,165 @@ bool LegacySessionStateDecoder::decodeSessionHistoryEntryData(CFDataRef historyE
     return decoder.finishDecoding();
 }
 
+static bool decodeSessionHistoryEntry(CFDictionaryRef entryDictionary, PageState& pageState)
+{
+    auto title = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryTitleKey));
+    if (!title)
+        return false;
+
+    auto urlString = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryURLKey));
+    if (!urlString)
+        return false;
+
+    auto originalURLString = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryOriginalURLKey));
+    if (!originalURLString)
+        return false;
+
+    auto historyEntryData = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryDataKey));
+    if (!historyEntryData)
+        return false;
+
+    if (!decodeSessionHistoryEntryData(historyEntryData, pageState.mainFrameState))
+        return false;
+
+    pageState.title = title;
+    pageState.mainFrameState.urlString = urlString;
+    pageState.mainFrameState.originalURLString = originalURLString;
+
+    return true;
+}
+
+static bool decodeSessionHistoryEntries(CFArrayRef entriesArray, Vector<PageState>& entries)
+{
+    for (CFIndex i = 0, size = CFArrayGetCount(entriesArray); i < size; ++i) {
+        auto entryDictionary = dynamic_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(entriesArray, i));
+        if (!entryDictionary)
+            return false;
+
+        PageState entry;
+        if (!decodeSessionHistoryEntry(entryDictionary, entry))
+            return false;
+
+        entries.append(std::move(entry));
+    }
+
+    return true;
+}
+
+static bool decodeV0SessionHistory(CFDictionaryRef sessionHistoryDictionary, BackForwardListState& backForwardListState)
+{
+    auto currentIndexNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(sessionHistoryDictionary, sessionHistoryCurrentIndexKey));
+    if (!currentIndexNumber)
+        return false;
+
+    CFIndex currentIndex;
+    if (!CFNumberGetValue(currentIndexNumber, kCFNumberCFIndexType, &currentIndex))
+        return false;
+
+    if (currentIndex < -1)
+        return false;
+
+    auto historyEntries = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(sessionHistoryDictionary, sessionHistoryEntriesKey));
+    if (!historyEntries)
+        return false;
+
+    // Version 0 session history relied on currentIndex == -1 to represent the same thing as not having a current index.
+    bool hasCurrentIndex = currentIndex != -1;
+
+    if (!decodeSessionHistoryEntries(historyEntries, backForwardListState.items))
+        return false;
+
+    if (!hasCurrentIndex && CFArrayGetCount(historyEntries))
+        return false;
+
+    if (hasCurrentIndex) {
+        if (static_cast<uint32_t>(currentIndex) >= backForwardListState.items.size())
+            return false;
+
+        backForwardListState.currentIndex = static_cast<uint32_t>(currentIndex);
+    }
+
+    return true;
+}
+
+static bool decodeV1SessionHistory(CFDictionaryRef sessionHistoryDictionary, BackForwardListState& backForwardListState)
+{
+    auto currentIndexNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(sessionHistoryDictionary, sessionHistoryCurrentIndexKey));
+    if (!currentIndexNumber) {
+        // No current index means the dictionary represents an empty session.
+        backForwardListState.currentIndex = 0;
+        backForwardListState.items = { };
+        return true;
+    }
+
+    CFIndex currentIndex;
+    if (!CFNumberGetValue(currentIndexNumber, kCFNumberCFIndexType, &currentIndex))
+        return false;
+
+    if (currentIndex < 0)
+        return false;
+
+    auto historyEntries = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(sessionHistoryDictionary, sessionHistoryEntriesKey));
+    if (!historyEntries)
+        return false;
+
+    if (!decodeSessionHistoryEntries(historyEntries, backForwardListState.items))
+        return false;
+
+    backForwardListState.currentIndex = static_cast<uint32_t>(currentIndex);
+    if (static_cast<uint32_t>(currentIndex) >= backForwardListState.items.size())
+        return false;
+
+    return true;
+}
+
+static bool decodeSessionHistory(CFDictionaryRef backForwardListDictionary, BackForwardListState& backForwardListState)
+{
+    auto sessionHistoryVersionNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(backForwardListDictionary, sessionHistoryVersionKey));
+    if (!sessionHistoryVersionNumber) {
+        // Version 0 session history dictionaries did not contain a version number.
+        return decodeV0SessionHistory(backForwardListDictionary, backForwardListState);
+    }
+
+    CFIndex sessionHistoryVersion;
+    if (!CFNumberGetValue(sessionHistoryVersionNumber, kCFNumberCFIndexType, &sessionHistoryVersion))
+        return false;
+
+    if (sessionHistoryVersion == 1)
+        return decodeV1SessionHistory(backForwardListDictionary, backForwardListState);
+
+    return false;
+}
+
+bool decodeLegacySessionState(const API::Data& data, SessionState& sessionState)
+{
+    size_t size = data.size();
+    const uint8_t* bytes = data.bytes();
+
+    if (size < sizeof(uint32_t))
+        return false;
+
+    uint32_t versionNumber = (bytes[0] << 24) + (bytes[1] << 16) + (bytes[2] << 8) + bytes[3];
+
+    if (versionNumber != sessionStateDataVersion)
+        return false;
+
+    auto sessionStateDictionary = adoptCF(dynamic_cf_cast<CFDictionaryRef>(CFPropertyListCreateWithData(kCFAllocatorDefault, adoptCF(CFDataCreate(kCFAllocatorDefault, bytes + sizeof(uint32_t), size - sizeof(uint32_t))).get(), kCFPropertyListImmutable, nullptr, nullptr)));
+    if (!sessionStateDictionary)
+        return false;
+
+    if (auto backForwardListDictionary = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(sessionStateDictionary.get(), sessionHistoryKey))) {
+        if (!decodeSessionHistory(backForwardListDictionary, sessionState.backForwardListState))
+            return false;
+    }
+
+    if (auto provisionalURLString = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(sessionStateDictionary.get(), provisionalURLKey))) {
+        sessionState.provisionalURL = WebCore::URL(WebCore::URL(), provisionalURLString);
+        if (!sessionState.provisionalURL.isValid())
+            return false;
+    }
+
+    return true;
+}
 
 } // namespace WebKit

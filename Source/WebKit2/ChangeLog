@@ -1,3 +1,36 @@
+2014-06-24  Anders Carlsson  <andersca@apple.com>
+
+        Simplify decodeLegacySessionState
+        https://bugs.webkit.org/show_bug.cgi?id=134280
+
+        Reviewed by Andreas Kling.
+
+        There's no need to use a LegacySessionStateDecoder object with a single member,
+        just make all functions static and only export a single entry point; decodeLegacySessionState.
+
+        No functionality change, just moving code around.
+
+        * UIProcess/API/C/WKSessionStateRef.cpp:
+        (WKSessionStateCreateFromData):
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::decodeSessionHistoryEntryData):
+        (WebKit::decodeSessionHistoryEntry):
+        (WebKit::decodeSessionHistoryEntries):
+        (WebKit::decodeV0SessionHistory):
+        (WebKit::decodeV1SessionHistory):
+        (WebKit::decodeSessionHistory):
+        (WebKit::decodeLegacySessionState):
+        (WebKit::LegacySessionStateDecoder::LegacySessionStateDecoder): Deleted.
+        (WebKit::LegacySessionStateDecoder::~LegacySessionStateDecoder): Deleted.
+        (WebKit::LegacySessionStateDecoder::decodeSessionState): Deleted.
+        (WebKit::LegacySessionStateDecoder::decodeSessionHistory): Deleted.
+        (WebKit::LegacySessionStateDecoder::decodeV0SessionHistory): Deleted.
+        (WebKit::LegacySessionStateDecoder::decodeV1SessionHistory): Deleted.
+        (WebKit::LegacySessionStateDecoder::decodeSessionHistoryEntries): Deleted.
+        (WebKit::LegacySessionStateDecoder::decodeSessionHistoryEntry): Deleted.
+        (WebKit::LegacySessionStateDecoder::decodeSessionHistoryEntryData): Deleted.
+        * UIProcess/mac/LegacySessionStateCoding.h:
+
 2014-06-24  Brady Eidson  <beidson@apple.com>
 
         Enable GAMEPAD in the Mac build, but disabled at runtime.

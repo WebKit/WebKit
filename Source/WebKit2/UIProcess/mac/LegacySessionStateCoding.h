@@ -34,29 +34,9 @@ class Data;
 
 namespace WebKit {
 
-struct BackForwardListState;
-struct FrameState;
-struct PageState;
 struct SessionState;
 
-class LegacySessionStateDecoder {
-public:
-    explicit LegacySessionStateDecoder(API::Data*);
-    ~LegacySessionStateDecoder();
-
-    bool decodeSessionState(SessionState&) const;
-
-private:
-    bool decodeSessionHistory(CFDictionaryRef, BackForwardListState&) const;
-    bool decodeV0SessionHistory(CFDictionaryRef, BackForwardListState&) const;
-    bool decodeV1SessionHistory(CFDictionaryRef, BackForwardListState&) const;
-
-    bool decodeSessionHistoryEntries(CFArrayRef, Vector<PageState>&) const;
-    bool decodeSessionHistoryEntry(CFDictionaryRef, PageState&) const;
-    bool decodeSessionHistoryEntryData(CFDataRef, FrameState&) const;
-
-    API::Data* m_data;
-};
+bool decodeLegacySessionState(const API::Data&, SessionState&);
 
 } // namespace WebKit
 
