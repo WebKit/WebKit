@@ -1,3 +1,19 @@
+2014-06-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: Add positionInRootFragments to SelectorFragment
+        https://bugs.webkit.org/show_bug.cgi?id=133609
+
+        Reviewed by Benjamin Poulain.
+
+        Some non-backtrack-related predicates use relationToRightFragment information
+        to decide whether checkingContext->elementStyle should be refered.
+        To make it works correctly, add the positionInRootFragments field to SelectorFragment.
+        When positionInRootFragments == Rightmost and relationToRightFragment == Rightmost,
+        we should see checkingContext->elementStyle.
+
+        * fast/selectors/first-child-update-with-renderer-expected.txt: Added.
+        * fast/selectors/first-child-update-with-renderer.html: Added.
+
 2014-06-24  Jarek Czekalski  <jarekczek@poczta.onet.pl>
 
         [ATK] Extended the test for accessibility of text inside "span" block in "a" block

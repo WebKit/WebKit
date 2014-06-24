@@ -1,3 +1,30 @@
+2014-06-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: Add positionInRootFragments to SelectorFragment
+        https://bugs.webkit.org/show_bug.cgi?id=133609
+
+        Reviewed by Benjamin Poulain.
+
+        Some non-backtrack-related predicates use relationToRightFragment information
+        to decide whether checkingContext->elementStyle should be refered.
+        To make it works correctly, add the positionInRootFragments field to SelectorFragment.
+        When positionInRootFragments == Rightmost and relationToRightFragment == Rightmost,
+        we should see checkingContext->elementStyle.
+
+        Test: fast/selectors/first-child-update-with-renderer.html
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::shouldUseRenderStyleFromCheckingContext):
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::SelectorCodeGenerator):
+        (WebCore::SelectorCompiler::constructFragments):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsActive):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsFirstChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsHovered):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsLastChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsOnlyChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChild):
+
 2014-06-24  Jer Noble  <jer.noble@apple.com>
 
         [Fullscreen][Mac] WKView is not firstResponder after entering fullscreen mode
