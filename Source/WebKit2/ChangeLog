@@ -1,3 +1,12 @@
+2014-06-23  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Unreviewed, fix build warning.
+
+        Source/WebKit2/WebProcess/WebPage/DrawingArea.h:117:18: warning: unused parameter ‘wantsDidUpdateViewState’ [-Wunused-parameter]
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::viewStateDidChange):
+
 2014-06-23  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Replace RefPtr<Evas_Object> with UniquePtrEfl
