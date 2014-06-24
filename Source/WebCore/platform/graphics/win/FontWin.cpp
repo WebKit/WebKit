@@ -51,7 +51,7 @@ bool Font::canExpandAroundIdeographsInComplexText()
     return false;
 }
 
-void Font::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, int from, int to) const
+void Font::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, unsigned from, unsigned to) const
 {
     UniscribeController it(this, run);
     it.advance(from);
@@ -67,7 +67,7 @@ void Font::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& sel
     selectionRect.setWidth(afterWidth - beforeWidth);
 }
 
-float Font::getGlyphsAndAdvancesForComplexText(const TextRun& run, int from, int to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
+float Font::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsigned from, unsigned to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
 {
     if (forTextEmphasis) {
         // FIXME: Add forTextEmphasis paremeter to UniscribeController and use it.
@@ -92,7 +92,7 @@ float Font::getGlyphsAndAdvancesForComplexText(const TextRun& run, int from, int
     return beforeWidth;
 }
 
-float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
+float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, unsigned from, unsigned to) const
 {
     // This glyph buffer holds our glyphs + advances + font data for each glyph.
     GlyphBuffer glyphBuffer;
@@ -109,7 +109,7 @@ float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const 
     return startPoint.x() - startX;
 }
 
-void Font::drawEmphasisMarksForComplexText(GraphicsContext* context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to) const
+void Font::drawEmphasisMarksForComplexText(GraphicsContext* context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, unsigned from, unsigned to) const
 {
     GlyphBuffer glyphBuffer;
     float initialAdvance = getGlyphsAndAdvancesForComplexText(run, from, to, glyphBuffer, ForTextEmphasis);

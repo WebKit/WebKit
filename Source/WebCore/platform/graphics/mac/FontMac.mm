@@ -184,7 +184,7 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData
     }
 }
 
-void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& anchorPoint) const
+void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, const GlyphBuffer& glyphBuffer, unsigned from, unsigned numGlyphs, const FloatPoint& anchorPoint) const
 {
     const FontPlatformData& platformData = font->platformData();
     if (!platformData.size())
@@ -468,7 +468,7 @@ private:
     virtual void advance() override;
     void moveToNextValidGlyph();
 
-    int m_index;
+    unsigned m_index;
     const TextRun& m_textRun;
     const GlyphBuffer& m_glyphBuffer;
     const SimpleFontData* m_fontData;
