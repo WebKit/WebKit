@@ -1,3 +1,17 @@
+2014-06-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        advanceByCombiningCharacterSequence() can be simplified
+        https://bugs.webkit.org/show_bug.cgi?id=133591
+
+        Reviewed by Dean Jackson.
+
+        Use U16_NEXT() because it already does what we're trying to do.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::advanceByCombiningCharacterSequence):
+
 2014-06-24  Brady Eidson  <beidson@apple.com>
 
         Enable GAMEPAD in the Mac build, but disabled at runtime.
