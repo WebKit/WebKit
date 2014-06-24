@@ -1439,6 +1439,7 @@ inline void InspectorInstrumentation::didFinishXHRLoading(ScriptExecutionContext
     UNUSED_PARAM(url);
     UNUSED_PARAM(sendURL);
     UNUSED_PARAM(sendLineNumber);
+    UNUSED_PARAM(sendColumnNumber);
 #endif
 }
 

@@ -401,6 +401,8 @@ bool CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache(con
 #if ENABLE(INSPECTOR)
     if (request.resourceRequest().hiddenFromInspector())
         newRequest.setHiddenFromInspector(true);
+#else
+    UNUSED_PARAM(request);
 #endif
     frame()->loader().loadedResourceFromMemoryCache(resource, newRequest);
     

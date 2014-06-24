@@ -180,6 +180,7 @@ inline void InspectorInstrumentation::startProfiling(Page* page, JSC::ExecState*
         startProfilingImpl(instrumentingAgents, exec, title);
 #else
     UNUSED_PARAM(page);
+    UNUSED_PARAM(exec);
     UNUSED_PARAM(title);
 #endif
 }
@@ -191,6 +192,7 @@ inline PassRefPtr<JSC::Profile> InspectorInstrumentation::stopProfiling(Page* pa
         return stopProfilingImpl(instrumentingAgents, exec, title);
 #else
     UNUSED_PARAM(page);
+    UNUSED_PARAM(exec);
     UNUSED_PARAM(title);
 #endif
     return nullptr;
