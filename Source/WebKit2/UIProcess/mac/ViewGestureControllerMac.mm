@@ -451,11 +451,8 @@ CALayer *ViewGestureController::determineLayerAdjacentToSnapshotForParent(SwipeD
     return layerAdjacentToSnapshot;
 }
 
-bool ViewGestureController::retrieveSnapshotForItem(WebBackForwardListItem* targetItem, FloatSize swipeLayerSize, float topContentInset, ViewSnapshot& snapshot)
+bool ViewGestureController::shouldUseSnapshotForSize(ViewSnapshot& snapshot, FloatSize swipeLayerSize, float topContentInset)
 {
-    if (!ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot))
-        return false;
-
     float deviceScaleFactor = m_webPageProxy.deviceScaleFactor();
     if (snapshot.deviceScaleFactor != deviceScaleFactor)
         return false;
@@ -528,15 +525,21 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     CALayer *snapshotLayerParent = determineSnapshotLayerParent();
     bool geometryIsFlippedToRoot = layerGeometryFlippedToRoot(snapshotLayerParent);
 
+    RetainPtr<CGColorRef> backgroundColor = CGColorGetConstantColor(kCGColorWhite);
     ViewSnapshot snapshot;
-    if (retrieveSnapshotForItem(targetItem, swipeArea.size(), topContentInset, snapshot)) {
-        [m_swipeSnapshotLayer setContents:snapshot.asLayerContents()];
+    if (ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot)) {
+        if (shouldUseSnapshotForSize(snapshot, swipeArea.size(), topContentInset))
+            [m_swipeSnapshotLayer setContents:snapshot.asLayerContents()];
+
+        Color coreColor = snapshot.backgroundColor;
+        if (coreColor.isValid())
+            backgroundColor = cachedCGColor(coreColor, ColorSpaceDeviceRGB);
 #if USE_IOSURFACE_VIEW_SNAPSHOTS
         m_currentSwipeSnapshotSurface = snapshot.surface;
 #endif
     }
 
-    [m_swipeLayer setBackgroundColor:CGColorGetConstantColor(kCGColorWhite)];
+    [m_swipeLayer setBackgroundColor:backgroundColor.get()];
     [m_swipeLayer setAnchorPoint:CGPointZero];
     [m_swipeLayer setFrame:swipeArea];
     [m_swipeLayer setName:@"Gesture Swipe Root Layer"];

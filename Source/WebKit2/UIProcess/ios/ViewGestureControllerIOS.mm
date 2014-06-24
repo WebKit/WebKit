@@ -157,16 +157,20 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     RetainPtr<UIViewController> snapshotViewController = adoptNS([[UIViewController alloc] init]);
     m_snapshotView = adoptNS([[UIView alloc] initWithFrame:liveSwipeViewFrame]);
 
+    RetainPtr<UIColor> backgroundColor = [UIColor whiteColor];
     ViewSnapshot snapshot;
-    if (ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot) && snapshot.hasImage()) {
+    if (ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot)) {
         float deviceScaleFactor = m_webPageProxy.deviceScaleFactor();
         FloatSize swipeLayerSizeInDeviceCoordinates(liveSwipeViewFrame.size);
         swipeLayerSizeInDeviceCoordinates.scale(deviceScaleFactor);
-        if (snapshot.size == swipeLayerSizeInDeviceCoordinates && deviceScaleFactor == snapshot.deviceScaleFactor)
+        if (snapshot.hasImage() && snapshot.size == swipeLayerSizeInDeviceCoordinates && deviceScaleFactor == snapshot.deviceScaleFactor)
             [m_snapshotView layer].contents = snapshot.asLayerContents();
+        Color coreColor = snapshot.backgroundColor;
+        if (coreColor.isValid())
+            backgroundColor = adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(coreColor, ColorSpaceDeviceRGB)]);
     }
 
-    [m_snapshotView setBackgroundColor:[UIColor whiteColor]];
+    [m_snapshotView setBackgroundColor:backgroundColor.get()];
     [m_snapshotView layer].contentsGravity = kCAGravityTopLeft;
     [m_snapshotView layer].contentsScale = m_liveSwipeView.window.screen.scale;
     [snapshotViewController setView:m_snapshotView.get()];

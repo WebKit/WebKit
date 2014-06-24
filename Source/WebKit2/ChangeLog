@@ -1,3 +1,26 @@
+2014-06-23  Timothy Horton  <timothy_horton@apple.com>
+
+        [WK2] Use the page background color instead of white when swipe snapshots were purged (134218)
+        https://bugs.webkit.org/show_bug.cgi?id=134218
+        <rdar://problem/17426454>
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateScrollViewBackground]):
+        (-[WKWebView WebKit::]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _takeViewSnapshot]):
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::shouldUseSnapshotForSize):
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::retrieveSnapshotForItem): Deleted.
+        * UIProcess/mac/ViewSnapshotStore.h:
+        Store a color along with each snapshot.
+        Set the background color of the swipe snapshot layer accordingly.
+
 2014-06-23  Anders Carlsson  <andersca@apple.com>
 
         Add -[WKBackForwardList _removeAllItems]

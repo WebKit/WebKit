@@ -3115,6 +3115,7 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     IntSize imageSize(CGImageGetWidth(croppedSnapshotImage.get()), CGImageGetHeight(croppedSnapshotImage.get()));
     snapshot.size = imageSize;
     snapshot.imageSizeInBytes = imageSize.width() * imageSize.height() * 4;
+    snapshot.backgroundColor = _data->_page->pageExtendedBackgroundColor();
 
     return snapshot;
 }

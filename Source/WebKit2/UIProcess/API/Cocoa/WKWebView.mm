@@ -674,7 +674,7 @@ static CGFloat contentZoomScale(WKWebView* webView)
 
     _scrollViewBackgroundColor = color;
 
-    RetainPtr<UIColor*> uiBackgroundColor = adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(color, WebCore::ColorSpaceDeviceRGB)]);
+    auto uiBackgroundColor = adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(color, WebCore::ColorSpaceDeviceRGB)]);
     [_scrollView setBackgroundColor:uiBackgroundColor.get()];
 }
 
@@ -874,6 +874,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 
     snapshot.size = WebCore::expandedIntSize(WebCore::FloatSize(snapshotSize));
     snapshot.imageSizeInBytes = snapshotSize.width * snapshotSize.height * 4;
+    snapshot.backgroundColor = _page->pageExtendedBackgroundColor();
 
     return snapshot;
 }

@@ -26,6 +26,7 @@
 #ifndef ViewSnapshotStore_h
 #define ViewSnapshotStore_h
 
+#include <WebCore/Color.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/IOSurface.h>
 #include <chrono>
@@ -70,6 +71,7 @@ struct ViewSnapshot {
     float deviceScaleFactor;
     WebCore::IntSize size;
     size_t imageSizeInBytes = 0;
+    WebCore::Color backgroundColor;
 
     void clearImage();
     bool hasImage() const;

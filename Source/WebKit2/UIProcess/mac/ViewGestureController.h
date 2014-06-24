@@ -132,7 +132,7 @@ private:
     void endSwipeGesture(WebBackForwardListItem* targetItem, bool cancelled);
     bool deltaIsSufficientToBeginSwipe(NSEvent *);
     bool scrollEventCanBecomeSwipe(NSEvent *, SwipeDirection&);
-    bool retrieveSnapshotForItem(WebBackForwardListItem* targetItem, WebCore::FloatSize swipeLayerSize, float topContentInset, ViewSnapshot&);
+    bool shouldUseSnapshotForSize(ViewSnapshot&, WebCore::FloatSize swipeLayerSize, float topContentInset);
 
     CALayer *determineSnapshotLayerParent() const;
     CALayer *determineLayerAdjacentToSnapshotForParent(SwipeDirection, CALayer *snapshotLayerParent) const;
