@@ -107,6 +107,14 @@ void FrameState::encode(IPC::ArgumentEncoder& encoder) const
 
     encoder << httpBody;
 
+#if PLATFORM(IOS)
+    encoder << exposedContentRect;
+    encoder << unobscuredContentRect;
+    encoder << minimumLayoutSizeInScrollViewCoordinates;
+    encoder << contentSize;
+    encoder << scaleIsInitial;
+#endif
+
     encoder << children;
 }
 
@@ -138,6 +146,19 @@ bool FrameState::decode(IPC::ArgumentDecoder& decoder, FrameState& result)
 
     if (!decoder.decode(result.httpBody))
         return false;
+
+#if PLATFORM(IOS)
+    if (!decoder.decode(result.exposedContentRect))
+        return false;
+    if (!decoder.decode(result.unobscuredContentRect))
+        return false;
+    if (!decoder.decode(result.minimumLayoutSizeInScrollViewCoordinates))
+        return false;
+    if (!decoder.decode(result.contentSize))
+        return false;
+    if (!decoder.decode(result.scaleIsInitial))
+        return false;
+#endif
 
     if (!decoder.decode(result.children))
         return false;

@@ -314,6 +314,76 @@ public:
         return *this;
     }
 
+#if PLATFORM(IOS)
+    HistoryEntryDataDecoder& operator>>(WebCore::FloatRect& value)
+    {
+        value = WebCore::FloatRect();
+
+        float x;
+        *this >> x;
+
+        float y;
+        *this >> y;
+
+        float width;
+        *this >> width;
+
+        float height;
+        *this >> height;
+
+        value = WebCore::FloatRect(x, y, width, height);
+        return *this;
+    }
+
+    HistoryEntryDataDecoder& operator>>(WebCore::IntRect& value)
+    {
+        value = WebCore::IntRect();
+
+        int32_t x;
+        *this >> x;
+
+        int32_t y;
+        *this >> y;
+
+        int32_t width;
+        *this >> width;
+
+        int32_t height;
+        *this >> height;
+
+        value = WebCore::IntRect(x, y, width, height);
+        return *this;
+    }
+
+    HistoryEntryDataDecoder& operator>>(WebCore::FloatSize& value)
+    {
+        value = WebCore::FloatSize();
+
+        float width;
+        *this >> width;
+
+        float height;
+        *this >> height;
+
+        value = WebCore::FloatSize(width, height);
+        return *this;
+    }
+
+    HistoryEntryDataDecoder& operator>>(WebCore::IntSize& value)
+    {
+        value = WebCore::IntSize();
+
+        int32_t width;
+        *this >> width;
+
+        int32_t height;
+        *this >> height;
+
+        value = WebCore::IntSize(width, height);
+        return *this;
+    }
+#endif
+
     template<typename T>
     auto operator>>(Optional<T>& value) -> typename std::enable_if<std::is_enum<T>::value, HistoryEntryDataDecoder&>::type
     {
@@ -560,6 +630,15 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
     }
 
     decoder >> frameState.target;
+
+    // FIXME: iOS should not use the legacy session state decoder.
+#if PLATFORM(IOS)
+    decoder >> frameState.exposedContentRect;
+    decoder >> frameState.unobscuredContentRect;
+    decoder >> frameState.minimumLayoutSizeInScrollViewCoordinates;
+    decoder >> frameState.contentSize;
+    decoder >> frameState.scaleIsInitial;
+#endif
 }
 
 bool LegacySessionStateDecoder::decodeSessionHistoryEntryData(CFDataRef historyEntryData, FrameState& mainFrameState) const

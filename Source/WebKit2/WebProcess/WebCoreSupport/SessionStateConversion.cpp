@@ -94,6 +94,14 @@ static FrameState toFrameState(const HistoryItem& historyItem)
         frameState.httpBody = std::move(httpBody);
     }
 
+#if PLATFORM(IOS)
+    frameState.exposedContentRect = historyItem.exposedContentRect();
+    frameState.unobscuredContentRect = historyItem.unobscuredContentRect();
+    frameState.minimumLayoutSizeInScrollViewCoordinates = historyItem.minimumLayoutSizeInScrollViewCoordinates();
+    frameState.contentSize = historyItem.contentSize();
+    frameState.scaleIsInitial = historyItem.scaleIsInitial();
+#endif
+
     for (auto& childHistoryItem : historyItem.children()) {
         FrameState childFrameState = toFrameState(*childHistoryItem);
         frameState.children.append(std::move(childFrameState));
@@ -160,6 +168,14 @@ static void applyFrameState(HistoryItem& historyItem, const FrameState& frameSta
 
         historyItem.setFormData(toFormData(httpBody));
     }
+
+#if PLATFORM(IOS)
+    historyItem.setExposedContentRect(frameState.exposedContentRect);
+    historyItem.setUnobscuredContentRect(frameState.unobscuredContentRect);
+    historyItem.setMinimumLayoutSizeInScrollViewCoordinates(frameState.minimumLayoutSizeInScrollViewCoordinates);
+    historyItem.setContentSize(frameState.contentSize);
+    historyItem.setScaleIsInitial(frameState.scaleIsInitial);
+#endif
 
     for (const auto& childFrameState : frameState.children) {
         RefPtr<HistoryItem> childHistoryItem = HistoryItem::create(childFrameState.urlString, String());

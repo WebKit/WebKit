@@ -1,3 +1,21 @@
+2014-06-24  Anders Carlsson  <andersca@apple.com>
+
+        Add iOS specific frame state member variables
+        https://bugs.webkit.org/show_bug.cgi?id=134268
+
+        Reviewed by Andreas Kling.
+
+        * Shared/SessionState.cpp:
+        (WebKit::FrameState::encode):
+        (WebKit::FrameState::decode):
+        * Shared/SessionState.h:
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::HistoryEntryDataDecoder::operator>>):
+        (WebKit::decodeBackForwardTreeNode):
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toFrameState):
+        (WebKit::applyFrameState):
+
 2014-06-24  Enrica Casucci  <enrica@apple.com>
 
         iOS WebKit2: block selection tends to prefer block to single words even when the page is zoomed.
