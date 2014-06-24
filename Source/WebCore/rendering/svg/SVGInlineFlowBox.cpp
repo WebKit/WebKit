@@ -106,8 +106,8 @@ void SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(RenderSVGInlineText
             if (markerStartPosition >= markerEndPosition)
                 continue;
 
-            unsigned fragmentStartPosition = 0;
-            unsigned fragmentEndPosition = 0;
+            int fragmentStartPosition = 0;
+            int fragmentEndPosition = 0;
 
             const Vector<SVGTextFragment>& fragments = textBox->textFragments();
             unsigned textFragmentsSize = fragments.size();

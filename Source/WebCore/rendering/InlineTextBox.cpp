@@ -196,26 +196,21 @@ LayoutUnit InlineTextBox::selectionHeight() const
     return root().selectionHeight();
 }
 
-bool InlineTextBox::isSelected(unsigned startPos, unsigned endPos) const
+bool InlineTextBox::isSelected(int startPos, int endPos) const
 {
-    unsigned sPos = startPos > m_start ? startPos - m_start : 0;
-    if (endPos <= m_start)
-        return false;
-    unsigned ePos = std::min(endPos - m_start, static_cast<unsigned>(m_len));
-    return sPos < ePos;
+    int sPos = std::max(startPos - m_start, 0);
+    int ePos = std::min(endPos - m_start, static_cast<int>(m_len));
+    return (sPos < ePos);
 }
 
 RenderObject::SelectionState InlineTextBox::selectionState()
 {
     RenderObject::SelectionState state = renderer().selectionState();
     if (state == RenderObject::SelectionStart || state == RenderObject::SelectionEnd || state == RenderObject::SelectionBoth) {
-        int initialStartPos, initialEndPos;
-        renderer().selectionStartEnd(initialStartPos, initialEndPos);
-        ASSERT(initialStartPos >= 0 && initialEndPos >= 0);
-        unsigned startPos = initialStartPos;
-        unsigned endPos = initialEndPos;
+        int startPos, endPos;
+        renderer().selectionStartEnd(startPos, endPos);
         // The position after a hard line break is considered to be past its end.
-        unsigned lastSelectable = start() + len() - (isLineBreak() ? 1 : 0);
+        int lastSelectable = start() + len() - (isLineBreak() ? 1 : 0);
 
         bool start = (state != RenderObject::SelectionEnd && startPos >= m_start && startPos < m_start + m_len);
         bool end = (state != RenderObject::SelectionStart && endPos > m_start && endPos <= lastSelectable);
@@ -236,7 +231,7 @@ RenderObject::SelectionState InlineTextBox::selectionState()
     if (m_truncation != cNoTruncation && root().ellipsisBox()) {
         EllipsisBox* ellipsis = root().ellipsisBox();
         if (state != RenderObject::SelectionNone) {
-            unsigned start, end;
+            int start, end;
             selectionStartEnd(start, end);
             // The ellipsis should be considered to be selected if the end of
             // the selection is past the beginning of the truncation and the
@@ -251,7 +246,7 @@ RenderObject::SelectionState InlineTextBox::selectionState()
     return state;
 }
 
-static void adjustCharactersAndLengthForHyphen(BufferForAppendingHyphen& charactersWithHyphen, const RenderStyle& style, String& string, unsigned& length)
+static void adjustCharactersAndLengthForHyphen(BufferForAppendingHyphen& charactersWithHyphen, const RenderStyle& style, String& string, int& length)
 {
     const AtomicString& hyphenString = style.hyphenString();
     charactersWithHyphen.reserveCapacity(length + hyphenString.length());
@@ -271,14 +266,10 @@ static const Font& fontToUse(const RenderStyle& style, const RenderText& rendere
     return style.font();
 }
 
-LayoutRect InlineTextBox::localSelectionRect(unsigned startPos, unsigned endPos) const
+LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos) const
 {
-    unsigned sPos = startPos > m_start ? startPos - m_start : 0;
-    
-    if (endPos < m_start)
-        return LayoutRect();
-
-    unsigned ePos = std::min(endPos - m_start, static_cast<unsigned>(m_len));
+    int sPos = std::max(startPos - m_start, 0);
+    int ePos = std::min(endPos - m_start, (int)m_len);
     
     if (sPos > ePos)
         return LayoutRect();
@@ -293,10 +284,12 @@ LayoutRect InlineTextBox::localSelectionRect(unsigned startPos, unsigned endPos)
     BufferForAppendingHyphen charactersWithHyphen;
     bool respectHyphen = ePos == m_len && hasHyphen();
     TextRun textRun = constructTextRun(lineStyle, font, respectHyphen ? &charactersWithHyphen : 0);
+    if (respectHyphen)
+        endPos = textRun.length();
 
     LayoutRect selectionRect = LayoutRect(LayoutPoint(logicalLeft(), selectionTop), LayoutSize(m_logicalWidth, selectionHeight));
     // Avoid computing the font width when the entire line box is selected as an optimization.
-    if (sPos || ePos != m_len)
+    if (sPos || ePos != static_cast<int>(m_len))
         font.adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
     IntRect snappedSelectionRect = enclosingIntRect(selectionRect);
     LayoutUnit logicalWidth = snappedSelectionRect.width();
@@ -613,16 +606,15 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     }
 
     // 2. Now paint the foreground, including text and decorations like underline/overline (in quirks mode only).
-    unsigned length = m_len;
-    unsigned maximumLength;
+    int length = m_len;
+    int maximumLength;
     String string;
     if (!combinedText) {
         string = renderer().text();
-        if (length != string.length() || m_start) {
-            ASSERT_WITH_SECURITY_IMPLICATION(m_start + length <= string.length());
+        if (static_cast<unsigned>(length) != string.length() || m_start) {
+            ASSERT_WITH_SECURITY_IMPLICATION(static_cast<unsigned>(m_start + length) <= string.length());
             string = string.substringSharingImpl(m_start, length);
         }
-        ASSERT(renderer().textLength() >= m_start);
         maximumLength = renderer().textLength() - m_start;
     } else {
         combinedText->getStringToRender(m_start, string, length);
@@ -634,14 +626,14 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     if (hasHyphen())
         length = textRun.length();
 
-    unsigned sPos = 0;
-    unsigned ePos = 0;
+    int sPos = 0;
+    int ePos = 0;
     if (haveSelection && (paintSelectedTextOnly || paintSelectedTextSeparately))
         selectionStartEnd(sPos, ePos);
 
     if (m_truncation != cNoTruncation) {
-        sPos = std::min(sPos, static_cast<unsigned>(m_truncation));
-        ePos = std::min(ePos, static_cast<unsigned>(m_truncation));
+        sPos = std::min<int>(sPos, m_truncation);
+        ePos = std::min<int>(ePos, m_truncation);
         length = m_truncation;
     }
 
@@ -701,27 +693,22 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         context->concatCTM(rotation(boxRect, Counterclockwise));
 }
 
-void InlineTextBox::selectionStartEnd(unsigned& sPos, unsigned& ePos)
+void InlineTextBox::selectionStartEnd(int& sPos, int& ePos)
 {
-    unsigned startPos, endPos;
+    int startPos, endPos;
     if (renderer().selectionState() == RenderObject::SelectionInside) {
         startPos = 0;
         endPos = renderer().textLength();
     } else {
-        int originalStartPos, originalEndPos;
-        renderer().selectionStartEnd(originalStartPos, originalEndPos);
-        ASSERT(originalStartPos >= 0 && originalEndPos >= 0);
-        startPos = originalStartPos;
-        endPos = originalEndPos;
+        renderer().selectionStartEnd(startPos, endPos);
         if (renderer().selectionState() == RenderObject::SelectionStart)
             endPos = renderer().textLength();
         else if (renderer().selectionState() == RenderObject::SelectionEnd)
             startPos = 0;
     }
-    
-    sPos = startPos > m_start ? startPos - m_start : 0;
-    ePos = endPos > m_start ? endPos - m_start : 0;
-    ePos = std::min(ePos, static_cast<unsigned>(m_len));
+
+    sPos = std::max(startPos - m_start, 0);
+    ePos = std::min(endPos - m_start, (int)m_len);
 }
 
 void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& boxOrigin, const RenderStyle& style, const Font& font, Color textColor)
@@ -731,7 +718,7 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
         return;
 
     // See if we have a selection to paint at all.
-    unsigned sPos, ePos;
+    int sPos, ePos;
     selectionStartEnd(sPos, ePos);
     if (sPos >= ePos)
         return;
@@ -750,7 +737,7 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
     
     // If the text is truncated, let the thing being painted in the truncation
     // draw its own highlight.
-    unsigned length = m_truncation != cNoTruncation ? m_truncation : m_len;
+    int length = m_truncation != cNoTruncation ? m_truncation : m_len;
     String string = renderer().text();
 
     if (string.length() != static_cast<unsigned>(length) || m_start) {
@@ -760,7 +747,6 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
 
     BufferForAppendingHyphen charactersWithHyphen;
     bool respectHyphen = ePos == length && hasHyphen();
-    ASSERT(renderer().textLength() >= m_start);
     TextRun textRun = constructTextRun(style, font, string, renderer().textLength() - m_start, respectHyphen ? &charactersWithHyphen : 0);
     if (respectHyphen)
         ePos = textRun.length();
@@ -784,12 +770,11 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
 #endif
 }
 
-void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const FloatPoint& boxOrigin, const RenderStyle& style, const Font& font, unsigned startPos, unsigned endPos)
+void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const FloatPoint& boxOrigin, const RenderStyle& style, const Font& font, int startPos, int endPos)
 {
-    unsigned offset = m_start;
-    unsigned sPos = startPos > offset ? startPos - offset : 0;
-    ASSERT(endPos >= offset);
-    unsigned ePos = std::min(endPos - offset, static_cast<unsigned>(m_len));
+    int offset = m_start;
+    int sPos = std::max(startPos - offset, 0);
+    int ePos = std::min(endPos - offset, (int)m_len);
 
     if (sPos >= ePos)
         return;
@@ -1128,7 +1113,7 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext* pt, const FloatPoint& b
 
     // Determine whether we need to measure text
     bool markerSpansWholeBox = true;
-    if (m_start <= marker->startOffset())
+    if (m_start <= (int)marker->startOffset())
         markerSpansWholeBox = false;
     if ((end() + 1) != marker->endOffset()) // end points at the last char, not past it
         markerSpansWholeBox = false;
@@ -1137,12 +1122,11 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext* pt, const FloatPoint& b
 
     bool isDictationMarker = marker->type() == DocumentMarker::DictationAlternatives;
     if (!markerSpansWholeBox || grammar || isDictationMarker) {
-        unsigned startPosition = marker->startOffset() > m_start ? marker->startOffset() - m_start : 0;
-        ASSERT(marker->endOffset() >= m_start);
-        unsigned endPosition = std::min(marker->endOffset() - m_start, static_cast<unsigned>(m_len));
+        int startPosition = std::max<int>(marker->startOffset() - m_start, 0);
+        int endPosition = std::min<int>(marker->endOffset() - m_start, m_len);
         
         if (m_truncation != cNoTruncation)
-            endPosition = std::min(endPosition, static_cast<unsigned>(m_truncation));
+            endPosition = std::min<int>(endPosition, m_truncation);
 
         // Calculate start & width
         int deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
@@ -1189,9 +1173,8 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* context, const FloatPo
 {
     LayoutUnit selectionHeight = this->selectionHeight();
 
-    unsigned sPos = marker->startOffset() > m_start ? marker->startOffset() - m_start : 0;
-    ASSERT(marker->endOffset() >= m_start);
-    unsigned ePos = std::min(marker->endOffset() - m_start, static_cast<unsigned>(m_len));
+    int sPos = std::max(marker->startOffset() - m_start, (unsigned)0);
+    int ePos = std::min(marker->endOffset() - m_start, (unsigned)m_len);
     TextRun run = constructTextRun(style, font);
 
     // Always compute and store the rect associated with this marker. The computed rect is in absolute coordinates.
@@ -1223,9 +1206,8 @@ void InlineTextBox::computeRectForReplacementMarker(DocumentMarker* marker, cons
     LayoutUnit top = selectionTop();
     LayoutUnit h = selectionHeight();
     
-    unsigned sPos = marker->startOffset() > m_start ? marker->startOffset() - m_start : 0;
-    ASSERT(marker->endOffset() >= m_start);
-    unsigned ePos = std::min(marker->endOffset() - m_start, (unsigned)m_len);
+    int sPos = std::max(marker->startOffset() - m_start, (unsigned)0);
+    int ePos = std::min(marker->endOffset() - m_start, (unsigned)m_len);
     TextRun run = constructTextRun(style, font);
 
     // Compute and store the rect associated with this marker.
@@ -1332,11 +1314,11 @@ void InlineTextBox::paintCompositionUnderline(GraphicsContext* ctx, const FloatP
         start = renderer().width(m_start, paintStart - m_start, textPos(), isFirstLine());
     }
     if (paintEnd != underline.endOffset) {      // end points at the last char, not past it
-        paintEnd = std::min(paintEnd, underline.endOffset);
+        paintEnd = std::min(paintEnd, (unsigned)underline.endOffset);
         useWholeWidth = false;
     }
     if (m_truncation != cNoTruncation) {
-        paintEnd = std::min(paintEnd, m_start + m_truncation);
+        paintEnd = std::min(paintEnd, (unsigned)m_start + m_truncation);
         useWholeWidth = false;
     }
     if (!useWholeWidth) {
@@ -1397,7 +1379,7 @@ int InlineTextBox::offsetForPosition(float lineOffset, bool includePartialGlyphs
     return font.offsetForPosition(constructTextRun(lineStyle, font), lineOffset - logicalLeft(), includePartialGlyphs);
 }
 
-float InlineTextBox::positionForOffset(unsigned offset) const
+float InlineTextBox::positionForOffset(int offset) const
 {
     ASSERT(offset >= m_start);
     ASSERT(offset <= m_start + m_len);
@@ -1409,8 +1391,8 @@ float InlineTextBox::positionForOffset(unsigned offset) const
 
     const RenderStyle& lineStyle = this->lineStyle();
     const Font& font = fontToUse(lineStyle, renderer());
-    unsigned from = !isLeftToRightDirection() ? offset - m_start : 0;
-    unsigned to = !isLeftToRightDirection() ? m_len : offset - m_start;
+    int from = !isLeftToRightDirection() ? offset - m_start : 0;
+    int to = !isLeftToRightDirection() ? m_len : offset - m_start;
     // FIXME: Do we need to add rightBearing here?
     LayoutRect selectionRect = LayoutRect(logicalLeft(), 0, 0, 0);
     TextRun run = constructTextRun(lineStyle, font);
@@ -1428,14 +1410,13 @@ TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const Font& fo
 
     if (string.length() != length || startPos)
         string = string.substringSharingImpl(startPos, length);
-    
-    ASSERT(renderer().textLength() >= startPos);
+
     return constructTextRun(style, font, string, renderer().textLength() - startPos, charactersWithHyphen);
 }
 
-TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const Font& font, String string, unsigned maximumLength, BufferForAppendingHyphen* charactersWithHyphen) const
+TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const Font& font, String string, int maximumLength, BufferForAppendingHyphen* charactersWithHyphen) const
 {
-    unsigned length = string.length();
+    int length = string.length();
 
     if (charactersWithHyphen) {
         adjustCharactersAndLengthForHyphen(*charactersWithHyphen, style, string, length);

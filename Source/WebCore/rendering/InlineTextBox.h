@@ -110,15 +110,15 @@ private:
     LayoutUnit selectionBottom() const;
     LayoutUnit selectionHeight() const;
 
-    TextRun constructTextRun(const RenderStyle&, const Font&, BufferForAppendingHyphen* = nullptr) const;
-    TextRun constructTextRun(const RenderStyle&, const Font&, String, unsigned maximumLength, BufferForAppendingHyphen* = nullptr) const;
+    TextRun constructTextRun(const RenderStyle&, const Font&, BufferForAppendingHyphen* = 0) const;
+    TextRun constructTextRun(const RenderStyle&, const Font&, String, int maximumLength, BufferForAppendingHyphen* = 0) const;
 
 public:
     virtual FloatRect calculateBoundaries() const { return FloatRect(x(), y(), width(), height()); }
 
-    virtual LayoutRect localSelectionRect(unsigned startPos, unsigned endPos) const;
-    bool isSelected(unsigned startPos, unsigned endPos) const;
-    void selectionStartEnd(unsigned& sPos, unsigned& ePos);
+    virtual LayoutRect localSelectionRect(int startPos, int endPos) const;
+    bool isSelected(int startPos, int endPos) const;
+    void selectionStartEnd(int& sPos, int& ePos);
 
 protected:
     virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom);
@@ -158,13 +158,13 @@ private:
 
 public:
     virtual int offsetForPosition(float x, bool includePartialGlyphs = true) const;
-    virtual float positionForOffset(unsigned offset) const;
+    virtual float positionForOffset(int offset) const;
 
     // Needs to be public, so the static paintTextWithShadows() function can use it.
     static FloatSize applyShadowToGraphicsContext(GraphicsContext*, const ShadowData*, const FloatRect& textRect, bool stroked, bool opaque, bool horizontal);
 
 protected:
-    void paintCompositionBackground(GraphicsContext*, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, unsigned startPos, unsigned endPos);
+    void paintCompositionBackground(GraphicsContext*, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, int startPos, int endPos);
     void paintDocumentMarkers(GraphicsContext*, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, bool background);
     void paintCompositionUnderline(GraphicsContext*, const FloatPoint& boxOrigin, const CompositionUnderline&);
 
@@ -187,7 +187,7 @@ private:
     InlineTextBox* m_prevTextBox; // The previous box that also uses our RenderObject
     InlineTextBox* m_nextTextBox; // The next box that also uses our RenderObject
 
-    unsigned m_start;
+    int m_start;
     unsigned short m_len;
 
     // Where to truncate when text overflow is applied. We use special constants to

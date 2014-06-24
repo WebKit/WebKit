@@ -76,7 +76,7 @@ typedef FloatSize GlyphBufferAdvance;
 class GlyphBuffer {
 public:
     bool isEmpty() const { return m_fontData.isEmpty(); }
-    unsigned size() const { return m_fontData.size(); }
+    int size() const { return m_fontData.size(); }
     
     void clear()
     {
@@ -90,12 +90,12 @@ public:
 #endif
     }
 
-    GlyphBufferGlyph* glyphs(unsigned from) { return m_glyphs.data() + from; }
-    GlyphBufferAdvance* advances(unsigned from) { return m_advances.data() + from; }
-    const GlyphBufferGlyph* glyphs(unsigned from) const { return m_glyphs.data() + from; }
-    const GlyphBufferAdvance* advances(unsigned from) const { return m_advances.data() + from; }
+    GlyphBufferGlyph* glyphs(int from) { return m_glyphs.data() + from; }
+    GlyphBufferAdvance* advances(int from) { return m_advances.data() + from; }
+    const GlyphBufferGlyph* glyphs(int from) const { return m_glyphs.data() + from; }
+    const GlyphBufferAdvance* advances(int from) const { return m_advances.data() + from; }
 
-    const SimpleFontData* fontDataAt(unsigned index) const { return m_fontData[index]; }
+    const SimpleFontData* fontDataAt(int index) const { return m_fontData[index]; }
 
     void setInitialAdvance(GlyphBufferAdvance initialAdvance) { m_initialAdvance = initialAdvance; }
     const GlyphBufferAdvance& initialAdvance() const { return m_initialAdvance; }
@@ -109,12 +109,12 @@ public:
 #endif
     }
 
-    GlyphBufferAdvance advanceAt(unsigned index) const
+    GlyphBufferAdvance advanceAt(int index) const
     {
         return m_advances[index];
     }
 
-    FloatSize offsetAt(unsigned index) const
+    FloatSize offsetAt(int index) const
     {
 #if PLATFORM(WIN)
         return m_offsets[index];
@@ -176,7 +176,7 @@ public:
     }
 #endif
 
-    void reverse(unsigned from, unsigned length)
+    void reverse(int from, int length)
     {
         for (int i = from, end = from + length - 1; i < end; ++i, --end)
             swap(i, end);
@@ -194,14 +194,14 @@ public:
         m_offsetsInString.reset(new Vector<int, 2048>());
     }
     
-    int offsetInString(unsigned index) const
+    int offsetInString(int index) const
     {
         ASSERT(m_offsetsInString);
         return (*m_offsetsInString)[index];
     }
 
 private:
-    void swap(unsigned index1, unsigned index2)
+    void swap(int index1, int index2)
     {
         const SimpleFontData* f = m_fontData[index1];
         m_fontData[index1] = m_fontData[index2];

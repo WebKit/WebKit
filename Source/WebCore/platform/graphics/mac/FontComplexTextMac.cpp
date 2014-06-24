@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-void Font::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, unsigned from, unsigned to) const
+void Font::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, int from, int to) const
 {
     ComplexTextController controller(this, run);
     controller.advance(from);
@@ -52,7 +52,7 @@ void Font::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& sel
     selectionRect.setWidth(afterWidth - beforeWidth);
 }
 
-float Font::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsigned from, unsigned to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
+float Font::getGlyphsAndAdvancesForComplexText(const TextRun& run, int from, int to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
 {
     float initialAdvance;
 
@@ -75,7 +75,7 @@ float Font::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsigned from
     return initialAdvance;
 }
 
-float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, unsigned from, unsigned to) const
+float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
 {
     // This glyph buffer holds our glyphs + advances + font data for each glyph.
     GlyphBuffer glyphBuffer;
@@ -93,7 +93,7 @@ float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const 
     return startPoint.x() - startX;
 }
 
-void Font::drawEmphasisMarksForComplexText(GraphicsContext* context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, unsigned from, unsigned to) const
+void Font::drawEmphasisMarksForComplexText(GraphicsContext* context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to) const
 {
     GlyphBuffer glyphBuffer;
     float initialAdvance = getGlyphsAndAdvancesForComplexText(run, from, to, glyphBuffer, ForTextEmphasis);
