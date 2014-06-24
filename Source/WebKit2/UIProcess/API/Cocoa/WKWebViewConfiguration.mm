@@ -79,6 +79,19 @@ private:
 #endif
 }
 
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+    
+#if PLATFORM(IOS)
+    _mediaPlaybackRequiresUserAction = YES;
+    _mediaPlaybackAllowsAirPlay = YES;
+#endif
+    
+    return self;
+}
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@: %p; processPool = %@; preferences = %@>", NSStringFromClass(self.class), self, self.processPool, self.preferences];

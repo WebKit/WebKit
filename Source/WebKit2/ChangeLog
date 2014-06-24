@@ -1,3 +1,14 @@
+2014-06-24  Jeremy Jones  <jeremyj@apple.com>
+
+        Initialize WKWebViewConfiguration properties to their default values.
+        https://bugs.webkit.org/show_bug.cgi?id=134216
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        add -init method to initialize _mediaPlaybackRequiresUserAction and _mediaPlaybackAllowsAirPlay.
+
 2014-06-24  Anders Carlsson  <andersca@apple.com>
 
         Add missing semicolon.
