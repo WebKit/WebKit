@@ -1207,6 +1207,9 @@ private:
     void stopAssistingNode();
 
 #if ENABLE(INSPECTOR)
+    void showInspectorHighlight(const WebCore::Highlight&);
+    void hideInspectorHighlight();
+
     void showInspectorIndication();
     void hideInspectorIndication();
 #endif

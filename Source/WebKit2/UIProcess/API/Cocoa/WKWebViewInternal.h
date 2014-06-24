@@ -45,6 +45,10 @@
 #define WK_WEB_VIEW_PROTOCOLS
 #endif
 
+namespace WebCore {
+struct Highlight;
+}
+
 namespace WebKit {
 class WebPageProxy;
 struct PrintInfo;
@@ -88,6 +92,9 @@ struct ViewSnapshot;
 
 - (void)_willInvokeUIScrollViewDelegateCallback;
 - (void)_didInvokeUIScrollViewDelegateCallback;
+
+- (void)_showInspectorHighlight:(const WebCore::Highlight&)highlight;
+- (void)_hideInspectorHighlight;
 
 - (void)_updateVisibleContentRects;
 

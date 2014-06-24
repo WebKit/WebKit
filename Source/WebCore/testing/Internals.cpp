@@ -717,7 +717,7 @@ PassRefPtr<ClientRectList> Internals::inspectorHighlightRects(ExceptionCode& ec)
     }
 
     Highlight highlight;
-    document->page()->inspectorController().getHighlight(&highlight);
+    document->page()->inspectorController().getHighlight(&highlight, InspectorOverlay::CoordinateSystem::View);
     return ClientRectList::create(highlight.quads);
 #else
     UNUSED_PARAM(ec);

@@ -646,6 +646,16 @@ void WebPageProxy::stopAssistingNode()
 }
 
 #if ENABLE(INSPECTOR)
+void WebPageProxy::showInspectorHighlight(const WebCore::Highlight& highlight)
+{
+    m_pageClient.showInspectorHighlight(highlight);
+}
+
+void WebPageProxy::hideInspectorHighlight()
+{
+    m_pageClient.hideInspectorHighlight();
+}
+
 void WebPageProxy::showInspectorIndication()
 {
     m_pageClient.showInspectorIndication();

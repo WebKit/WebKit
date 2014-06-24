@@ -132,6 +132,9 @@ private:
     virtual WebCore::FloatSize contentsSize() const override;
 
 #if ENABLE(INSPECTOR)
+    virtual void showInspectorHighlight(const WebCore::Highlight&) override;
+    virtual void hideInspectorHighlight() override;
+
     virtual void showInspectorIndication() override;
     virtual void hideInspectorIndication() override;
 #endif

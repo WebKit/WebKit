@@ -98,6 +98,7 @@ struct KeypressCommand;
 namespace WebCore {
 class FloatQuad;
 class SelectionRect;
+struct Highlight;
 struct PasteboardImage;
 struct PasteboardWebContent;
 struct ViewportArguments;
@@ -287,6 +288,11 @@ template<> struct ArgumentCoder<WebCore::KeypressCommand> {
 template<> struct ArgumentCoder<WebCore::SelectionRect> {
     static void encode(ArgumentEncoder&, const WebCore::SelectionRect&);
     static bool decode(ArgumentDecoder&, WebCore::SelectionRect&);
+};
+
+template<> struct ArgumentCoder<WebCore::Highlight> {
+    static void encode(ArgumentEncoder&, const WebCore::Highlight&);
+    static bool decode(ArgumentDecoder&, WebCore::Highlight&);
 };
 
 template<> struct ArgumentCoder<WebCore::PasteboardWebContent> {

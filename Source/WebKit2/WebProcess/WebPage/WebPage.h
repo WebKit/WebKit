@@ -131,6 +131,7 @@ class SubstituteData;
 class TextCheckingRequest;
 class URL;
 class VisibleSelection;
+struct Highlight;
 struct KeypressCommand;
 struct TextCheckingResult;
 }
@@ -507,6 +508,9 @@ public:
     void dispatchAsynchronousTouchEvents(const Vector<WebTouchEvent, 1>& queue);
     void contentSizeCategoryDidChange(const String&);
 #if ENABLE(INSPECTOR)
+    void showInspectorHighlight(const WebCore::Highlight&);
+    void hideInspectorHighlight();
+
     void showInspectorIndication();
     void hideInspectorIndication();
 #endif

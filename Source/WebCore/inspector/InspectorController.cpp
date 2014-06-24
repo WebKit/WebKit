@@ -318,9 +318,9 @@ void InspectorController::drawHighlight(GraphicsContext& context) const
     m_overlay->paint(context);
 }
 
-void InspectorController::getHighlight(Highlight* highlight) const
+void InspectorController::getHighlight(Highlight* highlight, InspectorOverlay::CoordinateSystem coordinateSystem) const
 {
-    m_overlay->getHighlight(highlight);
+    m_overlay->getHighlight(highlight, coordinateSystem);
 }
 
 PassRefPtr<InspectorObject> InspectorController::buildObjectForHighlightedNode() const

@@ -92,6 +92,7 @@
 #import <UIKit/UIWindow_Private.h>
 #import <QuartzCore/CARenderServer.h>
 #import <QuartzCore/QuartzCorePrivate.h>
+#import <WebCore/InspectorOverlay.h>
 
 @interface UIScrollView (UIScrollViewInternal)
 - (void)_adjustForAutomaticKeyboardInfo:(NSDictionary*)info animated:(BOOL)animated lastAdjustment:(CGFloat*)lastAdjustment;
@@ -637,6 +638,16 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
         _hadDelayedUpdateVisibleContentRects = NO;
         [self _updateVisibleContentRects];
     }
+}
+
+- (void)_showInspectorHighlight:(const WebCore::Highlight&)highlight
+{
+    [_contentView _showInspectorHighlight:highlight];
+}
+
+- (void)_hideInspectorHighlight
+{
+    [_contentView _hideInspectorHighlight];
 }
 
 static CGFloat contentZoomScale(WKWebView* webView)

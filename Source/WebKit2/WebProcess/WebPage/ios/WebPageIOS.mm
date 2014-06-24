@@ -612,6 +612,16 @@ void WebPage::setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSel
 }
 
 #if ENABLE(INSPECTOR)
+void WebPage::showInspectorHighlight(const WebCore::Highlight& highlight)
+{
+    send(Messages::WebPageProxy::ShowInspectorHighlight(highlight));
+}
+
+void WebPage::hideInspectorHighlight()
+{
+    send(Messages::WebPageProxy::HideInspectorHighlight());
+}
+
 void WebPage::showInspectorIndication()
 {
     send(Messages::WebPageProxy::ShowInspectorIndication());

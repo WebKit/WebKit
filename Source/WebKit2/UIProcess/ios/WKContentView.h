@@ -33,6 +33,10 @@
 @class WKContentView;
 @class WKWebView;
 
+namespace WebCore {
+struct Highlight;
+}
+
 namespace WebKit {
 class DrawingAreaProxy;
 class FindIndicator;
@@ -73,6 +77,9 @@ struct WebPageConfiguration;
 - (void)_processDidExit;
 - (void)_didRelaunchProcess;
 - (void)_setAcceleratedCompositingRootView:(UIView *)rootView;
+
+- (void)_showInspectorHighlight:(const WebCore::Highlight&)highlight;
+- (void)_hideInspectorHighlight;
 
 - (void)_didCommitLoadForMainFrame;
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;

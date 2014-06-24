@@ -210,7 +210,7 @@ EXPORTS
         ?selectTag@HTMLNames@WebCore@@3VHTMLQualifiedName@2@B
 #if ENABLE(INSPECTOR)
         symbolWithPointer(?buildObjectForHighlightedNode@InspectorController@WebCore@@QBE?AV?$PassRefPtr@VInspectorObject@Inspector@@@WTF@@XZ, ?buildObjectForHighlightedNode@InspectorController@WebCore@@QEBA?AV?$PassRefPtr@VInspectorObject@Inspector@@@WTF@@XZ)
-        symbolWithPointer(?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@@Z, ?getHighlight@InspectorController@WebCore@@QEBAXPEAUHighlight@2@@Z)
+        symbolWithPointer(?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@W4CoordinateSystem@InspectorOverlay@2@@Z, ?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@W4CoordinateSystem@InspectorOverlay@2@@Z)
         symbolWithPointer(?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@CAPAVInstrumentingAgents@2@PAVPage@2@@Z, ?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@CAPEAVInstrumentingAgents@2@PEAVPage@2@@Z)
         ?s_frontendCounter@InspectorInstrumentation@WebCore@@0HA
         symbolWithPointer(?isUnderTest@InspectorFrontendClientLocal@WebCore@@UAE_NXZ, ?isUnderTest@InspectorFrontendClientLocal@WebCore@@UEAA_NXZ)

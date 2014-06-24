@@ -33,6 +33,10 @@
 #include <WebCore/InspectorController.h>
 #include <WebCore/Page.h>
 
+#if PLATFORM(IOS)
+#include <WebCore/InspectorOverlay.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -69,6 +73,7 @@ void WebInspectorClient::didResizeMainFrame(Frame*)
 
 void WebInspectorClient::highlight()
 {
+#if !PLATFORM(IOS)
     if (!m_highlightOverlay) {
         RefPtr<PageOverlay> highlightOverlay = PageOverlay::create(this);
         m_highlightOverlay = highlightOverlay.get();
@@ -78,12 +83,21 @@ void WebInspectorClient::highlight()
         m_highlightOverlay->stopFadeOutAnimation();
         m_highlightOverlay->setNeedsDisplay();
     }
+#else
+    Highlight highlight;
+    m_page->corePage()->inspectorController().getHighlight(&highlight, InspectorOverlay::CoordinateSystem::Document);
+    m_page->showInspectorHighlight(highlight);
+#endif
 }
 
 void WebInspectorClient::hideHighlight()
 {
+#if !PLATFORM(IOS)
     if (m_highlightOverlay)
         m_page->uninstallPageOverlay(m_highlightOverlay, PageOverlay::FadeMode::Fade);
+#else
+    m_page->hideInspectorHighlight();
+#endif
 }
 
 #if PLATFORM(IOS)

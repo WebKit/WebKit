@@ -485,6 +485,16 @@ bool PageClientImpl::handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, WebOpenPa
 }
 
 #if ENABLE(INSPECTOR)
+void PageClientImpl::showInspectorHighlight(const WebCore::Highlight& highlight)
+{
+    [m_webView _showInspectorHighlight:highlight];
+}
+
+void PageClientImpl::hideInspectorHighlight()
+{
+    [m_webView _hideInspectorHighlight];
+}
+
 void PageClientImpl::showInspectorIndication()
 {
     [m_webView _showInspectorIndication];

@@ -341,6 +341,9 @@ messages -> WebPageProxy {
     NotifyRevealedSelection()
 
 #if ENABLE(INSPECTOR)
+    ShowInspectorHighlight(WebCore::Highlight highlight)
+    HideInspectorHighlight()
+
     ShowInspectorIndication()
     HideInspectorIndication()
 #endif

@@ -100,16 +100,23 @@ void drawOutlinedQuad(GraphicsContext* context, const FloatQuad& quad, const Col
     context->fillPath(quadPath);
 }
 
-static void contentsQuadToPage(const FrameView* mainView, const FrameView* view, FloatQuad& quad)
+static void contentsQuadToCoordinateSystem(const FrameView* mainView, const FrameView* view, FloatQuad& quad, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
     quad.setP1(view->contentsToRootView(roundedIntPoint(quad.p1())));
     quad.setP2(view->contentsToRootView(roundedIntPoint(quad.p2())));
     quad.setP3(view->contentsToRootView(roundedIntPoint(quad.p3())));
     quad.setP4(view->contentsToRootView(roundedIntPoint(quad.p4())));
-    quad += mainView->scrollOffset();
+
+    if (coordinateSystem == InspectorOverlay::CoordinateSystem::View)
+        quad += mainView->scrollOffset();
 }
 
-static void buildRendererHighlight(RenderObject* renderer, RenderRegion* region, const HighlightConfig& highlightConfig, Highlight* highlight)
+static void contentsQuadToPage(const FrameView* mainView, const FrameView* view, FloatQuad& quad)
+{
+    contentsQuadToCoordinateSystem(mainView, view, quad, InspectorOverlay::CoordinateSystem::View);
+}
+
+static void buildRendererHighlight(RenderObject* renderer, RenderRegion* region, const HighlightConfig& highlightConfig, Highlight* highlight, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
     Frame* containingFrame = renderer->document().frame();
     if (!containingFrame)
@@ -126,7 +133,7 @@ static void buildRendererHighlight(RenderObject* renderer, RenderRegion* region,
         highlight->type = HighlightTypeRects;
         renderer->absoluteQuads(highlight->quads);
         for (size_t i = 0; i < highlight->quads.size(); ++i)
-            contentsQuadToPage(mainView, containingView, highlight->quads[i]);
+            contentsQuadToCoordinateSystem(mainView, containingView, highlight->quads[i], coordinateSystem);
     } else if (renderer->isBox() || renderer->isRenderInline()) {
         LayoutRect contentBox;
         LayoutRect paddingBox;
@@ -202,10 +209,10 @@ static void buildRendererHighlight(RenderObject* renderer, RenderRegion* region,
             absMarginQuad = renderer->localToAbsoluteQuad(FloatRect(marginBox));
         }
 
-        contentsQuadToPage(mainView, containingView, absContentQuad);
-        contentsQuadToPage(mainView, containingView, absPaddingQuad);
-        contentsQuadToPage(mainView, containingView, absBorderQuad);
-        contentsQuadToPage(mainView, containingView, absMarginQuad);
+        contentsQuadToCoordinateSystem(mainView, containingView, absContentQuad, coordinateSystem);
+        contentsQuadToCoordinateSystem(mainView, containingView, absPaddingQuad, coordinateSystem);
+        contentsQuadToCoordinateSystem(mainView, containingView, absBorderQuad, coordinateSystem);
+        contentsQuadToCoordinateSystem(mainView, containingView, absMarginQuad, coordinateSystem);
 
         highlight->type = HighlightTypeNode;
         highlight->quads.append(absMarginQuad);
@@ -215,12 +222,12 @@ static void buildRendererHighlight(RenderObject* renderer, RenderRegion* region,
     }
 }
 
-static void buildNodeHighlight(Node* node, RenderRegion* region, const HighlightConfig& highlightConfig, Highlight* highlight)
+static void buildNodeHighlight(Node* node, RenderRegion* region, const HighlightConfig& highlightConfig, Highlight* highlight, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
     RenderObject* renderer = node->renderer();
     if (!renderer)
         return;
-    buildRendererHighlight(renderer, region, highlightConfig, highlight);
+    buildRendererHighlight(renderer, region, highlightConfig, highlight, coordinateSystem);
 }
 
 static void buildQuadHighlight(const FloatQuad& quad, const HighlightConfig& highlightConfig, Highlight *highlight)
@@ -260,14 +267,14 @@ void InspectorOverlay::drawOutline(GraphicsContext* context, const LayoutRect& r
     drawOutlinedQuad(context, outlineRect, Color(), color);
 }
 
-void InspectorOverlay::getHighlight(Highlight* highlight) const
+void InspectorOverlay::getHighlight(Highlight* highlight, InspectorOverlay::CoordinateSystem coordinateSystem) const
 {
     if (!m_highlightNode && !m_highlightQuad)
         return;
 
     highlight->type = HighlightTypeRects;
     if (m_highlightNode)
-        buildNodeHighlight(m_highlightNode.get(), nullptr, m_nodeHighlightConfig, highlight);
+        buildNodeHighlight(m_highlightNode.get(), nullptr, m_nodeHighlightConfig, highlight, coordinateSystem);
     else
         buildQuadHighlight(*m_highlightQuad, m_quadHighlightConfig, highlight);
 }
@@ -508,7 +515,7 @@ static PassRefPtr<InspectorArray> buildObjectForRendererFragments(RenderObject* 
     RenderFlowThread* containingFlowThread = renderer->flowThreadContainingBlock();
     if (!containingFlowThread) {
         Highlight highlight;
-        buildRendererHighlight(renderer, nullptr, config, &highlight);
+        buildRendererHighlight(renderer, nullptr, config, &highlight, InspectorOverlay::CoordinateSystem::View);
         fragmentsArray->pushObject(buildObjectForHighlight(highlight));
     } else {
         RenderRegion* startRegion = nullptr;
@@ -524,7 +531,7 @@ static PassRefPtr<InspectorArray> buildObjectForRendererFragments(RenderObject* 
             if (region->isValid()) {
                 // Compute the highlight of the fragment inside the current region.
                 Highlight highlight;
-                buildRendererHighlight(renderer, region, config, &highlight);
+                buildRendererHighlight(renderer, region, config, &highlight, InspectorOverlay::CoordinateSystem::View);
                 RefPtr<InspectorObject> fragmentObject = buildObjectForHighlight(highlight);
 
                 // Compute the clipping area of the region.

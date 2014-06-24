@@ -70,6 +70,7 @@ enum HighlightType {
 struct Highlight {
     Highlight()
         : type(HighlightTypeNode)
+        , usePageCoordinates(true)
     {
     }
 
@@ -102,10 +103,15 @@ public:
     InspectorOverlay(Page&, InspectorClient*);
     ~InspectorOverlay();
 
+    enum class CoordinateSystem {
+        View, // Adjusts for the main frame's scroll offset.
+        Document, // Does not adjust for the main frame's scroll offset.
+    };
+
     void update();
     void paint(GraphicsContext&);
     void drawOutline(GraphicsContext*, const LayoutRect&, const Color&);
-    void getHighlight(Highlight*) const;
+    void getHighlight(Highlight*, CoordinateSystem) const;
 
     void setPausedInDebuggerMessage(const String*);
 

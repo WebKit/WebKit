@@ -1,3 +1,26 @@
+2014-06-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS]: WK2 Inspector Node Highlighting
+        https://bugs.webkit.org/show_bug.cgi?id=134257
+
+        Reviewed by Timothy Hatcher.
+
+        Some clients want to get highlights with the scroll applied,
+        others do not. Provide a CoordinateSpace param to be used for
+        getting a highlight (only used on iOS).
+
+        * WebCore.exp.in:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::getHighlight):
+        * inspector/InspectorController.h:
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::getHighlight):
+        (WebCore::buildObjectForRendererFragments):
+        * inspector/InspectorOverlay.h:
+        (WebCore::Highlight::Highlight):
+        * testing/Internals.cpp:
+        (WebCore::Internals::inspectorHighlightRects):
+
 2014-06-24  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] Uncaught exception when deallocating AVSampleBufferDisplayLayer

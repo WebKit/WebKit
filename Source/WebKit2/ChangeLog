@@ -1,3 +1,63 @@
+2014-06-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS]: WK2 Inspector Node Highlighting
+        https://bugs.webkit.org/show_bug.cgi?id=134257
+
+        Reviewed by Timothy Hatcher.
+
+        * Scripts/webkit2/messages.py:
+        (struct_or_class):
+        (headers_for_type):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Highlight>::encode):
+        (IPC::ArgumentCoder<Highlight>::decode):
+        Add a way to encode a WebCore::Highlight struct.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _showInspectorHighlight:WebCore::]):
+        (-[WKWebView _hideInspectorHighlight]):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::showInspectorHighlight):
+        (WebKit::PageClientImpl::hideInspectorHighlight):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::showInspectorHighlight):
+        (WebKit::WebPageProxy::hideInspectorHighlight):
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::highlight):
+        (WebKit::WebInspectorClient::hideHighlight):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::showInspectorHighlight):
+        (WebKit::WebPage::hideInspectorHighlight):
+        Send web process highlight / hideHighlight messages up to
+        the UIProcess so it can highlight in the WKContentView.
+        Pass up a WebCore::Highlight in Document coordinates.
+
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKInspectorHighlightView initWithFrame:]):
+        (-[WKInspectorHighlightView dealloc]):
+        (-[WKInspectorHighlightView _removeAllLayers]):
+        (-[WKInspectorHighlightView _createLayers:]):
+        (findIntersectionOnLineBetweenPoints):
+        (quadIntersection):
+        (layerPathWithHole):
+        (layerPath):
+        (-[WKInspectorHighlightView _layoutForNodeHighlight:]):
+        (-[WKInspectorHighlightView _layoutForRectsHighlight:]):
+        (-[WKInspectorHighlightView update:]):
+        Reuse the WebKit1 code to turn highlight float quads into CAShapeLayers.
+
+        (-[WKContentView _showInspectorHighlight:WebCore::]):
+        (-[WKContentView _hideInspectorHighlight]):
+        Show and hide the highlight view with the respective WebCore::Highlight.
+
 2014-06-24  Anders Carlsson  <andersca@apple.com>
 
         Simplify decodeLegacySessionState

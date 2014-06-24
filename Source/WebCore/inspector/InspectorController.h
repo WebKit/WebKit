@@ -34,6 +34,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "InspectorInstrumentationCookie.h"
+#include "InspectorOverlay.h"
 #include <inspector/InspectorAgentRegistry.h>
 #include <inspector/InspectorEnvironment.h>
 #include <wtf/Forward.h>
@@ -59,7 +60,6 @@ class InspectorClient;
 class InspectorDOMAgent;
 class InspectorDOMDebuggerAgent;
 class InspectorFrontendClient;
-class InspectorOverlay;
 class InspectorPageAgent;
 class InspectorResourceAgent;
 class InstrumentingAgents;
@@ -67,7 +67,6 @@ class Node;
 class Page;
 class PageDebuggerAgent;
 class WebInjectedScriptManager;
-struct Highlight;
 
 class InspectorController final : public Inspector::InspectorEnvironment {
     WTF_MAKE_NONCOPYABLE(InspectorController);
@@ -104,7 +103,7 @@ public:
 
     void inspect(Node*);
     void drawHighlight(GraphicsContext&) const;
-    void getHighlight(Highlight*) const;
+    void getHighlight(Highlight*, InspectorOverlay::CoordinateSystem) const;
     void hideHighlight();
     Node* highlightedNode() const;
 

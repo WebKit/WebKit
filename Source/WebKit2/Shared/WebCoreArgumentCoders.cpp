@@ -75,6 +75,7 @@
 
 #if PLATFORM(IOS)
 #include <WebCore/FloatQuad.h>
+#include <WebCore/InspectorOverlay.h>
 #include <WebCore/Pasteboard.h>
 #include <WebCore/SelectionRect.h>
 #include <WebCore/SharedBuffer.h>
@@ -1195,6 +1196,42 @@ bool ArgumentCoder<DatabaseDetails>::decode(ArgumentDecoder& decoder, DatabaseDe
 #endif
 
 #if PLATFORM(IOS)
+
+void ArgumentCoder<Highlight>::encode(ArgumentEncoder& encoder, const Highlight& highlight)
+{
+    encoder << static_cast<uint32_t>(highlight.type);
+    encoder << highlight.usePageCoordinates;
+    encoder << highlight.contentColor;
+    encoder << highlight.contentOutlineColor;
+    encoder << highlight.paddingColor;
+    encoder << highlight.borderColor;
+    encoder << highlight.marginColor;
+    encoder << highlight.quads;
+}
+
+bool ArgumentCoder<Highlight>::decode(ArgumentDecoder& decoder, Highlight& highlight)
+{
+    uint32_t type;
+    if (!decoder.decode(type))
+        return false;
+    highlight.type = (HighlightType)type;
+
+    if (!decoder.decode(highlight.usePageCoordinates))
+        return false;
+    if (!decoder.decode(highlight.contentColor))
+        return false;
+    if (!decoder.decode(highlight.contentOutlineColor))
+        return false;
+    if (!decoder.decode(highlight.paddingColor))
+        return false;
+    if (!decoder.decode(highlight.borderColor))
+        return false;
+    if (!decoder.decode(highlight.marginColor))
+        return false;
+    if (!decoder.decode(highlight.quads))
+        return false;
+    return true;
+}
 
 static void encodeSharedBuffer(ArgumentEncoder& encoder, SharedBuffer* buffer)
 {

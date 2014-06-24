@@ -48,6 +48,7 @@ OBJC_CLASS NSTextAlternatives;
 namespace WebCore {
 class Cursor;
 struct ViewportAttributes;
+struct Highlight;
 }
 
 namespace WebKit {
@@ -270,6 +271,9 @@ public:
     virtual void didFinishDrawingPagesToPDF(const IPC::DataReference&) = 0;
 
 #if ENABLE(INSPECTOR)
+    virtual void showInspectorHighlight(const WebCore::Highlight&) = 0;
+    virtual void hideInspectorHighlight() = 0;
+
     virtual void showInspectorIndication() = 0;
     virtual void hideInspectorIndication() = 0;
 #endif
