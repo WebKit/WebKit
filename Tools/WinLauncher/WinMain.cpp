@@ -27,9 +27,9 @@
  */
 
 #include "stdafx.h"
-#include "Common.cpp"
 #include "WinLauncherLibResource.h"
 #include "WinLauncherWebHost.h"
+#include "Common.cpp"
 
 int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int nCmdShow)
 {

@@ -1,5 +1,12 @@
 2014-06-23  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Build fix after r134209
+
+        * WinLauncher/WinMain.cpp: Must include the resources file
+        before Common.cpp.
+
+2014-06-23  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Clean up and refactor WinLauncher
         https://bugs.webkit.org/show_bug.cgi?id=134209
 
