@@ -1200,6 +1200,14 @@
             "jasonliu"
          ]
       },
+      "Javier Fernandez" : {
+         "emails" : [
+            "jfernandez@igalia.com"
+         ],
+         "nicks" : [
+            "lajava"
+         ]
+      },
       "Jay Civelli" : {
          "emails" : [
             "jcivelli@chromium.org"
@@ -2789,14 +2797,6 @@
          ],
          "nicks" : [
             "zdobersek"
-         ]
-      },
-      "Javier Fernandez" : {
-         "emails" : [
-            "jfernandez@igalia.com"
-         ],
-         "nicks" : [
-            "lajava"
          ]
       }
    },
