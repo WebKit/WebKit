@@ -305,6 +305,10 @@ sub SkipFunction {
         return 1;
     }
 
+    if ($codeGenerator->IsTypedArrayType($function->signature->type) || $codeGenerator->GetArrayType($function->signature->type)) {
+        return 1;
+    }
+
     if ($function->signature->name eq "set" and $parentNode->extendedAttributes->{"TypedArray"}) {
         return 1;
     }

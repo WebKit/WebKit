@@ -1,3 +1,12 @@
+2014-06-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r170309.
+
+        Skip functions returning arrays in GObject DOM bindings.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (SkipFunction):
+
 2014-06-23  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Replace RefPtr<Evas_Object> with UniquePtrEfl
