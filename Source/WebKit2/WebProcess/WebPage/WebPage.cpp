@@ -2775,6 +2775,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setUseImageDocumentForSubframePDF(true);
 #endif
 
+#if ENABLE(GAMEPAD)
+    RuntimeEnabledFeatures::sharedFeatures().setGamepadsEnabled(store.getBoolValueForKey(WebPreferencesKey::gamepadsEnabledKey()));
+#endif
+
     if (store.getBoolValueForKey(WebPreferencesKey::pageVisibilityBasedProcessSuppressionEnabledKey()))
         m_processSuppressionDisabledByWebPreference.stop();
     else

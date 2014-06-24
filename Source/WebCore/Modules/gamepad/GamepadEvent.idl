@@ -24,6 +24,7 @@
  */
 
 [
+    EnabledAtRuntime=Gamepads,
     Conditional=GAMEPAD,
     ConstructorTemplate=Event
 ] interface GamepadEvent : Event {

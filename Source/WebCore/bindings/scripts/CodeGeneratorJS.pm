@@ -1940,6 +1940,8 @@ sub GenerateImplementation
         $hashSize++;
     }
 
+    my @runtimeEnabledFunctions = ();
+
     foreach my $function (@{$interface->functions}) {
         next if ($function->isStatic);
         next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
@@ -1964,6 +1966,8 @@ sub GenerateImplementation
         if ($conditional) {
             $conditionals{$name} = $conditional;
         }
+
+        push(@runtimeEnabledFunctions, $function) if $function->signature->extendedAttributes->{"EnabledAtRuntime"};
 
         $hashSize++;
     }
@@ -2011,6 +2015,20 @@ sub GenerateImplementation
             push(@implContent, "{\n");
             push(@implContent, "    Base::finishCreation(vm);\n");
             push(@implContent, "    reifyStaticProperties(vm, ${className}PrototypeTableValues, *this);\n");
+
+            foreach my $function (@runtimeEnabledFunctions) {
+                my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
+                push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
+                AddToImplIncludes("RuntimeEnabledFeatures.h");
+                my $signature = $function->signature;
+                my $enable_function = GetRuntimeEnableFunctionName($signature);
+                my $name = $signature->name;
+                push(@implContent, "    if (!${enable_function}()) {\n");
+                push(@implContent, "        Identifier propertyName(&vm, reinterpret_cast<const LChar*>(\"$name\"), strlen(\"$name\"));\n");
+                push(@implContent, "        removeDirect(vm, propertyName);\n");
+                push(@implContent, "    }\n");
+                push(@implContent, "#endif\n") if $conditionalString;
+            }
             push(@implContent, "}\n\n");
         } else {
             push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");

@@ -218,6 +218,11 @@ public:
     void setPluginReplacementEnabled(bool isEnabled) { m_isPluginReplacementEnabled = isEnabled; }
     bool pluginReplacementEnabled() const { return m_isPluginReplacementEnabled; }
 
+#if ENABLE(GAMEPAD)
+    void setGamepadsEnabled(bool areEnabled) { m_areGamepadsEnabled = areEnabled; }
+    bool gamepadsEnabled() const { return m_areGamepadsEnabled; }
+#endif
+
     static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -293,6 +298,10 @@ private:
 
 #if ENABLE(FONT_LOAD_EVENTS)
     bool m_isFontLoadEventsEnabled;
+#endif
+
+#if ENABLE(GAMEPAD)
+    bool m_areGamepadsEnabled;
 #endif
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;

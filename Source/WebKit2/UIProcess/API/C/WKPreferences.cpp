@@ -1275,3 +1275,13 @@ bool WKPreferencesGetImageControlsEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->imageControlsEnabled();
 }
+
+void WKPreferencesSetGamepadsEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setGamepadsEnabled(enabled);
+}
+
+bool WKPreferencesGetGamepadsEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->gamepadsEnabled();
+}

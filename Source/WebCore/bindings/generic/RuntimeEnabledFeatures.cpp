@@ -102,6 +102,9 @@ RuntimeEnabledFeatures::RuntimeEnabledFeatures()
 #if ENABLE(FONT_LOAD_EVENTS)
     , m_isFontLoadEventsEnabled(false)
 #endif
+#if ENABLE(GAMEPAD)
+    , m_areGamepadsEnabled(false)
+#endif
 {
 }
 

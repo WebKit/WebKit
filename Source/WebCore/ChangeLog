@@ -1,3 +1,31 @@
+2014-06-24  Brady Eidson  <beidson@apple.com>
+
+        Enable GAMEPAD in the Mac build, but disabled at runtime.
+        https://bugs.webkit.org/show_bug.cgi?id=134255
+
+        Reviewed by Dean Jackson.
+
+        No new tests (No changes to a tested config).
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): Add the ability to have a function be EnabledAtRuntime by
+          removing such functions from the prototype if they are disabled.
+
+        Change the three new objects and the one new function to be EnabledAtRuntime
+        * Modules/gamepad/Gamepad.idl:
+        * Modules/gamepad/GamepadButton.idl:
+        * Modules/gamepad/GamepadEvent.idl:
+        * Modules/gamepad/NavigatorGamepad.idl:
+
+        Add a RuntimeEnabledFeature for Gamepads:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setGamepadsEnabled):
+        (WebCore::RuntimeEnabledFeatures::gamepadsEnabled):
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-06-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: Add positionInRootFragments to SelectorFragment

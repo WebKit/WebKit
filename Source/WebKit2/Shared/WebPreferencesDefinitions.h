@@ -207,6 +207,7 @@
     macro(ImageControlsEnabled, imageControlsEnabled, Bool, bool, false) \
     macro(EnableInheritURIQueryComponent, enableInheritURIQueryComponent, Bool, bool, false) \
     macro(ServiceControlsEnabled, serviceControlsEnabled, Bool, bool, false) \
+    macro(GamepadsEnabled, gamepadsEnabled, Bool, bool, false) \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
     macro(PDFScaleFactor, pdfScaleFactor, Double, double, 0) \

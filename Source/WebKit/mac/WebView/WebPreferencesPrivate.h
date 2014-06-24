@@ -436,6 +436,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setImageControlsEnabled:(BOOL)flag;
 - (BOOL)imageControlsEnabled;
 
+- (void)setGamepadsEnabled:(BOOL)flag;
+- (BOOL)gamepadsEnabled;
+
 #if TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED < 80000
 - (void)_setAllowCompositingLayerVisualDegradation:(BOOL)flag;
 #endif
