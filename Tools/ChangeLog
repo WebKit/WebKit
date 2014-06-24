@@ -1,3 +1,18 @@
+2014-06-23  Daniel Bates  <dabates@apple.com>
+
+        Rolling out r170340 and r170339.
+
+        Changeset r170339 broke the Apple Windows Debug and Release builds.
+
+        Reverted changesets:
+
+        "[Win] Build fix after r134209"
+        http://trac.webkit.org/changeset/170340
+
+        "[Win] Clean up and refactor WinLauncher"
+        https://bugs.webkit.org/show_bug.cgi?id=134209
+        http://trac.webkit.org/changeset/170339
+
 2014-06-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Build fix after r134209
