@@ -1,3 +1,16 @@
+2014-06-24  Andreas Kling  <akling@apple.com>
+
+        [iOS WebKit2] Disable screen font substitution by default.
+        <https://webkit.org/b/134266>
+        <rdar://problem/17427740>
+
+        Just like OS X >= 10.9, screen font substitution should be disabled
+        by default in WebKit2 for iOS.
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2014-06-24  Anders Carlsson  <andersca@apple.com>
 
         Add PageState to HistoryItem conversion code
