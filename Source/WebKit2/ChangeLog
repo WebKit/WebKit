@@ -1,3 +1,9 @@
+2014-06-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed, EFL build fix after r170330.
+
+        * WebProcess/WebPage/WebPage.cpp: Guard WKStringCF.h with PLATFORM(COCOA) macro.
+
 2014-06-23  Timothy Horton  <timothy_horton@apple.com>
 
         [WK2] Use the page background color instead of white when swipe snapshots were purged (134218)

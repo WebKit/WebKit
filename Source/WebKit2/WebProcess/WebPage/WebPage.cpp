@@ -58,7 +58,6 @@
 #include "WKBundleAPICast.h"
 #include "WKRetainPtr.h"
 #include "WKSharedAPICast.h"
-#include "WKStringCF.h"
 #include "WebAlternativeTextClient.h"
 #include "WebBackForwardListItem.h"
 #include "WebBackForwardListProxy.h"
@@ -180,6 +179,7 @@
 #if PLATFORM(COCOA)
 #include "PDFPlugin.h"
 #include "RemoteLayerTreeTransaction.h"
+#include "WKStringCF.h"
 #include <WebCore/LegacyWebArchive.h>
 #endif
 
