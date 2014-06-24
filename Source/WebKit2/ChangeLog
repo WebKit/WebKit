@@ -1,3 +1,18 @@
+2014-06-24  Enrica Casucci  <enrica@apple.com>
+
+        iOS WebKit2: block selection tends to prefer block to single words even when the page is zoomed.
+        https://bugs.webkit.org/show_bug.cgi?id=134267
+        <rdar://problem/17138059>
+
+        Reviewed by Benjamin Poulain.
+
+        When trying to find the best selection match for the position where the tap occurs,
+        we need to take into account the page scale. This patch applies the scale factor
+        to the selection rect before comparing it with the desired size.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::rangeForWebSelectionAtPosition):
+
 2014-06-24  Anders Carlsson  <andersca@apple.com>
 
         Add code to convert HistoryItem to PageState

@@ -676,6 +676,7 @@ PassRefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point,
     Node* currentNode = result.innerNode();
     RefPtr<Range> range;
     IntRect boundingRect;
+    FloatRect boundingRectInScrollViewCoordinates;
 
     if (currentNode->isTextNode()) {
         range = enclosingTextUnitOfGranularity(position, ParagraphGranularity, DirectionForward);
@@ -695,7 +696,9 @@ PassRefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point,
             else
                 boundingRect.unite(coreRect);
         }
-        if (boundingRect.width() > m_blockSelectionDesiredSize.width() && boundingRect.height() > m_blockSelectionDesiredSize.height())
+        boundingRectInScrollViewCoordinates = boundingRect;
+        boundingRectInScrollViewCoordinates.scale(m_page->pageScaleFactor());
+        if (boundingRectInScrollViewCoordinates.width() > m_blockSelectionDesiredSize.width() && boundingRectInScrollViewCoordinates.height() > m_blockSelectionDesiredSize.height())
             return wordRangeFromPosition(position);
 
         currentNode = range->commonAncestorContainer(ASSERT_NO_EXCEPTION);
@@ -707,7 +710,9 @@ PassRefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point,
     Node* bestChoice = currentNode;
     while (currentNode) {
         boundingRect = currentNode->renderer()->absoluteBoundingBoxRect(true);
-        if (boundingRect.width() > m_blockSelectionDesiredSize.width() && boundingRect.height() > m_blockSelectionDesiredSize.height())
+        boundingRectInScrollViewCoordinates = boundingRect;
+        boundingRectInScrollViewCoordinates.scale(m_page->pageScaleFactor());
+        if (boundingRectInScrollViewCoordinates.width() > m_blockSelectionDesiredSize.width() && boundingRectInScrollViewCoordinates.height() > m_blockSelectionDesiredSize.height())
             break;
         bestChoice = currentNode;
         currentNode = currentNode->parentElement();
