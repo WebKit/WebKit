@@ -514,49 +514,47 @@ static void adjustFonts()
     activateTestingFonts();
 }
 #else
+static void activateFontIOS(const uint8_t* fontData, unsigned long length, std::string sectionName)
+{
+    CGDataProviderRef data = CGDataProviderCreateWithData(nullptr, fontData, length, nullptr);
+    if (!data) {
+        fprintf(stderr, "Failed to create CGDataProviderRef for the %s font.\n", sectionName.c_str());
+        exit(1);
+    }
+
+    CGFontRef cgFont = CGFontCreateWithDataProvider(data);
+    CGDataProviderRelease(data);
+    if (!cgFont) {
+        fprintf(stderr, "Failed to create CGFontRef for the %s font.\n", sectionName.c_str());
+        exit(1);
+    }
+
+    if (!GSFontAddCGFont(cgFont)) {
+        fprintf(stderr, "Failed to add CGFont to GraphicsServices for the %s font.\n", sectionName.c_str());
+        exit(1);
+    }
+    CGFontRelease(cgFont);
+}
+
 static void activateFontsIOS()
 {
-    static const char* fontSectionNames[] = {
-        "Ahem",
-        "WeightWatcher100",
-        "WeightWatcher200",
-        "WeightWatcher300",
-        "WeightWatcher400",
-        "WeightWatcher500",
-        "WeightWatcher600",
-        "WeightWatcher700",
-        "WeightWatcher800",
-        "WeightWatcher900",
-        0
-    };
-
-    for (unsigned i = 0; fontSectionNames[i]; ++i) {
-        unsigned long fontDataLength;
-        char* fontData = getsectdata("__DATA", fontSectionNames[i], &fontDataLength);
-        if (!fontData) {
-            fprintf(stderr, "Failed to locate the %s font.\n", fontSectionNames[i]);
-            exit(1);
-        }
-
-        CGDataProviderRef data = CGDataProviderCreateWithData(NULL, fontData, fontDataLength, NULL);
-        if (!data) {
-            fprintf(stderr, "Failed to create CGDataProviderRef for the %s font.\n", fontSectionNames[i]);
-            exit(1);
-        }
-
-        CGFontRef cgFont = CGFontCreateWithDataProvider(data);
-        CGDataProviderRelease(data);
-        if (!cgFont) {
-            fprintf(stderr, "Failed to create CGFontRef for the %s font.\n", fontSectionNames[i]);
-            exit(1);
-        }
-
-        if (!GSFontAddCGFont(cgFont)) {
-            fprintf(stderr, "Failed to add CGFont to GraphicsServices for the %s font.\n", fontSectionNames[i]);
-            exit(1);
-        }
-        CGFontRelease(cgFont);
-    }
+    // __asm() requires a string literal, so we can't do this as either local variables or template parameters.
+#define fontData(sectionName) \
+{ \
+    extern const uint8_t start __asm("section$start$__DATA$" sectionName); \
+    extern const uint8_t end __asm("section$end$__DATA$" sectionName); \
+    activateFontIOS(&start, &end - &start, sectionName); \
+}
+    fontData("Ahem");
+    fontData("WeightWatcher100");
+    fontData("WeightWatcher200");
+    fontData("WeightWatcher300");
+    fontData("WeightWatcher400");
+    fontData("WeightWatcher500");
+    fontData("WeightWatcher600");
+    fontData("WeightWatcher700");
+    fontData("WeightWatcher800");
+    fontData("WeightWatcher900");
 }
 #endif // !PLATFORM(IOS)
 
@@ -1028,11 +1026,11 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
         {"accelerated-drawing", no_argument, &useAcceleratedDrawing, YES},
         {"gc-between-tests", no_argument, &gcBetweenTests, YES},
         {"no-timeout", no_argument, &useTimeoutWatchdog, NO},
-        {NULL, 0, NULL, 0}
+        {nullptr, 0, nullptr, 0}
     };
     
     int option;
-    while ((option = getopt_long(argc, (char * const *)argv, "", options, NULL)) != -1) {
+    while ((option = getopt_long(argc, (char * const *)argv, "", options, nullptr)) != -1) {
         switch (option) {
             case '?':   // unknown or ambiguous option
             case ':':   // missing argument

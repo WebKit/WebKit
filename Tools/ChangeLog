@@ -1,3 +1,17 @@
+2014-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] getsectdata() is deprecated and we use it in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=134122
+
+        Reviewed by Alexey Proskuryakov.
+
+        Migrate to using magic linker symbols.
+
+        No tests because there should be no behavior change
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (activateFontsIOS):
+
 2014-06-24  Javier Fernandez  <jfernandez@igalia.com>
 
         Name moving. Unreviewed.
