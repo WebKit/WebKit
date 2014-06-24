@@ -1,3 +1,19 @@
+2014-06-24  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Remove some unused code from DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=134191
+
+        Reviewed by Chris Fleizach.
+
+        DumpRenderTree's accessibility code could be removed since GTK and EFL has stopped supporting WK1.
+
+        * DumpRenderTree/atk/AccessibilityCallbacks.h: Removed.
+        * DumpRenderTree/atk/AccessibilityCallbacksAtk.cpp: Removed.
+        * DumpRenderTree/atk/AccessibilityControllerAtk.cpp: Removed.
+        * DumpRenderTree/atk/AccessibilityNotificationHandlerAtk.cpp: Removed.
+        * DumpRenderTree/atk/AccessibilityNotificationHandlerAtk.h: Removed.
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp: Removed.
+
 2014-06-23  Shivakumar JM  <shiva.jm@samsung.com>
 
         [EFL][WK2] Search field is not shown properly on doing ctrl+f on Minibrowser.
