@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+    <script>
+        function runTest()
+        {
+            findMediaElement();
+            waitForEvent('canplaythrough', canplaythrough);
+            video.src = findMediaFile('video', 'content/test');
+        }
+
+        function canplaythrough() 
+        {
+            waitForEventOnce('seeked', seeked );
+            run('video.currentTime = 2');
+            run('video.currentTime = 0.5');
+            consoleWrite('');
+        }
+
+        function seeked()
+        { 
+            testExpected('video.currentTime', 0.5);
+            waitForEventAndFail('seeked');
+            waitForEventAndEnd('play');
+            run('video.play()');
+         }
+    </script>
+</head>
+<body onload='runTest()'>
+    <p>Test that seeking twice in the same run loop will cancel the first seek.
+     </p>
+    <video controls></video>
+</body>
+</html>

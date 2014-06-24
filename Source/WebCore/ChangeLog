@@ -1,3 +1,38 @@
+2014-06-20  Jer Noble  <jer.noble@apple.com>
+
+        HTMLMediaElement seek algorithm should allow cancelling previous seeks.
+        https://bugs.webkit.org/show_bug.cgi?id=134116
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-seek-double.html
+
+        Fulfill the requirement of the §4.7.14.9 seeking algorithm to do steps 5+ asynchronously and cancel
+        previous instances of the algorithm.
+
+        For the html/ parts of the algorithm, implement this by adding a seek timer, which when fired will
+        issue steps 5-12. MediaPlayerPrivateAVFoundation will already coalesce multiple seek operations, so nothing
+        additional needs be done there.  However, MediaPlayerPrivateMediaSourceAVFObjC needs to implement the same
+        pending seek logic in case additional seeks were issued after the html/ algorithm reached step 12.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize the new m_seekTimer.
+        (WebCore::HTMLMediaElement::parseAttribute): Clear the seek timer.
+        (WebCore::HTMLMediaElement::seekInternal): Differentiate between DOM seeks and internal seeks.
+        (WebCore::HTMLMediaElement::seekWithTolerance:) Split into the seekTimerFired() method.
+        (WebCore::HTMLMediaElement::seekTimerFired:) Added, split from seekWithTolerance().
+        * html/HTMLMediaElement.h:
+        * html/MediaController.cpp:
+        (MediaController::bringElementUpToSpeed): Call seekInternal().
+        (WebCore::HTMLMediaElement::PendingSeek::PendingSeek): Added convenience struct for storing seek requests.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::PendingSeek::PendingSeek): Ditto.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC): Modify the time jumped
+            handler to not clear the m_seeking flag if another seek request is pending.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekInternal):
+
 2014-06-23  Timothy Horton  <timothy_horton@apple.com>
 
         [WK2] Use the page background color instead of white when swipe snapshots were purged (134218)

@@ -1,3 +1,13 @@
+2014-06-20  Jer Noble  <jer.noble@apple.com>
+
+        HTMLMediaElement seek algorithm should allow cancelling previous seeks.
+        https://bugs.webkit.org/show_bug.cgi?id=134116
+
+        Reviewed by Eric Carlson.
+
+        * media/video-seek-double-expected.txt: Added.
+        * media/video-seek-double.html: Added.
+
 2014-06-19  Jeffrey Pfau  <jpfau@apple.com>
 
         Database process crashes when multiple transactions attempt to run at once

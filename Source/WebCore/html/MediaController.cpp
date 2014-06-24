@@ -479,7 +479,7 @@ void MediaController::bringElementUpToSpeed(HTMLMediaElement* element)
     // When the user agent is to bring a media element up to speed with its new media controller,
     // it must seek that media element to the MediaController's media controller position relative
     // to the media element's timeline.
-    element->seek(currentTime());
+    element->seekInternal(currentTime());
 }
 
 bool MediaController::isBlocked() const

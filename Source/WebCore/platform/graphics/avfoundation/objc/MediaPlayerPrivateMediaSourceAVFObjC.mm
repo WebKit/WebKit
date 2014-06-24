@@ -153,9 +153,12 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
         if (!weakThis)
             return;
 
-        if (m_seeking)
+        if (m_seeking && !m_pendingSeek)
             m_seeking = false;
         m_player->timeChanged();
+
+        if (m_pendingSeek)
+            seekInternal();
     }];
 }
 
@@ -424,23 +427,31 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance(double time, double
 {
     m_seeking = true;
     auto weakThis = createWeakPtr();
-    callOnMainThread([weakThis, time, negativeThreshold, positiveThreshold]{
+    m_pendingSeek = std::make_unique<PendingSeek>(MediaTime::createWithDouble(time), MediaTime::createWithDouble(negativeThreshold), MediaTime::createWithDouble(positiveThreshold));
+
+    callOnMainThread([weakThis] {
         if (!weakThis)
             return;
-        weakThis.get()->seekInternal(time, negativeThreshold, positiveThreshold);
+        weakThis.get()->seekInternal();
     });
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal(double time, double negativeThreshold, double positiveThreshold)
+void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
 {
+    std::unique_ptr<PendingSeek> pendingSeek;
+    pendingSeek.swap(m_pendingSeek);
+
+    if (!pendingSeek)
+        return;
+
     if (!m_mediaSourcePrivate)
         return;
 
     MediaTime seekTime;
-    if (!negativeThreshold && !positiveThreshold)
-        seekTime = MediaTime::createWithDouble(time);
+    if (pendingSeek->negativeThreshold != MediaTime::zeroTime() && pendingSeek->positiveThreshold != MediaTime::zeroTime())
+        seekTime = pendingSeek->targetTime;
     else
-        seekTime = m_mediaSourcePrivate->fastSeekTimeForMediaTime(MediaTime::createWithDouble(time), MediaTime::createWithDouble(positiveThreshold), MediaTime::createWithDouble(negativeThreshold));
+        seekTime = m_mediaSourcePrivate->fastSeekTimeForMediaTime(pendingSeek->targetTime, pendingSeek->positiveThreshold, pendingSeek->negativeThreshold);
 
     [m_synchronizer setRate:(m_playing ? m_rate : 0) time:toCMTime(seekTime)];
     m_mediaSourcePrivate->seekToTime(seekTime);

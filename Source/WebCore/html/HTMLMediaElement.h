@@ -576,12 +576,14 @@ private:
     void progressEventTimerFired(Timer<HTMLMediaElement>&);
     void playbackProgressTimerFired(Timer<HTMLMediaElement>&);
     void scanTimerFired(Timer<HTMLMediaElement>&);
+    void seekTimerFired(Timer<HTMLMediaElement>&);
     void startPlaybackProgressTimer();
     void startProgressEventTimer();
     void stopPeriodicTimers();
 
     void seek(double time);
-    void seekWithTolerance(double time, double negativeTolerance, double positiveTolerance);
+    void seekInternal(double time);
+    void seekWithTolerance(double time, double negativeTolerance, double positiveTolerance, bool fromDOM);
     void finishSeek();
     void checkIfSeekNeeded();
     void addPlayedRange(double start, double end);
@@ -701,6 +703,7 @@ private:
     Timer<HTMLMediaElement> m_progressEventTimer;
     Timer<HTMLMediaElement> m_playbackProgressTimer;
     Timer<HTMLMediaElement> m_scanTimer;
+    Timer<HTMLMediaElement> m_seekTimer;
     RefPtr<TimeRanges> m_playedTimeRanges;
     GenericEventQueue m_asyncEventQueue;
 
@@ -713,6 +716,21 @@ private:
     URL m_currentSrc;
 
     RefPtr<MediaError> m_error;
+
+    struct PendingSeek {
+        PendingSeek(double now, double targetTime, double negativeTolerance, double positiveTolerance)
+            : now(now)
+            , targetTime(targetTime)
+            , negativeTolerance(negativeTolerance)
+            , positiveTolerance(positiveTolerance)
+        {
+        }
+        double now;
+        double targetTime;
+        double negativeTolerance;
+        double positiveTolerance;
+    };
+    std::unique_ptr<PendingSeek> m_pendingSeek;
 
     double m_volume;
     bool m_volumeInitialized;
