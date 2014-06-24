@@ -1,3 +1,14 @@
+2014-06-23  Jeremy Jones  <jeremyj@apple.com>
+
+        Chapter forward/backward should seek to beginning/end.
+        https://bugs.webkit.org/show_bug.cgi?id=134225
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerController seekChapterBackward:]): forwards to -seekToBeginning
+        (-[WebAVPlayerController seekChapterForward:]): forwards to -seekToEnd
+
 2014-06-23  Dean Jackson  <dino@apple.com>
 
         [Mac] Don't draw focus rings if we are animating controls

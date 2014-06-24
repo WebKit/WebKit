@@ -348,6 +348,11 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
     self.delegate->seekToTime(-INFINITY);
 }
 
+- (void)seekChapterBackward:(id)sender
+{
+    [self seekToBeginning:sender];
+}
+
 - (BOOL)canSeekToEnd
 {
     CMTime maximumTime = kCMTimeIndefinite;
@@ -369,6 +374,11 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
     ASSERT(self.delegate);
 
     self.delegate->seekToTime(INFINITY);
+}
+
+- (void)seekChapterForward:(id)sender
+{
+    [self seekToEnd:sender];
 }
 
 - (BOOL)hasMediaSelectionOptions
