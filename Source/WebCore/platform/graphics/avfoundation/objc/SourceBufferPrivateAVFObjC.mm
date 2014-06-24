@@ -319,8 +319,10 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
     if (!_parent && !_layers.size() && !_renderers.size())
         return;
 
-    for (auto& layer : _layers)
+    for (auto& layer : _layers) {
         [layer removeObserver:self forKeyPath:@"error"];
+        [layer removeObserver:self forKeyPath:@"outputObscuredDueToInsufficientExternalProtection"];
+    }
     _layers.clear();
 
     for (auto& renderer : _renderers)
@@ -339,6 +341,7 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
 
     _layers.append(layer);
     [layer addObserver:self forKeyPath:@"error" options:NSKeyValueObservingOptionNew context:nullptr];
+    [layer addObserver:self forKeyPath:@"outputObscuredDueToInsufficientExternalProtection" options:NSKeyValueObservingOptionNew context:nullptr];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(layerFailedToDecode:) name:AVSampleBufferDisplayLayerFailedToDecodeNotification object:layer];
 }
 
@@ -380,14 +383,23 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
     RetainPtr<WebAVSampleBufferErrorListener> strongSelf = self;
     if ([object isKindOfClass:getAVSampleBufferDisplayLayerClass()]) {
         RetainPtr<AVSampleBufferDisplayLayer> layer = (AVSampleBufferDisplayLayer *)object;
-        RetainPtr<NSError> error = [change valueForKey:NSKeyValueChangeNewKey];
-
         ASSERT(_layers.contains(layer.get()));
-        ASSERT([keyPath isEqualTo:@"error"]);
 
-        callOnMainThread([strongSelf, layer, error] {
-            strongSelf->_parent->layerDidReceiveError(layer.get(), error.get());
-        });
+        if ([keyPath isEqualTo:@"error"]) {
+            RetainPtr<NSError> error = [change valueForKey:NSKeyValueChangeNewKey];
+            callOnMainThread([strongSelf, layer, error] {
+                strongSelf->_parent->layerDidReceiveError(layer.get(), error.get());
+            });
+        } else if ([keyPath isEqualTo:@"outputObscuredDueToInsufficientExternalProtection"]) {
+            if ([[change valueForKey:NSKeyValueChangeNewKey] boolValue]) {
+                RetainPtr<NSError> error = [NSError errorWithDomain:@"com.apple.WebKit" code:'HDCP' userInfo:nil];
+                callOnMainThread([strongSelf, layer, error] {
+                    strongSelf->_parent->layerDidReceiveError(layer.get(), error.get());
+                });
+            }
+        } else
+            ASSERT_NOT_REACHED();
+
     } else if ([object isKindOfClass:getAVSampleBufferAudioRendererClass()]) {
         RetainPtr<AVSampleBufferAudioRenderer> renderer = (AVSampleBufferAudioRenderer *)object;
         RetainPtr<NSError> error = [change valueForKey:NSKeyValueChangeNewKey];

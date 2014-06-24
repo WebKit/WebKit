@@ -1,3 +1,18 @@
+2014-06-24  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] Pass AVSampleBufferDisplayLayer HDCP status through to EME
+        https://bugs.webkit.org/show_bug.cgi?id=134221
+
+        Reviewed by Eric Carlson.
+
+        Pass the outputObscuredDueToInsufficientExternalProtection property of AVSampleBufferDisplayLayer
+        as an error to the associated MediaKeySession object.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebAVSampleBufferErrorListener invalidate]):
+        (-[WebAVSampleBufferErrorListener beginObservingLayer:]):
+        (-[WebAVSampleBufferErrorListener observeValueForKeyPath:ofObject:change:context:]):
+
 2014-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Use unsigneds instead of ints for indexes into a string in text layout code
