@@ -1,3 +1,10 @@
+2014-06-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Unreviewed build fix.
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::processNativeSamples): Cast variadic argument to int.
+
 2014-06-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] MSVC mishandles enums in bitfields

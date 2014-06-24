@@ -571,7 +571,7 @@ void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, d
         CMSampleTimingInfo timingInfo;
         OSStatus status = CMSampleBufferGetSampleTimingInfo(sampleBuffer, i, &timingInfo);
         if (status) {
-            LOG(Media, "InbandTextTrackPrivateAVF::processNativeSamples(%p) - CMSampleBufferGetSampleTimingInfo returned error %x for sample %li", this, static_cast<SInt32>(status), i);
+            LOG(Media, "InbandTextTrackPrivateAVF::processNativeSamples(%p) - CMSampleBufferGetSampleTimingInfo returned error %x for sample %li", this, static_cast<int>(status), i);
             continue;
         }
 
