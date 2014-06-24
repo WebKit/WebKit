@@ -2646,11 +2646,22 @@ bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyN
                 exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change the getter of an unconfigurable property.")));
             return false;
         }
+        if (current.attributes() & CustomAccessor) {
+            if (throwException)
+                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change access mechanism for an unconfigurable property.")));
+            return false;
+        }
     }
     JSValue accessor = getDirect(exec->vm(), propertyName);
     if (!accessor)
         return false;
-    GetterSetter* getterSetter = asGetterSetter(accessor);
+    GetterSetter* getterSetter;
+    if (accessor.isCustomGetterSetter())
+        getterSetter = GetterSetter::create(exec->vm());
+    else {
+        ASSERT(accessor.isGetterSetter());
+        getterSetter = asGetterSetter(accessor);
+    }
     if (descriptor.setterPresent())
         getterSetter->setSetter(exec->vm(), descriptor.setterObject());
     if (descriptor.getterPresent())

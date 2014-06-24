@@ -85,7 +85,7 @@ namespace JSC {
 
     inline GetterSetter* asGetterSetter(JSValue value)
     {
-        ASSERT(value.asCell()->isGetterSetter());
+        ASSERT_WITH_SECURITY_IMPLICATION(value.asCell()->isGetterSetter());
         return static_cast<GetterSetter*>(value.asCell());
     }
 

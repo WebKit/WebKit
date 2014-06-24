@@ -1,3 +1,17 @@
+2014-06-24  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        REGRESSION (r169703): Invalid cast in JSC::asGetterSetter / JSC::JSObject::defineOwnNonIndexProperty
+        https://bugs.webkit.org/show_bug.cgi?id=134046
+
+        Reviewed by Filip Pizlo.
+
+        * runtime/GetterSetter.h:
+        (JSC::asGetterSetter):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineOwnNonIndexProperty): We need to check for a CustomGetterSetter here as well as
+        a normal GetterSetter. If we encounter a CustomGetterSetter, we delete it, create a new normal GetterSetter,
+        and insert it like normal. We also need to check for CustomAccessors when checking for unconfigurable properties.
+
 2014-06-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] MSVC mishandles enums in bitfields
