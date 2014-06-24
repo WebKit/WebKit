@@ -1,0 +1,23 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.dumpFrameLoadCallbacks();
+}
+
+var n = 0;
+function runTest() {
+    if (++n > 5) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+    history.pushState({}, 'State ' + n, 'http://127.0.0.1:8000/globalhistory/history-delegate-pushstate.html?' + n);
+    setTimeout(runTest, 10);
+}
+
+</script>
+<body onload="setTimeout(runTest, 10);">
+This tests functionality of the history delegate related to history.pushState.
+</body>

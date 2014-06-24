@@ -1,3 +1,17 @@
+2014-06-24  Mark Rowe  <mrowe@apple.com>
+
+        WKContextHistoryClient::didNavigateWithNavigationData is passed incorrect URL when history.pushState is used
+        <https://webkit.org/b/134271> / <rdar://problem/16270167>
+
+        Reviewed by Brady Eidson.
+
+        Tests: http/tests/globalhistory/history-delegate-pushstate.html
+               http/tests/globalhistory/history-delegate-replacestate.html
+
+        * page/History.cpp:
+        (WebCore::History::stateObjectAdded): Call HistoryController after updating the document's URL so that the
+        URL will reflect the destination of the navigation when FrameLoaderClient::updateGlobalHistory is called.
+
 2014-06-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         advanceByCombiningCharacterSequence() can be simplified

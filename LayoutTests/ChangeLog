@@ -1,3 +1,15 @@
+2014-06-24  Mark Rowe  <mrowe@apple.com>
+
+        WKContextHistoryClient::didNavigateWithNavigationData is passed incorrect URL when history.pushState is used
+        <https://webkit.org/b/134271> / <rdar://problem/16270167>
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/globalhistory/history-delegate-pushstate-expected.txt: Added.
+        * http/tests/globalhistory/history-delegate-pushstate.html: Added.
+        * http/tests/globalhistory/history-delegate-replacestate-expected.txt: Added.
+        * http/tests/globalhistory/history-delegate-replacestate.html: Added.
+
 2014-06-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: Add positionInRootFragments to SelectorFragment
