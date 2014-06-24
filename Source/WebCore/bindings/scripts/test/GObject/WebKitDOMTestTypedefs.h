@@ -93,32 +93,6 @@ WEBKIT_API WebKitDOMSVGPoint*
 webkit_dom_test_typedefs_immutable_point_function(WebKitDOMTestTypedefs* self);
 
 /**
- * webkit_dom_test_typedefs_string_array_function:
- * @self: A #WebKitDOMTestTypedefs
- * @values: A #WebKitDOMDOMString[]
- * @error: #GError
- *
- * Returns: (transfer none): A #WebKitDOMDOMString[]
- *
- * Stability: Unstable
-**/
-WEBKIT_API WebKitDOMDOMString[]*
-webkit_dom_test_typedefs_string_array_function(WebKitDOMTestTypedefs* self, WebKitDOMDOMString[]* values, GError** error);
-
-/**
- * webkit_dom_test_typedefs_string_array_function2:
- * @self: A #WebKitDOMTestTypedefs
- * @values: A #WebKitDOMDOMString[]
- * @error: #GError
- *
- * Returns: (transfer none): A #WebKitDOMDOMString[]
- *
- * Stability: Unstable
-**/
-WEBKIT_API WebKitDOMDOMString[]*
-webkit_dom_test_typedefs_string_array_function2(WebKitDOMTestTypedefs* self, WebKitDOMDOMString[]* values, GError** error);
-
-/**
  * webkit_dom_test_typedefs_method_with_exception:
  * @self: A #WebKitDOMTestTypedefs
  * @error: #GError

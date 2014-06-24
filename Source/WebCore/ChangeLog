@@ -1,5 +1,12 @@
 2014-06-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update GObject DOM bindings test results after r170351.
+
+        * bindings/scripts/test/GObject/WebKitDOMTestTypedefs.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestTypedefs.h:
+
+2014-06-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+ build after r170309.
 
         Skip functions returning arrays in GObject DOM bindings.

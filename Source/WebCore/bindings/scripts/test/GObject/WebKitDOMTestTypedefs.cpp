@@ -292,40 +292,6 @@ WebKitDOMSVGPoint* webkit_dom_test_typedefs_immutable_point_function(WebKitDOMTe
     return WebKit::kit(gobjectResult.get());
 }
 
-WebKitDOMDOMString[]* webkit_dom_test_typedefs_string_array_function(WebKitDOMTestTypedefs* self, WebKitDOMDOMString[]* values, GError** error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_TYPEDEFS(self), 0);
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_STRING[](values), 0);
-    g_return_val_if_fail(!error || !*error, 0);
-    WebCore::TestTypedefs* item = WebKit::core(self);
-    WebCore::DOMString[]* convertedValues = WebKit::core(values);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::DOMString[]> gobjectResult = WTF::getPtr(item->stringArrayFunction(convertedValues, ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
-    }
-    return WebKit::kit(gobjectResult.get());
-}
-
-WebKitDOMDOMString[]* webkit_dom_test_typedefs_string_array_function2(WebKitDOMTestTypedefs* self, WebKitDOMDOMString[]* values, GError** error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_TYPEDEFS(self), 0);
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_STRING[](values), 0);
-    g_return_val_if_fail(!error || !*error, 0);
-    WebCore::TestTypedefs* item = WebKit::core(self);
-    WebCore::DOMString[]* convertedValues = WebKit::core(values);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::DOMString[]> gobjectResult = WTF::getPtr(item->stringArrayFunction2(convertedValues, ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
-    }
-    return WebKit::kit(gobjectResult.get());
-}
-
 void webkit_dom_test_typedefs_method_with_exception(WebKitDOMTestTypedefs* self, GError** error)
 {
     WebCore::JSMainThreadNullState state;
