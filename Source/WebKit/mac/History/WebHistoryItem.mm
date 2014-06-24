@@ -79,15 +79,11 @@ static NSString * const sharedLinkUniqueIdentifierKey = @"sharedLinkUniqueIdenti
 // Private keys used in the WebHistoryItem's dictionary representation.
 // see 3245793 for explanation of "lastVisitedDate"
 static NSString *lastVisitedTimeIntervalKey = @"lastVisitedDate";
-static NSString *visitCountKey = @"visitCount";
 static NSString *titleKey = @"title";
 static NSString *childrenKey = @"children";
 static NSString *displayTitleKey = @"displayTitle";
 static NSString *lastVisitWasFailureKey = @"lastVisitWasFailure";
-static NSString *lastVisitWasHTTPNonGetKey = @"lastVisitWasHTTPNonGet";
 static NSString *redirectURLsKey = @"redirectURLs";
-static NSString *dailyVisitCountKey = @"D"; // short key to save space
-static NSString *weeklyVisitCountKey = @"W"; // short key to save space
 
 // Notification strings.
 NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotification";
@@ -177,11 +173,6 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
     WebHistoryItem *copy = [[[self class] alloc] initWithWebCoreHistoryItem:core(_private)->copy()];
 
     copy->_private->_lastVisitedTime = _private->_lastVisitedTime;
-    copy->_private->_visitCount = _private->_visitCount;
-    copy->_private->_dailyVisitCounts = _private->_dailyVisitCounts;
-    copy->_private->_weeklyVisitCounts = _private->_weeklyVisitCounts;
-
-    copy->_private->_lastVisitWasHTTPNonGet = _private->_lastVisitWasHTTPNonGet;
 
     historyItemWrappers().set(core(copy->_private), copy);
 
@@ -347,25 +338,9 @@ WebHistoryItem *kit(HistoryItem* item)
     core(_private)->setTitle(title);
 }
 
-- (void)setVisitCount:(int)count
-{
-    _private->_visitCount = count;
-}
-
 - (void)setViewState:(id)statePList
 {
     core(_private)->setViewState(statePList);
-}
-
-- (void)_mergeAutoCompleteHints:(WebHistoryItem *)otherItem
-{
-    ASSERT_ARG(otherItem, otherItem);
-
-    // FIXME: this is broken - we should be merging the daily counts
-    // somehow.  but this is to support API that's not really used in
-    // practice so leave it broken for now.
-    if (otherItem != self)
-        _private->_visitCount += otherItem->_private->_visitCount;
 }
 
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict
@@ -391,45 +366,15 @@ WebHistoryItem *kit(HistoryItem* item)
         core(_private)->setOriginalURLString(newURLString);
     } 
 
-    int visitCount = [dict _webkit_intForKey:visitCountKey];
-    
-    // Can't trust data on disk, and we've had at least one report of this (<rdar://6572300>).
-    if (visitCount < 0) {
-        LOG_ERROR("visit count for history item \"%@\" is negative (%d), will be reset to 1", URLString, visitCount);
-        visitCount = 1;
-    }
-    _private->_visitCount = visitCount;
-
     if ([dict _webkit_boolForKey:lastVisitWasFailureKey])
         core(_private)->setLastVisitWasFailure(true);
     
-    BOOL lastVisitWasHTTPNonGet = [dict _webkit_boolForKey:lastVisitWasHTTPNonGetKey];
-    NSString *tempURLString = [URLString lowercaseString];
-    if (lastVisitWasHTTPNonGet && ([tempURLString hasPrefix:@"http:"] || [tempURLString hasPrefix:@"https:"]))
-        _private->_lastVisitWasHTTPNonGet = lastVisitWasHTTPNonGet;
-
     if (NSArray *redirectURLs = [dict _webkit_arrayForKey:redirectURLsKey]) {
         NSUInteger size = [redirectURLs count];
         auto redirectURLsVector = std::make_unique<Vector<String>>(size);
         for (NSUInteger i = 0; i < size; ++i)
             (*redirectURLsVector)[i] = String([redirectURLs _webkit_stringAtIndex:i]);
         core(_private)->setRedirectURLs(std::move(redirectURLsVector));
-    }
-
-    NSArray *dailyCounts = [dict _webkit_arrayForKey:dailyVisitCountKey];
-    NSArray *weeklyCounts = [dict _webkit_arrayForKey:weeklyVisitCountKey];
-    if (dailyCounts || weeklyCounts) {
-        Vector<int> coreDailyCounts([dailyCounts count]);
-        Vector<int> coreWeeklyCounts([weeklyCounts count]);
-
-        // Daily and weekly counts < 0 are errors in the data read from disk, so reset to 0.
-        for (size_t i = 0; i < coreDailyCounts.size(); ++i)
-            coreDailyCounts[i] = std::max([[dailyCounts _webkit_numberAtIndex:i] intValue], 0);
-        for (size_t i = 0; i < coreWeeklyCounts.size(); ++i)
-            coreWeeklyCounts[i] = std::max([[weeklyCounts _webkit_numberAtIndex:i] intValue], 0);
-
-        _private->_dailyVisitCounts = std::move(coreDailyCounts);
-        _private->_weeklyVisitCounts = std::move(coreWeeklyCounts);
     }
 
     NSArray *childDicts = [dict objectForKey:childrenKey];
@@ -473,70 +418,10 @@ WebHistoryItem *kit(HistoryItem* item)
     return core(_private)->scrollPoint();
 }
 
-- (void)_visitedWithTitle:(NSString *)title increaseVisitCount:(BOOL)increaseVisitCount
+- (void)_visitedWithTitle:(NSString *)title
 {
     core(_private)->setTitle(title);
-
-    [self _recordVisitAtTime:[NSDate timeIntervalSinceReferenceDate] increaseVisitCount:increaseVisitCount];
-}
-
-- (void)_recordInitialVisit
-{
-    ASSERT(!_private->_visitCount);
-    [self _recordVisitAtTime:_private->_lastVisitedTime increaseVisitCount:YES];
-}
-
-static inline int timeToDay(double time)
-{
-    return static_cast<int>(ceil(time / secondsPerDay));
-}
-
-- (void)_padDailyCountsForNewVisit:(NSTimeInterval)time
-{
-    if (_private->_dailyVisitCounts.isEmpty())
-        _private->_dailyVisitCounts.insert(0, _private->_visitCount);
-
-    int daysElapsed = timeToDay(time) - timeToDay(_private->_lastVisitedTime);
-
-    if (daysElapsed < 0)
-        daysElapsed = 0;
-
-    Vector<int, 32> padding;
-    padding.fill(0, daysElapsed);
-
-    _private->_dailyVisitCounts.insertVector(0, padding);
-}
-
-static const size_t daysPerWeek = 7;
-static const size_t maxDailyCounts = 2 * daysPerWeek - 1;
-static const size_t maxWeeklyCounts = 5;
-
-- (void)_collapseDailyVisitsToWeekly
-{
-    while (_private->_dailyVisitCounts.size() > maxDailyCounts) {
-        int oldestWeekTotal = 0;
-        for (size_t i = 0; i < daysPerWeek; i++)
-            oldestWeekTotal += _private->_dailyVisitCounts[_private->_dailyVisitCounts.size() - daysPerWeek + i];
-        _private->_dailyVisitCounts.shrink(_private->_dailyVisitCounts.size() - daysPerWeek);
-        _private->_weeklyVisitCounts.insert(0, oldestWeekTotal);
-    }
-
-    if (_private->_weeklyVisitCounts.size() > maxWeeklyCounts)
-        _private->_weeklyVisitCounts.shrink(maxWeeklyCounts);
-}
-
-- (void)_recordVisitAtTime:(NSTimeInterval)time increaseVisitCount:(BOOL)increaseVisitCount
-{
-    [self _padDailyCountsForNewVisit:time];
-
-    _private->_lastVisitedTime = time;
-
-    if (increaseVisitCount) {
-        ++_private->_visitCount;
-        ++_private->_dailyVisitCounts[0];
-    }
-
-    [self _collapseDailyVisitsToWeekly];
+    _private->_lastVisitedTime = [NSDate timeIntervalSinceReferenceDate];
 }
 
 @end
@@ -546,14 +431,6 @@ static const size_t maxWeeklyCounts = 5;
 - (id)initWithURL:(NSURL *)URL title:(NSString *)title
 {
     return [self initWithURLString:[URL _web_originalDataAsString] title:title lastVisitedTimeInterval:0];
-}
-
-// This should not be called directly for WebHistoryItems that are already included
-// in WebHistory. Use -[WebHistory setLastVisitedTimeInterval:forItem:] instead.
-- (void)_setLastVisitedTimeInterval:(NSTimeInterval)time
-{
-    if (_private->_lastVisitedTime != time)
-        [self _recordVisitAtTime:time increaseVisitCount:YES];
 }
 
 // FIXME: The only iOS difference here should be whether YES or NO is passed to dictionaryRepresentationIncludingChildren:
@@ -584,14 +461,8 @@ static const size_t maxWeeklyCounts = 5;
         [dict setObject:[NSString stringWithFormat:@"%.1lf", _private->_lastVisitedTime]
                  forKey:lastVisitedTimeIntervalKey];
     }
-    if (_private->_visitCount)
-        [dict setObject:[NSNumber numberWithInt:_private->_visitCount] forKey:visitCountKey];
     if (coreItem->lastVisitWasFailure())
         [dict setObject:[NSNumber numberWithBool:YES] forKey:lastVisitWasFailureKey];
-    if (_private->_lastVisitWasHTTPNonGet) {
-        ASSERT(coreItem->urlString().startsWith("http:", false) || coreItem->urlString().startsWith("https:", false));
-        [dict setObject:[NSNumber numberWithBool:YES] forKey:lastVisitWasHTTPNonGetKey];
-    }
     if (Vector<String>* redirectURLs = coreItem->redirectURLs()) {
         size_t size = redirectURLs->size();
         ASSERT(size);
@@ -602,24 +473,6 @@ static const size_t maxWeeklyCounts = 5;
         [result release];
     }
     
-    const Vector<int>& dailyVisitCounts = _private->_dailyVisitCounts;
-    if (dailyVisitCounts.size()) {
-        NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:13];
-        for (size_t i = 0; i < dailyVisitCounts.size(); ++i)
-            [array addObject:[NSNumber numberWithInt:dailyVisitCounts[i]]];
-        [dict setObject:array forKey:dailyVisitCountKey];
-        [array release];
-    }
-    
-    const Vector<int>& weeklyVisitCounts = _private->_weeklyVisitCounts;
-    if (weeklyVisitCounts.size()) {
-        NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:5];
-        for (size_t i = 0; i < weeklyVisitCounts.size(); ++i)
-            [array addObject:[NSNumber numberWithInt:weeklyVisitCounts[i]]];
-        [dict setObject:array forKey:weeklyVisitCountKey];
-        [array release];
-    }    
-
 #if PLATFORM(IOS)
     if (includesChildren && coreItem->children().size()) {
 #else
@@ -666,12 +519,6 @@ static const size_t maxWeeklyCounts = 5;
 - (BOOL)isTargetItem
 {
     return core(_private)->isTargetItem();
-}
-
-- (int)visitCount
-{
-    ASSERT_MAIN_THREAD();
-    return _private->_visitCount;
 }
 
 - (NSString *)RSSFeedReferrer
@@ -741,16 +588,6 @@ static const size_t maxWeeklyCounts = 5;
     return core(_private)->lastVisitWasFailure();
 }
 
-- (void)_setLastVisitWasFailure:(BOOL)failure
-{
-    core(_private)->setLastVisitWasFailure(failure);
-}
-
-- (BOOL)_lastVisitWasHTTPNonGet
-{
-    return _private->_lastVisitWasHTTPNonGet;
-}
-
 - (NSArray *)_redirectURLs
 {
     Vector<String>* redirectURLs = core(_private)->redirectURLs();
@@ -763,18 +600,6 @@ static const size_t maxWeeklyCounts = 5;
     for (size_t i = 0; i < size; ++i)
         [result addObject:(NSString*)redirectURLs->at(i)];
     return [result autorelease];
-}
-
-- (size_t)_getDailyVisitCounts:(const int**)counts
-{
-    *counts = _private->_dailyVisitCounts.data();
-    return _private->_dailyVisitCounts.size();
-}
-
-- (size_t)_getWeeklyVisitCounts:(const int**)counts
-{
-    *counts = _private->_weeklyVisitCounts.data();
-    return _private->_weeklyVisitCounts.size();
 }
 
 #if PLATFORM(IOS)

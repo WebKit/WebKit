@@ -34,16 +34,12 @@ using namespace WebCore;
 static const int currentFileVersion = 1;
 
 HistoryPropertyListWriter::HistoryPropertyListWriter()
-    : m_dailyVisitCountsKey("D")
-    , m_displayTitleKey("displayTitle")
+    : m_displayTitleKey("displayTitle")
     , m_lastVisitWasFailureKey("lastVisitWasFailure")
-    , m_lastVisitWasHTTPNonGetKey("lastVisitWasHTTPNonGet")
     , m_lastVisitedDateKey("lastVisitedDate")
     , m_redirectURLsKey("redirectURLs")
     , m_titleKey("title")
     , m_urlKey("")
-    , m_visitCountKey("visitCount")
-    , m_weeklyVisitCountsKey("W")
     , m_buffer(0)
 {
 }
@@ -94,10 +90,7 @@ void HistoryPropertyListWriter::writeHistoryItem(BinaryPropertyListObjectStream&
     const String& title = item->title();
     const String& displayTitle = item->alternateTitle();
     double lastVisitedDate = webHistoryItem->_private->_lastVisitedTime;
-    int visitCount = webHistoryItem->_private->_visitCount;
     Vector<String>* redirectURLs = item->redirectURLs();
-    const Vector<int>& dailyVisitCounts = webHistoryItem->_private->_dailyVisitCounts;
-    const Vector<int>& weeklyVisitCounts = webHistoryItem->_private->_weeklyVisitCounts;
 
     // keys
     stream.writeString(m_urlKey);
@@ -107,18 +100,10 @@ void HistoryPropertyListWriter::writeHistoryItem(BinaryPropertyListObjectStream&
         stream.writeString(m_displayTitleKey);
     if (lastVisitedDate)
         stream.writeString(m_lastVisitedDateKey);
-    if (visitCount)
-        stream.writeString(m_visitCountKey);
     if (item->lastVisitWasFailure())
         stream.writeString(m_lastVisitWasFailureKey);
-    if (webHistoryItem->_private->_lastVisitWasHTTPNonGet)
-        stream.writeString(m_lastVisitWasHTTPNonGetKey);
     if (redirectURLs)
         stream.writeString(m_redirectURLsKey);
-    if (!dailyVisitCounts.isEmpty())
-        stream.writeString(m_dailyVisitCountsKey);
-    if (!weeklyVisitCounts.isEmpty())
-        stream.writeString(m_weeklyVisitCountsKey);
 
     // values
     stream.writeUniqueString(item->urlString());
@@ -131,14 +116,8 @@ void HistoryPropertyListWriter::writeHistoryItem(BinaryPropertyListObjectStream&
         snprintf(buffer, sizeof(buffer), "%.1lf", lastVisitedDate);
         stream.writeUniqueString(buffer);
     }
-    if (visitCount)
-        stream.writeInteger(visitCount);
     if (item->lastVisitWasFailure())
         stream.writeBooleanTrue();
-    if (webHistoryItem->_private->_lastVisitWasHTTPNonGet) {
-        ASSERT(item->urlString().startsWith("http:", false) || item->urlString().startsWith("https:", false));
-        stream.writeBooleanTrue();
-    }
     if (redirectURLs) {
         size_t redirectArrayStart = stream.writeArrayStart();
         size_t size = redirectURLs->size();
@@ -147,10 +126,6 @@ void HistoryPropertyListWriter::writeHistoryItem(BinaryPropertyListObjectStream&
             stream.writeUniqueString(redirectURLs->at(i));
         stream.writeArrayEnd(redirectArrayStart);
     }
-    if (size_t size = dailyVisitCounts.size())
-        stream.writeIntegerArray(dailyVisitCounts.data(), size);
-    if (size_t size = weeklyVisitCounts.size())
-        stream.writeIntegerArray(weeklyVisitCounts.data(), size);
 
     stream.writeDictionaryEnd(itemDictionaryStart);
 }

@@ -86,7 +86,7 @@ private:
     int ageInDaysLimit;
 }
 
-- (WebHistoryItem *)visitedURL:(NSURL *)url withTitle:(NSString *)title increaseVisitCount:(BOOL)increaseVisitCount;
+- (WebHistoryItem *)visitedURL:(NSURL *)url withTitle:(NSString *)title;
 
 - (BOOL)addItem:(WebHistoryItem *)entry discardDuplicate:(BOOL)discardDuplicate;
 - (void)addItems:(NSArray *)newEntries;
@@ -301,7 +301,7 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     }
 }
 
-- (WebHistoryItem *)visitedURL:(NSURL *)url withTitle:(NSString *)title increaseVisitCount:(BOOL)increaseVisitCount
+- (WebHistoryItem *)visitedURL:(NSURL *)url withTitle:(NSString *)title
 {
     ASSERT(url);
     ASSERT(title);
@@ -318,11 +318,10 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
         BOOL itemWasInDateCaches = [self removeItemFromDateCaches:entry];
         ASSERT_UNUSED(itemWasInDateCaches, itemWasInDateCaches);
 
-        [entry _visitedWithTitle:title increaseVisitCount:increaseVisitCount];
+        [entry _visitedWithTitle:title];
     } else {
         LOG(History, "Adding new global history entry for %@", url);
         entry = [[WebHistoryItem alloc] initWithURLString:URLString title:title lastVisitedTimeInterval:[NSDate timeIntervalSinceReferenceDate]];
-        [entry _recordInitialVisit];
         [_entriesByURL setObject:entry forKey:URLString];
         [entry release];
     }
@@ -349,10 +348,6 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
         // until we're done with oldEntry.
         [oldEntry retain];
         [self removeItemForURLString:URLString];
-
-        // If we already have an item with this URL, we need to merge info that drives the
-        // URL autocomplete heuristics from that item into the new one.
-        [entry _mergeAutoCompleteHints:oldEntry];
         [oldEntry release];
     }
 
@@ -369,10 +364,6 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
             // until we're done with oldEntry.
             [otherEntry retain];
             [self removeItemForURLString:URLString];
-
-            // If we already have an item with this URL, we need to merge info that drives the
-            // URL autocomplete heuristics from that item into the new one.
-            [entry _mergeAutoCompleteHints:otherEntry];
             [otherEntry release];
 
             [self addItemToDateCaches:entry];
@@ -930,15 +921,12 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
 
 @implementation WebHistory (WebInternal)
 
-- (void)_visitedURL:(NSURL *)url withTitle:(NSString *)title method:(NSString *)method wasFailure:(BOOL)wasFailure increaseVisitCount:(BOOL)increaseVisitCount
+- (void)_visitedURL:(NSURL *)url withTitle:(NSString *)title method:(NSString *)method wasFailure:(BOOL)wasFailure
 {
-    WebHistoryItem *entry = [_historyPrivate visitedURL:url withTitle:title increaseVisitCount:increaseVisitCount];
+    WebHistoryItem *entry = [_historyPrivate visitedURL:url withTitle:title];
 
     HistoryItem* item = core(entry);
     item->setLastVisitWasFailure(wasFailure);
-
-    if ([method length])
-        entry->_private->_lastVisitWasHTTPNonGet = [method caseInsensitiveCompare:@"GET"] && (![[url scheme] caseInsensitiveCompare:@"http"] || ![[url scheme] caseInsensitiveCompare:@"https"]);
 
     item->setRedirectURLs(nullptr);
 

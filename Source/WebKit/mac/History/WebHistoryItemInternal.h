@@ -49,10 +49,8 @@ extern void WKNotifyHistoryItemChanged(WebCore::HistoryItem*);
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict;
 - (id)initWithWebCoreHistoryItem:(PassRefPtr<WebCore::HistoryItem>)item;
 
-- (void)_mergeAutoCompleteHints:(WebHistoryItem *)otherItem;
 - (void)setTitle:(NSString *)title;
-- (void)_visitedWithTitle:(NSString *)title increaseVisitCount:(BOOL)increaseVisitCount;
-- (void)_recordInitialVisit;
+- (void)_visitedWithTitle:(NSString *)title;
 
 @end
 
@@ -65,10 +63,5 @@ extern void WKNotifyHistoryItemChanged(WebCore::HistoryItem*);
     RefPtr<WebCore::HistoryItem> _historyItem;
 
     NSTimeInterval _lastVisitedTime;
-    int _visitCount;
-    Vector<int> _dailyVisitCounts;
-    Vector<int> _weeklyVisitCounts;
-
-    bool _lastVisitWasHTTPNonGet;
 }
 @end

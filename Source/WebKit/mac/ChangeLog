@@ -1,3 +1,39 @@
+2014-06-23  Anders Carlsson  <andersca@apple.com>
+
+        Remove unused history visit code from WebHistoryItem
+        https://bugs.webkit.org/show_bug.cgi?id=134201
+
+        Reviewed by Sam Weinig.
+
+        * History/HistoryPropertyList.h:
+        * History/HistoryPropertyList.mm:
+        (HistoryPropertyListWriter::HistoryPropertyListWriter):
+        (HistoryPropertyListWriter::writeHistoryItem):
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate visitedURL:withTitle:]):
+        (-[WebHistoryPrivate addItem:discardDuplicate:]):
+        (-[WebHistory _visitedURL:withTitle:method:wasFailure:]):
+        (-[WebHistoryPrivate visitedURL:withTitle:increaseVisitCount:]): Deleted.
+        (-[WebHistory _visitedURL:withTitle:method:wasFailure:increaseVisitCount:]): Deleted.
+        * History/WebHistoryInternal.h:
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem copyWithZone:]):
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        (-[WebHistoryItem _visitedWithTitle:]):
+        (-[WebHistoryItem setVisitCount:]): Deleted.
+        (-[WebHistoryItem _mergeAutoCompleteHints:]): Deleted.
+        (-[WebHistoryItem _visitedWithTitle:increaseVisitCount:]): Deleted.
+        (-[WebHistoryItem _recordInitialVisit]): Deleted.
+        (timeToDay): Deleted.
+        (-[WebHistoryItem _padDailyCountsForNewVisit:]): Deleted.
+        (-[WebHistoryItem _collapseDailyVisitsToWeekly]): Deleted.
+        (-[WebHistoryItem _recordVisitAtTime:increaseVisitCount:]): Deleted.
+        (-[WebHistoryItem _setLastVisitedTimeInterval:]): Deleted.
+        * History/WebHistoryItemInternal.h:
+        * History/WebHistoryItemPrivate.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::updateGlobalHistory):
+
 2014-06-24  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         REGRESSION(r170235): Remove incorrect ifdef guard

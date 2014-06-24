@@ -47,16 +47,12 @@ private:
     virtual void writeObjects(BinaryPropertyListObjectStream&);
     virtual UInt8* buffer(size_t);
 
-    const String m_dailyVisitCountsKey;
     const String m_displayTitleKey;
     const String m_lastVisitWasFailureKey;
-    const String m_lastVisitWasHTTPNonGetKey;
     const String m_lastVisitedDateKey;
     const String m_redirectURLsKey;
     const String m_titleKey;
     const String m_urlKey;
-    const String m_visitCountKey;
-    const String m_weeklyVisitCountsKey;
 
     UInt8* m_buffer;
     size_t m_bufferSize;

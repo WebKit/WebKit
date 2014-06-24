@@ -1017,11 +1017,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
         return;
     }
 
-    [[WebHistory optionalSharedHistory] _visitedURL:loader->urlForHistory() 
-                                          withTitle:loader->title().string()
-                                             method:loader->originalRequestCopy().httpMethod()
-                                         wasFailure:loader->urlForHistoryReflectsFailure()
-                                 increaseVisitCount:!loader->clientRedirectSourceForHistory()]; // Do not increase visit count due to navigations that were not initiated by the user directly, avoiding growth from programmatic reloads.
+    [[WebHistory optionalSharedHistory] _visitedURL:loader->urlForHistory() withTitle:loader->title().string() method:loader->originalRequestCopy().httpMethod() wasFailure:loader->urlForHistoryReflectsFailure()];
 }
 
 void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
