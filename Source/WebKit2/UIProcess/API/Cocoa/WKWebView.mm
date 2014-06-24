@@ -1283,7 +1283,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 {
     if (![self usesStandardContentView]) {
         [_customContentView web_computedContentInsetDidChange];
-        return
+        return;
     }
 
     if (_delayUpdateVisibleContentRects) {

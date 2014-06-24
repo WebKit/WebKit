@@ -1,3 +1,10 @@
+2014-06-24  Anders Carlsson  <andersca@apple.com>
+
+        Add missing semicolon.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateVisibleContentRects]):
+
 2014-06-24  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Fix unused parameter warnings if inspector is disabled
