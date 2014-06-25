@@ -153,8 +153,33 @@ public:
 
     Call call()
     {
+#if OS(WINDOWS)
+        // JIT relies on the CallerFrame (frame pointer) being put on the stack,
+        // On Win64 we need to manually copy the frame pointer to the stack, since MSVC may not maintain a frame pointer on 64-bit.
+        // See http://msdn.microsoft.com/en-us/library/9z1stfyw.aspx where it's stated that rbp MAY be used as a frame pointer.
+        store64(X86Registers::ebp, Address(X86Registers::esp, -16));
+
+        // On Windows we need to copy the arguments that don't fit in registers to the stack location where the callee expects to find them.
+        // We don't know the number of arguments at this point, so the arguments (5, 6, ...) should always be copied.
+
+        // Copy argument 5
+        load64(Address(X86Registers::esp, 4 * sizeof(int64_t)), scratchRegister);
+        store64(scratchRegister, Address(X86Registers::esp, -4 * sizeof(int64_t)));
+
+        // Copy argument 6
+        load64(Address(X86Registers::esp, 5 * sizeof(int64_t)), scratchRegister);
+        store64(scratchRegister, Address(X86Registers::esp, -3 * sizeof(int64_t)));
+
+        // We also need to allocate the shadow space on the stack for the 4 parameter registers.
+        // Also, we should allocate 16 bytes for the frame pointer, and return address (not populated).
+        // In addition, we need to allocate 16 bytes for two more parameters, since the call can have up to 6 parameters.
+        sub64(TrustedImm32(8 * sizeof(int64_t)), X86Registers::esp);
+#endif
         DataLabelPtr label = moveWithPatch(TrustedImmPtr(0), scratchRegister);
         Call result = Call(m_assembler.call(scratchRegister), Call::Linkable);
+#if OS(WINDOWS)
+        add64(TrustedImm32(8 * sizeof(int64_t)), X86Registers::esp);
+#endif
         ASSERT_UNUSED(label, differenceBetween(label, result) == REPTACH_OFFSET_CALL_R11);
         return result;
     }

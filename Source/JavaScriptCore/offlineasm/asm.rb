@@ -262,7 +262,7 @@ class Assembler
             @codeOrigin = nil
             @commentState = :many
         when :many
-            @outp.puts "// #{text}" if $enableCodeOriginComments
+            @outp.puts $commentPrefix + " #{text}" if $enableCodeOriginComments
         else
             raise
         end

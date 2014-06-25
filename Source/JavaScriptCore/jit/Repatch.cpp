@@ -1082,7 +1082,12 @@ static void emitPutTransitionStub(
     ASSERT(oldStructure->typeInfo().type() == structure->typeInfo().type());
     ASSERT(oldStructure->typeInfo().inlineTypeFlags() == structure->typeInfo().inlineTypeFlags());
     ASSERT(oldStructure->indexingType() == structure->indexingType());
-    stubJit.store32(MacroAssembler::TrustedImm32(reinterpret_cast<uint32_t>(structure->id())), MacroAssembler::Address(baseGPR, JSCell::structureIDOffset()));
+#if USE(JSVALUE64)
+    uint32_t val = structure->id();
+#else
+    uint32_t val = reinterpret_cast<uint32_t>(structure->id());
+#endif
+    stubJit.store32(MacroAssembler::TrustedImm32(val), MacroAssembler::Address(baseGPR, JSCell::structureIDOffset()));
 #if USE(JSVALUE64)
     if (isInlineOffset(slot.cachedOffset()))
         stubJit.store64(valueGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + offsetInInlineStorage(slot.cachedOffset()) * sizeof(JSValue)));

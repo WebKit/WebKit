@@ -1,3 +1,35 @@
+2014-06-25  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win64] ASM LLINT is not enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=130638
+
+        This patch adds a new LLINT assembler backend for Win64, and implements it.
+        It makes adjustments to follow the Win64 ABI spec. where it's found to be needed.
+        Also, LLINT and JIT is enabled for Win64.
+
+        Reviewed by Mark Lam.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Added JITStubsMSVC64.asm.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Ditto.
+        * JavaScriptCore/JavaScriptCore.vcxproj/jsc/jscCommon.props: Increased stack size to avoid stack overflow in tests.
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/build-LLIntAssembly.sh: Generate assembler source file for Win64.
+        * assembler/MacroAssemblerX86_64.h: 
+        (JSC::MacroAssemblerX86_64::call): Follow Win64 ABI spec.
+        * jit/JITStubsMSVC64.asm: Added.
+        * jit/Repatch.cpp:
+        (JSC::emitPutTransitionStub): Compile fix.
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator): Follow Win64 ABI spec.
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions): Ditto.
+        * llint/LLIntOfflineAsmConfig.h: Enable new llint backend for Win64.
+        * llint/LowLevelInterpreter.asm: Implement new Win64 backend, and follow Win64 ABI spec.
+        * llint/LowLevelInterpreter64.asm: Ditto.
+        * offlineasm/asm.rb: Compile fix.
+        * offlineasm/backends.rb: Add new llint backend for Win64.
+        * offlineasm/settings.rb: Compile fix.
+        * offlineasm/x86.rb: Implement new llint Win64 backend.
+
 2014-06-25  Laszlo Gombos  <l.gombos@samsung.com>
 
         Remove build guard for progress element

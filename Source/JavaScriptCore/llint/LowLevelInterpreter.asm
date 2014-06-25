@@ -84,6 +84,8 @@ elsif X86 or X86_WIN
 const maxFrameExtentForSlowPathCall = 40
 elsif MIPS
 const maxFrameExtentForSlowPathCall = 40
+elsif X86_64_WIN
+const maxFrameExtentForSlowPathCall = 64
 end
 
 # Watchpoint states
@@ -248,7 +250,7 @@ macro preserveCallerPCAndCFR()
     if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
         push lr
         push cfr
-    elsif X86 or X86_WIN or X86_64
+    elsif X86 or X86_WIN or X86_64 or X86_64_WIN
         push cfr
     elsif ARM64
         pushLRAndFP
@@ -263,7 +265,7 @@ macro restoreCallerPCAndCFR()
     if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
         pop cfr
         pop lr
-    elsif X86 or X86_WIN or X86_64
+    elsif X86 or X86_WIN or X86_64 or X86_64_WIN
         pop cfr
     elsif ARM64
         popLRAndFP
@@ -274,7 +276,7 @@ macro preserveReturnAddressAfterCall(destinationRegister)
     if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or ARM64 or MIPS or SH4
         # In C_LOOP case, we're only preserving the bytecode vPC.
         move lr, destinationRegister
-    elsif X86 or X86_WIN or X86_64
+    elsif X86 or X86_WIN or X86_64 or X86_64_WIN
         pop destinationRegister
     else
         error
@@ -285,7 +287,7 @@ macro restoreReturnAddressBeforeReturn(sourceRegister)
     if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or ARM64 or MIPS or SH4
         # In C_LOOP case, we're only restoring the bytecode vPC.
         move sourceRegister, lr
-    elsif X86 or X86_WIN or X86_64
+    elsif X86 or X86_WIN or X86_64 or X86_64_WIN
         push sourceRegister
     else
         error
@@ -293,7 +295,7 @@ macro restoreReturnAddressBeforeReturn(sourceRegister)
 end
 
 macro functionPrologue()
-    if X86 or X86_WIN or X86_64
+    if X86 or X86_WIN or X86_64 or X86_64_WIN
         push cfr
     elsif ARM64
         pushLRAndFP
@@ -305,7 +307,7 @@ macro functionPrologue()
 end
 
 macro functionEpilogue()
-    if X86 or X86_WIN or X86_64
+    if X86 or X86_WIN or X86_64 or X86_64_WIN
         pop cfr
     elsif ARM64
         popLRAndFP
@@ -316,7 +318,7 @@ macro functionEpilogue()
 end
 
 macro callToJavaScriptPrologue()
-    if X86_64
+    if X86_64 or X86_64_WIN
         push cfr
         push t0
     elsif X86 or X86_WIN
@@ -371,7 +373,7 @@ macro callToJavaScriptEpilogue()
     end
 
     popCalleeSaves
-    if X86_64
+    if X86_64 or X86_64_WIN
         pop t2
         pop cfr
     elsif X86 or X86_WIN
@@ -656,6 +658,10 @@ _sanitizeStackForVMImpl:
         const vm = t4
         const address = t1
         const zeroValue = t0
+    elsif X86_64_WIN
+        const vm = t2
+        const address = t1
+        const zeroValue = t0
     elsif X86 or X86_WIN
         const vm = t2
         const address = t1
@@ -692,7 +698,7 @@ _llint_entry:
     crash()
 else
 macro initPCRelative(pcBase)
-    if X86_64
+    if X86_64 or X86_64_WIN
         call _relativePCBase
     _relativePCBase:
         pop pcBase
@@ -725,6 +731,10 @@ macro setEntryAddress(index, label)
         leap (label - _relativePCBase)[t1], t0
         move index, t2
         storep t0, [t4, t2, 8]
+    elsif X86_64_WIN
+        leap (label - _relativePCBase)[t1], t0
+        move index, t4
+        storep t0, [t2, t4, 8]
     elsif X86 or X86_WIN
         leap (label - _relativePCBase)[t1], t0
         move index, t2

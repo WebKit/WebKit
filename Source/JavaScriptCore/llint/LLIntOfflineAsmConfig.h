@@ -39,6 +39,7 @@
 #define OFFLINE_ASM_ARMv7_TRADITIONAL 0
 #define OFFLINE_ASM_ARM64 0
 #define OFFLINE_ASM_X86_64 0
+#define OFFLINE_ASM_X86_64_WIN 0
 #define OFFLINE_ASM_ARMv7s 0
 #define OFFLINE_ASM_MIPS 0
 #define OFFLINE_ASM_SH4 0
@@ -84,10 +85,16 @@
 #define OFFLINE_ASM_ARM 0
 #endif
 
-#if CPU(X86_64)
+#if CPU(X86_64) && !PLATFORM(WIN)
 #define OFFLINE_ASM_X86_64 1
 #else
 #define OFFLINE_ASM_X86_64 0
+#endif
+
+#if CPU(X86_64) && PLATFORM(WIN)
+#define OFFLINE_ASM_X86_64_WIN 1
+#else
+#define OFFLINE_ASM_X86_64_WIN 0
 #endif
 
 #if CPU(MIPS)

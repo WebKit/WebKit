@@ -25,13 +25,8 @@ cd "${BUILT_PRODUCTS_DIR}/JavaScriptCore/DerivedSources"
 
 printf "END" > LowLevelInterpreterWin.asm
 
-# Win32 is using the LLINT x86 backend, and should generate an assembler file.
-# Win64 is using the LLINT C backend, and should generate a header file.
+# If you want to enable the LLINT C loop, set OUTPUTFILENAME to "LLIntAssembly.h"
 
-if [ "${PLATFORMARCHITECTURE}" == "32" ]; then
-    OUTPUTFILENAME="LowLevelInterpreterWin.asm"
-else
-    OUTPUTFILENAME="LLIntAssembly.h"
-fi
+OUTPUTFILENAME="LowLevelInterpreterWin.asm"
 
 /usr/bin/env ruby "${SRCROOT}/offlineasm/asm.rb" "-I." "${SRCROOT}/llint/LowLevelInterpreter.asm" "${BUILT_PRODUCTS_DIR}/LLIntOffsetsExtractor/LLIntOffsetsExtractor${3}.exe" "${OUTPUTFILENAME}" || exit 1

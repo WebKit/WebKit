@@ -3714,5 +3714,8 @@
   </ItemGroup>
   <ItemGroup>
     <MASM Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\LowLevelInterpreterWin.asm" />
+    <MASM Include="..\jit\JITStubsMSVC64.asm">
+      <Filter>jit</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

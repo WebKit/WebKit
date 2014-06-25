@@ -177,7 +177,9 @@ def emitCodeInConfiguration(concreteSettings, ast, backend)
     if !$emitWinAsm
         $output.puts cppSettingsTest(concreteSettings)
     else
-        $output.puts ".MODEL FLAT, C"
+        if backend == "X86_WIN"
+            $output.puts ".MODEL FLAT, C"
+        end
         $output.puts "INCLUDE #{File.basename($output.path)}.sym"
         $output.puts "_TEXT SEGMENT"
     end

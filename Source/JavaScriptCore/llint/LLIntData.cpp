@@ -123,12 +123,14 @@ void Data::performAssertions(VM& vm)
     ASSERT(ValueUndefined == (TagBitTypeOther | TagBitUndefined));
     ASSERT(ValueNull == TagBitTypeOther);
 #endif
-#if CPU(X86_64) || CPU(ARM64) || !ENABLE(JIT)
+#if (CPU(X86_64) && !OS(WINDOWS)) || CPU(ARM64) || !ENABLE(JIT)
     ASSERT(!maxFrameExtentForSlowPathCall);
 #elif CPU(ARM) || CPU(SH4)
     ASSERT(maxFrameExtentForSlowPathCall == 24);
 #elif CPU(X86) || CPU(MIPS)
     ASSERT(maxFrameExtentForSlowPathCall == 40);
+#elif CPU(X86_64) && OS(WINDOWS)
+    ASSERT(maxFrameExtentForSlowPathCall == 64);
 #endif
     ASSERT(StringType == 5);
     ASSERT(ObjectType == 18);

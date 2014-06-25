@@ -57,6 +57,24 @@ macro cCall2(function, arg1, arg2)
         move arg1, t4
         move arg2, t5
         call function
+    elsif X86_64_WIN
+        # Note: this implementation is only correct if the return type size is > 8 bytes.
+        # See macro cCall2Void for an implementation when the return type <= 8 bytes.
+        # On Win64, when the return type is larger than 8 bytes, we need to allocate space on the stack for the return value.
+        # On entry rcx (t2), should contain a pointer to this stack space. The other parameters are shifted to the right,
+        # rdx (t1) should contain the first argument, and r8 (t6) should contain the second argument.
+        # On return, rax contains a pointer to this stack value, and we then need to copy the 16 byte return value into rax (t0) and rdx (t1)
+        # since the return value is expected to be split between the two.
+        # See http://msdn.microsoft.com/en-us/library/7572ztz4.aspx
+        move arg1, t1
+        move arg2, t6
+        subp 48, sp
+        move sp, t2
+        addp 32, t2
+        call function
+        addp 48, sp
+        move 8[t0], t1
+        move [t0], t0
     elsif ARM64
         move arg1, t0
         move arg2, t1
@@ -71,6 +89,17 @@ end
 macro cCall2Void(function, arg1, arg2)
     if C_LOOP
         cloopCallSlowPathVoid function, arg1, arg2
+    elsif X86_64_WIN
+        # Note: we cannot use the cCall2 macro for Win64 in this case,
+        # as the Win64 cCall2 implemenation is only correct when the return type size is > 8 bytes.
+        # On Win64, rcx and rdx are used for passing the first two parameters.
+        # We also need to make room on the stack for all four parameter registers.
+        # See http://msdn.microsoft.com/en-us/library/ms235286.aspx
+        move arg2, t1
+        move arg1, t2
+        subp 32, sp 
+        call function
+        addp 32, sp 
     else
         cCall2(function, arg1, arg2)
     end
@@ -85,6 +114,17 @@ macro cCall4(function, arg1, arg2, arg3, arg4)
         move arg3, t1
         move arg4, t2
         call function
+    elsif X86_64_WIN
+        # On Win64, rcx, rdx, r8, and r9 are used for passing the first four parameters.
+        # We also need to make room on the stack for all four parameter registers.
+        # See http://msdn.microsoft.com/en-us/library/ms235286.aspx
+        move arg1, t2
+        move arg2, t1
+        move arg3, t6
+        move arg4, t7
+        subp 32, sp 
+        call function
+        addp 32, sp 
     elsif ARM64
         move arg1, t0
         move arg2, t1
@@ -109,6 +149,16 @@ macro doCallToJavaScript(makeCall)
         const temp1 = t0
         const temp2 = t3
         const temp3 = t6
+    elsif X86_64_WIN
+        const entry = t2
+        const vm = t1
+        const protoCallFrame = t6
+
+        const previousCFR = t0
+        const previousPC = t4
+        const temp1 = t0
+        const temp2 = t3
+        const temp3 = t7
     elsif ARM64 or C_LOOP
         const entry = a0
         const vm = a1
@@ -126,6 +176,10 @@ macro doCallToJavaScript(makeCall)
     if X86_64
         loadp 7*8[sp], previousPC
         move 6*8[sp], previousCFR
+    elsif X86_64_WIN
+        # Win64 pushes two more registers
+        loadp 9*8[sp], previousPC
+        move 8*8[sp], previousCFR
     elsif ARM64
         move cfr, previousCFR
     end
@@ -142,10 +196,7 @@ macro doCallToJavaScript(makeCall)
     loadp VM::topCallFrame[vm], temp2
     storep temp2, ScopeChain[cfr]
     storep 1, CodeBlock[cfr]
-    if X86_64
-        loadp 7*8[sp], previousPC
-        loadp 6*8[sp], previousCFR
-    end
+
     storep previousPC, ReturnPC[cfr]
     storep previousCFR, CallerFrame[cfr]
 
@@ -238,7 +289,7 @@ macro doCallToJavaScript(makeCall)
 
     checkStackPointerAlignment(temp3, 0xbad0dc04)
 
-    if X86_64
+    if X86_64 or X86_64_WIN
         pop t5
     end
     callToJavaScriptEpilogue()
@@ -262,6 +313,8 @@ macro makeHostFunctionCall(entry, temp)
     move entry, temp
     if X86_64
         move sp, t4
+    elsif X86_64_WIN
+        move sp, t2
     elsif ARM64 or C_LOOP
         move sp, a0
     end
@@ -269,8 +322,18 @@ macro makeHostFunctionCall(entry, temp)
         storep cfr, [sp]
         storep lr, 8[sp]
         cloopCallNative temp
+    elsif X86_64_WIN
+        # For a host function call, JIT relies on that the CallerFrame (frame pointer) is put on the stack,
+        # On Win64 we need to manually copy the frame pointer to the stack, since MSVC may not maintain a frame pointer on 64-bit.
+        # See http://msdn.microsoft.com/en-us/library/9z1stfyw.aspx where it's stated that rbp MAY be used as a frame pointer.
+        storep cfr, [sp]
+
+        # We need to allocate 32 bytes on the stack for the shadow space.
+        subp 32, sp
+        call temp
+        addp 32, sp
     else
-        addp 16, sp 
+        addp 16, sp
         call temp
         subp 16, sp
     end
@@ -957,7 +1020,7 @@ _llint_op_sub:
 
 _llint_op_div:
     traceExecution()
-    if X86_64
+    if X86_64 or X86_64_WIN
         binaryOpCustomStore(
             macro (left, right, slow, index)
                 # Assume t3 is scratchable.
@@ -1968,7 +2031,16 @@ macro nativeCallTrampoline(executableOffsetToFunction)
 
     functionPrologue()
     storep 0, CodeBlock[cfr]
-    if X86_64
+    if X86_64 or X86_64_WIN
+        if X86_64
+            const arg1 = t4  # t4 = rdi
+            const arg2 = t5  # t5 = rsi
+            const temp = t1
+        elsif X86_64_WIN
+            const arg1 = t2  # t2 = rcx
+            const arg2 = t1  # t1 = rdx
+            const temp = t0
+        end
         loadp ScopeChain[cfr], t0
         andp MarkedBlockMask, t0
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t0], t0
@@ -1976,11 +2048,17 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         loadp CallerFrame[cfr], t0
         loadq ScopeChain[t0], t1
         storeq t1, ScopeChain[cfr]
-        move cfr, t4  # t4 = rdi
-        loadp Callee[cfr], t5 # t5 = rsi
-        loadp JSFunction::m_executable[t5], t1
+        move cfr, arg1
+        loadp Callee[cfr], arg2
+        loadp JSFunction::m_executable[arg2], temp
         checkStackPointerAlignment(t3, 0xdead0001)
-        call executableOffsetToFunction[t1]
+        if X86_64_WIN
+            subp 32, sp
+        end
+        call executableOffsetToFunction[temp]
+        if X86_64_WIN
+            addp 32, sp
+        end
         loadp ScopeChain[cfr], t3
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3

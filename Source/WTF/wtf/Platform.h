@@ -640,8 +640,7 @@
 #if !defined(ENABLE_JIT) \
     && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)) \
     && !CPU(APPLE_ARMV7K)                                                           \
-    && !OS(WINCE) \
-    && !(OS(WINDOWS) && CPU(X86_64))
+    && !OS(WINCE)
 #define ENABLE_JIT 1
 #endif
 
