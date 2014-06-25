@@ -93,13 +93,9 @@ struct ViewSnapshot;
 - (void)_willInvokeUIScrollViewDelegateCallback;
 - (void)_didInvokeUIScrollViewDelegateCallback;
 
-- (void)_showInspectorHighlight:(const WebCore::Highlight&)highlight;
-- (void)_hideInspectorHighlight;
-
 - (void)_updateVisibleContentRects;
 
 @property (nonatomic, readonly) UIEdgeInsets _computedContentInset;
-
 #endif
 @end
 

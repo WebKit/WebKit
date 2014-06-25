@@ -137,6 +137,9 @@ private:
 
     virtual void showInspectorIndication() override;
     virtual void hideInspectorIndication() override;
+
+    virtual void enableInspectorNodeSearch() override;
+    virtual void disableInspectorNodeSearch() override;
 #endif
 
     virtual void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale) override;

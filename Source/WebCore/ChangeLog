@@ -1,3 +1,13 @@
+2014-06-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS]: WK2 Inspector Node Search
+        https://bugs.webkit.org/show_bug.cgi?id=134279
+
+        Reviewed by Benjamin Poulain.
+
+        * WebCore.exp.in:
+        Export Node::inspect for WebKit2.
+
 2014-06-25  Dana Burkart  <dburkart@apple.com>
 
         Add support for 5-tuple versioning.

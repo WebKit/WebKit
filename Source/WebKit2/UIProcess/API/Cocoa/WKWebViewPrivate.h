@@ -131,9 +131,6 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 - (void)_beginAnimatedResizeWithUpdates:(void (^)(void))updateBlock;
 - (void)_endAnimatedResize;
 
-- (void)_showInspectorIndication;
-- (void)_hideInspectorIndication;
-
 - (void)_snapshotRect:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler;
 
 - (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize minimumLayoutSizeForMinimalUI:(CGSize)minimumLayoutSizeForMinimalUI maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride;

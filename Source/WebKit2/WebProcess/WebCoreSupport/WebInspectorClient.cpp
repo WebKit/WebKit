@@ -110,6 +110,14 @@ void WebInspectorClient::hideInspectorIndication()
 {
     m_page->hideInspectorIndication();
 }
+
+void WebInspectorClient::didSetSearchingForNode(bool enabled)
+{
+    if (enabled)
+        m_page->enableInspectorNodeSearch();
+    else
+        m_page->disableInspectorNodeSearch();
+}
 #endif
 
 bool WebInspectorClient::sendMessageToFrontend(const String& message)

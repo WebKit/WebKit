@@ -1,3 +1,80 @@
+2014-06-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS]: WK2 Inspector Node Search
+        https://bugs.webkit.org/show_bug.cgi?id=134279
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/ios/WKInspectorNodeSearchGestureRecognizer.h: Added.
+        * UIProcess/ios/WKInspectorNodeSearchGestureRecognizer.mm: Added.
+        (-[WKInspectorNodeSearchGestureRecognizer locationInView:]):
+        (-[WKInspectorNodeSearchGestureRecognizer _processTouches:state:]):
+        (-[WKInspectorNodeSearchGestureRecognizer touchesBegan:withEvent:]):
+        (-[WKInspectorNodeSearchGestureRecognizer touchesMoved:withEvent:]):
+        (-[WKInspectorNodeSearchGestureRecognizer touchesEnded:withEvent:]):
+        (-[WKInspectorNodeSearchGestureRecognizer touchesCancelled:withEvent:]):
+        (-[WKInspectorNodeSearchGestureRecognizer reset]):
+        Gesture recognizer that tracks a single touch, updates as that touch
+        moves, and ends when that touch is cancelled or ends. The location
+        of the gesture recognizer is the location of the touch it was tracking.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        Handle the inspector node search gesture recognizer if needed.
+
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        Helpers to add and remove the default gestures.
+
+        (-[WKContentView _enableInspectorNodeSearch]):
+        (-[WKContentView _disableInspectorNodeSearch]):
+        When node search is enabled, remove all gesture recognizers and
+        replace with a single inspector node search gesture recognizer.
+        Likewise, inverse that when disabled.
+
+        (-[WKContentView _inspectorNodeSearchRecognized:]):
+        Notify the WebProcess of new touch positions during node search.
+
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        When inspector node search is enabled, disable selection.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::inspectorNodeSearchMovedToPosition):
+        Send a mouse move to the new location. WebCore will update the highlight.
+
+        (WebKit::WebPage::inspectorNodeSearchEndedAtPosition):
+        Inspect the node at the location.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _enableInspectorNodeSearch]):
+        (-[WKWebView _disableInspectorNodeSearch]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::enableInspectorNodeSearch):
+        (WebKit::PageClientImpl::disableInspectorNodeSearch):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::inspectorNodeSearchMovedToPosition):
+        (WebKit::WebPageProxy::inspectorNodeSearchEndedAtPosition):
+        (WebKit::WebPageProxy::enableInspectorNodeSearch):
+        (WebKit::WebPageProxy::disableInspectorNodeSearch):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::didSetSearchingForNode):
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::enableInspectorNodeSearch):
+        (WebKit::WebPage::disableInspectorNodeSearch):
+        Pass the inspector node search state up from the WebProcess
+        to the WKContentView in the UIProcess. Likewise some messages
+        in the reverse direction.
+
 2014-06-25  Dana Burkart  <dburkart@apple.com>
 
         Add support for 5-tuple versioning.

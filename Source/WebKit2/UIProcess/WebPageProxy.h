@@ -845,6 +845,9 @@ public:
     void cancelPotentialTap();
     void tapHighlightAtPosition(const WebCore::FloatPoint&, uint64_t& requestID);
 
+    void inspectorNodeSearchMovedToPosition(const WebCore::FloatPoint&);
+    void inspectorNodeSearchEndedAtPosition(const WebCore::FloatPoint&);
+
     void blurAssistedNode();
 #endif
 
@@ -1212,6 +1215,9 @@ private:
 
     void showInspectorIndication();
     void hideInspectorIndication();
+
+    void enableInspectorNodeSearch();
+    void disableInspectorNodeSearch();
 #endif
 
     void notifyRevealedSelection();

@@ -640,16 +640,6 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
     }
 }
 
-- (void)_showInspectorHighlight:(const WebCore::Highlight&)highlight
-{
-    [_contentView _showInspectorHighlight:highlight];
-}
-
-- (void)_hideInspectorHighlight
-{
-    [_contentView _hideInspectorHighlight];
-}
-
 static CGFloat contentZoomScale(WKWebView* webView)
 {
     UIView *zoomView;
@@ -2145,16 +2135,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _resizeAnimationTransformAdjustments = CATransform3DIdentity;
 
     [self _updateVisibleContentRects];
-}
-
-- (void)_showInspectorIndication
-{
-    [_contentView setShowingInspectorIndication:YES];
-}
-
-- (void)_hideInspectorIndication
-{
-    [_contentView setShowingInspectorIndication:NO];
 }
 
 - (void)_setOverlaidAccessoryViewsInset:(CGSize)inset

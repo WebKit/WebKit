@@ -347,6 +347,9 @@ messages -> WebPageProxy {
 
     ShowInspectorIndication()
     HideInspectorIndication()
+
+    EnableInspectorNodeSearch()
+    DisableInspectorNodeSearch()
 #endif
 #endif
 

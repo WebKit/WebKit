@@ -587,6 +587,16 @@ void WebPageProxy::tapHighlightAtPosition(const WebCore::FloatPoint& position, u
     process().send(Messages::WebPage::TapHighlightAtPosition(requestID, position), m_pageID);
 }
 
+void WebPageProxy::inspectorNodeSearchMovedToPosition(const WebCore::FloatPoint& position)
+{
+    process().send(Messages::WebPage::InspectorNodeSearchMovedToPosition(position), m_pageID);
+}
+
+void WebPageProxy::inspectorNodeSearchEndedAtPosition(const WebCore::FloatPoint& position)
+{
+    process().send(Messages::WebPage::InspectorNodeSearchEndedAtPosition(position), m_pageID);
+}
+
 void WebPageProxy::blurAssistedNode()
 {
     process().send(Messages::WebPage::BlurAssistedNode(), m_pageID);
@@ -664,6 +674,16 @@ void WebPageProxy::showInspectorIndication()
 void WebPageProxy::hideInspectorIndication()
 {
     m_pageClient.hideInspectorIndication();
+}
+
+void WebPageProxy::enableInspectorNodeSearch()
+{
+    m_pageClient.enableInspectorNodeSearch();
+}
+
+void WebPageProxy::disableInspectorNodeSearch()
+{
+    m_pageClient.disableInspectorNodeSearch();
 }
 #endif
 

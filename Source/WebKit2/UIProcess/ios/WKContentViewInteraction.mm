@@ -35,6 +35,7 @@
 #import "WKActionSheetAssistant.h"
 #import "WKFormInputControl.h"
 #import "WKFormSelectControl.h"
+#import "WKInspectorNodeSearchGestureRecognizer.h"
 #import "WKWebViewPrivate.h"
 #import "WebEvent.h"
 #import "WebIOSEventFactory.h"
@@ -273,11 +274,38 @@ static const float tapAndHoldDelay  = 0.75;
     [_twoFingerDoubleTapGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
 
+    _inspectorNodeSearchEnabled = NO;
+    if (_inspectorNodeSearchGestureRecognizer) {
+        [_inspectorNodeSearchGestureRecognizer setDelegate:nil];
+        [self removeGestureRecognizer:_inspectorNodeSearchGestureRecognizer.get()];
+        _inspectorNodeSearchGestureRecognizer = nil;
+    }
+
     if (_fileUploadPanel) {
         [_fileUploadPanel setDelegate:nil];
         [_fileUploadPanel dismiss];
         _fileUploadPanel = nil;
     }
+}
+
+- (void)_removeDefaultGestureRecognizers
+{
+    [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
+    [self removeGestureRecognizer:_singleTapGestureRecognizer.get()];
+    [self removeGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
+    [self removeGestureRecognizer:_longPressGestureRecognizer.get()];
+    [self removeGestureRecognizer:_doubleTapGestureRecognizer.get()];
+    [self removeGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
+}
+
+- (void)_addDefaultGestureRecognizers
+{
+    [self addGestureRecognizer:_touchEventGestureRecognizer.get()];
+    [self addGestureRecognizer:_singleTapGestureRecognizer.get()];
+    [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
+    [self addGestureRecognizer:_longPressGestureRecognizer.get()];
+    [self addGestureRecognizer:_doubleTapGestureRecognizer.get()];
+    [self addGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
 }
 
 - (UIView*)unscaledView
@@ -296,6 +324,26 @@ static const float tapAndHoldDelay  = 0.75;
     [_inverseScaleRootView setTransform:CGAffineTransformMakeScale(inverseScale, inverseScale)];
     _selectionNeedsUpdate = YES;
     [self _updateChangedSelection];
+}
+
+- (void)_enableInspectorNodeSearch
+{
+    _inspectorNodeSearchEnabled = YES;
+
+    [self _cancelInteraction];
+
+    [self _removeDefaultGestureRecognizers];
+    _inspectorNodeSearchGestureRecognizer = adoptNS([[WKInspectorNodeSearchGestureRecognizer alloc] initWithTarget:self action:@selector(_inspectorNodeSearchRecognized:)]);
+    [self addGestureRecognizer:_inspectorNodeSearchGestureRecognizer.get()];
+}
+
+- (void)_disableInspectorNodeSearch
+{
+    _inspectorNodeSearchEnabled = NO;
+
+    [self _addDefaultGestureRecognizers];
+    [self removeGestureRecognizer:_inspectorNodeSearchGestureRecognizer.get()];
+    _inspectorNodeSearchGestureRecognizer = nil;
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(::UIEvent *)event
@@ -368,6 +416,25 @@ static const float tapAndHoldDelay  = 0.75;
 
     if (nativeWebTouchEvent.allTouchPointsAreReleased())
         _canSendTouchEventsAsynchronously = NO;
+}
+
+- (void)_inspectorNodeSearchRecognized:(UIGestureRecognizer *)gestureRecognizer
+{
+    ASSERT(_inspectorNodeSearchEnabled);
+
+    CGPoint point = [gestureRecognizer locationInView:self];
+
+    switch (gestureRecognizer.state) {
+    case UIGestureRecognizerStateBegan:
+    case UIGestureRecognizerStateChanged:
+        _page->inspectorNodeSearchMovedToPosition(point);
+        break;
+    case UIGestureRecognizerStateEnded:
+    case UIGestureRecognizerStateCancelled:
+    default: // To ensure we turn off node search.
+        _page->inspectorNodeSearchEndedAtPosition(point);
+        break;
+    }
 }
 
 static FloatQuad inflateQuad(const FloatQuad& quad, float inflateSize)
@@ -734,6 +801,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (BOOL)hasSelectablePositionAtPoint:(CGPoint)point
 {
+    if (_inspectorNodeSearchEnabled)
+        return NO;
+
     [self ensurePositionInformationIsUpToDate:point];
     return _positionInformation.isSelectable;
 }

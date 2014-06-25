@@ -476,6 +476,9 @@ public:
     void cancelPotentialTap();
     void tapHighlightAtPosition(uint64_t requestID, const WebCore::FloatPoint&);
 
+    void inspectorNodeSearchMovedToPosition(const WebCore::FloatPoint&);
+    void inspectorNodeSearchEndedAtPosition(const WebCore::FloatPoint&);
+
     void blurAssistedNode();
     void selectWithGesture(const WebCore::IntPoint&, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, uint64_t callbackID);
     void updateSelectionWithTouches(const WebCore::IntPoint& point, uint32_t touches, bool baseIsStart, uint64_t callbackID);
@@ -513,6 +516,9 @@ public:
 
     void showInspectorIndication();
     void hideInspectorIndication();
+
+    void enableInspectorNodeSearch();
+    void disableInspectorNodeSearch();
 #endif
 #endif
 

@@ -643,6 +643,9 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
 - (void)_processDidExit
 {
     [self cleanupInteraction];
+
+    [self setShowingInspectorIndication:NO];
+    [self _hideInspectorHighlight];
 }
 
 - (void)_didRelaunchProcess

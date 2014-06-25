@@ -64,6 +64,8 @@ private:
 #if PLATFORM(IOS)
     virtual void showInspectorIndication() override;
     virtual void hideInspectorIndication() override;
+
+    virtual void didSetSearchingForNode(bool) override;
 #endif
 
     virtual bool sendMessageToFrontend(const String&) override;

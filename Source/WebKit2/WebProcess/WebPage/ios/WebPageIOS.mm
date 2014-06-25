@@ -576,6 +576,21 @@ void WebPage::tapHighlightAtPosition(uint64_t requestID, const FloatPoint& posit
     sendTapHighlightForNodeIfNecessary(requestID, mainframe.nodeRespondingToClickEvents(position, adjustedPoint));
 }
 
+void WebPage::inspectorNodeSearchMovedToPosition(const FloatPoint& position)
+{
+    IntPoint adjustedPoint = roundedIntPoint(position);
+    Frame& mainframe = m_page->mainFrame();
+
+    mainframe.eventHandler().mouseMoved(PlatformMouseEvent(adjustedPoint, adjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, false, false, false, false, 0));
+    mainframe.document()->updateStyleIfNeeded();
+}
+
+void WebPage::inspectorNodeSearchEndedAtPosition(const FloatPoint& position)
+{
+    if (Node* node = m_page->mainFrame().deepestNodeAtLocation(position))
+        node->inspect();
+}
+
 void WebPage::blurAssistedNode()
 {
     if (m_assistedNode && m_assistedNode->isElementNode())
@@ -630,6 +645,16 @@ void WebPage::showInspectorIndication()
 void WebPage::hideInspectorIndication()
 {
     send(Messages::WebPageProxy::HideInspectorIndication());
+}
+
+void WebPage::enableInspectorNodeSearch()
+{
+    send(Messages::WebPageProxy::EnableInspectorNodeSearch());
+}
+
+void WebPage::disableInspectorNodeSearch()
+{
+    send(Messages::WebPageProxy::DisableInspectorNodeSearch());
 }
 #endif
 

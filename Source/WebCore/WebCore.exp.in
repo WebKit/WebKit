@@ -3152,6 +3152,7 @@ __ZNK7WebCore9DOMWindow8documentEv
 
 #if ENABLE(INSPECTOR) && PLATFORM(IOS)
 __ZN7WebCore16findIntersectionERKNS_10FloatPointES2_S2_S2_RS0_
+__ZN7WebCore4Node7inspectEv
 __ZNK7WebCore9FloatQuad12containsQuadERKS0_
 __ZNK7WebCore9FloatQuad13containsPointERKNS_10FloatPointE
 #endif

@@ -276,6 +276,9 @@ public:
 
     virtual void showInspectorIndication() = 0;
     virtual void hideInspectorIndication() = 0;
+
+    virtual void enableInspectorNodeSearch() = 0;
+    virtual void disableInspectorNodeSearch() = 0;
 #endif
 #endif
 
