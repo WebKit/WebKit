@@ -1,3 +1,22 @@
+2014-06-24  Frédéric Wang  <fred.wang@free.fr>
+
+        [EFL] [GTK] Update the MathML test references.
+        https://bugs.webkit.org/show_bug.cgi?id=134153
+
+        Reviewed by Martin Robinson.
+
+        We update the GTK references after the move to Latin Modern Math.
+
+        * mathml/presentation/bug95015-expected.html: hide the base X since it is causing antialiasing diff.
+        * mathml/presentation/bug95015.html: ditto
+        * platform/efl/TestExpectations: enable some tests again (the references must be updated).
+        * platform/gtk/TestExpectations: enable OpenType MATH test again, mark mo-stacked-glyphs as failing.
+        * platform/gtk/mathml/presentation/menclose-notation-default-longdiv-expected.txt: update reference.
+        * platform/gtk/mathml/presentation/mo-stretch-expected.png: ditto
+        * platform/gtk/mathml/presentation/mo-stretch-expected.txt: ditto
+        * platform/gtk/mathml/presentation/roots-expected.png: ditto
+        * platform/gtk/mathml/presentation/roots-expected.txt: ditto
+
 2014-06-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r170414.

@@ -85,7 +85,7 @@
 
   <autotools id="fonts"
              skip-autogen="true">
-    <branch repo="github.com" module="mrobinson/webkitgtk-test-fonts.git" checkoutdir="webkitgtk-test-fonts" tag="0.0.4"/>
+    <branch repo="github.com" module="mrobinson/webkitgtk-test-fonts.git" checkoutdir="webkitgtk-test-fonts" tag="0.0.5"/>
   </autotools>
 
   <autotools id="freetype6" autogen-sh="configure">

@@ -1,3 +1,13 @@
+2014-06-24  Frédéric Wang  <fred.wang@free.fr>
+
+        [EFL] [GTK] Use Latin Modern Math in the jhbuild environments.
+        https://bugs.webkit.org/show_bug.cgi?id=134153
+
+        Reviewed by Martin Robinson.
+
+        * efl/jhbuild.modules: Use webkitgtk-test-fonts.git instead of the zip archive and upgrade to 0.0.5.
+        * gtk/jhbuild.modules: Upgrade webkitgtk-test-fonts to 0.0.5.
+
 2014-06-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, update my speciality.
