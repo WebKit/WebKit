@@ -4,379 +4,379 @@ This tests that native elements and ARIA overrides result in the expected role, 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS: a[href]
+a[href]
       AXRole: AXLink
       
-PASS: address
+address
       AXRole: AXLandmarkContentInfo
       
-PASS: article
+article
       AXRole: AXArticle
       
-PASS: aside
+aside
       AXRole: AXLandmarkComplementary
       
-PASS: blockquote
+blockquote
       AXRole: AXGroup
       
-PASS: button
+button
       AXRole: AXButton
       
-PASS: dl
+dl
       AXRole: AXDescriptionList
       
-PASS: dt
+dt
       AXRole: AXDescriptionTerm
       
-PASS: dd
+dd
       AXRole: AXDescriptionValue
       
-PASS: div
+div
       AXRole: AXSection
       
-PASS: fieldset
+fieldset
       AXRole: AXGroup
       
-PASS: legend
+legend
       AXRole: AXLabel
       
-PASS: form
+form
       AXRole: AXForm
       
-PASS: header
+header
       AXRole: AXLandmarkBanner
       
-PASS: hgroup
+hgroup
       AXRole: AXGroup
       
-PASS: h1
+h1
       AXRole: AXHeading
       
-PASS: h2
+h2
       AXRole: AXHeading
       
-PASS: h3
+h3
       AXRole: AXHeading
       
-PASS: h4
+h4
       AXRole: AXHeading
       
-PASS: h5
+h5
       AXRole: AXHeading
       
-PASS: h6
+h6
       AXRole: AXHeading
       
-PASS: hr
+hr
       AXRole: AXSeparator
       
-PASS: img[alt='X']
+img[alt='X']
       AXRole: AXImage
       
-PASS: input[type='button']
+input[type='button']
       AXRole: AXButton
       
-PASS: input[type='checkbox']
+input[type='checkbox']
       AXRole: AXCheckBox
       
-PASS: input[type='date']
+input[type='date']
       AXRole: AXTextField
       
-PASS: input[type='datetime']
+input[type='datetime']
       AXRole: AXTextField
       
-PASS: input[type='datetime-local']
+input[type='datetime-local']
       AXRole: AXTextField
       
-PASS: input[type='email']
+input[type='email']
       AXRole: AXTextField
       
-PASS: input[type='file']
+input[type='file']
       AXRole: AXButton
       
-PASS: input[type='image']
+input[type='image']
       AXRole: AXButton
       
-PASS: input[type='month']
+input[type='month']
       AXRole: AXTextField
       
-PASS: input[type='number']
+input[type='number']
       AXRole: AXTextField
       
-PASS: input[type='password']
+input[type='password']
       AXRole: AXPasswordField
       
-PASS: input[type='radio']
+input[type='radio']
       AXRole: AXRadioButton
       
-PASS: input[type='range']
+input[type='range']
       AXRole: AXSlider
       
-PASS: input[type='reset']
+input[type='reset']
       AXRole: AXButton
       
-PASS: input[type='search']
+input[type='search']
       AXRole: AXTextField
       
-PASS: input[type='submit']
+input[type='submit']
       AXRole: AXButton
       
-PASS: input[type='tel']
+input[type='tel']
       AXRole: AXTextField
       
-PASS: input[type='text']
+input[type='text']
       AXRole: AXTextField
       
-PASS: input[type='time']
+input[type='time']
       AXRole: AXTextField
       
-PASS: input[type='url']
+input[type='url']
       AXRole: AXTextField
       
-PASS: input[type='week']
+input[type='week']
       AXRole: AXTextField
       
-PASS: math
+math
       AXRole: AXMath
       
-PASS: nav
+nav
       AXRole: AXLandmarkNavigation
       
-PASS: ol
+ol
       AXRole: AXList
       
-PASS: li
+li
       AXRole: AXListItem
       
-PASS: p
+p
       AXRole: AXParagraph
       
-PASS: pre
+pre
       AXRole: AXGroup
       
-PASS: progress
+progress
       AXRole: AXProgressIndicator
       
-PASS: select:not([multiple])
+select:not([multiple])
       AXRole: AXComboBox
       
-PASS: select[multiple]
+select[multiple]
       AXRole: AXList
       
-PASS: option
+option
       AXRole: AXListItem
       
-PASS: optgroup
+optgroup
       AXRole: AXListItem
       
-PASS: table
+table
       AXRole: AXTable
       
-PASS: th
+th
       AXRole: AXCell
       
-PASS: td
+td
       AXRole: AXCell
       
-PASS: th
+th
       AXRole: AXCell
       
-PASS: textarea
+textarea
       AXRole: AXTextField
       
-PASS: ul
+ul
       AXRole: AXList
       
-PASS: li
+li
       AXRole: AXListItem
       
-PASS: div[role=command]
+div[role=command]
       AXRole: AXSection
       
-PASS: div[role=composite]
+div[role=composite]
       AXRole: AXSection
       
-PASS: div[role=input]
+div[role=input]
       AXRole: AXSection
       
-PASS: div[role=landmark]
+div[role=landmark]
       AXRole: AXSection
       
-PASS: div[role=range]
+div[role=range]
       AXRole: AXSection
       
-PASS: div[role=roletype]
+div[role=roletype]
       AXRole: AXSection
       
-PASS: div[role=section]
+div[role=section]
       AXRole: AXSection
       
-PASS: div[role=sectionhead]
+div[role=sectionhead]
       AXRole: AXSection
       
-PASS: div[role=select]
+div[role=select]
       AXRole: AXSection
       
-PASS: div[role=structure]
+div[role=structure]
       AXRole: AXSection
       
-PASS: div[role=widget]
+div[role=widget]
       AXRole: AXSection
       
-PASS: div[role=window]
+div[role=window]
       AXRole: AXSection
       
-PASS: div[role=alert]
+div[role=alert]
       AXRole: AXAlert
       
-PASS: div[role=alertdialog]
+div[role=alertdialog]
       AXRole: AXAlert
       
-PASS: div[role=application]
+div[role=application]
       AXRole: AXEmbedded
       
-PASS: div[role=article]
+div[role=article]
       AXRole: AXArticle
       
-PASS: div[role=banner]
+div[role=banner]
       AXRole: AXLandmarkBanner
       
-PASS: div[role=button]
+div[role=button]
       AXRole: AXButton
       
-PASS: div[role=checkbox]
+div[role=checkbox]
       AXRole: AXCheckBox
       
-PASS: div[role=combobox]
+div[role=combobox]
       AXRole: AXComboBox
       
-PASS: div[role=complementary]
+div[role=complementary]
       AXRole: AXLandmarkComplementary
       
-PASS: div[role=contentinfo]
+div[role=contentinfo]
       AXRole: AXLandmarkContentInfo
       
-PASS: div[role=definition]
+div[role=definition]
       AXRole: AXDefinition
       
-PASS: div[role=dialog]
+div[role=dialog]
       AXRole: AXDialog
       
-PASS: div[role=directory]
+div[role=directory]
       AXRole: AXList
       
-PASS: div[role=grid]
+div[role=grid]
       AXRole: AXTable
       
-PASS: div[role=gridcell]
+div[role=gridcell]
       AXRole: AXCell
       
-PASS: div[role=group]
+div[role=group]
       AXRole: AXGroup
       
-PASS: div[role=heading]
+div[role=heading]
       AXRole: AXHeading
       
-PASS: div[role=img]
+div[role=img]
       AXRole: AXImage
       
-PASS: div[role=link]
+div[role=link]
       AXRole: AXLink
       
-PASS: div[role=list]
+div[role=list]
       AXRole: AXList
       
-PASS: div[role=listitem]
+div[role=listitem]
       AXRole: AXListItem
       
-PASS: div[role=option]
+div[role=option]
       AXRole: AXListItem
       
-PASS: div[role=log]
+div[role=log]
       AXRole: AXLog
       
-PASS: div[role=main]
+div[role=main]
       AXRole: AXLandmarkMain
       
-PASS: div[role=marquee]
+div[role=marquee]
       AXRole: AXMarquee
       
-PASS: div[role=math]
+div[role=math]
       AXRole: AXMath
       
-PASS: div[role=menu]
+div[role=menu]
       AXRole: AXMenu
       
-PASS: div[role=menuitem]
+div[role=menuitem]
       AXRole: AXMenuItem
       
-PASS: div[role=menuitemcheckbox]
+div[role=menuitemcheckbox]
       AXRole: AXCheckMenuItem
       
-PASS: div[role=menuitemradio]
+div[role=menuitemradio]
       AXRole: AXRadioMenuItem
       
-PASS: div[role=menubar]
+div[role=menubar]
       AXRole: AXMenuBar
       
-PASS: div[role=menuitem]
+div[role=menuitem]
       AXRole: AXMenuItem
       
-PASS: div[role=menuitemcheckbox]
+div[role=menuitemcheckbox]
       AXRole: AXCheckMenuItem
       
-PASS: div[role=menuitemradio]
+div[role=menuitemradio]
       AXRole: AXRadioMenuItem
       
-PASS: div[role=navigation]
+div[role=navigation]
       AXRole: AXLandmarkNavigation
       
-PASS: div[role=note]
+div[role=note]
       AXRole: AXComment
       
-PASS: div[role=progressbar]
+div[role=progressbar]
       AXRole: AXProgressIndicator
       
-PASS: div[role=radiogroup]
+div[role=radiogroup]
       AXRole: AXGroup
       
-PASS: div[role=radio]
+div[role=radio]
       AXRole: AXRadioButton
       
-PASS: div[role=scrollbar]
+div[role=scrollbar]
       AXRole: AXScrollBar
       
-PASS: div[role=search]
+div[role=search]
       AXRole: AXLandmarkSearch
       
-PASS: div[role=separator]
+div[role=separator]
       AXRole: AXSeparator
       
-PASS: div[role=slider]
+div[role=slider]
       AXRole: AXSlider
       
-PASS: div[role=spinbutton]
+div[role=spinbutton]
       AXRole: AXSpinButton
       
-PASS: div[role=tablist]
+div[role=tablist]
       AXRole: AXTabGroup
       
-PASS: div[role=tab]
+div[role=tab]
       AXRole: AXTab
       
-PASS: div[role=textbox]
+div[role=textbox]
       AXRole: AXTextField
       
-PASS: div[role=timer]
+div[role=timer]
       AXRole: AXTimer
       
-PASS: div[role=toolbar]
+div[role=toolbar]
       AXRole: AXToolbar
       
-PASS: div[role=treegrid]
+div[role=treegrid]
       AXRole: AXTable
       
-PASS: div[role=gridcell]
+div[role=gridcell]
       AXRole: AXCell
       
 PASS successfullyParsed is true
