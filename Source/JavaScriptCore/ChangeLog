@@ -1,5 +1,17 @@
 2014-06-25  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix.
+
+        Unreviewed.
+
+        * runtime/JSDateMath.cpp:
+        (JSC::parseDateFromNullTerminatedCharacters):
+        * runtime/VM.cpp:
+        (JSC::VM::resetDateCache): Use std::numeric_limits instead of QNaN
+        constant since that constant doesn't exist anymore.
+
+2014-06-25  Geoffrey Garen  <ggaren@apple.com>
+
         Unreviewed, rolling out r166876.
 
         Caused some ECMA test262 failures
