@@ -1,3 +1,10 @@
+2014-06-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Update to
+        put various files in proper IDE categories.
+
 2014-06-25  peavo@outlook.com  <peavo@outlook.com>
 
         [Win64] ASM LLINT is not enabled.

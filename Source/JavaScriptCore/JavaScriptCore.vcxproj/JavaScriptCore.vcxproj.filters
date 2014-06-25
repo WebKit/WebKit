@@ -1095,9 +1095,6 @@
     <ClCompile Include="..\dfg\DFGFlushFormat.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
-    <ClCompile Include="..\dfg\DFGFlushLivenessAnalysisPhase.cpp">
-      <Filter>dfg</Filter>
-    </ClCompile>
     <ClCompile Include="..\dfg\DFGFunctionWhitelist.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
@@ -1508,6 +1505,105 @@
     </ClCompile>
     <ClCompile Include="..\llvm\LLVMAPI.cpp">
       <Filter>llvm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jit\AccessorCallJITStubRoutine.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\ConsoleMessage.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGArithMode.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGGraphSafepoint.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGIntegerCheckCombiningPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGSafepoint.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGStaticExecutionCountEstimationPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGThreadData.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGVariableAccessData.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bytecode\GetByIdVariant.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\IdentifiersFactory.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bytecode\ExitingJITType.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\InjectedScript.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\InjectedScriptBase.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\InjectedScriptHost.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\InjectedScriptManager.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\InjectedScriptModule.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\agents\InspectorConsoleAgent.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\JavaScriptCallFrame.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\JSInjectedScriptHost.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\JSInjectedScriptHostPrototype.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\JSJavaScriptCallFrame.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\JSJavaScriptCallFramePrototype.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bytecode\PolymorphicGetByIdList.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\profiler\ProfilerJettisonReason.cpp">
+      <Filter>profiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bytecode\PutByIdVariant.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jit\ScratchRegisterAllocator.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\ScriptArguments.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jit\Reg.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\ScriptCallFrame.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\ScriptCallStack.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\ScriptCallStackFactory.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\ScriptDebugServer.cpp">
+      <Filter>inspector</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2624,9 +2720,6 @@
     <ClInclude Include="..\runtime\Structure.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\runtime\StructureIDBlobh">
-      <Filter>runtime</Filter>
-    </ClInclude>
     <ClInclude Include="..\runtime\StructureChain.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -3180,9 +3273,6 @@
     <ClInclude Include="..\dfg\DFGFlushFormat.h">
       <Filter>dfg</Filter>
     </ClInclude>
-    <ClInclude Include="..\dfg\DFGFlushLivenessAnalysisPhase.h">
-      <Filter>dfg</Filter>
-    </ClInclude>
     <ClInclude Include="..\dfg\DFGFPRInfo.h">
       <Filter>dfg</Filter>
     </ClInclude>
@@ -3703,6 +3793,120 @@
     <ClInclude Include="..\llvm\LLVMHeaders.h">
       <Filter>llvm</Filter>
     </ClInclude>
+    <ClInclude Include="..\jit\AccessorCallJITStubRoutine.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\assembler\AbortReason.h">
+      <Filter>assembler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\ConsoleMessage.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGArithMode.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGGraphSafepoint.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGIntegerCheckCombiningPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGNodeOrigin.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGSafepoint.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGScannable.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGStaticExecutionCountEstimationPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGThreadData.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\GetByIdVariant.h">
+      <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\IdentifiersFactory.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\InjectedScriptModule.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\InjectedScript.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\InjectedScriptBase.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\InjectedScriptHost.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\InjectedScriptManager.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InjectedScriptSource.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\agents\InspectorConsoleAgent.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\InspectorEnvironment.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\JavaScriptCallFrame.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\JSInjectedScriptHost.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\JSInjectedScriptHostPrototype.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\JSJavaScriptCallFramePrototype.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\JSJavaScriptCallFrame.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\JSCInlines.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\PolymorphicGetByIdList.h">
+      <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\profiler\ProfilerJettisonReason.h">
+      <Filter>profiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\PutByIdVariant.h">
+      <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\ScriptArguments.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\Reg.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\ScriptBreakpoint.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\ScriptCallStack.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\ScriptCallFrame.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\ScriptCallStackFactory.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\ScriptDebugServer.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\ScriptDebugListener.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="JavaScriptCorePreLink.cmd" />
@@ -3713,7 +3917,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\LowLevelInterpreterWin.asm" />
+    <MASM Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\LowLevelInterpreterWin.asm">
+      <Filter>Derived Sources</Filter>
+    </MASM>
     <MASM Include="..\jit\JITStubsMSVC64.asm">
       <Filter>jit</Filter>
     </MASM>
