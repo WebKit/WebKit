@@ -1,5 +1,17 @@
 2014-06-25  Jer Noble  <jer.noble@apple.com>
 
+        [MSE][Mac] REGRESSION(r170336) - zero tolerance seeks are ignored.
+        https://bugs.webkit.org/show_bug.cgi?id=134310
+
+        Reviewed by Brent Fulgham.
+
+        Tests for zero tolerance seeks were inadvertantly reversed in r170336.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekInternal):
+
+2014-06-25  Jer Noble  <jer.noble@apple.com>
+
         [MSE][Mac] Pause playback when readyState drops below HAVE_FUTURE_DATA, and do not complete seek until it rises above HAVE_METADATA.
         https://bugs.webkit.org/show_bug.cgi?id=134306
 

@@ -455,7 +455,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
         return;
 
     MediaTime seekTime;
-    if (pendingSeek->negativeThreshold != MediaTime::zeroTime() && pendingSeek->positiveThreshold != MediaTime::zeroTime())
+    if (pendingSeek->negativeThreshold == MediaTime::zeroTime() && pendingSeek->positiveThreshold == MediaTime::zeroTime())
         seekTime = pendingSeek->targetTime;
     else
         seekTime = m_mediaSourcePrivate->fastSeekTimeForMediaTime(pendingSeek->targetTime, pendingSeek->positiveThreshold, pendingSeek->negativeThreshold);
