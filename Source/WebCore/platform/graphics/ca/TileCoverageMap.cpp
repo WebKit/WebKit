@@ -63,6 +63,7 @@ void TileCoverageMap::update()
     FloatRect containerBounds = m_controller.bounds();
     FloatRect visibleRect = m_controller.visibleRect();
     visibleRect.contract(4, 4); // Layer is positioned 2px from top and left edges.
+    visibleRect.setHeight(visibleRect.height() - m_controller.topContentInset());
 
     float widthScale = 1;
     float scale = 1;
