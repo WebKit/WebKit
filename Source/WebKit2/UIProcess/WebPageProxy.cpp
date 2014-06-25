@@ -4972,10 +4972,8 @@ void WebPageProxy::getMarkedRangeAsync(std::function<void (EditingRange, Callbac
 
 void WebPageProxy::getSelectedRangeAsync(std::function<void (EditingRange, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<EditingRangeCallback> callback = EditingRangeCallback::create(std::move(callbackFunction));
-
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(EditingRange(), CallbackBase::Error::Unknown);
         return;
     }
 

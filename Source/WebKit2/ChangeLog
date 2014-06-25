@@ -1,3 +1,14 @@
+2014-06-25  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/17448049> REGRESSION (r170254): Input methods don’t work
+        https://bugs.webkit.org/show_bug.cgi?id=134311
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getSelectedRangeAsync): Removed code that accidentally put the
+        callback function into a throwaway EditingRangeCallback.
+
 2014-06-25  Timothy Horton  <timothy_horton@apple.com>
 
         [iOS][WK2] Rotating a zoomed PDF leads to weird scrolling behavior
