@@ -329,10 +329,17 @@ static CFTimeInterval cachedStartupTimeIntervalSince1970()
 {
     static dispatch_once_t once;
     dispatch_once(&once, ^{
+        void (^updateBlock)(NSNotification *) = Block_copy(^(NSNotification *){ updateSystemStartupTimeIntervalSince1970(); });
         [[[NSWorkspace sharedWorkspace] notificationCenter] addObserverForName:NSWorkspaceDidWakeNotification
                                                                         object:nil
                                                                          queue:nil
-                                                                    usingBlock:^(NSNotification *){ updateSystemStartupTimeIntervalSince1970(); }];
+                                                                    usingBlock:updateBlock];
+        [[NSNotificationCenter defaultCenter] addObserverForName:NSSystemClockDidChangeNotification
+                                                          object:nil
+                                                           queue:nil
+                                                      usingBlock:updateBlock];
+        Block_release(updateBlock);
+
         updateSystemStartupTimeIntervalSince1970();
     });
     return systemStartupTime;

@@ -1,3 +1,14 @@
+2014-06-25  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Mac] Update the time base of event's timestamp when the system time changes
+        https://bugs.webkit.org/show_bug.cgi?id=134293
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::cachedStartupTimeIntervalSince1970): Since events timestamps are absolute time, they also
+        need to be updated if the system clock changes.
+
 2014-06-25  Dirk Schulze  <krit@webkit.org>
 
         Add all blend modes to feBlend
