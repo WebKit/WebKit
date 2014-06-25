@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2012 University of Szeged
  * Copyright (C) 2012 Gabor Rapcsanyi
+ * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -105,6 +106,39 @@ public:
     }
 };
 
+void FEBlend::platformApplySoftware()
+{
+    FilterEffect* in = inputEffect(0);
+    FilterEffect* in2 = inputEffect(1);
+
+    Uint8ClampedArray* dstPixelArray = createPremultipliedImageResult();
+    if (!dstPixelArray)
+        return;
+
+    IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
+    RefPtr<Uint8ClampedArray> srcPixelArrayA = in->asPremultipliedImage(effectADrawingRect);
+
+    IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
+    RefPtr<Uint8ClampedArray> srcPixelArrayB = in2->asPremultipliedImage(effectBDrawingRect);
+
+    unsigned pixelArrayLength = srcPixelArrayA->length();
+    ASSERT(pixelArrayLength == srcPixelArrayB->length());
+
+    if (pixelArrayLength >= 8) {
+        platformApplyNEON(srcPixelArrayA->data(), srcPixelArrayB->data(), dstPixelArray->data(), pixelArrayLength);
+        return
+    }
+    // If there is just one pixel we expand it to two.
+    ASSERT(pixelArrayLength > 0);
+    uint32_t sourceA[2] = {0, 0};
+    uint32_t sourceBAndDest[2] = {0, 0};
+
+    sourceA[0] = reinterpret_cast<uint32_t*>(srcPixelArrayA->data())[0];
+    sourceBAndDest[0] = reinterpret_cast<uint32_t*>(srcPixelArrayB->data())[0];
+    platformApplyNEON(reinterpret_cast<uint8_t*>(sourceA), reinterpret_cast<uint8_t*>(sourceBAndDest), reinterpret_cast<uint8_t*>(sourceBAndDest), 8);
+    reinterpret_cast<uint32_t*>(dstPixelArray->data())[0] = sourceBAndDest[0];
+}
+
 void FEBlend::platformApplyNEON(unsigned char* srcPixelArrayA, unsigned char* srcPixelArrayB, unsigned char* dstPixelArray,
                                 unsigned colorArrayLength)
 {
@@ -129,22 +163,21 @@ void FEBlend::platformApplyNEON(unsigned char* srcPixelArrayA, unsigned char* sr
 
         uint16x8_t result;
         switch (m_mode) {
-        case FEBLEND_MODE_NORMAL:
+        case BlendModeNormal:
             result = FEBlendUtilitiesNEON::normal(doubblePixelA, doubblePixelB, alphaA, alphaB, sixteenConst255, sixteenConstOne);
             break;
-        case FEBLEND_MODE_MULTIPLY:
+        case BlendModeMultiply:
             result = FEBlendUtilitiesNEON::multiply(doubblePixelA, doubblePixelB, alphaA, alphaB, sixteenConst255, sixteenConstOne);
             break;
-        case FEBLEND_MODE_SCREEN:
+        case BlendModeScreen:
             result = FEBlendUtilitiesNEON::screen(doubblePixelA, doubblePixelB, alphaA, alphaB, sixteenConst255, sixteenConstOne);
             break;
-        case FEBLEND_MODE_DARKEN:
+        case BlendModeDarken:
             result = FEBlendUtilitiesNEON::darken(doubblePixelA, doubblePixelB, alphaA, alphaB, sixteenConst255, sixteenConstOne);
             break;
-        case FEBLEND_MODE_LIGHTEN:
+        case BlendModeLighten:
             result = FEBlendUtilitiesNEON::lighten(doubblePixelA, doubblePixelB, alphaA, alphaB, sixteenConst255, sixteenConstOne);
             break;
-        case FEBLEND_MODE_UNKNOWN:
         default:
             result = vdupq_n_u16(0);
             break;

@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,21 +30,12 @@
 
 namespace WebCore {
 
-enum BlendModeType {
-    FEBLEND_MODE_UNKNOWN = 0,
-    FEBLEND_MODE_NORMAL = 1,
-    FEBLEND_MODE_MULTIPLY = 2,
-    FEBLEND_MODE_SCREEN = 3,
-    FEBLEND_MODE_DARKEN = 4,
-    FEBLEND_MODE_LIGHTEN = 5
-};
-
 class FEBlend : public FilterEffect {
 public:
-    static PassRefPtr<FEBlend> create(Filter*, BlendModeType);
+    static PassRefPtr<FEBlend> create(Filter*, BlendMode);
 
-    BlendModeType blendMode() const;
-    bool setBlendMode(BlendModeType);
+    BlendMode blendMode() const;
+    bool setBlendMode(BlendMode);
 
     void platformApplyGeneric(unsigned char* srcPixelArrayA, unsigned char* srcPixelArrayB, unsigned char* dstPixelArray,
                            unsigned colorArrayLength);
@@ -55,9 +47,9 @@ public:
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FEBlend(Filter*, BlendModeType);
+    FEBlend(Filter*, BlendMode);
 
-    BlendModeType m_mode;
+    BlendMode m_mode;
 };
 
 } // namespace WebCore

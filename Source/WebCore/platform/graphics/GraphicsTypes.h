@@ -48,12 +48,12 @@ namespace WebCore {
     };
 
     enum BlendMode {
-        BlendModeNormal,
+        BlendModeNormal = 1, // Start with 1 to match SVG's blendmode enumeration.
         BlendModeMultiply,
         BlendModeScreen,
-        BlendModeOverlay,
         BlendModeDarken,
         BlendModeLighten,
+        BlendModeOverlay,
         BlendModeColorDodge,
         BlendModeColorBurn,
         BlendModeHardLight,
@@ -83,6 +83,7 @@ namespace WebCore {
     enum TextAlign { StartTextAlign, EndTextAlign, LeftTextAlign, CenterTextAlign, RightTextAlign };
 
     String compositeOperatorName(CompositeOperator, BlendMode);
+    bool parseBlendMode(const String&, BlendMode&);
     bool parseCompositeAndBlendOperator(const String&, CompositeOperator&, BlendMode&);
 
     String lineCapName(LineCap);

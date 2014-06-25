@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
       RenderSVGResourceFilter {filter} [id="shadow"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-        [feBlend mode="NORMAL"]
+        [feBlend mode="normal"]
           [SourceGraphic]
           [feGaussianBlur stdDeviation="10.00, 10.00"]
             [feOffset dx="75.00" dy="75.00"]

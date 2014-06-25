@@ -1,3 +1,70 @@
+2014-06-25  Dirk Schulze  <krit@webkit.org>
+
+        Add all blend modes to feBlend
+
+        feBlend should support all blend modes from CSS and Canvas
+        https://bugs.webkit.org/show_bug.cgi?id=134296
+
+        Reviewed by Dean Jackson.
+
+        Add all blend modes to <feBlend> (the SVG filter primitive) that are also
+        supported by HTML Canvas and CSS.
+
+        In addition, add "normal" blend mode to HTML Canvas as requested by the
+        CSS Compositing and Blending specification. (Referenced from HTML Canvas.)
+        With this change, SVG, CSS and Canvas truly share the same blend modes and
+        even the same keywords. This is much easier to for web authors.
+
+        http://www.w3.org/TR/2014/CR-compositing-1-20140220/#ltblendmodegt
+
+        Test: svg/filters/feBlend-all-blendmodes.svg
+
+        * platform/graphics/GraphicsTypes.cpp: Reorder blend mode text streams to match
+            enumeration order. Add a new function to parse blend modes independent of
+            compositing modes. Add a string "normal" that is supported by CSS, feBlend and
+            HTML Canvas now.
+        (WebCore::parseBlendMode):
+        (WebCore::parseCompositeAndBlendOperator):
+        * platform/graphics/GraphicsTypes.h: Reorder BlendMode enumeration values to match
+         the SVG JS enumeration for blend modes.
+        * platform/graphics/cpu/arm/filters/FEBlendNEON.h: Move all software code that is no
+            longer required by the software path but still used by NEON here.
+        (WebCore::FEBlend::platformApplySoftware):
+        (WebCore::FEBlend::platformApplyNEON):
+        * platform/graphics/filters/FEBlend.cpp:
+            Use drawImageBuffer() to blend the results of previous filter primitives. This
+            allows removing more than 60% of the code.
+        (WebCore::FEBlend::FEBlend):
+        (WebCore::FEBlend::create):
+        (WebCore::FEBlend::blendMode):
+        (WebCore::FEBlend::setBlendMode):
+        (WebCore::FEBlend::platformApplySoftware):
+        (WebCore::FEBlend::dump):
+        (WebCore::FEBlend::externalRepresentation):
+        (WebCore::feBlendNormal): Deleted.
+        (WebCore::feBlendMultiply): Deleted.
+        (WebCore::feBlendScreen): Deleted.
+        (WebCore::feBlendDarken): Deleted.
+        (WebCore::feBlendLighten): Deleted.
+        (WebCore::feBlendUnknown): Deleted.
+        (WebCore::platformApply): Deleted.
+        (WebCore::FEBlend::platformApplyGeneric): Deleted.
+        (WebCore::operator<<): Deleted.
+        * platform/graphics/filters/FEBlend.h:
+        * svg/SVGAnimatedEnumeration.cpp: Use the global BlendMode enumeration.
+        (WebCore::enumerationValueForTargetAttribute):
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::SVGFEBlendElement): Use the global BlendMode enumeration.
+            No new enumeration values added or exposed to SVG DOM as requested by SVG WG.
+        (WebCore::SVGFEBlendElement::parseAttribute):
+        * svg/SVGFEBlendElement.h: Replace BlendModeType with global BlendMode enumeration. Remove
+            blend mode parsing code and use the code in GraphicsTypes instead.
+        (WebCore::SVGPropertyTraits<BlendMode>::highestEnumValue):
+        (WebCore::SVGPropertyTraits<BlendMode>::toString):
+        (WebCore::SVGPropertyTraits<BlendModeType>::highestEnumValue): Deleted.
+        (WebCore::SVGPropertyTraits<BlendModeType>::toString): Deleted.
+        (WebCore::SVGPropertyTraits<BlendModeType>::fromString): Deleted.
+
 2014-06-25  Zalan Bujtas  <zalan@apple.com>
 
         Unreviewed iOS build fix after r170425.

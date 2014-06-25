@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Apple Inc.  All rights reserved.
  * Copyright (C) 2012 Rik Cabanier (cabanier@adobe.com)
+ * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,11 +50,12 @@ static const char* const compositeOperatorNames[] = {
 };
 
 static const char* const blendOperatorNames[] = {
+    "normal",
     "multiply",
     "screen",
-    "overlay",
     "darken",
     "lighten",
+    "overlay",
     "color-dodge",
     "color-burn",
     "hard-light",
@@ -68,6 +70,18 @@ static const char* const blendOperatorNames[] = {
 const int numCompositeOperatorNames = WTF_ARRAY_LENGTH(compositeOperatorNames);
 const int numBlendOperatorNames = WTF_ARRAY_LENGTH(blendOperatorNames);
 
+bool parseBlendMode(const String& s, BlendMode& blendMode)
+{
+    for (int i = 0; i < numBlendOperatorNames; i++) {
+        if (s == blendOperatorNames[i]) {
+            blendMode = static_cast<BlendMode>(i+1);
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 bool parseCompositeAndBlendOperator(const String& s, CompositeOperator& op, BlendMode& blendOp)
 {
     for (int i = 0; i < numCompositeOperatorNames; i++) {
@@ -78,13 +92,10 @@ bool parseCompositeAndBlendOperator(const String& s, CompositeOperator& op, Blen
         }
     }
     
-    for (int i = 0; i < numBlendOperatorNames; i++) {
-        if (s == blendOperatorNames[i]) {
-            blendOp = static_cast<BlendMode>(i+1);
-            // For now, blending will always assume source-over. This will be fixed in the future
-            op = CompositeSourceOver;
-            return true;
-        }
+    if (parseBlendMode(s, blendOp)) {
+        // For now, blending will always assume source-over. This will be fixed in the future
+        op = CompositeSourceOver;
+        return true;
     }
     
     return false;

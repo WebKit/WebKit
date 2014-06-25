@@ -1,3 +1,28 @@
+2014-06-25  Dirk Schulze  <krit@webkit.org>
+
+        Add all blend modes to feBlend
+
+        feBlend should support all blend modes from CSS and Canvas
+        https://bugs.webkit.org/show_bug.cgi?id=134296
+
+        Added tests for new blend modes in feBlend as well as a test for 'normal' blend mode
+        on HTML Canvas.
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/canvas-blend-image-expected.txt:
+        * fast/canvas/canvas-blend-solid-expected.txt:
+        * fast/canvas/script-tests/canvas-blend-image.js: Test 'normal' blend mode in Canvas.
+        (prepareTestScenario):
+        * fast/canvas/script-tests/canvas-blend-solid.js: Ditto.
+        (prepareTestScenario):
+        * platform/mac/svg/W3C-SVG-1.1/filters-blend-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-blend-01-b-expected.txt: DRT output is lowercase now.
+        * platform/mac/svg/filters/feBlend-all-blendmodes-expected.png: Added.
+        * platform/mac/svg/filters/feBlend-all-blendmodes-expected.txt: Added.
+        * svg/filters/feBlend-all-blendmodes.svg: Added. Tests all blend modes now supported by feBlend.
+        * svg/filters/feBlend-invalid-mode.xhtml: Add an upper bound check as well.
+
 2014-06-25  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash at com.apple.WebCore: WebCore::AlternativeTextController::removeDictationAlternativesForMarker + 43
