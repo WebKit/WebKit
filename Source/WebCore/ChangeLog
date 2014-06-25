@@ -1,3 +1,11 @@
+2014-06-25  Dana Burkart  <dburkart@apple.com>
+
+        Add support for 5-tuple versioning.
+
+        Reviewed by David Farler.
+
+        * Configurations/Version.xcconfig:
+
 2014-06-25  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] REGRESSION(r170336) - zero tolerance seeks are ignored.

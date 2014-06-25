@@ -1,3 +1,11 @@
+2014-06-25  Dana Burkart  <dburkart@apple.com>
+
+        Add support for 5-tuple versioning.
+
+        Reviewed by David Farler.
+
+        * Configurations/Version.xcconfig:
+
 2014-06-24  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: clicking "Show All Nodes" button throws TypeError
