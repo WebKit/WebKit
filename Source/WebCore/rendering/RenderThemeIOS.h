@@ -80,14 +80,12 @@ protected:
     virtual void adjustSliderThumbSize(RenderStyle*, Element*) const override;
     virtual bool paintSliderThumbDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-#if ENABLE(PROGRESS_ELEMENT)
     // Returns the repeat interval of the animation for the progress bar.
     virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const override;
     // Returns the duration of the animation for the progress bar.
     virtual double animationDurationForProgressBar(RenderProgress*) const override;
 
     virtual bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
-#endif
 
 #if ENABLE(DATALIST_ELEMENT)
     virtual IntSize sliderTickSize() const override;

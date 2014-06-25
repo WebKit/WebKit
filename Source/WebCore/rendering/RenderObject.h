@@ -326,9 +326,7 @@ public:
     virtual bool isMeter() const { return false; }
 #endif
     virtual bool isSnapshottedPlugIn() const { return false; }
-#if ENABLE(PROGRESS_ELEMENT)
     virtual bool isProgress() const { return false; }
-#endif
     virtual bool isRenderSVGBlock() const { return false; };
     virtual bool isRenderButton() const { return false; }
     virtual bool isRenderIFrame() const { return false; }

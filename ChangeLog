@@ -1,3 +1,15 @@
+2014-06-25  Laszlo Gombos  <l.gombos@samsung.com>
+
+        Remove build guard for progress element
+        https://bugs.webkit.org/show_bug.cgi?id=134292
+
+        Reviewed by Benjamin Poulain.
+
+        The build flag is no longer needed as it is always on.
+
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2014-06-23  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Platform support for WebSpeech feature.

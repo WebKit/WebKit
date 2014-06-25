@@ -21,7 +21,7 @@
 #include "config.h"
 #include "AccessibilityProgressIndicator.h"
 
-#if ENABLE(PROGRESS_ELEMENT) || ENABLE(METER_ELEMENT)
+#if ENABLE(METER_ELEMENT)
 #include "FloatConversion.h"
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
@@ -34,7 +34,6 @@ namespace WebCore {
     
 using namespace HTMLNames;
 
-#if ENABLE(PROGRESS_ELEMENT)
 AccessibilityProgressIndicator::AccessibilityProgressIndicator(RenderProgress* renderer)
     : AccessibilityRenderObject(renderer)
 {
@@ -44,7 +43,6 @@ PassRefPtr<AccessibilityProgressIndicator> AccessibilityProgressIndicator::creat
 {
     return adoptRef(new AccessibilityProgressIndicator(renderer));
 }
-#endif 
     
 #if ENABLE(METER_ELEMENT)
 AccessibilityProgressIndicator::AccessibilityProgressIndicator(RenderMeter* renderer)
@@ -68,13 +66,11 @@ float AccessibilityProgressIndicator::valueForRange() const
     if (!m_renderer)
         return 0.0;
     
-#if ENABLE(PROGRESS_ELEMENT)
     if (m_renderer->isProgress()) {
         HTMLProgressElement* progress = progressElement();
         if (progress && progress->position() >= 0)
             return narrowPrecisionToFloat(progress->value());
     }
-#endif
 
 #if ENABLE(METER_ELEMENT)
     if (m_renderer->isMeter()) {
@@ -92,12 +88,10 @@ float AccessibilityProgressIndicator::maxValueForRange() const
     if (!m_renderer)
         return 0.0;
 
-#if ENABLE(PROGRESS_ELEMENT)
     if (m_renderer->isProgress()) {
         if (HTMLProgressElement* progress = progressElement())
             return narrowPrecisionToFloat(progress->max());
     }
-#endif
     
 #if ENABLE(METER_ELEMENT)
     if (m_renderer->isMeter()) {
@@ -114,10 +108,8 @@ float AccessibilityProgressIndicator::minValueForRange() const
     if (!m_renderer)
         return 0.0;
     
-#if ENABLE(PROGRESS_ELEMENT)
     if (m_renderer->isProgress())
         return 0.0;
-#endif
     
 #if ENABLE(METER_ELEMENT)
     if (m_renderer->isMeter()) {
@@ -129,7 +121,6 @@ float AccessibilityProgressIndicator::minValueForRange() const
     return 0.0;
 }
 
-#if ENABLE(PROGRESS_ELEMENT)
 HTMLProgressElement* AccessibilityProgressIndicator::progressElement() const
 {
     if (!m_renderer->isProgress())
@@ -137,7 +128,6 @@ HTMLProgressElement* AccessibilityProgressIndicator::progressElement() const
     
     return toRenderProgress(m_renderer)->progressElement();
 }
-#endif
 
 #if ENABLE(METER_ELEMENT)
 HTMLMeterElement* AccessibilityProgressIndicator::meterElement() const
@@ -151,5 +141,5 @@ HTMLMeterElement* AccessibilityProgressIndicator::meterElement() const
 
 } // namespace WebCore
 
-#endif // ENABLE(PROGRESS_ELEMENT) || ENABLE(METER_ELEMENT)
+#endif // ENABLE(METER_ELEMENT)
 

@@ -47,9 +47,7 @@ collections {
 #include "widget/combo/combo.edc"
 #include "widget/cursor/cursor.edc"
 #include "widget/entry/entry.edc"
-#ifdef ENABLE_PROGRESS_ELEMENT
 #include "widget/progressbar/progressbar.edc"
-#endif
 #include "widget/radio/radio.edc"
 #include "widget/scrollbar/scrollbar.edc"
 #include "widget/search/cancel/search_cancel.edc"

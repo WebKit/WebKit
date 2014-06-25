@@ -180,12 +180,10 @@ private:
 #endif
 #endif
 
-#if ENABLE(PROGRESS_ELEMENT)
     virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const override;
     virtual double animationDurationForProgressBar(RenderProgress*) const override;
     virtual void adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*) const override;
     virtual bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
-#endif
 
     virtual bool paintCapsLockIndicator(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
@@ -202,9 +200,7 @@ private:
     bool paintMediaButton(const RenderObject&, GraphicsContext*, const IntRect&, const char* symbolicIconName, const char* fallbackStockIconName);
 #endif
 
-#if ENABLE(PROGRESS_ELEMENT)
     static IntRect calculateProgressRect(const RenderObject&, const IntRect&);
-#endif
 
     mutable Color m_panelColor;
     mutable Color m_sliderColor;

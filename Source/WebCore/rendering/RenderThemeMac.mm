@@ -1045,7 +1045,6 @@ NSLevelIndicatorCell* RenderThemeMac::levelIndicatorFor(const RenderMeter* rende
 
 #endif
 
-#if ENABLE(PROGRESS_ELEMENT)
 const IntSize* RenderThemeMac::progressBarSizes() const
 {
     static const IntSize sizes[3] = { IntSize(0, 20), IntSize(0, 12), IntSize(0, 12) };
@@ -1149,7 +1148,6 @@ bool RenderThemeMac::paintProgressBar(const RenderObject& renderObject, const Pa
     paintInfo.context->drawImageBuffer(imageBuffer.get(), ColorSpaceDeviceRGB, inflatedRect.location());
     return false;
 }
-#endif
 
 const float baseFontSize = 11.0f;
 const float baseArrowHeight = 4.0f;

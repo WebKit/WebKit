@@ -98,7 +98,7 @@ p interfaceName=HTMLParagraphElement
 param generateTypeHelpers
 plaintext interfaceName=HTMLElement
 pre
-progress interfaceName=HTMLProgressElement, conditional=PROGRESS_ELEMENT, generateTypeHelpers
+progress interfaceName=HTMLProgressElement, generateTypeHelpers
 q interfaceName=HTMLQuoteElement
 rb interfaceName=HTMLElement
 rp interfaceName=HTMLElement

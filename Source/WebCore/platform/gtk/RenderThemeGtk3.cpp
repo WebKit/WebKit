@@ -731,7 +731,6 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderStyle* style, Element*) const
     style->setHeight(Length(sliderLength, Fixed));
 }
 
-#if ENABLE(PROGRESS_ELEMENT)
 bool RenderThemeGtk::paintProgressBar(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     if (!renderObject.isProgress())
@@ -764,7 +763,6 @@ bool RenderThemeGtk::paintProgressBar(const RenderObject& renderObject, const Pa
     gtk_style_context_restore(context);
     return false;
 }
-#endif
 
 static gint spinButtonArrowSize(GtkStyleContext* context)
 {

@@ -578,12 +578,10 @@ bool StyleResolver::sharingCandidateHasIdenticalStyleAffectingAttributes(StyledE
     if (state.styledElement()->presentationAttributeStyle() != sharingCandidate->presentationAttributeStyle())
         return false;
 
-#if ENABLE(PROGRESS_ELEMENT)
     if (state.element()->hasTagName(progressTag)) {
         if (state.element()->shouldAppearIndeterminate() != sharingCandidate->shouldAppearIndeterminate())
             return false;
     }
-#endif
 
     return true;
 }

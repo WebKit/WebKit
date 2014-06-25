@@ -94,13 +94,11 @@ public:
     virtual bool supportsMeter(ControlPart) const override;
 #endif
 
-#if ENABLE(PROGRESS_ELEMENT)
     // Returns the repeat interval of the animation for the progress bar.
     virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const override;
     // Returns the duration of the animation for the progress bar.
     virtual double animationDurationForProgressBar(RenderProgress*) const override;
     virtual IntRect progressBarRectForBounds(const RenderObject&, const IntRect&) const override;
-#endif
 
     virtual Color systemColor(CSSValueID) const override;
     // Controls color values returned from platformFocusRingColor(). systemColor() will be used when false.
@@ -136,10 +134,8 @@ protected:
     virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     virtual void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element&) const override;
 
-#if ENABLE(PROGRESS_ELEMENT)
     virtual void adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*) const override;
     virtual bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
-#endif
 
     virtual bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
     virtual void adjustSliderTrackStyle(StyleResolver*, RenderStyle*, Element*) const override;
@@ -217,11 +213,9 @@ private:
     NSLevelIndicatorCell *levelIndicatorFor(const RenderMeter*) const;
 #endif
 
-#if ENABLE(PROGRESS_ELEMENT)
     int minimumProgressBarHeight(RenderStyle*) const;
     const IntSize* progressBarSizes() const;
     const int* progressBarMargins(NSControlSize) const;
-#endif
 
 #if ENABLE(SERVICE_CONTROLS)
     virtual bool paintImageControlsButton(const RenderObject&, const PaintInfo&, const IntRect&) override;

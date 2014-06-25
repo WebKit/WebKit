@@ -50,6 +50,7 @@
 #import "PlatformLocale.h"
 #import "PaintInfo.h"
 #import "RenderObject.h"
+#import "RenderProgress.h"
 #import "RenderStyle.h"
 #import "RenderThemeIOS.h"
 #import "RenderView.h"
@@ -63,10 +64,6 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RefPtr.h>
 #import <wtf/StdLibExtras.h>
-
-#if ENABLE(PROGRESS_ELEMENT)
-#import "RenderProgress.h"
-#endif
 
 @interface UIApplication
 + (UIApplication *)sharedApplication;
@@ -839,7 +836,6 @@ bool RenderThemeIOS::paintSliderThumbDecorations(const RenderObject& box, const 
     return false;
 }
 
-#if ENABLE(PROGRESS_ELEMENT)
 double RenderThemeIOS::animationRepeatIntervalForProgressBar(RenderProgress*) const
 {
     return 0;
@@ -931,7 +927,6 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
 
     return false;
 }
-#endif // ENABLE(PROGRESS_ELEMENT)
 
 #if ENABLE(DATALIST_ELEMENT)
 IntSize RenderThemeIOS::sliderTickSize() const

@@ -21,7 +21,6 @@
 #ifndef RenderProgress_h
 #define RenderProgress_h
 
-#if ENABLE(PROGRESS_ELEMENT)
 #include "RenderBlockFlow.h"
 
 namespace WebCore {
@@ -62,8 +61,6 @@ private:
 RENDER_OBJECT_TYPE_CASTS(RenderProgress, isProgress())
 
 } // namespace WebCore
-
-#endif
 
 #endif // RenderProgress_h
 

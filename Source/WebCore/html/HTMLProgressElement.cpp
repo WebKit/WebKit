@@ -19,7 +19,6 @@
  */
 
 #include "config.h"
-#if ENABLE(PROGRESS_ELEMENT)
 #include "HTMLProgressElement.h"
 
 #include "Attribute.h"
@@ -169,4 +168,3 @@ bool HTMLProgressElement::shouldAppearIndeterminate() const
 }
 
 } // namespace
-#endif

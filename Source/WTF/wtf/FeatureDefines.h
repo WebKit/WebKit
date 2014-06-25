@@ -652,10 +652,6 @@
 #define ENABLE_POINTER_LOCK 0
 #endif
 
-#if !defined(ENABLE_PROGRESS_ELEMENT)
-#define ENABLE_PROGRESS_ELEMENT 0
-#endif
-
 #if !defined(ENABLE_PROMISES)
 #define ENABLE_PROMISES 0
 #endif

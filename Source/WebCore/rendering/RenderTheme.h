@@ -47,9 +47,7 @@ class RenderMenuList;
 #if ENABLE(METER_ELEMENT)
 class RenderMeter;
 #endif
-#if ENABLE(PROGRESS_ELEMENT)
 class RenderProgress;
-#endif
 class RenderSnapshottedPlugIn;
 
 class RenderTheme : public RefCounted<RenderTheme> {
@@ -193,13 +191,11 @@ public:
     // Method for painting the caps lock indicator
     virtual bool paintCapsLockIndicator(const RenderObject&, const PaintInfo&, const IntRect&) { return 0; };
 
-#if ENABLE(PROGRESS_ELEMENT)
     // Returns the repeat interval of the animation for the progress bar.
     virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
     // Returns the duration of the animation for the progress bar.
     virtual double animationDurationForProgressBar(RenderProgress*) const;
     virtual IntRect progressBarRectForBounds(const RenderObject&, const IntRect&) const;
-#endif
 
 #if ENABLE(VIDEO)
     // Media controls
@@ -313,10 +309,8 @@ protected:
     virtual bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&);
 #endif
 
-#if ENABLE(PROGRESS_ELEMENT)
     virtual void adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
-#endif
 
 #if ENABLE(INPUT_SPEECH)
     virtual void adjustInputFieldSpeechButtonStyle(StyleResolver*, RenderStyle*, Element*) const;

@@ -1032,7 +1032,6 @@ meter::-webkit-meter-even-less-good-value {
 }
 #endif
 
-#if defined(ENABLE_PROGRESS_ELEMENT) && ENABLE_PROGRESS_ELEMENT
 /* progress */
 
 progress {
@@ -1064,7 +1063,6 @@ progress::-webkit-progress-value {
     width: 50%; /* should be removed later */
     box-sizing: border-box;
 }
-#endif
 
 /* inline elements */
 

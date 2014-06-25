@@ -92,9 +92,7 @@ static const char* toEdjeGroup(FormType type)
         "webkit/widget/entry",
         "webkit/widget/checkbox",
         "webkit/widget/combo",
-#if ENABLE(PROGRESS_ELEMENT)
         "webkit/widget/progressbar",
-#endif
         "webkit/widget/search/field",
         "webkit/widget/search/results_button",
         "webkit/widget/search/results_decoration",
@@ -324,7 +322,6 @@ void RenderThemeEfl::applyEdjeRTLState(Evas_Object* edje, const RenderObject& ob
 
         msg->val[1] = (input.valueAsNumber() - input.minimum()) / valueRange;
         edje_object_message_send(edje, EDJE_MESSAGE_FLOAT_SET, 0, msg.get());
-#if ENABLE(PROGRESS_ELEMENT)
     } else if (type == ProgressBar) {
         const RenderProgress* renderProgress = toRenderProgress(&object);
 
@@ -340,9 +337,6 @@ void RenderThemeEfl::applyEdjeRTLState(Evas_Object* edje, const RenderObject& ob
             msg->val[0] = 0;
         msg->val[1] = value;
         edje_object_message_send(edje, EDJE_MESSAGE_FLOAT_SET, 0, msg.get());
-#else
-        UNUSED_PARAM(rect);
-#endif
     }
 }
 
@@ -1007,7 +1001,6 @@ void RenderThemeEfl::systemFont(CSSValueID, FontDescription& fontDescription) co
     fontDescription.setItalic(false);
 }
 
-#if ENABLE(PROGRESS_ELEMENT)
 void RenderThemeEfl::adjustProgressBarStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     style->setBoxShadow(nullptr);
@@ -1030,7 +1023,6 @@ bool RenderThemeEfl::paintProgressBar(const RenderObject& object, const PaintInf
 
     return paintThemePart(object, ProgressBar, info, rect);
 }
-#endif
 
 #if ENABLE(VIDEO)
 String RenderThemeEfl::mediaControlsStyleSheet()

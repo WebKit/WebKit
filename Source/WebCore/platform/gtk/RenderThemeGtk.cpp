@@ -41,6 +41,7 @@
 #include "PlatformContextCairo.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
+#include "RenderProgress.h"
 #include "StringTruncator.h"
 #include "TimeRanges.h"
 #include "UserAgentScripts.h"
@@ -52,10 +53,6 @@
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
-
-#if ENABLE(PROGRESS_ELEMENT)
-#include "RenderProgress.h"
-#endif
 
 namespace WebCore {
 
@@ -674,7 +671,6 @@ bool RenderThemeGtk::paintMediaCurrentTime(const RenderObject&, const PaintInfo&
 }
 #endif
 
-#if ENABLE(PROGRESS_ELEMENT)
 void RenderThemeGtk::adjustProgressBarStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     style->setBoxShadow(nullptr);
@@ -723,7 +719,6 @@ IntRect RenderThemeGtk::calculateProgressRect(const RenderObject& renderObject, 
         progressRect.setX(progressRect.x() + ((1.0 - animationProgress) * 2 * movableWidth));
     return progressRect;
 }
-#endif
 
 String RenderThemeGtk::fileListNameForWidth(const FileList* fileList, const Font& font, int width, bool multipleFilesAllowed) const
 {

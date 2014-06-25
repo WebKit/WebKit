@@ -110,7 +110,6 @@ my (
     $orientationEventsSupport,
     $pageVisibilityAPISupport,
     $performanceTimelineSupport,
-    $progressElementSupport,
     $promiseSupport,
     $proximityEventsSupport,
     $quotaSupport,
@@ -345,9 +344,6 @@ my @features = (
 
     { option => "performance-timeline", desc => "Toggle Performance Timeline support",
       define => "ENABLE_PERFORMANCE_TIMELINE", default => isGtk(), value => \$performanceTimelineSupport },
-
-    { option => "progress-element", desc => "Toggle Progress Element support",
-      define => "ENABLE_PROGRESS_ELEMENT", default => 1, value => \$progressElementSupport },
 
     { option => "promises", desc => "Toggle Promise support",
       define => "ENABLE_PROMISES", default => 1, value => \$promiseSupport },

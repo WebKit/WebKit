@@ -238,10 +238,8 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
         return adjustSearchFieldResultsDecorationPartStyle(&styleResolver, &style, e);
     case SearchFieldResultsButtonPart:
         return adjustSearchFieldResultsButtonStyle(&styleResolver, &style, e);
-#if ENABLE(PROGRESS_ELEMENT)
     case ProgressBarPart:
         return adjustProgressBarStyle(&styleResolver, &style, e);
-#endif
 #if ENABLE(METER_ELEMENT)
     case MeterPart:
     case RelevancyLevelIndicatorPart:
@@ -324,10 +322,8 @@ bool RenderTheme::paint(const RenderObject& o, ControlStates* controlStates, con
     case RatingLevelIndicatorPart:
         return paintMeter(o, paintInfo, integralSnappedRect);
 #endif
-#if ENABLE(PROGRESS_ELEMENT)
     case ProgressBarPart:
         return paintProgressBar(o, paintInfo, integralSnappedRect);
-#endif
     case SliderHorizontalPart:
     case SliderVerticalPart:
         return paintSliderTrack(o, paintInfo, integralSnappedRect);
@@ -441,9 +437,7 @@ bool RenderTheme::paintBorderOnly(const RenderObject& o, const PaintInfo& paintI
     case DiscreteCapacityLevelIndicatorPart:
     case RatingLevelIndicatorPart:
 #endif
-#if ENABLE(PROGRESS_ELEMENT)
     case ProgressBarPart:
-#endif
     case SliderHorizontalPart:
     case SliderVerticalPart:
     case SliderThumbHorizontalPart:
@@ -506,9 +500,7 @@ bool RenderTheme::paintDecorations(const RenderObject& renderer, const PaintInfo
     case DiscreteCapacityLevelIndicatorPart:
     case RatingLevelIndicatorPart:
 #endif
-#if ENABLE(PROGRESS_ELEMENT)
     case ProgressBarPart:
-#endif
     case SliderHorizontalPart:
     case SliderVerticalPart:
     case ListboxPart:
@@ -1093,7 +1085,6 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
 }
 #endif
 
-#if ENABLE(PROGRESS_ELEMENT)
 double RenderTheme::animationRepeatIntervalForProgressBar(RenderProgress*) const
 {
     return 0;
@@ -1112,7 +1103,6 @@ IntRect RenderTheme::progressBarRectForBounds(const RenderObject&, const IntRect
 {
     return bounds;
 }
-#endif
 
 bool RenderTheme::shouldHaveSpinButton(HTMLInputElement* inputElement) const
 {

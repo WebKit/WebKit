@@ -44,9 +44,7 @@ enum FormType { // KEEP IN SYNC WITH edjeGroupFromFormType()
     TextField,
     CheckBox,
     ComboBox,
-#if ENABLE(PROGRESS_ELEMENT)
     ProgressBar,
-#endif
     SearchField,
     SearchFieldResultsButton,
     SearchFieldResultsDecoration,
@@ -164,12 +162,10 @@ public:
 
     static void setDefaultFontSize(int fontsize);
 
-#if ENABLE(PROGRESS_ELEMENT)
     virtual void adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*) const override;
     virtual bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
     virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const override;
     virtual double animationDurationForProgressBar(RenderProgress*) const override;
-#endif
 
 #if ENABLE(VIDEO)
     virtual String mediaControlsStyleSheet() override;

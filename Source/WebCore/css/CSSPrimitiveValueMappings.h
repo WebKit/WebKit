@@ -554,14 +554,10 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
         m_value.valueID = CSSValueRatingLevelIndicator;
         break;
     case ProgressBarPart:
-#if ENABLE(PROGRESS_ELEMENT)
         m_value.valueID = CSSValueProgressBar;
-#endif
         break;
     case ProgressBarValuePart:
-#if ENABLE(PROGRESS_ELEMENT)
         m_value.valueID = CSSValueProgressBarValue;
-#endif
         break;
     case SliderHorizontalPart:
         m_value.valueID = CSSValueSliderHorizontal;
