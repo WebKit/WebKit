@@ -1,3 +1,22 @@
+2014-06-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Adopt the C API of UIWebTouchEventsGestureRecognizer for touch event mapping
+        https://bugs.webkit.org/show_bug.cgi?id=134234
+
+        Reviewed by Tim Horton.
+
+        The C API is more efficient and expose properties we will need for other patches. This patch moves from
+        getting each value independently on UIWebTouchEventsGestureRecognizer to the single structure exposed
+        by _UIWebTouchEvent.
+
+        * Shared/NativeWebTouchEvent.h:
+        * Shared/ios/NativeWebTouchEventIOS.mm:
+        (WebKit::convertTouchPhase):
+        (WebKit::extractWebTouchPoint):
+        (WebKit::NativeWebTouchEvent::NativeWebTouchEvent):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _webTouchEventsRecognized:]):
+
 2014-06-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS]: WK2 Inspector Node Highlighting

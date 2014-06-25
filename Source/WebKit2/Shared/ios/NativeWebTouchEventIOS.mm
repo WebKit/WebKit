@@ -51,9 +51,8 @@ static inline WebEvent::Type webEventTypeForUIWebTouchEventType(UIWebTouchEventT
     }
 }
 
-static WebPlatformTouchPoint::TouchPointState convertTouchPhase(NSNumber *touchPhaseNumber)
+static WebPlatformTouchPoint::TouchPointState convertTouchPhase(UITouchPhase touchPhase)
 {
-    UITouchPhase touchPhase = static_cast<UITouchPhase>([touchPhaseNumber unsignedIntValue]);
     switch (touchPhase) {
     case UITouchPhaseBegan:
         return WebPlatformTouchPoint::TouchPressed;
@@ -76,27 +75,24 @@ static inline WebCore::IntPoint positionForCGPoint(CGPoint position)
     return WebCore::IntPoint(position);
 }
 
-static inline Vector<WebPlatformTouchPoint> extractWebTouchPoint(UIWebTouchEventsGestureRecognizer *gestureRecognizer)
+static inline Vector<WebPlatformTouchPoint> extractWebTouchPoint(const _UIWebTouchEvent* event)
 {
-    unsigned touchCount = [gestureRecognizer.touchLocations count];
-    NSArray *touchLocations = gestureRecognizer.touchLocations;
-    NSArray *touchIdentifiers = gestureRecognizer.touchIdentifiers;
-    NSArray *touchPhases = gestureRecognizer.touchPhases;
+    unsigned touchCount = event->touchPointCount;
 
     Vector<WebPlatformTouchPoint> touchPointList;
     touchPointList.reserveInitialCapacity(touchCount);
     for (unsigned i = 0; i < touchCount; ++i) {
-        unsigned identifier = [(NSNumber *)[touchIdentifiers objectAtIndex:i] unsignedIntValue];
-        WebCore::IntPoint location = positionForCGPoint([(NSValue *)[touchLocations objectAtIndex:i] pointValue]);
-        WebPlatformTouchPoint::TouchPointState phase = convertTouchPhase([touchPhases objectAtIndex:i]);
-        WebPlatformTouchPoint touchPoint(identifier, location, phase);
-        touchPointList.uncheckedAppend(touchPoint);
+        const _UIWebTouchPoint& touchPoint = event->touchPoints[i];
+        unsigned identifier = touchPoint.identifier;
+        WebCore::IntPoint location = positionForCGPoint(touchPoint.locationInDocumentCoordinates);
+        WebPlatformTouchPoint::TouchPointState phase = convertTouchPhase(touchPoint.phase);
+        touchPointList.uncheckedAppend(WebPlatformTouchPoint(identifier, location, phase));
     }
     return touchPointList;
 }
 
-NativeWebTouchEvent::NativeWebTouchEvent(UIWebTouchEventsGestureRecognizer *gestureRecognizer)
-    : WebTouchEvent(webEventTypeForUIWebTouchEventType(gestureRecognizer.type), static_cast<Modifiers>(0), WTF::currentTime(), extractWebTouchPoint(gestureRecognizer), positionForCGPoint(gestureRecognizer.locationInWindow), gestureRecognizer.inJavaScriptGesture, gestureRecognizer.scale, gestureRecognizer.rotation)
+NativeWebTouchEvent::NativeWebTouchEvent(const _UIWebTouchEvent* event)
+    : WebTouchEvent(webEventTypeForUIWebTouchEventType(event->type), static_cast<Modifiers>(0), event->timestamp, extractWebTouchPoint(event), positionForCGPoint(event->locationInDocumentCoordinates), event->inJavaScriptGesture, event->scale, event->rotation)
 {
 }
 

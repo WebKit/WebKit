@@ -355,10 +355,11 @@ static const float tapAndHoldDelay  = 0.75;
 
 - (void)_webTouchEventsRecognized:(UIWebTouchEventsGestureRecognizer *)gestureRecognizer
 {
-    NativeWebTouchEvent nativeWebTouchEvent(gestureRecognizer);
+    const _UIWebTouchEvent* lastTouchEvent = gestureRecognizer.lastTouchEvent;
+    NativeWebTouchEvent nativeWebTouchEvent(lastTouchEvent);
 
-    _lastInteractionLocation = gestureRecognizer.locationInWindow;
-    nativeWebTouchEvent.setCanPreventNativeGestures(!_canSendTouchEventsAsynchronously || [_touchEventGestureRecognizer isDefaultPrevented]);
+    _lastInteractionLocation = lastTouchEvent->locationInDocumentCoordinates;
+    nativeWebTouchEvent.setCanPreventNativeGestures(!_canSendTouchEventsAsynchronously || [gestureRecognizer isDefaultPrevented]);
 
     if (_canSendTouchEventsAsynchronously)
         _page->handleTouchEventAsynchronously(nativeWebTouchEvent);

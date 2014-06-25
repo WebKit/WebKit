@@ -31,8 +31,7 @@
 #include "WebEvent.h"
 
 #if PLATFORM(IOS)
-#include <wtf/RetainPtr.h>
-OBJC_CLASS UIWebTouchEventsGestureRecognizer;
+struct _UIWebTouchEvent;
 #elif PLATFORM(GTK)
 #include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/GtkTouchContextHelper.h>
@@ -47,7 +46,7 @@ namespace WebKit {
 class NativeWebTouchEvent : public WebTouchEvent {
 public:
 #if PLATFORM(IOS)
-    explicit NativeWebTouchEvent(UIWebTouchEventsGestureRecognizer *);
+    explicit NativeWebTouchEvent(const _UIWebTouchEvent*);
 #elif PLATFORM(GTK)
     NativeWebTouchEvent(const NativeWebTouchEvent&);
     NativeWebTouchEvent(GdkEvent*, WebCore::GtkTouchContextHelper&);
