@@ -125,10 +125,10 @@ void RenderMenuList::adjustInnerStyle()
         innerStyle.setAlignSelf(AlignFlexStart);
     }
 
-    innerStyle.setPaddingLeft(Length(theme().popupInternalPaddingLeft(&style()), Fixed));
-    innerStyle.setPaddingRight(Length(theme().popupInternalPaddingRight(&style()), Fixed));
-    innerStyle.setPaddingTop(Length(theme().popupInternalPaddingTop(&style()), Fixed));
-    innerStyle.setPaddingBottom(Length(theme().popupInternalPaddingBottom(&style()), Fixed));
+    innerStyle.setPaddingLeft(Length(theme().popupInternalPaddingLeft(style()), Fixed));
+    innerStyle.setPaddingRight(Length(theme().popupInternalPaddingRight(style()), Fixed));
+    innerStyle.setPaddingTop(Length(theme().popupInternalPaddingTop(style()), Fixed));
+    innerStyle.setPaddingBottom(Length(theme().popupInternalPaddingBottom(style()), Fixed));
 
     if (document().page()->chrome().selectItemWritingDirectionIsNatural()) {
         // Items in the popup will not respect the CSS text-align and direction properties,
@@ -326,7 +326,7 @@ LayoutRect RenderMenuList::controlClipRect(const LayoutPoint& additionalOffset) 
 
 void RenderMenuList::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    maxLogicalWidth = std::max(m_optionsWidth, theme().minimumMenuListSize(&style())) + m_innerBlock->paddingLeft() + m_innerBlock->paddingRight();
+    maxLogicalWidth = std::max(m_optionsWidth, theme().minimumMenuListSize(style())) + m_innerBlock->paddingLeft() + m_innerBlock->paddingRight();
     if (!style().width().isPercent())
         minLogicalWidth = maxLogicalWidth;
 }
@@ -569,7 +569,7 @@ PopupMenuStyle RenderMenuList::menuStyle() const
     return PopupMenuStyle(styleToUse.visitedDependentColor(CSSPropertyColor), styleToUse.visitedDependentColor(CSSPropertyBackgroundColor),
         styleToUse.font(), styleToUse.visibility() == VISIBLE, styleToUse.display() == NONE, style().hasAppearance(), styleToUse.textIndent(),
         style().direction(), isOverride(style().unicodeBidi()), PopupMenuStyle::DefaultBackgroundColor,
-        PopupMenuStyle::SelectPopup, theme().popupMenuSize(&styleToUse, absBounds));
+        PopupMenuStyle::SelectPopup, theme().popupMenuSize(styleToUse, absBounds));
 }
 
 HostWindow* RenderMenuList::hostWindow() const

@@ -94,8 +94,10 @@ void RenderSliderThumb::updateAppearance(RenderStyle* parentStyle)
         style().setAppearance(MediaVolumeSliderThumbPart);
     else if (parentStyle->appearance() == MediaFullScreenVolumeSliderPart)
         style().setAppearance(MediaFullScreenVolumeSliderThumbPart);
-    if (style().hasAppearance())
-        theme().adjustSliderThumbSize(&style(), element());
+    if (style().hasAppearance()) {
+        ASSERT(element());
+        theme().adjustSliderThumbSize(style(), *element());
+    }
 }
 
 bool RenderSliderThumb::isSliderThumb() const

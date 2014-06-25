@@ -232,7 +232,7 @@ bool TextFieldInputType::shouldHaveSpinButton() const
 {
     Document& document = element().document();
     RefPtr<RenderTheme> theme = document.page() ? &document.page()->theme() : RenderTheme::defaultTheme();
-    return theme->shouldHaveSpinButton(&element());
+    return theme->shouldHaveSpinButton(element());
 }
 
 void TextFieldInputType::createShadowSubtree()

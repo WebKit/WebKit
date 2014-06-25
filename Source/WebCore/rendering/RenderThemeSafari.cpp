@@ -252,21 +252,21 @@ void RenderThemeSafari::systemFont(CSSValueID valueID, FontDescription& fontDesc
     fontDescription = *cachedDesc;
 }
 
-bool RenderThemeSafari::isControlStyled(const RenderStyle* style, const BorderData& border,
+bool RenderThemeSafari::isControlStyled(const RenderStyle& style, const BorderData& border,
                                      const FillLayer& background, const Color& backgroundColor) const
 {
     // If we didn't find SafariTheme.dll we won't be able to paint any themed controls.
     if (!SafariThemeLibrary())
         return true;
 
-    if (style->appearance() == TextFieldPart || style->appearance() == TextAreaPart || style->appearance() == ListboxPart)
-        return style->border() != border;
+    if (style.appearance() == TextFieldPart || style.appearance() == TextAreaPart || style.appearance() == ListboxPart)
+        return style.border() != border;
     return RenderTheme::isControlStyled(style, border, background, backgroundColor);
 }
 
 void RenderThemeSafari::adjustRepaintRect(const RenderObject& o, IntRect& r)
 {
-    NSControlSize controlSize = controlSizeForFont(&o.style());
+    NSControlSize controlSize = controlSizeForFont(o.style());
 
     switch (o.style().appearance()) {
         case CheckboxPart: {
@@ -323,8 +323,8 @@ int RenderThemeSafari::baselinePosition(const RenderObject& o) const
         return 0;
 
     if (o.style().appearance() == CheckboxPart || o.style().appearance() == RadioPart) {
-        const RenderBox* box = toRenderBox(&o);
-        return box->marginTop() + box->height() - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
+        const RenderBox& box = toRenderBox(o);
+        return box.marginTop() + box.height() - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
     }
 
     return RenderTheme::baselinePosition(o);
@@ -343,9 +343,9 @@ bool RenderThemeSafari::controlSupportsTints(const RenderObject& o) const
     return true;
 }
 
-NSControlSize RenderThemeSafari::controlSizeForFont(RenderStyle* style) const
+NSControlSize RenderThemeSafari::controlSizeForFont(RenderStyle& style) const
 {
-    int fontSize = style->fontSize();
+    int fontSize = style.fontSize();
     if (fontSize >= 16)
         return NSRegularControlSize;
     if (fontSize >= 11)
@@ -368,27 +368,27 @@ void RenderThemeSafari::setControlSize(NSCell* cell, const IntSize* sizes, const
         [cell setControlSize:size];
 }
 */
-IntSize RenderThemeSafari::sizeForFont(RenderStyle* style, const IntSize* sizes) const
+IntSize RenderThemeSafari::sizeForFont(RenderStyle& style, const IntSize* sizes) const
 {
     return sizes[controlSizeForFont(style)];
 }
 
-IntSize RenderThemeSafari::sizeForSystemFont(RenderStyle* style, const IntSize* sizes) const
+IntSize RenderThemeSafari::sizeForSystemFont(RenderStyle& style, const IntSize* sizes) const
 {
     return sizes[controlSizeForSystemFont(style)];
 }
 
-void RenderThemeSafari::setSizeFromFont(RenderStyle* style, const IntSize* sizes) const
+void RenderThemeSafari::setSizeFromFont(RenderStyle& style, const IntSize* sizes) const
 {
     // FIXME: Check is flawed, since it doesn't take min-width/max-width into account.
     IntSize size = sizeForFont(style, sizes);
-    if (style->width().isIntrinsicOrAuto() && size.width() > 0)
-        style->setWidth(Length(size.width(), Fixed));
-    if (style->height().isAuto() && size.height() > 0)
-        style->setHeight(Length(size.height(), Fixed));
+    if (style.width().isIntrinsicOrAuto() && size.width() > 0)
+        style.setWidth(Length(size.width(), Fixed));
+    if (style.height().isAuto() && size.height() > 0)
+        style.setHeight(Length(size.height(), Fixed));
 }
 
-void RenderThemeSafari::setFontFromControlSize(StyleResolver* styleResolver, RenderStyle* style, NSControlSize controlSize) const
+void RenderThemeSafari::setFontFromControlSize(StyleResolver& styleResolver, RenderStyle& style, NSControlSize controlSize) const
 {
     FontDescription fontDescription;
     fontDescription.setIsAbsoluteSize(true);
@@ -400,15 +400,15 @@ void RenderThemeSafari::setFontFromControlSize(StyleResolver* styleResolver, Ren
     fontDescription.setSpecifiedSize(fontSize);
 
     // Reset line height
-    style->setLineHeight(RenderStyle::initialLineHeight());
+    style.setLineHeight(RenderStyle::initialLineHeight());
 
-    if (style->setFontDescription(fontDescription))
-        style->font().update(styleResolver->fontSelector());
+    if (style.setFontDescription(fontDescription))
+        style.font().update(styleResolver.fontSelector());
 }
 
-NSControlSize RenderThemeSafari::controlSizeForSystemFont(RenderStyle* style) const
+NSControlSize RenderThemeSafari::controlSizeForSystemFont(RenderStyle& style) const
 {
-    int fontSize = style->fontSize();
+    int fontSize = style.fontSize();
     if (fontSize >= 13)
         return NSRegularControlSize;
     if (fontSize >= 11)
@@ -420,7 +420,7 @@ bool RenderThemeSafari::paintCheckbox(const RenderObject& o, const PaintInfo& pa
 {
     ASSERT(SafariThemeLibrary());
 
-    NSControlSize controlSize = controlSizeForFont(&o.style());
+    NSControlSize controlSize = controlSizeForFont(o.style());
 
     IntRect inflatedRect = inflateRect(r, checkboxSizes()[controlSize], checkboxMargins(controlSize));  
     paintThemePart(SafariTheme::CheckboxPart, paintInfo.context->platformContext(), inflatedRect, controlSize, determineState(o));
@@ -445,10 +445,10 @@ const int* RenderThemeSafari::checkboxMargins(NSControlSize controlSize) const
     return margins[controlSize];
 }
 
-void RenderThemeSafari::setCheckboxSize(RenderStyle* style) const
+void RenderThemeSafari::setCheckboxSize(RenderStyle& style) const
 {
     // If the width and height are both specified, then we have nothing to do.
-    if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
+    if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
 
     // Use the font size to determine the intrinsic width of the control.
@@ -459,7 +459,7 @@ bool RenderThemeSafari::paintRadio(const RenderObject& o, const PaintInfo& paint
 {
     ASSERT(SafariThemeLibrary());
 
-    NSControlSize controlSize = controlSizeForFont(&o.style());
+    NSControlSize controlSize = controlSizeForFont(o.style());
  
     IntRect inflatedRect = inflateRect(r, radioSizes()[controlSize], radioMargins(controlSize));    
     paintThemePart(RadioButtonPart, paintInfo.context->platformContext(), inflatedRect, controlSize, determineState(o));
@@ -484,17 +484,17 @@ const int* RenderThemeSafari::radioMargins(NSControlSize controlSize) const
     return margins[controlSize];
 }
 
-void RenderThemeSafari::setRadioSize(RenderStyle* style) const
+void RenderThemeSafari::setRadioSize(RenderStyle& style) const
 {
     // If the width and height are both specified, then we have nothing to do.
-    if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
+    if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
 
     // Use the font size to determine the intrinsic width of the control.
     setSizeFromFont(style, radioSizes());
 }
 
-void RenderThemeSafari::setButtonPaddingFromControlSize(RenderStyle* style, NSControlSize size) const
+void RenderThemeSafari::setButtonPaddingFromControlSize(RenderStyle& style, NSControlSize size) const
 {
     // Just use 8px.  AppKit wants to use 11px for mini buttons, but that padding is just too large
     // for real-world Web sites (creating a huge necessary minimum width for buttons whose space is
@@ -502,13 +502,13 @@ void RenderThemeSafari::setButtonPaddingFromControlSize(RenderStyle* style, NSCo
     // This also guarantees the HTML4 <button> will match our rendering by default, since we're using a consistent
     // padding.
     const int padding = 8;
-    style->setPaddingLeft(Length(padding, Fixed));
-    style->setPaddingRight(Length(padding, Fixed));
-    style->setPaddingTop(Length(0, Fixed));
-    style->setPaddingBottom(Length(0, Fixed));
+    style.setPaddingLeft(Length(padding, Fixed));
+    style.setPaddingRight(Length(padding, Fixed));
+    style.setPaddingTop(Length(0, Fixed));
+    style.setPaddingBottom(Length(0, Fixed));
 }
 
-void RenderThemeSafari::adjustButtonStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e) const
+void RenderThemeSafari::adjustButtonStyle(StyleResolver& styleResolver, RenderStyle& style, Element& e) const
 {
     // There are three appearance constants for buttons.
     // (1) Push-button is the constant for the default Aqua system button.  Push buttons will not scale vertically and will not allow
@@ -522,15 +522,15 @@ void RenderThemeSafari::adjustButtonStyle(StyleResolver* styleResolver, RenderSt
     // Determine our control size based off our font.
     NSControlSize controlSize = controlSizeForFont(style);
 
-    if (style->appearance() == PushButtonPart) {
+    if (style.appearance() == PushButtonPart) {
         // Ditch the border.
-        style->resetBorder();
+        style.resetBorder();
 
         // Height is locked to auto.
-        style->setHeight(Length(Auto));
+        style.setHeight(Length(Auto));
 
         // White-space is locked to pre
-        style->setWhiteSpace(PRE);
+        style.setWhiteSpace(PRE);
 
         // Set the button's vertical size.
         setButtonSize(style);
@@ -544,11 +544,11 @@ void RenderThemeSafari::adjustButtonStyle(StyleResolver* styleResolver, RenderSt
         setFontFromControlSize(styleResolver, style, controlSize);
     } else {
         // Set a min-height so that we can't get smaller than the mini button.
-        style->setMinHeight(Length(15, Fixed));
+        style.setMinHeight(Length(15, Fixed));
 
         // Reset the top and bottom borders.
-        style->resetBorderTop();
-        style->resetBorderBottom();
+        style.resetBorderTop();
+        style.resetBorderBottom();
     }
 }
 
@@ -569,10 +569,10 @@ const int* RenderThemeSafari::buttonMargins(NSControlSize controlSize) const
     return margins[controlSize];
 }
 
-void RenderThemeSafari::setButtonSize(RenderStyle* style) const
+void RenderThemeSafari::setButtonSize(RenderStyle& style) const
 {
     // If the width and height are both specified, then we have nothing to do.
-    if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
+    if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
 
     // Use the font size to determine the intrinsic width of the control.
@@ -620,7 +620,7 @@ bool RenderThemeSafari::paintTextField(const RenderObject& o, const PaintInfo& p
     return false;
 }
 
-void RenderThemeSafari::adjustTextFieldStyle(StyleResolver*, RenderStyle*, Element*) const
+void RenderThemeSafari::adjustTextFieldStyle(StyleResolver&, RenderStyle&, Element&) const
 {
 }
 
@@ -648,7 +648,7 @@ bool RenderThemeSafari::paintTextArea(const RenderObject& o, const PaintInfo& pa
     return false;
 }
 
-void RenderThemeSafari::adjustTextAreaStyle(StyleResolver*, RenderStyle*, Element*) const
+void RenderThemeSafari::adjustTextAreaStyle(StyleResolver&, RenderStyle&, Element&) const
 {
 }
 
@@ -690,7 +690,7 @@ bool RenderThemeSafari::paintMenuList(const RenderObject& o, const PaintInfo& in
     size.setWidth(r.width());
 
     // Now inflate it to account for the shadow.
-    if (r.width() >= minimumMenuListSize(&o.style()))
+    if (r.width() >= minimumMenuListSize(o.style()))
         inflatedRect = inflateRect(inflatedRect, size, popupButtonMargins(controlSize));
 
     paintThemePart(DropDownButtonPart, info.context->platformContext(), inflatedRect, controlSize, determineState(o));
@@ -864,22 +864,22 @@ bool RenderThemeSafari::paintMenuListButtonDecorations(const RenderObject& rende
     return false;
 }
 
-void RenderThemeSafari::adjustMenuListStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e) const
+void RenderThemeSafari::adjustMenuListStyle(StyleResolver& styleResolver, RenderStyle& style, Element& e) const
 {
     NSControlSize controlSize = controlSizeForFont(style);
 
-    style->resetBorder();
-    style->resetPadding();
+    style.resetBorder();
+    style.resetPadding();
     
     // Height is locked to auto.
-    style->setHeight(Length(Auto));
+    style.setHeight(Length(Auto));
 
     // White-space is locked to pre
-    style->setWhiteSpace(PRE);
+    style.setWhiteSpace(PRE);
 
     // Set the foreground color to black or gray when we have the aqua look.
     // Cast to RGB32 is to work around a compiler bug.
-    style->setColor(e && !e->isDisabledFormControl() ? static_cast<RGBA32>(Color::black) : Color::darkGray);
+    style.setColor(!e.isDisabledFormControl() ? static_cast<RGBA32>(Color::black) : Color::darkGray);
 
     // Set the button's vertical size.
     setButtonSize(style);
@@ -890,56 +890,56 @@ void RenderThemeSafari::adjustMenuListStyle(StyleResolver* styleResolver, Render
     setFontFromControlSize(styleResolver, style, controlSize);
 }
 
-int RenderThemeSafari::popupInternalPaddingLeft(RenderStyle* style) const
+int RenderThemeSafari::popupInternalPaddingLeft(RenderStyle& style) const
 {
-    if (style->appearance() == MenulistPart)
+    if (style.appearance() == MenulistPart)
         return popupButtonPadding(controlSizeForFont(style))[leftPadding];
-    if (style->appearance() == MenulistButtonPart)
+    if (style.appearance() == MenulistButtonPart)
         return styledPopupPaddingLeft;
     return 0;
 }
 
-int RenderThemeSafari::popupInternalPaddingRight(RenderStyle* style) const
+int RenderThemeSafari::popupInternalPaddingRight(RenderStyle& style) const
 {
-    if (style->appearance() == MenulistPart)
+    if (style.appearance() == MenulistPart)
         return popupButtonPadding(controlSizeForFont(style))[rightPadding];
-    if (style->appearance() == MenulistButtonPart) {
-        float fontScale = style->fontSize() / baseFontSize;
+    if (style.appearance() == MenulistButtonPart) {
+        float fontScale = style.fontSize() / baseFontSize;
         float arrowWidth = baseArrowWidth * fontScale;
         return static_cast<int>(ceilf(arrowWidth + arrowPaddingLeft + arrowPaddingRight + paddingBeforeSeparator));
     }
     return 0;
 }
 
-int RenderThemeSafari::popupInternalPaddingTop(RenderStyle* style) const
+int RenderThemeSafari::popupInternalPaddingTop(RenderStyle& style) const
 {
-    if (style->appearance() == MenulistPart)
+    if (style.appearance() == MenulistPart)
         return popupButtonPadding(controlSizeForFont(style))[topPadding];
-    if (style->appearance() == MenulistButtonPart)
+    if (style.appearance() == MenulistButtonPart)
         return styledPopupPaddingTop;
     return 0;
 }
 
-int RenderThemeSafari::popupInternalPaddingBottom(RenderStyle* style) const
+int RenderThemeSafari::popupInternalPaddingBottom(RenderStyle& style) const
 {
-    if (style->appearance() == MenulistPart)
+    if (style.appearance() == MenulistPart)
         return popupButtonPadding(controlSizeForFont(style))[bottomPadding];
-    if (style->appearance() == MenulistButtonPart)
+    if (style.appearance() == MenulistButtonPart)
         return styledPopupPaddingBottom;
     return 0;
 }
 
-void RenderThemeSafari::adjustMenuListButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
+void RenderThemeSafari::adjustMenuListButtonStyle(StyleResolver&, RenderStyle& style, Element&) const
 {
-    float fontScale = style->fontSize() / baseFontSize;
+    float fontScale = style.fontSize() / baseFontSize;
     
-    style->resetPadding();
-    style->setBorderRadius(IntSize(int(baseBorderRadius + fontScale - 1), int(baseBorderRadius + fontScale - 1))); // FIXME: Round up?
+    style.resetPadding();
+    style.setBorderRadius(IntSize(int(baseBorderRadius + fontScale - 1), int(baseBorderRadius + fontScale - 1))); // FIXME: Round up?
 
     const int minHeight = 15;
-    style->setMinHeight(Length(minHeight, Fixed));
+    style.setMinHeight(Length(minHeight, Fixed));
     
-    style->setLineHeight(RenderStyle::initialLineHeight());
+    style.setLineHeight(RenderStyle::initialLineHeight());
 }
 
 const IntSize* RenderThemeSafari::menuListSizes() const
@@ -948,7 +948,7 @@ const IntSize* RenderThemeSafari::menuListSizes() const
     return sizes;
 }
 
-int RenderThemeSafari::minimumMenuListSize(RenderStyle* style) const
+int RenderThemeSafari::minimumMenuListSize(RenderStyle& style) const
 {
     return sizeForSystemFont(style, menuListSizes()).width();
 }
@@ -987,10 +987,10 @@ bool RenderThemeSafari::paintSliderTrack(const RenderObject& o, const PaintInfo&
     return false;
 }
 
-void RenderThemeSafari::adjustSliderThumbStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e) const 
+void RenderThemeSafari::adjustSliderThumbStyle(StyleResolver& styleResolver, RenderStyle& style, Element& e) const 
 { 
     RenderTheme::adjustSliderThumbStyle(styleResolver, style, e);
-    style->setBoxShadow(nullptr); 
+    style.setBoxShadow(nullptr); 
 } 
 
 const float verticalSliderHeightPadding = 0.1f;
@@ -1005,14 +1005,14 @@ bool RenderThemeSafari::paintSliderThumb(const RenderObject& o, const PaintInfo&
 const int sliderThumbWidth = 15;
 const int sliderThumbHeight = 15;
 
-void RenderThemeSafari::adjustSliderThumbSize(RenderStyle* style, Element*) const
+void RenderThemeSafari::adjustSliderThumbSize(RenderStyle& style, Element&) const
 {
-    if (style->appearance() == SliderThumbHorizontalPart || style->appearance() == SliderThumbVerticalPart) {
-        style->setWidth(Length(sliderThumbWidth, Fixed));
-        style->setHeight(Length(sliderThumbHeight, Fixed));
+    if (style.appearance() == SliderThumbHorizontalPart || style.appearance() == SliderThumbVerticalPart) {
+        style.setWidth(Length(sliderThumbWidth, Fixed));
+        style.setHeight(Length(sliderThumbHeight, Fixed));
     } 
 #if ENABLE(VIDEO)
-    else if (style->appearance() == MediaSliderThumbPart) 
+    else if (style.appearance() == MediaSliderThumbPart) 
         RenderMediaControls::adjustMediaSliderThumbSize(style);
 #endif
 }
@@ -1031,40 +1031,40 @@ const IntSize* RenderThemeSafari::searchFieldSizes() const
     return sizes;
 }
 
-void RenderThemeSafari::setSearchFieldSize(RenderStyle* style) const
+void RenderThemeSafari::setSearchFieldSize(RenderStyle& style) const
 {
     // If the width and height are both specified, then we have nothing to do.
-    if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
+    if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
     
     // Use the font size to determine the intrinsic width of the control.
     setSizeFromFont(style, searchFieldSizes());
 }
 
-void RenderThemeSafari::adjustSearchFieldStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e) const
+void RenderThemeSafari::adjustSearchFieldStyle(StyleResolver& styleResolver, RenderStyle& style, Element& e) const
 {
     // Override border.
-    style->resetBorder();
+    style.resetBorder();
     const short borderWidth = 2;
-    style->setBorderLeftWidth(borderWidth);
-    style->setBorderLeftStyle(INSET);
-    style->setBorderRightWidth(borderWidth);
-    style->setBorderRightStyle(INSET);
-    style->setBorderBottomWidth(borderWidth);
-    style->setBorderBottomStyle(INSET);
-    style->setBorderTopWidth(borderWidth);
-    style->setBorderTopStyle(INSET);    
+    style.setBorderLeftWidth(borderWidth);
+    style.setBorderLeftStyle(INSET);
+    style.setBorderRightWidth(borderWidth);
+    style.setBorderRightStyle(INSET);
+    style.setBorderBottomWidth(borderWidth);
+    style.setBorderBottomStyle(INSET);
+    style.setBorderTopWidth(borderWidth);
+    style.setBorderTopStyle(INSET);    
     
     // Override height.
-    style->setHeight(Length(Auto));
+    style.setHeight(Length(Auto));
     setSearchFieldSize(style);
     
     // Override padding size to match AppKit text positioning.
     const int padding = 1;
-    style->setPaddingLeft(Length(padding, Fixed));
-    style->setPaddingRight(Length(padding, Fixed));
-    style->setPaddingTop(Length(padding, Fixed));
-    style->setPaddingBottom(Length(padding, Fixed));
+    style.setPaddingLeft(Length(padding, Fixed));
+    style.setPaddingRight(Length(padding, Fixed));
+    style.setPaddingTop(Length(padding, Fixed));
+    style.setPaddingBottom(Length(padding, Fixed));
     
     NSControlSize controlSize = controlSizeForFont(style);
     setFontFromControlSize(styleResolver, style, controlSize);
@@ -1092,11 +1092,11 @@ const IntSize* RenderThemeSafari::cancelButtonSizes() const
     return sizes;
 }
 
-void RenderThemeSafari::adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
+void RenderThemeSafari::adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle& style, Element&) const
 {
     IntSize size = sizeForSystemFont(style, cancelButtonSizes());
-    style->setWidth(Length(size.width(), Fixed));
-    style->setHeight(Length(size.height(), Fixed));
+    style.setWidth(Length(size.width(), Fixed));
+    style.setHeight(Length(size.height(), Fixed));
 }
 
 const IntSize* RenderThemeSafari::resultsButtonSizes() const
@@ -1106,11 +1106,11 @@ const IntSize* RenderThemeSafari::resultsButtonSizes() const
 }
 
 const int emptyResultsOffset = 9;
-void RenderThemeSafari::adjustSearchFieldDecorationPartStyle(StyleResolver*, RenderStyle* style, Element*) const
+void RenderThemeSafari::adjustSearchFieldDecorationPartStyle(StyleResolver&, RenderStyle& style, Element&) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
-    style->setWidth(Length(size.width() - emptyResultsOffset, Fixed));
-    style->setHeight(Length(size.height(), Fixed));
+    style.setWidth(Length(size.width() - emptyResultsOffset, Fixed));
+    style.setHeight(Length(size.height(), Fixed));
 }
 
 bool RenderThemeSafari::paintSearchFieldDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&)
@@ -1118,11 +1118,11 @@ bool RenderThemeSafari::paintSearchFieldDecorationPart(const RenderObject&, cons
     return false;
 }
 
-void RenderThemeSafari::adjustSearchFieldResultsDecorationPartStyle(StyleResolver*, RenderStyle* style, Element*) const
+void RenderThemeSafari::adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle& style, Element&) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
-    style->setWidth(Length(size.width(), Fixed));
-    style->setHeight(Length(size.height(), Fixed));
+    style.setWidth(Length(size.width(), Fixed));
+    style.setHeight(Length(size.height(), Fixed));
 }
 
 bool RenderThemeSafari::paintSearchFieldResultsDecorationPart(const RenderObject& o, const PaintInfo& paintInfo, const IntRect&)
@@ -1142,11 +1142,11 @@ bool RenderThemeSafari::paintSearchFieldResultsDecorationPart(const RenderObject
 }
 
 const int resultsArrowWidth = 5;
-void RenderThemeSafari::adjustSearchFieldResultsButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
+void RenderThemeSafari::adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle& style, Element&) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
-    style->setWidth(Length(size.width() + resultsArrowWidth, Fixed));
-    style->setHeight(Length(size.height(), Fixed));
+    style.setWidth(Length(size.width() + resultsArrowWidth, Fixed));
+    style.setHeight(Length(size.height(), Fixed));
 }
 
 bool RenderThemeSafari::paintSearchFieldResultsButton(const RenderObject& o, const PaintInfo& paintInfo, const IntRect&)
@@ -1190,9 +1190,9 @@ String RenderThemeSafari::mediaControlsScript()
 #endif
 
 #if ENABLE(METER_ELEMENT)
-void RenderThemeSafari::adjustMeterStyle(StyleResolver*, RenderStyle* style, Element*) const
+void RenderThemeSafari::adjustMeterStyle(StyleResolver&, RenderStyle& style, Element&) const
 {
-    style->setBoxShadow(nullptr);
+    style.setBoxShadow(nullptr);
 }
 
 bool RenderThemeSafari::supportsMeter(ControlPart part) const
@@ -1205,7 +1205,7 @@ bool RenderThemeSafari::supportsMeter(ControlPart part) const
     }
 }
 
-IntSize RenderThemeSafari::meterSizeForBounds(const RenderMeter*, const IntRect& bounds) const
+IntSize RenderThemeSafari::meterSizeForBounds(const RenderMeter&, const IntRect& bounds) const
 {
     return bounds.size();
 }
@@ -1217,7 +1217,7 @@ bool RenderThemeSafari::paintMeter(const RenderObject& renderObject, const Paint
     if (!renderObject.isMeter())
         return true;
 
-    HTMLMeterElement* element = toRenderMeter(&renderObject)->meterElement();
+    HTMLMeterElement* element = toRenderMeter(renderObject).meterElement();
 
     int remaining = static_cast<int>((1.0 - element->valueRatio()) * static_cast<double>(rect.size().width()));
 

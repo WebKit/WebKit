@@ -203,7 +203,7 @@ void RenderButton::layout()
     RenderFlexibleBox::layout();
 
     // FIXME: We should not be adjusting styles during layout. See <rdar://problem/7675493>.
-    RenderThemeIOS::adjustRoundBorderRadius(style(), this);
+    RenderThemeIOS::adjustRoundBorderRadius(style(), *this);
 }
 #endif
 

@@ -142,18 +142,18 @@ static GtkStateType getGtkStateType(RenderThemeGtk* theme, const RenderObject& o
     return GTK_STATE_NORMAL;
 }
 
-static void setToggleSize(const RenderThemeGtk*, RenderStyle* style, GtkWidget* widget)
+static void setToggleSize(const RenderThemeGtk*, RenderStyle& style, GtkWidget* widget)
 {
     // The width and height are both specified, so we shouldn't change them.
-    if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
+    if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
 
     gint indicatorSize;
     gtk_widget_style_get(widget, "indicator-size", &indicatorSize, NULL);
-    if (style->width().isIntrinsicOrAuto())
-        style->setWidth(Length(indicatorSize, Fixed));
-    if (style->height().isAuto())
-        style->setHeight(Length(indicatorSize, Fixed));
+    if (style.width().isIntrinsicOrAuto())
+        style.setWidth(Length(indicatorSize, Fixed));
+    if (style.height().isAuto())
+        style.setHeight(Length(indicatorSize, Fixed));
 }
 
 static void paintToggle(RenderThemeGtk* theme, const RenderObject& renderObject, const PaintInfo& info, const IntRect& rect, GtkWidget* widget)
@@ -194,7 +194,7 @@ static void paintToggle(RenderThemeGtk* theme, const RenderObject& renderObject,
     }
 }
 
-void RenderThemeGtk::setCheckboxSize(RenderStyle* style) const
+void RenderThemeGtk::setCheckboxSize(RenderStyle& style) const
 {
     setToggleSize(this, style, gtkCheckButton());
 }
@@ -205,7 +205,7 @@ bool RenderThemeGtk::paintCheckbox(const RenderObject& renderObject, const Paint
     return false;
 }
 
-void RenderThemeGtk::setRadioSize(RenderStyle* style) const
+void RenderThemeGtk::setRadioSize(RenderStyle& style) const
 {
     setToggleSize(this, style, gtkRadioButton());
 }
@@ -289,11 +289,11 @@ int RenderThemeGtk::getComboBoxSeparatorWidth() const
     return gtk_widget_get_style(separator)->xthickness;
 }
 
-int RenderThemeGtk::comboBoxArrowSize(RenderStyle* style) const
+int RenderThemeGtk::comboBoxArrowSize(RenderStyle& style) const
 {
     // Taking the font size and reversing the DPI conversion seems to match
     // GTK+ rendering as closely as possible.
-    return style->font().size() * (72.0 / RenderThemeGtk::getScreenDPI());
+    return style.font().size() * (72.0 / RenderThemeGtk::getScreenDPI());
 }
 
 static void getButtonInnerBorder(GtkWidget* button, int& left, int& top, int& right, int& bottom)
@@ -316,11 +316,11 @@ static void getButtonInnerBorder(GtkWidget* button, int& left, int& top, int& ri
 }
 
 
-void RenderThemeGtk::getComboBoxPadding(RenderStyle* style, int& left, int& top, int& right, int& bottom) const
+void RenderThemeGtk::getComboBoxPadding(RenderStyle& style, int& left, int& top, int& right, int& bottom) const
 {
     // If this menu list button isn't drawn using the native theme, we
     // don't add any extra padding beyond what WebCore already uses.
-    if (style->appearance() == NoControlPart)
+    if (style.appearance() == NoControlPart)
         return;
 
     // A combo box button is a button with widgets packed into it.
@@ -332,34 +332,34 @@ void RenderThemeGtk::getComboBoxPadding(RenderStyle* style, int& left, int& top,
     int arrowAndSeperatorLength = comboBoxArrowSize(style) +
         getComboBoxSeparatorWidth() + (3 * buttonWidgetStyle->xthickness);
 
-    if (style->direction() == RTL)
+    if (style.direction() == RTL)
         left += arrowAndSeperatorLength;
     else
         right += arrowAndSeperatorLength;
 }
 
-int RenderThemeGtk::popupInternalPaddingLeft(RenderStyle* style) const
+int RenderThemeGtk::popupInternalPaddingLeft(RenderStyle& style) const
 {
     int left = 0, top = 0, right = 0, bottom = 0;
     getComboBoxPadding(style, left, top, right, bottom);
     return left;
 }
 
-int RenderThemeGtk::popupInternalPaddingRight(RenderStyle* style) const
+int RenderThemeGtk::popupInternalPaddingRight(RenderStyle& style) const
 {
     int left = 0, top = 0, right = 0, bottom = 0;
     getComboBoxPadding(style, left, top, right, bottom);
     return right;
 }
 
-int RenderThemeGtk::popupInternalPaddingTop(RenderStyle* style) const
+int RenderThemeGtk::popupInternalPaddingTop(RenderStyle& style) const
 {
     int left = 0, top = 0, right = 0, bottom = 0;
     getComboBoxPadding(style, left, top, right, bottom);
     return top;
 }
 
-int RenderThemeGtk::popupInternalPaddingBottom(RenderStyle* style) const
+int RenderThemeGtk::popupInternalPaddingBottom(RenderStyle& style) const
 {
     int left = 0, top = 0, right = 0, bottom = 0;
     getComboBoxPadding(style, left, top, right, bottom);
@@ -381,12 +381,12 @@ bool RenderThemeGtk::paintMenuList(const RenderObject& object, const PaintInfo& 
 
     int leftBorder = 0, rightBorder = 0, bottomBorder = 0, topBorder = 0;
     getButtonInnerBorder(gtkComboBoxButton(), leftBorder, topBorder, rightBorder, bottomBorder);
-    RenderStyle* style = &object.style();
+    RenderStyle& style = object.style();
     int arrowSize = comboBoxArrowSize(style);
     GtkStyle* buttonStyle = gtk_widget_get_style(gtkComboBoxButton());
 
     IntRect arrowRect(0, (rect.height() - arrowSize) / 2, arrowSize, arrowSize);
-    if (style->direction() == RTL)
+    if (style.direction() == RTL)
         arrowRect.setX(leftBorder + buttonStyle->xthickness);
     else
         arrowRect.setX(rect.width() - rightBorder - buttonStyle->xthickness - arrowSize);
@@ -410,7 +410,7 @@ bool RenderThemeGtk::paintMenuList(const RenderObject& object, const PaintInfo& 
     bottomBorder += focusPadding + focusWidth;
     int separatorWidth = getComboBoxSeparatorWidth();
     IntRect separatorRect(0, topBorder, separatorWidth, rect.height() - topBorder - bottomBorder);
-    if (style->direction() == RTL)
+    if (style.direction() == RTL)
         separatorRect.setX(arrowRect.x() + arrowRect.width() + buttonStyle->xthickness + separatorWidth);
     else
         separatorRect.setX(arrowRect.x() - buttonStyle->xthickness - separatorWidth);
@@ -528,9 +528,9 @@ bool RenderThemeGtk::paintSliderThumb(const RenderObject& object, const PaintInf
     return false;
 }
 
-void RenderThemeGtk::adjustSliderThumbSize(RenderStyle* style, Element*) const
+void RenderThemeGtk::adjustSliderThumbSize(RenderStyle& style, Element&) const
 {
-    ControlPart part = style->appearance();
+    ControlPart part = style.appearance();
     if (part != SliderThumbHorizontalPart && part != SliderThumbVerticalPart)
         return;
 
@@ -542,13 +542,13 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderStyle* style, Element*) const
                          NULL);
 
     if (part == SliderThumbHorizontalPart) {
-        style->setWidth(Length(length, Fixed));
-        style->setHeight(Length(width, Fixed));
+        style.setWidth(Length(length, Fixed));
+        style.setHeight(Length(width, Fixed));
         return;
     }
     ASSERT(part == SliderThumbVerticalPart || part == MediaVolumeSliderThumbPart);
-    style->setWidth(Length(width, Fixed));
-    style->setHeight(Length(length, Fixed));
+    style.setWidth(Length(width, Fixed));
+    style.setHeight(Length(length, Fixed));
 }
 
 bool RenderThemeGtk::paintProgressBar(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
@@ -572,7 +572,7 @@ bool RenderThemeGtk::paintProgressBar(const RenderObject& renderObject, const Pa
     return false;
 }
 
-void RenderThemeGtk::adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
+void RenderThemeGtk::adjustInnerSpinButtonStyle(StyleResolver&, RenderStyle& style, Element&) const
 {
     GtkStyle* gtkStyle = gtk_widget_get_style(gtkSpinButton());
     const PangoFontDescription* fontDescription = gtkStyle->font_desc;
@@ -583,8 +583,8 @@ void RenderThemeGtk::adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle* sty
     int width = std::max(PANGO_PIXELS(fontSize), minSpinButtonArrowSize);
     width += -((width % 2) - 1) + gtkStyle->xthickness;
 
-    style->setWidth(Length(width, Fixed));
-    style->setMinWidth(Length(width, Fixed));
+    style.setWidth(Length(width, Fixed));
+    style.setMinWidth(Length(width, Fixed));
 }
 
 bool RenderThemeGtk::paintInnerSpinButton(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)

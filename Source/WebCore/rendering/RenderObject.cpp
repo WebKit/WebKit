@@ -1053,10 +1053,10 @@ void RenderObject::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRec
     int outlineOffset = styleToUse.outlineOffset();
 
     // Only paint the focus ring by hand if the theme isn't able to draw it.
-    if (styleToUse.outlineStyleIsAuto() && !theme().supportsFocusRing(&styleToUse))
+    if (styleToUse.outlineStyleIsAuto() && !theme().supportsFocusRing(styleToUse))
         paintFocusRing(paintInfo, paintRect.location(), &styleToUse);
 
-    if (hasOutlineAnnotation() && !styleToUse.outlineStyleIsAuto() && !theme().supportsFocusRing(&styleToUse))
+    if (hasOutlineAnnotation() && !styleToUse.outlineStyleIsAuto() && !theme().supportsFocusRing(styleToUse))
         addPDFURLRect(paintInfo, paintRect.location());
 
     if (styleToUse.outlineStyleIsAuto() || styleToUse.outlineStyle() == BNONE)

@@ -350,15 +350,15 @@ FloatRect RenderThemeIOS::addRoundedBorderClip(const RenderObject& box, Graphics
     return border.rect();
 }
 
-void RenderThemeIOS::adjustCheckboxStyle(StyleResolver*, RenderStyle* style, Element*) const
+void RenderThemeIOS::adjustCheckboxStyle(StyleResolver&, RenderStyle& style, Element&) const
 {
-    if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
+    if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
 
-    Length length = Length(static_cast<int>(ceilf(std::max(style->fontSize(), 10))), Fixed);
+    Length length = Length(static_cast<int>(ceilf(std::max(style.fontSize(), 10))), Fixed);
     
-    style->setWidth(length);
-    style->setHeight(length);
+    style.setWidth(length);
+    style.setHeight(length);
 }
 
 static CGPoint shortened(CGPoint start, CGPoint end, float width)
@@ -434,27 +434,27 @@ int RenderThemeIOS::baselinePosition(const RenderObject& renderer) const
     return RenderTheme::baselinePosition(box);
 }
 
-bool RenderThemeIOS::isControlStyled(const RenderStyle* style, const BorderData& border, const FillLayer& background, const Color& backgroundColor) const
+bool RenderThemeIOS::isControlStyled(const RenderStyle& style, const BorderData& border, const FillLayer& background, const Color& backgroundColor) const
 {
     // Buttons and MenulistButtons are styled if they contain a background image.
-    if (style->appearance() == PushButtonPart || style->appearance() == MenulistButtonPart)
-        return !style->visitedDependentColor(CSSPropertyBackgroundColor).alpha() || style->backgroundLayers()->hasImage();
+    if (style.appearance() == PushButtonPart || style.appearance() == MenulistButtonPart)
+        return !style.visitedDependentColor(CSSPropertyBackgroundColor).alpha() || style.backgroundLayers()->hasImage();
 
-    if (style->appearance() == TextFieldPart || style->appearance() == TextAreaPart)
-        return *style->backgroundLayers() != background;
+    if (style.appearance() == TextFieldPart || style.appearance() == TextAreaPart)
+        return *style.backgroundLayers() != background;
 
     return RenderTheme::isControlStyled(style, border, background, backgroundColor);
 }
 
-void RenderThemeIOS::adjustRadioStyle(StyleResolver*, RenderStyle* style, Element*) const
+void RenderThemeIOS::adjustRadioStyle(StyleResolver&, RenderStyle& style, Element&) const
 {
-    if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
+    if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
 
-    Length length = Length(static_cast<int>(ceilf(std::max(style->fontSize(), 10))), Fixed);
-    style->setWidth(length);
-    style->setHeight(length);
-    style->setBorderRadius(IntSize(length.value() / 2.0f, length.value() / 2.0f));
+    Length length = Length(static_cast<int>(ceilf(std::max(style.fontSize(), 10))), Fixed);
+    style.setWidth(length);
+    style.setHeight(length);
+    style.setBorderRadius(IntSize(length.value() / 2.0f, length.value() / 2.0f));
 }
 
 bool RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
@@ -516,21 +516,21 @@ const float MenuListArrowWidth = 7;
 const float MenuListArrowHeight = 6;
 const float MenuListButtonPaddingRight = 19;
 
-int RenderThemeIOS::popupInternalPaddingRight(RenderStyle* style) const
+int RenderThemeIOS::popupInternalPaddingRight(RenderStyle& style) const
 {
-    if (style->appearance() == MenulistButtonPart)
-        return MenuListButtonPaddingRight + style->borderTopWidth();
+    if (style.appearance() == MenulistButtonPart)
+        return MenuListButtonPaddingRight + style.borderTopWidth();
     return 0;
 }
 
-void RenderThemeIOS::adjustRoundBorderRadius(RenderStyle& style, RenderBox* box)
+void RenderThemeIOS::adjustRoundBorderRadius(RenderStyle& style, RenderBox& box)
 {
     if (style.appearance() == NoControlPart || style.backgroundLayers()->hasImage())
         return;
 
     // FIXME: We should not be relying on border radius for the appearance of our controls <rdar://problem/7675493>
-    Length radiusWidth(static_cast<int>(std::min(box->width(), box->height()) / 2.0), Fixed);
-    Length radiusHeight(static_cast<int>(box->height() / 2.0), Fixed);
+    Length radiusWidth(static_cast<int>(std::min(box.width(), box.height()) / 2.0), Fixed);
+    Length radiusHeight(static_cast<int>(box.height() / 2.0), Fixed);
     style.setBorderRadius(LengthSize(radiusWidth, radiusHeight));
 }
 
@@ -616,10 +616,8 @@ void RenderThemeIOS::adjustMenuListButtonStyle(StyleResolver&, RenderStyle& styl
     // "-webkit-appearance: menulist-button".
     if (element.hasTagName(HTMLNames::selectTag) && !element.hasAttribute(HTMLNames::multipleAttr))
         adjustSelectListButtonStyle(style, element);
-    else if (element.hasTagName(HTMLNames::inputTag)) {
-        HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(&element);
-        adjustInputElementButtonStyle(style, *inputElement);
-    }
+    else if (element.hasTagName(HTMLNames::inputTag))
+        adjustInputElementButtonStyle(style, static_cast<HTMLInputElement&>(element));
 }
 
 bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
@@ -714,14 +712,14 @@ const CGFloat kTrackThickness = 4.0;
 const CGFloat kTrackRadius = kTrackThickness / 2.0;
 const int kDefaultSliderThumbSize = 16;
 
-void RenderThemeIOS::adjustSliderTrackStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
+void RenderThemeIOS::adjustSliderTrackStyle(StyleResolver& selector, RenderStyle& style, Element& element) const
 {
     RenderTheme::adjustSliderTrackStyle(selector, style, element);
 
     // FIXME: We should not be relying on border radius for the appearance of our controls <rdar://problem/7675493>
     Length radiusWidth(static_cast<int>(kTrackRadius), Fixed);
     Length radiusHeight(static_cast<int>(kTrackRadius), Fixed);
-    style->setBorderRadius(LengthSize(radiusWidth, radiusHeight));
+    style.setBorderRadius(LengthSize(radiusWidth, radiusHeight));
 }
 
 bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
@@ -802,20 +800,20 @@ bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& 
     return false;
 }
 
-void RenderThemeIOS::adjustSliderThumbSize(RenderStyle* style, Element*) const
+void RenderThemeIOS::adjustSliderThumbSize(RenderStyle& style, Element&) const
 {
-    if (style->appearance() != SliderThumbHorizontalPart && style->appearance() != SliderThumbVerticalPart)
+    if (style.appearance() != SliderThumbHorizontalPart && style.appearance() != SliderThumbVerticalPart)
         return;
 
     // Enforce "border-radius: 50%".
     Length length(50.0f, Percent);
-    style->setBorderRadius(LengthSize(length, length));
+    style.setBorderRadius(LengthSize(length, length));
 
     // Enforce a 16x16 size if no size is provided.
-    if (style->width().isIntrinsicOrAuto() || style->height().isAuto()) {
+    if (style.width().isIntrinsicOrAuto() || style.height().isAuto()) {
         Length length = Length(kDefaultSliderThumbSize, Fixed);
-        style->setWidth(length);
-        style->setHeight(length);
+        style.setWidth(length);
+        style.setHeight(length);
     }
 }
 
@@ -836,12 +834,12 @@ bool RenderThemeIOS::paintSliderThumbDecorations(const RenderObject& box, const 
     return false;
 }
 
-double RenderThemeIOS::animationRepeatIntervalForProgressBar(RenderProgress*) const
+double RenderThemeIOS::animationRepeatIntervalForProgressBar(RenderProgress&) const
 {
     return 0;
 }
 
-double RenderThemeIOS::animationDurationForProgressBar(RenderProgress*) const
+double RenderThemeIOS::animationDurationForProgressBar(RenderProgress&) const
 {
     return 0;
 }
@@ -942,21 +940,18 @@ int RenderThemeIOS::sliderTickOffsetFromTrackCenter() const
 }
 #endif
 
-void RenderThemeIOS::adjustSearchFieldStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
+void RenderThemeIOS::adjustSearchFieldStyle(StyleResolver& selector, RenderStyle& style, Element& element) const
 {
     RenderTheme::adjustSearchFieldStyle(selector, style, element);
 
-    if (!element)
+    if (!style.hasBorder())
         return;
 
-    if (!style->hasBorder())
-        return;
-
-    RenderBox* box = element->renderBox();
+    RenderBox* box = element.renderBox();
     if (!box)
         return;
 
-    adjustRoundBorderRadius(*style, box);
+    adjustRoundBorderRadius(style, *box);
 }
 
 bool RenderThemeIOS::paintSearchFieldDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
@@ -964,7 +959,7 @@ bool RenderThemeIOS::paintSearchFieldDecorations(const RenderObject& box, const 
     return paintTextFieldDecorations(box, paintInfo, rect);
 }
 
-void RenderThemeIOS::adjustButtonStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
+void RenderThemeIOS::adjustButtonStyle(StyleResolver& selector, RenderStyle& style, Element& element) const
 {
     RenderTheme::adjustButtonStyle(selector, style, element);
 
@@ -973,17 +968,14 @@ void RenderThemeIOS::adjustButtonStyle(StyleResolver* selector, RenderStyle* sty
     // Since the element might not be in a document, just pass nullptr for the root element style
     // and the render view.
     RefPtr<CSSPrimitiveValue> emSize = CSSPrimitiveValue::create(1.0, CSSPrimitiveValue::CSS_EMS);
-    int pixels = emSize->computeLength<int>(CSSToLengthConversionData(style, nullptr, nullptr, 1.0, false));
-    style->setPaddingBox(LengthBox(0, pixels, 0, pixels));
+    int pixels = emSize->computeLength<int>(CSSToLengthConversionData(&style, nullptr, nullptr, 1.0, false));
+    style.setPaddingBox(LengthBox(0, pixels, 0, pixels));
 
-    if (!element)
-        return;
-
-    RenderBox* box = element->renderBox();
+    RenderBox* box = element.renderBox();
     if (!box)
         return;
 
-    adjustRoundBorderRadius(*style, box);
+    adjustRoundBorderRadius(style, *box);
 }
 
 bool RenderThemeIOS::paintButtonDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
@@ -1006,14 +998,14 @@ bool RenderThemeIOS::paintPushButtonDecorations(const RenderObject& box, const P
     return false;
 }
 
-void RenderThemeIOS::setButtonSize(RenderStyle* style) const
+void RenderThemeIOS::setButtonSize(RenderStyle& style) const
 {
     // If the width and height are both specified, then we have nothing to do.
-    if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
+    if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
 
     // Use the font size to determine the intrinsic width of the control.
-    style->setHeight(Length(static_cast<int>(ControlBaseHeight / ControlBaseFontSize * style->fontDescription().computedSize()), Fixed));
+    style.setHeight(Length(static_cast<int>(ControlBaseHeight / ControlBaseFontSize * style.fontDescription().computedSize()), Fixed));
 }
 
 const int kThumbnailBorderStrokeWidth = 1;
@@ -1082,7 +1074,7 @@ bool RenderThemeIOS::shouldShowPlaceholderWhenFocused() const
     return true;
 }
 
-bool RenderThemeIOS::shouldHaveSpinButton(HTMLInputElement*) const
+bool RenderThemeIOS::shouldHaveSpinButton(HTMLInputElement&) const
 {
     return false;
 }

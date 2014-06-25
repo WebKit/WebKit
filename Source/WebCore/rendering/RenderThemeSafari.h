@@ -62,7 +62,7 @@ public:
 
     virtual void adjustRepaintRect(const RenderObject&, IntRect&);
 
-    virtual bool isControlStyled(const RenderStyle*, const BorderData&,
+    virtual bool isControlStyled(const RenderStyle&, const BorderData&,
                                  const FillLayer&, const Color& backgroundColor) const;
 
     virtual Color platformActiveSelectionBackgroundColor() const;
@@ -74,56 +74,56 @@ public:
     // System fonts.
     virtual void systemFont(CSSValueID, FontDescription&) const;
 
-    virtual int minimumMenuListSize(RenderStyle*) const;
+    virtual int minimumMenuListSize(RenderStyle&) const;
 
-    virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
-    virtual void adjustSliderThumbStyle(StyleResolver*, RenderStyle*, Element*) const; 
+    virtual void adjustSliderThumbSize(RenderStyle&, Element&) const;
+    virtual void adjustSliderThumbStyle(StyleResolver&, RenderStyle&, Element&) const; 
     
-    virtual int popupInternalPaddingLeft(RenderStyle*) const;
-    virtual int popupInternalPaddingRight(RenderStyle*) const;
-    virtual int popupInternalPaddingTop(RenderStyle*) const;
-    virtual int popupInternalPaddingBottom(RenderStyle*) const;
+    virtual int popupInternalPaddingLeft(RenderStyle&) const;
+    virtual int popupInternalPaddingRight(RenderStyle&) const;
+    virtual int popupInternalPaddingTop(RenderStyle&) const;
+    virtual int popupInternalPaddingBottom(RenderStyle&) const;
 
 protected:
     // Methods for each appearance value.
     virtual bool paintCheckbox(const RenderObject&, const PaintInfo&, const IntRect&);
-    virtual void setCheckboxSize(RenderStyle*) const;
+    virtual void setCheckboxSize(RenderStyle&) const;
 
     virtual bool paintRadio(const RenderObject&, const PaintInfo&, const IntRect&);
-    virtual void setRadioSize(RenderStyle*) const;
+    virtual void setRadioSize(RenderStyle&) const;
 
-    virtual void adjustButtonStyle(StyleResolver*, RenderStyle*, WebCore::Element*) const;
+    virtual void adjustButtonStyle(StyleResolver&, RenderStyle&, WebCore::Element&) const;
     virtual bool paintButton(const RenderObject&, const PaintInfo&, const IntRect&);
-    virtual void setButtonSize(RenderStyle*) const;
+    virtual void setButtonSize(RenderStyle&) const;
 
     virtual bool paintTextField(const RenderObject&, const PaintInfo&, const IntRect&);
-    virtual void adjustTextFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustTextFieldStyle(StyleResolver&, RenderStyle&, Element&) const;
 
     virtual bool paintTextArea(const RenderObject&, const PaintInfo&, const IntRect&);
-    virtual void adjustTextAreaStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustTextAreaStyle(StyleResolver&, RenderStyle&, Element&) const;
 
     virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const IntRect&);
-    virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustMenuListStyle(StyleResolver&, RenderStyle&, Element&) const;
 
     virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const FloatRect&);
-    virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element&) const;
 
     virtual bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&);
-    virtual void adjustSearchFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, Element&) const;
 
-    virtual void adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintSearchFieldCancelButton(const RenderObject&, const PaintInfo&, const IntRect&);
 
-    virtual void adjustSearchFieldDecorationPartStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldDecorationPartStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintSearchFieldDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&);
 
-    virtual void adjustSearchFieldResultsDecorationPartStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintSearchFieldResultsDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&);
 
-    virtual void adjustSearchFieldResultsButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintSearchFieldResultsButton(const RenderObject&, const PaintInfo&, const IntRect&);
  
     virtual bool paintCapsLockIndicator(const RenderObject&, const PaintInfo&, const IntRect&);
@@ -134,9 +134,9 @@ protected:
 #endif
 
 #if ENABLE(METER_ELEMENT)
-    virtual IntSize meterSizeForBounds(const RenderMeter*, const IntRect&) const override;
+    virtual IntSize meterSizeForBounds(const RenderMeter&, const IntRect&) const override;
     virtual bool supportsMeter(ControlPart) const override;
-    virtual void adjustMeterStyle(StyleResolver*, RenderStyle*, Element*) const override;
+    virtual void adjustMeterStyle(StyleResolver&, RenderStyle&, Element&) const override;
     virtual bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
 
@@ -150,13 +150,13 @@ private:
 
     // Get the control size based off the font.  Used by some of the controls (like buttons).
 
-    NSControlSize controlSizeForFont(RenderStyle*) const;
-    NSControlSize controlSizeForSystemFont(RenderStyle*) const;
+    NSControlSize controlSizeForFont(RenderStyle&) const;
+    NSControlSize controlSizeForSystemFont(RenderStyle&) const;
     //void setControlSize(NSCell*, const IntSize* sizes, const IntSize& minSize);
-    void setSizeFromFont(RenderStyle*, const IntSize* sizes) const;
-    IntSize sizeForFont(RenderStyle*, const IntSize* sizes) const;
-    IntSize sizeForSystemFont(RenderStyle*, const IntSize* sizes) const;
-    void setFontFromControlSize(StyleResolver*, RenderStyle*, NSControlSize) const;
+    void setSizeFromFont(RenderStyle&, const IntSize* sizes) const;
+    IntSize sizeForFont(RenderStyle&, const IntSize* sizes) const;
+    IntSize sizeForSystemFont(RenderStyle&, const IntSize* sizes) const;
+    void setFontFromControlSize(StyleResolver&, RenderStyle&, NSControlSize) const;
 
     // Helpers for adjusting appearance and for painting
     const IntSize* checkboxSizes() const;
@@ -165,7 +165,7 @@ private:
     const IntSize* radioSizes() const;
     const int* radioMargins(NSControlSize) const;
 
-    void setButtonPaddingFromControlSize(RenderStyle*, NSControlSize) const;
+    void setButtonPaddingFromControlSize(RenderStyle&, NSControlSize) const;
     const IntSize* buttonSizes() const;
     const int* buttonMargins(NSControlSize) const;
 
@@ -178,7 +178,7 @@ private:
     const IntSize* searchFieldSizes() const;
     const IntSize* cancelButtonSizes() const;
     const IntSize* resultsButtonSizes() const;
-    void setSearchFieldSize(RenderStyle*) const;
+    void setSearchFieldSize(RenderStyle&) const;
 
     ThemeControlState determineState(const RenderObject&) const;
 

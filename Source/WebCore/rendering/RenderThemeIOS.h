@@ -39,9 +39,9 @@ class RenderThemeIOS : public RenderTheme {
 public:
     static PassRefPtr<RenderTheme> create();
 
-    virtual int popupInternalPaddingRight(RenderStyle*) const override;
+    virtual int popupInternalPaddingRight(RenderStyle&) const override;
 
-    static void adjustRoundBorderRadius(RenderStyle&, RenderBox*);
+    static void adjustRoundBorderRadius(RenderStyle&, RenderBox&);
 
     virtual void systemFont(CSSValueID, FontDescription&) const override;
 
@@ -52,19 +52,19 @@ public:
 protected:
     virtual int baselinePosition(const RenderObject&) const override;
 
-    virtual bool isControlStyled(const RenderStyle*, const BorderData&, const FillLayer& background, const Color& backgroundColor) const override;
+    virtual bool isControlStyled(const RenderStyle&, const BorderData&, const FillLayer& background, const Color& backgroundColor) const override;
 
     // Methods for each appearance value.
-    virtual void adjustCheckboxStyle(StyleResolver*, RenderStyle*, Element*) const override;
+    virtual void adjustCheckboxStyle(StyleResolver&, RenderStyle&, Element&) const override;
     virtual bool paintCheckboxDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustRadioStyle(StyleResolver*, RenderStyle*, Element*) const override;
+    virtual void adjustRadioStyle(StyleResolver&, RenderStyle&, Element&) const override;
     virtual bool paintRadioDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustButtonStyle(StyleResolver*, RenderStyle*, Element*) const override;
+    virtual void adjustButtonStyle(StyleResolver&, RenderStyle&, Element&) const override;
     virtual bool paintButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
     virtual bool paintPushButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
-    virtual void setButtonSize(RenderStyle*) const override;
+    virtual void setButtonSize(RenderStyle&) const override;
 
     virtual bool paintFileUploadIconDecorations(const RenderObject& inputRenderer, const RenderObject& buttonRenderer, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) override;
 
@@ -74,16 +74,16 @@ protected:
     virtual void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element&) const override;
     virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
-    virtual void adjustSliderTrackStyle(StyleResolver*, RenderStyle*, Element*) const override;
+    virtual void adjustSliderTrackStyle(StyleResolver&, RenderStyle&, Element&) const override;
     virtual bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustSliderThumbSize(RenderStyle*, Element*) const override;
+    virtual void adjustSliderThumbSize(RenderStyle&, Element&) const override;
     virtual bool paintSliderThumbDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     // Returns the repeat interval of the animation for the progress bar.
-    virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const override;
+    virtual double animationRepeatIntervalForProgressBar(RenderProgress&) const override;
     // Returns the duration of the animation for the progress bar.
-    virtual double animationDurationForProgressBar(RenderProgress*) const override;
+    virtual double animationDurationForProgressBar(RenderProgress&) const override;
 
     virtual bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
@@ -92,7 +92,7 @@ protected:
     virtual int sliderTickOffsetFromTrackCenter() const override;
 #endif
 
-    virtual void adjustSearchFieldStyle(StyleResolver*, RenderStyle*, Element*) const override;
+    virtual void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, Element&) const override;
     virtual bool paintSearchFieldDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     virtual Color platformActiveSelectionBackgroundColor() const override;
@@ -103,7 +103,7 @@ protected:
 #endif
 
     virtual bool shouldShowPlaceholderWhenFocused() const override;
-    virtual bool shouldHaveSpinButton(HTMLInputElement*) const override;
+    virtual bool shouldHaveSpinButton(HTMLInputElement&) const override;
 
 #if ENABLE(VIDEO)
     virtual String mediaControlsStyleSheet() override;

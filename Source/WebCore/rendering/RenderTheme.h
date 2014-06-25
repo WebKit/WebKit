@@ -73,7 +73,7 @@ public:
     // metrics and defaults given the contents of the style.  This includes sophisticated operations like
     // selection of control size based off the font, the disabling of appearance when certain other properties like
     // "border" are set, or if the appearance is not supported by the theme.
-    void adjustStyle(StyleResolver&, RenderStyle&, Element*,  bool UAHasAppearance, const BorderData&, const FillLayer&, const Color& backgroundColor);
+    void adjustStyle(StyleResolver&, RenderStyle&, Element&,  bool UAHasAppearance, const BorderData&, const FillLayer&, const Color& backgroundColor);
 
     // This method is called to paint the widget as a background of the RenderObject.  A widget's foreground, e.g., the
     // text of a button, is always rendered by the engine itself.  The boolean return value indicates
@@ -115,7 +115,7 @@ public:
     virtual bool controlSupportsTints(const RenderObject&) const { return false; }
 
     // Whether or not the control has been styled enough by the author to disable the native appearance.
-    virtual bool isControlStyled(const RenderStyle*, const BorderData&, const FillLayer&, const Color& backgroundColor) const;
+    virtual bool isControlStyled(const RenderStyle&, const BorderData&, const FillLayer&, const Color& backgroundColor) const;
 
     // A general method asking if any control tinting is supported at all.
     virtual bool supportsControlTints() const { return false; }
@@ -133,10 +133,10 @@ public:
     virtual void themeChanged() { }
 
     // A method asking if the theme is able to draw the focus ring.
-    virtual bool supportsFocusRing(const RenderStyle*) const;
+    virtual bool supportsFocusRing(const RenderStyle&) const;
 
     // A method asking if the theme's controls actually care about redrawing when hovered.
-    virtual bool supportsHover(const RenderStyle*) const { return false; }
+    virtual bool supportsHover(const RenderStyle&) const { return false; }
 
     // A method asking if the platform is able to show datalist suggestions for a given input type.
     virtual bool supportsDataListUI(const AtomicString&) const { return false; }
@@ -175,16 +175,16 @@ public:
     virtual void systemFont(CSSValueID, FontDescription&) const = 0;
     virtual Color systemColor(CSSValueID) const;
 
-    virtual int minimumMenuListSize(RenderStyle*) const { return 0; }
+    virtual int minimumMenuListSize(RenderStyle&) const { return 0; }
 
-    virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
+    virtual void adjustSliderThumbSize(RenderStyle&, Element&) const;
 
-    virtual int popupInternalPaddingLeft(RenderStyle*) const { return 0; }
-    virtual int popupInternalPaddingRight(RenderStyle*) const { return 0; }
-    virtual int popupInternalPaddingTop(RenderStyle*) const { return 0; }
-    virtual int popupInternalPaddingBottom(RenderStyle*) const { return 0; }
+    virtual int popupInternalPaddingLeft(RenderStyle&) const { return 0; }
+    virtual int popupInternalPaddingRight(RenderStyle&) const { return 0; }
+    virtual int popupInternalPaddingTop(RenderStyle&) const { return 0; }
+    virtual int popupInternalPaddingBottom(RenderStyle&) const { return 0; }
     virtual bool popupOptionSupportsTextIndent() const { return false; }
-    virtual PopupMenuStyle::PopupMenuSize popupMenuSize(const RenderStyle*, IntRect&) const { return PopupMenuStyle::PopupMenuSizeNormal; }
+    virtual PopupMenuStyle::PopupMenuSize popupMenuSize(const RenderStyle&, IntRect&) const { return PopupMenuStyle::PopupMenuSizeNormal; }
 
     virtual ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) { return RegularScrollbar; }
 
@@ -192,9 +192,9 @@ public:
     virtual bool paintCapsLockIndicator(const RenderObject&, const PaintInfo&, const IntRect&) { return 0; };
 
     // Returns the repeat interval of the animation for the progress bar.
-    virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
+    virtual double animationRepeatIntervalForProgressBar(RenderProgress&) const;
     // Returns the duration of the animation for the progress bar.
-    virtual double animationDurationForProgressBar(RenderProgress*) const;
+    virtual double animationDurationForProgressBar(RenderProgress&) const;
     virtual IntRect progressBarRectForBounds(const RenderObject&, const IntRect&) const;
 
 #if ENABLE(VIDEO)
@@ -215,7 +215,7 @@ public:
 #endif
 
 #if ENABLE(METER_ELEMENT)
-    virtual IntSize meterSizeForBounds(const RenderMeter*, const IntRect&) const;
+    virtual IntSize meterSizeForBounds(const RenderMeter&, const IntRect&) const;
     virtual bool supportsMeter(ControlPart) const;
 #endif
 
@@ -231,7 +231,7 @@ public:
 #endif
 
     virtual bool shouldShowPlaceholderWhenFocused() const { return false; }
-    virtual bool shouldHaveSpinButton(HTMLInputElement*) const;
+    virtual bool shouldHaveSpinButton(HTMLInputElement&) const;
 
     // Functions for <select> elements.
     virtual bool delegatesMenuListRendering() const { return false; }
@@ -266,19 +266,19 @@ protected:
 
 #if !USE(NEW_THEME)
     // Methods for each appearance value.
-    virtual void adjustCheckboxStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustCheckboxStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintCheckbox(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
-    virtual void setCheckboxSize(RenderStyle*) const { }
+    virtual void setCheckboxSize(RenderStyle&) const { }
 
-    virtual void adjustRadioStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustRadioStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintRadio(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
-    virtual void setRadioSize(RenderStyle*) const { }
+    virtual void setRadioSize(RenderStyle&) const { }
 
-    virtual void adjustButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustButtonStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
-    virtual void setButtonSize(RenderStyle*) const { }
+    virtual void setButtonSize(RenderStyle&) const { }
 
-    virtual void adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustInnerSpinButtonStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintInnerSpinButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 #endif
 
@@ -286,15 +286,15 @@ protected:
     virtual bool paintRadioDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
-    virtual void adjustTextFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustTextFieldStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
     virtual bool paintTextFieldDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
 
-    virtual void adjustTextAreaStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustTextAreaStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
     virtual bool paintTextAreaDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
 
-    virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustMenuListStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
     virtual bool paintMenuListDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
@@ -305,42 +305,42 @@ protected:
     virtual bool paintSquareButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
 #if ENABLE(METER_ELEMENT)
-    virtual void adjustMeterStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustMeterStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&);
 #endif
 
-    virtual void adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustProgressBarStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
 #if ENABLE(INPUT_SPEECH)
-    virtual void adjustInputFieldSpeechButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustInputFieldSpeechButtonStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintInputFieldSpeechButton(const RenderObject&, const PaintInfo&, const IntRect&);
 #endif
 
-    virtual void adjustSliderTrackStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustSliderTrackStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
-    virtual void adjustSliderThumbStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustSliderThumbStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintSliderThumbDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
-    virtual void adjustSearchFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintSearchFieldDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
-    virtual void adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintSearchFieldCancelButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
-    virtual void adjustSearchFieldDecorationPartStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldDecorationPartStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintSearchFieldDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
-    virtual void adjustSearchFieldResultsDecorationPartStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintSearchFieldResultsDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
-    virtual void adjustSearchFieldResultsButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintSearchFieldResultsButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
-    virtual void adjustMediaControlStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustMediaControlStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintMediaFullscreenButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintMediaPlayButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintMediaOverlayPlayButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }

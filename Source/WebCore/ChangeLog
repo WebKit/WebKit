@@ -1,3 +1,269 @@
+2014-06-25  Alex Christensen  <achristensen@webkit.org>
+            And peavo@outlook.com  <peavo@outlook.com>
+
+        Use references instead of pointers in RenderTheme.
+        https://bugs.webkit.org/show_bug.cgi?id=134261
+
+        Reviewed by Zalan Bujtas.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::shouldHaveSpinButton):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderThumb::updateAppearance):
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::adjustSizeConstraints):
+        (WebCore::RenderThemeEfl::applyEdjeRTLState):
+        (WebCore::RenderThemeEfl::isControlStyled):
+        (WebCore::RenderThemeEfl::paintThemePart):
+        (WebCore::RenderThemeEfl::supportsFocusRing):
+        (WebCore::RenderThemeEfl::adjustSliderTrackStyle):
+        (WebCore::RenderThemeEfl::adjustSliderThumbStyle):
+        (WebCore::RenderThemeEfl::adjustSliderThumbSize):
+        (WebCore::RenderThemeEfl::adjustCheckboxStyle):
+        (WebCore::RenderThemeEfl::adjustRadioStyle):
+        (WebCore::RenderThemeEfl::adjustButtonStyle):
+        (WebCore::RenderThemeEfl::adjustMenuListStyle):
+        (WebCore::RenderThemeEfl::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeEfl::adjustTextFieldStyle):
+        (WebCore::RenderThemeEfl::adjustTextAreaStyle):
+        (WebCore::RenderThemeEfl::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeEfl::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::RenderThemeEfl::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeEfl::adjustSearchFieldStyle):
+        (WebCore::RenderThemeEfl::adjustInnerSpinButtonStyle):
+        (WebCore::RenderThemeEfl::adjustProgressBarStyle):
+        (WebCore::RenderThemeEfl::animationRepeatIntervalForProgressBar):
+        (WebCore::RenderThemeEfl::animationDurationForProgressBar):
+        * platform/efl/RenderThemeEfl.h:
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::supportsFocusRing):
+        (WebCore::RenderThemeGtk::adjustButtonStyle):
+        (WebCore::RenderThemeGtk::adjustMenuListStyle):
+        (WebCore::RenderThemeGtk::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeGtk::adjustSearchFieldResultsButtonStyle):
+        (WebCore::adjustSearchFieldIconStyle):
+        (WebCore::RenderThemeGtk::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::RenderThemeGtk::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeGtk::adjustSearchFieldStyle):
+        (WebCore::RenderThemeGtk::adjustSliderTrackStyle):
+        (WebCore::RenderThemeGtk::adjustSliderThumbStyle):
+        (WebCore::borderRadiiFromStyle):
+        (WebCore::RenderThemeGtk::paintMediaSliderTrack):
+        (WebCore::RenderThemeGtk::paintMediaSliderThumb):
+        (WebCore::RenderThemeGtk::paintMediaVolumeSliderTrack):
+        (WebCore::RenderThemeGtk::adjustProgressBarStyle):
+        (WebCore::RenderThemeGtk::animationRepeatIntervalForProgressBar):
+        (WebCore::RenderThemeGtk::animationDurationForProgressBar):
+        (WebCore::RenderThemeGtk::calculateProgressRect):
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/gtk/RenderThemeGtk2.cpp:
+        (WebCore::setToggleSize):
+        (WebCore::RenderThemeGtk::setCheckboxSize):
+        (WebCore::RenderThemeGtk::setRadioSize):
+        (WebCore::RenderThemeGtk::comboBoxArrowSize):
+        (WebCore::RenderThemeGtk::getComboBoxPadding):
+        (WebCore::RenderThemeGtk::popupInternalPaddingLeft):
+        (WebCore::RenderThemeGtk::popupInternalPaddingRight):
+        (WebCore::RenderThemeGtk::popupInternalPaddingTop):
+        (WebCore::RenderThemeGtk::popupInternalPaddingBottom):
+        (WebCore::RenderThemeGtk::paintMenuList):
+        (WebCore::RenderThemeGtk::adjustSliderThumbSize):
+        (WebCore::RenderThemeGtk::adjustInnerSpinButtonStyle):
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::setToggleSize):
+        (WebCore::RenderThemeGtk::setCheckboxSize):
+        (WebCore::RenderThemeGtk::setRadioSize):
+        (WebCore::getComboBoxMetrics):
+        (WebCore::RenderThemeGtk::popupInternalPaddingLeft):
+        (WebCore::RenderThemeGtk::popupInternalPaddingRight):
+        (WebCore::RenderThemeGtk::popupInternalPaddingTop):
+        (WebCore::RenderThemeGtk::popupInternalPaddingBottom):
+        (WebCore::RenderThemeGtk::adjustSliderThumbSize):
+        (WebCore::RenderThemeGtk::adjustInnerSpinButtonStyle):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::layout):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutline):
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::RenderMediaControls::adjustMediaSliderThumbSize):
+        * rendering/RenderMediaControls.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::adjustInnerStyle):
+        (RenderMenuList::computeIntrinsicLogicalWidths):
+        (RenderMenuList::menuStyle):
+        * rendering/RenderMeter.cpp:
+        (WebCore::RenderMeter::updateLogicalWidth):
+        (WebCore::RenderMeter::computeLogicalHeight):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintOutline):
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::updateAnimationState):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::isControlStyled):
+        (WebCore::RenderTheme::supportsFocusRing):
+        (WebCore::RenderTheme::stateChanged):
+        (WebCore::RenderTheme::adjustCheckboxStyle):
+        (WebCore::RenderTheme::adjustRadioStyle):
+        (WebCore::RenderTheme::adjustButtonStyle):
+        (WebCore::RenderTheme::adjustInnerSpinButtonStyle):
+        (WebCore::RenderTheme::adjustTextFieldStyle):
+        (WebCore::RenderTheme::adjustTextAreaStyle):
+        (WebCore::RenderTheme::adjustMenuListStyle):
+        (WebCore::RenderTheme::adjustInputFieldSpeechButtonStyle):
+        (WebCore::RenderTheme::adjustMeterStyle):
+        (WebCore::RenderTheme::meterSizeForBounds):
+        (WebCore::RenderTheme::animationRepeatIntervalForProgressBar):
+        (WebCore::RenderTheme::animationDurationForProgressBar):
+        (WebCore::RenderTheme::adjustProgressBarStyle):
+        (WebCore::RenderTheme::shouldHaveSpinButton):
+        (WebCore::RenderTheme::adjustMediaControlStyle):
+        (WebCore::RenderTheme::adjustSliderTrackStyle):
+        (WebCore::RenderTheme::adjustSliderThumbStyle):
+        (WebCore::RenderTheme::adjustSliderThumbSize):
+        (WebCore::RenderTheme::adjustSearchFieldStyle):
+        (WebCore::RenderTheme::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderTheme::adjustSearchFieldDecorationPartStyle):
+        (WebCore::RenderTheme::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::RenderTheme::adjustSearchFieldResultsButtonStyle):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::supportsHover):
+        (WebCore::RenderTheme::minimumMenuListSize):
+        (WebCore::RenderTheme::popupInternalPaddingLeft):
+        (WebCore::RenderTheme::popupInternalPaddingRight):
+        (WebCore::RenderTheme::popupInternalPaddingTop):
+        (WebCore::RenderTheme::popupInternalPaddingBottom):
+        (WebCore::RenderTheme::popupMenuSize):
+        (WebCore::RenderTheme::setCheckboxSize):
+        (WebCore::RenderTheme::setRadioSize):
+        (WebCore::RenderTheme::setButtonSize):
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::adjustCheckboxStyle):
+        (WebCore::RenderThemeIOS::isControlStyled):
+        (WebCore::RenderThemeIOS::adjustRadioStyle):
+        (WebCore::RenderThemeIOS::popupInternalPaddingRight):
+        (WebCore::RenderThemeIOS::adjustRoundBorderRadius):
+        (WebCore::RenderThemeIOS::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeIOS::adjustSliderTrackStyle):
+        (WebCore::RenderThemeIOS::adjustSliderThumbSize):
+        (WebCore::RenderThemeIOS::animationRepeatIntervalForProgressBar):
+        (WebCore::RenderThemeIOS::animationDurationForProgressBar):
+        (WebCore::RenderThemeIOS::adjustSearchFieldStyle):
+        (WebCore::RenderThemeIOS::adjustButtonStyle):
+        (WebCore::RenderThemeIOS::setButtonSize):
+        (WebCore::RenderThemeIOS::shouldHaveSpinButton):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::isControlStyled):
+        (WebCore::RenderThemeMac::controlSizeForFont):
+        (WebCore::RenderThemeMac::sizeForFont):
+        (WebCore::RenderThemeMac::sizeForSystemFont):
+        (WebCore::RenderThemeMac::setSizeFromFont):
+        (WebCore::RenderThemeMac::setFontFromControlSize):
+        (WebCore::RenderThemeMac::controlSizeForSystemFont):
+        (WebCore::RenderThemeMac::adjustTextFieldStyle):
+        (WebCore::RenderThemeMac::adjustTextAreaStyle):
+        (WebCore::RenderThemeMac::paintMenuList):
+        (WebCore::RenderThemeMac::meterSizeForBounds):
+        (WebCore::RenderThemeMac::paintMeter):
+        (WebCore::RenderThemeMac::levelIndicatorFor):
+        (WebCore::RenderThemeMac::progressBarRectForBounds):
+        (WebCore::RenderThemeMac::minimumProgressBarHeight):
+        (WebCore::RenderThemeMac::animationRepeatIntervalForProgressBar):
+        (WebCore::RenderThemeMac::animationDurationForProgressBar):
+        (WebCore::RenderThemeMac::adjustProgressBarStyle):
+        (WebCore::RenderThemeMac::paintProgressBar):
+        (WebCore::RenderThemeMac::adjustMenuListStyle):
+        (WebCore::RenderThemeMac::popupInternalPaddingLeft):
+        (WebCore::RenderThemeMac::popupInternalPaddingRight):
+        (WebCore::RenderThemeMac::popupInternalPaddingTop):
+        (WebCore::RenderThemeMac::popupInternalPaddingBottom):
+        (WebCore::RenderThemeMac::popupMenuSize):
+        (WebCore::RenderThemeMac::minimumMenuListSize):
+        (WebCore::RenderThemeMac::adjustSliderTrackStyle):
+        (WebCore::RenderThemeMac::adjustSliderThumbStyle):
+        (WebCore::RenderThemeMac::setSearchCellState):
+        (WebCore::RenderThemeMac::setSearchFieldSize):
+        (WebCore::RenderThemeMac::adjustSearchFieldStyle):
+        (WebCore::RenderThemeMac::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeMac::adjustSearchFieldDecorationPartStyle):
+        (WebCore::RenderThemeMac::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::RenderThemeMac::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeMac::adjustSliderThumbSize):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::isControlStyled):
+        (WebCore::RenderThemeSafari::adjustRepaintRect):
+        (WebCore::RenderThemeSafari::baselinePosition):
+        (WebCore::RenderThemeSafari::controlSizeForFont):
+        (WebCore::RenderThemeSafari::sizeForFont):
+        (WebCore::RenderThemeSafari::sizeForSystemFont):
+        (WebCore::RenderThemeSafari::setSizeFromFont):
+        (WebCore::RenderThemeSafari::setFontFromControlSize):
+        (WebCore::RenderThemeSafari::controlSizeForSystemFont):
+        (WebCore::RenderThemeSafari::paintCheckbox):
+        (WebCore::RenderThemeSafari::setCheckboxSize):
+        (WebCore::RenderThemeSafari::paintRadio):
+        (WebCore::RenderThemeSafari::setRadioSize):
+        (WebCore::RenderThemeSafari::setButtonPaddingFromControlSize):
+        (WebCore::RenderThemeSafari::adjustButtonStyle):
+        (WebCore::RenderThemeSafari::setButtonSize):
+        (WebCore::RenderThemeSafari::adjustTextFieldStyle):
+        (WebCore::RenderThemeSafari::adjustTextAreaStyle):
+        (WebCore::RenderThemeSafari::paintMenuList):
+        (WebCore::RenderThemeSafari::adjustMenuListStyle):
+        (WebCore::RenderThemeSafari::popupInternalPaddingLeft):
+        (WebCore::RenderThemeSafari::popupInternalPaddingRight):
+        (WebCore::RenderThemeSafari::popupInternalPaddingTop):
+        (WebCore::RenderThemeSafari::popupInternalPaddingBottom):
+        (WebCore::RenderThemeSafari::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeSafari::minimumMenuListSize):
+        (WebCore::RenderThemeSafari::adjustSliderThumbStyle):
+        (WebCore::RenderThemeSafari::adjustSliderThumbSize):
+        (WebCore::RenderThemeSafari::setSearchFieldSize):
+        (WebCore::RenderThemeSafari::adjustSearchFieldStyle):
+        (WebCore::RenderThemeSafari::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeSafari::adjustSearchFieldDecorationPartStyle):
+        (WebCore::RenderThemeSafari::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::RenderThemeSafari::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeSafari::adjustMeterStyle):
+        (WebCore::RenderThemeSafari::meterSizeForBounds):
+        (WebCore::RenderThemeSafari::paintMeter):
+        * rendering/RenderThemeSafari.h:
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::supportsHover):
+        (WebCore::RenderThemeWin::supportsFocusRing):
+        (WebCore::RenderThemeWin::adjustInnerSpinButtonStyle):
+        (WebCore::RenderThemeWin::setCheckboxSize):
+        (WebCore::RenderThemeWin::paintTextField):
+        (WebCore::RenderThemeWin::paintMenuList):
+        (WebCore::RenderThemeWin::adjustMenuListStyle):
+        (WebCore::RenderThemeWin::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeWin::adjustSliderThumbSize):
+        (WebCore::RenderThemeWin::adjustSearchFieldStyle):
+        (WebCore::RenderThemeWin::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeWin::adjustSearchFieldDecorationPartStyle):
+        (WebCore::RenderThemeWin::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::RenderThemeWin::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeWin::adjustMeterStyle):
+        (WebCore::RenderThemeWin::meterSizeForBounds):
+        (WebCore::RenderThemeWin::paintMeter):
+        * rendering/RenderThemeWin.h:
+        (WebCore::RenderThemeWin::paintCheckbox):
+        (WebCore::RenderThemeWin::paintRadio):
+        (WebCore::RenderThemeWin::setRadioSize):
+        (WebCore::RenderThemeWin::paintTextArea):
+        (WebCore::RenderThemeWin::popupOptionSupportsTextIndent):
+        (WebCore::RenderThemeWin::paintSearchFieldDecorationPart):
+        (WebCore::RenderThemeWin::adjustButtonStyle):
+        (WebCore::RenderThemeWin::adjustTextFieldStyle):
+        (WebCore::RenderThemeWin::adjustTextAreaStyle):
+        (WebCore::RenderThemeWin::shouldShowPlaceholderWhenFocused):
+
 2014-06-25  Benjamin Poulain  <benjamin@webkit.org>
 
         [Mac] Update the time base of event's timestamp when the system time changes

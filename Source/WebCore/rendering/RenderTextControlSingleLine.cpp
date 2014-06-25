@@ -225,7 +225,7 @@ void RenderTextControlSingleLine::layout()
 #if PLATFORM(IOS)
     // FIXME: We should not be adjusting styles during layout. <rdar://problem/7675493>
     if (inputElement().isSearchField())
-        RenderThemeIOS::adjustRoundBorderRadius(style(), this);
+        RenderThemeIOS::adjustRoundBorderRadius(style(), *this);
 #endif
 }
 
