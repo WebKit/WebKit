@@ -59,7 +59,7 @@ WebCore::TestEventConstructor* core(WebKitDOMTestEventConstructor* request)
 WebKitDOMTestEventConstructor* wrapTestEventConstructor(WebCore::TestEventConstructor* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR(g_object_new(WEBKIT_DOM_TYPE_TEST_EVENT_CONSTRUCTOR, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR(g_object_new(WEBKIT_DOM_TYPE_TEST_EVENT_CONSTRUCTOR, "core-object", coreObject, nullptr));
 }
 
 } // namespace WebKit

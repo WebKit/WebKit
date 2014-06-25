@@ -59,7 +59,7 @@ WebCore::TestNamedConstructor* core(WebKitDOMTestNamedConstructor* request)
 WebKitDOMTestNamedConstructor* wrapTestNamedConstructor(WebCore::TestNamedConstructor* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_NAMED_CONSTRUCTOR(g_object_new(WEBKIT_DOM_TYPE_TEST_NAMED_CONSTRUCTOR, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_NAMED_CONSTRUCTOR(g_object_new(WEBKIT_DOM_TYPE_TEST_NAMED_CONSTRUCTOR, "core-object", coreObject, nullptr));
 }
 
 } // namespace WebKit

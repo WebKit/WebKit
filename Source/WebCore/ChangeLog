@@ -1,3 +1,44 @@
+2014-06-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update GObject DOM bindings test results after r170422.
+
+        * bindings/scripts/test/GObject/WebKitDOMTestActiveDOMObject.cpp:
+        (WebKit::wrapTestActiveDOMObject):
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        (WebKit::wrapTestCallback):
+        * bindings/scripts/test/GObject/WebKitDOMTestCustomNamedGetter.cpp:
+        (WebKit::wrapTestCustomNamedGetter):
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructor.cpp:
+        (WebKit::wrapTestEventConstructor):
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.cpp:
+        (WebKit::wrapTestEventTarget):
+        * bindings/scripts/test/GObject/WebKitDOMTestException.cpp:
+        (WebKit::wrapTestException):
+        * bindings/scripts/test/GObject/WebKitDOMTestGenerateIsReachable.cpp:
+        (WebKit::wrapTestGenerateIsReachable):
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        (WebKit::wrapTestInterface):
+        * bindings/scripts/test/GObject/WebKitDOMTestMediaQueryListListener.cpp:
+        (WebKit::wrapTestMediaQueryListListener):
+        * bindings/scripts/test/GObject/WebKitDOMTestNamedConstructor.cpp:
+        (WebKit::wrapTestNamedConstructor):
+        * bindings/scripts/test/GObject/WebKitDOMTestNode.cpp:
+        (WebKit::wrapTestNode):
+        * bindings/scripts/test/GObject/WebKitDOMTestNondeterministic.cpp:
+        (WebKit::wrapTestNondeterministic):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (WebKit::wrapTestObj):
+        * bindings/scripts/test/GObject/WebKitDOMTestOverloadedConstructors.cpp:
+        (WebKit::wrapTestOverloadedConstructors):
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.cpp:
+        (WebKit::wrapTestSerializedScriptValueInterface):
+        * bindings/scripts/test/GObject/WebKitDOMTestTypedefs.cpp:
+        (WebKit::wrapTestTypedefs):
+        * bindings/scripts/test/GObject/WebKitDOMattribute.cpp:
+        (WebKit::wrapattribute):
+        * bindings/scripts/test/GObject/WebKitDOMreadonly.cpp:
+        (WebKit::wrapreadonly):
+
 2014-06-24  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Some of DOM bindings macros are misnamed

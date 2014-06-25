@@ -51,7 +51,7 @@ WebCore::TestNode* core(WebKitDOMTestNode* request)
 WebKitDOMTestNode* wrapTestNode(WebCore::TestNode* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_NODE(g_object_new(WEBKIT_DOM_TYPE_TEST_NODE, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_NODE(g_object_new(WEBKIT_DOM_TYPE_TEST_NODE, "core-object", coreObject, nullptr));
 }
 
 } // namespace WebKit

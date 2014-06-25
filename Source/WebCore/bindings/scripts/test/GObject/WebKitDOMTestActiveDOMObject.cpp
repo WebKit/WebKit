@@ -60,7 +60,7 @@ WebCore::TestActiveDOMObject* core(WebKitDOMTestActiveDOMObject* request)
 WebKitDOMTestActiveDOMObject* wrapTestActiveDOMObject(WebCore::TestActiveDOMObject* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_ACTIVE_DOM_OBJECT(g_object_new(WEBKIT_DOM_TYPE_TEST_ACTIVE_DOM_OBJECT, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_ACTIVE_DOM_OBJECT(g_object_new(WEBKIT_DOM_TYPE_TEST_ACTIVE_DOM_OBJECT, "core-object", coreObject, nullptr));
 }
 
 } // namespace WebKit

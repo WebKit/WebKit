@@ -59,7 +59,7 @@ WebCore::TestCustomNamedGetter* core(WebKitDOMTestCustomNamedGetter* request)
 WebKitDOMTestCustomNamedGetter* wrapTestCustomNamedGetter(WebCore::TestCustomNamedGetter* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_CUSTOM_NAMED_GETTER(g_object_new(WEBKIT_DOM_TYPE_TEST_CUSTOM_NAMED_GETTER, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_CUSTOM_NAMED_GETTER(g_object_new(WEBKIT_DOM_TYPE_TEST_CUSTOM_NAMED_GETTER, "core-object", coreObject, nullptr));
 }
 
 } // namespace WebKit

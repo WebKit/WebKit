@@ -67,7 +67,7 @@ WebCore::TestCallback* core(WebKitDOMTestCallback* request)
 WebKitDOMTestCallback* wrapTestCallback(WebCore::TestCallback* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_CALLBACK(g_object_new(WEBKIT_DOM_TYPE_TEST_CALLBACK, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_CALLBACK(g_object_new(WEBKIT_DOM_TYPE_TEST_CALLBACK, "core-object", coreObject, nullptr));
 }
 
 } // namespace WebKit

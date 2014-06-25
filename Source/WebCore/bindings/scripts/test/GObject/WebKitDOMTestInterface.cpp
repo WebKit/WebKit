@@ -66,7 +66,7 @@ WebCore::TestInterface* core(WebKitDOMTestInterface* request)
 WebKitDOMTestInterface* wrapTestInterface(WebCore::TestInterface* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_INTERFACE(g_object_new(WEBKIT_DOM_TYPE_TEST_INTERFACE, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_INTERFACE(g_object_new(WEBKIT_DOM_TYPE_TEST_INTERFACE, "core-object", coreObject, nullptr));
 }
 
 } // namespace WebKit

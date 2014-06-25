@@ -63,7 +63,7 @@ WebCore::TestEventTarget* core(WebKitDOMTestEventTarget* request)
 WebKitDOMTestEventTarget* wrapTestEventTarget(WebCore::TestEventTarget* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_EVENT_TARGET(g_object_new(WEBKIT_DOM_TYPE_TEST_EVENT_TARGET, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_EVENT_TARGET(g_object_new(WEBKIT_DOM_TYPE_TEST_EVENT_TARGET, "core-object", coreObject, nullptr));
 }
 
 } // namespace WebKit

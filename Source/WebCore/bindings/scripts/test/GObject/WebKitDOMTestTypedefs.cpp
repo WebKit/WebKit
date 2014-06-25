@@ -63,7 +63,7 @@ WebCore::TestTypedefs* core(WebKitDOMTestTypedefs* request)
 WebKitDOMTestTypedefs* wrapTestTypedefs(WebCore::TestTypedefs* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_TYPEDEFS(g_object_new(WEBKIT_DOM_TYPE_TEST_TYPEDEFS, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_TYPEDEFS(g_object_new(WEBKIT_DOM_TYPE_TEST_TYPEDEFS, "core-object", coreObject, nullptr));
 }
 
 } // namespace WebKit

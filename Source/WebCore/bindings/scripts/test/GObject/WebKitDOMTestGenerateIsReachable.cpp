@@ -59,7 +59,7 @@ WebCore::TestGenerateIsReachable* core(WebKitDOMTestGenerateIsReachable* request
 WebKitDOMTestGenerateIsReachable* wrapTestGenerateIsReachable(WebCore::TestGenerateIsReachable* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_GENERATE_IS_REACHABLE(g_object_new(WEBKIT_DOM_TYPE_TEST_GENERATE_IS_REACHABLE, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_GENERATE_IS_REACHABLE(g_object_new(WEBKIT_DOM_TYPE_TEST_GENERATE_IS_REACHABLE, "core-object", coreObject, nullptr));
 }
 
 } // namespace WebKit

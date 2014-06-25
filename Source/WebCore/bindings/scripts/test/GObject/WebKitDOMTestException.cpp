@@ -59,7 +59,7 @@ WebCore::TestException* core(WebKitDOMTestException* request)
 WebKitDOMTestException* wrapTestException(WebCore::TestException* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_EXCEPTION(g_object_new(WEBKIT_DOM_TYPE_TEST_EXCEPTION, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_EXCEPTION(g_object_new(WEBKIT_DOM_TYPE_TEST_EXCEPTION, "core-object", coreObject, nullptr));
 }
 
 } // namespace WebKit

@@ -59,7 +59,7 @@ WebCore::TestNondeterministic* core(WebKitDOMTestNondeterministic* request)
 WebKitDOMTestNondeterministic* wrapTestNondeterministic(WebCore::TestNondeterministic* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_NONDETERMINISTIC(g_object_new(WEBKIT_DOM_TYPE_TEST_NONDETERMINISTIC, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_NONDETERMINISTIC(g_object_new(WEBKIT_DOM_TYPE_TEST_NONDETERMINISTIC, "core-object", coreObject, nullptr));
 }
 
 } // namespace WebKit

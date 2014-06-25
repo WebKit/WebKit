@@ -64,7 +64,7 @@ WebCore::TestSerializedScriptValueInterface* core(WebKitDOMTestSerializedScriptV
 WebKitDOMTestSerializedScriptValueInterface* wrapTestSerializedScriptValueInterface(WebCore::TestSerializedScriptValueInterface* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(g_object_new(WEBKIT_DOM_TYPE_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(g_object_new(WEBKIT_DOM_TYPE_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE, "core-object", coreObject, nullptr));
 }
 
 } // namespace WebKit

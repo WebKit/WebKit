@@ -59,7 +59,7 @@ WebCore::readonly* core(WebKitDOMreadonly* request)
 WebKitDOMreadonly* wrapreadonly(WebCore::readonly* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_READONLY(g_object_new(WEBKIT_DOM_TYPE_READONLY, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_READONLY(g_object_new(WEBKIT_DOM_TYPE_READONLY, "core-object", coreObject, nullptr));
 }
 
 } // namespace WebKit

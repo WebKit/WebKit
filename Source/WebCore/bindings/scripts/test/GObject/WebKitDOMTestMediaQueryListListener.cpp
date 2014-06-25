@@ -59,7 +59,7 @@ WebCore::TestMediaQueryListListener* core(WebKitDOMTestMediaQueryListListener* r
 WebKitDOMTestMediaQueryListListener* wrapTestMediaQueryListListener(WebCore::TestMediaQueryListListener* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_MEDIA_QUERY_LIST_LISTENER(g_object_new(WEBKIT_DOM_TYPE_TEST_MEDIA_QUERY_LIST_LISTENER, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_MEDIA_QUERY_LIST_LISTENER(g_object_new(WEBKIT_DOM_TYPE_TEST_MEDIA_QUERY_LIST_LISTENER, "core-object", coreObject, nullptr));
 }
 
 } // namespace WebKit

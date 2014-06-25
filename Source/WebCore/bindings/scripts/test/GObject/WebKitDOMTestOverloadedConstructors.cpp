@@ -59,7 +59,7 @@ WebCore::TestOverloadedConstructors* core(WebKitDOMTestOverloadedConstructors* r
 WebKitDOMTestOverloadedConstructors* wrapTestOverloadedConstructors(WebCore::TestOverloadedConstructors* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_OVERLOADED_CONSTRUCTORS(g_object_new(WEBKIT_DOM_TYPE_TEST_OVERLOADED_CONSTRUCTORS, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_OVERLOADED_CONSTRUCTORS(g_object_new(WEBKIT_DOM_TYPE_TEST_OVERLOADED_CONSTRUCTORS, "core-object", coreObject, nullptr));
 }
 
 } // namespace WebKit

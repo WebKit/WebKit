@@ -59,7 +59,7 @@ WebCore::attribute* core(WebKitDOMattribute* request)
 WebKitDOMattribute* wrapattribute(WebCore::attribute* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_ATTRIBUTE(g_object_new(WEBKIT_DOM_TYPE_ATTRIBUTE, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_ATTRIBUTE(g_object_new(WEBKIT_DOM_TYPE_ATTRIBUTE, "core-object", coreObject, nullptr));
 }
 
 } // namespace WebKit
