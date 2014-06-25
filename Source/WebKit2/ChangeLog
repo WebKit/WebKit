@@ -1,5 +1,18 @@
 2014-06-24  Benjamin Poulain  <bpoulain@apple.com>
 
+        [iOS][WK2] We should not start potential tap activation unless the tap gesture recognizer succeed
+        https://bugs.webkit.org/show_bug.cgi?id=134277
+        <rdar://problem/17439973>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/ios/WKSyntheticClickTapGestureRecognizer.m:
+        (-[WKSyntheticClickTapGestureRecognizer setState:]):
+        We were calling the _gestureRecognizedAction even for failure states. The potential activation work
+        is not light on the Web Process, we should not start if we don't care about the result.
+
+2014-06-24  Benjamin Poulain  <bpoulain@apple.com>
+
         [iOS][WK2] Adopt the C API of UIWebTouchEventsGestureRecognizer for touch event mapping
         https://bugs.webkit.org/show_bug.cgi?id=134234
 

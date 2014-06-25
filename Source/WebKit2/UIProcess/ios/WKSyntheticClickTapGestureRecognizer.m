@@ -51,7 +51,8 @@
 
 - (void)setState:(UIGestureRecognizerState)state
 {
-    [_gestureRecognizedTarget performSelector:_gestureRecognizedAction withObject:self];
+    if (state == UIGestureRecognizerStateEnded)
+        [_gestureRecognizedTarget performSelector:_gestureRecognizedAction withObject:self];
     [super setState:state];
 }
 
