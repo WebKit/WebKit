@@ -1,3 +1,10 @@
+2014-06-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Speculative 32-bit Mac build fix after r170402.
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::advanceByCombiningCharacterSequence):
+
 2014-06-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS]: WK2 Inspector Node Highlighting

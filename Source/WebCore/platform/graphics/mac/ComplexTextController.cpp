@@ -269,7 +269,8 @@ static bool advanceByCombiningCharacterSequence(const UChar*& iterator, const UC
     markCount = 0;
 
     unsigned i = 0;
-    U16_NEXT(iterator, i, end - iterator, baseCharacter);
+    unsigned remainingCharacters = end - iterator;
+    U16_NEXT(iterator, i, remainingCharacters, baseCharacter);
     iterator = iterator + i;
 
     if (U16_IS_SURROGATE(baseCharacter))
