@@ -1,3 +1,22 @@
+2014-06-25  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash at com.apple.WebCore: WebCore::AlternativeTextController::removeDictationAlternativesForMarker + 43
+        https://bugs.webkit.org/show_bug.cgi?id=134226
+
+        Reviewed by Enrica Casucci.
+
+        Unchecked access of details pointer in the Document marker led to the crash.
+        It seems erroneous to allow creation of a DocumentMarker without details when one is expected, because it
+        carries the dictation context (not just the description).
+        Also, add in ASSERTs to catch scenarios where a nullptr might be passed in.
+
+        Test: platform/mac/editing/input/crash-for-empty-text-alternative.html
+
+        * dom/DocumentMarker.cpp:
+        (WebCore::DocumentMarker::DocumentMarker):
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::removeDictationAlternativesForMarker):
+
 2014-06-25  Laszlo Gombos  <l.gombos@samsung.com>
 
         Remove build guard for progress element

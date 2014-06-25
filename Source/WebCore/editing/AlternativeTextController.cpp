@@ -702,9 +702,11 @@ bool AlternativeTextController::insertDictatedText(const String& text, const Vec
 void AlternativeTextController::removeDictationAlternativesForMarker(const DocumentMarker* marker)
 {
 #if USE(DICTATION_ALTERNATIVES)
-    DictationMarkerDetails* details = static_cast<DictationMarkerDetails*>(marker->details());
-    if (AlternativeTextClient* client = alternativeTextClient())
-        client->removeDictationAlternatives(details->dictationContext());
+    ASSERT(marker->details());
+    if (DictationMarkerDetails* details = static_cast<DictationMarkerDetails*>(marker->details())) {
+        if (AlternativeTextClient* client = alternativeTextClient())
+            client->removeDictationAlternatives(details->dictationContext());
+    }
 #else
     UNUSED_PARAM(marker);
 #endif

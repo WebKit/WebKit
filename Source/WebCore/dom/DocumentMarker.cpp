@@ -111,8 +111,9 @@ DocumentMarker::DocumentMarker(MarkerType type, unsigned startOffset, unsigned e
     : m_type(type)
     , m_startOffset(startOffset)
     , m_endOffset(endOffset)
-    , m_details(description.isEmpty() ? 0 : DocumentMarkerDescription::create(description))
+    , m_details(DocumentMarkerDescription::create(description))
 {
+    ASSERT(m_details);
 }
 
 DocumentMarker::DocumentMarker(unsigned startOffset, unsigned endOffset, bool activeMatch)
@@ -121,6 +122,7 @@ DocumentMarker::DocumentMarker(unsigned startOffset, unsigned endOffset, bool ac
     , m_endOffset(endOffset)
     , m_details(DocumentMarkerTextMatch::instanceFor(activeMatch))
 {
+    ASSERT(m_details);
 }
 
 DocumentMarker::DocumentMarker(MarkerType type, unsigned startOffset, unsigned endOffset, PassRefPtr<DocumentMarkerDetails> details)
@@ -129,6 +131,7 @@ DocumentMarker::DocumentMarker(MarkerType type, unsigned startOffset, unsigned e
     , m_endOffset(endOffset)
     , m_details(details)
 {
+    ASSERT(m_details);
 }
 
 void DocumentMarker::shiftOffsets(int delta)

@@ -1,3 +1,15 @@
+2014-06-25  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash at com.apple.WebCore: WebCore::AlternativeTextController::removeDictationAlternativesForMarker + 43
+        https://bugs.webkit.org/show_bug.cgi?id=134226
+
+        Reviewed by Enrica Casucci.
+
+        * platform/mac-wk2/TestExpectations:
+            Skip test on wk2 because dictation related tests are not yet supported (89401)
+        * platform/mac/editing/input/crash-for-empty-text-alternative-expected.txt: Added.
+        * platform/mac/editing/input/crash-for-empty-text-alternative.html: Added.
+
 2014-06-25  Laszlo Gombos  <l.gombos@samsung.com>
 
         Remove build guard for progress element

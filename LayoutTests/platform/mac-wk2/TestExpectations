@@ -184,6 +184,7 @@ storage/websql/transaction-error-callback-isolated-world.html
 # Missing functionality of textInputController
 # https://bugs.webkit.org/show_bug.cgi?id=89401
 platform/mac/editing/input/insert-dictated-text.html
+platform/mac/editing/input/crash-for-empty-text-alternative.html
 platform/mac/editing/input/edit-dictated-text-with-alternative.html
 platform/mac/editing/attributed-string/
 
