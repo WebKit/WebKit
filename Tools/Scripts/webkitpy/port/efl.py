@@ -110,6 +110,7 @@ class EflPort(Port):
 
     def _search_paths(self):
         search_paths = []
+        search_paths.append(self.port_name + '-wk2')
         search_paths.append('wk2')
         search_paths.append(self.port_name)
         return search_paths
