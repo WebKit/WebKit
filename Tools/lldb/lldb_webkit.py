@@ -30,9 +30,11 @@
 """
 
 import lldb
+import string
 import struct
 
 def __lldb_init_module(debugger, dict):
+    debugger.HandleCommand('command script add -f lldb_webkit.btjs btjs')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFString_SummaryProvider WTF::String')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFStringImpl_SummaryProvider WTF::StringImpl')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFAtomicString_SummaryProvider WTF::AtomicString')
@@ -95,6 +97,43 @@ def WebCoreLayoutSize_SummaryProvider(valobj, dict):
 def WebCoreLayoutPoint_SummaryProvider(valobj, dict):
     provider = WebCoreLayoutPointProvider(valobj, dict)
     return "{ x = %s, y = %s }" % (provider.get_x(), provider.get_y())
+
+
+def btjs(debugger, command, result, internal_dict):
+    '''Prints a stack trace of current thread with JavaScript frames decoded.  Takes optional frame count argument'''
+
+    target = debugger.GetSelectedTarget()
+    addressFormat = '#0{width}x'.format(width=target.GetAddressByteSize() * 2 + 2)
+    process = target.GetProcess()
+    thread = process.GetSelectedThread()
+
+    backtraceDepth = thread.GetNumFrames()
+
+    if len(command) == 1:
+        try:
+            backtraceDepth = int(command)
+        except ValueError:
+            return
+
+    threadFormat = '* thread #{num}: tid = {tid:#x}, {pcAddr:' + addressFormat + '}, queue = \'{queueName}, stop reason = {stopReason}'
+    print threadFormat.format(num=thread.GetIndexID(), tid=thread.GetThreadID(), pcAddr=thread.GetFrameAtIndex(0).GetPC(), queueName=thread.GetQueueName(), stopReason=thread.GetStopDescription(30))
+
+    for frame in thread:
+        if backtraceDepth < 1:
+            break
+
+        backtraceDepth = backtraceDepth - 1
+
+        function = frame.GetFunction()
+
+        if not frame or not frame.GetSymbol() or frame.GetSymbol().GetName() == "llint_entry":
+            callFrame = frame.GetSP()
+            JSFrameDescription = frame.EvaluateExpression("((JSC::CallFrame*)0x%x)->describeFrame()" % frame.GetFP()).GetSummary()
+            JSFrameDescription = string.strip(JSFrameDescription, '"')
+            frameFormat = '    frame #{num}: {addr:' + addressFormat + '} {desc}'
+            print frameFormat.format(num=frame.GetFrameID(), addr=frame.GetPC(), desc=JSFrameDescription)
+        else:
+            print '    %s' % frame
 
 # FIXME: Provide support for the following types:
 # def WTFVector_SummaryProvider(valobj, dict):

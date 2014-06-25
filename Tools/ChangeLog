@@ -1,3 +1,14 @@
+2014-06-25  Michael Saboff  <msaboff@apple.com>
+
+        Provide javascript aware backtrace script for lldb
+        https://bugs.webkit.org/show_bug.cgi?id=134276
+
+        Reviewed by Jer Noble.
+
+        * lldb/lldb_webkit.py:
+        (__lldb_init_module):
+        (btjs): New scripted command to display a backtrace that shows JavaScript frames with details.
+
 2014-06-25  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         REGRESSION (r170426) Broke two python tests
