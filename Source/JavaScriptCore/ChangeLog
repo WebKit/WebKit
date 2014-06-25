@@ -1,3 +1,15 @@
+2014-06-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, rolling out r166876.
+
+        Caused some ECMA test262 failures
+
+        Reverted changeset:
+
+        "Date object needs to check for ES5 15.9.1.14 TimeClip limit."
+        https://bugs.webkit.org/show_bug.cgi?id=131248
+        http://trac.webkit.org/changeset/166876
+
 2014-06-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening.
