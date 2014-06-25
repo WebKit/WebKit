@@ -300,7 +300,7 @@ void WebPageProxy::cancelComposition()
 
 #endif // !USE(ASYNC_NSTEXTINPUTCLIENT)
 
-void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<TextAlternativeWithRange>& dictationAlternativesWithRange)
+void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<TextAlternativeWithRange>& dictationAlternativesWithRange, bool registerUndoGroup)
 {
 #if USE(DICTATION_ALTERNATIVES)
     if (!isValid())
@@ -315,13 +315,13 @@ void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRang
     }
 
     if (dictationAlternatives.isEmpty()) {
-        insertTextAsync(text, replacementRange);
+        insertTextAsync(text, replacementRange, registerUndoGroup);
         return;
     }
 
-    process().send(Messages::WebPage::InsertDictatedTextAsync(text, replacementRange, dictationAlternatives), m_pageID);
+    process().send(Messages::WebPage::InsertDictatedTextAsync(text, replacementRange, dictationAlternatives, registerUndoGroup), m_pageID);
 #else
-    insertTextAsync(text, replacementRange);
+    insertTextAsync(text, replacementRange, registerUndoGroup);
 #endif
 }
 

@@ -412,7 +412,7 @@ void WebPage::cancelComposition(EditorState& newState)
 
 #endif // !USE(ASYNC_NSTEXTINPUTCLIENT)
 
-void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& replacementEditingRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations)
+void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& replacementEditingRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool registerUndoGroup)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
@@ -422,6 +422,9 @@ void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& re
             frame.selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
     }
 
+    if (registerUndoGroup)
+        send(Messages::WebPageProxy::RegisterInsertionUndoGrouping());
+    
     ASSERT(!frame.editor().hasComposition());
     frame.editor().insertDictatedText(text, dictationAlternativeLocations, nullptr);
 }

@@ -4035,7 +4035,7 @@ bool WebPage::shouldUseCustomContentProviderForResponse(const ResourceResponse& 
 
 #if PLATFORM(COCOA)
 
-void WebPage::insertTextAsync(const String& text, const EditingRange& replacementEditingRange)
+void WebPage::insertTextAsync(const String& text, const EditingRange& replacementEditingRange, bool registerUndoGroup)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
@@ -4044,7 +4044,10 @@ void WebPage::insertTextAsync(const String& text, const EditingRange& replacemen
         if (replacementRange)
             frame.selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
     }
-
+    
+    if (registerUndoGroup)
+        send(Messages::WebPageProxy::RegisterInsertionUndoGrouping());
+    
     if (!frame.editor().hasComposition()) {
         // An insertText: might be handled by other responders in the chain if we don't handle it.
         // One example is space bar that results in scrolling down the page.

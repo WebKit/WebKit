@@ -58,6 +58,7 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/TextUndoInsertionMarkupMac.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
@@ -359,6 +360,13 @@ void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy> prpComm
     if (!actionName.isEmpty())
         [undoManager setActionName:(NSString *)actionName];
 }
+
+#if USE(INSERTION_UNDO_GROUPING)
+void PageClientImpl::registerInsertionUndoGrouping()
+{
+    registerInsertionUndoGroupingWithUndoManager([m_wkView undoManager]);
+}
+#endif
 
 void PageClientImpl::clearAllEditCommands()
 {

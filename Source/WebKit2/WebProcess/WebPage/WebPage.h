@@ -589,7 +589,7 @@ public:
     
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
 
-    void insertTextAsync(const String& text, const EditingRange& replacementRange);
+    void insertTextAsync(const String& text, const EditingRange& replacementRange, bool registerUndoGroup = false);
     void getMarkedRangeAsync(uint64_t callbackID);
     void getSelectedRangeAsync(uint64_t callbackID);
     void characterIndexForPointAsync(const WebCore::IntPoint&, uint64_t callbackID);
@@ -598,7 +598,7 @@ public:
     void confirmCompositionAsync();
 
 #if PLATFORM(MAC)
-    void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations);
+    void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool registerUndoGroup = false);
     void attributedSubstringForCharacterRangeAsync(const EditingRange&, uint64_t callbackID);
 #if !USE(ASYNC_NSTEXTINPUTCLIENT)
     void insertText(const String& text, const EditingRange& replacementRange, bool& handled, EditorState& newState);

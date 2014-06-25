@@ -113,6 +113,7 @@
 #import <WebCore/StyleProperties.h>
 #import <WebCore/Text.h>
 #import <WebCore/TextAlternativeWithRange.h>
+#import <WebCore/TextUndoInsertionMarkupMac.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebNSAttributedStringExtras.h>
 #import <WebCore/markup.h>
@@ -6041,6 +6042,9 @@ static BOOL writingDirectionKeyBindingsEnabled()
 #if USE(DICTATION_ALTERNATIVES)
                            NSTextAlternativesAttributeName,
 #endif
+#if USE(INSERTION_UNDO_GROUPING)
+                           NSTextInsertionUndoableAttributeName,
+#endif
                            nil];
         // NSText also supports the following attributes, but it's
         // hard to tell which are really required for text input to
@@ -6385,6 +6389,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     NSString *text;
     NSRange replacementRange = { NSNotFound, 0 };
     bool isFromInputMethod = coreFrame && coreFrame->editor().hasComposition();
+#if USE(INSERTION_UNDO_GROUPING)
+    bool registerUndoGroup = false;
+#endif
 
     Vector<DictationAlternative> dictationAlternativeLocations;
 #if !PLATFORM(IOS)
@@ -6394,6 +6401,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         collectDictationTextAlternatives(string, textAlternatives);
         if (!textAlternatives.isEmpty())
             [[self _webView] _getWebCoreDictationAlternatives:dictationAlternativeLocations fromTextAlternatives:textAlternatives];
+#endif
+#if USE(INSERTION_UNDO_GROUPING)
+        registerUndoGroup = shouldRegisterInsertionUndoGroup(string);
 #endif
         // FIXME: We ignore most attributes from the string, so for example inserting from Character Palette loses font and glyph variation data.
         // It does not look like any input methods ever use insertText: with attributes other than NSTextInputReplacementRangeAttributeName.
@@ -6439,6 +6449,11 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
             eventHandled = coreFrame->editor().insertDictatedText(eventText, dictationAlternativeLocations, event);
         else
             eventHandled = coreFrame->editor().insertText(eventText, event);
+        
+#if USE(INSERTION_UNDO_GROUPING)
+        if (registerUndoGroup)
+            registerInsertionUndoGroupingWithUndoManager([[self _webView] undoManager]);
+#endif
     } else {
         eventHandled = true;
         coreFrame->editor().confirmComposition(eventText);

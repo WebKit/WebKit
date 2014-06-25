@@ -3396,6 +3396,13 @@ void WebPageProxy::registerEditCommandForUndo(uint64_t commandID, uint32_t editA
 {
     registerEditCommand(WebEditCommandProxy::create(commandID, static_cast<EditAction>(editAction), this), Undo);
 }
+    
+void WebPageProxy::registerInsertionUndoGrouping()
+{
+#if USE(INSERTION_UNDO_GROUPING)
+    m_pageClient.registerInsertionUndoGrouping();
+#endif
+}
 
 void WebPageProxy::canUndoRedo(uint32_t action, bool& result)
 {
@@ -4951,12 +4958,12 @@ void WebPageProxy::addMIMETypeWithCustomContentProvider(const String& mimeType)
 
 #if PLATFORM(COCOA)
 
-void WebPageProxy::insertTextAsync(const String& text, const EditingRange& replacementRange)
+void WebPageProxy::insertTextAsync(const String& text, const EditingRange& replacementRange, bool registerUndoGroup)
 {
     if (!isValid())
         return;
 
-    process().send(Messages::WebPage::InsertTextAsync(text, replacementRange), m_pageID);
+    process().send(Messages::WebPage::InsertTextAsync(text, replacementRange, registerUndoGroup), m_pageID);
 }
 
 void WebPageProxy::getMarkedRangeAsync(std::function<void (EditingRange, CallbackBase::Error)> callbackFunction)

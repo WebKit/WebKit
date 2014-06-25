@@ -235,6 +235,13 @@ void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPag
     notImplemented();
 }
 
+#if USE(INSERTION_UNDO_GROUPING)
+void PageClientImpl::registerInsertionUndoGrouping()
+{
+    notImplemented();
+}
+#endif
+
 void PageClientImpl::clearAllEditCommands()
 {
     notImplemented();

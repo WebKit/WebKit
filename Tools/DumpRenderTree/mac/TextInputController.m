@@ -38,6 +38,15 @@
 #define SUPPORT_DICTATION_ALTERNATIVES
 #import <AppKit/NSTextAlternatives.h>
 #endif
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+#define SUPPORT_INSERTION_UNDO_GROUPING
+#if __has_include(<AppKit/NSTextInputContext_Private.h>)
+#import <AppKit/NSTextInputContext_Private.h>
+#else
+extern "C" NSString *NSTextInsertionUndoableAttributeName;
+#endif
+#endif
+
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
@@ -232,7 +241,8 @@
             || aSelector == @selector(validAttributesForMarkedText)
             || aSelector == @selector(attributedStringWithString:)
             || aSelector == @selector(setInputMethodHandler:)
-            || aSelector == @selector(dictatedStringWithPrimaryString:alternative:alternativeOffset:alternativeLength:))
+            || aSelector == @selector(dictatedStringWithPrimaryString:alternative:alternativeOffset:alternativeLength:)
+            || aSelector == @selector(stringWithUndoGroupingInsertion:))
         return NO;
     return YES;
 }
@@ -261,6 +271,8 @@
         return @"setInputMethodHandler";
     else if (aSelector == @selector(dictatedStringWithPrimaryString:alternative:alternativeOffset:alternativeLength:))
         return @"makeDictatedString";
+    else if (aSelector == @selector(stringWithUndoGroupingInsertion:))
+        return @"makeUndoGroupingInsertionString";
 
     return nil;
 }
@@ -450,6 +462,17 @@
 - (NSMutableAttributedString *)attributedStringWithString:(NSString *)aString
 {
     return [[[NSMutableAttributedString alloc] initWithString:aString] autorelease];
+}
+
+- (NSMutableAttributedString*)stringWithUndoGroupingInsertion:(NSString*)aString
+{
+#if defined(SUPPORT_INSERTION_UNDO_GROUPING) && defined(SUPPORT_DICTATION_ALTERNATIVES)
+    NSMutableAttributedString* attributedString = [self dictatedStringWithPrimaryString:aString alternative:@"test" alternativeOffset:0 alternativeLength:1];
+    [attributedString addAttribute:NSTextInsertionUndoableAttributeName value:@YES range:NSMakeRange(0, [attributedString length])];
+    return attributedString;
+#else
+    return nil;
+#endif
 }
 
 - (NSMutableAttributedString*)dictatedStringWithPrimaryString:(NSString*)aString alternative:(NSString*)alternative alternativeOffset:(int)offset alternativeLength:(int)length

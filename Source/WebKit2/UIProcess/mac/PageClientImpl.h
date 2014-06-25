@@ -154,6 +154,9 @@ private:
     virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext);
     virtual Vector<String> dictationAlternatives(uint64_t dictationContext);
 #endif
+#if USE(INSERTION_UNDO_GROUPING)
+    virtual void registerInsertionUndoGrouping() override;
+#endif
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)

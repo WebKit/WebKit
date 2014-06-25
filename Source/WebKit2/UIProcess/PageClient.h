@@ -36,6 +36,7 @@
 
 #if PLATFORM(COCOA)
 #include "PluginComplexTextInputState.h"
+#include <WebCore/TextUndoInsertionMarkup.h>
 
 OBJC_CLASS CALayer;
 
@@ -242,6 +243,9 @@ public:
     virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext) = 0;
     virtual Vector<String> dictationAlternatives(uint64_t dictationContext) = 0;
 #endif // USE(DICTATION_ALTERNATIVES)
+#if USE(INSERTION_UNDO_GROUPING)
+    virtual void registerInsertionUndoGrouping() = 0;
+#endif // USE(INSERTION_UNDO_GROUPING)
 #endif // USE(APPKIT)
 #endif // PLATFORM(MAC)
 

@@ -472,7 +472,7 @@ public:
     void setAcceleratedCompositingRootLayer(LayerOrView*);
     LayerOrView* acceleratedCompositingRootLayer() const;
 
-    void insertTextAsync(const String& text, const EditingRange& replacementRange);
+    void insertTextAsync(const String& text, const EditingRange& replacementRange, bool registerUndoGroup = false);
     void getMarkedRangeAsync(std::function<void (EditingRange, CallbackBase::Error)>);
     void getSelectedRangeAsync(std::function<void (EditingRange, CallbackBase::Error)>);
     void characterIndexForPointAsync(const WebCore::IntPoint&, std::function<void (uint64_t, CallbackBase::Error)>);
@@ -481,7 +481,7 @@ public:
     void confirmCompositionAsync();
 
 #if PLATFORM(MAC)
-    void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::TextAlternativeWithRange>& dictationAlternatives);
+    void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::TextAlternativeWithRange>& dictationAlternatives, bool registerUndoGroup);
     void attributedSubstringForCharacterRangeAsync(const EditingRange&, std::function<void (const AttributedString&, const EditingRange&, CallbackBase::Error)>);
 
 #if !USE(ASYNC_NSTEXTINPUTCLIENT)
@@ -1058,6 +1058,7 @@ private:
 
     // Undo management
     void registerEditCommandForUndo(uint64_t commandID, uint32_t editAction);
+    void registerInsertionUndoGrouping();
     void clearAllEditCommands();
     void canUndoRedo(uint32_t action, bool& result);
     void executeUndoRedo(uint32_t action, bool& result);

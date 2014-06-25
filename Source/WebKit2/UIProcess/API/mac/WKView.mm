@@ -90,6 +90,7 @@
 #import <WebCore/Region.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextAlternativeWithRange.h>
+#import <WebCore/TextUndoInsertionMarkupMac.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebCoreFullScreenPlaceholderView.h>
@@ -1429,9 +1430,13 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     NSString *text;
     Vector<TextAlternativeWithRange> dictationAlternatives;
 
+    bool registerUndoGroup = false;
     if (isAttributedString) {
 #if USE(DICTATION_ALTERNATIVES)
         collectDictationTextAlternatives(string, dictationAlternatives);
+#endif
+#if USE(INSERTION_UNDO_GROUPING)
+        registerUndoGroup = shouldRegisterInsertionUndoGroup(string);
 #endif
         // FIXME: We ignore most attributes from the string, so for example inserting from Character Palette loses font and glyph variation data.
         text = [string string];
@@ -1456,9 +1461,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     String eventText = text;
     eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
     if (!dictationAlternatives.isEmpty())
-        _data->_page->insertDictatedTextAsync(eventText, replacementRange, dictationAlternatives);
+        _data->_page->insertDictatedTextAsync(eventText, replacementRange, dictationAlternatives, registerUndoGroup);
     else
-        _data->_page->insertTextAsync(eventText, replacementRange);
+        _data->_page->insertTextAsync(eventText, replacementRange, registerUndoGroup);
 }
 
 - (void)selectedRangeWithCompletionHandler:(void(^)(NSRange selectedRange))completionHandlerPtr
@@ -2232,6 +2237,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
                            NSMarkedClauseSegmentAttributeName,
 #if USE(DICTATION_ALTERNATIVES)
                            NSTextAlternativesAttributeName,
+#endif
+#if USE(INSERTION_UNDO_GROUPING)
+                           NSTextInsertionUndoableAttributeName,
 #endif
                            nil];
         // NSText also supports the following attributes, but it's

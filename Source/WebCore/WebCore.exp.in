@@ -2427,6 +2427,11 @@ _wkNSReboundDeltaForElasticDelta
 _wkCreateMemoryStatusPressureCriticalDispatchOnMainQueue
 #endif
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+__ZN7WebCore32shouldRegisterInsertionUndoGroupEP18NSAttributedString
+__ZN7WebCore44registerInsertionUndoGroupingWithUndoManagerEP13NSUndoManager
+#endif
+
 #if PLATFORM(MAC) || PLATFORM(IOS_SIMULATOR)
 _wkSetCrashReportApplicationSpecificInformation
 #endif

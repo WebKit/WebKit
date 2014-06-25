@@ -326,7 +326,7 @@ messages -> WebPage LegacyReceiver {
     ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result)
     AcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) -> (bool result)
 
-    InsertTextAsync(String text, WebKit::EditingRange replacementRange)
+    InsertTextAsync(String text, WebKit::EditingRange replacementRange, bool registerUndoGroup)
     GetMarkedRangeAsync(uint64_t callbackID)
     GetSelectedRangeAsync(uint64_t callbackID)
     CharacterIndexForPointAsync(WebCore::IntPoint point, uint64_t callbackID);
@@ -335,7 +335,7 @@ messages -> WebPage LegacyReceiver {
     ConfirmCompositionAsync()
 #endif
 #if PLATFORM(MAC)
-    InsertDictatedTextAsync(String text, WebKit::EditingRange replacementRange, Vector<WebCore::DictationAlternative> dictationAlternatives)
+    InsertDictatedTextAsync(String text, WebKit::EditingRange replacementRange, Vector<WebCore::DictationAlternative> dictationAlternatives, bool registerUndoGroup)
     AttributedSubstringForCharacterRangeAsync(WebKit::EditingRange range, uint64_t callbackID);
 #endif
 #if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
