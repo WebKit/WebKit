@@ -36,7 +36,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-#define WEBKIT_DOM_TEST_TYPEDEFS_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_TEST_TYPEDEFS, WebKitDOMTestTypedefsPrivate)
+#define WEBKIT_DOM_TEST_TYPEDEFS_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_TEST_TYPEDEFS, WebKitDOMTestTypedefsPrivate)
 
 typedef struct _WebKitDOMTestTypedefsPrivate {
     RefPtr<WebCore::TestTypedefs> coreObject;
@@ -63,12 +63,12 @@ WebCore::TestTypedefs* core(WebKitDOMTestTypedefs* request)
 WebKitDOMTestTypedefs* wrapTestTypedefs(WebCore::TestTypedefs* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_TYPEDEFS(g_object_new(WEBKIT_TYPE_DOM_TEST_TYPEDEFS, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_TYPEDEFS(g_object_new(WEBKIT_DOM_TYPE_TEST_TYPEDEFS, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
 
-G_DEFINE_TYPE(WebKitDOMTestTypedefs, webkit_dom_test_typedefs, WEBKIT_TYPE_DOM_OBJECT)
+G_DEFINE_TYPE(WebKitDOMTestTypedefs, webkit_dom_test_typedefs, WEBKIT_DOM_TYPE_OBJECT)
 
 enum {
     PROP_0,
@@ -202,7 +202,7 @@ static void webkit_dom_test_typedefs_class_init(WebKitDOMTestTypedefsClass* requ
             "immutable-serialized-script-value",
             "TestTypedefs:immutable-serialized-script-value",
             "read-only WebKitDOMSerializedScriptValue* TestTypedefs:immutable-serialized-script-value",
-            WEBKIT_TYPE_DOM_SERIALIZED_SCRIPT_VALUE,
+            WEBKIT_DOM_TYPE_SERIALIZED_SCRIPT_VALUE,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(

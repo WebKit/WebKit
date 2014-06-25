@@ -32,7 +32,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-#define WEBKIT_DOM_TEST_MEDIA_QUERY_LIST_LISTENER_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_TEST_MEDIA_QUERY_LIST_LISTENER, WebKitDOMTestMediaQueryListListenerPrivate)
+#define WEBKIT_DOM_TEST_MEDIA_QUERY_LIST_LISTENER_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_TEST_MEDIA_QUERY_LIST_LISTENER, WebKitDOMTestMediaQueryListListenerPrivate)
 
 typedef struct _WebKitDOMTestMediaQueryListListenerPrivate {
     RefPtr<WebCore::TestMediaQueryListListener> coreObject;
@@ -59,12 +59,12 @@ WebCore::TestMediaQueryListListener* core(WebKitDOMTestMediaQueryListListener* r
 WebKitDOMTestMediaQueryListListener* wrapTestMediaQueryListListener(WebCore::TestMediaQueryListListener* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_MEDIA_QUERY_LIST_LISTENER(g_object_new(WEBKIT_TYPE_DOM_TEST_MEDIA_QUERY_LIST_LISTENER, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_MEDIA_QUERY_LIST_LISTENER(g_object_new(WEBKIT_DOM_TYPE_TEST_MEDIA_QUERY_LIST_LISTENER, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
 
-G_DEFINE_TYPE(WebKitDOMTestMediaQueryListListener, webkit_dom_test_media_query_list_listener, WEBKIT_TYPE_DOM_OBJECT)
+G_DEFINE_TYPE(WebKitDOMTestMediaQueryListListener, webkit_dom_test_media_query_list_listener, WEBKIT_DOM_TYPE_OBJECT)
 
 static void webkit_dom_test_media_query_list_listener_finalize(GObject* object)
 {

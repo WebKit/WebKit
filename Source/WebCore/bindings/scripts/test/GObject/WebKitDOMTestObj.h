@@ -29,12 +29,12 @@
 
 G_BEGIN_DECLS
 
-#define WEBKIT_TYPE_DOM_TEST_OBJ            (webkit_dom_test_obj_get_type())
-#define WEBKIT_DOM_TEST_OBJ(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_DOM_TEST_OBJ, WebKitDOMTestObj))
-#define WEBKIT_DOM_TEST_OBJ_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_DOM_TEST_OBJ, WebKitDOMTestObjClass)
-#define WEBKIT_DOM_IS_TEST_OBJ(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_DOM_TEST_OBJ))
-#define WEBKIT_DOM_IS_TEST_OBJ_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_DOM_TEST_OBJ))
-#define WEBKIT_DOM_TEST_OBJ_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_DOM_TEST_OBJ, WebKitDOMTestObjClass))
+#define WEBKIT_DOM_TYPE_TEST_OBJ            (webkit_dom_test_obj_get_type())
+#define WEBKIT_DOM_TEST_OBJ(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_DOM_TYPE_TEST_OBJ, WebKitDOMTestObj))
+#define WEBKIT_DOM_TEST_OBJ_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_DOM_TYPE_TEST_OBJ, WebKitDOMTestObjClass)
+#define WEBKIT_DOM_IS_TEST_OBJ(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_DOM_TYPE_TEST_OBJ))
+#define WEBKIT_DOM_IS_TEST_OBJ_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_DOM_TYPE_TEST_OBJ))
+#define WEBKIT_DOM_TEST_OBJ_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_DOM_TYPE_TEST_OBJ, WebKitDOMTestObjClass))
 
 struct _WebKitDOMTestObj {
     WebKitDOMObject parent_instance;

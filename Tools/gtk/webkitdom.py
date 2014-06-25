@@ -105,6 +105,12 @@ class WebKitDOMDocGeneratorSections(WebKitDOMDocGenerator):
         retval = retval.replace('Web_Kit', 'WebKit')
         retval = retval.replace('X_Path', 'XPath')
         retval = retval.replace('HTMLI_Frame', 'HTML_IFrame')
+        retval = retval.replace('HTMLBR', 'HTML_BR')
+        retval = retval.replace('HTMLHR', 'HTML_HR')
+        retval = retval.replace('HTMLLI', 'HTML_LI')
+        retval = retval.replace('HTMLD', 'HTML_D')
+        retval = retval.replace('HTMLO', 'HTML_O')
+        retval = retval.replace('HTMLU', 'HTML_U')
 
         return retval
 
@@ -139,20 +145,14 @@ class WebKitDOMDocGeneratorSections(WebKitDOMDocGenerator):
             self.write('\n<SUBSECTION Standard>\n')
             self.write('%sClass\n' % class_name)
             dom_class = self._dom_class_decamelize(class_name).upper()
-            self.write('WEBKIT_TYPE_DOM_%s\n' % dom_class)
+            self.write('WEBKIT_DOM_TYPE_%s\n' % dom_class)
             self.write('WEBKIT_DOM_%s\n' % dom_class)
-            if is_object:
-                self.write('WEBKIT_IS_DOM_%s\n' % dom_class)
-            else:
-                self.write('WEBKIT_DOM_IS_%s\n' % dom_class)
+            self.write('WEBKIT_DOM_IS_%s\n' % dom_class)
             self.write('WEBKIT_DOM_%s_CLASS\n' % dom_class)
             if is_interface:
                 self.write('WEBKIT_DOM_%s_GET_IFACE\n' % dom_class)
             else:
-                if is_object:
-                    self.write('WEBKIT_IS_DOM_%s_CLASS\n' % dom_class)
-                else:
-                    self.write('WEBKIT_DOM_IS_%s_CLASS\n' % dom_class)
+                self.write('WEBKIT_DOM_IS_%s_CLASS\n' % dom_class)
                 self.write('WEBKIT_DOM_%s_GET_CLASS\n' % dom_class)
             self.write('\n<SUBSECTION Private>\n')
             if is_object:

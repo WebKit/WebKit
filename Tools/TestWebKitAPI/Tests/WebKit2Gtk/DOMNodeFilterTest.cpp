@@ -43,7 +43,7 @@ static void webkitNodeFilterDOMNodeFilterIfaceInit(WebKitDOMNodeFilterIface* ifa
     iface->accept_node = webkitNodeFilterAcceptNode;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitNodeFilter, webkit_node_filter, G_TYPE_OBJECT, G_IMPLEMENT_INTERFACE(WEBKIT_TYPE_DOM_NODE_FILTER, webkitNodeFilterDOMNodeFilterIfaceInit))
+G_DEFINE_TYPE_WITH_CODE(WebKitNodeFilter, webkit_node_filter, G_TYPE_OBJECT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_NODE_FILTER, webkitNodeFilterDOMNodeFilterIfaceInit))
 
 static void webkit_node_filter_init(WebKitNodeFilter*)
 {

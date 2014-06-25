@@ -36,7 +36,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-#define WEBKIT_DOM_TEST_CALLBACK_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_TEST_CALLBACK, WebKitDOMTestCallbackPrivate)
+#define WEBKIT_DOM_TEST_CALLBACK_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_TEST_CALLBACK, WebKitDOMTestCallbackPrivate)
 
 typedef struct _WebKitDOMTestCallbackPrivate {
 #if ENABLE(SQL_DATABASE)
@@ -67,14 +67,14 @@ WebCore::TestCallback* core(WebKitDOMTestCallback* request)
 WebKitDOMTestCallback* wrapTestCallback(WebCore::TestCallback* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_CALLBACK(g_object_new(WEBKIT_TYPE_DOM_TEST_CALLBACK, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_CALLBACK(g_object_new(WEBKIT_DOM_TYPE_TEST_CALLBACK, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
 
 #endif // ENABLE(SQL_DATABASE)
 
-G_DEFINE_TYPE(WebKitDOMTestCallback, webkit_dom_test_callback, WEBKIT_TYPE_DOM_OBJECT)
+G_DEFINE_TYPE(WebKitDOMTestCallback, webkit_dom_test_callback, WEBKIT_DOM_TYPE_OBJECT)
 
 static void webkit_dom_test_callback_finalize(GObject* object)
 {

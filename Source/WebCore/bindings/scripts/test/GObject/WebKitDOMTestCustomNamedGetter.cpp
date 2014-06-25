@@ -32,7 +32,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-#define WEBKIT_DOM_TEST_CUSTOM_NAMED_GETTER_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_TEST_CUSTOM_NAMED_GETTER, WebKitDOMTestCustomNamedGetterPrivate)
+#define WEBKIT_DOM_TEST_CUSTOM_NAMED_GETTER_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_TEST_CUSTOM_NAMED_GETTER, WebKitDOMTestCustomNamedGetterPrivate)
 
 typedef struct _WebKitDOMTestCustomNamedGetterPrivate {
     RefPtr<WebCore::TestCustomNamedGetter> coreObject;
@@ -59,12 +59,12 @@ WebCore::TestCustomNamedGetter* core(WebKitDOMTestCustomNamedGetter* request)
 WebKitDOMTestCustomNamedGetter* wrapTestCustomNamedGetter(WebCore::TestCustomNamedGetter* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_CUSTOM_NAMED_GETTER(g_object_new(WEBKIT_TYPE_DOM_TEST_CUSTOM_NAMED_GETTER, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_CUSTOM_NAMED_GETTER(g_object_new(WEBKIT_DOM_TYPE_TEST_CUSTOM_NAMED_GETTER, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
 
-G_DEFINE_TYPE(WebKitDOMTestCustomNamedGetter, webkit_dom_test_custom_named_getter, WEBKIT_TYPE_DOM_OBJECT)
+G_DEFINE_TYPE(WebKitDOMTestCustomNamedGetter, webkit_dom_test_custom_named_getter, WEBKIT_DOM_TYPE_OBJECT)
 
 static void webkit_dom_test_custom_named_getter_finalize(GObject* object)
 {

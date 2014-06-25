@@ -33,7 +33,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-#define WEBKIT_DOM_TEST_ACTIVE_DOM_OBJECT_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_TEST_ACTIVE_DOM_OBJECT, WebKitDOMTestActiveDOMObjectPrivate)
+#define WEBKIT_DOM_TEST_ACTIVE_DOM_OBJECT_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_TEST_ACTIVE_DOM_OBJECT, WebKitDOMTestActiveDOMObjectPrivate)
 
 typedef struct _WebKitDOMTestActiveDOMObjectPrivate {
     RefPtr<WebCore::TestActiveDOMObject> coreObject;
@@ -60,12 +60,12 @@ WebCore::TestActiveDOMObject* core(WebKitDOMTestActiveDOMObject* request)
 WebKitDOMTestActiveDOMObject* wrapTestActiveDOMObject(WebCore::TestActiveDOMObject* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_ACTIVE_DOM_OBJECT(g_object_new(WEBKIT_TYPE_DOM_TEST_ACTIVE_DOM_OBJECT, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_ACTIVE_DOM_OBJECT(g_object_new(WEBKIT_DOM_TYPE_TEST_ACTIVE_DOM_OBJECT, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
 
-G_DEFINE_TYPE(WebKitDOMTestActiveDOMObject, webkit_dom_test_active_dom_object, WEBKIT_TYPE_DOM_OBJECT)
+G_DEFINE_TYPE(WebKitDOMTestActiveDOMObject, webkit_dom_test_active_dom_object, WEBKIT_DOM_TYPE_OBJECT)
 
 enum {
     PROP_0,

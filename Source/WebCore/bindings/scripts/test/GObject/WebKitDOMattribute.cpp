@@ -32,7 +32,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-#define WEBKIT_DOM_ATTRIBUTE_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_ATTRIBUTE, WebKitDOMattributePrivate)
+#define WEBKIT_DOM_ATTRIBUTE_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_ATTRIBUTE, WebKitDOMattributePrivate)
 
 typedef struct _WebKitDOMattributePrivate {
     RefPtr<WebCore::attribute> coreObject;
@@ -59,12 +59,12 @@ WebCore::attribute* core(WebKitDOMattribute* request)
 WebKitDOMattribute* wrapattribute(WebCore::attribute* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_ATTRIBUTE(g_object_new(WEBKIT_TYPE_DOM_ATTRIBUTE, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_ATTRIBUTE(g_object_new(WEBKIT_DOM_TYPE_ATTRIBUTE, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
 
-G_DEFINE_TYPE(WebKitDOMattribute, webkit_dom_attribute, WEBKIT_TYPE_DOM_OBJECT)
+G_DEFINE_TYPE(WebKitDOMattribute, webkit_dom_attribute, WEBKIT_DOM_TYPE_OBJECT)
 
 enum {
     PROP_0,

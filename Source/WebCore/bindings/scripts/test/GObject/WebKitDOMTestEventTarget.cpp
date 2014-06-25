@@ -36,7 +36,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-#define WEBKIT_DOM_TEST_EVENT_TARGET_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_TEST_EVENT_TARGET, WebKitDOMTestEventTargetPrivate)
+#define WEBKIT_DOM_TEST_EVENT_TARGET_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_TEST_EVENT_TARGET, WebKitDOMTestEventTargetPrivate)
 
 typedef struct _WebKitDOMTestEventTargetPrivate {
     RefPtr<WebCore::TestEventTarget> coreObject;
@@ -63,7 +63,7 @@ WebCore::TestEventTarget* core(WebKitDOMTestEventTarget* request)
 WebKitDOMTestEventTarget* wrapTestEventTarget(WebCore::TestEventTarget* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_EVENT_TARGET(g_object_new(WEBKIT_TYPE_DOM_TEST_EVENT_TARGET, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_EVENT_TARGET(g_object_new(WEBKIT_DOM_TYPE_TEST_EVENT_TARGET, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
@@ -101,7 +101,7 @@ static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
     iface->remove_event_listener = webkit_dom_test_event_target_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMTestEventTarget, webkit_dom_test_event_target, WEBKIT_TYPE_DOM_OBJECT, G_IMPLEMENT_INTERFACE(WEBKIT_TYPE_DOM_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMTestEventTarget, webkit_dom_test_event_target, WEBKIT_DOM_TYPE_OBJECT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
 
 static void webkit_dom_test_event_target_finalize(GObject* object)
 {

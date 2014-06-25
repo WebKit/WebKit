@@ -32,7 +32,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-#define WEBKIT_DOM_TEST_OVERLOADED_CONSTRUCTORS_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_TEST_OVERLOADED_CONSTRUCTORS, WebKitDOMTestOverloadedConstructorsPrivate)
+#define WEBKIT_DOM_TEST_OVERLOADED_CONSTRUCTORS_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_TEST_OVERLOADED_CONSTRUCTORS, WebKitDOMTestOverloadedConstructorsPrivate)
 
 typedef struct _WebKitDOMTestOverloadedConstructorsPrivate {
     RefPtr<WebCore::TestOverloadedConstructors> coreObject;
@@ -59,12 +59,12 @@ WebCore::TestOverloadedConstructors* core(WebKitDOMTestOverloadedConstructors* r
 WebKitDOMTestOverloadedConstructors* wrapTestOverloadedConstructors(WebCore::TestOverloadedConstructors* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_OVERLOADED_CONSTRUCTORS(g_object_new(WEBKIT_TYPE_DOM_TEST_OVERLOADED_CONSTRUCTORS, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_OVERLOADED_CONSTRUCTORS(g_object_new(WEBKIT_DOM_TYPE_TEST_OVERLOADED_CONSTRUCTORS, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
 
-G_DEFINE_TYPE(WebKitDOMTestOverloadedConstructors, webkit_dom_test_overloaded_constructors, WEBKIT_TYPE_DOM_OBJECT)
+G_DEFINE_TYPE(WebKitDOMTestOverloadedConstructors, webkit_dom_test_overloaded_constructors, WEBKIT_DOM_TYPE_OBJECT)
 
 static void webkit_dom_test_overloaded_constructors_finalize(GObject* object)
 {

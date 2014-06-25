@@ -32,7 +32,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-#define WEBKIT_DOM_TEST_NONDETERMINISTIC_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_TEST_NONDETERMINISTIC, WebKitDOMTestNondeterministicPrivate)
+#define WEBKIT_DOM_TEST_NONDETERMINISTIC_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_TEST_NONDETERMINISTIC, WebKitDOMTestNondeterministicPrivate)
 
 typedef struct _WebKitDOMTestNondeterministicPrivate {
     RefPtr<WebCore::TestNondeterministic> coreObject;
@@ -59,12 +59,12 @@ WebCore::TestNondeterministic* core(WebKitDOMTestNondeterministic* request)
 WebKitDOMTestNondeterministic* wrapTestNondeterministic(WebCore::TestNondeterministic* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_NONDETERMINISTIC(g_object_new(WEBKIT_TYPE_DOM_TEST_NONDETERMINISTIC, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_NONDETERMINISTIC(g_object_new(WEBKIT_DOM_TYPE_TEST_NONDETERMINISTIC, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
 
-G_DEFINE_TYPE(WebKitDOMTestNondeterministic, webkit_dom_test_nondeterministic, WEBKIT_TYPE_DOM_OBJECT)
+G_DEFINE_TYPE(WebKitDOMTestNondeterministic, webkit_dom_test_nondeterministic, WEBKIT_DOM_TYPE_OBJECT)
 
 enum {
     PROP_0,

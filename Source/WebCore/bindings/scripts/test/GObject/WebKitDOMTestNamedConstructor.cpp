@@ -32,7 +32,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-#define WEBKIT_DOM_TEST_NAMED_CONSTRUCTOR_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_TEST_NAMED_CONSTRUCTOR, WebKitDOMTestNamedConstructorPrivate)
+#define WEBKIT_DOM_TEST_NAMED_CONSTRUCTOR_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_TEST_NAMED_CONSTRUCTOR, WebKitDOMTestNamedConstructorPrivate)
 
 typedef struct _WebKitDOMTestNamedConstructorPrivate {
     RefPtr<WebCore::TestNamedConstructor> coreObject;
@@ -59,12 +59,12 @@ WebCore::TestNamedConstructor* core(WebKitDOMTestNamedConstructor* request)
 WebKitDOMTestNamedConstructor* wrapTestNamedConstructor(WebCore::TestNamedConstructor* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_NAMED_CONSTRUCTOR(g_object_new(WEBKIT_TYPE_DOM_TEST_NAMED_CONSTRUCTOR, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_NAMED_CONSTRUCTOR(g_object_new(WEBKIT_DOM_TYPE_TEST_NAMED_CONSTRUCTOR, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
 
-G_DEFINE_TYPE(WebKitDOMTestNamedConstructor, webkit_dom_test_named_constructor, WEBKIT_TYPE_DOM_OBJECT)
+G_DEFINE_TYPE(WebKitDOMTestNamedConstructor, webkit_dom_test_named_constructor, WEBKIT_DOM_TYPE_OBJECT)
 
 static void webkit_dom_test_named_constructor_finalize(GObject* object)
 {

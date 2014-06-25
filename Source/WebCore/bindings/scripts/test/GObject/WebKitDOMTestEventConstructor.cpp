@@ -32,7 +32,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-#define WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_TEST_EVENT_CONSTRUCTOR, WebKitDOMTestEventConstructorPrivate)
+#define WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_TEST_EVENT_CONSTRUCTOR, WebKitDOMTestEventConstructorPrivate)
 
 typedef struct _WebKitDOMTestEventConstructorPrivate {
     RefPtr<WebCore::TestEventConstructor> coreObject;
@@ -59,12 +59,12 @@ WebCore::TestEventConstructor* core(WebKitDOMTestEventConstructor* request)
 WebKitDOMTestEventConstructor* wrapTestEventConstructor(WebCore::TestEventConstructor* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR(g_object_new(WEBKIT_TYPE_DOM_TEST_EVENT_CONSTRUCTOR, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR(g_object_new(WEBKIT_DOM_TYPE_TEST_EVENT_CONSTRUCTOR, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
 
-G_DEFINE_TYPE(WebKitDOMTestEventConstructor, webkit_dom_test_event_constructor, WEBKIT_TYPE_DOM_OBJECT)
+G_DEFINE_TYPE(WebKitDOMTestEventConstructor, webkit_dom_test_event_constructor, WEBKIT_DOM_TYPE_OBJECT)
 
 enum {
     PROP_0,

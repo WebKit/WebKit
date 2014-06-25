@@ -32,7 +32,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-#define WEBKIT_DOM_READONLY_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_READONLY, WebKitDOMreadonlyPrivate)
+#define WEBKIT_DOM_READONLY_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_READONLY, WebKitDOMreadonlyPrivate)
 
 typedef struct _WebKitDOMreadonlyPrivate {
     RefPtr<WebCore::readonly> coreObject;
@@ -59,12 +59,12 @@ WebCore::readonly* core(WebKitDOMreadonly* request)
 WebKitDOMreadonly* wrapreadonly(WebCore::readonly* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_READONLY(g_object_new(WEBKIT_TYPE_DOM_READONLY, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_READONLY(g_object_new(WEBKIT_DOM_TYPE_READONLY, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
 
-G_DEFINE_TYPE(WebKitDOMreadonly, webkit_dom_readonly, WEBKIT_TYPE_DOM_OBJECT)
+G_DEFINE_TYPE(WebKitDOMreadonly, webkit_dom_readonly, WEBKIT_DOM_TYPE_OBJECT)
 
 static void webkit_dom_readonly_finalize(GObject* object)
 {

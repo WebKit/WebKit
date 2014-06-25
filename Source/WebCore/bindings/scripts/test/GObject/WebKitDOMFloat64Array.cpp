@@ -49,12 +49,12 @@ WebCore::Float64Array* core(WebKitDOMFloat64Array* request)
 WebKitDOMFloat64Array* wrapFloat64Array(WebCore::Float64Array* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_FLOAT64ARRAY(g_object_new(WEBKIT_TYPE_DOM_FLOAT64ARRAY, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_FLOAT64ARRAY(g_object_new(WEBKIT_DOM_TYPE_FLOAT64ARRAY, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
 
-G_DEFINE_TYPE(WebKitDOMFloat64Array, webkit_dom_float64array, WEBKIT_TYPE_DOM_ARRAY_BUFFER_VIEW)
+G_DEFINE_TYPE(WebKitDOMFloat64Array, webkit_dom_float64array, WEBKIT_DOM_TYPE_ARRAY_BUFFER_VIEW)
 
 static void webkit_dom_float64array_class_init(WebKitDOMFloat64ArrayClass* requestClass)
 {

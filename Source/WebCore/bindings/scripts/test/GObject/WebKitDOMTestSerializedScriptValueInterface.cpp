@@ -33,7 +33,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-#define WEBKIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE, WebKitDOMTestSerializedScriptValueInterfacePrivate)
+#define WEBKIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE, WebKitDOMTestSerializedScriptValueInterfacePrivate)
 
 typedef struct _WebKitDOMTestSerializedScriptValueInterfacePrivate {
 #if ENABLE(Condition1) || ENABLE(Condition2)
@@ -64,14 +64,14 @@ WebCore::TestSerializedScriptValueInterface* core(WebKitDOMTestSerializedScriptV
 WebKitDOMTestSerializedScriptValueInterface* wrapTestSerializedScriptValueInterface(WebCore::TestSerializedScriptValueInterface* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(g_object_new(WEBKIT_TYPE_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(g_object_new(WEBKIT_DOM_TYPE_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
 
 #endif // ENABLE(Condition1) || ENABLE(Condition2)
 
-G_DEFINE_TYPE(WebKitDOMTestSerializedScriptValueInterface, webkit_dom_test_serialized_script_value_interface, WEBKIT_TYPE_DOM_OBJECT)
+G_DEFINE_TYPE(WebKitDOMTestSerializedScriptValueInterface, webkit_dom_test_serialized_script_value_interface, WEBKIT_DOM_TYPE_OBJECT)
 
 enum {
     PROP_0,
@@ -174,7 +174,7 @@ static void webkit_dom_test_serialized_script_value_interface_class_init(WebKitD
             "value",
             "TestSerializedScriptValueInterface:value",
             "read-only WebKitDOMSerializedScriptValue* TestSerializedScriptValueInterface:value",
-            WEBKIT_TYPE_DOM_SERIALIZED_SCRIPT_VALUE,
+            WEBKIT_DOM_TYPE_SERIALIZED_SCRIPT_VALUE,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -184,7 +184,7 @@ static void webkit_dom_test_serialized_script_value_interface_class_init(WebKitD
             "readonly-value",
             "TestSerializedScriptValueInterface:readonly-value",
             "read-only WebKitDOMSerializedScriptValue* TestSerializedScriptValueInterface:readonly-value",
-            WEBKIT_TYPE_DOM_SERIALIZED_SCRIPT_VALUE,
+            WEBKIT_DOM_TYPE_SERIALIZED_SCRIPT_VALUE,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -194,7 +194,7 @@ static void webkit_dom_test_serialized_script_value_interface_class_init(WebKitD
             "cached-value",
             "TestSerializedScriptValueInterface:cached-value",
             "read-only WebKitDOMSerializedScriptValue* TestSerializedScriptValueInterface:cached-value",
-            WEBKIT_TYPE_DOM_SERIALIZED_SCRIPT_VALUE,
+            WEBKIT_DOM_TYPE_SERIALIZED_SCRIPT_VALUE,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -204,7 +204,7 @@ static void webkit_dom_test_serialized_script_value_interface_class_init(WebKitD
             "cached-readonly-value",
             "TestSerializedScriptValueInterface:cached-readonly-value",
             "read-only WebKitDOMSerializedScriptValue* TestSerializedScriptValueInterface:cached-readonly-value",
-            WEBKIT_TYPE_DOM_SERIALIZED_SCRIPT_VALUE,
+            WEBKIT_DOM_TYPE_SERIALIZED_SCRIPT_VALUE,
             WEBKIT_PARAM_READABLE));
 
 }

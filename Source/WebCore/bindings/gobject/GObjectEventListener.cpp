@@ -64,11 +64,11 @@ void GObjectEventListener::gobjectDestroyed()
 void GObjectEventListener::handleEvent(ScriptExecutionContext*, Event* event)
 {
     GValue parameters[2] = { G_VALUE_INIT, G_VALUE_INIT };
-    g_value_init(&parameters[0], WEBKIT_TYPE_DOM_EVENT_TARGET);
+    g_value_init(&parameters[0], WEBKIT_DOM_TYPE_EVENT_TARGET);
     g_value_set_object(&parameters[0], m_target);
 
     GRefPtr<WebKitDOMEvent> domEvent = adoptGRef(WebKit::kit(event));
-    g_value_init(&parameters[1], WEBKIT_TYPE_DOM_EVENT);
+    g_value_init(&parameters[1], WEBKIT_DOM_TYPE_EVENT);
     g_value_set_object(&parameters[1], domEvent.get());
 
     g_closure_invoke(m_handler.get(), 0, 2, parameters, NULL);

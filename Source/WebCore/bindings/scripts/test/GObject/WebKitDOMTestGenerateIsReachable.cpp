@@ -32,7 +32,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-#define WEBKIT_DOM_TEST_GENERATE_IS_REACHABLE_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_TEST_GENERATE_IS_REACHABLE, WebKitDOMTestGenerateIsReachablePrivate)
+#define WEBKIT_DOM_TEST_GENERATE_IS_REACHABLE_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_TEST_GENERATE_IS_REACHABLE, WebKitDOMTestGenerateIsReachablePrivate)
 
 typedef struct _WebKitDOMTestGenerateIsReachablePrivate {
     RefPtr<WebCore::TestGenerateIsReachable> coreObject;
@@ -59,12 +59,12 @@ WebCore::TestGenerateIsReachable* core(WebKitDOMTestGenerateIsReachable* request
 WebKitDOMTestGenerateIsReachable* wrapTestGenerateIsReachable(WebCore::TestGenerateIsReachable* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_GENERATE_IS_REACHABLE(g_object_new(WEBKIT_TYPE_DOM_TEST_GENERATE_IS_REACHABLE, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_GENERATE_IS_REACHABLE(g_object_new(WEBKIT_DOM_TYPE_TEST_GENERATE_IS_REACHABLE, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
 
-G_DEFINE_TYPE(WebKitDOMTestGenerateIsReachable, webkit_dom_test_generate_is_reachable, WEBKIT_TYPE_DOM_OBJECT)
+G_DEFINE_TYPE(WebKitDOMTestGenerateIsReachable, webkit_dom_test_generate_is_reachable, WEBKIT_DOM_TYPE_OBJECT)
 
 static void webkit_dom_test_generate_is_reachable_finalize(GObject* object)
 {

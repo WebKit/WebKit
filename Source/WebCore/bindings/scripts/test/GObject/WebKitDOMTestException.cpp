@@ -32,7 +32,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-#define WEBKIT_DOM_TEST_EXCEPTION_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_TEST_EXCEPTION, WebKitDOMTestExceptionPrivate)
+#define WEBKIT_DOM_TEST_EXCEPTION_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_TEST_EXCEPTION, WebKitDOMTestExceptionPrivate)
 
 typedef struct _WebKitDOMTestExceptionPrivate {
     RefPtr<WebCore::TestException> coreObject;
@@ -59,12 +59,12 @@ WebCore::TestException* core(WebKitDOMTestException* request)
 WebKitDOMTestException* wrapTestException(WebCore::TestException* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_EXCEPTION(g_object_new(WEBKIT_TYPE_DOM_TEST_EXCEPTION, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_EXCEPTION(g_object_new(WEBKIT_DOM_TYPE_TEST_EXCEPTION, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
 
-G_DEFINE_TYPE(WebKitDOMTestException, webkit_dom_test_exception, WEBKIT_TYPE_DOM_OBJECT)
+G_DEFINE_TYPE(WebKitDOMTestException, webkit_dom_test_exception, WEBKIT_DOM_TYPE_OBJECT)
 
 enum {
     PROP_0,

@@ -30,12 +30,12 @@
 
 G_BEGIN_DECLS
 
-#define WEBKIT_TYPE_DOM_OBJECT            (webkit_dom_object_get_type())
-#define WEBKIT_DOM_OBJECT(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_DOM_OBJECT, WebKitDOMObject))
-#define WEBKIT_DOM_OBJECT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_DOM_OBJECT, WebKitDOMObjectClass))
-#define WEBKIT_IS_DOM_OBJECT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_DOM_OBJECT))
-#define WEBKIT_IS_DOM_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_DOM_OBJECT))
-#define WEBKIT_DOM_OBJECT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_DOM_OBJECT, WebKitDOMObjectClass))
+#define WEBKIT_DOM_TYPE_OBJECT            (webkit_dom_object_get_type())
+#define WEBKIT_DOM_OBJECT(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_DOM_TYPE_OBJECT, WebKitDOMObject))
+#define WEBKIT_DOM_OBJECT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_DOM_TYPE_OBJECT, WebKitDOMObjectClass))
+#define WEBKIT_DOM_IS_OBJECT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_DOM_TYPE_OBJECT))
+#define WEBKIT_DOM_IS_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_DOM_TYPE_OBJECT))
+#define WEBKIT_DOM_OBJECT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_DOM_TYPE_OBJECT, WebKitDOMObjectClass))
 
 typedef struct _WebKitDOMObjectPrivate WebKitDOMObjectPrivate;
 

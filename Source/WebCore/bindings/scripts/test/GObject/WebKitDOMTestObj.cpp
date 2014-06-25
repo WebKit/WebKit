@@ -41,7 +41,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-#define WEBKIT_DOM_TEST_OBJ_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_TEST_OBJ, WebKitDOMTestObjPrivate)
+#define WEBKIT_DOM_TEST_OBJ_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_TEST_OBJ, WebKitDOMTestObjPrivate)
 
 typedef struct _WebKitDOMTestObjPrivate {
     RefPtr<WebCore::TestObj> coreObject;
@@ -68,12 +68,12 @@ WebCore::TestObj* core(WebKitDOMTestObj* request)
 WebKitDOMTestObj* wrapTestObj(WebCore::TestObj* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_OBJ(g_object_new(WEBKIT_TYPE_DOM_TEST_OBJ, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_OBJ(g_object_new(WEBKIT_DOM_TYPE_TEST_OBJ, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
 
-G_DEFINE_TYPE(WebKitDOMTestObj, webkit_dom_test_obj, WEBKIT_TYPE_DOM_OBJECT)
+G_DEFINE_TYPE(WebKitDOMTestObj, webkit_dom_test_obj, WEBKIT_DOM_TYPE_OBJECT)
 
 enum {
     PROP_0,
@@ -625,7 +625,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "read-only-test-obj-attr",
             "TestObj:read-only-test-obj-attr",
             "read-only WebKitDOMTestObj* TestObj:read-only-test-obj-attr",
-            WEBKIT_TYPE_DOM_TEST_OBJ,
+            WEBKIT_DOM_TYPE_TEST_OBJ,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -715,7 +715,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "test-obj-attr",
             "TestObj:test-obj-attr",
             "read-only WebKitDOMTestObj* TestObj:test-obj-attr",
-            WEBKIT_TYPE_DOM_TEST_OBJ,
+            WEBKIT_DOM_TYPE_TEST_OBJ,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -725,7 +725,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "xml-obj-attr",
             "TestObj:xml-obj-attr",
             "read-only WebKitDOMTestObj* TestObj:xml-obj-attr",
-            WEBKIT_TYPE_DOM_TEST_OBJ,
+            WEBKIT_DOM_TYPE_TEST_OBJ,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -885,7 +885,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "with-script-execution-context-attribute",
             "TestObj:with-script-execution-context-attribute",
             "read-only WebKitDOMTestObj* TestObj:with-script-execution-context-attribute",
-            WEBKIT_TYPE_DOM_TEST_OBJ,
+            WEBKIT_DOM_TYPE_TEST_OBJ,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -895,7 +895,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "with-script-state-attribute-raises",
             "TestObj:with-script-state-attribute-raises",
             "read-only WebKitDOMTestObj* TestObj:with-script-state-attribute-raises",
-            WEBKIT_TYPE_DOM_TEST_OBJ,
+            WEBKIT_DOM_TYPE_TEST_OBJ,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -905,7 +905,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "with-script-execution-context-attribute-raises",
             "TestObj:with-script-execution-context-attribute-raises",
             "read-only WebKitDOMTestObj* TestObj:with-script-execution-context-attribute-raises",
-            WEBKIT_TYPE_DOM_TEST_OBJ,
+            WEBKIT_DOM_TYPE_TEST_OBJ,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -915,7 +915,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "with-script-execution-context-and-script-state-attribute",
             "TestObj:with-script-execution-context-and-script-state-attribute",
             "read-only WebKitDOMTestObj* TestObj:with-script-execution-context-and-script-state-attribute",
-            WEBKIT_TYPE_DOM_TEST_OBJ,
+            WEBKIT_DOM_TYPE_TEST_OBJ,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -925,7 +925,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "with-script-execution-context-and-script-state-attribute-raises",
             "TestObj:with-script-execution-context-and-script-state-attribute-raises",
             "read-only WebKitDOMTestObj* TestObj:with-script-execution-context-and-script-state-attribute-raises",
-            WEBKIT_TYPE_DOM_TEST_OBJ,
+            WEBKIT_DOM_TYPE_TEST_OBJ,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -935,7 +935,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "with-script-execution-context-and-script-state-with-spaces-attribute",
             "TestObj:with-script-execution-context-and-script-state-with-spaces-attribute",
             "read-only WebKitDOMTestObj* TestObj:with-script-execution-context-and-script-state-with-spaces-attribute",
-            WEBKIT_TYPE_DOM_TEST_OBJ,
+            WEBKIT_DOM_TYPE_TEST_OBJ,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -945,7 +945,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "with-script-arguments-and-call-stack-attribute",
             "TestObj:with-script-arguments-and-call-stack-attribute",
             "read-only WebKitDOMTestObj* TestObj:with-script-arguments-and-call-stack-attribute",
-            WEBKIT_TYPE_DOM_TEST_OBJ,
+            WEBKIT_DOM_TYPE_TEST_OBJ,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -985,7 +985,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "any-attribute",
             "TestObj:any-attribute",
             "read-only WebKitDOMany* TestObj:any-attribute",
-            WEBKIT_TYPE_DOM_ANY,
+            WEBKIT_DOM_TYPE_ANY,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -995,7 +995,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "content-document",
             "TestObj:content-document",
             "read-only WebKitDOMDocument* TestObj:content-document",
-            WEBKIT_TYPE_DOM_DOCUMENT,
+            WEBKIT_DOM_TYPE_DOCUMENT,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -1005,7 +1005,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "mutable-point",
             "TestObj:mutable-point",
             "read-only WebKitDOMSVGPoint* TestObj:mutable-point",
-            WEBKIT_TYPE_DOM_SVG_POINT,
+            WEBKIT_DOM_TYPE_SVG_POINT,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -1015,7 +1015,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "immutable-point",
             "TestObj:immutable-point",
             "read-only WebKitDOMSVGPoint* TestObj:immutable-point",
-            WEBKIT_TYPE_DOM_SVG_POINT,
+            WEBKIT_DOM_TYPE_SVG_POINT,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(

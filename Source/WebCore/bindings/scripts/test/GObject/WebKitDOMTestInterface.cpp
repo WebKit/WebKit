@@ -35,7 +35,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-#define WEBKIT_DOM_TEST_INTERFACE_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_TEST_INTERFACE, WebKitDOMTestInterfacePrivate)
+#define WEBKIT_DOM_TEST_INTERFACE_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_TEST_INTERFACE, WebKitDOMTestInterfacePrivate)
 
 typedef struct _WebKitDOMTestInterfacePrivate {
 #if ENABLE(Condition1) || ENABLE(Condition2)
@@ -66,14 +66,14 @@ WebCore::TestInterface* core(WebKitDOMTestInterface* request)
 WebKitDOMTestInterface* wrapTestInterface(WebCore::TestInterface* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_INTERFACE(g_object_new(WEBKIT_TYPE_DOM_TEST_INTERFACE, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_INTERFACE(g_object_new(WEBKIT_DOM_TYPE_TEST_INTERFACE, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
 
 #endif // ENABLE(Condition1) || ENABLE(Condition2)
 
-G_DEFINE_TYPE(WebKitDOMTestInterface, webkit_dom_test_interface, WEBKIT_TYPE_DOM_OBJECT)
+G_DEFINE_TYPE(WebKitDOMTestInterface, webkit_dom_test_interface, WEBKIT_DOM_TYPE_OBJECT)
 
 enum {
     PROP_0,
@@ -290,7 +290,7 @@ static void webkit_dom_test_interface_class_init(WebKitDOMTestInterfaceClass* re
             "implements-node",
             "TestInterface:implements-node",
             "read-only WebKitDOMNode* TestInterface:implements-node",
-            WEBKIT_TYPE_DOM_NODE,
+            WEBKIT_DOM_TYPE_NODE,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -320,7 +320,7 @@ static void webkit_dom_test_interface_class_init(WebKitDOMTestInterfaceClass* re
             "supplemental-node",
             "TestInterface:supplemental-node",
             "read-only WebKitDOMNode* TestInterface:supplemental-node",
-            WEBKIT_TYPE_DOM_NODE,
+            WEBKIT_DOM_TYPE_NODE,
             WEBKIT_PARAM_READABLE));
 
 }

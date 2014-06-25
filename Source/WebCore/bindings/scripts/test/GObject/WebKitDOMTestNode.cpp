@@ -51,7 +51,7 @@ WebCore::TestNode* core(WebKitDOMTestNode* request)
 WebKitDOMTestNode* wrapTestNode(WebCore::TestNode* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_TEST_NODE(g_object_new(WEBKIT_TYPE_DOM_TEST_NODE, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_TEST_NODE(g_object_new(WEBKIT_DOM_TYPE_TEST_NODE, "core-object", coreObject, NULL));
 }
 
 } // namespace WebKit
@@ -89,7 +89,7 @@ static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
     iface->remove_event_listener = webkit_dom_test_node_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMTestNode, webkit_dom_test_node, WEBKIT_TYPE_DOM_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_TYPE_DOM_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMTestNode, webkit_dom_test_node, WEBKIT_DOM_TYPE_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
 
 static void webkit_dom_test_node_class_init(WebKitDOMTestNodeClass* requestClass)
 {

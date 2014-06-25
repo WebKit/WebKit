@@ -158,6 +158,12 @@ sub decamelize
             s/x_path/xpath/;
             s/web_kit/webkit/;
             s/htmli_frame/html_iframe/;
+            s/htmlbr/html_br/;
+            s/htmlli/html_li/;
+            s/htmlhr/html_hr/;
+            s/htmld/html_d/;
+            s/htmlo/html_o/;
+            s/htmlu/html_u/;
         }
         return $s;
 }
@@ -180,8 +186,8 @@ sub HumanReadableConditional {
 sub GetParentGObjType {
     my $interface = shift;
 
-    return "WEBKIT_TYPE_DOM_OBJECT" unless $interface->parent;
-    return "WEBKIT_TYPE_DOM_" . uc(decamelize(($interface->parent)));
+    return "WEBKIT_DOM_TYPE_OBJECT" unless $interface->parent;
+    return "WEBKIT_DOM_TYPE_" . uc(decamelize(($interface->parent)));
 }
 
 sub GetClassName {
@@ -602,7 +608,7 @@ sub GenerateProperty {
                                 "uchar" =>   [ "G_MININT8", "G_MAXINT8", "0" ],
                                 "char" =>    [ "0", "G_MAXUINT8", "0" ],
                                 "string" =>  [ '""', ],
-                                "object" =>  [ "WEBKIT_TYPE_DOM_${ucPropGType}" ]);
+                                "object" =>  [ "WEBKIT_DOM_TYPE_${ucPropGType}" ]);
 
     my $extraParameters = join(", ", @{$parameterSpecOptions{$gtype}});
     my $glibTypeName = GetGlibTypeName($propType);
@@ -855,12 +861,12 @@ EOF
     my $lowerCaseIfaceName = "webkit_dom_$decamelize";
 
     $implContent = << "EOF";
-#define WEBKIT_TYPE_DOM_${clsCaps}            (${lowerCaseIfaceName}_get_type())
-#define WEBKIT_DOM_${clsCaps}(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_DOM_${clsCaps}, ${className}))
-#define WEBKIT_DOM_${clsCaps}_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_DOM_${clsCaps}, ${className}Class)
-#define WEBKIT_DOM_IS_${clsCaps}(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_DOM_${clsCaps}))
-#define WEBKIT_DOM_IS_${clsCaps}_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_DOM_${clsCaps}))
-#define WEBKIT_DOM_${clsCaps}_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_DOM_${clsCaps}, ${className}Class))
+#define WEBKIT_DOM_TYPE_${clsCaps}            (${lowerCaseIfaceName}_get_type())
+#define WEBKIT_DOM_${clsCaps}(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_DOM_TYPE_${clsCaps}, ${className}))
+#define WEBKIT_DOM_${clsCaps}_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_DOM_TYPE_${clsCaps}, ${className}Class)
+#define WEBKIT_DOM_IS_${clsCaps}(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_DOM_TYPE_${clsCaps}))
+#define WEBKIT_DOM_IS_${clsCaps}_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_DOM_TYPE_${clsCaps}))
+#define WEBKIT_DOM_${clsCaps}_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_DOM_TYPE_${clsCaps}, ${className}Class))
 
 struct _${className} {
     ${parentClassName} parent_instance;
@@ -1363,7 +1369,7 @@ sub GenerateCFile {
     # for the WebCore wrapped object and make sure we only increment the reference counter once.
     if ($parentImplClassName eq "Object") {
         my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
-        push(@cStructPriv, "#define WEBKIT_DOM_${clsCaps}_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_${clsCaps}, ${className}Private)\n\n");
+        push(@cStructPriv, "#define WEBKIT_DOM_${clsCaps}_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_${clsCaps}, ${className}Private)\n\n");
         push(@cStructPriv, "typedef struct _${className}Private {\n");
         push(@cStructPriv, "#if ${conditionalString}\n") if $conditionalString;
         push(@cStructPriv, "    RefPtr<WebCore::${interfaceName}> coreObject;\n");
@@ -1414,7 +1420,7 @@ WebCore::${interfaceName}* core(${className}* request)
 ${className}* wrap${interfaceName}(WebCore::${interfaceName}* coreObject)
 {
     ASSERT(coreObject);
-    return WEBKIT_DOM_${clsCaps}(g_object_new(WEBKIT_TYPE_DOM_${clsCaps}, "core-object", coreObject, NULL));
+    return WEBKIT_DOM_${clsCaps}(g_object_new(WEBKIT_DOM_TYPE_${clsCaps}, "core-object", coreObject, nullptr));
 }
 
 EOF
@@ -1513,7 +1519,7 @@ sub GenerateEventTargetIface {
     push(@cBodyProperties, "    iface->remove_event_listener = webkit_dom_${decamelize}_remove_event_listener;\n}\n\n");
 
     $defineTypeMacro = "G_DEFINE_TYPE_WITH_CODE";
-    $defineTypeInterfaceImplementation = ", G_IMPLEMENT_INTERFACE(WEBKIT_TYPE_DOM_EVENT_TARGET, webkit_dom_event_target_init))";
+    $defineTypeInterfaceImplementation = ", G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))";
 }
 
 sub Generate {

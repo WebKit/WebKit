@@ -1,3 +1,20 @@
+2014-06-24  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Some of DOM bindings macros are misnamed
+        https://bugs.webkit.org/show_bug.cgi?id=121543
+
+        Reviewed by Carlos Garcia Campos.
+
+        As we are using WebKitDOM as a namespace we should unify all type macros
+        to have WEBKIT_DOM_TYPE prefix instead of WEBKIT_TYPE_DOM. Also add
+        more exceptions to decamelize function in GObject bindings generator
+        to fix the names of bindings for BR, HR, UL, OL, DL and LI elements.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/DOMNodeFilterTest.cpp:
+        * gtk/webkitdom.py:
+        (WebKitDOMDocGeneratorSections._dom_class_decamelize):
+        (WebKitDOMDocGeneratorSections.write_section):
+
 2014-06-24  Frédéric Wang  <fred.wang@free.fr>
 
         [EFL] Install Latin Modern Math on the bots
