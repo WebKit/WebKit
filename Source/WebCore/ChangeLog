@@ -1,5 +1,26 @@
 2014-06-25  Jer Noble  <jer.noble@apple.com>
 
+        [MSE][Mac] Pause playback when readyState drops below HAVE_FUTURE_DATA, and do not complete seek until it rises above HAVE_METADATA.
+        https://bugs.webkit.org/show_bug.cgi?id=134306
+
+        Reviewed by Eric Carlson.
+
+        Pause the synchronizer before seeking, and do not resume the synchronizer until it both reports that the seek completed,
+        and that the readyState rises above HAVE_METADATA. In every other location where we change the rate of the synchronizer,
+        gate that rate change on the above.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC): Check shouldBePlaying().
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::playInternal): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance): Unset m_seekCompleted.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekInternal): Pause the synchronizer.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setRateDouble): Check shouldBePlaying().
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::shouldBePlaying): Test m_seeking, !m_seekCompleted, and the readyState.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setReadyState): Set m_seekCompleted; check shouldBePlaying() and play if appropriate.
+
+2014-06-25  Jer Noble  <jer.noble@apple.com>
+
         [MSE] Update monitorSourceBuffers to match recent spec changes
         https://bugs.webkit.org/show_bug.cgi?id=134305
 

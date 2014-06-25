@@ -156,6 +156,7 @@ private:
 
     void ensureLayer();
     void destroyLayer();
+    bool shouldBePlaying() const;
 
     // MediaPlayer Factory Methods
     static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
@@ -194,6 +195,7 @@ private:
     double m_rate;
     bool m_playing;
     bool m_seeking;
+    bool m_seekCompleted;
     mutable bool m_loadingProgressed;
     bool m_hasAvailableVideoFrame;
 };

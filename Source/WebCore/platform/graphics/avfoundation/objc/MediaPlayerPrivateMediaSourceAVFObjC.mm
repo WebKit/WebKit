@@ -139,6 +139,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
     , m_rate(1)
     , m_playing(0)
     , m_seeking(false)
+    , m_seekCompleted(true)
     , m_loadingProgressed(false)
 {
     CMTimebaseRef timebase = [m_synchronizer timebase];
@@ -153,8 +154,12 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
         if (!weakThis)
             return;
 
-        if (m_seeking && !m_pendingSeek)
+        if (m_seeking && !m_pendingSeek) {
             m_seeking = false;
+            if (shouldBePlaying())
+                [m_synchronizer setRate:m_rate];
+        }
+
         m_player->timeChanged();
 
         if (m_pendingSeek)
@@ -328,7 +333,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::playInternal()
         return;
 
     m_playing = true;
-    [m_synchronizer setRate:m_rate];
+    if (shouldBePlaying())
+        [m_synchronizer setRate:m_rate];
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::pause()
@@ -426,6 +432,7 @@ double MediaPlayerPrivateMediaSourceAVFObjC::initialTime() const
 void MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance(double time, double negativeThreshold, double positiveThreshold)
 {
     m_seeking = true;
+    m_seekCompleted = false;
     auto weakThis = createWeakPtr();
     m_pendingSeek = std::make_unique<PendingSeek>(MediaTime::createWithDouble(time), MediaTime::createWithDouble(negativeThreshold), MediaTime::createWithDouble(positiveThreshold));
 
@@ -453,19 +460,19 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
     else
         seekTime = m_mediaSourcePrivate->fastSeekTimeForMediaTime(pendingSeek->targetTime, pendingSeek->positiveThreshold, pendingSeek->negativeThreshold);
 
-    [m_synchronizer setRate:(m_playing ? m_rate : 0) time:toCMTime(seekTime)];
+    [m_synchronizer setRate:0 time:toCMTime(seekTime)];
     m_mediaSourcePrivate->seekToTime(seekTime);
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::seeking() const
 {
-    return m_seeking;
+    return m_seeking && !m_seekCompleted;
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setRateDouble(double rate)
 {
     m_rate = rate;
-    if (m_playing)
+    if (shouldBePlaying())
         [m_synchronizer setRate:m_rate];
 }
 
@@ -610,6 +617,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::destroyLayer()
     m_sampleBufferDisplayLayer = nullptr;
 }
 
+bool MediaPlayerPrivateMediaSourceAVFObjC::shouldBePlaying() const
+{
+    return m_playing && !seeking() && m_readyState >= MediaPlayer::HaveFutureData;
+}
+
 void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
 {
     m_player->durationChanged();
@@ -663,6 +675,17 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setReadyState(MediaPlayer::ReadyState
         return;
 
     m_readyState = readyState;
+
+    if (!m_seekCompleted && m_readyState >= MediaPlayer::HaveCurrentData) {
+        m_seekCompleted = true;
+        m_player->timeChanged();
+    }
+
+    if (shouldBePlaying())
+        [m_synchronizer setRate:m_rate];
+    else
+        [m_synchronizer setRate:0];
+
     m_player->readyStateChanged();
 }
 
