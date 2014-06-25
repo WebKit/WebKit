@@ -1,5 +1,19 @@
 2014-06-24  Jono Wells  <jonowells@apple.com>
 
+        Web Inspector: clicking "Show All Nodes" button throws TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=133701
+
+        Reviewed by Timothy Hatcher.
+
+        The method used for isEventWithinDisclosureTriangle needs to consider the possibility that the 
+        targeted TreeElement isn't contained within the visible DOM, for instance in the case of the
+        "Show All Nodes" button immediately after it is pressed.
+
+        * UserInterface/Views/TreeOutline.js:
+        (TreeElement.prototype.isEventWithinDisclosureTriangle): Check to make sure TreeElement node is in the visible DOM.
+
+2014-06-24  Jono Wells  <jonowells@apple.com>
+
         Web Inspector: TypeError when hovering over "Show All Nodes" button in the Dom Tree inspector
         https://bugs.webkit.org/show_bug.cgi?id=133699
 
