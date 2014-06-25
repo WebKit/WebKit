@@ -1,3 +1,16 @@
+2014-06-25  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Update monitorSourceBuffers to match recent spec changes
+        https://bugs.webkit.org/show_bug.cgi?id=134305
+
+        Reviewed by Eric Carlson.
+
+        In W3C bug #24347, the text for the third clause of Source Buffer Monitoring was updated. Update our
+        implementation to match the new text.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::monitorSourceBuffers):
+
 2014-06-25  Alex Christensen  <achristensen@webkit.org>
             And peavo@outlook.com  <peavo@outlook.com>
 

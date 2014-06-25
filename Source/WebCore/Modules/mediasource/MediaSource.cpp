@@ -221,9 +221,9 @@ void MediaSource::monitorSourceBuffers()
         return;
     }
 
-    // ↳ If buffered for at least one object in activeSourceBuffers contains a TimeRange that includes
-    // the current playback position but not enough data to ensure uninterrupted playback:
-    if (std::any_of(begin, end, [](RefPtr<SourceBuffer>& sourceBuffer) {
+    // ↳ If buffered for all objects in activeSourceBuffers contain a TimeRange that includes
+    // the current playback position and some time beyond the current playback position, then run the following steps:
+    if (std::all_of(begin, end, [](RefPtr<SourceBuffer>& sourceBuffer) {
         return sourceBuffer->hasFutureTime();
     })) {
         // 1. Set the HTMLMediaElement.readyState attribute to HAVE_FUTURE_DATA.
