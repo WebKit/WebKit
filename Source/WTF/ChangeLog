@@ -1,3 +1,13 @@
+2014-06-24  Andreas Kling  <akling@apple.com>
+
+        Run the FastMalloc scavenger thread on iOS as well.
+        <https://webkit.org/b/134287>
+        <rdar://problem/17446198>
+
+        Reviewed by Gavin Barraclough.
+
+        * wtf/FastMalloc.cpp:
+
 2014-06-24  Anders Carlsson  <andersca@apple.com>
 
         Add PageState to HistoryItem conversion code
