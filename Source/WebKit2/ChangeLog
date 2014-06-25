@@ -1,3 +1,19 @@
+2014-06-25  Timothy Horton  <timothy_horton@apple.com>
+
+        [iOS][WK2] Rotating a zoomed PDF leads to weird scrolling behavior
+        https://bugs.webkit.org/show_bug.cgi?id=134286
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView _computePageAndDocumentFrames]):
+        The WKPDFView frame and scroll view content size need to be scaled.
+
+        (-[WKPDFView web_setScrollView:]): Deleted.
+
+        (-[WKPDFView web_initWithFrame:webView:]):
+        Get rid of _documentFrame, and don't set it at initWithFrame: time (it's not useful yet).
+
 2014-06-25  Laszlo Gombos  <l.gombos@samsung.com>
 
         Remove build guard for progress element

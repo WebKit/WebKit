@@ -57,7 +57,6 @@ typedef struct {
     RetainPtr<WKPDFPageNumberIndicator> _pageNumberIndicator;
 
     Vector<PDFPageInfo> _pages;
-    CGRect _documentFrame;
     unsigned _centerPageNumber;
 
     CGSize _minimumSize;
@@ -79,7 +78,6 @@ typedef struct {
     _scrollView = webView.scrollView;
     [_scrollView setMinimumZoomScale:pdfMinimumZoomScale];
     [_scrollView setMaximumZoomScale:pdfMaximumZoomScale];
-    [_scrollView setContentSize:_documentFrame.size];
     [_scrollView setBackgroundColor:[UIColor grayColor]];
 
     return self;
@@ -124,16 +122,6 @@ typedef struct {
 
     [self _computePageAndDocumentFrames];
     [self _revalidateViews];
-}
-
-- (void)web_setScrollView:(UIScrollView *)scrollView
-{
-    _scrollView = scrollView;
-
-    [_scrollView setMinimumZoomScale:pdfMinimumZoomScale];
-    [_scrollView setMaximumZoomScale:pdfMaximumZoomScale];
-    [_scrollView setContentSize:_documentFrame.size];
-    [_scrollView setBackgroundColor:[UIColor grayColor]];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
@@ -247,12 +235,13 @@ typedef struct {
         pageFrame.origin.y += pageFrame.size.height - pdfPageMargin;
     }
 
-    _documentFrame = [self frame];
-    _documentFrame.size.width = _minimumSize.width;
-    _documentFrame.size.height = std::max(pageFrame.origin.y + pdfPageMargin, _minimumSize.height);
+    CGFloat scale = _scrollView.zoomScale;
+    CGRect newFrame = [self frame];
+    newFrame.size.width = _minimumSize.width * scale;
+    newFrame.size.height = std::max(pageFrame.origin.y + pdfPageMargin, _minimumSize.height) * scale;
 
-    [self setFrame:_documentFrame];
-    [_scrollView setContentSize:_documentFrame.size];
+    [self setFrame:newFrame];
+    [_scrollView setContentSize:newFrame.size];
 }
 
 @end
