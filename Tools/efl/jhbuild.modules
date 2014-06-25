@@ -75,7 +75,12 @@
 
   <autotools id="fonts"
              skip-autogen="true">
-    <branch repo="github.com" module="mrobinson/webkitgtk-test-fonts.git" checkoutdir="webkitgtk-test-fonts" tag="0.0.5"/>
+    <branch module="mrobinson/webkitgtk-test-fonts/archive/0.0.5.tar.gz" version="0.0.5"
+            checkoutdir="webkitgtk-test-fonts"
+            repo="github.com"
+            hash="sha256:369aea9e18aa1a234400976c0a8135b9709805ce4b65a3b474a8d0ee0e298f34"
+            md5sum="39802b485f513842724e6cfd265335bb" size="22592847">
+    </branch>
   </autotools>
 
   <autotools id="libffi" autogen-sh="configure">

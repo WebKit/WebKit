@@ -1,5 +1,14 @@
 2014-06-24  Frédéric Wang  <fred.wang@free.fr>
 
+        [EFL] Install Latin Modern Math on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=134153
+
+        Reviewed by Gyuyoung Kim.
+
+        * efl/jhbuild.modules: Switch back to https://github.com/ for the webkitgtk-test-fonts.
+
+2014-06-24  Frédéric Wang  <fred.wang@free.fr>
+
         [EFL] [GTK] Use Latin Modern Math in the jhbuild environments.
         https://bugs.webkit.org/show_bug.cgi?id=134153
 
