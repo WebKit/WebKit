@@ -1,3 +1,15 @@
+2014-06-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Tiles on bottom of screen are not always allocated when necessary
+        https://bugs.webkit.org/show_bug.cgi?id=134272
+
+        Reviewed by Simon Fraser.
+
+        Apply a content inset, then dump visible rects.
+
+        * platform/mac-wk2/tiled-drawing/visible-rect-content-inset-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/visible-rect-content-inset.html: Added.
+
 2014-06-24  Samuel White  <samuel_white@apple.com>
 
         AX: Remove tight platform expectation coupling form roles-exposed layout test.

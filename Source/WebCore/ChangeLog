@@ -1,5 +1,29 @@
 2014-06-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Tiles on bottom of screen are not always allocated when necessary
+        https://bugs.webkit.org/show_bug.cgi?id=134272
+
+        Reviewed by Simon Fraser.
+
+        The initial visibleRect is in the coordinate of the root layer, so its origin
+        is at the top left of the view. The initial rect we were using doesn't
+        include the contents inset, so it was too short, which was causing tiles near
+        the bottom of the screen to not always be allocated if the tile threshold was
+        close to the bottom of the view. Instead, we want to include the contents
+        inset size so the visible rect includes the entire view.
+        GraphicsLayerCA::recursiveCommitChanges() takes care of mapping and cropping
+        the visible rect into the tiled layer's coordinate system, at which point it
+        is used for visible tile logic.
+
+        Test: platform/mac-wk2/tiled-drawing/visible-rect-content-inset.html
+
+        * platform/graphics/ca/TileCoverageMap.cpp:
+        (WebCore::TileCoverageMap::update):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+
+2014-06-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
         InlineTextBox's m_len can be an unsigned (rather than an unsigned short)
         https://bugs.webkit.org/show_bug.cgi?id=134173
 
