@@ -829,10 +829,7 @@ sub builtDylibPathForName
         return "NotFound";
     }
     if (isEfl()) {
-        if (isWK2()) {
-            return "$configurationProductDir/lib/libewebkit2.so";
-        }
-        return "$configurationProductDir/lib/libewebkit.so";
+        return "$configurationProductDir/lib/libewebkit2.so";
     }
     if (isWinCE()) {
         return "$configurationProductDir/$libraryName";

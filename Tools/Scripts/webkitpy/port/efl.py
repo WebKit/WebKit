@@ -110,11 +110,7 @@ class EflPort(Port):
 
     def _search_paths(self):
         search_paths = []
-        if self.get_option('webkit_test_runner'):
-            search_paths.append(self.port_name + '-wk2')
-            search_paths.append('wk2')
-        else:
-            search_paths.append(self.port_name + '-wk1')
+        search_paths.append('wk2')
         search_paths.append(self.port_name)
         return search_paths
 
@@ -129,8 +125,6 @@ class EflPort(Port):
         # FIXME: We should find a way to share this implmentation with Gtk,
         # or teach run-launcher how to call run-safari and move this down to WebKitPort.
         run_launcher_args = ["file://%s" % results_filename]
-        if self.get_option('webkit_test_runner'):
-            run_launcher_args.append('-2')
         # FIXME: old-run-webkit-tests also added ["-graphicssystem", "raster", "-style", "windows"]
         # FIXME: old-run-webkit-tests converted results_filename path for cygwin.
         self._run_script("run-launcher", run_launcher_args)

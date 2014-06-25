@@ -45,14 +45,8 @@ my @jhbuildWrapper;
 checkFrameworks();
 
 # Set paths according to the build system used
-if (isGtk()) {
+if (isGtk() || isEfl()) {
     $launcherPath = catdir($productDir, "bin", "MiniBrowser");
-} elsif (isEfl()) {
-    if (isWK2()) {
-        $launcherPath = catdir($productDir, "bin", "MiniBrowser");
-    } else {
-        $launcherPath = catdir($productDir, "bin", "EWebLauncher");
-    }
 }
 
 $launcherPath && -x $launcherPath or die "Can't find the launcher command";
