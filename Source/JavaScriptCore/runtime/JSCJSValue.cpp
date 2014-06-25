@@ -251,6 +251,47 @@ void JSValue::dumpInContext(PrintStream& out, DumpContext* context) const
         out.print("INVALID");
 }
 
+void JSValue::dumpForBacktrace(PrintStream& out) const
+{
+    if (!*this)
+        out.print("<JSValue()>");
+    else if (isInt32())
+        out.printf("%d", asInt32());
+    else if (isDouble())
+        out.printf("%lf", asDouble());
+    else if (isCell()) {
+        if (asCell()->inherits(JSString::info())) {
+            JSString* string = jsCast<JSString*>(asCell());
+            const StringImpl* impl = string->tryGetValueImpl();
+            if (impl)
+                out.print("\"", impl, "\"");
+            else
+                out.print("(unresolved string)");
+        } else if (asCell()->inherits(Structure::info())) {
+            out.print("Structure[ ", asCell()->structure()->classInfo()->className);
+#if USE(JSVALUE64)
+            out.print(" ID: ", asCell()->structureID());
+#endif
+            out.print("]: ", RawPointer(asCell()));
+        } else {
+            out.print("Cell[", asCell()->structure()->classInfo()->className);
+#if USE(JSVALUE64)
+            out.print(" ID: ", asCell()->structureID());
+#endif
+            out.print("]: ", RawPointer(asCell()));
+        }
+    } else if (isTrue())
+        out.print("True");
+    else if (isFalse())
+        out.print("False");
+    else if (isNull())
+        out.print("Null");
+    else if (isUndefined())
+        out.print("Undefined");
+    else
+        out.print("INVALID");
+}
+
 // This in the ToInt32 operation is defined in section 9.5 of the ECMA-262 spec.
 // Note that this operation is identical to ToUInt32 other than to interpretation
 // of the resulting bit-pattern (as such this metod is also called to implement

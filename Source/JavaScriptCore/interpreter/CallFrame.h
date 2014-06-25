@@ -308,6 +308,9 @@ namespace JSC  {
             StackVisitor::visit<Functor>(this, functor);
         }
 
+        void dump(PrintStream&);
+        JS_EXPORT_PRIVATE const char* describeFrame();
+
     private:
         static const intptr_t s_VMEntrySentinel = 1;
 

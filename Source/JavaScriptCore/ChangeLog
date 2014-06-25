@@ -1,3 +1,18 @@
+2014-06-24  Michael Saboff  <msaboff@apple.com>
+
+        Add support routines to provide descriptive JavaScript backtraces
+        https://bugs.webkit.org/show_bug.cgi?id=134278
+
+        Reviewed by Mark Lam.
+
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::dump):
+        (JSC::CallFrame::describeFrame):
+        * interpreter/CallFrame.h:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::dumpForBacktrace):
+        * runtime/JSCJSValue.h:
+
 2014-06-24  Brady Eidson  <beidson@apple.com>
 
         Enable GAMEPAD in the Mac build, but disabled at runtime.
