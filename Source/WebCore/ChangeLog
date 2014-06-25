@@ -1,3 +1,10 @@
+2014-06-25  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed iOS build fix after r170425.
+
+        * accessibility/AccessibilityProgressIndicator.cpp:
+        * accessibility/AccessibilityProgressIndicator.h:
+
 2014-06-25  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash at com.apple.WebCore: WebCore::AlternativeTextController::removeDictationAlternativesForMarker + 43

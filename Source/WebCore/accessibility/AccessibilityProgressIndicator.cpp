@@ -21,7 +21,6 @@
 #include "config.h"
 #include "AccessibilityProgressIndicator.h"
 
-#if ENABLE(METER_ELEMENT)
 #include "FloatConversion.h"
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
@@ -140,6 +139,4 @@ HTMLMeterElement* AccessibilityProgressIndicator::meterElement() const
 #endif
 
 } // namespace WebCore
-
-#endif // ENABLE(METER_ELEMENT)
 
