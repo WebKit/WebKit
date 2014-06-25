@@ -1,3 +1,9 @@
+2014-06-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Whoops! DirectX SDK is still needed.
+
+        * building/tools.html: Put DirectX instruction back.
+
 2014-06-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Remove some out-of-date stuff from our instructions.
