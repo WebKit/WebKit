@@ -1,3 +1,15 @@
+2014-06-25  Gavin Barraclough  <baraclough@apple.com>
+
+        Should _updateVisibilityState on view hide/unhide.
+        https://bugs.webkit.org/show_bug.cgi?id=134314
+        rdar://17171803
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebView.mm:
+        (-[WebView viewDidHide]):
+        (-[WebView viewDidUnhide]):
+
 2014-06-25  Chris Fleizach  <cfleizach@apple.com>
 
         Add an undo group for each dictated utterance in WebKit

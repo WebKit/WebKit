@@ -5298,6 +5298,16 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     [self _updateActiveState];
 }
 
+- (void)viewDidHide
+{
+    [self _updateVisibilityState];
+}
+
+- (void)viewDidUnhide
+{
+    [self _updateVisibilityState];
+}
+
 - (void)_windowWillOrderOnScreen:(NSNotification *)notification
 {
     if (![self shouldUpdateWhileOffscreen])
