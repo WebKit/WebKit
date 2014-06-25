@@ -1,3 +1,15 @@
+2014-06-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Remove some out-of-date stuff from our instructions.
+        https://bugs.webkit.org/show_bug.cgi?id=134282
+
+        Reviewed by Tim Horton.
+
+        * building/build.html: Remove reference to "Platform SDK" which we don't manuall 
+        install anymore (it's part of Visual Studio 2013).
+        * building/tools.html: We no longer need QuickTime SDK, QuickTime Player, or
+        the DirectX SDK.
+
 2014-06-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Drop the cross organizational support requirement from reviewer nomination policy
