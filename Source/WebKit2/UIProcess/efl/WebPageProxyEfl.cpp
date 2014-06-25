@@ -97,6 +97,11 @@ void WebPageProxy::windowedPluginGeometryDidChange(const WebCore::IntRect&, cons
     notImplemented();
 }
 
+void WebPageProxy::windowedPluginVisibilityDidChange(bool, uint64_t)
+{
+    notImplemented();
+}
+
 void WebPageProxy::handleInputMethodKeydown(bool& handled)
 {
     handled = m_keyEventQueue.first().isFiltered();

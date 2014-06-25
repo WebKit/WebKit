@@ -116,12 +116,14 @@ private:
 #if PLUGIN_ARCHITECTURE(X11)
     virtual uint64_t createPluginContainer() override;
     virtual void windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID) override;
+    virtual void windowedPluginVisibilityDidChange(bool isVisible, uint64_t windowID) override;
 #endif
     
     // Message handlers.
     void frameDidFinishLoading(uint64_t requestID);
     void frameDidFail(uint64_t requestID, bool wasCancelled);
     void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform, float contentsScaleFactor, const ShareableBitmap::Handle& backingStoreHandle);
+    void visibilityDidChange(bool isVisible);
     void didEvaluateJavaScript(uint64_t requestID, const String& result);
     void streamDidReceiveResponse(uint64_t streamID, const String& responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers);
     void streamDidReceiveData(uint64_t streamID, const IPC::DataReference& data);

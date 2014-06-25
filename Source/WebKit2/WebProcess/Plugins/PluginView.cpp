@@ -615,6 +615,7 @@ void PluginView::didInitializePlugin()
     windowAndViewFramesChanged(m_webPage->windowFrameInScreenCoordinates(), m_webPage->viewFrameInWindowCoordinates());
 #endif
 
+    viewVisibilityDidChange();
     viewGeometryDidChange();
 
     if (m_pluginElement->document().focusedElement() == m_pluginElement)
@@ -1021,6 +1022,15 @@ void PluginView::hide()
     Widget::hide();
 }
 
+void PluginView::setParentVisible(bool isVisible)
+{
+    if (isParentVisible() == isVisible)
+        return;
+
+    Widget::setParentVisible(isVisible);
+    viewVisibilityDidChange();
+}
+
 bool PluginView::transformsAffectFrameRect()
 {
     return false;
@@ -1063,7 +1073,7 @@ void PluginView::viewVisibilityDidChange()
     if (!m_isInitialized || !m_plugin || !parent())
         return;
 
-    m_plugin->visibilityDidChange();
+    m_plugin->visibilityDidChange(isVisible());
 }
 
 IntRect PluginView::clipRectInWindowCoordinates() const
@@ -1624,6 +1634,11 @@ uint64_t PluginView::createPluginContainer()
 void PluginView::windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID)
 {
     m_webPage->send(Messages::WebPageProxy::WindowedPluginGeometryDidChange(frameRect, clipRect, windowID));
+}
+
+void PluginView::windowedPluginVisibilityDidChange(bool isVisible, uint64_t windowID)
+{
+    m_webPage->send(Messages::WebPageProxy::WindowedPluginVisibilityDidChange(isVisible, windowID));
 }
 #endif
 

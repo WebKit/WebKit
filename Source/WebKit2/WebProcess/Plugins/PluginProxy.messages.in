@@ -73,6 +73,9 @@ messages -> PluginProxy LegacyReceiver {
 
     # Update geometry of windowed plugin widget
     WindowedPluginGeometryDidChange(WebCore::IntRect frameRect, WebCore::IntRect clipRect, uint64_t windowID)
+
+    # Update visibility of windowed plugin widget
+    WindowedPluginVisibilityDidChange(bool isVisible, uint64_t windowID)
 #endif
 
     # Tells the WebProcess that the plug-in was successfully initialized asynchronously

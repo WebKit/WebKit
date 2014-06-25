@@ -71,6 +71,7 @@ NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
     , m_inNPPNew(false)
     , m_shouldUseManualLoader(false)
     , m_hasCalledSetWindow(false)
+    , m_isVisible(false)
     , m_nextTimerID(0)
 #if PLATFORM(COCOA)
     , m_drawingModel(static_cast<NPDrawingModel>(-1))
@@ -760,10 +761,14 @@ void NetscapePlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&
     callSetWindow();
 }
 
-void NetscapePlugin::visibilityDidChange()
+void NetscapePlugin::visibilityDidChange(bool isVisible)
 {
     ASSERT(m_isStarted);
 
+    if (m_isVisible == isVisible)
+        return;
+
+    m_isVisible = isVisible;
     platformVisibilityDidChange();
 }
 
