@@ -464,7 +464,7 @@ void RenderTextLineBoxes::setSelectionState(RenderText& renderer, RenderObject::
 
 static IntRect ellipsisRectForBox(const InlineTextBox& box, unsigned start, unsigned end)
 {
-    unsigned short truncation = box.truncation();
+    unsigned truncation = box.truncation();
     if (truncation == cNoTruncation)
         return IntRect();
 
@@ -473,8 +473,9 @@ static IntRect ellipsisRectForBox(const InlineTextBox& box, unsigned start, unsi
         return IntRect();
     
     IntRect rect;
-    int ellipsisStartPosition = std::max<int>(start - box.start(), 0);
-    int ellipsisEndPosition = std::min<int>(end - box.start(), box.len());
+    unsigned ellipsisStartPosition = start > box.start() ? start - box.start() : 0;
+    ASSERT(end >= box.start());
+    unsigned ellipsisEndPosition = std::min(end - box.start(), box.len());
     
     // The ellipsis should be considered to be selected if the end of
     // the selection is past the beginning of the truncation and the

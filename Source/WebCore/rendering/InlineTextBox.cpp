@@ -59,7 +59,7 @@ namespace WebCore {
 
 struct SameSizeAsInlineTextBox : public InlineBox {
     unsigned variables[1];
-    unsigned short variables2[2];
+    unsigned variables2[2];
     void* pointers[2];
 };
 
@@ -201,7 +201,7 @@ bool InlineTextBox::isSelected(unsigned startPos, unsigned endPos) const
     unsigned sPos = startPos > m_start ? startPos - m_start : 0;
     if (endPos <= m_start)
         return false;
-    unsigned ePos = std::min(endPos - m_start, static_cast<unsigned>(m_len));
+    unsigned ePos = std::min(endPos - m_start, m_len);
     return sPos < ePos;
 }
 
@@ -278,7 +278,7 @@ LayoutRect InlineTextBox::localSelectionRect(unsigned startPos, unsigned endPos)
     if (endPos < m_start)
         return LayoutRect();
 
-    unsigned ePos = std::min(endPos - m_start, static_cast<unsigned>(m_len));
+    unsigned ePos = std::min(endPos - m_start, m_len);
     
     if (sPos > ePos)
         return LayoutRect();
@@ -640,8 +640,8 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         selectionStartEnd(sPos, ePos);
 
     if (m_truncation != cNoTruncation) {
-        sPos = std::min(sPos, static_cast<unsigned>(m_truncation));
-        ePos = std::min(ePos, static_cast<unsigned>(m_truncation));
+        sPos = std::min(sPos, m_truncation);
+        ePos = std::min(ePos, m_truncation);
         length = m_truncation;
     }
 
@@ -721,7 +721,7 @@ void InlineTextBox::selectionStartEnd(unsigned& sPos, unsigned& ePos)
     
     sPos = startPos > m_start ? startPos - m_start : 0;
     ePos = endPos > m_start ? endPos - m_start : 0;
-    ePos = std::min(ePos, static_cast<unsigned>(m_len));
+    ePos = std::min(ePos, m_len);
 }
 
 void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& boxOrigin, const RenderStyle& style, const Font& font, Color textColor)
@@ -753,8 +753,8 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
     unsigned length = m_truncation != cNoTruncation ? m_truncation : m_len;
     String string = renderer().text();
 
-    if (string.length() != static_cast<unsigned>(length) || m_start) {
-        ASSERT_WITH_SECURITY_IMPLICATION(static_cast<unsigned>(m_start + length) <= string.length());
+    if (string.length() != length || m_start) {
+        ASSERT_WITH_SECURITY_IMPLICATION(m_start + length <= string.length());
         string = string.substringSharingImpl(m_start, length);
     }
 
@@ -789,7 +789,7 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const F
     unsigned offset = m_start;
     unsigned sPos = startPos > offset ? startPos - offset : 0;
     ASSERT(endPos >= offset);
-    unsigned ePos = std::min(endPos - offset, static_cast<unsigned>(m_len));
+    unsigned ePos = std::min(endPos - offset, m_len);
 
     if (sPos >= ePos)
         return;
@@ -1139,10 +1139,10 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext* pt, const FloatPoint& b
     if (!markerSpansWholeBox || grammar || isDictationMarker) {
         unsigned startPosition = marker->startOffset() > m_start ? marker->startOffset() - m_start : 0;
         ASSERT(marker->endOffset() >= m_start);
-        unsigned endPosition = std::min(marker->endOffset() - m_start, static_cast<unsigned>(m_len));
+        unsigned endPosition = std::min(marker->endOffset() - m_start, m_len);
         
         if (m_truncation != cNoTruncation)
-            endPosition = std::min(endPosition, static_cast<unsigned>(m_truncation));
+            endPosition = std::min(endPosition, m_truncation);
 
         // Calculate start & width
         int deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
@@ -1191,7 +1191,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* context, const FloatPo
 
     unsigned sPos = marker->startOffset() > m_start ? marker->startOffset() - m_start : 0;
     ASSERT(marker->endOffset() >= m_start);
-    unsigned ePos = std::min(marker->endOffset() - m_start, static_cast<unsigned>(m_len));
+    unsigned ePos = std::min(marker->endOffset() - m_start, m_len);
     TextRun run = constructTextRun(style, font);
 
     // Always compute and store the rect associated with this marker. The computed rect is in absolute coordinates.
@@ -1225,7 +1225,7 @@ void InlineTextBox::computeRectForReplacementMarker(DocumentMarker* marker, cons
     
     unsigned sPos = marker->startOffset() > m_start ? marker->startOffset() - m_start : 0;
     ASSERT(marker->endOffset() >= m_start);
-    unsigned ePos = std::min(marker->endOffset() - m_start, (unsigned)m_len);
+    unsigned ePos = std::min(marker->endOffset() - m_start, m_len);
     TextRun run = constructTextRun(style, font);
 
     // Compute and store the rect associated with this marker.

@@ -34,8 +34,8 @@ struct CompositionUnderline;
 class DocumentMarker;
 class TextPainter;
 
-const unsigned short cNoTruncation = USHRT_MAX;
-const unsigned short cFullTruncation = USHRT_MAX - 1;
+const unsigned cNoTruncation = std::numeric_limits<unsigned>::max();
+const unsigned cFullTruncation = std::numeric_limits<unsigned>::max() - 1;
 
 class BufferForAppendingHyphen : public StringBuilder {
 public:
@@ -75,7 +75,7 @@ public:
 
     void offsetRun(int d) { ASSERT(!isDirty()); m_start += d; }
 
-    unsigned short truncation() const { return m_truncation; }
+    unsigned truncation() const { return m_truncation; }
 
     virtual void markDirty(bool dirty = true) override final;
 
@@ -188,11 +188,11 @@ private:
     InlineTextBox* m_nextTextBox; // The next box that also uses our RenderObject
 
     unsigned m_start;
-    unsigned short m_len;
+    unsigned m_len;
 
     // Where to truncate when text overflow is applied. We use special constants to
     // denote no truncation (the whole run paints) and full truncation (nothing paints at all).
-    unsigned short m_truncation;
+    unsigned m_truncation;
 };
 
 INLINE_BOX_OBJECT_TYPE_CASTS(InlineTextBox, isInlineTextBox())
