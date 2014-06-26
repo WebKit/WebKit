@@ -71,6 +71,8 @@ public:
 
     void setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheRight, bool pinnedToTheTop, bool pinnedToTheBottom);
 
+    virtual PassRefPtr<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) = 0;
+
     // Called after a scrolling tree node has handled a scroll and updated its layers.
     // Updates FrameView/RenderLayer scrolling state and GraphicsLayers.
     virtual void scrollingTreeNodeDidScroll(ScrollingNodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) = 0;
@@ -134,8 +136,6 @@ private:
     
     typedef HashMap<ScrollingNodeID, RefPtr<ScrollingTreeNode>> OrphanScrollingNodeMap;
     void updateTreeFromStateNode(const ScrollingStateNode*, OrphanScrollingNodeMap&);
-
-    virtual PassRefPtr<ScrollingTreeNode> createNode(ScrollingNodeType, ScrollingNodeID) = 0;
 
     ScrollingTreeNode* nodeForID(ScrollingNodeID) const;
 

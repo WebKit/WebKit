@@ -172,7 +172,7 @@ void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode,
     if (it != m_nodeMap.end())
         node = it->value;
     else {
-        node = createNode(stateNode->nodeType(), nodeID);
+        node = createScrollingTreeNode(stateNode->nodeType(), nodeID);
         if (!parentNodeID) {
             // This is the root node. Clear the node map.
             ASSERT(stateNode->nodeType() == FrameScrollingNode);

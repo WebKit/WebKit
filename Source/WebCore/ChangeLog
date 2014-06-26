@@ -1,3 +1,57 @@
+2014-06-25  Beth Dakin  <bdakin@apple.com>
+
+        Crash in ScrollingTree::isRubberBandInProgress()
+        https://bugs.webkit.org/show_bug.cgi?id=134316
+        -and corresponding-
+        <rdar://problem/16247911>
+
+        Reviewed by Geoffrey Garen.
+
+        This crash appears to have been caused by http://trac.webkit.org/changeset/161276 
+        which moved the ScrollingNode creation code from ScrollingTree over to 
+        ScrollingCoordinator. This creates a thread safety issue. In the crashing case, we 
+        believe that the ScrollingCoordinator's ScrollingTree pointer had been null-ed out
+        even though the ScrollingTree was kept alive by the bind call to propagate 
+        commitNewTreeState() over to the scrolling thread. The fix is to move node 
+        creation back to the ScrollingTree and to use the this pointer to create new
+        nodes rather than the ScrollingCoordinator's ScrollingTree pointer.
+
+        Don't allow ScrollingCoordinator to handle ScrollingTreeNode creation.
+        * page/scrolling/AsyncScrollingCoordinator.h:
+
+        Re-name createNode to createScrollingTreeNode(). 
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::updateTreeFromStateNode):
+        * page/scrolling/ScrollingTree.h:
+
+        Remove this implementation of createNode that called into the 
+        ScrollingCoordinator.
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::createNode): Deleted.
+        * page/scrolling/ThreadedScrollingTree.h:
+
+        Don't allow ScrollingCoordinator to handle ScrollingTreeNode creation.
+        * page/scrolling/ios/ScrollingCoordinatorIOS.h:
+        * page/scrolling/ios/ScrollingCoordinatorIOS.mm:
+        (WebCore::ScrollingCoordinatorIOS::createScrollingTreeNode): Deleted.
+
+        Re-name createNode to createScrollingTreeNode, and actually create the nodes here.
+        * page/scrolling/ios/ScrollingTreeIOS.cpp:
+        (WebCore::ScrollingTreeIOS::createScrollingTreeNode):
+        (WebCore::ScrollingTreeIOS::createNode): Deleted.
+        * page/scrolling/ios/ScrollingTreeIOS.h:
+
+        Don't allow ScrollingCoordinator to handle ScrollingTreeNode creation.
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::createScrollingTreeNode): Deleted.
+
+        Add the implementation of createScrollingTreeNode() for the Mac to 
+        ScrollingTreeMac since it can create Mac-specific nodes.
+        * page/scrolling/mac/ScrollingTreeMac.cpp:
+        (ScrollingTreeMac::createScrollingTreeNode):
+        * page/scrolling/mac/ScrollingTreeMac.h:
+
 2014-06-25  Enrica Casucci  <enrica@apple.com>
 
         iOS build fix after http://trac.webkit.org/changeset/170447.

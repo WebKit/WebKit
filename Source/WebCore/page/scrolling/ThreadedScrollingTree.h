@@ -59,8 +59,6 @@ public:
 protected:
     explicit ThreadedScrollingTree(AsyncScrollingCoordinator*);
 
-    virtual PassRefPtr<ScrollingTreeNode> createNode(ScrollingNodeType, ScrollingNodeID) override;
-
     virtual void scrollingTreeNodeDidScroll(ScrollingNodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) override;
 #if PLATFORM(MAC)
     virtual void handleWheelEventPhase(PlatformWheelEventPhase) override;

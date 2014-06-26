@@ -53,8 +53,6 @@ public:
 
     ScrollingTree* scrollingTree() const { return m_scrollingTree.get(); }
 
-    virtual PassRefPtr<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) = 0;
-
     void scrollingStateTreePropertiesChanged();
 
     void scheduleUpdateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, bool programmaticScroll, SetOrSyncScrollingLayerPosition);

@@ -64,7 +64,6 @@ private:
     virtual bool coordinatesScrollingForFrameView(WebCore::FrameView*) const override;
     virtual void scheduleTreeStateCommit() override;
 
-    virtual PassRefPtr<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) override;
     virtual bool isRubberBandInProgress() const override;
     virtual void setScrollPinningBehavior(WebCore::ScrollPinningBehavior) override;
 

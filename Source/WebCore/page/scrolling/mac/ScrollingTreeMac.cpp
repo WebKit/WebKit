@@ -26,6 +26,10 @@
 #include "config.h"
 #include "ScrollingTreeMac.h"
 
+#include "ScrollingTreeFixedNode.h"
+#include "ScrollingTreeFrameScrollingNodeMac.h"
+#include "ScrollingTreeStickyNode.h"
+
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
 using namespace WebCore;
@@ -38,6 +42,22 @@ RefPtr<ScrollingTreeMac> ScrollingTreeMac::create(AsyncScrollingCoordinator* scr
 ScrollingTreeMac::ScrollingTreeMac(AsyncScrollingCoordinator* scrollingCoordinator)
     : ThreadedScrollingTree(scrollingCoordinator)
 {
+}
+
+PassRefPtr<ScrollingTreeNode> ScrollingTreeMac::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+{
+    switch (nodeType) {
+    case FrameScrollingNode:
+        return ScrollingTreeFrameScrollingNodeMac::create(*this, nodeID);
+    case OverflowScrollingNode:
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    case FixedNode:
+        return ScrollingTreeFixedNode::create(*this, nodeID);
+    case StickyNode:
+        return ScrollingTreeStickyNode::create(*this, nodeID);
+    }
+    return nullptr;
 }
 
 #endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)

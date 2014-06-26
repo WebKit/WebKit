@@ -32,6 +32,7 @@
 #include "PlatformWheelEvent.h"
 #include "ScrollingThread.h"
 #include "ScrollingTreeFixedNode.h"
+#include "ScrollingTreeFrameScrollingNodeIOS.h"
 #include "ScrollingTreeNode.h"
 #include "ScrollingTreeScrollingNode.h"
 #include "ScrollingTreeStickyNode.h"
@@ -92,9 +93,20 @@ void ScrollingTreeIOS::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const 
     callOnMainThread(bind(&AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll, m_scrollingCoordinator.get(), nodeID, scrollPosition, isHandlingProgrammaticScroll(), scrollingLayerPositionAction));
 }
 
-PassRefPtr<ScrollingTreeNode> ScrollingTreeIOS::createNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+PassRefPtr<ScrollingTreeNode> ScrollingTreeIOS::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
-    return m_scrollingCoordinator->createScrollingTreeNode(nodeType, nodeID);
+    switch (nodeType) {
+    case FrameScrollingNode:
+        return ScrollingTreeFrameScrollingNodeIOS::create(*this, nodeID);
+    case OverflowScrollingNode:
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    case FixedNode:
+        return ScrollingTreeFixedNode::create(*this, nodeID);
+    case StickyNode:
+        return ScrollingTreeStickyNode::create(*this, nodeID);
+    }
+    return nullptr;
 }
 
 FloatRect ScrollingTreeIOS::fixedPositionRect()

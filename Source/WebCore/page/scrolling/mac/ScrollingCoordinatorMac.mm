@@ -142,24 +142,6 @@ void ScrollingCoordinatorMac::updateTiledScrollingIndicator()
     tiledBacking->setScrollingModeIndication(indicatorMode);
 }
 
-PassRefPtr<ScrollingTreeNode> ScrollingCoordinatorMac::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
-{
-    ASSERT(scrollingTree());
-
-    switch (nodeType) {
-    case FrameScrollingNode:
-        return ScrollingTreeFrameScrollingNodeMac::create(*scrollingTree(), nodeID);
-    case OverflowScrollingNode:
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    case FixedNode:
-        return ScrollingTreeFixedNode::create(*scrollingTree(), nodeID);
-    case StickyNode:
-        return ScrollingTreeStickyNode::create(*scrollingTree(), nodeID);
-    }
-    return nullptr;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)

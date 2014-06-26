@@ -104,24 +104,6 @@ void ScrollingCoordinatorIOS::commitTreeState()
     // FIXME: figure out how to commit.
 }
 
-PassRefPtr<ScrollingTreeNode> ScrollingCoordinatorIOS::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
-{
-    ASSERT(scrollingTree());
-
-    switch (nodeType) {
-    case FrameScrollingNode:
-        return ScrollingTreeFrameScrollingNodeIOS::create(*scrollingTree(), nodeID);
-    case OverflowScrollingNode:
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    case FixedNode:
-        return ScrollingTreeFixedNode::create(*scrollingTree(), nodeID);
-    case StickyNode:
-        return ScrollingTreeStickyNode::create(*scrollingTree(), nodeID);
-    }
-    return nullptr;
-}
-
 
 } // namespace WebCore
 

@@ -116,11 +116,6 @@ void ThreadedScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)
 }
 #endif
 
-PassRefPtr<ScrollingTreeNode> ThreadedScrollingTree::createNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
-{
-    return m_scrollingCoordinator->createScrollingTreeNode(nodeType, nodeID);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)

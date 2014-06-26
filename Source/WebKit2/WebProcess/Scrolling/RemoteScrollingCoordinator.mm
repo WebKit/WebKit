@@ -67,13 +67,6 @@ void RemoteScrollingCoordinator::scheduleTreeStateCommit()
     m_webPage->drawingArea()->scheduleCompositingLayerFlush();
 }
 
-PassRefPtr<ScrollingTreeNode> RemoteScrollingCoordinator::createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID)
-{
-    // We never created scrolling nodes in the WebProcess with remote scrolling.
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
 bool RemoteScrollingCoordinator::coordinatesScrollingForFrameView(FrameView* frameView) const
 {
     RenderView* renderView = frameView->renderView();
