@@ -36,9 +36,17 @@
 #include <WebCore/StorageStrategy.h>
 #include <wtf/NeverDestroyed.h>
 
+#if ENABLE(GAMEPAD)
+#include <WebCore/GamepadStrategy.h>
+#endif
+
 namespace WebKit {
 
-class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::DatabaseStrategy, private WebCore::LoaderStrategy, private WebCore::PasteboardStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy, private WebCore::StorageStrategy {
+class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::DatabaseStrategy, private WebCore::LoaderStrategy, private WebCore::PasteboardStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy, private WebCore::StorageStrategy
+#if ENABLE(GAMEPAD)
+    , private WebCore::GamepadStrategy
+#endif
+{
     friend class NeverDestroyed<WebPlatformStrategies>;
 public:
     static void initialize();
@@ -54,6 +62,9 @@ private:
     virtual WebCore::PluginStrategy* createPluginStrategy() override;
     virtual WebCore::SharedWorkerStrategy* createSharedWorkerStrategy() override;
     virtual WebCore::StorageStrategy* createStorageStrategy() override;
+#if ENABLE(GAMEPAD)
+    virtual WebCore::GamepadStrategy* createGamepadStrategy() override;
+#endif
 
     // WebCore::CookiesStrategy
     virtual String cookiesForDOM(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&) override;
@@ -127,6 +138,13 @@ private:
     Vector<WebCore::PluginInfo> m_cachedPlugins;
     Vector<WebCore::PluginInfo> m_cachedApplicationPlugins;
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
+
+#if ENABLE(GAMEPAD)
+    // WebCore::GamepadStrategy
+    virtual void startMonitoringGamepads(WebCore::GamepadStrategyClient*) override;
+    virtual void stopMonitoringGamepads(WebCore::GamepadStrategyClient*) override;
+    virtual const Vector<WebCore::PlatformGamepad*>& platformGamepads() override;
+#endif
 };
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

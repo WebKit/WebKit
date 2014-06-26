@@ -124,6 +124,13 @@ StorageStrategy* WebPlatformStrategies::createStorageStrategy()
     return this;
 }
 
+#if ENABLE(GAMEPAD)
+GamepadStrategy* WebPlatformStrategies::createGamepadStrategy()
+{
+    return this;
+}
+#endif
+
 // CookiesStrategy
 
 String WebPlatformStrategies::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
@@ -506,6 +513,22 @@ long WebPlatformStrategies::setStringForType(const String& string, const String&
     return newChangeCount;
 }
 
+#if ENABLE(GAMEPAD)
+void WebPlatformStrategies::startMonitoringGamepads(GamepadStrategyClient*)
+{
+}
+
+void WebPlatformStrategies::stopMonitoringGamepads(GamepadStrategyClient*)
+{
+}
+
+const Vector<PlatformGamepad*>& WebPlatformStrategies::platformGamepads()
+{
+    NeverDestroyed<Vector<PlatformGamepad*>> dummyGamepads;
+    return dummyGamepads;
+}
+#endif // ENABLE(GAMEPAD)
+
 #if PLATFORM(IOS)
 void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardWebContent& content)
 {
@@ -566,8 +589,8 @@ long WebPlatformStrategies::changeCount()
     return changeCount;
 }
 
-#endif
+#endif // PLATFORM(IOS)
 
-#endif
+#endif // PLATFORM(COCOA)
 
 } // namespace WebKit

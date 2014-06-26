@@ -44,6 +44,9 @@ private:
     virtual WebCore::PluginStrategy* createPluginStrategy() override;
     virtual WebCore::SharedWorkerStrategy* createSharedWorkerStrategy() override;
     virtual WebCore::StorageStrategy* createStorageStrategy() override;
+#if ENABLE(GAMEPAD)
+    virtual WebCore::GamepadStrategy* createGamepadStrategy() override;
+#endif
 
     // WebCore::LoaderStrategy
     virtual WebCore::ResourceLoadScheduler* resourceLoadScheduler() override;

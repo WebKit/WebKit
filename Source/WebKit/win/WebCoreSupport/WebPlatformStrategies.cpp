@@ -83,6 +83,13 @@ StorageStrategy* WebPlatformStrategies::createStorageStrategy()
     return this;
 }
 
+#if ENABLE(GAMEPAD)
+GamepadStrategy* WebPlatformStrategies::createGamepadStrategy()
+{
+    return nullptr;
+}
+#endif
+
 String WebPlatformStrategies::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
     return WebCore::cookiesForDOM(session, firstParty, url);

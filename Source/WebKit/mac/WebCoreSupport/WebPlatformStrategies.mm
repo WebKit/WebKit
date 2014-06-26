@@ -38,6 +38,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SubframeLoader.h>
 #import <WebKitSystemInterface.h>
+#import <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
@@ -88,6 +89,13 @@ StorageStrategy* WebPlatformStrategies::createStorageStrategy()
 {
     return this;
 }
+
+#if ENABLE(GAMEPAD)
+GamepadStrategy* WebPlatformStrategies::createGamepadStrategy()
+{
+    return this;
+}
+#endif
 
 String WebPlatformStrategies::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
@@ -212,6 +220,22 @@ long WebPlatformStrategies::setStringForType(const String& string, const String&
     return PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType);
 }
 
+#if ENABLE(GAMEPAD)
+void WebPlatformStrategies::startMonitoringGamepads(GamepadStrategyClient*)
+{
+}
+
+void WebPlatformStrategies::stopMonitoringGamepads(GamepadStrategyClient*)
+{
+}
+
+const Vector<PlatformGamepad*>& WebPlatformStrategies::platformGamepads()
+{
+    NeverDestroyed<Vector<PlatformGamepad*>> dummyGamepads;
+    return dummyGamepads;
+}
+#endif // ENABLE(GAMEPAD)
+
 #if PLATFORM(IOS)
 void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardWebContent& content)
 {
@@ -252,5 +276,4 @@ long WebPlatformStrategies::changeCount()
 {
     return PlatformPasteboard().changeCount();
 }
-
-#endif
+#endif // PLATFORM(IOS)

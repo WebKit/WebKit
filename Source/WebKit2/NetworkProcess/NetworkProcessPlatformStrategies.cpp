@@ -74,6 +74,13 @@ StorageStrategy* NetworkProcessPlatformStrategies::createStorageStrategy()
     return 0;
 }
 
+#if ENABLE(GAMEPAD)
+GamepadStrategy* NetworkProcessPlatformStrategies::createGamepadStrategy()
+{
+    return nullptr;
+}
+#endif
+
 ResourceLoadScheduler* NetworkProcessPlatformStrategies::resourceLoadScheduler()
 {
     ASSERT_NOT_REACHED();

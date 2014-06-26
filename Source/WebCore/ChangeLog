@@ -1,3 +1,43 @@
+2014-06-25  Brady Eidson  <beidson@apple.com>
+
+        Add new platform gamepad abstractions
+        https://bugs.webkit.org/show_bug.cgi?id=134325
+
+        Reviewed by Dean Jackson.
+
+        No new tests (Not yet a tested config)
+
+        - GamepadStrategy lets ports customize the 3 basic behaviors needed for a gamepad
+          implementation to feed the API in WebCore.
+        - GamepadStrategyClient gives arbitrary objects in WebCore the ability to register
+          for callbacks with the GamepadStrategy.
+        - PlatformGamepad is a platform-agnostic object that represents the data that
+          feeds into the Gamepad object that is exposed to web content.
+
+        The code in this patch is dead as-is, but https://bugs.webkit.org/show_bug.cgi?id=134324
+        will contain an immediate follow-up patch that uses it.
+
+        Makes sense to review them separately.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * platform/GamepadStrategy.h: Added.
+        (WebCore::GamepadStrategy::~GamepadStrategy):
+
+        * platform/GamepadStrategyClient.h: Added.
+        (WebCore::GamepadStrategyClient::~GamepadStrategyClient):
+
+        * platform/PlatformGamepad.h: Added.
+        (WebCore::PlatformGamepad::~PlatformGamepad):
+        (WebCore::PlatformGamepad::id):
+        (WebCore::PlatformGamepad::lastUpdateTime):
+        (WebCore::PlatformGamepad::connectTime):
+        (WebCore::PlatformGamepad::PlatformGamepad):
+
+        * platform/PlatformStrategies.h:
+        (WebCore::PlatformStrategies::gamepadStrategy):
+        (WebCore::PlatformStrategies::PlatformStrategies):
+
 2014-06-25  Zalan Bujtas  <zalan@apple.com>
 
         Assertion failed: CGPathAddRoundedRect asserts on non-renderable rounded rectangle.

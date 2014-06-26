@@ -1,3 +1,22 @@
+2014-06-25  Brady Eidson  <beidson@apple.com>
+
+        Add new platform gamepad abstractions
+        https://bugs.webkit.org/show_bug.cgi?id=134325
+
+        Reviewed by Dean Jackson.
+
+        * NetworkProcess/NetworkProcessPlatformStrategies.cpp:
+        (WebKit::NetworkProcessPlatformStrategies::createGamepadStrategy):
+        * NetworkProcess/NetworkProcessPlatformStrategies.h:
+
+        Actually return a GamepadStrategy in WK2 with no implementation for now:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::createGamepadStrategy):
+        (WebKit::WebPlatformStrategies::startMonitoringGamepads):
+        (WebKit::WebPlatformStrategies::stopMonitoringGamepads):
+        (WebKit::WebPlatformStrategies::platformGamepads):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2014-06-25  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Unreviewed, CMake build fix after r170450
