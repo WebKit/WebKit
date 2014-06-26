@@ -900,11 +900,9 @@ void CachedResource::tryReplaceEncodedData(PassRefPtr<SharedBuffer> newBuffer)
     
     if (!mayTryReplaceEncodedData())
         return;
-    
-    // Because the disk cache is asynchronous and racey with regards to the data we might be asked to replace,
-    // we need to verify that the new buffer has the same contents as our old buffer.
-    if (m_data->size() != newBuffer->size() || memcmp(m_data->data(), newBuffer->data(), m_data->size()))
-        return;
+
+    ASSERT(m_data->size() == newBuffer->size());
+    ASSERT(!memcmp(m_data->data(), newBuffer->data(), m_data->size()));
 
     m_data->tryReplaceSharedBufferContents(newBuffer.get());
 }

@@ -1,3 +1,23 @@
+2014-06-26  Andreas Kling  <akling@apple.com>
+
+        Skip memcmp()ing fully downloaded resources after they become mmap()able.
+        <https://webkit.org/b/134362>
+
+        When we receive word that a downloaded resource is now available for mmap()ing
+        from the file system, we don't need to compare against the buffered data,
+        since even if there were a mismatch, the cached version should be the canonical one.
+
+        This was added as belt-and-suspenders while the supporting mechanism was being
+        developed in CFNetwork, and there's no evidence of a race today. This change
+        turns the runtime checks into debug-only assertions.
+
+        Saves ~300ms of main thread time on PLT.
+
+        Reviewed by Geoff Garen.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::tryReplaceEncodedData):
+
 2014-06-26  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Refactoring: Use C++11 for-loops in SourceBuffer.
