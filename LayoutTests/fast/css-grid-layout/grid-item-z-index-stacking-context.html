@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+.grid {
+    -webkit-grid-template-rows: 100px;
+    -webkit-grid-template-columns: 200px 200px;
+    margin-top: 10px;
+}
+.red {
+    background-color: red;
+}
+.green {
+    background-color: green;
+}
+.positiveZIndex {
+    z-index: 10;
+}
+.negativeZIndex {
+    z-index: -5;
+}
+</style>
+</head>
+<body>
+<p>This test checks that grid items with 'z-index' do produce a stacking context and that we honor the property.</p>
+<p>For this test to pass, there should be no red below.</p>
+
+<div class="grid">
+    <div class="sizedToGridArea green positiveZIndex"></div>
+    <div class="sizedToGridArea red"></div>
+</div>
+
+<div class="grid">
+    <div class="sizedToGridArea green"></div>
+    <div class="sizedToGridArea red negativeZIndex"></div>
+</div>
+
+<div class="grid">
+    <div class="sizedToGridArea green firstRowBothColumn"></div>
+    <div class="sizedToGridArea red negativeZIndex firstRowFirstColumn"></div>
+    <div class="sizedToGridArea red negativeZIndex firstRowSecondColumn"></div>
+</div>
+
+</body>
+</html>

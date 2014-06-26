@@ -1,3 +1,21 @@
+2014-06-26  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Properly support for z-index on grid items
+        https://bugs.webkit.org/show_bug.cgi?id=103329
+
+        Reviewed by Benjamin Poulain.
+
+        From Blink r157620 by <jchaffraix@chromium.org> and r172402 by
+        <wangxianzhu@chromium.org>.
+
+        * css3/blending/repaint/blend-mode-turn-off-isolation-expected.txt: Test rebaseline.
+        * fast/css-grid-layout/grid-item-z-index-change-repaint-expected.html: Added.
+        * fast/css-grid-layout/grid-item-z-index-change-repaint.html: Added.
+        * fast/css-grid-layout/grid-item-z-index-stacking-context-expected.html: Added.
+        * fast/css-grid-layout/grid-item-z-index-stacking-context.html: Added.
+        * fast/css-grid-layout/grid-item-z-index-support-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-z-index-support.html: Added.
+
 2014-06-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         compositing/visible-rect/iframe-no-layers.html is broken and confusing

@@ -673,10 +673,12 @@ bool RenderStyle::changeRequiresPositionedLayoutOnly(const RenderStyle* other, u
 
 bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle* other, unsigned& changedContextSensitiveProperties) const
 {
+    // StyleResolver has ensured that zIndex is non-auto only if it's applicable.
+    if (m_box->zIndex() != other->m_box->zIndex() || m_box->hasAutoZIndex() != other->m_box->hasAutoZIndex())
+        return true;
+
     if (position() != StaticPosition) {
-        if (m_box->zIndex() != other->m_box->zIndex()
-            || m_box->hasAutoZIndex() != other->m_box->hasAutoZIndex()
-            || visual->clip != other->visual->clip
+        if (visual->clip != other->visual->clip
             || visual->hasClip != other->visual->hasClip)
             return true;
     }

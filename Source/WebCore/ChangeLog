@@ -1,3 +1,39 @@
+2014-06-26  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Properly support for z-index on grid items
+        https://bugs.webkit.org/show_bug.cgi?id=103329
+
+        Reviewed by Benjamin Poulain.
+
+        From Blink r157620 by <jchaffraix@chromium.org> and r172402 by
+        <wangxianzhu@chromium.org>.
+
+        The specification says that grid should match flexbox and force
+        grid items to be stacking context if z-index is set, regardless
+        of 'position'. After this change, this is what happens.
+
+        Previously z-index changes of static positioned objects were ignored.
+        However, z-index is applicable for some static positioned objects,
+        such as grid items. Ignoring them makes the object not to be properly
+        painted on z-index change.
+
+        As StyleResolver has ensured that z-index is non-auto only if
+        applicable, RenderStyle::changeRequiresLayerRepaint() should not check
+        again (with inconsistent conditions).
+
+        Tests: fast/css-grid-layout/grid-item-z-index-change-repaint.html
+               fast/css-grid-layout/grid-item-z-index-stacking-context.html
+               fast/css-grid-layout/grid-item-z-index-support.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::isDisplayFlexibleOrGridBox): Add new method to check if parent
+        display is flexbox or grid.
+        (WebCore::StyleResolver::adjustRenderStyle): Use new method in z-index
+        condition.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayerRepaint): Move z-index checks
+        out of non-static positioned objects if.
+
 2014-06-25  Dean Jackson  <dino@apple.com>
 
         HIDGamepad should use CFIndex when looping

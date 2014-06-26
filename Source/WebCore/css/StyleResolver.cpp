@@ -1136,6 +1136,11 @@ static inline bool isDisplayGridBox(EDisplay display)
 #endif
 }
 
+static bool isDisplayFlexibleOrGridBox(EDisplay display)
+{
+    return isDisplayFlexibleBox(display) || isDisplayGridBox(display);
+}
+
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
 static bool isScrollableOverflow(EOverflow overflow)
 {
@@ -1228,14 +1233,14 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         if (style.writingMode() != TopToBottomWritingMode && (style.display() == BOX || style.display() == INLINE_BOX))
             style.setWritingMode(TopToBottomWritingMode);
 
-        if (isDisplayFlexibleBox(parentStyle.display()) || isDisplayGridBox(parentStyle.display())) {
+        if (isDisplayFlexibleOrGridBox(parentStyle.display())) {
             style.setFloating(NoFloat);
             style.setDisplay(equivalentBlockDisplay(style.display(), style.isFloating(), !document().inQuirksMode()));
         }
     }
 
     // Make sure our z-index value is only applied if the object is positioned.
-    if (style.position() == StaticPosition && !isDisplayFlexibleBox(parentStyle.display()))
+    if (style.position() == StaticPosition && !isDisplayFlexibleOrGridBox(parentStyle.display()))
         style.setHasAutoZIndex();
 
     // Auto z-index becomes 0 for the root element and transparent objects. This prevents
