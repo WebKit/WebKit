@@ -81,6 +81,10 @@ void FunctionWhitelist::parseFunctionNamesInFile(const char* filename)
         
         m_entries.add(String(line, length));
     }
+
+    int result = fclose(f);
+    if (result)
+        dataLogF("Failed to close file %s: %s\n", filename, strerror(errno));
 }
 
 bool FunctionWhitelist::contains(CodeBlock* codeBlock) const 
