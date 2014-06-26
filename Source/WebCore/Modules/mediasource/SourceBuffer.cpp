@@ -557,19 +557,21 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
     // 3. For each track buffer in this source buffer, run the following steps:
     for (auto iter : m_trackBufferMap) {
         TrackBuffer& trackBuffer = iter.value;
-        // 3.1. Let remove end timestamp be the current value of duration
-        SampleMap::iterator removeEnd = trackBuffer.samples.presentationEnd();
 
+        // 3.1. Let remove end timestamp be the current value of duration
         // 3.2 If this track buffer has a random access point timestamp that is greater than or equal to end, then update
         // remove end timestamp to that random access point timestamp.
-        SampleMap::iterator nextRandomAccessPoint = trackBuffer.samples.findSyncSampleAfterPresentationTime(end);
-        if (nextRandomAccessPoint->first >= end)
-            removeEnd = trackBuffer.samples.findSampleContainingPresentationTime(nextRandomAccessPoint->first);
+        // NOTE: findSyncSampleAfterPresentationTime will return the next sync sample on or after the presentation time
+        // or decodeEnd() if no sync sample exists after that presentation time.
+        SampleMap::iterator removeDecodeEnd = trackBuffer.samples.findSyncSampleAfterPresentationTime(end);
 
         // 3.3 Remove all media data, from this track buffer, that contain starting timestamps greater than or equal to
         // start and less than the remove end timestamp.
-        SampleMap::iterator removeStart = trackBuffer.samples.findSampleAfterPresentationTime(start);
-        SampleMap::MapType erasedSamples(removeStart, removeEnd);
+        // NOTE: frames must be removed in decode order, so that all dependant frames between the frame to be removed
+        // and the next sync sample frame are removed.
+        SampleMap::iterator removePresentaionStart = trackBuffer.samples.findSampleAfterPresentationTime(start);
+        SampleMap::iterator removeDecodeStart = trackBuffer.samples.findSampleWithDecodeTime(removePresentaionStart->second->decodeTime());
+        SampleMap::MapType erasedSamples(removeDecodeStart, removeDecodeEnd);
         RefPtr<TimeRanges> erasedRanges = TimeRanges::create();
         MediaTime microsecond(1, 1000000);
         for (auto erasedIt : erasedSamples) {

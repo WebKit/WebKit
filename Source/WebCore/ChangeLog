@@ -1,3 +1,18 @@
+2014-06-25  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] removeCodedFrames() can remove more than it should
+        https://bugs.webkit.org/show_bug.cgi?id=134320
+
+        Reviewed by Geoff Garen.
+
+        removeCodedFrames() can remove more samples than it should because it compares an iterator
+        in presentation timespace to one in decode timespace. Clean up this code by removing frames
+        in decode order. Rename variables and add comments to make explicit which timespace defines
+        the iterators being used.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::removeCodedFrames):
+
 2014-06-25  Beth Dakin  <bdakin@apple.com>
 
         Crash in ScrollingTree::isRubberBandInProgress()
