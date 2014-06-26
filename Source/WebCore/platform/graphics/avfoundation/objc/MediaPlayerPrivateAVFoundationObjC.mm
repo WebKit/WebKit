@@ -671,6 +671,24 @@ void MediaPlayerPrivateAVFoundationObjC::synchronizeTextTrackState()
 }
 #endif
 
+
+static NSURL *canonicalURL(const String& url)
+{
+    NSURL *cocoaURL = URL(ParsedURLString, url);
+    if (url.isEmpty())
+        return cocoaURL;
+
+    RetainPtr<NSURLRequest> request = adoptNS([[NSURLRequest alloc] initWithURL:cocoaURL]);
+    if (!request)
+        return cocoaURL;
+
+    NSURLRequest *canonicalRequest = [NSURLProtocol canonicalRequestForRequest:request.get()];
+    if (!canonicalRequest)
+        return cocoaURL;
+
+    return [canonicalRequest URL];
+}
+
 void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
 {
     if (m_avAsset)
@@ -733,7 +751,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
         [options setObject:networkInterfaceName forKey:AVURLAssetBoundNetworkInterfaceName];
 #endif
 
-    NSURL *cocoaURL = URL(ParsedURLString, url);
+    NSURL *cocoaURL = canonicalURL(url);
     m_avAsset = adoptNS([[AVURLAsset alloc] initWithURL:cocoaURL options:options.get()]);
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)

@@ -1,3 +1,14 @@
+2014-06-26  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] allow host application to canonicalize media urls
+        https://bugs.webkit.org/show_bug.cgi?id=134329
+
+        Reviewed by Dean Jackson.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::canonicalURL): New, use NSURLProtocol to canonicalize a URL.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL): Call canonicalURL.
+
 2014-06-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add padding for future expansion to WebKitDOMEventTargetIface
