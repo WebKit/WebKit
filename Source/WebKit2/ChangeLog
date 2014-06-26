@@ -1,3 +1,16 @@
+2014-06-25  Tim Horton  <timothy_horton@apple.com>
+
+        [WK2] Shadow layer is in the wrong place while pinch-zooming
+        https://bugs.webkit.org/show_bug.cgi?id=134321
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::applyTransientZoomToLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::commitTransientZoom):
+        (WebKit::TiledCoreAnimationDrawingArea::applyTransientZoomToPage):
+        The anchor point of the shadow layer changed, so we no longer need to shift our position to the center.
+
 2014-06-25  Dan Bernstein  <mitz@apple.com>
 
         Fixed crashes after r170450.

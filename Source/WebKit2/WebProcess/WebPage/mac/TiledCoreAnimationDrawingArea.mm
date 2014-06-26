@@ -547,7 +547,7 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToLayers(double scale, Flo
         shadowBounds.scale(scale);
 
         shadowLayer->setBounds(shadowBounds);
-        shadowLayer->setPosition(origin + shadowBounds.center());
+        shadowLayer->setPosition(origin);
     }
 
     m_transientZoomScale = scale;
@@ -639,7 +639,7 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
         RetainPtr<CABasicAnimation> shadowBoundsAnimation = transientZoomSnapAnimationForKeyPath("bounds");
         [shadowBoundsAnimation setToValue:[NSValue valueWithRect:shadowBounds]];
         RetainPtr<CABasicAnimation> shadowPositionAnimation = transientZoomSnapAnimationForKeyPath("position");
-        [shadowPositionAnimation setToValue:[NSValue valueWithPoint:constrainedOrigin + shadowBounds.center()]];
+        [shadowPositionAnimation setToValue:[NSValue valueWithPoint:constrainedOrigin]];
         RetainPtr<CABasicAnimation> shadowPathAnimation = transientZoomSnapAnimationForKeyPath("shadowPath");
         [shadowPathAnimation setToValue:(id)shadowPath.get()];
 
@@ -663,7 +663,7 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, Float
         RenderView* renderView = m_webPage.mainFrameView()->renderView();
         IntRect overflowRect = renderView->pixelSnappedLayoutOverflowRect();
         shadowLayer->setBounds(IntRect(IntPoint(), toIntSize(overflowRect.maxXMaxYCorner())));
-        shadowLayer->setPosition(shadowLayer->bounds().center());
+        shadowLayer->setPosition(FloatPoint());
     }
 
     FloatPoint unscrolledOrigin(origin);
