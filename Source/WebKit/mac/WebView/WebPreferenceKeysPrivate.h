@@ -202,10 +202,4 @@
 #define WebKitDiskImageCacheMaximumCacheSizePreferenceKey @"WebKitDiskImageCacheMaximumCacheSize"
 #define WebKitDiskImageCacheSavedCacheDirectoryKey @"WebKitDiskImageCacheSavedCacheDirectory"
 
-#if TARGET_OS_IPHONE
-#if !defined(ENABLE_REMOTE_INSPECTOR) || ENABLE_REMOTE_INSPECTOR
-#define WebKitTextFieldRemoteInspectionEnabledPreferenceKey @"WebKitTextFieldRemoteInspectionEnabled"
-#endif
-#endif
-
 #define WebKitEnableInheritURIQueryComponentPreferenceKey @"WebKitEnableInheritURIQueryComponent"

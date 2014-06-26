@@ -1,3 +1,14 @@
+2014-06-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] Remove User Default for iOS TextField Debugging
+        https://bugs.webkit.org/show_bug.cgi?id=134356
+
+        Reviewed by Timothy Hatcher.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+
 2014-06-25  Brady Eidson  <beidson@apple.com>
 
         Add HID-based gamepad implementation for Mac

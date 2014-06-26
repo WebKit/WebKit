@@ -1189,14 +1189,7 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
     [self setGroupName:groupName];
 
 #if ENABLE(REMOTE_INSPECTOR)
-    // Production installs always disallow debugging simple HTML documents.
-    // Internal installs allow debugging simple HTML documents (TextFields) if the Internal Setting is enabled.
-    if (!isInternalInstall())
-        _private->page->setRemoteInspectionAllowed(false);
-    else {
-        static BOOL textFieldInspectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitTextFieldRemoteInspectionEnabledPreferenceKey];
-        _private->page->setRemoteInspectionAllowed(textFieldInspectionEnabled);
-    }
+    _private->page->setRemoteInspectionAllowed(isInternalInstall());
 #endif
     
     [self _updateScreenScaleFromWindow];
