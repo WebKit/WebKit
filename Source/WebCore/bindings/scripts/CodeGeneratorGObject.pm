@@ -815,8 +815,42 @@ EOF
     push(@cBodyProperties, $implContent);
 }
 
+sub GenerateConstants {
+    my ($interface, $prefix) = @_;
+
+    my $isStableClass = scalar(@stableSymbols);
+
+    if (@{$interface->constants}) {
+        my @constants = @{$interface->constants};
+        foreach my $constant (@constants) {
+            my $conditionalString = $codeGenerator->GenerateConditionalString($constant);
+            my $constantName = $prefix . $constant->name;
+            my $constantValue = $constant->value;
+            my $isStableSymbol = grep {$_ eq $constantName} @stableSymbols;
+            if ($isStableSymbol) {
+                push(@symbols, "$constantName\n");
+            }
+
+            my @constantHeader = ();
+            push(@constantHeader, "#if ${conditionalString}") if $conditionalString;
+            push(@constantHeader, "/**");
+            push(@constantHeader, " * ${constantName}:");
+            push(@constantHeader, " */");
+            push(@constantHeader, "#define $constantName $constantValue");
+            push(@constantHeader, "#endif /* ${conditionalString} */") if $conditionalString;
+            push(@constantHeader, "\n");
+
+            if ($isStableSymbol or !$isStableClass) {
+                push(@hBody, join("\n", @constantHeader));
+            } else {
+                push(@hBodyUnstable, join("\n", @constantHeader));
+            }
+        }
+    }
+}
+
 sub GenerateHeader {
-    my ($object, $interfaceName, $parentClassName) = @_;
+    my ($object, $interfaceName, $parentClassName, $interface) = @_;
 
     my $implContent = "";
 
@@ -868,6 +902,17 @@ EOF
 #define WEBKIT_DOM_IS_${clsCaps}_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_DOM_TYPE_${clsCaps}))
 #define WEBKIT_DOM_${clsCaps}_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_DOM_TYPE_${clsCaps}, ${className}Class))
 
+EOF
+
+    push(@hBody, $implContent);
+
+    if ($isStableClass) {
+        push(@symbols, "GType ${lowerCaseIfaceName}_get_type(void)\n");
+    }
+
+    GenerateConstants($interface, "WEBKIT_DOM_${clsCaps}_");
+
+    $implContent = << "EOF";
 struct _${className} {
     ${parentClassName} parent_instance;
 };
@@ -880,9 +925,6 @@ EOF
 
     push(@hBody, $implContent);
 
-    if ($isStableClass) {
-        push(@symbols, "GType ${lowerCaseIfaceName}_get_type(void)\n");
-    }
     push(@hBody, "WEBKIT_API GType\n${lowerCaseIfaceName}_get_type(void);\n");
     push(@hBody, "\n");
 }
@@ -1549,7 +1591,7 @@ sub Generate {
 
     $hdrIncludes{"webkitdom/${parentClassName}.h"} = 1;
 
-    $object->GenerateHeader($interfaceName, $parentClassName);
+    $object->GenerateHeader($interfaceName, $parentClassName, $interface);
     $object->GenerateCFile($interfaceName, $parentClassName, $parentGObjType, $interface);
     $object->GenerateEndHeader();
 }
@@ -1713,6 +1755,18 @@ EOF
     @stableSymbols = ();
 }
 
+sub IsInterfaceSymbol {
+    my ($line, $lowerCaseIfaceName) = @_;
+
+    # Function.
+    return 1 if $line =~ /^[a-zA-Z0-9\*]+\s${lowerCaseIfaceName}_.+$/;
+
+    # Constant.
+    my $prefix = uc($lowerCaseIfaceName);
+    return 1 if $line =~ /^${prefix}_[A-Z_]+$/;
+    return 0;
+}
+
 sub ReadStableSymbols {
     my $interfaceName = shift;
 
@@ -1735,7 +1789,7 @@ sub ReadStableSymbols {
             next;
         }
 
-        if (scalar(@stableSymbols) and $line =~ /^[a-zA-Z0-9\*]+\s${lowerCaseIfaceName}_.+$/ and $line !~ /^GType/) {
+        if (scalar(@stableSymbols) and IsInterfaceSymbol($line, $lowerCaseIfaceName) and $line !~ /^GType/) {
             push(@stableSymbols, $line);
             next;
         }

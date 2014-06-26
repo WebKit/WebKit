@@ -176,6 +176,24 @@ WebKitDOMNode* webkit_dom_named_node_map_remove_named_item(WebKitDOMNamedNodeMap
 WebKitDOMNode* webkit_dom_named_node_map_remove_named_item_ns(WebKitDOMNamedNodeMap*, const gchar*, const gchar*, GError**)
 WebKitDOMNode* webkit_dom_named_node_map_item(WebKitDOMNamedNodeMap*, gulong)
 GType webkit_dom_node_get_type(void)
+WEBKIT_DOM_NODE_ELEMENT_NODE
+WEBKIT_DOM_NODE_ATTRIBUTE_NODE
+WEBKIT_DOM_NODE_TEXT_NODE
+WEBKIT_DOM_NODE_CDATA_SECTION_NODE
+WEBKIT_DOM_NODE_ENTITY_REFERENCE_NODE
+WEBKIT_DOM_NODE_ENTITY_NODE
+WEBKIT_DOM_NODE_PROCESSING_INSTRUCTION_NODE
+WEBKIT_DOM_NODE_COMMENT_NODE
+WEBKIT_DOM_NODE_DOCUMENT_NODE
+WEBKIT_DOM_NODE_DOCUMENT_TYPE_NODE
+WEBKIT_DOM_NODE_DOCUMENT_FRAGMENT_NODE
+WEBKIT_DOM_NODE_NOTATION_NODE
+WEBKIT_DOM_NODE_DOCUMENT_POSITION_DISCONNECTED
+WEBKIT_DOM_NODE_DOCUMENT_POSITION_PRECEDING
+WEBKIT_DOM_NODE_DOCUMENT_POSITION_FOLLOWING
+WEBKIT_DOM_NODE_DOCUMENT_POSITION_CONTAINS
+WEBKIT_DOM_NODE_DOCUMENT_POSITION_CONTAINED_BY
+WEBKIT_DOM_NODE_DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC
 gushort webkit_dom_node_get_node_type(WebKitDOMNode*)
 gchar* webkit_dom_node_get_node_name(WebKitDOMNode*)
 gchar* webkit_dom_node_get_local_name(WebKitDOMNode*)
@@ -939,10 +957,18 @@ WebKitDOMCSSRuleList* webkit_dom_css_style_sheet_get_rules(WebKitDOMCSSStyleShee
 gulong webkit_dom_css_style_sheet_insert_rule(WebKitDOMCSSStyleSheet*, const gchar*, gulong, GError**)
 void webkit_dom_css_style_sheet_remove_rule(WebKitDOMCSSStyleSheet*, gulong, GError**)
 GType webkit_dom_css_value_get_type(void)
+WEBKIT_DOM_CSS_VALUE_CSS_INHERIT
+WEBKIT_DOM_CSS_VALUE_CSS_PRIMITIVE_VALUE
+WEBKIT_DOM_CSS_VALUE_CSS_VALUE_LIST
+WEBKIT_DOM_CSS_VALUE_CSS_CUSTOM
 gchar* webkit_dom_css_value_get_css_text(WebKitDOMCSSValue*)
 gushort webkit_dom_css_value_get_css_value_type(WebKitDOMCSSValue*)
 void webkit_dom_css_value_set_css_text(WebKitDOMCSSValue*, const gchar*, GError**)
 GType webkit_dom_event_get_type(void)
+WEBKIT_DOM_EVENT_NONE
+WEBKIT_DOM_EVENT_CAPTURING_PHASE
+WEBKIT_DOM_EVENT_AT_TARGET
+WEBKIT_DOM_EVENT_BUBBLING_PHASE
 gboolean webkit_dom_event_get_bubbles(WebKitDOMEvent*)
 gboolean webkit_dom_event_get_cancelable(WebKitDOMEvent*)
 gboolean webkit_dom_event_get_cancel_bubble(WebKitDOMEvent*)
@@ -973,6 +999,10 @@ glong webkit_dom_wheel_event_get_wheel_delta_x(WebKitDOMWheelEvent*)
 glong webkit_dom_wheel_event_get_wheel_delta_y(WebKitDOMWheelEvent*)
 void webkit_dom_wheel_event_init_wheel_event(WebKitDOMWheelEvent*, glong, glong, WebKitDOMDOMWindow*, glong, glong, glong, glong, gboolean, gboolean, gboolean, gboolean)
 GType webkit_dom_keyboard_event_get_type(void)
+WEBKIT_DOM_KEYBOARD_EVENT_KEY_LOCATION_STANDARD
+WEBKIT_DOM_KEYBOARD_EVENT_KEY_LOCATION_LEFT
+WEBKIT_DOM_KEYBOARD_EVENT_KEY_LOCATION_RIGHT
+WEBKIT_DOM_KEYBOARD_EVENT_KEY_LOCATION_NUMPAD
 gboolean webkit_dom_keyboard_event_get_alt_graph_key(WebKitDOMKeyboardEvent*)
 gboolean webkit_dom_keyboard_event_get_alt_key(WebKitDOMKeyboardEvent*)
 gboolean webkit_dom_keyboard_event_get_ctrl_key(WebKitDOMKeyboardEvent*)
@@ -1002,6 +1032,14 @@ glong webkit_dom_mouse_event_get_y(WebKitDOMMouseEvent*)
 void webkit_dom_mouse_event_init_mouse_event(WebKitDOMMouseEvent*, const gchar*, gboolean, gboolean, WebKitDOMDOMWindow*, glong, glong, glong, glong, glong, gboolean, gboolean, gboolean, gboolean, gushort, WebKitDOMEventTarget*)
 GType webkit_dom_object_get_type(void)
 GType webkit_dom_range_get_type(void)
+WEBKIT_DOM_RANGE_START_TO_START
+WEBKIT_DOM_RANGE_START_TO_END
+WEBKIT_DOM_RANGE_END_TO_END
+WEBKIT_DOM_RANGE_END_TO_START
+WEBKIT_DOM_RANGE_NODE_BEFORE
+WEBKIT_DOM_RANGE_NODE_AFTER
+WEBKIT_DOM_RANGE_NODE_BEFORE_AND_AFTER
+WEBKIT_DOM_RANGE_NODE_INSIDE
 WebKitDOMDocumentFragment* webkit_dom_range_clone_contents(WebKitDOMRange*, GError**)
 WebKitDOMRange* webkit_dom_range_clone_range(WebKitDOMRange*, GError**)
 void webkit_dom_range_collapse(WebKitDOMRange*, gboolean, GError**)
@@ -1064,6 +1102,16 @@ WebKitDOMNode* webkit_dom_tree_walker_previous_node(WebKitDOMTreeWalker*)
 WebKitDOMNode* webkit_dom_tree_walker_previous_sibling(WebKitDOMTreeWalker*)
 void webkit_dom_tree_walker_set_current_node(WebKitDOMTreeWalker*, WebKitDOMNode*, GError**)
 GType webkit_dom_xpath_result_get_type(void)
+WEBKIT_DOM_XPATH_RESULT_ANY_TYPE
+WEBKIT_DOM_XPATH_RESULT_NUMBER_TYPE
+WEBKIT_DOM_XPATH_RESULT_STRING_TYPE
+WEBKIT_DOM_XPATH_RESULT_BOOLEAN_TYPE
+WEBKIT_DOM_XPATH_RESULT_UNORDERED_NODE_ITERATOR_TYPE
+WEBKIT_DOM_XPATH_RESULT_ORDERED_NODE_ITERATOR_TYPE
+WEBKIT_DOM_XPATH_RESULT_UNORDERED_NODE_SNAPSHOT_TYPE
+WEBKIT_DOM_XPATH_RESULT_ORDERED_NODE_SNAPSHOT_TYPE
+WEBKIT_DOM_XPATH_RESULT_ANY_UNORDERED_NODE_TYPE
+WEBKIT_DOM_XPATH_RESULT_FIRST_ORDERED_NODE_TYPE
 gboolean webkit_dom_xpath_result_get_boolean_value(WebKitDOMXPathResult*, GError**)
 gboolean webkit_dom_xpath_result_get_invalid_iterator_state(WebKitDOMXPathResult*)
 gdouble webkit_dom_xpath_result_get_number_value(WebKitDOMXPathResult*, GError**)
@@ -1082,6 +1130,22 @@ void webkit_dom_event_target_dispatch_event(WebKitDOMEventTarget*, WebKitDOMEven
 gboolean webkit_dom_event_target_remove_event_listener(WebKitDOMEventTarget*, const char*, GCallback, gboolean)
 gboolean webkit_dom_event_target_remove_event_listener_with_closure(WebKitDOMEventTarget*, const char*, GClosure*, gboolean)
 GType webkit_dom_node_filter_get_type(void)
+WEBKIT_DOM_NODE_FILTER_ACCEPT
+WEBKIT_DOM_NODE_FILTER_REJECT
+WEBKIT_DOM_NODE_FILTER_SKIP
+WEBKIT_DOM_NODE_FILTER_SHOW_ALL
+WEBKIT_DOM_NODE_FILTER_SHOW_ELEMENT
+WEBKIT_DOM_NODE_FILTER_SHOW_ATTRIBUTE
+WEBKIT_DOM_NODE_FILTER_SHOW_TEXT
+WEBKIT_DOM_NODE_FILTER_SHOW_CDATA_SECTION
+WEBKIT_DOM_NODE_FILTER_SHOW_ENTITY_REFERENCE
+WEBKIT_DOM_NODE_FILTER_SHOW_ENTITY
+WEBKIT_DOM_NODE_FILTER_SHOW_PROCESSING_INSTRUCTION
+WEBKIT_DOM_NODE_FILTER_SHOW_COMMENT
+WEBKIT_DOM_NODE_FILTER_SHOW_DOCUMENT
+WEBKIT_DOM_NODE_FILTER_SHOW_DOCUMENT_TYPE
+WEBKIT_DOM_NODE_FILTER_SHOW_DOCUMENT_FRAGMENT
+WEBKIT_DOM_NODE_FILTER_SHOW_NOTATION
 gshort webkit_dom_node_filter_accept_node(WebKitDOMNodeFilter*, WebKitDOMNode*)
 GType webkit_dom_xpath_ns_resolver_get_type(void)
 gchar* webkit_dom_xpath_ns_resolver_lookup_namespace_uri(WebKitDOMXPathNSResolver*, const gchar*)

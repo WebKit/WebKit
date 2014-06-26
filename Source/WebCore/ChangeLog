@@ -1,3 +1,20 @@
+2014-06-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add support for constants in GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=133983
+
+        Reviewed by Martin Robinson.
+
+        * bindings/gobject/webkitdom.symbols: Add stable constants.
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateHeader): Add constants to the header.
+        (Generate): Pass the interface object to GenerateHeader to get the constants
+        (IsInterfaceSymbol): Helper function that returns whether the given
+        symbol belongs to the interface. Check also constants now.
+        (ReadStableSymbols): Use IsInterfaceSymbol().
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+
 2014-06-26  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Properly support for z-index on grid items
