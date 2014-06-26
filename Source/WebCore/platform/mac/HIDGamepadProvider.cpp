@@ -24,10 +24,11 @@
  */
 
 #include "config.h"
-#include "HIDGamepadListener.h"
+#include "HIDGamepadProvider.h"
 
 #if ENABLE(GAMEPAD)
 
+#include "GamepadProviderClient.h"
 #include "PlatformGamepad.h"
 #include <wtf/MainThread.h>
 
@@ -49,13 +50,13 @@ static RetainPtr<CFDictionaryRef> deviceMatchingDictionary(uint32_t usagePage, u
 
 static void deviceAddedCallback(void* context, IOReturn, void*, IOHIDDeviceRef device)
 {
-    HIDGamepadListener* listener = static_cast<HIDGamepadListener*>(context);
+    HIDGamepadProvider* listener = static_cast<HIDGamepadProvider*>(context);
     listener->deviceAdded(device);
 }
 
 static void deviceRemovedCallback(void* context, IOReturn, void*, IOHIDDeviceRef device)
 {
-    HIDGamepadListener* listener = static_cast<HIDGamepadListener*>(context);
+    HIDGamepadProvider* listener = static_cast<HIDGamepadProvider*>(context);
     listener->deviceRemoved(device);
 }
 
@@ -65,19 +66,18 @@ static void deviceValuesChangedCallback(void* context, IOReturn result, void*, I
     if (result)
         return;
 
-    HIDGamepadListener* listener = static_cast<HIDGamepadListener*>(context);
+    HIDGamepadProvider* listener = static_cast<HIDGamepadProvider*>(context);
     listener->valuesChanged(value);
 }
 
-HIDGamepadListener& HIDGamepadListener::shared()
+HIDGamepadProvider& HIDGamepadProvider::shared()
 {
-    static NeverDestroyed<HIDGamepadListener> sharedListener;
+    static NeverDestroyed<HIDGamepadProvider> sharedListener;
     return sharedListener;
 }
 
-HIDGamepadListener::HIDGamepadListener()
-    : m_client(nullptr)
-    , m_shouldDispatchCallbacks(false)
+HIDGamepadProvider::HIDGamepadProvider()
+    : m_shouldDispatchCallbacks(false)
 {
     m_manager = adoptCF(IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone));
 
@@ -100,11 +100,11 @@ HIDGamepadListener::HIDGamepadListener()
     // but we don't want to notify WebCore of those events.
     // This callOnMainThread call re-enables those callbacks after the runloop empties out.
     callOnMainThread([]() {
-        HIDGamepadListener::shared().setShouldDispatchCallbacks(true);
+        HIDGamepadProvider::shared().setShouldDispatchCallbacks(true);
     });
 }
 
-unsigned HIDGamepadListener::indexForNewlyConnectedDevice()
+unsigned HIDGamepadProvider::indexForNewlyConnectedDevice()
 {
     unsigned index = 0;
     while (index < m_gamepadVector.size() && m_gamepadVector[index])
@@ -113,7 +113,16 @@ unsigned HIDGamepadListener::indexForNewlyConnectedDevice()
     return index;
 }
 
-void HIDGamepadListener::deviceAdded(IOHIDDeviceRef device)
+void HIDGamepadProvider::startMonitoringGamepads(GamepadProviderClient* client)
+{
+    m_clients.add(client);
+}
+void HIDGamepadProvider::stopMonitoringGamepads(GamepadProviderClient* client)
+{
+    m_clients.remove(client);
+}
+
+void HIDGamepadProvider::deviceAdded(IOHIDDeviceRef device)
 {
     ASSERT(!m_gamepadMap.get(device));
 
@@ -126,20 +135,26 @@ void HIDGamepadListener::deviceAdded(IOHIDDeviceRef device)
     m_gamepadVector[index] = gamepad.get();
     m_gamepadMap.set(device, std::move(gamepad));
 
-    if (m_client && m_shouldDispatchCallbacks)
-        m_client->gamepadConnected(index);
+    if (!m_shouldDispatchCallbacks)
+        return;
+
+    for (auto& client : m_clients)
+        client->platformGamepadConnected(index);
 }
 
-void HIDGamepadListener::deviceRemoved(IOHIDDeviceRef device)
+void HIDGamepadProvider::deviceRemoved(IOHIDDeviceRef device)
 {
     std::pair<std::unique_ptr<HIDGamepad>, unsigned> removedGamepad = removeGamepadForDevice(device);
     ASSERT(removedGamepad.first);
 
-    if (m_client && m_shouldDispatchCallbacks)
-        m_client->gamepadDisconnected(removedGamepad.second);
+    if (!m_shouldDispatchCallbacks)
+        return;
+
+    for (auto& client : m_clients)
+        client->platformGamepadDisconnected(removedGamepad.second);
 }
 
-void HIDGamepadListener::valuesChanged(IOHIDValueRef value)
+void HIDGamepadProvider::valuesChanged(IOHIDValueRef value)
 {
     IOHIDDeviceRef device = IOHIDElementGetDevice(IOHIDValueGetElement(value));
 
@@ -152,7 +167,7 @@ void HIDGamepadListener::valuesChanged(IOHIDValueRef value)
     gamepad->valueChanged(value);
 }
 
-std::pair<std::unique_ptr<HIDGamepad>, unsigned>  HIDGamepadListener::removeGamepadForDevice(IOHIDDeviceRef device)
+std::pair<std::unique_ptr<HIDGamepad>, unsigned>  HIDGamepadProvider::removeGamepadForDevice(IOHIDDeviceRef device)
 {
     std::pair<std::unique_ptr<HIDGamepad>, unsigned> result;
     result.first = m_gamepadMap.take(device);

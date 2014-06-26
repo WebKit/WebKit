@@ -3441,5 +3441,7 @@ __ZNK7WebCore20ResourceResponseBase18resourceLoadTimingEv
 #endif
 
 #if ENABLE(GAMEPAD)
-__ZN7WebCore18HIDGamepadListener6sharedEv
+__ZN7WebCore15GamepadProvider17setSharedProviderERS0_
+__ZN7WebCore15GamepadProvider6sharedEv
+__ZN7WebCore18HIDGamepadProvider6sharedEv
 #endif

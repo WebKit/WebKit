@@ -49,9 +49,6 @@ private:
     virtual WebCore::PluginStrategy* createPluginStrategy();
     virtual WebCore::SharedWorkerStrategy* createSharedWorkerStrategy();
     virtual WebCore::StorageStrategy* createStorageStrategy();
-#if ENABLE(GAMEPAD)
-    virtual WebCore::GamepadStrategy* createGamepadStrategy();
-#endif
 
     // WebCore::CookiesStrategy
     virtual String cookiesForDOM(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&);

@@ -121,4 +121,4 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(GAMEPAD)
-#endif // HIDGamepadListener_h
+#endif // HIDGamepad_h

@@ -1,3 +1,14 @@
+2014-06-26  Brady Eidson  <beidson@apple.com>
+
+        Remove use of PlatformStrategies for Gamepad API.
+        https://bugs.webkit.org/show_bug.cgi?id=134348
+
+        Reviewed by Dean Jackson.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::createGamepadStrategy): Deleted.
+        * WebCoreSupport/WebPlatformStrategies.h:
+
 2014-06-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Expose Cache Information to WinLauncher

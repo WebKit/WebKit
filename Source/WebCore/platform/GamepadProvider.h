@@ -23,35 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebHIDGamepadController_h
-#define WebHIDGamepadController_h
+#ifndef GamepadProvider_h
+#define GamepadProvider_h
 
 #if ENABLE(GAMEPAD)
 
-#include <WebCore/HIDGamepadListener.h>
-#include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
-class GamepadStrategyClient;
-}
 
-class WebHIDGamepadController : public WebCore::HIDGamepadListenerClient {
+class GamepadProviderClient;
+class PlatformGamepad;
+
+class GamepadProvider {
 public:
-    static WebHIDGamepadController& shared();
+    virtual ~GamepadProvider() { }
 
-    virtual void gamepadConnected(unsigned index) override final;
-    virtual void gamepadDisconnected(unsigned index) override final;
+    static GamepadProvider& shared();
+    static void setSharedProvider(GamepadProvider&);
 
-    void registerGamepadStrategyClient(WebCore::GamepadStrategyClient*);
-    void unregisterGamepadStrategyClient(WebCore::GamepadStrategyClient*);
-
-private:
-    friend NeverDestroyed<WebHIDGamepadController>;
-
-    WebHIDGamepadController();
-
-    HashSet<WebCore::GamepadStrategyClient*> m_clients;
+    virtual void startMonitoringGamepads(GamepadProviderClient*);
+    virtual void stopMonitoringGamepads(GamepadProviderClient*);
+    virtual const Vector<PlatformGamepad*>& platformGamepads();
 };
 
+} // namespace WebCore
+
 #endif // ENABLE(GAMEPAD)
-#endif // WebHIDGamepadController_h
+#endif // GamepadProvider_h

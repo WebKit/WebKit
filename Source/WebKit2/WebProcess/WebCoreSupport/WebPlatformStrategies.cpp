@@ -124,13 +124,6 @@ StorageStrategy* WebPlatformStrategies::createStorageStrategy()
     return this;
 }
 
-#if ENABLE(GAMEPAD)
-GamepadStrategy* WebPlatformStrategies::createGamepadStrategy()
-{
-    return this;
-}
-#endif
-
 // CookiesStrategy
 
 String WebPlatformStrategies::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
@@ -512,22 +505,6 @@ long WebPlatformStrategies::setStringForType(const String& string, const String&
         Messages::WebContext::SetPasteboardStringForType::Reply(newChangeCount), 0);
     return newChangeCount;
 }
-
-#if ENABLE(GAMEPAD)
-void WebPlatformStrategies::startMonitoringGamepads(GamepadStrategyClient*)
-{
-}
-
-void WebPlatformStrategies::stopMonitoringGamepads(GamepadStrategyClient*)
-{
-}
-
-const Vector<PlatformGamepad*>& WebPlatformStrategies::platformGamepads()
-{
-    NeverDestroyed<Vector<PlatformGamepad*>> dummyGamepads;
-    return dummyGamepads;
-}
-#endif // ENABLE(GAMEPAD)
 
 #if PLATFORM(IOS)
 void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardWebContent& content)

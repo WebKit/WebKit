@@ -22,23 +22,46 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#ifndef GamepadStrategyClient_h
-#define GamepadStrategyClient_h
+#include "config.h"
+#include "GamepadProvider.h"
 
 #if ENABLE(GAMEPAD)
 
+#include <wtf/NeverDestroyed.h>
+
 namespace WebCore {
 
-class GamepadStrategyClient {
-public:
-    virtual ~GamepadStrategyClient() { }
+static GamepadProvider* sharedProvider = nullptr;
 
-    virtual void platformGamepadConnected(unsigned index) = 0;
-    virtual void platformGamepadDisconnected(unsigned index) = 0;
-};
+GamepadProvider& GamepadProvider::shared()
+{
+    if (!sharedProvider) {
+        static NeverDestroyed<GamepadProvider> defaultProvider;
+        sharedProvider = &defaultProvider.get();
+    }
+
+    return *sharedProvider;
+}
+
+void GamepadProvider::setSharedProvider(GamepadProvider& newProvider)
+{
+    sharedProvider = &newProvider;
+}
+
+void GamepadProvider::startMonitoringGamepads(GamepadProviderClient*)
+{
+}
+
+void GamepadProvider::stopMonitoringGamepads(GamepadProviderClient*)
+{
+}
+
+const Vector<PlatformGamepad*>& GamepadProvider::platformGamepads()
+{
+    static NeverDestroyed<Vector<PlatformGamepad*>> defaultGamepads;
+    return defaultGamepads;
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(GAMEPAD)
-#endif // GamepadStrategyClient_h

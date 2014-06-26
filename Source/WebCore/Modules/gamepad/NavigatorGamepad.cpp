@@ -32,10 +32,9 @@
 #include "Frame.h"
 #include "Gamepad.h"
 #include "GamepadManager.h"
-#include "GamepadStrategy.h"
+#include "GamepadProvider.h"
 #include "Navigator.h"
 #include "PlatformGamepad.h"
-#include "PlatformStrategies.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 
@@ -83,7 +82,7 @@ const Vector<RefPtr<Gamepad>>& NavigatorGamepad::gamepads()
     if (m_gamepads.isEmpty())
         return m_gamepads;
 
-    const Vector<PlatformGamepad*>& platformGamepads = platformStrategies()->gamepadStrategy()->platformGamepads();
+    const Vector<PlatformGamepad*>& platformGamepads = GamepadProvider::shared().platformGamepads();
 
     for (unsigned i = 0; i < platformGamepads.size(); ++i) {
         if (!platformGamepads[i]) {
@@ -100,7 +99,7 @@ const Vector<RefPtr<Gamepad>>& NavigatorGamepad::gamepads()
 
 void NavigatorGamepad::gamepadsBecameVisible()
 {
-    const Vector<PlatformGamepad*>& platformGamepads = platformStrategies()->gamepadStrategy()->platformGamepads();
+    const Vector<PlatformGamepad*>& platformGamepads = GamepadProvider::shared().platformGamepads();
     m_gamepads.resize(platformGamepads.size());
 
     for (unsigned i = 0; i < platformGamepads.size(); ++i) {
@@ -122,7 +121,7 @@ void NavigatorGamepad::gamepadConnected(unsigned index)
     // The new index should already fit in the existing array, or should be exactly one past-the-end of the existing array.
     ASSERT(index <= m_gamepads.size());
 
-    const Vector<PlatformGamepad*>& platformGamepads = platformStrategies()->gamepadStrategy()->platformGamepads();
+    const Vector<PlatformGamepad*>& platformGamepads = GamepadProvider::shared().platformGamepads();
     ASSERT(index < platformGamepads.size());
     ASSERT(platformGamepads[index]);
 

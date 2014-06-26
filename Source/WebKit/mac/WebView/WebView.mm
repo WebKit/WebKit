@@ -282,6 +282,10 @@
 #import <WebCore/DiskImageCacheIOS.h>
 #endif
 
+#if ENABLE(GAMEPAD)
+#import <WebCore/HIDGamepadProvider.h>
+#endif
+
 #if !PLATFORM(IOS)
 @interface NSSpellChecker (WebNSSpellCheckerDetails)
 - (void)_preflightChosenSpellServer;
@@ -838,6 +842,18 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
     return shouldUseLegacyBackgroundSizeShorthandBehavior;
 }
 
+#if ENABLE(GAMEPAD)
+static void WebKitInitializeGamepadProviderIfNecessary()
+{
+    static bool initialized = false;
+    if (initialized)
+        return;
+
+    GamepadProvider::shared().setSharedProvider(HIDGamepadProvider::shared());
+    initialized = true;
+}
+#endif
+
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
     WebCoreThreadViolationCheckRoundTwo();
@@ -895,6 +911,9 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
         WebKitInitializeApplicationCachePathIfNecessary();
 #if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
         WebKitInitializeWebDiskImageCache();
+#endif
+#if ENABLE(GAMEPAD)
+        WebKitInitializeGamepadProviderIfNecessary();
 #endif
         
         Settings::setDefaultMinDOMTimerInterval(0.004);

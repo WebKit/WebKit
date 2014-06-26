@@ -1,3 +1,69 @@
+2014-06-26  Brady Eidson  <beidson@apple.com>
+
+        Remove use of PlatformStrategies for Gamepad API.
+        https://bugs.webkit.org/show_bug.cgi?id=134348
+
+        Reviewed by Dean Jackson.
+
+        No new tests (Not yet a tested config)
+
+        Introduce a virtual GamepadProvider with a process-global shared provider.
+        The base implementation of the GamepadProvider does nothing.
+        * platform/GamepadProvider.cpp: Renamed from Source/WebKit/mac/WebCoreSupport/WebHIDGamepadController.h.
+        (WebCore::GamepadProvider::shared):
+        (WebCore::GamepadProvider::setSharedProvider):
+        (WebCore::GamepadProvider::startMonitoringGamepads):
+        (WebCore::GamepadProvider::stopMonitoringGamepads):
+        (WebCore::GamepadProvider::platformGamepads):
+        * platform/GamepadProvider.h: Renamed from Source/WebCore/platform/GamepadStrategy.h.
+        (WebCore::GamepadProvider::~GamepadProvider):
+
+        * platform/GamepadProviderClient.h: Renamed from Source/WebCore/platform/GamepadStrategyClient.h.
+        (WebCore::GamepadProviderClient::~GamepadProviderClient):
+
+        GamepadManager is now a GamepadProviderClient:
+        * Modules/gamepad/GamepadManager.cpp:
+        (WebCore::GamepadManager::GamepadManager):
+        (WebCore::GamepadManager::registerNavigator):
+        (WebCore::GamepadManager::unregisterNavigator):
+        * Modules/gamepad/GamepadManager.h:
+
+        Remove the GamepadStrategy altogether:
+        * platform/PlatformStrategies.h:
+        (WebCore::PlatformStrategies::PlatformStrategies):
+        (WebCore::PlatformStrategies::gamepadStrategy): Deleted.
+
+        Call to the shared GamepadProvider instead of the strategy:
+        * Modules/gamepad/NavigatorGamepad.cpp:
+        (WebCore::NavigatorGamepad::gamepads):
+        (WebCore::NavigatorGamepad::gamepadsBecameVisible):
+        (WebCore::NavigatorGamepad::gamepadConnected):
+
+        HIDGamepadListener is now a subclass of GamepadProvider that implements the HID based management.
+        LegacyWebKit on Mac will install the shared HIDGamepadProvider instead of the default GamepadProvider:
+        * platform/mac/HIDGamepadProvider.cpp: Renamed from Source/WebCore/platform/mac/HIDGamepadListener.cpp.
+        (WebCore::deviceMatchingDictionary):
+        (WebCore::deviceAddedCallback):
+        (WebCore::deviceRemovedCallback):
+        (WebCore::deviceValuesChangedCallback):
+        (WebCore::HIDGamepadProvider::shared):
+        (WebCore::HIDGamepadProvider::HIDGamepadProvider):
+        (WebCore::HIDGamepadProvider::indexForNewlyConnectedDevice):
+        (WebCore::HIDGamepadProvider::startMonitoringGamepads):
+        (WebCore::HIDGamepadProvider::stopMonitoringGamepads):
+        (WebCore::HIDGamepadProvider::deviceAdded):
+        (WebCore::HIDGamepadProvider::deviceRemoved):
+        (WebCore::HIDGamepadProvider::valuesChanged):
+        (WebCore::HIDGamepadProvider::removeGamepadForDevice):
+        * platform/mac/HIDGamepadProvider.h: Renamed from Source/WebCore/platform/mac/HIDGamepadListener.h.
+        (WebCore::HIDGamepadProvider::platformGamepads):
+        (WebCore::HIDGamepadProvider::setShouldDispatchCallbacks):
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * platform/mac/HIDGamepad.h: Fix incorrect comment
+
 2014-06-26  Andreas Kling  <akling@apple.com>
 
         Skip memcmp()ing fully downloaded resources after they become mmap()able.

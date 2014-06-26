@@ -113,8 +113,6 @@
 		5158F6EF106D862A00AF457C /* WebHistoryDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5158F6EE106D862A00AF457C /* WebHistoryDelegate.h */; };
 		5185F62610712B80007AA393 /* WebNavigationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5185F62510712B80007AA393 /* WebNavigationData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5185F62810712B97007AA393 /* WebNavigationData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5185F62710712B97007AA393 /* WebNavigationData.mm */; };
-		51A9D9ED195B949F001B2B5C /* WebHIDGamepadController.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A9D9EB195B949F001B2B5C /* WebHIDGamepadController.h */; };
-		51A9D9EE195B949F001B2B5C /* WebHIDGamepadController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51A9D9EC195B949F001B2B5C /* WebHIDGamepadController.mm */; };
 		51AEDEF10CECF45700854328 /* WebDatabaseManagerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 51AEDEF00CECF45700854328 /* WebDatabaseManagerInternal.h */; };
 		51B2A1000ADB15D0002A9BEE /* WebIconDatabaseDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B2A0FF0ADB15D0002A9BEE /* WebIconDatabaseDelegate.h */; };
 		51C714FB0B20F79F00E5E33C /* WebBackForwardListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C714FA0B20F79F00E5E33C /* WebBackForwardListInternal.h */; };
@@ -601,8 +599,6 @@
 		51A8B579042834F700CA2D3A /* WebView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51A8B57A042834F700CA2D3A /* WebView.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebView.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51A8B57D0428353A00CA2D3A /* WebViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebViewPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		51A9D9EB195B949F001B2B5C /* WebHIDGamepadController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHIDGamepadController.h; sourceTree = "<group>"; };
-		51A9D9EC195B949F001B2B5C /* WebHIDGamepadController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebHIDGamepadController.mm; sourceTree = "<group>"; };
 		51AEDEF00CECF45700854328 /* WebDatabaseManagerInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDatabaseManagerInternal.h; sourceTree = "<group>"; };
 		51B2A0FF0ADB15D0002A9BEE /* WebIconDatabaseDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconDatabaseDelegate.h; sourceTree = "<group>"; };
 		51C714FA0B20F79F00E5E33C /* WebBackForwardListInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListInternal.h; sourceTree = "<group>"; };
@@ -1551,8 +1547,6 @@
 				9391F274121B38BD00EBF7E8 /* WebFrameNetworkingContext.mm */,
 				BC7F884910C8775A00D6133D /* WebGeolocationClient.h */,
 				BC7F884A10C8775A00D6133D /* WebGeolocationClient.mm */,
-				51A9D9EB195B949F001B2B5C /* WebHIDGamepadController.h */,
-				51A9D9EC195B949F001B2B5C /* WebHIDGamepadController.mm */,
 				51494CD40C7EBDE0004178C5 /* WebIconDatabaseClient.h */,
 				51494CD50C7EBDE0004178C5 /* WebIconDatabaseClient.mm */,
 				06693DDA0BFBA85200216072 /* WebInspectorClient.h */,
@@ -1765,7 +1759,6 @@
 				A10C1D4218202FEF0036883A /* WebSQLiteDatabaseTrackerClient.h in Headers */,
 				939810540824BF01008DF038 /* WebFramePrivate.h in Headers */,
 				A10C1D621820300E0036883A /* SearchPopupMenuIOS.h in Headers */,
-				51A9D9ED195B949F001B2B5C /* WebHIDGamepadController.h in Headers */,
 				9398106E0824BF01008DF038 /* WebFrameView.h in Headers */,
 				9398106F0824BF01008DF038 /* WebFrameViewInternal.h in Headers */,
 				939810AF0824BF01008DF038 /* WebFrameViewPrivate.h in Headers */,
@@ -2144,7 +2137,6 @@
 				070F549C17F1E42B00169E04 /* WebUserMediaClient.mm in Sources */,
 				E169836C11346D5600894115 /* ProxyRuntimeObject.mm in Sources */,
 				7C01CB88173435C900C5D807 /* SearchPopupMenuMac.mm in Sources */,
-				51A9D9EE195B949F001B2B5C /* WebHIDGamepadController.mm in Sources */,
 				CEDA12DB152CBE6800D9E08D /* WebAlternativeTextClient.mm in Sources */,
 				A10C1D601820300E0036883A /* PopupMenuIOS.mm in Sources */,
 				B6CE5C24100BC5CE00219936 /* WebApplicationCache.mm in Sources */,

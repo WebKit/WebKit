@@ -36,10 +36,6 @@ class PluginStrategy;
 class SharedWorkerStrategy;
 class StorageStrategy;
 
-#if ENABLE(GAMEPAD)
-class GamepadStrategy;
-#endif
-
 class PlatformStrategies {
 public:
     CookiesStrategy* cookiesStrategy()
@@ -91,15 +87,6 @@ public:
         return m_storageStrategy;
     }
 
-#if ENABLE(GAMEPAD)
-    GamepadStrategy* gamepadStrategy()
-    {
-        if (!m_gamepadStrategy)
-            m_gamepadStrategy = createGamepadStrategy();
-        return m_gamepadStrategy;
-    }
-#endif
-
 protected:
     PlatformStrategies()
         : m_cookiesStrategy(nullptr)
@@ -109,9 +96,6 @@ protected:
         , m_pluginStrategy(nullptr)
         , m_sharedWorkerStrategy(nullptr)
         , m_storageStrategy(nullptr)
-#if ENABLE(GAMEPAD)
-        , m_gamepadStrategy(nullptr)
-#endif
     {
     }
 
@@ -127,9 +111,6 @@ private:
     virtual PluginStrategy* createPluginStrategy() = 0;
     virtual SharedWorkerStrategy* createSharedWorkerStrategy() = 0;
     virtual StorageStrategy* createStorageStrategy() = 0;
-#if ENABLE(GAMEPAD)
-    virtual GamepadStrategy* createGamepadStrategy() = 0;
-#endif
 
     CookiesStrategy* m_cookiesStrategy;
     DatabaseStrategy* m_databaseStrategy;
@@ -138,9 +119,6 @@ private:
     PluginStrategy* m_pluginStrategy;
     SharedWorkerStrategy* m_sharedWorkerStrategy;
     StorageStrategy* m_storageStrategy;
-#if ENABLE(GAMEPAD)
-    GamepadStrategy* m_gamepadStrategy;
-#endif
 };
 
 PlatformStrategies* platformStrategies();

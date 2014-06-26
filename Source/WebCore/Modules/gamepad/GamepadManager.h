@@ -28,7 +28,7 @@
 
 #if ENABLE(GAMEPAD)
 
-#include "GamepadStrategyClient.h"
+#include "GamepadProviderClient.h"
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
@@ -38,7 +38,7 @@ namespace WebCore {
 class Gamepad;
 class NavigatorGamepad;
 
-class GamepadManager : public GamepadStrategyClient {
+class GamepadManager : public GamepadProviderClient {
     WTF_MAKE_NONCOPYABLE(GamepadManager);
     friend class NeverDestroyed<GamepadManager>;
 public:

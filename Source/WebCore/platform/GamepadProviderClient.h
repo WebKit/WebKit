@@ -23,61 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HIDGamepadListener_h
-#define HIDGamepadListener_h
+#ifndef GamepadProviderClient_h
+#define GamepadProviderClient_h
 
 #if ENABLE(GAMEPAD)
 
-#include "HIDGamepad.h"
-#include <IOKit/hid/IOHIDManager.h>
-#include <wtf/Deque.h>
-#include <wtf/HashMap.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/RetainPtr.h>
-
 namespace WebCore {
 
-class HIDGamepadListenerClient {
+class GamepadProviderClient {
 public:
-    virtual ~HIDGamepadListenerClient() { }
+    virtual ~GamepadProviderClient() { }
 
-    virtual void gamepadConnected(unsigned index) = 0;
-    virtual void gamepadDisconnected(unsigned index) = 0;
-};
-
-class HIDGamepadListener {
-    WTF_MAKE_NONCOPYABLE(HIDGamepadListener);
-    friend class NeverDestroyed<HIDGamepadListener>;
-public:
-    static HIDGamepadListener& shared();
-
-    void setClient(HIDGamepadListenerClient* client) { m_client = client; }
-
-    void deviceAdded(IOHIDDeviceRef);
-    void deviceRemoved(IOHIDDeviceRef);
-    void valuesChanged(IOHIDValueRef);
-
-    const Vector<PlatformGamepad*>& platformGamepads() const { return m_gamepadVector; }
-
-    void setShouldDispatchCallbacks(bool shouldDispatchCallbacks) { m_shouldDispatchCallbacks = shouldDispatchCallbacks; }
-
-private:
-    HIDGamepadListener();
-
-    std::pair<std::unique_ptr<HIDGamepad>, unsigned> removeGamepadForDevice(IOHIDDeviceRef);
-
-    unsigned indexForNewlyConnectedDevice();
-
-    Vector<PlatformGamepad*> m_gamepadVector;
-    HashMap<IOHIDDeviceRef, std::unique_ptr<HIDGamepad>> m_gamepadMap;
-
-    RetainPtr<IOHIDManagerRef> m_manager;
-
-    HIDGamepadListenerClient* m_client;
-    bool m_shouldDispatchCallbacks;
+    virtual void platformGamepadConnected(unsigned index) = 0;
+    virtual void platformGamepadDisconnected(unsigned index) = 0;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(GAMEPAD)
-#endif // HIDGamepadListener_h
+#endif // GamepadProviderClient_h

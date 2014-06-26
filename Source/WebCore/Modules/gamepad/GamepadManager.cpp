@@ -28,10 +28,9 @@
 #if ENABLE(GAMEPAD)
 
 #include "Gamepad.h"
-#include "GamepadStrategy.h"
+#include "GamepadProvider.h"
 #include "NavigatorGamepad.h"
 #include "PlatformGamepad.h"
-#include "PlatformStrategies.h"
 
 namespace WebCore {
 
@@ -43,7 +42,7 @@ GamepadManager& GamepadManager::shared()
 
 GamepadManager::GamepadManager()
 {
-    platformStrategies()->gamepadStrategy()->stopMonitoringGamepads(this);
+    GamepadProvider::shared().stopMonitoringGamepads(this);
 }
 
 void GamepadManager::platformGamepadConnected(unsigned index)
@@ -71,7 +70,7 @@ void GamepadManager::registerNavigator(NavigatorGamepad* navigator)
     // connected/disconnected event listeners.
     // Those event listeners will also need to register with the GamepadManager.
     if (m_navigators.size() == 1)
-        platformStrategies()->gamepadStrategy()->startMonitoringGamepads(this);
+        GamepadProvider::shared().startMonitoringGamepads(this);
 }
 
 void GamepadManager::unregisterNavigator(NavigatorGamepad* navigator)
@@ -83,7 +82,7 @@ void GamepadManager::unregisterNavigator(NavigatorGamepad* navigator)
     // connected/disconnected event listeners.
     // Those event listeners will also need to register with the GamepadManager.
     if (m_navigators.isEmpty())
-        platformStrategies()->gamepadStrategy()->stopMonitoringGamepads(this);
+        GamepadProvider::shared().stopMonitoringGamepads(this);
 }
 
 } // namespace WebCore

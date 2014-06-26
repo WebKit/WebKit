@@ -23,29 +23,57 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GamepadStrategy_h
-#define GamepadStrategy_h
+#ifndef HIDGamepadProvider_h
+#define HIDGamepadProvider_h
 
 #if ENABLE(GAMEPAD)
 
+#include "GamepadProvider.h"
+#include "HIDGamepad.h"
+#include <IOKit/hid/IOHIDManager.h>
+#include <wtf/Deque.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/RetainPtr.h>
+
 namespace WebCore {
 
-class PlatformGamepad;
-class GamepadStrategyClient;
+class GamepadProviderClient;
 
-class GamepadStrategy {
+class HIDGamepadProvider : public GamepadProvider {
+    WTF_MAKE_NONCOPYABLE(HIDGamepadProvider);
+    friend class NeverDestroyed<HIDGamepadProvider>;
 public:
-    virtual void startMonitoringGamepads(GamepadStrategyClient*) = 0;
-    virtual void stopMonitoringGamepads(GamepadStrategyClient*) = 0;
-    virtual const Vector<PlatformGamepad*>& platformGamepads() = 0;
+    static HIDGamepadProvider& shared();
 
-protected:
-    virtual ~GamepadStrategy()
-    {
-    }
+    virtual void startMonitoringGamepads(GamepadProviderClient*);
+    virtual void stopMonitoringGamepads(GamepadProviderClient*);
+    virtual const Vector<PlatformGamepad*>& platformGamepads() { return m_gamepadVector; }
+
+    void deviceAdded(IOHIDDeviceRef);
+    void deviceRemoved(IOHIDDeviceRef);
+    void valuesChanged(IOHIDValueRef);
+
+    void setShouldDispatchCallbacks(bool shouldDispatchCallbacks) { m_shouldDispatchCallbacks = shouldDispatchCallbacks; }
+
+private:
+    HIDGamepadProvider();
+
+    std::pair<std::unique_ptr<HIDGamepad>, unsigned> removeGamepadForDevice(IOHIDDeviceRef);
+
+    unsigned indexForNewlyConnectedDevice();
+
+    Vector<PlatformGamepad*> m_gamepadVector;
+    HashMap<IOHIDDeviceRef, std::unique_ptr<HIDGamepad>> m_gamepadMap;
+
+    RetainPtr<IOHIDManagerRef> m_manager;
+
+    HashSet<GamepadProviderClient*> m_clients;
+    bool m_shouldDispatchCallbacks;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(GAMEPAD)
-#endif // GamepadStrategy_h
+#endif // HIDGamepadProvider_h

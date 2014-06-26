@@ -40,10 +40,6 @@
 #import <WebKitSystemInterface.h>
 #import <wtf/NeverDestroyed.h>
 
-#if ENABLE(GAMEPAD)
-#import "WebHIDGamepadController.h"
-#endif
-
 using namespace WebCore;
 
 void WebPlatformStrategies::initializeIfNecessary()
@@ -93,13 +89,6 @@ StorageStrategy* WebPlatformStrategies::createStorageStrategy()
 {
     return this;
 }
-
-#if ENABLE(GAMEPAD)
-GamepadStrategy* WebPlatformStrategies::createGamepadStrategy()
-{
-    return this;
-}
-#endif
 
 String WebPlatformStrategies::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
@@ -223,23 +212,6 @@ long WebPlatformStrategies::setStringForType(const String& string, const String&
 {
     return PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType);
 }
-
-#if ENABLE(GAMEPAD)
-void WebPlatformStrategies::startMonitoringGamepads(GamepadStrategyClient* client)
-{
-    WebHIDGamepadController::shared().registerGamepadStrategyClient(client);
-}
-
-void WebPlatformStrategies::stopMonitoringGamepads(GamepadStrategyClient* client)
-{
-    WebHIDGamepadController::shared().unregisterGamepadStrategyClient(client);
-}
-
-const Vector<PlatformGamepad*>& WebPlatformStrategies::platformGamepads()
-{
-    return HIDGamepadListener::shared().platformGamepads();
-}
-#endif // ENABLE(GAMEPAD)
 
 #if PLATFORM(IOS)
 void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardWebContent& content)
