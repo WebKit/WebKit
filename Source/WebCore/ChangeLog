@@ -1,3 +1,15 @@
+2014-06-26  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK1] Use native touch event's timestamp for DOM touch event
+        https://bugs.webkit.org/show_bug.cgi?id=134326
+
+        Reviewed by Enrica Casucci.
+
+        * platform/ios/PlatformEventFactoryIOS.mm:
+        (WebCore::PlatformTouchEventBuilder::PlatformTouchEventBuilder):
+        Use device event timestamp to get more accurate timing information. This also removes
+        the variance introduced by WebKit when computing velocity/acceleration/etc.
+
 2014-06-26  Balazs Kelemen  <b.kelemen@samsung.com>
 
         Memcache migth not be pruned when it should for https pages

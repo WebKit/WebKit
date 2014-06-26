@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -228,7 +228,7 @@ public:
     {
         m_type = touchEventType(event);
         m_modifiers = modifiersForEvent(event);
-        m_timestamp = currentTime();
+        m_timestamp = event.timestamp;
 
         m_gestureScale = event.gestureScale;
         m_gestureRotation = event.gestureRotation;
