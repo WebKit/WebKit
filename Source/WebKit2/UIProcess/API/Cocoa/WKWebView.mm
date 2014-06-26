@@ -774,7 +774,9 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
         return;
     }
 
-    [_scrollView setContentSize:roundScrollViewContentSize(*_page, [_contentView frame].size)];
+    CGSize newContentSize = roundScrollViewContentSize(*_page, [_contentView frame].size);
+    [_scrollView _setContentSizePreservingContentOffsetDuringRubberband:newContentSize];
+
     [_scrollView setMinimumZoomScale:layerTreeTransaction.minimumScaleFactor()];
     [_scrollView setMaximumZoomScale:layerTreeTransaction.maximumScaleFactor()];
     [_scrollView setZoomEnabled:layerTreeTransaction.allowsUserScaling()];

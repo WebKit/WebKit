@@ -33,6 +33,8 @@
 
 @property (nonatomic, assign) WKWebView <UIScrollViewDelegate> *internalDelegate;
 
+- (void)_setContentSizePreservingContentOffsetDuringRubberband:(CGSize)contentSize;
+
 @end
 
 #endif // PLATFORM(IOS)

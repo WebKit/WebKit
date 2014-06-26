@@ -198,6 +198,54 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     [_internalDelegate _updateVisibleContentRects];
 }
 
+// Fetch top/left rubberband amounts (as negative values).
+- (CGSize)_currentTopLeftRubberbandAmount
+{
+    UIEdgeInsets edgeInsets = [self contentInset];
+
+    CGSize rubberbandAmount = CGSizeZero;
+
+    CGPoint contentOffset = [self contentOffset];
+    if (contentOffset.x < -edgeInsets.left)
+        rubberbandAmount.width = std::min<CGFloat>(contentOffset.x + -edgeInsets.left, 0);
+
+    if (contentOffset.y < -edgeInsets.top)
+        rubberbandAmount.height = std::min<CGFloat>(contentOffset.y + edgeInsets.top, 0);
+    
+    return rubberbandAmount;
+}
+
+- (void)_restoreContentOffsetWithRubberbandAmount:(CGSize)rubberbandAmount
+{
+    UIEdgeInsets edgeInsets = [self contentInset];
+    CGPoint adjustedOffset = [self contentOffset];
+
+    if (rubberbandAmount.width < 0)
+        adjustedOffset.x = -edgeInsets.left + rubberbandAmount.width;
+
+    if (rubberbandAmount.height < 0)
+        adjustedOffset.y = -edgeInsets.top + rubberbandAmount.height;
+
+    [self setContentOffset:adjustedOffset];
+}
+
+- (void)_setContentSizePreservingContentOffsetDuringRubberband:(CGSize)contentSize
+{
+    CGSize currentContentSize = [self contentSize];
+
+    if (CGSizeEqualToSize(currentContentSize, CGSizeZero) || CGSizeEqualToSize(currentContentSize, contentSize) || self.zoomScale < self.minimumZoomScale) {
+        [self setContentSize:contentSize];
+        return;
+    }
+
+    CGSize rubberbandAmount = [self _currentTopLeftRubberbandAmount];
+
+    [self setContentSize:contentSize];
+
+    if (!CGSizeEqualToSize(rubberbandAmount, CGSizeZero))
+        [self _restoreContentOffsetWithRubberbandAmount:rubberbandAmount];
+}
+
 @end
 
 #endif // PLATFORM(IOS)

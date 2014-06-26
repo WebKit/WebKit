@@ -1,5 +1,31 @@
 2014-06-25  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS WK2] Page jumps when rubber-banding on azuremagazine.com 
+        https://bugs.webkit.org/show_bug.cgi?id=134238
+        <rdar://problem/16918228>
+
+        Reviewed by Benjamin Poulain.
+        
+        If the scroll view is in the process of rubber-banding when -setContentSize: is called,
+        it clamps the scroll offsets between zero and the max value, which visibly interrupts the
+        rubberband. This can easily happen now that we continually send scroll events to the page
+        on scrolling, especially when pages like azuremagazine.com do fake sticky by toggling
+        in-flow elements into position:fixed.
+        
+        Fix by computing the amount of rubber-band before calling -setContentSize:, and then
+        restoring the contentOffset with the same amount of rubber-band even when the content size
+        is different, for top/left rubberbands.
+        
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:WebKit::]):
+        * UIProcess/ios/WKScrollView.h:
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView _currentTopLeftRubberbandAmount]):
+        (-[WKScrollView _restoreContentOffsetWithRubberbandAmount:]):
+        (-[WKScrollView _setContentSizePreservingContentOffsetDuringRubberband:]):
+
+2014-06-25  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS WK2] Fixed position elements jump around when zooming
         https://bugs.webkit.org/show_bug.cgi?id=134328
         <rdar://problem/17447048>
