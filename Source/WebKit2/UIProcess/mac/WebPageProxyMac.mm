@@ -335,7 +335,7 @@ void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange&
     }
 
     uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
 
     process().send(Messages::WebPage::AttributedSubstringForCharacterRangeAsync(range, callbackID), m_pageID);
 }

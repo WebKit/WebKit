@@ -31,8 +31,6 @@
 #include <WebCore/Timer.h>
 #include <wtf/WeakPtr.h>
 
-#if PLATFORM(IOS)
-
 namespace WebKit {
     
 class WebProcessProxy;
@@ -83,7 +81,5 @@ private:
 };
     
 }
-
-#endif // PLATFORM(IOS)
 
 #endif // ProcessThrottler_h

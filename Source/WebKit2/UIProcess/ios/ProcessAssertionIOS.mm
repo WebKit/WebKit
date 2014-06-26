@@ -80,4 +80,4 @@ void ProcessAssertion::setState(AssertionState assertionState)
     
 }
 
-#endif // PLATFORM(IOS) && USE(XPC_SERVICES)
+#endif // PLATFORM(IOS)

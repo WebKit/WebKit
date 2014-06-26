@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebProcessProxy.h"
+#ifndef ProcessAssertion_h
+#define ProcessAssertion_h
 
-#if PLATFORM(IOS)
-
-#import <WebCore/NotImplemented.h>
-
-#import "WebContext.h"
-#import "WebProcessMessages.h"
+#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+#include <wtf/RetainPtr.h>
+OBJC_CLASS BKSProcessAssertion;
+#endif
 
 namespace WebKit {
+    
+enum class AssertionState {
+    Suspended,
+    Background,
+    Foreground
+};
 
-bool WebProcessProxy::fullKeyboardAccessEnabled()
-{
-    notImplemented();
-    return false;
+class ProcessAssertion {
+public:
+    ProcessAssertion(pid_t, AssertionState);
+    
+    AssertionState state() const { return m_assertionState; }
+    
+    void setState(AssertionState);
+    
+private:
+#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+    RetainPtr<BKSProcessAssertion> m_assertion;
+#endif
+    AssertionState m_assertionState;
+};
+    
 }
 
-void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
-{
-    // We want the web process to match the architecture of the UI process.
-    launchOptions.architecture = ProcessLauncher::LaunchOptions::MatchCurrentArchitecture;
-    launchOptions.executableHeap = false;
-
-    launchOptions.useXPC = true;
-}
-
-bool WebProcessProxy::allPagesAreProcessSuppressible() const
-{
-    notImplemented();
-    return false;
-}
-
-void WebProcessProxy::updateProcessSuppressionState()
-{
-    notImplemented();
-}
-
-} // namespace WebKit
-
-#endif // PLATFORM(IOS)
+#endif // ProcessAssertion_h

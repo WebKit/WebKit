@@ -305,29 +305,23 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
 
 void WebPageProxy::selectWithGesture(const WebCore::IntPoint point, WebCore::TextGranularity granularity, uint32_t gestureType, uint32_t gestureState, std::function<void (const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<GestureCallback> callback = GestureCallback::create(std::move(callbackFunction));
-
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(WebCore::IntPoint(), 0, 0, 0, CallbackBase::Error::Unknown);
         return;
     }
-    
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::SelectWithGesture(point, (uint32_t)granularity, gestureType, gestureState, callbackID), m_pageID);
 }
 
 void WebPageProxy::updateSelectionWithTouches(const WebCore::IntPoint point, uint32_t touches, bool baseIsStart, std::function<void (const WebCore::IntPoint&, uint32_t, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<TouchesCallback> callback = TouchesCallback::create(std::move(callbackFunction));
-
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(WebCore::IntPoint(), 0, CallbackBase::Error::Unknown);
         return;
     }
 
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::UpdateSelectionWithTouches(point, touches, baseIsStart, callbackID), m_pageID);
 }
     
@@ -343,29 +337,23 @@ void WebPageProxy::replaceSelectedText(const String& oldText, const String& newT
 
 void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection, std::function<void (const Vector<WebCore::FloatRect>&, const String&, double, uint64_t, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<AutocorrectionDataCallback> callback = AutocorrectionDataCallback::create(std::move(callbackFunction));
-
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(Vector<WebCore::FloatRect>(), String(), 0, 0, CallbackBase::Error::Unknown);
         return;
     }
 
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::RequestAutocorrectionData(textForAutocorrection, callbackID), m_pageID);
 }
 
 void WebPageProxy::applyAutocorrection(const String& correction, const String& originalText, std::function<void (const String&, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<StringCallback> callback = StringCallback::create(std::move(callbackFunction));
-
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(String(), CallbackBase::Error::Unknown);
         return;
     }
 
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::ApplyAutocorrection(correction, originalText, callbackID), m_pageID);
 }
 
@@ -378,29 +366,23 @@ bool WebPageProxy::applyAutocorrection(const String& correction, const String& o
 
 void WebPageProxy::requestDictationContext(std::function<void (const String&, const String&, const String&, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<DictationContextCallback> callback = DictationContextCallback::create(std::move(callbackFunction));
-
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(String(), String(), String(), CallbackBase::Error::Unknown);
         return;
     }
 
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::RequestDictationContext(callbackID), m_pageID);
 }
 
 void WebPageProxy::requestAutocorrectionContext(std::function<void (const String&, const String&, const String&, const String&, uint64_t, uint64_t, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<AutocorrectionContextCallback> callback = AutocorrectionContextCallback::create(std::move(callbackFunction));
-
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(String(), String(), String(), String(), 0, 0, CallbackBase::Error::Unknown);
         return;
     }
 
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::RequestAutocorrectionContext(callbackID), m_pageID);
 }
 
@@ -411,15 +393,12 @@ void WebPageProxy::getAutocorrectionContext(String& beforeContext, String& marke
 
 void WebPageProxy::selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, std::function<void (const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<GestureCallback> callback = GestureCallback::create(std::move(callbackFunction));
-
     if (!isValid()) {
-        callback->invalidate();
+        callbackFunction(WebCore::IntPoint(), 0, 0, 0, CallbackBase::Error::Unknown);
         return;
     }
 
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::SelectWithTwoTouches(from, to, gestureType, gestureState, callbackID), m_pageID);
 }
 

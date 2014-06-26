@@ -1,3 +1,91 @@
+2014-06-25  Dan Bernstein  <mitz@apple.com>
+
+        Web process should become active when sent a message that requires a callback
+        https://bugs.webkit.org/show_bug.cgi?id=134315
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]): Removed one-off code to
+        acquire an activity token, now that WebPageProxy::takeSnapshot does it automatically for us.
+
+        * UIProcess/GenericCallback.h:
+        (WebKit::CallbackBase::CallbackBase): Made this constructor take and adopt an activity
+        token.
+        (WebKit::GenericCallback::create): Added an optional activity token parameter.
+        (WebKit::GenericCallback::GenericCallback): Pass the activity token to the CallbackBase
+        constructor.
+        (WebKit::CallbackMap::put): Added an activity token parameter, which is passed along to
+        GenericCallback::create.
+
+        * UIProcess/ProcessAssertion.cpp: Moved from Source/WebKit2/UIProcess/ios/ProcessAssertion.mm.
+        This copy includes generic no-op implementations for platforms that don’t have assertions.
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        (WebKit::ProcessAssertion::setState):
+        * UIProcess/ProcessAssertion.h: Moved from Source/WebKit2/UIProcess/ios/ProcessAssertion.h.
+        Changed platform #ifdefs to make this usable by all platforms.
+
+        * UIProcess/ProcessThrottler.cpp: Moved from Source/WebKit2/UIProcess/ios/ProcessThrottler.mm.
+        Removed iOS platform #ifdef.
+        * UIProcess/ProcessThrottler.h: Moved from Source/WebKit2/UIProcess/ios/ProcessThrottler.h.
+        Ditto.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::validateCommand): Create a background activity token and pass it
+        along to CallbackMap::put.
+        (WebKit::WebPageProxy::runJavaScriptInMainFrame): Ditto.
+        (WebKit::WebPageProxy::getRenderTreeExternalRepresentation): Ditto.
+        (WebKit::WebPageProxy::getSourceForFrame): Ditto.
+        (WebKit::WebPageProxy::getContentsAsString): Ditto.
+        (WebKit::WebPageProxy::getBytecodeProfile): Ditto.
+        (WebKit::WebPageProxy::getSelectionOrContentsAsString): Ditto.
+        (WebKit::WebPageProxy::getSelectionAsWebArchiveData): Ditto.
+        (WebKit::WebPageProxy::getMainResourceDataOfFrame): Ditto.
+        (WebKit::WebPageProxy::getResourceDataFromFrame): Ditto.
+        (WebKit::WebPageProxy::getWebArchiveOfFrame): Ditto.
+        (WebKit::WebPageProxy::getMarkedRangeAsync): Ditto.
+        (WebKit::WebPageProxy::getSelectedRangeAsync): Ditto.
+        (WebKit::WebPageProxy::characterIndexForPointAsync): Ditto.
+        (WebKit::WebPageProxy::firstRectForCharacterRangeAsync): Ditto.
+        (WebKit::WebPageProxy::takeSnapshot): Ditto.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::sendProcessWillSuspend): Moved from WebProcessProxyIOS.mm.
+        (WebKit::WebProcessProxy::sendCancelProcessWillSuspend): Ditto.
+        (WebKit::WebProcessProxy::processReadyToSuspend): Ditto.
+        (WebKit::WebProcessProxy::didCancelProcessSuspension): Ditto.
+        * UIProcess/WebProcessProxy.h: Removed iOS platform #ifdef.
+        * UIProcess/WebProcessProxy.messages.in: Ditto.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm: Renamed from Source/WebKit2/UIProcess/ios/ProcessAssertion.mm.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::selectWithGesture): Changed to pass the function directly to
+        CallbackMap::put, along with a background activity token.
+        (WebKit::WebPageProxy::updateSelectionWithTouches): Ditto.
+        (WebKit::WebPageProxy::requestAutocorrectionData): Ditto.
+        (WebKit::WebPageProxy::applyAutocorrection): Ditto.
+        (WebKit::WebPageProxy::requestDictationContext): Ditto.
+        (WebKit::WebPageProxy::requestAutocorrectionContext): Ditto.
+        (WebKit::WebPageProxy::selectWithTwoTouches): Ditto.
+
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        (WebKit::WebProcessProxy::sendProcessWillSuspend): Moved to WebProcessProxy.cpp.
+        (WebKit::WebProcessProxy::sendCancelProcessWillSuspend): Ditto.
+        (WebKit::WebProcessProxy::processReadyToSuspend): Ditto.
+        (WebKit::WebProcessProxy::didCancelProcessSuspension): Ditto.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::attributedSubstringForCharacterRangeAsync): Create a background
+        activity token and pass it along to CallbackMap::put.
+
+        * WebKit2.xcodeproj/project.pbxproj: Updated for moves and copies.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess): Moved iOS platform #ifdef.
+        * WebProcess/WebProcess.h: Ditto.
+        * WebProcess/WebProcess.messages.in: Ditto.
+
 2014-06-25  Chris Fleizach  <cfleizach@apple.com>
 
         Add an undo group for each dictated utterance in WebKit

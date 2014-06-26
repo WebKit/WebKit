@@ -27,6 +27,7 @@
 #define GenericCallback_h
 
 #include "APIError.h"
+#include "ProcessThrottler.h"
 #include "ShareableBitmap.h"
 #include "WKAPICast.h"
 #include <functional>
@@ -67,9 +68,10 @@ protected:
     struct TypeTag { };
     typedef const TypeTag* Type;
 
-    explicit CallbackBase(Type type)
+    explicit CallbackBase(Type type, std::unique_ptr<ProcessThrottler::BackgroundActivityToken> activityToken)
         : m_type(type)
         , m_callbackID(generateCallbackID())
+        , m_activityToken(std::move(activityToken))
     {
     }
 
@@ -83,6 +85,7 @@ private:
 
     Type m_type;
     uint64_t m_callbackID;
+    std::unique_ptr<ProcessThrottler::BackgroundActivityToken> m_activityToken;
 };
 
 template<typename... T>
@@ -90,9 +93,9 @@ class GenericCallback : public CallbackBase {
 public:
     typedef std::function<void (T..., Error)> CallbackFunction;
 
-    static PassRefPtr<GenericCallback> create(CallbackFunction callback)
+    static PassRefPtr<GenericCallback> create(CallbackFunction callback, std::unique_ptr<ProcessThrottler::BackgroundActivityToken> activityToken = nullptr)
     {
-        return adoptRef(new GenericCallback(callback));
+        return adoptRef(new GenericCallback(callback, std::move(activityToken)));
     }
 
     virtual ~GenericCallback()
@@ -126,8 +129,8 @@ public:
     }
 
 private:
-    GenericCallback(CallbackFunction callback)
-        : CallbackBase(type())
+    GenericCallback(CallbackFunction callback, std::unique_ptr<ProcessThrottler::BackgroundActivityToken> activityToken)
+        : CallbackBase(type(), std::move(activityToken))
         , m_callback(callback)
     {
     }
@@ -187,9 +190,9 @@ public:
     };
 
     template<typename... T>
-    uint64_t put(std::function<void (T...)> function)
+    uint64_t put(std::function<void (T...)> function, std::unique_ptr<ProcessThrottler::BackgroundActivityToken> activityToken)
     {
-        auto callback = GenericCallbackType<sizeof...(T), T...>::type::create(std::move(function));
+        auto callback = GenericCallbackType<sizeof...(T), T...>::type::create(std::move(function), std::move(activityToken));
         return put(callback);
     }
 

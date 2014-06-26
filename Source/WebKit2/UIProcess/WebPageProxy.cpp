@@ -1257,7 +1257,7 @@ void WebPageProxy::validateCommand(const String& commandName, std::function<void
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::ValidateCommand(commandName, callbackID), m_pageID);
 }
 
@@ -2200,7 +2200,7 @@ void WebPageProxy::runJavaScriptInMainFrame(const String& script, std::function<
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::RunJavaScriptInMainFrame(script, callbackID), m_pageID);
 }
 
@@ -2211,7 +2211,7 @@ void WebPageProxy::getRenderTreeExternalRepresentation(std::function<void (const
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::GetRenderTreeExternalRepresentation(callbackID), m_pageID);
 }
 
@@ -2222,7 +2222,7 @@ void WebPageProxy::getSourceForFrame(WebFrameProxy* frame, std::function<void (c
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_loadDependentStringCallbackIDs.add(callbackID);
     m_process->send(Messages::WebPage::GetSourceForFrame(frame->frameID(), callbackID), m_pageID);
 }
@@ -2234,7 +2234,7 @@ void WebPageProxy::getContentsAsString(std::function<void (const String&, Callba
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_loadDependentStringCallbackIDs.add(callbackID);
     m_process->send(Messages::WebPage::GetContentsAsString(callbackID), m_pageID);
 }
@@ -2246,7 +2246,7 @@ void WebPageProxy::getBytecodeProfile(std::function<void (const String&, Callbac
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_loadDependentStringCallbackIDs.add(callbackID);
     m_process->send(Messages::WebPage::GetBytecodeProfile(callbackID), m_pageID);
 }
@@ -2259,7 +2259,7 @@ void WebPageProxy::getContentsAsMHTMLData(std::function<void (API::Data*, Callba
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::GetContentsAsMHTMLData(callbackID, useBinaryEncoding), m_pageID);
 }
 #endif
@@ -2271,7 +2271,7 @@ void WebPageProxy::getSelectionOrContentsAsString(std::function<void (const Stri
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::GetSelectionOrContentsAsString(callbackID), m_pageID);
 }
 
@@ -2282,7 +2282,7 @@ void WebPageProxy::getSelectionAsWebArchiveData(std::function<void (API::Data*, 
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::GetSelectionAsWebArchiveData(callbackID), m_pageID);
 }
 
@@ -2293,7 +2293,7 @@ void WebPageProxy::getMainResourceDataOfFrame(WebFrameProxy* frame, std::functio
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::GetMainResourceDataOfFrame(frame->frameID(), callbackID), m_pageID);
 }
 
@@ -2304,7 +2304,7 @@ void WebPageProxy::getResourceDataFromFrame(WebFrameProxy* frame, API::URL* reso
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::GetResourceDataFromFrame(frame->frameID(), resourceURL->string(), callbackID), m_pageID);
 }
 
@@ -2315,7 +2315,7 @@ void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, std::function<void
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::GetWebArchiveOfFrame(frame->frameID(), callbackID), m_pageID);
 }
 
@@ -4973,7 +4973,7 @@ void WebPageProxy::getMarkedRangeAsync(std::function<void (EditingRange, Callbac
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     process().send(Messages::WebPage::GetMarkedRangeAsync(callbackID), m_pageID);
 }
 
@@ -4984,7 +4984,7 @@ void WebPageProxy::getSelectedRangeAsync(std::function<void (EditingRange, Callb
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     process().send(Messages::WebPage::GetSelectedRangeAsync(callbackID), m_pageID);
 }
 
@@ -4995,7 +4995,7 @@ void WebPageProxy::characterIndexForPointAsync(const WebCore::IntPoint& point, s
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     process().send(Messages::WebPage::CharacterIndexForPointAsync(point, callbackID), m_pageID);
 }
 
@@ -5006,7 +5006,7 @@ void WebPageProxy::firstRectForCharacterRangeAsync(const EditingRange& range, st
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     process().send(Messages::WebPage::FirstRectForCharacterRangeAsync(range, callbackID), m_pageID);
 }
 
@@ -5038,7 +5038,7 @@ void WebPageProxy::takeSnapshot(IntRect rect, IntSize bitmapSize, SnapshotOption
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction));
+    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::TakeSnapshot(rect, bitmapSize, options, callbackID), m_pageID);
 }
 

@@ -23,40 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ProcessAssertion_h
-#define ProcessAssertion_h
+#import "config.h"
+#import "ProcessAssertion.h"
 
-#include <wtf/RetainPtr.h>
-
-#if PLATFORM(IOS)
-
-OBJC_CLASS BKSProcessAssertion;
+#if !PLATFORM(IOS)
 
 namespace WebKit {
-    
-enum class AssertionState {
-    Suspended,
-    Background,
-    Foreground
-};
 
-class ProcessAssertion {
-public:
-    ProcessAssertion(pid_t, AssertionState);
-    
-    AssertionState state() const { return m_assertionState; }
-    
-    void setState(AssertionState);
-    
-private:
-#if !PLATFORM(IOS_SIMULATOR)
-    RetainPtr<BKSProcessAssertion> m_assertion;
-#endif
-    AssertionState m_assertionState;
-};
+ProcessAssertion::ProcessAssertion(pid_t, AssertionState assertionState)
+{
+    m_assertionState = assertionState;
+}
+
+void ProcessAssertion::setState(AssertionState assertionState)
+{
+    if (m_assertionState == assertionState)
+        return;
+
+    m_assertionState = assertionState;
+}
     
 }
 
-#endif // PLATFORM(IOS) && USE(XPC_SERVICES)
-
-#endif // ProcessAssertion_h
+#endif // !PLATFORM(IOS)

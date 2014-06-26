@@ -716,6 +716,7 @@
 		376C51191957452E0007B0FA /* _WKSecurityOrigin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 376C51171957452E0007B0FA /* _WKSecurityOrigin.mm */; };
 		376C511A1957452E0007B0FA /* _WKSecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = 376C51181957452E0007B0FA /* _WKSecurityOrigin.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		376C511D19574F5F0007B0FA /* _WKSecurityOriginInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 376C511B195748C20007B0FA /* _WKSecurityOriginInternal.h */; };
+		37716A5A195B910500EE8B1B /* ProcessAssertion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37716A59195B910500EE8B1B /* ProcessAssertion.cpp */; };
 		377EAD4517E2C51A002D193D /* WKDeclarationSpecifiers.h in Headers */ = {isa = PBXBuildFile; fileRef = 377EAD4417E2C51A002D193D /* WKDeclarationSpecifiers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		377EAD4817E2C77B002D193D /* WKUserContentInjectedFrames.h in Headers */ = {isa = PBXBuildFile; fileRef = 377EAD4617E2C77B002D193D /* WKUserContentInjectedFrames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		377EAD4917E2C77B002D193D /* WKUserScriptInjectionTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 377EAD4717E2C77B002D193D /* WKUserScriptInjectionTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1063,8 +1064,8 @@
 		84477853176FCC0800CDC7BB /* InjectedBundleHitTestResultMediaType.h in Headers */ = {isa = PBXBuildFile; fileRef = 84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */; };
 		868160D0187645570021E79D /* WindowServerConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 868160CF187645370021E79D /* WindowServerConnection.mm */; };
 		86E67A251910B9D100004AB7 /* ProcessThrottler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E67A21190F411800004AB7 /* ProcessThrottler.h */; };
-		86E67A261910B9D900004AB7 /* ProcessThrottler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86E67A22190F411800004AB7 /* ProcessThrottler.mm */; };
-		86F9536418FF583C001DB2EF /* ProcessAssertion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86F9536218FF550B001DB2EF /* ProcessAssertion.mm */; };
+		86E67A261910B9D900004AB7 /* ProcessThrottler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86E67A22190F411800004AB7 /* ProcessThrottler.cpp */; };
+		86F9536418FF583C001DB2EF /* ProcessAssertionIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86F9536218FF550B001DB2EF /* ProcessAssertionIOS.mm */; };
 		86F9536518FF58F5001DB2EF /* ProcessAssertion.h in Headers */ = {isa = PBXBuildFile; fileRef = 86F9536018FF4FD4001DB2EF /* ProcessAssertion.h */; };
 		8CFECE941490F140002AAA32 /* EditorState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CFECE931490F140002AAA32 /* EditorState.cpp */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
@@ -2717,6 +2718,7 @@
 		376C51171957452E0007B0FA /* _WKSecurityOrigin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKSecurityOrigin.mm; sourceTree = "<group>"; };
 		376C51181957452E0007B0FA /* _WKSecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSecurityOrigin.h; sourceTree = "<group>"; };
 		376C511B195748C20007B0FA /* _WKSecurityOriginInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSecurityOriginInternal.h; sourceTree = "<group>"; };
+		37716A59195B910500EE8B1B /* ProcessAssertion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessAssertion.cpp; sourceTree = "<group>"; };
 		377EAD4417E2C51A002D193D /* WKDeclarationSpecifiers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDeclarationSpecifiers.h; sourceTree = "<group>"; };
 		377EAD4617E2C77B002D193D /* WKUserContentInjectedFrames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserContentInjectedFrames.h; sourceTree = "<group>"; };
 		377EAD4717E2C77B002D193D /* WKUserScriptInjectionTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserScriptInjectionTime.h; sourceTree = "<group>"; };
@@ -3104,10 +3106,10 @@
 		84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleHitTestResultMediaType.h; sourceTree = "<group>"; };
 		868160CD18763D4B0021E79D /* WindowServerConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowServerConnection.h; sourceTree = "<group>"; };
 		868160CF187645370021E79D /* WindowServerConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WindowServerConnection.mm; sourceTree = "<group>"; };
-		86E67A21190F411800004AB7 /* ProcessThrottler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessThrottler.h; path = ios/ProcessThrottler.h; sourceTree = "<group>"; };
-		86E67A22190F411800004AB7 /* ProcessThrottler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProcessThrottler.mm; path = ios/ProcessThrottler.mm; sourceTree = "<group>"; };
-		86F9536018FF4FD4001DB2EF /* ProcessAssertion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessAssertion.h; path = ios/ProcessAssertion.h; sourceTree = "<group>"; };
-		86F9536218FF550B001DB2EF /* ProcessAssertion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProcessAssertion.mm; path = ios/ProcessAssertion.mm; sourceTree = "<group>"; };
+		86E67A21190F411800004AB7 /* ProcessThrottler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessThrottler.h; sourceTree = "<group>"; };
+		86E67A22190F411800004AB7 /* ProcessThrottler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessThrottler.cpp; sourceTree = "<group>"; };
+		86F9536018FF4FD4001DB2EF /* ProcessAssertion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessAssertion.h; sourceTree = "<group>"; };
+		86F9536218FF550B001DB2EF /* ProcessAssertionIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProcessAssertionIOS.mm; path = ios/ProcessAssertionIOS.mm; sourceTree = "<group>"; };
 		8CFECE931490F140002AAA32 /* EditorState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditorState.cpp; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* WebKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4797,10 +4799,7 @@
 				0F0C365D18C110A500F607D7 /* LayerRepresentation.mm */,
 				0FCB4E3618BBE044000FCFC9 /* PageClientImplIOS.h */,
 				0FCB4E3718BBE044000FCFC9 /* PageClientImplIOS.mm */,
-				86F9536018FF4FD4001DB2EF /* ProcessAssertion.h */,
-				86F9536218FF550B001DB2EF /* ProcessAssertion.mm */,
-				86E67A21190F411800004AB7 /* ProcessThrottler.h */,
-				86E67A22190F411800004AB7 /* ProcessThrottler.mm */,
+				86F9536218FF550B001DB2EF /* ProcessAssertionIOS.mm */,
 				0F0C365718C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm */,
 				0F0C365B18C05CA100F607D7 /* RemoteScrollingCoordinatorProxyIOS.mm */,
 				2DA1E4FC18C02B6A00DBC929 /* WKPDFView.h */,
@@ -5787,7 +5786,11 @@
 				E13833EB189C33C8001E2350 /* LocalStorageDetails.h */,
 				1AC75379183A9FDA0072CB15 /* PageLoadState.cpp */,
 				1AC7537A183A9FDB0072CB15 /* PageLoadState.h */,
+				37716A59195B910500EE8B1B /* ProcessAssertion.cpp */,
+				86F9536018FF4FD4001DB2EF /* ProcessAssertion.h */,
 				BC597074116591D000551FCA /* ProcessModel.h */,
+				86E67A22190F411800004AB7 /* ProcessThrottler.cpp */,
+				86E67A21190F411800004AB7 /* ProcessThrottler.h */,
 				BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */,
 				1A30066C1110F4F70031937C /* ResponsivenessTimer.h */,
 				51A4D5A816CAC4FF000E615E /* StatisticsRequest.cpp */,
@@ -9093,8 +9096,8 @@
 				F6A25FDC12ADC6CC00DC40CC /* WebDatabaseManager.cpp in Sources */,
 				F62A76B612B1B25F0005F1B6 /* WebDatabaseManagerMessageReceiver.cpp in Sources */,
 				51E35209180F5D6B00E53BE9 /* DatabaseServiceEntryPoint.mm in Sources */,
-				86E67A261910B9D900004AB7 /* ProcessThrottler.mm in Sources */,
-				86F9536418FF583C001DB2EF /* ProcessAssertion.mm in Sources */,
+				86E67A261910B9D900004AB7 /* ProcessThrottler.cpp in Sources */,
+				86F9536418FF583C001DB2EF /* ProcessAssertionIOS.mm in Sources */,
 				29232DF818B2A9AE00D0596F /* WKAccessibilityWebPageObjectIOS.mm in Sources */,
 				3F418EF91887BD97002795FD /* WebVideoFullscreenManagerMessageReceiver.cpp in Sources */,
 				F62A765C12B1ABC30005F1B6 /* WebDatabaseManagerProxy.cpp in Sources */,
@@ -9392,6 +9395,7 @@
 				7C135AA8173B0BCA00586AE2 /* WKPluginInformation.cpp in Sources */,
 				1AC86FF3130B46D3002C1257 /* WKPluginSiteDataManager.cpp in Sources */,
 				BCD597D1112B56AC00EC8C23 /* WKPreferences.cpp in Sources */,
+				37716A5A195B910500EE8B1B /* ProcessAssertion.cpp in Sources */,
 				BCBAACEC145225E30053F82F /* WKProcessGroup.mm in Sources */,
 				0F5E200318E77051003EC3E5 /* PlatformCAAnimationRemote.mm in Sources */,
 				512F58FB12A88A5400629530 /* WKProtectionSpace.cpp in Sources */,

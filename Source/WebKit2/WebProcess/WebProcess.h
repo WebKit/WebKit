@@ -175,13 +175,14 @@ public:
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
 #endif
 
-#if PLATFORM(IOS)
-    void resetAllGeolocationPermissions();
     void processWillSuspend();
     void cancelProcessWillSuspend();
     bool markAllLayersVolatileIfPossible();
     void processSuspensionCleanupTimerFired(WebCore::Timer<WebProcess>*);
-#endif // PLATFORM(IOS)
+
+#if PLATFORM(IOS)
+    void resetAllGeolocationPermissions();
+#endif
 
     RefPtr<API::Object> apiObjectByConvertingFromHandles(API::Object*);
 
@@ -290,8 +291,8 @@ private:
     RefPtr<EventDispatcher> m_eventDispatcher;
 #if PLATFORM(IOS)
     RefPtr<ViewUpdateDispatcher> m_viewUpdateDispatcher;
-    WebCore::Timer<WebProcess> m_processSuspensionCleanupTimer;
 #endif
+    WebCore::Timer<WebProcess> m_processSuspensionCleanupTimer;
 
     bool m_inDidClose;
 

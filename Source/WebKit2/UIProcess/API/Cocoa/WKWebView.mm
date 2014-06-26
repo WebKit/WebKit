@@ -2148,17 +2148,8 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     CGFloat imageHeight = imageWidth / snapshotRectInContentCoordinates.size.width * snapshotRectInContentCoordinates.size.height;
     CGSize imageSize = CGSizeMake(imageWidth, imageHeight);
     
-#if PLATFORM(IOS)
-    WebKit::ProcessThrottler::BackgroundActivityToken* activityToken = new WebKit::ProcessThrottler::BackgroundActivityToken(_page->process().throttler());
-#endif
-    
     void(^copiedCompletionHandler)(CGImageRef) = [completionHandler copy];
     _page->takeSnapshot(WebCore::enclosingIntRect(snapshotRectInContentCoordinates), WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebKit::SnapshotOptionsExcludeDeviceScaleFactor, [=](const WebKit::ShareableBitmap::Handle& imageHandle, WebKit::CallbackBase::Error) {
-#if PLATFORM(IOS)
-        // Automatically delete when this goes out of scope.
-        auto uniqueActivityToken = std::unique_ptr<WebKit::ProcessThrottler::BackgroundActivityToken>(activityToken);
-#endif
-        
         if (imageHandle.isNull()) {
             copiedCompletionHandler(nullptr);
             [copiedCompletionHandler release];

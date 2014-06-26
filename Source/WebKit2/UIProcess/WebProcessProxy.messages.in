@@ -47,8 +47,6 @@ messages -> WebProcessProxy LegacyReceiver {
 #if ENABLE(DATABASE_PROCESS)
     GetDatabaseProcessConnection() -> (IPC::Attachment connectionHandle) Delayed
 #endif
-#if PLATFORM(IOS)
     ProcessReadyToSuspend()
     DidCancelProcessSuspension()
-#endif
 }

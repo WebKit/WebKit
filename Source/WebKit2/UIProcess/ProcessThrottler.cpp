@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "ProcessThrottler.h"
+#include "config.h"
+#include "ProcessThrottler.h"
 
-#if PLATFORM(IOS)
-
-#import "WebProcessProxy.h"
+#include "WebProcessProxy.h"
 
 namespace WebKit {
     
@@ -138,5 +136,3 @@ void ProcessThrottler::didCancelProcessSuspension()
 }
 
 }
-
-#endif // PLATFORM(IOS)

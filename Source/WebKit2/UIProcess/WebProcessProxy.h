@@ -135,14 +135,12 @@ public:
 
     void windowServerConnectionStateChanged();
 
-#if PLATFORM(IOS)
     void sendProcessWillSuspend();
     void processReadyToSuspend();
     void sendCancelProcessWillSuspend();
     void didCancelProcessSuspension();
     
     ProcessThrottler& throttler() { return *m_throttler; }
-#endif
     
 private:
     explicit WebProcessProxy(WebContext&);
@@ -228,10 +226,7 @@ private:
 #endif
 
     int m_numberOfTimesSuddenTerminationWasDisabled;
-    
-#if PLATFORM(IOS)
     std::unique_ptr<ProcessThrottler> m_throttler;
-#endif
 };
 
 } // namespace WebKit

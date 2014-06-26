@@ -152,8 +152,8 @@ WebProcess::WebProcess()
     : m_eventDispatcher(EventDispatcher::create())
 #if PLATFORM(IOS)
     , m_viewUpdateDispatcher(ViewUpdateDispatcher::create())
+#endif
     , m_processSuspensionCleanupTimer(this, &WebProcess::processSuspensionCleanupTimerFired)
-#endif // PLATFORM(IOS)
     , m_inDidClose(false)
     , m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
@@ -1161,6 +1161,7 @@ void WebProcess::resetAllGeolocationPermissions()
             mainFrame->resetAllGeolocationPermission();
     }
 }
+#endif
     
 void WebProcess::processWillSuspend()
 {
@@ -1201,7 +1202,6 @@ void WebProcess::processSuspensionCleanupTimerFired(Timer<WebProcess>* timer)
         timer->stop();
     }
 }
-#endif // PLATFORM(IOS)
 
 void WebProcess::pageDidEnterWindow(uint64_t pageID)
 {
