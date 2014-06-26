@@ -78,16 +78,16 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
             break;
         }
         case FixedNode:
-            if (currNode->hasChangedProperty(ScrollingStateNode::ScrollLayer)) {
+            if (currNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
                 currNode->setLayer(layerRepresentationFromLayerOrView(layerTreeHost.getLayer(currNode->layer())));
-                fixedOrStickyLayerChanged = true;
-            }
+            
+            fixedOrStickyLayerChanged |= currNode->hasChangedProperties();
             break;
         case StickyNode:
-            if (currNode->hasChangedProperty(ScrollingStateNode::ScrollLayer)) {
+            if (currNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
                 currNode->setLayer(layerRepresentationFromLayerOrView(layerTreeHost.getLayer(currNode->layer())));
-                fixedOrStickyLayerChanged = true;
-            }
+
+            fixedOrStickyLayerChanged |= currNode->hasChangedProperties();
             break;
         }
     }

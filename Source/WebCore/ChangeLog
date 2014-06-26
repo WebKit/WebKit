@@ -1,5 +1,39 @@
 2014-06-25  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS WK2] Fixed position elements jump around when zooming
+        https://bugs.webkit.org/show_bug.cgi?id=134328
+        <rdar://problem/17447048>
+
+        Reviewed by Zalan Bujtas.
+
+        If a given remote layer tree commit contains changes of layers for viewport-constrained
+        objects, then the associated scrolling tree also needs to show that the layers changed,
+        since we need to re-run the "viewport changed" logic in the UI process to get the
+        layers correctly positioned for the current zoom level.
+        
+        The bug was that page scale changes resulted in small "pixel alignment" position
+        changes which touched layers, but we didn't commit any scrolling tree changes. So
+        the scrolling tree commit would result in visibly stale layer positions, with no scrolling tree
+        update to adjust them for the current transient zoom.
+
+        Fix by making use of the existing "alignment offset" field in the ViewportConstraints
+        data, and having RemoteScrollingCoordinatorProxy::connectStateNodeLayers() note that
+        fixed or sticky layers changed if any properties of fixed or sticky scrolling tree
+        nodes were updated.
+
+        * page/scrolling/ScrollingConstraints.h:
+        (WebCore::StickyPositionViewportConstraints::operator==):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::pixelAlignmentOffset):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateGeometry):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeFixedViewportConstraints):
+        (WebCore::RenderLayerCompositor::computeStickyViewportConstraints):
+
+2014-06-25  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS WK2] Tweak the logic used to choose the scale at which position:fixed gets pushed out of view
         https://bugs.webkit.org/show_bug.cgi?id=134323
 

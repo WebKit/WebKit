@@ -462,6 +462,7 @@ public:
 #if PLATFORM(IOS)
     bool hasFlattenedPerspectiveTransform() const { return !preserves3D() && m_childrenTransform.hasPerspective(); }
 #endif
+    virtual FloatSize pixelAlignmentOffset() const { return FloatSize(); }
     
     virtual void setAppliesPageScale(bool appliesScale = true) { m_appliesPageScale = appliesScale; }
     virtual bool appliesPageScale() const { return m_appliesPageScale; }

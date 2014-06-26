@@ -3536,6 +3536,7 @@ FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportCons
     FixedPositionViewportConstraints constraints;
     constraints.setLayerPositionAtLastLayout(graphicsLayer->position());
     constraints.setViewportRectAtLastLayout(viewportRect);
+    constraints.setAlignmentOffset(graphicsLayer->pixelAlignmentOffset());
 
     const RenderStyle& style = layer.renderer().style();
     if (!style.left().isAuto())
@@ -3579,6 +3580,7 @@ StickyPositionViewportConstraints RenderLayerCompositor::computeStickyViewportCo
 
     constraints.setLayerPositionAtLastLayout(graphicsLayer->position());
     constraints.setStickyOffsetAtLastLayout(renderer.stickyPositionOffset());
+    constraints.setAlignmentOffset(graphicsLayer->pixelAlignmentOffset());
 
     return constraints;
 }

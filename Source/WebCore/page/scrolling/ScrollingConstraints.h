@@ -167,7 +167,9 @@ public:
 
     bool operator==(const StickyPositionViewportConstraints& other) const
     {
-        return m_leftOffset == other.m_leftOffset
+        return m_alignmentOffset == other.m_alignmentOffset
+            && m_anchorEdges == other.m_anchorEdges
+            && m_leftOffset == other.m_leftOffset
             && m_rightOffset == other.m_rightOffset
             && m_topOffset == other.m_topOffset
             && m_bottomOffset == other.m_bottomOffset

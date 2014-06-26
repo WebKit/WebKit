@@ -1520,6 +1520,8 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
         adjustedPosition = FloatPoint(scaledAnchorPoint.x() * scaledSize.width() - pixelAlignmentOffset.width(), scaledAnchorPoint.y() * scaledSize.height() - pixelAlignmentOffset.height());
     }
 
+    m_pixelAlignmentOffset = pixelAlignmentOffset;
+
     // Push the layer to device pixel boundary (setPosition()), but move the content back to its original position (setBounds())
     m_layer->setPosition(adjustedPosition);
     FloatRect adjustedBounds = FloatRect(FloatPoint(m_boundsOrigin - pixelAlignmentOffset), m_size);

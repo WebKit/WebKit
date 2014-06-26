@@ -146,6 +146,8 @@ public:
 
     virtual void deviceOrPageScaleFactorChanged() override;
 
+    virtual FloatSize pixelAlignmentOffset() const override { return m_pixelAlignmentOffset; }
+
     struct CommitState {
         bool ancestorHasTransformAnimation;
         int treeDepth;
@@ -527,6 +529,8 @@ private:
     AnimationsMap m_runningAnimations;
 
     Vector<FloatRect> m_dirtyRects;
+
+    FloatSize m_pixelAlignmentOffset;
 
     LayerChangeFlags m_uncommittedChanges;
     bool m_isCommittingChanges;
