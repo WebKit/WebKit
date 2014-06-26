@@ -100,7 +100,7 @@ FloatRect RemoteScrollingCoordinatorProxy::customFixedPositionRect() const
 
 void RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartPanGesture()
 {
-    m_webPageProxy.scrollViewWillStartPanGesture();
+    m_webPageProxy.overflowScrollViewWillStartPanGesture();
 }
 
 } // namespace WebKit

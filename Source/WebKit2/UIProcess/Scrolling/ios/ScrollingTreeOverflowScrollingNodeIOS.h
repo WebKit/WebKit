@@ -40,7 +40,7 @@ public:
     static PassRefPtr<ScrollingTreeOverflowScrollingNodeIOS> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
     virtual ~ScrollingTreeOverflowScrollingNodeIOS();
 
-    void scrollViewWillStartPanGesture();
+    void overflowScrollViewWillStartPanGesture();
     void scrollViewDidScroll(const WebCore::FloatPoint&, bool inUserInteration);
 
     CALayer *scrollLayer() const { return m_scrollLayer.get(); }

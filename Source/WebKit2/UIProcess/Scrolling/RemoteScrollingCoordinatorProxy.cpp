@@ -167,6 +167,9 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll(ScrollingNodeID
     if (!m_propagatesMainFrameScrolls && scrolledNodeID == rootScrollingNodeID())
         return;
 
+#if PLATFORM(IOS)
+    m_webPageProxy.overflowScrollViewDidScroll();
+#endif
     m_webPageProxy.send(Messages::RemoteScrollingCoordinator::ScrollPositionChangedForNode(scrolledNodeID, newScrollPosition, scrollingLayerPositionAction));
 }
 

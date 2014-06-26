@@ -1,3 +1,32 @@
+2014-06-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Update the long press interactions correctly when an overflow scroll view scrolls
+        https://bugs.webkit.org/show_bug.cgi?id=134334
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll):
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (-[WKOverflowScrollViewDelegate scrollViewWillBeginDragging:]):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::overflowScrollViewWillStartPanGesture):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::scrollViewWillStartPanGesture): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::overflowScrollViewWillStartPanGesture):
+        (WebKit::PageClientImpl::overflowScrollViewDidScroll):
+        (WebKit::PageClientImpl::scrollViewWillStartPanGesture): Deleted.
+        * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartPanGesture):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::overflowScrollViewWillStartPanGesture):
+        (WebKit::WebPageProxy::overflowScrollViewDidScroll):
+        (WebKit::WebPageProxy::scrollViewWillStartPanGesture): Deleted.
+
 2014-06-25  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Page jumps when rubber-banding on azuremagazine.com 

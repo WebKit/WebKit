@@ -171,6 +171,7 @@ struct WKAutoCorrectionData {
 - (void)_updatePositionInformation;
 - (void)_performAction:(WebKit::SheetAction)action;
 - (void)_willStartScrollingOrZooming;
+- (void)_didScroll;
 - (void)_didEndScrollingOrZooming;
 - (void)_didUpdateBlockSelectionWithTouch:(WebKit::SelectionTouch)touch withFlags:(WebKit::SelectionFlags)flags growThreshold:(CGFloat)growThreshold shrinkThreshold:(CGFloat)shrinkThreshold;
 - (void)_showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(const WebCore::IntRect&)elementRect;

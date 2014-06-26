@@ -570,9 +570,14 @@ void PageClientImpl::zoomToRect(FloatRect rect, double minimumScale, double maxi
     [m_contentView _zoomToRect:rect withOrigin:rect.center() fitEntireRect:YES minimumScale:minimumScale maximumScale:maximumScale minimumScrollDistance:0];
 }
 
-void PageClientImpl::scrollViewWillStartPanGesture()
+void PageClientImpl::overflowScrollViewWillStartPanGesture()
 {
     [m_contentView scrollViewWillStartPanOrPinchGesture];
+}
+
+void PageClientImpl::overflowScrollViewDidScroll()
+{
+    [m_contentView _didScroll];
 }
 
 void PageClientImpl::didFinishDrawingPagesToPDF(const IPC::DataReference& pdfData)

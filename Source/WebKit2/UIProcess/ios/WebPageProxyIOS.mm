@@ -242,9 +242,14 @@ WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect&
     return FrameView::rectForViewportConstrainedObjects(enclosingLayoutRect(constrainedUnobscuredRect), roundedLayoutSize(contentsSize), displayedContentScale, false, StickToViewportBounds);
 }
 
-void WebPageProxy::scrollViewWillStartPanGesture()
+void WebPageProxy::overflowScrollViewWillStartPanGesture()
 {
-    m_pageClient.scrollViewWillStartPanGesture();
+    m_pageClient.overflowScrollViewWillStartPanGesture();
+}
+
+void WebPageProxy::overflowScrollViewDidScroll()
+{
+    m_pageClient.overflowScrollViewDidScroll();
 }
 
 void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, const WebCore::FloatSize& minimumLayoutSizeForMinimalUI, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const FloatRect& targetUnobscuredRectInScrollViewCoordinates,  double targetScale, int32_t deviceOrientation)

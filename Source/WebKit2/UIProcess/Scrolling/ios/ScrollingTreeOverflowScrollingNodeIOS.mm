@@ -68,7 +68,7 @@ using namespace WebCore;
     _inUserInteraction = YES;
 
     if (scrollView.panGestureRecognizer.state == UIGestureRecognizerStateBegan)
-        _scrollingTreeNode->scrollViewWillStartPanGesture();
+        _scrollingTreeNode->overflowScrollViewWillStartPanGesture();
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)willDecelerate
@@ -195,7 +195,7 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateChildNodesAfterScroll(const Fl
         child->updateLayersAfterAncestorChange(*this, fixedPositionRect, scrollDelta);
 }
 
-void ScrollingTreeOverflowScrollingNodeIOS::scrollViewWillStartPanGesture()
+void ScrollingTreeOverflowScrollingNodeIOS::overflowScrollViewWillStartPanGesture()
 {
     scrollingTree().scrollingTreeNodeWillStartPanGesture();
 }
