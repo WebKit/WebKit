@@ -154,6 +154,7 @@ WebInspector.KeyboardShortcut.Key = {
     Minus: new WebInspector.Key(189, "-"),
     Period: new WebInspector.Key(190, "."),
     Slash: new WebInspector.Key(191, "/"),
+    Backslash: new WebInspector.Key(220, "\\"),
     Apostrophe: new WebInspector.Key(192, "`"),
     SingleQuote: new WebInspector.Key(222, "\'")
 };

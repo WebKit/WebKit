@@ -1,3 +1,16 @@
+2014-06-26  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: Command-/ (slash) now auto-comments code via CodeMirror 4. Should remove as command to pause
+        https://bugs.webkit.org/show_bug.cgi?id=134313
+
+        Reviewed by Timothy Hatcher.
+
+        Changed alternate command to pause/resume from command-slash to command-backslash.
+        Command-slash sets/unsets comments in all code editors.
+
+        * UserInterface/Models/KeyboardShortcut.js: Added Backslash.
+        * UserInterface/Views/DebuggerSidebarPanel.js: Changed pauseOrResumeAlternateKeyboardShortcut to use Backslash instead of Slash.
+
 2014-06-25  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: Rules panel's strikethrough gets confused at -webkit-align-items: flex-start;
