@@ -1,3 +1,19 @@
+2014-06-25  Joseph Pecoraro  <pecoraro@apple.com>
+ 
+        [iOS]: Tapping <button> outside of a form is no longer working
+        https://bugs.webkit.org/show_bug.cgi?id=134319
+        <rdar://problem/17213346>
+
+        Reviewed by Daniel Bates.
+
+        Restore behavior of allowing <button> clicks outside of <form>.
+        This used to be iOS behavior before it was removed in favor of the
+        OpenSource (Android?) behavior. Now, willRespondToMouseClickEvents
+        is only used by iOS, so lets restore the iOS behavior.
+
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::willRespondToMouseClickEvents):
+
 2014-06-26  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build-fix. Remove unintentionial rename of MediaTime.h -> MediaTimeHash.h.
