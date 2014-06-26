@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 <head>
     <style>
@@ -19,7 +18,8 @@
         {
             window.setTimeout(function() {
                 window.scrollTo(10, 100);
-            }, 2000);
+                window.parent.testIsDone();
+            }, 0);
         }
         window.addEventListener('load', scroll, false);
     </script>
