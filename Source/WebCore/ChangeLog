@@ -1,3 +1,15 @@
+2014-06-26  Shivakumar JM  <shiva.jm@samsung.com>
+
+        [EFL][WK2] Fix Debug Build Error in Webcore module.
+        https://bugs.webkit.org/show_bug.cgi?id=134345
+
+        Reviewed by Zalan Bujtas.
+
+        Use static cast to change the type of variable to fix error
+
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::setDrawRange):
+
 2014-06-26  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] allow host application to canonicalize media urls
