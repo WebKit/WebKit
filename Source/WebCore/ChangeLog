@@ -1,3 +1,18 @@
+2014-06-26  Balazs Kelemen  <b.kelemen@samsung.com>
+
+        Memcache migth not be pruned when it should for https pages
+        https://bugs.webkit.org/show_bug.cgi?id=134361
+
+        Reviewed by Geoffrey Garen.
+
+        There is no reason we should not try to prune in case of a https resource.
+
+        No observable change in behavior, no tests.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::removeClient):
+        Call prune unconditionally and remove an unnecessary branch.
+
 2014-06-26  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION: Mountain Lion: Gmail's "in new window" view of mail threads is very slow to load its content
