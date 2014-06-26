@@ -48,6 +48,11 @@ struct _WebKitDOMEventTargetIface {
                                             const char           *event_name,
                                             GClosure             *handler,
                                             gboolean              use_capture);
+
+    void (*_webkitdom_reserved0) (void);
+    void (*_webkitdom_reserved1) (void);
+    void (*_webkitdom_reserved2) (void);
+    void (*_webkitdom_reserved3) (void);
 };
 
 
