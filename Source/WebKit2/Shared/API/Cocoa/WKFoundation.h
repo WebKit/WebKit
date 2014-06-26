@@ -44,6 +44,7 @@
 #define WK_AVAILABLE(_mac, _ios)
 #define WK_CLASS_AVAILABLE(_mac, _ios) __attribute__((visibility ("default")))
 #define WK_ENUM_AVAILABLE(_mac, _ios)
+#define WK_ENUM_AVAILABLE_IOS(_ios)
 
 #if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
 

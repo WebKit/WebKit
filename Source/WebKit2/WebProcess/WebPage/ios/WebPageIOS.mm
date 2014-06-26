@@ -856,7 +856,10 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
         break;
 
     case GestureType::Loupe:
-        range = Range::create(*frame.document(), position, position);
+        if (position.rootEditableElement())
+            range = Range::create(*frame.document(), position, position);
+        else
+            range = wordRangeFromPosition(position);
         break;
 
     case GestureType::TapAndAHalf:

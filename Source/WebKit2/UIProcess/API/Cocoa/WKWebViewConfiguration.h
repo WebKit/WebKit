@@ -33,6 +33,21 @@
 @class WKProcessPool;
 @class WKUserContentController;
 
+#if TARGET_OS_IPHONE
+/*! @enum WKSelectionGranularity
+ @abstract The granularity with which a selection can be created and modified interactively.
+ @constant WKSelectionGranularityDynamic    Selection granularity varies automatically based on the selection.
+ @constant WKSelectionGranularityCharacter  Selection endpoints can be placed at any character boundary.
+ @discussion An example of how granularity may vary when WKSelectionGranularityDynamic is used is
+ that when the selection is within a single block, the granularity may be single character, and when
+ the selection is not confined to a single block, the selection granularity may be single block.
+ */
+typedef NS_ENUM(NSInteger, WKSelectionGranularity) {
+    WKSelectionGranularityDynamic,
+    WKSelectionGranularityCharacter,
+} WK_ENUM_AVAILABLE_IOS(8_0);
+#endif
+
 /*! A WKWebViewConfiguration object is a collection of properties with
  which to initialize a web view.
  @helps Contains properties used to configure a @link WKWebView @/link.
@@ -79,6 +94,13 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  @discussion The default value is YES.
  */
 @property (nonatomic) BOOL mediaPlaybackAllowsAirPlay;
+
+/*! @abstract The level of granularity with which the user can interactively
+ select content in the web view.
+ @discussion Possible values are described in WKSelectionGranularity.
+ The default value is WKSelectionGranularityDynamic.
+ */
+@property (nonatomic) WKSelectionGranularity selectionGranularity;
 
 #endif
 

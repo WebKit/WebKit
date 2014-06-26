@@ -36,6 +36,7 @@
 #import "WKFormInputControl.h"
 #import "WKFormSelectControl.h"
 #import "WKInspectorNodeSearchGestureRecognizer.h"
+#import "WKWebViewConfiguration.h"
 #import "WKWebViewPrivate.h"
 #import "WebEvent.h"
 #import "WebIOSEventFactory.h"
@@ -190,6 +191,19 @@ static const float tapAndHoldDelay  = 0.75;
 
 @implementation WKContentView (WKInteraction)
 
+static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularity)
+{
+    switch (granularity) {
+    case WKSelectionGranularityDynamic:
+        return UIWebSelectionModeWeb;
+    case WKSelectionGranularityCharacter:
+        return UIWebSelectionModeTextOnly;
+    }
+
+    ASSERT_NOT_REACHED();
+    return UIWebSelectionModeWeb;
+}
+
 - (void)setupInteraction
 {
     if (!_inverseScaleRootView) {
@@ -237,7 +251,7 @@ static const float tapAndHoldDelay  = 0.75;
     _showingTextStyleOptions = NO;
 
     // FIXME: This should be called when we get notified that loading has completed.
-    [self useSelectionAssistantWithMode:UIWebSelectionModeWeb];
+    [self useSelectionAssistantWithMode:toUIWebSelectionMode([[_webView configuration] selectionGranularity])];
     
     _actionSheetAssistant = adoptNS([[WKActionSheetAssistant alloc] initWithView:self]);
     _smartMagnificationController = std::make_unique<SmartMagnificationController>(self);
@@ -2306,7 +2320,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 
 - (void)_stopAssistingKeyboard
 {
-    [self useSelectionAssistantWithMode:UIWebSelectionModeWeb];
+    [self useSelectionAssistantWithMode:toUIWebSelectionMode([[_webView configuration] selectionGranularity])];
 }
 
 - (const AssistedNodeInformation&)assistedNodeInformation

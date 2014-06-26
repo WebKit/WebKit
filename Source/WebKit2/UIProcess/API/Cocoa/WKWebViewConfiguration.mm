@@ -116,6 +116,7 @@ private:
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
     configuration->_mediaPlaybackRequiresUserAction = self->_mediaPlaybackRequiresUserAction;
     configuration->_mediaPlaybackAllowsAirPlay = self->_mediaPlaybackAllowsAirPlay;
+    configuration->_selectionGranularity = self->_selectionGranularity;
 #endif
 
     return configuration;

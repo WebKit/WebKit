@@ -1,3 +1,30 @@
+2014-06-26  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Add API for opting into character selection granularity
+        https://bugs.webkit.org/show_bug.cgi?id=134354
+
+        Reviewed by Geoff Garen.
+
+        * Shared/API/Cocoa/WKFoundation.h: Added a definition of WK_ENUM_AVAILABLE_IOS.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        (WKSelectionGranularity): Added this enum with two values, one representing dynamic
+        granularity( the current, default behavior) and one representing character granularity.
+        Delcared new selectionGranularity property.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]): Copy the _selectionGranularity ivar.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (toUIWebSelectionMode): Added this helper function for mapping WKSelectionGranularity values
+        to UIWebSelectionMode values.
+        (-[WKContentView setupInteraction]): Use a selection assistant with the mode specified in
+        the configuration.
+        (-[WKContentView _stopAssistingKeyboard]): Ditto.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::selectWithGesture): Changed the behavior of the loupe gesture type in
+        non-editable text to select a word, rather than an empty range, matching the UITextView
+        behavior.
+
 2014-06-26  Ada Chan  <adachan@apple.com>
 
         Change the target membership of WKBackForwardListPrivate.h from WebKit2 to WebKit.
