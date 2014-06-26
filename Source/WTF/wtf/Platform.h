@@ -1048,7 +1048,9 @@
 #define ENABLE_OPENTYPE_MATH 1
 #endif
 
-#if PLATFORM(EFL) || PLATFORM(GTK)
+/* Set TARGET_OS_IPHONE to 0 by default to allow using it as a guard 
+ * in cross-platform the same way as it is used in OS(DARWIN) code. */ 
+#if !defined(TARGET_OS_IPHONE) && !OS(DARWIN)
 #define TARGET_OS_IPHONE 0
 #endif
 

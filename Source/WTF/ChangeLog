@@ -1,3 +1,16 @@
+2014-06-26  Laszlo Gombos  <l.gombos@samsung.com>
+
+        Define TARGET_OS_IPHONE to 0 for non-darwin ports
+        https://bugs.webkit.org/show_bug.cgi?id=134347
+
+        Reviewed by Darin Adler.
+
+        A follow-up to r169880 to make it easier to reason about
+        the code. The purpose of this change to allow
+        "#if TARGET_OS_IPHONE" in public header files.
+
+        * wtf/Platform.h:
+
 2014-06-26  Chris Fleizach  <cfleizach@apple.com>
 
         Add an undo group for each dictated utterance in WebKit
