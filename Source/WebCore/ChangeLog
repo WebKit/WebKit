@@ -1,3 +1,10 @@
+2014-06-25  Enrica Casucci  <enrica@apple.com>
+
+        iOS build fix after http://trac.webkit.org/changeset/170447.
+        Unreviewed.
+
+        * editing/mac/TextUndoInsertionMarkup.h:
+
 2014-06-25  Chris Fleizach  <cfleizach@apple.com>
 
         Add an undo group for each dictated utterance in WebKit

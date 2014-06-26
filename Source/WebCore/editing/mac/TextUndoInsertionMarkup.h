@@ -26,8 +26,10 @@
 #ifndef TextUndoInsertionMarkup_h
 #define TextUndoInsertionMarkup_h
 
+#if !PLATFORM(IOS)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
 #define WTF_USE_INSERTION_UNDO_GROUPING 1
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+#endif
 
 #endif
