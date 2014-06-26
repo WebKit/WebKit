@@ -60,6 +60,8 @@ static const unsigned loadStalledHeartbeatCount = 4;
 // How many bytes are required between heartbeats to consider it progress.
 static const unsigned minumumBytesPerHeartbeatForProgress = 1024;
 
+static const std::chrono::milliseconds progressNotificationTimeInterval = std::chrono::milliseconds(200);
+
 struct ProgressItem {
     WTF_MAKE_NONCOPYABLE(ProgressItem); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -80,8 +82,6 @@ ProgressTracker::ProgressTracker(ProgressTrackerClient& client)
     , m_totalPageAndResourceBytesToLoad(0)
     , m_totalBytesReceived(0)
     , m_lastNotifiedProgressValue(0)
-    , m_progressNotificationInterval(0.02)
-    , m_progressNotificationTimeInterval(std::chrono::milliseconds(100))
     , m_finalProgressChangedSent(false)
     , m_progressValue(0)
     , m_numProgressTrackedFrames(0)
@@ -257,10 +257,7 @@ void ProgressTracker::incrementProgress(unsigned long identifier, unsigned bytes
     auto notifiedProgressTimeDelta = now - m_lastNotifiedProgressTime;
     
     LOG(Progress, "Progress incremented (%p) - value %f, tracked frames %d", this, m_progressValue, m_numProgressTrackedFrames);
-    double notificationProgressDelta = m_progressValue - m_lastNotifiedProgressValue;
-    if ((notificationProgressDelta >= m_progressNotificationInterval ||
-         notifiedProgressTimeDelta >= m_progressNotificationTimeInterval) &&
-        m_numProgressTrackedFrames > 0) {
+    if ((notifiedProgressTimeDelta >= progressNotificationTimeInterval || m_progressValue == 1) && m_numProgressTrackedFrames > 0) {
         if (!m_finalProgressChangedSent) {
             if (m_progressValue == 1)
                 m_finalProgressChangedSent = true;

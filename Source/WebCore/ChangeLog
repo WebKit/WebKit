@@ -1,3 +1,18 @@
+2014-06-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WebProgressTracker updates progress too frequently
+        https://bugs.webkit.org/show_bug.cgi?id=134185
+
+        Reviewed by Tim Horton.
+
+        The old code throttled the progress update to when either 100ms has passed or the delta is at least 2%
+        but this was still not enough in pages that loaded in sub-seconds. The new code always throttles it at 200ms.
+
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::ProgressTracker):
+        (WebCore::ProgressTracker::incrementProgress):
+        * loader/ProgressTracker.h:
+
 2014-06-25  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Fixed position elements jump around when zooming

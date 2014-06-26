@@ -75,8 +75,6 @@ private:
     long long m_totalBytesReceived;
     double m_lastNotifiedProgressValue;
     std::chrono::steady_clock::time_point m_lastNotifiedProgressTime;
-    double m_progressNotificationInterval;
-    std::chrono::milliseconds m_progressNotificationTimeInterval;
     bool m_finalProgressChangedSent;    
     double m_progressValue;
     RefPtr<Frame> m_originatingProgressFrame;
