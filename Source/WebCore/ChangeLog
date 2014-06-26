@@ -1,3 +1,18 @@
+2014-06-25  Dean Jackson  <dino@apple.com>
+
+        [Mac] Radio buttons and checkboxes vanish when redrawn
+        https://bugs.webkit.org/show_bug.cgi?id=134335
+
+        Reviewed by Dan Bernstein.
+
+        I screwed up when landing r170343 by moving some code around
+        which broke the logic. We need to query the animation
+        state for controls after we draw (both statically and animated).
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::paintToggleButton): We need to check the state of animation again, after
+        we draw.
+
 2014-06-25  Brady Eidson  <beidson@apple.com>
 
         Add HID-based gamepad implementation for Mac

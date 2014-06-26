@@ -449,7 +449,9 @@ static void paintToggleButton(ControlPart buttonType, ControlStates* controlStat
         needsRepaint = drawCellFocusRing(toggleButtonCell, inflatedRect, view);
     [toggleButtonCell setControlView:nil];
 
-    needsRepaint |= isAnimating;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+    needsRepaint |= [toggleButtonCell _stateAnimationRunning];
+#endif
     controlStates->setNeedsRepaint(needsRepaint);
     if (needsRepaint)
         controlStates->setPlatformControl(toggleButtonCell);
