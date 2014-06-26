@@ -40,19 +40,23 @@ namespace WebKit {
 void NetworkResourceLoadScheduler::platformInitializeMaximumHTTPConnectionCountPerHost()
 {
     static const unsigned preferredConnectionCount = 6;
-    static const unsigned unlimitedConnectionCount = 10000;
+    static const unsigned unlimitedRequestCount = 10000;
 
-    WKInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
+    unsigned maximumHTTPConnectionCountPerHost = WKInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
 
     Boolean keyExistsAndHasValidFormat = false;
     Boolean prefValue = CFPreferencesGetAppBooleanValue(CFSTR("WebKitEnableHTTPPipelining"), kCFPreferencesCurrentApplication, &keyExistsAndHasValidFormat);
     if (keyExistsAndHasValidFormat)
         ResourceRequest::setHTTPPipeliningEnabled(prefValue);
 
-    WKSetHTTPRequestMaximumPriority(toPlatformRequestPriority(ResourceLoadPriorityHighest));
-    WKSetHTTPRequestMinimumFastLanePriority(toPlatformRequestPriority(ResourceLoadPriorityMedium));
-
-    m_maxRequestsInFlightPerHost = unlimitedConnectionCount;
+    if (ResourceRequest::resourcePrioritiesEnabled()) {
+        WKSetHTTPRequestMaximumPriority(toPlatformRequestPriority(ResourceLoadPriorityHighest));
+        WKSetHTTPRequestMinimumFastLanePriority(toPlatformRequestPriority(ResourceLoadPriorityMedium));
+        m_maxRequestsInFlightPerHost = unlimitedRequestCount;
+    } else {
+        // Use WebKit scheduler when we can't use request priorities with CFNetwork.
+        m_maxRequestsInFlightPerHost = maximumHTTPConnectionCountPerHost;
+    }
 }
 
 } // namespace WebKit

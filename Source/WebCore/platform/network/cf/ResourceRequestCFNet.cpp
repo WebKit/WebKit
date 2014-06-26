@@ -156,7 +156,8 @@ void ResourceRequest::doUpdatePlatformRequest()
     if (httpPipeliningEnabled())
         wkHTTPRequestEnablePipelining(cfRequest);
 
-    wkSetHTTPRequestPriority(cfRequest, toPlatformRequestPriority(m_priority));
+    if (resourcePrioritiesEnabled())
+        wkSetHTTPRequestPriority(cfRequest, toPlatformRequestPriority(m_priority));
 
 #if !PLATFORM(WIN)
     wkCFURLRequestAllowAllPostCaching(cfRequest);
@@ -282,7 +283,8 @@ void ResourceRequest::doUpdateResourceRequest()
     }
     m_allowCookies = CFURLRequestShouldHandleHTTPCookies(m_cfRequest.get());
 
-    m_priority = toResourceLoadPriority(wkGetHTTPRequestPriority(m_cfRequest.get()));
+    if (resourcePrioritiesEnabled())
+        m_priority = toResourceLoadPriority(wkGetHTTPRequestPriority(m_cfRequest.get()));
 
     m_httpHeaderFields.clear();
     if (CFDictionaryRef headers = CFURLRequestCopyAllHTTPHeaderFields(m_cfRequest.get())) {
@@ -398,17 +400,22 @@ void ResourceRequest::doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData>
 #endif
 }
 
+// FIXME: It is confusing that this function both sets connection count and determines maximum request count at network layer. This can and should be done separately.
 unsigned initializeMaximumHTTPConnectionCountPerHost()
 {
     static const unsigned preferredConnectionCount = 6;
-    static const unsigned unlimitedConnectionCount = 10000;
+    static const unsigned unlimitedRequestCount = 10000;
 
-    wkInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
+    unsigned maximumHTTPConnectionCountPerHost = wkInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
 
     Boolean keyExistsAndHasValidFormat = false;
     Boolean prefValue = CFPreferencesGetAppBooleanValue(CFSTR("WebKitEnableHTTPPipelining"), kCFPreferencesCurrentApplication, &keyExistsAndHasValidFormat);
     if (keyExistsAndHasValidFormat)
         ResourceRequest::setHTTPPipeliningEnabled(prefValue);
+
+    // Use WebCore scheduler when we can't use request priorities with CFNetwork.
+    if (!ResourceRequest::resourcePrioritiesEnabled())
+        return maximumHTTPConnectionCountPerHost;
 
     wkSetHTTPRequestMaximumPriority(toPlatformRequestPriority(ResourceLoadPriorityHighest));
 #if !PLATFORM(WIN)
@@ -416,9 +423,9 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
     wkSetHTTPRequestMinimumFastLanePriority(toPlatformRequestPriority(ResourceLoadPriorityMedium));
 #endif
 
-    return unlimitedConnectionCount;
+    return unlimitedRequestCount;
 }
-    
+
 #if PLATFORM(IOS)
 void initializeHTTPConnectionSettingsOnStartup()
 {

@@ -1,3 +1,27 @@
+2014-06-26  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION: Mountain Lion: Gmail's "in new window" view of mail threads is very slow to load its content
+        https://bugs.webkit.org/show_bug.cgi?id=133882
+        <rdar://problem/17271965>
+
+        Reviewed by Brady Eidson.
+
+        This goes to pre-r161796 behavior on 10.8 and 10.9. We schedule the requests internally,
+        and only give 6 of them to CFNetwork at a time. Except for synchronous requests,
+        which still use the improved approach, and don't count against 6 connections.
+
+        * loader/ResourceLoadScheduler.cpp:
+        (WebCore::ResourceLoadScheduler::scheduleLoad):
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::resourcePrioritiesEnabled):
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::initializeMaximumHTTPConnectionCountPerHost): Deleted.
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+
 2014-06-26  Brady Eidson  <beidson@apple.com>
 
         Remove use of PlatformStrategies for Gamepad API.

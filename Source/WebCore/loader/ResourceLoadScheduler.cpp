@@ -163,7 +163,7 @@ void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Resourc
     host->schedule(resourceLoader, priority);
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)
-    if (!isSuspendingPendingRequests()) {
+    if (ResourceRequest::resourcePrioritiesEnabled() && !isSuspendingPendingRequests()) {
         // Serve all requests at once to keep the pipeline full at the network layer.
         // FIXME: Does this code do anything useful, given that we also set maxRequestsInFlightPerHost to effectively unlimited on these platforms?
         servePendingRequests(host, ResourceLoadPriorityVeryLow);
