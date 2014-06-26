@@ -199,7 +199,6 @@ void WebPageProxy::updateVisibleContentRects(const WebCore::FloatRect& exposedRe
 
     m_lastVisibleContentRectUpdate = visibleContentRectUpdateInfo;
     m_process->send(Messages::ViewUpdateDispatcher::VisibleContentRectUpdate(m_pageID, visibleContentRectUpdateInfo), 0);
-    return;
 }
 
 static inline float adjustedUnexposedEdge(float documentEdge, float exposedRectEdge, float factor)

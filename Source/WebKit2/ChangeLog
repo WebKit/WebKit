@@ -1,3 +1,11 @@
+2014-06-26  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove a useless return in WebPageProxyIOS
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::updateVisibleContentRects):
+        Darin caught this mistake in r170460.
+
 2014-06-26  Chris Fleizach  <cfleizach@apple.com>
 
         Add an undo group for each dictated utterance in WebKit
