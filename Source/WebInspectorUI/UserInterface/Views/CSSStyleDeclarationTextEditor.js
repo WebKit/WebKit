@@ -867,10 +867,15 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
                 var lineCount = this._codeMirror.lineCount();
                 for (var i = 0; i < lineCount; ++i) {
                     var lineContent = this._codeMirror.getLine(i);
-
                     var prefixWhitespaceMatch = lineContent.match(/^\s+/);
-                    if (!prefixWhitespaceMatch)
-                        continue;
+
+                    // If there is no prefix whitespace, then the prefix whitespace of all
+                    // other lines will be retained as is. Update markers and return.
+                    if (!prefixWhitespaceMatch) {
+                        this._linePrefixWhitespace = "";
+                        this._updateTextMarkers(true);
+                        return;
+                    }
 
                     linesToStrip.push(i);
 
@@ -878,8 +883,10 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
                     // original author's whitespace if their indentation lengths differed.
                     // Using the shortest also makes the adjustment work in _updateTextMarkers.
 
-                    // FIXME: This messes up if there is a mix of spaces and tabs. One tab
-                    // will be shorter than 4 or 8 spaces, but will look the same visually.
+                    // FIXME: This messes up if there is a mix of spaces and tabs. A tab
+                    // is treated the same as a space when prefix whitespace is omitted,
+                    // so if the shortest prefixed whitespace is, say, two tab characters,
+                    // lines that begin with four spaces will only have a two space indent.
                     if (!this._linePrefixWhitespace || prefixWhitespaceMatch[0].length < this._linePrefixWhitespace.length)
                         this._linePrefixWhitespace = prefixWhitespaceMatch[0];
                 }

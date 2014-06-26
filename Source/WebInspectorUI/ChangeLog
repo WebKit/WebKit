@@ -1,3 +1,16 @@
+2014-06-25  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: Rules panel's strikethrough gets confused at -webkit-align-items: flex-start;
+        https://bugs.webkit.org/show_bug.cgi?id=133515
+
+        Reviewed by Timothy Hatcher.
+
+        The CSS style declaration text editor uses the author's shortest instance of prefix whitespace
+        to create an indentation baseline for the style editor. This needs to consider the possibility
+        that there is no whitespace prefixing one of the rules. Also clarified a FIXME line.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js: Account for zero-length whitespace.
+
 2014-06-25  Dana Burkart  <dburkart@apple.com>
 
         Add support for 5-tuple versioning.
