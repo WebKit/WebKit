@@ -1,3 +1,26 @@
+2014-06-25  Zalan Bujtas  <zalan@apple.com>
+
+        Assertion failed: CGPathAddRoundedRect asserts on non-renderable rounded rectangle.
+        https://bugs.webkit.org/show_bug.cgi?id=134288
+
+        Reviewed by Simon Fraser.
+
+        Speculative fix. This changeset attempts to address a possible mantissa overflow of radius
+        when checking whether the rounded rectangle is renderable.
+        We convert both the radius and the rectangle values to CGFloat(float/double) to perform
+        this renderable check, instead of always using float.
+
+        * platform/graphics/FloatRoundedRect.cpp:
+        (WebCore::FloatRoundedRect::Radii::scale): Move scale(float, float) from RoundedRect to FloatRoundedRect.
+        (WebCore::FloatRoundedRect::isRenderable): Add check if radius is >= 0.
+        * platform/graphics/FloatRoundedRect.h:
+        * platform/graphics/RoundedRect.cpp:
+        (WebCore::RoundedRect::Radii::scale):
+        (WebCore::RoundedRect::pixelSnappedRoundedRectForPainting): use FloatRoundeRect::Radii.
+        * platform/graphics/RoundedRect.h:
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::platformAddPathForRoundedRect): use epsilon() to ensure width/height is always >= even with mantissa overflow. 
+
 2014-06-25  Jer Noble  <jer.noble@apple.com>
 
         [MSE] removeCodedFrames() can remove more than it should

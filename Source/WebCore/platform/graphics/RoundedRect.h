@@ -64,7 +64,6 @@ public:
         void excludeLogicalEdges(bool isHorizontal, bool excludeLogicalLeftEdge, bool excludeLogicalRightEdge);
 
         void scale(float factor);
-        void scale(float horizontalFactor, float verticalFactor);
         void expand(const LayoutUnit& topWidth, const LayoutUnit& bottomWidth, const LayoutUnit& leftWidth, const LayoutUnit& rightWidth);
         void expand(const LayoutUnit& size) { expand(size, size, size, size); }
         void shrink(const LayoutUnit& topWidth, const LayoutUnit& bottomWidth, const LayoutUnit& leftWidth, const LayoutUnit& rightWidth) { expand(-topWidth, -bottomWidth, -leftWidth, -rightWidth); }

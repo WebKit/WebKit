@@ -43,25 +43,20 @@ bool RoundedRect::Radii::isZero() const
 
 void RoundedRect::Radii::scale(float factor)
 {
-    scale(factor, factor);
-}
-
-void RoundedRect::Radii::scale(float horizontalFactor, float verticalFactor)
-{
-    if (horizontalFactor == 1 && verticalFactor == 1)
+    if (factor == 1)
         return;
 
     // If either radius on a corner becomes zero, reset both radii on that corner.
-    m_topLeft.scale(horizontalFactor, verticalFactor);
+    m_topLeft.scale(factor);
     if (!m_topLeft.width() || !m_topLeft.height())
         m_topLeft = LayoutSize();
-    m_topRight.scale(horizontalFactor, verticalFactor);
+    m_topRight.scale(factor);
     if (!m_topRight.width() || !m_topRight.height())
         m_topRight = LayoutSize();
-    m_bottomLeft.scale(horizontalFactor, verticalFactor);
+    m_bottomLeft.scale(factor);
     if (!m_bottomLeft.width() || !m_bottomLeft.height())
         m_bottomLeft = LayoutSize();
-    m_bottomRight.scale(horizontalFactor, verticalFactor);
+    m_bottomRight.scale(factor);
     if (!m_bottomRight.width() || !m_bottomRight.height())
         m_bottomRight = LayoutSize();
 }
@@ -248,10 +243,16 @@ FloatRoundedRect RoundedRect::pixelSnappedRoundedRectForPainting(float deviceSca
         return FloatRoundedRect(originalRect, radii());
 
     FloatRect pixelSnappedRect = pixelSnappedForPainting(originalRect, deviceScaleFactor);
-    Radii adjustedRadii = radii();
+
+    if (!isRenderable())
+        return FloatRoundedRect(pixelSnappedRect, radii());
+
     // Snapping usually does not alter size, but when it does, we need to make sure that the final rect is still renderable by distributing the size delta proportionally.
+    FloatRoundedRect::Radii adjustedRadii = radii();
     adjustedRadii.scale(pixelSnappedRect.width() / originalRect.width(), pixelSnappedRect.height() / originalRect.height());
-    return FloatRoundedRect(pixelSnappedRect, adjustedRadii);
+    FloatRoundedRect snappedRoundedRect = FloatRoundedRect(pixelSnappedRect, adjustedRadii);
+    ASSERT(snappedRoundedRect.isRenderable());
+    return snappedRoundedRect;
 }
 
 } // namespace WebCore

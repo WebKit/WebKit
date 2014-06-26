@@ -265,7 +265,17 @@ void Path::platformAddPathForRoundedRect(const FloatRect& rect, const FloatSize&
     bool equalHeights = (topLeftRadius.height() == bottomLeftRadius.height() && bottomLeftRadius.height() == topRightRadius.height() && topRightRadius.height() == bottomRightRadius.height());
 
     if (equalWidths && equalHeights) {
-        wkCGPathAddRoundedRect(ensurePlatformPath(), 0, rect, topLeftRadius.width(), topLeftRadius.height());
+        // Ensure that CG can render the rounded rect.
+        CGFloat radiusWidth = topLeftRadius.width();
+        CGFloat radiusHeight = topLeftRadius.height();
+        CGRect rectToDraw = rect;
+        CGFloat rectWidth = CGRectGetWidth(rectToDraw);
+        CGFloat rectHeight = CGRectGetHeight(rectToDraw);
+        if (rectWidth < 2 * radiusWidth)
+            radiusWidth = rectWidth / 2 - std::numeric_limits<CGFloat>::epsilon();
+        if (rectHeight < 2 * radiusHeight)
+            radiusHeight = rectHeight / 2 - std::numeric_limits<CGFloat>::epsilon();
+        wkCGPathAddRoundedRect(ensurePlatformPath(), 0, rectToDraw, radiusWidth, radiusHeight);
         return;
     }
 #endif

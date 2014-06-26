@@ -64,23 +64,27 @@ bool FloatRoundedRect::Radii::isZero() const
 
 void FloatRoundedRect::Radii::scale(float factor)
 {
-    if (factor == 1)
+    scale(factor, factor);
+}
+
+void FloatRoundedRect::Radii::scale(float horizontalFactor, float verticalFactor)
+{
+    if (horizontalFactor == 1 && verticalFactor == 1)
         return;
 
     // If either radius on a corner becomes zero, reset both radii on that corner.
-    m_topLeft.scale(factor);
+    m_topLeft.scale(horizontalFactor, verticalFactor);
     if (!m_topLeft.width() || !m_topLeft.height())
         m_topLeft = FloatSize();
-    m_topRight.scale(factor);
+    m_topRight.scale(horizontalFactor, verticalFactor);
     if (!m_topRight.width() || !m_topRight.height())
         m_topRight = FloatSize();
-    m_bottomLeft.scale(factor);
+    m_bottomLeft.scale(horizontalFactor, verticalFactor);
     if (!m_bottomLeft.width() || !m_bottomLeft.height())
         m_bottomLeft = FloatSize();
-    m_bottomRight.scale(factor);
+    m_bottomRight.scale(horizontalFactor, verticalFactor);
     if (!m_bottomRight.width() || !m_bottomRight.height())
         m_bottomRight = FloatSize();
-
 }
 
 void FloatRoundedRect::Radii::expand(float topWidth, float bottomWidth, float leftWidth, float rightWidth)
@@ -145,7 +149,11 @@ bool FloatRoundedRect::xInterceptsAtY(float y, float& minXIntercept, float& maxX
 
 bool FloatRoundedRect::isRenderable() const
 {
-    return m_radii.topLeft().width() + m_radii.topRight().width() <= m_rect.width()
+    return m_radii.topLeft().width() >= 0 && m_radii.topLeft().height() >= 0
+        && m_radii.bottomLeft().width() >= 0 && m_radii.bottomLeft().height() >= 0
+        && m_radii.topRight().width() >= 0 && m_radii.topRight().height() >= 0
+        && m_radii.bottomRight().width() >= 0 && m_radii.bottomRight().height() >= 0
+        && m_radii.topLeft().width() + m_radii.topRight().width() <= m_rect.width()
         && m_radii.bottomLeft().width() + m_radii.bottomRight().width() <= m_rect.width()
         && m_radii.topLeft().height() + m_radii.bottomLeft().height() <= m_rect.height()
         && m_radii.topRight().height() + m_radii.bottomRight().height() <= m_rect.height();
