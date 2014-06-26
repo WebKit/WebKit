@@ -731,11 +731,7 @@ static const int kMaxFreeListLength = 256;
 
 // Lower and upper bounds on the per-thread cache sizes
 static const size_t kMinThreadCacheSize = kMaxSize * 2;
-#if PLATFORM(IOS)
-static const size_t kMaxThreadCacheSize = 512 * 1024;
-#else
 static const size_t kMaxThreadCacheSize = 2 << 20;
-#endif
 
 // Default bound on the total amount of thread caches
 static const size_t kDefaultOverallThreadCacheSize = 16 << 20;

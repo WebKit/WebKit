@@ -1,3 +1,19 @@
+2014-06-26  Andreas Kling  <akling@apple.com>
+
+        Bump FastMalloc thread cache max size to 1MB on iOS.
+        <https://webkit.org/b/134365>
+
+        The previous limit (512kB) comes from the old days of very-low-memory
+        devices, and we can now afford to spend another 512kB here.
+        Note that we already have a mechanism to purge FastMalloc caches on
+        system memory pressure.
+
+        Looks like a ~400ms progression on PLT.
+
+        Reviewed by Geoff Garen.
+
+        * wtf/FastMalloc.cpp:
+
 2014-06-26  Laszlo Gombos  <l.gombos@samsung.com>
 
         Define TARGET_OS_IPHONE to 0 for non-darwin ports
