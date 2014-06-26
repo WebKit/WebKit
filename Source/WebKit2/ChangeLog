@@ -1,3 +1,10 @@
+2014-06-25  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Unreviewed, CMake build fix after r170450
+
+        * CMakeLists.txt: Add ProcessAssertion.cpp and ProcessThrottler.cpp.
+        * UIProcess/ProcessAssertion.cpp: Replace #import with #include.
+
 2014-06-25  Tim Horton  <timothy_horton@apple.com>
 
         [WK2] Shadow layer is in the wrong place while pinch-zooming

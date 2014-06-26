@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "ProcessAssertion.h"
+#include "config.h"
+#include "ProcessAssertion.h"
 
 #if !PLATFORM(IOS)
 

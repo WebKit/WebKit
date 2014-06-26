@@ -299,6 +299,8 @@ set(WebKit2_SOURCES
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp
     UIProcess/GeolocationPermissionRequestProxy.cpp
     UIProcess/PageLoadState.cpp
+    UIProcess/ProcessAssertion.cpp
+    UIProcess/ProcessThrottler.cpp
     UIProcess/ResponsivenessTimer.cpp
     UIProcess/StatisticsRequest.cpp
     UIProcess/TextCheckerCompletion.cpp
