@@ -36,7 +36,6 @@
 
 #if PLATFORM(COCOA)
 #include "PluginComplexTextInputState.h"
-#include <WebCore/TextUndoInsertionMarkup.h>
 
 OBJC_CLASS CALayer;
 

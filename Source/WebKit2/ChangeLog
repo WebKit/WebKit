@@ -1,3 +1,14 @@
+2014-06-26  Chris Fleizach  <cfleizach@apple.com>
+
+        Add an undo group for each dictated utterance in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=134086
+
+        Applied review comments from Sam Weinig.
+
+        Move the associated USE #define into Platform.h.
+
+        * UIProcess/PageClient.h:
+
 2014-06-24  Roger Fong  <roger_fong@apple.com>
 
         Don't allow sudden termination while writing to local storage.

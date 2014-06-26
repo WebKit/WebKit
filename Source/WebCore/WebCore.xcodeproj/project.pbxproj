@@ -1037,7 +1037,6 @@
 		293EAE1F1356B2FE0067ACF9 /* RuntimeApplicationChecks.h in Headers */ = {isa = PBXBuildFile; fileRef = 293EAE1E1356B2FE0067ACF9 /* RuntimeApplicationChecks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		293EAE211356B32E0067ACF9 /* RuntimeApplicationChecks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 293EAE201356B32E0067ACF9 /* RuntimeApplicationChecks.cpp */; };
 		29489FC712C00F0300D83F0F /* AccessibilityScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 29489FC512C00F0300D83F0F /* AccessibilityScrollView.h */; };
-		29498682195341940072D2BD /* TextUndoInsertionMarkup.h in Headers */ = {isa = PBXBuildFile; fileRef = 29498680195341940072D2BD /* TextUndoInsertionMarkup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		29498683195341940072D2BD /* TextUndoInsertionMarkupMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29498681195341940072D2BD /* TextUndoInsertionMarkupMac.mm */; };
 		297BE3D516C03C08003316BD /* PlatformSpeechSynthesisUtterance.h in Headers */ = {isa = PBXBuildFile; fileRef = 2527CC9116BF8BA1009DDAC0 /* PlatformSpeechSynthesisUtterance.h */; };
 		297BE3D616C03C0B003316BD /* PlatformSpeechSynthesisVoice.h in Headers */ = {isa = PBXBuildFile; fileRef = 2527CC9216BF90B4009DDAC0 /* PlatformSpeechSynthesisVoice.h */; };
@@ -8005,7 +8004,6 @@
 		293EAE1E1356B2FE0067ACF9 /* RuntimeApplicationChecks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuntimeApplicationChecks.h; sourceTree = "<group>"; };
 		293EAE201356B32E0067ACF9 /* RuntimeApplicationChecks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RuntimeApplicationChecks.cpp; sourceTree = "<group>"; };
 		29489FC512C00F0300D83F0F /* AccessibilityScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityScrollView.h; sourceTree = "<group>"; };
-		29498680195341940072D2BD /* TextUndoInsertionMarkup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextUndoInsertionMarkup.h; path = mac/TextUndoInsertionMarkup.h; sourceTree = "<group>"; };
 		29498681195341940072D2BD /* TextUndoInsertionMarkupMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextUndoInsertionMarkupMac.mm; path = mac/TextUndoInsertionMarkupMac.mm; sourceTree = "<group>"; };
 		297BE3D916C043D8003316BD /* PlatformSpeechSynthesizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformSpeechSynthesizer.cpp; sourceTree = "<group>"; };
 		2981CA9D131822EC00D12F2A /* AccessibilityARIAGrid.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityARIAGrid.cpp; sourceTree = "<group>"; };
@@ -17460,7 +17458,6 @@
 				93309DCC099E64910056E581 /* TextIterator.cpp */,
 				93309DCD099E64910056E581 /* TextIterator.h */,
 				9392146818A6D791000EE688 /* TextIteratorBehavior.h */,
-				29498680195341940072D2BD /* TextUndoInsertionMarkup.h */,
 				93309DCA099E64910056E581 /* TypingCommand.cpp */,
 				93309DCB099E64910056E581 /* TypingCommand.h */,
 				9B2D8A7814997CCF00ECEF3E /* UndoStep.h */,
@@ -26184,7 +26181,6 @@
 				B2227A690D00BF220071B782 /* SVGPathSegCurvetoCubicSmooth.h in Headers */,
 				83C1D429178D5AB400141E68 /* SVGPathSegCurvetoCubicSmoothAbs.h in Headers */,
 				83C1D42A178D5AB400141E68 /* SVGPathSegCurvetoCubicSmoothRel.h in Headers */,
-				29498682195341940072D2BD /* TextUndoInsertionMarkup.h in Headers */,
 				B2227A6D0D00BF220071B782 /* SVGPathSegCurvetoQuadratic.h in Headers */,
 				83C1D42B178D5AB400141E68 /* SVGPathSegCurvetoQuadraticAbs.h in Headers */,
 				83C1D42C178D5AB500141E68 /* SVGPathSegCurvetoQuadraticRel.h in Headers */,

@@ -26,8 +26,6 @@
 #ifndef TextUndoInsertionMarkupMac_h
 #define TextUndoInsertionMarkupMac_h
 
-#import <WebCore/TextUndoInsertionMarkup.h>
-
 #if USE(INSERTION_UNDO_GROUPING)
 
 #if __has_include(<AppKit/NSTextInputContext_Private.h>)
