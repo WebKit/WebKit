@@ -123,6 +123,7 @@
              autogenargs="--without-gnome --disable-introspection">
     <dependencies>
       <dep package="glib-networking"/>
+      <dep package="libxml2"/>
     </dependencies>
     <branch module="/pub/gnome/sources/libsoup/2.42/libsoup-2.42.0.tar.xz" version="2.42.0"
             repo="ftp.gnome.org"
@@ -137,6 +138,10 @@
   </autotools>
 
   <autotools id="fontconfig" autogen-sh="configure">
+    <dependencies>
+      <dep package="freetype6"/>
+      <dep package="libxml2"/>
+    </dependencies>
     <branch module="software/fontconfig/release/fontconfig-2.8.0.tar.gz" version="2.8.0"
             repo="freedesktop.org"
             hash="sha256:fa2a1c6eea654d9fce7a4b1220f10c99cdec848dccaf1625c01f076b31382335"
@@ -157,6 +162,7 @@
   <autotools id="efl" autogen-sh="configure"
              autogenargs="--disable-fribidi --disable-audio --disable-libmount --disable-physics --enable-lua-old --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aaa">
     <dependencies>
+      <dep package="fontconfig"/>
       <dep package="gstreamer"/>
       <dep package="gst-plugins-base"/>
     </dependencies>
@@ -205,6 +211,9 @@
     <branch repo="gstreamer"
             module="gstreamer/gstreamer-1.2.1.tar.xz" version="1.2.1"
             hash="sha256:a4523d2471bca6cd0059a32e3b042f50faa4dadc6439852af8b43ca3f17d1fc9"/>
+    <dependencies>
+        <dep package="glib"/>
+    </dependencies>
   </autotools>
 
   <autotools id="gst-plugins-base"
@@ -264,6 +273,9 @@
     <branch module="pub/GNOME/sources/atk/2.11/atk-2.11.92.tar.xz" version="2.11.92"
             repo="ftp.gnome.org"
             hash="sha256:71e9880f1b704dfd98806643b8dc66a5df4fcef155cf5944184d8e8f66dac689"/>
+    <dependencies>
+        <dep package="glib"/>
+    </dependencies>
   </autotools>
 
 </moduleset>

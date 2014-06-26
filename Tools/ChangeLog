@@ -1,3 +1,21 @@
+2014-06-26  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        [EFL] Missing dependency between freetype6 and fontconfig libs.
+        https://bugs.webkit.org/show_bug.cgi?id=134190
+
+        Reviewed by Gyuyoung Kim.
+
+        The external dependencies contain the freetype6 and the fontconfig libs.
+        The fontconfig lib requires freetype, but the dependency is not set in
+        the efl/jhbuild.modules file. So, during building the external libs,
+        fontconfig uses the freetype package of the system, while WebKit
+        binaries will use freetype from the WebKitBuild/Dependency directory.
+        There are more similar dependencies that were not indicated in the
+        jhbuild.modules file.
+
+        * efl/jhbuild.modules:
+          Added dependencies between libs.
+
 2014-06-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Expose Cache Information to WinLauncher
