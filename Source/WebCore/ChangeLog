@@ -1,3 +1,10 @@
+2014-06-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix attempt after r170465.
+
+        * platform/mac/HIDGamepad.cpp:
+        (WebCore::HIDGamepad::initElementsFromArray):
+
 2014-06-25  Dean Jackson  <dino@apple.com>
 
         [Mac] Radio buttons and checkboxes vanish when redrawn
