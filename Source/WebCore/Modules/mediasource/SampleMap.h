@@ -29,21 +29,66 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include <map>
-#include <wtf/MediaTime.h>
+#include <wtf/MediaTimeHash.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class MediaSample;
+class SampleMap;
 
-class SampleMap {
+class PresentationOrderSampleMap {
+    friend class SampleMap;
 public:
     typedef std::map<MediaTime, RefPtr<MediaSample>> MapType;
     typedef MapType::iterator iterator;
     typedef MapType::reverse_iterator reverse_iterator;
     typedef std::pair<iterator, iterator> iterator_range;
+
+    iterator begin() { return m_samples.begin(); }
+    iterator end() { return m_samples.end(); }
+    reverse_iterator rbegin() { return m_samples.rbegin(); }
+    reverse_iterator rend() { return m_samples.rend(); }
+
+    iterator findSampleContainingPresentationTime(const MediaTime&);
+    iterator findSampleAfterPresentationTime(const MediaTime&);
+    reverse_iterator reverseFindSampleContainingPresentationTime(const MediaTime&);
+    reverse_iterator reverseFindSampleBeforePresentationTime(const MediaTime&);
+    iterator_range findSamplesBetweenPresentationTimes(const MediaTime&, const MediaTime&);
+    iterator_range findSamplesWithinPresentationRange(const MediaTime&, const MediaTime&);
+
+private:
+    MapType m_samples;
+};
+
+class DecodeOrderSampleMap {
+    friend class SampleMap;
+public:
+    typedef std::map<MediaTime, RefPtr<MediaSample>> MapType;
+    typedef MapType::iterator iterator;
+    typedef MapType::reverse_iterator reverse_iterator;
     typedef std::pair<reverse_iterator, reverse_iterator> reverse_iterator_range;
 
+    iterator begin() { return m_samples.begin(); }
+    iterator end() { return m_samples.end(); }
+    reverse_iterator rbegin() { return m_samples.rbegin(); }
+    reverse_iterator rend() { return m_samples.rend(); }
+
+    iterator findSampleWithDecodeTime(const MediaTime&);
+    reverse_iterator reverseFindSampleWithDecodeTime(const MediaTime&);
+    reverse_iterator findSyncSamplePriorToPresentationTime(const MediaTime&, const MediaTime& threshold = MediaTime::positiveInfiniteTime());
+    reverse_iterator findSyncSamplePriorToDecodeIterator(reverse_iterator);
+    iterator findSyncSampleAfterPresentationTime(const MediaTime&, const MediaTime& threshold = MediaTime::positiveInfiniteTime());
+    iterator findSyncSampleAfterDecodeIterator(iterator);
+    reverse_iterator_range findDependentSamples(MediaSample*);
+
+private:
+    MapType m_samples;
+    PresentationOrderSampleMap m_presentationOrder;
+};
+
+class SampleMap {
+public:
     SampleMap()
         : m_totalSize(0)
     {
@@ -54,33 +99,11 @@ public:
     void removeSample(MediaSample*);
     size_t sizeInBytes() const { return m_totalSize; }
 
-    iterator presentationBegin() { return m_presentationSamples.begin(); }
-    iterator presentationEnd() { return m_presentationSamples.end(); }
-    iterator decodeBegin() { return m_decodeSamples.begin(); }
-    iterator decodeEnd() { return m_decodeSamples.end(); }
-    reverse_iterator reversePresentationBegin() { return m_presentationSamples.rbegin(); }
-    reverse_iterator reversePresentationEnd() { return m_presentationSamples.rend(); }
-    reverse_iterator reverseDecodeBegin() { return m_decodeSamples.rbegin(); }
-    reverse_iterator reverseDecodeEnd() { return m_decodeSamples.rend(); }
+    DecodeOrderSampleMap& decodeOrder() { return m_decodeOrder; }
+    PresentationOrderSampleMap& presentationOrder() { return m_decodeOrder.m_presentationOrder; }
 
-    iterator findSampleContainingPresentationTime(const MediaTime&);
-    iterator findSampleAfterPresentationTime(const MediaTime&);
-    iterator findSampleWithDecodeTime(const MediaTime&);
-    reverse_iterator reverseFindSampleContainingPresentationTime(const MediaTime&);
-    reverse_iterator reverseFindSampleBeforePresentationTime(const MediaTime&);
-    reverse_iterator reverseFindSampleWithDecodeTime(const MediaTime&);
-    reverse_iterator findSyncSamplePriorToPresentationTime(const MediaTime&, const MediaTime& threshold = MediaTime::positiveInfiniteTime());
-    reverse_iterator findSyncSamplePriorToDecodeIterator(reverse_iterator);
-    iterator findSyncSampleAfterPresentationTime(const MediaTime&, const MediaTime& threshold = MediaTime::positiveInfiniteTime());
-    iterator findSyncSampleAfterDecodeIterator(iterator);
-
-    iterator_range findSamplesBetweenPresentationTimes(const MediaTime&, const MediaTime&);
-    iterator_range findSamplesWithinPresentationRange(const MediaTime&, const MediaTime&);
-    reverse_iterator_range findDependentSamples(MediaSample*);
-    
 private:
-    MapType m_presentationSamples;
-    MapType m_decodeSamples;
+    DecodeOrderSampleMap m_decodeOrder;
     size_t m_totalSize;
 };
 

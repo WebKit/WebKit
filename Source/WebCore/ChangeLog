@@ -1,3 +1,59 @@
+2014-06-26  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Refactoring: Differentiate between SampleMap decode and presentation order methods
+        https://bugs.webkit.org/show_bug.cgi?id=134349
+
+        Reviewed by Geoffrey Garen.
+
+        Refactor SampleMap to clarify the distinction between methods which return decode-order
+        iterators and ones which retun presentation-order iterators.
+
+        Add two classes, PresentationOrderSampleMap and DecodeOrderSampleMap, to contain the actual
+        MediaTime-to-Sample maps, and move the methods returning presentation-order and decode-order
+        iterators to each, respectively.  Rename the {presentation,decode}{Begin,End}() methods to
+        begin() and end() so the objects can be used in C++11 for-loops.
+
+        Update all the call sites in SourceBuffer to use the new ordered objects.
+
+        * Modules/mediasource/SampleMap.cpp:
+        (WebCore::SampleIsLessThanMediaTimeComparator::operator()): Use new ordered objects.
+        (WebCore::SampleIsGreaterThanMediaTimeComparator::operator()): Ditto.
+        (WebCore::SampleMap::clear): Ditto.
+        (WebCore::SampleMap::addSample): Ditto.
+        (WebCore::SampleMap::removeSample): Ditto.
+        (WebCore::PresentationOrderSampleMap::findSampleContainingPresentationTime): Renamed from SampleMap version.
+        (WebCore::PresentationOrderSampleMap::findSampleAfterPresentationTime): Ditto.
+        (WebCore::DecodeOrderSampleMap::findSampleWithDecodeTime): Ditto.
+        (WebCore::PresentationOrderSampleMap::reverseFindSampleContainingPresentationTime): Ditto.
+        (WebCore::PresentationOrderSampleMap::reverseFindSampleBeforePresentationTime): Ditto.
+        (WebCore::DecodeOrderSampleMap::reverseFindSampleWithDecodeTime): Ditto.
+        (WebCore::DecodeOrderSampleMap::findSyncSamplePriorToPresentationTime): Ditto.
+        (WebCore::DecodeOrderSampleMap::findSyncSamplePriorToDecodeIterator): Ditto.
+        (WebCore::DecodeOrderSampleMap::findSyncSampleAfterPresentationTime): Ditto.
+        (WebCore::DecodeOrderSampleMap::findSyncSampleAfterDecodeIterator): Ditto.
+        (WebCore::PresentationOrderSampleMap::findSamplesBetweenPresentationTimes): Ditto.
+        (WebCore::PresentationOrderSampleMap::findSamplesWithinPresentationRange): Ditto.
+        (WebCore::DecodeOrderSampleMap::findDependentSamples): Ditto.
+        * Modules/mediasource/SampleMap.h:
+        (WebCore::PresentationOrderSampleMap::begin): Renamed from presentationBegin().
+        (WebCore::PresentationOrderSampleMap::end): Renamed from presentationEnd().
+        (WebCore::PresentationOrderSampleMap::rbegin): Renamed from reversePresentationBegin().
+        (WebCore::PresentationOrderSampleMap::rend): Renamed from reversePresentationEnd().
+        (WebCore::DecodeOrderSampleMap::begin): Renamed from decodeBegin().
+        (WebCore::DecodeOrderSampleMap::end): Renamed from decodeEnd().
+        (WebCore::DecodeOrderSampleMap::rbegin): Renamed from reverseDecodeBegin().
+        (WebCore::DecodeOrderSampleMap::rend): Renamed from reverseDecodeEnd().
+        (WebCore::SampleMap::SampleMap): Create new ordered objects.
+        (WebCore::SampleMap::sizeInBytes): Use new ordered objects.
+        (WebCore::SampleMap::decodeOrder): Simple accessor.
+        (WebCore::SampleMap::presentationOrder): Simple accessor.
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateSeekToTime): Use new ordered objects.
+        (WebCore::SourceBuffer::sourceBufferPrivateFastSeekTimeForMediaTime): Ditto.
+        (WebCore::SourceBuffer::removeCodedFrames): Ditto.
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample): Ditto.
+        (WebCore::SourceBuffer::bufferedSamplesForTrackID): Ditto.
+
 2014-06-26  Chris Fleizach  <cfleizach@apple.com>
 
         Add an undo group for each dictated utterance in WebKit
