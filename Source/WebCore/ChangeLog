@@ -1,3 +1,21 @@
+2014-06-26  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Refactoring: Use C++11 for-loops in SourceBuffer.
+        https://bugs.webkit.org/show_bug.cgi?id=134352
+
+        Reviewed by Darin Adler.
+
+        Use C++11 style for-loops where appropriate in SourceBuffer now that the
+        SampleMap ordered objects support them.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateSeekToTime):
+        (WebCore::SourceBuffer::sourceBufferPrivateFastSeekTimeForMediaTime):
+        (WebCore::SourceBuffer::sourceBufferPrivateAppendComplete):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment):
+        (WebCore::SourceBuffer::validateInitializationSegment):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+
 2014-06-25  Joseph Pecoraro  <pecoraro@apple.com>
  
         [iOS]: Tapping <button> outside of a form is no longer working

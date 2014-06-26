@@ -311,9 +311,9 @@ void SourceBuffer::sourceBufferPrivateSeekToTime(SourceBufferPrivate*, const Med
 {
     LOG(Media, "SourceBuffer::sourceBufferPrivateSeekToTime(%p)", this);
 
-    for (auto trackBufferIterator = m_trackBufferMap.begin(); trackBufferIterator != m_trackBufferMap.end(); ++trackBufferIterator) {
-        TrackBuffer& trackBuffer = trackBufferIterator->value;
-        AtomicString trackID = trackBufferIterator->key;
+    for (auto& trackBufferPair : m_trackBufferMap) {
+        TrackBuffer& trackBuffer = trackBufferPair.value;
+        const AtomicString& trackID = trackBufferPair.key;
 
         // Find the sample which contains the current presentation time.
         auto currentSamplePTSIterator = trackBuffer.samples.presentationOrder().findSampleContainingPresentationTime(time);
@@ -360,9 +360,7 @@ MediaTime SourceBuffer::sourceBufferPrivateFastSeekTimeForMediaTime(SourceBuffer
     MediaTime lowerBoundTime = targetTime - negativeThreshold;
     MediaTime upperBoundTime = targetTime + positiveThreshold;
 
-    for (auto trackBufferIterator = m_trackBufferMap.begin(); trackBufferIterator != m_trackBufferMap.end(); ++trackBufferIterator) {
-        TrackBuffer& trackBuffer = trackBufferIterator->value;
-
+    for (auto& trackBuffer : m_trackBufferMap.values()) {
         // Find the sample which contains the target time time.
         auto futureSyncSampleIterator = trackBuffer.samples.decodeOrder().findSyncSampleAfterPresentationTime(targetTime, positiveThreshold);
         auto pastSyncSampleIterator = trackBuffer.samples.decodeOrder().findSyncSamplePriorToPresentationTime(targetTime, negativeThreshold);
@@ -532,8 +530,8 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(SourceBufferPrivate*, Appen
 
     if (m_source)
         m_source->monitorSourceBuffers();
-    for (auto iter = m_trackBufferMap.begin(), end = m_trackBufferMap.end(); iter != end; ++iter)
-        provideMediaData(iter->value, iter->key);
+    for (auto& trackBufferPair : m_trackBufferMap)
+        provideMediaData(trackBufferPair.value, trackBufferPair.key);
 
     reportExtraMemoryCost();
 }
@@ -761,8 +759,8 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
         // NOTE: This check is the responsibility of the SourceBufferPrivate.
 
         // 5.2 For each audio track in the initialization segment, run following steps:
-        for (auto it = segment.audioTracks.begin(); it != segment.audioTracks.end(); ++it) {
-            AudioTrackPrivate* audioTrackPrivate = it->track.get();
+        for (auto& audioTrackInfo : segment.audioTracks) {
+            AudioTrackPrivate* audioTrackPrivate = audioTrackInfo.track.get();
 
             // 5.2.1 Let new audio track be a new AudioTrack object.
             // 5.2.2 Generate a unique ID and assign it to the id property on new video track.
@@ -795,14 +793,14 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
             TrackBuffer& trackBuffer = m_trackBufferMap.add(newAudioTrack->id(), TrackBuffer()).iterator->value;
 
             // 5.2.9 Add the track description for this track to the track buffer.
-            trackBuffer.description = it->description;
+            trackBuffer.description = audioTrackInfo.description;
 
             m_audioCodecs.append(trackBuffer.description->codec());
         }
 
         // 5.3 For each video track in the initialization segment, run following steps:
-        for (auto it = segment.videoTracks.begin(); it != segment.videoTracks.end(); ++it) {
-            VideoTrackPrivate* videoTrackPrivate = it->track.get();
+        for (auto& videoTrackInfo : segment.videoTracks) {
+            VideoTrackPrivate* videoTrackPrivate = videoTrackInfo.track.get();
 
             // 5.3.1 Let new video track be a new VideoTrack object.
             // 5.3.2 Generate a unique ID and assign it to the id property on new video track.
@@ -835,14 +833,14 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
             TrackBuffer& trackBuffer = m_trackBufferMap.add(newVideoTrack->id(), TrackBuffer()).iterator->value;
 
             // 5.3.9 Add the track description for this track to the track buffer.
-            trackBuffer.description = it->description;
+            trackBuffer.description = videoTrackInfo.description;
 
             m_videoCodecs.append(trackBuffer.description->codec());
         }
 
         // 5.4 For each text track in the initialization segment, run following steps:
-        for (auto it = segment.textTracks.begin(); it != segment.textTracks.end(); ++it) {
-            InbandTextTrackPrivate* textTrackPrivate = it->track.get();
+        for (auto& textTrackInfo : segment.textTracks) {
+            InbandTextTrackPrivate* textTrackPrivate = textTrackInfo.track.get();
 
             // 5.4.1 Let new text track be a new TextTrack object with its properties populated with the
             // appropriate information from the initialization segment.
@@ -870,7 +868,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
             TrackBuffer& trackBuffer = m_trackBufferMap.add(textTrackPrivate->id(), TrackBuffer()).iterator->value;
 
             // 5.4.8 Add the track description for this track to the track buffer.
-            trackBuffer.description = it->description;
+            trackBuffer.description = trackBuffer.description;
 
             m_textCodecs.append(trackBuffer.description->codec());
         }
@@ -888,8 +886,8 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
     // 6. If the HTMLMediaElement.readyState attribute is HAVE_NOTHING, then run the following steps:
     if (m_private->readyState() == MediaPlayer::HaveNothing) {
         // 6.1 If one or more objects in sourceBuffers have first initialization segment flag set to false, then abort these steps.
-        for (unsigned long i = 0; i < m_source->sourceBuffers()->length(); ++i) {
-            if (!m_source->sourceBuffers()->item(i)->m_receivedFirstInitializationSegment)
+        for (auto& sourceBuffer : *m_source->sourceBuffers()) {
+            if (!sourceBuffer->m_receivedFirstInitializationSegment)
                 return;
         }
 
@@ -919,40 +917,40 @@ bool SourceBuffer::validateInitializationSegment(const InitializationSegment& se
         return false;
 
     //   * The codecs for each track, match what was specified in the first initialization segment.
-    for (auto it = segment.audioTracks.begin(); it != segment.audioTracks.end(); ++it) {
-        if (!m_audioCodecs.contains(it->description->codec()))
+    for (auto& audioTrackInfo : segment.audioTracks) {
+        if (!m_audioCodecs.contains(audioTrackInfo.description->codec()))
             return false;
     }
 
-    for (auto it = segment.videoTracks.begin(); it != segment.videoTracks.end(); ++it) {
-        if (!m_videoCodecs.contains(it->description->codec()))
+    for (auto& videoTrackInfo : segment.videoTracks) {
+        if (!m_videoCodecs.contains(videoTrackInfo.description->codec()))
             return false;
     }
 
-    for (auto it = segment.textTracks.begin(); it != segment.textTracks.end(); ++it) {
-        if (!m_textCodecs.contains(it->description->codec()))
+    for (auto& textTrackInfo : segment.textTracks) {
+        if (!m_textCodecs.contains(textTrackInfo.description->codec()))
             return false;
     }
 
     //   * If more than one track for a single type are present (ie 2 audio tracks), then the Track
     //   IDs match the ones in the first initialization segment.
     if (segment.audioTracks.size() >= 2) {
-        for (auto it = segment.audioTracks.begin(); it != segment.audioTracks.end(); ++it) {
-            if (!m_trackBufferMap.contains(it->track->id()))
+        for (auto& audioTrackInfo : segment.audioTracks) {
+            if (!m_trackBufferMap.contains(audioTrackInfo.track->id()))
                 return false;
         }
     }
 
     if (segment.videoTracks.size() >= 2) {
-        for (auto it = segment.videoTracks.begin(); it != segment.videoTracks.end(); ++it) {
-            if (!m_trackBufferMap.contains(it->track->id()))
+        for (auto& videoTrackInfo : segment.videoTracks) {
+            if (!m_trackBufferMap.contains(videoTrackInfo.track->id()))
                 return false;
         }
     }
 
     if (segment.textTracks.size() >= 2) {
-        for (auto it = segment.videoTracks.begin(); it != segment.videoTracks.end(); ++it) {
-            if (!m_trackBufferMap.contains(it->track->id()))
+        for (auto& textTrackInfo : segment.videoTracks) {
+            if (!m_trackBufferMap.contains(textTrackInfo.track->id()))
                 return false;
         }
     }
@@ -1046,15 +1044,15 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
             // Set group start timestamp equal to the highest presentation end timestamp.
             // FIXME: Add support for "sequence" mode.
 
-            for (auto i = m_trackBufferMap.values().begin(); i != m_trackBufferMap.values().end(); ++i) {
+            for (auto& trackBuffer : m_trackBufferMap.values()) {
                 // 1.7.2 Unset the last decode timestamp on all track buffers.
-                i->lastDecodeTimestamp = MediaTime::invalidTime();
+                trackBuffer.lastDecodeTimestamp = MediaTime::invalidTime();
                 // 1.7.3 Unset the last frame duration on all track buffers.
-                i->lastFrameDuration = MediaTime::invalidTime();
+                trackBuffer.lastFrameDuration = MediaTime::invalidTime();
                 // 1.7.4 Unset the highest presentation timestamp on all track buffers.
-                i->highestPresentationTimestamp = MediaTime::invalidTime();
+                trackBuffer.highestPresentationTimestamp = MediaTime::invalidTime();
                 // 1.7.5 Set the need random access point flag on all track buffers to true.
-                i->needRandomAccessFlag = true;
+                trackBuffer.needRandomAccessFlag = true;
             }
 
             // 1.7.6 Jump to the Loop Top step above to restart processing of the current coded frame.
@@ -1155,26 +1153,26 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
 
             // Otherwise: Remove all coded frames between the coded frames removed in the previous step
             // and the next random access point after those removed frames.
-            for (auto erasedIt = erasedSamples.begin(), end = erasedSamples.end(); erasedIt != end; ++erasedIt) {
-                auto currentDecodeIter = trackBuffer.samples.decodeOrder().findSampleWithDecodeTime(erasedIt->second->decodeTime());
+            for (auto& samplePair : erasedSamples) {
+                auto currentDecodeIter = trackBuffer.samples.decodeOrder().findSampleWithDecodeTime(samplePair.second->decodeTime());
                 auto nextSyncIter = trackBuffer.samples.decodeOrder().findSyncSampleAfterDecodeIterator(currentDecodeIter);
                 dependentSamples.insert(currentDecodeIter, nextSyncIter);
             }
 
 
             RefPtr<TimeRanges> erasedRanges = TimeRanges::create();
-            for (auto erasedIt = erasedSamples.begin(), end = erasedSamples.end(); erasedIt != end; ++erasedIt) {
-                MediaTime startTime = erasedIt->second->presentationTime();
-                MediaTime endTime = startTime + erasedIt->second->duration() + microsecond;
+            for (auto& samplePair : erasedSamples) {
+                MediaTime startTime = samplePair.second->presentationTime();
+                MediaTime endTime = startTime + samplePair.second->duration() + microsecond;
                 erasedRanges->add(startTime.toDouble(), endTime.toDouble());
-                trackBuffer.samples.removeSample(erasedIt->second.get());
+                trackBuffer.samples.removeSample(samplePair.second.get());
             }
 
-            for (auto dependentIt = dependentSamples.begin(), end = dependentSamples.end(); dependentIt != end; ++dependentIt) {
-                MediaTime startTime = dependentIt->second->presentationTime();
-                MediaTime endTime = startTime + dependentIt->second->duration() + microsecond;
+            for (auto& samplePair : dependentSamples) {
+                MediaTime startTime = samplePair.second->presentationTime();
+                MediaTime endTime = startTime + samplePair.second->duration() + microsecond;
                 erasedRanges->add(startTime.toDouble(), endTime.toDouble());
-                trackBuffer.samples.removeSample(dependentIt->second.get());
+                trackBuffer.samples.removeSample(samplePair.second.get());
             }
 
             erasedRanges->invert();
