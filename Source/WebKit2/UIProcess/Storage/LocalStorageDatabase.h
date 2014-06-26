@@ -37,6 +37,7 @@ class WorkQueue;
 namespace WebCore {
 class SecurityOrigin;
 class StorageMap;
+class SuddenTerminationDisabler;
 }
 
 namespace WebKit {
@@ -91,6 +92,8 @@ private:
     bool m_didScheduleDatabaseUpdate;
     bool m_shouldClearItems;
     HashMap<String, String> m_changedItems;
+
+    std::unique_ptr<WebCore::SuddenTerminationDisabler> m_disableSuddenTerminationWhileWritingToLocalStorage;
 };
 
 

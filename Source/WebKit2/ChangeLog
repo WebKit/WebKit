@@ -1,3 +1,18 @@
+2014-06-24  Roger Fong  <roger_fong@apple.com>
+
+        Don't allow sudden termination while writing to local storage.
+        https://bugs.webkit.org/show_bug.cgi?id=134254.
+        <rdar://problem/15093854>.
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/Storage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::scheduleDatabaseUpdate):
+        Disable sudden termination when a database update is scheduled.
+        (WebKit::LocalStorageDatabase::updateDatabase):
+        Re-enable sudden termination when the update completes.
+        * UIProcess/Storage/LocalStorageDatabase.h:
+
 2014-06-25  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Update the long press interactions correctly when an overflow scroll view scrolls
