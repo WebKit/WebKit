@@ -1,3 +1,15 @@
+2014-06-26  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] no need to deactivate audio session
+        https://bugs.webkit.org/show_bug.cgi?id=134350
+
+        Reviewed by Jer Noble.
+
+        * platform/audio/mac/MediaSessionManagerMac.cpp:
+        (MediaSessionManager::updateSessionState): Don't bother calling 
+            AudioSession::setActive(false), WebCore's audio session will be deactivated 
+            automatically if another application begins playing audio.
+
 2014-06-26  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Refactoring: Differentiate between SampleMap decode and presentation order methods
