@@ -35,6 +35,8 @@ use lib $FindBin::Bin;
 use webkitdirs;
 use POSIX;
 
+sub writeCongrats();
+
 my $coverageSupport = 0;
 my $showHelp = 0;
 my $ftlJIT = isAppleWebKit();
@@ -42,6 +44,7 @@ my $forceCLoop = 0;
 my $cli = 0;
 my $makeArgs = "";
 my $copyLibraries = 1;
+my $startTime = time();
 
 my $programName = basename($0);
 my $usage = <<EOF;
@@ -85,6 +88,7 @@ if (cmakeBasedPortName()) {
 
     # This call only returns if nothing wrong happened
     buildCMakeProjectOrExit(0, cmakeBasedPortName(), undef, "jsc $makeArgs", (cmakeBasedPortArguments(), $cmakeArgs));
+    writeCongrats();
     exit exitStatus(0);
 }
 
@@ -125,6 +129,17 @@ sub buildMyProject
     }
     exit exitStatus($result) if exitStatus($result);
     chdirWebKit();
+}
+
+sub writeCongrats()
+{
+    my $endTime = time();
+    my $buildTime = formatBuildTime($endTime - $startTime);
+
+    print "\n";
+    print "====================================================================\n";
+    print " JavaScriptCore is now built ($buildTime). \n";
+    print "====================================================================\n";
 }
 
 if (!isAppleWinWebKit() && !isWinCairo()) {

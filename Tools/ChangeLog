@@ -1,3 +1,18 @@
+2014-06-25  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        [JavaScriptCore] Make build-jsc output format better.
+        https://bugs.webkit.org/show_bug.cgi?id=133547
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/build-jsc: Emit built time information on successful builds.
+        (writeCongrats):
+        * Scripts/build-webkit: Move formatBuildTime function into webkitdirs.pm.
+        (cMakeArgsFromFeatures):
+        (formatBuildTime): Deleted.
+        * Scripts/webkitdirs.pm:
+        (formatBuildTime):
+
 2014-06-25  Chris Fleizach  <cfleizach@apple.com>
 
         Add an undo group for each dictated utterance in WebKit
