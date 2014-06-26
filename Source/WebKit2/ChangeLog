@@ -1,3 +1,23 @@
+2014-06-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        REGRESSION (r170325): UI process crashes in lastCommittedLayerTreeTransactionID() when the Web Content process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=134284
+
+        Reviewed by Simon Fraser.
+
+        The crash was caused by the access to the Drawing Area after the crash.
+        This lead to discovering another bug: m_lastVisibleContentRectUpdate could have been updated after WebPageProxy::resetState(),
+        which in turn would prevent valid updates when a new WebProcess is created.
+
+        This patch fixes both issues by moving the VisibleContentRectUpdateInfo to be internal to WebPageProxy,
+        then early return if we get there in an invalid state.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::updateVisibleContentRects):
+
 2014-06-25  Brady Eidson  <beidson@apple.com>
 
         Add new platform gamepad abstractions
