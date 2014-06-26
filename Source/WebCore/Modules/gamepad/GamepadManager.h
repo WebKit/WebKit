@@ -23,36 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GamepadButton_h
-#define GamepadButton_h
+#ifndef GamepadManager_h
+#define GamepadManager_h
 
 #if ENABLE(GAMEPAD)
 
-#include <wtf/PassRef.h>
-#include <wtf/RefCounted.h>
+#include "GamepadStrategyClient.h"
+#include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class GamepadButton : public RefCounted<GamepadButton> {
-public:
-    static PassRef<GamepadButton> create()
-    {
-        return adoptRef(*new GamepadButton);
-    }
+class Gamepad;
+class NavigatorGamepad;
 
-    bool pressed() const;
-    double value() const { return m_value; }
-    void setValue(double value) { m_value = value; }
+class GamepadManager : public GamepadStrategyClient {
+    WTF_MAKE_NONCOPYABLE(GamepadManager);
+    friend class NeverDestroyed<GamepadManager>;
+public:
+    static GamepadManager& shared();
+
+    virtual void platformGamepadConnected(unsigned index) override final;
+    virtual void platformGamepadDisconnected(unsigned index) override final;
+
+    void registerNavigator(NavigatorGamepad*);
+    void unregisterNavigator(NavigatorGamepad*);
 
 private:
-    GamepadButton();
+    GamepadManager();
 
-    double m_value;
+    HashSet<NavigatorGamepad*> m_navigators;
 };
-
 
 } // namespace WebCore
 
 #endif // ENABLE(GAMEPAD)
-
-#endif // GamepadButton_h
+#endif // GamepadManager_h

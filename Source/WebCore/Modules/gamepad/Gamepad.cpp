@@ -28,15 +28,22 @@
 
 #if ENABLE(GAMEPAD)
 
+#include "GamepadButton.h"
+#include "PlatformGamepad.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-Gamepad::Gamepad()
-    : m_index(0)
+Gamepad::Gamepad(const PlatformGamepad& platformGamepad, unsigned index)
+    : m_id(platformGamepad.id())
+    , m_index(index)
     , m_connected(true)
-    , m_timestamp(0.0)
+    , m_timestamp(platformGamepad.lastUpdateTime())
 {
+    m_axes.resize(platformGamepad.axisValues().size());
+    unsigned buttonCount = platformGamepad.buttonValues().size();
+    for (unsigned i = 0; i < buttonCount; ++i)
+        m_buttons.append(GamepadButton::create());
 }
 
 Gamepad::~Gamepad()
@@ -51,6 +58,16 @@ const Vector<double>& Gamepad::axes() const
 const Vector<Ref<GamepadButton>>& Gamepad::buttons() const
 {
     return m_buttons;
+}
+
+void Gamepad::updateFromPlatformGamepad(const PlatformGamepad& platformGamepad)
+{
+    for (unsigned i = 0; i < m_axes.size(); ++i)
+        m_axes[i] = platformGamepad.axisValues()[i];
+    for (unsigned i = 0; i < m_buttons.size(); ++i)
+        m_buttons[i]->setValue(platformGamepad.buttonValues()[i]);
+
+    m_timestamp = platformGamepad.lastUpdateTime();
 }
 
 } // namespace WebCore

@@ -40,6 +40,10 @@
 #import <WebKitSystemInterface.h>
 #import <wtf/NeverDestroyed.h>
 
+#if ENABLE(GAMEPAD)
+#import "WebHIDGamepadController.h"
+#endif
+
 using namespace WebCore;
 
 void WebPlatformStrategies::initializeIfNecessary()
@@ -221,18 +225,19 @@ long WebPlatformStrategies::setStringForType(const String& string, const String&
 }
 
 #if ENABLE(GAMEPAD)
-void WebPlatformStrategies::startMonitoringGamepads(GamepadStrategyClient*)
+void WebPlatformStrategies::startMonitoringGamepads(GamepadStrategyClient* client)
 {
+    WebHIDGamepadController::shared().registerGamepadStrategyClient(client);
 }
 
-void WebPlatformStrategies::stopMonitoringGamepads(GamepadStrategyClient*)
+void WebPlatformStrategies::stopMonitoringGamepads(GamepadStrategyClient* client)
 {
+    WebHIDGamepadController::shared().unregisterGamepadStrategyClient(client);
 }
 
 const Vector<PlatformGamepad*>& WebPlatformStrategies::platformGamepads()
 {
-    NeverDestroyed<Vector<PlatformGamepad*>> dummyGamepads;
-    return dummyGamepads;
+    return HIDGamepadListener::shared().platformGamepads();
 }
 #endif // ENABLE(GAMEPAD)
 

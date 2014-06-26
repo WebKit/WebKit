@@ -23,36 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GamepadButton_h
-#define GamepadButton_h
-
 #if ENABLE(GAMEPAD)
 
-#include <wtf/PassRef.h>
-#include <wtf/RefCounted.h>
+#import "WebHIDGamepadController.h"
+#import <WebCore/GamepadStrategyClient.h>
+#import <WebCore/HIDGamepadListener.h>
 
-namespace WebCore {
+using namespace WebCore;
 
-class GamepadButton : public RefCounted<GamepadButton> {
-public:
-    static PassRef<GamepadButton> create()
-    {
-        return adoptRef(*new GamepadButton);
-    }
+WebHIDGamepadController& WebHIDGamepadController::shared()
+{
+    static NeverDestroyed<WebHIDGamepadController> sharedClient;
+    return sharedClient;
+}
 
-    bool pressed() const;
-    double value() const { return m_value; }
-    void setValue(double value) { m_value = value; }
+WebHIDGamepadController::WebHIDGamepadController()
+{
+    HIDGamepadListener::shared().setClient(this);
+}
 
-private:
-    GamepadButton();
+void WebHIDGamepadController::gamepadConnected(unsigned index)
+{
+    for (auto& client : m_clients)
+        client->platformGamepadConnected(index);
+}
 
-    double m_value;
-};
+void WebHIDGamepadController::gamepadDisconnected(unsigned index)
+{
+    for (auto& client : m_clients)
+        client->platformGamepadDisconnected(index);
+}
 
+void WebHIDGamepadController::registerGamepadStrategyClient(GamepadStrategyClient* client)
+{
+    m_clients.add(client);
+}
 
-} // namespace WebCore
+void WebHIDGamepadController::unregisterGamepadStrategyClient(GamepadStrategyClient* client)
+{
+    m_clients.remove(client);
+}
 
 #endif // ENABLE(GAMEPAD)
-
-#endif // GamepadButton_h

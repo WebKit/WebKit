@@ -23,36 +23,61 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GamepadButton_h
-#define GamepadButton_h
+#ifndef HIDGamepadListener_h
+#define HIDGamepadListener_h
 
 #if ENABLE(GAMEPAD)
 
-#include <wtf/PassRef.h>
-#include <wtf/RefCounted.h>
+#include "HIDGamepad.h"
+#include <IOKit/hid/IOHIDManager.h>
+#include <wtf/Deque.h>
+#include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
-class GamepadButton : public RefCounted<GamepadButton> {
+class HIDGamepadListenerClient {
 public:
-    static PassRef<GamepadButton> create()
-    {
-        return adoptRef(*new GamepadButton);
-    }
+    virtual ~HIDGamepadListenerClient() { }
 
-    bool pressed() const;
-    double value() const { return m_value; }
-    void setValue(double value) { m_value = value; }
-
-private:
-    GamepadButton();
-
-    double m_value;
+    virtual void gamepadConnected(unsigned index) = 0;
+    virtual void gamepadDisconnected(unsigned index) = 0;
 };
 
+class HIDGamepadListener {
+    WTF_MAKE_NONCOPYABLE(HIDGamepadListener);
+    friend class NeverDestroyed<HIDGamepadListener>;
+public:
+    static HIDGamepadListener& shared();
+
+    void setClient(HIDGamepadListenerClient* client) { m_client = client; }
+
+    void deviceAdded(IOHIDDeviceRef);
+    void deviceRemoved(IOHIDDeviceRef);
+    void valuesChanged(IOHIDValueRef);
+
+    const Vector<PlatformGamepad*>& platformGamepads() const { return m_gamepadVector; }
+
+    void setShouldDispatchCallbacks(bool shouldDispatchCallbacks) { m_shouldDispatchCallbacks = shouldDispatchCallbacks; }
+
+private:
+    HIDGamepadListener();
+
+    std::pair<std::unique_ptr<HIDGamepad>, unsigned> removeGamepadForDevice(IOHIDDeviceRef);
+
+    unsigned indexForNewlyConnectedDevice();
+
+    Vector<PlatformGamepad*> m_gamepadVector;
+    HashMap<IOHIDDeviceRef, std::unique_ptr<HIDGamepad>> m_gamepadMap;
+
+    RetainPtr<IOHIDManagerRef> m_manager;
+
+    HIDGamepadListenerClient* m_client;
+    bool m_shouldDispatchCallbacks;
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(GAMEPAD)
-
-#endif // GamepadButton_h
+#endif // HIDGamepadListener_h

@@ -23,36 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GamepadButton_h
-#define GamepadButton_h
+#ifndef WebHIDGamepadController_h
+#define WebHIDGamepadController_h
 
 #if ENABLE(GAMEPAD)
 
-#include <wtf/PassRef.h>
-#include <wtf/RefCounted.h>
+#include <WebCore/HIDGamepadListener.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
+class GamepadStrategyClient;
+}
 
-class GamepadButton : public RefCounted<GamepadButton> {
+class WebHIDGamepadController : public WebCore::HIDGamepadListenerClient {
 public:
-    static PassRef<GamepadButton> create()
-    {
-        return adoptRef(*new GamepadButton);
-    }
+    static WebHIDGamepadController& shared();
 
-    bool pressed() const;
-    double value() const { return m_value; }
-    void setValue(double value) { m_value = value; }
+    virtual void gamepadConnected(unsigned index) override final;
+    virtual void gamepadDisconnected(unsigned index) override final;
+
+    void registerGamepadStrategyClient(WebCore::GamepadStrategyClient*);
+    void unregisterGamepadStrategyClient(WebCore::GamepadStrategyClient*);
 
 private:
-    GamepadButton();
+    friend NeverDestroyed<WebHIDGamepadController>;
 
-    double m_value;
+    WebHIDGamepadController();
+
+    HashSet<WebCore::GamepadStrategyClient*> m_clients;
 };
 
-
-} // namespace WebCore
-
 #endif // ENABLE(GAMEPAD)
-
-#endif // GamepadButton_h
+#endif // WebHIDGamepadController_h

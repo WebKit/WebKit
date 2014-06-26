@@ -3439,3 +3439,7 @@ __ZN7WebCore4Page11setViewModeENS0_8ViewModeE
 #if ENABLE(WEB_TIMING)
 __ZNK7WebCore20ResourceResponseBase18resourceLoadTimingEv
 #endif
+
+#if ENABLE(GAMEPAD)
+__ZN7WebCore18HIDGamepadListener6sharedEv
+#endif

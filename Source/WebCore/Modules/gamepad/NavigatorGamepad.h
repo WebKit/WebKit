@@ -39,16 +39,27 @@ class Navigator;
 class NavigatorGamepad : public Supplement<Navigator> {
 public:
     NavigatorGamepad();
+    virtual ~NavigatorGamepad();
 
     static NavigatorGamepad* from(Navigator*);
 
+    // The array of Gamepads might be sparse.
+    // Null checking each entry is necessary.
     static const Vector<RefPtr<Gamepad>>& getGamepads(Navigator*);
+
+    double navigationStart() const { return m_navigationStart; }
+
+    void gamepadConnected(unsigned index);
+    void gamepadDisconnected(unsigned index);
 
 private:
     static const char* supplementName();
 
+    void gamepadsBecameVisible();
+
     const Vector<RefPtr<Gamepad>>& gamepads();
 
+    double m_navigationStart;
     Vector<RefPtr<Gamepad>> m_gamepads;
 };
 

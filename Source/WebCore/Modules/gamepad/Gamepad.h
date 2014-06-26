@@ -28,18 +28,20 @@
 
 #if ENABLE(GAMEPAD)
 
-#include "GamepadButton.h"
-#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class GamepadButton;
+class PlatformGamepad;
+
 class Gamepad: public RefCounted<Gamepad> {
 public:
-    static PassRefPtr<Gamepad> create()
+    static PassRefPtr<Gamepad> create(const PlatformGamepad& platformGamepad, unsigned index)
     {
-        return adoptRef(new Gamepad);
+        return adoptRef(new Gamepad(platformGamepad, index));
     }
     ~Gamepad();
 
@@ -52,8 +54,10 @@ public:
     const Vector<double>& axes() const;
     const Vector<Ref<GamepadButton>>& buttons() const;
 
+    void updateFromPlatformGamepad(const PlatformGamepad&);
+
 private:
-    Gamepad();
+    Gamepad(const PlatformGamepad&, unsigned index);
     String m_id;
     unsigned m_index;
     bool m_connected;

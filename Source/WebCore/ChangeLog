@@ -1,3 +1,84 @@
+2014-06-25  Brady Eidson  <beidson@apple.com>
+
+        Add HID-based gamepad implementation for Mac
+        https://bugs.webkit.org/show_bug.cgi?id=134324
+
+        Reviewed by Dean Jackson.
+
+        No new tests (Not yet a tested config)
+
+        * Modules/gamepad/Gamepad.cpp:
+        (WebCore::Gamepad::Gamepad):
+        (WebCore::Gamepad::updateFromPlatformGamepad): Update the Gamepad’s data from the passed-in PlatformGamepad.
+        * Modules/gamepad/Gamepad.h:
+
+        * Modules/gamepad/GamepadButton.h:
+        (WebCore::GamepadButton::create): Change to use Ref instead of RefPtr.
+
+        GamepadManager is a GamepadStrategyClient that receives notifications from the platform gamepad implementation
+        and forwards them to NavigatorGamepad objects. In the future it will also handle event dispatch and exposing
+        gamepads to the API layer when a button is pressed:
+        * Modules/gamepad/GamepadManager.cpp: Added.
+        (WebCore::GamepadManager::shared):
+        (WebCore::GamepadManager::GamepadManager):
+        (WebCore::GamepadManager::platformGamepadConnected):
+        (WebCore::GamepadManager::platformGamepadDisconnected):
+        (WebCore::GamepadManager::registerNavigator):
+        (WebCore::GamepadManager::unregisterNavigator):
+        * Modules/gamepad/GamepadManager.h:
+
+        The NavigatorGamepad supplement actually manages visibility of Gamepads on a per-DOMWindow basis:
+        * Modules/gamepad/NavigatorGamepad.cpp:
+        (WebCore::NavigatorGamepad::NavigatorGamepad):
+        (WebCore::NavigatorGamepad::~NavigatorGamepad):
+        (WebCore::NavigatorGamepad::from):
+        (WebCore::NavigatorGamepad::gamepads):
+        (WebCore::NavigatorGamepad::gamepadsBecameVisible):
+        (WebCore::NavigatorGamepad::gamepadConnected):
+        (WebCore::NavigatorGamepad::gamepadDisconnected):
+        * Modules/gamepad/NavigatorGamepad.h:
+        (WebCore::NavigatorGamepad::navigationStart):
+
+        HIDGamepad is a PlatformGamepad that wraps an IOHIDDeviceRef and keeps input values updated:
+        * platform/mac/HIDGamepad.cpp: Added.
+        (WebCore::HIDGamepad::HIDGamepad):
+        (WebCore::HIDGamepad::initElements):
+        (WebCore::HIDGamepad::initElementsFromArray):
+        (WebCore::HIDGamepad::maybeAddButton):
+        (WebCore::HIDGamepad::maybeAddAxis):
+        (WebCore::HIDGamepad::valueChanged):
+        * platform/mac/HIDGamepad.h: Added.
+        (WebCore::HIDGamepadElement::HIDGamepadElement):
+        (WebCore::HIDGamepadElement::~HIDGamepadElement):
+        (WebCore::HIDGamepadElement::isButton):
+        (WebCore::HIDGamepadElement::isAxis):
+        (WebCore::HIDGamepadButton::HIDGamepadButton):
+        (WebCore::HIDGamepadAxis::HIDGamepadAxis):
+        (WebCore::HIDGamepad::hidDevice):
+
+        HIDGamepadListener wraps an IOHIDManagerRef and continuously listens for changes to Gamepad-type
+        devices plugged in to the system:
+        * platform/mac/HIDGamepadListener.cpp: Added.
+        (WebCore::deviceMatchingDictionary):
+        (WebCore::deviceAddedCallback):
+        (WebCore::deviceRemovedCallback):
+        (WebCore::deviceValuesChangedCallback):
+        (WebCore::HIDGamepadListener::shared):
+        (WebCore::HIDGamepadListener::HIDGamepadListener):
+        (WebCore::HIDGamepadListener::indexForNewlyConnectedDevice):
+        (WebCore::HIDGamepadListener::deviceAdded):
+        (WebCore::HIDGamepadListener::deviceRemoved):
+        (WebCore::HIDGamepadListener::valuesChanged):
+        (WebCore::HIDGamepadListener::removeGamepadForDevice):
+        * platform/mac/HIDGamepadListener.h: Copied from Source/WebCore/Modules/gamepad/NavigatorGamepad.cpp.
+        (WebCore::HIDGamepadListenerClient::~HIDGamepadListenerClient):
+        (WebCore::HIDGamepadListener::setClient):
+        (WebCore::HIDGamepadListener::platformGamepads):
+        (WebCore::HIDGamepadListener::setShouldDispatchCallbacks):
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2014-06-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebProgressTracker updates progress too frequently
