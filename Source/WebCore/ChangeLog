@@ -1,3 +1,9 @@
+2014-06-26  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build-fix. Remove unintentionial rename of MediaTime.h -> MediaTimeHash.h.
+
+        * Modules/mediasource/SampleMap.h:
+
 2014-06-26  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] no need to deactivate audio session

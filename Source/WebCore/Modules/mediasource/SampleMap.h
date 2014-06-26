@@ -29,7 +29,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include <map>
-#include <wtf/MediaTimeHash.h>
+#include <wtf/MediaTime.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
