@@ -1,3 +1,14 @@
+2014-06-25  Dean Jackson  <dino@apple.com>
+
+        HIDGamepad should use CFIndex when looping
+        https://bugs.webkit.org/show_bug.cgi?id=134337
+
+        Reviewed by Dan Bernstein.
+
+        * platform/mac/HIDGamepad.cpp:
+        (WebCore::HIDGamepad::initElementsFromArray): Replace int with CFIndex, and use
+        a local variable for CFArrayCount.
+
 2014-06-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix attempt after r170465.
