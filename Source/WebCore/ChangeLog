@@ -1,3 +1,18 @@
+2014-06-25  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Tweak the logic used to choose the scale at which position:fixed gets pushed out of view
+        https://bugs.webkit.org/show_bug.cgi?id=134323
+
+        Reviewed by Benjamin Poulain.
+
+        Previously we used a fixed scale (1.2x) at which we'd start pushing position:fixed elements
+        out of the viewport. This worked well on iPad, but terribly on iPhone. Instead, choose a scale
+        relative to how much of the page is visible width-wise, the threshold being 2/3 of the page width.
+        The width is clamped to get reasonable behavior on wide pages.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::rectForViewportConstrainedObjects):
+
 2014-06-25  Brady Eidson  <beidson@apple.com>
 
         Add new platform gamepad abstractions
