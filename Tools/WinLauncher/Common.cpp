@@ -34,9 +34,12 @@
 #include <WebKit/WebKitCOMAPI.h>
 #include <wtf/ExportMacros.h>
 #include <wtf/Platform.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #if USE(CF)
 #include <CoreFoundation/CFRunLoop.h>
+#include <WebKit/CFDictionaryPropertyBag.h>
 #endif
 
 #include <cassert>
@@ -62,7 +65,6 @@ static const int maxHistorySize = 10;
 
 typedef _com_ptr_t<_com_IIID<IWebFrame, &__uuidof(IWebFrame)>> IWebFramePtr;
 typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequest)>> IWebMutableURLRequestPtr;
-typedef _com_ptr_t<_com_IIID<IWebCache, &__uuidof(IWebCache)>> IWebCachePtr;
 
 // Global Variables:
 HINSTANCE hInst;
@@ -70,6 +72,7 @@ HWND hMainWnd;
 HWND hURLBarWnd;
 HWND hBackButtonWnd;
 HWND hForwardButtonWnd;
+HWND hCacheWnd;
 WNDPROC DefEditProc = nullptr;
 WNDPROC DefButtonProc = nullptr;
 WNDPROC DefWebKitProc = nullptr;
@@ -90,8 +93,10 @@ LRESULT CALLBACK EditProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK BackButtonProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK ForwardButtonProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK ReloadButtonProc(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK Caches(HWND, UINT, WPARAM, LPARAM);
 
 static void loadURL(BSTR urlBStr);
+static void updateStatistics(HWND hDlg);
 
 static void resizeSubViews()
 {
@@ -155,10 +160,8 @@ static bool getAppDataFolder(_bstr_t& directory)
 
 static bool setCacheFolder()
 {
-    IWebCachePtr webCache;
-
-    HRESULT hr = WebKitCreateInstance(CLSID_WebCache, 0, __uuidof(webCache), reinterpret_cast<void**>(&webCache.GetInterfacePtr()));
-    if (FAILED(hr))
+    IWebCachePtr webCache = gWinLauncher->webCache();
+    if (!webCache)
         return false;
 
     _bstr_t appDataFolder;
@@ -379,6 +382,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             if (gWinLauncher)
                 gWinLauncher->launchInspector();
             break;
+        case IDM_CACHES:
+            if (!::IsWindow(hCacheWnd)) {
+                hCacheWnd = CreateDialog(hInst, MAKEINTRESOURCE(IDD_CACHES), hWnd, Caches);
+                ::ShowWindow(hCacheWnd, SW_SHOW);
+            }
+            break;
         case IDM_HISTORY_BACKWARD:
         case IDM_HISTORY_FORWARD:
             if (gWinLauncher)
@@ -476,12 +485,202 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     return (INT_PTR)FALSE;
 }
 
+INT_PTR CALLBACK Caches(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    UNREFERENCED_PARAMETER(lParam);
+    switch (message) {
+    case WM_INITDIALOG:
+        ::SetTimer(hDlg, IDT_UPDATE_STATS, 1000, nullptr);
+        return (INT_PTR)TRUE;
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
+            ::KillTimer(hDlg, IDT_UPDATE_STATS);
+            ::DestroyWindow(hDlg);
+            hCacheWnd = 0;
+            return (INT_PTR)TRUE;
+        }
+        break;
+
+    case IDT_UPDATE_STATS:
+        ::InvalidateRect(hDlg, nullptr, FALSE);
+        return (INT_PTR)TRUE;
+
+    case WM_PAINT:
+        updateStatistics(hDlg);
+        break;
+    }
+
+    return (INT_PTR)FALSE;
+}
+
 static void loadURL(BSTR passedURL)
 {
     if (FAILED(gWinLauncher->loadURL(passedURL)))
         return;
 
     SetFocus(gViewWindow);
+}
+
+static void setWindowText(HWND dialog, UINT field, _bstr_t value)
+{
+    ::SetDlgItemText(dialog, field, value);
+}
+
+static void setWindowText(HWND dialog, UINT field, UINT value)
+{
+    String valueStr = WTF::String::number(value);
+
+    setWindowText(dialog, field, _bstr_t(valueStr.utf8().data()));
+}
+
+typedef _com_ptr_t<_com_IIID<IPropertyBag, &__uuidof(IPropertyBag)>> IPropertyBagPtr;
+
+static void setWindowText(HWND dialog, UINT field, IPropertyBagPtr statistics, const _bstr_t& key)
+{
+    VARIANT var;
+    ::VariantInit(&var);
+    V_VT(&var) = VT_UI8;
+    if (FAILED(statistics->Read(key, &var, 0))) {
+        ::VariantClear(&var);
+        return;
+    }
+
+    unsigned long long value = V_UI8(&var);
+    String valueStr = WTF::String::number(value);
+
+    setWindowText(dialog, field, _bstr_t(valueStr.utf8().data()));
+    ::VariantClear(&var);
+}
+
+static void setWindowText(HWND dialog, UINT field, CFDictionaryRef dictionary, CFStringRef key, UINT& total)
+{
+    CFNumberRef countNum = static_cast<CFNumberRef>(CFDictionaryGetValue(dictionary, key));
+    if (!countNum)
+        return;
+
+    int count = 0;
+    CFNumberGetValue(countNum, kCFNumberIntType, &count);
+
+    setWindowText(dialog, field, static_cast<UINT>(count));
+    total += count;
+}
+
+static void updateStatistics(HWND dialog)
+{
+    if (!gWinLauncher)
+        return;
+
+    IWebCoreStatisticsPtr webCoreStatistics = gWinLauncher->statistics();
+    if (!webCoreStatistics)
+        return;
+
+    IPropertyBagPtr statistics;
+    HRESULT hr = webCoreStatistics->memoryStatistics(&statistics.GetInterfacePtr());
+    if (FAILED(hr))
+        return;
+
+    // FastMalloc.
+    setWindowText(dialog, IDC_RESERVED_VM, statistics, "FastMallocReservedVMBytes");
+    setWindowText(dialog, IDC_COMMITTED_VM, statistics, "FastMallocCommittedVMBytes");
+    setWindowText(dialog, IDC_FREE_LIST_BYTES, statistics, "FastMallocFreeListBytes");
+
+    // WebCore Cache.
+#if USE(CF)
+    IWebCachePtr webCache = gWinLauncher->webCache();
+
+    int dictCount = 6;
+    IPropertyBag* cacheDict[6] = { 0 };
+    if (FAILED(webCache->statistics(&dictCount, cacheDict)))
+        return;
+
+    COMPtr<CFDictionaryPropertyBag> counts, sizes, liveSizes, decodedSizes, purgableSizes;
+    counts.adoptRef(reinterpret_cast<CFDictionaryPropertyBag*>(cacheDict[0]));
+    sizes.adoptRef(reinterpret_cast<CFDictionaryPropertyBag*>(cacheDict[1]));
+    liveSizes.adoptRef(reinterpret_cast<CFDictionaryPropertyBag*>(cacheDict[2]));
+    decodedSizes.adoptRef(reinterpret_cast<CFDictionaryPropertyBag*>(cacheDict[3]));
+    purgableSizes.adoptRef(reinterpret_cast<CFDictionaryPropertyBag*>(cacheDict[4]));
+
+    static CFStringRef imagesKey = CFSTR("images");
+    static CFStringRef stylesheetsKey = CFSTR("style sheets");
+    static CFStringRef xslKey = CFSTR("xsl");
+    static CFStringRef scriptsKey = CFSTR("scripts");
+
+    if (counts) {
+        UINT totalObjects = 0;
+        setWindowText(dialog, IDC_IMAGES_OBJECT_COUNT, counts->dictionary(), imagesKey, totalObjects);
+        setWindowText(dialog, IDC_CSS_OBJECT_COUNT, counts->dictionary(), stylesheetsKey, totalObjects);
+        setWindowText(dialog, IDC_XSL_OBJECT_COUNT, counts->dictionary(), xslKey, totalObjects);
+        setWindowText(dialog, IDC_JSC_OBJECT_COUNT, counts->dictionary(), scriptsKey, totalObjects);
+        setWindowText(dialog, IDC_TOTAL_OBJECT_COUNT, totalObjects);
+    }
+
+    if (sizes) {
+        UINT totalBytes = 0;
+        setWindowText(dialog, IDC_IMAGES_BYTES, sizes->dictionary(), imagesKey, totalBytes);
+        setWindowText(dialog, IDC_CSS_BYTES, sizes->dictionary(), stylesheetsKey, totalBytes);
+        setWindowText(dialog, IDC_XSL_BYTES, sizes->dictionary(), xslKey, totalBytes);
+        setWindowText(dialog, IDC_JSC_BYTES, sizes->dictionary(), scriptsKey, totalBytes);
+        setWindowText(dialog, IDC_TOTAL_BYTES, totalBytes);
+    }
+
+    if (liveSizes) {
+        UINT totalLiveBytes = 0;
+        setWindowText(dialog, IDC_IMAGES_LIVE_COUNT, liveSizes->dictionary(), imagesKey, totalLiveBytes);
+        setWindowText(dialog, IDC_CSS_LIVE_COUNT, liveSizes->dictionary(), stylesheetsKey, totalLiveBytes);
+        setWindowText(dialog, IDC_XSL_LIVE_COUNT, liveSizes->dictionary(), xslKey, totalLiveBytes);
+        setWindowText(dialog, IDC_JSC_LIVE_COUNT, liveSizes->dictionary(), scriptsKey, totalLiveBytes);
+        setWindowText(dialog, IDC_TOTAL_LIVE_COUNT, totalLiveBytes);
+    }
+
+    if (decodedSizes) {
+        UINT totalDecoded = 0;
+        setWindowText(dialog, IDC_IMAGES_DECODED_COUNT, decodedSizes->dictionary(), imagesKey, totalDecoded);
+        setWindowText(dialog, IDC_CSS_DECODED_COUNT, decodedSizes->dictionary(), stylesheetsKey, totalDecoded);
+        setWindowText(dialog, IDC_XSL_DECODED_COUNT, decodedSizes->dictionary(), xslKey, totalDecoded);
+        setWindowText(dialog, IDC_JSC_DECODED_COUNT, decodedSizes->dictionary(), scriptsKey, totalDecoded);
+        setWindowText(dialog, IDC_TOTAL_DECODED, totalDecoded);
+    }
+
+    if (purgableSizes) {
+        UINT totalPurgable = 0;
+        setWindowText(dialog, IDC_IMAGES_PURGEABLE_COUNT, purgableSizes->dictionary(), imagesKey, totalPurgable);
+        setWindowText(dialog, IDC_CSS_PURGEABLE_COUNT, purgableSizes->dictionary(), stylesheetsKey, totalPurgable);
+        setWindowText(dialog, IDC_XSL_PURGEABLE_COUNT, purgableSizes->dictionary(), xslKey, totalPurgable);
+        setWindowText(dialog, IDC_JSC_PURGEABLE_COUNT, purgableSizes->dictionary(), scriptsKey, totalPurgable);
+        setWindowText(dialog, IDC_TOTAL_PURGEABLE, totalPurgable);
+    }
+#endif
+
+    // JavaScript Heap.
+    setWindowText(dialog, IDC_JSC_HEAP_SIZE, statistics, "JavaScriptHeapSize");
+    setWindowText(dialog, IDC_JSC_HEAP_FREE, statistics, "JavaScriptFreeSize");
+
+    UINT count;
+    if (SUCCEEDED(webCoreStatistics->javaScriptObjectsCount(&count)))
+        setWindowText(dialog, IDC_TOTAL_JSC_HEAP_OBJECTS, count);
+    if (SUCCEEDED(webCoreStatistics->javaScriptGlobalObjectsCount(&count)))
+        setWindowText(dialog, IDC_GLOBAL_JSC_HEAP_OBJECTS, count);
+    if (SUCCEEDED(webCoreStatistics->javaScriptProtectedObjectsCount(&count)))
+        setWindowText(dialog, IDC_PROTECTED_JSC_HEAP_OBJECTS, count);
+
+    // Font and Glyph Caches.
+    if (SUCCEEDED(webCoreStatistics->cachedFontDataCount(&count)))
+        setWindowText(dialog, IDC_TOTAL_FONT_OBJECTS, count);
+    if (SUCCEEDED(webCoreStatistics->cachedFontDataInactiveCount(&count)))
+        setWindowText(dialog, IDC_INACTIVE_FONT_OBJECTS, count);
+    if (SUCCEEDED(webCoreStatistics->glyphPageCount(&count)))
+        setWindowText(dialog, IDC_GLYPH_PAGES, count);
+
+    // Site Icon Database.
+    if (SUCCEEDED(webCoreStatistics->iconPageURLMappingCount(&count)))
+        setWindowText(dialog, IDC_PAGE_URL_MAPPINGS, count);
+    if (SUCCEEDED(webCoreStatistics->iconRetainedPageURLCount(&count)))
+        setWindowText(dialog, IDC_RETAINED_PAGE_URLS, count);
+    if (SUCCEEDED(webCoreStatistics->iconRecordCount(&count)))
+        setWindowText(dialog, IDC_SITE_ICON_RECORDS, count);
+    if (SUCCEEDED(webCoreStatistics->iconsWithDataCount(&count)))
+        setWindowText(dialog, IDC_SITE_ICONS_WITH_DATA, count);
 }
 
 extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpstrCmdLine, int nCmdShow)

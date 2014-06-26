@@ -6,6 +6,7 @@ xcopy /y /d "%PROJECTDIR%\..\..\win\WebLocalizableStrings.h" "%CONFIGURATIONBUIL
 xcopy /y /d "%PROJECTDIR%\..\..\win\WebKitGraphics.h" "%CONFIGURATIONBUILDDIR%\include\WebKit"
 xcopy /y /d "%PROJECTDIR%\..\..\win\WebKitCOMAPI.h" "%CONFIGURATIONBUILDDIR%\include\WebKit"
 xcopy /y /d "%PROJECTDIR%\..\..\win\WebPreferenceKeysPrivate.h" "%CONFIGURATIONBUILDDIR%\include\WebKit"
+xcopy /y /d "%PROJECTDIR%\..\..\win\CFDictionaryPropertyBag.h" "%CONFIGURATIONBUILDDIR%\include\WebKit"
 
 xcopy /y /d "%CONFIGURATIONBUILDDIR%\include\WebCore\npapi.h" "%CONFIGURATIONBUILDDIR%\include\WebKit"
 xcopy /y /d "%CONFIGURATIONBUILDDIR%\include\WebCore\npfunctions.h" "%CONFIGURATIONBUILDDIR%\include\WebKit"

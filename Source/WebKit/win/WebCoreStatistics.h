@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2014 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,9 +64,26 @@ public:
         /* [retval][out] */ UINT *count);
     virtual HRESULT STDMETHODCALLTYPE cachedFontDataInactiveCount( 
         /* [retval][out] */ UINT *count);
-    virtual HRESULT STDMETHODCALLTYPE purgeInactiveFontData(void);
+    virtual HRESULT STDMETHODCALLTYPE purgeInactiveFontData();
     virtual HRESULT STDMETHODCALLTYPE glyphPageCount( 
         /* [retval][out] */ UINT *count);
+
+    virtual HRESULT STDMETHODCALLTYPE javaScriptObjectTypeCounts(/* [retval][out] */ IPropertyBag2** typeNamesAndCounts);
+    virtual HRESULT STDMETHODCALLTYPE garbageCollectJavaScriptObjects();
+    virtual HRESULT STDMETHODCALLTYPE garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(BOOL waitUntilDone);
+    virtual HRESULT STDMETHODCALLTYPE setJavaScriptGarbageCollectorTimerEnabled(BOOL);
+
+    virtual HRESULT STDMETHODCALLTYPE shouldPrintExceptions(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setShouldPrintExceptions(BOOL);
+
+    virtual HRESULT STDMETHODCALLTYPE startIgnoringWebCoreNodeLeaks();
+    virtual HRESULT STDMETHODCALLTYPE stopIgnoringWebCoreNodeLeaks();
+
+    virtual HRESULT STDMETHODCALLTYPE memoryStatistics(/* [retval][out] */ IPropertyBag** statistics);
+    virtual HRESULT STDMETHODCALLTYPE returnFreeMemoryToSystem();
+
+    virtual HRESULT STDMETHODCALLTYPE cachedPageCount(/* [retval][out] */ INT *count);
+    virtual HRESULT STDMETHODCALLTYPE cachedFrameCount(/* [retval][out] */ INT *count);
 
 protected:
     ULONG m_refCount;

@@ -50,7 +50,6 @@
 static const int maxHistorySize = 10;
 
 typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequest)>> IWebMutableURLRequestPtr;
-typedef _com_ptr_t<_com_IIID<IWebCache, &__uuidof(IWebCache)>> IWebCachePtr;
 
 WinLauncher::WinLauncher(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView)
     : m_hMainWnd(mainWnd)
@@ -70,6 +69,14 @@ HRESULT WinLauncher::init()
         return hr;
 
     hr = WebKitCreateInstance(CLSID_WebHistory, 0, __uuidof(m_webHistory), reinterpret_cast<void**>(&m_webHistory.GetInterfacePtr()));
+    if (FAILED(hr))
+        return hr;
+
+    hr = WebKitCreateInstance(CLSID_WebCoreStatistics, 0, __uuidof(m_statistics), reinterpret_cast<void**>(&m_statistics.GetInterfacePtr()));
+    if (FAILED(hr))
+        return hr;
+
+    hr = WebKitCreateInstance(CLSID_WebCache, 0, __uuidof(m_webCache), reinterpret_cast<void**>(&m_webCache.GetInterfacePtr()));
 
     return hr;
 }

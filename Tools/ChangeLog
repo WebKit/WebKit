@@ -1,3 +1,21 @@
+2014-06-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Expose Cache Information to WinLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=134318
+
+        Reviewed by Dean Jackson.
+
+        * WinLauncher/Common.cpp: Update for new dialog.
+        * WinLauncher/WinLauncher.cpp: Add support for WebCache
+        and WebCoreStatistics.
+        * WinLauncher/WinLauncher.h:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.rc:
+        Update for new Cache Dialog.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibCommon.props: Link to
+        WTF.lib
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibResource.h: Update
+        for new Dialog.
+
 2014-06-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening. Use consistent line-endings in file.

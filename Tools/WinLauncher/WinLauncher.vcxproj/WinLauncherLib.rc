@@ -15,13 +15,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -38,7 +36,7 @@ IDI_SMALL               ICON                    "small.ico"
 // Menu
 //
 
-IDC_WINLAUNCHER MENU 
+IDC_WINLAUNCHER MENU
 BEGIN
     POPUP "&File"
     BEGIN
@@ -81,6 +79,8 @@ BEGIN
         MENUITEM "Enable WebKit Full Screen",   IDM_WK_FULLSCREEN, CHECKED
         MENUITEM SEPARATOR
         MENUITEM "Show Compositing Borders",    IDM_COMPOSITING_BORDERS
+        MENUITEM SEPARATOR
+        MENUITEM "Show Caches Window",          IDM_CACHES
     END
 END
 
@@ -90,7 +90,7 @@ END
 // Accelerator
 //
 
-IDC_WINLAUNCHER ACCELERATORS 
+IDC_WINLAUNCHER ACCELERATORS
 BEGIN
     "?",            IDM_ABOUT,              ASCII,  ALT
     "/",            IDM_ABOUT,              ASCII,  ALT
@@ -108,9 +108,95 @@ CAPTION "About"
 FONT 8, "System", 0, 0, 0x0
 BEGIN
     ICON            IDI_WINLAUNCHER,IDC_MYICON,14,9,20,20
-    LTEXT           "WinLauncher Version 1.2",IDC_STATIC,49,10,119,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2009",IDC_STATIC,49,20,119,8
+    LTEXT           "WinLauncher Version 1.3",IDC_STATIC,49,10,119,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2014",IDC_STATIC,49,20,119,8
     DEFPUSHBUTTON   "OK",IDOK,195,6,30,11,WS_GROUP
+END
+
+IDD_CACHES DIALOGEX 0, 0, 401, 456
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,287,435,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,344,435,50,14
+    GROUPBOX        "FastMalloc",IDC_STATIC,208,14,186,67
+    GROUPBOX        "WebCore Cache",IDC_STATIC,17,83,376,105
+    GROUPBOX        "JavaScript Heap",IDC_STATIC,18,193,376,168
+    GROUPBOX        "Site Icon Database",IDC_STATIC,18,366,142,65
+    GROUPBOX        "Font and Glyph Caches",IDC_STATIC,168,366,226,66
+    GROUPBOX        "CFURLCache",IDC_STATIC,7,14,197,67
+    PUSHBUTTON      "Empty URLCache",IDC_EMPTY_URL_CACHE,131,63,69,14,WS_DISABLED
+    PUSHBUTTON      "Return Free Memory",IDC_RETURN_FREE_MEMORY,308,63,76,14,WS_DISABLED
+    PUSHBUTTON      "Empty WebCore Cache",IDC_EMPTY_WEBCORE_CACHE,21,170,83,14,WS_DISABLED
+    CONTROL         "Disable WebCore Cache",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,119,172,93,10
+    PUSHBUTTON      "Garbage Collect JavaScript Objects",IDC_GC_JSC,253,343,135,14,WS_DISABLED
+    RTEXT           "Reserved VM",IDC_STATIC,212,26,67,9
+    RTEXT           "0",IDC_RESERVED_VM,290,26,94,8
+    RTEXT           "Committed VM",IDC_STATIC,211,39,67,8
+    RTEXT           "0",IDC_COMMITTED_VM,290,39,94,8
+    RTEXT           "Free List Bytes",IDC_STATIC,211,52,67,8
+    RTEXT           "0",IDC_FREE_LIST_BYTES,290,52,94,8
+    RTEXT           "Images",IDC_STATIC,37,106,24,8
+    RTEXT           "CSS",IDC_STATIC,47,116,14,8
+    RTEXT           "XSL",IDC_STATIC,49,126,12,8
+    RTEXT           "JavaScript",IDC_STATIC,27,135,34,8
+    RTEXT           "Total",IDC_STATIC,43,146,17,8
+    LTEXT           "Objects",IDC_STATIC,111,96,26,8
+    LTEXT           "Bytes",IDC_STATIC,175,96,19,8
+    LTEXT           "Live",IDC_STATIC,232,96,14,8
+    LTEXT           "Decoded",IDC_STATIC,284,96,29,8
+    LTEXT           "Purgeable",IDC_STATIC,351,96,33,8
+    RTEXT           "0",IDC_IMAGES_OBJECT_COUNT,100,106,32,8
+    RTEXT           "0",IDC_CSS_OBJECT_COUNT,100,116,32,8
+    RTEXT           "0",IDC_XSL_OBJECT_COUNT,100,126,32,8
+    RTEXT           "0",IDC_JSC_OBJECT_COUNT,100,135,32,8
+    RTEXT           "0",IDC_TOTAL_OBJECT_COUNT,100,146,32,8
+    RTEXT           "0",IDC_IMAGES_BYTES,162,106,32,8
+    RTEXT           "0",IDC_CSS_BYTES,162,116,32,8
+    RTEXT           "0",IDC_XSL_BYTES,162,126,32,8
+    RTEXT           "0",IDC_JSC_BYTES,162,135,32,8
+    RTEXT           "0",IDC_TOTAL_BYTES,162,146,32,8
+    RTEXT           "0",IDC_IMAGES_LIVE_COUNT,221,106,32,8
+    RTEXT           "0",IDC_CSS_LIVE_COUNT,221,116,32,8
+    RTEXT           "0",IDC_XSL_LIVE_COUNT,221,126,32,8
+    RTEXT           "0",IDC_JSC_LIVE_COUNT,221,135,32,8
+    RTEXT           "0",IDC_TOTAL_LIVE_COUNT,221,146,32,8
+    RTEXT           "0",IDC_IMAGES_DECODED_COUNT,284,106,32,8
+    RTEXT           "0",IDC_CSS_DECODED_COUNT,284,116,32,8
+    RTEXT           "0",IDC_XSL_DECODED_COUNT,284,126,32,8
+    RTEXT           "0",IDC_JSC_DECODED_COUNT,284,135,32,8
+    RTEXT           "0",IDC_TOTAL_DECODED,284,146,32,8
+    RTEXT           "0",IDC_IMAGES_PURGEABLE_COUNT,354,106,32,8
+    RTEXT           "0",IDC_CSS_PURGEABLE_COUNT,354,116,32,8
+    RTEXT           "0",IDC_XSL_PURGEABLE_COUNT,354,126,32,8
+    RTEXT           "0",IDC_JSC_PURGEABLE_COUNT,354,135,32,8
+    RTEXT           "0",IDC_TOTAL_PURGEABLE,354,146,32,8
+    RTEXT           "Total Objects",IDC_STATIC,63,207,44,8
+    RTEXT           "Global Objects",IDC_STATIC,56,217,51,8
+    RTEXT           "Protected Objects",IDC_STATIC,48,227,59,8
+    RTEXT           "0",IDC_TOTAL_JSC_HEAP_OBJECTS,127,207,56,8
+    RTEXT           "0",IDC_GLOBAL_JSC_HEAP_OBJECTS,127,217,56,8
+    RTEXT           "0",IDC_PROTECTED_JSC_HEAP_OBJECTS,127,227,56,8
+    RTEXT           "Size",IDC_STATIC56,223,207,14,8
+    RTEXT           "Free",IDC_STATIC57,222,217,16,8
+    RTEXT           "0",IDC_JSC_HEAP_SIZE,270,207,56,8
+    RTEXT           "0",IDC_JSC_HEAP_FREE,270,217,56,8
+    PUSHBUTTON      "Purge Inactive Font Data",IDC_BUTTON5,293,415,95,14,WS_DISABLED
+    LTEXT           "Total Font Data Objects",IDC_STATIC,208,379,78,8
+    LTEXT           "Inactive Font Data Objects",IDC_STATIC,198,390,88,8
+    LTEXT           "Glyph Pages",IDC_STATIC,246,402,40,8
+    RTEXT           "0",IDC_TOTAL_FONT_OBJECTS,329,379,56,8
+    RTEXT           "0",IDC_INACTIVE_FONT_OBJECTS,329,390,56,8
+    RTEXT           "0",IDC_GLYPH_PAGES,329,402,56,8
+    LTEXT           "Page URL Mappings",IDC_STATIC,33,380,64,8
+    LTEXT           "Retained Page URLs",IDC_STATIC,31,390,66,8
+    LTEXT           "Site Icon Records",IDC_STATIC,40,400,57,8
+    LTEXT           "Site Icons with Data",IDC_STATIC,32,410,65,8
+    RTEXT           "0",IDC_PAGE_URL_MAPPINGS,101,380,52,8
+    RTEXT           "0",IDC_RETAINED_PAGE_URLS,101,390,52,8
+    RTEXT           "0",IDC_SITE_ICON_RECORDS,101,400,52,8
+    RTEXT           "0",IDC_SITE_ICONS_WITH_DATA,101,410,52,8
 END
 
 
@@ -144,16 +230,39 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+    END
+
+    IDD_CACHES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 394
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 449
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_APP_TITLE           "WinLauncher"
     IDC_WINLAUNCHER         "WINLAUNCHER"
 END
 
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

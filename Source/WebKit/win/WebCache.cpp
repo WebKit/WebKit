@@ -91,14 +91,12 @@ ULONG STDMETHODCALLTYPE WebCache::Release(void)
 
 // IWebCache ------------------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebCache::statistics( 
-    /* [in][out] */ int* count,
-    /* [retval][out] */ IPropertyBag ** s)
+HRESULT WebCache::statistics(int* count, IPropertyBag** s)
 {
-    if (!count || (s && *count < 4))
+    if (!count || (s && *count < 6))
         return E_FAIL;
 
-    *count = 4;
+    *count = 6;
     if (!s)
         return S_OK;
 
@@ -112,6 +110,7 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
     const int zero = 0;
 #endif
 
+    // Object Counts.
     RetainPtr<CFMutableDictionaryRef> dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     RetainPtr<CFNumberRef> value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.images.count));
@@ -134,6 +133,7 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
     propBag->setDictionary(dictionary.get());
     s[0] = propBag.leakRef();
 
+    // Object Sizes.
     dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.images.size));
@@ -156,6 +156,7 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
     propBag->setDictionary(dictionary.get());
     s[1] = propBag.leakRef();
 
+    // Live Sizes.
     dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.images.liveSize));
@@ -178,6 +179,7 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
     propBag->setDictionary(dictionary.get());
     s[2] = propBag.leakRef();
 
+    // Decoded Sizes.
     dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.images.decodedSize));
@@ -199,6 +201,52 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
     propBag = CFDictionaryPropertyBag::createInstance();
     propBag->setDictionary(dictionary.get());
     s[3] = propBag.leakRef();
+
+    // Purgable Sizes.
+    dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.images.purgeableSize));
+    CFDictionaryAddValue(dictionary.get(), imagesKey, value.get());
+
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.purgeableSize));
+    CFDictionaryAddValue(dictionary.get(), stylesheetsKey, value.get());
+
+#if ENABLE(XSLT)
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.purgeableSize));
+#else
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &zero));
+#endif
+    CFDictionaryAddValue(dictionary.get(), xslKey, value.get());
+
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.purgeableSize));
+    CFDictionaryAddValue(dictionary.get(), scriptsKey, value.get());
+
+    propBag = CFDictionaryPropertyBag::createInstance();
+    propBag->setDictionary(dictionary.get());
+    s[4] = propBag.leakRef();
+
+    // Purged Sizes.
+    dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.images.purgedSize));
+    CFDictionaryAddValue(dictionary.get(), imagesKey, value.get());
+
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.purgedSize));
+    CFDictionaryAddValue(dictionary.get(), stylesheetsKey, value.get());
+
+#if ENABLE(XSLT)
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.purgedSize));
+#else
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &zero));
+#endif
+    CFDictionaryAddValue(dictionary.get(), xslKey, value.get());
+
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.purgedSize));
+    CFDictionaryAddValue(dictionary.get(), scriptsKey, value.get());
+
+    propBag = CFDictionaryPropertyBag::createInstance();
+    propBag->setDictionary(dictionary.get());
+    s[5] = propBag.leakRef();
 
     return S_OK;
 }

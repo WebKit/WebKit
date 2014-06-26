@@ -734,6 +734,7 @@
     <ClCompile Include="..\runtime\MapIteratorPrototype.cpp" />
     <ClCompile Include="..\runtime\MapPrototype.cpp" />
     <ClCompile Include="..\runtime\MathObject.cpp" />
+    <ClCompile Include="..\runtime\MemoryStatistics.cpp" />
     <ClCompile Include="..\runtime\NameConstructor.cpp" />
     <ClCompile Include="..\runtime\NameInstance.cpp" />
     <ClCompile Include="..\runtime\NamePrototype.cpp" />
@@ -1478,6 +1479,7 @@
     <ClInclude Include="..\runtime\MapPrototype.h" />
     <ClInclude Include="..\runtime\MatchResult.h" />
     <ClInclude Include="..\runtime\MathObject.h" />
+    <ClInclude Include="..\runtime\MemoryStatistics.h" />
     <ClInclude Include="..\runtime\Microtask.h" />
     <ClInclude Include="..\runtime\NameConstructor.h" />
     <ClInclude Include="..\runtime\NameInstance.h" />

@@ -179,6 +179,7 @@ EXPORTS
         symbolWithPointer(?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@ABVString@4@@Z, ?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@AEBVString@4@@Z)
 #if USE(CF)
         symbolWithPointer(?createCFString@String@WTF@@QBE?AV?$RetainPtr@PBU__CFString@@@2@XZ, ?createCFString@String@WTF@@QEBA?AV?$RetainPtr@PEBU__CFString@@@2@XZ)
+        symbolWithPointer(?dictionary@CFDictionaryPropertyBag@@QBEPAU__CFDictionary@@XZ, )
 #endif
         symbolWithPointer(?createShadowRoot@Element@WebCore@@QAE?AV?$PassRefPtr@VShadowRoot@WebCore@@@WTF@@AAH@Z, ?createShadowRoot@Element@WebCore@@QEAA?AV?$PassRefPtr@VShadowRoot@WebCore@@@WTF@@AEAH@Z)
         symbolWithPointer(?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z, ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PEAVExecState@3@PEAVJSDOMGlobalObject@1@PEAVNode@1@@Z)

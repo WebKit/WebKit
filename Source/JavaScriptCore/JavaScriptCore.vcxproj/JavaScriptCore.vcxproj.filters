@@ -1605,6 +1605,9 @@
     <ClCompile Include="..\inspector\ScriptDebugServer.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\MemoryStatistics.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h">
@@ -3906,6 +3909,9 @@
     </ClInclude>
     <ClInclude Include="..\inspector\ScriptDebugListener.h">
       <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\MemoryStatistics.h">
+      <Filter>runtime</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

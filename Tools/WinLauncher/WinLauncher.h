@@ -37,9 +37,10 @@ typedef _com_ptr_t<_com_IIID<IWebPreferencesPrivate, &__uuidof(IWebPreferencesPr
 typedef _com_ptr_t<_com_IIID<IWebUIDelegate, &__uuidof(IWebUIDelegate)>> IWebUIDelegatePtr;
 typedef _com_ptr_t<_com_IIID<IAccessibilityDelegate, &__uuidof(IAccessibilityDelegate)>> IAccessibilityDelegatePtr;
 typedef _com_ptr_t<_com_IIID<IWebInspector, &__uuidof(IWebInspector)>> IWebInspectorPtr;
+typedef _com_ptr_t<_com_IIID<IWebCoreStatistics, &__uuidof(IWebCoreStatistics)>> IWebCoreStatisticsPtr;
+typedef _com_ptr_t<_com_IIID<IWebCache, &__uuidof(IWebCache)>> IWebCachePtr;
 
-class WinLauncher
-{
+class WinLauncher {
 public:
     WinLauncher(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false);
 
@@ -48,7 +49,7 @@ public:
 
     HRESULT loadURL(const BSTR& passedURL);
 
-    void showLastVisitedSites(IWebView& webView);
+    void showLastVisitedSites(IWebView&);
     void launchInspector();
     void navigateForwardOrBackward(HWND hWnd, UINT menuID);
     void navigateToHistory(HWND hWnd, UINT menuID);
@@ -62,6 +63,8 @@ public:
     IWebPreferencesPtr standardPreferences() { return m_standardPreferences;  }
     IWebPreferencesPrivatePtr privatePreferences() { return m_prefsPrivate; }
     IWebFramePtr mainFrame();
+    IWebCoreStatisticsPtr statistics() { return m_statistics; }
+    IWebCachePtr webCache() { return m_webCache;  }
 
     bool hasWebView() const { return !!m_webView; }
     bool usesLayeredWebView() const { return m_useLayeredWebView; }
@@ -82,6 +85,9 @@ private:
     IWebFrameLoadDelegatePtr m_frameLoadDelegate;
     IWebUIDelegatePtr m_uiDelegate;
     IAccessibilityDelegatePtr m_accessibilityDelegate;
+
+    IWebCoreStatisticsPtr m_statistics;
+    IWebCachePtr m_webCache;
 
     HWND m_hMainWnd;
     HWND m_hURLBarWnd;

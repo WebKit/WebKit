@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2014 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,4 +53,21 @@ interface IWebCoreStatistics : IUnknown
     HRESULT glyphPageCount([out, retval] UINT* count);
 
     HRESULT javaScriptProtectedObjectTypeCounts([out, retval] IPropertyBag2** typeNamesAndCounts);
+    HRESULT javaScriptObjectTypeCounts([out, retval] IPropertyBag2** typeNamesAndCounts);
+
+    HRESULT garbageCollectJavaScriptObjects();
+    HRESULT garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging([in] BOOL waitUntilDone);
+    HRESULT setJavaScriptGarbageCollectorTimerEnabled([in] BOOL);
+
+    HRESULT shouldPrintExceptions([out, retval] BOOL*);
+    HRESULT setShouldPrintExceptions([in] BOOL);
+
+    HRESULT startIgnoringWebCoreNodeLeaks();
+    HRESULT stopIgnoringWebCoreNodeLeaks();
+
+    HRESULT memoryStatistics([out, retval] IPropertyBag** statistics);
+    HRESULT returnFreeMemoryToSystem();
+
+    HRESULT cachedPageCount([out, retval] INT* count);
+    HRESULT cachedFrameCount([out, retval] INT* count);
 }
