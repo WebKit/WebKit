@@ -315,7 +315,7 @@ struct WKViewInterpretKeyEventsParameters {
 - (WKBrowsingContextController *)browsingContextController
 {
     if (!_data->_browsingContextController)
-        _data->_browsingContextController = [[WKBrowsingContextController alloc] _initWithPageRef:toAPI(_data->_page.get())];
+        _data->_browsingContextController = adoptNS([[WKBrowsingContextController alloc] _initWithPageRef:toAPI(_data->_page.get())]);
 
     return _data->_browsingContextController.get();
 }
