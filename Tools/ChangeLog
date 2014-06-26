@@ -1,3 +1,10 @@
+2014-06-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening. Use consistent line-endings in file.
+
+        * WinLauncher/WinLauncher.h: Use '\n' EOL marker, not DOS-style
+        '\r\n' EOL.
+
 2014-06-25  László Langó  <llango.u-szeged@partner.samsung.com>
 
         [JavaScriptCore] Make build-jsc output format better.
