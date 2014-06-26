@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -176,7 +176,7 @@ static wstring getLastErrorString(HRESULT hr)
     if (len >= bufSize)
         len = bufSize - 1;
 
-    errorMessage[len + 1] = 0;
+    errorMessage[len] = 0;
 
     return errorMessage;
 }

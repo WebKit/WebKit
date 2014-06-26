@@ -1,3 +1,14 @@
+2014-06-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Fix potential buffer overrun in DLLLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=134351
+        <rdar://problem/17469185>
+
+        Reviewed by Darin Adler.
+
+        * win/DLLLauncher/DLLLauncherMain.cpp: Correct error
+        in end-of-buffer calculation.
+
 2014-06-26  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         [EFL] Missing dependency between freetype6 and fontconfig libs.
