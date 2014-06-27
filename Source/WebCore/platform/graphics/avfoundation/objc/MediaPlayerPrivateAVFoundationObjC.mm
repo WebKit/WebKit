@@ -236,7 +236,7 @@ SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicTranscribesSpokenDialogForA
 
 #if ENABLE(DATACUE_VALUE)
 SOFT_LINK_POINTER(AVFoundation, AVMetadataKeySpaceQuickTimeUserData, NSString*)
-SOFT_LINK_POINTER(AVFoundation, AVMetadataKeySpaceISOUserData, NSString*)
+SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVMetadataKeySpaceISOUserData, NSString*)
 SOFT_LINK_POINTER(AVFoundation, AVMetadataKeySpaceQuickTimeMetadata, NSString*)
 SOFT_LINK_POINTER(AVFoundation, AVMetadataKeySpaceiTunes, NSString*)
 SOFT_LINK_POINTER(AVFoundation, AVMetadataKeySpaceID3, NSString*)
@@ -2467,7 +2467,7 @@ static const AtomicString& metadataType(NSString *avMetadataKeySpace)
 
     if ([avMetadataKeySpace isEqualToString:AVMetadataKeySpaceQuickTimeUserData])
         return quickTimeUserData;
-    if ([avMetadataKeySpace isEqualToString:AVMetadataKeySpaceISOUserData])
+    if (AVMetadataKeySpaceISOUserData && [avMetadataKeySpace isEqualToString:AVMetadataKeySpaceISOUserData])
         return isoUserData;
     if ([avMetadataKeySpace isEqualToString:AVMetadataKeySpaceQuickTimeMetadata])
         return quickTimeMetadata;

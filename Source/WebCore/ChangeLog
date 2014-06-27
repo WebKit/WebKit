@@ -1,3 +1,14 @@
+2014-06-27  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] AVMetadataKeySpaceISOUserData not defined on 10.8
+        https://bugs.webkit.org/show_bug.cgi?id=134401
+
+        Reviewed by Jer Noble.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::metadataType): Use SOFT_LINK_POINTER_OPTIONAL for AVMetadataKeySpaceISOUserData
+            so we don't have problems on OS versions where it isn't defined.
+
 2014-06-27  Martin Hodovan  <mhodovan.u-szeged@partner.samsung.com>
 
         REGRESSION (r168685): css calc() expression fails 
