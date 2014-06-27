@@ -1,3 +1,42 @@
+2014-06-27  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening; fix whitespace issues in the W3C Media Source expected results.
+
+        * http/tests/media/media-source/mediasource-addsourcebuffer-expected.txt:
+        * http/tests/media/media-source/mediasource-append-buffer-expected.txt:
+        * http/tests/media/media-source/mediasource-append-stream-expected.txt:
+        * http/tests/media/media-source/mediasource-appendwindow-expected.txt:
+        * http/tests/media/media-source/mediasource-buffered-expected.txt:
+        * http/tests/media/media-source/mediasource-closed-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-mp4-a-bitrate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-mp4-av-audio-bitrate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-mp4-av-framesize-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-mp4-av-video-bitrate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-mp4-v-bitrate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-mp4-v-framerate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-mp4-v-framesize-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-webm-a-bitrate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-webm-av-audio-bitrate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-webm-av-framesize-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-webm-av-video-bitrate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-webm-v-bitrate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-webm-v-framerate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-webm-v-framesize-expected.txt:
+        * http/tests/media/media-source/mediasource-duration-expected.txt:
+        * http/tests/media/media-source/mediasource-endofstream-invaliderror-expected.txt:
+        * http/tests/media/media-source/mediasource-endofstream-invaliderror.html:
+        * http/tests/media/media-source/mediasource-getvideoplaybackquality-expected.txt:
+        * http/tests/media/media-source/mediasource-is-type-supported-expected.txt:
+        * http/tests/media/media-source/mediasource-multiple-attach-expected.txt:
+        * http/tests/media/media-source/mediasource-play-expected.txt:
+        * http/tests/media/media-source/mediasource-play-then-seek-back-expected.txt:
+        * http/tests/media/media-source/mediasource-redundant-seek-expected.txt:
+        * http/tests/media/media-source/mediasource-remove-expected.txt:
+        * http/tests/media/media-source/mediasource-seek-beyond-duration-expected.txt:
+        * http/tests/media/media-source/mediasource-seek-during-pending-seek-expected.txt:
+        * http/tests/media/media-source/mediasource-sourcebuffer-mode-expected.txt:
+        * http/tests/media/media-source/mediasource-sourcebufferlist-expected.txt:
+
 2014-06-27  Martin Hodovan  <mhodovan.u-szeged@partner.samsung.com>
 
         REGRESSION (r168685): css calc() expression fails 
