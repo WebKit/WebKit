@@ -1,3 +1,30 @@
+2014-06-26  Jeongeun Kim  <je_julie.kim@samsung.com>
+
+        REGRESSION (r170287): SVGDocumentExtensions::rebuildElements() called on removed element
+        https://bugs.webkit.org/show_bug.cgi?id=134304
+
+        Reviewed by Daniel Bates.
+
+        Roll out <http://trac.webkit.org/170287> (https://bugs.webkit.org/show_bug.cgi?id=134186)
+        as it led to SVGDocumentExtensions::rebuildElements() being called on an element(s) that
+        may no longer be in the document.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChild):
+        (WebCore::ContainerNode::removeChildren):
+        * dom/Document.cpp:
+        (WebCore::Document::commonTeardown):
+        (WebCore::Document::implicitClose):
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::startAnimations):
+        (WebCore::SVGDocumentExtensions::pauseAnimations):
+        (WebCore::SVGDocumentExtensions::unpauseAnimations):
+        (WebCore::SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements):
+        (WebCore::SVGDocumentExtensions::rebuildElements):
+        * svg/SVGDocumentExtensions.h:
+
 2014-06-26  Tim Horton  <timothy_horton@apple.com>
 
         [WK2] Pinch-zoom shadows can overlap headers and footers

@@ -89,7 +89,7 @@ void CachedFrameBase::restore()
     m_cachedFrameScriptData->restore(frame);
 
     if (m_document->svgExtensions())
-        m_document->svgExtensions()->unpauseAnimations();
+        m_document->accessSVGExtensions()->unpauseAnimations();
 
     frame.animation().resumeAnimationsForDocument(m_document.get());
     m_document->resumeActiveDOMObjects(ActiveDOMObject::DocumentWillBecomeInactive);

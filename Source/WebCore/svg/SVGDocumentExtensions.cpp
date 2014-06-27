@@ -87,7 +87,7 @@ RenderSVGResourceContainer* SVGDocumentExtensions::resourceById(const AtomicStri
     return m_resources.get(id);
 }
 
-void SVGDocumentExtensions::startAnimations() const
+void SVGDocumentExtensions::startAnimations()
 {
     // FIXME: Eventually every "Time Container" will need a way to latch on to some global timer
     // starting animations for a document will do this "latching"
@@ -100,21 +100,21 @@ void SVGDocumentExtensions::startAnimations() const
         (*it)->timeContainer()->begin();
 }
 
-void SVGDocumentExtensions::pauseAnimations() const
+void SVGDocumentExtensions::pauseAnimations()
 {
     auto end = m_timeContainers.end();
     for (auto it = m_timeContainers.begin(); it != end; ++it)
         (*it)->pauseAnimations();
 }
 
-void SVGDocumentExtensions::unpauseAnimations() const
+void SVGDocumentExtensions::unpauseAnimations()
 {
     auto end = m_timeContainers.end();
     for (auto it = m_timeContainers.begin(); it != end; ++it)
         (*it)->unpauseAnimations();
 }
 
-void SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements() const
+void SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements()
 {
     Vector<RefPtr<SVGSVGElement>> timeContainers;
     timeContainers.appendRange(m_timeContainers.begin(), m_timeContainers.end());
@@ -332,7 +332,7 @@ void SVGDocumentExtensions::removeAllTargetReferencesForElement(SVGElement* refe
         m_elementDependencies.remove(*it);
 }
 
-void SVGDocumentExtensions::rebuildElements() const
+void SVGDocumentExtensions::rebuildElements()
 {
     Vector<SVGElement*> shadowRebuildElements = std::move(m_rebuildElements);
     for (auto* element : shadowRebuildElements)
