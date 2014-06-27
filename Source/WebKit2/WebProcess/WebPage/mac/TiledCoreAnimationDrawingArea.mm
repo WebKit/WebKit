@@ -358,7 +358,6 @@ void TiledCoreAnimationDrawingArea::updateScrolledExposedRect()
 #endif
 
     frameView->setExposedRect(m_scrolledExposedRect);
-    frameView->adjustTiledBackingCoverage();
 
     m_webPage.pageOverlayController().didChangeExposedRect();
 }

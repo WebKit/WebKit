@@ -1,3 +1,38 @@
+2014-06-27  Antti Koivisto  <antti@apple.com>
+
+        Flush throttling with remote layers
+        https://bugs.webkit.org/show_bug.cgi?id=134398
+
+        Reviewed by Darin Adler.
+
+        With remote layer trees the flush scheduling lives in the WebKit2 layer. The throttling code
+        needs to live there as well.
+        
+        Add the required callbacks and disable the existing throttling code in RenderLayerCompositor
+        when remote layers are in use. Later we can get rid of the RenderLayerCompositor throttling code.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadProgressingStatusChanged):
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::adjustLayerFlushThrottling):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::disableLayerFlushThrottlingTemporarilyForInteraction):
+        (WebCore::FrameView::loadProgressingStatusChanged):
+        
+            Factor the progress status change activities to a function.
+
+        (WebCore::FrameView::updateLayerFlushThrottling):
+        (WebCore::FrameView::setExposedRect):
+        
+            Move the call to adjustTiledBackingCoverage from WebKit to here.
+
+        (WebCore::FrameView::updateLayerFlushThrottlingInAllFrames): Deleted.
+        * page/FrameView.h:
+        * page/LayerFlushThrottleState.h: Added.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor):
+
 2014-06-27  Brady Eidson  <beidson@apple.com>
 
         The user pressing a button on a gamepad should cause gamepads to become visible to all NavigatorGamepads.

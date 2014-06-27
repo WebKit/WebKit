@@ -1,3 +1,33 @@
+2014-06-27  Antti Koivisto  <antti@apple.com>
+
+        Flush throttling with remote layers
+        https://bugs.webkit.org/show_bug.cgi?id=134398
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::adjustLayerFlushThrottling):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::adjustLayerFlushThrottling):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        (WebKit::RemoteLayerTreeDrawingArea::updateScrolledExposedRect):
+        (WebKit::RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush):
+
+            Delay layer flushes during page loading.
+            If use interacts with the page the next flush in unthrottled even if loading is in progress.
+
+        (WebKit::RemoteLayerTreeDrawingArea::adjustLayerFlushThrottling):
+        
+            Compute the new delay. The first visual flush uses a shorter delay.
+            Flush immediately when we are no longer throttling.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updateScrolledExposedRect):
+
 2014-06-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS][WK2] <select> tapping "next" does not save new picker value

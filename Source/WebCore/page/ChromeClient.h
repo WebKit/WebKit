@@ -29,6 +29,7 @@
 #include "FrameLoader.h"
 #include "GraphicsContext.h"
 #include "HostWindow.h"
+#include "LayerFlushThrottleState.h"
 #include "PopupMenu.h"
 #include "PopupMenuClient.h"
 #include "RenderEmbeddedObject.h"
@@ -326,6 +327,8 @@ public:
     
     // Returns true if layer tree updates are disabled.
     virtual bool layerTreeStateIsFrozen() const { return false; }
+
+    virtual bool adjustLayerFlushThrottling(LayerFlushThrottleState::Flags) { return false; }
 
     virtual PassRefPtr<ScrollingCoordinator> createScrollingCoordinator(Page*) const { return nullptr; }
 

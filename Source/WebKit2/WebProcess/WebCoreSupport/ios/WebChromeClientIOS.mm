@@ -28,11 +28,12 @@
 
 #if PLATFORM(IOS)
 
-#import <WebCore/NotImplemented.h>
+#import "DrawingArea.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebFrame.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
+#import <WebCore/NotImplemented.h>
 
 namespace WebKit {
 

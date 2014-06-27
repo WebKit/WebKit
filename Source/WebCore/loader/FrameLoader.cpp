@@ -3408,12 +3408,8 @@ NetworkingContext* FrameLoader::networkingContext() const
 
 void FrameLoader::loadProgressingStatusChanged()
 {
-    FrameView* view = m_frame.mainFrame().view();
-    if (!view)
-        return;
-
-    view->updateLayerFlushThrottlingInAllFrames();
-    view->adjustTiledBackingCoverage();
+    if (auto* view = m_frame.mainFrame().view())
+        view->loadProgressingStatusChanged();
 }
 
 void FrameLoader::forcePageTransitionIfNeeded()

@@ -843,6 +843,10 @@ void WebChromeClient::scheduleCompositingLayerFlush()
         m_page->drawingArea()->scheduleCompositingLayerFlush();
 }
 
+bool WebChromeClient::adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags flags)
+{
+    return m_page->drawingArea() && m_page->drawingArea()->adjustLayerFlushThrottling(flags);
+}
 
 bool WebChromeClient::layerTreeStateIsFrozen() const
 {

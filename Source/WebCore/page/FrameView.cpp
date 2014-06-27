@@ -2253,13 +2253,33 @@ void FrameView::addedOrRemovedScrollbar()
 
 void FrameView::disableLayerFlushThrottlingTemporarilyForInteraction()
 {
+    bool mainLoadProgressing = frame().page()->progress().isMainLoadProgressing();
+
+    LayerFlushThrottleState::Flags flags = LayerFlushThrottleState::UserIsInteracting | (mainLoadProgressing ? LayerFlushThrottleState::MainLoadProgressing : 0);
+    if (frame().page()->chrome().client().adjustLayerFlushThrottling(flags))
+        return;
+
     if (RenderView* view = renderView())
         view->compositor().disableLayerFlushThrottlingTemporarilyForInteraction();
 }
 
-void FrameView::updateLayerFlushThrottlingInAllFrames()
+void FrameView::loadProgressingStatusChanged()
 {
+    updateLayerFlushThrottling();
+    adjustTiledBackingCoverage();
+}
+
+void FrameView::updateLayerFlushThrottling()
+{
+    ASSERT(frame().isMainFrame());
+
     bool isMainLoadProgressing = frame().page()->progress().isMainLoadProgressing();
+
+    // See if the client is handling throttling.
+    LayerFlushThrottleState::Flags flags = isMainLoadProgressing ? LayerFlushThrottleState::MainLoadProgressing : 0;
+    if (frame().page()->chrome().client().adjustLayerFlushThrottling(flags))
+        return;
+
     for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
         if (RenderView* renderView = frame->contentRenderer())
             renderView->compositor().setLayerFlushThrottlingEnabled(isMainLoadProgressing);
@@ -4420,8 +4440,10 @@ void FrameView::setExposedRect(FloatRect exposedRect)
     // FIXME: We should support clipping to the exposed rect for subframes as well.
     if (!m_frame->isMainFrame())
         return;
-    if (TiledBacking* tiledBacking = this->tiledBacking())
+    if (TiledBacking* tiledBacking = this->tiledBacking()) {
+        adjustTiledBackingCoverage();
         tiledBacking->setTiledScrollingIndicatorPosition(exposedRect.location());
+    }
 
     if (auto* view = renderView())
         view->compositor().scheduleLayerFlush(false /* canThrottle */);

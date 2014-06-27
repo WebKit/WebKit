@@ -30,6 +30,7 @@
 #include "LayerTreeContext.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/LayerFlushThrottleState.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/ViewState.h>
 #include <functional>
@@ -118,6 +119,8 @@ public:
     virtual void setLayerHostingMode(LayerHostingMode) { }
 
     virtual bool markLayersVolatileImmediatelyIfPossible() { return true; }
+
+    virtual bool adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags) { return false; }
 
 protected:
     DrawingArea(DrawingAreaType, WebPage&);

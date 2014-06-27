@@ -290,9 +290,8 @@ public:
     bool fixedElementsLayoutRelativeToFrame() const;
 
     void disableLayerFlushThrottlingTemporarilyForInteraction();
-    void updateLayerFlushThrottlingInAllFrames();
-    void adjustTiledBackingCoverage();
     bool speculativeTilingEnabled() const { return m_speculativeTilingEnabled; }
+    void loadProgressingStatusChanged();
 
 #if ENABLE(DASHBOARD_SUPPORT)
     void updateAnnotatedRegions();
@@ -543,6 +542,9 @@ private:
     void forceLayoutParentViewIfNeeded();
     void performPostLayoutTasks();
     void autoSizeIfEnabled();
+
+    void updateLayerFlushThrottling();
+    void adjustTiledBackingCoverage();
 
     virtual void repaintContentRectangle(const IntRect&) override;
     virtual void contentsResized() override;

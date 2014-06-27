@@ -99,6 +99,8 @@ private:
 
     virtual void viewStateDidChange(WebCore::ViewState::Flags changed, bool wantsDidUpdateViewState) override;
 
+    virtual bool adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags) override;
+
     // GraphicsLayerClient
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) override { }
     virtual void notifyFlushRequired(const WebCore::GraphicsLayer*) override { }
@@ -143,6 +145,9 @@ private:
     WebCore::Timer<RemoteLayerTreeDrawingArea> m_layerFlushTimer;
     bool m_isFlushingSuspended;
     bool m_hasDeferredFlush;
+    bool m_isThrottlingLayerFlushes;
+    bool m_isLayerFlushThrottlingTemporarilyDisabledForInteraction;
+    bool m_isInitialThrottledLayerFlush;
 
     bool m_waitingForBackingStoreSwap;
     bool m_hadFlushDeferredWhileWaitingForBackingStoreSwap;

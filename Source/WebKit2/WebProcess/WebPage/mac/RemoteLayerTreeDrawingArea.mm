@@ -59,6 +59,9 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     , m_layerFlushTimer(this, &RemoteLayerTreeDrawingArea::layerFlushTimerFired)
     , m_isFlushingSuspended(false)
     , m_hasDeferredFlush(false)
+    , m_isThrottlingLayerFlushes(false)
+    , m_isLayerFlushThrottlingTemporarilyDisabledForInteraction(false)
+    , m_isInitialThrottledLayerFlush(false)
     , m_waitingForBackingStoreSwap(false)
     , m_hadFlushDeferredWhileWaitingForBackingStoreSwap(false)
     , m_displayRefreshMonitorsToNotify(nullptr)
@@ -226,7 +229,6 @@ void RemoteLayerTreeDrawingArea::updateScrolledExposedRect()
 #endif
 
     frameView->setExposedRect(m_scrolledExposedRect);
-    frameView->adjustTiledBackingCoverage();
 
     m_webPage.pageOverlayController().didChangeExposedRect();
 }
@@ -239,10 +241,45 @@ TiledBacking* RemoteLayerTreeDrawingArea::mainFrameTiledBacking() const
 
 void RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush()
 {
+    if (m_isFlushingSuspended) {
+        m_isLayerFlushThrottlingTemporarilyDisabledForInteraction = false;
+        m_hasDeferredFlush = true;
+        return;
+    }
+    if (m_isLayerFlushThrottlingTemporarilyDisabledForInteraction) {
+        m_isLayerFlushThrottlingTemporarilyDisabledForInteraction = false;
+        m_layerFlushTimer.startOneShot(0_ms);
+        return;
+    }
+
     if (m_layerFlushTimer.isActive())
         return;
 
-    m_layerFlushTimer.startOneShot(0);
+    const auto initialFlushDelay = 500_ms;
+    const auto flushDelay = 1500_ms;
+    auto throttleDelay = m_isThrottlingLayerFlushes ? (m_isInitialThrottledLayerFlush ? initialFlushDelay : flushDelay) : 0_ms;
+    m_isInitialThrottledLayerFlush = false;
+
+    m_layerFlushTimer.startOneShot(throttleDelay);
+}
+
+bool RemoteLayerTreeDrawingArea::adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags flags)
+{
+    if (flags & WebCore::LayerFlushThrottleState::UserIsInteracting)
+        m_isLayerFlushThrottlingTemporarilyDisabledForInteraction = true;
+
+    bool wasThrottlingLayerFlushes = m_isThrottlingLayerFlushes;
+    m_isThrottlingLayerFlushes = flags & WebCore::LayerFlushThrottleState::MainLoadProgressing;
+
+    if (!wasThrottlingLayerFlushes && m_isThrottlingLayerFlushes)
+        m_isInitialThrottledLayerFlush = true;
+
+    // Re-schedule the flush if we stopped throttling.
+    if (wasThrottlingLayerFlushes && !m_isThrottlingLayerFlushes && m_layerFlushTimer.isActive()) {
+        m_layerFlushTimer.stop();
+        scheduleCompositingLayerFlush();
+    }
+    return true;
 }
 
 void RemoteLayerTreeDrawingArea::layerFlushTimerFired(WebCore::Timer<RemoteLayerTreeDrawingArea>*)
