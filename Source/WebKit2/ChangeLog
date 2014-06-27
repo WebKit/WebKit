@@ -1,3 +1,12 @@
+2014-06-27  Dan Bernstein  <mitz@apple.com>
+
+        Remove unused definitions that were mistakenly added back in r170323 and then again in r170329
+        https://bugs.webkit.org/show_bug.cgi?id=134397
+
+        Reviewed by Geoff Garen.
+
+        * UIProcess/API/Cocoa/WKBackForwardList.mm:
+
 2014-06-26  Daniel Bates  <dabates@apple.com>
 
         [iOS][WK2] Distant focusable element may not be scrolled into view when focused using keyboard
