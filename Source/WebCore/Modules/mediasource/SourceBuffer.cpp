@@ -868,7 +868,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
             TrackBuffer& trackBuffer = m_trackBufferMap.add(textTrackPrivate->id(), TrackBuffer()).iterator->value;
 
             // 5.4.8 Add the track description for this track to the track buffer.
-            trackBuffer.description = trackBuffer.description;
+            trackBuffer.description = textTrackInfo.description;
 
             m_textCodecs.append(trackBuffer.description->codec());
         }

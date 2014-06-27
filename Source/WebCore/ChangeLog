@@ -1,3 +1,15 @@
+2014-06-27  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] media/media-source/media-source-tracks.html is crashy
+        https://bugs.webkit.org/show_bug.cgi?id=134385
+
+        Reviewed by Eric Carlson.
+
+        Fix the refactoring error (self assignment) introduced by r170488.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment):
+
 2014-06-27  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         XHR should keep attributes on instance
