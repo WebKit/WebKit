@@ -1,3 +1,14 @@
+2014-06-26  Dan Bernstein  <mitz@apple.com>
+
+        prepare-ChangeLog mangles Objective-C selectors for methods with parameter types that contain colons
+        https://bugs.webkit.org/show_bug.cgi?id=134383
+
+        Reviewed by Tim Horton.
+
+        * Scripts/prepare-ChangeLog:
+        (method_decl_to_selector): Strip out the return type and parameter types before splitting at
+        colons.
+
 2014-06-26  Brady Eidson  <beidson@apple.com>
 
         MiniBrowser should support a preference to override the default URL

@@ -658,6 +658,9 @@ sub method_decl_to_selector($)
 
     s/,\s*...//;
 
+    # Strip out the return type and parameter types. The extra )? takes care of most block parameter types.
+    s/\([^\)]*\)\)?//g;
+
     if (/:/) {
         my @components = split /:/;
         pop @components if (scalar @components > 1);
