@@ -1,3 +1,14 @@
+2014-06-27  Jeremy Jones  <jeremyj@apple.com>
+
+        removeCodedFrames should modify ref to TrackBuffer no a copy.
+        https://bugs.webkit.org/show_bug.cgi?id=134380
+
+        Reviewed by Daniel Bates.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::removeCodedFrames):
+        Iterate with a reference.
+
 2014-06-27  Zalan Bujtas  <zalan@apple.com>
 
         Set cliprect radius unconditionally in RenderLayer.
