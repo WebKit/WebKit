@@ -4168,7 +4168,9 @@ static ALWAYS_INLINE void do_free(void* ptr) {
 
   if (cl) {
     size_t byteSizeForClass = ByteSizeForClass(cl);
+#if !(CPU(ARM_THUMB2) && !CPU(APPLE_ARMV7S))
     RELEASE_ASSERT(!((reinterpret_cast<char*>(ptr) - reinterpret_cast<char*>(span->start << kPageShift)) % byteSizeForClass));
+#endif
     pageheap->CacheSizeClass(p, cl);
 
 #ifndef NO_TCMALLOC_SAMPLES

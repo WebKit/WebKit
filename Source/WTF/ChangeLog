@@ -1,3 +1,19 @@
+2014-06-27  Andreas Kling  <akling@apple.com>
+
+        [ARMv7] Skip one particularly expensive fastFree() alignment check.
+        <https://webkit.org/b/134402>
+
+        The size class alignment check in fastFree() was crazy expensive on ARMv7
+        due to its use of modulo. Disabling it shaves 470ms off of PLT main thread
+        time in the web process.
+
+        Note that this was very hard to identify in profiles due to TCO.
+
+        Reviewed by Gavin Barraclough.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+
 2014-06-26  Andreas Kling  <akling@apple.com>
 
         Bump FastMalloc thread cache max size to 1MB on iOS.
