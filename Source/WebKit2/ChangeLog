@@ -1,3 +1,13 @@
+2014-06-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix various leaks, RetainPtrs should adopt allocs
+        https://bugs.webkit.org/show_bug.cgi?id=134308
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _remoteObjectRegistry]):
+
 2014-06-27  Dan Bernstein  <mitz@apple.com>
 
         Remove unused definitions that were mistakenly added back in r170323 and then again in r170329
