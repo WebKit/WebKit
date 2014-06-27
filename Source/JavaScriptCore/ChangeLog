@@ -1,3 +1,21 @@
+2014-06-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Don't fold a UInt32ToNumber with DoOverflow to Identity since that would result in an Identity that takes an Int32 and returns a DoubleRep
+        https://bugs.webkit.org/show_bug.cgi?id=134412
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::setReplacement):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        * tests/stress/uint32-to-number-fold-constant-with-do-overflow.js: Added.
+        (foo):
+        (bar):
+        (baz):
+
 2014-06-27  Peyton Randolph  <prandolph@apple.com>
 
          Add feature flag for link long-press gesture.                                                                   

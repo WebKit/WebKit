@@ -103,7 +103,8 @@ private:
                 && m_node->child1()->child2()->isConstant()) {
                 JSValue shiftAmount = m_graph.valueOfJSConstant(
                     m_node->child1()->child2().node());
-                if (shiftAmount.isInt32() && (shiftAmount.asInt32() & 0x1f)) {
+                if (shiftAmount.isInt32() && (shiftAmount.asInt32() & 0x1f)
+                    && m_node->arithMode() != Arith::DoOverflow) {
                     m_node->convertToIdentity();
                     m_changed = true;
                     break;

@@ -199,6 +199,14 @@ public:
                 
                 if (node->hasStructure())
                     VALIDATE((node), !!node->structure());
+                
+                switch (node->op()) {
+                case Identity:
+                    VALIDATE((node), canonicalResultRepresentation(node->result()) == canonicalResultRepresentation(node->child1()->result()));
+                    break;
+                default:
+                    break;
+                }
             }
         }
         

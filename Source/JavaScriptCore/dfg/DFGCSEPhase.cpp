@@ -1054,6 +1054,15 @@ private:
         if (!replacement)
             return false;
         
+        if (!ASSERT_DISABLED
+            && canonicalResultRepresentation(m_currentNode->result()) != canonicalResultRepresentation(replacement->result())) {
+            startCrashing();
+            dataLog("CSE attempting to replace a node with a mismatched result: ", m_currentNode, " with ", replacement, "\n");
+            dataLog("\n");
+            m_graph.dump();
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        
         m_currentNode->convertToPhantom();
         eliminateIrrelevantPhantomChildren(m_currentNode);
         
