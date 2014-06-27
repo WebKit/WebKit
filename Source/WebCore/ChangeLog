@@ -1,3 +1,23 @@
+2014-06-27  Alex Christensen  <achristensen@webkit.org>
+
+        Prevent unnecessary register saving in css jit.
+        https://bugs.webkit.org/show_bug.cgi?id=133955
+
+        Reviewed by Geoff Garen.
+
+        * cssjit/FunctionCall.h:
+        (WebCore::FunctionCall::prepareAndCall):
+        (WebCore::FunctionCall::cleanupPostCall):
+        (WebCore::FunctionCall::saveAllocatedCallerSavedRegisters):
+        (WebCore::FunctionCall::restoreAllocatedCallerSavedRegisters):
+        (WebCore::FunctionCall::saveAllocatedRegisters): Renamed to saveAllocatedCallerSavedRegisters.
+        (WebCore::FunctionCall::restoreAllocatedRegisters): Renamed to restoreAllocatedCallerSavedRegisters.
+        Only push caller saved registers before function calls.
+        * cssjit/RegisterAllocator.h:
+        (WebCore::RegisterAllocator::isValidRegister):
+        Corrected register ranges.
+        (WebCore::RegisterAllocator::isCallerSavedRegister): Added.
+
 2014-06-27  Beth Dakin  <bdakin@apple.com>
 
         Custom scrollbars should not create ScrollbarPainters on Mac

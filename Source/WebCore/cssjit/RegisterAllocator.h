@@ -172,13 +172,30 @@ public:
     static bool isValidRegister(JSC::MacroAssembler::RegisterID registerID)
     {
 #if CPU(ARM64)
-        return registerID >= JSC::ARM64Registers::x0 && registerID <= JSC::ARM64Registers::x15;
+        return (registerID >= JSC::ARM64Registers::x0 && registerID <= JSC::ARM64Registers::x14)
+            || registerID == JSC::ARM64Registers::x19;
 #elif CPU(ARM_THUMB2)
         return registerID >= JSC::ARMRegisters::r0 && registerID <= JSC::ARMRegisters::r7 && registerID != JSC::ARMRegisters::r6;
 #elif CPU(X86_64)
-        return registerID >= JSC::X86Registers::eax && registerID <= JSC::X86Registers::r14;
+        return (registerID >= JSC::X86Registers::eax && registerID <= JSC::X86Registers::edx)
+            || (registerID >= JSC::X86Registers::esi && registerID <= JSC::X86Registers::r15);
 #else
 #error RegisterAllocator does not define the valid register range for the current architecture.
+#endif
+    }
+    
+    static bool isCallerSavedRegister(JSC::MacroAssembler::RegisterID registerID)
+    {
+        ASSERT(isValidRegister(registerID));
+#if CPU(ARM64)
+        return registerID >= JSC::ARM64Registers::x0 && registerID <= JSC::ARM64Registers::x14;
+#elif CPU(ARM_THUMB2)
+        return registerID >= JSC::ARMRegisters::r0 && registerID <= JSC::ARMRegisters::r3;
+#elif CPU(X86_64)
+        return (registerID >= JSC::X86Registers::eax && registerID <= JSC::X86Registers::edx)
+            || (registerID >= JSC::X86Registers::esi && registerID <= JSC::X86Registers::r11);
+#else
+#error RegisterAllocator does not define the valid caller saved register range for the current architecture.
 #endif
     }
 
