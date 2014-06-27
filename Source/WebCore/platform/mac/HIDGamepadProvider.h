@@ -30,6 +30,7 @@
 
 #include "GamepadProvider.h"
 #include "HIDGamepad.h"
+#include "Timer.h"
 #include <IOKit/hid/IOHIDManager.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
@@ -55,12 +56,15 @@ public:
     void deviceRemoved(IOHIDDeviceRef);
     void valuesChanged(IOHIDValueRef);
 
-    void setShouldDispatchCallbacks(bool shouldDispatchCallbacks) { m_shouldDispatchCallbacks = shouldDispatchCallbacks; }
-
 private:
     HIDGamepadProvider();
 
     std::pair<std::unique_ptr<HIDGamepad>, unsigned> removeGamepadForDevice(IOHIDDeviceRef);
+
+    void openAndScheduleManager();
+    void closeAndUnscheduleManager();
+
+    void connectionDelayTimerFired(Timer<HIDGamepadProvider>&);
 
     unsigned indexForNewlyConnectedDevice();
 
@@ -71,6 +75,8 @@ private:
 
     HashSet<GamepadProviderClient*> m_clients;
     bool m_shouldDispatchCallbacks;
+
+    Timer<HIDGamepadProvider> m_connectionDelayTimer;
 };
 
 } // namespace WebCore

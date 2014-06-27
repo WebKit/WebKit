@@ -29,10 +29,12 @@
 #if ENABLE(GAMEPAD)
 
 #include "GamepadProviderClient.h"
+#include "Logging.h"
 #include "PlatformGamepad.h"
-#include <wtf/MainThread.h>
 
 namespace WebCore {
+
+static const double ConnectionDelayInterval = 0.5;
 
 static RetainPtr<CFDictionaryRef> deviceMatchingDictionary(uint32_t usagePage, uint32_t usage)
 {
@@ -78,6 +80,7 @@ HIDGamepadProvider& HIDGamepadProvider::shared()
 
 HIDGamepadProvider::HIDGamepadProvider()
     : m_shouldDispatchCallbacks(false)
+    , m_connectionDelayTimer(this, &HIDGamepadProvider::connectionDelayTimerFired)
 {
     m_manager = adoptCF(IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone));
 
@@ -91,17 +94,7 @@ HIDGamepadProvider::HIDGamepadProvider()
     IOHIDManagerSetDeviceMatchingMultiple(m_manager.get(), matchingArray.get());
     IOHIDManagerRegisterDeviceMatchingCallback(m_manager.get(), deviceAddedCallback, this);
     IOHIDManagerRegisterDeviceRemovalCallback(m_manager.get(), deviceRemovedCallback, this);
-    IOHIDManagerScheduleWithRunLoop(m_manager.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-    IOHIDManagerOpen(m_manager.get(), kIOHIDOptionsTypeNone);
-
     IOHIDManagerRegisterInputValueCallback(m_manager.get(), deviceValuesChangedCallback, this);
-
-    // We'll immediately get a series of connection and value callbacks for already-connected gamepads
-    // but we don't want to notify WebCore of those events.
-    // This callOnMainThread call re-enables those callbacks after the runloop empties out.
-    callOnMainThread([]() {
-        HIDGamepadProvider::shared().setShouldDispatchCallbacks(true);
-    });
 }
 
 unsigned HIDGamepadProvider::indexForNewlyConnectedDevice()
@@ -113,18 +106,66 @@ unsigned HIDGamepadProvider::indexForNewlyConnectedDevice()
     return index;
 }
 
+void HIDGamepadProvider::connectionDelayTimerFired(Timer<HIDGamepadProvider>&)
+{
+    m_shouldDispatchCallbacks = true;
+}
+
+void HIDGamepadProvider::openAndScheduleManager()
+{
+    LOG(Gamepad, "HIDGamepadProvider opening/scheduling HID manager");
+
+    ASSERT(m_gamepadVector.isEmpty());
+    ASSERT(m_gamepadMap.isEmpty());
+
+    m_shouldDispatchCallbacks = false;
+
+    IOHIDManagerScheduleWithRunLoop(m_manager.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+    IOHIDManagerOpen(m_manager.get(), kIOHIDOptionsTypeNone);
+
+    // Any connections we are notified of within the ConnectionDelayInterval of listening likely represent
+    // devices that were already connected, so we suppress notifying clients of these.
+    m_connectionDelayTimer.startOneShot(ConnectionDelayInterval);
+}
+
+void HIDGamepadProvider::closeAndUnscheduleManager()
+{
+    LOG(Gamepad, "HIDGamepadProvider closing/unscheduling HID manager");
+
+    IOHIDManagerUnscheduleFromRunLoop(m_manager.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+    IOHIDManagerClose(m_manager.get(), kIOHIDOptionsTypeNone);
+
+    m_gamepadVector.clear();
+    m_gamepadMap.clear();
+
+    m_connectionDelayTimer.stop();
+}
+
 void HIDGamepadProvider::startMonitoringGamepads(GamepadProviderClient* client)
 {
+    bool shouldOpenAndScheduleManager = m_clients.isEmpty();
+
+    ASSERT(!m_clients.contains(client));
     m_clients.add(client);
+
+    if (shouldOpenAndScheduleManager)
+        openAndScheduleManager();
 }
 void HIDGamepadProvider::stopMonitoringGamepads(GamepadProviderClient* client)
 {
-    m_clients.remove(client);
+    ASSERT(m_clients.contains(client));
+
+    bool shouldCloseAndUnscheduleManager = m_clients.remove(client) && m_clients.isEmpty();
+
+    if (shouldCloseAndUnscheduleManager)
+        closeAndUnscheduleManager();
 }
 
 void HIDGamepadProvider::deviceAdded(IOHIDDeviceRef device)
 {
     ASSERT(!m_gamepadMap.get(device));
+
+    LOG(Gamepad, "HIDGamepadProvider device %p added", device);
 
     std::unique_ptr<HIDGamepad> gamepad = std::make_unique<HIDGamepad>(device);
     unsigned index = indexForNewlyConnectedDevice();
@@ -135,8 +176,18 @@ void HIDGamepadProvider::deviceAdded(IOHIDDeviceRef device)
     m_gamepadVector[index] = gamepad.get();
     m_gamepadMap.set(device, std::move(gamepad));
 
-    if (!m_shouldDispatchCallbacks)
+    if (!m_shouldDispatchCallbacks) {
+        // This added device is the result of us starting to monitor gamepads.
+        // We'll get notified of all connected devices during this current spin of the runloop
+        // and we don't want to tell the client about any of them.
+        // The m_connectionDelayTimer fires in a subsequent spin of the runloop after which
+        // any connection events are actual new devices.
+        m_connectionDelayTimer.startOneShot(0);
+
+        LOG(Gamepad, "Device %p was added while suppressing callbacks, so this should be an 'already connected' event", device);
+
         return;
+    }
 
     for (auto& client : m_clients)
         client->platformGamepadConnected(index);
@@ -144,11 +195,14 @@ void HIDGamepadProvider::deviceAdded(IOHIDDeviceRef device)
 
 void HIDGamepadProvider::deviceRemoved(IOHIDDeviceRef device)
 {
+    LOG(Gamepad, "HIDGamepadProvider device %p removed", device);
+
     std::pair<std::unique_ptr<HIDGamepad>, unsigned> removedGamepad = removeGamepadForDevice(device);
     ASSERT(removedGamepad.first);
 
-    if (!m_shouldDispatchCallbacks)
-        return;
+    // Any time we get a device removed callback we know it's a real event and not an 'already connected' event.
+    // We should always stop supressing callbacks when we receive such an event.
+    m_shouldDispatchCallbacks = true;
 
     for (auto& client : m_clients)
         client->platformGamepadDisconnected(removedGamepad.second);

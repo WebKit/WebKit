@@ -29,6 +29,7 @@
 
 #include "Gamepad.h"
 #include "GamepadProvider.h"
+#include "Logging.h"
 #include "NavigatorGamepad.h"
 #include "PlatformGamepad.h"
 
@@ -63,26 +64,34 @@ void GamepadManager::platformGamepadDisconnected(unsigned index)
 
 void GamepadManager::registerNavigator(NavigatorGamepad* navigator)
 {
+    LOG(Gamepad, "GamepadManager registering NavigatorGamepad %p", navigator);
+
     ASSERT(!m_navigators.contains(navigator));
     m_navigators.add(navigator);
 
     // FIXME: Monitoring gamepads will also be reliant on whether or not there are any
     // connected/disconnected event listeners.
     // Those event listeners will also need to register with the GamepadManager.
-    if (m_navigators.size() == 1)
+    if (m_navigators.size() == 1) {
+        LOG(Gamepad, "GamepadManager registered first navigator, is starting gamepad monitoring");
         GamepadProvider::shared().startMonitoringGamepads(this);
+    }
 }
 
 void GamepadManager::unregisterNavigator(NavigatorGamepad* navigator)
 {
+    LOG(Gamepad, "GamepadManager unregistering NavigatorGamepad %p", navigator);
+
     ASSERT(m_navigators.contains(navigator));
     m_navigators.remove(navigator);
 
     // FIXME: Monitoring gamepads will also be reliant on whether or not there are any
     // connected/disconnected event listeners.
     // Those event listeners will also need to register with the GamepadManager.
-    if (m_navigators.isEmpty())
+    if (m_navigators.isEmpty()) {
+        LOG(Gamepad, "GamepadManager unregistered last navigator, is stopping gamepad monitoring");
         GamepadProvider::shared().stopMonitoringGamepads(this);
+    }
 }
 
 } // namespace WebCore
