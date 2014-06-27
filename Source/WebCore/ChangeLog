@@ -1,3 +1,13 @@
+2014-06-27  Peyton Randolph  <prandolph@apple.com>
+
+        Add feature flag for link long-press gesture.
+        https://bugs.webkit.org/show_bug.cgi?id=134262
+
+        Reviewed by Enrica Casucci.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Add ENABLE_LINK_LONG_PRESS.
+
 2014-06-26  Brady Eidson  <beidson@apple.com>
 
         HIDGamepadProvider should only be active when someone is interested in Gamepads.

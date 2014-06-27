@@ -1,3 +1,13 @@
+2014-06-27  Peyton Randolph  <prandolph@apple.com>
+
+         Add feature flag for link long-press gesture.                                                                   
+         https://bugs.webkit.org/show_bug.cgi?id=134262                                                                  
+                                                                                                                         
+         Reviewed by Enrica Casucci.                                                                                     
+                                                                                                                         
+         * Configurations/FeatureDefines.xcconfig:                                                                       
+         Add ENABLE_LINK_LONG_PRESS. 
+
 2014-06-26  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Fix touch-scrollable elements with overflow:scroll on just one axis, and RTL scrolling
