@@ -1,3 +1,21 @@
+2014-06-27  Mahesh Kulkarni  <mahesh.kk@samsung.com>
+
+        [XHR] open method must uppercase only standard method types
+        https://bugs.webkit.org/show_bug.cgi?id=134264
+
+        Reviewed by Darin Adler.
+
+        As per step-5 of http://xhr.spec.whatwg.org/#the-open()-method only
+        DELETE, PUT, GET, POST, OPTIONS, HEAD are standard. Use other methods as is without case change.
+        All tests from w3c-test suite pass http://w3c-test.org/XMLHttpRequest/open-method-case-sensitive.htm.
+        This merges blink changes from r176592.
+
+        Tests: http/tests/xmlhttprequest/xmlhttprequest-open-method-allowed.html
+               http/tests/xmlhttprequest/xmlhttprequest-open-method-case-insensitive.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::uppercaseKnownHTTPMethod):
+
 2014-06-27  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
 
         Increase priority on SharedTimer source.

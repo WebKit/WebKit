@@ -1,3 +1,19 @@
+2014-06-27  Mahesh Kulkarni  <mahesh.kk@samsung.com>
+
+        [XHR] open method must uppercase only standard method types
+        https://bugs.webkit.org/show_bug.cgi?id=134264
+
+        Reviewed by Darin Adler.
+
+        All tests from w3c-test suite pass http://w3c-test.org/XMLHttpRequest/open-method-case-sensitive.htm.
+        This merges blink changes from r176592.
+
+        * http/tests/xmlhttprequest/resources/echo-request-method.php: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-open-method-allowed-expected.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-open-method-allowed.html: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-open-method-case-insensitive-expected.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-open-method-case-insensitive.html: Added.
+
 2014-06-26  Benjamin Poulain  <benjamin@webkit.org>
 
         iOS 8 beta 2 ES6 'Set' clear() broken
