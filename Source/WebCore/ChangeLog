@@ -1,3 +1,19 @@
+2014-06-27  Bear Travis  <betravis@adobe.com>
+
+        [Feature Queries] Fix feature queries build on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=134359
+
+        Reviewed by Antti Koivisto.
+
+        Update the XCode project and Feature Queries code to build on Mac.
+
+        There are existing tests for supports in the LayoutTests/css3 directory.
+
+        * WebCore.xcodeproj/project.pbxproj: Add the Feature Queries files
+        to the XCode project.
+        * css/CSSGrammar.y.in: Update CSSParserExpression to CSSParserValueList.
+        * css/DOMWindowCSS.idl: Add ImplementationLacksVTable metadata.
+
 2014-06-27  Jer Noble  <jer.noble@apple.com>
 
         [MSE] media/media-source/media-source-tracks.html is crashy

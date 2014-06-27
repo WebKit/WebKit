@@ -6511,6 +6511,10 @@
 		FD62F52E145898D80094B0ED /* AudioSourceProviderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = FD62F52D145898D80094B0ED /* AudioSourceProviderClient.h */; };
 		FD671A77159BB07000197559 /* MediaStreamAudioSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD671A74159BB07000197559 /* MediaStreamAudioSourceNode.cpp */; };
 		FD671A78159BB07000197559 /* MediaStreamAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD671A75159BB07000197559 /* MediaStreamAudioSourceNode.h */; };
+		FD677738195CAF3D0072E0D3 /* DOMWindowCSS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD677735195CAB200072E0D3 /* DOMWindowCSS.cpp */; };
+		FD677739195CAFBA0072E0D3 /* CSSSupportsRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD677734195CAB200072E0D3 /* CSSSupportsRule.cpp */; };
+		FD67773A195CB14A0072E0D3 /* JSCSSSupportsRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD677736195CAB7D0072E0D3 /* JSCSSSupportsRule.cpp */; };
+		FD67773B195CB1E60072E0D3 /* JSDOMWindowCSS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD677737195CAB7D0072E0D3 /* JSDOMWindowCSS.cpp */; };
 		FD6ED2C3136B8E42003CF072 /* DynamicsCompressorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD6ED2C1136B8E42003CF072 /* DynamicsCompressorNode.cpp */; };
 		FD6ED2C4136B8E42003CF072 /* DynamicsCompressorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD6ED2C2136B8E42003CF072 /* DynamicsCompressorNode.h */; };
 		FD6ED2C7136B8E66003CF072 /* DynamicsCompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD6ED2C5136B8E66003CF072 /* DynamicsCompressor.cpp */; };
@@ -14068,6 +14072,10 @@
 		FD671A74159BB07000197559 /* MediaStreamAudioSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamAudioSourceNode.cpp; sourceTree = "<group>"; };
 		FD671A75159BB07000197559 /* MediaStreamAudioSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamAudioSourceNode.h; sourceTree = "<group>"; };
 		FD671A76159BB07000197559 /* MediaStreamAudioSourceNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaStreamAudioSourceNode.idl; sourceTree = "<group>"; };
+		FD677734195CAB200072E0D3 /* CSSSupportsRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSSupportsRule.cpp; sourceTree = "<group>"; };
+		FD677735195CAB200072E0D3 /* DOMWindowCSS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowCSS.cpp; sourceTree = "<group>"; };
+		FD677736195CAB7D0072E0D3 /* JSCSSSupportsRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSCSSSupportsRule.cpp; path = DerivedSources/WebCore/JSCSSSupportsRule.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		FD677737195CAB7D0072E0D3 /* JSDOMWindowCSS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMWindowCSS.cpp; path = DerivedSources/WebCore/JSDOMWindowCSS.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD6ED2C1136B8E42003CF072 /* DynamicsCompressorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicsCompressorNode.cpp; sourceTree = "<group>"; };
 		FD6ED2C2136B8E42003CF072 /* DynamicsCompressorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicsCompressorNode.h; sourceTree = "<group>"; };
 		FD6ED2C5136B8E66003CF072 /* DynamicsCompressor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicsCompressor.cpp; sourceTree = "<group>"; };
@@ -19198,11 +19206,13 @@
 				BC46C2050C0DDCA10020CFC3 /* JSCSSStyleRule.h */,
 				BCC5BDFE0C0E93110011C2DB /* JSCSSStyleSheet.cpp */,
 				BCC5BDFF0C0E93110011C2DB /* JSCSSStyleSheet.h */,
+				FD677736195CAB7D0072E0D3 /* JSCSSSupportsRule.cpp */,
 				FC84802E167AB444008CD100 /* JSCSSSupportsRule.h */,
 				14CF78A309F58CBF00EB3665 /* JSCSSValue.cpp */,
 				14CF78A509F58CD800EB3665 /* JSCSSValue.h */,
 				A8D05FA90A23B30F005E7203 /* JSCSSValueList.cpp */,
 				A8D05FAA0A23B30F005E7203 /* JSCSSValueList.h */,
+				FD677737195CAB7D0072E0D3 /* JSDOMWindowCSS.cpp */,
 				FC9E0E4B16419C1E00392BE3 /* JSDOMWindowCSS.h */,
 				BC3C39B40C0D3D8D005F4D7A /* JSMediaList.cpp */,
 				BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */,
@@ -22021,6 +22031,7 @@
 				A8EA80000A19516E00A8EF5F /* CSSStyleSheet.cpp */,
 				A8EA7FFF0A19516E00A8EF5F /* CSSStyleSheet.h */,
 				858C39100AA8FF0000B187A4 /* CSSStyleSheet.idl */,
+				FD677734195CAB200072E0D3 /* CSSSupportsRule.cpp */,
 				FC63BDB1167AABAC00F9380F /* CSSSupportsRule.h */,
 				FC63BDB2167AABAC00F9380F /* CSSSupportsRule.idl */,
 				BC80C9850CD294EE00A0B7B3 /* CSSTimingFunctionValue.cpp */,
@@ -22047,6 +22058,7 @@
 				E100EE741546EAC100BA11D1 /* DeprecatedStyleBuilder.h */,
 				4A4F48A716B0DFC000EDBB29 /* DocumentRuleSets.cpp */,
 				4A4F48A816B0DFC000EDBB29 /* DocumentRuleSets.h */,
+				FD677735195CAB200072E0D3 /* DOMWindowCSS.cpp */,
 				FC9A0F72164094CF003D6B8D /* DOMWindowCSS.h */,
 				FC9A0F73164094CF003D6B8D /* DOMWindowCSS.idl */,
 				FBDB619A16D6032A00BB3394 /* ElementRuleCollector.cpp */,
@@ -27307,6 +27319,7 @@
 				A80E6CF40A1989CA007FB8C5 /* CSSShadowValue.cpp in Sources */,
 				A80E6CEF0A1989CA007FB8C5 /* CSSStyleRule.cpp in Sources */,
 				A8EA80080A19516E00A8EF5F /* CSSStyleSheet.cpp in Sources */,
+				FD677739195CAFBA0072E0D3 /* CSSSupportsRule.cpp in Sources */,
 				BC80C9870CD294EE00A0B7B3 /* CSSTimingFunctionValue.cpp in Sources */,
 				A882DA201593846A000115ED /* CSSToStyleMap.cpp in Sources */,
 				371F53EA0D2704F900ECE0D5 /* CSSUnicodeRangeValue.cpp in Sources */,
@@ -27580,6 +27593,7 @@
 				31C0FF4D0E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.mm in Sources */,
 				85C7F5E80AAFBAFB004014DD /* DOMWheelEvent.mm in Sources */,
 				1403B99809EB13AF00797C7F /* DOMWindow.cpp in Sources */,
+				FD677738195CAF3D0072E0D3 /* DOMWindowCSS.cpp in Sources */,
 				517FBA1E151AB17C00B57959 /* DOMWindowExtension.cpp in Sources */,
 				51D719B6181106E00016DC51 /* DOMWindowIndexedDatabase.cpp in Sources */,
 				97B38E28151C4273004622E9 /* DOMWindowNotifications.cpp in Sources */,
@@ -28112,6 +28126,7 @@
 				BC5825F30C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp in Sources */,
 				BC46C2060C0DDCA10020CFC3 /* JSCSSStyleRule.cpp in Sources */,
 				BCC5BE000C0E93110011C2DB /* JSCSSStyleSheet.cpp in Sources */,
+				FD67773A195CB14A0072E0D3 /* JSCSSSupportsRule.cpp in Sources */,
 				14CF78A409F58CBF00EB3665 /* JSCSSValue.cpp in Sources */,
 				BC20FB7F0C0E8E6C00D1447F /* JSCSSValueCustom.cpp in Sources */,
 				A8D05FAB0A23B30F005E7203 /* JSCSSValueList.cpp in Sources */,
@@ -28166,6 +28181,7 @@
 				2E37E00512DBC5A400A6B233 /* JSDOMURL.cpp in Sources */,
 				1403BA0C09EB18C700797C7F /* JSDOMWindow.cpp in Sources */,
 				BC6932730D7E293900AE44D1 /* JSDOMWindowBase.cpp in Sources */,
+				FD67773B195CB1E60072E0D3 /* JSDOMWindowCSS.cpp in Sources */,
 				BCD9C2620C17AA67005C90A2 /* JSDOMWindowCustom.cpp in Sources */,
 				BCBFB53C0DCD29CF0019B3E5 /* JSDOMWindowShell.cpp in Sources */,
 				FD7868B9136B999200D403DF /* JSDynamicsCompressorNode.cpp in Sources */,

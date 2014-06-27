@@ -682,7 +682,7 @@ supports_declaration_condition:
     '(' maybe_space property ':' maybe_space expr priority ')' maybe_space {
         $$ = false;
         CSSParser* p = static_cast<CSSParser*>(parser);
-        std::unique_ptr<CSSParserExpression> propertyValue($6);
+        std::unique_ptr<CSSParserValueList> propertyValue($6);
         if ($3 && propertyValue) {
             p->m_valueList = std::move(propertyValue);
             int oldParsedProperties = p->m_parsedProperties.size();
