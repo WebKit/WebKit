@@ -47,7 +47,6 @@
 #include "PageCache.h"
 #include "PageGroup.h"
 #include "ScrollingCoordinator.h"
-#include "Settings.h"
 #include "VisitedLinkStore.h"
 #include <wtf/text/CString.h>
 

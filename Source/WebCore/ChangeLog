@@ -1,3 +1,15 @@
+2014-06-27  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Remove unnecessary #include in HistoryController
+        https://bugs.webkit.org/show_bug.cgi?id=134369
+
+        Reviewed by Daniel Bates.
+
+        After the landing of https://webkit.org/b/130099, HistoryController doesn't need
+        WebCore::Settings class. So we can remove the related header.
+
+        * loader/HistoryController.cpp:
+
 2014-06-26  Jeongeun Kim  <je_julie.kim@samsung.com>
 
         REGRESSION (r170287): SVGDocumentExtensions::rebuildElements() called on removed element
