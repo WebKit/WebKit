@@ -1,3 +1,60 @@
+2014-06-27  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Interaction between auto-placement and column / row spanning
+        https://bugs.webkit.org/show_bug.cgi?id=110633
+
+        Reviewed by Sergio Villar Senin.
+
+        Modify auto-placement algorithm in order to support span in both
+        definite and automatic positions.
+
+        This patch fixes examples like:
+        grid-row: auto;
+        grid-column: 2 / span 3;
+
+        And also:
+        grid-row: auto;
+        grid-column: span 3;
+
+        Tests: fast/css-grid-layout/grid-item-auto-placement-automatic-span.html
+               fast/css-grid-layout/grid-item-auto-placement-definite-span.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::GridIterator::isEmptyAreaEnough): New method that
+        checks if a grid area is or not empty.
+        (WebCore::RenderGrid::GridIterator::nextEmptyGridArea): Updated method
+        that now receives two arguments with the span value in both directions.
+        (WebCore::RenderGrid::ensureGridSize): Renamed from gridRow(). Adapted
+        method to grow in both directions at the same time if needed. It ensures
+        that the grid is big enough to insert a new item.
+        (WebCore::RenderGrid::insertItemIntoGrid): Only leave the method that
+        receives a GridCoordinate. It uses ensureGridSize() before inserting the
+        item in the grid.
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator): Ensure that
+        the grid is big enough to place the largest span for auto-positioned
+        items.
+        (WebCore::RenderGrid::createEmptyGridAreaAtSpecifiedPositionsOutsideGrid):
+        New method that returns a GridCoordinate outside current grid with the
+        requested dimensions.
+        (WebCore::RenderGrid::placeSpecifiedMajorAxisItemsOnGrid): Adapted
+        method to calculate the item's span and use the new version of
+        nextEmptyGridArea(). If an empty area is not found it uses
+        createEmptyGridAreaAtSpecifiedPositionsOutsideGrid() to place the item.
+        (WebCore::RenderGrid::placeAutoMajorAxisItemOnGrid): Ditto.
+        (WebCore::RenderGrid::growGrid): Renamed to ensureGridSize().
+        * rendering/RenderGrid.h: Modify methods headers and add new method
+        signature.
+        * rendering/style/GridCoordinate.h:
+        (WebCore::GridSpan::integerSpan): Add new simple method to return the
+        span value of a position.
+        * rendering/style/GridResolvedPosition.cpp:
+        (WebCore::GridResolvedPosition::resolveGridPositionsFromAutoPlacementPosition):
+        Implement method to take into account span in auto-placement algorithm.
+        (WebCore::GridResolvedPosition::adjustGridPositionsFromStyle): Add new
+        checks related with named grid line spans in auto-positioned items,
+        which is not allowed according to the spec.
+        * rendering/style/GridResolvedPosition.h: Update method header.
+
 2014-06-27  Mahesh Kulkarni  <mahesh.kk@samsung.com>
 
         [XHR] open method must uppercase only standard method types

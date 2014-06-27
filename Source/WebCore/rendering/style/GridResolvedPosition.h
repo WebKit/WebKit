@@ -71,7 +71,7 @@ public:
         return GridResolvedPosition(resolvedPosition);
     }
 
-    static GridSpan resolveGridPositionsFromAutoPlacementPosition(const RenderBox&, GridTrackSizingDirection, const GridResolvedPosition&);
+    static GridSpan resolveGridPositionsFromAutoPlacementPosition(const RenderStyle&, const RenderBox&, GridTrackSizingDirection, const GridResolvedPosition&);
     static void adjustNamedGridItemPosition(const RenderStyle&, GridPosition&, GridPositionSide);
     static void adjustGridPositionsFromStyle(const RenderStyle&, GridPosition& initialPosition, GridPosition& finalPosition, GridPositionSide initialPositionSide, GridPositionSide finalPositionSide);
     static std::unique_ptr<GridSpan> resolveGridPositionsFromStyle(const RenderStyle&, const RenderBox&, GridTrackSizingDirection);

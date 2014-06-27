@@ -70,11 +70,11 @@ private:
     LayoutUnit computeUsedBreadthOfSpecifiedLength(GridTrackSizingDirection, const Length&) const;
     void resolveContentBasedTrackSizingFunctions(GridTrackSizingDirection, GridSizingData&);
 
-    void growGrid(GridTrackSizingDirection);
-    void insertItemIntoGrid(RenderBox*, const GridResolvedPosition& rowTrack, const GridResolvedPosition& columnTrack);
+    void ensureGridSize(size_t maximumRowIndex, size_t maximumColumnIndex);
     void insertItemIntoGrid(RenderBox*, const GridCoordinate&);
     void placeItemsOnGrid();
     void populateExplicitGridAndOrderIterator();
+    std::unique_ptr<GridCoordinate> createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(const RenderBox*, GridTrackSizingDirection, const GridSpan&) const;
     void placeSpecifiedMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
     void placeAutoMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
     void placeAutoMajorAxisItemOnGrid(RenderBox*);

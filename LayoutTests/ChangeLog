@@ -1,3 +1,19 @@
+2014-06-27  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Interaction between auto-placement and column / row spanning
+        https://bugs.webkit.org/show_bug.cgi?id=110633
+
+        Reviewed by Sergio Villar Senin.
+
+        Add new specific test cases for span in auto-placement algorithm.
+
+        * fast/css-grid-layout/grid-item-auto-placement-automatic-span-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-auto-placement-automatic-span.html: Added.
+        * fast/css-grid-layout/grid-item-auto-placement-definite-span-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-auto-placement-definite-span.html: Added.
+        * fast/css-grid-layout/grid-item-spanning-resolution.html: Update test
+        case now that span in auto-positioned items is supported.
+
 2014-06-27  Mahesh Kulkarni  <mahesh.kk@samsung.com>
 
         [XHR] open method must uppercase only standard method types

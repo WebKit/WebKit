@@ -1,0 +1,10 @@
+Thist test checks that span is supported in auto-placement for automatic positions.
+
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
