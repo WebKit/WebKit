@@ -1,3 +1,18 @@
+2014-06-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        XHR should keep attributes on instance
+        https://bugs.webkit.org/show_bug.cgi?id=134363
+
+        Reviewed by Sam Weinig.
+
+        Test: js/dom/xhr-prototype-define-property.html
+
+        Having them on the prototype broke some sites due to the fact that these DOM attributes are currently 
+        not configurable. Once we make them configurable, we can move XHR attributes back to the prototype.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (InterfaceRequiresAttributesOnInstanceForCompatibility):
+
 2014-06-27  Jeremy Jones  <jeremyj@apple.com>
 
         removeCodedFrames should modify ref to TrackBuffer no a copy.

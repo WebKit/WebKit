@@ -1,3 +1,15 @@
+2014-06-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        XHR should keep attributes on instance
+        https://bugs.webkit.org/show_bug.cgi?id=134363
+
+        Reviewed by Sam Weinig.
+
+        Added a new test for defining properties on XHR prototype.
+
+        * js/dom/xhr-prototype-define-property-expected.txt: Added.
+        * js/dom/xhr-prototype-define-property.html: Added.
+
 2014-06-27  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Interaction between auto-placement and column / row spanning
