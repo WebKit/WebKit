@@ -1432,9 +1432,14 @@ void SelectorCodeGenerator::addFlagsToElementStyleFromContext(Assembler::Registe
     // FIXME: We should look into doing something smart in MacroAssembler instead.
     Assembler::Address flagAddress(childStyle, RenderStyle::noninheritedFlagsMemoryOffset() + RenderStyle::NonInheritedFlags::flagsMemoryOffset());
 #if CPU(ARM_THUMB2)
-    m_assembler.or32(Assembler::TrustedImm32(newFlag & 0xffffffff), flagAddress);
-    Assembler::Address flagHighBits = flagAddress.withOffset(4);
-    m_assembler.or32(Assembler::TrustedImm32(newFlag >> 32), flagHighBits);
+    int32_t flagLowBits = newFlag & 0xffffffff;
+    int32_t flagHighBits = newFlag >> 32;
+    if (flagLowBits)
+        m_assembler.or32(Assembler::TrustedImm32(flagLowBits), flagAddress);
+    if (flagHighBits) {
+        Assembler::Address flagHighAddress = flagAddress.withOffset(4);
+        m_assembler.or32(Assembler::TrustedImm32(flagHighBits), flagHighAddress);
+    }
 #elif CPU(X86_64) || CPU(ARM64)
     LocalRegister flags(m_registerAllocator);
     m_assembler.load64(flagAddress, flags);
