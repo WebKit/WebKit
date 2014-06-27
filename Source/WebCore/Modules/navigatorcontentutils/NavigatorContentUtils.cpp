@@ -103,16 +103,14 @@ static bool isProtocolWhitelisted(const String& scheme)
 
 static bool verifyProtocolHandlerScheme(const String& scheme, ExceptionCode& ec)
 {
+    if (isProtocolWhitelisted(scheme))
+        return true;
+
     if (scheme.startsWith("web+")) {
         // The specification requires that the length of scheme is at least five characters (including 'web+' prefix).
         if (scheme.length() >= 5 && isValidProtocol(scheme))
             return true;
-        ec = SECURITY_ERR;
-        return false;
     }
-
-    if (isProtocolWhitelisted(scheme))
-        return true;
 
     ec = SECURITY_ERR;
     return false;

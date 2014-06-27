@@ -1,3 +1,17 @@
+2014-06-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Rearrange conditions to find invalid protocol in NavigatorContentUtils::verifyProtocolHandlerScheme()
+        https://bugs.webkit.org/show_bug.cgi?id=134289
+
+        Reviewed by Darin Adler.
+
+        If we do early return when there is invalid protocol, we're able to avoid unnecessary call flow.
+
+        No new tests, covered by existing tests.
+
+        * Modules/navigatorcontentutils/NavigatorContentUtils.cpp:
+        (WebCore::verifyProtocolHandlerScheme):
+
 2014-06-26  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK1] Use native touch event's timestamp for DOM touch event
