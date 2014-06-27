@@ -1,3 +1,16 @@
+2014-06-27  Martin Hodovan  <mhodovan.u-szeged@partner.samsung.com>
+
+        REGRESSION (r168685): css calc() expression fails 
+        https://bugs.webkit.org/show_bug.cgi?id=134059
+
+        Added test demonstrates that expressions like
+        'calc((100% - 20px) / 3' work correctly again.
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/calc-percentage-pixel-expected.html: Added.
+        * fast/css/calc-percentage-pixel.html: Added.
+
 2014-06-27  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Import latest Media Source tests from W3C test suite

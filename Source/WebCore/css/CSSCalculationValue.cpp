@@ -493,14 +493,14 @@ private:
                 return leftType;
             return CSSPrimitiveValue::CSS_UNKNOWN;
         }
-        case CalcPercentLength:
-        case CalcPercentNumber:
         case CalcAngle:
             return CSSPrimitiveValue::CSS_DEG;
         case CalcTime:
             return CSSPrimitiveValue::CSS_MS;
         case CalcFrequency:
             return CSSPrimitiveValue::CSS_HZ;
+        case CalcPercentLength:
+        case CalcPercentNumber:
         case CalcOther:
             return CSSPrimitiveValue::CSS_UNKNOWN;
         }

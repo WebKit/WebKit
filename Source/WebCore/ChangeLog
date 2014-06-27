@@ -1,3 +1,19 @@
+2014-06-27  Martin Hodovan  <mhodovan.u-szeged@partner.samsung.com>
+
+        REGRESSION (r168685): css calc() expression fails 
+        https://bugs.webkit.org/show_bug.cgi?id=134059
+
+        The expression 'calc((100% - 20px) / 3' did not work properly after r168685,
+        because primitiveType() function in CSSCalculationValue.cpp has handled
+        CalcPercentLength and CalcPercentNumber categories as if they were angles.
+        The patch fixes this incorrect behavior.
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/css/calc-percentage-pixel.html
+
+        * css/CSSCalculationValue.cpp:
+
 2014-06-27  Jer Noble  <jer.noble@apple.com>
 
         [MSE] http/tests/media/media-source/mediasource-append-buffer.html is failing
