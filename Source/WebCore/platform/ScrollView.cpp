@@ -860,7 +860,7 @@ IntPoint ScrollView::rootViewToTotalContents(const IntPoint& rootViewPoint) cons
         return convertFromRootView(rootViewPoint);
 
     IntPoint viewPoint = convertFromRootView(rootViewPoint);
-    return viewPoint + scrollOffset();
+    return viewPoint + scrollOffset() - IntSize(0, topContentInset());
 }
 
 IntPoint ScrollView::windowToContents(const IntPoint& windowPoint) const

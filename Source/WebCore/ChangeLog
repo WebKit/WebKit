@@ -1,3 +1,20 @@
+2014-06-27  Beth Dakin  <bdakin@apple.com>
+
+        ScrollView::rootViewToTotalContents() needs to take topContentInset into account
+        https://bugs.webkit.org/show_bug.cgi?id=134415
+        -and corresponding-
+        <rdar://problem/17473633>
+
+        Reviewed by Simon Fraser.
+
+        This affects hit testing in headers aka PageBanners.
+
+        The root view will be anchored above the start of the total contents if there is a 
+        topContentInset, so the inset value should be subtracted to get into the right 
+        coordinate space here.
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::rootViewToTotalContents):
+
 2014-06-27  Antti Koivisto  <antti@apple.com>
 
         Flush throttling with remote layers
