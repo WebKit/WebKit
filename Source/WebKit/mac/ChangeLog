@@ -1,3 +1,23 @@
+2014-06-27  Sam Weinig  <sam@webkit.org>
+
+        InfoClick (from Nisus Software) dies on viewing found items
+        <rdar://problem/17395601>
+        https://bugs.webkit.org/show_bug.cgi?id=134410
+
+        Reviewed by Andy Estes.
+
+        InfoClick was calling -[WebPreferences setPrivateBrowsingEnabled:] before
+        setting up a WebView (or anything else that would have set up WebKitSystemInterface),
+        which now requires a set up WebKitSystemInterface. We can fix this by initializing
+        it from +[WebPreferences initialize].
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        Add call to InitWebCoreSystemInterface().
+
+        (+[WebPreferences _switchNetworkLoaderToNewTestingSession]):
+        Remove now unnecessary call to InitWebCoreSystemInterface().
+
 2014-06-27  Peyton Randolph  <prandolph@apple.com>
 
         Add feature flag for link long-press gesture.

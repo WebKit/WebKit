@@ -394,6 +394,7 @@ public:
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
 #endif
+    InitWebCoreSystemInterface();
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         @"Times",                       WebKitStandardFontPreferenceKey,
@@ -1781,7 +1782,6 @@ static NSString *classIBCreatorID = nil;
 
 + (void)_switchNetworkLoaderToNewTestingSession
 {
-    InitWebCoreSystemInterface();
     NetworkStorageSession::switchToNewTestingSession();
 }
 
