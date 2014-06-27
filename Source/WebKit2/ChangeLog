@@ -1,5 +1,30 @@
 2014-06-26  Tim Horton  <timothy_horton@apple.com>
 
+        [WK2] Pinch-zoom shadows can overlap headers and footers
+        https://bugs.webkit.org/show_bug.cgi?id=134372
+        <rdar://problem/16004095>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::shadowLayerPositionForFrame):
+        (WebKit::shadowLayerBoundsForFrame):
+        Compute the initial shadow layer and shadow bounds exactly as RenderLayerCompositor does
+        (in updateRootLayerPosition and friends). Also, clip the shadow layer to the old document rect,
+        otherwise it can extend over top of the header/footers. The content is automatically clipped to
+        this rect by the root content layer, but the shadow is outside of that.
+
+        (WebKit::TiledCoreAnimationDrawingArea::applyTransientZoomToLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::commitTransientZoom):
+        Pass all of the arguments to constrainScrollPositionForOverhang, not just half of them.
+        There's still a bug where we constrain incorrectly with header/footer layers, but that
+        will be addressed elsewhere.
+
+        (WebKit::TiledCoreAnimationDrawingArea::applyTransientZoomToPage):
+        Make use of the new helpers.
+
+2014-06-26  Tim Horton  <timothy_horton@apple.com>
+
         Don't leak WKBrowsingContextControllers
         https://bugs.webkit.org/show_bug.cgi?id=134368
         <rdar://problem/17476582>

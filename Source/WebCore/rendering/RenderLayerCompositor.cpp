@@ -3001,7 +3001,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
 #ifndef NDEBUG
         m_layerForHeader->setName("header");
 #endif
-        m_scrollLayer->addChildBelow(m_layerForHeader.get(), m_rootContentLayer.get());
+        m_scrollLayer->addChildAbove(m_layerForHeader.get(), m_rootContentLayer.get());
         m_renderView.frameView().addPaintPendingMilestones(DidFirstFlushForHeaderLayer);
     }
 
@@ -3042,7 +3042,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForFooter(bool wantsLayer)
 #ifndef NDEBUG
         m_layerForFooter->setName("footer");
 #endif
-        m_scrollLayer->addChildBelow(m_layerForFooter.get(), m_rootContentLayer.get());
+        m_scrollLayer->addChildAbove(m_layerForFooter.get(), m_rootContentLayer.get());
     }
 
     float totalContentHeight = m_rootContentLayer->size().height() + m_renderView.frameView().headerHeight() + m_renderView.frameView().footerHeight();
