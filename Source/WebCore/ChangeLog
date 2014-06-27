@@ -1,3 +1,29 @@
+2014-06-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Expose getter and setter functions for attributes named type
+        https://bugs.webkit.org/show_bug.cgi?id=134300
+
+        Reviewed by Martin Robinson.
+
+        We skip those because the getter conflicts with the get_type()
+        function of all GObjects. We should use a different name for them. As
+        a general rule we use the last word of the class name, something like:
+
+          webkit_dom_blob_get_type() -> webkit_dom_blob_get_blob_type()
+          webkit_dom_event_get_type() -> webkit_dom_event_get_event_type()
+
+        It's consistent with other existing DOM methods like
+        webkit_dom_xpath_result_get_result_type() or webkit_dom_css_value_get_css_value_type().
+        This patch also adds some exceptions for particular cases.
+
+        * bindings/gobject/webkitdom.symbols: Add new public symbols.
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GetFunctionSigName): Helper function to return the function name
+        that takes into account all exceptions when generating getters and
+        setters of attributes named type. Otherwise the name is returned unmodified.
+        (GenerateFunction): Use GetFunctionSigName().
+        (GenerateFunctions): Do not skip functions for type attributes.
+
 2014-06-27  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Remove unnecessary #include in HistoryController

@@ -968,6 +968,46 @@ sub ParamCanBeNull {
     return 0;
 }
 
+sub GetFunctionSignatureName {
+    my ($interfaceName, $function) = @_;
+
+    my $signatureName = decamelize($function->signature->name);
+
+    return $signatureName if $signatureName ne "type";
+
+    # For HTML type attribute use type_attr.
+    # Example: webkit_dom_html_link_element_get_type_attr()
+    my $contentAttributeName = $codeGenerator->ContentAttributeName(\%implIncludes, $interfaceName, $function);
+    if ($contentAttributeName) {
+        return "type_attr" if $contentAttributeName eq "WebCore::HTMLNames::typeAttr";
+    }
+
+    # For methods returning a MIME type use content_type.
+    # Examples: webkit_dom_style_sheet_get_content_type(), webkit_dom_dom_mime_type_get_content_type()
+    if ($interfaceName eq "StyleSheet" || $interfaceName eq "DOMMimeType") {
+        return "content_type";
+    }
+
+    # For HTMLFieldSet use field_set_type.
+    # Example: webkit_dom_html_field_set_element_get_field_set_type()
+    if ($interfaceName eq "HTMLFieldSet") {
+        return "field_set_type";
+    }
+
+    # For any other cases use the last word of the interface name.
+    # Examples: webkit_dom_blob_get_blob_type(), webkit_dom_event_get_event_type()
+    my @nameTokens = split('_', decamelize($interfaceName));
+    my $name = $nameTokens[-1];
+
+    # If the last word is element and there are more words, use the previous one.
+    # Example: webkit_dom_html_button_element_get_button_type()
+    if (scalar(@nameTokens) > 1 && $name eq "element") {
+        $name = $nameTokens[-2];
+    }
+
+    return "${name}_type";
+}
+
 sub GenerateFunction {
     my ($object, $interfaceName, $function, $prefix, $parentNode) = @_;
 
@@ -978,7 +1018,8 @@ sub GenerateFunction {
     }
 
     my $functionSigType = $prefix eq "set_" ? "void" : $function->signature->type;
-    my $functionName = "webkit_dom_" . $decamelize . "_" . $prefix . decamelize($function->signature->name);
+    my $functionSigName = GetFunctionSignatureName($interfaceName, $function);
+    my $functionName = "webkit_dom_" . $decamelize . "_" . $prefix . $functionSigName;
     my $returnType = GetGlibTypeName($functionSigType);
     my $returnValueIsGDOMType = IsGDOMClassType($functionSigType);
     my $raisesException = $function->signature->extendedAttributes->{"RaisesException"};
@@ -1333,12 +1374,6 @@ sub GenerateFunctions {
             next TOP;
         }
 
-        if ($attribute->signature->name eq "type") {
-            # This will conflict with the get_type() function we define to return a GType
-            # according to GObject conventions.  Skip this for now.
-            next TOP;
-        }
-            
         my $attrNameUpper = $codeGenerator->WK_ucfirst($attribute->signature->name);
         my $getname = "get${attrNameUpper}";
         my $setname = "set${attrNameUpper}";

@@ -239,6 +239,8 @@ gchar* webkit_dom_text_get_whole_text(WebKitDOMText*)
 WebKitDOMText* webkit_dom_text_split_text(WebKitDOMText*, gulong, GError**)
 WebKitDOMText* webkit_dom_text_replace_whole_text(WebKitDOMText*, const gchar*, GError**)
 GType webkit_dom_html_anchor_element_get_type(void)
+gchar* webkit_dom_html_anchor_element_get_type_attr(WebKitDOMHTMLAnchorElement*)
+void webkit_dom_html_anchor_element_set_type_attr(WebKitDOMHTMLAnchorElement*, const gchar*)
 gchar* webkit_dom_html_anchor_element_get_name(WebKitDOMHTMLAnchorElement*)
 void webkit_dom_html_anchor_element_set_name(WebKitDOMHTMLAnchorElement*, const gchar*)
 gchar* webkit_dom_html_anchor_element_get_target(WebKitDOMHTMLAnchorElement*)
@@ -344,6 +346,8 @@ void webkit_dom_html_body_element_set_link(WebKitDOMHTMLBodyElement*, const gcha
 void webkit_dom_html_body_element_set_text(WebKitDOMHTMLBodyElement*, const gchar*)
 void webkit_dom_html_body_element_set_v_link(WebKitDOMHTMLBodyElement*, const gchar*)
 GType webkit_dom_html_button_element_get_type(void)
+gchar* webkit_dom_html_button_element_get_button_type(WebKitDOMHTMLButtonElement*)
+void webkit_dom_html_button_element_set_button_type(WebKitDOMHTMLButtonElement*, const gchar*)
 gboolean webkit_dom_html_button_element_get_autofocus(WebKitDOMHTMLButtonElement*)
 gboolean webkit_dom_html_button_element_get_disabled(WebKitDOMHTMLButtonElement*)
 WebKitDOMHTMLFormElement* webkit_dom_html_button_element_get_form(WebKitDOMHTMLButtonElement*)
@@ -422,6 +426,8 @@ void webkit_dom_html_element_set_outer_text(WebKitDOMHTMLElement*, const gchar*,
 void webkit_dom_html_element_set_tab_index(WebKitDOMHTMLElement*, glong)
 void webkit_dom_html_element_set_title(WebKitDOMHTMLElement*, const gchar*)
 GType webkit_dom_html_embed_element_get_type(void)
+gchar* webkit_dom_html_embed_element_get_type_attr(WebKitDOMHTMLEmbedElement*)
+void webkit_dom_html_embed_element_set_type_attr(WebKitDOMHTMLEmbedElement*, const gchar*)
 gchar* webkit_dom_html_embed_element_get_align(WebKitDOMHTMLEmbedElement*)
 glong webkit_dom_html_embed_element_get_height(WebKitDOMHTMLEmbedElement*)
 gchar* webkit_dom_html_embed_element_get_name(WebKitDOMHTMLEmbedElement*)
@@ -560,6 +566,8 @@ void webkit_dom_html_image_element_set_use_map(WebKitDOMHTMLImageElement*, const
 void webkit_dom_html_image_element_set_vspace(WebKitDOMHTMLImageElement*, glong)
 void webkit_dom_html_image_element_set_width(WebKitDOMHTMLImageElement*, glong)
 GType webkit_dom_html_input_element_get_type(void)
+gchar* webkit_dom_html_input_element_get_input_type(WebKitDOMHTMLInputElement*)
+void webkit_dom_html_input_element_set_input_type(WebKitDOMHTMLInputElement*, const gchar*)
 gchar* webkit_dom_html_input_element_get_accept(WebKitDOMHTMLInputElement*)
 gchar* webkit_dom_html_input_element_get_align(WebKitDOMHTMLInputElement*)
 gchar* webkit_dom_html_input_element_get_alt(WebKitDOMHTMLInputElement*)
@@ -604,6 +612,8 @@ void webkit_dom_html_input_element_set_value(WebKitDOMHTMLInputElement*, const g
 void webkit_dom_html_input_element_set_width(WebKitDOMHTMLInputElement*, gulong)
 gboolean webkit_dom_html_input_element_is_edited(WebKitDOMHTMLInputElement*)
 GType webkit_dom_html_li_element_get_type(void)
+gchar* webkit_dom_html_li_element_get_type_attr(WebKitDOMHTMLLIElement*)
+void webkit_dom_html_li_element_set_type_attr(WebKitDOMHTMLLIElement*, const gchar*)
 glong webkit_dom_html_li_element_get_value(WebKitDOMHTMLLIElement*)
 void webkit_dom_html_li_element_set_value(WebKitDOMHTMLLIElement*, glong)
 GType webkit_dom_html_label_element_get_type(void)
@@ -615,6 +625,8 @@ gchar* webkit_dom_html_legend_element_get_align(WebKitDOMHTMLLegendElement*)
 WebKitDOMHTMLFormElement* webkit_dom_html_legend_element_get_form(WebKitDOMHTMLLegendElement*)
 void webkit_dom_html_legend_element_set_align(WebKitDOMHTMLLegendElement*, const gchar*)
 GType webkit_dom_html_link_element_get_type(void)
+gchar* webkit_dom_html_link_element_get_type_attr(WebKitDOMHTMLLinkElement*)
+void webkit_dom_html_link_element_set_type_attr(WebKitDOMHTMLLinkElement*, const gchar*)
 gchar* webkit_dom_html_link_element_get_charset(WebKitDOMHTMLLinkElement*)
 gboolean webkit_dom_html_link_element_get_disabled(WebKitDOMHTMLLinkElement*)
 gchar* webkit_dom_html_link_element_get_hreflang(WebKitDOMHTMLLinkElement*)
@@ -657,11 +669,15 @@ gchar* webkit_dom_html_mod_element_get_date_time(WebKitDOMHTMLModElement*)
 void webkit_dom_html_mod_element_set_cite(WebKitDOMHTMLModElement*, const gchar*)
 void webkit_dom_html_mod_element_set_date_time(WebKitDOMHTMLModElement*, const gchar*)
 GType webkit_dom_html_o_list_element_get_type(void)
+gchar* webkit_dom_html_o_list_element_get_type_attr(WebKitDOMHTMLOListElement*)
+void webkit_dom_html_o_list_element_set_type_attr(WebKitDOMHTMLOListElement*, const gchar*)
 gboolean webkit_dom_html_o_list_element_get_compact(WebKitDOMHTMLOListElement*)
 glong webkit_dom_html_o_list_element_get_start(WebKitDOMHTMLOListElement*)
 void webkit_dom_html_o_list_element_set_compact(WebKitDOMHTMLOListElement*, gboolean)
 void webkit_dom_html_o_list_element_set_start(WebKitDOMHTMLOListElement*, glong)
 GType webkit_dom_html_object_element_get_type(void)
+gchar* webkit_dom_html_object_element_get_type_attr(WebKitDOMHTMLObjectElement*)
+void webkit_dom_html_object_element_set_type_attr(WebKitDOMHTMLObjectElement*, const gchar*)
 gchar* webkit_dom_html_object_element_get_align(WebKitDOMHTMLObjectElement*)
 gchar* webkit_dom_html_object_element_get_archive(WebKitDOMHTMLObjectElement*)
 gchar* webkit_dom_html_object_element_get_border(WebKitDOMHTMLObjectElement*)
@@ -722,6 +738,8 @@ GType webkit_dom_html_paragraph_element_get_type(void)
 gchar* webkit_dom_html_paragraph_element_get_align(WebKitDOMHTMLParagraphElement*)
 void webkit_dom_html_paragraph_element_set_align(WebKitDOMHTMLParagraphElement*, const gchar*)
 GType webkit_dom_html_param_element_get_type(void)
+gchar* webkit_dom_html_param_element_get_type_attr(WebKitDOMHTMLParamElement*)
+void webkit_dom_html_param_element_set_type_attr(WebKitDOMHTMLParamElement*, const gchar*)
 gchar* webkit_dom_html_param_element_get_name(WebKitDOMHTMLParamElement*)
 gchar* webkit_dom_html_param_element_get_value_type(WebKitDOMHTMLParamElement*)
 gchar* webkit_dom_html_param_element_get_value(WebKitDOMHTMLParamElement*)
@@ -737,6 +755,8 @@ GType webkit_dom_html_quote_element_get_type(void)
 gchar* webkit_dom_html_quote_element_get_cite(WebKitDOMHTMLQuoteElement*)
 void webkit_dom_html_quote_element_set_cite(WebKitDOMHTMLQuoteElement*, const gchar*)
 GType webkit_dom_html_script_element_get_type(void)
+gchar* webkit_dom_html_script_element_get_type_attr(WebKitDOMHTMLScriptElement*)
+void webkit_dom_html_script_element_set_type_attr(WebKitDOMHTMLScriptElement*, const gchar*)
 gchar* webkit_dom_html_script_element_get_charset(WebKitDOMHTMLScriptElement*)
 gboolean webkit_dom_html_script_element_get_defer(WebKitDOMHTMLScriptElement*)
 gchar* webkit_dom_html_script_element_get_event(WebKitDOMHTMLScriptElement*)
@@ -749,6 +769,7 @@ void webkit_dom_html_script_element_set_html_for(WebKitDOMHTMLScriptElement*, co
 void webkit_dom_html_script_element_set_src(WebKitDOMHTMLScriptElement*, const gchar*)
 void webkit_dom_html_script_element_set_text(WebKitDOMHTMLScriptElement*, const gchar*)
 GType webkit_dom_html_select_element_get_type(void)
+gchar* webkit_dom_html_select_element_get_select_type(WebKitDOMHTMLSelectElement*)
 void webkit_dom_html_select_element_add(WebKitDOMHTMLSelectElement*, WebKitDOMHTMLElement*, WebKitDOMHTMLElement*, GError**)
 gboolean webkit_dom_html_select_element_get_autofocus(WebKitDOMHTMLSelectElement*)
 gboolean webkit_dom_html_select_element_get_disabled(WebKitDOMHTMLSelectElement*)
@@ -773,6 +794,8 @@ void webkit_dom_html_select_element_set_selected_index(WebKitDOMHTMLSelectElemen
 void webkit_dom_html_select_element_set_size(WebKitDOMHTMLSelectElement*, glong)
 void webkit_dom_html_select_element_set_value(WebKitDOMHTMLSelectElement*, const gchar*)
 GType webkit_dom_html_style_element_get_type(void)
+gchar* webkit_dom_html_style_element_get_type_attr(WebKitDOMHTMLStyleElement*)
+void webkit_dom_html_style_element_set_type_attr(WebKitDOMHTMLStyleElement*, const gchar*)
 gboolean webkit_dom_html_style_element_get_disabled(WebKitDOMHTMLStyleElement*)
 gchar* webkit_dom_html_style_element_get_media(WebKitDOMHTMLStyleElement*)
 WebKitDOMStyleSheet* webkit_dom_html_style_element_get_sheet(WebKitDOMHTMLStyleElement*)
@@ -886,6 +909,7 @@ void webkit_dom_html_table_section_element_set_ch_off(WebKitDOMHTMLTableSectionE
 void webkit_dom_html_table_section_element_set_ch(WebKitDOMHTMLTableSectionElement*, const gchar*)
 void webkit_dom_html_table_section_element_set_v_align(WebKitDOMHTMLTableSectionElement*, const gchar*)
 GType webkit_dom_html_text_area_element_get_type(void)
+gchar* webkit_dom_html_text_area_element_get_area_type(WebKitDOMHTMLTextAreaElement*)
 gboolean webkit_dom_html_text_area_element_get_autofocus(WebKitDOMHTMLTextAreaElement*)
 glong webkit_dom_html_text_area_element_get_cols(WebKitDOMHTMLTextAreaElement*)
 gchar* webkit_dom_html_text_area_element_get_default_value(WebKitDOMHTMLTextAreaElement*)
@@ -915,12 +939,22 @@ GType webkit_dom_html_title_element_get_type(void)
 gchar* webkit_dom_html_title_element_get_text(WebKitDOMHTMLTitleElement*)
 void webkit_dom_html_title_element_set_text(WebKitDOMHTMLTitleElement*, const gchar*)
 GType webkit_dom_html_u_list_element_get_type(void)
+gchar* webkit_dom_html_u_list_element_get_type_attr(WebKitDOMHTMLUListElement*)
+void webkit_dom_html_u_list_element_set_type_attr(WebKitDOMHTMLUListElement*, const gchar*)
 gboolean webkit_dom_html_u_list_element_get_compact(WebKitDOMHTMLUListElement*)
 void webkit_dom_html_u_list_element_set_compact(WebKitDOMHTMLUListElement*, gboolean)
 GType webkit_dom_style_sheet_list_get_type(void)
 gulong webkit_dom_style_sheet_list_get_length(WebKitDOMStyleSheetList*)
 WebKitDOMStyleSheet* webkit_dom_style_sheet_list_item(WebKitDOMStyleSheetList*, gulong)
 GType webkit_dom_css_rule_get_type(void)
+WEBKIT_DOM_CSS_RULE_UNKNOWN_RULE
+WEBKIT_DOM_CSS_RULE_STYLE_RULE
+WEBKIT_DOM_CSS_RULE_CHARSET_RULE
+WEBKIT_DOM_CSS_RULE_IMPORT_RULE
+WEBKIT_DOM_CSS_RULE_MEDIA_RULE
+WEBKIT_DOM_CSS_RULE_FONT_FACE_RULE
+WEBKIT_DOM_CSS_RULE_PAGE_RULE
+gushort webkit_dom_css_rule_get_rule_type(WebKitDOMCSSRule*)
 gchar* webkit_dom_css_rule_get_css_text(WebKitDOMCSSRule*)
 WebKitDOMCSSRule* webkit_dom_css_rule_get_parent_rule(WebKitDOMCSSRule*)
 WebKitDOMCSSStyleSheet* webkit_dom_css_rule_get_parent_style_sheet(WebKitDOMCSSRule*)
@@ -941,6 +975,7 @@ gchar* webkit_dom_css_style_declaration_remove_property(WebKitDOMCSSStyleDeclara
 void webkit_dom_css_style_declaration_set_css_text(WebKitDOMCSSStyleDeclaration*, const gchar*, GError**)
 void webkit_dom_css_style_declaration_set_property(WebKitDOMCSSStyleDeclaration*, const gchar*, const gchar*, const gchar*, GError**)
 GType webkit_dom_style_sheet_get_type(void)
+gchar* webkit_dom_style_sheet_get_content_type(WebKitDOMStyleSheet*)
 gboolean webkit_dom_style_sheet_get_disabled(WebKitDOMStyleSheet*)
 gchar* webkit_dom_style_sheet_get_href(WebKitDOMStyleSheet*)
 WebKitDOMMediaList* webkit_dom_style_sheet_get_media(WebKitDOMStyleSheet*)
@@ -969,6 +1004,23 @@ WEBKIT_DOM_EVENT_NONE
 WEBKIT_DOM_EVENT_CAPTURING_PHASE
 WEBKIT_DOM_EVENT_AT_TARGET
 WEBKIT_DOM_EVENT_BUBBLING_PHASE
+WEBKIT_DOM_EVENT_MOUSEDOWN
+WEBKIT_DOM_EVENT_MOUSEUP
+WEBKIT_DOM_EVENT_MOUSEOVER
+WEBKIT_DOM_EVENT_MOUSEOUT
+WEBKIT_DOM_EVENT_MOUSEMOVE
+WEBKIT_DOM_EVENT_MOUSEDRAG
+WEBKIT_DOM_EVENT_CLICK
+WEBKIT_DOM_EVENT_DBLCLICK
+WEBKIT_DOM_EVENT_KEYDOWN
+WEBKIT_DOM_EVENT_KEYUP
+WEBKIT_DOM_EVENT_KEYPRESS
+WEBKIT_DOM_EVENT_DRAGDROP
+WEBKIT_DOM_EVENT_FOCUS
+WEBKIT_DOM_EVENT_BLUR
+WEBKIT_DOM_EVENT_SELECT
+WEBKIT_DOM_EVENT_CHANGE
+gchar* webkit_dom_event_get_event_type(WebKitDOMEvent*)
 gboolean webkit_dom_event_get_bubbles(WebKitDOMEvent*)
 gboolean webkit_dom_event_get_cancelable(WebKitDOMEvent*)
 gboolean webkit_dom_event_get_cancel_bubble(WebKitDOMEvent*)
