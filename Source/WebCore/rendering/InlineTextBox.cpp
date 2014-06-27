@@ -1,7 +1,7 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2014 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -251,16 +251,6 @@ RenderObject::SelectionState InlineTextBox::selectionState()
     return state;
 }
 
-static void adjustCharactersAndLengthForHyphen(BufferForAppendingHyphen& charactersWithHyphen, const RenderStyle& style, String& string, unsigned& length)
-{
-    const AtomicString& hyphenString = style.hyphenString();
-    charactersWithHyphen.reserveCapacity(length + hyphenString.length());
-    charactersWithHyphen.append(string);
-    charactersWithHyphen.append(hyphenString);
-    string = charactersWithHyphen.toString();
-    length += hyphenString.length();
-}
-
 static const Font& fontToUse(const RenderStyle& style, const RenderText& renderer)
 {
     if (style.hasTextCombine() && renderer.isCombineText()) {
@@ -290,9 +280,9 @@ LayoutRect InlineTextBox::localSelectionRect(unsigned startPos, unsigned endPos)
     const RenderStyle& lineStyle = this->lineStyle();
     const Font& font = fontToUse(lineStyle, renderer());
 
-    BufferForAppendingHyphen charactersWithHyphen;
+    String hyphenatedStringBuffer;
     bool respectHyphen = ePos == m_len && hasHyphen();
-    TextRun textRun = constructTextRun(lineStyle, font, respectHyphen ? &charactersWithHyphen : 0);
+    TextRun textRun = constructTextRun(lineStyle, font, respectHyphen ? &hyphenatedStringBuffer : 0);
 
     LayoutRect selectionRect = LayoutRect(LayoutPoint(logicalLeft(), selectionTop), LayoutSize(m_logicalWidth, selectionHeight));
     // Avoid computing the font width when the entire line box is selected as an optimization.
@@ -629,8 +619,8 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         maximumLength = length;
     }
 
-    BufferForAppendingHyphen charactersWithHyphen;
-    TextRun textRun = constructTextRun(lineStyle, font, string, maximumLength, hasHyphen() ? &charactersWithHyphen : 0);
+    String hyphenatedStringBuffer;
+    TextRun textRun = constructTextRun(lineStyle, font, string, maximumLength, hasHyphen() ? &hyphenatedStringBuffer : nullptr);
     if (hasHyphen())
         length = textRun.length();
 
@@ -758,10 +748,10 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
         string = string.substringSharingImpl(m_start, length);
     }
 
-    BufferForAppendingHyphen charactersWithHyphen;
-    bool respectHyphen = ePos == length && hasHyphen();
     ASSERT(renderer().textLength() >= m_start);
-    TextRun textRun = constructTextRun(style, font, string, renderer().textLength() - m_start, respectHyphen ? &charactersWithHyphen : 0);
+    String hyphenatedStringBuffer;
+    bool respectHyphen = ePos == length && hasHyphen();
+    TextRun textRun = constructTextRun(style, font, string, renderer().textLength() - m_start, respectHyphen ? &hyphenatedStringBuffer : nullptr);
     if (respectHyphen)
         ePos = textRun.length();
 
@@ -1418,7 +1408,7 @@ float InlineTextBox::positionForOffset(unsigned offset) const
     return directionalPixelSnappedForPainting(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()).maxX();
 }
 
-TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const Font& font, BufferForAppendingHyphen* charactersWithHyphen) const
+TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const Font& font, String* hyphenatedStringBuffer) const
 {
     ASSERT(renderer().text());
 
@@ -1430,16 +1420,18 @@ TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const Font& fo
         string = string.substringSharingImpl(startPos, length);
     
     ASSERT(renderer().textLength() >= startPos);
-    return constructTextRun(style, font, string, renderer().textLength() - startPos, charactersWithHyphen);
+    return constructTextRun(style, font, string, renderer().textLength() - startPos, hyphenatedStringBuffer);
 }
 
-TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const Font& font, String string, unsigned maximumLength, BufferForAppendingHyphen* charactersWithHyphen) const
+TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const Font& font, String string, unsigned maximumLength, String* hyphenatedStringBuffer) const
 {
     unsigned length = string.length();
 
-    if (charactersWithHyphen) {
-        adjustCharactersAndLengthForHyphen(*charactersWithHyphen, style, string, length);
-        maximumLength = length;
+    if (hyphenatedStringBuffer) {
+        const AtomicString& hyphenString = style.hyphenString();
+        *hyphenatedStringBuffer = string + hyphenString;
+        string = *hyphenatedStringBuffer;
+        maximumLength = length + hyphenString.length();
     }
 
     ASSERT(maximumLength >= length);

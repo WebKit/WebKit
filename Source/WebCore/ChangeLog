@@ -1,3 +1,36 @@
+2014-06-27  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove BufferForAppendingHyphen
+        https://bugs.webkit.org/show_bug.cgi?id=134376
+
+        Reviewed by Darin Adler.
+
+        It is legacy, from a time when that code was using a Vector.
+
+        The problem is that StringBuilder's memory was also implicitly used to keep
+        the string alive for the lifespan of the TextRun. That seems quite dangerous
+        as changes in StringBuilder could have changed that.
+
+        To fix the lifetime issue, my first idea was to make it explicit by passing
+        a String reference to hold the memory alive, and a boolean to say if the text
+        need an hyphen. The problem with that is this code is very hot and I made things
+        worse.
+
+        The solution with this patch is to just pass a pointer to a String to do both
+        the buffer reference, and the decision to add the hyphen. Having a single
+        argument with 2 meanings is not pretty but that's not worse than the old buffer.
+
+        * editing/TextIterator.cpp:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::localSelectionRect):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::constructTextRun):
+        (WebCore::adjustCharactersAndLengthForHyphen): Deleted.
+        * rendering/InlineTextBox.h:
+        (WebCore::BufferForAppendingHyphen::BufferForAppendingHyphen): Deleted.
+        * rendering/RenderText.cpp:
+
 2014-06-27  Jeremy Jones  <jeremyj@apple.com>
 
         Lazily link frameworks in WebVideoFullscreenInterfaceAVKit.

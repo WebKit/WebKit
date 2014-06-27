@@ -1,7 +1,7 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2009, 2010, 2011, 2014 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,7 +26,6 @@
 #include "InlineBox.h"
 #include "RenderText.h"
 #include "TextRun.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -36,11 +35,6 @@ class TextPainter;
 
 const unsigned cNoTruncation = std::numeric_limits<unsigned>::max();
 const unsigned cFullTruncation = std::numeric_limits<unsigned>::max() - 1;
-
-class BufferForAppendingHyphen : public StringBuilder {
-public:
-    BufferForAppendingHyphen() { reserveCapacity(256); }
-};
 
 class InlineTextBox : public InlineBox {
 public:
@@ -110,8 +104,8 @@ private:
     LayoutUnit selectionBottom() const;
     LayoutUnit selectionHeight() const;
 
-    TextRun constructTextRun(const RenderStyle&, const Font&, BufferForAppendingHyphen* = nullptr) const;
-    TextRun constructTextRun(const RenderStyle&, const Font&, String, unsigned maximumLength, BufferForAppendingHyphen* = nullptr) const;
+    TextRun constructTextRun(const RenderStyle&, const Font&, String* hyphenatedStringBuffer = nullptr) const;
+    TextRun constructTextRun(const RenderStyle&, const Font&, String, unsigned maximumLength, String* hyphenatedStringBuffer = nullptr) const;
 
 public:
     virtual FloatRect calculateBoundaries() const { return FloatRect(x(), y(), width(), height()); }

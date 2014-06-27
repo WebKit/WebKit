@@ -46,6 +46,7 @@
 #include "break_lines.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuffer.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(IOS)

@@ -50,6 +50,7 @@
 #include "VisibleUnits.h"
 #include "htmlediting.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if !UCONFIG_NO_COLLATION
