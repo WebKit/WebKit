@@ -406,7 +406,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setVisible(bool)
 
 double MediaPlayerPrivateMediaSourceAVFObjC::durationDouble() const
 {
-    return m_mediaSource->duration();
+    return m_mediaSource ? m_mediaSource->duration() : 0;
 }
 
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime() const
@@ -503,7 +503,7 @@ double MediaPlayerPrivateMediaSourceAVFObjC::minTimeSeekable() const
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaSourceAVFObjC::buffered() const
 {
-    return m_mediaSource->buffered();
+    return m_mediaSource ? m_mediaSource->buffered() : PlatformTimeRanges::create();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::didLoadingProgress() const

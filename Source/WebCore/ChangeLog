@@ -1,3 +1,17 @@
+2014-06-26  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] Crash in WebCore::MediaPlayerPrivateMediaSourceAVFObjC::buffered const + 13
+        https://bugs.webkit.org/show_bug.cgi?id=134367
+
+        Reviewed by Darin Adler.
+
+        Add a couple of null-checks to protect against methods being called in the brief time
+        between when the object is created and when it's asked to load.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::durationDouble):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::buffered):
+
 2014-06-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Rearrange conditions to find invalid protocol in NavigatorContentUtils::verifyProtocolHandlerScheme()
