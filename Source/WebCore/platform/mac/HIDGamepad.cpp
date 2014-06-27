@@ -59,6 +59,14 @@ HIDGamepad::HIDGamepad(IOHIDDeviceRef hidDevice)
     initElements();
 }
 
+void HIDGamepad::getCurrentValueForElement(const HIDGamepadElement& gamepadElement)
+{
+    IOHIDElementRef element = gamepadElement.iohidElement.get();
+    IOHIDValueRef value;
+    if (IOHIDDeviceGetValue(IOHIDElementGetDevice(element), element, &value) == kIOReturnSuccess)
+        valueChanged(value);
+}
+
 void HIDGamepad::initElements()
 {
     RetainPtr<CFArrayRef> elements = adoptCF(IOHIDDeviceCopyMatchingElements(m_hidDevice.get(), NULL, kIOHIDOptionsTypeNone));
@@ -71,6 +79,12 @@ void HIDGamepad::initElements()
 
     m_axisValues.resize(m_axes.size());
     m_buttonValues.resize(m_buttons.size());
+
+    for (auto& button : m_buttons)
+        getCurrentValueForElement(*button);
+
+    for (auto& axis : m_axes)
+        getCurrentValueForElement(*axis);
 }
 
 void HIDGamepad::initElementsFromArray(CFArrayRef elements)
@@ -113,7 +127,7 @@ bool HIDGamepad::maybeAddButton(IOHIDElementRef element)
     CFIndex min = IOHIDElementGetLogicalMin(element);
     CFIndex max = IOHIDElementGetLogicalMax(element);
 
-    m_buttons.append(std::make_unique<HIDGamepadButton>(usage, min, max));
+    m_buttons.append(std::make_unique<HIDGamepadButton>(usage, min, max, element));
 
     IOHIDElementCookie cookie = IOHIDElementGetCookie(element);
     m_elementMap.set(cookie, m_buttons.last().get());
@@ -135,7 +149,7 @@ bool HIDGamepad::maybeAddAxis(IOHIDElementRef element)
     CFIndex min = IOHIDElementGetPhysicalMin(element);
     CFIndex max = IOHIDElementGetPhysicalMax(element);
 
-    m_axes.append(std::make_unique<HIDGamepadAxis>(min, max));
+    m_axes.append(std::make_unique<HIDGamepadAxis>(min, max, element));
 
     IOHIDElementCookie cookie = IOHIDElementGetCookie(element);
     m_elementMap.set(cookie, m_axes.last().get());

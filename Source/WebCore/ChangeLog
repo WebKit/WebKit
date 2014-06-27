@@ -1,3 +1,22 @@
+2014-06-27  Brady Eidson  <beidson@apple.com>
+
+        HIDGamepads should populate themselves with initial input values
+        https://bugs.webkit.org/show_bug.cgi?id=134381
+
+        Reviewed by Darin Adler.
+
+        No new tests (Not yet a tested config)
+
+        * platform/mac/HIDGamepad.cpp:
+        (WebCore::HIDGamepad::getCurrentValueForElement):
+        (WebCore::HIDGamepad::initElements):  Loop through all the saved elements to get current values.
+        (WebCore::HIDGamepad::maybeAddButton):
+        (WebCore::HIDGamepad::maybeAddAxis):
+        * platform/mac/HIDGamepad.h:
+        (WebCore::HIDGamepadElement::HIDGamepadElement):
+        (WebCore::HIDGamepadButton::HIDGamepadButton):
+        (WebCore::HIDGamepadAxis::HIDGamepadAxis):
+
 2014-06-27  Peyton Randolph  <prandolph@apple.com>
 
         Add feature flag for link long-press gesture.
