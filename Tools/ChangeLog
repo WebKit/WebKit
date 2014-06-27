@@ -1,5 +1,15 @@
 2014-06-26  Dan Bernstein  <mitz@apple.com>
 
+        prepare-ChangeLog outputs (NS_ENUM): entries for Cocoa enums
+        https://bugs.webkit.org/show_bug.cgi?id=134387
+
+        Reviewed by Tim Horton.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_cpp): Don’t consider {CF,NS}_{ENUM,OPTIONS} as function names.
+
+2014-06-26  Dan Bernstein  <mitz@apple.com>
+
         prepare-ChangeLog mangles Objective-C selectors for methods with parameter types that contain colons
         https://bugs.webkit.org/show_bug.cgi?id=134383
 

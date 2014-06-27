@@ -853,7 +853,7 @@ sub get_function_line_ranges_for_cpp($$)
 
             # Open parenthesis.
             if ($1 eq "(") {
-                $potential_name = $word unless $in_parentheses || $skip_til_brace_or_semicolon;
+                $potential_name = $word unless $in_parentheses || $skip_til_brace_or_semicolon || $word ~~ ["CF_ENUM", "CF_OPTIONS", "NS_ENUM", "NS_OPTIONS"];
                 $in_parentheses++;
                 next;
             }
