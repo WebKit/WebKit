@@ -1,3 +1,14 @@
+2014-06-26  Brady Eidson  <beidson@apple.com>
+
+        MiniBrowser should support a preference to override the default URL
+        https://bugs.webkit.org/show_bug.cgi?id=134373
+
+        Reviewed by Darin Adler.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate applicationDidFinishLaunching:]): See if there’s a pref
+          overriding the default URL, and use it if there is.
+
 2014-06-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Fix potential buffer overrun in DLLLauncher

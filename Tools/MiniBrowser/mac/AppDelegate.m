@@ -32,6 +32,7 @@
 
 static NSString *defaultURL = @"http://www.webkit.org/";
 static NSString *useWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault";
+static NSString *defaultURLPreferenceKey = @"DefaultURL";
 
 enum {
     WebKit1NewWindowTag = 1,
@@ -90,6 +91,10 @@ enum {
     [self _updateNewWindowKeyEquivalents];
     
     [[NSUserDefaults standardUserDefaults] setBool:@YES forKey:@"WebKitDeveloperExtrasEnabled"];
+    NSString *newDefaultURL = [[NSUserDefaults standardUserDefaults] stringForKey:defaultURLPreferenceKey];
+    if (newDefaultURL)
+        defaultURL = [newDefaultURL retain];
+
     [self newWindow:self];
 }
 
