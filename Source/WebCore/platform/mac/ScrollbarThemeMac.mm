@@ -156,6 +156,9 @@ static NSControlSize scrollbarControlSizeToNSControlSize(ScrollbarControlSize co
 
 void ScrollbarThemeMac::registerScrollbar(ScrollbarThemeClient* scrollbar)
 {
+    if (scrollbar->isCustomScrollbar())
+        return;
+
     bool isHorizontal = scrollbar->orientation() == HorizontalScrollbar;
     ScrollbarPainter scrollbarPainter = [NSClassFromString(@"NSScrollerImp") scrollerImpWithStyle:recommendedScrollerStyle() controlSize:scrollbarControlSizeToNSControlSize(scrollbar->controlSize()) horizontal:isHorizontal replacingScrollerImp:nil];
     scrollbarMap()->add(scrollbar, scrollbarPainter);

@@ -72,7 +72,7 @@ public:
 
     virtual IntPoint convertFromContainingWindow(const IntPoint& windowPoint) override { return Widget::convertFromContainingWindow(windowPoint); }
 
-    virtual bool isCustomScrollbar() const override { return false; }
+    virtual bool isCustomScrollbar() const override final { return m_isCustomScrollbar; }
     virtual ScrollbarOrientation orientation() const override { return m_orientation; }
 
     virtual int value() const override { return lroundf(m_currentPos); }
@@ -156,7 +156,7 @@ public:
     virtual bool supportsUpdateOnSecondaryThread() const;
 
 protected:
-    Scrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = 0);
+    Scrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = 0, bool isCustomScrollbar = false);
 
     void updateThumb();
     virtual void updateThumbPosition();
@@ -197,6 +197,8 @@ protected:
     bool m_suppressInvalidation;
 
     bool m_isAlphaLocked;
+
+    bool m_isCustomScrollbar;
 
 private:
     virtual bool isScrollbar() const override { return true; }

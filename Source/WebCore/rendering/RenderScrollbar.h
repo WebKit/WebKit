@@ -74,8 +74,6 @@ private:
 
     virtual void styleChanged() override;
 
-    virtual bool isCustomScrollbar() const override { return true; }
-
     void updateScrollbarParts();
 
     void updateScrollbarPart(ScrollbarPart);

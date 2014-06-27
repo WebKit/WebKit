@@ -56,7 +56,7 @@ int Scrollbar::maxOverlapBetweenPages()
 }
 
 Scrollbar::Scrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize,
-                     ScrollbarTheme* theme)
+                     ScrollbarTheme* theme, bool isCustomScrollbar)
     : m_scrollableArea(scrollableArea)
     , m_orientation(orientation)
     , m_controlSize(controlSize)
@@ -79,6 +79,7 @@ Scrollbar::Scrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orient
     , m_overlapsResizer(false)
     , m_suppressInvalidation(false)
     , m_isAlphaLocked(false)
+    , m_isCustomScrollbar(isCustomScrollbar)
 {
     if (!m_theme)
         m_theme = ScrollbarTheme::theme();

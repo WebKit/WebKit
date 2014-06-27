@@ -1,3 +1,37 @@
+2014-06-27  Beth Dakin  <bdakin@apple.com>
+
+        Custom scrollbars should not create ScrollbarPainters on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=134406
+        -and corresponding-
+        <rdar://problem/16178301>
+
+        Reviewed by Tim Horton.
+
+        The solution here is to return early in ScrollbarThemeMac::registerScrollbar() if 
+        the scrollbar is custom. However, since this function is called during the 
+        RenderScrollbar and Scrollbar constructor, we need to re-implement 
+        Scrollbar::isCustomScrollbar() to return a member variable that is passed into the 
+        constructor. Otherwise, we will get Scrollbar’s implementation is 
+        isCustomScrollbar() wrongfully returning false since instead of the derived
+        class’s implementation. 
+
+        Scrollbar constructor now has an option parameter isCustomScrollbar that defaults 
+        to false. That value is returned by isCustomScrollbar()
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::Scrollbar):
+        * platform/Scrollbar.h:
+
+        Return early if this is a custom scrollbar since the rest of the function deals 
+        with creating a native scrollbar and getting it in the right state.
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::registerScrollbar):
+
+        Send true to the Scrollbar constructor to indicate that this is a custom 
+        scrollbar.
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::RenderScrollbar):
+        * rendering/RenderScrollbar.h:
+
 2014-06-27  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] AVMetadataKeySpaceISOUserData not defined on 10.8
