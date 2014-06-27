@@ -36,6 +36,7 @@ public:
 
     virtual void platformGamepadConnected(unsigned index) = 0;
     virtual void platformGamepadDisconnected(unsigned index) = 0;
+    virtual void platformGamepadInputActivity() = 0;
 };
 
 } // namespace WebCore

@@ -35,6 +35,7 @@
 namespace WebCore {
 
 static const double ConnectionDelayInterval = 0.5;
+static const double InputNotificationDelay = 0.05;
 
 static RetainPtr<CFDictionaryRef> deviceMatchingDictionary(uint32_t usagePage, uint32_t usage)
 {
@@ -81,6 +82,7 @@ HIDGamepadProvider& HIDGamepadProvider::shared()
 HIDGamepadProvider::HIDGamepadProvider()
     : m_shouldDispatchCallbacks(false)
     , m_connectionDelayTimer(this, &HIDGamepadProvider::connectionDelayTimerFired)
+    , m_inputNotificationTimer(this, &HIDGamepadProvider::inputNotificationTimerFired)
 {
     m_manager = adoptCF(IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone));
 
@@ -219,6 +221,20 @@ void HIDGamepadProvider::valuesChanged(IOHIDValueRef value)
         return;
 
     gamepad->valueChanged(value);
+
+    // This isActive check is necessary as we want to delay input notifications from the time of the first input,
+    // and not push the notification out on every subsequent input.
+    if (!m_inputNotificationTimer.isActive())
+        m_inputNotificationTimer.startOneShot(InputNotificationDelay);
+}
+
+void HIDGamepadProvider::inputNotificationTimerFired(Timer<HIDGamepadProvider>&)
+{
+    if (!m_shouldDispatchCallbacks)
+        return;
+
+    for (auto& client : m_clients)
+        client->platformGamepadInputActivity();
 }
 
 std::pair<std::unique_ptr<HIDGamepad>, unsigned>  HIDGamepadProvider::removeGamepadForDevice(IOHIDDeviceRef device)

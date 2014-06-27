@@ -46,6 +46,7 @@ public:
 
     virtual void platformGamepadConnected(unsigned index) override final;
     virtual void platformGamepadDisconnected(unsigned index) override final;
+    virtual void platformGamepadInputActivity() override final;
 
     void registerNavigator(NavigatorGamepad*);
     void unregisterNavigator(NavigatorGamepad*);
@@ -53,7 +54,10 @@ public:
 private:
     GamepadManager();
 
+    void makeGamepadsVisibileToBlindNavigators();
+
     HashSet<NavigatorGamepad*> m_navigators;
+    HashSet<NavigatorGamepad*> m_gamepadBlindNavigators;
 };
 
 } // namespace WebCore

@@ -1,5 +1,33 @@
 2014-06-27  Brady Eidson  <beidson@apple.com>
 
+        The user pressing a button on a gamepad should cause gamepads to become visible to all NavigatorGamepads.
+        https://bugs.webkit.org/show_bug.cgi?id=134375
+
+        Reviewed by Darin Adler.
+
+        No new tests (Not yet a tested config)
+
+        * Modules/gamepad/GamepadManager.cpp:
+        (WebCore::GamepadManager::platformGamepadConnected): Also call to makeGamepadsVisibileToBlindNavigators.
+        (WebCore::GamepadManager::platformGamepadDisconnected):
+        (WebCore::GamepadManager::platformGamepadInputActivity): Call makeGamepadsVisibileToBlindNavigators.
+        (WebCore::GamepadManager::makeGamepadsVisibileToBlindNavigators): Walk through each blind navigator
+          notifying it of each connected Gamepad.
+        (WebCore::GamepadManager::registerNavigator): Also add to the blind navigator set.
+        (WebCore::GamepadManager::unregisterNavigator): Also remove from the blind navigator set.
+        * Modules/gamepad/GamepadManager.h:
+
+        * platform/GamepadProviderClient.h: Added platformGamepadInputActivity.
+
+        * platform/mac/HIDGamepadProvider.cpp:
+        (WebCore::HIDGamepadProvider::HIDGamepadProvider):
+        (WebCore::HIDGamepadProvider::valuesChanged): Set the input notification timer which will notify the clients
+          that a button was pressed.
+        (WebCore::HIDGamepadProvider::inputNotificationTimerFired): Perform that notification.
+        * platform/mac/HIDGamepadProvider.h:
+
+2014-06-27  Brady Eidson  <beidson@apple.com>
+
         HIDGamepads should populate themselves with initial input values
         https://bugs.webkit.org/show_bug.cgi?id=134381
 

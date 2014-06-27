@@ -48,18 +48,45 @@ GamepadManager::GamepadManager()
 
 void GamepadManager::platformGamepadConnected(unsigned index)
 {
-    for (auto& navigator : m_navigators)
-        navigator->gamepadConnected(index);
+    for (auto& navigator : m_navigators) {
+        if (!m_gamepadBlindNavigators.contains(navigator))
+            navigator->gamepadConnected(index);
 
-    // FIXME: Fire connected event to all pages with listeners.
+        // FIXME: Fire connected event to all pages with listeners.
+    }
+
+    makeGamepadsVisibileToBlindNavigators();
 }
 
 void GamepadManager::platformGamepadDisconnected(unsigned index)
 {
-    // FIXME: Fire disconnected event to all pages with listeners.
+    for (auto& navigator : m_navigators) {
+        if (!m_gamepadBlindNavigators.contains(navigator))
+            navigator->gamepadDisconnected(index);
 
-    for (auto& navigator : m_navigators)
-        navigator->gamepadDisconnected(index);
+        // FIXME: Fire disconnected event to all pages with listeners.
+    }
+}
+
+void GamepadManager::platformGamepadInputActivity()
+{
+    makeGamepadsVisibileToBlindNavigators();
+}
+
+void GamepadManager::makeGamepadsVisibileToBlindNavigators()
+{
+    for (auto& navigator : m_gamepadBlindNavigators) {
+        // FIXME: Here we notify a blind Navigator of each existing gamepad.
+        // But we also need to fire the connected event to its corresponding DOMWindow objects.
+        auto& platformGamepads = GamepadProvider::shared().platformGamepads();
+        unsigned size = platformGamepads.size();
+        for (unsigned i = 0; i < size; ++i) {
+            if (platformGamepads[i])
+                navigator->gamepadConnected(i);
+        }
+    }
+
+    m_gamepadBlindNavigators.clear();
 }
 
 void GamepadManager::registerNavigator(NavigatorGamepad* navigator)
@@ -68,6 +95,7 @@ void GamepadManager::registerNavigator(NavigatorGamepad* navigator)
 
     ASSERT(!m_navigators.contains(navigator));
     m_navigators.add(navigator);
+    m_gamepadBlindNavigators.add(navigator);
 
     // FIXME: Monitoring gamepads will also be reliant on whether or not there are any
     // connected/disconnected event listeners.
@@ -84,6 +112,7 @@ void GamepadManager::unregisterNavigator(NavigatorGamepad* navigator)
 
     ASSERT(m_navigators.contains(navigator));
     m_navigators.remove(navigator);
+    m_gamepadBlindNavigators.remove(navigator);
 
     // FIXME: Monitoring gamepads will also be reliant on whether or not there are any
     // connected/disconnected event listeners.
