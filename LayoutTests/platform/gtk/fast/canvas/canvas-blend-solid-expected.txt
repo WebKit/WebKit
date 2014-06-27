@@ -73,6 +73,76 @@ PASS pixelDataAtPoint(3)[1] is within 5 of 0
 PASS pixelDataAtPoint(3)[2] is within 5 of 255
 PASS pixelDataAtPoint(3)[3] is within 5 of 191
 
+Testing blend mode "normal"
+solid on solid
+PASS pixelDataAtPoint(0)[0] is within 5 of 255
+PASS pixelDataAtPoint(0)[1] is within 5 of 0
+PASS pixelDataAtPoint(0)[2] is within 5 of 0
+PASS pixelDataAtPoint(0)[3] is within 5 of 255
+PASS pixelDataAtPoint(1)[0] is within 5 of 255
+PASS pixelDataAtPoint(1)[1] is within 5 of 255
+PASS pixelDataAtPoint(1)[2] is within 5 of 0
+PASS pixelDataAtPoint(1)[3] is within 5 of 255
+PASS pixelDataAtPoint(2)[0] is within 5 of 0
+PASS pixelDataAtPoint(2)[1] is within 5 of 128
+PASS pixelDataAtPoint(2)[2] is within 5 of 0
+PASS pixelDataAtPoint(2)[3] is within 5 of 255
+PASS pixelDataAtPoint(3)[0] is within 5 of 0
+PASS pixelDataAtPoint(3)[1] is within 5 of 0
+PASS pixelDataAtPoint(3)[2] is within 5 of 255
+PASS pixelDataAtPoint(3)[3] is within 5 of 255
+solid on alpha
+PASS pixelDataAtPoint(0)[0] is within 5 of 128
+PASS pixelDataAtPoint(0)[1] is within 5 of 0
+PASS pixelDataAtPoint(0)[2] is within 5 of 127
+PASS pixelDataAtPoint(0)[3] is within 5 of 255
+PASS pixelDataAtPoint(1)[0] is within 5 of 128
+PASS pixelDataAtPoint(1)[1] is within 5 of 128
+PASS pixelDataAtPoint(1)[2] is within 5 of 127
+PASS pixelDataAtPoint(1)[3] is within 5 of 255
+PASS pixelDataAtPoint(2)[0] is within 5 of 0
+PASS pixelDataAtPoint(2)[1] is within 5 of 64
+PASS pixelDataAtPoint(2)[2] is within 5 of 127
+PASS pixelDataAtPoint(2)[3] is within 5 of 255
+PASS pixelDataAtPoint(3)[0] is within 5 of 0
+PASS pixelDataAtPoint(3)[1] is within 5 of 0
+PASS pixelDataAtPoint(3)[2] is within 5 of 255
+PASS pixelDataAtPoint(3)[3] is within 5 of 255
+alpha on solid
+PASS pixelDataAtPoint(0)[0] is within 5 of 255
+PASS pixelDataAtPoint(0)[1] is within 5 of 0
+PASS pixelDataAtPoint(0)[2] is within 5 of 0
+PASS pixelDataAtPoint(0)[3] is within 5 of 255
+PASS pixelDataAtPoint(1)[0] is within 5 of 255
+PASS pixelDataAtPoint(1)[1] is within 5 of 255
+PASS pixelDataAtPoint(1)[2] is within 5 of 0
+PASS pixelDataAtPoint(1)[3] is within 5 of 255
+PASS pixelDataAtPoint(2)[0] is within 5 of 0
+PASS pixelDataAtPoint(2)[1] is within 5 of 128
+PASS pixelDataAtPoint(2)[2] is within 5 of 0
+PASS pixelDataAtPoint(2)[3] is within 5 of 255
+PASS pixelDataAtPoint(3)[0] is within 5 of 0
+PASS pixelDataAtPoint(3)[1] is within 5 of 0
+PASS pixelDataAtPoint(3)[2] is within 5 of 255
+PASS pixelDataAtPoint(3)[3] is within 5 of 255
+alpha on alpha
+PASS pixelDataAtPoint(0)[0] is within 5 of 171
+PASS pixelDataAtPoint(0)[1] is within 5 of 0
+PASS pixelDataAtPoint(0)[2] is within 5 of 84
+PASS pixelDataAtPoint(0)[3] is within 5 of 191
+PASS pixelDataAtPoint(1)[0] is within 5 of 171
+PASS pixelDataAtPoint(1)[1] is within 5 of 171
+PASS pixelDataAtPoint(1)[2] is within 5 of 84
+PASS pixelDataAtPoint(1)[3] is within 5 of 191
+PASS pixelDataAtPoint(2)[0] is within 5 of 0
+PASS pixelDataAtPoint(2)[1] is within 5 of 85
+PASS pixelDataAtPoint(2)[2] is within 5 of 84
+PASS pixelDataAtPoint(2)[3] is within 5 of 191
+PASS pixelDataAtPoint(3)[0] is within 5 of 0
+PASS pixelDataAtPoint(3)[1] is within 5 of 0
+PASS pixelDataAtPoint(3)[2] is within 5 of 255
+PASS pixelDataAtPoint(3)[3] is within 5 of 191
+
 Testing blend mode "multiply"
 solid on solid
 PASS pixelDataAtPoint(0)[0] is within 5 of 0

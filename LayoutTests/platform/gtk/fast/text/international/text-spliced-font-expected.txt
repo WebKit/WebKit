@@ -14,10 +14,10 @@ layer at (0,0) size 800x524
           RenderText {#text} at (0,0) size 17x171
             text run at (0,0) width 171: "string\x{300C}\x{3042}\x{3001}\x{5909}\x{3063}\x{FF01}\x{300D}\x{3002}"
         RenderBR {BR} at (17,157) size 0x17
-        RenderInline {SPAN} at (0,0) size 220x17
-          RenderText {#text} at (0,174) size 220x17
-            text run at (0,174) width 220: "\x{90CA}\x{5916}\x{306E}\x{304E}\x{3089}\x{304E}\x{3089}\x{3072}\x{304B}\x{308B}\x{8349}\x{306E}\x{6CE2}\x{3002}"
-        RenderBR {BR} at (220,174) size 0x17
+        RenderInline {SPAN} at (0,0) size 224x17
+          RenderText {#text} at (0,174) size 224x17
+            text run at (0,174) width 224: "\x{90CA}\x{5916}\x{306E}\x{304E}\x{3089}\x{304E}\x{3089}\x{3072}\x{304B}\x{308B}\x{8349}\x{306E}\x{6CE2}\x{3002}"
+        RenderBR {BR} at (224,174) size 0x17
         RenderInline {SPAN} at (0,0) size 314x17
           RenderText {#text} at (0,191) size 314x17
             text run at (0,191) width 314: "ABCDEFGHIJKLM abcdefghijklm 1234567890"
@@ -34,10 +34,10 @@ layer at (0,0) size 800x524
           RenderText {#text} at (0,0) size 17x163
             text run at (0,0) width 163: "string\x{300C}\x{3042}\x{3001}\x{5909}\x{3063}\x{FF01}\x{300D}\x{3002}"
         RenderBR {BR} at (17,149) size 0x17
-        RenderInline {SPAN} at (0,0) size 220x17
-          RenderText {#text} at (0,166) size 220x17
-            text run at (0,166) width 220: "\x{90CA}\x{5916}\x{306E}\x{304E}\x{3089}\x{304E}\x{3089}\x{3072}\x{304B}\x{308B}\x{8349}\x{306E}\x{6CE2}\x{3002}"
-        RenderBR {BR} at (220,166) size 0x17
+        RenderInline {SPAN} at (0,0) size 224x17
+          RenderText {#text} at (0,166) size 224x17
+            text run at (0,166) width 224: "\x{90CA}\x{5916}\x{306E}\x{304E}\x{3089}\x{304E}\x{3089}\x{3072}\x{304B}\x{308B}\x{8349}\x{306E}\x{6CE2}\x{3002}"
+        RenderBR {BR} at (224,166) size 0x17
         RenderInline {SPAN} at (0,0) size 314x17
           RenderText {#text} at (0,183) size 314x17
             text run at (0,183) width 314: "ABCDEFGHIJKLM abcdefghijklm 1234567890"

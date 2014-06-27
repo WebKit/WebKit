@@ -18,7 +18,6 @@ navigator.registerProtocolHandler() threw err TypeError: Not enough arguments
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
-navigator.webkitGetGamepads() is OK
 navigator.appCodeName is OK
 navigator.appName is OK
 navigator.appVersion is OK
@@ -37,5 +36,4 @@ navigator.registerProtocolHandler() threw err TypeError: Not enough arguments
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
-navigator.webkitGetGamepads() is OK
 

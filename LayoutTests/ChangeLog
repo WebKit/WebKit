@@ -1,3 +1,34 @@
+2014-06-27  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        Rebaseline tests after r170207, r170249, r170304, r170418 and r170433.
+        Update expectations for new crashing tests.
+
+        * platform/gtk/TestExpectations: Report and mark new crashing tests. Adjust some tests expectations.
+        * platform/gtk/fast/canvas/canvas-blend-image-expected.txt: Rebaseline after r170433.
+        * platform/gtk/fast/canvas/canvas-blend-solid-expected.txt: Rebaseline after r170433.
+        * platform/gtk/fast/dom/navigator-detached-no-crash-expected.txt: Rebaseline after r170249.
+        * platform/gtk/fast/dynamic/text-combine-expected.txt: Rebaseline after r170418.
+        * platform/gtk/fast/multicol/pagination/RightToLeft-rl-dynamic-expected.txt: Added. Add baseline after r170304.
+        * platform/gtk/fast/regions/repaint/japanese-rl-selection-repaint-in-regions-expected.txt: Rebaseline after r170418.
+        * platform/gtk/fast/repaint/japanese-rl-selection-clear-expected.txt: Added. Rebaseline after r170418.
+        * platform/gtk/fast/repaint/japanese-rl-selection-repaint-expected.txt: Added. Rebaseline after r170418.
+        * platform/gtk/fast/text/decorations-with-text-combine-expected.txt: Rebaseline after r170418.
+        * platform/gtk/fast/text/emphasis-vertical-expected.txt: Rebaseline after r170418.
+        * platform/gtk/fast/text/international/002-expected.txt: Rebaseline after r170418.
+        * platform/gtk/fast/text/international/text-combine-image-test-expected.txt: Rebaseline after r170418.
+        * platform/gtk/fast/text/international/text-spliced-font-expected.txt: Rebaseline after r170418.
+        * platform/gtk/fast/text/international/wrap-CJK-001-expected.txt: Added. Rebaseline after r170418.
+        * platform/gtk/fast/text/khmer-lao-font-expected.txt: Added. Add baseline after r170207.
+        * platform/gtk/fast/writing-mode/border-vertical-lr-expected.txt: Rebaseline after r170418.
+        * platform/gtk/fast/writing-mode/japanese-lr-selection-expected.txt: Rebaseline after r170418.
+        * platform/gtk/fast/writing-mode/japanese-lr-text-expected.txt: Rebaseline after r170418.
+        * platform/gtk/fast/writing-mode/japanese-rl-selection-expected.txt: Rebaseline after r170418.
+        * platform/gtk/fast/writing-mode/japanese-rl-text-expected.txt: Rebaseline after r170418.
+        * platform/gtk/svg/W3C-SVG-1.1/filters-blend-01-b-expected.txt: Added. Rebaseline after r170433.
+        * platform/gtk/svg/filters/feBlend-all-blendmodes-expected.txt: Added. Add baseline after r170433.
+
 2014-06-27  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         XHR should keep attributes on instance

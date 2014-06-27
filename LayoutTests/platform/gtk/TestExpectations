@@ -515,6 +515,9 @@ webkit.org/b/105870 [ Debug ] webaudio/audionode-connect-order.html [ Crash ]
 
 webkit.org/b/133797 fast/dom/NavigatorContentUtils/register-protocol-handler.html [ Crash ]
 
+webkit.org/b/134399 fast/forms/option-constructor-selected.html [ Crash ]
+webkit.org/b/134399 fast/forms/select-live-pseudo-selectors.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -762,7 +765,7 @@ Bug(GTK) fast/workers/storage/open-database-set-empty-version-sync.html [ Failur
 Bug(GTK) fast/workers/storage/open-database-while-transaction-in-progress.html [ Failure Pass ]
 Bug(GTK) fast/workers/storage/open-database-while-transaction-in-progress-sync.html [ Failure Pass ]
 Bug(GTK) fast/workers/storage/read-and-write-transactions-dont-run-together.html [ Failure Pass ]
-Bug(GTK) fast/workers/storage/sql-data-types-sync.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/sql-data-types-sync.html [ Timeout Pass ]
 Bug(GTK) fast/workers/storage/test-authorizer.html [ Failure Pass ]
 Bug(GTK) fast/workers/storage/test-authorizer-sync.html [ Failure Pass ]
 Bug(GTK) fast/workers/storage/transaction-in-transaction-sync.html [ Failure Pass ]
@@ -1427,7 +1430,7 @@ Bug(GTK) canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
 # movements during drags or fail only in Xvfb
 Bug(GTK) http/tests/local/drag-over-remote-content.html [ Failure ]
 Bug(GTK) http/tests/security/drag-over-remote-content-iframe.html [ Failure ]
-Bug(GTK) fast/events/drag-in-frames.html [ Failure ]
+Bug(GTK) fast/events/drag-in-frames.html [ Failure Timeout ]
 Bug(GTK) http/tests/misc/bubble-drag-events.html [ Failure ]
 
 # Dragging images and links results in a DataTransfer object containing a non-empty files array
@@ -1921,7 +1924,7 @@ webkit.org/b/132126 animations/combo-transform-translate+scale.html [ Failure Pa
 webkit.org/b/132126 animations/play-state.html [ Failure Pass ]
 webkit.org/b/132126 animations/3d/change-transform-in-end-event.html [ Timeout Pass ]
 webkit.org/b/132126 animations/added-while-suspended.html [ Timeout Pass ]
-webkit.org/b/132126 animations/animation-iteration-event-destroy-renderer.html [ Timeout Pass ]
+webkit.org/b/132126 animations/animation-iteration-event-destroy-renderer.html [ Timeout Pass Crash ]
 webkit.org/b/132126 animations/animation-direction-normal.html [ Failure Pass ]
 webkit.org/b/132126 animations/animation-direction-reverse.html [ Failure Pass ]
 webkit.org/b/132126 animations/play-state-paused.html [ Failure ]
