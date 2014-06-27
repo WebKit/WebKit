@@ -1,3 +1,16 @@
+2014-06-26  Daniel Bates  <dabates@apple.com>
+
+        [iOS][WK2] Distant focusable element may not be scrolled into view when focused using keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=134309
+        <rdar://problem/17427385>
+
+        Reviewed by Darin Adler.
+
+        Add a manual test to ensure that we scroll to a distant focused text field when it's focused
+        using the keyboard.
+
+        * ManualTests/ios/scroll-to-distant-keyboard-focused-text-field.html: Added.
+
 2014-06-25  Laszlo Gombos  <l.gombos@samsung.com>
 
         Remove build guard for progress element

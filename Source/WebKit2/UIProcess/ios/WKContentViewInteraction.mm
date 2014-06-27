@@ -263,6 +263,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     _textSelectionAssistant = nil;
     _actionSheetAssistant = nil;
     _smartMagnificationController = nil;
+    _didAccessoryTabInitiateFocus = NO;
     [_formInputSession invalidate];
     _formInputSession = nil;
     [_highlightView removeFromSuperview];
@@ -638,12 +639,13 @@ static inline bool highlightedQuadsAreSmallerThanRect(const Vector<FloatQuad>& q
 - (void)_displayFormNodeInputView
 {
     [self _zoomToFocusRect:_assistedNodeInformation.elementRect
-             selectionRect:_assistedNodeInformation.selectionRect
+             selectionRect: _didAccessoryTabInitiateFocus ? IntRect() : _assistedNodeInformation.selectionRect
                   fontSize:_assistedNodeInformation.nodeFontSize
               minimumScale:_assistedNodeInformation.minimumScaleFactor
               maximumScale:_assistedNodeInformation.maximumScaleFactor
               allowScaling:(_assistedNodeInformation.allowsUserScaling && !UICurrentUserInterfaceIdiomIsPad())
                forceScroll:[self requiresAccessoryView]];
+    _didAccessoryTabInitiateFocus = NO;
     [self _updateAccessory];
 }
 
@@ -1729,6 +1731,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)accessoryTab:(BOOL)isNext
 {
+    _didAccessoryTabInitiateFocus = YES; // Will be cleared in either -_displayFormNodeInputView or -cleanupInteraction.
     _page->focusNextAssistedNode(isNext);
 }
 

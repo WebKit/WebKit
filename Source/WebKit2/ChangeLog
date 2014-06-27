@@ -1,3 +1,27 @@
+2014-06-26  Daniel Bates  <dabates@apple.com>
+
+        [iOS][WK2] Distant focusable element may not be scrolled into view when focused using keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=134309
+        <rdar://problem/17427385>
+
+        Reviewed by Darin Adler.
+
+        Fixes an issue where the focusable element may not be scrolled into view when it's focused by
+        using the keyboard accessory (i.e. the < and > buttons). In particular, we don't scroll a
+        keyboard focused text field into view when it's positioned significantly outside the visible region.
+
+        * UIProcess/ios/WKContentViewInteraction.h: Added an instance variable called _didAccessoryTabInitiateFocus
+        to track whether an accessory tab initiated the focus of the focusable element.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]): Clear _didAccessoryTabInitiateFocus so that we're in a good state
+        should the WebProcess crash between the time the UIProcess receives the accessory tab request and the
+        WebProcess calls back to the UIProcess to zoom/scroll to the newly focused element.
+        (-[WKContentView _displayFormNodeInputView]): Modified to pass an empty rectangle for the selection
+        rectangle to -_zoomToFocusRect to avoid constraining the scroll to the newly focused element when it
+        was focused using the keyboard accessory tab buttons
+        (-[WKContentView accessoryTab:]): Modified to set _didAccessoryTabInitiateFocus to YES. We'll set
+        this boolean to NO in -_displayFormNodeInputView.
+
 2014-06-26  Timothy Horton  <timothy_horton@apple.com>
 
         [iOS][WK2] Implement WKPDFView smart magnification
