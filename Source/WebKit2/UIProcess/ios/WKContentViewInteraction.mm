@@ -1731,6 +1731,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)accessoryTab:(BOOL)isNext
 {
+    [_inputPeripheral endEditing];
+    _inputPeripheral = nil;
+
     _didAccessoryTabInitiateFocus = YES; // Will be cleared in either -_displayFormNodeInputView or -cleanupInteraction.
     _page->focusNextAssistedNode(isNext);
 }
@@ -2391,6 +2394,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     _formInputSession = nil;
     _isEditable = NO;
     _assistedNodeInformation.elementType = InputType::None;
+    [_inputPeripheral endEditing];
     _inputPeripheral = nil;
 
     [self _stopAssistingKeyboard];

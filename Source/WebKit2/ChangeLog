@@ -1,3 +1,24 @@
+2014-06-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS][WK2] <select> tapping "next" does not save new picker value
+        https://bugs.webkit.org/show_bug.cgi?id=134409
+
+        Reviewed by Enrica Casucci.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView accessoryTab:]):
+        We know the assisted node will change, so call endEditing
+        before the assisted node changes in the WebProcess.
+
+        (-[WKContentView _stopAssistingNode]):
+        Ensure we call endEditing to trigger controlEndEditing.
+
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKMultipleSelectPicker initWithView:]):
+        (-[WKMultipleSelectPicker pickerView:row:column:checked:]):
+        (-[WKSelectSinglePicker dealloc]):
+        Style fixes.
+
 2014-06-27  Peyton Randolph  <prandolph@apple.com>
 
          Add feature flag for link long-press gesture.                                                                   

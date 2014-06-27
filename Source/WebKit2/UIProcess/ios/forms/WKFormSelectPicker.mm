@@ -181,7 +181,7 @@ static const float DisabledOptionAlpha = 0.3;
 
     if (_singleSelectionIndex != NSNotFound)
         [self selectRow:_singleSelectionIndex inComponent:0 animated:NO];
-    
+
     return self;
 }
 
@@ -275,7 +275,6 @@ static const float DisabledOptionAlpha = 0.3;
 
 - (void)pickerView:(UIPickerView *)pickerView row:(int)rowIndex column:(int)columnIndex checked:(BOOL)isChecked
 {
-
     if ((size_t)rowIndex >= [_view assistedNodeSelectOptions].size())
         return;
 
@@ -335,7 +334,7 @@ static const float DisabledOptionAlpha = 0.3;
 - (void)dealloc
 {
     [self setDelegate:nil];
-     [self setDataSource:nil];
+    [self setDataSource:nil];
 
     [super dealloc];
 }
