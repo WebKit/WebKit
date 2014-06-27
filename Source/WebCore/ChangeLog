@@ -1,3 +1,15 @@
+2014-06-27  Zalan Bujtas  <zalan@apple.com>
+
+        Set cliprect radius unconditionally in RenderLayer.
+        https://bugs.webkit.org/show_bug.cgi?id=134396
+
+        Reviewed by Simon Fraser.
+
+        No change in functionality.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+
 2014-06-27  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Interaction between auto-placement and column / row spanning

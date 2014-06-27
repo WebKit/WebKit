@@ -5185,8 +5185,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
         
         if (renderer().hasOverflowClip()) {
             ClipRect newOverflowClip = toRenderBox(renderer()).overflowClipRectForChildLayers(offset, currentRenderNamedFlowFragment(), clipRectsContext.overlayScrollbarSizeRelevancy);
-            if (renderer().style().hasBorderRadius())
-                newOverflowClip.setHasRadius(true);
+            newOverflowClip.setHasRadius(renderer().style().hasBorderRadius());
             clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
             if (renderer().isPositioned())
                 clipRects.setPosClipRect(intersection(newOverflowClip, clipRects.posClipRect()));
@@ -5310,8 +5309,7 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
         // This layer establishes a clip of some kind.
         if (renderer().hasOverflowClip() && (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip == RespectOverflowClip)) {
             foregroundRect.intersect(toRenderBox(renderer()).overflowClipRect(toLayoutPoint(offsetFromRootLocal), namedFlowFragment, clipRectsContext.overlayScrollbarSizeRelevancy));
-            if (renderer().style().hasBorderRadius())
-                foregroundRect.setHasRadius(true);
+            foregroundRect.setHasRadius(renderer().style().hasBorderRadius());
         }
 
         if (renderer().hasClip()) {
