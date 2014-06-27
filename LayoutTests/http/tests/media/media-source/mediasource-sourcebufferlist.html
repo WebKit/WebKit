@@ -4,8 +4,6 @@
         <script src="/w3c/resources/testharness.js"></script>
         <script src="/w3c/resources/testharnessreport.js"></script>
         <script src="mediasource-util.js"></script>
-
-        <link rel='stylesheet' href='/w3c/resources/testharness.css'>
     </head>
     <body>
         <div id="log"></div>
@@ -13,24 +11,20 @@
           function verifySourceBufferLists(mediaSource, expected)
           {
               assert_equals(mediaSource.sourceBuffers.length, expected.length, "sourceBuffers length");
-              assert_equals(mediaSource.activeSourceBuffers.length, expected.length, "activeSourceBuffers length");
-              for (var i = 0; i < expected.length; ++i) {
+              assert_equals(mediaSource.activeSourceBuffers.length, 0, "activeSourceBuffers length");
+              for (var i = 0; i < expected.length; ++i)
                 assert_equals(mediaSource.sourceBuffers[i], expected[i], "Verifying mediaSource.sourceBuffers[" + i + "]");
-                assert_equals(mediaSource.activeSourceBuffers[i], expected[i], "Verifying mediaSource.activeSourceBuffers[" + i + "]");
-              }
           }
 
           mediasource_test(function(test, mediaElement, mediaSource)
           {
               test.expectEvent(mediaSource.sourceBuffers, "addsourcebuffer", "sourceBuffers");
-              test.expectEvent(mediaSource.activeSourceBuffers, "addsourcebuffer", "activeSourceBuffers");
               var sourceBufferA = mediaSource.addSourceBuffer(MediaSourceUtil.VIDEO_ONLY_TYPE);
               var sourceBufferB = null;
 
               test.waitForExpectedEvents(function()
               {
                   test.expectEvent(mediaSource.sourceBuffers, "addsourcebuffer", "sourceBuffers");
-                  test.expectEvent(mediaSource.activeSourceBuffers, "addsourcebuffer", "activeSourceBuffers");
                   sourceBufferB = mediaSource.addSourceBuffer(MediaSourceUtil.AUDIO_ONLY_TYPE);
 
                   verifySourceBufferLists(mediaSource, [sourceBufferA, sourceBufferB]);
@@ -38,14 +32,12 @@
 
               test.waitForExpectedEvents(function()
               {
-                  test.expectEvent(mediaSource.activeSourceBuffers, "removesourcebuffer", "activeSourceBuffers");
                   test.expectEvent(mediaSource.sourceBuffers, "removesourcebuffer", "sourceBuffers");
                   mediaSource.removeSourceBuffer(sourceBufferA);
 
                   verifySourceBufferLists(mediaSource, [sourceBufferB]);
 
                   test.expectEvent(mediaSource.sourceBuffers, "addsourcebuffer", "sourceBuffers");
-                  test.expectEvent(mediaSource.activeSourceBuffers, "addsourcebuffer", "activeSourceBuffers");
                   sourceBufferA = mediaSource.addSourceBuffer(MediaSourceUtil.VIDEO_ONLY_TYPE);
 
                   verifySourceBufferLists(mediaSource, [sourceBufferB, sourceBufferA]);
@@ -60,9 +52,7 @@
           mediasource_test(function(test, mediaElement, mediaSource)
           {
               test.expectEvent(mediaSource.sourceBuffers, "addsourcebuffer", "sourceBuffers");
-              test.expectEvent(mediaSource.activeSourceBuffers, "addsourcebuffer", "activeSourceBuffers");
               test.expectEvent(mediaSource.sourceBuffers, "addsourcebuffer", "sourceBuffers");
-              test.expectEvent(mediaSource.activeSourceBuffers, "addsourcebuffer", "activeSourceBuffers");
               var sourceBufferA = mediaSource.addSourceBuffer(MediaSourceUtil.VIDEO_ONLY_TYPE);
               var sourceBufferB = mediaSource.addSourceBuffer(MediaSourceUtil.AUDIO_ONLY_TYPE);
 
@@ -73,7 +63,6 @@
                   verifySourceBufferLists(mediaSource, [sourceBufferA, sourceBufferB]);
 
                   // Force the media element to close the MediaSource object.
-                  test.expectEvent(mediaSource.activeSourceBuffers, "removesourcebuffer", "activeSourceBuffers");
                   test.expectEvent(mediaSource.sourceBuffers, "removesourcebuffer", "sourceBuffers");
                   test.expectEvent(mediaSource, "sourceclose", "mediaSource closing");
                   mediaElement.src = "";

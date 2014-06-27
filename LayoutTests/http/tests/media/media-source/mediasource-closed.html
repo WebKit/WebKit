@@ -4,7 +4,6 @@
         <script src="/w3c/resources/testharness.js"></script>
         <script src="/w3c/resources/testharnessreport.js"></script>
         <script src="mediasource-util.js"></script>
-        <link rel='stylesheet' href='/w3c/resources/testharness.css'>
     </head>
     <body>
         <div id="log"></div>
@@ -22,16 +21,13 @@
           {
               var mediaSource = new MediaSource();
               assert_throws("InvalidStateError",
-                  function() { mediaSource.addSourceBuffer('video/webm;codecs="vp8"'); },
+                  function() { mediaSource.addSourceBuffer(MediaSourceUtil.VIDEO_ONLY_TYPE); },
                   "addSourceBuffer() throws an exception when closed.");
           }, "Test addSourceBuffer() while closed.");
 
           mediasource_test(function(test, mediaElement, mediaSource)
           {
-              var VORBIS_TYPE = 'video/webm;codecs="vorbis"';
-              var AAC_TYPE = 'video/mp4;codecs="mp4a.40.2"';
-              var mediaType = MediaSource.isTypeSupported(VORBIS_TYPE) ? VORBIS_TYPE : AAC_TYPE;
-              var sourceBuffer = mediaSource.addSourceBuffer(mediaType);
+              var sourceBuffer = mediaSource.addSourceBuffer(MediaSourceUtil.AUDIO_ONLY_TYPE);
 
               // Setup a handler to run when the MediaSource closes.
               mediaSource.addEventListener('sourceclose', test.step_func(function (event)

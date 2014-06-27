@@ -1,3 +1,171 @@
+2014-06-27  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Import latest Media Source tests from W3C test suite
+        https://bugs.webkit.org/show_bug.cgi?id=134388
+
+        Reviewed by Eric Carlson.
+
+        Import the most recent Media Source tests from the proposed W3C test suite:
+        <https://github.com/acolwell/web-platform-tests/tree/submission/acolwell/media-source/media-source>
+
+        No ports currently enable these tests, so update the expected results for each
+        test with the ideal expected result.
+
+        * http/tests/media/media-source/mediasource-addsourcebuffer-expected.txt:
+        * http/tests/media/media-source/mediasource-addsourcebuffer.html:
+        * http/tests/media/media-source/mediasource-append-buffer-expected.txt:
+        * http/tests/media/media-source/mediasource-append-buffer.html:
+        * http/tests/media/media-source/mediasource-append-stream-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-append-stream.html: Added.
+        * http/tests/media/media-source/mediasource-appendwindow-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-appendwindow.html: Added.
+        * http/tests/media/media-source/mediasource-buffered-expected.txt:
+        * http/tests/media/media-source/mediasource-buffered.html:
+        * http/tests/media/media-source/mediasource-closed-expected.txt:
+        * http/tests/media/media-source/mediasource-closed.html:
+        * http/tests/media/media-source/mediasource-config-change-mp4-a-bitrate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-mp4-a-bitrate.html:
+        * http/tests/media/media-source/mediasource-config-change-mp4-av-audio-bitrate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-mp4-av-audio-bitrate.html:
+        * http/tests/media/media-source/mediasource-config-change-mp4-av-framesize-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-mp4-av-framesize.html:
+        * http/tests/media/media-source/mediasource-config-change-mp4-av-video-bitrate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-mp4-av-video-bitrate.html:
+        * http/tests/media/media-source/mediasource-config-change-mp4-v-bitrate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-mp4-v-bitrate.html:
+        * http/tests/media/media-source/mediasource-config-change-mp4-v-framerate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-mp4-v-framerate.html:
+        * http/tests/media/media-source/mediasource-config-change-mp4-v-framesize-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-mp4-v-framesize.html:
+        * http/tests/media/media-source/mediasource-config-change-webm-a-bitrate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-webm-a-bitrate.html:
+        * http/tests/media/media-source/mediasource-config-change-webm-av-audio-bitrate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-webm-av-audio-bitrate.html:
+        * http/tests/media/media-source/mediasource-config-change-webm-av-framesize-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-webm-av-framesize.html:
+        * http/tests/media/media-source/mediasource-config-change-webm-av-video-bitrate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-webm-av-video-bitrate.html:
+        * http/tests/media/media-source/mediasource-config-change-webm-v-bitrate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-webm-v-bitrate.html:
+        * http/tests/media/media-source/mediasource-config-change-webm-v-framerate-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-webm-v-framerate.html:
+        * http/tests/media/media-source/mediasource-config-change-webm-v-framesize-expected.txt:
+        * http/tests/media/media-source/mediasource-config-change-webm-v-framesize.html:
+        * http/tests/media/media-source/mediasource-config-changes.js:
+        * http/tests/media/media-source/mediasource-duration-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-duration.html: Added.
+        * http/tests/media/media-source/mediasource-endofstream-invaliderror-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-endofstream-invaliderror.html: Added.
+        * http/tests/media/media-source/mediasource-getvideoplaybackquality-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-getvideoplaybackquality.html: Added.
+        * http/tests/media/media-source/mediasource-is-type-supported-expected.txt:
+        * http/tests/media/media-source/mediasource-is-type-supported.html:
+        * http/tests/media/media-source/mediasource-multiple-attach-expected.txt:
+        * http/tests/media/media-source/mediasource-multiple-attach.html:
+        * http/tests/media/media-source/mediasource-play-expected.txt:
+        * http/tests/media/media-source/mediasource-play-then-seek-back-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-play-then-seek-back.html: Added.
+        * http/tests/media/media-source/mediasource-play.html:
+        * http/tests/media/media-source/mediasource-redundant-seek-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-redundant-seek.html: Added.
+        * http/tests/media/media-source/mediasource-remove-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-remove.html: Added.
+        * http/tests/media/media-source/mediasource-seek-beyond-duration-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-seek-beyond-duration.html: Added.
+        * http/tests/media/media-source/mediasource-seek-during-pending-seek-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-seek-during-pending-seek.html: Added.
+        * http/tests/media/media-source/mediasource-sourcebuffer-mode-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-sourcebuffer-mode.html: Added.
+        * http/tests/media/media-source/mediasource-sourcebufferlist-expected.txt:
+        * http/tests/media/media-source/mediasource-sourcebufferlist.html:
+        * http/tests/media/media-source/mediasource-util.js:
+        * http/tests/media/media-source/mp4/test-a-128k-44100Hz-1ch-manifest.json: Added.
+        * http/tests/media/media-source/mp4/test-a-128k-44100Hz-1ch.mp4: Added.
+        * http/tests/media/media-source/mp4/test-a-192k-44100Hz-1ch-manifest.json: Added.
+        * http/tests/media/media-source/mp4/test-a-192k-44100Hz-1ch.mp4: Added.
+        * http/tests/media/media-source/mp4/test-av-384k-44100Hz-1ch-320x240-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/media-source/mp4/test-av-384k-44100Hz-1ch-320x240-30fps-10kfr.mp4: Added.
+        * http/tests/media/media-source/mp4/test-av-384k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/media-source/mp4/test-av-384k-44100Hz-1ch-640x480-30fps-10kfr.mp4: Added.
+        * http/tests/media/media-source/mp4/test-av-448k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/media-source/mp4/test-av-448k-44100Hz-1ch-640x480-30fps-10kfr.mp4: Added.
+        * http/tests/media/media-source/mp4/test-av-640k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/media-source/mp4/test-av-640k-44100Hz-1ch-640x480-30fps-10kfr.mp4: Added.
+        * http/tests/media/media-source/mp4/test-v-128k-320x240-24fps-8kfr-manifest.json: Added.
+        * http/tests/media/media-source/mp4/test-v-128k-320x240-24fps-8kfr.mp4: Added.
+        * http/tests/media/media-source/mp4/test-v-128k-320x240-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/media-source/mp4/test-v-128k-320x240-30fps-10kfr.mp4: Added.
+        * http/tests/media/media-source/mp4/test-v-128k-640x480-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/media-source/mp4/test-v-128k-640x480-30fps-10kfr.mp4: Added.
+        * http/tests/media/media-source/mp4/test-v-256k-320x240-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/media-source/mp4/test-v-256k-320x240-30fps-10kfr.mp4: Added.
+        * http/tests/media/media-source/mp4/test.mp4: Added.
+        * http/tests/media/media-source/seek-to-end-after-duration-change-expected.txt: Removed.
+        * http/tests/media/media-source/seek-to-end-after-duration-change.html: Removed.
+        * http/tests/media/media-source/video-media-source-abort-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-abort.html: Removed.
+        * http/tests/media/media-source/video-media-source-add-and-remove-buffers-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-add-and-remove-buffers.html: Removed.
+        * http/tests/media/media-source/video-media-source-append-in-ended-state-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-append-in-ended-state.html: Removed.
+        * http/tests/media/media-source/video-media-source-append-with-offset-in-ended-state-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-append-with-offset-in-ended-state.html: Removed.
+        * http/tests/media/media-source/video-media-source-async-events-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-async-events.html: Removed.
+        * http/tests/media/media-source/video-media-source-closed-on-htmlmediaelement-destruction-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-closed-on-htmlmediaelement-destruction.html: Removed.
+        * http/tests/media/media-source/video-media-source-duration-boundaryconditions-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-duration-boundaryconditions.html: Removed.
+        * http/tests/media/media-source/video-media-source-duration-changed-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-duration-changed.html: Removed.
+        * http/tests/media/media-source/video-media-source-duration-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-duration.html: Removed.
+        * http/tests/media/media-source/video-media-source-errors-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-errors.html: Removed.
+        * http/tests/media/media-source/video-media-source-event-attributes-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-event-attributes.html: Removed.
+        * http/tests/media/media-source/video-media-source-garbage-collection-before-sourceopen-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-garbage-collection-before-sourceopen.html: Removed.
+        * http/tests/media/media-source/video-media-source-is-type-supported-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-is-type-supported.html: Removed.
+        * http/tests/media/media-source/video-media-source-objects-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-objects.html: Removed.
+        * http/tests/media/media-source/video-media-source-play-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-play.html: Removed.
+        * http/tests/media/media-source/video-media-source-reject-append-after-reopening-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-reject-append-after-reopening.html: Removed.
+        * http/tests/media/media-source/video-media-source-seek-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-seek.html: Removed.
+        * http/tests/media/media-source/video-media-source-sourcebufferlist-crash-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-sourcebufferlist-crash.html: Removed.
+        * http/tests/media/media-source/video-media-source-state-changes-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-state-changes.html: Removed.
+        * http/tests/media/media-source/video-media-source-zero-byte-append-in-ended-state-expected.txt: Removed.
+        * http/tests/media/media-source/video-media-source-zero-byte-append-in-ended-state.html: Removed.
+        * http/tests/media/media-source/webm/segment-info.js: Added.
+        * http/tests/media/media-source/webm/test-a-128k-44100Hz-1ch-manifest.json: Added.
+        * http/tests/media/media-source/webm/test-a-128k-44100Hz-1ch.webm: Added.
+        * http/tests/media/media-source/webm/test-a-192k-44100Hz-1ch-manifest.json: Added.
+        * http/tests/media/media-source/webm/test-a-192k-44100Hz-1ch.webm: Added.
+        * http/tests/media/media-source/webm/test-av-384k-44100Hz-1ch-320x240-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/media-source/webm/test-av-384k-44100Hz-1ch-320x240-30fps-10kfr.webm: Added.
+        * http/tests/media/media-source/webm/test-av-384k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/media-source/webm/test-av-384k-44100Hz-1ch-640x480-30fps-10kfr.webm: Added.
+        * http/tests/media/media-source/webm/test-av-448k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/media-source/webm/test-av-448k-44100Hz-1ch-640x480-30fps-10kfr.webm: Added.
+        * http/tests/media/media-source/webm/test-av-640k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/media-source/webm/test-av-640k-44100Hz-1ch-640x480-30fps-10kfr.webm: Added.
+        * http/tests/media/media-source/webm/test-v-128k-320x240-24fps-8kfr-manifest.json: Added.
+        * http/tests/media/media-source/webm/test-v-128k-320x240-24fps-8kfr.webm: Added.
+        * http/tests/media/media-source/webm/test-v-128k-320x240-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/media-source/webm/test-v-128k-320x240-30fps-10kfr.webm: Added.
+        * http/tests/media/media-source/webm/test-v-128k-640x480-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/media-source/webm/test-v-128k-640x480-30fps-10kfr.webm: Added.
+        * http/tests/media/media-source/webm/test-v-256k-320x240-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/media-source/webm/test-v-256k-320x240-30fps-10kfr.webm: Added.
+        * http/tests/media/media-source/webm/test-vp8-vorbis-webvtt.webm: Added.
+        * http/tests/media/media-source/webm/test.webm: Added.
+
 2014-06-27  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.

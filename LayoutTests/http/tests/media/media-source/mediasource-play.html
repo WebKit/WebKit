@@ -4,31 +4,40 @@
         <script src="/w3c/resources/testharness.js"></script>
         <script src="/w3c/resources/testharnessreport.js"></script>
         <script src="mediasource-util.js"></script>
-        <link rel='stylesheet' href='/w3c/resources/testharness.css'>
     </head>
     <body>
         <div id="log"></div>
         <script>
-          mediasource_test(function(test, mediaElement, mediaSource)
+          mediasource_testafterdataloaded(function(test, mediaElement, mediaSource, segmentInfo, sourceBuffer, mediaData)
           {
               test.failOnEvent(mediaElement, 'error');
               test.endOnEvent(mediaElement, 'ended');
 
-              var mediaType = 'video/webm;codecs="vp8,vorbis"';
-              var mediaURL = '/media/resources/media-source/webm/test.webm';
-              var sourceBuffer = mediaSource.addSourceBuffer(mediaType);
+              test.expectEvent(sourceBuffer, 'updatestart', 'sourceBuffer');
+              test.expectEvent(sourceBuffer, 'update', 'sourceBuffer');
+              test.expectEvent(sourceBuffer, 'updateend', 'sourceBuffer');
 
-              MediaSourceUtil.loadBinaryData(test, mediaURL, function(data)
+              sourceBuffer.appendBuffer(mediaData);
+
+              test.waitForExpectedEvents(function()
               {
-                  sourceBuffer.addEventListener('updateend', test.step_func(function()
-                  {
-                      mediaSource.duration = 1;
-                      mediaSource.endOfStream();
-                      mediaElement.play();
-                  }));
-                  sourceBuffer.appendBuffer(data);
+                  assert_false(sourceBuffer.updating, "updating");
+                  assert_greater_than(mediaSource.duration, 1, "duration");
+
+                  mediaSource.duration = 1;
+
+                  assert_true(sourceBuffer.updating, "updating");
+                  test.expectEvent(sourceBuffer, 'updatestart', 'sourceBuffer');
+                  test.expectEvent(sourceBuffer, 'update', 'sourceBuffer');
+                  test.expectEvent(sourceBuffer, 'updateend', 'sourceBuffer');
               });
-          }, "Test normal playback case with MediaSource API");
+
+              test.waitForExpectedEvents(function()
+              {
+                  mediaSource.endOfStream();
+                  mediaElement.play();
+              });
+          }, "Test normal playback case with MediaSource API", {timeout: 5000});
         </script>
     </body>
 </html>

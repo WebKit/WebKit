@@ -1,4 +1,48 @@
 (function(window) {
+    setup({ timeout: 12000 });
+
+    var SEGMENT_INFO_LIST = [
+        {
+            url: 'webm/test.webm',
+            type: 'video/webm; codecs="vp8, vorbis"',
+            duration: 6.042,
+            init: { offset: 0, size: 4357 },
+            media: [
+                {  offset: 4357, size: 11830, timecode: 0 },
+                {  offset: 16187, size: 12588, timecode: 0.385 },
+                {  offset: 28775, size: 14588, timecode: 0.779 },
+                {  offset: 43363, size: 13023, timecode: 1.174 },
+                {  offset: 56386, size: 13127, timecode: 1.592 },
+                {  offset: 69513, size: 14456, timecode: 1.987 },
+                {  offset: 83969, size: 13458, timecode: 2.381 },
+                {  offset: 97427, size: 14566, timecode: 2.776 },
+                {  offset: 111993, size: 13201, timecode: 3.171 },
+                {  offset: 125194, size: 14061, timecode: 3.566 },
+                {  offset: 139255, size: 15353, timecode: 3.96 },
+                {  offset: 154608, size: 13618, timecode: 4.378 },
+                {  offset: 168226, size: 15094, timecode: 4.773 },
+                {  offset: 183320, size: 13069, timecode: 5.168 },
+                {  offset: 196389, size: 13788, timecode: 5.563 },
+                {  offset: 210177, size: 9009, timecode: 5.957 },
+            ],
+        },
+        {
+            url: 'mp4/test.mp4',
+            type: 'video/mp4; codecs="mp4a.40.2, avc1.4D401E"',
+            duration: 6.0424,
+            init: { offset: 0, size: 1279 },
+            media: [
+                {  offset: 1406, size: 23863, timecode: 0 },
+                {  offset: 25270, size: 25435, timecode: 0.797 },
+                {  offset: 50705, size: 24796, timecode: 1.594 },
+                {  offset: 75501, size: 25167, timecode: 2.390 },
+                {  offset: 100668, size: 22976, timecode: 3.187 },
+                {  offset: 123644, size: 25030, timecode: 3.984},
+                {  offset: 148674, size: 24929, timecode: 4.781 },
+                {  offset: 173603, size: 19271, timecode: 5.578 },
+            ],
+        }
+    ];
     EventExpectationsManager = function(test)
     {
         this.test_ = test;
@@ -13,7 +57,7 @@
         expectations.push(eventInfo);
 
         var t = this;
-        var waitHandler = this.test_.step_func(function() { t.handleWaitCallback_(); });
+        var waitHandler = this.test_.step_func(this.handleWaitCallback_.bind(this));
         var eventHandler = this.test_.step_func(function(event)
         {
             object.removeEventListener(eventName, eventHandler);
@@ -32,7 +76,7 @@
     EventExpectationsManager.prototype.waitForExpectedEvents = function(callback)
     {
         this.waitCallbacks_.push(callback);
-        setTimeout(this.handleWaitCallback_.bind(this), 0);
+        setTimeout(this.test_.step_func(this.handleWaitCallback_.bind(this)), 0);
     };
 
     EventExpectationsManager.prototype.expectingEvents = function()
@@ -123,7 +167,7 @@
 
     MediaSourceUtil.fetchManifestAndData = function(test, manifestFilename, callback)
     {
-        var baseURL = '/media/resources/media-source/';
+        var baseURL = '';
         var manifestURL = baseURL + manifestFilename;
         MediaSourceUtil.loadTextData(test, manifestURL, function(manifestText)
         {
@@ -139,6 +183,28 @@
         });
     };
 
+    MediaSourceUtil.extractSegmentData = function(mediaData, info)
+    {
+        var start = info.offset;
+        var end = start + info.size;
+        return mediaData.subarray(start, end);
+    }
+
+    MediaSourceUtil.getMediaDataForPlaybackTime = function(mediaData, segmentInfo, playbackTimeToAdd)
+    {
+        assert_less_than_equal(playbackTimeToAdd, segmentInfo.duration);
+        var mediaInfo = segmentInfo.media;
+        var start = mediaInfo[0].offset;
+        var numBytes = 0;
+        var segmentIndex = 0;
+        while (segmentIndex < mediaInfo.length && mediaInfo[segmentIndex].timecode <= playbackTimeToAdd)
+        {
+          numBytes += mediaInfo[segmentIndex].size;
+          ++segmentIndex;
+        }
+        return mediaData.subarray(start, numBytes + start);
+    }
+
     function getFirstSupportedType(typeList)
     {
         for (var i = 0; i < typeList.length; ++i) {
@@ -148,12 +214,45 @@
         return "";
     }
 
+    function getSegmentInfo()
+    {
+        for (var i = 0; i < SEGMENT_INFO_LIST.length; ++i) {
+            var segmentInfo = SEGMENT_INFO_LIST[i];
+            if (MediaSource.isTypeSupported(segmentInfo.type)) {
+                return segmentInfo;
+            }
+        }
+        return null;
+    }
+
     var audioOnlyTypes = ['audio/webm;codecs="vorbis"', 'audio/mp4;codecs="mp4a.40.2"'];
     var videoOnlyTypes = ['video/webm;codecs="vp8"', 'video/mp4;codecs="avc1.4D4001"'];
-    var audioVideoTypes = ['video/webm;codecs="vp8,vorbis"', 'video/mp4;codecs="mp4a.40.2"'];
+    var audioVideoTypes = ['video/webm;codecs="vp8,vorbis"', 'video/mp4;codecs="avc1.4D4001,mp4a.40.2"'];
     MediaSourceUtil.AUDIO_ONLY_TYPE = getFirstSupportedType(audioOnlyTypes);
     MediaSourceUtil.VIDEO_ONLY_TYPE = getFirstSupportedType(videoOnlyTypes);
     MediaSourceUtil.AUDIO_VIDEO_TYPE = getFirstSupportedType(audioVideoTypes);
+    MediaSourceUtil.SEGMENT_INFO = getSegmentInfo();
+
+    MediaSourceUtil.getSubType = function(mimetype) {
+        var slashIndex = mimetype.indexOf("/");
+        var semicolonIndex = mimetype.indexOf(";");
+        if (slashIndex <= 0) {
+            assert_unreached("Invalid mimetype '" + mimetype + "'");
+            return;
+        }
+
+        var start = slashIndex + 1;
+        if (semicolonIndex >= 0) {
+            if (semicolonIndex <= start) {
+                assert_unreached("Invalid mimetype '" + mimetype + "'");
+                return;
+            }
+
+            return mimetype.substr(start, semicolonIndex - start)
+        }
+
+        return mimetype.substr(start);
+    };
 
     function addExtraTestMethods(test)
     {
@@ -181,11 +280,27 @@
             test.eventExpectations_.waitForExpectedEvents(callback);
         };
 
+        test.waitForCurrentTimeChange = function(mediaElement, callback)
+        {
+            var initialTime = mediaElement.currentTime;
+
+            var onTimeUpdate = test.step_func(function()
+            {
+                if (mediaElement.currentTime != initialTime) {
+                    mediaElement.removeEventListener('timeupdate', onTimeUpdate);
+                    callback();
+                }
+            });
+
+            mediaElement.addEventListener('timeupdate', onTimeUpdate);
+        }
+
         var oldTestDone = test.done.bind(test);
         test.done = function()
         {
-            if (test.status == test.PASS)
+            if (test.status == test.PASS) {
                 assert_false(test.eventExpectations_.expectingEvents(), "No pending event expectations.");
+            }
             oldTestDone();
         };
     };
@@ -224,6 +339,42 @@
                 testFunction(test, mediaTag, mediaSource);
             });
         }, description, options);
-
     };
+
+    window['mediasource_testafterdataloaded'] = function(testFunction, description, options)
+    {
+        mediasource_test(function(test, mediaElement, mediaSource)
+        {
+            var segmentInfo = MediaSourceUtil.SEGMENT_INFO;
+
+            if (!segmentInfo) {
+                assert_unreached("No segment info compatible with this MediaSource implementation.");
+                return;
+            }
+
+            test.failOnEvent(mediaElement, 'error');
+
+            var sourceBuffer = mediaSource.addSourceBuffer(segmentInfo.type);
+            MediaSourceUtil.loadBinaryData(test, segmentInfo.url, function(mediaData)
+            {
+                testFunction(test, mediaElement, mediaSource, segmentInfo, sourceBuffer, mediaData);
+            });
+        }, description, options);
+    }
+
+    function timeRangesToString(ranges)
+    {
+        var s = "{";
+        for (var i = 0; i < ranges.length; ++i) {
+            s += " [" + ranges.start(i).toFixed(3) + ", " + ranges.end(i).toFixed(3) + ")";
+        }
+        return s + " }";
+    }
+
+    window['assertBufferedEquals'] = function(obj, expected, description)
+    {
+        var actual = timeRangesToString(obj.buffered);
+        assert_equals(actual, expected, description);
+    };
+
 })(window);

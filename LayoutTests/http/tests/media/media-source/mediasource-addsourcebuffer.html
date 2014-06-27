@@ -4,8 +4,6 @@
         <script src="/w3c/resources/testharness.js"></script>
         <script src="/w3c/resources/testharnessreport.js"></script>
         <script src="mediasource-util.js"></script>
-
-        <link rel='stylesheet' href='/w3c/resources/testharness.css'>
     </head>
     <body>
         <div id="log"></div>
@@ -36,7 +34,7 @@
               var sourceBuffer = mediaSource.addSourceBuffer(mimetype);
               assert_true(sourceBuffer != null, "New SourceBuffer returned");
               assert_equals(mediaSource.sourceBuffers[0], sourceBuffer, "SourceBuffer is in mediaSource.sourceBuffers");
-              assert_equals(mediaSource.activeSourceBuffers[0], sourceBuffer, "SourceBuffer is in mediaSource.activeSourceBuffers");
+              assert_equals(mediaSource.activeSourceBuffers.length, 0, "SourceBuffer is not in mediaSource.activeSourceBuffers");
               test.done();
           }, "Test addSourceBuffer() with Vorbis and VP8");
 
@@ -51,9 +49,9 @@
               var sourceBufferA = mediaSource.addSourceBuffer(videoMimetype);
               var sourceBufferB = mediaSource.addSourceBuffer(audioMimetype);
               assert_equals(mediaSource.sourceBuffers[0], sourceBufferA, "sourceBufferA is in mediaSource.sourceBuffers");
-              assert_equals(mediaSource.activeSourceBuffers[0], sourceBufferA, "sourceBufferA is in mediaSource.activeSourceBuffers");
+              assert_equals(mediaSource.activeSourceBuffers.length, 0, "SourceBufferA is not in mediaSource.activeSourceBuffers");
               assert_equals(mediaSource.sourceBuffers[1], sourceBufferB, "sourceBufferB is in mediaSource.sourceBuffers");
-              assert_equals(mediaSource.activeSourceBuffers[1], sourceBufferB, "sourceBufferB is in mediaSource.activeSourceBuffers");
+              assert_equals(mediaSource.activeSourceBuffers.length, 0, "SourceBufferB is not in mediaSource.activeSourceBuffers");
               test.done();
           }, "Test addSourceBuffer() with Vorbis and VP8 in separate SourceBuffers");
 
@@ -66,7 +64,7 @@
               var sourceBuffer = mediaSource.addSourceBuffer(mimetype);
               assert_true(sourceBuffer != null, "New SourceBuffer returned");
               assert_equals(mediaSource.sourceBuffers[0], sourceBuffer, "SourceBuffer is in mediaSource.sourceBuffers");
-              assert_equals(mediaSource.activeSourceBuffers[0], sourceBuffer, "SourceBuffer is in mediaSource.activeSourceBuffers");
+              assert_equals(mediaSource.activeSourceBuffers.length, 0, "SourceBuffer is not in mediaSource.activeSourceBuffers");
               test.done();
           }, "Test addSourceBuffer() with AAC and H.264");
 
@@ -81,9 +79,9 @@
               var sourceBufferA = mediaSource.addSourceBuffer(videoMimetype);
               var sourceBufferB = mediaSource.addSourceBuffer(audioMimetype);
               assert_equals(mediaSource.sourceBuffers[0], sourceBufferA, "sourceBufferA is in mediaSource.sourceBuffers");
-              assert_equals(mediaSource.activeSourceBuffers[0], sourceBufferA, "sourceBufferA is in mediaSource.activeSourceBuffers");
+              assert_equals(mediaSource.activeSourceBuffers.length, 0, "SourceBufferA is not in mediaSource.activeSourceBuffers");
               assert_equals(mediaSource.sourceBuffers[1], sourceBufferB, "sourceBufferB is in mediaSource.sourceBuffers");
-              assert_equals(mediaSource.activeSourceBuffers[1], sourceBufferB, "sourceBufferB is in mediaSource.activeSourceBuffers");
+              assert_equals(mediaSource.activeSourceBuffers.length, 0, "SourceBufferB is not in mediaSource.activeSourceBuffers");
               test.done();
           }, "Test addSourceBuffer() with AAC and H.264 in separate SourceBuffers");
         </script>

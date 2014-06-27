@@ -4,27 +4,11 @@
         <script src="/w3c/resources/testharness.js"></script>
         <script src="/w3c/resources/testharnessreport.js"></script>
         <script src="mediasource-util.js"></script>
-        <link rel='stylesheet' href='/w3c/resources/testharness.css'>
     </head>
     <body>
         <div id="log"></div>
         <script>
-          mediasource_loaddata_test = function(callback, description)
-          {
-              mediasource_test(function(test, mediaElement, mediaSource)
-              {
-                  var mediaType = 'video/webm;codecs="vp8,vorbis"';
-                  var mediaURL = '/media/resources/media-source/webm/test.webm';
-                  var sourceBuffer = mediaSource.addSourceBuffer(mediaType);
-                  MediaSourceUtil.loadBinaryData(test, mediaURL, function(mediaData)
-                  {
-                      callback(test, mediaElement, mediaSource, sourceBuffer, mediaData);
-
-                  });
-              }, description);
-          };
-
-          mediasource_loaddata_test(function(test, mediaElement, mediaSource, sourceBuffer, mediaData)
+          mediasource_testafterdataloaded(function(test, mediaElement, mediaSource, segmentInfo, sourceBuffer, mediaData)
           {
               test.failOnEvent(mediaElement, 'error');
 
@@ -42,7 +26,7 @@
               });
           }, "Test SourceBuffer.appendBuffer() event dispatching.");
 
-          mediasource_loaddata_test(function(test, mediaElement, mediaSource, sourceBuffer, mediaData)
+          mediasource_testafterdataloaded(function(test, mediaElement, mediaSource, segmentInfo, sourceBuffer, mediaData)
           {
               test.failOnEvent(mediaElement, 'error');
 
@@ -66,7 +50,7 @@
               });
           }, "Test SourceBuffer.appendBuffer() call during a pending appendBuffer().");
 
-          mediasource_loaddata_test(function(test, mediaElement, mediaSource, sourceBuffer, mediaData)
+          mediasource_testafterdataloaded(function(test, mediaElement, mediaSource, segmentInfo, sourceBuffer, mediaData)
           {
               test.failOnEvent(mediaElement, 'error');
 
@@ -88,7 +72,7 @@
               });
           }, "Test SourceBuffer.abort() call during a pending appendBuffer().");
 
-          mediasource_loaddata_test(function(test, mediaElement, mediaSource, sourceBuffer, mediaData)
+          mediasource_testafterdataloaded(function(test, mediaElement, mediaSource, segmentInfo, sourceBuffer, mediaData)
           {
               test.failOnEvent(mediaElement, 'error');
 
@@ -129,7 +113,7 @@
               });
           }, "Test SourceBuffer.appendBuffer() triggering an 'ended' to 'open' transition.");
 
-          mediasource_loaddata_test(function(test, mediaElement, mediaSource, sourceBuffer, mediaData)
+          mediasource_testafterdataloaded(function(test, mediaElement, mediaSource, segmentInfo, sourceBuffer, mediaData)
           {
               test.failOnEvent(mediaElement, 'error');
 
@@ -139,8 +123,8 @@
               sourceBuffer.appendBuffer(mediaData);
 
               assert_true(sourceBuffer.updating, "updating attribute is true");
+              assert_equals(mediaSource.activeSourceBuffers.length, 0, "activeSourceBuffers.length");
 
-              test.expectEvent(mediaSource.activeSourceBuffers, "removesourcebuffer", "activeSourceBuffers");
               test.expectEvent(mediaSource.sourceBuffers, "removesourcebuffer", "sourceBuffers");
               mediaSource.removeSourceBuffer(sourceBuffer);
 
@@ -157,7 +141,53 @@
               });
           }, "Test MediaSource.removeSourceBuffer() call during a pending appendBuffer().");
 
-          mediasource_loaddata_test(function(test, mediaElement, mediaSource, sourceBuffer, mediaData)
+          mediasource_testafterdataloaded(function(test, mediaElement, mediaSource, segmentInfo, sourceBuffer, mediaData)
+          {
+              test.failOnEvent(mediaElement, 'error');
+
+              test.expectEvent(sourceBuffer, "updatestart", "Append started.");
+              test.expectEvent(sourceBuffer, "updateend", "Append ended.");
+              sourceBuffer.appendBuffer(mediaData);
+
+              assert_true(sourceBuffer.updating, "updating attribute is true");
+
+              assert_throws("InvalidStateError",
+                  function() { mediaSource.duration = 1.0; },
+                  "set duration throws an exception when updating attribute is true.");
+
+              test.waitForExpectedEvents(function()
+              {
+                  assert_false(sourceBuffer.updating, "updating attribute is false");
+                  test.done();
+              });
+          }, "Test set MediaSource.duration during a pending appendBuffer() for one of its SourceBuffers.");
+
+          mediasource_testafterdataloaded(function(test, mediaElement, mediaSource, segmentInfo, sourceBuffer, mediaData)
+          {
+              test.failOnEvent(mediaElement, "error");
+              test.failOnEvent(mediaSource, "sourceended");
+
+              test.expectEvent(sourceBuffer, "updatestart", "Append started.");
+              test.expectEvent(sourceBuffer, "updateend", "Append ended.");
+              sourceBuffer.appendBuffer(mediaData);
+
+              assert_true(sourceBuffer.updating, "updating attribute is true");
+
+              assert_throws("InvalidStateError",
+                  function() { mediaSource.endOfStream(); },
+                  "endOfStream() throws an exception when updating attribute is true.");
+
+              assert_equals(mediaSource.readyState, "open");
+
+              test.waitForExpectedEvents(function()
+              {
+                  assert_false(sourceBuffer.updating, "updating attribute is false");
+                  assert_equals(mediaSource.readyState, "open");
+                  test.done();
+              });
+          }, "Test MediaSource.endOfStream() during a pending appendBuffer() for one of its SourceBuffers.");
+
+          mediasource_testafterdataloaded(function(test, mediaElement, mediaSource, segmentInfo, sourceBuffer, mediaData)
           {
               test.failOnEvent(mediaElement, 'error');
 
