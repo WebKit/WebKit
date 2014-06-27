@@ -252,14 +252,32 @@ void MediaSource::monitorSourceBuffers()
 
 void MediaSource::setDuration(double duration, ExceptionCode& ec)
 {
+    // 2.1 Attributes - Duration
+    // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#attributes
+
+    // On setting, run the following steps:
+    // 1. If the value being set is negative or NaN then throw an INVALID_ACCESS_ERR exception and abort these steps.
     if (duration < 0.0 || std::isnan(duration)) {
         ec = INVALID_ACCESS_ERR;
         return;
     }
+
+    // 2. If the readyState attribute is not "open" then throw an INVALID_STATE_ERR exception and abort these steps.
     if (!isOpen()) {
         ec = INVALID_STATE_ERR;
         return;
     }
+
+    // 3. If the updating attribute equals true on any SourceBuffer in sourceBuffers, then throw an INVALID_STATE_ERR
+    // exception and abort these steps.
+    for (auto& sourceBuffer : *m_sourceBuffers) {
+        if (sourceBuffer->updating()) {
+            ec = INVALID_STATE_ERR;
+            return;
+        }
+    }
+
+    // 4. Run the duration change algorithm with new duration set to the value being assigned to this attribute.
     m_private->setDuration(MediaTime::createWithDouble(duration));
 }
 

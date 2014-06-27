@@ -304,7 +304,6 @@ void SourceBuffer::removedFromMediaSource()
 
     m_private->removedFromMediaSource();
     m_source = 0;
-    m_asyncEventQueue.close();
 }
 
 void SourceBuffer::sourceBufferPrivateSeekToTime(SourceBufferPrivate*, const MediaTime& time)
@@ -392,7 +391,7 @@ MediaTime SourceBuffer::sourceBufferPrivateFastSeekTimeForMediaTime(SourceBuffer
 
 bool SourceBuffer::hasPendingActivity() const
 {
-    return m_source;
+    return m_source || m_asyncEventQueue.hasPendingEvents();
 }
 
 void SourceBuffer::stop()

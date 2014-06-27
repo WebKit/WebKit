@@ -1,3 +1,21 @@
+2014-06-27  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] http/tests/media/media-source/mediasource-append-buffer.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=134389
+
+        Reviewed by Eric Carlson.
+
+        Two subtests in mediasource-append-buffer.html are failing. Bring setDuration() up to spec
+        by throwing an exception if the duration is called while any SourceBuffer is updating. Do
+        not cancel pending events when a SourceBuffer is removed from its MediaSource. And mark the
+        SourceBuffer as having pending activity if there are pending events to be fired.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::setDuration):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::removedFromMediaSource):
+        (WebCore::SourceBuffer::hasPendingActivity):
+
 2014-06-26  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Fix touch-scrollable elements with overflow:scroll on just one axis, and RTL scrolling
