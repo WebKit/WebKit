@@ -4854,6 +4854,7 @@ private:
             return Int52;
         }
         RELEASE_ASSERT_NOT_REACHED();
+        return Int52;
     }
     
     LValue lowWhicheverInt52(Edge edge, Int52Kind& kind)

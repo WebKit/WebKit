@@ -49,7 +49,7 @@ using namespace DFG;
 static void compileStub(
     unsigned exitID, JITCode* jitCode, OSRExit& exit, VM* vm, CodeBlock* codeBlock)
 {
-    StackMaps::Record* record;
+    StackMaps::Record* record = nullptr;
     
     for (unsigned i = jitCode->stackmaps.records.size(); i--;) {
         record = &jitCode->stackmaps.records[i];

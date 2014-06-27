@@ -50,7 +50,7 @@ void StackMaps::Constant::parse(StackMaps::ParseContext& context)
 
 void StackMaps::Constant::dump(PrintStream& out) const
 {
-    out.printf("0x%016llx", integer);
+    out.printf("0x%016llx", static_cast<unsigned long long>(integer));
 }
 
 void StackMaps::StackSize::parse(StackMaps::ParseContext& context)

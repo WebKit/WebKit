@@ -59,6 +59,8 @@ Location Location::forStackmaps(const StackMaps* stackmaps, const StackMaps::Loc
     }
     
     RELEASE_ASSERT_NOT_REACHED();
+
+    return Location();
 }
 
 void Location::dump(PrintStream& out) const

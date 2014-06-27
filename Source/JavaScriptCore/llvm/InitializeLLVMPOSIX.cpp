@@ -35,7 +35,8 @@
 
 namespace JSC {
 
-typedef LLVMAPI* (*InitializerFunction)(void (*)(const char*, ...));
+typedef void (*LoggerFunction)(const char*, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
+typedef LLVMAPI* (*InitializerFunction)(LoggerFunction);
 
 void initializeLLVMPOSIX(const char* libraryName)
 {

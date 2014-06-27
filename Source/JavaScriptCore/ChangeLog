@@ -1,3 +1,23 @@
+2014-06-27  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        [JavaScriptCore] FTL buildfix for EFL platform.
+        https://bugs.webkit.org/show_bug.cgi?id=133546
+
+        Reviewed by Darin Adler.
+
+        * ftl/FTLAbstractHeap.cpp:
+        (JSC::FTL::IndexedAbstractHeap::IndexedAbstractHeap):
+        * ftl/FTLLocation.cpp:
+        (JSC::FTL::Location::forStackmaps):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::opposite):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * ftl/FTLStackMaps.cpp:
+        (JSC::FTL::StackMaps::Constant::dump):
+        * llvm/InitializeLLVMPOSIX.cpp:
+        (JSC::initializeLLVMPOSIX):
+
 2014-06-26  Benjamin Poulain  <benjamin@webkit.org>
 
         iOS 8 beta 2 ES6 'Set' clear() broken

@@ -64,7 +64,7 @@ IndexedAbstractHeap::IndexedAbstractHeap(LContext context, AbstractHeap* parent,
     // See if there is a common shift amount we could use instead of multiplying. Don't
     // try too hard. This is just a speculative optimization to reduce load on LLVM.
     for (unsigned i = 0; i < 4; ++i) {
-        if ((1 << i) == m_elementSize) {
+        if (1U << i == m_elementSize) {
             if (i)
                 m_scaleTerm = constInt(intPtrType(context), i, ZeroExtend);
             m_canShift = true;
