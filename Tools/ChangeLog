@@ -1,3 +1,25 @@
+2014-06-27  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL] Remove efl-wk2 from baseline search path
+        https://bugs.webkit.org/show_bug.cgi?id=134391
+
+        Reviewed by Gyuyoung Kim.
+
+        As WebKit1 EFL is removed and platform/efl and platform/efl-wk2 baselines and test expectations files
+        are merged efl-wk2 search path should be removed.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.test_expectations_file_postion): Added method to determine port test expectations file position in expectations_dict.
+        * Scripts/webkitpy/port/efl.py:
+        (EflPort._search_paths): Changed baseline search paths from efl-wk2 -> wk2 -> efl -> generic is changed to: efl -> wk2 -> generic.
+        (EflPort.test_expectations_file_postion): Added method to determine EFL port specific test expectation file position.
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.test_expectations_ordering): Changed constant value to one returned from test_expectations_file_postion().
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        (TestExpectationsTestCase.test_determine_port_from_expectations_path): Removed efl-wk2 test case.
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaselineTest.test_baseline_directory): Changed directory name in assertion from platform/efl-wk2 to platform/efl.
+
 2014-06-26  Dan Bernstein  <mitz@apple.com>
 
         prepare-ChangeLog outputs (NS_ENUM): entries for Cocoa enums

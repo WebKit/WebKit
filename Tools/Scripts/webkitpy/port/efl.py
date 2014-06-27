@@ -110,9 +110,8 @@ class EflPort(Port):
 
     def _search_paths(self):
         search_paths = []
-        search_paths.append(self.port_name + '-wk2')
-        search_paths.append('wk2')
         search_paths.append(self.port_name)
+        search_paths.append('wk2')
         return search_paths
 
     def default_baseline_search_path(self):
@@ -145,3 +144,7 @@ class EflPort(Port):
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
         return GDBCrashLogGenerator(name, pid, newer_than, self._filesystem, self._path_to_driver).generate_crash_log(stdout, stderr)
+
+    def test_expectations_file_position(self):
+        # EFL port baseline search path is efl -> wk2 -> generic (as efl-wk2 and efl baselines are merged), so port test expectations file is at third to last position.
+        return 2

@@ -418,7 +418,7 @@ class PortTestCase(unittest.TestCase):
             port._filesystem.write_text_file(path, '')
         ordered_dict = port.expectations_dict()
         self.assertEqual(port.path_to_generic_test_expectations_file(), ordered_dict.keys()[0])
-        self.assertEqual(port.path_to_test_expectations_file(), ordered_dict.keys()[1])
+        self.assertEqual(port.path_to_test_expectations_file(), ordered_dict.keys()[port.test_expectations_file_position()])
 
         options = MockOptions(additional_expectations=['/tmp/foo', '/tmp/bar'])
         port = self.make_port(options=options)
