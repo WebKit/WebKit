@@ -1,3 +1,19 @@
+2014-06-27  Jeremy Jones  <jeremyj@apple.com>
+
+        Lazily link frameworks in WebVideoFullscreenInterfaceAVKit.
+        https://bugs.webkit.org/show_bug.cgi?id=134407
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerController init]):
+        Load AVPlayerController on use.
+        (WebVideoFullscreenInterfaceAVKit::WebVideoFullscreenInterfaceAVKit):
+        Remove loading on construction.
+        (WebVideoFullscreenInterfaceAVKit::setCurrentTime): Load AVValueTiming on use.
+        (WebVideoFullscreenInterfaceAVKit::setupFullscreen): Load several classes on use.
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreen): Load UIColor on use.
+
 2014-06-27  Alex Christensen  <achristensen@webkit.org>
 
         Remove extra operations from 64-bit or on armv7.
