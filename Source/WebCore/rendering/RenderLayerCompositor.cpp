@@ -508,7 +508,7 @@ static void updateScrollingLayerWithClient(RenderLayer& layer, ChromeClient* cli
     bool allowHorizontalScrollbar = !scrollbarHasDisplayNone(layer.horizontalScrollbar());
     bool allowVerticalScrollbar = !scrollbarHasDisplayNone(layer.verticalScrollbar());
     client->addOrUpdateScrollingLayer(layer.renderer().element(), backing->scrollingLayer()->platformLayer(), backing->scrollingContentsLayer()->platformLayer(),
-        IntSize(layer.scrollWidth(), layer.scrollHeight()), allowHorizontalScrollbar, allowVerticalScrollbar);
+        layer.scrollableContentsSize(), allowHorizontalScrollbar, allowVerticalScrollbar);
 }
 
 void RenderLayerCompositor::updateCustomLayersAfterFlush()
@@ -3739,7 +3739,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Scr
         if (isRootLayer)
             updateScrollCoordinationForThisFrame(parentNodeID);
         else {
-            ScrollingNodeType nodeType = isRootLayer ? FrameScrollingNode : OverflowScrollingNode;
+            ScrollingNodeType nodeType = OverflowScrollingNode;
             ScrollingNodeID nodeID = attachScrollingNode(layer, nodeType, parentNodeID);
             if (!nodeID)
                 return;
@@ -3749,6 +3749,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Scr
             scrollingGeometry.scrollPosition = layer.scrollPosition();
             scrollingGeometry.scrollableAreaSize = layer.visibleSize();
             scrollingGeometry.contentSize = layer.contentsSize();
+            scrollingGeometry.reachableContentSize = layer.scrollableContentsSize();
             scrollingCoordinator->updateOverflowScrollingNode(nodeID, backing->scrollingLayer(), backing->scrollingContentsLayer(), &scrollingGeometry);
         }
     }

@@ -58,6 +58,9 @@ void ScrollingTreeScrollingNode::updateBeforeChildren(const ScrollingStateNode& 
         m_totalContentsSize = state.totalContentsSize();
     }
 
+    if (state.hasChangedProperty(ScrollingStateScrollingNode::ReachableContentsSize))
+        m_reachableContentsSize = state.reachableContentsSize();
+
     if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrollPosition))
         m_lastCommittedScrollPosition = state.scrollPosition();
 

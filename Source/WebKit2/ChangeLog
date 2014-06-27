@@ -1,3 +1,33 @@
+2014-06-26  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Fix touch-scrollable elements with overflow:scroll on just one axis, and RTL scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=134377
+        <rdar://problem/16762224>
+
+        Reviewed by Tim Horton.
+
+        Make -webkit-overflow-scrolling:touch scrolling work correctly when one axis
+        has overflow:scroll and the other overflow:hidden. Also fix scrolling in RTL
+        contexts.
+        
+        An RTL scroller with overflow-x:hidden will have a non-zero scroll origin,
+        and needs to truncate the scrolled content on the left side. To pass the
+        correct geometry to the UI process, we need to introduce the concept of
+        "reachable" size as well as total content size; normally these are the same,
+        but will differ when scrolling is only allowed on one axis but there is overflow
+        on both axes.
+        
+        ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren() uses the total and
+        reachable content sizes to set a negative edge inset on the left (for RTL) or top
+        (for bottom-to-top) so prevent scrolling into these areas.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateScrollingNode>::decode):
+        (WebKit::RemoteScrollingTreeTextStream::dump):
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren): 
+
 2014-06-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix various leaks, RetainPtrs should adopt allocs

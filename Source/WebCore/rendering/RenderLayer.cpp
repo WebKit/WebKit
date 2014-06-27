@@ -2734,9 +2734,30 @@ IntPoint RenderLayer::convertFromContainingViewToScrollbar(const Scrollbar* scro
     return point;
 }
 
+IntSize RenderLayer::visibleSize() const
+{
+    if (!renderer().isBox())
+        return IntSize();
+
+    return IntSize(renderBox()->pixelSnappedClientWidth(), renderBox()->pixelSnappedClientHeight());
+}
+
 IntSize RenderLayer::contentsSize() const
 {
     return IntSize(scrollWidth(), scrollHeight());
+}
+
+IntSize RenderLayer::scrollableContentsSize() const
+{
+    IntSize contentsSize = this->contentsSize();
+
+    if (!hasScrollableHorizontalOverflow())
+        contentsSize.setWidth(std::min(contentsSize.width(), visibleSize().width()));
+
+    if (!hasScrollableVerticalOverflow())
+        contentsSize.setHeight(std::min(contentsSize.height(), visibleSize().height()));
+
+    return contentsSize;
 }
 
 bool RenderLayer::shouldSuspendScrollAnimations() const

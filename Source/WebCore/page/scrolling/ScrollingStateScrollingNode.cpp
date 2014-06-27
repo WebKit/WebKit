@@ -44,6 +44,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     : ScrollingStateNode(stateNode, adoptiveTree)
     , m_scrollableAreaSize(stateNode.scrollableAreaSize())
     , m_totalContentsSize(stateNode.totalContentsSize())
+    , m_reachableContentsSize(stateNode.reachableContentsSize())
     , m_scrollPosition(stateNode.scrollPosition())
     , m_requestedScrollPosition(stateNode.requestedScrollPosition())
     , m_scrollOrigin(stateNode.scrollOrigin())
@@ -72,6 +73,15 @@ void ScrollingStateScrollingNode::setTotalContentsSize(const FloatSize& totalCon
 
     m_totalContentsSize = totalContentsSize;
     setPropertyChanged(TotalContentsSize);
+}
+
+void ScrollingStateScrollingNode::setReachableContentsSize(const FloatSize& reachableContentsSize)
+{
+    if (m_reachableContentsSize == reachableContentsSize)
+        return;
+
+    m_reachableContentsSize = reachableContentsSize;
+    setPropertyChanged(ReachableContentsSize);
 }
 
 void ScrollingStateScrollingNode::setScrollPosition(const FloatPoint& scrollPosition)

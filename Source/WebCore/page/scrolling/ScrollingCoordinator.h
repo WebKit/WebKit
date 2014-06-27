@@ -161,6 +161,7 @@ public:
     struct ScrollingGeometry {
         FloatSize scrollableAreaSize;
         FloatSize contentSize;
+        FloatSize reachableContentSize; // Smaller than contentSize when overflow is hidden on one axis.
         FloatPoint scrollPosition;
         IntPoint scrollOrigin;
     };

@@ -94,6 +94,7 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
     node->setScrollOrigin(frameView->scrollOrigin());
     node->setScrollableAreaSize(frameView->visibleContentRect().size());
     node->setTotalContentsSize(frameView->totalContentsSize());
+    node->setReachableContentsSize(frameView->totalContentsSize());
 
     ScrollableAreaParameters scrollParameters;
     scrollParameters.horizontalScrollElasticity = frameView->horizontalScrollElasticity();
@@ -375,6 +376,7 @@ void AsyncScrollingCoordinator::updateFrameScrollingNode(ScrollingNodeID nodeID,
         node->setScrollOrigin(scrollingGeometry->scrollOrigin);
         node->setScrollPosition(scrollingGeometry->scrollPosition);
         node->setTotalContentsSize(scrollingGeometry->contentSize);
+        node->setReachableContentsSize(scrollingGeometry->reachableContentSize);
         node->setScrollableAreaSize(scrollingGeometry->scrollableAreaSize);
     }
 }
@@ -393,6 +395,7 @@ void AsyncScrollingCoordinator::updateOverflowScrollingNode(ScrollingNodeID node
         node->setScrollOrigin(scrollingGeometry->scrollOrigin);
         node->setScrollPosition(scrollingGeometry->scrollPosition);
         node->setTotalContentsSize(scrollingGeometry->contentSize);
+        node->setReachableContentsSize(scrollingGeometry->reachableContentSize);
         node->setScrollableAreaSize(scrollingGeometry->scrollableAreaSize);
     }
 }

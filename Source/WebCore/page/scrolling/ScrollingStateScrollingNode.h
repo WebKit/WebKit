@@ -42,6 +42,7 @@ public:
     enum ChangedProperty {
         ScrollableAreaSize = NumStateNodeBits,
         TotalContentsSize,
+        ReachableContentsSize,
         ScrollPosition,
         ScrollOrigin,
         ScrollableAreaParams,
@@ -54,6 +55,9 @@ public:
 
     const FloatSize& totalContentsSize() const { return m_totalContentsSize; }
     void setTotalContentsSize(const FloatSize&);
+
+    const FloatSize& reachableContentsSize() const { return m_reachableContentsSize; }
+    void setReachableContentsSize(const FloatSize&);
 
     const FloatPoint& scrollPosition() const { return m_scrollPosition; }
     void setScrollPosition(const FloatPoint&);
@@ -77,6 +81,7 @@ protected:
 private:
     FloatSize m_scrollableAreaSize;
     FloatSize m_totalContentsSize;
+    FloatSize m_reachableContentsSize;
     FloatPoint m_scrollPosition;
     FloatPoint m_requestedScrollPosition;
     IntPoint m_scrollOrigin;

@@ -125,6 +125,7 @@ void ArgumentCoder<ScrollingStateScrollingNode>::encode(ArgumentEncoder& encoder
     
     SCROLLING_NODE_ENCODE(ScrollingStateScrollingNode::ScrollableAreaSize, scrollableAreaSize)
     SCROLLING_NODE_ENCODE(ScrollingStateScrollingNode::TotalContentsSize, totalContentsSize)
+    SCROLLING_NODE_ENCODE(ScrollingStateScrollingNode::ReachableContentsSize, reachableContentsSize)
     SCROLLING_NODE_ENCODE(ScrollingStateScrollingNode::ScrollPosition, scrollPosition)
     SCROLLING_NODE_ENCODE(ScrollingStateScrollingNode::ScrollOrigin, scrollOrigin)
     SCROLLING_NODE_ENCODE(ScrollingStateScrollingNode::ScrollableAreaParams, scrollableAreaParameters)
@@ -189,6 +190,7 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(ArgumentDecoder& decoder
 
     SCROLLING_NODE_DECODE(ScrollingStateScrollingNode::ScrollableAreaSize, FloatSize, setScrollableAreaSize);
     SCROLLING_NODE_DECODE(ScrollingStateScrollingNode::TotalContentsSize, FloatSize, setTotalContentsSize);
+    SCROLLING_NODE_DECODE(ScrollingStateScrollingNode::ReachableContentsSize, FloatSize, setReachableContentsSize);
     SCROLLING_NODE_DECODE(ScrollingStateScrollingNode::ScrollPosition, FloatPoint, setScrollPosition);
     SCROLLING_NODE_DECODE(ScrollingStateScrollingNode::ScrollOrigin, IntPoint, setScrollOrigin);
     SCROLLING_NODE_DECODE(ScrollingStateScrollingNode::ScrollableAreaParams, ScrollableAreaParameters, setScrollableAreaParameters);
@@ -565,10 +567,13 @@ void RemoteScrollingTreeTextStream::dump(const ScrollingStateScrollingNode& node
     RemoteScrollingTreeTextStream& ts = *this;
     
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::ScrollableAreaSize))
-        dumpProperty(ts, "scrollable-area-size", node.totalContentsSize());
+        dumpProperty(ts, "scrollable-area-size", node.scrollableAreaSize());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize))
         dumpProperty(ts, "total-contents-size", node.totalContentsSize());
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::ReachableContentsSize))
+        dumpProperty(ts, "reachable-contents-size", node.reachableContentsSize());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::ScrollPosition))
         dumpProperty(ts, "scroll-position", node.scrollPosition());

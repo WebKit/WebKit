@@ -140,7 +140,9 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren(const ScrollingS
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollLayer)
         || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize)
-        || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollPosition)) {
+        || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ReachableContentsSize)
+        || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollPosition)
+        || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollOrigin)) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate];
         ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
@@ -152,12 +154,31 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren(const ScrollingS
             scrollView.delegate = m_scrollViewDelegate.get();
         }
 
-        if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize))
-            scrollView.contentSize = scrollingStateNode.totalContentsSize();
+        bool recomputeInsets = scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize);
+        if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ReachableContentsSize)) {
+            scrollView.contentSize = scrollingStateNode.reachableContentsSize();
+            recomputeInsets = true;
+        }
 
-        if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollPosition) && ![m_scrollViewDelegate _isInUserInteraction])
-            scrollView.contentOffset = scrollingStateNode.scrollPosition();
+        if ((scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollPosition)
+            || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollOrigin))
+            && ![m_scrollViewDelegate _isInUserInteraction]) {
+            scrollView.contentOffset = scrollingStateNode.scrollPosition() + scrollOrigin();
+            recomputeInsets = true;
+        }
+        
+        if (recomputeInsets) {
+            UIEdgeInsets insets = UIEdgeInsetsMake(0, 0, 0, 0);
+            // With RTL or bottom-to-top scrolling (non-zero origin), we need extra space on the left or top.
+            if (scrollOrigin().x())
+                insets.left = reachableContentsSize().width() - totalContentsSize().width();
 
+            if (scrollOrigin().y())
+                insets.top = reachableContentsSize().height() - totalContentsSize().height();
+
+            scrollView.contentInset = insets;
+        }
+            
         END_BLOCK_OBJC_EXCEPTIONS
     }
 }

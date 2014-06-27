@@ -1,3 +1,51 @@
+2014-06-26  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Fix touch-scrollable elements with overflow:scroll on just one axis, and RTL scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=134377
+        <rdar://problem/16762224>
+
+        Reviewed by Tim Horton.
+        
+        Make -webkit-overflow-scrolling:touch scrolling work correctly when one axis
+        has overflow:scroll and the other overflow:hidden. Also fix scrolling in RTL
+        contexts.
+        
+        An RTL scroller with overflow-x:hidden will have a non-zero scroll origin,
+        and needs to truncate the scrolled content on the left side. To pass the
+        correct geometry to the UI process, we need to introduce the concept of
+        "reachable" size as well as total content size; normally these are the same,
+        but will differ when scrolling is only allowed on one axis but there is overflow
+        on both axes.
+        
+        To get the reachable size, add RenderLayer::scrollableContentsSize().
+        
+        RenderLayer::visibleSize() was wrong; the function should return the size of the 
+        scrollable portion, but used layer size which includes borders. Fix to use pixelSnappedClientWidth()/Height(),
+        which is what we use for scrollbar computations.
+
+        * WebCore.exp.in:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        (WebCore::AsyncScrollingCoordinator::updateFrameScrollingNode):
+        (WebCore::AsyncScrollingCoordinator::updateOverflowScrollingNode):
+        * page/scrolling/ScrollingCoordinator.h:
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::setReachableContentsSize):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        (WebCore::ScrollingStateScrollingNode::reachableContentsSize):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::updateBeforeChildren):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::reachableContentsSize):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::visibleSize):
+        (WebCore::RenderLayer::scrollableContentsSize):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::updateScrollingLayerWithClient):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+
 2014-06-27  Bear Travis  <betravis@adobe.com>
 
         [Feature Queries] Fix feature queries build on Mac
