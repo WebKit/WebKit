@@ -100,7 +100,10 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
 
 MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
 {
-    g_signal_handler_disconnect(m_webkitVideoSink.get(), m_repaintHandler);
+    if (m_repaintHandler) {
+        g_signal_handler_disconnect(m_webkitVideoSink.get(), m_repaintHandler);
+        m_repaintHandler = 0;
+    }
 
     g_mutex_clear(m_bufferMutex);
     delete m_bufferMutex;
