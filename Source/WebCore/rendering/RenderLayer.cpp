@@ -5386,7 +5386,6 @@ LayoutRect RenderLayer::selfClipRect() const
 LayoutRect RenderLayer::localClipRect(bool& clipExceedsBounds) const
 {
     clipExceedsBounds = false;
-    
     // FIXME: border-radius not accounted for.
     // FIXME: Regions not accounted for.
     RenderLayer* clippingRootLayer = clippingRootForPainting();
@@ -5407,7 +5406,7 @@ LayoutRect RenderLayer::localClipRect(bool& clipExceedsBounds) const
         clipExceedsBounds = !clipRect.contains(cssClipRect);
     }
 
-    clipRect.move(-offsetFromAncestor(clippingRootLayer));
+    clipRect.move(-offsetFromRoot);
     return clipRect;
 }
 

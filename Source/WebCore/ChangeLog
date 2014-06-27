@@ -1,3 +1,15 @@
+2014-06-27  Zalan Bujtas  <zalan@apple.com>
+
+        Remove redundant offsetFromAncestor() call from RenderLayer::localClipRect().
+        https://bugs.webkit.org/show_bug.cgi?id=134378
+
+        Reviewed by Simon Fraser.
+
+        No change in functionality.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+
 2014-06-27  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] 8tracks.com triggers annoying pop-up window/installation of "About protocol source plugin" (GStreamer?)
