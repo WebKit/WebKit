@@ -142,12 +142,13 @@ private:
 
 ALWAYS_INLINE void MapData::clear()
 {
+    m_cellKeyedTable.clear();
     m_valueKeyedTable.clear();
     m_stringKeyedTable.clear();
     m_capacity = 0;
     m_size = 0;
     m_deletedCount = 0;
-    m_entries = 0;
+    m_entries = nullptr;
 }
 
 ALWAYS_INLINE MapData::KeyType::KeyType(JSValue v)

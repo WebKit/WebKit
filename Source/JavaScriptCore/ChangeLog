@@ -1,3 +1,18 @@
+2014-06-26  Benjamin Poulain  <benjamin@webkit.org>
+
+        iOS 8 beta 2 ES6 'Set' clear() broken
+        https://bugs.webkit.org/show_bug.cgi?id=134346
+
+        Reviewed by Oliver Hunt.
+
+        The object map was not cleared :(.
+
+        Kudos to Ashley Gullen for tracking this and making a regression test.
+        Credit to Oliver for finding the missing code.
+
+        * runtime/MapData.h:
+        (JSC::MapData::clear):
+
 2014-06-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Expose Cache Information to WinLauncher

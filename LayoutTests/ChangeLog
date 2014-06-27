@@ -1,3 +1,14 @@
+2014-06-26  Benjamin Poulain  <benjamin@webkit.org>
+
+        iOS 8 beta 2 ES6 'Set' clear() broken
+        https://bugs.webkit.org/show_bug.cgi?id=134346
+
+        Reviewed by Oliver Hunt.
+
+        * js/script-tests/set-clear.js: Added.
+        * js/set-clear-expected.txt: Added.
+        * js/set-clear.html: Added.
+
 2014-06-26  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Properly support for z-index on grid items
