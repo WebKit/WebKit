@@ -33,6 +33,7 @@
 #import <CorePDF/UIPDFDocument.h>
 #import <CorePDF/UIPDFPage.h>
 #import <CorePDF/UIPDFPageView.h>
+#import <UIKit/UIScrollView_Private.h>
 #import <WebCore/FloatRect.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
@@ -44,6 +45,8 @@ const CGFloat pdfMinimumZoomScale = 1;
 const CGFloat pdfMaximumZoomScale = 5;
 
 const float overdrawHeightMultiplier = 1.5;
+
+static const CGFloat smartMagnificationElementPadding = 0.05;
 
 typedef struct {
     CGRect frame;
@@ -64,6 +67,8 @@ typedef struct {
     WKWebView *_webView;
     UIScrollView *_scrollView;
     UIView *_fixedOverlayView;
+
+    BOOL _isStartingZoom;
 }
 
 - (instancetype)web_initWithFrame:(CGRect)frame webView:(WKWebView *)webView
@@ -85,6 +90,7 @@ typedef struct {
 
 - (void)dealloc
 {
+    [self _clearPages];
     [_pageNumberIndicator removeFromSuperview];
     [super dealloc];
 }
@@ -99,14 +105,21 @@ typedef struct {
     return [_pdfDocument CGDocument];
 }
 
+- (void)_clearPages
+{
+    for (auto& page : _pages) {
+        [page.view removeFromSuperview];
+        [page.view setDelegate:nil];
+    }
+    
+    _pages.clear();
+}
+
 - (void)web_setContentProviderData:(NSData *)data suggestedFilename:(NSString *)filename
 {
     _suggestedFilename = adoptNS([filename copy]);
 
-    for (auto& page : _pages)
-        [page.view removeFromSuperview];
-
-    _pages.clear();
+    [self _clearPages];
 
     RetainPtr<CGDataProvider> dataProvider = adoptCF(CGDataProviderCreateWithCFData((CFDataRef)data));
     RetainPtr<CGPDFDocumentRef> cgPDFDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
@@ -126,7 +139,7 @@ typedef struct {
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    if (scrollView.isZoomBouncing)
+    if (scrollView.isZoomBouncing || scrollView._isAnimatingZoom)
         return;
 
     [self _revalidateViews];
@@ -135,6 +148,9 @@ typedef struct {
 
 - (void)_revalidateViews
 {
+    if (_isStartingZoom)
+        return;
+
     CGRect targetRect = [_scrollView convertRect:_scrollView.bounds toView:self];
 
     // We apply overdraw after applying scale in order to avoid excessive
@@ -162,6 +178,7 @@ typedef struct {
 
         pageInfo.view = adoptNS([[UIPDFPageView alloc] initWithPage:pageInfo.page.get() tiledContent:YES]);
         [pageInfo.view setUseBackingLayer:YES];
+        [pageInfo.view setDelegate:self];
         [self addSubview:pageInfo.view.get()];
 
         [pageInfo.view setFrame:pageInfo.frame];
@@ -211,11 +228,9 @@ typedef struct {
 {
     NSUInteger pageCount = [_pdfDocument numberOfPages];
     [_pageNumberIndicator setPageCount:pageCount];
+    
+    [self _clearPages];
 
-    for (auto& pageInfo : _pages)
-        [pageInfo.view removeFromSuperview];
-
-    _pages.clear();
     _pages.reserveCapacity(pageCount);
 
     CGRect pageFrame = CGRectMake(0, 0, _minimumSize.width, _minimumSize.height);
@@ -242,6 +257,35 @@ typedef struct {
 
     [self setFrame:newFrame];
     [_scrollView setContentSize:newFrame.size];
+}
+
+
+- (void)zoom:(UIPDFPageView *)pageView to:(CGRect)targetRect atPoint:(CGPoint)origin kind:(UIPDFObjectKind)kind
+{
+    _isStartingZoom = YES;
+
+    BOOL isImage = kind == kUIPDFObjectKindGraphic;
+
+    if (!isImage)
+        targetRect = CGRectInset(targetRect, smartMagnificationElementPadding * targetRect.size.width, smartMagnificationElementPadding * targetRect.size.height);
+
+    CGRect rectInDocumentCoordinates = [pageView convertRect:targetRect toView:self];
+    CGPoint originInDocumentCoordinates = [pageView convertPoint:origin toView:self];
+
+    [_webView _zoomToRect:rectInDocumentCoordinates withOrigin:originInDocumentCoordinates fitEntireRect:isImage minimumScale:pdfMinimumZoomScale maximumScale:pdfMaximumZoomScale minimumScrollDistance:0];
+
+    _isStartingZoom = NO;
+}
+
+- (void)resetZoom:(UIPDFPageView *)pageView
+{
+    _isStartingZoom = YES;
+    
+    CGRect scrollViewBounds = _scrollView.bounds;
+    CGPoint centerOfPageInDocumentCoordinates = [_scrollView convertPoint:CGPointMake(CGRectGetMidX(scrollViewBounds), CGRectGetMidY(scrollViewBounds)) toView:self];
+    [_webView _zoomOutWithOrigin:centerOfPageInDocumentCoordinates];
+
+    _isStartingZoom = NO;
 }
 
 @end

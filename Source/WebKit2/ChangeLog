@@ -1,3 +1,33 @@
+2014-06-26  Timothy Horton  <timothy_horton@apple.com>
+
+        [iOS][WK2] Implement WKPDFView smart magnification
+        https://bugs.webkit.org/show_bug.cgi?id=134269
+        <rdar://problem/17272825>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _currentContentView]):
+        (contentZoomScale):
+        Factor _currentContentView out of contentZoomScale.
+
+        (-[WKWebView _zoomToRect:WebCore::atScale:origin:WebCore::]):
+        (-[WKWebView _scrollToRect:WebCore::origin:WebCore::minimumScrollDistance:]):
+        (-[WKWebView _contentRectForUserInteraction]):
+        Use it in a bunch more places so we query the right view when zooming/scrolling for smart magnification.
+
+        * UIProcess/ios/WKPDFView.h:
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView scrollViewDidScroll:]):
+        (-[WKPDFView _revalidateViews]):
+        (-[WKPDFView zoom:to:atPoint:kind:]):
+        (-[WKPDFView resetZoom:]):
+        Implement zoom:to:atPoint:kind: and resetZoom: UIPDFPageViewDelegate methods.
+        Convert the rects/points and forward them on to the WKWebView to do the zoom.
+        resetZoom: doesn't provide the gesture origin, so we zoom out using the view center as our origin.
+        Avoid parenting new UIPDFPageViews while starting a zoom; they'll end up with a bizarre
+        animation on them and go flying across the screen (even before _isAnimatingZoom is set).
+
 2014-06-26  Tim Horton  <timothy_horton@apple.com>
 
         [WK2] Pinch-zoom shadows can overlap headers and footers

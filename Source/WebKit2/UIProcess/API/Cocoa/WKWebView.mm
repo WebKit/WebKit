@@ -582,6 +582,11 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
     return CGSizeMake(floorToDevicePixel(contentSize.width, deviceScaleFactor), floorToDevicePixel(contentSize.height, deviceScaleFactor));
 }
 
+- (UIView *)_currentContentView
+{
+    return _customContentView ? _customContentView.get() : _contentView.get();
+}
+
 - (void)_setHasCustomContentView:(BOOL)pageHasCustomContentView loadedMIMEType:(const WTF::String&)mimeType
 {
     if (pageHasCustomContentView) {
@@ -642,13 +647,7 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
 
 static CGFloat contentZoomScale(WKWebView* webView)
 {
-    UIView *zoomView;
-    if (webView->_customContentView)
-        zoomView = webView->_customContentView.get();
-    else
-        zoomView = webView->_contentView.get();
-
-    CGFloat scale = [[zoomView layer] affineTransform].a;
+    CGFloat scale = [[webView._currentContentView layer] affineTransform].a;
     ASSERT(scale == [webView->_scrollView zoomScale]);
     return scale;
 }
@@ -916,7 +915,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 {
     // FIMXE: Some of this could be shared with _scrollToRect.
     const double visibleRectScaleChange = contentZoomScale(self) / scale;
-    const WebCore::FloatRect visibleRect([self convertRect:self.bounds toView:_contentView.get()]);
+    const WebCore::FloatRect visibleRect([self convertRect:self.bounds toView:self._currentContentView]);
     const WebCore::FloatRect unobscuredRect([self _contentRectForUserInteraction]);
 
     const WebCore::FloatSize topLeftObscuredInsetAfterZoom((unobscuredRect.minXMinYCorner() - visibleRect.minXMinYCorner()) * visibleRectScaleChange);
@@ -967,7 +966,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 {
     WebCore::FloatRect unobscuredContentRect([self _contentRectForUserInteraction]);
     WebCore::FloatPoint unobscuredContentOffset = unobscuredContentRect.location();
-    WebCore::FloatSize contentSize([_contentView bounds].size);
+    WebCore::FloatSize contentSize([self._currentContentView bounds].size);
 
     // Center the target rect in the scroll view.
     // If the target doesn't fit in the scroll view, center on the gesture location instead.
@@ -1279,7 +1278,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     UIEdgeInsets obscuredInsets = _obscuredInsets;
     obscuredInsets.bottom = std::max(_obscuredInsets.bottom, _inputViewBounds.size.height);
     CGRect unobscuredRect = UIEdgeInsetsInsetRect(self.bounds, obscuredInsets);
-    return [self convertRect:unobscuredRect toView:_contentView.get()];
+    return [self convertRect:unobscuredRect toView:self._currentContentView];
 }
 
 - (void)_updateVisibleContentRects
