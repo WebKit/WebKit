@@ -1,3 +1,19 @@
+2014-06-28  Radu Stavila  <stavila@adobe.com>
+
+        [New Multicolumn] Elements with rounded corners and overflow:hidden do not properly clip their content
+        https://bugs.webkit.org/show_bug.cgi?id=133941
+
+        Reviewed by Darin Adler.
+
+        When having a multicol element inside an element with overflow:hidden and border-radius,
+        the fragments representing the columns need to have the border radius set also, to ensure
+        proper clipping.
+
+        Test: fast/multicol/newmulticol/multicol-clip-rounded-corners.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::collectFragments):
+
 2014-06-27  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Background clipping with subpixel behaves differently when composited.

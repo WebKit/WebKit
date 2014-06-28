@@ -4311,6 +4311,13 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
         // properly clipped by the overflow.
         fragment.intersect(ancestorClipRect.rect());
         
+        // If the ancestor clip rect has border-radius, make sure to apply it to the fragments.
+        if (ancestorClipRect.hasRadius()) {
+            fragment.foregroundRect.setHasRadius(true);
+            fragment.backgroundRect.setHasRadius(true);
+            fragment.outlineRect.setHasRadius(true);
+        }
+
         // Now intersect with our pagination clip. This will typically mean we're just intersecting the dirty rect with the column
         // clip, so the column clip ends up being all we apply.
         fragment.intersect(fragment.paginationClip);
