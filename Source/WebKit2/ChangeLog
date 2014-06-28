@@ -1,3 +1,29 @@
+2014-06-27  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] position:fixed inside accelerated overflow:scroll is jumpy
+        https://bugs.webkit.org/show_bug.cgi?id=134426
+        <rdar://problem/17474523>
+
+        Reviewed by Tim Horton.
+
+        After committing a new layer tree (with possibly stale position:fixed layer
+        positions), we need the scrolling tree to update those positions based on
+        the current scroll offset.
+        
+        To achieve that, implement ScrollingTreeOverflowScrollingNodeIOS::updateLayersAfterAncestorChange()
+        and have it add to the cumulative delta the difference between the last committed scroll
+        position and the current scroll position.
+        
+        Also make sure that ScrollingTreeOverflowScrollingNodeIOS doesn't call back to scrollViewDidScroll()
+        when we're updating its scroll position inside a scrolling tree commit.
+
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::ScrollingTreeOverflowScrollingNodeIOS):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateLayersAfterAncestorChange):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::scrollViewDidScroll):
+
 2014-06-27  Antti Koivisto  <antti@apple.com>
 
         Flush throttling with remote layers

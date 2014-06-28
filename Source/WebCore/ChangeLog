@@ -1,3 +1,23 @@
+2014-06-27  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] position:fixed inside accelerated overflow:scroll is jumpy
+        https://bugs.webkit.org/show_bug.cgi?id=134426
+        <rdar://problem/17474523>
+
+        Reviewed by Tim Horton.
+
+        After committing a new layer tree (with possibly stale position:fixed layer
+        positions), we need the scrolling tree to update those positions based on
+        the current scroll offset.
+        
+        Give ScrollingTreeScrollingNode an implementation of updateLayersAfterAncestorChange()
+        which is required to update fixed/sticky child nodes.
+
+        * WebCore.exp.in:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::updateLayersAfterAncestorChange):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+
 2014-06-28  Juan A. Suarez Romero  <jasuarez@igalia.com>  and  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use public getter/setter in GObject DOM bindings properties implementation.

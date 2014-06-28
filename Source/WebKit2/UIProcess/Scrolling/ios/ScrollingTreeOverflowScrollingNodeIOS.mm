@@ -35,6 +35,7 @@
 #import <WebCore/ScrollingTree.h>
 #import <UIKit/UIPanGestureRecognizer.h>
 #import <UIKit/UIScrollView.h>
+#import <wtf/TemporaryChange.h>
 
 using namespace WebCore;
 
@@ -98,6 +99,7 @@ PassRefPtr<ScrollingTreeOverflowScrollingNodeIOS> ScrollingTreeOverflowScrolling
 
 ScrollingTreeOverflowScrollingNodeIOS::ScrollingTreeOverflowScrollingNodeIOS(WebCore::ScrollingTree& scrollingTree, WebCore::ScrollingNodeID nodeID)
     : ScrollingTreeOverflowScrollingNode(scrollingTree, nodeID)
+    , m_updatingFromStateNode(false)
 {
 }
 
@@ -136,6 +138,8 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren(const ScrollingS
 {
     ScrollingTreeOverflowScrollingNode::updateAfterChildren(stateNode);
 
+    TemporaryChange<bool> updatingChange(m_updatingFromStateNode, true);
+
     const auto& scrollingStateNode = toScrollingStateOverflowScrollingNode(stateNode);
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollLayer)
@@ -166,7 +170,7 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren(const ScrollingS
             scrollView.contentOffset = scrollingStateNode.scrollPosition() + scrollOrigin();
             recomputeInsets = true;
         }
-        
+
         if (recomputeInsets) {
             UIEdgeInsets insets = UIEdgeInsetsMake(0, 0, 0, 0);
             // With RTL or bottom-to-top scrolling (non-zero origin), we need extra space on the left or top.
@@ -181,6 +185,17 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren(const ScrollingS
             
         END_BLOCK_OBJC_EXCEPTIONS
     }
+}
+
+void ScrollingTreeOverflowScrollingNodeIOS::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta)
+{
+    if (!m_children)
+        return;
+
+    FloatSize scrollDelta = lastCommittedScrollPosition() - scrollPosition();
+
+    for (auto& child : *m_children)
+        child->updateLayersAfterAncestorChange(changedNode, fixedPositionRect, cumulativeDelta + scrollDelta);
 }
 
 FloatPoint ScrollingTreeOverflowScrollingNodeIOS::scrollPosition() const
@@ -223,6 +238,9 @@ void ScrollingTreeOverflowScrollingNodeIOS::overflowScrollViewWillStartPanGestur
 
 void ScrollingTreeOverflowScrollingNodeIOS::scrollViewDidScroll(const FloatPoint& scrollPosition, bool inUserInteration)
 {
+    if (m_updatingFromStateNode)
+        return;
+
     scrollingTree().scrollPositionChangedViaDelegatedScrolling(scrollingNodeID(), scrollPosition, inUserInteration);
 }
 

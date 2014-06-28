@@ -58,6 +58,8 @@ private:
     virtual void updateLayersAfterViewportChange(const WebCore::FloatRect& fixedPositionRect, double scale) { }
     virtual void updateLayersAfterDelegatedScroll(const WebCore::FloatPoint& scrollPosition) override;
 
+    virtual void updateLayersAfterAncestorChange(const WebCore::ScrollingTreeNode& changedNode, const WebCore::FloatRect& fixedPositionRect, const WebCore::FloatSize& cumulativeDelta) override;
+
     virtual void handleWheelEvent(const WebCore::PlatformWheelEvent&) override { }
 
     void updateChildNodesAfterScroll(const WebCore::FloatPoint&);
@@ -66,6 +68,7 @@ private:
     RetainPtr<CALayer> m_scrolledContentsLayer;
 
     RetainPtr<WKOverflowScrollViewDelegate> m_scrollViewDelegate;
+    bool m_updatingFromStateNode;
 };
 
 } // namespace WebKit
