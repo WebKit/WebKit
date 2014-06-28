@@ -2771,8 +2771,8 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_enum_casing(clean_lines, line_number, enum_state, error)
 
 
-_RE_PATTERN_INCLUDE_NEW_STYLE = re.compile(r'#include +"[^/]+\.h"')
-_RE_PATTERN_INCLUDE = re.compile(r'^\s*#\s*include\s*([<"])([^>"]*)[>"].*$')
+_RE_PATTERN_INCLUDE_NEW_STYLE = re.compile(r'#(?:include|import) +"[^/]+\.h"')
+_RE_PATTERN_INCLUDE = re.compile(r'^\s*#\s*(?:include|import)\s*([<"])([^>"]*)[>"].*$')
 # Matches the first component of a filename delimited by -s and _s. That is:
 #  _RE_FIRST_COMPONENT.match('foo').group(0) == 'foo'
 #  _RE_FIRST_COMPONENT.match('foo.cpp').group(0) == 'foo'

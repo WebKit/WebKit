@@ -1,3 +1,13 @@
+2014-06-27  Tim Horton  <timothy_horton@apple.com>
+
+        check-webkit-style should check the order of #imports as well as #includes
+        https://bugs.webkit.org/show_bug.cgi?id=134428
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        Allow "import" in addition to "include", so that the sort order of headers in ObjC files is checked.
+
 2014-06-27  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL] Remove efl-wk2 from baseline search path
