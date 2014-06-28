@@ -1,3 +1,13 @@
+2014-06-28  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION: WebPageProxy::attributedSubstringForCharacterRangeAsync never calls its callback function
+        https://bugs.webkit.org/show_bug.cgi?id=134429
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::attributedSubstringForCharacterRangeAsync):
+
 2014-06-27  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] position:fixed inside accelerated overflow:scroll is jumpy
