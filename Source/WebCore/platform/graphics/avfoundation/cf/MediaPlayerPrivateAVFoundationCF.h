@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,15 +30,30 @@
 
 #include "MediaPlayerPrivateAVFoundation.h"
 
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE) || HAVE(ENCRYPTED_MEDIA_V2)
+typedef struct OpaqueAVCFAssetResourceLoadingRequest* AVCFAssetResourceLoadingRequestRef;
+#endif
+
 namespace WebCore {
 
 class AVFWrapper;
+class WebCoreAVCFResourceLoader;
 
 class MediaPlayerPrivateAVFoundationCF : public MediaPlayerPrivateAVFoundation {
 public:
     virtual ~MediaPlayerPrivateAVFoundationCF();
 
     virtual void tracksChanged() override;
+
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE)
+    bool shouldWaitForLoadingOfResource(AVCFAssetResourceLoadingRequestRef);
+    void didCancelLoadingRequest(AVCFAssetResourceLoadingRequestRef);
+    void didStopLoadingRequest(AVCFAssetResourceLoadingRequestRef);
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    RetainPtr<AVCFAssetResourceLoadingRequestRef> takeRequestForKeyURI(const String&);
+#endif
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
@@ -102,6 +117,10 @@ private:
 
     virtual void contentsNeedsDisplay();
 
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    virtual std::unique_ptr<CDMSession> createSession(const String&) override;
+#endif
+
     virtual String languageOfPrimaryAudioTrack() const override;
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
@@ -117,8 +136,14 @@ private:
 
     friend class AVFWrapper;
     AVFWrapper* m_avfWrapper;
-    
+
     mutable String m_languageOfPrimaryAudioTrack;
+
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE)
+    friend class WebCoreAVCFResourceLoader;
+    HashMap<RetainPtr<AVCFAssetResourceLoadingRequestRef>, RefPtr<WebCoreAVCFResourceLoader>> m_resourceLoaderMap;
+#endif
+
     bool m_videoFrameHasDrawn;
 };
 

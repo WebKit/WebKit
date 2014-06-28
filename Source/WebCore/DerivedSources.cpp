@@ -250,6 +250,13 @@
 #endif
 #include "JSMediaError.cpp"
 #include "JSMediaList.cpp"
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+#include "JSMediaKeyError.cpp"
+#include "JSMediaKeyMessageEvent.cpp"
+#include "JSMediaKeyNeededEvent.cpp"
+#include "JSMediaKeySession.cpp"
+#include "JSMediaKeys.cpp"
+#endif
 #include "JSMediaQueryList.cpp"
 #include "JSMediaQueryListListener.cpp"
 #include "JSMessageChannel.cpp"

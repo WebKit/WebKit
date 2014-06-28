@@ -87,10 +87,6 @@ public:
     void didStopLoadingRequest(AVAssetResourceLoadingRequest *);
 #endif
 
-#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
-    static bool extractKeyURIKeyIDAndCertificateFromInitData(Uint8Array* initData, String& keyURI, String& keyID, RefPtr<Uint8Array>& certificate);
-#endif
-
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     RetainPtr<AVAssetResourceLoadingRequest> takeRequestForKeyURI(const String&);
 #endif

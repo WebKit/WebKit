@@ -490,3 +490,6 @@ EXPORTS
         symbolWithPointer(?throwSequenceTypeError@WebCore@@YAXAAVExecState@JSC@@@Z, ?throwSequenceTypeError@WebCore@@YAXAEAVExecState@JSC@@@Z)
         symbolWithPointer(?throwSetterTypeError@WebCore@@YAXAAVExecState@JSC@@PBD1@Z, ?throwSetterTypeError@WebCore@@YAXAEAVExecState@JSC@@PEBD1@Z)
         symbolWithPointer(?throwThisTypeError@WebCore@@YA_JAAVExecState@JSC@@PBD1@Z, ?throwThisTypeError@WebCore@@YA_JAEAVExecState@JSC@@PEBD1@Z)
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+        symbolWithPointer(?registerCDMFactory@CDM@WebCore@@SAXP6A?AV?$unique_ptr@VCDMPrivateInterface@WebCore@@U?$default_delete@VCDMPrivateInterface@WebCore@@@std@@@std@@PAV12@@ZP6A_NABVString@WTF@@@ZP6A_N22@Z@Z,)
+#endif

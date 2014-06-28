@@ -42,6 +42,8 @@
 #include "Settings.h"
 #include "SoftLinking.h"
 #include <CoreMedia/CoreMedia.h>
+#include <runtime/DataView.h>
+#include <runtime/Uint16Array.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 
@@ -1003,6 +1005,59 @@ void MediaPlayerPrivateAVFoundation::playbackTargetIsWirelessChanged()
         m_player->currentPlaybackTargetIsWirelessChanged();
 }
 #endif
+
+#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
+bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitData(Uint8Array* initData, String& keyURI, String& keyID, RefPtr<Uint8Array>& certificate)
+{
+    // initData should have the following layout:
+    // [4 bytes: keyURI length][N bytes: keyURI][4 bytes: contentID length], [N bytes: contentID], [4 bytes: certificate length][N bytes: certificate]
+    if (initData->byteLength() < 4)
+        return false;
+
+    RefPtr<ArrayBuffer> initDataBuffer = initData->buffer();
+
+    // Use a DataView to read uint32 values from the buffer, as Uint32Array requires the reads be aligned on 4-byte boundaries. 
+    RefPtr<JSC::DataView> initDataView = JSC::DataView::create(initDataBuffer, 0, initDataBuffer->byteLength());
+    uint32_t offset = 0;
+    bool status = true;
+
+    uint32_t keyURILength = initDataView->get<uint32_t>(offset, true, &status);
+    offset += 4;
+    if (!status || offset + keyURILength > initData->length())
+        return false;
+
+    RefPtr<Uint16Array> keyURIArray = Uint16Array::create(initDataBuffer, offset, keyURILength);
+    if (!keyURIArray)
+        return false;
+
+    keyURI = String(reinterpret_cast<UChar*>(keyURIArray->data()), keyURILength / sizeof(unsigned short));
+    offset += keyURILength;
+
+    uint32_t keyIDLength = initDataView->get<uint32_t>(offset, true, &status);
+    offset += 4;
+    if (!status || offset + keyIDLength > initData->length())
+        return false;
+
+    RefPtr<Uint16Array> keyIDArray = Uint16Array::create(initDataBuffer, offset, keyIDLength);
+    if (!keyIDArray)
+        return false;
+
+    keyID = String(reinterpret_cast<UChar*>(keyIDArray->data()), keyIDLength / sizeof(unsigned short));
+    offset += keyIDLength;
+
+    uint32_t certificateLength = initDataView->get<uint32_t>(offset, true, &status);
+    offset += 4;
+    if (!status || offset + certificateLength > initData->length())
+        return false;
+
+    certificate = Uint8Array::create(initDataBuffer, offset, certificateLength);
+    if (!certificate)
+        return false;
+
+    return true;
+}
+#endif
+
 } // namespace WebCore
 
 #endif

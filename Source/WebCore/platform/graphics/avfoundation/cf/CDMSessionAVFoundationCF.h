@@ -23,44 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CDMPrivateMediaPlayer.h"
+#ifndef CDMSessionAVFoundationCF_h
+#define CDMSessionAVFoundationCF_h
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
-
-#include "CDM.h"
 #include "CDMSession.h"
-#include "ContentType.h"
-#include "ExceptionCode.h"
-#include "MediaPlayer.h"
-#include "SoftLinking.h"
+#include <wtf/PassOwnPtr.h>
+#include <wtf/RetainPtr.h>
+
+#if ENABLE(ENCRYPTED_MEDIA_V2) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
+
+typedef struct OpaqueAVCFAssetResourceLoadingRequest* AVCFAssetResourceLoadingRequestRef;
 
 namespace WebCore {
 
-bool CDMPrivateMediaPlayer::supportsKeySystem(const String& keySystem)
-{
-    return MediaPlayer::supportsKeySystem(keySystem, emptyString());
-}
+class MediaPlayerPrivateAVFoundationCF;
 
-bool CDMPrivateMediaPlayer::supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType)
-{
-    return MediaPlayer::supportsKeySystem(keySystem, mimeType);
-}
+class CDMSessionAVFoundationCF : public CDMSession {
+public:
+    CDMSessionAVFoundationCF(MediaPlayerPrivateAVFoundationCF* parent);
+    virtual ~CDMSessionAVFoundationCF() { }
 
-bool CDMPrivateMediaPlayer::supportsMIMEType(const String& mimeType)
-{
-    return MediaPlayer::supportsKeySystem(m_cdm->keySystem(), mimeType);
-}
+    virtual void setClient(CDMSessionClient* client) override { m_client = client; }
+    virtual const String& sessionId() const override { return m_sessionId; }
+    virtual PassRefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode) override;
+    virtual void releaseKeys() override;
+    virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode) override;
 
-std::unique_ptr<CDMSession> CDMPrivateMediaPlayer::createSession()
-{
-    MediaPlayer* mediaPlayer = m_cdm->mediaPlayer();
-    if (!mediaPlayer)
-        return nullptr;
-
-    return mediaPlayer->createSession(m_cdm->keySystem());
-}
+protected:
+    MediaPlayerPrivateAVFoundationCF* m_parent;
+    CDMSessionClient* m_client;
+    String m_sessionId;
+    RetainPtr<AVCFAssetResourceLoadingRequestRef> m_request;
+};
 
 }
 
 #endif
+
+#endif // CDMSessionAVFoundationCF_h

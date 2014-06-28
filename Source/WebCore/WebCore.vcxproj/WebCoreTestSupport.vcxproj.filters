@@ -39,6 +39,9 @@
     <ClCompile Include="..\testing\js\WebCoreTestSupport.cpp">
       <Filter>testing</Filter>
     </ClCompile>
+    <ClCompile Include="..\testing\MockCDM.cpp">
+      <Filter>testing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\InternalSettingsGenerated.h">
@@ -81,5 +84,8 @@
       <Filter>testing</Filter>
     </ClInclude>
     <ClInclude Include="..\config.h" />
+    <ClInclude Include="..\testing\MockCDM.h">
+      <Filter>testing</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

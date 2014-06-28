@@ -1,3 +1,39 @@
+2014-06-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Implement parts of the AVFOUNDATION_LOADER_DELEGATE logic for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=134418
+
+        Reviewed by Eric Carlson.
+
+        Land an initial implementation of AVFOUNDATION_LOADER_DELEGATE for
+        Windows.
+
+        * DerivedSources.cpp: Add new IDL files
+        * DerivedSources.make: Add check for AVFOUNDATION_LOADER_DELEGATE.
+        * Modules/encryptedmedia/CDMPrivateMediaPlayer.cpp: Added (ported from
+        Objective C.)
+        * WebCore.vcxproj/WebCore.vcxproj: Update for new files.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.vcxproj/WebCoreCommon.props: Add new search paths.
+        * WebCore.vcxproj/WebCoreTestSupport.vcxproj: Update for new files.
+        * WebCore.vcxproj/WebCoreTestSupport.vcxproj.filters: Ditto.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitData):
+        Moved from MediaPlayerPrivateAVFoundationObjC.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/cf/AVFoundationCFSoftLinking.h:
+        Update for new API calls.
+        * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.cpp: Added.
+        * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.h: Added.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        Updated for new AVFOUNDATION_LOADER_DELEGATE methods.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+        * platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp: Added.
+        * platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.h: Added.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        Remove method that was moved to base class.
+
 2014-06-27  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove BufferForAppendingHyphen

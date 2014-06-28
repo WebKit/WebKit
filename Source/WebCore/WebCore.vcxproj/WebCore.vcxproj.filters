@@ -340,6 +340,9 @@
     <Filter Include="platform\soup">
       <UniqueIdentifier>{b353479a-a6bf-41ad-b655-876165789b99}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Modules\encryptedmedia">
+      <UniqueIdentifier>{f9aa953b-e2a1-4d9e-a049-c34b10c81b4e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DerivedSources.cpp">
@@ -7103,6 +7106,53 @@
     </ClCompile>
     <ClCompile Include="..\platform\graphics\ca\TileCoverageMap.cpp">
       <Filter>platform\graphics\ca</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGamepad.cpp" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGamepadButton.cpp" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGamepadEvent.cpp" />
+    <ClCompile Include="..\Modules\gamepad\Gamepad.cpp" />
+    <ClCompile Include="..\Modules\gamepad\GamepadButton.cpp" />
+    <ClCompile Include="..\Modules\gamepad\GamepadEvent.cpp" />
+    <ClCompile Include="..\Modules\gamepad\NavigatorGamepad.cpp" />
+    <ClCompile Include="..\platform\graphics\ISOVTTCue.cpp" />
+    <ClCompile Include="..\Modules\encryptedmedia\CDM.cpp">
+      <Filter>Modules\encryptedmedia</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\encryptedmedia\CDMPrivateMediaPlayer.cpp">
+      <Filter>Modules\encryptedmedia</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\encryptedmedia\MediaKeyMessageEvent.cpp">
+      <Filter>Modules\encryptedmedia</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\encryptedmedia\MediaKeyNeededEvent.cpp">
+      <Filter>Modules\encryptedmedia</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\encryptedmedia\MediaKeys.cpp">
+      <Filter>Modules\encryptedmedia</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\encryptedmedia\MediaKeySession.cpp">
+      <Filter>Modules\encryptedmedia</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaKeyMessageEvent.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaKeyNeededEvent.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaKeys.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaKeySession.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaKeyError.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\avfoundation\cf\CDMSessionAVFoundationCF.cpp">
+      <Filter>platform\graphics\avfoundation\cf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\avfoundation\cf\WebCoreAVCFResourceLoader.cpp">
+      <Filter>platform\graphics\avfoundation\cf</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -14963,6 +15013,56 @@
     </ClInclude>
     <ClInclude Include="..\platform\graphics\ca\TileCoverageMap.h">
       <Filter>platform\graphics\ca</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGamepad.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGamepadButton.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGamepadEvent.h" />
+    <ClInclude Include="..\Modules\gamepad\Gamepad.h" />
+    <ClInclude Include="..\Modules\gamepad\GamepadButton.h" />
+    <ClInclude Include="..\Modules\gamepad\GamepadEvent.h" />
+    <ClInclude Include="..\Modules\gamepad\NavigatorGamepad.h" />
+    <ClInclude Include="..\platform\graphics\ISOVTTCue.h" />
+    <ClInclude Include="..\Modules\encryptedmedia\CDM.h">
+      <Filter>Modules\encryptedmedia</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\encryptedmedia\CDMPrivate.h">
+      <Filter>Modules\encryptedmedia</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\encryptedmedia\CDMPrivateMediaPlayer.h">
+      <Filter>Modules\encryptedmedia</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\encryptedmedia\MediaKeyMessageEvent.h">
+      <Filter>Modules\encryptedmedia</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\encryptedmedia\MediaKeyNeededEvent.h">
+      <Filter>Modules\encryptedmedia</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\encryptedmedia\MediaKeys.h">
+      <Filter>Modules\encryptedmedia</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\encryptedmedia\MediaKeySession.h">
+      <Filter>Modules\encryptedmedia</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaNeededEvent.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaKeys.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaKeySession.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaMessageEvent.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaKeyError.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\avfoundation\cf\CDMSessionAVFoundationCF.h">
+      <Filter>platform\graphics\avfoundation\cf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\avfoundation\cf\WebCoreAVCFResourceLoader.h">
+      <Filter>platform\graphics\avfoundation\cf</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
