@@ -470,6 +470,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     if (m_useAsyncScrolling)
         WebProcess::shared().eventDispatcher().addScrollingTreeForPage(this);
 #endif
+
+    for (auto& mimeType : parameters.mimeTypesWithCustomContentProviders)
+        m_mimeTypesWithCustomContentProviders.add(mimeType);
 }
 
 void WebPage::reinitializeWebPage(const WebPageCreationParameters& parameters)

@@ -106,6 +106,8 @@ struct WebPageCreationParameters {
 
     LayerHostingMode layerHostingMode;
 
+    Vector<String> mimeTypesWithCustomContentProviders;
+
 #if ENABLE(REMOTE_INSPECTOR)
     bool allowsRemoteInspection;
 #endif

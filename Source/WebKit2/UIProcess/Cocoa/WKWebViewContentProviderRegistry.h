@@ -45,6 +45,8 @@ class WebPageProxy;
 - (void)registerProvider:(Class <WKWebViewContentProvider>)contentProvider forMIMEType:(const String&)mimeType;
 - (Class <WKWebViewContentProvider>)providerForMIMEType:(const String&)mimeType;
 
+- (Vector<String>)_mimeTypesWithCustomContentProviders;
+
 @end
 
 #endif // PLATFORM(IOS)

@@ -61,15 +61,11 @@ using namespace WebKit;
 {
     ASSERT(!_pages.contains(&page));
     _pages.add(&page);
-
-    for (auto& mimeType : _contentProviderForMIMEType.keys())
-        page.addMIMETypeWithCustomContentProvider(mimeType);
 }
 
 - (void)removePage:(WebPageProxy&)page
 {
     ASSERT(_pages.contains(&page));
-
     _pages.remove(&page);
 }
 
@@ -89,6 +85,13 @@ using namespace WebKit;
         return nil;
 
     return representation->value;
+}
+
+- (Vector<String>)_mimeTypesWithCustomContentProviders
+{
+    Vector<String> mimeTypes;
+    copyKeysToVector(_contentProviderForMIMEType, mimeTypes);
+    return mimeTypes;
 }
 
 @end

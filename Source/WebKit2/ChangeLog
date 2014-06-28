@@ -1,3 +1,38 @@
+2014-06-28  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS][WK2] PDFs never load inline again after the Web process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=134432
+        <rdar://problem/17484205>
+
+        Reviewed by Dan Bernstein.
+
+        After a crash, the WebPage never gets mimeTypesWithCustomContentProviders filled back in.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        Add mimeTypesWithCustomContentProviders to WebPageCreationParameters.
+
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.h:
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm:
+        (-[WKWebViewContentProviderRegistry addPage:]):
+        We don't need to send the MIME types across when a page is added, because it already got them in its creation parameters.
+
+        (-[WKWebViewContentProviderRegistry removePage:]):
+        (-[WKWebViewContentProviderRegistry _mimeTypesWithCustomContentProviders]):
+        Return a vector of all registered MIME types.
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::mimeTypesWithCustomContentProviders):
+        * UIProcess/PageClient.h:
+        Add (iOS only for now) mimeTypesWithCustomContentProviders to PageClient.
+
 2014-06-28  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION: WebPageProxy::attributedSubstringForCharacterRangeAsync never calls its callback function

@@ -37,6 +37,8 @@
 #import "ViewSnapshotStore.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
+#import "WKWebViewConfigurationInternal.h"
+#import "WKWebViewContentProviderRegistry.h"
 #import "WKWebViewInternal.h"
 #import "WebContextMenuProxy.h"
 #import "WebEditCommandProxy.h"
@@ -585,6 +587,11 @@ void PageClientImpl::didFinishDrawingPagesToPDF(const IPC::DataReference& pdfDat
     RetainPtr<CFDataRef> data = adoptCF(CFDataCreate(kCFAllocatorDefault, pdfData.data(), pdfData.size()));
     RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithCFData(data.get()));
     m_webView._printedDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get())).get();
+}
+
+Vector<String> PageClientImpl::mimeTypesWithCustomContentProviders()
+{
+    return m_webView.configuration._contentProviderRegistry._mimeTypesWithCustomContentProviders;
 }
 
 } // namespace WebKit

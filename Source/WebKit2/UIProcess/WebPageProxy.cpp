@@ -4393,6 +4393,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.screenSize = screenSize();
     parameters.availableScreenSize = availableScreenSize();
     parameters.textAutosizingWidth = textAutosizingWidth();
+    parameters.mimeTypesWithCustomContentProviders = m_pageClient.mimeTypesWithCustomContentProviders();
 #endif
 
     return parameters;
