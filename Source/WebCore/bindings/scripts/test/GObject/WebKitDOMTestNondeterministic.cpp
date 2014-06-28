@@ -87,28 +87,21 @@ static void webkit_dom_test_nondeterministic_finalize(GObject* object)
 
 static void webkit_dom_test_nondeterministic_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
 {
-    WebCore::JSMainThreadNullState state;
     WebKitDOMTestNondeterministic* self = WEBKIT_DOM_TEST_NONDETERMINISTIC(object);
-    WebCore::TestNondeterministic* coreSelf = WebKit::core(self);
 
     switch (propertyId) {
-    case PROP_NONDETERMINISTIC_WRITEABLE_ATTR: {
-        coreSelf->setNondeterministicWriteableAttr(WTF::String::fromUTF8(g_value_get_string(value)));
+    case PROP_NONDETERMINISTIC_WRITEABLE_ATTR:
+        webkit_dom_test_nondeterministic_set_nondeterministic_writeable_attr(self, g_value_get_string(value));
         break;
-    }
-    case PROP_NONDETERMINISTIC_EXCEPTION_ATTR: {
-        coreSelf->setNondeterministicExceptionAttr(WTF::String::fromUTF8(g_value_get_string(value)));
+    case PROP_NONDETERMINISTIC_EXCEPTION_ATTR:
+        webkit_dom_test_nondeterministic_set_nondeterministic_exception_attr(self, g_value_get_string(value));
         break;
-    }
-    case PROP_NONDETERMINISTIC_GETTER_EXCEPTION_ATTR: {
-        coreSelf->setNondeterministicGetterExceptionAttr(WTF::String::fromUTF8(g_value_get_string(value)));
+    case PROP_NONDETERMINISTIC_GETTER_EXCEPTION_ATTR:
+        webkit_dom_test_nondeterministic_set_nondeterministic_getter_exception_attr(self, g_value_get_string(value));
         break;
-    }
-    case PROP_NONDETERMINISTIC_SETTER_EXCEPTION_ATTR: {
-        WebCore::ExceptionCode ec = 0;
-        coreSelf->setNondeterministicSetterExceptionAttr(WTF::String::fromUTF8(g_value_get_string(value)), ec);
+    case PROP_NONDETERMINISTIC_SETTER_EXCEPTION_ATTR:
+        webkit_dom_test_nondeterministic_set_nondeterministic_setter_exception_attr(self, g_value_get_string(value), nullptr);
         break;
-    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;
@@ -117,32 +110,24 @@ static void webkit_dom_test_nondeterministic_set_property(GObject* object, guint
 
 static void webkit_dom_test_nondeterministic_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
-    WebCore::JSMainThreadNullState state;
     WebKitDOMTestNondeterministic* self = WEBKIT_DOM_TEST_NONDETERMINISTIC(object);
-    WebCore::TestNondeterministic* coreSelf = WebKit::core(self);
 
     switch (propertyId) {
-    case PROP_NONDETERMINISTIC_READONLY_ATTR: {
-        g_value_set_long(value, coreSelf->nondeterministicReadonlyAttr());
+    case PROP_NONDETERMINISTIC_READONLY_ATTR:
+        g_value_set_long(value, webkit_dom_test_nondeterministic_get_nondeterministic_readonly_attr(self));
         break;
-    }
-    case PROP_NONDETERMINISTIC_WRITEABLE_ATTR: {
-        g_value_take_string(value, convertToUTF8String(coreSelf->nondeterministicWriteableAttr()));
+    case PROP_NONDETERMINISTIC_WRITEABLE_ATTR:
+        g_value_take_string(value, webkit_dom_test_nondeterministic_get_nondeterministic_writeable_attr(self));
         break;
-    }
-    case PROP_NONDETERMINISTIC_EXCEPTION_ATTR: {
-        g_value_take_string(value, convertToUTF8String(coreSelf->nondeterministicExceptionAttr()));
+    case PROP_NONDETERMINISTIC_EXCEPTION_ATTR:
+        g_value_take_string(value, webkit_dom_test_nondeterministic_get_nondeterministic_exception_attr(self));
         break;
-    }
-    case PROP_NONDETERMINISTIC_GETTER_EXCEPTION_ATTR: {
-        WebCore::ExceptionCode ec = 0;
-        g_value_take_string(value, convertToUTF8String(coreSelf->nondeterministicGetterExceptionAttr(ec)));
+    case PROP_NONDETERMINISTIC_GETTER_EXCEPTION_ATTR:
+        g_value_take_string(value, webkit_dom_test_nondeterministic_get_nondeterministic_getter_exception_attr(self, nullptr));
         break;
-    }
-    case PROP_NONDETERMINISTIC_SETTER_EXCEPTION_ATTR: {
-        g_value_take_string(value, convertToUTF8String(coreSelf->nondeterministicSetterExceptionAttr()));
+    case PROP_NONDETERMINISTIC_SETTER_EXCEPTION_ATTR:
+        g_value_take_string(value, webkit_dom_test_nondeterministic_get_nondeterministic_setter_exception_attr(self));
         break;
-    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;

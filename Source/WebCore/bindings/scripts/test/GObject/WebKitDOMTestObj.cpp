@@ -146,155 +146,102 @@ static void webkit_dom_test_obj_finalize(GObject* object)
 
 static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
 {
-    WebCore::JSMainThreadNullState state;
     WebKitDOMTestObj* self = WEBKIT_DOM_TEST_OBJ(object);
-    WebCore::TestObj* coreSelf = WebKit::core(self);
 
     switch (propertyId) {
-    case PROP_BYTE_ATTR: {
-        coreSelf->setByteAttr((g_value_get_int8(value)));
+    case PROP_BYTE_ATTR:
+        webkit_dom_test_obj_set_byte_attr(self, g_value_get_int8(value));
         break;
-    }
-    case PROP_OCTET_ATTR: {
-        coreSelf->setOctetAttr((g_value_get_uint8(value)));
+    case PROP_OCTET_ATTR:
+        webkit_dom_test_obj_set_octet_attr(self, g_value_get_uint8(value));
         break;
-    }
-    case PROP_SHORT_ATTR: {
-        coreSelf->setShortAttr((g_value_get_int(value)));
+    case PROP_SHORT_ATTR:
+        webkit_dom_test_obj_set_short_attr(self, g_value_get_int(value));
         break;
-    }
-    case PROP_UNSIGNED_SHORT_ATTR: {
-        coreSelf->setUnsignedShortAttr((g_value_get_uint(value)));
+    case PROP_UNSIGNED_SHORT_ATTR:
+        webkit_dom_test_obj_set_unsigned_short_attr(self, g_value_get_uint(value));
         break;
-    }
-    case PROP_LONG_ATTR: {
-        coreSelf->setLongAttr((g_value_get_long(value)));
+    case PROP_LONG_ATTR:
+        webkit_dom_test_obj_set_long_attr(self, g_value_get_long(value));
         break;
-    }
-    case PROP_LONG_LONG_ATTR: {
-        coreSelf->setLongLongAttr((g_value_get_int64(value)));
+    case PROP_LONG_LONG_ATTR:
+        webkit_dom_test_obj_set_long_long_attr(self, g_value_get_int64(value));
         break;
-    }
-    case PROP_UNSIGNED_LONG_LONG_ATTR: {
-        coreSelf->setUnsignedLongLongAttr((g_value_get_uint64(value)));
+    case PROP_UNSIGNED_LONG_LONG_ATTR:
+        webkit_dom_test_obj_set_unsigned_long_long_attr(self, g_value_get_uint64(value));
         break;
-    }
-    case PROP_STRING_ATTR: {
-        coreSelf->setStringAttr(WTF::String::fromUTF8(g_value_get_string(value)));
+    case PROP_STRING_ATTR:
+        webkit_dom_test_obj_set_string_attr(self, g_value_get_string(value));
         break;
-    }
-    case PROP_CREATE: {
-        coreSelf->setCreate((g_value_get_boolean(value)));
+    case PROP_CREATE:
+        webkit_dom_test_obj_set_create(self, g_value_get_boolean(value));
         break;
-    }
-    case PROP_REFLECTED_STRING_ATTR: {
-        coreSelf->setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
+    case PROP_REFLECTED_STRING_ATTR:
+        webkit_dom_test_obj_set_reflected_string_attr(self, g_value_get_string(value));
         break;
-    }
-    case PROP_REFLECTED_INTEGRAL_ATTR: {
-        coreSelf->setIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, (g_value_get_long(value)));
+    case PROP_REFLECTED_INTEGRAL_ATTR:
+        webkit_dom_test_obj_set_reflected_integral_attr(self, g_value_get_long(value));
         break;
-    }
-    case PROP_REFLECTED_UNSIGNED_INTEGRAL_ATTR: {
-        coreSelf->setUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr, (g_value_get_ulong(value)));
+    case PROP_REFLECTED_UNSIGNED_INTEGRAL_ATTR:
+        webkit_dom_test_obj_set_reflected_unsigned_integral_attr(self, g_value_get_ulong(value));
         break;
-    }
-    case PROP_REFLECTED_BOOLEAN_ATTR: {
-        coreSelf->setBooleanAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr, (g_value_get_boolean(value)));
+    case PROP_REFLECTED_BOOLEAN_ATTR:
+        webkit_dom_test_obj_set_reflected_boolean_attr(self, g_value_get_boolean(value));
         break;
-    }
-    case PROP_REFLECTED_URL_ATTR: {
-        coreSelf->setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedurlattrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
+    case PROP_REFLECTED_URL_ATTR:
+        webkit_dom_test_obj_set_reflected_url_attr(self, g_value_get_string(value));
         break;
-    }
-    case PROP_REFLECTED_STRING_ATTR: {
-        coreSelf->setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
+    case PROP_REFLECTED_STRING_ATTR:
+        webkit_dom_test_obj_set_reflected_string_attr(self, g_value_get_string(value));
         break;
-    }
-    case PROP_REFLECTED_CUSTOM_INTEGRAL_ATTR: {
-        coreSelf->setIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr, (g_value_get_long(value)));
+    case PROP_REFLECTED_CUSTOM_INTEGRAL_ATTR:
+        webkit_dom_test_obj_set_reflected_custom_integral_attr(self, g_value_get_long(value));
         break;
-    }
-    case PROP_REFLECTED_CUSTOM_BOOLEAN_ATTR: {
-        coreSelf->setBooleanAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr, (g_value_get_boolean(value)));
+    case PROP_REFLECTED_CUSTOM_BOOLEAN_ATTR:
+        webkit_dom_test_obj_set_reflected_custom_boolean_attr(self, g_value_get_boolean(value));
         break;
-    }
-    case PROP_REFLECTED_CUSTOM_URL_ATTR: {
-        coreSelf->setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentURLAttrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
+    case PROP_REFLECTED_CUSTOM_URL_ATTR:
+        webkit_dom_test_obj_set_reflected_custom_url_attr(self, g_value_get_string(value));
         break;
-    }
-    case PROP_ATTR_WITH_GETTER_EXCEPTION: {
-        coreSelf->setAttrWithGetterException((g_value_get_long(value)));
+    case PROP_ATTR_WITH_GETTER_EXCEPTION:
+        webkit_dom_test_obj_set_attr_with_getter_exception(self, g_value_get_long(value));
         break;
-    }
-    case PROP_ATTR_WITH_SETTER_EXCEPTION: {
-        WebCore::ExceptionCode ec = 0;
-        coreSelf->setAttrWithSetterException((g_value_get_long(value)), ec);
+    case PROP_ATTR_WITH_SETTER_EXCEPTION:
+        webkit_dom_test_obj_set_attr_with_setter_exception(self, g_value_get_long(value), nullptr);
         break;
-    }
-    case PROP_STRING_ATTR_WITH_GETTER_EXCEPTION: {
-        coreSelf->setStringAttrWithGetterException(WTF::String::fromUTF8(g_value_get_string(value)));
+    case PROP_STRING_ATTR_WITH_GETTER_EXCEPTION:
+        webkit_dom_test_obj_set_string_attr_with_getter_exception(self, g_value_get_string(value));
         break;
-    }
-    case PROP_STRING_ATTR_WITH_SETTER_EXCEPTION: {
-        WebCore::ExceptionCode ec = 0;
-        coreSelf->setStringAttrWithSetterException(WTF::String::fromUTF8(g_value_get_string(value)), ec);
+    case PROP_STRING_ATTR_WITH_SETTER_EXCEPTION:
+        webkit_dom_test_obj_set_string_attr_with_setter_exception(self, g_value_get_string(value), nullptr);
         break;
-    }
-    case PROP_WITH_SCRIPT_STATE_ATTRIBUTE: {
-        coreSelf->setWithScriptStateAttribute((g_value_get_long(value)));
+    case PROP_WITH_SCRIPT_STATE_ATTRIBUTE:
+        webkit_dom_test_obj_set_with_script_state_attribute(self, g_value_get_long(value));
         break;
-    }
-    case PROP_CONDITIONAL_ATTR1: {
-#if ENABLE(Condition1)
-        coreSelf->setConditionalAttr1((g_value_get_long(value)));
-#else
-        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
-#endif /* ENABLE(Condition1) */
+    case PROP_CONDITIONAL_ATTR1:
+        webkit_dom_test_obj_set_conditional_attr1(self, g_value_get_long(value));
         break;
-    }
-    case PROP_CONDITIONAL_ATTR2: {
-#if ENABLE(Condition1) && ENABLE(Condition2)
-        coreSelf->setConditionalAttr2((g_value_get_long(value)));
-#else
-#if !ENABLE(Condition1)
-        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
-#endif
-#if !ENABLE(Condition2)
-        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
-#endif
-#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
+    case PROP_CONDITIONAL_ATTR2:
+        webkit_dom_test_obj_set_conditional_attr2(self, g_value_get_long(value));
         break;
-    }
-    case PROP_CONDITIONAL_ATTR3: {
-#if ENABLE(Condition1) || ENABLE(Condition2)
-        coreSelf->setConditionalAttr3((g_value_get_long(value)));
-#else
-        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
-        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
-#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+    case PROP_CONDITIONAL_ATTR3:
+        webkit_dom_test_obj_set_conditional_attr3(self, g_value_get_long(value));
         break;
-    }
-    case PROP_STRAWBERRY: {
-        coreSelf->setBlueberry((g_value_get_long(value)));
+    case PROP_STRAWBERRY:
+        webkit_dom_test_obj_set_strawberry(self, g_value_get_long(value));
         break;
-    }
-    case PROP_STRICT_FLOAT: {
-        coreSelf->setStrictFloat((g_value_get_float(value)));
+    case PROP_STRICT_FLOAT:
+        webkit_dom_test_obj_set_strict_float(self, g_value_get_float(value));
         break;
-    }
-    case PROP_ID: {
-        coreSelf->setId((g_value_get_long(value)));
+    case PROP_ID:
+        webkit_dom_test_obj_set_id(self, g_value_get_long(value));
         break;
-    }
-    case PROP_NULLABLE_LONG_SETTABLE_ATTRIBUTE: {
-        coreSelf->setNullableLongSettableAttribute((g_value_get_long(value)));
+    case PROP_NULLABLE_LONG_SETTABLE_ATTRIBUTE:
+        webkit_dom_test_obj_set_nullable_long_settable_attribute(self, g_value_get_long(value));
         break;
-    }
-    case PROP_NULLABLE_STRING_VALUE: {
-        coreSelf->setNullableStringValue((g_value_get_long(value)));
+    case PROP_NULLABLE_STRING_VALUE:
+        webkit_dom_test_obj_set_nullable_string_value(self, g_value_get_long(value));
         break;
-    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;
@@ -303,275 +250,174 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, 
 
 static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
-    WebCore::JSMainThreadNullState state;
     WebKitDOMTestObj* self = WEBKIT_DOM_TEST_OBJ(object);
-    WebCore::TestObj* coreSelf = WebKit::core(self);
 
     switch (propertyId) {
-    case PROP_READ_ONLY_LONG_ATTR: {
-        g_value_set_long(value, coreSelf->readOnlyLongAttr());
+    case PROP_READ_ONLY_LONG_ATTR:
+        g_value_set_long(value, webkit_dom_test_obj_get_read_only_long_attr(self));
         break;
-    }
-    case PROP_READ_ONLY_STRING_ATTR: {
-        g_value_take_string(value, convertToUTF8String(coreSelf->readOnlyStringAttr()));
+    case PROP_READ_ONLY_STRING_ATTR:
+        g_value_take_string(value, webkit_dom_test_obj_get_read_only_string_attr(self));
         break;
-    }
-    case PROP_READ_ONLY_TEST_OBJ_ATTR: {
-        RefPtr<WebCore::TestObj> ptr = coreSelf->readOnlyTestObjAttr();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
+    case PROP_READ_ONLY_TEST_OBJ_ATTR:
+        g_value_set_object(value, webkit_dom_test_obj_get_read_only_test_obj_attr(self));
         break;
-    }
-    case PROP_BYTE_ATTR: {
-        g_value_set_int8(value, coreSelf->byteAttr());
+    case PROP_BYTE_ATTR:
+        g_value_set_int8(value, webkit_dom_test_obj_get_byte_attr(self));
         break;
-    }
-    case PROP_OCTET_ATTR: {
-        g_value_set_uint8(value, coreSelf->octetAttr());
+    case PROP_OCTET_ATTR:
+        g_value_set_uint8(value, webkit_dom_test_obj_get_octet_attr(self));
         break;
-    }
-    case PROP_SHORT_ATTR: {
-        g_value_set_int(value, coreSelf->shortAttr());
+    case PROP_SHORT_ATTR:
+        g_value_set_int(value, webkit_dom_test_obj_get_short_attr(self));
         break;
-    }
-    case PROP_UNSIGNED_SHORT_ATTR: {
-        g_value_set_uint(value, coreSelf->unsignedShortAttr());
+    case PROP_UNSIGNED_SHORT_ATTR:
+        g_value_set_uint(value, webkit_dom_test_obj_get_unsigned_short_attr(self));
         break;
-    }
-    case PROP_LONG_ATTR: {
-        g_value_set_long(value, coreSelf->longAttr());
+    case PROP_LONG_ATTR:
+        g_value_set_long(value, webkit_dom_test_obj_get_long_attr(self));
         break;
-    }
-    case PROP_LONG_LONG_ATTR: {
-        g_value_set_int64(value, coreSelf->longLongAttr());
+    case PROP_LONG_LONG_ATTR:
+        g_value_set_int64(value, webkit_dom_test_obj_get_long_long_attr(self));
         break;
-    }
-    case PROP_UNSIGNED_LONG_LONG_ATTR: {
-        g_value_set_uint64(value, coreSelf->unsignedLongLongAttr());
+    case PROP_UNSIGNED_LONG_LONG_ATTR:
+        g_value_set_uint64(value, webkit_dom_test_obj_get_unsigned_long_long_attr(self));
         break;
-    }
-    case PROP_STRING_ATTR: {
-        g_value_take_string(value, convertToUTF8String(coreSelf->stringAttr()));
+    case PROP_STRING_ATTR:
+        g_value_take_string(value, webkit_dom_test_obj_get_string_attr(self));
         break;
-    }
-    case PROP_TEST_OBJ_ATTR: {
-        RefPtr<WebCore::TestObj> ptr = coreSelf->testObjAttr();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
+    case PROP_TEST_OBJ_ATTR:
+        g_value_set_object(value, webkit_dom_test_obj_get_test_obj_attr(self));
         break;
-    }
-    case PROP_XML_OBJ_ATTR: {
-        RefPtr<WebCore::TestObj> ptr = coreSelf->xmlObjAttr();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
+    case PROP_XML_OBJ_ATTR:
+        g_value_set_object(value, webkit_dom_test_obj_get_xml_obj_attr(self));
         break;
-    }
-    case PROP_CREATE: {
-        g_value_set_boolean(value, coreSelf->isCreate());
+    case PROP_CREATE:
+        g_value_set_boolean(value, webkit_dom_test_obj_get_create(self));
         break;
-    }
-    case PROP_REFLECTED_STRING_ATTR: {
-        g_value_take_string(value, convertToUTF8String(coreSelf->fastGetAttribute(WebCore::HTMLNames::reflectedstringattrAttr)));
+    case PROP_REFLECTED_STRING_ATTR:
+        g_value_take_string(value, webkit_dom_test_obj_get_reflected_string_attr(self));
         break;
-    }
-    case PROP_REFLECTED_INTEGRAL_ATTR: {
-        g_value_set_long(value, coreSelf->getIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr));
+    case PROP_REFLECTED_INTEGRAL_ATTR:
+        g_value_set_long(value, webkit_dom_test_obj_get_reflected_integral_attr(self));
         break;
-    }
-    case PROP_REFLECTED_UNSIGNED_INTEGRAL_ATTR: {
-        g_value_set_ulong(value, coreSelf->getUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr));
+    case PROP_REFLECTED_UNSIGNED_INTEGRAL_ATTR:
+        g_value_set_ulong(value, webkit_dom_test_obj_get_reflected_unsigned_integral_attr(self));
         break;
-    }
-    case PROP_REFLECTED_BOOLEAN_ATTR: {
-        g_value_set_boolean(value, coreSelf->fastHasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr));
+    case PROP_REFLECTED_BOOLEAN_ATTR:
+        g_value_set_boolean(value, webkit_dom_test_obj_get_reflected_boolean_attr(self));
         break;
-    }
-    case PROP_REFLECTED_URL_ATTR: {
-        g_value_take_string(value, convertToUTF8String(coreSelf->getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr)));
+    case PROP_REFLECTED_URL_ATTR:
+        g_value_take_string(value, webkit_dom_test_obj_get_reflected_url_attr(self));
         break;
-    }
-    case PROP_REFLECTED_STRING_ATTR: {
-        g_value_take_string(value, convertToUTF8String(coreSelf->fastGetAttribute(WebCore::HTMLNames::customContentStringAttrAttr)));
+    case PROP_REFLECTED_STRING_ATTR:
+        g_value_take_string(value, webkit_dom_test_obj_get_reflected_string_attr(self));
         break;
-    }
-    case PROP_REFLECTED_CUSTOM_INTEGRAL_ATTR: {
-        g_value_set_long(value, coreSelf->getIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr));
+    case PROP_REFLECTED_CUSTOM_INTEGRAL_ATTR:
+        g_value_set_long(value, webkit_dom_test_obj_get_reflected_custom_integral_attr(self));
         break;
-    }
-    case PROP_REFLECTED_CUSTOM_BOOLEAN_ATTR: {
-        g_value_set_boolean(value, coreSelf->fastHasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr));
+    case PROP_REFLECTED_CUSTOM_BOOLEAN_ATTR:
+        g_value_set_boolean(value, webkit_dom_test_obj_get_reflected_custom_boolean_attr(self));
         break;
-    }
-    case PROP_REFLECTED_CUSTOM_URL_ATTR: {
-        g_value_take_string(value, convertToUTF8String(coreSelf->getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr)));
+    case PROP_REFLECTED_CUSTOM_URL_ATTR:
+        g_value_take_string(value, webkit_dom_test_obj_get_reflected_custom_url_attr(self));
         break;
-    }
-    case PROP_ATTR_WITH_GETTER_EXCEPTION: {
-        WebCore::ExceptionCode ec = 0;
-        g_value_set_long(value, coreSelf->attrWithGetterException(ec));
+    case PROP_ATTR_WITH_GETTER_EXCEPTION:
+        g_value_set_long(value, webkit_dom_test_obj_get_attr_with_getter_exception(self, nullptr));
         break;
-    }
-    case PROP_ATTR_WITH_SETTER_EXCEPTION: {
-        g_value_set_long(value, coreSelf->attrWithSetterException());
+    case PROP_ATTR_WITH_SETTER_EXCEPTION:
+        g_value_set_long(value, webkit_dom_test_obj_get_attr_with_setter_exception(self));
         break;
-    }
-    case PROP_STRING_ATTR_WITH_GETTER_EXCEPTION: {
-        WebCore::ExceptionCode ec = 0;
-        g_value_take_string(value, convertToUTF8String(coreSelf->stringAttrWithGetterException(ec)));
+    case PROP_STRING_ATTR_WITH_GETTER_EXCEPTION:
+        g_value_take_string(value, webkit_dom_test_obj_get_string_attr_with_getter_exception(self, nullptr));
         break;
-    }
-    case PROP_STRING_ATTR_WITH_SETTER_EXCEPTION: {
-        g_value_take_string(value, convertToUTF8String(coreSelf->stringAttrWithSetterException()));
+    case PROP_STRING_ATTR_WITH_SETTER_EXCEPTION:
+        g_value_take_string(value, webkit_dom_test_obj_get_string_attr_with_setter_exception(self));
         break;
-    }
-    case PROP_WITH_SCRIPT_STATE_ATTRIBUTE: {
-        g_value_set_long(value, coreSelf->withScriptStateAttribute());
+    case PROP_WITH_SCRIPT_STATE_ATTRIBUTE:
+        g_value_set_long(value, webkit_dom_test_obj_get_with_script_state_attribute(self));
         break;
-    }
-    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE: {
-        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptExecutionContextAttribute();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
+    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE:
+        g_value_set_object(value, webkit_dom_test_obj_get_with_script_execution_context_attribute(self));
         break;
-    }
-    case PROP_WITH_SCRIPT_STATE_ATTRIBUTE_RAISES: {
-        WebCore::ExceptionCode ec = 0;
-        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptStateAttributeRaises(ec);
-        g_value_set_object(value, WebKit::kit(ptr.get()));
+    case PROP_WITH_SCRIPT_STATE_ATTRIBUTE_RAISES:
+        g_value_set_object(value, webkit_dom_test_obj_get_with_script_state_attribute_raises(self, nullptr));
         break;
-    }
-    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE_RAISES: {
-        WebCore::ExceptionCode ec = 0;
-        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptExecutionContextAttributeRaises(ec);
-        g_value_set_object(value, WebKit::kit(ptr.get()));
+    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE_RAISES:
+        g_value_set_object(value, webkit_dom_test_obj_get_with_script_execution_context_attribute_raises(self, nullptr));
         break;
-    }
-    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_ATTRIBUTE: {
-        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptExecutionContextAndScriptStateAttribute();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
+    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_ATTRIBUTE:
+        g_value_set_object(value, webkit_dom_test_obj_get_with_script_execution_context_and_script_state_attribute(self));
         break;
-    }
-    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_ATTRIBUTE_RAISES: {
-        WebCore::ExceptionCode ec = 0;
-        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptExecutionContextAndScriptStateAttributeRaises(ec);
-        g_value_set_object(value, WebKit::kit(ptr.get()));
+    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_ATTRIBUTE_RAISES:
+        g_value_set_object(value, webkit_dom_test_obj_get_with_script_execution_context_and_script_state_attribute_raises(self, nullptr));
         break;
-    }
-    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_WITH_SPACES_ATTRIBUTE: {
-        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptExecutionContextAndScriptStateWithSpacesAttribute();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
+    case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_WITH_SPACES_ATTRIBUTE:
+        g_value_set_object(value, webkit_dom_test_obj_get_with_script_execution_context_and_script_state_with_spaces_attribute(self));
         break;
-    }
-    case PROP_WITH_SCRIPT_ARGUMENTS_AND_CALL_STACK_ATTRIBUTE: {
-        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptArgumentsAndCallStackAttribute();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
+    case PROP_WITH_SCRIPT_ARGUMENTS_AND_CALL_STACK_ATTRIBUTE:
+        g_value_set_object(value, webkit_dom_test_obj_get_with_script_arguments_and_call_stack_attribute(self));
         break;
-    }
-    case PROP_CONDITIONAL_ATTR1: {
-#if ENABLE(Condition1)
-        g_value_set_long(value, coreSelf->conditionalAttr1());
-#else
-        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
-#endif /* ENABLE(Condition1) */
+    case PROP_CONDITIONAL_ATTR1:
+        g_value_set_long(value, webkit_dom_test_obj_get_conditional_attr1(self));
         break;
-    }
-    case PROP_CONDITIONAL_ATTR2: {
-#if ENABLE(Condition1) && ENABLE(Condition2)
-        g_value_set_long(value, coreSelf->conditionalAttr2());
-#else
-#if !ENABLE(Condition1)
-        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
-#endif
-#if !ENABLE(Condition2)
-        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
-#endif
-#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
+    case PROP_CONDITIONAL_ATTR2:
+        g_value_set_long(value, webkit_dom_test_obj_get_conditional_attr2(self));
         break;
-    }
-    case PROP_CONDITIONAL_ATTR3: {
-#if ENABLE(Condition1) || ENABLE(Condition2)
-        g_value_set_long(value, coreSelf->conditionalAttr3());
-#else
-        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
-        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
-#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+    case PROP_CONDITIONAL_ATTR3:
+        g_value_set_long(value, webkit_dom_test_obj_get_conditional_attr3(self));
         break;
-    }
-    case PROP_ANY_ATTRIBUTE: {
-        RefPtr<WebCore::any> ptr = coreSelf->anyAttribute();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
+    case PROP_ANY_ATTRIBUTE:
+        g_value_set_object(value, webkit_dom_test_obj_get_any_attribute(self));
         break;
-    }
-    case PROP_CONTENT_DOCUMENT: {
-        RefPtr<WebCore::Document> ptr = coreSelf->contentDocument();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
+    case PROP_CONTENT_DOCUMENT:
+        g_value_set_object(value, webkit_dom_test_obj_get_content_document(self));
         break;
-    }
-    case PROP_MUTABLE_POINT: {
-        RefPtr<WebCore::SVGPoint> ptr = coreSelf->mutablePoint();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
+    case PROP_MUTABLE_POINT:
+        g_value_set_object(value, webkit_dom_test_obj_get_mutable_point(self));
         break;
-    }
-    case PROP_IMMUTABLE_POINT: {
-        RefPtr<WebCore::SVGPoint> ptr = coreSelf->immutablePoint();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
+    case PROP_IMMUTABLE_POINT:
+        g_value_set_object(value, webkit_dom_test_obj_get_immutable_point(self));
         break;
-    }
-    case PROP_STRAWBERRY: {
-        g_value_set_long(value, coreSelf->blueberry());
+    case PROP_STRAWBERRY:
+        g_value_set_long(value, webkit_dom_test_obj_get_strawberry(self));
         break;
-    }
-    case PROP_STRICT_FLOAT: {
-        g_value_set_float(value, coreSelf->strictFloat());
+    case PROP_STRICT_FLOAT:
+        g_value_set_float(value, webkit_dom_test_obj_get_strict_float(self));
         break;
-    }
-    case PROP_DESCRIPTION: {
-        g_value_set_long(value, coreSelf->description());
+    case PROP_DESCRIPTION:
+        g_value_set_long(value, webkit_dom_test_obj_get_description(self));
         break;
-    }
-    case PROP_ID: {
-        g_value_set_long(value, coreSelf->id());
+    case PROP_ID:
+        g_value_set_long(value, webkit_dom_test_obj_get_id(self));
         break;
-    }
-    case PROP_HASH: {
-        g_value_take_string(value, convertToUTF8String(coreSelf->hash()));
+    case PROP_HASH:
+        g_value_take_string(value, webkit_dom_test_obj_get_hash(self));
         break;
-    }
-    case PROP_REPLACEABLE_ATTRIBUTE: {
-        g_value_set_long(value, coreSelf->replaceableAttribute());
+    case PROP_REPLACEABLE_ATTRIBUTE:
+        g_value_set_long(value, webkit_dom_test_obj_get_replaceable_attribute(self));
         break;
-    }
-    case PROP_NULLABLE_DOUBLE_ATTRIBUTE: {
-        bool isNull = false;
-        g_value_set_double(value, coreSelf->nullableDoubleAttribute(isNull));
+    case PROP_NULLABLE_DOUBLE_ATTRIBUTE:
+        g_value_set_double(value, webkit_dom_test_obj_get_nullable_double_attribute(self));
         break;
-    }
-    case PROP_NULLABLE_LONG_ATTRIBUTE: {
-        bool isNull = false;
-        g_value_set_long(value, coreSelf->nullableLongAttribute(isNull));
+    case PROP_NULLABLE_LONG_ATTRIBUTE:
+        g_value_set_long(value, webkit_dom_test_obj_get_nullable_long_attribute(self));
         break;
-    }
-    case PROP_NULLABLE_BOOLEAN_ATTRIBUTE: {
-        bool isNull = false;
-        g_value_set_boolean(value, coreSelf->nullableBooleanAttribute(isNull));
+    case PROP_NULLABLE_BOOLEAN_ATTRIBUTE:
+        g_value_set_boolean(value, webkit_dom_test_obj_get_nullable_boolean_attribute(self));
         break;
-    }
-    case PROP_NULLABLE_STRING_ATTRIBUTE: {
-        bool isNull = false;
-        g_value_take_string(value, convertToUTF8String(coreSelf->nullableStringAttribute(isNull)));
+    case PROP_NULLABLE_STRING_ATTRIBUTE:
+        g_value_take_string(value, webkit_dom_test_obj_get_nullable_string_attribute(self));
         break;
-    }
-    case PROP_NULLABLE_LONG_SETTABLE_ATTRIBUTE: {
-        bool isNull = false;
-        g_value_set_long(value, coreSelf->nullableLongSettableAttribute(isNull));
+    case PROP_NULLABLE_LONG_SETTABLE_ATTRIBUTE:
+        g_value_set_long(value, webkit_dom_test_obj_get_nullable_long_settable_attribute(self));
         break;
-    }
-    case PROP_NULLABLE_STRING_VALUE: {
-        bool isNull = false;
-        WebCore::ExceptionCode ec = 0;
-        g_value_set_long(value, coreSelf->nullableStringValue(isNull, ec));
+    case PROP_NULLABLE_STRING_VALUE:
+        g_value_set_long(value, webkit_dom_test_obj_get_nullable_string_value(self, nullptr));
         break;
-    }
-    case PROP_ATTRIBUTE: {
-        g_value_take_string(value, convertToUTF8String(coreSelf->attribute()));
+    case PROP_ATTRIBUTE:
+        g_value_take_string(value, webkit_dom_test_obj_get_attribute(self));
         break;
-    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;

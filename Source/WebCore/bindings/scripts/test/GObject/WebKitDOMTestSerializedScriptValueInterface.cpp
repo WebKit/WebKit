@@ -93,55 +93,21 @@ static void webkit_dom_test_serialized_script_value_interface_finalize(GObject* 
 
 static void webkit_dom_test_serialized_script_value_interface_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
-    WebCore::JSMainThreadNullState state;
-#if ENABLE(Condition1) || ENABLE(Condition2)
     WebKitDOMTestSerializedScriptValueInterface* self = WEBKIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(object);
-    WebCore::TestSerializedScriptValueInterface* coreSelf = WebKit::core(self);
-#else
-    UNUSED_PARAM(value);
-#endif // ENABLE(Condition1) || ENABLE(Condition2)
 
     switch (propertyId) {
-    case PROP_VALUE: {
-#if ENABLE(Condition1) || ENABLE(Condition2)
-        RefPtr<WebCore::SerializedScriptValue> ptr = coreSelf->value();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
-#else
-        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
-        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
-#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+    case PROP_VALUE:
+        g_value_set_object(value, webkit_dom_test_serialized_script_value_interface_get_value(self));
         break;
-    }
-    case PROP_READONLY_VALUE: {
-#if ENABLE(Condition1) || ENABLE(Condition2)
-        RefPtr<WebCore::SerializedScriptValue> ptr = coreSelf->readonlyValue();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
-#else
-        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
-        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
-#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+    case PROP_READONLY_VALUE:
+        g_value_set_object(value, webkit_dom_test_serialized_script_value_interface_get_readonly_value(self));
         break;
-    }
-    case PROP_CACHED_VALUE: {
-#if ENABLE(Condition1) || ENABLE(Condition2)
-        RefPtr<WebCore::SerializedScriptValue> ptr = coreSelf->cachedValue();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
-#else
-        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
-        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
-#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+    case PROP_CACHED_VALUE:
+        g_value_set_object(value, webkit_dom_test_serialized_script_value_interface_get_cached_value(self));
         break;
-    }
-    case PROP_CACHED_READONLY_VALUE: {
-#if ENABLE(Condition1) || ENABLE(Condition2)
-        RefPtr<WebCore::SerializedScriptValue> ptr = coreSelf->cachedReadonlyValue();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
-#else
-        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
-        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
-#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+    case PROP_CACHED_READONLY_VALUE:
+        g_value_set_object(value, webkit_dom_test_serialized_script_value_interface_get_cached_readonly_value(self));
         break;
-    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;

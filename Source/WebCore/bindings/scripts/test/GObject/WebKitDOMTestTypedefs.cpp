@@ -92,33 +92,24 @@ static void webkit_dom_test_typedefs_finalize(GObject* object)
 
 static void webkit_dom_test_typedefs_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
 {
-    WebCore::JSMainThreadNullState state;
     WebKitDOMTestTypedefs* self = WEBKIT_DOM_TEST_TYPEDEFS(object);
-    WebCore::TestTypedefs* coreSelf = WebKit::core(self);
 
     switch (propertyId) {
-    case PROP_UNSIGNED_LONG_LONG_ATTR: {
-        coreSelf->setUnsignedLongLongAttr((g_value_get_uint64(value)));
+    case PROP_UNSIGNED_LONG_LONG_ATTR:
+        webkit_dom_test_typedefs_set_unsigned_long_long_attr(self, g_value_get_uint64(value));
         break;
-    }
-    case PROP_ATTR_WITH_GETTER_EXCEPTION: {
-        coreSelf->setAttrWithGetterException((g_value_get_long(value)));
+    case PROP_ATTR_WITH_GETTER_EXCEPTION:
+        webkit_dom_test_typedefs_set_attr_with_getter_exception(self, g_value_get_long(value));
         break;
-    }
-    case PROP_ATTR_WITH_SETTER_EXCEPTION: {
-        WebCore::ExceptionCode ec = 0;
-        coreSelf->setAttrWithSetterException((g_value_get_long(value)), ec);
+    case PROP_ATTR_WITH_SETTER_EXCEPTION:
+        webkit_dom_test_typedefs_set_attr_with_setter_exception(self, g_value_get_long(value), nullptr);
         break;
-    }
-    case PROP_STRING_ATTR_WITH_GETTER_EXCEPTION: {
-        coreSelf->setStringAttrWithGetterException(WTF::String::fromUTF8(g_value_get_string(value)));
+    case PROP_STRING_ATTR_WITH_GETTER_EXCEPTION:
+        webkit_dom_test_typedefs_set_string_attr_with_getter_exception(self, g_value_get_string(value));
         break;
-    }
-    case PROP_STRING_ATTR_WITH_SETTER_EXCEPTION: {
-        WebCore::ExceptionCode ec = 0;
-        coreSelf->setStringAttrWithSetterException(WTF::String::fromUTF8(g_value_get_string(value)), ec);
+    case PROP_STRING_ATTR_WITH_SETTER_EXCEPTION:
+        webkit_dom_test_typedefs_set_string_attr_with_setter_exception(self, g_value_get_string(value), nullptr);
         break;
-    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;
@@ -127,38 +118,27 @@ static void webkit_dom_test_typedefs_set_property(GObject* object, guint propert
 
 static void webkit_dom_test_typedefs_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
-    WebCore::JSMainThreadNullState state;
     WebKitDOMTestTypedefs* self = WEBKIT_DOM_TEST_TYPEDEFS(object);
-    WebCore::TestTypedefs* coreSelf = WebKit::core(self);
 
     switch (propertyId) {
-    case PROP_UNSIGNED_LONG_LONG_ATTR: {
-        g_value_set_uint64(value, coreSelf->unsignedLongLongAttr());
+    case PROP_UNSIGNED_LONG_LONG_ATTR:
+        g_value_set_uint64(value, webkit_dom_test_typedefs_get_unsigned_long_long_attr(self));
         break;
-    }
-    case PROP_IMMUTABLE_SERIALIZED_SCRIPT_VALUE: {
-        RefPtr<WebCore::SerializedScriptValue> ptr = coreSelf->immutableSerializedScriptValue();
-        g_value_set_object(value, WebKit::kit(ptr.get()));
+    case PROP_IMMUTABLE_SERIALIZED_SCRIPT_VALUE:
+        g_value_set_object(value, webkit_dom_test_typedefs_get_immutable_serialized_script_value(self));
         break;
-    }
-    case PROP_ATTR_WITH_GETTER_EXCEPTION: {
-        WebCore::ExceptionCode ec = 0;
-        g_value_set_long(value, coreSelf->attrWithGetterException(ec));
+    case PROP_ATTR_WITH_GETTER_EXCEPTION:
+        g_value_set_long(value, webkit_dom_test_typedefs_get_attr_with_getter_exception(self, nullptr));
         break;
-    }
-    case PROP_ATTR_WITH_SETTER_EXCEPTION: {
-        g_value_set_long(value, coreSelf->attrWithSetterException());
+    case PROP_ATTR_WITH_SETTER_EXCEPTION:
+        g_value_set_long(value, webkit_dom_test_typedefs_get_attr_with_setter_exception(self));
         break;
-    }
-    case PROP_STRING_ATTR_WITH_GETTER_EXCEPTION: {
-        WebCore::ExceptionCode ec = 0;
-        g_value_take_string(value, convertToUTF8String(coreSelf->stringAttrWithGetterException(ec)));
+    case PROP_STRING_ATTR_WITH_GETTER_EXCEPTION:
+        g_value_take_string(value, webkit_dom_test_typedefs_get_string_attr_with_getter_exception(self, nullptr));
         break;
-    }
-    case PROP_STRING_ATTR_WITH_SETTER_EXCEPTION: {
-        g_value_take_string(value, convertToUTF8String(coreSelf->stringAttrWithSetterException()));
+    case PROP_STRING_ATTR_WITH_SETTER_EXCEPTION:
+        g_value_take_string(value, webkit_dom_test_typedefs_get_string_attr_with_setter_exception(self));
         break;
-    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;

@@ -1,3 +1,48 @@
+2014-06-28  Juan A. Suarez Romero  <jasuarez@igalia.com>  and  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use public getter/setter in GObject DOM bindings properties implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=134390.
+
+        Reviewed by Carlos Garcia Campos.
+
+        The current GObject DOM bindings generator is duplicating code when
+        implementing the get/set_property methods and the public
+        getters/setters, instead of making one invoking the other.
+        
+        This commit changes this behaviour so the code is not duplicated,
+        making it easier to maintain.
+
+        No new tests needed.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateProperty):
+        (GenerateProperties):
+        (WriteData):
+        (GetCoreObject): Deleted.
+        * bindings/scripts/test/GObject/WebKitDOMTestActiveDOMObject.cpp:
+        (webkit_dom_test_active_dom_object_get_property):
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructor.cpp:
+        (webkit_dom_test_event_constructor_get_property):
+        * bindings/scripts/test/GObject/WebKitDOMTestException.cpp:
+        (webkit_dom_test_exception_get_property):
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        (webkit_dom_test_interface_set_property):
+        (webkit_dom_test_interface_get_property):
+        * bindings/scripts/test/GObject/WebKitDOMTestNondeterministic.cpp:
+        (webkit_dom_test_nondeterministic_set_property):
+        (webkit_dom_test_nondeterministic_get_property):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_set_property):
+        (webkit_dom_test_obj_get_property):
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.cpp:
+        (webkit_dom_test_serialized_script_value_interface_get_property):
+        * bindings/scripts/test/GObject/WebKitDOMTestTypedefs.cpp:
+        (webkit_dom_test_typedefs_set_property):
+        (webkit_dom_test_typedefs_get_property):
+        * bindings/scripts/test/GObject/WebKitDOMattribute.cpp:
+        (webkit_dom_test_exception_get_property):
+        (webkit_dom_attribute_get_property):
+
 2014-06-28  Radu Stavila  <stavila@adobe.com>
 
         [New Multicolumn] Elements with rounded corners and overflow:hidden do not properly clip their content

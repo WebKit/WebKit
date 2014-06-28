@@ -83,15 +83,12 @@ static void webkit_dom_test_exception_finalize(GObject* object)
 
 static void webkit_dom_test_exception_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
-    WebCore::JSMainThreadNullState state;
     WebKitDOMTestException* self = WEBKIT_DOM_TEST_EXCEPTION(object);
-    WebCore::TestException* coreSelf = WebKit::core(self);
 
     switch (propertyId) {
-    case PROP_NAME: {
-        g_value_take_string(value, convertToUTF8String(coreSelf->name()));
+    case PROP_NAME:
+        g_value_take_string(value, webkit_dom_test_exception_get_name(self));
         break;
-    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;
