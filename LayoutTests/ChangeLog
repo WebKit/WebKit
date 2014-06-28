@@ -1,3 +1,17 @@
+2014-06-27  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Background clipping with subpixel behaves differently when composited.
+        https://bugs.webkit.org/show_bug.cgi?id=134422
+
+        Reviewed by Simon Fraser.
+
+        Adjust cliprect with the subpixel offset from the graphics layer the same way we do it for painting.
+        It ensures that cliprect starts from the right position when graphics layer is not on the same
+        coordinates as the associated render layer.
+
+        * compositing/hidpi-compositing-layer-with-subpixel-offset-accumulation-clipping-expected.html: Added.
+        * compositing/hidpi-compositing-layer-with-subpixel-offset-accumulation-clipping.html: Added.
+
 2014-06-27  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed gardening; fix whitespace issues in the W3C Media Source expected results.

@@ -891,6 +891,25 @@ public:
 private:
     enum CollectLayersBehavior { StopAtStackingContexts, StopAtStackingContainers };
 
+    struct LayerPaintingInfo {
+        LayerPaintingInfo(RenderLayer* inRootLayer, const LayoutRect& inDirtyRect, PaintBehavior inPaintBehavior, const LayoutSize& inSubPixelAccumulation, RenderObject* inSubtreePaintRoot = nullptr, OverlapTestRequestMap* inOverlapTestRequests = nullptr)
+            : rootLayer(inRootLayer)
+            , subtreePaintRoot(inSubtreePaintRoot)
+            , paintDirtyRect(inDirtyRect)
+            , subPixelAccumulation(inSubPixelAccumulation)
+            , overlapTestRequests(inOverlapTestRequests)
+            , paintBehavior(inPaintBehavior)
+            , clipToDirtyRect(true)
+        { }
+        RenderLayer* rootLayer;
+        RenderObject* subtreePaintRoot; // only paint descendants of this object
+        LayoutRect paintDirtyRect; // relative to rootLayer;
+        LayoutSize subPixelAccumulation;
+        OverlapTestRequestMap* overlapTestRequests; // May be null.
+        PaintBehavior paintBehavior;
+        bool clipToDirtyRect;
+    };
+
     void updateZOrderLists();
     void rebuildZOrderLists();
     void rebuildZOrderLists(CollectLayersBehavior, std::unique_ptr<Vector<RenderLayer*>>&, std::unique_ptr<Vector<RenderLayer*>>&);
@@ -915,8 +934,7 @@ private:
     void computeRepaintRectsIncludingDescendants();
     void clearRepaintRects();
 
-    void clipToRect(RenderLayer* rootLayer, GraphicsContext*, const LayoutRect& paintDirtyRect, const ClipRect&,
-                    BorderRadiusClippingRule = IncludeSelfForBorderRadius);
+    void clipToRect(const LayerPaintingInfo&, GraphicsContext*, const ClipRect&, BorderRadiusClippingRule = IncludeSelfForBorderRadius);
     void restoreClip(GraphicsContext*, const LayoutRect& paintDirtyRect, const ClipRect&);
 
     bool shouldRepaintAfterLayout() const;
@@ -966,25 +984,6 @@ private:
     void collectLayers(bool includeHiddenLayers, CollectLayersBehavior, std::unique_ptr<Vector<RenderLayer*>>&, std::unique_ptr<Vector<RenderLayer*>>&);
 
     void updateCompositingAndLayerListsIfNeeded();
-
-    struct LayerPaintingInfo {
-        LayerPaintingInfo(RenderLayer* inRootLayer, const LayoutRect& inDirtyRect, PaintBehavior inPaintBehavior, const LayoutSize& inSubPixelAccumulation, RenderObject* inSubtreePaintRoot = nullptr, OverlapTestRequestMap* inOverlapTestRequests = nullptr)
-            : rootLayer(inRootLayer)
-            , subtreePaintRoot(inSubtreePaintRoot)
-            , paintDirtyRect(inDirtyRect)
-            , subPixelAccumulation(inSubPixelAccumulation)
-            , overlapTestRequests(inOverlapTestRequests)
-            , paintBehavior(inPaintBehavior)
-            , clipToDirtyRect(true)
-        { }
-        RenderLayer* rootLayer;
-        RenderObject* subtreePaintRoot; // only paint descendants of this object
-        LayoutRect paintDirtyRect; // relative to rootLayer;
-        LayoutSize subPixelAccumulation;
-        OverlapTestRequestMap* overlapTestRequests; // May be null.
-        PaintBehavior paintBehavior;
-        bool clipToDirtyRect;
-    };
 
     bool setupFontSubpixelQuantization(GraphicsContext*, bool& didQuantizeFonts);
     bool setupClipPath(GraphicsContext*, const LayerPaintingInfo&, const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed);
