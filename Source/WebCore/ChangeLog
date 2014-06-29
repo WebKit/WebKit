@@ -1,3 +1,24 @@
+2014-06-28  Dean Jackson  <dino@apple.com>
+
+        [iOS] Pinching into a video (fullscreen gesture) leaves page zoomed in
+        https://bugs.webkit.org/show_bug.cgi?id=134433
+        <rdar://problem/16630794>
+
+        Reviewed by Eric Carlson.
+
+        Detect the number of target touches (those directly on the
+        video element) and disable the page zoom if it looks
+        like the user is trying to trigger fullscreen.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.handleBaseGestureStart): If we are seeing
+        two touches in this video element, don't trigger fullscreen. The
+        exception is if we haven't yet started playback.
+        (ControllerIOS.prototype.handleBaseGestureChange): Don't allow fullscreen
+        if we haven't started playback (iOS 7 behaviour).
+        (ControllerIOS.prototype.handleWrapperTouchStart): Keep track of the
+        number of targetted touches.
+
 2014-06-27  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] position:fixed inside accelerated overflow:scroll is jumpy

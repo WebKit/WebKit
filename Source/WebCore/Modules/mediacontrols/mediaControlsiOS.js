@@ -287,10 +287,15 @@ ControllerIOS.prototype = {
 
     handleBaseGestureStart: function(event) {
         this.gestureStartTime = new Date();
+        // If this gesture started with two fingers inside the video, then
+        // don't treat it as a potential zoom, unless we're still waiting
+        // to play.
+        if (this.mostRecentNumberOfTargettedTouches == 2 && this.controlsType != ControllerIOS.StartPlaybackControls)
+            event.preventDefault();
     },
 
     handleBaseGestureChange: function(event) {
-        if (!this.video.controls || this.isAudio() || this.isFullScreen() || this.gestureStartTime === undefined)
+        if (!this.video.controls || this.isAudio() || this.isFullScreen() || this.gestureStartTime === undefined || this.controlsType == ControllerIOS.StartPlaybackControls)
             return;
 
         var currentGestureTime = new Date();
@@ -314,6 +319,8 @@ ControllerIOS.prototype = {
     handleWrapperTouchStart: function(event) {
         if (event.target != this.base && event.target != this.controls.wirelessPlaybackStatus)
             return;
+
+        this.mostRecentNumberOfTargettedTouches = event.targetTouches.length;
 
         if (this.controlsAreHidden()) {
             this.showControls();
