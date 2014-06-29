@@ -1,3 +1,15 @@
+2014-06-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        TextCodecICU::encode turns the whole string as yen signs if there is any backslash in it
+        https://bugs.webkit.org/show_bug.cgi?id=133678
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: fast/encoding/backslash-encoding-jp.html
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::encode): fixed the copy of characters other than backslash.
+
 2014-06-28  Dean Jackson  <dino@apple.com>
 
         [iOS] Pinching into a video (fullscreen gesture) leaves page zoomed in

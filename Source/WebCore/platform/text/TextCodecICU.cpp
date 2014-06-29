@@ -498,9 +498,9 @@ CString TextCodecICU::encode(const UChar* characters, size_t length, Unencodable
             if (characters[i] == '\\') {
                 copy.reserveInitialCapacity(length);
                 for (size_t j = 0; j < i; ++j)
-                    copy.uncheckedAppend(characters[i]);
+                    copy.uncheckedAppend(characters[j]);
                 for (size_t j = i; j < length; ++j) {
-                    UChar character = characters[i];
+                    UChar character = characters[j];
                     if (character == '\\')
                         character = yenSign;
                     copy.uncheckedAppend(character);

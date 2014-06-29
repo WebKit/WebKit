@@ -1,3 +1,13 @@
+2014-06-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        TextCodecICU::encode turns the whole string as yen signs if there is any backslash in it
+        https://bugs.webkit.org/show_bug.cgi?id=133678
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/encoding/backslash-encoding-jp-expected.txt: Added.
+        * fast/encoding/backslash-encoding-jp.html: Added.
+
 2014-06-28  Radu Stavila  <stavila@adobe.com>
 
         [New Multicolumn] Elements with rounded corners and overflow:hidden do not properly clip their content
