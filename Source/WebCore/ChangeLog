@@ -1,3 +1,44 @@
+2014-06-29  Pratik Solanki  <pratik.solanki@gmail.com>
+
+        Refactor ResourceRequest into Cocoa and iOS specific files
+        https://bugs.webkit.org/show_bug.cgi?id=134430
+
+        Reviewed by Andreas Kling.
+
+        No new tests because no functional changes.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::applyWebArchiveHackForMail): Deleted.
+        * platform/network/cocoa/ResourceRequestCocoa.mm: Copied from Source/WebCore/platform/network/mac/ResourceRequestMac.mm.
+        (WebCore::ResourceRequest::nsURLRequest):
+        (WebCore::ResourceRequest::cfURLRequest):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::ResourceRequest::doUpdateResourceHTTPBody):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformHTTPBody):
+        (WebCore::ResourceRequest::updateFromDelegatePreservingOldProperties):
+        (WebCore::ResourceRequest::applyWebArchiveHackForMail):
+        (WebCore::ResourceRequest::setStorageSession):
+        * platform/network/ios/ResourceRequestIOS.mm: Added.
+        (WebCore::ResourceRequest::useQuickLookResourceCachingQuirks):
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::updateNSURLRequest):
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::initQuickLookResourceCachingQuirks):
+        (WebCore::ResourceRequest::useQuickLookResourceCachingQuirks):
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::updateNSURLRequest):
+        (WebCore::ResourceRequest::applyWebArchiveHackForMail):
+        (WebCore::ResourceRequest::nsURLRequest): Deleted.
+        (WebCore::ResourceRequest::cfURLRequest): Deleted.
+        (WebCore::ResourceRequest::doUpdateResourceRequest): Deleted.
+        (WebCore::ResourceRequest::doUpdateResourceHTTPBody): Deleted.
+        (WebCore::ResourceRequest::doUpdatePlatformRequest): Deleted.
+        (WebCore::ResourceRequest::doUpdatePlatformHTTPBody): Deleted.
+        (WebCore::ResourceRequest::updateFromDelegatePreservingOldProperties): Deleted.
+        (WebCore::ResourceRequest::setStorageSession): Deleted.
+
 2014-06-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         TextCodecICU::encode turns the whole string as yen signs if there is any backslash in it

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2014 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,17 +20,13 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #import "config.h"
 #import "ResourceRequest.h"
 
-#if PLATFORM(MAC)
-
-#import "RuntimeApplicationChecks.h"
-
-#import <Foundation/Foundation.h>
+#if PLATFORM(IOS)
 
 @interface NSURLRequest (WebNSURLRequestDetails)
 - (CFURLRequestRef)_CFURLRequest;
@@ -39,35 +35,16 @@
 
 namespace WebCore {
 
-static bool initQuickLookResourceCachingQuirks()
-{
-    if (applicationIsSafari())
-        return false;
-    
-    NSArray* frameworks = [NSBundle allFrameworks];
-    
-    if (!frameworks)
-        return false;
-    
-    for (unsigned int i = 0; i < [frameworks count]; i++) {
-        NSBundle* bundle = [frameworks objectAtIndex: i];
-        const char* bundleID = [[bundle bundleIdentifier] UTF8String];
-        if (bundleID && !strcasecmp(bundleID, "com.apple.QuickLookUIFramework"))
-            return true;
-    }
-    return false;
-}
-
 bool ResourceRequest::useQuickLookResourceCachingQuirks()
 {
-    static bool flag = initQuickLookResourceCachingQuirks();
-    return flag;
+    return false;
 }
 
 #if USE(CFNETWORK)
 
 ResourceRequest::ResourceRequest(NSURLRequest *nsRequest)
     : ResourceRequestBase()
+    , m_mainResourceRequest(false)
     , m_cfRequest([nsRequest _CFURLRequest])
     , m_nsRequest(nsRequest)
 {
@@ -75,18 +52,24 @@ ResourceRequest::ResourceRequest(NSURLRequest *nsRequest)
 
 void ResourceRequest::updateNSURLRequest()
 {
+    // There is client code that extends NSURLRequest and expects to get back, in the delegate
+    // callbacks, an object of the same type that they passed into WebKit. To keep then running, we
+    // create an object of the same type and return that. See <rdar://9843582>.
+    // Also, developers really really want an NSMutableURLRequest so try to create an
+    // NSMutableURLRequest instead of NSURLRequest.
+    static Class nsURLRequestClass = [NSURLRequest class];
+    static Class nsMutableURLRequestClass = [NSMutableURLRequest class];
+    Class requestClass = [m_nsRequest.get() class];
+
+    if (!requestClass || requestClass == nsURLRequestClass)
+        requestClass = nsMutableURLRequestClass;
+
     if (m_cfRequest)
-        m_nsRequest = adoptNS([[NSURLRequest alloc] _initWithCFURLRequest:m_cfRequest.get()]);
+        m_nsRequest = adoptNS([[requestClass alloc] _initWithCFURLRequest:m_cfRequest.get()]);
 }
 
-void ResourceRequest::applyWebArchiveHackForMail()
-{
-    // Hack because Mail checks for this property to detect data / archive loads
-    _CFURLRequestSetProtocolProperty(cfURLRequest(DoNotUpdateHTTPBody), CFSTR("WebDataRequest"), CFSTR(""));
-}
-
-#endif
+#endif // USE(CFNETWORK)
 
 } // namespace WebCore
 
-#endif
+#endif // PLATFORM(IOS)

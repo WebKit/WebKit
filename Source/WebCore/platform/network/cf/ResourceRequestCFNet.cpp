@@ -347,14 +347,6 @@ void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
 #endif
 }
 
-#if PLATFORM(MAC)
-void ResourceRequest::applyWebArchiveHackForMail()
-{
-    // Hack because Mail checks for this property to detect data / archive loads
-    _CFURLRequestSetProtocolProperty(cfURLRequest(DoNotUpdateHTTPBody), CFSTR("WebDataRequest"), CFSTR(""));
-}
-#endif
-
 #endif // USE(CFNETWORK)
 
 bool ResourceRequest::httpPipeliningEnabled()
