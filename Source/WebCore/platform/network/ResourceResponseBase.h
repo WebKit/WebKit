@@ -117,8 +117,7 @@ public:
     bool wasCached() const;
     void setWasCached(bool);
 
-    ResourceLoadTiming& resourceLoadTiming() const;
-    void setResourceLoadTiming(const ResourceLoadTiming&);
+    ResourceLoadTiming& resourceLoadTiming() const { return m_resourceLoadTiming; }
 
     // The ResourceResponse subclass may "shadow" this method to provide platform-specific memory usage information
     unsigned memoryUsage() const

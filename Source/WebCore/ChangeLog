@@ -1,3 +1,30 @@
+2014-06-29  Andreas Kling  <akling@apple.com>
+
+        No need to lazily initialize ResourceResponse internals when accessing timing data.
+        <https://webkit.org/b/134437>
+        <rdar://problem/17499876>
+
+        When building with ENABLE(WEB_TIMING), the last thing that would happen when
+        serializing a ResourceResponse in the network process is that we'd retrieve
+        the ResourceLoadTiming to encode it as part of the response. Doing so would
+        trigger the lazy instantiation of ResourceResponse's internal data structures.
+
+        Since timing data is not actually lazily instantiated, we can just not do that.
+
+        This shaves off ~550ms of network process main thread time on PLT, reducing
+        response latency by not doing unnecessary stuff before letting the web process
+        look at the downloaded data.
+
+        Reviewed by Gavin Barraclough.
+
+        * WebCore.exp.in:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::adopt):
+        (WebCore::ResourceResponseBase::resourceLoadTiming): Deleted.
+        (WebCore::ResourceResponseBase::setResourceLoadTiming): Deleted.
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::resourceLoadTiming):
+
 2014-06-29  Pratik Solanki  <pratik.solanki@gmail.com>
 
         Refactor ResourceRequest into Cocoa and iOS specific files

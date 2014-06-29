@@ -108,7 +108,7 @@ PassOwnPtr<ResourceResponse> ResourceResponseBase::adopt(PassOwnPtr<CrossThreadR
 
     response->lazyInit(CommonAndUncommonFields);
     response->m_httpHeaderFields.adopt(std::move(data->m_httpHeaders));
-    response->setResourceLoadTiming(data->m_resourceLoadTiming);
+    response->m_resourceLoadTiming = data->m_resourceLoadTiming;
     response->doPlatformAdopt(data);
     return response.release();
 }
@@ -557,20 +557,6 @@ void ResourceResponseBase::setConnectionID(unsigned connectionID)
     lazyInit(CommonAndUncommonFields);
 
     m_connectionID = connectionID;
-}
-
-ResourceLoadTiming& ResourceResponseBase::resourceLoadTiming() const
-{
-    lazyInit(CommonAndUncommonFields);
-
-    return m_resourceLoadTiming;
-}
-
-void ResourceResponseBase::setResourceLoadTiming(const ResourceLoadTiming& resourceLoadTiming)
-{
-    lazyInit(CommonAndUncommonFields);
-
-    m_resourceLoadTiming = resourceLoadTiming;
 }
 
 void ResourceResponseBase::lazyInit(InitLevel initLevel) const
