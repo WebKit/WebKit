@@ -53,7 +53,6 @@ Widget::Widget(PlatformWidget widget)
     , m_selfVisible(false)
     , m_parentVisible(false)
     , m_frame(0, 0, 0, 0)
-    , m_evasObject(0)
 {
     init(widget);
 }
@@ -104,11 +103,6 @@ void Widget::paint(GraphicsContext*, const IntRect&)
 void Widget::setIsSelected(bool)
 {
     notImplemented();
-}
-
-void Widget::setEvasObject(Evas_Object* object)
-{
-    m_evasObject = object;
 }
 
 }

@@ -1,3 +1,42 @@
+2014-06-30  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Remove m_evasObject from Widget
+        https://bugs.webkit.org/show_bug.cgi?id=134442
+
+        Reviewed by Gyuyoung Kim.
+
+        Since WebKit1/EFL was dropped, we don't need to keep the m_evasObject
+        in the Widget.cpp because it's not used for WebKit2/Efl.
+
+        * platform/Widget.h:
+        (WebCore::Widget::evasObject): Deleted.
+        * platform/efl/ScrollbarEfl.cpp:
+        Removed WebKit1/Efl specific code which uses m_evasObject.
+        It will be a dummy until WebKit2/Efl support proper scrollbar implementation.
+        (WebCore::ScrollbarEfl::ScrollbarEfl):
+        (WebCore::ScrollbarEfl::~ScrollbarEfl):
+        (WebCore::ScrollbarEfl::setParent):
+        (WebCore::ScrollbarEfl::frameRectsChanged):
+        (WebCore::ScrollbarEfl::invalidate):
+        (ScrollbarEfl::ScrollbarEfl): Deleted.
+        (ScrollbarEfl::~ScrollbarEfl): Deleted.
+        (scrollbarEflEdjeMessage): Deleted.
+        (ScrollbarEfl::setParent): Deleted.
+        (ScrollbarEfl::updateThumbPosition): Deleted.
+        (ScrollbarEfl::updateThumbProportion): Deleted.
+        (ScrollbarEfl::updateThumbPositionAndProportion): Deleted.
+        (ScrollbarEfl::frameRectsChanged): Deleted.
+        (ScrollbarEfl::invalidate): Deleted.
+        * platform/efl/ScrollbarEfl.h:
+        Removed unnecessary methods. In addition, applied final, override keyword.
+        (WebCore::ScrollbarEfl::handleMouseMoveEvent): Deleted.
+        (WebCore::ScrollbarEfl::handleMouseOutEvent): Deleted.
+        (WebCore::ScrollbarEfl::handleMousePressEvent): Deleted.
+        (WebCore::ScrollbarEfl::handleMouseReleaseEvent): Deleted.
+        * platform/efl/WidgetEfl.cpp:
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::setEvasObject): Deleted.
+
 2014-06-30  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Fix deprecated warning with bison 3

@@ -34,35 +34,20 @@
 
 namespace WebCore {
 
-class ScrollbarEfl : public Scrollbar {
+class ScrollbarEfl final : public Scrollbar {
 public:
     friend class Scrollbar;
 
     virtual ~ScrollbarEfl();
 
-    virtual void setFrameRect(const IntRect&);
-
-    virtual bool handleMouseMoveEvent(const PlatformMouseEvent&) { return false; }
-    virtual bool handleMouseOutEvent(const PlatformMouseEvent&) { return false; }
-    virtual bool handleMousePressEvent(const PlatformMouseEvent&) { return false; }
-    virtual bool handleMouseReleaseEvent(const PlatformMouseEvent&) { return false; }
-
-    virtual void frameRectsChanged();
-
+    virtual void setFrameRect(const IntRect&) override;
+    virtual void frameRectsChanged() override;
     virtual void invalidate() override;
+
 protected:
     ScrollbarEfl(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize);
 
-    virtual void updateThumbPositionAndProportion();
-    virtual void updateThumbPosition();
-    virtual void updateThumbProportion();
-
-    virtual void setParent(ScrollView*);
-
-private:
-    int m_lastPos;
-    int m_lastTotalSize;
-    int m_lastVisibleSize;
+    virtual void setParent(ScrollView*) override;
 };
 
 }

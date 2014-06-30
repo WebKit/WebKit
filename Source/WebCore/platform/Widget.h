@@ -183,11 +183,6 @@ public:
     void addToSuperview(NSView*);
 #endif
 
-#if PLATFORM(EFL)
-    void setEvasObject(Evas_Object*);
-    Evas_Object* evasObject() { return m_evasObject; }
-#endif
-
     // Virtual methods to convert points to/from the containing ScrollView
     virtual IntRect convertToContainingView(const IntRect&) const;
     virtual IntRect convertFromContainingView(const IntRect&) const;
@@ -219,10 +214,6 @@ private:
     bool m_parentVisible;
 
     IntRect m_frame; // Not used when a native widget exists.
-
-#if PLATFORM(EFL)
-    Evas_Object* m_evasObject;
-#endif
 };
 
 #define WIDGET_TYPE_CASTS(ToValueTypeName, predicate) \
