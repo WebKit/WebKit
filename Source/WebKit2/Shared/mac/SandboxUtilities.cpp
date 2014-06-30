@@ -27,6 +27,7 @@
 #include "SandboxUtilities.h"
 
 #include <array>
+#include <wtf/text/WTFString.h>
 
 #if __has_include(<sandbox/private.h>)
 #import <sandbox/private.h>
@@ -65,6 +66,15 @@ bool processHasContainer()
     static bool hasContainer = processHasContainer(getpid());
 
     return hasContainer;
+}
+
+String pathForProcessContainer()
+{
+    std::array<char, MAXPATHLEN> path;
+    path[0] = 0;
+    sandbox_container_path_for_pid(getpid(), path.data(), path.size());
+
+    return String::fromUTF8(path.data());
 }
 
 }

@@ -42,6 +42,8 @@ void NetworkProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) con
     encoder.encodeEnum(cacheModel);
     encoder << diskCacheDirectory;
     encoder << diskCacheDirectoryExtensionHandle;
+    encoder << cookieStorageDirectory;
+    encoder << cookieStorageDirectoryExtensionHandle;
     encoder << shouldUseTestingNetworkSession;
 #if ENABLE(CUSTOM_PROTOCOLS)
     encoder << urlSchemesRegisteredForCustomProtocols;
@@ -72,6 +74,10 @@ bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Net
     if (!decoder.decode(result.diskCacheDirectory))
         return false;
     if (!decoder.decode(result.diskCacheDirectoryExtensionHandle))
+        return false;
+    if (!decoder.decode(result.cookieStorageDirectory))
+        return false;
+    if (!decoder.decode(result.cookieStorageDirectoryExtensionHandle))
         return false;
     if (!decoder.decode(result.shouldUseTestingNetworkSession))
         return false;

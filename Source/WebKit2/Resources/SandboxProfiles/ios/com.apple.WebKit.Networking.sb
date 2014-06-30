@@ -22,7 +22,48 @@
 ; THE POSSIBILITY OF SUCH DAMAGE.
 
 (version 1)
-(allow default)
+(deny default (with partial-symbolication))
+(allow system-audit file-read-metadata)
 
 (import "common.sb")
 (import "removed-dev-nodes.sb")
+
+;; Access CFNetwork shared cookies
+;; This is too generous -- <rdar://problem/17496756>
+(apple-cookie-access 'with-read-write)
+
+;; Sandbox extensions
+(allow file-read* (container-subpath "Library/")
+       (extension "com.apple.webkit.read"))
+
+;; Access to client's cache folder & re-vending to CFNetwork.
+(allow file-read* file-write* (container-subpath "Library/")
+       (extension "com.apple.nsurlstorage.extension-cache"))
+(allow file-issue-extension  (container-subpath "Library/")
+       (extension-class "com.apple.nsurlstorage.extension-cache"))
+
+;; App sandbox extensions
+(allow file-read* file-write* (container-subpath "Library/")
+       (extension "com.apple.app-sandbox.read-write"))
+
+;; Access to own cache & temp folders.
+(allow file-read* file-write* (container-subpath "")
+       (extension "com.apple.webkit.read-write"))
+
+;; IOKit user clients
+(allow iokit-open
+       (iokit-user-client-class "RootDomainUserClient"))
+
+;; Various services required by CFNetwork and other frameworks
+(allow mach-lookup
+       (global-name "com.apple.PowerManagement.control"))
+
+(network-client)
+
+;; Security framework
+(allow mach-lookup
+       (global-name "com.apple.ocspd")
+       (global-name "com.apple.securityd"))
+
+(deny file-write-create
+       (vnode-type SYMLINK))

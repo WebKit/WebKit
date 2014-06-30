@@ -411,6 +411,10 @@ void WebContext::ensureNetworkProcess()
     if (!parameters.diskCacheDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.diskCacheDirectory, parameters.diskCacheDirectoryExtensionHandle);
 
+    parameters.cookieStorageDirectory = cookieStorageDirectory();
+    if (!parameters.cookieStorageDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(parameters.cookieStorageDirectory, parameters.cookieStorageDirectoryExtensionHandle);
+
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
 
     // Add any platform specific parameters

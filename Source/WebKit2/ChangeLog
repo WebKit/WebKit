@@ -1,3 +1,40 @@
+2014-06-28  Oliver Hunt  <oliver@apple.com>
+
+       Restrict network process sandbox
+       https://bugs.webkit.org/show_bug.cgi?id=134360
+
+       Reviewed by Sam Weinig.
+
+       Add more restrictions to the network process sandbox.
+
+       * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+       (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+         Always use the cache directory provided in the initialization parameters,
+         and make sure we consume the cookie directory extension.
+       * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+         Make the sandbox profile much more restrictive.
+       * Shared/Network/NetworkProcessCreationParameters.cpp:
+       (WebKit::NetworkProcessCreationParameters::encode):
+       (WebKit::NetworkProcessCreationParameters::decode):
+       * Shared/Network/NetworkProcessCreationParameters.h:
+         The network process now requires an extension to access
+         its cookie storage.
+       * Shared/mac/SandboxUtilities.cpp:
+       (WebKit::pathForProcessContainer):
+       * Shared/mac/SandboxUtilities.h:
+         We need to be able to get hold of our container so
+         that we can get the correct cookie storage directory.
+       * UIProcess/WebContext.cpp:
+       (WebKit::WebContext::ensureNetworkProcess):
+         We have to pass in the an extension for the cookie storage directory when
+       initalising the network process
+       * UIProcess/mac/WebContextMac.mm:
+       (WebKit::WebContext::platformDefaultCookieStorageDirectory):
+         Make sure we provide the correct location on IOS
+       * WebProcess/cocoa/WebProcessCocoa.mm:
+       (WebKit::WebProcess::platformInitializeWebProcess):
+         Consume the cookie storage extension
+
 2014-06-30  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Turn off scrollsToTop on overflow UIScrollViews
