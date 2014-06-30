@@ -34,11 +34,12 @@ namespace WebKit {
 static uint64_t highestUsedItemID = 0;
 
 WebBackForwardListItem::WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID)
-    : m_originalURL(originalURL)
-    , m_url(url)
-    , m_title(title)
-    , m_itemID(itemID)
+    : m_itemID(itemID)
 {
+    m_pageState.mainFrameState.originalURLString = originalURL;
+    m_pageState.mainFrameState.urlString = url;
+    m_pageState.title = title;
+
     if (m_itemID > highestUsedItemID)
         highestUsedItemID = m_itemID;
 
@@ -63,9 +64,9 @@ void WebBackForwardListItem::setBackForwardData(const uint8_t* data, size_t size
 
 void WebBackForwardListItem::encode(IPC::ArgumentEncoder& encoder) const
 {
-    encoder << m_originalURL;
-    encoder << m_url;
-    encoder << m_title;
+    encoder << m_pageState.mainFrameState.originalURLString;
+    encoder << m_pageState.mainFrameState.urlString;
+    encoder << m_pageState.title;
     encoder << m_itemID;
     encoder << IPC::DataReference(m_backForwardData);
 }

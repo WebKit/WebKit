@@ -27,6 +27,7 @@
 #define WebBackForwardListItem_h
 
 #include "APIObject.h"
+#include "SessionState.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -48,14 +49,14 @@ public:
 
     uint64_t itemID() const { return m_itemID; }
 
-    void setOriginalURL(const String& originalURL) { m_originalURL = originalURL; }
-    const String& originalURL() const { return m_originalURL; }
+    void setOriginalURL(const String& originalURL) { m_pageState.mainFrameState.originalURLString = originalURL; }
+    const String& originalURL() const { return m_pageState.mainFrameState.originalURLString; }
 
-    void setURL(const String& url) { m_url = url; }
-    const String& url() const { return m_url; }
+    void setURL(const String& url) { m_pageState.mainFrameState.urlString = url; }
+    const String& url() const { return m_pageState.mainFrameState.urlString; }
 
-    void setTitle(const String& title) { m_title = title; }
-    const String& title() const { return m_title; }
+    void setTitle(const String& title) { m_pageState.title = title; }
+    const String& title() const { return m_pageState.title; }
     
     void setBackForwardData(const uint8_t* buffer, size_t size);
     const Vector<uint8_t>& backForwardData() const { return m_backForwardData; }
@@ -71,9 +72,7 @@ public:
 private:
     WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID);
 
-    String m_originalURL;
-    String m_url;
-    String m_title;
+    PageState m_pageState;
     uint64_t m_itemID;
     Vector<uint8_t> m_backForwardData;
     String m_snapshotUUID;
