@@ -541,20 +541,20 @@ static void activateFontsIOS()
     // __asm() requires a string literal, so we can't do this as either local variables or template parameters.
 #define fontData(sectionName) \
 { \
-    extern const uint8_t start __asm("section$start$__DATA$" sectionName); \
-    extern const uint8_t end __asm("section$end$__DATA$" sectionName); \
-    activateFontIOS(&start, &end - &start, sectionName); \
+    extern const uint8_t start##sectionName __asm("section$start$__DATA$" # sectionName); \
+    extern const uint8_t end##sectionName __asm("section$end$__DATA$" # sectionName); \
+    activateFontIOS(&start##sectionName, &end##sectionName - &start##sectionName, #sectionName); \
 }
-    fontData("Ahem");
-    fontData("WeightWatcher100");
-    fontData("WeightWatcher200");
-    fontData("WeightWatcher300");
-    fontData("WeightWatcher400");
-    fontData("WeightWatcher500");
-    fontData("WeightWatcher600");
-    fontData("WeightWatcher700");
-    fontData("WeightWatcher800");
-    fontData("WeightWatcher900");
+    fontData(Ahem);
+    fontData(WeightWatcher100);
+    fontData(WeightWatcher200);
+    fontData(WeightWatcher300);
+    fontData(WeightWatcher400);
+    fontData(WeightWatcher500);
+    fontData(WeightWatcher600);
+    fontData(WeightWatcher700);
+    fontData(WeightWatcher800);
+    fontData(WeightWatcher900);
 }
 #endif // !PLATFORM(IOS)
 

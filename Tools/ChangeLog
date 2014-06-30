@@ -1,3 +1,16 @@
+2014-06-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        DRT in iOS sim crashes while loading fonts
+        https://bugs.webkit.org/show_bug.cgi?id=134451
+
+        Reviewed by Geoffrey Garen.
+
+        The magic linker symbols had the same name, and were therefore being unified
+        to a single font file. Then, adding the same file twice was failing.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (activateFontsIOS):
+
 2014-06-30  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Remove Qt cruft from webkitpy
