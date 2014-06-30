@@ -1449,7 +1449,7 @@ namespace JSC {
 
         void emitStatementsBytecode(BytecodeGenerator&, RegisterID* destination);
         
-        void setClosedVariables(const Vector<RefPtr<StringImpl>>&&) { }
+        void setClosedVariables(Vector<RefPtr<StringImpl>>&&) { }
 
     protected:
         void setSource(const SourceCode& source) { m_source = source; }
@@ -1479,7 +1479,7 @@ namespace JSC {
 
         static const bool scopeIsFunction = false;
 
-        void setClosedVariables(const Vector<RefPtr<StringImpl>>&&);
+        void setClosedVariables(Vector<RefPtr<StringImpl>>&&);
         const Vector<RefPtr<StringImpl>>& closedVariables() const { return m_closedVariables; }
     private:
         ProgramNode(VM*, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);

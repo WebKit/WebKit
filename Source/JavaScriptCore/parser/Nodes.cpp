@@ -133,7 +133,7 @@ PassRefPtr<ProgramNode> ProgramNode::create(VM* vm, const JSTokenLocation& start
 }
 
 
-void ProgramNode::setClosedVariables(const Vector<RefPtr<StringImpl>>&& closedVariables)
+void ProgramNode::setClosedVariables(Vector<RefPtr<StringImpl>>&& closedVariables)
 {
     m_closedVariables = std::move(closedVariables);
 }

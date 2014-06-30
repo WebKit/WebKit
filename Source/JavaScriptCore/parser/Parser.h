@@ -401,7 +401,7 @@ public:
     PassRefPtr<ParsedNode> parse(ParserError&, bool needReparsingAdjustment);
 
     JSTextPosition positionBeforeLastNewline() const { return m_lexer->positionBeforeLastNewline(); }
-    const Vector<RefPtr<StringImpl>>&& closedVariables() { return std::move(m_closedVariables); }
+    Vector<RefPtr<StringImpl>>&& closedVariables() { return std::move(m_closedVariables); }
 
 private:
     struct AllowInOverride {
@@ -951,7 +951,7 @@ PassRefPtr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionParameter
             if (!result)
                 WTF::dataLog("Error compiling builtin: ", error.m_message, "\n");
             RELEASE_ASSERT(result);
-            result->setClosedVariables(std::move(parser.closedVariables()));
+            result->setClosedVariables(parser.closedVariables());
         }
         return result.release();
     }

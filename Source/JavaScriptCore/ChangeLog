@@ -1,3 +1,24 @@
+2014-06-30  Daniel Bates  <dabates@apple.com>
+
+        Avoid copying closed variables vector; actually use move semantics
+
+        Rubber-stamped by Oliver Hunt.
+
+        Currently we always copy the closed variables vector passed by Parser::closedVariables()
+        to ProgramNode::setClosedVariables() because these member functions return and take a const
+        rvalue reference, respectively. Instead, these member functions should take an return a non-
+        constant rvalue reference so that we actually move the closed variables vector from the Parser
+        object to the Node object.
+
+        * parser/Nodes.cpp:
+        (JSC::ProgramNode::setClosedVariables): Remove const qualifier for argument.
+        * parser/Nodes.h:
+        (JSC::ScopeNode::setClosedVariables): Ditto.
+        * parser/Parser.h:
+        (JSC::Parser::closedVariables): Remove const qualifier on return type.
+        (JSC::parse): Remove extraneous call to std::move(). Calling std::move() is unnecessary here
+        because Parser::closedVariables() returns an rvalue reference.
+
 2014-06-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         JSContext Inspection: Provide a way to use a non-Main RunLoop for Inspector JavaScript Evaluations
