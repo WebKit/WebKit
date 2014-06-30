@@ -1,3 +1,14 @@
+2014-06-30  Anders Carlsson  <andersca@apple.com>
+
+        Add code for encoding legacy session history entries
+        https://bugs.webkit.org/show_bug.cgi?id=134452
+
+        Reviewed by Andreas Kling.
+
+        * wtf/MallocPtr.h:
+        (WTF::MallocPtr::malloc):
+        (WTF::MallocPtr::realloc):
+
 2014-06-27  Andreas Kling  <akling@apple.com>
 
         [ARMv7] Skip one particularly expensive fastFree() alignment check.

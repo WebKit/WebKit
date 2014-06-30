@@ -34,9 +34,13 @@ class Data;
 
 namespace WebKit {
 
+struct FrameState;
 struct SessionState;
 
+RefPtr<API::Data> encodeLegacySessionHistoryEntryData(const FrameState&);
+
 bool decodeLegacySessionState(const API::Data&, SessionState&);
+bool decodeLegacySessionHistoryEntryData(const API::Data&, FrameState&);
 
 } // namespace WebKit
 

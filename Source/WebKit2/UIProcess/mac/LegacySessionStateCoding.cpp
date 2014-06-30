@@ -28,7 +28,9 @@
 
 #include "APIData.h"
 #include "SessionState.h"
+#include <wtf/MallocPtr.h>
 #include <wtf/cf/TypeCasts.h>
+#include <wtf/text/StringView.h>
 
 namespace WebKit {
 
@@ -54,6 +56,233 @@ static CFStringRef sessionHistoryEntryDataKey = CFSTR("SessionHistoryEntryData")
 const uint32_t sessionHistoryEntryDataVersion = 2;
 
 template<typename T> void isValidEnum(T);
+
+class HistoryEntryDataEncoder {
+public:
+    HistoryEntryDataEncoder()
+        : m_bufferSize(0)
+        , m_bufferCapacity(512)
+        , m_buffer(MallocPtr<uint8_t>::malloc(m_bufferCapacity))
+        , m_bufferPointer(m_buffer.get())
+    {
+        // Keep format compatibility by encoding an unused uint64_t here.
+        *this << static_cast<uint64_t>(0);
+    }
+
+    HistoryEntryDataEncoder& operator<<(uint32_t value)
+    {
+        return encodeArithmeticType(value);
+    }
+
+    HistoryEntryDataEncoder& operator<<(int32_t value)
+    {
+        return encodeArithmeticType(value);
+    }
+
+    HistoryEntryDataEncoder& operator<<(uint64_t value)
+    {
+        return encodeArithmeticType(value);
+    }
+
+    HistoryEntryDataEncoder& operator<<(int64_t value)
+    {
+        return encodeArithmeticType(value);
+    }
+
+    HistoryEntryDataEncoder& operator<<(float value)
+    {
+        return encodeArithmeticType(value);
+    }
+
+    HistoryEntryDataEncoder& operator<<(double value)
+    {
+        return encodeArithmeticType(value);
+    }
+
+    HistoryEntryDataEncoder& operator<<(bool value)
+    {
+        return encodeArithmeticType(value);
+    }
+
+    HistoryEntryDataEncoder& operator<<(const String& value)
+    {
+        // Special case the null string.
+        if (value.isNull())
+            return *this << std::numeric_limits<uint32_t>::max();
+
+        uint32_t length = value.length();
+        *this << length;
+
+        *this << static_cast<uint64_t>(length * sizeof(UChar));
+        encodeFixedLengthData(reinterpret_cast<const uint8_t*>(StringView(value).upconvertedCharacters().get()), length * sizeof(UChar), alignof(UChar));
+
+        return *this;
+    }
+
+#if PLATFORM(IOS)
+    HistoryEntryDataEncoder& operator<<(WebCore::FloatRect value)
+    {
+        *this << value.x();
+        *this << value.y();
+        *this << value.width();
+        *this << value.height();
+
+        return *this;
+    }
+
+    HistoryEntryDataEncoder& operator<<(WebCore::IntRect value)
+    {
+        *this << value.x();
+        *this << value.y();
+        *this << value.width();
+        *this << value.height();
+
+        return *this;
+    }
+
+    HistoryEntryDataEncoder& operator<<(WebCore::FloatSize value)
+    {
+        *this << value.width();
+        *this << value.height();
+
+        return *this;
+    }
+
+    HistoryEntryDataEncoder& operator<<(WebCore::IntSize value)
+    {
+        *this << value.width();
+        *this << value.height();
+
+        return *this;
+    }
+#endif
+
+    MallocPtr<uint8_t> finishEncoding(size_t& size)
+    {
+        size = m_bufferSize;
+        return std::move(m_buffer);
+    }
+
+private:
+    template<typename Type>
+    HistoryEntryDataEncoder& encodeArithmeticType(Type value)
+    {
+        static_assert(std::is_arithmetic<Type>::value, "");
+
+        encodeFixedLengthData(reinterpret_cast<uint8_t*>(&value), sizeof(value), sizeof(value));
+        return *this;
+    }
+
+    void encodeFixedLengthData(const uint8_t* data, size_t size, unsigned alignment)
+    {
+        ASSERT(!(reinterpret_cast<uintptr_t>(data) % alignment));
+
+        uint8_t* buffer = grow(alignment, size);
+        memcpy(buffer, data, size);
+    }
+
+    uint8_t* grow(unsigned alignment, size_t size)
+    {
+        size_t alignedSize = ((m_bufferSize + alignment - 1) / alignment) * alignment;
+
+        growCapacity(alignedSize + size);
+
+        m_bufferSize = alignedSize + size;
+        m_bufferPointer = m_buffer.get() + m_bufferSize;
+
+        return m_buffer.get() + alignedSize;
+    }
+
+    void growCapacity(size_t newSize)
+    {
+        if (newSize <= m_bufferCapacity)
+            return;
+
+        size_t newCapacity = m_bufferCapacity * 2;
+        while (newCapacity < newSize)
+            newCapacity *= 2;
+
+        m_buffer.realloc(newCapacity);
+        m_bufferCapacity = newCapacity;
+    }
+
+    size_t m_bufferSize;
+    size_t m_bufferCapacity;
+    MallocPtr<uint8_t> m_buffer;
+    uint8_t* m_bufferPointer;
+};
+
+static void encodeFrameStateNode(HistoryEntryDataEncoder& encoder, const FrameState& frameState)
+{
+    encoder << static_cast<uint64_t>(frameState.children.size());
+
+    for (const auto& childFrameState : frameState.children) {
+        // FIXME: Implement.
+        (void)childFrameState;
+        ASSERT_NOT_REACHED();
+    }
+
+    encoder << frameState.documentSequenceNumber;
+
+    encoder << static_cast<uint64_t>(frameState.documentState.size());
+    for (const auto& documentState : frameState.documentState) {
+        // FIXME: Implement.
+        (void)documentState;
+        ASSERT_NOT_REACHED();
+    }
+
+    encoder << !!frameState.httpBody;
+    if (frameState.httpBody) {
+        // FIXME: Implement.
+        ASSERT_NOT_REACHED();
+    }
+
+    encoder << frameState.itemSequenceNumber;
+
+    encoder << frameState.referrer;
+
+    encoder << frameState.scrollPoint.x();
+    encoder << frameState.scrollPoint.y();
+
+    encoder << frameState.pageScaleFactor;
+
+    encoder << !!frameState.stateObjectData;
+    if (frameState.stateObjectData) {
+        // FIXME: Implement.
+        ASSERT_NOT_REACHED();
+    }
+
+    encoder << frameState.target;
+
+#if PLATFORM(IOS)
+    // FIXME: iOS should not use the legacy session state encoder.
+    encoder << frameState.exposedContentRect;
+    encoder << frameState.unobscuredContentRect;
+    encoder << frameState.minimumLayoutSizeInScrollViewCoordinates;
+    encoder << frameState.contentSize;
+    encoder << frameState.scaleIsInitial;
+#endif
+}
+
+static MallocPtr<uint8_t> encodeLegacySessionHistoryEntryData(const FrameState& frameState, size_t& bufferSize)
+{
+    HistoryEntryDataEncoder encoder;
+
+    encoder << sessionHistoryEntryDataVersion;
+    encodeFrameStateNode(encoder, frameState);
+
+    return encoder.finishEncoding(bufferSize);
+}
+
+RefPtr<API::Data> encodeLegacySessionHistoryEntryData(const FrameState& frameState)
+{
+    size_t bufferSize;
+    auto buffer = encodeLegacySessionHistoryEntryData(frameState, bufferSize);
+
+    return API::Data::createWithoutCopying(buffer.leakPtr(), bufferSize, [] (unsigned char* buffer, const void* context) {
+        fastFree(buffer);
+    }, nullptr);
+}
 
 class HistoryEntryDataDecoder {
 public:
@@ -496,9 +725,9 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
 #endif
 }
 
-static bool decodeSessionHistoryEntryData(CFDataRef historyEntryData, FrameState& mainFrameState)
+static bool decodeSessionHistoryEntryData(const uint8_t* buffer, size_t bufferSize, FrameState& mainFrameState)
 {
-    HistoryEntryDataDecoder decoder { CFDataGetBytePtr(historyEntryData), static_cast<size_t>(CFDataGetLength(historyEntryData)) };
+    HistoryEntryDataDecoder decoder { buffer, bufferSize };
 
     uint32_t version;
     decoder >> version;
@@ -509,6 +738,11 @@ static bool decodeSessionHistoryEntryData(CFDataRef historyEntryData, FrameState
     decodeBackForwardTreeNode(decoder, mainFrameState);
 
     return decoder.finishDecoding();
+}
+
+static bool decodeSessionHistoryEntryData(CFDataRef historyEntryData, FrameState& mainFrameState)
+{
+    return decodeSessionHistoryEntryData(CFDataGetBytePtr(historyEntryData), static_cast<size_t>(CFDataGetLength(historyEntryData)), mainFrameState);
 }
 
 static bool decodeSessionHistoryEntry(CFDictionaryRef entryDictionary, PageState& pageState)
@@ -670,6 +904,11 @@ bool decodeLegacySessionState(const API::Data& data, SessionState& sessionState)
     }
 
     return true;
+}
+
+bool decodeLegacySessionHistoryEntryData(const API::Data& historyEntryData, FrameState& mainFrameState)
+{
+    return decodeSessionHistoryEntryData(historyEntryData.bytes(), historyEntryData.size(), mainFrameState);
 }
 
 } // namespace WebKit
