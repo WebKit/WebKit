@@ -739,11 +739,6 @@ static CGFloat contentZoomScale(WKWebView* webView)
     _usesMinimalUI = NO;
 }
 
-static inline bool withinEpsilon(float a, float b)
-{
-    return fabs(a - b) < std::numeric_limits<float>::epsilon();
-}
-
 static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, WebCore::FloatPoint contentOffset)
 {
     UIEdgeInsets contentInsets = scrollView.contentInset;

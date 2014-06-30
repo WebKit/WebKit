@@ -100,7 +100,6 @@ struct WKAutoCorrectionData {
 
     RetainPtr<UITextInputTraits> _traits;
     RetainPtr<UIWebFormAccessory> _formAccessoryView;
-    RetainPtr<UIView> _highlightRootView;
     RetainPtr<_UIHighlightView> _highlightView;
     RetainPtr<UIView> _inverseScaleRootView;
     RetainPtr<NSString> _markedText;
@@ -122,7 +121,7 @@ struct WKAutoCorrectionData {
         WebCore::IntSize bottomLeftRadius;
         WebCore::IntSize bottomRightRadius;
     };
-    std::unique_ptr<TapHighlightInformation> _potentialTapHighlightInformation;
+    TapHighlightInformation _tapHighlightInformation;
 
     WebKit::WKAutoCorrectionData _autocorrectionData;
     WebKit::InteractionInformationAtPosition _positionInformation;
@@ -136,6 +135,7 @@ struct WKAutoCorrectionData {
     BOOL _hasValidPositionInformation;
     BOOL _isTapHighlightIDValid;
     BOOL _potentialTapInProgress;
+    BOOL _hasTapHighlightForPotentialTap;
     BOOL _selectionNeedsUpdate;
     BOOL _usingGestureForSelection;
     BOOL _inspectorNodeSearchEnabled;
@@ -184,5 +184,10 @@ struct WKAutoCorrectionData {
 - (void)_enableInspectorNodeSearch;
 - (void)_disableInspectorNodeSearch;
 @end
+
+static inline bool withinEpsilon(float a, float b)
+{
+    return fabs(a - b) < std::numeric_limits<float>::epsilon();
+}
 
 #endif // PLATFORM(IOS)

@@ -1,3 +1,56 @@
+2014-06-30  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Move tap highlight to the inverseScaleRootView
+        https://bugs.webkit.org/show_bug.cgi?id=134424
+        <rdar://problem/17480880>
+
+        Reviewed by Tim Horton.
+
+        Enrica introduced the inverseScaleRootView that is a dynamic version of _highlightRootView.
+
+        This patch moves the tap highlight from its own inverse root to inverseScaleRootView. This provides better handling
+        of scale, better behavior on crash, and remove one extra view from the hierarchy.
+
+        The code is pretty much the same, just moved around. Some of the changes:
+
+        Now the code needs to handle repainting live when the view scale. To do that, _showTapHighlightXXX was split in two:
+        -_showTapHighlight to setup the view.
+        -_updateTapHighlight to update the view based on the current scale.
+
+        Since the view updates live on scaling, we need to recompute the coordinates for each update. To do that, the _potentialTapHighlightInformation
+        was generalized to handle all cases of highlight.
+
+        Since we can no longer test for the nullity of _potentialTapHighlightInformation,
+        a new attribute is introduced for that: _hasTapHighlightForPotentialTap.
+
+        The last bit of change concern reentering the tap highlight. This becomes quite simple:
+        1) _isTapHighlightIDValid is updated before the animation starts
+           so that it can be set again during an animation.
+        2) The animation checks the "finished" flags before removing the view from its superview
+           to avoid breaking the new animation.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (withinEpsilon): Deleted.
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:]):
+        Make _updateUnscaledView conditional to scale changes, that thing isn't cheap!
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        (withinEpsilon):
+        Move withinEpsilon() from WKContentView to use it from both classes.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _updateUnscaledView]):
+        (-[WKContentView _updateTapHighlight]):
+        (-[WKContentView _showTapHighlight]):
+        (-[WKContentView _didGetTapHighlightForRequest:color:quads:topLeftRadius:topRightRadius:bottomLeftRadius:bottomRightRadius:]):
+        (-[WKContentView _cancelInteraction]):
+        (-[WKContentView _finishInteraction]):
+        (-[WKContentView _singleTapDidReset:]):
+        (-[WKContentView _singleTapCommited:]):
+        (-[WKContentView _showTapHighlightWithColor:quads:topLeftRadius:topRightRadius:bottomLeftRadius:bottomRightRadius:]): Deleted.
+
 2014-06-30  Anders Carlsson  <andersca@apple.com>
 
         Add code for encoding legacy session history entries
