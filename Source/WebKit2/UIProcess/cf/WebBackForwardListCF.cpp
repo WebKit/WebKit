@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebBackForwardList.h"
 
+#include "APIData.h"
 #include "Logging.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/NeverDestroyed.h>
@@ -109,7 +110,8 @@ CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProx
 
         // FIXME: This uses the IPC data encoding format, which means that whenever we change the IPC encoding we need to bump the CurrentSessionStateDataVersion
         // constant in WebPageProxyCF.cpp. The IPC data format is meant to be an implementation detail, and not something that should be written to disk.
-        RetainPtr<CFDataRef> entryData = adoptCF(CFDataCreate(kCFAllocatorDefault, m_entries[i]->backForwardData().data(), m_entries[i]->backForwardData().size()));
+        RefPtr<API::Data> backForwardData = m_entries[i]->backForwardData();
+        RetainPtr<CFDataRef> entryData = adoptCF(CFDataCreate(kCFAllocatorDefault, backForwardData->bytes(), backForwardData->size()));
 
         const void* keys[5] = { sessionHistoryEntryURLKey, sessionHistoryEntryTitleKey, sessionHistoryEntryOriginalURLKey, sessionHistoryEntryDataKey, sessionHistoryEntrySnapshotUUIDKey };
         const void* values[5] = { url.get(), title.get(), originalURL.get(), entryData.get(), uuid.get() };

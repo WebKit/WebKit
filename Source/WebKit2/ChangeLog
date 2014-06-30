@@ -1,5 +1,26 @@
 2014-06-30  Anders Carlsson  <andersca@apple.com>
 
+        WebBackForwardListItem should not store back-forward data
+        https://bugs.webkit.org/show_bug.cgi?id=134469
+
+        Reviewed by Darin Adler.
+
+        Change WebBackForwardListItem::backForwardData to encode the main frame state lazily,
+        and change WebBackForwardListItem::setBackForwardData to decode it into the main frame state.
+
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::backForwardData):
+        (WebKit::WebBackForwardListItem::setBackForwardData):
+        (WebKit::WebBackForwardListItem::encode):
+        * Shared/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::backForwardData): Deleted.
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::WebBackForwardList::createCFDictionaryRepresentation):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::restoreSession):
+
+2014-06-30  Anders Carlsson  <andersca@apple.com>
+
         WebBackForwardListItems should hold on to PageState objects
         https://bugs.webkit.org/show_bug.cgi?id=134467
 

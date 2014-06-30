@@ -26,7 +26,9 @@
 #include "config.h"
 #include "WebBackForwardListItem.h"
 
+#include "APIData.h"
 #include "DataReference.h"
+#include "LegacySessionStateCoding.h"
 #include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
@@ -55,11 +57,14 @@ uint64_t WebBackForwardListItem::highedUsedItemID()
     return highestUsedItemID;
 }
 
+PassRefPtr<API::Data> WebBackForwardListItem::backForwardData() const
+{
+    return encodeLegacySessionHistoryEntryData(m_pageState.mainFrameState);
+}
+
 void WebBackForwardListItem::setBackForwardData(const uint8_t* data, size_t size)
 {
-    m_backForwardData.clear();
-    m_backForwardData.reserveCapacity(size);
-    m_backForwardData.append(data, size);
+    decodeLegacySessionHistoryEntryData(data, size, m_pageState.mainFrameState);
 }
 
 void WebBackForwardListItem::encode(IPC::ArgumentEncoder& encoder) const
@@ -68,7 +73,9 @@ void WebBackForwardListItem::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_pageState.mainFrameState.urlString;
     encoder << m_pageState.title;
     encoder << m_itemID;
-    encoder << IPC::DataReference(m_backForwardData);
+
+    RefPtr<API::Data> backForwardData = this->backForwardData();
+    encoder << IPC::DataReference(backForwardData->bytes(), backForwardData->size());
 }
 
 PassRefPtr<WebBackForwardListItem> WebBackForwardListItem::decode(IPC::ArgumentDecoder& decoder)

@@ -1971,7 +1971,8 @@ uint64_t WebPage::restoreSession(const LegacySessionState& sessionState)
         pageState.mainFrameState.urlString = webItem->url();
         pageState.mainFrameState.originalURLString = webItem->originalURL();
 
-        if (!decodeLegacySessionHistoryEntryData(webItem->backForwardData().data(), webItem->backForwardData().size(), pageState.mainFrameState)) {
+        RefPtr<API::Data> backForwardData = webItem->backForwardData();
+        if (!decodeLegacySessionHistoryEntryData(backForwardData->bytes(), backForwardData->size(), pageState.mainFrameState)) {
             LOG_ERROR("Failed to decode page state.");
             return 0;
         }

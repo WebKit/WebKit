@@ -31,6 +31,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
+namespace API {
+class Data;
+}
+
 namespace IPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
@@ -59,7 +63,7 @@ public:
     const String& title() const { return m_pageState.title; }
     
     void setBackForwardData(const uint8_t* buffer, size_t size);
-    const Vector<uint8_t>& backForwardData() const { return m_backForwardData; }
+    PassRefPtr<API::Data> backForwardData() const;
 
     void setSnapshotUUID(const String& uuid) { m_snapshotUUID = uuid; }
     const String& snapshotUUID() const { return m_snapshotUUID; }
@@ -74,7 +78,6 @@ private:
 
     PageState m_pageState;
     uint64_t m_itemID;
-    Vector<uint8_t> m_backForwardData;
     String m_snapshotUUID;
 };
 
