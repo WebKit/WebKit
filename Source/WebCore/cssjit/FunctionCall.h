@@ -37,7 +37,7 @@ namespace WebCore {
 
 class FunctionCall {
 public:
-    FunctionCall(JSC::MacroAssembler& assembler, RegisterAllocator& registerAllocator, StackAllocator& stackAllocator, Vector<std::pair<JSC::MacroAssembler::Call, JSC::FunctionPtr>>& callRegistry)
+    FunctionCall(JSC::MacroAssembler& assembler, RegisterAllocator& registerAllocator, StackAllocator& stackAllocator, Vector<std::pair<JSC::MacroAssembler::Call, JSC::FunctionPtr>, 32>& callRegistry)
         : m_assembler(assembler)
         , m_registerAllocator(registerAllocator)
         , m_stackAllocator(stackAllocator)
@@ -167,8 +167,7 @@ private:
             if (RegisterAllocator::isCallerSavedRegister(registerID))
                 m_savedRegisters.append(registerID);
         }
-        Vector<StackAllocator::StackReference> stackReferences = m_stackAllocator.push(m_savedRegisters);
-        m_savedRegisterStackReferences.appendVector(stackReferences);
+        m_stackAllocator.push(m_savedRegisterStackReferences, m_savedRegisters);
     }
 
     void restoreAllocatedCallerSavedRegisters()
@@ -180,7 +179,7 @@ private:
     JSC::MacroAssembler& m_assembler;
     RegisterAllocator& m_registerAllocator;
     StackAllocator& m_stackAllocator;
-    Vector<std::pair<JSC::MacroAssembler::Call, JSC::FunctionPtr>>& m_callRegistry;
+    Vector<std::pair<JSC::MacroAssembler::Call, JSC::FunctionPtr>, 32>& m_callRegistry;
 
     Vector<JSC::MacroAssembler::RegisterID, registerCount> m_savedRegisters;
     Vector<StackAllocator::StackReference, registerCount> m_savedRegisterStackReferences;

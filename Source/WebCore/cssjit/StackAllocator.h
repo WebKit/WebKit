@@ -28,6 +28,7 @@
 
 #if ENABLE(CSS_SELECTOR_JIT)
 
+#include "RegisterAllocator.h"
 #include <JavaScriptCore/MacroAssembler.h>
 
 namespace WebCore {
@@ -68,14 +69,11 @@ public:
         return StackReference(m_offsetFromTop);
     }
 
-    Vector<StackReference> push(const Vector<JSC::MacroAssembler::RegisterID>& registerIDs)
+    void push(Vector<StackReference, registerCount>& stackReferences, const Vector<JSC::MacroAssembler::RegisterID>& registerIDs)
     {
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
-        unsigned registerCount = registerIDs.size();
-        Vector<StackReference> stackReferences;
-        stackReferences.reserveInitialCapacity(registerCount);
 #if CPU(ARM64)
-        for (unsigned i = 0; i < registerCount - 1; i += 2) {
+        for (unsigned i = 0; i < registerIDs.size() - 1; i += 2) {
             m_assembler.pushPair(registerIDs[i + 1], registerIDs[i]);
             m_offsetFromTop += stackUnitInBytes();
             stackReferences.append(StackReference(m_offsetFromTop - stackUnitInBytes() / 2));
@@ -87,7 +85,6 @@ public:
         for (auto registerID : registerIDs)
             stackReferences.append(push(registerID));
 #endif
-        return stackReferences;
     }
 
     StackReference push(JSC::MacroAssembler::RegisterID registerID)

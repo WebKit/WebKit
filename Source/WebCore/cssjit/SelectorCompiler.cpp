@@ -159,11 +159,11 @@ struct SelectorFragment {
     const QualifiedName* tagName;
     const AtomicString* id;
     const AtomicString* langFilter;
-    Vector<const AtomicStringImpl*, 1> classNames;
+    Vector<const AtomicStringImpl*, 2> classNames;
     HashSet<unsigned> pseudoClasses;
-    Vector<JSC::FunctionPtr> unoptimizedPseudoClasses;
-    Vector<AttributeMatchingInfo> attributes;
-    Vector<std::pair<int, int>> nthChildFilters;
+    Vector<JSC::FunctionPtr, 2> unoptimizedPseudoClasses;
+    Vector<AttributeMatchingInfo, 32> attributes;
+    Vector<std::pair<int, int>, 2> nthChildFilters;
     Vector<SelectorFragment> notFilters;
     Vector<Vector<SelectorFragment>> anyFilters;
 
@@ -192,8 +192,8 @@ struct TagNamePattern {
 };
 
 typedef JSC::MacroAssembler Assembler;
-typedef Vector<SelectorFragment, 8> SelectorFragmentList;
-typedef Vector<TagNamePattern, 8> TagNameList;
+typedef Vector<SelectorFragment, 16> SelectorFragmentList;
+typedef Vector<TagNamePattern, 16> TagNameList;
 
 class SelectorCodeGenerator {
 public:
@@ -265,12 +265,12 @@ private:
 
     bool generatePrologue();
     void generateEpilogue();
-    Vector<StackAllocator::StackReference> m_prologueStackReferences;
+    Vector<StackAllocator::StackReference, registerCount> m_prologueStackReferences;
 
     Assembler m_assembler;
     RegisterAllocator m_registerAllocator;
     StackAllocator m_stackAllocator;
-    Vector<std::pair<Assembler::Call, JSC::FunctionPtr>> m_functionCalls;
+    Vector<std::pair<Assembler::Call, JSC::FunctionPtr>, 32> m_functionCalls;
 
     SelectorContext m_selectorContext;
     FunctionType m_functionType;
@@ -476,7 +476,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
 
     case CSSSelector::PseudoClassAny:
         {
-            Vector<SelectorFragment> anyFragments;
+            Vector<SelectorFragment, 32> anyFragments;
             FunctionType functionType = FunctionType::SimpleSelectorChecker;
             for (const CSSSelector* rootSelector = selector.selectorList()->first(); rootSelector; rootSelector = CSSSelectorList::next(rootSelector)) {
                 SelectorFragmentList fragmentList;
@@ -1127,19 +1127,19 @@ inline bool SelectorCodeGenerator::generatePrologue()
     Vector<JSC::MacroAssembler::RegisterID, 2> prologueRegisters;
     prologueRegisters.append(JSC::ARM64Registers::lr);
     prologueRegisters.append(JSC::ARM64Registers::fp);
-    m_prologueStackReferences = m_stackAllocator.push(prologueRegisters);
+    m_stackAllocator.push(m_prologueStackReferences, prologueRegisters);
     return true;
 #elif CPU(ARM_THUMB2)
     Vector<JSC::MacroAssembler::RegisterID, 2> prologueRegisters;
     prologueRegisters.append(JSC::ARMRegisters::lr);
     // r6 is tempRegister in RegisterAllocator.h and addressTempRegister in MacroAssemblerARMv7.h and must be preserved by the callee.
     prologueRegisters.append(JSC::ARMRegisters::r6);
-    m_prologueStackReferences = m_stackAllocator.push(prologueRegisters);
+    m_stackAllocator.push(m_prologueStackReferences, prologueRegisters);
     return true;
 #elif CPU(X86_64) && CSS_SELECTOR_JIT_DEBUGGING
     Vector<JSC::MacroAssembler::RegisterID, 1> prologueRegister;
     prologueRegister.append(callFrameRegister);
-    m_prologueStackReferences = m_stackAllocator.push(prologueRegister);
+    m_stackAllocator.push(m_prologueStackReferences, prologueRegister);
     return true;
 #endif
     return false;
@@ -1166,7 +1166,7 @@ inline void SelectorCodeGenerator::generateEpilogue()
 
 void SelectorCodeGenerator::generateSelectorChecker()
 {
-    Vector<StackAllocator::StackReference> calleeSavedRegisterStackReferences;
+    Vector<StackAllocator::StackReference, registerCount> calleeSavedRegisterStackReferences;
     bool reservedCalleeSavedRegisters = false;
     unsigned availableRegisterCount = m_registerAllocator.availableRegisterCount();
     unsigned minimumRegisterCountForAttributes = minimumRegisterRequirements(m_selectorFragments);
@@ -1179,7 +1179,7 @@ void SelectorCodeGenerator::generateSelectorChecker()
     ASSERT(minimumRegisterCountForAttributes <= registerCount);
     if (availableRegisterCount < minimumRegisterCountForAttributes) {
         reservedCalleeSavedRegisters = true;
-        calleeSavedRegisterStackReferences = m_stackAllocator.push(m_registerAllocator.reserveCalleeSavedRegisters(minimumRegisterCountForAttributes - availableRegisterCount));
+        m_stackAllocator.push(calleeSavedRegisterStackReferences, m_registerAllocator.reserveCalleeSavedRegisters(minimumRegisterCountForAttributes - availableRegisterCount));
     }
 
     m_registerAllocator.allocateRegister(elementAddressRegister);
@@ -2582,7 +2582,7 @@ void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failu
     Assembler::RegisterID parentElement = m_registerAllocator.allocateRegister();
     generateWalkToParentElement(failureCases, parentElement);
 
-    Vector<std::pair<int, int>> validSubsetFilters;
+    Vector<std::pair<int, int>, 32> validSubsetFilters;
     validSubsetFilters.reserveInitialCapacity(fragment.nthChildFilters.size());
     for (const auto& slot : fragment.nthChildFilters) {
         int a = slot.first;

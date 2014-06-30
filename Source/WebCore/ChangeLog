@@ -1,5 +1,29 @@
 2014-06-30  Alex Christensen  <achristensen@webkit.org>
 
+        Reduce dynamic memory allocation in css jit.
+        https://bugs.webkit.org/show_bug.cgi?id=134416
+
+        Reviewed by Benjamin Poulain.
+
+        * cssjit/FunctionCall.h:
+        (WebCore::FunctionCall::FunctionCall):
+        (WebCore::FunctionCall::saveAllocatedCallerSavedRegisters):
+        * cssjit/RegisterAllocator.h:
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generatePrologue):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChild):
+        Use inlineCapacity template parameter to reduce malloc calls.
+        I use 16 and 32 as the inline capacity for non-register related vectors because that
+        is probably big enough for the selector compiler, and if it is not then a malloc
+        call will not be significant because the selector is very complex.
+        * cssjit/StackAllocator.h:
+        (WebCore::StackAllocator::push):
+        Pass a vector of stack references to match calls to pop and to avoid a call to appendVector.
+
+2014-06-30  Alex Christensen  <achristensen@webkit.org>
+
         Use non-thumb registers in armv7 css jit.
         https://bugs.webkit.org/show_bug.cgi?id=134450
 
