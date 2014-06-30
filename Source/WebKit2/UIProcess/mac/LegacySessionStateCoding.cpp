@@ -977,9 +977,9 @@ bool decodeLegacySessionState(const API::Data& data, SessionState& sessionState)
     return true;
 }
 
-bool decodeLegacySessionHistoryEntryData(const API::Data& historyEntryData, FrameState& mainFrameState)
+bool decodeLegacySessionHistoryEntryData(const uint8_t* data, size_t size, FrameState& mainFrameState)
 {
-    return decodeSessionHistoryEntryData(historyEntryData.bytes(), historyEntryData.size(), mainFrameState);
+    return decodeSessionHistoryEntryData(data, size, mainFrameState);
 }
 
 } // namespace WebKit

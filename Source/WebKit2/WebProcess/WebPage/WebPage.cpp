@@ -42,6 +42,7 @@
 #include "InjectedBundleUserMessageCoders.h"
 #include "LayerTreeHost.h"
 #include "LegacySessionState.h"
+#include "LegacySessionStateCoding.h"
 #include "Logging.h"
 #include "NetscapePlugin.h"
 #include "NotificationPermissionRequestManager.h"
@@ -51,6 +52,8 @@
 #include "PluginView.h"
 #include "PrintInfo.h"
 #include "SelectionOverlayController.h"
+#include "SessionState.h"
+#include "SessionStateConversion.h"
 #include "SessionTracker.h"
 #include "ShareableBitmap.h"
 #include "TelephoneNumberOverlayController.h"
@@ -1962,14 +1965,19 @@ uint64_t WebPage::restoreSession(const LegacySessionState& sessionState)
     uint64_t currentItemID = 0;
     for (size_t i = 0; i < size; ++i) {
         WebBackForwardListItem* webItem = list[i].get();
-        DecoderAdapter decoder(webItem->backForwardData().data(), webItem->backForwardData().size());
-        
-        RefPtr<HistoryItem> item = HistoryItem::decodeBackForwardTree(webItem->url(), webItem->title(), webItem->originalURL(), decoder);
-        if (!item) {
-            LOG_ERROR("Failed to decode a HistoryItem from session state data.");
+
+        PageState pageState;
+        pageState.title = webItem->title();
+        pageState.mainFrameState.urlString = webItem->url();
+        pageState.mainFrameState.originalURLString = webItem->originalURL();
+
+        if (!decodeLegacySessionHistoryEntryData(webItem->backForwardData().data(), webItem->backForwardData().size(), pageState.mainFrameState)) {
+            LOG_ERROR("Failed to decode page state.");
             return 0;
         }
-        
+
+        RefPtr<HistoryItem> item = toHistoryItem(pageState);
+
         if (i == sessionState.currentIndex())
             currentItemID = webItem->itemID();
         

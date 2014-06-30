@@ -1,3 +1,12 @@
+2014-06-30  Anders Carlsson  <andersca@apple.com>
+
+        Adopt the legacy session decoding inside WebPage::restoreSession for now
+        https://bugs.webkit.org/show_bug.cgi?id=134465
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+
 2014-06-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r170578.

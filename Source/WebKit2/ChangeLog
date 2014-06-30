@@ -1,3 +1,16 @@
+2014-06-30  Anders Carlsson  <andersca@apple.com>
+
+        Adopt the legacy session decoding inside WebPage::restoreSession for now
+        https://bugs.webkit.org/show_bug.cgi?id=134465
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::decodeLegacySessionHistoryEntryData):
+        * UIProcess/mac/LegacySessionStateCoding.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::restoreSession):
+
 2014-06-30  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Don't crash on status bar tap with overflow scroll views
