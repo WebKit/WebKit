@@ -1,3 +1,11 @@
+2014-06-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed project gardening.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Clean up path information so
+        files appear in appropriate places in project view.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+
 2014-06-30  Zalan Bujtas  <zalan@apple.com>
 
         Remove redundant repaintCompositedLayers() parameter and its dependencies.

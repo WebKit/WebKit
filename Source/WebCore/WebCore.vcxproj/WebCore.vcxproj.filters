@@ -343,6 +343,24 @@
     <Filter Include="Modules\encryptedmedia">
       <UniqueIdentifier>{f9aa953b-e2a1-4d9e-a049-c34b10c81b4e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="text">
+      <UniqueIdentifier>{b49e99e9-9833-455a-8295-d33fe7f846ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="text\icu">
+      <UniqueIdentifier>{cebfbf0c-0752-44b0-b99e-d184f92ff494}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rendering\line">
+      <UniqueIdentifier>{a4a1db84-2491-460a-ba65-4a9d129c70bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\gamepad">
+      <UniqueIdentifier>{dac6e72d-ed92-4aa5-b782-d5ea50ff6afa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\audio">
+      <UniqueIdentifier>{a16b83e4-e955-436f-b3d9-f698bd5a16e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\plugins">
+      <UniqueIdentifier>{d37aa05d-ced2-4c39-b72b-f410f6c2bf2b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DerivedSources.cpp">
@@ -2707,27 +2725,6 @@
       <Filter>rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\ScrollBehavior.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\svg\SVGPathData.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\svg\SVGRenderingContext.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\svg\SVGRenderSupport.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\svg\SVGRenderTreeAsText.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\svg\SVGResources.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\svg\SVGResourcesCache.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\svg\SVGResourcesCycleSolver.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\mathml\RenderMathMLBlock.cpp">
@@ -6826,9 +6823,6 @@
     <ClCompile Include="..\Modules\indexeddb\leveldb\IDBFactoryBackendLevelDB.cpp">
       <Filter>Modules\indexeddb\leveldb</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\line\LineWidth.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSBeforeUnloadEvent.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
@@ -7009,22 +7003,6 @@
     <ClCompile Include="..\platform\graphics\gstreamer\WebKitWebSourceGStreamer.cpp">
       <Filter>platform\graphics\gstreamer</Filter>
     </ClCompile>
-    <ClCompile Include="..\css\StyleProperties.cpp" />
-    <ClCompile Include="..\rendering\line\LineBreaker.cpp" />
-    <ClCompile Include="..\rendering\line\LineInfo.cpp" />
-    <ClCompile Include="..\rendering\line\TrailingObjects.cpp" />
-    <ClCompile Include="..\inspector\InspectorNodeFinder.cpp" />
-    <ClCompile Include="..\Modules\indexeddb\IDBKeyData.cpp" />
-    <ClCompile Include="..\page\ContextMenuContext.cpp" />
-    <ClCompile Include="..\platform\RemoteCommandListener.cpp" />
-    <ClCompile Include="..\platform\audio\AudioSession.cpp" />
-    <ClCompile Include="..\platform\audio\MediaSession.cpp" />
-    <ClCompile Include="..\platform\audio\MediaSessionManager.cpp" />
-    <ClCompile Include="..\platform\text\icu\UTextProvider.cpp" />
-    <ClCompile Include="..\platform\text\icu\UTextProviderLatin1.cpp" />
-    <ClCompile Include="..\platform\text\icu\UTextProviderUTF16.cpp" />
-    <ClCompile Include="..\dom\CollectionIndexCache.cpp" />
-    <ClCompile Include="..\html\HTMLMediaSession.cpp" />
     <ClCompile Include="..\platform\network\soup\AuthenticationChallengeSoup.cpp">
       <Filter>platform\network\soup</Filter>
     </ClCompile>
@@ -7091,13 +7069,6 @@
     <ClCompile Include="..\html\track\VTTRegionList.cpp">
       <Filter>html\track</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HTTPHeaderNames.cpp" />
-    <ClCompile Include="..\platform\DisplaySleepDisabler.cpp" />
-    <ClCompile Include="..\platform\SystemSleepListener.cpp" />
-    <ClCompile Include="..\platform\network\BlobRegistry.cpp" />
-    <ClCompile Include="..\platform\network\BlobRegistryImpl.cpp" />
-    <ClCompile Include="..\css\CSSToLengthConversionData.cpp" />
-    <ClCompile Include="..\html\PublicURLManager.cpp" />
     <ClCompile Include="..\platform\graphics\ca\TileController.cpp">
       <Filter>platform\graphics\ca</Filter>
     </ClCompile>
@@ -7110,14 +7081,6 @@
     <ClCompile Include="..\platform\graphics\ca\TileCoverageMap.cpp">
       <Filter>platform\graphics\ca</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGamepad.cpp" />
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGamepadButton.cpp" />
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGamepadEvent.cpp" />
-    <ClCompile Include="..\Modules\gamepad\Gamepad.cpp" />
-    <ClCompile Include="..\Modules\gamepad\GamepadButton.cpp" />
-    <ClCompile Include="..\Modules\gamepad\GamepadEvent.cpp" />
-    <ClCompile Include="..\Modules\gamepad\NavigatorGamepad.cpp" />
-    <ClCompile Include="..\platform\graphics\ISOVTTCue.cpp" />
     <ClCompile Include="..\Modules\encryptedmedia\CDM.cpp">
       <Filter>Modules\encryptedmedia</Filter>
     </ClCompile>
@@ -7156,6 +7119,123 @@
     </ClCompile>
     <ClCompile Include="..\platform\graphics\avfoundation\cf\WebCoreAVCFResourceLoader.cpp">
       <Filter>platform\graphics\avfoundation\cf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\audio\AudioSession.cpp">
+      <Filter>platform\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\BlobRegistry.cpp">
+      <Filter>platform\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\BlobRegistryImpl.cpp">
+      <Filter>platform\network</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGamepad.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGamepadButton.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGamepadEvent.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\text\icu\UTextProviderUTF16.cpp">
+      <Filter>text\icu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\text\icu\UTextProvider.cpp">
+      <Filter>text\icu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\text\icu\UTextProviderLatin1.cpp">
+      <Filter>text\icu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dom\CollectionIndexCache.cpp">
+      <Filter>dom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\page\ContextMenuContext.cpp">
+      <Filter>page</Filter>
+    </ClCompile>
+    <ClCompile Include="..\css\CSSToLengthConversionData.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\DisplaySleepDisabler.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\gamepad\Gamepad.cpp">
+      <Filter>Modules\gamepad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\gamepad\GamepadButton.cpp">
+      <Filter>Modules\gamepad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\gamepad\GamepadEvent.cpp">
+      <Filter>Modules\gamepad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\HTMLMediaSession.cpp">
+      <Filter>html</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HTTPHeaderNames.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\indexeddb\IDBKeyData.cpp">
+      <Filter>Modules\indexeddb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\InspectorNodeFinder.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\ISOVTTCue.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\line\LineBreaker.cpp">
+      <Filter>rendering\line</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\line\LineInfo.cpp">
+      <Filter>rendering\line</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\audio\MediaSession.cpp">
+      <Filter>platform\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\audio\MediaSessionManager.cpp">
+      <Filter>platform\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\gamepad\NavigatorGamepad.cpp">
+      <Filter>Modules\gamepad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\PublicURLManager.cpp">
+      <Filter>html</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\RemoteCommandListener.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\css\StyleProperties.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\SystemSleepListener.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\line\TrailingObjects.cpp">
+      <Filter>rendering\line</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\line\LineWidth.cpp">
+      <Filter>rendering\line</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\svg\SVGPathData.cpp">
+      <Filter>rendering\svg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\svg\SVGRenderingContext.cpp">
+      <Filter>rendering\svg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\svg\SVGRenderSupport.cpp">
+      <Filter>rendering\svg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\svg\SVGRenderTreeAsText.cpp">
+      <Filter>rendering\svg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\svg\SVGResources.cpp">
+      <Filter>rendering\svg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\svg\SVGResourcesCache.cpp">
+      <Filter>rendering\svg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\svg\SVGResourcesCycleSolver.cpp">
+      <Filter>rendering\svg</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -9644,30 +9724,6 @@
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\ScrollBehavior.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\svg\SVGMarkerData.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\svg\SVGPathData.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\svg\SVGRenderingContext.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\svg\SVGRenderSupport.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\svg\SVGRenderTreeAsText.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\svg\SVGResources.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\svg\SVGResourcesCache.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\svg\SVGResourcesCycleSolver.h">
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\TableLayout.h">
@@ -14679,12 +14735,6 @@
     <ClInclude Include="..\rendering\RenderElement.h">
       <Filter>rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\rendering\line\LineInfo.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\line\LineLayoutState.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\graphics\FloatPolygon.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
@@ -14931,24 +14981,6 @@
     <ClInclude Include="..\platform\graphics\gstreamer\WebKitWebSourceGStreamer.h">
       <Filter>platform\graphics\gstreamer</Filter>
     </ClInclude>
-    <ClInclude Include="..\Modules\plugins\PluginReplacement.h" />
-    <ClInclude Include="..\css\StyleProperties.h" />
-    <ClInclude Include="..\rendering\line\BreakingContextInlineHeaders.h" />
-    <ClInclude Include="..\rendering\line\LineBreaker.h" />
-    <ClInclude Include="..\rendering\line\LineInlineHeaders.h" />
-    <ClInclude Include="..\rendering\line\LineWidth.h" />
-    <ClInclude Include="..\rendering\line\TrailingObjects.h" />
-    <ClInclude Include="..\page\ContextMenuContext.h" />
-    <ClInclude Include="..\page\DefaultVisitedLinkStore.h" />
-    <ClInclude Include="..\page\VisitedLinkStore.h" />
-    <ClInclude Include="..\platform\RemoteCommandListener.h" />
-    <ClInclude Include="..\platform\audio\AudioSession.h" />
-    <ClInclude Include="..\platform\audio\AudioSessionListener.h" />
-    <ClInclude Include="..\platform\audio\MediaSession.h" />
-    <ClInclude Include="..\platform\audio\MediaSessionManager.h" />
-    <ClInclude Include="..\html\ElementMediaSession.h" />
-    <ClInclude Include="..\html\URLUtils.h" />
-    <ClInclude Include="..\rendering\BorderEdge.h" />
     <ClInclude Include="..\platform\network\soup\AuthenticationChallenge.h">
       <Filter>platform\network\soup</Filter>
     </ClInclude>
@@ -14982,32 +15014,12 @@
     <ClInclude Include="..\platform\network\soup\SoupNetworkSession.h">
       <Filter>platform\network\soup</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\GeometryUtilities.h" />
     <ClInclude Include="..\html\track\VTTRegion.h">
       <Filter>html\track</Filter>
     </ClInclude>
     <ClInclude Include="..\html\track\VTTRegionList.h">
       <Filter>html\track</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSTextTrack.cpp" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSTextTrack.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSTextTrackCue.cpp" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSTextTrackCue.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSTextTrackCueList.cpp" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSTextTrackCueList.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSTextTrackList.cpp" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSTextTrackList.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSVTTCue.cpp" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSVTTCue.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSVTTRegion.cpp" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSVTTRegion.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSVTTRegionList.cpp" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSVTTRegionList.h" />
-    <ClInclude Include="..\platform\DisplaySleepDisabler.h" />
-    <ClInclude Include="..\platform\graphics\ca\win\PlatformCAAnimationWin.h" />
-    <ClInclude Include="..\platform\graphics\win\MediaPlayerPrivateMediaFoundation.h" />
-    <ClInclude Include="..\platform\SystemSleepListener.h" />
-    <ClInclude Include="..\css\CSSToLengthConversionData.h" />
     <ClInclude Include="..\platform\graphics\ca\TileController.h">
       <Filter>platform\graphics\ca</Filter>
     </ClInclude>
@@ -15020,14 +15032,6 @@
     <ClInclude Include="..\platform\graphics\ca\TileCoverageMap.h">
       <Filter>platform\graphics\ca</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGamepad.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGamepadButton.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGamepadEvent.h" />
-    <ClInclude Include="..\Modules\gamepad\Gamepad.h" />
-    <ClInclude Include="..\Modules\gamepad\GamepadButton.h" />
-    <ClInclude Include="..\Modules\gamepad\GamepadEvent.h" />
-    <ClInclude Include="..\Modules\gamepad\NavigatorGamepad.h" />
-    <ClInclude Include="..\platform\graphics\ISOVTTCue.h" />
     <ClInclude Include="..\Modules\encryptedmedia\CDM.h">
       <Filter>Modules\encryptedmedia</Filter>
     </ClInclude>
@@ -15069,6 +15073,171 @@
     </ClInclude>
     <ClInclude Include="..\platform\graphics\avfoundation\cf\WebCoreAVCFResourceLoader.h">
       <Filter>platform\graphics\avfoundation\cf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\audio\AudioSessionListener.h">
+      <Filter>platform\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\audio\AudioSession.h">
+      <Filter>platform\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGamepad.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGamepadButton.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGamepadEvent.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSTextTrack.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSTextTrack.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSTextTrackCue.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSTextTrackCue.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSTextTrackCueList.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSTextTrackCueList.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSTextTrackList.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSTextTrackList.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSVTTCue.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSVTTCue.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSVTTRegion.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSVTTRegion.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSVTTRegionList.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSVTTRegionList.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\VisitedLinkStore.h">
+      <Filter>page</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\URLUtils.h">
+      <Filter>html</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\DefaultVisitedLinkStore.h">
+      <Filter>page</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\BorderEdge.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\line\BreakingContextInlineHeaders.h">
+      <Filter>rendering\line</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\ContextMenuContext.h">
+      <Filter>page</Filter>
+    </ClInclude>
+    <ClInclude Include="..\css\CSSToLengthConversionData.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\DisplaySleepDisabler.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\gamepad\Gamepad.h">
+      <Filter>Modules\gamepad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\gamepad\GamepadButton.h">
+      <Filter>Modules\gamepad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\gamepad\GamepadEvent.h">
+      <Filter>Modules\gamepad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\GeometryUtilities.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\ISOVTTCue.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\line\LineWidth.h">
+      <Filter>rendering\line</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\line\LineBreaker.h">
+      <Filter>rendering\line</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\line\LineInlineHeaders.h">
+      <Filter>rendering\line</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\win\MediaPlayerPrivateMediaFoundation.h">
+      <Filter>platform\graphics\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\audio\MediaSessionManager.h">
+      <Filter>platform\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\audio\MediaSession.h">
+      <Filter>platform\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\gamepad\NavigatorGamepad.h">
+      <Filter>Modules\gamepad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\ca\win\PlatformCAAnimationWin.h">
+      <Filter>platform\graphics\ca\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\plugins\PluginReplacement.h">
+      <Filter>Modules\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\RemoteCommandListener.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\css\StyleProperties.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\SystemSleepListener.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\line\TrailingObjects.h">
+      <Filter>rendering\line</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\line\LineInfo.h">
+      <Filter>rendering\line</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\line\LineLayoutState.h">
+      <Filter>rendering\line</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\svg\SVGPathData.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\svg\SVGMarkerData.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\svg\SVGResourcesCycleSolver.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\svg\SVGRenderingContext.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\svg\SVGRenderSupport.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\svg\SVGRenderTreeAsText.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\svg\SVGResources.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\svg\SVGResourcesCache.h">
+      <Filter>rendering\svg</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -15143,7 +15312,9 @@
     <None Include="..\Modules\mediacontrols\mediaControlsApple.js">
       <Filter>Modules\mediacontrols</Filter>
     </None>
-    <None Include="..\platform\network\HTTPHeaderNames.in" />
+    <None Include="..\platform\network\HTTPHeaderNames.in">
+      <Filter>platform\network</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CustomBuildStep Include="..\platform\graphics\win\MediaPlayerPrivateFullscreenWindow.h">
