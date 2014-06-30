@@ -46,6 +46,7 @@
 #import "_WKFormInputSession.h"
 #import <DataDetectorsUI/DDDetectionController.h>
 #import <TextInput/TI_NSStringExtras.h>
+#import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIFont_Private.h>
 #import <UIKit/UIGestureRecognizer_Private.h>
 #import <UIKit/UIKeyboardImpl.h>
@@ -900,6 +901,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         if (action) {
             [self performSelector:action];
             [self _cancelLongPressGestureRecognizer];
+            [UIApp _cancelAllTouches];
         }
     }
 }
