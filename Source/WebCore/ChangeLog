@@ -1,3 +1,15 @@
+2014-06-30  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Fix deprecated warning with bison 3
+        https://bugs.webkit.org/show_bug.cgi?id=133791
+
+        Reviewed by Csaba Osztrogonác.
+
+        No new tests because no functional changes.
+
+        * css/CSSGrammar.y.in:
+        * xml/XPathGrammar.y:
+
 2014-06-30  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Remove HarfBuzzShaper::setDrawRange()

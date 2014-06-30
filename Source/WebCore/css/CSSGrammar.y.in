@@ -21,7 +21,7 @@
  *
  */
 
-%pure_parser
+%pure-parser
 
 %parse-param { CSSParser* parser }
 %lex-param { CSSParser* parser }

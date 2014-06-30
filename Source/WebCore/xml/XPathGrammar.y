@@ -47,7 +47,7 @@ using namespace XPath;
 
 %}
 
-%pure_parser
+%pure-parser
 %lex-param { parser }
 %parse-param { Parser& parser }
 
