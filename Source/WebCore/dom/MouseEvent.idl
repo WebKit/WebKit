@@ -31,8 +31,8 @@
     [InitializedByEventConstructor] readonly attribute boolean          metaKey;
     [InitializedByEventConstructor] readonly attribute unsigned short   button;
     [InitializedByEventConstructor] readonly attribute EventTarget      relatedTarget;
-    [Conditional=POINTER_LOCK]      readonly attribute long             webkitMovementX;
-    [Conditional=POINTER_LOCK]      readonly attribute long             webkitMovementY;
+    [Conditional=POINTER_LOCK]      readonly attribute long             movementX;
+    [Conditional=POINTER_LOCK]      readonly attribute long             movementY;
     
     [ObjCLegacyUnnamedParameters] void initMouseEvent([Default=Undefined] optional DOMString type, 
                                        [Default=Undefined] optional boolean canBubble, 

@@ -1,3 +1,37 @@
+2014-06-30  Alex Christensen  <achristensen@webkit.org>
+
+        Remove webkit prefix from pointer lock.
+        https://bugs.webkit.org/show_bug.cgi?id=134312
+
+        Reviewed by Dean Jackson.
+
+        * dom/Document.cpp:
+        (WebCore::Document::exitPointerLock):
+        (WebCore::Document::pointerLockElement):
+        (WebCore::Document::webkitExitPointerLock): Deleted.
+        (WebCore::Document::webkitPointerLockElement): Deleted.
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/Element.cpp:
+        (WebCore::Element::requestPointerLock):
+        (WebCore::Element::webkitRequestPointerLock): Deleted.
+        * dom/Element.h:
+        * dom/Element.idl:
+        * dom/EventNames.h:
+        * dom/MouseEvent.idl:
+        * dom/MouseRelatedEvent.h:
+        (WebCore::MouseRelatedEvent::movementX):
+        (WebCore::MouseRelatedEvent::movementY):
+        (WebCore::MouseRelatedEvent::webkitMovementX): Deleted.
+        (WebCore::MouseRelatedEvent::webkitMovementY): Deleted.
+        * page/PointerLockController.cpp:
+        (WebCore::PointerLockController::PointerLockController):
+        Initialize all data members.
+        (WebCore::PointerLockController::requestPointerLock):
+        (WebCore::PointerLockController::didAcquirePointerLock):
+        (WebCore::PointerLockController::didNotAcquirePointerLock):
+        (WebCore::PointerLockController::didLosePointerLock):
+
 2014-06-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         U16_IS_SURROGATE should not be called with a UChar32

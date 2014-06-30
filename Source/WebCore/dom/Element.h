@@ -512,7 +512,7 @@ public:
 #endif
 
 #if ENABLE(POINTER_LOCK)
-    void webkitRequestPointerLock();
+    void requestPointerLock();
 #endif
 
 #if ENABLE(INDIE_UI)

@@ -232,8 +232,8 @@
     void webkitExitFullscreen();
 #endif
 
-    [Conditional=POINTER_LOCK] void webkitExitPointerLock();
-    [Conditional=POINTER_LOCK] readonly attribute Element webkitPointerLockElement;
+    [Conditional=POINTER_LOCK] void exitPointerLock();
+    [Conditional=POINTER_LOCK] readonly attribute Element pointerLockElement;
 
     [Conditional=CSS_REGIONS] DOMNamedFlowCollection webkitGetNamedFlows();
 
@@ -317,8 +317,8 @@
     [NotEnumerable,Conditional=TOUCH_EVENTS] attribute EventListener ontouchcancel;
     [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventListener onwebkitfullscreenchange;
     [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventListener onwebkitfullscreenerror;
-    [NotEnumerable, Conditional=POINTER_LOCK] attribute EventListener onwebkitpointerlockchange;
-    [NotEnumerable, Conditional=POINTER_LOCK] attribute EventListener onwebkitpointerlockerror;
+    [NotEnumerable, Conditional=POINTER_LOCK] attribute EventListener onpointerlockchange;
+    [NotEnumerable, Conditional=POINTER_LOCK] attribute EventListener onpointerlockerror;
     [NotEnumerable, Conditional=CSP_NEXT] attribute EventListener onsecuritypolicyviolation;
     [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealbottom;
     [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealleft;

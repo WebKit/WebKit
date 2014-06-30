@@ -258,8 +258,8 @@ namespace WebCore {
     \
     macro(show) \
     \
-    macro(webkitpointerlockchange) \
-    macro(webkitpointerlockerror) \
+    macro(pointerlockchange) \
+    macro(pointerlockerror) \
     \
     macro(webkitregionoversetchange) \
     \
