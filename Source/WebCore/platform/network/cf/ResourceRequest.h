@@ -72,6 +72,9 @@ namespace WebCore {
             : ResourceRequestBase()
             , m_cfRequest(cfRequest)
         {
+#if PLATFORM(COCOA)
+            updateNSURLRequest();
+#endif
         }
 #else
         ResourceRequest(NSURLRequest *nsRequest)

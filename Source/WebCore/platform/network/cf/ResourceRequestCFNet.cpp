@@ -196,7 +196,7 @@ void ResourceRequest::doUpdatePlatformRequest()
 
     m_cfRequest = adoptCF(cfRequest);
 #if PLATFORM(COCOA)
-    m_nsRequest = nullptr;
+    updateNSURLRequest();
 #endif
 }
 
@@ -231,7 +231,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
 
     m_cfRequest = adoptCF(cfRequest);
 #if PLATFORM(COCOA)
-    m_nsRequest = nullptr;
+    updateNSURLRequest();
 #endif
 }
 
@@ -343,7 +343,7 @@ void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
     wkSetRequestStorageSession(storageSession, cfRequest);
     m_cfRequest = adoptCF(cfRequest);
 #if PLATFORM(COCOA)
-    m_nsRequest = nullptr;
+    updateNSURLRequest();
 #endif
 }
 
