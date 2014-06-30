@@ -1,3 +1,15 @@
+2014-06-30  Michael Saboff  <msaboff@apple.com>
+
+        Reduce memory required for js/typedarray-zero-size.js
+        https://bugs.webkit.org/show_bug.cgi?id=134448
+
+        Reviewed by Darin Adler.
+
+        Making the loop count down reduces memory usage from ~190MB to ~22MB while
+        still testing the original issue.
+
+        * js/script-tests/typedarray-zero-size.js:
+
 2014-06-29  Yoav Weiss  <yoav@yoav.ws>
 
         Add support for HTMLImageElement's sizes attribute
