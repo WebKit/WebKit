@@ -119,6 +119,22 @@ public:
         return *this;
     }
 
+    HistoryEntryDataEncoder& operator<<(const Vector<uint8_t>& value)
+    {
+        *this << static_cast<uint64_t>(value.size());
+        encodeFixedLengthData(value.data(), value.size(), 1);
+
+        return *this;
+    }
+
+    HistoryEntryDataEncoder& operator<<(const Vector<char>& value)
+    {
+        *this << static_cast<uint64_t>(value.size());
+        encodeFixedLengthData(reinterpret_cast<const uint8_t*>(value.data()), value.size(), 1);
+
+        return *this;
+    }
+
 #if PLATFORM(IOS)
     HistoryEntryDataEncoder& operator<<(WebCore::FloatRect value)
     {
@@ -156,6 +172,12 @@ public:
         return *this;
     }
 #endif
+
+    template<typename T>
+    auto operator<<(T value) -> typename std::enable_if<std::is_enum<T>::value, HistoryEntryDataEncoder&>::type
+    {
+        return *this << static_cast<uint32_t>(value);
+    }
 
     MallocPtr<uint8_t> finishEncoding(size_t& size)
     {
@@ -212,29 +234,98 @@ private:
     uint8_t* m_bufferPointer;
 };
 
+enum class FormDataElementType {
+    Data = 0,
+    EncodedFile = 1,
+    EncodedBlob = 2,
+};
+
+static bool isValidEnum(FormDataElementType type)
+{
+    switch (type) {
+    case FormDataElementType::Data:
+    case FormDataElementType::EncodedFile:
+    case FormDataElementType::EncodedBlob:
+        return true;
+    }
+
+    return false;
+}
+
+static void encodeFormDataElement(HistoryEntryDataEncoder& encoder, const HTTPBody::Element& element)
+{
+    switch (element.type) {
+    case HTTPBody::Element::Type::Data:
+        encoder << FormDataElementType::Data;
+        encoder << element.data;
+        break;
+
+    case HTTPBody::Element::Type::File:
+        encoder << FormDataElementType::EncodedFile;
+        encoder << element.filePath;
+
+        // Used to be generatedFilename.
+        encoder << String();
+
+        // Used to be shouldGenerateFile.
+        encoder << false;
+
+        encoder << element.fileStart;
+        encoder << element.fileLength.valueOr(-1);
+        encoder << element.expectedFileModificationTime.valueOr(std::numeric_limits<double>::quiet_NaN());
+        break;
+
+    case HTTPBody::Element::Type::Blob:
+        encoder << FormDataElementType::EncodedBlob;
+        encoder << element.blobURLString;
+        break;
+    }
+}
+
+static void encodeFormData(HistoryEntryDataEncoder& encoder, const HTTPBody& formData)
+{
+    // Used to be alwaysStream.
+    encoder << false;
+
+    // Used to be boundary.
+    encoder << Vector<uint8_t>();
+
+    encoder << static_cast<uint64_t>(formData.elements.size());
+    for (const auto& element : formData.elements)
+        encodeFormDataElement(encoder, element);
+
+    // Used to be hasGeneratedFiles.
+    encoder << false;
+
+    // Used to be identifier.
+    encoder << static_cast<int64_t>(0);
+}
+
 static void encodeFrameStateNode(HistoryEntryDataEncoder& encoder, const FrameState& frameState)
 {
     encoder << static_cast<uint64_t>(frameState.children.size());
 
     for (const auto& childFrameState : frameState.children) {
-        // FIXME: Implement.
-        (void)childFrameState;
-        ASSERT_NOT_REACHED();
+        encoder << childFrameState.originalURLString;
+        encoder << childFrameState.urlString;
+
+        encodeFrameStateNode(encoder, childFrameState);
     }
 
     encoder << frameState.documentSequenceNumber;
 
     encoder << static_cast<uint64_t>(frameState.documentState.size());
-    for (const auto& documentState : frameState.documentState) {
-        // FIXME: Implement.
-        (void)documentState;
-        ASSERT_NOT_REACHED();
-    }
+    for (const auto& documentState : frameState.documentState)
+        encoder << documentState;
 
-    encoder << !!frameState.httpBody;
     if (frameState.httpBody) {
-        // FIXME: Implement.
-        ASSERT_NOT_REACHED();
+        encoder << frameState.httpBody.value().contentType;
+        encoder << true;
+
+        encodeFormData(encoder, frameState.httpBody.value());
+    } else {
+        encoder << String();
+        encoder << false;
     }
 
     encoder << frameState.itemSequenceNumber;
@@ -247,10 +338,8 @@ static void encodeFrameStateNode(HistoryEntryDataEncoder& encoder, const FrameSt
     encoder << frameState.pageScaleFactor;
 
     encoder << !!frameState.stateObjectData;
-    if (frameState.stateObjectData) {
-        // FIXME: Implement.
-        ASSERT_NOT_REACHED();
-    }
+    if (frameState.stateObjectData)
+        encoder << frameState.stateObjectData.value();
 
     encoder << frameState.target;
 
@@ -552,24 +641,6 @@ private:
     const uint8_t* m_buffer;
     const uint8_t* m_bufferEnd;
 };
-
-enum class FormDataElementType {
-    Data = 0,
-    EncodedFile = 1,
-    EncodedBlob = 2,
-};
-
-static bool isValidEnum(FormDataElementType type)
-{
-    switch (type) {
-    case FormDataElementType::Data:
-    case FormDataElementType::EncodedFile:
-    case FormDataElementType::EncodedBlob:
-        return true;
-    }
-
-    return false;
-}
 
 static void decodeFormDataElement(HistoryEntryDataDecoder& decoder, HTTPBody::Element& formDataElement)
 {

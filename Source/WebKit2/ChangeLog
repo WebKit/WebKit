@@ -1,3 +1,17 @@
+2014-06-30  Anders Carlsson  <andersca@apple.com>
+
+        Implement the last pieces of encodeFrameStateNode
+        https://bugs.webkit.org/show_bug.cgi?id=134460
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::HistoryEntryDataEncoder::operator<<):
+        (WebKit::isValidEnum):
+        (WebKit::encodeFormDataElement):
+        (WebKit::encodeFormData):
+        (WebKit::encodeFrameStateNode):
+
 2014-06-30  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Move tap highlight to the inverseScaleRootView
