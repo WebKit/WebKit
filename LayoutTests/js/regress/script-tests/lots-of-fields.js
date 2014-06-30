@@ -1,3 +1,6 @@
+// This test uses all available memory on some small memory devices.
+//@largeHeap
+
 function foo() {
     var result = 0;
     for (var i = 0; i < 5000; ++i) {

@@ -94,6 +94,7 @@ end
 $jscPath = nil
 $copy = true
 $enableFTL = false
+$memoryLimited = false
 $outputDir = Pathname.new("results")
 $verbosity = 0
 $bundle = nil
@@ -112,6 +113,8 @@ def usage
     puts "--no-copy                   Do not copy the JavaScriptCore build product before testing."
     puts "                            --jsc specifies an already present JavaScriptCore to test."
     puts "--ftl-jit                   Indicate that we have the FTL JIT."
+    puts "--memory-limited            Indicate that we are targeting the test for a memory limited device."
+    puts "                            Skip tests tagged with //@large-heap"
     puts "--output-dir         (-o)   Path where to put results. Default is #{$outputDir}."
     puts "--verbose            (-v)   Print more things while running."
     puts "--run-bundle                Runs a bundle previously created by run-jsc-stress-tests."
@@ -130,6 +133,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--jsc', '-j', GetoptLong::REQUIRED_ARGUMENT],
                ['--no-copy', GetoptLong::NO_ARGUMENT],
                ['--ftl-jit', GetoptLong::NO_ARGUMENT],
+               ['--memory-limited', GetoptLong::NO_ARGUMENT],
                ['--output-dir', '-o', GetoptLong::REQUIRED_ARGUMENT],
                ['--run-bundle', GetoptLong::REQUIRED_ARGUMENT],
                ['--tarball', GetoptLong::NO_ARGUMENT],
@@ -150,6 +154,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $outputDir = Pathname.new(arg)
     when '--ftl-jit'
         $enableFTL = true
+    when '--memory-limited'
+        $memoryLimited = true
     when '--verbose'
         $verbosity += 1
     when '--run-bundle'
@@ -873,6 +879,13 @@ end
 def skip
     $didAddRunCommand = true
     puts "Skipping #{$collectionName}/#{$benchmark}"
+end
+
+def largeHeap
+    if $memoryLimited
+        $didAddRunCommand = true
+        puts "Skipping #{$collectionName}/#{$benchmark}"
+    end
 end
 
 def allJSFiles(path)

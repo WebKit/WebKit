@@ -1,3 +1,15 @@
+2014-06-30  Michael Saboff  <msaboff@apple.com>
+
+        Add option to run-jsc-stress-testes to filter out tests that use large heaps
+        https://bugs.webkit.org/show_bug.cgi?id=134458
+
+        Reviewed by Filip Pizlo.
+
+        Added new --memory-limited to filter out tests that have large heap usage.
+        Such tests are either tagged with //@largeHeap or logic is added to their .yaml file.
+
+        * Scripts/run-jsc-stress-tests:
+
 2014-06-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         DRT in iOS sim crashes while loading fonts
