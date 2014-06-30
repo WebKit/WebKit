@@ -1,3 +1,19 @@
+2014-06-30  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Don't crash on status bar tap with overflow scroll views
+        https://bugs.webkit.org/show_bug.cgi?id=134459
+
+        Reviewed by Tim Horton.
+        
+        The tiled scrolling indicator parents UIViews under CALayers, but that causes
+        those views to miss -willMoveToWindow:nil notifications on teardown. This can leave
+        deleted UIScrollViews in UIKit's "scroll to top" list.
+        
+        Fix by not making UIScrollViews in the debug layer tree host.
+
+        * UIProcess/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::createLayer):
+
 2014-06-28  Oliver Hunt  <oliver@apple.com>
 
        Restrict network process sandbox

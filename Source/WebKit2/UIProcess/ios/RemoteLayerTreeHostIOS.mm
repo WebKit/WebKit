@@ -140,9 +140,12 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
     case PlatformCALayer::LayerTypeTiledBackingLayer:
     case PlatformCALayer::LayerTypePageTiledBackingLayer:
     case PlatformCALayer::LayerTypeTiledBackingTileLayer:
-        if (layerProperties && layerProperties->customBehavior == GraphicsLayer::CustomScrollingBehavior)
-            view = adoptNS([[UIScrollView alloc] init]);
-        else
+        if (layerProperties && layerProperties->customBehavior == GraphicsLayer::CustomScrollingBehavior) {
+            if (!m_isDebugLayerTreeHost)
+                view = adoptNS([[UIScrollView alloc] init]);
+            else // The debug indicator parents views under layers, which can cause crashes with UIScrollView.
+                view = adoptNS([[UIView alloc] init]);
+        } else
             view = adoptNS([[WKCompositingView alloc] init]);
         break;
     case PlatformCALayer::LayerTypeTransformLayer:
