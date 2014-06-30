@@ -176,8 +176,8 @@ public:
     // Get the nearest ancestor layer that has overflow or clip, but is not a stacking context
     RenderLayer* enclosingNonStackingClippingLayer(const RenderLayer&) const;
 
-    // Repaint parts of all composited layers that intersect the given absolute rectangle (or the entire layer if the pointer is null).
-    void repaintCompositedLayers(const IntRect* = 0);
+    // Repaint all composited layers.
+    void repaintCompositedLayers();
 
     // Returns true if the given layer needs it own backing store.
     bool requiresOwnBackingStore(const RenderLayer&, const RenderLayer* compositingAncestorLayer, const LayoutRect& layerCompositedBoundsInAncestor, const LayoutRect& ancestorCompositedBounds) const;
@@ -331,8 +331,8 @@ private:
     void clearBackingForLayerIncludingDescendants(RenderLayer&);
     void setIsInWindowForLayerIncludingDescendants(RenderLayer&, bool isInWindow);
 
-    // Repaint the given rect (which is layer's coords), and regions of child layers that intersect that rect.
-    void recursiveRepaintLayer(RenderLayer&, const IntRect* = nullptr);
+    // Repaint this and its child layers.
+    void recursiveRepaintLayer(RenderLayer&);
 
     void addToOverlapMap(OverlapMap&, RenderLayer&, IntRect& layerBounds, bool& boundsComputed);
     void addToOverlapMapRecursive(OverlapMap&, RenderLayer&, RenderLayer* ancestorLayer = nullptr);

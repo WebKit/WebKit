@@ -1849,12 +1849,6 @@ void RenderLayer::convertToPixelSnappedLayerCoords(const RenderLayer* ancestorLa
     roundedLocation = roundedIntPoint(location);
 }
 
-void RenderLayer::convertToPixelSnappedLayerCoords(const RenderLayer* ancestorLayer, IntRect& roundedRect, ColumnOffsetAdjustment adjustForColumns) const
-{
-    LayoutRect rect = convertToLayerCoords(ancestorLayer, roundedRect, adjustForColumns);
-    roundedRect = pixelSnappedIntRect(rect);
-}
-
 // Returns the layer reached on the walk up towards the ancestor.
 static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLayer* layer, const RenderLayer* ancestorLayer, LayoutPoint& location, RenderLayer::ColumnOffsetAdjustment adjustForColumns)
 {
@@ -1994,14 +1988,6 @@ LayoutPoint RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, 
     while (currLayer && currLayer != ancestorLayer)
         currLayer = accumulateOffsetTowardsAncestor(currLayer, ancestorLayer, locationInLayerCoords, adjustForColumns);
     return locationInLayerCoords;
-}
-
-LayoutRect RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, const LayoutRect& rect, ColumnOffsetAdjustment adjustForColumns) const
-{
-    LayoutPoint delta = convertToLayerCoords(ancestorLayer, LayoutPoint(), adjustForColumns);
-    LayoutRect rectInLayerCoords = rect;
-    rectInLayerCoords.moveBy(-delta);
-    return rectInLayerCoords;
 }
 
 LayoutSize RenderLayer::offsetFromAncestor(const RenderLayer* ancestorLayer) const

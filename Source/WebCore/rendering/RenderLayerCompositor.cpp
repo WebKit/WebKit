@@ -1818,20 +1818,16 @@ void RenderLayerCompositor::updateCompositingDescendantGeometry(RenderLayer& com
     }
 }
 
-void RenderLayerCompositor::repaintCompositedLayers(const IntRect* absRect)
+void RenderLayerCompositor::repaintCompositedLayers()
 {
-    recursiveRepaintLayer(rootRenderLayer(), absRect);
+    recursiveRepaintLayer(rootRenderLayer());
 }
 
-void RenderLayerCompositor::recursiveRepaintLayer(RenderLayer& layer, const IntRect* rect)
+void RenderLayerCompositor::recursiveRepaintLayer(RenderLayer& layer)
 {
     // FIXME: This method does not work correctly with transforms.
-    if (layer.isComposited() && !layer.backing()->paintsIntoCompositedAncestor()) {
-        if (rect)
-            layer.setBackingNeedsRepaintInRect(*rect);
-        else
-            layer.setBackingNeedsRepaint();
-    }
+    if (layer.isComposited() && !layer.backing()->paintsIntoCompositedAncestor())
+        layer.setBackingNeedsRepaint();
 
 #if !ASSERT_DISABLED
     LayerListMutationDetector mutationChecker(&layer);
@@ -1839,39 +1835,18 @@ void RenderLayerCompositor::recursiveRepaintLayer(RenderLayer& layer, const IntR
 
     if (layer.hasCompositingDescendant()) {
         if (Vector<RenderLayer*>* negZOrderList = layer.negZOrderList()) {
-            for (size_t i = 0, size = negZOrderList->size(); i < size; ++i) {
-                RenderLayer& childLayer = *negZOrderList->at(i);
-                if (rect) {
-                    IntRect childRect(*rect);
-                    childLayer.convertToPixelSnappedLayerCoords(&layer, childRect);
-                    recursiveRepaintLayer(childLayer, &childRect);
-                } else
-                    recursiveRepaintLayer(childLayer);
-            }
+            for (size_t i = 0, size = negZOrderList->size(); i < size; ++i)
+                recursiveRepaintLayer(*negZOrderList->at(i));
         }
 
         if (Vector<RenderLayer*>* posZOrderList = layer.posZOrderList()) {
-            for (size_t i = 0, size = posZOrderList->size(); i < size; ++i) {
-                RenderLayer& childLayer = *posZOrderList->at(i);
-                if (rect) {
-                    IntRect childRect(*rect);
-                    childLayer.convertToPixelSnappedLayerCoords(&layer, childRect);
-                    recursiveRepaintLayer(childLayer, &childRect);
-                } else
-                    recursiveRepaintLayer(childLayer);
-            }
+            for (size_t i = 0, size = posZOrderList->size(); i < size; ++i)
+                recursiveRepaintLayer(*posZOrderList->at(i));
         }
     }
     if (Vector<RenderLayer*>* normalFlowList = layer.normalFlowList()) {
-        for (size_t i = 0, size = normalFlowList->size(); i < size; ++i) {
-            RenderLayer& childLayer = *normalFlowList->at(i);
-            if (rect) {
-                IntRect childRect(*rect);
-                childLayer.convertToPixelSnappedLayerCoords(&layer, childRect);
-                recursiveRepaintLayer(childLayer, &childRect);
-            } else
-                recursiveRepaintLayer(childLayer);
-        }
+        for (size_t i = 0, size = normalFlowList->size(); i < size; ++i)
+            recursiveRepaintLayer(*normalFlowList->at(i));
     }
 }
 
