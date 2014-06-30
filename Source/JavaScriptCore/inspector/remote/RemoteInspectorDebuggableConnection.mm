@@ -38,46 +38,11 @@
 
 namespace Inspector {
 
-class RemoteInspectorBlock {
-public:
-    RemoteInspectorBlock(void (^task)())
-        : m_task(Block_copy(task))
-    {
-    }
-
-    RemoteInspectorBlock(const RemoteInspectorBlock& other)
-        : m_task(Block_copy(other.m_task))
-    {
-    }
-
-    ~RemoteInspectorBlock()
-    {
-        Block_release(m_task);
-    }
-
-    RemoteInspectorBlock& operator=(const RemoteInspectorBlock& other)
-    {
-        void (^oldTask)() = m_task;
-        m_task = Block_copy(other.m_task);
-        Block_release(oldTask);
-        return *this;
-    }
-
-    void operator()() const
-    {
-        m_task();
-    }
-
-private:
-    void (^m_task)();
-};
-
-typedef Vector<RemoteInspectorBlock> RemoteInspectorQueue;
 static std::mutex* rwiQueueMutex;
 static CFRunLoopSourceRef rwiRunLoopSource;
 static RemoteInspectorQueue* rwiQueue;
 
-static void RemoteInspectorHandleRunSource(void*)
+static void RemoteInspectorHandleRunSourceGlobal(void*)
 {
     ASSERT(CFRunLoopGetCurrent() == CFRunLoopGetMain());
     ASSERT(rwiQueueMutex);
@@ -95,7 +60,7 @@ static void RemoteInspectorHandleRunSource(void*)
         block();
 }
 
-static void RemoteInspectorQueueTask(void (^task)())
+static void RemoteInspectorQueueTaskOnGlobalQueue(void (^task)())
 {
     ASSERT(rwiQueueMutex);
     ASSERT(rwiRunLoopSource);
@@ -110,20 +75,37 @@ static void RemoteInspectorQueueTask(void (^task)())
     CFRunLoopWakeUp(CFRunLoopGetMain());
 }
 
-static void RemoteInspectorInitializeQueue()
+static void RemoteInspectorInitializeGlobalQueue()
 {
     static dispatch_once_t pred;
     dispatch_once(&pred, ^{
         rwiQueue = new RemoteInspectorQueue;
         rwiQueueMutex = std::make_unique<std::mutex>().release();
 
-        CFRunLoopSourceContext runLoopSourceContext = {0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, RemoteInspectorHandleRunSource};
+        CFRunLoopSourceContext runLoopSourceContext = {0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, RemoteInspectorHandleRunSourceGlobal};
         rwiRunLoopSource = CFRunLoopSourceCreate(nullptr, 1, &runLoopSourceContext);
+
         // Add to the default run loop mode for default handling, and the JSContext remote inspector run loop mode when paused.
         CFRunLoopAddSource(CFRunLoopGetMain(), rwiRunLoopSource, kCFRunLoopDefaultMode);
         CFRunLoopAddSource(CFRunLoopGetMain(), rwiRunLoopSource, EventLoop::remoteInspectorRunLoopMode());
     });
 }
+
+static void RemoteInspectorHandleRunSourceWithInfo(void* info)
+{
+    RemoteInspectorDebuggableConnection *debuggableConnection = static_cast<RemoteInspectorDebuggableConnection*>(info);
+
+    RemoteInspectorQueue queueCopy;
+    {
+        std::lock_guard<std::mutex> lock(debuggableConnection->queueMutex());
+        queueCopy = debuggableConnection->queue();
+        debuggableConnection->clearQueue();
+    }
+
+    for (const auto& block : queueCopy)
+        block();
+}
+
 
 RemoteInspectorDebuggableConnection::RemoteInspectorDebuggableConnection(RemoteInspectorDebuggable* debuggable, NSString *connectionIdentifier, NSString *destination, RemoteInspectorDebuggable::DebuggableType)
     : m_debuggable(debuggable)
@@ -132,11 +114,12 @@ RemoteInspectorDebuggableConnection::RemoteInspectorDebuggableConnection(RemoteI
     , m_identifier(debuggable->identifier())
     , m_connected(false)
 {
-    RemoteInspectorInitializeQueue();
+    setupRunLoop();
 }
 
 RemoteInspectorDebuggableConnection::~RemoteInspectorDebuggableConnection()
 {
+    teardownRunLoop();
 }
 
 NSString *RemoteInspectorDebuggableConnection::destination() const
@@ -151,6 +134,11 @@ NSString *RemoteInspectorDebuggableConnection::connectionIdentifier() const
 
 void RemoteInspectorDebuggableConnection::dispatchAsyncOnDebuggable(void (^block)())
 {
+    if (m_runLoop) {
+        queueTaskOnPrivateRunLoop(block);
+        return;
+    }
+
 #if PLATFORM(IOS)
     if (WebCoreWebThreadIsEnabled && WebCoreWebThreadIsEnabled()) {
         WebCoreWebThreadRun(block);
@@ -158,7 +146,7 @@ void RemoteInspectorDebuggableConnection::dispatchAsyncOnDebuggable(void (^block
     }
 #endif
 
-    RemoteInspectorQueueTask(block);
+    RemoteInspectorQueueTaskOnGlobalQueue(block);
 }
 
 bool RemoteInspectorDebuggableConnection::setup()
@@ -235,6 +223,48 @@ bool RemoteInspectorDebuggableConnection::sendMessageToFrontend(const String& me
     RemoteInspector::shared().sendMessageToRemoteFrontend(identifier(), message);
 
     return true;
+}
+
+void RemoteInspectorDebuggableConnection::setupRunLoop()
+{
+    CFRunLoopRef debuggerRunLoop = m_debuggable->debuggerRunLoop();
+    if (!debuggerRunLoop) {
+        RemoteInspectorInitializeGlobalQueue();
+        return;
+    }
+
+    m_runLoop = debuggerRunLoop;
+
+    CFRunLoopSourceContext runLoopSourceContext = {0, this, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, RemoteInspectorHandleRunSourceWithInfo};
+    m_runLoopSource = CFRunLoopSourceCreate(nullptr, 1, &runLoopSourceContext);
+
+    CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), kCFRunLoopDefaultMode);
+    CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), EventLoop::remoteInspectorRunLoopMode());
+}
+
+void RemoteInspectorDebuggableConnection::teardownRunLoop()
+{
+    if (!m_runLoop)
+        return;
+
+    CFRunLoopRemoveSource(m_runLoop.get(), m_runLoopSource.get(), kCFRunLoopDefaultMode);
+    CFRunLoopRemoveSource(m_runLoop.get(), m_runLoopSource.get(), EventLoop::remoteInspectorRunLoopMode());
+
+    m_runLoop = nullptr;
+    m_runLoopSource = nullptr;
+}
+
+void RemoteInspectorDebuggableConnection::queueTaskOnPrivateRunLoop(void (^block)())
+{
+    ASSERT(m_runLoop);
+
+    {
+        std::lock_guard<std::mutex> lock(m_queueMutex);
+        m_queue.append(RemoteInspectorBlock(block));
+    }
+
+    CFRunLoopSourceSignal(m_runLoopSource.get());
+    CFRunLoopWakeUp(m_runLoop.get());
 }
 
 } // namespace Inspector

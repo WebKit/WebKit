@@ -25,7 +25,7 @@
 
 #include "config.h"
 #include "JSContextRef.h"
-#include "JSContextRefPrivate.h"
+#include "JSContextRefInternal.h"
 
 #include "APICast.h"
 #include "CallFrame.h"
@@ -41,6 +41,7 @@
 #include <wtf/text/StringHash.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
+#include "JSGlobalObjectDebuggable.h"
 #include "JSGlobalObjectInspectorController.h"
 #endif
 
@@ -367,3 +368,40 @@ void JSGlobalContextSetIncludesNativeCallStackWhenReportingExceptions(JSGlobalCo
 #endif
 }
 
+#if USE(CF)
+CFRunLoopRef JSGlobalContextGetDebuggerRunLoop(JSGlobalContextRef ctx)
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    ExecState* exec = toJS(ctx);
+    JSLockHolder lock(exec);
+
+    return exec->vmEntryGlobalObject()->inspectorDebuggable().debuggerRunLoop();
+#else
+    UNUSED_PARAM(ctx);
+    return nullptr;
+#endif
+}
+
+void JSGlobalContextSetDebuggerRunLoop(JSGlobalContextRef ctx, CFRunLoopRef runLoop)
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    ExecState* exec = toJS(ctx);
+    JSLockHolder lock(exec);
+
+    exec->vmEntryGlobalObject()->inspectorDebuggable().setDebuggerRunLoop(runLoop);
+#else
+    UNUSED_PARAM(ctx);
+    UNUSED_PARAM(runLoop);
+#endif
+}
+#endif

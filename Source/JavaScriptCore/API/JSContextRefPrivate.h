@@ -126,7 +126,7 @@ JS_EXPORT bool JSGlobalContextGetIncludesNativeCallStackWhenReportingExceptions(
 @param ctx The JSGlobalContext that you want to change.
 @param includeNativeCallStack The new value of the setting for the context.
 */
-JS_EXPORT void JSGlobalContextSetIncludesNativeCallStackWhenReportingExceptions(JSGlobalContextRef ctx, bool includesNativeCallStack) CF_AVAILABLE(10_10, 8_0);    
+JS_EXPORT void JSGlobalContextSetIncludesNativeCallStackWhenReportingExceptions(JSGlobalContextRef ctx, bool includesNativeCallStack) CF_AVAILABLE(10_10, 8_0);
 
 #ifdef __cplusplus
 }

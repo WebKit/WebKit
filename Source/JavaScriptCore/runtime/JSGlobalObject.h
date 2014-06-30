@@ -456,6 +456,7 @@ public:
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::JSGlobalObjectInspectorController& inspectorController() const { return *m_inspectorController.get(); }
+    JSGlobalObjectDebuggable& inspectorDebuggable() { return *m_inspectorDebuggable.get(); }
 #endif
 
     JS_EXPORT_PRIVATE void setConsoleClient(ConsoleClient* consoleClient) { m_consoleClient = consoleClient; }

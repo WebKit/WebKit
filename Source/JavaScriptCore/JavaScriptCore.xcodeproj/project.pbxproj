@@ -1332,6 +1332,7 @@
 		A5C3A1A618C0490200C9593A /* JSConsoleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C3A1A418C0490200C9593A /* JSConsoleClient.h */; };
 		A5CEEE14187F3BAD00E55C99 /* InspectorAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5CEEE12187F3BAD00E55C99 /* InspectorAgent.cpp */; };
 		A5D0A1BB1862301B00C7B496 /* InspectorEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = A5D0A1BA1862301B00C7B496 /* InspectorEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5D2E665195E174000A518E7 /* JSContextRefInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A5D2E664195E173800A518E7 /* JSContextRefInternal.h */; };
 		A5FD0067189AFE9C00633231 /* ScriptArguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD0065189AFE9C00633231 /* ScriptArguments.cpp */; };
 		A5FD0068189AFE9C00633231 /* ScriptArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FD0066189AFE9C00633231 /* ScriptArguments.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5FD006D189B00AA00633231 /* ScriptCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD0069189B00A900633231 /* ScriptCallFrame.cpp */; };
@@ -2933,6 +2934,7 @@
 		A5CEEE12187F3BAD00E55C99 /* InspectorAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAgent.cpp; sourceTree = "<group>"; };
 		A5CEEE13187F3BAD00E55C99 /* InspectorAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAgent.h; sourceTree = "<group>"; };
 		A5D0A1BA1862301B00C7B496 /* InspectorEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorEnvironment.h; sourceTree = "<group>"; };
+		A5D2E664195E173800A518E7 /* JSContextRefInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSContextRefInternal.h; sourceTree = "<group>"; };
 		A5FD0065189AFE9C00633231 /* ScriptArguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptArguments.cpp; sourceTree = "<group>"; };
 		A5FD0066189AFE9C00633231 /* ScriptArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptArguments.h; sourceTree = "<group>"; };
 		A5FD0069189B00A900633231 /* ScriptCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCallFrame.cpp; sourceTree = "<group>"; };
@@ -3965,6 +3967,7 @@
 				86E3C609167BAB87006D760A /* JSContextInternal.h */,
 				14BD5A290A3E91F600BAF59C /* JSContextRef.cpp */,
 				14BD5A2A0A3E91F600BAF59C /* JSContextRef.h */,
+				A5D2E664195E173800A518E7 /* JSContextRefInternal.h */,
 				148CD1D7108CF902008163C6 /* JSContextRefPrivate.h */,
 				A72028B41797601E0098028C /* JSCTestRunnerUtils.cpp */,
 				A72028B51797601E0098028C /* JSCTestRunnerUtils.h */,
@@ -5537,6 +5540,7 @@
 				14816E1C154CC56C00B8054C /* BlockAllocator.h in Headers */,
 				BC18C3EC0E16F5CD00B34460 /* BooleanObject.h in Headers */,
 				FEA08620182B7A0400F6D851 /* Breakpoint.h in Headers */,
+				A5D2E665195E174000A518E7 /* JSContextRefInternal.h in Headers */,
 				A7D801A51880D66E0026C39B /* BuiltinExecutables.h in Headers */,
 				A75EE9B218AAB7E200AAD043 /* BuiltinNames.h in Headers */,
 				0FB7F39715ED8E4600F167B2 /* Butterfly.h in Headers */,

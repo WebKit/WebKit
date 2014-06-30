@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSContextPrivate_h
-#define JSContextPrivate_h
+#ifndef JSContextRefInternal_h
+#define JSContextRefInternal_h
 
-#if JSC_OBJC_API_ENABLED
+#include "JSContextRefPrivate.h"
 
-#import <JavaScriptCore/JSContext.h>
-
-@interface JSContext(Private)
-
-/*!
-@property
-@discussion Remote inspection setting of the JSContext. Default value is YES.
-*/
-@property (setter=_setRemoteInspectionEnabled:) BOOL _remoteInspectionEnabled NS_AVAILABLE(10_10, 8_0);
-
-/*!
-@property
-@discussion Set whether or not the native call stack is included when reporting exceptions. Default value is YES.
-*/
-@property (setter=_setIncludesNativeCallStackWhenReportingExceptions:) BOOL _includesNativeCallStackWhenReportingExceptions NS_AVAILABLE(10_10, 8_0);
-
-/*!
-@property
-@discussion Set the run loop the Web Inspector debugger should use when evaluating JavaScript in the JSContext.
-*/
-@property (setter=_setDebuggerRunLoop:) CFRunLoopRef _debuggerRunLoop NS_AVAILABLE(10_10, 8_0);
-
-@end
-
+#if USE(CF)
+#include <CoreFoundation/CFRunLoop.h>
 #endif
 
-#endif // JSContextInternal_h
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#if USE(CF)
+/*!
+@function
+@abstract Gets the run loop used by the Web Inspector debugger when evaluating JavaScript in this context.
+@param ctx The JSGlobalContext whose setting you want to get.
+*/
+JS_EXPORT CFRunLoopRef JSGlobalContextGetDebuggerRunLoop(JSGlobalContextRef ctx) CF_AVAILABLE(10_10, 8_0);
+
+/*!
+@function
+@abstract Sets the run loop used by the Web Inspector debugger when evaluating JavaScript in this context.
+@param ctx The JSGlobalContext that you want to change.
+@param runLoop The new value of the setting for the context.
+*/
+JS_EXPORT void JSGlobalContextSetDebuggerRunLoop(JSGlobalContextRef ctx, CFRunLoopRef) CF_AVAILABLE(10_10, 8_0);
+#endif
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // JSContextRefInternal_h

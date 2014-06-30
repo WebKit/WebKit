@@ -1,3 +1,53 @@
+2014-06-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        JSContext Inspection: Provide a way to use a non-Main RunLoop for Inspector JavaScript Evaluations
+        https://bugs.webkit.org/show_bug.cgi?id=134371
+
+        Reviewed by Timothy Hatcher.
+
+        * API/JSContextPrivate.h:
+        * API/JSContext.mm:
+        (-[JSContext _debuggerRunLoop]):
+        (-[JSContext _setDebuggerRunLoop:]):
+        Private API for setting the CFRunLoop for a debugger to evaluate in.
+        
+        * API/JSContextRefInternal.h: Added.
+        * API/JSContextRef.cpp:
+        (JSGlobalContextGetDebuggerRunLoop):
+        (JSGlobalContextSetDebuggerRunLoop):
+        Internal API for setting a CFRunLoop on a JSContextRef.
+        Set this on the debuggable.
+        
+        * inspector/remote/RemoteInspectorDebuggable.h:
+        * inspector/remote/RemoteInspectorDebuggableConnection.h:
+        (Inspector::RemoteInspectorBlock::RemoteInspectorBlock):
+        (Inspector::RemoteInspectorBlock::~RemoteInspectorBlock):
+        (Inspector::RemoteInspectorBlock::operator=):
+        (Inspector::RemoteInspectorBlock::operator()):
+        Moved into the header.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::inspectorDebuggable):
+        Lets store the RunLoop on the debuggable instead of this core
+        platform agnostic class, so expose the debuggable.
+
+        * inspector/remote/RemoteInspectorDebuggableConnection.mm:
+        (Inspector::RemoteInspectorHandleRunSourceGlobal):
+        (Inspector::RemoteInspectorQueueTaskOnGlobalQueue):
+        (Inspector::RemoteInspectorInitializeGlobalQueue):
+        Rename the global functions for clarity.
+
+        (Inspector::RemoteInspectorHandleRunSourceWithInfo):
+        Handler for private run loops.
+
+        (Inspector::RemoteInspectorDebuggableConnection::RemoteInspectorDebuggableConnection):
+        (Inspector::RemoteInspectorDebuggableConnection::~RemoteInspectorDebuggableConnection):
+        (Inspector::RemoteInspectorDebuggableConnection::dispatchAsyncOnDebuggable):
+        (Inspector::RemoteInspectorDebuggableConnection::setupRunLoop):
+        (Inspector::RemoteInspectorDebuggableConnection::teardownRunLoop):
+        (Inspector::RemoteInspectorDebuggableConnection::queueTaskOnPrivateRunLoop):
+        Setup and teardown and use private run loop sources if the debuggable needs it.
+
 2014-06-30  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Add missing ENABLE(DFG_JIT) guards

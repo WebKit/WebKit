@@ -28,6 +28,8 @@
 #ifndef RemoteInspectorDebuggable_h
 #define RemoteInspectorDebuggable_h
 
+#include <CoreFoundation/CFRunLoop.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -49,6 +51,9 @@ public:
     bool remoteDebuggingAllowed() const { return m_allowed; }
     void setRemoteDebuggingAllowed(bool);
 
+    CFRunLoopRef debuggerRunLoop() { return m_runLoop.get(); }
+    void setDebuggerRunLoop(CFRunLoopRef runLoop) { m_runLoop = runLoop; }
+
     RemoteInspectorDebuggableInfo info() const;
 
     enum DebuggableType { JavaScript, Web };
@@ -65,6 +70,7 @@ public:
 private:
     unsigned m_identifier;
     bool m_allowed;
+    RetainPtr<CFRunLoopRef> m_runLoop;
 };
 
 struct RemoteInspectorDebuggableInfo {

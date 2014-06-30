@@ -29,7 +29,7 @@
 #import "JSCInlines.h"
 #import "JSContextInternal.h"
 #import "JSContextPrivate.h"
-#import "JSContextRefPrivate.h"
+#import "JSContextRefInternal.h"
 #import "JSGlobalObject.h"
 #import "JSValueInternal.h"
 #import "JSVirtualMachineInternal.h"
@@ -221,6 +221,16 @@
 - (void)_setIncludesNativeCallStackWhenReportingExceptions:(BOOL)includeNativeCallStack
 {
     JSGlobalContextSetIncludesNativeCallStackWhenReportingExceptions(m_context, includeNativeCallStack);
+}
+
+- (CFRunLoopRef)_debuggerRunLoop
+{
+    return JSGlobalContextGetDebuggerRunLoop(m_context);
+}
+
+- (void)_setDebuggerRunLoop:(CFRunLoopRef)runLoop
+{
+    JSGlobalContextSetDebuggerRunLoop(m_context, runLoop);
 }
 
 @end
