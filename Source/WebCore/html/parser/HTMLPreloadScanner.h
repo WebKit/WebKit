@@ -39,6 +39,7 @@ typedef size_t TokenPreloadScannerCheckpoint;
 class HTMLParserOptions;
 class HTMLTokenizer;
 class SegmentedString;
+class Frame;
 
 class TokenPreloadScanner {
     WTF_MAKE_NONCOPYABLE(TokenPreloadScanner); WTF_MAKE_FAST_ALLOCATED;
@@ -46,7 +47,11 @@ public:
     explicit TokenPreloadScanner(const URL& documentURL, float deviceScaleFactor = 1.0);
     ~TokenPreloadScanner();
 
-    void scan(const HTMLToken&, PreloadRequestStream& requests);
+    void scan(const HTMLToken&, PreloadRequestStream& requests
+#if ENABLE_PICTURE_SIZES
+        , RenderView*, Frame*
+#endif
+        );
 
     void setPredictedBaseElementURL(const URL& url) { m_predictedBaseElementURL = url; }
 
@@ -126,7 +131,11 @@ public:
     ~HTMLPreloadScanner();
 
     void appendToEnd(const SegmentedString&);
-    void scan(HTMLResourcePreloader*, const URL& documentBaseElementURL);
+    void scan(HTMLResourcePreloader*, const URL& documentBaseElementURL
+#if ENABLE_PICTURE_SIZES
+        , RenderView*, Frame*
+#endif
+        );
 
 private:
     TokenPreloadScanner m_scanner;

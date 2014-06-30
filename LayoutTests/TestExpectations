@@ -126,3 +126,7 @@ webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-percen
 webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-auto.html [ Skip ]
 
 webkit.org/b/133057 fast/table/border-collapsing/collapsed-borders-adjoining-sections.html [ ImageOnlyFailure ]
+
+# Skip img@sizes tests since it is disabled by default.
+fast/dom/HTMLImageElement/sizes
+http/tests/loading/sizes

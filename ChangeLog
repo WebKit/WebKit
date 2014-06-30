@@ -1,3 +1,15 @@
+2014-06-29  Yoav Weiss  <yoav@yoav.ws>
+
+        Add support for HTMLImageElement's sizes attribute
+        https://bugs.webkit.org/show_bug.cgi?id=133620
+
+        Reviewed by Dean Jackson.
+
+        Added an ENABLE_PICTURE_SIZES compile flag.
+
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2014-06-26  Daniel Bates  <dabates@apple.com>
 
         [iOS][WK2] Distant focusable element may not be scrolled into view when focused using keyboard

@@ -1455,6 +1455,21 @@ std::unique_ptr<MediaQuery> CSSParser::parseMediaQuery(const String& string)
     return std::move(m_mediaQuery);
 }
 
+#if ENABLE(PICTURE_SIZES)
+std::unique_ptr<SourceSizeList> CSSParser::parseSizesAttribute(const String& string)
+{
+    if (string.isEmpty())
+        return nullptr;
+
+    ASSERT(!m_sourceSizeList.get());
+
+    setupParser("@-webkit-sizesattr ", string, "}");
+    cssyyparse(this);
+
+    return std::move(m_sourceSizeList);
+}
+#endif
+
 static inline void filterProperties(bool important, const CSSParser::ParsedPropertyVector& input, Vector<CSSProperty, 256>& output, size_t& unusedEntries, std::bitset<numCSSProperties>& seenProperties)
 {
     // Add properties in reverse order so that highest priority definitions are reached first. Duplicate definitions can then be ignored when found.
@@ -10802,6 +10817,10 @@ inline void CSSParser::detectAtToken(int length, bool hasEscape)
         case 18:
             if (isEqualToCSSIdentifier(name + 2, "webkit-keyframes"))
                 m_token = WEBKIT_KEYFRAMES_SYM;
+#if ENABLE(PICTURE_SIZES)
+            else if (isEqualToCSSIdentifier(name + 2, "webkit-sizesattr"))
+                m_token = WEBKIT_SIZESATTR_SYM;
+#endif
             return;
 
         case 19:

@@ -80,9 +80,17 @@ static inline CSSParserValue makeIdentValue(CSSParserString string)
 %}
 
 #if ENABLE_CSS_GRID_LAYOUT
+#if ENABLE_PICTURE_SIZES
+%expect 34
+#else
 %expect 30
+#endif
+#else
+#if ENABLE_PICTURE_SIZES
+%expect 33
 #else
 %expect 29
+#endif
 #endif
 
 %nonassoc LOWEST_PREC
@@ -123,6 +131,9 @@ static inline CSSParserValue makeIdentValue(CSSParserString string)
 %token WEBKIT_KEYFRAMES_SYM
 %token WEBKIT_VALUE_SYM
 %token WEBKIT_MEDIAQUERY_SYM
+#if ENABLE_PICTURE_SIZES
+%token WEBKIT_SIZESATTR_SYM
+#endif
 %token WEBKIT_SELECTOR_SYM
 %token WEBKIT_REGION_RULE_SYM
 %token WEBKIT_VIEWPORT_RULE_SYM
@@ -223,6 +234,22 @@ static inline CSSParserValue makeIdentValue(CSSParserString string)
 %type <mediaQueryExp> media_query_exp
 %destructor { delete $$; } media_query_exp
 
+#if ENABLE_PICTURE_SIZES
+%union { MediaQueryExp* mediaCondition; }
+%type <mediaQueryExp> media_condition
+%destructor { delete $$; } media_condition
+
+%union { SourceSize* sourceSize; }
+%type <sourceSize> source_size
+%destructor { delete $$; } source_size
+
+%union { SourceSizeList* sourceSizeList; }
+%type <sourceSizeList> source_size_list
+%destructor { delete $$; } source_size_list
+
+%type <value> source_size_length
+#endif
+
 %union { Vector<std::unique_ptr<MediaQueryExp>>* mediaQueryExpList; }
 %type <mediaQueryExpList> media_query_exp_list maybe_and_media_query_exp_list
 %destructor { delete $$; } media_query_exp_list maybe_and_media_query_exp_list
@@ -322,6 +349,9 @@ stylesheet:
   | webkit_decls maybe_space
   | webkit_value maybe_space
   | webkit_mediaquery maybe_space
+#if ENABLE_PICTURE_SIZES
+  | webkit_source_size_list maybe_space
+#endif
   | webkit_selector maybe_space
   | webkit_keyframe_rule maybe_space
 #if ENABLE_CSS3_CONDITIONAL_RULES
@@ -517,6 +547,45 @@ maybe_ns_prefix: /* empty */ { $$.clear(); } | IDENT maybe_space;
 string_or_uri: STRING | URI ;
 
 maybe_media_value: /*empty*/ { $$ = nullptr; } | ':' maybe_space expr maybe_space { $$ = $3; } ;
+
+#if ENABLE_PICTURE_SIZES
+media_condition:
+    maybe_space '(' maybe_space IDENT maybe_space maybe_media_value ')' maybe_space {
+        std::unique_ptr<CSSParserValueList> mediaValue($6);
+        $4.lower();
+        $$ = new MediaQueryExp($4, mediaValue.get());
+    }
+    ;
+
+webkit_source_size_list:
+    WEBKIT_SIZESATTR_SYM WHITESPACE source_size_list '}' { parser->m_sourceSizeList = std::move(std::unique_ptr<SourceSizeList>($3)); };
+
+source_size_list:
+    maybe_space source_size maybe_space {
+        $$ = new SourceSizeList();
+        $$->append(std::unique_ptr<SourceSize>($2));
+    }
+    | maybe_space source_size maybe_space ',' maybe_space source_size_list maybe_space {
+        $$ = $6;
+        $$->append(std::unique_ptr<SourceSize>($2));
+    };
+
+source_size_length:
+    unary_term {
+        $$ = $1;
+    }
+    | calc_function {
+        $$ = $1;
+    };
+
+source_size:
+    media_condition source_size_length {
+        $$ = new SourceSize(std::unique_ptr<MediaQueryExp>($1), $2);
+    }
+    | source_size_length {
+        $$ = new SourceSize(std::make_unique<MediaQueryExp>(emptyString(), nullptr), $1);
+    };
+#endif
 
 media_query_exp:
     maybe_media_restrictor maybe_space '(' maybe_space IDENT maybe_space maybe_media_value ')' maybe_space {

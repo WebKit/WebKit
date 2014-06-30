@@ -145,6 +145,7 @@ static bool parseDescriptors(Vector<StringView>& descriptors, DescriptorParsingR
             int resourceWidth = descriptor.toInt(isValid);
             if (!isValid || resourceWidth <= 0)
                 return false;
+            result.setResourceWidth(resourceWidth);
         } else if (descriptorChar == 'h') {
             // This is here only for future compat purposes.
             // The value of the 'h' descriptor is not used.
@@ -217,13 +218,24 @@ static void parseImageCandidatesFromSrcsetAttribute(StringView attribute, Vector
         parseImageCandidatesFromSrcsetAttribute<UChar>(attribute.characters16(), attribute.length(), imageCandidates);
 }
 
-static ImageCandidate pickBestImageCandidate(float deviceScaleFactor, Vector<ImageCandidate>& imageCandidates)
+static ImageCandidate pickBestImageCandidate(float deviceScaleFactor, Vector<ImageCandidate>& imageCandidates
+#if ENABLE(PICTURE_SIZES)
+    , unsigned sourceSize
+#endif
+    )
 {
+    bool ignoreSrc = false;
     if (imageCandidates.isEmpty())
         return ImageCandidate();
 
     // http://picture.responsiveimages.org/#normalize-source-densities
     for (auto& candidate : imageCandidates) {
+#if ENABLE(PICTURE_SIZES)
+        if (candidate.resourceWidth > 0) {
+            candidate.density = static_cast<float>(candidate.resourceWidth) / static_cast<float>(sourceSize);
+            ignoreSrc = true;
+        } else
+#endif
         if (candidate.density < 0)
             candidate.density = DefaultDensityValue;
     }
@@ -232,10 +244,14 @@ static ImageCandidate pickBestImageCandidate(float deviceScaleFactor, Vector<Ima
 
     unsigned i;
     for (i = 0; i < imageCandidates.size() - 1; ++i) {
-        if ((imageCandidates[i].density >= deviceScaleFactor))
+        if ((imageCandidates[i].density >= deviceScaleFactor) && (!ignoreSrc || !imageCandidates[i].srcOrigin()))
             break;
     }
 
+    if (imageCandidates[i].srcOrigin() && ignoreSrc) {
+        ASSERT(i > 0);
+        --i;
+    }
     float winningDensity = imageCandidates[i].density;
 
     unsigned winner = i;
@@ -247,7 +263,11 @@ static ImageCandidate pickBestImageCandidate(float deviceScaleFactor, Vector<Ima
     return imageCandidates[winner];
 }
 
-ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const AtomicString& srcAttribute, const AtomicString& srcsetAttribute)
+ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const AtomicString& srcAttribute, const AtomicString& srcsetAttribute
+#if ENABLE(PICTURE_SIZES)
+    , unsigned sourceSize
+#endif
+    )
 {
     if (srcsetAttribute.isNull()) {
         if (srcAttribute.isNull())
@@ -262,7 +282,11 @@ ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const At
     if (!srcAttribute.isEmpty())
         imageCandidates.append(ImageCandidate(StringView(srcAttribute), DescriptorParsingResult(), ImageCandidate::SrcOrigin));
 
-    return pickBestImageCandidate(deviceScaleFactor, imageCandidates);
+    return pickBestImageCandidate(deviceScaleFactor, imageCandidates
+#if ENABLE(PICTURE_SIZES)
+        , sourceSize
+#endif
+        );
 }
 
 } // namespace WebCore

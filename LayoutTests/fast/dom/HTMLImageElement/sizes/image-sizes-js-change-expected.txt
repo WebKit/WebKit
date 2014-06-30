@@ -1,0 +1,9 @@
+image-set-4x.png - willSendRequest <NSURLRequest URL image-set-4x.png, main document URL image-sizes-js-change.html, http method GET> redirectResponse (null)
+js-test.js - didFinishLoading
+image-set-4x.png - didReceiveResponse <NSURLResponse image-set-4x.png, http status code 0>
+image-set-4x.png - didFinishLoading
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS currentSrcFileName("foo") is "image-set-4x.png"
+

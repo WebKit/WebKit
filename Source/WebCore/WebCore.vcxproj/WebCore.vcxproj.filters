@@ -2271,6 +2271,9 @@
     <ClCompile Include="..\css\SelectorChecker.cpp">
       <Filter>css</Filter>
     </ClCompile>
+    <ClCompile Include="..\css\SourceSizeList.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
     <ClCompile Include="..\css\StyleInvalidationAnalysis.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -9209,6 +9212,9 @@
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\SelectorCheckerTestFunctions.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\css\SourceSizeList.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\StyleInvalidationAnalysis.h">

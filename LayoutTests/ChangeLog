@@ -1,3 +1,32 @@
+2014-06-29  Yoav Weiss  <yoav@yoav.ws>
+
+        Add support for HTMLImageElement's sizes attribute
+        https://bugs.webkit.org/show_bug.cgi?id=133620
+
+        Reviewed by Dean Jackson.
+
+        These layout tests check that the sizes attribute and the related
+        srcset syntax are well supported, that the right resource is displayed,
+        that the currentSrc attribute is well supported and also that the right
+        resource is preloaded.
+
+        * fast/dom/HTMLImageElement/resources/currentSrcHelper.js: Added.
+        (fileName):
+        (currentSrcFileName):
+        * fast/dom/HTMLImageElement/resources/image-set-4x.png: Added.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-1x-expected.txt: Added.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-1x.html: Added.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-2x-expected.txt: Added.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-2x.html: Added.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-js-change-expected.txt: Added.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html: Added.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-js-innerhtml-expected.txt: Added.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-js-innerhtml.html: Added.
+        * http/tests/loading/sizes/preload-image-sizes-2x-expected.txt: Added.
+        * http/tests/loading/sizes/preload-image-sizes-2x.html: Added.
+        * http/tests/loading/sizes/preload-image-sizes-expected.txt: Added.
+        * http/tests/loading/sizes/preload-image-sizes.html: Added.
+
 2014-06-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         TextCodecICU::encode turns the whole string as yen signs if there is any backslash in it

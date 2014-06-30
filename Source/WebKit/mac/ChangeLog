@@ -1,3 +1,14 @@
+2014-06-29  Yoav Weiss  <yoav@yoav.ws>
+
+        Add support for HTMLImageElement's sizes attribute
+        https://bugs.webkit.org/show_bug.cgi?id=133620
+
+        Reviewed by Dean Jackson.
+
+        Added an ENABLE_PICTURE_SIZES compile flag.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-06-27  Sam Weinig  <sam@webkit.org>
 
         InfoClick (from Nisus Software) dies on viewing found items

@@ -110,6 +110,7 @@ my (
     $orientationEventsSupport,
     $pageVisibilityAPISupport,
     $performanceTimelineSupport,
+    $pictureSizesSupport,
     $promiseSupport,
     $proximityEventsSupport,
     $quotaSupport,
@@ -344,6 +345,9 @@ my @features = (
 
     { option => "performance-timeline", desc => "Toggle Performance Timeline support",
       define => "ENABLE_PERFORMANCE_TIMELINE", default => isGtk(), value => \$performanceTimelineSupport },
+
+    { option => "picture-sizes", desc => "Toggle sizes attribute support",
+      define => "ENABLE_PICTURE_SIZES", default => 0, value => \$pictureSizesSupport },
 
     { option => "promises", desc => "Toggle Promise support",
       define => "ENABLE_PROMISES", default => 1, value => \$promiseSupport },

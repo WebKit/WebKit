@@ -34,6 +34,7 @@
 #include "HTMLTokenizer.h"
 #include "InputTypeNames.h"
 #include "LinkRelAttribute.h"
+#include "SourceSizeList.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -92,7 +93,11 @@ public:
     {
     }
 
-    void processAttributes(const HTMLToken::AttributeList& attributes)
+    void processAttributes(const HTMLToken::AttributeList& attributes
+#if ENABLE(PICTURE_SIZES)
+        , RenderView* view, Frame* frame
+#endif
+        )
     {
         ASSERT(isMainThread());
         if (m_tagId >= TagId::Unknown)
@@ -105,7 +110,11 @@ public:
 
         // Resolve between src and srcSet if we have them.
         if (!m_srcSetAttribute.isEmpty()) {
-            ImageCandidate imageCandidate = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute);
+            ImageCandidate imageCandidate = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute
+#if ENABLE(PICTURE_SIZES)
+                , SourceSizeList::parseSizesAttribute(m_sizesAttribute, view, frame)
+#endif
+                );
             setUrlToLoad(imageCandidate.string.toString(), true);
         }
     }
@@ -138,8 +147,12 @@ private:
         if (m_tagId == TagId::Script || m_tagId == TagId::Img) {
             if (match(attributeName, srcAttr))
                 setUrlToLoad(attributeValue);
-            else if (match(attributeName, srcsetAttr))
+            else if (match(attributeName, srcsetAttr) && m_srcSetAttribute.isNull())
                 m_srcSetAttribute = attributeValue;
+#if ENABLE(PICTURE_SIZES)
+            else if (match(attributeName, sizesAttr) && m_sizesAttribute.isNull())
+                m_sizesAttribute = attributeValue;
+#endif
             else if (match(attributeName, crossoriginAttr) && !attributeValue.isNull())
                 m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
         } else if (m_tagId == TagId::Link) {
@@ -217,6 +230,9 @@ private:
     TagId m_tagId;
     String m_urlToLoad;
     String m_srcSetAttribute;
+#if ENABLE(PICTURE_SIZES)
+    String m_sizesAttribute;
+#endif
     String m_charset;
     String m_crossOriginMode;
     bool m_linkIsStyleSheet;
@@ -263,7 +279,11 @@ void TokenPreloadScanner::rewindTo(TokenPreloadScannerCheckpoint checkpointIndex
     m_checkpoints.clear();
 }
 
-void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<PreloadRequest>>& requests)
+void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<PreloadRequest>>& requests
+#if ENABLE(PICTURE_SIZES)
+        , RenderView* view, Frame* frame
+#endif
+        )
 {
     switch (token.type()) {
     case HTMLToken::Character:
@@ -314,7 +334,11 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
         }
 
         StartTagScanner scanner(tagId, m_deviceScaleFactor);
-        scanner.processAttributes(token.attributes());
+        scanner.processAttributes(token.attributes()
+#if ENABLE(PICTURE_SIZES)
+            , view, frame
+#endif
+            );
         if (auto request = scanner.createPreloadRequest(m_predictedBaseElementURL))
             requests.append(std::move(request));
         return;
@@ -348,7 +372,11 @@ void HTMLPreloadScanner::appendToEnd(const SegmentedString& source)
     m_source.append(source);
 }
 
-void HTMLPreloadScanner::scan(HTMLResourcePreloader* preloader, const URL& startingBaseElementURL)
+void HTMLPreloadScanner::scan(HTMLResourcePreloader* preloader, const URL& startingBaseElementURL
+#if ENABLE(PICTURE_SIZES)
+        , RenderView* view, Frame* frame
+#endif
+        )
 {
     ASSERT(isMainThread()); // HTMLTokenizer::updateStateFor only works on the main thread.
 
@@ -361,7 +389,11 @@ void HTMLPreloadScanner::scan(HTMLResourcePreloader* preloader, const URL& start
     while (m_tokenizer->nextToken(m_source, m_token)) {
         if (m_token.type() == HTMLToken::StartTag)
             m_tokenizer->updateStateFor(AtomicString(m_token.name()));
-        m_scanner.scan(m_token, requests);
+        m_scanner.scan(m_token, requests
+#if ENABLE(PICTURE_SIZES)
+            , view, frame
+#endif
+            );
         m_token.clear();
     }
 

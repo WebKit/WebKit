@@ -33,6 +33,7 @@
 #include "CSSValueKeywords.h"
 #include "Color.h"
 #include "MediaQuery.h"
+#include "SourceSizeList.h"
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -100,6 +101,9 @@ public:
     bool parseDeclaration(MutableStyleProperties*, const String&, PassRefPtr<CSSRuleSourceData>, StyleSheetContents* contextStyleSheet);
     static PassRef<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, Element*);
     std::unique_ptr<MediaQuery> parseMediaQuery(const String&);
+#if ENABLE(PICTURE_SIZES)
+    std::unique_ptr<SourceSizeList> parseSizesAttribute(const String&);
+#endif
 
     void addPropertyWithPrefixingVariant(CSSPropertyID, PassRefPtr<CSSValue>, bool important, bool implicit = false);
     void addProperty(CSSPropertyID, PassRefPtr<CSSValue>, bool important, bool implicit = false);
@@ -347,6 +351,9 @@ public:
     RefPtr<StyleRuleBase> m_rule;
     RefPtr<StyleKeyframe> m_keyframe;
     std::unique_ptr<MediaQuery> m_mediaQuery;
+#if ENABLE(PICTURE_SIZES)
+    std::unique_ptr<SourceSizeList> m_sourceSizeList;
+#endif
     std::unique_ptr<CSSParserValueList> m_valueList;
 #if ENABLE(CSS3_CONDITIONAL_RULES)
     bool m_supportsCondition;
@@ -409,6 +416,7 @@ public:
     static URL completeURL(const CSSParserContext&, const String& url);
 
     Location currentLocation();
+    static bool isCalculation(CSSParserValue*);
 
 private:
     bool is8BitSource() { return m_is8BitSource; }
@@ -621,7 +629,6 @@ private:
     bool parseBorderImageQuad(Units, RefPtr<CSSPrimitiveValue>&);
     int colorIntFromValue(CSSParserValue*);
     double parsedDouble(CSSParserValue*, ReleaseParsedCalcValueCondition releaseCalc = DoNotReleaseParsedCalcValue);
-    bool isCalculation(CSSParserValue*);
     
     friend class TransformOperationInfo;
 #if ENABLE(CSS_FILTERS)

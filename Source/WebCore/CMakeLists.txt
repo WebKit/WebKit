@@ -1277,6 +1277,7 @@ set(WebCore_SOURCES
     css/SelectorChecker.cpp
     css/SelectorCheckerFastPath.cpp
     css/SelectorFilter.cpp
+    css/SourceSizeList.cpp
     css/StyleInvalidationAnalysis.cpp
     css/StyleMedia.cpp
     css/StyleProperties.cpp

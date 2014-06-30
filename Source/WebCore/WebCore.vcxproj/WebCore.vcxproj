@@ -9771,6 +9771,7 @@
     <ClCompile Include="..\css\PropertySetCSSStyleDeclaration.cpp" />
     <ClCompile Include="..\css\RGBColor.cpp" />
     <ClCompile Include="..\css\SelectorChecker.cpp" />
+    <ClCompile Include="..\css\SourceSizeList.cpp" />
     <ClCompile Include="..\css\StyleInvalidationAnalysis.cpp" />
     <ClCompile Include="..\css\StyleMedia.cpp" />
     <ClCompile Include="..\css\StyleProperties.cpp">
@@ -20089,6 +20090,7 @@
     <ClInclude Include="..\css\RGBColor.h" />
     <ClInclude Include="..\css\SelectorChecker.h" />
     <ClInclude Include="..\css\SelectorCheckerTestFunctions.h" />
+    <ClInclude Include="..\css\SourceSizeList.h" />
     <ClInclude Include="..\css\StyleInvalidationAnalysis.h" />
     <ClInclude Include="..\css\StyleMedia.h" />
     <ClInclude Include="..\css\StyleProperties.h" />
