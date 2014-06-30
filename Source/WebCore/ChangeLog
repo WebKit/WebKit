@@ -1,3 +1,21 @@
+2014-06-29  Pratik Solanki  <psolanki@apple.com>
+
+        Create NSURLRequest lazily when USE(CFNETWORK) is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=134441
+
+        Reviewed by Sam Weinig.
+
+        No new tests. Should be covered by exsting tests.
+
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformHTTPBody):
+        (WebCore::ResourceRequest::setStorageSession):
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::ResourceRequest::nsURLRequest):
+
 2014-06-29  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Remove netscape plugin implementation from WebCore

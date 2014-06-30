@@ -53,6 +53,10 @@ namespace WebCore {
 NSURLRequest *ResourceRequest::nsURLRequest(HTTPBodyUpdatePolicy bodyPolicy) const
 {
     updatePlatformRequest(bodyPolicy);
+#if USE(CFNETWORK)
+    if (!m_nsRequest)
+        const_cast<ResourceRequest*>(this)->updateNSURLRequest();
+#endif
     return [[m_nsRequest.get() retain] autorelease];
 }
 
