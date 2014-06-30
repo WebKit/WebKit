@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DFGFunctionWhitelist.h"
 
+#if ENABLE(DFG_JIT)
+
 #include "CodeBlock.h"
 #include "Options.h"
 #include <stdio.h>
@@ -111,3 +113,6 @@ bool FunctionWhitelist::contains(CodeBlock* codeBlock) const
 }
 
 } } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)
+

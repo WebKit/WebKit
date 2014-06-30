@@ -26,6 +26,8 @@
 #ifndef DFGFunctionWhitelist_h
 #define DFGFunctionWhitelist_h
 
+#if ENABLE(DFG_JIT)
+
 #include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -49,5 +51,7 @@ private:
 };
 
 } } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)
 
 #endif // DFGFunctionWhitelist_h
