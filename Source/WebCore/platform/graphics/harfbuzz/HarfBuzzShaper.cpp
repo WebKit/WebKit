@@ -192,8 +192,6 @@ HarfBuzzShaper::HarfBuzzShaper(const Font* font, const TextRun& run)
     , m_padPerWordBreak(0)
     , m_padError(0)
     , m_letterSpacing(font->letterSpacing())
-    , m_fromIndex(0)
-    , m_toIndex(m_run.length())
 {
     m_normalizedBuffer = std::make_unique<UChar[]>(m_run.length() + 1);
     m_normalizedBufferLength = m_run.length();
@@ -326,15 +324,6 @@ void HarfBuzzShaper::setPadding(int padding)
         m_padPerWordBreak = m_padding / numWordEnds;
     else
         m_padPerWordBreak = 0;
-}
-
-
-void HarfBuzzShaper::setDrawRange(int from, int to)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(from >= 0);
-    ASSERT_WITH_SECURITY_IMPLICATION(to <= static_cast<int>(m_run.length()));
-    m_fromIndex = from;
-    m_toIndex = to;
 }
 
 void HarfBuzzShaper::setFontFeatures()
@@ -587,14 +576,12 @@ void HarfBuzzShaper::fillGlyphBufferFromHarfBuzzRun(GlyphBuffer* glyphBuffer, Ha
         float glyphAdvanceX = advances[i] + nextOffset.x() - currentOffset.x();
         float glyphAdvanceY = nextOffset.y() - currentOffset.y();
         if (m_run.rtl()) {
-            if (currentCharacterIndex > m_toIndex)
+            if (currentCharacterIndex > m_run.length())
                 m_startOffset.move(glyphAdvanceX, glyphAdvanceY);
-            else if (currentCharacterIndex >= m_fromIndex)
+            else
                 glyphBuffer->add(glyphs[i], currentRun->fontData(), createGlyphBufferAdvance(glyphAdvanceX, glyphAdvanceY));
         } else {
-            if (currentCharacterIndex < m_fromIndex)
-                m_startOffset.move(glyphAdvanceX, glyphAdvanceY);
-            else if (currentCharacterIndex < m_toIndex)
+            if (currentCharacterIndex < m_run.length())
                 glyphBuffer->add(glyphs[i], currentRun->fontData(), createGlyphBufferAdvance(glyphAdvanceX, glyphAdvanceY));
         }
     }

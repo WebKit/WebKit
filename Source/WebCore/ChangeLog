@@ -1,3 +1,23 @@
+2014-06-30  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Remove HarfBuzzShaper::setDrawRange()
+        https://bugs.webkit.org/show_bug.cgi?id=134243
+
+        Reviewed by Gyuyoung Kim.
+
+        setDrawRange() is not used anywhere. Remove it.
+        And m_fromIndex and m_toIndex are changed by only setDrawRange().
+        So remove them too and use the default values instead of them.
+
+        No new tests, no behavior changes.
+
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::HarfBuzzShaper):
+        (WebCore::HarfBuzzShaper::fillGlyphBufferFromHarfBuzzRun):
+            currentCharacterIndex is unsigned, always greater than 0. Clean up if statements.
+        (WebCore::HarfBuzzShaper::setDrawRange): Deleted.
+        * platform/graphics/harfbuzz/HarfBuzzShaper.h:
+
 2014-06-29  Pratik Solanki  <psolanki@apple.com>
 
         Create NSURLRequest lazily when USE(CFNETWORK) is enabled

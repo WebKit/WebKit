@@ -57,7 +57,6 @@ public:
     HarfBuzzShaper(const Font*, const TextRun&);
     virtual ~HarfBuzzShaper();
 
-    void setDrawRange(int from, int to);
     bool shape(GlyphBuffer* = 0);
     FloatPoint adjustStartPoint(const FloatPoint&);
     float totalWidth() { return m_totalWidth; }
@@ -143,9 +142,6 @@ private:
     Vector<OwnPtr<HarfBuzzRun>, 16> m_harfBuzzRuns;
 
     FloatPoint m_startOffset;
-
-    int m_fromIndex;
-    int m_toIndex;
 
     float m_totalWidth;
 };
