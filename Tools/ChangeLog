@@ -1,3 +1,23 @@
+2014-06-30  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Remove Qt cruft from webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=134445
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (DeprecatedPort.port):
+        (QtPort): Deleted.
+        (QtPort.build_webkit_command): Deleted.
+        (QtPort.run_webkit_tests_command): Deleted.
+        (QtWK2Port): Deleted.
+        (QtWK2Port.build_webkit_command): Deleted.
+        (QtWK2Port.run_webkit_tests_command): Deleted.
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+        (DeprecatedPortTest): Deleted.
+        (DeprecatedPortTest.test_qt_port): Deleted.
+        (DeprecatedPortTest.test_qt_wk2_port): Deleted.
+
 2014-06-29  Yoav Weiss  <yoav@yoav.ws>
 
         Add support for HTMLImageElement's sizes attribute

@@ -44,15 +44,3 @@ class DeprecatedPortTest(unittest.TestCase):
         self.assertEqual(GtkWK2Port().run_webkit_tests_command(), DeprecatedPort().script_shell_command("run-webkit-tests") + ["--gtk", "-2"])
         self.assertEqual(GtkWK2Port().build_webkit_command(), DeprecatedPort().script_shell_command("build-webkit") + ["--gtk", "--update-gtk", "--no-webkit1", DeprecatedPort().makeArgs()])
         self.assertEqual(GtkWK2Port().build_webkit_command(build_style="debug"), DeprecatedPort().script_shell_command("build-webkit") + ["--debug", "--gtk", "--update-gtk", "--no-webkit1", DeprecatedPort().makeArgs()])
-
-    def test_qt_port(self):
-        self.assertEqual(QtPort().flag(), "--port=qt")
-        self.assertEqual(QtPort().run_webkit_tests_command(), DeprecatedPort().script_shell_command("run-webkit-tests") + ["--qt"])
-        self.assertEqual(QtPort().build_webkit_command(), DeprecatedPort().script_shell_command("build-webkit") + ["--qt", "--no-webkit2", DeprecatedPort().makeArgs()])
-        self.assertEqual(QtPort().build_webkit_command(build_style="debug"), DeprecatedPort().script_shell_command("build-webkit") + ["--debug", "--qt", "--no-webkit2", DeprecatedPort().makeArgs()])
-
-    def test_qt_wk2_port(self):
-        self.assertEqual(QtWK2Port().flag(), "--port=qt-wk2")
-        self.assertEqual(QtWK2Port().run_webkit_tests_command(), DeprecatedPort().script_shell_command("run-webkit-tests") + ["--qt", "-2"])
-        self.assertEqual(QtWK2Port().build_webkit_command(), DeprecatedPort().script_shell_command("build-webkit") + ["--qt", DeprecatedPort().makeArgs()])
-        self.assertEqual(QtWK2Port().build_webkit_command(build_style="debug"), DeprecatedPort().script_shell_command("build-webkit") + ["--debug", "--qt", DeprecatedPort().makeArgs()])
