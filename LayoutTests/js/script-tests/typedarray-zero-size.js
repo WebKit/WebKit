@@ -10,7 +10,7 @@ function foo() {
 
 var result = 0;
 
-for (var i = 10000; i > 0; i--) {
+for (var i = 4000; i > 0; i--) {
     var newArray = foo();
     var otherArray = new Array(i);
     for (var j = 0; j < i; ++j)
@@ -18,5 +18,5 @@ for (var i = 10000; i > 0; i--) {
     result += otherArray[i - 1];
 }
 
-if (result != (10000 * 9999) / 2)
+if (result != (4000 * 3999) / 2)
     throw "Bad result: " + result;

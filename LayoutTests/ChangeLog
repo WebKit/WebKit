@@ -3,6 +3,18 @@
         Reduce memory required for js/typedarray-zero-size.js
         https://bugs.webkit.org/show_bug.cgi?id=134448
 
+        Reviewed by Mark Hahnenberg.
+
+        Reduce the loop count from 10000 to 4000 to further reduce memory requirements
+        on older devices.
+
+        * js/script-tests/typedarray-zero-size.js:
+
+2014-06-30  Michael Saboff  <msaboff@apple.com>
+
+        Reduce memory required for js/typedarray-zero-size.js
+        https://bugs.webkit.org/show_bug.cgi?id=134448
+
         Reviewed by Darin Adler.
 
         Making the loop count down reduces memory usage from ~190MB to ~22MB while
