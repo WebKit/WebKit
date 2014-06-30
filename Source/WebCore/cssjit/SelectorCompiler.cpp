@@ -206,7 +206,7 @@ private:
     static const Assembler::RegisterID checkingContextRegister;
     static const Assembler::RegisterID callFrameRegister;
 
-    bool generateSelectorChecker();
+    void generateSelectorChecker();
 
     // Element relations tree walker.
     void generateWalkToParentNode(Assembler::RegisterID targetRegister);
@@ -733,8 +733,7 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::VM* vm, JSC
     switch (m_functionType) {
     case FunctionType::SimpleSelectorChecker:
     case FunctionType::SelectorCheckerWithCheckingContext:
-        if (!generateSelectorChecker())
-            return SelectorCompilationStatus::CannotCompile;
+        generateSelectorChecker();
         break;
     case FunctionType::CannotMatchAnything:
         m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
@@ -1165,23 +1164,12 @@ inline void SelectorCodeGenerator::generateEpilogue()
 #endif
 }
 
-bool SelectorCodeGenerator::generateSelectorChecker()
+void SelectorCodeGenerator::generateSelectorChecker()
 {
     Vector<StackAllocator::StackReference> calleeSavedRegisterStackReferences;
     bool reservedCalleeSavedRegisters = false;
     unsigned availableRegisterCount = m_registerAllocator.availableRegisterCount();
     unsigned minimumRegisterCountForAttributes = minimumRegisterRequirements(m_selectorFragments);
-    if (minimumRegisterCountForAttributes > registerCount) {
-#if !CPU(ARM_THUMB2)
-        // ARM_THUMB2 does not have enough registers to compile complicated selectors.
-        // Compiling should always succeed on non-ARM_THUMB2 CPUs.
-        ASSERT_NOT_REACHED();
-#endif
-#if CSS_SELECTOR_JIT_DEBUGGING
-        dataLogF("Failed to compile because it would have required %u registers\n", minimumRegisterCountForAttributes);
-#endif
-        return false;
-    }
 #if CSS_SELECTOR_JIT_DEBUGGING
     dataLogF("Compiling with minimum required register count %u\n", minimumRegisterCountForAttributes);
 #endif
@@ -1281,7 +1269,6 @@ bool SelectorCodeGenerator::generateSelectorChecker()
             generateEpilogue();
         m_assembler.ret();
     }
-    return true;
 }
 
 static inline Assembler::Jump testIsElementFlagOnNode(Assembler::ResultCondition condition, Assembler& assembler, Assembler::RegisterID nodeAddress)
