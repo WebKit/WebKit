@@ -1,3 +1,18 @@
+2014-06-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Tiles on bottom of screen are not always allocated when necessary
+        https://bugs.webkit.org/show_bug.cgi?id=134272
+
+        Reviewed by Simon Fraser.
+
+        Apply a content inset, then dump visible rects.
+
+        * platform/mac-wk2/tiled-drawing/visible-rect-content-inset-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/visible-rect-content-inset.html: Added.
+        * compositing/visible-rect/iframe-no-layers.html: For WK2, the size of the visibleRect
+        includes the size of the border of the iframe. In order to elliminate platform
+        differences, set this border to 0. 
+
 2014-06-30  Michael Saboff  <msaboff@apple.com>
 
         Reduce memory required for js/typedarray-zero-size.js
