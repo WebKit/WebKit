@@ -197,6 +197,9 @@ list(APPEND WebCore_SOURCES
     platform/text/efl/TextBreakIteratorInternalICUEfl.cpp
 
     platform/text/enchant/TextCheckerEnchant.cpp
+
+    plugins/PluginPackageNone.cpp
+    plugins/PluginViewNone.cpp
 )
 
 if (ENABLE_BATTERY_STATUS OR (EFL_REQUIRED_VERSION VERSION_LESS 1.8))
@@ -206,19 +209,6 @@ if (ENABLE_BATTERY_STATUS OR (EFL_REQUIRED_VERSION VERSION_LESS 1.8))
     list(APPEND WebCore_LIBRARIES ${DBUS_LIBRARIES})
     list(APPEND WebCore_LIBRARIES ${E_DBUS_LIBRARIES})
     list(APPEND WebCore_LIBRARIES ${E_DBUS_EUKIT_LIBRARIES})
-endif ()
-
-if (ENABLE_NETSCAPE_PLUGIN_API)
-    list(APPEND WebCore_SOURCES
-        plugins/PluginPackage.cpp
-        plugins/PluginView.cpp
-        plugins/npapi.cpp
-
-        plugins/efl/PluginPackageEfl.cpp
-        plugins/efl/PluginViewEfl.cpp
-
-        plugins/x11/PluginViewX11.cpp
-    )
 endif ()
 
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS

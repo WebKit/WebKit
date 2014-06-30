@@ -1,3 +1,19 @@
+2014-06-29  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Remove netscape plugin implementation from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=134438
+
+        Reviewed by Gyuyoung Kim.
+
+        Because WebKit1/Efl was dropped, PluginPackageEfl.cpp and PluginViewEfl.cpp are not necessary.
+
+        * PlatformEfl.cmake:
+        * plugins/efl/PluginPackageEfl.cpp: Removed.
+        * plugins/efl/PluginViewEfl.cpp: Removed.
+        * plugins/x11/PluginViewX11.cpp: Removed.
+        This file is to share common code between WebKit1/Efl and WebKit1/GTk.
+        Now, both ports are dropped WebKit1 support and the GTK port already removed the related files at r167016.
+
 2014-06-29  Yoav Weiss  <yoav@yoav.ws>
 
         Add support for HTMLImageElement's sizes attribute
