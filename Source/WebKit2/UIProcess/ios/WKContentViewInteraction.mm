@@ -511,7 +511,7 @@ static inline bool highlightedQuadsAreSmallerThanRect(const Vector<FloatQuad>& q
 
 static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius)
 {
-    return [NSValue valueWithCGSize:CGSizeMake(borderRadius.width() + minimumTapHighlightRadius, borderRadius.height() + minimumTapHighlightRadius)]
+    return [NSValue valueWithCGSize:CGSizeMake(borderRadius.width() + minimumTapHighlightRadius, borderRadius.height() + minimumTapHighlightRadius)];
 }
 
 - (void)_updateTapHighlight

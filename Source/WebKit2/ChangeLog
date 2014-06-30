@@ -1,3 +1,11 @@
+2014-06-30  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add a missing semicolon in WKContentViewInteraction
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (nsSizeForTapHighlightBorderRadius):
+        I messed up this when fixing the patch on landing.
+
 2014-06-30  Anders Carlsson  <andersca@apple.com>
 
         Adopt the legacy session decoding inside WebPage::restoreSession for now
