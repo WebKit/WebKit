@@ -1,3 +1,17 @@
+2014-06-30  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Turn off scrollsToTop on overflow UIScrollViews
+        https://bugs.webkit.org/show_bug.cgi?id=134456
+
+        Reviewed by Tim Horton.
+        
+        Set scrollsToTop to NO on our UIScrollViews created for overflow scrolling, since
+        we don't have a good strategy for when to allow it, and doing so would also require
+        some smarts in the main UIScrollView.
+
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren):
+
 2014-06-30  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION (Okemo): The contextual menu on tap and hold does not cancel the other gestures.

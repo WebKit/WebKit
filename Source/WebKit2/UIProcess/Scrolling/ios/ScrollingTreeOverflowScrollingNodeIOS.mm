@@ -155,6 +155,7 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren(const ScrollingS
             if (!m_scrollViewDelegate)
                 m_scrollViewDelegate = adoptNS([[WKOverflowScrollViewDelegate alloc] initWithScrollingTreeNode:this]);
 
+            scrollView.scrollsToTop = NO;
             scrollView.delegate = m_scrollViewDelegate.get();
         }
 
