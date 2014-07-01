@@ -1,3 +1,16 @@
+2014-06-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] GSFontAddCGFont is deprecated and we use it in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=134133
+
+        Reviewed by Simon Fraser.
+
+        Replace it with CTFontManagerRegisterGraphicsFont
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (activateFontIOS):
+
 2014-06-30  Michael Saboff  <msaboff@apple.com>
 
         Add option to run-jsc-stress-testes to filter out tests that use large heaps

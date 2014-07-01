@@ -99,7 +99,6 @@
 
 #if PLATFORM(IOS)
 #import <CoreGraphics/CGFontDB.h>
-#import <GraphicsServices/GSFont.h>
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIMath.h>
@@ -529,8 +528,10 @@ static void activateFontIOS(const uint8_t* fontData, unsigned long length, std::
         exit(1);
     }
 
-    if (!GSFontAddCGFont(cgFont)) {
-        fprintf(stderr, "Failed to add CGFont to GraphicsServices for the %s font.\n", sectionName.c_str());
+    CFErrorRef error = nullptr;
+    CTFontManagerRegisterGraphicsFont(cgFont, &error);
+    if (error) {
+        fprintf(stderr, "Failed to add CGFont to CoreText for the %s font: %s.\n", sectionName.c_str(), CFStringGetCStringPtr(CFErrorCopyDescription(error), kCFStringEncodingUTF8));
         exit(1);
     }
     CGFontRelease(cgFont);
