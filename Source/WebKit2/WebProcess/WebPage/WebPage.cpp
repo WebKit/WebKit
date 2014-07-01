@@ -4738,7 +4738,7 @@ bool WebPage::synchronousMessagesShouldSpinRunLoop()
 ServicesOverlayController& WebPage::servicesOverlayController()
 {
     if (!m_servicesOverlayController)
-        m_servicesOverlayController = std::make_unique<ServicesOverlayController>(this);
+        m_servicesOverlayController = std::make_unique<ServicesOverlayController>(*this);
 
     return *m_servicesOverlayController;
 }

@@ -1,5 +1,14 @@
 2014-07-01  Brady Eidson  <beidson@apple.com>
 
+        Build fix.
+
+        Forgot to commit locally before pushing.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::servicesOverlayController): s/this/*this/
+
+2014-07-01  Brady Eidson  <beidson@apple.com>
+
         Combine the Telephone and Selection overlay controllers, updating UI behavior.
         https://bugs.webkit.org/show_bug.cgi?id=134461
 
