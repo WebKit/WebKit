@@ -29,7 +29,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
 
 namespace JSC {
@@ -128,8 +127,7 @@ protected:
 private:
     typedef HashMap<BreakpointID, Breakpoint*> BreakpointIDToBreakpointMap;
 
-    typedef Vector<Breakpoint> BreakpointsInLine;
-    typedef HashMap<unsigned, BreakpointsInLine, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> LineToBreakpointsMap;
+    typedef HashMap<unsigned, RefPtr<BreakpointsList>, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> LineToBreakpointsMap;
     typedef HashMap<SourceID, LineToBreakpointsMap, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> SourceIDToBreakpointsMap;
 
     class ClearCodeBlockDebuggerRequestsFunctor;

@@ -1,3 +1,29 @@
+2014-07-01  Mark Lam  <mark.lam@apple.com>
+
+        Debugger's breakpoint list should not be a Vector.
+        <https://webkit.org/b/134514>
+
+        Reviewed by Geoffrey Garen.
+
+        The debugger currently stores breakpoint data as entries in a Vector (see
+        BreakpointsInLine).  It also keeps a fast map look up of breakpoint IDs to
+        the breakpoint data (see m_breakpointIDToBreakpoint).  Because a Vector can
+        compact or reallocate its backing store, this can causes all sorts of havoc.
+        The m_breakpointIDToBreakpoint map assumes that the breakpoint data doesn't
+        move in memory.
+
+        The fix is to replace the BreakpointsInLine Vector with a BreakpointsList
+        doubly linked list.
+
+        * debugger/Breakpoint.h:
+        (JSC::Breakpoint::Breakpoint):
+        (JSC::BreakpointsList::~BreakpointsList):
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::setBreakpoint):
+        (JSC::Debugger::removeBreakpoint):
+        (JSC::Debugger::hasBreakpoint):
+        * debugger/Debugger.h:
+
 2014-06-30  Michael Saboff  <msaboff@apple.com>
 
         Add option to run-jsc-stress-testes to filter out tests that use large heaps
