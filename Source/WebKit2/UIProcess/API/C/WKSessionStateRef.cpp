@@ -31,6 +31,11 @@
 #include "SessionState.h"
 #include "WKAPICast.h"
 
+WKTypeID WKSessionStateGetTypeID()
+{
+    return WebKit::toAPI(API::SessionState::APIType);
+}
+
 WKSessionStateRef WKSessionStateCreateFromData(WKDataRef data)
 {
     WebKit::SessionState sessionState;

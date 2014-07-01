@@ -32,6 +32,8 @@
 extern "C" {
 #endif
 
+WK_EXPORT WKTypeID WKSessionStateGetTypeID();
+
 WK_EXPORT WKSessionStateRef WKSessionStateCreateFromData(WKDataRef data);
 
 #ifdef __cplusplus

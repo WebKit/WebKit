@@ -1,3 +1,14 @@
+2014-07-01  Anders Carlsson  <andersca@apple.com>
+
+        Add WKSessionStateGetTypeID
+        https://bugs.webkit.org/show_bug.cgi?id=134499
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/C/WKSessionStateRef.cpp:
+        (WKSessionStateGetTypeID):
+        * UIProcess/API/C/WKSessionStateRef.h:
+
 2014-07-01  Daniel Bates  <dabates@apple.com>
 
         Remove unnecessary calls to std::move()
