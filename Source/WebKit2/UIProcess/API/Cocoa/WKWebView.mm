@@ -306,6 +306,10 @@ static int32_t deviceOrientation()
     _wkView = [[WKView alloc] initWithFrame:bounds context:context configuration:std::move(webPageConfiguration) webView:self];
     [self addSubview:_wkView.get()];
     _page = WebKit::toImpl([_wkView pageRef]);
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    [_wkView _setAutomaticallyAdjustsContentInsets:YES];
+#endif
 #endif
 
     _page->setBackgroundExtendsBeyondPage(true);
@@ -2240,13 +2244,27 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_setTopContentInset:(CGFloat)contentInset
 {
-    _page->setTopContentInset(contentInset);
+    [_wkView _setTopContentInset:contentInset];
 }
 
 - (CGFloat)_topContentInset
 {
-    return _page->topContentInset();
+    return [_wkView _topContentInset];
 }
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+
+- (void)_setAutomaticallyAdjustsContentInsets:(BOOL)automaticallyAdjustsContentInsets
+{
+    [_wkView _setAutomaticallyAdjustsContentInsets:automaticallyAdjustsContentInsets];
+}
+
+- (BOOL)_automaticallyAdjustsContentInsets
+{
+    return [_wkView _automaticallyAdjustsContentInsets];
+}
+
+#endif
 
 #endif
 

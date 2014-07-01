@@ -39,6 +39,10 @@
 
 - (void)windowDidLoad
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    self.window.styleMask |= NSFullSizeContentViewWindowMask;
+#endif
+
     [super windowDidLoad];
 }
 

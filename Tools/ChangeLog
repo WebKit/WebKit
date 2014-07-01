@@ -1,3 +1,15 @@
+2014-07-01  Sam Weinig  <sam@webkit.org>
+
+        [Cocoa][Mac] WKWebView should automatically set topContentInset when beneath a toolbar
+        <rdar://problem/17523159>
+        https://bugs.webkit.org/show_bug.cgi?id=134496
+
+        Reviewed by Beth Dakin.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController windowDidLoad]):
+        Use the NSFullSizeContentViewWindowMask bit on Yosemite and later to enable toolbar blurring.
+
 2014-07-01  Zan Dobersek  <zdobersek@igalia.com>
 
         [CMake] Add necessary support for building for the Wayland target

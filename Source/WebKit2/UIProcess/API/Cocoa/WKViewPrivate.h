@@ -83,6 +83,10 @@
 @property (readwrite) BOOL allowsBackForwardNavigationGestures;
 @property (nonatomic, setter=_setTopContentInset:) CGFloat _topContentInset;
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+@property (nonatomic, setter=_setAutomaticallyAdjustsContentInsets:) BOOL _automaticallyAdjustsContentInsets;
+#endif
+
 @property (readonly) NSColor *_pageExtendedBackgroundColor;
 @property(copy, nonatomic) NSColor *underlayColor;
 

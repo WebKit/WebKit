@@ -1,3 +1,63 @@
+2014-07-01  Sam Weinig  <sam@webkit.org>
+
+        [Cocoa][Mac] WKWebView should automatically set topContentInset when beneath a toolbar
+        <rdar://problem/17523159>
+        https://bugs.webkit.org/show_bug.cgi?id=134496
+
+        Reviewed by Beth Dakin.
+
+        - Adds _automaticallyAdjustsContentInsets SPI to both WKView and WKWebView.
+        - Defaults _automaticallyAdjustsContentInsets to NO for WKView to keep legacy clients working.
+        - Defaults _automaticallyAdjustsContentInsets to YES for WKWebView.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        Add _automaticallyAdjustsContentInsets SPI.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        Default _automaticallyAdjustsContentInsets to YES for WKWebView.
+
+        (-[WKWebView _setTopContentInset:]):
+        (-[WKWebView _topContentInset]):
+        Change to forward to the WKView, since we now do coalescing and caching there.
+
+        (-[WKWebView _setAutomaticallyAdjustsContentInsets:]):
+        (-[WKWebView _automaticallyAdjustsContentInsets]):
+        Forward to the WKView.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        Add _automaticallyAdjustsContentInsets SPI.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView renewGState]):
+        Ensure the contentInset is updated when the view changes, as its relative location to the toolbar may have changed.
+
+        (-[WKView addWindowObserversForWindow:]):
+        (-[WKView removeWindowObservers]):
+        (-[WKView observeValueForKeyPath:ofObject:change:context:]):
+        Add observers for the contentLayoutRect and titlebarAppearsTransparent properties on the window. If either of them
+        change, we need to recalculate the content inset.
+
+        (-[WKView _updateContentInsetsIfAutomatic]):
+        If _automaticallyAdjustsContentInsets is YES, follow the same rules as AppKit in setting the top content inset. Like
+        AppKit this is only done when:
+            - The window's style mask has the NSFullSizeContentViewWindowMask bit.
+            - The window does not have titlebarAppearsTransparent set.
+            - And we are not in an enclosing NSScrollView.
+
+        (-[WKView _setTopContentInset:]):
+        (-[WKView _topContentInset]):
+        Coalesce setting the topContentInset to avoid a visual lag when resizing the window that was caused by us sending
+        multiple topContentInsets to the WebContentProcess per runloop cycle. The reason for the lag was that at the time
+        we observe the contentLayoutRect changing, our view may not yet be in its final position yet, so the inset will be
+        temporarily wrong. When the view is finally positioned correctly, we will get a renewGState, at which point we will
+        again calculate the inset, which now will be correct. Since these both happen in the same runloop iteration, we can
+        just defer sending the inset to the WebContentProcess.
+
+        (-[WKView _setAutomaticallyAdjustsContentInsets:]):
+        (-[WKView _automaticallyAdjustsContentInsets]):
+        Add the new SPI.
+
 2014-07-01  Anders Carlsson  <andersca@apple.com>
 
         Add a function for restoring page state given a SessionState object
