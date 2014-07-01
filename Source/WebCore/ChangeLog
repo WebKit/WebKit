@@ -1,3 +1,22 @@
+2014-07-01  Pratik Solanki  <psolanki@apple.com>
+
+        Create NSURLRequest lazily when USE(CFNETWORK) is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=134441
+
+        Reviewed by Andreas Kling.
+
+        No new tests. Should be covered by existing tests.
+
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::encodingRequiresPlatformData):
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformHTTPBody):
+        (WebCore::ResourceRequest::setStorageSession):
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::ResourceRequest::nsURLRequest):
+
 2014-07-01  Brady Eidson  <beidson@apple.com>
 
         Combine the Telephone and Selection overlay controllers, updating UI behavior.
