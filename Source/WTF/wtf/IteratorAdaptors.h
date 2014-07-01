@@ -77,7 +77,7 @@ inline FilterIterator<Predicate, Iterator> makeFilterIterator(Predicate&& pred, 
 template<typename Transform, typename Iterator>
 class TransformIterator {
 public:
-    TransformIterator(const Transform& transform, const Iterator& iter)
+    TransformIterator(Transform&& transform, Iterator&& iter)
         : m_transform(std::move(transform))
         , m_iter(std::move(iter))
     {
@@ -105,7 +105,7 @@ private:
 template<typename Transform, typename Iterator>
 inline TransformIterator<Transform, Iterator> makeTransformIterator(Transform&& transform, Iterator&& iter)
 {
-    return TransformIterator<Transform, Iterator>(std::forward<Transform>(transform), std::forward<Iterator>(iter));
+    return TransformIterator<Transform, Iterator>(std::move(transform), std::move(iter));
 }
 
 } // namespace WTF

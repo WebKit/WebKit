@@ -1,3 +1,18 @@
+2014-06-30  Daniel Bates  <dabates@apple.com>
+
+        Make TransformIterator::TransformIterator() take rvalue references
+        https://bugs.webkit.org/show_bug.cgi?id=134468
+
+        Reviewed by Darin Adler.
+
+        It's unnecessary to support TransformIterator::TransformIterator() taking const lvalue references
+        as we only call it with rvalues. As a side benefit, we can use move semantics to initialize the
+        members of TransformIterator.
+
+        * wtf/IteratorAdaptors.h:
+        (WTF::TransformIterator::TransformIterator): Make constructor take arguments as rvalue references.
+        (WTF::makeTransformIterator): Substitute std::move() for std::forward().
+
 2014-06-30  Alex Christensen  <achristensen@webkit.org>
 
         Reduce dynamic memory allocation in css jit.
