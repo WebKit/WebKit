@@ -235,8 +235,8 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action
 
     m_policyDownloadID = downloadID;
     if (navigationID) {
-        WebDocumentLoader& documentLoader = static_cast<WebDocumentLoader&>(*m_coreFrame->loader().policyDocumentLoader());
-        documentLoader.setNavigationID(navigationID);
+        if (WebDocumentLoader* documentLoader = static_cast<WebDocumentLoader*>(m_coreFrame->loader().policyDocumentLoader()))
+            documentLoader->setNavigationID(navigationID);
     }
 
     function(action);

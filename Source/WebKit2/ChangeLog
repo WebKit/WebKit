@@ -1,5 +1,15 @@
 2014-07-01  Dan Bernstein  <mitz@apple.com>
 
+        Crash in WebDocumentLoader::setNavigationID
+        https://bugs.webkit.org/show_bug.cgi?id=134520
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::didReceivePolicyDecision): Null-check the policy document loader.
+
+2014-07-01  Dan Bernstein  <mitz@apple.com>
+
         Build fix.
 
         * UIProcess/API/APILoaderClient.h:
