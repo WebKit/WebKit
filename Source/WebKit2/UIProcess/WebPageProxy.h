@@ -553,6 +553,7 @@ public:
     typedef bool (*WebPageProxySessionStateFilterCallback)(WKPageRef, WKStringRef type, WKTypeRef object, void* context);
     PassRefPtr<API::Data> sessionStateData(WebPageProxySessionStateFilterCallback, void* context) const;
     void restoreFromSessionStateData(API::Data*);
+    void restoreFromState(SessionState);
 
     bool supportsTextZoom() const;
     double textZoomFactor() const { return m_textZoomFactor; }

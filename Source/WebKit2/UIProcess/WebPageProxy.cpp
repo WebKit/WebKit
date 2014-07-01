@@ -1846,6 +1846,24 @@ void WebPageProxy::restoreFromSessionStateData(API::Data*)
 }
 #endif
 
+void WebPageProxy::restoreFromState(SessionState sessionState)
+{
+    m_backForwardList->restoreFromState(std::move(sessionState.backForwardListState));
+
+    LegacySessionState state(m_backForwardList->entries(), m_backForwardList->currentIndex());
+    process().send(Messages::WebPage::RestoreSession(state), m_pageID);
+
+    // FIXME: Navigating should be separate from state restoration.
+
+    if (sessionState.provisionalURL) {
+        loadRequest(sessionState.provisionalURL);
+        return;
+    }
+
+    if (WebBackForwardListItem* item = m_backForwardList->currentItem())
+        goToBackForwardItem(item);
+}
+
 bool WebPageProxy::supportsTextZoom() const
 {
     // FIXME (118840): This should also return false for standalone media and plug-in documents.

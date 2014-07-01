@@ -1,5 +1,16 @@
 2014-06-30  Anders Carlsson  <andersca@apple.com>
 
+        Add WebPageProxy::restoreFromState
+        https://bugs.webkit.org/show_bug.cgi?id=134480
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::restoreFromState):
+        * UIProcess/WebPageProxy.h:
+
+2014-06-30  Anders Carlsson  <andersca@apple.com>
+
         Add a function to restore a WebBackForwardList object from a BackForwardListState object
         https://bugs.webkit.org/show_bug.cgi?id=134478
 
