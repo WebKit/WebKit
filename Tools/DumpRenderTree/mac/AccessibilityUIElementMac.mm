@@ -1479,8 +1479,13 @@ bool AccessibilityUIElement::isCollapsed() const
 
 bool AccessibilityUIElement::isIndeterminate() const
 {
-    // FIXME: implement
-    return false;
+    BOOL result = NO;
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id value = [m_element accessibilityAttributeValue:NSAccessibilityValueAttribute];
+    if ([value isKindOfClass:[NSNumber class]])
+        result = [value intValue] == 2;
+    END_AX_OBJC_EXCEPTIONS
+    return result;
 }
 
 bool AccessibilityUIElement::isIgnored() const

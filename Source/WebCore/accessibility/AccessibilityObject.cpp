@@ -2085,6 +2085,9 @@ AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
         return ButtonStateMixed;
     }
     
+    if (equalIgnoringCase(getAttribute(indeterminateAttr), "true"))
+        return ButtonStateMixed;
+    
     return ButtonStateOff;
 }
 

@@ -7,7 +7,7 @@ Role: AXRole: AXRadioButton
 Mixed: false
 
 
-Role: AXRole: AXRadioMenuItem
+Role: AXRole: AXMenuItem
 Mixed: false
 
 
@@ -15,7 +15,7 @@ Role: AXRole: AXCheckBox
 Mixed: true
 
 
-Role: AXRole: AXCheckMenuItem
+Role: AXRole: AXMenuItem
 Mixed: true
 
 

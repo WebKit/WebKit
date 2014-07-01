@@ -1,3 +1,17 @@
+2014-07-01  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: HTML indeterminate IDL attribute not mapped to checkbox value=2
+        https://bugs.webkit.org/show_bug.cgi?id=134492
+
+        Reviewed by Andreas Kling.
+
+        Support the indeterminate attribute in AX code.
+
+        Test: Update existing test: accessibility/aria-checked-mixed-value
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::checkboxOrRadioValue):
+
 2014-07-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Typing an automatic text replacement phrase after a br in contenteditable is not rendered as expected

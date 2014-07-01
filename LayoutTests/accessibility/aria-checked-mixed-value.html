@@ -11,6 +11,8 @@
 <div id="element2" role="menuitemradio" aria-checked="mixed"></div> <!-- treat as false for menuitemradio roles -->
 <div id="element3" role="checkbox" aria-checked="mixed"></div>
 <div id="element4" role="menuitemcheckbox" aria-checked="mixed"></div>
+<div id="element5" role="checkbox" indeterminate="true"></div>
+<div id="element6" role="checkbox" indeterminate="false"></div>
 
 </div>
 
@@ -22,7 +24,7 @@
     description("Tests whether mixed values are reported properly.");
 
     if (window.accessibilityController) {
-          for (var i = 1; i < 5; i++) {
+          for (var i = 1; i < 7; i++) {
               var element = accessibilityController.accessibleElementById("element" + i);
               debug("Role: " + element.role);
               debug("Mixed: " + element.isIndeterminate);
