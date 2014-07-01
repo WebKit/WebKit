@@ -66,6 +66,21 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_XHR_TIMEOUT ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_NETWORK_PROCESS ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(WTF_USE_TILED_BACKING_STORE OFF)
 
+set(ENABLE_X11_TARGET ON CACHE BOOL "Whether to enable support for the X11 windowing target.")
+set(ENABLE_WAYLAND_TARGET OFF CACHE BOOL "Whether to enable support for the Wayland windowing target.")
+
+if (ENABLE_X11_TARGET)
+    add_definitions(-DWTF_PLATFORM_X11=1)
+    add_definitions(-DMOZ_X11=1)
+    if (WTF_OS_UNIX)
+        add_definitions(-DXP_UNIX)
+    endif ()
+endif ()
+
+if (ENABLE_WAYLAND_TARGET)
+    add_definitions(-DWTF_PLATFORM_WAYLAND=1)
+endif ()
+
 # FIXME: Perhaps we need a more generic way of defining dependencies between features.
 # VIDEO_TRACK depends on VIDEO.
 if (NOT ENABLE_VIDEO AND ENABLE_VIDEO_TRACK)
@@ -142,10 +157,6 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     endif ()
 endif ()
 
-# FIXME: These need to be configurable.
-add_definitions(-DWTF_PLATFORM_X11=1)
-add_definitions(-DMOZ_X11)
-
 find_package(Cairo 1.10.2 REQUIRED)
 find_package(Fontconfig 2.8.0 REQUIRED)
 find_package(Freetype2 2.4.2 REQUIRED)
@@ -166,8 +177,14 @@ find_package(WebP REQUIRED)
 find_package(ATSPI 2.5.3)
 find_package(GObjectIntrospection)
 
-find_package(GTK3 3.6.0 REQUIRED)
-find_package(GDK3 3.6.0 REQUIRED)
+if (ENABLE_WAYLAND_TARGET)
+    set(GTK3_REQUIRED_VERSION 3.12.0)
+else ()
+    set(GTK3_REQUIRED_VERSION 3.6.0)
+endif ()
+
+find_package(GTK3 ${GTK3_REQUIRED_VERSION} REQUIRED)
+find_package(GDK3 ${GTK3_REQUIRED_VERSION} REQUIRED)
 set(GTK_LIBRARIES ${GTK3_LIBRARIES})
 set(GTK_INCLUDE_DIRS ${GTK3_INCLUDE_DIRS})
 set(GDK_LIBRARIES ${GDK3_LIBRARIES})
@@ -205,11 +222,17 @@ find_package(OpenGL)
 # CMakePushCheckState can be used. We need to have OPENGL_INCLUDE_DIR as part
 # of the directories check_include_files() looks for in case OpenGL is
 # installed into a non-standard location.
-set(REQUIRED_INCLUDES_OLD ${CMAKE_REQUIRED_INCLUDES})
-set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${OPENGL_INCLUDE_DIR})
-# We don't use find_package for GLX because it is part of -lGL, unlike EGL.
-check_include_files("GL/glx.h" GLX_FOUND)
-set(CMAKE_REQUIRED_INCLUDES ${REQUIRED_INCLUDES_OLD})
+if (ENABLE_X11_TARGET)
+    set(REQUIRED_INCLUDES_OLD ${CMAKE_REQUIRED_INCLUDES})
+    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${OPENGL_INCLUDE_DIR})
+    # We don't use find_package for GLX because it is part of -lGL, unlike EGL.
+    check_include_files("GL/glx.h" GLX_FOUND)
+    set(CMAKE_REQUIRED_INCLUDES ${REQUIRED_INCLUDES_OLD})
+
+    if (GLX_FOUND)
+        set(WTF_USE_GLX 1)
+    endif ()
+endif ()
 
 find_package(EGL)
 if (EGL_FOUND)

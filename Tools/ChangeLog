@@ -1,3 +1,13 @@
+2014-07-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Add necessary support for building for the Wayland target
+        https://bugs.webkit.org/show_bug.cgi?id=134160
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt: Only build the TestNetscapePlugIn target in case
+        the X11 windowing target is enabled.
+
 2014-07-01  Chris Fleizach  <cfleizach@apple.com>
 
         AX: HTML indeterminate IDL attribute not mapped to checkbox value=2

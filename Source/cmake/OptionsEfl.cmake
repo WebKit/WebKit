@@ -167,6 +167,11 @@ if (ENABLE_NETSCAPE_PLUGIN_API)
     set(ENABLE_PLUGIN_PROCESS 1)
 endif ()
 
+if (WTF_OS_UNIX)
+    set(ENABLE_X11_TARGET ON)
+    add_definitions(-DXP_UNIX)
+endif (WTF_OS_UNIX)
+
 if (ENABLE_BATTERY_STATUS OR (EFL_REQUIRED_VERSION VERSION_LESS 1.8))
     find_package(DBus REQUIRED)
     find_package(E_DBus 1.7 COMPONENTS EUKit)

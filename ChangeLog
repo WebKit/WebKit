@@ -1,3 +1,24 @@
+2014-07-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Add necessary support for building for the Wayland target
+        https://bugs.webkit.org/show_bug.cgi?id=134160
+
+        Reviewed by Darin Adler.
+
+        * Source/cmake/FindGTK3.cmake: Check for the gtk+-x11-3.0 package if the X11 target
+        is enabled, and that its version matches the version of the generic package. Same
+        for the gtk+-wayland-3.0 package and the Wayland target.
+        * Source/cmake/OptionsCommon.cmake: Don't add the -DXP_UNIX definition here.
+        * Source/cmake/OptionsEfl.cmake: Add -DXP_UNIX here for the EFL port, under the same
+        condition as in OptionsCommon.cmake. ENABLE_X11_TARGET is enabled by default for EFL
+        so they keep building the TestNetscapePlugin target.
+        * Source/cmake/OptionsGTK.cmake: Enable the X11 target and disable the Wayland target
+        by default. Group all the X11-specific macro definitions (WTF_PLATFORM_X11, MOZ_X11,
+        XP_UNIX) and only add them if the X11 target is enabled. Similar goes for the Wayland
+        target and WTF_PLATFORM_WAYLAND. The Wayland target requires GTK+ 3.12.0, so that's
+        the minimum required version as soon as that target is enabled. Only search for GLX
+        if the X11 target is enabled.
+
 2014-06-29  Yoav Weiss  <yoav@yoav.ws>
 
         Add support for HTMLImageElement's sizes attribute
