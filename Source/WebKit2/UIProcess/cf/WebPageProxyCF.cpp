@@ -46,13 +46,13 @@ static CFStringRef provisionalURLKey = CFSTR("ProvisionalURL");
 
 static const UInt32 CurrentSessionStateDataVersion = 2;
 
-PassRefPtr<API::Data> WebPageProxy::sessionStateData(WebPageProxySessionStateFilterCallback filter, void* context) const
+PassRefPtr<API::Data> WebPageProxy::sessionStateData(std::function<bool (WebBackForwardListItem&)> filter) const
 {
     const void* keys[2];
     const void* values[2];
     CFIndex numValues = 0;
 
-    RetainPtr<CFDictionaryRef> sessionHistoryDictionary = adoptCF(m_backForwardList->createCFDictionaryRepresentation(filter, context));
+    RetainPtr<CFDictionaryRef> sessionHistoryDictionary = adoptCF(m_backForwardList->createCFDictionaryRepresentation(std::move(filter)));
     if (sessionHistoryDictionary) {
         keys[numValues] = sessionHistoryKey;
         values[numValues] = sessionHistoryDictionary.get();

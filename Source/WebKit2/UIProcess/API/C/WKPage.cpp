@@ -351,7 +351,15 @@ WKStringRef WKPageGetSessionBackForwardListItemValueType()
 
 WKDataRef WKPageCopySessionState(WKPageRef pageRef, void *context, WKPageSessionStateFilterCallback filter)
 {
-    return toAPI(toImpl(pageRef)->sessionStateData(filter, context).leakRef());
+    return toAPI(toImpl(pageRef)->sessionStateData([pageRef, context, filter](WebBackForwardListItem& item) {
+        if (!filter(pageRef, WKPageGetSessionBackForwardListItemValueType(), toAPI(&item), context))
+            return false;
+
+        if (!filter(pageRef, WKPageGetSessionHistoryURLValueType(), toURLRef(item.originalURL().impl()), context))
+            return false;
+
+        return true;
+    }).leakRef());
 }
 
 void WKPageRestoreFromSessionState(WKPageRef pageRef, WKDataRef sessionStateData)

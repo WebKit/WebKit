@@ -1,3 +1,23 @@
+2014-06-30  Anders Carlsson  <andersca@apple.com>
+
+        Use an std::function for filtering session state data
+        https://bugs.webkit.org/show_bug.cgi?id=134481
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageCopySessionState):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _sessionState]):
+        * UIProcess/WebBackForwardList.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::sessionStateData):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::WebBackForwardList::createCFDictionaryRepresentation):
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::WebPageProxy::sessionStateData):
+
 2014-07-01  Rohit Kumar  <kumar.rohit@samsung.com>
 
         Clean up the WebKit build from unused parameter warning in Webkit2/UIProcess module

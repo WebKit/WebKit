@@ -1834,7 +1834,7 @@ void WebPageProxy::terminateProcess()
 }
 
 #if !USE(CF)
-PassRefPtr<API::Data> WebPageProxy::sessionStateData(WebPageProxySessionStateFilterCallback, void* /*context*/) const
+PassRefPtr<API::Data> WebPageProxy::sessionStateData(std::function<bool (WebBackForwardListItem&)>) const
 {
     // FIXME: Return session state data for saving Page state.
     return 0;

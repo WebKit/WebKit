@@ -550,8 +550,7 @@ public:
 
     void terminateProcess();
 
-    typedef bool (*WebPageProxySessionStateFilterCallback)(WKPageRef, WKStringRef type, WKTypeRef object, void* context);
-    PassRefPtr<API::Data> sessionStateData(WebPageProxySessionStateFilterCallback, void* context) const;
+    PassRefPtr<API::Data> sessionStateData(std::function<bool (WebBackForwardListItem&)>) const;
     void restoreFromSessionStateData(API::Data*);
     void restoreFromState(SessionState);
 

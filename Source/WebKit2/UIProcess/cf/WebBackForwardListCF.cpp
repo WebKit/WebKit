@@ -63,7 +63,7 @@ static CFDictionaryRef createEmptySessionHistoryDictionary()
     return CFDictionaryCreate(0, keys, values, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 }
 
-CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProxy::WebPageProxySessionStateFilterCallback filter, void* context) const
+CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(std::function<bool (WebBackForwardListItem&)> filter) const
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
@@ -86,13 +86,10 @@ CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProx
             return 0;
         }
 
-        if (filter) {
-            if (!filter(toAPI(m_page), WKPageGetSessionBackForwardListItemValueType(), toAPI(m_entries[i].get()), context)
-                || !filter(toAPI(m_page), WKPageGetSessionHistoryURLValueType(), toURLRef(m_entries[i]->originalURL().impl()), context)) {
-                if (i <= m_currentIndex)
-                    currentIndex--;
-                continue;
-            }
+        if (filter && !filter(*m_entries[i])) {
+            if (i <= m_currentIndex)
+                currentIndex--;
+            continue;
         }
         
         RetainPtr<CFStringRef> url = m_entries[i]->url().createCFString();

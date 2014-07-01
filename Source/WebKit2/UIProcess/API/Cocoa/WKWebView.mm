@@ -1560,7 +1560,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (NSData *)_sessionState
 {
-    return [wrapper(*_page->sessionStateData(nullptr, nullptr).leakRef()) autorelease];
+    return [wrapper(*_page->sessionStateData(nullptr).leakRef()) autorelease];
 }
 
 static void releaseNSData(unsigned char*, const void* data)
