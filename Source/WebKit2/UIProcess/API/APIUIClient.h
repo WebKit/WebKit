@@ -115,7 +115,7 @@ public:
         completionHandler(currentQuota);
     }
 
-    virtual void reachedApplicationCacheOriginQuota(WebKit::WebPageProxy*, const WebCore::SecurityOrigin&, uint64_t currentQuota, uint64_t totalBytesNeeded, std::function<void (unsigned long long)> completionHandler)
+    virtual void reachedApplicationCacheOriginQuota(WebKit::WebPageProxy*, const WebCore::SecurityOrigin&, uint64_t currentQuota, uint64_t, std::function<void (unsigned long long)> completionHandler)
     {
         completionHandler(currentQuota);
     }
