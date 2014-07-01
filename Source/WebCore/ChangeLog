@@ -1,3 +1,16 @@
+2014-07-01  Brady Eidson  <beidson@apple.com>
+
+        Combine the Telephone and Selection overlay controllers, updating UI behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=134461
+
+        Reviewed by Tim Horton.
+
+        * WebCore.exp.in:
+
+        * dom/Range.cpp:
+        (WebCore::Range::contains): Returns true if the Range completely contains the passed-in Range.
+        * dom/Range.h:
+
 2014-07-01  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(160908): vube.com video won't play after going into and out of fullscreen

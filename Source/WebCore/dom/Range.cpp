@@ -1967,6 +1967,19 @@ void Range::formatForDebugger(char* buffer, unsigned length) const
 }
 #endif
 
+bool Range::contains(const Range& other) const
+{
+    if (commonAncestorContainer(ASSERT_NO_EXCEPTION)->ownerDocument() != other.commonAncestorContainer(ASSERT_NO_EXCEPTION)->ownerDocument())
+        return false;
+
+    short startToStart = compareBoundaryPoints(Range::START_TO_START, &other, ASSERT_NO_EXCEPTION);
+    if (startToStart > 0)
+        return false;
+
+    short endToEnd = compareBoundaryPoints(Range::END_TO_END, &other, ASSERT_NO_EXCEPTION);
+    return endToEnd >= 0;
+}
+
 bool areRangesEqual(const Range* a, const Range* b)
 {
     if (a == b)

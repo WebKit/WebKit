@@ -51,12 +51,11 @@
 #include "PluginProxy.h"
 #include "PluginView.h"
 #include "PrintInfo.h"
-#include "SelectionOverlayController.h"
+#include "ServicesOverlayController.h"
 #include "SessionState.h"
 #include "SessionStateConversion.h"
 #include "SessionTracker.h"
 #include "ShareableBitmap.h"
-#include "TelephoneNumberOverlayController.h"
 #include "VisitedLinkTableController.h"
 #include "WKBundleAPICast.h"
 #include "WKRetainPtr.h"
@@ -4735,23 +4734,13 @@ bool WebPage::synchronousMessagesShouldSpinRunLoop()
     return false;
 }
     
-#if ENABLE(TELEPHONE_NUMBER_DETECTION)
-TelephoneNumberOverlayController& WebPage::telephoneNumberOverlayController()
+#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
+ServicesOverlayController& WebPage::servicesOverlayController()
 {
-    if (!m_telephoneNumberOverlayController)
-        m_telephoneNumberOverlayController = TelephoneNumberOverlayController::create(this);
+    if (!m_servicesOverlayController)
+        m_servicesOverlayController = std::make_unique<ServicesOverlayController>(this);
 
-    return *m_telephoneNumberOverlayController;
-}
-#endif
-
-#if ENABLE(SERVICE_CONTROLS)
-SelectionOverlayController& WebPage::selectionOverlayController()
-{
-    if (!m_selectionOverlayController)
-        m_selectionOverlayController = SelectionOverlayController::create(this);
-
-    return *m_selectionOverlayController;
+    return *m_servicesOverlayController;
 }
 #endif
 

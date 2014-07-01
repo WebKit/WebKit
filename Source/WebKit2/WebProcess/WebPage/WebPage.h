@@ -140,12 +140,12 @@ namespace WebKit {
 
 class DrawingArea;
 class InjectedBundleBackForwardList;
+class LegacySessionState;
 class NotificationPermissionRequestManager;
 class PageBanner;
 class PageOverlay;
 class PluginView;
-class LegacySessionState;
-class SelectionOverlayController;
+class ServicesOverlayController;
 class VisibleContentRectUpdateInfo;
 class WebColorChooser;
 class WebContextMenu;
@@ -181,10 +181,6 @@ class RemoteLayerTreeTransaction;
 
 #if ENABLE(TOUCH_EVENTS)
 class WebTouchEvent;
-#endif
-
-#if ENABLE(TELEPHONE_NUMBER_DETECTION)
-class TelephoneNumberOverlayController;
 #endif
 
 class WebPage : public API::ObjectImpl<API::Object::Type::BundlePage>, public IPC::MessageReceiver, public IPC::MessageSender {
@@ -827,13 +823,10 @@ public:
     // Some platforms require accessibility-enabled processes to spin the run loop so that the WebProcess doesn't hang.
     // While this is not ideal, it does not have to be applied to every platform at the moment.
     static bool synchronousMessagesShouldSpinRunLoop();
-    
-#if ENABLE(TELEPHONE_NUMBER_DETECTION)
-    TelephoneNumberOverlayController& telephoneNumberOverlayController();
+
+#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION) 
+    ServicesOverlayController& servicesOverlayController();
     void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&);
-#endif
-#if ENABLE(SERVICE_CONTROLS)
-    SelectionOverlayController& selectionOverlayController();
     void handleSelectionServiceClick(WebCore::FrameSelection&, const WebCore::IntPoint&);
     bool serviceControlsEnabled() const { return m_serviceControlsEnabled; }
 #endif
@@ -1271,11 +1264,8 @@ private:
     WebCore::WebGLLoadPolicy m_systemWebGLPolicy;
 #endif
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION)
-    RefPtr<TelephoneNumberOverlayController> m_telephoneNumberOverlayController;
-#endif
-#if ENABLE(SERVICE_CONTROLS)
-    RefPtr<SelectionOverlayController> m_selectionOverlayController;
+#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
+    std::unique_ptr<ServicesOverlayController> m_servicesOverlayController;
 #endif
 
     PageOverlayController m_pageOverlayController;

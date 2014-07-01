@@ -23,63 +23,58 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SelectionOverlayController_h
+#ifndef ServicesOverlayController_h
 
-#if ENABLE(SERVICE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
 
 #include "PageOverlay.h"
-#include "WebPage.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RunLoop.h>
 
 typedef void* DDHighlightRef;
 
 namespace WebCore {
 class LayoutRect;
+class Range;
 }
 
 namespace WebKit {
-    
+
 class WebPage;
 
-class SelectionOverlayController : public RefCounted<SelectionOverlayController>, private PageOverlay::Client {
+typedef void* DDHighlightRef;
+
+class ServicesOverlayController : private PageOverlay::Client {
 public:
+    ServicesOverlayController(WebPage&);
+    ~ServicesOverlayController();
 
-    static PassRefPtr<SelectionOverlayController> create(WebPage* webPage)
-    {
-        return adoptRef(new SelectionOverlayController(webPage));
-    }
-
+    void selectedTelephoneNumberRangesChanged(const Vector<RefPtr<WebCore::Range>>&);
     void selectionRectsDidChange(const Vector<WebCore::LayoutRect>&);
-    void handleClick(const WebCore::IntPoint&);
-    
+
 private:
-    SelectionOverlayController(WebPage*);
-
     void createOverlayIfNeeded();
-    void destroyOverlay();
+    void handleClick(const WebCore::IntPoint&);
+    void clearHighlightState();
     
-    void handleSelectionOverlayClick(const WebCore::IntPoint&);
-
     virtual void pageOverlayDestroyed(PageOverlay*) override;
     virtual void willMoveToWebPage(PageOverlay*, WebPage*) override;
     virtual void didMoveToWebPage(PageOverlay*, WebPage*) override;
     virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
     virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&) override;
 
-    void mouseHoverStateChanged();
-    void hoverTimerFired();
+    void drawTelephoneNumberHighlight(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
+    void drawSelectionHighlight(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
+    void drawCurrentHighlight(WebCore::GraphicsContext&);
 
-    RefPtr<WebPage> m_webPage;
-    PageOverlay* m_selectionOverlay;
+    WebPage* m_webPage;
+    PageOverlay* m_servicesOverlay;
+    
     Vector<WebCore::LayoutRect> m_currentSelectionRects;
+    Vector<RefPtr<WebCore::Range>> m_currentTelephoneNumberRanges;
 
     WebCore::IntPoint m_mousePosition;
     bool m_mouseIsDownOnButton;
     bool m_mouseIsOverHighlight;
-    bool m_visible;
-
-    RunLoop::Timer<SelectionOverlayController> m_hoverTimer;
+    bool m_drawingTelephoneNumberHighlight;
 
     RetainPtr<DDHighlightRef> m_currentHighlight;
     bool m_currentHighlightIsDirty;
@@ -87,5 +82,5 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(SERVICE_CONTROLS)
-#endif // SelectionOverlayController_h
+#endif // ENABLE(SERVICE_CONTROLS) && ENABLE(TELEPHONE_NUMBER_DETECTION)
+#endif // ServicesOverlayController_h

@@ -1,3 +1,57 @@
+2014-07-01  Brady Eidson  <beidson@apple.com>
+
+        Combine the Telephone and Selection overlay controllers, updating UI behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=134461
+
+        Reviewed by Tim Horton.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::selectedTelephoneNumberRangesChanged):
+        (WebKit::WebEditorClient::selectionRectsDidChange):
+
+        Remove the separate Selection overlay controller:
+        * WebProcess/WebPage/SelectionOverlayController.cpp: Removed.
+        * WebProcess/WebPage/ServicesOverlayController.h: Renamed from Source/WebKit2/WebProcess/WebPage/SelectionOverlayController.h.
+        (WebKit::ServicesOverlayController::create):
+        * WebProcess/WebPage/mac/SelectionOverlayControllerMac.mm: Removed.
+
+        Remove the separate TelephoneNumber overlay controller:
+        * WebProcess/WebPage/TelephoneNumberOverlayController.cpp: Removed.
+        * WebProcess/WebPage/TelephoneNumberOverlayController.h: Removed.
+        * WebProcess/WebPage/mac/TelephoneNumberOverlayControllerMac.mm: Removed.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::servicesOverlayController):
+        (WebKit::WebPage::telephoneNumberOverlayController): Deleted.
+        (WebKit::WebPage::selectionOverlayController): Deleted.
+        (WebKit::WebPage::didChangeScrollOffsetForFrame): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::serviceControlsEnabled): Deleted.
+
+        ServicesOverlayController is a combination of the old TelephoneNumber and Selection overlay controllers.
+        A lot of code duplication is resolved, and things are generally easier to follow.
+        It enforces displaying a telephone number highlight if precisely one telephone number is selected, or
+        the selection highlight if the selection contains more than a single phone number
+        * WebProcess/WebPage/mac/ServicesOverlayController.mm: Added.
+        (WebKit::textQuadsToBoundingRectForRange):
+        (WebKit::ServicesOverlayController::ServicesOverlayController):
+        (WebKit::ServicesOverlayController::destroyOverlay):
+        (WebKit::ServicesOverlayController::pageOverlayDestroyed):
+        (WebKit::ServicesOverlayController::willMoveToWebPage):
+        (WebKit::ServicesOverlayController::didMoveToWebPage):
+        (WebKit::ServicesOverlayController::createOverlayIfNeeded):
+        (WebKit::ServicesOverlayController::selectionRectsDidChange):
+        (WebKit::ServicesOverlayController::selectedTelephoneNumberRangesChanged):
+        (WebKit::ServicesOverlayController::clearHighlightState):
+        (WebKit::ServicesOverlayController::drawRect):
+        (WebKit::ServicesOverlayController::drawSelectionHighlight):
+        (WebKit::ServicesOverlayController::drawTelephoneNumberHighlight):
+        (WebKit::ServicesOverlayController::drawCurrentHighlight):
+        (WebKit::ServicesOverlayController::mouseEvent):
+        (WebKit::ServicesOverlayController::handleClick):
+
 2014-07-01  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] IPC messages' arguments() method returns const std::tuple<> copies
