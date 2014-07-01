@@ -1,3 +1,10 @@
+2014-07-01  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::didDestroyNavigation):
+
 2014-07-01  Anders Carlsson  <andersca@apple.com>
 
         Use the new legacy session state coding in WKPageCopySessionState

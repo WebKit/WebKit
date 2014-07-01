@@ -65,7 +65,7 @@ public:
     virtual void didSameDocumentNavigationForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::SameDocumentNavigationType, API::Object*) { }
     virtual void didReceiveTitleForFrame(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, API::Object*) { }
     virtual void didFirstLayoutForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }
-    virtual void didDestroyNavigation(WebKit::WebPageProxy*, uint64_t navigationID) { }
+    virtual void didDestroyNavigation(WebKit::WebPageProxy*, uint64_t) { }
 
     // FIXME: We should consider removing didFirstVisuallyNonEmptyLayoutForFrame since it is replaced by didLayout.
     virtual void didFirstVisuallyNonEmptyLayoutForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }
