@@ -1,3 +1,10 @@
+2014-07-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. EFL and GTK build fix since r170654.
+
+        * UIProcess/LegacySessionStateCodingNone.cpp: Add a dummy encodeLegacySessionState(const SessionState&).
+        (WebKit::encodeLegacySessionState):
+
 2014-07-01  Dan Bernstein  <mitz@apple.com>
 
         Crash in WebDocumentLoader::setNavigationID
