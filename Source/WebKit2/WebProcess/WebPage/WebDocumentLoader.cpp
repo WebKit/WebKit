@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebDocumentLoader.h"
 
+#include "WebFrame.h"
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -34,6 +36,16 @@ WebDocumentLoader::WebDocumentLoader(const ResourceRequest& request, const Subst
     : DocumentLoader(request, substituteData)
     , m_navigationID(0)
 {
+}
+
+void WebDocumentLoader::detachFromFrame()
+{
+    if (m_navigationID)
+        WebFrame::fromCoreFrame(*frame())->documentLoaderDetached(m_navigationID);
+
+    m_navigationID = 0;
+
+    DocumentLoader::detachFromFrame();
 }
 
 void WebDocumentLoader::setNavigationID(uint64_t navigationID)

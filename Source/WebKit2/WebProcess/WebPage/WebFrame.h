@@ -77,7 +77,7 @@ public:
 
     uint64_t setUpPolicyListener(WebCore::FramePolicyFunction);
     void invalidatePolicyListener();
-    void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyAction, uint64_t downloadID);
+    void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyAction, uint64_t navigationID, uint64_t downloadID);
 
     void startDownload(const WebCore::ResourceRequest&);
     void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
@@ -130,6 +130,8 @@ public:
     String mimeTypeForResourceWithURL(const WebCore::URL&) const;
 
     void setTextDirection(const String&);
+
+    void documentLoaderDetached(uint64_t navigationID);
 
     // Simple listener class used by plug-ins to know when frames finish or fail loading.
     class LoadListener {

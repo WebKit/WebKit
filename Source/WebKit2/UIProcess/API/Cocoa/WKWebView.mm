@@ -1571,7 +1571,9 @@ static void releaseNSData(unsigned char*, const void* data)
 - (void)_restoreFromSessionState:(NSData *)sessionState
 {
     [sessionState retain];
-    _page->restoreFromSessionStateData(API::Data::createWithoutCopying((const unsigned char*)sessionState.bytes, sessionState.length, releaseNSData, sessionState).get());
+    uint64_t navigationID = _page->restoreFromSessionStateData(API::Data::createWithoutCopying((const unsigned char*)sessionState.bytes, sessionState.length, releaseNSData, sessionState).get());
+    if (navigationID)
+        _navigationState->createReloadNavigation(navigationID);
 }
 
 - (void)_close

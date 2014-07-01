@@ -33,6 +33,7 @@ namespace WebKit {
 WebFrameListenerProxy::WebFrameListenerProxy(WebFrameProxy* frame, uint64_t listenerID)
     : m_frame(frame)
     , m_listenerID(listenerID)
+    , m_navigationID(0)
 {
 }
 
@@ -50,7 +51,7 @@ void WebFrameListenerProxy::receivedPolicyDecision(WebCore::PolicyAction action)
     if (!m_frame)
         return;
 
-    m_frame->receivedPolicyDecision(action, m_listenerID);
+    m_frame->receivedPolicyDecision(action, m_listenerID, m_navigationID);
     m_frame = 0;
 }
 

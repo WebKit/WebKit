@@ -104,17 +104,17 @@ PassRefPtr<API::Data> WebPageProxy::sessionStateData(std::function<bool (WebBack
     return API::Data::create(stateVector);
 }
 
-void WebPageProxy::restoreFromSessionStateData(API::Data* apiData)
+uint64_t WebPageProxy::restoreFromSessionStateData(API::Data* apiData)
 {
     if (!apiData || apiData->size() < sizeof(UInt32))
-        return;
+        return 0;
 
     const unsigned char* buffer = apiData->bytes();
     UInt32 versionHeader = (buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3];
     
     if (versionHeader != CurrentSessionStateDataVersion) {
         LOG(SessionState, "Unrecognized version header for session state data - cannot restore");
-        return;
+        return 0;
     }
     
     RetainPtr<CFDataRef> data = adoptCF(CFDataCreate(0, apiData->bytes() + sizeof(UInt32), apiData->size() - sizeof(UInt32)));
@@ -124,15 +124,15 @@ void WebPageProxy::restoreFromSessionStateData(API::Data* apiData)
     if (propertyListError) {
         CFRelease(propertyListError);
         LOG(SessionState, "Could not read session state property list");
-        return;
+        return 0;
     }
 
     if (!propertyList)
-        return;
+        return 0;
         
     if (CFGetTypeID(propertyList.get()) != CFDictionaryGetTypeID()) {
         LOG(SessionState, "SessionState property list is not a CFDictionaryRef (%i) - its CFTypeID is %i", (int)CFDictionaryGetTypeID(), (int)CFGetTypeID(propertyList.get()));
-        return;
+        return 0;
     }
 
     CFDictionaryRef backForwardListDictionary = 0;
@@ -169,14 +169,18 @@ void WebPageProxy::restoreFromSessionStateData(API::Data* apiData)
                     if (WebBackForwardListItem* item = m_backForwardList->currentItem())
                         m_pageLoadState.setPendingAPIRequestURL(transaction, item->url());
 
-                    process().send(Messages::WebPage::RestoreSessionAndNavigateToCurrentItem(generateNavigationID(), state), m_pageID);
+                    uint64_t navigationID = generateNavigationID();
+                    process().send(Messages::WebPage::RestoreSessionAndNavigateToCurrentItem(navigationID, state), m_pageID);
+                    return navigationID;
                 }
             }
         }
     }
 
     if (provisionalURL)
-        loadRequest(URL(URL(), provisionalURL));
+        return loadRequest(URL(URL(), provisionalURL));
+
+    return 0;
 }
 
 static RetainPtr<CFStringRef> autosaveKey(const String& name)

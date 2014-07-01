@@ -1,3 +1,98 @@
+2014-07-01  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Navigation parameter in navigation delegate messages is nil for navigations started by the Web Content process
+        https://bugs.webkit.org/show_bug.cgi?id=134482
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::didDestroyNavigation): New client function, called when a navigation ID
+        is not going to be used anymore.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _restoreFromSessionState:]): If restoring triggered a navigation, create a
+        WKNavigation for its ID.
+
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::createLoadRequestNavigation): Removed FIXME, because we now remove
+        navigations from the map in LoaderClient::didDestroyNavigation.
+        (WebKit::NavigationState::createBackForwardNavigation): Ditto.
+        (WebKit::NavigationState::createReloadNavigation): Ditto.
+        (WebKit::NavigationState::createLoadDataNavigation): Ditto.
+        (WebKit::NavigationState::PolicyClient::decidePolicyForNavigationAction): If we are only
+        getting a navigation ID now, create a WKNavigation for it. Also changed to create the
+        NSURLRequest lazily.
+        (WebKit::NavigationState::LoaderClient::didStartProvisionalLoadForFrame): Assert that
+        navigationID is not zero and that it maps to an existing WKNavigation.
+        (WebKit::NavigationState::LoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame):
+        Ditto.
+        (WebKit::NavigationState::LoaderClient::didFailProvisionalLoadWithErrorForFrame): Ditto.
+        (WebKit::NavigationState::LoaderClient::didCommitLoadForFrame): Ditto.
+        (WebKit::NavigationState::LoaderClient::didFinishDocumentLoadForFrame): Ditto.
+        (WebKit::NavigationState::LoaderClient::didFinishLoadForFrame): Ditto.
+        (WebKit::NavigationState::LoaderClient::didFailLoadWithErrorForFrame): Ditto.
+        (WebKit::NavigationState::LoaderClient::didDestroyNavigation): Override the new client
+        function to remove the navigation from the map.
+        (WebKit::NavigationState::LoaderClient::processDidCrash): Clear the navigations map.
+
+        * UIProcess/WebFrameListenerProxy.cpp:
+        (WebKit::WebFrameListenerProxy::WebFrameListenerProxy): Initialize new m_navigationID
+        member variable.
+        (WebKit::WebFrameListenerProxy::receivedPolicyDecision): Pass the navigation ID to
+        WebFrame::receivedPolicyDecision.
+        * UIProcess/WebFrameListenerProxy.h:
+        (WebKit::WebFrameListenerProxy::navigationID): Added this accessor.
+        (WebKit::WebFrameListenerProxy::setNavigationID): Ditto.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::receivedPolicyDecision): Added navigationID parameter, which is
+        passed along to the WebPageProxy.
+        * UIProcess/WebFrameProxy.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision): Added navigationID parameter, which is
+        passed along in the message to the Web Content process.
+        (WebKit::WebPageProxy::restoreFromSessionStateData): Changed to return a navigation ID of 0.
+        (WebKit::WebPageProxy::restoreFromState): Changed to return a navigation ID if one was
+        started.
+        (WebKit::WebPageProxy::didDestroyNavigation): Added. Calls the new client function.
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction): Added navigationID and
+        newNavigationID parameters. If a main-frame navigation doesn’t already have an ID, assign it
+        a new ID and return it in the newNavigationID parmeter as well as setting it on the listener
+        for the asynchronous case.
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/WebPageProxy.messages.in: Added navigationID and newNavigationID parameters.
+
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::WebPageProxy::restoreFromSessionStateData): Changed to return a navigation ID if
+        one was started.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse): Updated for additional
+        parameter.
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction): Send the navigation
+        ID to the UI process, get the new navigation ID from the reply, and set it on the document
+        loader.
+
+        * WebProcess/WebPage/WebDocumentLoader.cpp:
+        (WebKit::WebDocumentLoader::detachFromFrame): Override to let the UI process know that the
+        navigation ID will not be used anymore.
+        * WebProcess/WebPage/WebDocumentLoader.h:
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::didReceivePolicyDecision): Added navigationID parameter, set it on the
+        document loader.
+        (WebKit::WebFrame::documentLoaderDetached): Pass the message along to the UI process.
+        * WebProcess/WebPage/WebFrame.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceivePolicyDecision): Pass new navigationID parameter along.
+        * WebProcess/WebPage/WebPage.h:
+
+        * WebProcess/WebPage/WebPage.messages.in: Added navigationID parameter.
+
 2014-07-01  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

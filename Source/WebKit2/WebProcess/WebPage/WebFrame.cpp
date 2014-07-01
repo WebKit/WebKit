@@ -36,6 +36,7 @@
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebChromeClient.h"
+#include "WebDocumentLoader.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
@@ -215,7 +216,7 @@ void WebFrame::invalidatePolicyListener()
     m_policyFunction = 0;
 }
 
-void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action, uint64_t downloadID)
+void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action, uint64_t navigationID, uint64_t downloadID)
 {
     if (!m_coreFrame)
         return;
@@ -233,6 +234,11 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action
     invalidatePolicyListener();
 
     m_policyDownloadID = downloadID;
+    if (navigationID) {
+        WebDocumentLoader& documentLoader = static_cast<WebDocumentLoader&>(*m_coreFrame->loader().policyDocumentLoader());
+        documentLoader.setNavigationID(navigationID);
+    }
+
     function(action);
 }
 
@@ -749,6 +755,11 @@ void WebFrame::setTextDirection(const String& direction)
         m_coreFrame->editor().setBaseWritingDirection(LeftToRightWritingDirection);
     else if (direction == "rtl")
         m_coreFrame->editor().setBaseWritingDirection(RightToLeftWritingDirection);
+}
+
+void WebFrame::documentLoaderDetached(uint64_t navigationID)
+{
+    page()->send(Messages::WebPageProxy::DidDestroyNavigation(navigationID));
 }
 
 #if PLATFORM(COCOA)

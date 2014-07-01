@@ -42,6 +42,7 @@
 #import "WKNSURLAuthenticationChallenge.h"
 #import "WKNSURLExtras.h"
 #import "WKNSURLProtectionSpace.h"
+#import "WKNSURLRequest.h"
 #import "WKNavigationActionInternal.h"
 #import "WKNavigationDataInternal.h"
 #import "WKNavigationDelegatePrivate.h"
@@ -163,7 +164,6 @@ RetainPtr<WKNavigation> NavigationState::createLoadRequestNavigation(uint64_t na
     RetainPtr<WKNavigation> navigation = adoptNS([[WKNavigation alloc] init]);
     [navigation setRequest:request];
 
-    // FIXME: We need to remove the navigation when we're done with it!
     m_navigations.set(navigationID, navigation);
 
     return navigation;
@@ -175,7 +175,6 @@ RetainPtr<WKNavigation> NavigationState::createBackForwardNavigation(uint64_t na
 
     auto navigation = adoptNS([[WKNavigation alloc] init]);
 
-    // FIXME: We need to remove the navigation when we're done with it!
     m_navigations.set(navigationID, navigation);
 
     return navigation;
@@ -187,7 +186,6 @@ RetainPtr<WKNavigation> NavigationState::createReloadNavigation(uint64_t navigat
 
     auto navigation = adoptNS([[WKNavigation alloc] init]);
 
-    // FIXME: We need to remove the navigation when we're done with it!
     m_navigations.set(navigationID, navigation);
 
     return navigation;
@@ -199,7 +197,6 @@ RetainPtr<WKNavigation> NavigationState::createLoadDataNavigation(uint64_t navig
 
     auto navigation = adoptNS([[WKNavigation alloc] init]);
 
-    // FIXME: We need to remove the navigation when we're done with it!
     m_navigations.set(navigationID, navigation);
 
     return navigation;
@@ -264,14 +261,18 @@ NavigationState::PolicyClient::~PolicyClient()
 
 void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy* destinationFrame, const NavigationActionData& navigationActionData, WebFrameProxy* sourceFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest& request, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* userData)
 {
+    RetainPtr<NSURLRequest> nsURLRequest = adoptNS(wrapper(*API::URLRequest::create(request).leakRef()));
+
+    if (listener->navigationID())
+        m_navigationState.createLoadRequestNavigation(listener->navigationID(), nsURLRequest.get());
+
     if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler) {
         if (!destinationFrame) {
             listener->use();
             return;
         }
 
-        NSURLRequest *nsURLRequest = request.nsURLRequest(WebCore::DoNotUpdateHTTPBody);
-        if ([NSURLConnection canHandleRequest:nsURLRequest]) {
+        if ([NSURLConnection canHandleRequest:nsURLRequest.get()]) {
             listener->use();
             return;
         }
@@ -279,8 +280,8 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
 #if PLATFORM(MAC)
         // A file URL shouldn't fall through to here, but if it did,
         // it would be a security risk to open it.
-        if (![nsURLRequest.URL isFileURL])
-            [[NSWorkspace sharedWorkspace] openURL:nsURLRequest.URL];
+        if (![[nsURLRequest URL] isFileURL])
+            [[NSWorkspace sharedWorkspace] openURL:[nsURLRequest URL]];
 #endif
         listener->ignore();
         return;
@@ -302,7 +303,7 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
             [navigationAction setSourceFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*sourceFrame]).get()];
     }
 
-    [navigationAction setRequest:request.nsURLRequest(WebCore::DoNotUpdateHTTPBody)];
+    [navigationAction setRequest:nsURLRequest.get()];
     [navigationAction _setOriginalURL:originalRequest.url()];
 
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationAction:decisionHandler:));
@@ -412,10 +413,9 @@ void NavigationState::LoaderClient::didStartProvisionalLoadForFrame(WebPageProxy
     if (!navigationDelegate)
         return;
 
-    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for navigations originating from the web process.
-    WKNavigation *navigation = nil;
-    if (navigationID)
-        navigation = m_navigationState.m_navigations.get(navigationID).get();
+    ASSERT(navigationID);
+    WKNavigation *navigation = m_navigationState.m_navigations.get(navigationID).get();
+    ASSERT(navigation);
 
     [navigationDelegate webView:m_navigationState.m_webView didStartProvisionalNavigation:navigation];
 }
@@ -432,10 +432,9 @@ void NavigationState::LoaderClient::didReceiveServerRedirectForProvisionalLoadFo
     if (!navigationDelegate)
         return;
 
-    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for navigations originating from the web process.
-    WKNavigation *navigation = nil;
-    if (navigationID)
-        navigation = m_navigationState.m_navigations.get(navigationID).get();
+    ASSERT(navigationID);
+    WKNavigation *navigation = m_navigationState.m_navigations.get(navigationID).get();
+    ASSERT(navigation);
 
     [navigationDelegate webView:m_navigationState.m_webView didReceiveServerRedirectForProvisionalNavigation:navigation];
 }
@@ -468,10 +467,9 @@ void NavigationState::LoaderClient::didFailProvisionalLoadWithErrorForFrame(WebP
         return;
     }
 
-    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for navigations originating from the web process.
-    RetainPtr<WKNavigation> navigation;
-    if (navigationID)
-        navigation = m_navigationState.m_navigations.take(navigationID);
+    ASSERT(navigationID);
+    RetainPtr<WKNavigation> navigation = m_navigationState.m_navigations.take(navigationID).get();
+    ASSERT(navigation);
 
     // FIXME: Set the error on the navigation object.
 
@@ -498,10 +496,9 @@ void NavigationState::LoaderClient::didCommitLoadForFrame(WebPageProxy*, WebFram
     if (!navigationDelegate)
         return;
 
-    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for navigations originating from the web process.
-    WKNavigation *navigation = nil;
-    if (navigationID)
-        navigation = m_navigationState.m_navigations.get(navigationID).get();
+    ASSERT(navigationID);
+    WKNavigation *navigation = m_navigationState.m_navigations.get(navigationID).get();
+    ASSERT(navigation);
 
     [navigationDelegate webView:m_navigationState.m_webView didCommitNavigation:navigation];
 }
@@ -518,9 +515,9 @@ void NavigationState::LoaderClient::didFinishDocumentLoadForFrame(WebPageProxy*,
     if (!navigationDelegate)
         return;
 
-    WKNavigation *navigation = nil;
-    if (navigationID)
-        navigation = m_navigationState.m_navigations.get(navigationID).get();
+    ASSERT(navigationID);
+    WKNavigation *navigation = m_navigationState.m_navigations.get(navigationID).get();
+    ASSERT(navigation);
 
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView navigationDidFinishDocumentLoad:navigation];
 }
@@ -537,10 +534,9 @@ void NavigationState::LoaderClient::didFinishLoadForFrame(WebPageProxy*, WebFram
     if (!navigationDelegate)
         return;
 
-    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for navigations originating from the web process.
-    WKNavigation *navigation = nil;
-    if (navigationID)
-        navigation = m_navigationState.m_navigations.get(navigationID).get();
+    ASSERT(navigationID);
+    WKNavigation *navigation = m_navigationState.m_navigations.get(navigationID).get();
+    ASSERT(navigation);
 
     [navigationDelegate webView:m_navigationState.m_webView didFinishNavigation:navigation];
 }
@@ -557,13 +553,17 @@ void NavigationState::LoaderClient::didFailLoadWithErrorForFrame(WebPageProxy*, 
     if (!navigationDelegate)
         return;
 
-    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for navigations originating from the web process.
-    WKNavigation *navigation = nil;
-    if (navigationID)
-        navigation = m_navigationState.m_navigations.get(navigationID).get();
+    ASSERT(navigationID);
+    WKNavigation *navigation = m_navigationState.m_navigations.get(navigationID).get();
+    ASSERT(navigation);
 
     auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState.m_webView, *webFrameProxy, error);
     [navigationDelegate webView:m_navigationState.m_webView didFailNavigation:navigation withError:errorWithRecoveryAttempter.get()];
+}
+
+void NavigationState::LoaderClient::didDestroyNavigation(WebPageProxy*, uint64_t navigationID)
+{
+    m_navigationState.m_navigations.remove(navigationID);
 }
 
 static _WKRenderingProgressEvents renderingProgressEvents(WebCore::LayoutMilestones milestones)
@@ -666,6 +666,8 @@ void NavigationState::LoaderClient::didReceiveAuthenticationChallengeInFrame(Web
 
 void NavigationState::LoaderClient::processDidCrash(WebKit::WebPageProxy*)
 {
+    m_navigationState.m_navigations.clear();
+
     if (!m_navigationState.m_navigationDelegateMethods.webViewWebProcessDidCrash)
         return;
 

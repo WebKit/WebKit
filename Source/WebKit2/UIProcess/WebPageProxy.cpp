@@ -1708,7 +1708,7 @@ void WebPageProxy::centerSelectionInVisibleArea()
     m_process->send(Messages::WebPage::CenterSelectionInVisibleArea(), m_pageID);
 }
 
-void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* frame, uint64_t listenerID)
+void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* frame, uint64_t listenerID, uint64_t navigationID)
 {
     if (!isValid())
         return;
@@ -1744,7 +1744,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
         return;
     }
     
-    m_process->send(Messages::WebPage::DidReceivePolicyDecision(frame->frameID(), listenerID, action, downloadID), m_pageID);
+    m_process->send(Messages::WebPage::DidReceivePolicyDecision(frame->frameID(), listenerID, action, navigationID, downloadID), m_pageID);
 }
 
 void WebPageProxy::setUserAgent(const String& userAgent)
@@ -1840,13 +1840,14 @@ PassRefPtr<API::Data> WebPageProxy::sessionStateData(std::function<bool (WebBack
     return 0;
 }
 
-void WebPageProxy::restoreFromSessionStateData(API::Data*)
+uint64_t WebPageProxy::restoreFromSessionStateData(API::Data*)
 {
     // FIXME: Restore the Page from the passed in session state data.
+    return 0;
 }
 #endif
 
-void WebPageProxy::restoreFromState(SessionState sessionState)
+uint64_t WebPageProxy::restoreFromState(SessionState sessionState)
 {
     m_backForwardList->restoreFromState(std::move(sessionState.backForwardListState));
 
@@ -1855,13 +1856,13 @@ void WebPageProxy::restoreFromState(SessionState sessionState)
 
     // FIXME: Navigating should be separate from state restoration.
 
-    if (!sessionState.provisionalURL.isNull()) {
-        loadRequest(sessionState.provisionalURL);
-        return;
-    }
+    if (!sessionState.provisionalURL.isNull())
+        return loadRequest(sessionState.provisionalURL);
 
     if (WebBackForwardListItem* item = m_backForwardList->currentItem())
-        goToBackForwardItem(item);
+        return goToBackForwardItem(item);
+
+    return 0;
 }
 
 bool WebPageProxy::supportsTextZoom() const
@@ -2428,6 +2429,11 @@ void WebPageProxy::didFinishProgress()
     m_loaderClient->didFinishProgress(this);
 }
 
+void WebPageProxy::didDestroyNavigation(uint64_t navigationID)
+{
+    m_loaderClient->didDestroyNavigation(this, navigationID);
+}
+
 void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& url, const String& unreachableURL, IPC::MessageDecoder& decoder)
 {
     auto transaction = m_pageLoadState.transaction();
@@ -2772,7 +2778,7 @@ void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
         m_frameSetLargestFrame = value ? m_mainFrame : 0;
 }
 
-void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const NavigationActionData& navigationActionData, uint64_t originatingFrameID, const WebCore::ResourceRequest& originalRequest, const ResourceRequest& request, uint64_t listenerID, IPC::MessageDecoder& decoder, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID)
+void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint64_t navigationID, const NavigationActionData& navigationActionData, uint64_t originatingFrameID, const WebCore::ResourceRequest& originalRequest, const ResourceRequest& request, uint64_t listenerID, IPC::MessageDecoder& decoder, bool& receivedPolicyAction, uint64_t& newNavigationID, uint64_t& policyAction, uint64_t& downloadID)
 {
     RefPtr<API::Object> userData;
     WebContextUserMessageDecoder messageDecoder(userData, process());
@@ -2792,6 +2798,10 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Navig
     WebFrameProxy* originatingFrame = m_process->webFrame(originatingFrameID);
     
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
+    if (!navigationID && frame->isMainFrame()) {
+        newNavigationID = generateNavigationID();
+        listener->setNavigationID(newNavigationID);
+    }
 
     ASSERT(!m_inDecidePolicyForNavigationAction);
 
