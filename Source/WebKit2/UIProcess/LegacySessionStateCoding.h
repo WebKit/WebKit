@@ -37,6 +37,7 @@ namespace WebKit {
 struct FrameState;
 struct SessionState;
 
+RefPtr<API::Data> encodeLegacySessionState(const SessionState&);
 RefPtr<API::Data> encodeLegacySessionHistoryEntryData(const FrameState&);
 
 bool decodeLegacySessionState(const API::Data&, SessionState&);

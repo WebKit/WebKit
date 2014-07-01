@@ -1,3 +1,18 @@
+2014-07-01  Anders Carlsson  <andersca@apple.com>
+
+        Add a encodeLegacySessionState function
+        https://bugs.webkit.org/show_bug.cgi?id=134502
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/LegacySessionStateCoding.h:
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::encodeSessionHistoryEntryData):
+        (WebKit::encodeLegacySessionHistoryEntryData):
+        (WebKit::createDictionary):
+        (WebKit::encodeSessionHistory):
+        (WebKit::encodeLegacySessionState):
+
 2014-07-01  Alexey Proskuryakov  <ap@apple.com>
 
         [Cocoa] WebProcess doesn't follow localization of UI process when run as a service

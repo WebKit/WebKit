@@ -41,6 +41,8 @@ static const CFStringRef sessionHistoryKey = CFSTR("SessionHistory");
 static const CFStringRef provisionalURLKey = CFSTR("ProvisionalURL");
 
 // Session history keys.
+static const uint32_t sessionHistoryVersion = 1;
+
 static const CFStringRef sessionHistoryVersionKey = CFSTR("SessionHistoryVersion");
 static const CFStringRef sessionHistoryCurrentIndexKey = CFSTR("SessionHistoryCurrentIndex");
 static const CFStringRef sessionHistoryEntriesKey = CFSTR("SessionHistoryEntries");
@@ -353,7 +355,7 @@ static void encodeFrameStateNode(HistoryEntryDataEncoder& encoder, const FrameSt
 #endif
 }
 
-static MallocPtr<uint8_t> encodeLegacySessionHistoryEntryData(const FrameState& frameState, size_t& bufferSize)
+static MallocPtr<uint8_t> encodeSessionHistoryEntryData(const FrameState& frameState, size_t& bufferSize)
 {
     HistoryEntryDataEncoder encoder;
 
@@ -366,7 +368,99 @@ static MallocPtr<uint8_t> encodeLegacySessionHistoryEntryData(const FrameState& 
 RefPtr<API::Data> encodeLegacySessionHistoryEntryData(const FrameState& frameState)
 {
     size_t bufferSize;
-    auto buffer = encodeLegacySessionHistoryEntryData(frameState, bufferSize);
+    auto buffer = encodeSessionHistoryEntryData(frameState, bufferSize);
+
+    return API::Data::createWithoutCopying(buffer.leakPtr(), bufferSize, [] (unsigned char* buffer, const void* context) {
+        fastFree(buffer);
+    }, nullptr);
+}
+
+static RetainPtr<CFDataRef> encodeSessionHistoryEntryData(const FrameState& frameState)
+{
+
+    return nullptr;
+}
+
+static RetainPtr<CFDictionaryRef> createDictionary(std::initializer_list<std::pair<CFStringRef, CFTypeRef>> keyValuePairs)
+{
+    Vector<CFTypeRef> keys;
+    Vector<CFTypeRef> values;
+
+    keys.reserveInitialCapacity(keyValuePairs.size());
+    values.reserveInitialCapacity(keyValuePairs.size());
+
+    for (const auto& keyValuePair : keyValuePairs) {
+        keys.uncheckedAppend(keyValuePair.first);
+        keys.uncheckedAppend(keyValuePair.second);
+    }
+
+    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys.data(), values.data(), keyValuePairs.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+}
+
+static RetainPtr<CFDictionaryRef> encodeSessionHistory(const BackForwardListState& backForwardListState)
+{
+    ASSERT(!backForwardListState.currentIndex || backForwardListState.currentIndex.value() < backForwardListState.items.size());
+
+    auto sessionHistoryVersionNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &sessionHistoryVersion));
+
+    if (!backForwardListState.currentIndex)
+        return createDictionary({ { sessionHistoryVersionKey, sessionHistoryVersionNumber.get() } });
+
+    auto entries = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, backForwardListState.items.size(), &kCFTypeArrayCallBacks));
+
+    for (const auto& item : backForwardListState.items) {
+        auto url = item.pageState.mainFrameState.urlString.createCFString();
+        auto title = item.pageState.title.createCFString();
+        auto originalURL = item.pageState.mainFrameState.originalURLString.createCFString();
+        auto data = encodeSessionHistoryEntryData(item.pageState.mainFrameState);
+
+        auto entryDictionary = createDictionary({ { sessionHistoryEntryURLKey, url.get() }, { sessionHistoryEntryTitleKey, title.get() }, { sessionHistoryEntryDataKey, data.get() }});
+
+        CFArrayAppendValue(entries.get(), entryDictionary.get());
+    }
+
+    uint32_t currentIndex = backForwardListState.currentIndex.value();
+    auto currentIndexNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &currentIndex));
+
+    return createDictionary({ { sessionHistoryVersionKey, sessionHistoryVersionNumber.get() }, { sessionHistoryCurrentIndexKey, currentIndexNumber.get() }, { sessionHistoryEntriesKey, entries.get() } });
+}
+
+RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
+{
+    auto sessionHistoryDictionary = encodeSessionHistory(sessionState.backForwardListState);
+    auto provisionalURLString = sessionState.provisionalURL.string().createCFString();
+
+    RetainPtr<CFDictionaryRef> stateDictionary;
+    if (provisionalURLString)
+        stateDictionary = createDictionary({ { sessionHistoryKey, sessionHistoryDictionary.get() }, { provisionalURLKey, provisionalURLString.get() } });
+    else
+        stateDictionary = createDictionary({ { sessionHistoryKey, sessionHistoryDictionary.get() } });
+
+    auto writeStream = adoptCF(CFWriteStreamCreateWithAllocatedBuffers(kCFAllocatorDefault, nullptr));
+    if (!writeStream)
+        return nullptr;
+
+    if (!CFWriteStreamOpen(writeStream.get()))
+        return nullptr;
+
+    if (!CFPropertyListWrite(stateDictionary.get(), writeStream.get(), kCFPropertyListBinaryFormat_v1_0, 0, nullptr))
+        return nullptr;
+
+    auto data = adoptCF(static_cast<CFDataRef>(CFWriteStreamCopyProperty(writeStream.get(), kCFStreamPropertyDataWritten)));
+
+    CFIndex length = CFDataGetLength(data.get());
+
+    size_t bufferSize = length + sizeof(uint32_t);
+    auto buffer = MallocPtr<uint8_t>::malloc(bufferSize);
+
+    // Put the session state version number at the start of the buffer
+    buffer.get()[0] = (sessionStateDataVersion & 0xff000000) >> 24;
+    buffer.get()[1] = (sessionStateDataVersion & 0x00ff0000) >> 16;
+    buffer.get()[2] = (sessionStateDataVersion & 0x0000ff00) >> 8;
+    buffer.get()[3] = (sessionStateDataVersion & 0x000000ff);
+
+    // Copy in the actual session state data
+    CFDataGetBytes(data.get(), CFRangeMake(0, length), buffer.get() + sizeof(uint32_t));
 
     return API::Data::createWithoutCopying(buffer.leakPtr(), bufferSize, [] (unsigned char* buffer, const void* context) {
         fastFree(buffer);
