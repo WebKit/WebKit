@@ -129,29 +129,31 @@ static LanguageSpecificFont languageSpecificFallbackFont(UChar32 c)
 
     if (c < 0x400)
         return LanguageSpecificFont::None;
-    if (c <= 0x52F)
+    if (c < 0x530)
         return LanguageSpecificFont::Cyrillic;
     if (c < 0x590)
         return LanguageSpecificFont::None;
     if (c < 0x600)
         return LanguageSpecificFont::Hebrew;
-    if (c <= 0x6FF)
+    if (c < 0x700)
         return LanguageSpecificFont::Arabic;
     if (c < 0x900)
         return LanguageSpecificFont::None;
     if (c < 0xE00)
         return LanguageSpecificFont::Arabic;
-    if (c <= 0xE7F)
+    if (c < 0xE80)
         return LanguageSpecificFont::Thai;
     if (c < 0x0F00)
         return LanguageSpecificFont::Lao;
-    if (c <= 0x0FFF)
+    if (c < 0x1000)
         return LanguageSpecificFont::Tibetan;
     if (c < 0x1100)
         return LanguageSpecificFont::None;
-    if (c <= 0x11FF)
+    if (c < 0x1200)
         return LanguageSpecificFont::Korean;
-    if (c > 0x1400 && c < 0x1780)
+    if (c < 0x1401)
+        return LanguageSpecificFont::Khmer; // FIXME: These codepoints don't belong to Khmer
+    if (c < 0x1780)
         return LanguageSpecificFont::CanadianAboriginalSyllabic;
     if (c < 0x1800)
         return LanguageSpecificFont::Khmer;
@@ -159,27 +161,25 @@ static LanguageSpecificFont languageSpecificFallbackFont(UChar32 c)
         return LanguageSpecificFont::None;
     if (c < 0x3130)
         return LanguageSpecificFont::ChineseJapanese;
-    if (c <= 0x318F)
+    if (c < 0x3190)
         return LanguageSpecificFont::Korean;
     if (c < 0xAC00)
         return LanguageSpecificFont::ChineseJapanese;
-    if (c <= 0xD7A3)
+    if (c < 0xD7A4)
         return LanguageSpecificFont::Korean;
-    if (c <= 0xDFFF)
-        return LanguageSpecificFont::ChineseJapanese;
     if (c < 0xE000)
-        return LanguageSpecificFont::None;
+        return LanguageSpecificFont::ChineseJapanese;
     if (c < 0xE600)
         return isGB18030ComplianceRequired ? LanguageSpecificFont::ChineseJapanese : LanguageSpecificFont::Emoji;
-    if (c <= 0xE864 && isGB18030ComplianceRequired)
+    if (c < 0xE865 && isGB18030ComplianceRequired)
         return LanguageSpecificFont::ChineseJapanese;
-    if (c <= 0xF8FF)
+    if (c < 0xF900)
         return LanguageSpecificFont::None;
     if (c < 0xFB00)
         return LanguageSpecificFont::ChineseJapanese;
     if (c < 0xFB50)
         return LanguageSpecificFont::None;
-    if (c <= 0xFDFF)
+    if (c < 0xFE00)
         return LanguageSpecificFont::Arabic;
     if (c < 0xFE20)
         return LanguageSpecificFont::None;
@@ -189,7 +189,9 @@ static LanguageSpecificFont languageSpecificFallbackFont(UChar32 c)
         return LanguageSpecificFont::Arabic;
     if (c < 0xFFF0)
         return LanguageSpecificFont::ChineseJapanese;
-    if (c >=0x20000 && c <= 0x2FFFF)
+    if (c < 0x20000)
+        return LanguageSpecificFont::None;
+    if (c < 0x30000)
         return LanguageSpecificFont::ChineseJapanese;
     return LanguageSpecificFont::None;
 }

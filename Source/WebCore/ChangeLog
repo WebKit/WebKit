@@ -1,3 +1,17 @@
+2014-06-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] languageSpecificFallbackFont() is not consistent
+        https://bugs.webkit.org/show_bug.cgi?id=134473
+
+        Reviewed by Darin Adler.
+
+        It can use "<" throughout the function as well as keeping the fallthrough behavior consistent.
+
+        No tests because there is no behavior change.
+
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::languageSpecificFallbackFont):
+
 2014-06-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening.
