@@ -145,18 +145,18 @@ static HTMLElement* enclosingDeletableElement(const VisibleSelection& selection)
 
     RefPtr<Range> range = selection.toNormalizedRange();
     if (!range)
-        return 0;
+        return nullptr;
 
     Node* container = range->commonAncestorContainer(ASSERT_NO_EXCEPTION);
     ASSERT(container);
 
     // The enclosingNodeOfType function only works on nodes that are editable
-    // (which is strange, given its name).
-    if (!container->hasEditableStyle())
-        return 0;
+    // and capable of having editing positions inside them (which is strange, given its name).
+    if (!container->hasEditableStyle() || editingIgnoresContent(container))
+        return nullptr;
 
     Node* element = enclosingNodeOfType(firstPositionInNode(container), &isDeletableElement);
-    return element && element->isHTMLElement() ? toHTMLElement(element) : 0;
+    return element && element->isHTMLElement() ? toHTMLElement(element) : nullptr;
 }
 
 void DeleteButtonController::respondToChangedSelection(const VisibleSelection& oldSelection)

@@ -1,3 +1,18 @@
+2014-07-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Typing an automatic text replacement phrase after a br in contenteditable is not rendered as expected
+        https://bugs.webkit.org/show_bug.cgi?id=133883
+
+        Reviewed by Enrica Casucci.
+
+        enclosingDeletableElement() makes sure that the element's container is editable, but not
+        that it is capable of having content inside it (like how a <br> can't).
+
+        No new tests. I don't think this is testable because it requires setting some state in System Preferences.
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::enclosingDeletableElement):
+
 2014-07-01  Alex Christensen  <achristensen@webkit.org>
 
         [iOS] Unreviewed build fix after r170640.
