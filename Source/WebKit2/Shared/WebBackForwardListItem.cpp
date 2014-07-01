@@ -44,6 +44,8 @@ WebBackForwardListItem::WebBackForwardListItem(uint64_t itemID, BackForwardListI
     : m_itemID(itemID)
     , m_itemState(std::move(backForwardListItemState))
 {
+    if (m_itemID > highestUsedItemID)
+        highestUsedItemID = m_itemID;
 }
 
 WebBackForwardListItem::WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID)

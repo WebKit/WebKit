@@ -1,3 +1,13 @@
+2014-07-01  Anders Carlsson  <andersca@apple.com>
+
+        Update the highest back-forward list item ID in the other WebBackForwardListItem constructor
+        https://bugs.webkit.org/show_bug.cgi?id=134515
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::WebBackForwardListItem):
+
 2014-07-01  Brady Eidson  <beidson@apple.com>
 
         Fix ServicesOverlayController teardown
