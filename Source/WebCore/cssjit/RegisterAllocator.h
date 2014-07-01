@@ -205,7 +205,7 @@ public:
     }
 
 private:
-    Deque<JSC::MacroAssembler::RegisterID, registerCount> m_registers;
+    Deque<JSC::MacroAssembler::RegisterID> m_registers;
     Vector<JSC::MacroAssembler::RegisterID, registerCount> m_allocatedRegisters;
     Vector<JSC::MacroAssembler::RegisterID, calleeSavedRegisterCount> m_reservedCalleeSavedRegisters;
 };
