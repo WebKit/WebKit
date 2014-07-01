@@ -527,12 +527,16 @@ bool WebEditorClient::supportsGlobalSelection()
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
 void WebEditorClient::selectedTelephoneNumberRangesChanged(const Vector<RefPtr<Range>>& ranges)
 {
+#if PLATFORM(MAC)
     m_page->servicesOverlayController().selectedTelephoneNumberRangesChanged(ranges);
+#endif
 }
 void WebEditorClient::selectionRectsDidChange(const Vector<LayoutRect>& rects)
 {
+#if PLATFORM(MAC)
     if (m_page->serviceControlsEnabled())
         m_page->servicesOverlayController().selectionRectsDidChange(rects);
+#endif
 }
 #endif // ENABLE(SERVICE_CONTROLS) && ENABLE(TELEPHONE_NUMBER_DETECTION)
 

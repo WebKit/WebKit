@@ -179,11 +179,8 @@ public:
     virtual void willSetInputMethodState() = 0;
     virtual void setInputMethodState(bool enabled) = 0;
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
     virtual void selectedTelephoneNumberRangesChanged(const Vector<RefPtr<Range>>&) { }
-#endif
-
-#if ENABLE(SERVICE_CONTROLS)
     virtual void selectionRectsDidChange(const Vector<LayoutRect>&) { }
 #endif
 

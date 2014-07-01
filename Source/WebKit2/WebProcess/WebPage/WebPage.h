@@ -1088,7 +1088,7 @@ private:
     RunLoop::Timer<WebPage> m_determinePrimarySnapshottedPlugInTimer;
 #endif
 
-#if ENABLE(SERVICE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
     bool m_serviceControlsEnabled;
 #endif
 

@@ -167,10 +167,8 @@ private:
 
     virtual bool supportsGlobalSelection() override;
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) || ENABLE(SERVICE_CONTROLS)
     virtual void selectedTelephoneNumberRangesChanged(const Vector<RefPtr<WebCore::Range>>&) override;
-#endif
-#if ENABLE(SERVICE_CONTROLS)
     virtual void selectionRectsDidChange(const Vector<WebCore::LayoutRect>&) override;
 #endif
 

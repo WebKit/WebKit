@@ -1,3 +1,14 @@
+2014-07-01  Alex Christensen  <achristensen@webkit.org>
+
+        [iOS] Unreviewed build fix after r170640.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::selectedTelephoneNumberRangesChanged):
+        (WebKit::WebEditorClient::selectionRectsDidChange):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        Add ifdefs to make everything compile and link.
+
 2014-07-01  Anders Carlsson  <andersca@apple.com>
 
         Add WKSessionStateGetTypeID
