@@ -44,7 +44,7 @@ public:
     void createPlaceholder(PassRef<RenderStyle>, const LayoutRect& frameRect);
 
     static RenderFullScreen* wrapRenderer(RenderObject*, RenderElement*, Document&);
-    void unwrapRenderer();
+    void unwrapRenderer(bool& requiresRenderTreeRebuild);
 
 private:
     virtual void willBeDestroyed() override;

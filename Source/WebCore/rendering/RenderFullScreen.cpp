@@ -138,11 +138,32 @@ RenderFullScreen* RenderFullScreen::wrapRenderer(RenderObject* object, RenderEle
     return fullscreenRenderer;
 }
 
-void RenderFullScreen::unwrapRenderer()
+void RenderFullScreen::unwrapRenderer(bool& requiresRenderTreeRebuild)
 {
+    requiresRenderTreeRebuild = false;
     if (parent()) {
-        RenderObject* child;
+        auto* child = firstChild();
+        // Things can get very complicated with anonymous block generation.
+        // We can restore correctly without rebuild in simple cases only.
+        // FIXME: We should have a mechanism for removing a block without reconstructing the tree.
+        if (child != lastChild())
+            requiresRenderTreeRebuild = true;
+        else if (child && child->isAnonymousBlock()) {
+            auto& anonymousBlock = toRenderBlock(*child);
+            if (anonymousBlock.firstChild() != anonymousBlock.lastChild())
+                requiresRenderTreeRebuild = true;
+        }
+
         while ((child = firstChild())) {
+            if (child->isAnonymousBlock() && !requiresRenderTreeRebuild) {
+                if (auto* nonAnonymousChild = toRenderBlock(*child).firstChild())
+                    child = nonAnonymousChild;
+                else {
+                    child->removeFromParent();
+                    child->destroy();
+                    continue;
+                }
+            }
             // We have to clear the override size, because as a flexbox, we
             // may have set one on the child, and we don't want to leave that
             // lying around on the child.

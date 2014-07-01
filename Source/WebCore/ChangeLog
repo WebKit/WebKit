@@ -1,3 +1,35 @@
+2014-07-01  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(160908): vube.com video won't play after going into and out of fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=134489
+
+        Reviewed by Zalan Bujtas.
+
+        Test: fullscreen/full-screen-plugin.html
+
+        It is difficult to restore the render tree correctly in all cases after removing a full screen
+        renderer from the tree. r160908 avoided dealing with this by simply always reconstructing the subtree.
+        Unfortunately plugin lifetime is currently tied to its renderer so this would cause the plugin to restart.
+        
+        With this patch we avoid reconstruction in normal cases and only force it if the render tree is complicated.
+
+        * dom/Document.cpp:
+        (WebCore::unwrapFullScreenRenderer):
+        
+            Force reconstruction conditionally.
+
+        (WebCore::Document::webkitWillEnterFullScreenForElement):
+        (WebCore::Document::webkitDidExitFullScreenForElement):
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::RenderFullScreen::wrapRenderer):
+        (WebCore::RenderFullScreen::unwrapRenderer):
+        
+            Deal with the simple case of single child, possibly in anonymous wrapper.
+            In other cases request reconstruction.
+            This is covered by the existing fullscreen tests.
+
+        * rendering/RenderFullScreen.h:
+
 2014-07-01  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove remaining Vector<> copies in WebCore accessibility code
