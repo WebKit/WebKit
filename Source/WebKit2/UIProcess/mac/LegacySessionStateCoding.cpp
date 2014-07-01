@@ -28,6 +28,7 @@
 
 #include "APIData.h"
 #include "SessionState.h"
+#include <mutex>
 #include <wtf/MallocPtr.h>
 #include <wtf/cf/TypeCasts.h>
 #include <wtf/text/StringView.h>
@@ -377,8 +378,30 @@ RefPtr<API::Data> encodeLegacySessionHistoryEntryData(const FrameState& frameSta
 
 static RetainPtr<CFDataRef> encodeSessionHistoryEntryData(const FrameState& frameState)
 {
+    static CFAllocatorRef fastMallocDeallocator;
 
-    return nullptr;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        CFAllocatorContext context = {
+            0, // version
+            nullptr, // info
+            nullptr, // retain
+            nullptr, // release
+            nullptr, // copyDescription
+            nullptr, // allocate
+            nullptr, // reallocate
+            [](void *ptr, void *info) {
+                WTF::fastFree(ptr);
+            },
+            nullptr, // preferredSize
+        };
+        fastMallocDeallocator = CFAllocatorCreate(kCFAllocatorDefault, &context);
+    });
+
+    size_t bufferSize;
+    auto buffer = encodeSessionHistoryEntryData(frameState, bufferSize);
+
+    return adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, buffer.get(), bufferSize, fastMallocDeallocator));
 }
 
 static RetainPtr<CFDictionaryRef> createDictionary(std::initializer_list<std::pair<CFStringRef, CFTypeRef>> keyValuePairs)
