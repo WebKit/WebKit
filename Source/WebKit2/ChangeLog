@@ -1,3 +1,25 @@
+2014-06-30  Anders Carlsson  <andersca@apple.com>
+
+        Change the AddBackForwardItem message to take a page state object
+        https://bugs.webkit.org/show_bug.cgi?id=134475
+
+        Reviewed by Andreas Kling.
+
+        * Scripts/webkit2/messages.py:
+        (struct_or_class):
+        (headers_for_type):
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::create):
+        (WebKit::WebBackForwardListItem::WebBackForwardListItem):
+        * Shared/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::setPageState):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::addBackForwardItem):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::updateBackForwardItem):
+
 2014-06-30  Tim Horton  <timothy_horton@apple.com>
 
         [WK2] Add a flatter find-in-page current match indicator style

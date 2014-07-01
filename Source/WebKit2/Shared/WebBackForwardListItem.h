@@ -42,8 +42,12 @@ namespace IPC {
 
 namespace WebKit {
 
+struct PageState;
+
 class WebBackForwardListItem : public API::ObjectImpl<API::Object::Type::BackForwardListItem> {
 public:
+    static PassRefPtr<WebBackForwardListItem> create(uint64_t itemID, PageState);
+
     static PassRefPtr<WebBackForwardListItem> create(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID)
     {
         return adoptRef(new WebBackForwardListItem(originalURL, url, title, backForwardData, backForwardDataSize, itemID));
@@ -52,6 +56,8 @@ public:
     virtual ~WebBackForwardListItem();
 
     uint64_t itemID() const { return m_itemID; }
+
+    void setPageState(PageState pageState) { m_pageState = std::move(pageState); }
 
     void setOriginalURL(const String& originalURL) { m_pageState.mainFrameState.originalURLString = originalURL; }
     const String& originalURL() const { return m_pageState.mainFrameState.originalURLString; }
@@ -74,10 +80,12 @@ public:
     static uint64_t highedUsedItemID();
 
 private:
+    WebBackForwardListItem(uint64_t itemID, PageState);
+
     WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID);
 
-    PageState m_pageState;
     uint64_t m_itemID;
+    PageState m_pageState;
     String m_snapshotUUID;
 };
 

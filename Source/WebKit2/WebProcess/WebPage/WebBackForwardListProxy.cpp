@@ -26,8 +26,8 @@
 #include "config.h"
 #include "WebBackForwardListProxy.h"
 
-#include "DataReference.h"
-#include "EncoderAdapter.h"
+#include "SessionState.h"
+#include "SessionStateConversion.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -84,10 +84,7 @@ void WebBackForwardListProxy::setHighestItemIDFromUIProcess(uint64_t itemID)
 
 static void updateBackForwardItem(uint64_t itemID, HistoryItem* item)
 {
-    EncoderAdapter encoder;
-    item->encodeBackForwardTree(encoder);
-
-    WebProcess::shared().parentProcessConnection()->send(Messages::WebProcessProxy::AddBackForwardItem(itemID, item->originalURLString(), item->urlString(), item->title(), encoder.dataReference()), 0);
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebProcessProxy::AddBackForwardItem(itemID, toPageState(*item)), 0);
 }
 
 void WebBackForwardListProxy::addItemFromUIProcess(uint64_t itemID, PassRefPtr<WebCore::HistoryItem> prpItem)

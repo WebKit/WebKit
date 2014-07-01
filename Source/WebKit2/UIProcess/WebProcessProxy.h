@@ -156,7 +156,7 @@ private:
     void disconnect();
 
     // IPC message handlers.
-    void addBackForwardItem(uint64_t itemID, const String& originalURLString, const String& urlString, const String& title, const IPC::DataReference& backForwardData);
+    void addBackForwardItem(uint64_t itemID, const PageState&);
     void didDestroyFrame(uint64_t);
     
     void shouldTerminate(bool& shouldTerminate);

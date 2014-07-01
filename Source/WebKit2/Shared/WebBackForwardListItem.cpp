@@ -35,6 +35,17 @@ namespace WebKit {
 
 static uint64_t highestUsedItemID = 0;
 
+PassRefPtr<WebBackForwardListItem> WebBackForwardListItem::create(uint64_t itemID, PageState pageState)
+{
+    return adoptRef(new WebBackForwardListItem(itemID, std::move(pageState)));
+}
+
+WebBackForwardListItem::WebBackForwardListItem(uint64_t itemID, PageState pageState)
+    : m_itemID(itemID)
+    , m_pageState(std::move(pageState))
+{
+}
+
 WebBackForwardListItem::WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID)
     : m_itemID(itemID)
 {

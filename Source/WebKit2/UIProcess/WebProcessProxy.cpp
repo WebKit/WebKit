@@ -310,22 +310,19 @@ bool WebProcessProxy::fullKeyboardAccessEnabled()
 }
 #endif
 
-void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& originalURL, const String& url, const String& title, const IPC::DataReference& backForwardData)
+void WebProcessProxy::addBackForwardItem(uint64_t itemID, const PageState& pageState)
 {
-    MESSAGE_CHECK_URL(originalURL);
-    MESSAGE_CHECK_URL(url);
+    MESSAGE_CHECK_URL(pageState.mainFrameState.originalURLString);
+    MESSAGE_CHECK_URL(pageState.mainFrameState.urlString);
 
-    WebBackForwardListItemMap::AddResult result = m_backForwardListItemMap.add(itemID, nullptr);
-    if (result.isNewEntry) {
-        result.iterator->value = WebBackForwardListItem::create(originalURL, url, title, backForwardData.data(), backForwardData.size(), itemID);
+    auto& backForwardListItem = m_backForwardListItemMap.add(itemID, nullptr).iterator->value;
+    if (!backForwardListItem) {
+        backForwardListItem = WebBackForwardListItem::create(itemID, pageState);
         return;
     }
 
     // Update existing item.
-    result.iterator->value->setOriginalURL(originalURL);
-    result.iterator->value->setURL(url);
-    result.iterator->value->setTitle(title);
-    result.iterator->value->setBackForwardData(backForwardData.data(), backForwardData.size());
+    backForwardListItem->setPageState(pageState);
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
