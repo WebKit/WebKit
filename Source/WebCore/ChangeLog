@@ -1,3 +1,29 @@
+2014-07-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove remaining Vector<> copies in WebCore accessibility code
+        https://bugs.webkit.org/show_bug.cgi?id=133263
+
+        Reviewed by Darin Adler.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::notificationPostTimerFired): Don't copy the Vector member and
+        then clear it -- move it into the local variable instead.
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::ariaLabeledByText): Move the axElements Vector into
+        the AccessibilityText constructor.
+        (WebCore::AccessibilityNodeObject::stringValue): Create a const reference to the Vector of
+        HTMLSelectElement's list items instead of copying it.
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityText::AccessibilityText): Take the Vector parameter by non-const
+        value and move it into the member variable.
+        * accessibility/AccessibilityRenderObject.cpp: 
+        (WebCore::AccessibilityRenderObject::stringValue): Create a const reference to the Vector
+        of HTMLSelectElement's list items instead of copying it.
+        (WebCore::AccessibilityRenderObject::ariaSelectedRows): Wrap the AccessibilityChildrenVector
+        iteration in a lambda. Use it to iterate over either the newly-constructed Vector (in case
+        the object has the tree role) or the reference to the vector returned by
+        AccessibilityTable::rows() (in case the object is an AccessibilityTable instance).
+
 2014-06-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r170605.

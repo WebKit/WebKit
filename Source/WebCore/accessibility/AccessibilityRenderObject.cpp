@@ -743,7 +743,7 @@ String AccessibilityRenderObject::stringValue() const
         // This has to be overridden in the case where the selected item has an ARIA label.
         HTMLSelectElement* selectElement = toHTMLSelectElement(m_renderer->node());
         int selectedIndex = selectElement->selectedIndex();
-        const Vector<HTMLElement*> listItems = selectElement->listItems();
+        const Vector<HTMLElement*>& listItems = selectElement->listItems();
         if (selectedIndex >= 0 && static_cast<size_t>(selectedIndex) < listItems.size()) {
             const AtomicString& overriddenDescription = listItems[selectedIndex]->fastGetAttribute(aria_labelAttr);
             if (!overriddenDescription.isNull())
@@ -3108,13 +3108,6 @@ bool AccessibilityRenderObject::ariaLiveRegionBusy() const
     
 void AccessibilityRenderObject::ariaSelectedRows(AccessibilityChildrenVector& result)
 {
-    // Get all the rows. 
-    AccessibilityChildrenVector allRows;
-    if (isTree())
-        ariaTreeRows(allRows);
-    else if (isAccessibilityTable() && toAccessibilityTable(this)->supportsSelectedRows())
-        allRows = toAccessibilityTable(this)->rows();
-
     // Determine which rows are selected.
     bool isMulti = isMultiSelectable();
 
@@ -3126,13 +3119,22 @@ void AccessibilityRenderObject::ariaSelectedRows(AccessibilityChildrenVector& re
             return;
     }
 
-    for (const auto& row : allRows) {
-        if (row->isSelected()) {
-            result.append(row);
-            if (!isMulti)
-                break;
+    // Get all the rows.
+    auto rowsIteration = [&](const AccessibilityChildrenVector& rows) {
+        for (auto& row : rows) {
+            if (row->isSelected()) {
+                result.append(row);
+                if (!isMulti)
+                    break;
+            }
         }
-    }
+    };
+    if (isTree()) {
+        AccessibilityChildrenVector allRows;
+        ariaTreeRows(allRows);
+        rowsIteration(allRows);
+    } else if (isAccessibilityTable() && toAccessibilityTable(this)->supportsSelectedRows())
+        rowsIteration(toAccessibilityTable(this)->rows());
 }
     
 void AccessibilityRenderObject::ariaListboxSelectedChildren(AccessibilityChildrenVector& result)

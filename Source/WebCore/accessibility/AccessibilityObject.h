@@ -230,10 +230,10 @@ struct AccessibilityText {
     , textSource(s)
     { }
 
-    AccessibilityText(const String& t, const AccessibilityTextSource& s, const Vector<RefPtr<AccessibilityObject>> elements)
+    AccessibilityText(const String& t, const AccessibilityTextSource& s, Vector<RefPtr<AccessibilityObject>> elements)
     : text(t)
     , textSource(s)
-    , textElements(elements)
+    , textElements(std::move(elements))
     { }
 
     AccessibilityText(const String& t, const AccessibilityTextSource& s, const RefPtr<AccessibilityObject> element)

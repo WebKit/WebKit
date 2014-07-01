@@ -704,8 +704,7 @@ void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>&)
     
     // In DRT, posting notifications has a tendency to immediately queue up other notifications, which can lead to unexpected behavior
     // when the notification list is cleared at the end. Instead copy this list at the start.
-    auto notifications = m_notificationsToPost;
-    m_notificationsToPost.clear();
+    auto notifications = std::move(m_notificationsToPost);
     
     for (const auto& note : notifications) {
         AccessibilityObject* obj = note.first.get();

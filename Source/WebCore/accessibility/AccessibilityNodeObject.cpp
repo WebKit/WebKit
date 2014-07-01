@@ -1438,7 +1438,7 @@ void AccessibilityNodeObject::ariaLabeledByText(Vector<AccessibilityText>& textO
             axElements.append(axElement);
         }
         
-        textOrder.append(AccessibilityText(ariaLabeledBy, AlternativeText, axElements));
+        textOrder.append(AccessibilityText(ariaLabeledBy, AlternativeText, std::move(axElements)));
     }
 }
     
@@ -1787,7 +1787,7 @@ String AccessibilityNodeObject::stringValue() const
     if (node->hasTagName(selectTag)) {
         HTMLSelectElement* selectElement = toHTMLSelectElement(node);
         int selectedIndex = selectElement->selectedIndex();
-        const Vector<HTMLElement*> listItems = selectElement->listItems();
+        const Vector<HTMLElement*>& listItems = selectElement->listItems();
         if (selectedIndex >= 0 && static_cast<size_t>(selectedIndex) < listItems.size()) {
             const AtomicString& overriddenDescription = listItems[selectedIndex]->fastGetAttribute(aria_labelAttr);
             if (!overriddenDescription.isNull())
