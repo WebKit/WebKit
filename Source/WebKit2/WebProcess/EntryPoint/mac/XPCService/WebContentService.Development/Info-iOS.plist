@@ -22,8 +22,6 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>${BUNDLE_VERSION}</string>
-	<key>CFBundleAllowMixedLocalizations</key>
-	<true/>
 	<key>LSFileQuarantineEnabled</key>
 	<true/>
 	<key>WebKitEntryPoint</key>

@@ -22,8 +22,6 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>${BUNDLE_VERSION}</string>
-	<key>CFBundleAllowMixedLocalizations</key>
-	<true/>
 	<key>LSFileQuarantineEnabled</key>
 	<true/>
 	<key>NSPrincipalClass</key>
@@ -36,6 +34,8 @@
 	<true/>
 	<key>NSSupportsAppNap</key>
 	<true/>
+	<key>NSMainNibFile</key>
+	<string>WebContentProcess</string>
 	<key>XPCService</key>
 	<dict>
 		<key>JoinExistingSession</key>
@@ -47,7 +47,5 @@
 		<key>_MultipleInstances</key>
 		<true/>
 	</dict>
-	<key>NSMainNibFile</key>
-	<string>WebContentProcess</string>
 </dict>
 </plist>
