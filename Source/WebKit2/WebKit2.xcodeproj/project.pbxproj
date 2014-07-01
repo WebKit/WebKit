@@ -147,6 +147,7 @@
 		1A1C649B11F4174200553C19 /* WebContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1C648611F415B700553C19 /* WebContextMac.mm */; };
 		1A1D8BA11731A36300141DA4 /* LocalStorageDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D8B9F1731A36300141DA4 /* LocalStorageDatabase.cpp */; };
 		1A1D8BA21731A36300141DA4 /* LocalStorageDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1D8BA01731A36300141DA4 /* LocalStorageDatabase.h */; };
+		1A1DC340196346D700FF7059 /* LegacySessionStateCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 31607F3819627002009B87DA /* LegacySessionStateCoding.h */; };
 		1A1E093318861D3800D2DC49 /* WebProgressTrackerClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1E093118861D3800D2DC49 /* WebProgressTrackerClient.cpp */; };
 		1A1E093418861D3800D2DC49 /* WebProgressTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1E093218861D3800D2DC49 /* WebProgressTrackerClient.h */; };
 		1A1EC69E1872092100B951F0 /* ImportanceAssertion.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1EC69D1872092100B951F0 /* ImportanceAssertion.h */; };
@@ -619,7 +620,6 @@
 		3131261F148FF82C00BA2A39 /* NotificationPermissionRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3131261A148FF82B00BA2A39 /* NotificationPermissionRequestManager.h */; };
 		31312620148FF82C00BA2A39 /* WebNotificationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3131261B148FF82B00BA2A39 /* WebNotificationManager.cpp */; };
 		31312621148FF82C00BA2A39 /* WebNotificationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3131261C148FF82B00BA2A39 /* WebNotificationManager.h */; };
-		31607F3919627002009B87DA /* LegacySessionStateCoding.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 31607F3819627002009B87DA /* LegacySessionStateCoding.h */; };
 		318BE17114743DB100A8FBB2 /* WKNotificationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 318BE17014743DB100A8FBB2 /* WKNotificationManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		318BE17514743DD700A8FBB2 /* WKNotificationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 318BE17414743DD600A8FBB2 /* WKNotificationManager.cpp */; };
 		318BE17714743E6000A8FBB2 /* WKNotification.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 318BE17614743E6000A8FBB2 /* WKNotification.cpp */; };
@@ -1908,7 +1908,6 @@
 			dstSubfolderSpec = 1;
 			files = (
 				510CC8491613C85C00D03ED3 /* NetworkProcess.app in Copy Files */,
-				31607F3919627002009B87DA /* LegacySessionStateCoding.h in Copy Files */,
 				BCDE0ABF13272708001259FB /* PluginProcess.app in Copy Files */,
 				51A60B2A180CCEB500F3BF50 /* DatabaseProcess.app in Copy Files */,
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in Copy Files */,
@@ -7261,6 +7260,7 @@
 				1A2D82A9127F4EAB001EB962 /* NPRemoteObjectMap.h in Headers */,
 				1A2161B011F37664008AD0F5 /* NPRuntimeObjectMap.h in Headers */,
 				2DA049B8180CCD0A00AAFA9E /* GraphicsLayerCARemote.h in Headers */,
+				1A1DC340196346D700FF7059 /* LegacySessionStateCoding.h in Headers */,
 				2DA049B4180CCCD300AAFA9E /* PlatformCALayerRemote.h in Headers */,
 				1A2162B111F38971008AD0F5 /* NPRuntimeUtilities.h in Headers */,
 				1AB8A1EC1840080900E9AE69 /* WKPageLoaderClient.h in Headers */,
