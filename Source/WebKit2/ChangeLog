@@ -1,3 +1,30 @@
+2014-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use a different user agent string depending on the site
+        https://bugs.webkit.org/show_bug.cgi?id=132681
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webkit_settings_class_init): Enable site specific quirks setting
+        by default.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::userAgent): Pass the given URL to WebPage.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::userAgent): Try to get the user agent for the
+        URL received falling back to the current one otherwise.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::platformUserAgent): Added.
+        * WebProcess/WebPage/efl/WebPageEfl.cpp:
+        (WebKit::WebPage::platformUserAgent): Return null String.
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::platformUserAgent): Use WebCore::standardUserAgentForURL() when site specific quirks
+        setting is enabled.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformUserAgent): Return null String.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformUserAgent): Return null String.
+
 2014-05-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebProcess leaked when closing pages with network process enabled

@@ -1064,13 +1064,15 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * workarounds. By turning on site-specific quirks, WebKit will
      * special-case this and other cases to make some specific sites work.
      */
-    g_object_class_install_property(gObjectClass,
-                                    PROP_ENABLE_SITE_SPECIFIC_QUIRKS,
-                                    g_param_spec_boolean("enable-site-specific-quirks",
-                                                         _("Enable Site Specific Quirks"),
-                                                         _("Enables the site-specific compatibility workarounds"),
-                                                         FALSE,
-                                                         readWriteConstructParamFlags));
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_ENABLE_SITE_SPECIFIC_QUIRKS,
+        g_param_spec_boolean(
+            "enable-site-specific-quirks",
+            _("Enable Site Specific Quirks"),
+            _("Enables the site-specific compatibility workarounds"),
+            TRUE,
+            readWriteConstructParamFlags));
 
     /**
      * WebKitSettings:enable-page-cache:

@@ -42,6 +42,7 @@
 #include <WebCore/PasteboardHelper.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/Settings.h>
+#include <WebCore/UserAgentGtk.h>
 #include <wtf/gobject/GUniquePtr.h>
 
 using namespace WebCore;
@@ -167,5 +168,13 @@ void WebPage::setAcceleratedCompositingWindowId(int64_t nativeWindowHandle)
     m_nativeWindowHandle = nativeWindowHandle;
 }
 #endif
+
+String WebPage::platformUserAgent(const URL& url) const
+{
+    if (url.isNull() || !m_page->settings().needsSiteSpecificQuirks())
+        return String();
+
+    return WebCore::standardUserAgentForURL(url);
+}
 
 } // namespace WebKit

@@ -1,3 +1,38 @@
+2014-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use a different user agent string depending on the site
+        https://bugs.webkit.org/show_bug.cgi?id=132681
+
+        Reviewed by Anders Carlsson.
+
+        We have changed the user agent string several times to try to fix
+        broken websites that require specific things in the UA string to
+        properly work. But everytime we change the UA string to fix a
+        website we break others. We could use different UA string
+        depending on the website. UserAgentGtk code has also been cleaned
+        up, using NeverDestroyed instead of DEPRECATED_DEFINE_STATIC_LOCAL
+        and avoiding unneeded conversions to UTF-8.
+
+        * platform/gtk/UserAgentGtk.cpp:
+        (WebCore::UserAgentQuirks::UserAgentQuirks): New helper private
+        class to handle user agent quirks.
+        (WebCore::UserAgentQuirks::add):
+        (WebCore::UserAgentQuirks::contains):
+        (WebCore::UserAgentQuirks::isEmpty):
+        (WebCore::platformForUAString): Bring back this method that was
+        removed to always pretend to be Macintosh.
+        (WebCore::platformVersionForUAString): Return a different platform
+        version depending on the actual platform.
+        (WebCore::versionForUAString): Return the WebKit version.
+        (WebCore::buildUserAgentString): Helper function to build the user
+        agent taking into account the UserAgentQuirks received.
+        (WebCore::standardUserAgentStatic): Standard user agent string
+        when no quirks are present.
+        (WebCore::standardUserAgent):
+        (WebCore::standardUserAgentForURL): New method that returns the
+        user agent string for the given URL.
+        * platform/gtk/UserAgentGtk.h:
+
 2014-06-13  Sergio Villar Senin  <svillar@igalia.com>
 
         [Gtk] [Stable] Fix the "Safari" part of the UA

@@ -1146,13 +1146,13 @@ void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const URL&
         title.string(), url.string(), m_frame->frameID()), 0);
 }
 
-String WebFrameLoaderClient::userAgent(const URL&)
+String WebFrameLoaderClient::userAgent(const URL& url)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return String();
 
-    return webPage->userAgent();
+    return webPage->userAgent(url);
 }
 
 void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame*)

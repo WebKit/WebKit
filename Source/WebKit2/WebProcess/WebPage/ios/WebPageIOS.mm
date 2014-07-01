@@ -877,4 +877,9 @@ void WebPage::didFinishZooming(float newScale)
     m_page->setPageScaleFactor(newScale, m_page->mainFrame().view()->scrollPosition());
 }
 
+String WebPage::platformUserAgent(const URL&) const
+{
+    return String();
+}
+
 } // namespace WebKit

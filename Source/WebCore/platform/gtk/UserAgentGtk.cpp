@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2012, 2014 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,48 @@
 #include "config.h"
 #include "UserAgentGtk.h"
 
-#include <glib.h>
+#include "URL.h"
+#include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringBuilder.h>
 
 #if OS(UNIX)
 #include <sys/utsname.h>
 #endif
 
 namespace WebCore {
+
+class UserAgentQuirks {
+public:
+    enum UserAgentQuirk {
+        NeedsMacintoshPlatform,
+
+        NumUserAgentQuirks
+    };
+
+    UserAgentQuirks()
+        : m_quirks(0)
+    {
+        COMPILE_ASSERT(sizeof(m_quirks) * 8 >= NumUserAgentQuirks, not_enough_room_for_quirks);
+    }
+
+    void add(UserAgentQuirk quirk)
+    {
+        ASSERT(quirk >= 0);
+        ASSERT_WITH_SECURITY_IMPLICATION(quirk < NumUserAgentQuirks);
+
+        m_quirks |= (1 << quirk);
+    }
+
+    bool contains(UserAgentQuirk quirk) const
+    {
+        return m_quirks & (1 << quirk);
+    }
+
+    bool isEmpty() const { return !m_quirks; }
+
+private:
+    uint32_t m_quirks;
+};
 
 static const char* cpuDescriptionForUAString()
 {
@@ -47,16 +82,74 @@ static const char* cpuDescriptionForUAString()
 #endif
 }
 
-static String platformVersionForUAString()
+static const char* platformForUAString()
 {
-    DEFINE_STATIC_LOCAL(String, uaOSVersion, (String()));
-    if (!uaOSVersion.isEmpty())
-        return uaOSVersion;
+#if PLATFORM(X11)
+    return "X11";
+#elif OS(WINDOWS)
+    return "";
+#elif PLATFORM(MAC)
+    return "Macintosh";
+#elif defined(GDK_WINDOWING_DIRECTFB)
+    return "DirectFB";
+#else
+    return "Unknown";
+#endif
+}
 
-    // We will always claim to be Safari in Mac OS X, since Safari in Linux triggers the iOS path on
-    // some websites.
-    uaOSVersion = String::format("%s Mac OS X", cpuDescriptionForUAString());
+static const String platformVersionForUAString()
+{
+#if OS(UNIX)
+    struct utsname name;
+    uname(&name);
+    static NeverDestroyed<const String> uaOSVersion(String::format("%s %s", name.sysname, name.machine));
     return uaOSVersion;
+#else
+    // We will always claim to be Safari in Mac OS X, since Safari in Linux triggers the iOS path on some websites.
+    static NeverDestroyed<const String> uaOSVersion(String::format("%s Mac OS X", cpuDescriptionForUAString()));
+    return uaOSVersion;
+#endif
+}
+
+static const String versionForUAString()
+{
+    static NeverDestroyed<const String> uaVersion(String::format("%i.%i", USER_AGENT_GTK_MAJOR_VERSION, USER_AGENT_GTK_MINOR_VERSION));
+    return uaVersion;
+}
+
+static String buildUserAgentString(const UserAgentQuirks& quirks)
+{
+    StringBuilder uaString;
+    uaString.appendLiteral("Mozilla/5.0 ");
+    uaString.append('(');
+
+    if (quirks.contains(UserAgentQuirks::NeedsMacintoshPlatform))
+        uaString.appendLiteral("Macintosh");
+    else
+        uaString.append(platformForUAString());
+
+    uaString.appendLiteral("; ");
+
+    if (quirks.contains(UserAgentQuirks::NeedsMacintoshPlatform)) {
+        uaString.append(cpuDescriptionForUAString());
+        uaString.appendLiteral(" Mac OS X");
+    } else
+        uaString.append(platformVersionForUAString());
+
+    uaString.appendLiteral(") AppleWebKit/");
+    uaString.append(versionForUAString());
+    // Version/X is mandatory *before* Safari/X to be a valid Safari UA. See
+    // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
+    uaString.appendLiteral(" (KHTML, like Gecko) Version/8.0 Safari/");
+    uaString.append(versionForUAString());
+
+    return uaString.toString();
+}
+
+static const String standardUserAgentStatic()
+{
+    static NeverDestroyed<const String> uaStatic(buildUserAgentString(UserAgentQuirks()));
+    return uaStatic;
 }
 
 String standardUserAgent(const String& applicationName, const String& applicationVersion)
@@ -69,18 +162,28 @@ String standardUserAgent(const String& applicationName, const String& applicatio
     // browsers that are "Safari" but not running on OS X are the Safari iOS browse. Getting this
     // wrong can cause sites to load the wrong JavaScript, CSS, or custom fonts. In some cases
     // sites won't load resources at all.
-    DEFINE_STATIC_LOCAL(const CString, uaVersion, (String::format("%i.%i", USER_AGENT_GTK_MAJOR_VERSION, USER_AGENT_GTK_MINOR_VERSION).utf8()));
-    DEFINE_STATIC_LOCAL(const String, staticUA, (String::format("Mozilla/5.0 (Macintosh; %s) AppleWebKit/%s (KHTML, like Gecko) Version/8.0 Safari/%s",
-        platformVersionForUAString().utf8().data(), uaVersion.data(), uaVersion.data())));
-
     if (applicationName.isEmpty())
-        return staticUA;
+        return standardUserAgentStatic();
 
     String finalApplicationVersion = applicationVersion;
     if (finalApplicationVersion.isEmpty())
-        finalApplicationVersion = uaVersion.data();
+        finalApplicationVersion = versionForUAString();
 
-    return String::format("%s %s/%s", staticUA.utf8().data(), applicationName.utf8().data(), finalApplicationVersion.utf8().data());
+    return standardUserAgentStatic() + ' ' + applicationName + '/' + finalApplicationVersion;
+}
+
+String standardUserAgentForURL(const URL& url)
+{
+    ASSERT(!url.isNull());
+    UserAgentQuirks quirks;
+    if (url.host().endsWith(".yahoo.com")) {
+        // www.yahoo.com redirects to the mobile version when Linux is present in the UA,
+        // use always Macintosh as platform. See https://bugs.webkit.org/show_bug.cgi?id=125444.
+        quirks.add(UserAgentQuirks::NeedsMacintoshPlatform);
+    }
+
+    // The null string means we don't need a specific UA for the given URL.
+    return quirks.isEmpty() ? String() : buildUserAgentString(quirks);
 }
 
 } // namespace WebCore

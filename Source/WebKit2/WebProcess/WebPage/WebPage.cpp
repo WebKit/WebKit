@@ -2169,6 +2169,15 @@ void WebPage::setUserAgent(const String& userAgent)
     m_userAgent = userAgent;
 }
 
+String WebPage::userAgent(const URL& url) const
+{
+    String userAgent = platformUserAgent(url);
+    if (!userAgent.isEmpty())
+        return userAgent;
+
+    return m_userAgent;
+}
+
 void WebPage::suspendActiveDOMObjectsAndAnimations()
 {
     m_page->suspendActiveDOMObjectsAndAnimations();
