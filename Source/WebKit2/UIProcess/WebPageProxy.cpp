@@ -1855,7 +1855,7 @@ void WebPageProxy::restoreFromState(SessionState sessionState)
 
     // FIXME: Navigating should be separate from state restoration.
 
-    if (sessionState.provisionalURL) {
+    if (!sessionState.provisionalURL.isNull()) {
         loadRequest(sessionState.provisionalURL);
         return;
     }
