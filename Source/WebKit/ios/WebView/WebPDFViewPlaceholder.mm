@@ -500,7 +500,11 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
         return;
 
     // Construct an event to simulate a click.
-    RefPtr<Event> event = MouseEvent::create(eventNames().clickEvent, true, true, currentTime(), 0, 1, 0, 0, 0, 0, false, false, false, false, 0, 0, 0, true);
+    RefPtr<Event> event = MouseEvent::create(eventNames().clickEvent, true, true, currentTime(), 0, 1, 0, 0, 0, 0,
+#if ENABLE(POINTER_LOCK)
+        0, 0,
+#endif
+        false, false, false, false, 0, 0, 0, true);
 
     // Call to the frame loader because this is where our security checks are made.
     Frame* frame = core([_dataSource webFrame]);
