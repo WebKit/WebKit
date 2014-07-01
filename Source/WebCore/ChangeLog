@@ -1,3 +1,19 @@
+2014-07-01  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Pixel crack in breadcrumbs at devforums.apple.com.
+        https://bugs.webkit.org/show_bug.cgi?id=134491
+
+        Reviewed by Simon Fraser.
+
+        Do not early round geometry values, while computing background image position. It changes the final
+        subpixel values and that could lead to wrong snap positions.
+        pixelSnapBackgroundImageGeometryForPainting() takes care of geometry snapping.
+
+        Test: fast/backgrounds/background-image-size-double-rounding.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+
 2014-07-01  Pratik Solanki  <psolanki@apple.com>
 
         Create NSURLRequest lazily when USE(CFNETWORK) is enabled

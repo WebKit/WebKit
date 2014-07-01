@@ -1,3 +1,17 @@
+2014-07-01  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Pixel crack in breadcrumbs at devforums.apple.com.
+        https://bugs.webkit.org/show_bug.cgi?id=134491
+
+        Reviewed by Simon Fraser.
+
+        Do not early round geometry values, while computing background image position. It changes the final
+        subpixel values and that could lead to wrong snap positions.
+        pixelSnapBackgroundImageGeometryForPainting() takes care of geometry snapping.
+
+        * fast/backgrounds/background-image-size-double-rounding-expected.html: Added.
+        * fast/backgrounds/background-image-size-double-rounding.html: Added.
+
 2014-06-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         All Indic text is rendered as boxes on iOS
