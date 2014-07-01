@@ -332,7 +332,17 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
         decoder.setData(m_image->data(), true);
         if (!decoder.frameCount())
             return false;
+#if PLATFORM(IOS)
+        float scaleHint = 1;
+        if (m_image->isBitmapImage()) {
+            IntSize originalSize = toBitmapImage(m_image)->originalSize();
+            if (originalSize.width() && originalSize.height())
+                scaleHint = std::min<float>(1.0f, std::max(m_image->size().width() / originalSize.width(), m_image->size().width() / originalSize.height()));
+        }
+        m_decodedImage = adoptCF(decoder.createFrameAtIndex(0, &scaleHint));
+#else
         m_decodedImage = adoptCF(decoder.createFrameAtIndex(0));
+#endif
         m_cgImage = m_decodedImage.get();
     } else
         m_cgImage = m_image->nativeImageForCurrentFrame();

@@ -61,7 +61,7 @@ bool FrameData::clear(bool clearMetadata)
 
 #if PLATFORM(IOS)
     m_frameBytes = 0;
-    m_scale = 1;
+    m_subsamplingScale = 1;
     m_haveInfo = false;
 #endif
 
@@ -114,7 +114,7 @@ BitmapImage::BitmapImage(CGImageRef cgImage, ImageObserver* observer)
     m_frames[0].m_haveMetadata = true;
 
 #if PLATFORM(IOS)
-    m_frames[0].m_scale = 1;
+    m_frames[0].m_subsamplingScale = 1;
 #endif
 
     checkForSolidColor();
@@ -199,11 +199,12 @@ RetainPtr<CFArrayRef> BitmapImage::getCGImageArray()
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription description)
 {
     CGImageRef image;
-#if !PLATFORM(IOS)
-    startAnimation();
+    FloatRect srcRectForCurrentFrame = srcRect;
 
-    image = frameAtIndex(m_currentFrame);
-#else
+#if PLATFORM(IOS)
+    if (m_originalSize.width() && m_originalSize.height())
+        srcRectForCurrentFrame.scale(m_size.width() / static_cast<float>(m_originalSize.width()), m_size.height() / static_cast<float>(m_originalSize.height()));
+
     startAnimation(DoNotCatchUp);
 
     CGRect transformedDestinationRect = CGRectApplyAffineTransform(destRect, CGContextGetCTM(ctxt->platformContext()));
@@ -212,10 +213,15 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
     if (CGContextGetType(ctxt->platformContext()) == kCGContextTypePDF)
         imagePossiblyCopied = adoptCF(copyUnscaledFrameAtIndex(m_currentFrame));
     else
-        imagePossiblyCopied = frameAtIndex(m_currentFrame, std::min<float>(1.0f, std::max(transformedDestinationRect.size.width  / srcRect.width(), transformedDestinationRect.size.height / srcRect.height())));
-    
+        imagePossiblyCopied = frameAtIndex(m_currentFrame, std::min<float>(1.0f, std::max(transformedDestinationRect.size.width  / srcRectForCurrentFrame.width(), transformedDestinationRect.size.height / srcRectForCurrentFrame.height())));
+
     image = imagePossiblyCopied.get();
+#else
+    startAnimation();
+
+    image = frameAtIndex(m_currentFrame);
 #endif
+
     if (!image) // If it's too early we won't have an image yet.
         return;
     
@@ -226,7 +232,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
 
     float scale = 1;
 #if PLATFORM(IOS)
-    scale = m_frames[m_currentFrame].m_scale;
+    scale = m_frames[m_currentFrame].m_subsamplingScale;
 #endif
     FloatSize selfSize = currentFrameSize();
     ImageOrientation orientation;
@@ -234,7 +240,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
     if (description.respectImageOrientation() == RespectImageOrientation)
         orientation = frameOrientationAtIndex(m_currentFrame);
 
-    ctxt->drawNativeImage(image, selfSize, styleColorSpace, destRect, srcRect, scale, compositeOp, blendMode, orientation);
+    ctxt->drawNativeImage(image, selfSize, styleColorSpace, destRect, srcRectForCurrentFrame, scale, compositeOp, blendMode, orientation);
 
     if (imageObserver())
         imageObserver()->didDraw(this);
@@ -249,7 +255,7 @@ PassNativeImagePtr BitmapImage::copyUnscaledFrameAtIndex(size_t index)
     if (index >= m_frames.size() || !m_frames[index].m_frame)
         cacheFrame(index, 1);
 
-    if (m_frames[index].m_scale == 1 && !m_source.isSubsampled())
+    if (m_frames[index].m_subsamplingScale == 1 && !m_source.isSubsampled())
         return CGImageRetain(m_frames[index].m_frame);
 
     return m_source.createFrameAtIndex(index);

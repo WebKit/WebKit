@@ -166,7 +166,7 @@ void BitmapImage::cacheFrame(size_t index)
 
 #if PLATFORM(IOS)
     m_frames[index].m_frame = m_source.createFrameAtIndex(index, &scaleHint);
-    m_frames[index].m_scale = scaleHint;
+    m_frames[index].m_subsamplingScale = scaleHint;
 #else
     m_frames[index].m_frame = m_source.createFrameAtIndex(index);
 #endif
@@ -431,7 +431,7 @@ PassNativeImagePtr BitmapImage::frameAtIndex(size_t index, float scaleHint)
 
     if (index >= m_frames.size() || !m_frames[index].m_frame)
         cacheFrame(index, scaleHint);
-    else if (std::min(1.0f, scaleHint) > m_frames[index].m_scale) {
+    else if (std::min(1.0f, scaleHint) > m_frames[index].m_subsamplingScale) {
         // If the image is already cached, but at too small a size, re-decode a larger version.
         int sizeChange = -m_frames[index].m_frameBytes;
         ASSERT(static_cast<int>(m_decodedSize) + sizeChange >= 0);

@@ -71,7 +71,7 @@ public:
         : m_frame(0)
         , m_orientation(DefaultImageOrientation)
 #if PLATFORM(IOS)
-        , m_scale(0)
+        , m_subsamplingScale(0)
         , m_haveInfo(false)
 #endif
         , m_duration(0)
@@ -94,7 +94,7 @@ public:
     NativeImagePtr m_frame;
     ImageOrientation m_orientation;
 #if PLATFORM(IOS)
-    float m_scale;
+    float m_subsamplingScale;
     bool m_haveInfo;
 #endif
     float m_duration;

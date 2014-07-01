@@ -1,3 +1,40 @@
+2014-07-01  Dean Jackson  <dino@apple.com>
+
+        [iOS] Subsampled JPEG images do not draw correctly via the canvas APIs
+        https://bugs.webkit.org/show_bug.cgi?id=134513
+        <rdar://problem/12078860>
+        <rdar://problem/16745393>
+
+        Reviewed by Tim Horton.
+
+        Subsampled images (e.g. JPEG) were not consistently using
+        their original dimensions and subsampled dimensions. This caused
+        things like texImage2D to pack the pixels incorrectly, or drawImage
+        to squish the rendering.
+
+        Renamed m_scale to m_subsamplingScale on FrameData.
+
+        Tests: fast/canvas/image-potential-subsample.html
+               fast/canvas/webgl/tex-image-and-sub-image-2d-with-potentially-subsampled-image.html
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::cacheFrame): Rename to m_subsamplingScale.
+        (WebCore::BitmapImage::frameAtIndex): Ditto.
+        * platform/graphics/BitmapImage.h:
+        (WebCore::FrameData::FrameData): Ditto.
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        (WebCore::FrameData::clear): Ditto.
+        (WebCore::BitmapImage::BitmapImage): Ditto.
+        (WebCore::BitmapImage::draw): Use a scaledSrcRect that reflects the subsampled size,
+        rather than assuming the srcRect accurately reflects how many pixels we have
+        in the Bitmap.
+        (WebCore::BitmapImage::copyUnscaledFrameAtIndex):
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage): Similar fix, although this
+        time we just ask the image decoder to take into account the subsampled size
+        when it is "generating" a frame, causing it to use the bitmap data it has already
+        decoded.
+
 2014-07-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Selected DOM element highlights invisible near bottom of the viewport (topContentInset?)

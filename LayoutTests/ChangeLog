@@ -1,3 +1,29 @@
+2014-07-01  Dean Jackson  <dino@apple.com>
+
+        [iOS] Subsampled JPEG images do not draw correctly via the canvas APIs
+        https://bugs.webkit.org/show_bug.cgi?id=134513
+        <rdar://problem/12078860>
+        <rdar://problem/16745393>
+
+        Reviewed by Tim Horton.
+
+        Add Canvas2D and WebGL tests that exercise a very large JPEG image.
+
+        The WebGL test is mostly copied from the WebGL test suite, so please
+        excuse the coding style.
+
+        * fast/canvas/image-potential-subsample-expected.txt: Added.
+        * fast/canvas/image-potential-subsample.html: Added.
+        * fast/canvas/resources/image-8000x8000.jpg: Added.
+        * fast/canvas/webgl/resources/tex-image-and-sub-image-2d-with-potentially-subsampled-image.js: Added.
+        (.init):
+        (.runOneIteration):
+        (.runTestOnImage):
+        (.runTest):
+        (generateTest):
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-potentially-subsampled-image-expected.txt: Added.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-potentially-subsampled-image.html: Added.
+
 2014-07-01  Chris Fleizach  <cfleizach@apple.com>
 
         AX: HTML indeterminate IDL attribute not mapped to checkbox value=2
