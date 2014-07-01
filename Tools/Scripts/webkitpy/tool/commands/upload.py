@@ -333,7 +333,7 @@ class PostCommits(Command):
     def execute(self, options, args, tool):
         commit_ids = tool.scm().commit_ids_from_commitish_arguments(args)
         if len(commit_ids) > 10: # We could lower this limit, 10 is too many for one bug as-is.
-            _log.error("webkit-patch does not support attaching %s at once.  Are you sure you passed the right commit range?" % (pluralize("patch", len(commit_ids))))
+            _log.error("webkit-patch does not support attaching %s at once.  Are you sure you passed the right commit range?" % (pluralize(len(commit_ids), "patch")))
             sys.exit(1)
 
         have_obsoleted_patches = set()

@@ -56,13 +56,13 @@ Reviewed by Geoffrey Garen.
 git-svn-id: http://svn.webkit.org/repository/webkit/trunk@95219 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 """
 
-    def _make_options(self, **kwargs):
+    def _make_options(self, verbose=False, **kwargs):
         defaults = {
             'committer_minimum': 10,
             'max_commit_age': 9,
             'reviewer_minimum': 80,
             'show_commits': False,
-            'verbose': False,
+            'verbose': verbose,
         }
         options = MockOptions(**defaults)
         options.update(**kwargs)
@@ -97,6 +97,14 @@ git-svn-id: http://svn.webkit.org/repository/webkit/trunk@95188 268f45cc-cd09-04
     def test_basic(self):
         expected_stdout = "REVIEWER: Xianzhu Wang (wangxianzhu@chromium.org) has 88 reviewed patches\n"
         options = self._make_options()
+        suggest_nominations = SuggestNominations()
+        suggest_nominations._init_options(options=options)
+        suggest_nominations._recent_commit_messages = lambda: [self.mock_non_committer_commit_message for _ in range(88)]
+        self.assert_execute_outputs(suggest_nominations, [], expected_stdout=expected_stdout, options=options)
+
+    def test_with_verbose(self):
+        expected_stdout = "REVIEWER: Xianzhu Wang (wangxianzhu@chromium.org) has 88 reviewed patches\nCONTRIBUTOR: Xianzhu Wang (wangxianzhu@chromium.org) has 88 reviewed patches\n"
+        options = self._make_options(verbose=True)
         suggest_nominations = SuggestNominations()
         suggest_nominations._init_options(options=options)
         suggest_nominations._recent_commit_messages = lambda: [self.mock_non_committer_commit_message for _ in range(88)]

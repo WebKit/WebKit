@@ -32,7 +32,7 @@ import re
 
 from webkitpy.common.checkout.changelog import ChangeLogEntry
 from webkitpy.common.config.committers import CommitterList
-from webkitpy.tool.grammar import join_with_separators
+from webkitpy.tool import grammar
 from webkitpy.tool.multicommandtool import Command
 
 
@@ -254,7 +254,7 @@ class SuggestNominations(AbstractCommitLogCommand):
 
         for nomination in sorted(nominations, nomination_cmp):
             # This is a little bit of a hack, but its convienent to just pass the nomination dictionary to the formating operator.
-            nomination['roles_string'] = join_with_separators(nomination['roles']).upper()
+            nomination['roles_string'] = grammar.join_with_separators(nomination['roles']).upper()
             print "%(roles_string)s: %(author_name)s (%(author_email)s) has %(patch_count)s reviewed patches" % nomination
             counter = counters_by_email[nomination['author_email']]
 
@@ -288,9 +288,9 @@ class SuggestNominations(AbstractCommitLogCommand):
             for alias in counter['emails']:
                 alias_list.append(alias)
             if alias_list:
-                print "CONTRIBUTOR: %s (%s) has %d reviewed patches %s" % (author_name, author_email, patch_count, "(aliases: " + ", ".join(alias_list) + ")")
+                print "CONTRIBUTOR: %s (%s) has %s %s" % (author_name, author_email, grammar.pluralize(patch_count, "reviewed patch"), "(aliases: " + ", ".join(alias_list) + ")")
             else:
-                print "CONTRIBUTOR: %s (%s) has %d reviewed patches" % (author_name, author_email, patch_count)
+                print "CONTRIBUTOR: %s (%s) has %s" % (author_name, author_email, grammar.pluralize(patch_count, "reviewed patch"))
         return
 
     def execute(self, options, args, tool):

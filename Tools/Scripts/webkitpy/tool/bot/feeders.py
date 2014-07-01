@@ -93,7 +93,7 @@ class EWSFeeder(AbstractFeeder):
     def feed(self):
         ids_needing_review = set(self._tool.bugs.queries.fetch_attachment_ids_from_review_queue(datetime.today() - timedelta(7)))
         new_ids = ids_needing_review.difference(self._ids_sent_to_server)
-        _log.info("Feeding EWS (%s, %s new)" % (pluralize("r? patch", len(ids_needing_review)), len(new_ids)))
+        _log.info("Feeding EWS (%s, %s new)" % (pluralize(len(ids_needing_review), "r? patch"), len(new_ids)))
         for attachment_id in new_ids:  # Order doesn't really matter for the EWS.
             self._tool.status_server.submit_to_ews(attachment_id)
             self._ids_sent_to_server.add(attachment_id)

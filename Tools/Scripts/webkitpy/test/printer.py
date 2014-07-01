@@ -26,6 +26,7 @@ import StringIO
 
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.layout_tests.views.metered_stream import MeteredStream
+from webkitpy.tool.grammar import pluralize
 
 _log = logging.getLogger(__name__)
 
@@ -178,7 +179,7 @@ class Printer(object):
 
     def print_result(self, run_time):
         write = self.meter.writeln
-        write('Ran %d test%s in %.3fs' % (self.num_started, self.num_started != 1 and "s" or "", run_time))
+        write('Ran %s in %.3fs' % (pluralize(self.num_started, "test"), run_time))
         if self.num_failures or self.num_errors:
             write('FAILED (failures=%d, errors=%d)\n' % (self.num_failures, self.num_errors))
         else:

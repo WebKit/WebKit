@@ -98,9 +98,9 @@ class Printer(object):
         self._print_default('')
 
     def print_found(self, num_all_test_files, num_to_run, repeat_each, iterations):
-        found_str = 'Found %s; running %d' % (grammar.pluralize('test', num_all_test_files), num_to_run)
+        found_str = 'Found %s; running %d' % (grammar.pluralize(num_all_test_files, "test"), num_to_run)
         if repeat_each * iterations > 1:
-            found_str += ' (%d times each: --repeat-each=%d --iterations=%d)' % (repeat_each * iterations, repeat_each, iterations)
+            found_str += ' (%s each: --repeat-each=%d --iterations=%d)' % (grammar.pluralize(repeat_each * iterations, "time"), repeat_each, iterations)
         found_str += ', skipping %d' % (num_all_test_files - num_to_run)
         self._print_default(found_str + '.')
 
@@ -114,9 +114,9 @@ class Printer(object):
         driver_name = self._port.driver_name()
         if num_workers == 1:
             self._print_default("Running 1 %s." % driver_name)
-            self._print_debug("(%s)." % grammar.pluralize('shard', num_shards))
+            self._print_debug("(%s)." % grammar.pluralize(num_shards, "shard"))
         else:
-            self._print_default("Running %d %ss in parallel." % (num_workers, driver_name))
+            self._print_default("Running %s in parallel." % (grammar.pluralize(num_workers, driver_name)))
             self._print_debug("(%d shards; %d locked)." % (num_shards, num_locked_shards))
         self._print_default('')
 
@@ -280,9 +280,9 @@ class Printer(object):
                 else:
                     summary = "The test ran as expected."
             else:
-                summary = "%s ran as expected%s." % (grammar.pluralize('test', expected), incomplete_str)
+                summary = "%s ran as expected%s." % (grammar.pluralize(expected, "test"), incomplete_str)
         else:
-            summary = "%s ran as expected, %d didn't%s:" % (grammar.pluralize('test', expected), unexpected, incomplete_str)
+            summary = "%s ran as expected, %d didn't%s:" % (grammar.pluralize(expected, "test"), unexpected, incomplete_str)
 
         self._print_quiet(summary)
         self._print_quiet("")

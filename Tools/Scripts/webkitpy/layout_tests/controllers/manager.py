@@ -51,6 +51,7 @@ from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models import test_run_results
 from webkitpy.layout_tests.models.test_input import TestInput
+from webkitpy.tool.grammar import pluralize
 
 _log = logging.getLogger(__name__)
 
@@ -203,7 +204,7 @@ class Manager(object):
                 enabled_pixel_tests_in_retry = self._force_pixel_tests_if_needed()
 
                 _log.info('')
-                _log.info("Retrying %d unexpected failure(s) ..." % len(tests_to_retry))
+                _log.info("Retrying %s ..." % pluralize(len(tests_to_retry), "unexpected failure"))
                 _log.info('')
                 retry_results = self._run_tests(tests_to_retry, tests_to_skip=set(), repeat_each=1, iterations=1,
                     num_workers=1, retrying=True)

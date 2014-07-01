@@ -1,3 +1,57 @@
+2014-07-01  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        [webkitpy] Refactor pluralizer in grammar.py
+        https://bugs.webkit.org/show_bug.cgi?id=133067
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.run_tests):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_found):
+        (Printer.print_workers_and_shards):
+        (Printer._print_one_line_summary):
+        * Scripts/webkitpy/test/printer.py:
+        (Printer.print_result):
+        * Scripts/webkitpy/tool/bot/feeders.py:
+        (EWSFeeder.feed):
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py:
+        (FlakyTestReporter._lookup_bug_for_flaky_test):
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Rollout._check_diff_failure):
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        (IRCCommandTest.test_rollout):
+        * Scripts/webkitpy/tool/commands/download.py:
+        (AbstractPatchProcessingCommand._process_patch.execute):
+        (ProcessBugsMixin._fetch_list_of_patches_to_process):
+        (ProcessURLsMixin._fetch_list_of_patches_to_process):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (WhatBroke.execute):
+        * Scripts/webkitpy/tool/commands/suggestnominations.py:
+        (SuggestNominations._print_nominations):
+        (SuggestNominations._print_counts):
+        * Scripts/webkitpy/tool/commands/suggestnominations_unittest.py:
+        (_make_options):
+        (test_basic):
+        (test_with_verbose):
+        * Scripts/webkitpy/tool/commands/upload.py:
+        (PostCommits.execute):
+        * Scripts/webkitpy/tool/grammar.py:
+        (pluralize):
+        * Scripts/webkitpy/tool/grammar_unittest.py:
+        (GrammarTest.test_join_with_separators):
+        (GrammarTest):
+        (GrammarTest.test_plural):
+        (GrammarTest.test_pluralize):
+        * Scripts/webkitpy/tool/multicommandtool.py:
+        (Command.check_arguments_and_execute):
+        * Scripts/webkitpy/tool/steps/obsoletepatches.py:
+        (ObsoletePatches.run):
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert.py:
+        (PrepareChangeLogForRevert._message_for_revert):
+
 2014-06-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] GSFontAddCGFont is deprecated and we use it in DumpRenderTree

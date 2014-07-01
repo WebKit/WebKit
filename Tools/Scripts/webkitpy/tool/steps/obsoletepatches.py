@@ -49,6 +49,6 @@ class ObsoletePatches(AbstractStep):
         patches = self._tool.bugs.fetch_bug(bug_id).patches()
         if not patches:
             return
-        _log.info("Obsoleting %s on bug %s" % (pluralize("old patch", len(patches)), bug_id))
+        _log.info("Obsoleting %s on bug %s" % (pluralize(len(patches), "old patch"), bug_id))
         for patch in patches:
             self._tool.bugs.obsolete_attachment(patch.id())

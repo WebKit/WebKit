@@ -29,6 +29,8 @@
 import unittest2 as unittest
 
 from webkitpy.tool.grammar import join_with_separators
+from webkitpy.tool.grammar import plural
+from webkitpy.tool.grammar import pluralize
 
 class GrammarTest(unittest.TestCase):
 
@@ -36,3 +38,15 @@ class GrammarTest(unittest.TestCase):
         self.assertEqual(join_with_separators(["one"]), "one")
         self.assertEqual(join_with_separators(["one", "two"]), "one and two")
         self.assertEqual(join_with_separators(["one", "two", "three"]), "one, two, and three")
+
+    def test_plural(self):
+        self.assertEqual(plural("patch"), "patches")
+        self.assertEqual(plural("test"), "tests")
+
+    def test_pluralize(self):
+        self.assertEqual(pluralize(1, "patch"), "1 patch")
+        self.assertEqual(pluralize(2, "patch"), "2 patches")
+        self.assertEqual(pluralize(1, "patch", True), "1 patch")
+        self.assertEqual(pluralize(2, "patch", True), "2 patches")
+        self.assertEqual(pluralize(1, "patch", False), "patch")
+        self.assertEqual(pluralize(2, "patch", False), "patches")

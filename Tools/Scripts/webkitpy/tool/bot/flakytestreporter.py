@@ -79,7 +79,7 @@ class FlakyTestReporter(object):
         if len(bugs) > 1:
             # FIXME: There are probably heuristics we could use for finding
             # the right bug instead of the first, like open vs. closed.
-            _log.warn("Found %s %s matching '%s' filed by a bot, using the first." % (pluralize('bug', len(bugs)), [bug.id() for bug in bugs], flaky_test))
+            _log.warn("Found %s %s matching '%s' filed by a bot, using the first." % (pluralize(len(bugs), "bug"), [bug.id() for bug in bugs], flaky_test))
         return bugs[0]
 
     def _view_source_url_for_test(self, test_path):

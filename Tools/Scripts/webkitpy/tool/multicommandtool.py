@@ -113,8 +113,8 @@ class Command(object):
     def check_arguments_and_execute(self, options, args, tool=None):
         if len(args) < len(self.required_arguments):
             _log.error("%s required, %s provided.  Provided: %s  Required: %s\nSee '%s help %s' for usage." % (
-                       pluralize("argument", len(self.required_arguments)),
-                       pluralize("argument", len(args)),
+                       pluralize(len(self.required_arguments), "argument"),
+                       pluralize(len(args), "argument"),
                        "'%s'" % " ".join(args),
                        " ".join(self.required_arguments),
                        tool.name(),

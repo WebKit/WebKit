@@ -171,7 +171,7 @@ class AbstractPatchProcessingCommand(Command):
 
         # It's nice to print out total statistics.
         bugs_to_patches = self._collect_patches_by_bug(patches)
-        _log.info("Processing %s from %s." % (pluralize("patch", len(patches)), pluralize("bug", len(bugs_to_patches))))
+        _log.info("Processing %s from %s." % (pluralize(len(patches), "patch"), pluralize(len(bugs_to_patches), "bug")))
 
         for patch in patches:
             self._process_patch(patch, options, args, tool)
@@ -216,13 +216,13 @@ class ProcessBugsMixin(object):
         all_patches = []
         for bug_id in args:
             patches = tool.bugs.fetch_bug(bug_id).reviewed_patches()
-            _log.info("%s found on bug %s." % (pluralize("reviewed patch", len(patches)), bug_id))
+            _log.info("%s found on bug %s." % (pluralize(len(patches), "reviewed patch"), bug_id))
             all_patches += patches
         if not all_patches:
             _log.info("No reviewed patches found, looking for unreviewed patches.")
             for bug_id in args:
                 patches = tool.bugs.fetch_bug(bug_id).patches()
-                _log.info("%s found on bug %s." % (pluralize("patch", len(patches)), bug_id))
+                _log.info("%s found on bug %s." % (pluralize(len(patches), "patch"), bug_id))
                 all_patches += patches
         return all_patches
 
@@ -234,7 +234,7 @@ class ProcessURLsMixin(object):
             bug_id = urls.parse_bug_id(url)
             if bug_id:
                 patches = tool.bugs.fetch_bug(bug_id).patches()
-                _log.info("%s found on bug %s." % (pluralize("patch", len(patches)), bug_id))
+                _log.info("%s found on bug %s." % (pluralize(len(patches), "patch"), bug_id))
                 all_patches += patches
 
             attachment_id = urls.parse_attachment_id(url)

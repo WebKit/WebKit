@@ -37,6 +37,7 @@ from webkitpy.common.net.web import Web
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.queueengine import TerminateQueue
 from webkitpy.tool.grammar import join_with_separators
+from webkitpy.tool.grammar import pluralize
 
 
 def _post_error_and_check_for_bug_url(tool, nicks_string, exception):
@@ -213,9 +214,9 @@ class Rollout(IRCCommand):
             return None
 
         lines = error_log[revert_failure_message_start:].split('\n')[1:]
-        files = itertools.takewhile(lambda line: tool.filesystem.exists(tool.scm().absolute_path(line)), lines)
+        files = list(itertools.takewhile(lambda line: tool.filesystem.exists(tool.scm().absolute_path(line)), lines))
         if files:
-            return "Failed to apply reverse diff for file(s): %s" % ", ".join(files)
+            return "Failed to apply reverse diff for %s: %s" % (pluralize(len(files), "file", showCount=False), ", ".join(files))
         return None
 
     def execute(self, nick, args, tool, sheriff):

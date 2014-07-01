@@ -217,7 +217,7 @@ class WhatBroke(Command):
             self._print_blame_information_for_builder(builder_status, name_width=longest_builder_name)
             failing_builders += 1
         if failing_builders:
-            print "%s of %s are failing" % (failing_builders, pluralize("builder", len(builder_statuses)))
+            print "%s of %s are failing" % (failing_builders, pluralize(len(builder_statuses), "builder"))
         else:
             print "All builders are passing!"
 

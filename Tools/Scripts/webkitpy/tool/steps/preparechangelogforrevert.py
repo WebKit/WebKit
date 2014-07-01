@@ -28,22 +28,21 @@
 
 from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.common.config import urls
-from webkitpy.tool.grammar import join_with_separators
+from webkitpy.tool import grammar
 from webkitpy.tool.steps.abstractstep import AbstractStep
 
 
 class PrepareChangeLogForRevert(AbstractStep):
     @classmethod
     def _message_for_revert(cls, revision_list, reason, description_list, reverted_bug_url_list, rollout_bug_url=None):
-        message = "Unreviewed, rolling out %s.\n" % join_with_separators(['r' + str(revision) for revision in revision_list])
+        message = "Unreviewed, rolling out %s.\n" % grammar.join_with_separators(['r' + str(revision) for revision in revision_list])
         if rollout_bug_url:
             message += "%s\n" % rollout_bug_url
         message += "\n"
         if reason:
             message += "%s\n" % reason
         message += "\n"
-        pluralSuffix = 's' if len(revision_list) > 1 else ''
-        message += "Reverted changeset%s:\n\n" % pluralSuffix
+        message += "Reverted %s:\n\n" % grammar.pluralize(len(revision_list), "changeset", showCount=False)
         for index in range(len(revision_list)):
             if description_list[index]:
                 message += "\"%s\"\n" % description_list[index]

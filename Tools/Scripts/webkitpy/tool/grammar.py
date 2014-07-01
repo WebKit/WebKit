@@ -38,10 +38,13 @@ def plural(noun):
         return noun + "s"
 
 
-def pluralize(noun, count):
+def pluralize(count, noun, showCount=True):
     if count != 1:
         noun = plural(noun)
-    return "%d %s" % (count, noun)
+    if showCount:
+        return "%d %s" % (count, noun)
+    else:
+        return "%s" % noun
 
 
 def join_with_separators(list_of_strings, separator=', ', only_two_separator=" and ", last_separator=', and '):

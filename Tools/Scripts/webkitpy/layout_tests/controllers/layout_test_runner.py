@@ -125,7 +125,7 @@ class LayoutTestRunner(object):
         if self._options.dry_run:
             return run_results
 
-        self._printer.write_update('Starting %s ...' % grammar.pluralize('worker', num_workers))
+        self._printer.write_update('Starting %s ...' % grammar.pluralize(num_workers, "worker"))
 
         try:
             with message_pool.get(self, self._worker_factory, num_workers, self._port.worker_startup_delay_secs(), self._port.host) as pool:

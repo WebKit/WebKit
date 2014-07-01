@@ -117,7 +117,7 @@ class IRCCommandTest(unittest.TestCase):
         tool = MockTool()
         tool.filesystem.files["/mock-checkout/test/file/one"] = ""
         tool.filesystem.files["/mock-checkout/test/file/two"] = ""
-        self.assertEqual("Failed to apply reverse diff for file(s): test/file/one, test/file/two",
+        self.assertEqual("Failed to apply reverse diff for files: test/file/one, test/file/two",
                           rollout._check_diff_failure("""
 Preparing rollout for bug 123456.
 Updating working directory
@@ -130,6 +130,17 @@ test/file/two
 Updating OpenSource
 Current branch master is up to date.
         """, tool))
+
+        self.assertEqual("Failed to apply reverse diff for file: test/file/one",
+                          rollout._check_diff_failure("""
+Preparing rollout for bug 123456.
+Updating working directory
+Failed to apply reverse diff for revision 123456 because of the following conflicts:
+test/file/one
+Updating OpenSource
+Current branch master is up to date.
+        """, tool))
+
         self.assertEqual(None, rollout._check_diff_failure("""
 Preparing rollout for bug 123456.
 Updating working directory
