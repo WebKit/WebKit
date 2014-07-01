@@ -1,3 +1,15 @@
+2014-07-01  Daniel Bates  <dabates@apple.com>
+
+        Remove unnecessary calls to std::move()
+        https://bugs.webkit.org/show_bug.cgi?id=134493
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/ns/RetainPtr.mm:
+        (TestWebKitAPI::TEST):
+
 2014-07-01  Pratik Solanki  <psolanki@apple.com>
 
         Unreviewed. Adding myself to the reviewers list to make commit bot happy.

@@ -89,7 +89,7 @@ RetainPtr<CFDataRef> ShareableResource::Handle::tryWrapInCFData() const
     }
 
     RetainPtr<CFAllocatorRef> deallocator = adoptCF(createShareableResourceDeallocator(resource.get()));
-    return std::move(adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(resource->data()), static_cast<CFIndex>(resource->size()), deallocator.get())));
+    return adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(resource->data()), static_cast<CFIndex>(resource->size()), deallocator.get()));
 }
 
 PassRefPtr<SharedBuffer> ShareableResource::Handle::tryWrapInSharedBuffer() const

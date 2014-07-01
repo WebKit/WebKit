@@ -1,3 +1,20 @@
+2014-07-01  Daniel Bates  <dabates@apple.com>
+
+        Remove unnecessary calls to std::move()
+        https://bugs.webkit.org/show_bug.cgi?id=134493
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/ShareableResource.cpp:
+        (WebKit::ShareableResource::Handle::tryWrapInCFData):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::certificateInfo): Return a WebCore::CertificateInfo instead
+        of const WebCore::CertificateInfo& to avoid returning a dangling reference to
+        a local variable. Also, remove the unnecessary calls to std::move() as the compiler
+        will invoke the move constructor for WebCore::CertificateInfo on return from the
+        function.
+        * WebProcess/WebPage/WebFrame.h:
+
 2014-07-01  Anders Carlsson  <andersca@apple.com>
 
         Add a BackForwardListItemState struct and put the snapshot UUID there

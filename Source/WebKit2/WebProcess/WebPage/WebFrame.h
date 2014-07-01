@@ -92,7 +92,7 @@ public:
     bool isMainFrame() const;
     String name() const;
     String url() const;
-    const WebCore::CertificateInfo& certificateInfo() const;
+    WebCore::CertificateInfo certificateInfo() const;
     String innerText() const;
     bool isFrameSet() const;
     WebFrame* parentFrame() const;

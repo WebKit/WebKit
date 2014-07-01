@@ -84,7 +84,7 @@ TEST(RetainPtr, ConstructionFromSameType)
     NSString *string = @"foo";
 
     // This should invoke RetainPtr's move constructor.
-    RetainPtr<NSString> ptr = std::move(RetainPtr<NSString>(string));
+    RetainPtr<NSString> ptr = RetainPtr<NSString>(string);
 
     EXPECT_EQ(string, ptr);
 

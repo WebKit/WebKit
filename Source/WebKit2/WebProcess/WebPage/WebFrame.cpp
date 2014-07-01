@@ -402,16 +402,16 @@ String WebFrame::url() const
     return documentLoader->url().string();
 }
 
-const WebCore::CertificateInfo& WebFrame::certificateInfo() const
+WebCore::CertificateInfo WebFrame::certificateInfo() const
 {
     if (!m_coreFrame)
-        return std::move(CertificateInfo());
+        return CertificateInfo();
 
     DocumentLoader* documentLoader = m_coreFrame->loader().documentLoader();
     if (!documentLoader)
-        return std::move(CertificateInfo());
+        return CertificateInfo();
 
-    return std::move(CertificateInfo(documentLoader->response()));
+    return CertificateInfo(documentLoader->response());
 }
 
 String WebFrame::innerText() const

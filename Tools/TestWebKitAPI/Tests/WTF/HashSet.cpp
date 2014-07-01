@@ -96,7 +96,7 @@ TEST(WTF_HashSet, MoveOnly)
     EXPECT_TRUE(hashSet.isEmpty());
 
     for (size_t i = 0; i < 100; ++i)
-        hashSet.add(std::move(MoveOnly(i + 1)));
+        hashSet.add(MoveOnly(i + 1));
 
     for (size_t i = 0; i < 100; ++i)
         EXPECT_TRUE(hashSet.take(MoveOnly(i + 1)) == MoveOnly(i + 1));
@@ -104,7 +104,7 @@ TEST(WTF_HashSet, MoveOnly)
     EXPECT_TRUE(hashSet.isEmpty());
 
     for (size_t i = 0; i < 100; ++i)
-        hashSet.add(std::move(MoveOnly(i + 1)));
+        hashSet.add(MoveOnly(i + 1));
 
     HashSet<MoveOnly> secondSet;
 

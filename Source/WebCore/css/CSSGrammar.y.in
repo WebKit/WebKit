@@ -377,7 +377,7 @@ webkit_value:
     }
 ;
 
-webkit_mediaquery: WEBKIT_MEDIAQUERY_SYM WHITESPACE maybe_space media_query '}' { parser->m_mediaQuery = std::move(std::unique_ptr<MediaQuery>($4)); } ;
+webkit_mediaquery: WEBKIT_MEDIAQUERY_SYM WHITESPACE maybe_space media_query '}' { parser->m_mediaQuery = std::unique_ptr<MediaQuery>($4); } ;
 
 webkit_selector:
     WEBKIT_SELECTOR_SYM '{' maybe_space selector_list '}' {
@@ -558,7 +558,7 @@ media_condition:
     ;
 
 webkit_source_size_list:
-    WEBKIT_SIZESATTR_SYM WHITESPACE source_size_list '}' { parser->m_sourceSizeList = std::move(std::unique_ptr<SourceSizeList>($3)); };
+    WEBKIT_SIZESATTR_SYM WHITESPACE source_size_list '}' { parser->m_sourceSizeList = std::unique_ptr<SourceSizeList>($3); };
 
 source_size_list:
     maybe_space source_size maybe_space {

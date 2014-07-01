@@ -106,7 +106,7 @@ CDM::CDM(const String& keySystem)
     : m_keySystem(keySystem)
     , m_client(0)
 {
-    m_private = std::move(CDMFactoryForKeySystem(keySystem)->constructor(this));
+    m_private = CDMFactoryForKeySystem(keySystem)->constructor(this);
 }
 
 CDM::~CDM()

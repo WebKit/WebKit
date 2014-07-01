@@ -940,7 +940,7 @@ NEVER_INLINE PassRef<StringImpl> CSSPrimitiveValue::formatNumberValue(const char
 template <unsigned characterCount>
 ALWAYS_INLINE PassRef<StringImpl> CSSPrimitiveValue::formatNumberValue(const char (&characters)[characterCount]) const
 {
-    return std::move(formatNumberValue(characters, characterCount - 1));
+    return formatNumberValue(characters, characterCount - 1);
 }
 
 ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForcustomCSSText() const
