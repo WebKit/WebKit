@@ -54,6 +54,7 @@ public:
     virtual ~WebBackForwardListItem();
 
     uint64_t itemID() const { return m_itemID; }
+    const BackForwardListItemState& itemState() { return m_itemState; }
 
     void setPageState(PageState pageState) { m_itemState.pageState = std::move(pageState); }
 

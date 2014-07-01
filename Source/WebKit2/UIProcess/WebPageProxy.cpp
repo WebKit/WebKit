@@ -1847,6 +1847,22 @@ uint64_t WebPageProxy::restoreFromSessionStateData(API::Data*)
 }
 #endif
 
+SessionState WebPageProxy::sessionState(const std::function<bool (WebBackForwardListItem&)>& filter) const
+{
+    SessionState sessionState;
+
+    sessionState.backForwardListState = m_backForwardList->backForwardListState(filter);
+
+    String provisionalURLString = m_pageLoadState.pendingAPIRequestURL();
+    if (provisionalURLString.isEmpty())
+        provisionalURLString = m_pageLoadState.provisionalURL();
+
+    if (!provisionalURLString.isEmpty())
+        sessionState.provisionalURL = URL(URL(), provisionalURLString);
+
+    return sessionState;
+}
+
 uint64_t WebPageProxy::restoreFromState(SessionState sessionState)
 {
     m_backForwardList->restoreFromState(std::move(sessionState.backForwardListState));

@@ -380,6 +380,30 @@ void WebBackForwardList::clear()
     m_page->didChangeBackForwardList(nullptr, std::move(removedItems));
 }
 
+BackForwardListState WebBackForwardList::backForwardListState(const std::function<bool (WebBackForwardListItem&)>& filter) const
+{
+    ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
+
+    BackForwardListState backForwardListState;
+    if (m_hasCurrentIndex)
+        backForwardListState.currentIndex = m_currentIndex;
+
+    for (size_t i = 0; i < m_entries.size(); ++i) {
+        auto& entry = *m_entries[i];
+
+        if (filter && !filter(entry)) {
+            if (backForwardListState.currentIndex && i <= backForwardListState.currentIndex.value())
+                --backForwardListState.currentIndex.value();
+
+            continue;
+        }
+
+        backForwardListState.items.append(entry.itemState());
+    }
+
+    return backForwardListState;
+}
+
 void WebBackForwardList::restoreFromState(BackForwardListState backForwardListState)
 {
     Vector<RefPtr<WebBackForwardListItem>> items;

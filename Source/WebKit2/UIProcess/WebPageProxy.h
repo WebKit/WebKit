@@ -550,6 +550,7 @@ public:
 
     void terminateProcess();
 
+    SessionState sessionState(const std::function<bool (WebBackForwardListItem&)>&) const;
     PassRefPtr<API::Data> sessionStateData(std::function<bool (WebBackForwardListItem&)>) const;
     uint64_t restoreFromSessionStateData(API::Data*);
     uint64_t restoreFromState(SessionState);

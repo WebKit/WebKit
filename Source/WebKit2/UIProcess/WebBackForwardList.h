@@ -79,6 +79,7 @@ public:
     bool restoreFromV1CFDictionaryRepresentation(CFDictionaryRef);
 #endif
 
+    BackForwardListState backForwardListState(const std::function<bool (WebBackForwardListItem&)>&) const;
     void restoreFromState(BackForwardListState);
 
 private:

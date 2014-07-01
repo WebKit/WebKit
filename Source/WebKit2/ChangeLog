@@ -1,3 +1,19 @@
+2014-07-01  Anders Carlsson  <andersca@apple.com>
+
+        Add a function for restoring page state given a SessionState object
+        https://bugs.webkit.org/show_bug.cgi?id=134509
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::itemState):
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::saveState):
+        * UIProcess/WebBackForwardList.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::saveState):
+        * UIProcess/WebPageProxy.h:
+
 2014-07-01  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Navigation parameter in navigation delegate messages is nil for navigations started by the Web Content process

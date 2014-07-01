@@ -1,0 +1,44 @@
+***************
+*** 515,536 ****
+  
+  #if ENABLE(INSPECTOR_SERVER)
+-     if (pageGroup().preferences()->developerExtrasEnabled())
+          inspector()->enableRemoteInspection();
+  #endif
+  
+-     if (pageGroup().addProcess(process()))
+-         process().addWebPageGroup(pageGroup());
+- 
+      initializeCreationParameters();
+-     process().send(Messages::WebProcess::CreateWebPage(m_pageID, m_creationParameters), 0);
+  
+  #if ENABLE(PAGE_VISIBILITY_API)
+-     process().send(Messages::WebPage::SetVisibilityState(m_visibilityState, /* isInitialState */ true), m_pageID);
+  #elif ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+-     process().send(Messages::WebPage::SetVisibilityState(isViewVisible() ? PageVisibilityStateVisible : PageVisibilityStateHidden, /* isInitialState */ true), m_pageID);
+  #endif
+  
+  #if PLATFORM(MAC)
+-     process().send(Messages::WebPage::SetSmartInsertDeleteEnabled(m_isSmartInsertDeleteEnabled), m_pageID);
+  #endif
+  }
+--- 515,533 ----
+  
+  #if ENABLE(INSPECTOR_SERVER)
++     if (m_pageGroup->preferences()->developerExtrasEnabled())
+          inspector()->enableRemoteInspection();
+  #endif
+  
+      initializeCreationParameters();
++     m_process->send(Messages::WebProcess::CreateWebPage(m_pageID, m_creationParameters), 0);
+  
+  #if ENABLE(PAGE_VISIBILITY_API)
++     m_process->send(Messages::WebPage::SetVisibilityState(m_visibilityState, /* isInitialState */ true), m_pageID);
+  #elif ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
++     m_process->send(Messages::WebPage::SetVisibilityState(isViewVisible() ? PageVisibilityStateVisible : PageVisibilityStateHidden, /* isInitialState */ true), m_pageID);
+  #endif
+  
+  #if PLATFORM(MAC)
++     m_process->send(Messages::WebPage::SetSmartInsertDeleteEnabled(m_isSmartInsertDeleteEnabled), m_pageID);
+  #endif
+  }
