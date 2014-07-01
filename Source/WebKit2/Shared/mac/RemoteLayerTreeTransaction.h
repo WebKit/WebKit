@@ -123,7 +123,7 @@ public:
         std::unique_ptr<WebCore::TransformationMatrix> sublayerTransform;
         Vector<WebCore::GraphicsLayer::PlatformLayerID> children;
 
-        HashMap<String, PlatformCAAnimationRemote::Properties> addedAnimations;
+        Vector<std::pair<String, PlatformCAAnimationRemote::Properties>> addedAnimations;
         HashSet<String> keyPathsOfAnimationsToRemove;
 
         WebCore::FloatPoint3D position;

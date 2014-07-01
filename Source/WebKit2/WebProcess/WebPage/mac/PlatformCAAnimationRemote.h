@@ -294,8 +294,8 @@ public:
 
     const Properties& properties() const { return m_properties; }
 
-    typedef HashMap<String, Properties> AnimationsMap;
-    static void updateLayerAnimations(CALayer *, RemoteLayerTreeHost*, const AnimationsMap& animationsToAdd, const HashSet<String>& animationsToRemove);
+    typedef Vector<std::pair<String, Properties>> AnimationsList;
+    static void updateLayerAnimations(CALayer *, RemoteLayerTreeHost*, const AnimationsList& animationsToAdd, const HashSet<String>& animationsToRemove);
 
 private:
     PlatformCAAnimationRemote(AnimationType, const String& keyPath);

@@ -1103,8 +1103,8 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const RemoteLayerTr
             dumpProperty(ts, "filters", layerProperties.filters ? *layerProperties.filters : FilterOperations());
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::AnimationsChanged) {
-            for (const auto& keyValuePair : layerProperties.addedAnimations)
-                dumpProperty(ts, "animation " +  keyValuePair.key, keyValuePair.value);
+            for (const auto& keyAnimationPair : layerProperties.addedAnimations)
+                dumpProperty(ts, "animation " +  keyAnimationPair.first, keyAnimationPair.second);
 
             for (const auto& name : layerProperties.keyPathsOfAnimationsToRemove)
                 dumpProperty(ts, "removed animation", name);

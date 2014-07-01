@@ -1,3 +1,16 @@
+2014-07-01  Simon Fraser  <simon.fraser@apple.com>
+
+        [UI-side compositing] Bad spinner on news.google.com: animations need to be ordered
+        https://bugs.webkit.org/show_bug.cgi?id=134504
+        <rdar://problem/17507892>
+
+        Reviewed by Tim Horton.
+        
+        Test that the transforms from the animation are applied in the correct order.
+
+        * compositing/animation/keyframe-order-expected.html: Added.
+        * compositing/animation/keyframe-order.html: Added.
+
 2014-07-01  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Pixel crack in breadcrumbs at devforums.apple.com.

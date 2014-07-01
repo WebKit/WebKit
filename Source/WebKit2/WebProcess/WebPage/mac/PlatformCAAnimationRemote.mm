@@ -775,15 +775,15 @@ static void addAnimationToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHo
     [layer addAnimation:caAnimation.get() forKey:key];
 }
 
-void PlatformCAAnimationRemote::updateLayerAnimations(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const AnimationsMap& animationsToAdd, const HashSet<String>& animationsToRemove)
+void PlatformCAAnimationRemote::updateLayerAnimations(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const AnimationsList& animationsToAdd, const HashSet<String>& animationsToRemove)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     for (const auto& value : animationsToRemove)
         [layer removeAnimationForKey:value];
 
-    for (const auto& keyValuePair : animationsToAdd)
-        addAnimationToLayer(layer, layerTreeHost, keyValuePair.key, keyValuePair.value);
+    for (const auto& keyAnimationPair : animationsToAdd)
+        addAnimationToLayer(layer, layerTreeHost, keyAnimationPair.first, keyAnimationPair.second);
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }

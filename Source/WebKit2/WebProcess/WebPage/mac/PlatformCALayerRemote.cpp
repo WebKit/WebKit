@@ -301,8 +301,18 @@ void PlatformCALayerRemote::adoptSublayers(PlatformCALayer* source)
 
 void PlatformCALayerRemote::addAnimationForKey(const String& key, PlatformCAAnimation* animation)
 {
-    m_animations.set(key, animation);
-    m_properties.addedAnimations.set(key, toPlatformCAAnimationRemote(animation)->properties());
+    auto addResult = m_animations.set(key, animation);
+    if (addResult.isNewEntry)
+        m_properties.addedAnimations.append(std::pair<String, PlatformCAAnimationRemote::Properties>(key, toPlatformCAAnimationRemote(animation)->properties()));
+    else {
+        for (auto& keyAnimationPair : m_properties.addedAnimations) {
+            if (keyAnimationPair.first == key) {
+                keyAnimationPair.second = toPlatformCAAnimationRemote(animation)->properties();
+                break;
+            }
+        }
+    }
+    
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::AnimationsChanged);
 
     if (m_context)
@@ -311,8 +321,14 @@ void PlatformCALayerRemote::addAnimationForKey(const String& key, PlatformCAAnim
 
 void PlatformCALayerRemote::removeAnimationForKey(const String& key)
 {
-    m_animations.remove(key);
-    m_properties.addedAnimations.remove(key);
+    if (m_animations.remove(key)) {
+        for (size_t i = 0; i < m_properties.addedAnimations.size(); ++i) {
+            if (m_properties.addedAnimations[i].first == key) {
+                m_properties.addedAnimations.remove(i);
+                break;
+            }
+        }
+    }
     m_properties.keyPathsOfAnimationsToRemove.add(key);
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::AnimationsChanged);
 }

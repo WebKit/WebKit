@@ -1,3 +1,27 @@
+2014-07-01  Simon Fraser  <simon.fraser@apple.com>
+
+        [UI-side compositing] Bad spinner on news.google.com: animations need to be ordered
+        https://bugs.webkit.org/show_bug.cgi?id=134504
+        <rdar://problem/17507892>
+
+        Reviewed by Tim Horton.
+        
+        The layer's addedAnimations property needs to maintain order, since the order
+        in which transforms are applied is important.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h: Use a Vector<pair<>> for addedAnimations.
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::dumpChangedLayers):
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.h:
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm:
+        (WebKit::PlatformCAAnimationRemote::updateLayerAnimations):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::addAnimationForKey): If this is a new entry, we
+        can just append to addedAnimations, otherwise we have to find the existing one
+        and update its properties.
+        (WebKit::PlatformCALayerRemote::removeAnimationForKey): Do linear search to
+        find the animation to remove (this list will normally be short).
+
 2014-07-01  Anders Carlsson  <andersca@apple.com>
 
         Add a encodeLegacySessionState function
