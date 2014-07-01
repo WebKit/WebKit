@@ -1,3 +1,19 @@
+2014-07-01  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Add encodeInteger and decodeInteger for remote object encoder and decoder.
+        https://bugs.webkit.org/show_bug.cgi?id=134453
+
+        In 64bit system, encodeInteger/decodeInteger is by default mapped into encodeInt64/decodeInt64.  For
+        32bit system, they are mapped to encodeInt32/decodeInt32.  However, since we don't have encodeInt32/decodeInt32
+        implementation in WKRemoteObjectCoder, we could hit crash in 32bit systems.
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (-[WKRemoteObjectEncoder encodeInteger:forKey:]): Instead of creating a new number type UInt32, use encodeInt64 for
+            encoding NSInteger.
+        (-[WKRemoteObjectDecoder decodeIntegerForKey:]):
+
 2014-06-30  Anders Carlsson  <andersca@apple.com>
 
         Use an std::function for filtering session state data

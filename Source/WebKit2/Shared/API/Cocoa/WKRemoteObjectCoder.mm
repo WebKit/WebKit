@@ -295,6 +295,11 @@ static NSString *escapeKey(NSString *key)
     _currentDictionary->set(escapeKey(key), API::UInt64::create(value));
 }
 
+- (void)encodeInteger:(NSInteger)intv forKey:(NSString *)key
+{
+    return [self encodeInt64:intv forKey:key];
+}
+
 - (void)encodeDouble:(double)value forKey:(NSString *)key
 {
     _currentDictionary->set(escapeKey(key), API::Double::create(value));
@@ -573,6 +578,11 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const ImmutableDictionary
     if (!value)
         return 0;
     return value->value();
+}
+
+- (NSInteger)decodeIntegerForKey:(NSString *)key
+{
+    return [self decodeInt64ForKey:key];
 }
 
 - (double)decodeDoubleForKey:(NSString *)key
