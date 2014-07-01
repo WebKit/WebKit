@@ -313,6 +313,15 @@
 
 2014-07-01  Brady Eidson  <beidson@apple.com>
 
+        Followup for: Combine the Telephone and Selection overlay controllers, updating UI behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=134461
+
+        Rubberstamped by Tim Horton.
+
+        * WebProcess/WebPage/mac/ServicesOverlayController.mm: Include the correct constant.
+
+2014-07-01  Brady Eidson  <beidson@apple.com>
+
         Build fix.
 
         Forgot to commit locally before pushing.

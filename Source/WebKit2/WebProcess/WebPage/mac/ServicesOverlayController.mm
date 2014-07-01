@@ -48,7 +48,7 @@ typedef void* DDHighlightRef;
 #endif
 
 typedef NSUInteger DDHighlightStyle;
-static DDHighlightStyle DDHighlightNoOutlineWithArrow = 0;
+static const DDHighlightStyle DDHighlightNoOutlineWithArrow = (1 << 16);
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectors)
 SOFT_LINK(DataDetectors, DDHighlightCreateWithRectsInVisibleRect, DDHighlightRef, (CFAllocatorRef allocator, CGRect * rects, CFIndex count, CGRect globalVisibleRect, Boolean withArrow), (allocator, rects, count, globalVisibleRect, withArrow))
