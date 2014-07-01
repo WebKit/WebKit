@@ -1,5 +1,19 @@
 2014-06-30  Anders Carlsson  <andersca@apple.com>
 
+        Add a function to restore a WebBackForwardList object from a BackForwardListState object
+        https://bugs.webkit.org/show_bug.cgi?id=134478
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::generateWebBackForwardItemID):
+        (WebKit::WebBackForwardList::restoreFromState):
+        * UIProcess/WebBackForwardList.h:
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::generateWebBackForwardItemID): Deleted.
+
+2014-06-30  Anders Carlsson  <andersca@apple.com>
+
         Change the AddBackForwardItem message to take a page state object
         https://bugs.webkit.org/show_bug.cgi?id=134475
 

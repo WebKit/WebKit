@@ -36,15 +36,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static uint64_t generateWebBackForwardItemID()
-{
-    // These IDs exist in the UIProcess for items created by the UIProcess.
-    // The IDs generated here need to never collide with the IDs created in WebBackForwardListProxy in the WebProcess.
-    // We accomplish this by starting from 2, and only ever using even ids.
-    static uint64_t uniqueHistoryItemID = 0;
-    uniqueHistoryItemID += 2;
-    return uniqueHistoryItemID;
-}
+uint64_t generateWebBackForwardItemID();
 
 static CFNumberRef sessionHistoryCurrentVersion()
 {

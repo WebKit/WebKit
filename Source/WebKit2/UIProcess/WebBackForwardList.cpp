@@ -27,9 +27,23 @@
 #include "WebBackForwardList.h"
 
 #include "APIArray.h"
+#include "SessionState.h"
 #include "WebPageProxy.h"
 
 namespace WebKit {
+
+// FIXME: Make this static once WebBackForwardListCF.cpp is no longer using it.
+uint64_t generateWebBackForwardItemID();
+
+uint64_t generateWebBackForwardItemID()
+{
+    // These IDs exist in the UIProcess for items created by the UIProcess.
+    // The IDs generated here need to never collide with the IDs created in WebBackForwardListProxy in the WebProcess.
+    // We accomplish this by starting from 2, and only ever using even ids.
+    static uint64_t uniqueHistoryItemID = 0;
+    uniqueHistoryItemID += 2;
+    return uniqueHistoryItemID;
+}
 
 static const unsigned DefaultCapacity = 100;
 
@@ -364,6 +378,19 @@ void WebBackForwardList::clear()
     }
 
     m_page->didChangeBackForwardList(nullptr, std::move(removedItems));
+}
+
+void WebBackForwardList::restoreFromState(BackForwardListState backForwardListState)
+{
+    Vector<RefPtr<WebBackForwardListItem>> items;
+    items.reserveInitialCapacity(backForwardListState.items.size());
+
+    for (auto& pageState : backForwardListState.items)
+        items.uncheckedAppend(WebBackForwardListItem::create(generateWebBackForwardItemID(), std::move(pageState)));
+
+    m_hasCurrentIndex = !!backForwardListState.currentIndex;
+    m_currentIndex = backForwardListState.currentIndex.valueOr(0);
+    m_entries = std::move(items);
 }
 
 } // namespace WebKit

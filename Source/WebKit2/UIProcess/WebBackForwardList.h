@@ -38,11 +38,7 @@
 
 namespace WebKit {
 
-/*
- *          Current
- *   |---------*--------------| Entries
- *      Back        Forward
- */
+struct BackForwardListState;
 
 class WebBackForwardList : public API::ObjectImpl<API::Object::Type::BackForwardList> {
 public:
@@ -82,6 +78,8 @@ public:
     bool restoreFromV0CFDictionaryRepresentation(CFDictionaryRef);
     bool restoreFromV1CFDictionaryRepresentation(CFDictionaryRef);
 #endif
+
+    void restoreFromState(BackForwardListState);
 
 private:
     explicit WebBackForwardList(WebPageProxy&);
