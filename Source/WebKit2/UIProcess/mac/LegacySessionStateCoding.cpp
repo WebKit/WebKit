@@ -844,15 +844,15 @@ static bool decodeSessionHistoryEntry(CFDictionaryRef entryDictionary, PageState
     return true;
 }
 
-static bool decodeSessionHistoryEntries(CFArrayRef entriesArray, Vector<PageState>& entries)
+static bool decodeSessionHistoryEntries(CFArrayRef entriesArray, Vector<BackForwardListItemState>& entries)
 {
     for (CFIndex i = 0, size = CFArrayGetCount(entriesArray); i < size; ++i) {
         auto entryDictionary = dynamic_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(entriesArray, i));
         if (!entryDictionary)
             return false;
 
-        PageState entry;
-        if (!decodeSessionHistoryEntry(entryDictionary, entry))
+        BackForwardListItemState entry;
+        if (!decodeSessionHistoryEntry(entryDictionary, entry.pageState))
             return false;
 
         entries.append(std::move(entry));

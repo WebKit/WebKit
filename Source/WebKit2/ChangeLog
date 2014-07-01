@@ -1,3 +1,39 @@
+2014-07-01  Anders Carlsson  <andersca@apple.com>
+
+        Add a BackForwardListItemState struct and put the snapshot UUID there
+        https://bugs.webkit.org/show_bug.cgi?id=134497
+
+        Reviewed by Sam Weinig.
+
+        * Shared/SessionState.cpp:
+        (WebKit::PageState::encode):
+        (WebKit::PageState::decode):
+        (WebKit::BackForwardListItemState::encode):
+        (WebKit::BackForwardListItemState::decode):
+        * Shared/SessionState.h:
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::create):
+        (WebKit::WebBackForwardListItem::WebBackForwardListItem):
+        (WebKit::WebBackForwardListItem::backForwardData):
+        (WebKit::WebBackForwardListItem::setBackForwardData):
+        (WebKit::WebBackForwardListItem::encode):
+        * Shared/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::setPageState):
+        (WebKit::WebBackForwardListItem::setOriginalURL):
+        (WebKit::WebBackForwardListItem::originalURL):
+        (WebKit::WebBackForwardListItem::setURL):
+        (WebKit::WebBackForwardListItem::url):
+        (WebKit::WebBackForwardListItem::setTitle):
+        (WebKit::WebBackForwardListItem::title):
+        (WebKit::WebBackForwardListItem::setSnapshotUUID):
+        (WebKit::WebBackForwardListItem::snapshotUUID):
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::restoreFromState):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::addBackForwardItem):
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::decodeSessionHistoryEntries):
+
 2014-07-01  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Add encodeInteger and decodeInteger for remote object encoder and decoder.

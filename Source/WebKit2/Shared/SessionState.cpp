@@ -168,12 +168,28 @@ bool FrameState::decode(IPC::ArgumentDecoder& decoder, FrameState& result)
 
 void PageState::encode(IPC::ArgumentEncoder& encoder) const
 {
+    encoder << title;
     encoder << mainFrameState;
 }
 
 bool PageState::decode(IPC::ArgumentDecoder& decoder, PageState& result)
 {
+    if (!decoder.decode(result.title))
+        return false;
     if (!decoder.decode(result.mainFrameState))
+        return false;
+
+    return true;
+}
+
+void BackForwardListItemState::encode(IPC::ArgumentEncoder& encoder) const
+{
+    encoder << pageState;
+}
+
+bool BackForwardListItemState::decode(IPC::ArgumentDecoder& decoder, BackForwardListItemState& result)
+{
+    if (!decoder.decode(result.pageState))
         return false;
 
     return true;

@@ -35,23 +35,23 @@ namespace WebKit {
 
 static uint64_t highestUsedItemID = 0;
 
-PassRefPtr<WebBackForwardListItem> WebBackForwardListItem::create(uint64_t itemID, PageState pageState)
+PassRefPtr<WebBackForwardListItem> WebBackForwardListItem::create(uint64_t itemID, BackForwardListItemState backForwardListItemState)
 {
-    return adoptRef(new WebBackForwardListItem(itemID, std::move(pageState)));
+    return adoptRef(new WebBackForwardListItem(itemID, std::move(backForwardListItemState)));
 }
 
-WebBackForwardListItem::WebBackForwardListItem(uint64_t itemID, PageState pageState)
+WebBackForwardListItem::WebBackForwardListItem(uint64_t itemID, BackForwardListItemState backForwardListItemState)
     : m_itemID(itemID)
-    , m_pageState(std::move(pageState))
+    , m_itemState(std::move(backForwardListItemState))
 {
 }
 
 WebBackForwardListItem::WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID)
     : m_itemID(itemID)
 {
-    m_pageState.mainFrameState.originalURLString = originalURL;
-    m_pageState.mainFrameState.urlString = url;
-    m_pageState.title = title;
+    m_itemState.pageState.mainFrameState.originalURLString = originalURL;
+    m_itemState.pageState.mainFrameState.urlString = url;
+    m_itemState.pageState.title = title;
 
     if (m_itemID > highestUsedItemID)
         highestUsedItemID = m_itemID;
@@ -70,19 +70,19 @@ uint64_t WebBackForwardListItem::highedUsedItemID()
 
 PassRefPtr<API::Data> WebBackForwardListItem::backForwardData() const
 {
-    return encodeLegacySessionHistoryEntryData(m_pageState.mainFrameState);
+    return encodeLegacySessionHistoryEntryData(m_itemState.pageState.mainFrameState);
 }
 
 void WebBackForwardListItem::setBackForwardData(const uint8_t* data, size_t size)
 {
-    decodeLegacySessionHistoryEntryData(data, size, m_pageState.mainFrameState);
+    decodeLegacySessionHistoryEntryData(data, size, m_itemState.pageState.mainFrameState);
 }
 
 void WebBackForwardListItem::encode(IPC::ArgumentEncoder& encoder) const
 {
-    encoder << m_pageState.mainFrameState.originalURLString;
-    encoder << m_pageState.mainFrameState.urlString;
-    encoder << m_pageState.title;
+    encoder << m_itemState.pageState.mainFrameState.originalURLString;
+    encoder << m_itemState.pageState.mainFrameState.urlString;
+    encoder << m_itemState.pageState.title;
     encoder << m_itemID;
 
     RefPtr<API::Data> backForwardData = this->backForwardData();
