@@ -483,9 +483,12 @@ class Bugzilla(object):
 
     def fetch_attachment_contents(self, attachment_id):
         attachment_url = self.attachment_url_for_id(attachment_id)
-        # We need to authenticate to download patches from security bugs.
-        self.authenticate()
-        return self.browser.open(attachment_url).read()
+        # We may need to authenticate to download patches from security bugs.
+        try:
+            return self.browser.open(attachment_url).read()
+        except:
+            self.authenticate()
+            return self.browser.open(attachment_url).read()
 
     def _parse_bug_id_from_attachment_page(self, page):
         # The "Up" relation happens to point to the bug.
@@ -498,11 +501,13 @@ class Bugzilla(object):
         return int(match.group('bug_id'))
 
     def bug_id_for_attachment_id(self, attachment_id):
-        self.authenticate()
-
         attachment_url = self.attachment_url_for_id(attachment_id, 'edit')
         _log.info("Fetching: %s" % attachment_url)
-        page = self.browser.open(attachment_url)
+        try:
+            page = self.browser.open(attachment_url)
+        except:
+            self.authenticate()
+            page = self.browser.open(attachment_url)
         return self._parse_bug_id_from_attachment_page(page)
 
     # FIXME: This should just return Attachment(id), which should be able to

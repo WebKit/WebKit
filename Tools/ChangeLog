@@ -1,3 +1,15 @@
+2014-07-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        webkit-patch apply-from-bug / apply-attachment should not ask for credentials if none are required
+        https://bugs.webkit.org/show_bug.cgi?id=40095
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla.fetch_attachment_contents): make a first fetch on bugzilla without authentication. If failing, use authentication (similar to fetch_bug_dictionary).
+        (Bugzilla):
+        (Bugzilla.bug_id_for_attachment_id): ditto.
+
 2014-07-01  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         [webkitpy] Refactor pluralizer in grammar.py
