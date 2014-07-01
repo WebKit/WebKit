@@ -1,3 +1,9 @@
+2014-07-01  Pratik Solanki  <psolanki@apple.com>
+
+        Unreviewed. Adding myself to the reviewers list to make commit bot happy.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-07-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         webkit-patch apply-from-bug / apply-attachment should not ask for credentials if none are required

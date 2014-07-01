@@ -2142,14 +2142,6 @@
             "pol"
          ]
       },
-      "Pratik Solanki" : {
-         "emails" : [
-            "psolanki@apple.com"
-         ],
-         "nicks" : [
-            "psolanki"
-         ]
-      },
       "Pravin D" : {
          "emails" : [
             "pravind@webkit.org",
@@ -4362,6 +4354,14 @@
          "expertise" : "WebKitGTK+, Media support (focused on the GStreamer implementation)",
          "nicks" : [
             "philn"
+         ]
+      },
+      "Pratik Solanki" : {
+         "emails" : [
+            "psolanki@apple.com"
+         ],
+         "nicks" : [
+            "psolanki"
          ]
       },
       "Richard Williamson" : {
