@@ -44,6 +44,12 @@
 
 using namespace WebCore;
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
+#define ENABLE_LEGACY_FIND_INDICATOR_STYLE 1
+#else
+#define ENABLE_LEGACY_FIND_INDICATOR_STYLE 0
+#endif
+
 namespace WebKit {
 
 static WebCore::FindOptions core(FindOptions options)
@@ -266,6 +272,8 @@ bool FindController::getFindIndicatorBitmapAndRect(Frame& frame, ShareableBitmap
     if (!findIndicatorTextBackingStore)
         return false;
 
+    // FIXME: We should consider using subpixel antialiasing for the snapshot
+    // if we're compositing this image onto a solid color (the modern find indicator style).
     auto graphicsContext = findIndicatorTextBackingStore->createGraphicsContext();
     graphicsContext->scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
 
@@ -448,18 +456,15 @@ void FindController::didMoveToWebPage(PageOverlay*, WebPage*)
 {
 }
 
+#if ENABLE(LEGACY_FIND_INDICATOR_STYLE)
 static const float shadowOffsetX = 0.0;
 static const float shadowOffsetY = 1.0;
 static const float shadowBlurRadius = 2.0;
-
-static const float overlayBackgroundRed = 0.1;
-static const float overlayBackgroundGreen = 0.1;
-static const float overlayBackgroundBlue = 0.1;
-static const float overlayBackgroundAlpha = 0.25;
+#endif
 
 void FindController::drawRect(PageOverlay*, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
 {
-    Color overlayBackgroundColor(overlayBackgroundRed, overlayBackgroundGreen, overlayBackgroundBlue, overlayBackgroundAlpha);
+    Color overlayBackgroundColor(0.1f, 0.1f, 0.1f, 0.25f);
 
     Vector<IntRect> rects = rectsForTextMatches();
 
@@ -469,20 +474,22 @@ void FindController::drawRect(PageOverlay*, GraphicsContext& graphicsContext, co
     {
         GraphicsContextStateSaver stateSaver(graphicsContext);
 
+#if ENABLE(LEGACY_FIND_INDICATOR_STYLE)
         graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, Color::black, ColorSpaceSRGB);
+#endif
         graphicsContext.setFillColor(Color::white, ColorSpaceSRGB);
 
         // Draw white frames around the holes.
-        for (size_t i = 0; i < rects.size(); ++i) {
-            IntRect whiteFrameRect = rects[i];
+        for (auto& rect : rects) {
+            IntRect whiteFrameRect = rect;
             whiteFrameRect.inflate(1);
             graphicsContext.fillRect(whiteFrameRect);
         }
     }
 
     // Clear out the holes.
-    for (size_t i = 0; i < rects.size(); ++i)
-        graphicsContext.clearRect(rects[i]);
+    for (auto& rect : rects)
+        graphicsContext.clearRect(rect);
 
     if (!m_isShowingFindIndicator)
         return;

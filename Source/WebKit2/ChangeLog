@@ -1,3 +1,27 @@
+2014-06-30  Tim Horton  <timothy_horton@apple.com>
+
+        [WK2] Add a flatter find-in-page current match indicator style
+        https://bugs.webkit.org/show_bug.cgi?id=134434
+        <rdar://problem/16225673>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/FindIndicator.cpp:
+        (WebKit::findIndicatorsForTextRectsOverlap):
+        (WebKit::FindIndicator::frameRect):
+        (WebKit::flatHighlightColor):
+        (WebKit::flatRimShadowColor):
+        (WebKit::flatDropShadowColor):
+        (WebKit::FindIndicator::draw):
+        Add a flatter find indicator, with a bigger shadow.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindUIAfterPageScroll):
+        (WebKit::FindController::getFindIndicatorBitmapAndRect):
+        (WebKit::FindController::hideFindIndicator):
+        (WebKit::FindController::drawRect):
+        Don't paint a shadow behind the secondary matches if we're using the new style.
+
 2014-06-30  Benjamin Poulain  <benjamin@webkit.org>
 
         [iOS][WK2] Improve double-tap-to-scroll on image documents

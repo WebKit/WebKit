@@ -33,8 +33,15 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/Path.h>
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
+#define ENABLE_LEGACY_FIND_INDICATOR_STYLE 1
+#else
+#define ENABLE_LEGACY_FIND_INDICATOR_STYLE 0
+#endif
+
 using namespace WebCore;
 
+#if ENABLE(LEGACY_FIND_INDICATOR_STYLE)
 static const float cornerRadius = 3.0;
 
 static const float shadowOffsetX = 0.0;
@@ -75,6 +82,14 @@ static const int gradientLightRed = 242;
 static const int gradientLightGreen = 239;
 static const int gradientLightBlue = 0;
 static const int gradientLightAlpha = 255;
+#else
+const float flatStyleHorizontalBorder = 2;
+const float flatStyleVerticalBorder = 1;
+const float flatShadowOffsetX = 0;
+const float flatShadowOffsetY = 5;
+const float flatShadowBlurRadius = 25;
+const float flatRimShadowBlurRadius = 2;
+#endif
 
 namespace WebKit {
 
@@ -88,6 +103,26 @@ PassRefPtr<FindIndicator> FindIndicator::create(const FloatRect& selectionRectIn
     return adoptRef(new FindIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, contentImageScaleFactor, contentImage.release()));
 }
 
+static FloatRect inflateRect(const FloatRect& rect, float inflateX, float inflateY)
+{
+    FloatRect inflatedRect = rect;
+    inflatedRect.inflateX(inflateX);
+    inflatedRect.inflateY(inflateY);
+    return inflatedRect;
+}
+
+static FloatRect outsetIndicatorRectIncludingShadow(const FloatRect rect)
+{
+#if ENABLE(LEGACY_FIND_INDICATOR_STYLE)
+    FloatRect outsetRect = rect;
+    outsetRect.move(-leftBorderThickness, -topBorderThickness);
+    outsetRect.expand(leftBorderThickness + rightBorderThickness, topBorderThickness + bottomBorderThickness);
+    return outsetRect;
+#else
+    return inflateRect(rect, flatShadowBlurRadius + flatStyleHorizontalBorder, flatShadowBlurRadius + flatStyleVerticalBorder);
+#endif
+}
+
 static bool findIndicatorsForTextRectsOverlap(const Vector<FloatRect>& textRects)
 {
     size_t count = textRects.size();
@@ -98,9 +133,7 @@ static bool findIndicatorsForTextRectsOverlap(const Vector<FloatRect>& textRects
     indicatorRects.reserveInitialCapacity(count);
 
     for (size_t i = 0; i < count; ++i) {
-        FloatRect indicatorRect = textRects[i];
-        indicatorRect.move(-leftBorderThickness, -topBorderThickness);
-        indicatorRect.expand(leftBorderThickness + rightBorderThickness, topBorderThickness + bottomBorderThickness);
+        FloatRect indicatorRect = outsetIndicatorRectIncludingShadow(textRects[i]);
 
         for (size_t j = indicatorRects.size(); j; ) {
             --j;
@@ -130,38 +163,28 @@ FindIndicator::~FindIndicator()
 {
 }
 
-static FloatRect inflateRect(const FloatRect& rect, float inflateX, float inflateY)
-{
-    FloatRect inflatedRect = rect;
-    inflatedRect.inflateX(inflateX);
-    inflatedRect.inflateY(inflateY);
-    
-    return inflatedRect;
-}
-
 FloatRect FindIndicator::frameRect() const
 {
-    return FloatRect(m_selectionRectInWindowCoordinates.x() - leftBorderThickness, m_selectionRectInWindowCoordinates.y() - topBorderThickness,
-                     m_selectionRectInWindowCoordinates.width() + rightBorderThickness + leftBorderThickness,
-                     m_selectionRectInWindowCoordinates.height() + topBorderThickness + bottomBorderThickness);
+    return outsetIndicatorRectIncludingShadow(m_selectionRectInWindowCoordinates);
 }
 
-static Color lightBorderColor()
+#if ENABLE(LEGACY_FIND_INDICATOR_STYLE)
+static inline Color lightBorderColor()
 {
     return Color(lightBorderRed, lightBorderGreen, lightBorderBlue, lightBorderAlpha);
 }
 
-static Color shadowColor()
+static inline Color shadowColor()
 {
     return Color(shadowRed, shadowGreen, shadowBlue, shadowAlpha);
 }
 
-static Color gradientLightColor()
+static inline Color gradientLightColor()
 {
     return Color(gradientLightRed, gradientLightGreen, gradientLightBlue, gradientLightAlpha);
 }
 
-static Color gradientDarkColor()
+static inline Color gradientDarkColor()
 {
     return Color(gradientDarkRed, gradientDarkGreen, gradientDarkBlue, gradientDarkAlpha);
 }
@@ -173,9 +196,26 @@ static Path pathWithRoundedRect(const FloatRect& pathRect, float radius)
 
     return path;
 }
+#else
+static inline Color flatHighlightColor()
+{
+    return Color(255, 255, 0, 255);
+}
+
+static inline Color flatRimShadowColor()
+{
+    return Color(0, 0, 0, 38);
+}
+
+static inline Color flatDropShadowColor()
+{
+    return Color(0, 0, 0, 51);
+}
+#endif
     
 void FindIndicator::draw(GraphicsContext& graphicsContext, const IntRect& /*dirtyRect*/)
 {
+#if ENABLE(LEGACY_FIND_INDICATOR_STYLE)
     for (size_t i = 0; i < m_textRectsInSelectionRectCoordinates.size(); ++i) {
         FloatRect textRect = m_textRectsInSelectionRectCoordinates[i];
         textRect.move(leftBorderThickness, topBorderThickness);
@@ -208,6 +248,30 @@ void FindIndicator::draw(GraphicsContext& graphicsContext, const IntRect& /*dirt
             m_contentImage->paint(graphicsContext, m_contentImageScaleFactor, contentImageRect.location(), contentImageRect);
         }
     }
+#else
+    for (auto& textRect : m_textRectsInSelectionRectCoordinates) {
+        FloatRect blurRect = textRect;
+        blurRect.move(flatShadowBlurRadius + flatStyleHorizontalBorder, flatShadowBlurRadius + flatStyleVerticalBorder);
+        FloatRect outerPathRect = inflateRect(blurRect, flatStyleHorizontalBorder, flatStyleVerticalBorder);
+
+        {
+            GraphicsContextStateSaver stateSaver(graphicsContext);
+            graphicsContext.setShadow(FloatSize(), flatRimShadowBlurRadius, flatRimShadowColor(), ColorSpaceSRGB);
+            graphicsContext.setFillColor(flatHighlightColor(), ColorSpaceSRGB);
+            graphicsContext.fillRect(outerPathRect);
+            graphicsContext.setShadow(FloatSize(flatShadowOffsetX, flatShadowOffsetY), flatShadowBlurRadius, flatDropShadowColor(), ColorSpaceSRGB);
+            graphicsContext.fillRect(outerPathRect);
+        }
+
+        {
+            GraphicsContextStateSaver stateSaver(graphicsContext);
+            graphicsContext.translate(FloatSize(flatShadowBlurRadius + flatStyleHorizontalBorder, flatShadowBlurRadius + flatStyleVerticalBorder));
+
+            IntRect contentImageRect = enclosingIntRect(textRect);
+            m_contentImage->paint(graphicsContext, m_contentImageScaleFactor, contentImageRect.location(), contentImageRect);
+        }
+    }
+#endif
 }
 
 } // namespace WebKit
