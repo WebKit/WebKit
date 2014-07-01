@@ -298,6 +298,7 @@ set(WebKit2_SOURCES
     UIProcess/FrameLoadState.cpp
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp
     UIProcess/GeolocationPermissionRequestProxy.cpp
+    UIProcess/LegacySessionStateCodingNone.cpp
     UIProcess/PageLoadState.cpp
     UIProcess/ProcessAssertion.cpp
     UIProcess/ProcessThrottler.cpp
@@ -519,6 +520,7 @@ set(WebKit2_SOURCES
 
     WebProcess/UserContent/WebUserContentController.cpp
 
+    WebProcess/WebCoreSupport/SessionStateConversion.cpp
     WebProcess/WebCoreSupport/WebBatteryClient.cpp
     WebProcess/WebCoreSupport/WebChromeClient.cpp
     WebProcess/WebCoreSupport/WebColorChooser.cpp

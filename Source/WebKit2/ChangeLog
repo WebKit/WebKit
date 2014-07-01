@@ -1,3 +1,24 @@
+2014-07-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Fix build break on EFL and GTK ports since r170611 and r170614
+        https://bugs.webkit.org/show_bug.cgi?id=134479
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add LegacySessionStateCodingNone.cpp in order to fix build break on EFL and GTK ports. Additionally
+        SessionStateConversion.cpp is added to CMakeLists.txt as well.
+
+        * CMakeLists.txt:
+        * UIProcess/LegacySessionStateCoding.h: Copied from Source/WebKit2/UIProcess/mac/LegacySessionStateCoding.h.
+        * UIProcess/LegacySessionStateCodingNone.cpp: Renamed from Source/WebKit2/UIProcess/mac/LegacySessionStateCoding.h.
+        (WebKit::encodeLegacySessionHistoryEntryData):
+        (WebKit::decodeLegacySessionState):
+        (WebKit::decodeLegacySessionHistoryEntryData):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadFile):
+        (WebKit::WebPageProxy::restoreFromState):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-06-30  Benjamin Poulain  <benjamin@webkit.org>
 
         [iOS][WK2] The long press gesture recognizers should not block the pinch gesture
