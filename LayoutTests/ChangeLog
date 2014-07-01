@@ -1,3 +1,17 @@
+2014-06-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        All Indic text is rendered as boxes on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=134464
+
+        Reviewed by Simon Fraser.
+
+        Simply draw some indic text and test that against currently good metric values.
+
+        * fast/text/indic.html: Added
+        * platform/ios-sim/fast/text/indic-expected.txt: Added.
+        * platform/mac/fast/text/indic-expected.txt: Added.
+        * platform/mac/fast/text/indic-expected.png: Added.
+
 2014-06-30  Michael Saboff  <msaboff@apple.com>
 
         js/script-tests/function-apply-many-args.js fails on ARM

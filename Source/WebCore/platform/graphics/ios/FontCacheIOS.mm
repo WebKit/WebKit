@@ -140,7 +140,7 @@ static LanguageSpecificFont languageSpecificFallbackFont(UChar32 c)
     if (c < 0x900)
         return LanguageSpecificFont::None;
     if (c < 0xE00)
-        return LanguageSpecificFont::Arabic;
+        return LanguageSpecificFont::Indic;
     if (c < 0xE80)
         return LanguageSpecificFont::Thai;
     if (c < 0x0F00)

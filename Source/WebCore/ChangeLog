@@ -1,5 +1,19 @@
 2014-06-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        All Indic text is rendered as boxes on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=134464
+
+        Reviewed by Simon Fraser.
+
+        I made a typo in r170207.
+
+        Test: fast/text/indic.html
+
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::languageSpecificFallbackFont):
+
+2014-06-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [iOS] languageSpecificFallbackFont() is not consistent
         https://bugs.webkit.org/show_bug.cgi?id=134473
 
