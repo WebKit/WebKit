@@ -437,7 +437,7 @@ static RetainPtr<CFDictionaryRef> encodeSessionHistory(const BackForwardListStat
         auto originalURL = item.pageState.mainFrameState.originalURLString.createCFString();
         auto data = encodeSessionHistoryEntryData(item.pageState.mainFrameState);
 
-        auto entryDictionary = createDictionary({ { sessionHistoryEntryURLKey, url.get() }, { sessionHistoryEntryTitleKey, title.get() }, { sessionHistoryEntryDataKey, data.get() }});
+        auto entryDictionary = createDictionary({ { sessionHistoryEntryURLKey, url.get() }, { sessionHistoryEntryTitleKey, title.get() }, { sessionHistoryEntryDataKey, data.get() }, { sessionHistoryEntrySnapshotUUIDKey, item.snapshotUUID.createCFString().get() }});
 
         CFArrayAppendValue(entries.get(), entryDictionary.get());
     }
@@ -933,7 +933,7 @@ static bool decodeSessionHistoryEntryData(CFDataRef historyEntryData, FrameState
     return decodeSessionHistoryEntryData(CFDataGetBytePtr(historyEntryData), static_cast<size_t>(CFDataGetLength(historyEntryData)), mainFrameState);
 }
 
-static bool decodeSessionHistoryEntry(CFDictionaryRef entryDictionary, PageState& pageState)
+static bool decodeSessionHistoryEntry(CFDictionaryRef entryDictionary, BackForwardListItemState& backForwardListItemState)
 {
     auto title = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryTitleKey));
     if (!title)
@@ -951,12 +951,15 @@ static bool decodeSessionHistoryEntry(CFDictionaryRef entryDictionary, PageState
     if (!historyEntryData)
         return false;
 
-    if (!decodeSessionHistoryEntryData(historyEntryData, pageState.mainFrameState))
+    if (!decodeSessionHistoryEntryData(historyEntryData, backForwardListItemState.pageState.mainFrameState))
         return false;
 
-    pageState.title = title;
-    pageState.mainFrameState.urlString = urlString;
-    pageState.mainFrameState.originalURLString = originalURLString;
+    if (auto snapshotUUID = WTF::dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntrySnapshotUUIDKey)))
+        backForwardListItemState.snapshotUUID = snapshotUUID;
+
+    backForwardListItemState.pageState.title = title;
+    backForwardListItemState.pageState.mainFrameState.urlString = urlString;
+    backForwardListItemState.pageState.mainFrameState.originalURLString = originalURLString;
 
     return true;
 }
@@ -969,7 +972,7 @@ static bool decodeSessionHistoryEntries(CFArrayRef entriesArray, Vector<BackForw
             return false;
 
         BackForwardListItemState entry;
-        if (!decodeSessionHistoryEntry(entryDictionary, entry.pageState))
+        if (!decodeSessionHistoryEntry(entryDictionary, entry))
             return false;
 
         entries.append(std::move(entry));
