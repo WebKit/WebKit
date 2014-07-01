@@ -1,3 +1,19 @@
+2014-06-30  Daniel Bates  <dabates@apple.com>
+
+        Avoid copying function object in lambda function in ScrollingThread::dispatchBarrier(); actually use move semantics
+        https://bugs.webkit.org/show_bug.cgi?id=134470
+
+        Reviewed by Anders Carlsson.
+
+        Currently we always copy construct the captured std::function object when calling callOnMainThread()
+        in the lambda function created in ScrollingThread::dispatchBarrier() because captured variables are
+        const in a lambda expression's body by default. That is, the std::function object is captured as const.
+        Instead, we should mark this lambda expression as mutable so the captured std::function object is
+        non-const and hence we can use move semantics when passing it to callOnMainThread().
+
+        * page/scrolling/ScrollingThread.cpp:
+        (WebCore::ScrollingThread::dispatchBarrier):
+
 2014-06-30  Anders Carlsson  <andersca@apple.com>
 
         Adopt the legacy session decoding inside WebPage::restoreSession for now

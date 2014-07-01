@@ -60,7 +60,7 @@ void ScrollingThread::dispatch(std::function<void ()> function)
 
 void ScrollingThread::dispatchBarrier(std::function<void ()> function)
 {
-    dispatch([function]{
+    dispatch([function]() mutable {
         callOnMainThread(std::move(function));
     });
 }
