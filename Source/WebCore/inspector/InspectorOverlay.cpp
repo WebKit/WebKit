@@ -63,9 +63,7 @@ using namespace Inspector;
 
 namespace WebCore {
 
-namespace {
-
-Path quadToPath(const FloatQuad& quad)
+static Path quadToPath(const FloatQuad& quad)
 {
     Path quadPath;
     quadPath.moveTo(quad.p1());
@@ -76,7 +74,7 @@ Path quadToPath(const FloatQuad& quad)
     return quadPath;
 }
 
-void drawOutlinedQuad(GraphicsContext* context, const FloatQuad& quad, const Color& fillColor, const Color& outlineColor)
+static void drawOutlinedQuad(GraphicsContext* context, const FloatQuad& quad, const Color& fillColor, const Color& outlineColor)
 {
     static const int outlineThickness = 2;
 
@@ -237,8 +235,6 @@ static void buildQuadHighlight(const FloatQuad& quad, const HighlightConfig& hig
     highlight->quads.append(quad);
 }
 
-} // anonymous namespace
-
 InspectorOverlay::InspectorOverlay(Page& page, InspectorClient* client)
     : m_page(page)
     , m_client(client)
@@ -348,8 +344,8 @@ void InspectorOverlay::update()
         return;
 
     FrameView* overlayView = overlayPage()->mainFrame().view();
-    IntSize viewportSize = view->visibleContentRect().size();
-    IntSize frameViewFullSize = view->visibleContentRectIncludingScrollbars().size();
+    IntSize viewportSize = view->unscaledTotalVisibleContentSize();
+    IntSize frameViewFullSize = view->unscaledTotalVisibleContentSize(ScrollableArea::IncludeScrollbars);
     overlayPage()->setPageScaleFactor(m_page.pageScaleFactor(), IntPoint());
     frameViewFullSize.scale(m_page.pageScaleFactor());
     overlayView->resize(frameViewFullSize);

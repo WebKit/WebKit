@@ -1,3 +1,14 @@
+2014-07-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Selected DOM element highlights invisible near bottom of the viewport (topContentInset?)
+        https://bugs.webkit.org/show_bug.cgi?id=133818
+
+        Reviewed by Beth Dakin.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::update):
+        Take the topContentInset into account when sizing the InspectorOverlay's FrameView.
+
 2014-07-01  Chris Fleizach  <cfleizach@apple.com>
 
         AX: HTML indeterminate IDL attribute not mapped to checkbox value=2
