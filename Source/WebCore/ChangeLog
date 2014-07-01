@@ -1,3 +1,10 @@
+2014-06-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Do not compile JSFileException
+        and JSFileReaderSync multiple times.
+
 2014-06-30  Daniel Bates  <dabates@apple.com>
 
         Avoid copying function object in lambda function in ScrollingThread::dispatchBarrier(); actually use move semantics
