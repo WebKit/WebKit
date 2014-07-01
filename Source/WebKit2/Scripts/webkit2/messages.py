@@ -142,7 +142,7 @@ def message_to_struct_declaration(message):
         result.append('\n        : m_arguments(%s)\n' % ', '.join([x[1] for x in function_parameters]))
         result.append('    {\n')
         result.append('    }\n\n')
-    result.append('    const %s arguments() const\n' % arguments_type(message))
+    result.append('    const %s& arguments() const\n' % arguments_type(message))
     result.append('    {\n')
     result.append('        return m_arguments;\n')
     result.append('    }\n')

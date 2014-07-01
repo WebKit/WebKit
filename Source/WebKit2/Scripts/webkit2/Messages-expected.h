@@ -77,7 +77,7 @@ public:
     {
     }
 
-    const std::tuple<const String&> arguments() const
+    const std::tuple<const String&>& arguments() const
     {
         return m_arguments;
     }
@@ -100,7 +100,7 @@ public:
     {
     }
 
-    const std::tuple<const String&> arguments() const
+    const std::tuple<const String&>& arguments() const
     {
         return m_arguments;
     }
@@ -124,7 +124,7 @@ public:
     {
     }
 
-    const std::tuple<const WebKit::WebTouchEvent&> arguments() const
+    const std::tuple<const WebKit::WebTouchEvent&>& arguments() const
     {
         return m_arguments;
     }
@@ -148,7 +148,7 @@ public:
     {
     }
 
-    const std::tuple<const WebKit::WebTouchEvent&> arguments() const
+    const std::tuple<const WebKit::WebTouchEvent&>& arguments() const
     {
         return m_arguments;
     }
@@ -172,7 +172,7 @@ public:
     {
     }
 
-    const std::tuple<const String&> arguments() const
+    const std::tuple<const String&>& arguments() const
     {
         return m_arguments;
     }
@@ -195,7 +195,7 @@ public:
     {
     }
 
-    const std::tuple<uint64_t, uint64_t, uint32_t> arguments() const
+    const std::tuple<uint64_t, uint64_t, uint32_t>& arguments() const
     {
         return m_arguments;
     }
@@ -212,7 +212,7 @@ public:
     static IPC::StringReference name() { return IPC::StringReference("Close"); }
     static const bool isSync = false;
 
-    const std::tuple<> arguments() const
+    const std::tuple<>& arguments() const
     {
         return m_arguments;
     }
@@ -234,7 +234,7 @@ public:
     {
     }
 
-    const std::tuple<const WebKit::WebPreferencesStore&> arguments() const
+    const std::tuple<const WebKit::WebPreferencesStore&>& arguments() const
     {
         return m_arguments;
     }
@@ -256,7 +256,7 @@ public:
     {
     }
 
-    const std::tuple<double, float> arguments() const
+    const std::tuple<double, float>& arguments() const
     {
         return m_arguments;
     }
@@ -278,7 +278,7 @@ public:
     {
     }
 
-    const std::tuple<const Vector<uint64_t>&, const Vector<Vector<uint64_t>>&> arguments() const
+    const std::tuple<const Vector<uint64_t>&, const Vector<Vector<uint64_t>>&>& arguments() const
     {
         return m_arguments;
     }
@@ -301,7 +301,7 @@ public:
     {
     }
 
-    const std::tuple<uint64_t, const WebKit::Plugin::Parameters&> arguments() const
+    const std::tuple<uint64_t, const WebKit::Plugin::Parameters&>& arguments() const
     {
         return m_arguments;
     }
@@ -324,7 +324,7 @@ public:
     {
     }
 
-    const std::tuple<uint64_t, const String&> arguments() const
+    const std::tuple<uint64_t, const String&>& arguments() const
     {
         return m_arguments;
     }
@@ -347,7 +347,7 @@ public:
     {
     }
 
-    const std::tuple<bool> arguments() const
+    const std::tuple<bool>& arguments() const
     {
         return m_arguments;
     }
@@ -381,7 +381,7 @@ public:
     {
     }
 
-    const std::tuple<const String&> arguments() const
+    const std::tuple<const String&>& arguments() const
     {
         return m_arguments;
     }
@@ -410,7 +410,7 @@ public:
     };
 
     typedef IPC::Arguments<> Reply;
-    const std::tuple<> arguments() const
+    const std::tuple<>& arguments() const
     {
         return m_arguments;
     }
@@ -432,7 +432,7 @@ public:
     {
     }
 
-    const std::tuple<uint64_t, double, double> arguments() const
+    const std::tuple<uint64_t, double, double>& arguments() const
     {
         return m_arguments;
     }
@@ -454,7 +454,7 @@ public:
     {
     }
 
-    const std::tuple<const HashMap<String, std::pair<String, uint64_t>>&> arguments() const
+    const std::tuple<const HashMap<String, std::pair<String, uint64_t>>&>& arguments() const
     {
         return m_arguments;
     }
@@ -476,7 +476,7 @@ public:
     {
     }
 
-    const std::tuple<const WebCore::GraphicsLayer::PlatformLayerID&> arguments() const
+    const std::tuple<const WebCore::GraphicsLayer::PlatformLayerID&>& arguments() const
     {
         return m_arguments;
     }
@@ -499,7 +499,7 @@ public:
     {
     }
 
-    const std::tuple<const IPC::MachPort&> arguments() const
+    const std::tuple<const IPC::MachPort&>& arguments() const
     {
         return m_arguments;
     }
@@ -524,7 +524,7 @@ public:
     {
     }
 
-    const std::tuple<uint32_t> arguments() const
+    const std::tuple<uint32_t>& arguments() const
     {
         return m_arguments;
     }
@@ -548,7 +548,7 @@ public:
     {
     }
 
-    const std::tuple<const IPC::DummyType&> arguments() const
+    const std::tuple<const IPC::DummyType&>& arguments() const
     {
         return m_arguments;
     }
@@ -572,7 +572,7 @@ public:
     {
     }
 
-    const std::tuple<const IPC::DummyType&> arguments() const
+    const std::tuple<const IPC::DummyType&>& arguments() const
     {
         return m_arguments;
     }

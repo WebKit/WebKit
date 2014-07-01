@@ -1,3 +1,68 @@
+2014-07-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] IPC messages' arguments() method returns const std::tuple<> copies
+        https://bugs.webkit.org/show_bug.cgi?id=131975
+
+        Reviewed by Darin Adler.
+
+        The arguments() method of the different IPC message objects should return a const reference
+        to the std::tuple<> containing the arguments, instead of a const value. This avoids copying
+        the std::tuple<> every time the arguments are encoded, and works best with the
+        ArgumentEncoder::encode<std::tuple<...>>(const std::tuple<...>&) template instantiation.
+
+        The unit test baselines are updated accordingly.
+
+        * Scripts/webkit2/LegacyMessages-expected.h:
+        (Messages::WebPage::LoadURL::arguments):
+        (Messages::WebPage::LoadSomething::arguments):
+        (Messages::WebPage::TouchEvent::arguments):
+        (Messages::WebPage::AddEvent::arguments):
+        (Messages::WebPage::LoadSomethingElse::arguments):
+        (Messages::WebPage::DidReceivePolicyDecision::arguments):
+        (Messages::WebPage::Close::arguments):
+        (Messages::WebPage::PreferencesDidChange::arguments):
+        (Messages::WebPage::SendDoubleAndFloat::arguments):
+        (Messages::WebPage::SendInts::arguments):
+        (Messages::WebPage::CreatePlugin::arguments):
+        (Messages::WebPage::RunJavaScriptAlert::arguments):
+        (Messages::WebPage::GetPlugins::arguments):
+        (Messages::WebPage::GetPluginProcessConnection::arguments):
+        (Messages::WebPage::TestMultipleAttributes::arguments):
+        (Messages::WebPage::TestParameterAttributes::arguments):
+        (Messages::WebPage::TemplateTest::arguments):
+        (Messages::WebPage::SetVideoLayerID::arguments):
+        (Messages::WebPage::DidCreateWebProcessConnection::arguments):
+        (Messages::WebPage::InterpretKeyEvent::arguments):
+        (Messages::WebPage::DeprecatedOperation::arguments):
+        (Messages::WebPage::ExperimentalOperation::arguments):
+        * Scripts/webkit2/Messages-expected.h:
+        (Messages::WebPage::LoadURL::arguments):
+        (Messages::WebPage::LoadSomething::arguments):
+        (Messages::WebPage::TouchEvent::arguments):
+        (Messages::WebPage::AddEvent::arguments):
+        (Messages::WebPage::LoadSomethingElse::arguments):
+        (Messages::WebPage::DidReceivePolicyDecision::arguments):
+        (Messages::WebPage::Close::arguments):
+        (Messages::WebPage::PreferencesDidChange::arguments):
+        (Messages::WebPage::SendDoubleAndFloat::arguments):
+        (Messages::WebPage::SendInts::arguments):
+        (Messages::WebPage::CreatePlugin::arguments):
+        (Messages::WebPage::RunJavaScriptAlert::arguments):
+        (Messages::WebPage::GetPlugins::arguments):
+        (Messages::WebPage::GetPluginProcessConnection::arguments):
+        (Messages::WebPage::TestMultipleAttributes::arguments):
+        (Messages::WebPage::TestParameterAttributes::arguments):
+        (Messages::WebPage::TemplateTest::arguments):
+        (Messages::WebPage::SetVideoLayerID::arguments):
+        (Messages::WebPage::DidCreateWebProcessConnection::arguments):
+        (Messages::WebPage::InterpretKeyEvent::arguments):
+        (Messages::WebPage::DeprecatedOperation::arguments):
+        (Messages::WebPage::ExperimentalOperation::arguments):
+        * Scripts/webkit2/MessagesSuperclass-expected.h:
+        (Messages::WebPage::LoadURL::arguments):
+        * Scripts/webkit2/messages.py:
+        (message_to_struct_declaration):
+
 2014-07-01  Evan Nemerson  <evan@nemerson.com>
 
         [GTK] Annotations for WebResource.get_data produce wrong signature in Vala binding

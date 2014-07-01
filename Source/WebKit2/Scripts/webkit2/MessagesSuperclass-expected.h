@@ -54,7 +54,7 @@ public:
     {
     }
 
-    const std::tuple<const String&> arguments() const
+    const std::tuple<const String&>& arguments() const
     {
         return m_arguments;
     }
