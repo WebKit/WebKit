@@ -1,3 +1,24 @@
+2014-06-30  Benjamin Poulain  <benjamin@webkit.org>
+
+        [iOS][WK2] Improve double-tap-to-scroll on image documents
+        https://bugs.webkit.org/show_bug.cgi?id=134474
+        <rdar://problem/17496778>
+
+        Reviewed by Enrica Casucci.
+
+        On image document, we were always rendering the center of the image as the origin, which broke
+        double tap to scroll.
+
+        This patch improves on this in two ways:
+        1) If the hit testing already got the image, only change the type to replaced (to get the right
+           scaling behavior for images since the type is block on iOS's image document).
+        2) If the hit testing is outside the image, only center the axis that is not in the image.
+           This way, we "fix" the component that is not valid, and keep the vali component.
+           This works great for viewing comics on iPad.
+
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture):
+
 2014-06-30  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION (WK2): Weird selection behavior on autos.yahoo.com, en.wikipedia.org.

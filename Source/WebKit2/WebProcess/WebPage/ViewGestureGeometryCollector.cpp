@@ -94,8 +94,15 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
 
         if (node->document().isImageDocument()) {
             if (HTMLImageElement* imageElement = static_cast<ImageDocument&>(node->document()).imageElement()) {
-                renderRect = imageElement->renderRect(&isReplaced);
-                origin = renderRect.center();
+                if (node != imageElement) {
+                    renderRect = imageElement->renderRect(&isReplaced);
+                    FloatPoint newOrigin = origin;
+                    if (origin.x() < renderRect.x() || origin.x() > renderRect.maxX())
+                        newOrigin.setX(renderRect.x() + renderRect.width() / 2);
+                    if (origin.y() < renderRect.y() || origin.y() > renderRect.maxY())
+                        newOrigin.setY(renderRect.y() + renderRect.height() / 2);
+                    origin = newOrigin;
+                }
                 isReplaced = true;
             }
         }
