@@ -757,11 +757,23 @@ PassRefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point,
         return nullptr;
 
     RenderObject* renderer = bestChoice->renderer();
-    if (renderer && renderer->childrenInline() && (renderer->isRenderBlock() && toRenderBlock(renderer)->inlineElementContinuation() == nil) && !renderer->isTable()) {
+    if (!renderer || renderer->style().userSelect() == SELECT_NONE)
+        return nullptr;
+
+    if (renderer->childrenInline() && (renderer->isRenderBlock() && !toRenderBlock(renderer)->inlineElementContinuation()) && !renderer->isTable()) {
         range = enclosingTextUnitOfGranularity(position, WordGranularity, DirectionBackward);
         if (range && !range->collapsed(ASSERT_NO_EXCEPTION))
             return range;
     }
+
+    // If all we could find is a block whose height is very close to the height
+    // of the visible area, don't use it.
+    const float adjustmentFactor = .97;
+    boundingRectInScrollViewCoordinates = renderer->absoluteBoundingBoxRect(true);
+
+    if (boundingRectInScrollViewCoordinates.height() > m_page->mainFrame().view()->exposedContentRect().height() * adjustmentFactor)
+        return nullptr;
+
     flags = IsBlockSelection;
     range = Range::create(bestChoice->document());
     range->selectNodeContents(bestChoice, ASSERT_NO_EXCEPTION);
@@ -1110,8 +1122,13 @@ PassRefPtr<Range> WebPage::expandedRangeFromHandle(Range* currentRange, Selectio
             break;
         }
 
+        distance = ceilf(distance * multiple);
+
         RefPtr<Range> newRange;
         RefPtr<Range> rangeAtPosition = rangeForBlockAtPoint(testPoint);
+        if (&currentRange->ownerDocument() != &rangeAtPosition->ownerDocument())
+            continue;
+
         if (containsRange(rangeAtPosition.get(), currentRange))
             newRange = rangeAtPosition;
         else if (containsRange(currentRange, rangeAtPosition.get()))
@@ -1155,8 +1172,6 @@ PassRefPtr<Range> WebPage::expandedRangeFromHandle(Range* currentRange, Selectio
             bestRange = newRange;
             bestRect = copyRect;
         }
-
-        distance = ceilf(distance * multiple);
     }
 
     if (bestRange)
@@ -1229,13 +1244,22 @@ PassRefPtr<Range> WebPage::contractedRangeFromHandle(Range* currentRange, Select
             break;
         }
 
+        distance *= multiple;
+
         RefPtr<Range> newRange = rangeForBlockAtPoint(testPoint);
+        if (&newRange->ownerDocument() != &currentRange->ownerDocument())
+            continue;
+
         if (handlePosition == SelectionHandlePosition::Top || handlePosition == SelectionHandlePosition::Left)
-            newRange = Range::create(newRange->startContainer()->document(), newRange->startPosition(), currentRange->endPosition());
+            newRange = Range::create(newRange->startContainer()->document(), newRange->endPosition(), currentRange->endPosition());
         else
-            newRange = Range::create(newRange->startContainer()->document(), currentRange->startPosition(), newRange->endPosition());
+            newRange = Range::create(newRange->startContainer()->document(), currentRange->startPosition(), newRange->startPosition());
 
         IntRect copyRect = newRange->boundingBox();
+        if (copyRect.isEmpty()) {
+            bestRange = rangeForBlockAtPoint(testPoint);
+            break;
+        }
         bool isBetterChoice;
         switch (handlePosition) {
         case SelectionHandlePosition::Top:
@@ -1266,23 +1290,22 @@ PassRefPtr<Range> WebPage::contractedRangeFromHandle(Range* currentRange, Select
             bestRect = copyRect;
         }
 
-        distance *= multiple;
     }
 
+    if (!bestRange)
+        bestRange = currentRange;
+    
     // If we can shrink down to text only, the only reason we wouldn't is that
     // there are multiple sub-element blocks beneath us.  If we didn't find
     // multiple sub-element blocks, don't shrink to a sub-element block.
-    if (!bestRange) {
-        bestRange = currentRange;
-        Node* node = currentRange->commonAncestorContainer(ASSERT_NO_EXCEPTION);
-        if (!node->isElementNode())
-            node = node->parentElement();
 
-        RenderObject* renderer = node->renderer();
-        if (renderer && renderer->childrenInline() && (renderer->isRenderBlock() && !toRenderBlock(renderer)->inlineElementContinuation()) && !renderer->isTable()) {
-            flags = None;
-        }
-    }
+    Node* node = bestRange->commonAncestorContainer(ASSERT_NO_EXCEPTION);
+    if (!node->isElementNode())
+        node = node->parentElement();
+
+    RenderObject* renderer = node->renderer();
+    if (renderer && renderer->childrenInline() && (renderer->isRenderBlock() && !toRenderBlock(renderer)->inlineElementContinuation()) && !renderer->isTable())
+        flags = None;
 
     return bestRange;
 }
@@ -1430,30 +1453,30 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, uint32_t touches
     VisiblePosition result;
     
     switch (static_cast<SelectionTouch>(touches)) {
-        case SelectionTouch::Started:
-        case SelectionTouch::EndedNotMoving:
-            break;
-        
-        case SelectionTouch::Ended:
-            if (frame.selection().selection().isContentEditable()) {
-                result = closestWordBoundaryForPosition(position);
-                if (result.isNotNull())
-                    range = Range::create(*frame.document(), result, result);
-            } else
-                range = rangeForPosition(&frame, position, baseIsStart);
-            break;
-
-        case SelectionTouch::EndedMovingForward:
-            range = rangeAtWordBoundaryForPosition(&frame, position, baseIsStart, DirectionForward);
-            break;
-            
-        case SelectionTouch::EndedMovingBackward:
-            range = rangeAtWordBoundaryForPosition(&frame, position, baseIsStart, DirectionBackward);
-            break;
-
-        case SelectionTouch::Moved:
+    case SelectionTouch::Started:
+    case SelectionTouch::EndedNotMoving:
+        break;
+    
+    case SelectionTouch::Ended:
+        if (frame.selection().selection().isContentEditable()) {
+            result = closestWordBoundaryForPosition(position);
+            if (result.isNotNull())
+                range = Range::create(*frame.document(), result, result);
+        } else
             range = rangeForPosition(&frame, position, baseIsStart);
-            break;
+        break;
+
+    case SelectionTouch::EndedMovingForward:
+        range = rangeAtWordBoundaryForPosition(&frame, position, baseIsStart, DirectionForward);
+        break;
+        
+    case SelectionTouch::EndedMovingBackward:
+        range = rangeAtWordBoundaryForPosition(&frame, position, baseIsStart, DirectionBackward);
+        break;
+
+    case SelectionTouch::Moved:
+        range = rangeForPosition(&frame, position, baseIsStart);
+        break;
     }
     if (range)
         frame.selection().setSelectedRange(range.get(), position.affinity(), true);

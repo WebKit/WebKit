@@ -1,3 +1,24 @@
+2014-06-30  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION (WK2): Weird selection behavior on autos.yahoo.com, en.wikipedia.org.
+        https://bugs.webkit.org/show_bug.cgi?id=134466
+        <rdar://problem/16817263>
+
+        Reviewed by Benjamin Poulain.
+
+        Avoid selecting blocks across frame boundaries and skip non-selectable
+        blocks. If the only block we find is almost the same height as the
+        visible area, we should not select at all.
+        This patch also fixes the logic to compute the next block when
+        shrinking the selection. When calculating the new range after shrinking,
+        we should not include the block that corresponds to the current handle position.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::rangeForWebSelectionAtPosition):
+        (WebKit::WebPage::expandedRangeFromHandle):
+        (WebKit::WebPage::contractedRangeFromHandle):
+        (WebKit::WebPage::updateSelectionWithTouches):
+
 2014-06-30  Anders Carlsson  <andersca@apple.com>
 
         WebBackForwardListItem should not store back-forward data
