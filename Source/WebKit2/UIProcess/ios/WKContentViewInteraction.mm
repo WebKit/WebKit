@@ -191,6 +191,10 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 
 @end
 
+@interface WKContentView (WKInteractionPrivate)
+- (void)accessibilitySpeakSelectionSetContent:(NSString *)string;
+@end
+
 @implementation WKContentView (WKInteraction)
 
 static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularity)
@@ -1354,6 +1358,16 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
             return;
 
         [self _showDictionary:string];
+    });
+}
+
+- (void)accessibilityRetrieveSpeakSelectionContent
+{
+    _page->getSelectionOrContentsAsString([self](const String& string, CallbackBase::Error error) {
+        if (error != CallbackBase::Error::None)
+            return;
+        if ([self respondsToSelector:@selector(accessibilitySpeakSelectionSetContent:)])
+            [self accessibilitySpeakSelectionSetContent:string];
     });
 }
 
