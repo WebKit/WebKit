@@ -83,7 +83,7 @@ ServicesOverlayController::ServicesOverlayController(WebPage& webPage)
 
 ServicesOverlayController::~ServicesOverlayController()
 {
-    if (!m_servicesOverlay) {
+    if (m_servicesOverlay) {
         ASSERT(m_webPage);
         m_webPage->uninstallPageOverlay(m_servicesOverlay, PageOverlay::FadeMode::DoNotFade);
     }

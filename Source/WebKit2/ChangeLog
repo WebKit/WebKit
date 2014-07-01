@@ -1,3 +1,13 @@
+2014-07-01  Brady Eidson  <beidson@apple.com>
+
+        Fix ServicesOverlayController teardown
+        <rdar://problem/17523998> and https://bugs.webkit.org/show_bug.cgi?id=134510
+
+        Reviewed by Mark Rowe.
+
+        * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+        (WebKit::ServicesOverlayController::~ServicesOverlayController): Flipped logic on null-checking the overlay.
+
 2014-07-01  Sam Weinig  <sam@webkit.org>
 
         [Cocoa][Mac] WKWebView should automatically set topContentInset when beneath a toolbar
