@@ -1,3 +1,13 @@
+2014-07-01  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: iOS does not expose ARIA toggle buttons at all (not even as a regular button)
+        https://bugs.webkit.org/show_bug.cgi?id=133875
+
+        Reviewed by Enrica Casucci.
+
+        * platform/ios-sim/accessibility/toggle-button-expected.txt: Added.
+        * platform/ios-sim/accessibility/toggle-button.html: Added.
+
 2014-07-01  Dean Jackson  <dino@apple.com>
 
         [iOS] Subsampled JPEG images do not draw correctly via the canvas APIs
