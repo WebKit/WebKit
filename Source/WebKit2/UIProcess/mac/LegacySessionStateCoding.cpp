@@ -401,7 +401,7 @@ static RetainPtr<CFDataRef> encodeSessionHistoryEntryData(const FrameState& fram
     size_t bufferSize;
     auto buffer = encodeSessionHistoryEntryData(frameState, bufferSize);
 
-    return adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, buffer.get(), bufferSize, fastMallocDeallocator));
+    return adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, buffer.leakPtr(), bufferSize, fastMallocDeallocator));
 }
 
 static RetainPtr<CFDictionaryRef> createDictionary(std::initializer_list<std::pair<CFStringRef, CFTypeRef>> keyValuePairs)
@@ -414,7 +414,7 @@ static RetainPtr<CFDictionaryRef> createDictionary(std::initializer_list<std::pa
 
     for (const auto& keyValuePair : keyValuePairs) {
         keys.uncheckedAppend(keyValuePair.first);
-        keys.uncheckedAppend(keyValuePair.second);
+        values.uncheckedAppend(keyValuePair.second);
     }
 
     return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys.data(), values.data(), keyValuePairs.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
@@ -451,7 +451,7 @@ static RetainPtr<CFDictionaryRef> encodeSessionHistory(const BackForwardListStat
 RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
 {
     auto sessionHistoryDictionary = encodeSessionHistory(sessionState.backForwardListState);
-    auto provisionalURLString = sessionState.provisionalURL.string().createCFString();
+    auto provisionalURLString = sessionState.provisionalURL.isNull() ? nullptr : sessionState.provisionalURL.string().createCFString();
 
     RetainPtr<CFDictionaryRef> stateDictionary;
     if (provisionalURLString)

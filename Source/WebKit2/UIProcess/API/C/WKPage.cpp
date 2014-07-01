@@ -34,6 +34,7 @@
 #include "APIPolicyClient.h"
 #include "APIUIClient.h"
 #include "ImmutableDictionary.h"
+#include "LegacySessionStateCoding.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "NavigationActionData.h"
@@ -351,7 +352,7 @@ WKStringRef WKPageGetSessionBackForwardListItemValueType()
 
 WKDataRef WKPageCopySessionState(WKPageRef pageRef, void *context, WKPageSessionStateFilterCallback filter)
 {
-    return toAPI(toImpl(pageRef)->sessionStateData([pageRef, context, filter](WebBackForwardListItem& item) {
+    auto sessionState = toImpl(pageRef)->sessionState([pageRef, context, filter](WebBackForwardListItem& item) {
         if (filter) {
             if (!filter(pageRef, WKPageGetSessionBackForwardListItemValueType(), toAPI(&item), context))
                 return false;
@@ -361,7 +362,9 @@ WKDataRef WKPageCopySessionState(WKPageRef pageRef, void *context, WKPageSession
         }
 
         return true;
-    }).leakRef());
+    });
+
+    return toAPI(encodeLegacySessionState(sessionState).release().leakRef());
 }
 
 void WKPageRestoreFromSessionState(WKPageRef pageRef, WKDataRef sessionStateData)
