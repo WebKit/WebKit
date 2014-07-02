@@ -1,3 +1,19 @@
+2014-07-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Improve behavior of position:sticky on zoomed pages
+        https://bugs.webkit.org/show_bug.cgi?id=134535
+        <rdar://problem/12898829>
+
+        Reviewed by Dean Jackson.
+
+        Despite r138036, position:sticky still had incorrect behavior in zoomed pages.
+        
+        Fix by removing the scaling of the rect from viewportConstrainedVisibleContentRect(),
+        since all the other math happens in unscaled coordinates.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::constrainingRectForStickyPosition):
+
 2014-07-01  Alex Christensen  <achristensen@webkit.org>
 
         [WebGL] Fix PVRTC extension.

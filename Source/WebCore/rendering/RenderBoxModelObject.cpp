@@ -451,10 +451,7 @@ FloatRect RenderBoxModelObject::constrainingRectForStickyPosition() const
         return constrainingRect;
     }
     
-    LayoutRect viewportRect = view().frameView().viewportConstrainedVisibleContentRect();
-    float scale = frame().frameScaleFactor();
-    viewportRect.scale(1 / scale);
-    return viewportRect;
+    return view().frameView().viewportConstrainedVisibleContentRect();
 }
 
 LayoutSize RenderBoxModelObject::stickyPositionOffset() const
