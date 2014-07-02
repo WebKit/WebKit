@@ -1072,11 +1072,8 @@ static bool decodeSessionHistory(CFDictionaryRef backForwardListDictionary, Back
     return false;
 }
 
-bool decodeLegacySessionState(const API::Data& data, SessionState& sessionState)
+bool decodeLegacySessionState(const uint8_t* bytes, size_t size, SessionState& sessionState)
 {
-    size_t size = data.size();
-    const uint8_t* bytes = data.bytes();
-
     if (size < sizeof(uint32_t))
         return false;
 

@@ -550,10 +550,10 @@ public:
 
     void terminateProcess();
 
-    SessionState sessionState(const std::function<bool (WebBackForwardListItem&)>&) const;
+    SessionState sessionState(const std::function<bool (WebBackForwardListItem&)>& = nullptr) const;
     PassRefPtr<API::Data> sessionStateData(std::function<bool (WebBackForwardListItem&)>) const;
     uint64_t restoreFromSessionStateData(API::Data*);
-    uint64_t restoreFromState(SessionState);
+    uint64_t restoreFromSessionState(SessionState);
 
     bool supportsTextZoom() const;
     double textZoomFactor() const { return m_textZoomFactor; }

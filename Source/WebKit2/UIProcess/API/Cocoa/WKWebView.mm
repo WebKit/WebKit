@@ -30,6 +30,7 @@
 
 #import "APIFormClient.h"
 #import "FindClient.h"
+#import "LegacySessionStateCoding.h"
 #import "NavigationState.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteObjectRegistry.h"
@@ -1564,30 +1565,36 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (NSData *)_sessionStateData
 {
-    return [self _sessionState];
+    WebKit::SessionState sessionState = _page->sessionState();
+
+    // FIXME: This should not use the legacy session state encoder.
+    return [wrapper(*WebKit::encodeLegacySessionState(sessionState).release().leakRef()) autorelease];
 }
 
+// FIXME: This should return a _WKSessionState object.
 - (NSData *)_sessionState
 {
-    return [wrapper(*_page->sessionStateData(nullptr).leakRef()) autorelease];
+    return [self _sessionStateData];
 }
 
-static void releaseNSData(unsigned char*, const void* data)
+- (void)_restoreFromSessionStateData:(NSData *)sessionStateData
 {
-    [(NSData *)data release];
+    // FIXME: This should not use the legacy session state decoder.
+    WebKit::SessionState sessionState;
+    if (!WebKit::decodeLegacySessionState(static_cast<const uint8_t*>(sessionStateData.bytes), sessionStateData.length, sessionState))
+        return;
+
+    uint64_t navigationID = _page->restoreFromSessionState(std::move(sessionState));
+    if (navigationID) {
+        // FIXME: This is not necessarily always a reload navigation.
+        _navigationState->createReloadNavigation(navigationID);
+    }
 }
 
-- (void)_restoreFromSessionStateData:(NSData *)sessionState
-{
-    [self _restoreFromSessionState:sessionState];
-}
-
+// FIXME: This should take a _WKSessionState object.
 - (void)_restoreFromSessionState:(NSData *)sessionStateData
 {
-    [sessionStateData retain];
-    uint64_t navigationID = _page->restoreFromSessionStateData(API::Data::createWithoutCopying((const unsigned char*)sessionStateData.bytes, sessionStateData.length, releaseNSData, sessionStateData).get());
-    if (navigationID)
-        _navigationState->createReloadNavigation(navigationID);
+    [self _restoreFromSessionStateData:sessionStateData];
 }
 
 - (void)_close

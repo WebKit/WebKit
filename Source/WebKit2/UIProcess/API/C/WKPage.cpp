@@ -381,7 +381,7 @@ void WKPageRestoreFromSessionState(WKPageRef pageRef, WKTypeRef sessionStateRef)
 
     // FIXME: This is for backwards compatibility with Safari. Remove it once Safari no longer depends on it.
     if (toImpl(sessionStateRef)->type() == API::Object::Type::Data) {
-        if (!decodeLegacySessionState(*toImpl(static_cast<WKDataRef>(sessionStateRef)), sessionState))
+        if (!decodeLegacySessionState(toImpl(static_cast<WKDataRef>(sessionStateRef))->bytes(), toImpl(static_cast<WKDataRef>(sessionStateRef))->size(), sessionState))
             return;
     } else {
         ASSERT(toImpl(sessionStateRef)->type() == API::Object::Type::SessionState);
@@ -389,7 +389,7 @@ void WKPageRestoreFromSessionState(WKPageRef pageRef, WKTypeRef sessionStateRef)
         sessionState = toImpl(static_cast<WKSessionStateRef>(sessionStateRef))->sessionState();
     }
 
-    toImpl(pageRef)->restoreFromState(std::move(sessionState));
+    toImpl(pageRef)->restoreFromSessionState(std::move(sessionState));
 }
 
 double WKPageGetTextZoomFactor(WKPageRef pageRef)

@@ -40,7 +40,7 @@ struct SessionState;
 RefPtr<API::Data> encodeLegacySessionState(const SessionState&);
 RefPtr<API::Data> encodeLegacySessionHistoryEntryData(const FrameState&);
 
-bool decodeLegacySessionState(const API::Data&, SessionState&);
+bool decodeLegacySessionState(const uint8_t* data, size_t, SessionState&);
 bool decodeLegacySessionHistoryEntryData(const uint8_t* data, size_t, FrameState&);
 
 } // namespace WebKit

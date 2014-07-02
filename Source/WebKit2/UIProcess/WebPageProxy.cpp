@@ -1863,7 +1863,7 @@ SessionState WebPageProxy::sessionState(const std::function<bool (WebBackForward
     return sessionState;
 }
 
-uint64_t WebPageProxy::restoreFromState(SessionState sessionState)
+uint64_t WebPageProxy::restoreFromSessionState(SessionState sessionState)
 {
     bool hasBackForwardList = !!sessionState.backForwardListState.currentIndex;
 

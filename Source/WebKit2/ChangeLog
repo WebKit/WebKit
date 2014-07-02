@@ -1,5 +1,30 @@
 2014-07-02  Anders Carlsson  <andersca@apple.com>
 
+        Use legacy state coding directly in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=134553
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageRestoreFromSessionState):
+        * UIProcess/API/C/WKSessionStateRef.cpp:
+        (WKSessionStateCreateFromData):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _sessionStateData]):
+        (-[WKWebView _sessionState]):
+        (-[WKWebView _restoreFromSessionStateData:]):
+        (-[WKWebView _restoreFromSessionState:]):
+        (releaseNSData): Deleted.
+        * UIProcess/LegacySessionStateCoding.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::restoreFromSessionState):
+        (WebKit::WebPageProxy::restoreFromState): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::decodeLegacySessionState):
+
+2014-07-02  Anders Carlsson  <andersca@apple.com>
+
         Add -[WKWebView _sessionStateData] and -[WKWebView _restoreFromSessionStateData:]
         https://bugs.webkit.org/show_bug.cgi?id=134549
 
