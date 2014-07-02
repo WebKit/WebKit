@@ -872,6 +872,9 @@ webkit.org/b/126624 [ MountainLion ] webgl/1.0.2/conformance/textures/tex-image-
 
 webkit.org/b/92464 [ Debug ] fast/events/tabindex-focus-blur-all.html [ Crash Pass ]
 
+# MountainLion doesn't support textures this large.
+[ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-potentially-subsampled-image.html [ Skip ]
+
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
 webkit.org/b/104822 css3/supports-cssom.html

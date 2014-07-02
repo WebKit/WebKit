@@ -1,3 +1,11 @@
+2014-07-02  Dean Jackson  <dino@apple.com>
+
+        Skip fast/canvas/webgl/tex-image-and-sub-image-2d-with-potentially-subsampled-image.html
+        on Mountain Lion. It doesn't support such large textures (or at least our
+        bots don't).
+
+        * platform/mac/TestExpectations:
+
 2014-07-02  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         REGRESSION(r170008): [GTK] Layout Tests fast/forms/option-constructor-selected.html and fast/forms/select-live-pseudo-selectors.html crash.
