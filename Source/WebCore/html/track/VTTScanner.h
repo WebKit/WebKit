@@ -127,7 +127,7 @@ public:
     unsigned scanDigits(int& number);
 
     // Scan a floating point value on one of the forms: \d+\.? \d+\.\d+ \.\d+
-    bool scanFloat(float& number);
+    bool scanFloat(float& number, bool* isNegative = nullptr);
 
 protected:
     Position position() const { return m_data.characters8; }

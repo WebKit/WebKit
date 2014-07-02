@@ -139,9 +139,9 @@ public:
     }
     static bool collectTimeStamp(const String&, double&);
 
-#if ENABLE(WEBVTT_REGIONS)
     // Useful functions for parsing percentage settings.
     static bool parseFloatPercentageValue(VTTScanner& valueScanner, float&);
+#if ENABLE(WEBVTT_REGIONS)
     static bool parseFloatPercentageValuePair(VTTScanner& valueScanner, char, FloatPoint&);
 #endif
 

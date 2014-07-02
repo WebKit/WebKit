@@ -121,13 +121,13 @@ PassRefPtr<VTTCueBox> TextTrackCueGeneric::createDisplayTree()
     return TextTrackCueGenericBoxElement::create(ownerDocument(), *this);
 }
 
-void TextTrackCueGeneric::setLine(int line, ExceptionCode& ec)
+void TextTrackCueGeneric::setLine(double line, ExceptionCode& ec)
 {
     m_defaultPosition = false;
     VTTCue::setLine(line, ec);
 }
 
-void TextTrackCueGeneric::setPosition(int position, ExceptionCode& ec)
+void TextTrackCueGeneric::setPosition(double position, ExceptionCode& ec)
 {
     m_defaultPosition = false;
     VTTCue::setPosition(position, ec);

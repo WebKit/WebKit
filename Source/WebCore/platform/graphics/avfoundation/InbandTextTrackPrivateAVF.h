@@ -74,7 +74,7 @@ public:
 protected:
     InbandTextTrackPrivateAVF(AVFInbandTrackParent*, CueFormat);
 
-    void processCueAttributes(CFAttributedStringRef, GenericCueData*);
+    void processCueAttributes(CFAttributedStringRef, GenericCueData&);
     void processAttributedStrings(CFArrayRef, double);
     void processNativeSamples(CFArrayRef, double);
     void removeCompletedCues();

@@ -1,3 +1,40 @@
+2014-07-01  Eric Carlson  <eric.carlson@apple.com>
+
+        WebVTT percentage value can be a float
+        https://bugs.webkit.org/show_bug.cgi?id=134511
+
+        Reviewed by Brent Fulgham.
+
+        No new tests, existing tests modified.
+
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGeneric::setLine): int -> double.
+        (WebCore::TextTrackCueGeneric::setPosition): Ditto.
+        * html/track/TextTrackCueGeneric.h:
+
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::setLine): Ditto.
+        (WebCore::VTTCue::setPosition):  Ditto.
+        (WebCore::VTTCue::setCueSettings): Support floating point values for line, position, and size.
+        (WebCore::scanPercentage): Deleted.
+        * html/track/VTTCue.h:
+
+        * html/track/VTTScanner.cpp:
+        (WebCore::VTTScanner::scanFloat): Support negative values.
+        * html/track/VTTScanner.h:
+
+        * html/track/WebVTTParser.cpp: Include parseFloatPercentageValue in non-WEBVTT_REGIONS builds.
+        * html/track/WebVTTParser.h:
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::processCueAttributes): Drive by change to take a cue
+            reference rather than a pointer.
+        (WebCore::InbandTextTrackPrivateAVF::processAttributedStrings): Ditto.
+        (WebCore::InbandTextTrackPrivateAVF::removeCompletedCues): Loop over all cues, don't LOG that
+            we are asking the client to delete the cue because the client will have already deleted
+            it when status when to GenericCueData::Complete.
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h:
+
 2014-07-01  Simon Fraser  <simon.fraser@apple.com>
 
         Improve behavior of position:sticky on zoomed pages

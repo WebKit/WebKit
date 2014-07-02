@@ -140,9 +140,11 @@ unsigned VTTScanner::scanDigits(int& number)
     return numDigits;
 }
 
-bool VTTScanner::scanFloat(float& number)
+bool VTTScanner::scanFloat(float& number, bool* isNegative)
 {
+    bool negative = scan('-');
     Run integerRun = collectWhile<isASCIIDigit>();
+
     seekTo(integerRun.end());
     Run decimalRun(position(), position(), m_is8Bit);
     if (scan('.')) {
@@ -166,6 +168,12 @@ bool VTTScanner::scanFloat(float& number)
 
     if (!validNumber)
         number = std::numeric_limits<float>::max();
+    else if (negative)
+        number = -number;
+
+    if (isNegative)
+        *isNegative = negative;
+
     return true;
 }
 

@@ -8,7 +8,7 @@ EXPECTED (cues[0].line == '0') OK
 EXPECTED (cues[0].snapToLines == 'false') OK
 EXPECTED (cues[1].line == '0') OK
 EXPECTED (cues[1].snapToLines == 'true') OK
-EXPECTED (cues[2].line == '50') OK
+EXPECTED (cues[2].line == '50.2') OK
 EXPECTED (cues[2].snapToLines == 'false') OK
 EXPECTED (cues[3].line == '5') OK
 EXPECTED (cues[3].snapToLines == 'true') OK

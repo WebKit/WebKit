@@ -319,7 +319,11 @@ function testCues(index, expected)
     for (var i = 0; i < cues.length; i++) {
         for (j = 0; j < expected.tests.length; j++) {
             var test = expected.tests[j];
-            testExpected("cues[" + i + "]." + test.property, test.values[i]);
+            var propertyString = "cues[" + i + "]." + test.property;
+            var propertyValue = eval(propertyString);
+            if (test["precision"])
+                propertyValue = propertyValue.toFixed(test["precision"]);
+            reportExpected(test.values[i] == propertyValue, propertyString, "==", test.values[i], propertyValue)
         }
     }
 }

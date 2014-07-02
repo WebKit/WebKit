@@ -50,7 +50,6 @@ const double secondsPerMillisecond = 0.001;
 const char* fileIdentifier = "WEBVTT";
 const unsigned fileIdentifierLength = 6;
 
-#if ENABLE(WEBVTT_REGIONS)
 bool WebVTTParser::parseFloatPercentageValue(VTTScanner& valueScanner, float& percentage)
 {
     float number;
@@ -67,6 +66,7 @@ bool WebVTTParser::parseFloatPercentageValue(VTTScanner& valueScanner, float& pe
     return true;
 }
 
+#if ENABLE(WEBVTT_REGIONS)
 bool WebVTTParser::parseFloatPercentageValuePair(VTTScanner& valueScanner, char delimiter, FloatPoint& valuePair)
 {
     float firstCoord;

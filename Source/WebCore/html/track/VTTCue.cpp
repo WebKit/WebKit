@@ -340,7 +340,7 @@ void VTTCue::setSnapToLines(bool value)
     didChange();
 }
 
-void VTTCue::setLine(int position, ExceptionCode& ec)
+void VTTCue::setLine(double position, ExceptionCode& ec)
 {
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-line
     // On setting, if the text track cue snap-to-lines flag is not set, and the new
@@ -360,7 +360,7 @@ void VTTCue::setLine(int position, ExceptionCode& ec)
     didChange();
 }
 
-void VTTCue::setPosition(int position, ExceptionCode& ec)
+void VTTCue::setPosition(double position, ExceptionCode& ec)
 {
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-position
     // On setting, if the new value is negative or greater than 100, then throw an IndexSizeError exception.
@@ -891,33 +891,6 @@ VTTCue::CueSetting VTTCue::settingName(VTTScanner& input)
     return None;
 }
 
-// Used for 'position' and 'size'.
-static bool scanPercentage(VTTScanner& input, const VTTScanner::Run& valueRun, int& number)
-{
-    // 1. If value contains any characters other than U+0025 PERCENT SIGN
-    //    characters (%) and characters in the range U+0030 DIGIT ZERO (0) to
-    //    U+0039 DIGIT NINE (9), then jump to the step labeled next setting.
-    // 2. If value does not contain at least one character in the range U+0030
-    //    DIGIT ZERO (0) to U+0039 DIGIT NINE (9), then jump to the step
-    //    labeled next setting.
-    if (!input.scanDigits(number))
-        return false;
-
-    // 3. If any character in value other than the last character is a U+0025
-    //    PERCENT SIGN character (%), then jump to the step labeled next
-    //    setting.
-    // 4. If the last character in value is not a U+0025 PERCENT SIGN character
-    //    (%), then jump to the step labeled next setting.
-    if (!input.scan('%') || !input.isAt(valueRun.end()))
-        return false;
-
-    // 5. Ignoring the trailing percent sign, interpret value as an integer,
-    //    and let number be that number.
-    // 6. If number is not in the range 0 ≤ number ≤ 100, then jump to the step
-    //    labeled next setting.
-    return number >= 0 && number <= 100;
-}
-
 void VTTCue::setCueSettings(const String& inputString)
 {
     if (inputString.isEmpty())
@@ -958,73 +931,81 @@ void VTTCue::setCueSettings(const String& inputString)
             //    direction be vertical growing right.
             else if (input.scanRun(valueRun, verticalGrowingRightKeyword()))
                 m_writingDirection = VerticalGrowingRight;
+
+            else
+                LOG(Media, "VTTCue::setCueSettings, invalid Vertical");
             break;
         }
         case Line: {
-            // 1-2 - Collect chars that are either '-', '%', or a digit.
-            // 1. If value contains any characters other than U+002D HYPHEN-MINUS characters (-), U+0025 PERCENT SIGN 
-            //    characters (%), and characters in the range U+0030 DIGIT ZERO (0) to U+0039 DIGIT NINE (9), then jump
-            //    to the step labeled next setting.
-            bool isNegative = input.scan('-');
-            int linePosition;
-            unsigned numDigits = input.scanDigits(linePosition);
-            bool isPercentage = input.scan('%');
-
-            if (!input.isAt(valueRun.end()))
-                break;
-
-            // 2. If value does not contain at least one character in the range U+0030 DIGIT ZERO (0) to U+0039 DIGIT 
-            //    NINE (9), then jump to the step labeled next setting.
-            // 3. If any character in value other than the first character is a U+002D HYPHEN-MINUS character (-), then 
-            //    jump to the step labeled next setting.
-            // 4. If any character in value other than the last character is a U+0025 PERCENT SIGN character (%), then
-            //    jump to the step labeled next setting.
-            // 5. If the first character in value is a U+002D HYPHEN-MINUS character (-) and the last character in value is a 
-            //    U+0025 PERCENT SIGN character (%), then jump to the step labeled next setting.
-            if (!numDigits || (isPercentage && isNegative))
-                break;
-
-            // 6. Ignoring the trailing percent sign, if any, interpret value as a (potentially signed) integer, and 
-            //    let number be that number. 
-            // 7. If the last character in value is a U+0025 PERCENT SIGN character (%), but number is not in the range 
-            //    0 ≤ number ≤ 100, then jump to the step labeled next setting.
-            // 8. Let cue's text track cue line position be number.
-            // 9. If the last character in value is a U+0025 PERCENT SIGN character (%), then let cue's text track cue 
-            //    snap-to-lines flag be false. Otherwise, let it be true.
-            if (isPercentage) {
-                if (linePosition < 0 || linePosition > 100)
+            bool isValid = false;
+            do {
+                // 1-2 - Collect chars that are either '-', '%', or a digit.
+                // 1. If value contains any characters other than U+002D HYPHEN-MINUS characters (-), U+0025 PERCENT SIGN
+                //    characters (%), and characters in the range U+0030 DIGIT ZERO (0) to U+0039 DIGIT NINE (9), then jump
+                //    to the step labeled next setting.
+                float linePosition;
+                bool isNegative;
+                if (!input.scanFloat(linePosition, &isNegative))
                     break;
 
-                // 10 - If '%' then set snap-to-lines flag to false.
-                m_snapToLines = false;
-            } else {
-                if (isNegative)
-                    linePosition = -linePosition;
+                bool isPercentage = input.scan('%');
+                if (!input.isAt(valueRun.end()))
+                    break;
 
-                m_snapToLines = true;
-            }
+                // 2. If value does not contain at least one character in the range U+0030 DIGIT ZERO (0) to U+0039 DIGIT
+                //    NINE (9), then jump to the step labeled next setting.
+                // 3. If any character in value other than the first character is a U+002D HYPHEN-MINUS character (-), then
+                //    jump to the step labeled next setting.
+                // 4. If any character in value other than the last character is a U+0025 PERCENT SIGN character (%), then
+                //    jump to the step labeled next setting.
+                // 5. If the first character in value is a U+002D HYPHEN-MINUS character (-) and the last character in value is a
+                //    U+0025 PERCENT SIGN character (%), then jump to the step labeled next setting.
+                if (isPercentage && isNegative)
+                    break;
 
-            m_linePosition = linePosition;
+                // 6. Ignoring the trailing percent sign, if any, interpret value as a (potentially signed) integer, and
+                //    let number be that number.
+                // 7. If the last character in value is a U+0025 PERCENT SIGN character (%), but number is not in the range
+                //    0 ≤ number ≤ 100, then jump to the step labeled next setting.
+                // 8. Let cue's text track cue line position be number.
+                // 9. If the last character in value is a U+0025 PERCENT SIGN character (%), then let cue's text track cue
+                //    snap-to-lines flag be false. Otherwise, let it be true.
+                if (isPercentage) {
+                    if (linePosition < 0 || linePosition > 100)
+                        break;
+
+                    // 10 - If '%' then set snap-to-lines flag to false.
+                    m_snapToLines = false;
+                } else {
+                    if (linePosition - static_cast<int>(linePosition))
+                        break;
+
+                    m_snapToLines = true;
+                }
+                
+                m_linePosition = linePosition;
+                isValid = true;
+            } while (0);
+
+            if (!isValid)
+                LOG(Media, "VTTCue::setCueSettings, invalid Line");
+
             break;
         }
         case Position: {
-            int number;
-            // Steps 1 - 6.
-            if (!scanPercentage(input, valueRun, number))            
-                break;
-
-            // 7. Let cue's text track cue text position be number.
-            m_textPosition = number;
+            float position;
+            if (WebVTTParser::parseFloatPercentageValue(input, position) && input.isAt(valueRun.end()))
+                m_textPosition = position;
+            else
+                LOG(Media, "VTTCue::setCueSettings, invalid Position");
             break;
         }
         case Size: {
-            int number;
-            // Steps 1 - 6.
-            if (!scanPercentage(input, valueRun, number))            
-                break;
-
-            // 7. Let cue's text track cue size be number.
-            m_cueSize = number;
+            float cueSize;
+            if (WebVTTParser::parseFloatPercentageValue(input, cueSize) && input.isAt(valueRun.end()))
+                m_cueSize = cueSize;
+            else
+                LOG(Media, "VTTCue::setCueSettings, invalid Size");
             break;
         }
         case Align: {
@@ -1047,6 +1028,10 @@ void VTTCue::setCueSettings(const String& inputString)
             // 5. If value is a case-sensitive match for the string "right", then let cue's text track cue alignment be right alignment.
             else if (input.scanRun(valueRun, rightKeyword()))
                 m_cueAlignment = Right;
+
+            else
+                LOG(Media, "VTTCue::setCueSettings, invalid Align");
+
             break;
         }
 #if ENABLE(WEBVTT_REGIONS)

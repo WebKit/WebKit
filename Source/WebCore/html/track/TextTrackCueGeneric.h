@@ -47,8 +47,8 @@ public:
 
     virtual PassRefPtr<VTTCueBox> createDisplayTree() override;
 
-    virtual void setLine(int, ExceptionCode&) override;
-    virtual void setPosition(int, ExceptionCode&) override;
+    virtual void setLine(double, ExceptionCode&) override;
+    virtual void setPosition(double, ExceptionCode&) override;
 
     bool useDefaultPosition() const { return m_defaultPosition; }
     

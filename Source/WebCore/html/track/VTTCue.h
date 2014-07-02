@@ -82,11 +82,11 @@ public:
     bool snapToLines() const { return m_snapToLines; }
     void setSnapToLines(bool);
 
-    int line() const { return m_linePosition; }
-    virtual void setLine(int, ExceptionCode&);
+    double line() const { return m_linePosition; }
+    virtual void setLine(double, ExceptionCode&);
 
-    int position() const { return m_textPosition; }
-    virtual void setPosition(int, ExceptionCode&);
+    double position() const { return m_textPosition; }
+    virtual void setPosition(double, ExceptionCode&);
 
     int size() const { return m_cueSize; }
     virtual void setSize(int, ExceptionCode&);
@@ -190,9 +190,9 @@ private:
 
     String m_content;
     String m_settings;
-    int m_linePosition;
-    int m_computedLinePosition;
-    int m_textPosition;
+    double m_linePosition;
+    double m_computedLinePosition;
+    double m_textPosition;
     int m_cueSize;
 
     WritingDirection m_writingDirection;
