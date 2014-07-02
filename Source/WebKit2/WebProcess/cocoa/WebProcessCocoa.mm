@@ -167,7 +167,6 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     SandboxExtension::consumePermanently(parameters.webSQLDatabaseDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.applicationCacheDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
-    SandboxExtension::consumePermanently(parameters.cookieStorageDirectoryExtensionHandle);
 #endif
 
     // When the network process is enabled, each web process wants a stand-alone
