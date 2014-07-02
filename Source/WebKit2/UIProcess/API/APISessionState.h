@@ -36,6 +36,8 @@ public:
     static PassRefPtr<SessionState> create(WebKit::SessionState);
     virtual ~SessionState();
 
+    const WebKit::SessionState& sessionState() const { return m_sessionState; }
+
 private:
     explicit SessionState(WebKit::SessionState);
 

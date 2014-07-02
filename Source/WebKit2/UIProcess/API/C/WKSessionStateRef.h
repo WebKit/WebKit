@@ -36,6 +36,8 @@ WK_EXPORT WKTypeID WKSessionStateGetTypeID();
 
 WK_EXPORT WKSessionStateRef WKSessionStateCreateFromData(WKDataRef data);
 
+WK_EXPORT WKDataRef WKSessionStateCopyData(WKSessionStateRef sessionState);
+
 #ifdef __cplusplus
 }
 #endif

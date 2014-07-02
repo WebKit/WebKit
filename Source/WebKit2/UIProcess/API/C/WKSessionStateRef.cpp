@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKSessionStateRef.h"
 
+#include "APIData.h"
 #include "APISessionState.h"
 #include "LegacySessionStateCoding.h"
 #include "SessionState.h"
@@ -43,4 +44,9 @@ WKSessionStateRef WKSessionStateCreateFromData(WKDataRef data)
         return nullptr;
 
     return WebKit::toAPI(API::SessionState::create(std::move(sessionState)).leakRef());
+}
+
+WKDataRef WKSessionStateCopyData(WKSessionStateRef sessionState)
+{
+    return WebKit::toAPI(WebKit::encodeLegacySessionState(WebKit::toImpl(sessionState)->sessionState()).release().leakRef());
 }

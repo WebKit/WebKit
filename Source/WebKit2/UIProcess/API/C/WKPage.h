@@ -130,8 +130,14 @@ WK_EXPORT WKStringRef WKPageGetSessionHistoryURLValueType(void);
 WK_EXPORT WKStringRef WKPageGetSessionBackForwardListItemValueType(void);
 
 typedef bool (*WKPageSessionStateFilterCallback)(WKPageRef page, WKStringRef valueType, WKTypeRef value, void* context);
-WK_EXPORT WKDataRef WKPageCopySessionState(WKPageRef page, void* context, WKPageSessionStateFilterCallback urlAllowedCallback);
-WK_EXPORT void WKPageRestoreFromSessionState(WKPageRef page, WKDataRef sessionStateData);
+
+// FIXME: This should return a WKSessionStateRef object, not a WKTypeRef.
+// It currently returns a WKTypeRef for backwards compatibility with Safari.
+WK_EXPORT WKTypeRef WKPageCopySessionState(WKPageRef page, void* context, WKPageSessionStateFilterCallback urlAllowedCallback);
+
+// FIXME: This should take a WKSessionStateRef object, not a WKTypeRef.
+// It currently takes a WKTypeRef for backwards compatibility with Safari.
+WK_EXPORT void WKPageRestoreFromSessionState(WKPageRef page, WKTypeRef sessionState);
 
 WK_EXPORT double WKPageGetBackingScaleFactor(WKPageRef page);
 WK_EXPORT void WKPageSetCustomBackingScaleFactor(WKPageRef page, double customScaleFactor);

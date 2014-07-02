@@ -32,6 +32,7 @@
 #include "APIFindClient.h"
 #include "APILoaderClient.h"
 #include "APIPolicyClient.h"
+#include "APISessionState.h"
 #include "APIUIClient.h"
 #include "ImmutableDictionary.h"
 #include "LegacySessionStateCoding.h"
@@ -350,8 +351,12 @@ WKStringRef WKPageGetSessionBackForwardListItemValueType()
     return toAPI(sessionBackForwardListValueType);
 }
 
-WKDataRef WKPageCopySessionState(WKPageRef pageRef, void *context, WKPageSessionStateFilterCallback filter)
+WKTypeRef WKPageCopySessionState(WKPageRef pageRef, void* context, WKPageSessionStateFilterCallback filter)
 {
+    // FIXME: This is a hack to make sure we return a WKDataRef to maintain compatibility with older versions of Safari.
+    bool shouldReturnData = !(reinterpret_cast<uintptr_t>(context) & 1);
+    context = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(context) & ~1);
+
     auto sessionState = toImpl(pageRef)->sessionState([pageRef, context, filter](WebBackForwardListItem& item) {
         if (filter) {
             if (!filter(pageRef, WKPageGetSessionBackForwardListItemValueType(), toAPI(&item), context))
@@ -364,14 +369,25 @@ WKDataRef WKPageCopySessionState(WKPageRef pageRef, void *context, WKPageSession
         return true;
     });
 
-    return toAPI(encodeLegacySessionState(sessionState).release().leakRef());
+    if (shouldReturnData)
+        toAPI(encodeLegacySessionState(sessionState).release().leakRef());
+
+    return toAPI(API::SessionState::create(std::move(sessionState)).leakRef());
 }
 
-void WKPageRestoreFromSessionState(WKPageRef pageRef, WKDataRef sessionStateData)
+void WKPageRestoreFromSessionState(WKPageRef pageRef, WKTypeRef sessionStateRef)
 {
     SessionState sessionState;
-    if (!decodeLegacySessionState(*toImpl(sessionStateData), sessionState))
-        return;
+
+    // FIXME: This is for backwards compatibility with Safari. Remove it once Safari no longer depends on it.
+    if (toImpl(sessionStateRef)->type() == API::Object::Type::Data) {
+        if (!decodeLegacySessionState(*toImpl(static_cast<WKDataRef>(sessionStateRef)), sessionState))
+            return;
+    } else {
+        ASSERT(toImpl(sessionStateRef)->type() == API::Object::Type::SessionState);
+
+        sessionState = toImpl(static_cast<WKSessionStateRef>(sessionStateRef))->sessionState();
+    }
 
     toImpl(pageRef)->restoreFromState(std::move(sessionState));
 }

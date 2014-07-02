@@ -28,6 +28,7 @@
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include "Test.h"
+#include <WebKit2/WKSessionStateRef.h>
 
 namespace TestWebKitAPI {
 
@@ -49,7 +50,7 @@ static void setPageLoaderClient(WKPageRef page)
     WKPageSetPageLoaderClient(page, &loaderClient.base);
 }
 
-static WKRetainPtr<WKDataRef> createSessionStateContainingFormData(WKContextRef context)
+static WKRetainPtr<WKDataRef> createSessionStateDataContainingFormData(WKContextRef context)
 {
     PlatformWebView webView(context);
     setPageLoaderClient(webView.page());
@@ -62,7 +63,8 @@ static WKRetainPtr<WKDataRef> createSessionStateContainingFormData(WKContextRef 
     Util::run(&didFinishLoad);
     didFinishLoad = false;
 
-    return adoptWK(WKPageCopySessionState(webView.page(), 0, 0));
+    auto sessionState = adoptWK(static_cast<WKSessionStateRef>(WKPageCopySessionState(webView.page(), reinterpret_cast<void*>(1), nullptr)));
+    return adoptWK(WKSessionStateCopyData(sessionState.get()));
 }
 
 TEST(WebKit2, RestoreSessionStateContainingFormData)
@@ -75,10 +77,12 @@ TEST(WebKit2, RestoreSessionStateContainingFormData)
     PlatformWebView webView(context.get());
     setPageLoaderClient(webView.page());
 
-    WKRetainPtr<WKDataRef> data = createSessionStateContainingFormData(context.get());
+    WKRetainPtr<WKDataRef> data = createSessionStateDataContainingFormData(context.get());
     EXPECT_NOT_NULL(data);
 
-    WKPageRestoreFromSessionState(webView.page(), data.get());
+    auto sessionState = adoptWK(WKSessionStateCreateFromData(data.get()));
+    WKPageRestoreFromSessionState(webView.page(), sessionState.get());
+
     Util::run(&didFinishLoad);
 
     EXPECT_TRUE(WKPageCanGoBack(webView.page()));

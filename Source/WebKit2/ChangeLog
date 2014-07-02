@@ -1,5 +1,30 @@
 2014-07-01  Anders Carlsson  <andersca@apple.com>
 
+        Add ABI hacks to allow WKPageRef to use WKSessionStateRef
+        https://bugs.webkit.org/show_bug.cgi?id=134529
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/APISessionState.h:
+        Add a sessionState() getter.
+        
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageCopySessionState):
+        Add a hack where we return a WKSessionStateRef if the least significant bit of the context pointer
+        is 1, and a WKDataRef otherwise.
+
+        (WKPageRestoreFromSessionState):
+        Handle both WKDataRef and WKSessionStateref.
+
+        * UIProcess/API/C/WKPage.h:
+        Use WKTypeRefs for state saving and restoration.
+
+        * UIProcess/API/C/WKSessionStateRef.cpp:
+        (WKSessionStateCopyData):
+        Add helper function.
+
+2014-07-01  Anders Carlsson  <andersca@apple.com>
+
         WKPageRestoreFromSessionState should use the new session state restore code path
         https://bugs.webkit.org/show_bug.cgi?id=134526
 
