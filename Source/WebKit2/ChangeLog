@@ -1,3 +1,10 @@
+2014-07-02  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Unreviewed. EFL and GTK build fix after r170716.
+
+        * UIProcess/LegacySessionStateCodingNone.cpp:
+        (WebKit::decodeLegacySessionState): Update method signature.
+
 2014-07-02  Anders Carlsson  <andersca@apple.com>
 
         Begin ripping out the old session state code
