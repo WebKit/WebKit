@@ -92,17 +92,6 @@
             "alecf"
          ]
       },
-      "Alex Christensen" : {
-         "emails" : [
-            "achristensen@apple.com",
-            "achristensen@webkit.org",
-            "alex.christensen@flexsim.com"
-         ],
-         "expertise" : "Win64",
-         "nicks" : [
-            "alexchristensen"
-         ]
-      },
       "Alexander F\u00e6r\u00f8y" : {
          "emails" : [
             "ahf@0x90.dk",
@@ -3364,6 +3353,17 @@
          "expertise" : "WebKitGTK+, Cairo graphics backend, ShadowBlur rendering, Epiphany/WebKit Contributor",
          "nicks" : [
             "alexg__"
+         ]
+      },
+      "Alex Christensen" : {
+         "emails" : [
+            "achristensen@apple.com",
+            "achristensen@webkit.org",
+            "alex.christensen@flexsim.com"
+         ],
+         "expertise" : "Win64, WebGL",
+         "nicks" : [
+            "alexchristensen"
          ]
       },
       "Alexander Pavlov" : {

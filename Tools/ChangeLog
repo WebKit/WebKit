@@ -1,3 +1,10 @@
+2014-07-02  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed.  Moved self to reviewers list.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+        Moved self to reviewers list, added WebGL to expertise.
+
 2014-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Make dist only works when run from the source directory
