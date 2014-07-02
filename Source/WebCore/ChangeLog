@@ -1,3 +1,19 @@
+2014-07-02  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        REGRESSION(r170008): [GTK] Layout Tests fast/forms/option-constructor-selected.html and fast/forms/select-live-pseudo-selectors.html crash.
+        https://bugs.webkit.org/show_bug.cgi?id=134399
+
+        Reviewed by Chris Fleizach.
+
+        Check that the value of optionIndex passed as a parameter is valid
+        before calling didUpdateActiveOption() over the item of the menu
+        list, to prevent crashes in platforms where renderers (and therefore
+        accessibility objects) might not be created for items at the time
+        of calling AccessibilityMenuList::didUpdateActiveOption().
+
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::didUpdateActiveOption): Added check.
+
 2014-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Do not add forward declaration of class struct for interfaces

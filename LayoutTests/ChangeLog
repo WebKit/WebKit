@@ -1,3 +1,14 @@
+2014-07-02  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        REGRESSION(r170008): [GTK] Layout Tests fast/forms/option-constructor-selected.html and fast/forms/select-live-pseudo-selectors.html crash.
+        https://bugs.webkit.org/show_bug.cgi?id=134399
+
+        Reviewed by Chris Fleizach.
+
+        Removing Crash expectations for two layout tests.
+
+        * platform/gtk/TestExpectations: Updated.
+
 2014-07-01  Frédéric Wang  <fred.wang@free.fr>
 
         The OpenType MATH table is not read on Mac

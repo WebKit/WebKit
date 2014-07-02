@@ -515,9 +515,6 @@ webkit.org/b/105870 [ Debug ] webaudio/audionode-connect-order.html [ Crash ]
 
 webkit.org/b/133797 fast/dom/NavigatorContentUtils/register-protocol-handler.html [ Crash ]
 
-webkit.org/b/134399 fast/forms/option-constructor-selected.html [ Crash ]
-webkit.org/b/134399 fast/forms/select-live-pseudo-selectors.html [ Crash ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////

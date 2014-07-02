@@ -120,7 +120,8 @@ void AccessibilityMenuList::didUpdateActiveOption(int optionIndex)
         // before asking it to update its active option, or it will read invalid memory.
         // You can reproduce the issue in the GTK+ port by removing this check and running
         // accessibility/insert-selected-option-into-select-causes-crash.html (will crash).
-        if (childObjects[0]->isMenuListPopup() && childObjects[0]->children().size()) {
+        int popupChildrenSize = static_cast<int>(childObjects[0]->children().size());
+        if (childObjects[0]->isMenuListPopup() && optionIndex >= 0 && optionIndex < popupChildrenSize) {
             if (AccessibilityMenuListPopup* popup = toAccessibilityMenuListPopup(childObjects[0].get()))
                 popup->didUpdateActiveOption(optionIndex);
         }
