@@ -85,6 +85,10 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 
 @property (nonatomic, readonly) pid_t _webProcessIdentifier;
 
+@property (nonatomic, readonly) NSData *_sessionStateData;
+- (void)_restoreFromSessionStateData:(NSData *)sessionStateData;
+
+// FIXME: Remove these once nobody is using them.
 @property (nonatomic, readonly) NSData *_sessionState;
 - (void)_restoreFromSessionState:(NSData *)sessionState;
 

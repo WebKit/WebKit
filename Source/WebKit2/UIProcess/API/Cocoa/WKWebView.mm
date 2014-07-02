@@ -1562,6 +1562,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 #endif
 }
 
+- (NSData *)_sessionStateData
+{
+    return [self _sessionState];
+}
+
 - (NSData *)_sessionState
 {
     return [wrapper(*_page->sessionStateData(nullptr).leakRef()) autorelease];
@@ -1572,10 +1577,15 @@ static void releaseNSData(unsigned char*, const void* data)
     [(NSData *)data release];
 }
 
-- (void)_restoreFromSessionState:(NSData *)sessionState
+- (void)_restoreFromSessionStateData:(NSData *)sessionState
 {
-    [sessionState retain];
-    uint64_t navigationID = _page->restoreFromSessionStateData(API::Data::createWithoutCopying((const unsigned char*)sessionState.bytes, sessionState.length, releaseNSData, sessionState).get());
+    [self _restoreFromSessionState:sessionState];
+}
+
+- (void)_restoreFromSessionState:(NSData *)sessionStateData
+{
+    [sessionStateData retain];
+    uint64_t navigationID = _page->restoreFromSessionStateData(API::Data::createWithoutCopying((const unsigned char*)sessionStateData.bytes, sessionStateData.length, releaseNSData, sessionStateData).get());
     if (navigationID)
         _navigationState->createReloadNavigation(navigationID);
 }
