@@ -1,5 +1,17 @@
 2014-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GStreamer] MediaPlayerPrivateGStreamer.cpp fails to build when VIDEO_TRACK is enabled and using GSTREAMER_MPEGTS
+        https://bugs.webkit.org/show_bug.cgi?id=134548
+
+        Reviewed by Philippe Normand.
+
+        Include AtomicStringHash.h when ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
+        since it's used by HashMap<AtomicString, RefPtr<InbandMetadataTextTrackPrivateGStreamer>>
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
+2014-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Unstable headers should include webkitdomdefines-unstable.h
         https://bugs.webkit.org/show_bug.cgi?id=134540
 

@@ -35,6 +35,10 @@
 #include <wtf/Forward.h>
 #include <wtf/gobject/GMainLoopSource.h>
 
+#if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
+#include <wtf/text/AtomicStringHash.h>
+#endif
+
 #if ENABLE(MEDIA_SOURCE)
 #include "MediaSourceGStreamer.h"
 #endif
