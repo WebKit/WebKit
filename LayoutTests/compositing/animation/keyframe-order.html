@@ -52,7 +52,7 @@
         function doTest()
         {
             var box = document.getElementById('spinner');
-            box.addEventListener('webkitAnimationEnd', function() {
+            box.addEventListener('webkitAnimationStart', function() {
                 if (window.testRunner)
                     testRunner.notifyDone();
             }, false);

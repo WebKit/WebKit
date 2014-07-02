@@ -1,3 +1,10 @@
+2014-07-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix this test; it was waiting about 32 years for the end of an animation.
+        What we really care about is the start of the animation.
+
+        * compositing/animation/keyframe-order.html:
+
 2014-07-01  Chris Fleizach  <cfleizach@apple.com>
 
         AX: iOS does not expose ARIA toggle buttons at all (not even as a regular button)
