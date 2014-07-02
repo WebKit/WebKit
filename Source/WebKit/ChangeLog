@@ -1,3 +1,10 @@
+2014-07-01  Alex Christensen  <achristensen@webkit.org>
+
+        [Win64] Unreviewed build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        Corrected 64-bit linker symbols.
+
 2014-06-27  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Implement parts of the AVFOUNDATION_LOADER_DELEGATE logic for Windows

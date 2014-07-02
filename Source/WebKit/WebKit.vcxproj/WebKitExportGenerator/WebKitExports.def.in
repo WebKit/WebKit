@@ -179,7 +179,7 @@ EXPORTS
         symbolWithPointer(?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@ABVString@4@@Z, ?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@AEBVString@4@@Z)
 #if USE(CF)
         symbolWithPointer(?createCFString@String@WTF@@QBE?AV?$RetainPtr@PBU__CFString@@@2@XZ, ?createCFString@String@WTF@@QEBA?AV?$RetainPtr@PEBU__CFString@@@2@XZ)
-        symbolWithPointer(?dictionary@CFDictionaryPropertyBag@@QBEPAU__CFDictionary@@XZ, )
+        symbolWithPointer(?dictionary@CFDictionaryPropertyBag@@QBEPAU__CFDictionary@@XZ, ?dictionary@CFDictionaryPropertyBag@@QEBAPEAU__CFDictionary@@XZ)
 #endif
         symbolWithPointer(?createShadowRoot@Element@WebCore@@QAE?AV?$PassRefPtr@VShadowRoot@WebCore@@@WTF@@AAH@Z, ?createShadowRoot@Element@WebCore@@QEAA?AV?$PassRefPtr@VShadowRoot@WebCore@@@WTF@@AEAH@Z)
         symbolWithPointer(?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z, ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PEAVExecState@3@PEAVJSDOMGlobalObject@1@PEAVNode@1@@Z)
@@ -211,7 +211,7 @@ EXPORTS
         ?selectTag@HTMLNames@WebCore@@3VHTMLQualifiedName@2@B
 #if ENABLE(INSPECTOR)
         symbolWithPointer(?buildObjectForHighlightedNode@InspectorController@WebCore@@QBE?AV?$PassRefPtr@VInspectorObject@Inspector@@@WTF@@XZ, ?buildObjectForHighlightedNode@InspectorController@WebCore@@QEBA?AV?$PassRefPtr@VInspectorObject@Inspector@@@WTF@@XZ)
-        symbolWithPointer(?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@W4CoordinateSystem@InspectorOverlay@2@@Z, ?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@W4CoordinateSystem@InspectorOverlay@2@@Z)
+        symbolWithPointer(?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@W4CoordinateSystem@InspectorOverlay@2@@Z, ?getHighlight@InspectorController@WebCore@@QEBAXPEAUHighlight@2@W4CoordinateSystem@InspectorOverlay@2@@Z)
         symbolWithPointer(?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@CAPAVInstrumentingAgents@2@PAVPage@2@@Z, ?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@CAPEAVInstrumentingAgents@2@PEAVPage@2@@Z)
         ?s_frontendCounter@InspectorInstrumentation@WebCore@@0HA
         symbolWithPointer(?isUnderTest@InspectorFrontendClientLocal@WebCore@@UAE_NXZ, ?isUnderTest@InspectorFrontendClientLocal@WebCore@@UEAA_NXZ)

@@ -1,5 +1,14 @@
 2014-07-01  Alex Christensen  <achristensen@webkit.org>
 
+        [Win64] Unreviewed build fix.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        Exclude CA files from 32 and 64 bit WinCairo builds.
+        * WebCore.vcxproj/WebCoreTestSupport.vcxproj:
+        Don't use a precompiled header in 32 or 63 bit builds of MockCDM.cpp.
+
+2014-07-01  Alex Christensen  <achristensen@webkit.org>
+
         Reduce dynamic memory allocation in css jit.
         https://bugs.webkit.org/show_bug.cgi?id=134416
 
