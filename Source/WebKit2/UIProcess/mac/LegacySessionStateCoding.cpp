@@ -825,6 +825,9 @@ static void decodeFormData(HistoryEntryDataDecoder& decoder, HTTPBody& formData)
         HTTPBody::Element formDataElement;
         decodeFormDataElement(decoder, formDataElement);
 
+        if (!decoder.isValid())
+            return;
+
         formData.elements.append(std::move(formDataElement));
     }
 
@@ -846,6 +849,10 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
         decoder >> childFrameState.urlString;
 
         decodeBackForwardTreeNode(decoder, childFrameState);
+
+        if (!decoder.isValid())
+            return;
+
         frameState.children.append(std::move(childFrameState));
     }
 
@@ -857,6 +864,9 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
     for (uint64_t i = 0; i < documentStateVectorSize; ++i) {
         String state;
         decoder >> state;
+
+        if (!decoder.isValid())
+            return;
 
         frameState.documentState.append(std::move(state));
     }
