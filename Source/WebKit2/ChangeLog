@@ -1,3 +1,40 @@
+2014-07-01  Benjamin Poulain  <benjamin@webkit.org>
+
+        [iOS][WK2] Fix a race between the short tap and long tap highlight
+        https://bugs.webkit.org/show_bug.cgi?id=134530
+
+        Reviewed by Enrica Casucci.
+
+        There was a potential race of event that can theoretically cause WKContentViewInteraction
+        to call [WKContentView _showTapHighlight] after all interactions have been cancelled.
+
+        The race would be like this:
+        1) On a short tap, _singleTapRecognized: is called, a tap highlight ID is defined and
+           _potentialTapInProgress is set to YES.
+        2) For some reason, the gesture is cancelled. The method _singleTapDidReset is called, 
+           setting _potentialTapInProgress but leaving the tap highlight ID as valid.
+        3) The UIProcess receives the tap highlight information from the WebProcess, _didGetTapHighlightForRequest:
+           has a valid ID, _potentialTapInProgress is false -> the highlight is shown right away as if a long tap
+           was in progress.
+
+        The missing piece that causes this is _singleTapDidReset: must also invalidate the tap highlight ID. This is done
+        in the new static function cancelPotentialTapIfNecessary().
+
+        Just invalidating the ID would create another race:
+        1) Short tap gesture recognizer starts.
+        2) The long press recognizer starts before (1) is commited.
+        3) The long press recognizers sets up its own tap highlight ID.
+        4) The short tap gesture recognizer resets, erasing the tap highlight ID defined in (3).
+
+        To avoid this, the long press gesture recognizers immediately cancels any potential tap in progress.
+        If _singleTapDidReset: is called before (3), this does nothing. If the reset is called after (3),
+        _singleTapDidReset does nothing.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _highlightLongPressRecognized:]):
+        (cancelPotentialTapIfNecessary):
+        (-[WKContentView _singleTapDidReset:]):
+
 2014-07-01  Anders Carlsson  <andersca@apple.com>
 
         Add ABI hacks to allow WKPageRef to use WKSessionStateRef

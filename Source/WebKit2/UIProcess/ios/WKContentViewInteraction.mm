@@ -877,6 +877,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
     switch ([gestureRecognizer state]) {
     case UIGestureRecognizerStateBegan:
+        cancelPotentialTapIfNecessary(self);
         _page->tapHighlightAtPosition([gestureRecognizer startPoint], ++_latestTapHighlightID);
         _isTapHighlightIDValid = YES;
         break;
@@ -921,14 +922,20 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     _isTapHighlightIDValid = YES;
 }
 
+static void cancelPotentialTapIfNecessary(WKContentView* contentView)
+{
+    if (contentView->_potentialTapInProgress) {
+        contentView->_potentialTapInProgress = NO;
+        contentView->_isTapHighlightIDValid = NO;
+        [contentView _cancelInteraction];
+        contentView->_page->cancelPotentialTap();
+    }
+}
+
 - (void)_singleTapDidReset:(UITapGestureRecognizer *)gestureRecognizer
 {
     ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
-    if (_potentialTapInProgress) {
-        _potentialTapInProgress = NO;
-        [self _cancelInteraction];
-        _page->cancelPotentialTap();
-    }
+    cancelPotentialTapIfNecessary(self);
 }
 
 - (void)_commitPotentialTapFailed
