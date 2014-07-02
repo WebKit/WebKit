@@ -1,3 +1,18 @@
+2014-07-02  Dan Bernstein  <mitz@apple.com>
+
+        Remove some code only needed for versions of Safari that are no longer supported
+        https://bugs.webkit.org/show_bug.cgi?id=134537
+
+        Reviewed by Anders Carlsson.
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLInputElement _rectOnScreen]): Deleted.
+        (-[DOMHTMLInputElement _replaceCharactersInRange:withString:selectingFromIndex:]): Deleted.
+        (-[DOMHTMLInputElement _selectedRange]): Deleted.
+        * bindings/objc/DOMPrivate.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::createCommandMap):
+
 2014-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] MediaPlayerPrivateGStreamer.cpp fails to build when VIDEO_TRACK is enabled and using GSTREAMER_MPEGTS

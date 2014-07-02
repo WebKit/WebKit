@@ -2587,12 +2587,7 @@ static NSURL *createUniqueWebDataURL()
 
 - (void)reload
 {
-#if !PLATFORM(IOS)
-    if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_RELOAD_FROM_ORIGIN) && applicationIsSafari())
-        _private->coreFrame->loader().reload(GetCurrentKeyModifiers() & shiftKey);
-    else
-#endif
-        _private->coreFrame->loader().reload(false);
+    _private->coreFrame->loader().reload(false);
 }
 
 - (void)reloadFromOrigin

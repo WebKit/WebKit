@@ -80,11 +80,6 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
     [_frontend showConsole];
 }
 
-- (void)showTimeline:(id)sender
-{
-    // Not used anymore. Remove when a release of Safari non-longer calls this.
-}
-
 - (BOOL)isDebuggingJavaScript
 {
     return _frontend && [_frontend isDebuggingEnabled];
@@ -197,57 +192,5 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
 {
     [_frontend release];
     _frontend = 0;
-}
-@end
-
-@implementation WebInspector (Obsolete)
-+ (WebInspector *)webInspector
-{
-    // Safari 3.0 calls this method
-    static BOOL logged = NO;
-    if (!logged) {
-        NSLog(@"+[WebInspector webInspector]: this method is obsolete.");
-        logged = YES;
-    }
-
-    return [[[WebInspector alloc] init] autorelease];
-}
-
-- (void)setWebFrame:(WebFrame *)frame
-{
-    // Safari 3.0 calls this method
-    static BOOL logged = NO;
-    if (!logged) {
-        NSLog(@"-[WebInspector setWebFrame:]: this method is obsolete.");
-        logged = YES;
-    }
-
-    _webView = [frame webView];
-}
-
-#if !PLATFORM(IOS)
-- (NSWindow *)window
-{
-    // Shiira calls this internal method, return nil since we can't easily return the window
-    static BOOL logged = NO;
-    if (!logged) {
-        NSLog(@"-[WebInspector window]: this method is obsolete and now returns nil.");
-        logged = YES;
-    }
-
-    return nil;
-}
-#endif
-
-- (void)showWindow:(id)sender
-{
-    // Safari 3.0 calls this method
-    static BOOL logged = NO;
-    if (!logged) {
-        NSLog(@"-[WebInspector showWindow:]: this method is obsolete.");
-        logged = YES;
-    }
-
-    [self showWindow];
 }
 @end

@@ -547,11 +547,6 @@ WebHistoryItem *kit(HistoryItem* item)
     return result;
 }
 
-- (void)setAlwaysAttemptToUsePageCache:(BOOL)flag
-{
-    // Safari 2.0 uses this for SnapBack, so we stub it out to avoid a crash.
-}
-
 - (NSURL *)URL
 {
     ASSERT_MAIN_THREAD();

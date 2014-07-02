@@ -94,7 +94,6 @@ extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
 @interface WebPDFView (FileInternal)
 + (Class)_PDFPreviewViewClass;
 + (Class)_PDFViewClass;
-- (BOOL)_anyPDFTagsFoundInMenu:(NSMenu *)menu;
 - (void)_applyPDFDefaults;
 - (BOOL)_canLookUpInDictionary;
 - (NSClipView *)_clipViewForPDFDocumentView;
@@ -450,33 +449,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     // pass the items off to the WebKit context menu mechanism
     WebView *webView = [[dataSource webFrame] webView];
     ASSERT(webView);
-    NSMenu *menu = [webView _menuForElement:[self elementAtPoint:[self convertPoint:[theEvent locationInWindow] fromView:nil]] defaultItems:items];
-    
-    // The delegate has now had the opportunity to add items to the standard PDF-related items, or to
-    // remove or modify some of the PDF-related items. In 10.4, the PDF context menu did not go through 
-    // the standard WebKit delegate path, and so the standard PDF-related items always appeared. For
-    // clients that create their own context menu by hand-picking specific items from the default list, such as
-    // Safari, none of the PDF-related items will appear until the client is rewritten to explicitly
-    // include these items. For backwards compatibility of tip-of-tree WebKit with the 10.4 version of Safari
-    // (the configuration that people building open source WebKit use), we'll use the entire set of PDFKit-supplied
-    // menu items. This backward-compatibility hack won't work with any non-Safari clients, but this seems OK since
-    // (1) the symptom is fairly minor, and (2) we suspect that non-Safari clients are probably using the entire
-    // set of default items, rather than manually choosing from them. We can remove this code entirely when we
-    // ship a version of Safari that includes the fix for radar 3796579.
-    if (![self _anyPDFTagsFoundInMenu:menu] && applicationIsSafari()) {
-        [menu addItem:[NSMenuItem separatorItem]];
-        NSEnumerator *e = [items objectEnumerator];
-        NSMenuItem *menuItem;
-        while ((menuItem = [e nextObject]) != nil) {
-            // copy menuItem since a given menuItem can be in only one menu at a time, and we don't
-            // want to mess with the menu returned from PDFKit.
-            NSMenuItem *menuItemCopy = [menuItem copy];
-            [menu addItem:menuItemCopy];
-            [menuItemCopy release];
-        }
-    }
-    
-    return menu;
+    return [webView _menuForElement:[self elementAtPoint:[self convertPoint:[theEvent locationInWindow] fromView:nil]] defaultItems:items];
 }
 
 - (void)setNextKeyView:(NSView *)aView
@@ -1113,30 +1086,6 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
             LOG_ERROR("Couldn't find PDFView class in PDFKit.framework");
     }
     return PDFViewClass;
-}
-
-- (BOOL)_anyPDFTagsFoundInMenu:(NSMenu *)menu
-{
-    NSEnumerator *e = [[menu itemArray] objectEnumerator];
-    NSMenuItem *item;
-    while ((item = [e nextObject]) != nil) {
-        switch ([item tag]) {
-            case WebMenuItemTagOpenWithDefaultApplication:
-            case WebMenuItemPDFActualSize:
-            case WebMenuItemPDFZoomIn:
-            case WebMenuItemPDFZoomOut:
-            case WebMenuItemPDFAutoSize:
-            case WebMenuItemPDFSinglePage:
-            case WebMenuItemPDFSinglePageScrolling:
-            case WebMenuItemPDFFacingPages:
-            case WebMenuItemPDFFacingPagesScrolling:
-            case WebMenuItemPDFContinuous:
-            case WebMenuItemPDFNextPage:
-            case WebMenuItemPDFPreviousPage:
-                return YES;
-        }
-    }
-    return NO;
 }
 
 - (void)_applyPDFDefaults

@@ -78,12 +78,6 @@ using namespace WebCore;
     return reinterpret_cast<SecurityOrigin*>(_private)->toString();
 }
 
-// Deprecated. Use host instead. This needs to stay here until we ship a new Safari.
-- (NSString *)domain
-{
-    return [self host];
-}
-
 - (unsigned short)port
 {
     return reinterpret_cast<SecurityOrigin*>(_private)->port();

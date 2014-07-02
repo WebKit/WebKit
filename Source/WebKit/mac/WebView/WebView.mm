@@ -1056,12 +1056,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
 }
 
-- (id)_initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName usesDocumentViews:(BOOL)usesDocumentViews
+- (id)_initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName
 {
-    // FIXME: Remove the usesDocumentViews parameter; it's only here for compatibility with WebKit nightly builds
-    // running against Safari 5 on Leopard.
-    ASSERT(usesDocumentViews);
-
     self = [super initWithFrame:f];
     if (!self)
         return nil;
@@ -1465,13 +1461,6 @@ static NSMutableSet *knownPluginMIMETypes()
 #endif
     return NO;
 }
-
-#if !PLATFORM(IOS)
-+ (void)_setAlwaysUseATSU:(BOOL)f
-{
-    [self _setAlwaysUsesComplexTextCodePath:f];
-}
-#endif
 
 + (void)_setAlwaysUsesComplexTextCodePath:(BOOL)f
 {
@@ -2136,17 +2125,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #endif
 }
 
-- (BOOL)_needsUnrestrictedGetMatchedCSSRules
-{
-#if !PLATFORM(IOS)
-    static bool needsUnrestrictedGetMatchedCSSRules = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_GET_MATCHED_CSS_RULES_RESTRICTIONS) && applicationIsSafari();
-    return needsUnrestrictedGetMatchedCSSRules;
-#else
-    // FIXME: <rdar://problem/8963684> Implement linked-on-or-after check for needsUnrestrictedGetMatchedCSSRules
-    return NO;
-#endif
-}
-
 - (void)_preferencesChangedNotification:(NSNotification *)notification
 {
 #if PLATFORM(IOS)
@@ -2291,7 +2269,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setAsynchronousSpellCheckingEnabled([preferences asynchronousSpellCheckingEnabled]);
     settings.setHyperlinkAuditingEnabled([preferences hyperlinkAuditingEnabled]);
     settings.setUsePreHTML5ParserQuirks([self _needsPreHTML5ParserQuirks]);
-    settings.setCrossOriginCheckInGetMatchedCSSRulesDisabled([self _needsUnrestrictedGetMatchedCSSRules]);
     settings.setInteractiveFormValidationEnabled([self interactiveFormValidationEnabled]);
     settings.setValidationMessageTimerMagnification([self validationMessageTimerMagnification]);
 
@@ -5013,7 +4990,7 @@ static bool needsWebViewInitThreadWorkaround()
 #endif
 
     WebCoreThreadViolationCheckRoundTwo();
-    return [self _initWithFrame:f frameName:frameName groupName:groupName usesDocumentViews:YES];
+    return [self _initWithFrame:f frameName:frameName groupName:groupName];
 }
 
 #if !PLATFORM(IOS)

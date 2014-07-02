@@ -175,7 +175,6 @@ using namespace WebCore;
 
 @end
 
-
 @implementation DOMHTMLInputElement (FormAutoFillTransition)
 
 - (BOOL)_isTextField
@@ -183,46 +182,7 @@ using namespace WebCore;
     return core(self)->isTextField();
 }
 
-#if !PLATFORM(IOS)
-- (NSRect)_rectOnScreen
-{
-    // Returns bounding rect of text field, in screen coordinates.
-    NSRect result = [self boundingBox];
-    if (!core(self)->document().view())
-        return result;
-
-    NSView* view = core(self)->document().view()->documentView();
-    result = [view convertRect:result toView:nil];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    result.origin = [[view window] convertBaseToScreen:result.origin];
-#pragma clang diagnostic pop
-    return result;
-}
-#endif
-
-- (void)_replaceCharactersInRange:(NSRange)targetRange withString:(NSString *)replacementString selectingFromIndex:(int)index
-{
-    WebCore::HTMLInputElement* inputElement = core(self);
-    if (inputElement) {
-        WTF::String newValue = inputElement->value();
-        newValue.replace(targetRange.location, targetRange.length, replacementString);
-        inputElement->setValue(newValue);
-        inputElement->setSelectionRange(index, newValue.length());
-    }
-}
-
-- (NSRange)_selectedRange
-{
-    WebCore::HTMLInputElement* inputElement = core(self);
-    if (inputElement) {
-        int start = inputElement->selectionStart();
-        int end = inputElement->selectionEnd();
-        return NSMakeRange(start, end - start); 
-    }
-    return NSMakeRange(NSNotFound, 0);
-}
-
+#if PLATFORM(IOS)
 - (BOOL)_isAutofilled
 {
     return core(self)->isAutofilled();
@@ -235,6 +195,7 @@ using namespace WebCore;
     // changes the background color.
     core(self)->setAutofilled(filled);
 }
+#endif // PLATFORM(IOS)
 
 @end
 
@@ -258,6 +219,8 @@ using namespace WebCore;
 
 @end
 
+#if PLATFORM(IOS)
+
 @implementation DOMHTMLInputElement (FormPromptAdditions)
 
 - (BOOL)_isEdited
@@ -276,7 +239,6 @@ using namespace WebCore;
 
 @end
 
-#if PLATFORM(IOS)
 @implementation DOMHTMLInputElement (AutocapitalizeAdditions)
 
 - (WebAutocapitalizeType)_autocapitalizeType
