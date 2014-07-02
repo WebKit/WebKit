@@ -1,0 +1,3 @@
+Test that plugin doesn't restart when taking it to full screen and back.
+SUCCESS
+
