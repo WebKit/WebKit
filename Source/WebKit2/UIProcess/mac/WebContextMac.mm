@@ -27,6 +27,7 @@
 #import "WebContext.h"
 
 #import "PluginProcessManager.h"
+#import "SandboxUtilities.h"
 #import "TextChecker.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextControllerInternal.h"
@@ -269,8 +270,17 @@ String WebContext::platformDefaultDiskCacheDirectory() const
 
 String WebContext::platformDefaultCookieStorageDirectory() const
 {
+#if PLATFORM(IOS)
+    String path = pathForProcessContainer();
+    if (path.isEmpty())
+        path = NSHomeDirectory();
+
+    path = path + "/Library/Cookies";
+    return stringByResolvingSymlinksInPath(path);
+#else
     notImplemented();
     return [@"" stringByStandardizingPath];
+#endif
 }
 
 String WebContext::platformDefaultWebSQLDatabaseDirectory()

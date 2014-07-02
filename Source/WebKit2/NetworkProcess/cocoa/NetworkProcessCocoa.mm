@@ -60,24 +60,23 @@ void NetworkProcess::platformLowMemoryHandler(bool)
 
 void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters& parameters)
 {
-#if PLATFORM(IOS)
-    if (!parameters.uiProcessBundleIdentifier.isNull()) {
-        [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
-            _initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
-            diskCapacity:parameters.nsURLCacheDiskCapacity
-            relativePath:parameters.uiProcessBundleIdentifier]).get()];
-    }
-#else
+    SandboxExtension::consumePermanently(parameters.cookieStorageDirectoryExtensionHandle);
     m_diskCacheDirectory = parameters.diskCacheDirectory;
 
     if (!m_diskCacheDirectory.isNull()) {
         SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
+#if PLATFORM(IOS)
+        [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
+            _initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
+            diskCapacity:parameters.nsURLCacheDiskCapacity
+            relativePath:parameters.uiProcessBundleIdentifier]).get()];
+#else
         [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
             initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
             diskCapacity:parameters.nsURLCacheDiskCapacity
             diskPath:parameters.diskCacheDirectory]).get()];
-    }
 #endif
+    }
 
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     RetainPtr<CFURLCacheRef> cache = adoptCF(CFURLCacheCopySharedURLCache());

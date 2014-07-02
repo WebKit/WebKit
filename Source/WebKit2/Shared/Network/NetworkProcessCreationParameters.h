@@ -56,6 +56,9 @@ struct NetworkProcessCreationParameters {
     String diskCacheDirectory;
     SandboxExtension::Handle diskCacheDirectoryExtensionHandle;
 
+    String cookieStorageDirectory;
+    SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
+
     bool shouldUseTestingNetworkSession;
 
 #if ENABLE(CUSTOM_PROTOCOLS)
