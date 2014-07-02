@@ -437,7 +437,7 @@ static RetainPtr<CFDictionaryRef> encodeSessionHistory(const BackForwardListStat
         auto originalURL = item.pageState.mainFrameState.originalURLString.createCFString();
         auto data = encodeSessionHistoryEntryData(item.pageState.mainFrameState);
 
-        auto entryDictionary = createDictionary({ { sessionHistoryEntryURLKey, url.get() }, { sessionHistoryEntryTitleKey, title.get() }, { sessionHistoryEntryDataKey, data.get() }, { sessionHistoryEntrySnapshotUUIDKey, item.snapshotUUID.createCFString().get() }});
+        auto entryDictionary = createDictionary({ { sessionHistoryEntryURLKey, url.get() }, { sessionHistoryEntryTitleKey, title.get() }, { sessionHistoryEntryOriginalURLKey, originalURL.get() }, { sessionHistoryEntryDataKey, data.get() }, { sessionHistoryEntrySnapshotUUIDKey, item.snapshotUUID.createCFString().get() }});
 
         CFArrayAppendValue(entries.get(), entryDictionary.get());
     }
@@ -1022,7 +1022,7 @@ static bool decodeV1SessionHistory(CFDictionaryRef sessionHistoryDictionary, Bac
     auto currentIndexNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(sessionHistoryDictionary, sessionHistoryCurrentIndexKey));
     if (!currentIndexNumber) {
         // No current index means the dictionary represents an empty session.
-        backForwardListState.currentIndex = 0;
+        backForwardListState.currentIndex = Nullopt;
         backForwardListState.items = { };
         return true;
     }

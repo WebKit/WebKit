@@ -1865,18 +1865,27 @@ SessionState WebPageProxy::sessionState(const std::function<bool (WebBackForward
 
 uint64_t WebPageProxy::restoreFromState(SessionState sessionState)
 {
-    m_backForwardList->restoreFromState(std::move(sessionState.backForwardListState));
+    bool hasBackForwardList = !!sessionState.backForwardListState.currentIndex;
 
-    LegacySessionState state(m_backForwardList->entries(), m_backForwardList->currentIndex());
-    process().send(Messages::WebPage::RestoreSession(state), m_pageID);
+    if (hasBackForwardList) {
+        m_backForwardList->restoreFromState(std::move(sessionState.backForwardListState));
+        for (const auto& entry : m_backForwardList->entries())
+            process().registerNewWebBackForwardListItem(entry.get());
+
+        LegacySessionState state(m_backForwardList->entries(), m_backForwardList->currentIndex());
+        process().send(Messages::WebPage::RestoreSession(state), m_pageID);
+    }
 
     // FIXME: Navigating should be separate from state restoration.
 
     if (!sessionState.provisionalURL.isNull())
         return loadRequest(sessionState.provisionalURL);
 
-    if (WebBackForwardListItem* item = m_backForwardList->currentItem())
-        return goToBackForwardItem(item);
+    if (hasBackForwardList) {
+        // FIXME: Do we have to null check the back forward list item here?
+        if (WebBackForwardListItem* item = m_backForwardList->currentItem())
+            return goToBackForwardItem(item);
+    }
 
     return 0;
 }

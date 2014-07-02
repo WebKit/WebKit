@@ -369,7 +369,11 @@ WKDataRef WKPageCopySessionState(WKPageRef pageRef, void *context, WKPageSession
 
 void WKPageRestoreFromSessionState(WKPageRef pageRef, WKDataRef sessionStateData)
 {
-    toImpl(pageRef)->restoreFromSessionStateData(toImpl(sessionStateData));
+    SessionState sessionState;
+    if (!decodeLegacySessionState(*toImpl(sessionStateData), sessionState))
+        return;
+
+    toImpl(pageRef)->restoreFromState(std::move(sessionState));
 }
 
 double WKPageGetTextZoomFactor(WKPageRef pageRef)
