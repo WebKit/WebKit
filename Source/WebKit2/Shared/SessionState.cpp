@@ -184,11 +184,15 @@ bool PageState::decode(IPC::ArgumentDecoder& decoder, PageState& result)
 
 void BackForwardListItemState::encode(IPC::ArgumentEncoder& encoder) const
 {
+    encoder << identifier;
     encoder << pageState;
 }
 
 bool BackForwardListItemState::decode(IPC::ArgumentDecoder& decoder, BackForwardListItemState& result)
 {
+    if (!decoder.decode(result.identifier))
+        return false;
+
     if (!decoder.decode(result.pageState))
         return false;
 

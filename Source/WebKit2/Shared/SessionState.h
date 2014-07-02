@@ -117,6 +117,8 @@ struct BackForwardListItemState {
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, BackForwardListItemState&);
 
+    uint64_t identifier;
+
     PageState pageState;
     // FIXME: This should hold the snapshot itself, not its UUID.
     String snapshotUUID;

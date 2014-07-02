@@ -35,28 +35,27 @@ namespace WebKit {
 
 static uint64_t highestUsedItemID = 0;
 
-PassRefPtr<WebBackForwardListItem> WebBackForwardListItem::create(uint64_t itemID, BackForwardListItemState backForwardListItemState)
+PassRefPtr<WebBackForwardListItem> WebBackForwardListItem::create(BackForwardListItemState backForwardListItemState)
 {
-    return adoptRef(new WebBackForwardListItem(itemID, std::move(backForwardListItemState)));
+    return adoptRef(new WebBackForwardListItem(std::move(backForwardListItemState)));
 }
 
-WebBackForwardListItem::WebBackForwardListItem(uint64_t itemID, BackForwardListItemState backForwardListItemState)
-    : m_itemID(itemID)
-    , m_itemState(std::move(backForwardListItemState))
+WebBackForwardListItem::WebBackForwardListItem(BackForwardListItemState backForwardListItemState)
+    : m_itemState(std::move(backForwardListItemState))
 {
-    if (m_itemID > highestUsedItemID)
-        highestUsedItemID = m_itemID;
+    if (m_itemState.identifier > highestUsedItemID)
+        highestUsedItemID = m_itemState.identifier;
 }
 
 WebBackForwardListItem::WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID)
-    : m_itemID(itemID)
 {
     m_itemState.pageState.mainFrameState.originalURLString = originalURL;
     m_itemState.pageState.mainFrameState.urlString = url;
     m_itemState.pageState.title = title;
+    m_itemState.identifier = itemID;
 
-    if (m_itemID > highestUsedItemID)
-        highestUsedItemID = m_itemID;
+    if (m_itemState.identifier > highestUsedItemID)
+        highestUsedItemID = m_itemState.identifier;
 
     setBackForwardData(backForwardData, backForwardDataSize);
 }
@@ -85,7 +84,7 @@ void WebBackForwardListItem::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_itemState.pageState.mainFrameState.originalURLString;
     encoder << m_itemState.pageState.mainFrameState.urlString;
     encoder << m_itemState.pageState.title;
-    encoder << m_itemID;
+    encoder << m_itemState.identifier;
 
     RefPtr<API::Data> backForwardData = this->backForwardData();
     encoder << IPC::DataReference(backForwardData->bytes(), backForwardData->size());

@@ -44,7 +44,7 @@ namespace WebKit {
 
 class WebBackForwardListItem : public API::ObjectImpl<API::Object::Type::BackForwardListItem> {
 public:
-    static PassRefPtr<WebBackForwardListItem> create(uint64_t itemID, BackForwardListItemState);
+    static PassRefPtr<WebBackForwardListItem> create(BackForwardListItemState);
 
     static PassRefPtr<WebBackForwardListItem> create(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID)
     {
@@ -53,7 +53,7 @@ public:
 
     virtual ~WebBackForwardListItem();
 
-    uint64_t itemID() const { return m_itemID; }
+    uint64_t itemID() const { return m_itemState.identifier; }
     const BackForwardListItemState& itemState() { return m_itemState; }
 
     void setPageState(PageState pageState) { m_itemState.pageState = std::move(pageState); }
@@ -79,11 +79,10 @@ public:
     static uint64_t highedUsedItemID();
 
 private:
-    WebBackForwardListItem(uint64_t itemID, BackForwardListItemState);
+    explicit WebBackForwardListItem(BackForwardListItemState);
 
     WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID);
 
-    uint64_t m_itemID;
     BackForwardListItemState m_itemState;
 };
 

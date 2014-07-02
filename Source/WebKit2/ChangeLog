@@ -1,3 +1,25 @@
+2014-07-02  Anders Carlsson  <andersca@apple.com>
+
+        Store the back forward list item id inside BackForwardListItemState
+        https://bugs.webkit.org/show_bug.cgi?id=134557
+
+        Reviewed by Tim Horton.
+
+        * Shared/SessionState.cpp:
+        (WebKit::BackForwardListItemState::encode):
+        (WebKit::BackForwardListItemState::decode):
+        * Shared/SessionState.h:
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::create):
+        (WebKit::WebBackForwardListItem::WebBackForwardListItem):
+        (WebKit::WebBackForwardListItem::encode):
+        * Shared/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::itemID):
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::restoreFromState):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::addBackForwardItem):
+
 2014-07-02  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Unreviewed. EFL and GTK build fix after r170716.

@@ -409,9 +409,10 @@ void WebBackForwardList::restoreFromState(BackForwardListState backForwardListSt
     Vector<RefPtr<WebBackForwardListItem>> items;
     items.reserveInitialCapacity(backForwardListState.items.size());
 
-    for (auto& backForwardListItemState : backForwardListState.items)
-        items.uncheckedAppend(WebBackForwardListItem::create(generateWebBackForwardItemID(), std::move(backForwardListItemState)));
-
+    for (auto& backForwardListItemState : backForwardListState.items) {
+        backForwardListItemState.identifier = generateWebBackForwardItemID();
+        items.uncheckedAppend(WebBackForwardListItem::create(std::move(backForwardListItemState)));
+    }
     m_hasCurrentIndex = !!backForwardListState.currentIndex;
     m_currentIndex = backForwardListState.currentIndex.valueOr(0);
     m_entries = std::move(items);
