@@ -1,3 +1,33 @@
+2014-07-02  Benjamin Poulain  <benjamin@webkit.org>
+
+        WebCore JIT: rename registerCount to something less generic and add new types for lists of registers and lists of stack references
+        https://bugs.webkit.org/show_bug.cgi?id=134552
+
+        Reviewed by Alex Christensen.
+
+        Little cleanup:
+        -The name registerCount was a little too generic. Rename that to "maximumRegisterCount" to avoid confusion.
+        -Add a new type RegisterVector for any vector holding registers. This is just to avoid repeating the inline
+         size everywhere, no functional change.
+        -Same idea for the stack: welcome StackReferenceVector!
+
+        * cssjit/FunctionCall.h:
+        (WebCore::FunctionCall::saveAllocatedCallerSavedRegisters):
+        Remove the appendVector here. It was unnecessarily cautious, StackAllocator already protect us
+        from mistakes.
+
+        * cssjit/RegisterAllocator.h:
+        (WebCore::RegisterAllocator::allocatedRegisters):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+        Changing from the count of "calleeSavedRegisterCount" to "maximumRegisterCount" will cause
+        calleeSavedRegisterStackReferences to always overallocate.
+        The code generator is never on the heap, so that should not change anything.
+
+        * cssjit/StackAllocator.h:
+        (WebCore::StackAllocator::push):
+        (WebCore::StackAllocator::pop):
+
 2014-07-02  Dan Bernstein  <mitz@apple.com>
 
         Remove some code only needed for versions of Safari that are no longer supported

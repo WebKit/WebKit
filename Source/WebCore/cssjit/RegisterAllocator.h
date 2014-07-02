@@ -96,7 +96,9 @@ static const JSC::MacroAssembler::RegisterID calleeSavedRegisters[] = {
 #error RegisterAllocator has no defined registers for the architecture.
 #endif
 static const unsigned calleeSavedRegisterCount = WTF_ARRAY_LENGTH(calleeSavedRegisters);
-static const unsigned registerCount = calleeSavedRegisterCount + WTF_ARRAY_LENGTH(callerSavedRegisters);
+static const unsigned maximumRegisterCount = calleeSavedRegisterCount + WTF_ARRAY_LENGTH(callerSavedRegisters);
+
+typedef Vector<JSC::MacroAssembler::RegisterID, maximumRegisterCount> RegisterVector;
 
 class RegisterAllocator {
 public:
@@ -171,7 +173,7 @@ public:
         return registers;
     }
 
-    const Vector<JSC::MacroAssembler::RegisterID, registerCount>& allocatedRegisters() const { return m_allocatedRegisters; }
+    const RegisterVector& allocatedRegisters() const { return m_allocatedRegisters; }
 
     static bool isValidRegister(JSC::MacroAssembler::RegisterID registerID)
     {
@@ -205,8 +207,8 @@ public:
     }
 
 private:
-    Deque<JSC::MacroAssembler::RegisterID, registerCount> m_registers;
-    Vector<JSC::MacroAssembler::RegisterID, registerCount> m_allocatedRegisters;
+    Deque<JSC::MacroAssembler::RegisterID, maximumRegisterCount> m_registers;
+    RegisterVector m_allocatedRegisters;
     Vector<JSC::MacroAssembler::RegisterID, calleeSavedRegisterCount> m_reservedCalleeSavedRegisters;
 };
 

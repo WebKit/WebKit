@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,8 @@ public:
         unsigned m_offsetFromTop;
     };
 
+    typedef Vector<StackReference, maximumRegisterCount> StackReferenceVector;
+
     StackAllocator(JSC::MacroAssembler& assembler)
         : m_assembler(assembler)
         , m_offsetFromTop(0)
@@ -69,10 +71,10 @@ public:
         return StackReference(m_offsetFromTop);
     }
 
-    Vector<StackReference, registerCount> push(const Vector<JSC::MacroAssembler::RegisterID>& registerIDs)
+    StackReferenceVector push(const Vector<JSC::MacroAssembler::RegisterID>& registerIDs)
     {
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
-        Vector<StackReference, registerCount> stackReferences;
+        StackReferenceVector stackReferences;
 #if CPU(ARM64)
         unsigned pushRegisterCount = registerIDs.size();
         for (unsigned i = 0; i < pushRegisterCount - 1; i += 2) {
@@ -98,7 +100,7 @@ public:
         return StackReference(m_offsetFromTop);
     }
 
-    void pop(const Vector<StackReference>& stackReferences, const Vector<JSC::MacroAssembler::RegisterID>& registerIDs)
+    void pop(const StackReferenceVector& stackReferences, const Vector<JSC::MacroAssembler::RegisterID>& registerIDs)
     {
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
 

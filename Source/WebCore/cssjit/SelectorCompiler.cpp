@@ -265,7 +265,7 @@ private:
 
     bool generatePrologue();
     void generateEpilogue();
-    Vector<StackAllocator::StackReference, registerCount> m_prologueStackReferences;
+    StackAllocator::StackReferenceVector m_prologueStackReferences;
 
     Assembler m_assembler;
     RegisterAllocator m_registerAllocator;
@@ -1166,7 +1166,7 @@ inline void SelectorCodeGenerator::generateEpilogue()
 
 void SelectorCodeGenerator::generateSelectorChecker()
 {
-    Vector<StackAllocator::StackReference, calleeSavedRegisterCount> calleeSavedRegisterStackReferences;
+    StackAllocator::StackReferenceVector calleeSavedRegisterStackReferences;
     bool reservedCalleeSavedRegisters = false;
     unsigned availableRegisterCount = m_registerAllocator.availableRegisterCount();
     unsigned minimumRegisterCountForAttributes = minimumRegisterRequirements(m_selectorFragments);
@@ -1176,7 +1176,7 @@ void SelectorCodeGenerator::generateSelectorChecker()
     
     bool needsEpilogue = generatePrologue();
     
-    ASSERT(minimumRegisterCountForAttributes <= registerCount);
+    ASSERT(minimumRegisterCountForAttributes <= maximumRegisterCount);
     if (availableRegisterCount < minimumRegisterCountForAttributes) {
         reservedCalleeSavedRegisters = true;
         calleeSavedRegisterStackReferences = m_stackAllocator.push(m_registerAllocator.reserveCalleeSavedRegisters(minimumRegisterCountForAttributes - availableRegisterCount));
