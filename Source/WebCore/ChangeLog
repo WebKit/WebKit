@@ -1,3 +1,18 @@
+2014-07-01  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/134522> Remove duplication in code that prepares the user agent string on Mac and iOS
+
+        Reviewed by Simon Fraser.
+
+        * page/cocoa/UserAgent.h:
+        * page/cocoa/UserAgent.mm:
+        (WebCore::userVisibleWebKitBundleVersionFromFullVersion): Moved from WebKit2.
+        * page/ios/UserAgentIOS.mm:
+        (WebCore::standardUserAgentWithApplicationName): Pass the WebKit bundle version through userVisibleWebKitBundleVersionFromFullVersion
+        before including it in the user agent string.
+        * page/mac/UserAgentMac.mm:
+        (WebCore::standardUserAgentWithApplicationName): Ditto.
+
 2014-07-02  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/134521> iOS should use shared code to determine the system marketing version

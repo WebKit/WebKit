@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-String standardUserAgentWithApplicationName(const String& applicationName, const String& webkitVersionString)
+String standardUserAgentWithApplicationName(const String& applicationName, const String& fullWebKitVersionString)
 {
     if (CFStringRef overrideUserAgent = wkGetUserAgent())
         return overrideUserAgent;
@@ -44,7 +44,7 @@ String standardUserAgentWithApplicationName(const String& applicationName, const
         CFRelease(override);
     }
 
-    NSString *webKitVersion = webkitVersionString;
+    NSString *webKitVersion = userVisibleWebKitBundleVersionFromFullVersion(fullWebKitVersionString);
     CFStringRef deviceName = wkGetDeviceName();
     CFStringRef osNameForUserAgent = wkGetOSNameForUserAgent();
     NSString *osMarketingVersionString = systemMarketingVersionForUserAgentString();

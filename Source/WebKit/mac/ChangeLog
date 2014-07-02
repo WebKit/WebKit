@@ -1,3 +1,13 @@
+2014-07-01  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/134522> Remove duplication in code that prepares the user agent string on Mac and iOS
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebView.mm:
+        (webKitBundleVersionString): Return the entire CFBundleVersion now that WebCore handles formatting it.
+        (+[WebView _standardUserAgentWithApplicationName:]):
+
 2014-07-02  Dan Bernstein  <mitz@apple.com>
 
         Remove some code only needed for versions of Safari that are no longer supported

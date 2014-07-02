@@ -97,22 +97,14 @@ void WebPageProxy::platformInitialize()
     setShouldUseImplicitRubberBandControl(clientExpectsLegacyImplicitRubberBandControl);
 }
 
-static String userVisibleWebKitVersionString()
+static String webKitBundleVersionString()
 {
-    // If the version is longer than 3 digits then the leading digits represent the version of the OS. Our user agent
-    // string should not include the leading digits, so strip them off and report the rest as the version. <rdar://problem/4997547>
-    NSString *fullVersion = [[NSBundle bundleForClass:NSClassFromString(@"WKView")] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
-    NSRange nonDigitRange = [fullVersion rangeOfCharacterFromSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]];
-    if (nonDigitRange.location == NSNotFound && fullVersion.length > 3)
-        return [fullVersion substringFromIndex:fullVersion.length - 3];
-    if (nonDigitRange.location != NSNotFound && nonDigitRange.location > 3)
-        return [fullVersion substringFromIndex:nonDigitRange.location - 3];
-    return fullVersion;
+    return [[NSBundle bundleForClass:NSClassFromString(@"WKView")] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
 }
 
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {
-    return standardUserAgentWithApplicationName(applicationNameForUserAgent, userVisibleWebKitVersionString());
+    return standardUserAgentWithApplicationName(applicationNameForUserAgent, webKitBundleVersionString());
 }
 
 void WebPageProxy::getIsSpeaking(bool& isSpeaking)

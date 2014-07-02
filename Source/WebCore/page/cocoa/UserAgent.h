@@ -29,8 +29,12 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
 String standardUserAgentWithApplicationName(const String& applicationName, const String& webkitVersionString);
+
 String systemMarketingVersionForUserAgentString();
+String userVisibleWebKitBundleVersionFromFullVersion(const String&);
+
 }
 
 #endif // UserAgent_h

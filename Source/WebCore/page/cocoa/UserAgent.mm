@@ -38,4 +38,18 @@ String systemMarketingVersionForUserAgentString()
     return [systemMarketingVersion() stringByReplacingOccurrencesOfString:@"." withString:@"_"];
 }
 
+String userVisibleWebKitBundleVersionFromFullVersion(const String& fullWebKitVersionString)
+{
+    NSString *fullWebKitVersion = fullWebKitVersionString;
+
+    // If the version is longer than 3 digits then the leading digits represent the version of the OS. Our user agent
+    // string should not include the leading digits, so strip them off and report the rest as the version. <rdar://problem/4997547>
+    NSRange nonDigitRange = [fullWebKitVersion rangeOfCharacterFromSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]];
+    if (nonDigitRange.location == NSNotFound && fullWebKitVersion.length > 3)
+        return [fullWebKitVersion substringFromIndex:fullWebKitVersion.length - 3];
+    if (nonDigitRange.location != NSNotFound && nonDigitRange.location > 3)
+        return [fullWebKitVersion substringFromIndex:nonDigitRange.location - 3];
+    return fullWebKitVersion;
+}
+
 } // namespace WebCore

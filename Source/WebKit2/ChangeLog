@@ -1,3 +1,16 @@
+2014-07-01  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/134522> Remove duplication in code that prepares the user agent string on Mac and iOS
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::webKitBundleVersionString): Return the entire CFBundleVersion now that WebCore handles formatting it.
+        (WebKit::WebPageProxy::standardUserAgent):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::webKitBundleVersionString): Ditto.
+        (WebKit::WebPageProxy::standardUserAgent):
+
 2014-06-28  Oliver Hunt  <oliver@apple.com>
 
        Restrict network process sandbox

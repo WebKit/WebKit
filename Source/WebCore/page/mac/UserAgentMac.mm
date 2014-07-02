@@ -38,9 +38,10 @@ namespace WebCore {
 #error Unknown architecture
 #endif
 
-String standardUserAgentWithApplicationName(const String& applicationName, const String& webKitVersionString)
+String standardUserAgentWithApplicationName(const String& applicationName, const String& fullWebKitVersionString)
 {
     String osVersion = systemMarketingVersionForUserAgentString();
+    String webKitVersionString = userVisibleWebKitBundleVersionFromFullVersion(fullWebKitVersionString);
 
     if (applicationName.isEmpty())
         return makeString("Mozilla/5.0 (Macintosh; " PROCESSOR " Mac OS X ", osVersion, ") AppleWebKit/", webKitVersionString, " (KHTML, like Gecko)");
