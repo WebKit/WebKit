@@ -116,8 +116,8 @@ class Manifest(object):
         self.current_directory = None
         self.directories = []
         self.tarball_root = tarball_root
-        self.source_root = os.path.abspath(source_root)
-        self.build_root = os.path.abspath(build_root)
+        self.source_root = source_root
+        self.build_root = build_root
 
         # Normalize the tarball root so that it starts and ends with a slash.
         if not self.tarball_root.endswith('/'):
@@ -204,20 +204,29 @@ class Manifest(object):
 
 
 if __name__ == "__main__":
+    class FilePathAction(argparse.Action):
+        def __call__(self, parser, namespace, values, option_string=None):
+            setattr(namespace, self.dest, os.path.abspath(values))
+
     parser = argparse.ArgumentParser(description='Build a distribution bundle.')
-    parser.add_argument('-s', '--source-dir', type=str, default=os.getcwd(),
+    parser.add_argument('-s', '--source-dir', type=str, action=FilePathAction, default=os.getcwd(),
                         help='The top-level directory of the source distribution. ' + \
                               'Directory for relative paths. Defaults to current directory.')
     parser.add_argument('--tarball-root', type=str, default='/',
                         help='The top-level path of the tarball. By default files are added to the root of the tarball.')
-    parser.add_argument('-b', '--build-dir', type=str, default=None,
+    parser.add_argument('-b', '--build-dir', type=str, action=FilePathAction, default=None,
                         help='The top-level path of directory of the build root. ' + \
                               'By default there is no build root.')
-    parser.add_argument('-o', type=str, default='out.tar', dest="output_filename",
+    parser.add_argument('-o', type=str, action=FilePathAction, default='out.tar', dest="output_filename",
                         help='The tarfile to produce. By default this is "out.tar"')
-    parser.add_argument('manifest_filename', metavar="manifest", type=str, help='The path to the manifest file.')
+    parser.add_argument('manifest_filename', metavar="manifest", type=str, action=FilePathAction, help='The path to the manifest file.')
 
     arguments = parser.parse_args()
+
+    # Paths in the manifest are relative to the source directory, and this script assumes that
+    # current working directory is the source directory, so change the current working directory
+    # to be the source directory.
+    os.chdir(arguments.source_dir)
 
     manifest = Manifest(arguments.manifest_filename, arguments.source_dir, arguments.build_dir, arguments.tarball_root)
     manifest.create_tarfile(arguments.output_filename)
