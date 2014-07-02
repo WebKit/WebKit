@@ -437,8 +437,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     WebBackForwardListProxy::setHighestItemIDFromUIProcess(parameters.highestUsedBackForwardItemID);
     
-    if (!parameters.sessionState.isEmpty())
-        restoreSession(parameters.sessionState);
+    if (!parameters.itemStates.isEmpty())
+        restoreSession(parameters.itemStates);
 
     if (parameters.sessionID.isValid())
         setSessionID(parameters.sessionID);
@@ -1957,40 +1957,10 @@ void WebPage::executeEditCommand(const String& commandName)
     executeEditingCommand(commandName, String());
 }
 
-uint64_t WebPage::restoreSession(const LegacySessionState& sessionState)
+void WebPage::restoreSession(const Vector<BackForwardListItemState>& itemStates)
 {
-    const BackForwardListItemVector& list = sessionState.list();
-    size_t size = list.size();
-    uint64_t currentItemID = 0;
-    for (size_t i = 0; i < size; ++i) {
-        WebBackForwardListItem* webItem = list[i].get();
-
-        PageState pageState;
-        pageState.title = webItem->title();
-        pageState.mainFrameState.urlString = webItem->url();
-        pageState.mainFrameState.originalURLString = webItem->originalURL();
-
-        RefPtr<API::Data> backForwardData = webItem->backForwardData();
-        if (!decodeLegacySessionHistoryEntryData(backForwardData->bytes(), backForwardData->size(), pageState.mainFrameState)) {
-            LOG_ERROR("Failed to decode page state.");
-            return 0;
-        }
-
-        RefPtr<HistoryItem> item = toHistoryItem(pageState);
-
-        if (i == sessionState.currentIndex())
-            currentItemID = webItem->itemID();
-        
-        WebBackForwardListProxy::addItemFromUIProcess(list[i]->itemID(), item.release());
-    }    
-    ASSERT(currentItemID);
-    return currentItemID;
-}
-
-void WebPage::restoreSessionAndNavigateToCurrentItem(uint64_t navigationID, const LegacySessionState& sessionState)
-{
-    if (uint64_t currentItemID = restoreSession(sessionState))
-        goToBackForwardItem(navigationID, currentItemID);
+    for (const auto& itemState : itemStates)
+        WebBackForwardListProxy::addItemFromUIProcess(itemState.identifier, toHistoryItem(itemState.pageState));
 }
 
 #if ENABLE(TOUCH_EVENTS)

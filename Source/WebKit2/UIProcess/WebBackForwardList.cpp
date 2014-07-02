@@ -418,4 +418,15 @@ void WebBackForwardList::restoreFromState(BackForwardListState backForwardListSt
     m_entries = std::move(items);
 }
 
+Vector<BackForwardListItemState> WebBackForwardList::itemStates() const
+{
+    Vector<BackForwardListItemState> itemStates;
+    itemStates.reserveInitialCapacity(m_entries.size());
+
+    for (const auto& entry : m_entries)
+        itemStates.uncheckedAppend(entry->itemState());
+
+    return itemStates;
+}
+
 } // namespace WebKit

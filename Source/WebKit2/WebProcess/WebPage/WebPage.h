@@ -140,7 +140,6 @@ namespace WebKit {
 
 class DrawingArea;
 class InjectedBundleBackForwardList;
-class LegacySessionState;
 class NotificationPermissionRequestManager;
 class PageBanner;
 class PageOverlay;
@@ -168,6 +167,7 @@ class WebVideoFullscreenManager;
 class WebWheelEvent;
 struct AssistedNodeInformation;
 struct AttributedString;
+struct BackForwardListItemState;
 struct EditingRange;
 struct EditorState;
 struct InteractionInformationAtPosition;
@@ -923,9 +923,7 @@ private:
 
     void loadURLInFrame(const String&, uint64_t frameID);
 
-    uint64_t restoreSession(const LegacySessionState&);
-    void restoreSessionAndNavigateToCurrentItem(uint64_t navigationID, const LegacySessionState&);
-
+    void restoreSession(const Vector<BackForwardListItemState>&);
     void didRemoveBackForwardItem(uint64_t);
 
 #if ENABLE(REMOTE_INSPECTOR)

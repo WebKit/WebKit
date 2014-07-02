@@ -129,8 +129,7 @@ messages -> WebPage LegacyReceiver {
 
     StopLoadingFrame(uint64_t frameID)
     
-    RestoreSession(WebKit::LegacySessionState state)
-    RestoreSessionAndNavigateToCurrentItem(uint64_t navigationID, WebKit::LegacySessionState state)
+    RestoreSession(Vector<WebKit::BackForwardListItemState> itemStates)
 
     DidRemoveBackForwardItem(uint64_t backForwardItemID)
 

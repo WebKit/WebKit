@@ -48,7 +48,7 @@ void WebPageCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << pageLength;
     encoder << gapBetweenPages;
     encoder << userAgent;
-    encoder << sessionState;
+    encoder << itemStates;
     encoder << sessionID;
     encoder << highestUsedBackForwardItemID;
     encoder << userContentControllerID;
@@ -111,7 +111,7 @@ bool WebPageCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebPageCre
         return false;
     if (!decoder.decode(parameters.userAgent))
         return false;
-    if (!decoder.decode(parameters.sessionState))
+    if (!decoder.decode(parameters.itemStates))
         return false;
     if (!decoder.decode(parameters.sessionID))
         return false;

@@ -59,7 +59,7 @@ public:
     WebBackForwardListItem* backItem() const;
     WebBackForwardListItem* forwardItem() const;
     WebBackForwardListItem* itemAtIndex(int) const;
-    
+
     const BackForwardListItemVector& entries() const { return m_entries; }
 
     uint32_t currentIndex() const { return m_currentIndex; }
@@ -74,6 +74,8 @@ public:
 
     BackForwardListState backForwardListState(const std::function<bool (WebBackForwardListItem&)>&) const;
     void restoreFromState(BackForwardListState);
+
+    Vector<BackForwardListItemState> itemStates() const;
 
 private:
     explicit WebBackForwardList(WebPageProxy&);

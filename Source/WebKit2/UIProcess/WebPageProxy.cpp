@@ -1869,11 +1869,11 @@ uint64_t WebPageProxy::restoreFromSessionState(SessionState sessionState)
 
     if (hasBackForwardList) {
         m_backForwardList->restoreFromState(std::move(sessionState.backForwardListState));
+
         for (const auto& entry : m_backForwardList->entries())
             process().registerNewWebBackForwardListItem(entry.get());
 
-        LegacySessionState state(m_backForwardList->entries(), m_backForwardList->currentIndex());
-        process().send(Messages::WebPage::RestoreSession(state), m_pageID);
+        process().send(Messages::WebPage::RestoreSession(m_backForwardList->itemStates()), m_pageID);
     }
 
     // FIXME: Navigating should be separate from state restoration.
@@ -4420,7 +4420,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.pageLength = m_pageLength;
     parameters.gapBetweenPages = m_gapBetweenPages;
     parameters.userAgent = userAgent();
-    parameters.sessionState = LegacySessionState(m_backForwardList->entries(), m_backForwardList->currentIndex());
+    parameters.itemStates = m_backForwardList->itemStates();
     parameters.sessionID = m_session->getID();
     parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
     parameters.userContentControllerID = m_userContentController ? m_userContentController->identifier() : 0;
