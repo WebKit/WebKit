@@ -26,11 +26,6 @@
 #include "config.h"
 #include "WebBackForwardListItem.h"
 
-#include "APIData.h"
-#include "DataReference.h"
-#include "LegacySessionStateCoding.h"
-#include "WebCoreArgumentCoders.h"
-
 namespace WebKit {
 
 static uint64_t highestUsedItemID = 0;
@@ -47,19 +42,6 @@ WebBackForwardListItem::WebBackForwardListItem(BackForwardListItemState backForw
         highestUsedItemID = m_itemState.identifier;
 }
 
-WebBackForwardListItem::WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID)
-{
-    m_itemState.pageState.mainFrameState.originalURLString = originalURL;
-    m_itemState.pageState.mainFrameState.urlString = url;
-    m_itemState.pageState.title = title;
-    m_itemState.identifier = itemID;
-
-    if (m_itemState.identifier > highestUsedItemID)
-        highestUsedItemID = m_itemState.identifier;
-
-    setBackForwardData(backForwardData, backForwardDataSize);
-}
-
 WebBackForwardListItem::~WebBackForwardListItem()
 {
 }
@@ -67,52 +49,6 @@ WebBackForwardListItem::~WebBackForwardListItem()
 uint64_t WebBackForwardListItem::highedUsedItemID()
 {
     return highestUsedItemID;
-}
-
-PassRefPtr<API::Data> WebBackForwardListItem::backForwardData() const
-{
-    return encodeLegacySessionHistoryEntryData(m_itemState.pageState.mainFrameState);
-}
-
-void WebBackForwardListItem::setBackForwardData(const uint8_t* data, size_t size)
-{
-    decodeLegacySessionHistoryEntryData(data, size, m_itemState.pageState.mainFrameState);
-}
-
-void WebBackForwardListItem::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << m_itemState.pageState.mainFrameState.originalURLString;
-    encoder << m_itemState.pageState.mainFrameState.urlString;
-    encoder << m_itemState.pageState.title;
-    encoder << m_itemState.identifier;
-
-    RefPtr<API::Data> backForwardData = this->backForwardData();
-    encoder << IPC::DataReference(backForwardData->bytes(), backForwardData->size());
-}
-
-PassRefPtr<WebBackForwardListItem> WebBackForwardListItem::decode(IPC::ArgumentDecoder& decoder)
-{
-    String originalURL;
-    if (!decoder.decode(originalURL))
-        return 0;
-
-    String url;
-    if (!decoder.decode(url))
-        return 0;
-
-    String title;
-    if (!decoder.decode(title))
-        return 0;
-
-    uint64_t itemID;
-    if (!decoder.decode(itemID))
-        return 0;
-    
-    IPC::DataReference data;
-    if (!decoder.decode(data))
-        return 0;
-
-    return create(originalURL, url, title, data.data(), data.size(), itemID);
 }
 
 } // namespace WebKit

@@ -1,5 +1,29 @@
 2014-07-02  Anders Carlsson  <andersca@apple.com>
 
+        Rip out more dead code
+        https://bugs.webkit.org/show_bug.cgi?id=134562
+
+        Reviewed by Andreas Kling.
+
+        * Shared/LegacySessionState.cpp: Removed.
+        * Shared/LegacySessionState.h: Removed.
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::WebBackForwardListItem): Deleted.
+        (WebKit::WebBackForwardListItem::backForwardData): Deleted.
+        (WebKit::WebBackForwardListItem::setBackForwardData): Deleted.
+        (WebKit::WebBackForwardListItem::encode): Deleted.
+        (WebKit::WebBackForwardListItem::decode): Deleted.
+        * Shared/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::create): Deleted.
+        (WebKit::WebBackForwardListItem::setOriginalURL): Deleted.
+        (WebKit::WebBackForwardListItem::setURL): Deleted.
+        (WebKit::WebBackForwardListItem::setTitle): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+
+2014-07-02  Anders Carlsson  <andersca@apple.com>
+
         RestoreSession should take a vector of BackForwardListItemStates
         https://bugs.webkit.org/show_bug.cgi?id=134558
 

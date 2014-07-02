@@ -903,8 +903,6 @@
 		518ACF1112B015F800B04B83 /* WKCredentialTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 518ACF1012B015F800B04B83 /* WKCredentialTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		518D2CAD12D5153B003BB93B /* WebBackForwardListItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518D2CAB12D5153B003BB93B /* WebBackForwardListItem.cpp */; };
 		518D2CAE12D5153B003BB93B /* WebBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 518D2CAC12D5153B003BB93B /* WebBackForwardListItem.h */; };
-		518D2CCA12D51DFB003BB93B /* LegacySessionState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518D2CC812D51DFB003BB93B /* LegacySessionState.cpp */; };
-		518D2CCB12D51DFB003BB93B /* LegacySessionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 518D2CC912D51DFB003BB93B /* LegacySessionState.h */; };
 		518E8EF816B2091C00E91429 /* AuthenticationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518E8EF316B2091C00E91429 /* AuthenticationManager.cpp */; };
 		518E8EF916B2091C00E91429 /* AuthenticationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 518E8EF416B2091C00E91429 /* AuthenticationManager.h */; };
 		518E8EFB16B2091C00E91429 /* AuthenticationManager.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 518E8EF716B2091C00E91429 /* AuthenticationManager.mac.mm */; };
@@ -2909,8 +2907,6 @@
 		518ACF1012B015F800B04B83 /* WKCredentialTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKCredentialTypes.h; sourceTree = "<group>"; };
 		518D2CAB12D5153B003BB93B /* WebBackForwardListItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebBackForwardListItem.cpp; sourceTree = "<group>"; };
 		518D2CAC12D5153B003BB93B /* WebBackForwardListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListItem.h; sourceTree = "<group>"; };
-		518D2CC812D51DFB003BB93B /* LegacySessionState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacySessionState.cpp; sourceTree = "<group>"; };
-		518D2CC912D51DFB003BB93B /* LegacySessionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacySessionState.h; sourceTree = "<group>"; };
 		518E8EF316B2091C00E91429 /* AuthenticationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AuthenticationManager.cpp; path = Authentication/AuthenticationManager.cpp; sourceTree = "<group>"; };
 		518E8EF416B2091C00E91429 /* AuthenticationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AuthenticationManager.h; path = Authentication/AuthenticationManager.h; sourceTree = "<group>"; };
 		518E8EF516B2091C00E91429 /* AuthenticationManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = AuthenticationManager.messages.in; path = Authentication/AuthenticationManager.messages.in; sourceTree = "<group>"; };
@@ -4414,8 +4410,6 @@
 				E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */,
 				33152973130D0CB200ED2483 /* SecurityOriginData.cpp */,
 				33152974130D0CB200ED2483 /* SecurityOriginData.h */,
-				518D2CC812D51DFB003BB93B /* LegacySessionState.cpp */,
-				518D2CC912D51DFB003BB93B /* LegacySessionState.h */,
 				1AFDE6571954A42B00C48FFA /* SessionState.cpp */,
 				1AFDE6581954A42B00C48FFA /* SessionState.h */,
 				753E3E0B1887397300188496 /* SessionTracker.cpp */,
@@ -7337,7 +7331,6 @@
 				E18E690C169B563F009B6670 /* SecItemShimProxy.h in Headers */,
 				E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */,
 				33152976130D0CB200ED2483 /* SecurityOriginData.h in Headers */,
-				518D2CCB12D51DFB003BB93B /* LegacySessionState.h in Headers */,
 				1AA20D5118AD50E0005D1ED4 /* WKNavigationDelegatePrivate.h in Headers */,
 				1ACB7987191ECADD006A6A61 /* XPCPtr.h in Headers */,
 				1A6420E512DCE2FF00CAAE2C /* ShareableBitmap.h in Headers */,
@@ -9017,7 +9010,6 @@
 				E18E690B169B563F009B6670 /* SecItemShimProxy.cpp in Sources */,
 				E18E6917169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp in Sources */,
 				33152975130D0CB200ED2483 /* SecurityOriginData.cpp in Sources */,
-				518D2CCA12D51DFB003BB93B /* LegacySessionState.cpp in Sources */,
 				515E772B184008B90007203F /* DatabaseProcessCreationParameters.cpp in Sources */,
 				1A6420E412DCE2FF00CAAE2C /* ShareableBitmap.cpp in Sources */,
 				C01A260112662F2100C9ED55 /* ShareableBitmapCG.cpp in Sources */,

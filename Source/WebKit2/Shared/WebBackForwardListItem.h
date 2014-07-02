@@ -45,12 +45,6 @@ namespace WebKit {
 class WebBackForwardListItem : public API::ObjectImpl<API::Object::Type::BackForwardListItem> {
 public:
     static PassRefPtr<WebBackForwardListItem> create(BackForwardListItemState);
-
-    static PassRefPtr<WebBackForwardListItem> create(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID)
-    {
-        return adoptRef(new WebBackForwardListItem(originalURL, url, title, backForwardData, backForwardDataSize, itemID));
-    }
-
     virtual ~WebBackForwardListItem();
 
     uint64_t itemID() const { return m_itemState.identifier; }
@@ -58,30 +52,17 @@ public:
 
     void setPageState(PageState pageState) { m_itemState.pageState = std::move(pageState); }
 
-    void setOriginalURL(const String& originalURL) { m_itemState.pageState.mainFrameState.originalURLString = originalURL; }
     const String& originalURL() const { return m_itemState.pageState.mainFrameState.originalURLString; }
-
-    void setURL(const String& url) { m_itemState.pageState.mainFrameState.urlString = url; }
     const String& url() const { return m_itemState.pageState.mainFrameState.urlString; }
-
-    void setTitle(const String& title) { m_itemState.pageState.title = title; }
     const String& title() const { return m_itemState.pageState.title; }
     
-    void setBackForwardData(const uint8_t* buffer, size_t size);
-    PassRefPtr<API::Data> backForwardData() const;
-
     void setSnapshotUUID(const String& uuid) { m_itemState.snapshotUUID = uuid; }
     const String& snapshotUUID() const { return m_itemState.snapshotUUID; }
-
-    void encode(IPC::ArgumentEncoder&) const;
-    static PassRefPtr<WebBackForwardListItem> decode(IPC::ArgumentDecoder&);
 
     static uint64_t highedUsedItemID();
 
 private:
     explicit WebBackForwardListItem(BackForwardListItemState);
-
-    WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID);
 
     BackForwardListItemState m_itemState;
 };
