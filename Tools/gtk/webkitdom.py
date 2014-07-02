@@ -133,7 +133,7 @@ class WebKitDOMDocGeneratorSections(WebKitDOMDocGenerator):
     def write_section(self, symbol_file):
         class_name = os.path.basename(symbol_file).replace(".symbols", "")
         is_custom = class_name == 'WebKitDOMCustom'
-        is_interface = class_name in ['WebKitDOMEventTarget', 'WebKitDOMNodeFilter']
+        is_interface = class_name in ['WebKitDOMEventTarget', 'WebKitDOMNodeFilter', 'WebKitDOMXPathNSResolver']
         is_object = class_name == 'WebKitDOMObject'
         self.write('<SECTION>\n')
         self.write('<FILE>%s</FILE>\n<TITLE>%s</TITLE>\n' % (class_name, class_name))

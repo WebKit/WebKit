@@ -1,3 +1,39 @@
+2014-07-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] XPathNSResolver should be exposed as an interface instead of as a class
+        https://bugs.webkit.org/show_bug.cgi?id=134028
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add unit tests to check WebKitDOMXPathNSResolver API when using the
+        native one and a user provided one.
+
+        * Scripts/webkitpy/style/checker.py: Add WebKitDOMXPathNSResolver
+        to the list of GTK+ public API exceptions.
+        * TestWebKitAPI/Tests/WebKit2Gtk/CMakeLists.txt: Add new files to compilation.
+        * TestWebKitAPI/Tests/WebKit2Gtk/DOMXPathNSResolverTest.cpp: Added.
+        (webkitXPathNSResolverLookupNamespaceURI):
+        (webkitXPathNSResolverDOMXPathNSResolverIfaceInit):
+        (webkit_xpath_ns_resolver_init):
+        (webkit_xpath_ns_resolver_class_init):
+        (WebKitDOMXPathNSResolverTest::create):
+        (WebKitDOMXPathNSResolverTest::webPageFromArgs):
+        (WebKitDOMXPathNSResolverTest::evaluateFooChildTextAndCheckResult):
+        (WebKitDOMXPathNSResolverTest::testXPathNSResolverNative):
+        (WebKitDOMXPathNSResolverTest::testXPathNSResolverCustom):
+        (WebKitDOMXPathNSResolverTest::runTest):
+        (registerTests):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDOMXPathNSResolver.cpp: Added.
+        (runTest):
+        (testWebKitDOMXPathNSResolverNative):
+        (testWebKitDOMXPathNSResolverCustom):
+        (serverCallback):
+        (beforeAll):
+        (afterAll):
+        * gtk/webkitdom.py:
+        (WebKitDOMDocGeneratorSections.write_section): Add
+        WebKitDOMXPathNSResolver to the list of interfaces.
+
 2014-07-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Fix build break on EFL and GTK ports since r170683

@@ -436,12 +436,14 @@ list(APPEND GObjectDOMBindings_SOURCES
     bindings/gobject/DOMObjectCache.cpp
     bindings/gobject/GObjectEventListener.cpp
     bindings/gobject/GObjectNodeFilterCondition.cpp
+    bindings/gobject/GObjectXPathNSResolver.cpp
     bindings/gobject/WebKitDOMCustom.cpp
     bindings/gobject/WebKitDOMEventTarget.cpp
     bindings/gobject/WebKitDOMHTMLPrivate.cpp
     bindings/gobject/WebKitDOMNodeFilter.cpp
     bindings/gobject/WebKitDOMObject.cpp
     bindings/gobject/WebKitDOMPrivate.cpp
+    bindings/gobject/WebKitDOMXPathNSResolver.cpp
     ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
     ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines-unstable.h
     ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
@@ -547,7 +549,6 @@ list(APPEND GObjectDOMBindingsStable_IDL_FILES
     page/DOMWindow.idl
 
     xml/XPathExpression.idl
-    xml/XPathNSResolver.idl
     xml/XPathResult.idl
 )
 
@@ -649,7 +650,7 @@ if (ENABLE_QUOTA)
     )
 endif ()
 
-set(GObjectDOMBindingsStable_CLASS_LIST Custom EventTarget NodeFilter Object)
+set(GObjectDOMBindingsStable_CLASS_LIST Custom EventTarget NodeFilter Object XPathNSResolver)
 set(GObjectDOMBindingsStable_INSTALLED_HEADERS
      ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
      ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
@@ -657,6 +658,7 @@ set(GObjectDOMBindingsStable_INSTALLED_HEADERS
      ${WEBCORE_DIR}/bindings/gobject/WebKitDOMEventTarget.h
      ${WEBCORE_DIR}/bindings/gobject/WebKitDOMNodeFilter.h
      ${WEBCORE_DIR}/bindings/gobject/WebKitDOMObject.h
+     ${WEBCORE_DIR}/bindings/gobject/WebKitDOMXPathNSResolver.h
 )
 
 set(GObjectDOMBindingsUnstable_INSTALLED_HEADERS
@@ -755,6 +757,7 @@ list(REMOVE_ITEM GObjectDOMBindings_GIR_HEADERS
      bindings/gobject/WebKitDOMEventTarget.h
      bindings/gobject/WebKitDOMNodeFilter.h
      bindings/gobject/WebKitDOMObject.h
+     bindings/gobject/WebKitDOMXPathNSResolver.h
 )
 
 # Propagate this variable to the parent scope, so that it can be used in other parts of the build.

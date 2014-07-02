@@ -1,3 +1,43 @@
+2014-07-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] XPathNSResolver should be exposed as an interface instead of as a class
+        https://bugs.webkit.org/show_bug.cgi?id=134028
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add custom implementation of WebKitDOMXPathNSResolver to expose it
+        as an interface instead of a class. It also includes an internal
+        default implementation of the interface to support methods that
+        create a XPathNSResolver using the native implementation.
+
+        * PlatformGTK.cmake: Add new files to compilation.
+        * bindings/gobject/GObjectXPathNSResolver.cpp: Added.
+        (WebCore::GObjectXPathNSResolver::~GObjectXPathNSResolver):
+        (WebCore::GObjectXPathNSResolver::lookupNamespaceURI): Call
+        webkit_dom_xpath_ns_resolver_lookup_namespace_uri().
+        * bindings/gobject/GObjectXPathNSResolver.h: Added.
+        (WebCore::GObjectXPathNSResolver::create):
+        (WebCore::GObjectXPathNSResolver::GObjectXPathNSResolver): Create
+        a new GObjectXPathNSResolver for the given WebKitDOMXPathNSResolver.
+        * bindings/gobject/WebKitDOMXPathNSResolver.cpp: Added.
+        (webkit_dom_xpath_ns_resolver_default_init):
+        (webkit_dom_xpath_ns_resolver_lookup_namespace_uri):
+        (webkitDOMNativeXPathNSResolverFinalize):
+        (webkitDOMNativeXPathNSResolverConstructor):
+        (webkit_dom_native_xpath_ns_resolver_init):
+        (webkit_dom_native_xpath_ns_resolver_class_init):
+        (webkitDOMNativeXPathNSResolverLookupNamespaceURI):
+        (webkitDOMXPathNSResolverIfaceInit):
+        (WebKit::core): Return the native XPathNSResolver when using the
+        internal implementation or create a custom XPathNSResolver when
+        using a user provided WebKitDOMXPathNSResolver.
+        (WebKit::kit):
+        * bindings/gobject/WebKitDOMXPathNSResolver.h: Added.
+        * bindings/gobject/WebKitDOMXPathNSResolverPrivate.h: Added.
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateFunction): Add exceptions for XPathNSResolver since
+        the core method returns a PassRefPtr.
+
 2014-07-01  Frédéric Wang  <fred.wang@free.fr>
 
         The OpenType MATH table is not read on Mac
