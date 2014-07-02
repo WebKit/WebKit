@@ -1832,20 +1832,6 @@ void WebPageProxy::terminateProcess()
     resetStateAfterProcessExited();
 }
 
-#if !USE(CF)
-PassRefPtr<API::Data> WebPageProxy::sessionStateData(std::function<bool (WebBackForwardListItem&)>) const
-{
-    // FIXME: Return session state data for saving Page state.
-    return 0;
-}
-
-uint64_t WebPageProxy::restoreFromSessionStateData(API::Data*)
-{
-    // FIXME: Restore the Page from the passed in session state data.
-    return 0;
-}
-#endif
-
 SessionState WebPageProxy::sessionState(const std::function<bool (WebBackForwardListItem&)>& filter) const
 {
     SessionState sessionState;
