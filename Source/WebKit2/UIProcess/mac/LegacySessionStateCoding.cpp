@@ -52,7 +52,6 @@ static const CFStringRef sessionHistoryEntriesKey = CFSTR("SessionHistoryEntries
 static const CFStringRef sessionHistoryEntryURLKey = CFSTR("SessionHistoryEntryURL");
 static CFStringRef sessionHistoryEntryTitleKey = CFSTR("SessionHistoryEntryTitle");
 static CFStringRef sessionHistoryEntryOriginalURLKey = CFSTR("SessionHistoryEntryOriginalURL");
-static CFStringRef sessionHistoryEntrySnapshotUUIDKey = CFSTR("SessionHistoryEntrySnapshotUUID");
 static CFStringRef sessionHistoryEntryDataKey = CFSTR("SessionHistoryEntryData");
 
 // Session history entry data.
@@ -437,7 +436,7 @@ static RetainPtr<CFDictionaryRef> encodeSessionHistory(const BackForwardListStat
         auto originalURL = item.pageState.mainFrameState.originalURLString.createCFString();
         auto data = encodeSessionHistoryEntryData(item.pageState.mainFrameState);
 
-        auto entryDictionary = createDictionary({ { sessionHistoryEntryURLKey, url.get() }, { sessionHistoryEntryTitleKey, title.get() }, { sessionHistoryEntryOriginalURLKey, originalURL.get() }, { sessionHistoryEntryDataKey, data.get() }, { sessionHistoryEntrySnapshotUUIDKey, item.snapshotUUID.createCFString().get() }});
+        auto entryDictionary = createDictionary({ { sessionHistoryEntryURLKey, url.get() }, { sessionHistoryEntryTitleKey, title.get() }, { sessionHistoryEntryOriginalURLKey, originalURL.get() }, { sessionHistoryEntryDataKey, data.get() } });
 
         CFArrayAppendValue(entries.get(), entryDictionary.get());
     }
@@ -953,9 +952,6 @@ static bool decodeSessionHistoryEntry(CFDictionaryRef entryDictionary, BackForwa
 
     if (!decodeSessionHistoryEntryData(historyEntryData, backForwardListItemState.pageState.mainFrameState))
         return false;
-
-    if (auto snapshotUUID = WTF::dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntrySnapshotUUIDKey)))
-        backForwardListItemState.snapshotUUID = snapshotUUID;
 
     backForwardListItemState.pageState.title = title;
     backForwardListItemState.pageState.mainFrameState.urlString = urlString;
