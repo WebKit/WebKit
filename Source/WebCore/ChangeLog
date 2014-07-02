@@ -1,3 +1,22 @@
+2014-07-02  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of the HistoryItem encoding/decoding in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=134564
+
+        Reviewed by Beth Dakin.
+
+        * WebCore.exp.in:
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::encodeBackForwardTree): Deleted.
+        (WebCore::encodeRect): Deleted.
+        (WebCore::encodeSize): Deleted.
+        (WebCore::HistoryItem::encodeBackForwardTreeNode): Deleted.
+        (WebCore::DecodeRecursionStackElement::DecodeRecursionStackElement): Deleted.
+        (WebCore::decodeRect): Deleted.
+        (WebCore::decodeSize): Deleted.
+        (WebCore::HistoryItem::decodeBackForwardTree): Deleted.
+        * history/HistoryItem.h:
+
 2014-07-02  Alex Christensen  <achristensen@webkit.org>
 
         [WebGL] Fix crash when glsl expressions are too complex.

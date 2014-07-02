@@ -51,8 +51,6 @@ class Document;
 class FormData;
 class HistoryItem;
 class Image;
-class KeyedDecoder;
-class KeyedEncoder;
 class ResourceRequest;
 class URL;
 
@@ -85,11 +83,6 @@ public:
     // Resets the HistoryItem to its initial state, as returned by create().
     void reset();
     
-    void encodeBackForwardTree(Encoder&) const;
-    void encodeBackForwardTree(KeyedEncoder&) const;
-    static PassRefPtr<HistoryItem> decodeBackForwardTree(const String& urlString, const String& title, const String& originalURLString, Decoder&);
-    static PassRefPtr<HistoryItem> decodeBackForwardTree(const String& urlString, const String& title, const String& originalURLString, KeyedDecoder&);
-
     const String& originalURLString() const;
     const String& urlString() const;
     const String& title() const;
@@ -223,9 +216,6 @@ private:
     bool hasSameDocumentTree(HistoryItem* otherItem) const;
 
     HistoryItem* findTargetItem();
-
-    void encodeBackForwardTreeNode(Encoder&) const;
-    void encodeBackForwardTreeNode(KeyedEncoder&) const;
 
     String m_urlString;
     String m_originalURLString;
