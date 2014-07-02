@@ -205,12 +205,12 @@ class Manifest(object):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Build a distribution bundle.')
-    parser.add_argument('-s', '--source-directory', type=str, default=os.getcwd(),
+    parser.add_argument('-s', '--source-dir', type=str, default=os.getcwd(),
                         help='The top-level directory of the source distribution. ' + \
                               'Directory for relative paths. Defaults to current directory.')
     parser.add_argument('--tarball-root', type=str, default='/',
                         help='The top-level path of the tarball. By default files are added to the root of the tarball.')
-    parser.add_argument('-b', '--build-directory', type=str, default=None,
+    parser.add_argument('-b', '--build-dir', type=str, default=None,
                         help='The top-level path of directory of the build root. ' + \
                               'By default there is no build root.')
     parser.add_argument('-o', type=str, default='out.tar', dest="output_filename",
@@ -219,5 +219,5 @@ if __name__ == "__main__":
 
     arguments = parser.parse_args()
 
-    manifest = Manifest(arguments.manifest_filename, arguments.source_directory, arguments.build_directory, arguments.tarball_root)
+    manifest = Manifest(arguments.manifest_filename, arguments.source_dir, arguments.build_dir, arguments.tarball_root)
     manifest.create_tarfile(arguments.output_filename)

@@ -47,7 +47,7 @@ add_custom_target(check
     COMMAND ${TOOLS_DIR}/gtk/check-for-webkitdom-api-breaks
 )
 
-if (ENABLE_WEBKIT AND ENABLE_WEBKIT2)
+if (ENABLE_WEBKIT2)
     add_custom_command(
         OUTPUT ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
         DEPENDS ${TOOLS_DIR}/gtk/make-dist.py

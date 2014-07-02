@@ -39,9 +39,6 @@ exclude Source/autotools$
 # Most of the files in Source/WebKit are not necessary to build GTK+ and
 # the directory includes lots of images, so we're a bit more picky here.
 exclude Source/WebKit/.*
-include Source/WebKit/CMakeLists.txt
-include Source/WebKit/PlatformGTK.cmake
-include Source/WebKit/gtk
 exclude Source/WebKit2/gtk/NEWS$
 
 # We do want to include the NEWS, but we want it to be in the root of the archive.
@@ -68,5 +65,5 @@ file Tools/jhbuild/jhbuildutils.py
 
 directory $build/Documentation/webkit2gtk/html Documentation/webkit2gtk/html
 directory $build/Documentation/webkit2gtk/html Documentation/webkit2gtk/html
-directory $build/Documentation/webkitgtk/tmpl Documentation/webkitgtk/tmpl
-directory $build/Documentation/webkitgtk/tmpl Documentation/webkitgtk/tmpl
+directory $build/Documentation/webkitdomgtk/html Documentation/webkitdomgtk/html
+directory $build/Documentation/webkitdomgtk/html Documentation/webkitdomgtk/html
