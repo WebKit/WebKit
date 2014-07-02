@@ -1,3 +1,15 @@
+2014-07-01  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Fix occurrence of two cursors on WK2 EFL.
+        https://bugs.webkit.org/show_bug.cgi?id=134436
+
+        Reviewed by Anders Carlsson.
+
+        ecore_x_window_cursor is released when ecore_evas_object_cursor should be shown in order to avoid occurrence of two cursors.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::updateCursor):
+
 2014-07-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Fix build break on EFL and GTK ports since r170683

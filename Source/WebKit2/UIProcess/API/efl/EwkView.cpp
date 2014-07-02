@@ -469,6 +469,10 @@ void EwkView::updateCursor()
     if (data)
         hotspotY = atoi(data);
 
+#ifdef HAVE_ECORE_X
+    ecore_x_window_cursor_set(getEcoreXWindow(ecoreEvas), 0);
+#endif
+
     // ecore_evas takes care of freeing the cursor object.
     ecore_evas_object_cursor_set(ecoreEvas, cursorObject.release(), EVAS_LAYER_MAX, hotspotX, hotspotY);
 }
