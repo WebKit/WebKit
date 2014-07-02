@@ -30,8 +30,6 @@ G_BEGIN_DECLS
 #define WEBKIT_DOM_IS_EVENT_TARGET(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), WEBKIT_DOM_TYPE_EVENT_TARGET))
 #define WEBKIT_DOM_EVENT_TARGET_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE ((obj), WEBKIT_DOM_TYPE_EVENT_TARGET, WebKitDOMEventTargetIface))
 
-typedef struct _WebKitDOMEventTargetIface WebKitDOMEventTargetIface;
-
 struct _WebKitDOMEventTargetIface {
     GTypeInterface gIface;
 

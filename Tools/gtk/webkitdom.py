@@ -143,7 +143,10 @@ class WebKitDOMDocGeneratorSections(WebKitDOMDocGenerator):
         self.write('\n'.join(self._symbol_list(symbol_file)) + '\n')
         if not is_custom:
             self.write('\n<SUBSECTION Standard>\n')
-            self.write('%sClass\n' % class_name)
+            if is_interface:
+                self.write('%sIface\n' % class_name)
+            else:
+                self.write('%sClass\n' % class_name)
             dom_class = self._dom_class_decamelize(class_name).upper()
             self.write('WEBKIT_DOM_TYPE_%s\n' % dom_class)
             self.write('WEBKIT_DOM_%s\n' % dom_class)

@@ -1,3 +1,15 @@
+2014-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Do not add forward declaration of class struct for interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=134297
+
+        Reviewed by Martin Robinson.
+
+        Add Iface symbol to documentation instead of Class for interfaces.
+
+        * gtk/webkitdom.py:
+        (WebKitDOMDocGeneratorSections.write_section):
+
 2014-07-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] XPathNSResolver should be exposed as an interface instead of as a class

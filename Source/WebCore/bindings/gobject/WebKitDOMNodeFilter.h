@@ -179,8 +179,6 @@ G_BEGIN_DECLS
  */
 #define WEBKIT_DOM_NODE_FILTER_SHOW_NOTATION               0x00000800
 
-typedef struct _WebKitDOMNodeFilterIface WebKitDOMNodeFilterIface;
-
 struct _WebKitDOMNodeFilterIface {
     GTypeInterface gIface;
 

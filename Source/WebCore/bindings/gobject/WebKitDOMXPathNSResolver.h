@@ -30,8 +30,6 @@ G_BEGIN_DECLS
 #define WEBKIT_DOM_IS_XPATH_NS_RESOLVER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), WEBKIT_DOM_TYPE_XPATH_NS_RESOLVER))
 #define WEBKIT_DOM_XPATH_NS_RESOLVER_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE ((obj), WEBKIT_DOM_TYPE_XPATH_NS_RESOLVER, WebKitDOMXPathNSResolverIface))
 
-typedef struct _WebKitDOMXPathNSResolverIface WebKitDOMXPathNSResolverIface;
-
 struct _WebKitDOMXPathNSResolverIface {
     GTypeInterface gIface;
 

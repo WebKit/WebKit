@@ -82,7 +82,11 @@ if ($outType eq "defines") {
     print "#endif\n";
 
     foreach my $class (@classes) {
-        if ($class ne "Deprecated" && $class ne "Custom") {
+        if ($class eq "EventTarget" || $class eq "NodeFilter" || $class eq "XPathNSResolver") {
+            print "typedef struct _WebKitDOM${class} WebKitDOM${class};\n";
+            print "typedef struct _WebKitDOM${class}Iface WebKitDOM${class}Iface;\n";
+            print "\n";
+        } elsif ($class ne "Deprecated" && $class ne "Custom") {
             print "typedef struct _WebKitDOM${class} WebKitDOM${class};\n";
             print "typedef struct _WebKitDOM${class}Class WebKitDOM${class}Class;\n";
             print "\n";
