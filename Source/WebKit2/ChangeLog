@@ -1,3 +1,12 @@
+2014-07-01  Dean Jackson  <dino@apple.com>
+
+        Make LogsPageMessagesToSystemConsoleEnabled a global debug preference
+        https://bugs.webkit.org/show_bug.cgi?id=134534
+
+        Reviewed by Joseph Pecoraro.
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2014-07-01  Tim Horton  <timothy_horton@apple.com>
 
         Handle invalid data more gracefully.
