@@ -1,3 +1,13 @@
+2014-07-01  Dan Bernstein  <mitz@apple.com>
+
+        Remove WebChromeClient code that was only needed for Safari versions earlier than 3.1
+        https://bugs.webkit.org/show_bug.cgi?id=134531
+
+        Reviewed by Daniel Bates.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::exceededDatabaseQuota):
+
 2014-06-29  Yoav Weiss  <yoav@yoav.ws>
 
         Add support for HTMLImageElement's sizes attribute

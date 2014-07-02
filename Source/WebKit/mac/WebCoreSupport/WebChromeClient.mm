@@ -684,14 +684,7 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:frame->document()->securityOrigin()];
-#if !PLATFORM(IOS)
-    // FIXME: remove this workaround once shipping Safari has the necessary delegate implemented.
-    if (WKAppVersionCheckLessThan(@"com.apple.Safari", -1, 3.1)) {
-        const unsigned long long defaultQuota = 5 * 1024 * 1024; // 5 megabytes should hopefully be enough to test storage support.
-        [[webOrigin databaseQuotaManager] setQuota:defaultQuota];
-    } else
-#endif
-        CallUIDelegate(m_webView, @selector(webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:), kit(frame), webOrigin, (NSString *)databaseName);
+    CallUIDelegate(m_webView, @selector(webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:), kit(frame), webOrigin, (NSString *)databaseName);
     [webOrigin release];
 
     END_BLOCK_OBJC_EXCEPTIONS;
