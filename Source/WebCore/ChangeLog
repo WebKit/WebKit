@@ -1,3 +1,25 @@
+2014-07-01  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce dynamic memory allocation in css jit.
+        https://bugs.webkit.org/show_bug.cgi?id=134416
+
+        Reviewed by Benjamin Poulain.
+
+        * cssjit/FunctionCall.h:
+        (WebCore::FunctionCall::saveAllocatedRegisters):
+        * cssjit/RegisterAllocator.h:
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChild):
+        * cssjit/StackAllocator.h:
+        (WebCore::StackAllocator::push):
+        (WebCore::StackAllocator::pop):
+        Use inlineCapacity template parameter to reduce malloc calls.
+        I use 32 as the inline capacity for non-register related vectors because that
+        is probably big enough for the selector compiler, and if it is not then a malloc
+        call will not be significant because the selector is very complex.
+
 2014-07-01  Eric Carlson  <eric.carlson@apple.com>
 
         WebVTT percentage value can be a float
