@@ -32,7 +32,6 @@
 #include "FileSystem.h"
 #include "FormDataBuilder.h"
 #include "FormDataList.h"
-#include "KeyedCoding.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "TextEncoding.h"
@@ -420,31 +419,6 @@ static void encodeElement(Encoder& encoder, const FormDataElement& element)
     ASSERT_NOT_REACHED();
 }
 
-static void encodeElement(KeyedEncoder& encoder, const FormDataElement& element)
-{
-    encoder.encodeEnum("type", element.m_type);
-
-    switch (element.m_type) {
-    case FormDataElement::Type::Data:
-        encoder.encodeBytes("data", reinterpret_cast<const uint8_t*>(element.m_data.data()), element.m_data.size());
-        return;
-    case FormDataElement::Type::EncodedFile:
-        encoder.encodeString("filename", element.m_filename);
-        encoder.encodeString("generatedFilename", element.m_generatedFilename);
-        encoder.encodeBool("shouldGenerateFile", element.m_shouldGenerateFile);
-        encoder.encodeInt64("fileStart", element.m_fileStart);
-        encoder.encodeInt64("fileLength", element.m_fileLength);
-        encoder.encodeDouble("expectedFileModificationTime", element.m_expectedFileModificationTime);
-        return;
-
-    case FormDataElement::Type::EncodedBlob:
-        encoder.encodeString("url", element.m_url.string());
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
 static bool decodeElement(Decoder& decoder, FormDataElement& element)
 {
     uint32_t type;
@@ -508,69 +482,6 @@ static bool decodeElement(Decoder& decoder, FormDataElement& element)
     return false;
 }
 
-static bool decodeElement(KeyedDecoder& decoder, FormDataElement& element)
-{
-    if (!decoder.decodeEnum("type", element.m_type, [](FormDataElement::Type type) {
-        switch (type) {
-        case FormDataElement::Type::Data:
-        case FormDataElement::Type::EncodedFile:
-        case FormDataElement::Type::EncodedBlob:
-            return true;
-        }
-
-        return false;
-    }))
-        return false;
-
-    switch (element.m_type) {
-    case FormDataElement::Type::Data:
-        if (!decoder.decodeBytes("data", element.m_data))
-            return false;
-        break;
-
-    case FormDataElement::Type::EncodedFile: {
-        if (!decoder.decodeString("filename", element.m_filename))
-            return false;
-        if (!decoder.decodeString("generatedFilename", element.m_generatedFilename))
-            return false;
-        if (!decoder.decodeBool("shouldGenerateFile", element.m_shouldGenerateFile))
-            return false;
-
-        int64_t fileStart;
-        if (!decoder.decodeInt64("fileStart", fileStart))
-            return false;
-        if (fileStart < 0)
-            return false;
-
-        int64_t fileLength;
-        if (!decoder.decodeInt64("fileLength", fileLength))
-            return false;
-        if (fileLength != BlobDataItem::toEndOfFile && fileLength < fileStart)
-            return false;
-
-        double expectedFileModificationTime;
-        if (!decoder.decodeDouble("expectedFileModificationTime", expectedFileModificationTime))
-            return false;
-
-        element.m_fileStart = fileStart;
-        element.m_fileLength = fileLength;
-        element.m_expectedFileModificationTime = expectedFileModificationTime;
-        break;
-    }
-
-    case FormDataElement::Type::EncodedBlob: {
-        String blobURLString;
-        if (!decoder.decodeString("url", blobURLString))
-            return false;
-
-        element.m_url = URL(URL(), blobURLString);
-        break;
-    }
-    }
-
-    return true;
-}
-
 void FormData::encode(Encoder& encoder) const
 {
     encoder.encodeBool(m_alwaysStream);
@@ -585,18 +496,6 @@ void FormData::encode(Encoder& encoder) const
     encoder.encodeBool(hasGeneratedFiles()); // For backward compatibility.
 
     encoder.encodeInt64(m_identifier);
-}
-
-void FormData::encode(KeyedEncoder& encoder) const
-{
-    encoder.encodeBool("alwaysStream", m_alwaysStream);
-    encoder.encodeBytes("boundary", reinterpret_cast<const uint8_t*>(m_boundary.data()), m_boundary.size());
-
-    encoder.encodeObjects("elements", m_elements.begin(), m_elements.end(), [](KeyedEncoder& encoder, const FormDataElement& element) {
-        encodeElement(encoder, element);
-    });
-
-    encoder.encodeInt64("identifier", m_identifier);
 }
 
 PassRefPtr<FormData> FormData::decode(Decoder& decoder)
@@ -629,27 +528,6 @@ PassRefPtr<FormData> FormData::decode(Decoder& decoder)
 
     if (!decoder.decodeInt64(data->m_identifier))
         return 0;
-
-    return data.release();
-}
-
-PassRefPtr<FormData> FormData::decode(KeyedDecoder& decoder)
-{
-    RefPtr<FormData> data = FormData::create();
-
-    if (!decoder.decodeBool("alwaysStream", data->m_alwaysStream))
-        return nullptr;
-
-    if (!decoder.decodeBytes("boundary", data->m_boundary))
-        return nullptr;
-
-    if (!decoder.decodeObjects("elements", data->m_elements, [](KeyedDecoder& decoder, FormDataElement& element) {
-        return decodeElement(decoder, element);
-    }))
-        return nullptr;
-
-    if (!decoder.decodeInt64("identifier", data->m_identifier))
-        return nullptr;
 
     return data.release();
 }

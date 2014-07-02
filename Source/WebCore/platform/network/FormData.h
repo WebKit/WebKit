@@ -30,8 +30,6 @@ namespace WebCore {
 
 class Document;
 class FormDataList;
-class KeyedDecoder;
-class KeyedEncoder;
 class TextEncoding;
 
 class FormDataElement {
@@ -130,9 +128,7 @@ public:
     PassRefPtr<FormData> deepCopy() const;
 
     void encode(Encoder&) const;
-    void encode(KeyedEncoder&) const;
     static PassRefPtr<FormData> decode(Decoder&);
-    static PassRefPtr<FormData> decode(KeyedDecoder&);
 
     void appendData(const void* data, size_t);
     void appendFile(const String& filePath, bool shouldGenerateFile = false);
