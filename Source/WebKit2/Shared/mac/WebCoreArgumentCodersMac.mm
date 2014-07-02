@@ -35,10 +35,43 @@
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
 
+#if USE(CFNETWORK)
+#import <CFNetwork/CFURLRequest.h>
+#endif
+
 using namespace WebCore;
 
 namespace IPC {
 
+#if USE(CFNETWORK)
+void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder, const ResourceRequest& resourceRequest)
+{
+    RetainPtr<CFURLRequestRef> requestToSerialize = resourceRequest.cfURLRequest(DoNotUpdateHTTPBody);
+
+    bool requestIsPresent = requestToSerialize;
+    encoder << requestIsPresent;
+
+    if (!requestIsPresent)
+        return;
+
+    // We don't send HTTP body over IPC for better performance.
+    // Also, it's not always possible to do, as streams can only be created in process that does networking.
+    RetainPtr<CFDataRef> requestHTTPBody = adoptCF(CFURLRequestCopyHTTPRequestBody(requestToSerialize.get()));
+    RetainPtr<CFReadStreamRef> requestHTTPBodyStream = adoptCF(CFURLRequestCopyHTTPRequestBodyStream(requestToSerialize.get()));
+    if (requestHTTPBody || requestHTTPBodyStream) {
+        CFMutableURLRequestRef mutableRequest = CFURLRequestCreateMutableCopy(0, requestToSerialize.get());
+        requestToSerialize = adoptCF(mutableRequest);
+        CFURLRequestSetHTTPRequestBody(mutableRequest, nil);
+        CFURLRequestSetHTTPRequestBodyStream(mutableRequest, nil);
+    }
+
+    RetainPtr<CFDictionaryRef> dictionary = adoptCF(WKCFURLRequestCreateSerializableRepresentation(requestToSerialize.get(), IPC::tokenNullTypeRef()));
+    IPC::encode(encoder, dictionary.get());
+
+    // The fallback array is part of CFURLRequest, but it is not encoded by WKCFURLRequestCreateSerializableRepresentation.
+    encoder << resourceRequest.responseContentDispositionEncodingFallbackArray();
+}
+#else
 void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder, const ResourceRequest& resourceRequest)
 {
     RetainPtr<NSURLRequest> requestToSerialize = resourceRequest.nsURLRequest(DoNotUpdateHTTPBody);
@@ -63,6 +96,7 @@ void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder
     // The fallback array is part of NSURLRequest, but it is not encoded by WKNSURLRequestCreateSerializableRepresentation.
     encoder << resourceRequest.responseContentDispositionEncodingFallbackArray();
 }
+#endif
 
 bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder& decoder, ResourceRequest& resourceRequest)
 {
@@ -79,11 +113,19 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder& decoder
     if (!IPC::decode(decoder, dictionary))
         return false;
 
+#if USE(CFNETWORK)
+    RetainPtr<CFURLRequestRef> cfURLRequest = adoptCF(WKCreateCFURLRequestFromSerializableRepresentation(dictionary.get(), IPC::tokenNullTypeRef()));
+    if (!cfURLRequest)
+        return false;
+
+    resourceRequest = ResourceRequest(cfURLRequest.get());
+#else
     RetainPtr<NSURLRequest> nsURLRequest = WKNSURLRequestFromSerializableRepresentation(dictionary.get(), IPC::tokenNullTypeRef());
     if (!nsURLRequest)
         return false;
 
     resourceRequest = ResourceRequest(nsURLRequest.get());
+#endif
     
     Vector<String> responseContentDispositionEncodingFallbackArray;
     if (!decoder.decode(responseContentDispositionEncodingFallbackArray))
