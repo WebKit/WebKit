@@ -182,6 +182,8 @@
 
     function extendedCSSToken(stream, state)
     {
+        const hexColorRegex = /#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b/g;
+
         if (state._urlTokenize) {
             // Call the link tokenizer instead.
             var style = state._urlTokenize(stream, state);
@@ -193,29 +195,32 @@
         var style = this._token(stream, state);
 
         if (style) {
-            if (style === "atom" && stream.current() === "url") {
-                // If the current text is "url" then we should expect the next string token to be a link.
-                state._expectLink = true;
-            } else if (state._expectLink && style === "atom") {
-                // We expected a string and got it. This is a link. Parse it the way we want it.
-                delete state._expectLink;
+            if (style === "atom") {
+                if (stream.current() === "url") {
+                    // If the current text is "url" then we should expect the next string token to be a link.
+                    state._expectLink = true;
+                } else if (state._expectLink) {
+                    // We expected a string and got it. This is a link. Parse it the way we want it.
+                    delete state._expectLink;
 
-                // This is a link, so setup the state to process it next.
-                state._urlTokenize = tokenizeCSSURLString;
-                state._urlBaseStyle = style;
+                    // This is a link, so setup the state to process it next.
+                    state._urlTokenize = tokenizeCSSURLString;
+                    state._urlBaseStyle = style;
 
-                // The url may or may not be quoted.
-                var quote = stream.current()[0];
-                state._urlQuoteCharacter = quote === "'" || quote === "\"" ? quote : ")";
-                state._unquotedURLString = state._urlQuoteCharacter === ")";
+                    // The url may or may not be quoted.
+                    var quote = stream.current()[0];
+                    state._urlQuoteCharacter = quote === "'" || quote === "\"" ? quote : ")";
+                    state._unquotedURLString = state._urlQuoteCharacter === ")";
 
-                // Rewind the steam to the start of this token.
-                stream.pos = startPosition;
+                    // Rewind the steam to the start of this token.
+                    stream.pos = startPosition;
 
-                // Eat the open quote of the string so the string style
-                // will be used for the quote character.
-                if (!state._unquotedURLString)
-                    stream.eat(state._urlQuoteCharacter);
+                    // Eat the open quote of the string so the string style
+                    // will be used for the quote character.
+                    if (!state._unquotedURLString)
+                        stream.eat(state._urlQuoteCharacter);
+                } else if (hexColorRegex.test(stream.current()))
+                    style = style + " hex-color";
             } else if (state._expectLink) {
                 // We expected a string and didn't get one. Cleanup.
                 delete state._expectLink;

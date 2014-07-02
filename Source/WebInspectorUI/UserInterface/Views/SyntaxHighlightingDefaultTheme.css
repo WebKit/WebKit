@@ -60,6 +60,7 @@
 }
 
 .cm-s-default .cm-number,
+.cm-s-default .cm-atom.cm-hex-color,
 .syntax-highlighted .css-number,
 .syntax-highlighted .javascript-number {
     color: rgb(28, 0, 207);

@@ -1,3 +1,16 @@
+2014-07-01  Jonathan Wells  <jonowells@apple.com>
+
+        Web Inspector: Hexadecimal color values in all CSS editors are purple when they should be blue
+        https://bugs.webkit.org/show_bug.cgi?id=133997
+
+        Reviewed by Joseph Pecoraro.
+
+        CodeMirror 4 removed the style for hex colors from the CSS tokenizer.
+        Feature has been added to CodeMirrorAdditions.js.
+
+        * UserInterface/Views/CodeMirrorAdditions.js: Added hex-color to style for a valid hexadecimal color.
+        * UserInterface/Views/SyntaxHighlightingDefaultTheme.css: Added selector for hexadecimal color.
+
 2014-06-26  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: Command-/ (slash) now auto-comments code via CodeMirror 4. Should remove as command to pause
