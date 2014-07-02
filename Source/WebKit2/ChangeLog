@@ -1,5 +1,20 @@
 2014-07-02  Anders Carlsson  <andersca@apple.com>
 
+        Begin ripping out the old session state code
+        https://bugs.webkit.org/show_bug.cgi?id=134556
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/WebBackForwardList.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/cf/WebBackForwardListCF.cpp: Removed.
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::WebPageProxy::sessionStateData): Deleted.
+        (WebKit::WebPageProxy::restoreFromSessionStateData): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2014-07-02  Anders Carlsson  <andersca@apple.com>
+
         Use legacy state coding directly in WKWebView
         https://bugs.webkit.org/show_bug.cgi?id=134553
 

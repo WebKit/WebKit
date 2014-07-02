@@ -72,13 +72,6 @@ public:
     PassRefPtr<API::Array> backListAsAPIArrayWithLimit(unsigned limit) const;
     PassRefPtr<API::Array> forwardListAsAPIArrayWithLimit(unsigned limit) const;
 
-#if USE(CF)
-    CFDictionaryRef createCFDictionaryRepresentation(std::function<bool (WebBackForwardListItem&)>) const;
-    bool restoreFromCFDictionaryRepresentation(CFDictionaryRef);
-    bool restoreFromV0CFDictionaryRepresentation(CFDictionaryRef);
-    bool restoreFromV1CFDictionaryRepresentation(CFDictionaryRef);
-#endif
-
     BackForwardListState backForwardListState(const std::function<bool (WebBackForwardListItem&)>&) const;
     void restoreFromState(BackForwardListState);
 
