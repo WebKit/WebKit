@@ -44,7 +44,7 @@ String standardUserAgentWithApplicationName(const String& applicationName, const
         CFRelease(override);
     }
 
-    NSString *webKitVersion = userVisibleWebKitBundleVersionFromFullVersion(fullWebKitVersionString);
+    NSString *webKitVersion = userAgentBundleVersionFromFullVersionString(fullWebKitVersionString);
     CFStringRef deviceName = wkGetDeviceName();
     CFStringRef osNameForUserAgent = wkGetOSNameForUserAgent();
     NSString *osMarketingVersionString = systemMarketingVersionForUserAgentString();

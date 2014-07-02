@@ -33,7 +33,7 @@ namespace WebCore {
 String standardUserAgentWithApplicationName(const String& applicationName, const String& webkitVersionString);
 
 String systemMarketingVersionForUserAgentString();
-String userVisibleWebKitBundleVersionFromFullVersion(const String&);
+String userAgentBundleVersionFromFullVersionString(const String&);
 
 }
 

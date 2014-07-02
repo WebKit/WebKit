@@ -1,5 +1,23 @@
 2014-07-01  Mark Rowe  <mrowe@apple.com>
 
+        Ensure that the WebKit bundle version in the user agent string continues to match the current format.
+        <https://webkit.org/b/134524> / <rdar://problem/17447771>
+
+        Reviewed by Simon Fraser.
+
+        * page/cocoa/UserAgent.h:
+        * page/cocoa/UserAgent.mm:
+        (WebCore::userVisibleWebKitBundleVersionFromFullVersion): Updated to take an NSString now that it's internal
+        to the file.
+        (WebCore::userAgentBundleVersionFromFullVersionString): Limit the bundle version included in the user agent
+        string to three components.
+        * page/ios/UserAgentIOS.mm:
+        (WebCore::standardUserAgentWithApplicationName): Update to call userAgentBundleVersionFromFullVersionString.
+        * page/mac/UserAgentMac.mm:
+        (WebCore::standardUserAgentWithApplicationName): Ditto.
+
+2014-07-01  Mark Rowe  <mrowe@apple.com>
+
         <https://webkit.org/b/134522> Remove duplication in code that prepares the user agent string on Mac and iOS
 
         Reviewed by Simon Fraser.

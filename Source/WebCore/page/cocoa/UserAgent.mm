@@ -38,10 +38,8 @@ String systemMarketingVersionForUserAgentString()
     return [systemMarketingVersion() stringByReplacingOccurrencesOfString:@"." withString:@"_"];
 }
 
-String userVisibleWebKitBundleVersionFromFullVersion(const String& fullWebKitVersionString)
+static NSString *userVisibleWebKitBundleVersionFromFullVersion(NSString *fullWebKitVersion)
 {
-    NSString *fullWebKitVersion = fullWebKitVersionString;
-
     // If the version is longer than 3 digits then the leading digits represent the version of the OS. Our user agent
     // string should not include the leading digits, so strip them off and report the rest as the version. <rdar://problem/4997547>
     NSRange nonDigitRange = [fullWebKitVersion rangeOfCharacterFromSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]];
@@ -50,6 +48,25 @@ String userVisibleWebKitBundleVersionFromFullVersion(const String& fullWebKitVer
     if (nonDigitRange.location != NSNotFound && nonDigitRange.location > 3)
         return [fullWebKitVersion substringFromIndex:nonDigitRange.location - 3];
     return fullWebKitVersion;
+}
+
+String userAgentBundleVersionFromFullVersionString(const String& fullWebKitVersion)
+{
+    // We include at most three components of the bundle version in the user agent string.
+    NSString *bundleVersion = userVisibleWebKitBundleVersionFromFullVersion(fullWebKitVersion);
+    NSScanner *scanner = [NSScanner scannerWithString:bundleVersion];
+    NSInteger periodCount = 0;
+    while (true) {
+        if (![scanner scanUpToString:@"." intoString:nullptr] || scanner.isAtEnd)
+            return bundleVersion;
+
+        if (++periodCount == 3)
+            return [bundleVersion substringToIndex:scanner.scanLocation];
+
+        ++scanner.scanLocation;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebCore
