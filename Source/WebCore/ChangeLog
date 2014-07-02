@@ -1,3 +1,15 @@
+2014-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Unstable headers should include webkitdomdefines-unstable.h
+        https://bugs.webkit.org/show_bug.cgi?id=134540
+
+        Reviewed by Martin Robinson.
+
+        Instead of the class header that can only be included from webkitdom.h.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (WriteData):
+
 2014-07-02  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         REGRESSION(r170008): [GTK] Layout Tests fast/forms/option-constructor-selected.html and fast/forms/select-live-pseudo-selectors.html crash.

@@ -1652,12 +1652,13 @@ EOF
 #ifndef $guard
 #define $guard
 
-#include <webkitdom/${className}.h>
+#ifdef WEBKIT_DOM_USE_UNSTABLE_API
+
+#include <webkitdom/webkitdomdefines-unstable.h>
 EOF
 
         print UNSTABLE $text;
         print UNSTABLE "\n";
-        print UNSTABLE "#ifdef WEBKIT_DOM_USE_UNSTABLE_API\n\n";
         print UNSTABLE "#if ${conditionalString}\n\n" if $conditionalString;
         print UNSTABLE "G_BEGIN_DECLS\n";
         print UNSTABLE "\n";
