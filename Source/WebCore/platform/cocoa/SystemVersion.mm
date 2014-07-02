@@ -23,12 +23,11 @@
  */
 
 #include "config.h"
-#include "SystemVersionMac.h"
+#include "SystemVersion.h"
 
 namespace WebCore {
 
-#if !PLATFORM(IOS)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 
 static NSString *createSystemMarketingVersion()
 {
@@ -63,22 +62,12 @@ static NSString *createSystemMarketingVersion()
     return [[NSString alloc] initWithFormat:@"%d", major];
 }
 
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#endif // PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 
 NSString *systemMarketingVersion()
 {
     static NSString *version = createSystemMarketingVersion();
     return version;
 }
-#else
-
-NSString *systemMarketingVersion()
-{
-    // FIXME: Needs implementation.
-    static NSString *version = @"";
-    return version;
-}
-
-#endif // !PLATFORM(IOS)
 
 }

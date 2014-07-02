@@ -1,3 +1,12 @@
+2014-07-02  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/134521> iOS should use shared code to determine the system marketing version
+
+        Reviewed by Simon Fraser.
+
+        * Shared/ios/ChildProcessIOS.mm: Update #import.
+        * Shared/mac/ChildProcessMac.mm: Ditto.
+
 2014-07-02  Anders Carlsson  <andersca@apple.com>
 
         Rip out more dead code

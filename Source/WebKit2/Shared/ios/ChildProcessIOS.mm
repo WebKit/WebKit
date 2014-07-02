@@ -32,7 +32,7 @@
 #import "SandboxInitializationParameters.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/FileSystem.h>
-#import <WebCore/SystemVersionMac.h>
+#import <WebCore/SystemVersion.h>
 #import <mach/mach.h>
 #import <mach/task.h>
 #import <pwd.h>

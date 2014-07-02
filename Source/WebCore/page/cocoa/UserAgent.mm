@@ -27,30 +27,15 @@
 #import "UserAgent.h"
 
 #import "SystemVersion.h"
-#import "WebCoreSystemInterface.h"
 
 namespace WebCore {
 
-String standardUserAgentWithApplicationName(const String& applicationName, const String& webkitVersionString)
+String systemMarketingVersionForUserAgentString()
 {
-    if (CFStringRef overrideUserAgent = wkGetUserAgent())
-        return overrideUserAgent;
-
-    // Check to see if there is a user agent override for all WebKit clients.
-    CFPropertyListRef override = CFPreferencesCopyAppValue(CFSTR("UserAgent"), CFSTR("com.apple.WebFoundation"));
-    if (override) {
-        if (CFGetTypeID(override) == CFStringGetTypeID())
-            return static_cast<NSString *>(CFBridgingRelease(override));
-        CFRelease(override);
-    }
-
-    NSString *webKitVersion = webkitVersionString;
-    CFStringRef deviceName = wkGetDeviceName();
-    CFStringRef osNameForUserAgent = wkGetOSNameForUserAgent();
-    NSString *osMarketingVersionString = systemMarketingVersionForUserAgentString();
-    if (applicationName.isEmpty())
-        return [NSString stringWithFormat:@"Mozilla/5.0 (%@; CPU %@ %@ like Mac OS X) AppleWebKit/%@ (KHTML, like Gecko)", deviceName, osNameForUserAgent, osMarketingVersionString, webKitVersion];
-    return [NSString stringWithFormat:@"Mozilla/5.0 (%@; CPU %@ %@ like Mac OS X) AppleWebKit/%@ (KHTML, like Gecko) %@", deviceName, osNameForUserAgent, osMarketingVersionString, webKitVersion, static_cast<NSString *>(applicationName)];
+    // Use underscores instead of dots because when we first added the Mac OS X version to the user agent string
+    // we were concerned about old DHTML libraries interpreting "4." as Netscape 4. That's no longer a concern for us
+    // but we're sticking with the underscores for compatibility with the format used by older versions of Safari.
+    return [systemMarketingVersion() stringByReplacingOccurrencesOfString:@"." withString:@"_"];
 }
 
-} // namespace WebCore.
+} // namespace WebCore

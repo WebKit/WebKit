@@ -26,8 +26,7 @@
 #import "config.h"
 #import "UserAgent.h"
 
-#import <WebCore/SystemVersionMac.h>
-#import <wtf/NeverDestroyed.h>
+#import "SystemVersion.h"
 
 namespace WebCore {
 
@@ -38,14 +37,6 @@ namespace WebCore {
 #else
 #error Unknown architecture
 #endif
-
-static NSString *systemMarketingVersionForUserAgentString()
-{
-    // Use underscores instead of dots because when we first added the Mac OS X version to the user agent string
-    // we were concerned about old DHTML libraries interpreting "4." as Netscape 4. That's no longer a concern for us
-    // but we're sticking with the underscores for compatibility with the format used by older versions of Safari.
-    return [systemMarketingVersion() stringByReplacingOccurrencesOfString:@"." withString:@"_"];
-}
 
 String standardUserAgentWithApplicationName(const String& applicationName, const String& webKitVersionString)
 {
