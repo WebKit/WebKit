@@ -1,3 +1,11 @@
+2014-07-02  Enrica Casucci  <enrica@apple.com>
+
+        iOS build fix after http://trac.webkit.org/changeset/170697.
+        
+        Unreviewed.
+
+        * wtf/Deque.h:
+
 2014-07-02  Dan Bernstein  <mitz@apple.com>
 
         Remove some code only needed for versions of Safari that are no longer supported

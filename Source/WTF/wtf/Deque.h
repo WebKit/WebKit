@@ -113,7 +113,7 @@ namespace WTF {
 #endif
     };
 
-    template<typename T, size_t inlineCapacity>
+    template<typename T, size_t inlineCapacity = 0>
     class DequeIteratorBase {
     protected:
         DequeIteratorBase();
@@ -149,7 +149,7 @@ namespace WTF {
 #endif
     };
 
-    template<typename T, size_t inlineCapacity>
+    template<typename T, size_t inlineCapacity = 0>
     class DequeIterator : public DequeIteratorBase<T, inlineCapacity> {
     private:
         typedef DequeIteratorBase<T, inlineCapacity> Base;
@@ -180,7 +180,7 @@ namespace WTF {
         // postfix -- intentionally omitted
     };
 
-    template<typename T, size_t inlineCapacity>
+    template<typename T, size_t inlineCapacity = 0>
     class DequeConstIterator : public DequeIteratorBase<T, inlineCapacity> {
     private:
         typedef DequeIteratorBase<T, inlineCapacity> Base;
