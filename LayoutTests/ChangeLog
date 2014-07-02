@@ -1,3 +1,21 @@
+2014-07-01  Frédéric Wang  <fred.wang@free.fr>
+
+        The OpenType MATH table is not read on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=133569
+
+        Reviewed by Chris Fleizach.
+
+        We update the references for some tests in LayoutTests/mathml/opentype/ and remove the failure from TestExpectations.
+        Other tests require a font with a MATH table to be installed on Mac bots and to be used by default (bug 133603).
+
+        * platform/mac-wk2/mathml/opentype/opentype-stretchy-expected.txt: Removed.
+        * platform/mac/TestExpectations: Enable mathml/opentype/opentype-stretchy-horizontal.html and mathml/opentype/opentype-stretchy.html.
+        * platform/mac/mathml/horizontal-LatinModern-expected.txt: Removed. This file should not have been in this directory.
+        * platform/mac/mathml/horizontal-LatinModern-munderover-expected.txt: Removed. This file should not have been in this directory.
+        * platform/mac/mathml/opentype-stretchy-horizontal-expected.txt: Removed. This file should not have been in this directory.
+        * platform/mac/mathml/opentype/opentype-stretchy-expected.txt: Add text reference.
+        * platform/mac/mathml/opentype/opentype-stretchy-horizontal-expected.txt: Add text reference.
+
 2014-07-01  Eric Carlson  <eric.carlson@apple.com>
 
         WebVTT percentage value can be a float

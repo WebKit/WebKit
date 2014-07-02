@@ -1,3 +1,18 @@
+2014-07-01  Frédéric Wang  <fred.wang@free.fr>
+
+        The OpenType MATH table is not read on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=133569
+
+        Reviewed by Chris Fleizach.
+
+        An incorrect tag format is used to load the OpenType MATH table on Mac.
+        This commit makes the format consistent with what is used for other tables on Mac.
+        This will allow to load the MATH table and to use it for the MathML rendering.
+
+        No new tests. platform/graphics/opentype already contains tests for the OpenType MATH support.
+
+        * platform/graphics/opentype/OpenTypeMathData.cpp:
+
 2014-07-01  Alex Christensen  <achristensen@webkit.org>
 
         [Win64] Unreviewed build fix.
