@@ -352,6 +352,8 @@ set(WebKit2_SOURCES
     UIProcess/WebVibrationProxy.cpp
     UIProcess/WebViewportAttributes.cpp
 
+    UIProcess/API/APISessionState.cpp
+
     UIProcess/API/C/WKApplicationCacheManager.cpp
     UIProcess/API/C/WKAuthenticationChallenge.cpp
     UIProcess/API/C/WKAuthenticationDecisionListener.cpp
@@ -390,6 +392,7 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKPreferences.cpp
     UIProcess/API/C/WKProtectionSpace.cpp
     UIProcess/API/C/WKResourceCacheManager.cpp
+    UIProcess/API/C/WKSessionStateRef.cpp
     UIProcess/API/C/WKTextChecker.cpp
     UIProcess/API/C/WKVibration.cpp
     UIProcess/API/C/WKViewportAttributes.cpp

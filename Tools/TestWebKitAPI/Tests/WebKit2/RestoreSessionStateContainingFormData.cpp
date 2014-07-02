@@ -28,7 +28,7 @@
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include "Test.h"
-#include <WebKit2/WKSessionStateRef.h>
+#include <WebKit/WKSessionStateRef.h>
 
 namespace TestWebKitAPI {
 
