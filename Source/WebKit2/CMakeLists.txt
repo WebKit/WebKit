@@ -198,7 +198,6 @@ set(WebKit2_SOURCES
     Shared/FontInfo.cpp
     Shared/ImmutableDictionary.cpp
     Shared/LayerTreeContext.cpp
-    Shared/LegacySessionState.cpp
     Shared/MutableDictionary.cpp
     Shared/NavigationActionData.cpp
     Shared/OriginAndDatabases.cpp

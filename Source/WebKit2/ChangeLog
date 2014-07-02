@@ -1,5 +1,11 @@
 2014-07-02  Csaba Osztrogonác  <ossy@webkit.org>
 
+        URTBF after r170725.
+
+        * CMakeLists.txt: Removed Shared/LegacySessionState.cpp.
+
+2014-07-02  Csaba Osztrogonác  <ossy@webkit.org>
+
         URTBF after r170719 for !CF platforms.
 
         * UIProcess/WebPageProxy.cpp:
