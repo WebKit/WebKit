@@ -5450,10 +5450,9 @@ bool WebGLRenderingContext::validateCompressedTexDimensions(const char* function
     case Extensions3D::COMPRESSED_RGB_PVRTC_2BPPV1_IMG:
     case Extensions3D::COMPRESSED_RGBA_PVRTC_4BPPV1_IMG:
     case Extensions3D::COMPRESSED_RGBA_PVRTC_2BPPV1_IMG:
-            return false;
         // Height and width must be powers of 2.
         if ((width & (width - 1)) || (height & (height - 1))) {
-            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "width or height invalid for level");
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "width or height invalid for level");
             return false;
         }
         return true;
