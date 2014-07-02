@@ -221,39 +221,33 @@ static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* hitTestR
                                                         paramFlags));
 }
 
-WebKitHitTestResult* webkitHitTestResultCreate(WebHitTestResult* hitTestResult)
+WebKitHitTestResult* webkitHitTestResultCreate(const WebHitTestResult::Data& hitTestResult)
 {
     unsigned context = WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT;
 
-    const String& linkURL = hitTestResult->absoluteLinkURL();
-    if (!linkURL.isEmpty())
+    if (!hitTestResult.absoluteLinkURL.isEmpty())
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK;
 
-    const String& imageURL = hitTestResult->absoluteImageURL();
-    if (!imageURL.isEmpty())
+    if (!hitTestResult.absoluteImageURL.isEmpty())
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE;
 
-    const String& mediaURL = hitTestResult->absoluteMediaURL();
-    if (!mediaURL.isEmpty())
+    if (!hitTestResult.absoluteMediaURL.isEmpty())
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA;
 
-    if (hitTestResult->isContentEditable())
+    if (hitTestResult.isContentEditable)
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE;
 
-    if (hitTestResult->isScrollbar())
+    if (hitTestResult.isScrollbar)
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_SCROLLBAR;
 
-    const String& linkTitle = hitTestResult->linkTitle();
-    const String& linkLabel = hitTestResult->linkLabel();
-
     return WEBKIT_HIT_TEST_RESULT(g_object_new(WEBKIT_TYPE_HIT_TEST_RESULT,
-                                               "context", context,
-                                               "link-uri", !linkURL.isEmpty() ? linkURL.utf8().data() : 0,
-                                               "image-uri", !imageURL.isEmpty() ? imageURL.utf8().data() : 0,
-                                               "media-uri", !mediaURL.isEmpty() ? mediaURL.utf8().data() : 0,
-                                               "link-title", !linkTitle.isEmpty() ? linkTitle.utf8().data() : 0,
-                                               "link-label", !linkLabel.isEmpty() ? linkLabel.utf8().data() : 0,
-                                               NULL));
+        "context", context,
+        "link-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK ? hitTestResult.absoluteLinkURL.utf8().data() : nullptr,
+        "image-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE ? hitTestResult.absoluteImageURL.utf8().data() : nullptr,
+        "media-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA ? hitTestResult.absoluteMediaURL.utf8().data() : nullptr,
+        "link-title", !hitTestResult.linkTitle.isEmpty() ? hitTestResult.linkTitle.utf8().data() : nullptr,
+        "link-label", !hitTestResult.linkLabel.isEmpty() ? hitTestResult.linkLabel.utf8().data() : nullptr,
+        nullptr));
 }
 
 static bool stringIsEqualToCString(const String& string, const CString& cString)
@@ -261,16 +255,16 @@ static bool stringIsEqualToCString(const String& string, const CString& cString)
     return ((string.isEmpty() && cString.isNull()) || (string.utf8() == cString));
 }
 
-bool webkitHitTestResultCompare(WebKitHitTestResult* hitTestResult, WebHitTestResult* webHitTestResult)
+bool webkitHitTestResultCompare(WebKitHitTestResult* hitTestResult, const WebHitTestResult::Data& webHitTestResult)
 {
     WebKitHitTestResultPrivate* priv = hitTestResult->priv;
-    return webHitTestResult->isContentEditable() == webkit_hit_test_result_context_is_editable(hitTestResult)
-        && webHitTestResult->isScrollbar() == webkit_hit_test_result_context_is_scrollbar(hitTestResult)
-        && stringIsEqualToCString(webHitTestResult->absoluteLinkURL(), priv->linkURI)
-        && stringIsEqualToCString(webHitTestResult->linkTitle(), priv->linkTitle)
-        && stringIsEqualToCString(webHitTestResult->linkLabel(), priv->linkLabel)
-        && stringIsEqualToCString(webHitTestResult->absoluteImageURL(), priv->imageURI)
-        && stringIsEqualToCString(webHitTestResult->absoluteMediaURL(), priv->mediaURI);
+    return webHitTestResult.isContentEditable == webkit_hit_test_result_context_is_editable(hitTestResult)
+        && webHitTestResult.isScrollbar == webkit_hit_test_result_context_is_scrollbar(hitTestResult)
+        && stringIsEqualToCString(webHitTestResult.absoluteLinkURL, priv->linkURI)
+        && stringIsEqualToCString(webHitTestResult.linkTitle, priv->linkTitle)
+        && stringIsEqualToCString(webHitTestResult.linkLabel, priv->linkLabel)
+        && stringIsEqualToCString(webHitTestResult.absoluteImageURL, priv->imageURI)
+        && stringIsEqualToCString(webHitTestResult.absoluteMediaURL, priv->mediaURI);
 }
 
 /**

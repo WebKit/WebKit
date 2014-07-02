@@ -521,6 +521,24 @@ webkit_geolocation_permission_request_get_type
 </SECTION>
 
 <SECTION>
+<FILE>WebKitNavigationAction</FILE>
+WebKitNavigationAction
+webkit_navigation_action_copy
+webkit_navigation_action_free
+webkit_navigation_action_get_navigation_type
+webkit_navigation_action_get_mouse_button
+webkit_navigation_action_get_modifiers
+webkit_navigation_action_get_request
+webkit_navigation_action_is_user_gesture
+
+<SUBSECTION Standard>
+WEBKIT_TYPE_NAVIGATION_ACTION
+
+<SUBSECTION Private>
+webkit_navigation_action_get_type
+</SECTION>
+
+<SECTION>
 <FILE>WebKitPolicyDecision</FILE>
 WebKitPolicyDecision
 webkit_policy_decision_download

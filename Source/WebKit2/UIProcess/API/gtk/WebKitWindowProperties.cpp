@@ -26,6 +26,7 @@
 #include "WebKitPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
 #include <WebCore/IntRect.h>
+#include <WebCore/WindowFeatures.h>
 #include <glib/gi18n-lib.h>
 
 using namespace WebKit;
@@ -374,54 +375,26 @@ void webkitWindowPropertiesSetFullscreen(WebKitWindowProperties* windowPropertie
     g_object_notify(G_OBJECT(windowProperties), "fullscreen");
 }
 
-void webkitWindowPropertiesUpdateFromWebWindowFeatures(WebKitWindowProperties* windowProperties, ImmutableDictionary* features)
+void webkitWindowPropertiesUpdateFromWebWindowFeatures(WebKitWindowProperties* windowProperties, const WindowFeatures& windowFeatures)
 {
     GdkRectangle geometry = windowProperties->priv->geometry;
-
-    API::Double* doubleValue = static_cast<API::Double*>(features->get("x"));
-    if (doubleValue)
-        geometry.x = doubleValue->value();
-
-    doubleValue = static_cast<API::Double*>(features->get("y"));
-    if (doubleValue)
-        geometry.y = doubleValue->value();
-
-    doubleValue = static_cast<API::Double*>(features->get("width"));
-    if (doubleValue)
-        geometry.width = doubleValue->value();
-
-    doubleValue = static_cast<API::Double*>(features->get("height"));
-    if (doubleValue)
-        geometry.height = doubleValue->value();
+    if (windowFeatures.xSet)
+        geometry.x = windowFeatures.x;
+    if (windowFeatures.ySet)
+        geometry.y = windowFeatures.y;
+    if (windowFeatures.widthSet)
+        geometry.width = windowFeatures.width;
+    if (windowFeatures.heightSet)
+        geometry.height = windowFeatures.height;
     webkitWindowPropertiesSetGeometry(windowProperties, &geometry);
 
-    API::Boolean* booleanValue = static_cast<API::Boolean*>(features->get("menuBarVisible"));
-    if (booleanValue)
-        webkitWindowPropertiesSetMenubarVisible(windowProperties, booleanValue->value());
-
-    booleanValue = static_cast<API::Boolean*>(features->get("statusBarVisible"));
-    if (booleanValue)
-        webkitWindowPropertiesSetStatusbarVisible(windowProperties, booleanValue->value());
-
-    booleanValue = static_cast<API::Boolean*>(features->get("toolBarVisible"));
-    if (booleanValue)
-        webkitWindowPropertiesSetToolbarVisible(windowProperties, booleanValue->value());
-
-    booleanValue = static_cast<API::Boolean*>(features->get("locationBarVisible"));
-    if (booleanValue)
-        webkitWindowPropertiesSetLocationbarVisible(windowProperties, booleanValue->value());
-
-    booleanValue = static_cast<API::Boolean*>(features->get("scrollbarsVisible"));
-    if (booleanValue)
-        webkitWindowPropertiesSetScrollbarsVisible(windowProperties, booleanValue->value());
-
-    booleanValue = static_cast<API::Boolean*>(features->get("resizable"));
-    if (booleanValue)
-        webkitWindowPropertiesSetResizable(windowProperties, booleanValue->value());
-
-    booleanValue = static_cast<API::Boolean*>(features->get("fullscreen"));
-    if (booleanValue)
-        webkitWindowPropertiesSetFullscreen(windowProperties, booleanValue->value());
+    webkitWindowPropertiesSetMenubarVisible(windowProperties, windowFeatures.menuBarVisible);
+    webkitWindowPropertiesSetStatusbarVisible(windowProperties, windowFeatures.statusBarVisible);
+    webkitWindowPropertiesSetToolbarVisible(windowProperties, windowFeatures.toolBarVisible);
+    webkitWindowPropertiesSetLocationbarVisible(windowProperties, windowFeatures.locationBarVisible);
+    webkitWindowPropertiesSetScrollbarsVisible(windowProperties, windowFeatures.scrollbarsVisible);
+    webkitWindowPropertiesSetResizable(windowProperties, windowFeatures.resizable);
+    webkitWindowPropertiesSetFullscreen(windowProperties, windowFeatures.fullscreen);
 }
 
 /**

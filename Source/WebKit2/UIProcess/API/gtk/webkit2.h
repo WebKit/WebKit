@@ -49,6 +49,7 @@
 #include <webkit2/WebKitHitTestResult.h>
 #include <webkit2/WebKitJavascriptResult.h>
 #include <webkit2/WebKitMimeInfo.h>
+#include <webkit2/WebKitNavigationAction.h>
 #include <webkit2/WebKitNavigationPolicyDecision.h>
 #include <webkit2/WebKitPermissionRequest.h>
 #include <webkit2/WebKitPlugin.h>

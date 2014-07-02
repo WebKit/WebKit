@@ -27,6 +27,7 @@
 #ifndef WebKitWebViewPrivate_h
 #define WebKitWebViewPrivate_h
 
+#include "WebHitTestResult.h"
 #include "WebImage.h"
 #include "WebKitWebView.h"
 #include <wtf/text/CString.h>
@@ -37,7 +38,7 @@ void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView*, const char* failingURI
 void webkitWebViewSetEstimatedLoadProgress(WebKitWebView*, double estimatedLoadProgress);
 void webkitWebViewSetTitle(WebKitWebView*, const CString&);
 void webkitWebViewUpdateURI(WebKitWebView*);
-WebKit::WebPageProxy* webkitWebViewCreateNewPage(WebKitWebView*, WebKit::ImmutableDictionary* windowFeatures);
+WebKit::WebPageProxy* webkitWebViewCreateNewPage(WebKitWebView*, const WebCore::WindowFeatures&, WebKitNavigationAction*);
 void webkitWebViewReadyToShowPage(WebKitWebView*);
 void webkitWebViewRunAsModal(WebKitWebView*);
 void webkitWebViewClosePage(WebKitWebView*);
@@ -46,7 +47,7 @@ bool webkitWebViewRunJavaScriptConfirm(WebKitWebView*, const CString& message);
 CString webkitWebViewRunJavaScriptPrompt(WebKitWebView*, const CString& message, const CString& defaultText);
 void webkitWebViewMakePermissionRequest(WebKitWebView*, WebKitPermissionRequest*);
 void webkitWebViewMakePolicyDecision(WebKitWebView*, WebKitPolicyDecisionType, WebKitPolicyDecision*);
-void webkitWebViewMouseTargetChanged(WebKitWebView*, WebKit::WebHitTestResult*, unsigned modifiers);
+void webkitWebViewMouseTargetChanged(WebKitWebView*, const WebKit::WebHitTestResult::Data&, unsigned modifiers);
 void webkitWebViewPrintFrame(WebKitWebView*, WebKit::WebFrameProxy*);
 void webkitWebViewResourceLoadStarted(WebKitWebView*, WebKit::WebFrameProxy*, uint64_t resourceIdentifier, WebKitURIRequest*);
 void webkitWebViewRunFileChooserRequest(WebKitWebView*, WebKitFileChooserRequest*);

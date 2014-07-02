@@ -217,9 +217,9 @@ static gboolean webkitWebViewLoadFail(WebKitWebView* webView, WebKitLoadEvent, c
     return TRUE;
 }
 
-static GtkWidget* webkitWebViewCreate(WebKitWebView*)
+static GtkWidget* webkitWebViewCreate(WebKitWebView*, WebKitNavigationAction*)
 {
-    return 0;
+    return nullptr;
 }
 
 static GtkWidget* webkitWebViewCreateJavaScriptDialog(WebKitWebView* webView, GtkMessageType type, GtkButtonsType buttons, int defaultResponse, const char* message)
@@ -889,14 +889,18 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     /**
      * WebKitWebView::create:
      * @web_view: the #WebKitWebView on which the signal is emitted
+     * @navigation_action: a #WebKitNavigationAction
      *
      * Emitted when the creation of a new #WebKitWebView is requested.
      * If this signal is handled the signal handler should return the
      * newly created #WebKitWebView.
      *
+     * The #WebKitNavigationAction parameter contains information about the
+     * navigation action that triggered this signal.
+     *
      * When using %WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES
      * process model, the new #WebKitWebView should be related to
-     * @web_view to share the same web process, see webkit_web_view_new_with_related_view
+     * @web_view to share the same web process, see webkit_web_view_new_with_related_view()
      * for more details.
      *
      * The new #WebKitWebView should not be displayed to the user
@@ -905,14 +909,15 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * Returns: (transfer full): a newly allocated #WebKitWebView widget
      *    or %NULL to propagate the event further.
      */
-    signals[CREATE] =
-        g_signal_new("create",
-                     G_TYPE_FROM_CLASS(webViewClass),
-                     G_SIGNAL_RUN_LAST,
-                     G_STRUCT_OFFSET(WebKitWebViewClass, create),
-                     webkitWebViewAccumulatorObjectHandled, 0,
-                     webkit_marshal_OBJECT__VOID,
-                     GTK_TYPE_WIDGET, 0);
+    signals[CREATE] = g_signal_new(
+        "create",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, create),
+        webkitWebViewAccumulatorObjectHandled, 0,
+        g_cclosure_marshal_generic,
+        GTK_TYPE_WIDGET, 1,
+        WEBKIT_TYPE_NAVIGATION_ACTION | G_SIGNAL_TYPE_STATIC_SCOPE);
 
     /**
      * WebKitWebView::ready-to-show:
@@ -1601,10 +1606,10 @@ void webkitWebViewUpdateURI(WebKitWebView* webView)
     g_object_notify(G_OBJECT(webView), "uri");
 }
 
-WebPageProxy* webkitWebViewCreateNewPage(WebKitWebView* webView, ImmutableDictionary* windowFeatures)
+WebPageProxy* webkitWebViewCreateNewPage(WebKitWebView* webView, const WindowFeatures& windowFeatures, WebKitNavigationAction* navigationAction)
 {
     WebKitWebView* newWebView;
-    g_signal_emit(webView, signals[CREATE], 0, &newWebView);
+    g_signal_emit(webView, signals[CREATE], 0, navigationAction, &newWebView);
     if (!newWebView)
         return 0;
 
@@ -1674,9 +1679,9 @@ void webkitWebViewMakePermissionRequest(WebKitWebView* webView, WebKitPermission
     g_signal_emit(webView, signals[PERMISSION_REQUEST], 0, request, &returnValue);
 }
 
-void webkitWebViewMouseTargetChanged(WebKitWebView* webView, WebHitTestResult* hitTestResult, unsigned modifiers)
+void webkitWebViewMouseTargetChanged(WebKitWebView* webView, const WebHitTestResult::Data& hitTestResult, unsigned modifiers)
 {
-    webkitWebViewBaseSetTooltipArea(WEBKIT_WEB_VIEW_BASE(webView), hitTestResult->elementBoundingBox());
+    webkitWebViewBaseSetTooltipArea(WEBKIT_WEB_VIEW_BASE(webView), hitTestResult.elementBoundingBox);
 
     WebKitWebViewPrivate* priv = webView->priv;
     if (priv->mouseTargetHitTestResult
@@ -1828,7 +1833,19 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, API::Array* propos
     if (webHitTestResult->isContentEditable())
         webkitWebViewCreateAndAppendInputMethodsMenuItem(webView, contextMenu.get());
 
-    GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(webHitTestResult));
+    // FIXME: we should use a custom ContextMenuClient at some point, that will receive a
+    // const WebHitTestResult::Data& that we can use directly here.
+    WebHitTestResult::Data data;
+    data.absoluteImageURL = webHitTestResult->absoluteImageURL();
+    data.absoluteLinkURL = webHitTestResult->absoluteLinkURL();
+    data.absoluteMediaURL = webHitTestResult->absoluteMediaURL();
+    data.linkLabel = webHitTestResult->linkLabel();
+    data.linkTitle = webHitTestResult->linkTitle();
+    data.isContentEditable = webHitTestResult->isContentEditable();
+    data.elementBoundingBox = webHitTestResult->elementBoundingBox();
+    data.isScrollbar = webHitTestResult->isScrollbar();
+
+    GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(data));
     GUniquePtr<GdkEvent> contextMenuEvent(webkitWebViewBaseTakeContextMenuEvent(webViewBase));
 
     gboolean returnValue;

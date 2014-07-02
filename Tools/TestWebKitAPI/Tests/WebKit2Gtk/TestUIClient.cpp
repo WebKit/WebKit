@@ -117,9 +117,9 @@ public:
         test->m_windowPropertiesChanged.add(g_param_spec_get_name(paramSpec));
     }
 
-    static GtkWidget* viewCreateCallback(WebKitWebView* webView, UIClientTest* test)
+    static GtkWidget* viewCreateCallback(WebKitWebView* webView, WebKitNavigationAction* navigation, UIClientTest* test)
     {
-        return test->viewCreate(webView);
+        return test->viewCreate(webView, navigation);
     }
 
     static void viewReadyToShowCallback(WebKitWebView* webView, UIClientTest* test)
@@ -240,9 +240,10 @@ public:
         return m_mouseTargetHitTestResult.get();
     }
 
-    virtual GtkWidget* viewCreate(WebKitWebView* webView)
+    virtual GtkWidget* viewCreate(WebKitWebView* webView, WebKitNavigationAction* navigation)
     {
         g_assert(webView == m_webView);
+        g_assert(navigation);
 
         GtkWidget* newWebView = webkit_web_view_new_with_context(webkit_web_view_get_context(webView));
         g_object_ref_sink(newWebView);
@@ -305,6 +306,91 @@ static void testWebViewCreateReadyClose(UIClientTest* test, gconstpointer)
     g_assert_cmpint(events[2], ==, UIClientTest::Close);
 }
 
+class CreateNavigationDataTest: public UIClientTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(CreateNavigationDataTest);
+
+    CreateNavigationDataTest()
+        : m_navigation(nullptr)
+    {
+    }
+
+    ~CreateNavigationDataTest()
+    {
+        clearNavigation();
+    }
+
+    void clearNavigation()
+    {
+        if (m_navigation)
+            webkit_navigation_action_free(m_navigation);
+        m_navigation = nullptr;
+    }
+
+    GtkWidget* viewCreate(WebKitWebView* webView, WebKitNavigationAction* navigation)
+    {
+        g_assert(navigation);
+        g_assert(!m_navigation);
+        m_navigation = webkit_navigation_action_copy(navigation);
+        g_main_loop_quit(m_mainLoop);
+        return nullptr;
+    }
+
+    void loadHTML(const char* html)
+    {
+        clearNavigation();
+        WebViewTest::loadHtml(html, nullptr);
+    }
+
+    void clickAndWaitUntilMainLoopFinishes(int x, int y)
+    {
+        clearNavigation();
+        clickMouseButton(x, y, 1);
+        g_main_loop_run(m_mainLoop);
+    }
+
+    WebKitNavigationAction* m_navigation;
+};
+
+static void testWebViewCreateNavigationData(CreateNavigationDataTest* test, gconstpointer)
+{
+    test->showInWindowAndWaitUntilMapped();
+
+    test->loadHTML(
+        "<html><body>"
+        "<input style=\"position:absolute; left:0; top:0; margin:0; padding:0\" type=\"button\" value=\"click to show a popup\" onclick=\"window.open('data:foo');\"/>"
+        "<a style=\"position:absolute; left:20; top:20;\" href=\"data:bar\" target=\"_blank\">popup link</a>"
+        "</body></html>");
+    test->waitUntilLoadFinished();
+
+    // Click on a button.
+    test->clickAndWaitUntilMainLoopFinishes(5, 5);
+    g_assert_cmpstr(webkit_uri_request_get_uri(webkit_navigation_action_get_request(test->m_navigation)), ==, "data:foo");
+    g_assert_cmpuint(webkit_navigation_action_get_navigation_type(test->m_navigation), ==, WEBKIT_NAVIGATION_TYPE_OTHER);
+    // FIXME: This should be button 1.
+    g_assert_cmpuint(webkit_navigation_action_get_mouse_button(test->m_navigation), ==, 0);
+    g_assert_cmpuint(webkit_navigation_action_get_modifiers(test->m_navigation), ==, 0);
+    g_assert(webkit_navigation_action_is_user_gesture(test->m_navigation));
+
+    // Click on a link.
+    test->clickAndWaitUntilMainLoopFinishes(21, 21);
+    g_assert_cmpstr(webkit_uri_request_get_uri(webkit_navigation_action_get_request(test->m_navigation)), ==, "data:bar");
+    g_assert_cmpuint(webkit_navigation_action_get_navigation_type(test->m_navigation), ==, WEBKIT_NAVIGATION_TYPE_LINK_CLICKED);
+    g_assert_cmpuint(webkit_navigation_action_get_mouse_button(test->m_navigation), ==, 1);
+    g_assert_cmpuint(webkit_navigation_action_get_modifiers(test->m_navigation), ==, 0);
+    g_assert(webkit_navigation_action_is_user_gesture(test->m_navigation));
+
+    // No user interaction.
+    test->loadHTML("<html><body onLoad=\"window.open();\"></html>");
+    test->waitUntilMainLoopFinishes();
+
+    g_assert_cmpstr(webkit_uri_request_get_uri(webkit_navigation_action_get_request(test->m_navigation)), ==, "");
+    g_assert_cmpuint(webkit_navigation_action_get_navigation_type(test->m_navigation), ==, WEBKIT_NAVIGATION_TYPE_OTHER);
+    g_assert_cmpuint(webkit_navigation_action_get_mouse_button(test->m_navigation), ==, 0);
+    g_assert_cmpuint(webkit_navigation_action_get_modifiers(test->m_navigation), ==, 0);
+    g_assert(!webkit_navigation_action_is_user_gesture(test->m_navigation));
+}
+
 static gboolean checkMimeTypeForFilter(GtkFileFilter* filter, const gchar* mimeType)
 {
     GtkFileFilterInfo filterInfo;
@@ -323,11 +409,11 @@ public:
         test->m_webViewEvents.append(RunAsModal);
     }
 
-    GtkWidget* viewCreate(WebKitWebView* webView)
+    GtkWidget* viewCreate(WebKitWebView* webView, WebKitNavigationAction* navigation)
     {
         g_assert(webView == m_webView);
 
-        GtkWidget* newWebView = UIClientTest::viewCreate(webView);
+        GtkWidget* newWebView = UIClientTest::viewCreate(webView, navigation);
         g_signal_connect(newWebView, "run-as-modal", G_CALLBACK(dialogRunAsModalCallback), this);
         return newWebView;
     }
@@ -665,6 +751,7 @@ static void testWebViewFileChooserRequest(FileChooserTest* test, gconstpointer)
 void beforeAll()
 {
     UIClientTest::add("WebKitWebView", "create-ready-close", testWebViewCreateReadyClose);
+    CreateNavigationDataTest::add("WebKitWebView", "create-navigation-data", testWebViewCreateNavigationData);
     ModalDialogsTest::add("WebKitWebView", "allow-modal-dialogs", testWebViewAllowModalDialogs);
     ModalDialogsTest::add("WebKitWebView", "disallow-modal-dialogs", testWebViewDisallowModalDialogs);
     UIClientTest::add("WebKitWebView", "javascript-dialogs", testWebViewJavaScriptDialogs);

@@ -194,7 +194,7 @@ class CloseAfterPrintTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(CloseAfterPrintTest);
 
-    static GtkWidget* webViewCreate(WebKitWebView* webView, CloseAfterPrintTest* test)
+    static GtkWidget* webViewCreate(WebKitWebView* webView, WebKitNavigationAction*, CloseAfterPrintTest* test)
     {
         return test->createWebView();
     }

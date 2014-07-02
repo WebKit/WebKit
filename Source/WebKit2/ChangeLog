@@ -1,3 +1,89 @@
+2014-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKitWebView::create should receive information about the navigation action
+        https://bugs.webkit.org/show_bug.cgi?id=133680
+
+        Reviewed by Martin Robinson.
+
+        Add WebKitNavigationAction boxed type representing a navigation
+        action to be passed as parameter of WebKitWebView::create
+        signal. In the future it could be also for the
+        WebKitNavigationPolicyDecision class. The class contains
+        information about a navigation action like the navigation type,
+        the request, the mouse button and key modifiers and whether it was
+        started by a user gesture. This information is needed to be able
+        to implement a proper popup blocker. Since all that information is
+        not provided by the C API, we have switched the UI client to use a
+        custom client derived from API::UIClient. This also avoids a lot
+        of toAPI -> toImpl unneeded conversions.
+
+        * PlatformGTK.cmake: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitHitTestResult.cpp:
+        (webkitHitTestResultCreate): Use a WebHitTestResult::Data const
+        reference instead of a pointer to a WebHitTestResult.
+        (webkitHitTestResultCompare): Ditto.
+        * UIProcess/API/gtk/WebKitHitTestResultPrivate.h:
+        * UIProcess/API/gtk/WebKitNavigationAction.cpp: Added.
+        (webkitNavigationActionCreate): Create a WebKitNavigationAction
+        for the given ResourceRequest and NavigationActionData.
+        (webkit_navigation_action_copy):
+        (webkit_navigation_action_free):
+        (webkit_navigation_action_get_navigation_type):
+        (webkit_navigation_action_get_mouse_button):
+        (webkit_navigation_action_get_modifiers):
+        (webkit_navigation_action_get_request):
+        (webkit_navigation_action_is_user_gesture):
+        * UIProcess/API/gtk/WebKitNavigationAction.h: Added.
+        * UIProcess/API/gtk/WebKitNavigationActionPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecision.h:
+        * UIProcess/API/gtk/WebKitPrivate.cpp:
+        (toGdkModifiers):
+        (toWebKitNavigationType):
+        (toWebKitMouseButton):
+        * UIProcess/API/gtk/WebKitPrivate.h:
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        (UIClient::UIClient): Implement the UIClient using a custom class.
+        (attachUIClientToView): Set the UIClient directly to the WebPageProxy.
+        (createNewPage): Deleted.
+        (showPage): Deleted.
+        (closePage): Deleted.
+        (runJavaScriptAlert): Deleted.
+        (runJavaScriptConfirm): Deleted.
+        (runJavaScriptPrompt): Deleted.
+        (toolbarsAreVisible): Deleted.
+        (setToolbarsAreVisible): Deleted.
+        (menuBarIsVisible): Deleted.
+        (setMenuBarIsVisible): Deleted.
+        (statusBarIsVisible): Deleted.
+        (setStatusBarIsVisible): Deleted.
+        (isResizable): Deleted.
+        (setIsResizable): Deleted.
+        (getWindowFrame): Deleted.
+        (setWindowFrame): Deleted.
+        (mouseDidMoveOverElement): Deleted.
+        (printFrame): Deleted.
+        (runOpenPanel): Deleted.
+        (decidePolicyForGeolocationPermissionRequest): Deleted.
+        (runModal): Deleted.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewCreate): Add WebKitNavigationAction parameter.
+        (webkit_web_view_class_init): Add WebKitNavigationAction paramter
+        to CREATE signal.
+        (webkitWebViewCreateNewPage): Add WebKitNavigationAction parameter
+        and pass it to the signal callbacks.
+        (webkitWebViewMouseTargetChanged): Use a WebHitTestResult::Data
+        const reference.
+        (webkitWebViewPopulateContextMenu): Ditto.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/WebKitWindowProperties.cpp:
+        (webkitWindowPropertiesUpdateFromWebWindowFeatures): Use a
+        WebCore::WindowFeatures const reference.
+        * UIProcess/API/gtk/WebKitWindowPropertiesPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new section.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/webkit2.h: Include WebKitNavigationAction.h.
+
 2014-07-01  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Fix occurrence of two cursors on WK2 EFL.

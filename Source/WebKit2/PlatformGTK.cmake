@@ -162,6 +162,9 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitMimeInfo.cpp
     UIProcess/API/gtk/WebKitMimeInfo.h
     UIProcess/API/gtk/WebKitMimeInfoPrivate.h
+    UIProcess/API/gtk/WebKitNavigationAction.cpp
+    UIProcess/API/gtk/WebKitNavigationAction.h
+    UIProcess/API/gtk/WebKitNavigationActionPrivate.h
     UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp
     UIProcess/API/gtk/WebKitNavigationPolicyDecision.h
     UIProcess/API/gtk/WebKitNavigationPolicyDecisionPrivate.h
@@ -337,6 +340,7 @@ set(WebKit2GTK_INSTALLED_HEADERS
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitHitTestResult.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitJavascriptResult.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitMimeInfo.h
+    ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitNavigationAction.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitNavigationPolicyDecision.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitPermissionRequest.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitPlugin.h

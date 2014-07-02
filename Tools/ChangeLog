@@ -1,5 +1,25 @@
 2014-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] WebKitWebView::create should receive information about the navigation action
+        https://bugs.webkit.org/show_bug.cgi?id=133680
+
+        Reviewed by Martin Robinson.
+
+        Add unit test to check the WebKitNavigationAction passed to
+        WebKitWebView::create callback.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (webViewCreate): Add WebKitNavigationAction parameter.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestMultiprocess.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestPrinting.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestUIClient.cpp:
+        (testWebViewCreateNavigationData):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitPolicyClient.cpp:
+        (createCallback):
+
+2014-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Do not add forward declaration of class struct for interfaces
         https://bugs.webkit.org/show_bug.cgi?id=134297
 

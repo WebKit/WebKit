@@ -26,6 +26,7 @@
 #ifndef WebKitPrivate_h
 #define WebKitPrivate_h
 
+#include "WebKitNavigationAction.h"
 #include <WebKit/WKAPICast.h>
 #include <WebKit/WKDownload.h>
 #include <WebKit/WKFindOptions.h>
@@ -115,6 +116,9 @@ GType type_name##_get_type(void) \
 
 unsigned wkEventModifiersToGdkModifiers(WKEventModifiers);
 unsigned wkEventMouseButtonToWebKitMouseButton(WKEventMouseButton);
+unsigned toGdkModifiers(WebKit::WebEvent::Modifiers);
+WebKitNavigationType toWebKitNavigationType(WebCore::NavigationType);
+unsigned toWebKitMouseButton(WebKit::WebMouseEvent::Button);
 unsigned toWebKitError(unsigned webCoreError);
 unsigned toWebCoreError(unsigned webKitError);
 

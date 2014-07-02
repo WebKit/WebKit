@@ -38,6 +38,7 @@
 #include <webkit2/WebKitForwardDeclarations.h>
 #include <webkit2/WebKitHitTestResult.h>
 #include <webkit2/WebKitJavascriptResult.h>
+#include <webkit2/WebKitNavigationAction.h>
 #include <webkit2/WebKitPermissionRequest.h>
 #include <webkit2/WebKitPolicyDecision.h>
 #include <webkit2/WebKitScriptDialog.h>
@@ -194,7 +195,8 @@ struct _WebKitWebViewClass {
                                                 const gchar                 *failing_uri,
                                                 GError                      *error);
 
-    GtkWidget *(* create)                      (WebKitWebView               *web_view);
+    GtkWidget *(* create)                      (WebKitWebView               *web_view,
+                                                WebKitNavigationAction      *navigation_action);
     void       (* ready_to_show)               (WebKitWebView               *web_view);
     void       (* run_as_modal)                (WebKitWebView               *web_view);
     void       (* close)                       (WebKitWebView               *web_view);

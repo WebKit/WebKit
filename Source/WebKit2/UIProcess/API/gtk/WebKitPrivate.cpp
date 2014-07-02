@@ -21,6 +21,7 @@
 #include "WebKitPrivate.h"
 
 #include "ErrorsGtk.h"
+#include "WebEvent.h"
 #include "WebKitError.h"
 #include <gdk/gdk.h>
 
@@ -36,6 +37,57 @@ unsigned wkEventModifiersToGdkModifiers(WKEventModifiers wkModifiers)
     if (wkModifiers & kWKEventModifiersMetaKey)
         modifiers |= GDK_META_MASK;
     return modifiers;
+}
+
+unsigned toGdkModifiers(WebKit::WebEvent::Modifiers wkModifiers)
+{
+    unsigned modifiers = 0;
+    if (wkModifiers & WebKit::WebEvent::Modifiers::ShiftKey)
+        modifiers |= GDK_SHIFT_MASK;
+    if (wkModifiers & WebKit::WebEvent::Modifiers::ControlKey)
+        modifiers |= GDK_CONTROL_MASK;
+    if (wkModifiers & WebKit::WebEvent::Modifiers::AltKey)
+        modifiers |= GDK_MOD1_MASK;
+    if (wkModifiers & WebKit::WebEvent::Modifiers::MetaKey)
+        modifiers |= GDK_META_MASK;
+    return modifiers;
+}
+
+WebKitNavigationType toWebKitNavigationType(WebCore::NavigationType type)
+{
+    switch (type) {
+    case WebCore::NavigationType::NavigationTypeLinkClicked:
+        return WEBKIT_NAVIGATION_TYPE_LINK_CLICKED;
+    case WebCore::NavigationType::NavigationTypeFormSubmitted:
+        return WEBKIT_NAVIGATION_TYPE_FORM_SUBMITTED;
+    case WebCore::NavigationType::NavigationTypeBackForward:
+        return WEBKIT_NAVIGATION_TYPE_BACK_FORWARD;
+    case WebCore::NavigationType::NavigationTypeReload:
+        return WEBKIT_NAVIGATION_TYPE_RELOAD;
+    case WebCore::NavigationType::NavigationTypeFormResubmitted:
+        return WEBKIT_NAVIGATION_TYPE_FORM_RESUBMITTED;
+    case WebCore::NavigationType::NavigationTypeOther:
+        return WEBKIT_NAVIGATION_TYPE_OTHER;
+    default:
+        ASSERT_NOT_REACHED();
+        return WEBKIT_NAVIGATION_TYPE_OTHER;
+    }
+}
+
+unsigned toWebKitMouseButton(WebKit::WebMouseEvent::Button button)
+{
+    switch (button) {
+    case WebKit::WebMouseEvent::Button::NoButton:
+        return 0;
+    case WebKit::WebMouseEvent::Button::LeftButton:
+        return 1;
+    case WebKit::WebMouseEvent::Button::MiddleButton:
+        return 2;
+    case WebKit::WebMouseEvent::Button::RightButton:
+        return 3;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 unsigned wkEventMouseButtonToWebKitMouseButton(WKEventMouseButton wkButton)

@@ -138,7 +138,7 @@ public:
         Close
     };
 
-    static GtkWidget* viewCreateCallback(WebKitWebView* webView, UIClientMultiprocessTest* test)
+    static GtkWidget* viewCreateCallback(WebKitWebView* webView, WebKitNavigationAction*, UIClientMultiprocessTest* test)
     {
         return test->viewCreate(webView);
     }

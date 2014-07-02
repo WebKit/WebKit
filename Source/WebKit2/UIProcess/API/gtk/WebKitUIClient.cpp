@@ -20,9 +20,12 @@
 #include "config.h"
 #include "WebKitUIClient.h"
 
+#include "APIUIClient.h"
 #include "WebKitFileChooserRequestPrivate.h"
 #include "WebKitGeolocationPermissionRequestPrivate.h"
+#include "WebKitNavigationActionPrivate.h"
 #include "WebKitPrivate.h"
+#include "WebKitURIRequestPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
@@ -32,187 +35,147 @@
 
 using namespace WebKit;
 
-static WKPageRef createNewPage(WKPageRef, WKURLRequestRef, WKDictionaryRef wkWindowFeatures, WKEventModifiers, WKEventMouseButton, const void* clientInfo)
-{
-    return static_cast<WKPageRef>(toAPI(webkitWebViewCreateNewPage(WEBKIT_WEB_VIEW(clientInfo), toImpl(wkWindowFeatures))));
-}
-
-static void showPage(WKPageRef, const void* clientInfo)
-{
-    webkitWebViewReadyToShowPage(WEBKIT_WEB_VIEW(clientInfo));
-}
-
-static void closePage(WKPageRef, const void* clientInfo)
-{
-    webkitWebViewClosePage(WEBKIT_WEB_VIEW(clientInfo));
-}
-
-static void runJavaScriptAlert(WKPageRef, WKStringRef message, WKFrameRef, const void* clientInfo)
-{
-    webkitWebViewRunJavaScriptAlert(WEBKIT_WEB_VIEW(clientInfo), toImpl(message)->string().utf8());
-}
-
-static bool runJavaScriptConfirm(WKPageRef, WKStringRef message, WKFrameRef, const void* clientInfo)
-{
-    return webkitWebViewRunJavaScriptConfirm(WEBKIT_WEB_VIEW(clientInfo), toImpl(message)->string().utf8());
-}
-
-static WKStringRef runJavaScriptPrompt(WKPageRef, WKStringRef message, WKStringRef defaultValue, WKFrameRef, const void* clientInfo)
-{
-    CString result = webkitWebViewRunJavaScriptPrompt(WEBKIT_WEB_VIEW(clientInfo), toImpl(message)->string().utf8(),
-                                                      toImpl(defaultValue)->string().utf8());
-    return WKStringCreateWithUTF8CString(result.data());
-}
-
-static bool toolbarsAreVisible(WKPageRef, const void* clientInfo)
-{
-    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(clientInfo));
-    return webkit_window_properties_get_toolbar_visible(windowProperties);
-}
-
-static void setToolbarsAreVisible(WKPageRef, bool toolbarsVisible, const void* clientInfo)
-{
-    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(clientInfo));
-    webkitWindowPropertiesSetToolbarVisible(windowProperties, toolbarsVisible);
-}
-
-static bool menuBarIsVisible(WKPageRef, const void* clientInfo)
-{
-    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(clientInfo));
-    return webkit_window_properties_get_menubar_visible(windowProperties);
-}
-
-static void setMenuBarIsVisible(WKPageRef, bool menuBarVisible, const void* clientInfo)
-{
-    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(clientInfo));
-    webkitWindowPropertiesSetMenubarVisible(windowProperties, menuBarVisible);
-}
-
-static bool statusBarIsVisible(WKPageRef, const void* clientInfo)
-{
-    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(clientInfo));
-    return webkit_window_properties_get_statusbar_visible(windowProperties);
-}
-
-static void setStatusBarIsVisible(WKPageRef, bool statusBarVisible, const void* clientInfo)
-{
-    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(clientInfo));
-    webkitWindowPropertiesSetStatusbarVisible(windowProperties, statusBarVisible);
-}
-
-static bool isResizable(WKPageRef, const void* clientInfo)
-{
-    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(clientInfo));
-    return webkit_window_properties_get_resizable(windowProperties);
-}
-
-static void setIsResizable(WKPageRef, bool resizable, const void* clientInfo)
-{
-    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(clientInfo));
-    webkitWindowPropertiesSetResizable(windowProperties, resizable);
-}
-
-static WKRect getWindowFrame(WKPageRef, const void* clientInfo)
-{
-    GdkRectangle geometry = { 0, 0, 0, 0 };
-    GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(clientInfo));
-    if (WebCore::widgetIsOnscreenToplevelWindow(window) && gtk_widget_get_visible(window)) {
-        gtk_window_get_position(GTK_WINDOW(window), &geometry.x, &geometry.y);
-        gtk_window_get_size(GTK_WINDOW(window), &geometry.width, &geometry.height);
+class UIClient : public API::UIClient {
+public:
+    explicit UIClient(WebKitWebView* webView)
+        : m_webView(webView)
+    {
     }
-    return WKRectMake(geometry.x, geometry.y, geometry.width, geometry.height);
-}
 
-static void setWindowFrame(WKPageRef, WKRect frame, const void* clientInfo)
-{
-    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(clientInfo));
-    GdkRectangle geometry = { static_cast<int>(frame.origin.x), static_cast<int>(frame.origin.y),
-        static_cast<int>(frame.size.width), static_cast<int>(frame.size.height) };
-    webkitWindowPropertiesSetGeometry(windowProperties, &geometry);
-}
+private:
+    virtual PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceRequest& resourceRequest, const WebCore::WindowFeatures& windowFeatures, const NavigationActionData& navigationActionData) override
+    {
+        GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(resourceRequest));
+        WebKitNavigationAction navigationAction(request.get(), navigationActionData);
+        return webkitWebViewCreateNewPage(m_webView, windowFeatures, &navigationAction);
+    }
 
-static void mouseDidMoveOverElement(WKPageRef, WKHitTestResultRef hitTestResult, WKEventModifiers modifiers, WKTypeRef /* userData */, const void* clientInfo)
-{
-    webkitWebViewMouseTargetChanged(WEBKIT_WEB_VIEW(clientInfo), toImpl(hitTestResult), wkEventModifiersToGdkModifiers(modifiers));
-}
+    virtual void showPage(WebPageProxy*) override
+    {
+        webkitWebViewReadyToShowPage(m_webView);
+    }
 
-static void printFrame(WKPageRef page, WKFrameRef frame, const void*)
-{
-    webkitWebViewPrintFrame(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), toImpl(frame));
-}
+    virtual void close(WebPageProxy*) override
+    {
+        webkitWebViewClosePage(m_webView);
+    }
 
-static void runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void *clientInfo)
-{
-    GRefPtr<WebKitFileChooserRequest> request = adoptGRef(webkitFileChooserRequestCreate(toImpl(parameters), toImpl(listener)));
-    webkitWebViewRunFileChooserRequest(WEBKIT_WEB_VIEW(clientInfo), request.get());
-}
+    virtual void runJavaScriptAlert(WebPageProxy*, const String& message, WebFrameProxy*, std::function<void ()> completionHandler) override
+    {
+        webkitWebViewRunJavaScriptAlert(m_webView, message.utf8());
+        completionHandler();
+    }
 
-static void decidePolicyForGeolocationPermissionRequest(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKGeolocationPermissionRequestRef request, const void* clientInfo)
-{
-    GRefPtr<WebKitGeolocationPermissionRequest> geolocationPermissionRequest = adoptGRef(webkitGeolocationPermissionRequestCreate(toImpl(request)));
-    webkitWebViewMakePermissionRequest(WEBKIT_WEB_VIEW(clientInfo), WEBKIT_PERMISSION_REQUEST(geolocationPermissionRequest.get()));
-}
+    virtual void runJavaScriptConfirm(WebPageProxy*, const String& message, WebFrameProxy*, std::function<void (bool)> completionHandler) override
+    {
+        completionHandler(webkitWebViewRunJavaScriptConfirm(m_webView, message.utf8()));
+    }
 
-static void runModal(WKPageRef, const void* clientInfo)
-{
-    webkitWebViewRunAsModal(WEBKIT_WEB_VIEW(clientInfo));
-}
+    virtual void runJavaScriptPrompt(WebPageProxy*, const String& message, const String& defaultValue, WebFrameProxy*, std::function<void (const String&)> completionHandler) override
+    {
+        CString result = webkitWebViewRunJavaScriptPrompt(m_webView, message.utf8(), defaultValue.utf8());
+        if (result.isNull()) {
+            completionHandler(String());
+            return;
+        }
+
+        completionHandler(String::fromUTF8(result.data()));
+    }
+
+    virtual void mouseDidMoveOverElement(WebPageProxy*, const WebHitTestResult::Data& data, WebEvent::Modifiers modifiers, API::Object*) override
+    {
+        webkitWebViewMouseTargetChanged(m_webView, data, toGdkModifiers(modifiers));
+    }
+
+    virtual bool toolbarsAreVisible(WebPageProxy*) override
+    {
+        return webkit_window_properties_get_toolbar_visible(webkit_web_view_get_window_properties(m_webView));
+    }
+
+    virtual void setToolbarsAreVisible(WebPageProxy*, bool visible) override
+    {
+        webkitWindowPropertiesSetToolbarVisible(webkit_web_view_get_window_properties(m_webView), visible);
+    }
+
+    virtual bool menuBarIsVisible(WebPageProxy*) override
+    {
+        return webkit_window_properties_get_menubar_visible(webkit_web_view_get_window_properties(m_webView));
+    }
+
+    virtual void setMenuBarIsVisible(WebPageProxy*, bool visible) override
+    {
+        webkitWindowPropertiesSetToolbarVisible(webkit_web_view_get_window_properties(m_webView), visible);
+    }
+
+    virtual bool statusBarIsVisible(WebPageProxy*) override
+    {
+        return webkit_window_properties_get_statusbar_visible(webkit_web_view_get_window_properties(m_webView));
+    }
+
+    virtual void setStatusBarIsVisible(WebPageProxy*, bool visible) override
+    {
+        webkitWindowPropertiesSetStatusbarVisible(webkit_web_view_get_window_properties(m_webView), visible);
+    }
+
+    virtual bool isResizable(WebPageProxy*) override
+    {
+        return webkit_window_properties_get_resizable(webkit_web_view_get_window_properties(m_webView));
+    }
+
+    virtual void setIsResizable(WebPageProxy*, bool resizable) override
+    {
+        webkitWindowPropertiesSetResizable(webkit_web_view_get_window_properties(m_webView), resizable);
+    }
+
+    virtual void setWindowFrame(WebPageProxy*, const WebCore::FloatRect& frame) override
+    {
+        GdkRectangle geometry = WebCore::IntRect(frame);
+        webkitWindowPropertiesSetGeometry(webkit_web_view_get_window_properties(m_webView), &geometry);
+    }
+
+    virtual WebCore::FloatRect windowFrame(WebPageProxy*) override
+    {
+        GdkRectangle geometry = { 0, 0, 0, 0 };
+        GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
+        if (WebCore::widgetIsOnscreenToplevelWindow(window) && gtk_widget_get_visible(window)) {
+            gtk_window_get_position(GTK_WINDOW(window), &geometry.x, &geometry.y);
+            gtk_window_get_size(GTK_WINDOW(window), &geometry.width, &geometry.height);
+        }
+        return WebCore::FloatRect(geometry);
+    }
+
+    virtual bool runOpenPanel(WebPageProxy*, WebFrameProxy*, WebOpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener) override
+    {
+        GRefPtr<WebKitFileChooserRequest> request = adoptGRef(webkitFileChooserRequestCreate(parameters, listener));
+        webkitWebViewRunFileChooserRequest(m_webView, request.get());
+        return true;
+    }
+
+    virtual bool decidePolicyForGeolocationPermissionRequest(WebPageProxy*, WebFrameProxy*, WebSecurityOrigin*, GeolocationPermissionRequestProxy* permissionRequest) override
+    {
+        GRefPtr<WebKitGeolocationPermissionRequest> geolocationPermissionRequest = adoptGRef(webkitGeolocationPermissionRequestCreate(permissionRequest));
+        webkitWebViewMakePermissionRequest(m_webView, WEBKIT_PERMISSION_REQUEST(geolocationPermissionRequest.get()));
+        return true;
+    }
+
+    virtual void printFrame(WebPageProxy*, WebFrameProxy* frame) override
+    {
+        webkitWebViewPrintFrame(m_webView, frame);
+    }
+
+    virtual bool canRunModal() const override { return true; }
+
+    virtual void runModal(WebPageProxy*) override
+    {
+        webkitWebViewRunAsModal(m_webView);
+    }
+
+    WebKitWebView* m_webView;
+};
 
 void attachUIClientToView(WebKitWebView* webView)
 {
-    WKPageUIClientV2 wkUIClient = {
-        {
-            2, // version
-            webView, // clientInfo
-        },
-        0, // createNewPage_deprecatedForUseWithV0
-        showPage,
-        closePage,
-        0, // takeFocus
-        0, // focus
-        0, // unfocus
-        runJavaScriptAlert,
-        runJavaScriptConfirm,
-        runJavaScriptPrompt,
-        0, // setStatusText
-        0, // mouseDidMoveOverElement_deprecatedForUseWithV0
-        0, // missingPluginButtonClicked
-        0, // didNotHandleKeyEvent
-        0, // didNotHandleWheelEvent
-        toolbarsAreVisible,
-        setToolbarsAreVisible,
-        menuBarIsVisible,
-        setMenuBarIsVisible,
-        statusBarIsVisible,
-        setStatusBarIsVisible,
-        isResizable,
-        setIsResizable,
-        getWindowFrame,
-        setWindowFrame,
-        0, // runBeforeUnloadConfirmPanel
-        0, // didDraw
-        0, // pageDidScroll
-        0, // exceededDatabaseQuota
-        runOpenPanel,
-        decidePolicyForGeolocationPermissionRequest,
-        0, // headerHeight
-        0, // footerHeight
-        0, // drawHeader
-        0, // drawFooter
-        printFrame,
-        runModal,
-        0, // didCompleteRubberBandForMainFrame
-        0, // saveDataToFileInDownloadsFolder
-        0, // shouldInterruptJavaScript
-        createNewPage,
-        mouseDidMoveOverElement,
-        0, // decidePolicyForNotificationPermissionRequest
-        0, // unavailablePluginButtonClicked
-        0, // showColorPicker
-        0, // hideColorPicker
-        0, // pluginLoadPolicy
-    };
-    WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
-    WKPageSetPageUIClient(wkPage, &wkUIClient.base);
+    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
+    page->setUIClient(std::make_unique<UIClient>(webView));
 }
 

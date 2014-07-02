@@ -191,7 +191,7 @@ struct CreateCallbackData {
     GMainLoop* mainLoop;
 };
 
-static WebKitWebView* createCallback(WebKitWebView* webView, CreateCallbackData* data)
+static WebKitWebView* createCallback(WebKitWebView* webView, WebKitNavigationAction*, CreateCallbackData* data)
 {
     data->triedToOpenWindow = true;
     g_main_loop_quit(data->mainLoop);
