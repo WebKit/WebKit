@@ -1,3 +1,25 @@
+2014-07-02  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION(WK2): Undo does not work in text fields in Safari.
+        https://bugs.webkit.org/show_bug.cgi?id=134572
+        <rdar://problem/17542238>
+
+        Reviewed by Benjamin Poulain.
+        
+        This patch adds for iOS the same implementation we have already for OS X.
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (-[WKEditCommandObjC initWithWebEditCommandProxy:]):
+        (-[WKEditCommandObjC command]):
+        (-[WKEditorUndoTargetObjC undoEditing:]):
+        (-[WKEditorUndoTargetObjC redoEditing:]):
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::registerEditCommand):
+        (WebKit::PageClientImpl::clearAllEditCommands):
+        (WebKit::PageClientImpl::canUndoRedo):
+        (WebKit::PageClientImpl::executeUndoRedo):
+
 2014-07-02  Gavin Barraclough  <baraclough@apple.com>
 
         ProcessAssertion should also prevent UIApp suspension

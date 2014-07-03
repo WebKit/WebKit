@@ -59,12 +59,62 @@
 @end
 
 using namespace WebCore;
+using namespace WebKit;
+
+@interface WKEditCommandObjC : NSObject
+{
+    RefPtr<WebEditCommandProxy> m_command;
+}
+- (id)initWithWebEditCommandProxy:(PassRefPtr<WebEditCommandProxy>)command;
+- (WebEditCommandProxy*)command;
+@end
+
+@interface WKEditorUndoTargetObjC : NSObject
+- (void)undoEditing:(id)sender;
+- (void)redoEditing:(id)sender;
+@end
+
+@implementation WKEditCommandObjC
+
+- (id)initWithWebEditCommandProxy:(PassRefPtr<WebEditCommandProxy>)command
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    
+    m_command = command;
+    return self;
+}
+
+- (WebEditCommandProxy *)command
+{
+    return m_command.get();
+}
+
+@end
+
+@implementation WKEditorUndoTargetObjC
+
+- (void)undoEditing:(id)sender
+{
+    ASSERT([sender isKindOfClass:[WKEditCommandObjC class]]);
+    [sender command]->unapply();
+}
+
+- (void)redoEditing:(id)sender
+{
+    ASSERT([sender isKindOfClass:[WKEditCommandObjC class]]);
+    [sender command]->reapply();
+}
+
+@end
 
 namespace WebKit {
 
 PageClientImpl::PageClientImpl(WKContentView *contentView, WKWebView *webView)
     : m_contentView(contentView)
     , m_webView(webView)
+    , m_undoTarget(adoptNS([[WKEditorUndoTargetObjC alloc] init]))
 {
 }
 
@@ -232,9 +282,17 @@ void PageClientImpl::didChangeViewportProperties(const ViewportAttributes&)
     notImplemented();
 }
 
-void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo)
+void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy> prpCommand, WebPageProxy::UndoOrRedo undoOrRedo)
 {
-    notImplemented();
+    RefPtr<WebEditCommandProxy> command = prpCommand;
+    
+    RetainPtr<WKEditCommandObjC> commandObjC = adoptNS([[WKEditCommandObjC alloc] initWithWebEditCommandProxy:command]);
+    String actionName = WebEditCommandProxy::nameForEditAction(command->editAction());
+    
+    NSUndoManager *undoManager = [m_contentView undoManager];
+    [undoManager registerUndoWithTarget:m_undoTarget.get() selector:((undoOrRedo == WebPageProxy::Undo) ? @selector(undoEditing:) : @selector(redoEditing:)) object:commandObjC.get()];
+    if (!actionName.isEmpty())
+        [undoManager setActionName:(NSString *)actionName];
 }
 
 #if USE(INSERTION_UNDO_GROUPING)
@@ -246,18 +304,17 @@ void PageClientImpl::registerInsertionUndoGrouping()
 
 void PageClientImpl::clearAllEditCommands()
 {
-    notImplemented();
+    [[m_contentView undoManager] removeAllActionsWithTarget:m_undoTarget.get()];
 }
 
-bool PageClientImpl::canUndoRedo(WebPageProxy::UndoOrRedo)
+bool PageClientImpl::canUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
 {
-    notImplemented();
-    return false;
+    return (undoOrRedo == WebPageProxy::Undo) ? [[m_contentView undoManager] canUndo] : [[m_contentView undoManager] canRedo];
 }
 
-void PageClientImpl::executeUndoRedo(WebPageProxy::UndoOrRedo)
+void PageClientImpl::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
 {
-    notImplemented();
+    return (undoOrRedo == WebPageProxy::Undo) ? [[m_contentView undoManager] undo] : [[m_contentView undoManager] redo];
 }
 
 void PageClientImpl::accessibilityWebProcessTokenReceived(const IPC::DataReference& data)
