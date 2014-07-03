@@ -1,3 +1,18 @@
+2014-07-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] The list of features shown by cmake is not accurate
+        https://bugs.webkit.org/show_bug.cgi?id=134588
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The problem is that some options might change after the feature
+        list has been printed.
+
+        * Source/cmake/OptionsGTK.cmake: Find package dependencies before
+        setting the default values of features and set WEBGL value
+        depending on the dependencies, and API_TEST depending on whether
+        developer mode is enabled or not.
+
 2014-07-03  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [CMAKE] Add WEBKIT_OPTION_DEPEND macro to resolve macro dependency
