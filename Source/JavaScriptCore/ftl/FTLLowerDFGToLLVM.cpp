@@ -5874,7 +5874,9 @@ private:
             return;
         }
 
-        dataLog("Cannot find value for node: ", node, "\n");
+        startCrashing();
+        dataLog("Cannot find value for node: ", node, " while compiling exit at ", exit.m_codeOrigin, " in node ", m_node, "\n");
+        m_graph.dump();
         RELEASE_ASSERT_NOT_REACHED();
     }
     

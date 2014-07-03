@@ -1,5 +1,19 @@
 2014-07-03  Filip Pizlo  <fpizlo@apple.com>
 
+        SSA DCE should process blocks in forward order
+        https://bugs.webkit.org/show_bug.cgi?id=134611
+
+        Reviewed by Andreas Kling.
+
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::run):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::addExitArgumentForNode):
+        * tests/stress/dead-value-with-mov-hint-in-another-block.js: Added.
+        (foo):
+
+2014-07-03  Filip Pizlo  <fpizlo@apple.com>
+
         JSActivation::symbolTablePut() should invalidate variable watchpoints
         https://bugs.webkit.org/show_bug.cgi?id=134602
 

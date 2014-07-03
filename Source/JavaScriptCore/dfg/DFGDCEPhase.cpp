@@ -106,11 +106,9 @@ public:
         }
         
         if (m_graph.m_form == SSA) {
-            // Need to process the graph in reverse DFS order, so that we get to the uses
-            // of a node before we get to the node itself.
             Vector<BasicBlock*> depthFirst;
             m_graph.getBlocksInDepthFirstOrder(depthFirst);
-            for (unsigned i = depthFirst.size(); i--;)
+            for (unsigned i = 0; i < depthFirst.size(); ++i)
                 fixupBlock(depthFirst[i]);
         } else {
             RELEASE_ASSERT(m_graph.m_form == ThreadedCPS);
