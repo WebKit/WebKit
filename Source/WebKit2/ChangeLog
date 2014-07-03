@@ -1,3 +1,15 @@
+2014-07-03  Brady Eidson  <beidson@apple.com>
+
+        Followup to "rects sent to ServicesOverlayController are wrong"
+        https://bugs.webkit.org/show_bug.cgi?id=134568
+
+        Rubberstamped by Tim Horton.
+
+        * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+        (WebKit::ServicesOverlayController::drawSelectionHighlight): Don’t check to see if the
+          proposed rect intersects the dirty rect. We always need to include all rects that form
+          the selection when creating the DDHighlight.
+
 2014-07-03  Tim Horton  <timothy_horton@apple.com>
 
         [WK2] RemoteLayerTreeDrawingAreaProxy re-checks a preference every commit for no reason

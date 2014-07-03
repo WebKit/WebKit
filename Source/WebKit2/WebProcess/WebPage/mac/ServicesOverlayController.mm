@@ -288,14 +288,8 @@ void ServicesOverlayController::drawSelectionHighlight(WebCore::GraphicsContext&
         Vector<CGRect> cgRects;
         cgRects.reserveCapacity(m_currentSelectionRects.size());
 
-        for (auto& rect : m_currentSelectionRects) {
-            IntRect selectionRect(rect.pixelSnappedLocation(), rect.pixelSnappedSize());
-
-            if (!selectionRect.intersects(dirtyRect))
-                continue;
-
+        for (auto& rect : m_currentSelectionRects)
             cgRects.append((CGRect)pixelSnappedIntRect(rect));
-        }
 
         if (!cgRects.isEmpty()) {
             CGRect bounds = m_webPage->corePage()->mainFrame().view()->boundsRect();
