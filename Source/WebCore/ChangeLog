@@ -1,3 +1,15 @@
+2014-07-03  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver does not read aria-expanded attribute on controls in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=134527
+
+        Reviewed by Mario Sanchez Prada.
+
+        Expose whether the ARIA expanded property is present or not.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilitySupportsARIAExpanded]):
+
 2014-07-02  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Removing an element with CSS -webkit-overflow-scrolling: touch breaks

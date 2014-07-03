@@ -2267,6 +2267,14 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return m_object->ariaLiveRegionAtomic();
 }
 
+- (BOOL)accessibilitySupportsARIAExpanded
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+    
+    return m_object->supportsARIAExpanded();
+}
+
 - (BOOL)accessibilityIsExpanded
 {
     if (![self _prepareAccessibilityCall])
