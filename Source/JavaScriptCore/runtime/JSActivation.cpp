@@ -89,20 +89,26 @@ inline bool JSActivation::symbolTablePut(ExecState* exec, PropertyName propertyN
     VM& vm = exec->vm();
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
     
-    SymbolTableEntry entry = symbolTable()->inlineGet(propertyName.uid());
-    if (entry.isNull())
-        return false;
-    if (entry.isReadOnly()) {
-        if (shouldThrow)
-            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
-        return true;
+    WriteBarrierBase<Unknown>* reg;
+    {
+        GCSafeConcurrentJITLocker locker(symbolTable()->m_lock, exec->vm().heap);
+        SymbolTable::Map::iterator iter = symbolTable()->find(locker, propertyName.uid());
+        if (iter == symbolTable()->end(locker))
+            return false;
+        ASSERT(!iter->value.isNull());
+        if (iter->value.isReadOnly()) {
+            if (shouldThrow)
+                throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+            return true;
+        }
+        // Defend against the inspector asking for a var after it has been optimized out.
+        if (isTornOff() && !isValid(iter->value))
+            return false;
+        if (VariableWatchpointSet* set = iter->value.watchpointSet())
+            set->invalidate(); // Don't mess around - if we had found this statically, we would have invcalidated it.
+        reg = &registerAt(iter->value.getIndex());
     }
-
-    // Defend against the inspector asking for a var after it has been optimized out.
-    if (isTornOff() && !isValid(entry))
-        return false;
-
-    registerAt(entry.getIndex()).set(vm, this, value);
+    reg->set(vm, this, value);
     return true;
 }
 

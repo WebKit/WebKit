@@ -126,6 +126,8 @@ inline bool symbolTablePut(
     WriteBarrierBase<Unknown>* reg;
     {
         SymbolTable& symbolTable = *object->symbolTable();
+        // FIXME: This is very suspicious. We shouldn't need a GC-safe lock here.
+        // https://bugs.webkit.org/show_bug.cgi?id=134601
         GCSafeConcurrentJITLocker locker(symbolTable.m_lock, exec->vm().heap);
         SymbolTable::Map::iterator iter = symbolTable.find(locker, propertyName.uid());
         if (iter == symbolTable.end(locker))
@@ -138,8 +140,11 @@ inline bool symbolTablePut(
                 throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
             return true;
         }
-        if (VariableWatchpointSet* set = iter->value.watchpointSet())
+        if (VariableWatchpointSet* set = iter->value.watchpointSet()) {
+            // FIXME: It's strange that we're doing this while holding the symbol table's lock.
+            // https://bugs.webkit.org/show_bug.cgi?id=134601
             set->notifyWrite(vm, value);
+        }
         reg = &object->registerAt(fastEntry.getIndex());
     }
     // I'd prefer we not hold lock while executing barriers, since I prefer to reserve
