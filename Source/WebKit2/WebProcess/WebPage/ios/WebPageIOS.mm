@@ -170,7 +170,7 @@ static double scaleAfterViewportWidthChange(double currentScale, bool userHasCha
     if (userHasChangedPageScaleFactor) {
         // When the content size changes, we keep the same relative horizontal content width in view, otherwise we would
         // end up zoomed too far in landscape->portrait, and too close in portrait->landscape.
-        float widthToKeepInView = visibleHorizontalFraction * newContentSize.width();
+        double widthToKeepInView = visibleHorizontalFraction * newContentSize.width();
         double newScale = unobscuredWidthInScrollViewCoordinates / widthToKeepInView;
         scale = std::max(std::min(newScale, viewportConfiguration.maximumScale()), viewportConfiguration.minimumScale());
     }
@@ -2161,9 +2161,8 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
     float relativeHorizontalPositionInNodeAtCenter = 0;
     float relativeVerticalPositionInNodeAtCenter = 0;
     {
-        IntRect unobscuredContentRect = frameView.unobscuredContentRect();
-        visibleHorizontalFraction = static_cast<float>(unobscuredContentRect.width()) / oldContentSize.width();
-        IntPoint unobscuredContentRectCenter = unobscuredContentRect.center();
+        visibleHorizontalFraction = frameView.unobscuredContentSize().width() / oldContentSize.width();
+        IntPoint unobscuredContentRectCenter = frameView.unobscuredContentRect().center();
 
         HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
         HitTestResult hitTestResult = HitTestResult(unobscuredContentRectCenter);
@@ -2199,7 +2198,8 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
     FloatRect newUnobscuredContentRect = targetUnobscuredRect;
     FloatRect newExposedContentRect = targetExposedContentRect;
 
-    if (scale != targetScale) {
+    bool scaleChanged = !withinEpsilon(scale, targetScale);
+    if (scaleChanged) {
         // The target scale the UI is using cannot be reached by the content. We need to compute new targets based
         // on the viewport constraint and report everything back to the UIProcess.
 
@@ -2222,7 +2222,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
                                           newUnobscuredRectHeight + obscuredTopMargin + obscuredBottomMargin);
     }
 
-    if (oldContentSize != newContentSize || scale != targetScale) {
+    if (oldContentSize != newContentSize || scaleChanged) {
         // Snap the new unobscured rect back into the content rect.
         newUnobscuredContentRect.setWidth(std::min(static_cast<float>(newContentSize.width()), newUnobscuredContentRect.width()));
         newUnobscuredContentRect.setHeight(std::min(static_cast<float>(newContentSize.height()), newUnobscuredContentRect.height()));
@@ -2278,14 +2278,14 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
         }
 
         float horizontalAdjustment = 0;
-        if (newExposedContentRect.maxX() > newContentSize.width())
+        if (newUnobscuredContentRect.maxX() > newContentSize.width())
             horizontalAdjustment -= newUnobscuredContentRect.maxX() - newContentSize.width();
         float verticalAdjustment = 0;
-        if (newExposedContentRect.maxY() > newContentSize.height())
+        if (newUnobscuredContentRect.maxY() > newContentSize.height())
             verticalAdjustment -= newUnobscuredContentRect.maxY() - newContentSize.height();
-        if (newExposedContentRect.x() < 0)
+        if (newUnobscuredContentRect.x() < 0)
             horizontalAdjustment += - newUnobscuredContentRect.x();
-        if (newExposedContentRect.y() < 0)
+        if (newUnobscuredContentRect.y() < 0)
             verticalAdjustment += - newUnobscuredContentRect.y();
 
         FloatPoint adjustmentDelta(horizontalAdjustment, verticalAdjustment);
@@ -2295,11 +2295,11 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
 
     frameView.setScrollVelocity(0, 0, 0, monotonicallyIncreasingTime());
 
-    IntRect roundedUnobscuredContentRect = roundedIntRect(newUnobscuredContentRect);
-    frameView.setUnobscuredContentSize(roundedUnobscuredContentRect.size());
+    IntPoint roundedUnobscuredContentRectPosition = roundedIntPoint(newUnobscuredContentRect.location());
+    frameView.setUnobscuredContentSize(newUnobscuredContentRect.size());
     m_drawingArea->setExposedContentRect(newExposedContentRect);
 
-    scalePage(scale, roundedUnobscuredContentRect.location());
+    scalePage(scale, roundedUnobscuredContentRectPosition);
 
     frameView.updateLayoutAndStyleIfNeededRecursive();
     IntRect fixedPositionLayoutRect = enclosingIntRect(frameView.viewportConstrainedObjectsRect());
@@ -2307,7 +2307,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
 
     frameView.setCustomSizeForResizeEvent(expandedIntSize(targetUnobscuredRectInScrollViewCoordinates.size()));
     setDeviceOrientation(deviceOrientation);
-    frameView.setScrollOffset(roundedUnobscuredContentRect.location());
+    frameView.setScrollOffset(roundedUnobscuredContentRectPosition);
 
     send(Messages::WebPageProxy::DynamicViewportUpdateChangedTarget(pageScaleFactor(), frameView.scrollPosition()));
 }
@@ -2445,8 +2445,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     FloatRect adjustedExposedRect = adjustExposedRectForBoundedScale(exposedRect, visibleContentRectUpdateInfo.scale(), boundedScale);
     m_drawingArea->setExposedContentRect(adjustedExposedRect);
 
-    IntRect roundedUnobscuredRect = roundedIntRect(visibleContentRectUpdateInfo.unobscuredRect());
-    IntPoint scrollPosition = roundedUnobscuredRect.location();
+    IntPoint scrollPosition = roundedIntPoint(visibleContentRectUpdateInfo.unobscuredRect().location());
 
     float floatBoundedScale = boundedScale;
     bool hasSetPageScale = false;
@@ -2472,7 +2471,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     if (scrollPosition != frameView.scrollPosition())
         m_dynamicSizeUpdateHistory.clear();
 
-    frameView.setUnobscuredContentSize(roundedUnobscuredRect.size());
+    frameView.setUnobscuredContentSize(visibleContentRectUpdateInfo.unobscuredRect().size());
 
     double horizontalVelocity = visibleContentRectUpdateInfo.horizontalVelocity();
     double verticalVelocity = visibleContentRectUpdateInfo.verticalVelocity();

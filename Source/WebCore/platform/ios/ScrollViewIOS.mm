@@ -108,12 +108,12 @@ IntRect ScrollView::unobscuredContentRect(VisibleContentRectIncludesScrollbars) 
     }
 
     if (!m_unobscuredContentSize.isEmpty())
-        return IntRect(IntPoint(m_scrollOffset), m_unobscuredContentSize);
+        return IntRect(IntPoint(m_scrollOffset), roundedIntSize(m_unobscuredContentSize));
 
     return unobscuredContentRectInternal();
 }
 
-void ScrollView::setUnobscuredContentSize(const IntSize& size)
+void ScrollView::setUnobscuredContentSize(const FloatSize& size)
 {
     ASSERT(!platformWidget());
     m_unobscuredContentSize = size;

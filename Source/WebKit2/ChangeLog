@@ -1,3 +1,40 @@
+2014-07-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Fix small bugs of dynamicViewportSizeUpdate that were causing inaccuracies in the computed target
+        https://bugs.webkit.org/show_bug.cgi?id=134582
+
+        Reviewed by Tim Horton.
+
+        This patch fixes two small bugs that were causing "jumpiness" on animated resize:
+        1) The new scale was less accurate than the target scale, making the WebProcess force a worse scale on the content.
+        2) The code putting back the rects in view was ignoring the obscured insets, constraining the scroll position more
+           than it should be.
+
+        The first problem was cause by a series of rounding issues accumulating to the fact that "scale != targetScale"
+        was almost never true.
+
+        The first issue is that the unobscured content size was stored in integer coordinates. Because of that, it was
+        impossible to determine accurately how much content is in the view.
+        The outcome was that visibleHorizontalFraction was very inaccurate compared to what the UIProcess computed.
+
+        Another issue affecting the scale is that scaleAfterViewportWidthChange was computing the widthToKeepInView
+        on floating point. Since ARM64 does all those computations on doubles in the UIProcess, the value would be quite
+        different from the received targetScale.
+
+        Finally, the code uses withinEpsilon() instead of a strict equality to reduce the effect of rounding errors.
+
+        For the second issue, the problem was that I was bounding the exposed rect to the page bounds. It is completely
+        valid to have an exposed rect outside the page bounds, that area is just under the obscured insets.
+
+        On the other hand, the unobscured rect needs to be within the bounds as we do not want to rotate to a rubberbanding
+        position. The fix is simply to put the right rect into bounds, and the horizontal/vertical adjustement applies on
+        both rects.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::scaleAfterViewportWidthChange):
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2014-07-03  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

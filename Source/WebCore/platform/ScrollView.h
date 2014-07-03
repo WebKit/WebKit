@@ -187,7 +187,8 @@ public:
 
     // The given rects are only used if there is no platform widget.
     void setExposedContentRect(const FloatRect&);
-    void setUnobscuredContentSize(const IntSize&);
+    const FloatSize& unobscuredContentSize() const { return m_unobscuredContentSize; }
+    void setUnobscuredContentSize(const FloatSize&);
 
     void setActualScrollPosition(const IntPoint&);
     LegacyTileCache* legacyTileCache();
@@ -431,7 +432,7 @@ private:
     // between exposed and unobscured areas. The two attributes should eventually be merged.
 #if PLATFORM(IOS)
     FloatRect m_exposedContentRect;
-    IntSize m_unobscuredContentSize;
+    FloatSize m_unobscuredContentSize;
 #else
     IntRect m_fixedVisibleContentRect;
 #endif

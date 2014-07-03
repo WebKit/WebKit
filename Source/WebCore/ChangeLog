@@ -1,3 +1,17 @@
+2014-07-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Fix small bugs of dynamicViewportSizeUpdate that were causing inaccuracies in the computed target
+        https://bugs.webkit.org/show_bug.cgi?id=134582
+
+        Reviewed by Tim Horton.
+
+        * WebCore.exp.in:
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::unobscuredContentSize):
+        * platform/ios/ScrollViewIOS.mm:
+        (WebCore::ScrollView::unobscuredContentRect):
+        (WebCore::ScrollView::setUnobscuredContentSize):
+
 2014-07-02  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] WebKit1 WebView iframe not responding to scroll gestures
