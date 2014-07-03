@@ -1,3 +1,18 @@
+2014-07-03  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of DecoderAdapter and EncoderAdapter
+        https://bugs.webkit.org/show_bug.cgi?id=134598
+
+        Reviewed by Andreas Kling.
+
+        * CMakeLists.txt:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/DecoderAdapter.cpp: Removed.
+        * WebProcess/WebPage/DecoderAdapter.h: Removed.
+        * WebProcess/WebPage/EncoderAdapter.cpp: Removed.
+        * WebProcess/WebPage/EncoderAdapter.h: Removed.
+        * WebProcess/WebPage/WebPage.cpp:
+
 2014-07-02  Anders Carlsson  <andersca@apple.com>
 
         Stop using EncoderAdapter/DecoderAdapter for FormData

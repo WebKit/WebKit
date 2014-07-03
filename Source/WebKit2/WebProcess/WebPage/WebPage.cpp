@@ -30,7 +30,6 @@
 
 #include "Arguments.h"
 #include "DataReference.h"
-#include "DecoderAdapter.h"
 #include "DragControllerAction.h"
 #include "DrawingArea.h"
 #include "DrawingAreaMessages.h"
