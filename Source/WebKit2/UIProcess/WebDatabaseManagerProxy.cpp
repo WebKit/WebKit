@@ -154,7 +154,7 @@ void WebDatabaseManagerProxy::derefWebContextSupplement()
 
 void WebDatabaseManagerProxy::getDatabasesByOrigin(std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<ArrayCallback> callback = ArrayCallback::create(std::move(callbackFunction));
+    RefPtr<ArrayCallback> callback = ArrayCallback::create(WTF::move(callbackFunction));
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
 
@@ -190,24 +190,24 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
             if (databaseDetails.modificationTime())
                 detailsMap.set(databaseDetailsModificationTimeKey(), API::Double::create(databaseDetails.modificationTime()));
 
-            databases.uncheckedAppend(ImmutableDictionary::create(std::move(detailsMap)));
+            databases.uncheckedAppend(ImmutableDictionary::create(WTF::move(detailsMap)));
         }
 
         HashMap<String, RefPtr<API::Object>> originAndDatabasesMap;
         originAndDatabasesMap.set(originKey(), origin);
         originAndDatabasesMap.set(originQuotaKey(), API::UInt64::create(originAndDatabases.originQuota));
         originAndDatabasesMap.set(originUsageKey(), API::UInt64::create(originAndDatabases.originUsage));
-        originAndDatabasesMap.set(databaseDetailsKey(), API::Array::create(std::move(databases)));
+        originAndDatabasesMap.set(databaseDetailsKey(), API::Array::create(WTF::move(databases)));
 
-        result.uncheckedAppend(ImmutableDictionary::create(std::move(originAndDatabasesMap)));
+        result.uncheckedAppend(ImmutableDictionary::create(WTF::move(originAndDatabasesMap)));
     }
 
-    callback->performCallbackWithReturnValue(API::Array::create(std::move(result)).get());
+    callback->performCallbackWithReturnValue(API::Array::create(WTF::move(result)).get());
 }
 
 void WebDatabaseManagerProxy::getDatabaseOrigins(std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<ArrayCallback> callback = ArrayCallback::create(std::move(callbackFunction));
+    RefPtr<ArrayCallback> callback = ArrayCallback::create(WTF::move(callbackFunction));
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
 
@@ -228,7 +228,7 @@ void WebDatabaseManagerProxy::didGetDatabaseOrigins(const Vector<String>& origin
     for (const auto& originIdentifier : originIdentifiers)
         securityOrigins.uncheckedAppend(WebSecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(originIdentifier)));
 
-    callback->performCallbackWithReturnValue(API::Array::create(std::move(securityOrigins)).get());
+    callback->performCallbackWithReturnValue(API::Array::create(WTF::move(securityOrigins)).get());
 }
 
 void WebDatabaseManagerProxy::deleteDatabaseWithNameForOrigin(const String& databaseIdentifier, WebSecurityOrigin* origin)

@@ -69,7 +69,7 @@ TEST(WTF_RefPtr, Basic)
 
     {
         RefPtr<RefLogger> p1 = &a;
-        RefPtr<RefLogger> p2 = std::move(p1);
+        RefPtr<RefLogger> p2 = WTF::move(p1);
         ASSERT_EQ(nullptr, p1.get());
         ASSERT_EQ(&a, p2.get());
     }
@@ -77,7 +77,7 @@ TEST(WTF_RefPtr, Basic)
 
     {
         RefPtr<RefLogger> p1 = &a;
-        RefPtr<RefLogger> p2(std::move(p1));
+        RefPtr<RefLogger> p2(WTF::move(p1));
         ASSERT_EQ(nullptr, p1.get());
         ASSERT_EQ(&a, p2.get());
     }
@@ -93,7 +93,7 @@ TEST(WTF_RefPtr, Basic)
 
     {
         RefPtr<DerivedRefLogger> p1 = &a;
-        RefPtr<RefLogger> p2 = std::move(p1);
+        RefPtr<RefLogger> p2 = WTF::move(p1);
         ASSERT_EQ(nullptr, p1.get());
         ASSERT_EQ(&a, p2.get());
     }
@@ -121,7 +121,7 @@ TEST(WTF_RefPtr, AssignPassRefToRefPtr)
     DerivedRefLogger a("a");
     {
         PassRef<RefLogger> passRef(a);
-        RefPtr<RefLogger> ptr = std::move(passRef);
+        RefPtr<RefLogger> ptr = WTF::move(passRef);
         ASSERT_EQ(&a, ptr.get());
         ptr.release();
         ASSERT_EQ(nullptr, ptr.get());
@@ -204,7 +204,7 @@ TEST(WTF_RefPtr, Assignment)
         ASSERT_EQ(&a, p1.get());
         ASSERT_EQ(&b, p2.get());
         log() << "| ";
-        p1 = std::move(p2);
+        p1 = WTF::move(p2);
         ASSERT_EQ(&b, p1.get());
         ASSERT_EQ(nullptr, p2.get());
         log() << "| ";
@@ -250,7 +250,7 @@ TEST(WTF_RefPtr, Assignment)
         ASSERT_EQ(&a, p1.get());
         ASSERT_EQ(&c, p2.get());
         log() << "| ";
-        p1 = std::move(p2);
+        p1 = WTF::move(p2);
         ASSERT_EQ(&c, p1.get());
         ASSERT_EQ(nullptr, p2.get());
         log() << "| ";
@@ -270,7 +270,7 @@ TEST(WTF_RefPtr, Assignment)
     {
         RefPtr<RefLogger> ptr(&a);
         ASSERT_EQ(&a, ptr.get());
-        ptr = std::move(ptr);
+        ptr = WTF::move(ptr);
         ASSERT_EQ(&a, ptr.get());
     }
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());

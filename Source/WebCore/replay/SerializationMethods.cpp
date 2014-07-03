@@ -201,7 +201,7 @@ bool EncodingTraits<NondeterministicInputBase>::decodeValue(EncodedValue& encode
         if (!InputTraits<name>::decode(encodedValue, decodedInput)) \
             return false; \
         \
-        input = std::move(decodedInput); \
+        input = WTF::move(decodedInput); \
         return true; \
     } \
 
@@ -214,7 +214,7 @@ bool EncodingTraits<NondeterministicInputBase>::decodeValue(EncodedValue& encode
         if (!InputTraits<MemoizedDOMResultBase>::decode(encodedValue, decodedInput))
             return false;
 
-        input = std::move(decodedInput);
+        input = WTF::move(decodedInput);
         return true;
     }
 

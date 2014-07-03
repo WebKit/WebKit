@@ -1136,7 +1136,7 @@ static const UChar horizontalOperators[] = {
 }
 
 RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, PassRef<RenderStyle> style)
-    : RenderMathMLToken(element, std::move(style))
+    : RenderMathMLToken(element, WTF::move(style))
     , m_stretchHeightAboveBaseline(0)
     , m_stretchDepthBelowBaseline(0)
     , m_operator(0)
@@ -1146,7 +1146,7 @@ RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, PassRef<Rende
 }
 
 RenderMathMLOperator::RenderMathMLOperator(Document& document, PassRef<RenderStyle> style, const String& operatorString, MathMLOperatorDictionary::Form form, unsigned short flags)
-    : RenderMathMLToken(document, std::move(style))
+    : RenderMathMLToken(document, WTF::move(style))
     , m_stretchHeightAboveBaseline(0)
     , m_stretchDepthBelowBaseline(0)
     , m_operator(0)
@@ -1649,7 +1649,7 @@ void RenderMathMLOperator::updateStyle()
     auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
     newStyle.get().setMarginStart(Length(m_leadingSpace, Fixed));
     newStyle.get().setMarginEnd(Length(m_trailingSpace, Fixed));
-    wrapper->setStyle(std::move(newStyle));
+    wrapper->setStyle(WTF::move(newStyle));
     wrapper->setNeedsLayoutAndPrefWidthsRecalc();
 
     if (!shouldAllowStretching())

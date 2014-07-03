@@ -156,7 +156,7 @@ public:
     }
 
     DeferrableOneShotTimer(std::function<void ()> function, std::chrono::milliseconds delay)
-        : m_function(std::move(function))
+        : m_function(WTF::move(function))
         , m_delay(delay)
         , m_shouldRestartWhenTimerFires(false)
     {

@@ -53,7 +53,7 @@ PassRefPtr<MathMLSelectElement> MathMLSelectElement::create(const QualifiedName&
 
 RenderPtr<RenderElement> MathMLSelectElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderMathMLRow>(*this, std::move(style));
+    return createRenderer<RenderMathMLRow>(*this, WTF::move(style));
 }
 
 //  We recognize the following values for the encoding attribute of the <semantics> element:

@@ -371,7 +371,7 @@ void LayerTreeHostGtk::createPageOverlayLayer(PageOverlay* pageOverlay)
     layer->setShowRepaintCounter(m_webPage->corePage()->settings().showRepaintCounter());
 
     m_rootLayer->addChild(layer.get());
-    m_pageOverlayLayers.add(pageOverlay, std::move(layer));
+    m_pageOverlayLayers.add(pageOverlay, WTF::move(layer));
 }
 
 void LayerTreeHostGtk::destroyPageOverlayLayer(PageOverlay* pageOverlay)

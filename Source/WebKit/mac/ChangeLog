@@ -1,3 +1,29 @@
+2014-07-03  Daniel Bates  <dabates@apple.com>
+
+        Add WTF::move()
+        https://bugs.webkit.org/show_bug.cgi?id=134500
+
+        Rubber-stamped by Anders Carlsson.
+
+        Substitute WTF::move() for std::move().
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        (WebKit::NetscapePluginInstanceProxy::setCurrentReply):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView scheduleTimerWithInterval:repeat:timerFunc:]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebFrameLoaderClient::dispatchWillSubmitForm):
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::openInspectorFrontend):
+        (WebInspectorFrontendClient::WebInspectorFrontendClient):
+        * WebView/WebArchive.mm:
+        (-[WebArchive initWithMainResource:subresources:subframeArchives:]):
+
 2014-07-01  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/134522> Remove duplication in code that prepares the user agent string on Mac and iOS

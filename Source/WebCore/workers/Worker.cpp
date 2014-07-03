@@ -118,7 +118,7 @@ void Worker::postMessage(PassRefPtr<SerializedScriptValue> message, const Messag
     std::unique_ptr<MessagePortChannelArray> channels = MessagePort::disentanglePorts(ports, ec);
     if (ec)
         return;
-    m_contextProxy->postMessageToWorkerGlobalScope(message, std::move(channels));
+    m_contextProxy->postMessageToWorkerGlobalScope(message, WTF::move(channels));
 }
 
 void Worker::terminate()

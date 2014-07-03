@@ -192,7 +192,7 @@ PassRefPtr<CSSCrossfadeValue> CSSCrossfadeValue::blend(const CSSCrossfadeValue& 
     auto fromImageValue = CSSImageValue::create(m_cachedFromImage->url(), fromStyledImage.get());
     auto toImageValue = CSSImageValue::create(m_cachedToImage->url(), toStyledImage.get());
 
-    RefPtr<CSSCrossfadeValue> crossfadeValue = CSSCrossfadeValue::create(std::move(fromImageValue), std::move(toImageValue));
+    RefPtr<CSSCrossfadeValue> crossfadeValue = CSSCrossfadeValue::create(WTF::move(fromImageValue), WTF::move(toImageValue));
 
     double fromPercentage = from.m_percentageValue->getDoubleValue();
     if (from.m_percentageValue->isPercentage())

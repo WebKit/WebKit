@@ -372,7 +372,7 @@ WKTypeRef WKPageCopySessionState(WKPageRef pageRef, void* context, WKPageSession
     if (shouldReturnData)
         return toAPI(encodeLegacySessionState(sessionState).release().leakRef());
 
-    return toAPI(API::SessionState::create(std::move(sessionState)).leakRef());
+    return toAPI(API::SessionState::create(WTF::move(sessionState)).leakRef());
 }
 
 void WKPageRestoreFromSessionState(WKPageRef pageRef, WKTypeRef sessionStateRef)
@@ -389,7 +389,7 @@ void WKPageRestoreFromSessionState(WKPageRef pageRef, WKTypeRef sessionStateRef)
         sessionState = toImpl(static_cast<WKSessionStateRef>(sessionStateRef))->sessionState();
     }
 
-    toImpl(pageRef)->restoreFromSessionState(std::move(sessionState));
+    toImpl(pageRef)->restoreFromSessionState(WTF::move(sessionState));
 }
 
 double WKPageGetTextZoomFactor(WKPageRef pageRef)
@@ -989,9 +989,9 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
                 Vector<RefPtr<API::Object>> removedItemsVector;
                 removedItemsVector.reserveInitialCapacity(removedItems.size());
                 for (auto& removedItem : removedItems)
-                    removedItemsVector.append(std::move(removedItem));
+                    removedItemsVector.append(WTF::move(removedItem));
 
-                removedItemsArray = API::Array::create(std::move(removedItemsVector));
+                removedItemsArray = API::Array::create(WTF::move(removedItemsVector));
             }
 
             m_client.didChangeBackForwardList(toAPI(page), toAPI(addedItem), toAPI(removedItemsArray.get()), m_client.base.clientInfo);
@@ -1097,7 +1097,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
     if (milestones)
         webPageProxy->process().send(Messages::WebPage::ListenForLayoutMilestones(milestones), webPageProxy->pageID());
 
-    webPageProxy->setLoaderClient(std::move(loaderClient));
+    webPageProxy->setLoaderClient(WTF::move(loaderClient));
 }
 
 void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClientBase* wkClient)
@@ -1203,7 +1203,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             map.set("resizable", API::Boolean::create(windowFeatures.resizable));
             map.set("fullscreen", API::Boolean::create(windowFeatures.fullscreen));
             map.set("dialog", API::Boolean::create(windowFeatures.dialog));
-            RefPtr<ImmutableDictionary> featuresMap = ImmutableDictionary::create(std::move(map));
+            RefPtr<ImmutableDictionary> featuresMap = ImmutableDictionary::create(WTF::move(map));
 
             if (!m_client.base.version)
                 return adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV0(toAPI(page), toAPI(featuresMap.get()), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), m_client.base.clientInfo)));
@@ -1790,7 +1790,7 @@ WKArrayRef WKPageCopyRelatedPages(WKPageRef pageRef)
             relatedPages.append(page);
     }
 
-    return toAPI(API::Array::create(std::move(relatedPages)).leakRef());
+    return toAPI(API::Array::create(WTF::move(relatedPages)).leakRef());
 }
 
 void WKPageSetMayStartMediaWhenInWindow(WKPageRef pageRef, bool mayStartMedia)

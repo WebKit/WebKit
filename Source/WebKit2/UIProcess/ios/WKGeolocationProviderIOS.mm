@@ -170,7 +170,7 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
 - (void)geolocationAuthorizationGranted
 {
     // Step 2: ask the user if the this particular page can use gelocation.
-    Vector<GeolocationRequestData> requests = std::move(_requestsWaitingForCoreLocationAuthorization);
+    Vector<GeolocationRequestData> requests = WTF::move(_requestsWaitingForCoreLocationAuthorization);
     for (const auto& request : requests) {
         RetainPtr<WKWebAllowDenyPolicyListener> policyListener = adoptNS([[WKWebAllowDenyPolicyListener alloc] initWithPermissionRequestProxy:request.permissionRequest.get()]);
         decidePolicyForGeolocationRequestFromOrigin(request.origin.get(), request.frame->url(), policyListener.get(), request.window.get());
@@ -179,7 +179,7 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
 
 - (void)geolocationAuthorizationDenied
 {
-    Vector<GeolocationRequestData> requests = std::move(_requestsWaitingForCoreLocationAuthorization);
+    Vector<GeolocationRequestData> requests = WTF::move(_requestsWaitingForCoreLocationAuthorization);
     for (const auto& requestData : requests)
         requestData.permissionRequest->deny();
 }

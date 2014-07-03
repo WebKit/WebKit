@@ -44,14 +44,14 @@ class RawData : public RefCounted<RawData> {
 public:
     static PassRefPtr<RawData> create(Vector<char>&& data)
     {
-        return adoptRef(new RawData(std::move(data)));
+        return adoptRef(new RawData(WTF::move(data)));
     }
 
     static PassRefPtr<RawData> create(const char* data, size_t size)
     {
         Vector<char> dataVector(size);
         memcpy(dataVector.data(), data, size);
-        return adoptRef(new RawData(std::move(dataVector)));
+        return adoptRef(new RawData(WTF::move(dataVector)));
     }
 
     const char* data() const { return m_data.data(); }
@@ -59,7 +59,7 @@ public:
 
 private:
     RawData(Vector<char>&& data)
-        : m_data(std::move(data))
+        : m_data(WTF::move(data))
     {
     }
 

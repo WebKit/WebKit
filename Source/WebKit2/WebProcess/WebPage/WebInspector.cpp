@@ -92,7 +92,7 @@ WebPage* WebInspector::createInspectorPage()
 
     auto frontendClient = std::make_unique<WebInspectorFrontendClient>(m_page, m_inspectorPage);
     m_frontendClient = frontendClient.get();
-    m_inspectorPage->corePage()->inspectorController().setInspectorFrontendClient(std::move(frontendClient));
+    m_inspectorPage->corePage()->inspectorController().setInspectorFrontendClient(WTF::move(frontendClient));
     return m_inspectorPage;
 }
 
@@ -122,7 +122,7 @@ WebPage* WebInspector::createInspectorPageForTest()
 
     auto frontendClient = std::make_unique<WebInspectorFrontendClient>(m_page, m_inspectorPage);
     m_frontendClient = frontendClient.get();
-    m_inspectorPage->corePage()->inspectorController().setInspectorFrontendClient(std::move(frontendClient));
+    m_inspectorPage->corePage()->inspectorController().setInspectorFrontendClient(WTF::move(frontendClient));
     return m_inspectorPage;
 }
 

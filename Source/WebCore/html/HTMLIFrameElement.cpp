@@ -92,7 +92,7 @@ bool HTMLIFrameElement::rendererIsNeeded(const RenderStyle& style)
 
 RenderPtr<RenderElement> HTMLIFrameElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderIFrame>(*this, std::move(style));
+    return createRenderer<RenderIFrame>(*this, WTF::move(style));
 }
 
 }

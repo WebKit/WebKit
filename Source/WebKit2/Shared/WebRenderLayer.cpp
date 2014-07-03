@@ -77,7 +77,7 @@ PassRefPtr<API::Array> WebRenderLayer::createArrayFromLayerList(Vector<RenderLay
     for (const auto& layer : *list)
         layers.uncheckedAppend(adoptRef(new WebRenderLayer(layer)));
 
-    return API::Array::create(std::move(layers));
+    return API::Array::create(WTF::move(layers));
 }
 
 WebRenderLayer::WebRenderLayer(RenderLayer* layer)

@@ -155,7 +155,7 @@ void DatabaseThread::handlePausedQueue()
 {
     Vector<std::unique_ptr<DatabaseTask> > pausedTasks;
     while (auto task = m_pausedQueue.tryGetMessage())
-        pausedTasks.append(std::move(task));
+        pausedTasks.append(WTF::move(task));
 
     for (unsigned i = 0; i < pausedTasks.size(); ++i) {
         AutodrainedPool pool;
@@ -164,7 +164,7 @@ void DatabaseThread::handlePausedQueue()
         {
             MutexLocker pausedLocker(m_pausedMutex);
             if (m_paused) {
-                m_pausedQueue.append(std::move(task));
+                m_pausedQueue.append(WTF::move(task));
                 continue;
             }
         }
@@ -193,7 +193,7 @@ void DatabaseThread::databaseThread()
         if (!m_paused || task->shouldPerformWhilePaused())
             task->performTask();
         else
-            m_pausedQueue.append(std::move(task));
+            m_pausedQueue.append(WTF::move(task));
 #else
         task->performTask();
 #endif
@@ -246,13 +246,13 @@ void DatabaseThread::recordDatabaseClosed(DatabaseBackend* database)
 void DatabaseThread::scheduleTask(std::unique_ptr<DatabaseTask> task)
 {
     ASSERT(!task->hasSynchronizer() || task->hasCheckedForTermination());
-    m_queue.append(std::move(task));
+    m_queue.append(WTF::move(task));
 }
 
 void DatabaseThread::scheduleImmediateTask(std::unique_ptr<DatabaseTask> task)
 {
     ASSERT(!task->hasSynchronizer() || task->hasCheckedForTermination());
-    m_queue.prepend(std::move(task));
+    m_queue.prepend(WTF::move(task));
 }
 
 class SameDatabasePredicate {

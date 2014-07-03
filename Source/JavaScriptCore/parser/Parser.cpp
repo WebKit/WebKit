@@ -296,7 +296,7 @@ String Parser<LexerType>::parseInner()
         }
     }
     didFinishParsing(sourceElements, context.varDeclarations(), context.funcDeclarations(), features,
-        context.numConstants(), capturedVariables, std::move(closedVariables));
+        context.numConstants(), capturedVariables, WTF::move(closedVariables));
 
     return parseError;
 }
@@ -1331,7 +1331,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
     matchOrFail(CLOSEBRACE, "Expected a closing '}' after a ", stringForFunctionMode(mode), " body");
     
     if (newInfo)
-        m_functionCache->add(openBraceOffset, std::move(newInfo));
+        m_functionCache->add(openBraceOffset, WTF::move(newInfo));
     
     next();
     return true;

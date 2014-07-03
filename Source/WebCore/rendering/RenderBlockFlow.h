@@ -269,7 +269,7 @@ public:
     RootInlineBox* lineGridBox() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_lineGridBox.get() : nullptr; }
     void setLineGridBox(std::unique_ptr<RootInlineBox> box)
     {
-        ensureRareBlockFlowData().m_lineGridBox = std::move(box);
+        ensureRareBlockFlowData().m_lineGridBox = WTF::move(box);
     }
     void layoutLineGridBox();
 

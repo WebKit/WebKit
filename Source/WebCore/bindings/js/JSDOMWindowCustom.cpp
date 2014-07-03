@@ -584,7 +584,7 @@ JSValue JSDOMWindow::setTimeout(ExecState* exec)
     int delay = exec->argument(1).toInt32(exec);
 
     ExceptionCode ec = 0;
-    int result = impl().setTimeout(std::move(action), delay, ec);
+    int result = impl().setTimeout(WTF::move(action), delay, ec);
     setDOMException(exec, ec);
 
     return jsNumber(result);
@@ -602,7 +602,7 @@ JSValue JSDOMWindow::setInterval(ExecState* exec)
         return jsNumber(0);
 
     ExceptionCode ec = 0;
-    int result = impl().setInterval(std::move(action), delay, ec);
+    int result = impl().setInterval(WTF::move(action), delay, ec);
     setDOMException(exec, ec);
 
     return jsNumber(result);

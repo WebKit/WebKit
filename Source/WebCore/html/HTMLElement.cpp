@@ -809,8 +809,8 @@ bool HTMLElement::rendererIsNeeded(const RenderStyle& style)
 RenderPtr<RenderElement> HTMLElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     if (hasTagName(wbrTag))
-        return createRenderer<RenderLineBreak>(*this, std::move(style));
-    return RenderElement::createFor(*this, std::move(style));
+        return createRenderer<RenderLineBreak>(*this, WTF::move(style));
+    return RenderElement::createFor(*this, WTF::move(style));
 }
 
 HTMLFormElement* HTMLElement::virtualForm() const

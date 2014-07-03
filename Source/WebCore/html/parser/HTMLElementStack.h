@@ -65,8 +65,8 @@ public:
     private:
         friend class HTMLElementStack;
 
-        std::unique_ptr<ElementRecord> releaseNext() { return std::move(m_next); }
-        void setNext(std::unique_ptr<ElementRecord> next) { m_next = std::move(next); }
+        std::unique_ptr<ElementRecord> releaseNext() { return WTF::move(m_next); }
+        void setNext(std::unique_ptr<ElementRecord> next) { m_next = WTF::move(next); }
 
         RefPtr<HTMLStackItem> m_item;
         std::unique_ptr<ElementRecord> m_next;

@@ -3131,7 +3131,7 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
     message.set(String::fromUTF8("CallbackID"), API::UInt64::create(callbackID));
 
     webView->priv->snapshotResultsMap.set(callbackID, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
-    getPage(webView)->postMessageToInjectedBundle(String::fromUTF8("GetSnapshot"), ImmutableDictionary::create(std::move(message)).get());
+    getPage(webView)->postMessageToInjectedBundle(String::fromUTF8("GetSnapshot"), ImmutableDictionary::create(WTF::move(message)).get());
 }
 
 /**

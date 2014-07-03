@@ -247,7 +247,7 @@ static PassRefPtr<API::Array> toAPIArray(const char* const* list)
         entries.append(API::String::createFromUTF8String(*list));
         list++;
     }
-    return API::Array::create(std::move(entries));
+    return API::Array::create(WTF::move(entries));
 }
 
 /**

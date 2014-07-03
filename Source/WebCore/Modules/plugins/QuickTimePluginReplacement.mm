@@ -138,7 +138,7 @@ RenderPtr<RenderElement> QuickTimePluginReplacement::createElementRenderer(HTMLP
     ASSERT_UNUSED(plugin, m_parentElement == &plugin);
 
     if (m_mediaElement)
-        return m_mediaElement->createElementRenderer(std::move(style));
+        return m_mediaElement->createElementRenderer(WTF::move(style));
 
     return nullptr;
 }

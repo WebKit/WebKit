@@ -117,7 +117,7 @@ void InjectedBundle::postMessage(const String& messageName, API::Object* message
     encoder->encode(messageName);
     encoder->encode(InjectedBundleUserMessageEncoder(messageBody));
 
-    WebProcess::shared().parentProcessConnection()->sendMessage(std::move(encoder));
+    WebProcess::shared().parentProcessConnection()->sendMessage(WTF::move(encoder));
 }
 
 void InjectedBundle::postSynchronousMessage(const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData)
@@ -129,7 +129,7 @@ void InjectedBundle::postSynchronousMessage(const String& messageName, API::Obje
     encoder->encode(messageName);
     encoder->encode(InjectedBundleUserMessageEncoder(messageBody));
 
-    std::unique_ptr<IPC::MessageDecoder> replyDecoder = WebProcess::shared().parentProcessConnection()->sendSyncMessage(syncRequestID, std::move(encoder), std::chrono::milliseconds::max());
+    std::unique_ptr<IPC::MessageDecoder> replyDecoder = WebProcess::shared().parentProcessConnection()->sendSyncMessage(syncRequestID, WTF::move(encoder), std::chrono::milliseconds::max());
     if (!replyDecoder || !replyDecoder->decode(messageDecoder)) {
         returnData = nullptr;
         return;
@@ -415,7 +415,7 @@ PassRefPtr<API::Array> InjectedBundle::originsWithApplicationCache()
     for (const auto& origin : origins)
         originIdentifiers.uncheckedAppend(API::String::create(origin->databaseIdentifier()));
 
-    return API::Array::create(std::move(originIdentifiers));
+    return API::Array::create(WTF::move(originIdentifiers));
 }
 
 int InjectedBundle::numberOfPages(WebFrame* frame, double pageWidthInPixels, double pageHeightInPixels)

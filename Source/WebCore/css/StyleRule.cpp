@@ -203,7 +203,7 @@ unsigned StyleRule::averageSizeInBytes()
 
 StyleRule::StyleRule(int sourceLine, PassRef<StyleProperties> properties)
     : StyleRuleBase(Style, sourceLine)
-    , m_properties(std::move(properties))
+    , m_properties(WTF::move(properties))
 {
 }
 
@@ -232,7 +232,7 @@ PassRef<StyleRule> StyleRule::create(int sourceLine, const Vector<const CSSSelec
     for (unsigned i = 0; i < selectors.size(); ++i)
         new (NotNull, &selectorListArray[i]) CSSSelector(*selectors.at(i));
     selectorListArray[selectors.size() - 1].setLastInSelectorList();
-    auto rule = StyleRule::create(sourceLine, std::move(properties));
+    auto rule = StyleRule::create(sourceLine, WTF::move(properties));
     rule.get().parserAdoptSelectorArray(selectorListArray);
     return rule;
 }
@@ -265,7 +265,7 @@ Vector<RefPtr<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorCo
 
 StyleRulePage::StyleRulePage(PassRef<StyleProperties> properties)
     : StyleRuleBase(Page)
-    , m_properties(std::move(properties))
+    , m_properties(WTF::move(properties))
 {
 }
 
@@ -289,7 +289,7 @@ MutableStyleProperties& StyleRulePage::mutableProperties()
 
 StyleRuleFontFace::StyleRuleFontFace(PassRef<StyleProperties> properties)
     : StyleRuleBase(FontFace, 0)
-    , m_properties(std::move(properties))
+    , m_properties(WTF::move(properties))
 {
 }
 
@@ -326,7 +326,7 @@ StyleRuleGroup::StyleRuleGroup(const StyleRuleGroup& o)
 
 void StyleRuleGroup::wrapperInsertRule(unsigned index, PassRef<StyleRuleBase> rule)
 {
-    m_childRules.insert(index, std::move(rule));
+    m_childRules.insert(index, WTF::move(rule));
 }
     
 void StyleRuleGroup::wrapperRemoveRule(unsigned index)
@@ -381,7 +381,7 @@ StyleRuleRegion::StyleRuleRegion(const StyleRuleRegion& o)
 #if ENABLE(CSS_DEVICE_ADAPTATION)
 StyleRuleViewport::StyleRuleViewport(PassRef<StyleProperties> properties)
     : StyleRuleBase(Viewport, 0)
-    , m_properties(std::move(properties))
+    , m_properties(WTF::move(properties))
 {
 }
 

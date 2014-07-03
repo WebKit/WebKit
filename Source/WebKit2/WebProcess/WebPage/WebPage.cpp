@@ -558,7 +558,7 @@ void WebPage::setInjectedBundleFormClient(std::unique_ptr<API::InjectedBundle::F
         return;
     }
 
-    m_formClient = std::move(formClient);
+    m_formClient = WTF::move(formClient);
 }
 
 void WebPage::initializeInjectedBundleLoaderClient(WKBundlePageLoaderClientBase* client)
@@ -597,7 +597,7 @@ void WebPage::setInjectedBundleUIClient(std::unique_ptr<API::InjectedBundle::Pag
         return;
     }
 
-    m_uiClient = std::move(uiClient);
+    m_uiClient = WTF::move(uiClient);
 }
 
 #if ENABLE(FULLSCREEN_API)
@@ -801,7 +801,7 @@ PassRefPtr<API::Array> WebPage::trackedRepaintRects()
     for (const auto& repaintRect : view->trackedRepaintRects())
         repaintRects.uncheckedAppend(API::Rect::create(toAPI(repaintRect)));
 
-    return API::Array::create(std::move(repaintRects));
+    return API::Array::create(WTF::move(repaintRects));
 }
 
 PluginView* WebPage::focusedPluginViewForFrame(Frame& frame)

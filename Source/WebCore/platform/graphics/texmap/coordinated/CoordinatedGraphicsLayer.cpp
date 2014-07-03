@@ -885,7 +885,7 @@ void CoordinatedGraphicsLayer::adjustContentsScale()
     // we do not want to drop the previous one as that might result in
     // briefly seeing flickering as the old tiles may be dropped before
     // something replaces them.
-    m_previousBackingStore = std::move(m_mainBackingStore);
+    m_previousBackingStore = WTF::move(m_mainBackingStore);
 
     // No reason to save the previous backing store for non-visible areas.
     m_previousBackingStore->removeAllNonVisibleTiles();

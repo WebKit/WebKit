@@ -166,9 +166,9 @@ Step:
         std::unique_ptr<Step::NodeTest> nodeTest($1);
         std::unique_ptr<Vector<std::unique_ptr<Expression>>> predicateList($2);
         if (predicateList)
-            $$ = new Step(Step::ChildAxis, std::move(*nodeTest), std::move(*predicateList));
+            $$ = new Step(Step::ChildAxis, WTF::move(*nodeTest), WTF::move(*predicateList));
         else
-            $$ = new Step(Step::ChildAxis, std::move(*nodeTest));
+            $$ = new Step(Step::ChildAxis, WTF::move(*nodeTest));
     }
     |
     NAMETEST OptionalPredicateList
@@ -184,7 +184,7 @@ Step:
         }
 
         if (predicateList)
-            $$ = new Step(Step::ChildAxis, Step::NodeTest(Step::NodeTest::NameTest, localName, namespaceURI), std::move(*predicateList));
+            $$ = new Step(Step::ChildAxis, Step::NodeTest(Step::NodeTest::NameTest, localName, namespaceURI), WTF::move(*predicateList));
         else
             $$ = new Step(Step::ChildAxis, Step::NodeTest(Step::NodeTest::NameTest, localName, namespaceURI));
     }
@@ -195,9 +195,9 @@ Step:
         std::unique_ptr<Vector<std::unique_ptr<Expression>>> predicateList($3);
 
         if (predicateList)
-            $$ = new Step($1, std::move(*nodeTest), std::move(*predicateList));
+            $$ = new Step($1, WTF::move(*nodeTest), WTF::move(*predicateList));
         else
-            $$ = new Step($1, std::move(*nodeTest));
+            $$ = new Step($1, WTF::move(*nodeTest));
     }
     |
     AxisSpecifier NAMETEST OptionalPredicateList
@@ -213,7 +213,7 @@ Step:
         }
 
         if (predicateList)
-            $$ = new Step($1, Step::NodeTest(Step::NodeTest::NameTest, localName, namespaceURI), std::move(*predicateList));
+            $$ = new Step($1, Step::NodeTest(Step::NodeTest::NameTest, localName, namespaceURI), WTF::move(*predicateList));
         else
             $$ = new Step($1, Step::NodeTest(Step::NodeTest::NameTest, localName, namespaceURI));
     }
@@ -322,7 +322,7 @@ PrimaryExpr:
     LITERAL
     {
         String literal = adoptRef($1);
-        $$ = new StringExpression(std::move(literal));
+        $$ = new StringExpression(WTF::move(literal));
     }
     |
     NUMBER
@@ -347,7 +347,7 @@ FunctionCall:
     {
         String name = adoptRef($1);
         std::unique_ptr<Vector<std::unique_ptr<Expression>>> argumentList($3);
-        $$ = XPath::Function::create(name, std::move(*argumentList)).release();
+        $$ = XPath::Function::create(name, WTF::move(*argumentList)).release();
         if (!$$)
             YYABORT;
     }
@@ -408,7 +408,7 @@ FilterExpr:
     PrimaryExpr PredicateList
     {
         std::unique_ptr<Vector<std::unique_ptr<Expression>>> predicateList($2);
-        $$ = new Filter(std::unique_ptr<Expression>($1), std::move(*predicateList));
+        $$ = new Filter(std::unique_ptr<Expression>($1), WTF::move(*predicateList));
     }
     ;
 

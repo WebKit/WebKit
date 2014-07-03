@@ -63,7 +63,7 @@ static void findGrammaticalErrors(TextCheckerClient& client, StringView text, Ve
         badGrammar.type = TextCheckingTypeGrammar;
         badGrammar.location = checkLocation + badGrammarLocation;
         badGrammar.length = badGrammarLength;
-        badGrammar.details = std::move(badGrammarDetails);
+        badGrammar.details = WTF::move(badGrammarDetails);
         results.append(badGrammar);
 
         checkLocation += badGrammarLocation + badGrammarLength;
@@ -669,11 +669,11 @@ void checkTextOfParagraph(TextCheckerClient& client, StringView text, TextChecki
         findGrammaticalErrors(client, text.substring(0, grammarCheckLength), grammaticalErrors);
     }
 
-    results = std::move(grammaticalErrors);
+    results = WTF::move(grammaticalErrors);
 #endif
 
     if (results.isEmpty())
-        results = std::move(mispellings);
+        results = WTF::move(mispellings);
     else
         results.appendVector(mispellings);
 #endif // USE(UNIFIED_TEXT_CHECKING)

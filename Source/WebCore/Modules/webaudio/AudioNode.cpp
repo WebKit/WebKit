@@ -100,12 +100,12 @@ void AudioNode::lazyInitialize()
 
 void AudioNode::addInput(std::unique_ptr<AudioNodeInput> input)
 {
-    m_inputs.append(std::move(input));
+    m_inputs.append(WTF::move(input));
 }
 
 void AudioNode::addOutput(std::unique_ptr<AudioNodeOutput> output)
 {
-    m_outputs.append(std::move(output));
+    m_outputs.append(WTF::move(output));
 }
 
 AudioNodeInput* AudioNode::input(unsigned i)

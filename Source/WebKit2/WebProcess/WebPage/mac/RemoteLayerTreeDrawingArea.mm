@@ -318,7 +318,7 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     // FIXME: Minimize these transactions if nothing changed.
     RemoteLayerTreeTransaction layerTransaction;
     layerTransaction.setTransactionID(takeNextTransactionID());
-    layerTransaction.setCallbackIDs(std::move(m_pendingCallbackIDs));
+    layerTransaction.setCallbackIDs(WTF::move(m_pendingCallbackIDs));
     m_remoteLayerTreeContext->buildTransaction(layerTransaction, *toGraphicsLayerCARemote(m_rootLayer.get())->platformCALayer());
     backingStoreCollection.willCommitLayerTree(layerTransaction);
     m_webPage.willCommitLayerTree(layerTransaction);
@@ -357,7 +357,7 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     if (hadAnyChangedBackingStore)
         backingStoreCollection.scheduleVolatilityTimer();
 
-    RefPtr<BackingStoreFlusher> backingStoreFlusher = BackingStoreFlusher::create(WebProcess::shared().parentProcessConnection(), std::move(commitEncoder), std::move(contextsToFlush));
+    RefPtr<BackingStoreFlusher> backingStoreFlusher = BackingStoreFlusher::create(WebProcess::shared().parentProcessConnection(), WTF::move(commitEncoder), WTF::move(contextsToFlush));
     m_pendingBackingStoreFlusher = backingStoreFlusher;
 
     dispatch_async(m_commitQueue, [backingStoreFlusher]{
@@ -402,13 +402,13 @@ bool RemoteLayerTreeDrawingArea::markLayersVolatileImmediatelyIfPossible()
 
 PassRefPtr<RemoteLayerTreeDrawingArea::BackingStoreFlusher> RemoteLayerTreeDrawingArea::BackingStoreFlusher::create(IPC::Connection* connection, std::unique_ptr<IPC::MessageEncoder> encoder, Vector<RetainPtr<CGContextRef>> contextsToFlush)
 {
-    return adoptRef(new RemoteLayerTreeDrawingArea::BackingStoreFlusher(connection, std::move(encoder), std::move(contextsToFlush)));
+    return adoptRef(new RemoteLayerTreeDrawingArea::BackingStoreFlusher(connection, WTF::move(encoder), WTF::move(contextsToFlush)));
 }
 
 RemoteLayerTreeDrawingArea::BackingStoreFlusher::BackingStoreFlusher(IPC::Connection* connection, std::unique_ptr<IPC::MessageEncoder> encoder, Vector<RetainPtr<CGContextRef>> contextsToFlush)
     : m_connection(connection)
-    , m_commitEncoder(std::move(encoder))
-    , m_contextsToFlush(std::move(contextsToFlush))
+    , m_commitEncoder(WTF::move(encoder))
+    , m_contextsToFlush(WTF::move(contextsToFlush))
     , m_hasFlushed(false)
 {
 }
@@ -421,7 +421,7 @@ void RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush()
         CGContextFlush(context.get());
     m_hasFlushed = true;
 
-    m_connection->sendMessage(std::move(m_commitEncoder));
+    m_connection->sendMessage(WTF::move(m_commitEncoder));
 }
 
 void RemoteLayerTreeDrawingArea::viewStateDidChange(ViewState::Flags, bool wantsDidUpdateViewState)

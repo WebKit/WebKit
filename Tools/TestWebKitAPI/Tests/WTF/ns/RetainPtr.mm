@@ -45,6 +45,8 @@ TEST(RetainPtr, MoveAssignmentFromSameType)
     RetainPtr<NSString> ptr;
 
     // This should invoke RetainPtr's move assignment operator.
+    // FIXME: This doesn't actually test that we moved the value. We should use a mock
+    // NSObject that logs -retain and -release calls.
     ptr = RetainPtr<NSString>(string);
 
     EXPECT_EQ(string, ptr);
@@ -53,7 +55,7 @@ TEST(RetainPtr, MoveAssignmentFromSameType)
     RetainPtr<NSString> temp = string;
 
     // This should invoke RetainPtr's move assignment operator.
-    ptr = std::move(temp);
+    ptr = WTF::move(temp);
 
     EXPECT_EQ(string, ptr);
     EXPECT_EQ((NSString *)0, temp);
@@ -65,6 +67,8 @@ TEST(RetainPtr, MoveAssignmentFromSimilarType)
     RetainPtr<NSString> ptr;
 
     // This should invoke RetainPtr's move assignment operator.
+    // FIXME: This doesn't actually test that we moved the value. We should use a mock
+    // NSObject that logs -retain and -release calls.
     ptr = RetainPtr<NSMutableString>(string);
 
     EXPECT_EQ(string, ptr);
@@ -73,7 +77,7 @@ TEST(RetainPtr, MoveAssignmentFromSimilarType)
     RetainPtr<NSMutableString> temp = string;
 
     // This should invoke RetainPtr's move assignment operator.
-    ptr = std::move(temp);
+    ptr = WTF::move(temp);
 
     EXPECT_EQ(string, ptr);
     EXPECT_EQ((NSString *)0, temp);
@@ -84,6 +88,8 @@ TEST(RetainPtr, ConstructionFromSameType)
     NSString *string = @"foo";
 
     // This should invoke RetainPtr's move constructor.
+    // FIXME: This doesn't actually test that we moved the value. We should use a mock
+    // NSObject that logs -retain and -release calls.
     RetainPtr<NSString> ptr = RetainPtr<NSString>(string);
 
     EXPECT_EQ(string, ptr);
@@ -91,7 +97,7 @@ TEST(RetainPtr, ConstructionFromSameType)
     RetainPtr<NSString> temp = string;
 
     // This should invoke RetainPtr's move constructor.
-    RetainPtr<NSString> ptr2(std::move(temp));
+    RetainPtr<NSString> ptr2(WTF::move(temp));
 
     EXPECT_EQ(string, ptr2);
     EXPECT_EQ((NSString *)0, temp);
@@ -102,6 +108,8 @@ TEST(RetainPtr, ConstructionFromSimilarType)
     NSMutableString *string = [NSMutableString stringWithUTF8String:"foo"];
 
     // This should invoke RetainPtr's move constructor.
+    // FIXME: This doesn't actually test that we moved the value. We should use a mock
+    // NSObject that logs -retain and -release calls.
     RetainPtr<NSString> ptr = RetainPtr<NSMutableString>(string);
 
     EXPECT_EQ(string, ptr);
@@ -109,7 +117,7 @@ TEST(RetainPtr, ConstructionFromSimilarType)
     RetainPtr<NSMutableString> temp = string;
 
     // This should invoke RetainPtr's move constructor.
-    RetainPtr<NSString> ptr2(std::move(temp));
+    RetainPtr<NSString> ptr2(WTF::move(temp));
 
     EXPECT_EQ(string, ptr2);
     EXPECT_EQ((NSString *)0, temp);

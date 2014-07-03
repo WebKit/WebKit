@@ -127,7 +127,7 @@ PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginMo
     ImmutableDictionary::MapType map;
     getPluginModuleInformation(plugin, map);
 
-    return ImmutableDictionary::create(std::move(map));
+    return ImmutableDictionary::create(WTF::move(map));
 }
 
 PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginModuleInfo& plugin, const String& frameURLString, const String& mimeType, const String& pageURLString, const String& pluginspageAttributeURLString, const String& pluginURLString, bool replacementObscured)
@@ -147,7 +147,7 @@ PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginMo
         map.set(pluginInformationPluginURLKey(), API::URL::create(pluginURLString));
     map.set(plugInInformationReplacementObscuredKey(), API::Boolean::create(replacementObscured));
 
-    return ImmutableDictionary::create(std::move(map));
+    return ImmutableDictionary::create(WTF::move(map));
 }
 
 PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const String& mimeType, const String& frameURLString, const String& pageURLString)
@@ -161,7 +161,7 @@ PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const String& 
     if (!pageURLString.isEmpty())
         map.set(pluginInformationPageURLKey(), API::URL::create(pageURLString));
 
-    return ImmutableDictionary::create(std::move(map));
+    return ImmutableDictionary::create(WTF::move(map));
 }
 
 #if !PLATFORM(COCOA)

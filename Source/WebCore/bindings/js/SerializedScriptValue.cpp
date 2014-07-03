@@ -1991,7 +1991,7 @@ private:
             auto key = CryptoKeyRSA::create(algorithm, *keyData, extractable, usages);
             if (isRestrictedToHash)
                 key->restrictToHash(hash);
-            result = std::move(key);
+            result = WTF::move(key);
             return true;
         }
 
@@ -2008,7 +2008,7 @@ private:
             auto key = CryptoKeyRSA::create(algorithm, *keyData, extractable, usages);
             if (isRestrictedToHash)
                 key->restrictToHash(hash);
-            result = std::move(key);
+            result = WTF::move(key);
             return true;
         }
 
@@ -2042,7 +2042,7 @@ private:
         auto key = CryptoKeyRSA::create(algorithm, *keyData, extractable, usages);
         if (isRestrictedToHash)
             key->restrictToHash(hash);
-        result = std::move(key);
+        result = WTF::move(key);
         return true;
     }
 
@@ -2194,11 +2194,11 @@ private:
                 if (!readFile(file))
                     return JSValue();
                 if (m_isDOMGlobalObject)
-                    files.append(std::move(file));
+                    files.append(WTF::move(file));
             }
             if (!m_isDOMGlobalObject)
                 return jsNull();
-            return getJSValue(FileList::create(std::move(files)).get());
+            return getJSValue(FileList::create(WTF::move(files)).get());
         }
         case ImageDataTag: {
             int32_t width;

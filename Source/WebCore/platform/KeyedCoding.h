@@ -117,7 +117,7 @@ public:
                 result = false;
                 break;
             }
-            objects.append(std::move(element));
+            objects.append(WTF::move(element));
             endArrayElement();
         }
 

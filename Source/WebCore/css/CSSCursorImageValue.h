@@ -35,7 +35,7 @@ class CSSCursorImageValue : public CSSValue {
 public:
     static PassRef<CSSCursorImageValue> create(PassRef<CSSValue> imageValue, bool hasHotSpot, const IntPoint& hotSpot)
     {
-        return adoptRef(*new CSSCursorImageValue(std::move(imageValue), hasHotSpot, hotSpot));
+        return adoptRef(*new CSSCursorImageValue(WTF::move(imageValue), hasHotSpot, hotSpot));
     }
 
     ~CSSCursorImageValue();

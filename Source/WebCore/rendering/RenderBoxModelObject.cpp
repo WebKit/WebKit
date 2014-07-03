@@ -161,12 +161,12 @@ bool RenderBoxModelObject::shouldPaintAtLowQuality(GraphicsContext* context, Ima
 }
 
 RenderBoxModelObject::RenderBoxModelObject(Element& element, PassRef<RenderStyle> style, unsigned baseTypeFlags)
-    : RenderLayerModelObject(element, std::move(style), baseTypeFlags | RenderBoxModelObjectFlag)
+    : RenderLayerModelObject(element, WTF::move(style), baseTypeFlags | RenderBoxModelObjectFlag)
 {
 }
 
 RenderBoxModelObject::RenderBoxModelObject(Document& document, PassRef<RenderStyle> style, unsigned baseTypeFlags)
-    : RenderLayerModelObject(document, std::move(style), baseTypeFlags | RenderBoxModelObjectFlag)
+    : RenderLayerModelObject(document, WTF::move(style), baseTypeFlags | RenderBoxModelObjectFlag)
 {
 }
 

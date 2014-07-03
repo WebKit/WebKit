@@ -131,7 +131,7 @@ void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName
 
 RenderPtr<RenderElement> SVGRadialGradientElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSVGResourceRadialGradient>(*this, std::move(style));
+    return createRenderer<RenderSVGResourceRadialGradient>(*this, WTF::move(style));
 }
 
 static void setGradientAttributes(SVGGradientElement& element, RadialGradientAttributes& attributes, bool isRadial = true)

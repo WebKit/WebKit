@@ -239,7 +239,7 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
 #if ENABLE(SVG_FONTS)
             source->setSVGFontFaceElement(item->svgFontFaceElement());
 #endif
-            fontFace->addSource(std::move(source));
+            fontFace->addSource(WTF::move(source));
         }
     }
 
@@ -311,7 +311,7 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
                     familyLocallyInstalledFaces->append(locallyInstalledFontFace);
                 }
 
-                m_locallyInstalledFontFaces.set(familyName, std::move(familyLocallyInstalledFaces));
+                m_locallyInstalledFontFaces.set(familyName, WTF::move(familyLocallyInstalledFaces));
             }
         }
 

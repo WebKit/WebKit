@@ -143,7 +143,7 @@ bool MediaQuerySet::parse(const String& mediaString)
                 continue;
             mediaQuery = std::make_unique<MediaQuery>(MediaQuery::None, mediaDescriptor, nullptr);
         }
-        result.append(std::move(mediaQuery));
+        result.append(WTF::move(mediaQuery));
     }
     // ",,,," falls straight through, but is not valid unless fallback
     if (!m_fallbackToDescriptor && list.isEmpty()) {
@@ -151,7 +151,7 @@ bool MediaQuerySet::parse(const String& mediaString)
         if (!strippedMediaString.isEmpty())
             return false;
     }
-    m_queries = std::move(result);
+    m_queries = WTF::move(result);
     return true;
 }
 
@@ -168,7 +168,7 @@ bool MediaQuerySet::add(const String& queryString)
     if (!parsedQuery)
         return false;
 
-    m_queries.append(std::move(parsedQuery));
+    m_queries.append(WTF::move(parsedQuery));
     return true;
 }
 
@@ -197,7 +197,7 @@ bool MediaQuerySet::remove(const String& queryStringToRemove)
 
 void MediaQuerySet::addMediaQuery(std::unique_ptr<MediaQuery> mediaQuery)
 {
-    m_queries.append(std::move(mediaQuery));
+    m_queries.append(WTF::move(mediaQuery));
 }
 
 String MediaQuerySet::mediaText() const

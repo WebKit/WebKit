@@ -60,7 +60,7 @@ public:
     AddResult set(const KeyType& key, ValueType value)
     {
         gcMapIfNeeded();
-        return m_map.set(key, std::move(value));
+        return m_map.set(key, WTF::move(value));
     }
 
     ALWAYS_INLINE AddResult add(const KeyType& key, ValueType value)
@@ -69,7 +69,7 @@ public:
         AddResult addResult = m_map.fastAdd(key, nullptr);
         if (!addResult.iterator->value) { // New value or found a zombie value.
             addResult.isNewEntry = true;
-            addResult.iterator->value = std::move(value);
+            addResult.iterator->value = WTF::move(value);
         }
         return addResult;
     }

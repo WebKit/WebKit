@@ -135,7 +135,7 @@ PassRefPtr<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frame
 
 PassRefPtr<WebFrame> WebFrame::create(std::unique_ptr<WebFrameLoaderClient> frameLoaderClient)
 {
-    RefPtr<WebFrame> frame = adoptRef(new WebFrame(std::move(frameLoaderClient)));
+    RefPtr<WebFrame> frame = adoptRef(new WebFrame(WTF::move(frameLoaderClient)));
 
     // Add explict ref() that will be balanced in WebFrameLoaderClient::frameLoaderDestroyed().
     frame->ref();
@@ -148,7 +148,7 @@ WebFrame::WebFrame(std::unique_ptr<WebFrameLoaderClient> frameLoaderClient)
     , m_policyListenerID(0)
     , m_policyFunction(0)
     , m_policyDownloadID(0)
-    , m_frameLoaderClient(std::move(frameLoaderClient))
+    , m_frameLoaderClient(WTF::move(frameLoaderClient))
     , m_loadListener(0)
     , m_frameID(generateFrameID())
 {
@@ -229,7 +229,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action
 
     ASSERT(m_policyFunction);
 
-    FramePolicyFunction function = std::move(m_policyFunction);
+    FramePolicyFunction function = WTF::move(m_policyFunction);
 
     invalidatePolicyListener();
 
@@ -457,7 +457,7 @@ PassRefPtr<API::Array> WebFrame::childFrames()
         vector.uncheckedAppend(webFrame);
     }
 
-    return API::Array::create(std::move(vector));
+    return API::Array::create(WTF::move(vector));
 }
 
 String WebFrame::layerTreeAsText() const

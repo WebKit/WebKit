@@ -330,8 +330,8 @@ public:
 
 IDBBackingStoreLevelDB::IDBBackingStoreLevelDB(const String& identifier, std::unique_ptr<LevelDBDatabase> db, std::unique_ptr<LevelDBComparator> comparator)
     : m_identifier(identifier)
-    , m_db(std::move(db))
-    , m_comparator(std::move(comparator))
+    , m_db(WTF::move(db))
+    , m_comparator(WTF::move(comparator))
     , m_weakFactory(this)
 {
 }
@@ -399,7 +399,7 @@ PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::open(const SecurityOr
         return PassRefPtr<IDBBackingStoreLevelDB>();
     }
 
-    return create(fileIdentifier, std::move(db), std::move(comparator));
+    return create(fileIdentifier, WTF::move(db), WTF::move(comparator));
 }
 
 PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::openInMemory(const String& identifier)
@@ -419,13 +419,13 @@ PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::openInMemory(const St
         return PassRefPtr<IDBBackingStoreLevelDB>();
     }
 
-    return create(identifier, std::move(db), std::move(comparator));
+    return create(identifier, WTF::move(db), WTF::move(comparator));
 }
 
 PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::create(const String& identifier, std::unique_ptr<LevelDBDatabase> db, std::unique_ptr<LevelDBComparator> comparator)
 {
     // FIXME: Handle comparator name changes.
-    RefPtr<IDBBackingStoreLevelDB> backingStore(adoptRef(new IDBBackingStoreLevelDB(identifier, std::move(db), std::move(comparator))));
+    RefPtr<IDBBackingStoreLevelDB> backingStore(adoptRef(new IDBBackingStoreLevelDB(identifier, WTF::move(db), WTF::move(comparator))));
 
     if (!setUpMetadata(backingStore->m_db.get(), identifier))
         return PassRefPtr<IDBBackingStoreLevelDB>();

@@ -140,7 +140,7 @@ void XMLHttpRequestProgressEventThrottle::dispatchDeferredEvents(Timer<XMLHttpRe
     m_deferEvents = false;
 
     // Take over the deferred events before dispatching them which can potentially add more.
-    auto deferredEvents = std::move(m_deferredEvents);
+    auto deferredEvents = WTF::move(m_deferredEvents);
 
     RefPtr<Event> deferredProgressEvent = m_deferredProgressEvent;
     m_deferredProgressEvent = nullptr;

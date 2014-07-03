@@ -53,7 +53,7 @@
 namespace WebCore {
 
 RenderSVGText::RenderSVGText(SVGTextElement& element, PassRef<RenderStyle> style)
-    : RenderSVGBlock(element, std::move(style))
+    : RenderSVGBlock(element, WTF::move(style))
     , m_needsReordering(false)
     , m_needsPositioningValuesUpdate(false)
     , m_needsTransformUpdate(true)
@@ -436,7 +436,7 @@ std::unique_ptr<RootInlineBox> RenderSVGText::createRootInlineBox()
 {
     auto box = std::make_unique<SVGRootInlineBox>(*this);
     box->setHasVirtualLogicalHeight();
-    return std::move(box);
+    return WTF::move(box);
 }
 
 bool RenderSVGText::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)

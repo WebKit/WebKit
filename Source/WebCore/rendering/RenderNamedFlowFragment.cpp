@@ -44,7 +44,7 @@
 namespace WebCore {
 
 RenderNamedFlowFragment::RenderNamedFlowFragment(Document& document, PassRef<RenderStyle> style)
-    : RenderRegion(document, std::move(style), nullptr)
+    : RenderRegion(document, WTF::move(style), nullptr)
     , m_hasCustomRegionStyle(false)
     , m_hasAutoLogicalHeight(false)
     , m_hasComputedAutoHeight(false)

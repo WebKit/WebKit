@@ -96,7 +96,7 @@ RENDER_OBJECT_TYPE_CASTS(RenderTextControl, isTextControl())
 class RenderTextControlInnerContainer final : public RenderFlexibleBox {
 public:
     explicit RenderTextControlInnerContainer(Element& element, PassRef<RenderStyle> style)
-        : RenderFlexibleBox(element, std::move(style))
+        : RenderFlexibleBox(element, WTF::move(style))
     { }
     virtual ~RenderTextControlInnerContainer() { }
 

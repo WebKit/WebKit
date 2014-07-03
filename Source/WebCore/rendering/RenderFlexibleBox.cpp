@@ -67,7 +67,7 @@ struct RenderFlexibleBox::Violation {
 
 
 RenderFlexibleBox::RenderFlexibleBox(Element& element, PassRef<RenderStyle> style)
-    : RenderBlock(element, std::move(style), 0)
+    : RenderBlock(element, WTF::move(style), 0)
     , m_orderIterator(*this)
     , m_numberOfInFlowChildrenOnFirstLine(-1)
 {
@@ -75,7 +75,7 @@ RenderFlexibleBox::RenderFlexibleBox(Element& element, PassRef<RenderStyle> styl
 }
 
 RenderFlexibleBox::RenderFlexibleBox(Document& document, PassRef<RenderStyle> style)
-    : RenderBlock(document, std::move(style), 0)
+    : RenderBlock(document, WTF::move(style), 0)
     , m_orderIterator(*this)
     , m_numberOfInFlowChildrenOnFirstLine(-1)
 {

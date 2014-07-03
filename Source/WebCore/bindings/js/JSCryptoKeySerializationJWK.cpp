@@ -152,7 +152,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> createHMACParameters(CryptoAlg
 {
     std::unique_ptr<CryptoAlgorithmHmacParams> hmacParameters = std::make_unique<CryptoAlgorithmHmacParams>();
     hmacParameters->hash = hashFunction;
-    return std::move(hmacParameters);
+    return WTF::move(hmacParameters);
 }
 
 static std::unique_ptr<CryptoAlgorithmParameters> createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier hashFunction)
@@ -160,7 +160,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> createRSAKeyParametersWithHash
     std::unique_ptr<CryptoAlgorithmRsaKeyParamsWithHash> rsaKeyParameters = std::make_unique<CryptoAlgorithmRsaKeyParamsWithHash>();
     rsaKeyParameters->hasHash = true;
     rsaKeyParameters->hash = hashFunction;
-    return std::move(rsaKeyParameters);
+    return WTF::move(rsaKeyParameters);
 }
 
 bool JSCryptoKeySerializationJWK::reconcileAlgorithm(std::unique_ptr<CryptoAlgorithm>& suggestedAlgorithm, std::unique_ptr<CryptoAlgorithmParameters>& suggestedParameters) const
@@ -220,8 +220,8 @@ bool JSCryptoKeySerializationJWK::reconcileAlgorithm(std::unique_ptr<CryptoAlgor
     }
 
     if (!suggestedAlgorithm) {
-        suggestedAlgorithm = std::move(algorithm);
-        suggestedParameters =  std::move(parameters);
+        suggestedAlgorithm = WTF::move(algorithm);
+        suggestedParameters =  WTF::move(parameters);
         return true;
     }
 

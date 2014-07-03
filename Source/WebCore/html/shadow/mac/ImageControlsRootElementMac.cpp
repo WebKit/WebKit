@@ -50,7 +50,7 @@ private:
 };
 
 RenderImageControls::RenderImageControls(HTMLElement& element, PassRef<RenderStyle> style)
-    : RenderBlockFlow(element, std::move(style))
+    : RenderBlockFlow(element, WTF::move(style))
 {
 }
 
@@ -104,7 +104,7 @@ ImageControlsRootElementMac::~ImageControlsRootElementMac()
 
 RenderPtr<RenderElement> ImageControlsRootElementMac::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderImageControls>(*this, std::move(style));
+    return createRenderer<RenderImageControls>(*this, WTF::move(style));
 }
 
 } // namespace WebCore

@@ -37,7 +37,7 @@ static IntPoint innerBottomRight(const IntRect& rect)
 
 TiledBackingStore::TiledBackingStore(TiledBackingStoreClient* client, std::unique_ptr<TiledBackingStoreBackend> backend)
     : m_client(client)
-    , m_backend(std::move(backend))
+    , m_backend(WTF::move(backend))
     , m_tileBufferUpdateTimer(this, &TiledBackingStore::tileBufferUpdateTimerFired)
     , m_backingStoreUpdateTimer(this, &TiledBackingStore::backingStoreUpdateTimerFired)
     , m_tileSize(defaultTileDimension, defaultTileDimension)

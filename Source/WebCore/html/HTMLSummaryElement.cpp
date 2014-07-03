@@ -66,7 +66,7 @@ HTMLSummaryElement::HTMLSummaryElement(const QualifiedName& tagName, Document& d
 
 RenderPtr<RenderElement> HTMLSummaryElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderBlockFlow>(*this, std::move(style));
+    return createRenderer<RenderBlockFlow>(*this, WTF::move(style));
 }
 
 bool HTMLSummaryElement::childShouldCreateRenderer(const Node& child) const

@@ -82,7 +82,7 @@ void WebApplicationCacheManagerProxy::derefWebContextSupplement()
 
 void WebApplicationCacheManagerProxy::getApplicationCacheOrigins(std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<ArrayCallback> callback = ArrayCallback::create(std::move(callbackFunction));
+    RefPtr<ArrayCallback> callback = ArrayCallback::create(WTF::move(callbackFunction));
 
     if (!context()) {
         callback->invalidate();

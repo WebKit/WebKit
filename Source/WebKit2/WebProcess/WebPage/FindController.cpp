@@ -249,7 +249,7 @@ void FindController::findStringMatches(const String& string, FindOptions options
     for (size_t i = 0; i < m_findMatches.size(); ++i) {
         Vector<IntRect> rects;
         m_findMatches[i]->textRects(rects);
-        matchRects.append(std::move(rects));
+        matchRects.append(WTF::move(rects));
     }
 
     m_webPage->send(Messages::WebPageProxy::DidFindStringMatches(string, matchRects, indexForSelection));

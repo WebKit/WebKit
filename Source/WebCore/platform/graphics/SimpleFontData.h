@@ -101,7 +101,7 @@ public:
     // Used to create SVG Fonts.
     static PassRefPtr<SimpleFontData> create(std::unique_ptr<AdditionalFontData> fontData, float fontSize, bool syntheticBold, bool syntheticItalic)
     {
-        return adoptRef(new SimpleFontData(std::move(fontData), fontSize, syntheticBold, syntheticItalic));
+        return adoptRef(new SimpleFontData(WTF::move(fontData), fontSize, syntheticBold, syntheticItalic));
     }
 
     virtual ~SimpleFontData();

@@ -212,7 +212,7 @@ void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const Atomic
 
 RenderPtr<RenderElement> HTMLTextAreaElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderTextControlMultiLine>(*this, std::move(style));
+    return createRenderer<RenderTextControlMultiLine>(*this, WTF::move(style));
 }
 
 bool HTMLTextAreaElement::appendFormData(FormDataList& encoding, bool)

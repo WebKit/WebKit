@@ -54,7 +54,7 @@ void DocumentRuleSets::initUserStyle(DocumentStyleSheetCollection& styleSheetCol
     collectRulesFromUserStyleSheets(styleSheetCollection.injectedUserStyleSheets(), *tempUserStyle, medium, resolver);
     collectRulesFromUserStyleSheets(styleSheetCollection.documentUserStyleSheets(), *tempUserStyle, medium, resolver);
     if (tempUserStyle->ruleCount() > 0 || tempUserStyle->pageRules().size() > 0)
-        m_userStyle = std::move(tempUserStyle);
+        m_userStyle = WTF::move(tempUserStyle);
 }
 
 void DocumentRuleSets::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& userSheets, RuleSet& userStyle, const MediaQueryEvaluator& medium, StyleResolver& resolver)

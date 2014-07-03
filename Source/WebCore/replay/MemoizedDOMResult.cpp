@@ -103,7 +103,7 @@ bool InputTraits<MemoizedDOMResultBase>::decode(EncodedValue& encodedValue, std:
     std::unique_ptr<MemoizedDOMResultBase> decodedInput = MemoizedDOMResultBase::createFromEncodedResult(attribute, ctype, encodedResult, exceptionCode);
     if (!decodedInput)
         return false;
-    input = std::move(decodedInput);
+    input = WTF::move(decodedInput);
     return true;
 }
 

@@ -66,7 +66,7 @@ namespace WebCore {
 WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& userAgent, std::unique_ptr<GroupSettings> settings, WorkerThread& thread, PassRefPtr<SecurityOrigin> topOrigin)
     : m_url(url)
     , m_userAgent(userAgent)
-    , m_groupSettings(std::move(settings))
+    , m_groupSettings(WTF::move(settings))
     , m_script(std::make_unique<WorkerScriptController>(this))
     , m_thread(thread)
 #if ENABLE(INSPECTOR)
@@ -149,12 +149,12 @@ WorkerNavigator* WorkerGlobalScope::navigator() const
 
 void WorkerGlobalScope::postTask(Task task)
 {
-    thread().runLoop().postTask(std::move(task));
+    thread().runLoop().postTask(WTF::move(task));
 }
 
 int WorkerGlobalScope::setTimeout(std::unique_ptr<ScheduledAction> action, int timeout)
 {
-    return DOMTimer::install(scriptExecutionContext(), std::move(action), timeout, true);
+    return DOMTimer::install(scriptExecutionContext(), WTF::move(action), timeout, true);
 }
 
 void WorkerGlobalScope::clearTimeout(int timeoutId)
@@ -164,7 +164,7 @@ void WorkerGlobalScope::clearTimeout(int timeoutId)
 
 int WorkerGlobalScope::setInterval(std::unique_ptr<ScheduledAction> action, int timeout)
 {
-    return DOMTimer::install(scriptExecutionContext(), std::move(action), timeout, false);
+    return DOMTimer::install(scriptExecutionContext(), WTF::move(action), timeout, false);
 }
 
 void WorkerGlobalScope::clearInterval(int timeoutId)

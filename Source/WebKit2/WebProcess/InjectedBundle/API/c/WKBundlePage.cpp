@@ -185,7 +185,7 @@ static PassRefPtr<API::Array> contextMenuItems(const WebContextMenu& contextMenu
     for (const auto& item : items)
         menuItems.uncheckedAppend(WebContextMenuItem::create(item));
 
-    return API::Array::create(std::move(menuItems));
+    return API::Array::create(WTF::move(menuItems));
 }
 #endif
 

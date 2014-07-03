@@ -166,7 +166,7 @@ static NSURL *websiteDataDirectoryURL(NSString *directoryName)
     webContextConfiguration.webSQLDatabaseDirectory = websiteDataDirectoryURL(@"WebSQL").absoluteURL.path.fileSystemRepresentation;
     webContextConfiguration.indexedDBDatabaseDirectory = websiteDataDirectoryURL(@"IndexedDB").absoluteURL.path.fileSystemRepresentation;
 
-    API::Object::constructInWrapper<WebKit::WebContext>(self, std::move(webContextConfiguration));
+    API::Object::constructInWrapper<WebKit::WebContext>(self, WTF::move(webContextConfiguration));
     _context->setHistoryClient(std::make_unique<WebKit::HistoryClient>());
     _context->setUsesNetworkProcess(true);
     _context->setProcessModel(WebKit::ProcessModelMultipleSecondaryProcesses);

@@ -86,21 +86,21 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
     auto runtimeAgent = std::make_unique<WorkerRuntimeAgent>(m_injectedScriptManager.get(), &workerGlobalScope);
     m_runtimeAgent = runtimeAgent.get();
     m_instrumentingAgents->setWorkerRuntimeAgent(m_runtimeAgent);
-    m_agents.append(std::move(runtimeAgent));
+    m_agents.append(WTF::move(runtimeAgent));
 
     auto consoleAgent = std::make_unique<WorkerConsoleAgent>(m_injectedScriptManager.get());
     m_instrumentingAgents->setWebConsoleAgent(consoleAgent.get());
 
     auto debuggerAgent = std::make_unique<WorkerDebuggerAgent>(m_injectedScriptManager.get(), m_instrumentingAgents.get(), &workerGlobalScope);
     m_runtimeAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
-    m_agents.append(std::move(debuggerAgent));
+    m_agents.append(WTF::move(debuggerAgent));
 
     auto profilerAgent = std::make_unique<WorkerProfilerAgent>(m_instrumentingAgents.get(), &workerGlobalScope);
     profilerAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
-    m_agents.append(std::move(profilerAgent));
+    m_agents.append(WTF::move(profilerAgent));
 
     m_agents.append(std::make_unique<InspectorTimelineAgent>(m_instrumentingAgents.get(), nullptr, InspectorTimelineAgent::WorkerInspector, nullptr));
-    m_agents.append(std::move(consoleAgent));
+    m_agents.append(WTF::move(consoleAgent));
 
     if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost()) {
         commandLineAPIHost->init(nullptr

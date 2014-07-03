@@ -113,7 +113,7 @@ void PseudoElement::didRecalcStyle(Style::Change)
         if (!child->isRenderImage() && !child->isQuote())
             continue;
         PassRef<RenderStyle> createdStyle = RenderStyle::createStyleInheritingFromPseudoStyle(renderer->style());
-        toRenderElement(*child).setStyle(std::move(createdStyle));
+        toRenderElement(*child).setStyle(WTF::move(createdStyle));
     }
 }
 

@@ -237,7 +237,7 @@ void InspectorConsoleAgent::addConsoleMessage(std::unique_ptr<ConsoleMessage> co
             m_previousMessage->updateRepeatCountInConsole(m_frontendDispatcher.get());
     } else {
         m_previousMessage = consoleMessage.get();
-        m_consoleMessages.append(std::move(consoleMessage));
+        m_consoleMessages.append(WTF::move(consoleMessage));
         if (m_frontendDispatcher && m_enabled)
             m_previousMessage->addToFrontend(m_frontendDispatcher.get(), m_injectedScriptManager, true);
     }

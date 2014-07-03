@@ -51,12 +51,12 @@ public:
 
     static PassRefPtr<Blob> create(Vector<char> data, const String& contentType)
     {
-        return adoptRef(new Blob(std::move(data), contentType));
+        return adoptRef(new Blob(WTF::move(data), contentType));
     }
 
     static PassRefPtr<Blob> create(Vector<BlobPart> blobParts, const String& contentType)
     {
-        return adoptRef(new Blob(std::move(blobParts), contentType));
+        return adoptRef(new Blob(WTF::move(blobParts), contentType));
     }
 
     static PassRefPtr<Blob> deserialize(const URL& srcURL, const String& type, long long size)

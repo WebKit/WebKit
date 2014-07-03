@@ -118,11 +118,11 @@ RenderPtr<RenderElement> HTMLCanvasElement::createElementRenderer(PassRef<Render
     Frame* frame = document().frame();
     if (frame && frame->script().canExecuteScripts(NotAboutToExecuteScript)) {
         m_rendererIsCanvas = true;
-        return createRenderer<RenderHTMLCanvas>(*this, std::move(style));
+        return createRenderer<RenderHTMLCanvas>(*this, WTF::move(style));
     }
 
     m_rendererIsCanvas = false;
-    return HTMLElement::createElementRenderer(std::move(style));
+    return HTMLElement::createElementRenderer(WTF::move(style));
 }
 
 void HTMLCanvasElement::willAttachRenderers()

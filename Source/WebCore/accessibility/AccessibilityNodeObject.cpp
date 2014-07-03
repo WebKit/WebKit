@@ -1438,7 +1438,7 @@ void AccessibilityNodeObject::ariaLabeledByText(Vector<AccessibilityText>& textO
             axElements.append(axElement);
         }
         
-        textOrder.append(AccessibilityText(ariaLabeledBy, AlternativeText, std::move(axElements)));
+        textOrder.append(AccessibilityText(ariaLabeledBy, AlternativeText, WTF::move(axElements)));
     }
 }
     

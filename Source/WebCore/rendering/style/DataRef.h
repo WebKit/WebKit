@@ -31,7 +31,7 @@ namespace WebCore {
 
 template <typename T> class DataRef {
 public:
-    DataRef(PassRef<T> data) : m_data(std::move(data)) { }
+    DataRef(PassRef<T> data) : m_data(WTF::move(data)) { }
     DataRef(const DataRef& other) : m_data(const_cast<T&>(other.m_data.get())) { }
     DataRef& operator=(const DataRef& other) { m_data = const_cast<T&>(other.m_data.get()); return *this; }
 

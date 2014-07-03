@@ -32,8 +32,8 @@ template<typename Iterator>
 class IteratorRange {
 public:
     IteratorRange(Iterator begin, Iterator end)
-        : m_begin(std::move(begin))
-        , m_end(std::move(end))
+        : m_begin(WTF::move(begin))
+        , m_end(WTF::move(end))
     {
     }
 

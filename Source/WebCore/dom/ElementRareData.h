@@ -95,10 +95,10 @@ public:
     void setAttributeMap(PassOwnPtr<NamedNodeMap> attributeMap) { m_attributeMap = attributeMap; }
 
     RenderStyle* computedStyle() const { return m_computedStyle.get(); }
-    void setComputedStyle(PassRef<RenderStyle> computedStyle) { m_computedStyle = std::move(computedStyle); }
+    void setComputedStyle(PassRef<RenderStyle> computedStyle) { m_computedStyle = WTF::move(computedStyle); }
 
     ClassList* classList() const { return m_classList.get(); }
-    void setClassList(std::unique_ptr<ClassList> classList) { m_classList = std::move(classList); }
+    void setClassList(std::unique_ptr<ClassList> classList) { m_classList = WTF::move(classList); }
     void clearClassListValueForQuirksMode()
     {
         if (!m_classList)
@@ -107,7 +107,7 @@ public:
     }
 
     DatasetDOMStringMap* dataset() const { return m_dataset.get(); }
-    void setDataset(std::unique_ptr<DatasetDOMStringMap> dataset) { m_dataset = std::move(dataset); }
+    void setDataset(std::unique_ptr<DatasetDOMStringMap> dataset) { m_dataset = WTF::move(dataset); }
 
     LayoutSize minimumSizeForResizing() const { return m_minimumSizeForResizing; }
     void setMinimumSizeForResizing(LayoutSize size) { m_minimumSizeForResizing = size; }

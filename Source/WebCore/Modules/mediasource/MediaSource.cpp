@@ -112,7 +112,7 @@ void MediaSource::setPrivateAndOpen(PassRef<MediaSourcePrivate> mediaSourcePriva
 {
     ASSERT(!m_private);
     ASSERT(m_mediaElement);
-    m_private = std::move(mediaSourcePrivate);
+    m_private = WTF::move(mediaSourcePrivate);
     setReadyState(openKeyword());
 }
 

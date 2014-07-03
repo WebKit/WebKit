@@ -38,7 +38,7 @@
 namespace Test {
 HandleWheelEvent::HandleWheelEvent(std::unique_ptr<PlatformWheelEvent> platformEvent)
     : EventLoopInput<HandleWheelEvent>()
-    , m_platformEvent(std::move(platformEvent))
+    , m_platformEvent(WTF::move(platformEvent))
 {
 }
 
@@ -65,7 +65,7 @@ bool InputTraits<Test::HandleWheelEvent>::decode(EncodedValue& encodedValue, std
     if (!encodedValue.get<WebCore::PlatformWheelEvent>(ASCIILiteral("platformEvent"), platformEvent))
         return false;
 
-    input = std::make_unique<Test::HandleWheelEvent>(std::move(platformEvent));
+    input = std::make_unique<Test::HandleWheelEvent>(WTF::move(platformEvent));
     return true;
 }
 #if ENABLE(DUMMY_FEATURE)

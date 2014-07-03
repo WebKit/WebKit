@@ -78,7 +78,7 @@ inline static bool hasVerticalAppearance(HTMLInputElement* input)
 // --------------------------------
 
 RenderSliderThumb::RenderSliderThumb(SliderThumbElement& element, PassRef<RenderStyle> style)
-    : RenderBlockFlow(element, std::move(style))
+    : RenderBlockFlow(element, WTF::move(style))
 {
 }
 
@@ -112,7 +112,7 @@ bool RenderSliderThumb::isSliderThumb() const
 class RenderSliderContainer : public RenderFlexibleBox {
 public:
     RenderSliderContainer(SliderContainerElement& element, PassRef<RenderStyle> style)
-        : RenderFlexibleBox(element, std::move(style))
+        : RenderFlexibleBox(element, WTF::move(style))
     {
     }
 
@@ -216,7 +216,7 @@ void SliderThumbElement::setPositionFromValue()
 
 RenderPtr<RenderElement> SliderThumbElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSliderThumb>(*this, std::move(style));
+    return createRenderer<RenderSliderThumb>(*this, WTF::move(style));
 }
 
 bool SliderThumbElement::isDisabledFormControl() const
@@ -617,7 +617,7 @@ PassRefPtr<SliderContainerElement> SliderContainerElement::create(Document& docu
 
 RenderPtr<RenderElement> SliderContainerElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSliderContainer>(*this, std::move(style));
+    return createRenderer<RenderSliderContainer>(*this, WTF::move(style));
 }
 
 const AtomicString& SliderContainerElement::shadowPseudoId() const

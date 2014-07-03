@@ -191,7 +191,7 @@ void SVGFilterElement::childrenChanged(const ChildChange& change)
 
 RenderPtr<RenderElement> SVGFilterElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSVGResourceFilter>(*this, std::move(style));
+    return createRenderer<RenderSVGResourceFilter>(*this, WTF::move(style));
 }
 
 bool SVGFilterElement::childShouldCreateRenderer(const Node& child) const

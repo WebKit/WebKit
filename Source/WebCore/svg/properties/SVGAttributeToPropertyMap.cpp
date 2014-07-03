@@ -53,7 +53,7 @@ void SVGAttributeToPropertyMap::addProperty(const SVGPropertyInfo* info)
     // FIXME: This does a second hash table lookup, but with HashMap::add we could instead do only one.
     auto vector = std::make_unique<PropertiesVector>();
     vector->append(info);
-    m_map.set(info->attributeName, std::move(vector));
+    m_map.set(info->attributeName, WTF::move(vector));
 }
 
 void SVGAttributeToPropertyMap::animatedPropertiesForAttribute(SVGElement* ownerType, const QualifiedName& attributeName, Vector<RefPtr<SVGAnimatedProperty>>& properties)

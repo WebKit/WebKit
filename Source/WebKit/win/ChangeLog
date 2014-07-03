@@ -1,3 +1,23 @@
+2014-07-03  Daniel Bates  <dabates@apple.com>
+
+        Add WTF::move()
+        https://bugs.webkit.org/show_bug.cgi?id=134500
+
+        Rubber-stamped by Anders Carlsson.
+
+        Substitute WTF::move() for std::move().
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::openInspectorFrontend):
+        (WebInspectorFrontendClient::WebInspectorFrontendClient):
+        * WebHistory.cpp:
+        (createUserInfoFromArray):
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::initFromDictionaryRepresentation):
+        * WebView.cpp:
+        (WebView::addToDirtyRegion):
+        (WebView::scrollBackingStore):
+
 2014-06-26  Brady Eidson  <beidson@apple.com>
 
         Remove use of PlatformStrategies for Gamepad API.

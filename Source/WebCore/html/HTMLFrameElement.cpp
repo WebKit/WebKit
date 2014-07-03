@@ -56,7 +56,7 @@ bool HTMLFrameElement::rendererIsNeeded(const RenderStyle&)
 
 RenderPtr<RenderElement> HTMLFrameElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderFrame>(*this, std::move(style));
+    return createRenderer<RenderFrame>(*this, WTF::move(style));
 }
 
 bool HTMLFrameElement::noResize() const

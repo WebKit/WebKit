@@ -589,7 +589,7 @@ static void generateByIdStub(
             successLabel.executableAddress()));
     
     if (kind == CallGetter || kind == CallSetter)
-        stubRoutine = adoptRef(new AccessorCallJITStubRoutine(code, *vm, std::move(callLinkInfo)));
+        stubRoutine = adoptRef(new AccessorCallJITStubRoutine(code, *vm, WTF::move(callLinkInfo)));
     else
         stubRoutine = createJITStubRoutine(code, *vm, codeBlock->ownerExecutable(), true);
 }

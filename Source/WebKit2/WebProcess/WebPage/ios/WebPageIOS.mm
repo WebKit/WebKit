@@ -2526,7 +2526,7 @@ void WebPage::computePagesForPrintingAndStartDrawingToPDF(uint64_t frameID, cons
     double totalScaleFactor = 1;
     computePagesForPrintingImpl(frameID, printInfo, pageRects, totalScaleFactor);
     std::size_t pageCount = pageRects.size();
-    reply->send(std::move(pageRects), totalScaleFactor);
+    reply->send(WTF::move(pageRects), totalScaleFactor);
 
     RetainPtr<CFMutableDataRef> pdfPageData;
     drawPagesToPDFImpl(frameID, printInfo, firstPage, pageCount - firstPage, pdfPageData);

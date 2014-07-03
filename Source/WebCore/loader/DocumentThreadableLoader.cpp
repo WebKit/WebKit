@@ -261,7 +261,7 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
             return;
         }
 
-        CrossOriginPreflightResultCache::shared().appendEntry(securityOrigin()->toString(), m_actualRequest->url(), std::move(preflightResult));
+        CrossOriginPreflightResultCache::shared().appendEntry(securityOrigin()->toString(), m_actualRequest->url(), WTF::move(preflightResult));
     } else {
         if (!m_sameOriginRequest && m_options.crossOriginRequestPolicy == UseAccessControl) {
             if (!passesAccessControlCheck(response, m_options.allowCredentials(), securityOrigin(), accessControlErrorDescription)) {

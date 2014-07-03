@@ -84,12 +84,12 @@ static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcP
 
 void CryptoAlgorithmAES_CBC::platformEncrypt(const CryptoAlgorithmAesCbcParams& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode&)
 {
-    transformAES_CBC(kCCEncrypt, parameters, key, data, std::move(callback), std::move(failureCallback));
+    transformAES_CBC(kCCEncrypt, parameters, key, data, WTF::move(callback), WTF::move(failureCallback));
 }
 
 void CryptoAlgorithmAES_CBC::platformDecrypt(const CryptoAlgorithmAesCbcParams& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode&)
 {
-    transformAES_CBC(kCCDecrypt, parameters, key, data, std::move(callback), std::move(failureCallback));
+    transformAES_CBC(kCCDecrypt, parameters, key, data, WTF::move(callback), WTF::move(failureCallback));
 }
 
 } // namespace WebCore

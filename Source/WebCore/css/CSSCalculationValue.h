@@ -111,7 +111,7 @@ private:
 
 inline CSSCalcValue::CSSCalcValue(PassRef<CSSCalcExpressionNode> expression, bool shouldClampToNonNegative)
     : CSSValue(CalculationClass)
-    , m_expression(std::move(expression))
+    , m_expression(WTF::move(expression))
     , m_shouldClampToNonNegative(shouldClampToNonNegative)
 {
 }

@@ -61,7 +61,7 @@ static inline bool shouldForwardUserGesture(int interval, int nestingLevel)
 DOMTimer::DOMTimer(ScriptExecutionContext* context, std::unique_ptr<ScheduledAction> action, int interval, bool singleShot)
     : SuspendableTimer(context)
     , m_nestingLevel(timerNestingLevel + 1)
-    , m_action(std::move(action))
+    , m_action(WTF::move(action))
     , m_originalInterval(interval)
     , m_shouldForwardUserGesture(shouldForwardUserGesture(interval, m_nestingLevel))
 {
@@ -88,7 +88,7 @@ int DOMTimer::install(ScriptExecutionContext* context, std::unique_ptr<Scheduled
     // DOMTimer constructor links the new timer into a list of ActiveDOMObjects held by the 'context'.
     // The timer is deleted when context is deleted (DOMTimer::contextDestroyed) or explicitly via DOMTimer::removeById(),
     // or if it is a one-time timer and it has fired (DOMTimer::fired).
-    DOMTimer* timer = new DOMTimer(context, std::move(action), timeout, singleShot);
+    DOMTimer* timer = new DOMTimer(context, WTF::move(action), timeout, singleShot);
 #if PLATFORM(IOS)
     if (context->isDocument()) {
         Document& document = toDocument(*context);
@@ -157,7 +157,7 @@ void DOMTimer::fired()
     }
 
     // Delete timer before executing the action for one-shot timers.
-    std::unique_ptr<ScheduledAction> action = std::move(m_action);
+    std::unique_ptr<ScheduledAction> action = WTF::move(m_action);
 
     // No access to member variables after this point.
     delete this;

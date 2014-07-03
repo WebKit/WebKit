@@ -167,7 +167,7 @@ void AnimationControllerPrivate::fireEventsAndUpdateStyle()
     bool updateStyle = !m_eventsToDispatch.isEmpty() || !m_elementChangesToDispatch.isEmpty();
 
     // fire all the events
-    Vector<EventToDispatch> eventsToDispatch = std::move(m_eventsToDispatch);
+    Vector<EventToDispatch> eventsToDispatch = WTF::move(m_eventsToDispatch);
     Vector<EventToDispatch>::const_iterator eventsToDispatchEnd = eventsToDispatch.end();
     for (Vector<EventToDispatch>::const_iterator it = eventsToDispatch.begin(); it != eventsToDispatchEnd; ++it) {
         Element* element = it->element.get();
@@ -206,7 +206,7 @@ void AnimationControllerPrivate::addEventToDispatch(PassRefPtr<Element> element,
 
 void AnimationControllerPrivate::addElementChangeToDispatch(PassRef<Element> element)
 {
-    m_elementChangesToDispatch.append(std::move(element));
+    m_elementChangesToDispatch.append(WTF::move(element));
     ASSERT(!m_elementChangesToDispatch.last()->document().inPageCache());
     startUpdateStyleIfNeededDispatcher();
 }
@@ -508,7 +508,7 @@ PassRef<RenderStyle> AnimationController::updateAnimations(RenderElement& render
     // We don't support anonymous pseudo elements like :first-line or :first-letter.
     ASSERT(renderer.element());
 
-    Ref<RenderStyle> newStyleBeforeAnimation(std::move(newStyle));
+    Ref<RenderStyle> newStyleBeforeAnimation(WTF::move(newStyle));
 
     CompositeAnimation& rendererAnimations = m_data->ensureCompositeAnimation(&renderer);
     auto blendedStyle = rendererAnimations.animate(renderer, oldStyle, newStyleBeforeAnimation.get());

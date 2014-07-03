@@ -1,3 +1,17 @@
+2014-07-03  Daniel Bates  <dabates@apple.com>
+
+        Add WTF::move()
+        https://bugs.webkit.org/show_bug.cgi?id=134500
+
+        Rubber-stamped by Anders Carlsson.
+
+        Substitute WTF::move() for std::move().
+
+        * WebCoreSupport/WebFixedPositionContent.mm:
+        (-[WebFixedPositionContent setViewportConstrainedLayers:stickyContainerMap:]):
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        (WebInspectorFrontendClient::WebInspectorFrontendClient):
+
 2014-07-01  Alex Christensen  <achristensen@webkit.org>
 
         [iOS] Compile fix with pointer lock enabled.

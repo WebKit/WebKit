@@ -216,7 +216,7 @@ bool TextFieldInputType::shouldSubmitImplicitly(Event* event)
 
 RenderPtr<RenderElement> TextFieldInputType::createInputRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderTextControlSingleLine>(element(), std::move(style));
+    return createRenderer<RenderTextControlSingleLine>(element(), WTF::move(style));
 }
 
 bool TextFieldInputType::needsContainer() const

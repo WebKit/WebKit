@@ -562,7 +562,7 @@ void CSSSelector::setArgument(const AtomicString& value)
 void CSSSelector::setSelectorList(std::unique_ptr<CSSSelectorList> selectorList)
 {
     createRareData();
-    m_data.m_rareData->m_selectorList = std::move(selectorList);
+    m_data.m_rareData->m_selectorList = WTF::move(selectorList);
 }
 
 bool CSSSelector::parseNth() const

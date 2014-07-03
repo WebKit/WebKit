@@ -39,7 +39,7 @@ namespace WebCore {
 
 PlatformMessagePortChannel::EventData::EventData(PassRefPtr<SerializedScriptValue> message, std::unique_ptr<MessagePortChannelArray> channels)
     : m_message(message)
-    , m_channels(std::move(channels))
+    , m_channels(WTF::move(channels))
 {
 }
 
@@ -54,8 +54,8 @@ void MessagePortChannel::createChannel(PassRefPtr<MessagePort> port1, PassRefPtr
     channel1->m_channel->m_entangledChannel = channel2->m_channel;
     channel2->m_channel->m_entangledChannel = channel1->m_channel;
 
-    port1->entangle(std::move(channel2));
-    port2->entangle(std::move(channel1));
+    port1->entangle(WTF::move(channel2));
+    port2->entangle(WTF::move(channel1));
 }
 
 MessagePortChannel::MessagePortChannel(PassRefPtr<PlatformMessagePortChannel> channel)
@@ -91,7 +91,7 @@ void MessagePortChannel::postMessageToRemote(PassRefPtr<SerializedScriptValue> m
     MutexLocker lock(m_channel->m_mutex);
     if (!m_channel->m_outgoingQueue)
         return;
-    bool wasEmpty = m_channel->m_outgoingQueue->appendAndCheckEmpty(std::make_unique<PlatformMessagePortChannel::EventData>(message, std::move(channels)));
+    bool wasEmpty = m_channel->m_outgoingQueue->appendAndCheckEmpty(std::make_unique<PlatformMessagePortChannel::EventData>(message, WTF::move(channels)));
     if (wasEmpty && m_channel->m_remotePort)
         m_channel->m_remotePort->messageAvailable();
 }

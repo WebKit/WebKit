@@ -39,14 +39,14 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderTableRow::RenderTableRow(Element& element, PassRef<RenderStyle> style)
-    : RenderBox(element, std::move(style), 0)
+    : RenderBox(element, WTF::move(style), 0)
     , m_rowIndex(unsetRowIndex)
 {
     setInline(false);
 }
 
 RenderTableRow::RenderTableRow(Document& document, PassRef<RenderStyle> style)
-    : RenderBox(document, std::move(style), 0)
+    : RenderBox(document, WTF::move(style), 0)
     , m_rowIndex(unsetRowIndex)
 {
     setInline(false);

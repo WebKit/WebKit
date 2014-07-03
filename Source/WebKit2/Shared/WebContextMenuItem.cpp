@@ -73,7 +73,7 @@ PassRefPtr<API::Array> WebContextMenuItem::submenuItemsAsAPIArray() const
     for (const auto& item : m_webContextMenuItemData.submenu())
         submenuItems.uncheckedAppend(WebContextMenuItem::create(item));
 
-    return API::Array::create(std::move(submenuItems));
+    return API::Array::create(WTF::move(submenuItems));
 }
 
 API::Object* WebContextMenuItem::userData() const

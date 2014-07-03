@@ -412,7 +412,7 @@ void CompositingCoordinator::releaseInactiveAtlasesTimerFired(Timer<CompositingC
         bool usableForRootContentsLayer = !atlas->supportsAlpha();
         if (atlas->isInactive()) {
             if (!foundActiveAtlasForRootContentsLayer && !atlasToKeepAnyway && usableForRootContentsLayer)
-                atlasToKeepAnyway = std::move(m_updateAtlases[i]);
+                atlasToKeepAnyway = WTF::move(m_updateAtlases[i]);
             m_updateAtlases.remove(i);
         } else if (usableForRootContentsLayer)
             foundActiveAtlasForRootContentsLayer = true;

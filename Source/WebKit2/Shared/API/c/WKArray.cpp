@@ -44,7 +44,7 @@ WKArrayRef WKArrayCreate(WKTypeRef* values, size_t numberOfValues)
     for (size_t i = 0; i < numberOfValues; ++i)
         elements.uncheckedAppend(const_cast<API::Object*>(static_cast<const API::Object*>(values[i])));
 
-    return toAPI(API::Array::create(std::move(elements)).leakRef());
+    return toAPI(API::Array::create(WTF::move(elements)).leakRef());
 }
 
 WKArrayRef WKArrayCreateAdoptingValues(WKTypeRef* values, size_t numberOfValues)
@@ -55,7 +55,7 @@ WKArrayRef WKArrayCreateAdoptingValues(WKTypeRef* values, size_t numberOfValues)
     for (size_t i = 0; i < numberOfValues; ++i)
         elements.uncheckedAppend(adoptRef(const_cast<API::Object*>(static_cast<const API::Object*>(values[i]))));
 
-    return toAPI(API::Array::create(std::move(elements)).leakRef());
+    return toAPI(API::Array::create(WTF::move(elements)).leakRef());
 }
 
 WKTypeRef WKArrayGetItemAtIndex(WKArrayRef arrayRef, size_t index)

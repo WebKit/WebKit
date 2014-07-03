@@ -56,7 +56,7 @@ private:
 };
 
 RenderImageControlsButton::RenderImageControlsButton(HTMLElement& element, PassRef<RenderStyle> style)
-    : RenderBlockFlow(element, std::move(style))
+    : RenderBlockFlow(element, WTF::move(style))
 {
 }
 
@@ -127,7 +127,7 @@ void ImageControlsButtonElementMac::defaultEventHandler(Event* event)
 
 RenderPtr<RenderElement> ImageControlsButtonElementMac::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderImageControlsButton>(*this, std::move(style));
+    return createRenderer<RenderImageControlsButton>(*this, WTF::move(style));
 }
 
 } // namespace WebCore

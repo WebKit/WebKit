@@ -64,7 +64,7 @@ void FileThread::stop()
 
 void FileThread::postTask(Task task)
 {
-    m_queue.append(std::make_unique<FileThread::Task>(std::move(task)));
+    m_queue.append(std::make_unique<FileThread::Task>(WTF::move(task)));
 }
 
 class SameInstancePredicate {

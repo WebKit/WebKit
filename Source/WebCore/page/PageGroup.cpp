@@ -289,13 +289,13 @@ StorageNamespace* PageGroup::transientLocalStorage(SecurityOrigin* topOrigin)
 void PageGroup::addUserScriptToWorld(DOMWrapperWorld& world, const String& source, const URL& url, const Vector<String>& whitelist, const Vector<String>& blacklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames)
 {
     auto userScript = std::make_unique<UserScript>(source, url, whitelist, blacklist, injectionTime, injectedFrames);
-    m_userContentController->addUserScript(world, std::move(userScript));
+    m_userContentController->addUserScript(world, WTF::move(userScript));
 }
 
 void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld& world, const String& source, const URL& url, const Vector<String>& whitelist, const Vector<String>& blacklist, UserContentInjectedFrames injectedFrames, UserStyleLevel level, UserStyleInjectionTime injectionTime)
 {
     auto userStyleSheet = std::make_unique<UserStyleSheet>(source, url, whitelist, blacklist, injectedFrames, level);
-    m_userContentController->addUserStyleSheet(world, std::move(userStyleSheet), injectionTime);
+    m_userContentController->addUserStyleSheet(world, WTF::move(userStyleSheet), injectionTime);
 
 }
 

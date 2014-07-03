@@ -229,7 +229,7 @@ void NetworkConnectionToWebProcess::registerFileBlobURL(const URL& url, const St
 
 void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, Vector<BlobPart> blobParts, const String& contentType)
 {
-    NetworkBlobRegistry::shared().registerBlobURL(this, url, std::move(blobParts), contentType);
+    NetworkBlobRegistry::shared().registerBlobURL(this, url, WTF::move(blobParts), contentType);
 }
 
 void NetworkConnectionToWebProcess::registerBlobURLFromURL(const URL& url, const URL& srcURL)

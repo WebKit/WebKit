@@ -37,7 +37,7 @@ PassRefPtr<Array> Array::create()
 
 PassRefPtr<Array> Array::create(Vector<RefPtr<Object>> elements)
 {
-    return adoptRef(new Array(std::move(elements)));
+    return adoptRef(new Array(WTF::move(elements)));
 }
 
 PassRefPtr<Array> Array::createStringArray(const Vector<WTF::String>& strings)
@@ -48,7 +48,7 @@ PassRefPtr<Array> Array::createStringArray(const Vector<WTF::String>& strings)
     for (const auto& string : strings)
         elements.uncheckedAppend(API::String::create(string));
 
-    return create(std::move(elements));
+    return create(WTF::move(elements));
 }
 
 Vector<WTF::String> Array::toStringVector()
@@ -66,7 +66,7 @@ Vector<WTF::String> Array::toStringVector()
 }
 
 Array::Array(Vector<RefPtr<Object>> elements)
-    : m_elements(std::move(elements))
+    : m_elements(WTF::move(elements))
 {
 }
 

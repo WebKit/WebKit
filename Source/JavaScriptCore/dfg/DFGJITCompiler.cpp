@@ -157,10 +157,10 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         m_jitCode->common.inlineCallFrames = m_graph.m_plan.inlineCallFrames;
     
     m_jitCode->common.machineCaptureStart = m_graph.m_machineCaptureStart;
-    m_jitCode->common.slowArguments = std::move(m_graph.m_slowArguments);
+    m_jitCode->common.slowArguments = WTF::move(m_graph.m_slowArguments);
 
 #if USE(JSVALUE32_64)
-    m_jitCode->common.doubleConstants = std::move(m_graph.m_doubleConstants);
+    m_jitCode->common.doubleConstants = WTF::move(m_graph.m_doubleConstants);
 #endif
 
     BitVector usedJumpTables;

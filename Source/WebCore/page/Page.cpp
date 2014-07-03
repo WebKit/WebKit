@@ -197,8 +197,8 @@ Page::Page(PageClients& pageClients)
 #endif
     , m_lastSpatialNavigationCandidatesCount(0) // NOTE: Only called from Internals for Spatial Navigation testing.
     , m_framesHandlingBeforeUnloadEvent(0)
-    , m_userContentController(std::move(pageClients.userContentController))
-    , m_visitedLinkStore(std::move(pageClients.visitedLinkStore))
+    , m_userContentController(WTF::move(pageClients.userContentController))
+    , m_visitedLinkStore(WTF::move(pageClients.visitedLinkStore))
     , m_sessionID(SessionID::defaultSessionID())
 {
     ASSERT(m_editorClient);

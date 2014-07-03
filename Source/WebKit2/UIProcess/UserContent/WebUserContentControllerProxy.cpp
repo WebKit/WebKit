@@ -83,7 +83,7 @@ void WebUserContentControllerProxy::removeProcess(WebProcessProxy& webProcessPro
 
 void WebUserContentControllerProxy::addUserScript(WebCore::UserScript userScript)
 {
-    m_userScripts.append(std::move(userScript));
+    m_userScripts.append(WTF::move(userScript));
 
     for (auto& processAndCount : m_processes)
         processAndCount.key->connection()->send(Messages::WebUserContentController::AddUserScripts({ m_userScripts.last() }), m_identifier);

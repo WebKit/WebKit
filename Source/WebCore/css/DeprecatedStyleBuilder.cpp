@@ -354,7 +354,7 @@ template <const Length& (RenderStyle::*getterFunction)() const,
           LengthUndefined noneUndefined = UndefinedDisabled>
 class ApplyPropertyLength {
 public:
-    static void setValue(RenderStyle* style, Length value) { (style->*setterFunction)(std::move(value)); }
+    static void setValue(RenderStyle* style, Length value) { (style->*setterFunction)(WTF::move(value)); }
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
         if (!value->isPrimitiveValue())
@@ -429,7 +429,7 @@ public:
 template <const LengthSize& (RenderStyle::*getterFunction)() const, void (RenderStyle::*setterFunction)(LengthSize), LengthSize (*initialFunction)()>
 class ApplyPropertyBorderRadius {
 public:
-    static void setValue(RenderStyle* style, LengthSize value) { (style->*setterFunction)(std::move(value)); }
+    static void setValue(RenderStyle* style, LengthSize value) { (style->*setterFunction)(WTF::move(value)); }
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
         if (!value->isPrimitiveValue())

@@ -140,21 +140,21 @@ namespace WTF {
 
     template<typename T> inline RefPtr<T>& RefPtr<T>::operator=(RefPtr&& o)
     {
-        RefPtr ptr = std::move(o);
+        RefPtr ptr = WTF::move(o);
         swap(ptr);
         return *this;
     }
 
     template<typename T> template<typename U> inline RefPtr<T>& RefPtr<T>::operator=(RefPtr<U>&& o)
     {
-        RefPtr ptr = std::move(o);
+        RefPtr ptr = WTF::move(o);
         swap(ptr);
         return *this;
     }
 
     template<typename T> template<typename U> inline RefPtr<T>& RefPtr<T>::operator=(PassRef<U> reference)
     {
-        RefPtr ptr = std::move(reference);
+        RefPtr ptr = WTF::move(reference);
         swap(ptr);
         return *this;
     }

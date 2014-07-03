@@ -62,7 +62,7 @@ static HTTPBody toHTTPBody(const FormData& formData)
             break;
         }
 
-        httpBody.elements.append(std::move(element));
+        httpBody.elements.append(WTF::move(element));
     }
 
     return httpBody;
@@ -91,7 +91,7 @@ static FrameState toFrameState(const HistoryItem& historyItem)
         HTTPBody httpBody = toHTTPBody(*formData);
         httpBody.contentType = historyItem.formContentType();
 
-        frameState.httpBody = std::move(httpBody);
+        frameState.httpBody = WTF::move(httpBody);
     }
 
 #if PLATFORM(IOS)
@@ -104,7 +104,7 @@ static FrameState toFrameState(const HistoryItem& historyItem)
 
     for (auto& childHistoryItem : historyItem.children()) {
         FrameState childFrameState = toFrameState(*childHistoryItem);
-        frameState.children.append(std::move(childFrameState));
+        frameState.children.append(WTF::move(childFrameState));
     }
 
     return frameState;

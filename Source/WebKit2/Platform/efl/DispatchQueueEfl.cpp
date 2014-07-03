@@ -95,7 +95,7 @@ void DispatchQueue::dispatch(std::unique_ptr<WorkItem> item)
 {
     {
         MutexLocker locker(m_workItemsLock);
-        m_workItems.append(std::move(item));
+        m_workItems.append(WTF::move(item));
     }
 
     wakeUpThread();
@@ -103,7 +103,7 @@ void DispatchQueue::dispatch(std::unique_ptr<WorkItem> item)
 
 void DispatchQueue::dispatch(std::unique_ptr<TimerWorkItem> item)
 {
-    insertTimerWorkItem(std::move(item));
+    insertTimerWorkItem(WTF::move(item));
     wakeUpThread();
 }
 
@@ -120,7 +120,7 @@ void DispatchQueue::setSocketEventHandler(int fileDescriptor, std::function<void
     ASSERT(m_socketDescriptor == invalidSocketDescriptor);
 
     m_socketDescriptor = fileDescriptor;
-    m_socketEventHandler = std::move(function);
+    m_socketEventHandler = WTF::move(function);
 
     if (fileDescriptor > m_maxFileDescriptor)
         m_maxFileDescriptor = fileDescriptor;
@@ -175,7 +175,7 @@ void DispatchQueue::performTimerWork()
 
     for (size_t i = 0; i < timerWorkItems.size(); ++i) {
         if (!timerWorkItems[i]->hasExpired(currentTimeNanoSeconds)) {
-            insertTimerWorkItem(std::move(timerWorkItems[i]));
+            insertTimerWorkItem(WTF::move(timerWorkItems[i]));
             continue;
         }
 
@@ -214,7 +214,7 @@ void DispatchQueue::insertTimerWorkItem(std::unique_ptr<TimerWorkItem> item)
         if (item->expirationTimeNanoSeconds() < m_timerWorkItems[position]->expirationTimeNanoSeconds())
             break;
 
-    m_timerWorkItems.insert(position, std::move(item));
+    m_timerWorkItems.insert(position, WTF::move(item));
 }
 
 void DispatchQueue::dispatchQueueThread()

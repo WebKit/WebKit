@@ -120,7 +120,7 @@ PassRefPtr<Image> CSSFilterImageValue::image(RenderElement* renderer, const Floa
     texture->context()->drawImage(image, ColorSpaceDeviceRGB, IntPoint());
 
     RefPtr<FilterEffectRenderer> filterRenderer = FilterEffectRenderer::create();
-    filterRenderer->setSourceImage(std::move(texture));
+    filterRenderer->setSourceImage(WTF::move(texture));
     filterRenderer->setSourceImageRect(FloatRect(FloatPoint(), size));
     filterRenderer->setFilterRegion(FloatRect(FloatPoint(), size));
     if (!filterRenderer->build(renderer, m_filterOperations, FilterFunction))

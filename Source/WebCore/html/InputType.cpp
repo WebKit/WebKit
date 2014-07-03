@@ -481,7 +481,7 @@ PassRefPtr<HTMLFormElement> InputType::formForSubmission() const
 
 RenderPtr<RenderElement> InputType::createInputRenderer(PassRef<RenderStyle> style)
 {
-    return RenderPtr<RenderElement>(RenderElement::createFor(element(), std::move(style)));
+    return RenderPtr<RenderElement>(RenderElement::createFor(element(), WTF::move(style)));
 }
 
 void InputType::blur()

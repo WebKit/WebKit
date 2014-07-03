@@ -401,7 +401,7 @@ void PlatformCAAnimationRemote::setTimingFunction(const TimingFunction* value, b
     Vector<RefPtr<TimingFunction>> timingFunctions;
     timingFunctions.append(value->clone());
 
-    m_properties.timingFunctions = std::move(timingFunctions);
+    m_properties.timingFunctions = WTF::move(timingFunctions);
     m_properties.reverseTimingFunctions = reverse;
 }
 
@@ -569,7 +569,7 @@ void PlatformCAAnimationRemote::setValues(const Vector<float>& values)
     for (size_t i = 0; i < values.size(); ++i)
         keyframes.uncheckedAppend(KeyframeValue(values[i]));
     
-    m_properties.keyValues = std::move(keyframes);
+    m_properties.keyValues = WTF::move(keyframes);
 }
 
 void PlatformCAAnimationRemote::setValues(const Vector<TransformationMatrix>& values)
@@ -583,7 +583,7 @@ void PlatformCAAnimationRemote::setValues(const Vector<TransformationMatrix>& va
     for (size_t i = 0; i < values.size(); ++i)
         keyframes.uncheckedAppend(KeyframeValue(values[i]));
     
-    m_properties.keyValues = std::move(keyframes);
+    m_properties.keyValues = WTF::move(keyframes);
 }
 
 void PlatformCAAnimationRemote::setValues(const Vector<FloatPoint3D>& values)
@@ -597,7 +597,7 @@ void PlatformCAAnimationRemote::setValues(const Vector<FloatPoint3D>& values)
     for (size_t i = 0; i < values.size(); ++i)
         keyframes.uncheckedAppend(KeyframeValue(values[i]));
     
-    m_properties.keyValues = std::move(keyframes);
+    m_properties.keyValues = WTF::move(keyframes);
 }
 
 void PlatformCAAnimationRemote::setValues(const Vector<Color>& values)
@@ -611,7 +611,7 @@ void PlatformCAAnimationRemote::setValues(const Vector<Color>& values)
     for (size_t i = 0; i < values.size(); ++i)
         keyframes.uncheckedAppend(KeyframeValue(values[i]));
     
-    m_properties.keyValues = std::move(keyframes);
+    m_properties.keyValues = WTF::move(keyframes);
 }
 
 #if ENABLE(CSS_FILTERS)
@@ -628,7 +628,7 @@ void PlatformCAAnimationRemote::setValues(const Vector<RefPtr<FilterOperation>>&
     for (size_t i = 0; i < values.size(); ++i)
         keyframes.uncheckedAppend(KeyframeValue(values[i]));
     
-    m_properties.keyValues = std::move(keyframes);
+    m_properties.keyValues = WTF::move(keyframes);
 }
 #endif
 
@@ -657,7 +657,7 @@ void PlatformCAAnimationRemote::setTimingFunctions(const Vector<const TimingFunc
     for (size_t i = 0; i < values.size(); ++i)
         timingFunctions.uncheckedAppend(values[i]->clone());
     
-    m_properties.timingFunctions = std::move(timingFunctions);
+    m_properties.timingFunctions = WTF::move(timingFunctions);
     m_properties.reverseTimingFunctions = reverse;
 }
 

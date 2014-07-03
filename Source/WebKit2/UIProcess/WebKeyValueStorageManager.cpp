@@ -96,12 +96,12 @@ static void didGetKeyValueStorageOrigins(const Vector<RefPtr<SecurityOrigin>>& s
     for (unsigned i = 0; i < securityOrigins.size(); ++i)
         webSecurityOrigins.uncheckedAppend(WebSecurityOrigin::create(securityOrigins[i]));
 
-    callback->performCallbackWithReturnValue(API::Array::create(std::move(webSecurityOrigins)).get());
+    callback->performCallbackWithReturnValue(API::Array::create(WTF::move(webSecurityOrigins)).get());
 }
 
 void WebKeyValueStorageManager::getKeyValueStorageOrigins(std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
 {
-    context()->storageManager().getOrigins(RunLoop::main(), ArrayCallback::create(std::move(callbackFunction)).leakRef(), didGetKeyValueStorageOrigins);
+    context()->storageManager().getOrigins(RunLoop::main(), ArrayCallback::create(WTF::move(callbackFunction)).leakRef(), didGetKeyValueStorageOrigins);
 }
 
 static void didGetStorageDetailsByOrigin(const Vector<LocalStorageDetails>& storageDetails, void* context)
@@ -122,15 +122,15 @@ static void didGetStorageDetailsByOrigin(const Vector<LocalStorageDetails>& stor
         if (originDetails.modificationTime)
             detailsMap.set(WebKeyValueStorageManager::modificationTimeKey(), API::Double::create(originDetails.modificationTime));
 
-        result.uncheckedAppend(ImmutableDictionary::create(std::move(detailsMap)));
+        result.uncheckedAppend(ImmutableDictionary::create(WTF::move(detailsMap)));
     }
 
-    callback->performCallbackWithReturnValue(API::Array::create(std::move(result)).get());
+    callback->performCallbackWithReturnValue(API::Array::create(WTF::move(result)).get());
 }
 
 void WebKeyValueStorageManager::getStorageDetailsByOrigin(std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
 {
-    context()->storageManager().getStorageDetailsByOrigin(RunLoop::main(), ArrayCallback::create(std::move(callbackFunction)).leakRef(), didGetStorageDetailsByOrigin);
+    context()->storageManager().getStorageDetailsByOrigin(RunLoop::main(), ArrayCallback::create(WTF::move(callbackFunction)).leakRef(), didGetStorageDetailsByOrigin);
 }
 
 void WebKeyValueStorageManager::deleteEntriesForOrigin(WebSecurityOrigin* origin)

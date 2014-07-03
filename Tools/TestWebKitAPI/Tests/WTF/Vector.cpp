@@ -149,7 +149,7 @@ TEST(WTF_Vector, MoveOnly_UncheckedAppend)
     vector.reserveInitialCapacity(100);
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i);
-        vector.uncheckedAppend(std::move(moveOnly));
+        vector.uncheckedAppend(WTF::move(moveOnly));
         EXPECT_EQ(0U, moveOnly.value());
     }
 
@@ -163,7 +163,7 @@ TEST(WTF_Vector, MoveOnly_Append)
 
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i);
-        vector.append(std::move(moveOnly));
+        vector.append(WTF::move(moveOnly));
         EXPECT_EQ(0U, moveOnly.value());
     }
 
@@ -177,7 +177,7 @@ TEST(WTF_Vector, MoveOnly_Append)
 
         for (size_t j = 0; j < i; ++j)
             vector.append(j);
-        vector.append(std::move(vector[0]));
+        vector.append(WTF::move(vector[0]));
 
         EXPECT_EQ(0U, vector[0].value());
 
@@ -193,7 +193,7 @@ TEST(WTF_Vector, MoveOnly_Insert)
 
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i);
-        vector.insert(0, std::move(moveOnly));
+        vector.insert(0, WTF::move(moveOnly));
         EXPECT_EQ(0U, moveOnly.value());
     }
 
@@ -203,7 +203,7 @@ TEST(WTF_Vector, MoveOnly_Insert)
 
     for (size_t i = 0; i < 200; i += 2) {
         MoveOnly moveOnly(1000 + i);
-        vector.insert(i, std::move(moveOnly));
+        vector.insert(i, WTF::move(moveOnly));
         EXPECT_EQ(0U, moveOnly.value());
     }
 
@@ -222,7 +222,7 @@ TEST(WTF_Vector, MoveOnly_TakeLast)
 
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i);
-        vector.append(std::move(moveOnly));
+        vector.append(WTF::move(moveOnly));
         EXPECT_EQ(0U, moveOnly.value());
     }
 

@@ -44,7 +44,7 @@ public:
 
     BlobPart(Vector<char> data)
         : m_type(Data)
-        , m_data(std::move(data))
+        , m_data(WTF::move(data))
     {
     }
 
@@ -65,7 +65,7 @@ public:
     Vector<char> moveData()
     {
         ASSERT(m_type == Data);
-        return std::move(m_data);
+        return WTF::move(m_data);
     }
 
     const URL& url() const

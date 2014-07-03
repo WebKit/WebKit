@@ -36,7 +36,7 @@ namespace WebCore {
 namespace XPath {
         
 Filter::Filter(std::unique_ptr<Expression> expression, Vector<std::unique_ptr<Expression>> predicates)
-    : m_expression(std::move(expression)), m_predicates(std::move(predicates))
+    : m_expression(WTF::move(expression)), m_predicates(WTF::move(predicates))
 {
     setIsContextNodeSensitive(m_expression->isContextNodeSensitive());
     setIsContextPositionSensitive(m_expression->isContextPositionSensitive());
@@ -65,7 +65,7 @@ Value Filter::evaluate() const
             if (evaluatePredicate(*m_predicates[i]))
                 newNodes.append(node);
         }
-        nodes = std::move(newNodes);
+        nodes = WTF::move(newNodes);
     }
 
     return result;
@@ -102,7 +102,7 @@ Value LocationPath::evaluate() const
     evaluate(nodes);
     
     evaluationContext = backupContext;
-    return Value(std::move(nodes));
+    return Value(WTF::move(nodes));
 }
 
 void LocationPath::evaluate(NodeSet& nodes) const
@@ -138,7 +138,7 @@ void LocationPath::evaluate(NodeSet& nodes) const
             }
         }
         
-        nodes = std::move(newNodes);
+        nodes = WTF::move(newNodes);
     }
 
     nodes.markSorted(resultIsSorted);
@@ -154,7 +154,7 @@ void LocationPath::appendStep(std::unique_ptr<Step> step)
             return;
     }
     step->optimize();
-    m_steps.append(std::move(step));
+    m_steps.append(WTF::move(step));
 }
 
 void LocationPath::prependStep(std::unique_ptr<Step> step)
@@ -163,17 +163,17 @@ void LocationPath::prependStep(std::unique_ptr<Step> step)
         bool dropSecondStep;
         optimizeStepPair(*step, *m_steps[0], dropSecondStep);
         if (dropSecondStep) {
-            m_steps[0] = std::move(step);
+            m_steps[0] = WTF::move(step);
             return;
         }
     }
     step->optimize();
-    m_steps.insert(0, std::move(step));
+    m_steps.insert(0, WTF::move(step));
 }
 
 Path::Path(std::unique_ptr<Expression> filter, std::unique_ptr<LocationPath> path)
-    : m_filter(std::move(filter))
-    , m_path(std::move(path))
+    : m_filter(WTF::move(filter))
+    , m_path(WTF::move(path))
 {
     setIsContextNodeSensitive(m_filter->isContextNodeSensitive());
     setIsContextPositionSensitive(m_filter->isContextPositionSensitive());

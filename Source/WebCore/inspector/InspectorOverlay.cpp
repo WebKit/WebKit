@@ -301,7 +301,7 @@ void InspectorOverlay::highlightQuad(std::unique_ptr<FloatQuad> quad, const High
         *quad -= m_page.mainFrame().view()->scrollOffset();
 
     m_quadHighlightConfig = highlightConfig;
-    m_highlightQuad = std::move(quad);
+    m_highlightQuad = WTF::move(quad);
     update();
 }
 

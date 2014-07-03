@@ -74,7 +74,7 @@ RENDER_OBJECT_TYPE_CASTS(RenderMathMLBlock, isRenderMathMLBlock())
 class RenderMathMLTable final : public RenderTable {
 public:
     explicit RenderMathMLTable(Element& element, PassRef<RenderStyle> style)
-        : RenderTable(element, std::move(style))
+        : RenderTable(element, WTF::move(style))
     {
     }
     

@@ -126,7 +126,7 @@ Deprecated::ScriptValue CommandLineAPIHost::InspectableObject::get(JSC::ExecStat
 
 void CommandLineAPIHost::addInspectedObject(std::unique_ptr<CommandLineAPIHost::InspectableObject> object)
 {
-    m_inspectedObjects.insert(0, std::move(object));
+    m_inspectedObjects.insert(0, WTF::move(object));
     while (m_inspectedObjects.size() > 5)
         m_inspectedObjects.removeLast();
 }

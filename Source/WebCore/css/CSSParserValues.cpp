@@ -238,13 +238,13 @@ CSSParserSelector::~CSSParserSelector()
     if (!m_tagHistory)
         return;
     Vector<std::unique_ptr<CSSParserSelector>, 16> toDelete;
-    std::unique_ptr<CSSParserSelector> selector = std::move(m_tagHistory);
+    std::unique_ptr<CSSParserSelector> selector = WTF::move(m_tagHistory);
     while (true) {
-        std::unique_ptr<CSSParserSelector> next = std::move(selector->m_tagHistory);
-        toDelete.append(std::move(selector));
+        std::unique_ptr<CSSParserSelector> next = WTF::move(selector->m_tagHistory);
+        toDelete.append(WTF::move(selector));
         if (!next)
             break;
-        selector = std::move(next);
+        selector = WTF::move(next);
     }
 }
 
@@ -252,7 +252,7 @@ void CSSParserSelector::adoptSelectorVector(Vector<std::unique_ptr<CSSParserSele
 {
     auto selectorList = std::make_unique<CSSSelectorList>();
     selectorList->adoptSelectorVector(selectorVector);
-    m_selector->setSelectorList(std::move(selectorList));
+    m_selector->setSelectorList(WTF::move(selectorList));
 }
 
 void CSSParserSelector::setPseudoClassValue(const CSSParserString& pseudoClassString)
@@ -286,10 +286,10 @@ bool CSSParserSelector::isSimple() const
 void CSSParserSelector::insertTagHistory(CSSSelector::Relation before, std::unique_ptr<CSSParserSelector> selector, CSSSelector::Relation after)
 {
     if (m_tagHistory)
-        selector->setTagHistory(std::move(m_tagHistory));
+        selector->setTagHistory(WTF::move(m_tagHistory));
     setRelation(before);
     selector->setRelation(after);
-    m_tagHistory = std::move(selector);
+    m_tagHistory = WTF::move(selector);
 }
 
 void CSSParserSelector::appendTagHistory(CSSSelector::Relation relation, std::unique_ptr<CSSParserSelector> selector)
@@ -298,15 +298,15 @@ void CSSParserSelector::appendTagHistory(CSSSelector::Relation relation, std::un
     while (end->tagHistory())
         end = end->tagHistory();
     end->setRelation(relation);
-    end->setTagHistory(std::move(selector));
+    end->setTagHistory(WTF::move(selector));
 }
 
 void CSSParserSelector::prependTagSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRule)
 {
     auto second = std::make_unique<CSSParserSelector>();
-    second->m_selector = std::move(m_selector);
-    second->m_tagHistory = std::move(m_tagHistory);
-    m_tagHistory = std::move(second);
+    second->m_selector = WTF::move(m_selector);
+    second->m_tagHistory = WTF::move(m_tagHistory);
+    m_tagHistory = WTF::move(second);
 
     m_selector = std::make_unique<CSSSelector>(tagQName, tagIsForNamespaceRule);
     m_selector->m_relation = CSSSelector::SubSelector;

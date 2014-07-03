@@ -43,7 +43,7 @@ namespace WebKit {
 class XPCServiceInitializerDelegate {
 public:
     XPCServiceInitializerDelegate(IPC::XPCPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
-        : m_connection(std::move(connection))
+        : m_connection(WTF::move(connection))
         , m_initializerMessage(initializerMessage)
     {
     }
@@ -68,7 +68,7 @@ protected:
 template<typename XPCServiceType, typename XPCServiceInitializerDelegateType>
 void XPCServiceInitializer(IPC::XPCPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
 {
-    XPCServiceInitializerDelegateType delegate(std::move(connection), initializerMessage);
+    XPCServiceInitializerDelegateType delegate(WTF::move(connection), initializerMessage);
 
     // We don't want XPC to be in charge of whether the process should be terminated or not,
     // so ensure that we have an outstanding transaction here.

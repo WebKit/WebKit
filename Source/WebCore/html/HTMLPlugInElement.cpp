@@ -278,9 +278,9 @@ NPObject* HTMLPlugInElement::getNPObject()
 RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     if (m_pluginReplacement && m_pluginReplacement->willCreateRenderer())
-        return m_pluginReplacement->createElementRenderer(*this, std::move(style));
+        return m_pluginReplacement->createElementRenderer(*this, WTF::move(style));
 
-    return createRenderer<RenderEmbeddedObject>(*this, std::move(style));
+    return createRenderer<RenderEmbeddedObject>(*this, WTF::move(style));
 }
 
 void HTMLPlugInElement::swapRendererTimerFired(Timer<HTMLPlugInElement>&)

@@ -128,7 +128,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::initFromDictionaryRepresentation(void*
         m_historyItem->setLastVisitWasFailure(true);
 
     if (redirectURLsVector.get())
-        m_historyItem->setRedirectURLs(std::move(redirectURLsVector));
+        m_historyItem->setRedirectURLs(WTF::move(redirectURLsVector));
 
     return S_OK;
 }

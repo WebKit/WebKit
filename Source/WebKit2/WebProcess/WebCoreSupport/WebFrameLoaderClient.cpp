@@ -657,7 +657,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
 
     bool canShowMIMEType = webPage->canShowMIMEType(response.mimeType());
 
-    uint64_t listenerID = m_frame->setUpPolicyListener(std::move(function));
+    uint64_t listenerID = m_frame->setUpPolicyListener(WTF::move(function));
     bool receivedPolicyAction;
     uint64_t policyAction;
     uint64_t downloadID;
@@ -691,7 +691,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
     }
 
 
-    uint64_t listenerID = m_frame->setUpPolicyListener(std::move(function));
+    uint64_t listenerID = m_frame->setUpPolicyListener(WTF::move(function));
 
     NavigationActionData navigationActionData;
     navigationActionData.navigationType = action->navigationType();
@@ -727,7 +727,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         return;
     }
     
-    uint64_t listenerID = m_frame->setUpPolicyListener(std::move(function));
+    uint64_t listenerID = m_frame->setUpPolicyListener(WTF::move(function));
     bool receivedPolicyAction;
     uint64_t newNavigationID;
     uint64_t policyAction;
@@ -830,7 +830,7 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(PassRefPtr<FormState> prpFormS
     webPage->injectedBundleFormClient().willSubmitForm(webPage, form, m_frame, sourceFrame, values, userData);
 
 
-    uint64_t listenerID = m_frame->setUpPolicyListener(std::move(function));
+    uint64_t listenerID = m_frame->setUpPolicyListener(WTF::move(function));
 
     webPage->send(Messages::WebPageProxy::WillSubmitForm(m_frame->frameID(), sourceFrame->frameID(), values, listenerID, InjectedBundleUserMessageEncoder(userData.get())));
 }

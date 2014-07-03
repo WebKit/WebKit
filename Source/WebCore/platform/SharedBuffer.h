@@ -77,7 +77,7 @@ public:
     public:
         template<typename T>
         NSDataRetainPtrWithoutImplicitConversionOperator(RetainPtr<T*>&& other)
-            : RetainPtr<NSData*>(std::move(other))
+            : RetainPtr<NSData*>(WTF::move(other))
         {
         }
 

@@ -247,10 +247,10 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(PassRefPtr<ArchiveResource
     archive->setMainResource(mainResource);
     
     for (unsigned i = 0; i < subresources.size(); ++i)
-        archive->addSubresource(std::move(subresources[i]));
+        archive->addSubresource(WTF::move(subresources[i]));
     
     for (unsigned i = 0; i < subframeArchives.size(); ++i)
-        archive->addSubframeArchive(std::move(subframeArchives[i]));
+        archive->addSubframeArchive(WTF::move(subframeArchives[i]));
         
     return archive.release();
 }
@@ -449,7 +449,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Node* node, std::function<
     if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
         markupString = documentTypeString(node->document()) + markupString;
 
-    return create(markupString, frame, nodeList, std::move(frameFilter));
+    return create(markupString, frame, nodeList, WTF::move(frameFilter));
 }
 
 PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Frame* frame)
@@ -465,11 +465,11 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Frame* frame)
     
     for (unsigned i = 0; i < frame->tree().childCount(); ++i) {
         if (RefPtr<LegacyWebArchive> childFrameArchive = create(frame->tree().child(i)))
-            subframeArchives.append(std::move(childFrameArchive));
+            subframeArchives.append(WTF::move(childFrameArchive));
     }
 
     auto subresources = documentLoader->subresources();
-    return create(documentLoader->mainResource(), std::move(subresources), std::move(subframeArchives));
+    return create(documentLoader->mainResource(), WTF::move(subresources), WTF::move(subframeArchives));
 }
 
 PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Range* range)
@@ -522,7 +522,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
                 continue;
                 
             if (RefPtr<LegacyWebArchive> subframeArchive = create(childFrame->document(), frameFilter))
-                subframeArchives.append(std::move(subframeArchive));
+                subframeArchives.append(WTF::move(subframeArchive));
             else
                 LOG_ERROR("Unabled to archive subframe %s", childFrame->tree().uniqueName().string().utf8().data());
 
@@ -539,7 +539,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
                 uniqueSubresources.add(subresourceURL);
 
                 if (RefPtr<ArchiveResource> resource = documentLoader->subresource(subresourceURL)) {
-                    subresources.append(std::move(resource));
+                    subresources.append(WTF::move(resource));
                     continue;
                 }
 
@@ -552,7 +552,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
                     ResourceBuffer* data = cachedResource->resourceBuffer();
 
                     if (RefPtr<ArchiveResource> resource = ArchiveResource::create(data ? data->sharedBuffer() : 0, subresourceURL, cachedResource->response())) {
-                        subresources.append(std::move(resource));
+                        subresources.append(WTF::move(resource));
                         continue;
                     }
                 }
@@ -574,7 +574,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
         }
     }
 
-    return create(mainResource.release(), subresources, std::move(subframeArchives));
+    return create(mainResource.release(), subresources, WTF::move(subframeArchives));
 }
 
 PassRefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)

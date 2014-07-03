@@ -54,7 +54,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderTextControlSingleLine::RenderTextControlSingleLine(HTMLInputElement& element, PassRef<RenderStyle> style)
-    : RenderTextControl(element, std::move(style))
+    : RenderTextControl(element, WTF::move(style))
     , m_shouldDrawCapsLockIndicator(false)
     , m_desiredInnerTextLogicalHeight(-1)
 {

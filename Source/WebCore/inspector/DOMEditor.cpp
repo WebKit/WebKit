@@ -374,7 +374,7 @@ bool DOMEditor::setOuterHTML(Node& node, const String& html, Node** newNode, Exc
 {
     auto action = std::make_unique<SetOuterHTMLAction>(node, html);
     SetOuterHTMLAction* rawAction = action.get();
-    bool result = m_history->perform(std::move(action), ec);
+    bool result = m_history->perform(WTF::move(action), ec);
     if (result)
         *newNode = rawAction->newNode();
     return result;

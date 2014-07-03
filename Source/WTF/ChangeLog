@@ -1,3 +1,29 @@
+2014-07-03  Daniel Bates  <dabates@apple.com>
+
+        Add WTF::move()
+        https://bugs.webkit.org/show_bug.cgi?id=134500
+
+        Reviewed by Darin Adler.
+
+        Substitution of WTF::move() for std::move() rubber-stamped by Anders Carlsson.
+
+        Implement WTF::move(), a replacement for std::move(). WTF::move() is less error
+        prone than std::move() as it compile asserts that its argument is a non-const
+        lvalue reference before ultimately casting it to a rvalue reference (via std::move).
+
+        * wtf/Deque.h: Substitute WTF::move() for std::move().
+        * wtf/HashMap.h: Ditto.
+        * wtf/HashSet.h: Ditto.
+        * wtf/HashTable.h: Ditto.
+        * wtf/IteratorAdaptors.h: Ditto.
+        * wtf/IteratorRange.h: Ditto.
+        * wtf/ListHashSet.h: Ditto.
+        * wtf/MainThread.cpp: Ditto.
+        [...]
+        * wtf/StdLibExtras.h:
+        (WTF::move): Added.
+        [...]
+
 2014-07-03  Anders Carlsson  <andersca@apple.com>
 
         Get rid of Encoder.h and Decoder.h from WTF

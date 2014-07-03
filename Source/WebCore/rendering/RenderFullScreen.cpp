@@ -37,7 +37,7 @@ namespace WebCore {
 class RenderFullScreenPlaceholder final : public RenderBlockFlow {
 public:
     RenderFullScreenPlaceholder(RenderFullScreen& owner, PassRef<RenderStyle> style)
-        : RenderBlockFlow(owner.document(), std::move(style))
+        : RenderBlockFlow(owner.document(), WTF::move(style))
         , m_owner(owner) 
     {
     }
@@ -55,7 +55,7 @@ void RenderFullScreenPlaceholder::willBeDestroyed()
 }
 
 RenderFullScreen::RenderFullScreen(Document& document, PassRef<RenderStyle> style)
-    : RenderFlexibleBox(document, std::move(style))
+    : RenderFlexibleBox(document, WTF::move(style))
     , m_placeholder(0)
 {
     setReplaced(false); 
@@ -193,11 +193,11 @@ void RenderFullScreen::createPlaceholder(PassRef<RenderStyle> style, const Layou
         style.get().setHeight(Length(frameRect.height(), Fixed));
 
     if (m_placeholder) {
-        m_placeholder->setStyle(std::move(style));
+        m_placeholder->setStyle(WTF::move(style));
         return;
     }
 
-    m_placeholder = new RenderFullScreenPlaceholder(*this, std::move(style));
+    m_placeholder = new RenderFullScreenPlaceholder(*this, WTF::move(style));
     m_placeholder->initializeStyle();
     if (parent()) {
         parent()->addChild(m_placeholder, this);

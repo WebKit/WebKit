@@ -42,7 +42,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderListItem::RenderListItem(Element& element, PassRef<RenderStyle> style)
-    : RenderBlockFlow(element, std::move(style))
+    : RenderBlockFlow(element, WTF::move(style))
     , m_hasExplicitValue(false)
     , m_isValueUpToDate(false)
     , m_notInList(false)
@@ -64,10 +64,10 @@ void RenderListItem::styleDidChange(StyleDifference diff, const RenderStyle* old
     // up (e.g., in some deeply nested line box). See CSS3 spec.
     newStyle.get().inheritFrom(&style());
     if (!m_marker) {
-        m_marker = createRenderer<RenderListMarker>(*this, std::move(newStyle));
+        m_marker = createRenderer<RenderListMarker>(*this, WTF::move(newStyle));
         m_marker->initializeStyle();
     } else
-        m_marker->setStyle(std::move(newStyle));
+        m_marker->setStyle(WTF::move(newStyle));
 }
 
 void RenderListItem::willBeDestroyed()

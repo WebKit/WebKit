@@ -32,11 +32,11 @@ static uint64_t highestUsedItemID = 0;
 
 PassRefPtr<WebBackForwardListItem> WebBackForwardListItem::create(BackForwardListItemState backForwardListItemState)
 {
-    return adoptRef(new WebBackForwardListItem(std::move(backForwardListItemState)));
+    return adoptRef(new WebBackForwardListItem(WTF::move(backForwardListItemState)));
 }
 
 WebBackForwardListItem::WebBackForwardListItem(BackForwardListItemState backForwardListItemState)
-    : m_itemState(std::move(backForwardListItemState))
+    : m_itemState(WTF::move(backForwardListItemState))
 {
     if (m_itemState.identifier > highestUsedItemID)
         highestUsedItemID = m_itemState.identifier;

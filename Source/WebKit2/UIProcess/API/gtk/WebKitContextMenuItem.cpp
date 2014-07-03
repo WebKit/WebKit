@@ -103,7 +103,7 @@ WebKitContextMenuItem* webkitContextMenuItemCreate(WebContextMenuItem* webItem)
     subMenuItems.reserveInitialCapacity(subMenu.size());
     for (size_t i = 0; i < subMenu.size(); ++i)
         subMenuItems.uncheckedAppend(WebContextMenuItem::create(subMenu[i]).get());
-    webkitContextMenuItemSetSubMenu(item, adoptGRef(webkitContextMenuCreate(API::Array::create(std::move(subMenuItems)).get())));
+    webkitContextMenuItemSetSubMenu(item, adoptGRef(webkitContextMenuCreate(API::Array::create(WTF::move(subMenuItems)).get())));
 
     return item;
 }

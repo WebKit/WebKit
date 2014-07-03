@@ -31,7 +31,7 @@
 namespace WebCore {
     
 RenderSVGInline::RenderSVGInline(SVGGraphicsElement& element, PassRef<RenderStyle> style)
-    : RenderInline(element, std::move(style))
+    : RenderInline(element, WTF::move(style))
 {
     setAlwaysCreateLineBoxes();
 }
@@ -40,7 +40,7 @@ std::unique_ptr<InlineFlowBox> RenderSVGInline::createInlineFlowBox()
 {
     auto box = std::make_unique<SVGInlineFlowBox>(*this);
     box->setHasVirtualLogicalHeight();
-    return std::move(box);
+    return WTF::move(box);
 }
 
 FloatRect RenderSVGInline::objectBoundingBox() const

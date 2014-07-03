@@ -146,7 +146,7 @@ void ConvolverNode::setBuffer(AudioBuffer* buffer)
     {
         // Synchronize with process().
         std::lock_guard<std::mutex> lock(m_processMutex);
-        m_reverb = std::move(reverb);
+        m_reverb = WTF::move(reverb);
         m_buffer = buffer;
     }
 }

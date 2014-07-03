@@ -150,7 +150,7 @@ InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorCon
     m_frontendClient = frontendClient.get();
     RetainPtr<WebInspectorFrontend> webInspectorFrontend = adoptNS([[WebInspectorFrontend alloc] initWithFrontendClient:frontendClient.get()]);
     [[m_webView inspector] setFrontend:webInspectorFrontend.get()];
-    m_frontendPage->inspectorController().setInspectorFrontendClient(std::move(frontendClient));
+    m_frontendPage->inspectorController().setInspectorFrontendClient(WTF::move(frontendClient));
     return this;
 }
 
@@ -201,7 +201,7 @@ void WebInspectorClient::releaseFrontend()
 
 
 WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, WebInspectorWindowController* windowController, InspectorController* inspectorController, Page* frontendPage, std::unique_ptr<Settings> settings)
-    : InspectorFrontendClientLocal(inspectorController,  frontendPage, std::move(settings))
+    : InspectorFrontendClientLocal(inspectorController,  frontendPage, WTF::move(settings))
     , m_inspectedWebView(inspectedWebView)
     , m_windowController(windowController)
 {

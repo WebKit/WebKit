@@ -44,7 +44,7 @@ public:
 
     static PassRefPtr<FileList> create(Vector<RefPtr<File>>&& files)
     {
-        return adoptRef(new FileList(std::move(files)));
+        return adoptRef(new FileList(WTF::move(files)));
     }
 
     unsigned length() const { return m_files.size(); }

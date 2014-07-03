@@ -231,7 +231,7 @@ void ThreadableWebSocketChannelClientWrapper::processPendingTasks()
         return;
     }
 
-    Vector<std::unique_ptr<ScriptExecutionContext::Task>> pendingTasks = std::move(m_pendingTasks);
+    Vector<std::unique_ptr<ScriptExecutionContext::Task>> pendingTasks = WTF::move(m_pendingTasks);
     for (auto& task : pendingTasks)
         task->performTask(*m_context);
 }

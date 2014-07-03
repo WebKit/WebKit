@@ -153,7 +153,7 @@ void SharedWorkerProxy::postTaskToLoader(ScriptExecutionContext::Task task)
     // Just pick an arbitrary active document from the HashSet and pass load requests to it.
     // FIXME: Do we need to deal with the case where the user closes the document mid-load, via a shadow document or some other solution?
     Document* document = *(m_workerDocuments.begin());
-    document->postTask(std::move(task));
+    document->postTask(WTF::move(task));
 }
 
 bool SharedWorkerProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task task, const String& mode)
@@ -161,7 +161,7 @@ bool SharedWorkerProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionContex
     if (isClosing())
         return false;
     ASSERT(m_thread);
-    m_thread->runLoop().postTaskForMode(std::move(task), mode);
+    m_thread->runLoop().postTaskForMode(WTF::move(task), mode);
     return true;
 }
 
@@ -288,7 +288,7 @@ private:
 
 SharedWorkerScriptLoader::SharedWorkerScriptLoader(PassRefPtr<SharedWorker> worker, std::unique_ptr<MessagePortChannel> port, PassRefPtr<SharedWorkerProxy> proxy)
     : m_worker(worker)
-    , m_port(std::move(port))
+    , m_port(WTF::move(port))
     , m_proxy(proxy)
 {
 }
@@ -320,7 +320,7 @@ void SharedWorkerScriptLoader::notifyFinished()
     else {
         InspectorInstrumentation::scriptImported(m_worker->scriptExecutionContext(), m_scriptLoader->identifier(), m_scriptLoader->script());
         DefaultSharedWorkerRepository::instance().workerScriptLoaded(*m_proxy, m_worker->scriptExecutionContext()->userAgent(m_scriptLoader->url()),
-            m_scriptLoader->script(), std::move(m_port),
+            m_scriptLoader->script(), WTF::move(m_port),
             m_worker->scriptExecutionContext()->contentSecurityPolicy()->deprecatedHeader(),
             m_worker->scriptExecutionContext()->contentSecurityPolicy()->deprecatedHeaderType());
     }
@@ -407,7 +407,7 @@ void DefaultSharedWorkerRepository::connectToWorker(PassRefPtr<SharedWorker> wor
     if (proxy->thread())
         proxy->thread()->runLoop().postTask(SharedWorkerConnectTask(port.release()));
     else {
-        RefPtr<SharedWorkerScriptLoader> loader = adoptRef(new SharedWorkerScriptLoader(worker, std::move(port), proxy.release()));
+        RefPtr<SharedWorkerScriptLoader> loader = adoptRef(new SharedWorkerScriptLoader(worker, WTF::move(port), proxy.release()));
         loader->load(url);
     }
 }

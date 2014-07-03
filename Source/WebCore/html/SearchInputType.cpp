@@ -61,7 +61,7 @@ void SearchInputType::addSearchResult()
 
 RenderPtr<RenderElement> SearchInputType::createInputRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSearchField>(element(), std::move(style));
+    return createRenderer<RenderSearchField>(element(), WTF::move(style));
 }
 
 const AtomicString& SearchInputType::formControlType() const

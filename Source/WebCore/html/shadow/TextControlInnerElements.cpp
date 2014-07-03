@@ -60,7 +60,7 @@ PassRefPtr<TextControlInnerContainer> TextControlInnerContainer::create(Document
     
 RenderPtr<RenderElement> TextControlInnerContainer::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderTextControlInnerContainer>(*this, std::move(style));
+    return createRenderer<RenderTextControlInnerContainer>(*this, WTF::move(style));
 }
 
 TextControlInnerElement::TextControlInnerElement(Document& document)
@@ -114,7 +114,7 @@ void TextControlInnerTextElement::defaultEventHandler(Event* event)
 
 RenderPtr<RenderElement> TextControlInnerTextElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderTextControlInnerBlock>(*this, std::move(style));
+    return createRenderer<RenderTextControlInnerBlock>(*this, WTF::move(style));
 }
 
 RenderTextControlInnerBlock* TextControlInnerTextElement::renderer() const

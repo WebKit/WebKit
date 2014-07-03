@@ -51,7 +51,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderSearchField::RenderSearchField(HTMLInputElement& element, PassRef<RenderStyle> style)
-    : RenderTextControlSingleLine(element, std::move(style))
+    : RenderTextControlSingleLine(element, WTF::move(style))
     , m_searchPopupIsVisible(false)
     , m_searchPopup(0)
 {
@@ -181,7 +181,7 @@ void RenderSearchField::updateCancelButtonVisibility() const
 
     auto cancelButtonStyle = RenderStyle::clone(&curStyle);
     cancelButtonStyle.get().setVisibility(buttonVisibility);
-    cancelButtonRenderer->setStyle(std::move(cancelButtonStyle));
+    cancelButtonRenderer->setStyle(WTF::move(cancelButtonStyle));
 }
 
 EVisibility RenderSearchField::visibilityForCancelButton() const

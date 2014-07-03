@@ -262,7 +262,7 @@ void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValu
         permissions |= DatabaseAuthorizer::ReadOnlyMask;
 
     auto statement = std::make_unique<SQLStatement>(m_database.get(), callback, callbackError);
-    m_backend->executeSQL(std::move(statement), sqlStatement, arguments, permissions);
+    m_backend->executeSQL(WTF::move(statement), sqlStatement, arguments, permissions);
 }
 
 bool SQLTransaction::computeNextStateAndCleanupIfNeeded()

@@ -58,7 +58,7 @@ public:
     std::unique_ptr<ContentData> clone() const;
 
     ContentData* next() const { return m_next.get(); }
-    void setNext(std::unique_ptr<ContentData> next) { m_next = std::move(next); }
+    void setNext(std::unique_ptr<ContentData> next) { m_next = WTF::move(next); }
 
     void setAltText(const String& alt) { m_altText = alt; }
     const String& altText() const { return m_altText; }
@@ -154,7 +154,7 @@ class CounterContentData final : public ContentData {
 public:
     explicit CounterContentData(std::unique_ptr<CounterContent> counter)
         : ContentData(CounterDataType)
-        , m_counter(std::move(counter))
+        , m_counter(WTF::move(counter))
     {
         ASSERT(m_counter);
     }
@@ -163,7 +163,7 @@ public:
     void setCounter(std::unique_ptr<CounterContent> counter)
     {
         ASSERT(counter);
-        m_counter = std::move(counter);
+        m_counter = WTF::move(counter);
     }
 
     virtual RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const override;
@@ -172,7 +172,7 @@ private:
     virtual std::unique_ptr<ContentData> cloneInternal() const override
     {
         auto counterData = std::make_unique<CounterContent>(counter());
-        return std::make_unique<CounterContentData>(std::move(counterData));
+        return std::make_unique<CounterContentData>(WTF::move(counterData));
     }
 
     std::unique_ptr<CounterContent> m_counter;

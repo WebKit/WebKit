@@ -40,7 +40,7 @@ class StyleKeyframe : public RefCounted<StyleKeyframe> {
 public:
     static PassRefPtr<StyleKeyframe> create(PassRef<StyleProperties> properties)
     {
-        return adoptRef(new StyleKeyframe(std::move(properties)));
+        return adoptRef(new StyleKeyframe(WTF::move(properties)));
     }
     ~StyleKeyframe();
 

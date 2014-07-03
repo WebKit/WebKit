@@ -158,7 +158,7 @@ void SVGMaskElement::childrenChanged(const ChildChange& change)
 
 RenderPtr<RenderElement> SVGMaskElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSVGResourceMasker>(*this, std::move(style));
+    return createRenderer<RenderSVGResourceMasker>(*this, WTF::move(style));
 }
 
 bool SVGMaskElement::selfHasRelativeLengths() const

@@ -59,7 +59,7 @@ DOMWindowSpeechSynthesis* DOMWindowSpeechSynthesis::from(DOMWindow* window)
     if (!supplement) {
         auto newSupplement = std::make_unique<DOMWindowSpeechSynthesis>(window);
         supplement = newSupplement.get();
-        provideTo(window, supplementName(), std::move(newSupplement));
+        provideTo(window, supplementName(), WTF::move(newSupplement));
     }
     return supplement;
 }

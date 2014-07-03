@@ -42,7 +42,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement& element, PassRef<RenderStyle> style)
-    : RenderReplaced(element, std::move(style), element.size())
+    : RenderReplaced(element, WTF::move(style), element.size())
 {
     // Actual size is not known yet, report the default intrinsic size.
     view().frameView().incrementVisuallyNonEmptyPixelCount(roundedIntSize(intrinsicSize()));

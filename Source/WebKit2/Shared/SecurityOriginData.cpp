@@ -95,10 +95,10 @@ void performAPICallbackWithSecurityOriginDataVector(const Vector<SecurityOriginD
         RefPtr<API::Object> origin = WebSecurityOrigin::create(originData.protocol, originData.host, originData.port);
         if (!origin)
             continue;
-        securityOrigins.uncheckedAppend(std::move(origin));
+        securityOrigins.uncheckedAppend(WTF::move(origin));
     }
 
-    callback->performCallbackWithReturnValue(API::Array::create(std::move(securityOrigins)).get());
+    callback->performCallbackWithReturnValue(API::Array::create(WTF::move(securityOrigins)).get());
 }
 
 bool operator==(const SecurityOriginData& a, const SecurityOriginData& b)

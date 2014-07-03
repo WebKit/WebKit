@@ -73,7 +73,7 @@ RenderPtr<RenderElement> YouTubePluginReplacement::createElementRenderer(HTMLPlu
     if (!m_embedShadowElement)
         return nullptr;
     
-    return m_embedShadowElement->createElementRenderer(std::move(style));
+    return m_embedShadowElement->createElementRenderer(WTF::move(style));
 }
 
 bool YouTubePluginReplacement::installReplacement(ShadowRoot* root)

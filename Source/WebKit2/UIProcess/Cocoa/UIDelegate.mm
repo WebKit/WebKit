@@ -232,7 +232,7 @@ void UIDelegate::UIClient::printFrame(WebKit::WebPageProxy*, WebKit::WebFramePro
 RetainPtr<NSArray> UIDelegate::UIClient::actionsForElement(_WKActivatedElementInfo *elementInfo, RetainPtr<NSArray> defaultActions)
 {
     if (!m_uiDelegate.m_delegateMethods.webViewActionsForElementDefaultActions)
-        return std::move(defaultActions);
+        return WTF::move(defaultActions);
 
     auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate)

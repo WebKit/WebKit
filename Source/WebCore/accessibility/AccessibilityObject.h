@@ -233,7 +233,7 @@ struct AccessibilityText {
     AccessibilityText(const String& t, const AccessibilityTextSource& s, Vector<RefPtr<AccessibilityObject>> elements)
     : text(t)
     , textSource(s)
-    , textElements(std::move(elements))
+    , textElements(WTF::move(elements))
     { }
 
     AccessibilityText(const String& t, const AccessibilityTextSource& s, const RefPtr<AccessibilityObject> element)

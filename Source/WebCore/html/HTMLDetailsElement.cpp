@@ -113,7 +113,7 @@ HTMLDetailsElement::HTMLDetailsElement(const QualifiedName& tagName, Document& d
 
 RenderPtr<RenderElement> HTMLDetailsElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderBlockFlow>(*this, std::move(style));
+    return createRenderer<RenderBlockFlow>(*this, WTF::move(style));
 }
 
 void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot* root)

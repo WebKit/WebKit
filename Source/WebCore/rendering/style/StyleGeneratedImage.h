@@ -35,7 +35,7 @@ class StyleGeneratedImage final : public StyleImage {
 public:
     static PassRefPtr<StyleGeneratedImage> create(PassRef<CSSImageGeneratorValue> value)
     {
-        return adoptRef(new StyleGeneratedImage(std::move(value)));
+        return adoptRef(new StyleGeneratedImage(WTF::move(value)));
     }
 
     CSSImageGeneratorValue& imageValue() { return m_imageGeneratorValue.get(); }

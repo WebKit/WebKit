@@ -4330,7 +4330,7 @@ void Document::applyXSLTransform(ProcessingInstruction* pi)
 
 void Document::setTransformSource(std::unique_ptr<TransformSource> source)
 {
-    m_transformSource = std::move(source);
+    m_transformSource = WTF::move(source);
 }
 
 #endif
@@ -4902,7 +4902,7 @@ SecurityOrigin* Document::topOrigin() const
 
 void Document::postTask(Task task)
 {
-    Task* taskPtr = std::make_unique<Task>(std::move(task)).release();
+    Task* taskPtr = std::make_unique<Task>(WTF::move(task)).release();
     WeakPtr<Document> documentReference(m_weakFactory.createWeakPtr());
 
     callOnMainThread([=] {
@@ -4915,7 +4915,7 @@ void Document::postTask(Task task)
 
         Page* page = document->page();
         if ((page && page->defersLoading()) || !document->m_pendingTasks.isEmpty())
-            document->m_pendingTasks.append(std::move(*task.release()));
+            document->m_pendingTasks.append(WTF::move(*task.release()));
         else
             task->performTask(*document);
     });
@@ -4923,7 +4923,7 @@ void Document::postTask(Task task)
 
 void Document::pendingTasksTimerFired(Timer<Document>&)
 {
-    Vector<Task> pendingTasks = std::move(m_pendingTasks);
+    Vector<Task> pendingTasks = WTF::move(m_pendingTasks);
     for (auto& task : pendingTasks)
         task.performTask(*this);
 }

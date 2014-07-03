@@ -1062,7 +1062,7 @@ void InspectorDOMAgent::setInspectModeEnabled(ErrorString* errorString, bool ena
 void InspectorDOMAgent::highlightRect(ErrorString*, int x, int y, int width, int height, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor, const bool* usePageCoordinates)
 {
     auto quad = std::make_unique<FloatQuad>(FloatRect(x, y, width, height));
-    innerHighlightQuad(std::move(quad), color, outlineColor, usePageCoordinates);
+    innerHighlightQuad(WTF::move(quad), color, outlineColor, usePageCoordinates);
 }
 
 void InspectorDOMAgent::highlightQuad(ErrorString* errorString, const RefPtr<InspectorArray>& quadArray, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor, const bool* usePageCoordinates)
@@ -1072,7 +1072,7 @@ void InspectorDOMAgent::highlightQuad(ErrorString* errorString, const RefPtr<Ins
         *errorString = "Invalid Quad format";
         return;
     }
-    innerHighlightQuad(std::move(quad), color, outlineColor, usePageCoordinates);
+    innerHighlightQuad(WTF::move(quad), color, outlineColor, usePageCoordinates);
 }
 
 void InspectorDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor, const bool* usePageCoordinates)
@@ -1081,7 +1081,7 @@ void InspectorDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, cons
     highlightConfig->content = parseColor(color);
     highlightConfig->contentOutline = parseColor(outlineColor);
     highlightConfig->usePageCoordinates = usePageCoordinates ? *usePageCoordinates : false;
-    m_overlay->highlightQuad(std::move(quad), *highlightConfig);
+    m_overlay->highlightQuad(WTF::move(quad), *highlightConfig);
 }
 
 void InspectorDOMAgent::highlightNode(ErrorString* errorString, const RefPtr<InspectorObject>& highlightInspectorObject, const int* nodeId, const String* objectId)

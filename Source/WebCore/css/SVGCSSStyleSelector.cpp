@@ -605,7 +605,7 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             ASSERT(!item->style);
 
             auto shadowData = std::make_unique<ShadowData>(location, blur, 0, Normal, false, color.isValid() ? color : Color::transparent);
-            svgStyle.setShadow(std::move(shadowData));
+            svgStyle.setShadow(WTF::move(shadowData));
             return;
         }
         case CSSPropertyVectorEffect: {

@@ -569,7 +569,7 @@ Vector<String>* HistoryItem::redirectURLs() const
 
 void HistoryItem::setRedirectURLs(std::unique_ptr<Vector<String>> redirectURLs)
 {
-    m_redirectURLs = std::move(redirectURLs);
+    m_redirectURLs = WTF::move(redirectURLs);
 }
 
 #ifndef NDEBUG

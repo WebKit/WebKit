@@ -72,7 +72,7 @@ static size_t selectedOptionCount(const RenderMenuList& renderMenuList)
 #endif
 
 RenderMenuList::RenderMenuList(HTMLSelectElement& element, PassRef<RenderStyle> style)
-    : RenderFlexibleBox(element, std::move(style))
+    : RenderFlexibleBox(element, WTF::move(style))
     , m_buttonText(nullptr)
     , m_innerBlock(nullptr)
     , m_needsOptionsWidthUpdate(true)

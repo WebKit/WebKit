@@ -187,7 +187,7 @@ void HTMLConstructionSite::executeQueuedTasks()
 
     // Copy the task queue into a local variable in case executeTask
     // re-enters the parser.
-    TaskQueue queue = std::move(m_taskQueue);
+    TaskQueue queue = WTF::move(m_taskQueue);
 
     for (size_t i = 0; i < size; ++i)
         executeTask(queue[i]);

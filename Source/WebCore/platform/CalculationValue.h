@@ -155,7 +155,7 @@ inline CalcExpressionNode::CalcExpressionNode(CalcExpressionNodeType type)
 }
 
 inline CalculationValue::CalculationValue(std::unique_ptr<CalcExpressionNode> expression, CalculationPermittedValueRange range)
-    : m_expression(std::move(expression))
+    : m_expression(WTF::move(expression))
     , m_shouldClampToNonNegative(range == CalculationRangeNonNegative)
 {
 }
@@ -201,8 +201,8 @@ inline const CalcExpressionLength& toCalcExpressionLength(const CalcExpressionNo
 
 inline CalcExpressionBinaryOperation::CalcExpressionBinaryOperation(std::unique_ptr<CalcExpressionNode> leftSide, std::unique_ptr<CalcExpressionNode> rightSide, CalcOperator op)
     : CalcExpressionNode(CalcExpressionNodeBinaryOperation)
-    , m_leftSide(std::move(leftSide))
-    , m_rightSide(std::move(rightSide))
+    , m_leftSide(WTF::move(leftSide))
+    , m_rightSide(WTF::move(rightSide))
     , m_operator(op)
 {
 }

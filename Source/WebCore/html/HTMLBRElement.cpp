@@ -74,9 +74,9 @@ void HTMLBRElement::collectStyleForPresentationAttribute(const QualifiedName& na
 RenderPtr<RenderElement> HTMLBRElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     if (style.get().hasContent())
-        return RenderElement::createFor(*this, std::move(style));
+        return RenderElement::createFor(*this, WTF::move(style));
 
-    return createRenderer<RenderLineBreak>(*this, std::move(style));
+    return createRenderer<RenderLineBreak>(*this, WTF::move(style));
 }
 
 }

@@ -77,7 +77,7 @@ void CryptoAlgorithmHMAC::sign(const CryptoAlgorithmParameters& parameters, cons
         return;
     }
 
-    platformSign(hmacParameters, toCryptoKeyHMAC(key), data, std::move(callback), std::move(failureCallback), ec);
+    platformSign(hmacParameters, toCryptoKeyHMAC(key), data, WTF::move(callback), WTF::move(failureCallback), ec);
 }
 
 void CryptoAlgorithmHMAC::verify(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
@@ -89,7 +89,7 @@ void CryptoAlgorithmHMAC::verify(const CryptoAlgorithmParameters& parameters, co
         return;
     }
 
-    platformVerify(hmacParameters, toCryptoKeyHMAC(key), expectedSignature, data, std::move(callback), std::move(failureCallback), ec);
+    platformVerify(hmacParameters, toCryptoKeyHMAC(key), expectedSignature, data, WTF::move(callback), WTF::move(failureCallback), ec);
 }
 
 void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback callback, VoidCallback failureCallback, ExceptionCode&)

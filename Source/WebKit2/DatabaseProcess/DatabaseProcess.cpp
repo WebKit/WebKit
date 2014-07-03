@@ -129,7 +129,7 @@ void DatabaseProcess::postDatabaseTask(std::unique_ptr<AsyncTask> task)
 
     MutexLocker locker(m_databaseTaskMutex);
 
-    m_databaseTasks.append(std::move(task));
+    m_databaseTasks.append(WTF::move(task));
 
     m_queue->dispatch(bind(&DatabaseProcess::performNextDatabaseTask, this));
 }

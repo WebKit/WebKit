@@ -94,7 +94,7 @@ public:
     bool handleScrollWheelEvent(NSEvent *);
     void wheelEventWasNotHandledByWebCore(NSEvent *);
 
-    void setCustomSwipeViews(Vector<RetainPtr<NSView>> views) { m_customSwipeViews = std::move(views); }
+    void setCustomSwipeViews(Vector<RetainPtr<NSView>> views) { m_customSwipeViews = WTF::move(views); }
     void setCustomSwipeViewsTopContentInset(float topContentInset) { m_customSwipeViewsTopContentInset = topContentInset; }
     WebCore::FloatRect windowRelativeBoundsForCustomSwipeViews() const;
 

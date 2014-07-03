@@ -101,7 +101,7 @@ bool ChildProcessProxy::send(T&& message, uint64_t destinationID, unsigned messa
     auto encoder = std::make_unique<IPC::MessageEncoder>(T::receiverName(), T::name(), destinationID);
     encoder->encode(message.arguments());
 
-    return sendMessage(std::move(encoder), messageSendFlags);
+    return sendMessage(WTF::move(encoder), messageSendFlags);
 }
 
 template<typename U> 
@@ -112,7 +112,7 @@ bool ChildProcessProxy::sendSync(U&& message, typename U::Reply&& reply, uint64_
     if (!m_connection)
         return false;
 
-    return connection()->sendSync(std::forward<U>(message), std::move(reply), destinationID, timeout);
+    return connection()->sendSync(std::forward<U>(message), WTF::move(reply), destinationID, timeout);
 }
 
 } // namespace WebKit

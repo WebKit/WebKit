@@ -38,11 +38,11 @@ RefPtr<ImmutableDictionary> ImmutableDictionary::create()
 
 RefPtr<ImmutableDictionary> ImmutableDictionary::create(MapType map)
 {
-    return adoptRef(new ImmutableDictionary(std::move(map)));
+    return adoptRef(new ImmutableDictionary(WTF::move(map)));
 }
 
 ImmutableDictionary::ImmutableDictionary(MapType map)
-    : m_map(std::move(map))
+    : m_map(WTF::move(map))
 {
 }
 
@@ -61,7 +61,7 @@ PassRefPtr<API::Array> ImmutableDictionary::keys() const
     for (const auto& key : m_map.keys())
         keys.uncheckedAppend(API::String::create(key));
 
-    return API::Array::create(std::move(keys));
+    return API::Array::create(WTF::move(keys));
 }
 
 } // namespace WebKit

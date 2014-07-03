@@ -62,7 +62,7 @@ PolicyChecker::PolicyChecker(Frame& frame)
 
 void PolicyChecker::checkNavigationPolicy(const ResourceRequest& newRequest, NavigationPolicyDecisionFunction function)
 {
-    checkNavigationPolicy(newRequest, m_frame.loader().activeDocumentLoader(), nullptr, std::move(function));
+    checkNavigationPolicy(newRequest, m_frame.loader().activeDocumentLoader(), nullptr, WTF::move(function));
 }
 
 void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, DocumentLoader* loader, PassRefPtr<FormState> formState, NavigationPolicyDecisionFunction function)
@@ -99,7 +99,7 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, Docume
 
     loader->setLastCheckedRequest(request);
 
-    m_callback.set(request, formState.get(), std::move(function));
+    m_callback.set(request, formState.get(), WTF::move(function));
 
 #if USE(QUICK_LOOK)
     // Always allow QuickLook-generated URLs based on the protocol scheme.
@@ -133,7 +133,7 @@ void PolicyChecker::checkNewWindowPolicy(const NavigationAction& action, const R
     if (!DOMWindow::allowPopUp(&m_frame))
         return continueAfterNavigationPolicy(PolicyIgnore);
 
-    m_callback.set(request, formState, frameName, action, std::move(function));
+    m_callback.set(request, formState, frameName, action, WTF::move(function));
     m_frame.loader().client().dispatchDecidePolicyForNewWindowAction(action, request, formState, frameName, [this](PolicyAction action) {
         continueAfterNewWindowPolicy(action);
     });
@@ -141,7 +141,7 @@ void PolicyChecker::checkNewWindowPolicy(const NavigationAction& action, const R
 
 void PolicyChecker::checkContentPolicy(const ResourceResponse& response, ContentPolicyDecisionFunction function)
 {
-    m_callback.set(std::move(function));
+    m_callback.set(WTF::move(function));
     m_frame.loader().client().dispatchDecidePolicyForResponse(response, m_frame.loader().activeDocumentLoader()->request(), [this](PolicyAction action) {
         continueAfterContentPolicy(action);
     });

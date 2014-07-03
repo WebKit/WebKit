@@ -61,7 +61,7 @@ void ScrollingThread::dispatch(std::function<void ()> function)
 void ScrollingThread::dispatchBarrier(std::function<void ()> function)
 {
     dispatch([function]() mutable {
-        callOnMainThread(std::move(function));
+        callOnMainThread(WTF::move(function));
     });
 }
 
@@ -108,7 +108,7 @@ void ScrollingThread::dispatchFunctionsFromScrollingThread()
     
     {
         std::lock_guard<std::mutex> lock(m_functionsMutex);
-        functions = std::move(m_functions);
+        functions = WTF::move(m_functions);
     }
 
     for (auto& function : functions)

@@ -158,9 +158,9 @@ bool HTMLFrameSetElement::rendererIsNeeded(const RenderStyle& style)
 RenderPtr<RenderElement> HTMLFrameSetElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     if (style.get().hasContent())
-        return RenderElement::createFor(*this, std::move(style));
+        return RenderElement::createFor(*this, WTF::move(style));
     
-    return createRenderer<RenderFrameSet>(*this, std::move(style));
+    return createRenderer<RenderFrameSet>(*this, WTF::move(style));
 }
 
 HTMLFrameSetElement* HTMLFrameSetElement::findContaining(Element* descendant)

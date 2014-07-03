@@ -50,10 +50,10 @@ struct LengthBox {
     }
 
     LengthBox(Length top, Length right, Length bottom, Length left)
-        : m_left(std::move(left))
-        , m_right(std::move(right))
-        , m_top(std::move(top))
-        , m_bottom(std::move(bottom))
+        : m_left(WTF::move(left))
+        , m_right(WTF::move(right))
+        , m_top(WTF::move(top))
+        , m_bottom(WTF::move(bottom))
     {
     }
 

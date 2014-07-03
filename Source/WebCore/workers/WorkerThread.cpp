@@ -159,7 +159,7 @@ void WorkerThread::workerThread()
 
     {
         MutexLocker lock(m_threadCreationMutex);
-        m_workerGlobalScope = createWorkerGlobalScope(m_startupData->m_scriptURL, m_startupData->m_userAgent, std::move(m_startupData->m_groupSettings), m_startupData->m_contentSecurityPolicy, m_startupData->m_contentSecurityPolicyType, m_startupData->m_topOrigin.release());
+        m_workerGlobalScope = createWorkerGlobalScope(m_startupData->m_scriptURL, m_startupData->m_userAgent, WTF::move(m_startupData->m_groupSettings), m_startupData->m_contentSecurityPolicy, m_startupData->m_contentSecurityPolicyType, m_startupData->m_topOrigin.release());
 
         if (m_runLoop.terminated()) {
             // The worker was terminated before the thread had a chance to run. Since the context didn't exist yet,

@@ -82,7 +82,7 @@ static inline void updateLogicalHeightForCell(RenderTableSection::RowStruct& row
 }
 
 RenderTableSection::RenderTableSection(Element& element, PassRef<RenderStyle> style)
-    : RenderBox(element, std::move(style), 0)
+    : RenderBox(element, WTF::move(style), 0)
     , m_cCol(0)
     , m_cRow(0)
     , m_outerBorderStart(0)
@@ -96,7 +96,7 @@ RenderTableSection::RenderTableSection(Element& element, PassRef<RenderStyle> st
 }
 
 RenderTableSection::RenderTableSection(Document& document, PassRef<RenderStyle> style)
-    : RenderBox(document, std::move(style), 0)
+    : RenderBox(document, WTF::move(style), 0)
     , m_cCol(0)
     , m_cRow(0)
     , m_outerBorderStart(0)

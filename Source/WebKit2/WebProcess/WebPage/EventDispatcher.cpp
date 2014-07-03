@@ -156,7 +156,7 @@ void EventDispatcher::clearQueuedTouchEventsForPage(const WebPage& webPage)
 void EventDispatcher::getQueuedTouchEventsForPage(const WebPage& webPage, TouchEventQueue& destinationQueue)
 {
     SpinLockHolder locker(&m_touchEventsLock);
-    destinationQueue = std::move(m_touchEvents.take(webPage.pageID()));
+    destinationQueue = WTF::move(m_touchEvents.take(webPage.pageID()));
 }
 
 void EventDispatcher::touchEvent(uint64_t pageID, const WebKit::WebTouchEvent& touchEvent)
@@ -165,7 +165,7 @@ void EventDispatcher::touchEvent(uint64_t pageID, const WebKit::WebTouchEvent& t
     {
         SpinLockHolder locker(&m_touchEventsLock);
         updateListWasEmpty = m_touchEvents.isEmpty();
-        auto addResult = m_touchEvents.add(pageID, std::move(TouchEventQueue()));
+        auto addResult = m_touchEvents.add(pageID, WTF::move(TouchEventQueue()));
         if (addResult.isNewEntry)
             addResult.iterator->value.append(touchEvent);
         else {

@@ -47,7 +47,7 @@ DetailsMarkerControl::DetailsMarkerControl(Document& document)
 
 RenderPtr<RenderElement> DetailsMarkerControl::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderDetailsMarker>(*this, std::move(style));
+    return createRenderer<RenderDetailsMarker>(*this, WTF::move(style));
 }
 
 bool DetailsMarkerControl::rendererIsNeeded(const RenderStyle& style)

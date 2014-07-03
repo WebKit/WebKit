@@ -60,7 +60,7 @@ PassOwnPtr<ResourceRequest> ResourceRequestBase::adopt(PassOwnPtr<CrossThreadRes
     request->setPriority(data->m_priority);
 
     request->updateResourceRequest();
-    request->m_httpHeaderFields.adopt(std::move(data->m_httpHeaders));
+    request->m_httpHeaderFields.adopt(WTF::move(data->m_httpHeaders));
 
     size_t encodingCount = data->m_responseContentDispositionEncodingFallbackArray.size();
     if (encodingCount > 0) {
@@ -467,7 +467,7 @@ void ResourceRequestBase::setHTTPHeaderFields(HTTPHeaderMap headerFields)
 {
     updateResourceRequest();
 
-    m_httpHeaderFields = std::move(headerFields);
+    m_httpHeaderFields = WTF::move(headerFields);
 
     if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;

@@ -340,7 +340,7 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
 #endif
             );
         if (auto request = scanner.createPreloadRequest(m_predictedBaseElementURL))
-            requests.append(std::move(request));
+            requests.append(WTF::move(request));
         return;
     }
 
@@ -397,7 +397,7 @@ void HTMLPreloadScanner::scan(HTMLResourcePreloader* preloader, const URL& start
         m_token.clear();
     }
 
-    preloader->preload(std::move(requests));
+    preloader->preload(WTF::move(requests));
 }
 
 }

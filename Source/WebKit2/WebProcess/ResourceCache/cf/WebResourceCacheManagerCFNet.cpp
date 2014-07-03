@@ -70,7 +70,7 @@ void WebResourceCacheManager::cfURLCacheHostNamesWithCallback(CacheCallback call
             CFArrayAppendArray(hostNames.get(), partitionNames, CFRangeMake(0, CFArrayGetCount(partitionNames)));
             CFRelease(partitionNames);
         }
-        callback(std::move(hostNames));
+        callback(WTF::move(hostNames));
     });
 }
 #endif

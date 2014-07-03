@@ -54,7 +54,7 @@ PageGroupIndexedDatabase* PageGroupIndexedDatabase::from(PageGroup& group)
     if (!supplement) {
         auto newSupplement = std::make_unique<PageGroupIndexedDatabase>(group.groupSettings().indexedDBDatabasePath());
         supplement = newSupplement.get();
-        provideTo(&group, supplementName(), std::move(newSupplement));
+        provideTo(&group, supplementName(), WTF::move(newSupplement));
     }
     return supplement;
 }

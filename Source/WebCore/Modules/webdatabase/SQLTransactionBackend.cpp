@@ -530,7 +530,7 @@ void SQLTransactionBackend::executeSQL(std::unique_ptr<AbstractSQLStatement> sta
     const String& sqlStatement, const Vector<SQLValue>& arguments, int permissions)
 {
     RefPtr<SQLStatementBackend> statementBackend;
-    statementBackend = SQLStatementBackend::create(std::move(statement), sqlStatement, arguments, permissions);
+    statementBackend = SQLStatementBackend::create(WTF::move(statement), sqlStatement, arguments, permissions);
 
     if (Database::from(m_database.get())->deleted())
         statementBackend->setDatabaseDeletedError();

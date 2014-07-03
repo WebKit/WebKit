@@ -38,7 +38,7 @@ namespace WebCore {
 
 PassRef<CalculationValue> CalculationValue::create(std::unique_ptr<CalcExpressionNode> value, CalculationPermittedValueRange range)
 {
-    return adoptRef(*new CalculationValue(std::move(value), range));
+    return adoptRef(*new CalculationValue(WTF::move(value), range));
 }
 
 float CalcExpressionNumber::evaluate(float) const

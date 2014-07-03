@@ -149,7 +149,7 @@ std::unique_ptr<LevelDBDatabase> LevelDBDatabase::open(const String& fileName, c
 
     auto result = std::make_unique<LevelDBDatabase>();
     result->m_db = std::unique_ptr<leveldb::DB>(db);
-    result->m_comparatorAdapter = std::move(comparatorAdapter);
+    result->m_comparatorAdapter = WTF::move(comparatorAdapter);
     result->m_comparator = comparator;
 
     return result;
@@ -169,9 +169,9 @@ std::unique_ptr<LevelDBDatabase> LevelDBDatabase::openInMemory(const LevelDBComp
     }
 
     auto result = std::make_unique<LevelDBDatabase>();
-    result->m_env = std::move(inMemoryEnv);
+    result->m_env = WTF::move(inMemoryEnv);
     result->m_db = std::unique_ptr<leveldb::DB>(db);
-    result->m_comparatorAdapter = std::move(comparatorAdapter);
+    result->m_comparatorAdapter = WTF::move(comparatorAdapter);
     result->m_comparator = comparator;
 
     return result;
@@ -258,7 +258,7 @@ private:
 }
 
 IteratorImpl::IteratorImpl(std::unique_ptr<leveldb::Iterator> it)
-    : m_iterator(std::move(it))
+    : m_iterator(WTF::move(it))
 {
 }
 
@@ -320,7 +320,7 @@ std::unique_ptr<LevelDBIterator> LevelDBDatabase::createIterator(const LevelDBSn
     std::unique_ptr<leveldb::Iterator> i(m_db->NewIterator(readOptions));
     if (!i) // FIXME: Double check if we actually need to check this.
         return nullptr;
-    return std::make_unique<IteratorImpl>(std::move(i));
+    return std::make_unique<IteratorImpl>(WTF::move(i));
 }
 
 const LevelDBComparator* LevelDBDatabase::comparator() const

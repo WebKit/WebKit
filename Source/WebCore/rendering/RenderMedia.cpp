@@ -35,13 +35,13 @@
 namespace WebCore {
 
 RenderMedia::RenderMedia(HTMLMediaElement& element, PassRef<RenderStyle> style)
-    : RenderImage(element, std::move(style))
+    : RenderImage(element, WTF::move(style))
 {
     setHasShadowControls(true);
 }
 
 RenderMedia::RenderMedia(HTMLMediaElement& element, PassRef<RenderStyle> style, const IntSize& intrinsicSize)
-    : RenderImage(element, std::move(style))
+    : RenderImage(element, WTF::move(style))
 {
     setIntrinsicSize(intrinsicSize);
     setHasShadowControls(true);

@@ -54,7 +54,7 @@ void CoordinatedLayerTreeHostProxy::updateViewport()
 
 void CoordinatedLayerTreeHostProxy::dispatchUpdate(std::function<void()> function)
 {
-    m_scene->appendUpdate(std::move(function));
+    m_scene->appendUpdate(WTF::move(function));
 }
 
 void CoordinatedLayerTreeHostProxy::commitCoordinatedGraphicsState(const CoordinatedGraphicsState& graphicsState)

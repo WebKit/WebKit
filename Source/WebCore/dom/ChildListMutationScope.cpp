@@ -50,7 +50,7 @@ static AccumulatorMap& accumulatorMap()
 ChildListMutationAccumulator::ChildListMutationAccumulator(ContainerNode& target, std::unique_ptr<MutationObserverInterestGroup> observers)
     : m_target(target)
     , m_lastAdded(nullptr)
-    , m_observers(std::move(observers))
+    , m_observers(WTF::move(observers))
 {
 }
 

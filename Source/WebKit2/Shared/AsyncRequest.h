@@ -59,12 +59,12 @@ class AsyncRequestImpl final : public AsyncRequest {
 public:
     static PassRefPtr<AsyncRequest> create(std::function<void (Arguments...)> completionHandler)
     {
-        return adoptRef(new AsyncRequestImpl<Arguments...>(std::move(completionHandler), nullptr));
+        return adoptRef(new AsyncRequestImpl<Arguments...>(WTF::move(completionHandler), nullptr));
     }
 
     static PassRefPtr<AsyncRequest> create(std::function<void (Arguments...)> completionHandler, std::function<void ()> abortHandler)
     {
-        return adoptRef(new AsyncRequestImpl<Arguments...>(std::move(completionHandler), std::move(abortHandler)));
+        return adoptRef(new AsyncRequestImpl<Arguments...>(WTF::move(completionHandler), WTF::move(abortHandler)));
     }
 
     virtual ~AsyncRequestImpl()
@@ -80,8 +80,8 @@ public:
 
 private:
     AsyncRequestImpl(std::function<void (Arguments...)> completionHandler, std::function<void ()> abortHandler)
-        : AsyncRequest(std::move(abortHandler))
-        , m_completionHandler(std::move(completionHandler))
+        : AsyncRequest(WTF::move(abortHandler))
+        , m_completionHandler(WTF::move(completionHandler))
     {
         ASSERT(m_completionHandler);
     }

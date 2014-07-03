@@ -451,7 +451,7 @@ void HTMLCollection::updateNamedElementCache() const
     }
 
     cache->didPopulate();
-    setNameItemCache(std::move(cache));
+    setNameItemCache(WTF::move(cache));
 }
 
 bool HTMLCollection::hasNamedItem(const AtomicString& name) const

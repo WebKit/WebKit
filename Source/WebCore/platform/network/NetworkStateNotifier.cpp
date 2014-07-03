@@ -57,7 +57,7 @@ void NetworkStateNotifier::addNetworkStateChangeListener(std::function<void (boo
     registerObserverIfNecessary();
 #endif
 
-    m_listeners.append(std::move(listener));
+    m_listeners.append(WTF::move(listener));
 }
 
 void NetworkStateNotifier::notifyNetworkStateChange() const

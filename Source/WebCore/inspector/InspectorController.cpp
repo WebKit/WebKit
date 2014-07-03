@@ -97,28 +97,28 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     auto inspectorAgentPtr = std::make_unique<InspectorAgent>();
     m_inspectorAgent = inspectorAgentPtr.get();
     m_instrumentingAgents->setInspectorAgent(m_inspectorAgent);
-    m_agents.append(std::move(inspectorAgentPtr));
+    m_agents.append(WTF::move(inspectorAgentPtr));
 
     auto pageAgentPtr = std::make_unique<InspectorPageAgent>(m_instrumentingAgents.get(), &page, inspectorClient, m_overlay.get());
     InspectorPageAgent* pageAgent = pageAgentPtr.get();
     m_pageAgent = pageAgentPtr.get();
-    m_agents.append(std::move(pageAgentPtr));
+    m_agents.append(WTF::move(pageAgentPtr));
 
     auto runtimeAgentPtr = std::make_unique<PageRuntimeAgent>(m_injectedScriptManager.get(), &page, pageAgent);
     PageRuntimeAgent* runtimeAgent = runtimeAgentPtr.get();
     m_instrumentingAgents->setPageRuntimeAgent(runtimeAgent);
-    m_agents.append(std::move(runtimeAgentPtr));
+    m_agents.append(WTF::move(runtimeAgentPtr));
 
     auto domAgentPtr = std::make_unique<InspectorDOMAgent>(m_instrumentingAgents.get(), pageAgent, m_injectedScriptManager.get(), m_overlay.get());
     m_domAgent = domAgentPtr.get();
-    m_agents.append(std::move(domAgentPtr));
+    m_agents.append(WTF::move(domAgentPtr));
 
     m_agents.append(std::make_unique<InspectorCSSAgent>(m_instrumentingAgents.get(), m_domAgent));
 
 #if ENABLE(SQL_DATABASE)
     auto databaseAgentPtr = std::make_unique<InspectorDatabaseAgent>(m_instrumentingAgents.get());
     InspectorDatabaseAgent* databaseAgent = databaseAgentPtr.get();
-    m_agents.append(std::move(databaseAgentPtr));
+    m_agents.append(WTF::move(databaseAgentPtr));
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
@@ -131,32 +131,32 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
 
     auto domStorageAgentPtr = std::make_unique<InspectorDOMStorageAgent>(m_instrumentingAgents.get(), m_pageAgent);
     InspectorDOMStorageAgent* domStorageAgent = domStorageAgentPtr.get();
-    m_agents.append(std::move(domStorageAgentPtr));
+    m_agents.append(WTF::move(domStorageAgentPtr));
 
     auto timelineAgentPtr = std::make_unique<InspectorTimelineAgent>(m_instrumentingAgents.get(), pageAgent, InspectorTimelineAgent::PageInspector, inspectorClient);
     InspectorTimelineAgent* timelineAgent = timelineAgentPtr.get();
-    m_agents.append(std::move(timelineAgentPtr));
+    m_agents.append(WTF::move(timelineAgentPtr));
 
     auto resourceAgentPtr = std::make_unique<InspectorResourceAgent>(m_instrumentingAgents.get(), pageAgent, inspectorClient);
     m_resourceAgent = resourceAgentPtr.get();
-    m_agents.append(std::move(resourceAgentPtr));
+    m_agents.append(WTF::move(resourceAgentPtr));
 
     auto consoleAgentPtr = std::make_unique<PageConsoleAgent>(m_injectedScriptManager.get(), m_domAgent);
     WebConsoleAgent* consoleAgent = consoleAgentPtr.get();
     m_instrumentingAgents->setWebConsoleAgent(consoleAgentPtr.get());
-    m_agents.append(std::move(consoleAgentPtr));
+    m_agents.append(WTF::move(consoleAgentPtr));
 
     auto debuggerAgentPtr = std::make_unique<PageDebuggerAgent>(m_injectedScriptManager.get(), m_instrumentingAgents.get(), pageAgent, m_overlay.get());
     m_debuggerAgent = debuggerAgentPtr.get();
-    m_agents.append(std::move(debuggerAgentPtr));
+    m_agents.append(WTF::move(debuggerAgentPtr));
 
     auto domDebuggerAgentPtr = std::make_unique<InspectorDOMDebuggerAgent>(m_instrumentingAgents.get(), m_domAgent, m_debuggerAgent);
     m_domDebuggerAgent = domDebuggerAgentPtr.get();
-    m_agents.append(std::move(domDebuggerAgentPtr));
+    m_agents.append(WTF::move(domDebuggerAgentPtr));
 
     auto profilerAgentPtr = std::make_unique<PageProfilerAgent>(m_instrumentingAgents.get(), &page);
     m_profilerAgent = profilerAgentPtr.get();
-    m_agents.append(std::move(profilerAgentPtr));
+    m_agents.append(WTF::move(profilerAgentPtr));
 
     m_agents.append(std::make_unique<InspectorApplicationCacheAgent>(m_instrumentingAgents.get(), pageAgent));
     m_agents.append(std::make_unique<InspectorWorkerAgent>(m_instrumentingAgents.get()));
@@ -196,7 +196,7 @@ void InspectorController::inspectedPageDestroyed()
 
 void InspectorController::setInspectorFrontendClient(std::unique_ptr<InspectorFrontendClient> inspectorFrontendClient)
 {
-    m_inspectorFrontendClient = std::move(inspectorFrontendClient);
+    m_inspectorFrontendClient = WTF::move(inspectorFrontendClient);
 }
 
 bool InspectorController::hasLocalFrontend() const

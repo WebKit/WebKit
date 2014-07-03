@@ -183,7 +183,7 @@ bool SVGImageElement::selfHasRelativeLengths() const
 
 RenderPtr<RenderElement> SVGImageElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSVGImage>(*this, std::move(style));
+    return createRenderer<RenderSVGImage>(*this, WTF::move(style));
 }
 
 bool SVGImageElement::haveLoadedRequiredResources()

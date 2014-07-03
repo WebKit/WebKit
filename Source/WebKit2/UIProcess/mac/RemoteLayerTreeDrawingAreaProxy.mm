@@ -348,7 +348,7 @@ void RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing(std::function
         return;
     }
 
-    m_webPageProxy->process().send(Messages::DrawingArea::AddTransactionCallbackID(m_callbacks.put(std::move(callbackFunction), nullptr)), m_webPageProxy->pageID());
+    m_webPageProxy->process().send(Messages::DrawingArea::AddTransactionCallbackID(m_callbacks.put(WTF::move(callbackFunction), nullptr)), m_webPageProxy->pageID());
 }
 
 } // namespace WebKit

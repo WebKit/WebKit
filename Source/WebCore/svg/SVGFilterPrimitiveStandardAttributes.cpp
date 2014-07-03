@@ -145,7 +145,7 @@ void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(FilterEffect* f
 
 RenderPtr<RenderElement> SVGFilterPrimitiveStandardAttributes::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSVGResourceFilterPrimitive>(*this, std::move(style));
+    return createRenderer<RenderSVGResourceFilterPrimitive>(*this, WTF::move(style));
 }
 
 bool SVGFilterPrimitiveStandardAttributes::rendererIsNeeded(const RenderStyle& style)

@@ -255,13 +255,13 @@ STDMETHODIMP DRTDataObject::SetData(FORMATETC* pformatetc, STGMEDIUM* pmedium, B
     ZeroMemory(pStgMed.get(), sizeof(STGMEDIUM));
 
     *formatetc = *pformatetc;
-    m_formats.append(std::move(formatetc));
+    m_formats.append(WTF::move(formatetc));
 
     if (fRelease)
         *pStgMed = *pmedium;
     else
         CopyMedium(pStgMed.get(), pmedium, pformatetc);
-    m_medium.append(std::move(pStgMed));
+    m_medium.append(WTF::move(pStgMed));
 
     return S_OK;
 }

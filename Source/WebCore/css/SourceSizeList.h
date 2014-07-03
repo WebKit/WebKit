@@ -35,7 +35,7 @@ class Frame;
 class SourceSize {
 public:
     SourceSize(std::unique_ptr<MediaQueryExp> mediaExp, const CSSParserValue& length)
-        : m_mediaExp(std::move(mediaExp))
+        : m_mediaExp(WTF::move(mediaExp))
         , m_length(length)
     {
     }
@@ -52,7 +52,7 @@ class SourceSizeList {
 public:
     void append(std::unique_ptr<SourceSize> sourceSize)
     {
-        m_list.append(std::move(sourceSize));
+        m_list.append(WTF::move(sourceSize));
     }
 
     static unsigned parseSizesAttribute(const String& sizesAttribute, RenderView*, Frame*);

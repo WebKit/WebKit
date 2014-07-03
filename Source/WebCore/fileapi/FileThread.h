@@ -57,13 +57,13 @@ public:
     public:
         template<typename T, typename U, typename = typename std::enable_if<!std::is_base_of<Task, U>::value && std::is_convertible<U, std::function<void ()>>::value>::type>
         Task(T* instance, U method)
-            : m_task(std::move(method))
+            : m_task(WTF::move(method))
             , m_instance(instance)
         {
         }
 
         Task(Task&& other)
-            : m_task(std::move(other.m_task))
+            : m_task(WTF::move(other.m_task))
             , m_instance(other.m_instance)
         {
         }

@@ -700,7 +700,7 @@ bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder& decoder, ResourceRe
         HTTPHeaderMap headers;
         if (!decoder.decode(headers))
             return false;
-        request.setHTTPHeaderFields(std::move(headers));
+        request.setHTTPHeaderFields(WTF::move(headers));
 
         bool hasHTTPBody;
         if (!decoder.decode(hasHTTPBody))
@@ -1823,7 +1823,7 @@ bool ArgumentCoder<FilterOperations>::decode(ArgumentDecoder& decoder, FilterOpe
         RefPtr<FilterOperation> filter;
         if (!decodeFilterOperation(decoder, filter))
             return false;
-        filters.operations().append(std::move(filter));
+        filters.operations().append(WTF::move(filter));
     }
 
     return true;
@@ -2138,7 +2138,7 @@ bool ArgumentCoder<BlobPart>::decode(ArgumentDecoder& decoder, BlobPart& blobPar
         Vector<char> data;
         if (!decoder.decode(data))
             return false;
-        blobPart = BlobPart(std::move(data));
+        blobPart = BlobPart(WTF::move(data));
         break;
     }
     case BlobPart::Blob: {

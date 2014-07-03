@@ -950,7 +950,7 @@ void resolveTree(Document& document, Change change)
 
         Style::Change documentChange = determineChange(&documentStyle.get(), &document.renderView()->style());
         if (documentChange != NoChange)
-            document.renderView()->setStyle(std::move(documentStyle));
+            document.renderView()->setStyle(WTF::move(documentStyle));
         else
             documentStyle.dropRef();
     }

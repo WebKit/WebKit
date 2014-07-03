@@ -104,7 +104,7 @@ RENDER_OBJECT_TYPE_CASTS(RenderTextControlSingleLine, isTextField())
 class RenderTextControlInnerBlock final : public RenderBlockFlow {
 public:
     RenderTextControlInnerBlock(Element& element, PassRef<RenderStyle> style)
-        : RenderBlockFlow(element, std::move(style))
+        : RenderBlockFlow(element, WTF::move(style))
     {
     }
 

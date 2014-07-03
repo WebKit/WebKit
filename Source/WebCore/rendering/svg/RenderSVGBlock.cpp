@@ -29,7 +29,7 @@
 namespace WebCore {
 
 RenderSVGBlock::RenderSVGBlock(SVGGraphicsElement& element, PassRef<RenderStyle> style)
-    : RenderBlockFlow(element, std::move(style))
+    : RenderBlockFlow(element, WTF::move(style))
 {
 }
 

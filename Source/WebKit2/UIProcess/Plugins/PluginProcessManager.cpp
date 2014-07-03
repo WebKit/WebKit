@@ -71,7 +71,7 @@ uint64_t PluginProcessManager::pluginProcessToken(const PluginModuleInfo& plugin
     attributes.processType = pluginProcessType;
     attributes.sandboxPolicy = pluginProcessSandboxPolicy;
 
-    m_pluginProcessTokens.append(std::make_pair(std::move(attributes), token));
+    m_pluginProcessTokens.append(std::make_pair(WTF::move(attributes), token));
     m_knownTokens.add(token);
 
     return token;

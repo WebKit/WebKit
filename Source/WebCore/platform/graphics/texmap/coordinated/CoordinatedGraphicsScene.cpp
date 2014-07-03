@@ -39,7 +39,7 @@ void CoordinatedGraphicsScene::dispatchOnMainThread(std::function<void()> functi
     if (isMainThread())
         function();
     else
-        callOnMainThread(std::move(function));
+        callOnMainThread(WTF::move(function));
 }
 
 static bool layerShouldHaveBackingStore(TextureMapperLayer* layer)
@@ -341,7 +341,7 @@ void CoordinatedGraphicsScene::createLayer(CoordinatedLayerID id)
     std::unique_ptr<TextureMapperLayer> newLayer = std::make_unique<TextureMapperLayer>();
     newLayer->setID(id);
     newLayer->setScrollClient(this);
-    m_layers.add(id, std::move(newLayer));
+    m_layers.add(id, WTF::move(newLayer));
 }
 
 void CoordinatedGraphicsScene::deleteLayers(const Vector<CoordinatedLayerID>& layerIDs)
@@ -625,7 +625,7 @@ void CoordinatedGraphicsScene::syncRemoteContent()
     bool calledOnMainThread = WTF::isMainThread();
     if (!calledOnMainThread)
         m_renderQueueMutex.lock();
-    renderQueue = std::move(m_renderQueue);
+    renderQueue = WTF::move(m_renderQueue);
     if (!calledOnMainThread)
         m_renderQueueMutex.unlock();
 
@@ -699,7 +699,7 @@ void CoordinatedGraphicsScene::appendUpdate(std::function<void()> function)
 
     ASSERT(isMainThread());
     MutexLocker locker(m_renderQueueMutex);
-    m_renderQueue.append(std::move(function));
+    m_renderQueue.append(WTF::move(function));
 }
 
 void CoordinatedGraphicsScene::setActive(bool active)

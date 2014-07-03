@@ -86,17 +86,17 @@ inline RenderElement::RenderElement(ContainerNode& elementOrDocument, PassRef<Re
     , m_hasPausedImageAnimations(false)
     , m_firstChild(nullptr)
     , m_lastChild(nullptr)
-    , m_style(std::move(style))
+    , m_style(WTF::move(style))
 {
 }
 
 RenderElement::RenderElement(Element& element, PassRef<RenderStyle> style, unsigned baseTypeFlags)
-    : RenderElement(static_cast<ContainerNode&>(element), std::move(style), baseTypeFlags)
+    : RenderElement(static_cast<ContainerNode&>(element), WTF::move(style), baseTypeFlags)
 {
 }
 
 RenderElement::RenderElement(Document& document, PassRef<RenderStyle> style, unsigned baseTypeFlags)
-    : RenderElement(static_cast<ContainerNode&>(document), std::move(style), baseTypeFlags)
+    : RenderElement(static_cast<ContainerNode&>(document), WTF::move(style), baseTypeFlags)
 {
 }
 
@@ -138,58 +138,58 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, PassRef<Rend
     const ContentData* contentData = style.get().contentData();
     if (contentData && !contentData->next() && contentData->isImage() && !element.isPseudoElement()) {
         auto& styleImage = toImageContentData(contentData)->image();
-        auto image = createRenderer<RenderImage>(element, std::move(style), const_cast<StyleImage*>(&styleImage));
+        auto image = createRenderer<RenderImage>(element, WTF::move(style), const_cast<StyleImage*>(&styleImage));
         image->setIsGeneratedContent();
-        return std::move(image);
+        return WTF::move(image);
     }
 
     if (element.hasTagName(HTMLNames::rubyTag)) {
         if (style.get().display() == INLINE)
-            return createRenderer<RenderRubyAsInline>(element, std::move(style));
+            return createRenderer<RenderRubyAsInline>(element, WTF::move(style));
         if (style.get().display() == BLOCK)
-            return createRenderer<RenderRubyAsBlock>(element, std::move(style));
+            return createRenderer<RenderRubyAsBlock>(element, WTF::move(style));
     }
     // treat <rt> as ruby text ONLY if it still has its default treatment of block
     if (element.hasTagName(HTMLNames::rtTag) && style.get().display() == BLOCK)
-        return createRenderer<RenderRubyText>(element, std::move(style));
+        return createRenderer<RenderRubyText>(element, WTF::move(style));
     switch (style.get().display()) {
     case NONE:
         style.dropRef();
         return nullptr;
     case INLINE:
-        return createRenderer<RenderInline>(element, std::move(style));
+        return createRenderer<RenderInline>(element, WTF::move(style));
     case BLOCK:
     case INLINE_BLOCK:
     case COMPACT:
-        return createRenderer<RenderBlockFlow>(element, std::move(style));
+        return createRenderer<RenderBlockFlow>(element, WTF::move(style));
     case LIST_ITEM:
-        return createRenderer<RenderListItem>(element, std::move(style));
+        return createRenderer<RenderListItem>(element, WTF::move(style));
     case TABLE:
     case INLINE_TABLE:
-        return createRenderer<RenderTable>(element, std::move(style));
+        return createRenderer<RenderTable>(element, WTF::move(style));
     case TABLE_ROW_GROUP:
     case TABLE_HEADER_GROUP:
     case TABLE_FOOTER_GROUP:
-        return createRenderer<RenderTableSection>(element, std::move(style));
+        return createRenderer<RenderTableSection>(element, WTF::move(style));
     case TABLE_ROW:
-        return createRenderer<RenderTableRow>(element, std::move(style));
+        return createRenderer<RenderTableRow>(element, WTF::move(style));
     case TABLE_COLUMN_GROUP:
     case TABLE_COLUMN:
-        return createRenderer<RenderTableCol>(element, std::move(style));
+        return createRenderer<RenderTableCol>(element, WTF::move(style));
     case TABLE_CELL:
-        return createRenderer<RenderTableCell>(element, std::move(style));
+        return createRenderer<RenderTableCell>(element, WTF::move(style));
     case TABLE_CAPTION:
-        return createRenderer<RenderTableCaption>(element, std::move(style));
+        return createRenderer<RenderTableCaption>(element, WTF::move(style));
     case BOX:
     case INLINE_BOX:
-        return createRenderer<RenderDeprecatedFlexibleBox>(element, std::move(style));
+        return createRenderer<RenderDeprecatedFlexibleBox>(element, WTF::move(style));
     case FLEX:
     case INLINE_FLEX:
-        return createRenderer<RenderFlexibleBox>(element, std::move(style));
+        return createRenderer<RenderFlexibleBox>(element, WTF::move(style));
 #if ENABLE(CSS_GRID_LAYOUT)
     case GRID:
     case INLINE_GRID:
-        return createRenderer<RenderGrid>(element, std::move(style));
+        return createRenderer<RenderGrid>(element, WTF::move(style));
 #endif
     }
     ASSERT_NOT_REACHED();
@@ -407,7 +407,7 @@ void RenderElement::setStyle(PassRef<RenderStyle> style)
 
     styleWillChange(diff, style.get());
 
-    Ref<RenderStyle> oldStyle(m_style.replace(std::move(style)));
+    Ref<RenderStyle> oldStyle(m_style.replace(WTF::move(style)));
 
     updateFillImages(oldStyle.get().backgroundLayers(), m_style->backgroundLayers());
     updateFillImages(oldStyle.get().maskLayers(), m_style->maskLayers());
@@ -786,7 +786,7 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
         if (elementChild.isInFlowPositioned() && toRenderBlock(elementChild).isAnonymousBlockContinuation())
             newStyle.get().setPosition(elementChild.style().position());
 
-        elementChild.setStyle(std::move(newStyle));
+        elementChild.setStyle(WTF::move(newStyle));
     }
 }
 

@@ -194,22 +194,22 @@ void WorkerRunLoop::terminate()
 
 void WorkerRunLoop::postTask(ScriptExecutionContext::Task task)
 {
-    postTaskForMode(std::move(task), defaultMode());
+    postTaskForMode(WTF::move(task), defaultMode());
 }
 
 void WorkerRunLoop::postTaskAndTerminate(ScriptExecutionContext::Task task)
 {
-    m_messageQueue.appendAndKill(Task::create(std::move(task), defaultMode().isolatedCopy()));
+    m_messageQueue.appendAndKill(Task::create(WTF::move(task), defaultMode().isolatedCopy()));
 }
 
 void WorkerRunLoop::postTaskForMode(ScriptExecutionContext::Task task, const String& mode)
 {
-    m_messageQueue.append(Task::create(std::move(task), mode.isolatedCopy()));
+    m_messageQueue.append(Task::create(WTF::move(task), mode.isolatedCopy()));
 }
 
 std::unique_ptr<WorkerRunLoop::Task> WorkerRunLoop::Task::create(ScriptExecutionContext::Task task, const String& mode)
 {
-    return std::unique_ptr<Task>(new Task(std::move(task), mode));
+    return std::unique_ptr<Task>(new Task(WTF::move(task), mode));
 }
 
 void WorkerRunLoop::Task::performTask(const WorkerRunLoop& runLoop, WorkerGlobalScope* context)
@@ -219,7 +219,7 @@ void WorkerRunLoop::Task::performTask(const WorkerRunLoop& runLoop, WorkerGlobal
 }
 
 WorkerRunLoop::Task::Task(ScriptExecutionContext::Task task, const String& mode)
-    : m_task(std::move(task))
+    : m_task(WTF::move(task))
     , m_mode(mode.isolatedCopy())
 {
 }

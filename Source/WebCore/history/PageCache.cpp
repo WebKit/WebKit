@@ -437,7 +437,7 @@ std::unique_ptr<CachedPage> PageCache::take(HistoryItem* item)
     if (!item)
         return nullptr;
 
-    std::unique_ptr<CachedPage> cachedPage = std::move(item->m_cachedPage);
+    std::unique_ptr<CachedPage> cachedPage = WTF::move(item->m_cachedPage);
 
     removeFromLRUList(item);
     --m_size;

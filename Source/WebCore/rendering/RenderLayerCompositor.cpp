@@ -3785,7 +3785,7 @@ void RenderLayerCompositor::registerAllViewportConstrainedLayers()
         else
             continue;
 
-        layerMap.add(layer.backing()->graphicsLayer()->platformLayer(), std::move(constraints));
+        layerMap.add(layer.backing()->graphicsLayer()->platformLayer(), WTF::move(constraints));
     }
     
     if (ChromeClient* client = this->chromeClient())

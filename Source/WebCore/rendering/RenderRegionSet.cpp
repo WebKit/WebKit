@@ -31,7 +31,7 @@
 namespace WebCore {
 
 RenderRegionSet::RenderRegionSet(Document& document, PassRef<RenderStyle> style, RenderFlowThread& flowThread)
-    : RenderRegion(document, std::move(style), &flowThread)
+    : RenderRegion(document, WTF::move(style), &flowThread)
 {
 }
 

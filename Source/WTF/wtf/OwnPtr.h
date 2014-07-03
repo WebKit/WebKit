@@ -143,7 +143,7 @@ namespace WTF {
     template<typename T> inline auto OwnPtr<T>::operator=(OwnPtr&& o) -> OwnPtr&
     {
         ASSERT(!o || o != m_ptr);
-        OwnPtr ptr = std::move(o);
+        OwnPtr ptr = WTF::move(o);
         swap(ptr);
         return *this;
     }
@@ -151,7 +151,7 @@ namespace WTF {
     template<typename T> template<typename U> inline auto OwnPtr<T>::operator=(OwnPtr<U>&& o) -> OwnPtr&
     {
         ASSERT(!o || o != m_ptr);
-        OwnPtr ptr = std::move(o);
+        OwnPtr ptr = WTF::move(o);
         swap(ptr);
         return *this;
     }

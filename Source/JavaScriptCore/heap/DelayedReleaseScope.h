@@ -62,7 +62,7 @@ public:
     template <typename T>
     void releaseSoon(RetainPtr<T>&& object)
     {
-        m_delayedReleaseObjects.append(std::move(object));
+        m_delayedReleaseObjects.append(WTF::move(object));
     }
 
     static bool isInEffectFor(MarkedSpace& markedSpace)
@@ -79,7 +79,7 @@ template <typename T>
 inline void MarkedSpace::releaseSoon(RetainPtr<T>&& object)
 {
     ASSERT(m_currentDelayedReleaseScope);
-    m_currentDelayedReleaseScope->releaseSoon(std::move(object));
+    m_currentDelayedReleaseScope->releaseSoon(WTF::move(object));
 }
 
 #else // USE(CF)

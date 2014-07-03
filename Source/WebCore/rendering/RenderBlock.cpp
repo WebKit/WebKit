@@ -173,7 +173,7 @@ private:
 };
 
 RenderBlock::RenderBlock(Element& element, PassRef<RenderStyle> style, unsigned baseTypeFlags)
-    : RenderBox(element, std::move(style), baseTypeFlags | RenderBlockFlag)
+    : RenderBox(element, WTF::move(style), baseTypeFlags | RenderBlockFlag)
     , m_lineHeight(-1)
     , m_hasMarginBeforeQuirk(false)
     , m_hasMarginAfterQuirk(false)
@@ -185,7 +185,7 @@ RenderBlock::RenderBlock(Element& element, PassRef<RenderStyle> style, unsigned 
 }
 
 RenderBlock::RenderBlock(Document& document, PassRef<RenderStyle> style, unsigned baseTypeFlags)
-    : RenderBox(document, std::move(style), baseTypeFlags | RenderBlockFlag)
+    : RenderBox(document, WTF::move(style), baseTypeFlags | RenderBlockFlag)
     , m_lineHeight(-1)
     , m_hasMarginBeforeQuirk(false)
     , m_hasMarginAfterQuirk(false)
@@ -448,7 +448,7 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
         RenderBlock* blockCurr = toRenderBlock(curr);
         
         // Create a new clone.
-        RenderPtr<RenderBlock> cloneChild = std::move(cloneBlock);
+        RenderPtr<RenderBlock> cloneChild = WTF::move(cloneBlock);
         cloneBlock = blockCurr->clone();
 
         // Insert our child clone as the first child.

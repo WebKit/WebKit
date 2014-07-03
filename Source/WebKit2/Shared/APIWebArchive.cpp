@@ -82,7 +82,7 @@ WebArchive::WebArchive(WebArchiveResource* mainResource, PassRefPtr<API::Array> 
         coreSubframeLegacyWebArchives.uncheckedAppend(subframeWebArchive->coreLegacyWebArchive());
     }
 
-    m_legacyWebArchive = LegacyWebArchive::create(coreMainResource.release(), std::move(coreArchiveResources), std::move(coreSubframeLegacyWebArchives));
+    m_legacyWebArchive = LegacyWebArchive::create(coreMainResource.release(), WTF::move(coreArchiveResources), WTF::move(coreSubframeLegacyWebArchives));
 }
 
 WebArchive::WebArchive(API::Data* data)
@@ -116,7 +116,7 @@ API::Array* WebArchive::subresources()
         for (const auto& subresource : m_legacyWebArchive->subresources())
             subresources.uncheckedAppend(WebArchiveResource::create(subresource));
 
-        m_cachedSubresources = API::Array::create(std::move(subresources));
+        m_cachedSubresources = API::Array::create(WTF::move(subresources));
     }
 
     return m_cachedSubresources.get();
@@ -131,7 +131,7 @@ API::Array* WebArchive::subframeArchives()
         for (const auto& subframeArchive : m_legacyWebArchive->subframeArchives())
             subframeWebArchives.uncheckedAppend(WebArchive::create(static_cast<LegacyWebArchive*>(subframeArchive.get())));
 
-        m_cachedSubframeArchives = API::Array::create(std::move(subframeWebArchives));
+        m_cachedSubframeArchives = API::Array::create(WTF::move(subframeWebArchives));
     }
 
     return m_cachedSubframeArchives.get();

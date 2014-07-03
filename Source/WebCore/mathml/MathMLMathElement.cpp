@@ -53,7 +53,7 @@ Node::InsertionNotificationRequest MathMLMathElement::insertedInto(ContainerNode
 
 RenderPtr<RenderElement> MathMLMathElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderMathMLMath>(*this, std::move(style));
+    return createRenderer<RenderMathMLMath>(*this, WTF::move(style));
 }
 
 }

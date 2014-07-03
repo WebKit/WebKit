@@ -109,8 +109,8 @@ void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transa
     rootLayerRemote.recursiveBuildTransaction(*this, transaction);
     m_currentTransaction = nullptr;
 
-    transaction.setCreatedLayers(std::move(m_createdLayers));
-    transaction.setDestroyedLayerIDs(std::move(m_destroyedLayers));
+    transaction.setCreatedLayers(WTF::move(m_createdLayers));
+    transaction.setDestroyedLayerIDs(WTF::move(m_destroyedLayers));
 }
 
 void RemoteLayerTreeContext::layerPropertyChangedWhileBuildingTransaction(PlatformCALayerRemote& layer)

@@ -61,7 +61,7 @@ void HTTPHeaderMap::adopt(std::unique_ptr<CrossThreadHTTPHeaderMapData> data)
     m_headers.clear();
 
     for (auto& header : *data)
-        m_headers.add(std::move(header.first), std::move(header.second));
+        m_headers.add(WTF::move(header.first), WTF::move(header.second));
 }
 
 static String internHTTPHeaderNameString(const String& nameString)

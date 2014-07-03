@@ -184,7 +184,7 @@ public:
     MallocPtr<uint8_t> finishEncoding(size_t& size)
     {
         size = m_bufferSize;
-        return std::move(m_buffer);
+        return WTF::move(m_buffer);
     }
 
 private:
@@ -828,7 +828,7 @@ static void decodeFormData(HistoryEntryDataDecoder& decoder, HTTPBody& formData)
         if (!decoder.isValid())
             return;
 
-        formData.elements.append(std::move(formDataElement));
+        formData.elements.append(WTF::move(formDataElement));
     }
 
     bool hasGeneratedFiles;
@@ -853,7 +853,7 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
         if (!decoder.isValid())
             return;
 
-        frameState.children.append(std::move(childFrameState));
+        frameState.children.append(WTF::move(childFrameState));
     }
 
     decoder >> frameState.documentSequenceNumber;
@@ -868,7 +868,7 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
         if (!decoder.isValid())
             return;
 
-        frameState.documentState.append(std::move(state));
+        frameState.documentState.append(WTF::move(state));
     }
 
     String formContentType;
@@ -879,11 +879,11 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
 
     if (hasFormData) {
         HTTPBody httpBody;
-        httpBody.contentType = std::move(formContentType);
+        httpBody.contentType = WTF::move(formContentType);
 
         decodeFormData(decoder, httpBody);
 
-        frameState.httpBody = std::move(httpBody);
+        frameState.httpBody = WTF::move(httpBody);
     }
 
     decoder >> frameState.itemSequenceNumber;
@@ -907,7 +907,7 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
         Vector<uint8_t> stateObjectData;
         decoder >> stateObjectData;
 
-        frameState.stateObjectData = std::move(stateObjectData);
+        frameState.stateObjectData = WTF::move(stateObjectData);
     }
 
     decoder >> frameState.target;
@@ -981,7 +981,7 @@ static bool decodeSessionHistoryEntries(CFArrayRef entriesArray, Vector<BackForw
         if (!decodeSessionHistoryEntry(entryDictionary, entry))
             return false;
 
-        entries.append(std::move(entry));
+        entries.append(WTF::move(entry));
     }
 
     return true;

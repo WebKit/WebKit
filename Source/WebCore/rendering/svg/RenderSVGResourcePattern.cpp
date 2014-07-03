@@ -33,7 +33,7 @@ namespace WebCore {
 RenderSVGResourceType RenderSVGResourcePattern::s_resourceType = PatternResourceType;
 
 RenderSVGResourcePattern::RenderSVGResourcePattern(SVGPatternElement& element, PassRef<RenderStyle> style)
-    : RenderSVGResourceContainer(element, std::move(style))
+    : RenderSVGResourceContainer(element, WTF::move(style))
     , m_shouldCollectPatternAttributes(true)
 {
 }
@@ -129,7 +129,7 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderElement& renderer, uns
     // Various calls above may trigger invalidations in some fringe cases (ImageBuffer allocation
     // failures in the SVG image cache for example). To avoid having our PatternData deleted by
     // removeAllClientsFromCache(), we only make it visible in the cache at the very end.
-    return m_patternMap.set(&renderer, std::move(patternData)).iterator->value.get();
+    return m_patternMap.set(&renderer, WTF::move(patternData)).iterator->value.get();
 }
 
 bool RenderSVGResourcePattern::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, unsigned short resourceMode)

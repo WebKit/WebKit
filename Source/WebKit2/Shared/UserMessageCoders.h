@@ -283,7 +283,7 @@ public:
                 vector.append(element.release());
             }
 
-            coder.m_root = API::Array::create(std::move(vector));
+            coder.m_root = API::Array::create(WTF::move(vector));
             break;
         }
         case API::Object::Type::Dictionary: {
@@ -307,7 +307,7 @@ public:
                     return false;
             }
 
-            coder.m_root = ImmutableDictionary::create(std::move(map));
+            coder.m_root = ImmutableDictionary::create(WTF::move(map));
             break;
         }
         case API::Object::Type::String: {

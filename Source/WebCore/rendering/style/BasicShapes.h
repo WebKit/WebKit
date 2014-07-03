@@ -153,9 +153,9 @@ public:
     const BasicShapeRadius& radius() const { return m_radius; }
     float floatValueForRadiusInBox(float boxWidth, float boxHeight) const;
 
-    void setCenterX(BasicShapeCenterCoordinate centerX) { m_centerX = std::move(centerX); }
-    void setCenterY(BasicShapeCenterCoordinate centerY) { m_centerY = std::move(centerY); }
-    void setRadius(BasicShapeRadius radius) { m_radius = std::move(radius); }
+    void setCenterX(BasicShapeCenterCoordinate centerX) { m_centerX = WTF::move(centerX); }
+    void setCenterY(BasicShapeCenterCoordinate centerY) { m_centerY = WTF::move(centerY); }
+    void setRadius(BasicShapeRadius radius) { m_radius = WTF::move(radius); }
 
     virtual void path(Path&, const FloatRect&) override;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;
@@ -179,10 +179,10 @@ public:
     const BasicShapeRadius& radiusY() const { return m_radiusY; }
     float floatValueForRadiusInBox(const BasicShapeRadius&, float center, float boxWidthOrHeight) const;
 
-    void setCenterX(BasicShapeCenterCoordinate centerX) { m_centerX = std::move(centerX); }
-    void setCenterY(BasicShapeCenterCoordinate centerY) { m_centerY = std::move(centerY); }
-    void setRadiusX(BasicShapeRadius radiusX) { m_radiusX = std::move(radiusX); }
-    void setRadiusY(BasicShapeRadius radiusY) { m_radiusY = std::move(radiusY); }
+    void setCenterX(BasicShapeCenterCoordinate centerX) { m_centerX = WTF::move(centerX); }
+    void setCenterY(BasicShapeCenterCoordinate centerY) { m_centerY = WTF::move(centerY); }
+    void setRadiusX(BasicShapeRadius radiusX) { m_radiusX = WTF::move(radiusX); }
+    void setRadiusY(BasicShapeRadius radiusY) { m_radiusY = WTF::move(radiusY); }
 
     virtual void path(Path&, const FloatRect&) override;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;
@@ -206,7 +206,7 @@ public:
     const Length& getYAt(unsigned i) const { return m_values[2 * i + 1]; }
 
     void setWindRule(WindRule windRule) { m_windRule = windRule; }
-    void appendPoint(Length x, Length y) { m_values.append(std::move(x)); m_values.append(std::move(y)); }
+    void appendPoint(Length x, Length y) { m_values.append(WTF::move(x)); m_values.append(WTF::move(y)); }
 
     virtual void path(Path&, const FloatRect&) override;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;
@@ -237,15 +237,15 @@ public:
     const LengthSize& bottomRightRadius() const { return m_bottomRightRadius; }
     const LengthSize& bottomLeftRadius() const { return m_bottomLeftRadius; }
 
-    void setTop(Length top) { m_top = std::move(top); }
-    void setRight(Length right) { m_right = std::move(right); }
-    void setBottom(Length bottom) { m_bottom = std::move(bottom); }
-    void setLeft(Length left) { m_left = std::move(left); }
+    void setTop(Length top) { m_top = WTF::move(top); }
+    void setRight(Length right) { m_right = WTF::move(right); }
+    void setBottom(Length bottom) { m_bottom = WTF::move(bottom); }
+    void setLeft(Length left) { m_left = WTF::move(left); }
 
-    void setTopLeftRadius(LengthSize radius) { m_topLeftRadius = std::move(radius); }
-    void setTopRightRadius(LengthSize radius) { m_topRightRadius = std::move(radius); }
-    void setBottomRightRadius(LengthSize radius) { m_bottomRightRadius = std::move(radius); }
-    void setBottomLeftRadius(LengthSize radius) { m_bottomLeftRadius = std::move(radius); }
+    void setTopLeftRadius(LengthSize radius) { m_topLeftRadius = WTF::move(radius); }
+    void setTopRightRadius(LengthSize radius) { m_topRightRadius = WTF::move(radius); }
+    void setBottomRightRadius(LengthSize radius) { m_bottomRightRadius = WTF::move(radius); }
+    void setBottomLeftRadius(LengthSize radius) { m_bottomLeftRadius = WTF::move(radius); }
 
     virtual void path(Path&, const FloatRect&) override;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;

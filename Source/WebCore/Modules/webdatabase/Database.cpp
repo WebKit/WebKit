@@ -130,7 +130,7 @@ void Database::markAsDeletedAndClose()
     }
 
     auto task = DatabaseCloseTask::create(this, &synchronizer);
-    databaseContext()->databaseThread()->scheduleImmediateTask(std::move(task));
+    databaseContext()->databaseThread()->scheduleImmediateTask(WTF::move(task));
     synchronizer.waitForTaskCompletion();
 }
 
@@ -222,7 +222,7 @@ Vector<String> Database::tableNames()
         return result;
 
     auto task = DatabaseTableNamesTask::create(this, &synchronizer, result);
-    databaseContext()->databaseThread()->scheduleImmediateTask(std::move(task));
+    databaseContext()->databaseThread()->scheduleImmediateTask(WTF::move(task));
     synchronizer.waitForTaskCompletion();
 
     return result;

@@ -128,7 +128,7 @@ void SVGTextPathElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGTextPathElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSVGTextPath>(*this, std::move(style));
+    return createRenderer<RenderSVGTextPath>(*this, WTF::move(style));
 }
 
 bool SVGTextPathElement::childShouldCreateRenderer(const Node& child) const

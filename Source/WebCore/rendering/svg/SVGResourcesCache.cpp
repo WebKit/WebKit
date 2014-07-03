@@ -47,7 +47,7 @@ void SVGResourcesCache::addResourcesFromRenderer(RenderElement& renderer, const 
         return;
 
     // Put object in cache.
-    SVGResources& resources = *m_cache.add(&renderer, std::move(newResources)).iterator->value;
+    SVGResources& resources = *m_cache.add(&renderer, WTF::move(newResources)).iterator->value;
 
     // Run cycle-detection _afterwards_, so self-references can be caught as well.
     SVGResourcesCycleSolver solver(renderer, resources);

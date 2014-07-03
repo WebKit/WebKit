@@ -90,7 +90,7 @@ void WebResourceCacheManagerProxy::derefWebContextSupplement()
 
 void WebResourceCacheManagerProxy::getCacheOrigins(std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<ArrayCallback> callback = ArrayCallback::create(std::move(callbackFunction));
+    RefPtr<ArrayCallback> callback = ArrayCallback::create(WTF::move(callbackFunction));
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
 

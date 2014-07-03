@@ -38,7 +38,7 @@
 namespace WebCore {
 
 RenderTextControl::RenderTextControl(HTMLTextFormControlElement& element, PassRef<RenderStyle> style)
-    : RenderBlockFlow(element, std::move(style))
+    : RenderBlockFlow(element, WTF::move(style))
 {
 }
 

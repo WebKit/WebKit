@@ -494,7 +494,7 @@ CFURLConnectionRef ResourceHandle::connection() const
 RetainPtr<CFURLConnectionRef> ResourceHandle::releaseConnectionForDownload()
 {
     LOG(Network, "CFNet - Job %p releasing connection %p for download", this, d->m_connection.get());
-    return std::move(d->m_connection);
+    return WTF::move(d->m_connection);
 }
 
 CFStringRef ResourceHandle::synchronousLoadRunLoopMode()

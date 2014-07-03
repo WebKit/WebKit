@@ -53,7 +53,7 @@ PassRefPtr<RTCDTMFSender> RTCDTMFSender::create(ScriptExecutionContext* context,
         return nullptr;
     }
 
-    RefPtr<RTCDTMFSender> dtmfSender = adoptRef(new RTCDTMFSender(context, track, std::move(handler)));
+    RefPtr<RTCDTMFSender> dtmfSender = adoptRef(new RTCDTMFSender(context, track, WTF::move(handler)));
     dtmfSender->suspendIfNeeded();
     return dtmfSender.release();
 }
@@ -63,7 +63,7 @@ RTCDTMFSender::RTCDTMFSender(ScriptExecutionContext* context, PassRefPtr<MediaSt
     , m_track(track)
     , m_duration(defaultToneDurationMs)
     , m_interToneGap(defaultInterToneGapMs)
-    , m_handler(std::move(handler))
+    , m_handler(WTF::move(handler))
     , m_stopped(false)
     , m_scheduledEventTimer(this, &RTCDTMFSender::scheduledEventTimerFired)
 {

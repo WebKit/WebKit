@@ -54,7 +54,7 @@
 namespace WebCore {
 
 RenderSVGRoot::RenderSVGRoot(SVGSVGElement& element, PassRef<RenderStyle> style)
-    : RenderReplaced(element, std::move(style))
+    : RenderReplaced(element, WTF::move(style))
     , m_objectBoundingBoxValid(false)
     , m_isLayoutSizeChanged(false)
     , m_needsBoundariesOrTransformUpdate(true)

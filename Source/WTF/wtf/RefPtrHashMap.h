@@ -313,7 +313,7 @@ namespace WTF {
         iterator it = find(key);
         if (it == end())
             return MappedTraits::emptyValue();
-        MappedType value = std::move(it->value);
+        MappedType value = WTF::move(it->value);
         remove(it);
         return value;
     }
@@ -324,7 +324,7 @@ namespace WTF {
         iterator it = find(key);
         if (it == end())
             return MappedTraits::emptyValue();
-        MappedType value = std::move(it->value);
+        MappedType value = WTF::move(it->value);
         remove(it);
         return value;
     }

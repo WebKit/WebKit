@@ -569,7 +569,7 @@ PassOwnPtr<FontPlatformData> FontCache::createFontPlatformData(const FontDescrip
     bool synthesizeBold = isGDIFontWeightBold(weight) && !isGDIFontWeightBold(logFont.lfWeight);
     bool synthesizeItalic = fontDescription.italic() && !logFont.lfItalic;
 
-    FontPlatformData* result = new FontPlatformData(std::move(hfont), fontDescription.computedPixelSize(), synthesizeBold, synthesizeItalic, useGDI);
+    FontPlatformData* result = new FontPlatformData(WTF::move(hfont), fontDescription.computedPixelSize(), synthesizeBold, synthesizeItalic, useGDI);
 
 #if USE(CG)
     bool fontCreationFailed = !result->cgFont();

@@ -55,7 +55,7 @@ static inline SVGCursorElement* resourceReferencedByCursorElement(const String& 
 
 CSSCursorImageValue::CSSCursorImageValue(PassRef<CSSValue> imageValue, bool hasHotSpot, const IntPoint& hotSpot)
     : CSSValue(CursorImageClass)
-    , m_imageValue(std::move(imageValue))
+    , m_imageValue(WTF::move(imageValue))
     , m_hasHotSpot(hasHotSpot)
     , m_hotSpot(hotSpot)
     , m_accessedImage(false)

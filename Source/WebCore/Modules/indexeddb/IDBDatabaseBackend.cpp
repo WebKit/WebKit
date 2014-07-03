@@ -419,7 +419,7 @@ void IDBDatabaseBackend::processPendingOpenCalls(bool success)
             if (m_metadata.id == InvalidId) {
                 // This database was deleted then quickly re-opened.
                 // openInternalAsync() will recreate it in the backing store and then resume processing pending callbacks.
-                pendingOpenCalls.prepend(std::move(pendingOpenCall));
+                pendingOpenCalls.prepend(WTF::move(pendingOpenCall));
                 pendingOpenCalls.swap(m_pendingOpenCalls);
 
                 openInternalAsync();

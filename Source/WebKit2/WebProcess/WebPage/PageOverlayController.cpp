@@ -106,7 +106,7 @@ void PageOverlayController::installPageOverlay(PassRefPtr<PageOverlay> pageOverl
         break;
     }
 
-    m_overlayGraphicsLayers.set(overlay.get(), std::move(layer));
+    m_overlayGraphicsLayers.set(overlay.get(), WTF::move(layer));
 
     updateForceSynchronousScrollLayerPositionUpdates();
 }

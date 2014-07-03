@@ -81,7 +81,7 @@ friend class RenderMathMLRoot;
 
 public:
     RenderMathMLRootWrapper(Document& document, PassRef<RenderStyle> style)
-        : RenderMathMLRow(document, std::move(style)) { }
+        : RenderMathMLRow(document, WTF::move(style)) { }
 
 private:
     RenderObject* removeChildWithoutRestructuring(RenderObject&);

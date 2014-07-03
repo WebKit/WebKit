@@ -171,7 +171,7 @@ JSValue JSSubtleCrypto::encrypt(ExecState* exec)
     };
 
     ExceptionCode ec = 0;
-    algorithm->encrypt(*parameters, *key, data, std::move(successCallback), std::move(failureCallback), ec);
+    algorithm->encrypt(*parameters, *key, data, WTF::move(successCallback), WTF::move(failureCallback), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -222,7 +222,7 @@ JSValue JSSubtleCrypto::decrypt(ExecState* exec)
     };
 
     ExceptionCode ec = 0;
-    algorithm->decrypt(*parameters, *key, data, std::move(successCallback), std::move(failureCallback), ec);
+    algorithm->decrypt(*parameters, *key, data, WTF::move(successCallback), WTF::move(failureCallback), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -273,7 +273,7 @@ JSValue JSSubtleCrypto::sign(ExecState* exec)
     };
 
     ExceptionCode ec = 0;
-    algorithm->sign(*parameters, *key, data, std::move(successCallback), std::move(failureCallback), ec);
+    algorithm->sign(*parameters, *key, data, WTF::move(successCallback), WTF::move(failureCallback), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -330,7 +330,7 @@ JSValue JSSubtleCrypto::verify(ExecState* exec)
     };
 
     ExceptionCode ec = 0;
-    algorithm->verify(*parameters, *key, signature, data, std::move(successCallback), std::move(failureCallback), ec);
+    algorithm->verify(*parameters, *key, signature, data, WTF::move(successCallback), WTF::move(failureCallback), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -371,7 +371,7 @@ JSValue JSSubtleCrypto::digest(ExecState* exec)
     };
 
     ExceptionCode ec = 0;
-    algorithm->digest(*parameters, data, std::move(successCallback), std::move(failureCallback), ec);
+    algorithm->digest(*parameters, data, WTF::move(successCallback), WTF::move(failureCallback), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -426,7 +426,7 @@ JSValue JSSubtleCrypto::generateKey(ExecState* exec)
     };
 
     ExceptionCode ec = 0;
-    algorithm->generateKey(*parameters, extractable, keyUsages, std::move(successCallback), std::move(failureCallback), ec);
+    algorithm->generateKey(*parameters, extractable, keyUsages, WTF::move(successCallback), WTF::move(failureCallback), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -490,7 +490,7 @@ static void importKey(ExecState* exec, CryptoKeyFormat keyFormat, CryptoOperatio
         return;
 
     ExceptionCode ec = 0;
-    algorithm->importKey(*parameters, *keyData, extractable, keyUsages, std::move(callback), std::move(failureCallback), ec);
+    algorithm->importKey(*parameters, *keyData, extractable, keyUsages, WTF::move(callback), WTF::move(failureCallback), ec);
     if (ec)
         setDOMException(exec, ec);
 }
@@ -550,7 +550,7 @@ JSValue JSSubtleCrypto::importKey(ExecState* exec)
         wrapper.reject(nullptr);
     };
 
-    WebCore::importKey(exec, keyFormat, data, algorithm.release(), parameters.release(), extractable, keyUsages, std::move(successCallback), std::move(failureCallback));
+    WebCore::importKey(exec, keyFormat, data, algorithm.release(), parameters.release(), extractable, keyUsages, WTF::move(successCallback), WTF::move(failureCallback));
     if (exec->hadException())
         return jsUndefined();
 
@@ -612,7 +612,7 @@ JSValue JSSubtleCrypto::exportKey(ExecState* exec)
         wrapper.reject(nullptr);
     };
 
-    WebCore::exportKey(exec, keyFormat, *key, std::move(successCallback), std::move(failureCallback));
+    WebCore::exportKey(exec, keyFormat, *key, WTF::move(successCallback), WTF::move(failureCallback));
     if (exec->hadException())
         return jsUndefined();
 
@@ -673,7 +673,7 @@ JSValue JSSubtleCrypto::wrapKey(ExecState* exec)
             wrapper.reject(nullptr);
         };
         ExceptionCode ec = 0;
-        algorithmPtr->encryptForWrapKey(*parametersPtr, *wrappingKey, std::make_pair(exportedKeyData.data(), exportedKeyData.size()), std::move(encryptSuccessCallback), std::move(encryptFailureCallback), ec);
+        algorithmPtr->encryptForWrapKey(*parametersPtr, *wrappingKey, std::make_pair(exportedKeyData.data(), exportedKeyData.size()), WTF::move(encryptSuccessCallback), WTF::move(encryptFailureCallback), ec);
         if (ec) {
             // FIXME: Report failure details to console, and possibly to calling script once there is a standardized way to pass errors to WebCrypto promise reject functions.
             encryptFailureCallback();
@@ -687,7 +687,7 @@ JSValue JSSubtleCrypto::wrapKey(ExecState* exec)
     };
 
     ExceptionCode ec = 0;
-    WebCore::exportKey(exec, keyFormat, *key, std::move(exportSuccessCallback), std::move(exportFailureCallback));
+    WebCore::exportKey(exec, keyFormat, *key, WTF::move(exportSuccessCallback), WTF::move(exportFailureCallback));
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -780,7 +780,7 @@ JSValue JSSubtleCrypto::unwrapKey(ExecState* exec)
             wrapper.reject(nullptr);
         };
         ExecState* exec = domGlobalObject->globalExec();
-        WebCore::importKey(exec, keyFormat, std::make_pair(result.data(), result.size()), unwrappedKeyAlgorithmPtr, unwrappedKeyAlgorithmParametersPtr, extractable, keyUsages, std::move(importSuccessCallback), std::move(importFailureCallback));
+        WebCore::importKey(exec, keyFormat, std::make_pair(result.data(), result.size()), unwrappedKeyAlgorithmPtr, unwrappedKeyAlgorithmParametersPtr, extractable, keyUsages, WTF::move(importSuccessCallback), WTF::move(importFailureCallback));
         if (exec->hadException()) {
             // FIXME: Report exception details to console, and possibly to calling script once there is a standardized way to pass errors to WebCrypto promise reject functions.
             exec->clearException();
@@ -795,7 +795,7 @@ JSValue JSSubtleCrypto::unwrapKey(ExecState* exec)
     };
 
     ExceptionCode ec = 0;
-    unwrapAlgorithm->decryptForUnwrapKey(*unwrapAlgorithmParameters, *unwrappingKey, wrappedKeyData, std::move(decryptSuccessCallback), std::move(decryptFailureCallback), ec);
+    unwrapAlgorithm->decryptForUnwrapKey(*unwrapAlgorithmParameters, *unwrappingKey, wrappedKeyData, WTF::move(decryptSuccessCallback), WTF::move(decryptFailureCallback), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();

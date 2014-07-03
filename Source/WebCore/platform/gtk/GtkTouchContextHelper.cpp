@@ -39,7 +39,7 @@ bool GtkTouchContextHelper::handleEvent(GdkEvent* touchEvent)
     case GDK_TOUCH_BEGIN: {
         ASSERT(!m_touchEvents.contains(sequence));
         GUniquePtr<GdkEvent> event(gdk_event_copy(touchEvent));
-        m_touchEvents.add(sequence, std::move(event));
+        m_touchEvents.add(sequence, WTF::move(event));
         break;
     }
     case GDK_TOUCH_UPDATE: {

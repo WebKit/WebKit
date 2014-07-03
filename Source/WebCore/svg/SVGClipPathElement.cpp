@@ -115,7 +115,7 @@ void SVGClipPathElement::childrenChanged(const ChildChange& change)
 
 RenderPtr<RenderElement> SVGClipPathElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSVGResourceClipper>(*this, std::move(style));
+    return createRenderer<RenderSVGResourceClipper>(*this, WTF::move(style));
 }
 
 }

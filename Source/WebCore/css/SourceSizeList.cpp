@@ -41,7 +41,7 @@ bool SourceSize::match(RenderStyle& style, Frame* frame)
     expList->append(m_mediaExp.release());
 
     RefPtr<MediaQuerySet> mediaQuerySet = MediaQuerySet::create();
-    mediaQuerySet->addMediaQuery(std::make_unique<MediaQuery>(MediaQuery::None, "all", std::move(expList)));
+    mediaQuerySet->addMediaQuery(std::make_unique<MediaQuery>(MediaQuery::None, "all", WTF::move(expList)));
 
     MediaQueryEvaluator mediaQueryEvaluator("screen", frame, &style);
     return mediaQueryEvaluator.eval(mediaQuerySet.get());

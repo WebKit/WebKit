@@ -77,7 +77,7 @@ void WKContextGetInfoForInstalledPlugIns(WKContextRef contextRef, WKContextGetIn
     for (const auto& plugin: plugins)
         pluginInfoDictionaries.uncheckedAppend(createPluginInformationDictionary(plugin));
 
-    RefPtr<API::Array> array = API::Array::create(std::move(pluginInfoDictionaries));
+    RefPtr<API::Array> array = API::Array::create(WTF::move(pluginInfoDictionaries));
 
     toImpl(contextRef)->ref();
     dispatch_async(dispatch_get_main_queue(), ^() {

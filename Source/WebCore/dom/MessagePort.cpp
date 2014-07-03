@@ -80,7 +80,7 @@ void MessagePort::postMessage(PassRefPtr<SerializedScriptValue> message, const M
         if (ec)
             return;
     }
-    m_entangledChannel->postMessageToRemote(message, std::move(channels));
+    m_entangledChannel->postMessageToRemote(message, WTF::move(channels));
 }
 
 std::unique_ptr<MessagePortChannel> MessagePort::disentangle()
@@ -94,7 +94,7 @@ std::unique_ptr<MessagePortChannel> MessagePort::disentangle()
     m_scriptExecutionContext->destroyedMessagePort(*this);
     m_scriptExecutionContext = nullptr;
 
-    return std::move(m_entangledChannel);
+    return WTF::move(m_entangledChannel);
 }
 
 // Invoked to notify us that there are messages available for this port.
@@ -134,7 +134,7 @@ void MessagePort::entangle(std::unique_ptr<MessagePortChannel> remote)
 
     // Don't entangle the ports if the channel is closed.
     if (remote->entangleIfOpen(this))
-        m_entangledChannel = std::move(remote);
+        m_entangledChannel = WTF::move(remote);
 }
 
 void MessagePort::contextDestroyed()
@@ -160,8 +160,8 @@ void MessagePort::dispatchMessages()
         if (m_scriptExecutionContext->isWorkerGlobalScope() && toWorkerGlobalScope(m_scriptExecutionContext)->isClosing())
             return;
 
-        std::unique_ptr<MessagePortArray> ports = MessagePort::entanglePorts(*m_scriptExecutionContext, std::move(channels));
-        RefPtr<Event> evt = MessageEvent::create(std::move(ports), message.release());
+        std::unique_ptr<MessagePortArray> ports = MessagePort::entanglePorts(*m_scriptExecutionContext, WTF::move(channels));
+        RefPtr<Event> evt = MessageEvent::create(WTF::move(ports), message.release());
 
         dispatchEvent(evt.release(), ASSERT_NO_EXCEPTION);
     }
@@ -205,7 +205,7 @@ std::unique_ptr<MessagePortChannelArray> MessagePort::disentanglePorts(const Mes
     auto portArray = std::make_unique<MessagePortChannelArray>(ports->size());
     for (unsigned int i = 0 ; i < ports->size() ; ++i) {
         std::unique_ptr<MessagePortChannel> channel = (*ports)[i]->disentangle();
-        (*portArray)[i] = std::move(channel);
+        (*portArray)[i] = WTF::move(channel);
     }
     return portArray;
 }
@@ -218,7 +218,7 @@ std::unique_ptr<MessagePortArray> MessagePort::entanglePorts(ScriptExecutionCont
     auto portArray = std::make_unique<MessagePortArray>(channels->size());
     for (unsigned int i = 0; i < channels->size(); ++i) {
         RefPtr<MessagePort> port = MessagePort::create(context);
-        port->entangle(std::move((*channels)[i]));
+        port->entangle(WTF::move((*channels)[i]));
         (*portArray)[i] = port.release();
     }
     return portArray;

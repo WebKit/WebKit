@@ -220,9 +220,9 @@ static inline PassRefPtr<StyleImage> blendFilter(const AnimationBase* anim, Cach
     auto imageValue = CSSImageValue::create(image->url(), styledImage.get());
     auto filterValue = ComputedStyleExtractor::valueForFilter(&anim->renderer()->style(), filterResult, DoNotAdjustPixelValues);
 
-    auto result = CSSFilterImageValue::create(std::move(imageValue), std::move(filterValue));
+    auto result = CSSFilterImageValue::create(WTF::move(imageValue), WTF::move(filterValue));
     result.get().setFilterOperations(filterResult);
-    return StyleGeneratedImage::create(std::move(result));
+    return StyleGeneratedImage::create(WTF::move(result));
 }
 #endif // ENABLE(CSS_FILTERS)
 
@@ -284,9 +284,9 @@ static inline PassRefPtr<StyleImage> crossfadeBlend(const AnimationBase*, StyleC
     auto fromImageValue = CSSImageValue::create(fromStyleImage->cachedImage()->url(), fromStyleImage);
     auto toImageValue = CSSImageValue::create(toStyleImage->cachedImage()->url(), toStyleImage);
 
-    auto crossfadeValue = CSSCrossfadeValue::create(std::move(fromImageValue), std::move(toImageValue));
+    auto crossfadeValue = CSSCrossfadeValue::create(WTF::move(fromImageValue), WTF::move(toImageValue));
     crossfadeValue.get().setPercentage(CSSPrimitiveValue::create(progress, CSSPrimitiveValue::CSS_NUMBER));
-    return StyleGeneratedImage::create(std::move(crossfadeValue));
+    return StyleGeneratedImage::create(WTF::move(crossfadeValue));
 }
 
 static inline PassRefPtr<StyleImage> blendFunc(const AnimationBase* anim, StyleImage* from, StyleImage* to, double progress)
@@ -662,9 +662,9 @@ private:
             ShadowData* blendedShadowPtr = blendedShadow.get();
 
             if (!lastShadow)
-                newShadowData = std::move(blendedShadow);
+                newShadowData = WTF::move(blendedShadow);
             else
-                lastShadow->setNext(std::move(blendedShadow));
+                lastShadow->setNext(WTF::move(blendedShadow));
 
             lastShadow = blendedShadowPtr;
 
@@ -703,8 +703,8 @@ private:
 
             std::unique_ptr<ShadowData> blendedShadow = blendFunc(anim, srcShadow, dstShadow, progress);
             // Insert at the start of the list to preserve the order.
-            blendedShadow->setNext(std::move(newShadowData));
-            newShadowData = std::move(blendedShadow);
+            blendedShadow->setNext(WTF::move(newShadowData));
+            newShadowData = WTF::move(blendedShadow);
         }
 
         return newShadowData;
@@ -960,7 +960,7 @@ class ShorthandPropertyWrapper : public AnimationPropertyWrapperBase {
 public:
     ShorthandPropertyWrapper(CSSPropertyID property, Vector<AnimationPropertyWrapperBase*> longhandWrappers)
         : AnimationPropertyWrapperBase(property)
-        , m_propertyWrappers(std::move(longhandWrappers))
+        , m_propertyWrappers(WTF::move(longhandWrappers))
     {
     }
 
@@ -1335,7 +1335,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
             longhandWrappers.uncheckedAppend(m_propertyWrappers[wrapperIndex].get());
         }
 
-        m_propertyWrappers.uncheckedAppend(std::make_unique<ShorthandPropertyWrapper>(propertyID, std::move(longhandWrappers)));
+        m_propertyWrappers.uncheckedAppend(std::make_unique<ShorthandPropertyWrapper>(propertyID, WTF::move(longhandWrappers)));
         indexFromPropertyID(propertyID) = animatableLonghandPropertiesCount + i;
     }
 }

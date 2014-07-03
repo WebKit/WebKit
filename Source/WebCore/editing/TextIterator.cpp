@@ -277,7 +277,7 @@ inline void TextIteratorCopyableText::reset()
 inline void TextIteratorCopyableText::set(String&& string)
 {
     m_singleCharacter = 0;
-    m_string = std::move(string);
+    m_string = WTF::move(string);
     m_offset = 0;
     m_length = m_string.length();
 }
@@ -289,7 +289,7 @@ inline void TextIteratorCopyableText::set(String&& string, unsigned offset, unsi
     ASSERT(length <= string.length() - offset);
 
     m_singleCharacter = 0;
-    m_string = std::move(string);
+    m_string = WTF::move(string);
     m_offset = offset;
     m_length = length;
 }
@@ -762,7 +762,7 @@ bool TextIterator::handleReplacedElement()
         String altText = toRenderImage(renderer).altText();
         if (unsigned length = altText.length()) {
             m_lastCharacter = altText[length - 1];
-            m_copyableText.set(std::move(altText));
+            m_copyableText.set(WTF::move(altText));
             m_text = m_copyableText.text();
             return true;
         }
@@ -1081,7 +1081,7 @@ void TextIterator::emitText(Text& textNode, RenderText& renderer, int textStartO
     m_positionEndOffset = textEndOffset;
 
     m_lastCharacter = string[textEndOffset - 1];
-    m_copyableText.set(std::move(string), textStartOffset, textEndOffset - textStartOffset);
+    m_copyableText.set(WTF::move(string), textStartOffset, textEndOffset - textStartOffset);
     m_text = m_copyableText.text();
 
     m_lastTextNodeEndedWithCollapsedSpace = false;
@@ -1289,7 +1289,7 @@ bool SimplifiedBackwardsTextIterator::handleTextNode()
     ASSERT(m_positionEndOffset - offsetInNode <= static_cast<int>(text.length()));
 
     m_lastCharacter = text[m_positionEndOffset - offsetInNode - 1];
-    m_copyableText.set(std::move(text), m_positionStartOffset - offsetInNode, m_positionEndOffset - m_positionStartOffset);
+    m_copyableText.set(WTF::move(text), m_positionStartOffset - offsetInNode, m_positionEndOffset - m_positionStartOffset);
     m_text = m_copyableText.text();
 
     return !m_shouldHandleFirstLetter;

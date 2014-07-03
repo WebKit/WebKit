@@ -36,7 +36,7 @@ bool MessageSender::sendMessage(std::unique_ptr<MessageEncoder> encoder, unsigne
 {
     ASSERT(messageSenderConnection());
 
-    return messageSenderConnection()->sendMessage(std::move(encoder), messageSendFlags);
+    return messageSenderConnection()->sendMessage(WTF::move(encoder), messageSendFlags);
 }
 
 } // namespace IPC

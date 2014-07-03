@@ -687,7 +687,7 @@ public:
         {
             ConcurrentJITLocker locker(m_lock);
             if (!m_livenessAnalysis)
-                m_livenessAnalysis = std::move(analysis);
+                m_livenessAnalysis = WTF::move(analysis);
             return *m_livenessAnalysis;
         }
     }

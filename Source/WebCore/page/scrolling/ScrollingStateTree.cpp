@@ -228,7 +228,7 @@ void ScrollingStateTree::willRemoveNode(ScrollingStateNode* node)
 
 void ScrollingStateTree::setRemovedNodes(HashSet<ScrollingNodeID> nodes)
 {
-    m_nodesRemovedSinceLastCommit = std::move(nodes);
+    m_nodesRemovedSinceLastCommit = WTF::move(nodes);
 }
 
 ScrollingStateNode* ScrollingStateTree::stateNodeForID(ScrollingNodeID scrollLayerID)

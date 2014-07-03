@@ -54,8 +54,8 @@ void BasicShapeCenterCoordinate::updateComputedLength()
 
     auto lhs = std::make_unique<CalcExpressionLength>(Length(100, Percent));
     auto rhs = std::make_unique<CalcExpressionLength>(m_length);
-    auto op = std::make_unique<CalcExpressionBinaryOperation>(std::move(lhs), std::move(rhs), CalcSubtract);
-    m_computedLength = Length(CalculationValue::create(std::move(op), CalculationRangeAll));
+    auto op = std::make_unique<CalcExpressionBinaryOperation>(WTF::move(lhs), WTF::move(rhs), CalcSubtract);
+    m_computedLength = Length(CalculationValue::create(WTF::move(op), CalculationRangeAll));
 }
 
 bool BasicShape::canBlend(const BasicShape* other) const

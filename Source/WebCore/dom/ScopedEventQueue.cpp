@@ -72,7 +72,7 @@ void ScopedEventQueue::dispatchEvent(PassRefPtr<Event> event) const
 
 void ScopedEventQueue::dispatchAllEvents()
 {
-    Vector<RefPtr<Event>> queuedEvents = std::move(m_queuedEvents);
+    Vector<RefPtr<Event>> queuedEvents = WTF::move(m_queuedEvents);
     for (size_t i = 0; i < queuedEvents.size(); i++)
         dispatchEvent(queuedEvents[i].release());
 }

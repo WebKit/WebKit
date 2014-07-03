@@ -57,7 +57,7 @@ WorkerNavigatorStorageQuota* WorkerNavigatorStorageQuota::from(WorkerNavigator* 
     if (!supplement) {
         auto newSupplement = std::make_unique<WorkerNavigatorStorageQuota>(window);
         supplement = newSupplement.get();
-        provideTo(navigator, supplementName(), std::move(newSupplement));
+        provideTo(navigator, supplementName(), WTF::move(newSupplement));
     }
     return supplement;
 }

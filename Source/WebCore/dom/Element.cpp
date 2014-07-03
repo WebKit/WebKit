@@ -1328,7 +1328,7 @@ bool Element::rendererIsNeeded(const RenderStyle& style)
 
 RenderPtr<RenderElement> Element::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return RenderElement::createFor(*this, std::move(style));
+    return RenderElement::createFor(*this, WTF::move(style));
 }
 
 Node::InsertionNotificationRequest Element::insertedInto(ContainerNode& insertionPoint)

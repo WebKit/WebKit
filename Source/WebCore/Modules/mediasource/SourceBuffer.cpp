@@ -90,14 +90,14 @@ struct SourceBuffer::TrackBuffer {
 
 PassRef<SourceBuffer> SourceBuffer::create(PassRef<SourceBufferPrivate> sourceBufferPrivate, MediaSource* source)
 {
-    RefPtr<SourceBuffer> sourceBuffer(adoptRef(new SourceBuffer(std::move(sourceBufferPrivate), source)));
+    RefPtr<SourceBuffer> sourceBuffer(adoptRef(new SourceBuffer(WTF::move(sourceBufferPrivate), source)));
     sourceBuffer->suspendIfNeeded();
     return sourceBuffer.releaseNonNull();
 }
 
 SourceBuffer::SourceBuffer(PassRef<SourceBufferPrivate> sourceBufferPrivate, MediaSource* source)
     : ActiveDOMObject(source->scriptExecutionContext())
-    , m_private(std::move(sourceBufferPrivate))
+    , m_private(WTF::move(sourceBufferPrivate))
     , m_source(source)
     , m_asyncEventQueue(*this)
     , m_updating(false)

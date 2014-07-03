@@ -211,9 +211,9 @@ String HTMLImageElement::altText() const
 RenderPtr<RenderElement> HTMLImageElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     if (style.get().hasContent())
-        return RenderElement::createFor(*this, std::move(style));
+        return RenderElement::createFor(*this, WTF::move(style));
 
-    return createRenderer<RenderImage>(*this, std::move(style), nullptr, m_imageDevicePixelRatio);
+    return createRenderer<RenderImage>(*this, WTF::move(style), nullptr, m_imageDevicePixelRatio);
 }
 
 bool HTMLImageElement::canStartSelection() const

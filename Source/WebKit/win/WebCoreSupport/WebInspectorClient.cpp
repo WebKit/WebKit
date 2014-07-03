@@ -173,7 +173,7 @@ WebCore::InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(Ins
     m_frontendPage = core(frontendWebView.get());
     auto frontendClient = std::make_unique<WebInspectorFrontendClient>(m_inspectedWebView, reinterpret_cast<HWND>(m_inspectedWebViewHandle), frontendHwnd, frontendWebView, frontendWebViewHwnd, this, createFrontendSettings());
     m_frontendClient = frontendClient.get();
-    m_frontendPage->inspectorController().setInspectorFrontendClient(std::move(frontendClient));
+    m_frontendPage->inspectorController().setInspectorFrontendClient(WTF::move(frontendClient));
     m_frontendHandle = reinterpret_cast<OLE_HANDLE>(frontendHwnd);
     return this;
 }
@@ -225,7 +225,7 @@ void WebInspectorClient::releaseFrontend()
 }
 
 WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, HWND inspectedWebViewHwnd, HWND frontendHwnd, const COMPtr<WebView>& frontendWebView, HWND frontendWebViewHwnd, WebInspectorClient* inspectorClient, std::unique_ptr<Settings> settings)
-    : InspectorFrontendClientLocal(&inspectedWebView->page()->inspectorController(),  core(frontendWebView.get()), std::move(settings))
+    : InspectorFrontendClientLocal(&inspectedWebView->page()->inspectorController(),  core(frontendWebView.get()), WTF::move(settings))
     , m_inspectedWebView(inspectedWebView)
     , m_inspectedWebViewHwnd(inspectedWebViewHwnd)
     , m_inspectorClient(inspectorClient)

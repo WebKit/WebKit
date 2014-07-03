@@ -37,7 +37,7 @@
 namespace WebCore {
 
 RenderRubyBase::RenderRubyBase(Document& document, PassRef<RenderStyle> style)
-    : RenderBlockFlow(document, std::move(style))
+    : RenderBlockFlow(document, WTF::move(style))
 {
     setInline(false);
 }

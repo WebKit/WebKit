@@ -401,7 +401,7 @@ public:
     PassRefPtr<ParsedNode> parse(ParserError&, bool needReparsingAdjustment);
 
     JSTextPosition positionBeforeLastNewline() const { return m_lexer->positionBeforeLastNewline(); }
-    Vector<RefPtr<StringImpl>>&& closedVariables() { return std::move(m_closedVariables); }
+    Vector<RefPtr<StringImpl>>&& closedVariables() { return WTF::move(m_closedVariables); }
 
 private:
     struct AllowInOverride {

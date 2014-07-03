@@ -59,11 +59,11 @@ public:
     }
     static PassRefPtr<MessageEvent> create(std::unique_ptr<MessagePortArray> ports, const Deprecated::ScriptValue& data = Deprecated::ScriptValue(), const String& origin = String(), const String& lastEventId = String(), PassRefPtr<EventTarget> source = 0)
     {
-        return adoptRef(new MessageEvent(data, origin, lastEventId, source, std::move(ports)));
+        return adoptRef(new MessageEvent(data, origin, lastEventId, source, WTF::move(ports)));
     }
     static PassRefPtr<MessageEvent> create(std::unique_ptr<MessagePortArray> ports, PassRefPtr<SerializedScriptValue> data, const String& origin = String(), const String& lastEventId = String(), PassRefPtr<EventTarget> source = 0)
     {
-        return adoptRef(new MessageEvent(data, origin, lastEventId, source, std::move(ports)));
+        return adoptRef(new MessageEvent(data, origin, lastEventId, source, WTF::move(ports)));
     }
     static PassRefPtr<MessageEvent> create(const String& data, const String& origin = String())
     {

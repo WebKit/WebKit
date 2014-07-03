@@ -278,7 +278,7 @@ static int32_t deviceOrientation()
     [self addSubview:_scrollView.get()];
     [_scrollView setBackgroundColor:[UIColor whiteColor]];
 
-    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds context:context configuration:std::move(webPageConfiguration) webView:self]);
+    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds context:context configuration:WTF::move(webPageConfiguration) webView:self]);
 
     _page = [_contentView page];
     _page->setApplicationNameForUserAgent([@"Mobile/" stringByAppendingString:[UIDevice currentDevice].buildVersion]);
@@ -304,7 +304,7 @@ static int32_t deviceOrientation()
 #endif
 
 #if PLATFORM(MAC)
-    _wkView = [[WKView alloc] initWithFrame:bounds context:context configuration:std::move(webPageConfiguration) webView:self];
+    _wkView = [[WKView alloc] initWithFrame:bounds context:context configuration:WTF::move(webPageConfiguration) webView:self];
     [self addSubview:_wkView.get()];
     _page = WebKit::toImpl([_wkView pageRef]);
 
@@ -1607,7 +1607,7 @@ static int32_t activeOrientation(WKWebView *webView)
     if (!WebKit::decodeLegacySessionState(static_cast<const uint8_t*>(sessionStateData.bytes), sessionStateData.length, sessionState))
         return;
 
-    uint64_t navigationID = _page->restoreFromSessionState(std::move(sessionState));
+    uint64_t navigationID = _page->restoreFromSessionState(WTF::move(sessionState));
     if (navigationID) {
         // FIXME: This is not necessarily always a reload navigation.
         _navigationState->createReloadNavigation(navigationID);

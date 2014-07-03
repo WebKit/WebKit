@@ -214,7 +214,7 @@ static void callFunctionObject(void* context)
 
 void callOnMainThread(std::function<void ()> function)
 {
-    callOnMainThread(callFunctionObject, std::make_unique<std::function<void ()>>(std::move(function)).release());
+    callOnMainThread(callFunctionObject, std::make_unique<std::function<void ()>>(WTF::move(function)).release());
 }
 
 void setMainThreadCallbacksPaused(bool paused)

@@ -40,7 +40,7 @@ PassRefPtr<API::Array> InjectedBundleBackForwardListItem::children() const
     for (const auto& child : m_item->children())
         children.uncheckedAppend(InjectedBundleBackForwardListItem::create(child));
 
-    return API::Array::create(std::move(children));
+    return API::Array::create(WTF::move(children));
 }
 
 } // namespace WebKit

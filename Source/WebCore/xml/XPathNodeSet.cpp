@@ -173,7 +173,7 @@ void NodeSet::sort() const
     for (unsigned i = 0; i < nodeCount; ++i)
         sortedNodes.append(parentMatrix[i][0]);
     
-    m_nodes = std::move(sortedNodes);
+    m_nodes = WTF::move(sortedNodes);
     m_isSorted = true;
 }
 
@@ -226,7 +226,7 @@ void NodeSet::traversalSort() const
     }
 
     ASSERT(sortedNodes.size() == nodeCount);
-    m_nodes = std::move(sortedNodes);
+    m_nodes = WTF::move(sortedNodes);
     m_isSorted = true;
 }
 

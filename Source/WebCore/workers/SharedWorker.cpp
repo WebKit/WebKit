@@ -77,7 +77,7 @@ PassRefPtr<SharedWorker> SharedWorker::create(ScriptExecutionContext& context, c
         return 0;
     }
 
-    SharedWorkerRepository::connect(worker.get(), std::move(remotePort), scriptURL, name, ec);
+    SharedWorkerRepository::connect(worker.get(), WTF::move(remotePort), scriptURL, name, ec);
 
     return worker.release();
 }

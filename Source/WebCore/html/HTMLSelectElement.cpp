@@ -350,10 +350,10 @@ RenderPtr<RenderElement> HTMLSelectElement::createElementRenderer(PassRef<Render
 {
 #if !PLATFORM(IOS)
     if (usesMenuList())
-        return createRenderer<RenderMenuList>(*this, std::move(style));
-    return createRenderer<RenderListBox>(*this, std::move(style));
+        return createRenderer<RenderMenuList>(*this, WTF::move(style));
+    return createRenderer<RenderListBox>(*this, WTF::move(style));
 #else
-    return createRenderer<RenderMenuList>(*this, std::move(style));
+    return createRenderer<RenderMenuList>(*this, WTF::move(style));
 #endif
 }
 

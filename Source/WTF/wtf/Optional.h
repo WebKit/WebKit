@@ -69,12 +69,12 @@ public:
         : m_isEngaged(other.m_isEngaged)
     {
         if (m_isEngaged)
-            new (NotNull, std::addressof(m_value)) T(std::move(other.m_value));
+            new (NotNull, std::addressof(m_value)) T(WTF::move(other.m_value));
     }
 
     Optional(T&& value)
         : m_isEngaged(true)
-        , m_value(std::move(value))
+        , m_value(WTF::move(value))
     {
     }
 
@@ -121,14 +121,14 @@ public:
     {
         if (m_isEngaged == other.m_isEngaged) {
             if (m_isEngaged)
-                m_value = std::move(other.m_value);
+                m_value = WTF::move(other.m_value);
             return *this;
         }
 
         if (m_isEngaged)
             m_value.~T();
         else
-            new (NotNull, std::addressof(m_value)) T(std::move(other.m_value));
+            new (NotNull, std::addressof(m_value)) T(WTF::move(other.m_value));
         m_isEngaged = other.m_isEngaged;
 
         return *this;

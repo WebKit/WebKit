@@ -52,7 +52,7 @@
 namespace WebCore {
 
 RenderFlowThread::RenderFlowThread(Document& document, PassRef<RenderStyle> style)
-    : RenderBlockFlow(document, std::move(style))
+    : RenderBlockFlow(document, WTF::move(style))
     , m_previousRegionCount(0)
     , m_autoLogicalHeightRegionsCount(0)
     , m_currentRegionMaintainer(nullptr)

@@ -286,7 +286,7 @@ HTMLElement* RangeInputType::sliderThumbElement() const
 
 RenderPtr<RenderElement> RangeInputType::createInputRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSlider>(element(), std::move(style));
+    return createRenderer<RenderSlider>(element(), WTF::move(style));
 }
 
 Decimal RangeInputType::parseToNumber(const String& src, const Decimal& defaultValue) const

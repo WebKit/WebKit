@@ -410,7 +410,7 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
             if (!decoder.decode(*backingStore))
                 return false;
             
-            result.backingStore = std::move(backingStore);
+            result.backingStore = WTF::move(backingStore);
         } else
             result.backingStore = nullptr;
     }
@@ -419,7 +419,7 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
         std::unique_ptr<FilterOperations> filters = std::make_unique<FilterOperations>();
         if (!decoder.decode(*filters))
             return false;
-        result.filters = std::move(filters);
+        result.filters = WTF::move(filters);
     }
 
     if (result.changedProperties & EdgeAntialiasingMaskChanged) {
@@ -502,7 +502,7 @@ bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLay
         if (!decoder.decode(*layerProperties))
             return false;
 
-        result.changedLayerProperties().set(layerID, std::move(layerProperties));
+        result.changedLayerProperties().set(layerID, WTF::move(layerProperties));
     }
 
     if (!decoder.decode(result.m_destroyedLayerIDs))
@@ -571,17 +571,17 @@ void RemoteLayerTreeTransaction::layerPropertiesChanged(PlatformCALayerRemote& r
 
 void RemoteLayerTreeTransaction::setCreatedLayers(Vector<LayerCreationProperties> createdLayers)
 {
-    m_createdLayers = std::move(createdLayers);
+    m_createdLayers = WTF::move(createdLayers);
 }
 
 void RemoteLayerTreeTransaction::setDestroyedLayerIDs(Vector<GraphicsLayer::PlatformLayerID> destroyedLayerIDs)
 {
-    m_destroyedLayerIDs = std::move(destroyedLayerIDs);
+    m_destroyedLayerIDs = WTF::move(destroyedLayerIDs);
 }
 
 void RemoteLayerTreeTransaction::setLayerIDsWithNewlyUnreachableBackingStore(Vector<GraphicsLayer::PlatformLayerID> layerIDsWithNewlyUnreachableBackingStore)
 {
-    m_layerIDsWithNewlyUnreachableBackingStore = std::move(layerIDsWithNewlyUnreachableBackingStore);
+    m_layerIDsWithNewlyUnreachableBackingStore = WTF::move(layerIDsWithNewlyUnreachableBackingStore);
 }
 
 #if !defined(NDEBUG) || !LOG_DISABLED

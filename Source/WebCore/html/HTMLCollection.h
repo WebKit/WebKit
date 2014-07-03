@@ -144,7 +144,7 @@ protected:
     void setNameItemCache(std::unique_ptr<CollectionNamedElementCache> cache) const
     {
         ASSERT(!m_namedElementCache);
-        m_namedElementCache = std::move(cache);
+        m_namedElementCache = WTF::move(cache);
         document().collectionCachedIdNameMap(*this);
     }
 

@@ -126,7 +126,7 @@ public:
             callback->attributes[i * 5 + 4] = callback->attributes[i * 5 + 3] + len;
         }
 
-        m_callbacks.append(std::move(callback));
+        m_callbacks.append(WTF::move(callback));
     }
 
     void appendEndElementNSCallback()
@@ -141,7 +141,7 @@ public:
         callback->s = xmlStrndup(s, len);
         callback->len = len;
 
-        m_callbacks.append(std::move(callback));
+        m_callbacks.append(WTF::move(callback));
     }
 
     void appendProcessingInstructionCallback(const xmlChar* target, const xmlChar* data)
@@ -151,7 +151,7 @@ public:
         callback->target = xmlStrdup(target);
         callback->data = xmlStrdup(data);
 
-        m_callbacks.append(std::move(callback));
+        m_callbacks.append(WTF::move(callback));
     }
 
     void appendCDATABlockCallback(const xmlChar* s, int len)
@@ -161,7 +161,7 @@ public:
         callback->s = xmlStrndup(s, len);
         callback->len = len;
 
-        m_callbacks.append(std::move(callback));
+        m_callbacks.append(WTF::move(callback));
     }
 
     void appendCommentCallback(const xmlChar* s)
@@ -170,7 +170,7 @@ public:
 
         callback->s = xmlStrdup(s);
 
-        m_callbacks.append(std::move(callback));
+        m_callbacks.append(WTF::move(callback));
     }
 
     void appendInternalSubsetCallback(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID)
@@ -181,7 +181,7 @@ public:
         callback->externalID = xmlStrdup(externalID);
         callback->systemID = xmlStrdup(systemID);
 
-        m_callbacks.append(std::move(callback));
+        m_callbacks.append(WTF::move(callback));
     }
 
     void appendErrorCallback(XMLErrors::ErrorType type, const xmlChar* message, OrdinalNumber lineNumber, OrdinalNumber columnNumber)
@@ -193,7 +193,7 @@ public:
         callback->lineNumber = lineNumber;
         callback->columnNumber = columnNumber;
 
-        m_callbacks.append(std::move(callback));
+        m_callbacks.append(WTF::move(callback));
     }
 
     void callAndRemoveFirstCallback(XMLDocumentParser* parser)
@@ -362,7 +362,7 @@ class OffsetBuffer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     OffsetBuffer(Vector<char> buffer)
-        : m_buffer(std::move(buffer))
+        : m_buffer(WTF::move(buffer))
         , m_currentOffset(0)
     {
     }
@@ -469,7 +469,7 @@ static void* openFunc(const char* uri)
     if (!shouldAllowExternalLoad(response.url()))
         return &globalDescriptor;
 
-    return new OffsetBuffer(std::move(data));
+    return new OffsetBuffer(WTF::move(data));
 }
 
 static int readFunc(void* context, char* buffer, int len)
@@ -1548,7 +1548,7 @@ HashMap<String, String> parseAttributes(const String& string, bool& attrsOK)
     xmlParseChunk(parser->context(), reinterpret_cast<const char*>(StringView(parseString).upconvertedCharacters().get()), parseString.length() * sizeof(UChar), 1);
 
     attrsOK = state.gotAttributes;
-    return std::move(state.attributes);
+    return WTF::move(state.attributes);
 }
 
 }

@@ -57,7 +57,7 @@ bool DatabaseBackend::openAndVerifyVersion(bool setVersionInNewDatabase, Databas
 
     bool success = false;
     auto task = DatabaseOpenTask::create(this, setVersionInNewDatabase, &synchronizer, error, errorMessage, success);
-    databaseContext()->databaseThread()->scheduleImmediateTask(std::move(task));
+    databaseContext()->databaseThread()->scheduleImmediateTask(WTF::move(task));
     synchronizer.waitForTaskCompletion();
 
     return success;
@@ -147,7 +147,7 @@ void DatabaseBackend::scheduleTransaction()
         auto task = DatabaseTransactionTask::create(transaction);
         LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for transaction %p\n", task.get(), task->transaction());
         m_transactionInProgress = true;
-        databaseContext()->databaseThread()->scheduleTask(std::move(task));
+        databaseContext()->databaseThread()->scheduleTask(WTF::move(task));
     } else
         m_transactionInProgress = false;
 }
@@ -159,7 +159,7 @@ void DatabaseBackend::scheduleTransactionStep(SQLTransactionBackend* transaction
 
     auto task = DatabaseTransactionTask::create(transaction);
     LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for the transaction step\n", task.get());
-    databaseContext()->databaseThread()->scheduleTask(std::move(task));
+    databaseContext()->databaseThread()->scheduleTask(WTF::move(task));
 }
 
 SQLTransactionClient* DatabaseBackend::transactionClient() const

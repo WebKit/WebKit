@@ -866,7 +866,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
                         decidePolicyForMIMEType:response.mimeType()
                                         request:request.nsURLRequest(UpdateHTTPBody)
                                           frame:m_webFrame.get()
-                               decisionListener:setUpPolicyListener(std::move(function)).get()];
+                               decisionListener:setUpPolicyListener(WTF::move(function)).get()];
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction& action, const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName, FramePolicyFunction function)
@@ -876,7 +876,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
             decidePolicyForNewWindowAction:actionDictionary(action, formState)
                                    request:request.nsURLRequest(UpdateHTTPBody)
                               newFrameName:frameName
-                          decisionListener:setUpPolicyListener(std::move(function)).get()];
+                          decisionListener:setUpPolicyListener(WTF::move(function)).get()];
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& action, const ResourceRequest& request, PassRefPtr<FormState> formState, FramePolicyFunction function)
@@ -886,7 +886,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
                 decidePolicyForNavigationAction:actionDictionary(action, formState)
                                         request:request.nsURLRequest(UpdateHTTPBody)
                                           frame:m_webFrame.get()
-                               decisionListener:setUpPolicyListener(std::move(function)).get()];
+                               decisionListener:setUpPolicyListener(WTF::move(function)).get()];
 }
 
 void WebFrameLoaderClient::cancelPolicyCheck()
@@ -932,7 +932,7 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(PassRefPtr<FormState> formStat
     }
 
     NSDictionary *values = makeFormFieldValuesDictionary(formState.get());
-    CallFormDelegate(getWebView(m_webFrame.get()), @selector(frame:sourceFrame:willSubmitForm:withValues:submissionListener:), m_webFrame.get(), kit(formState->sourceDocument()->frame()), kit(formState->form()), values, setUpPolicyListener(std::move(function)).get());
+    CallFormDelegate(getWebView(m_webFrame.get()), @selector(frame:sourceFrame:willSubmitForm:withValues:submissionListener:), m_webFrame.get(), kit(formState->sourceDocument()->frame()), kit(formState->form()), values, setUpPolicyListener(WTF::move(function)).get());
 }
 
 void WebFrameLoaderClient::revertToProvisionalState(DocumentLoader* loader)
@@ -2257,7 +2257,7 @@ void WebFrameLoaderClient::didCreateQuickLookHandle(WebCore::QuickLookHandle& ha
         return nil;
 
     _frame = frame;
-    _policyFunction = std::move(policyFunction);
+    _policyFunction = WTF::move(policyFunction);
 
     return self;
 }
@@ -2281,7 +2281,7 @@ void WebFrameLoaderClient::didCreateQuickLookHandle(WebCore::QuickLookHandle& ha
     if (!frame)
         return;
 
-    FramePolicyFunction policyFunction = std::move(_policyFunction);
+    FramePolicyFunction policyFunction = WTF::move(_policyFunction);
     _policyFunction = nullptr;
 
     ASSERT(policyFunction);

@@ -659,7 +659,7 @@ void StorageManager::getOriginsInternal(FunctionDispatcher* dispatcher, void* co
 void StorageManager::getStorageDetailsByOriginInternal(FunctionDispatcher* dispatcher, void* context, void (*callbackFunction)(const Vector<LocalStorageDetails>& storageDetails, void* context))
 {
     Vector<LocalStorageDetails> storageDetails = m_localStorageDatabaseTracker->details();
-    dispatcher->dispatch(bind(callbackFunction, std::move(storageDetails), context));
+    dispatcher->dispatch(bind(callbackFunction, WTF::move(storageDetails), context));
 }
 
 void StorageManager::deleteEntriesForOriginInternal(SecurityOrigin* securityOrigin)

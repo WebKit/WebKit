@@ -984,7 +984,7 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebCon
     WebPageConfiguration webPageConfiguration;
     webPageConfiguration.pageGroup = pageGroup;
     webPageConfiguration.relatedPage = relatedPage;
-    priv->pageProxy = context->createWebPage(*priv->pageClient, std::move(webPageConfiguration));
+    priv->pageProxy = context->createWebPage(*priv->pageClient, WTF::move(webPageConfiguration));
     priv->pageProxy->initializeWebPage();
 
 #if USE(TEXTURE_MAPPER_GL)

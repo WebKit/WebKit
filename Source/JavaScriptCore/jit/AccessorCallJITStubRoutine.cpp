@@ -35,7 +35,7 @@ namespace JSC {
 AccessorCallJITStubRoutine::AccessorCallJITStubRoutine(
     const MacroAssemblerCodeRef& code, VM& vm, std::unique_ptr<CallLinkInfo> info)
     : GCAwareJITStubRoutine(code, vm)
-    , m_callLinkInfo(std::move(info))
+    , m_callLinkInfo(WTF::move(info))
 {
 }
 

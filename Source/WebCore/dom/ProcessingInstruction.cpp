@@ -202,7 +202,7 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const URL& base
     cssSheet.get().setTitle(m_title);
     cssSheet.get().setMediaQueries(MediaQuerySet::create(m_media));
 
-    m_sheet = std::move(cssSheet);
+    m_sheet = WTF::move(cssSheet);
 
     // We don't need the cross-origin security check here because we are
     // getting the sheet text in "strict" mode. This enforces a valid CSS MIME

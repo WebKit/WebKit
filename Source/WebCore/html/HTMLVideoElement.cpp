@@ -69,7 +69,7 @@ bool HTMLVideoElement::rendererIsNeeded(const RenderStyle& style)
 
 RenderPtr<RenderElement> HTMLVideoElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderVideo>(*this, std::move(style));
+    return createRenderer<RenderVideo>(*this, WTF::move(style));
 }
 
 void HTMLVideoElement::didAttachRenderers()

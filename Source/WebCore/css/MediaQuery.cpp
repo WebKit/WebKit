@@ -75,7 +75,7 @@ String MediaQuery::serialize() const
 MediaQuery::MediaQuery(Restrictor r, const String& mediaType, std::unique_ptr<ExpressionVector> exprs)
     : m_restrictor(r)
     , m_mediaType(mediaType.lower())
-    , m_expressions(std::move(exprs))
+    , m_expressions(WTF::move(exprs))
     , m_ignored(false)
 {
     if (!m_expressions) {

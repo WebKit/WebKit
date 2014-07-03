@@ -227,7 +227,7 @@ public:
 
     std::unique_ptr<DoctypeData> releaseDoctypeData()
     {
-        return std::move(m_doctypeData);
+        return WTF::move(m_doctypeData);
     }
 
     /* Start/End Tag Tokens */

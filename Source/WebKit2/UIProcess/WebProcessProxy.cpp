@@ -320,7 +320,7 @@ void WebProcessProxy::addBackForwardItem(uint64_t itemID, const PageState& pageS
         BackForwardListItemState backForwardListItemState;
         backForwardListItemState.identifier = itemID;
         backForwardListItemState.pageState = pageState;
-        backForwardListItem = WebBackForwardListItem::create(std::move(backForwardListItemState));
+        backForwardListItem = WebBackForwardListItem::create(WTF::move(backForwardListItemState));
         return;
     }
 

@@ -141,7 +141,7 @@ const AtomicString& HTMLFieldSetElement::formControlType() const
 
 RenderPtr<RenderElement> HTMLFieldSetElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderFieldset>(*this, std::move(style));
+    return createRenderer<RenderFieldset>(*this, WTF::move(style));
 }
 
 HTMLLegendElement* HTMLFieldSetElement::legend() const

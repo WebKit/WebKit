@@ -670,7 +670,7 @@ void RTCPeerConnection::didAddRemoteDataChannel(std::unique_ptr<RTCDataChannelHa
     if (m_signalingState == SignalingStateClosed)
         return;
 
-    RefPtr<RTCDataChannel> channel = RTCDataChannel::create(scriptExecutionContext(), std::move(handler));
+    RefPtr<RTCDataChannel> channel = RTCDataChannel::create(scriptExecutionContext(), WTF::move(handler));
     m_dataChannels.append(channel);
 
     scheduleDispatchEvent(RTCDataChannelEvent::create(eventNames().datachannelEvent, false, false, channel.release()));

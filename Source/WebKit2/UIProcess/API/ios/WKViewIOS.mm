@@ -225,7 +225,7 @@ using namespace WebKit;
     webPageConfiguration.pageGroup = toImpl(pageGroupRef);
     webPageConfiguration.relatedPage = toImpl(relatedPage);
 
-    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds context:*toImpl(contextRef) configuration:std::move(webPageConfiguration) webView:nil]);
+    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds context:*toImpl(contextRef) configuration:WTF::move(webPageConfiguration) webView:nil]);
 
     [[_contentView layer] setAnchorPoint:CGPointZero];
     [_contentView setFrame:bounds];

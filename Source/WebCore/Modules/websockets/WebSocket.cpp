@@ -519,7 +519,7 @@ void WebSocket::didReceiveBinaryData(PassOwnPtr<Vector<char>> binaryData)
     switch (m_binaryType) {
     case BinaryTypeBlob: {
         // FIXME: We just received the data from NetworkProcess, and are sending it back. This is inefficient.
-        RefPtr<Blob> blob = Blob::create(std::move(*binaryData), emptyString());
+        RefPtr<Blob> blob = Blob::create(WTF::move(*binaryData), emptyString());
         dispatchEvent(MessageEvent::create(blob.release(), SecurityOrigin::create(m_url)->toString()));
         break;
     }

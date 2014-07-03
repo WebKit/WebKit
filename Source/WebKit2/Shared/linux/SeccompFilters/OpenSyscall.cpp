@@ -57,7 +57,7 @@ std::unique_ptr<Syscall> OpenSyscall::createFromOpenatContext(mcontext_t* contex
 
     if (path[0] == '/') {
         open->setPath(path);
-        return std::move(open);
+        return WTF::move(open);
     }
 
     struct stat pathStat;
@@ -90,7 +90,7 @@ std::unique_ptr<Syscall> OpenSyscall::createFromOpenatContext(mcontext_t* contex
     sprintf(&fdPath[size], "/%s", path);
     open->setPath(fdPath);
 
-    return std::move(open);
+    return WTF::move(open);
 }
 
 std::unique_ptr<Syscall> OpenSyscall::createFromCreatContext(mcontext_t* context)
@@ -102,7 +102,7 @@ std::unique_ptr<Syscall> OpenSyscall::createFromCreatContext(mcontext_t* context
     open->setMode(context->gregs[REG_ARG1]);
     open->setContext(context);
 
-    return std::move(open);
+    return WTF::move(open);
 }
 
 OpenSyscall::OpenSyscall(mcontext_t* context)

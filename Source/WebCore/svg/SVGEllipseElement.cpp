@@ -146,7 +146,7 @@ bool SVGEllipseElement::selfHasRelativeLengths() const
 
 RenderPtr<RenderElement> SVGEllipseElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSVGEllipse>(*this, std::move(style));
+    return createRenderer<RenderSVGEllipse>(*this, WTF::move(style));
 }
 
 }

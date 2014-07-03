@@ -134,7 +134,7 @@ void InjectedBundlePageFormClient::willSendSubmitEvent(WebPage* page, HTMLFormEl
     ImmutableDictionary::MapType map;
     for (size_t i = 0; i < values.size(); ++i)
         map.set(values[i].first, API::String::create(values[i].second));
-    auto textFieldsMap = ImmutableDictionary::create(std::move(map));
+    auto textFieldsMap = ImmutableDictionary::create(WTF::move(map));
 
     m_client.willSendSubmitEvent(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.get()), m_client.base.clientInfo);
 }
@@ -149,7 +149,7 @@ void InjectedBundlePageFormClient::willSubmitForm(WebPage* page, HTMLFormElement
     ImmutableDictionary::MapType map;
     for (size_t i = 0; i < values.size(); ++i)
         map.set(values[i].first, API::String::create(values[i].second));
-    auto textFieldsMap = ImmutableDictionary::create(std::move(map));
+    auto textFieldsMap = ImmutableDictionary::create(WTF::move(map));
 
     WKTypeRef userDataToPass = 0;
     m_client.willSubmitForm(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.get()), &userDataToPass, m_client.base.clientInfo);
@@ -167,7 +167,7 @@ void InjectedBundlePageFormClient::didAssociateFormControls(WebPage* page, const
     for (const auto& element : elements)
         elementHandles.uncheckedAppend(InjectedBundleNodeHandle::getOrCreate(element.get()));
 
-    m_client.didAssociateFormControls(toAPI(page), toAPI(API::Array::create(std::move(elementHandles)).get()), m_client.base.clientInfo);
+    m_client.didAssociateFormControls(toAPI(page), toAPI(API::Array::create(WTF::move(elementHandles)).get()), m_client.base.clientInfo);
 }
 
 bool InjectedBundlePageFormClient::shouldNotifyOnFormChanges(WebPage* page)

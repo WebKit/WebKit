@@ -107,7 +107,7 @@ PassOwnPtr<ResourceResponse> ResourceResponseBase::adopt(PassOwnPtr<CrossThreadR
     response->setHTTPStatusText(data->m_httpStatusText);
 
     response->lazyInit(CommonAndUncommonFields);
-    response->m_httpHeaderFields.adopt(std::move(data->m_httpHeaders));
+    response->m_httpHeaderFields.adopt(WTF::move(data->m_httpHeaders));
     response->m_resourceLoadTiming = data->m_resourceLoadTiming;
     response->doPlatformAdopt(data);
     return response.release();

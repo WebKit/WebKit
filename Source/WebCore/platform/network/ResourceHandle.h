@@ -164,7 +164,7 @@ public:
 
 #if USE(QUICK_LOOK)
     QuickLookHandle* quickLookHandle() { return m_quickLook.get(); }
-    void setQuickLookHandle(std::unique_ptr<QuickLookHandle> handle) { m_quickLook = std::move(handle); }
+    void setQuickLookHandle(std::unique_ptr<QuickLookHandle> handle) { m_quickLook = WTF::move(handle); }
 #endif
 
 #if PLATFORM(WIN) && USE(CURL)

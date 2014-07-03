@@ -175,7 +175,7 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
     }
 
     cache->didPopulate();
-    setNameItemCache(std::move(cache));
+    setNameItemCache(WTF::move(cache));
 }
 
 void HTMLFormControlsCollection::invalidateCache(Document& document) const

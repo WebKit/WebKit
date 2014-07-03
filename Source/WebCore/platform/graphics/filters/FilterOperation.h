@@ -287,7 +287,7 @@ class BlurFilterOperation : public FilterOperation {
 public:
     static PassRefPtr<BlurFilterOperation> create(Length stdDeviation)
     {
-        return adoptRef(new BlurFilterOperation(std::move(stdDeviation)));
+        return adoptRef(new BlurFilterOperation(WTF::move(stdDeviation)));
     }
 
     virtual PassRefPtr<FilterOperation> clone() const override
@@ -307,7 +307,7 @@ private:
 
     BlurFilterOperation(Length stdDeviation)
         : FilterOperation(BLUR)
-        , m_stdDeviation(std::move(stdDeviation))
+        , m_stdDeviation(WTF::move(stdDeviation))
     {
     }
 

@@ -110,7 +110,7 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
         return jsUndefined();
 
     MessageEvent& event = jsEvent->impl();
-    event.initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, originArg, lastEventIdArg, sourceArg, std::move(messagePorts));
+    event.initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, originArg, lastEventIdArg, sourceArg, WTF::move(messagePorts));
     jsEvent->m_data.set(exec->vm(), jsEvent, dataArg.jsValue());
     return jsUndefined();
 }

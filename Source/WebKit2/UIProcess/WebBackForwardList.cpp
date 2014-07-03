@@ -156,7 +156,7 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
             m_entries.insert(m_currentIndex, newItem);
     }
 
-    m_page->didChangeBackForwardList(newItem, std::move(removedItems));
+    m_page->didChangeBackForwardList(newItem, WTF::move(removedItems));
 }
 
 void WebBackForwardList::goToItem(WebBackForwardListItem* item)
@@ -276,7 +276,7 @@ PassRefPtr<API::Array> WebBackForwardList::backListAsAPIArrayWithLimit(unsigned 
         vector.uncheckedAppend(m_entries[i].get());
     }
 
-    return API::Array::create(std::move(vector));
+    return API::Array::create(WTF::move(vector));
 }
 
 PassRefPtr<API::Array> WebBackForwardList::forwardListAsAPIArrayWithLimit(unsigned limit) const
@@ -300,7 +300,7 @@ PassRefPtr<API::Array> WebBackForwardList::forwardListAsAPIArrayWithLimit(unsign
         vector.uncheckedAppend(m_entries[i].get());
     }
 
-    return API::Array::create(std::move(vector));
+    return API::Array::create(WTF::move(vector));
 }
 
 void WebBackForwardList::removeAllItems()
@@ -315,12 +315,12 @@ void WebBackForwardList::removeAllItems()
             continue;
 
         m_page->backForwardRemovedItem(entry->itemID());
-        removedItems.append(std::move(entry));
+        removedItems.append(WTF::move(entry));
     }
 
     m_entries.clear();
     m_hasCurrentIndex = false;
-    m_page->didChangeBackForwardList(nullptr, std::move(removedItems));
+    m_page->didChangeBackForwardList(nullptr, WTF::move(removedItems));
 }
 
 void WebBackForwardList::clear()
@@ -350,7 +350,7 @@ void WebBackForwardList::clear()
 
         m_entries.clear();
         m_hasCurrentIndex = false;
-        m_page->didChangeBackForwardList(nullptr, std::move(removedItems));
+        m_page->didChangeBackForwardList(nullptr, WTF::move(removedItems));
 
         return;
     }
@@ -377,7 +377,7 @@ void WebBackForwardList::clear()
         m_hasCurrentIndex = false;
     }
 
-    m_page->didChangeBackForwardList(nullptr, std::move(removedItems));
+    m_page->didChangeBackForwardList(nullptr, WTF::move(removedItems));
 }
 
 BackForwardListState WebBackForwardList::backForwardListState(const std::function<bool (WebBackForwardListItem&)>& filter) const
@@ -411,11 +411,11 @@ void WebBackForwardList::restoreFromState(BackForwardListState backForwardListSt
 
     for (auto& backForwardListItemState : backForwardListState.items) {
         backForwardListItemState.identifier = generateWebBackForwardItemID();
-        items.uncheckedAppend(WebBackForwardListItem::create(std::move(backForwardListItemState)));
+        items.uncheckedAppend(WebBackForwardListItem::create(WTF::move(backForwardListItemState)));
     }
     m_hasCurrentIndex = !!backForwardListState.currentIndex;
     m_currentIndex = backForwardListState.currentIndex.valueOr(0);
-    m_entries = std::move(items);
+    m_entries = WTF::move(items);
 }
 
 Vector<BackForwardListItemState> WebBackForwardList::itemStates() const

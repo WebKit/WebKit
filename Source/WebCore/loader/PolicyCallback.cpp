@@ -61,7 +61,7 @@ void PolicyCallback::set(const ResourceRequest& request, PassRefPtr<FormState> f
     m_formState = formState;
     m_frameName = String();
 
-    m_navigationFunction = std::move(function);
+    m_navigationFunction = WTF::move(function);
     m_newWindowFunction = nullptr;
     m_contentFunction = nullptr;
 }
@@ -74,7 +74,7 @@ void PolicyCallback::set(const ResourceRequest& request, PassRefPtr<FormState> f
     m_navigationAction = navigationAction;
 
     m_navigationFunction = nullptr;
-    m_newWindowFunction = std::move(function);
+    m_newWindowFunction = WTF::move(function);
     m_contentFunction = nullptr;
 }
 
@@ -86,7 +86,7 @@ void PolicyCallback::set(ContentPolicyDecisionFunction function)
 
     m_navigationFunction = nullptr;
     m_newWindowFunction = nullptr;
-    m_contentFunction = std::move(function);
+    m_contentFunction = WTF::move(function);
 }
 
 void PolicyCallback::call(bool shouldContinue)

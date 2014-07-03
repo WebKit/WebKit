@@ -29,7 +29,7 @@ namespace WebCore {
 class RenderSVGTSpan final : public RenderSVGInline {
 public:
     explicit RenderSVGTSpan(SVGTextPositioningElement& element, PassRef<RenderStyle> style)
-        : RenderSVGInline(element, std::move(style))
+        : RenderSVGInline(element, WTF::move(style))
     {
     }
 

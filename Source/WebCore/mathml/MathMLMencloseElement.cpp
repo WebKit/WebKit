@@ -52,7 +52,7 @@ PassRefPtr<MathMLMencloseElement> MathMLMencloseElement::create(const QualifiedN
 
 RenderPtr<RenderElement> MathMLMencloseElement::createElementRenderer(PassRef<RenderStyle> style)
 {    
-    return createRenderer<RenderMathMLMenclose>(*this, std::move(style));
+    return createRenderer<RenderMathMLMenclose>(*this, WTF::move(style));
 }
 
 bool MathMLMencloseElement::isPresentationAttribute(const QualifiedName& name) const

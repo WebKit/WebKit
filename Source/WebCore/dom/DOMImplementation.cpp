@@ -245,7 +245,7 @@ PassRefPtr<CSSStyleSheet> DOMImplementation::createCSSStyleSheet(const String&, 
     // FIXME: Media could have wrong syntax, in which case we should generate an exception.
     auto sheet = CSSStyleSheet::create(StyleSheetContents::create());
     sheet.get().setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(media));
-    return std::move(sheet);
+    return WTF::move(sheet);
 }
 
 static inline bool isValidXMLMIMETypeChar(UChar c)

@@ -46,8 +46,8 @@ class HRTFElevation {
     WTF_MAKE_NONCOPYABLE(HRTFElevation);
 public:
     HRTFElevation(std::unique_ptr<HRTFKernelList> kernelListL, std::unique_ptr<HRTFKernelList> kernelListR, int elevation, float sampleRate)
-        : m_kernelListL(std::move(kernelListL))
-        , m_kernelListR(std::move(kernelListR))
+        : m_kernelListL(WTF::move(kernelListL))
+        , m_kernelListR(WTF::move(kernelListR))
         , m_elevationAngle(elevation)
         , m_sampleRate(sampleRate)
     {

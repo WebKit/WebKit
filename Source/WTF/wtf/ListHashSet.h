@@ -477,7 +477,7 @@ inline T ListHashSet<T, inlineCapacity, U>::takeFirst()
     ASSERT(!isEmpty());
     auto it = m_impl.find(m_head);
 
-    T result = std::move((*it)->m_value);
+    T result = WTF::move((*it)->m_value);
     m_impl.remove(it);
     unlinkAndDelete(m_head);
 
@@ -517,7 +517,7 @@ inline T ListHashSet<T, inlineCapacity, U>::takeLast()
     ASSERT(!isEmpty());
     auto it = m_impl.find(m_tail);
 
-    T result = std::move((*it)->m_value);
+    T result = WTF::move((*it)->m_value);
     m_impl.remove(it);
     unlinkAndDelete(m_tail);
 
@@ -593,7 +593,7 @@ auto ListHashSet<T, inlineCapacity, U>::add(const ValueType& value) -> AddResult
 template<typename T, size_t inlineCapacity, typename U>
 auto ListHashSet<T, inlineCapacity, U>::add(ValueType&& value) -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator>(std::move(value), m_allocator.get());
+    auto result = m_impl.template add<BaseTranslator>(WTF::move(value), m_allocator.get());
     if (result.isNewEntry)
         appendNode(*result.iterator);
     return AddResult(makeIterator(*result.iterator), result.isNewEntry);
@@ -614,7 +614,7 @@ auto ListHashSet<T, inlineCapacity, U>::appendOrMoveToLast(const ValueType& valu
 template<typename T, size_t inlineCapacity, typename U>
 auto ListHashSet<T, inlineCapacity, U>::appendOrMoveToLast(ValueType&& value) -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator>(std::move(value), m_allocator.get());
+    auto result = m_impl.template add<BaseTranslator>(WTF::move(value), m_allocator.get());
     Node* node = *result.iterator;
     if (!result.isNewEntry)
         unlink(node);
@@ -638,7 +638,7 @@ auto ListHashSet<T, inlineCapacity, U>::prependOrMoveToFirst(const ValueType& va
 template<typename T, size_t inlineCapacity, typename U>
 auto ListHashSet<T, inlineCapacity, U>::prependOrMoveToFirst(ValueType&& value) -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator>(std::move(value), m_allocator.get());
+    auto result = m_impl.template add<BaseTranslator>(WTF::move(value), m_allocator.get());
     Node* node = *result.iterator;
     if (!result.isNewEntry)
         unlink(node);
@@ -656,7 +656,7 @@ auto ListHashSet<T, inlineCapacity, U>::insertBefore(const ValueType& beforeValu
 template<typename T, size_t inlineCapacity, typename U>
 auto ListHashSet<T, inlineCapacity, U>::insertBefore(const ValueType& beforeValue, ValueType&& newValue) -> AddResult
 {
-    return insertBefore(find(beforeValue), std::move(newValue));
+    return insertBefore(find(beforeValue), WTF::move(newValue));
 }
 
 template<typename T, size_t inlineCapacity, typename U>
@@ -671,7 +671,7 @@ auto ListHashSet<T, inlineCapacity, U>::insertBefore(iterator it, const ValueTyp
 template<typename T, size_t inlineCapacity, typename U>
 auto ListHashSet<T, inlineCapacity, U>::insertBefore(iterator it, ValueType&& newValue) -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator>(std::move(newValue), m_allocator.get());
+    auto result = m_impl.template add<BaseTranslator>(WTF::move(newValue), m_allocator.get());
     if (result.isNewEntry)
         insertNodeBefore(it.node(), *result.iterator);
     return AddResult(makeIterator(*result.iterator), result.isNewEntry);

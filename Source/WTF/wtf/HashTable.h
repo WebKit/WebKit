@@ -373,7 +373,7 @@ namespace WTF {
         bool isEmpty() const { return !m_keyCount; }
 
         AddResult add(const ValueType& value) { return add<IdentityTranslatorType>(Extractor::extract(value), value); }
-        AddResult add(ValueType&& value) { return add<IdentityTranslatorType>(Extractor::extract(value), std::move(value)); }
+        AddResult add(ValueType&& value) { return add<IdentityTranslatorType>(Extractor::extract(value), WTF::move(value)); }
 
         // A special version of add() that finds the object by hashing and comparing
         // with some other type, to avoid the cost of type conversion if the object is already
@@ -919,7 +919,7 @@ namespace WTF {
 
         Value* newEntry = lookupForWriting(Extractor::extract(entry)).first;
         newEntry->~Value();
-        new (NotNull, newEntry) ValueType(std::move(entry));
+        new (NotNull, newEntry) ValueType(WTF::move(entry));
 
         return newEntry;
     }
@@ -1096,7 +1096,7 @@ namespace WTF {
                 continue;
             }
 
-            Value* reinsertedEntry = reinsert(std::move(oldTable[i]));
+            Value* reinsertedEntry = reinsert(WTF::move(oldTable[i]));
             if (&oldTable[i] == entry) {
                 ASSERT(!newEntry);
                 newEntry = reinsertedEntry;

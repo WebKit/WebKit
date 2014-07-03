@@ -485,7 +485,7 @@ bool RenderThemeEfl::loadTheme()
         clearThemePartCache();
 
     // Set new loaded theme, and apply it.
-    m_edje = std::move(o);
+    m_edje = WTF::move(o);
 
     const char* thickness = edje_object_data_get(m_edje.get(), "scrollbar.thickness");
     if (thickness && !Settings::mockScrollbarsEnabled())

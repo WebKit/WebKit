@@ -380,7 +380,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer)
 
 RetainPtr<CGContextRef> RemoteLayerBackingStore::takeFrontContextPendingFlush()
 {
-    return std::move(m_frontContextPendingFlush);
+    return WTF::move(m_frontContextPendingFlush);
 }
 
 #if USE(IOSURFACE)

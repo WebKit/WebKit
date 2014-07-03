@@ -831,7 +831,7 @@ static PassRef<CSSValue> computedTransform(RenderObject* renderer, const RenderS
     // FIXME: Need to print out individual functions (https://bugs.webkit.org/show_bug.cgi?id=23924)
     auto list = CSSValueList::createSpaceSeparated();
     list.get().append(matrixTransformValue(transform, style));
-    return std::move(list);
+    return WTF::move(list);
 }
 
 static inline PassRef<CSSPrimitiveValue> adjustLengthForZoom(double length, const RenderStyle* style, AdjustPixelValuesForComputedStyle adjust)
@@ -951,7 +951,7 @@ PassRef<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderStyle* styl
         list.get().append(filterValue.release());
     }
 
-    return std::move(list);
+    return WTF::move(list);
 }
 #endif
 
@@ -1025,7 +1025,7 @@ static PassRef<CSSValue> valueForGridTrackList(GridTrackSizingDirection directio
 
     // Those are the trailing <ident>* allowed in the syntax.
     addValuesForNamedGridLinesAtIndex(orderedNamedGridLines, trackSizes.size(), list.get());
-    return std::move(list);
+    return WTF::move(list);
 }
 
 static PassRef<CSSValue> valueForGridPosition(const GridPosition& position)
@@ -1045,7 +1045,7 @@ static PassRef<CSSValue> valueForGridPosition(const GridPosition& position)
 
     if (!position.namedGridLine().isNull())
         list.get().append(cssValuePool().createValue(position.namedGridLine(), CSSPrimitiveValue::CSS_STRING));
-    return std::move(list);
+    return WTF::move(list);
 }
 #endif
 
@@ -1358,7 +1358,7 @@ static PassRef<CSSValue> fillRepeatToCSSValue(EFillRepeat xRepeat, EFillRepeat y
     auto list = CSSValueList::createSpaceSeparated();
     list.get().append(cssValuePool().createValue(xRepeat));
     list.get().append(cssValuePool().createValue(yRepeat));
-    return std::move(list);
+    return WTF::move(list);
 }
 
 static PassRefPtr<CSSValue> fillSourceTypeToCSSValue(EMaskSourceType type)
@@ -1389,7 +1389,7 @@ static PassRef<CSSValue> fillSizeToCSSValue(const FillSize& fillSize, const Rend
     auto list = CSSValueList::createSpaceSeparated();
     list.get().append(zoomAdjustedPixelValueForLength(fillSize.size.width(), style));
     list.get().append(zoomAdjustedPixelValueForLength(fillSize.size.height(), style));
-    return std::move(list);
+    return WTF::move(list);
 }
 
 static PassRef<CSSValue> altTextToCSSValue(const RenderStyle* style)

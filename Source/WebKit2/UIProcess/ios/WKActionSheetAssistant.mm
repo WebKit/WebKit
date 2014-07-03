@@ -235,7 +235,7 @@ using namespace WebKit;
     auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage
         URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds]);
 
-    RetainPtr<NSArray> actions = _view.page->uiClient().actionsForElement(elementInfo.get(), std::move(defaultActions));
+    RetainPtr<NSArray> actions = _view.page->uiClient().actionsForElement(elementInfo.get(), WTF::move(defaultActions));
 
     if (![actions count])
         return;
@@ -244,7 +244,7 @@ using namespace WebKit;
     if (!_interactionSheet)
         return;
 
-    _elementInfo = std::move(elementInfo);
+    _elementInfo = WTF::move(elementInfo);
 
     if (![_interactionSheet presentSheet])
         [self cleanupSheet];
@@ -271,7 +271,7 @@ using namespace WebKit;
     RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink
         URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds]);
 
-    RetainPtr<NSArray> actions = _view.page->uiClient().actionsForElement(elementInfo.get(), std::move(defaultActions));
+    RetainPtr<NSArray> actions = _view.page->uiClient().actionsForElement(elementInfo.get(), WTF::move(defaultActions));
 
     if (![actions count])
         return;
@@ -280,7 +280,7 @@ using namespace WebKit;
     if (!_interactionSheet)
         return;
 
-    _elementInfo = std::move(elementInfo);
+    _elementInfo = WTF::move(elementInfo);
 
     if (![_interactionSheet presentSheet])
         [self cleanupSheet];

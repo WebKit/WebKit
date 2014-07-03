@@ -65,7 +65,7 @@ template<typename T> inline void Weak<T>::swap(Weak& other)
 
 template<typename T> inline auto Weak<T>::operator=(Weak&& other) -> Weak&
 {
-    Weak weak = std::move(other);
+    Weak weak = WTF::move(other);
     swap(weak);
     return *this;
 }

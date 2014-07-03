@@ -317,7 +317,7 @@ void UniqueIDBDatabase::postTransactionOperation(const IDBIdentifier& transactio
         return;
     }
 
-    postDatabaseTask(std::move(task));
+    postDatabaseTask(WTF::move(task));
 
     RefPtr<AsyncRequest> request = AsyncRequestImpl<bool>::create([successCallback](bool success) {
         successCallback(success);
@@ -1081,7 +1081,7 @@ void UniqueIDBDatabase::postMainThreadTask(std::unique_ptr<AsyncTask> task, Data
 
     MutexLocker locker(m_mainThreadTaskMutex);
 
-    m_mainThreadTasks.append(std::move(task));
+    m_mainThreadTasks.append(WTF::move(task));
 
     // Balanced by an adoptRef() in ::performNextMainThreadTask
     ref();
@@ -1128,7 +1128,7 @@ void UniqueIDBDatabase::postDatabaseTask(std::unique_ptr<AsyncTask> task, Databa
 
     MutexLocker locker(m_databaseTaskMutex);
 
-    m_databaseTasks.append(std::move(task));
+    m_databaseTasks.append(WTF::move(task));
 
     DatabaseProcess::shared().queue().dispatch(bind(&UniqueIDBDatabase::performNextDatabaseTask, this));
 }

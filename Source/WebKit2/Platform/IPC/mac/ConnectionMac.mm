@@ -204,7 +204,7 @@ bool Connection::open()
         auto encoder = std::make_unique<MessageEncoder>("IPC", "InitializeConnection", 0);
         encoder->encode(MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND));
 
-        sendMessage(std::move(encoder));
+        sendMessage(WTF::move(encoder));
 
         initializeDeadNameSource();
     }
@@ -228,7 +228,7 @@ bool Connection::open()
         auto encoder = std::make_unique<MessageEncoder>("IPC", "SetExceptionPort", 0);
         encoder->encode(MachPort(m_exceptionPort, MACH_MSG_TYPE_MAKE_SEND));
 
-        sendMessage(std::move(encoder));
+        sendMessage(WTF::move(encoder));
     }
 #endif
 
@@ -423,7 +423,7 @@ static std::unique_ptr<MessageDecoder> createMessageDecoder(mach_msg_header_t* h
         uint8_t* messageBody = static_cast<uint8_t*>(descriptor->out_of_line.address);
         size_t messageBodySize = descriptor->out_of_line.size;
 
-        auto decoder = std::make_unique<MessageDecoder>(DataReference(messageBody, messageBodySize), std::move(attachments));
+        auto decoder = std::make_unique<MessageDecoder>(DataReference(messageBody, messageBodySize), WTF::move(attachments));
 
         vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(descriptor->out_of_line.address), descriptor->out_of_line.size);
 
@@ -523,7 +523,7 @@ void Connection::receiveSourceEventHandler()
     }
 #endif
 
-    processIncomingMessage(std::move(decoder));
+    processIncomingMessage(WTF::move(decoder));
 }    
 
 #if !PLATFORM(IOS)

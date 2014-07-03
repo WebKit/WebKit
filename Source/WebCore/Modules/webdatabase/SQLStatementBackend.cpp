@@ -77,12 +77,12 @@ namespace WebCore {
 PassRefPtr<SQLStatementBackend> SQLStatementBackend::create(std::unique_ptr<AbstractSQLStatement> frontend,
     const String& statement, const Vector<SQLValue>& arguments, int permissions)
 {
-    return adoptRef(new SQLStatementBackend(std::move(frontend), statement, arguments, permissions));
+    return adoptRef(new SQLStatementBackend(WTF::move(frontend), statement, arguments, permissions));
 }
 
 SQLStatementBackend::SQLStatementBackend(std::unique_ptr<AbstractSQLStatement> frontend,
     const String& statement, const Vector<SQLValue>& arguments, int permissions)
-    : m_frontend(std::move(frontend))
+    : m_frontend(WTF::move(frontend))
     , m_statement(statement.isolatedCopy())
     , m_arguments(arguments)
     , m_hasCallback(m_frontend->hasCallback())

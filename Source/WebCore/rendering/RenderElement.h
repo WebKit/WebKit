@@ -110,7 +110,7 @@ public:
 
     // Updates only the local style ptr of the object. Does not update the state of the object,
     // and so only should be called when the style is known not to have changed (or from setStyle).
-    void setStyleInternal(PassRef<RenderStyle> style) { m_style = std::move(style); }
+    void setStyleInternal(PassRef<RenderStyle> style) { m_style = WTF::move(style); }
 
     // Repaint only if our old bounds and new bounds are different. The caller may pass in newBounds and newOutlineBox if they are known.
     bool repaintAfterLayoutIfNeeded(const RenderLayerModelObject* repaintContainer, const LayoutRect& oldBounds, const LayoutRect& oldOutlineBox, const LayoutRect* newBoundsPtr = nullptr, const LayoutRect* newOutlineBoxPtr = nullptr);
@@ -247,7 +247,7 @@ RENDER_OBJECT_TYPE_CASTS(RenderElement, isRenderElement())
 
 inline void RenderElement::setAnimatableStyle(PassRef<RenderStyle> style)
 {
-    setStyle(animation().updateAnimations(*this, std::move(style)));
+    setStyle(animation().updateAnimations(*this, WTF::move(style)));
 }
 
 inline RenderStyle& RenderElement::firstLineStyle() const

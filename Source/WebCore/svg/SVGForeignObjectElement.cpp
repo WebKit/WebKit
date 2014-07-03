@@ -127,7 +127,7 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGForeignObjectElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSVGForeignObject>(*this, std::move(style));
+    return createRenderer<RenderSVGForeignObject>(*this, WTF::move(style));
 }
 
 bool SVGForeignObjectElement::childShouldCreateRenderer(const Node& child) const

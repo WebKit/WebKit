@@ -504,9 +504,9 @@ bool SVGSVGElement::rendererIsNeeded(const RenderStyle& style)
 RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     if (isOutermostSVGSVGElement())
-        return createRenderer<RenderSVGRoot>(*this, std::move(style));
+        return createRenderer<RenderSVGRoot>(*this, WTF::move(style));
 
-    return createRenderer<RenderSVGViewportContainer>(*this, std::move(style));
+    return createRenderer<RenderSVGViewportContainer>(*this, WTF::move(style));
 }
 
 Node::InsertionNotificationRequest SVGSVGElement::insertedInto(ContainerNode& rootParent)

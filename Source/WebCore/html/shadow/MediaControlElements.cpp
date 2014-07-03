@@ -337,7 +337,7 @@ void MediaControlTimelineContainerElement::setTimeDisplaysHidden(bool hidden)
 
 RenderPtr<RenderElement> MediaControlTimelineContainerElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderMediaControlTimelineContainer>(*this, std::move(style));
+    return createRenderer<RenderMediaControlTimelineContainer>(*this, WTF::move(style));
 }
 
 // ----------------------------
@@ -357,7 +357,7 @@ PassRefPtr<MediaControlVolumeSliderContainerElement> MediaControlVolumeSliderCon
 
 RenderPtr<RenderElement> MediaControlVolumeSliderContainerElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderMediaVolumeSliderContainer>(*this, std::move(style));
+    return createRenderer<RenderMediaVolumeSliderContainer>(*this, WTF::move(style));
 }
 
 void MediaControlVolumeSliderContainerElement::defaultEventHandler(Event* event)
@@ -1241,7 +1241,7 @@ PassRefPtr<MediaControlTextTrackContainerElement> MediaControlTextTrackContainer
 
 RenderPtr<RenderElement> MediaControlTextTrackContainerElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderTextTrackContainerElement>(*this, std::move(style));
+    return createRenderer<RenderTextTrackContainerElement>(*this, WTF::move(style));
 }
 
 const AtomicString& MediaControlTextTrackContainerElement::textTrackContainerElementShadowPseudoId()

@@ -92,7 +92,7 @@ RenderBlockFlow::MarginInfo::MarginInfo(RenderBlockFlow& block, LayoutUnit befor
 }
 
 RenderBlockFlow::RenderBlockFlow(Element& element, PassRef<RenderStyle> style)
-    : RenderBlock(element, std::move(style), RenderBlockFlowFlag)
+    : RenderBlock(element, WTF::move(style), RenderBlockFlowFlag)
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)
@@ -102,7 +102,7 @@ RenderBlockFlow::RenderBlockFlow(Element& element, PassRef<RenderStyle> style)
 }
 
 RenderBlockFlow::RenderBlockFlow(Document& document, PassRef<RenderStyle> style)
-    : RenderBlock(document, std::move(style), RenderBlockFlowFlag)
+    : RenderBlock(document, WTF::move(style), RenderBlockFlowFlag)
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)
@@ -1916,7 +1916,7 @@ void RenderBlockFlow::layoutLineGridBox()
     VerticalPositionCache verticalPositionCache;
     lineGridBox->alignBoxesInBlockDirection(logicalHeight(), textBoxDataMap, verticalPositionCache);
     
-    setLineGridBox(std::move(lineGridBox));
+    setLineGridBox(WTF::move(lineGridBox));
 
     // FIXME: If any of the characteristics of the box change compared to the old one, then we need to do a deep dirtying
     // (similar to what happens when the page height changes). Ideally, though, we only do this if someone is actually snapping
@@ -2222,7 +2222,7 @@ FloatingObject* RenderBlockFlow::insertFloatingObject(RenderBox& floatBox)
 
     setLogicalWidthForFloat(floatingObject.get(), logicalWidthForChild(floatBox) + marginStartForChild(floatBox) + marginEndForChild(floatBox));
 
-    return m_floatingObjects->add(std::move(floatingObject));
+    return m_floatingObjects->add(WTF::move(floatingObject));
 }
 
 void RenderBlockFlow::removeFloatingObject(RenderBox& floatBox)

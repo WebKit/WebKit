@@ -80,18 +80,18 @@ PassRefPtr<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext* contex
         ec = NOT_SUPPORTED_ERR;
         return nullptr;
     }
-    return adoptRef(new RTCDataChannel(context, std::move(handler)));
+    return adoptRef(new RTCDataChannel(context, WTF::move(handler)));
 }
 
 PassRefPtr<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext* context, std::unique_ptr<RTCDataChannelHandler> handler)
 {
     ASSERT(handler);
-    return adoptRef(new RTCDataChannel(context, std::move(handler)));
+    return adoptRef(new RTCDataChannel(context, WTF::move(handler)));
 }
 
 RTCDataChannel::RTCDataChannel(ScriptExecutionContext* context, std::unique_ptr<RTCDataChannelHandler> handler)
     : m_scriptExecutionContext(context)
-    , m_handler(std::move(handler))
+    , m_handler(WTF::move(handler))
     , m_stopped(false)
     , m_readyState(ReadyStateConnecting)
     , m_binaryType(BinaryTypeArrayBuffer)

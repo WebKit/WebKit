@@ -1,3 +1,23 @@
+2014-07-03  Daniel Bates  <dabates@apple.com>
+
+        Add WTF::move()
+        https://bugs.webkit.org/show_bug.cgi?id=134500
+
+        Rubber-stamped by Anders Carlsson.
+
+        Substitute WTF::move() for std::move().
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm:
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        * Platform/IPC/ArgumentCoders.h:
+        * Platform/IPC/ArgumentDecoder.cpp:
+        * Platform/IPC/Connection.cpp:
+        * Platform/IPC/Connection.h:
+        [...]
+
 2014-07-03  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Fix small bugs of dynamicViewportSizeUpdate that were causing inaccuracies in the computed target

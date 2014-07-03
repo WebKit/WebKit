@@ -32,7 +32,7 @@ namespace WebCore {
 using namespace SVGNames;
 
 RenderSVGGradientStop::RenderSVGGradientStop(SVGStopElement& element, PassRef<RenderStyle> style)
-    : RenderElement(element, std::move(style), 0)
+    : RenderElement(element, WTF::move(style), 0)
 {
 }
 

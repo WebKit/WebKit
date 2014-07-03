@@ -363,7 +363,7 @@ public:
         RenderStyle* style() const { return m_style.get(); }
         PassRef<RenderStyle> takeStyle() { return m_style.releaseNonNull(); }
 
-        void setParentStyle(PassRef<RenderStyle> parentStyle) { m_parentStyle = std::move(parentStyle); }
+        void setParentStyle(PassRef<RenderStyle> parentStyle) { m_parentStyle = WTF::move(parentStyle); }
         RenderStyle* parentStyle() const { return m_parentStyle.get(); }
         RenderStyle* rootElementStyle() const { return m_rootElementStyle; }
 

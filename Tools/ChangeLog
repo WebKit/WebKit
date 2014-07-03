@@ -1,3 +1,23 @@
+2014-07-03  Daniel Bates  <dabates@apple.com>
+
+        Add WTF::move()
+        https://bugs.webkit.org/show_bug.cgi?id=134500
+
+        Rubber-stamped by Anders Carlsson.
+
+        Substitute WTF::move() for std::move().
+
+        * DumpRenderTree/win/DRTDataObject.cpp:
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+        * TestWebKitAPI/Tests/WTF/RefPtr.cpp:
+        * TestWebKitAPI/Tests/WTF/Vector.cpp:
+        * TestWebKitAPI/Tests/WTF/WTFString.cpp:
+        * TestWebKitAPI/Tests/WTF/ns/RetainPtr.mm: Added FIXME comments that explain that some of the sub-tests
+        aren't actually testing move semantics in tests: MoveAssignmentFromSameType, MoveAssignmentFromSimilarType,
+        ConstructionFromSameType, and ConstructionFromSimilarType.
+        * TestWebKitAPI/Tests/WebCore/CalculationValue.cpp:
+
 2014-07-03  László Langó  <llango.u-szeged@partner.samsung.com>
 
         [JavaScriptCore] Add --cmakeargs option to build-jsc.

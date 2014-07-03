@@ -525,7 +525,7 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGElement* target)
 
 RenderPtr<RenderElement> SVGUseElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSVGTransformableContainer>(*this, std::move(style));
+    return createRenderer<RenderSVGTransformableContainer>(*this, WTF::move(style));
 }
 
 static bool isDirectReference(const SVGElement& element)

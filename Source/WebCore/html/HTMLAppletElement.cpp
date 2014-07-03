@@ -78,9 +78,9 @@ bool HTMLAppletElement::rendererIsNeeded(const RenderStyle& style)
 RenderPtr<RenderElement> HTMLAppletElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     if (!canEmbedJava())
-        return RenderElement::createFor(*this, std::move(style));
+        return RenderElement::createFor(*this, WTF::move(style));
 
-    return RenderEmbeddedObject::createForApplet(*this, std::move(style));
+    return RenderEmbeddedObject::createForApplet(*this, WTF::move(style));
 }
 
 RenderWidget* HTMLAppletElement::renderWidgetForJSBindings() const

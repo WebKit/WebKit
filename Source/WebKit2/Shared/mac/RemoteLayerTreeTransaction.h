@@ -212,7 +212,7 @@ public:
 
     typedef uint64_t TransactionCallbackID;
     const Vector<TransactionCallbackID>& callbackIDs() const { return m_callbackIDs; }
-    void setCallbackIDs(Vector<TransactionCallbackID> callbackIDs) { m_callbackIDs = std::move(callbackIDs); }
+    void setCallbackIDs(Vector<TransactionCallbackID> callbackIDs) { m_callbackIDs = WTF::move(callbackIDs); }
     
 private:
     WebCore::GraphicsLayer::PlatformLayerID m_rootLayerID;

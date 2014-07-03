@@ -71,7 +71,7 @@ protected:
     explicit CallbackBase(Type type, std::unique_ptr<ProcessThrottler::BackgroundActivityToken> activityToken)
         : m_type(type)
         , m_callbackID(generateCallbackID())
-        , m_activityToken(std::move(activityToken))
+        , m_activityToken(WTF::move(activityToken))
     {
     }
 
@@ -95,7 +95,7 @@ public:
 
     static PassRefPtr<GenericCallback> create(CallbackFunction callback, std::unique_ptr<ProcessThrottler::BackgroundActivityToken> activityToken = nullptr)
     {
-        return adoptRef(new GenericCallback(callback, std::move(activityToken)));
+        return adoptRef(new GenericCallback(callback, WTF::move(activityToken)));
     }
 
     virtual ~GenericCallback()
@@ -130,7 +130,7 @@ public:
 
 private:
     GenericCallback(CallbackFunction callback, std::unique_ptr<ProcessThrottler::BackgroundActivityToken> activityToken)
-        : CallbackBase(type(), std::move(activityToken))
+        : CallbackBase(type(), WTF::move(activityToken))
         , m_callback(callback)
     {
     }
@@ -192,7 +192,7 @@ public:
     template<typename... T>
     uint64_t put(std::function<void (T...)> function, std::unique_ptr<ProcessThrottler::BackgroundActivityToken> activityToken)
     {
-        auto callback = GenericCallbackType<sizeof...(T), T...>::type::create(std::move(function), std::move(activityToken));
+        auto callback = GenericCallbackType<sizeof...(T), T...>::type::create(WTF::move(function), WTF::move(activityToken));
         return put(callback);
     }
 

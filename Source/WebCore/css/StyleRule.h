@@ -108,7 +108,7 @@ class StyleRule : public StyleRuleBase {
 public:
     static PassRef<StyleRule> create(int sourceLine, PassRef<StyleProperties> properties)
     {
-        return adoptRef(*new StyleRule(sourceLine, std::move(properties)));
+        return adoptRef(*new StyleRule(sourceLine, WTF::move(properties)));
     }
     
     ~StyleRule();
@@ -118,7 +118,7 @@ public:
     MutableStyleProperties& mutableProperties();
     
     void parserAdoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectors) { m_selectorList.adoptSelectorVector(selectors); }
-    void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList = std::move(selectors); }
+    void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList = WTF::move(selectors); }
     void parserAdoptSelectorArray(CSSSelector* selectors) { m_selectorList.adoptSelectorArray(selectors); }
 
     PassRef<StyleRule> copy() const { return adoptRef(*new StyleRule(*this)); }
@@ -145,7 +145,7 @@ inline const StyleRule* toStyleRule(const StyleRuleBase* rule)
 
 class StyleRuleFontFace : public StyleRuleBase {
 public:
-    static PassRef<StyleRuleFontFace> create(PassRef<StyleProperties> properties) { return adoptRef(*new StyleRuleFontFace(std::move(properties))); }
+    static PassRef<StyleRuleFontFace> create(PassRef<StyleProperties> properties) { return adoptRef(*new StyleRuleFontFace(WTF::move(properties))); }
     
     ~StyleRuleFontFace();
 
@@ -164,7 +164,7 @@ private:
 
 class StyleRulePage : public StyleRuleBase {
 public:
-    static PassRef<StyleRulePage> create(PassRef<StyleProperties> properties) { return adoptRef(*new StyleRulePage(std::move(properties))); }
+    static PassRef<StyleRulePage> create(PassRef<StyleProperties> properties) { return adoptRef(*new StyleRulePage(WTF::move(properties))); }
 
     ~StyleRulePage();
 
@@ -173,7 +173,7 @@ public:
     MutableStyleProperties& mutableProperties();
 
     void parserAdoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectors) { m_selectorList.adoptSelectorVector(selectors); }
-    void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList = std::move(selectors); }
+    void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList = WTF::move(selectors); }
 
     PassRef<StyleRulePage> copy() const { return adoptRef(*new StyleRulePage(*this)); }
 
@@ -260,7 +260,7 @@ private:
 #if ENABLE(CSS_DEVICE_ADAPTATION)
 class StyleRuleViewport : public StyleRuleBase {
 public:
-    static PassRef<StyleRuleViewport> create(PassRef<StyleProperties> properties) { return adoptRef(*new StyleRuleViewport(std::move(properties))); }
+    static PassRef<StyleRuleViewport> create(PassRef<StyleProperties> properties) { return adoptRef(*new StyleRuleViewport(WTF::move(properties))); }
 
     ~StyleRuleViewport();
 

@@ -103,7 +103,7 @@ void ImageInputType::handleDOMActivateEvent(Event* event)
 
 RenderPtr<RenderElement> ImageInputType::createInputRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderImage>(element(), std::move(style));
+    return createRenderer<RenderImage>(element(), WTF::move(style));
 }
 
 void ImageInputType::altAttributeChanged()

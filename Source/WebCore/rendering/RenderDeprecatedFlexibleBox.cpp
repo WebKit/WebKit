@@ -118,7 +118,7 @@ private:
 };
 
 RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Element& element, PassRef<RenderStyle> style)
-    : RenderBlock(element, std::move(style), 0)
+    : RenderBlock(element, WTF::move(style), 0)
 {
     setChildrenInline(false); // All of our children must be block-level
     m_stretchingChildren = false;

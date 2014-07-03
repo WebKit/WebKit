@@ -30,11 +30,11 @@ namespace API {
 
 PassRefPtr<SessionState> SessionState::create(WebKit::SessionState sessionState)
 {
-    return adoptRef(new SessionState(std::move(sessionState)));
+    return adoptRef(new SessionState(WTF::move(sessionState)));
 }
 
 SessionState::SessionState(WebKit::SessionState sessionState)
-    : m_sessionState(std::move(sessionState))
+    : m_sessionState(WTF::move(sessionState))
 {
 }
 

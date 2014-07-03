@@ -119,7 +119,7 @@ void RenderImage::collectSelectionRects(Vector<SelectionRect>& rects, unsigned, 
 using namespace HTMLNames;
 
 RenderImage::RenderImage(Element& element, PassRef<RenderStyle> style, StyleImage* styleImage, const float imageDevicePixelRatio)
-    : RenderReplaced(element, std::move(style), IntSize())
+    : RenderReplaced(element, WTF::move(style), IntSize())
     , m_imageResource(styleImage ? std::make_unique<RenderImageResourceStyleImage>(*styleImage) : std::make_unique<RenderImageResource>())
     , m_needsToSetSizeForAltText(false)
     , m_didIncrementVisuallyNonEmptyPixelCount(false)
@@ -135,7 +135,7 @@ RenderImage::RenderImage(Element& element, PassRef<RenderStyle> style, StyleImag
 }
 
 RenderImage::RenderImage(Document& document, PassRef<RenderStyle> style, StyleImage* styleImage)
-    : RenderReplaced(document, std::move(style), IntSize())
+    : RenderReplaced(document, WTF::move(style), IntSize())
     , m_imageResource(styleImage ? std::make_unique<RenderImageResourceStyleImage>(*styleImage) : std::make_unique<RenderImageResource>())
     , m_needsToSetSizeForAltText(false)
     , m_didIncrementVisuallyNonEmptyPixelCount(false)

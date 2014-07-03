@@ -65,7 +65,7 @@ RefPtr<API::Object> UserData::transform(API::Object* object, const std::function
         for (const auto& element : array.elements())
             elements.uncheckedAppend(transform(element.get(), transformer));
 
-        return API::Array::create(std::move(elements));
+        return API::Array::create(WTF::move(elements));
     }
 
     if (object->type() == API::Object::Type::Dictionary) {
@@ -75,7 +75,7 @@ RefPtr<API::Object> UserData::transform(API::Object* object, const std::function
         for (const auto& keyValuePair : dictionary.map())
             map.add(keyValuePair.key, transform(keyValuePair.value.get(), transformer));
 
-        return ImmutableDictionary::create(std::move(map));
+        return ImmutableDictionary::create(WTF::move(map));
     }
 
     if (auto transformedObject = transformer(*object))
@@ -216,10 +216,10 @@ bool UserData::decode(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result
             if (!decode(decoder, element))
                 return false;
 
-            elements.append(std::move(element));
+            elements.append(WTF::move(element));
         }
 
-        result = API::Array::create(std::move(elements));
+        result = API::Array::create(WTF::move(elements));
         break;
     }
 
@@ -248,11 +248,11 @@ bool UserData::decode(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result
             if (!decode(decoder, value))
                 return false;
 
-            if (!map.add(std::move(key), std::move(value)).isNewEntry)
+            if (!map.add(WTF::move(key), WTF::move(value)).isNewEntry)
                 return false;
         }
 
-        result = ImmutableDictionary::create(std::move(map));
+        result = ImmutableDictionary::create(WTF::move(map));
         break;
     }
 

@@ -423,7 +423,7 @@ std::unique_ptr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node* nod
             std::unique_ptr<Digest> childInfo = createDigest(child, unusedNodesMap);
             addStringToSHA1(sha1, childInfo->m_sha1);
             child = child->nextSibling();
-            digest->m_children.append(std::move(childInfo));
+            digest->m_children.append(WTF::move(childInfo));
         }
         Element* element = toElement(node);
 

@@ -1114,7 +1114,7 @@ Vector<RefPtr<ArchiveResource>> DocumentLoader::subresources() const
 
     for (auto& cachedResourceHandle : m_cachedResourceLoader->allCachedResources().values()) {
         if (RefPtr<ArchiveResource> subresource = this->subresource(URL(ParsedURLString, cachedResourceHandle->url())))
-            subresources.append(std::move(subresource));
+            subresources.append(WTF::move(subresource));
     }
 
     return subresources;

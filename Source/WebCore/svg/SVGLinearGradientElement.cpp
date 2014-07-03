@@ -119,7 +119,7 @@ void SVGLinearGradientElement::svgAttributeChanged(const QualifiedName& attrName
 
 RenderPtr<RenderElement> SVGLinearGradientElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSVGResourceLinearGradient>(*this, std::move(style));
+    return createRenderer<RenderSVGResourceLinearGradient>(*this, WTF::move(style));
 }
 
 static void setGradientAttributes(SVGGradientElement& element, LinearGradientAttributes& attributes, bool isLinear = true)

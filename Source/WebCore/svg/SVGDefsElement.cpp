@@ -53,7 +53,7 @@ bool SVGDefsElement::isValid() const
 
 RenderPtr<RenderElement> SVGDefsElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSVGHiddenContainer>(*this, std::move(style));
+    return createRenderer<RenderSVGHiddenContainer>(*this, WTF::move(style));
 }
 
 }

@@ -848,7 +848,7 @@ void WebView::addToDirtyRegion(const IntRect& dirtyRect)
 
     auto newRegion = adoptGDIObject(::CreateRectRgn(dirtyRect.x(), dirtyRect.y(),
         dirtyRect.maxX(), dirtyRect.maxY()));
-    addToDirtyRegion(std::move(newRegion));
+    addToDirtyRegion(WTF::move(newRegion));
 }
 
 void WebView::addToDirtyRegion(GDIObject<HRGN> newRegion)
@@ -862,9 +862,9 @@ void WebView::addToDirtyRegion(GDIObject<HRGN> newRegion)
     if (m_backingStoreDirtyRegion) {
         auto combinedRegion = adoptGDIObject(::CreateRectRgn(0, 0, 0, 0));
         ::CombineRgn(combinedRegion.get(), m_backingStoreDirtyRegion->get(), newRegion.get(), RGN_OR);
-        m_backingStoreDirtyRegion = SharedGDIObject<HRGN>::create(std::move(combinedRegion));
+        m_backingStoreDirtyRegion = SharedGDIObject<HRGN>::create(WTF::move(combinedRegion));
     } else
-        m_backingStoreDirtyRegion = SharedGDIObject<HRGN>::create(std::move(newRegion));
+        m_backingStoreDirtyRegion = SharedGDIObject<HRGN>::create(WTF::move(newRegion));
 
     if (m_uiDelegatePrivate)
         m_uiDelegatePrivate->webViewDidInvalidate(this);
@@ -910,7 +910,7 @@ void WebView::scrollBackingStore(FrameView* frameView, int dx, int dy, const Int
     GdiFlush();
 
     // Add the dirty region to the backing store's dirty region.
-    addToDirtyRegion(std::move(updateRegion));
+    addToDirtyRegion(WTF::move(updateRegion));
 
     if (m_uiDelegatePrivate)
         m_uiDelegatePrivate->webViewScrolled(this);

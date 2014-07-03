@@ -94,7 +94,7 @@ struct SelectionIterator {
 };
 
 RenderView::RenderView(Document& document, PassRef<RenderStyle> style)
-    : RenderBlockFlow(document, std::move(style))
+    : RenderBlockFlow(document, WTF::move(style))
     , m_frameView(*document.view())
     , m_selectionStart(0)
     , m_selectionEnd(0)
@@ -996,7 +996,7 @@ void RenderView::setSubtreeSelection(SelectionSubtreeRoot& root, RenderObject* s
                 m_selectionRectGatherer.addRect(rect);
 #endif
 
-            newSelectedObjects.set(o, std::move(selectionInfo));
+            newSelectedObjects.set(o, WTF::move(selectionInfo));
 
             RenderBlock* cb = o->containingBlock();
             while (cb && !cb->isRenderView()) {

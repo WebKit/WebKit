@@ -90,7 +90,7 @@ TEST(WTF_HashMap, MoveOnlyValues)
 
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i + 1);
-        moveOnlyValues.set(i + 1, std::move(moveOnly));
+        moveOnlyValues.set(i + 1, WTF::move(moveOnly));
     }
 
     for (size_t i = 0; i < 100; ++i) {
@@ -113,7 +113,7 @@ TEST(WTF_HashMap, MoveOnlyKeys)
 
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i + 1);
-        moveOnlyKeys.set(std::move(moveOnly), i + 1);
+        moveOnlyKeys.set(WTF::move(moveOnly), i + 1);
     }
 
     for (size_t i = 0; i < 100; ++i) {

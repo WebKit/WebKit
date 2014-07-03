@@ -44,7 +44,7 @@ void DownloadManager::startDownload(uint64_t downloadID, const ResourceRequest& 
     download->start();
 
     ASSERT(!m_downloads.contains(downloadID));
-    m_downloads.add(downloadID, std::move(download));
+    m_downloads.add(downloadID, WTF::move(download));
 }
 
 void DownloadManager::convertHandleToDownload(uint64_t downloadID, ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)
@@ -53,7 +53,7 @@ void DownloadManager::convertHandleToDownload(uint64_t downloadID, ResourceHandl
 
     download->startWithHandle(handle, response);
     ASSERT(!m_downloads.contains(downloadID));
-    m_downloads.add(downloadID, std::move(download));
+    m_downloads.add(downloadID, WTF::move(download));
 }
 
 void DownloadManager::cancelDownload(uint64_t downloadID)

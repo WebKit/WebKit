@@ -291,7 +291,7 @@ void Function::setArguments(const String& name, Vector<std::unique_ptr<Expressio
     if (name != "lang" && !arguments.isEmpty())
         setIsContextNodeSensitive(false);
 
-    setSubexpressions(std::move(arguments));
+    setSubexpressions(WTF::move(arguments));
 }
 
 Value FunLast::evaluate() const
@@ -355,7 +355,7 @@ Value FunId::evaluate() const
     
     result.markSorted(false);
     
-    return Value(std::move(result));
+    return Value(WTF::move(result));
 }
 
 static inline String expandedNameLocalPart(Node* node)
@@ -737,7 +737,7 @@ std::unique_ptr<Function> Function::create(const String& name, Vector<std::uniqu
 {
     std::unique_ptr<Function> function = create(name, arguments.size());
     if (function)
-        function->setArguments(name, std::move(arguments));
+        function->setArguments(name, WTF::move(arguments));
     return function;
 }
 

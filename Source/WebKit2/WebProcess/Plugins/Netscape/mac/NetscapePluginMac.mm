@@ -994,7 +994,7 @@ static bool convertStringToKeyCodes(StringView string, ScriptCode scriptCode, Ve
     if (status != noErr)
         return false;
 
-    keyCodes = std::move(outputData);
+    keyCodes = WTF::move(outputData);
     return true;
 }
 #endif

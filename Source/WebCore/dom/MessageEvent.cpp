@@ -64,7 +64,7 @@ MessageEvent::MessageEvent(const Deprecated::ScriptValue& data, const String& or
     , m_origin(origin)
     , m_lastEventId(lastEventId)
     , m_source(source)
-    , m_ports(std::move(ports))
+    , m_ports(WTF::move(ports))
 {
     ASSERT(isValidSource(m_source.get()));
 }
@@ -76,7 +76,7 @@ MessageEvent::MessageEvent(PassRefPtr<SerializedScriptValue> data, const String&
     , m_origin(origin)
     , m_lastEventId(lastEventId)
     , m_source(source)
-    , m_ports(std::move(ports))
+    , m_ports(WTF::move(ports))
 {
     ASSERT(isValidSource(m_source.get()));
 }
@@ -121,7 +121,7 @@ void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bo
     m_origin = origin;
     m_lastEventId = lastEventId;
     m_source = source;
-    m_ports = std::move(ports);
+    m_ports = WTF::move(ports);
 }
 
 void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, DOMWindow* source, std::unique_ptr<MessagePortArray> ports)
@@ -136,7 +136,7 @@ void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bo
     m_origin = origin;
     m_lastEventId = lastEventId;
     m_source = source;
-    m_ports = std::move(ports);
+    m_ports = WTF::move(ports);
 }
 
 // FIXME: Remove this when we have custom ObjC binding support.
@@ -162,7 +162,7 @@ void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bo
         ports = std::make_unique<MessagePortArray>();
         ports->append(port);
     }
-    initMessageEvent(type, canBubble, cancelable, data, origin, lastEventId, source, std::move(ports));
+    initMessageEvent(type, canBubble, cancelable, data, origin, lastEventId, source, WTF::move(ports));
 }
 
 EventInterface MessageEvent::eventInterface() const

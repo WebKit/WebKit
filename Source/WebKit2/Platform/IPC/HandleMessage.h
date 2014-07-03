@@ -117,7 +117,7 @@ void handleMessage(MessageDecoder& decoder, C* object, MF function)
         return;
     }
 
-    callMemberFunction(std::move(arguments), object, function);
+    callMemberFunction(WTF::move(arguments), object, function);
 }
 
 template<typename T, typename C, typename MF>
@@ -130,7 +130,7 @@ void handleMessage(MessageDecoder& decoder, MessageEncoder& replyEncoder, C* obj
     }
 
     typename T::Reply::ValueType replyArguments;
-    callMemberFunction(std::move(arguments), replyArguments, object, function);
+    callMemberFunction(WTF::move(arguments), replyArguments, object, function);
     replyEncoder << replyArguments;
 }
 
@@ -144,7 +144,7 @@ void handleMessage(Connection* connection, MessageDecoder& decoder, MessageEncod
     }
 
     typename T::Reply::ValueType replyArguments;
-    callMemberFunction(connection, std::move(arguments), replyArguments, object, function);
+    callMemberFunction(connection, WTF::move(arguments), replyArguments, object, function);
     replyEncoder << replyArguments;
 }
 
@@ -156,7 +156,7 @@ void handleMessage(Connection* connection, MessageDecoder& decoder, C* object, M
         ASSERT(decoder.isInvalid());
         return;
     }
-    callMemberFunction(connection, std::move(arguments), object, function);
+    callMemberFunction(connection, WTF::move(arguments), object, function);
 }
 
 template<typename T, typename C, typename MF>
@@ -167,7 +167,7 @@ void handleMessageVariadic(MessageDecoder& decoder, C* object, MF function)
         ASSERT(decoder.isInvalid());
         return;
     }
-    callMemberFunction(std::move(arguments), decoder, object, function);
+    callMemberFunction(WTF::move(arguments), decoder, object, function);
 }
 
 template<typename T, typename C, typename MF>
@@ -180,7 +180,7 @@ void handleMessageVariadic(MessageDecoder& decoder, MessageEncoder& replyEncoder
     }
 
     typename T::Reply::ValueType replyArguments;
-    callMemberFunction(std::move(arguments), decoder, replyArguments, object, function);
+    callMemberFunction(WTF::move(arguments), decoder, replyArguments, object, function);
     replyEncoder << replyArguments;
 }
 
@@ -193,8 +193,8 @@ void handleMessageDelayed(Connection* connection, MessageDecoder& decoder, std::
         return;
     }
 
-    RefPtr<typename T::DelayedReply> delayedReply = adoptRef(new typename T::DelayedReply(connection, std::move(replyEncoder)));
-    callMemberFunction(std::move(arguments), delayedReply.release(), object, function);
+    RefPtr<typename T::DelayedReply> delayedReply = adoptRef(new typename T::DelayedReply(connection, WTF::move(replyEncoder)));
+    callMemberFunction(WTF::move(arguments), delayedReply.release(), object, function);
 }
 
 } // namespace IPC

@@ -54,7 +54,7 @@ WebView::WebView(WebContext* context, WebPageGroup* pageGroup)
     webPageConfiguration.pageGroup = pageGroup;
 
     // Need to call createWebPage after other data members, specifically m_visible, are initialized.
-    m_page = context->createWebPage(*this, std::move(webPageConfiguration));
+    m_page = context->createWebPage(*this, WTF::move(webPageConfiguration));
 
     m_page->pageGroup().preferences().setAcceleratedCompositingEnabled(true);
     m_page->pageGroup().preferences().setForceCompositingMode(true);

@@ -46,7 +46,7 @@ void WebUIPopupMenuClient::showPopupMenu(WebPageProxy* pageProxy, WebPopupMenuPr
 
     RefPtr<API::Array> ItemsArray;
     if (!webPopupItems.isEmpty())
-        ItemsArray = API::Array::create(std::move(webPopupItems));
+        ItemsArray = API::Array::create(WTF::move(webPopupItems));
 
     m_client.showPopupMenu(toAPI(pageProxy), toAPI(static_cast<WebPopupMenuListenerEfl*>(popupMenuProxy)), toAPI(rect), toAPI(textDirection), pageScaleFactor, toAPI(ItemsArray.get()), selectedIndex, m_client.base.clientInfo);
 }

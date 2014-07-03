@@ -296,7 +296,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
 template<typename T>
 auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::set(KeyType&& key, T&& mapped) -> AddResult
 {
-    return inlineSet(std::move(key), std::forward<T>(mapped));
+    return inlineSet(WTF::move(key), std::forward<T>(mapped));
 }
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
@@ -317,7 +317,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
 template<typename T>
 auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::add(KeyType&& key, T&& mapped) -> AddResult
 {
-    return inlineAdd(std::move(key), std::forward<T>(mapped));
+    return inlineAdd(WTF::move(key), std::forward<T>(mapped));
 }
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
@@ -331,7 +331,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
 template<typename T>
 ALWAYS_INLINE auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::fastAdd(KeyType&& key, T&& mapped) -> AddResult
 {
-    return inlineAdd(std::move(key), std::forward<T>(mapped));
+    return inlineAdd(WTF::move(key), std::forward<T>(mapped));
 }
 
 template<typename T, typename U, typename V, typename W, typename MappedTraits>
@@ -371,7 +371,7 @@ auto HashMap<T, U, V, W, MappedTraits>::take(const KeyType& key) -> MappedType
     iterator it = find(key);
     if (it == end())
         return MappedTraits::emptyValue();
-    MappedType value = std::move(it->value);
+    MappedType value = WTF::move(it->value);
     remove(it);
     return value;
 }

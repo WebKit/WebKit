@@ -393,7 +393,7 @@ namespace WTF {
     template<typename T, size_t inlineCapacity>
     inline auto Deque<T, inlineCapacity>::takeFirst() -> T
     {
-        T oldFirst = std::move(first());
+        T oldFirst = WTF::move(first());
         removeFirst();
         return oldFirst;
     }
@@ -401,7 +401,7 @@ namespace WTF {
     template<typename T, size_t inlineCapacity>
     inline auto Deque<T, inlineCapacity>::takeLast() -> T
     {
-        T oldLast = std::move(last());
+        T oldLast = WTF::move(last());
         removeLast();
         return oldLast;
     }

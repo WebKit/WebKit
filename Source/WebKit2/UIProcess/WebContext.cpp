@@ -136,7 +136,7 @@ void WebContext::applyPlatformSpecificConfigurationDefaults(WebContextConfigurat
 PassRefPtr<WebContext> WebContext::create(WebContextConfiguration configuration)
 {
     InitializeWebKit2();
-    return adoptRef(new WebContext(std::move(configuration)));
+    return adoptRef(new WebContext(WTF::move(configuration)));
 }
 
 static Vector<WebContext*>& contexts()
@@ -171,8 +171,8 @@ WebContext::WebContext(WebContextConfiguration configuration)
 #if USE(SOUP)
     , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain)
 #endif
-    , m_webSQLDatabaseDirectory(std::move(configuration.webSQLDatabaseDirectory))
-    , m_indexedDBDatabaseDirectory(std::move(configuration.indexedDBDatabaseDirectory))
+    , m_webSQLDatabaseDirectory(WTF::move(configuration.webSQLDatabaseDirectory))
+    , m_indexedDBDatabaseDirectory(WTF::move(configuration.indexedDBDatabaseDirectory))
     , m_shouldUseTestingNetworkSession(false)
     , m_processTerminationEnabled(true)
 #if ENABLE(NETWORK_PROCESS)
@@ -298,7 +298,7 @@ void WebContext::setHistoryClient(std::unique_ptr<API::HistoryClient> historyCli
     if (!historyClient)
         m_historyClient = std::make_unique<API::HistoryClient>();
     else
-        m_historyClient = std::move(historyClient);
+        m_historyClient = WTF::move(historyClient);
 }
 
 void WebContext::setDownloadClient(std::unique_ptr<API::DownloadClient> downloadClient)
@@ -306,7 +306,7 @@ void WebContext::setDownloadClient(std::unique_ptr<API::DownloadClient> download
     if (!downloadClient)
         m_downloadClient = std::make_unique<API::DownloadClient>();
     else
-        m_downloadClient = std::move(downloadClient);
+        m_downloadClient = WTF::move(downloadClient);
 }
 
 void WebContext::setProcessModel(ProcessModel processModel)
@@ -830,7 +830,7 @@ PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPa
             process = &createNewWebProcessRespectingProcessCountLimit();
     }
 
-    return process->createWebPage(pageClient, std::move(configuration));
+    return process->createWebPage(pageClient, WTF::move(configuration));
 }
 
 DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const ResourceRequest& request)
@@ -1238,7 +1238,7 @@ void WebContext::getStatistics(uint32_t statisticsMask, std::function<void (Immu
         return;
     }
 
-    RefPtr<StatisticsRequest> request = StatisticsRequest::create(DictionaryCallback::create(std::move(callbackFunction)));
+    RefPtr<StatisticsRequest> request = StatisticsRequest::create(DictionaryCallback::create(WTF::move(callbackFunction)));
 
     if (statisticsMask & StatisticsRequestTypeWebContent)
         requestWebContentStatistics(request.get());
@@ -1386,17 +1386,17 @@ void WebContext::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
         mimeTypes.reserveInitialCapacity(pluginModule.info.mimes.size());
         for (const auto& mimeClassInfo : pluginModule.info.mimes)
             mimeTypes.uncheckedAppend(API::String::create(mimeClassInfo.type));
-        map.set(ASCIILiteral("mimes"), API::Array::create(std::move(mimeTypes)));
+        map.set(ASCIILiteral("mimes"), API::Array::create(WTF::move(mimeTypes)));
 
 #if PLATFORM(COCOA)
         map.set(ASCIILiteral("bundleId"), API::String::create(pluginModule.bundleIdentifier));
         map.set(ASCIILiteral("version"), API::String::create(pluginModule.versionString));
 #endif
 
-        plugins.uncheckedAppend(ImmutableDictionary::create(std::move(map)));
+        plugins.uncheckedAppend(ImmutableDictionary::create(WTF::move(map)));
     }
 
-    m_client.plugInInformationBecameAvailable(this, API::Array::create(std::move(plugins)).get());
+    m_client.plugInInformationBecameAvailable(this, API::Array::create(WTF::move(plugins)).get());
 }
 #endif
     

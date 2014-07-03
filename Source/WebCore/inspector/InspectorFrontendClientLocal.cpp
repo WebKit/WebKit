@@ -119,7 +119,7 @@ void InspectorFrontendClientLocal::Settings::setProperty(const String&, const St
 InspectorFrontendClientLocal::InspectorFrontendClientLocal(InspectorController* inspectorController, Page* frontendPage, std::unique_ptr<Settings> settings)
     : m_inspectorController(inspectorController)
     , m_frontendPage(frontendPage)
-    , m_settings(std::move(settings))
+    , m_settings(WTF::move(settings))
     , m_frontendLoaded(false)
     , m_dockSide(UNDOCKED)
 {

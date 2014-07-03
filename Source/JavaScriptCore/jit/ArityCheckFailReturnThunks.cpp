@@ -115,7 +115,7 @@ CodeLocationLabel* ArityCheckFailReturnThunks::returnPCsFor(
 
     {
         ConcurrentJITLocker locker(m_lock);
-        m_returnPCArrays.append(std::move(returnPCs));
+        m_returnPCArrays.append(WTF::move(returnPCs));
         m_refs.append(FINALIZE_CODE(linkBuffer, ("Arity check fail return thunks for up to numArgs = %u", numExpectedArgumentsIncludingThis)));
         m_nextSize = numExpectedArgumentsIncludingThis + stackAlignmentRegisters();
     }

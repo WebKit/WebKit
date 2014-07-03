@@ -1484,7 +1484,7 @@ PassRefPtr<DOMWindow> Internals::openDummyInspectorFrontend(const String& url)
 
     auto frontendClient = std::make_unique<InspectorFrontendClientDummy>(&page->inspectorController(), frontendPage);
 
-    frontendPage->inspectorController().setInspectorFrontendClient(std::move(frontendClient));
+    frontendPage->inspectorController().setInspectorFrontendClient(WTF::move(frontendClient));
 
     m_frontendChannel = adoptPtr(new InspectorFrontendChannelDummy(frontendPage));
 
@@ -1686,7 +1686,7 @@ void Internals::insertAuthorCSS(const String& css, ExceptionCode& ec) const
     auto parsedSheet = StyleSheetContents::create(*document);
     parsedSheet.get().setIsUserStyleSheet(false);
     parsedSheet.get().parseString(css);
-    document->styleSheetCollection().addAuthorSheet(std::move(parsedSheet));
+    document->styleSheetCollection().addAuthorSheet(WTF::move(parsedSheet));
 }
 
 void Internals::insertUserCSS(const String& css, ExceptionCode& ec) const
@@ -1700,7 +1700,7 @@ void Internals::insertUserCSS(const String& css, ExceptionCode& ec) const
     auto parsedSheet = StyleSheetContents::create(*document);
     parsedSheet.get().setIsUserStyleSheet(true);
     parsedSheet.get().parseString(css);
-    document->styleSheetCollection().addUserSheet(std::move(parsedSheet));
+    document->styleSheetCollection().addUserSheet(WTF::move(parsedSheet));
 }
 
 String Internals::counterValue(Element* element)

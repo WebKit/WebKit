@@ -94,7 +94,7 @@ struct VectorMover<false, T>
     static void move(T* src, T* srcEnd, T* dst)
     {
         while (src != srcEnd) {
-            new (NotNull, dst) T(std::move(*src));
+            new (NotNull, dst) T(WTF::move(*src));
             src->~T();
             ++dst;
             ++src;
@@ -109,7 +109,7 @@ struct VectorMover<false, T>
             while (src != srcEnd) {
                 --srcEnd;
                 --dstEnd;
-                new (NotNull, dstEnd) T(std::move(*srcEnd));
+                new (NotNull, dstEnd) T(WTF::move(*srcEnd));
                 srcEnd->~T();
             }
         }
@@ -661,7 +661,7 @@ public:
     
     T takeLast()
     {
-        T result = std::move(last());
+        T result = WTF::move(last());
         removeLast();
         return result;
     }

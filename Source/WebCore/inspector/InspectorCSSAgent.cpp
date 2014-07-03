@@ -799,7 +799,7 @@ void InspectorCSSAgent::addRule(ErrorString* errorString, const int contextNodeI
     ExceptionCode ec = 0;
     auto action = std::make_unique<AddRuleAction>(inspectorStyleSheet, selector);
     AddRuleAction* rawAction = action.get();
-    bool success = m_domAgent->history()->perform(std::move(action), ec);
+    bool success = m_domAgent->history()->perform(WTF::move(action), ec);
     if (!success) {
         *errorString = InspectorDOMAgent::toErrorString(ec);
         return;

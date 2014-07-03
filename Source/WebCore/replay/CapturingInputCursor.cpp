@@ -55,7 +55,7 @@ PassRefPtr<CapturingInputCursor> CapturingInputCursor::create(SegmentedInputStor
 void CapturingInputCursor::storeInput(std::unique_ptr<NondeterministicInputBase> input)
 {
     ASSERT(input);
-    m_storage.store(std::move(input));
+    m_storage.store(WTF::move(input));
 }
 
 NondeterministicInputBase* CapturingInputCursor::loadInput(InputQueue, const AtomicString&)

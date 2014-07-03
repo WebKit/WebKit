@@ -70,9 +70,9 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     profilerAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
 
     m_agents.append(std::make_unique<InspectorAgent>());
-    m_agents.append(std::move(runtimeAgent));
-    m_agents.append(std::move(consoleAgent));
-    m_agents.append(std::move(debuggerAgent));
+    m_agents.append(WTF::move(runtimeAgent));
+    m_agents.append(WTF::move(consoleAgent));
+    m_agents.append(WTF::move(debuggerAgent));
 }
 
 JSGlobalObjectInspectorController::~JSGlobalObjectInspectorController()

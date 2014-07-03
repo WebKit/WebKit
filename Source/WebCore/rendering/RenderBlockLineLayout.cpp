@@ -126,7 +126,7 @@ RootInlineBox* RenderBlockFlow::createAndAppendRootInlineBox()
 {
     auto newRootBox = createRootInlineBox();
     RootInlineBox* rootBox = newRootBox.get();
-    m_lineBoxes.appendLineBox(std::move(newRootBox));
+    m_lineBoxes.appendLineBox(WTF::move(newRootBox));
 
     if (UNLIKELY(AXObjectCache::accessibilityEnabled()) && firstRootBox() == rootBox) {
         if (AXObjectCache* cache = document().existingAXObjectCache())
@@ -1312,7 +1312,7 @@ void RenderBlockFlow::linkToEndLineIfNeeded(LineLayoutState& layoutState)
             LayoutUnit bottomLayoutOverflow = lastRootBox()->logicalBottomLayoutOverflow();
             auto newLineBox = std::make_unique<TrailingFloatsRootInlineBox>(*this);
             auto trailingFloatsLineBox = newLineBox.get();
-            m_lineBoxes.appendLineBox(std::move(newLineBox));
+            m_lineBoxes.appendLineBox(WTF::move(newLineBox));
             trailingFloatsLineBox->setConstructed();
             GlyphOverflowAndFallbackFontsMap textBoxDataMap;
             VerticalPositionCache verticalPositionCache;

@@ -41,7 +41,7 @@ namespace WebCore {
 using namespace XPath;
     
 inline XPathExpression::XPathExpression(std::unique_ptr<XPath::Expression> expression)
-    : m_topExpression(std::move(expression))
+    : m_topExpression(WTF::move(expression))
 {
 }
 
@@ -51,7 +51,7 @@ PassRefPtr<XPathExpression> XPathExpression::createExpression(const String& expr
     if (!parsedExpression)
         return nullptr;
 
-    return adoptRef(new XPathExpression(std::move(parsedExpression)));
+    return adoptRef(new XPathExpression(WTF::move(parsedExpression)));
 }
 
 XPathExpression::~XPathExpression()

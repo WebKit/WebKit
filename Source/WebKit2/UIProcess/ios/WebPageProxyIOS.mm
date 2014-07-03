@@ -312,7 +312,7 @@ void WebPageProxy::selectWithGesture(const WebCore::IntPoint point, WebCore::Tex
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
+    uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::SelectWithGesture(point, (uint32_t)granularity, gestureType, gestureState, callbackID), m_pageID);
 }
 
@@ -323,7 +323,7 @@ void WebPageProxy::updateSelectionWithTouches(const WebCore::IntPoint point, uin
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
+    uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::UpdateSelectionWithTouches(point, touches, baseIsStart, callbackID), m_pageID);
 }
     
@@ -344,7 +344,7 @@ void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
+    uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::RequestAutocorrectionData(textForAutocorrection, callbackID), m_pageID);
 }
 
@@ -355,7 +355,7 @@ void WebPageProxy::applyAutocorrection(const String& correction, const String& o
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
+    uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::ApplyAutocorrection(correction, originalText, callbackID), m_pageID);
 }
 
@@ -373,7 +373,7 @@ void WebPageProxy::requestDictationContext(std::function<void (const String&, co
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
+    uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::RequestDictationContext(callbackID), m_pageID);
 }
 
@@ -384,7 +384,7 @@ void WebPageProxy::requestAutocorrectionContext(std::function<void (const String
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
+    uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::RequestAutocorrectionContext(callbackID), m_pageID);
 }
 
@@ -400,7 +400,7 @@ void WebPageProxy::selectWithTwoTouches(const WebCore::IntPoint from, const WebC
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(std::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
+    uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::SelectWithTwoTouches(from, to, gestureType, gestureState, callbackID), m_pageID);
 }
 

@@ -50,7 +50,7 @@ class CSSFilterImageValue : public CSSImageGeneratorValue {
 public:
     static PassRef<CSSFilterImageValue> create(PassRef<CSSValue> imageValue, PassRef<CSSValue> filterValue)
     {
-        return adoptRef(*new CSSFilterImageValue(std::move(imageValue), std::move(filterValue)));
+        return adoptRef(*new CSSFilterImageValue(WTF::move(imageValue), WTF::move(filterValue)));
     }
 
     ~CSSFilterImageValue();

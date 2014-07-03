@@ -113,7 +113,7 @@ std::unique_ptr<InlineTextBox> RenderSVGInlineText::createTextBox()
 {
     auto box = std::make_unique<SVGInlineTextBox>(*this);
     box->setHasVirtualLogicalHeight();
-    return std::move(box);
+    return WTF::move(box);
 }
 
 LayoutRect RenderSVGInlineText::localCaretRect(InlineBox* box, int caretOffset, LayoutUnit*)

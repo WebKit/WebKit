@@ -1141,36 +1141,36 @@ public:
     void setPosition(EPosition v) { noninherited_flags.setPosition(v); }
     void setFloating(EFloat v) { noninherited_flags.setFloating(v); }
 
-    void setLeft(Length v) { SET_VAR(surround, offset.m_left, std::move(v)); }
-    void setRight(Length v) { SET_VAR(surround, offset.m_right, std::move(v)); }
-    void setTop(Length v) { SET_VAR(surround, offset.m_top, std::move(v)); }
-    void setBottom(Length v) { SET_VAR(surround, offset.m_bottom, std::move(v)); }
+    void setLeft(Length v) { SET_VAR(surround, offset.m_left, WTF::move(v)); }
+    void setRight(Length v) { SET_VAR(surround, offset.m_right, WTF::move(v)); }
+    void setTop(Length v) { SET_VAR(surround, offset.m_top, WTF::move(v)); }
+    void setBottom(Length v) { SET_VAR(surround, offset.m_bottom, WTF::move(v)); }
 
-    void setWidth(Length v) { SET_VAR(m_box, m_width, std::move(v)); }
-    void setHeight(Length v) { SET_VAR(m_box, m_height, std::move(v)); }
+    void setWidth(Length v) { SET_VAR(m_box, m_width, WTF::move(v)); }
+    void setHeight(Length v) { SET_VAR(m_box, m_height, WTF::move(v)); }
 
     void setLogicalWidth(Length v)
     {
         if (isHorizontalWritingMode()) {
-            SET_VAR(m_box, m_width, std::move(v));
+            SET_VAR(m_box, m_width, WTF::move(v));
         } else {
-            SET_VAR(m_box, m_height, std::move(v));
+            SET_VAR(m_box, m_height, WTF::move(v));
         }
     }
 
     void setLogicalHeight(Length v)
     {
         if (isHorizontalWritingMode()) {
-            SET_VAR(m_box, m_height, std::move(v));
+            SET_VAR(m_box, m_height, WTF::move(v));
         } else {
-            SET_VAR(m_box, m_width, std::move(v));
+            SET_VAR(m_box, m_width, WTF::move(v));
         }
     }
 
-    void setMinWidth(Length v) { SET_VAR(m_box, m_minWidth, std::move(v)); }
-    void setMaxWidth(Length v) { SET_VAR(m_box, m_maxWidth, std::move(v)); }
-    void setMinHeight(Length v) { SET_VAR(m_box, m_minHeight, std::move(v)); }
-    void setMaxHeight(Length v) { SET_VAR(m_box, m_maxHeight, std::move(v)); }
+    void setMinWidth(Length v) { SET_VAR(m_box, m_minWidth, WTF::move(v)); }
+    void setMaxWidth(Length v) { SET_VAR(m_box, m_maxWidth, WTF::move(v)); }
+    void setMinHeight(Length v) { SET_VAR(m_box, m_minHeight, WTF::move(v)); }
+    void setMaxHeight(Length v) { SET_VAR(m_box, m_maxHeight, WTF::move(v)); }
 
 #if ENABLE(DASHBOARD_SUPPORT)
     Vector<StyleDashboardRegion> dashboardRegions() const { return rareNonInheritedData->m_dashboardRegions; }
@@ -1180,10 +1180,10 @@ public:
     {
         StyleDashboardRegion region;
         region.label = label;
-        region.offset.m_top = std::move(t);
-        region.offset.m_right = std::move(r);
-        region.offset.m_bottom = std::move(b);
-        region.offset.m_left = std::move(l);
+        region.offset.m_top = WTF::move(t);
+        region.offset.m_right = WTF::move(r);
+        region.offset.m_bottom = WTF::move(b);
+        region.offset.m_left = WTF::move(l);
         region.type = type;
         if (!append)
             rareNonInheritedData.access()->m_dashboardRegions.clear();
@@ -1205,10 +1205,10 @@ public:
 
     void setBackgroundColor(const Color& v) { SET_VAR(m_background, m_color, v); }
 
-    void setBackgroundXPosition(Length length) { SET_VAR(m_background, m_background.m_xPosition, std::move(length)); }
-    void setBackgroundYPosition(Length length) { SET_VAR(m_background, m_background.m_yPosition, std::move(length)); }
+    void setBackgroundXPosition(Length length) { SET_VAR(m_background, m_background.m_xPosition, WTF::move(length)); }
+    void setBackgroundYPosition(Length length) { SET_VAR(m_background, m_background.m_yPosition, WTF::move(length)); }
     void setBackgroundSize(EFillSizeType b) { SET_VAR(m_background, m_background.m_sizeType, b); }
-    void setBackgroundSizeLength(LengthSize size) { SET_VAR(m_background, m_background.m_sizeLength, std::move(size)); }
+    void setBackgroundSizeLength(LengthSize size) { SET_VAR(m_background, m_background.m_sizeLength, WTF::move(size)); }
     
     void setBorderImage(const NinePieceImage& b) { SET_VAR(surround, border.m_image, b); }
     void setBorderImageSource(PassRefPtr<StyleImage>);
@@ -1216,10 +1216,10 @@ public:
     void setBorderImageWidth(LengthBox);
     void setBorderImageOutset(LengthBox);
 
-    void setBorderTopLeftRadius(LengthSize size) { SET_VAR(surround, border.m_topLeft, std::move(size)); }
-    void setBorderTopRightRadius(LengthSize size) { SET_VAR(surround, border.m_topRight, std::move(size)); }
-    void setBorderBottomLeftRadius(LengthSize size) { SET_VAR(surround, border.m_bottomLeft, std::move(size)); }
-    void setBorderBottomRightRadius(LengthSize size) { SET_VAR(surround, border.m_bottomRight, std::move(size)); }
+    void setBorderTopLeftRadius(LengthSize size) { SET_VAR(surround, border.m_topLeft, WTF::move(size)); }
+    void setBorderTopRightRadius(LengthSize size) { SET_VAR(surround, border.m_topRight, WTF::move(size)); }
+    void setBorderBottomLeftRadius(LengthSize size) { SET_VAR(surround, border.m_bottomLeft, WTF::move(size)); }
+    void setBorderBottomRightRadius(LengthSize size) { SET_VAR(surround, border.m_bottomRight, WTF::move(size)); }
 
     void setBorderRadius(LengthSize s)
     {
@@ -1261,15 +1261,15 @@ public:
     void setOverflowY(EOverflow v) { noninherited_flags.setOverflowY(v); }
     void setVisibility(EVisibility v) { inherited_flags._visibility = v; }
     void setVerticalAlign(EVerticalAlign v) { noninherited_flags.setVerticalAlign(v); }
-    void setVerticalAlignLength(Length length) { setVerticalAlign(LENGTH); SET_VAR(m_box, m_verticalAlign, std::move(length)); }
+    void setVerticalAlignLength(Length length) { setVerticalAlign(LENGTH); SET_VAR(m_box, m_verticalAlign, WTF::move(length)); }
 
     void setHasClip(bool b = true) { SET_VAR(visual, hasClip, b); }
-    void setClipLeft(Length length) { SET_VAR(visual, clip.m_left, std::move(length)); }
-    void setClipRight(Length length) { SET_VAR(visual, clip.m_right, std::move(length)); }
-    void setClipTop(Length length) { SET_VAR(visual, clip.m_top, std::move(length)); }
-    void setClipBottom(Length length) { SET_VAR(visual, clip.m_bottom, std::move(length)); }
+    void setClipLeft(Length length) { SET_VAR(visual, clip.m_left, WTF::move(length)); }
+    void setClipRight(Length length) { SET_VAR(visual, clip.m_right, WTF::move(length)); }
+    void setClipTop(Length length) { SET_VAR(visual, clip.m_top, WTF::move(length)); }
+    void setClipBottom(Length length) { SET_VAR(visual, clip.m_bottom, WTF::move(length)); }
     void setClip(Length top, Length right, Length bottom, Length left);
-    void setClip(LengthBox box) { SET_VAR(visual, clip, std::move(box)); }
+    void setClip(LengthBox box) { SET_VAR(visual, clip, WTF::move(box)); }
 
     void setUnicodeBidi(EUnicodeBidi b) { noninherited_flags.setUnicodeBidi(b); }
 
@@ -1289,7 +1289,7 @@ public:
 #endif
 
     void setColor(const Color&);
-    void setTextIndent(Length length) { SET_VAR(rareInheritedData, indent, std::move(length)); }
+    void setTextIndent(Length length) { SET_VAR(rareInheritedData, indent, WTF::move(length)); }
 #if ENABLE(CSS3_TEXT)
     void setTextIndentLine(TextIndentLine v) { SET_VAR(rareInheritedData, m_textIndentLine, v); }
     void setTextIndentType(TextIndentType v) { SET_VAR(rareInheritedData, m_textIndentType, v); }
@@ -1358,9 +1358,9 @@ public:
 
     void setMaskBoxImage(const NinePieceImage& b) { SET_VAR(rareNonInheritedData, m_maskBoxImage, b); }
     void setMaskBoxImageSource(PassRefPtr<StyleImage> v) { rareNonInheritedData.access()->m_maskBoxImage.setImage(v); }
-    void setMaskXPosition(Length length) { SET_VAR(rareNonInheritedData, m_mask.m_xPosition, std::move(length)); }
-    void setMaskYPosition(Length length) { SET_VAR(rareNonInheritedData, m_mask.m_yPosition, std::move(length)); }
-    void setMaskSize(LengthSize size) { SET_VAR(rareNonInheritedData, m_mask.m_sizeLength, std::move(size)); }
+    void setMaskXPosition(Length length) { SET_VAR(rareNonInheritedData, m_mask.m_xPosition, WTF::move(length)); }
+    void setMaskYPosition(Length length) { SET_VAR(rareNonInheritedData, m_mask.m_yPosition, WTF::move(length)); }
+    void setMaskSize(LengthSize size) { SET_VAR(rareNonInheritedData, m_mask.m_sizeLength, WTF::move(size)); }
 
     void setBorderCollapse(EBorderCollapse collapse) { inherited_flags._border_collapse = collapse; }
     void setHorizontalBorderSpacing(short);
@@ -1377,19 +1377,19 @@ public:
     void setListStylePosition(EListStylePosition v) { inherited_flags._list_style_position = v; }
 
     void resetMargin() { SET_VAR(surround, margin, LengthBox(Fixed)); }
-    void setMarginTop(Length length) { SET_VAR(surround, margin.m_top, std::move(length)); }
-    void setMarginBottom(Length length) { SET_VAR(surround, margin.m_bottom, std::move(length)); }
-    void setMarginLeft(Length length) { SET_VAR(surround, margin.m_left, std::move(length)); }
-    void setMarginRight(Length length) { SET_VAR(surround, margin.m_right, std::move(length)); }
+    void setMarginTop(Length length) { SET_VAR(surround, margin.m_top, WTF::move(length)); }
+    void setMarginBottom(Length length) { SET_VAR(surround, margin.m_bottom, WTF::move(length)); }
+    void setMarginLeft(Length length) { SET_VAR(surround, margin.m_left, WTF::move(length)); }
+    void setMarginRight(Length length) { SET_VAR(surround, margin.m_right, WTF::move(length)); }
     void setMarginStart(Length);
     void setMarginEnd(Length);
 
     void resetPadding() { SET_VAR(surround, padding, LengthBox(Auto)); }
-    void setPaddingBox(LengthBox box) { SET_VAR(surround, padding, std::move(box)); }
-    void setPaddingTop(Length length) { SET_VAR(surround, padding.m_top, std::move(length)); }
-    void setPaddingBottom(Length length) { SET_VAR(surround, padding.m_bottom, std::move(length)); }
-    void setPaddingLeft(Length length) { SET_VAR(surround, padding.m_left, std::move(length)); }
-    void setPaddingRight(Length length) { SET_VAR(surround, padding.m_right, std::move(length)); }
+    void setPaddingBox(LengthBox box) { SET_VAR(surround, padding, WTF::move(box)); }
+    void setPaddingTop(Length length) { SET_VAR(surround, padding.m_top, WTF::move(length)); }
+    void setPaddingBottom(Length length) { SET_VAR(surround, padding.m_bottom, WTF::move(length)); }
+    void setPaddingLeft(Length length) { SET_VAR(surround, padding.m_left, WTF::move(length)); }
+    void setPaddingRight(Length length) { SET_VAR(surround, padding.m_right, WTF::move(length)); }
 
     void setCursor(ECursor c) { inherited_flags._cursor_style = c; }
     void addCursor(PassRefPtr<StyleImage>, const IntPoint& hotSpot = IntPoint());
@@ -1448,7 +1448,7 @@ public:
     void setBoxSizing(EBoxSizing s) { SET_VAR(m_box, m_boxSizing, s); }
     void setFlexGrow(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexGrow, f); }
     void setFlexShrink(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexShrink, f); }
-    void setFlexBasis(Length length) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexBasis, std::move(length)); }
+    void setFlexBasis(Length length) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexBasis, WTF::move(length)); }
     void setOrder(int o) { SET_VAR(rareNonInheritedData, m_order, o); }
     void setAlignContent(EAlignContent p) { SET_VAR(rareNonInheritedData, m_alignContent, p); }
     void setAlignItems(EAlignItems a) { SET_VAR(rareNonInheritedData, m_alignItems, a); }
@@ -1474,7 +1474,7 @@ public:
     void setGridItemRowStart(const GridPosition& rowStartPosition) { SET_VAR(rareNonInheritedData.access()->m_gridItem, m_gridRowStart, rowStartPosition); }
     void setGridItemRowEnd(const GridPosition& rowEndPosition) { SET_VAR(rareNonInheritedData.access()->m_gridItem, m_gridRowEnd, rowEndPosition); }
 #endif /* ENABLE(CSS_GRID_LAYOUT) */
-    void setMarqueeIncrement(Length length) { SET_VAR(rareNonInheritedData.access()->m_marquee, increment, std::move(length)); }
+    void setMarqueeIncrement(Length length) { SET_VAR(rareNonInheritedData.access()->m_marquee, increment, WTF::move(length)); }
     void setMarqueeSpeed(int f) { SET_VAR(rareNonInheritedData.access()->m_marquee, speed, f); }
     void setMarqueeDirection(EMarqueeDirection d) { SET_VAR(rareNonInheritedData.access()->m_marquee, direction, d); }
     void setMarqueeBehavior(EMarqueeBehavior b) { SET_VAR(rareNonInheritedData.access()->m_marquee, behavior, b); }
@@ -1520,8 +1520,8 @@ public:
     void setRegionBreakAfter(EPageBreak p) { SET_VAR(rareNonInheritedData, m_regionBreakAfter, p); }
     void inheritColumnPropertiesFrom(RenderStyle* parent) { rareNonInheritedData.access()->m_multiCol = parent->rareNonInheritedData->m_multiCol; }
     void setTransform(const TransformOperations& ops) { SET_VAR(rareNonInheritedData.access()->m_transform, m_operations, ops); }
-    void setTransformOriginX(Length length) { SET_VAR(rareNonInheritedData.access()->m_transform, m_x, std::move(length)); }
-    void setTransformOriginY(Length length) { SET_VAR(rareNonInheritedData.access()->m_transform, m_y, std::move(length)); }
+    void setTransformOriginX(Length length) { SET_VAR(rareNonInheritedData.access()->m_transform, m_x, WTF::move(length)); }
+    void setTransformOriginY(Length length) { SET_VAR(rareNonInheritedData.access()->m_transform, m_y, WTF::move(length)); }
     void setTransformOriginZ(float f) { SET_VAR(rareNonInheritedData.access()->m_transform, m_z, f); }
     void setSpeak(ESpeak s) { SET_VAR(rareInheritedData, speak, s); }
     void setTextCombine(TextCombine v) { SET_VAR(rareNonInheritedData, m_textCombine, v); }
@@ -1574,9 +1574,9 @@ public:
     void setTransformStyle3D(ETransformStyle3D b) { SET_VAR(rareNonInheritedData, m_transformStyle3D, b); }
     void setBackfaceVisibility(EBackfaceVisibility b) { SET_VAR(rareNonInheritedData, m_backfaceVisibility, b); }
     void setPerspective(float p) { SET_VAR(rareNonInheritedData, m_perspective, p); }
-    void setPerspectiveOriginX(Length length) { SET_VAR(rareNonInheritedData, m_perspectiveOriginX, std::move(length)); }
-    void setPerspectiveOriginY(Length length) { SET_VAR(rareNonInheritedData, m_perspectiveOriginY, std::move(length)); }
-    void setPageSize(LengthSize size) { SET_VAR(rareNonInheritedData, m_pageSize, std::move(size)); }
+    void setPerspectiveOriginX(Length length) { SET_VAR(rareNonInheritedData, m_perspectiveOriginX, WTF::move(length)); }
+    void setPerspectiveOriginY(Length length) { SET_VAR(rareNonInheritedData, m_perspectiveOriginY, WTF::move(length)); }
+    void setPageSize(LengthSize size) { SET_VAR(rareNonInheritedData, m_pageSize, WTF::move(size)); }
     void setPageSizeType(PageSizeType t) { SET_VAR(rareNonInheritedData, m_pageSizeType, t); }
     void resetPageSizeType() { SET_VAR(rareNonInheritedData, m_pageSizeType, PAGE_SIZE_AUTO); }
 
@@ -1649,7 +1649,7 @@ public:
     static ShapeValue* initialShapeOutside() { return 0; }
 
     const Length& shapeMargin() const { return rareNonInheritedData->m_shapeMargin; }
-    void setShapeMargin(Length shapeMargin) { SET_VAR(rareNonInheritedData, m_shapeMargin, std::move(shapeMargin)); }
+    void setShapeMargin(Length shapeMargin) { SET_VAR(rareNonInheritedData, m_shapeMargin, WTF::move(shapeMargin)); }
     static Length initialShapeMargin() { return Length(0, Fixed); }
 
     float shapeImageThreshold() const { return rareNonInheritedData->m_shapeImageThreshold; }

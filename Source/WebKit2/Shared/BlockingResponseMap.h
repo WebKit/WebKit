@@ -59,7 +59,7 @@ public:
         std::lock_guard<std::mutex> lock(m_mutex);
         ASSERT(!m_responses.contains(requestID));
 
-        m_responses.set(requestID, std::move(response));
+        m_responses.set(requestID, WTF::move(response));
 
         // FIXME: Waking up all threads is quite inefficient.
         m_condition.notify_all();

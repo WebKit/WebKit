@@ -161,7 +161,7 @@ bool SVGRectElement::selfHasRelativeLengths() const
 
 RenderPtr<RenderElement> SVGRectElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSVGRect>(*this, std::move(style));
+    return createRenderer<RenderSVGRect>(*this, WTF::move(style));
 }
 
 }

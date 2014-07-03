@@ -256,7 +256,7 @@ static gpointer createDefaultWebContext(gpointer)
     WebContextConfiguration webContextConfiguration;
     webContextConfiguration.injectedBundlePath = WebCore::filenameToString(injectedBundleFilename().data());
     WebContext::applyPlatformSpecificConfigurationDefaults(webContextConfiguration);
-    priv->context = WebContext::create(std::move(webContextConfiguration));
+    priv->context = WebContext::create(WTF::move(webContextConfiguration));
 
     priv->requestManager = webContext->priv->context->supplement<WebSoupCustomProtocolRequestManager>();
     priv->context->setCacheModel(CacheModelPrimaryWebBrowser);
@@ -893,7 +893,7 @@ void webkit_web_context_prefetch_dns(WebKitWebContext* context, const char* host
 
     ImmutableDictionary::MapType message;
     message.set(String::fromUTF8("Hostname"), API::String::create(String::fromUTF8(hostname)));
-    context->priv->context->postMessageToInjectedBundle(String::fromUTF8("PrefetchDNS"), ImmutableDictionary::create(std::move(message)).get());
+    context->priv->context->postMessageToInjectedBundle(String::fromUTF8("PrefetchDNS"), ImmutableDictionary::create(WTF::move(message)).get());
 }
 
 /**

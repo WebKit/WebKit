@@ -181,7 +181,7 @@ void CachedCSSStyleSheet::saveParsedStyleSheet(PassRef<StyleSheetContents> sheet
 
     if (m_parsedStyleSheetCache)
         m_parsedStyleSheetCache->removedFromMemoryCache();
-    m_parsedStyleSheetCache = std::move(sheet);
+    m_parsedStyleSheetCache = WTF::move(sheet);
     m_parsedStyleSheetCache->addedToMemoryCache();
 
     setDecodedSize(m_parsedStyleSheetCache->estimatedSizeInBytes());

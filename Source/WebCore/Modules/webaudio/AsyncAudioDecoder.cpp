@@ -59,7 +59,7 @@ void AsyncAudioDecoder::decodeAsync(ArrayBuffer* audioData, float sampleRate, Pa
         return;
 
     auto decodingTask = DecodingTask::create(audioData, sampleRate, successCallback, errorCallback);
-    m_queue.append(std::move(decodingTask)); // note that ownership of the task is effectively taken by the queue.
+    m_queue.append(WTF::move(decodingTask)); // note that ownership of the task is effectively taken by the queue.
 }
 
 // Asynchronously decode in this thread.

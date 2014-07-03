@@ -85,7 +85,7 @@ void SessionTracker::setSession(SessionID sessionID, std::unique_ptr<NetworkStor
 {
     ASSERT(sessionID != SessionID::defaultSessionID());
     storageSessionToID().set(session.get(), sessionID);
-    staticSessionMap().set(sessionID, std::move(session));
+    staticSessionMap().set(sessionID, WTF::move(session));
 }
 
 void SessionTracker::destroySession(SessionID sessionID)

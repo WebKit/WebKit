@@ -108,13 +108,13 @@ void WorkQueue::unregisterSocketEventHandler(int)
 void WorkQueue::dispatch(std::function<void ()> function)
 {
     ref();
-    GMainLoopSource::createAndDeleteOnDestroy().schedule("[WebKit] WorkQueue::dispatch", std::move(function), G_PRIORITY_DEFAULT,
+    GMainLoopSource::createAndDeleteOnDestroy().schedule("[WebKit] WorkQueue::dispatch", WTF::move(function), G_PRIORITY_DEFAULT,
         [this] { deref(); }, m_eventContext.get());
 }
 
 void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, std::function<void ()> function)
 {
     ref();
-    GMainLoopSource::createAndDeleteOnDestroy().scheduleAfterDelay("[WebKit] WorkQueue::dispatchAfter", std::move(function),
+    GMainLoopSource::createAndDeleteOnDestroy().scheduleAfterDelay("[WebKit] WorkQueue::dispatchAfter", WTF::move(function),
         std::chrono::duration_cast<std::chrono::milliseconds>(duration), G_PRIORITY_DEFAULT, [this] { deref(); }, m_eventContext.get());
 }

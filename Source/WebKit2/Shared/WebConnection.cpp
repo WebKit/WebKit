@@ -55,7 +55,7 @@ void WebConnection::postMessage(const String& messageName, API::Object* messageB
     encoder->encode(messageName);
     encodeMessageBody(*encoder, messageBody);
 
-    sendMessage(std::move(encoder), 0);
+    sendMessage(WTF::move(encoder), 0);
 }
 
 void WebConnection::didClose()

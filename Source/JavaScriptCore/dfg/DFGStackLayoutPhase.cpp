@@ -228,7 +228,7 @@ public:
                         newSlowArguments[i].index = virtualRegisterForLocal(allocation[reg.toLocal()]).offset();
                 }
             
-                m_graph.m_slowArguments = std::move(newSlowArguments);
+                m_graph.m_slowArguments = WTF::move(newSlowArguments);
             }
         }
         

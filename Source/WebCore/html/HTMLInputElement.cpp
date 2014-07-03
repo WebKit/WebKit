@@ -467,7 +467,7 @@ void HTMLInputElement::updateType()
 
     m_inputType->destroyShadowSubtree();
 
-    m_inputType = std::move(newType);
+    m_inputType = WTF::move(newType);
     m_inputType->createShadowSubtree();
     updateInnerTextElementEditability();
 
@@ -759,7 +759,7 @@ bool HTMLInputElement::rendererIsNeeded(const RenderStyle& style)
 
 RenderPtr<RenderElement> HTMLInputElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return m_inputType->createInputRenderer(std::move(style));
+    return m_inputType->createInputRenderer(WTF::move(style));
 }
 
 void HTMLInputElement::willAttachRenderers()

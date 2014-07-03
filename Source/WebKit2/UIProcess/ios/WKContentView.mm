@@ -432,7 +432,7 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
 
     _pageClient = std::make_unique<PageClientImpl>(self, webView);
 
-    _page = context.createWebPage(*_pageClient, std::move(webPageConfiguration));
+    _page = context.createWebPage(*_pageClient, WTF::move(webPageConfiguration));
     _page->initializeWebPage();
     _page->setIntrinsicDeviceScaleFactor(WKGetScaleFactorForScreen([UIScreen mainScreen]));
     _page->setUseFixedLayout(true);

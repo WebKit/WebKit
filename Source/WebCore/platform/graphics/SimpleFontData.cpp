@@ -72,7 +72,7 @@ SimpleFontData::SimpleFontData(const FontPlatformData& platformData, bool isCust
 
 SimpleFontData::SimpleFontData(std::unique_ptr<AdditionalFontData> fontData, float fontSize, bool syntheticBold, bool syntheticItalic)
     : m_platformData(FontPlatformData(fontSize, syntheticBold, syntheticItalic))
-    , m_fontData(std::move(fontData))
+    , m_fontData(WTF::move(fontData))
     , m_treatAsFixedPitch(false)
     , m_isCustomFont(true)
     , m_isLoading(false)

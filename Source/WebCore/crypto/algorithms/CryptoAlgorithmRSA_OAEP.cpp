@@ -79,7 +79,7 @@ void CryptoAlgorithmRSA_OAEP::encrypt(const CryptoAlgorithmParameters& parameter
         return;
     }
 
-    platformEncrypt(rsaOAEPParameters, toCryptoKeyRSA(key), data, std::move(callback), std::move(failureCallback), ec);
+    platformEncrypt(rsaOAEPParameters, toCryptoKeyRSA(key), data, WTF::move(callback), WTF::move(failureCallback), ec);
 }
 
 void CryptoAlgorithmRSA_OAEP::decrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
@@ -91,7 +91,7 @@ void CryptoAlgorithmRSA_OAEP::decrypt(const CryptoAlgorithmParameters& parameter
         return;
     }
 
-    platformDecrypt(rsaOAEPParameters, toCryptoKeyRSA(key), data, std::move(callback), std::move(failureCallback), ec);
+    platformDecrypt(rsaOAEPParameters, toCryptoKeyRSA(key), data, WTF::move(callback), WTF::move(failureCallback), ec);
 }
 
 void CryptoAlgorithmRSA_OAEP::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback callback, VoidCallback failureCallback, ExceptionCode&)
@@ -102,7 +102,7 @@ void CryptoAlgorithmRSA_OAEP::generateKey(const CryptoAlgorithmParameters& param
         callback(nullptr, &pair);
     };
 
-    CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier::RSA_OAEP, rsaParameters.modulusLength, rsaParameters.publicExponent, extractable, usages, std::move(keyPairCallback), std::move(failureCallback));
+    CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier::RSA_OAEP, rsaParameters.modulusLength, rsaParameters.publicExponent, extractable, usages, WTF::move(keyPairCallback), WTF::move(failureCallback));
 }
 
 void CryptoAlgorithmRSA_OAEP::importKey(const CryptoAlgorithmParameters& parameters, const CryptoKeyData& keyData, bool extractable, CryptoKeyUsage usage, KeyCallback callback, VoidCallback failureCallback, ExceptionCode&)

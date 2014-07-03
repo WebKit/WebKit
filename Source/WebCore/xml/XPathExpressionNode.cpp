@@ -49,7 +49,7 @@ Expression::Expression()
 void Expression::setSubexpressions(Vector<std::unique_ptr<Expression>> subexpressions)
 {
     ASSERT(m_subexpressions.isEmpty());
-    m_subexpressions = std::move(subexpressions);
+    m_subexpressions = WTF::move(subexpressions);
     for (unsigned i = 0; i < m_subexpressions.size(); ++i) {
         m_isContextNodeSensitive |= m_subexpressions[i]->m_isContextNodeSensitive;
         m_isContextPositionSensitive |= m_subexpressions[i]->m_isContextPositionSensitive;

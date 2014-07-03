@@ -146,7 +146,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> createAesCbcParams(ExecState* 
 
     memcpy(result->iv.data(), ivData.first, ivData.second);
 
-    return std::move(result);
+    return WTF::move(result);
 }
 
 static std::unique_ptr<CryptoAlgorithmParameters> createAesKeyGenParams(ExecState* exec, JSValue value)
@@ -164,7 +164,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> createAesKeyGenParams(ExecStat
 
     result->length = toUInt16(exec, lengthValue, EnforceRange);
 
-    return std::move(result);
+    return WTF::move(result);
 }
 
 static std::unique_ptr<CryptoAlgorithmParameters> createHmacParams(ExecState* exec, JSValue value)
@@ -182,7 +182,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> createHmacParams(ExecState* ex
         return nullptr;
     }
 
-    return std::move(result);
+    return WTF::move(result);
 }
 
 static std::unique_ptr<CryptoAlgorithmParameters> createHmacKeyParams(ExecState* exec, JSValue value)
@@ -204,7 +204,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> createHmacKeyParams(ExecState*
     if (exec->hadException())
         return nullptr;
 
-    return std::move(result);
+    return WTF::move(result);
 }
 
 static std::unique_ptr<CryptoAlgorithmParameters> createRsaKeyGenParams(ExecState* exec, JSValue value)
@@ -236,7 +236,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> createRsaKeyGenParams(ExecStat
     }
     result->publicExponent.append(publicExponentArray->data(), publicExponentArray->byteLength());
 
-    return std::move(result);
+    return WTF::move(result);
 }
 
 static std::unique_ptr<CryptoAlgorithmParameters> createRsaKeyParamsWithHash(ExecState*, JSValue)
@@ -266,7 +266,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> createRsaOaepParams(ExecState*
 
     result->hasLabel = !labelValue.isUndefinedOrNull();
     if (!result->hasLabel)
-        return std::move(result);
+        return WTF::move(result);
 
     CryptoOperationData labelData;
     if (!cryptoOperationDataFromJSValue(exec, labelValue, labelData)) {
@@ -276,7 +276,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> createRsaOaepParams(ExecState*
 
     result->label.append(labelData.first, labelData.second);
 
-    return std::move(result);
+    return WTF::move(result);
 }
 
 static std::unique_ptr<CryptoAlgorithmParameters> createRsaSsaParams(ExecState* exec, JSValue value)
@@ -294,7 +294,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> createRsaSsaParams(ExecState* 
         return nullptr;
     }
 
-    return std::move(result);
+    return WTF::move(result);
 }
 
 std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForEncrypt(ExecState* exec, CryptoAlgorithmIdentifier algorithm, JSValue value)

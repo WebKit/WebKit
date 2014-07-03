@@ -99,7 +99,7 @@ void SVGStopElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGStopElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSVGGradientStop>(*this, std::move(style));
+    return createRenderer<RenderSVGGradientStop>(*this, WTF::move(style));
 }
 
 bool SVGStopElement::rendererIsNeeded(const RenderStyle&)

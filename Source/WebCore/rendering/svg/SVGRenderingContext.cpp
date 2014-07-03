@@ -266,7 +266,7 @@ bool SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const A
     imageContext->translate(-paintRect.x(), -paintRect.y());
     imageContext->concatCTM(absoluteTransform);
 
-    imageBuffer = std::move(image);
+    imageBuffer = WTF::move(image);
     return true;
 }
 
@@ -289,7 +289,7 @@ bool SVGRenderingContext::createImageBufferForPattern(const FloatRect& absoluteT
     // Compensate rounding effects, as the absolute target rect is using floating-point numbers and the image buffer size is integer.
     imageContext->scale(FloatSize(unclampedImageSize.width() / absoluteTargetRect.width(), unclampedImageSize.height() / absoluteTargetRect.height()));
 
-    imageBuffer = std::move(image);
+    imageBuffer = WTF::move(image);
     return true;
 }
 

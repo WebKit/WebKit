@@ -63,7 +63,7 @@ WorkerGlobalScopeIndexedDatabase* WorkerGlobalScopeIndexedDatabase::from(ScriptE
 
         auto newSupplement = std::make_unique<WorkerGlobalScopeIndexedDatabase>(databaseDirectoryIdentifier);
         supplement = newSupplement.get();
-        provideTo(context, supplementName(), std::move(newSupplement));
+        provideTo(context, supplementName(), WTF::move(newSupplement));
     }
     return supplement;
 }

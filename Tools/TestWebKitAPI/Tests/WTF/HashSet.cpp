@@ -84,7 +84,7 @@ TEST(WTF_HashSet, MoveOnly)
 
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i + 1);
-        hashSet.add(std::move(moveOnly));
+        hashSet.add(WTF::move(moveOnly));
     }
 
     for (size_t i = 0; i < 100; ++i)

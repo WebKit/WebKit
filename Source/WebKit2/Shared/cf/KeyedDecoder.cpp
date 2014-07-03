@@ -36,7 +36,7 @@ KeyedDecoder::KeyedDecoder(const uint8_t* data, size_t size)
     auto cfData = adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, data, size, kCFAllocatorNull));
 
     if (auto rootDictionary = adoptCF(dynamic_cf_cast<CFDictionaryRef>(CFPropertyListCreateWithData(kCFAllocatorDefault, cfData.get(), kCFPropertyListImmutable, nullptr, nullptr))))
-        m_rootDictionary = std::move(rootDictionary);
+        m_rootDictionary = WTF::move(rootDictionary);
     else
         m_rootDictionary = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, nullptr, nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     m_dictionaryStack.append(m_rootDictionary.get());

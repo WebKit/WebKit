@@ -183,7 +183,7 @@ void SVGPatternElement::childrenChanged(const ChildChange& change)
 
 RenderPtr<RenderElement> SVGPatternElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSVGResourcePattern>(*this, std::move(style));
+    return createRenderer<RenderSVGResourcePattern>(*this, WTF::move(style));
 }
 
 static void setPatternAttributes(const SVGPatternElement& element, PatternAttributes& attributes)
