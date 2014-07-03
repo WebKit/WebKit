@@ -1,5 +1,20 @@
 2014-07-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r170676): [GTK] UI process crashes when the Web Process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=134541
+
+        Reviewed by Gyuyoung Kim.
+
+        It happens when attaching a new web process, because it tries to
+        encode a null SessionState.
+
+        * UIProcess/LegacySessionStateCodingNone.cpp:
+        (WebKit::encodeLegacySessionState): Return an empty API::Data
+        object instead of nullptr.
+        (WebKit::encodeLegacySessionHistoryEntryData): Ditto.
+
+2014-07-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r170743): [GTK] [EFL] Build broken.
         https://bugs.webkit.org/show_bug.cgi?id=134585
 

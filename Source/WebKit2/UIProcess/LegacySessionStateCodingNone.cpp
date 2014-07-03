@@ -35,13 +35,13 @@ namespace WebKit {
 RefPtr<API::Data> encodeLegacySessionState(const SessionState&)
 {
     notImplemented();
-    return nullptr;
+    return API::Data::create(nullptr, 0);
 }
 
 RefPtr<API::Data> encodeLegacySessionHistoryEntryData(const FrameState&)
 {
     notImplemented();
-    return nullptr;
+    return API::Data::create(nullptr, 0);
 }
 
 bool decodeLegacySessionState(const uint8_t* data, size_t, SessionState&)
