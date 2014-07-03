@@ -257,7 +257,9 @@ WebContext::~WebContext()
 
     m_iconDatabase->invalidate();
     m_iconDatabase->clearContext();
-    
+    WebIconDatabase* rawIconDatabase = m_iconDatabase.release().leakRef();
+    rawIconDatabase->derefWhenAppropriate();
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
     m_pluginSiteDataManager->invalidate();
     m_pluginSiteDataManager->clearContext();

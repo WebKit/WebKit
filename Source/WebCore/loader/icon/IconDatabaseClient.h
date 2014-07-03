@@ -42,6 +42,7 @@ public:
     virtual void didChangeIconForPageURL(const String&) = 0;
     virtual void didRemoveAllIcons() = 0;
     virtual void didFinishURLImport() = 0;
+    virtual void didClose() { }
 };
  
 } // namespace WebCore 

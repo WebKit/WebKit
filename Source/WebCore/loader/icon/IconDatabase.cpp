@@ -168,7 +168,11 @@ void IconDatabase::close()
     m_removeIconsRequested = false;
 
     m_syncDB.close();
-    ASSERT(!isOpen());
+
+    // If there are still main thread callbacks in flight then the database might not actually be closed yet.
+    // But if it is closed, notify the client now.
+    if (!isOpen() && m_client)
+        m_client->didClose();
 }
 
 void IconDatabase::removeAllIcons()
@@ -793,6 +797,7 @@ IconDatabase::IconDatabase()
     , m_syncThreadHasWorkToDo(false)
     , m_retainOrReleaseIconRequested(false)
     , m_initialPruningComplete(false)
+    , m_mainThreadCallbackCount(0)
     , m_client(defaultClient())
 {
     LOG(IconDatabase, "Creating IconDatabase %p", this);
@@ -864,8 +869,13 @@ void IconDatabase::syncTimerFired(Timer<IconDatabase>&)
 
 bool IconDatabase::isOpen() const
 {
+    return isOpenBesidesMainThreadCallbacks() || m_mainThreadCallbackCount;
+}
+
+bool IconDatabase::isOpenBesidesMainThreadCallbacks() const
+{
     MutexLocker locker(m_syncLock);
-    return m_syncDB.isOpen();
+    return m_syncThreadRunning || m_syncDB.isOpen();
 }
 
 String IconDatabase::databasePath() const
@@ -2066,44 +2076,72 @@ void IconDatabase::setWasExcludedFromBackup()
     SQLiteStatement(m_syncDB, "INSERT INTO IconDatabaseInfo (key, value) VALUES ('ExcludedFromBackup', 1)").executeCommand();
 }
 
+void IconDatabase::checkClosedAfterMainThreadCallback()
+{
+    ASSERT_NOT_SYNC_THREAD();
+
+    // If there are still callbacks in flight from the sync thread we cannot possibly be closed.
+    if (--m_mainThreadCallbackCount)
+        return;
+
+    // Even if there's no more pending callbacks the database might otherwise still be open.
+    if (isOpenBesidesMainThreadCallbacks())
+        return;
+
+    // This database is now actually closed! But first notify the client.
+    if (m_client)
+        m_client->didClose();
+}
+
 void IconDatabase::dispatchDidImportIconURLForPageURLOnMainThread(const String& pageURL)
 {
     ASSERT_ICON_SYNC_THREAD();
+    ++m_mainThreadCallbackCount;
 
     String pageURLCopy = pageURL.isolatedCopy();
     callOnMainThread([this, pageURLCopy] {
-        m_client->didImportIconURLForPageURL(pageURLCopy);
+        if (m_client)
+            m_client->didImportIconURLForPageURL(pageURLCopy);
+        checkClosedAfterMainThreadCallback();
     });
 }
 
 void IconDatabase::dispatchDidImportIconDataForPageURLOnMainThread(const String& pageURL)
 {
     ASSERT_ICON_SYNC_THREAD();
+    ++m_mainThreadCallbackCount;
 
     String pageURLCopy = pageURL.isolatedCopy();
     callOnMainThread([this, pageURLCopy] {
-        m_client->didImportIconDataForPageURL(pageURLCopy);
+        if (m_client)
+            m_client->didImportIconDataForPageURL(pageURLCopy);
+        checkClosedAfterMainThreadCallback();
     });
 }
 
 void IconDatabase::dispatchDidRemoveAllIconsOnMainThread()
 {
     ASSERT_ICON_SYNC_THREAD();
+    ++m_mainThreadCallbackCount;
 
     callOnMainThread([this] {
-        m_client->didRemoveAllIcons();
+        if (m_client)
+            m_client->didRemoveAllIcons();
+        checkClosedAfterMainThreadCallback();
     });
 }
 
 void IconDatabase::dispatchDidFinishURLImportOnMainThread()
 {
     ASSERT_ICON_SYNC_THREAD();
+    ++m_mainThreadCallbackCount;
 
     callOnMainThread([this] {
-        m_client->didFinishURLImport();
+        if (m_client)
+            m_client->didFinishURLImport();
+        checkClosedAfterMainThreadCallback();
     });
 }
-
 
 } // namespace WebCore
 

@@ -84,6 +84,11 @@ public:
 
     void setPrivateBrowsingEnabled(bool);
 
+    // Called when the WebContext is through with this WebIconDatabase but the
+    // WebCore::IconDatabase possibly isn't done shutting down.
+    // In that case this WebIconDatabase will deref() itself when the time is right.
+    void derefWhenAppropriate();
+
 private:
     explicit WebIconDatabase(WebContext&);
 
@@ -93,6 +98,7 @@ private:
     virtual void didChangeIconForPageURL(const String&) override;
     virtual void didRemoveAllIcons() override;
     virtual void didFinishURLImport() override;
+    virtual void didClose() override;
 
     // IPC::MessageReceiver
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
@@ -105,6 +111,7 @@ private:
     std::unique_ptr<WebCore::IconDatabase> m_iconDatabaseImpl;
     bool m_urlImportCompleted;
     bool m_databaseCleanupDisabled;
+    bool m_shouldDerefWhenAppropriate;
     HashMap<uint64_t, String> m_pendingLoadDecisionURLMap;
 
     WebIconDatabaseClient m_iconDatabaseClient;

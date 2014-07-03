@@ -203,6 +203,9 @@ private:
     bool wasExcludedFromBackup();
     void setWasExcludedFromBackup();
 
+    bool isOpenBesidesMainThreadCallbacks() const;
+    void checkClosedAfterMainThreadCallback();
+
     bool m_initialPruningComplete;
         
     void setIconURLForPageURLInSQLDatabase(const String&, const String&);
@@ -221,6 +224,7 @@ private:
     void dispatchDidImportIconDataForPageURLOnMainThread(const String&);
     void dispatchDidRemoveAllIconsOnMainThread();
     void dispatchDidFinishURLImportOnMainThread();
+    std::atomic<uint32_t> m_mainThreadCallbackCount;
     
     // The client is set by the main thread before the thread starts, and from then on is only used by the sync thread
     IconDatabaseClient* m_client;

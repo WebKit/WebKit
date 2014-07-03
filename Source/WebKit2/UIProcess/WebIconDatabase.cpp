@@ -52,6 +52,7 @@ WebIconDatabase::WebIconDatabase(WebContext& context)
     : m_webContext(&context)
     , m_urlImportCompleted(false)
     , m_databaseCleanupDisabled(false)
+    , m_shouldDerefWhenAppropriate(false)
 {
     m_webContext->addMessageReceiver(Messages::WebIconDatabase::messageReceiverName(), *this);
 }
@@ -282,6 +283,24 @@ void WebIconDatabase::didFinishURLImport()
     m_pendingLoadDecisionURLMap.clear();
 
     m_urlImportCompleted = true;
+}
+
+void WebIconDatabase::didClose()
+{
+    if (!m_shouldDerefWhenAppropriate)
+        return;
+
+    deref();
+}
+
+void WebIconDatabase::derefWhenAppropriate()
+{
+    if (m_iconDatabaseImpl && m_iconDatabaseImpl->isOpen()) {
+        m_shouldDerefWhenAppropriate = true;
+        return;
+    }
+
+    deref();
 }
 
 void WebIconDatabase::notifyIconDataReadyForPageURL(const String& pageURL)

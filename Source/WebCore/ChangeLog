@@ -1,3 +1,38 @@
+2014-07-03  Brady Eidson  <beidson@apple.com>
+
+        Possible crash in IconDatabase in WebCore::IconDatabase::dispatchDidRemoveAllIconsOnMainThread
+        <rdar://problem/17437687> and https://bugs.webkit.org/show_bug.cgi?id=134517
+
+        Reviewed by Eric Carlson.
+
+        Since WebCore::IconDatabase is not RefCounted there’s no obvious way to keep it alive until it is
+        truly no longer needed.
+
+        This isn’t generally a problem because they are usually a singleton that lasts the lifetime of the process.
+
+        In the WebKit2 case, WebCore::IconDatabases can come and go as their owning WebIconDatabases come and go.
+
+        So we can rely on WebIconDatabase to handle the lifetime appropriately. 
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::close): If the database is actually closed, notify the client.
+        (WebCore::IconDatabase::IconDatabase):
+        (WebCore::IconDatabase::isOpen): Take into account whether there’s any main thread callbacks, plus what
+          is covered by isOpenBesidesMainThreadCallbacks.
+        (WebCore::IconDatabase::isOpenBesidesMainThreadCallbacks): Take into account whether the sync thread
+          is still running and whether or not the database file is still open.
+        (WebCore::IconDatabase::checkClosedAfterMainThreadCallback): Checks to see if the database has just
+          become 100% closed and - if so - notify the client.
+        (WebCore::IconDatabase::dispatchDidImportIconURLForPageURLOnMainThread): Updated to increment the main thread
+          callback count and to call checkClosedAfterMainThreadCallback when done.
+        (WebCore::IconDatabase::dispatchDidImportIconDataForPageURLOnMainThread): Ditto.
+        (WebCore::IconDatabase::dispatchDidRemoveAllIconsOnMainThread): Ditto.
+        (WebCore::IconDatabase::dispatchDidFinishURLImportOnMainThread): Ditto.
+        * loader/icon/IconDatabase.h:
+
+        * loader/icon/IconDatabaseClient.h:
+        (WebCore::IconDatabaseClient::didClose): Added. For the IconDatabase to tell its client it is 100% closed.
+
 2014-07-03  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver does not read aria-expanded attribute on controls in Safari

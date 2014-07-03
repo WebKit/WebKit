@@ -1,3 +1,22 @@
+2014-07-03  Brady Eidson  <beidson@apple.com>
+
+        Possible crash in IconDatabase in WebCore::IconDatabase::dispatchDidRemoveAllIconsOnMainThread
+        <rdar://problem/17437687> and https://bugs.webkit.org/show_bug.cgi?id=134517
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::~WebContext): Instead of directly deref’ing the WebIconDatabase, ask it to
+          deref itself when appropriate.
+
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::WebIconDatabase):
+        (WebKit::WebIconDatabase::didClose): If this WebIconDatabase is supposed to deref itself when
+          appropriate, do so now.
+        (WebKit::WebIconDatabase::derefWhenAppropriate): If the WebCore::IconDatabase is still open then
+          defer this deref.
+        * UIProcess/WebIconDatabase.h:
+
 2014-07-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r170676): [GTK] UI process crashes when the Web Process crashes
