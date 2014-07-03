@@ -591,6 +591,8 @@ void PluginView::initializePlugin()
         }
     }
 
+    HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(m_pluginElement.get());
+    m_didPlugInStartOffScreen = !m_webPage->plugInIntersectsSearchRect(*plugInImageElement);
     m_plugin->initialize(this, m_parameters);
     
     // Plug-in initialization continued in didFailToInitializePlugin() or didInitializePlugin().
@@ -1712,9 +1714,6 @@ void PluginView::pluginSnapshotTimerFired()
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(m_pluginElement.get());
     bool isPlugInOnScreen = m_webPage->plugInIntersectsSearchRect(*plugInImageElement);
-    if (!m_countSnapshotRetries)
-        m_didPlugInStartOffScreen = !isPlugInOnScreen;
-
     bool plugInCameOnScreen = isPlugInOnScreen && m_didPlugInStartOffScreen;
     bool snapshotFound = false;
 #endif

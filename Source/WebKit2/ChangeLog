@@ -1,3 +1,19 @@
+2014-07-02  Roger Fong  <roger_fong@apple.com>
+
+        Improve handling of primary offscreen plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=134528.
+        <rdar://problem/17471864>
+
+        Reviewed by Dean Jackson.
+
+        * WebProcess/Plugins/PluginView.cpp: 
+        Determine whether or not the plugin starts offscreen when the plugin is initialized.
+        (WebKit::PluginView::initializePlugin):
+        (WebKit::PluginView::pluginSnapshotTimerFired):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        Use the PluginProcessTypeNormal for offscreen plugins that are potentially primary plugins.
+
 2014-07-02  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION(WK2): Undo does not work in text fields in Safari.
