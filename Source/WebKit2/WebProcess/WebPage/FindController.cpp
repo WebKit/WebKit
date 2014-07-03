@@ -457,9 +457,15 @@ void FindController::didMoveToWebPage(PageOverlay*, WebPage*)
 }
 
 #if ENABLE(LEGACY_FIND_INDICATOR_STYLE)
-static const float shadowOffsetX = 0.0;
-static const float shadowOffsetY = 1.0;
-static const float shadowBlurRadius = 2.0;
+const float shadowOffsetX = 0;
+const float shadowOffsetY = 1;
+const float shadowBlurRadius = 2;
+const float shadowColorAlpha = 1;
+#else
+const float shadowOffsetX = 0;
+const float shadowOffsetY = 0;
+const float shadowBlurRadius = 1;
+const float shadowColorAlpha = 0.5;
 #endif
 
 void FindController::drawRect(PageOverlay*, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
@@ -474,9 +480,7 @@ void FindController::drawRect(PageOverlay*, GraphicsContext& graphicsContext, co
     {
         GraphicsContextStateSaver stateSaver(graphicsContext);
 
-#if ENABLE(LEGACY_FIND_INDICATOR_STYLE)
-        graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, Color::black, ColorSpaceSRGB);
-#endif
+        graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, Color(0.0f, 0.0f, 0.0f, shadowColorAlpha), ColorSpaceSRGB);
         graphicsContext.setFillColor(Color::white, ColorSpaceSRGB);
 
         // Draw white frames around the holes.
