@@ -931,7 +931,6 @@
 		51ACBBA1127A8F2C00D203B9 /* WebContextMenuProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51ACBB9F127A8F2C00D203B9 /* WebContextMenuProxyMac.mm */; };
 		51B15A8413843A3900321AD8 /* EnvironmentUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B15A8213843A3900321AD8 /* EnvironmentUtilities.cpp */; };
 		51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */; };
-		51B3005112529D0E000B5CA0 /* WebPageProxyCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B3004F12529D0E000B5CA0 /* WebPageProxyCF.cpp */; };
 		51BA24441858EE3000EA2811 /* AsyncTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BA24431858EE3000EA2811 /* AsyncTask.h */; };
 		51BA24461858F55D00EA2811 /* WebCrossThreadCopier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51BA24451858F41500EA2811 /* WebCrossThreadCopier.cpp */; };
 		51C96118183D294700D2002E /* WebIDBServerConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C96116183D294700D2002E /* WebIDBServerConnectionMessageReceiver.cpp */; };
@@ -2943,7 +2942,6 @@
 		51ACC9351628064800342550 /* NetworkProcessMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkProcessMessages.h; sourceTree = "<group>"; };
 		51B15A8213843A3900321AD8 /* EnvironmentUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EnvironmentUtilities.cpp; path = unix/EnvironmentUtilities.cpp; sourceTree = "<group>"; };
 		51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EnvironmentUtilities.h; path = unix/EnvironmentUtilities.h; sourceTree = "<group>"; };
-		51B3004F12529D0E000B5CA0 /* WebPageProxyCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPageProxyCF.cpp; path = cf/WebPageProxyCF.cpp; sourceTree = "<group>"; };
 		51BA24431858EE3000EA2811 /* AsyncTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncTask.h; sourceTree = "<group>"; };
 		51BA24451858F41500EA2811 /* WebCrossThreadCopier.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCrossThreadCopier.cpp; sourceTree = "<group>"; };
 		51C96115183C95FF00D2002E /* WebIDBServerConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebIDBServerConnection.messages.in; sourceTree = "<group>"; };
@@ -5360,14 +5358,6 @@
 			name = unix;
 			sourceTree = "<group>";
 		};
-		51B3004D12529CF5000B5CA0 /* cf */ = {
-			isa = PBXGroup;
-			children = (
-				51B3004F12529D0E000B5CA0 /* WebPageProxyCF.cpp */,
-			);
-			name = cf;
-			sourceTree = "<group>";
-		};
 		51E351C2180F2C8500E53BE9 /* Databases */ = {
 			isa = PBXGroup;
 			children = (
@@ -5719,7 +5709,6 @@
 				2DA944A81884E9AB00ED86DB /* ios */,
 				BC032DC410F4387C0058C15A /* API */,
 				512F588D12A8836F00629530 /* Authentication */,
-				51B3004D12529CF5000B5CA0 /* cf */,
 				1ABC3DF21899E415004F0626 /* Cocoa */,
 				517DD5BB180DA7C40081660B /* Databases */,
 				1AB7D4C71288AA9A00CFD08C /* Downloads */,
@@ -9202,7 +9191,6 @@
 				37A5E01318BBF937000A081E /* _WKActivatedElementInfo.mm in Sources */,
 				BC111B0F112F5E4F00337BAB /* WebPageProxy.cpp in Sources */,
 				C58CDF2D1887609F00871536 /* InteractionInformationAtPosition.cpp in Sources */,
-				51B3005112529D0E000B5CA0 /* WebPageProxyCF.cpp in Sources */,
 				1F7506AD1859161C00EC0FF7 /* WKWebProcessPlugInFrame.mm in Sources */,
 				C5FA1ED418E1062200B3F402 /* WKAirPlayRoutePicker.mm in Sources */,
 				BC857E8712B71EBB00EDEB2E /* WebPageProxyMac.mm in Sources */,
