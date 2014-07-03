@@ -68,6 +68,7 @@ public:
 
     void setSelectionState(RenderText&, RenderObject::SelectionState);
     LayoutRect selectionRectForRange(unsigned start, unsigned end);
+    void collectSelectionRectsForRange(unsigned start, unsigned end, Vector<LayoutRect>& rects);
 
     IntRect boundingBox(const RenderText&) const;
     IntPoint firstRunLocation() const;

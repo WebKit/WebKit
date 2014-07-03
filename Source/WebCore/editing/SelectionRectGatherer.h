@@ -62,6 +62,7 @@ public:
 private:
     RenderView& m_renderView;
     Vector<LayoutRect> m_rects;
+    Vector<GapRects> m_gapRects;
 };
 
 } // namespace WebCore

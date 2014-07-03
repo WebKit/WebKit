@@ -44,6 +44,26 @@
 
 2014-07-03  Brady Eidson  <beidson@apple.com>
 
+        Selection rects sent to ServicesOverlayController are wrong.
+        <rdar://problem/16727796> and https://bugs.webkit.org/show_bug.cgi?id=134568
+
+        Reviewed by Darin Adler (and Tim Horton and Ryosuke Niwa).
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::selectionRectsDidChange): Also pass the GapRects to the ServicesOverlayController.
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+
+        * WebProcess/WebPage/ServicesOverlayController.h:
+        * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+        (WebKit::expandForGap):
+        (WebKit::compactRectsWithGapRects): Combine 3+ rects down to exactly 3 rects, then expand them based on GapRects.
+        (WebKit::ServicesOverlayController::selectionRectsDidChange): Call compactRectsWithGapRects, then reverse the list.
+        (WebKit::ServicesOverlayController::drawSelectionHighlight): Tell data detectors to flip this.
+        (WebKit::ServicesOverlayController::drawTelephoneNumberHighlight): Tell data detectors to flip this.
+        (WebKit::ServicesOverlayController::drawCurrentHighlight): No need to flip this anymore.
+
+2014-07-03  Brady Eidson  <beidson@apple.com>
+
         Possible crash in IconDatabase in WebCore::IconDatabase::dispatchDidRemoveAllIconsOnMainThread
         <rdar://problem/17437687> and https://bugs.webkit.org/show_bug.cgi?id=134517
 

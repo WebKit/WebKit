@@ -64,6 +64,7 @@ class TextCheckerClient;
 class VisibleSelection;
 class VisiblePosition;
 
+struct GapRects;
 struct GrammarDetail;
 
 class EditorClient {
@@ -181,7 +182,7 @@ public:
 
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
     virtual void selectedTelephoneNumberRangesChanged(const Vector<RefPtr<Range>>&) { }
-    virtual void selectionRectsDidChange(const Vector<LayoutRect>&) { }
+    virtual void selectionRectsDidChange(const Vector<LayoutRect>&, const Vector<GapRects>&) { }
 #endif
 
     // Support for global selections, used on platforms like the X Window System that treat

@@ -992,7 +992,8 @@ void RenderView::setSubtreeSelection(SelectionSubtreeRoot& root, RenderObject* s
             std::unique_ptr<RenderSelectionInfo> selectionInfo = std::make_unique<RenderSelectionInfo>(o, true);
 
 #if ENABLE(SERVICE_CONTROLS)
-            m_selectionRectGatherer.addRect(selectionInfo->rect());
+            for (auto& rect : selectionInfo->rects())
+                m_selectionRectGatherer.addRect(rect);
 #endif
 
             newSelectedObjects.set(o, std::move(selectionInfo));

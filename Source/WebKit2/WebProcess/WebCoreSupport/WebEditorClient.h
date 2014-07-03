@@ -169,7 +169,7 @@ private:
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) || ENABLE(SERVICE_CONTROLS)
     virtual void selectedTelephoneNumberRangesChanged(const Vector<RefPtr<WebCore::Range>>&) override;
-    virtual void selectionRectsDidChange(const Vector<WebCore::LayoutRect>&) override;
+    virtual void selectionRectsDidChange(const Vector<WebCore::LayoutRect>&, const Vector<WebCore::GapRects>&) override;
 #endif
 
     WebPage* m_page;

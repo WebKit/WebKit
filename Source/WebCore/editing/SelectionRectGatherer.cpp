@@ -48,12 +48,7 @@ void SelectionRectGatherer::addRect(const LayoutRect& rect)
 
 void SelectionRectGatherer::addRects(const GapRects& rects)
 {
-    if (!rects.left().isEmpty())
-        m_rects.append(rects.left());
-    if (!rects.right().isEmpty())
-        m_rects.append(rects.right());
-    if (!rects.center().isEmpty())
-        m_rects.append(rects.center());
+    m_gapRects.append(rects);
 }
 
 SelectionRectGatherer::Notifier::Notifier(SelectionRectGatherer& gatherer)
@@ -64,12 +59,13 @@ SelectionRectGatherer::Notifier::Notifier(SelectionRectGatherer& gatherer)
 SelectionRectGatherer::Notifier::~Notifier()
 {
     if (EditorClient* client = m_gatherer.m_renderView.view().frame().editor().client())
-        client->selectionRectsDidChange(m_gatherer.m_rects);
+        client->selectionRectsDidChange(m_gatherer.m_rects, m_gatherer.m_gapRects);
 }
 
 std::unique_ptr<SelectionRectGatherer::Notifier> SelectionRectGatherer::clearAndCreateNotifier()
 {
     m_rects.clear();
+    m_gapRects.clear();
 
     return std::make_unique<Notifier>(*this);
 }

@@ -27,6 +27,7 @@
 
 #include "IntRect.h"
 #include "RenderBox.h"
+#include "RenderText.h"
 
 namespace WebCore {
 
@@ -62,8 +63,14 @@ class RenderSelectionInfo : public RenderSelectionInfoBase {
 public:
     RenderSelectionInfo(RenderObject* o, bool clipToVisibleContent)
         : RenderSelectionInfoBase(o)
-        , m_rect(o->canUpdateSelectionOnRootLineBoxes() ? o->selectionRectForRepaint(m_repaintContainer, clipToVisibleContent) : LayoutRect())
     {
+        ASSERT(o);
+        if (o->canUpdateSelectionOnRootLineBoxes()) {
+            if (o->isText())
+                m_rect = toRenderText(*o).collectSelectionRectsForLineBoxes(m_repaintContainer, clipToVisibleContent, m_rects);
+            else
+                m_rect = o->selectionRectForRepaint(m_repaintContainer, clipToVisibleContent);
+        }
     }
     
     void repaint()
@@ -71,9 +78,11 @@ public:
         m_object->repaintUsingContainer(m_repaintContainer, enclosingIntRect(m_rect));
     }
 
+    const Vector<LayoutRect>& rects() const { return m_rects; }
     LayoutRect rect() const { return m_rect; }
 
 private:
+    Vector<LayoutRect> m_rects;
     LayoutRect m_rect; // relative to repaint container
 };
 

@@ -33,6 +33,7 @@
 #import <WebCore/Document.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/GapRects.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/SoftLinking.h>
@@ -49,10 +50,10 @@ typedef void* DDHighlightRef;
 
 typedef NSUInteger DDHighlightStyle;
 static const DDHighlightStyle DDHighlightNoOutlineWithArrow = (1 << 16);
+static const DDHighlightStyle DDHighlightOutlineWithArrow = (1 << 16) | 1;
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectors)
-SOFT_LINK(DataDetectors, DDHighlightCreateWithRectsInVisibleRect, DDHighlightRef, (CFAllocatorRef allocator, CGRect * rects, CFIndex count, CGRect globalVisibleRect, Boolean withArrow), (allocator, rects, count, globalVisibleRect, withArrow))
-SOFT_LINK(DataDetectors, DDHighlightCreateWithRectsInVisibleRectWithStyle, DDHighlightRef, (CFAllocatorRef allocator, CGRect * rects, CFIndex count, CGRect globalVisibleRect, DDHighlightStyle style, Boolean withArrow), (allocator, rects, count, globalVisibleRect, style, withArrow))
+SOFT_LINK(DataDetectors, DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection, DDHighlightRef, (CFAllocatorRef allocator, CGRect* rects, CFIndex count, CGRect globalVisibleRect, DDHighlightStyle style, Boolean withArrow, NSWritingDirection writingDirection, Boolean endsWithEOL, Boolean flipped), (allocator, rects, count, globalVisibleRect, style, withArrow, writingDirection, endsWithEOL, flipped))
 SOFT_LINK(DataDetectors, DDHighlightGetLayerWithContext, CGLayerRef, (DDHighlightRef highlight, CGContextRef context), (highlight, context))
 SOFT_LINK(DataDetectors, DDHighlightGetBoundingRect, CGRect, (DDHighlightRef highlight), (highlight))
 SOFT_LINK(DataDetectors, DDHighlightPointIsOnHighlight, Boolean, (DDHighlightRef highlight, CGPoint point, Boolean* onButton), (highlight, point, onButton))
@@ -128,11 +129,104 @@ void ServicesOverlayController::createOverlayIfNeeded()
     m_servicesOverlay->setNeedsDisplay();
 }
 
-void ServicesOverlayController::selectionRectsDidChange(const Vector<LayoutRect>& rects)
+static const uint8_t AlignmentNone = 0;
+static const uint8_t AlignmentLeft = 1 << 0;
+static const uint8_t AlignmentRight = 1 << 1;
+
+static void expandForGap(Vector<LayoutRect>& rects, uint8_t* alignments, const GapRects& gap)
+{
+    if (!gap.left().isEmpty()) {
+        LayoutUnit leftEdge = gap.left().x();
+        for (unsigned i = 0; i < 3; ++i) {
+            if (alignments[i] & AlignmentLeft)
+                rects[i].shiftXEdgeTo(leftEdge);
+        }
+    }
+
+    if (!gap.right().isEmpty()) {
+        LayoutUnit rightEdge = gap.right().maxX();
+        for (unsigned i = 0; i < 3; ++i) {
+            if (alignments[i] & AlignmentRight)
+                rects[i].shiftMaxXEdgeTo(rightEdge);
+        }
+    }
+}
+
+static void compactRectsWithGapRects(Vector<LayoutRect>& rects, const Vector<GapRects>& gapRects)
+{
+    if (rects.isEmpty())
+        return;
+
+    // All of the middle rects - everything but the first and last - can be unioned together.
+    if (rects.size() > 3) {
+        LayoutRect united;
+        for (unsigned i = 1; i < rects.size() - 1; ++i)
+            united.unite(rects[i]);
+
+        rects[1] = united;
+        rects[2] = rects.last();
+        rects.shrink(3);
+    }
+
+    // FIXME: The following alignments are correct for LTR text.
+    // We should also account for RTL.
+    uint8_t alignments[3];
+    if (rects.size() == 1) {
+        alignments[0] = AlignmentLeft | AlignmentRight;
+        alignments[1] = AlignmentNone;
+        alignments[2] = AlignmentNone;
+    } else if (rects.size() == 2) {
+        alignments[0] = AlignmentRight;
+        alignments[1] = AlignmentLeft;
+        alignments[2] = AlignmentNone;
+    } else {
+        alignments[0] = AlignmentRight;
+        alignments[1] = AlignmentLeft | AlignmentRight;
+        alignments[2] = AlignmentLeft;
+    }
+
+    // Account for each GapRects by extending the edge of certain LayoutRects to meet the gap.
+    for (auto& gap : gapRects)
+        expandForGap(rects, alignments, gap);
+
+    // If we have 3 rects we might need one final GapRects to align the edges.
+    if (rects.size() == 3) {
+        LayoutRect left;
+        LayoutRect right;
+        for (unsigned i = 0; i < 3; ++i) {
+            if (alignments[i] & AlignmentLeft) {
+                if (left.isEmpty())
+                    left = rects[i];
+                else if (rects[i].x() < left.x())
+                    left = rects[i];
+            }
+            if (alignments[i] & AlignmentRight) {
+                if (right.isEmpty())
+                    right = rects[i];
+                else if ((rects[i].x() + rects[i].width()) > (right.x() + right.width()))
+                    right = rects[i];
+            }
+        }
+
+        if (!left.isEmpty() || !right.isEmpty()) {
+            GapRects gap;
+            gap.uniteLeft(left);
+            gap.uniteRight(right);
+            expandForGap(rects, alignments, gap);
+        }
+    }
+}
+
+void ServicesOverlayController::selectionRectsDidChange(const Vector<LayoutRect>& rects, const Vector<GapRects>& gapRects)
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED > 1090
     m_currentHighlightIsDirty = true;
     m_currentSelectionRects = rects;
+
+    compactRectsWithGapRects(m_currentSelectionRects, gapRects);
+
+    // DataDetectors needs these reversed in order to place the arrow in the right location.
+    m_currentSelectionRects.reverse();
 
     createOverlayIfNeeded();
 #else
@@ -205,12 +299,13 @@ void ServicesOverlayController::drawSelectionHighlight(WebCore::GraphicsContext&
 
         if (!cgRects.isEmpty()) {
             CGRect bounds = m_webPage->corePage()->mainFrame().view()->boundsRect();
-            m_currentHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyle(nullptr, cgRects.begin(), cgRects.size(), bounds, DDHighlightNoOutlineWithArrow, true));
+            m_currentHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, cgRects.begin(), cgRects.size(), bounds, DDHighlightNoOutlineWithArrow, YES, NSWritingDirectionNatural, NO, YES));
             m_currentHighlightIsDirty = false;
         }
     }
 
-    drawCurrentHighlight(graphicsContext);
+    if (m_currentHighlight)
+        drawCurrentHighlight(graphicsContext);
 }
 
 void ServicesOverlayController::drawTelephoneNumberHighlight(WebCore::GraphicsContext& graphicsContext, const WebCore::IntRect& dirtyRect)
@@ -241,15 +336,18 @@ void ServicesOverlayController::drawTelephoneNumberHighlight(WebCore::GraphicsCo
     if (!m_currentHighlight || m_currentHighlightIsDirty) {
         CGRect cgRect = (CGRect)rect;
 
-        m_currentHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRect(nullptr, &cgRect, 1, viewForRange->boundsRect(), true));
+        m_currentHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &cgRect, 1, viewForRange->boundsRect(), DDHighlightOutlineWithArrow, YES, NSWritingDirectionNatural, NO, YES));
         m_currentHighlightIsDirty = false;
     }
 
-    drawCurrentHighlight(graphicsContext);
+    if (m_currentHighlight)
+        drawCurrentHighlight(graphicsContext);
 }
 
 void ServicesOverlayController::drawCurrentHighlight(WebCore::GraphicsContext& graphicsContext)
 {
+    ASSERT(m_currentHighlight);
+
     Boolean onButton;
     m_mouseIsOverHighlight = DDHighlightPointIsOnHighlight(m_currentHighlight.get(), (CGPoint)m_mousePosition, &onButton);
 
@@ -265,9 +363,7 @@ void ServicesOverlayController::drawCurrentHighlight(WebCore::GraphicsContext& g
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
     graphicsContext.translate(toFloatSize(highlightBoundingRect.origin));
-    graphicsContext.scale(FloatSize(1, -1));
-    graphicsContext.translate(FloatSize(0, -highlightBoundingRect.size.height));
-    
+
     CGRect highlightDrawRect = highlightBoundingRect;
     highlightDrawRect.origin.x = 0;
     highlightDrawRect.origin.y = 0;

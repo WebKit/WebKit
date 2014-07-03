@@ -19,6 +19,44 @@
 
 2014-07-03  Brady Eidson  <beidson@apple.com>
 
+        Selection rects sent to ServicesOverlayController are wrong.
+        <rdar://problem/16727796> and https://bugs.webkit.org/show_bug.cgi?id=134568
+
+        Reviewed by Darin Adler (and Tim Horton and Ryosuke Niwa).
+
+        * WebCore.exp.in:
+
+        Update the gatherer to keep GapRects separate from LayoutRects:
+        * editing/SelectionRectGatherer.cpp:
+        (WebCore::SelectionRectGatherer::addRects):
+        (WebCore::SelectionRectGatherer::Notifier::~Notifier):
+        (WebCore::SelectionRectGatherer::clearAndCreateNotifier):
+        * editing/SelectionRectGatherer.h:
+
+        * page/EditorClient.h:
+        (WebCore::EditorClient::selectionRectsDidChange): Updated to take LayoutRects and GapRects separately.
+
+        Change RenderSelectionInfo to also hang on to the individual rects that formed the final bounding rect:
+        * rendering/RenderSelectionInfo.h:
+        (WebCore::RenderSelectionInfo::RenderSelectionInfo): If the RenderObject is a RenderText, then call
+          collectSelectionRectsForLineBoxes instead of selectionRectForRepaint.
+        (WebCore::RenderSelectionInfo::rects):
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::collectSelectionRectsForLineBoxes): Added
+        (WebCore::RenderText::selectionRectForRepaint):
+        * rendering/RenderText.h:
+
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::RenderTextLineBoxes::collectSelectionRectsForRange): Added
+        * rendering/RenderTextLineBoxes.h:
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::setSubtreeSelection): Add the list of rects to the gatherer instead of just 
+          the bounding rect.
+
+2014-07-03  Brady Eidson  <beidson@apple.com>
+
         Possible crash in IconDatabase in WebCore::IconDatabase::dispatchDidRemoveAllIconsOnMainThread
         <rdar://problem/17437687> and https://bugs.webkit.org/show_bug.cgi?id=134517
 

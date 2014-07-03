@@ -34,6 +34,8 @@ typedef void* DDHighlightRef;
 namespace WebCore {
 class LayoutRect;
 class Range;
+
+struct GapRects;
 }
 
 namespace WebKit {
@@ -48,7 +50,7 @@ public:
     ~ServicesOverlayController();
 
     void selectedTelephoneNumberRangesChanged(const Vector<RefPtr<WebCore::Range>>&);
-    void selectionRectsDidChange(const Vector<WebCore::LayoutRect>&);
+    void selectionRectsDidChange(const Vector<WebCore::LayoutRect>&, const Vector<WebCore::GapRects>&);
 
 private:
     void createOverlayIfNeeded();

@@ -1237,7 +1237,7 @@ LayoutRect RenderText::clippedOverflowRectForRepaint(const RenderLayerModelObjec
     return rendererToRepaint->clippedOverflowRectForRepaint(repaintContainer);
 }
 
-LayoutRect RenderText::selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent)
+LayoutRect RenderText::collectSelectionRectsForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<LayoutRect>* rects)
 {
     ASSERT(!needsLayout());
     ASSERT(!simpleLineLayout());
@@ -1266,14 +1266,33 @@ LayoutRect RenderText::selectionRectForRepaint(const RenderLayerModelObject* rep
     if (startPos == endPos)
         return IntRect();
 
-    LayoutRect rect = m_lineBoxes.selectionRectForRange(startPos, endPos);
+    LayoutRect resultRect;
+    if (!rects)
+        resultRect = m_lineBoxes.selectionRectForRange(startPos, endPos);
+    else {
+        m_lineBoxes.collectSelectionRectsForRange(startPos, endPos, *rects);
+        for (auto& rect : *rects) {
+            resultRect.unite(rect);
+            rect = localToContainerQuad(FloatRect(rect), repaintContainer).enclosingBoundingBox();
+        }
+    }
 
     if (clipToVisibleContent)
-        computeRectForRepaint(repaintContainer, rect);
+        computeRectForRepaint(repaintContainer, resultRect);
     else
-        rect = localToContainerQuad(FloatRect(rect), repaintContainer).enclosingBoundingBox();
+        resultRect = localToContainerQuad(FloatRect(resultRect), repaintContainer).enclosingBoundingBox();
 
-    return rect;
+    return resultRect;
+}
+
+LayoutRect RenderText::collectSelectionRectsForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<LayoutRect>& rects)
+{
+    return collectSelectionRectsForLineBoxes(repaintContainer, clipToVisibleContent, &rects);
+}
+
+LayoutRect RenderText::selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent)
+{
+    return collectSelectionRectsForLineBoxes(repaintContainer, clipToVisibleContent, nullptr);
 }
 
 int RenderText::caretMinOffset() const

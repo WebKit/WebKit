@@ -495,6 +495,17 @@ LayoutRect RenderTextLineBoxes::selectionRectForRange(unsigned start, unsigned e
     return rect;
 }
 
+void RenderTextLineBoxes::collectSelectionRectsForRange(unsigned start, unsigned end, Vector<LayoutRect>& rects)
+{
+    for (auto box = m_first; box; box = box->nextTextBox()) {
+        LayoutRect rect;
+        rect.unite(box->localSelectionRect(start, end));
+        rect.unite(ellipsisRectForBox(*box, start, end));
+        if (!rect.size().isEmpty())
+            rects.append(rect);
+    }
+}
+
 Vector<IntRect> RenderTextLineBoxes::absoluteRects(const LayoutPoint& accumulatedOffset) const
 {
     Vector<IntRect> rects;
