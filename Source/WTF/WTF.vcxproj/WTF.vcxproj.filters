@@ -408,9 +408,6 @@
     <ClInclude Include="..\wtf\DecimalNumber.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\Decoder.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\Deque.h">
       <Filter>wtf</Filter>
     </ClInclude>
@@ -418,9 +415,6 @@
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\DoublyLinkedList.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\Encoder.h">
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\FastBitVector.h">

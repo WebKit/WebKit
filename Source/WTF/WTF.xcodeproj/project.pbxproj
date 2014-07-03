@@ -123,7 +123,6 @@
 		A8A473A1151A825B004123FF /* DateMath.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4727A151A825A004123FF /* DateMath.h */; };
 		A8A473A2151A825B004123FF /* DecimalNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A4727B151A825A004123FF /* DecimalNumber.cpp */; };
 		A8A473A3151A825B004123FF /* DecimalNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4727C151A825A004123FF /* DecimalNumber.h */; };
-		A8A473A4151A825B004123FF /* Decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4727D151A825A004123FF /* Decoder.h */; };
 		A8A473A5151A825B004123FF /* Deque.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4727E151A825A004123FF /* Deque.h */; };
 		A8A473A6151A825B004123FF /* DisallowCType.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4727F151A825A004123FF /* DisallowCType.h */; };
 		A8A473A7151A825B004123FF /* DoublyLinkedList.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47280151A825A004123FF /* DoublyLinkedList.h */; };
@@ -147,7 +146,6 @@
 		A8A473B9151A825B004123FF /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47296151A825A004123FF /* utils.h */; };
 		A8A473BA151A825B004123FF /* dtoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47297151A825A004123FF /* dtoa.cpp */; };
 		A8A473BB151A825B004123FF /* dtoa.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47298151A825A004123FF /* dtoa.h */; };
-		A8A473C0151A825B004123FF /* Encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4729E151A825A004123FF /* Encoder.h */; };
 		A8A473C1151A825B004123FF /* ExportMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4729F151A825A004123FF /* ExportMacros.h */; };
 		A8A473C3151A825B004123FF /* FastMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472A1151A825A004123FF /* FastMalloc.cpp */; };
 		A8A473C4151A825B004123FF /* FastMalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472A2151A825A004123FF /* FastMalloc.h */; };
@@ -412,7 +410,6 @@
 		A8A4727A151A825A004123FF /* DateMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateMath.h; sourceTree = "<group>"; };
 		A8A4727B151A825A004123FF /* DecimalNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DecimalNumber.cpp; sourceTree = "<group>"; };
 		A8A4727C151A825A004123FF /* DecimalNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DecimalNumber.h; sourceTree = "<group>"; };
-		A8A4727D151A825A004123FF /* Decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decoder.h; sourceTree = "<group>"; };
 		A8A4727E151A825A004123FF /* Deque.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Deque.h; sourceTree = "<group>"; };
 		A8A4727F151A825A004123FF /* DisallowCType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisallowCType.h; sourceTree = "<group>"; };
 		A8A47280151A825A004123FF /* DoublyLinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoublyLinkedList.h; sourceTree = "<group>"; };
@@ -439,7 +436,6 @@
 		A8A47296151A825A004123FF /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		A8A47297151A825A004123FF /* dtoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dtoa.cpp; sourceTree = "<group>"; };
 		A8A47298151A825A004123FF /* dtoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dtoa.h; sourceTree = "<group>"; };
-		A8A4729E151A825A004123FF /* Encoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encoder.h; sourceTree = "<group>"; };
 		A8A4729F151A825A004123FF /* ExportMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExportMacros.h; sourceTree = "<group>"; };
 		A8A472A1151A825A004123FF /* FastMalloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastMalloc.cpp; sourceTree = "<group>"; };
 		A8A472A2151A825A004123FF /* FastMalloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastMalloc.h; sourceTree = "<group>"; };
@@ -734,14 +730,12 @@
 				A8A4727A151A825A004123FF /* DateMath.h */,
 				A8A4727B151A825A004123FF /* DecimalNumber.cpp */,
 				A8A4727C151A825A004123FF /* DecimalNumber.h */,
-				A8A4727D151A825A004123FF /* Decoder.h */,
 				0F2B66A417B6B4F700A7AE3F /* DeferrableRefCounted.h */,
 				A8A4727E151A825A004123FF /* Deque.h */,
 				A8A4727F151A825A004123FF /* DisallowCType.h */,
 				A8A47280151A825A004123FF /* DoublyLinkedList.h */,
 				A8A47297151A825A004123FF /* dtoa.cpp */,
 				A8A47298151A825A004123FF /* dtoa.h */,
-				A8A4729E151A825A004123FF /* Encoder.h */,
 				A8A4729F151A825A004123FF /* ExportMacros.h */,
 				0F885E0E1845AE9F00F1E3FA /* FastBitVector.cpp */,
 				0FD81AC4154FB22E00983E72 /* FastBitVector.h */,
@@ -1048,7 +1042,6 @@
 				A8A4739F151A825B004123FF /* DataLog.h in Headers */,
 				A8A473A1151A825B004123FF /* DateMath.h in Headers */,
 				A8A473A3151A825B004123FF /* DecimalNumber.h in Headers */,
-				A8A473A4151A825B004123FF /* Decoder.h in Headers */,
 				0F2B66A617B6B4FB00A7AE3F /* DeferrableRefCounted.h in Headers */,
 				A8A473A5151A825B004123FF /* Deque.h in Headers */,
 				A8A473A6151A825B004123FF /* DisallowCType.h in Headers */,
@@ -1057,7 +1050,6 @@
 				A8A473B2151A825B004123FF /* double.h in Headers */,
 				A8A473A7151A825B004123FF /* DoublyLinkedList.h in Headers */,
 				A8A473BB151A825B004123FF /* dtoa.h in Headers */,
-				A8A473C0151A825B004123FF /* Encoder.h in Headers */,
 				A8A473C1151A825B004123FF /* ExportMacros.h in Headers */,
 				A8A473B4151A825B004123FF /* fast-dtoa.h in Headers */,
 				0FD81AC5154FB22E00983E72 /* FastBitVector.h in Headers */,

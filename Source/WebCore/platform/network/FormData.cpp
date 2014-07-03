@@ -35,8 +35,6 @@
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "TextEncoding.h"
-#include <wtf/Decoder.h>
-#include <wtf/Encoder.h>
 
 namespace WebCore {
 

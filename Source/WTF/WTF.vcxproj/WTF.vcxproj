@@ -177,7 +177,6 @@
     <ClInclude Include="..\wtf\DataLog.h" />
     <ClInclude Include="..\wtf\DateMath.h" />
     <ClInclude Include="..\wtf\DecimalNumber.h" />
-    <ClInclude Include="..\wtf\Decoder.h" />
     <ClInclude Include="..\wtf\DeferrableRefCounted.h" />
     <ClInclude Include="..\wtf\Deque.h" />
     <ClInclude Include="..\wtf\DisallowCType.h" />
@@ -193,7 +192,6 @@
     <ClInclude Include="..\wtf\dtoa\fixed-dtoa.h" />
     <ClInclude Include="..\wtf\dtoa\strtod.h" />
     <ClInclude Include="..\wtf\dtoa\utils.h" />
-    <ClInclude Include="..\wtf\Encoder.h" />
     <ClInclude Include="..\wtf\FastBitVector.h" />
     <ClInclude Include="..\wtf\FastMalloc.h" />
     <ClInclude Include="..\wtf\FeatureDefines.h" />

@@ -37,8 +37,6 @@
 #include <stdio.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/DateMath.h>
-#include <wtf/Decoder.h>
-#include <wtf/Encoder.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
