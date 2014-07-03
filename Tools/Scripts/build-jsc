@@ -43,8 +43,12 @@ my $ftlJIT = isAppleWebKit();
 my $forceCLoop = 0;
 my $cli = 0;
 my $makeArgs = "";
+my $cmakeArgs = "";
 my $copyLibraries = 1;
 my $startTime = time();
+
+# Additional environment parameters
+push @ARGV, split(/ /, $ENV{'BUILD_JSC_ARGS'}) if ($ENV{'BUILD_JSC_ARGS'});
 
 my $programName = basename($0);
 my $usage = <<EOF;
@@ -56,6 +60,7 @@ Usage: $programName [options] [options to pass to build system]
   --cloop                       Use C Loop interpreter (default: $forceCLoop)
   --cli                         Build the new jsc command line interface (default: $cli)
   --makeargs=<arguments>        Optional Makefile flags
+  --cmakeargs=<arguments>       Optional CMake flags (e.g. --cmakeargs="-DFOO=bar -DCMAKE_PREFIX_PATH=/usr/local")
 EOF
 
 GetOptions(
@@ -65,7 +70,8 @@ GetOptions(
     'cloop!' => \$forceCLoop,
     'cli!' => \$cli,
     'copy-libraries!' => \$copyLibraries,
-    'makeargs=s' => \$makeArgs
+    'makeargs=s' => \$makeArgs,
+    'cmakeargs=s' => \$cmakeArgs
 );
 
 if ($showHelp) {
@@ -80,7 +86,6 @@ my @options = XcodeOptions();
 my @coverageSupportOptions = ($coverageSupport) ? XcodeCoverageSupportOptions() : ();
 
 if (cmakeBasedPortName()) {
-    my $cmakeArgs = "";
     $cmakeArgs .= " -DENABLE_LLINT_C_LOOP=ON" if $forceCLoop;
     $cmakeArgs .= " -DENABLE_FTL_JIT=ON" if $ftlJIT;
     # By default we build using all of the available CPUs
