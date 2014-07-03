@@ -1,3 +1,22 @@
+2014-07-02  Anders Carlsson  <andersca@apple.com>
+
+        Stop using EncoderAdapter/DecoderAdapter for FormData
+        https://bugs.webkit.org/show_bug.cgi?id=134571
+
+        Reviewed by Andreas Kling.
+
+        * WebCore.exp.in:
+        * platform/network/FormData.cpp:
+        (WebCore::encodeElement): Deleted.
+        (WebCore::decodeElement): Deleted.
+        (WebCore::FormData::encode): Deleted.
+        (WebCore::FormData::decode): Deleted.
+        * platform/network/FormData.h:
+        (WebCore::FormDataElement::encode):
+        (WebCore::FormDataElement::decode):
+        (WebCore::FormData::encode):
+        (WebCore::FormData::decode):
+
 2014-07-03  Brady Eidson  <beidson@apple.com>
 
         Possible crash in IconDatabase in WebCore::IconDatabase::dispatchDidRemoveAllIconsOnMainThread

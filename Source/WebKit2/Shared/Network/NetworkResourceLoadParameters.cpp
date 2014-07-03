@@ -28,8 +28,6 @@
 
 #include "ArgumentCoders.h"
 #include "DataReference.h"
-#include "DecoderAdapter.h"
-#include "EncoderAdapter.h"
 #include "WebCoreArgumentCoders.h"
 
 #if ENABLE(NETWORK_PROCESS)
@@ -37,6 +35,7 @@
 using namespace WebCore;
 
 namespace WebKit {
+
 NetworkResourceLoadParameters::NetworkResourceLoadParameters()
     : identifier(0)
     , webPageID(0)
@@ -62,9 +61,7 @@ void NetworkResourceLoadParameters::encode(IPC::ArgumentEncoder& encoder) const
 
     encoder << static_cast<bool>(request.httpBody());
     if (request.httpBody()) {
-        EncoderAdapter httpBodyEncoderAdapter;
-        request.httpBody()->encode(httpBodyEncoderAdapter);
-        encoder << httpBodyEncoderAdapter.dataReference();
+        request.httpBody()->encode(encoder);
 
         const Vector<FormDataElement>& elements = request.httpBody()->elements();
         size_t fileCount = 0;
@@ -123,11 +120,10 @@ bool NetworkResourceLoadParameters::decode(IPC::ArgumentDecoder& decoder, Networ
         return false;
 
     if (hasHTTPBody) {
-        IPC::DataReference formData;
-        if (!decoder.decode(formData))
+        RefPtr<FormData> formData = FormData::decode(decoder);
+        if (!formData)
             return false;
-        DecoderAdapter httpBodyDecoderAdapter(formData.data(), formData.size());
-        result.request.setHTTPBody(FormData::decode(httpBodyDecoderAdapter));
+        result.request.setHTTPBody(formData.release());
 
         if (!decoder.decode(result.requestBodySandboxExtensions))
             return false;
