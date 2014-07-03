@@ -17,7 +17,6 @@ LOAD_BUILDBOT_DATA([
                     "Apple MountainLion Release WK2 (Tests)", 
                     "Apple Win 7 Debug (Tests)", 
                     "Apple Win 7 Release (Tests)", 
-                    "EFL Linux 64-bit Release WK1", 
                     "EFL Linux 64-bit Release WK2", 
                     "GTK Linux 64-bit Debug (Tests)", 
                     "GTK Linux 64-bit Release (Tests)"

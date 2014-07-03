@@ -1,3 +1,21 @@
+2014-07-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Clean up unused EFL buildbot information in BuildSlaveSupport and TestResultServer
+        https://bugs.webkit.org/show_bug.cgi?id=134581
+
+        Reviewed by Tim Horton.
+
+        Should be removed unused EFL bot info.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWS.js:
+        (EWS):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+        * TestResultServer/static-dashboards/builders.jsonp:
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (test):
+
 2014-07-02  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed.  Moved self to reviewers list.

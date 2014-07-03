@@ -177,7 +177,7 @@ test('realModifiers', 3, function() {
 test('allTestsWithSamePlatformAndBuildType', 1, function() {
     // FIXME: test that allTestsWithSamePlatformAndBuildType actually returns the right set of tests.
     var expectedPlatformsList = ['APPLE_MAC_LION_WK1', 'APPLE_MAC_LION_WK2', 'APPLE_MAC_MOUNTAINLION_WK1', 'APPLE_MAC_MOUNTAINLION_WK2',
-                                 'APPLE_WIN_XP', 'APPLE_WIN_WIN7',  'GTK_LINUX_WK1', 'GTK_LINUX_WK2', 'EFL_LINUX_WK1', 'EFL_LINUX_WK2'];
+                                 'APPLE_WIN_XP', 'APPLE_WIN_WIN7',  'GTK_LINUX_WK1', 'GTK_LINUX_WK2', 'EFL_LINUX_WK2'];
     var actualPlatformsList = Object.keys(g_allTestsByPlatformAndBuildType);
     deepEqual(expectedPlatformsList, actualPlatformsList);
 });

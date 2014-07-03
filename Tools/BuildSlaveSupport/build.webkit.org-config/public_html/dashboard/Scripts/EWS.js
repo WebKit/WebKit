@@ -30,7 +30,6 @@ EWS = function()
         "mac-wk2": {platform: Dashboard.Platform.MacOSXMountainLion, title: "WebKit2 Release Tests"},
         "win": {platform: Dashboard.Platform.Windows7, title: "WebKit1 Release Build"},
         "gtk-wk2": {platform: Dashboard.Platform.LinuxGTK, title: "WebKit2 Release Build"},
-        "efl": {platform: Dashboard.Platform.LinuxEFL, title: "WebKit1 Release Build"},
         "efl-wk2": {platform: Dashboard.Platform.LinuxEFL, title: "WebKit2 Release Build"}
     };
 

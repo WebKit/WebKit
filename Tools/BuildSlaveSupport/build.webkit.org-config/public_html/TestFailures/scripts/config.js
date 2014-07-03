@@ -110,9 +110,7 @@ config.kPlatforms = {
         layoutTestResultsURL: 'http://build.webkit.org/results',
         waterfallURL: 'http://build.webkit.org/waterfall',
         builders: {
-            'EFL Linux 64-bit Debug WK2' : {version : '64-bit WK2', debug: true},
             'EFL Linux 64-bit Release WK2' : {version: '64-bit WK2'},
-            'EFL Linux 64-bit Release' : {version: '64-bit'},
         },
         haveBuilderAccumulatedResults : false,
         useDirectoryListingForOldBuilds: false,
