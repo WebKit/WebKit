@@ -109,7 +109,7 @@ static uint64_t generateListenerID()
 PassRefPtr<WebFrame> WebFrame::createWithCoreMainFrame(WebPage* page, WebCore::Frame* coreFrame)
 {
     RefPtr<WebFrame> frame = create(std::unique_ptr<WebFrameLoaderClient>(static_cast<WebFrameLoaderClient*>(&coreFrame->loader().client())));
-    page->send(Messages::WebPageProxy::DidCreateMainFrame(frame->frameID()));
+    page->send(Messages::WebPageProxy::DidCreateMainFrame(frame->frameID()), page->pageID(), IPC::DispatchMessageEvenWhenWaitingForSyncReply);
 
     frame->m_coreFrame = coreFrame;
     frame->m_coreFrame->tree().setName(String());
@@ -120,7 +120,7 @@ PassRefPtr<WebFrame> WebFrame::createWithCoreMainFrame(WebPage* page, WebCore::F
 PassRefPtr<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frameName, HTMLFrameOwnerElement* ownerElement)
 {
     RefPtr<WebFrame> frame = create(std::make_unique<WebFrameLoaderClient>());
-    page->send(Messages::WebPageProxy::DidCreateSubframe(frame->frameID()));
+    page->send(Messages::WebPageProxy::DidCreateSubframe(frame->frameID()), page->pageID(), IPC::DispatchMessageEvenWhenWaitingForSyncReply);
 
     RefPtr<Frame> coreFrame = Frame::create(page->corePage(), ownerElement, frame->m_frameLoaderClient.get());
     frame->m_coreFrame = coreFrame.get();

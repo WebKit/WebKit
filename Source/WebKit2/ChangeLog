@@ -1,3 +1,21 @@
+2014-07-03  Antti Koivisto  <antti@apple.com>
+
+        Ensure frame creation messages get through to UI process
+        https://bugs.webkit.org/show_bug.cgi?id=134591
+        <rdar://problem/16918218>
+
+        Reviewed by Anders Carlsson.
+
+        If we are middle of handling a synchronous message from UI process a frame creation message back gets delayed.
+        The subsequent synchronous DecidePolicyForNavigationAction message expects that the frame creation
+        message has arrived first and fails.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createWithCoreMainFrame):
+        (WebKit::WebFrame::createSubframe):
+        
+            Send messages with DispatchMessageEvenWhenWaitingForSyncReply so they always go through in order.
+
 2014-07-03  Anders Carlsson  <andersca@apple.com>
 
         Get rid of DecoderAdapter and EncoderAdapter
