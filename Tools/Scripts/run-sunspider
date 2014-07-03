@@ -47,12 +47,14 @@ my $setBaseline = 0;
 my $showHelp = 0;
 my $testsPattern;
 my $noBuild = 0;
+my $jsShellArgs="";
 
 my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
   --help            Show this help message
   --set-baseline    Set baseline for future comparisons
+  --args            Arguments to pass to JavaScript shell
   --root            Path to root tools build
   --runs            Number of times to run tests (default: $testRuns)
   --tests           Only run tests matching provided pattern
@@ -67,6 +69,7 @@ EOF
 GetOptions('root=s' => sub { my ($x, $value) = @_; $root = $value; setConfigurationProductDir(Cwd::abs_path($root)); },
            'runs=i' => \$testRuns,
            'set-baseline' => \$setBaseline,
+           'args=s' => \$jsShellArgs,
            'instruments' => \$runInstruments,
            'suite=s' => \$suite,
            'ubench' => \$ubench,
@@ -122,5 +125,6 @@ push @args, "--ubench" if $ubench;
 push @args, "--v8-suite" if $v8suite;
 push @args, "--parse-only" if $parseonly;
 push @args, "--tests", $testsPattern if $testsPattern;
+push @args, "--args", $jsShellArgs if $jsShellArgs;
 
 exec currentPerlPath(), "./sunspider", @args;
