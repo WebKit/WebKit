@@ -28,21 +28,22 @@
 
 #if PLATFORM(IOS)
 
-#import "WebPageGroup.h"
 #import "ViewGestureControllerMessages.h"
 #import "ViewGestureGeometryCollectorMessages.h"
 #import "ViewSnapshotStore.h"
 #import "WebBackForwardList.h"
+#import "WebPageGroup.h"
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
-#import <WebCore/IOSurface.h>
 #import <QuartzCore/QuartzCorePrivate.h>
 #import <UIKit/UIScreenEdgePanGestureRecognizer.h>
 #import <UIKit/UIViewControllerTransitioning_Private.h>
 #import <UIKit/UIWebTouchEventsGestureRecognizer.h>
 #import <UIKit/_UINavigationInteractiveTransition.h>
 #import <UIKit/_UINavigationParallaxTransition.h>
+#import <WebCore/IOSurface.h>
+#import <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
@@ -63,6 +64,13 @@ using namespace WebCore;
 
 static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 static const std::chrono::seconds swipeSnapshotRemovalWatchdogDuration = 3_s;
+
+// The key in this map is the associated page ID.
+static HashMap<uint64_t, WebKit::ViewGestureController*>& viewGestureControllersForAllPages()
+{
+    static NeverDestroyed<HashMap<uint64_t, WebKit::ViewGestureController*>> viewGestureControllers;
+    return viewGestureControllers.get();
+}
 
 - (instancetype)initWithViewGestureController:(WebKit::ViewGestureController*)gestureController gestureRecognizerView:(UIView *)gestureRecognizerView
 {
@@ -130,10 +138,12 @@ ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     , m_snapshotRemovalTargetRenderTreeSize(0)
     , m_shouldRemoveSnapshotWhenTargetRenderTreeSizeHit(false)
 {
+    viewGestureControllersForAllPages().add(webPageProxy.pageID(), this);
 }
 
 ViewGestureController::~ViewGestureController()
 {
+    viewGestureControllersForAllPages().remove(m_webPageProxy.pageID());
 }
 
 void ViewGestureController::installSwipeHandler(UIView *gestureRecognizerView, UIView *swipingView)
@@ -238,7 +248,6 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     m_snapshotRemovalTargetRenderTreeSize = 0;
     if (ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot))
         m_snapshotRemovalTargetRenderTreeSize = snapshot.renderTreeSize * swipeSnapshotRemovalRenderTreeSizeTargetFraction;
-    m_snapshotRemovalTargetTransactionID = m_webPageProxy.drawingArea()->lastVisibleTransactionID() + 1;
 
     // We don't want to replace the current back-forward item's snapshot
     // like we normally would when going back or forward, because we are
@@ -247,11 +256,29 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     m_webPageProxy.goToBackForwardItem(targetItem);
     ViewSnapshotStore::shared().enableSnapshotting();
 
+    uint64_t pageID = m_webPageProxy.pageID();
+    m_webPageProxy.drawingArea()->dispatchAfterEnsuringDrawing([pageID] (CallbackBase::Error error) {
+        auto gestureControllerIter = viewGestureControllersForAllPages().find(pageID);
+        if (gestureControllerIter != viewGestureControllersForAllPages().end())
+            gestureControllerIter->value->willCommitPostSwipeTransitionLayerTree(error == CallbackBase::Error::None);
+    });
+
     m_swipeWatchdogTimer.startOneShot(swipeSnapshotRemovalWatchdogDuration.count());
+}
+
+void ViewGestureController::willCommitPostSwipeTransitionLayerTree(bool successful)
+{
+    if (m_activeGestureType != ViewGestureType::Swipe)
+        return;
+
+    if (!successful) {
+        removeSwipeSnapshot();
+        return;
+    }
 
     m_shouldRemoveSnapshotWhenTargetRenderTreeSizeHit = true;
 }
-    
+
 void ViewGestureController::setRenderTreeSize(uint64_t renderTreeSize)
 {
     if (m_activeGestureType != ViewGestureType::Swipe)
@@ -260,10 +287,7 @@ void ViewGestureController::setRenderTreeSize(uint64_t renderTreeSize)
     if (!m_shouldRemoveSnapshotWhenTargetRenderTreeSizeHit)
         return;
 
-    // Don't remove the swipe snapshot until we get a drawing area transaction more recent than the navigation,
-    // and we hit the render tree size threshold. This avoids potentially removing the snapshot early,
-    // when receiving commits from the previous (pre-navigation) page.
-    if ((!m_snapshotRemovalTargetRenderTreeSize || renderTreeSize > m_snapshotRemovalTargetRenderTreeSize) && m_webPageProxy.drawingArea()->lastVisibleTransactionID() >= m_snapshotRemovalTargetTransactionID)
+    if (!m_snapshotRemovalTargetRenderTreeSize || renderTreeSize > m_snapshotRemovalTargetRenderTreeSize)
         removeSwipeSnapshot();
 }
 

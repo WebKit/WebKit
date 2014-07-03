@@ -209,6 +209,10 @@ public:
 
     uint64_t transactionID() const { return m_transactionID; }
     void setTransactionID(uint64_t transactionID) { m_transactionID = transactionID; }
+
+    typedef uint64_t TransactionCallbackID;
+    const Vector<TransactionCallbackID>& callbackIDs() const { return m_callbackIDs; }
+    void setCallbackIDs(Vector<TransactionCallbackID> callbackIDs) { m_callbackIDs = std::move(callbackIDs); }
     
 private:
     WebCore::GraphicsLayer::PlatformLayerID m_rootLayerID;
@@ -219,6 +223,8 @@ private:
     Vector<WebCore::GraphicsLayer::PlatformLayerID> m_destroyedLayerIDs;
     Vector<WebCore::GraphicsLayer::PlatformLayerID> m_videoLayerIDsPendingFullscreen;
     Vector<WebCore::GraphicsLayer::PlatformLayerID> m_layerIDsWithNewlyUnreachableBackingStore;
+
+    Vector<TransactionCallbackID> m_callbackIDs;
 
     WebCore::IntSize m_contentsSize;
     WebCore::Color m_pageExtendedBackgroundColor;

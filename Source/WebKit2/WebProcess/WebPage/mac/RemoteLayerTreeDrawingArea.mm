@@ -318,6 +318,7 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     // FIXME: Minimize these transactions if nothing changed.
     RemoteLayerTreeTransaction layerTransaction;
     layerTransaction.setTransactionID(takeNextTransactionID());
+    layerTransaction.setCallbackIDs(std::move(m_pendingCallbackIDs));
     m_remoteLayerTreeContext->buildTransaction(layerTransaction, *toGraphicsLayerCARemote(m_rootLayer.get())->platformCALayer());
     backingStoreCollection.willCommitLayerTree(layerTransaction);
     m_webPage.willCommitLayerTree(layerTransaction);
@@ -426,6 +427,12 @@ void RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush()
 void RemoteLayerTreeDrawingArea::viewStateDidChange(ViewState::Flags, bool wantsDidUpdateViewState)
 {
     // FIXME: Should we suspend painting while not visible, like TiledCoreAnimationDrawingArea? Probably.
+}
+
+void RemoteLayerTreeDrawingArea::addTransactionCallbackID(uint64_t callbackID)
+{
+    m_pendingCallbackIDs.append(static_cast<RemoteLayerTreeTransaction::TransactionCallbackID>(callbackID));
+    scheduleCompositingLayerFlush();
 }
 
 } // namespace WebKit

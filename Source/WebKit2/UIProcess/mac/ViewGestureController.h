@@ -107,6 +107,7 @@ public:
     bool canSwipeInDirection(SwipeDirection);
     void beginSwipeGesture(_UINavigationInteractiveTransitionBase *, SwipeDirection);
     void endSwipeGesture(WebBackForwardListItem* targetItem, _UIViewControllerTransitionContext *, bool cancelled);
+    void willCommitPostSwipeTransitionLayerTree(bool);
     void setRenderTreeSize(uint64_t);
 #endif
 
@@ -184,7 +185,6 @@ private:
     RetainPtr<UIView> m_transitionContainerView;
     RetainPtr<WKSwipeTransitionController> m_swipeInteractiveTransitionDelegate;
     uint64_t m_snapshotRemovalTargetRenderTreeSize;
-    uint64_t m_snapshotRemovalTargetTransactionID;
     bool m_shouldRemoveSnapshotWhenTargetRenderTreeSizeHit;
 #endif
 };

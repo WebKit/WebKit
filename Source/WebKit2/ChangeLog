@@ -1,3 +1,70 @@
+2014-07-03  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS][WK2] Sometimes the swipe snapshot stays up too long
+        https://bugs.webkit.org/show_bug.cgi?id=134506
+        <rdar://problem/17496803>
+
+        Reviewed by Simon Fraser.
+
+        Implement a transaction callback mechanism.
+        The UI process can register a callback at any point, generally immediately after sending a message to the Web process.
+        It will then send another message (in-order) with the callback ID to the Web process, which will put it into the next transaction
+        (scheduling a new one if needed). When the transaction comes back to the UI process, the callbacks are performed.
+        This ensures that the callback fires alongside a commit that includes the results of whatever messages were sent before it was registered.
+        For now, all callbacks are fired just before committing layer changes, but it's possible future patches will want post-commit callbacks.
+        
+        Make use of this to remove the ViewGestureControllerIOS snapshots at the right time.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::callbackIDs):
+        (WebKit::RemoteLayerTreeTransaction::setCallbackIDs):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        Add a vector of callback IDs to the transaction; encode and decode as appropriate.
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::dispatchAfterEnsuringDrawing):
+        (WebKit::DrawingAreaProxy::lastVisibleTransactionID): Deleted.
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing):
+        Add dispatchAfterEnsuringDrawing, which takes a function.
+        When a callback is added, we send the callback ID to the Web process via the AddTransactionCallbackID message.
+        Perform callbacks listed in the incoming transaction's vector of callback IDs.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::addTransactionCallbackID):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        (WebKit::RemoteLayerTreeDrawingArea::addTransactionCallbackID):
+        Keep track of the pending callback IDs on the drawing area, and move them into the transaction.
+        We schedule a flush when installing a transaction callback on the premise that
+        sometimes the action (goToBackForwardListItem in the swipe case) might have already occurred
+        and been committed by the time the Web process receives AddTransactionCallbackID, so we need
+        to cause another commit to send the callbacks across. If said commit is still pending, this is a no-op.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (allViewGestureControllers):
+        (WebKit::ViewGestureController::ViewGestureController):
+        (WebKit::ViewGestureController::~ViewGestureController):
+        (WebKit::ViewGestureController::endSwipeGesture):
+        (WebKit::ViewGestureController::willCommitPostSwipeTransitionLayerTree):
+        (WebKit::ViewGestureController::setRenderTreeSize):
+        * UIProcess/mac/ViewGestureController.h:
+        Keep a side-map of page IDs to ViewGestureControllers, so that we can safely get back to
+        our ViewGestureController from the callback.
+
+        When the callback fires, if it succeeded, set m_shouldRemoveSnapshotWhenTargetRenderTreeSizeHit,
+        so that the commit (which is about to occur immediately after the callback returns) which calls
+        setRenderTreeSize will (perhaps) remove the snapshot.
+
+        If it failed, we remove the snapshot immediately, as this usually happens if the Web process crashed.
+
 2014-07-03  Brady Eidson  <beidson@apple.com>
 
         Followup to "rects sent to ServicesOverlayController are wrong"

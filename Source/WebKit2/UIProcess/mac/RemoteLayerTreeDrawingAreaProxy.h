@@ -56,6 +56,10 @@ private:
     virtual void sizeDidChange() override;
     virtual void deviceScaleFactorDidChange() override;
     virtual void didUpdateGeometry() override;
+    
+    // For now, all callbacks are called before committing changes, because that's what the only client requires.
+    // Once we have other callbacks, it may make sense to have a before-commit/after-commit option.
+    virtual void dispatchAfterEnsuringDrawing(std::function<void (CallbackBase::Error)>) override;
 
     WebCore::FloatRect scaledExposedRect() const;
     virtual void setShouldShowDebugIndicator(bool) override;
@@ -82,8 +86,6 @@ private:
     
     void sendUpdateGeometry();
 
-    virtual uint64_t lastVisibleTransactionID() const override { return m_lastVisibleTransactionID; }
-
     RemoteLayerTreeHost m_remoteLayerTreeHost;
     bool m_isWaitingForDidUpdateGeometry;
 
@@ -99,6 +101,8 @@ private:
     uint64_t m_pendingLayerTreeTransactionID;
     uint64_t m_lastVisibleTransactionID;
     uint64_t m_transactionIDForPendingCACommit;
+
+    CallbackMap m_callbacks;
 };
 
 DRAWING_AREA_PROXY_TYPE_CASTS(RemoteLayerTreeDrawingAreaProxy, type() == DrawingAreaTypeRemoteLayerTree);

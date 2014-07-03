@@ -475,6 +475,8 @@ void RemoteLayerTreeTransaction::encode(IPC::ArgumentEncoder& encoder) const
 
     encoder << m_scaleWasSetByUIProcess;
     encoder << m_allowsUserScaling;
+
+    encoder << m_callbackIDs;
 }
 
 bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLayerTreeTransaction& result)
@@ -547,6 +549,9 @@ bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLay
         return false;
 
     if (!decoder.decode(result.m_allowsUserScaling))
+        return false;
+
+    if (!decoder.decode(result.m_callbackIDs))
         return false;
 
     return true;

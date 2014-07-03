@@ -143,6 +143,8 @@ private:
 
     virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) { }
     virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) { }
+
+    virtual void addTransactionCallbackID(uint64_t callbackID) { ASSERT_NOT_REACHED(); }
 #endif
 };
 

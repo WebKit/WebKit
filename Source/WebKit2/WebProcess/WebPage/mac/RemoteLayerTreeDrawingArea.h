@@ -28,6 +28,7 @@
 
 #include "DrawingArea.h"
 #include "GraphicsLayerCARemote.h"
+#include "RemoteLayerTreeTransaction.h"
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/Timer.h>
 #include <atomic>
@@ -65,6 +66,8 @@ private:
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
     virtual void scheduleCompositingLayerFlush() override;
+
+    virtual void addTransactionCallbackID(uint64_t callbackID) override;
 
     virtual PassRefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) override;
     void willDestroyDisplayRefreshMonitor(WebCore::DisplayRefreshMonitor*);
@@ -159,6 +162,7 @@ private:
     HashSet<RemoteLayerTreeDisplayRefreshMonitor*>* m_displayRefreshMonitorsToNotify;
 
     uint64_t m_currentTransactionID;
+    Vector<RemoteLayerTreeTransaction::TransactionCallbackID> m_pendingCallbackIDs;
 };
 
 DRAWING_AREA_TYPE_CASTS(RemoteLayerTreeDrawingArea, type() == DrawingAreaTypeRemoteLayerTree);
