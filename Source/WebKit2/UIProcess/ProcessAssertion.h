@@ -42,6 +42,7 @@ enum class AssertionState {
 class ProcessAssertion {
 public:
     ProcessAssertion(pid_t, AssertionState);
+    ~ProcessAssertion();
     
     AssertionState state() const { return m_assertionState; }
     

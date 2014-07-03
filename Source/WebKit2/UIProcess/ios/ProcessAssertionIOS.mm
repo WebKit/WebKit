@@ -29,10 +29,100 @@
 #if PLATFORM(IOS)
 
 #import <AssertionServices/BKSProcessAssertion.h>
+#import <UIKit/UIApplication.h>
+
+#if !PLATFORM(IOS_SIMULATOR)
+
+@interface WKProcessAssertionBackgroundTaskManager : NSObject
+
++ (WKProcessAssertionBackgroundTaskManager *)shared;
+
+- (void)incrementNeedsToRunInBackgroundCount;
+- (void)decrementNeedsToRunInBackgroundCount;
+
+@end
+
+@implementation WKProcessAssertionBackgroundTaskManager
+{
+    unsigned _needsToRunInBackgroundCount;
+    BOOL _appIsBackground;
+    UIBackgroundTaskIdentifier _backgroundTask;
+}
+
++ (WKProcessAssertionBackgroundTaskManager *)shared
+{
+    static WKProcessAssertionBackgroundTaskManager *shared = [WKProcessAssertionBackgroundTaskManager new];
+    return shared;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _appIsBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
+    _backgroundTask = UIBackgroundTaskInvalid;
+
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(_applicationDidEnterBackgroundOrWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
+    [center addObserver:self selector:@selector(_applicationDidEnterBackgroundOrWillEnterForeground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+
+    return self;
+}
+
+- (void)dealloc
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
+    [center removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+
+    if (_backgroundTask != UIBackgroundTaskInvalid)
+        [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
+
+    [super dealloc];
+}
+
+- (void)_updateBackgroundTask
+{
+    bool shouldHoldTask = _needsToRunInBackgroundCount && _appIsBackground;
+
+    if (shouldHoldTask && _backgroundTask == UIBackgroundTaskInvalid) {
+        __block UIBackgroundTaskIdentifier task = [[UIApplication sharedApplication] beginBackgroundTaskWithName:@"com.apple.WebKit.ProcessAssertion" expirationHandler:^{
+            NSLog(@"Background task expired while holding WebKit ProcessAssertion.");
+            [[UIApplication sharedApplication] endBackgroundTask:task];
+        }];
+        _backgroundTask = task;
+    }
+
+    if (!shouldHoldTask && _backgroundTask != UIBackgroundTaskInvalid) {
+        [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
+        _backgroundTask = UIBackgroundTaskInvalid;
+    }
+}
+
+- (void)_applicationDidEnterBackgroundOrWillEnterForeground:(NSNotification *)notification
+{
+    _appIsBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
+    [self _updateBackgroundTask];
+}
+
+- (void)incrementNeedsToRunInBackgroundCount
+{
+    ++_needsToRunInBackgroundCount;
+    [self _updateBackgroundTask];
+}
+
+- (void)decrementNeedsToRunInBackgroundCount
+{
+    --_needsToRunInBackgroundCount;
+    [self _updateBackgroundTask];
+}
+
+@end
 
 namespace WebKit {
 
-#if !PLATFORM(IOS_SIMULATOR)
 const BKSProcessAssertionFlags suspendedTabFlags = (BKSProcessAssertionAllowIdleSleep);
 const BKSProcessAssertionFlags backgroundTabFlags = (BKSProcessAssertionAllowIdleSleep | BKSProcessAssertionPreventTaskSuspend | BKSProcessAssertionAllowSuspendOnSleep);
 const BKSProcessAssertionFlags foregroundTabFlags = (BKSProcessAssertionAllowIdleSleep | BKSProcessAssertionPreventTaskSuspend | BKSProcessAssertionAllowSuspendOnSleep | BKSProcessAssertionWantsForegroundResourcePriority | BKSProcessAssertionPreventTaskThrottleDown);
@@ -48,15 +138,11 @@ static BKSProcessAssertionFlags flagsForState(AssertionState assertionState)
         return foregroundTabFlags;
     }
 }
-#endif
 
 ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState)
 {
     m_assertionState = assertionState;
     
-#if PLATFORM(IOS_SIMULATOR)
-    UNUSED_PARAM(pid);
-#else
     BKSProcessAssertionAcquisitionHandler handler = ^(BOOL acquired) {
         if (!acquired) {
             LOG_ERROR("Unable to acquire assertion for process %d", pid);
@@ -64,7 +150,15 @@ ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState)
         }
     };
     m_assertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flagsForState(assertionState) reason:BKSProcessAssertionReasonExtension name:@"Web content visible" withHandler:handler]);
-#endif
+
+    if (m_assertionState != AssertionState::Suspended)
+        [[WKProcessAssertionBackgroundTaskManager shared] incrementNeedsToRunInBackgroundCount];
+}
+
+ProcessAssertion::~ProcessAssertion()
+{
+    if (m_assertionState != AssertionState::Suspended)
+        [[WKProcessAssertionBackgroundTaskManager shared] decrementNeedsToRunInBackgroundCount];
 }
 
 void ProcessAssertion::setState(AssertionState assertionState)
@@ -72,12 +166,37 @@ void ProcessAssertion::setState(AssertionState assertionState)
     if (m_assertionState == assertionState)
         return;
 
+    if ((m_assertionState != AssertionState::Suspended) && (assertionState == AssertionState::Suspended))
+        [[WKProcessAssertionBackgroundTaskManager shared] decrementNeedsToRunInBackgroundCount];
+    if ((m_assertionState == AssertionState::Suspended) && (assertionState != AssertionState::Suspended))
+        [[WKProcessAssertionBackgroundTaskManager shared] incrementNeedsToRunInBackgroundCount];
+
     m_assertionState = assertionState;
-#if !PLATFORM(IOS_SIMULATOR)
     [m_assertion setFlags:flagsForState(assertionState)];
-#endif
 }
-    
+
+} // namespace WebKit
+
+#else // PLATFORM(IOS_SIMULATOR)
+
+namespace WebKit {
+
+ProcessAssertion::ProcessAssertion(pid_t, AssertionState assertionState)
+{
+    m_assertionState = assertionState;
 }
+
+ProcessAssertion::~ProcessAssertion()
+{
+}
+
+void ProcessAssertion::setState(AssertionState assertionState)
+{
+    m_assertionState = assertionState;
+}
+
+} // namespace WebKit
+
+#endif // PLATFORM(IOS_SIMULATOR)
 
 #endif // PLATFORM(IOS)

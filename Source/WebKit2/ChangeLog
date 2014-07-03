@@ -1,3 +1,38 @@
+2014-07-02  Gavin Barraclough  <baraclough@apple.com>
+
+        ProcessAssertion should also prevent UIApp suspension
+        https://bugs.webkit.org/show_bug.cgi?id=134563
+
+        Reviewed by Dan Bernstein.
+
+        If the application suspends then the child processes will, too.
+        Use beginBackgroundTaskWithName:expirationHandler: to request that the application remain runnable
+        while waiting for background tasks to complete.
+
+        * UIProcess/ProcessAssertion.cpp:
+        (WebKit::ProcessAssertion::~ProcessAssertion):
+            - Added destructor.
+        * UIProcess/ProcessAssertion.h:
+            - Added destructor.
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (+[WKProcessAssertionBackgroundTaskManager shared]):
+            - singleton WKProcessAssertionBackgroundTaskManager.
+        (-[WKProcessAssertionBackgroundTaskManager init]):
+        (-[WKProcessAssertionBackgroundTaskManager dealloc]):
+            - register/remove notification handlers.
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]):
+            - if we need to be runnable make sure we're holding a BackgroundTask, if not release it.
+        (-[WKProcessAssertionBackgroundTaskManager _applicationDidEnterBackgroundOrWillEnterForeground:]):
+            - detect when the app enters/leaves foreground; calls to _updateBackgroundTask.
+        (-[WKProcessAssertionBackgroundTaskManager incrementNeedsToRunInBackgroundCount]):
+        (-[WKProcessAssertionBackgroundTaskManager decrementNeedsToRunInBackgroundCount]):
+            - interface to update the count; calls to _updateBackgroundTask.
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        (WebKit::ProcessAssertion::~ProcessAssertion):
+            - count ProcessAssertions in and out of existance.
+        (WebKit::ProcessAssertion::setState):
+            - count when the state changes.
+
 2014-07-01  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/134522> Remove duplication in code that prepares the user agent string on Mac and iOS
