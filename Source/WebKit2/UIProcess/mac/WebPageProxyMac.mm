@@ -55,6 +55,7 @@
 #import <WebKitSystemInterface.h>
 #import <mach-o/dyld.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/cf/TypeCasts.h>
 #import <wtf/text/StringConcatenate.h>
 
 @interface NSApplication (Details)
