@@ -58,7 +58,7 @@ private:
     virtual void didUpdateGeometry() override;
 
     WebCore::FloatRect scaledExposedRect() const;
-    void showDebugIndicator(bool);
+    virtual void setShouldShowDebugIndicator(bool) override;
 
 #if PLATFORM(MAC)
     virtual void setExposedRect(const WebCore::FloatRect&) override;

@@ -60,6 +60,8 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy* w
 
     m_webPageProxy->process().addMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_webPageProxy->pageID(), *this);
 
+    setShouldShowDebugIndicator(m_webPageProxy->preferences().tiledScrollingIndicatorVisible());
+
     m_layerCommitObserver = RunLoopObserver::create(didCommitLayersRunLoopOrder, [this]() {
         this->coreAnimationDidCommitLayers();
     });
@@ -150,8 +152,6 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
     }
 #endif
 #endif // ENABLE(ASYNC_SCROLLING)
-
-    showDebugIndicator(m_webPageProxy->preferences().tiledScrollingIndicatorVisible());
 
     if (m_debugIndicatorLayerTreeHost) {
         float scale = indicatorScale(layerTreeTransaction.contentsSize());
@@ -260,7 +260,7 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize,
     }
 }
 
-void RemoteLayerTreeDrawingAreaProxy::showDebugIndicator(bool show)
+void RemoteLayerTreeDrawingAreaProxy::setShouldShowDebugIndicator(bool show)
 {
     if (show == !!m_debugIndicatorLayerTreeHost)
         return;

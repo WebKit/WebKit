@@ -1,3 +1,25 @@
+2014-07-03  Tim Horton  <timothy_horton@apple.com>
+
+        [WK2] RemoteLayerTreeDrawingAreaProxy re-checks a preference every commit for no reason
+        https://bugs.webkit.org/show_bug.cgi?id=134586
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::setShouldShowDebugIndicator):
+        (WebKit::DrawingAreaProxy::showDebugIndicator): Deleted.
+        (WebKit::DrawingAreaProxy::isShowingDebugIndicator): Remove this, nobody is using it.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::preferencesDidChange):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::setShouldShowDebugIndicator):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::showDebugIndicator): Deleted.
+        Check the debug indicator pref at construction time, and update the state when it changes.
+        Checking it every commit was surprisingly expensive.
+
 2014-07-03  Antti Koivisto  <antti@apple.com>
 
         Ensure frame creation messages get through to UI process

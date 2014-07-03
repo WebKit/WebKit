@@ -82,8 +82,7 @@ public:
 #endif
 
     virtual void updateDebugIndicator() { }
-    virtual void showDebugIndicator(bool) { }
-    virtual bool isShowingDebugIndicator() const { return false; }
+    virtual void setShouldShowDebugIndicator(bool) { }
 
     virtual uint64_t lastVisibleTransactionID() const { ASSERT_NOT_REACHED(); return 0; }
 
