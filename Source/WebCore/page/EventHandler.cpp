@@ -2521,7 +2521,7 @@ void EventHandler::platformRecordWheelEvent(const PlatformWheelEvent& event)
     m_recentWheelEventDeltaTracker->recordWheelEventDelta(event);
 }
 
-bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& event, ContainerNode*, ScrollableArea*)
+bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& event, Element*, ContainerNode*, ScrollableArea*)
 {
     // We do another check on the frame view because the event handler can run JS which results in the frame getting destroyed.
     FrameView* view = m_frame.view();
@@ -2529,6 +2529,11 @@ bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& event, C
     bool didHandleEvent = view ? view->wheelEvent(event) : false;
     m_isHandlingWheelEvent = false;
     return didHandleEvent;
+}
+
+bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent&, ContainerNode*)
+{
+    return true;
 }
 #endif
 
@@ -2589,6 +2594,8 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
                 m_isHandlingWheelEvent = false;
                 if (scrollableArea)
                     scrollableArea->setScrolledProgrammatically(false);
+                if (widget->platformWidget())
+                    return platformCompletePlatformWidgetWheelEvent(e, scrollableContainer);
                 return true;
             }
         }
@@ -2609,7 +2616,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
     if (scrollableArea)
         scrollableArea->setScrolledProgrammatically(false);
 
-    return platformCompleteWheelEvent(e, scrollableContainer, scrollableArea);
+    return platformCompleteWheelEvent(e, element, scrollableContainer, scrollableArea);
 }
 
 void EventHandler::clearLatchedState()

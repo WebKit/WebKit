@@ -782,6 +782,39 @@ static bool scrolledToEdgeInDominantDirection(const ContainerNode& container, co
     return area.scrolledToTop();
 }
 
+static Widget* widgetForEventTarget(Element* eventTarget)
+{
+    if (!eventTarget)
+        return nullptr;
+    
+    RenderElement* target = eventTarget->renderer();
+    if (!target || !target->isWidget())
+        return nullptr;
+    
+    return toRenderWidget(target)->widget();
+}
+
+static ScrollView* scrollViewForEventTarget(Element* eventTarget)
+{
+    Widget* widget = widgetForEventTarget(eventTarget);
+    if (!widget)
+        return nullptr;
+    
+    if (!widget->isScrollView())
+        return nullptr;
+    
+    return reinterpret_cast<ScrollView*>(widget);
+}
+    
+static bool eventTargetIsPlatformWidget(Element* eventTarget)
+{
+    Widget* widget = widgetForEventTarget(eventTarget);
+    if (!widget)
+        return false;
+    
+    return widget->platformWidget();
+}
+
 void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheelEvent, const HitTestResult& result, Element*& wheelEventTarget, ContainerNode*& scrollableContainer, ScrollableArea*& scrollableArea, bool& isOverWidget)
 {
     FrameView* view = m_frame.view();
@@ -792,13 +825,18 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
         scrollableContainer = wheelEventTarget;
         scrollableArea = view;
     } else {
-        scrollableContainer = findEnclosingScrollableContainer(*wheelEventTarget);
-        if (scrollableContainer) {
-            if (RenderBox* box = scrollableContainer->renderBox()) {
-                if (box->isListBox())
-                    scrollableArea = toRenderListBox(box);
-                else
-                    scrollableArea = box->layer();
+        if (eventTargetIsPlatformWidget(wheelEventTarget)) {
+            scrollableContainer = wheelEventTarget;
+            scrollableArea = scrollViewForEventTarget(wheelEventTarget);
+        } else {
+            scrollableContainer = findEnclosingScrollableContainer(*wheelEventTarget);
+            if (scrollableContainer) {
+                if (RenderBox* box = scrollableContainer->renderBox()) {
+                    if (box->isListBox())
+                        scrollableArea = toRenderListBox(box);
+                    else
+                        scrollableArea = box->layer();
+                }
             }
         }
     }
@@ -840,7 +878,7 @@ void EventHandler::platformRecordWheelEvent(const PlatformWheelEvent& wheelEvent
     m_recentWheelEventDeltaTracker->recordWheelEventDelta(wheelEvent);
 }
 
-bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEvent, ContainerNode* scrollableContainer, ScrollableArea* scrollableArea)
+bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEvent, Element* wheelEventTarget, ContainerNode* scrollableContainer, ScrollableArea* scrollableArea)
 {
     // We do another check on the frame view because the event handler can run JS which results in the frame getting destroyed.
     FrameView* view = m_frame.view();
@@ -853,12 +891,21 @@ bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEve
                 // the enclosing frame to handle the scroll.
                 didHandleWheelEvent = !m_startedGestureAtScrollLimit;
             }
+
+            // If the platform widget is handling the event, we always want to return false.
+            if (view && scrollableArea == view && view->platformWidget())
+                didHandleWheelEvent = false;
+
             m_isHandlingWheelEvent = false;
             return didHandleWheelEvent;
         }
         
         if (scrollableArea && !m_startedGestureAtScrollLimit && scrollableContainer == m_latchedScrollableContainer) {
             m_isHandlingWheelEvent = false;
+
+            if (eventTargetIsPlatformWidget(wheelEventTarget))
+                return !m_startedGestureAtScrollLimit;
+
             return true;
         }
     }
@@ -868,4 +915,12 @@ bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEve
     return didHandleEvent;
 }
 
+bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent& wheelEvent, ContainerNode* scrollableContainer)
+{
+    if (wheelEvent.useLatchedEventElement() && m_latchedScrollableContainer && scrollableContainer == m_latchedScrollableContainer)
+        return !m_startedGestureAtScrollLimit;
+
+    return false;
+}
+    
 }

@@ -1,3 +1,47 @@
+2014-07-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] WebKit1 WebView iframe not responding to scroll gestures
+        https://bugs.webkit.org/show_bug.cgi?id=134569
+        <rdar://problem/17309008>
+
+        Reviewed by Simon Fraser.
+
+        New test: platform/mac/fast/scrolling/scroll-iframe-fragment.html
+
+        WK1 scrollable areas are implemented on top of PlatformWidget (i.e., NSView) objects. They only
+        perform a scroll operation if the EventHandler::handleWheelEvent method returns 'false', indicating
+        that the Cocoa layer should do scrolling work. This is in contrast to WK2, where the scrolling is
+        handled separately and we return 'true' from EventHandler::handleWheelEvent to indicate that the
+        scroll event has been handled and that no other work is needed. This mismatch in the meaning of
+        EventHandler::handleWheelEvent means that WK1 views do not properly handle scroll wheel events.
+
+        To correct this, we need to see if we are acting on an Element backed by a PlatformWidget. When we
+        are (the WK1 case) we want to return 'false' to instruct the Cocoa object to do the scroll operation.
+        To implement proper latching behavior in WK1, we must return 'true' in the case where we are latched
+        to a PlatformWidget, and that PlatformWidget did not start the scroll gesture at the edge of
+        the region in the dominant scroll direction.
+
+        Finally, additional logic was needed to determine whether the PlatformWidget is scrolled to the
+        edge in the dominant scroll direction.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::platformCompleteWheelEvent): Added stub.
+        (WebCore::EventHandler::platformCompletePlatformWidgetWheelEvent): Added stub.
+        (WebCore::EventHandler::handleWheelEvent): Call new platformCompletePlatformWidgetWheelEvent if the
+        event was handled for a PlatformWidget.
+        * page/EventHandler.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::widgetForEventTarget): Added helper function.
+        (WebCore::scrollViewForEventTarget): Added helper function.
+        (WebCore::eventTargetIsPlatformWidget): Added helper function.
+        (WebCore::EventHandler::platformPrepareForWheelEvents): Check whether we are at a scrolled edge
+        for the NSView (PlatformWidget) case.
+        (WebCore::EventHandler::platformCompleteWheelEvent): Return 'false' when handling WK1-style scrolls.
+        (WebCore::EventHandler::platformCompletePlatformWidgetWheelEvent): Added. We generally want to
+        return false so the PlatformWidget handles scrolling, except in the case where we are latched to
+        a PlatformWidget, which has already performed its scroll, and we want to avoid propegating a
+        scroll event to an enclosing region.
+
 2014-07-03  Pratik Solanki  <psolanki@apple.com>
 
         Preserve old behavior of creating an NSURLRequest of the exact same type as passed to us

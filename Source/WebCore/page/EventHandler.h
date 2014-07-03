@@ -199,7 +199,8 @@ public:
 
     void platformPrepareForWheelEvents(const PlatformWheelEvent& wheelEvent, const HitTestResult& result, Element*& wheelEventTarget, ContainerNode*& scrollableContainer, ScrollableArea*& scrollableArea, bool& isOverWidget);
     void platformRecordWheelEvent(const PlatformWheelEvent&);
-    bool platformCompleteWheelEvent(const PlatformWheelEvent&, ContainerNode* scrollableContainer, ScrollableArea* scrollableArea);
+    bool platformCompleteWheelEvent(const PlatformWheelEvent&, Element* wheelEventTarget, ContainerNode* scrollableContainer, ScrollableArea*);
+    bool platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent&, ContainerNode* scrollableContainer);
 
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
     typedef Vector<RefPtr<Touch>> TouchArray;
