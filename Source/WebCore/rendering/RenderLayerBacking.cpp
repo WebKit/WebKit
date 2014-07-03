@@ -1429,7 +1429,7 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
         m_scrollingContentsLayer->setPaintingPhase(paintPhase);
         m_scrollingLayer->addChild(m_scrollingContentsLayer.get());
     } else {
-        compositor().willRemoveScrollingLayer(m_owningLayer);
+        compositor().willRemoveScrollingLayerWithBacking(m_owningLayer, *this);
 
         willDestroyLayer(m_scrollingLayer.get());
         willDestroyLayer(m_scrollingContentsLayer.get());

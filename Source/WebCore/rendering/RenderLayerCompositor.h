@@ -275,7 +275,7 @@ public:
     void updateScrollCoordinatedStatus(RenderLayer&);
     void removeFromScrollCoordinatedLayers(RenderLayer&);
 
-    void willRemoveScrollingLayer(RenderLayer&);
+    void willRemoveScrollingLayerWithBacking(RenderLayer&, RenderLayerBacking&);
     void didAddScrollingLayer(RenderLayer&);
 
 #if PLATFORM(IOS)

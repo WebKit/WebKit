@@ -1,3 +1,37 @@
+2014-07-02  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Removing an element with CSS -webkit-overflow-scrolling: touch breaks
+        subsequent touch events
+
+        <https://bugs.webkit.org/show_bug.cgi?id=134584>
+        <rdar://problem/17202021>
+
+        This issue is caused by the order of teardown for RenderLayers.
+
+        RenderLayer clears its m_backing in its destructor, calling the
+        RenderLayerBacking destructor. The RenderLayerBacking destructor calls
+        RenderLayerCompositor::willRemoveScrollingLayer(), which tries to
+        access the RenderLayer's backing that has already been cleared. This
+        causes us to skip the call to ChromeClient::removeScrollingLayer(),
+        resulting in a stale view that can block touch events.
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateScrollingLayers):
+        When calling willRemoveScrollingLayerWithBacking(), pass both the layer
+        and the RenderLayerBacking.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::willRemoveScrollingLayerWithBacking):
+        Renamed. Use the passed RenderLayerBacking, as the RenderLayer's
+        backing might have already been cleared.
+        (WebCore::RenderLayerCompositor::willRemoveScrollingLayer): Deleted.
+
+        * rendering/RenderLayerCompositor.h:
+        Renamed willRemoveScrollingLayer() to
+        willRemoveScrollingLayerWithBacking() and added a parameter.
+
 2014-07-01  Mark Rowe  <mrowe@apple.com>
 
         Ensure that the WebKit bundle version in the user agent string continues to match the current format.

@@ -3833,13 +3833,10 @@ void RenderLayerCompositor::unregisterAllScrollingLayers()
 }
 #endif
 
-void RenderLayerCompositor::willRemoveScrollingLayer(RenderLayer& layer)
+void RenderLayerCompositor::willRemoveScrollingLayerWithBacking(RenderLayer& layer, RenderLayerBacking& backing)
 {
     if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator()) {
-        RenderLayerBacking* backing = layer.backing();
-    
-        if (backing)
-            backing->detachFromScrollingCoordinator();
+        backing.detachFromScrollingCoordinator();
 
         // For Coordinated Graphics.
         scrollingCoordinator->scrollableAreaScrollLayerDidChange(&layer);
@@ -3850,12 +3847,12 @@ void RenderLayerCompositor::willRemoveScrollingLayer(RenderLayer& layer)
     m_scrollingLayersNeedingUpdate.remove(&layer);
     m_scrollingLayers.remove(&layer);
 
-    if (m_renderView.document().inPageCache() || !layer.backing())
+    if (m_renderView.document().inPageCache())
         return;
 
     if (ChromeClient* client = this->chromeClient()) {
-        PlatformLayer* scrollingLayer = layer.backing()->scrollingLayer()->platformLayer();
-        PlatformLayer* contentsLayer = layer.backing()->scrollingContentsLayer()->platformLayer();
+        PlatformLayer* scrollingLayer = backing.scrollingLayer()->platformLayer();
+        PlatformLayer* contentsLayer = backing.scrollingContentsLayer()->platformLayer();
         client->removeScrollingLayer(layer.renderer().element(), scrollingLayer, contentsLayer);
     }
 #endif
