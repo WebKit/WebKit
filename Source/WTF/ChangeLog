@@ -1,3 +1,9 @@
+2014-07-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreivewed, fix build break on EFL and GTK since r170767.
+
+        * wtf/CMakeLists.txt: Exclude Decoder.h and Encoder.h because those files were removed.
+
 2014-07-03  Daniel Bates  <dabates@apple.com>
 
         Add WTF::move()

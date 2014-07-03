@@ -19,12 +19,10 @@ set(WTF_HEADERS
     DataLog.h
     DateMath.h
     DecimalNumber.h
-    Decoder.h
     DeferrableRefCounted.h
     Deque.h
     DisallowCType.h
     DoublyLinkedList.h
-    Encoder.h
     FastMalloc.h
     FeatureDefines.h
     FilePrintStream.h
