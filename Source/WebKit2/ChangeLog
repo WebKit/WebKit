@@ -1,3 +1,43 @@
+2014-07-02  Benjamin Poulain  <benjamin@webkit.org>
+
+        [iOS][WK2] Make is safe/fast to use the animated resize API without resizing anything
+        https://bugs.webkit.org/show_bug.cgi?id=134570
+
+        Reviewed by Enrica Casucci.
+
+        Today, if someone calls _beginAnimatedResizeWithUpdates-_endAnimatedResize, it is always a very heavy process
+        forcing a relayout and can cause synchronous operations.
+
+        We should not force the caller of the API to maintain their own state tracking, we should do that for them.
+
+        With this patch, we track everything we need for a resize and only do the heavy lifting if anything has actually changed.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (activeMinimumLayoutSize):
+        (activeMinimumLayoutSizeForMinimalUI):
+        (activeMaximumUnobscuredSize):
+        (activeOrientation):
+        This code is used in both _didRelaunchProcess and _beginAnimatedResizeWithUpdates. It is moved to static functions
+        to avoid having it in two places.
+
+        (-[WKWebView _didRelaunchProcess]):
+
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        The updates now goes like this:
+        1) Set _isAnimatingResize to prevent the undesired side effects updateBlock() if we really need to resize.
+        2) Get all the original values before calling the update block.
+        3) Call the update block.
+        4a) If nothing useful for resize has changed, reset _isAnimatingResize to false.
+            We also need to update the visible content rect because the update block may have changed something unrelated
+            to the view size (scale, scroll position, etc).
+        4b) If we really need to resize, proceed as usual.
+
+        (-[WKWebView _endAnimatedResize]):
+        With the changes in _beginAnimatedResizeWithUpdates:, _isAnimatingResize is only set for real cases of animated resize,
+        bail out early if that flag isn't set.
+
+        The remaining code is unchanged, it is just not indented due to the removal of the if() branch.
+
 2014-07-02  Roger Fong  <roger_fong@apple.com>
 
         Improve handling of primary offscreen plugins.
