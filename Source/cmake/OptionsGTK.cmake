@@ -81,13 +81,6 @@ if (ENABLE_WAYLAND_TARGET)
     add_definitions(-DWTF_PLATFORM_WAYLAND=1)
 endif ()
 
-# FIXME: Perhaps we need a more generic way of defining dependencies between features.
-# VIDEO_TRACK depends on VIDEO.
-if (NOT ENABLE_VIDEO AND ENABLE_VIDEO_TRACK)
-    message(STATUS "Disabling VIDEO_TRACK since VIDEO support is disabled.")
-    set(ENABLE_VIDEO_TRACK OFF)
-endif ()
-
 if (DEVELOPER_MODE)
     set(ENABLE_TOOLS ON)
     set(ENABLE_API_TESTS ON)

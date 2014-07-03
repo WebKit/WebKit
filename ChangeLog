@@ -1,3 +1,18 @@
+2014-07-03  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [CMAKE] Add WEBKIT_OPTION_DEPEND macro to resolve macro dependency
+        https://bugs.webkit.org/show_bug.cgi?id=134578
+
+        Reviewed by Gyuyoung Kim.
+
+        Some options depend on another option such as ENABLE_VIDEO_TRACK and ENABLE_VIDEO.
+        This patch adds WEBKIT_OPTION_DEPEND to check the depending option and
+        disable related option if it is not ON.
+
+        * Source/cmake/OptionsEfl.cmake: Removed hack for option dependency.
+        * Source/cmake/OptionsGTK.cmake: Ditto.
+        * Source/cmake/WebKitFeatures.cmake: Added WEBKIT_OPTION_DEPEND macro.
+
 2014-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] make dist is broken

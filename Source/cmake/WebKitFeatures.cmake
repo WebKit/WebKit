@@ -10,6 +10,10 @@ macro(WEBKIT_OPTION_DEFAULT_PORT_VALUE _name _value)
     set(_WEBKIT_AVAILABLE_OPTIONS_INITIALVALUE_${_name} ${_value})
 endmacro()
 
+macro(WEBKIT_OPTION_DEPEND _name _depend)
+    set(_WEBKIT_AVAILABLE_OPTIONS_DEPENDENCY_OF_${_name} ${_depend})
+endmacro()
+
 macro(WEBKIT_OPTION_BEGIN)
     WEBKIT_OPTION_DEFINE(ENABLE_3D_RENDERING "Toggle 3D rendering support" OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_ACCELERATED_2D_CANVAS "Toggle accelerated 2D canvas support" OFF)
@@ -126,6 +130,9 @@ macro(WEBKIT_OPTION_BEGIN)
     WEBKIT_OPTION_DEFINE(ENABLE_XSLT "Toggle XSLT support" ON)
     WEBKIT_OPTION_DEFINE(USE_SYSTEM_MALLOC "Toggle system allocator instead of TCmalloc" OFF)
     WEBKIT_OPTION_DEFINE(WTF_USE_TILED_BACKING_STORE "Toggle Tiled Backing Store support" OFF)
+
+    WEBKIT_OPTION_DEPEND(ENABLE_VIDEO_TRACK ENABLE_VIDEO)
+    WEBKIT_OPTION_DEPEND(ENABLE_TOUCH_SLIDER ENABLE_TOUCH_EVENT)
 endmacro()
 
 macro(WEBKIT_OPTION_END)
@@ -133,16 +140,22 @@ macro(WEBKIT_OPTION_END)
         option(${_name} "${_WEBKIT_AVAILABLE_OPTIONS_DESCRIPTION_${_name}}" ${_WEBKIT_AVAILABLE_OPTIONS_INITIALVALUE_${_name}})
     endforeach ()
 
-
-    message(STATUS "Enabled features:")
-
     set(_MAX_FEATURE_LENGTH 0)
     foreach (_name ${_WEBKIT_AVAILABLE_OPTIONS})
         string(LENGTH ${_name} _NAME_LENGTH)
         if (_NAME_LENGTH GREATER _MAX_FEATURE_LENGTH)
             set(_MAX_FEATURE_LENGTH ${_NAME_LENGTH})
         endif ()
+
+        if (${_name} AND DEFINED _WEBKIT_AVAILABLE_OPTIONS_DEPENDENCY_OF_${_name})
+            if (NOT ${${_WEBKIT_AVAILABLE_OPTIONS_DEPENDENCY_OF_${_name}}})
+                message(STATUS "Disabling ${_name} since ${_WEBKIT_AVAILABLE_OPTIONS_DEPENDENCY_OF_${_name}} support is disabled.")
+                set(${_name} OFF)
+            endif ()
+        endif ()
     endforeach ()
+
+    message(STATUS "Enabled features:")
 
     set(_SHOULD_PRINT_POINTS OFF)
     foreach (_name ${_WEBKIT_AVAILABLE_OPTIONS})
