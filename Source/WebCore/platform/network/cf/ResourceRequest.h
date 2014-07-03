@@ -66,6 +66,7 @@ namespace WebCore {
 #if PLATFORM(COCOA)
         ResourceRequest(NSURLRequest *);
         void updateNSURLRequest();
+        void clearOrUpdateNSURLRequest();
 #endif
 
         ResourceRequest(CFURLRequestRef cfRequest)

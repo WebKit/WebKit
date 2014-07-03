@@ -1,3 +1,28 @@
+2014-07-03  Pratik Solanki  <psolanki@apple.com>
+
+        Preserve old behavior of creating an NSURLRequest of the exact same type as passed to us
+        https://bugs.webkit.org/show_bug.cgi?id=134605
+        <rdar://problem/17544641>
+
+        Reviewed by Andreas Kling.
+
+        We have client code that passes us a subclass of NSURLRequest to load resource. Later when
+        we call willSendRequest, they test to make sure they get an object of the same type. My
+        optimization in r170642 broke this path when I cleared out the NSURLRequest object. We
+        already had code in updateNSURLRequest() that was taking this quirk into account but I broke
+        that. Fix it by reverting to old behavior for such clients.
+
+        No new tests though we need one. I will add it later.
+
+        * platform/network/cf/ResourceRequest.h:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformHTTPBody):
+        (WebCore::ResourceRequest::setStorageSession):
+        * platform/network/ios/ResourceRequestIOS.mm:
+        (WebCore::ResourceRequest::updateNSURLRequest):
+        (WebCore::ResourceRequest::clearOrUpdateNSURLRequest):
+
 2014-07-02  Anders Carlsson  <andersca@apple.com>
 
         Stop using EncoderAdapter/DecoderAdapter for FormData
