@@ -1,3 +1,11 @@
+2014-07-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations: Report and mark several flaky tests.
+        * platform/gtk/fast/text/indic-expected.txt: Added. Add baseline for GTK.
+        * platform/mac-wk2/TestExpectations: Report and mark flaky test http/tests/cache/iframe-304-crash.html.
+
 2014-07-01  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(160908): vube.com video won't play after going into and out of fullscreen

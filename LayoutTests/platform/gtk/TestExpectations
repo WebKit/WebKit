@@ -660,7 +660,12 @@ webkit.org/b/103443 fast/parser/parser-yield-timing.html [ Failure Pass ]
 
 webkit.org/b/105191 media/video-playing-and-pause.html [ Failure Pass ]
 
-webkit.org/b/105280 [ Debug ] http/tests/xmlhttprequest/access-control-preflight-async-not-supported.html [ Failure Pass ]
+webkit.org/b/105280 http/tests/xmlhttprequest/access-control-preflight-async-method-denied.html [ Failure Pass ]
+webkit.org/b/105280 http/tests/xmlhttprequest/access-control-preflight-async-not-supported.html [ Failure Pass ]
+webkit.org/b/105280 http/tests/xmlhttprequest/cross-site-denied-response.html [ Failure Pass ]
+webkit.org/b/105280 http/tests/xmlhttprequest/origin-whitelisting-https.html [ Failure Pass ]
+webkit.org/b/105280 http/tests/xmlhttprequest/simple-cross-origin-denied-events.html [ Failure Pass ]
+webkit.org/b/105280 http/tests/xmlhttprequest/simple-cross-origin-denied-events-post.html [ Failure Pass ]
 
 webkit.org/b/118460 media/media-element-play-after-eos.html [ Timeout Pass ]
 
@@ -854,6 +859,18 @@ webkit.org/b/133867 webaudio/audioprocessingevent.html [ Failure Pass ]
 webkit.org/b/133868 js/dom/dom-static-property-for-in-iteration.html [ Failure Pass ]
 webkit.org/b/133869 media/video-seek-after-end.html [ Failure Pass ]
 
+webkit.org/b/36642 fast/replaced/border-radius-clip.html [ Failure Pass ]
+
+webkit.org/b/134550 http/tests/cache/iframe-304-crash.html [ Failure Pass ]
+
+webkit.org/b/134573 media/track/audio-track.html [ Failure Timeout Pass ]
+webkit.org/b/134574 media/media-fragments/TC0024.html [ Failure Timeout Pass ]
+webkit.org/b/134575 http/tests/media/hls/video-controls-live-stream.html [ Crash Failure Timeout Pass ]
+webkit.org/b/134576 media/track/video/video-track-mkv-theora-selected.html [ Failure Timeout Pass ]
+webkit.org/b/134577 svg/dom/svg-root-lengths.html [ Failure Timeout Pass ]
+webkit.org/b/103383 fast/css/counters/element-removal-crash.xhtml [ Failure Pass ]
+webkit.org/b/134579 fast/forms/state-restore-to-non-edited-controls.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1013,6 +1030,8 @@ webkit.org/b/133148 accessibility/content-editable-set-inner-text-generates-axva
 webkit.org/b/133151 js/cached-window-properties.html [ Timeout Pass ]
 
 webkit.org/b/133808 media/video-trackmenu-selection.html [ Timeout ]
+
+webkit.org/b/134559 fast/parser/xml-error-adopted.xml [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
