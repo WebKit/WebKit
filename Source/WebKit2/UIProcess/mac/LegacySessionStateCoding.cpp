@@ -365,16 +365,6 @@ static MallocPtr<uint8_t> encodeSessionHistoryEntryData(const FrameState& frameS
     return encoder.finishEncoding(bufferSize);
 }
 
-RefPtr<API::Data> encodeLegacySessionHistoryEntryData(const FrameState& frameState)
-{
-    size_t bufferSize;
-    auto buffer = encodeSessionHistoryEntryData(frameState, bufferSize);
-
-    return API::Data::createWithoutCopying(buffer.leakPtr(), bufferSize, [] (unsigned char* buffer, const void* context) {
-        fastFree(buffer);
-    }, nullptr);
-}
-
 static RetainPtr<CFDataRef> encodeSessionHistoryEntryData(const FrameState& frameState)
 {
     static CFAllocatorRef fastMallocDeallocator;
@@ -1098,11 +1088,6 @@ bool decodeLegacySessionState(const uint8_t* bytes, size_t size, SessionState& s
     }
 
     return true;
-}
-
-bool decodeLegacySessionHistoryEntryData(const uint8_t* data, size_t size, FrameState& mainFrameState)
-{
-    return decodeSessionHistoryEntryData(data, size, mainFrameState);
 }
 
 } // namespace WebKit
