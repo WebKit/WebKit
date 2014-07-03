@@ -1,3 +1,14 @@
+2014-07-03  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Broken build with build-webkit --no-video
+        https://bugs.webkit.org/show_bug.cgi?id=134587
+
+        Reviewed by Darin Adler.
+
+        MEDIA_CONTROLS_SCRIPT requires VIDEO enabled.
+
+        * wtf/FeatureDefines.h: Added error message for dependency failure.
+
 2014-07-02  Enrica Casucci  <enrica@apple.com>
 
         iOS build fix after http://trac.webkit.org/changeset/170697.

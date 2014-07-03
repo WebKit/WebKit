@@ -1,3 +1,14 @@
+2014-07-03  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Broken build with build-webkit --no-video
+        https://bugs.webkit.org/show_bug.cgi?id=134587
+
+        Reviewed by Darin Adler.
+
+        MEDIA_CONTROLS_SCRIPT requires VIDEO enabled.
+
+        * Source/cmake/WebKitFeatures.cmake: Added the dependency for ENABLE_MEDIA_CONTROLS_SCRIPT.
+
 2014-07-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] The list of features shown by cmake is not accurate
