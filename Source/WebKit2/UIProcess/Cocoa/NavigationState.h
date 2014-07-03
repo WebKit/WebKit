@@ -131,6 +131,8 @@ private:
     virtual void didChangeCanGoBack() override;
     virtual void willChangeCanGoForward() override;
     virtual void didChangeCanGoForward() override;
+    virtual void willChangeNetworkRequestsInProgress() override;
+    virtual void didChangeNetworkRequestsInProgress() override;
 
     WKWebView *m_webView;
     WeakObjCPtr<id <WKNavigationDelegate> > m_navigationDelegate;

@@ -2442,6 +2442,12 @@ void WebPageProxy::didFinishProgress()
     m_loaderClient->didFinishProgress(this);
 }
 
+void WebPageProxy::setNetworkRequestsInProgress(bool networkRequestsInProgress)
+{
+    auto transaction = m_pageLoadState.transaction();
+    m_pageLoadState.setNetworkRequestsInProgress(transaction, networkRequestsInProgress);
+}
+
 void WebPageProxy::didDestroyNavigation(uint64_t navigationID)
 {
     m_loaderClient->didDestroyNavigation(this, navigationID);

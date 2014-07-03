@@ -67,6 +67,9 @@ public:
 
         virtual void willChangeCanGoForward() = 0;
         virtual void didChangeCanGoForward() = 0;
+
+        virtual void willChangeNetworkRequestsInProgress() = 0;
+        virtual void didChangeNetworkRequestsInProgress() = 0;
     };
 
     class Transaction {
@@ -118,6 +121,7 @@ public:
     bool hasOnlySecureContent() const;
 
     double estimatedProgress() const;
+    bool networkRequestsInProgress() const { return m_committedState.networkRequestsInProgress; }
 
     const String& pendingAPIRequestURL() const;
     void setPendingAPIRequestURL(const Transaction::Token&, const String&);
@@ -149,6 +153,7 @@ public:
     void didStartProgress(const Transaction::Token&);
     void didChangeProgress(const Transaction::Token&, double);
     void didFinishProgress(const Transaction::Token&);
+    void setNetworkRequestsInProgress(const Transaction::Token&, bool);
 
 private:
     void beginTransaction() { ++m_outstandingTransactionCount; }
@@ -165,6 +170,7 @@ private:
             , canGoBack(false)
             , canGoForward(false)
             , estimatedProgress(0)
+            , networkRequestsInProgress(false)
         {
         }
 
@@ -184,6 +190,7 @@ private:
         bool canGoForward;
 
         double estimatedProgress;
+        bool networkRequestsInProgress;
     };
 
     static bool isLoading(const Data&);

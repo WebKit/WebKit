@@ -1651,6 +1651,11 @@ static int32_t activeOrientation(WKWebView *webView)
     _page->setAddsVisitedLinks(addsVisitedLinks);
 }
 
+- (BOOL)_networkRequestsInProgress
+{
+    return _page->pageLoadState().networkRequestsInProgress();
+}
+
 static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEvents events)
 {
     WebCore::LayoutMilestones milestones = 0;

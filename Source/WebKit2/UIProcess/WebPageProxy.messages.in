@@ -119,6 +119,8 @@ messages -> WebPageProxy {
     DidFinishProgress()
     DidStartProgress()
 
+    SetNetworkRequestsInProgress(bool networkRequestsInProgress)
+
     # Frame lifetime messages
     DidCreateMainFrame(uint64_t frameID)
     DidCreateSubframe(uint64_t frameID)

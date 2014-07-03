@@ -797,6 +797,16 @@ void NavigationState::didChangeCanGoForward()
     [m_webView didChangeValueForKey:@"canGoForward"];
 }
 
+void NavigationState::willChangeNetworkRequestsInProgress()
+{
+    [m_webView willChangeValueForKey:@"_networkRequestsInProgress"];
+}
+
+void NavigationState::didChangeNetworkRequestsInProgress()
+{
+    [m_webView didChangeValueForKey:@"_networkRequestsInProgress"];
+}
+
 } // namespace WebKit
 
 #endif

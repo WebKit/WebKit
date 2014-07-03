@@ -1,3 +1,57 @@
+2014-07-03  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/16337741> The UI process needs to track the number of HTTP subresource loads in progress (or at least whether there are any)
+        https://bugs.webkit.org/show_bug.cgi?id=134615
+
+        Reviewed by Anders Carlsson.
+
+        Added a _networkRequestsInProgress boolean property to WKWebView.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm: Added no-op overrides of new
+        PageLoadStateObserver member functions.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _networkRequestsInProgress]): New getter that gets this state from the
+        PageLoadState.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Declared new property.
+
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::willChangeNetworkRequestsInProgress):: Override this new
+        PageLoadState::Observer member function by sending the appropriate KVO change message to the
+        WKWebView.
+        (WebKit::NavigationState::didChangeNetworkRequestsInProgress): Ditto.
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::commitChanges): Check for changes to networkRequestsInProgress
+        and call the observers if needed.
+        (WebKit::PageLoadState::reset): Reset networkRequestsInProgress in the uncommitted state.
+        (WebKit::PageLoadState::setNetworkRequestsInProgress): Set networkRequestsInProgress in the
+        uncommitted state.
+        * UIProcess/PageLoadState.h:
+        (WebKit::PageLoadState::networkRequestsInProgress): Added this getter.
+        (WebKit::PageLoadState::Data::Data): Initialize new networkRequestsInProgress member.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setNetworkRequestsInProgress): Added. Updates the PageLoadState.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in: Added SetNetworkRequestsInProgress message.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::assignIdentifierToInitialRequest): Call
+        WebPage::addResourceRequest.
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoading): Call
+        WebPage::removeResourceRequest.
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoading): Ditto.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::addResourceRequest): Added. If the new request is for an HTTP-family URL,
+        add its identifier to the set of network resourece request identifiers. If the set was
+        previously empty, send the WebPageProxy a message.
+        (WebKit::WebPage::removeResourceRequest): Added. Remove the identifier from the set. If it
+        becomes empty, send the WebPageProxy a message.
+        * WebProcess/WebPage/WebPage.h:
+
 2014-07-03  Anders Carlsson  <andersca@apple.com>
 
         Remove two unused functions

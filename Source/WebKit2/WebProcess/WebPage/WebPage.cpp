@@ -3806,6 +3806,27 @@ void WebPage::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String&
 }
 #endif
 
+void WebPage::addResourceRequest(unsigned long identifier, const WebCore::ResourceRequest& request)
+{
+    if (!request.url().protocolIsInHTTPFamily())
+        return;
+
+    ASSERT(!m_networkResourceRequestIdentifiers.contains(identifier));
+    bool wasEmpty = m_networkResourceRequestIdentifiers.isEmpty();
+    m_networkResourceRequestIdentifiers.add(identifier);
+    if (wasEmpty)
+        send(Messages::WebPageProxy::SetNetworkRequestsInProgress(true));
+}
+
+void WebPage::removeResourceRequest(unsigned long identifier)
+{
+    if (!m_networkResourceRequestIdentifiers.remove(identifier))
+        return;
+
+    if (m_networkResourceRequestIdentifiers.isEmpty())
+        send(Messages::WebPageProxy::SetNetworkRequestsInProgress(false));
+}
+
 void WebPage::setMediaVolume(float volume)
 {
     m_page->setMediaVolume(volume);

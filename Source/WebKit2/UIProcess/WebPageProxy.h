@@ -956,6 +956,8 @@ private:
     void didStartProgress();
     void didChangeProgress(double);
     void didFinishProgress();
+    void setNetworkRequestsInProgress(bool);
+
     void didDestroyNavigation(uint64_t navigationID);
 
     void decidePolicyForNavigationAction(uint64_t frameID, uint64_t navigationID, const NavigationActionData&, uint64_t originatingFrameID, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest&, uint64_t listenerID, IPC::MessageDecoder&, bool& receivedPolicyAction, uint64_t& newNavigationID, uint64_t& policyAction, uint64_t& downloadID);

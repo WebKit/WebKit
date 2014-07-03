@@ -124,6 +124,8 @@ private:
     virtual void didChangeCanGoBack() override { }
     virtual void willChangeCanGoForward() override { }
     virtual void didChangeCanGoForward() override { }
+    virtual void willChangeNetworkRequestsInProgress() override { }
+    virtual void didChangeNetworkRequestsInProgress() override { }
 
     WKBrowsingContextController *m_controller;
 };

@@ -690,6 +690,9 @@ public:
     void didFinishPrintOperation(const WebCore::ResourceError&, uint64_t callbackID);
 #endif
 
+    void addResourceRequest(unsigned long, const WebCore::ResourceRequest&);
+    void removeResourceRequest(unsigned long);
+
     void setMediaVolume(float);
     void setMayStartMediaWhenInWindow(bool);
 
@@ -1199,6 +1202,8 @@ private:
     unsigned m_numWheelEventHandlers;
 
     unsigned m_cachedPageCount;
+
+    HashSet<unsigned long> m_networkResourceRequestIdentifiers;
 
     WebCore::IntSize m_minimumLayoutSize;
     bool m_autoSizingShouldExpandToViewHeight;
