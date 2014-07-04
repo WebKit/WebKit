@@ -1,3 +1,18 @@
+2014-06-13  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] GLContextEGL.cpp: conflicting declaration 'typedef ptrdiff_t GLintptr'
+        https://bugs.webkit.org/show_bug.cgi?id=133550
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Cairo includes some definitions from GLX that conflict with the
+        ones provided by our GLES2 headers (GLintptr, GLsizeiptr).
+
+        Since GLContextEGL doesn't use any GLX functions we can safely
+        disable the inclusion of those functions in that source file.
+
+        * platform/graphics/egl/GLContextEGL.cpp:
+
 2014-06-24  Jarek Czekalski  <jarekczek@poczta.onet.pl>
 
         [ATK] Don't ignore links rendered as blocks.
