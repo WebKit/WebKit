@@ -1,3 +1,39 @@
+2014-07-04  Andreas Kling  <akling@apple.com>
+
+        CTTE: ApplicationCacheHost always has a DocumentLoader.
+        <https://webkit.org/b/b/128435>
+
+        Have ApplicationCacheHost store the backpointer to its owning
+        DocumentLoader as a reference.
+
+        Reviewed by Sam Weinig.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader):
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::ApplicationCacheHost):
+        (WebCore::ApplicationCacheHost::~ApplicationCacheHost):
+        (WebCore::ApplicationCacheHost::selectCacheWithoutManifest):
+        (WebCore::ApplicationCacheHost::selectCacheWithManifest):
+        (WebCore::ApplicationCacheHost::maybeLoadMainResource):
+        (WebCore::ApplicationCacheHost::maybeLoadFallbackForMainResponse):
+        (WebCore::ApplicationCacheHost::maybeLoadFallbackForMainError):
+        (WebCore::ApplicationCacheHost::failedLoadingMainResource):
+        (WebCore::ApplicationCacheHost::finishedLoadingMainResource):
+        (WebCore::ApplicationCacheHost::maybeLoadResource):
+        (WebCore::ApplicationCacheHost::maybeLoadFallbackForError):
+        (WebCore::ApplicationCacheHost::maybeLoadSynchronously):
+        (WebCore::ApplicationCacheHost::notifyDOMApplicationCache):
+        (WebCore::ApplicationCacheHost::stopDeferringEvents):
+        (WebCore::ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache):
+        (WebCore::ApplicationCacheHost::update):
+        (WebCore::ApplicationCacheHost::swapCache):
+        (WebCore::ApplicationCacheHost::abort):
+        (WebCore::ApplicationCacheHost::isApplicationCacheEnabled):
+        * loader/appcache/ApplicationCacheHost.h:
+        (WebCore::ApplicationCacheHost::documentLoader): Deleted.
+
 2014-07-04  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r159345): Lines are clipped between pages when printing web content from Safari

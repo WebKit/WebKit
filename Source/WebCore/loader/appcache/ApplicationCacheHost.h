@@ -110,7 +110,7 @@ namespace WebCore {
         typedef Vector<ResourceInfo> ResourceInfoList;
 #endif
 
-        ApplicationCacheHost(DocumentLoader*);
+        explicit ApplicationCacheHost(DocumentLoader&);
         ~ApplicationCacheHost();
 
         void selectCacheWithoutManifest();
@@ -156,7 +156,6 @@ namespace WebCore {
     private:
         bool isApplicationCacheEnabled();
         bool isApplicationCacheBlockedForRequest(const ResourceRequest&);
-        DocumentLoader* documentLoader() const { return m_documentLoader; }
 
         struct DeferredEvent {
             EventID eventID;
@@ -166,7 +165,7 @@ namespace WebCore {
         };
 
         DOMApplicationCache* m_domApplicationCache;
-        DocumentLoader* m_documentLoader;
+        DocumentLoader& m_documentLoader;
         bool m_defersEvents; // Events are deferred until after document onload.
         Vector<DeferredEvent> m_deferredEvents;
 
