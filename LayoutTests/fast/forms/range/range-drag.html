@@ -8,6 +8,12 @@
 <div id="console"></div>
 <script>
 
+var inputEventCounter = 0;
+function handleInput() {
+    inputEventCounter++;
+}
+var lastInputEventCounter = inputEventCounter;
+
 var changeEventCounter = 0;
 function handleChange() {
     changeEventCounter++;
@@ -40,27 +46,33 @@ function testInput(dragsFromEdge) {
 
     debug('readOnly=false, disabled=false');
     input.valueAsNumber = 50;
+    lastInputEventCounter = inputEventCounter;
     lastChangeEventCounter = changeEventCounter;
     dragMouse();
     shouldBe('input.value', '"100"');
-    shouldBeGreaterThanOrEqual('changeEventCounter', 'lastChangeEventCounter + 1');
+    shouldBeGreaterThanOrEqual('inputEventCounter', 'lastInputEventCounter + 1');
+    shouldBe('changeEventCounter', 'lastChangeEventCounter + 1');
 
     debug('readOnly=true');
     input.disabled = false;
     input.readOnly = true;
     input.valueAsNumber = 50;
+    lastInputEventCounter = inputEventCounter;
     lastChangeEventCounter = changeEventCounter;
     dragMouse();
     shouldBe('input.value', '"50"');
+    shouldBe('lastInputEventCounter', 'inputEventCounter');
     shouldBe('lastChangeEventCounter', 'changeEventCounter');
 
     debug('disabled=true');
     input.readOnly = false;
     input.disabled = true;
     input.valueAsNumber = 50;
+    lastInputEventCounter = inputEventCounter;
     lastChangeEventCounter = changeEventCounter;
     dragMouse();
     shouldBe('input.value', '"50"');
+    shouldBe('lastInputEventCounter', 'inputEventCounter');
     shouldBe('lastChangeEventCounter', 'changeEventCounter');
 }
 
@@ -71,6 +83,7 @@ parent.innerHTML = '<input type=range id=range1 min=0 max=100 value=50>' +
 
 debug('Tests for range dragging from center.');
 var input = document.getElementById('range1');
+input.oninput = handleInput;
 input.onchange = handleChange;
 input.focus();
 testInput(false);
@@ -78,6 +91,7 @@ debug('');
 
 debug('Tests for range dragging from edge');
 var input = document.getElementById('range2');
+input.oninput = handleInput;
 input.onchange = handleChange;
 input.focus();
 testInput(true);

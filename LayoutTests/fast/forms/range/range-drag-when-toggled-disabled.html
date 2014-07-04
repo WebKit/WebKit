@@ -11,9 +11,14 @@
 <script>
 
 var changeEventCounter = 0;
-var lastChangeEventCounter = changeEventCounter;
 function handleChange() {
     changeEventCounter++;
+}
+
+var inputEventCounter = 0;
+var lastInputEventCounter = inputEventCounter;
+function handleInput() {
+    inputEventCounter++;
 }
 
 var input = null;
@@ -24,6 +29,7 @@ function testInput(id, field) {
 
     input = document.getElementById(id);
     input.onchange = handleChange;
+    input.oninput = handleInput;
     input.focus();
 
     var centerY = input.offsetTop + input.offsetHeight / 2;
@@ -49,24 +55,24 @@ function testInput(id, field) {
     // Drag from center, to right edge, to left edge.
     debug('readOnly=false, disabled=false');
     input.valueAsNumber = 50;
-    lastChangeEventCounter = changeEventCounter;
+    lastInputEventCounter = inputEventCounter;
     dragToRightEdge();
     shouldBe('input.value', '"100"');
-    shouldBeGreaterThanOrEqual('changeEventCounter', 'lastChangeEventCounter + 1');
-    lastChangeEventCounter = changeEventCounter;
+    shouldBeGreaterThanOrEqual('inputEventCounter', 'lastInputEventCounter + 1');
+    lastInputEventCounter = inputEventCounter;
     dragToLeftEdge();
     shouldBe('input.value', '"0"');
-    shouldBeGreaterThanOrEqual('changeEventCounter', 'lastChangeEventCounter + 1');
+    shouldBeGreaterThanOrEqual('inputEventCounter', 'lastInputEventCounter + 1');
 
     // Toggle (readonly | disabled).
     debug(field + '=true');
     input[field] = true;
 
     // Attempt to drag to right edge. Should not change.
-    lastChangeEventCounter = changeEventCounter;
+    lastInputEventCounter = inputEventCounter;
     dragToRightEdge();
     shouldBe('input.value', '"0"');
-    shouldBe('lastChangeEventCounter', 'changeEventCounter');
+    shouldBe('lastInputEventCounter', 'inputEventCounter');
 
     stopDrag();
 }
@@ -81,6 +87,9 @@ debug('');
 
 debug('Tests for range dragging while it toggles to be disabled.');
 testInput('range2', 'disabled');
+debug('');
+
+shouldBe('changeEventCounter', '1');
 debug('');
 
 </script>

@@ -133,10 +133,7 @@ void AccessibilitySlider::setValue(const String& value)
     if (input->value() == value)
         return;
 
-    input->setValue(value);
-
-    // Fire change event manually, as RenderSlider::setValueForPosition does.
-    input->dispatchFormControlChangeEvent();
+    input->setValue(value, DispatchChangeEvent);
 }
 
 HTMLInputElement* AccessibilitySlider::inputElement() const

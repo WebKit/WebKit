@@ -330,7 +330,7 @@ Controller.prototype = {
         timeline.setAttribute('aria-label', this.UIString('Duration'));
         timeline.style.backgroundImage = '-webkit-canvas(timeline-' + this.timelineID + ')';
         timeline.type = 'range';
-        this.listenFor(timeline, 'change', this.handleTimelineChange);
+        this.listenFor(timeline, 'input', this.handleTimelineChange);
         this.listenFor(timeline, 'mouseover', this.handleTimelineMouseOver);
         this.listenFor(timeline, 'mouseout', this.handleTimelineMouseOut);
         this.listenFor(timeline, 'mousemove', this.handleTimelineMouseMove);

@@ -1,3 +1,20 @@
+2014-07-04  Julien Quint  <pom@graougraou.com>
+
+        input type=range element should only fire change events after committing a  value
+        https://bugs.webkit.org/show_bug.cgi?id=134545
+
+        Reviewed by Dean Jackson.
+
+        Two existing tests are updated to count "input" events as well as
+        "change" events. The tests now verify that "change" is only fired once
+        after every slider drag completes, whereas "input" may be fired more
+        than once.
+
+        * fast/forms/range/range-drag-expected.txt:
+        * fast/forms/range/range-drag-when-toggled-disabled-expected.txt:
+        * fast/forms/range/range-drag-when-toggled-disabled.html:
+        * fast/forms/range/range-drag.html:
+
 2014-07-04  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         buildAccessibilityTree() needs to be removed from individual layout tests

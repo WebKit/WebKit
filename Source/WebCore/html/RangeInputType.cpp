@@ -327,6 +327,9 @@ void RangeInputType::setValue(const String& value, bool valueChanged, TextFieldE
     if (!valueChanged)
         return;
 
+    if (eventBehavior == DispatchNoEvent)
+        element().setTextAsOfLastFormControlChangeEvent(value);
+
     typedSliderThumbElement().setPositionFromValue();
 }
 

@@ -261,8 +261,6 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
     if (!trackElement->renderBox())
         return;
 
-    input->setTextAsOfLastFormControlChangeEvent(input->value());
-
     // Do all the tracking math relative to the input's renderer's box.
     RenderBox& inputRenderer = *toRenderBox(input->renderer());
     RenderBox& trackRenderer = *trackElement->renderBox();
@@ -312,7 +310,6 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
     input->setValueFromRenderer(valueString);
     if (renderer())
         renderer()->setNeedsLayout();
-    input->dispatchFormControlChangeEvent();
 }
 
 void SliderThumbElement::startDragging()
@@ -333,6 +330,10 @@ void SliderThumbElement::stopDragging()
     m_inDragMode = false;
     if (renderer())
         renderer()->setNeedsLayout();
+
+    RefPtr<HTMLInputElement> input = hostInput();
+    if (input)
+        input->dispatchFormControlChangeEvent();
 }
 
 #if !PLATFORM(IOS)
