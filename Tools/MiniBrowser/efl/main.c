@@ -31,7 +31,7 @@ static const char APP_NAME[] = "EFL MiniBrowser";
 static const int TOOL_BAR_ICON_SIZE = 24;
 static const int TOOL_BAR_BUTTON_SIZE = 32;
 static const int SEARCH_FIELD_SIZE = 200;
-static const int SEARCH_BUTTON_SIZE = 25;
+static const int SEARCH_BUTTON_SIZE = 30;
 static const int MAX_SEARCH_COUNT = 100;
 static const int DEFAULT_SEARCH_FLAGS = EWK_FIND_OPTIONS_SHOW_HIGHLIGHT | EWK_FIND_OPTIONS_CASE_INSENSITIVE | EWK_FIND_OPTIONS_WRAP_AROUND;
 static const double TOOLTIP_DELAY_SECONDS = 1.0;
@@ -108,8 +108,10 @@ typedef struct _Browser_Window {
     struct {
         Evas_Object *search_bar;
         Evas_Object *search_field;
+        Evas_Object *search_field_count;
         Evas_Object *backward_button;
         Evas_Object *forward_button;
+        Evas_Object *close_button;
     } search;
     int current_zoom_level; 
     Tooltip_Information tooltip;
@@ -368,8 +370,10 @@ search_box_show(Browser_Window *window)
 
     evas_object_show(window->search.search_bar);
     evas_object_show(window->search.search_field);
+    evas_object_show(window->search.search_field_count);
     evas_object_show(window->search.backward_button);
     evas_object_show(window->search.forward_button);
+    evas_object_show(window->search.close_button);
 
     /* Grab focus from the view */
     evas_object_focus_set(window->ewk_view, EINA_FALSE);
@@ -384,8 +388,10 @@ search_box_hide(Browser_Window *window)
     evas_object_size_hint_min_set(window->search.search_bar, SEARCH_FIELD_SIZE + 2 * SEARCH_BUTTON_SIZE, 0);
     evas_object_hide(window->search.search_bar);
     evas_object_hide(window->search.search_field);
+    evas_object_hide(window->search.search_field_count);
     evas_object_hide(window->search.backward_button);
     evas_object_hide(window->search.forward_button);
+    evas_object_hide(window->search.close_button);
 
     /* Give focus back to the view */
     elm_object_focus_set(window->search.search_field, EINA_FALSE);
@@ -1013,6 +1019,14 @@ on_search_forward_button_clicked(void *user_data, Evas_Object *search_forward_bu
     char *text = elm_entry_markup_to_utf8(elm_entry_entry_get(window->search.search_field));
     ewk_view_text_find(window->ewk_view, text, DEFAULT_SEARCH_FLAGS, MAX_SEARCH_COUNT);
     free(text);
+}
+
+static void
+on_search_close_button_clicked(void *user_data, Evas_Object *search_close_button, void *event_info)
+{
+    Browser_Window *window = (Browser_Window *)user_data;
+
+    search_box_hide(window);
 }
 
 static void
@@ -1658,6 +1672,26 @@ on_authentication_request(void *user_data, Evas_Object *obj, void *event_info)
 }
 
 static void
+on_search_text_found(void *user_data, Evas_Object *obj, void *event_info)
+{
+    Browser_Window *window = (Browser_Window *)user_data;
+
+    const int *match_count = (const int *)(event_info);
+
+    if (*match_count) {
+        Eina_Strbuf *search_text = eina_strbuf_new();
+        eina_strbuf_append_printf(search_text, "  %d  Matches Found " , *match_count);
+        elm_object_text_set(window->search.search_field_count, eina_strbuf_string_get(search_text));
+        eina_strbuf_free(search_text);
+    } else
+        elm_object_text_set(window->search.search_field_count, " No Matches Found");
+
+    evas_object_focus_set(window->ewk_view, EINA_FALSE);
+    elm_object_focus_set(window->search.search_field_count, EINA_FALSE);
+    elm_object_focus_set(window->search.search_field, EINA_TRUE);
+}
+
+static void
 on_tooltip_text_set(void *user_data, Evas_Object *obj, void *event_info)
 {
     Browser_Window *window = (Browser_Window *)user_data;
@@ -1837,6 +1871,23 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     evas_object_size_hint_min_set(window->search.forward_button, SEARCH_BUTTON_SIZE, SEARCH_BUTTON_SIZE);
     elm_box_pack_end(window->search.search_bar, window->search.forward_button);
 
+    /* Create Search count field */
+    window->search.search_field_count = elm_label_add(window->elm_window);
+    evas_object_size_hint_weight_set(window->search.search_field_count, 0.0, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(window->search.search_field_count, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    elm_object_text_set(window->search.search_field_count, "");
+    elm_entry_text_style_user_push(window->search.search_field_count, "DEFAULT='font_size=14'");
+    elm_box_pack_end(window->search.search_bar, window->search.search_field_count);
+
+    /* Create Search close button */
+    window->search.close_button = create_toolbar_button(window->elm_window, "close");
+    evas_object_smart_callback_add(window->search.close_button, "clicked", on_search_close_button_clicked, window);
+    elm_object_disabled_set(window->search.close_button, EINA_FALSE);
+    evas_object_size_hint_weight_set(window->search.close_button, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(window->search.close_button, 1.0, 0.5);
+    evas_object_size_hint_min_set(window->search.close_button, SEARCH_BUTTON_SIZE, SEARCH_BUTTON_SIZE);
+    elm_box_pack_end(window->search.search_bar, window->search.close_button);
+
     /* Create ewk_view */
     Ewk_View_Smart_Class *ewkViewClass = miniBrowserViewSmartClass();
     ewkViewClass->run_javascript_alert = on_javascript_alert;
@@ -1907,6 +1958,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     evas_object_smart_callback_add(window->ewk_view, "title,changed", on_title_changed, window);
     evas_object_smart_callback_add(window->ewk_view, "url,changed", on_url_changed, window);
     evas_object_smart_callback_add(window->ewk_view, "back,forward,list,changed", on_back_forward_list_changed, window);
+    evas_object_smart_callback_add(window->ewk_view, "text,found", on_search_text_found, window);
     evas_object_smart_callback_add(window->ewk_view, "tooltip,text,set", on_tooltip_text_set, window);
     evas_object_smart_callback_add(window->ewk_view, "tooltip,text,unset", on_tooltip_text_unset, window);
 
