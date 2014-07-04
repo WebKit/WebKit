@@ -44,7 +44,6 @@
 #define WTF_COMPILER_SUPPORTS_BLOCKS __has_feature(blocks)
 #define WTF_COMPILER_SUPPORTS_C_STATIC_ASSERT __has_feature(c_static_assert)
 #define WTF_COMPILER_SUPPORTS_CXX_CONSTEXPR __has_feature(cxx_constexpr)
-#define WTF_COMPILER_SUPPORTS_CXX_GENERALIZED_INITIALIZERS __has_feature(cxx_generalized_initializers)
 #define WTF_COMPILER_SUPPORTS_CXX_REFERENCE_QUALIFIED_FUNCTIONS __has_feature(cxx_reference_qualified_functions)
 #define WTF_COMPILER_SUPPORTS_CXX_USER_LITERALS __has_feature(cxx_user_literals)
 #define WTF_COMPILER_SUPPORTS_FALLTHROUGH_WARNINGS __has_feature(cxx_attributes) && __has_warning("-Wimplicit-fallthrough")
@@ -106,7 +105,6 @@
 
 #if defined(_MSC_VER)
 #define WTF_COMPILER_MSVC 1
-#define WTF_COMPILER_SUPPORTS_CXX_GENERALIZED_INITIALIZERS 1
 #endif
 
 #if defined(_MSC_VER) && _MSC_VER < 1800
