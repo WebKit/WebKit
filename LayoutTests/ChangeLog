@@ -1,3 +1,15 @@
+2014-06-24  Jarek Czekalski  <jarekczek@poczta.onet.pl>
+
+        [ATK] Extended the test for accessibility of text inside "span" block in "a" block
+        with the tests for caret movements in these cases.
+        https://bugs.webkit.org/show_bug.cgi?id=130941
+
+        Reviewed by Mario Sanchez Prada.
+
+        * platform/gtk/accessibility/text-in-span-block-in-a-block-expected.txt: 
+        * platform/gtk/accessibility/text-in-span-block-in-a-block.html:
+        Added testing for text-caret-moved signal. Added one more "a" element to the set.
+
 2014-06-13  Jarek Czekalski  <jarekczek@poczta.onet.pl>
 
         [ATK] Add test for accessibility of text inside "span" block in "a" block.

@@ -41,6 +41,8 @@
 
 <a id="id6" href="x" style="display:block;">before,<span style="display:block;">six</span></a>
 
+<a id="id7" href="x" style="display:block;">no span here</a>
+
 <div id="console"></div>
 
 <script>
@@ -72,7 +74,7 @@ if (window.testRunner) {
 if (window.accessibilityController) {
     var i, linkText, accText, id;
     accessibilityController.addNotificationListener(globalListener)
-    for (i = 1; i <= 6; i++) {
+    for (i = 1; i <= 7; i++) {
         id = 'id' + i;
         elem = accessibilityController.accessibleElementById(id);
         linkText = stripNonWhite(document.links[id].textContent);
@@ -80,8 +82,7 @@ if (window.accessibilityController) {
         shouldBeEqualToString("accText", "AXValue:" + linkText);
         caretMovedData = '';
         shouldBe("setCaretOffset(elem, 1)", "true");
-        // FIXME: This line will be added after fixing bug #130941.
-        //shouldBeEqualToString("caretMovedData", "Link|1");
+        shouldBeEqualToString("caretMovedData", "Link|1");
     }
 }
 

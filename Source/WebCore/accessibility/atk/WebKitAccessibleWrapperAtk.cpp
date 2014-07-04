@@ -1299,8 +1299,10 @@ AccessibilityObject* objectFocusedAndCaretOffsetUnignored(AccessibilityObject* r
     if (!firstUnignoredParent)
         return 0;
 
-    // Don't ignore links if the offset is being requested for a link.
-    if (!referenceObject->isLink() && firstUnignoredParent->isLink())
+    // Don't ignore links if the offset is being requested for a link
+    // or if the link is a block.
+    if (!referenceObject->isLink() && firstUnignoredParent->isLink()
+        && !(firstUnignoredParent->renderer() && !firstUnignoredParent->renderer()->isInline()))
         firstUnignoredParent = firstUnignoredParent->parentObjectUnignored();
     if (!firstUnignoredParent)
         return 0;

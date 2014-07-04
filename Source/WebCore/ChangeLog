@@ -1,3 +1,14 @@
+2014-06-24  Jarek Czekalski  <jarekczek@poczta.onet.pl>
+
+        [ATK] Don't ignore links rendered as blocks.
+        https://bugs.webkit.org/show_bug.cgi?id=130941
+
+        Reviewed by Mario Sanchez Prada.
+
+        * /m/usr/src/webkit-trunk/Source/WebCore/accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (WebCore::AccessibilityObject::objectFocusedAndCaretOffsetUnignored): Don't ignore links
+        when they are renderered with display:block.
+
 2014-06-13  Jarek Czekalski  <jarekczek@poczta.onet.pl>
 
         [ATK] Fix text inside "span" block in "a" block was not accessible.
