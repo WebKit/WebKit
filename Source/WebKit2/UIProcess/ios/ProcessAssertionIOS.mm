@@ -88,11 +88,11 @@
     bool shouldHoldTask = _needsToRunInBackgroundCount && _appIsBackground;
 
     if (shouldHoldTask && _backgroundTask == UIBackgroundTaskInvalid) {
-        __block UIBackgroundTaskIdentifier task = [[UIApplication sharedApplication] beginBackgroundTaskWithName:@"com.apple.WebKit.ProcessAssertion" expirationHandler:^{
+        _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithName:@"com.apple.WebKit.ProcessAssertion" expirationHandler:^{
             NSLog(@"Background task expired while holding WebKit ProcessAssertion.");
-            [[UIApplication sharedApplication] endBackgroundTask:task];
+            [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
+            _backgroundTask = UIBackgroundTaskInvalid;
         }];
-        _backgroundTask = task;
     }
 
     if (!shouldHoldTask && _backgroundTask != UIBackgroundTaskInvalid) {

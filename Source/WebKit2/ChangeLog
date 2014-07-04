@@ -1,3 +1,16 @@
+2014-07-03  Gavin Barraclough  <baraclough@apple.com>
+
+        WKProcessAssertionBackgroundTaskManager should clear member if task expires
+        https://bugs.webkit.org/show_bug.cgi?id=134618
+
+        Reviewed by Anders Carlson.
+
+        Failure to do so results in a warning, and could result in us erroneously completing a background task too soon.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]):
+            - remove local variable, _backgroundTask = UIBackgroundTaskInvalid;
+
 2014-07-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed iOS build fix for r170774.
