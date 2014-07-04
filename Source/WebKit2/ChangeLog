@@ -1,3 +1,16 @@
+2014-07-04  Tim Horton  <timothy_horton@apple.com>
+
+        [WK2] Take TopContentInset into account when sending dictionary lookup point to PluginView
+        https://bugs.webkit.org/show_bug.cgi?id=134624
+        <rdar://problem/17222041>
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::performDictionaryLookupAtLocation):
+        Perform the same coordinate conversion we use for mouse events, which happens
+        to take the top content inset into account.
+
 2014-07-04  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK WK2 build fix after r170787.
