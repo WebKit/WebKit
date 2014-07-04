@@ -1,3 +1,15 @@
+2014-07-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] [Stable] Crash while playing a video
+        https://bugs.webkit.org/show_bug.cgi?id=133940
+
+        Unreviewed. Rolling out r160688.
+
+        * jit/CCallHelpers.h:
+        * jit/Repatch.cpp:
+        (JSC::generateProtoChainAccessStub):
+        (JSC::tryBuildGetByIDList):
+
 2014-05-19  Mark Lam  <mark.lam@apple.com>
 
         operationOptimize() should defer the GC for a while.
@@ -5011,26 +5023,6 @@
 
         * assembler/ARMv7Assembler.h: Include limits.h for INT_MIN.
         * assembler/SH4Assembler.h: Include limits.h for INT_MIN.
-
-2013-12-16  Oliver Hunt  <oliver@apple.com>
-
-        Avoid indirect function calls for custom getters
-        https://bugs.webkit.org/show_bug.cgi?id=125821
-
-        Reviewed by Mark Hahnenberg.
-
-        Rather than invoking a helper function to perform an indirect call
-        through a function pointer, just have the JIT call the function directly.
-
-        Unfortunately this only works in JSVALUE64 at the moment as there
-        is not an obvious way to pass two EncodedJSValues uniformly over
-        the various effected JITs.
-
-        * jit/CCallHelpers.h:
-        (JSC::CCallHelpers::setupArguments):
-        * jit/Repatch.cpp:
-        (JSC::generateProtoChainAccessStub):
-        (JSC::tryBuildGetByIDList):
 
 2013-12-16  Joseph Pecoraro  <pecoraro@apple.com>
 

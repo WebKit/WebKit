@@ -308,17 +308,11 @@ static ProtoChainGenerationResult generateProtoChainAccessStub(ExecState* exec, 
             stubJit.setupArguments(callFrameRegister, scratchGPR, resultGPR);
             operationFunction = operationCallGetter;
         } else {
-#if USE(JSVALUE64)
-            // EncodedJSValue (*GetValueFunc)(ExecState*, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName);
-            stubJit.setupArguments(callFrameRegister, MacroAssembler::TrustedImmPtr(protoObject), scratchGPR, MacroAssembler::TrustedImmPtr(propertyName.impl()));
-            operationFunction = FunctionPtr(slot.customGetter());
-#else
             stubJit.move(MacroAssembler::TrustedImmPtr(protoObject), scratchGPR);
             stubJit.setupArguments(callFrameRegister, scratchGPR,
                 MacroAssembler::TrustedImmPtr(FunctionPtr(slot.customGetter()).executableAddress()),
                 MacroAssembler::TrustedImmPtr(propertyName.impl()));
             operationFunction = operationCallCustomGetter;
-#endif
         }
 
         // Need to make sure that whenever this call is made in the future, we remember the
@@ -616,17 +610,11 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
                 stubJit.setupArguments(callFrameRegister, baseGPR, scratchGPR);
                 operationFunction = operationCallGetter;
             } else {
-#if USE(JSVALUE64)
-                // EncodedJSValue (*GetValueFunc)(ExecState*, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName);
-                stubJit.setupArguments(callFrameRegister, baseGPR, baseGPR, MacroAssembler::TrustedImmPtr(ident.impl()));
-                operationFunction = FunctionPtr(slot.customGetter());
-#else
                 stubJit.setupArguments(
                     callFrameRegister, baseGPR,
                     MacroAssembler::TrustedImmPtr(FunctionPtr(slot.customGetter()).executableAddress()),
                     MacroAssembler::TrustedImmPtr(ident.impl()));
                 operationFunction = operationCallCustomGetter;
-#endif
             }
             
             // Need to make sure that whenever this call is made in the future, we remember the
