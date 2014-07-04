@@ -1,3 +1,13 @@
+2014-06-13  Jarek Czekalski  <jarekczek@poczta.onet.pl>
+
+        [ATK] Fix text inside "span" block in "a" block was not accessible.
+        https://bugs.webkit.org/show_bug.cgi?id=132349
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp: Add link role
+          to the list of roles whose objects always expose atk_text interface.
+
 2014-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use a different user agent string depending on the site

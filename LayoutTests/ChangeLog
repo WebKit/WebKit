@@ -1,3 +1,13 @@
+2014-06-13  Jarek Czekalski  <jarekczek@poczta.onet.pl>
+
+        [ATK] Add test for accessibility of text inside "span" block in "a" block.
+        https://bugs.webkit.org/show_bug.cgi?id=132349
+
+        Reviewed by Mario Sanchez Prada.
+
+        * platform/gtk/accessibility/text-in-span-block-in-a-block-expected.txt: Added.
+        * platform/gtk/accessibility/text-in-span-block-in-a-block.html: Added.
+
 2014-05-30  Jarek Czekalski  <jarekczek@poczta.onet.pl>
 
         [ATK] Convert caret offset tests from testatk.c.
