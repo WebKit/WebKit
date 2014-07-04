@@ -1,3 +1,14 @@
+2014-07-04  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] -[WKWebView _reload] is unused
+        https://bugs.webkit.org/show_bug.cgi?id=134638
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _reload]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2014-07-04  Tim Horton  <timothy_horton@apple.com>
 
         [WK2] Take TopContentInset into account when sending dictionary lookup point to PluginView
