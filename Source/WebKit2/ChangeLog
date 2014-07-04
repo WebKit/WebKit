@@ -1,3 +1,14 @@
+2014-07-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed iOS build fix for r170774.
+
+        Remove some unnecessary WTF::moves on iOS:
+        error: static_assert failed "T is not an lvalue reference; move() is unnecessary."
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::getQueuedTouchEventsForPage):
+        (WebKit::EventDispatcher::touchEvent):
+
 2014-07-03  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the iOS build.
