@@ -146,7 +146,7 @@ static NSString * const WebKit2SubpixelCSSOMElementMetricsEnabledKey = @"WebKitS
 
 - (IBAction)reload:(id)sender
 {
-    [_webView _reload];
+    [_webView reload];
 }
 
 - (IBAction)forceRepaint:(id)sender

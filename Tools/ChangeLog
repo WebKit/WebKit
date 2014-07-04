@@ -1,3 +1,10 @@
+2014-07-04  Dan Bernstein  <mitz@apple.com>
+
+        Build fix after r170811.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController reload:]):
+
 2014-07-04  Timothy Horton  <timothy_horton@apple.com>
 
         Typo in watchlist config means four specific people get Cc'd on everything
