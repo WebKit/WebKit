@@ -760,7 +760,7 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
 - (void)_applicationWillEnterForeground:(NSNotification*)notification
 {
     _page->applicationWillEnterForeground();
-    _page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow);
+    _page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow, true);
 }
 
 - (void)_applicationDidBecomeActive:(NSNotification*)notification

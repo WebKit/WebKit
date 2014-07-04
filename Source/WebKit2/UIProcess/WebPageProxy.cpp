@@ -366,7 +366,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_navigationID(0)
     , m_configurationPreferenceValues(configuration.preferenceValues)
     , m_potentiallyChangedViewStateFlags(ViewState::NoFlags)
-    , m_viewStateChangeWantsReply(WantsReplyOrNot::DoesNotWantReply)
+    , m_viewStateChangeWantsReply(false)
 {
     if (m_process->state() == WebProcessProxy::State::Running) {
         if (m_userContentController)
@@ -1101,15 +1101,13 @@ void WebPageProxy::updateViewState(ViewState::Flags flagsToUpdate)
         m_viewState |= ViewState::IsVisuallyIdle;
 }
 
-void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged)
+void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, bool wantsReply)
 {
-    bool isNewlyInWindow = !isInWindow() && (mayHaveChanged & ViewState::IsInWindow) && m_pageClient.isViewInWindow();
-
     m_potentiallyChangedViewStateFlags |= mayHaveChanged;
-    m_viewStateChangeWantsReply = ((m_viewWasEverInWindow && isNewlyInWindow) || m_viewStateChangeWantsReply == WantsReplyOrNot::DoesWantReply) ? WantsReplyOrNot::DoesWantReply : WantsReplyOrNot::DoesNotWantReply;
+    m_viewStateChangeWantsReply = m_viewStateChangeWantsReply || wantsReply;
 
 #if PLATFORM(COCOA)
-    if (isNewlyInWindow) {
+    if (!isInWindow() && (mayHaveChanged & ViewState::IsInWindow) && m_pageClient.isViewInWindow()) {
         dispatchViewStateChange();
         return;
     }
@@ -1117,6 +1115,29 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged)
 #else
     dispatchViewStateChange();
 #endif
+}
+
+void WebPageProxy::viewDidLeaveWindow()
+{
+#if ENABLE(INPUT_TYPE_COLOR_POPOVER)
+    // When leaving the current page, close the popover color well.
+    if (m_colorPicker)
+        endColorPicker();
+#endif
+#if PLATFORM(IOS)
+    // When leaving the current page, close the video fullscreen.
+    if (m_videoFullscreenManager)
+        m_videoFullscreenManager->requestHideAndExitFullscreen();
+#endif
+}
+
+void WebPageProxy::viewDidEnterWindow()
+{
+    LayerHostingMode layerHostingMode = m_pageClient.viewLayerHostingMode();
+    if (m_layerHostingMode != layerHostingMode) {
+        m_layerHostingMode = layerHostingMode;
+        m_process->send(Messages::WebPage::SetLayerHostingMode(static_cast<unsigned>(layerHostingMode)), m_pageID);
+    }
 }
 
 void WebPageProxy::dispatchViewStateChange()
@@ -1138,8 +1159,12 @@ void WebPageProxy::dispatchViewStateChange()
     updateViewState(m_potentiallyChangedViewStateFlags);
     ViewState::Flags changed = m_viewState ^ previousViewState;
 
+    // We always want to wait for the Web process to reply if we've been in-window before and are coming back in-window.
+    if (m_viewWasEverInWindow && (changed & ViewState::IsInWindow) && isInWindow())
+        m_viewStateChangeWantsReply = true;
+
     if (changed)
-        m_process->send(Messages::WebPage::SetViewState(m_viewState, m_viewStateChangeWantsReply == WantsReplyOrNot::DoesWantReply), m_pageID);
+        m_process->send(Messages::WebPage::SetViewState(m_viewState, m_viewStateChangeWantsReply), m_pageID);
 
     // This must happen after the SetViewState message is sent, to ensure the page visibility event can fire.
     updateActivityToken();
@@ -1153,34 +1178,20 @@ void WebPageProxy::dispatchViewStateChange()
     if ((changed & ViewState::IsVisible) && !isViewVisible())
         m_process->responsivenessTimer()->stop();
 
-    if ((m_potentiallyChangedViewStateFlags & ViewState::IsInWindow) && (m_viewState & ViewState::IsInWindow)) {
-        LayerHostingMode layerHostingMode = m_pageClient.viewLayerHostingMode();
-        if (m_layerHostingMode != layerHostingMode) {
-            m_layerHostingMode = layerHostingMode;
-            m_process->send(Messages::WebPage::SetLayerHostingMode(static_cast<unsigned>(layerHostingMode)), m_pageID);
-        }
-    }
-
-    if ((m_potentiallyChangedViewStateFlags & ViewState::IsInWindow) && !(m_viewState & ViewState::IsInWindow)) {
-#if ENABLE(INPUT_TYPE_COLOR_POPOVER)
-        // When leaving the current page, close the popover color well.
-        if (m_colorPicker)
-            endColorPicker();
-#endif
-#if PLATFORM(IOS)
-        // When leaving the current page, close the video fullscreen.
-        if (m_videoFullscreenManager)
-            m_videoFullscreenManager->requestHideAndExitFullscreen();
-#endif
+    if (changed & ViewState::IsInWindow) {
+        if (isInWindow())
+            viewDidEnterWindow();
+        else
+            viewDidLeaveWindow();
     }
 
     updateBackingStoreDiscardableState();
 
-    if (m_viewStateChangeWantsReply == WantsReplyOrNot::DoesWantReply)
+    if (m_viewStateChangeWantsReply)
         waitForDidUpdateViewState();
 
     m_potentiallyChangedViewStateFlags = ViewState::NoFlags;
-    m_viewStateChangeWantsReply = WantsReplyOrNot::DoesNotWantReply;
+    m_viewStateChangeWantsReply = false;
 }
 
 void WebPageProxy::updateActivityToken()

@@ -174,6 +174,11 @@ void TiledCoreAnimationDrawingArea::scheduleCompositingLayerFlush()
     m_layerFlushScheduler.schedule();
 }
 
+void TiledCoreAnimationDrawingArea::scheduleCompositingLayerFlushImmediately()
+{
+    scheduleCompositingLayerFlush();
+}
+
 void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&)
 {
     Settings& settings = m_webPage.corePage()->settings();

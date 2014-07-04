@@ -67,6 +67,7 @@ private:
     virtual bool layerTreeStateIsFrozen() const override;
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
     virtual void scheduleCompositingLayerFlush() override;
+    virtual void scheduleCompositingLayerFlushImmediately() override;
 
     virtual void updatePreferences(const WebPreferencesStore&) override;
     virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) override;

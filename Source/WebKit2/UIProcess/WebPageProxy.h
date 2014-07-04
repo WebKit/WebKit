@@ -360,8 +360,7 @@ public:
     void setDelegatesScrolling(bool delegatesScrolling) { m_delegatesScrolling = delegatesScrolling; }
     bool delegatesScrolling() const { return m_delegatesScrolling; }
 
-    enum class WantsReplyOrNot { DoesNotWantReply, DoesWantReply };
-    void viewStateDidChange(WebCore::ViewState::Flags mayHaveChanged);
+    void viewStateDidChange(WebCore::ViewState::Flags mayHaveChanged, bool wantsReply = false);
     bool isInWindow() const { return m_viewState & WebCore::ViewState::IsInWindow; }
     void waitForDidUpdateViewState();
     void didUpdateViewState() { m_waitingForDidUpdateViewState = false; }
@@ -1266,6 +1265,8 @@ private:
     WebPreferencesStore preferencesStore() const;
 
     void dispatchViewStateChange();
+    void viewDidLeaveWindow();
+    void viewDidEnterWindow();
 
     PageClient& m_pageClient;
     std::unique_ptr<API::LoaderClient> m_loaderClient;
@@ -1513,7 +1514,7 @@ private:
 
     WebPreferencesStore::ValueMap m_configurationPreferenceValues;
     WebCore::ViewState::Flags m_potentiallyChangedViewStateFlags;
-    WantsReplyOrNot m_viewStateChangeWantsReply;
+    bool m_viewStateChangeWantsReply;
 };
 
 } // namespace WebKit

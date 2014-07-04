@@ -66,6 +66,7 @@ private:
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
     virtual void scheduleCompositingLayerFlush() override;
+    virtual void scheduleCompositingLayerFlushImmediately() override;
 
     virtual void addTransactionCallbackID(uint64_t callbackID) override;
 
