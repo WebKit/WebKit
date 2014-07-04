@@ -102,7 +102,7 @@
                         r"|Source/WebCore/dom/Element\.(cpp|h|idl)",
         },
         "EFL": {
-            "filename": r"|Source/WebCore/platform/efl/"
+            "filename": r"Source/WebCore/platform/efl/"
                         r"|Source/WTF/wtf/efl/"
                         r"|LayoutTests/platform/efl/",
         },
