@@ -141,7 +141,7 @@ public:
     virtual void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform) = 0;
 
     // Tells the plug-in that it has been explicitly hidden or shown. (Note that this is not called when the plug-in becomes obscured from view on screen.)
-    virtual void visibilityDidChange() = 0;
+    virtual void visibilityDidChange(bool isVisible) = 0;
 
     // Tells the plug-in that a frame load request that the plug-in made by calling PluginController::loadURL has finished.
     virtual void frameDidFinishLoading(uint64_t requestID) = 0;

@@ -1,3 +1,53 @@
+2014-06-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Windowed plugins visibility doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=131487
+
+        Reviewed by Anders Carlsson.
+
+        Implement plugins visibility changes and add a new message to
+        notify the UI process when a windowed plugin is shown/hidden to
+        show/hide the plugin widget.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::visibilityDidChange): Add
+        implementation to notify the plugin about visibility change.
+        (WebKit::PluginControllerProxy::windowedPluginVisibilityDidChange):
+        Send WindowedPluginVisibilityDidChange to the plugin proxy.
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/PluginControllerProxy.messages.in: Add VisibilityDidChange message.
+        * UIProcess/WebPageProxy.h: Add windowedPluginVisibilityDidChange
+        to handle WindowedPluginVisibilityDidChange message.
+        * UIProcess/WebPageProxy.messages.in: Add WindowedPluginVisibilityDidChange message.
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::windowedPluginVisibilityDidChange):
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::createPluginContainer): Do not show the
+        plugins by default.
+        (WebKit::WebPageProxy::windowedPluginVisibilityDidChange): Show or hide the plugin widget.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin): Initialize m_isVisible.
+        (WebKit::NetscapePlugin::visibilityDidChange): Add visible parameter and save it in m_isVisible
+        member, calling platformVisibilityDidChange() only when it has actually changed.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePlugin::platformVisibilityDidChange): Notify the controller about visibility change.
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::visibilityDidChange): Send VisibilityDidChange message to the plugin controller proxy.
+        (WebKit::PluginProxy::windowedPluginVisibilityDidChange): Notify the controller about visibility change.
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginProxy.messages.in: Add WindowedPluginVisibilityDidChange message.
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::didInitializePlugin): Also call viewVisibilityDidChange() when the plugin is initialized.
+        (WebKit::PluginView::setParentVisible): Override this Widget method to update the plugin visibility when parent
+        widget is shown/hidden.
+        (WebKit::PluginView::viewVisibilityDidChange): Pass visible parameter to visibilityDidChange().
+        (WebKit::PluginView::windowedPluginVisibilityDidChange): Send WindowedPluginVisibilityDidChange message to the UI process.
+        * WebProcess/Plugins/PluginView.h:
+
 2014-07-01  Evan Nemerson  <evan@nemerson.com>
 
         [GTK] Annotations for WebResource.get_data produce wrong signature in Vala binding

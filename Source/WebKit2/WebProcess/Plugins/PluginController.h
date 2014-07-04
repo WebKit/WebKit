@@ -148,6 +148,7 @@ public:
     // Create a plugin container for windowed plugins
     virtual uint64_t createPluginContainer() = 0;
     virtual void windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID) = 0;
+    virtual void windowedPluginVisibilityDidChange(bool isVisible, uint64_t windowID) = 0;
 #endif
 
     // Called when the a plug-in instance is successfully initialized, either synchronously or asynchronously.

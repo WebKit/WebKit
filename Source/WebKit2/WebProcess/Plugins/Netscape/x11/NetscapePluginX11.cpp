@@ -296,7 +296,15 @@ void NetscapePlugin::platformGeometryDidChange()
 
 void NetscapePlugin::platformVisibilityDidChange()
 {
-    notImplemented();
+    if (!m_isWindowed)
+        return;
+
+    uint64_t windowID = 0;
+#if PLATFORM(GTK)
+    windowID = static_cast<uint64_t>(GDK_WINDOW_XID(gtk_plug_get_socket_window(GTK_PLUG(m_platformPluginWidget))));
+#endif
+    controller()->windowedPluginVisibilityDidChange(m_isVisible, windowID);
+    controller()->windowedPluginGeometryDidChange(m_frameRectInWindowCoordinates, m_clipRect, windowID);
 }
 
 void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect, bool /*isSnapshot*/)

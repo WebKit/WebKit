@@ -303,10 +303,10 @@ void PluginProxy::geometryDidChange(const IntSize& pluginSize, const IntRect& cl
     geometryDidChange();
 }
 
-void PluginProxy::visibilityDidChange()
+void PluginProxy::visibilityDidChange(bool isVisible)
 {
     ASSERT(m_isStarted);
-    notImplemented();
+    m_connection->connection()->send(Messages::PluginControllerProxy::VisibilityDidChange(isVisible), m_pluginInstanceID);
 }
 
 void PluginProxy::frameDidFinishLoading(uint64_t requestID)
@@ -682,6 +682,11 @@ void PluginProxy::createPluginContainer(uint64_t& windowID)
 void PluginProxy::windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID)
 {
     controller()->windowedPluginGeometryDidChange(frameRect, clipRect, windowID);
+}
+
+void PluginProxy::windowedPluginVisibilityDidChange(bool isVisible, uint64_t windowID)
+{
+    controller()->windowedPluginVisibilityDidChange(isVisible, windowID);
 }
 #endif
 

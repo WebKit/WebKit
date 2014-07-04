@@ -302,6 +302,7 @@ messages -> WebPageProxy {
     # X11 windowed plugin messages
     CreatePluginContainer() -> (uint64_t windowID)
     WindowedPluginGeometryDidChange(WebCore::IntRect frameRect, WebCore::IntRect clipRect, uint64_t windowID)
+    WindowedPluginVisibilityDidChange(bool isVisible, uint64_t windowID)
 #endif
 
 #if PLATFORM(IOS)

@@ -118,7 +118,7 @@ private:
     virtual bool wantsWheelEvents() override { return true; }
     virtual void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform) override;
     virtual void contentsScaleFactorChanged(float) override;
-    virtual void visibilityDidChange() override { }
+    virtual void visibilityDidChange(bool) override { }
     virtual void frameDidFinishLoading(uint64_t requestID) override;
     virtual void frameDidFail(uint64_t requestID, bool wasCancelled) override;
     virtual void didEvaluateJavaScript(uint64_t requestID, const String& result) override;

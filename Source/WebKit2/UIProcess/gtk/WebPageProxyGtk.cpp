@@ -95,7 +95,6 @@ void WebPageProxy::createPluginContainer(uint64_t& windowID)
     GtkWidget* socket = gtk_socket_new();
     g_signal_connect(socket, "plug-removed", G_CALLBACK(pluginContainerPlugRemoved), 0);
     gtk_container_add(GTK_CONTAINER(viewWidget()), socket);
-    gtk_widget_show(socket);
 
     windowID = static_cast<uint64_t>(gtk_socket_get_id(GTK_SOCKET(socket)));
     pluginWindowMap().set(windowID, socket);
@@ -115,6 +114,18 @@ void WebPageProxy::windowedPluginGeometryDidChange(const WebCore::IntRect& frame
     }
 
     webkitWebViewBaseChildMoveResize(WEBKIT_WEB_VIEW_BASE(viewWidget()), plugin, frameRect);
+}
+
+void WebPageProxy::windowedPluginVisibilityDidChange(bool isVisible, uint64_t windowID)
+{
+    GtkWidget* plugin = pluginWindowMap().get(windowID);
+    if (!plugin)
+        return;
+
+    if (isVisible)
+        gtk_widget_show(plugin);
+    else
+        gtk_widget_hide(plugin);
 }
 #endif // PLUGIN_ARCHITECTURE(X11)
 

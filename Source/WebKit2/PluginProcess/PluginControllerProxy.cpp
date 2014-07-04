@@ -427,6 +427,12 @@ void PluginControllerProxy::geometryDidChange(const IntSize& pluginSize, const I
     m_plugin->geometryDidChange(pluginSize, clipRect, pluginToRootViewTransform);
 }
 
+void PluginControllerProxy::visibilityDidChange(bool isVisible)
+{
+    ASSERT(m_plugin);
+    m_plugin->visibilityDidChange(isVisible);
+}
+
 void PluginControllerProxy::didEvaluateJavaScript(uint64_t requestID, const String& result)
 {
     m_plugin->didEvaluateJavaScript(requestID, result);
@@ -610,6 +616,11 @@ uint64_t PluginControllerProxy::createPluginContainer()
 void PluginControllerProxy::windowedPluginGeometryDidChange(const IntRect& frameRect, const IntRect& clipRect, uint64_t windowID)
 {
     m_connection->connection()->send(Messages::PluginProxy::WindowedPluginGeometryDidChange(frameRect, clipRect, windowID), m_pluginInstanceID);
+}
+
+void PluginControllerProxy::windowedPluginVisibilityDidChange(bool isVisible, uint64_t windowID)
+{
+    m_connection->connection()->send(Messages::PluginProxy::WindowedPluginVisibilityDidChange(isVisible, windowID), m_pluginInstanceID);
 }
 #endif
 

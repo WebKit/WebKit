@@ -26,6 +26,9 @@ messages -> PluginControllerProxy LegacyReceiver {
     # Sent when the plug-in geometry changes.
     GeometryDidChange(WebCore::IntSize pluginSize, WebCore::IntRect clipRect, WebCore::AffineTransform pluginToRootViewTransform, float scaleFactor, WebKit::ShareableBitmap::Handle backingStoreHandle)
 
+    # Sent when the plug-in visibility changes.
+    VisibilityDidChange(bool isVisible)
+
     # Sent when a frame has finished loading.
     FrameDidFinishLoading(uint64_t requestID)
 

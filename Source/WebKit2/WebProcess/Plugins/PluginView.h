@@ -169,6 +169,7 @@ private:
     virtual void notifyWidget(WebCore::WidgetNotification);
     virtual void show();
     virtual void hide();
+    virtual void setParentVisible(bool);
     virtual bool transformsAffectFrameRect();
     virtual void clipRectChanged() override;
 
@@ -212,6 +213,7 @@ private:
 #if PLUGIN_ARCHITECTURE(X11)
     virtual uint64_t createPluginContainer();
     virtual void windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID);
+    virtual void windowedPluginVisibilityDidChange(bool isVisible, uint64_t windowID);
 #endif
 
     virtual void didInitializePlugin();
