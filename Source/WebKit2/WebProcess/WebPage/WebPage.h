@@ -830,7 +830,7 @@ public:
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION) 
     ServicesOverlayController& servicesOverlayController();
     void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&);
-    void handleSelectionServiceClick(WebCore::FrameSelection&, const WebCore::IntPoint&);
+    void handleSelectionServiceClick(WebCore::FrameSelection&, const Vector<String>& telephoneNumbers, const WebCore::IntPoint&);
     bool serviceControlsEnabled() const { return m_serviceControlsEnabled; }
 #endif
 

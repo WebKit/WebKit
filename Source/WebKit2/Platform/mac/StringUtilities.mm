@@ -28,6 +28,7 @@
 
 #import "WKSharedAPICast.h"
 #import "WKStringCF.h"
+#import <WebCore/SoftLinking.h>
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/text/WTFString.h>
 
@@ -37,5 +38,40 @@ NSString *nsStringFromWebCoreString(const String& string)
 {
     return string.isEmpty() ? @"" : CFBridgingRelease(WKStringCopyCFString(0, toAPI(string.impl())));
 }
+
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+
+SOFT_LINK_PRIVATE_FRAMEWORK(PhoneNumbers);
+
+typedef struct __CFPhoneNumber* CFPhoneNumberRef;
+
+// These functions are declared with __attribute__((visibility ("default")))
+// We currently don't have a way to soft link such functions, so we forward declare them again here.
+CFPhoneNumberRef CFPhoneNumberCreate(CFAllocatorRef, CFStringRef, CFStringRef);
+SOFT_LINK(PhoneNumbers, CFPhoneNumberCreate, CFPhoneNumberRef, (CFAllocatorRef allocator, CFStringRef digits, CFStringRef countryCode), (allocator, digits, countryCode));
+
+CFStringRef CFPhoneNumberCopyFormattedRepresentation(CFPhoneNumberRef);
+SOFT_LINK(PhoneNumbers, CFPhoneNumberCopyFormattedRepresentation, CFStringRef, (CFPhoneNumberRef phoneNumber), (phoneNumber));
+
+CFStringRef CFPhoneNumberCopyUnformattedRepresentation(CFPhoneNumberRef);
+SOFT_LINK(PhoneNumbers, CFPhoneNumberCopyUnformattedRepresentation, CFStringRef, (CFPhoneNumberRef phoneNumber), (phoneNumber));
+
+
+NSString *formattedPhoneNumberString(NSString *originalPhoneNumber)
+{
+    NSString *countryCode = [[[NSLocale currentLocale] objectForKey:NSLocaleCountryCode] lowercaseString];
+
+    RetainPtr<CFPhoneNumberRef> phoneNumber = adoptCF(CFPhoneNumberCreate(kCFAllocatorDefault, (CFStringRef)originalPhoneNumber, (CFStringRef)countryCode));
+    if (!phoneNumber)
+        return originalPhoneNumber;
+
+    CFStringRef phoneNumberString = CFPhoneNumberCopyFormattedRepresentation(phoneNumber.get());
+    if (!phoneNumberString)
+        phoneNumberString = CFPhoneNumberCopyUnformattedRepresentation(phoneNumber.get());
+
+    return [(NSString *)phoneNumberString autorelease];
+}
+
+#endif // ENABLE(TELEPHONE_NUMBER_DETECTION) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
 }

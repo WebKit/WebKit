@@ -278,7 +278,11 @@ void ServicesOverlayController::drawRect(PageOverlay* overlay, WebCore::Graphics
 void ServicesOverlayController::drawSelectionHighlight(WebCore::GraphicsContext& graphicsContext, const WebCore::IntRect& dirtyRect)
 {
     ASSERT(!m_drawingTelephoneNumberHighlight);
-    ASSERT(m_currentSelectionRects.size());
+
+    // It's possible to end up drawing the selection highlight before we've actually received the selection rects.
+    // If that happens we'll end up here again once we have the rects.
+    if (m_currentSelectionRects.isEmpty())
+        return;
 
     // If there are no installed selection services and we have no phone numbers detected, then we have nothing to draw.
     if (!WebProcess::shared().hasSelectionServices() && m_currentTelephoneNumberRanges.isEmpty())
@@ -430,8 +434,12 @@ void ServicesOverlayController::handleClick(const WebCore::IntPoint& point)
         ASSERT(m_currentTelephoneNumberRanges.size() == 1);
         m_webPage->handleTelephoneNumberClick(m_currentTelephoneNumberRanges[0]->text(), point);
     } else {
-        // FIXME: Include all selected telephone numbers so they can be added to the menu as well.
-        m_webPage->handleSelectionServiceClick(m_webPage->corePage()->mainFrame().selection(), point);
+        Vector<String> selectedTelephoneNumbers;
+        selectedTelephoneNumbers.reserveCapacity(m_currentTelephoneNumberRanges.size());
+        for (auto& range : m_currentTelephoneNumberRanges)
+            selectedTelephoneNumbers.append(range->text());
+
+        m_webPage->handleSelectionServiceClick(m_webPage->corePage()->mainFrame().selection(), selectedTelephoneNumbers, point);
     }
 }
     

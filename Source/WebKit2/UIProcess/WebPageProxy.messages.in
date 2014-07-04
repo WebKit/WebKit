@@ -396,7 +396,7 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)
-    ShowSelectionServiceMenu(IPC::DataReference selectionAsRTFD, bool isEditable, WebCore::IntPoint point)
+    ShowSelectionServiceMenu(IPC::DataReference selectionAsRTFD, Vector<String> telephoneNumbers, bool isEditable, WebCore::IntPoint point)
 #endif
 
 #if USE(QUICK_LOOK)

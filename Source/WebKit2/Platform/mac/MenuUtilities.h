@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StringUtilities_h
-#define StringUtilities_h
+#ifndef MenuUtilities_h
+#define MenuUtilities_h
 
-#import <wtf/Forward.h>
+#import <wtf/Vector.h>
+#import <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-// NOTE: This does not use String::operator NSString*() since that function
-// expects to be called on the thread running WebCore.
-NSString *nsStringFromWebCoreString(const String&);
-
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-NSString *formattedPhoneNumberString(NSString *originalPhoneNumber);
+NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumberString);
+NSArray *menuItemsForTelephoneNumber(const String& telephoneNumber);
 #endif
 
-}
+} // namespace WebKit
 
-#endif // StringUtilities_h
+#endif // MenuUtilities_h

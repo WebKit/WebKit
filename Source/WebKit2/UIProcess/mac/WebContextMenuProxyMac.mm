@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "DataReference.h"
+#import "MenuUtilities.h"
 #import "PageClientImpl.h"
 #import "ShareableBitmap.h"
 #import "StringUtilities.h"
@@ -397,6 +398,16 @@ void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& con
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setIncludeEditorServices:includeEditorServices];
 
     m_servicesMenu = [picker menu];
+
+    // Explicitly add a menu item for each telephone number that is in the selection.
+    const Vector<String>& selectedTelephoneNumbers = context.selectedTelephoneNumbers();
+    if (!selectedTelephoneNumbers.isEmpty()) {
+        [m_servicesMenu.get() addItem:[NSMenuItem separatorItem]];
+        for (auto& telephoneNumber : selectedTelephoneNumbers) {
+            if (NSMenuItem *item = menuItemForTelephoneNumber(telephoneNumber))
+                [m_servicesMenu.get() addItem:item];
+        }
+    }
 
     // If there is no services menu, then the existing services on the system have changed.
     // Ask the UIProcess to refresh that list of services.

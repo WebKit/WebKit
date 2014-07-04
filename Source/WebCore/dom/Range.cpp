@@ -2008,11 +2008,11 @@ bool rangesOverlap(const Range* a, const Range* b)
         return true;
 
     // End of first range is inside second range.
-    if (a->compareBoundaryPoints(Range::END_TO_START, b, ASSERT_NO_EXCEPTION) >= 0 && endToEnd <= 0)
+    if (a->compareBoundaryPoints(Range::START_TO_END, b, ASSERT_NO_EXCEPTION) >= 0 && endToEnd <= 0)
         return true;
 
     // Start of first range is inside second range.
-    if (startToStart >= 0 && a->compareBoundaryPoints(Range::START_TO_END, b, ASSERT_NO_EXCEPTION) <= 0)
+    if (startToStart >= 0 && a->compareBoundaryPoints(Range::END_TO_START, b, ASSERT_NO_EXCEPTION) <= 0)
         return true;
 
     return false;

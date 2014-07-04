@@ -1,3 +1,48 @@
+2014-07-03  Brady Eidson  <beidson@apple.com>
+
+        When showing the selection menu, include menu options for all selected phone numbers.
+        <rdar://problem/16983434>, <rdar://problem/16874568>, and https://bugs.webkit.org/show_bug.cgi?id=134613
+
+        Reviewed by Tim Horton.
+
+        Move some telephone number menu logic from WebKitSystemInterface here.
+        Also provide utility to get just the one menu item relevant to a telephone number.
+        * Platform/mac/MenuUtilities.h:
+        * Platform/mac/MenuUtilities.mm: Added.
+        (WebKit::menuItemForTelephoneNumber):
+        (WebKit::menuItemsForTelephoneNumber):
+
+        * Platform/mac/StringUtilities.h:
+        * Platform/mac/StringUtilities.mm:
+        (WebKit::formattedPhoneNumberString): Return a localized formatted phone number.
+
+        Add a member to track the selected phone numbers:
+        * Shared/ContextMenuContextData.h:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        (WebKit::ContextMenuContextData::selectedTelephoneNumbers):
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu): Also add menu items for each phone number that is
+          in the selection.
+
+        Switch away from a WKSI method, and remove a lot of unneeded forward declarations and soft linking:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::showTelephoneNumberMenu):
+        (WebKit::WebPageProxy::showSelectionServiceMenu):
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+        (WebKit::ServicesOverlayController::drawSelectionHighlight):
+        (WebKit::ServicesOverlayController::handleClick): Pass the phone numbers along.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::handleSelectionServiceClick): Pass the phone numbers along.
+
 2014-07-03  Gavin Barraclough  <baraclough@apple.com>
 
         WKProcessAssertionBackgroundTaskManager should clear member if task expires

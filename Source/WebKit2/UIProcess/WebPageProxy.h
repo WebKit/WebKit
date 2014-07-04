@@ -1099,7 +1099,7 @@ private:
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)
-    void showSelectionServiceMenu(const IPC::DataReference& selectionAsRTFD, bool isEditable, const WebCore::IntPoint&);
+    void showSelectionServiceMenu(const IPC::DataReference& selectionAsRTFD, const Vector<String>& telephoneNumbers, bool isEditable, const WebCore::IntPoint&);
 #endif
 
     // Search popup results

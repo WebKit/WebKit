@@ -1022,7 +1022,7 @@ void WebPage::handleTelephoneNumberClick(const String& number, const IntPoint& p
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)
-void WebPage::handleSelectionServiceClick(FrameSelection& selection, const IntPoint& point)
+void WebPage::handleSelectionServiceClick(FrameSelection& selection, const Vector<String>& phoneNumbers, const IntPoint& point)
 {
     RefPtr<Range> range = selection.selection().firstRange();
     if (!range)
@@ -1036,7 +1036,7 @@ void WebPage::handleSelectionServiceClick(FrameSelection& selection, const IntPo
     IPC::DataReference data = IPC::DataReference(reinterpret_cast<const uint8_t*>([selectionData bytes]), [selectionData length]);
     bool isEditable = selection.selection().isContentRichlyEditable();
 
-    send(Messages::WebPageProxy::ShowSelectionServiceMenu(data, isEditable, point));
+    send(Messages::WebPageProxy::ShowSelectionServiceMenu(data, phoneNumbers, isEditable, point));
 }
 #endif
 

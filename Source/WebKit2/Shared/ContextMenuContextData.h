@@ -57,14 +57,16 @@ public:
     const WebHitTestResult::Data& webHitTestResultData() const { return m_webHitTestResultData; }
 
 #if ENABLE(SERVICE_CONTROLS)
-    ContextMenuContextData(const Vector<uint8_t>& selectionData, bool isEditable)
+    ContextMenuContextData(const Vector<uint8_t>& selectionData, const Vector<String>& selectedTelephoneNumbers, bool isEditable)
         : m_isTelephoneNumberContext(false)
         , m_controlledSelectionData(selectionData)
+        , m_selectedTelephoneNumbers(selectedTelephoneNumbers)
         , m_selectionIsEditable(isEditable)
     { }
 
     const ShareableBitmap::Handle& controlledImageHandle() const { return m_controlledImageHandle; }
     const Vector<uint8_t>& controlledSelectionData() const { return m_controlledSelectionData; }
+    const Vector<String>& selectedTelephoneNumbers() const { return m_selectedTelephoneNumbers; }
 
     bool controlledDataIsEditable() const;
     bool needsServicesMenu() const { return !m_controlledImageHandle.isNull() || !m_controlledSelectionData.isEmpty(); }
@@ -85,6 +87,7 @@ private:
 #if ENABLE(SERVICE_CONTROLS)
     ShareableBitmap::Handle m_controlledImageHandle;
     Vector<uint8_t> m_controlledSelectionData;
+    Vector<String> m_selectedTelephoneNumbers;
     bool m_selectionIsEditable;
 #endif
 };

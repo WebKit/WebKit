@@ -915,6 +915,8 @@
 		518E8F0C16B2093700E91429 /* DownloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 518E8F0316B2093700E91429 /* DownloadManager.h */; };
 		518E8F0D16B2093700E91429 /* DownloadMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 518E8F0516B2093700E91429 /* DownloadMac.mm */; };
 		5192D5761961FD0300CD19AA /* ServicesOverlayController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5192D5751961FD0300CD19AA /* ServicesOverlayController.mm */; };
+		51933DEF1965EB31008AC3EA /* MenuUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51933DEB1965EB24008AC3EA /* MenuUtilities.h */; };
+		51933DF01965EB31008AC3EA /* MenuUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51933DEC1965EB24008AC3EA /* MenuUtilities.mm */; };
 		51A4D5A916CAC4FF000E615E /* StatisticsRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A4D5A816CAC4FF000E615E /* StatisticsRequest.cpp */; };
 		51A555F5128C6C47009ABCEC /* WKContextMenuItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A555F3128C6C47009ABCEC /* WKContextMenuItem.cpp */; };
 		51A555F6128C6C47009ABCEC /* WKContextMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A555F4128C6C47009ABCEC /* WKContextMenuItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2917,6 +2919,8 @@
 		518E8F0516B2093700E91429 /* DownloadMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DownloadMac.mm; sourceTree = "<group>"; };
 		5192D5711961FA2F00CD19AA /* ServicesOverlayController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServicesOverlayController.h; sourceTree = "<group>"; };
 		5192D5751961FD0300CD19AA /* ServicesOverlayController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ServicesOverlayController.mm; sourceTree = "<group>"; };
+		51933DEB1965EB24008AC3EA /* MenuUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuUtilities.h; sourceTree = "<group>"; };
+		51933DEC1965EB24008AC3EA /* MenuUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MenuUtilities.mm; sourceTree = "<group>"; };
 		51A4D5A816CAC4FF000E615E /* StatisticsRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StatisticsRequest.cpp; sourceTree = "<group>"; };
 		51A555F3128C6C47009ABCEC /* WKContextMenuItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKContextMenuItem.cpp; sourceTree = "<group>"; };
 		51A555F4128C6C47009ABCEC /* WKContextMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextMenuItem.h; sourceTree = "<group>"; };
@@ -4256,6 +4260,8 @@
 				BCE0937514FB128B001138D9 /* LayerHostingContext.mm */,
 				1A24B5F011F531E800C38269 /* MachUtilities.cpp */,
 				1A24B5F111F531E800C38269 /* MachUtilities.h */,
+				51933DEB1965EB24008AC3EA /* MenuUtilities.h */,
+				51933DEC1965EB24008AC3EA /* MenuUtilities.mm */,
 				1A24BF39120896A600FBB059 /* SharedMemoryMac.cpp */,
 				296BD85B15019BC30071F424 /* StringUtilities.h */,
 				296BD85C15019BC30071F424 /* StringUtilities.mm */,
@@ -7624,6 +7630,7 @@
 				BC5C75C814954DA600BC4775 /* WKConnectionInternal.h in Headers */,
 				BC4A6297147313A0006C681A /* WKConnectionRef.h in Headers */,
 				BCB9E24B1120E15C00A137E0 /* WKContext.h in Headers */,
+				51933DEF1965EB31008AC3EA /* MenuUtilities.h in Headers */,
 				3795789C18AD4F1900B9ED2E /* WKWebProcessPlugInFormDelegatePrivate.h in Headers */,
 				51A555F6128C6C47009ABCEC /* WKContextMenuItem.h in Headers */,
 				51A55601128C6D92009ABCEC /* WKContextMenuItemTypes.h in Headers */,
@@ -9000,6 +9007,7 @@
 				51A4D5A916CAC4FF000E615E /* StatisticsRequest.cpp in Sources */,
 				1AD3306E16B1D991004F60E7 /* StorageAreaImpl.cpp in Sources */,
 				1ACECD2417162DB1001FC9EF /* StorageAreaMap.cpp in Sources */,
+				51933DF01965EB31008AC3EA /* MenuUtilities.mm in Sources */,
 				1A334DED16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp in Sources */,
 				1A44B95B16B73F9F00B7BBD8 /* StorageManager.cpp in Sources */,
 				1AB31A9616BC688100F6DBC9 /* StorageManagerMessageReceiver.cpp in Sources */,

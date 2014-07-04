@@ -35,6 +35,7 @@
 #import "DictionaryPopupInfo.h"
 #import "EditingRange.h"
 #import "EditorState.h"
+#import "MenuUtilities.h"
 #import "NativeWebKeyboardEvent.h"
 #import "PageClient.h"
 #import "PageClientImpl.h"
@@ -49,27 +50,14 @@
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
-#import <WebCore/SoftLinking.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/UserAgent.h>
-#import <WebKitSystemInterface.h>
 #import <mach-o/dyld.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/StringConcatenate.h>
 
 @interface NSApplication (Details)
 - (void)speakString:(NSString *)string;
-@end
-
-SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectors)
-SOFT_LINK_CLASS(DataDetectors, DDActionsManager)
-SOFT_LINK_CONSTANT(DataDetectors, DDBinderPhoneNumberKey, CFStringRef)
-
-typedef void* DDActionContext;
-
-@interface DDActionsManager : NSObject
-+ (DDActionsManager *) sharedManager;
-- (NSArray *) menuItemsForValue:(NSString *)value type:(CFStringRef)type service:(NSString *)service context:(DDActionContext *)context;
 @end
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
@@ -647,8 +635,7 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String&
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
 void WebPageProxy::showTelephoneNumberMenu(const String& telephoneNumber, const WebCore::IntPoint& point)
 {
-    NSArray *menuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForValue:(NSString *)telephoneNumber type:getDDBinderPhoneNumberKey() service:nil context:nil];
-    menuItems = WKTelephoneNumberMenuFromProposedMenu(menuItems, telephoneNumber);
+    NSArray *menuItems = menuItemsForTelephoneNumber(telephoneNumber);
 
     Vector<WebContextMenuItemData> items;
     for (NSMenuItem *item in menuItems) {
@@ -667,10 +654,10 @@ void WebPageProxy::showTelephoneNumberMenu(const String& telephoneNumber, const 
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)
-void WebPageProxy::showSelectionServiceMenu(const IPC::DataReference& selectionAsRTFD, bool isEditable, const IntPoint& point)
+void WebPageProxy::showSelectionServiceMenu(const IPC::DataReference& selectionAsRTFD, const Vector<String>& telephoneNumbers, bool isEditable, const IntPoint& point)
 {
     Vector<WebContextMenuItemData> items;
-    ContextMenuContextData contextData(selectionAsRTFD.vector(), isEditable);
+    ContextMenuContextData contextData(selectionAsRTFD.vector(), telephoneNumbers, isEditable);
 
     internalShowContextMenu(point, contextData, items, ContextMenuClientEligibility::NotEligibleForClient, nullptr);
 }
