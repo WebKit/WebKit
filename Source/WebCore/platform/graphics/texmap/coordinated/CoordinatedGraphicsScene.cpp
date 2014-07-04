@@ -160,9 +160,8 @@ void CoordinatedGraphicsScene::adjustPositionForFixedLayers()
     // them by the delta between the current position and the position of the viewport used for the last layout.
     FloatSize delta = m_scrollPosition - m_renderedContentsScrollPosition;
 
-    LayerRawPtrMap::iterator end = m_fixedLayers.end();
-    for (LayerRawPtrMap::iterator it = m_fixedLayers.begin(); it != end; ++it)
-        it->value->setScrollPositionDeltaIfNeeded(delta);
+    for (auto& fixedLayer : m_fixedLayers.values())
+        fixedLayer->setScrollPositionDeltaIfNeeded(delta);
 }
 
 #if USE(GRAPHICS_SURFACE)
@@ -560,9 +559,8 @@ void CoordinatedGraphicsScene::removeReleasedImageBackingsIfNeeded()
 
 void CoordinatedGraphicsScene::commitPendingBackingStoreOperations()
 {
-    HashSet<RefPtr<CoordinatedBackingStore> >::iterator end = m_backingStoresWithPendingBuffers.end();
-    for (HashSet<RefPtr<CoordinatedBackingStore> >::iterator it = m_backingStoresWithPendingBuffers.begin(); it != end; ++it)
-        (*it)->commitTileOperations(m_textureMapper.get());
+    for (auto& backingStore : m_backingStoresWithPendingBuffers)
+        backingStore->commitTileOperations(m_textureMapper.get());
 
     m_backingStoresWithPendingBuffers.clear();
 }

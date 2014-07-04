@@ -47,9 +47,8 @@ CompositingCoordinator::~CompositingCoordinator()
 {
     purgeBackingStores();
 
-    LayerMap::iterator end = m_registeredLayers.end();
-    for (LayerMap::iterator it = m_registeredLayers.begin(); it != end; ++it)
-        it->value->setCoordinator(0);
+    for (auto& registeredLayer : m_registeredLayers.values())
+        registeredLayer->setCoordinator(0);
 }
 
 CompositingCoordinator::CompositingCoordinator(Page* page, CompositingCoordinator::Client* client)
@@ -236,9 +235,8 @@ void CompositingCoordinator::removeImageBacking(CoordinatedImageBackingID imageI
 
 void CompositingCoordinator::flushPendingImageBackingChanges()
 {
-    ImageBackingMap::iterator end = m_imageBackings.end();
-    for (ImageBackingMap::iterator iter = m_imageBackings.begin(); iter != end; ++iter)
-        iter->value->update();
+    for (auto& imageBacking : m_imageBackings.values())
+        imageBacking->update();
 }
 
 void CompositingCoordinator::notifyAnimationStarted(const GraphicsLayer*, double /* time */)
@@ -313,9 +311,8 @@ void CompositingCoordinator::setVisibleContentsRect(const FloatRect& rect, const
     if (contentsRectDidChange) {
         m_visibleContentsRect = rect;
 
-        LayerMap::iterator end = m_registeredLayers.end();
-        for (LayerMap::iterator it = m_registeredLayers.begin(); it != end; ++it)
-            it->value->setNeedsVisibleRectAdjustment();
+        for (auto& registeredLayer : m_registeredLayers.values())
+            registeredLayer->setNeedsVisibleRectAdjustment();
     }
 
     FrameView* view = m_page->mainFrame().view();
@@ -367,9 +364,8 @@ void CompositingCoordinator::purgeBackingStores()
 {
     TemporaryChange<bool> purgingToggle(m_isPurging, true);
 
-    LayerMap::iterator end = m_registeredLayers.end();
-    for (LayerMap::iterator it = m_registeredLayers.begin(); it != end; ++it)
-        it->value->purgeBackingStores();
+    for (auto& registeredLayer : m_registeredLayers.values())
+        registeredLayer->purgeBackingStores();
 
     m_imageBackings.clear();
     m_updateAtlases.clear();

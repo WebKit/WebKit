@@ -78,9 +78,8 @@ void CoordinatedBackingStore::removeTile(uint32_t id)
 
 void CoordinatedBackingStore::removeAllTiles()
 {
-    CoordinatedBackingStoreTileMap::iterator end = m_tiles.end();
-    for (CoordinatedBackingStoreTileMap::iterator it = m_tiles.begin(); it != end; ++it)
-        m_tilesToRemove.add(it->key);
+    for (auto& key : m_tiles.keys())
+        m_tilesToRemove.add(key);
 }
 
 void CoordinatedBackingStore::updateTile(uint32_t id, const IntRect& sourceRect, const IntRect& tileRect, PassRefPtr<CoordinatedSurface> backBuffer, const IntPoint& offset)
@@ -128,10 +127,8 @@ void CoordinatedBackingStore::paintToTextureMapper(TextureMapper* textureMapper,
     Vector<TextureMapperTile*> previousTilesToPaint;
 
     // We have to do this every time we paint, in case the opacity has changed.
-    CoordinatedBackingStoreTileMap::iterator end = m_tiles.end();
     FloatRect coveredRect;
-    for (CoordinatedBackingStoreTileMap::iterator it = m_tiles.begin(); it != end; ++it) {
-        CoordinatedBackingStoreTile& tile = it->value;
+    for (auto& tile : m_tiles.values()) {
         if (!tile.texture())
             continue;
 
@@ -160,17 +157,15 @@ void CoordinatedBackingStore::paintToTextureMapper(TextureMapper* textureMapper,
 void CoordinatedBackingStore::drawBorder(TextureMapper* textureMapper, const Color& borderColor, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& transform)
 {
     TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
-    CoordinatedBackingStoreTileMap::iterator end = m_tiles.end();
-    for (CoordinatedBackingStoreTileMap::iterator it = m_tiles.begin(); it != end; ++it)
-        textureMapper->drawBorder(borderColor, borderWidth, it->value.rect(), adjustedTransform);
+    for (auto& tile : m_tiles.values())
+        textureMapper->drawBorder(borderColor, borderWidth, tile.rect(), adjustedTransform);
 }
 
 void CoordinatedBackingStore::drawRepaintCounter(TextureMapper* textureMapper, int repaintCount, const Color& borderColor, const FloatRect& targetRect, const TransformationMatrix& transform)
 {
     TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
-    CoordinatedBackingStoreTileMap::iterator end = m_tiles.end();
-    for (CoordinatedBackingStoreTileMap::iterator it = m_tiles.begin(); it != end; ++it)
-        textureMapper->drawNumber(repaintCount, borderColor, it->value.rect().location(), adjustedTransform);
+    for (auto& tile : m_tiles.values())
+        textureMapper->drawNumber(repaintCount, borderColor, tile.rect().location(), adjustedTransform);
 }
 
 void CoordinatedBackingStore::commitTileOperations(TextureMapper* textureMapper)
@@ -180,14 +175,12 @@ void CoordinatedBackingStore::commitTileOperations(TextureMapper* textureMapper)
         m_pendingSize = FloatSize();
     }
 
-    HashSet<uint32_t>::iterator tilesToRemoveEnd = m_tilesToRemove.end();
-    for (HashSet<uint32_t>::iterator it = m_tilesToRemove.begin(); it != tilesToRemoveEnd; ++it)
-        m_tiles.remove(*it);
+    for (auto& tileToRemove : m_tilesToRemove)
+        m_tiles.remove(tileToRemove);
     m_tilesToRemove.clear();
 
-    CoordinatedBackingStoreTileMap::iterator tilesEnd = m_tiles.end();
-    for (CoordinatedBackingStoreTileMap::iterator it = m_tiles.begin(); it != tilesEnd; ++it)
-        it->value.swapBuffers(textureMapper);
+    for (auto& tile : m_tiles.values())
+        tile.swapBuffers(textureMapper);
 }
 
 } // namespace WebCore
