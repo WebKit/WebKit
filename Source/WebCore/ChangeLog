@@ -1,3 +1,24 @@
+2014-06-27  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] 8tracks.com triggers annoying pop-up window/installation of "About protocol source plugin" (GStreamer?)
+        https://bugs.webkit.org/show_bug.cgi?id=133605
+
+        Reviewed by Carlos Garcia Campos.
+
+        Don't attempt to load blank URLs with the GStreamer media
+        player. Those URLs trigger the codec installer which is useless in
+        this scenario. This patch also renames some of the variables of
+        the ::load method, as suggested by Carlos.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        Check video-sink validity before disconnecting its signal handlers.
+        (WebCore::MediaPlayerPrivateGStreamer::load): Don't load blank
+        URLs (about:blank).
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+        Disconnect repaint handler only if it's valid.
+
 2014-06-12  Alberto Garcia  <berto@igalia.com>
 
         [GTK] fails to build with --disable-webgl --disable-accelerated-compositing
