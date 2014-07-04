@@ -171,7 +171,8 @@ TFunction::~TFunction()
 TSymbolTableLevel::~TSymbolTableLevel()
 {
     for (tLevel::iterator it = level.begin(); it != level.end(); ++it)
-        delete (*it).second;
+        if ((*it).first == (*it).second->getMangledName())
+            delete (*it).second;
 }
 
 //
