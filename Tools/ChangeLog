@@ -1,3 +1,23 @@
+2014-06-10  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GTK][gtkdoc] remove -Wcast-align
+        https://bugs.webkit.org/show_bug.cgi?id=133640
+
+        Apparently gcc warns that GParamSpec is not castable to
+        GParamSpecInt64/GParamSpecUInt64/GParamSpecDouble due they are 64bit, even
+        though ARM hackers claim that those only need 4byte alignment. As long as gcc
+        behaves that way, this warning is not very useful, also they break the Debian
+        packaging.
+
+        This patch appends the compiler flag -Wno-align-cast for the gtkdoc
+        scanner compilation, thus the compiler ignores the previous
+        -Waling-cast flag.
+
+        Reviewed by Martin Robinson.
+
+        * gtk/generate-gtkdoc:
+        (get_generator_for_config):
+
 2014-05-30  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Deprecate usage of logAccessibilityEvents() in layout tests

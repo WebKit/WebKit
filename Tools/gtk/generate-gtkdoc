@@ -166,6 +166,12 @@ def prepare_environment_for_gtkdoc_generation():
     # to compile it.
     cflags = os.environ.get('CFLAGS', '')
     cflags += ' -DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_32'
+
+    # In non-x86 architectures, when a pointer is cast to (void*) and
+    # back, the compiler thinks that the alignment is random. Since
+    # gtkdoc build is broken at any warning message, it is better to
+    # silence these false positives.
+    cflags += ' -Wno-cast-align'
     os.environ['CFLAGS'] = cflags
 
     # Clang can be noisy, throwing unnecessary warnings for unused arguments.
