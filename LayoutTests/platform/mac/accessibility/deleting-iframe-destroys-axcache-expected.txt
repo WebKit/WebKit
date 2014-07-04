@@ -23,7 +23,6 @@ AXRole: AXScrollArea
         AXRole: AXGroup AXValue: 
             AXRole: AXStaticText AXValue: After
         AXRole: AXGroup AXValue: 
-            AXRole: AXStaticText AXValue: End of test
 
 After:
 AXRole: AXScrollArea 
@@ -33,7 +32,6 @@ AXRole: AXScrollArea
         AXRole: AXGroup AXValue: 
             AXRole: AXStaticText AXValue: After
         AXRole: AXGroup AXValue: 
-            AXRole: AXStaticText AXValue: End of test
 
 PASS frameBodyRole == frameBody.role is false
 PASS frameGroupRole == frameGroup.role is false

@@ -1,17 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script>
-
-    function buildAccessibilityTree(accessibilityObject) {
-        accessibilityObject.isEnabled
-
-        var count = accessibilityObject.childrenCount;
-        for (var i = 0; i < count; ++i)
-            buildAccessibilityTree(accessibilityObject.childAtIndex(i));
-    }
-</script>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body>
 
@@ -29,7 +20,7 @@
 
     if (window.accessibilityController) {
         document.body.focus();
-        buildAccessibilityTree(accessibilityController.focusedElement);
+        touchAccessibilityTree(accessibilityController.focusedElement);
     }
 
 </script>

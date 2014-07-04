@@ -13,7 +13,6 @@ AXRole: AXWebArea AXValue:
         AXRole: AXStaticText AXValue: y
     AXRole: AXStaticText AXValue: z
     AXRole: AXGroup AXValue: 
-        AXRole: AXStaticText AXValue: End of test
 PASS successfullyParsed is true
 
 TEST COMPLETE

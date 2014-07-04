@@ -1,35 +1,10 @@
 <html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
-
-  <script>
+<script src="../resources/accessibility-helper.js"></script>
+<script>
     if (window.testRunner)
         testRunner.waitUntilDone();
-
-    function buildAccessibilityTree(accessibilityObject, indent) {
-        var str = "";
-        for (var i = 0; i < indent; i++)
-            str += "    ";
-        str += accessibilityObject.role;
-        str += " " + accessibilityObject.stringValue;
-
-        if (accessibilityObject.role == '')
-            str += accessibilityObject.allAttributes();
-
-        str += "\n";
-        document.getElementById("console").innerText += str;
-
-        if (accessibilityObject.stringValue.indexOf('End of test') >= 0)
-            return false;
-
-        var count = accessibilityObject.childrenCount;
-        for (var i = 0; i < count; ++i) {
-            if (!buildAccessibilityTree(accessibilityObject.childAtIndex(i), indent + 1))
-                return false;
-        }
-
-        return true;
-    }
 
     function runTest()
     {
@@ -37,6 +12,8 @@
 
         if (window.accessibilityController) {
             window.root = accessibilityController.rootElement;
+            window.stopElement = accessibilityController.accessibleElementById("stopElement");
+
             window.body = root.childAtIndex(0);
             window.before = body.childAtIndex(0);
             window.iframe = body.childAtIndex(1).childAtIndex(0);
@@ -49,8 +26,8 @@
             window.frameButton = window.frameGroup.childAtIndex(0);
             window.frameButtonRole = window.frameButton.role;
 
-            document.getElementById("console").innerText += "\nBefore:\n";
-            buildAccessibilityTree(root, 0);
+            document.getElementById("tree").innerText += "\nBefore:\n";
+            dumpAccessibilityTree(root, stopElement, 0, true);
 
             // Remove the iframe.
             document.body.removeChild(document.getElementById("iframe"));
@@ -60,9 +37,9 @@
             window.newBefore = newBody.childAtIndex(0);
             window.newAfter = newBody.childAtIndex(1);
 
-            document.getElementById("console").innerText += "\nAfter:\n";
-            buildAccessibilityTree(newRoot, 0);
-            document.getElementById("console").innerText += "\n";
+            document.getElementById("tree").innerText += "\nAfter:\n";
+            dumpAccessibilityTree(newRoot, stopElement, 0, true);
+            document.getElementById("tree").innerText += "\n";
 
             // Make sure that the accessibility objects from the iframe's nodes
             // are now invalid by checking that their role is changed - this
@@ -97,9 +74,10 @@
 
 <p>After</p>
 
-<p>End of test</p>
+<p id="stopElement">End of test</p>
 
 <p id="description"></p>
+<pre id="tree"></pre>
 <div id="console"></div>
 
 </body>

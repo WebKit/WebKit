@@ -1,3 +1,41 @@
+2014-07-04  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        buildAccessibilityTree() needs to be removed from individual layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=95286
+
+        Reviewed by Chris Fleizach.
+
+        Extracted two functions to 'dump' and 'touch' the accessibility
+        hierarchies out of different layout tests and into a single file,
+        living in LayoutTests/resources/accessibility-helper.js
+
+        * resources/accessibility-helper.js: Added.
+        (dumpAccessibilityTree): New, based on buildAccessibilityTree()
+        for the cases where it was used to actually 'dump' it into the output.
+        (touchAccessibilityTree): Same, but for the cases where we don't
+        want to dump the accessibility tree, just to make sure is generated.
+
+        Updated affected layout tests to use the newly added helper functions.
+
+        * accessibility/adjacent-continuations-cause-assertion-failure.html: Updated.
+        * accessibility/children-changed-sends-notification.html: Ditto.
+        * accessibility/deleting-iframe-destroys-axcache.html: Ditto.
+        * accessibility/div-within-anchors-causes-crash.html: Ditto.
+        * accessibility/first-letter-text-transform-causes-crash.html: Ditto.
+        * accessibility/image-map-update-parent-crash.html: Ditto.
+        * accessibility/table-with-empty-thead-causes-crash.html: Ditto.
+        * platform/efl/accessibility/media-emits-object-replacement.html: Ditto.
+        * platform/gtk/accessibility/entry-and-password.html: Ditto.
+        * platform/gtk/accessibility/media-emits-object-replacement.html: Ditto.
+        * platform/gtk/accessibility/replaced-objects-in-anonymous-blocks.html: Ditto.
+
+        Updated Mac specific expectations not to print the "End of test" element.
+
+        * platform/mac-wk2/accessibility/deleting-iframe-destroys-axcache-expected.txt: Updated.
+        * platform/mac/accessibility/adjacent-continuations-cause-assertion-failure-expected.txt: Ditto.
+        * platform/mac/accessibility/deleting-iframe-destroys-axcache-expected.txt: Ditto.
+        * platform/mac/accessibility/div-within-anchors-causes-crash-expected.txt: Ditto.
+
 2014-07-04  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r159345): Lines are clipped between pages when printing web content from Safari
