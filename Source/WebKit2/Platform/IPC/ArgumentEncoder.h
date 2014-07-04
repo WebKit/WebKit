@@ -79,7 +79,6 @@ private:
     void encode(int64_t);
     void encode(float);
     void encode(double);
-    void encode(long long);
 
     uint8_t* grow(unsigned alignment, size_t size);
 

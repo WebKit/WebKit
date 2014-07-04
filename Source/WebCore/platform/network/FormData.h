@@ -78,8 +78,8 @@ public:
     Vector<char> m_data;
     String m_filename;
     URL m_url; // For Blob or URL.
-    long long m_fileStart;
-    long long m_fileLength;
+    int64_t m_fileStart;
+    int64_t m_fileLength;
     double m_expectedFileModificationTime;
     // FIXME: Generated file support in FormData is almost identical to Blob, they should be merged.
     // We can't just switch to using Blobs for all files for two reasons:

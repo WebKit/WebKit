@@ -1,5 +1,16 @@
 2014-07-04  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed. Reverting the bad changes introduced in r170795.
+
+        * Platform/IPC/ArgumentDecoder.cpp:
+        (IPC::ArgumentDecoder::decode): Deleted.
+        * Platform/IPC/ArgumentDecoder.h:
+        * Platform/IPC/ArgumentEncoder.cpp:
+        (IPC::ArgumentEncoder::encode): Deleted.
+        * Platform/IPC/ArgumentEncoder.h:
+
+2014-07-04  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed. Fixing the build for ports on 64-bit Linux.
 
         Add IPC encoding and decoding overloads for the long long type, needed

@@ -214,15 +214,6 @@ bool ArgumentDecoder::decode(double& result)
     return true;
 }
 
-bool ArgumentDecoder::decode(long long& result)
-{
-    if (!alignBufferPosition(sizeof(result), sizeof(result)))
-        return false;
-
-    decodeValueFromBuffer(result, m_bufferPos);
-    return true;
-}
-
 bool ArgumentDecoder::removeAttachment(Attachment& attachment)
 {
     if (m_attachments.isEmpty())

@@ -1,3 +1,13 @@
+2014-07-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Fixing the build after r170795.
+
+        Mac didn't like that change as it seems to properly typedef long long to int64_t.
+        That's not the case on 64-bit Linux (for some reason), so I'm changing the type of
+        the two long long variables in FormDataElement to int64_t to avoid any further trouble.
+
+        * platform/network/FormData.h:
+
 2014-07-03  Brady Eidson  <beidson@apple.com>
 
         When showing the selection menu, include menu options for all selected phone numbers.
