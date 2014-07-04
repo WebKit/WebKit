@@ -331,6 +331,11 @@ void DrawingAreaImpl::scheduleCompositingLayerFlush()
     m_layerTreeHost->scheduleLayerFlush();
 }
 
+void DrawingAreaImpl::scheduleCompositingLayerFlushImmediately()
+{
+    scheduleCompositingLayerFlush();
+}
+
 void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset)
 {
     ASSERT(!m_inUpdateBackingStoreState);

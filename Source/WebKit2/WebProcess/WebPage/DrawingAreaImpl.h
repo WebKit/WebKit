@@ -70,6 +70,7 @@ private:
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
     virtual void scheduleCompositingLayerFlush() override;
+    virtual void scheduleCompositingLayerFlushImmediately() override;
 
     // IPC message handlers.
     virtual void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
