@@ -417,6 +417,7 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
     RetainPtr<WKBrowsingContextController> _browsingContextController;
 
     RetainPtr<UIView> _rootContentView;
+    RetainPtr<UIView> _fixedClippingView;
     RetainPtr<WKInspectorIndicationView> _inspectorIndicationView;
     RetainPtr<WKInspectorHighlightView> _inspectorHighlightView;
 
@@ -444,8 +445,16 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
 
     _rootContentView = adoptNS([[UIView alloc] init]);
     [_rootContentView layer].masksToBounds = NO;
+    
+    _fixedClippingView = adoptNS([[UIView alloc] init]);
+    [_fixedClippingView layer].masksToBounds = YES;
+    [_fixedClippingView layer].anchorPoint = CGPointZero;
+#ifndef NDEBUG
+    [[_fixedClippingView layer] setName:@"Fixed clipping"];
+#endif
 
-    [self addSubview:_rootContentView.get()];
+    [self addSubview:_fixedClippingView.get()];
+    [_fixedClippingView addSubview:_rootContentView.get()];
 
     [self setupInteraction];
     [self setUserInteractionEnabled:YES];
@@ -553,6 +562,15 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
     }
 }
 
+- (void)updateFixedClippingView:(FloatRect)fixedPositionRectForUI
+{
+    FloatRect clippingBounds = [self bounds];
+    clippingBounds.unite(fixedPositionRectForUI);
+
+    [_fixedClippingView setCenter:clippingBounds.location()]; // Not really the center since we set an anchor point.
+    [_fixedClippingView setBounds:clippingBounds];
+}
+
 - (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
     scale:(CGFloat)zoomScale minimumScale:(CGFloat)minimumScale inStableState:(BOOL)isStableState isChangingObscuredInsetsInteractively:(BOOL)isChangingObscuredInsetsInteractively
 {
@@ -570,13 +588,16 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
         zoomScale, isStableState, isChangingObscuredInsetsInteractively, timestamp, velocityData.horizontalVelocity, velocityData.verticalVelocity, velocityData.scaleChangeRate);
 
     RemoteScrollingCoordinatorProxy* scrollingCoordinator = _page->scrollingCoordinatorProxy();
-    scrollingCoordinator->viewportChangedViaDelegatedScrolling(scrollingCoordinator->rootScrollingNodeID(), _page->computeCustomFixedPositionRect(_page->unobscuredContentRect(), zoomScale), zoomScale);
+    FloatRect fixedPositionRect = _page->computeCustomFixedPositionRect(_page->unobscuredContentRect(), zoomScale);
+    scrollingCoordinator->viewportChangedViaDelegatedScrolling(scrollingCoordinator->rootScrollingNodeID(), fixedPositionRect, zoomScale);
 
     if (auto drawingArea = _page->drawingArea())
         drawingArea->updateDebugIndicator();
 
     if (!withinEpsilon(oldDisplayedContentScale, zoomScale))
         [self _updateUnscaledView];
+        
+    [self updateFixedClippingView:fixedPositionRect];
 }
 
 - (void)setMinimumSize:(CGSize)size
@@ -667,12 +688,23 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
 {
     CGSize contentsSize = layerTreeTransaction.contentsSize();
+    CGRect contentBounds = { CGPointZero, contentsSize };
+    CGRect oldBounds = [self bounds];
 
-    [self setBounds:{CGPointZero, contentsSize}];
-    [_rootContentView setFrame:CGRectMake(0, 0, contentsSize.width, contentsSize.height)];
-    [_inspectorIndicationView setFrame:[self bounds]];
+    BOOL boundsChanged = !CGRectEqualToRect(oldBounds, contentBounds);
+    if (boundsChanged) {
+        [self setBounds:contentBounds];
+        [_rootContentView setFrame:contentBounds];
+        [_inspectorIndicationView setFrame:contentBounds];
+    }
 
     [_webView _didCommitLayerTree:layerTreeTransaction];
+    
+    if (boundsChanged) {
+        FloatRect fixedPositionRect = _page->computeCustomFixedPositionRect(_page->unobscuredContentRect(), [[_webView scrollView] zoomScale]);
+        [self updateFixedClippingView:fixedPositionRect];
+    }
+    
     [self _updateChangedSelection];
 }
 

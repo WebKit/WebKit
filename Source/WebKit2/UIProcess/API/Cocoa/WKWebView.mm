@@ -664,6 +664,7 @@ static CGFloat contentZoomScale(WKWebView* webView)
         color = [_customContentView backgroundColor].CGColor;
     else
         color = _page->pageExtendedBackgroundColor();
+
     CGFloat zoomScale = contentZoomScale(self);
     CGFloat minimumZoomScale = [_scrollView minimumZoomScale];
     if (zoomScale < minimumZoomScale) {

@@ -1,3 +1,32 @@
+2014-07-03  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Compositing layers draw outside page bounds
+        https://bugs.webkit.org/show_bug.cgi?id=134619
+        <rdar://problem/16953222>
+
+        Reviewed by Benjamin Poulain.
+        
+        With the new rubber-banding behavior, we no longer have the root content layer clipping all
+        the web layers, but this resulted in web layers which were moved outside the viewport by CSS
+        transforms not being clipped.
+        
+        Fix by adding a clipping layer inside the scroll view, above _rootContentView. This layer
+        normally has the same bounds as the content, but when rubber-banding or pinching,
+        it takes the union of the content bounds and the rect used for fixed positioning.
+        To make scrolling work as expected in this scenario, when it has non-zero offset, it
+        has to compensate by setting its bounds origin.
+
+        The bounds of the clipping layer are updated on scrolling/zooming, and when the
+        layer commit tells us that the content size changed.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateScrollViewBackground]):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView initWithFrame:context:configuration:webView:]):
+        (-[WKContentView updateFixedClippingView:]):
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:]):
+        (-[WKContentView _didCommitLayerTree:]):
+
 2014-07-03  Brady Eidson  <beidson@apple.com>
 
         When showing the selection menu, include menu options for all selected phone numbers.
