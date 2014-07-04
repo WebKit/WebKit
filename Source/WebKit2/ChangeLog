@@ -1,5 +1,12 @@
 2014-07-03  Simon Fraser  <simon.fraser@apple.com>
 
+        Clean up Brady's mess on iOS.
+
+        * Platform/mac/StringUtilities.h:
+        * Platform/mac/StringUtilities.mm:
+
+2014-07-03  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS WK2] Compositing layers draw outside page bounds
         https://bugs.webkit.org/show_bug.cgi?id=134619
         <rdar://problem/16953222>

@@ -31,7 +31,7 @@
 #import <WebCore/SoftLinking.h>
 #import <objc/runtime.h>
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectors)
 SOFT_LINK_CLASS(DataDetectors, DDAction)
 SOFT_LINK_CLASS(DataDetectors, DDActionsManager)
@@ -51,7 +51,7 @@ typedef void* DDActionContext;
 
 namespace WebKit {
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
 static NSString *menuItemTitleForTelephoneNumber(const String& telephoneNumber)
 {
