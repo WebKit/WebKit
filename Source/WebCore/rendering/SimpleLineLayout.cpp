@@ -103,6 +103,9 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     if (flow.flowThreadState() != RenderObject::NotInsideFlowThread)
         return false;
+    // Printing does pagination without a flow thread.
+    if (flow.document().paginated())
+        return false;
     if (flow.hasOutline())
         return false;
     if (flow.isRubyText() || flow.isRubyBase())

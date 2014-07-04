@@ -1,3 +1,19 @@
+2014-07-04  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r159345): Lines are clipped between pages when printing web content from Safari
+        https://bugs.webkit.org/show_bug.cgi?id=134633
+        <rdar://problem/17088936>
+
+        Reviewed by Zalan Bujtas.
+
+        Test: printing/simple-lines-break.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+        
+            Disable simple lines if global pagination is enabled.
+            Printing does not currently use flow threads which we already test for.
+
 2014-07-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Fixing the build after r170795.

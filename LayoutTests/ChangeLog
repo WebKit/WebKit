@@ -1,3 +1,13 @@
+2014-07-04  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r159345): Lines are clipped between pages when printing web content from Safari
+        https://bugs.webkit.org/show_bug.cgi?id=134633
+
+        Reviewed by Zalan Bujtas.
+
+        * printing/simple-lines-break-expected.html: Added.
+        * printing/simple-lines-break.html: Added.
+
 2014-07-02  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] WebKit1 WebView iframe not responding to scroll gestures
