@@ -1,3 +1,33 @@
+2014-07-04  Andreas Kling  <akling@apple.com>
+
+        CTTE: ScriptElement always has a HTTPScriptElement or SVGScriptElement.
+        <https://webkit.org/b/134637>
+
+        Have ScriptElement store the pointer to the more specific subclass
+        element as a reference. Also made the constructor protected since
+        nobody should instantiate ScriptElement directly.
+
+        Reviewed by Antti Koivisto.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::ScriptElement):
+        (WebCore::ScriptElement::childrenChanged):
+        (WebCore::ScriptElement::dispatchErrorEvent):
+        (WebCore::ScriptElement::prepareScript):
+        (WebCore::ScriptElement::requestScript):
+        (WebCore::ScriptElement::executeScript):
+        (WebCore::ScriptElement::notifyFinished):
+        (WebCore::ScriptElement::ignoresLoadRequest):
+        (WebCore::ScriptElement::scriptContent):
+        * dom/ScriptElement.h:
+        (WebCore::ScriptElement::element):
+        * dom/ScriptRunner.cpp:
+        (WebCore::ScriptRunner::queueScriptForExecution):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::HTMLScriptElement):
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::SVGScriptElement):
+
 2014-07-04  Julien Quint  <pom@graougraou.com>
 
         input type=range element should only fire change events after committing a  value

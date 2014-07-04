@@ -36,10 +36,10 @@ class ScriptSourceCode;
 
 class ScriptElement : private CachedResourceClient {
 public:
-    ScriptElement(Element*, bool createdByParser, bool isEvaluated);
     virtual ~ScriptElement();
 
-    Element* element() const { return m_element; }
+    Element& element() { return m_element; }
+    const Element& element() const { return m_element; }
 
     enum LegacyTypeSupport { DisallowLegacyTypeInTypeAttribute, AllowLegacyTypeInTypeAttribute };
     bool prepareScript(const TextPosition& scriptStartPosition = TextPosition::minimumPosition(), LegacyTypeSupport = DisallowLegacyTypeInTypeAttribute);
@@ -61,6 +61,8 @@ public:
     CachedResourceHandle<CachedScript> cachedScript() { return m_cachedScript; }
 
 protected:
+    ScriptElement(Element&, bool createdByParser, bool isEvaluated);
+
     void setHaveFiredLoadEvent(bool haveFiredLoad) { m_haveFiredLoad = haveFiredLoad; }
     bool isParserInserted() const { return m_parserInserted; }
     bool alreadyStarted() const { return m_alreadyStarted; }
@@ -91,7 +93,7 @@ private:
     virtual bool deferAttributeValue() const = 0;
     virtual bool hasSourceAttribute() const = 0;
 
-    Element* m_element;
+    Element& m_element;
     CachedResourceHandle<CachedScript> m_cachedScript;
     WTF::OrdinalNumber m_startLineNumber;
     bool m_parserInserted : 1;

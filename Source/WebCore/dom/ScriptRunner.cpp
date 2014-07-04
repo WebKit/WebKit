@@ -54,19 +54,18 @@ void ScriptRunner::queueScriptForExecution(ScriptElement* scriptElement, CachedR
     ASSERT(scriptElement);
     ASSERT(cachedScript.get());
 
-    Element* element = scriptElement->element();
-    ASSERT(element);
-    ASSERT(element->inDocument());
+    Element& element = scriptElement->element();
+    ASSERT(element.inDocument());
 
     m_document.incrementLoadEventDelayCount();
 
     switch (executionType) {
     case ASYNC_EXECUTION:
-        m_pendingAsyncScripts.add(scriptElement, PendingScript(element, cachedScript.get()));
+        m_pendingAsyncScripts.add(scriptElement, PendingScript(&element, cachedScript.get()));
         break;
 
     case IN_ORDER_EXECUTION:
-        m_scriptsToExecuteInOrder.append(PendingScript(element, cachedScript.get()));
+        m_scriptsToExecuteInOrder.append(PendingScript(&element, cachedScript.get()));
         break;
     }
 }
