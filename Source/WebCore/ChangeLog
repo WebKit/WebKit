@@ -1,3 +1,25 @@
+2014-07-04  Dean Jackson  <dino@apple.com>
+
+        [iOS] [Media] Prevent page zoom if it started in the video element
+        https://bugs.webkit.org/show_bug.cgi?id=134640
+        <rdar://problem/16630794>
+
+        Reviewed by Sam Weinig.
+
+        In r170572 I attempted to prevent the page zoom from happening
+        when the user was attempting to fullscreen the video. That fix was
+        not complete, because it relied on the touchstart event being
+        sent before a gesture event. It turns out this doesn't always happen,
+        so we need to apply the same check in the gesture event - if the
+        gesture began with two fingers on the media, don't do a page zoom.
+        The exception is zooming out, if you've managed to make the video
+        cover the entire screen (also, the pinch-out-of-fullscreen gesture
+        does not get handled by WebKit).
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.handleBaseGestureChange): Add a check to
+        make sure our pinch didn't start in the video element.
+
 2014-07-04  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [CoordinatedGraphics] Use the C++11 syntax to clean-up for loops 

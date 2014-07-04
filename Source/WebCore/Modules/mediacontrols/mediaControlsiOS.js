@@ -298,6 +298,9 @@ ControllerIOS.prototype = {
         if (!this.video.controls || this.isAudio() || this.isFullScreen() || this.gestureStartTime === undefined || this.controlsType == ControllerIOS.StartPlaybackControls)
             return;
 
+        if (this.mostRecentNumberOfTargettedTouches == 2 && event.scale >= 1.0)
+            event.preventDefault();
+
         var currentGestureTime = new Date();
         var duration = (currentGestureTime - this.gestureStartTime) / 1000;
         if (!duration)
