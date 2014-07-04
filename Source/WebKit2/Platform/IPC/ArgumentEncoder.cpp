@@ -188,6 +188,12 @@ void ArgumentEncoder::encode(double n)
     copyValueToBuffer(n, buffer);
 }
 
+void ArgumentEncoder::encode(long long n)
+{
+    uint8_t* buffer = grow(sizeof(n), sizeof(n));
+    copyValueToBuffer(n, buffer);
+}
+
 void ArgumentEncoder::addAttachment(const Attachment& attachment)
 {
     m_attachments.append(attachment);

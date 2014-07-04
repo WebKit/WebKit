@@ -59,6 +59,7 @@ public:
     bool decode(int64_t&);
     bool decode(float&);
     bool decode(double&);
+    bool decode(long long&);
 
     template<typename T> bool decodeEnum(T& result)
     {

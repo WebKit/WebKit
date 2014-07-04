@@ -1,3 +1,18 @@
+2014-07-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Fixing the build for ports on 64-bit Linux.
+
+        Add IPC encoding and decoding overloads for the long long type, needed
+        after r170755 started encoding and decoding long long variables in
+        FormDataElement.
+
+        * Platform/IPC/ArgumentDecoder.cpp:
+        (IPC::ArgumentDecoder::decode):
+        * Platform/IPC/ArgumentDecoder.h:
+        * Platform/IPC/ArgumentEncoder.cpp:
+        (IPC::ArgumentEncoder::encode):
+        * Platform/IPC/ArgumentEncoder.h:
+
 2014-07-04  Timothy Horton  <timothy_horton@apple.com>
 
         [iOS][WK2] Black web view after un-suspending process
