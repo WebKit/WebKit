@@ -378,6 +378,7 @@
 		1ABC3DF51899E437004F0626 /* NavigationState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ABC3DF31899E437004F0626 /* NavigationState.mm */; };
 		1ABC3DF61899E437004F0626 /* NavigationState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABC3DF41899E437004F0626 /* NavigationState.h */; };
 		1ABC3DFC1899F51C004F0626 /* WKNavigationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABC3DFB1899F51C004F0626 /* WKNavigationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AC0273F196622D600C12B75 /* WebPageProxyCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AC0273E196622D600C12B75 /* WebPageProxyCocoa.mm */; };
 		1AC1336718565B5700F3EC05 /* UserData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC1336518565B5700F3EC05 /* UserData.cpp */; };
 		1AC1336818565B5700F3EC05 /* UserData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC1336618565B5700F3EC05 /* UserData.h */; };
 		1AC1336C18565C7A00F3EC05 /* APIPageHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC1336B18565C7A00F3EC05 /* APIPageHandle.h */; };
@@ -2334,6 +2335,7 @@
 		1ABC3DF31899E437004F0626 /* NavigationState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NavigationState.mm; sourceTree = "<group>"; };
 		1ABC3DF41899E437004F0626 /* NavigationState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationState.h; sourceTree = "<group>"; };
 		1ABC3DFB1899F51C004F0626 /* WKNavigationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationDelegate.h; sourceTree = "<group>"; };
+		1AC0273E196622D600C12B75 /* WebPageProxyCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPageProxyCocoa.mm; sourceTree = "<group>"; };
 		1AC1336518565B5700F3EC05 /* UserData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserData.cpp; sourceTree = "<group>"; };
 		1AC1336618565B5700F3EC05 /* UserData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserData.h; sourceTree = "<group>"; };
 		1AC1336B18565C7A00F3EC05 /* APIPageHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIPageHandle.h; sourceTree = "<group>"; };
@@ -4579,6 +4581,7 @@
 				2D7AAFD218C8640600A7ACD4 /* WKWebViewContentProvider.h */,
 				2DC6D9C118C44A610043BAD4 /* WKWebViewContentProviderRegistry.h */,
 				2DC6D9C218C44A610043BAD4 /* WKWebViewContentProviderRegistry.mm */,
+				1AC0273E196622D600C12B75 /* WebPageProxyCocoa.mm */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -8943,6 +8946,7 @@
 				0F0C365E18C110A500F607D7 /* LayerRepresentation.mm in Sources */,
 				1A043CEB124FE38F00FFBFB5 /* PluginProcessMessageReceiver.cpp in Sources */,
 				1A0EC75F124BC7B2007EF4A5 /* PluginProcessProxy.cpp in Sources */,
+				1AC0273F196622D600C12B75 /* WebPageProxyCocoa.mm in Sources */,
 				1A2D90BB1281C931001EB962 /* PluginProcessProxyMac.mm in Sources */,
 				1A043B5D124D5E9D00FFBFB5 /* PluginProcessProxyMessageReceiver.cpp in Sources */,
 				1A043DC2124FF87500FFBFB5 /* PluginProxy.cpp in Sources */,

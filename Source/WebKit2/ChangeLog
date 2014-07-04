@@ -1,3 +1,16 @@
+2014-07-03  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the iOS build.
+
+        Add WebPageProxyCocoa.mm for code shared between iOS and OS X. Put the recent searches save/restore code there.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm: Added.
+        (WebKit::autosaveKey):
+        (WebKit::WebPageProxy::saveRecentSearches):
+        (WebKit::WebPageProxy::loadRecentSearches):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-07-03  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/16337741> The UI process needs to track the number of HTTP subresource loads in progress (or at least whether there are any)

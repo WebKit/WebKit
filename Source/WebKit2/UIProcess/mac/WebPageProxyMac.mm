@@ -55,7 +55,6 @@
 #import <WebKitSystemInterface.h>
 #import <mach-o/dyld.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/cf/TypeCasts.h>
 #import <wtf/text/StringConcatenate.h>
 
 @interface NSApplication (Details)
@@ -643,48 +642,6 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String&
         return;
 
     [[NSWorkspace sharedWorkspace] openFile:pdfFilename];
-}
-
-static RetainPtr<CFStringRef> autosaveKey(const String& name)
-{
-    return String("com.apple.WebKit.searchField:" + name).createCFString();
-}
-
-void WebPageProxy::saveRecentSearches(const String& name, const Vector<String>& searchItems)
-{
-    if (!name) {
-        // FIXME: This should be a message check.
-        return;
-    }
-
-    RetainPtr<CFMutableArrayRef> items;
-
-    if (!searchItems.isEmpty()) {
-        items = adoptCF(CFArrayCreateMutable(0, searchItems.size(), &kCFTypeArrayCallBacks));
-
-        for (const auto& searchItem : searchItems)
-            CFArrayAppendValue(items.get(), searchItem.createCFString().get());
-    }
-
-    CFPreferencesSetAppValue(autosaveKey(name).get(), items.get(), kCFPreferencesCurrentApplication);
-    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
-}
-
-void WebPageProxy::loadRecentSearches(const String& name, Vector<String>& searchItems)
-{
-    if (!name) {
-        // FIXME: This should be a message check.
-        return;
-    }
-
-    auto items = adoptCF(dynamic_cf_cast<CFArrayRef>(CFPreferencesCopyAppValue(autosaveKey(name).get(), kCFPreferencesCurrentApplication)));
-    if (!items)
-        return;
-
-    for (size_t i = 0, size = CFArrayGetCount(items.get()); i < size; ++i) {
-        if (auto item = dynamic_cf_cast<CFStringRef>(CFArrayGetValueAtIndex(items.get(), i)))
-            searchItems.append(item);
-    }
 }
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
