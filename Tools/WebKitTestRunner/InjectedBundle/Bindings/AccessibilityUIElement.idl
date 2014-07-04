@@ -156,7 +156,7 @@ interface AccessibilityUIElement {
     boolean attributedStringRangeIsMisspelled(unsigned long location, unsigned long length);
     [PassContext] unsigned int uiElementCountForSearchPredicate(AccessibilityUIElement startElement, boolean isDirectionNext, object searchKey, DOMString searchText, boolean visibleOnly);
     [PassContext] AccessibilityUIElement uiElementForSearchPredicate(AccessibilityUIElement startElement, boolean isDirectionNext, object searchKey, DOMString searchText, boolean visibleOnly);
-    void setSelectedTextRange(unsigned long location, unsigned long length);
+    boolean setSelectedTextRange(unsigned long location, unsigned long length);
 
     // Scroll area attributes.
     readonly attribute AccessibilityUIElement horizontalScrollbar;

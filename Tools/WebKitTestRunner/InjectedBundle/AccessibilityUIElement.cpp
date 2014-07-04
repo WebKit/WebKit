@@ -166,7 +166,7 @@ int AccessibilityUIElement::lineForIndex(int) { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForLine(int) { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForPosition(int, int) { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::boundsForRange(unsigned, unsigned) { return 0; }
-void AccessibilityUIElement::setSelectedTextRange(unsigned, unsigned) { }
+bool AccessibilityUIElement::setSelectedTextRange(unsigned, unsigned) { return false; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForRange(unsigned, unsigned) { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForRange(unsigned, unsigned) { return 0; }
 bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned, unsigned) { return false; }

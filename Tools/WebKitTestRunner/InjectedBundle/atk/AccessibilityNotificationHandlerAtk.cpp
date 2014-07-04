@@ -29,6 +29,7 @@
 #include <WebKit2/WKBundlePage.h>
 #include <WebKit2/WKBundlePagePrivate.h>
 #include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -39,13 +40,7 @@ namespace {
 
 typedef HashMap<AtkObject*, AccessibilityNotificationHandler*> NotificationHandlersMap;
 
-unsigned stateChangeListenerId = 0;
-unsigned focusEventListenerId = 0;
-unsigned activeDescendantChangedListenerId = 0;
-unsigned childrenChangedListenerId = 0;
-unsigned propertyChangedListenerId = 0;
-unsigned visibleDataChangedListenerId = 0;
-unsigned loadCompleteListenerId = 0;
+WTF::Vector<unsigned> listenerIds;
 NotificationHandlersMap notificationHandlers;
 AccessibilityNotificationHandler* globalNotificationHandler = nullptr;
 bool loggingAccessibilityEvents = false;
@@ -82,10 +77,19 @@ gboolean axObjectEventListener(GSignalInvocationHint* signalHint, unsigned numPa
     if (!accessible || !ATK_IS_OBJECT(accessible))
         return true;
 
+#if PLATFORM(GTK) || PLATFORM(EFL)
+    WKBundlePageRef page = InjectedBundle::shared().page()->page();
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(page);
+    JSContextRef jsContext = WKBundleFrameGetJavaScriptContext(mainFrame);
+#else
+    JSContextRef jsContext = nullptr;
+#endif
+
     GSignalQuery signalQuery;
     GUniquePtr<char> signalName;
     GUniquePtr<char> signalValue;
     const char* notificationName = nullptr;
+    Vector<JSValueRef> extraArgs;
 
     g_signal_query(signalHint->signal_id, &signalQuery);
 
@@ -112,19 +116,18 @@ gboolean axObjectEventListener(GSignalInvocationHint* signalHint, unsigned numPa
             notificationName = "AXValueChanged";
     } else if (!g_strcmp0(signalQuery.signal_name, "load-complete"))
         notificationName = "AXLoadComplete";
-    else
+    else if (!g_strcmp0(signalQuery.signal_name, "text-caret-moved")) {
+        notificationName = "AXTextCaretMoved";
+        signalName.reset(g_strdup(signalQuery.signal_name));
+        signalValue.reset(g_strdup_printf("%d", g_value_get_int(&paramValues[1])));
+        JSRetainPtr<JSStringRef> jsSignalValue(Adopt, JSStringCreateWithUTF8CString(signalValue.get()));
+        extraArgs.append(JSValueMakeString(jsContext, jsSignalValue.get()));
+    } else
         signalName.reset(g_strdup(signalQuery.signal_name));
 
     if (loggingAccessibilityEvents)
         printAccessibilityEvent(accessible, signalName.get(), signalValue.get());
 
-#if PLATFORM(GTK) || PLATFORM(EFL)
-    WKBundlePageRef page = InjectedBundle::shared().page()->page();
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(page);
-    JSContextRef jsContext = WKBundleFrameGetJavaScriptContext(mainFrame);
-#else
-    JSContextRef jsContext = nullptr;
-#endif
     if (!jsContext)
         return true;
 
@@ -132,17 +135,25 @@ gboolean axObjectEventListener(GSignalInvocationHint* signalHint, unsigned numPa
         JSRetainPtr<JSStringRef> jsNotificationEventName(Adopt, JSStringCreateWithUTF8CString(notificationName));
         JSValueRef notificationNameArgument = JSValueMakeString(jsContext, jsNotificationEventName.get());
         NotificationHandlersMap::iterator elementNotificationHandler = notificationHandlers.find(accessible);
+        JSValueRef arguments[5]; // this dimension must be >= 2 + max(extraArgs.size())
+        arguments[0] = toJS(jsContext, WTF::getPtr(WTR::AccessibilityUIElement::create(accessible)));
+        arguments[1] = notificationNameArgument;
+        size_t numOfExtraArgs = extraArgs.size();
+        for (int i = 0; i < numOfExtraArgs; i++)
+            arguments[i + 2] = extraArgs[i];
         if (elementNotificationHandler != notificationHandlers.end()) {
-            // Listener for one element just gets one argument, the notification name.
-            JSObjectCallAsFunction(jsContext, const_cast<JSObjectRef>(elementNotificationHandler->value->notificationFunctionCallback()), 0, 1, &notificationNameArgument, 0);
+            // Listener for one element. As arguments, it gets the notification name
+            // and sometimes extra arguments.
+            JSObjectCallAsFunction(jsContext,
+                const_cast<JSObjectRef>(elementNotificationHandler->value->notificationFunctionCallback()),
+                0, numOfExtraArgs + 1, arguments + 1, 0);
         }
 
         if (globalNotificationHandler) {
-            // A global listener gets the element and the notification name as arguments.
-            JSValueRef arguments[2];
-            arguments[0] = toJS(jsContext, WTF::getPtr(WTR::AccessibilityUIElement::create(accessible)));
-            arguments[1] = notificationNameArgument;
-            JSObjectCallAsFunction(jsContext, const_cast<JSObjectRef>(globalNotificationHandler->notificationFunctionCallback()), 0, 2, arguments, 0);
+            // A global listener gets additionally the element as the first argument.
+            JSObjectCallAsFunction(jsContext,
+                const_cast<JSObjectRef>(globalNotificationHandler->notificationFunctionCallback()),
+                0, numOfExtraArgs + 2, arguments, 0);
         }
     }
 
@@ -238,14 +249,34 @@ void AccessibilityNotificationHandler::connectAccessibilityCallbacks()
     if (!disconnectAccessibilityCallbacks())
         return;
 
+    const char* signalNames[] = {
+        "ATK:AtkObject:state-change",
+        "ATK:AtkObject:focus-event",
+        "ATK:AtkObject:active-descendant-changed",
+        "ATK:AtkObject:children-changed",
+        "ATK:AtkObject:property-change",
+        "ATK:AtkObject:visible-data-changed",
+        "ATK:AtkDocument:load-complete",
+        "ATK:AtkText:text-caret-moved",
+        0
+    };
+
+    // Register atk interfaces, otherwise add_global may fail.
+    GObject* dummyObject = (GObject*)g_object_new(G_TYPE_OBJECT, NULL, NULL);
+    g_object_unref(atk_no_op_object_new(dummyObject));
+    g_object_unref(dummyObject);
+
     // Add global listeners for AtkObject's signals.
-    stateChangeListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:state-change");
-    focusEventListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:focus-event");
-    activeDescendantChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:active-descendant-changed");
-    childrenChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:children-changed");
-    propertyChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:property-change");
-    visibleDataChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:visible-data-changed");
-    loadCompleteListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkDocument:load-complete");
+    for (const char** signalName = signalNames; *signalName; signalName++) {
+        unsigned id = atk_add_global_event_listener(axObjectEventListener, *signalName);
+        if (!id) {
+            String message = String::format("atk_add_global_event_listener failed for signal %s\n", *signalName);
+            InjectedBundle::shared().outputText(message);
+            continue;
+        }
+
+        listenerIds.append(id);
+    }
 }
 
 bool AccessibilityNotificationHandler::disconnectAccessibilityCallbacks()
@@ -255,34 +286,11 @@ bool AccessibilityNotificationHandler::disconnectAccessibilityCallbacks()
         return false;
 
     // AtkObject signals.
-    if (stateChangeListenerId) {
-        atk_remove_global_event_listener(stateChangeListenerId);
-        stateChangeListenerId = 0;
+    for (int i = 0; i < listenerIds.size(); i++) {
+        ASSERT(listenerIds[i]);
+        atk_remove_global_event_listener(listenerIds[i]);
     }
-    if (focusEventListenerId) {
-        atk_remove_global_event_listener(focusEventListenerId);
-        focusEventListenerId = 0;
-    }
-    if (activeDescendantChangedListenerId) {
-        atk_remove_global_event_listener(activeDescendantChangedListenerId);
-        activeDescendantChangedListenerId = 0;
-    }
-    if (childrenChangedListenerId) {
-        atk_remove_global_event_listener(childrenChangedListenerId);
-        childrenChangedListenerId = 0;
-    }
-    if (propertyChangedListenerId) {
-        atk_remove_global_event_listener(propertyChangedListenerId);
-        propertyChangedListenerId = 0;
-    }
-    if (visibleDataChangedListenerId) {
-        atk_remove_global_event_listener(visibleDataChangedListenerId);
-        visibleDataChangedListenerId = 0;
-    }
-    if (loadCompleteListenerId) {
-        atk_remove_global_event_listener(loadCompleteListenerId);
-        loadCompleteListenerId = 0;
-    }
+    listenerIds.clear();
     return true;
 }
 

@@ -541,8 +541,9 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::selectedTextRange()
     return JSStringCreateWithCharacters(0, 0);
 }
 
-void AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned length)
+bool AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned length)
 {
+    return false;
 }
 
 void AccessibilityUIElement::increment()

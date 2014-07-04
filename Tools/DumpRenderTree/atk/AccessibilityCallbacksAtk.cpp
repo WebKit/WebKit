@@ -57,6 +57,9 @@ static guint childrenChangedListenerId = 0;
 static guint propertyChangedListenerId = 0;
 static guint visibleDataChangedListenerId = 0;
 static guint loadCompleteListenerId = 0;
+// Up to 2014 it was obligatory to mirror the changes from
+// WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp,
+// but the habit has been dropped: https://bugs.webkit.org/show_bug.cgi?id=132527#c6
 static NotificationHandlersMap notificationHandlers;
 static AccessibilityNotificationHandler* globalNotificationHandler = 0;
 

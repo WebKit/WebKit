@@ -1,3 +1,36 @@
+2014-05-30  Jarek Czekalski  <jarekczek@poczta.onet.pl>
+
+        [ATK] Convert caret offset tests from testatk.c.
+        https://bugs.webkit.org/show_bug.cgi?id=132527
+
+        Reviewed by Mario Sanchez Prada.
+
+        The tests are replicated from testatk.c file, functions
+            testWebkitAtkCaretOffsets()
+            testWebkitAtkCaretOffsetsAndExtranousWhiteSpaces()
+        The file was present in webkit1. Removed from trunk in r166977, so
+        the last version was
+        https://trac.webkit.org/browser/trunk/Tools/TestWebKitAPI/Tests/WebKitGtk/testatk.c?rev=166976
+        What could not be verified in the same way:
+
+        1. Whether element implements ATK_TEXT. If setCaretOffset
+        succeeds, it confirms that element is text as well. But in cases
+        when setCaretOffset must fail I see no way to confirm it is text
+        element.
+
+        2. Whether position is correct through a call to
+        atk_text_get_caret_offset.  text-caret-moved signal value is
+        tested instead.
+
+        Anyway these cases don't look crucial, so they are skipped.
+
+        * platform/gtk/resources/atk-helpers.js: Added.
+        (setCaretOffset): Added.
+        * platform/gtk/accessibility/caret-offsets-and-extraneous-white-spaces-expected.txt: Added.
+        * platform/gtk/accessibility/caret-offsets-and-extraneous-white-spaces.html: Added.
+        * platform/gtk/accessibility/caret-offsets-expected.txt: Added.
+        * platform/gtk/accessibility/caret-offsets.html: Added.
+
 2014-05-22  Piotr Grad  <p.grad@samsung.com>
 
         Video is resumed with old playback rate.

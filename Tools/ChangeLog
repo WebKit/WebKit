@@ -1,3 +1,52 @@
+2014-05-30  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Deprecate usage of logAccessibilityEvents() in layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=132280
+
+        Rubber stamped by Carlos Garcia Campos.
+
+        Fix two small issues with previous patch (r169483), that caused some tests to break.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp:
+        (WTR::AccessibilityNotificationHandler::connectAccessibilityCallbacks): Removed
+        duplicated entry.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::setSelectedTextRange): Fix boolean condition.
+
+2014-05-30  Jarek Czekalski  <jarekczek@poczta.onet.pl>
+
+        [ATK] Added new accessibility signal: text-caret-moved.
+        Make AccessibilityUIElement.setSelectedTextRange work
+        as atk_text_set_caret_offset when given offset == 0.
+        https://bugs.webkit.org/show_bug.cgi?id=132527
+
+        Reviewed by Mario Sanchez Prada.
+
+        text-caret-moved signal in accessibilityController is needed to
+        implement tests from Tools/TestWebKitAPI/Tests/WebKitGtk/testatk.c
+        as LayoutTests. Add the signal to the controller.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (setSelectedTextRange): Change return type to bool.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (setSelectedTextRange): Call atk_text_set_caret_offset and return bool.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp:
+        (axObjectEventListener): Add notification name AXTextCaretMoved, allow
+        for extra arguments passed to handler and use it for text-caret-moved offset.
+        (WTR::AccessibilityNotificationHandler::connectAccessibilityCallbacks):
+        Connect callback to new listener for ATK:AtkText:text-caret-moved.
+        Refactor so that failures be reported.
+        Initialize atk interfaces before trying to connect to them, see
+        https://bugzilla.gnome.org/show_bug.cgi?id=729922
+        (WTR::AccessibilityNotificationHandler::disconnectAccessibilityCallbacks):
+        Simplify code by using a vector in place of dozen variables.
+        * DumpRenderTree/atk/AccessibilityCallbacksAtk.cpp:
+        Comment about not synchronizing with accessibilityController.
+
 2014-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use a different user agent string depending on the site

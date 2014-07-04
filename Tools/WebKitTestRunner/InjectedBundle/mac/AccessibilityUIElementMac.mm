@@ -1289,13 +1289,15 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::selectedTextRange()
     return nullptr;
 }
 
-void AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned length)
+bool AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned length)
 {
     NSRange textRange = NSMakeRange(location, length);
     NSValue *textRangeValue = [NSValue valueWithRange:textRange];
     BEGIN_AX_OBJC_EXCEPTIONS
     [m_element accessibilitySetValue:textRangeValue forAttribute:NSAccessibilitySelectedTextRangeAttribute];
     END_AX_OBJC_EXCEPTIONS
+
+    return true;
 }
 
 void AccessibilityUIElement::increment()
