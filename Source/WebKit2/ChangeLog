@@ -1,3 +1,44 @@
+2014-07-03  Gavin Barraclough  <baraclough@apple.com>
+
+        Should not take background task assertion for NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=134622
+
+        Reviewed by Tim Horton.
+
+        When the WebContent wants to complete a task in the background we take a process assertion on the child process, and also need to prevent the UI process from suspending.
+        However for the NetworkProcess we always just hold a process assertion, and don't want this to interfere with UIApp suspension.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::ConnectionTerminationWatchdog::ConnectionTerminationWatchdog):
+            - ProcessAssertion -> ProcessAndUIAssertion
+        * UIProcess/ProcessAssertion.cpp:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+            - assignment -> initializer list.
+        (WebKit::ProcessAndUIAssertion::ProcessAndUIAssertion):
+        (WebKit::ProcessAndUIAssertion::~ProcessAndUIAssertion):
+        (WebKit::ProcessAndUIAssertion::setState):
+            - added no-op implementation.
+        (WebKit::ProcessAssertion::~ProcessAssertion): Deleted.
+        * UIProcess/ProcessAssertion.h:
+            - removed ~ProcessAssertion, added ProcessAndUIAssertion class.
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::didConnnectToProcess):
+            - ProcessAssertion -> ProcessAndUIAssertion
+        * UIProcess/ProcessThrottler.h:
+            - ProcessAssertion -> ProcessAndUIAssertion
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+            - assignment -> initializer list.
+            - moved code to manage WKProcessAssertionBackgroundTaskManager
+        (WebKit::ProcessAssertion::setState):
+            - moved code to manage WKProcessAssertionBackgroundTaskManager
+        (WebKit::ProcessAndUIAssertion::ProcessAndUIAssertion):
+        (WebKit::ProcessAndUIAssertion::~ProcessAndUIAssertion):
+        (WebKit::ProcessAndUIAssertion::setState):
+            - moved code to manage WKProcessAssertionBackgroundTaskManager from ProcessAssertion.
+        (WebKit::ProcessAssertion::~ProcessAssertion): Deleted.
+            - delete - moved code to manage WKProcessAssertionBackgroundTaskManager
+
 2014-07-03  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up Brady's mess on iOS.

@@ -42,7 +42,6 @@ enum class AssertionState {
 class ProcessAssertion {
 public:
     ProcessAssertion(pid_t, AssertionState);
-    ~ProcessAssertion();
     
     AssertionState state() const { return m_assertionState; }
     
@@ -53,6 +52,14 @@ private:
     RetainPtr<BKSProcessAssertion> m_assertion;
 #endif
     AssertionState m_assertionState;
+};
+    
+class ProcessAndUIAssertion : public ProcessAssertion {
+public:
+    ProcessAndUIAssertion(pid_t, AssertionState);
+    ~ProcessAndUIAssertion();
+    
+    void setState(AssertionState);
 };
     
 }

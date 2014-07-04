@@ -113,7 +113,7 @@ void ProcessThrottler::updateAssertion()
 void ProcessThrottler::didConnnectToProcess(pid_t pid)
 {
     m_suspendTimer.stop();
-    m_assertion = std::make_unique<ProcessAssertion>(pid, assertionState());
+    m_assertion = std::make_unique<ProcessAndUIAssertion>(pid, assertionState());
 }
     
 void ProcessThrottler::suspendTimerFired(WebCore::Timer<ProcessThrottler>*)

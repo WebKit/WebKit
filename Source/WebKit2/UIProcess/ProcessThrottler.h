@@ -73,7 +73,7 @@ private:
     
     WebProcessProxy* m_process;
     WeakPtrFactory<ProcessThrottler> m_weakPtrFactory;
-    std::unique_ptr<ProcessAssertion> m_assertion;
+    std::unique_ptr<ProcessAndUIAssertion> m_assertion;
     WebCore::Timer<ProcessThrottler> m_suspendTimer;
     unsigned m_foregroundCount;
     unsigned m_backgroundCount;

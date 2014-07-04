@@ -150,15 +150,6 @@ ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState)
         }
     };
     m_assertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flagsForState(assertionState) reason:BKSProcessAssertionReasonExtension name:@"Web content visible" withHandler:handler]);
-
-    if (m_assertionState != AssertionState::Suspended)
-        [[WKProcessAssertionBackgroundTaskManager shared] incrementNeedsToRunInBackgroundCount];
-}
-
-ProcessAssertion::~ProcessAssertion()
-{
-    if (m_assertionState != AssertionState::Suspended)
-        [[WKProcessAssertionBackgroundTaskManager shared] decrementNeedsToRunInBackgroundCount];
 }
 
 void ProcessAssertion::setState(AssertionState assertionState)
@@ -166,13 +157,31 @@ void ProcessAssertion::setState(AssertionState assertionState)
     if (m_assertionState == assertionState)
         return;
 
-    if ((m_assertionState != AssertionState::Suspended) && (assertionState == AssertionState::Suspended))
-        [[WKProcessAssertionBackgroundTaskManager shared] decrementNeedsToRunInBackgroundCount];
-    if ((m_assertionState == AssertionState::Suspended) && (assertionState != AssertionState::Suspended))
-        [[WKProcessAssertionBackgroundTaskManager shared] incrementNeedsToRunInBackgroundCount];
-
     m_assertionState = assertionState;
     [m_assertion setFlags:flagsForState(assertionState)];
+}
+
+ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, AssertionState assertionState)
+    : ProcessAssertion(pid, assertionState)
+{
+    if (assertionState != AssertionState::Suspended)
+        [[WKProcessAssertionBackgroundTaskManager shared] incrementNeedsToRunInBackgroundCount];
+}
+
+ProcessAndUIAssertion::~ProcessAndUIAssertion()
+{
+    if (state() != AssertionState::Suspended)
+        [[WKProcessAssertionBackgroundTaskManager shared] decrementNeedsToRunInBackgroundCount];
+}
+
+void ProcessAndUIAssertion::setState(AssertionState assertionState)
+{
+    if ((state() == AssertionState::Suspended) && (assertionState != AssertionState::Suspended))
+        [[WKProcessAssertionBackgroundTaskManager shared] incrementNeedsToRunInBackgroundCount];
+    if ((state() != AssertionState::Suspended) && (assertionState == AssertionState::Suspended))
+        [[WKProcessAssertionBackgroundTaskManager shared] decrementNeedsToRunInBackgroundCount];
+
+    ProcessAssertion::setState(assertionState);
 }
 
 } // namespace WebKit
@@ -182,17 +191,27 @@ void ProcessAssertion::setState(AssertionState assertionState)
 namespace WebKit {
 
 ProcessAssertion::ProcessAssertion(pid_t, AssertionState assertionState)
-{
-    m_assertionState = assertionState;
-}
-
-ProcessAssertion::~ProcessAssertion()
+    : m_assertionState(assertionState)
 {
 }
 
 void ProcessAssertion::setState(AssertionState assertionState)
 {
     m_assertionState = assertionState;
+}
+
+ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, AssertionState assertionState)
+    : ProcessAssertion(pid, assertionState)
+{
+}
+
+ProcessAndUIAssertion::~ProcessAndUIAssertion()
+{
+}
+
+void ProcessAndUIAssertion::setState(AssertionState assertionState)
+{
+    ProcessAssertion::setState(assertionState);
 }
 
 } // namespace WebKit
