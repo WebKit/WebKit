@@ -1,3 +1,13 @@
+2014-07-01  Evan Nemerson  <evan@nemerson.com>
+
+        [GTK] Annotations for WebResource.get_data produce wrong signature in Vala binding
+        https://bugs.webkit.org/show_bug.cgi?id=134476
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitWebResource.cpp: Add array length and
+        element-type annotations to return value of webkit_web_resource_get_data_finish().
+
 2014-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use a different user agent string depending on the site

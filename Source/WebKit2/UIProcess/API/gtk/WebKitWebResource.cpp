@@ -352,13 +352,14 @@ void webkit_web_resource_get_data(WebKitWebResource* resource, GCancellable* can
  * webkit_web_resource_get_data_finish:
  * @resource: a #WebKitWebResource
  * @result: a #GAsyncResult
- * @length: (out): return location for the length of the resource data
+ * @length: (out) (allow-none): return location for the length of the resource data
  * @error: return location for error or %NULL to ignore
  *
  * Finish an asynchronous operation started with webkit_web_resource_get_data().
  *
- * Returns: (transfer full): a string with the data of @resource, or %NULL in case
- *    of error. if @length is not %NULL, the size of the data will be assigned to it.
+ * Returns: (transfer full) (array length=length) (element-type guint8): a
+ *    string with the data of @resource, or %NULL in case of error. if @length
+ *    is not %NULL, the size of the data will be assigned to it.
  */
 guchar* webkit_web_resource_get_data_finish(WebKitWebResource* resource, GAsyncResult* result, gsize* length, GError** error)
 {
