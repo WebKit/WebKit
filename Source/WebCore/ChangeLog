@@ -1,3 +1,17 @@
+2014-07-05  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r170825.
+        https://bugs.webkit.org/show_bug.cgi?id=134653
+
+        broke debug builds (Requested by kling on #webkit).
+
+        Reverted changeset:
+
+        "Generate isMathMLFoo() toMathMLFoo() by using NODE_TYPE_CASTS
+        macro and generateTypeHelpers"
+        https://bugs.webkit.org/show_bug.cgi?id=134647
+        http://trac.webkit.org/changeset/170825
+
 2014-07-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Generate isMathMLFoo() toMathMLFoo() by using NODE_TYPE_CASTS macro and generateTypeHelpers

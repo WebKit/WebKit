@@ -50,7 +50,11 @@ private:
     bool m_isRadicalValue;
 };
 
-NODE_TYPE_CASTS(MathMLMencloseElement)
+inline MathMLMencloseElement* toMathMLMencloseElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || (node->isElementNode() && toElement(node)->hasTagName(MathMLNames::mencloseTag)));
+    return static_cast<MathMLMencloseElement*>(node);
+}
 
 }
 
