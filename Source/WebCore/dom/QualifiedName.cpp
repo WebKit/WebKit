@@ -68,7 +68,7 @@ struct QNameComponentsTranslator {
     }
     static void translate(QualifiedName::QualifiedNameImpl*& location, const QualifiedNameComponents& components, unsigned)
     {
-        location = QualifiedName::QualifiedNameImpl::create(components.m_prefix, components.m_localName, components.m_namespace).leakRef();
+        location = &QualifiedName::QualifiedNameImpl::create(components.m_prefix, components.m_localName, components.m_namespace).leakRef();
     }
 };
 
@@ -80,26 +80,9 @@ static inline QNameSet& qualifiedNameCache()
 
 QualifiedName::QualifiedName(const AtomicString& p, const AtomicString& l, const AtomicString& n)
 {
-    QualifiedNameComponents components = { p.impl(), l.impl(), n.isEmpty() ? nullAtom.impl() : n.impl() };
+    QualifiedNameComponents components = { p.impl(), l.impl(), n.isEmpty() ? nullptr : n.impl() };
     QNameSet::AddResult addResult = qualifiedNameCache().add<QNameComponentsTranslator>(components);
-    m_impl = *addResult.iterator;
-    if (!addResult.isNewEntry)
-        m_impl->ref();
-}
-
-QualifiedName::~QualifiedName()
-{
-    deref();
-}
-
-void QualifiedName::deref()
-{
-#ifdef QNAME_DEFAULT_CONSTRUCTOR
-    if (!m_impl)
-        return;
-#endif
-    ASSERT(!isHashTableDeletedValue());
-    m_impl->deref();
+    m_impl = addResult.isNewEntry ? adoptRef(*addResult.iterator) : *addResult.iterator;
 }
 
 QualifiedName::QualifiedNameImpl::~QualifiedNameImpl()

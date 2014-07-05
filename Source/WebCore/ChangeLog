@@ -1,3 +1,32 @@
+2014-05-10  Andreas Kling  <akling@apple.com>
+
+        QualifiedName should use RefPtr<QualifiedNameImpl> internally.
+        <https://webkit.org/b/132796>
+
+        We were not inlining ~QualifiedName() and it was showing up in some
+        profiles (over 1% on dom-attr.html.)
+
+        This patch modernizes QualifiedName a bit by using RefPtr to store
+        the QualifiedNameImpl instead of doing manual ref() and deref()
+        in out-of-line functions.
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in:
+        * dom/QualifiedName.cpp:
+        (WebCore::QNameComponentsTranslator::translate):
+        (WebCore::QualifiedName::QualifiedName):
+        (WebCore::QualifiedName::~QualifiedName): Deleted.
+        (WebCore::QualifiedName::deref): Deleted.
+        * dom/QualifiedName.h:
+        (WebCore::QualifiedName::QualifiedNameImpl::create):
+        (WebCore::QualifiedName::QualifiedName):
+        (WebCore::QualifiedName::isHashTableDeletedValue):
+        (WebCore::QualifiedName::~QualifiedName):
+        (WebCore::QualifiedName::operator=):
+        (WebCore::QualifiedName::impl):
+        (WebCore::QualifiedName::ref): Deleted.
+
 2014-07-04  Dean Jackson  <dino@apple.com>
 
         [iOS] [Media] Prevent page zoom if it started in the video element
