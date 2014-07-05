@@ -1,3 +1,16 @@
+2014-07-04  Shivakumar JM  <shiva.jm@samsung.com>
+
+        [EFL][WK2] Enhance the Minibrowser to show selected/highlighted text in search bar, if any.
+        https://bugs.webkit.org/show_bug.cgi?id=134485
+
+        Reviewed by Gyuyoung Kim.
+
+        Use script_execute_callback to get selected/highlighted text and show in search bar.
+
+        * MiniBrowser/efl/main.c:
+        (script_execute_callback):
+        (on_key_down):
+
 2014-07-04  Dan Bernstein  <mitz@apple.com>
 
         Build fix after r170811.

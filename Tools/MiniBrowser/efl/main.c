@@ -426,6 +426,22 @@ static void save_page_contents_callback(Ewk_Page_Contents_Type type, const char 
     eina_stringshare_del(fileName);
 }
 
+static void 
+script_execute_callback(Evas_Object *ewk_view, const char *return_value, void *user_data)
+{
+    Browser_Window *window = (Browser_Window *)user_data;
+
+    Eina_Strbuf *text_buffer = eina_strbuf_new();
+
+    if (return_value) {
+        eina_strbuf_append(text_buffer, return_value);
+        info("selected text is: %s", eina_strbuf_string_get(text_buffer));
+        elm_entry_entry_set(window->search.search_field, eina_strbuf_string_get(text_buffer));   
+    }
+    eina_strbuf_free(text_buffer);
+    search_box_show(window);
+}
+
 static void
 on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
 {
@@ -484,7 +500,8 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
         ewk_view_inspector_show(ewk_view);
     } else if (!strcmp(ev->key, "f") && ctrlPressed) {
         info("Show Search Box (Ctrl+f) was pressed.");
-        search_box_show(window);
+        const char get_data_script[] = "window.getSelection().toString();";
+        ewk_view_script_execute(ewk_view, get_data_script, script_execute_callback, (void*)(window));
     } else if (!strcmp(ev->key, "Escape")) {
         if (evas_object_visible_get(window->search.search_bar))
             search_box_hide(window);
