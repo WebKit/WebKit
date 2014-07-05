@@ -1,3 +1,14 @@
+2014-07-05  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Add libgeoclue-dev to Tools/efl/install-dependencies.
+        https://bugs.webkit.org/show_bug.cgi?id=134648
+
+        Reviewed by Gyuyoung Kim.
+
+        As Geoclue is enabled for EFL, libgeoclue-dev is also added to Tools/efl/install-dependencies.
+
+        * efl/install-dependencies:
+
 2014-07-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Support Geolocation

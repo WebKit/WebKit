@@ -43,6 +43,7 @@ function installDependenciesWithApt {
         libffi-dev \
         libfreetype6-dev \
         libgcrypt11-dev \
+        libgeoclue-dev \
         libgif-dev \
         libgl1-mesa-dev \
         libgnutls-dev \
