@@ -516,6 +516,34 @@ namespace JSC {
     inline JSString* jsNontrivialString(ExecState* exec, const String& s) { return jsNontrivialString(&exec->vm(), s); }
     inline JSString* jsOwnedString(ExecState* exec, const String& s) { return jsOwnedString(&exec->vm(), s); }
 
+    JS_EXPORT_PRIVATE JSString* jsStringWithCacheSlowCase(VM&, StringImpl&);
+
+    ALWAYS_INLINE JSString* jsStringWithCache(ExecState* exec, const String& s)
+    {
+        VM& vm = exec->vm();
+        StringImpl* stringImpl = s.impl();
+        if (!stringImpl || !stringImpl->length())
+            return jsEmptyString(&vm);
+
+        if (stringImpl->length() == 1) {
+            UChar singleCharacter = (*stringImpl)[0u];
+            if (singleCharacter <= maxSingleCharacterString)
+                return vm.smallStrings.singleCharacterString(static_cast<unsigned char>(singleCharacter));
+        }
+
+        if (JSString* lastCachedString = vm.lastCachedString.get()) {
+            if (lastCachedString->tryGetValueImpl() == stringImpl)
+                return lastCachedString;
+        }
+
+        return jsStringWithCacheSlowCase(vm, *stringImpl);
+    }
+
+    ALWAYS_INLINE JSString* jsStringWithCache(ExecState* exec, const AtomicString& s)
+    {
+        return jsStringWithCache(exec, s.string());
+    }
+
     ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
     {
         if (propertyName == exec->propertyNames().length) {

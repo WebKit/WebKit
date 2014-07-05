@@ -237,7 +237,6 @@ EXPORTS
         symbolWithPointer(?isActiveInsertionPoint@WebCore@@YA_NPBVNode@1@@Z, ?isActiveInsertionPoint@WebCore@@YA_NPEBVNode@1@@Z)
         symbolWithPointer(?isPreloaded@CachedResourceLoader@WebCore@@QBE_NABVString@WTF@@@Z, ?isPreloaded@CachedResourceLoader@WebCore@@QEBA_NAEBVString@WTF@@@Z)
         symbolWithPointer(?jsArray@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@V?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@@Z, ?jsArray@WebCore@@YA?AVJSValue@JSC@@PEAVExecState@3@PEAVJSDOMGlobalObject@1@V?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@@Z)
-        symbolWithPointer(?jsStringWithCache@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@ABVString@WTF@@@Z, ?jsStringWithCache@WebCore@@YA?AVJSValue@JSC@@PEAVExecState@3@AEBVString@WTF@@@Z)
         symbolWithPointer(?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QBE_NXZ, ?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QEBA_NXZ)
         symbolWithPointer(?synchronousScrollingReasonsAsText@Page@WebCore@@QAE?AVString@WTF@@XZ, ?synchronousScrollingReasonsAsText@Page@WebCore@@QEAA?AVString@WTF@@XZ)
         symbolWithPointer(?markerTextForListItem@WebCore@@YA?AVString@WTF@@PAVElement@1@@Z, ?markerTextForListItem@WebCore@@YA?AVString@WTF@@PEAVElement@1@@Z)

@@ -1,3 +1,20 @@
+2014-07-04  Andreas Kling  <akling@apple.com>
+
+        Fast path for jsStringWithCache() when asked for the same string repeatedly.
+        <https://webkit.org/b/134635>
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsStringWithCache): Deleted.
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::JSValueTraits<String>::arrayJSValue):
+        (WebCore::jsStringWithCache): Deleted.
+        * bridge/c/c_utility.cpp:
+        (JSC::Bindings::convertNPVariantToValue):
+        * loader/cache/CachedResourceHandle.h:
+
 2014-07-04  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: ebay.com rotating billboard on the main page has cut off buttons.

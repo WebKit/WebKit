@@ -268,12 +268,7 @@ void reportCurrentException(JSC::ExecState*);
 // Convert a DOM implementation exception code into a JavaScript exception in the execution state.
 void setDOMException(JSC::ExecState*, ExceptionCode);
 
-JSC::JSValue jsStringWithCache(JSC::ExecState*, const String&);
 JSC::JSValue jsString(JSC::ExecState*, const URL&); // empty if the URL is null
-inline JSC::JSValue jsStringWithCache(JSC::ExecState* exec, const AtomicString& s)
-{
-    return jsStringWithCache(exec, s.string());
-}
 
 JSC::JSValue jsStringOrNull(JSC::ExecState*, const String&); // null if the string is null
 JSC::JSValue jsStringOrNull(JSC::ExecState*, const URL&); // null if the URL is null
@@ -423,7 +418,7 @@ template<typename T> struct JSValueTraits {
 template<> struct JSValueTraits<String> {
     static JSC::JSValue arrayJSValue(JSC::ExecState* exec, JSDOMGlobalObject*, const String& value)
     {
-        return jsStringWithCache(exec, value);
+        return JSC::jsStringWithCache(exec, value);
     }
 };
 

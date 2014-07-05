@@ -1,3 +1,20 @@
+2014-07-04  Andreas Kling  <akling@apple.com>
+
+        Fast path for jsStringWithCache() when asked for the same string repeatedly.
+        <https://webkit.org/b/134635>
+
+        Also moved the whole thing from WebCore to JavaScriptCore since it
+        makes more sense here, and inline the lightweight checks, leaving only
+        the hashmap stuff out of line.
+
+        Reviewed by Darin Adler.
+
+        * runtime/JSString.cpp:
+        (JSC::jsStringWithCacheSlowCase):
+        * runtime/JSString.h:
+        (JSC::jsStringWithCache):
+        * runtime/VM.h:
+
 2014-07-03  Daniel Bates  <dabates@apple.com>
 
         Add WTF::move()
