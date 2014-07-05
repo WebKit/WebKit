@@ -1,3 +1,12 @@
+2014-07-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Support Geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=134439
+
+        Reviewed by Antonio Gomes.
+
+        * platform/efl/TestExpectations: Unskip geolocation tests.
+
 2014-07-04  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: ebay.com rotating billboard on the main page has cut off buttons.

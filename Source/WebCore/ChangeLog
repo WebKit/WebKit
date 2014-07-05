@@ -1,3 +1,14 @@
+2014-07-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Support Geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=134439
+
+        Reviewed by Antonio Gomes.
+
+        Add geoclue files in order to enable geolocation for EFL port.
+
+        * PlatformEfl.cmake:
+
 2014-07-04  Benjamin Poulain  <benjamin@webkit.org>
 
         CSS JIT: compile :in-range and :out-of-range

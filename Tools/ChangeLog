@@ -1,3 +1,12 @@
+2014-07-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Support Geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=134439
+
+        Reviewed by Antonio Gomes.
+
+        * Scripts/webkitperl/FeatureList.pm: Enable geolocation for EFL port.
+
 2014-07-04  Shivakumar JM  <shiva.jm@samsung.com>
 
         [EFL][WK2] Enhance the Minibrowser to show selected/highlighted text in search bar, if any.

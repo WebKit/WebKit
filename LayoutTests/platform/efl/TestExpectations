@@ -1167,9 +1167,7 @@ webkit.org/b/88191 fast/viewport/viewport-legacy-ordering-6.html [ Failure ]
 webkit.org/b/88191 fast/viewport/viewport-legacy-xhtmlmp.html [ Failure ]
 webkit.org/b/88191 fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html [ Failure ]
 
-# EFL's TestRunner should support for the Geolocation API
-webkit.org/b/82140 fast/dom/Geolocation [ Skip ]
-webkit.org/b/82140 fast/dom/Window/window-properties-geolocation.html [ Failure ]
+webkit.org/b/82140 fast/dom/Geolocation/page-reload-cancel-permission-requests.html
 
 # IETC namespace failures
 webkit.org/b/86142 ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]

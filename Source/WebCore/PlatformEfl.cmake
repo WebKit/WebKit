@@ -4,6 +4,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/page/scrolling/coordinatedgraphics"
     "${WEBCORE_DIR}/platform/cairo"
     "${WEBCORE_DIR}/platform/efl"
+    "${WEBCORE_DIR}/platform/geoclue"
     "${WEBCORE_DIR}/platform/graphics/cairo"
     "${WEBCORE_DIR}/platform/graphics/efl"
     "${WEBCORE_DIR}/platform/graphics/freetype"
@@ -96,6 +97,9 @@ list(APPEND WebCore_SOURCES
     platform/efl/SoundEfl.cpp
     platform/efl/TemporaryLinkStubs.cpp
     platform/efl/WidgetEfl.cpp
+
+    platform/geoclue/GeolocationProviderGeoclue1.cpp
+    platform/geoclue/GeolocationProviderGeoclue2.cpp
 
     platform/graphics/WOFFFileFormat.cpp
 
@@ -241,6 +245,7 @@ list(APPEND WebCore_LIBRARIES
     ${EVAS_LIBRARIES}
     ${FONTCONFIG_LIBRARIES}
     ${FREETYPE2_LIBRARIES}
+    ${GEOCLUE_LIBRARIES}
     ${GLIB_GIO_LIBRARIES}
     ${GLIB_GOBJECT_LIBRARIES}
     ${GLIB_LIBRARIES}
@@ -266,6 +271,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     ${EINA_INCLUDE_DIRS}
     ${EVAS_INCLUDE_DIRS}
     ${FREETYPE2_INCLUDE_DIRS}
+    ${GEOCLUE_INCLUDE_DIRS}
     ${LIBXML2_INCLUDE_DIR}
     ${LIBXSLT_INCLUDE_DIR}
     ${SQLITE_INCLUDE_DIR}
