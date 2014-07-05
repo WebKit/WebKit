@@ -762,11 +762,9 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             return true;
 #endif
         case CSSSelector::PseudoClassInRange:
-            element->document().setContainsValidityStyleRules();
-            return element->isInRange();
+            return isInRange(element);
         case CSSSelector::PseudoClassOutOfRange:
-            element->document().setContainsValidityStyleRules();
-            return element->isOutOfRange();
+            return isOutOfRange(element);
 #if ENABLE(VIDEO_TRACK)
         case CSSSelector::PseudoClassFuture:
             return matchesFutureCuePseudoClass(element);

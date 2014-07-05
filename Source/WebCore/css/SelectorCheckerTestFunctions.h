@@ -77,6 +77,18 @@ ALWAYS_INLINE bool isChecked(Element* element)
     return false;
 }
 
+ALWAYS_INLINE bool isInRange(Element* element)
+{
+    element->document().setContainsValidityStyleRules();
+    return element->isInRange();
+}
+
+ALWAYS_INLINE bool isOutOfRange(Element* element)
+{
+    element->document().setContainsValidityStyleRules();
+    return element->isOutOfRange();
+}
+
 ALWAYS_INLINE bool isInvalid(const Element* element)
 {
     element->document().setContainsValidityStyleRules();

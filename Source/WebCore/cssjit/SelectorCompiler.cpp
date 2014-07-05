@@ -369,6 +369,9 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClassFocus:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(SelectorChecker::matchesFocusPseudoClass));
         return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassInRange:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isInRange));
+        return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassIndeterminate:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(shouldAppearIndeterminate));
         return FunctionType::SimpleSelectorChecker;
@@ -377,6 +380,9 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassOptional:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isOptionalFormControl));
+        return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassOutOfRange:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isOutOfRange));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassReadOnly:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesReadOnlyPseudoClass));

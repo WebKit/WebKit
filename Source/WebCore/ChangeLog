@@ -1,3 +1,20 @@
+2014-07-04  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS JIT: compile :in-range and :out-of-range
+        https://bugs.webkit.org/show_bug.cgi?id=134639
+
+        Reviewed by Andreas Kling.
+
+        The pseudo class :in-range and :out-of-range are trivial non-inlined selectors.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::isInRange):
+        (WebCore::isOutOfRange):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+
 2014-07-04  Andreas Kling  <akling@apple.com>
 
         Fast path for jsStringWithCache() when asked for the same string repeatedly.
