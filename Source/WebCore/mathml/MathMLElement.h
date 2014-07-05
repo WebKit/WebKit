@@ -73,8 +73,6 @@ private:
     virtual void updateSelectedChild() { }
 };
 
-void isMathMLElement(const MathMLElement&); // Catch unnecessary runtime check of type known at compile time.
-inline bool isMathMLElement(const Node& node) { return node.isMathMLElement(); }
 NODE_TYPE_CASTS(MathMLElement)
 
 inline bool Node::hasTagName(const MathMLQualifiedName& name) const
@@ -82,7 +80,9 @@ inline bool Node::hasTagName(const MathMLQualifiedName& name) const
     return isMathMLElement() && toMathMLElement(*this).hasTagName(name);
 }
 
-}
+} // namespace WebCore
+
+#include "MathMLElementTypeHelpers.h"
 
 #endif // ENABLE(MATHML)
 

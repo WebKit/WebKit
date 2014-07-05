@@ -31,7 +31,7 @@ mtr interfaceName=MathMLElement
 mtd interfaceName=MathMLElement
 mmultiscripts interfaceName=MathMLInlineContainerElement
 mprescripts interfaceName=MathMLInlineContainerElement
-menclose interfaceName=MathMLMencloseElement
+menclose interfaceName=MathMLMencloseElement, generateTypeHelpers
 none interfaceName=MathMLInlineContainerElement
 semantics interfaceName=MathMLSelectElement
 
