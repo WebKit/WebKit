@@ -1,3 +1,19 @@
+2014-07-04  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: ebay.com rotating billboard on the main page has cut off buttons.
+        https://bugs.webkit.org/show_bug.cgi?id=134636
+        <rdar://problem/17529112>
+
+        Reviewed by Darin Adler.
+
+        Missing pixel snapping when clipping the transparency layer for BackgroundBleedUseTransparencyLayer.
+        Clipping needs to take the same snapping strategy as the rest of the painting code.
+
+        Test: fast/borders/border-radius-on-subpixel-position-non-hidpi.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations):
+
 2014-05-10  Andreas Kling  <akling@apple.com>
 
         QualifiedName should use RefPtr<QualifiedNameImpl> internally.

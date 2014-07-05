@@ -1,3 +1,17 @@
+2014-07-04  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: ebay.com rotating billboard on the main page has cut off buttons.
+        https://bugs.webkit.org/show_bug.cgi?id=134636
+        <rdar://problem/17529112>
+
+        Reviewed by Darin Adler.
+
+        Missing pixel snapping when clipping the transparency layer for BackgroundBleedUseTransparencyLayer.
+        Clipping needs to take the same snapping strategy as the rest of the painting code.
+
+        * fast/borders/border-radius-on-subpixel-position-non-hidpi-expected.html: Added.
+        * fast/borders/border-radius-on-subpixel-position-non-hidpi.html: Added.
+
 2014-07-04  Julien Quint  <pom@graougraou.com>
 
         input type=range element should only fire change events after committing a  value

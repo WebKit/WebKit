@@ -1256,9 +1256,8 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         // To avoid the background color bleeding out behind the border, we'll render background and border
         // into a transparency layer, and then clip that in one go (which requires setting up the clip before
         // beginning the layer).
-        RoundedRect border = style().getRoundedBorderFor(paintRect);
         stateSaver.save();
-        paintInfo.context->clipRoundedRect(FloatRoundedRect(border));
+        paintInfo.context->clipRoundedRect(style().getRoundedBorderFor(paintRect).pixelSnappedRoundedRectForPainting(document().deviceScaleFactor()));
         paintInfo.context->beginTransparencyLayer(1);
     }
 
