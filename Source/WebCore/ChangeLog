@@ -1,3 +1,18 @@
+2014-07-05  Dean Jackson  <dino@apple.com>
+
+        [iOS] MediaDocument should set a viewport
+        https://bugs.webkit.org/show_bug.cgi?id=134658
+        <rdar://problem/17552339>
+
+        Reviewed by Zalan Bujtas.
+
+        A MediaDocument should fill the viewport, so set its
+        initial-scale to 1 and make it non-zoomable.
+
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure): Create
+        a <head> element and a <meta> element with a 1:1 viewport.
+
 2014-07-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r170825.

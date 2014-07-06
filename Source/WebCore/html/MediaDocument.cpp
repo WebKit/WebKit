@@ -81,6 +81,16 @@ void MediaDocumentParser::createDocumentStructure()
     if (document()->frame())
         document()->frame()->injectUserScripts(InjectAtDocumentStart);
 
+#if PLATFORM(IOS)
+    RefPtr<Element> headElement = document()->createElement(headTag, false);
+    rootElement->appendChild(headElement, IGNORE_EXCEPTION);
+
+    RefPtr<Element> metaElement = document()->createElement(metaTag, false);
+    metaElement->setAttribute(nameAttr, "viewport");
+    metaElement->setAttribute(contentAttr, "width=device-width,initial-scale=1,user-scalable=no");
+    headElement->appendChild(metaElement, IGNORE_EXCEPTION);
+#endif
+
     RefPtr<Element> body = document()->createElement(bodyTag, false);
     rootElement->appendChild(body, IGNORE_EXCEPTION);
 
