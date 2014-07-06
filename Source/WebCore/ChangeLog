@@ -1,3 +1,23 @@
+2014-07-06  Andreas Kling  <akling@apple.com>
+
+        Inline Node's rare data getters.
+        <https://webkit.org/b/134652>
+
+        There was a fair bit of overhead when calling Node::ensureRareData()
+        from Document's collection getters. This patch inlines the case where
+        we've already materialized the rare data.
+
+        Reviewed by Antti Koivisto.
+
+        * dom/Node.cpp:
+        (WebCore::Node::materializeRareData):
+        (WebCore::Node::rareData): Deleted.
+        (WebCore::Node::ensureRareData): Deleted.
+        * dom/Node.h:
+        * dom/NodeRareData.h:
+        (WebCore::Node::rareData):
+        (WebCore::Node::ensureRareData):
+
 2014-07-05  Dean Jackson  <dino@apple.com>
 
         [iOS] MediaDocument should set a viewport

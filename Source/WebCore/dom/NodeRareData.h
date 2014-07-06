@@ -356,6 +356,19 @@ inline bool NodeListsNodeData::deleteThisAndUpdateNodeRareDataIfAboutToRemoveLas
     return true;
 }
 
+inline NodeRareData* Node::rareData() const
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(hasRareData());
+    return static_cast<NodeRareData*>(m_data.m_rareData);
+}
+
+inline NodeRareData& Node::ensureRareData()
+{
+    if (!hasRareData())
+        materializeRareData();
+    return *rareData();
+}
+
 // Ensure the 10 bits reserved for the m_connectedFrameCount cannot overflow
 COMPILE_ASSERT(Page::maxNumberOfFrames < 1024, Frame_limit_should_fit_in_rare_data_count);
 

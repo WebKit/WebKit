@@ -691,6 +691,7 @@ private:
     Element* ancestorElement() const;
 
     void trackForDebugging();
+    void materializeRareData();
 
     Vector<OwnPtr<MutationObserverRegistration>>* mutationObserverRegistry();
     HashSet<MutationObserverRegistration*>* transientMutationObserverRegistry();

@@ -325,17 +325,8 @@ void Node::willBeDeletedFrom(Document& document)
         cache->remove(this);
 }
 
-NodeRareData* Node::rareData() const
+void Node::materializeRareData()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(hasRareData());
-    return static_cast<NodeRareData*>(m_data.m_rareData);
-}
-
-NodeRareData& Node::ensureRareData()
-{
-    if (hasRareData())
-        return *rareData();
-
     NodeRareData* data;
     if (isElementNode())
         data = ElementRareData::create(toRenderElement(m_data.m_renderer)).leakPtr();
@@ -345,7 +336,6 @@ NodeRareData& Node::ensureRareData()
 
     m_data.m_rareData = data;
     setFlag(HasRareDataFlag);
-    return *data;
 }
 
 void Node::clearRareData()
