@@ -1,5 +1,20 @@
 2014-07-06  Andreas Kling  <akling@apple.com>
 
+        Inline NodeListsNodeData helpers more aggressively.
+        <https://webkit.org/b/134654>
+
+        Get rid of call overhead costs when retrieving NodeLists and
+        HTMLCollections from Document. These functions have very few clients,
+        so there's no real reason to keep them out of line.
+
+        Reviewed by Antti Koivisto.
+
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::addCacheWithAtomicName):
+        (WebCore::NodeListsNodeData::addCacheWithName):
+
+2014-07-06  Andreas Kling  <akling@apple.com>
+
         Inline Node's rare data getters.
         <https://webkit.org/b/134652>
 

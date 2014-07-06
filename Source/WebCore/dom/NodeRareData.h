@@ -118,7 +118,7 @@ public:
     typedef HashMap<QualifiedName, TagNodeList*> TagNodeListCacheNS;
 
     template<typename T, typename ContainerType>
-    PassRef<T> addCacheWithAtomicName(ContainerType& container, const AtomicString& name)
+    ALWAYS_INLINE PassRef<T> addCacheWithAtomicName(ContainerType& container, const AtomicString& name)
     {
         NodeListAtomicNameCacheMap::AddResult result = m_atomicNameCaches.fastAdd(namedNodeListKey<T>(name), nullptr);
         if (!result.isNewEntry)
@@ -130,7 +130,7 @@ public:
     }
 
     template<typename T>
-    PassRef<T> addCacheWithName(ContainerNode& node, const String& name)
+    ALWAYS_INLINE PassRef<T> addCacheWithName(ContainerNode& node, const String& name)
     {
         NodeListNameCacheMap::AddResult result = m_nameCaches.fastAdd(namedNodeListKey<T>(name), nullptr);
         if (!result.isNewEntry)
@@ -141,7 +141,7 @@ public:
         return list;
     }
 
-    PassRef<TagNodeList> addCacheWithQualifiedName(ContainerNode& node, const AtomicString& namespaceURI, const AtomicString& localName)
+    ALWAYS_INLINE PassRef<TagNodeList> addCacheWithQualifiedName(ContainerNode& node, const AtomicString& namespaceURI, const AtomicString& localName)
     {
         QualifiedName name(nullAtom, localName, namespaceURI);
         TagNodeListCacheNS::AddResult result = m_tagNodeListCacheNS.fastAdd(name, nullptr);
@@ -154,7 +154,7 @@ public:
     }
 
     template<typename T, typename ContainerType>
-    PassRef<T> addCachedCollection(ContainerType& container, CollectionType collectionType, const AtomicString& name)
+    ALWAYS_INLINE PassRef<T> addCachedCollection(ContainerType& container, CollectionType collectionType, const AtomicString& name)
     {
         CollectionCacheMap::AddResult result = m_cachedCollections.fastAdd(namedCollectionKey(collectionType, name), nullptr);
         if (!result.isNewEntry)
@@ -166,7 +166,7 @@ public:
     }
 
     template<typename T, typename ContainerType>
-    PassRef<T> addCachedCollection(ContainerType& container, CollectionType collectionType)
+    ALWAYS_INLINE PassRef<T> addCachedCollection(ContainerType& container, CollectionType collectionType)
     {
         CollectionCacheMap::AddResult result = m_cachedCollections.fastAdd(namedCollectionKey(collectionType, starAtom), nullptr);
         if (!result.isNewEntry)
