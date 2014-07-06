@@ -1,3 +1,13 @@
+2014-07-06  Antti Koivisto  <antti@apple.com>
+
+        Don't throttle layer flushes when the main resource is a GIF
+        https://bugs.webkit.org/show_bug.cgi?id=134650
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::adjustLayerFlushThrottling):
+
 2014-07-04  Rohit Kumar  <kumar.rohit@samsung.com>
 
         [EFL][WK2]Fix build break in EFL WK2

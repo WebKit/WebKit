@@ -30,7 +30,7 @@ namespace WebCore {
 
 struct LayerFlushThrottleState {
     enum {
-        MainLoadProgressing = 1 << 0,
+        Enabled = 1 << 0,
         UserIsInteracting = 1 << 1
     };
     typedef unsigned Flags;

@@ -274,7 +274,7 @@ bool RemoteLayerTreeDrawingArea::adjustLayerFlushThrottling(WebCore::LayerFlushT
         m_isLayerFlushThrottlingTemporarilyDisabledForInteraction = true;
 
     bool wasThrottlingLayerFlushes = m_isThrottlingLayerFlushes;
-    m_isThrottlingLayerFlushes = flags & WebCore::LayerFlushThrottleState::MainLoadProgressing;
+    m_isThrottlingLayerFlushes = flags & WebCore::LayerFlushThrottleState::Enabled;
 
     if (!wasThrottlingLayerFlushes && m_isThrottlingLayerFlushes)
         m_isInitialThrottledLayerFlush = true;

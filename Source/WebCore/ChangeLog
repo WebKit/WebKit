@@ -1,3 +1,27 @@
+2014-07-06  Antti Koivisto  <antti@apple.com>
+
+        Don't throttle layer flushes when the main resource is a GIF
+        https://bugs.webkit.org/show_bug.cgi?id=134650
+        <rdar://problem/17490712>
+
+        Reviewed by Simon Fraser.
+        
+        Avoid throttling big image animations.
+
+        * page/FrameView.cpp:
+        (WebCore::determineLayerFlushThrottleState):
+        
+            Disable for image documents.
+
+        (WebCore::FrameView::disableLayerFlushThrottlingTemporarilyForInteraction):
+        (WebCore::FrameView::updateLayerFlushThrottling):
+        
+            Refactor a bit.
+
+        * page/LayerFlushThrottleState.h:
+        
+            Rename the flag.
+
 2014-07-06  Andreas Kling  <akling@apple.com>
 
         Inline NodeListsNodeData helpers more aggressively.
