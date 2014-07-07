@@ -648,6 +648,8 @@ private:
         OP_ADD_SP_imm_T1    = 0xA800,
         OP_ADD_SP_imm_T2    = 0xB000,
         OP_SUB_SP_imm_T1    = 0xB080,
+        OP_PUSH_T1          = 0xB400,
+        OP_POP_T1           = 0xBC00,
         OP_BKPT             = 0xBE00,
         OP_IT               = 0xBF00,
         OP_NOP_T1           = 0xBF00,
@@ -1500,9 +1502,16 @@ public:
     ALWAYS_INLINE void pop(uint32_t registerList)
     {
         ASSERT(WTF::bitCount(registerList) > 1);
-        ASSERT(!((1 << ARMRegisters::pc) & registerList) || !((1 << ARMRegisters::lr) & registerList));
+        ASSERT(!((1 << ARMRegisters::lr) & registerList));
         ASSERT(!((1 << ARMRegisters::sp) & registerList));
-        m_formatter.twoWordOp16Imm16(OP_POP_T2, registerList);
+
+        // It is possible to restore the PC with thumb, but that is not used by the MacroAssembler.
+        ASSERT(!((1 << ARMRegisters::pc) & registerList));
+
+        if (registerList & ~(0xff))
+            m_formatter.twoWordOp16Imm16(OP_POP_T2, registerList);
+        else
+            m_formatter.oneWordOp7Imm9(OP_POP_T1, registerList & 0xff);
     }
 
     ALWAYS_INLINE void push(uint32_t registerList)
@@ -1510,7 +1519,18 @@ public:
         ASSERT(WTF::bitCount(registerList) > 1);
         ASSERT(!((1 << ARMRegisters::pc) & registerList));
         ASSERT(!((1 << ARMRegisters::sp) & registerList));
-        m_formatter.twoWordOp16Imm16(OP_PUSH_T2, registerList);
+        uint32_t lrMask = 1 << ARMRegisters::lr;
+        if (registerList & ~(0xff | lrMask))
+            m_formatter.twoWordOp16Imm16(OP_PUSH_T2, registerList);
+        else {
+            uint16_t t1RegisterList = registerList & 0xff;
+
+            // For T1 PUSH, the M field encodes LR.
+            if (registerList & lrMask)
+                t1RegisterList |= 0x100;
+            ASSERT(WTF::bitCount(static_cast<unsigned>(t1RegisterList)) > 1);
+            m_formatter.oneWordOp7Imm9(OP_PUSH_T1, t1RegisterList);
+        }
     }
 
 #if CPU(APPLE_ARMV7S)
@@ -2771,6 +2791,11 @@ private:
         ALWAYS_INLINE void oneWordOp7Reg3Reg3Reg3(OpcodeID op, RegisterID reg1, RegisterID reg2, RegisterID reg3)
         {
             m_buffer.putShort(op | (reg1 << 6) | (reg2 << 3) | reg3);
+        }
+
+        ALWAYS_INLINE void oneWordOp7Imm9(OpcodeID op, uint16_t imm)
+        {
+            m_buffer.putShort(op | imm);
         }
 
         ALWAYS_INLINE void oneWordOp8Imm8(OpcodeID op, uint8_t imm)

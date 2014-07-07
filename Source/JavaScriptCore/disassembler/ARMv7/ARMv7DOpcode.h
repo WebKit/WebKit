@@ -621,7 +621,7 @@ protected:
 
     const char* opName() { return op() ? "pop" : "push"; }
     unsigned op() { return (m_opcode >> 11) & 0x1; }
-    unsigned registerMask() { return ((m_opcode << 6) & 0x4000) | (m_opcode & 0x7f); }
+    unsigned registerMask() { return ((m_opcode << 6) & 0x4000) | (m_opcode & 0xff); }
 };
 
 class ARMv7DOpcodeMoveImmediateT1 : public ARMv7D16BitOpcode {

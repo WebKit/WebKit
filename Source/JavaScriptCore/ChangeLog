@@ -1,3 +1,30 @@
+2014-07-06  Benjamin Poulain  <benjamin@webkit.org>
+
+        [ARMv7] Use 16 bits instructions for push/pop when possible
+        https://bugs.webkit.org/show_bug.cgi?id=134656
+
+        Reviewed by Andreas Kling.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::pop):
+        (JSC::ARMv7Assembler::push):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::oneWordOp7Imm9):
+        Add the 16 bits version of push and pop.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::pop):
+        (JSC::MacroAssemblerARMv7::push):
+        Use the new push/pop instead of a regular load/store.
+
+        * disassembler/ARMv7/ARMv7DOpcode.cpp:
+        (JSC::ARMv7Disassembler::ARMv7DOpcode::appendRegisterList):
+        * disassembler/ARMv7/ARMv7DOpcode.h:
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeMiscPushPop::registerMask):
+        Fix the disassembler for push/pop:
+        -The register mask was on 7 bits for some reason.
+        -The code printing the registers was comparing a register ID with a register
+         mask.
+
 2014-07-06  Yoav Weiss  <yoav@yoav.ws>
 
         Turn on img@sizes compile flag
