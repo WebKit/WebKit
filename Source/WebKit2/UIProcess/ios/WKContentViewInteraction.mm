@@ -1289,20 +1289,12 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)cut:(id)sender
 {
-    [self.inputDelegate textWillChange:self];
-
     _page->executeEditCommand(ASCIILiteral("cut"));
-
-    [self.inputDelegate textDidChange:self];
 }
 
 - (void)paste:(id)sender
 {
-    [self.inputDelegate textWillChange:self];
-    
     _page->executeEditCommand(ASCIILiteral("paste"));
-    
-    [self.inputDelegate textDidChange:self];
 }
 
 - (void)select:(id)sender
@@ -2218,6 +2210,78 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     return NO;
 }
 
+- (UITextInputArrowKeyHistory *)_moveUp:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
+{
+    _page->executeEditCommand(ASCIILiteral("moveUp"));
+    return nil;
+}
+
+- (UITextInputArrowKeyHistory *)_moveDown:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
+{
+    _page->executeEditCommand(ASCIILiteral("moveDown"));
+    return nil;
+}
+
+- (UITextInputArrowKeyHistory *)_moveLeft:(BOOL) extending withHistory:(UITextInputArrowKeyHistory *)history
+{
+    _page->executeEditCommand(ASCIILiteral("moveLeft"));
+    return nil;
+}
+
+- (UITextInputArrowKeyHistory *)_moveRight:(BOOL) extending withHistory:(UITextInputArrowKeyHistory *)history
+{
+    _page->executeEditCommand(ASCIILiteral("moveRight"));
+    return nil;
+}
+
+- (UITextInputArrowKeyHistory *)_moveToStartOfWord:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
+{
+    _page->executeEditCommand(ASCIILiteral("moveWordBackward"));
+    return nil;
+}
+
+- (UITextInputArrowKeyHistory *)_moveToStartOfParagraph:(BOOL) extending withHistory:(UITextInputArrowKeyHistory *)history
+{
+    _page->executeEditCommand(ASCIILiteral("moveToStartOfParagraph"));
+    return nil;
+}
+
+- (UITextInputArrowKeyHistory *)_moveToStartOfLine:(BOOL) extending withHistory:(UITextInputArrowKeyHistory *)history
+{
+    _page->executeEditCommand(ASCIILiteral("moveToStartOfLine"));
+    return nil;
+}
+
+- (UITextInputArrowKeyHistory *)_moveToStartOfDocument:(BOOL) extending withHistory:(UITextInputArrowKeyHistory *)history
+{
+    _page->executeEditCommand(ASCIILiteral("moveToBeginningOfDocument"));
+    return nil;
+}
+
+- (UITextInputArrowKeyHistory *)_moveToEndOfWord:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
+{
+    _page->executeEditCommand(ASCIILiteral("moveWordForward"));
+    return nil;
+}
+
+- (UITextInputArrowKeyHistory *)_moveToEndOfParagraph:(BOOL) extending withHistory:(UITextInputArrowKeyHistory *)history
+{
+    _page->executeEditCommand(ASCIILiteral("moveToEndOfParagraph"));
+    return nil;
+}
+
+- (UITextInputArrowKeyHistory *)_moveToEndOfLine:(BOOL) extending withHistory:(UITextInputArrowKeyHistory *)history
+{
+    _page->executeEditCommand(ASCIILiteral("moveToEndOfLine"));
+    return nil;
+}
+
+- (UITextInputArrowKeyHistory *)_moveToEndOfDocument:(BOOL) extending withHistory:(UITextInputArrowKeyHistory *)history
+{
+    _page->executeEditCommand(ASCIILiteral("moveToEndOfDocument"));
+    return nil;
+}
+
 // Sets a buffer to make room for autocorrection views
 - (void)setBottomBufferHeight:(CGFloat)bottomBuffer
 {
@@ -2425,6 +2489,13 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     [_webSelectionAssistant resignedFirstResponder];
 }
 
+- (void)_selectionWillChange
+{
+    if (_usingGestureForSelection)
+        return;
+    [self beginSelectionChange];
+}
+
 - (void)_selectionChanged
 {
     _selectionNeedsUpdate = YES;
@@ -2432,6 +2503,8 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     // to wait to paint the selection.
     if (_usingGestureForSelection)
         [self _updateChangedSelection];
+    else
+        [self endSelectionChange];
 }
 
 - (void)selectWordForReplacement

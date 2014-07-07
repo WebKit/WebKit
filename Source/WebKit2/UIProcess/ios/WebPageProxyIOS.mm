@@ -466,6 +466,11 @@ void WebPageProxy::applicationDidBecomeActive()
     m_process->send(Messages::WebPage::ApplicationDidBecomeActive(), m_pageID);
 }
 
+void WebPageProxy::notifySelectionWillChange()
+{
+    m_pageClient.selectionWillChange();
+}
+
 void WebPageProxy::notifyRevealedSelection()
 {
     m_pageClient.selectionDidChange();

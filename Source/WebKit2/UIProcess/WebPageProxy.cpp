@@ -3410,6 +3410,9 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
     m_temporarilyClosedComposition = editorState.shouldIgnoreCompositionSelectionChange && (m_temporarilyClosedComposition || m_editorState.hasComposition) && !editorState.hasComposition;
 #endif
 
+#if PLATFORM(IOS)
+    notifySelectionWillChange();
+#endif
     m_editorState = editorState;
 
 #if PLATFORM(COCOA)

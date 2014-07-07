@@ -1,3 +1,48 @@
+2014-07-07  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION(iOS WK2): arrow keys movements don't work.
+        https://bugs.webkit.org/show_bug.cgi?id=134561
+        <rdar://problem/16827629>
+
+        Reviewed by Benjamin Poulain.
+
+        This change add the implementations for cursor movement selectors.
+        It also provides a mechanism to ensure that every selection
+        change in WebKit is reflected in UIKit so that it can update the 
+        autocorrection data. This way we ensure that the autocorraction state
+        is consistent even when selection changes are originated by JavaScript.
+        WebPageProxy::editorStateChanged now notifies the page client when the
+        selection is about to change as well as when it actually changed.
+        
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::editorStateChanged):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::selectionWillChange):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cut:]): Removed incorrect calls to textWillChange and
+        textDidChange.
+        (-[WKContentView paste:]):
+        (-[WKContentView _moveUp:withHistory:]):
+        (-[WKContentView _moveDown:withHistory:]):
+        (-[WKContentView _moveLeft:withHistory:]):
+        (-[WKContentView _moveRight:withHistory:]):
+        (-[WKContentView _moveToStartOfWord:withHistory:]):
+        (-[WKContentView _moveToStartOfParagraph:withHistory:]):
+        (-[WKContentView _moveToStartOfLine:withHistory:]):
+        (-[WKContentView _moveToStartOfDocument:withHistory:]):
+        (-[WKContentView _moveToEndOfWord:withHistory:]):
+        (-[WKContentView _moveToEndOfParagraph:withHistory:]):
+        (-[WKContentView _moveToEndOfLine:withHistory:]):
+        (-[WKContentView _moveToEndOfDocument:withHistory:]):
+        (-[WKContentView _selectionWillChange]):
+        (-[WKContentView _selectionChanged]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::notifySelectionWillChange):
+
 2014-07-07  Anders Carlsson  <andersca@apple.com>
 
         Add SPI for saving and restoring a WKWebView's _WKSessionState

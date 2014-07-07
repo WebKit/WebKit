@@ -1222,7 +1222,7 @@ private:
     void enableInspectorNodeSearch();
     void disableInspectorNodeSearch();
 #endif
-
+    void notifySelectionWillChange();
     void notifyRevealedSelection();
 #endif // PLATFORM(IOS)
 
