@@ -1,3 +1,15 @@
+2014-07-07  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Fix cursor artifacts on naver map site.
+        https://bugs.webkit.org/show_bug.cgi?id=134649
+
+        Reviewed by Gyuyoung Kim.
+
+        Old evas cursor and ecore x cursor are reset before new cursor is applied.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::updateCursor):
+
 2014-07-06  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] The tap highlight ID is not invalidated when a long press ends

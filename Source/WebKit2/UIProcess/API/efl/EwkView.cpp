@@ -407,6 +407,10 @@ WKPageRef EwkView::wkPage() const
 void EwkView::updateCursor()
 {
     Ewk_View_Smart_Data* sd = smartData();
+    Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(sd->base.evas);
+    // FIXME : ecore_evas_object_cursor_set doesn't guarantee deletion of cursor image previously set.
+    // Therefore, this patch deletes old cursor image before setting new image explicitly.
+    ecore_evas_object_cursor_set(ecoreEvas, 0, 0, 0, 0);
 
     if (m_useCustomCursor) {
         Image* cursorImage = static_cast<Image*>(m_cursorIdentifier.image);
@@ -425,7 +429,9 @@ void EwkView::updateCursor()
         IntPoint hotSpot;
         cursorImage->getHotSpot(hotSpot);
 
-        Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(sd->base.evas);
+#ifdef HAVE_ECORE_X
+        ecore_x_window_cursor_set(getEcoreXWindow(ecoreEvas), 0);
+#endif
         // ecore_evas takes care of freeing the cursor object.
         ecore_evas_object_cursor_set(ecoreEvas, cursorObject.release(), EVAS_LAYER_MAX, hotSpot.x(), hotSpot.y());
         return;
@@ -437,9 +443,7 @@ void EwkView::updateCursor()
 
     EflUniquePtr<Evas_Object> cursorObject = EflUniquePtr<Evas_Object>(edje_object_add(sd->base.evas));
 
-    Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(sd->base.evas);
     if (!m_theme || !edje_object_file_set(cursorObject.get(), m_theme, group)) {
-        ecore_evas_object_cursor_set(ecoreEvas, 0, 0, 0, 0);
 #ifdef HAVE_ECORE_X
         WebCore::applyFallbackCursor(ecoreEvas, group);
 #endif
