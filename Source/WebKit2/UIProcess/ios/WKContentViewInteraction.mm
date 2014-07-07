@@ -808,11 +808,13 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (void)_cancelInteraction
 {
+    _isTapHighlightIDValid = NO;
     [_highlightView removeFromSuperview];
 }
 
 - (void)_finishInteraction
 {
+    _isTapHighlightIDValid = NO;
     [UIView animateWithDuration:0.1
                      animations:^{
                          [_highlightView layer].opacity = 0;
@@ -926,7 +928,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     if (contentView->_potentialTapInProgress) {
         contentView->_potentialTapInProgress = NO;
-        contentView->_isTapHighlightIDValid = NO;
         [contentView _cancelInteraction];
         contentView->_page->cancelPotentialTap();
     }

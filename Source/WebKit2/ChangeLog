@@ -1,3 +1,19 @@
+2014-07-06  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] The tap highlight ID is not invalidated when a long press ends
+        https://bugs.webkit.org/show_bug.cgi?id=134660
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _cancelInteraction]):
+        (-[WKContentView _finishInteraction]):
+        (cancelPotentialTapIfNecessary):
+        I messed that up in r170600. I only accounted for the web process being too fast.
+
+        If the web process is too slow, _cancelInteraction or _finishInteraction happen before
+        _didGetTapHighlightForRequest:, and we also need to nuke the tap highlight.
+
 2014-07-06  Tim Horton  <timothy_horton@apple.com>
 
         [WK2] Don't support dynamically enabling the RemoteLayerTree debug indicator
