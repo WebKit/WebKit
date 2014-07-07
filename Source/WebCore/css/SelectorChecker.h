@@ -47,7 +47,9 @@ class SelectorChecker {
 
 public:
     enum VisitedMatchType { VisitedMatchDisabled, VisitedMatchEnabled };
-    enum Mode { ResolvingStyle = 0, CollectingRules, QueryingRules, SharingRules, StyleInvalidation };
+    enum class Mode : unsigned char {
+        ResolvingStyle = 0, CollectingRules, QueryingRules, SharingRules, StyleInvalidation
+    };
 
     SelectorChecker(Document&, Mode);
 

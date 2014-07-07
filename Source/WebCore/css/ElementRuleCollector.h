@@ -49,7 +49,7 @@ public:
         , m_regionForStyling(0)
         , m_pseudoStyleRequest(NOPSEUDO)
         , m_sameOriginOnly(false)
-        , m_mode(SelectorChecker::ResolvingStyle)
+        , m_mode(SelectorChecker::Mode::ResolvingStyle)
         , m_canUseFastReject(m_selectorFilter.parentStackIsConsistent(element.parentNode()))
     {
     }

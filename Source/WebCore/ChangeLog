@@ -1,3 +1,40 @@
+2014-07-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: Ensure resolvingMode size is 1 byte
+        https://bugs.webkit.org/show_bug.cgi?id=134662
+
+        Reviewed by Benjamin Poulain.
+
+        Since selector compiler uses MacroAssembler::branch8 for SelectorChecker::Mode,
+        we should ensure sizeof(SelectorChecker::Mode) == 1.
+        Old implementation works only in little endianness environments.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchedResult):
+        (WebCore::ElementRuleCollector::matchedRuleList):
+        (WebCore::ElementRuleCollector::collectMatchingRules):
+        (WebCore::ElementRuleCollector::sortAndTransferMatchedRules):
+        (WebCore::ElementRuleCollector::hasAnyMatchingRules):
+        * css/ElementRuleCollector.h:
+        (WebCore::ElementRuleCollector::ElementRuleCollector):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::match):
+        (WebCore::SelectorChecker::matchRecursively):
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorChecker.h:
+        * css/StyleInvalidationAnalysis.cpp:
+        (WebCore::invalidateStyleRecursively):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::pseudoStyleRulesForElement):
+        * css/StyleResolver.h:
+        (WebCore::checkRegionSelector):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::jumpIfNotResolvingStyle):
+        (WebCore::SelectorCompiler::elementIsActiveForStyleResolution):
+        (WebCore::SelectorCompiler::elementIsHoveredForStyleResolution):
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::selectorMatches):
+
 2014-07-06  Antti Koivisto  <antti@apple.com>
 
         Don't throttle layer flushes when the main resource is a GIF

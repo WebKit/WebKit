@@ -77,13 +77,13 @@ public:
 
 StyleResolver::MatchResult& ElementRuleCollector::matchedResult()
 {
-    ASSERT(m_mode == SelectorChecker::ResolvingStyle);
+    ASSERT(m_mode == SelectorChecker::Mode::ResolvingStyle);
     return m_result;
 }
 
 const Vector<RefPtr<StyleRule>>& ElementRuleCollector::matchedRuleList() const
 {
-    ASSERT(m_mode == SelectorChecker::CollectingRules);
+    ASSERT(m_mode == SelectorChecker::Mode::CollectingRules);
     return m_matchedRuleList;
 }
 
@@ -145,7 +145,7 @@ bool MatchingUARulesScope::m_matchingUARules = false;
 void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest, StyleResolver::RuleRange& ruleRange)
 {
     ASSERT(matchRequest.ruleSet);
-    ASSERT_WITH_MESSAGE(!(m_mode == SelectorChecker::ResolvingStyle && !m_style), "When resolving style, the SelectorChecker must have a style to set the pseudo elements and/or to do marking. The SelectorCompiler also rely on that behavior.");
+    ASSERT_WITH_MESSAGE(!(m_mode == SelectorChecker::Mode::ResolvingStyle && !m_style), "When resolving style, the SelectorChecker must have a style to set the pseudo elements and/or to do marking. The SelectorCompiler also rely on that behavior.");
 
     const AtomicString& pseudoId = m_element.shadowPseudoId();
     if (!pseudoId.isEmpty())
@@ -200,7 +200,7 @@ void ElementRuleCollector::sortAndTransferMatchedRules()
     sortMatchedRules();
 
     Vector<const RuleData*, 32>& matchedRules = *m_matchedRules;
-    if (m_mode == SelectorChecker::CollectingRules) {
+    if (m_mode == SelectorChecker::Mode::CollectingRules) {
         for (unsigned i = 0; i < matchedRules.size(); ++i)
             m_matchedRuleList.append(matchedRules[i]->rule());
         return;
@@ -432,7 +432,7 @@ bool ElementRuleCollector::hasAnyMatchingRules(RuleSet* ruleSet)
 {
     clearMatchedRules();
 
-    m_mode = SelectorChecker::SharingRules;
+    m_mode = SelectorChecker::Mode::SharingRules;
     int firstRuleIndex = -1, lastRuleIndex = -1;
     StyleResolver::RuleRange ruleRange(firstRuleIndex, lastRuleIndex);
     collectMatchingRules(MatchRequest(ruleSet), ruleRange);

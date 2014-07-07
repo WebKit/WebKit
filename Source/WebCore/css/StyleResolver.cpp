@@ -1436,7 +1436,7 @@ Vector<RefPtr<StyleRule>> StyleResolver::pseudoStyleRulesForElement(Element* ele
     m_state.initForStyleResolve(document(), element, 0);
 
     ElementRuleCollector collector(*element, m_state.style(), m_ruleSets, m_selectorFilter);
-    collector.setMode(SelectorChecker::CollectingRules);
+    collector.setMode(SelectorChecker::Mode::CollectingRules);
     collector.setPseudoStyleRequest(PseudoStyleRequest(pseudoId));
     collector.setMedium(m_medium.get());
 

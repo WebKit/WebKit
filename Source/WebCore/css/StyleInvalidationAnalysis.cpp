@@ -94,7 +94,7 @@ static void invalidateStyleRecursively(Element& element, SelectorFilter& filter,
         return;
     if (element.styleChangeType() == NoStyleChange) {
         ElementRuleCollector ruleCollector(element, nullptr, ruleSets, filter);
-        ruleCollector.setMode(SelectorChecker::StyleInvalidation);
+        ruleCollector.setMode(SelectorChecker::Mode::StyleInvalidation);
         ruleCollector.matchAuthorRules(false);
 
         if (ruleCollector.hasMatchedRules())

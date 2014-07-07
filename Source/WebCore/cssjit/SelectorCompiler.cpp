@@ -1472,7 +1472,8 @@ Assembler::Jump SelectorCodeGenerator::jumpIfNotResolvingStyle(Assembler::Regist
     m_assembler.loadPtr(Assembler::Address(Assembler::stackPointerRegister, offsetToCheckingContext), checkingContext);
 
     // If we not resolving style, skip the whole marking.
-    return m_assembler.branch8(Assembler::NotEqual, Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, resolvingMode)), Assembler::TrustedImm32(SelectorChecker::ResolvingStyle));
+    static_assert(sizeof(SelectorChecker::Mode) == 1, "We generate a byte load/test for the SelectorChecker::Mode.");
+    return m_assembler.branch8(Assembler::NotEqual, Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, resolvingMode)), Assembler::TrustedImm32(static_cast<std::underlying_type<SelectorChecker::Mode>::type>(SelectorChecker::Mode::ResolvingStyle)));
 }
 
 static void getDocument(Assembler& assembler, Assembler::RegisterID element, Assembler::RegisterID output)
@@ -2213,7 +2214,7 @@ static bool elementIsActive(Element* element)
 
 static bool elementIsActiveForStyleResolution(Element* element, const CheckingContext* checkingContext)
 {
-    if (checkingContext->resolvingMode == SelectorChecker::ResolvingStyle)
+    if (checkingContext->resolvingMode == SelectorChecker::Mode::ResolvingStyle)
         element->setChildrenAffectedByActive();
     return element->active() || InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassActive);
 }
@@ -2309,7 +2310,7 @@ static bool elementIsHovered(Element* element)
 
 static bool elementIsHoveredForStyleResolution(Element* element, const CheckingContext* checkingContext)
 {
-    if (checkingContext->resolvingMode == SelectorChecker::ResolvingStyle)
+    if (checkingContext->resolvingMode == SelectorChecker::Mode::ResolvingStyle)
         element->setChildrenAffectedByHover();
     return element->hovered() || InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassHover);
 }
