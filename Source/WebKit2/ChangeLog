@@ -1,3 +1,21 @@
+2014-07-07  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Assertion failure in NavigationState::LoaderClient::didStartProvisionalLoadForFrame (navigationID) when navigating through the page cache
+        https://bugs.webkit.org/show_bug.cgi?id=134682
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::LoaderClient::didStartProvisionalLoadForFrame): Replaced the
+        assertion with a FIXME.
+        (WebKit::NavigationState::LoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame):
+        Ditto.
+        (WebKit::NavigationState::LoaderClient::didFailProvisionalLoadWithErrorForFrame): Ditto.
+        (WebKit::NavigationState::LoaderClient::didCommitLoadForFrame): Ditto.
+        (WebKit::NavigationState::LoaderClient::didFinishDocumentLoadForFrame): Ditto.
+        (WebKit::NavigationState::LoaderClient::didFinishLoadForFrame): Ditto.
+        (WebKit::NavigationState::LoaderClient::didFailLoadWithErrorForFrame): Ditto.
+
 2014-07-07  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Fix cursor artifacts on naver map site.

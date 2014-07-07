@@ -413,9 +413,10 @@ void NavigationState::LoaderClient::didStartProvisionalLoadForFrame(WebPageProxy
     if (!navigationDelegate)
         return;
 
-    ASSERT(navigationID);
-    WKNavigation *navigation = m_navigationState.m_navigations.get(navigationID).get();
-    ASSERT(navigation);
+    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
+    WKNavigation *navigation = nil;
+    if (navigationID)
+        navigation = m_navigationState.m_navigations.get(navigationID).get();
 
     [navigationDelegate webView:m_navigationState.m_webView didStartProvisionalNavigation:navigation];
 }
@@ -432,9 +433,10 @@ void NavigationState::LoaderClient::didReceiveServerRedirectForProvisionalLoadFo
     if (!navigationDelegate)
         return;
 
-    ASSERT(navigationID);
-    WKNavigation *navigation = m_navigationState.m_navigations.get(navigationID).get();
-    ASSERT(navigation);
+    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
+    WKNavigation *navigation = nil;
+    if (navigationID)
+        navigation = m_navigationState.m_navigations.get(navigationID).get();
 
     [navigationDelegate webView:m_navigationState.m_webView didReceiveServerRedirectForProvisionalNavigation:navigation];
 }
@@ -467,9 +469,10 @@ void NavigationState::LoaderClient::didFailProvisionalLoadWithErrorForFrame(WebP
         return;
     }
 
-    ASSERT(navigationID);
-    RetainPtr<WKNavigation> navigation = m_navigationState.m_navigations.take(navigationID).get();
-    ASSERT(navigation);
+    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
+    RetainPtr<WKNavigation> navigation;
+    if (navigationID)
+        navigation = m_navigationState.m_navigations.take(navigationID);
 
     // FIXME: Set the error on the navigation object.
 
@@ -496,9 +499,10 @@ void NavigationState::LoaderClient::didCommitLoadForFrame(WebPageProxy*, WebFram
     if (!navigationDelegate)
         return;
 
-    ASSERT(navigationID);
-    WKNavigation *navigation = m_navigationState.m_navigations.get(navigationID).get();
-    ASSERT(navigation);
+    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
+    WKNavigation *navigation = nil;
+    if (navigationID)
+        navigation = m_navigationState.m_navigations.get(navigationID).get();
 
     [navigationDelegate webView:m_navigationState.m_webView didCommitNavigation:navigation];
 }
@@ -515,9 +519,10 @@ void NavigationState::LoaderClient::didFinishDocumentLoadForFrame(WebPageProxy*,
     if (!navigationDelegate)
         return;
 
-    ASSERT(navigationID);
-    WKNavigation *navigation = m_navigationState.m_navigations.get(navigationID).get();
-    ASSERT(navigation);
+    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
+    WKNavigation *navigation = nil;
+    if (navigationID)
+        navigation = m_navigationState.m_navigations.get(navigationID).get();
 
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView navigationDidFinishDocumentLoad:navigation];
 }
@@ -534,9 +539,10 @@ void NavigationState::LoaderClient::didFinishLoadForFrame(WebPageProxy*, WebFram
     if (!navigationDelegate)
         return;
 
-    ASSERT(navigationID);
-    WKNavigation *navigation = m_navigationState.m_navigations.get(navigationID).get();
-    ASSERT(navigation);
+    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
+    WKNavigation *navigation = nil;
+    if (navigationID)
+        navigation = m_navigationState.m_navigations.get(navigationID).get();
 
     [navigationDelegate webView:m_navigationState.m_webView didFinishNavigation:navigation];
 }
@@ -553,9 +559,10 @@ void NavigationState::LoaderClient::didFailLoadWithErrorForFrame(WebPageProxy*, 
     if (!navigationDelegate)
         return;
 
-    ASSERT(navigationID);
-    WKNavigation *navigation = m_navigationState.m_navigations.get(navigationID).get();
-    ASSERT(navigation);
+    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
+    WKNavigation *navigation = nil;
+    if (navigationID)
+        navigation = m_navigationState.m_navigations.get(navigationID).get();
 
     auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState.m_webView, *webFrameProxy, error);
     [navigationDelegate webView:m_navigationState.m_webView didFailNavigation:navigation withError:errorWithRecoveryAttempter.get()];
