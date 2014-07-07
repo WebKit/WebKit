@@ -1,3 +1,17 @@
+2014-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        [iOS WebGL] Fix crash with too many nested glsl functions.
+        https://bugs.webkit.org/show_bug.cgi?id=134683
+        <rdar://problem/17541529>
+
+        Reviewed by Geoffrey Garen.
+
+        This fixes the Khronos WebGL 1.0.3 test nested-functions-should-not-crash.html.
+
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE):
+        Add SH_LIMIT_CALL_STACK_DEPTH to extraCompileOptions.
+
 2014-07-07  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending]The background images set on the root element will blend on an initial white backdrop.
