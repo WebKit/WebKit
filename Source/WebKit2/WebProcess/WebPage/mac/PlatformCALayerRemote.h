@@ -171,6 +171,8 @@ protected:
     PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context);
     PlatformCALayerRemote(const PlatformCALayerRemote&, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
 
+    void updateClonedLayerProperties(PlatformCALayerRemote& clone, bool copyContents = true) const;
+
 private:
     virtual bool isPlatformCALayerRemote() const override { return true; }
     void ensureBackingStore();

@@ -30,19 +30,32 @@
 #import "RemoteLayerTreeContext.h"
 #import "RemoteLayerTreePropertyApplier.h"
 #import "WebProcess.h"
+#import <AVFoundation/AVFoundation.h>
 #import <WebCore/GraphicsLayerCA.h>
 #import <WebCore/PlatformCALayerMac.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <wtf/RetainPtr.h>
 
+SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
+SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
+
 using namespace WebCore;
 
 namespace WebKit {
 
 static NSString * const platformCALayerPointer = @"WKPlatformCALayer";
-PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(PlatformLayer* customLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
-    : PlatformCALayerRemote(LayerTypeCustom, owner, context)
+
+PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemoteCustom::create(PlatformLayer *platformLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
+{
+    RefPtr<PlatformCALayerRemote> layer = adoptRef(new PlatformCALayerRemoteCustom(PlatformCALayerMac::layerTypeForPlatformLayer(platformLayer), platformLayer, owner, context));
+    context.layerWasCreated(*layer, layer->layerType());
+
+    return layer.release();
+}
+
+PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(LayerType layerType, PlatformLayer * customLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
+    : PlatformCALayerRemote(layerType, owner, context)
 {
     switch (context.layerHostingMode()) {
     case LayerHostingMode::InProcess:
@@ -61,7 +74,7 @@ PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(PlatformLayer* customLa
     m_platformLayer = customLayer;
     [customLayer web_disableAllActions];
 
-    m_providesContents = [customLayer isKindOfClass:NSClassFromString(@"WebGLLayer")];
+    m_providesContents = layerType == LayerTypeWebGLLayer;
 
     properties().position = FloatPoint3D(customLayer.position.x, customLayer.position.y, customLayer.zPosition);
     properties().anchorPoint = FloatPoint3D(customLayer.anchorPoint.x, customLayer.anchorPoint.y, customLayer.anchorPointZ);
@@ -77,6 +90,45 @@ PlatformCALayerRemoteCustom::~PlatformCALayerRemoteCustom()
 uint32_t PlatformCALayerRemoteCustom::hostingContextID()
 {
     return m_layerHostingContext->contextID();
+}
+
+PassRefPtr<WebCore::PlatformCALayer> PlatformCALayerRemoteCustom::clone(PlatformCALayerClient* owner) const
+{
+    RetainPtr<CALayer *> clonedLayer;
+    bool copyContents = true;
+
+    if (layerType() == LayerTypeAVPlayerLayer) {
+        clonedLayer = adoptNS([[getAVPlayerLayerClass() alloc] init]);
+
+        AVPlayerLayer* destinationPlayerLayer = static_cast<AVPlayerLayer *>(clonedLayer.get());
+        AVPlayerLayer* sourcePlayerLayer = static_cast<AVPlayerLayer *>(platformLayer());
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [destinationPlayerLayer setPlayer:[sourcePlayerLayer player]];
+        });
+        copyContents = false;
+    } else if (layerType() == LayerTypeWebGLLayer) {
+        clonedLayer = adoptNS([[CALayer alloc] init]);
+        // FIXME: currently copying WebGL contents breaks the original layer.
+        copyContents = false;
+    }
+
+    RefPtr<PlatformCALayerRemote> clone = adoptRef(new PlatformCALayerRemoteCustom(layerType(), clonedLayer.get(), owner, *context()));
+    context()->layerWasCreated(*clone, clone->layerType());
+
+    updateClonedLayerProperties(*clone, copyContents);
+
+    clone->setClonedLayer(this);
+    return clone.release();
+}
+
+CFTypeRef PlatformCALayerRemoteCustom::contents() const
+{
+    return [m_platformLayer contents];
+}
+
+void PlatformCALayerRemoteCustom::setContents(CFTypeRef contents)
+{
+    [m_platformLayer setContents:(id)contents];
 }
 
 void PlatformCALayerRemoteCustom::setNeedsDisplay(const FloatRect* rect)

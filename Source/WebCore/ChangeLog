@@ -1,5 +1,23 @@
 2014-07-07  Simon Fraser  <simon.fraser@apple.com>
 
+        [UI-side compositing] Support reflections on custom layers like video
+        https://bugs.webkit.org/show_bug.cgi?id=134701
+
+        Reviewed by Tim Horton.
+
+        Add a LayerTypeWebGLLayer layer type, and support casting to PlatformCALayerRemoteCustom.
+
+        * WebCore.exp.in: Export PlatformCALayerMac::layerTypeForPlatformLayer(CALayer*), and sort.
+        * platform/graphics/ca/PlatformCALayer.h:
+        (WebCore::PlatformCALayer::isPlatformCALayerRemoteCustom):
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::layerTypeForPlatformLayer):
+        (PlatformCALayerMac::PlatformCALayerMac):
+        (PlatformCALayerMac::commonInit):
+
+2014-07-07  Simon Fraser  <simon.fraser@apple.com>
+
         [UI-side compositing] Crash when starting a filter transition on a reflected layer
         https://bugs.webkit.org/show_bug.cgi?id=134694
 

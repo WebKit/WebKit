@@ -75,6 +75,7 @@ public:
         LayerTypeTiledBackingTileLayer,
         LayerTypeRootLayer,
         LayerTypeAVPlayerLayer,
+        LayerTypeWebGLLayer,
         LayerTypeCustom
     };
     enum FilterType { Linear, Nearest, Trilinear };
@@ -87,6 +88,7 @@ public:
 
     virtual bool isPlatformCALayerMac() const { return false; }
     virtual bool isPlatformCALayerRemote() const { return false; }
+    virtual bool isPlatformCALayerRemoteCustom() const { return false; }
 
     // This function passes the layer as a void* rather than a PlatformLayer because PlatformLayer
     // is defined differently for Obj C and C++. This allows callers from both languages.

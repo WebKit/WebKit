@@ -32,9 +32,12 @@ namespace WebKit {
 
 class LayerHostingContext;
 
+// PlatformCALayerRemoteCustom is used for CALayers that live in the web process and are hosted into the UI process via remote context.
 class PlatformCALayerRemoteCustom final : public PlatformCALayerRemote {
     friend class PlatformCALayerRemote;
 public:
+    static PassRefPtr<PlatformCALayerRemote> create(PlatformLayer *, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
+
     virtual ~PlatformCALayerRemoteCustom();
 
     virtual PlatformLayer* platformLayer() const override { return m_platformLayer.get(); }
@@ -44,12 +47,21 @@ public:
     virtual void setNeedsDisplay(const WebCore::FloatRect* dirtyRect = 0) override;
 
 private:
-    PlatformCALayerRemoteCustom(PlatformLayer*, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
+    PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType, PlatformLayer *, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
+
+    virtual PassRefPtr<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const override;
+
+    virtual bool isPlatformCALayerRemoteCustom() const { return true; }
+
+    virtual CFTypeRef contents() const override;
+    virtual void setContents(CFTypeRef) override;
 
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     RetainPtr<PlatformLayer> m_platformLayer;
     bool m_providesContents;
 };
+
+PLATFORM_CALAYER_TYPE_CASTS(PlatformCALayerRemoteCustom, isPlatformCALayerRemote())
 
 } // namespace WebKit
 

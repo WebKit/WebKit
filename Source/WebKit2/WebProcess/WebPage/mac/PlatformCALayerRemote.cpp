@@ -61,11 +61,7 @@ PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(LayerType layerT
 
 PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(PlatformLayer *platformLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
-    RefPtr<PlatformCALayerRemote> layer = adoptRef(new PlatformCALayerRemoteCustom(static_cast<PlatformLayer*>(platformLayer), owner, context));
-
-    context.layerWasCreated(*layer, LayerTypeCustom);
-
-    return layer.release();
+    return PlatformCALayerRemoteCustom::create(platformLayer, owner, context);
 }
 
 PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(const PlatformCALayerRemote& other, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
@@ -97,31 +93,11 @@ PlatformCALayerRemote::PlatformCALayerRemote(const PlatformCALayerRemote& other,
 {
 }
 
-PassRefPtr<PlatformCALayer> PlatformCALayerRemote::clone(PlatformCALayerClient* client) const
+PassRefPtr<PlatformCALayer> PlatformCALayerRemote::clone(PlatformCALayerClient* owner) const
 {
-    RefPtr<PlatformCALayerRemote> clone = PlatformCALayerRemote::create(*this, client, *m_context);
+    RefPtr<PlatformCALayerRemote> clone = PlatformCALayerRemote::create(*this, owner, *m_context);
 
-    clone->setPosition(position());
-    clone->setBounds(bounds());
-    clone->setAnchorPoint(anchorPoint());
-
-    if (m_properties.transform)
-        clone->setTransform(*m_properties.transform);
-
-    if (m_properties.sublayerTransform)
-        clone->setSublayerTransform(*m_properties.sublayerTransform);
-
-    clone->setContents(contents());
-    clone->setMasksToBounds(masksToBounds());
-    clone->setDoubleSided(isDoubleSided());
-    clone->setOpaque(isOpaque());
-    clone->setBackgroundColor(backgroundColor());
-    clone->setContentsScale(contentsScale());
-#if ENABLE(CSS_FILTERS)
-    if (m_properties.filters)
-        clone->copyFiltersFrom(this);
-#endif
-    clone->updateCustomAppearance(customAppearance());
+    updateClonedLayerProperties(*clone);
 
     clone->setClonedLayer(this);
     return clone.release();
@@ -134,6 +110,33 @@ PlatformCALayerRemote::~PlatformCALayerRemote()
 
     if (m_context)
         m_context->layerWillBeDestroyed(*this);
+}
+
+void PlatformCALayerRemote::updateClonedLayerProperties(PlatformCALayerRemote& clone, bool copyContents) const
+{
+    clone.setPosition(position());
+    clone.setBounds(bounds());
+    clone.setAnchorPoint(anchorPoint());
+
+    if (m_properties.transform)
+        clone.setTransform(*m_properties.transform);
+
+    if (m_properties.sublayerTransform)
+        clone.setSublayerTransform(*m_properties.sublayerTransform);
+
+    if (copyContents)
+        clone.setContents(contents());
+
+    clone.setMasksToBounds(masksToBounds());
+    clone.setDoubleSided(isDoubleSided());
+    clone.setOpaque(isOpaque());
+    clone.setBackgroundColor(backgroundColor());
+    clone.setContentsScale(contentsScale());
+#if ENABLE(CSS_FILTERS)
+    if (m_properties.filters)
+        clone.copyFiltersFrom(this);
+#endif
+    clone.updateCustomAppearance(customAppearance());
 }
 
 void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& context, RemoteLayerTreeTransaction& transaction)
@@ -156,7 +159,7 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& co
                 m_properties.children.append(layer->layerID());
         }
 
-        if (m_layerType == LayerTypeCustom) {
+        if (isPlatformCALayerRemoteCustom()) {
             RemoteLayerTreePropertyApplier::applyProperties(platformLayer(), nullptr, m_properties, RemoteLayerTreePropertyApplier::RelatedLayerMap());
             didCommit();
             return;

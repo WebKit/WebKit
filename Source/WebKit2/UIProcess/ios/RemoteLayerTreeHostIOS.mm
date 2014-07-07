@@ -152,6 +152,8 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
         view = adoptNS([[WKTransformView alloc] init]);
         break;
     case PlatformCALayer::LayerTypeCustom:
+    case PlatformCALayer::LayerTypeAVPlayerLayer:
+    case PlatformCALayer::LayerTypeWebGLLayer:
         if (!m_isDebugLayerTreeHost)
             view = adoptNS([[WKRemoteView alloc] initWithFrame:CGRectZero contextID:properties.hostingContextID]);
         else

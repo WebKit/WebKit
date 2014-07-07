@@ -40,6 +40,8 @@ public:
     // is defined differently for Obj C and C++. This allows callers from both languages.
     static PassRefPtr<PlatformCALayer> create(void* platformLayer, PlatformCALayerClient*);
 
+    static LayerType layerTypeForPlatformLayer(PlatformLayer*);
+
     ~PlatformCALayerMac();
 
     virtual void setOwner(PlatformCALayerClient*) override;

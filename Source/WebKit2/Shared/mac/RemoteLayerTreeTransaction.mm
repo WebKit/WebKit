@@ -54,9 +54,7 @@ void RemoteLayerTreeTransaction::LayerCreationProperties::encode(IPC::ArgumentEn
 {
     encoder << layerID;
     encoder.encodeEnum(type);
-
-    if (type == PlatformCALayer::LayerTypeCustom)
-        encoder << hostingContextID;
+    encoder << hostingContextID;
 }
 
 bool RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::ArgumentDecoder& decoder, LayerCreationProperties& result)
@@ -67,10 +65,8 @@ bool RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::ArgumentDe
     if (!decoder.decodeEnum(result.type))
         return false;
 
-    if (result.type == PlatformCALayer::LayerTypeCustom) {
-        if (!decoder.decode(result.hostingContextID))
-            return false;
-    }
+    if (!decoder.decode(result.hostingContextID))
+        return false;
 
     return true;
 }
@@ -1180,7 +1176,10 @@ CString RemoteLayerTreeTransaction::description() const
                 ts << "root-layer";
                 break;
             case PlatformCALayer::LayerTypeAVPlayerLayer:
-                ts << "av-player-layer";
+                ts << "av-player-layer (context-id " << createdLayer.hostingContextID << ")";
+                break;
+            case PlatformCALayer::LayerTypeWebGLLayer:
+                ts << "web-gl-layer (context-id " << createdLayer.hostingContextID << ")";
                 break;
             case PlatformCALayer::LayerTypeCustom:
                 ts << "custom-layer (context-id " << createdLayer.hostingContextID << ")";

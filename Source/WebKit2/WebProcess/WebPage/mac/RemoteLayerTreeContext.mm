@@ -61,7 +61,7 @@ void RemoteLayerTreeContext::layerWasCreated(PlatformCALayerRemote& layer, Platf
     creationProperties.layerID = layerID;
     creationProperties.type = type;
 
-    if (type == PlatformCALayer::LayerTypeCustom)
+    if (layer.isPlatformCALayerRemoteCustom())
         creationProperties.hostingContextID = layer.hostingContextID();
 
     m_createdLayers.append(creationProperties);
@@ -70,6 +70,7 @@ void RemoteLayerTreeContext::layerWasCreated(PlatformCALayerRemote& layer, Platf
 
 void RemoteLayerTreeContext::layerWillBeDestroyed(PlatformCALayerRemote& layer)
 {
+    ASSERT(layer.layerID());
     GraphicsLayer::PlatformLayerID layerID = layer.layerID();
 
     m_liveLayers.remove(layerID);
