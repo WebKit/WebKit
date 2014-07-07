@@ -1,3 +1,12 @@
+2014-07-07  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        Remove failure expectations for tests that have been passing after r168046, r168350, r168400,
+        r168479, r169309, r169620, r169689 and r169799.
+
+        * platform/gtk/TestExpectations:
+
 2014-07-07  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending]The background images set on the root element will blend on an initial white backdrop.

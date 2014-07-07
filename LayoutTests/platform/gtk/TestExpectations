@@ -404,7 +404,6 @@ webkit.org/b/131347 fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-
 webkit.org/b/131347 fast/borders/hidpi-border-image-gradient-on-subpixels.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-border-radius-with-subpixel-margin-not-renderable.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-double-border-with-border-radius-always-produce-solid-line.html [ ImageOnlyFailure ]
-webkit.org/b/131347 fast/borders/hidpi-rounded-border-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-simple-hairline-border-painting.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/box-shadow/hidpi-webkit-box-shadow-subpixel-position.html [ Missing ]
 webkit.org/b/131347 fast/forms/hidpi-fieldset-on-subpixel-position-when-legend-is-present.html [ ImageOnlyFailure ]
@@ -1428,8 +1427,6 @@ Bug(GTK) canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html [ Failur
 Bug(GTK) canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.missingargs.html [ Failure ]
-Bug(GTK) canvas/philip/tests/2d.pattern.image.broken.html [ Failure ]
-Bug(GTK) canvas/philip/tests/2d.pattern.image.incomplete.empty.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.pattern.image.incomplete.omitted.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.text.draw.baseline.bottom.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.text.draw.baseline.hanging.html [ Failure ]
@@ -1603,8 +1600,6 @@ webkit.org/b/98613 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
 
 webkit.org/b/98950 transitions/blendmode-transitions.html [ Failure ]
 
-webkit.org/b/98718 svg/animations/animate-css-xml-attributeType.html [ Failure ]
-
 webkit.org/b/100424 editing/selection/user-select-all-selection.html [ Failure ]
 webkit.org/b/100424 editing/selection/user-select-all-with-shift.html [ Failure ]
 
@@ -1726,7 +1721,6 @@ webkit.org/b/118416 storage/websql/sql-error-codes.html [ Failure ]
 Bug(GTK) mathml/very-large-stretchy-operators.html [ Pass Timeout ]
 
 webkit.org/b/119841 fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
-webkit.org/b/119841 fast/sub-pixel/sub-pixel-root-layer.html [ ImageOnlyFailure ]
 webkit.org/b/119841 fast/sub-pixel/zoomed-em-border.html [ ImageOnlyFailure ]
 
 webkit.org/b/120105 http/tests/navigation/post-frames-goback1-uncached.html [ Failure ]
@@ -1767,15 +1761,6 @@ webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click.html [
 
 webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure ]
 
-webkit.org/b/124770 fast/dom/access-key-iframe.html [ Failure ]
-webkit.org/b/124770 fast/forms/ValidityState-valueMissing-002.html [ Failure ]
-webkit.org/b/124770 fast/forms/access-key-for-all-elements.html [ Failure ]
-webkit.org/b/124770 fast/forms/access-key.html [ Failure ]
-webkit.org/b/124770 fast/forms/focus-selection-input.html [ Failure ]
-webkit.org/b/124770 fast/forms/focus-selection-textarea.html [ Failure ]
-webkit.org/b/124770 fast/forms/legend-access-key.html [ Failure ]
-webkit.org/b/124770 fast/forms/select-accesskey.html [ Failure ]
-
 webkit.org/b/124834 fast/block/float/clear-negative-margin-top.html [ ImageOnlyFailure ]
 webkit.org/b/124834 fast/regions/overflow/overflow-in-variable-width-regions-inline-bt.html [ ImageOnlyFailure ]
 webkit.org/b/124834 fast/regions/overflow/overflow-in-variable-width-regions-inline-continuation.html [ ImageOnlyFailure ]
@@ -1810,13 +1795,9 @@ webkit.org/b/128061 tables/mozilla_expected_failures/bugs/bug1055-2.html [ Failu
 # End of subpixel failures.
 
 # After webkit.org/b/123097 we flag these tests that also fail in mac
-webkit.org/b/123097 media/track/track-cue-mutable-text.html [ Failure ]
 webkit.org/b/123097 media/video-controls-toggling.html [ Timeout ]
 
 # Regressions in svg/clip-path
-webkit.org/b/128499 svg/clip-path/clip-path-content-use-005.svg [ ImageOnlyFailure ]
-webkit.org/b/128499 svg/clip-path/clip-path-precision-001.svg [ ImageOnlyFailure ]
-webkit.org/b/128499 svg/clip-path/clip-path-content-use-006.svg [ ImageOnlyFailure ]
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure Pass ]
 
@@ -1962,8 +1943,6 @@ webkit.org/b/132234 fast/regions/wheel-scrollable-single-region.html [ ImageOnly
 webkit.org/b/132235 fast/shapes/shape-outside-floats/shape-outside-floats-shape-margin-percent.html [ ImageOnlyFailure ]
 
 webkit.org/b/132253 media/volume-bar-empty-when-muted.html [ Failure ]
-
-webkit.org/b/132274 fast/multicol/newmulticol/compare-with-old-impl/column-rules-stacking.html [ ImageOnlyFailure ]
 
 webkit.org/b/132909 accessibility/table-with-footer-section-above-body.html [ Failure ]
 
