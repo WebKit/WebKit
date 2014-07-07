@@ -1,3 +1,20 @@
+2014-07-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Generate isMathMLFoo() toMathMLFoo() by using NODE_TYPE_CASTS macro and generateTypeHelpers
+        https://bugs.webkit.org/show_bug.cgi?id=134647
+
+        Reviewed by Andreas Kling.
+
+        Use type cast macro and generation tag for isFoo() and toFoo() in some MathML classes.
+
+        No new tests, no behavior change.
+
+        * mathml/MathMLElement.h: Place MathMLElementTypeHelpers.h to the bottom of the
+        file so that functions from that file can use the Element|Node classes and other things defined in this file.
+        * mathml/MathMLMencloseElement.h:
+        (WebCore::toMathMLMencloseElement): Deleted.
+        * mathml/mathtags.in:
+
 2014-07-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: Ensure resolvingMode size is 1 byte
