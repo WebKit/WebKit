@@ -1,3 +1,16 @@
+2014-07-07  Simon Fraser  <simon.fraser@apple.com>
+
+        [UI-side compositing] Crash when starting a filter transition on a reflected layer
+        https://bugs.webkit.org/show_bug.cgi?id=134694
+
+        Reviewed by Tim Horton.
+
+        Don't call the owner if we failed to find the animation key (which actually
+        isn't used by PlatformCALayerMac anyway).
+
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (-[WebAnimationDelegate animationDidStart:]):
+
 2014-07-07  Alex Christensen  <achristensen@webkit.org>
 
         [iOS WebGL] Fix crash with too many nested glsl functions.

@@ -148,7 +148,8 @@ void RemoteLayerTreeHost::animationDidStart(WebCore::GraphicsLayer::PlatformLaye
         }
     }
 
-    m_drawingArea.acceleratedAnimationDidStart(layerID, animationKey, startTime);
+    if (!animationKey.isEmpty())
+        m_drawingArea.acceleratedAnimationDidStart(layerID, animationKey, startTime);
 }
 
 void RemoteLayerTreeHost::clearLayers()

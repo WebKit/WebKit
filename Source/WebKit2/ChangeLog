@@ -1,3 +1,30 @@
+2014-07-07  Simon Fraser  <simon.fraser@apple.com>
+
+        [UI-side compositing] Crash when starting a filter transition on a reflected layer
+        https://bugs.webkit.org/show_bug.cgi?id=134694
+
+        Reviewed by Tim Horton.
+        
+        When cloned layers had animations, we would fire two animationDidStart callbacks,
+        but the second would pass an empty animationKey string to the web process, resulting
+        in a crash.
+        
+        Fix by not blindly copying all layer properties when cloning PlatformCALayerRemotes,
+        since the clone would include addedAnimations, and then get the same animations
+        added on top by the caller.
+        
+        Also protect against an empty animation key in the animationDidStart callback.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::animationDidStart):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::PlatformCALayerRemote):
+        (WebKit::PlatformCALayerRemote::clone): Don't copy all the properties; copy
+        them manually as PlatformCALayerMac does. Only copy the big things if they don't
+        have their default values.
+        (WebKit::PlatformCALayerRemote::copyFiltersFrom): Need an implementation of this
+        for clone() to call.
+
 2014-07-07  Tim Horton  <timothy_horton@apple.com>
 
         Nearly everything in the UIProcess "leaks" when WKWebView is torn down

@@ -132,7 +132,8 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
             }
         }
 
-        m_owner->animationStarted(animationKey, startTime);
+        if (!animationKey.isEmpty())
+            m_owner->animationStarted(animationKey, startTime);
     }
 }
 

@@ -90,7 +90,6 @@ PlatformCALayerRemote::PlatformCALayerRemote(LayerType layerType, PlatformCALaye
 
 PlatformCALayerRemote::PlatformCALayerRemote(const PlatformCALayerRemote& other, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
     : PlatformCALayer(other.layerType(), owner)
-    , m_properties(other.m_properties)
     , m_superlayer(nullptr)
     , m_maskLayer(nullptr)
     , m_acceleratesDrawing(other.acceleratesDrawing())
@@ -102,7 +101,27 @@ PassRefPtr<PlatformCALayer> PlatformCALayerRemote::clone(PlatformCALayerClient* 
 {
     RefPtr<PlatformCALayerRemote> clone = PlatformCALayerRemote::create(*this, client, *m_context);
 
-    clone->m_properties.notePropertiesChanged(static_cast<RemoteLayerTreeTransaction::LayerChange>(m_properties.everChangedProperties & ~RemoteLayerTreeTransaction::BackingStoreChanged));
+    clone->setPosition(position());
+    clone->setBounds(bounds());
+    clone->setAnchorPoint(anchorPoint());
+
+    if (m_properties.transform)
+        clone->setTransform(*m_properties.transform);
+
+    if (m_properties.sublayerTransform)
+        clone->setSublayerTransform(*m_properties.sublayerTransform);
+
+    clone->setContents(contents());
+    clone->setMasksToBounds(masksToBounds());
+    clone->setDoubleSided(isDoubleSided());
+    clone->setOpaque(isOpaque());
+    clone->setBackgroundColor(backgroundColor());
+    clone->setContentsScale(contentsScale());
+#if ENABLE(CSS_FILTERS)
+    if (m_properties.filters)
+        clone->copyFiltersFrom(this);
+#endif
+    clone->updateCustomAppearance(customAppearance());
 
     clone->setClonedLayer(this);
     return clone.release();
@@ -577,7 +596,12 @@ void PlatformCALayerRemote::setFilters(const FilterOperations& filters)
 
 void PlatformCALayerRemote::copyFiltersFrom(const PlatformCALayer* sourceLayer)
 {
-    ASSERT_NOT_REACHED();
+    if (const FilterOperations* filters = toPlatformCALayerRemote(sourceLayer)->m_properties.filters.get())
+        setFilters(*filters);
+    else if (m_properties.filters)
+        m_properties.filters = nullptr;
+
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::FiltersChanged);
 }
 
 #if ENABLE(CSS_COMPOSITING)
