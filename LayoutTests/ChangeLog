@@ -1,3 +1,9 @@
+2014-07-07  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed Mac gardening after r170817.
+
+        * platform/mac-wk2/TestExpectations:
+
 2014-07-07  Lorenzo Tilve  <ltilve@igalia.com>
 
         [GTK] Unreviewed GTK gardening.

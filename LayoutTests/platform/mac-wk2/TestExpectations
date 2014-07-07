@@ -299,6 +299,7 @@ webkit.org/b/130175 [ MountainLion Debug ] compositing/hidpi-simple-container-la
 webkit.org/b/130175 [ MountainLion Debug ] compositing/hidpi-transform-with-render-layer-on-fractional-pixel-value.html [ ImageOnlyFailure ]
 webkit.org/b/130175 [ MountainLion Debug ] compositing/hidpi-nested-compositing-layers-with-subpixel-accumulation.html [ ImageOnlyFailure ]
 webkit.org/b/130175 [ MountainLion Debug ] compositing/hidpi-box-positioned-off-by-one-when-non-compositing-transform-is-present.html [ ImageOnlyFailure ]
+webkit.org/b/130175 [ MountainLion ] fast/borders/border-radius-on-subpixel-position-non-hidpi.html [ Pass ImageOnlyFailure ]
 
 # Only failing on WK1
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Pass ]
