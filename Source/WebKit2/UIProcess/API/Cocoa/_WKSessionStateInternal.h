@@ -23,23 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LegacySessionStateCoding_h
-#define LegacySessionStateCoding_h
+#import "_WKSessionState.h"
 
-#include <wtf/Forward.h>
+#if WK_API_ENABLED
 
-namespace API {
-class Data;
+#import "SessionState.h"
+
+@interface _WKSessionState () {
+    WebKit::SessionState _sessionState;
 }
 
-namespace WebKit {
+@end
 
-struct FrameState;
-struct SessionState;
-
-RefPtr<API::Data> encodeLegacySessionState(const SessionState&);
-bool decodeLegacySessionState(const uint8_t* data, size_t, SessionState&);
-
-} // namespace WebKit
-
-#endif // LegacySessionStateCoding_h
+#endif

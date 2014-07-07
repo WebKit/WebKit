@@ -23,23 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LegacySessionStateCoding_h
-#define LegacySessionStateCoding_h
-
-#include <wtf/Forward.h>
-
-namespace API {
-class Data;
-}
+#include "config.h"
+#include "SessionStateCoding.h"
 
 namespace WebKit {
 
-struct FrameState;
-struct SessionState;
+RetainPtr<NSData> encodeSessionState(const SessionState&)
+{
+    // FIXME: Implement.
+    return nullptr;
+}
 
-RefPtr<API::Data> encodeLegacySessionState(const SessionState&);
-bool decodeLegacySessionState(const uint8_t* data, size_t, SessionState&);
+bool decodeSessionState(NSData *, SessionState&)
+{
+    // FIXME: Implement.
+    return false;
+}
 
-} // namespace WebKit
-
-#endif // LegacySessionStateCoding_h
+}

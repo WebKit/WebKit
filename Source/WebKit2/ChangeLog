@@ -1,5 +1,24 @@
 2014-07-07  Anders Carlsson  <andersca@apple.com>
 
+        Add a stubbed out _WKSessionState class
+        https://bugs.webkit.org/show_bug.cgi?id=134690
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/API/Cocoa/_WKSessionState.h: Copied from Source/WebKit2/UIProcess/LegacySessionStateCoding.h.
+        * UIProcess/API/Cocoa/_WKSessionState.mm: Copied from Source/WebKit2/UIProcess/LegacySessionStateCoding.h.
+        (-[_WKSessionState initWithData:]):
+        (-[_WKSessionState data]):
+        * UIProcess/API/Cocoa/_WKSessionStateInternal.h: Copied from Source/WebKit2/UIProcess/LegacySessionStateCoding.h.
+        * UIProcess/Cocoa/SessionStateCoding.h: Copied from Source/WebKit2/UIProcess/LegacySessionStateCoding.h.
+        * UIProcess/Cocoa/SessionStateCoding.mm: Copied from Source/WebKit2/UIProcess/LegacySessionStateCoding.h.
+        (WebKit::encodeSessionState):
+        (WebKit::decodeSessionState):
+        * UIProcess/LegacySessionStateCoding.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2014-07-07  Anders Carlsson  <andersca@apple.com>
+
         Some of the WKPreferences (API) property getters read like questions
         https://bugs.webkit.org/show_bug.cgi?id=134678
         <rdar://problem/17576847>
