@@ -1,3 +1,14 @@
+2014-07-07  Alberto Garcia  <berto@igalia.com>
+
+        update-webkitgtk-libs script fails by unsatisfied dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=134547
+
+        Reviewed by Martin Robinson.
+
+        Install libxcb-xfixes0-dev, needed to build Mesa.
+
+        * gtk/install-dependencies:
+
 2014-07-06  Yoav Weiss  <yoav@yoav.ws>
 
         Turn on img@sizes compile flag

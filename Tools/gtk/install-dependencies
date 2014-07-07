@@ -107,6 +107,7 @@ function installDependenciesWithApt {
         libp11-kit-dev \
         libpciaccess-dev \
         libtiff5-dev \
+        libxcb-xfixes0-dev \
         libxfont-dev \
         libxkbfile-dev \
         llvm \
