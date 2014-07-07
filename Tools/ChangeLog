@@ -1,3 +1,16 @@
+2014-07-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Have MiniBrowser log and reload if the Web Content Process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=134691
+
+        Reviewed by Tim Horton.
+        
+        Implement _webViewWebProcessDidCrash, log and reload when the web process
+        crashes.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController _webViewWebProcessDidCrash:]):
+
 2014-07-07  Alberto Garcia  <berto@igalia.com>
 
         update-webkitgtk-libs script fails by unsatisfied dependencies

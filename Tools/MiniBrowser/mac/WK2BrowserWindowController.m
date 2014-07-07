@@ -456,6 +456,12 @@ static NSString * const WebKit2SubpixelCSSOMElementMetricsEnabledKey = @"WebKitS
     LOG(@"didFailNavigation: %@, error %@", navigation, error);
 }
 
+- (void)_webViewWebProcessDidCrash:(WKWebView *)webView
+{
+    NSLog(@"WebContent process crashed; reloading");
+    [self reload:nil];
+}
+
 @end
 
 #endif // WK_API_ENABLED
