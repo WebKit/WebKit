@@ -2384,9 +2384,6 @@ void WebPageProxy::preferencesDidChange()
         inspector()->enableRemoteInspection();
 #endif
 
-    if (m_drawingArea)
-        m_drawingArea->setShouldShowDebugIndicator(m_preferences->tiledScrollingIndicatorVisible());
-
     m_process->pagePreferencesChanged(this);
 
     m_pageClient.preferencesDidChange();

@@ -83,7 +83,6 @@ public:
 #endif
 
     virtual void updateDebugIndicator() { }
-    virtual void setShouldShowDebugIndicator(bool) { }
 
     virtual void waitForDidUpdateViewState() { }
     

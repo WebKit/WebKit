@@ -62,7 +62,6 @@ private:
     virtual void dispatchAfterEnsuringDrawing(std::function<void (CallbackBase::Error)>) override;
 
     WebCore::FloatRect scaledExposedRect() const;
-    virtual void setShouldShowDebugIndicator(bool) override;
 
 #if PLATFORM(MAC)
     virtual void setExposedRect(const WebCore::FloatRect&) override;
@@ -72,6 +71,7 @@ private:
     virtual void updateDebugIndicator() override;
     void updateDebugIndicator(WebCore::IntSize contentsSize, bool rootLayerChanged, float scale);
     void updateDebugIndicatorPosition();
+    void initializeDebugIndicator();
 
     virtual void waitForDidUpdateViewState() override;
     
