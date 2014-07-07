@@ -1,3 +1,12 @@
+2014-07-06  Yoav Weiss  <yoav@yoav.ws>
+
+        Turn on img@sizes compile flag
+        https://bugs.webkit.org/show_bug.cgi?id=134634
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/FeatureDefines.h: Added compile flag definition.
+
 2014-07-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreivewed, fix build break on EFL and GTK since r170767.

@@ -1,3 +1,12 @@
+2014-07-06  Yoav Weiss  <yoav@yoav.ws>
+
+        Turn on img@sizes compile flag
+        https://bugs.webkit.org/show_bug.cgi?id=134634
+
+        Reviewed by Benjamin Poulain.
+
+        * Configurations/FeatureDefines.xcconfig: Moved compile flag to alphabetical order.
+
 2014-07-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Generate isMathMLFoo() toMathMLFoo() by using NODE_TYPE_CASTS macro and generateTypeHelpers
