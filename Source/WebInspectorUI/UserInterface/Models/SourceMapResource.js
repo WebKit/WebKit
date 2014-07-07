@@ -116,6 +116,11 @@ WebInspector.SourceMapResource.prototype = {
             callback(null, body, base64encoded);
         }
 
+        if (!NetworkAgent.loadResource) {
+            sourceMapResourceLoaded.call(this, "error: no NetworkAgent.loadResource");
+            return false;
+        }
+
         var frameIdentifier = null;
         if (this._sourceMap.originalSourceCode instanceof WebInspector.Resource && this._sourceMap.originalSourceCode.parentFrame)
             frameIdentifier = this._sourceMap.originalSourceCode.parentFrame.id;

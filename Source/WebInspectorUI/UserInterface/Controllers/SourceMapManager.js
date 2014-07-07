@@ -116,7 +116,8 @@ WebInspector.SourceMapManager.prototype = {
         if (!frameIdentifier)
             frameIdentifier = WebInspector.frameResourceManager.mainFrame.id;
 
-        NetworkAgent.loadResource(frameIdentifier, sourceMapURL, sourceMapLoaded.bind(this));
+        if (NetworkAgent.loadResource)
+            NetworkAgent.loadResource(frameIdentifier, sourceMapURL, sourceMapLoaded.bind(this));
     },
 
     _loadAndParseFailed: function(sourceMapURL)
