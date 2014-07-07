@@ -45,7 +45,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 /*! @abstract A Boolean value indicating whether JavaScript is enabled.
  @discussion The default value is YES.
  */
-@property (nonatomic, getter=isJavaScriptEnabled) BOOL javaScriptEnabled;
+@property (nonatomic) BOOL javaScriptEnabled;
 
 /*! @abstract A Boolean value indicating whether JavaScript can open
  windows without user interaction.
@@ -55,14 +55,14 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 #if !TARGET_OS_IPHONE
 /*! @abstract A Boolean value indicating whether Java is enabled.
- @discussion The default value is YES.
+ @discussion The default value is NO.
  */
-@property (nonatomic, getter=isJavaEnabled) BOOL javaEnabled;
+@property (nonatomic) BOOL javaEnabled;
 
 /*! @abstract A Boolean value indicating whether plug-ins are enabled.
- @discussion The default value is YES.
+ @discussion The default value is NO.
  */
-@property (nonatomic, getter=arePlugInsEnabled) BOOL plugInsEnabled;
+@property (nonatomic) BOOL plugInsEnabled;
 #endif
 
 @end

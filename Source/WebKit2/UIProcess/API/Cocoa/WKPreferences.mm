@@ -53,7 +53,7 @@
     _preferences->setMinimumFontSize(minimumFontSize);
 }
 
-- (BOOL)isJavaScriptEnabled
+- (BOOL)javaScriptEnabled
 {
     return _preferences->javaScriptEnabled();
 }
@@ -77,7 +77,7 @@
 
 #if PLATFORM(MAC)
 
-- (BOOL)isJavaEnabled
+- (BOOL)javaEnabled
 {
     return _preferences->javaEnabled();
 }
@@ -87,7 +87,7 @@
     _preferences->setJavaEnabled(javaEnabled);
 }
 
-- (BOOL)arePlugInsEnabled
+- (BOOL)plugInsEnabled
 {
     return _preferences->pluginsEnabled();
 }
