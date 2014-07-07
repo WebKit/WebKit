@@ -207,6 +207,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGWatchpointCollectionPhase.cpp
     dfg/DFGWorklist.cpp
 
+    disassembler/ARMv7/ARMv7DOpcode.cpp
     disassembler/ARMv7Disassembler.cpp
     disassembler/Disassembler.cpp
     disassembler/LLVMDisassembler.cpp

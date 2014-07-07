@@ -32,6 +32,7 @@
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 
 namespace JSC { namespace ARMv7Disassembler {
 
