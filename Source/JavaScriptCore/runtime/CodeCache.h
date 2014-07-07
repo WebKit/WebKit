@@ -65,7 +65,7 @@ public:
     SourceCodeKey(const SourceCode& sourceCode, const String& name, CodeType codeType, JSParserStrictness jsParserStrictness)
         : m_sourceCode(sourceCode)
         , m_name(name)
-        , m_flags((codeType << 1) | jsParserStrictness)
+        , m_flags((codeType << 2) | jsParserStrictness)
         , m_hash(string().impl()->hash())
     {
     }

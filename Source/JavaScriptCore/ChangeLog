@@ -1,3 +1,17 @@
+2014-07-06  Daewoong Jang  <daewoong.jang@navercorp.com>
+
+        Flags value of SourceCodeKey should be unique for each case.
+        https://bugs.webkit.org/show_bug.cgi?id=134435
+
+        Reviewed by Darin Adler.
+
+        Different combinations of CodeType and JSParserStrictness could generate same m_flags value because
+        the value of CodeType and the value of JSParserStrictness shares a bit inside m_flags member variable.
+        Shift the value of CodeType one bit farther to the left so those values don't overlap.
+
+        * runtime/CodeCache.h:
+        (JSC::SourceCodeKey::SourceCodeKey):
+
 2014-07-04  Andreas Kling  <akling@apple.com>
 
         Fast path for jsStringWithCache() when asked for the same string repeatedly.
