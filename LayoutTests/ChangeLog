@@ -1,3 +1,18 @@
+2014-07-07  Daniel Bates  <dabates@apple.com>
+
+        Add test to ensure that SVGDocumentExtensions::rebuildElements() doesn't rebuild invalid elements
+        https://bugs.webkit.org/show_bug.cgi?id=134417
+        <rdar://problem/17479854>
+
+        Reviewed by David Kilzer.
+
+        Add a test that implicitly checks that the list of SVG elements to be rebuilt doesn't contain
+        removed elements. Run this test in DRT with Guard Malloc/MallocScribble (or the platform-
+        specific equivalent) enabled.
+
+        * svg/custom/overwrite-page-that-has-use-elements-expected.txt: Added.
+        * svg/custom/overwrite-page-that-has-use-elements.html: Added.
+
 2014-07-07  Zalan Bujtas  <zalan@apple.com>
 
         Unreviewed Mac gardening after r170817.
