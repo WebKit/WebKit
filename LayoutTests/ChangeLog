@@ -1,3 +1,17 @@
+2014-07-07  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending]The background images set on the root element will blend on an initial white backdrop.
+        https://bugs.webkit.org/show_bug.cgi?id=134342
+
+        Reviewed by Dean Jackson.
+
+        * css3/blending/background-blend-mode-body-image-expected.html: Added.
+        * css3/blending/background-blend-mode-body-image.html: Added.
+        * css3/blending/background-blend-mode-body-transparent-color-and-image-expected.html: Added.
+        * css3/blending/background-blend-mode-body-transparent-color-and-image.html: Added.
+        * css3/blending/background-blend-mode-body-transparent-image-expected.html: Added.
+        * css3/blending/background-blend-mode-body-transparent-image.html: Added.
+
 2014-07-06  Yoav Weiss  <yoav@yoav.ws>
 
         Turn on img@sizes compile flag

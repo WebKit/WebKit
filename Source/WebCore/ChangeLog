@@ -1,3 +1,33 @@
+2014-07-07  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending]The background images set on the root element will blend on an initial white backdrop.
+        https://bugs.webkit.org/show_bug.cgi?id=134342
+
+        Reviewed by Dean Jackson.
+
+        Tests: css3/blending/background-blend-mode-body-image.html
+               css3/blending/background-blend-mode-body-transparent-color-and-image.html
+               css3/blending/background-blend-mode-body-transparent-image.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintFillLayers):
+        If the background layers have blend modes, we paint the base background color first,
+        before starting a new transparency layer. After creating the transparency layer,
+        the base background will be skipped, and the background layers will blend on top of
+        a transparent backdrop.
+        (WebCore::RenderBox::paintFillLayer):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        This method is able to paint only the base background color (BaseBackgroundColorOnly), 
+        skipping the background-color and background-images. This option is available only
+        on bottom layer of the root renderer and only if the background color is not opaque,
+        otherwise the method will return early.
+        Another option is to paint the root background without using the base background color
+        (BaseBackgroundColorSkip).
+        * rendering/RenderBoxModelObject.h:
+        Adding the BaseBackgroundColorUsage enum.
+
 2014-07-06  Yoav Weiss  <yoav@yoav.ws>
 
         Turn on img@sizes compile flag

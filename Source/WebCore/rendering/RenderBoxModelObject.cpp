@@ -618,7 +618,7 @@ void RenderBoxModelObject::paintMaskForTextFillBox(ImageBuffer* maskImage, const
 }
 
 void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& color, const FillLayer* bgLayer, const LayoutRect& rect,
-    BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox* box, const LayoutSize& boxSize, CompositeOperator op, RenderElement* backgroundObject)
+    BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox* box, const LayoutSize& boxSize, CompositeOperator op, RenderElement* backgroundObject, BaseBackgroundColorUsage baseBgColorUsage)
 {
     GraphicsContext* context = paintInfo.context;
     if (context->paintingDisabled() || rect.isEmpty())
@@ -659,6 +659,10 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             shouldPaintBackgroundImage = false;
         }
     }
+
+    bool baseBgColorOnly = (baseBgColorUsage == BaseBackgroundColorOnly);
+    if (baseBgColorOnly && (!isRoot || bgLayer->next() || (bgColor.isValid() && !bgColor.hasAlpha())))
+        return;
 
     bool colorVisible = bgColor.isValid() && bgColor.alpha();
     float deviceScaleFactor = document().deviceScaleFactor();
@@ -801,7 +805,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             // If we have an alpha and we are painting the root element, go ahead and blend with the base background color.
             Color baseColor;
             bool shouldClearBackground = false;
-            if (isOpaqueRoot) {
+            if ((baseBgColorUsage != BaseBackgroundColorSkip) && isOpaqueRoot) {
                 baseColor = view().frameView().baseBackgroundColor();
                 if (!baseColor.alpha())
                     shouldClearBackground = true;
@@ -813,11 +817,11 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 
             FloatRect backgroundRectForPainting = pixelSnappedForPainting(backgroundRect, deviceScaleFactor);
             if (baseColor.alpha()) {
-                if (bgColor.alpha())
+                if (!baseBgColorOnly && bgColor.alpha())
                     baseColor = baseColor.blend(bgColor);
 
                 context->fillRect(backgroundRectForPainting, baseColor, style().colorSpace(), CompositeCopy);
-            } else if (bgColor.alpha()) {
+            } else if (!baseBgColorOnly && bgColor.alpha()) {
                 CompositeOperator operation = shouldClearBackground ? CompositeCopy : context->compositeOperation();
                 context->fillRect(backgroundRectForPainting, bgColor, style().colorSpace(), operation);
             } else if (shouldClearBackground)
@@ -826,7 +830,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     }
 
     // no progressive loading of the background image
-    if (shouldPaintBackgroundImage) {
+    if (!baseBgColorOnly && shouldPaintBackgroundImage) {
         BackgroundImageGeometry geometry;
         calculateBackgroundImageGeometry(paintInfo.paintContainer, bgLayer, scrolledPaintRect, geometry, backgroundObject);
         geometry.clip(LayoutRect(pixelSnappedRect));
