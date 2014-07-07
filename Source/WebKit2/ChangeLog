@@ -1,5 +1,27 @@
 2014-07-07  Anders Carlsson  <andersca@apple.com>
 
+        Add SPI for saving and restoring a WKWebView's _WKSessionState
+        https://bugs.webkit.org/show_bug.cgi?id=134693
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageRestoreFromSessionState):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _sessionState]):
+        (-[WKWebView _restoreFromSessionStateData:]):
+        (-[WKWebView _restoreFromSessionState:]):
+        (-[WKWebView _restoreSessionState:andNavigate:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKSessionState.mm:
+        (-[_WKSessionState _initWithSessionState:]):
+        * UIProcess/API/Cocoa/_WKSessionStateInternal.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::restoreFromSessionState):
+        * UIProcess/WebPageProxy.h:
+
+2014-07-07  Anders Carlsson  <andersca@apple.com>
+
         Add a stubbed out _WKSessionState class
         https://bugs.webkit.org/show_bug.cgi?id=134690
 

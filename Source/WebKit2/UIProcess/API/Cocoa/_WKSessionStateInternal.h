@@ -30,8 +30,11 @@
 #import "SessionState.h"
 
 @interface _WKSessionState () {
+@package
     WebKit::SessionState _sessionState;
 }
+
+- (instancetype)_initWithSessionState:(WebKit::SessionState)sessionState;
 
 @end
 

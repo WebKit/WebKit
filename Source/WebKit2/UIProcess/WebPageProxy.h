@@ -550,7 +550,7 @@ public:
     void terminateProcess();
 
     SessionState sessionState(const std::function<bool (WebBackForwardListItem&)>& = nullptr) const;
-    uint64_t restoreFromSessionState(SessionState);
+    uint64_t restoreFromSessionState(SessionState, bool navigate);
 
     bool supportsTextZoom() const;
     double textZoomFactor() const { return m_textZoomFactor; }

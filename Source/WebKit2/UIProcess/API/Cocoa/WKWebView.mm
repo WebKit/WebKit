@@ -67,6 +67,7 @@
 #import "_WKFindDelegate.h"
 #import "_WKFormDelegate.h"
 #import "_WKRemoteObjectRegistryInternal.h"
+#import "_WKSessionStateInternal.h"
 #import "_WKVisitedLinkProviderInternal.h"
 #import "_WKWebsiteDataStoreInternal.h"
 #import <JavaScriptCore/JSContext.h>
@@ -1591,9 +1592,9 @@ static int32_t activeOrientation(WKWebView *webView)
 }
 
 // FIXME: This should return a _WKSessionState object.
-- (NSData *)_sessionState
+- (id)_sessionState
 {
-    return [self _sessionStateData];
+    return adoptNS([[_WKSessionState alloc] _initWithSessionState:_page->sessionState()]).autorelease();
 }
 
 - (void)_restoreFromSessionStateData:(NSData *)sessionStateData
@@ -1603,17 +1604,26 @@ static int32_t activeOrientation(WKWebView *webView)
     if (!WebKit::decodeLegacySessionState(static_cast<const uint8_t*>(sessionStateData.bytes), sessionStateData.length, sessionState))
         return;
 
-    uint64_t navigationID = _page->restoreFromSessionState(WTF::move(sessionState));
-    if (navigationID) {
+    if (uint64_t navigationID = _page->restoreFromSessionState(WTF::move(sessionState), true)) {
         // FIXME: This is not necessarily always a reload navigation.
         _navigationState->createReloadNavigation(navigationID);
     }
 }
 
-// FIXME: This should take a _WKSessionState object.
-- (void)_restoreFromSessionState:(NSData *)sessionStateData
+// FIXME: Remove this once nobody is using it.
+- (void)_restoreFromSessionState:(id)sessionState
 {
-    [self _restoreFromSessionStateData:sessionStateData];
+    [self _restoreSessionState:sessionState andNavigate:YES];
+}
+
+- (WKNavigation *)_restoreSessionState:(_WKSessionState *)sessionState andNavigate:(BOOL)navigate
+{
+    if (uint64_t navigationID = _page->restoreFromSessionState(sessionState->_sessionState, navigate)) {
+        // FIXME: This is not necessarily always a reload navigation.
+        return _navigationState->createReloadNavigation(navigationID).autorelease();
+    }
+
+    return nil;
 }
 
 - (void)_close

@@ -45,6 +45,16 @@
     return self;
 }
 
+- (instancetype)_initWithSessionState:(WebKit::SessionState)sessionState
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _sessionState = std::move(sessionState);
+
+    return self;
+}
+
 - (NSData *)data
 {
     return WebKit::encodeSessionState(_sessionState).autorelease();

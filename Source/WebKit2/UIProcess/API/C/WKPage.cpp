@@ -389,7 +389,7 @@ void WKPageRestoreFromSessionState(WKPageRef pageRef, WKTypeRef sessionStateRef)
         sessionState = toImpl(static_cast<WKSessionStateRef>(sessionStateRef))->sessionState();
     }
 
-    toImpl(pageRef)->restoreFromSessionState(WTF::move(sessionState));
+    toImpl(pageRef)->restoreFromSessionState(WTF::move(sessionState), true);
 }
 
 double WKPageGetTextZoomFactor(WKPageRef pageRef)
