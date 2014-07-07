@@ -53,7 +53,9 @@ void SecItemRequestData::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder.encodeEnum(m_type);
 
-    IPC::encode(encoder, m_queryDictionary.get());
+    encoder << static_cast<bool>(m_queryDictionary);
+    if (m_queryDictionary)
+        IPC::encode(encoder, m_queryDictionary.get());
 
     encoder << static_cast<bool>(m_attributesToMatch);
     if (m_attributesToMatch)
@@ -61,11 +63,15 @@ void SecItemRequestData::encode(IPC::ArgumentEncoder& encoder) const
 }
 
 bool SecItemRequestData::decode(IPC::ArgumentDecoder& decoder, SecItemRequestData& secItemRequestData)
-{    
+{
     if (!decoder.decodeEnum(secItemRequestData.m_type))
         return false;
 
-    if (!IPC::decode(decoder, secItemRequestData.m_queryDictionary))
+    bool expectQuery;
+    if (!decoder.decode(expectQuery))
+        return false;
+
+    if (expectQuery && !IPC::decode(decoder, secItemRequestData.m_queryDictionary))
         return false;
     
     bool expectAttributes;

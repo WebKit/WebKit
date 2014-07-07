@@ -32,6 +32,7 @@
 #include "SecItemResponseData.h"
 #include "SecItemShimMessages.h"
 #include "SecItemShimProxyMessages.h"
+#include <Security/SecBase.h>
 #include <Security/SecItem.h>
 
 namespace WebKit {
@@ -62,8 +63,9 @@ void SecItemShimProxy::secItemRequest(IPC::Connection* connection, uint64_t requ
 
     switch (request.type()) {
     case SecItemRequestData::Invalid:
-        ASSERT_NOT_REACHED();
-        return;
+        LOG_ERROR("SecItemShimProxy::secItemRequest received an invalid data request. Please file a bug if you know how you caused this.");
+        response = SecItemResponseData(errSecParam, nullptr);
+        break;
 
     case SecItemRequestData::CopyMatching: {
         CFTypeRef resultObject = 0;

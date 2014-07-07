@@ -1,3 +1,18 @@
+2014-07-06  Brady Eidson  <beidson@apple.com>
+
+        Speculative fix for: NetworkProcess sometimes hangs under copyDefaultCredentialForProtectionSpace
+        https://bugs.webkit.org/show_bug.cgi?id=134666
+
+        Reviewed by Tim Horton.
+
+        * Shared/mac/SecItemRequestData.cpp:
+        (WebKit::SecItemRequestData::encode): Encode whether or not the query dictionary exists.
+        (WebKit::SecItemRequestData::decode): Only fail when query dictionary fails to decode if we expect one. 
+
+        * UIProcess/mac/SecItemShimProxy.cpp:
+        (WebKit::SecItemShimProxy::secItemRequest): If the request is of type Invalid, log an error message asking 
+          for a bug, and respond with an "invalid parameter" error.
+
 2014-07-06  Antti Koivisto  <antti@apple.com>
 
         Don't throttle layer flushes when the main resource is a GIF
