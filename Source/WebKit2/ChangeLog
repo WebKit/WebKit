@@ -1,3 +1,16 @@
+2014-07-07  Brady Eidson  <beidson@apple.com>
+
+        ServicesOverlayController menus show up in the wrong place.
+        <rdar://problem/17130576> and https://bugs.webkit.org/show_bug.cgi?id=134684
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+        (WebKit::ServicesOverlayController::selectedTelephoneNumberRangesChanged): Handle cases where
+          the telephone number is in a subframe.
+        (WebKit::ServicesOverlayController::handleClick): The click point is always in main frame document
+          coordinates, so convert it to window coordinates using the main frame’s FrameView.
+
 2014-07-07  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Assertion failure in NavigationState::LoaderClient::didStartProvisionalLoadForFrame (navigationID) when navigating through the page cache

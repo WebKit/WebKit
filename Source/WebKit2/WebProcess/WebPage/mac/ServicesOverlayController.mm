@@ -242,9 +242,11 @@ void ServicesOverlayController::selectedTelephoneNumberRangesChanged(const Vecto
     m_drawingTelephoneNumberHighlight = false;
 
     if (ranges.size() == 1) {
-        RefPtr<Range> selectionRange = m_webPage->corePage()->mainFrame().selection().toNormalizedRange();
-        if (ranges[0]->contains(*selectionRange))
-            m_drawingTelephoneNumberHighlight = true;
+        if (Frame* frame = ranges[0]->startContainer()->document().frame()) {
+            RefPtr<Range> selectionRange = frame->selection().toNormalizedRange();
+            if (ranges[0]->contains(*selectionRange))
+                m_drawingTelephoneNumberHighlight = true;
+        }
     }
     
     createOverlayIfNeeded();
@@ -428,18 +430,24 @@ bool ServicesOverlayController::mouseEvent(PageOverlay*, const WebMouseEvent& ev
     return false;
 }
 
-void ServicesOverlayController::handleClick(const WebCore::IntPoint& point)
+void ServicesOverlayController::handleClick(const WebCore::IntPoint& clickPoint)
 {
+    FrameView* frameView = m_webPage->mainFrameView();
+    if (!frameView)
+        return;
+
+    IntPoint windowPoint = frameView->contentsToWindow(clickPoint);
+
     if (m_drawingTelephoneNumberHighlight) {
         ASSERT(m_currentTelephoneNumberRanges.size() == 1);
-        m_webPage->handleTelephoneNumberClick(m_currentTelephoneNumberRanges[0]->text(), point);
+        m_webPage->handleTelephoneNumberClick(m_currentTelephoneNumberRanges[0]->text(), windowPoint);
     } else {
         Vector<String> selectedTelephoneNumbers;
         selectedTelephoneNumbers.reserveCapacity(m_currentTelephoneNumberRanges.size());
         for (auto& range : m_currentTelephoneNumberRanges)
             selectedTelephoneNumbers.append(range->text());
 
-        m_webPage->handleSelectionServiceClick(m_webPage->corePage()->mainFrame().selection(), selectedTelephoneNumbers, point);
+        m_webPage->handleSelectionServiceClick(m_webPage->corePage()->mainFrame().selection(), selectedTelephoneNumbers, windowPoint);
     }
 }
     
