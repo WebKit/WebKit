@@ -1,3 +1,15 @@
+2014-07-07  Andreas Kling  <akling@apple.com>
+
+        Fast path for jsStringWithCache() when asked for the same string repeatedly.
+        <https://webkit.org/b/134635>
+
+        Reviewed by Darin Adler.
+
+        Follow-up to r170818 addressing a review comment by Geoff Garen.
+
+        * runtime/JSString.cpp:
+        (JSC::jsStringWithCacheSlowCase):
+
 2014-07-07  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Add missing ENABLE(FTL_JIT) guards

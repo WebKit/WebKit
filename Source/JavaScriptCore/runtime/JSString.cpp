@@ -380,7 +380,7 @@ JSString* jsStringWithCacheSlowCase(VM& vm, StringImpl& stringImpl)
     if (addResult.isNewEntry)
         addResult.iterator->value = jsString(&vm, String(stringImpl));
     vm.lastCachedString = addResult.iterator->value.get();
-    return vm.lastCachedString.get();
+    return addResult.iterator->value.get();
 }
 
 } // namespace JSC
