@@ -26,6 +26,8 @@
 #include "config.h"
 #include "FTLDWARFDebugLineInfo.h"
 
+#if ENABLE(FTL_JIT)
+
 #include <wtf/DataLog.h>
 
 namespace JSC { namespace FTL {
@@ -330,3 +332,6 @@ void DebugLineInterpreter::resetInterpreterState()
 }
 
 } } // namespace JSC::FTL
+
+#endif // ENABLE(FTL_JIT)
+

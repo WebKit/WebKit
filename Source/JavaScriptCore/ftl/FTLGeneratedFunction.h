@@ -26,6 +26,8 @@
 #ifndef FTLGeneratedFunction_h
 #define FTLGeneratedFunction_h
 
+#if ENABLE(FTL_JIT)
+
 #include "CallFrame.h"
 
 namespace JSC { namespace FTL {
@@ -33,5 +35,7 @@ namespace JSC { namespace FTL {
 typedef EncodedJSValue (*GeneratedFunction)(ExecState*);
 
 } } // namespace JSC::FTL
+
+#endif // ENABLE(FTL_JIT)
 
 #endif // FTLGeneratedFunction_h

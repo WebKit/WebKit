@@ -1,3 +1,14 @@
+2014-07-07  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Add missing ENABLE(FTL_JIT) guards
+        https://bugs.webkit.org/show_bug.cgi?id=134680
+
+        Reviewed by Darin Adler.
+
+        * ftl/FTLDWARFDebugLineInfo.cpp:
+        * ftl/FTLDWARFDebugLineInfo.h:
+        * ftl/FTLGeneratedFunction.h:
+
 2014-07-07  Zan Dobersek  <zdobersek@igalia.com>
 
         Enable ARMv7 disassembler for the GTK port
