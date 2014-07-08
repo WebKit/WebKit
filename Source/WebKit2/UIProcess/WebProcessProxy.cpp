@@ -199,6 +199,14 @@ void WebProcessProxy::removeWebPage(uint64_t pageID)
 {
     m_pageMap.remove(pageID);
     globalPageMap().remove(pageID);
+    
+    Vector<uint64_t> itemIDsToRemove;
+    for (auto& idAndItem : m_backForwardListItemMap) {
+        if (idAndItem.value->pageID() == pageID)
+            itemIDsToRemove.append(idAndItem.key);
+    }
+    for (auto itemID : itemIDsToRemove)
+        m_backForwardListItemMap.remove(itemID);
 
 #if PLATFORM(COCOA)
     m_processSuppressiblePages.remove(pageID);
@@ -310,7 +318,7 @@ bool WebProcessProxy::fullKeyboardAccessEnabled()
 }
 #endif
 
-void WebProcessProxy::addBackForwardItem(uint64_t itemID, const PageState& pageState)
+void WebProcessProxy::addBackForwardItem(uint64_t itemID, uint64_t pageID, const PageState& pageState)
 {
     MESSAGE_CHECK_URL(pageState.mainFrameState.originalURLString);
     MESSAGE_CHECK_URL(pageState.mainFrameState.urlString);
@@ -320,7 +328,7 @@ void WebProcessProxy::addBackForwardItem(uint64_t itemID, const PageState& pageS
         BackForwardListItemState backForwardListItemState;
         backForwardListItemState.identifier = itemID;
         backForwardListItemState.pageState = pageState;
-        backForwardListItem = WebBackForwardListItem::create(WTF::move(backForwardListItemState));
+        backForwardListItem = WebBackForwardListItem::create(WTF::move(backForwardListItemState), pageID);
         return;
     }
 

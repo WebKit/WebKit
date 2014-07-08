@@ -1964,7 +1964,7 @@ void WebPage::executeEditCommand(const String& commandName)
 void WebPage::restoreSession(const Vector<BackForwardListItemState>& itemStates)
 {
     for (const auto& itemState : itemStates)
-        WebBackForwardListProxy::addItemFromUIProcess(itemState.identifier, toHistoryItem(itemState.pageState));
+        WebBackForwardListProxy::addItemFromUIProcess(itemState.identifier, toHistoryItem(itemState.pageState), m_pageID);
 }
 
 #if ENABLE(TOUCH_EVENTS)

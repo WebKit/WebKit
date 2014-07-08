@@ -45,20 +45,25 @@ namespace WebKit {
 // FIXME <rdar://problem/8819268>: This leaks all HistoryItems that go into these maps.
 // We need to clear up the life time of these objects.
 
-typedef HashMap<uint64_t, RefPtr<HistoryItem>> IDToHistoryItemMap;
-typedef HashMap<RefPtr<HistoryItem>, uint64_t> HistoryItemToIDMap;
+typedef HashMap<uint64_t, RefPtr<HistoryItem>> IDToHistoryItemMap; // "ID" here is the item ID.
+    
+struct ItemAndPageID {
+    uint64_t itemID;
+    uint64_t pageID;
+};
+typedef HashMap<RefPtr<HistoryItem>, ItemAndPageID> HistoryItemToIDMap;
 
 static IDToHistoryItemMap& idToHistoryItemMap()
 {
     static NeverDestroyed<IDToHistoryItemMap> map;;
     return map;
-} 
+}
 
 static HistoryItemToIDMap& historyItemToIDMap()
 {
     static NeverDestroyed<HistoryItemToIDMap> map;
     return map;
-} 
+}
 
 static uint64_t uniqueHistoryItemID = 1;
 
@@ -82,30 +87,30 @@ void WebBackForwardListProxy::setHighestItemIDFromUIProcess(uint64_t itemID)
          uniqueHistoryItemID = itemID + 1;
 }
 
-static void updateBackForwardItem(uint64_t itemID, HistoryItem* item)
+static void updateBackForwardItem(uint64_t itemID, uint64_t pageID, HistoryItem* item)
 {
-    WebProcess::shared().parentProcessConnection()->send(Messages::WebProcessProxy::AddBackForwardItem(itemID, toPageState(*item)), 0);
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebProcessProxy::AddBackForwardItem(itemID, pageID, toPageState(*item)), 0);
 }
 
-void WebBackForwardListProxy::addItemFromUIProcess(uint64_t itemID, PassRefPtr<WebCore::HistoryItem> prpItem)
+void WebBackForwardListProxy::addItemFromUIProcess(uint64_t itemID, PassRefPtr<WebCore::HistoryItem> prpItem, uint64_t pageID)
 {
     RefPtr<HistoryItem> item = prpItem;
     
     // This item/itemID pair should not already exist in our maps.
     ASSERT(!historyItemToIDMap().contains(item.get()));
     ASSERT(!idToHistoryItemMap().contains(itemID));
-        
-    historyItemToIDMap().set(item, itemID);
+
+    historyItemToIDMap().set<ItemAndPageID>(item, { .itemID = itemID, .pageID = pageID });
     idToHistoryItemMap().set(itemID, item);
 }
 
 static void WK2NotifyHistoryItemChanged(HistoryItem* item)
 {
-    uint64_t itemID = historyItemToIDMap().get(item);
-    if (!itemID)
+    ItemAndPageID ids = historyItemToIDMap().get(item);
+    if (!ids.itemID)
         return;
 
-    updateBackForwardItem(itemID, item);
+    updateBackForwardItem(ids.itemID, ids.pageID, item);
 }
 
 HistoryItem* WebBackForwardListProxy::itemForID(uint64_t itemID)
@@ -116,7 +121,7 @@ HistoryItem* WebBackForwardListProxy::itemForID(uint64_t itemID)
 uint64_t WebBackForwardListProxy::idForItem(HistoryItem* item)
 {
     ASSERT(item);
-    return historyItemToIDMap().get(item);
+    return historyItemToIDMap().get(item).itemID;
 }
 
 void WebBackForwardListProxy::removeItem(uint64_t itemID)
@@ -150,10 +155,10 @@ void WebBackForwardListProxy::addItem(PassRefPtr<HistoryItem> prpItem)
 
     m_associatedItemIDs.add(itemID);
 
-    historyItemToIDMap().set(item, itemID);
+    historyItemToIDMap().set<ItemAndPageID>(item, { .itemID = itemID, .pageID = m_page->pageID() });
     idToHistoryItemMap().set(itemID, item);
 
-    updateBackForwardItem(itemID, item.get());
+    updateBackForwardItem(itemID, m_page->pageID(), item.get());
     m_page->send(Messages::WebPageProxy::BackForwardAddItem(itemID));
 }
 
@@ -163,7 +168,7 @@ void WebBackForwardListProxy::goToItem(HistoryItem* item)
         return;
 
     SandboxExtension::Handle sandboxExtensionHandle;
-    m_page->sendSync(Messages::WebPageProxy::BackForwardGoToItem(historyItemToIDMap().get(item)), Messages::WebPageProxy::BackForwardGoToItem::Reply(sandboxExtensionHandle));
+    m_page->sendSync(Messages::WebPageProxy::BackForwardGoToItem(historyItemToIDMap().get(item).itemID), Messages::WebPageProxy::BackForwardGoToItem::Reply(sandboxExtensionHandle));
     m_page->sandboxExtensionTracker().beginLoad(m_page->mainWebFrame(), sandboxExtensionHandle);
 }
 
@@ -214,7 +219,7 @@ void WebBackForwardListProxy::close()
 
     m_associatedItemIDs.clear();
 
-    m_page = 0;
+    m_page = nullptr;
 }
 
 bool WebBackForwardListProxy::isActive()

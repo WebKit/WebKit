@@ -156,7 +156,7 @@ private:
     void disconnect();
 
     // IPC message handlers.
-    void addBackForwardItem(uint64_t itemID, const PageState&);
+    void addBackForwardItem(uint64_t itemID, uint64_t pageID, const PageState&);
     void didDestroyFrame(uint64_t);
     
     void shouldTerminate(bool& shouldTerminate);

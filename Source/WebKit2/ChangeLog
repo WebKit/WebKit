@@ -1,5 +1,50 @@
 2014-07-08  Tim Horton  <timothy_horton@apple.com>
 
+        Remove WebBackForwardListItems when their owning page goes away
+        https://bugs.webkit.org/show_bug.cgi?id=134709
+        <rdar://problem/17584645>
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::create):
+        (WebKit::WebBackForwardListItem::WebBackForwardListItem):
+        * Shared/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::pageID):
+        Add the associated PageID to the WebBackForwardListItem.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::restoreFromState):
+        Push the current PageID onto the WebBackForwardListItem.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::removeWebPage):
+        Remove all of the WebBackForwardListItems from m_backForwardListItemMap when
+        the page they are associated with is removed.
+
+        (WebKit::WebProcessProxy::addBackForwardItem):
+        Push the PageID from the WebProcess onto the WebBackForwardListItem.
+
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::idToHistoryItemMap):
+        (WebKit::historyItemToIDMap):
+        (WebKit::updateBackForwardItem):
+        (WebKit::WebBackForwardListProxy::addItemFromUIProcess):
+        (WebKit::WK2NotifyHistoryItemChanged):
+        (WebKit::WebBackForwardListProxy::idForItem):
+        (WebKit::WebBackForwardListProxy::addItem):
+        (WebKit::WebBackForwardListProxy::goToItem):
+        (WebKit::WebBackForwardListProxy::close):
+        * WebProcess/WebPage/WebBackForwardListProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::restoreSession):
+        Keep track of the PageID that back-forward items were created by.
+        Pass the PageID along when registering WebBackForwardListItems.
+
+2014-07-08  Tim Horton  <timothy_horton@apple.com>
+
         [WK2] Expose a few drawing/compositing settings on WKPreferences(Private)
         https://bugs.webkit.org/show_bug.cgi?id=134645
 

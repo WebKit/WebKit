@@ -44,11 +44,12 @@ namespace WebKit {
 
 class WebBackForwardListItem : public API::ObjectImpl<API::Object::Type::BackForwardListItem> {
 public:
-    static PassRefPtr<WebBackForwardListItem> create(BackForwardListItemState);
+    static PassRefPtr<WebBackForwardListItem> create(BackForwardListItemState, uint64_t pageID);
     virtual ~WebBackForwardListItem();
 
     uint64_t itemID() const { return m_itemState.identifier; }
     const BackForwardListItemState& itemState() { return m_itemState; }
+    uint64_t pageID() const { return m_pageID; }
 
     void setPageState(PageState pageState) { m_itemState.pageState = WTF::move(pageState); }
 
@@ -62,9 +63,10 @@ public:
     static uint64_t highedUsedItemID();
 
 private:
-    explicit WebBackForwardListItem(BackForwardListItemState);
+    explicit WebBackForwardListItem(BackForwardListItemState, uint64_t pageID);
 
     BackForwardListItemState m_itemState;
+    uint64_t m_pageID;
 };
 
 typedef Vector<RefPtr<WebBackForwardListItem>> BackForwardListItemVector;

@@ -411,7 +411,7 @@ void WebBackForwardList::restoreFromState(BackForwardListState backForwardListSt
 
     for (auto& backForwardListItemState : backForwardListState.items) {
         backForwardListItemState.identifier = generateWebBackForwardItemID();
-        items.uncheckedAppend(WebBackForwardListItem::create(WTF::move(backForwardListItemState)));
+        items.uncheckedAppend(WebBackForwardListItem::create(WTF::move(backForwardListItemState), m_page->pageID()));
     }
     m_hasCurrentIndex = !!backForwardListState.currentIndex;
     m_currentIndex = backForwardListState.currentIndex.valueOr(0);
