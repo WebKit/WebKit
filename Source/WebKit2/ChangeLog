@@ -1,3 +1,14 @@
+2014-07-07  Tim Horton  <timothy_horton@apple.com>
+
+        Turn on accelerated drawing for WebKit2 by default
+        https://bugs.webkit.org/show_bug.cgi?id=134708
+        <rdar://problem/17584642>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebPreferencesDefinitions.h:
+        Make Mac match iOS, in that accelerated drawing is on by default.
+
 2014-07-07  Timothy Horton  <timothy_horton@apple.com>
 
         Don't leak _WKRemoteObjectRegistry in WKBrowsingContextController
