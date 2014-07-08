@@ -1,0 +1,2 @@
+GType webkit_dom_xpath_ns_resolver_get_type(void)
+gchar* webkit_dom_xpath_ns_resolver_lookup_namespace_uri(WebKitDOMXPathNSResolver*, const gchar*)
