@@ -97,7 +97,7 @@ CodeLocationLabel* ArityCheckFailReturnThunks::returnPCsFor(
         jit.jump(GPRInfo::regT2);
     }
     
-    LinkBuffer linkBuffer(vm, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer linkBuffer(vm, jit, GLOBAL_THUNK_ID);
     
     unsigned returnPCsSize = numExpectedArgumentsIncludingThis / stackAlignmentRegisters() + 1;
     std::unique_ptr<CodeLocationLabel[]> returnPCs =

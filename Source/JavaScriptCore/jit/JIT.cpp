@@ -46,6 +46,7 @@ JSC::MacroAssemblerX86Common::SSE2CheckState JSC::MacroAssemblerX86Common::s_sse
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "JSCInlines.h"
+#include "ProfilerDatabase.h"
 #include "RepatchBuffer.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
@@ -586,7 +587,7 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
     if (m_disassembler)
         m_disassembler->setEndOfCode(label());
 
-    LinkBuffer patchBuffer(*m_vm, this, m_codeBlock, effort);
+    LinkBuffer patchBuffer(*m_vm, *this, m_codeBlock, effort);
     if (patchBuffer.didFailToAllocate())
         return CompilationFailed;
 

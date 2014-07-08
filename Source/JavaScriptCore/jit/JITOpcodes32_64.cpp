@@ -133,7 +133,7 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
     jumpToExceptionHandler();
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
-    LinkBuffer patchBuffer(*m_vm, this, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*m_vm, *this, GLOBAL_THUNK_ID);
 
     patchBuffer.link(nativeCall, FunctionPtr(func));
     return FINALIZE_CODE(patchBuffer, ("JIT CTI native call"));

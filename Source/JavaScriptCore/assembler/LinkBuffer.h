@@ -80,38 +80,36 @@ class LinkBuffer {
 #endif
 
 public:
-    LinkBuffer(VM& vm, MacroAssembler* masm, void* ownerUID, JITCompilationEffort effort = JITCompilationMustSucceed)
+    LinkBuffer(VM& vm, MacroAssembler& macroAssembler, void* ownerUID, JITCompilationEffort effort = JITCompilationMustSucceed)
         : m_size(0)
 #if ENABLE(BRANCH_COMPACTION)
         , m_initialSize(0)
 #endif
         , m_didAllocate(false)
         , m_code(0)
-        , m_storage(masm->m_assembler.buffer().storage())
-        , m_assembler(masm)
+        , m_storage(macroAssembler.m_assembler.buffer().storage())
         , m_vm(&vm)
 #ifndef NDEBUG
         , m_completed(false)
 #endif
     {
-        linkCode(ownerUID, effort);
+        linkCode(macroAssembler, ownerUID, effort);
     }
 
-    LinkBuffer(VM& vm, MacroAssembler* masm, void* code, size_t size)
+    LinkBuffer(VM& vm, MacroAssembler& macroAssembler, void* code, size_t size)
         : m_size(size)
 #if ENABLE(BRANCH_COMPACTION)
         , m_initialSize(0)
 #endif
         , m_didAllocate(false)
         , m_code(code)
-        , m_storage(masm->m_assembler.buffer().storage())
-        , m_assembler(masm)
+        , m_storage(macroAssembler.m_assembler.buffer().storage())
         , m_vm(&vm)
 #ifndef NDEBUG
         , m_completed(false)
 #endif
     {
-        linkCode(0, JITCompilationCanFail);
+        linkCode(macroAssembler, 0, JITCompilationCanFail);
     }
 
     ~LinkBuffer()
@@ -285,10 +283,10 @@ private:
     void allocate(size_t initialSize, void* ownerUID, JITCompilationEffort);
     void shrink(size_t newSize);
 
-    JS_EXPORT_PRIVATE void linkCode(void* ownerUID, JITCompilationEffort);
+    JS_EXPORT_PRIVATE void linkCode(MacroAssembler&, void* ownerUID, JITCompilationEffort);
 #if ENABLE(BRANCH_COMPACTION)
     template <typename InstructionType>
-    void copyCompactAndLinkCode(void* ownerUID, JITCompilationEffort);
+    void copyCompactAndLinkCode(MacroAssembler&, void* ownerUID, JITCompilationEffort);
 #endif
 
     void performFinalization();
@@ -309,7 +307,6 @@ private:
     bool m_didAllocate;
     void* m_code;
     RefPtr<AssemblerData> m_storage;
-    MacroAssembler* m_assembler;
     VM* m_vm;
 #ifndef NDEBUG
     bool m_completed;

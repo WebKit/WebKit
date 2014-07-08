@@ -304,7 +304,7 @@ void JITCompiler::compile()
 
 void JITCompiler::link()
 {
-    OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(*m_vm, this, m_codeBlock, JITCompilationCanFail));
+    OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(*m_vm, *this, m_codeBlock, JITCompilationCanFail));
     if (linkBuffer->didFailToAllocate()) {
         m_graph.m_plan.finalizer = adoptPtr(new FailedFinalizer(m_graph.m_plan));
         return;
@@ -406,7 +406,7 @@ void JITCompiler::compileFunction()
 void JITCompiler::linkFunction()
 {
     // === Link ===
-    OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(*m_vm, this, m_codeBlock, JITCompilationCanFail));
+    OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(*m_vm, *this, m_codeBlock, JITCompilationCanFail));
     if (linkBuffer->didFailToAllocate()) {
         m_graph.m_plan.finalizer = adoptPtr(new FailedFinalizer(m_graph.m_plan));
         return;

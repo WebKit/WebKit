@@ -37,7 +37,6 @@
 #include "JSCell.h"
 #include "JSFunction.h"
 #include "JSPropertyNameIterator.h"
-#include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "SlowPathCall.h"
 #include "VirtualRegister.h"

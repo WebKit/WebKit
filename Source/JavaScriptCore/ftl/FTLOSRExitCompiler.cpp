@@ -363,7 +363,7 @@ static void compileStub(
     
     adjustAndJumpToTarget(jit, exit);
     
-    LinkBuffer patchBuffer(*vm, &jit, codeBlock);
+    LinkBuffer patchBuffer(*vm, jit, codeBlock);
     exit.m_code = FINALIZE_CODE_IF(
         shouldShowDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit(),
         patchBuffer,

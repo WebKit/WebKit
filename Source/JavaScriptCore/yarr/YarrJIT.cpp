@@ -2657,7 +2657,7 @@ public:
         backtrack();
 
         // Link & finalize the code.
-        LinkBuffer linkBuffer(*vm, this, REGEXP_CODE_ID);
+        LinkBuffer linkBuffer(*vm, *this, REGEXP_CODE_ID);
         m_backtrackingState.linkDataLabels(linkBuffer);
 
         if (compileMode == MatchOnly) {

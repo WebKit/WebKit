@@ -32,6 +32,7 @@
 #include "CodeBlockWithJITType.h"
 #include "JIT.h"
 #include "JSCInlines.h"
+#include "LinkBuffer.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC {

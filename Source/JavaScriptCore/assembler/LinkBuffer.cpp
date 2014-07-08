@@ -78,17 +78,17 @@ LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithDisassembly(const char* format, 
 
 #if ENABLE(BRANCH_COMPACTION)
 template <typename InstructionType>
-void LinkBuffer::copyCompactAndLinkCode(void* ownerUID, JITCompilationEffort effort)
+void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ownerUID, JITCompilationEffort effort)
 {
-    m_initialSize = m_assembler->m_assembler.codeSize();
+    m_initialSize = macroAssembler.m_assembler.codeSize();
     allocate(m_initialSize, ownerUID, effort);
     if (didFailToAllocate())
         return;
-    uint8_t* inData = (uint8_t*)m_assembler->unlinkedCode();
+    uint8_t* inData = (uint8_t*)macroAssembler.unlinkedCode();
     uint8_t* outData = reinterpret_cast<uint8_t*>(m_code);
     int readPtr = 0;
     int writePtr = 0;
-    Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink = m_assembler->jumpsToLink();
+    Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink = macroAssembler.jumpsToLink();
     unsigned jumpCount = jumpsToLink.size();
     for (unsigned i = 0; i < jumpCount; ++i) {
         int offset = readPtr - writePtr;
@@ -104,7 +104,7 @@ void LinkBuffer::copyCompactAndLinkCode(void* ownerUID, JITCompilationEffort eff
         ASSERT(!(writePtr % 2));
         while (copySource != copyEnd)
             *copyDst++ = *copySource++;
-        m_assembler->recordLinkOffsets(readPtr, jumpsToLink[i].from(), offset);
+        macroAssembler.recordLinkOffsets(readPtr, jumpsToLink[i].from(), offset);
         readPtr += regionSize;
         writePtr += regionSize;
             
@@ -116,26 +116,26 @@ void LinkBuffer::copyCompactAndLinkCode(void* ownerUID, JITCompilationEffort eff
         else
             target = outData + jumpsToLink[i].to() - executableOffsetFor(jumpsToLink[i].to());
             
-        JumpLinkType jumpLinkType = m_assembler->computeJumpType(jumpsToLink[i], outData + writePtr, target);
+        JumpLinkType jumpLinkType = macroAssembler.computeJumpType(jumpsToLink[i], outData + writePtr, target);
         // Compact branch if we can...
-        if (m_assembler->canCompact(jumpsToLink[i].type())) {
+        if (macroAssembler.canCompact(jumpsToLink[i].type())) {
             // Step back in the write stream
-            int32_t delta = m_assembler->jumpSizeDelta(jumpsToLink[i].type(), jumpLinkType);
+            int32_t delta = macroAssembler.jumpSizeDelta(jumpsToLink[i].type(), jumpLinkType);
             if (delta) {
                 writePtr -= delta;
-                m_assembler->recordLinkOffsets(jumpsToLink[i].from() - delta, readPtr, readPtr - writePtr);
+                macroAssembler.recordLinkOffsets(jumpsToLink[i].from() - delta, readPtr, readPtr - writePtr);
             }
         }
         jumpsToLink[i].setFrom(writePtr);
     }
     // Copy everything after the last jump
     memcpy(outData + writePtr, inData + readPtr, m_initialSize - readPtr);
-    m_assembler->recordLinkOffsets(readPtr, m_initialSize, readPtr - writePtr);
+    macroAssembler.recordLinkOffsets(readPtr, m_initialSize, readPtr - writePtr);
         
     for (unsigned i = 0; i < jumpCount; ++i) {
         uint8_t* location = outData + jumpsToLink[i].from();
         uint8_t* target = outData + jumpsToLink[i].to() - executableOffsetFor(jumpsToLink[i].to());
-        m_assembler->link(jumpsToLink[i], location, target);
+        macroAssembler.link(jumpsToLink[i], location, target);
     }
 
     jumpsToLink.clear();
@@ -151,23 +151,23 @@ void LinkBuffer::copyCompactAndLinkCode(void* ownerUID, JITCompilationEffort eff
 #endif
 
 
-void LinkBuffer::linkCode(void* ownerUID, JITCompilationEffort effort)
+void LinkBuffer::linkCode(MacroAssembler& macroAssembler, void* ownerUID, JITCompilationEffort effort)
 {
 #if !ENABLE(BRANCH_COMPACTION)
 #if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL
-    m_assembler->m_assembler.buffer().flushConstantPool(false);
+    macroAssembler.m_assembler.buffer().flushConstantPool(false);
 #endif
-    AssemblerBuffer& buffer = m_assembler->m_assembler.buffer();
+    AssemblerBuffer& buffer = macroAssembler.m_assembler.buffer();
     allocate(buffer.codeSize(), ownerUID, effort);
     if (!m_didAllocate)
         return;
     ASSERT(m_code);
 #if CPU(ARM_TRADITIONAL)
-    m_assembler->m_assembler.prepareExecutableCopy(m_code);
+    macroAssembler.m_assembler.prepareExecutableCopy(m_code);
 #endif
     memcpy(m_code, buffer.data(), buffer.codeSize());
 #if CPU(MIPS)
-    m_assembler->m_assembler.relocateJumps(buffer.data(), m_code);
+    macroAssembler.m_assembler.relocateJumps(buffer.data(), m_code);
 #endif
 #elif CPU(ARM_THUMB2)
     copyCompactAndLinkCode<uint16_t>(ownerUID, effort);

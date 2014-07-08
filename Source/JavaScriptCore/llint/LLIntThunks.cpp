@@ -53,7 +53,7 @@ static MacroAssemblerCodeRef generateThunkWithJumpTo(VM* vm, void (*target)(), c
     jit.move(JSInterfaceJIT::TrustedImmPtr(bitwise_cast<void*>(target)), JSInterfaceJIT::regT0);
     jit.jump(JSInterfaceJIT::regT0);
     
-    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("LLInt %s prologue thunk", thunkKind));
 }
 

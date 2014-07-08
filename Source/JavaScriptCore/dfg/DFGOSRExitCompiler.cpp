@@ -94,7 +94,7 @@ void compileOSRExit(ExecState* exec)
         
         exitCompiler.compileExit(exit, operands, recovery);
         
-        LinkBuffer patchBuffer(*vm, &jit, codeBlock);
+        LinkBuffer patchBuffer(*vm, jit, codeBlock);
         exit.m_code = FINALIZE_CODE_IF(
             shouldShowDisassembly() || Options::verboseOSR(),
             patchBuffer,

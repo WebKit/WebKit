@@ -30,14 +30,17 @@
 
 #include "DFGCommon.h"
 #include "DumpContext.h"
-#include "LinkBuffer.h"
 #include "MacroAssembler.h"
-#include "ProfilerDatabase.h"
+#include "ProfilerCompilation.h"
 #include <wtf/HashMap.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/Vector.h>
 
-namespace JSC { namespace DFG {
+namespace JSC {
+
+class LinkBuffer;
+
+namespace DFG {
 
 class Graph;
 

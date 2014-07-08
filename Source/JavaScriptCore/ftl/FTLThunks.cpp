@@ -101,7 +101,7 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
 
     jit.ret();
     
-    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
     patchBuffer.link(functionCall, compileFTLOSRExit);
     return FINALIZE_CODE(patchBuffer, ("FTL OSR exit generation thunk"));
 }
@@ -192,7 +192,7 @@ MacroAssemblerCodeRef slowPathCallThunkGenerator(VM& vm, const SlowPathCallKey& 
     
     jit.ret();
 
-    LinkBuffer patchBuffer(vm, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(vm, jit, GLOBAL_THUNK_ID);
     patchBuffer.link(call, FunctionPtr(key.callTarget()));
     return FINALIZE_CODE(patchBuffer, ("FTL slow path call thunk for %s", toCString(key).data()));
 }

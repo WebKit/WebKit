@@ -65,8 +65,9 @@
 #include "DFGVirtualRegisterAllocationPhase.h"
 #include "DFGWatchpointCollectionPhase.h"
 #include "Debugger.h"
-#include "OperandsInlines.h"
 #include "JSCInlines.h"
+#include "OperandsInlines.h"
+#include "ProfilerDatabase.h"
 #include <wtf/CurrentTime.h>
 
 #if ENABLE(FTL_JIT)

@@ -36,6 +36,7 @@
 #include "JSFunction.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"
+#include "LinkBuffer.h"
 #include "RepatchBuffer.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
@@ -286,7 +287,7 @@ void JIT::privateCompileClosureCall(CallLinkInfo* callLinkInfo, CodeBlock* calle
     restoreReturnAddressBeforeReturn(regT2);
     Jump slow = jump();
     
-    LinkBuffer patchBuffer(*m_vm, this, m_codeBlock);
+    LinkBuffer patchBuffer(*m_vm, *this, m_codeBlock);
     
     patchBuffer.link(call, FunctionPtr(codePtr.executableAddress()));
     patchBuffer.link(done, callLinkInfo->hotPathOther.labelAtOffset(0));

@@ -147,7 +147,7 @@ void generateICFastPath(
         char* startOfIC =
             bitwise_cast<char*>(generatedFunction) + record.instructionOffset;
         
-        LinkBuffer linkBuffer(vm, &fastPathJIT, startOfIC, sizeOfIC);
+        LinkBuffer linkBuffer(vm, fastPathJIT, startOfIC, sizeOfIC);
         // Note: we could handle the !isValid() case. We just don't appear to have a
         // reason to do so, yet.
         RELEASE_ASSERT(linkBuffer.isValid());
@@ -238,7 +238,7 @@ static void fixFunctionBasedOnStackMaps(
         checkJIT.jump(exceptionContinueArg1Set);
 
         OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(
-            vm, &checkJIT, codeBlock, JITCompilationMustSucceed));
+            vm, checkJIT, codeBlock, JITCompilationMustSucceed));
         linkBuffer->link(call, FunctionPtr(lookupExceptionHandler));
         
         state.finalizer->handleExceptionsLinkBuffer = linkBuffer.release();
@@ -251,7 +251,7 @@ static void fixFunctionBasedOnStackMaps(
         RELEASE_ASSERT(didSeeUnwindInfo);
         
         OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(
-            vm, &exitThunkGenerator, codeBlock, JITCompilationMustSucceed));
+            vm, exitThunkGenerator, codeBlock, JITCompilationMustSucceed));
         
         RELEASE_ASSERT(state.finalizer->osrExit.size() == state.jitCode->osrExit.size());
         
@@ -374,7 +374,7 @@ static void fixFunctionBasedOnStackMaps(
         MacroAssembler::Jump exceptionJump = slowPathJIT.jump();
         
         state.finalizer->sideCodeLinkBuffer = adoptPtr(
-            new LinkBuffer(vm, &slowPathJIT, codeBlock, JITCompilationMustSucceed));
+            new LinkBuffer(vm, slowPathJIT, codeBlock, JITCompilationMustSucceed));
         state.finalizer->sideCodeLinkBuffer->link(
             exceptionJump, state.finalizer->handleExceptionsLinkBuffer->entrypoint());
         
@@ -418,7 +418,7 @@ static void fixFunctionBasedOnStackMaps(
         
         char* startOfIC = bitwise_cast<char*>(generatedFunction) + call.m_instructionOffset;
         
-        LinkBuffer linkBuffer(vm, &fastPathJIT, startOfIC, sizeOfCall());
+        LinkBuffer linkBuffer(vm, fastPathJIT, startOfIC, sizeOfCall());
         if (!linkBuffer.isValid()) {
             dataLog("Failed to insert inline cache for call because we thought the size would be ", sizeOfCall(), " but it ended up being ", fastPathJIT.m_assembler.codeSize(), " prior to compaction.\n");
             RELEASE_ASSERT_NOT_REACHED();

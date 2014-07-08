@@ -26,7 +26,6 @@
 #include "config.h"
 #include "Watchpoint.h"
 
-#include "LinkBuffer.h"
 #include <wtf/CompilationThread.h>
 #include <wtf/PassRefPtr.h>
 

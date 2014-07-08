@@ -1,3 +1,91 @@
+2014-07-07  Benjamin Poulain  <benjamin@webkit.org>
+
+        LinkBuffer should not keep a reference to the MacroAssembler
+        https://bugs.webkit.org/show_bug.cgi?id=134668
+
+        Reviewed by Geoffrey Garen.
+
+        In FTL, the LinkBuffer can outlive the MacroAssembler that was used for code generation.
+        When that happens, the pointer m_assembler points to released memory. That was not causing
+        issues because the attribute is not used after linking, but that was not particularily
+        future proof.
+
+        This patch refactors LinkBuffer to avoid any lifetime risk. The MacroAssembler is now passed
+        as a reference, it is used for linking but no reference is ever stored with the LinkBuffer.
+
+        While fixing the call sites to use a reference, I also discovered LinkBuffer.h was included
+        everywhere. I refactored some #include to avoid that.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+        (JSC::LinkBuffer::linkCode):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::LinkBuffer):
+        * bytecode/Watchpoint.cpp:
+        * dfg/DFGDisassembler.cpp:
+        * dfg/DFGDisassembler.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::linkFunction):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGPlan.cpp:
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        (JSC::DFG::osrEntryThunkGenerator):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::generateICFastPath):
+        (JSC::FTL::fixFunctionBasedOnStackMaps):
+        * ftl/FTLJSCall.cpp:
+        * ftl/FTLJSCall.h:
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::osrExitGenerationThunkGenerator):
+        (JSC::FTL::slowPathCallThunkGenerator):
+        * jit/ArityCheckFailReturnThunks.cpp:
+        (JSC::ArityCheckFailReturnThunks::returnPCsFor):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITCall.cpp:
+        (JSC::JIT::privateCompileClosureCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::privateCompileClosureCall):
+        * jit/JITDisassembler.cpp:
+        * jit/JITDisassembler.h:
+        * jit/JITOpcodes.cpp:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::privateCompileGetByVal):
+        (JSC::JIT::privateCompilePutByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        * jit/RegisterPreservationWrapperGenerator.cpp:
+        (JSC::generateRegisterPreservationWrapper):
+        (JSC::registerRestorationThunkGenerator):
+        * jit/Repatch.cpp:
+        (JSC::generateByIdStub):
+        (JSC::tryCacheGetByID):
+        (JSC::emitPutReplaceStub):
+        (JSC::emitPutTransitionStub):
+        (JSC::tryRepatchIn):
+        (JSC::linkClosureCall):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::finalize):
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::linkForThunkGenerator):
+        (JSC::linkClosureCallForThunkGenerator):
+        (JSC::virtualForThunkGenerator):
+        (JSC::nativeForGenerator):
+        (JSC::arityFixup):
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::generateThunkWithJumpTo):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::compile):
+
 2014-07-07  Andreas Kling  <akling@apple.com>
 
         Fast path for jsStringWithCache() when asked for the same string repeatedly.

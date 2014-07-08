@@ -31,9 +31,10 @@
 #include "CCallHelpers.h"
 #include "CallLinkInfo.h"
 #include "CodeOrigin.h"
-#include "LinkBuffer.h"
 
 namespace JSC {
+
+class LinkBuffer;
 
 namespace DFG {
 struct Node;

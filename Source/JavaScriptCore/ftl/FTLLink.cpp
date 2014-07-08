@@ -176,7 +176,7 @@ void link(State& state)
         jit.emitFunctionEpilogue();
         mainPathJumps.append(jit.jump());
 
-        linkBuffer = adoptPtr(new LinkBuffer(vm, &jit, codeBlock, JITCompilationMustSucceed));
+        linkBuffer = adoptPtr(new LinkBuffer(vm, jit, codeBlock, JITCompilationMustSucceed));
         linkBuffer->link(callArityCheck, codeBlock->m_isConstructor ? operationConstructArityCheck : operationCallArityCheck);
         linkBuffer->link(callArityFixup, FunctionPtr((vm.getCTIStub(arityFixup)).code().executableAddress()));
         linkBuffer->link(mainPathJumps, CodeLocationLabel(bitwise_cast<void*>(state.generatedFunction)));
@@ -194,7 +194,7 @@ void link(State& state)
         jit.emitFunctionEpilogue();
         CCallHelpers::Jump mainPathJump = jit.jump();
         
-        linkBuffer = adoptPtr(new LinkBuffer(vm, &jit, codeBlock, JITCompilationMustSucceed));
+        linkBuffer = adoptPtr(new LinkBuffer(vm, jit, codeBlock, JITCompilationMustSucceed));
         linkBuffer->link(mainPathJump, CodeLocationLabel(bitwise_cast<void*>(state.generatedFunction)));
 
         state.jitCode->initializeAddressForCall(linkBuffer->locationOf(start));

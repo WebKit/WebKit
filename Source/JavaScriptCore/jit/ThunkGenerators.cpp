@@ -71,7 +71,7 @@ MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(VM* vm)
     jit.call(GPRInfo::nonArgGPR0);
     jit.jumpToExceptionHandler();
 
-    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("Throw exception from call slow path thunk"));
 }
 
@@ -111,7 +111,7 @@ static MacroAssemblerCodeRef linkForThunkGenerator(
     
     slowPathFor(jit, vm, operationLinkFor(kind, registers));
     
-    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(
         patchBuffer,
         ("Link %s%s slow path thunk", kind == CodeForCall ? "call" : "construct", registers == MustPreserveRegisters ? " that preserves registers" : ""));
@@ -144,7 +144,7 @@ static MacroAssemblerCodeRef linkClosureCallForThunkGenerator(
     
     slowPathFor(jit, vm, operationLinkClosureCallFor(registers));
     
-    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("Link closure call %s slow path thunk", registers == MustPreserveRegisters ? " that preserves registers" : ""));
 }
 
@@ -235,7 +235,7 @@ static MacroAssemblerCodeRef virtualForThunkGenerator(
     
     slowPathFor(jit, vm, operationVirtualFor(kind, registers));
     
-    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(
         patchBuffer,
         ("Virtual %s%s slow path thunk", kind == CodeForCall ? "call" : "construct", registers == MustPreserveRegisters ? " that preserves registers" : ""));
@@ -415,7 +415,7 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
 
     jit.jumpToExceptionHandler();
 
-    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("native %s%s trampoline", entryType == EnterViaJump ? "Tail " : "", toCString(kind).data()));
 }
 
@@ -533,7 +533,7 @@ MacroAssemblerCodeRef arityFixup(VM* vm)
     jit.ret();
 #endif
 
-    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("fixup arity"));
 }
 

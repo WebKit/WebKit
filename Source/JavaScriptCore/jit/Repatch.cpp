@@ -565,7 +565,7 @@ static void generateByIdStub(
     }
     emitRestoreScratch(stubJit, needToRestoreScratch, scratchGPR, success, fail, failureCases);
     
-    LinkBuffer patchBuffer(*vm, &stubJit, exec->codeBlock());
+    LinkBuffer patchBuffer(*vm, stubJit, exec->codeBlock());
     
     linkRestoreScratch(patchBuffer, needToRestoreScratch, success, fail, failureCases, successLabel, slowCaseLabel);
     if (kind == CallCustomGetter || kind == CallCustomSetter) {
@@ -678,7 +678,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
 
             emitRestoreScratch(stubJit, needToRestoreScratch, scratchGPR, success, fail, failureCases);
             
-            LinkBuffer patchBuffer(*vm, &stubJit, codeBlock);
+            LinkBuffer patchBuffer(*vm, stubJit, codeBlock);
 
             linkRestoreScratch(patchBuffer, needToRestoreScratch, stubInfo, success, fail, failureCases);
 
@@ -708,7 +708,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
 
         MacroAssembler::Jump success = stubJit.jump();
 
-        LinkBuffer patchBuffer(*vm, &stubJit, codeBlock);
+        LinkBuffer patchBuffer(*vm, stubJit, codeBlock);
 
         patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone));
         patchBuffer.link(failure, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToSlowCase));
@@ -953,7 +953,7 @@ static void emitPutReplaceStub(
         failure = badStructure;
     }
     
-    LinkBuffer patchBuffer(*vm, &stubJit, exec->codeBlock());
+    LinkBuffer patchBuffer(*vm, stubJit, exec->codeBlock());
     patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone));
     patchBuffer.link(failure, failureLabel);
             
@@ -1140,7 +1140,7 @@ static void emitPutTransitionStub(
         successInSlowPath = stubJit.jump();
     }
     
-    LinkBuffer patchBuffer(*vm, &stubJit, exec->codeBlock());
+    LinkBuffer patchBuffer(*vm, stubJit, exec->codeBlock());
     patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone));
     if (allocator.didReuseRegisters())
         patchBuffer.link(failure, failureLabel);
@@ -1513,7 +1513,7 @@ static InlineCacheAction tryRepatchIn(
         
         emitRestoreScratch(stubJit, needToRestoreScratch, scratchGPR, success, fail, failureCases);
         
-        LinkBuffer patchBuffer(*vm, &stubJit, exec->codeBlock());
+        LinkBuffer patchBuffer(*vm, stubJit, exec->codeBlock());
 
         linkRestoreScratch(patchBuffer, needToRestoreScratch, success, fail, failureCases, successLabel, slowCaseLabel);
         
@@ -1676,7 +1676,7 @@ void linkClosureCall(
     stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT4);
     AssemblyHelpers::Jump slow = stubJit.jump();
     
-    LinkBuffer patchBuffer(*vm, &stubJit, callerCodeBlock);
+    LinkBuffer patchBuffer(*vm, stubJit, callerCodeBlock);
     
     patchBuffer.link(call, FunctionPtr(codePtr.executableAddress()));
     if (JITCode::isOptimizingJIT(callerCodeBlock->jitType()))

@@ -40,7 +40,6 @@
 #include "FTLOutput.h"
 #include "FTLThunks.h"
 #include "FTLWeightedTarget.h"
-#include "LinkBuffer.h"
 #include "OperandsInlines.h"
 #include "JSCInlines.h"
 #include "VirtualRegister.h"

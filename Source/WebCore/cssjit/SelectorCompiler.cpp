@@ -749,7 +749,7 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::VM* vm, JSC
         return SelectorCompilationStatus::CannotCompile;
     }
 
-    JSC::LinkBuffer linkBuffer(*vm, &m_assembler, CSS_CODE_ID);
+    JSC::LinkBuffer linkBuffer(*vm, m_assembler, CSS_CODE_ID);
     for (unsigned i = 0; i < m_functionCalls.size(); i++)
         linkBuffer.link(m_functionCalls[i].first, m_functionCalls[i].second);
 

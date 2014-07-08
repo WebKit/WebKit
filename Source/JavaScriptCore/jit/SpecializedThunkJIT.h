@@ -168,7 +168,7 @@ namespace JSC {
         
         MacroAssemblerCodeRef finalize(MacroAssemblerCodePtr fallback, const char* thunkKind)
         {
-            LinkBuffer patchBuffer(*m_vm, this, GLOBAL_THUNK_ID);
+            LinkBuffer patchBuffer(*m_vm, *this, GLOBAL_THUNK_ID);
             patchBuffer.link(m_failures, CodeLocationLabel(fallback));
             for (unsigned i = 0; i < m_calls.size(); i++)
                 patchBuffer.link(m_calls[i].first, m_calls[i].second);
