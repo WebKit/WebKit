@@ -123,7 +123,7 @@ FrameLoaderClient::~FrameLoaderClient()
 String FrameLoaderClient::userAgent(const URL& url)
 {
     WebKitWebSettings* settings = webkit_web_view_get_settings(getViewFromFrame(m_frame));
-    GUniquePtr<gchar> userAgentString(webkitWebSettingsUserAgentForURI(settings, url.string().utf8().data()));
+    GUniquePtr<gchar> userAgentString(webkitWebSettingsUserAgentForURI(settings, url));
     return String::fromUTF8(userAgentString.get());
 }
 

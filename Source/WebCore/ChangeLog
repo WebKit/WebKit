@@ -1,3 +1,27 @@
+2014-07-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][Stable] Google Maps doesn't work with Version/X in the user agent
+        https://bugs.webkit.org/show_bug.cgi?id=134631
+
+        Reviewed by Sergio Villar Senin.
+
+        Because of the JSC version used in stable branch, when the
+        Version/X string is present in the user agent, google maps uses
+        JavaScript API that we don't support. Move the google domain quirks
+        from WebKit1 to WebCore and add a quirk for google maps.
+
+        * platform/gtk/UserAgentGtk.cpp:
+        (WebCore::googleDomains):
+        (WebCore::otherGoogleDomains):
+        (WebCore::isGoogleDomain): Returns whether the given host is a
+        known google domain
+        (WebCore::buildUserAgentString): Do not include the Version/X
+        string in the user agent if the ShouldNotIncludeSafariVersion
+        quirk is present.
+        (WebCore::standardUserAgentForURL): Add RequiresStandardUserAgent
+        quirk for any google doamin and ShouldNotIncludeSafariVersion for
+        Google Maps.
+
 2014-06-27  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] 8tracks.com triggers annoying pop-up window/installation of "About protocol source plugin" (GStreamer?)

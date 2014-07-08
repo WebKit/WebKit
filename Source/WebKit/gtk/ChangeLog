@@ -1,3 +1,21 @@
+2014-07-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][Stable] Google Maps doesn't work with Version/X in the user agent
+        https://bugs.webkit.org/show_bug.cgi?id=134631
+
+        Reviewed by Sergio Villar Senin.
+
+        Remove user agent quirks for google domains, since they are now
+        implemented in WebCore.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::userAgent): Pass the WebCore::URL
+        const reference to webkitWebSettingsUserAgentForURI().
+        * webkit/webkitwebsettings.cpp:
+        (webkitWebSettingsUserAgentForURI): Use
+        WebCore::standardUserAgentForURL() when site specific quirks are enabled.
+        * webkit/webkitwebsettingsprivate.h:
+
 2014-05-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update NEWS and Versions.m4 for 2.4.3 release.

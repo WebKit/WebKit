@@ -22,9 +22,6 @@
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
-/* Private API */
-char* webkitWebSettingsUserAgentForURI(WebKitWebSettings *settings, const char *uri);
-
 static void test_webkit_web_settings_copy(void)
 {
     WebKitWebSettings *settings = webkit_web_settings_new();
@@ -61,9 +58,22 @@ static void test_webkit_web_settings_copy(void)
     g_free(defaultEncoding);
 }
 
-static void test_non_quirky_user_agents(WebKitWebSettings *settings, const char *defaultUserAgent)
+static void test_webkit_web_settings_user_agent(void)
 {
+    WebKitWebSettings *settings;
+    GtkWidget *webView;
+    char *defaultUserAgent;
     char *userAgent = 0;
+    g_test_bug("17375");
+
+    webView = webkit_web_view_new();
+    g_object_ref_sink(webView);
+
+    settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webView));
+    defaultUserAgent = g_strdup(webkit_web_settings_get_user_agent(settings));
+
+    g_assert(g_strstr_len(defaultUserAgent, -1, "Version/8.0 Safari/"));
+    g_assert(g_strstr_len(defaultUserAgent, -1, "Version/8.0") < g_strstr_len(defaultUserAgent, -1, "Safari/"));
 
     // test a custom UA string
     userAgent = 0;
@@ -83,68 +93,6 @@ static void test_non_quirky_user_agents(WebKitWebSettings *settings, const char 
     g_object_set(settings, "user-agent", "", NULL);
     g_object_get(settings,"user-agent", &userAgent, NULL);
     g_assert_cmpstr(userAgent, ==, defaultUserAgent);
-    g_free(userAgent);
-}
-
-static void test_webkit_web_settings_user_agent(void)
-{
-    WebKitWebSettings *settings;
-    GtkWidget *webView;
-    char *defaultUserAgent;
-    char *userAgent = 0;
-    g_test_bug("17375");
-
-    webView = webkit_web_view_new();
-    g_object_ref_sink(webView);
-
-    settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webView));
-    defaultUserAgent = g_strdup(webkit_web_settings_get_user_agent(settings));
-
-    g_assert(g_strstr_len(defaultUserAgent, -1, "Version/8.0 Safari/"));
-    g_assert(g_strstr_len(defaultUserAgent, -1, "Version/8.0") < g_strstr_len(defaultUserAgent, -1, "Safari/"));
-
-    test_non_quirky_user_agents(settings, defaultUserAgent);
-
-    /* Test quirky google domains */
-    g_object_set(settings, "user-agent", "testwebsettings/0.1", NULL);
-
-    userAgent = webkitWebSettingsUserAgentForURI(settings, "http://www.google.com/");
-    g_assert_cmpstr(userAgent, ==, "testwebsettings/0.1");
-    g_free(userAgent);
-
-    userAgent = webkitWebSettingsUserAgentForURI(settings, "http://gmail.com/");
-    g_assert_cmpstr(userAgent, ==, "testwebsettings/0.1");
-    g_free(userAgent);
-
-    userAgent = webkitWebSettingsUserAgentForURI(settings, "http://www.google.com.br/");
-    g_assert_cmpstr(userAgent, ==, "testwebsettings/0.1");
-    g_free(userAgent);
-
-    userAgent = webkitWebSettingsUserAgentForURI(settings, "http://calendar.google.com/");
-    g_assert_cmpstr(userAgent, ==, "testwebsettings/0.1");
-    g_free(userAgent);
-
-    /* Now enable quirks handling */
-    g_object_set(settings, "enable-site-specific-quirks", TRUE, NULL);
-
-    test_non_quirky_user_agents(settings, defaultUserAgent);
-
-    g_object_set(settings, "user-agent", "testwebsettings/0.1", NULL);
-
-    userAgent = webkitWebSettingsUserAgentForURI(settings, "http://www.google.com/");
-    g_assert_cmpstr(userAgent, ==, defaultUserAgent);
-    g_free(userAgent);
-
-    userAgent = webkitWebSettingsUserAgentForURI(settings, "http://gmail.com/");
-    g_assert_cmpstr(userAgent, ==, defaultUserAgent);
-    g_free(userAgent);
-
-    userAgent = webkitWebSettingsUserAgentForURI(settings, "http://www.google.com.br/");
-    g_assert_cmpstr(userAgent, ==, defaultUserAgent);
-    g_free(userAgent);
-
-    userAgent = webkitWebSettingsUserAgentForURI(settings, "http://www.google.uk.not.com.br/");
-    g_assert_cmpstr(userAgent, ==, "testwebsettings/0.1");
     g_free(userAgent);
 
     g_free(defaultUserAgent);

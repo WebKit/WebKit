@@ -27,8 +27,10 @@
 #include "UserAgentGtk.h"
 
 #include "URL.h"
+#include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringHash.h>
 
 #if OS(UNIX)
 #include <sys/utsname.h>
@@ -40,6 +42,8 @@ class UserAgentQuirks {
 public:
     enum UserAgentQuirk {
         NeedsMacintoshPlatform,
+        RequiresStandardUserAgent,
+        ShouldNotClaimToBeSafari,
 
         NumUserAgentQuirks
     };
@@ -68,6 +72,107 @@ public:
 private:
     uint32_t m_quirks;
 };
+
+static const HashSet<String>& googleDomains()
+{
+    static NeverDestroyed<HashSet<String>> domains(std::initializer_list<String>({
+        "biz",
+        "com",
+        "net",
+        "org",
+        "ae",
+        "ag",
+        "am",
+        "at",
+        "az",
+        "be",
+        "bi",
+        "ca",
+        "cc",
+        "cd",
+        "cg",
+        "ch",
+        "cl",
+        "com.br",
+        "com.do",
+        "co.uk",
+        "co.kr",
+        "co.jp",
+        "de",
+        "dj",
+        "dk",
+        "ee",
+        "es",
+        "fi",
+        "fm",
+        "fr",
+        "gg",
+        "gl",
+        "gm",
+        "gs",
+        "hn",
+        "hu",
+        "ie",
+        "it",
+        "je",
+        "kz",
+        "li",
+        "lt",
+        "lu",
+        "lv",
+        "ma",
+        "ms",
+        "mu",
+        "mw",
+        "nl",
+        "no",
+        "nu",
+        "pl",
+        "pn",
+        "pt",
+        "ru",
+        "rw",
+        "sh",
+        "sk",
+        "sm",
+        "st",
+        "td",
+        "tk",
+        "tp",
+        "tv",
+        "us",
+        "uz",
+        "ws"
+    }));
+    return domains;
+}
+
+static const Vector<String>& otherGoogleDomains()
+{
+    static NeverDestroyed<Vector<String>> otherDomains(std::initializer_list<String>({
+        "gmail.com",
+        "youtube.com",
+        "gstatic.com",
+        "ytimg.com"
+    }));
+    return otherDomains;
+}
+
+static bool isGoogleDomain(String host)
+{
+    // First check if this is one of the various google.com international domains.
+    int position = host.find(".google.");
+    if (position > 0 && googleDomains().contains(host.substring(position + sizeof(".google.") - 1)))
+        return true;
+
+    // Then we check the possibility of it being one of the other, .com-only google domains.
+    for (unsigned i = 0; i < otherGoogleDomains().size(); i++) {
+        if (host.endsWith(otherGoogleDomains().at(i)))
+            return true;
+    }
+
+    return false;
+}
 
 static const char* cpuDescriptionForUAString()
 {
@@ -138,10 +243,14 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
 
     uaString.appendLiteral(") AppleWebKit/");
     uaString.append(versionForUAString());
-    // Version/X is mandatory *before* Safari/X to be a valid Safari UA. See
-    // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
-    uaString.appendLiteral(" (KHTML, like Gecko) Version/8.0 Safari/");
-    uaString.append(versionForUAString());
+
+    uaString.appendLiteral(" (KHTML, like Gecko)");
+    if (!quirks.contains(UserAgentQuirks::ShouldNotClaimToBeSafari)) {
+        // Version/X is mandatory *before* Safari/X to be a valid Safari UA. See
+        // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
+        uaString.appendLiteral(" Version/8.0 Safari/");
+        uaString.append(versionForUAString());
+    }
 
     return uaString.toString();
 }
@@ -180,6 +289,14 @@ String standardUserAgentForURL(const URL& url)
         // www.yahoo.com redirects to the mobile version when Linux is present in the UA,
         // use always Macintosh as platform. See https://bugs.webkit.org/show_bug.cgi?id=125444.
         quirks.add(UserAgentQuirks::NeedsMacintoshPlatform);
+    } else if (isGoogleDomain(url.host())) {
+        // For Google domains, drop the browser's custom User Agent string, and use the
+        // standard one, so they don't give us a broken experience.
+        quirks.add(UserAgentQuirks::RequiresStandardUserAgent);
+
+        // Google Maps uses new JavaScript API not supported by us when Safari Version is present in the user agent.
+        if (url.host().startsWith("maps.") || url.path().startsWith("/maps"))
+            quirks.add(UserAgentQuirks::ShouldNotClaimToBeSafari);
     }
 
     // The null string means we don't need a specific UA for the given URL.

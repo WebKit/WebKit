@@ -1,3 +1,17 @@
+2014-07-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][Stable] Google Maps doesn't work with Version/X in the user agent
+        https://bugs.webkit.org/show_bug.cgi?id=134631
+
+        Reviewed by Sergio Villar Senin.
+
+        Move user agent quirks tests from WebKit1 to WebCore.
+
+        * TestWebKitAPI/Tests/WebCore/gtk/UserAgentQuirks.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitGtk/testwebsettings.c:
+        (test_webkit_web_settings_user_agent):
+
 2014-02-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove the WTF_COMPILER_SUPPORTS_CXX_GENERALIZED_INITIALIZERS macro

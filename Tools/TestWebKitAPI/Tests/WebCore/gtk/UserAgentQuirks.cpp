@@ -43,6 +43,21 @@ TEST(WebCore, UserAgentQuirksTest)
     EXPECT_TRUE(uaString.contains("Macintosh"));
     EXPECT_TRUE(uaString.contains("Mac OS X"));
     EXPECT_FALSE(uaString.contains("Linux"));
+
+    // For Google domains we always return the standard UA.
+    uaString = standardUserAgent();
+    EXPECT_FALSE(uaString.isNull());
+    EXPECT_TRUE(uaString == standardUserAgentForURL(URL(ParsedURLString, "http://www.google.com/")));
+    EXPECT_TRUE(uaString == standardUserAgentForURL(URL(ParsedURLString, "http://calendar.google.com/")));
+    EXPECT_TRUE(uaString == standardUserAgentForURL(URL(ParsedURLString, "http://gmail.com/")));
+    EXPECT_TRUE(uaString == standardUserAgentForURL(URL(ParsedURLString, "http://www.google.com.br/")));
+    EXPECT_TRUE(uaString == standardUserAgentForURL(URL(ParsedURLString, "http://www.youtube.com/")));
+    EXPECT_TRUE(uaString != standardUserAgentForURL(URL(ParsedURLString, "http://www.google.uk.not.com.br/")));
+
+    // For Google Maps we remove the Version/8.0 string.
+    uaString = standardUserAgentForURL(URL(ParsedURLString, "http://maps.google.com/"));
+    EXPECT_TRUE(uaString == standardUserAgentForURL(URL(ParsedURLString, "http://www.google.com/maps/")));
+    EXPECT_FALSE(uaString.contains("Version/8.0 Safari/"));
 }
 
 } // namespace TestWebKitAPI
