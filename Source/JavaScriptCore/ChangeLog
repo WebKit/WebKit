@@ -1,3 +1,10 @@
+2014-07-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix the build after r170876
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::linkCode):
+
 2014-07-07  Benjamin Poulain  <benjamin@webkit.org>
 
         LinkBuffer should not keep a reference to the MacroAssembler

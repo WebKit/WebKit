@@ -170,9 +170,9 @@ void LinkBuffer::linkCode(MacroAssembler& macroAssembler, void* ownerUID, JITCom
     macroAssembler.m_assembler.relocateJumps(buffer.data(), m_code);
 #endif
 #elif CPU(ARM_THUMB2)
-    copyCompactAndLinkCode<uint16_t>(ownerUID, effort);
+    copyCompactAndLinkCode<uint16_t>(macroAssembler, ownerUID, effort);
 #elif CPU(ARM64)
-    copyCompactAndLinkCode<uint32_t>(ownerUID, effort);
+    copyCompactAndLinkCode<uint32_t>(macroAssembler, ownerUID, effort);
 #endif
 }
 
