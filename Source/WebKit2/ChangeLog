@@ -1,3 +1,21 @@
+2014-07-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Guard uses of RedirectedXCompositeWindow in WebKitWebViewBase with PLATFORM(X11)
+        https://bugs.webkit.org/show_bug.cgi?id=133871
+
+        Reviewed by Martin Robinson.
+
+        Guard uses of the RedirectedXCompositeWindow object in WebKitWebViewBase with the
+        PLATFORM(X11) build guard. This is required to properly support building the GTK
+        port only for the Wayland target.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseConstructed):
+        (webkitWebViewRenderAcceleratedCompositingResults):
+        (resizeWebKitWebViewBaseFromAllocation):
+        (webkitWebViewBaseUpdatePreferences):
+        (webkitWebViewBaseCreateWebPage):
+
 2014-07-07  Tim Horton  <timothy_horton@apple.com>
 
         Turn on accelerated drawing for WebKit2 by default

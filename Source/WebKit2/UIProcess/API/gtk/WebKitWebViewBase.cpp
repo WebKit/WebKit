@@ -63,7 +63,7 @@
 #include <WebCore/Region.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
-#ifdef GDK_WINDOWING_X11
+#if defined(GDK_WINDOWING_X11)
 #include <gdk/gdkx.h>
 #endif
 #include <memory>
@@ -75,7 +75,7 @@
 #include "WebFullScreenManagerProxy.h"
 #endif
 
-#if USE(TEXTURE_MAPPER_GL) && defined(GDK_WINDOWING_X11)
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
 #include <WebCore/RedirectedXCompositeWindow.h>
 #endif
 
@@ -88,7 +88,7 @@ using namespace WebCore;
 
 typedef HashMap<GtkWidget*, IntRect> WebKitWebViewChildrenMap;
 
-#if USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
 void redirectedWindowDamagedCallback(void* data);
 #endif
 
@@ -133,7 +133,7 @@ struct _WebKitWebViewBasePrivate {
     WebFullScreenClientGtk fullScreenClient;
 #endif
 
-#if USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
     OwnPtr<RedirectedXCompositeWindow> redirectedWindow;
 #endif
 };
@@ -414,7 +414,7 @@ static void webkitWebViewBaseConstructed(GObject* object)
     priv->pageClient = PageClientImpl::create(viewWidget);
     priv->dragAndDropHelper.setWidget(viewWidget);
 
-#if USE(TEXTURE_MAPPER_GL) && defined(GDK_WINDOWING_X11)
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
     GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
     if (GDK_IS_X11_DISPLAY(display)) {
         priv->redirectedWindow = RedirectedXCompositeWindow::create(IntSize(1, 1), RedirectedXCompositeWindow::DoNotCreateGLContext);
@@ -432,6 +432,7 @@ static bool webkitWebViewRenderAcceleratedCompositingResults(WebKitWebViewBase* 
     if (!drawingArea->isInAcceleratedCompositingMode())
         return false;
 
+#if PLATFORM(X11)
     // To avoid flashes when initializing accelerated compositing for the first
     // time, we wait until we know there's a frame ready before rendering.
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
@@ -443,6 +444,9 @@ static bool webkitWebViewRenderAcceleratedCompositingResults(WebKitWebViewBase* 
     cairo_set_source_surface(cr, surface, 0, 0);
     cairo_fill(cr);
     return true;
+#else
+    return false;
+#endif
 }
 #endif
 
@@ -534,7 +538,7 @@ static void resizeWebKitWebViewBaseFromAllocation(WebKitWebViewBase* webViewBase
         gtk_widget_size_allocate(priv->authenticationDialog, &childAllocation);
     }
 
-#if USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
     if (sizeChanged && webViewBase->priv->redirectedWindow)
         webViewBase->priv->redirectedWindow->resize(viewRect.size());
 #endif
@@ -962,7 +966,7 @@ void webkitWebViewBaseUpdatePreferences(WebKitWebViewBase* webkitWebViewBase)
 {
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
 
-#if USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
     if (priv->redirectedWindow)
         return;
 #endif
@@ -987,7 +991,7 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebCon
     priv->pageProxy = context->createWebPage(*priv->pageClient, WTF::move(webPageConfiguration));
     priv->pageProxy->initializeWebPage();
 
-#if USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
     if (priv->redirectedWindow)
         priv->pageProxy->setAcceleratedCompositingWindowId(priv->redirectedWindow->windowId());
 #endif
@@ -1129,7 +1133,7 @@ GdkEvent* webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase* webkitWebView
     return webkitWebViewBase->priv->contextMenuEvent.release();
 }
 
-#if USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
 void redirectedWindowDamagedCallback(void* data)
 {
     gtk_widget_queue_draw(GTK_WIDGET(data));
