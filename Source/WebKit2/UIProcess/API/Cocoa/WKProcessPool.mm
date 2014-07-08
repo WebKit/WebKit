@@ -170,6 +170,7 @@ static NSURL *websiteDataDirectoryURL(NSString *directoryName)
     _context->setHistoryClient(std::make_unique<WebKit::HistoryClient>());
     _context->setUsesNetworkProcess(true);
     _context->setProcessModel(WebKit::ProcessModelMultipleSecondaryProcesses);
+    _context->setMaximumNumberOfProcesses([_configuration maximumProcessCount]);
 
 #if ENABLE(CACHE_PARTITIONING)
     for (NSString *urlScheme in [_configuration cachePartitionedURLSchemes])

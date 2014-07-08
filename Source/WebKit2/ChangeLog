@@ -1,3 +1,15 @@
+2014-07-08  Tim Horton  <timothy_horton@apple.com>
+
+        WKProcessPoolConfigurationPrivate's maximumProcessCount property has no effect
+        https://bugs.webkit.org/show_bug.cgi?id=134711
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _initWithConfiguration:]):
+        Respect the maximumProcessCount.
+        Currently the default limit is UINT_MAX; if maximumProcessCount = 0 (the default), we'll use that limit.
+
 2014-07-08  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Move user style sheet API out of WebKitWebViewGroup
