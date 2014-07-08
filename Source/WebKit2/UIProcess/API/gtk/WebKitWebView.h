@@ -44,6 +44,7 @@
 #include <webkit2/WebKitScriptDialog.h>
 #include <webkit2/WebKitSettings.h>
 #include <webkit2/WebKitURIRequest.h>
+#include <webkit2/WebKitUserContentManager.h>
 #include <webkit2/WebKitWebContext.h>
 #include <webkit2/WebKitWebInspector.h>
 #include <webkit2/WebKitWebResource.h>
@@ -260,6 +261,9 @@ webkit_web_view_new_with_related_view                (WebKitWebView             
 WEBKIT_API GtkWidget *
 webkit_web_view_new_with_group                       (WebKitWebViewGroup        *group);
 
+WEBKIT_API GtkWidget *
+webkit_web_view_new_with_user_content_manager        (WebKitUserContentManager  *user_content_manager);
+
 WEBKIT_API WebKitWebContext *
 webkit_web_view_get_context                          (WebKitWebView             *web_view);
 
@@ -455,6 +459,10 @@ WEBKIT_API cairo_surface_t *
 webkit_web_view_get_snapshot_finish                  (WebKitWebView             *web_view,
                                                       GAsyncResult              *result,
                                                       GError                   **error);
+
+WEBKIT_API WebKitUserContentManager *
+webkit_web_view_get_user_content_manager             (WebKitWebView             *web_view);
+
 G_END_DECLS
 
 #endif

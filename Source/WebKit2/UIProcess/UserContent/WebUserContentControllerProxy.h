@@ -39,6 +39,7 @@ class DataReference;
 
 namespace WebCore {
 class UserScript;
+class UserStyleSheet;
 }
 
 namespace WebKit {
@@ -59,6 +60,9 @@ public:
     void addUserScript(WebCore::UserScript);
     void removeAllUserScripts();
 
+    void addUserStyleSheet(WebCore::UserStyleSheet);
+    void removeAllUserStyleSheets();
+
     // Returns false if there was a name conflict.
     bool addUserScriptMessageHandler(WebScriptMessageHandler*);
     void removeUserMessageHandlerForName(const String&);
@@ -75,6 +79,7 @@ private:
     HashCountedSet<WebProcessProxy*> m_processes;
 
     Vector<WebCore::UserScript> m_userScripts;
+    Vector<WebCore::UserStyleSheet> m_userStyleSheets;
     HashMap<uint64_t, RefPtr<WebScriptMessageHandler>> m_scriptMessageHandlers;
 };
 

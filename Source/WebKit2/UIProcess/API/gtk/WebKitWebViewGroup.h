@@ -84,17 +84,6 @@ WEBKIT_API void
 webkit_web_view_group_set_settings                 (WebKitWebViewGroup          *group,
                                                     WebKitSettings              *settings);
 
-WEBKIT_API void
-webkit_web_view_group_add_user_style_sheet         (WebKitWebViewGroup           *group,
-                                                    const gchar                  *source,
-                                                    const gchar                  *base_uri,
-                                                    const gchar * const          *whitelist,
-                                                    const gchar * const          *blacklist,
-                                                    WebKitInjectedContentFrames   injected_frames);
-
-WEBKIT_API void
-webkit_web_view_group_remove_all_user_style_sheets (WebKitWebViewGroup          *group);
-
 G_END_DECLS
 
 #endif

@@ -1,3 +1,39 @@
+2014-07-08  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Move user style sheet API out of WebKitWebViewGroup
+        https://bugs.webkit.org/show_bug.cgi?id=134551
+
+        Reviewed by Carlos Garcia Campos.
+
+        Removes testing user style sheet injection from
+        TestWebKitWebViewGroup and moves that into a new
+        TestWebKitUserContentManager, adapting the existing tests to the new
+        API. Also, it contains a new test case for
+        webkit_web_view_new_with_user_content_manager().
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/CMakeLists.txt:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitUserContentManager.cpp: Added.
+        (UserContentManagerTest::UserContentManagerTest):
+        (testWebViewNewWithUserContentManager):
+        (isStyleSheetInjectedForURLAtPath):
+        (fillURLListFromPaths):
+        (removeOldInjectedStyleSheetsAndResetLists):
+        (testUserContentManagerInjectedStyleSheet):
+        (serverCallback):
+        (beforeAll):
+        (afterAll):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebViewGroup.cpp:
+        (beforeAll):
+        (afterAll):
+        (isStyleSheetInjectedForURLAtPath): Deleted.
+        (fillURLListFromPaths): Deleted.
+        (removeOldInjectedStyleSheetsAndResetLists): Deleted.
+        (testWebViewGroupInjectedStyleSheet): Deleted.
+        (serverCallback): Deleted.
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.cpp:
+        (WebViewTest::WebViewTest):
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.h:
+
 2014-07-08  Ziran Sun  <ziran.sun@samsung.com>
 
         [GTK] Gstreamer missing from the install-dependencies script

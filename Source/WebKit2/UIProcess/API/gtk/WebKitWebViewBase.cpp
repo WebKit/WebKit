@@ -45,6 +45,7 @@
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
+#include "WebUserContentControllerProxy.h"
 #include "WebViewBaseInputMethodFilter.h"
 #include <WebCore/CairoUtilities.h>
 #include <WebCore/ClipboardUtilitiesGtk.h>
@@ -945,10 +946,10 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
     containerClass->forall = webkitWebViewBaseContainerForall;
 }
 
-WebKitWebViewBase* webkitWebViewBaseCreate(WebContext* context, WebPageGroup* pageGroup, WebPageProxy* relatedPage)
+WebKitWebViewBase* webkitWebViewBaseCreate(WebContext* context, WebPageGroup* pageGroup, WebUserContentControllerProxy* userContentController, WebPageProxy* relatedPage)
 {
     WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(g_object_new(WEBKIT_TYPE_WEB_VIEW_BASE, NULL));
-    webkitWebViewBaseCreateWebPage(webkitWebViewBase, context, pageGroup, relatedPage);
+    webkitWebViewBaseCreateWebPage(webkitWebViewBase, context, pageGroup, userContentController, relatedPage);
     return webkitWebViewBase;
 }
 
@@ -981,13 +982,14 @@ static void deviceScaleFactorChanged(WebKitWebViewBase* webkitWebViewBase)
 }
 #endif // HAVE(GTK_SCALE_FACTOR)
 
-void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebContext* context, WebPageGroup* pageGroup, WebPageProxy* relatedPage)
+void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebContext* context, WebPageGroup* pageGroup, WebUserContentControllerProxy* userContentController, WebPageProxy* relatedPage)
 {
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
 
     WebPageConfiguration webPageConfiguration;
     webPageConfiguration.pageGroup = pageGroup;
     webPageConfiguration.relatedPage = relatedPage;
+    webPageConfiguration.userContentController = userContentController;
     priv->pageProxy = context->createWebPage(*priv->pageClient, WTF::move(webPageConfiguration));
     priv->pageProxy->initializeWebPage();
 

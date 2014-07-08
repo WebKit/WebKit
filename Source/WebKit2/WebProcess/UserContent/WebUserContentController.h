@@ -54,6 +54,9 @@ private:
     void addUserScripts(const Vector<WebCore::UserScript>& userScripts);
     void removeAllUserScripts();
 
+    void addUserStyleSheets(const Vector<WebCore::UserStyleSheet>& userStyleSheets);
+    void removeAllUserStyleSheets();
+
     void addUserScriptMessageHandlers(const Vector<WebScriptMessageHandlerHandle>& scriptMessageHandlers);
     void removeUserScriptMessageHandler(uint64_t);
 

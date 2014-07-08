@@ -35,6 +35,7 @@
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SerializedScriptValue.h>
+#include <WebCore/UserStyleSheet.h>
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
@@ -90,6 +91,19 @@ void WebUserContentController::addUserScripts(const Vector<WebCore::UserScript>&
 void WebUserContentController::removeAllUserScripts()
 {
     m_userContentController->removeUserScripts(mainThreadNormalWorld());
+}
+
+void WebUserContentController::addUserStyleSheets(const Vector<WebCore::UserStyleSheet>& userStyleSheets)
+{
+    for (const auto& userStyleSheet : userStyleSheets) {
+        m_userContentController->addUserStyleSheet(mainThreadNormalWorld(),
+            std::make_unique<WebCore::UserStyleSheet>(userStyleSheet), InjectInExistingDocuments);
+    }
+}
+
+void WebUserContentController::removeAllUserStyleSheets()
+{
+    m_userContentController->removeUserStyleSheets(mainThreadNormalWorld());
 }
 
 #if ENABLE(USER_MESSAGE_HANDLERS)

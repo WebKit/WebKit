@@ -112,6 +112,7 @@ ADD_WK2_TEST(TestWebViewEditor TestWebViewEditor.cpp)
 ADD_WK2_TEST(TestWebKitWebViewGroup TestWebKitWebViewGroup.cpp)
 ADD_WK2_TEST(TestWebKitWebContext TestWebKitWebContext.cpp)
 ADD_WK2_TEST(TestWebKitWebView TestWebKitWebView.cpp)
+ADD_WK2_TEST(TestWebKitUserContentManager TestWebKitUserContentManager.cpp)
 
 if (ATSPI_FOUND)
     ADD_WK2_TEST(AccessibilityTestServer AccessibilityTestServer.cpp)

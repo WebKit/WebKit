@@ -66,7 +66,8 @@ void WebUserContentControllerProxy::addProcess(WebProcessProxy& webProcessProxy)
     webProcessProxy.addMessageReceiver(Messages::WebUserContentControllerProxy::messageReceiverName(), m_identifier, *this);
 
     webProcessProxy.connection()->send(Messages::WebUserContentController::AddUserScripts(m_userScripts), m_identifier);
-    
+    webProcessProxy.connection()->send(Messages::WebUserContentController::AddUserStyleSheets(m_userStyleSheets), m_identifier);
+
     Vector<WebScriptMessageHandlerHandle> messageHandlerHandles;
     for (auto& handler : m_scriptMessageHandlers.values())
         messageHandlerHandles.append(handler->handle());
@@ -95,6 +96,22 @@ void WebUserContentControllerProxy::removeAllUserScripts()
 
     for (auto& processAndCount : m_processes)
         processAndCount.key->connection()->send(Messages::WebUserContentController::RemoveAllUserScripts(), m_identifier);
+}
+
+void WebUserContentControllerProxy::addUserStyleSheet(WebCore::UserStyleSheet userStyleSheet)
+{
+    m_userStyleSheets.append(WTF::move(userStyleSheet));
+
+    for (auto& processAndCount : m_processes)
+        processAndCount.key->connection()->send(Messages::WebUserContentController::AddUserStyleSheets({ m_userStyleSheets.last() }), m_identifier);
+}
+
+void WebUserContentControllerProxy::removeAllUserStyleSheets()
+{
+    m_userStyleSheets.clear();
+
+    for (auto& processAndCount : m_processes)
+        processAndCount.key->connection()->send(Messages::WebUserContentController::RemoveAllUserStyleSheets(), m_identifier);
 }
 
 bool WebUserContentControllerProxy::addUserScriptMessageHandler(WebScriptMessageHandler* handler)

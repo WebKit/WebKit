@@ -133,6 +133,7 @@ enum {
     PROP_WEB_CONTEXT,
     PROP_RELATED_VIEW,
     PROP_GROUP,
+    PROP_USER_CONTENT_MANAGER,
     PROP_TITLE,
     PROP_ESTIMATED_LOAD_PROGRESS,
     PROP_FAVICON,
@@ -171,6 +172,7 @@ struct _WebKitWebViewPrivate {
     GRefPtr<WebKitSettings> settings;
     unsigned long settingsChangedHandlerID;
     GRefPtr<WebKitWebViewGroup> group;
+    GRefPtr<WebKitUserContentManager> userContentManager;
     GRefPtr<WebKitWindowProperties> windowProperties;
 
     GRefPtr<GMainLoop> modalLoop;
@@ -501,7 +503,7 @@ static void webkitWebViewConstructed(GObject* object)
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
     WebKitWebViewPrivate* priv = webView->priv;
-    webkitWebContextCreatePageForWebView(priv->context, webView, priv->group.get(), priv->relatedView);
+    webkitWebContextCreatePageForWebView(priv->context, webView, priv->group.get(), priv->userContentManager.get(), priv->relatedView);
     // The related view is only valid during the construction.
     priv->relatedView = nullptr;
 
@@ -542,6 +544,11 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
         webView->priv->group = group ? WEBKIT_WEB_VIEW_GROUP(group) : 0;
         break;
     }
+    case PROP_USER_CONTENT_MANAGER: {
+        gpointer userContentManager = g_value_get_object(value);
+        webView->priv->userContentManager = userContentManager ? WEBKIT_USER_CONTENT_MANAGER(userContentManager) : nullptr;
+        break;
+    }
     case PROP_ZOOM_LEVEL:
         webkit_web_view_set_zoom_level(webView, g_value_get_double(value));
         break;
@@ -560,6 +567,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
         break;
     case PROP_GROUP:
         g_value_set_object(value, webkit_web_view_get_group(webView));
+        break;
+    case PROP_USER_CONTENT_MANAGER:
+        g_value_set_object(value, webkit_web_view_get_user_content_manager(webView));
         break;
     case PROP_TITLE:
         g_value_set_string(value, webView->priv->title.data());
@@ -668,6 +678,23 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             _("WebView Group"),
             _("The WebKitWebViewGroup of the view"),
             WEBKIT_TYPE_WEB_VIEW_GROUP,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+
+    /**
+     * WebKitWebView:user-content-manager:
+     *
+     * The #WebKitUserContentManager of the view.
+     *
+     * Since: 2.6
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_USER_CONTENT_MANAGER,
+        g_param_spec_object(
+            "user-content-manager",
+            _("WebView user content manager"),
+            _("The WebKitUserContentManager of the view"),
+            WEBKIT_TYPE_USER_CONTENT_MANAGER,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
     /**
@@ -1924,6 +1951,8 @@ GtkWidget* webkit_web_view_new_with_context(WebKitWebContext* context)
  * You can also use this method to implement other process models based on %WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES,
  * like for example, sharing the same web process for all the views in the same security domain.
  *
+ * The newly created #WebKitWebView will also have the same #WebKitUserContentManager as @web_view.
+ *
  * Returns: (transfer full): The newly created #WebKitWebView widget
  *
  * Since: 2.4
@@ -1932,7 +1961,10 @@ GtkWidget* webkit_web_view_new_with_related_view(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
 
-    return GTK_WIDGET(g_object_new(WEBKIT_TYPE_WEB_VIEW, "related-view", webView, nullptr));
+    return GTK_WIDGET(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "user-content-manager", webView->priv->userContentManager.get(),
+        "related-view", webView,
+        nullptr));
 }
 
 /**
@@ -1950,6 +1982,25 @@ GtkWidget* webkit_web_view_new_with_group(WebKitWebViewGroup* group)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW_GROUP(group), 0);
 
     return GTK_WIDGET(g_object_new(WEBKIT_TYPE_WEB_VIEW, "group", group, NULL));
+}
+
+/**
+ * webkit_web_view_new_with_user_content_manager:
+ * @user_content_manager: a #WebKitUserContentManager.
+ *
+ * Creates a new #WebKitWebView with the given #WebKitUserContentManager.
+ * The content loaded in the view may be affected by the content injected
+ * in the view by the user content manager.
+ *
+ * Returns: The newly created #WebKitWebView widget
+ *
+ * Since: 2.6
+ */
+GtkWidget* webkit_web_view_new_with_user_content_manager(WebKitUserContentManager* userContentManager)
+{
+    g_return_val_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(userContentManager), nullptr);
+
+    return GTK_WIDGET(g_object_new(WEBKIT_TYPE_WEB_VIEW, "user-content-manager", userContentManager, nullptr));
 }
 
 /**
@@ -1983,6 +2034,24 @@ WebKitWebViewGroup* webkit_web_view_get_group(WebKitWebView* webView)
         return webView->priv->group.get();
 
     return webkitWebContextGetDefaultWebViewGroup(webView->priv->context);
+}
+
+/**
+ * webkit_web_view_get_user_content_manager:
+ * @web_view: a #WebKitWebView
+ *
+ * Gets the user content manager associated to @web_view, or %NULL if the
+ * view does not have an user content manager.
+ *
+ * Returns: (transfer none): the #WebKitUserContentManager associated with the view
+ *
+ * Since: 2.6
+ */
+WebKitUserContentManager* webkit_web_view_get_user_content_manager(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
+
+    return webView->priv->userContentManager.get();
 }
 
 /**

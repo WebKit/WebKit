@@ -39,6 +39,7 @@
 #include "WebKitSecurityManagerPrivate.h"
 #include "WebKitTextChecker.h"
 #include "WebKitURISchemeRequestPrivate.h"
+#include "WebKitUserContentManagerPrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewGroupPrivate.h"
@@ -1050,12 +1051,13 @@ void webkitWebContextDidFinishLoadingCustomProtocol(WebKitWebContext* context, u
     context->priv->uriSchemeRequests.remove(customProtocolID);
 }
 
-void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebView* webView, WebKitWebViewGroup* webViewGroup, WebKitWebView* relatedView)
+void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebView* webView, WebKitWebViewGroup* webViewGroup, WebKitUserContentManager* userContentManager, WebKitWebView* relatedView)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(webView);
     WebPageGroup* pageGroup = webViewGroup ? webkitWebViewGroupGetPageGroup(webViewGroup) : 0;
     WebPageProxy* relatedPage = relatedView ? webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(relatedView)) : nullptr;
-    webkitWebViewBaseCreateWebPage(webViewBase, context->priv->context.get(), pageGroup, relatedPage);
+    WebUserContentControllerProxy* userContentControllerProxy = userContentManager ? webkitUserContentManagerGetUserContentControllerProxy(userContentManager) : nullptr;
+    webkitWebViewBaseCreateWebPage(webViewBase, context->priv->context.get(), pageGroup, userContentControllerProxy, relatedPage);
 
     WebPageProxy* page = webkitWebViewBaseGetPage(webViewBase);
     context->priv->webViews.set(page->pageID(), webView);
