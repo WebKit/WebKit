@@ -1,3 +1,10 @@
+2014-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed build fix.
+
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj:
+        Make Common.cpp excluded from both 32-bit and 64-bit builds.
+
 2014-07-07  Simon Fraser  <simon.fraser@apple.com>
 
         Have MiniBrowser log and reload if the Web Content Process crashes
