@@ -1,5 +1,22 @@
 2014-07-08  Tim Horton  <timothy_horton@apple.com>
 
+        [WK2] Expose a few drawing/compositing settings on WKPreferences(Private)
+        https://bugs.webkit.org/show_bug.cgi?id=134645
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _compositingBordersVisible]):
+        (-[WKPreferences _setCompositingBordersVisible:]):
+        (-[WKPreferences _compositingRepaintCountersVisible]):
+        (-[WKPreferences _setCompositingRepaintCountersVisible:]):
+        (-[WKPreferences _tiledScrollingIndicatorVisible]):
+        (-[WKPreferences _setTiledScrollingIndicatorVisible:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        Expose layer borders, repaint counters, and the tiled scrolling indicator on WKPreferences, as SPI.
+
+2014-07-08  Tim Horton  <timothy_horton@apple.com>
+
         WKProcessPoolConfigurationPrivate's maximumProcessCount property has no effect
         https://bugs.webkit.org/show_bug.cgi?id=134711
 

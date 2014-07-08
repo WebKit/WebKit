@@ -39,10 +39,16 @@ typedef NS_ENUM(NSInteger, _WKStorageBlockingPolicy) {
 
 @interface WKPreferences (WKPrivate)
 
+// FIXME: This property should not have the verb "is" in it.
 @property (nonatomic, setter=_setTelephoneNumberDetectionIsEnabled:) BOOL _telephoneNumberDetectionIsEnabled;
 @property (nonatomic, setter=_setStorageBlockingPolicy:) _WKStorageBlockingPolicy _storageBlockingPolicy;
 
+@property (nonatomic, setter=_setCompositingBordersVisible:) BOOL _compositingBordersVisible;
+@property (nonatomic, setter=_setCompositingRepaintCountersVisible:) BOOL _compositingRepaintCountersVisible;
+@property (nonatomic, setter=_setTiledScrollingIndicatorVisible:) BOOL _tiledScrollingIndicatorVisible;
+
 // FIXME: This should be configured on the WKWebsiteDataStore.
+// FIXME: This property should not have the verb "is" in it.
 @property (nonatomic, setter=_setOfflineApplicationCacheIsEnabled:) BOOL _offlineApplicationCacheIsEnabled;
 
 @end

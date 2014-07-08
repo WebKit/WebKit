@@ -1915,7 +1915,7 @@ static NSString *classIBCreatorID = nil;
     return [self _boolValueForKey:WebKitSubpixelCSSOMElementMetricsEnabledPreferenceKey];
 }
 
-- (void) setSubpixelCSSOMElementMetricsEnabled:(BOOL)enabled
+- (void)setSubpixelCSSOMElementMetricsEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitSubpixelCSSOMElementMetricsEnabledPreferenceKey];
 }

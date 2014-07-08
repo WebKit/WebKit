@@ -30,6 +30,7 @@
 #import "AppDelegate.h"
 #import <WebKit/WKFrameInfo.h>
 #import <WebKit/WKNavigationDelegate.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
@@ -37,7 +38,9 @@
 
 static void* keyValueObservingContext = &keyValueObservingContext;
 static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
-static NSString * const WebKit2SubpixelCSSOMElementMetricsEnabledKey = @"WebKitSubpixelCSSOMElementMetricsEnabled";
+
+static NSString * const LayerBordersVisiblePreferenceKey = @"LayerBordersVisible";
+static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScrollingIndicatorVisibleKey";
 
 @interface WK2BrowserWindowController () <WKNavigationDelegate, WKUIDelegate>
 @end
@@ -50,8 +53,13 @@ static NSString * const WebKit2SubpixelCSSOMElementMetricsEnabledKey = @"WebKitS
 - (void)awakeFromNib
 {
     static WKWebViewConfiguration *configuration;
-    if (!configuration)
+    if (!configuration) {
         configuration = [[WKWebViewConfiguration alloc] init];
+
+        configuration.preferences._tiledScrollingIndicatorVisible = [self tiledScrollingIndicatorVisible];
+        configuration.preferences._compositingBordersVisible = [self layerBordersVisible];
+        configuration.preferences._compositingRepaintCountersVisible = [self layerBordersVisible];
+    }
     _webView = [[WKWebView alloc] initWithFrame:[containerView bounds] configuration:configuration];
 
     _webView.allowsMagnification = YES;
@@ -138,8 +146,10 @@ static NSString * const WebKit2SubpixelCSSOMElementMetricsEnabledKey = @"WebKitS
         [menuItem setState:[[self window] isOpaque] ? NSOffState : NSOnState];
     else if (action == @selector(toggleUISideCompositing:))
         [menuItem setState:[self isUISideCompositingEnabled] ? NSOnState : NSOffState];
-    else if (action == @selector(toggleSubpixelCSSOMElementMetricsEnabled:))
-        [menuItem setState:[self isSubpixelCSSOMElementMetricsEnabled] ? NSOnState : NSOffState];
+    else if (action == @selector(toggleLayerBordersVisibility:))
+        [menuItem setState:[self layerBordersVisible] ? NSOnState : NSOffState];
+    else if (action == @selector(toggleTiledScrollingIndicatorVisibility:))
+        [menuItem setState:[self tiledScrollingIndicatorVisible] ? NSOnState : NSOffState];
 
     return YES;
 }
@@ -301,16 +311,6 @@ static NSString * const WebKit2SubpixelCSSOMElementMetricsEnabledKey = @"WebKitS
     [[self window] display];    
 }
 
-- (BOOL)isSubpixelCSSOMElementMetricsEnabled
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKit2SubpixelCSSOMElementMetricsEnabledKey];
-}
-
-- (IBAction)toggleSubpixelCSSOMElementMetricsEnabled:(id)sender
-{
-    [[NSUserDefaults standardUserDefaults] setBool:![self isSubpixelCSSOMElementMetricsEnabled] forKey:WebKit2SubpixelCSSOMElementMetricsEnabledKey];
-}
-
 - (BOOL)isUISideCompositingEnabled
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:WebKit2UseRemoteLayerTreeDrawingAreaKey];
@@ -318,9 +318,32 @@ static NSString * const WebKit2SubpixelCSSOMElementMetricsEnabledKey = @"WebKitS
 
 - (IBAction)toggleUISideCompositing:(id)sender
 {
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    BOOL newValue = ![userDefaults boolForKey:WebKit2UseRemoteLayerTreeDrawingAreaKey];
-    [userDefaults setBool:newValue forKey:WebKit2UseRemoteLayerTreeDrawingAreaKey];
+    [[NSUserDefaults standardUserDefaults] setBool:![self isUISideCompositingEnabled] forKey:WebKit2UseRemoteLayerTreeDrawingAreaKey];
+}
+
+- (BOOL)layerBordersVisible
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:LayerBordersVisiblePreferenceKey];
+}
+
+- (IBAction)toggleLayerBordersVisibility:(id)sender
+{
+    BOOL newState = ![self layerBordersVisible];
+    [[NSUserDefaults standardUserDefaults] setBool:newState forKey:LayerBordersVisiblePreferenceKey];
+    _webView.configuration.preferences._compositingBordersVisible = newState;
+    _webView.configuration.preferences._compositingRepaintCountersVisible = newState;
+}
+
+- (BOOL)tiledScrollingIndicatorVisible
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:TiledScrollingIndicatorVisiblePreferenceKey];
+}
+
+- (IBAction)toggleTiledScrollingIndicatorVisibility:(id)sender
+{
+    BOOL newState = ![self tiledScrollingIndicatorVisible];
+    [[NSUserDefaults standardUserDefaults] setBool:newState forKey:TiledScrollingIndicatorVisiblePreferenceKey];
+    _webView.configuration.preferences._tiledScrollingIndicatorVisible = newState;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context

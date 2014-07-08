@@ -136,6 +136,8 @@
         [menuItem setState:[[self window] isOpaque] ? NSOffState : NSOnState];
     else if (action == @selector(toggleSubpixelCSSOMElementMetricsEnabled:))
         [menuItem setState:[self isSubpixelCSSOMElementMetricsEnabled] ? NSOnState : NSOffState];
+    else if (action == @selector(toggleLayerBordersVisibility:))
+        [menuItem setState:[self layerBordersVisible] ? NSOnState : NSOffState];
 
     return YES;
 }
@@ -263,6 +265,18 @@
 - (IBAction)toggleSubpixelCSSOMElementMetricsEnabled:(id)sender
 {
     [[WebPreferences standardPreferences] setSubpixelCSSOMElementMetricsEnabled:![self isSubpixelCSSOMElementMetricsEnabled]];
+}
+
+- (BOOL)layerBordersVisible
+{
+    return [[WebPreferences standardPreferences] showDebugBorders];
+}
+
+- (IBAction)toggleLayerBordersVisibility:(id)sender
+{
+    BOOL newValue = ![self layerBordersVisible];
+    [[WebPreferences standardPreferences] setShowDebugBorders:newValue];
+    [[WebPreferences standardPreferences] setShowRepaintCounter:newValue];
 }
 
 - (IBAction)find:(id)sender

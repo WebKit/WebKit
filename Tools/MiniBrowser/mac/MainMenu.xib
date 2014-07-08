@@ -469,6 +469,18 @@
                                     <action selector="toggleUISideCompositing:" target="-1" id="1Ed-C5-0po"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Layer Borders" id="00T-EI-Wqj">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleLayerBordersVisibility:" target="-1" id="gmt-1Z-XcQ"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Tiled Scrolling Indicator" id="iBU-Yy-GuV">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleTiledScrollingIndicatorVisibility:" target="-1" id="RJB-dt-xSR"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Enable Sub-Pixel offsetWidth etc." state="on" id="8X5-i6-t2d">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
