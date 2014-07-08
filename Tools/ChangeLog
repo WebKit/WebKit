@@ -1,3 +1,12 @@
+2014-07-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Add myself to the watchlist for text-related files
+        https://bugs.webkit.org/show_bug.cgi?id=134707
+
+        Reviewed by Timothy Horton.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2014-07-08  Gergo Balogh  <gbalogh.u-szeged@partner.samsung.com>
 
         Add option to specify output file location in sunspider.

@@ -289,6 +289,28 @@
                         r"|LayoutTests/media/encrypted-media/"
                         r"|LayoutTests/media/media-source/",
         },
+        "MacAndIOSTextLayoutAndRendering": {
+            "filename": r"Source/WebCore/rendering/.*Inline.*Box\.(h|cpp)"
+                        r"|Source/WebCore/rendering/InlineIterator\.h"
+                        r"|Source/WebCore/rendering/InlineBlockLineLayout\.cpp"
+                        r"|Source/WebCore/rendering/RenderCombineText\.(h|cpp)"
+                        r"|Source/WebCore/rendering/RenderText.*\.(h|cpp)"
+                        r"|Source/WebCore/rendering/SimpleLineLayout\.(h|cpp)"
+                        r"|Source/WebCore/rendering/TextPainter\.(h|cpp)"
+                        r"|Source/WebCore/rendering/line/BreakingContextInlineHeaders\.(h|cpp)"
+                        r"|Source/WebCore/rendering/line/TrailingObjects\.(h|cpp)"
+                        r"|Source/WebCore/style/InlineTextBoxStyle\.(h|cpp)"
+                        r"|Source/WebCore/platform/graphics/.*Font.*"
+                        r"|Source/WebCore/platform/graphics/mac/.*Font.*"
+                        r"|Source/WebCore/platform/graphics/mac/.*Text.*"
+                        r"|Source/WebCore/platform/graphics/ios/.*Font.*"
+                        r"|Source/WebCore/platform/graphics/cocoa/.*Font.*"
+                        r"|Source/WebCore/platform/graphics/GlyphBuffer\.h"
+                        r"|Source/WebCore/platform/graphics/.*TextIterator\.(h|cpp)"
+                        r"|Source/WebCore/platform/graphics/TextRun\.(h|cpp)"
+                        r"|Source/WebCore/platform/graphics/WidthIterator\.(h|cpp)"
+                        r"|Source/WebCore/platform/text/BidiResolver.h",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -326,6 +348,7 @@
         "HTML": [ "esprehn+autocc@chromium.org", "gyuyoung.kim@webkit.org" ],
         "IndexedDB": [ "alecflett@chromium.org", "jsbell@chromium.org" ],
         "Loader": [ "japhet@chromium.org" ],
+        "MacAndIOSTextLayoutAndRendering": [ "mmaxfield@apple.com" ],
         "MathML": [ "dbarton@mathscribe.com", "mrobinson@webkit.org", "fred.wang@free.fr" ],
         "Media": [ "eric.carlson@apple.com", "jer.noble@apple.com", "glenn@skynav.com", "philipj@opera.com", "sergio.correia@openbossa.org" ],
         "MSEEME": [ "eric.carlson@apple.com", "calvaris@igalia.com" ],
