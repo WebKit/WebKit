@@ -254,10 +254,11 @@ bool RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight() const
     if (cb->isRenderView())
         return false;
 
-    if (!cb->style().logicalHeight().isAuto() || (!cb->style().logicalTop().isAuto() && !cb->style().logicalBottom().isAuto()))
+    if (cb->isOutOfFlowPositioned() && !cb->style().logicalTop().isAuto() && !cb->style().logicalBottom().isAuto())
         return false;
 
-    return true;
+    // If the height of the containing block computes to 'auto', then it hasn't been 'specified explictly'.
+    return cb->hasAutoHeightOrContainingBlockWithAutoHeight();
 }
 
 LayoutSize RenderBoxModelObject::relativePositionOffset() const

@@ -1,0 +1,4 @@
+
+
+PASS Inapplicable |top| and |bottom| specified style shouldn't affect height calculation 
+

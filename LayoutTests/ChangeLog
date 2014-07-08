@@ -1,3 +1,16 @@
+2014-07-08  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Ensure we compute the height of replaced elements to 'auto' when appropriate.
+        https://bugs.webkit.org/show_bug.cgi?id=134700
+
+        Reviewed by David Hyatt.
+
+        * css2.1/20110323/height-percentage-005-expected.html: Added.
+        * css2.1/20110323/height-percentage-005.htm: Added.
+        * css2.1/20110323/support/black96x96.png: Added.
+        * fast/css/replaced-element-ignore-top-bottom-expected.txt: Added.
+        * fast/css/replaced-element-ignore-top-bottom.html: Added.
+
 2014-07-07  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: icloud.com password arrow has clipped circle at some window sizes.

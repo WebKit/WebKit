@@ -1,3 +1,31 @@
+2014-07-08  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Ensure we compute the height of replaced elements to 'auto' when appropriate.
+        https://bugs.webkit.org/show_bug.cgi?id=134700
+
+        Reviewed by David Hyatt.
+
+        This fixes two issues:
+
+        1) If a replaced element has a percentage height specified then its
+        height should compute to 'auto' when its containing block does not
+        have a height 'specified explicitly'. We were taking this to mean when
+        its containing block's specified height value is 'auto' - in fact it
+        means when the containing block's computed height is auto.
+
+        2) Top and bottom on the containing block should only affect the
+        height of the block if that block has absolute or fixed position.
+
+        This brings us into line with IE, Firefox, and Chrome.
+
+        This is a port of Blink patches by Rob Hogan and David Vest.
+
+        Tests: css2.1/20110323/height-percentage-005.htm
+               fast/css/replaced-element-ignore-top-bottom.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight):
+
 2014-07-08  Alex Christensen  <achristensen@webkit.org>
 
         Added css jit profiler, disabled by default.
