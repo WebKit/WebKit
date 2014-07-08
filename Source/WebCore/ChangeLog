@@ -1,3 +1,18 @@
+2014-07-07  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: icloud.com password arrow has clipped circle at some window sizes.
+        https://bugs.webkit.org/show_bug.cgi?id=134710
+        <rdar://problem/17545291>
+
+        Reviewed by Simon Fraser.
+
+        Transparent layer clipping needs device pixel snapping.
+
+        Test: fast/layers/wrong-clipping-semi-transparent-layer-on-subpixel-position.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::beginTransparencyLayers):
+
 2014-07-07  Benjamin Poulain  <benjamin@webkit.org>
 
         LinkBuffer should not keep a reference to the MacroAssembler

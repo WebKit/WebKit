@@ -1661,8 +1661,8 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext* context, const Render
     if (paintsWithTransparency(paintBehavior)) {
         m_usedTransparency = true;
         context->save();
-        LayoutRect clipRect = paintingExtent(*this, rootLayer, paintDirtyRect, paintBehavior);
-        context->clip(clipRect);
+        FloatRect pixelSnappedClipRect = pixelSnappedForPainting(paintingExtent(*this, rootLayer, paintDirtyRect, paintBehavior), renderer().document().deviceScaleFactor());
+        context->clip(pixelSnappedClipRect);
 
 #if ENABLE(CSS_COMPOSITING)
         if (hasBlendMode())
@@ -1678,7 +1678,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext* context, const Render
 
 #ifdef REVEAL_TRANSPARENCY_LAYERS
         context->setFillColor(Color(0.0f, 0.0f, 0.5f, 0.2f), ColorSpaceDeviceRGB);
-        context->fillRect(clipRect);
+        context->fillRect(pixelSnappedClipRect);
 #endif
     }
 }
