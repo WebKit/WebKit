@@ -178,7 +178,7 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     if (style.font().codePath(TextRun(textRenderer.text())) != Font::Simple)
         return false;
-    if (style.font().isSVGFont())
+    if (style.font().primaryFont()->isSVGFont())
         return false;
 
     // We assume that all lines have metrics based purely on the primary font.

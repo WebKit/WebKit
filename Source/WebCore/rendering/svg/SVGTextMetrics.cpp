@@ -70,7 +70,7 @@ TextRun SVGTextMetrics::constructTextRun(RenderSVGInlineText& text, unsigned pos
                 , style.direction()
                 , isOverride(style.unicodeBidi()) /* directionalOverride */);
 
-    if (style.font().isSVGFont())
+    if (style.font().primaryFont()->isSVGFont())
         run.setRenderingContext(SVGTextRunRenderingContext::create(text));
 
     run.disableRoundingHacks();
@@ -91,7 +91,7 @@ SVGTextMetrics SVGTextMetrics::measureCharacterRange(RenderSVGInlineText& text, 
 
 SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText& text, unsigned position, unsigned length, float width, const String& glyphName)
 {
-    bool needsContext = text.style().font().isSVGFont();
+    bool needsContext = text.style().font().primaryFont()->isSVGFont();
     float scalingFactor = text.scalingFactor();
     ASSERT(scalingFactor);
 

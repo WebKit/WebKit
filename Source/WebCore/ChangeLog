@@ -1,3 +1,33 @@
+2014-07-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove misleadingly-named Font::isSVGFont()
+        https://bugs.webkit.org/show_bug.cgi?id=134697
+
+        Reviewed by Dean Jackson.
+
+        Being a SVG font is a property of the FontData object, not
+        the Font object. Providing an isSVGFont() function on the
+        Font class will likely lead to incorrect code and non-obvious
+        bugs.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::isSVGFont): Deleted.
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::primaryFontDataIsSystemFont):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::constructTextRun):
+        * rendering/RenderBlock.cpp:
+        (WebCore::constructTextRunInternal):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::constructTextRun):
+        * rendering/svg/SVGTextMetrics.cpp:
+        (WebCore::SVGTextMetrics::constructTextRun):
+        (WebCore::SVGTextMetrics::SVGTextMetrics):
+
 2014-07-07  Brady Eidson  <beidson@apple.com>
 
         Move Gamepad index down into PlatformGamepad.
