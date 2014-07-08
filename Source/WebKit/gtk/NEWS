@@ -1,4 +1,23 @@
 =================
+WebKitGTK+  2.4.4
+=================
+
+What's new in WebKitGTK+ 2.4.4?
+
+  - Fix annoying popup shown when visiting 8tracks.com.
+  - Expose links rendered as blocks to accessibility.
+  - Make text inside "span" block in "a" block accessible.
+  - Implement windowed plugins visibility.
+  - Fix the GObject introspection annotations of webkit_web_resource_get_data_finish().
+  - Fix a crash in TSymbolTableLevel::~TSymbolTableLevel when WebKit
+    is built with GCC 4.9.
+  - Fix a crash when playing a video in facebook.
+  - Several user agent changes to fix Google Maps and a few other issues.
+  - Allo to include WebKitVersion.h from web extensions API too.
+  - Fix web process leak when closing pages with network process enabled.
+  - Fix the build with --disable-webgl --disable-accelerated-compositing.
+
+=================
 WebKitGTK+  2.4.3
 =================
 
