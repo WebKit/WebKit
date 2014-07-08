@@ -1,3 +1,32 @@
+2014-07-08  Alex Christensen  <achristensen@webkit.org>
+
+        Added css jit profiler, disabled by default.
+        https://bugs.webkit.org/show_bug.cgi?id=134695
+
+        Reviewed by Benjamin Poulain.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ruleMatches):
+        Tell the RuleData when its compiled selector is used.
+        * css/RuleSet.cpp:
+        (WebCore::RuleData::RuleData):
+        Initialize the compiled selector use count to 0.
+        * css/RuleSet.h:
+        (WebCore::RuleData::~RuleData):
+        (WebCore::RuleData::compiledSelectorUsed):
+        Count and log the number of times a compiled selector is used.
+        * cssjit/SelectorCompiler.h:
+        Added option for CSS_SELECTOR_JIT_PROFILING set to 0 by default.
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::executeCompiledSimpleSelectorChecker):
+        (WebCore::SelectorDataList::execute):
+        Tell the SelectorData when its compiled selector is used.
+        * dom/SelectorQuery.h:
+        (WebCore::SelectorDataList::SelectorData::SelectorData):
+        (WebCore::SelectorDataList::SelectorData::~SelectorData):
+        (WebCore::SelectorDataList::SelectorData::compiledSelectorUsed):
+        Count and log the number of times a compiled selector is used.
+
 2014-07-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GObject DOM bindings API breaks test after r170700.

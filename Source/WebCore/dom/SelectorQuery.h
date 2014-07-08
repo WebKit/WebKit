@@ -32,6 +32,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -55,6 +56,9 @@ private:
     struct SelectorData {
         SelectorData(const CSSSelector* selector, bool isFastCheckable)
             : selector(selector)
+#if CSS_SELECTOR_JIT_PROFILING
+            , m_compiledSelectorUseCount(0)
+#endif
             , isFastCheckable(isFastCheckable)
         {
         }
@@ -63,6 +67,15 @@ private:
 #if ENABLE(CSS_SELECTOR_JIT)
         mutable JSC::MacroAssemblerCodeRef compiledSelectorCodeRef;
         mutable SelectorCompilationStatus compilationStatus;
+#if CSS_SELECTOR_JIT_PROFILING
+        ~SelectorData()
+        {
+            if (compiledSelectorCodeRef.code().executableAddress())
+                dataLogF("SelectorData compiled selector %d \"%s\"\n", m_compiledSelectorUseCount, selector->selectorText().utf8().data());
+        }
+        mutable unsigned m_compiledSelectorUseCount;
+        void compiledSelectorUsed() const { m_compiledSelectorUseCount++; }
+#endif
 #endif // ENABLE(CSS_SELECTOR_JIT)
         bool isFastCheckable;
     };
@@ -76,7 +89,7 @@ private:
     template <typename SelectorQueryTrait> void executeSingleSelectorData(const ContainerNode& rootNode, const SelectorData&, typename SelectorQueryTrait::OutputType&) const;
     template <typename SelectorQueryTrait> void executeSingleMultiSelectorData(const ContainerNode& rootNode, typename SelectorQueryTrait::OutputType&) const;
 #if ENABLE(CSS_SELECTOR_JIT)
-    template <typename SelectorQueryTrait> void executeCompiledSimpleSelectorChecker(const ContainerNode& rootNode, SelectorCompiler::SimpleSelectorChecker, typename SelectorQueryTrait::OutputType&) const;
+    template <typename SelectorQueryTrait> void executeCompiledSimpleSelectorChecker(const ContainerNode& rootNode, SelectorCompiler::SimpleSelectorChecker, typename SelectorQueryTrait::OutputType&, const SelectorData&) const;
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
     Vector<SelectorData> m_selectors;

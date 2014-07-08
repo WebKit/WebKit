@@ -29,6 +29,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/AtomicString.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -85,6 +86,14 @@ public:
         m_compilationStatus = status;
         m_compiledSelectorCodeRef = codeRef;
     }
+#if CSS_SELECTOR_JIT_PROFILING
+    ~RuleData()
+    {
+        if (m_compiledSelectorCodeRef.code().executableAddress())
+            dataLogF("RuleData compiled selector %d \"%s\"\n", m_compiledSelectorUseCount, selector()->selectorText().utf8().data());
+    }
+    void compiledSelectorUsed() const { m_compiledSelectorUseCount++; }
+#endif
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
 private:
@@ -106,6 +115,9 @@ private:
 #if ENABLE(CSS_SELECTOR_JIT)
     mutable SelectorCompilationStatus m_compilationStatus;
     mutable JSC::MacroAssemblerCodeRef m_compiledSelectorCodeRef;
+#if CSS_SELECTOR_JIT_PROFILING
+    mutable unsigned m_compiledSelectorUseCount;
+#endif
 #endif // ENABLE(CSS_SELECTOR_JIT)
 };
     
@@ -114,6 +126,9 @@ struct SameSizeAsRuleData {
     unsigned compilationStatus;
     void* compiledSelectorPointer;
     void* codeRefPtr;
+#if CSS_SELECTOR_JIT_PROFILING
+    unsigned compiledSelectorUseCount;
+#endif
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
     void* a;
