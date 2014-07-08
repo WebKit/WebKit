@@ -34,9 +34,8 @@
 #import "RemoteInspectorDebuggableConnection.h"
 #import <Foundation/Foundation.h>
 #import <notify.h>
-#import <wtf/NeverDestroyed.h>
 #import <wtf/Assertions.h>
-#import <wtf/MainThread.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/text/WTFString.h>
 #import <xpc/xpc.h>
 
@@ -72,7 +71,6 @@ RemoteInspector& RemoteInspector::shared()
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         JSC::initializeThreading();
-        WTF::initializeMainThread();
         if (RemoteInspector::startEnabled)
             shared.get().start();
     });

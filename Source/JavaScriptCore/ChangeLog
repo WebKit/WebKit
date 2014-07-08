@@ -1,3 +1,16 @@
+2014-07-08  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        RemoteInspector::shared() should not call WTF::initializeMainThread()
+        <https://bugs.webkit.org/show_bug.cgi?id=134747>
+        <rdar://problem/17161482>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::shared):
+        Don't call WTF::initializeMainThread(). WTF threading is initialized by
+        JSC::initializeThreading().
+
 2014-07-08  Andreas Kling  <akling@apple.com>
 
         VM::lastCachedString should be a Strong, not a Weak.
