@@ -242,6 +242,12 @@ sub gitDirectory()
     return $result;
 }
 
+sub gitTreeDirectory()
+{
+    chomp(my $result = `git rev-parse --show-toplevel`);
+    return $result;
+}
+
 sub gitBisectStartBranch()
 {
     my $bisectStartFile = File::Spec->catfile(gitDirectory(), "BISECT_START");
@@ -375,7 +381,9 @@ sub determineSVNRoot()
 sub determineVCSRoot()
 {
     if (isGit()) {
-        return dirname(gitDirectory());
+        # This is the working tree root. If WebKit is a submodule,
+        # then the relevant metadata directory is somewhere else.
+        return gitTreeDirectory();
     }
 
     if (!isSVN()) {

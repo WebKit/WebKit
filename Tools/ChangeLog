@@ -1,3 +1,22 @@
+2014-07-08  Brian J. Burg  <burg@cs.washington.edu>
+
+        resolve-ChangeLogs fails when WebKit repository is a git submodule
+        https://bugs.webkit.org/show_bug.cgi?id=134734
+
+        Reviewed by David Kilzer.
+
+        When using resolve-ChangeLogs in a WebKit git repository with a
+        non-default arrangement of GIT_DIR and GIT_WORK_TREE, incorrect
+        paths are computed and the script fails mysteriously.
+
+        We were naively computing GIT_WORK_TREE as being one level above
+        GIT_DIR, but this is not the case for submodules or a manually
+        configured GIT_WORK_TREE or GIT_DIR location.
+
+        * Scripts/VCSUtils.pm:
+        (gitTreeDirectory): Added. Find the equivalent of GIT_WORK_TREE.
+        (determineVCSRoot): Calculate the working tree root directly.
+
 2014-07-08  Tim Horton  <timothy_horton@apple.com>
 
         [WK2] Expose a few drawing/compositing settings on WKPreferences(Private)
