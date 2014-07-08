@@ -1,3 +1,12 @@
+2014-07-08  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Update policy for Inactive Committer and Reviewer status
+        https://bugs.webkit.org/show_bug.cgi?id=134403
+
+        Reviewed by Nico Weber.
+
+        * coding/commit-review-policy.html:
+
 2014-06-26  Vivek Galatage  <vivek.vg@samsung.com>
 
         Remove Qt instructions from http://www.webkit.org/building/tools.html 
