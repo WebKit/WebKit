@@ -1,3 +1,23 @@
+2014-07-07  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Inline box decoration rounds to integral.
+        https://bugs.webkit.org/show_bug.cgi?id=134523
+        <rdar://problem/17530298>
+
+        Reviewed by Darin Adler.
+
+        This patch removes 2 integral roundings from InlineFlowBox:
+        1. Border and padding sizes are implicitly integral truncated by the 'int' return type
+           of borderLogicalLeft/Right()/paddingLogicalLeft/Right(). It results in losing
+           fractional border/padding values.
+        2. Painting rectangle is explicitly rounded which pushes border and
+           other decoration elements to odd device pixel positions on retina displays.
+        These values get pixel snapped right before calling in to GraphicsContext::*.
+
+        * fast/inline/hidpi-inline-text-decoration-with-subpixel-value-expected.html: Added.
+        * fast/inline/hidpi-inline-text-decoration-with-subpixel-value.html: Added.
+        * platform/mac/css1/formatting_model/inline_elements-expected.txt:
+
 2014-07-07  Hunseop Jeong  <hs85.jeong@samsung.com>
         [EFL] gardening after r170864
         https://bugs.webkit.org/show_bug.cgi?id=134713

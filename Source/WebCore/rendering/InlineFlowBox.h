@@ -113,8 +113,6 @@ public:
 
     virtual void clearTruncation() override;
 
-    IntRect roundedFrameRect() const;
-    
     void paintBoxDecorations(PaintInfo&, const LayoutPoint&);
     void paintMask(PaintInfo&, const LayoutPoint&);
     void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, const LayoutRect&, CompositeOperator = CompositeSourceOver);
@@ -140,25 +138,25 @@ public:
             return 0;
         return isHorizontal() ? renderer().marginRight() : renderer().marginBottom();
     }
-    int borderLogicalLeft() const
+    float borderLogicalLeft() const
     {
         if (!includeLogicalLeftEdge())
             return 0;
         return isHorizontal() ? lineStyle().borderLeftWidth() : lineStyle().borderTopWidth();
     }
-    int borderLogicalRight() const
+    float borderLogicalRight() const
     {
         if (!includeLogicalRightEdge())
             return 0;
         return isHorizontal() ? lineStyle().borderRightWidth() : lineStyle().borderBottomWidth();
     }
-    int paddingLogicalLeft() const
+    float paddingLogicalLeft() const
     {
         if (!includeLogicalLeftEdge())
             return 0;
         return isHorizontal() ? renderer().paddingLeft() : renderer().paddingTop();
     }
-    int paddingLogicalRight() const
+    float paddingLogicalRight() const
     {
         if (!includeLogicalRightEdge())
             return 0;

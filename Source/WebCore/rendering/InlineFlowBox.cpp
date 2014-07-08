@@ -78,18 +78,6 @@ LayoutUnit InlineFlowBox::getFlowSpacingLogicalWidth()
     return totWidth;
 }
 
-IntRect InlineFlowBox::roundedFrameRect() const
-{
-    // Begin by snapping the x and y coordinates to the nearest pixel.
-    int snappedX = lroundf(x());
-    int snappedY = lroundf(y());
-    
-    int snappedMaxX = lroundf(x() + width());
-    int snappedMaxY = lroundf(y() + height());
-    
-    return IntRect(snappedX, snappedY, snappedMaxX - snappedX, snappedMaxY - snappedY);
-}
-
 static void setHasTextDescendantsOnAncestors(InlineFlowBox* box)
 {
     while (box && !box->hasTextDescendants()) {
@@ -1061,7 +1049,7 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     // Do not hittest content beyond the ellipsis box.
     if (isRootInlineBox() && hasEllipsisBox()) {
         const EllipsisBox* ellipsisBox = root().ellipsisBox();
-        LayoutRect boundsRect(roundedFrameRect());
+        FloatRect boundsRect(frameRect());
 
         if (isHorizontal())
             renderer().style().isLeftToRightDirection() ? boundsRect.shiftXEdgeTo(ellipsisBox->right()) : boundsRect.setWidth(ellipsisBox->left() - left());
@@ -1075,25 +1063,19 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
             return false;
     }
 
-    LayoutRect frameRect = roundedFrameRect();
-    LayoutUnit minX = frameRect.x();
-    LayoutUnit minY = frameRect.y();
-    LayoutUnit width = frameRect.width();
-    LayoutUnit height = frameRect.height();
-
     // Constrain our hit testing to the line top and bottom if necessary.
     bool noQuirksMode = renderer().document().inNoQuirksMode();
     if (!noQuirksMode && !hasTextChildren() && !(descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants())) {
         RootInlineBox& rootBox = root();
-        LayoutUnit& top = isHorizontal() ? minY : minX;
-        LayoutUnit& logicalHeight = isHorizontal() ? height : width;
+        LayoutUnit top = isHorizontal() ? y() : x();
+        LayoutUnit logicalHeight = isHorizontal() ? height() : width();
         LayoutUnit bottom = std::min(rootBox.lineBottom(), top + logicalHeight);
         top = std::max(rootBox.lineTop(), top);
         logicalHeight = bottom - top;
     }
 
     // Move x/y to our coordinates.
-    LayoutRect rect(minX, minY, width, height);
+    FloatRect rect(frameRect());
     flipForWritingMode(rect);
     rect.moveBy(accumulatedOffset);
 
@@ -1302,9 +1284,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
     if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != VISIBLE || paintInfo.phase != PaintPhaseForeground)
         return;
 
-    // Pixel snap background/border painting.
-    LayoutRect frameRect = roundedFrameRect();
-
+    LayoutRect frameRect(this->frameRect());
     constrainToLineTopAndBottomIfNeeded(frameRect);
     
     // Move x/y to our coordinates.
@@ -1376,9 +1356,7 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
         return;
 
-    // Pixel snap mask painting.
-    LayoutRect frameRect = roundedFrameRect();
-
+    LayoutRect frameRect(this->frameRect());
     constrainToLineTopAndBottomIfNeeded(frameRect);
     
     // Move x/y to our coordinates.
