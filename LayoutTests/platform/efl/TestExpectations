@@ -2079,6 +2079,8 @@ webkit.org/b/131987 fast/inline/hidpi-selection-gap-on-subpixel-position.html [ 
 webkit.org/b/131987 fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
 webkit.org/b/131987 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]
 webkit.org/b/131987 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
+webkit.org/b/131987 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
+webkit.org/b/131987 svg/text/hidpi-text-selection-rect-position.html [ ImageOnlyFailure ]
 
 webkit.org/b/132049 fast/css3-text/css3-text-decoration/text-decoration-skip/glyph-inside-underline.html [ ImageOnlyFailure ]
 
@@ -2146,3 +2148,7 @@ webkit.org/b/133859 fast/regions/inline-block-inside-anonymous-overflow.html [ I
 webkit.org/b/133860 fast/regions/auto-size/autosize-region-window-resize.html [ ImageOnlyFailure Pass ]
 webkit.org/b/133974 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-svg.html [ ImageOnlyFailure Pass ]
 
+# Difference invisible at the naked eye with Latin Modern Math.
+webkit.org/b/134153 mathml/presentation/mo-stacked-glyphs.html [ ImageOnlyFailure ]
+
+webkit.org/b/134712 svg/masking/mask-transformed-text-missing.svg [ ImageOnlyFailure ]
