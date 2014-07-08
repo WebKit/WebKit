@@ -34,9 +34,9 @@
 
 namespace WebCore {
 
-Gamepad::Gamepad(const PlatformGamepad& platformGamepad, unsigned index)
+Gamepad::Gamepad(const PlatformGamepad& platformGamepad)
     : m_id(platformGamepad.id())
-    , m_index(index)
+    , m_index(platformGamepad.index())
     , m_connected(true)
     , m_timestamp(platformGamepad.lastUpdateTime())
 {

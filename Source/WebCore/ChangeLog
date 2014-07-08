@@ -1,3 +1,45 @@
+2014-07-07  Brady Eidson  <beidson@apple.com>
+
+        Move Gamepad index down into PlatformGamepad.
+        https://bugs.webkit.org/show_bug.cgi?id=134670
+
+        Reviewed by Darin Adler.
+
+        PlatformGamepads always have an inherent index anyways.
+        This will make things easier in all upcoming work.
+
+        * Modules/gamepad/Gamepad.cpp:
+        (WebCore::Gamepad::Gamepad):
+        * Modules/gamepad/Gamepad.h:
+
+        * Modules/gamepad/GamepadManager.cpp:
+        (WebCore::GamepadManager::platformGamepadConnected):
+        (WebCore::GamepadManager::platformGamepadDisconnected):
+        (WebCore::GamepadManager::makeGamepadsVisibileToBlindNavigators):
+        * Modules/gamepad/GamepadManager.h:
+
+        * Modules/gamepad/NavigatorGamepad.cpp:
+        (WebCore::NavigatorGamepad::gamepadsBecameVisible):
+        (WebCore::NavigatorGamepad::gamepadConnected):
+        (WebCore::NavigatorGamepad::gamepadDisconnected):
+        * Modules/gamepad/NavigatorGamepad.h:
+
+        * platform/GamepadProviderClient.h:
+
+        * platform/PlatformGamepad.h:
+        (WebCore::PlatformGamepad::index):
+        (WebCore::PlatformGamepad::PlatformGamepad):
+
+        * platform/mac/HIDGamepad.cpp:
+        (WebCore::HIDGamepad::HIDGamepad):
+        * platform/mac/HIDGamepad.h:
+
+        * platform/mac/HIDGamepadProvider.cpp:
+        (WebCore::HIDGamepadProvider::deviceAdded):
+        (WebCore::HIDGamepadProvider::deviceRemoved):
+        (WebCore::HIDGamepadProvider::removeGamepadForDevice):
+        * platform/mac/HIDGamepadProvider.h:
+
 2014-07-07  Simon Fraser  <simon.fraser@apple.com>
 
         [UI-side compositing] Support reflections on custom layers like video

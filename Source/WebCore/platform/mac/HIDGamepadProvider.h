@@ -59,7 +59,7 @@ public:
 private:
     HIDGamepadProvider();
 
-    std::pair<std::unique_ptr<HIDGamepad>, unsigned> removeGamepadForDevice(IOHIDDeviceRef);
+    std::unique_ptr<HIDGamepad> removeGamepadForDevice(IOHIDDeviceRef);
 
     void openAndScheduleManager();
     void closeAndUnscheduleManager();

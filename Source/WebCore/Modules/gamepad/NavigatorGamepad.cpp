@@ -106,11 +106,11 @@ void NavigatorGamepad::gamepadsBecameVisible()
         if (!platformGamepads[i])
             continue;
 
-        m_gamepads[i] = Gamepad::create(*platformGamepads[i], i);
+        m_gamepads[i] = Gamepad::create(*platformGamepads[i]);
     }
 }
 
-void NavigatorGamepad::gamepadConnected(unsigned index)
+void NavigatorGamepad::gamepadConnected(PlatformGamepad& platformGamepad)
 {
     // If this is the first gamepad this Navigator object has seen, then all gamepads just became visible.
     if (m_gamepads.isEmpty()) {
@@ -118,29 +118,28 @@ void NavigatorGamepad::gamepadConnected(unsigned index)
         return;
     }
 
+    unsigned index = platformGamepad.index();
+    ASSERT(GamepadProvider::shared().platformGamepads()[index] == &platformGamepad);
+
     // The new index should already fit in the existing array, or should be exactly one past-the-end of the existing array.
     ASSERT(index <= m_gamepads.size());
 
-    const Vector<PlatformGamepad*>& platformGamepads = GamepadProvider::shared().platformGamepads();
-    ASSERT(index < platformGamepads.size());
-    ASSERT(platformGamepads[index]);
-
     if (index < m_gamepads.size())
-        m_gamepads[index] = Gamepad::create(*platformGamepads[index], index);
+        m_gamepads[index] = Gamepad::create(platformGamepad);
     else if (index == m_gamepads.size())
-        m_gamepads.append(Gamepad::create(*platformGamepads[index], index));
+        m_gamepads.append(Gamepad::create(platformGamepad));
 }
 
-void NavigatorGamepad::gamepadDisconnected(unsigned index)
+void NavigatorGamepad::gamepadDisconnected(PlatformGamepad& platformGamepad)
 {
     // If this Navigator hasn't seen any gamepads yet its Vector will still be empty.
     if (!m_gamepads.size())
         return;
 
-    ASSERT(index < m_gamepads.size());
-    ASSERT(m_gamepads[index]);
+    ASSERT(platformGamepad.index() < m_gamepads.size());
+    ASSERT(m_gamepads[platformGamepad.index()]);
 
-    m_gamepads[index] = nullptr;
+    m_gamepads[platformGamepad.index()] = nullptr;
 }
 
 } // namespace WebCore

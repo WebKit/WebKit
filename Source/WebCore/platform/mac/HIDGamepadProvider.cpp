@@ -169,8 +169,8 @@ void HIDGamepadProvider::deviceAdded(IOHIDDeviceRef device)
 
     LOG(Gamepad, "HIDGamepadProvider device %p added", device);
 
-    std::unique_ptr<HIDGamepad> gamepad = std::make_unique<HIDGamepad>(device);
     unsigned index = indexForNewlyConnectedDevice();
+    std::unique_ptr<HIDGamepad> gamepad = std::make_unique<HIDGamepad>(device, index);
 
     if (m_gamepadVector.size() <= index)
         m_gamepadVector.resize(index + 1);
@@ -192,22 +192,22 @@ void HIDGamepadProvider::deviceAdded(IOHIDDeviceRef device)
     }
 
     for (auto& client : m_clients)
-        client->platformGamepadConnected(index);
+        client->platformGamepadConnected(*m_gamepadVector[index]);
 }
 
 void HIDGamepadProvider::deviceRemoved(IOHIDDeviceRef device)
 {
     LOG(Gamepad, "HIDGamepadProvider device %p removed", device);
 
-    std::pair<std::unique_ptr<HIDGamepad>, unsigned> removedGamepad = removeGamepadForDevice(device);
-    ASSERT(removedGamepad.first);
+    std::unique_ptr<HIDGamepad> removedGamepad = removeGamepadForDevice(device);
+    ASSERT(removedGamepad);
 
     // Any time we get a device removed callback we know it's a real event and not an 'already connected' event.
     // We should always stop supressing callbacks when we receive such an event.
     m_shouldDispatchCallbacks = true;
 
     for (auto& client : m_clients)
-        client->platformGamepadDisconnected(removedGamepad.second);
+        client->platformGamepadDisconnected(*removedGamepad);
 }
 
 void HIDGamepadProvider::valuesChanged(IOHIDValueRef value)
@@ -237,19 +237,14 @@ void HIDGamepadProvider::inputNotificationTimerFired(Timer<HIDGamepadProvider>&)
         client->platformGamepadInputActivity();
 }
 
-std::pair<std::unique_ptr<HIDGamepad>, unsigned>  HIDGamepadProvider::removeGamepadForDevice(IOHIDDeviceRef device)
+std::unique_ptr<HIDGamepad> HIDGamepadProvider::removeGamepadForDevice(IOHIDDeviceRef device)
 {
-    std::pair<std::unique_ptr<HIDGamepad>, unsigned> result;
-    result.first = m_gamepadMap.take(device);
-    ASSERT(result.first);
+    std::unique_ptr<HIDGamepad> result = m_gamepadMap.take(device);
+    ASSERT(result);
 
-    for (unsigned i = 0; i < m_gamepadVector.size(); ++i) {
-        if (m_gamepadVector[i] == result.first.get()) {
-            result.second = i;
-            m_gamepadVector[i] = nullptr;
-            break;
-        }
-    }
+    auto i = m_gamepadVector.find(result.get());
+    if (i != notFound)
+        m_gamepadVector[i] = nullptr;
 
     return result;
 }

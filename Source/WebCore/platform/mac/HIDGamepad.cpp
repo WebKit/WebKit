@@ -37,8 +37,9 @@
 
 namespace WebCore {
 
-HIDGamepad::HIDGamepad(IOHIDDeviceRef hidDevice)
-    : m_hidDevice(hidDevice)
+HIDGamepad::HIDGamepad(IOHIDDeviceRef hidDevice, unsigned index)
+    : PlatformGamepad(index)
+    , m_hidDevice(hidDevice)
 {
     m_connectTime = m_lastUpdateTime = monotonicallyIncreasingTime();
 

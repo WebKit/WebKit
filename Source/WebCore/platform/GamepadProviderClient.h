@@ -30,12 +30,14 @@
 
 namespace WebCore {
 
+class PlatformGamepad;
+
 class GamepadProviderClient {
 public:
     virtual ~GamepadProviderClient() { }
 
-    virtual void platformGamepadConnected(unsigned index) = 0;
-    virtual void platformGamepadDisconnected(unsigned index) = 0;
+    virtual void platformGamepadConnected(PlatformGamepad&) = 0;
+    virtual void platformGamepadDisconnected(PlatformGamepad&) = 0;
     virtual void platformGamepadInputActivity() = 0;
 };
 

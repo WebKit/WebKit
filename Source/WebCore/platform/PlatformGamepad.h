@@ -38,19 +38,22 @@ public:
     virtual ~PlatformGamepad() { }
 
     const String& id() const { return m_id; }
+    unsigned index() const { return m_index; }
     double lastUpdateTime() const { return m_lastUpdateTime; }
     double connectTime() const { return m_connectTime; }
     virtual const Vector<double>& axisValues() const = 0;
     virtual const Vector<double>& buttonValues() const = 0;
 
 protected:
-    PlatformGamepad()
-        : m_lastUpdateTime(0.0)
+    explicit PlatformGamepad(unsigned index)
+        : m_index(index)
+        , m_lastUpdateTime(0.0)
         , m_connectTime(0.0)
     {
     }
 
     String m_id;
+    unsigned m_index;
     double m_lastUpdateTime;
     double m_connectTime;
 };

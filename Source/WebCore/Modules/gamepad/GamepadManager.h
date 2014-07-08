@@ -44,8 +44,8 @@ class GamepadManager : public GamepadProviderClient {
 public:
     static GamepadManager& shared();
 
-    virtual void platformGamepadConnected(unsigned index) override final;
-    virtual void platformGamepadDisconnected(unsigned index) override final;
+    virtual void platformGamepadConnected(PlatformGamepad&) override final;
+    virtual void platformGamepadDisconnected(PlatformGamepad&) override final;
     virtual void platformGamepadInputActivity() override final;
 
     void registerNavigator(NavigatorGamepad*);

@@ -94,7 +94,7 @@ struct HIDGamepadAxis : HIDGamepadElement {
 
 class HIDGamepad : public PlatformGamepad {
 public:
-    HIDGamepad(IOHIDDeviceRef);
+    HIDGamepad(IOHIDDeviceRef, unsigned index);
 
     IOHIDDeviceRef hidDevice() const { return m_hidDevice.get(); }
 

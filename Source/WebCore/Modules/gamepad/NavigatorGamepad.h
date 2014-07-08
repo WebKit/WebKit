@@ -35,6 +35,7 @@ namespace WebCore {
 
 class Gamepad;
 class Navigator;
+class PlatformGamepad;
 
 class NavigatorGamepad : public Supplement<Navigator> {
 public:
@@ -49,8 +50,8 @@ public:
 
     double navigationStart() const { return m_navigationStart; }
 
-    void gamepadConnected(unsigned index);
-    void gamepadDisconnected(unsigned index);
+    void gamepadConnected(PlatformGamepad&);
+    void gamepadDisconnected(PlatformGamepad&);
 
 private:
     static const char* supplementName();

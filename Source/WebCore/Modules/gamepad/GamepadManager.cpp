@@ -46,11 +46,11 @@ GamepadManager::GamepadManager()
     GamepadProvider::shared().stopMonitoringGamepads(this);
 }
 
-void GamepadManager::platformGamepadConnected(unsigned index)
+void GamepadManager::platformGamepadConnected(PlatformGamepad& platformGamepad)
 {
     for (auto& navigator : m_navigators) {
         if (!m_gamepadBlindNavigators.contains(navigator))
-            navigator->gamepadConnected(index);
+            navigator->gamepadConnected(platformGamepad);
 
         // FIXME: Fire connected event to all pages with listeners.
     }
@@ -58,11 +58,11 @@ void GamepadManager::platformGamepadConnected(unsigned index)
     makeGamepadsVisibileToBlindNavigators();
 }
 
-void GamepadManager::platformGamepadDisconnected(unsigned index)
+void GamepadManager::platformGamepadDisconnected(PlatformGamepad& platformGamepad)
 {
     for (auto& navigator : m_navigators) {
         if (!m_gamepadBlindNavigators.contains(navigator))
-            navigator->gamepadDisconnected(index);
+            navigator->gamepadDisconnected(platformGamepad);
 
         // FIXME: Fire disconnected event to all pages with listeners.
     }
@@ -78,11 +78,9 @@ void GamepadManager::makeGamepadsVisibileToBlindNavigators()
     for (auto& navigator : m_gamepadBlindNavigators) {
         // FIXME: Here we notify a blind Navigator of each existing gamepad.
         // But we also need to fire the connected event to its corresponding DOMWindow objects.
-        auto& platformGamepads = GamepadProvider::shared().platformGamepads();
-        unsigned size = platformGamepads.size();
-        for (unsigned i = 0; i < size; ++i) {
-            if (platformGamepads[i])
-                navigator->gamepadConnected(i);
+        for (auto& platformGamepad : GamepadProvider::shared().platformGamepads()) {
+            if (platformGamepad)
+                navigator->gamepadConnected(*platformGamepad);
         }
     }
 

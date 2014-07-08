@@ -39,9 +39,9 @@ class PlatformGamepad;
 
 class Gamepad: public RefCounted<Gamepad> {
 public:
-    static PassRefPtr<Gamepad> create(const PlatformGamepad& platformGamepad, unsigned index)
+    static PassRefPtr<Gamepad> create(const PlatformGamepad& platformGamepad)
     {
-        return adoptRef(new Gamepad(platformGamepad, index));
+        return adoptRef(new Gamepad(platformGamepad));
     }
     ~Gamepad();
 
@@ -57,7 +57,7 @@ public:
     void updateFromPlatformGamepad(const PlatformGamepad&);
 
 private:
-    Gamepad(const PlatformGamepad&, unsigned index);
+    explicit Gamepad(const PlatformGamepad&);
     String m_id;
     unsigned m_index;
     bool m_connected;
