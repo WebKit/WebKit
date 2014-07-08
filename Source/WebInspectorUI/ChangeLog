@@ -1,3 +1,14 @@
+2014-07-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Debugger popovers should not dismiss when mousing over them
+        https://bugs.webkit.org/show_bug.cgi?id=134687
+
+        Reviewed by David Kilzer.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._trackPopoverEvents):
+        Actually install the listeners in the set. Regression from code refactoring in r165052.
+
 2014-07-07  Jonathan Wells  <jonowells@apple.com>
 
         Web Inspector: CSS style declaration editor should ignore empty lines when determining prefix whitespace

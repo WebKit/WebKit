@@ -1270,6 +1270,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
             this._popoverEventListeners = new WebInspector.EventListenerSet(this, "Popover listeners");
         this._popoverEventListeners.register(this._popover.element, "mouseover", this._popoverMouseover);
         this._popoverEventListeners.register(this._popover.element, "mouseout", this._popoverMouseout);
+        this._popoverEventListeners.install();
     },
 
     _popoverMouseover: function(event)
