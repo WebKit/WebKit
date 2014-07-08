@@ -384,8 +384,7 @@ DerivedSources/WebCore/InjectedScriptCanvasModuleSource.h: $(WebCore)/inspector/
 if ENABLE_WEB_AUDIO
 # Installing HRTF database wav files
 audiodir = ${datadir}/webkitgtk-@WEBKITGTK_API_VERSION@/resources/audio/
-audio_DATA = $(WebCore)/platform/audio/resources/Composite.wav
-dist_audio_DATA = $(audio_DATA)
+dist_audio_DATA = $(WebCore)/platform/audio/resources/Composite.wav
 endif  # END ENABLE_WEB_AUDIO
 
 # ANGLE tokenizer & parser
