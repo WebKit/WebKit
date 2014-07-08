@@ -585,7 +585,8 @@ WebAVPlayerController *WebVideoFullscreenInterfaceAVKit::playerController()
 void WebVideoFullscreenInterfaceAVKit::setWebVideoFullscreenModel(WebVideoFullscreenModel* model)
 {
     m_videoFullscreenModel = model;
-    playerController().delegate = m_videoFullscreenModel;
+    if (m_playerController)
+        playerController().delegate = m_videoFullscreenModel;
 }
 
 void WebVideoFullscreenInterfaceAVKit::setWebVideoFullscreenChangeObserver(WebVideoFullscreenChangeObserver* observer)

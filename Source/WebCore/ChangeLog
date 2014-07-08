@@ -1,3 +1,14 @@
+2014-07-08  Jeremy Jones  <jeremyj@apple.com>
+
+        WebVideoFullscreenInterfaceAVKit should lazily create m_playerController.
+        https://bugs.webkit.org/show_bug.cgi?id=134706
+
+        Reviewed by Simon Fraser.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::setWebVideoFullscreenModel):
+        Don't set the delegate if m_playerController isn't created.
+
 2014-07-08  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Ensure we compute the height of replaced elements to 'auto' when appropriate.
