@@ -19,26 +19,26 @@
     todo = [
       function () {
           expectOnlyChangeEvent("Lock targetDiv1.");
-          targetDiv1.webkitRequestPointerLock();
+          targetDiv1.requestPointerLock();
           // doNextStep called by event handler.
       },
       function () {
-          shouldBe("document.webkitPointerLockElement", "targetDiv1");
+          shouldBe("document.pointerLockElement", "targetDiv1");
           doNextStep();
       },
       function () {
-          iframe.contentWindow.postMessage(["eval", 'document.body.webkitRequestPointerLock()'], "*");
+          iframe.contentWindow.postMessage(["eval", 'document.body.requestPointerLock()'], "*");
           window.onmessage = function (messageEvent) {
               message = messageEvent.data;
-              shouldBeEqualToString("message", "inner-iframe.html onwebkitpointerlockerror");
+              shouldBeEqualToString("message", "inner-iframe.html onpointerlockerror");
               window.onmessage = null;
               doNextStep();
           }
       },
       function () {
-          iframe.contentWindow.postMessage(["eval", 'document.webkitExitPointerLock()'], "*");
+          iframe.contentWindow.postMessage(["eval", 'document.exitPointerLock()'], "*");
           window.onmessage = function (messageEvent) {
-              testFailed("webkitExitPointerLock from a document that doesn't have a lock caused an event " + messageEvent.data);
+              testFailed("exitPointerLock from a document that doesn't have a lock caused an event " + messageEvent.data);
               finishJSTest();
           }
           doNextStep();

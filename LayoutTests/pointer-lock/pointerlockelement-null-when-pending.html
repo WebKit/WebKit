@@ -16,26 +16,26 @@
 
     todo = [
         function () {
-            shouldBe("document.webkitPointerLockElement", "null");
+            shouldBe("document.pointerLockElement", "null");
             testRunner.setPointerLockWillRespondAsynchronously();
             expectOnlyChangeEvent("Lock.");
-            targetDiv1.webkitRequestPointerLock();
+            targetDiv1.requestPointerLock();
             doNextStep();
         },
         function () {
-            shouldBe("document.webkitPointerLockElement", "null");
+            shouldBe("document.pointerLockElement", "null");
             testRunner.didAcquirePointerLock();
             // doNextStep called from event handler set with expect...
         },
         function () {
-            shouldBe("document.webkitPointerLockElement", "targetDiv1");
+            shouldBe("document.pointerLockElement", "targetDiv1");
             expectOnlyChangeEvent("Unlock.");
-            document.webkitExitPointerLock();
-            shouldBe("document.webkitPointerLockElement", "targetDiv1");
+            document.exitPointerLock();
+            shouldBe("document.pointerLockElement", "targetDiv1");
             // doNextStep called from event handler set with expect...
         },
         function () {
-            shouldBe("document.webkitPointerLockElement", "null");
+            shouldBe("document.pointerLockElement", "null");
             doNextStep();
         },
     ];

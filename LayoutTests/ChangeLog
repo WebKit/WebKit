@@ -1,3 +1,58 @@
+2014-07-08  Alex Christensen  <achristensen@webkit.org>
+
+        Remove webkit prefix from pointer lock tests.
+        https://bugs.webkit.org/show_bug.cgi?id=134744
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/pointer-lock/iframe-sandboxed-allow-pointer-lock-expected.txt:
+        * http/tests/pointer-lock/iframe-sandboxed-allow-pointer-lock.html:
+        * http/tests/pointer-lock/iframe-sandboxed-expected.txt:
+        * http/tests/pointer-lock/iframe-sandboxed-nested-allow-pointer-lock-expected.txt:
+        * http/tests/pointer-lock/iframe-sandboxed-nested-allow-pointer-lock.html:
+        * http/tests/pointer-lock/iframe-sandboxed-nested-disallow-then-allow-pointer-lock-expected.txt:
+        * http/tests/pointer-lock/iframe-sandboxed-nested-disallow-then-allow-pointer-lock.html:
+        * http/tests/pointer-lock/iframe-sandboxed.html:
+        * http/tests/pointer-lock/pointerlockelement-different-origin-expected.txt:
+        * http/tests/pointer-lock/pointerlockelement-different-origin.html:
+        * http/tests/pointer-lock/pointerlockelement-same-origin-expected.txt:
+        * http/tests/pointer-lock/pointerlockelement-same-origin.html:
+        * http/tests/pointer-lock/requestPointerLock-can-not-transfer-between-documents-expected.txt:
+        * http/tests/pointer-lock/requestPointerLock-can-not-transfer-between-documents.html:
+        * http/tests/resources/pointer-lock/iframe-common.js:
+        (document.onpointerlockchange):
+        (document.onpointerlockerror):
+        (document.onwebkitpointerlockchange): Deleted.
+        (document.onwebkitpointerlockerror): Deleted.
+        * http/tests/resources/pointer-lock/pointer-lock-test-harness.js:
+        (expectOnlyChangeEvent):
+        (expectOnlyErrorEvent):
+        (expectNoEvents):
+        * pointer-lock/bug90391-move-then-window-open-crash-expected.txt:
+        * pointer-lock/bug90391-move-then-window-open-crash.html:
+        * pointer-lock/lock-already-locked-expected.txt:
+        * pointer-lock/lock-already-locked.html:
+        * pointer-lock/lock-element-not-in-dom-expected.txt:
+        * pointer-lock/lock-element-not-in-dom.html:
+        * pointer-lock/locked-element-iframe-removed-from-dom-expected.txt:
+        * pointer-lock/locked-element-iframe-removed-from-dom.html:
+        * pointer-lock/locked-element-removed-from-dom-expected.txt:
+        * pointer-lock/locked-element-removed-from-dom.html:
+        * pointer-lock/mouse-event-api-expected.txt:
+        * pointer-lock/mouse-event-api.html:
+        * pointer-lock/mouse-event-delivery-expected.txt:
+        * pointer-lock/mouse-event-delivery.html:
+        * pointer-lock/pointer-lock-api-expected.txt:
+        * pointer-lock/pointer-lock-api.html:
+        * pointer-lock/pointerlockchange-event-on-lock-lost-expected.txt:
+        * pointer-lock/pointerlockchange-event-on-lock-lost.html:
+        * pointer-lock/pointerlockchange-pointerlockerror-events-expected.txt:
+        * pointer-lock/pointerlockchange-pointerlockerror-events.html:
+        * pointer-lock/pointerlockelement-null-when-pending-expected.txt:
+        * pointer-lock/pointerlockelement-null-when-pending.html:
+        Remove webkit prefix on pointer lock functions and events.
+        This should have been done in r170585.
+
 2014-07-08  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Ensure we compute the height of replaced elements to 'auto' when appropriate.

@@ -18,10 +18,10 @@ window.onmessage = function (messageEvent) {
     }
 }
 
-document.onwebkitpointerlockchange = function () {
-    parent.postMessage(thisFileName() + " onwebkitpointerlockchange, document.webkitPointerLockElement = " + document.webkitPointerLockElement, "*");
+document.onpointerlockchange = function () {
+    parent.postMessage(thisFileName() + " onpointerlockchange, document.pointerLockElement = " + document.pointerLockElement, "*");
 }
 
-document.onwebkitpointerlockerror = function () {
-    parent.postMessage(thisFileName() + " onwebkitpointerlockerror", "*");
+document.onpointerlockerror = function () {
+    parent.postMessage(thisFileName() + " onpointerlockerror", "*");
 }

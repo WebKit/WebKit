@@ -28,17 +28,17 @@
             targetDiv1 = targetIframe1.contentDocument.body.firstChild.firstChild
             expectNoEvents("Lock target in iframe. (main document handler)");
             expectOnlyChangeEvent("Lock target in iframe. (iframe handler)", targetIframe1.contentDocument);
-            targetDiv1.webkitRequestPointerLock();
+            targetDiv1.requestPointerLock();
             // doNextStep called by event handler.
         },
         function () {
-            shouldBe("targetIframe1.contentDocument.webkitPointerLockElement", "targetDiv1");
+            shouldBe("targetIframe1.contentDocument.pointerLockElement", "targetDiv1");
             shouldBe("targetDiv1.parentElement.parentElement", "targetIframe1.contentDocument.body");
             expectOnlyChangeEvent("Remove iframe & immediately lock target2. (main document handler)");
             expectNoEvents("Remove iframe & immediately lock target2. (iframe handler)", targetIframe1.contentDocument);
             targetIframe1.parentElement.removeChild(targetIframe1);
-            targetDiv2.webkitRequestPointerLock();
-            shouldBe("document.webkitPointerLockElement", "null");
+            targetDiv2.requestPointerLock();
+            shouldBe("document.pointerLockElement", "null");
             // doNextStep called by event handler.
         },
     ];

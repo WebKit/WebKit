@@ -3,11 +3,11 @@ Basic API existence test for Pointer Lock.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.onwebkitpointerlockchange is defined.
-PASS document.onwebkitpointerlockerror is defined.
-PASS document.webkitExitPointerLock is defined.
-PASS document.webkitPointerLockElement is null
-PASS element.webkitRequestPointerLock is defined.
+PASS document.onpointerlockchange is defined.
+PASS document.onpointerlockerror is defined.
+PASS document.exitPointerLock is defined.
+PASS document.pointerLockElement is null
+PASS element.requestPointerLock is defined.
 PASS successfullyParsed is true
 
 TEST COMPLETE

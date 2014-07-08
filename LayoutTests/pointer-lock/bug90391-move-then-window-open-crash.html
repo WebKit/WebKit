@@ -17,10 +17,10 @@
     todo = [
         function () {
             debug("     Locking targetdiv1.")
-            targetdiv1.webkitRequestPointerLock();
-            document.onwebkitpointerlockchange = function () {
-                document.onwebkitpointerlockchange = null;
-                testPassed("document.onwebkitpointerlockchange event received.");
+            targetdiv1.requestPointerLock();
+            document.onpointerlockchange = function () {
+                document.onpointerlockchange = null;
+                testPassed("document.onpointerlockchange event received.");
                 doNextStep();
             };
         },
@@ -43,7 +43,7 @@
             gc();
             window.open();
             testPassed("Didn't crash");
-            document.webkitExitPointerLock();
+            document.exitPointerLock();
             doNextStep();
         },
     ];

@@ -3,15 +3,15 @@ Test pointerLockElement is null when a lock is pending.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.webkitPointerLockElement is null
+PASS document.pointerLockElement is null
      Lock.
-PASS document.webkitPointerLockElement is null
-PASS onwebkitpointerlockchange received after: Lock.
-PASS document.webkitPointerLockElement is targetDiv1
+PASS document.pointerLockElement is null
+PASS onpointerlockchange received after: Lock.
+PASS document.pointerLockElement is targetDiv1
      Unlock.
-PASS document.webkitPointerLockElement is targetDiv1
-PASS onwebkitpointerlockchange received after: Unlock.
-PASS document.webkitPointerLockElement is null
+PASS document.pointerLockElement is targetDiv1
+PASS onpointerlockchange received after: Unlock.
+PASS document.pointerLockElement is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -18,10 +18,10 @@
 
     todo = [
       function () {
-          iframe.contentWindow.postMessage(["pass message down", "eval", 'document.body.webkitRequestPointerLock()'], "*");
+          iframe.contentWindow.postMessage(["pass message down", "eval", 'document.body.requestPointerLock()'], "*");
           window.onmessage = function (messageEvent) {
               message = messageEvent.data;
-              shouldBeEqualToString("message", "inner-iframe.html onwebkitpointerlockchange, document.webkitPointerLockElement = [object HTMLBodyElement]");
+              shouldBeEqualToString("message", "inner-iframe.html onpointerlockchange, document.pointerLockElement = [object HTMLBodyElement]");
               window.onmessage = null;
               doNextStep();
           }

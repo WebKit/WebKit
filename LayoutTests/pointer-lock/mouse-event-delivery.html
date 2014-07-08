@@ -18,14 +18,14 @@
 
     // Expect change event only for all transitions below.
     expectedTargetToBeLockedString = "";
-    document.onwebkitpointerlockchange = function ()
+    document.onpointerlockchange = function ()
         {
-            testPassed("document.onwebkitpointerlockchange event received.");
-            shouldBe("document.webkitPointerLockElement", expectedTargetToBeLockedString);
+            testPassed("document.onpointerlockchange event received.");
+            shouldBe("document.pointerLockElement", expectedTargetToBeLockedString);
             doNextStep();
         };
-    document.onwebkitpointerlockerror =
-        function () { testFailed("document.onwebkitpointerlockerror event received."); finishJSTest(); };
+    document.onpointerlockerror =
+        function () { testFailed("document.onpointerlockerror event received."); finishJSTest(); };
 
     function eventNotExpected(e) {
         testFailed("Unexpected event " + e.type + " on " + e.currentTarget.id);
@@ -37,9 +37,9 @@
 
     todo = [
         function () {
-            targetdiv1.webkitRequestPointerLock();
+            targetdiv1.requestPointerLock();
             expectedTargetToBeLockedString = "targetdiv1";
-            // doNextStep() called by onwebkitpointerlockchange handler.
+            // doNextStep() called by onpointerlockchange handler.
         },
         function () {
             debug("     With a lock in place send a click.")
@@ -54,9 +54,9 @@
             doNextStepWithUserGesture();
         },
         function () {
-            targetdiv2.webkitRequestPointerLock();
+            targetdiv2.requestPointerLock();
             expectedTargetToBeLockedString = "targetdiv2";
-            // doNextStep() called by onwebkitpointerlockchange handler.
+            // doNextStep() called by onpointerlockchange handler.
         },
         function () {
             debug("     With a lock in place send a click.")

@@ -9,7 +9,7 @@
   <div id="target1"></div>
 </div>
 <script>
-    description("Test that webkitpointerlockchange event is dispatched when lock is lost.")
+    description("Test that pointerlockchange event is dispatched when lock is lost.")
     window.jsTestIsAsync = true;
     shouldBeDefined("window.testRunner");
 
@@ -18,17 +18,17 @@
     todo = [
         function () {
             expectOnlyChangeEvent("Lock targetDiv1.");
-            targetDiv1.webkitRequestPointerLock();
+            targetDiv1.requestPointerLock();
             // doNextStep called by event handler.
         },
         function () {
-            shouldBe("document.webkitPointerLockElement", "targetDiv1");
+            shouldBe("document.pointerLockElement", "targetDiv1");
             expectOnlyChangeEvent("Host initiated unlock.");
             testRunner.didLosePointerLock();
             // doNextStep called by event handler.
         },
         function () {
-            shouldBe("document.webkitPointerLockElement", "null");
+            shouldBe("document.pointerLockElement", "null");
             doNextStep();
         },
     ];

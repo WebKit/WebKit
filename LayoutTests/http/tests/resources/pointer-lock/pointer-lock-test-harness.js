@@ -68,21 +68,21 @@ function eventExpected(eventHandlerName, message, expectedCalls, targetHanderNod
 function expectOnlyChangeEvent(message, targetDocument) {
     debug("     " + message);
     targetDocument = targetDocument !== undefined ? targetDocument : document;
-    eventExpected("onwebkitpointerlockchange", message, 1, targetDocument);
-    eventExpected("onwebkitpointerlockerror", message, 0, targetDocument);
+    eventExpected("onpointerlockchange", message, 1, targetDocument);
+    eventExpected("onpointerlockerror", message, 0, targetDocument);
 };
 
 function expectOnlyErrorEvent(message, targetDocument) {
     debug("     " + message);
     targetDocument = targetDocument !== undefined ? targetDocument : document;
-    eventExpected("onwebkitpointerlockchange", message, 0, targetDocument);
-    eventExpected("onwebkitpointerlockerror", message, 1, targetDocument);
+    eventExpected("onpointerlockchange", message, 0, targetDocument);
+    eventExpected("onpointerlockerror", message, 1, targetDocument);
 };
 
 function expectNoEvents(message, targetDocument) {
     debug("     " + message);
     targetDocument = targetDocument !== undefined ? targetDocument : document;
-    eventExpected("onwebkitpointerlockchange", message, 0, targetDocument);
-    eventExpected("onwebkitpointerlockerror", message, 0, targetDocument);
+    eventExpected("onpointerlockchange", message, 0, targetDocument);
+    eventExpected("onpointerlockerror", message, 0, targetDocument);
 };
 

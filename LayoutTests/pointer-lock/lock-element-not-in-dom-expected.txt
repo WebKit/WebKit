@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS targetDiv1.parentElement is not null
      Remove targetDiv1 from document, and try to lock it.
 PASS targetDiv1.parentElement is null
-PASS onwebkitpointerlockerror received after: Remove targetDiv1 from document, and try to lock it.
+PASS onpointerlockerror received after: Remove targetDiv1 from document, and try to lock it.
 PASS successfullyParsed is true
 
 TEST COMPLETE

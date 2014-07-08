@@ -18,43 +18,43 @@
 
     // Expect change event only for all transitions below.
     expectedTargetToBeLockedString = "";
-    document.onwebkitpointerlockchange = function ()
+    document.onpointerlockchange = function ()
         {
-            testPassed("document.onwebkitpointerlockchange event received.");
-            shouldBe("document.webkitPointerLockElement", expectedTargetToBeLockedString);
+            testPassed("document.onpointerlockchange event received.");
+            shouldBe("document.pointerLockElement", expectedTargetToBeLockedString);
             doNextStepWithUserGesture();
         };
-    document.onwebkitpointerlockerror =
-        function () { testFailed("document.onwebkitpointerlockerror event received."); finishJSTest(); };
+    document.onpointerlockerror =
+        function () { testFailed("document.onpointerlockerror event received."); finishJSTest(); };
 
     var expectTarget1Unlock = false;
-    targetdiv1.addEventListener("webkitpointerlocklost",
+    targetdiv1.addEventListener("pointerlocklost",
         function () { shouldBe("expectTarget1Unlock", "true"); });
 
     var expectTarget2Unlock = false;
-    targetdiv2.addEventListener("webkitpointerlocklost",
+    targetdiv2.addEventListener("pointerlocklost",
         function () { shouldBe("expectTarget2Unlock", "true"); });
 
     todo = [
         function () {
-            shouldBe("document.webkitPointerLockElement", "null");
+            shouldBe("document.pointerLockElement", "null");
             debug("     Locking targetdiv1.")
-            targetdiv1.webkitRequestPointerLock();
+            targetdiv1.requestPointerLock();
             expectedTargetToBeLockedString = "targetdiv1";
-            // doNextStep() called by onwebkitpointerlockchange handler.
+            // doNextStep() called by onpointerlockchange handler.
         },
         function () {
             debug("     Locking targetdiv1, again.")
-            targetdiv1.webkitRequestPointerLock();
+            targetdiv1.requestPointerLock();
             expectedTargetToBeLockedString = "targetdiv1";
-            // doNextStep() called by onwebkitpointerlockchange handler.
+            // doNextStep() called by onpointerlockchange handler.
         },
         function () {
             debug("     Locking targetdiv2.")
             expectTarget1Unlock = true;
-            targetdiv2.webkitRequestPointerLock();
+            targetdiv2.requestPointerLock();
             expectedTargetToBeLockedString = "targetdiv2";
-            // doNextStep() called by onwebkitpointerlockchange handler.
+            // doNextStep() called by onpointerlockchange handler.
         },
     ];
     doNextStepWithUserGesture();

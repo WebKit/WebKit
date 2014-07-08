@@ -3,13 +3,13 @@ Test mouse events are routed to lock target.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.onwebkitpointerlockchange event received.
-PASS document.webkitPointerLockElement is targetdiv1
+PASS document.onpointerlockchange event received.
+PASS document.pointerLockElement is targetdiv1
      With a lock in place send a click.
 PASS event type: mousedown, target: target1, received on: target1
 PASS event type: mousedown, target: target1, received on: body
-PASS document.onwebkitpointerlockchange event received.
-PASS document.webkitPointerLockElement is targetdiv2
+PASS document.onpointerlockchange event received.
+PASS document.pointerLockElement is targetdiv2
      With a lock in place send a click.
 PASS event type: mousedown, target: target2, received on: target2
 PASS event type: mousedown, target: target2, received on: body
