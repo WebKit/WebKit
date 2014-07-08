@@ -43,6 +43,7 @@ my $jsShellArgs = "";
 my $setBaseline = 0;
 my $testsPattern;
 my $testRuns = 10;
+my $resultsFile = "";
 
 my $programName = basename($0);
 my $usage = <<EOF;
@@ -57,6 +58,7 @@ Usage: $programName --shell=[path] [options]
   --suite           Select a specific benchmark suite. The default is sunspider-1.0.1
   --ubench          Use microbenchmark suite instead of regular tests. Same as --suite=ubench
   --v8-suite        Use the V8 benchmark suite. Same as --suite=v8-v4
+  --output          Override the default output path and filename
   --parse-only      Use the parse-only benchmark suite. Same as --suite=parse-only
 EOF
 
@@ -70,6 +72,7 @@ GetOptions('runs=i' => \$testRuns,
            'v8-suite' => \$v8suite,
            'parse-only' => \$parseOnly,
            'tests=s' => \$testsPattern,
+           'output=s' => \$resultsFile,
            'help' => \$showHelp);
 
 
@@ -122,7 +125,7 @@ sub loadTestsList()
 
 my $timeString = strftime "%Y-%m-%d-%H.%M.%S", localtime $^T;
 my $prefixFile = "$resultDirectory/sunspider-test-prefix.js";
-my $resultsFile = "$resultDirectory/sunspider-results-$timeString.js";
+$resultsFile = "$resultDirectory/sunspider-results-$timeString.js" unless $resultsFile;
 
 sub writePrefixFile()
 {

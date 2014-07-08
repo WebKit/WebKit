@@ -46,6 +46,7 @@ my $parseonly = 0;
 my $setBaseline = 0;
 my $showHelp = 0;
 my $testsPattern;
+my $output = "";
 my $noBuild = 0;
 my $jsShellArgs="";
 
@@ -63,6 +64,7 @@ Usage: $programName [options] [options to pass to build system]
   --ubench          Use microbenchmark suite instead of regular tests. Same as --suite=ubench
   --v8-suite        Use the V8 benchmark suite. Same as --suite=v8-v4
   --parse-only      Use the parse-only benchmark suite. Same as --suite=parse-only
+  --output          Override the default output path and filename
   --no-build        Do not try to build JSC before running the tests.
 EOF
 
@@ -76,6 +78,7 @@ GetOptions('root=s' => sub { my ($x, $value) = @_; $root = $value; setConfigurat
            'v8-suite' => \$v8suite,
            'parse-only' => \$parseonly,
            'tests=s' => \$testsPattern,
+           'output=s' => \$output,
            'help' => \$showHelp,
            'no-build' => \$noBuild);
 
@@ -126,5 +129,6 @@ push @args, "--v8-suite" if $v8suite;
 push @args, "--parse-only" if $parseonly;
 push @args, "--tests", $testsPattern if $testsPattern;
 push @args, "--args", $jsShellArgs if $jsShellArgs;
+push @args, "--output", $output if $output;
 
 exec currentPerlPath(), "./sunspider", @args;
