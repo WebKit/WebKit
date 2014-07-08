@@ -1,3 +1,18 @@
+2014-07-08  Andreas Kling  <akling@apple.com>
+
+        VM::lastCachedString should be a Strong, not a Weak.
+        <https://webkit.org/b/134746>
+
+        Using Weak<JSString> for this regressed some of our bindings perf tests
+        due to Weak having to allocate a new WeakImpl every time the last cached
+        string changed. Make it a Strong instead should make that problem go away.
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSString.cpp:
+        (JSC::jsStringWithCacheSlowCase):
+        * runtime/VM.h:
+
 2014-07-07  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix the build after r170876

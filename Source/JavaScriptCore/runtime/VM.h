@@ -297,7 +297,7 @@ namespace JSC {
         DateInstanceCache dateInstanceCache;
         WTF::SimpleStats machineCodeBytesPerBytecodeWordForBaselineJIT;
         WeakGCMap<StringImpl*, JSString, PtrHash<StringImpl*>> stringCache;
-        Weak<JSString> lastCachedString;
+        Strong<JSString> lastCachedString;
 
         AtomicStringTable* atomicStringTable() const { return m_atomicStringTable; }
 

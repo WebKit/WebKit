@@ -29,6 +29,7 @@
 #include "JSCInlines.h"
 #include "StringObject.h"
 #include "StringPrototype.h"
+#include "StrongInlines.h"
 
 namespace JSC {
     
@@ -379,7 +380,7 @@ JSString* jsStringWithCacheSlowCase(VM& vm, StringImpl& stringImpl)
     auto addResult = vm.stringCache.add(&stringImpl, nullptr);
     if (addResult.isNewEntry)
         addResult.iterator->value = jsString(&vm, String(stringImpl));
-    vm.lastCachedString = addResult.iterator->value.get();
+    vm.lastCachedString.set(vm, addResult.iterator->value.get());
     return addResult.iterator->value.get();
 }
 
