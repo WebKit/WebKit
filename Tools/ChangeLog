@@ -1,3 +1,14 @@
+2014-07-08  Ziran Sun  <ziran.sun@samsung.com>
+
+        [GTK] Gstreamer missing from the install-dependencies script
+        https://bugs.webkit.org/show_bug.cgi?id=134727
+
+        Reviewed by Mario Sanchez Prada.
+
+        Added missing gstreamer dependencies for debian based systems.
+
+        * gtk/install-dependencies: Added 2 dependencies for apt-get.
+
 2014-07-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add myself to the watchlist for text-related files
