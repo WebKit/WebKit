@@ -869,9 +869,11 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
                     var lineContent = this._codeMirror.getLine(i);
                     var prefixWhitespaceMatch = lineContent.match(/^\s+/);
 
-                    // If there is no prefix whitespace, then the prefix whitespace of all
-                    // other lines will be retained as is. Update markers and return.
+                    // If there is no prefix whitespace (except for empty lines) then the prefix
+                    // whitespace of all other lines will be retained as is. Update markers and return.
                     if (!prefixWhitespaceMatch) {
+                        if (!lineContent)
+                            continue;
                         this._linePrefixWhitespace = "";
                         this._updateTextMarkers(true);
                         return;
@@ -912,7 +914,7 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
 
                 var lineNumber = 0;
 
-                // Iterate only visible properties if we have original style text. That way we known we only syntesize
+                // Iterate only visible properties if we have original style text. That way we known we only synthesize
                 // what was originaly in the style text.
                 this._iterateOverProperties(styleText ? true : false, function(property) {
                     // Some property text can have line breaks, so consider that in the ranges below.

@@ -1,3 +1,16 @@
+2014-07-07  Jonathan Wells  <jonowells@apple.com>
+
+        Web Inspector: CSS style declaration editor should ignore empty lines when determining prefix whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=134704
+
+        Reviewed by Joseph Pecoraro.
+
+        When checking for zero-length prefix whitespace, completely empty lines are now ignored
+        as these lines are most often used for organizing rules into groups and often have their
+        whitespace removed due to trailing whitespace removal conventions.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+
 2014-07-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Uncaught Exception debugging iOS 7 NetworkAgent.loadResource is unavailable
