@@ -1,3 +1,23 @@
+2014-07-07  Zalan Bujtas  <zalan@apple.com>
+
+        Pass RenderLayer reference instead of pointer to RenderLayer::paintingExtent().
+        https://bugs.webkit.org/show_bug.cgi?id=134714
+
+        Reviewed by Simon Fraser.
+
+        No change in functionality. 
+
+        * rendering/RenderLayer.cpp: * -> &
+        (WebCore::expandClipRectForRegionAndReflection):
+        (WebCore::expandClipRectForDescendantsAndReflection):
+        (WebCore::transparencyClipBox):
+        (WebCore::paintingExtent):
+        (WebCore::RenderLayer::beginTransparencyLayers):
+        (WebCore::RenderLayer::paintTransformedLayerIntoFragments):
+        (WebCore::RenderLayer::hitTestTransformedLayerInFragments):
+        (WebCore::RenderLayer::paintingExtent): Deleted.
+        * rendering/RenderLayer.h:
+
 2014-07-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove misleadingly-named Font::isSVGFont()

@@ -1134,8 +1134,6 @@ private:
     void parentClipRects(const ClipRectsContext&, ClipRects&) const;
     ClipRect backgroundClipRect(const ClipRectsContext&) const;
 
-    LayoutRect paintingExtent(const RenderLayer* rootLayer, const LayoutRect& paintDirtyRect, PaintBehavior);
-
     RenderLayer* enclosingTransformedAncestor() const;
 
     // Convert a point in absolute coords into layer coords, taking transforms into account
