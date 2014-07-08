@@ -1,3 +1,17 @@
+2014-07-08  Alex Christensen  <achristensen@webkit.org>
+
+        Steps towards CMake on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=134716
+
+        Reviewed by Martin Robinson.
+
+        * CMakeLists.txt:
+        Added AppleWin and WinCairo to list of CMake ports.
+        * Source/cmake/OptionsAppleWin.cmake: Added.
+        * Source/cmake/OptionsWinCairo.cmake: Added.
+        * Source/cmake/OptionsWindows.cmake:
+        Windows needs to use the system malloc.  Other options to come.
+
 2014-07-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Support Geolocation
