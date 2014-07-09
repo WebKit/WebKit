@@ -1,5 +1,5 @@
 make:
-	if exist "%ConfigurationBuildDir%\buildfailed" grep XXWebCoreGeneratedXX "%ConfigurationBuildDir%\buildfailed"
+	if exist "%CONFIGURATIONBUILDDIR%\buildfailed" perl -wnne "if (/XXWebCoreGeneratedXX/) { print } else { exit 1 }" "%ConfigurationBuildDir%\buildfailed"
 	if errorlevel 1 exit 1
 	echo XXWebCoreGeneratedXX > "%ConfigurationBuildDir%\buildfailed"
 

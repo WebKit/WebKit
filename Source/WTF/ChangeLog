@@ -1,3 +1,16 @@
+2014-07-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Remove use of 'grep' in build steps
+        https://bugs.webkit.org/show_bug.cgi?id=134770
+        <rdar://problem/17608783>
+
+        Reviewed by Tim Horton.
+
+        Replace uses of the grep command in Windows builds with the equivalent
+        Perl program.
+
+        * WTF.vcxproj/WTFPreBuild.cmd:
+
 2014-07-07  Zan Dobersek  <zdobersek@igalia.com>
 
         Enable ARMv7 disassembler for the GTK port
