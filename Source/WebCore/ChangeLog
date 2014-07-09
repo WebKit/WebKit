@@ -1,3 +1,54 @@
+2014-07-09  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] caption size is sometimes incorrect in fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=134740
+
+        Reviewed by Jer Noble.
+
+        Captions on iOS are displayed in fullscreen with a TextTrackRepresentation object. Because
+        the fullscreen video presentation is controlled by code in the UI process running on the
+        UI thread, WebCore is notified of changes to fullscreen state asynchronously. This resulted
+        in the TextTrackRepresentation object being created and/or destroyed too late some of the 
+        time, which caused us to sometimes display captions incorrectly. Fix this by setting up and
+        tearing down the TextTrackRepresentation object when WebCore's 'webkitfullscreenchange'
+        event fires.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::enteredFullscreen): Notify text track container.
+        (WebCore::MediaControlsHost::exitedFullscreen): Ditto.
+        * Modules/mediacontrols/MediaControlsHost.h:
+        * Modules/mediacontrols/MediaControlsHost.idl:
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.handleFullscreenChange): Notify host of fullscreen change.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::requiresTextTrackRepresentation): Only return true when in
+            fullscreen.
+        (WebCore::HTMLMediaElement::setVideoFullscreenLayer): Call updateTextTrackDisplay.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement): Initialize
+            m_updateTextTrackRepresentationStyle to false.
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay): Move logic for creating
+            TextTrackRepresentation to updateTextTrackRepresentation.
+        (WebCore::MediaControlTextTrackContainerElement::updateActiveCuesFontSize): New, split out of updateTimerFired.
+        (WebCore::MediaControlTextTrackContainerElement::updateTimerFired): Move code to force immediate
+            font size change to updateActiveCuesFontSize.
+        (WebCore::MediaControlTextTrackContainerElement::updateTextTrackRepresentation): New, update
+            text track representation, creating first if necessary.
+        (WebCore::MediaControlTextTrackContainerElement::clearTextTrackRepresentation): Add an early
+            return if we don't have a text track representation.
+        (WebCore::MediaControlTextTrackContainerElement::updateStyleForTextTrackRepresentation): Early
+            return if there is nothing to be done.
+        (WebCore::MediaControlTextTrackContainerElement::enteredFullscreen): Force a caption update
+            if there are visible captions.
+        (WebCore::MediaControlTextTrackContainerElement::updateSizes): Set m_updateTextTrackRepresentationStyle
+            to true.
+        (WebCore::MediaControlTextTrackContainerElement::textTrackRepresentationBoundsChanged):  Force a 
+            caption update if there are visible captions.
+        * html/shadow/MediaControlElements.h:
+
 2014-07-09  Jer Noble  <jer.noble@apple.com>
 
         [MSE] http/tests/media/media-source/mediasource-endofstream-invaliderror.html is failing.

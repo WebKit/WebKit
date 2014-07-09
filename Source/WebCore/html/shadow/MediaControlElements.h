@@ -478,6 +478,7 @@ public:
 
 private:
     void updateTimerFired(Timer<MediaControlTextTrackContainerElement>&);
+    void updateActiveCuesFontSize();
 
     explicit MediaControlTextTrackContainerElement(Document&);
     virtual const AtomicString& shadowPseudoId() const override;
@@ -486,6 +487,7 @@ private:
 
     virtual PassRefPtr<Image> createTextTrackRepresentationImage() override;
     virtual void textTrackRepresentationBoundsChanged(const IntRect&) override;
+    void updateTextTrackRepresentation();
     void clearTextTrackRepresentation();
     void updateStyleForTextTrackRepresentation();
     OwnPtr<TextTrackRepresentation> m_textTrackRepresentation;
@@ -494,6 +496,7 @@ private:
     IntRect m_videoDisplaySize;
     int m_fontSize;
     bool m_fontSizeIsImportant;
+    bool m_updateTextTrackRepresentationStyle;
 };
 
 #endif

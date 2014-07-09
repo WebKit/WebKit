@@ -624,9 +624,11 @@ Controller.prototype = {
         if (this.isFullScreen()) {
             this.controls.fullscreenButton.classList.add(this.ClassNames.exit);
             this.controls.fullscreenButton.setAttribute('aria-label', this.UIString('Exit Full Screen'));
+            this.host.enteredFullscreen();
         } else {
             this.controls.fullscreenButton.classList.remove(this.ClassNames.exit);
             this.controls.fullscreenButton.setAttribute('aria-label', this.UIString('Display Full Screen'));
+            this.host.exitedFullscreen();
         }
     },
 

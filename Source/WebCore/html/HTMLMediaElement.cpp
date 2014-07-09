@@ -4773,7 +4773,7 @@ void HTMLMediaElement::visibilityStateChanged()
 #if ENABLE(VIDEO_TRACK)
 bool HTMLMediaElement::requiresTextTrackRepresentation() const
 {
-    return m_player ? m_player->requiresTextTrackRepresentation() : 0;
+    return m_isFullscreen && m_player ? m_player->requiresTextTrackRepresentation() : false;
 }
 
 void HTMLMediaElement::setTextTrackRepresentation(TextTrackRepresentation* representation)
@@ -4961,6 +4961,10 @@ void HTMLMediaElement::setVideoFullscreenLayer(PlatformLayer* platformLayer)
     
     m_player->setVideoFullscreenLayer(platformLayer);
     setNeedsStyleRecalc(SyntheticStyleChange);
+#if ENABLE(VIDEO_TRACK)
+    if (RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled())
+        updateTextTrackDisplay();
+#endif
 }
     
 void HTMLMediaElement::setVideoFullscreenFrame(FloatRect frame)

@@ -41,7 +41,6 @@ enum DeviceType {
     readonly attribute DOMString captionDisplayMode;
     void setSelectedTextTrack(TextTrack track);
     readonly attribute HTMLElement textTrackContainer;
-    void updateTextTrackContainer();
     readonly attribute boolean mediaPlaybackAllowsInline;
     readonly attribute boolean supportsFullscreen;
     readonly attribute boolean userGestureRequired;
@@ -50,4 +49,8 @@ enum DeviceType {
     readonly attribute DeviceType externalDeviceType;
 
     attribute boolean controlsDependOnPageScaleFactor;
+    
+    void updateTextTrackContainer();
+    void enteredFullscreen();
+    void exitedFullscreen();
 };

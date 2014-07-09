@@ -150,6 +150,18 @@ void MediaControlsHost::updateTextTrackContainer()
         m_textTrackContainer->updateDisplay();
 }
 
+void MediaControlsHost::enteredFullscreen()
+{
+    if (m_textTrackContainer)
+        m_textTrackContainer->enteredFullscreen();
+}
+
+void MediaControlsHost::exitedFullscreen()
+{
+    if (m_textTrackContainer)
+        m_textTrackContainer->exitedFullscreen();
+}
+
 void MediaControlsHost::updateCaptionDisplaySizes()
 {
     if (m_textTrackContainer)

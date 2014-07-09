@@ -64,6 +64,8 @@ public:
     bool userGestureRequired() const;
 
     void updateCaptionDisplaySizes();
+    void enteredFullscreen();
+    void exitedFullscreen();
 
     String externalDeviceDisplayName() const;
     String externalDeviceType() const;
