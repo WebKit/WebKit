@@ -1,6 +1,6 @@
 all:
     touch "%ConfigurationBuildDir%\buildfailed"
-    bash build-LLIntDesiredOffsets.sh "%ConfigurationBuildDir%" "$(WEBKIT_LIBRARIES)" "%PlatformArchitecture%"
+    perl build-LLIntDesiredOffsets.pl "%ConfigurationBuildDir%" "$(WEBKIT_LIBRARIES)" "%PlatformArchitecture%"
 
     -del "%ConfigurationBuildDir%\buildfailed"
 

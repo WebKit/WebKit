@@ -52,7 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DerivedSources.make" />
-    <None Include="build-generated-files.sh" />
+    <None Include="build-generated-files.pl" />
     <None Include="copy-files.cmd" />
     <None Include="JavaScriptCoreGenerated.make" />
   </ItemGroup>

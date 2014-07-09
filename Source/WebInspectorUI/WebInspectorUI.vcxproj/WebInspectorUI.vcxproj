@@ -778,7 +778,7 @@
     <None Include="..\UserInterface\TreeOutline.js" />
     <None Include="..\UserInterface\Utilities.js" />
     <None Include="..\UserInterface\WebInspector.js" />
-    <None Include="build-webinspectorui.sh" />
+    <None Include="build-webinspectorui.pl" />
     <None Include="WebInspectorUI.make" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

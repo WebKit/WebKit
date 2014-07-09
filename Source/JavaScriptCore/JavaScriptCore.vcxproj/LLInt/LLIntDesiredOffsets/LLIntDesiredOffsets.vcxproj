@@ -260,7 +260,7 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="build-LLIntDesiredOffsets.sh" />
+    <None Include="build-LLIntDesiredOffsets.pl" />
     <None Include="LLIntDesiredOffsets.make" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

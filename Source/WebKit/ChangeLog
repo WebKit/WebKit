@@ -1,5 +1,24 @@
 2014-07-09  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Remove uses of 'bash' in build system
+        https://bugs.webkit.org/show_bug.cgi?id=134782
+        <rdar://problem/17615533>
+
+        Reviewed by Dean Jackson.
+
+        Remove uses of 'bash' by replacing Windows-specific bash scripts
+        with Perl equivalents.
+
+        * WebKit.vcxproj/Interfaces/FixMIDLHeaders.pl:
+        * WebKit.vcxproj/Interfaces/InterfacesPreBuild.cmd:
+        * WebKit.vcxproj/WebKit/WebKitPreBuild.cmd:
+        * WebKit.vcxproj/WebKit/WebKitVersion.cmd:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorBuildCmd.cmd:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorPreBuild.cmd:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDPreBuild.cmd:
+
+2014-07-09  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Remove use of 'grep' in build steps
         https://bugs.webkit.org/show_bug.cgi?id=134770
         <rdar://problem/17608783>

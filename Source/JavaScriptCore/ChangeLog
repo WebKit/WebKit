@@ -1,5 +1,34 @@
 2014-07-09  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Remove uses of 'bash' in build system
+        https://bugs.webkit.org/show_bug.cgi?id=134782
+        <rdar://problem/17615533>
+
+        Reviewed by Dean Jackson.
+
+        Remove uses of 'bash' by replacing Windows-specific bash scripts
+        with Perl equivalents.
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.make:
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.vcxproj.filters:
+        * JavaScriptCore.vcxproj/JavaScriptCorePreBuild.cmd:
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/LLIntAssembly.make:
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/LLIntAssembly.vcxproj:
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/build-LLIntAssembly.pl: Copied from Source/JavaScriptCore/JavaScriptCore.vcxproj/LLInt/LLIntAssembly/build-LLIntAssembly.sh.
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/build-LLIntAssembly.sh: Removed.
+        * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/LLIntDesiredOffsets.make:
+        * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/LLIntDesiredOffsets.vcxproj:
+        * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/build-LLIntDesiredOffsets.pl: Copied from Source/JavaScriptCore/JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/build-LLIntDesiredOffsets.sh.
+        * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/build-LLIntDesiredOffsets.sh: Removed.
+        * JavaScriptCore.vcxproj/build-generated-files.pl: Copied from Source/JavaScriptCore/JavaScriptCore.vcxproj/build-generated-files.sh.
+        * JavaScriptCore.vcxproj/build-generated-files.sh: Removed.
+        * JavaScriptCore.vcxproj/jsc/jscPreBuild.cmd:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpPreBuild.cmd:
+        * JavaScriptCore.vcxproj/testapi/testapiPreBuild.cmd:
+
+2014-07-09  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Remove use of 'grep' in build steps
         https://bugs.webkit.org/show_bug.cgi?id=134770
         <rdar://problem/17608783>

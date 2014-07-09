@@ -12,7 +12,7 @@ del /F /Q "%GeneratorDirectory%\DerivedSources\WebKitExportGenerator.cpp"
 del /F /Q "%OUTDIR%\WebKitExportGenerator%DEBUGSUFFIX%.exe"
 
 cmd /c
-if exist "%CONFIGURATIONBUILDDIR%\buildfailed" perl -wnne "if (/XX%PROJECTNAME%XX/) { print } else { exit 1 }" "%CONFIGURATIONBUILDDIR%\buildfailed"
+if exist "%CONFIGURATIONBUILDDIR%\buildfailed" perl -wnle "if (/XX%PROJECTNAME%XX/) { print } else { exit 1 }" "%CONFIGURATIONBUILDDIR%\buildfailed"
 if errorlevel 1 exit 1
 echo XX%PROJECTNAME%XX > "%CONFIGURATIONBUILDDIR%\buildfailed"
 

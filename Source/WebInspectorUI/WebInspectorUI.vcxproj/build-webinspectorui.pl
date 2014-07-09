@@ -1,6 +1,6 @@
-#!/usr/bin/bash
+#!/usr/bin/perl -w
 
-# Copyright (C) 2007 Apple Inc.  All rights reserved.
+# Copyright (C) 2014 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -26,46 +26,37 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-NUMCPUPATH="../../Tools/Scripts/num-cpus"
-if [ -x $NUMCPUPATH ]; then
-    NUMCPUS=`$NUMCPUPATH`
-else
-    NUMCPUS=8
-fi
+use strict;
+use Cwd;
+use File::Path qw(make_path);
+use File::Spec;
 
-XSRCROOT="`pwd`/.."
-XSRCROOT=`realpath "$XSRCROOT"`
-# Do a little dance to get the path into 8.3 form to make it safe for gnu make
-# http://bugzilla.opendarwin.org/show_bug.cgi?id=8173
-XSRCROOT=`cygpath -m -s "$XSRCROOT"`
-XSRCROOT=`cygpath -u "$XSRCROOT"`
-export XSRCROOT
-export SOURCE_ROOT=$XSRCROOT
+my $PWD = Cwd::cwd();
+my $XSRCROOT =  Cwd::realpath(File::Spec->updir);
+$ENV{'XSRCROOT'} = $XSRCROOT;
+$ENV{'SRCROOT'} = $XSRCROOT;
 
-XDSTROOT="$1"
-export XDSTROOT
-# Do a little dance to get the path into 8.3 form to make it safe for gnu make
-# http://bugzilla.opendarwin.org/show_bug.cgi?id=8173
-XDSTROOT=`cygpath -m -s "$XDSTROOT"`
-XDSTROOT=`cygpath -u "$XDSTROOT"`
-export XDSTROOT
+# Make sure we don't have any leading or trailing quotes
+$ARGV[0] =~ s/^\"//;
+$ARGV[0] =~ s/\"$//;
 
-SDKROOT="$2"
-export SDKROOT
-# Do a little dance to get the path into 8.3 form to make it safe for gnu make
-# http://bugzilla.opendarwin.org/show_bug.cgi?id=8173
-SDKROOT=`cygpath -m -s "$SDKROOT"`
-SDKROOT=`cygpath -u "$SDKROOT"`
-export SDKROOT
+my $XDSTROOT = Cwd::realpath($ARGV[0]);
+$ENV{'XDSTROOT'} = $XDSTROOT;
 
-export BUILT_PRODUCTS_DIR="$XDSTROOT/obj${4}/WebCore"
+my $TARGET_BUILD_DIR = File::Spec->catdir($XDSTROOT, "bin$ARGV[3]", 'WebKit.resources');
+$ENV{'TARGET_BUILD_DIR'} = $TARGET_BUILD_DIR;
+my $JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = File::Spec->catdir($XDSTROOT, "obj$ARGV[3]", 'JavaScriptCore', 'DerivedSources');
+$ENV{'JAVASCRIPTCORE_PRIVATE_HEADERS_DIR'} = $JAVASCRIPTCORE_PRIVATE_HEADERS_DIR;
+my $WEBCORE_PRIVATE_HEADERS_DIR = File::Spec->catdir($XDSTROOT, "obj$ARGV[3]", 'WebCore', 'DerivedSources');
+$ENV{'WEBCORE_PRIVATE_HEADERS_DIR'} = $WEBCORE_PRIVATE_HEADERS_DIR;
+my $DERIVED_SOURCES_DIR = File::Spec->catdir($XDSTROOT, "obj$ARGV[3]", 'WebInspectorUI', 'DerivedSources');
+$ENV{'DERIVED_SOURCES_DIR'} = $DERIVED_SOURCES_DIR;
 
-mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources"
-cd "${BUILT_PRODUCTS_DIR}/DerivedSources"
+$ENV{'UNLOCALIZED_RESOURCES_FOLDER_PATH'} = 'WebInspectorUI';
 
-export WebCore="${XSRCROOT}"
-export FEATURE_DEFINES=`$SDKROOT/tools/scripts/feature-defines.sh $SDKROOT $3`
-export InspectorScripts="$XDSTROOT/include/private/JavaScriptCore"
-export WebReplayScripts="$XDSTROOT/include/private/JavaScriptCore"
+if (($TARGET_BUILD_DIR =~ /Release/) || ($TARGET_BUILD_DIR =~ /Production/)) {
+    $ENV{'COMBINE_INSPECTOR_RESOURCES'} = 'YES';
+} 
 
-make -f "$WebCore/DerivedSources.make" -j ${NUMCPUS} || exit 1
+my $copyResourcesCommand = File::Spec->catfile($XSRCROOT, 'Scripts', 'copy-user-interface-resources.pl');
+do $copyResourcesCommand;

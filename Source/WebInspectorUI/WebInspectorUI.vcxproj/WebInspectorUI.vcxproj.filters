@@ -1720,6 +1720,6 @@
       <Filter>Scripts</Filter>
     </None>
     <None Include="WebInspectorUI.make" />
-    <None Include="build-webinspectorui.sh" />
+    <None Include="build-webinspectorui.pl" />
   </ItemGroup>
 </Project>

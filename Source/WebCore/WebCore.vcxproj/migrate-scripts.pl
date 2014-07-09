@@ -1,6 +1,6 @@
-#!/usr/bin/bash
+#!/usr/bin/perl -w
 
-# Copyright (C) 2014 Apple Inc.  All rights reserved.
+# Copyright (C) 2007, 2008, 2009, 2010, 2014 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -13,7 +13,7 @@
 #     documentation and/or other materials provided with the distribution. 
 # 3.  Neither the name of Apple puter, Inc. ("Apple") nor the names of
 #     its contributors may be used to endorse or promote products derived
-#     from this software without specific prior written permission.
+#     from this software without specific prior written permission. 
 #
 # THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -26,23 +26,39 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-XSRCROOT="`pwd`/.."
-XSRCROOT=`realpath "$XSRCROOT"`
-export XSRCROOT
-export SRCROOT=$XSRCROOT
+use strict;
+use Cwd;
+use File::Path qw(make_path);
+use File::Spec;
 
-XDSTROOT="$1"
-export XDSTROOT
+# Not all build environments have the webkitdirs module installed.
+my $NUMCPUS = 2;
+eval "use webkitdirs";
+unless ($@) {
+    $NUMCPUS = numberOfCPUs();
+}
 
-export TARGET_BUILD_DIR="$XDSTROOT/bin${4}/WebKit.resources"
-export JAVASCRIPTCORE_PRIVATE_HEADERS_DIR="$XDSTROOT/obj${4}/JavaScriptCore/DerivedSources"
-export WEBCORE_PRIVATE_HEADERS_DIR="$XDSTROOT/obj${4}/WebCore/DerivedSources"
-export DERIVED_SOURCES_DIR="$XDSTROOT/obj${4}/WebInspectorUI/DerivedSources"
+# Make sure we don't have any leading or trailing quotes
+$ARGV[0] =~ s/^\"//;
+$ARGV[0] =~ s/\"$//;
 
-export UNLOCALIZED_RESOURCES_FOLDER_PATH="WebInspectorUI"
+my $MIGRATION_DIR = File::Spec->canonpath($ARGV[0]);
+unless (-d $MIGRATION_DIR) {
+    make_path($MIGRATION_DIR) or die "Couldn't create $MIGRATION_DIR: $!";
+}
+$MIGRATION_DIR = Cwd::realpath($MIGRATION_DIR);
 
-if [[ ${TARGET_BUILD_DIR} =~ "Release" ]] || [[ ${TARGET_BUILD_DIR} =~ "Production" ]]; then
-    export COMBINE_INSPECTOR_RESOURCES="YES";
-fi
+my $PWD = Cwd::cwd();
+my $XSRCROOT =  Cwd::realpath(File::Spec->updir);
+$ENV{'XSRCROOT'} = $XSRCROOT;
+$ENV{'SOURCE_ROOT'} = $XSRCROOT;
 
-/usr/bin/perl "${SRCROOT}/Scripts/copy-user-interface-resources.pl"
+my $XDSTROOT = Cwd::realpath($ARGV[0]);
+$ENV{'XDSTROOT'} = $XDSTROOT;
+
+$ENV{'WEBCORE'} = $XSRCROOT;
+$ENV{'WebCore'} = $XSRCROOT;
+$ENV{'WEBKIT_OUTPUT'} = $XDSTROOT;
+
+my $MIGRATE_SCRIPTS_MAKEFILE = File::Spec->catfile($XSRCROOT, 'WebCore.vcxproj', 'MigrateScripts');
+system('/usr/bin/make', '-f', $MIGRATE_SCRIPTS_MAKEFILE, '-j', $NUMCPUS) and die "Failed to build $MIGRATE_SCRIPTS_MAKEFILE: $!";

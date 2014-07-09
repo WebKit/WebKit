@@ -1,3 +1,20 @@
+2014-07-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Remove uses of 'bash' in build system
+        https://bugs.webkit.org/show_bug.cgi?id=134782
+        <rdar://problem/17615533>
+
+        Reviewed by Dean Jackson.
+
+        Remove uses of 'bash' by replacing Windows-specific bash scripts
+        with Perl equivalents.
+
+        * WebInspectorUI.vcxproj/WebInspectorUI.make:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+        * WebInspectorUI.vcxproj/build-webinspectorui.pl: Copied from Source/WebInspectorUI/WebInspectorUI.vcxproj/build-webinspectorui.sh.
+        * WebInspectorUI.vcxproj/build-webinspectorui.sh: Removed.
+
 2014-07-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Debugger popovers should not dismiss when mousing over them

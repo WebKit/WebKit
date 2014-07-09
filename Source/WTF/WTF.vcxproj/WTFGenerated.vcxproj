@@ -51,7 +51,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <None Include="build-generated-files.sh" />
+    <None Include="build-generated-files.pl" />
     <None Include="copy-files.cmd" />
     <None Include="work-around-vs-dependency-tracking-bugs.py" />
     <None Include="WTFGenerated.make" />

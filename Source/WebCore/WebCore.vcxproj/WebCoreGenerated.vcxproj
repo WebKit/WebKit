@@ -52,10 +52,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DerivedSources.make" />
-    <None Include="build-generated-files.sh" />
+    <None Include="build-generated-files.pl" />
     <None Include="copyForwardingHeaders.cmd" />
     <None Include="copyWebCoreResourceFiles.cmd" />
-    <None Include="migrate-scripts.sh" />
+    <None Include="migrate-scripts.pl" />
     <None Include="MigrateScripts" />
     <None Include="WebCoreGenerated.make" />
   </ItemGroup>

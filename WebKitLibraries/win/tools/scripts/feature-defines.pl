@@ -1,6 +1,6 @@
-#!/usr/bin/bash
+#!/usr/bin/perl -w
 
-# Copyright (C) 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2013-2014 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -16,17 +16,32 @@
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 # DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
 # DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+
 # LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 # ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-if [ "$2" = "cairo" ]; then
-    FeatureDefines=$1/tools/vsprops/FeatureDefinesCairo.props
-else
-    FeatureDefines=$1/tools/vsprops/FeatureDefines.props
-fi
+use strict;
+use File::Spec;
 
-grep "<ENABLE_" $FeatureDefines | sed '/\/>/d' | sed 's/<\/.*>//' | sed 's/<.*>//' | tr -d '\n'
+my $FeatureDefines = ($ARGV[1] eq 'cairo')  ? 'FeatureDefinesCairo.props' : 'FeatureDefines.props';
+my $FeatureDefinesFile = File::Spec->catfile($ARGV[0], 'tools', 'vsprops', $FeatureDefines);
 
+open(FEATURE_DEFINES, '<', $FeatureDefinesFile) or die "Unable to open $FeatureDefinesFile: $!";
+my @lines = <FEATURE_DEFINES>;
+close(FEATURE_DEFINES);
+
+my @enabled = grep(/<ENABLE_/, @lines);
+@enabled = grep(!/\/>/, @enabled);
+for (@enabled) {
+    s/<\/.*>//;
+    s/<.*>//;
+    s/^\s+//;
+    s/\s+$//;
+    chomp();
+}
+
+my $result = join(' ', @enabled);
+
+print "$result";

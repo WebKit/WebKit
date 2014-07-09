@@ -1,5 +1,5 @@
 make:
-	bash build-webinspectorui.sh "%ConfigurationBuildDir%" "%WebKit_Libraries%" windows "%PlatformArchitecture%"
+	perl build-webinspectorui.pl "%ConfigurationBuildDir%" "%WebKit_Libraries%" windows "%PlatformArchitecture%"
 	if errorlevel 1 exit 1
 
 	xcopy /y /e "..\Localizations\en.lproj\*" "%ConfigurationBuildDir%\bin%PlatformArchitecture%\WebKit.resources\WebInspectorUI"

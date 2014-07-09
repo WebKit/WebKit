@@ -1,10 +1,10 @@
 make:
-	if exist "%CONFIGURATIONBUILDDIR%\buildfailed" perl -wnne "if (/XXWebCoreGeneratedXX/) { print } else { exit 1 }" "%ConfigurationBuildDir%\buildfailed"
+	if exist "%CONFIGURATIONBUILDDIR%\buildfailed" perl -wnle "if (/XXWebCoreGeneratedXX/) { print } else { exit 1 }" "%ConfigurationBuildDir%\buildfailed"
 	if errorlevel 1 exit 1
 	echo XXWebCoreGeneratedXX > "%ConfigurationBuildDir%\buildfailed"
 
-	bash build-generated-files.sh "%ConfigurationBuildDir%" "%WebKit_Libraries%" windows "%PlatformArchitecture%"
-	bash migrate-scripts.sh "%ConfigurationBuildDir%\obj%PlatformArchitecture%\WebCore\scripts"
+	perl build-generated-files.pl "%ConfigurationBuildDir%" "%WebKit_Libraries%" windows "%PlatformArchitecture%"
+	perl migrate-scripts.pl "%ConfigurationBuildDir%\obj%PlatformArchitecture%\WebCore\scripts"
 	cmd /C copyForwardingHeaders.cmd cg cf
 	cmd /C copyWebCoreResourceFiles.cmd
 	

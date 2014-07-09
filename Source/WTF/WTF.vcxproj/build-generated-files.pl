@@ -1,6 +1,6 @@
-#!/usr/bin/bash
+#!/usr/bin/perl -w
 
-# Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+# Copyright (C) 2007, 2014 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -13,7 +13,7 @@
 #     documentation and/or other materials provided with the distribution. 
 # 3.  Neither the name of Apple puter, Inc. ("Apple") nor the names of
 #     its contributors may be used to endorse or promote products derived
-#     from this software without specific prior written permission. 
+#     from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -26,33 +26,28 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-NUMCPUPATH="../../Tools/Scripts/num-cpus"
-if [ -x $NUMCPUPATH ]; then
-    NUMCPUS=`$NUMCPUPATH`
-else
-    NUMCPUS=1
-fi
+use strict;
+use File::Path qw(make_path);
+use File::Spec;
+use File::stat;
 
-mkdir -p "$1"
+# Make sure we don't have any leading or trailing quotes
+for (@ARGV) {
+    s/^\"//;
+    s/\"$//;
+}
 
-XSRCROOT="`pwd`/.."
-XSRCROOT=`realpath "$XSRCROOT"`
-# Do a little dance to get the path into 8.3 form to make it safe for gnu make
-# http://bugzilla.opendarwin.org/show_bug.cgi?id=8173
-XSRCROOT=`cygpath -m -s "$XSRCROOT"`
-XSRCROOT=`cygpath -u "$XSRCROOT"`
-export XSRCROOT
-export SOURCE_ROOT=$XSRCROOT
+# Determine whether we have the versioned ICU 4.0 or the unversioned ICU 4.4
+my $UNVERSIONED_ICU_LIB_PATH = File::Spec->catfile($ARGV[1], "lib$ARGV[3]", "libicuuc$ARGV[2].lib");
+my $PRIVATE_INCLUDE =  File::Spec->catdir($ARGV[0], 'include', 'private');
+my $ICUVERSION_H_PATH = File::Spec->catfile($PRIVATE_INCLUDE, 'ICUVersion.h');
+if ((! -f $ICUVERSION_H_PATH) or (-f $UNVERSIONED_ICU_LIB_PATH and (stat($UNVERSIONED_ICU_LIB_PATH)->mtime > stat($ICUVERSION_H_PATH)->mtime))) {
+    unless (-d $PRIVATE_INCLUDE) {
+        make_path($PRIVATE_INCLUDE) or die "Couldn't create $PRIVATE_INCLUDE: $!";
+    }
 
-XDSTROOT="$1"
-export XDSTROOT
-# Do a little dance to get the path into 8.3 form to make it safe for gnu make
-# http://bugzilla.opendarwin.org/show_bug.cgi?id=8173
-XDSTROOT=`cygpath -m -s "$XDSTROOT"`
-XDSTROOT=`cygpath -u "$XDSTROOT"`
-export XDSTROOT
-
-export WEBCORE=$XSRCROOT
-export WEBKIT_OUTPUT=$XDSTROOT
-
-make -f "$WEBCORE/WebCore.vcxproj/MigrateScripts" -j ${NUMCPUS} || exit 1
+    my $disableRenaming = (-f $UNVERSIONED_ICU_LIB_PATH) ? 1 : 0;
+    open(ICU_VERSION_FILE, '>', $ICUVERSION_H_PATH) or die "Unable to open $ICUVERSION_H_PATH: $!";
+    print ICU_VERSION_FILE "#define U_DISABLE_RENAMING $disableRenaming\n";
+    close(ICU_VERSION_FILE);
+}

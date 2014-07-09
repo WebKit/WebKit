@@ -1,6 +1,6 @@
-#! /usr/bin/perl -w
+#!/usr/bin/perl -w
 
-# Copyright (C) 2007, 2014 Apple Inc. All rights reserved.
+# Copyright (C) 2014 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -13,7 +13,7 @@
 #     documentation and/or other materials provided with the distribution. 
 # 3.  Neither the name of Apple puter, Inc. ("Apple") nor the names of
 #     its contributors may be used to endorse or promote products derived
-#     from this software without specific prior written permission. 
+#     from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -26,55 +26,33 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# This script cleans up the headers that MIDL (Microsoft's IDL Parser/Generator)
-# outputs to only #include the parent interface avoiding circular dependencies
-# that MIDL creates.
-
-use File::Find;
 use strict;
-use warnings;
+use Cwd;
+use File::Path qw(make_path);
+use File::Spec;
+
+my $PWD = Cwd::cwd();
+my $XSRCROOT = Cwd::realpath(File::Spec->catdir($PWD, '..', '..', '..'));
+$ENV{'XSRCROOT'} = $XSRCROOT;
+$ENV{'SRCROOT'} = $XSRCROOT;
 
 # Make sure we don't have any leading or trailing quotes
 $ARGV[0] =~ s/^\"//;
 $ARGV[0] =~ s/\"$//;
 
-my $dir = $ARGV[0];
+my $XDSTROOT = Cwd::realpath($ARGV[0]);
+$ENV{'XDSTROOT'} = $XDSTROOT;
 
-$dir = `cygpath -u '$dir'`;
-chomp($dir);
+my $BUILD_PRODUCTS_DIR = File::Spec->catdir($XDSTROOT, "obj$ARGV[2]", 'JavaScriptCore', 'DerivedSources');
+$ENV{'BUILT_PRODUCTS_DIR'} = $BUILD_PRODUCTS_DIR;
 
-find(\&finder, $dir);
-
-sub finder
-{
-    my $fileName = $_;
-
-    return unless ($fileName =~ /IGEN_DOM(.*)\.h/);
-
-    open(IN, "<", $fileName);
-    my @contents = <IN>;
-    close(IN);
-
-    open(OUT, ">", $fileName);
-
-    my $state = 0;
-    foreach my $line (@contents) {
-        if ($line =~ /^\/\* header files for imported files \*\//) {
-            $state = 1;
-        } elsif ($line =~ /^#include "oaidl\.h"/) {
-            die "#include \"oaidl.h\" did not come second" if $state != 1;
-            $state = 2;
-        } elsif ($line =~ /^#include "ocidl\.h"/) {
-            die "#include \"ocidl.h\" did not come third" if $state != 2;
-            $state = 3;
-        } elsif ($line =~ /^#include "IGEN_DOM/ && $state == 3) {
-            $state = 4;
-        } elsif ($line =~ /^#include "(IGEN_DOM.*)\.h"/ && $state == 4) {
-            next;
-        }
-
-        print OUT $line;
-    }
-
-    close(OUT);
+##############################################################################
+# Step 1: Generate LLIntDesiredOffsets.h
+unless (-d $BUILD_PRODUCTS_DIR) {
+    make_path($BUILD_PRODUCTS_DIR) or die "Couldn't create $BUILD_PRODUCTS_DIR: $!";
 }
+
+my $generateOffsetExtractor = File::Spec->catfile($XSRCROOT, 'offlineasm', 'generate_offset_extractor.rb');
+my $lowLevelInterpreter = File::Spec->catfile($XSRCROOT, 'llint', 'LowLevelInterpreter.asm');
+my $OUTPUTFILENAME = File::Spec->catfile($BUILD_PRODUCTS_DIR, 'LLIntDesiredOffsets.h');
+system('/usr/bin/env', 'ruby', $generateOffsetExtractor, "-I$BUILD_PRODUCTS_DIR", $lowLevelInterpreter, $OUTPUTFILENAME) and die "Failed to generate $OUTPUTFILENAME: $!";

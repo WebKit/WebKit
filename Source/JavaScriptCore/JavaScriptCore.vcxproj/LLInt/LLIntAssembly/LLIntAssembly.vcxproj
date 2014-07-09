@@ -274,7 +274,7 @@ nmake /nologo -f $(ProjectName).make DEBUGSUFFIX=_debug</NMakeReBuildCommandLine
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="build-LLIntAssembly.sh" />
+    <None Include="build-LLIntAssembly.pl" />
     <None Include="LLIntAssembly.make" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

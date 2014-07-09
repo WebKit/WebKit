@@ -1,6 +1,6 @@
 all:
     touch "%ConfigurationBuildDir%\buildfailed"
-    bash build-LLIntAssembly.sh "%ConfigurationBuildDir%" "$(WEBKIT_LIBRARIES)" "$(DEBUGSUFFIX)" "%PlatformArchitecture%"
+    perl build-LLIntAssembly.pl "%ConfigurationBuildDir%" "$(WEBKIT_LIBRARIES)" "$(DEBUGSUFFIX)" "%PlatformArchitecture%"
     -del "%ConfigurationBuildDir%\buildfailed"
 
 clean:

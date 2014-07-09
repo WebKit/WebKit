@@ -1,3 +1,23 @@
+2014-07-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Remove uses of 'bash' in build system
+        https://bugs.webkit.org/show_bug.cgi?id=134782
+        <rdar://problem/17615533>
+
+        Reviewed by Dean Jackson.
+
+        Remove uses of 'bash' by replacing Windows-specific bash scripts
+        with Perl equivalents.
+
+        * WebCore.vcxproj/WebCoreGenerated.make:
+        * WebCore.vcxproj/WebCoreGenerated.vcxproj:
+        * WebCore.vcxproj/WebCoreGenerated.vcxproj.filters:
+        * WebCore.vcxproj/WebCorePreBuild.cmd:
+        * WebCore.vcxproj/build-generated-files.pl: Copied from Source/WebCore/WebCore.vcxproj/build-generated-files.sh.
+        * WebCore.vcxproj/build-generated-files.sh: Removed.
+        * WebCore.vcxproj/migrate-scripts.pl: Copied from Source/WebCore/WebCore.vcxproj/migrate-scripts.sh.
+        * WebCore.vcxproj/migrate-scripts.sh: Removed.
+
 2014-07-09  Anders Carlsson  <andersca@apple.com>
 
         Support transparent WKWebViews
