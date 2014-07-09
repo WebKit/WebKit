@@ -80,6 +80,12 @@ SOFT_LINK_CONSTANT(MobileCoreServices, kUTTagClassMIMEType, CFStringRef)
 #define kUTTagClassFilenameExtension getkUTTagClassFilenameExtension()
 #define kUTTagClassMIMEType getkUTTagClassMIMEType()
 
+SOFT_LINK_PRIVATE_FRAMEWORK(UIFoundation)
+SOFT_LINK_CONSTANT(UIFoundation, NSFontAttributeName, NSString *)
+#define NSFontAttributeName getNSFontAttributeName()
+SOFT_LINK_CONSTANT(UIFoundation, NSUnderlineStyleAttributeName, NSString *)
+#define NSUnderlineStyleAttributeName getNSUnderlineStyleAttributeName()
+
 @interface NSAttributedString (NSAttributedStringKitAdditions)
 - (id)initWithRTF:(NSData *)data documentAttributes:(NSDictionary **)dict;
 - (id)initWithRTFD:(NSData *)data documentAttributes:(NSDictionary **)dict;
@@ -87,6 +93,21 @@ SOFT_LINK_CONSTANT(MobileCoreServices, kUTTagClassMIMEType, CFStringRef)
 - (NSData *)RTFDFromRange:(NSRange)range documentAttributes:(NSDictionary *)dict;
 - (BOOL)containsAttachments;
 @end
+
+typedef NS_ENUM(NSInteger, NSUnderlineStyle) {
+    NSUnderlineStyleNone                                = 0x00,
+    NSUnderlineStyleSingle                              = 0x01,
+    NSUnderlineStyleThick NS_ENUM_AVAILABLE_IOS(7_0)    = 0x02,
+    NSUnderlineStyleDouble NS_ENUM_AVAILABLE_IOS(7_0)   = 0x09,
+    
+    NSUnderlinePatternSolid NS_ENUM_AVAILABLE_IOS(7_0)      = 0x0000,
+    NSUnderlinePatternDot NS_ENUM_AVAILABLE_IOS(7_0)        = 0x0100,
+    NSUnderlinePatternDash NS_ENUM_AVAILABLE_IOS(7_0)       = 0x0200,
+    NSUnderlinePatternDashDot NS_ENUM_AVAILABLE_IOS(7_0)    = 0x0300,
+    NSUnderlinePatternDashDotDot NS_ENUM_AVAILABLE_IOS(7_0) = 0x0400,
+    
+    NSUnderlineByWord NS_ENUM_AVAILABLE_IOS(7_0) = 0x8000
+};
 
 namespace WebCore {
 
@@ -238,6 +259,17 @@ NSDictionary* Editor::fontAttributesForSelectionStart() const
         return nil;
 
     NSMutableDictionary* result = [NSMutableDictionary dictionary];
+    
+    CTFontRef font = style->font().primaryFont()->getCTFont();
+    if (font)
+        [result setObject:(id)font forKey:NSFontAttributeName];
+    
+    if (style->textDecorationsInEffect() & TextDecorationUnderline)
+        [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
+    
+    if (nodeToRemove)
+        nodeToRemove->remove(ASSERT_NO_EXCEPTION);
+    
     return result;
 }
 

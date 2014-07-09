@@ -184,6 +184,7 @@ typedef enum {
 @interface WebView (WebViewEditingActionsPendingPublic)
 
 - (void)outdent:(id)sender;
+- (NSDictionary *)typingAttributes;
 
 @end
 
@@ -972,6 +973,7 @@ Could be worth adding to the API.
 - (void)initializationAllowedWebView:(WebView *)webView;
 - (void)initializationDeniedWebView:(WebView *)webView;
 @end
+
 #endif
 
 @interface WebView (WebViewUserMedia)

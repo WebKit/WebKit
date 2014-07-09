@@ -1,3 +1,13 @@
+2014-07-09  Enrica Casucci  <enrica@apple.com>
+
+        Implement Editor::fontAttributesForSelectionStart() or iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=134771
+        <rdar://problem/16167838>
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebView/WebViewPrivate.h:
+
 2014-07-08  Tim Horton  <timothy_horton@apple.com>
 
         [WK2] Expose a few drawing/compositing settings on WKPreferences(Private)

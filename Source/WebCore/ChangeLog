@@ -1,3 +1,16 @@
+2014-07-09  Enrica Casucci  <enrica@apple.com>
+
+        Implement Editor::fontAttributesForSelectionStart() or iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=134771
+        <rdar://problem/16167838>
+
+        Reviewed by Ryosuke Niwa.
+
+        Implement for iOS the equivalent function we have for OS X.
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::fontAttributesForSelectionStart):
+
 2014-07-09  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Remove use of 'grep' in build steps
