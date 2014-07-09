@@ -288,6 +288,7 @@ static int32_t deviceOrientation()
     [_contentView layer].anchorPoint = CGPointZero;
     [_contentView setFrame:bounds];
     [_scrollView addSubview:_contentView.get()];
+    [_scrollView addSubview:[_contentView unscaledView]];
     _viewportMetaTagWidth = -1;
 
     [self _frameOrBoundsChanged];
@@ -605,6 +606,7 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
         _customContentFixedOverlayView = adoptNS([[UIView alloc] initWithFrame:self.bounds]);
         [_customContentFixedOverlayView setUserInteractionEnabled:NO];
 
+        [[_contentView unscaledView] removeFromSuperview];
         [_contentView removeFromSuperview];
         [_scrollView addSubview:_customContentView.get()];
         [self addSubview:_customContentFixedOverlayView.get()];
@@ -619,6 +621,7 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
         _customContentFixedOverlayView = nullptr;
 
         [_scrollView addSubview:_contentView.get()];
+        [_scrollView addSubview:[_contentView unscaledView]];
         [_scrollView setContentSize:roundScrollViewContentSize(*_page, [_contentView frame].size)];
 
         [_customContentFixedOverlayView setFrame:self.bounds];
@@ -718,6 +721,7 @@ static CGFloat contentZoomScale(WKWebView* webView)
     if (!_customContentView && _isAnimatingResize) {
         NSUInteger indexOfResizeAnimationView = [[_scrollView subviews] indexOfObject:_resizeAnimationView.get()];
         [_scrollView insertSubview:_contentView.get() atIndex:indexOfResizeAnimationView];
+        [_scrollView insertSubview:[_contentView unscaledView] atIndex:indexOfResizeAnimationView + 1];
         [_resizeAnimationView removeFromSuperview];
         _resizeAnimationView = nil;
 
@@ -838,7 +842,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
         CGFloat animatingScaleTarget = [[_resizeAnimationView layer] transform].m11;
         double currentTargetScale = animatingScaleTarget * [[_contentView layer] transform].m11;
         double scale = newScale / currentTargetScale;
-        _resizeAnimationTransformAdjustments = CATransform3DMakeScale(scale, scale, 0);
+        _resizeAnimationTransformAdjustments = CATransform3DMakeScale(scale, scale, 1);
 
         CGPoint newContentOffset = [self _adjustedContentOffset:CGPointMake(newScrollPosition.x * newScale, newScrollPosition.y * newScale)];
         CGPoint currentContentOffset = [_scrollView contentOffset];
@@ -2101,6 +2105,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _resizeAnimationView = adoptNS([[UIView alloc] init]);
     [_scrollView insertSubview:_resizeAnimationView.get() atIndex:indexOfContentView];
     [_resizeAnimationView addSubview:_contentView.get()];
+    [_resizeAnimationView addSubview:[_contentView unscaledView]];
 
     CGSize contentSizeInContentViewCoordinates = [_contentView bounds].size;
     [_scrollView setMinimumZoomScale:std::min(newMinimumLayoutSize.width() / contentSizeInContentViewCoordinates.width, [_scrollView minimumZoomScale])];
@@ -2159,6 +2164,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
     NSUInteger indexOfResizeAnimationView = [[_scrollView subviews] indexOfObject:_resizeAnimationView.get()];
     [_scrollView insertSubview:_contentView.get() atIndex:indexOfResizeAnimationView];
+    [_scrollView insertSubview:[_contentView unscaledView] atIndex:indexOfResizeAnimationView + 1];
 
     CALayer *contentViewLayer = [_contentView layer];
     CGFloat adjustmentScale = _resizeAnimationTransformAdjustments.m11;

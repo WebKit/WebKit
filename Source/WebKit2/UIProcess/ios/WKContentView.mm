@@ -574,8 +574,6 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
 - (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
     scale:(CGFloat)zoomScale minimumScale:(CGFloat)minimumScale inStableState:(BOOL)isStableState isChangingObscuredInsetsInteractively:(BOOL)isChangingObscuredInsetsInteractively
 {
-    double oldDisplayedContentScale = _page->displayedContentScale();
-
     double timestamp = monotonicallyIncreasingTime();
     HistoricalVelocityData::VelocityData velocityData;
     if (!isStableState)
@@ -593,9 +591,6 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
 
     if (auto drawingArea = _page->drawingArea())
         drawingArea->updateDebugIndicator();
-
-    if (!withinEpsilon(oldDisplayedContentScale, zoomScale))
-        [self _updateUnscaledView];
         
     [self updateFixedClippingView:fixedPositionRect];
 }

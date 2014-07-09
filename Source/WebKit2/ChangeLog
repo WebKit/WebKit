@@ -1,3 +1,44 @@
+2014-07-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] subviews of the unscaled view drift out during CA animations
+        https://bugs.webkit.org/show_bug.cgi?id=134751
+
+        Reviewed by Enrica Casucci.
+
+        It is not possible to animate the WKContentView and the inverse view in such a way
+        that the combined matrix remain the identity for every frame of the animation.
+
+        This patch solves the issue by moving the unscaled view as a sibling of WKContentView
+        instead of a child so that we do not need to update two scales simultaneously.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        (-[WKWebView _processDidExit]):
+        (-[WKWebView _dynamicViewportUpdateChangedTargetToScale:position:]):
+        Set the z scale to 1 or no coordinate transform will work with this view.
+
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        (-[WKWebView _endAnimatedResize]):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        Since we need to observe changes inside the animation block, the code now use KVO to observe changes of scale.
+
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView unscaledView]):
+        (-[WKContentView inverseScale]):
+        (-[WKContentView observeValueForKeyPath:ofObject:change:context:]):
+        We update the utility views as usual. The extra bits here are to deal with views coming in during an animation.
+
+        If a new utility view comes in during a scaling animation, we do not want to start a new animation with the same curve
+        to end up at the right place. To avoid any issue, we just hide the view until the animation is finished.
+
+        (-[WKContentView hitTest:withEvent:]):
+        (-[WKContentView _showTapHighlight]):
+        (-[WKContentView _updateUnscaledView]): Deleted.
+
 2014-07-09  Tim Horton  <timothy_horton@apple.com>
 
         Use IOSurface ViewSnapshots everywhere on Mac, remove JPEG encoding path
