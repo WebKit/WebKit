@@ -465,6 +465,11 @@ namespace WebCore {
         void reconnectDOMWindowProperties();
         void willDestroyDocumentInFrame();
 
+#if ENABLE(GAMEPAD)
+        void incrementGamepadEventListenerCount();
+        void decrementGamepadEventListenerCount();
+#endif
+
         bool m_shouldPrintWhenFinishedLoading;
         bool m_suspendedForPageCache;
 
@@ -497,6 +502,9 @@ namespace WebCore {
         unsigned m_touchEventListenerCount;
 #endif
 
+#if ENABLE(GAMEPAD)
+        unsigned m_gamepadEventListenerCount;
+#endif
         mutable RefPtr<Storage> m_sessionStorage;
         mutable RefPtr<Storage> m_localStorage;
         mutable RefPtr<DOMApplicationCache> m_applicationCache;

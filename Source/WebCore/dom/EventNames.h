@@ -281,6 +281,11 @@ namespace WebCore {
     macro(gesturechange) \
     macro(gestureend) \
     /* End of ENABLE(IOS_GESTURE_EVENTS) */ \
+    \
+    /* ENABLE(GAMEPAD) */ \
+    macro(gamepadconnected) \
+    macro(gamepaddisconnected) \
+    /* End of ENABLE(GAMEPAD) */ \
 
 // end of DOM_EVENT_NAMES_FOR_EACH
 
@@ -319,6 +324,14 @@ public:
         names.append(touchcancelEvent);
         return names;
     }
+
+#if ENABLE(GAMEPAD)
+    inline bool isGamepadEventType(const AtomicString& eventType) const
+    {
+        return eventType == gamepadconnectedEvent
+            || eventType == gamepaddisconnectedEvent;
+    }
+#endif
 };
 
 inline EventNames& eventNames()

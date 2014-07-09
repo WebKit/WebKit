@@ -1,3 +1,43 @@
+2014-07-08  Brady Eidson  <beidson@apple.com>
+
+        DOMWindows should register themselves with the GamepadManager when they have event listeners
+        https://bugs.webkit.org/show_bug.cgi?id=134669
+
+        Reviewed by Dean Jackson.
+
+        No new tests (No effect in a currently tested config)
+
+        By having DOMWindows register with the GamepadManager when they have/don’t have gamepad event
+        listeners, we accomplish two things:
+        1 - It’s simple for GamepadManager to dispatch gamepad events directly to the DOMWindows interested.
+        2 - We know when to start monitoring for gamepad connections.
+
+        * Modules/gamepad/GamepadManager.cpp:
+        (WebCore::GamepadManager::GamepadManager):
+        (WebCore::GamepadManager::registerNavigator):
+        (WebCore::GamepadManager::unregisterNavigator):
+        (WebCore::GamepadManager::registerDOMWindow):
+        (WebCore::GamepadManager::unregisterDOMWindow):
+        (WebCore::GamepadManager::maybeStartMonitoringGamepads): Start monitoring gamepads if there are any
+          registered DOMWindows or NavigatorGamepads, and we aren’t already monitoring them.
+        (WebCore::GamepadManager::maybeStopMonitoringGamepads): Stop monitoring gamepads if there aren’t any
+          registered DOMWindows or NavigatorGameads, and we have been monitoring them before now.
+        * Modules/gamepad/GamepadManager.h:
+
+        * dom/EventNames.h:
+        (WebCore::EventNames::isGamepadEventType):
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::DOMWindow):
+        (WebCore::DOMWindow::~DOMWindow): If registered for gamepad events, unregister now.
+        (WebCore::DOMWindow::incrementGamepadEventListenerCount): If this is the first gamepad event
+          listener, register with the GamepadManager now.
+        (WebCore::DOMWindow::decrementGamepadEventListenerCount): If this was the last gamepad event
+          listener, unregister from the GamepadManager now.
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::removeEventListener):
+        * page/DOMWindow.h:
+
 2014-07-08  Sun-woo Nam  <sunny.nam@samsung.com>
 
         [EFL] Fix the build break when ENABLE_ENCRYPTED_MEDIA_V2 is turned on.

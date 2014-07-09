@@ -42,8 +42,8 @@ GamepadManager& GamepadManager::shared()
 }
 
 GamepadManager::GamepadManager()
+    : m_isMonitoringGamepads(false)
 {
-    GamepadProvider::shared().stopMonitoringGamepads(this);
 }
 
 void GamepadManager::platformGamepadConnected(PlatformGamepad& platformGamepad)
@@ -95,13 +95,7 @@ void GamepadManager::registerNavigator(NavigatorGamepad* navigator)
     m_navigators.add(navigator);
     m_gamepadBlindNavigators.add(navigator);
 
-    // FIXME: Monitoring gamepads will also be reliant on whether or not there are any
-    // connected/disconnected event listeners.
-    // Those event listeners will also need to register with the GamepadManager.
-    if (m_navigators.size() == 1) {
-        LOG(Gamepad, "GamepadManager registered first navigator, is starting gamepad monitoring");
-        GamepadProvider::shared().startMonitoringGamepads(this);
-    }
+    maybeStartMonitoringGamepads();
 }
 
 void GamepadManager::unregisterNavigator(NavigatorGamepad* navigator)
@@ -112,11 +106,49 @@ void GamepadManager::unregisterNavigator(NavigatorGamepad* navigator)
     m_navigators.remove(navigator);
     m_gamepadBlindNavigators.remove(navigator);
 
-    // FIXME: Monitoring gamepads will also be reliant on whether or not there are any
-    // connected/disconnected event listeners.
-    // Those event listeners will also need to register with the GamepadManager.
-    if (m_navigators.isEmpty()) {
-        LOG(Gamepad, "GamepadManager unregistered last navigator, is stopping gamepad monitoring");
+    maybeStopMonitoringGamepads();
+}
+
+void GamepadManager::registerDOMWindow(DOMWindow* window)
+{
+    LOG(Gamepad, "GamepadManager registering DOMWindow %p", window);
+
+    ASSERT(!m_domWindows.contains(window));
+    m_domWindows.add(window);
+
+    maybeStartMonitoringGamepads();
+}
+
+void GamepadManager::unregisterDOMWindow(DOMWindow* window)
+{
+    LOG(Gamepad, "GamepadManager unregistering DOMWindow %p", window);
+
+    ASSERT(m_domWindows.contains(window));
+    m_domWindows.remove(window);
+
+    maybeStopMonitoringGamepads();
+}
+
+void GamepadManager::maybeStartMonitoringGamepads()
+{
+    if (m_isMonitoringGamepads)
+        return;
+
+    if (!m_navigators.isEmpty() || !m_domWindows.isEmpty()) {
+        LOG(Gamepad, "GamepadManager has %i NavigatorGamepads and %i DOMWindows registered, is starting gamepad monitoring", m_navigators.size(), m_domWindows.size());
+        m_isMonitoringGamepads = true;
+        GamepadProvider::shared().startMonitoringGamepads(this);
+    }
+}
+
+void GamepadManager::maybeStopMonitoringGamepads()
+{
+    if (!m_isMonitoringGamepads)
+        return;
+
+    if (m_navigators.isEmpty() && m_domWindows.isEmpty()) {
+        LOG(Gamepad, "GamepadManager has no NavigatorGamepads or DOMWindows registered, is stopping gamepad monitoring");
+        m_isMonitoringGamepads = false;
         GamepadProvider::shared().stopMonitoringGamepads(this);
     }
 }

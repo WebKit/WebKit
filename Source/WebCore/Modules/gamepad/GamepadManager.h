@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class DOMWindow;
 class Gamepad;
 class NavigatorGamepad;
 
@@ -50,14 +51,22 @@ public:
 
     void registerNavigator(NavigatorGamepad*);
     void unregisterNavigator(NavigatorGamepad*);
+    void registerDOMWindow(DOMWindow*);
+    void unregisterDOMWindow(DOMWindow*);
 
 private:
     GamepadManager();
 
     void makeGamepadsVisibileToBlindNavigators();
 
+    void maybeStartMonitoringGamepads();
+    void maybeStopMonitoringGamepads();
+
+    bool m_isMonitoringGamepads;
+
     HashSet<NavigatorGamepad*> m_navigators;
     HashSet<NavigatorGamepad*> m_gamepadBlindNavigators;
+    HashSet<DOMWindow*> m_domWindows;
 };
 
 } // namespace WebCore

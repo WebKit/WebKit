@@ -124,6 +124,10 @@
 #include "RequestAnimationFrameCallback.h"
 #endif
 
+#if ENABLE(GAMEPAD)
+#include "GamepadManager.h"
+#endif
+
 #if PLATFORM(IOS)
 #if ENABLE(GEOLOCATION)
 #include "NavigatorGeolocation.h"
@@ -395,6 +399,9 @@ DOMWindow::DOMWindow(Document* document)
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
     , m_touchEventListenerCount(0)
 #endif
+#if ENABLE(GAMEPAD)
+    , m_gamepadEventListenerCount(0)
+#endif
 {
     ASSERT(frame());
     ASSERT(DOMWindow::document());
@@ -441,6 +448,11 @@ DOMWindow::~DOMWindow()
 
     removeAllUnloadEventListeners(this);
     removeAllBeforeUnloadEventListeners(this);
+
+#if ENABLE(GAMEPAD)
+    if (m_gamepadEventListenerCount)
+        GamepadManager::shared().unregisterDOMWindow(this);
+#endif
 }
 
 DOMWindow* DOMWindow::toDOMWindow()
@@ -500,6 +512,22 @@ void DOMWindow::willDetachDocumentFromFrame()
     for (size_t i = 0; i < properties.size(); ++i)
         properties[i]->willDetachGlobalObjectFromFrame();
 }
+
+#if ENABLE(GAMEPAD)
+void DOMWindow::incrementGamepadEventListenerCount()
+{
+    if (++m_gamepadEventListenerCount == 1)
+        GamepadManager::shared().registerDOMWindow(this);
+}
+
+void DOMWindow::decrementGamepadEventListenerCount()
+{
+    ASSERT(m_gamepadEventListenerCount);
+
+    if (!--m_gamepadEventListenerCount)
+        GamepadManager::shared().unregisterDOMWindow(this);
+}
+#endif
 
 void DOMWindow::registerProperty(DOMWindowProperty* property)
 {
@@ -1708,7 +1736,10 @@ bool DOMWindow::addEventListener(const AtomicString& eventType, PassRefPtr<Event
     else if (eventNames().isGestureEventType(eventType))
         ++m_touchEventListenerCount;
 #endif
-
+#if ENABLE(GAMEPAD)
+    else if (eventNames().isGamepadEventType(eventType))
+        incrementGamepadEventListenerCount();
+#endif
 #if ENABLE(PROXIMITY_EVENTS)
     else if (eventType == eventNames().webkitdeviceproximityEvent) {
         if (DeviceProximityController* controller = DeviceProximityController::from(page()))
@@ -1798,7 +1829,10 @@ bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
         --m_touchEventListenerCount;
     }
 #endif
-
+#if ENABLE(GAMEPAD)
+    else if (eventNames().isGamepadEventType(eventType))
+        decrementGamepadEventListenerCount();
+#endif
 #if ENABLE(PROXIMITY_EVENTS)
     else if (eventType == eventNames().webkitdeviceproximityEvent) {
         if (DeviceProximityController* controller = DeviceProximityController::from(page()))
