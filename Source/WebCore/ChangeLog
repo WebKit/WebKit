@@ -1,3 +1,31 @@
+2014-07-09  Javier Fernandez  <jfernandez@igalia.com>
+        CSS canvas color parsing accepts invalid color identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=134661
+
+        Reviewed by Benjamin Poulain.
+
+        Current implementation of the CSSParser::parseSystemColor assumes
+        that if a valid cssValueKeywordID is got then it has to be a valid
+        color. Such assumption is wrong and lead to many bugs and layout
+        test failures.
+
+        The parseSystemFunction determines now whether the parsed color is
+        valid or not.
+
+        Addtionally, a new method has been added to share the logic of
+        determining whether a CSSValueID is a valid primitive values for
+        colors or not. Generally, we should avoid passing invalid color
+        identifiers to the theming API.
+
+        No new tests, but added additional cases to the
+        canvas-color-serialization.html, test-setting-canvas-color and
+        rgb-color-parse test.
+
+        * css/CSSParser.cpp:
+        (WebCore::validPrimitiveValueColor): Added.
+        (WebCore::parseColorValue):
+        (WebCore::CSSParser::parseSystemColor):
+
 2014-06-28  Jer Noble  <jer.noble@apple.com>
 
         [MSE] http/tests/media/media-source/mediasource-remove.html is failing

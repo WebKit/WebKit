@@ -501,6 +501,13 @@ static inline bool isColorPropertyID(CSSPropertyID propertyId)
     }
 }
 
+static bool validPrimitiveValueColor(CSSValueID valueID, bool strict = false)
+{
+    return (valueID == CSSValueWebkitText || valueID == CSSValueCurrentcolor || valueID == CSSValueMenu
+        || (valueID >= CSSValueAlpha && valueID <= CSSValueWindowtext)
+        || (valueID >= CSSValueWebkitFocusRingColor && valueID < CSSValueWebkitText && !strict));
+}
+
 static bool parseColorValue(MutableStyleProperties* declaration, CSSPropertyID propertyId, const String& string, bool important, CSSParserMode cssParserMode)
 {
     ASSERT(!string.isEmpty());
@@ -510,17 +517,7 @@ static bool parseColorValue(MutableStyleProperties* declaration, CSSPropertyID p
     CSSParserString cssString;
     cssString.init(string);
     CSSValueID valueID = cssValueKeywordID(cssString);
-    bool validPrimitive = false;
-    if (valueID == CSSValueWebkitText)
-        validPrimitive = true;
-    else if (valueID == CSSValueCurrentcolor)
-        validPrimitive = true;
-    else if ((valueID >= CSSValueAqua && valueID <= CSSValueWindowtext) || valueID == CSSValueMenu
-             || (valueID >= CSSValueWebkitFocusRingColor && valueID < CSSValueWebkitText && !strict)) {
-        validPrimitive = true;
-    }
-
-    if (validPrimitive) {
+    if (validPrimitiveValueColor(valueID, strict)) {
         RefPtr<CSSValue> value = cssValuePool().createIdentifierValue(valueID);
         declaration->addParsedProperty(CSSProperty(propertyId, value.release(), important));
         return true;
@@ -1355,10 +1352,14 @@ bool CSSParser::parseSystemColor(RGBA32& color, const String& string, Document* 
     CSSParserString cssColor;
     cssColor.init(string);
     CSSValueID id = cssValueKeywordID(cssColor);
-    if (id <= 0)
+    if (!validPrimitiveValueColor(id))
         return false;
 
-    color = document->page()->theme().systemColor(id).rgb();
+    Color parsedColor = document->page()->theme().systemColor(id);
+    if (!parsedColor.isValid())
+        return false;
+
+    color = parsedColor.rgb();
     return true;
 }
 

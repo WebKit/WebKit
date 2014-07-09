@@ -1,3 +1,24 @@
+2014-07-09  Javier Fernandez  <jfernandez@igalia.com>
+
+        CSS canvas color parsing accepts invalid color identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=134661
+
+        Reviewed by Benjamin Poulain.
+
+        The parseSystemFunction determines now whether the parsed color is
+        valid or not.
+
+        The rgb-color-parser covers css style color parsing cases, which
+        already provide coverage for invalid color identifiers. I've added
+        a few more, though.
+
+        * fast/canvas/canvas-color-serialization-expected.txt:
+        * fast/canvas/script-tests/canvas-color-serialization.js:
+        * fast/css/test-setting-canvas-color-expected.txt:
+        * fast/css/test-setting-canvas-color.html:
+        * svg/dom/rgb-color-parser-expected.txt:
+        * svg/dom/rgb-color-parser.html:
+
 2014-06-28  Jer Noble  <jer.noble@apple.com>
 
         [MSE] http/tests/media/media-source/mediasource-remove.html is failing.

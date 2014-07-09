@@ -230,6 +230,14 @@ trySettingColor("-1", "'#666666'");
 trySettingColor("NaN", "'#666666'");
 trySettingColor("Infinity", "'#666666'");
 trySettingColor("null", "'#666666'");
+trySettingColor("'left'", "'#666666'");
+trySettingColor("'right'", "'#666666'");
+trySettingColor("'center'", "'#666666'");
+trySettingColor("'border'", "'#666666'");
+trySettingColor("'border-box'", "'#666666'");
+trySettingColor("'content'", "'#666666'");
+trySettingColor("'logical'", "'#666666'");
+trySettingColor("'visual'", "'#666666'");
 
 trySettingColorWithSetter("'transparent'", "'rgba(0, 0, 0, 0)'");
 trySettingColorWithSetter("'red'", "'#ff0000'");

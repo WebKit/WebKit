@@ -214,6 +214,14 @@ PASS Setting color to inherited was not set (as expected).
 PASS Setting color to #100% was not set (as expected).
 PASS Setting color to #100px was not set (as expected).
 PASS Setting color to -webkit-var("test") was not set (as expected).
+PASS Setting color to left was not set (as expected).
+PASS Setting color to right was not set (as expected).
+PASS Setting color to center was not set (as expected).
+PASS Setting color to border was not set (as expected).
+PASS Setting color to border was not set (as expected).
+PASS Setting color to content was not set (as expected).
+PASS Setting color to logical was not set (as expected).
+PASS Setting color to visual was not set (as expected).
 PASS successfullyParsed is true
 
 TEST COMPLETE
