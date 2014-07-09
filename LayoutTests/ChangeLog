@@ -1,3 +1,10 @@
+2014-07-09  Antti Koivisto  <antti@apple.com>
+
+        fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html is failing in some bots
+        https://bugs.webkit.org/show_bug.cgi?id=134769
+
+        * TestExpectations: Skipping the test.
+
 2014-07-09  Jer Noble  <jer.noble@apple.com>
 
         [MSE] http/tests/media/media-source/mediasource-endofstream-invaliderror.html is failing.
