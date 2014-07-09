@@ -1,3 +1,15 @@
+2014-07-09  Anders Carlsson  <andersca@apple.com>
+
+        RemoteLayerBackingStore::ensureBackingStore should ensure that the entire backing store gets redrawn
+        https://bugs.webkit.org/show_bug.cgi?id=134772
+
+        Reviewed by Tim Horton.
+
+        * Shared/mac/RemoteLayerBackingStore.h:
+        (WebKit::RemoteLayerBackingStore::Buffer::operator bool):
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::ensureBackingStore):
+
 2014-07-09  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Fix crash caused by invalid cursor image.

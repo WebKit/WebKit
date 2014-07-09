@@ -112,6 +112,18 @@ private:
         bool isVolatile = false;
 #endif
 
+        explicit operator bool() const
+        {
+#if USE(IOSURFACE)
+            if (surface)
+                return true;
+#endif
+            if (bitmap)
+                return true;
+
+            return false;
+        }
+
         void discard();
     };
 
