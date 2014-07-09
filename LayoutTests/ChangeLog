@@ -1,3 +1,10 @@
+2014-07-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Report and mark new failing and flaky tests. Adjust some tests expectations.
+        * platform/gtk/css1/formatting_model/inline_elements-expected.txt: Rebaseline after r170875.
+
 2014-07-08  Alex Christensen  <achristensen@webkit.org>
 
         Remove webkit prefix from pointer lock tests.

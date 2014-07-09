@@ -417,6 +417,7 @@ webkit.org/b/131347 fast/hidpi/image-srcset-invalid-inputs-except-one.html [ Fai
 webkit.org/b/131347 fast/hidpi/image-srcset-simple-2x.html [ Failure ]
 webkit.org/b/131347 fast/hidpi/image-srcset-src-selection-2x.html [ Failure ]
 webkit.org/b/131347 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/inline/hidpi-inline-text-decoration-with-subpixel-value.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlines.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-select-inline-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-selection-gap-and-inline-selection-have-gap-rtl.html [ ImageOnlyFailure ]
@@ -659,6 +660,7 @@ webkit.org/b/103443 fast/parser/parser-yield-timing.html [ Failure Pass ]
 
 webkit.org/b/105191 media/video-playing-and-pause.html [ Failure Pass ]
 
+webkit.org/b/105280 http/tests/xmlhttprequest/access-control-preflight-async-header-denied.html [ Failure Pass ]
 webkit.org/b/105280 http/tests/xmlhttprequest/access-control-preflight-async-method-denied.html [ Failure Pass ]
 webkit.org/b/105280 http/tests/xmlhttprequest/access-control-preflight-async-not-supported.html [ Failure Pass ]
 webkit.org/b/105280 http/tests/xmlhttprequest/cross-site-denied-response.html [ Failure Pass ]
@@ -783,8 +785,9 @@ webkit.org/b/132183 fast/dom/adopt-node-crash-2.html [ Failure Pass ]
 webkit.org/b/132184 fast/multicol/span/span-as-immediate-columns-child-dynamic.html [ Failure Pass ]
 webkit.org/b/132185 platform/gtk/editing/pasteboard/middle-button-paste.html [ Failure Pass ]
 
-#Some media fragment tests are flaky
+# Some media fragment tests are flaky
 webkit.org/b/132864 media/media-fragments/TC0005.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0006.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0037.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0078.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0079.html [ Failure Pass ]
@@ -865,10 +868,18 @@ webkit.org/b/134550 http/tests/cache/iframe-304-crash.html [ Failure Pass ]
 webkit.org/b/134573 media/track/audio-track.html [ Failure Timeout Pass ]
 webkit.org/b/134574 media/media-fragments/TC0024.html [ Failure Timeout Pass ]
 webkit.org/b/134575 http/tests/media/hls/video-controls-live-stream.html [ Crash Failure Timeout Pass ]
+webkit.org/b/134576 media/track/audio/audio-track-mkv-vorbis-language.html [ Failure Timeout Pass ]
+webkit.org/b/134576 media/track/track-cue-rendering.html [ Failure Timeout Pass ]
 webkit.org/b/134576 media/track/video/video-track-mkv-theora-selected.html [ Failure Timeout Pass ]
+webkit.org/b/134576 media/track/video/video-track-mkv-theora-language.html [ Failure Timeout Pass ]
 webkit.org/b/134577 svg/dom/svg-root-lengths.html [ Failure Timeout Pass ]
 webkit.org/b/103383 fast/css/counters/element-removal-crash.xhtml [ Failure Pass ]
 webkit.org/b/134579 fast/forms/state-restore-to-non-edited-controls.html [ Timeout Pass ]
+webkit.org/b/134758 svg/custom/composited-svg-with-opacity.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/134760 plugins/layout-in-beforeload-listener-affects-plugin-loading.html [ Failure Pass ]
+
+webkit.org/b/134761 svg/custom/animate-initial-pause-unpause.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -992,7 +1003,7 @@ webkit.org/b/122571 inspector-protocol/debugger/call-frame-this-strict.html [ Ti
 webkit.org/b/122571 inspector-protocol/debugger/setBreakpoint-dfg.html [ Failure Pass ]
 webkit.org/b/122571 inspector-protocol/profiler/console-profile.html [ Failure Pass ]
 webkit.org/b/122571 inspector-protocol/dom/request-child-nodes-depth.html [ Timeout Pass ]
-webkit.org/b/122571 inspector-protocol/dom/focus.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/dom/focus.html [ Failure Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/runtime/getProperties.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/page/javascriptDialogEvents.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/page/frameStartedLoading.html [ Timeout Pass ]
@@ -1973,6 +1984,10 @@ webkit.org/b/133803 editing/undo/undo-deleteWord.html [ Failure ]
 
 # Difference invisible at the naked eye with Latin Modern Math.
 webkit.org/b/134153 mathml/presentation/mo-stacked-glyphs.html [ ImageOnlyFailure ]
+
+webkit.org/b/134756 fast/dom/HTMLImageElement/sizes/image-sizes-2x.html [ Failure ]
+webkit.org/b/134756 fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [ Failure ]
+webkit.org/b/134756 http/tests/loading/sizes/preload-image-sizes-2x.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
