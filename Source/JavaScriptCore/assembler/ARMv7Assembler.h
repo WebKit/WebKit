@@ -1502,16 +1502,9 @@ public:
     ALWAYS_INLINE void pop(uint32_t registerList)
     {
         ASSERT(WTF::bitCount(registerList) > 1);
-        ASSERT(!((1 << ARMRegisters::lr) & registerList));
+        ASSERT(!((1 << ARMRegisters::pc) & registerList) || !((1 << ARMRegisters::lr) & registerList));
         ASSERT(!((1 << ARMRegisters::sp) & registerList));
-
-        // It is possible to restore the PC with thumb, but that is not used by the MacroAssembler.
-        ASSERT(!((1 << ARMRegisters::pc) & registerList));
-
-        if (registerList & ~(0xff))
-            m_formatter.twoWordOp16Imm16(OP_POP_T2, registerList);
-        else
-            m_formatter.oneWordOp7Imm9(OP_POP_T1, registerList & 0xff);
+        m_formatter.twoWordOp16Imm16(OP_POP_T2, registerList);
     }
 
     ALWAYS_INLINE void push(uint32_t registerList)
@@ -1519,18 +1512,7 @@ public:
         ASSERT(WTF::bitCount(registerList) > 1);
         ASSERT(!((1 << ARMRegisters::pc) & registerList));
         ASSERT(!((1 << ARMRegisters::sp) & registerList));
-        uint32_t lrMask = 1 << ARMRegisters::lr;
-        if (registerList & ~(0xff | lrMask))
-            m_formatter.twoWordOp16Imm16(OP_PUSH_T2, registerList);
-        else {
-            uint16_t t1RegisterList = registerList & 0xff;
-
-            // For T1 PUSH, the M field encodes LR.
-            if (registerList & lrMask)
-                t1RegisterList |= 0x100;
-            ASSERT(WTF::bitCount(static_cast<unsigned>(t1RegisterList)) > 1);
-            m_formatter.oneWordOp7Imm9(OP_PUSH_T1, t1RegisterList);
-        }
+        m_formatter.twoWordOp16Imm16(OP_PUSH_T2, registerList);
     }
 
 #if CPU(APPLE_ARMV7S)

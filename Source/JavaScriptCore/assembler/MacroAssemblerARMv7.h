@@ -1182,15 +1182,13 @@ public:
     void pop(RegisterID dest)
     {
         // Load postindexed with writeback.
-        if (dest == ARMRegisters::lr)
-            m_assembler.ldr(dest, ARMRegisters::sp, sizeof(void*), false, true);
-        else
-            m_assembler.pop(1 << dest);
+        m_assembler.ldr(dest, ARMRegisters::sp, sizeof(void*), false, true);
     }
 
     void push(RegisterID src)
     {
-        m_assembler.push(1 << src);
+        // Store preindexed with writeback.
+        m_assembler.str(src, ARMRegisters::sp, -sizeof(void*), true, true);
     }
 
     void push(Address address)

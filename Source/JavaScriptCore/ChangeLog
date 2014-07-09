@@ -1,3 +1,14 @@
+2014-07-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        Restore the assertion changed with 170839
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::pop):
+        (JSC::ARMv7Assembler::push):
+        Revert the Assembler part of 170839. The assertions do not match both encoding.
+
+        I'll add specific version of push and pop instead.
+
 2014-07-08  Jon Honeycutt  <jhoneycutt@apple.com>
 
         RemoteInspector::shared() should not call WTF::initializeMainThread()
