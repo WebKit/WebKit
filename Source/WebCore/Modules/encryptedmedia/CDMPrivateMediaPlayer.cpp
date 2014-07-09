@@ -33,7 +33,10 @@
 #include "ContentType.h"
 #include "ExceptionCode.h"
 #include "MediaPlayer.h"
+
+#if PLATFORM(IOS) || OS(WINCE)
 #include "SoftLinking.h"
+#endif
 
 namespace WebCore {
 

@@ -1,3 +1,15 @@
+2014-07-08  Sun-woo Nam  <sunny.nam@samsung.com>
+
+        [EFL] Support Encrypted Media Extensions.
+        https://bugs.webkit.org/show_bug.cgi?id=134750
+
+        Reviewed by Gyuyoung Kim.
+
+        Webkit needs to play encrypted media contents when media player
+        is played by Media source extensions and normal video procedure.
+
+        * Source/cmake/OptionsEfl.cmake: Turn on ENABLE_ENCRYPTED_MEDIA_V2
+
 2014-07-08  Alex Christensen  <achristensen@webkit.org>
 
         Steps towards CMake on Windows.

@@ -2767,11 +2767,13 @@ set(WebCore_LIBRARIES
 if (ENABLE_ENCRYPTED_MEDIA OR ENABLE_ENCRYPTED_MEDIA_V2)
     list(APPEND WebCore_SOURCES
         Modules/encryptedmedia/CDM.cpp
+        Modules/encryptedmedia/CDMPrivateMediaPlayer.cpp
         Modules/encryptedmedia/MediaKeyMessageEvent.cpp
         Modules/encryptedmedia/MediaKeyNeededEvent.cpp
         Modules/encryptedmedia/MediaKeys.cpp
         Modules/encryptedmedia/MediaKeySession.cpp
         html/MediaKeyEvent.cpp
+        testing/MockCDM.cpp
     )
     list(APPEND WebCore_IDL_FILES
         Modules/encryptedmedia/MediaKeyMessageEvent.idl

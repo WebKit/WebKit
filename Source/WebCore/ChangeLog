@@ -1,3 +1,17 @@
+2014-07-08  Sun-woo Nam  <sunny.nam@samsung.com>
+
+        [EFL] Fix the build break when ENABLE_ENCRYPTED_MEDIA_V2 is turned on.
+        https://bugs.webkit.org/show_bug.cgi?id=134750
+
+        Reviewed by Gyuyoung Kim.
+
+        When turning ENABLE_ENCRYPTED_MEDIA_V2 on, build break occurs.
+        Some source files need to be included in CMakeLists.txt file for build.
+        And wrap the included header file which is built only on mac and wince.
+
+        * CMakeLists.txt:
+        * Modules/encryptedmedia/CDMPrivateMediaPlayer.cpp:
+
 2014-07-08  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] user caption preferences not applied
