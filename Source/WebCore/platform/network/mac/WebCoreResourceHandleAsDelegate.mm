@@ -197,7 +197,7 @@ using namespace WebCore;
         return;
 #endif
 
-    m_handle->handleDataArray(reinterpret_cast<CFArrayRef>(dataArray));
+    m_handle->client()->didReceiveBuffer(m_handle, SharedBuffer::wrapCFDataArray(reinterpret_cast<CFArrayRef>(dataArray)), -1);
     // The call to didReceiveData above can cancel a load, and if so, the delegate (self) could have been deallocated by this point.
 }
 #endif

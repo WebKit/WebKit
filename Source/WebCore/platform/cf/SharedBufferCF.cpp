@@ -29,6 +29,7 @@
 #include "SharedBuffer.h"
 
 #include "PurgeableBuffer.h"
+#include <wtf/cf/TypeCasts.h>
 
 #if ENABLE(DISK_IMAGE_CACHE)
 #include "DiskImageCacheIOS.h"
@@ -112,6 +113,27 @@ void SharedBuffer::tryReplaceContentsWithPlatformBuffer(SharedBuffer* newContent
 }
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+PassRefPtr<SharedBuffer> SharedBuffer::wrapCFDataArray(CFArrayRef cfDataArray)
+{
+    return adoptRef(new SharedBuffer(cfDataArray));
+}
+
+SharedBuffer::SharedBuffer(CFArrayRef cfDataArray)
+    : m_size(0)
+    , m_shouldUsePurgeableMemory(true)
+#if ENABLE(DISK_IMAGE_CACHE)
+    , m_isMemoryMapped(false)
+    , m_diskImageCacheId(DiskImageCache::invalidDiskCacheId)
+    , m_notifyMemoryMappedCallback(nullptr)
+    , m_notifyMemoryMappedCallbackData(nullptr)
+#endif
+    , m_cfData(nullptr)
+{
+    CFIndex dataArrayCount = CFArrayGetCount(cfDataArray);
+    for (CFIndex index = 0; index < dataArrayCount; ++index)
+        append(checked_cf_cast<CFDataRef>(CFArrayGetValueAtIndex(cfDataArray, index)));
+}
+
 void SharedBuffer::append(CFDataRef data)
 {
     ASSERT(data);

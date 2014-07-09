@@ -258,10 +258,6 @@ public:
     static CFMutableDictionaryRef createSSLPropertiesFromNSURLRequest(const ResourceRequest&);
 #endif
 
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    void handleDataArray(CFArrayRef dataArray);
-#endif
-
     typedef PassRefPtr<ResourceHandle> (*BuiltinConstructor)(const ResourceRequest& request, ResourceHandleClient* client);
     static void registerBuiltinConstructor(const AtomicString& protocol, BuiltinConstructor);
 

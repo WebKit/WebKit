@@ -275,7 +275,8 @@ void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveDataArray(CFArr
         return;
 #endif
 
-    m_handle->handleDataArray(dataArray);
+    if (ResourceHandleClient* client = m_handle->client())
+        client->didReceiveBuffer(m_handle, SharedBuffer::wrapCFDataArray(dataArray), -1);
 }
 #endif // USE(NETWORK_CFDATA_ARRAY_CALLBACK)
 

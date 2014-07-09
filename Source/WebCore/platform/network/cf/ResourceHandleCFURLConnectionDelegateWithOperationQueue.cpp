@@ -282,7 +282,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveDataArra
         if (protector->hasHandle()) {
             LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::didSendBodyData(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
-            m_handle->handleDataArray(dataArray);
+            m_handle->client()->didReceiveBuffer(m_handle, SharedBuffer::wrapCFDataArray(dataArray), -1);
         }
         CFRelease(dataArray);
     });

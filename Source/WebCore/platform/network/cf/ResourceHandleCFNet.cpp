@@ -624,29 +624,4 @@ void ResourceHandle::continueWillCacheResponse(CFCachedURLResponseRef response)
 }
 #endif // USE(CFNETWORK)
 
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-void ResourceHandle::handleDataArray(CFArrayRef dataArray)
-{
-    ASSERT(client());
-    if (client()->supportsDataArray()) {
-        client()->didReceiveDataArray(this, dataArray);
-        return;
-    }
-
-    CFIndex count = CFArrayGetCount(dataArray);
-    ASSERT(count);
-    if (count == 1) {
-        CFDataRef data = static_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, 0));
-        client()->didReceiveBuffer(this, SharedBuffer::wrapCFData(data), -1);
-        return;
-    }
-
-    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create();
-    for (CFIndex index = 0; index < count; index++)
-        sharedBuffer->append(static_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, index)));
-
-    client()->didReceiveBuffer(this, sharedBuffer, -1);
-}
-#endif
-
 } // namespace WebCore
