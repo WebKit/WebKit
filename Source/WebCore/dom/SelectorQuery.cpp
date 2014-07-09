@@ -361,9 +361,14 @@ ALWAYS_INLINE void SelectorDataList::executeSingleMultiSelectorData(const Contai
 
 #if ENABLE(CSS_SELECTOR_JIT)
 template <typename SelectorQueryTrait>
-ALWAYS_INLINE void SelectorDataList::executeCompiledSimpleSelectorChecker(const ContainerNode& rootNode, SelectorCompiler::SimpleSelectorChecker selectorChecker, typename SelectorQueryTrait::OutputType& output) const
+ALWAYS_INLINE void SelectorDataList::executeCompiledSimpleSelectorChecker(const ContainerNode& rootNode, SelectorCompiler::SimpleSelectorChecker selectorChecker, typename SelectorQueryTrait::OutputType& output, const SelectorData& selectorData) const
 {
     for (auto& element : elementDescendants(const_cast<ContainerNode&>(rootNode))) {
+#if CSS_SELECTOR_JIT_PROFILING
+        selectorData.compiledSelectorUsed();
+#else
+        UNUSED_PARAM(selectorData);
+#endif
         if (selectorChecker(&element)) {
             SelectorQueryTrait::appendOutputForElement(output, &element);
             if (SelectorQueryTrait::shouldOnlyMatchFirstElement)
@@ -435,7 +440,7 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename S
         const SelectorData& selectorData = m_selectors.first();
         void* compiledSelectorChecker = selectorData.compiledSelectorCodeRef.code().executableAddress();
         SelectorCompiler::SimpleSelectorChecker selectorChecker = SelectorCompiler::simpleSelectorCheckerFunction(compiledSelectorChecker, selectorData.compilationStatus);
-        executeCompiledSimpleSelectorChecker<SelectorQueryTrait>(*searchRootNode, selectorChecker, output);
+        executeCompiledSimpleSelectorChecker<SelectorQueryTrait>(*searchRootNode, selectorChecker, output, selectorData);
         break;
         }
 #else

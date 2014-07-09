@@ -31,6 +31,8 @@
 #include "SelectorChecker.h"
 #include <JavaScriptCore/MacroAssemblerCodeRef.h>
 
+#define CSS_SELECTOR_JIT_PROFILING 0
+
 namespace JSC {
 class MacroAssemblerCodeRef;
 class VM;

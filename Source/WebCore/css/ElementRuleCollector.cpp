@@ -303,6 +303,9 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData)
 
         if (ruleData.compilationStatus() == SelectorCompilationStatus::SimpleSelectorChecker) {
             SelectorCompiler::SimpleSelectorChecker selectorChecker = SelectorCompiler::simpleSelectorCheckerFunction(compiledSelectorChecker, ruleData.compilationStatus());
+#if CSS_SELECTOR_JIT_PROFILING
+            ruleData.compiledSelectorUsed();
+#endif
             return selectorChecker(&m_element);
         }
         ASSERT(ruleData.compilationStatus() == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
@@ -311,6 +314,9 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData)
         SelectorCompiler::CheckingContext context;
         context.elementStyle = m_style;
         context.resolvingMode = m_mode;
+#if CSS_SELECTOR_JIT_PROFILING
+        ruleData.compiledSelectorUsed();
+#endif
         return selectorChecker(&m_element, &context);
     }
 #endif // ENABLE(CSS_SELECTOR_JIT)

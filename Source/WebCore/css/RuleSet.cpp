@@ -140,6 +140,9 @@ RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned position, A
     , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector()))
     , m_hasDocumentSecurityOrigin(addRuleFlags & RuleHasDocumentSecurityOrigin)
     , m_propertyWhitelistType(determinePropertyWhitelistType(addRuleFlags, selector()))
+#if ENABLE(CSS_SELECTOR_JIT) && CSS_SELECTOR_JIT_PROFILING
+    , m_compiledSelectorUseCount(0)
+#endif
 {
     ASSERT(m_position == position);
     ASSERT(m_selectorIndex == selectorIndex);
