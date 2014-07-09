@@ -3141,7 +3141,8 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
     auto croppedSnapshotImage = adoptCF(CGImageCreateWithImageInRect(windowSnapshotImage.get(), NSRectToCGRect([window convertRectToBacking:croppedImageRect])));
 
-    snapshot.image = croppedSnapshotImage.get();
+    snapshot.surface = IOSurface::createFromImage(croppedSnapshotImage.get());
+    snapshot.surface->setIsVolatile(true);
 
     IntSize imageSize(CGImageGetWidth(croppedSnapshotImage.get()), CGImageGetHeight(croppedSnapshotImage.get()));
     snapshot.size = imageSize;

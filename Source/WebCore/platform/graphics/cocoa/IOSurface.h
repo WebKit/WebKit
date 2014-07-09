@@ -40,6 +40,7 @@ public:
     static PassRefPtr<IOSurface> create(IntSize, ColorSpace);
     static PassRefPtr<IOSurface> createFromMachPort(mach_port_t, ColorSpace);
     static PassRefPtr<IOSurface> createFromSurface(IOSurfaceRef, ColorSpace);
+    static PassRefPtr<IOSurface> createFromImage(CGImageRef);
 
     static IntSize maximumSize();
 

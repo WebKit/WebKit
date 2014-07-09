@@ -1,3 +1,28 @@
+2014-07-09  Tim Horton  <timothy_horton@apple.com>
+
+        Use IOSurface ViewSnapshots everywhere on Mac, remove JPEG encoding path
+        https://bugs.webkit.org/show_bug.cgi?id=134773
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _takeViewSnapshot]):
+        * UIProcess/mac/ViewSnapshotStore.h:
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::ViewSnapshotStore::ViewSnapshotStore):
+        (WebKit::ViewSnapshotStore::~ViewSnapshotStore):
+        (WebKit::ViewSnapshotStore::recordSnapshot):
+        (WebKit::ViewSnapshot::clearImage):
+        (WebKit::ViewSnapshot::asLayerContents):
+        (WebKit::createIOSurfaceFromImage): Deleted.
+        (WebKit::compressImageAsJPEG): Deleted.
+        (WebKit::ViewSnapshotStore::reduceSnapshotMemoryCost): Deleted.
+        (WebKit::ViewSnapshotStore::didCompressSnapshot): Deleted.
+        Remove all ViewSnapshot(Store) code related to JPEG-encoded snapshots.
+        Remove the "image" member on ViewSnapshot; Mac will always start out with an IOSurface instead.
+        Adopt WebCore::IOSurface::createFromImage to make that happen.
+        Add a comment noting that if a snapshot comes back empty, we should throw it away completely.
+
 2014-07-09  Anders Carlsson  <andersca@apple.com>
 
         RemoteLayerBackingStore::ensureBackingStore should ensure that the entire backing store gets redrawn

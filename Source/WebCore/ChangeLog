@@ -1,3 +1,16 @@
+2014-07-09  Tim Horton  <timothy_horton@apple.com>
+
+        Use IOSurface ViewSnapshots everywhere on Mac, remove JPEG encoding path
+        https://bugs.webkit.org/show_bug.cgi?id=134773
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+        (IOSurface::createFromImage):
+        Move make-an-IOSurface-from-a-CGImageRef into WebCore::IOSurface.
+
 2014-07-09  Enrica Casucci  <enrica@apple.com>
 
         Implement Editor::fontAttributesForSelectionStart() or iOS.

@@ -70,6 +70,19 @@ PassRefPtr<IOSurface> IOSurface::createFromSurface(IOSurfaceRef surface, ColorSp
     return adoptRef(new IOSurface(surface, colorSpace));
 }
 
+PassRefPtr<IOSurface> IOSurface::createFromImage(CGImageRef image)
+{
+    size_t width = CGImageGetWidth(image);
+    size_t height = CGImageGetHeight(image);
+
+    RefPtr<IOSurface> surface = IOSurface::create(IntSize(width, height), ColorSpaceDeviceRGB);
+    auto surfaceContext = surface->ensurePlatformContext();
+    CGContextDrawImage(surfaceContext, CGRectMake(0, 0, width, height), image);
+    CGContextFlush(surfaceContext);
+
+    return surface.release();
+}
+
 IOSurface::IOSurface(IntSize size, ColorSpace colorSpace)
     : m_colorSpace(colorSpace)
     , m_size(size)

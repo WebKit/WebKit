@@ -37,17 +37,10 @@
 
 OBJC_CLASS CAContext;
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-#define USE_JPEG_VIEW_SNAPSHOTS false
+#if PLATFORM(MAC)
 #define USE_IOSURFACE_VIEW_SNAPSHOTS true
 #define USE_RENDER_SERVER_VIEW_SNAPSHOTS false
-#elif PLATFORM(MAC)
-// Mountain Lion and before do not support IOSurface purgeability.
-#define USE_JPEG_VIEW_SNAPSHOTS true
-#define USE_IOSURFACE_VIEW_SNAPSHOTS false
-#define USE_RENDER_SERVER_VIEW_SNAPSHOTS false
 #else
-#define USE_JPEG_VIEW_SNAPSHOTS false
 #define USE_IOSURFACE_VIEW_SNAPSHOTS false
 #define USE_RENDER_SERVER_VIEW_SNAPSHOTS true
 #endif
@@ -58,9 +51,8 @@ class WebBackForwardListItem;
 class WebPageProxy;
 
 struct ViewSnapshot {
-#if USE_JPEG_VIEW_SNAPSHOTS || USE_IOSURFACE_VIEW_SNAPSHOTS
+#if USE_IOSURFACE_VIEW_SNAPSHOTS
     RefPtr<WebCore::IOSurface> surface;
-    RetainPtr<CGImageRef> image;
 #endif
 #if USE_RENDER_SERVER_VIEW_SNAPSHOTS
     uint32_t slotID = 0;
@@ -101,12 +93,6 @@ public:
 private:
     void pruneSnapshots(WebPageProxy&);
     void removeSnapshotImage(ViewSnapshot&);
-    void reduceSnapshotMemoryCost(const String& uuid);
-
-#if USE_JPEG_VIEW_SNAPSHOTS
-    void didCompressSnapshot(const String& uuid, RetainPtr<CGImageRef> newImage, size_t newImageSize);
-    dispatch_queue_t m_compressionQueue;
-#endif
 
     HashMap<String, ViewSnapshot> m_snapshotMap;
 
