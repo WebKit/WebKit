@@ -277,7 +277,6 @@ static int32_t deviceOrientation()
     [_scrollView setBouncesZoom:YES];
 
     [self addSubview:_scrollView.get()];
-    [_scrollView setBackgroundColor:[UIColor whiteColor]];
 
     _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds context:context configuration:WTF::move(webPageConfiguration) webView:self]);
 
@@ -287,8 +286,9 @@ static int32_t deviceOrientation()
 
     [_contentView layer].anchorPoint = CGPointZero;
     [_contentView setFrame:bounds];
-    [_scrollView addSubview:_contentView.get()];
     [_scrollView addSubview:[_contentView unscaledView]];
+    [self _updateScrollViewBackground];
+
     _viewportMetaTagWidth = -1;
 
     [self _frameOrBoundsChanged];
@@ -654,28 +654,39 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
     }
 }
 
-static CGFloat contentZoomScale(WKWebView* webView)
+static CGFloat contentZoomScale(WKWebView *webView)
 {
-    CGFloat scale = [[webView._currentContentView layer] affineTransform].a;
+    CGFloat scale = webView._currentContentView.layer.affineTransform.a;
     ASSERT(scale == [webView->_scrollView zoomScale]);
     return scale;
 }
 
-- (void)_updateScrollViewBackground
+static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 {
-    WebCore::Color color;
-    if (_customContentView)
-        color = [_customContentView backgroundColor].CGColor;
-    else
-        color = _page->pageExtendedBackgroundColor();
+    if (!webView.opaque)
+        return WebCore::Color::transparent;
 
-    CGFloat zoomScale = contentZoomScale(self);
-    CGFloat minimumZoomScale = [_scrollView minimumZoomScale];
+    WebCore::Color color;
+
+    if (webView->_customContentView)
+        color = [webView->_customContentView backgroundColor].CGColor;
+    else
+        color = webView->_page->pageExtendedBackgroundColor();
+
+    CGFloat zoomScale = contentZoomScale(webView);
+    CGFloat minimumZoomScale = [webView->_scrollView minimumZoomScale];
     if (zoomScale < minimumZoomScale) {
         CGFloat slope = 12;
         CGFloat opacity = std::max<CGFloat>(1 - slope * (minimumZoomScale - zoomScale), 0);
         color = WebCore::colorWithOverrideAlpha(color.rgb(), opacity);
     }
+
+    return color;
+}
+
+- (void)_updateScrollViewBackground
+{
+    WebCore::Color color = scrollViewBackgroundColor(self);
 
     if (_scrollViewBackgroundColor == color)
         return;
@@ -1158,6 +1169,26 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 - (void)didMoveToWindow
 {
     _page->viewStateDidChange(WebCore::ViewState::IsInWindow);
+}
+
+- (void)setOpaque:(BOOL)opaque
+{
+    BOOL oldOpaque = self.opaque;
+
+    [super setOpaque:opaque];
+    [_contentView setOpaque:opaque];
+
+    if (oldOpaque == opaque)
+        return;
+
+    _page->setDrawsBackground(opaque);
+    [self _updateScrollViewBackground];
+}
+
+- (void)setBackgroundColor:(UIColor *)backgroundColor
+{
+    [super setBackgroundColor:backgroundColor];
+    [_contentView setBackgroundColor:backgroundColor];
 }
 
 #pragma mark - UIScrollViewDelegate

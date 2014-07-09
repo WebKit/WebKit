@@ -2523,7 +2523,18 @@ bool FrameView::isTransparent() const
 
 void FrameView::setTransparent(bool isTransparent)
 {
+    if (m_isTransparent == isTransparent)
+        return;
+
     m_isTransparent = isTransparent;
+
+    RenderView* renderView = this->renderView();
+    if (!renderView)
+        return;
+
+    RenderLayerCompositor& compositor = renderView->compositor();
+    compositor.setCompositingLayersNeedRebuild();
+    compositor.scheduleCompositingLayerUpdate();
 }
 
 bool FrameView::hasOpaqueBackground() const
