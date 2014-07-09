@@ -1,3 +1,16 @@
+2014-07-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r167770): Cannot login in Evernote Safari extension
+        https://bugs.webkit.org/show_bug.cgi?id=134776
+
+        Reviewed by Enrica Casucci.
+
+        Unfortunately, NSWindowDidBecomeKeyNotification does not notify us when a popover becomes key
+        so we need to keep using the SPI (_windowChangedKeyState) I removed in r167770.
+
+        * WebView/WebView.mm:
+        (-[WebView _windowChangedKeyState]):
+
 2014-07-09  Enrica Casucci  <enrica@apple.com>
 
         Implement Editor::fontAttributesForSelectionStart() or iOS.
