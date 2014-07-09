@@ -219,10 +219,9 @@ void EwkViewEventHandler<EVAS_CALLBACK_MOUSE_WHEEL>::handleEvent(void* data, Eva
 template <>
 void EwkViewEventHandler<EVAS_CALLBACK_MOUSE_IN>::handleEvent(void* data, Evas*, Evas_Object*, void*)
 {
-    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
-    EwkView* self = toEwkView(smartData);
-
-    self->updateCursor();
+    // FIXME: self->updateCursor(); was removed in order to fix crash caused by invalid cursor image.
+    // new cursor implementation should be added for curso image restoration previously used for.
+    notImplemented();
 }
 
 template <>

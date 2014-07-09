@@ -1,3 +1,15 @@
+2014-07-09  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Fix crash caused by invalid cursor image.
+        https://bugs.webkit.org/show_bug.cgi?id=134663
+
+        Reviewed by Gyuyoung Kim.
+
+        Remove calling of updateCursor since the custom cursor image is invalid once a mouse is out of the webview.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkViewEventHandler<EVAS_CALLBACK_MOUSE_IN>::handleEvent):
+
 2014-07-08  Tim Horton  <timothy_horton@apple.com>
 
         Remove WebBackForwardListItems when their owning page goes away
