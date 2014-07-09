@@ -187,7 +187,7 @@
           {
               var expectations = {
                 webm: ("{ [3.187, " + duration + ") }"),
-                mp4: ("{ [3.021, " + duration + ") }"),
+                mp4: ("{ [3.228, " + duration + ") }"),
               };
 
               // Note: Range doesn't start exactly at the end of the remove range because there isn't
@@ -199,7 +199,7 @@
           {
               var expectations = {
                 webm: ("{ [0.000, 1.012) [3.187, " + duration + ") }"),
-                mp4: ("{ [0.000, 1.022) [3.021, " + duration + ") }"),
+                mp4: ("{ [0.000, 1.029) [3.228, " + duration + ") }"),
               };
 
               // Note: The first resulting range ends slightly after start because the removal algorithm only removes
@@ -212,7 +212,7 @@
           {
               var expectations = {
                 webm: "{ [0.000, 1.012) }",
-                mp4: "{ [0.000, 1.022) }",
+                mp4: "{ [0.000, 1.029) }",
               };
 
               removeAndCheckBufferedRanges(test, sourceBuffer, 1, Number.POSITIVE_INFINITY, expectations[subType]);

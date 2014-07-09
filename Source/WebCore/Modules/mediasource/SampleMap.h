@@ -50,8 +50,9 @@ public:
     reverse_iterator rbegin() { return m_samples.rbegin(); }
     reverse_iterator rend() { return m_samples.rend(); }
 
+    iterator findSampleWithPresentationTime(const MediaTime&);
     iterator findSampleContainingPresentationTime(const MediaTime&);
-    iterator findSampleAfterPresentationTime(const MediaTime&);
+    iterator findSampleOnOrAfterPresentationTime(const MediaTime&);
     reverse_iterator reverseFindSampleContainingPresentationTime(const MediaTime&);
     reverse_iterator reverseFindSampleBeforePresentationTime(const MediaTime&);
     iterator_range findSamplesBetweenPresentationTimes(const MediaTime&, const MediaTime&);

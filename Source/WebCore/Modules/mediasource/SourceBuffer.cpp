@@ -243,7 +243,7 @@ void SourceBuffer::remove(double start, double end, ExceptionCode& ec)
     //    InvalidStateError exception and abort these steps.
     // 4. If the updating attribute equals true, then throw an InvalidStateError exception and abort these steps.
     if (isRemoved() || m_updating) {
-        ec = INVALID_ACCESS_ERR;
+        ec = INVALID_STATE_ERR;
         return;
     }
 
@@ -541,6 +541,11 @@ void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(SourceBufferPriva
         m_source->streamEndedWithError(decodeError(), IgnorableExceptionCode());
 }
 
+static bool decodeTimeComparator(const PresentationOrderSampleMap::MapType::value_type& a, const PresentationOrderSampleMap::MapType::value_type& b)
+{
+    return a.second->decodeTime() < b.second->decodeTime();
+}
+
 void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& end)
 {
     // 3.5.9 Coded Frame Removal Algorithm
@@ -561,20 +566,33 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
         // NOTE: findSyncSampleAfterPresentationTime will return the next sync sample on or after the presentation time
         // or decodeOrder().end() if no sync sample exists after that presentation time.
         DecodeOrderSampleMap::iterator removeDecodeEnd = trackBuffer.samples.decodeOrder().findSyncSampleAfterPresentationTime(end);
+        PresentationOrderSampleMap::iterator removePresentationEnd;
+        if (removeDecodeEnd == trackBuffer.samples.decodeOrder().end())
+            removePresentationEnd = trackBuffer.samples.presentationOrder().end();
+        else
+            removePresentationEnd = trackBuffer.samples.presentationOrder().findSampleWithPresentationTime(removeDecodeEnd->second->presentationTime());
+
+        PresentationOrderSampleMap::iterator removePresentationStart = trackBuffer.samples.presentationOrder().findSampleOnOrAfterPresentationTime(start);
+        if (removePresentationStart == removePresentationEnd)
+            continue;
 
         // 3.3 Remove all media data, from this track buffer, that contain starting timestamps greater than or equal to
         // start and less than the remove end timestamp.
         // NOTE: frames must be removed in decode order, so that all dependant frames between the frame to be removed
-        // and the next sync sample frame are removed.
-        PresentationOrderSampleMap::iterator removePresentaionStart = trackBuffer.samples.presentationOrder().findSampleAfterPresentationTime(start);
-        DecodeOrderSampleMap::iterator removeDecodeStart = trackBuffer.samples.decodeOrder().findSampleWithDecodeTime(removePresentaionStart->second->decodeTime());
+        // and the next sync sample frame are removed. But we must start from the first sample in decode order, not
+        // presentation order.
+        PresentationOrderSampleMap::iterator minDecodeTimeIter = std::min_element(removePresentationStart, removePresentationEnd, decodeTimeComparator);
+        DecodeOrderSampleMap::iterator removeDecodeStart = trackBuffer.samples.decodeOrder().findSampleWithDecodeTime(minDecodeTimeIter->second->decodeTime());
+
         DecodeOrderSampleMap::MapType erasedSamples(removeDecodeStart, removeDecodeEnd);
+
         RefPtr<TimeRanges> erasedRanges = TimeRanges::create();
         MediaTime microsecond(1, 1000000);
         for (auto erasedIt : erasedSamples) {
-            trackBuffer.samples.removeSample(erasedIt.second.get());
-            double startTime = erasedIt.first.toDouble();
-            double endTime = ((erasedIt.first + erasedIt.second->duration()) + microsecond).toDouble();
+            RefPtr<MediaSample>& sample = erasedIt.second;
+            trackBuffer.samples.removeSample(sample.get());
+            double startTime = sample->presentationTime().toDouble();
+            double endTime = startTime + (sample->duration() + microsecond).toDouble();
             erasedRanges->add(startTime, endTime);
         }
 
@@ -692,7 +710,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
         // ↳ Otherwise:
         //   Run the duration change algorithm with new duration set to positive Infinity.
         MediaTime newDuration = segment.duration.isValid() ? segment.duration : MediaTime::positiveInfiniteTime();
-        m_source->setDuration(newDuration.toDouble(), IGNORE_EXCEPTION);
+        m_source->setDurationInternal(newDuration.toDouble());
     }
 
     // 2. If the initialization segment has no audio, video, or text tracks, then run the end of stream
@@ -1217,7 +1235,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
     // 5. If the media segment contains data beyond the current duration, then run the duration change algorithm with new
     // duration set to the maximum of the current duration and the highest end timestamp reported by HTMLMediaElement.buffered.
     if (highestPresentationEndTimestamp().toDouble() > m_source->duration())
-        m_source->setDuration(highestPresentationEndTimestamp().toDouble(), IgnorableExceptionCode());
+        m_source->setDurationInternal(highestPresentationEndTimestamp().toDouble());
 }
 
 bool SourceBuffer::sourceBufferPrivateHasAudio(const SourceBufferPrivate*) const

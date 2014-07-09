@@ -278,6 +278,11 @@ void MediaSource::setDuration(double duration, ExceptionCode& ec)
     }
 
     // 4. Run the duration change algorithm with new duration set to the value being assigned to this attribute.
+    setDurationInternal(duration);
+}
+
+void MediaSource::setDurationInternal(double duration)
+{
     m_private->setDuration(MediaTime::createWithDouble(duration));
 }
 

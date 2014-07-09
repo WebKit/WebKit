@@ -1,3 +1,46 @@
+2014-06-28  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] http/tests/media/media-source/mediasource-remove.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=134768
+
+        Reviewed by Eric Carlson.
+
+        Fix multiple bugs causing mediasource-remove.html to fail:
+
+        Separate out setDuration() into setDurationInternal() so that steps which require
+        us to run the "duration change algorithm" don't bail out if the SoureBuffer is
+        inside updating().
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::setDuration):
+        (WebCore::MediaSource::setDurationInternal):
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+
+        When removing coded frames, do so starting from the first sample in the range in
+        decode order, so that frames dependant on removed frames are themselves removed. Add
+        a convenience method in SampleMap findSampleWithPresentationTime(), and rename
+        findSampleAfterPresentationTime() to findSampleOnOrAfterPresentationTime() to correctly
+        reflect what the method does, and simplify its implementation by searching the map's keys
+        directly.
+
+        * Modules/mediasource/SampleMap.cpp:
+        (WebCore::PresentationOrderSampleMap::findSampleWithPresentationTime):
+        (WebCore::PresentationOrderSampleMap::findSampleOnOrAfterPresentationTime):
+        (WebCore::DecodeOrderSampleMap::findSyncSampleAfterPresentationTime):
+        (WebCore::PresentationOrderSampleMap::findSampleAfterPresentationTime): Deleted.
+        * Modules/mediasource/SampleMap.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::decodeTimeComparator):
+        (WebCore::SourceBuffer::removeCodedFrames):
+
+        Throw the correct exception (INVALID_STATE_ERR) from SourceBuffer::remove().
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::remove):
+
 2014-07-09  Pratik Solanki  <psolanki@apple.com>
 
         Add SharedBuffer::wrapCFDataArray() and use it

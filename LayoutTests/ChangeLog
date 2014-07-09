@@ -1,3 +1,14 @@
+2014-06-28  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] http/tests/media/media-source/mediasource-remove.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=134768
+
+        Reviewed by Eric Carlson.
+
+        Update mediasource-remove.html with the correct locations of sync-samples.
+
+        * http/tests/media/media-source/mediasource-remove.html:
+
 2014-07-09  Antti Koivisto  <antti@apple.com>
 
         fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html is failing in some bots

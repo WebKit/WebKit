@@ -79,6 +79,7 @@ public:
     void monitorSourceBuffers();
 
     void setDuration(double, ExceptionCode&);
+    void setDurationInternal(double);
     double currentTime() const;
     const AtomicString& readyState() const { return m_readyState; }
     void setReadyState(const AtomicString&);

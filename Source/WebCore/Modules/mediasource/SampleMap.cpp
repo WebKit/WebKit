@@ -122,6 +122,14 @@ void SampleMap::removeSample(MediaSample* sample)
     m_totalSize -= sample->sizeInBytes();
 }
 
+PresentationOrderSampleMap::iterator PresentationOrderSampleMap::findSampleWithPresentationTime(const MediaTime& time)
+{
+    auto range = m_samples.equal_range(time);
+    if (range.first == range.second)
+        return end();
+    return range.first;
+}
+
 PresentationOrderSampleMap::iterator PresentationOrderSampleMap::findSampleContainingPresentationTime(const MediaTime& time)
 {
     auto range = std::equal_range(begin(), end(), time, SampleIsLessThanMediaTimeComparator<MapType>());
@@ -130,9 +138,9 @@ PresentationOrderSampleMap::iterator PresentationOrderSampleMap::findSampleConta
     return range.first;
 }
 
-PresentationOrderSampleMap::iterator PresentationOrderSampleMap::findSampleAfterPresentationTime(const MediaTime& time)
+PresentationOrderSampleMap::iterator PresentationOrderSampleMap::findSampleOnOrAfterPresentationTime(const MediaTime& time)
 {
-    return std::lower_bound(begin(), end(), time, SampleIsLessThanMediaTimeComparator<MapType>());
+    return m_samples.lower_bound(time);
 }
 
 DecodeOrderSampleMap::iterator DecodeOrderSampleMap::findSampleWithDecodeTime(const MediaTime& time)
@@ -184,7 +192,7 @@ DecodeOrderSampleMap::reverse_iterator DecodeOrderSampleMap::findSyncSamplePrior
 
 DecodeOrderSampleMap::iterator DecodeOrderSampleMap::findSyncSampleAfterPresentationTime(const MediaTime& time, const MediaTime& threshold)
 {
-    PresentationOrderSampleMap::iterator currentSamplePTS = m_presentationOrder.findSampleAfterPresentationTime(time);
+    PresentationOrderSampleMap::iterator currentSamplePTS = m_presentationOrder.findSampleOnOrAfterPresentationTime(time);
     if (currentSamplePTS == m_presentationOrder.end())
         return end();
 
