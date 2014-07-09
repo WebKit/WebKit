@@ -141,8 +141,7 @@ void WebResourceLoader::didReceiveData(const IPC::DataReference& data, int64_t e
 
 #if USE(QUICK_LOOK)
     if (m_quickLookHandle) {
-        RetainPtr<CFDataRef> rawData = adoptCF(CFDataCreateWithBytesNoCopy(0, data.data(), data.size(), kCFAllocatorNull));
-        if (m_quickLookHandle->didReceiveData(rawData.get()))
+        if (m_quickLookHandle->didReceiveData(adoptCF(CFDataCreate(kCFAllocatorDefault, data.data(), data.size())).get()))
             return;
     }
 #endif

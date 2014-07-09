@@ -1,3 +1,16 @@
+2014-07-09  Andy Estes  <aestes@apple.com>
+
+        [iOS] WebKit can crash under QuickLookDocumentData::encode() when viewing a QuickLook preview
+        https://bugs.webkit.org/show_bug.cgi?id=134780
+
+        Reviewed by Tim Horton.
+
+        Don't use CFDataCreateWithBytesNoCopy() when we can't guarantee the lifetime of the copied-from DataReference
+        will match or exceed that of the CFDataRef. Copy the data instead.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveData):
+
 2014-07-09  Pratik Solanki  <psolanki@apple.com>
 
         Move resource buffering from SynchronousNetworkLoaderClient to NetworkResourceLoader
