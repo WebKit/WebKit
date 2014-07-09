@@ -1,0 +1,139 @@
+#!/usr/bin/perl -w
+
+use strict;
+use File::Path qw(make_path);
+use File::Spec;
+use Win32;
+
+# Copyright (C) 2007, 2009, 2014 Apple Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+# OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+
+die "You must supply an output path as the argument.\n" if ($#ARGV < 0);
+
+my $WEBKIT_LIBRARIES = $ENV{'WEBKIT_LIBRARIES'};
+
+my ($COPYRIGHT_END_YEAR, $FALLBACK_VERSION);
+if (defined $WEBKIT_LIBRARIES) {
+    my $FALLBACK_VERSION_PATH = File::Spec->catfile($WEBKIT_LIBRARIES, 'tools', 'scripts', 'VERSION');
+    open(FALLBACK_VERSION_FILE, '<', $FALLBACK_VERSION_PATH) or die "Unable to open $FALLBACK_VERSION_PATH: $!";
+    $FALLBACK_VERSION = <FALLBACK_VERSION_FILE>;
+    close FALLBACK_VERSION_FILE;
+    chomp($FALLBACK_VERSION);
+
+    my $COPYRIGHT_END_YEAR_PATH = File::Spec->catfile($WEBKIT_LIBRARIES, 'tools', 'scripts', 'COPYRIGHT-END-YEAR');
+    open(COPYRIGHT_END_YEAR_FILE, '<', $COPYRIGHT_END_YEAR_PATH) or die "Unable to open $COPYRIGHT_END_YEAR_PATH: $!";
+    $COPYRIGHT_END_YEAR = <COPYRIGHT_END_YEAR_FILE>;
+    close COPYRIGHT_END_YEAR_FILE;
+    chomp($COPYRIGHT_END_YEAR);
+}
+
+my $OUTPUT_DIR = File::Spec->catdir($ARGV[0], 'include');
+my $OUTPUT_FILE = File::Spec->catfile($OUTPUT_DIR, 'autoversion.h');
+
+unless (-d $OUTPUT_DIR) {
+    make_path($OUTPUT_DIR) or die "Couldn't create $OUTPUT_DIR: $!";
+}
+
+# Take the initial version number from RC_ProjectSourceVersion if it
+# exists, otherwise fall back to the version number stored in the source.
+my $ENVIRONMENT_VERSION = $ENV{'RC_ProjectSourceVersion'};
+if (!defined $ENVIRONMENT_VERSION) {
+    $ENVIRONMENT_VERSION = $ENV{'RC_PROJECTSOURCEVERSION'};
+}
+
+my $PROPOSED_VERSION = (defined $ENVIRONMENT_VERSION) ? $ENVIRONMENT_VERSION : $FALLBACK_VERSION;
+chomp($PROPOSED_VERSION);
+
+# Split out the three components of the dotted version number.  We pad
+# the input with trailing dots to handle the case where the input version
+# has fewer components than we expect.
+$PROPOSED_VERSION =~ m/^(?:(\d+)\.)?(?:(\d+)\.)?(\*|\d+)$/ or die "Couldn't parse $PROPOSED_VERSION";
+my $BUILD_MAJOR_VERSION = $1;
+my $BUILD_MINOR_VERSION = $2;
+my $BUILD_TINY_VERSION = $3;
+
+# Cut the major component down to three characters by dropping any
+# extra leading digits, then adjust the major version portion of the
+# version string to match.
+$BUILD_MAJOR_VERSION =~ s/^.*(\d\d\d+)$/$1/;
+
+# Have the minor and tiny components default to zero if not present.
+if (!defined $BUILD_MINOR_VERSION) {
+    $BUILD_MINOR_VERSION = 0;
+}
+if (!defined $BUILD_TINY_VERSION) {
+    $BUILD_TINY_VERSION = 0;
+}
+
+$PROPOSED_VERSION = "$BUILD_MAJOR_VERSION.$BUILD_MINOR_VERSION.$BUILD_TINY_VERSION";
+
+# Split the first component further by using the first digit for the
+# major version and the remaining two characters as the minor version.
+# The minor version is shifted down to the tiny version, with the tiny
+# version becoming the variant version.
+$BUILD_MAJOR_VERSION =~ m/^.*(\d)(\d\d)/;
+my $MAJOR_VERSION = $1;
+my $MINOR_VERSION = $2;
+my $TINY_VERSION = $BUILD_MINOR_VERSION;
+my $VARIANT_VERSION = $BUILD_TINY_VERSION;
+
+my $VERSION_TEXT = $PROPOSED_VERSION;
+my $VERSION_TEXT_SHORT = $VERSION_TEXT;
+
+my $SVN_REVISION = '';
+if (!$ENVIRONMENT_VERSION) {
+    # If we didn't pull the version number from the environment then we're doing
+    # an engineering build and we'll stamp the build with some more information.
+
+    my $BUILD_DATE = localtime(time);
+    my $SVN_REVISION = `svn info`;
+    $SVN_REVISION =~ m/Revision: (\d+)/;
+    $SVN_REVISION= $1;
+
+    chomp($BUILD_DATE);
+    chomp($SVN_REVISION);
+
+    $VERSION_TEXT_SHORT .= "+";
+    my $USER = Win32::LoginName;
+    $VERSION_TEXT = "$VERSION_TEXT_SHORT $USER - $BUILD_DATE - r$SVN_REVISION";
+}
+
+open(OUTPUT_FILE, '>', $OUTPUT_FILE) or die "Couldn't open $OUTPUT_FILE: $!";
+print OUTPUT_FILE <<EOF;
+#define __VERSION_TEXT__ "$VERSION_TEXT"
+#define __BUILD_NUMBER__ "$VERSION_TEXT"
+#define __BUILD_NUMBER_SHORT__ "$VERSION_TEXT_SHORT"
+#define __VERSION_MAJOR__ $MAJOR_VERSION
+#define __VERSION_MINOR__ $MINOR_VERSION
+#define __VERSION_TINY__ $TINY_VERSION
+#define __VERSION_BUILD__ $VARIANT_VERSION
+#define __BUILD_NUMBER_MAJOR__ $BUILD_MAJOR_VERSION
+#define __BUILD_NUMBER_MINOR__ $BUILD_MINOR_VERSION
+#define __BUILD_NUMBER_VARIANT__ $BUILD_TINY_VERSION
+#define __SVN_REVISION__ $SVN_REVISION
+EOF
+
+if (defined $COPYRIGHT_END_YEAR) {
+    print OUTPUT_FILE "#define __COPYRIGHT_YEAR_END_TEXT__ \"$COPYRIGHT_END_YEAR\"\n";
+}
+close(OUTPUT_FILE);

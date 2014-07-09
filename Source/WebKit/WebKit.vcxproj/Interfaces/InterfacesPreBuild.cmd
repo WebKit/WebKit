@@ -6,4 +6,4 @@ if errorlevel 1 exit 1
 echo XX%PROJECTNAME%XX > "%CONFIGURATIONBUILDDIR%\buildfailed"
 
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\WebKit\%PROJECTNAME%"
-bash "%WEBKIT_LIBRARIES%\tools\scripts\auto-version.sh" "%INTDIR%"
+perl "%WEBKIT_LIBRARIES%\tools\scripts\auto-version.pl" "%INTDIR%"

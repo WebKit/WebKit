@@ -1,3 +1,17 @@
+2014-07-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Implement auto-version as a Perl program
+        https://bugs.webkit.org/show_bug.cgi?id=134745
+        <rdar://problem/17597801>
+
+        Reviewed by David Kilzer.
+
+        Translate the auto-version.sh bash script into an equivalent
+        Perl script.
+
+        * win/tools/scripts/auto-version.pl: Added.
+        * win/tools/scripts/auto-version.sh: Removed.
+
 2014-07-06  Yoav Weiss  <yoav@yoav.ws>
 
         Turn on img@sizes compile flag
