@@ -1,3 +1,16 @@
+2014-07-09  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] http/tests/media/media-source/mediasource-endofstream-invaliderror.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=134413
+
+        Reviewed by Eric Carlson.
+
+        Fix an inadevntant editing error in mediasource-endofstream-invaliderror.html, and fix missing
+        whitespace at the end of http/tests/media/media-source/mediasource-endofstream-invaliderror-expected.txt.
+
+        * http/tests/media/media-source/mediasource-endofstream-invaliderror-expected.txt:
+        * http/tests/media/media-source/mediasource-endofstream-invaliderror.html:
+
 2014-07-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.

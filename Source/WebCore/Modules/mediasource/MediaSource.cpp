@@ -307,6 +307,11 @@ static bool SourceBufferIsUpdating(RefPtr<SourceBuffer>& sourceBuffer)
     return sourceBuffer->updating();
 }
 
+void MediaSource::endOfStream(ExceptionCode& ec)
+{
+    endOfStream(emptyAtom, ec);
+}
+
 void MediaSource::endOfStream(const AtomicString& error, ExceptionCode& ec)
 {
     // 2.2 https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#widl-MediaSource-endOfStream-void-EndOfStreamError-error

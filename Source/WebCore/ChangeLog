@@ -1,3 +1,17 @@
+2014-07-09  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] http/tests/media/media-source/mediasource-endofstream-invaliderror.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=134413
+
+        Reviewed by Eric Carlson.
+
+        Update MediaSource.endOfStream() to take an optional enum instead of an optional String.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::endOfStream):
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/MediaSource.idl:
+
 2014-07-08  Brady Eidson  <beidson@apple.com>
 
         DOMWindows should register themselves with the GamepadManager when they have event listeners

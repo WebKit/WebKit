@@ -82,6 +82,7 @@ public:
     double currentTime() const;
     const AtomicString& readyState() const { return m_readyState; }
     void setReadyState(const AtomicString&);
+    void endOfStream(ExceptionCode&);
     void endOfStream(const AtomicString& error, ExceptionCode&);
 
     HTMLMediaElement* mediaElement() const { return m_mediaElement; }
