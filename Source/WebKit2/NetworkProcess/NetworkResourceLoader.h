@@ -147,6 +147,8 @@ public:
 #endif
     void continueWillSendRequest(const WebCore::ResourceRequest& newRequest);
 
+    WebCore::SharedBuffer* bufferedData() const { return m_bufferedData.get(); }
+
 private:
     NetworkResourceLoader(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess*, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>);
 
@@ -196,6 +198,7 @@ private:
     RefPtr<NetworkConnectionToWebProcess> m_connection;
     
     RefPtr<HostRecord> m_hostRecord;
+    RefPtr<WebCore::SharedBuffer> m_bufferedData;
 };
 
 } // namespace WebKit

@@ -99,9 +99,10 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
 
     ASSERT(RunLoop::isMain());
     
-    if (reply)
+    if (reply) {
         m_networkLoaderClient = std::make_unique<SynchronousNetworkLoaderClient>(m_request, reply);
-    else
+        m_bufferedData = WebCore::SharedBuffer::create();
+    } else
         m_networkLoaderClient = std::make_unique<AsynchronousNetworkLoaderClient>();
 }
 
@@ -214,12 +215,19 @@ void NetworkResourceLoader::didReceiveBuffer(ResourceHandle* handle, PassRefPtr<
     // Such buffering will need to be thread safe, as this callback is happening on a background thread.
     
     m_bytesReceived += buffer->size();
-    m_networkLoaderClient->didReceiveBuffer(this, buffer.get(), encodedDataLength);
+    if (m_bufferedData)
+        m_bufferedData->append(buffer.get());
+    else
+        m_networkLoaderClient->didReceiveBuffer(this, buffer.get(), encodedDataLength);
 }
 
 void NetworkResourceLoader::didFinishLoading(ResourceHandle* handle, double finishTime)
 {
     ASSERT_UNUSED(handle, handle == m_handle);
+
+    // Send the full resource data if we were buffering it.
+    if (m_bufferedData && m_bufferedData->size())
+        m_networkLoaderClient->didReceiveBuffer(this, m_bufferedData.get(), m_bufferedData->size());
 
     m_networkLoaderClient->didFinishLoading(this, finishTime);
 

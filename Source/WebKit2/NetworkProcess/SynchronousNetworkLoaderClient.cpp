@@ -81,30 +81,24 @@ void SynchronousNetworkLoaderClient::didReceiveResponse(NetworkResourceLoader*, 
     m_response = response;
 }
 
-void SynchronousNetworkLoaderClient::didReceiveBuffer(NetworkResourceLoader*, SharedBuffer* buffer, int /* encodedDataLength */)
+void SynchronousNetworkLoaderClient::didReceiveBuffer(NetworkResourceLoader*, SharedBuffer*, int /* encodedDataLength */)
 {
-    // FIXME: There's a potential performance improvement here by preallocating a SharedMemory region
-    // of the expected content length to avoid a copy when we send it to the WebProcess on completion.
-    // It's unclear if the potential complexities of that approach are worth it.
-    
-    if (!m_responseData)
-        m_responseData = std::make_unique<Vector<char>>();
-
-    m_responseData->append(buffer->data(), buffer->size());
+    // Nothing to do here. Data is buffered in NetworkResourceLoader and we will grab it from there
+    // in sendDelayedReply().
 }
 
-void SynchronousNetworkLoaderClient::didFinishLoading(NetworkResourceLoader*, double /* finishTime */)
+void SynchronousNetworkLoaderClient::didFinishLoading(NetworkResourceLoader* loader, double /* finishTime */)
 {
-    sendDelayedReply();
+    sendDelayedReply(*loader);
 }
 
-void SynchronousNetworkLoaderClient::didFail(NetworkResourceLoader*, const ResourceError& error)
+void SynchronousNetworkLoaderClient::didFail(NetworkResourceLoader* loader, const ResourceError& error)
 {
     m_error = error;
-    sendDelayedReply();
+    sendDelayedReply(*loader);
 }
 
-void SynchronousNetworkLoaderClient::sendDelayedReply()
+void SynchronousNetworkLoaderClient::sendDelayedReply(NetworkResourceLoader& loader)
 {
     ASSERT(m_delayedReply);
 
@@ -113,7 +107,12 @@ void SynchronousNetworkLoaderClient::sendDelayedReply()
         //platformSynthesizeErrorResponse();
     }
 
-    m_delayedReply->send(m_error, m_response, m_responseData ? *m_responseData : Vector<char>());
+    Vector<char> responseData;
+    SharedBuffer* buffer = loader.bufferedData();
+    if (buffer && buffer->size())
+        responseData.append(buffer->data(), buffer->size());
+
+    m_delayedReply->send(m_error, m_response, responseData);
     m_delayedReply = nullptr;
 }
 

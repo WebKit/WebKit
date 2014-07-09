@@ -1,3 +1,27 @@
+2014-07-09  Pratik Solanki  <psolanki@apple.com>
+
+        Move resource buffering from SynchronousNetworkLoaderClient to NetworkResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=134732
+
+        Reviewed by Darin Adler.
+
+        Buffer the resource in NetworkResourceLoader instead of SynchronousNetworkLoaderClient. This
+        is in preparation for bug 134560 where we will be supporting JS and CSS resource buffering
+        that uses AsynchronousNetworkLoaderClient.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::didReceiveBuffer):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        * NetworkProcess/NetworkResourceLoader.h:
+        (WebKit::NetworkResourceLoader::bufferedData):
+        * NetworkProcess/SynchronousNetworkLoaderClient.cpp:
+        (WebKit::SynchronousNetworkLoaderClient::didReceiveBuffer):
+        (WebKit::SynchronousNetworkLoaderClient::didFinishLoading):
+        (WebKit::SynchronousNetworkLoaderClient::didFail):
+        (WebKit::SynchronousNetworkLoaderClient::sendDelayedReply):
+        * NetworkProcess/SynchronousNetworkLoaderClient.h:
+
 2014-07-09  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] subviews of the unscaled view drift out during CA animations

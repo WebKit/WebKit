@@ -60,14 +60,13 @@ private:
     virtual void didFinishLoading(NetworkResourceLoader*, double finishTime) override;
     virtual void didFail(NetworkResourceLoader*, const WebCore::ResourceError&) override;
 
-    void sendDelayedReply();
+    void sendDelayedReply(NetworkResourceLoader&);
 
     WebCore::ResourceRequest m_originalRequest;
     WebCore::ResourceRequest m_currentRequest;
     RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> m_delayedReply;
     WebCore::ResourceResponse m_response;
     WebCore::ResourceError m_error;
-    std::unique_ptr<Vector<char>> m_responseData;
 };
 
 } // namespace WebKit
