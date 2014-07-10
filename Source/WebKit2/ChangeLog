@@ -1,3 +1,16 @@
+2014-07-10  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r170935): WKWebView is always transparent until the first layer tree commit
+        https://bugs.webkit.org/show_bug.cgi?id=134818
+        <rdar://problem/17632468>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (scrollViewBackgroundColor):
+        r170935 made it so that we would initialize the scroll view background color to an
+        invalid color until the first layer tree commit. We should go with white instead.
+
 2014-07-10  Enrica Casucci  <enrica@apple.com>
 
         Add a mechanism to notify the UIProcess when an editing command is done executing.

@@ -679,6 +679,9 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     else
         color = webView->_page->pageExtendedBackgroundColor();
 
+    if (!color.isValid())
+        color = WebCore::Color::white;
+
     CGFloat zoomScale = contentZoomScale(webView);
     CGFloat minimumZoomScale = [webView->_scrollView minimumZoomScale];
     if (zoomScale < minimumZoomScale) {
