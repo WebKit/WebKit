@@ -96,6 +96,11 @@ struct SamplePresentationTimeIsWithinRangeComparator {
     }
 };
 
+bool SampleMap::empty() const
+{
+    return presentationOrder().m_samples.empty();
+}
+
 void SampleMap::clear()
 {
     presentationOrder().m_samples.clear();
@@ -209,7 +214,9 @@ DecodeOrderSampleMap::iterator DecodeOrderSampleMap::findSyncSampleAfterPresenta
 
 DecodeOrderSampleMap::iterator DecodeOrderSampleMap::findSyncSampleAfterDecodeIterator(iterator currentSampleDTS)
 {
-    return std::find_if(currentSampleDTS, end(), SampleIsRandomAccess());
+    if (currentSampleDTS == end())
+        return end();
+    return std::find_if(++currentSampleDTS, end(), SampleIsRandomAccess());
 }
 
 PresentationOrderSampleMap::iterator_range PresentationOrderSampleMap::findSamplesBetweenPresentationTimes(const MediaTime& beginTime, const MediaTime& endTime)

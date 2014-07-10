@@ -95,18 +95,31 @@ public:
     {
     }
 
+    bool empty() const;
     void clear();
     void addSample(PassRefPtr<MediaSample>);
     void removeSample(MediaSample*);
     size_t sizeInBytes() const { return m_totalSize; }
 
+    template<typename I>
+    void addRange(I begin, I end);
+
     DecodeOrderSampleMap& decodeOrder() { return m_decodeOrder; }
+    const DecodeOrderSampleMap& decodeOrder() const { return m_decodeOrder; }
     PresentationOrderSampleMap& presentationOrder() { return m_decodeOrder.m_presentationOrder; }
+    const PresentationOrderSampleMap& presentationOrder() const { return m_decodeOrder.m_presentationOrder; }
 
 private:
     DecodeOrderSampleMap m_decodeOrder;
     size_t m_totalSize;
 };
+
+template<typename I>
+void SampleMap::addRange(I begin, I end)
+{
+    for (I iter = begin; iter != end; ++iter)
+        addSample(iter->second);
+}
 
 }
 

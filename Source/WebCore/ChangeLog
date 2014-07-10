@@ -1,3 +1,45 @@
+2014-07-10  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Overlapping appended ranges must cause the decoder to flush and re-enqueue.
+        https://bugs.webkit.org/show_bug.cgi?id=134805
+
+        Reviewed by Eric Carlson.
+
+        When appending a range of media data which overlaps with an existing range, SourceBuffer
+        must cause the decoder to flush and re-enqueue samples. Those samples removed by appending
+        the overlapping range may have already been enqueued for display, and unless the decode
+        queue is flushed, corruption or decode errors may occur as the new samples are enqueued for
+        display.
+
+        Add a boolean flag onto TrackBuffer to indicate whether the decoder needs to be flushed and
+        re-enqueued the next time an append operation completes. Set this flag whenever samples are
+        removed due to overlapping or an explicit call to removeCodedFrames(). Move the contents of
+        sourceBufferPrivateSeekToTime() (which previously did flushing and re-enqueueing) into a new
+        function, reenqueueMediaForTime(), which can be called from sourceBufferPrivateAppendComplete().
+
+        Drive-by fix: findSyncSampleAfterDecodeIterator() would return the passed in iterator if that
+        sample is a sync-sample. Fix this to correctly return the next sync sample.
+
+        Drive-by fix: Use a SampleMap, rather than a DecodeOrderSampleMap, to track erased samples
+        so that the erasedSamples are correctly accounted for in both presentation and decode orders.
+
+        * Modules/mediasource/SampleMap.cpp:
+        (WebCore::SampleMap::empty): Add convenience method.
+        (WebCore::DecodeOrderSampleMap::findSyncSampleAfterDecodeIterator): Drive-by fix.
+        * Modules/mediasource/SampleMap.h:
+        (WebCore::SampleMap::decodeOrder): Added const accessor.
+        (WebCore::SampleMap::presentationOrder): Ditto.
+        (WebCore::SampleMap::addRange): Added.
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::TrackBuffer::TrackBuffer): Add needsReenqueeing flag.
+        (WebCore::SourceBuffer::sourceBufferPrivateSeekToTime): Move contents into reenqueueMediaForTime().
+        (WebCore::SourceBuffer::sourceBufferPrivateAppendComplete): Call reenqueMediaForTime() if necessary.
+        (WebCore::SourceBuffer::removeCodedFrames): Set needsReenqueing.
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample): Ditto.
+        (WebCore::SourceBuffer::provideMediaData): Drive-by fix.
+        (WebCore::SourceBuffer::reenqueueMediaForTime): Moved from sourceBufferPrivateSeekToTime().
+        * Modules/mediasource/SourceBuffer.h:
+
 2014-07-10  Pratik Solanki  <psolanki@apple.com>
 
         ASSERT in SharedBuffer::maybeAppendDataArray() on MobileSafari launch
