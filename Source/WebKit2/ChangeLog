@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 2014-07-10  Timothy Horton  <timothy_horton@apple.com>
 
         Assertions or crashes under _takeViewSnapshot when restoring windows
@@ -358,6 +359,48 @@
         (-[WKPreferences _setTiledScrollingIndicatorVisible:]):
         * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
         Expose layer borders, repaint counters, and the tiled scrolling indicator on WKPreferences, as SPI.
+=======
+2014-07-09  Brady Eidson  <beidson@apple.com>
+
+        Phone number highlights should always be visible if the mouse hovers over.
+        <rdar://problem/17527476> and https://bugs.webkit.org/show_bug.cgi?id=134784
+
+        Reviewed by Tim Horton.
+
+        This is a fairly extensive rewrite of ServicesOverlayController.
+        It allows one selection highlight for the entire selection, and as many telephone number highlights as there are numbers.
+        If a telephone number highlight is hovered over, it wins and is painted.
+        If no telephone number highlight is hovered but the selection highlight is, then it is painted.
+       
+        The purposes of each method are self evident by their name, and the concepts are mostly the same as they used to be.
+
+        The exception is establishHoveredTelephoneHighlight which gets a more detailed explanation below.
+        
+        * Platform/Logging.h: Add a Services logging channel.
+
+        * WebProcess/WebPage/ServicesOverlayController.h:
+        (WebKit::TelephoneNumberData::TelephoneNumberData):
+
+        * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+        (WebKit::ServicesOverlayController::ServicesOverlayController):
+        (WebKit::ServicesOverlayController::selectionRectsDidChange):
+        (WebKit::ServicesOverlayController::selectedTelephoneNumberRangesChanged):
+        (WebKit::ServicesOverlayController::clearHighlightState):
+        (WebKit::ServicesOverlayController::drawRect):
+        (WebKit::ServicesOverlayController::drawSelectionHighlight):
+        (WebKit::ServicesOverlayController::maybeDrawTelephoneNumberHighlight):
+        (WebKit::ServicesOverlayController::drawHighlight):
+        (WebKit::ServicesOverlayController::clearSelectionHighlight):
+        (WebKit::ServicesOverlayController::clearHoveredTelephoneNumberHighlight):
+        (WebKit::ServicesOverlayController::establishHoveredTelephoneHighlight): Starts walking the telephone number ranges and
+            creating a highlight for each one that doesn’t already have a highlight. If that highlight is also being hovered by
+            the mouse, then it is set as the hovered telephone number highlight and the method stops creating new highlights.
+        (WebKit::ServicesOverlayController::maybeCreateSelectionHighlight):
+        (WebKit::ServicesOverlayController::mouseEvent):
+        (WebKit::ServicesOverlayController::handleClick):
+        (WebKit::ServicesOverlayController::drawTelephoneNumberHighlight): Deleted.
+        (WebKit::ServicesOverlayController::drawCurrentHighlight): Deleted.
+>>>>>>> Phone number highlights should always be visible if the mouse hovers over.
 
 2014-07-08  Tim Horton  <timothy_horton@apple.com>
 

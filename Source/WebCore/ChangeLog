@@ -1,3 +1,12 @@
+2014-07-10  Brady Eidson  <beidson@apple.com>
+
+        Phone number highlights should always be visible if the mouse hovers over.
+        <rdar://problem/17527476> and https://bugs.webkit.org/show_bug.cgi?id=134784
+
+        Reviewed by Tim Horton.
+
+        * WebCore.exp.in:
+
 2014-07-10  Timothy Horton  <timothy_horton@apple.com>
 
         Assertions or crashes under _takeViewSnapshot when restoring windows
