@@ -168,14 +168,13 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     m_snapshotView = adoptNS([[UIView alloc] initWithFrame:liveSwipeViewFrame]);
 
     RetainPtr<UIColor> backgroundColor = [UIColor whiteColor];
-    ViewSnapshot snapshot;
-    if (ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot)) {
+    if (ViewSnapshot* snapshot = targetItem->snapshot()) {
         float deviceScaleFactor = m_webPageProxy.deviceScaleFactor();
         FloatSize swipeLayerSizeInDeviceCoordinates(liveSwipeViewFrame.size);
         swipeLayerSizeInDeviceCoordinates.scale(deviceScaleFactor);
-        if (snapshot.hasImage() && snapshot.size == swipeLayerSizeInDeviceCoordinates && deviceScaleFactor == snapshot.deviceScaleFactor)
-            [m_snapshotView layer].contents = snapshot.asLayerContents();
-        Color coreColor = snapshot.backgroundColor;
+        if (snapshot->hasImage() && snapshot->size() == swipeLayerSizeInDeviceCoordinates && deviceScaleFactor == snapshot->deviceScaleFactor())
+            [m_snapshotView layer].contents = snapshot->asLayerContents();
+        Color coreColor = snapshot->backgroundColor();
         if (coreColor.isValid())
             backgroundColor = adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(coreColor, ColorSpaceDeviceRGB)]);
     }
@@ -244,10 +243,9 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         return;
     }
 
-    ViewSnapshot snapshot;
     m_snapshotRemovalTargetRenderTreeSize = 0;
-    if (ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot))
-        m_snapshotRemovalTargetRenderTreeSize = snapshot.renderTreeSize * swipeSnapshotRemovalRenderTreeSizeTargetFraction;
+    if (ViewSnapshot* snapshot = targetItem->snapshot())
+        m_snapshotRemovalTargetRenderTreeSize = snapshot->renderTreeSize() * swipeSnapshotRemovalRenderTreeSizeTargetFraction;
 
     // We don't want to replace the current back-forward item's snapshot
     // like we normally would when going back or forward, because we are

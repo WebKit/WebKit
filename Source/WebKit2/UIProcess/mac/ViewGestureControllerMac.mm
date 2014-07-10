@@ -454,12 +454,12 @@ CALayer *ViewGestureController::determineLayerAdjacentToSnapshotForParent(SwipeD
 bool ViewGestureController::shouldUseSnapshotForSize(ViewSnapshot& snapshot, FloatSize swipeLayerSize, float topContentInset)
 {
     float deviceScaleFactor = m_webPageProxy.deviceScaleFactor();
-    if (snapshot.deviceScaleFactor != deviceScaleFactor)
+    if (snapshot.deviceScaleFactor() != deviceScaleFactor)
         return false;
 
     FloatSize unobscuredSwipeLayerSizeInDeviceCoordinates = swipeLayerSize - FloatSize(0, topContentInset);
     unobscuredSwipeLayerSizeInDeviceCoordinates.scale(deviceScaleFactor);
-    if (snapshot.size != unobscuredSwipeLayerSizeInDeviceCoordinates)
+    if (snapshot.size() != unobscuredSwipeLayerSizeInDeviceCoordinates)
         return false;
 
     return true;
@@ -526,16 +526,15 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     bool geometryIsFlippedToRoot = layerGeometryFlippedToRoot(snapshotLayerParent);
 
     RetainPtr<CGColorRef> backgroundColor = CGColorGetConstantColor(kCGColorWhite);
-    ViewSnapshot snapshot;
-    if (ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot)) {
-        if (shouldUseSnapshotForSize(snapshot, swipeArea.size(), topContentInset))
-            [m_swipeSnapshotLayer setContents:snapshot.asLayerContents()];
+    if (ViewSnapshot* snapshot = targetItem->snapshot()) {
+        if (shouldUseSnapshotForSize(*snapshot, swipeArea.size(), topContentInset))
+            [m_swipeSnapshotLayer setContents:snapshot->asLayerContents()];
 
-        Color coreColor = snapshot.backgroundColor;
+        Color coreColor = snapshot->backgroundColor();
         if (coreColor.isValid())
             backgroundColor = cachedCGColor(coreColor, ColorSpaceDeviceRGB);
 #if USE_IOSURFACE_VIEW_SNAPSHOTS
-        m_currentSwipeSnapshotSurface = snapshot.surface;
+        m_currentSwipeSnapshotSurface = snapshot->surface();
 #endif
     }
 
@@ -630,10 +629,9 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         return;
     }
 
-    ViewSnapshot snapshot;
     uint64_t renderTreeSize = 0;
-    if (ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot))
-        renderTreeSize = snapshot.renderTreeSize;
+    if (ViewSnapshot* snapshot = targetItem->snapshot())
+        renderTreeSize = snapshot->renderTreeSize();
 
     m_webPageProxy.process().send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(renderTreeSize * swipeSnapshotRemovalRenderTreeSizeTargetFraction), m_webPageProxy.pageID());
 

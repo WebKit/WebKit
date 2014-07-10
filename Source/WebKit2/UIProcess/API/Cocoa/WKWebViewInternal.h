@@ -50,9 +50,9 @@ struct Highlight;
 }
 
 namespace WebKit {
+class ViewSnapshot;
 class WebPageProxy;
 struct PrintInfo;
-struct ViewSnapshot;
 }
 
 @class _WKFrameHandle;
@@ -78,7 +78,7 @@ struct ViewSnapshot;
 - (void)_restorePageStateToExposedRect:(WebCore::FloatRect)exposedRect scale:(double)scale;
 - (void)_restorePageStateToUnobscuredCenter:(WebCore::FloatPoint)center scale:(double)scale;
 
-- (WebKit::ViewSnapshot)_takeViewSnapshot;
+- (PassRefPtr<WebKit::ViewSnapshot>)_takeViewSnapshot;
 
 - (void)_scrollToContentOffset:(WebCore::FloatPoint)contentOffset;
 - (BOOL)_scrollToRect:(WebCore::FloatRect)targetRect origin:(WebCore::FloatPoint)origin minimumScrollDistance:(float)minimumScrollDistance;

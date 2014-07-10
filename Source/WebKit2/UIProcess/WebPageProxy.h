@@ -152,6 +152,7 @@ class PageClient;
 class RemoteLayerTreeTransaction;
 class RemoteScrollingCoordinatorProxy;
 class StringPairVector;
+class ViewSnapshot;
 class VisitedLinkProvider;
 class WebBackForwardList;
 class WebBackForwardListItem;
@@ -173,7 +174,6 @@ struct EditingRange;
 struct EditorState;
 struct PlatformPopupMenuData;
 struct PrintInfo;
-struct ViewSnapshot;
 struct WebPopupItem;
 
 #if ENABLE(VIBRATION)
@@ -884,7 +884,7 @@ public:
     void recordNavigationSnapshot();
 
 #if PLATFORM(COCOA)
-    ViewSnapshot takeViewSnapshot();
+    PassRefPtr<ViewSnapshot> takeViewSnapshot();
 #endif
 
 #if ENABLE(SUBTLE_CRYPTO)

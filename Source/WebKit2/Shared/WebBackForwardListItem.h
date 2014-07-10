@@ -36,8 +36,8 @@ class Data;
 }
 
 namespace IPC {
-    class ArgumentDecoder;
-    class ArgumentEncoder;
+class ArgumentDecoder;
+class ArgumentEncoder;
 }
 
 namespace WebKit {
@@ -56,9 +56,9 @@ public:
     const String& originalURL() const { return m_itemState.pageState.mainFrameState.originalURLString; }
     const String& url() const { return m_itemState.pageState.mainFrameState.urlString; }
     const String& title() const { return m_itemState.pageState.title; }
-    
-    void setSnapshotUUID(const String& uuid) { m_itemState.snapshotUUID = uuid; }
-    const String& snapshotUUID() const { return m_itemState.snapshotUUID; }
+
+    ViewSnapshot* snapshot() const { return m_itemState.snapshot.get(); }
+    void setSnapshot(PassRefPtr<ViewSnapshot> snapshot) { m_itemState.snapshot = snapshot; }
 
     static uint64_t highedUsedItemID();
 

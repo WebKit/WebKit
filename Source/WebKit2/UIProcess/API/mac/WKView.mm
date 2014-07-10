@@ -3101,15 +3101,13 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     return _data->_rootLayer.get();
 }
 
-- (ViewSnapshot)_takeViewSnapshot
+- (PassRefPtr<ViewSnapshot>)_takeViewSnapshot
 {
     NSWindow *window = self.window;
 
-    ViewSnapshot snapshot;
-
     CGSWindowID windowID = (CGSWindowID)[window windowNumber];
     if (!windowID || ![window isVisible])
-        return snapshot;
+        return nullptr;
 
     RetainPtr<CGImageRef> windowSnapshotImage = adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque));
 
@@ -3141,15 +3139,12 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
     auto croppedSnapshotImage = adoptCF(CGImageCreateWithImageInRect(windowSnapshotImage.get(), NSRectToCGRect([window convertRectToBacking:croppedImageRect])));
 
-    snapshot.surface = IOSurface::createFromImage(croppedSnapshotImage.get());
-    snapshot.surface->setIsVolatile(true);
+    auto surface = IOSurface::createFromImage(croppedSnapshotImage.get());
+    if (!surface)
+        return nullptr;
+    surface->setIsVolatile(true);
 
-    IntSize imageSize(CGImageGetWidth(croppedSnapshotImage.get()), CGImageGetHeight(croppedSnapshotImage.get()));
-    snapshot.size = imageSize;
-    snapshot.imageSizeInBytes = imageSize.width() * imageSize.height() * 4;
-    snapshot.backgroundColor = _data->_page->pageExtendedBackgroundColor();
-
-    return snapshot;
+    return ViewSnapshot::create(surface.get(), surface->size(), surface->totalBytes());
 }
 
 - (void)_wheelEventWasNotHandledByWebCore:(NSEvent *)event

@@ -26,6 +26,7 @@
 #ifndef SessionState_h
 #define SessionState_h
 
+#include "ViewSnapshotStore.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/URL.h>
@@ -120,8 +121,7 @@ struct BackForwardListItemState {
     uint64_t identifier;
 
     PageState pageState;
-    // FIXME: This should hold the snapshot itself, not its UUID.
-    String snapshotUUID;
+    RefPtr<ViewSnapshot> snapshot;
 };
 
 struct BackForwardListState {

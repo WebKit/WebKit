@@ -105,7 +105,7 @@ private:
     virtual LayerOrView *acceleratedCompositingRootLayer() const override;
     virtual LayerHostingMode viewLayerHostingMode() override { return LayerHostingMode::OutOfProcess; }
 
-    virtual ViewSnapshot takeViewSnapshot() override;
+    virtual PassRefPtr<ViewSnapshot> takeViewSnapshot() override;
     virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) override;
     virtual void clearCustomSwipeViews() override;
 

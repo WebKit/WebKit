@@ -30,7 +30,6 @@
 #import "WebPageProxy.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <WebCore/IOSurface.h>
-#import <WebCore/UUID.h>
 
 #if PLATFORM(IOS)
 #import <QuartzCore/QuartzCorePrivate.h>
@@ -55,7 +54,7 @@ ViewSnapshotStore::ViewSnapshotStore()
 
 ViewSnapshotStore::~ViewSnapshotStore()
 {
-    discardSnapshots();
+    discardSnapshotImages();
 }
 
 ViewSnapshotStore& ViewSnapshotStore::shared()
@@ -64,7 +63,7 @@ ViewSnapshotStore& ViewSnapshotStore::shared()
     return store;
 }
 
-#if PLATFORM(IOS)
+#if USE_RENDER_SERVER_VIEW_SNAPSHOTS
 CAContext *ViewSnapshotStore::snapshottingContext()
 {
     static CAContext *context;
@@ -82,13 +81,18 @@ CAContext *ViewSnapshotStore::snapshottingContext()
 }
 #endif
 
-void ViewSnapshotStore::removeSnapshotImage(ViewSnapshot& snapshot)
+void ViewSnapshotStore::didAddImageToSnapshot(ViewSnapshot& snapshot)
 {
-    if (!snapshot.hasImage())
-        return;
+    bool isNewEntry = m_snapshotsWithImages.add(&snapshot).isNewEntry;
+    ASSERT_UNUSED(isNewEntry, isNewEntry);
+    m_snapshotCacheSize += snapshot.imageSizeInBytes();
+}
 
-    m_snapshotCacheSize -= snapshot.imageSizeInBytes;
-    snapshot.clearImage();
+void ViewSnapshotStore::willRemoveImageFromSnapshot(ViewSnapshot& snapshot)
+{
+    bool removed = m_snapshotsWithImages.remove(&snapshot);
+    ASSERT_UNUSED(removed, removed);
+    m_snapshotCacheSize -= snapshot.imageSizeInBytes();
 }
 
 void ViewSnapshotStore::pruneSnapshots(WebPageProxy& webPageProxy)
@@ -96,54 +100,11 @@ void ViewSnapshotStore::pruneSnapshots(WebPageProxy& webPageProxy)
     if (m_snapshotCacheSize <= maximumSnapshotCacheSize)
         return;
 
-    uint32_t currentIndex = webPageProxy.backForwardList().currentIndex();
-    uint32_t maxDistance = 0;
-    auto mostDistantSnapshotIter = m_snapshotMap.end();
-    auto backForwardEntries = webPageProxy.backForwardList().entries();
+    ASSERT(!m_snapshotsWithImages.isEmpty());
 
-    // First, try to evict the snapshot for the page farthest from the current back-forward item.
-    for (uint32_t i = 0, entryCount = webPageProxy.backForwardList().entries().size(); i < entryCount; i++) {
-        uint32_t distance = std::max(currentIndex, i) - std::min(currentIndex, i);
+    // FIXME: We have enough information to do smarter-than-LRU eviction (making use of the back-forward lists, etc.)
 
-        if (i == currentIndex || distance < maxDistance)
-            continue;
-
-        WebBackForwardListItem* item = backForwardEntries[i].get();
-        String snapshotUUID = item->snapshotUUID();
-        if (snapshotUUID.isEmpty())
-            continue;
-
-        const auto& snapshotIter = m_snapshotMap.find(snapshotUUID);
-        if (snapshotIter == m_snapshotMap.end())
-            continue;
-
-        // We're only interested in evicting snapshots that still have images.
-        if (!snapshotIter->value.hasImage())
-            continue;
-
-        mostDistantSnapshotIter = snapshotIter;
-        maxDistance = distance;
-    }
-
-    if (mostDistantSnapshotIter != m_snapshotMap.end()) {
-        removeSnapshotImage(mostDistantSnapshotIter->value);
-        return;
-    }
-
-    // If we can't find a most distant item (perhaps because all the snapshots are from
-    // a different WebPageProxy's back-forward list), we should evict the the oldest item.
-    std::chrono::steady_clock::time_point oldestSnapshotTime = std::chrono::steady_clock::time_point::max();
-    String oldestSnapshotUUID;
-
-    for (const auto& uuidAndSnapshot : m_snapshotMap) {
-        if (uuidAndSnapshot.value.creationTime < oldestSnapshotTime && uuidAndSnapshot.value.hasImage()) {
-            oldestSnapshotTime = uuidAndSnapshot.value.creationTime;
-            oldestSnapshotUUID = uuidAndSnapshot.key;
-        }
-    }
-
-    const auto& snapshotIter = m_snapshotMap.find(oldestSnapshotUUID);
-    removeSnapshotImage(snapshotIter->value);
+    m_snapshotsWithImages.first()->clearImage();
 }
 
 void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy)
@@ -158,77 +119,94 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy)
 
     pruneSnapshots(webPageProxy);
 
-    ViewSnapshot snapshot = webPageProxy.takeViewSnapshot();
-    if (!snapshot.hasImage())
+    RefPtr<ViewSnapshot> snapshot = webPageProxy.takeViewSnapshot();
+    if (!snapshot || !snapshot->hasImage())
         return;
 
-    String oldSnapshotUUID = item->snapshotUUID();
-    if (!oldSnapshotUUID.isEmpty()) {
-        const auto& oldSnapshotIter = m_snapshotMap.find(oldSnapshotUUID);
-        if (oldSnapshotIter != m_snapshotMap.end()) {
-            removeSnapshotImage(oldSnapshotIter->value);
-            m_snapshotMap.remove(oldSnapshotIter);
-        }
-    }
+    snapshot->setRenderTreeSize(webPageProxy.renderTreeSize());
+    snapshot->setDeviceScaleFactor(webPageProxy.deviceScaleFactor());
+    snapshot->setBackgroundColor(webPageProxy.pageExtendedBackgroundColor());
 
-    snapshot.creationTime = std::chrono::steady_clock::now();
-    snapshot.renderTreeSize = webPageProxy.renderTreeSize();
-    snapshot.deviceScaleFactor = webPageProxy.deviceScaleFactor();
-
-    item->setSnapshotUUID(createCanonicalUUIDString());
-
-    m_snapshotMap.add(item->snapshotUUID(), snapshot);
-    m_snapshotCacheSize += snapshot.imageSizeInBytes;
+    item->setSnapshot(snapshot.release());
 }
 
-bool ViewSnapshotStore::getSnapshot(WebBackForwardListItem* item, ViewSnapshot& snapshot)
+void ViewSnapshotStore::discardSnapshotImages()
 {
-    if (item->snapshotUUID().isEmpty())
-        return false;
-
-    const auto& snapshotIterator = m_snapshotMap.find(item->snapshotUUID());
-    if (snapshotIterator == m_snapshotMap.end())
-        return false;
-    snapshot = snapshotIterator->value;
-    return true;
+    while (!m_snapshotsWithImages.isEmpty())
+        m_snapshotsWithImages.first()->clearImage();
 }
 
-void ViewSnapshotStore::discardSnapshots()
+
+#if USE_IOSURFACE_VIEW_SNAPSHOTS
+PassRefPtr<ViewSnapshot> ViewSnapshot::create(IOSurface* surface, IntSize size, size_t imageSizeInBytes)
 {
-    for (auto& snapshot : m_snapshotMap.values())
-        removeSnapshotImage(snapshot);
+    return adoptRef(new ViewSnapshot(surface, size, imageSizeInBytes));
+}
+#elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
+PassRefPtr<ViewSnapshot> ViewSnapshot::create(uint32_t slotID, IntSize size, size_t imageSizeInBytes)
+{
+    return adoptRef(new ViewSnapshot(slotID, size, imageSizeInBytes));
+}
+#endif
+
+#if USE_IOSURFACE_VIEW_SNAPSHOTS
+ViewSnapshot::ViewSnapshot(IOSurface* surface, IntSize size, size_t imageSizeInBytes)
+    : m_surface(surface)
+#elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
+ViewSnapshot::ViewSnapshot(uint32_t slotID, IntSize size, size_t imageSizeInBytes)
+    : m_slotID(slotID)
+#endif
+    , m_imageSizeInBytes(imageSizeInBytes)
+    , m_size(size)
+{
+    if (hasImage())
+        ViewSnapshotStore::shared().didAddImageToSnapshot(*this);
+}
+
+ViewSnapshot::~ViewSnapshot()
+{
+    clearImage();
 }
 
 bool ViewSnapshot::hasImage() const
 {
-    return imageSizeInBytes;
+#if USE_IOSURFACE_VIEW_SNAPSHOTS
+    return m_surface;
+#elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
+    return m_slotID;
+#endif
 }
 
 void ViewSnapshot::clearImage()
 {
+    if (!hasImage())
+        return;
+
+    ViewSnapshotStore::shared().willRemoveImageFromSnapshot(*this);
+
 #if USE_IOSURFACE_VIEW_SNAPSHOTS
-    surface = nullptr;
+    m_surface = nullptr;
 #elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
-    if (slotID)
-        [ViewSnapshotStore::snapshottingContext() deleteSlot:slotID];
-    slotID = 0;
+    [ViewSnapshotStore::snapshottingContext() deleteSlot:m_slotID];
+    m_slotID = 0;
 #endif
-    imageSizeInBytes = 0;
+    m_imageSizeInBytes = 0;
 }
 
 id ViewSnapshot::asLayerContents()
 {
 #if USE_IOSURFACE_VIEW_SNAPSHOTS
-    if (!surface)
+    if (!m_surface)
         return nullptr;
 
-    // FIXME: This should destroy the surface and inform the ViewSnapshotStore to reduce m_snapshotCacheSize.
-    if (surface->setIsVolatile(false) != IOSurface::SurfaceState::Valid)
+    if (m_surface->setIsVolatile(false) != IOSurface::SurfaceState::Valid) {
+        clearImage();
         return nullptr;
+    }
 
-    return (id)surface->surface();
+    return (id)m_surface->surface();
 #elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
-    return [CAContext objectForSlot:slotID];
+    return [CAContext objectForSlot:m_slotID];
 #endif
 }
 

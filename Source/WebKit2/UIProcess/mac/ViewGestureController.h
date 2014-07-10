@@ -50,7 +50,7 @@ class IOSurface;
 
 namespace WebKit {
 
-struct ViewSnapshot;
+class ViewSnapshot;
 class WebBackForwardListItem;
 class WebPageProxy;
 

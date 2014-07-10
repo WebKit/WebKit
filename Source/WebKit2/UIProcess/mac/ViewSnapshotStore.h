@@ -29,49 +29,84 @@
 #include <WebCore/Color.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/IOSurface.h>
-#include <chrono>
-#include <wtf/HashMap.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS CAContext;
 
 #if PLATFORM(MAC)
-#define USE_IOSURFACE_VIEW_SNAPSHOTS true
-#define USE_RENDER_SERVER_VIEW_SNAPSHOTS false
+#define USE_IOSURFACE_VIEW_SNAPSHOTS 1
+#define USE_RENDER_SERVER_VIEW_SNAPSHOTS 0
 #else
-#define USE_IOSURFACE_VIEW_SNAPSHOTS false
-#define USE_RENDER_SERVER_VIEW_SNAPSHOTS true
+#define USE_IOSURFACE_VIEW_SNAPSHOTS 0
+#define USE_RENDER_SERVER_VIEW_SNAPSHOTS 1
 #endif
+
+namespace WebCore {
+class IOSurface;
+}
 
 namespace WebKit {
 
+class ViewSnapshotStore;
 class WebBackForwardListItem;
 class WebPageProxy;
 
-struct ViewSnapshot {
+class ViewSnapshot : public RefCounted<ViewSnapshot> {
+public:
 #if USE_IOSURFACE_VIEW_SNAPSHOTS
-    RefPtr<WebCore::IOSurface> surface;
-#endif
-#if USE_RENDER_SERVER_VIEW_SNAPSHOTS
-    uint32_t slotID = 0;
+    static PassRefPtr<ViewSnapshot> create(WebCore::IOSurface*, WebCore::IntSize, size_t imageSizeInBytes);
+#elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
+    static PassRefPtr<ViewSnapshot> create(uint32_t slotID, WebCore::IntSize, size_t imageSizeInBytes);
 #endif
 
-    std::chrono::steady_clock::time_point creationTime;
-    uint64_t renderTreeSize;
-    float deviceScaleFactor;
-    WebCore::IntSize size;
-    size_t imageSizeInBytes = 0;
-    WebCore::Color backgroundColor;
+    ~ViewSnapshot();
 
     void clearImage();
     bool hasImage() const;
     id asLayerContents();
+
+    void setRenderTreeSize(uint64_t renderTreeSize) { m_renderTreeSize = renderTreeSize; }
+    uint64_t renderTreeSize() const { return m_renderTreeSize; }
+
+    void setBackgroundColor(WebCore::Color color) { m_backgroundColor = color; }
+    WebCore::Color backgroundColor() const { return m_backgroundColor; }
+
+    void setDeviceScaleFactor(float deviceScaleFactor) { m_deviceScaleFactor = deviceScaleFactor; }
+    float deviceScaleFactor() const { return m_deviceScaleFactor; }
+
+    size_t imageSizeInBytes() const { return m_imageSizeInBytes; }
+#if USE_IOSURFACE_VIEW_SNAPSHOTS
+    WebCore::IOSurface* surface() const { return m_surface.get(); }
+#endif
+    WebCore::IntSize size() const { return m_size; }
+
+private:
+#if USE_IOSURFACE_VIEW_SNAPSHOTS
+    explicit ViewSnapshot(WebCore::IOSurface*, WebCore::IntSize, size_t imageSizeInBytes);
+#elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
+    explicit ViewSnapshot(uint32_t slotID, WebCore::IntSize, size_t imageSizeInBytes);
+#endif
+
+#if USE_IOSURFACE_VIEW_SNAPSHOTS
+    RefPtr<WebCore::IOSurface> m_surface;
+#elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
+    uint32_t m_slotID;
+#endif
+
+    size_t m_imageSizeInBytes;
+    uint64_t m_renderTreeSize;
+    float m_deviceScaleFactor;
+    WebCore::IntSize m_size;
+    WebCore::Color m_backgroundColor;
 };
 
 class ViewSnapshotStore {
     WTF_MAKE_NONCOPYABLE(ViewSnapshotStore);
+    friend class ViewSnapshot;
 public:
     ViewSnapshotStore();
     ~ViewSnapshotStore();
@@ -79,25 +114,25 @@ public:
     static ViewSnapshotStore& shared();
 
     void recordSnapshot(WebPageProxy&);
-    bool getSnapshot(WebBackForwardListItem*, ViewSnapshot&);
 
     void disableSnapshotting() { m_enabled = false; }
     void enableSnapshotting() { m_enabled = true; }
 
-    void discardSnapshots();
+    void discardSnapshotImages();
 
-#if PLATFORM(IOS)
+#if USE_RENDER_SERVER_VIEW_SNAPSHOTS
     static CAContext *snapshottingContext();
 #endif
 
 private:
+    void didAddImageToSnapshot(ViewSnapshot&);
+    void willRemoveImageFromSnapshot(ViewSnapshot&);
     void pruneSnapshots(WebPageProxy&);
-    void removeSnapshotImage(ViewSnapshot&);
-
-    HashMap<String, ViewSnapshot> m_snapshotMap;
 
     bool m_enabled;
     size_t m_snapshotCacheSize;
+
+    ListHashSet<ViewSnapshot*> m_snapshotsWithImages;
 };
 
 } // namespace WebKit

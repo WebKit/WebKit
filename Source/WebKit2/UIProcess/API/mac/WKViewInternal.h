@@ -47,10 +47,10 @@ namespace WebKit {
 class DrawingAreaProxy;
 class FindIndicator;
 class LayerTreeContext;
+class ViewSnapshot;
 class WebContext;
 struct ColorSpaceData;
 struct EditorState;
-struct ViewSnapshot;
 struct WebPageConfiguration;
 }
 
@@ -83,7 +83,7 @@ struct WebPageConfiguration;
 - (void)_setAcceleratedCompositingModeRootLayer:(CALayer *)rootLayer;
 - (CALayer *)_acceleratedCompositingModeRootLayer;
 
-- (WebKit::ViewSnapshot)_takeViewSnapshot;
+- (PassRefPtr<WebKit::ViewSnapshot>)_takeViewSnapshot;
 - (void)_wheelEventWasNotHandledByWebCore:(NSEvent *)event;
 
 - (void)_setAccessibilityWebProcessToken:(NSData *)data;

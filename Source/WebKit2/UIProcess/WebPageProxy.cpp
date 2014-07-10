@@ -4944,7 +4944,7 @@ void WebPageProxy::dictationAlternatives(uint64_t dictationContext, Vector<Strin
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(COCOA)
-ViewSnapshot WebPageProxy::takeViewSnapshot()
+PassRefPtr<ViewSnapshot> WebPageProxy::takeViewSnapshot()
 {
     return m_pageClient.takeViewSnapshot();
 }

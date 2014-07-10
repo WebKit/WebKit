@@ -507,7 +507,7 @@ CALayer *PageClientImpl::acceleratedCompositingRootLayer() const
     return m_wkView._acceleratedCompositingModeRootLayer;
 }
 
-ViewSnapshot PageClientImpl::takeViewSnapshot()
+PassRefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot()
 {
     return [m_wkView _takeViewSnapshot];
 }

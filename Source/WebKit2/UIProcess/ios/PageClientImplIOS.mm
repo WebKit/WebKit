@@ -470,7 +470,7 @@ LayerOrView *PageClientImpl::acceleratedCompositingRootLayer() const
     return nullptr;
 }
 
-ViewSnapshot PageClientImpl::takeViewSnapshot()
+PassRefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot()
 {
     return [m_webView _takeViewSnapshot];
 }

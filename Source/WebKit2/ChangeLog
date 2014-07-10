@@ -1,3 +1,111 @@
+2014-07-10  Tim Horton  <timothy_horton@apple.com>
+
+        Store ViewSnapshots directly on the WebBackForwardListItem
+        https://bugs.webkit.org/show_bug.cgi?id=134667
+        <rdar://problem/17082639>
+
+        Reviewed by Dan Bernstein.
+
+        Make ViewSnapshot a refcounted class. Store it directly on the back-forward item
+        instead of in a side map referenced by UUID. Switch to a very simple LRU eviction model for now.
+        This fixes a ton of snapshot management bugs; for example, we would start throwing out snapshots
+        in the page that was actively being interacted with *first* when evicting snapshots, instead of
+        preferring older snapshots. Additionally, we would not throw away snapshots when back forward items
+        became unreachable.
+
+        There is definitely room for improvement of the eviction mechanism, but this is closer to a time-tested implementation.
+
+        * Shared/SessionState.h:
+        Keep a ViewSnapshot instead of a UUID on the BackForwardListItemState.
+
+        * Shared/WebBackForwardListItem.h:
+        Fix some indented namespace contents.
+
+        (WebKit::WebBackForwardListItem::snapshot):
+        (WebKit::WebBackForwardListItem::setSnapshot):
+        (WebKit::WebBackForwardListItem::setSnapshotUUID): Deleted.
+        (WebKit::WebBackForwardListItem::snapshotUUID): Deleted.
+        Switch the snapshot getter/setter to operate on ViewSnapshots instead of UUIDs.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _takeViewSnapshot]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _takeViewSnapshot]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::takeViewSnapshot):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::takeViewSnapshot):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::takeViewSnapshot):
+        Adopt ViewSnapshot::create, return a PassRefPtr, and class-ify ViewSnapshot.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::endSwipeGesture):
+        * UIProcess/mac/ViewGestureController.h:
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::shouldUseSnapshotForSize):
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::endSwipeGesture):
+        Grab the ViewSnapshot directly from the WebBackForwardListItem, and adopt the new functions.
+
+        * UIProcess/ios/WebMemoryPressureHandlerIOS.mm:
+        (WebKit::WebMemoryPressureHandler::WebMemoryPressureHandler):
+        Rename discardSnapshots to discardSnapshotImages, because we're really only discarding
+        the images; the render tree size/background color "snapshot" remains and is useful.
+
+        * UIProcess/mac/ViewSnapshotStore.h:
+        (WebKit::ViewSnapshot::setRenderTreeSize):
+        (WebKit::ViewSnapshot::renderTreeSize):
+        (WebKit::ViewSnapshot::setBackgroundColor):
+        (WebKit::ViewSnapshot::backgroundColor):
+        (WebKit::ViewSnapshot::setDeviceScaleFactor):
+        (WebKit::ViewSnapshot::deviceScaleFactor):
+        (WebKit::ViewSnapshot::imageSizeInBytes):
+        (WebKit::ViewSnapshot::surface):
+        (WebKit::ViewSnapshot::size):
+        (WebKit::ViewSnapshot::creationTime):
+        Make ViewSnapshot a refcounted class.
+        Add create functions which take an image (or slot ID), and relevant sizes.
+        It is expected that a ViewSnapshot is created with an image, and it is only possible
+        to remove that image, never to replace it. A new ViewSnapshot is required in that case.
+        Add setters for things that ViewSnapshotStore sets on the snapshot after the PageClient
+        retrieves it from the view. Add getters for things that the ViewGestureControllers need.
+
+        Remove removeSnapshotImage, getSnapshot, and the snapshot map.
+
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::ViewSnapshotStore::~ViewSnapshotStore):
+        (WebKit::ViewSnapshotStore::didAddImageToSnapshot):
+        (WebKit::ViewSnapshotStore::willRemoveImageFromSnapshot):
+        Manage m_snapshotCacheSize and m_snapshotsWithImages via didAddImageToSnapshot and willRemoveImageFromSnapshot.
+        willRemoveImageFromSnapshot will -always- be called before the ViewSnapshot is destroyed.
+
+        (WebKit::ViewSnapshotStore::pruneSnapshots):
+        Switch to a simple LRU eviction model. As previously mentioned, it's possible to do better, but
+        this is much less broken than the previous implementation.
+
+        (WebKit::ViewSnapshotStore::recordSnapshot):
+        (WebKit::ViewSnapshotStore::discardSnapshotImages):
+        (WebKit::ViewSnapshot::create):
+        (WebKit::ViewSnapshot::ViewSnapshot):
+        (WebKit::ViewSnapshot::~ViewSnapshot):
+        (WebKit::ViewSnapshot::hasImage):
+        (WebKit::ViewSnapshot::clearImage):
+        (WebKit::ViewSnapshot::asLayerContents):
+        If a surface is Empty when it comes back from being volatile, throw away the surface
+        and notify the Store to remove it from m_snapshotCacheSize (via clearImage()).
+
+        (WebKit::ViewSnapshotStore::removeSnapshotImage): Deleted.
+        (WebKit::ViewSnapshotStore::getSnapshot): Deleted.
+        (WebKit::ViewSnapshotStore::discardSnapshots): Deleted.
+
 2014-07-10  Beth Dakin  <bdakin@apple.com>
 
         Need Setting/WKPreference that allows clients to prevent scrollbars from drawing 
