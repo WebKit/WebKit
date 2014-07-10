@@ -3108,7 +3108,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     ViewSnapshot snapshot;
 
     CGSWindowID windowID = (CGSWindowID)[window windowNumber];
-    if (!windowID)
+    if (!windowID || ![window isVisible])
         return snapshot;
 
     RetainPtr<CGImageRef> windowSnapshotImage = adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque));

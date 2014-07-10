@@ -72,6 +72,9 @@ PassRefPtr<IOSurface> IOSurface::createFromSurface(IOSurfaceRef surface, ColorSp
 
 PassRefPtr<IOSurface> IOSurface::createFromImage(CGImageRef image)
 {
+    if (!image)
+        return nullptr;
+
     size_t width = CGImageGetWidth(image);
     size_t height = CGImageGetHeight(image);
 
