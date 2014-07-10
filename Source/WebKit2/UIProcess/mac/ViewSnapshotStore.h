@@ -35,6 +35,10 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
+#if !defined(__OBJC__)
+typedef struct objc_object *id;
+#endif
+
 OBJC_CLASS CAContext;
 
 #if PLATFORM(MAC)
