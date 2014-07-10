@@ -1,3 +1,25 @@
+2014-07-09  Pratik Solanki  <psolanki@apple.com>
+
+        Buffer CSS and JS resources in network process before sending over to web process
+        https://bugs.webkit.org/show_bug.cgi?id=134560
+        <rdar://problem/16737186>
+
+        Reviewed by Antti Koivisto.
+
+        For CSS and JS resources, ask the network process to buffer the entire resource instead of
+        sending it to web process in chunks since the web process can't do anything with a partial
+        css or js file.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+        * Shared/Network/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::NetworkResourceLoadParameters):
+        (WebKit::NetworkResourceLoadParameters::encode):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * Shared/Network/NetworkResourceLoadParameters.h:
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad):
+
 2014-07-09  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Disable text quantization while actively changing the page's scale factor

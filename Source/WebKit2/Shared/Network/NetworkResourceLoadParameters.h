@@ -64,6 +64,7 @@ public:
     bool shouldClearReferrerOnHTTPSToHTTPRedirect;
     bool isMainResource;
     bool defersLoading;
+    bool shouldBufferResource;
 };
 
 } // namespace WebKit

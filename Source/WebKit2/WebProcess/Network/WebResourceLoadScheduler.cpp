@@ -136,6 +136,7 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Cach
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect;
     loadParameters.isMainResource = resource && resource->type() == CachedResource::MainResource;
     loadParameters.defersLoading = resourceLoader->defersLoading();
+    loadParameters.shouldBufferResource = resource && (resource->type() == CachedResource::CSSStyleSheet || resource->type() == CachedResource::Script);
 
     ASSERT((loadParameters.webPageID && loadParameters.webFrameID) || loadParameters.clientCredentialPolicy == DoNotAskClientForAnyCredentials);
 

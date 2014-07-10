@@ -99,10 +99,12 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
 
     ASSERT(RunLoop::isMain());
     
-    if (reply) {
-        m_networkLoaderClient = std::make_unique<SynchronousNetworkLoaderClient>(m_request, reply);
+    if (reply || parameters.shouldBufferResource)
         m_bufferedData = WebCore::SharedBuffer::create();
-    } else
+
+    if (reply)
+        m_networkLoaderClient = std::make_unique<SynchronousNetworkLoaderClient>(m_request, reply);
+    else
         m_networkLoaderClient = std::make_unique<AsynchronousNetworkLoaderClient>();
 }
 
