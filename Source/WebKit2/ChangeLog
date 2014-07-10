@@ -1,3 +1,13 @@
+2014-07-10  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS] Frequent assertion failures when swiping back
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing):
+        Don't create an unused VoidCallback. It will assert when destroyed without being called.
+
 2014-07-10  Oliver Hunt  <oliver@apple.com>
 
         Pass sandbox extension for GL cache over to webprocess

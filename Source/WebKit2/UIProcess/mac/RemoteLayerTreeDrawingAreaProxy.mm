@@ -331,8 +331,6 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateViewState()
 
 void RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing(std::function<void (CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<VoidCallback> callback = VoidCallback::create(callbackFunction);
-
     if (!m_webPageProxy->isValid()) {
         callbackFunction(CallbackBase::Error::OwnerWasInvalidated);
         return;
