@@ -1499,12 +1499,34 @@ public:
         m_formatter.twoWordOp12Reg4FourFours(OP_ROR_reg_T2, rn, FourFours(0xf, rd, 0, rm));
     }
 
+    ALWAYS_INLINE void pop(RegisterID dest)
+    {
+        if (dest < ARMRegisters::r8)
+            m_formatter.oneWordOp7Imm9(OP_POP_T1, 1 << dest);
+        else {
+            // Load postindexed with writeback.
+            ldr(dest, ARMRegisters::sp, sizeof(void*), false, true);
+        }
+    }
+
     ALWAYS_INLINE void pop(uint32_t registerList)
     {
         ASSERT(WTF::bitCount(registerList) > 1);
         ASSERT(!((1 << ARMRegisters::pc) & registerList) || !((1 << ARMRegisters::lr) & registerList));
         ASSERT(!((1 << ARMRegisters::sp) & registerList));
         m_formatter.twoWordOp16Imm16(OP_POP_T2, registerList);
+    }
+
+    ALWAYS_INLINE void push(RegisterID src)
+    {
+        if (src < ARMRegisters::r8)
+            m_formatter.oneWordOp7Imm9(OP_PUSH_T1, 1 << src);
+        else if (src == ARMRegisters::lr)
+            m_formatter.oneWordOp7Imm9(OP_PUSH_T1, 0x100);
+        else {
+            // Store preindexed with writeback.
+            str(src, ARMRegisters::sp, -sizeof(void*), true, true);
+        }
     }
 
     ALWAYS_INLINE void push(uint32_t registerList)
