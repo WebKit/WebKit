@@ -1,3 +1,20 @@
+2014-07-09  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION(r170858): Safari freezes upon making a search on a website (yelp.com).
+        https://bugs.webkit.org/show_bug.cgi?id=134791
+        <rdar://problem/17616971>
+
+        Reviewed by Benjamin Poulain.
+
+        After r170858 we notify the keyboard too often about
+        the changed selection. This patch removes the notification
+        until we find a better way to do it that doesn't cause
+        deadlocks.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _selectionWillChange]):
+        (-[WKContentView _selectionChanged]):
+
 2014-07-09  Anders Carlsson  <andersca@apple.com>
 
         Safari showing blank pages

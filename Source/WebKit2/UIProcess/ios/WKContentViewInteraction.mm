@@ -2506,9 +2506,6 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 
 - (void)_selectionWillChange
 {
-    if (_usingGestureForSelection)
-        return;
-    [self beginSelectionChange];
 }
 
 - (void)_selectionChanged
@@ -2518,8 +2515,6 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     // to wait to paint the selection.
     if (_usingGestureForSelection)
         [self _updateChangedSelection];
-    else
-        [self endSelectionChange];
 }
 
 - (void)selectWordForReplacement
