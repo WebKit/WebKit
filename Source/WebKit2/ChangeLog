@@ -1,5 +1,17 @@
 2014-07-09  Anders Carlsson  <andersca@apple.com>
 
+        Safari showing blank pages
+        https://bugs.webkit.org/show_bug.cgi?id=134790
+        <rdar://problem/17617166>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        Make sure to add the content view to the scroll view.
+
+2014-07-09  Anders Carlsson  <andersca@apple.com>
+
         Closed web views should never create new web processes
         https://bugs.webkit.org/show_bug.cgi?id=134787
         <rdar://problem/16892526>

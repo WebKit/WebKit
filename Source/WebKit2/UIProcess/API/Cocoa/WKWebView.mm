@@ -286,6 +286,7 @@ static int32_t deviceOrientation()
 
     [_contentView layer].anchorPoint = CGPointZero;
     [_contentView setFrame:bounds];
+    [_scrollView addSubview:_contentView.get()];
     [_scrollView addSubview:[_contentView unscaledView]];
     [self _updateScrollViewBackground];
 
