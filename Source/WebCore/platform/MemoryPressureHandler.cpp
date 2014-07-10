@@ -68,18 +68,37 @@ MemoryPressureHandler::MemoryPressureHandler()
 {
 }
 
-void MemoryPressureHandler::releaseMemory(bool critical)
+void MemoryPressureHandler::releaseNoncriticalMemory()
+{
+    {
+        ReliefLogger log("Purge inactive FontData");
+        fontCache().purgeInactiveFontData();
+    }
+
+    {
+        ReliefLogger log("Clear WidthCaches");
+        clearWidthCaches();
+    }
+
+    {
+        ReliefLogger log("Discard Selector Query Cache");
+        for (auto* document : Document::allDocuments())
+            document->clearSelectorQueryCache();
+    }
+
+    {
+        ReliefLogger log("Clearing JS string cache");
+        JSDOMWindow::commonVM().stringCache.clear();
+    }
+}
+
+void MemoryPressureHandler::releaseCriticalMemory()
 {
     {
         ReliefLogger log("Empty the PageCache");
         int savedPageCacheCapacity = pageCache()->capacity();
         pageCache()->setCapacity(0);
         pageCache()->setCapacity(savedPageCacheCapacity);
-    }
-
-    {
-        ReliefLogger log("Purge inactive FontData");
-        fontCache().purgeInactiveFontData();
     }
 
     {
@@ -93,31 +112,23 @@ void MemoryPressureHandler::releaseMemory(bool critical)
     }
 
     {
-        ReliefLogger log("Clear WidthCaches");
-        clearWidthCaches();
-    }
-
-    {
         ReliefLogger log("Discard StyleResolvers");
         for (auto* document : Document::allDocuments())
             document->clearStyleResolver();
     }
 
     {
-        ReliefLogger log("Discard Selector Query Cache");
-        for (auto* document : Document::allDocuments())
-            document->clearSelectorQueryCache();
-    }
-
-    {
         ReliefLogger log("Discard all JIT-compiled code");
         gcController().discardAllCompiledCode();
     }
+}
 
-    {
-        ReliefLogger log("Clearing JS string cache");
-        JSDOMWindow::commonVM().stringCache.clear();
-    }
+void MemoryPressureHandler::releaseMemory(bool critical)
+{
+    releaseNoncriticalMemory();
+
+    if (critical)
+        releaseCriticalMemory();
 
     platformReleaseMemory(critical);
 

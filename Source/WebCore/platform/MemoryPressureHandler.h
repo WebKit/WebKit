@@ -87,6 +87,7 @@ public:
 
         const char* logString() const { return m_logString; }
         static void setLoggingEnabled(bool enabled) { s_loggingEnabled = enabled; }
+        static bool loggingEnabled() { return s_loggingEnabled; }
 
     private:
         size_t platformMemoryUsage();
@@ -101,6 +102,9 @@ public:
     static void releaseMemory(bool critical);
 
 private:
+    static void releaseNoncriticalMemory();
+    static void releaseCriticalMemory();
+
     void uninstall();
 
     void holdOff(unsigned);

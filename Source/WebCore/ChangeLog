@@ -1,3 +1,29 @@
+2014-07-10  Andreas Kling  <akling@apple.com>
+
+        [iOS WebKit2] Some memory pressure relief tweaks.
+        <https://webkit.org/b/134811>
+
+        Split memory pressure relief into critical and non-critical sections.
+        Non-critical relief is for clearing out things that are really not
+        essential, e.g unused font data, text measurement caches, etc.
+
+        On iOS, only flip the "WebKit is under memory pressure" flag when we
+        are under *critical* memroy pressure, rather than doing it early on
+        and gimping ourselves because other processes are too big.
+
+        Also added logging for when we transition in/out of system pressure.
+
+        Reviewed by Geoffrey Garen.
+
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseNoncriticalMemory):
+        (WebCore::MemoryPressureHandler::releaseCriticalMemory):
+        (WebCore::MemoryPressureHandler::releaseMemory):
+        * platform/MemoryPressureHandler.h:
+        (WebCore::MemoryPressureHandler::ReliefLogger::loggingEnabled):
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::install):
+
 2014-07-10  Beth Dakin  <bdakin@apple.com>
 
         Need Setting/WKPreference that allows clients to prevent scrollbars from drawing 

@@ -96,11 +96,16 @@ void MemoryPressureHandler::install()
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000
                 unsigned long status = dispatch_source_get_data(_cache_event_source);
                 critical = status == DISPATCH_MEMORYPRESSURE_CRITICAL;
+                bool wasCritical = memoryPressureHandler().isUnderMemoryPressure();
+                memoryPressureHandler().setUnderMemoryPressure(critical);
                 if (status == DISPATCH_MEMORYSTATUS_PRESSURE_NORMAL) {
-                    memoryPressureHandler().setUnderMemoryPressure(false);
+                    if (ReliefLogger::loggingEnabled())
+                        NSLog(@"System is no longer under (%s) memory pressure.", wasCritical ? "critical" : "non-critical");
                     return;
                 }
-                memoryPressureHandler().setUnderMemoryPressure(true);
+
+                if (ReliefLogger::loggingEnabled())
+                    NSLog(@"Got memory pressure notification (%s)", critical ? "critical" : "non-critical");
 #endif
                 memoryPressureHandler().respondToMemoryPressure(critical);
             });
