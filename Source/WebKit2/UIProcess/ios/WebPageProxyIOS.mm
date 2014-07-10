@@ -359,6 +359,17 @@ void WebPageProxy::applyAutocorrection(const String& correction, const String& o
     m_process->send(Messages::WebPage::ApplyAutocorrection(correction, originalText, callbackID), m_pageID);
 }
 
+void WebPageProxy::executeEditCommand(const String& commandName, std::function<void (CallbackBase::Error)> callbackFunction)
+{
+    if (!isValid()) {
+        callbackFunction(CallbackBase::Error::Unknown);
+        return;
+    }
+    
+    uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
+    m_process->send(Messages::WebPage::ExecuteEditCommandWithCallback(commandName, callbackID), m_pageID);
+}
+
 bool WebPageProxy::applyAutocorrection(const String& correction, const String& originalText)
 {
     bool autocorrectionApplied = false;
@@ -464,11 +475,6 @@ void WebPageProxy::applicationWillResignActive()
 void WebPageProxy::applicationDidBecomeActive()
 {
     m_process->send(Messages::WebPage::ApplicationDidBecomeActive(), m_pageID);
-}
-
-void WebPageProxy::notifySelectionWillChange()
-{
-    m_pageClient.selectionWillChange();
 }
 
 void WebPageProxy::notifyRevealedSelection()

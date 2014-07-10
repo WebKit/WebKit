@@ -85,6 +85,7 @@ messages -> WebPage LegacyReceiver {
     ApplicationWillEnterForeground()
     ApplicationDidBecomeActive()
     ContentSizeCategoryDidChange(String contentSizeCategory)
+    ExecuteEditCommandWithCallback(String name, uint64_t callbackID)
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)

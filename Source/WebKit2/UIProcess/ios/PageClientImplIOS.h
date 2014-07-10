@@ -119,7 +119,6 @@ private:
 
     virtual void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, API::Object* userData) override;
     virtual void stopAssistingNode() override;
-    virtual void selectionWillChange() override;
     virtual void selectionDidChange() override;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) override;
     virtual void positionInformationDidChange(const InteractionInformationAtPosition&) override;

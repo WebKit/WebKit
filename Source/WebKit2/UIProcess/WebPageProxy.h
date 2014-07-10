@@ -377,6 +377,7 @@ public:
     void executeEditCommand(const String& commandName);
     void validateCommand(const String& commandName, std::function<void (const String&, bool, int32_t, CallbackBase::Error)>);
 #if PLATFORM(IOS)
+    void executeEditCommand(const String& commandName, std::function<void (CallbackBase::Error)>);
     double displayedContentScale() const { return m_lastVisibleContentRectUpdate.scale(); }
     const WebCore::FloatRect& exposedContentRect() const { return m_lastVisibleContentRectUpdate.exposedRect(); }
     const WebCore::FloatRect& unobscuredContentRect() const { return m_lastVisibleContentRectUpdate.unobscuredRect(); }
@@ -1222,7 +1223,6 @@ private:
     void enableInspectorNodeSearch();
     void disableInspectorNodeSearch();
 #endif
-    void notifySelectionWillChange();
     void notifyRevealedSelection();
 #endif // PLATFORM(IOS)
 

@@ -507,6 +507,7 @@ public:
 
     void dispatchAsynchronousTouchEvents(const Vector<WebTouchEvent, 1>& queue);
     void contentSizeCategoryDidChange(const String&);
+    void executeEditCommandWithCallback(const String&, uint64_t callbackID);
 #if ENABLE(INSPECTOR)
     void showInspectorHighlight(const WebCore::Highlight&);
     void hideInspectorHighlight();

@@ -350,11 +350,6 @@ void PageClientImpl::setDragImage(const IntPoint&, PassRefPtr<ShareableBitmap>, 
     notImplemented();
 }
 
-void PageClientImpl::selectionWillChange()
-{
-    [m_contentView _selectionWillChange];
-}
-
 void PageClientImpl::selectionDidChange()
 {
     [m_contentView _selectionChanged];

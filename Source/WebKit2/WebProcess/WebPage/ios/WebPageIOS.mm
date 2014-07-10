@@ -1666,6 +1666,12 @@ void WebPage::applyAutocorrection(const String& correction, const String& origin
     send(Messages::WebPageProxy::StringCallback(correctionApplied ? correction : String(), callbackID));
 }
 
+void WebPage::executeEditCommandWithCallback(const String& commandName, uint64_t callbackID)
+{
+    executeEditCommand(commandName);
+    send(Messages::WebPageProxy::VoidCallback(callbackID));
+}
+
 void WebPage::syncApplyAutocorrection(const String& correction, const String& originalText, bool& correctionApplied)
 {
     RefPtr<Range> range;

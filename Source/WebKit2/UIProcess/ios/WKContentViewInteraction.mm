@@ -2225,75 +2225,83 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     return NO;
 }
 
+- (void)executeEditCommandWithCallback:(NSString *)commandName
+{
+    [self beginSelectionChange];
+    _page->executeEditCommand(commandName, [self](CallbackBase::Error) {
+        [self endSelectionChange];
+    });
+}
+
 - (UITextInputArrowKeyHistory *)_moveUp:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    _page->executeEditCommand(ASCIILiteral("moveUp"));
+    [self executeEditCommandWithCallback:@"moveUp"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveDown:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    _page->executeEditCommand(ASCIILiteral("moveDown"));
+    [self executeEditCommandWithCallback:@"moveDown"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveLeft:(BOOL) extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    _page->executeEditCommand(ASCIILiteral("moveLeft"));
+    [self executeEditCommandWithCallback:@"moveLeft"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveRight:(BOOL) extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    _page->executeEditCommand(ASCIILiteral("moveRight"));
+    [self executeEditCommandWithCallback:@"moveRight"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveToStartOfWord:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    _page->executeEditCommand(ASCIILiteral("moveWordBackward"));
+    [self executeEditCommandWithCallback:@"moveWordBackward"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveToStartOfParagraph:(BOOL) extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    _page->executeEditCommand(ASCIILiteral("moveToStartOfParagraph"));
+    [self executeEditCommandWithCallback:@"moveToStartOfParagraph"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveToStartOfLine:(BOOL) extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    _page->executeEditCommand(ASCIILiteral("moveToStartOfLine"));
+    [self executeEditCommandWithCallback:@"moveToStartOfLine"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveToStartOfDocument:(BOOL) extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    _page->executeEditCommand(ASCIILiteral("moveToBeginningOfDocument"));
+    [self executeEditCommandWithCallback:@"moveToBeginningOfDocument"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveToEndOfWord:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    _page->executeEditCommand(ASCIILiteral("moveWordForward"));
+    [self executeEditCommandWithCallback:@"moveWordForward"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveToEndOfParagraph:(BOOL) extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    _page->executeEditCommand(ASCIILiteral("moveToEndOfParagraph"));
+    [self executeEditCommandWithCallback:@"moveToEndOfParagraph"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveToEndOfLine:(BOOL) extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    _page->executeEditCommand(ASCIILiteral("moveToEndOfLine"));
+    [self executeEditCommandWithCallback:@"moveToEndOfLine"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveToEndOfDocument:(BOOL) extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    _page->executeEditCommand(ASCIILiteral("moveToEndOfDocument"));
+    [self executeEditCommandWithCallback:@"moveToEndOfDocument"];
     return nil;
 }
 
@@ -2502,10 +2510,6 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     [self _updateAccessory];
     // The name is misleading, but this actually clears the selection views and removes any selection.
     [_webSelectionAssistant resignedFirstResponder];
-}
-
-- (void)_selectionWillChange
-{
 }
 
 - (void)_selectionChanged
