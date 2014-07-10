@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 620x17
+        text run at (0,0) width 620: "This page renders some indic text and makes sure that the text metrics match the expected metrics. "
+      RenderBR {BR} at (620,14) size 0x0
+      RenderText {#text} at (0,18) size 746x35
+        text run at (0,18) width 746: "\x{AA0}\x{AB3}\x{AA8}\x{ABE} \x{A87}\x{AB0}\x{ABE}\x{A95}\x{AC0} \x{AAA}\x{ACD}\x{AB0}\x{AA6}\x{AC7}\x{AB6}\x{ACB}\x{AA8}\x{AC7} \x{A87}\x{AB8}\x{ACD}\x{AB2}\x{ABE}\x{AAE}\x{ABF}\x{A95} \x{AB0}\x{ABE}\x{AB7}\x{ACD}\x{A9F}\x{ACD}\x{AB0} \x{A9C}\x{ABE}\x{AB9}\x{AC7}\x{AB0} \x{A95}\x{AB0}\x{ACD}\x{AAF}\x{AC1}\x{A82} \x{A9B}\x{AC7} \x{A85}\x{AA8}\x{AC7} \x{AAA}\x{ACB}\x{AA4}\x{ABE}\x{AA8}\x{ACB} \x{AB5}\x{ACD}\x{AAF}\x{ABE}\x{AAA} \x{AB5}\x{AA7}\x{ABE}\x{AB0}\x{AB5}\x{ABE} \x{AA4}\x{AC7}\x{AAE}\x{AA8}\x{ABE} \x{AB5}\x{AA1}\x{ABE} \x{AAA}\x{ACD}\x{AB0}\x{AA4}\x{ACD}\x{AAF}\x{AC7} \x{AB5}\x{AAB}\x{ABE}\x{AA6}\x{ABE}\x{AB0}\x{AC0}\x{AA8}\x{AC1}\x{A82} \x{AB5}\x{ABF}\x{AB6}\x{ACD}\x{AB5}\x{AAD}\x{AB0}\x{AA8}\x{ABE}"
+        text run at (0,36) width 426: "\x{AAE}\x{AC1}\x{AB8}\x{ACD}\x{AB2}\x{ABF}\x{AAE}\x{ACB}\x{AA8}\x{AC7} \x{A86}\x{AB9}\x{ACD}\x{AB5}\x{ABE}\x{AA8} \x{A95}\x{AB0}\x{ACD}\x{AAF}\x{AC1}\x{A82} \x{A9B}\x{AC7}. \x{A87}\x{AB8}\x{ACD}\x{AB2}\x{ABE}\x{AAE}\x{ABF}\x{A95} \x{AB8}\x{ACD}\x{A9F}\x{AC7}\x{A9F} \x{A93}\x{AAB} \x{A87}\x{AB0}\x{ABE}\x{A95} \x{A8F}\x{AA8}\x{ACD}\x{AA1} \x{AB8}\x{ABF}\x{AB0}\x{ABF}\x{AAF}\x{ABE}"

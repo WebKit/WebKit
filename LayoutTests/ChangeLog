@@ -2,6 +2,17 @@
 
         [EFL] Unreviewed EFL gardening.
 
+        Rebaseline tests after r170304 and r170619.
+
+        * platform/efl/fast/multicol/pagination/RightToLeft-rl-dynamic-expected.png: Added after r170304.
+        * platform/efl/fast/multicol/pagination/RightToLeft-rl-dynamic-expected.txt: Added after r170304.
+        * platform/efl/fast/text/indic-expected.png: Added after r170619.
+        * platform/efl/fast/text/indic-expected.txt: Added after r170619.
+
+2014-07-10  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Unreviewed EFL gardening.
+
         Rebaseline tests after r170207.
 
         * platform/efl/fast/text/khmer-lao-font-expected.txt: Added.
