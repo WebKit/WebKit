@@ -1,3 +1,32 @@
+2014-07-09  Brady Eidson  <beidson@apple.com>
+
+        Fire connected/disconnected events for Gamepads.
+        https://bugs.webkit.org/show_bug.cgi?id=134386
+
+        Reviewed by Dean Jackson.
+
+        No new tests (No effect in a currently tested config)
+
+        * Modules/gamepad/GamepadManager.cpp:
+        (WebCore::navigatorGamepadFromDOMWindow): Handling converting a possibly-null Navigator into
+            a possibly null NavigatorGamepad.
+        (WebCore::GamepadManager::platformGamepadConnected): Notify blind Navigator/DOMWindows of all
+            previously attached Gamepads, then notify everybody of this new gamepad.
+        (WebCore::GamepadManager::platformGamepadDisconnected): Handle dispatching the disconnected
+            event to all registered DOMWindows.
+        (WebCore::GamepadManager::platformGamepadInputActivity): Notify blind Navigator/DOMWindows of all
+            attached Gamepads.
+        (WebCore::GamepadManager::makeGamepadVisible): Handles notifying setting up a new gamepads
+            with all NavigatorGamepads as well as dispatching the connected even to DOMWindows.
+        (WebCore::GamepadManager::registerDOMWindow):
+        (WebCore::GamepadManager::unregisterDOMWindow):
+        (WebCore::GamepadManager::makeGamepadsVisibileToBlindNavigators): Deleted.
+        * Modules/gamepad/GamepadManager.h:
+
+        * Modules/gamepad/NavigatorGamepad.cpp:
+        (WebCore::NavigatorGamepad::gamepadAtIndex):
+        * Modules/gamepad/NavigatorGamepad.h:
+
 2014-07-09  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Disable text quantization while actively changing the page's scale factor

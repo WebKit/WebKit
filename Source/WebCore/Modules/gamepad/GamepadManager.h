@@ -32,6 +32,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
@@ -57,7 +58,8 @@ public:
 private:
     GamepadManager();
 
-    void makeGamepadsVisibileToBlindNavigators();
+    void makeGamepadVisible(PlatformGamepad&, HashSet<NavigatorGamepad*>&, HashSet<DOMWindow*>&);
+    void dispatchGamepadEvent(const WTF::AtomicString& eventName, PlatformGamepad&);
 
     void maybeStartMonitoringGamepads();
     void maybeStopMonitoringGamepads();
@@ -67,6 +69,7 @@ private:
     HashSet<NavigatorGamepad*> m_navigators;
     HashSet<NavigatorGamepad*> m_gamepadBlindNavigators;
     HashSet<DOMWindow*> m_domWindows;
+    HashSet<DOMWindow*> m_gamepadBlindDOMWindows;
 };
 
 } // namespace WebCore

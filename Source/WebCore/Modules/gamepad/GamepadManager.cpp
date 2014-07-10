@@ -27,13 +27,25 @@
 
 #if ENABLE(GAMEPAD)
 
+#include "DOMWindow.h"
+#include "Document.h"
 #include "Gamepad.h"
+#include "GamepadEvent.h"
 #include "GamepadProvider.h"
 #include "Logging.h"
 #include "NavigatorGamepad.h"
 #include "PlatformGamepad.h"
 
 namespace WebCore {
+
+static NavigatorGamepad* navigatorGamepadFromDOMWindow(DOMWindow* window)
+{
+    Navigator* navigator = window->navigator();
+    if (!navigator)
+        return nullptr;
+
+    return NavigatorGamepad::from(navigator);
+}
 
 GamepadManager& GamepadManager::shared()
 {
@@ -48,43 +60,95 @@ GamepadManager::GamepadManager()
 
 void GamepadManager::platformGamepadConnected(PlatformGamepad& platformGamepad)
 {
-    for (auto& navigator : m_navigators) {
-        if (!m_gamepadBlindNavigators.contains(navigator))
-            navigator->gamepadConnected(platformGamepad);
+    // Notify blind Navigators and Windows about all gamepads except for this one.
+    for (auto* gamepad : GamepadProvider::shared().platformGamepads()) {
+        if (!gamepad || gamepad == &platformGamepad)
+            continue;
 
-        // FIXME: Fire connected event to all pages with listeners.
+        makeGamepadVisible(*gamepad, m_gamepadBlindNavigators, m_gamepadBlindDOMWindows);
     }
 
-    makeGamepadsVisibileToBlindNavigators();
+    m_gamepadBlindNavigators.clear();
+    m_gamepadBlindDOMWindows.clear();
+
+    // Notify everyone of this new gamepad.
+    makeGamepadVisible(platformGamepad, m_navigators, m_domWindows);
 }
 
 void GamepadManager::platformGamepadDisconnected(PlatformGamepad& platformGamepad)
 {
-    for (auto& navigator : m_navigators) {
-        if (!m_gamepadBlindNavigators.contains(navigator))
-            navigator->gamepadDisconnected(platformGamepad);
+    Vector<DOMWindow*> domWindowVector;
+    copyToVector(m_domWindows, domWindowVector);
 
-        // FIXME: Fire disconnected event to all pages with listeners.
+    HashSet<NavigatorGamepad*> notifiedNavigators;
+
+    // Handle the disconnect for all DOMWindows with event listeners and their Navigators.
+    for (auto* window : domWindowVector) {
+        // Event dispatch might have made this window go away.
+        if (!m_domWindows.contains(window))
+            continue;
+
+        NavigatorGamepad* navigator = navigatorGamepadFromDOMWindow(window);
+        if (!navigator)
+            continue;
+
+        // If this Navigator hasn't seen gamepads yet then its Window should not get the disconnect event.
+        if (m_gamepadBlindNavigators.contains(navigator))
+            continue;
+
+        RefPtr<Gamepad> gamepad = navigator->gamepadAtIndex(platformGamepad.index());
+        ASSERT(gamepad);
+
+        navigator->gamepadDisconnected(platformGamepad);
+        notifiedNavigators.add(navigator);
+
+        window->dispatchEvent(GamepadEvent::create(eventNames().gamepaddisconnectedEvent, gamepad.get()), window->document());
+    }
+
+    // Notify all the Navigators that haven't already been notified.
+    for (auto* navigator : m_navigators) {
+        if (!notifiedNavigators.contains(navigator))
+            navigator->gamepadDisconnected(platformGamepad);
     }
 }
 
 void GamepadManager::platformGamepadInputActivity()
 {
-    makeGamepadsVisibileToBlindNavigators();
-}
+    if (m_gamepadBlindNavigators.isEmpty() && m_gamepadBlindDOMWindows.isEmpty())
+        return;
 
-void GamepadManager::makeGamepadsVisibileToBlindNavigators()
-{
-    for (auto& navigator : m_gamepadBlindNavigators) {
-        // FIXME: Here we notify a blind Navigator of each existing gamepad.
-        // But we also need to fire the connected event to its corresponding DOMWindow objects.
-        for (auto& platformGamepad : GamepadProvider::shared().platformGamepads()) {
-            if (platformGamepad)
-                navigator->gamepadConnected(*platformGamepad);
-        }
-    }
+    for (auto* gamepad : GamepadProvider::shared().platformGamepads())
+        makeGamepadVisible(*gamepad, m_gamepadBlindNavigators, m_gamepadBlindDOMWindows);
 
     m_gamepadBlindNavigators.clear();
+    m_gamepadBlindDOMWindows.clear();
+}
+
+void GamepadManager::makeGamepadVisible(PlatformGamepad& platformGamepad, HashSet<NavigatorGamepad*>& navigatorSet, HashSet<DOMWindow*>& domWindowSet)
+{
+    if (navigatorSet.isEmpty() && domWindowSet.isEmpty())
+        return;
+
+    for (auto* navigator : navigatorSet)
+        navigator->gamepadConnected(platformGamepad);
+
+    Vector<DOMWindow*> domWindowVector;
+    copyToVector(domWindowSet, domWindowVector);
+
+    for (auto* window : domWindowVector) {
+        // Event dispatch might have made this window go away.
+        if (!m_domWindows.contains(window))
+            continue;
+
+        NavigatorGamepad* navigator = navigatorGamepadFromDOMWindow(window);
+        if (!navigator)
+            continue;
+
+        RefPtr<Gamepad> gamepad = navigator->gamepadAtIndex(platformGamepad.index());
+        ASSERT(gamepad);
+
+        window->dispatchEvent(GamepadEvent::create(eventNames().gamepadconnectedEvent, gamepad.get()), window->document());
+    }
 }
 
 void GamepadManager::registerNavigator(NavigatorGamepad* navigator)
@@ -116,6 +180,18 @@ void GamepadManager::registerDOMWindow(DOMWindow* window)
     ASSERT(!m_domWindows.contains(window));
     m_domWindows.add(window);
 
+    // Anytime we register a DOMWindow, we should also double check that its NavigatorGamepad is registered.
+    NavigatorGamepad* navigator = navigatorGamepadFromDOMWindow(window);
+    ASSERT(navigator);
+
+    if (m_navigators.add(navigator).isNewEntry)
+        m_gamepadBlindNavigators.add(navigator);
+
+    // If this DOMWindow's NavigatorGamepad was already registered but was still blind,
+    // then this DOMWindow should be blind.
+    if (m_gamepadBlindNavigators.contains(navigator))
+        m_gamepadBlindDOMWindows.add(window);
+
     maybeStartMonitoringGamepads();
 }
 
@@ -125,6 +201,7 @@ void GamepadManager::unregisterDOMWindow(DOMWindow* window)
 
     ASSERT(m_domWindows.contains(window));
     m_domWindows.remove(window);
+    m_gamepadBlindDOMWindows.remove(window);
 
     maybeStopMonitoringGamepads();
 }

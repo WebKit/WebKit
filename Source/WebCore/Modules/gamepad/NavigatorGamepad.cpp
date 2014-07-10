@@ -72,6 +72,13 @@ NavigatorGamepad* NavigatorGamepad::from(Navigator* navigator)
     return supplement;
 }
 
+Gamepad* NavigatorGamepad::gamepadAtIndex(unsigned index)
+{
+    if (index >= m_gamepads.size())
+        return nullptr;
+    return m_gamepads[index].get();
+}
+
 const Vector<RefPtr<Gamepad>>& NavigatorGamepad::getGamepads(Navigator* navigator)
 {
     return NavigatorGamepad::from(navigator)->gamepads();
