@@ -1149,17 +1149,17 @@ private:
 
     void setHasCompositingDescendant(bool b)  { m_hasCompositingDescendant = b; }
     
-    enum IndirectCompositingReason {
-        NoIndirectCompositingReason,
-        IndirectCompositingForStacking,
-        IndirectCompositingForOverlap,
-        IndirectCompositingForBackgroundLayer,
-        IndirectCompositingForGraphicalEffect, // opacity, mask, filter, transform etc.
-        IndirectCompositingForPerspective,
-        IndirectCompositingForPreserve3D
+    enum class IndirectCompositingReason {
+        None,
+        Stacking,
+        Overlap,
+        BackgroundLayer,
+        GraphicalEffect, // opacity, mask, filter, transform etc.
+        Perspective,
+        Preserve3D
     };
     
-    void setIndirectCompositingReason(IndirectCompositingReason reason) { m_indirectCompositingReason = reason; }
+    void setIndirectCompositingReason(IndirectCompositingReason reason) { m_indirectCompositingReason = static_cast<unsigned>(reason); }
     IndirectCompositingReason indirectCompositingReason() const { return static_cast<IndirectCompositingReason>(m_indirectCompositingReason); }
     bool mustCompositeForIndirectReasons() const { return m_indirectCompositingReason; }
 
