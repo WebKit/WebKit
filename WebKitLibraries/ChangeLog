@@ -1,5 +1,14 @@
 2014-07-09  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Unreviewed build fix.
+
+        Build bots don't have a three-part default version string,
+        breaking pattern matching. Handle this case.
+
+        * win/tools/scripts/auto-version.pl:
+
+2014-07-09  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed gardening.
 
         * win/tools/scripts/auto-version.pl: Protect against

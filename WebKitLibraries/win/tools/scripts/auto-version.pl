@@ -76,6 +76,14 @@ my $BUILD_MAJOR_VERSION = $1;
 my $BUILD_MINOR_VERSION = $2;
 my $BUILD_TINY_VERSION = $3;
 
+# The default version (with no decimals) will be matched by the regexp
+# to $BUILD_TINY_VERSION. If that happens, we need to move it to
+# $BUILD_MAJOR_VERSION.
+if (!defined $BUILD_MAJOR_VERSION && !defined $BUILD_MINOR_VERSION) {
+    $BUILD_MAJOR_VERSION = $BUILD_TINY_VERSION;
+    $BUILD_TINY_VERSION = 0;
+}
+
 # Cut the major component down to three characters by dropping any
 # extra leading digits, then adjust the major version portion of the
 # version string to match.
