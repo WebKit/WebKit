@@ -1,3 +1,23 @@
+2014-07-10  Carlos Garcia Campos  <cgarcia@igalia.com> and Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][CMake] Add a 'distcheck' target
+        https://bugs.webkit.org/show_bug.cgi?id=130675
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add --check option to make-dist script that builds and installs the tarball.
+
+        * gtk/make-dist.py:
+        (Distcheck.__init__):
+        (Distcheck.extract_tarball): Extratc the tarball.
+        (Distcheck.configure): Run cmake.
+        (Distcheck.configure.create_dir): Helper function to create a directory.
+        (Distcheck.build): Run make.
+        (Distcheck.install): Run make install.
+        (Distcheck.clean): Clean up the extracted tarball.
+        (Distcheck.check): Run all previous methods in order.
+        * gtk/manifest.txt: Add missing file.
+
 2014-07-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use the same default options for production builds that previous stable releases

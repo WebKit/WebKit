@@ -19,9 +19,12 @@ from __future__ import print_function
 from contextlib import closing
 
 import argparse
+import errno
+import multiprocessing
 import os
 import re
-import sys
+import shutil
+import subprocess
 import tarfile
 
 
@@ -203,12 +206,67 @@ class Manifest(object):
         print("Wrote {0}".format(output).ljust(40))
 
 
+class Distcheck(object):
+    BUILD_DIRECTORY_NAME = "_build"
+    INSTALL_DIRECTORY_NAME = "_install"
+
+    def __init__(self, source_root, build_root):
+        self.source_root = source_root
+        self.build_root = build_root
+
+    def extract_tarball(self, tarball_path):
+        with closing(tarfile.open(tarball_path, 'r')) as tarball:
+            tarball.extractall(self.build_root)
+
+    def configure(self, build_dir, install_dir):
+        def create_dir(directory, directory_type):
+            try:
+                os.mkdir(directory)
+            except OSError, e:
+                if e.errno != errno.EEXIST or not os.path.isdir(directory):
+                    raise Exception("Could not create %s dir at %s: %s" % (directory_type, directory, str(e)))
+
+        create_dir(build_dir, "build")
+        create_dir(install_dir, "install")
+
+        command = ['cmake', '-DPORT=GTK', '-DCMAKE_INSTALL_PREFIX=%s' % install_dir, '-DCMAKE_BUILD_TYPE=Release', self.source_root]
+        subprocess.check_call(command, cwd=build_dir)
+
+    def build(self, build_dir):
+        command = ['make']
+        make_args = os.getenv('MAKE_ARGS')
+        if make_args:
+            command.extend(make_args.split(' '))
+        else:
+            command.append('-j%d' % multiprocessing.cpu_count())
+        subprocess.check_call(command, cwd=build_dir)
+
+    def install(self, build_dir):
+        subprocess.check_call(['make', 'install'], cwd=build_dir)
+
+    def clean(self, dist_dir):
+        shutil.rmtree(dist_dir)
+
+    def check(self, tarball):
+        tarball_name, ext = os.path.splitext(os.path.basename(tarball))
+        dist_dir = os.path.join(self.build_root, tarball_name)
+        build_dir = os.path.join(dist_dir, self.BUILD_DIRECTORY_NAME)
+        install_dir = os.path.join(dist_dir, self.INSTALL_DIRECTORY_NAME)
+
+        self.extract_tarball(tarball)
+        self.configure(build_dir, install_dir)
+        self.build(build_dir)
+        self.install(build_dir)
+        self.clean(dist_dir)
+
 if __name__ == "__main__":
     class FilePathAction(argparse.Action):
         def __call__(self, parser, namespace, values, option_string=None):
             setattr(namespace, self.dest, os.path.abspath(values))
 
     parser = argparse.ArgumentParser(description='Build a distribution bundle.')
+    parser.add_argument('-c', '--check', action='store_true',
+                        help='Check the tarball')
     parser.add_argument('-s', '--source-dir', type=str, action=FilePathAction, default=os.getcwd(),
                         help='The top-level directory of the source distribution. ' + \
                               'Directory for relative paths. Defaults to current directory.')
@@ -230,3 +288,6 @@ if __name__ == "__main__":
 
     manifest = Manifest(arguments.manifest_filename, arguments.source_dir, arguments.build_dir, arguments.tarball_root)
     manifest.create_tarfile(arguments.output_filename)
+
+    if arguments.check:
+        Distcheck(arguments.source_dir, arguments.build_dir).check(arguments.output_filename)

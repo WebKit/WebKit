@@ -71,4 +71,19 @@ if (ENABLE_WEBKIT2)
     add_custom_target(dist
         DEPENDS ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar.xz
     )
+
+    add_custom_target(distcheck
+        DEPENDS ${TOOLS_DIR}/gtk/make-dist.py
+        DEPENDS ${TOOLS_DIR}/gtk/manifest.txt
+        DEPENDS WebKit2
+        DEPENDS gtkdoc
+        COMMAND ${TOOLS_DIR}/gtk/make-dist.py
+                --check
+                --source-dir=${CMAKE_SOURCE_DIR}
+                --build-dir=${CMAKE_BINARY_DIR}
+                --tarball-root=/webkitgtk-${PROJECT_VERSION}
+                -o ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
+                ${TOOLS_DIR}/gtk/manifest.txt
+        COMMAND xz -f ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
+    )
 endif ()
