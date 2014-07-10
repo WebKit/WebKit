@@ -303,6 +303,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
 
 #if PLATFORM(IOS)
     CGContextSetFontSize(cgContext, 1);
+    CGContextSetShouldSubpixelQuantizeFonts(cgContext, context->shouldSubpixelQuantizeFonts());
 #else
     wkSetCGFontRenderingMode(cgContext, drawFont, context->shouldSubpixelQuantizeFonts());
     if (drawFont)

@@ -170,6 +170,7 @@ private:
     virtual void didLayout(LayoutType = NormalLayout) override;
     virtual void didStartOverflowScroll() override;
     virtual void didEndOverflowScroll() override;
+    virtual bool hasStablePageScaleFactor() const override;
 
     // FIXME: See <rdar://problem/5975559>
     virtual void suppressFormNotifications() override;

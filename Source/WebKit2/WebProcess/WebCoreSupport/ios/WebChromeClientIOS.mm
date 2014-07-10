@@ -100,6 +100,11 @@ void WebChromeClient::didEndOverflowScroll()
     notImplemented();
 }
 
+bool WebChromeClient::hasStablePageScaleFactor() const
+{
+    return m_page->hasStablePageScaleFactor();
+}
+
 void WebChromeClient::suppressFormNotifications()
 {
     notImplemented();

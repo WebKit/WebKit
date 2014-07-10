@@ -1,3 +1,27 @@
+2014-07-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Disable text quantization while actively changing the page's scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=134781
+
+        Reviewed by Tim Horton and Myles C. Maxfield.
+
+        While zooming a page, text quantization causes glyphs to "move" in order to get to the closest
+        boundary for the current scale factor.
+
+        We do not want this to happen while dynamically changing the scale factor because the effect
+        is visible. To avoid this, we disable text quantization if the page's scale factor changes
+        in response to a non-stable contentRect update.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::hasStablePageScaleFactor):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::hasStablePageScaleFactor):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2014-07-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] Use UIAlertController API in WKFileUploadPanel instead of SPI

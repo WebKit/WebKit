@@ -464,6 +464,7 @@ public:
     double minimumPageScaleFactor() const;
     double maximumPageScaleFactor() const;
     bool allowsUserScaling() const;
+    bool hasStablePageScaleFactor() const { return m_hasStablePageScaleFactor; }
 
     void handleTap(const WebCore::IntPoint&);
     void potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoint&);
@@ -1226,6 +1227,7 @@ private:
     bool m_hasReceivedVisibleContentRectsAfterDidCommitLoad;
     bool m_scaleWasSetByUIProcess;
     bool m_userHasChangedPageScaleFactor;
+    bool m_hasStablePageScaleFactor;
     bool m_userIsInteracting;
     bool m_hasPendingBlurNotification;
     bool m_useTestingViewportConfiguration;

@@ -1,3 +1,19 @@
+2014-07-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Disable text quantization while actively changing the page's scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=134781
+
+        Reviewed by Tim Horton and Myles C. Maxfield.
+
+        Query the chrome client to setup quantization on each layers.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::hasStablePageScaleFactor):
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setupFontSubpixelQuantization):
+
 2014-07-09  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] Cache entry invalidated too early.

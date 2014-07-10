@@ -287,6 +287,7 @@ public:
     virtual void elementDidBlur(const Node*) { };
     
     virtual bool shouldPaintEntireContents() const { return false; }
+    virtual bool hasStablePageScaleFactor() const { return true; }
 
     // Allows ports to customize the type of graphics layers created by this page.
     virtual GraphicsLayerFactory* graphicsLayerFactory() const { return nullptr; }

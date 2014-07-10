@@ -2447,10 +2447,14 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
 
     IntPoint scrollPosition = roundedIntPoint(visibleContentRectUpdateInfo.unobscuredRect().location());
 
+    if (!m_hasStablePageScaleFactor && visibleContentRectUpdateInfo.inStableState())
+        m_hasStablePageScaleFactor = true;
+
     float floatBoundedScale = boundedScale;
     bool hasSetPageScale = false;
     if (floatBoundedScale != currentScale) {
         m_scaleWasSetByUIProcess = true;
+        m_hasStablePageScaleFactor = visibleContentRectUpdateInfo.inStableState();
 
         m_dynamicSizeUpdateHistory.clear();
 

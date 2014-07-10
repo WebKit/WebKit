@@ -3755,7 +3755,10 @@ bool RenderLayer::setupFontSubpixelQuantization(GraphicsContext* context, bool& 
     // FIXME: We shouldn't have to disable subpixel quantization for overflow clips or subframes once we scroll those
     // things on the scrolling thread.
     bool contentsScrollByPainting = (renderer().hasOverflowClip() && !usesCompositedScrolling()) || (renderer().frame().ownerElement());
-    if (scrollingOnMainThread || contentsScrollByPainting) {
+    bool isZooming = false;
+    if (Page* page = renderer().frame().page())
+        isZooming = !page->chrome().client().hasStablePageScaleFactor();
+    if (scrollingOnMainThread || contentsScrollByPainting || isZooming) {
         didQuantizeFonts = context->shouldSubpixelQuantizeFonts();
         context->setShouldSubpixelQuantizeFonts(false);
         return true;
