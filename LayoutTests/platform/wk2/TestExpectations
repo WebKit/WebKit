@@ -240,10 +240,6 @@ webkit.org/b/127683 http/tests/navigation/new-window-redirect-history.html [ Ski
 
 webkit.org/b/132297 svg/custom/bug79798.html [ Skip ]
 
-webkit.org/b/133696 fast/frames/iframe-onload-remove-self-no-crash.html [ Skip ]
-webkit.org/b/133696 fast/loader/create-frame-in-DOMContentLoaded.html [ Skip ]
-webkit.org/b/133696 fast/loader/frame-creation-removal.html [ Skip ]
-
 ### END OF (1) Classified failures with bug reports
 ########################################
 
