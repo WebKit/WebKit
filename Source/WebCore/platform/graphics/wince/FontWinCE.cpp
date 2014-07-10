@@ -62,7 +62,7 @@ public:
 ScreenDcReleaser releaseScreenDc;
 
 void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fontData, const GlyphBuffer& glyphBuffer,
-    unsigned from, unsigned numGlyphs, const FloatPoint& point) const
+    int from, int numGlyphs, const FloatPoint& point) const
 {
     graphicsContext->drawText(fontData, glyphBuffer, from, numGlyphs, point);
 }
@@ -206,7 +206,7 @@ static int generateComponents(TextRunComponents* components, const Font &font, c
     return offset;
 }
 
-float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, unsigned from, unsigned to) const
+float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
 {
     if (to < 0)
         to = run.length();
@@ -237,7 +237,7 @@ float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const 
     return widthOfDrawnText;
 }
 
-void Font::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const TextRun& /* run */, const AtomicString& /* mark */, const FloatPoint& /* point */, unsigned /* from */, unsigned /* to */) const
+void Font::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const TextRun& /* run */, const AtomicString& /* mark */, const FloatPoint& /* point */, int /* from */, int /* to */) const
 {
     notImplemented();
 }
@@ -321,7 +321,7 @@ static float cursorToX(const Font* font, const TextRunComponents& components, in
 }
 
 FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint& pt,
-    int h, unsigned from, unsigned to) const
+    int h, int from, int to) const
 {
     TextRunComponents components;
     int w = generateComponents(&components, *this, run);

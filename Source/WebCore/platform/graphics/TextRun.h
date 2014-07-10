@@ -171,8 +171,8 @@ public:
     const UChar* characters16() const { ASSERT(!is8Bit()); return m_data.characters16; }
     
     bool is8Bit() const { return m_is8Bit; }
-    unsigned length() const { return m_len; }
-    unsigned charactersLength() const { return m_charactersLength; }
+    int length() const { return m_len; }
+    int charactersLength() const { return m_charactersLength; }
     String string() const
     {
         if (is8Bit())
@@ -217,7 +217,7 @@ public:
         virtual ~RenderingContext() { }
 
 #if ENABLE(SVG_FONTS)
-        virtual GlyphData glyphDataForCharacter(const Font&, WidthIterator&, UChar32 character, bool mirror, unsigned currentCharacter, unsigned& advanceLength) = 0;
+        virtual GlyphData glyphDataForCharacter(const Font&, WidthIterator&, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength) = 0;
         virtual void drawSVGGlyphs(GraphicsContext*, const SimpleFontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const = 0;
         virtual float floatWidthUsingSVGFont(const Font&, const TextRun&, int& charsConsumed, String& glyphName) const = 0;
         virtual bool applySVGKerning(const SimpleFontData*, WidthIterator&, GlyphBuffer*, int from) const = 0;

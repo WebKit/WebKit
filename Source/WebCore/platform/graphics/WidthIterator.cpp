@@ -68,7 +68,7 @@ WidthIterator::WidthIterator(const Font* font, const TextRun& run, HashSet<const
     }
 }
 
-GlyphData WidthIterator::glyphDataForCharacter(UChar32 character, bool mirror, unsigned currentCharacter, unsigned& advanceLength)
+GlyphData WidthIterator::glyphDataForCharacter(UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength)
 {
     ASSERT(m_font);
 
@@ -99,7 +99,7 @@ public:
 
 typedef Vector<std::pair<int, OriginalAdvancesForCharacterTreatedAsSpace>, 64> CharactersTreatedAsSpace;
 
-static inline float applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, unsigned& lastGlyphCount, const SimpleFontData* fontData, WidthIterator& iterator, TypesettingFeatures typesettingFeatures, CharactersTreatedAsSpace& charactersTreatedAsSpace)
+static inline float applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, int& lastGlyphCount, const SimpleFontData* fontData, WidthIterator& iterator, TypesettingFeatures typesettingFeatures, CharactersTreatedAsSpace& charactersTreatedAsSpace)
 {
     ASSERT(typesettingFeatures & (Kerning | Ligatures));
 
@@ -165,14 +165,14 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
 
     const SimpleFontData* primaryFont = m_font->primaryFont();
     const SimpleFontData* lastFontData = primaryFont;
-    unsigned lastGlyphCount = glyphBuffer ? glyphBuffer->size() : 0;
+    int lastGlyphCount = glyphBuffer ? glyphBuffer->size() : 0;
 
     UChar32 character = 0;
     unsigned clusterLength = 0;
     CharactersTreatedAsSpace charactersTreatedAsSpace;
     while (textIterator.consume(character, clusterLength)) {
         unsigned advanceLength = clusterLength;
-        unsigned currentCharacter = textIterator.currentCharacter();
+        int currentCharacter = textIterator.currentCharacter();
         const GlyphData& glyphData = glyphDataForCharacter(character, rtl, currentCharacter, advanceLength);
         Glyph glyph = glyphData.glyph;
         const SimpleFontData* fontData = glyphData.fontData;
@@ -327,14 +327,14 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
     return consumedCharacters;
 }
 
-unsigned WidthIterator::advance(unsigned offset, GlyphBuffer* glyphBuffer)
+unsigned WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
 {
-    unsigned length = m_run.length();
+    int length = m_run.length();
 
     if (offset > length)
         offset = length;
 
-    if (m_currentCharacter >= offset)
+    if (m_currentCharacter >= static_cast<unsigned>(offset))
         return 0;
 
     if (m_run.is8Bit()) {
@@ -348,10 +348,10 @@ unsigned WidthIterator::advance(unsigned offset, GlyphBuffer* glyphBuffer)
 
 bool WidthIterator::advanceOneCharacter(float& width, GlyphBuffer& glyphBuffer)
 {
-    unsigned oldSize = glyphBuffer.size();
+    int oldSize = glyphBuffer.size();
     advance(m_currentCharacter + 1, &glyphBuffer);
     float w = 0;
-    for (unsigned i = oldSize; i < glyphBuffer.size(); ++i)
+    for (int i = oldSize; i < glyphBuffer.size(); ++i)
         w += glyphBuffer.advanceAt(i).width();
     width = w;
     return glyphBuffer.size() > oldSize;

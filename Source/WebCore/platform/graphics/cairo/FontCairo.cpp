@@ -94,7 +94,7 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint&
 }
 
 void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, const GlyphBuffer& glyphBuffer,
-    unsigned from, unsigned numGlyphs, const FloatPoint& point) const
+    int from, int numGlyphs, const FloatPoint& point) const
 {
     if (!font->platformData().size())
         return;
@@ -102,7 +102,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     GlyphBufferGlyph* glyphs = const_cast<GlyphBufferGlyph*>(glyphBuffer.glyphs(from));
 
     float offset = point.x();
-    for (unsigned i = 0; i < numGlyphs; i++) {
+    for (int i = 0; i < numGlyphs; i++) {
         glyphs[i].x = offset;
         glyphs[i].y = point.y();
         offset += glyphBuffer.advanceAt(from + i).width();
