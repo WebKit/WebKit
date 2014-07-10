@@ -189,6 +189,7 @@ private:
 
     void clearPlatformData();
     void maybeTransferPlatformData();
+    bool maybeAppendPlatformData(SharedBuffer*);
 
     void copyBufferAndClear(char* destination, unsigned bytesToCopy) const;
 
@@ -201,6 +202,7 @@ private:
     mutable Vector<RetainPtr<CFDataRef>> m_dataArray;
     unsigned copySomeDataFromDataArray(const char*& someData, unsigned position) const;
     const char *singleDataArrayBuffer() const;
+    bool maybeAppendDataArray(SharedBuffer*);
 #else
     mutable Vector<char*> m_segments;
 #endif

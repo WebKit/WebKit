@@ -296,6 +296,13 @@ PassRefPtr<ArrayBuffer> SharedBuffer::createArrayBuffer() const
 
 void SharedBuffer::append(SharedBuffer* data)
 {
+    if (maybeAppendPlatformData(data))
+        return;
+#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+    if (maybeAppendDataArray(data))
+        return;
+#endif
+
     const char* segment;
     size_t position = 0;
     while (size_t length = data->getSomeData(segment, position)) {
@@ -510,6 +517,11 @@ inline unsigned SharedBuffer::platformDataSize() const
     ASSERT_NOT_REACHED();
     
     return 0;
+}
+
+inline bool SharedBuffer::maybeAppendPlatformData(SharedBuffer*)
+{
+    return false;
 }
 
 #endif

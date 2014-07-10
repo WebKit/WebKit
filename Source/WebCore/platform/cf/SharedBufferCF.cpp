@@ -112,6 +112,14 @@ void SharedBuffer::tryReplaceContentsWithPlatformBuffer(SharedBuffer* newContent
     m_cfData = newContents->m_cfData;
 }
 
+bool SharedBuffer::maybeAppendPlatformData(SharedBuffer* newContents)
+{
+    if (size() || !newContents->m_cfData)
+        return false;
+    m_cfData = newContents->m_cfData;
+    return true;
+}
+
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
 PassRefPtr<SharedBuffer> SharedBuffer::wrapCFDataArray(CFArrayRef cfDataArray)
 {
@@ -186,6 +194,19 @@ const char *SharedBuffer::singleDataArrayBuffer() const
         return 0;
 
     return reinterpret_cast<const char*>(CFDataGetBytePtr(m_dataArray.at(0).get()));
+}
+
+bool SharedBuffer::maybeAppendDataArray(SharedBuffer* data)
+{
+    if (m_buffer.size() || m_cfData || !data->m_dataArray.size())
+        return false;
+#if !ASSERT_DISABLED
+    unsigned originalSize = size();
+#endif
+    for (auto cfData : data->m_dataArray)
+        append(cfData.get());
+    ASSERT(size() == originalSize + data->size());
+    return true;
 }
 #endif
 

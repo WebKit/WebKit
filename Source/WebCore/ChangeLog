@@ -1,3 +1,26 @@
+2014-07-09  Pratik Solanki  <psolanki@apple.com>
+
+        Make SharedBuffer::append(SharedBuffer*) be smarter about CFData and data arrays
+        https://bugs.webkit.org/show_bug.cgi?id=134731
+
+        Reviewed by Antti Koivisto.
+
+        If the target SharedBuffer has a CFDataRef or a data array then we can simply retain that
+        CFDataRef or data array elements in the SharedBuffer being appended to. This avoids
+        unnecessary copying.
+
+        No new tests because no functional changes.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::append):
+        (WebCore::SharedBuffer::maybeAppendPlatformData):
+        * platform/SharedBuffer.h:
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::maybeAppendPlatformData):
+        (WebCore::SharedBuffer::maybeAppendDataArray):
+        * platform/soup/SharedBufferSoup.cpp:
+        (WebCore::SharedBuffer::maybeAppendPlatformData):
+
 2014-07-09  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Remove uses of 'bash' in build system

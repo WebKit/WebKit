@@ -79,6 +79,11 @@ unsigned SharedBuffer::platformDataSize() const
     return m_soupBuffer->length;
 }
 
+bool SharedBuffer::maybeAppendPlatformData(SharedBuffer*)
+{
+    return false;
+}
+
 } // namespace WebCore
 
 #endif
