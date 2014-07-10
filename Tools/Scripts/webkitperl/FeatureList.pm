@@ -155,7 +155,7 @@ my @features = (
       define => "ENABLE_3D_RENDERING", default => (isAppleMacWebKit() || isIOSWebKit() || isGtk() || isEfl()), value => \$threeDRenderingSupport },
 
     { option => "accelerated-2d-canvas", desc => "Toggle Accelerated 2D Canvas support",
-      define => "ENABLE_ACCELERATED_2D_CANVAS", default => 0, value => \$accelerated2DCanvasSupport },
+      define => "ENABLE_ACCELERATED_2D_CANVAS", default => isGtk(), value => \$accelerated2DCanvasSupport },
 
     { option => "battery-status", desc => "Toggle Battery Status support",
       define => "ENABLE_BATTERY_STATUS", default => isEfl(), value => \$batteryStatusSupport },
@@ -179,7 +179,7 @@ my @features = (
       define => "ENABLE_CSS_SHAPES", default => 1, value => \$cssShapesSupport },
 
     { option => "css-filters", desc => "Toggle CSS Filters support",
-      define => "ENABLE_CSS_FILTERS", default => (isAppleMacWebKit() || isIOSWebKit() || isEfl()), value => \$cssFiltersSupport },
+      define => "ENABLE_CSS_FILTERS", default => (isAppleMacWebKit() || isIOSWebKit() || isEfl() || isGtk()), value => \$cssFiltersSupport },
 
     { option => "css-grid-layout", desc => "Toggle CSS Grid Layout support",
       define => "ENABLE_CSS_GRID_LAYOUT", default => 1, value => \$cssGridLayoutSupport },

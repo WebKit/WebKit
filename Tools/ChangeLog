@@ -1,3 +1,16 @@
+2014-07-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use the same default options for production builds that previous stable releases
+        https://bugs.webkit.org/show_bug.cgi?id=134589
+
+        Reviewed by Martin Robinson.
+
+        Make sure all features enabled in production builds are also
+        enabled in developer mode.
+
+        * Scripts/webkitperl/FeatureList.pm: Enable ACCELERATED_2D_CANVAS
+        and CSS_FILTERS for the GTK port.
+
 2014-07-09  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Remove uses of 'bash' in build system
