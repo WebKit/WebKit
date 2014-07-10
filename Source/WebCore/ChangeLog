@@ -1,3 +1,16 @@
+2014-07-10  Andreas Kling  <akling@apple.com>
+
+        [iOS WebKit2] Don't uninstall the memory pressure listener after first signal.
+        <https://webkit.org/b/134814>
+
+        The call to uninstall() should not be made on iOS since iOS doesn't use the
+        hold-off mechanism in MemoryPressureHandler.
+
+        Reviewed by Benjamin Poulain.
+
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::respondToMemoryPressure):
+
 2014-07-10  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Overlapping appended ranges must cause the decoder to flush and re-enqueue.
