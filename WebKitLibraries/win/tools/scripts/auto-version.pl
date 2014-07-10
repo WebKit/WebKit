@@ -47,12 +47,16 @@ if (defined $WEBKIT_LIBRARIES) {
     chomp($COPYRIGHT_END_YEAR);
 }
 
-my $OUTPUT_DIR = File::Spec->catdir($ARGV[0], 'include');
-my $OUTPUT_FILE = File::Spec->catfile($OUTPUT_DIR, 'autoversion.h');
+# Make sure we don't have any leading or trailing quote
+$ARGV[0] =~ s/^\"//;
+$ARGV[0] =~ s/\"$//;
 
+my $OUTPUT_DIR = File::Spec->catdir(File::Spec->canonpath($ARGV[0]), 'include');
 unless (-d $OUTPUT_DIR) {
     make_path($OUTPUT_DIR) or die "Couldn't create $OUTPUT_DIR: $!";
 }
+
+my $OUTPUT_FILE = File::Spec->catfile($OUTPUT_DIR, 'autoversion.h');
 
 # Take the initial version number from RC_ProjectSourceVersion if it
 # exists, otherwise fall back to the version number stored in the source.

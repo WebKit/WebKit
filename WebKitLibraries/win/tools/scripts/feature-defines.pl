@@ -44,4 +44,4 @@ for (@enabled) {
 
 my $result = join(' ', @enabled);
 
-print "$result";
+print "$result\n";
