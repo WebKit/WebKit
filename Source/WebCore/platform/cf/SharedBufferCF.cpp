@@ -128,7 +128,7 @@ PassRefPtr<SharedBuffer> SharedBuffer::wrapCFDataArray(CFArrayRef cfDataArray)
 
 SharedBuffer::SharedBuffer(CFArrayRef cfDataArray)
     : m_size(0)
-    , m_shouldUsePurgeableMemory(true)
+    , m_shouldUsePurgeableMemory(false)
 #if ENABLE(DISK_IMAGE_CACHE)
     , m_isMemoryMapped(false)
     , m_diskImageCacheId(DiskImageCache::invalidDiskCacheId)

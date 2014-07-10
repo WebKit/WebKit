@@ -1,3 +1,21 @@
+2014-07-10  Pratik Solanki  <psolanki@apple.com>
+
+        ASSERT in SharedBuffer::maybeAppendDataArray() on MobileSafari launch
+        https://bugs.webkit.org/show_bug.cgi?id=134812
+        <rdar://problem/17628434>
+
+        Reviewed by Joseph Pecoraro.
+
+        Fix bug in my fix in r170930. Initialize the badly named m_shouldUsePurgeableMemory field to
+        false. This field indicates when it is okay to use purgeable memory and is set to true once
+        the resource is finished loading. By setting it to true in the constructor we were creating
+        purgeable memory while the resource was still being loaded and this triggered the assert.
+
+        No new tests. Should be covered by existing tests.
+
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+
 2014-07-10  Andreas Kling  <akling@apple.com>
 
         [iOS WebKit2] Some memory pressure relief tweaks.
