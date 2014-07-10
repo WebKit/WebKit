@@ -236,18 +236,15 @@ void CurlCacheManager::didFinishLoading(ResourceHandle& job)
         it->value->didFinishLoading();
 }
 
-bool CurlCacheManager::isCached(const String& url)
+bool CurlCacheManager::isCached(const String& url) const
 {
     if (m_disabled)
         return false;
 
     auto it = m_index.find(url);
-    if (it != m_index.end()) {
-        if (it->value->isCached())
-            return !it->value->isLoading();
+    if (it != m_index.end())
+        return it->value->isCached() && !it->value->isLoading();
 
-        invalidateCacheEntry(url);
-    }
     return false;
 }
 

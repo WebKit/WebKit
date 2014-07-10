@@ -45,7 +45,7 @@ public:
     const String& cacheDirectory() { return m_cacheDir; }
     void setStorageSizeLimit(size_t);
 
-    bool isCached(const String&);
+    bool isCached(const String&) const;
     HTTPHeaderMap& requestHeaders(const String&); // Load headers
     bool getCachedResponse(const String& url, ResourceResponse&);
 

@@ -1,3 +1,21 @@
+2014-07-09  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Cache entry invalidated too early.
+        https://bugs.webkit.org/show_bug.cgi?id=134681
+
+        Reviewed by Alex Christensen.
+
+        When a cache entry has expired, it is invalidated when a request for the corresponding url is started.
+        This is too early, since the resource is possibly not modified (even though it has expired),
+        and the server might respond with a 304 (not modified) response.
+        When we then receive a 304 response, the cache entry is deleted, and we have no cached response/data to provide.
+        This can be solved by not invalidating the entry when a request for that url is started,
+        but instead invalidate when a 200 OK response is received (which means the resource has been modified).
+
+        * platform/network/curl/CurlCacheManager.cpp:
+        (WebCore::CurlCacheManager::isCached): Avoid invalidating cache entry when it has expired, wait until we know the server response.
+        * platform/network/curl/CurlCacheManager.h: Added const modifier.
+
 2014-07-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Revert r170413 and r170390
