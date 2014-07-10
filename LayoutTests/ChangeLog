@@ -1,3 +1,22 @@
+2014-07-09  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] gardening after r170868  
+        https://bugs.webkit.org/show_bug.cgi?id=134717 
+
+        Unreviewed, EFL gardening. 
+
+        Four tests have been rebaselined, and disable the gamepad tests
+
+        * platform/efl/TestExpectations: Disable the gamepad tests
+        * platform/efl/fast/text/atsui-multiple-renderers-expected.png:
+        * platform/efl/fast/text/atsui-multiple-renderers-expected.txt:
+        * platform/efl/fast/text/complex-text-opacity-expected.png:
+        * platform/efl/fast/text/complex-text-opacity-expected.txt:
+        * platform/efl/fast/text/midword-break-before-surrogate-pair-expected.png:
+        * platform/efl/fast/text/midword-break-before-surrogate-pair-expected.txt:
+        * platform/efl/transforms/2d/hindi-rotated-expected.png:
+        * platform/efl/transforms/2d/hindi-rotated-expected.txt:
+
 2014-07-09  Jer Noble  <jer.noble@apple.com>
 
         [MSE] http/tests/media/media-source/mediasource-closed.html is failing.
