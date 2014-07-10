@@ -134,6 +134,7 @@ shouldDisplayTextDescriptions initial=false, conditional=VIDEO_TRACK
 scrollingCoordinatorEnabled initial=false
 scrollingTreeIncludesFrames initial=defaultScrollingTreeIncludesFrames
 scrollAnimatorEnabled initial=true, conditional=SMOOTH_SCROLLING
+forceUpdateScrollbarsOnMainThreadForPerformanceTesting initial=false
 notificationsEnabled initial=true
 
 # Some apps needs isLoadingInAPISense to account for active subresource loaders.

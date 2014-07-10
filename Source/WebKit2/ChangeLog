@@ -1,3 +1,28 @@
+2014-07-10  Beth Dakin  <bdakin@apple.com>
+
+        Need Setting/WKPreference that allows clients to prevent scrollbars from drawing 
+        on a secondary thread
+        https://bugs.webkit.org/show_bug.cgi?id=134778
+        -and corresponding-
+        <rdar://problem/17595333>
+
+        Reviewed by Tim Horton.
+
+        This is a requirement for some types of performance tests.
+
+        New pref.
+        * Shared/WebPreferencesDefinitions.h:
+
+        PDFPlugin has to implement this new ScrollableArea virtual function to indicate 
+        the Setting’s value.
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::forceUpdateScrollbarsOnMainThreadForPerformanceTesting):
+
+        New pref.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2014-07-10  Tim Horton  <timothy_horton@apple.com>
 
         [iOS] Frequent assertion failures when swiping back

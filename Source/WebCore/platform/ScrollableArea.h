@@ -125,6 +125,8 @@ public:
 
     virtual bool updatesScrollLayerPositionOnMainThread() const = 0;
 
+    virtual bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const = 0;
+
     // Convert points and rects between the scrollbar and its containing view.
     // The client needs to implement these in order to be aware of layout effects
     // like CSS transforms.

@@ -56,6 +56,7 @@
 #include "RenderView.h"
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
+#include "Settings.h"
 #include "SpatialNavigation.h"
 #include "StyleResolver.h"
 #include <math.h>
@@ -772,6 +773,12 @@ bool RenderListBox::isHandlingWheelEvent() const
 bool RenderListBox::shouldSuspendScrollAnimations() const
 {
     return view().frameView().shouldSuspendScrollAnimations();
+}
+
+bool RenderListBox::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const
+{
+    Page* page = frame().page();
+    return page && page->settings().forceUpdateScrollbarsOnMainThreadForPerformanceTesting();
 }
 
 ScrollableArea* RenderListBox::enclosingScrollableArea() const

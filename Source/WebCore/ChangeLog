@@ -1,3 +1,33 @@
+2014-07-10  Beth Dakin  <bdakin@apple.com>
+
+        Need Setting/WKPreference that allows clients to prevent scrollbars from drawing 
+        on a secondary thread
+        https://bugs.webkit.org/show_bug.cgi?id=134778
+        -and corresponding-
+        <rdar://problem/17595333>
+
+        Reviewed by Tim Horton.
+
+        This is a requirement for some types of performance tests. The patch adds a new 
+        virtual function to ScrollableArea that forces subclasses to indicate the value of 
+        the Setting. This is required because Scrollbar and ScrollableArea can’t get to 
+        Settings on their own.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::forceUpdateScrollbarsOnMainThreadForPerformanceTesting):
+        * page/FrameView.h:
+        * page/Settings.in:
+        * platform/ScrollableArea.h:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::supportsUpdateOnSecondaryThread):
+        * platform/win/PopupMenuWin.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::forceUpdateScrollbarsOnMainThreadForPerformanceTesting):
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::forceUpdateScrollbarsOnMainThreadForPerformanceTesting):
+        * rendering/RenderListBox.h:
+
 2014-07-10  Brady Eidson  <beidson@apple.com>
 
         Phone number highlights should always be visible if the mouse hovers over.
