@@ -24,16 +24,17 @@
  */
 
 #ifndef ServicesOverlayController_h
+#define ServicesOverlayController_h
 
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
 
 #include "PageOverlay.h"
+#include <WebCore/Range.h>
 
 typedef void* DDHighlightRef;
 
 namespace WebCore {
 class LayoutRect;
-class Range;
 
 struct GapRects;
 }
