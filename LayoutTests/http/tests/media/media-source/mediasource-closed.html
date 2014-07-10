@@ -14,7 +14,7 @@
               assert_equals(mediaSource.sourceBuffers.length, 0, "sourceBuffers is empty");
               assert_equals(mediaSource.activeSourceBuffers.length, 0, "activeSourceBuffers is empty");
               assert_equals(mediaSource.readyState, "closed", "readyState is 'closed'");
-              assert_true(Number.isNaN(mediaSource.duration), "duration is NaN");
+              assert_true(isNaN(mediaSource.duration), "duration is NaN");
           }, "Test attribute values on a closed MediaSource object.");
 
           test(function ()

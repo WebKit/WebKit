@@ -1,3 +1,14 @@
+2014-07-09  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] http/tests/media/media-source/mediasource-closed.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=134775
+
+        Reviewed by Eric Carlson.
+
+        Update the test to use isNaN rather than Number.isNaN.
+
+        * http/tests/media/media-source/mediasource-closed.html:
+
 2014-07-09  Javier Fernandez  <jfernandez@igalia.com>
 
         CSS canvas color parsing accepts invalid color identifiers
