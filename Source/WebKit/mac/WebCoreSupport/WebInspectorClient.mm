@@ -62,6 +62,10 @@ static const CGFloat dockButtonMargin = 3;
 
 using namespace WebCore;
 
+@interface NSView (AppKitDetails)
+- (void)_addKnownSubview:(NSView *)subview;
+@end
+
 @interface NSWindow (AppKitDetails)
 - (NSCursor *)_cursorForResizeDirection:(NSInteger)direction;
 - (NSRect)_customTitleFrame;
@@ -517,7 +521,10 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     // Set the autoresizing mask to keep the dock button pinned to the top right corner.
     _dockButton.get().autoresizingMask = NSViewMinXMargin | NSViewMinYMargin;
 
-    [frameView addSubview:_dockButton.get()];
+    if ([frameView respondsToSelector:@selector(_addKnownSubview:)])
+        [frameView _addKnownSubview:_dockButton.get()];
+    else
+        [frameView addSubview:_dockButton.get()];
 
     // Hide the dock button if we can't attach.
     _dockButton.get().hidden = !_frontendClient->canAttachWindow() || _inspectorClient->inspectorAttachDisabled();

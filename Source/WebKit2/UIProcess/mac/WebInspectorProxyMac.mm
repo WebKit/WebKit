@@ -154,6 +154,10 @@ static const NSUInteger windowStyleMask = NSTitledWindowMask | NSClosableWindowM
 
 @end
 
+@interface NSView (AppKitDetails)
+- (void)_addKnownSubview:(NSView *)subview;
+@end
+
 @interface NSWindow (AppKitDetails)
 - (NSCursor *)_cursorForResizeDirection:(NSInteger)direction;
 - (NSRect)_customTitleFrame;
@@ -337,8 +341,13 @@ void WebInspectorProxy::createInspectorWindow()
     dockButtonOrigin.x -= dockButtonSize.width + dockButtonSpacing;
     m_dockBottomButton.get().frameOrigin = dockButtonOrigin;
 
-    [frameView addSubview:m_dockBottomButton.get()];
-    [frameView addSubview:m_dockRightButton.get()];
+    if ([frameView respondsToSelector:@selector(_addKnownSubview:)]) {
+        [frameView _addKnownSubview:m_dockBottomButton.get()];
+        [frameView _addKnownSubview:m_dockRightButton.get()];
+    } else {
+        [frameView addSubview:m_dockBottomButton.get()];
+        [frameView addSubview:m_dockRightButton.get()];
+    }
 
     // Hide the dock buttons if we can't attach.
     m_dockBottomButton.get().hidden = !canAttach();
