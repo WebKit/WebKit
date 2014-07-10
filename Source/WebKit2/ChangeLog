@@ -1,3 +1,13 @@
+2014-07-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] Use UIAlertController API in WKFileUploadPanel instead of SPI
+        https://bugs.webkit.org/show_bug.cgi?id=134777
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _showMediaSourceSelectionSheet]):
+
 2014-07-09  Shivakumar JM  <shiva.jm@samsung.com>
 
         [EFL][WK2] Add new Public API in ewk_download_job.h to get size of the data already downloaded.

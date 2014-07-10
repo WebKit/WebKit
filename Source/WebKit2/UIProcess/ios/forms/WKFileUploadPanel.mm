@@ -41,7 +41,6 @@
 #import <AVFoundation/AVFoundation.h>
 #import <CoreMedia/CoreMedia.h>
 #import <MobileCoreServices/MobileCoreServices.h>
-#import <UIKit/UIAlertController_Private.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIImagePickerController_Private.h>
 #import <UIKit/UIImage_Private.h>
@@ -388,23 +387,26 @@ static bool stringHasPrefixCaseInsensitive(NSString *str, NSString *prefix)
     else
         cameraString = WEB_UI_STRING_KEY("Take Photo", "Take Photo (file upload action sheet)", "File Upload alert sheet camera button string for taking only photos");
 
-    _actionSheetController = [UIAlertController _alertControllerWithTitle:nil message:nil];
-    [_actionSheetController setPreferredStyle:UIAlertControllerStyleActionSheet];
+    _actionSheetController = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
 
-    [_actionSheetController _addActionWithTitle:cancelString style:UIAlertActionStyleCancel handler:^{
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:cancelString style:UIAlertActionStyleCancel handler:^(UIAlertAction *){
         [self _cancel];
         // We handled cancel ourselves. Prevent the popover controller delegate from cancelling when the popover dismissed.
         [_presentationPopover setDelegate:nil];
     }];
 
-    [_actionSheetController _addActionWithTitle:cameraString style:UIAlertActionStyleDefault handler:^{
+    UIAlertAction *cameraAction = [UIAlertAction actionWithTitle:cameraString style:UIAlertActionStyleDefault handler:^(UIAlertAction *){
         _usingCamera = YES;
         [self _showPhotoPickerWithSourceType:UIImagePickerControllerSourceTypeCamera];
     }];
 
-    [_actionSheetController _addActionWithTitle:existingString style:UIAlertActionStyleDefault handler:^{
+    UIAlertAction *photoLibraryAction = [UIAlertAction actionWithTitle:existingString style:UIAlertActionStyleDefault handler:^(UIAlertAction *){
         [self _showPhotoPickerWithSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
     }];
+
+    [_actionSheetController addAction:cancelAction];
+    [_actionSheetController addAction:cameraAction];
+    [_actionSheetController addAction:photoLibraryAction];
 
     if (UICurrentUserInterfaceIdiomIsPad())
         [self _presentPopoverWithContentViewController:_actionSheetController.get() animated:YES];
