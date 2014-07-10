@@ -203,6 +203,18 @@ double EwkDownloadJob::elapsedTime() const
     return ecore_time_get() - m_startTime;
 }
 
+uint64_t ewk_download_job_received_data_size_get(const Ewk_Download_Job* download)
+{
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkDownloadJob, download, impl, 0);
+
+    return impl->receivedDataSize();
+}
+
+uint64_t EwkDownloadJob::receivedDataSize() const
+{
+    return m_downloaded;
+}
+
 /**
  * @internal
  * Sets the URL @a response for this @a download.

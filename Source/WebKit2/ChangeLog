@@ -1,3 +1,21 @@
+2014-07-09  Shivakumar JM  <shiva.jm@samsung.com>
+
+        [EFL][WK2] Add new Public API in ewk_download_job.h to get size of the data already downloaded.
+        https://bugs.webkit.org/show_bug.cgi?id=134759
+
+        Reviewed by Gyuyoung Kim.
+
+        Add new API in ewk_download_job.h to get size of the data already downloaded.
+
+        * UIProcess/API/efl/ewk_download_job.cpp:
+        (ewk_download_job_received_data_length_get):
+        (EwkDownloadJob::receivedData):
+        * UIProcess/API/efl/ewk_download_job.h:
+        * UIProcess/API/efl/ewk_download_job_private.h:
+        * UIProcess/API/efl/tests/test_ewk2_download_job.cpp:
+        (EWK2DownloadJobTest::on_download_requested):
+        (EWK2DownloadJobTest::on_download_finished):
+
 2014-07-09  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION(r170858): Safari freezes upon making a search on a website (yelp.com).

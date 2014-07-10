@@ -68,6 +68,7 @@ public:
     double estimatedProgress() const;
     double elapsedTime() const;
     void incrementReceivedData(uint64_t length);
+    uint64_t receivedDataSize() const;
 
 private:
     EwkDownloadJob(WKDownloadRef download, EwkView* view);

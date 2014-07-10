@@ -183,6 +183,18 @@ EAPI double ewk_download_job_estimated_progress_get(const Ewk_Download_Job *down
  */
 EAPI double ewk_download_job_elapsed_time_get(const Ewk_Download_Job *download);
 
+/**
+ * Gets the data size, already downloaded.
+ *
+ * If the download finished, had an error or was cancelled this is
+ * the data size between its start and the end.
+ *
+ * @param download a #Ewk_Download_Job to query.
+ *
+ * @return the size of the data already downloaded, since the download was started or 0.0 in case of failure.
+ */
+EAPI uint64_t ewk_download_job_received_data_size_get(const Ewk_Download_Job *download);
+
 #ifdef __cplusplus
 }
 #endif

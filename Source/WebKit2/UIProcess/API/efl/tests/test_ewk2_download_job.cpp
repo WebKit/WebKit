@@ -103,6 +103,7 @@ public:
         ASSERT_EQ(EWK_DOWNLOAD_JOB_STATE_NOT_STARTED, ewk_download_job_state_get(download));
         ASSERT_EQ(0, ewk_download_job_estimated_progress_get(download));
         ASSERT_EQ(0, ewk_download_job_elapsed_time_get(download));
+        ASSERT_EQ(0, ewk_download_job_received_data_size_get(download));
 
         Ewk_Url_Request* request = ewk_download_job_request_get(download);
         ASSERT_TRUE(request);
@@ -142,6 +143,7 @@ public:
         ASSERT_EQ(1, ewk_download_job_estimated_progress_get(download));
         ASSERT_EQ(EWK_DOWNLOAD_JOB_STATE_FINISHED, ewk_download_job_state_get(download));
         ASSERT_GT(ewk_download_job_elapsed_time_get(download), 0);
+        ASSERT_GT(ewk_download_job_received_data_size_get(download), 0);
 
         ASSERT_TRUE(fileExists(testData->destinationPath));
 
