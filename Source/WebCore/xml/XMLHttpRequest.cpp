@@ -1128,13 +1128,8 @@ void XMLHttpRequest::didReceiveResponse(unsigned long identifier, const Resource
     InspectorInstrumentation::didReceiveXHRResponse(scriptExecutionContext(), identifier);
 
     m_response = response;
-    if (!m_mimeTypeOverride.isEmpty()) {
+    if (!m_mimeTypeOverride.isEmpty())
         m_response.setHTTPHeaderField(HTTPHeaderName::ContentType, m_mimeTypeOverride);
-        m_responseEncoding = extractCharsetFromMediaType(m_mimeTypeOverride);
-    }
-
-    if (m_responseEncoding.isEmpty())
-        m_responseEncoding = response.textEncodingName();
 }
 
 void XMLHttpRequest::didReceiveData(const char* data, int len)
@@ -1144,6 +1139,12 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
 
     if (m_state < HEADERS_RECEIVED)
         changeState(HEADERS_RECEIVED);
+
+    // FIXME: Should we update "Content-Type" header field with m_mimeTypeOverride value in case it has changed since didReceiveResponse?
+    if (!m_mimeTypeOverride.isEmpty())
+        m_responseEncoding = extractCharsetFromMediaType(m_mimeTypeOverride);
+    if (m_responseEncoding.isEmpty())
+        m_responseEncoding = m_response.textEncodingName();
 
     bool useDecoder = shouldDecodeResponse();
 

@@ -1,3 +1,19 @@
+2014-07-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [XHR] overrideMimeType() should be able to change encoding in HEADERS RECEIVED state
+        https://bugs.webkit.org/show_bug.cgi?id=128968
+
+        Reviewed by Alexey Proskuryakov.
+
+        Moved response encoding computation from didReceiveResponse to didReceiveData, just before the decoder is instantiated.
+        This allows overrideMimeType to be changed within readystatechange event callback and have an impact on selected encoding.
+
+        Test: http/tests/xmlhttprequest/overridemimetype-headers-received-state-force-shiftjis.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didReceiveResponse): Removed m_responseEncoding computation from response and mimeTypeOverride.
+        (WebCore::XMLHttpRequest::didReceiveData): Added m_responseEncoding computation from response and mimeTypeOverride.
+
 2014-07-09  Brady Eidson  <beidson@apple.com>
 
         Fire connected/disconnected events for Gamepads.
