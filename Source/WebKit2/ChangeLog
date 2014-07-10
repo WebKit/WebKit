@@ -1,3 +1,27 @@
+2014-07-10  Oliver Hunt  <oliver@apple.com>
+
+        Pass sandbox extension for GL cache over to webprocess
+        https://bugs.webkit.org/show_bug.cgi?id=134806
+
+        Reviewed by Anders Carlsson.
+
+        Add additional WebProcess parameters to pass an extension
+        that allows access to the opengl cache directory in the
+        host application's container.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess):
+        (WebKit::WebContext::openGLCacheDirectory):
+        * UIProcess/WebContext.h:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformDefaultOpenGLCacheDirectory):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2014-07-10  Dan Bernstein  <mitz@apple.com>
 
         iOS build fix.

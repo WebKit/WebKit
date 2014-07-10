@@ -590,6 +590,10 @@ WebProcessProxy& WebContext::createNewWebProcess()
     if (!parameters.cookieStorageDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.cookieStorageDirectory, parameters.cookieStorageDirectoryExtensionHandle);
 
+    parameters.openGLCacheDirectory = openGLCacheDirectory();
+    if (!parameters.openGLCacheDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(parameters.openGLCacheDirectory, parameters.openGLCacheDirectoryExtensionHandle);
+
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
 
     parameters.cacheModel = m_cacheModel;
@@ -1173,6 +1177,14 @@ String WebContext::cookieStorageDirectory() const
         return m_overrideCookieStorageDirectory;
 
     return platformDefaultCookieStorageDirectory();
+}
+
+String WebContext::openGLCacheDirectory() const
+{
+    if (!m_overrideOpenGLCacheDirectory.isEmpty())
+        return m_overrideOpenGLCacheDirectory;
+
+    return platformDefaultOpenGLCacheDirectory();
 }
 
 void WebContext::useTestingNetworkSession()

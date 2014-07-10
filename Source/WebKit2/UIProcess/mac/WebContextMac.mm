@@ -283,6 +283,21 @@ String WebContext::platformDefaultCookieStorageDirectory() const
 #endif
 }
 
+String WebContext::platformDefaultOpenGLCacheDirectory() const
+{
+#if PLATFORM(IOS)
+    String path = pathForProcessContainer();
+    if (path.isEmpty())
+        path = NSHomeDirectory();
+
+    path = path + "/Library/Caches/com.apple.WebKit.WebContent/com.apple.opengl/";
+    return stringByResolvingSymlinksInPath(path);
+#else
+    notImplemented();
+    return [@"" stringByStandardizingPath];
+#endif
+}
+
 String WebContext::platformDefaultWebSQLDatabaseDirectory()
 {
     NSString *databasesDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebDatabaseDirectoryDefaultsKey];

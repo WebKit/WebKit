@@ -423,6 +423,9 @@ private:
     String cookieStorageDirectory() const;
     String platformDefaultCookieStorageDirectory() const;
 
+    String openGLCacheDirectory() const;
+    String platformDefaultOpenGLCacheDirectory() const;
+
 #if PLATFORM(COCOA)
     void registerNotificationObservers();
     void unregisterNotificationObservers();
@@ -518,6 +521,7 @@ private:
     String m_overrideIconDatabasePath;
     String m_overrideDiskCacheDirectory;
     String m_overrideCookieStorageDirectory;
+    String m_overrideOpenGLCacheDirectory;
 
     String m_webSQLDatabaseDirectory;
     String m_indexedDBDatabaseDirectory;
