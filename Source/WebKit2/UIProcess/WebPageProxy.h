@@ -1426,7 +1426,7 @@ private:
     RefPtr<WebColorPicker> m_colorPicker;
 #endif
 
-    uint64_t m_pageID;
+    const uint64_t m_pageID;
     Ref<API::Session> m_session;
 
     bool m_isPageSuspended;

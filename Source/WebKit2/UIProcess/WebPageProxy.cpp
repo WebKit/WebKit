@@ -537,8 +537,10 @@ void WebPageProxy::initializeContextMenuClient(const WKPageContextMenuClientBase
 
 void WebPageProxy::reattachToWebProcess()
 {
+    ASSERT(!m_isClosed);
     ASSERT(!isValid());
     ASSERT(m_process->state() == WebProcessProxy::State::Terminated);
+
     m_isValid = true;
 
     if (m_process->context().processModel() == ProcessModelSharedSecondaryProcess)
@@ -569,6 +571,9 @@ void WebPageProxy::reattachToWebProcess()
 
 uint64_t WebPageProxy::reattachToWebProcessWithItem(WebBackForwardListItem* item)
 {
+    if (m_isClosed)
+        return 0;
+
     if (item && item != m_backForwardList->currentItem())
         m_backForwardList->goToItem(item);
     
@@ -703,6 +708,9 @@ bool WebPageProxy::maybeInitializeSandboxExtensionHandle(const URL& url, Sandbox
 
 uint64_t WebPageProxy::loadRequest(const ResourceRequest& request, API::Object* userData)
 {
+    if (m_isClosed)
+        return 0;
+
     uint64_t navigationID = generateNavigationID();
 
     auto transaction = m_pageLoadState.transaction();
@@ -724,6 +732,9 @@ uint64_t WebPageProxy::loadRequest(const ResourceRequest& request, API::Object* 
 
 void WebPageProxy::loadFile(const String& fileURLString, const String& resourceDirectoryURLString, API::Object* userData)
 {
+    if (m_isClosed)
+        return;
+
     if (!isValid())
         reattachToWebProcess();
 
@@ -751,6 +762,9 @@ void WebPageProxy::loadFile(const String& fileURLString, const String& resourceD
 
 void WebPageProxy::loadData(API::Data* data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData)
 {
+    if (m_isClosed)
+        return;
+
     if (!isValid())
         reattachToWebProcess();
 
@@ -761,6 +775,9 @@ void WebPageProxy::loadData(API::Data* data, const String& MIMEType, const Strin
 
 uint64_t WebPageProxy::loadHTMLString(const String& htmlString, const String& baseURL, API::Object* userData)
 {
+    if (m_isClosed)
+        return 0;
+
     uint64_t navigationID = generateNavigationID();
 
     auto transaction = m_pageLoadState.transaction();
@@ -780,6 +797,9 @@ uint64_t WebPageProxy::loadHTMLString(const String& htmlString, const String& ba
 
 void WebPageProxy::loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL, API::Object* userData)
 {
+    if (m_isClosed)
+        return;
+
     if (!isValid())
         reattachToWebProcess();
 
@@ -797,6 +817,9 @@ void WebPageProxy::loadAlternateHTMLString(const String& htmlString, const Strin
 
 void WebPageProxy::loadPlainTextString(const String& string, API::Object* userData)
 {
+    if (m_isClosed)
+        return;
+
     if (!isValid())
         reattachToWebProcess();
 
@@ -806,6 +829,9 @@ void WebPageProxy::loadPlainTextString(const String& string, API::Object* userDa
 
 void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* userData)
 {
+    if (m_isClosed)
+        return;
+
     if (!isValid())
         reattachToWebProcess();
 

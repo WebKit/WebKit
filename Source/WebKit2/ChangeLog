@@ -1,5 +1,35 @@
 2014-07-09  Anders Carlsson  <andersca@apple.com>
 
+        Closed web views should never create new web processes
+        https://bugs.webkit.org/show_bug.cgi?id=134787
+        <rdar://problem/16892526>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView loadHTMLString:baseURL:]):
+        (-[WKWebView reload]):
+        (-[WKWebView reloadFromOrigin]):
+        Return nil if the returned navigation ID is 0.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        Assert that the page is not closed.
+
+        (WebKit::WebPageProxy::reattachToWebProcessWithItem):
+        (WebKit::WebPageProxy::loadRequest):
+        (WebKit::WebPageProxy::loadFile):
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::WebPageProxy::loadHTMLString):
+        (WebKit::WebPageProxy::loadAlternateHTMLString):
+        (WebKit::WebPageProxy::loadPlainTextString):
+        (WebKit::WebPageProxy::loadWebArchiveData):
+        Add early returns if the page is closed.
+
+        * UIProcess/WebPageProxy.h:
+
+2014-07-09  Anders Carlsson  <andersca@apple.com>
+
         Support transparent WKWebViews
         https://bugs.webkit.org/show_bug.cgi?id=134779
         <rdar://problem/17351058>

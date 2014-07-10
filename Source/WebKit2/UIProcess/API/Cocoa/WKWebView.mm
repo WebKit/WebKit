@@ -393,6 +393,9 @@ static int32_t deviceOrientation()
 - (WKNavigation *)loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL
 {
     uint64_t navigationID = _page->loadHTMLString(string, baseURL.absoluteString);
+    if (!navigationID)
+        return nil;
+
     auto navigation = _navigationState->createLoadDataNavigation(navigationID);
 
     return navigation.autorelease();
@@ -450,7 +453,7 @@ static int32_t deviceOrientation()
 
     ASSERT(_page->backForwardList().currentItem());
     auto navigation = _navigationState->createBackForwardNavigation(navigationID, *_page->backForwardList().currentItem());
-
+ 
     return navigation.autorelease();
 }
 
@@ -469,7 +472,8 @@ static int32_t deviceOrientation()
 - (WKNavigation *)reload
 {
     uint64_t navigationID = _page->reload(false);
-    ASSERT(navigationID);
+    if (!navigationID)
+        return nil;
 
     auto navigation = _navigationState->createReloadNavigation(navigationID);
     return navigation.autorelease();
@@ -478,7 +482,8 @@ static int32_t deviceOrientation()
 - (WKNavigation *)reloadFromOrigin
 {
     uint64_t navigationID = _page->reload(true);
-    ASSERT(navigationID);
+    if (!navigationID)
+        return nil;
 
     auto navigation = _navigationState->createReloadNavigation(navigationID);
     return navigation.autorelease();
