@@ -743,8 +743,8 @@ supports_disjunction:
 
 supports_condition_in_parens:
     '(' maybe_space supports_condition ')' maybe_space { $$ = $3; }
-    | supports_declaration_condition
-    | '(' error ')'
+    | supports_declaration_condition { $$ = $1; }
+    | '(' error ')' { $$ = false; }
     ;
 
 supports_declaration_condition:

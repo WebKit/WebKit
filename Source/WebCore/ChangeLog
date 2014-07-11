@@ -1,3 +1,18 @@
+2014-07-11  Bear Travis  <betravis@adobe.com>
+
+        [Feature Queries] Feature Query CSS Grammar Productions Should Return a Value
+        https://bugs.webkit.org/show_bug.cgi?id=134810
+
+        Reviewed by Antti Koivisto.
+
+        The parsing return values are used to determine if a feature query is valid. Two
+        grammar productions have been updated to correctly return a value.
+
+        Tests exist for this feature but will not be run until the feature is turned on.
+        See https://bugs.webkit.org/show_bug.cgi?id=134404.
+
+        * css/CSSGrammar.y.in: Adding return values for two valid feature query productions.
+
 2014-07-10  Brent Fulgham  <bfulgham@apple.com>
 
         Use a separate backdrop element to allow cues to have highlight and background color
