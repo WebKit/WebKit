@@ -118,6 +118,16 @@ ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheck(const Funct
     return call;
 }
 
+#if OS(WINDOWS) && CPU(X86_64)
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckAndSlowPathReturnType(const FunctionPtr& function)
+{
+    updateTopCallFrame();
+    MacroAssembler::Call call = appendCallWithSlowPathReturnType(function);
+    exceptionCheck();
+    return call;
+}
+#endif
+
 ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithCallFrameRollbackOnException(const FunctionPtr& function)
 {
     updateTopCallFrame(); // The callee is responsible for setting topCallFrame to their caller
@@ -235,8 +245,13 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_EOJss opera
 
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(Sprt_JITOperation_EZ operation, int32_t op)
 {
+#if OS(WINDOWS) && CPU(X86_64)
+    setupArgumentsWithExecStateForCallWithSlowPathReturnType(TrustedImm32(op));
+    return appendCallWithExceptionCheckAndSlowPathReturnType(operation);
+#else
     setupArgumentsWithExecState(TrustedImm32(op));
     return appendCallWithExceptionCheck(operation);
+#endif
 }
 
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_E operation)

@@ -1,3 +1,12 @@
+2014-07-11  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win] Enable DFG JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=123615
+
+        Reviewed by Mark Lam.
+
+        * wtf/Platform.h:
+
 2014-07-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r170995.

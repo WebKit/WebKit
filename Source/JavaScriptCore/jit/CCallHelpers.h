@@ -798,14 +798,27 @@ public:
     
     ALWAYS_INLINE void setupArgumentsWithExecState(FPRReg arg1, GPRReg arg2)
     {
+#if OS(WINDOWS) && CPU(X86_64)
+        // On Windows, arguments map to designated registers based on the argument positions, even when there are interlaced scalar and floating point arguments.
+        // See http://msdn.microsoft.com/en-us/library/zthk2dkh.aspx
+        moveDouble(arg1, FPRInfo::argumentFPR1);
+        move(arg2, GPRInfo::argumentGPR2);
+#else
         moveDouble(arg1, FPRInfo::argumentFPR0);
         move(arg2, GPRInfo::argumentGPR1);
+#endif
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
 
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, FPRReg arg3)
     {
+#if OS(WINDOWS) && CPU(X86_64)
+        // On Windows, arguments map to designated registers based on the argument positions, even when there are interlaced scalar and floating point arguments.
+        // See http://msdn.microsoft.com/en-us/library/zthk2dkh.aspx
+        moveDouble(arg3, FPRInfo::argumentFPR3);
+#else
         moveDouble(arg3, FPRInfo::argumentFPR0);
+#endif
         setupStubArguments(arg1, arg2);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
@@ -1060,6 +1073,14 @@ public:
         move(arg1, GPRInfo::argumentGPR1);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
+
+#if OS(WINDOWS) && CPU(X86_64)
+    ALWAYS_INLINE void setupArgumentsWithExecStateForCallWithSlowPathReturnType(TrustedImm32 arg1)
+    {
+        move(arg1, GPRInfo::argumentGPR2);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
+    }
+#endif
 
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2)
     {

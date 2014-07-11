@@ -264,6 +264,15 @@ namespace JSC {
             return functionCall;
         }
 
+#if OS(WINDOWS) && CPU(X86_64)
+        Call appendCallWithSlowPathReturnType(const FunctionPtr& function)
+        {
+            Call functionCall = callWithSlowPathReturnType();
+            m_calls.append(CallRecord(functionCall, m_bytecodeOffset, function.value()));
+            return functionCall;
+        }
+#endif
+
         void exceptionCheck(Jump jumpToHandler)
         {
             m_exceptionChecks.append(jumpToHandler);
@@ -648,6 +657,9 @@ namespace JSC {
         void linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&, int virtualRegisterIndex);
 
         MacroAssembler::Call appendCallWithExceptionCheck(const FunctionPtr&);
+#if OS(WINDOWS) && CPU(X86_64)
+        MacroAssembler::Call appendCallWithExceptionCheckAndSlowPathReturnType(const FunctionPtr&);
+#endif
         MacroAssembler::Call appendCallWithCallFrameRollbackOnException(const FunctionPtr&);
         MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr&, int);
         MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResultWithProfile(const FunctionPtr&, int);

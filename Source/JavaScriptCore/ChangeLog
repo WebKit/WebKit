@@ -1,3 +1,26 @@
+2014-07-11  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win] Enable DFG JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=123615
+
+        Reviewed by Mark Lam.
+
+        When the return type of a JIT generated function call is larger than 64-bit (e.g. SlowPathReturnType),
+        the normal call() implementation cannot be used on 64-bit Windows, because the 64-bit Windows ABI is different in this case.
+        Also, when generating calls with double arguments, we need to make sure the arguments are put in the correct registers,
+        since the register allocation differs on 64-bit Windows.
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::callWithSlowPathReturnType): Added method to handle function calls where the return value type size is larger than 64-bit.
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState): Move arguments to correct registers when there are floating point arguments.
+        (JSC::CCallHelpers::setupArgumentsWithExecStateForCallWithSlowPathReturnType): Added method.
+        * jit/JIT.h:
+        (JSC::JIT::appendCallWithSlowPathReturnType): Added method.
+        * jit/JITInlines.h:
+        (JSC::JIT::appendCallWithExceptionCheckAndSlowPathReturnType): Added method.
+        (JSC::JIT::callOperation): Call new method.
+
 2014-07-09  Benjamin Poulain  <benjamin@webkit.org>
 
         Use 16bits instructions for push/pop on ARMv7 when possible

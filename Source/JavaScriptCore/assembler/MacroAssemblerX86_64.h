@@ -151,6 +151,45 @@ public:
         store8(reg, Address(scratchRegister));
     }
 
+#if OS(WINDOWS)
+    Call callWithSlowPathReturnType()
+    {
+        // On Win64, when the return type is larger than 8 bytes, we need to allocate space on the stack for the return value.
+        // On entry, rcx should contain a pointer to this stack space. The other parameters are shifted to the right,
+        // rdx should contain the first argument, r8 should contain the second argument, and r9 should contain the third argument.
+        // On return, rax contains a pointer to this stack value. See http://msdn.microsoft.com/en-us/library/7572ztz4.aspx.
+        // We then need to copy the 16 byte return value into rax and rdx, since JIT expects the return value to be split between the two.
+        // It is assumed that the parameters are already shifted to the right, when entering this method.
+        // Note: this implementation supports up to 3 parameters.
+
+        // JIT relies on the CallerFrame (frame pointer) being put on the stack,
+        // On Win64 we need to manually copy the frame pointer to the stack, since MSVC may not maintain a frame pointer on 64-bit.
+        // See http://msdn.microsoft.com/en-us/library/9z1stfyw.aspx where it's stated that rbp MAY be used as a frame pointer.
+        store64(X86Registers::ebp, Address(X86Registers::esp, -16));
+
+        // We also need to allocate the shadow space on the stack for the 4 parameter registers.
+        // In addition, we need to allocate 16 bytes for the return value.
+        // Also, we should allocate 16 bytes for the frame pointer, and return address (not populated).
+        sub64(TrustedImm32(8 * sizeof(int64_t)), X86Registers::esp);
+
+        // The first parameter register should contain a pointer to the stack allocated space for the return value.
+        move(X86Registers::esp, X86Registers::ecx);
+        add64(TrustedImm32(4 * sizeof(int64_t)), X86Registers::ecx);
+
+        DataLabelPtr label = moveWithPatch(TrustedImmPtr(0), scratchRegister);
+        Call result = Call(m_assembler.call(scratchRegister), Call::Linkable);
+
+        add64(TrustedImm32(8 * sizeof(int64_t)), X86Registers::esp);
+
+        // Copy the return value into rax and rdx.
+        load64(Address(X86Registers::eax, sizeof(int64_t)), X86Registers::edx);
+        load64(Address(X86Registers::eax), X86Registers::eax);
+
+        ASSERT_UNUSED(label, differenceBetween(label, result) == REPTACH_OFFSET_CALL_R11);
+        return result;
+    }
+#endif
+
     Call call()
     {
 #if OS(WINDOWS)
