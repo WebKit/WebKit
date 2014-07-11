@@ -4260,7 +4260,7 @@ void FrameView::setScrollVelocity(double horizontalVelocity, double verticalVelo
 FloatRect FrameView::computeCoverageRect(double horizontalMargin, double verticalMargin) const
 {
     FloatRect exposedContentRect = this->exposedContentRect();
-    if (!m_speculativeTilingEnabled)
+    if (!m_speculativeTilingEnabled || memoryPressureHandler().isUnderMemoryPressure())
         return exposedContentRect;
 
     double currentTime = monotonicallyIncreasingTime();
