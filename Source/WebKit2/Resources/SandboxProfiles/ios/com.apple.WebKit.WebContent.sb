@@ -1,4 +1,4 @@
-; Copyright (C) 2014 Apple Inc. All rights reserved.
+; Copyright (C) 2010, 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -22,7 +22,68 @@
 ; THE POSSIBILITY OF SUCH DAMAGE.
 
 (version 1)
-(allow default)
+(deny default (with partial-symbolication))
+(allow system-audit file-read-metadata)
 
 (import "common.sb")
 (import "removed-dev-nodes.sb")
+(import "apple-UI-apps.sb")
+
+(apple-ui-app "com.apple.WebKit.WebContent" 'with-webkit 'with-opengl)
+(opengl)
+
+;; Access CFNetwork shared cookies
+;; This is too generous -- <rdar://problem/17496756>
+(apple-cookie-access 'with-read-write)
+
+(play-media)
+
+;; Read-only preferences and data
+(mobile-preferences-read
+    "com.apple.LaunchServices"
+    "com.apple.WebFoundation")
+
+;; Sandbox extensions
+(define (apply-read-and-issue-extension op path-filter)
+    (op file-read* path-filter)
+    (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") path-filter)))
+(define (apply-write-and-issue-extension op path-filter)
+    (op file-write* path-filter)
+    (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read-write") path-filter)))
+(define (read-only-and-issue-extensions path-filter)
+    (apply-read-and-issue-extension allow path-filter))
+(define (read-write-and-issue-extensions path-filter)
+    (apply-read-and-issue-extension allow path-filter)
+    (apply-write-and-issue-extension allow path-filter))
+(read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
+(read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
+
+(allow file-issue-extension
+    (require-all
+        (extension-class "com.apple.webkit.read")
+        (require-any
+            (extension "com.apple.app-sandbox.read")
+            (extension "com.apple.app-sandbox.read-write"))))
+
+
+(allow file-read* file-write* (extension "com.apple.nsurlstorage.extension-cache"))
+(allow file-issue-extension (extension-class "com.apple.nsurlstorage.extension-cache"))
+
+;; Access to own cache & temp folders.
+(allow file-read* (extension "com.apple.webkit.read"))
+(allow file-read* file-write* (extension "com.apple.webkit.read-write"))
+
+
+;; Allow the OpenGL Profiler to attach.
+(instruments-support)    ; For <rdar://problem/7931952>
+
+;; MediaAccessibility
+(mobile-preferences-read "com.apple.mediaaccessibility")
+(mobile-preferences-read-write "com.apple.mediaaccessibility.public")
+
+;; Remote Web Inspector
+(allow mach-lookup
+       (global-name "com.apple.webinspector"))
+
+(deny file-write-create (vnode-type SYMLINK))
+(deny file-read-xattr file-write-xattr (xattr-regex #"^com\.apple\.security\.private\."))

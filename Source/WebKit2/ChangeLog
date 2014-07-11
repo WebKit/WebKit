@@ -1,3 +1,14 @@
+2014-07-11  Oliver Hunt  <oliver@apple.com>
+
+        Tighten WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=134834
+
+        Reviewed by Sam Weinig.
+
+        Define a much tighter sandbox profile for the WebContent process
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2014-07-11  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r170163?): Web content shifts revealing space equivalent to the find bar when clicking a link while a phrase is targeted via Cmd+F
