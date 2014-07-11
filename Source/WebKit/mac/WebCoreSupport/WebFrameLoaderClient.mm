@@ -349,7 +349,7 @@ void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, unsig
     bool isHiddenFromInspector = request.hiddenFromInspector();
 #endif
 #if PLATFORM(IOS)
-    bool isMainResourceRequest = request.isMainResourceRequest();
+    bool isMainResourceRequest = request.deprecatedIsMainResourceRequest();
     if (implementations->webThreadWillSendRequestFunc) {
         newURLRequest = (NSURLRequest *)CallResourceLoadDelegateInWebThread(implementations->webThreadWillSendRequestFunc, webView, @selector(webThreadWebView:resource:willSendRequest:redirectResponse:fromDataSource:), [webView _objectForIdentifier:identifier], currentURLRequest, redirectResponse.nsURLResponse(), dataSource(loader));
     } else
@@ -363,7 +363,7 @@ void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, unsig
     request.setHiddenFromInspector(isHiddenFromInspector);
 #endif
 #if PLATFORM(IOS)
-    request.setMainResourceRequest(isMainResourceRequest);
+    request.deprecatedSetMainResourceRequest(isMainResourceRequest);
 #endif
 }
 

@@ -1,3 +1,20 @@
+2014-07-09  Andy Estes  <aestes@apple.com>
+
+        [iOS] Some QuickLook documents are not displayed as previews
+        https://bugs.webkit.org/show_bug.cgi?id=134788
+
+        Reviewed by Pratik Solanki.
+        
+        ResourceRequest::isMainResourceRequest() is not reliable (e.g. ResourceRequests reconstituted from an
+        NSURLRequest have no way to set this bit properly) and should probably be removed. Instead of using
+        isMainResourceRequest() to check if a QuickLookHandle should be created when the Network Process is in use,
+        just check if the current ResourceLoader is the same as the DocumentLoader's ResourceLoader.
+
+        No new tests. QuickLook is not testable from WebKit.
+
+        * platform/network/ios/QuickLook.mm:
+        (WebCore::QuickLookHandle::create):
+
 2014-07-10  Andreas Kling  <akling@apple.com>
 
         [iOS WebKit2] Don't uninstall the memory pressure listener after first signal.

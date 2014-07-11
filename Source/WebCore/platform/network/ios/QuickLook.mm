@@ -28,6 +28,7 @@
 
 #if USE(QUICK_LOOK)
 
+#import "DocumentLoader.h"
 #import "FileSystemIOS.h"
 #import "Logging.h"
 #import "ResourceError.h"
@@ -423,7 +424,7 @@ QuickLookHandle::QuickLookHandle(NSURL *firstRequestURL, NSURLConnection *connec
 std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceHandle* handle, NSURLConnection *connection, NSURLResponse *nsResponse, id delegate)
 {
     ASSERT_ARG(handle, handle);
-    if (!handle->firstRequest().isMainResourceRequest() || ![WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:[nsResponse MIMEType]])
+    if (!handle->firstRequest().deprecatedIsMainResourceRequest() || ![WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:[nsResponse MIMEType]])
         return nullptr;
 
     std::unique_ptr<QuickLookHandle> quickLookHandle(new QuickLookHandle([handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], connection, nsResponse, delegate));
@@ -435,7 +436,7 @@ std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceHandle* handle,
 std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceHandle* handle, SynchronousResourceHandleCFURLConnectionDelegate* connectionDelegate, CFURLResponseRef cfResponse)
 {
     ASSERT_ARG(handle, handle);
-    if (!handle->firstRequest().isMainResourceRequest() || ![WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:(NSString *)CFURLResponseGetMIMEType(cfResponse)])
+    if (!handle->firstRequest().deprecatedIsMainResourceRequest() || ![WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:(NSString *)CFURLResponseGetMIMEType(cfResponse)])
         return nullptr;
 
     NSURLResponse *nsResponse = [NSURLResponse _responseWithCFURLResponse:cfResponse];
@@ -451,10 +452,15 @@ CFURLResponseRef QuickLookHandle::cfResponse()
 }
 #endif
 
+static inline bool isMainResourceLoader(ResourceLoader* loader)
+{
+    return loader->documentLoader()->mainResourceLoader() == loader;
+}
+
 std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceLoader* loader, NSURLResponse *response)
 {
     ASSERT_ARG(loader, loader);
-    if (!loader->request().isMainResourceRequest() || ![WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:[response MIMEType]])
+    if (!isMainResourceLoader(loader) || ![WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:[response MIMEType]])
         return nullptr;
 
     RetainPtr<WebResourceLoaderQuickLookDelegate> delegate = adoptNS([[WebResourceLoaderQuickLookDelegate alloc] initWithResourceLoader:loader]);

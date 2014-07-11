@@ -958,7 +958,7 @@ void DocumentLoader::clearMainResourceLoader()
 
 #if PLATFORM(IOS)
     // FIXME: Remove PLATFORM(IOS)-guard once we upstream the iOS changes to ResourceRequest.h.
-    m_request.setMainResourceRequest(false);
+    m_request.deprecatedSetMainResourceRequest(false);
 #endif
 
     if (this == frameLoader()->activeDocumentLoader())
@@ -1433,7 +1433,7 @@ void DocumentLoader::startLoadingMainResource()
 
 #if PLATFORM(IOS)
     // FIXME: Remove PLATFORM(IOS)-guard once we upstream the iOS changes to ResourceRequest.h.
-    m_request.setMainResourceRequest(true);
+    m_request.deprecatedSetMainResourceRequest(true);
 #endif
 
     ResourceRequest request(m_request);
