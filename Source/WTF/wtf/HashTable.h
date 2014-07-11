@@ -360,9 +360,6 @@ namespace WTF {
         void swap(HashTable&);
         HashTable& operator=(const HashTable&);
 
-        HashTable(HashTable&&);
-        HashTable& operator=(HashTable&&);
-
         // When the hash table is empty, just return the same iterator for end as for begin.
         // This is more efficient because we don't have to skip all the empty and deleted
         // buckets, and iterating an empty table is a common case that's worth optimizing.
@@ -1176,57 +1173,6 @@ namespace WTF {
         // HashSets. https://bugs.webkit.org/show_bug.cgi?id=118455
         HashTable tmp(other);
         swap(tmp);
-        return *this;
-    }
-
-    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    inline HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::HashTable(HashTable&& other)
-#if CHECK_HASHTABLE_ITERATORS
-        : m_iterators(nullptr)
-        , m_mutex(std::make_unique<std::mutex>())
-#endif
-    {
-        other.invalidateIterators();
-
-        m_table = other.m_table;
-        m_tableSize = other.m_tableSize;
-        m_tableSizeMask = other.m_tableSizeMask;
-        m_keyCount = other.m_keyCount;
-        m_deletedCount = other.m_deletedCount;
-
-        other.m_table = nullptr;
-        other.m_tableSize = 0;
-        other.m_tableSizeMask = 0;
-        other.m_keyCount = 0;
-        other.m_deletedCount = 0;
-
-#if DUMP_HASHTABLE_STATS_PER_TABLE
-        m_stats = std::move(other.m_stats);
-#endif
-    }
-
-    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::operator=(HashTable&& other) -> HashTable&
-    {
-        invalidateIterators();
-        other.invalidateIterators();
-
-        m_table = other.m_table;
-        m_tableSize = other.m_tableSize;
-        m_tableSizeMask = other.m_tableSizeMask;
-        m_keyCount = other.m_keyCount;
-        m_deletedCount = other.m_deletedCount;
-
-        other.m_table = nullptr;
-        other.m_tableSize = 0;
-        other.m_tableSizeMask = 0;
-        other.m_keyCount = 0;
-        other.m_deletedCount = 0;
-
-#if DUMP_HASHTABLE_STATS_PER_TABLE
-        m_stats = std::move(other.m_stats);
-#endif
-
         return *this;
     }
 
