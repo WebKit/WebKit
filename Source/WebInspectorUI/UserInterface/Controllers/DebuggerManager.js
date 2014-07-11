@@ -358,18 +358,18 @@ WebInspector.DebuggerManager.prototype = {
         for (var i = 0; i < callFramesPayload.length; ++i) {
             var callFramePayload = callFramesPayload[i];
             var sourceCodeLocation = this._sourceCodeLocationFromPayload(callFramePayload.location);
+            // FIXME: There may be useful call frames without a source code location (native callframes), should we include them?
+            if (!sourceCodeLocation)
+                continue;
+            if (!sourceCodeLocation.sourceCode)
+                continue;
             // Exclude the case where the call frame is in the inspector code.
-            if (!sourceCodeLocation || !sourceCodeLocation._sourceCode || !sourceCodeLocation._sourceCode._url || sourceCodeLocation._sourceCode._url.indexOf("__WebInspector") === 0)
+            if (sourceCodeLocation.sourceCode.url && sourceCodeLocation.sourceCode.url.startsWith("__WebInspector"))
                 continue;
             var thisObject = WebInspector.RemoteObject.fromPayload(callFramePayload.this);
             var scopeChain = this._scopeChainFromPayload(callFramePayload.scopeChain);
             var callFrame = new WebInspector.CallFrame(callFramePayload.callFrameId, sourceCodeLocation, callFramePayload.functionName, thisObject, scopeChain);
             this._callFrames.push(callFrame);
-        }
-
-        if (!this._callFrames.length) {
-            this.resume();
-            return;
         }
 
         this._activeCallFrame = this._callFrames[0];

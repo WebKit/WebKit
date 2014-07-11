@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+//# sourceURL=__WebInspectorCommandLineAPIModuleSource__
+
 /**
  * @param {InjectedScriptHost} InjectedScriptHost
  * @param {Window} inspectedWindow

@@ -147,7 +147,8 @@ InspectorJSFrontendDispatchers.h : InspectorJS.json $(INSPECTOR_GENERATOR_SCRIPT
 	$(PYTHON) $(JavaScriptCore)/inspector/scripts/CodeGeneratorInspector.py ./InspectorJS.json --output_h_dir . --output_cpp_dir . --output_js_dir . --output_type JavaScript
 
 InjectedScriptSource.h : inspector/InjectedScriptSource.js $(JavaScriptCore)/inspector/scripts/jsmin.py $(JavaScriptCore)/inspector/scripts/xxd.pl
-	$(PYTHON) $(JavaScriptCore)/inspector/scripts/jsmin.py < $(JavaScriptCore)/inspector/InjectedScriptSource.js > ./InjectedScriptSource.min.js
+	echo "//# sourceURL=__WebInspectorInjectedScript__" > ./InjectedScriptSource.min.js
+	$(PYTHON) $(JavaScriptCore)/inspector/scripts/jsmin.py < $(JavaScriptCore)/inspector/InjectedScriptSource.js >> ./InjectedScriptSource.min.js
 	$(PERL) $(JavaScriptCore)/inspector/scripts/xxd.pl InjectedScriptSource_js ./InjectedScriptSource.min.js InjectedScriptSource.h
 	rm -f ./InjectedScriptSource.min.js
 

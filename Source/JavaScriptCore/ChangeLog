@@ -1,3 +1,14 @@
+2014-07-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Debugger Pause button does not work
+        https://bugs.webkit.org/show_bug.cgi?id=134785
+
+        Reviewed by Timothy Hatcher.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        Minification strips the sourceURL command. Add it back with minification.
+
 2014-07-11  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] Enable DFG JIT.

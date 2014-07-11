@@ -1,5 +1,26 @@
 2014-07-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Debugger Pause button does not work
+        https://bugs.webkit.org/show_bug.cgi?id=134785
+
+        Reviewed by Timothy Hatcher.
+
+        Previously we were automatically resuming if we had no recognized
+        call frames in the call stack we get when paused. However, we
+        were accidentally skipping over anonymous scripts instead of
+        just Web Inspector originated call frames.
+
+        Now that we allow anonymous scripts we can step into anonymous
+        scripts (e.g. evals, new Function(...)) as expected.
+
+        Also, remove the condition of automatically resuming if the
+        call stack was empty. The UI handles this with "No Call Frames".
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.debuggerDidPause):
+
+2014-07-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: CSS Autocompletion: "background" only has colors, should support others
         https://bugs.webkit.org/show_bug.cgi?id=134839
 
