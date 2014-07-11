@@ -673,7 +673,7 @@ WebView *createWebViewAndOffscreenWindow()
     WebView *webView = [[WebView alloc] initWithFrame:rect frameName:nil groupName:@"org.webkit.DumpRenderTree"];
 #else
     UIWebBrowserView *webBrowserView = [[[DumpRenderTreeBrowserView alloc] initWithFrame:layoutTestViewportRect] autorelease];
-
+    [webBrowserView setInputViewObeysDOMFocus:YES];
     WebView *webView = [[webBrowserView webView] retain];
     [webView setGroupName:@"org.webkit.DumpRenderTree"];
 #endif

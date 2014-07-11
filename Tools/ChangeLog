@@ -1,3 +1,15 @@
+2014-07-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Pasting rich content does not perform a two-step paste
+        https://bugs.webkit.org/show_bug.cgi?id=134795
+
+        Reviewed by Benjamin Poulain.
+
+        Two-step paste requires setting InputViewObeysDOMFocus on the UIWebBrowserView.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+
 2014-07-10  Carlos Garcia Campos  <cgarcia@igalia.com> and Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][CMake] Add a 'distcheck' target

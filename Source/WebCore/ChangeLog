@@ -1,3 +1,19 @@
+2014-07-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Pasting rich content does not perform a two-step paste
+        https://bugs.webkit.org/show_bug.cgi?id=134795
+
+        Reviewed by Benjamin Poulain.
+
+        UIKit requires writing something (anything!) to a particular pasteboard
+        during copy in order to flag the content as rich. When a paste occurs,
+        UIKit will read this flag and perform a two-step paste.
+
+        Test: platform/ios-sim/editing/pasteboard/two-step-paste.html
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::write):
+
 2014-07-09  Andy Estes  <aestes@apple.com>
 
         [iOS] Some QuickLook documents are not displayed as previews
