@@ -3369,6 +3369,7 @@ void Editor::scanSelectionForTelephoneNumbers()
         client()->selectedTelephoneNumberRangesChanged(markedRanges);
         return;
     }
+    RefPtr<Range> selectedRange = frameSelection.toNormalizedRange();
 
     // Extend the range a few characters in each direction to detect incompletely selected phone numbers.
     static const int charactersToExtend = 15;
@@ -3384,19 +3385,54 @@ void Editor::scanSelectionForTelephoneNumbers()
     extendedSelection.setExtent(extent);
     RefPtr<Range> extendedRange = extendedSelection.toNormalizedRange();
 
-    // FIXME: This won't work if a phone number spans multiple chunks of text from the perspective of the TextIterator
-    // (By a style change, image, line break, etc.)
-    // One idea to handle this would be a model like text search that uses a rotating window.
     for (TextIterator textChunk(extendedRange.get()); !textChunk.atEnd(); textChunk.advance()) {
-        // TextIterator is supposed to never returns a Range that spans multiple Nodes.
-        ASSERT(textChunk.range()->startContainer() == textChunk.range()->endContainer());
+        Vector<RefPtr<Range>> markedChunkRanges;
+        Vector<RefPtr<Range>> markedEdgeRanges;
 
-        scanRangeForTelephoneNumbers(*textChunk.range(), textChunk.text(), markedRanges);
+        // Scan the text iterator range.
+        RefPtr<Range> range = textChunk.range();
+        scanRangeForTelephoneNumbers(*range, textChunk.text(), markedChunkRanges);
+
+        // If this text iterator range's end position is before the end of the full range,
+        // then scan a window that is a bit before and a bit after this text iterator range.
+        RefPtr<Range> edgeRange;
+        if (range->endPosition() < extendedRange->endPosition()) {
+            Position endPosition = range->endPosition();
+            Position startPosition = endPosition;
+            for (int i = 0; i < charactersToExtend; ++i) {
+                startPosition = startPosition.previous(Character);
+                endPosition = endPosition.next(Character);
+            }
+
+            edgeRange = Range::create(range->ownerDocument(), startPosition, endPosition);
+            scanRangeForTelephoneNumbers(*edgeRange, plainText(edgeRange.get()), markedEdgeRanges);
+        }
+
+        // Add both of these sets of ranges to the full set of marked ranges, double checking to
+        // make sure we don't end up with two equivalent ranges in the full set.
+        for (auto& chunkRange : markedChunkRanges) {
+            bool matchesEdgeRange = false;
+            for (auto& edgeRange : markedEdgeRanges) {
+                if (areRangesEqual(chunkRange.get(), edgeRange.get())) {
+                    matchesEdgeRange = true;
+                    break;
+                }
+            }
+
+            if (!matchesEdgeRange)
+                markedRanges.append(chunkRange);
+        }
+
+        for (auto& range : markedEdgeRanges)
+            markedRanges.append(range);
+
+        // If the edge range's end position is past the end position of the original range, we're done scanning.
+        if (edgeRange && edgeRange->endPosition() >= extendedRange->endPosition())
+            break;
     }
 
     // Only consider ranges with a detected telephone number if they overlap with the actual selection range.
     Vector<RefPtr<Range>> extendedMarkedRanges;
-    RefPtr<Range> selectedRange = frameSelection.toNormalizedRange();
     for (auto& range : markedRanges) {
         if (rangesOverlap(range.get(), selectedRange.get()))
             extendedMarkedRanges.append(range);

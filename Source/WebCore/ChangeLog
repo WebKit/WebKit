@@ -1,3 +1,16 @@
+2014-07-11  Brady Eidson  <beidson@apple.com>
+
+        Phone numbers that span two lines are not detected.
+        <rdar://problem/17601146> and https://bugs.webkit.org/show_bug.cgi?id=134808
+
+        Reviewed by Tim Horton.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::scanSelectionForTelephoneNumbers): After scanning a range from the TextIterator,
+            create an "edge range" window around the end of the TextIterator range, and scan it.
+            Also make sure to not accumulate duplicate ranges that might have showed up in both the
+            TextIterator range and the edge window range.
+
 2014-07-11  Enrica Casucci  <enrica@apple.com>
 
         Implement textStylingAtPosition in WK2.
