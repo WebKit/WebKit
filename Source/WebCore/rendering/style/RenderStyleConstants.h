@@ -184,6 +184,9 @@ enum EAlignItems { AlignAuto, AlignFlexStart, AlignFlexEnd, AlignCenter, AlignSt
 enum EFlexDirection { FlowRow, FlowRowReverse, FlowColumn, FlowColumnReverse };
 enum EFlexWrap { FlexNoWrap, FlexWrap, FlexWrapReverse };
 enum EJustifyContent { JustifyFlexStart, JustifyFlexEnd, JustifyCenter, JustifySpaceBetween, JustifySpaceAround };
+enum EJustifySelf {JustifySelfAuto, JustifySelfStretch, JustifySelfBaseline, JustifySelfCenter, JustifySelfStart, JustifySelfEnd, JustifySelfSelfStart, JustifySelfSelfEnd, JustifySelfFlexStart, JustifySelfFlexEnd, JustifySelfLeft, JustifySelfRight};
+enum EJustifySelfOverflowAlignment {JustifySelfOverflowAlignmentDefault, JustifySelfOverflowAlignmentTrue, JustifySelfOverflowAlignmentSafe};
+
 
 enum ETextSecurity {
     TSNONE, TSDISC, TSCIRCLE, TSSQUARE

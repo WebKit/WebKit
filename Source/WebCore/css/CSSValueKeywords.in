@@ -544,6 +544,22 @@ space-around
 // space-between
 // space-around
 
+// CSS_PROP_JUSTIFY_SELF
+// auto
+// stretch
+// baseline
+// center
+// start
+// end
+self-start
+self-end
+// flex-start
+// flex-end
+// left
+// right
+true
+safe
+
 // CSS_PROP_FLEX_FLOW
 row
 row-reverse

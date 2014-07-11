@@ -176,6 +176,9 @@ public:
     unsigned m_alignSelf : 3; // EAlignItems
     unsigned m_justifyContent : 3; // EJustifyContent
 
+    unsigned m_justifySelf : 4; // EJustifySelf
+    unsigned m_justifySelfOverflowAlignment : 2; // EJustifySelfOverflowAlignment
+
     unsigned userDrag : 2; // EUserDrag
     unsigned textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
     unsigned marginBeforeCollapse : 2; // EMarginCollapse

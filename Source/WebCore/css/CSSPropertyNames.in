@@ -303,6 +303,7 @@ isolation
 -webkit-flex-shrink
 -webkit-flex-wrap
 -webkit-justify-content
+-webkit-justify-self
 -webkit-font-size-delta
 #if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
 -webkit-grid

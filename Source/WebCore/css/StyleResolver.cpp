@@ -2827,6 +2827,16 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
 #endif /* ENABLE(CSS_GRID_LAYOUT) */
+    case CSSPropertyWebkitJustifySelf: {
+        HANDLE_INHERIT_AND_INITIAL(justifySelf, JustifySelf);
+        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        if (Pair* pairValue = primitiveValue->getPairValue()) {
+            state.style()->setJustifySelf(*pairValue->first());
+            state.style()->setJustifySelfOverflowAlignment(*pairValue->second());
+        } else
+            state.style()->setJustifySelf(*primitiveValue);
+        return;
+    }
     // These properties are aliased and DeprecatedStyleBuilder already applied the property on the prefixed version.
     case CSSPropertyTransitionDelay:
     case CSSPropertyTransitionDuration:

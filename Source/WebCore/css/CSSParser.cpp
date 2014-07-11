@@ -848,14 +848,17 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
             return true;
         break;
     case CSSPropertyWebkitAlignContent:
-         if (valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueSpaceBetween || valueID == CSSValueSpaceAround || valueID == CSSValueStretch)
-             return true;
-         break;
+        // FIXME: Per CSS alignment, this property should accept an optional <overflow-position>. We should share this parsing code with 'justify-self'.
+        if (valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueSpaceBetween || valueID == CSSValueSpaceAround || valueID == CSSValueStretch)
+            return true;
+        break;
     case CSSPropertyWebkitAlignItems:
+        // FIXME: Per CSS alignment, this property should accept the same arguments as 'justify-self' so we should share its parsing code.
         if (valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueBaseline || valueID == CSSValueStretch)
             return true;
         break;
     case CSSPropertyWebkitAlignSelf:
+        // FIXME: Per CSS alignment, this property should accept the same arguments as 'justify-self' so we should share its parsing code.
         if (valueID == CSSValueAuto || valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueBaseline || valueID == CSSValueStretch)
             return true;
         break;
@@ -868,7 +871,12 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
              return true;
         break;
     case CSSPropertyWebkitJustifyContent:
+        // FIXME: Per CSS alignment, this property should accept an optional <overflow-position>. We should share this parsing code with 'justify-self'.
         if (valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueSpaceBetween || valueID == CSSValueSpaceAround)
+            return true;
+        break;
+    case CSSPropertyWebkitJustifySelf:
+        if (valueID == CSSValueAuto || valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueBaseline || valueID == CSSValueStretch)
             return true;
         break;
     case CSSPropertyWebkitFontKerning:
@@ -2566,6 +2574,8 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         }
         return false;
     }
+    case CSSPropertyWebkitJustifySelf:
+        return parseJustifySelf(propId, important);
 #if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyWebkitGridAutoColumns:
     case CSSPropertyWebkitGridAutoRows:
@@ -3067,6 +3077,63 @@ void CSSParser::addFillValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval)
     }
     else
         lval = rval;
+}
+
+static bool isItemPositionKeyword(CSSValueID id)
+{
+    return id == CSSValueStart || id == CSSValueEnd || id == CSSValueCenter
+        || id == CSSValueSelfStart || id == CSSValueSelfEnd || id == CSSValueFlexStart
+        || id == CSSValueFlexEnd || id == CSSValueLeft || id == CSSValueRight;
+}
+
+bool CSSParser::parseJustifySelf(CSSPropertyID propId, bool important)
+{
+    // auto | baseline | stretch | [<item-position> && <overflow-position>? ]
+    // <item-position> = center | start | end | self-start | self-end | flex-start | flex-end | left | right;
+    // <overflow-position> = true | safe
+
+    CSSParserValue* value = m_valueList->current();
+
+    if (value->id == CSSValueAuto || value->id == CSSValueBaseline || value->id == CSSValueStretch) {
+        if (m_valueList->next())
+            return false;
+
+        addProperty(propId, cssValuePool().createIdentifierValue(value->id), important);
+        return true;
+    }
+
+    RefPtr<CSSPrimitiveValue> position = 0;
+    RefPtr<CSSPrimitiveValue> overflowAlignmentKeyword = 0;
+    if (isItemPositionKeyword(value->id)) {
+        position = cssValuePool().createIdentifierValue(value->id);
+        value = m_valueList->next();
+        if (value) {
+            if (value->id != CSSValueTrue && value->id != CSSValueSafe)
+                return false;
+            overflowAlignmentKeyword = cssValuePool().createIdentifierValue(value->id);
+        }
+    } else if (value->id != CSSValueTrue && value->id != CSSValueSafe)
+        return false;
+    else {
+        overflowAlignmentKeyword = cssValuePool().createIdentifierValue(value->id);
+        value = m_valueList->next();
+        if (value) {
+            if (!isItemPositionKeyword(value->id))
+                return false;
+            position = cssValuePool().createIdentifierValue(value->id);
+        }
+    }
+
+    if (m_valueList->next())
+        return false;
+
+    ASSERT(position);
+    if (overflowAlignmentKeyword)
+        addProperty(propId, createPrimitiveValuePair(position.release(), overflowAlignmentKeyword.release()), important);
+    else
+        addProperty(propId, position.release(), important);
+
+    return true;
 }
 
 static bool parseBackgroundClip(CSSParserValue* parserValue, RefPtr<CSSValue>& cssValue)

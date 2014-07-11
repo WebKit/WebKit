@@ -1,3 +1,42 @@
+2014-07-11  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Implement justify-self css property
+        https://bugs.webkit.org/show_bug.cgi?id=134419
+
+        Reviewed by Dean Jackson.
+
+        This change adds the justify-self property from CSS 3 Box Alignment
+        and implements the parsing.
+
+        From Blink r164685 by <jchaffraix@chromium.org>
+
+        Test: fast/css/parse-justify-self.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::isItemPositionKeyword):
+        (WebCore::CSSParser::parseJustifySelf):
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EJustifySelf):
+        (WebCore::CSSPrimitiveValue::operator EJustifySelfOverflowAlignment):
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2014-07-11  Bear Travis  <betravis@adobe.com>
 
         [Feature Queries] Feature Query CSS Grammar Productions Should Return a Value

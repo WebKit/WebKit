@@ -914,6 +914,8 @@ public:
     bool isReverseFlexDirection() const { return flexDirection() == FlowRowReverse || flexDirection() == FlowColumnReverse; }
     EFlexWrap flexWrap() const { return static_cast<EFlexWrap>(rareNonInheritedData->m_flexibleBox->m_flexWrap); }
     EJustifyContent justifyContent() const { return static_cast<EJustifyContent>(rareNonInheritedData->m_justifyContent); }
+    EJustifySelf justifySelf() const { return static_cast<EJustifySelf>(rareNonInheritedData->m_justifySelf); }
+    EJustifySelfOverflowAlignment justifySelfOverflowAlignment() const { return static_cast<EJustifySelfOverflowAlignment>(rareNonInheritedData->m_justifySelfOverflowAlignment); }
 
 #if ENABLE(CSS_GRID_LAYOUT)
     const Vector<GridTrackSize>& gridColumns() const { return rareNonInheritedData->m_grid->m_gridColumns; }
@@ -1461,6 +1463,8 @@ public:
     void setFlexDirection(EFlexDirection direction) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexDirection, direction); }
     void setFlexWrap(EFlexWrap w) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexWrap, w); }
     void setJustifyContent(EJustifyContent p) { SET_VAR(rareNonInheritedData, m_justifyContent, p); }
+    void setJustifySelf(EJustifySelf p) { SET_VAR(rareNonInheritedData, m_justifySelf, p); }
+    void setJustifySelfOverflowAlignment(EJustifySelfOverflowAlignment overflowAlignment) { SET_VAR(rareNonInheritedData, m_justifySelfOverflowAlignment, overflowAlignment); }
 #if ENABLE(CSS_GRID_LAYOUT)
     void setGridAutoColumns(const GridTrackSize& length) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridAutoColumns, length); }
     void setGridAutoRows(const GridTrackSize& length) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridAutoRows, length); }
@@ -1825,6 +1829,8 @@ public:
     static EFlexDirection initialFlexDirection() { return FlowRow; }
     static EFlexWrap initialFlexWrap() { return FlexNoWrap; }
     static EJustifyContent initialJustifyContent() { return JustifyFlexStart; }
+    static EJustifySelf initialJustifySelf() { return JustifySelfAuto; }
+    static EJustifySelfOverflowAlignment initialJustifySelfOverflowAlignment() { return JustifySelfOverflowAlignmentDefault; }
     static int initialMarqueeLoopCount() { return -1; }
     static int initialMarqueeSpeed() { return 85; }
     static Length initialMarqueeIncrement() { return Length(6, Fixed); }
