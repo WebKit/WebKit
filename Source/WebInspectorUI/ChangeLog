@@ -1,3 +1,19 @@
+2014-07-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CSS Autocompletion: "background" only has colors, should support others
+        https://bugs.webkit.org/show_bug.cgi?id=134839
+
+        Reviewed by Timothy Hatcher.
+
+        Update and consolidate the background related CSS properties
+        and include sub-property completions in the shorthand property.
+
+        Also take the opportunity to add or update other properties
+        (-webkit-alt, -webkit-text-decoration-skip, -webkit-aspect-ratio)
+        and remove unnecessary newlines / commas in the list.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
 2014-07-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Debugger Continue button is incorrectly sized
