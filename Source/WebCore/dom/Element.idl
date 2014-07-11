@@ -78,10 +78,6 @@
     readonly attribute long clientTop;
     readonly attribute long clientWidth;
     readonly attribute long clientHeight;
-    attribute long scrollLeft;
-    attribute long scrollTop;
-    readonly attribute long scrollWidth;
-    readonly attribute long scrollHeight;
 #else
     readonly attribute double offsetLeft;
     readonly attribute double offsetTop;
@@ -91,11 +87,12 @@
     readonly attribute double clientTop;
     readonly attribute double clientWidth;
     readonly attribute double clientHeight;
-    attribute double scrollLeft;
-    attribute double scrollTop;
-    readonly attribute double scrollWidth;
-    readonly attribute double scrollHeight;
 #endif
+
+    attribute long scrollLeft;
+    attribute long scrollTop;
+    readonly attribute long scrollWidth;
+    readonly attribute long scrollHeight;
 
     [ImplementedAs=bindingsOffsetParent] readonly attribute Element offsetParent;
 

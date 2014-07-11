@@ -220,12 +220,12 @@ public:
     double clientTop();
     double clientWidth();
     double clientHeight();
-    virtual double scrollLeft();
-    virtual double scrollTop();
-    virtual void setScrollLeft(double);
-    virtual void setScrollTop(double);
-    virtual double scrollWidth();
-    virtual double scrollHeight();
+    virtual int scrollLeft();
+    virtual int scrollTop();
+    virtual void setScrollLeft(int);
+    virtual void setScrollTop(int);
+    virtual int scrollWidth();
+    virtual int scrollHeight();
 
     IntRect boundsInRootViewSpace();
 

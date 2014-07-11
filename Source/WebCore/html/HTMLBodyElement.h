@@ -69,14 +69,14 @@ private:
     
     virtual bool supportsFocus() const override;
 
-    virtual double scrollLeft() override;
-    virtual void setScrollLeft(double) override;
+    virtual int scrollLeft() override;
+    virtual void setScrollLeft(int) override;
     
-    virtual double scrollTop() override;
-    virtual void setScrollTop(double) override;
+    virtual int scrollTop() override;
+    virtual void setScrollTop(int) override;
     
-    virtual double scrollHeight() override;
-    virtual double scrollWidth() override;
+    virtual int scrollHeight() override;
+    virtual int scrollWidth() override;
     
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 };

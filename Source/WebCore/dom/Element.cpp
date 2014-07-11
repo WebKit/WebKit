@@ -823,7 +823,7 @@ double Element::clientHeight()
     return 0;
 }
 
-double Element::scrollLeft()
+int Element::scrollLeft()
 {
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -832,7 +832,7 @@ double Element::scrollLeft()
     return 0;
 }
 
-double Element::scrollTop()
+int Element::scrollTop()
 {
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -841,29 +841,29 @@ double Element::scrollTop()
     return 0;
 }
 
-void Element::setScrollLeft(double newLeft)
+void Element::setScrollLeft(int newLeft)
 {
     document().updateLayoutIgnorePendingStylesheets();
 
     if (RenderBox* renderer = renderBox()) {
-        renderer->setScrollLeft(round(newLeft * renderer->style().effectiveZoom()));
+        renderer->setScrollLeft(static_cast<int>(newLeft * renderer->style().effectiveZoom()));
         if (auto* scrollableArea = renderer->layer())
             scrollableArea->setScrolledProgrammatically(true);
     }
 }
 
-void Element::setScrollTop(double newTop)
+void Element::setScrollTop(int newTop)
 {
     document().updateLayoutIgnorePendingStylesheets();
 
     if (RenderBox* renderer = renderBox()) {
-        renderer->setScrollTop(round(newTop * renderer->style().effectiveZoom()));
+        renderer->setScrollTop(static_cast<int>(newTop * renderer->style().effectiveZoom()));
         if (auto* scrollableArea = renderer->layer())
             scrollableArea->setScrolledProgrammatically(true);
     }
 }
 
-double Element::scrollWidth()
+int Element::scrollWidth()
 {
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBox* rend = renderBox())
@@ -871,7 +871,7 @@ double Element::scrollWidth()
     return 0;
 }
 
-double Element::scrollHeight()
+int Element::scrollHeight()
 {
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBox* rend = renderBox())

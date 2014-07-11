@@ -1,3 +1,17 @@
+2014-07-11  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r168868): eBay 'see all' links fail due to different JS bindings conversion behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=134841
+        <rdar://problem/17577563>
+
+        Reviewed by Simon Fraser.
+
+        Revert back to type int for Element.scroll* APIs in order to preserve exception handling
+        behavior.
+
+        * cssom/non-subpixel-scroll-top-left-values-expected.txt: Added.
+        * cssom/non-subpixel-scroll-top-left-values.html: Added.
+
 2014-07-11  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Implement justify-self css property

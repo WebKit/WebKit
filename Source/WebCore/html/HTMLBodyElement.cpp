@@ -198,7 +198,7 @@ bool HTMLBodyElement::supportsFocus() const
     return hasEditableStyle() || HTMLElement::supportsFocus();
 }
 
-static double adjustForZoom(int value, const Frame& frame)
+static int adjustForZoom(int value, const Frame& frame)
 {
     double zoomFactor = frame.pageZoomFactor() * frame.frameScaleFactor();
     if (zoomFactor == 1)
@@ -206,10 +206,10 @@ static double adjustForZoom(int value, const Frame& frame)
     // Needed because of truncation (rather than rounding) when scaling up.
     if (zoomFactor > 1)
         value++;
-    return value / zoomFactor;
+    return static_cast<int>(value / zoomFactor);
 }
 
-double HTMLBodyElement::scrollLeft()
+int HTMLBodyElement::scrollLeft()
 {
     document().updateLayoutIgnorePendingStylesheets();
     Frame* frame = document().frame();
@@ -218,10 +218,10 @@ double HTMLBodyElement::scrollLeft()
     FrameView* view = frame->view();
     if (!view)
         return 0;
-    return floor(adjustForZoom(view->contentsScrollPosition().x(), *frame));
+    return adjustForZoom(view->contentsScrollPosition().x(), *frame);
 }
 
-void HTMLBodyElement::setScrollLeft(double scrollLeft)
+void HTMLBodyElement::setScrollLeft(int scrollLeft)
 {
     document().updateLayoutIgnorePendingStylesheets();
     Frame* frame = document().frame();
@@ -233,7 +233,7 @@ void HTMLBodyElement::setScrollLeft(double scrollLeft)
     view->setScrollPosition(IntPoint(static_cast<int>(scrollLeft * frame->pageZoomFactor() * frame->frameScaleFactor()), view->scrollY()));
 }
 
-double HTMLBodyElement::scrollTop()
+int HTMLBodyElement::scrollTop()
 {
     document().updateLayoutIgnorePendingStylesheets();
     Frame* frame = document().frame();
@@ -242,10 +242,10 @@ double HTMLBodyElement::scrollTop()
     FrameView* view = frame->view();
     if (!view)
         return 0;
-    return floor(adjustForZoom(view->contentsScrollPosition().y(), *frame));
+    return adjustForZoom(view->contentsScrollPosition().y(), *frame);
 }
 
-void HTMLBodyElement::setScrollTop(double scrollTop)
+void HTMLBodyElement::setScrollTop(int scrollTop)
 {
     document().updateLayoutIgnorePendingStylesheets();
     Frame* frame = document().frame();
@@ -257,7 +257,7 @@ void HTMLBodyElement::setScrollTop(double scrollTop)
     view->setScrollPosition(IntPoint(view->scrollX(), static_cast<int>(scrollTop * frame->pageZoomFactor() * frame->frameScaleFactor())));
 }
 
-double HTMLBodyElement::scrollHeight()
+int HTMLBodyElement::scrollHeight()
 {
     // Update the document's layout.
     document().updateLayoutIgnorePendingStylesheets();
@@ -267,10 +267,10 @@ double HTMLBodyElement::scrollHeight()
     FrameView* view = frame->view();
     if (!view)
         return 0;
-    return floor(adjustForZoom(view->contentsHeight(), *frame));
+    return adjustForZoom(view->contentsHeight(), *frame);
 }
 
-double HTMLBodyElement::scrollWidth()
+int HTMLBodyElement::scrollWidth()
 {
     // Update the document's layout.
     document().updateLayoutIgnorePendingStylesheets();
@@ -280,7 +280,7 @@ double HTMLBodyElement::scrollWidth()
     FrameView* view = frame->view();
     if (!view)
         return 0;
-    return floor(adjustForZoom(view->contentsWidth(), *frame));
+    return adjustForZoom(view->contentsWidth(), *frame);
 }
 
 void HTMLBodyElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
