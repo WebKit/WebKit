@@ -2,9 +2,10 @@
 
         [iOS] Some QuickLook documents are not displayed as previews
         https://bugs.webkit.org/show_bug.cgi?id=134788
+        <rdar://problem/17278194>
 
         Reviewed by Pratik Solanki.
-        
+
         ResourceRequest::isMainResourceRequest() is not reliable (e.g. ResourceRequests reconstituted from an
         NSURLRequest have no way to set this bit properly) and should probably be removed. Instead of using
         isMainResourceRequest() to check if a QuickLookHandle should be created when the Network Process is in use,
