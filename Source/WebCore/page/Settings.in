@@ -195,7 +195,7 @@ minimumZoomFontSize type=float, initial=15, conditional=IOS_TEXT_AUTOSIZING
 simpleLineLayoutEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
 simpleLineLayoutDebugBordersEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
 
-subpixelCSSOMElementMetricsEnabled initial=true
+subpixelCSSOMElementMetricsEnabled initial=false
 
 mediaSourceEnabled initial=true, conditional=MEDIA_SOURCE
 

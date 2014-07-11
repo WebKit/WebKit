@@ -1,3 +1,21 @@
+2014-07-11  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: return integral results for offset*, client*, scroll* by default.
+        https://bugs.webkit.org/show_bug.cgi?id=134651
+
+        Reviewed by Simon Fraser.
+
+        Revert to returning integral values for Element.offset* client* scroll* by default.
+        Fractional values break number of sites(tight design) and JS frameworks(fail to handle fractional values).
+
+        Since snapped dimension depends on both the original point and the width/height of the box,
+        we need to call RenderBoxModelObject::pixelSnapped*() helpers, instead of round().
+
+        Covered by existing tests
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
 2014-07-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Mac] NSWindow warning: adding an unknown subview opening detached Inspector

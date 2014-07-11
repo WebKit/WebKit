@@ -496,7 +496,7 @@ public:
         [NSNumber numberWithBool:NO],   WebKitMultithreadedWebGLEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitForceSoftwareWebGLRenderingPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitAccelerated2dCanvasEnabledPreferenceKey,
-        [NSNumber numberWithBool:YES],  WebKitSubpixelCSSOMElementMetricsEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],  WebKitSubpixelCSSOMElementMetricsEnabledPreferenceKey,
 #if PLATFORM(IOS)
         [NSNumber numberWithBool:YES],  WebKitFrameFlatteningEnabledPreferenceKey,
 #else

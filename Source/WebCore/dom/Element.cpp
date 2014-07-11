@@ -661,18 +661,24 @@ static double adjustForLocalZoom(LayoutUnit value, const RenderElement& renderer
 
 enum LegacyCSSOMElementMetricsRoundingStrategy { Round, Floor };
 
+static bool subpixelMetricsEnabled(const Document& document)
+{
+    return document.settings() && document.settings()->subpixelCSSOMElementMetricsEnabled();
+}
+
 static double convertToNonSubpixelValueIfNeeded(double value, const Document& document, LegacyCSSOMElementMetricsRoundingStrategy roundStrategy = Round)
 {
-    return document.settings() && !document.settings()->subpixelCSSOMElementMetricsEnabled() ? roundStrategy == Round ? round(value) : floor(value) : value;
+    return subpixelMetricsEnabled(document) ? value : roundStrategy == Round ? round(value) : floor(value);
 }
 
 double Element::offsetLeft()
 {
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
+        LayoutUnit offsetLeft = subpixelMetricsEnabled(renderer->document()) ? renderer->offsetLeft() : LayoutUnit(renderer->pixelSnappedOffsetLeft());
         double zoomFactor = 1;
-        double offsetLeftValue = adjustForLocalZoom(renderer->offsetLeft(), *renderer, zoomFactor);
-        return convertToNonSubpixelValueIfNeeded(offsetLeftValue, renderer->document(), zoomFactor == 1 ? Floor : Round);
+        double offsetLeftAdjustedWithZoom = adjustForLocalZoom(offsetLeft, *renderer, zoomFactor);
+        return convertToNonSubpixelValueIfNeeded(offsetLeftAdjustedWithZoom, renderer->document(), zoomFactor == 1 ? Floor : Round);
     }
     return 0;
 }
@@ -681,9 +687,10 @@ double Element::offsetTop()
 {
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
+        LayoutUnit offsetTop = subpixelMetricsEnabled(renderer->document()) ? renderer->offsetTop() : LayoutUnit(renderer->pixelSnappedOffsetTop());
         double zoomFactor = 1;
-        double offsetTopValue = adjustForLocalZoom(renderer->offsetTop(), *renderer, zoomFactor);
-        return convertToNonSubpixelValueIfNeeded(offsetTopValue, renderer->document(), zoomFactor == 1 ? Floor : Round);
+        double offsetTopAdjustedWithZoom = adjustForLocalZoom(offsetTop, *renderer, zoomFactor);
+        return convertToNonSubpixelValueIfNeeded(offsetTopAdjustedWithZoom, renderer->document(), zoomFactor == 1 ? Floor : Round);
     }
     return 0;
 }
@@ -693,7 +700,8 @@ double Element::offsetWidth()
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
 #if ENABLE(SUBPIXEL_LAYOUT)
-        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(renderer->offsetWidth(), *renderer).toDouble(), renderer->document());
+        LayoutUnit offsetWidth = subpixelMetricsEnabled(renderer->document()) ? renderer->offsetWidth() : LayoutUnit(renderer->pixelSnappedOffsetWidth());
+        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(offsetWidth, *renderer).toDouble(), renderer->document());
 #else
         return adjustForAbsoluteZoom(renderer->offsetWidth(), *renderer);
 #endif
@@ -704,12 +712,14 @@ double Element::offsetWidth()
 double Element::offsetHeight()
 {
     document().updateLayoutIgnorePendingStylesheets();
-    if (RenderBoxModelObject* renderer = renderBoxModelObject())
+    if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
 #if ENABLE(SUBPIXEL_LAYOUT)
-        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(renderer->offsetHeight(), *renderer).toDouble(), renderer->document());
+        LayoutUnit offsetHeight = subpixelMetricsEnabled(renderer->document()) ? renderer->offsetHeight() : LayoutUnit(renderer->pixelSnappedOffsetHeight());
+        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(offsetHeight, *renderer).toDouble(), renderer->document());
 #else
         return adjustForAbsoluteZoom(renderer->offsetHeight(), *renderer);
 #endif
+    }
     return 0;
 }
 
@@ -737,12 +747,14 @@ double Element::clientLeft()
 {
     document().updateLayoutIgnorePendingStylesheets();
 
-    if (RenderBox* renderer = renderBox())
+    if (RenderBox* renderer = renderBox()) {
 #if ENABLE(SUBPIXEL_LAYOUT)
-        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(renderer->clientLeft(), *renderer).toDouble(), renderer->document());
+        LayoutUnit clientLeft = subpixelMetricsEnabled(renderer->document()) ? renderer->clientLeft() : LayoutUnit(roundToInt(renderer->clientLeft()));
+        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(clientLeft, *renderer).toDouble(), renderer->document());
 #else
         return adjustForAbsoluteZoom(renderer->clientLeft(), *renderer);
 #endif
+    }
     return 0;
 }
 
@@ -750,12 +762,14 @@ double Element::clientTop()
 {
     document().updateLayoutIgnorePendingStylesheets();
 
-    if (RenderBox* renderer = renderBox())
+    if (RenderBox* renderer = renderBox()) {
 #if ENABLE(SUBPIXEL_LAYOUT)
-        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(renderer->clientTop(), *renderer).toDouble(), renderer->document());
+        LayoutUnit clientTop = subpixelMetricsEnabled(renderer->document()) ? renderer->clientTop() : LayoutUnit(roundToInt(renderer->clientTop()));
+        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(clientTop, *renderer).toDouble(), renderer->document());
 #else
         return adjustForAbsoluteZoom(renderer->clientTop(), *renderer);
 #endif
+    }
     return 0;
 }
 
@@ -773,12 +787,14 @@ double Element::clientWidth()
     if ((!inQuirksMode && document().documentElement() == this) || (inQuirksMode && isHTMLElement() && document().body() == this))
         return adjustForAbsoluteZoom(renderView.frameView().layoutWidth(), renderView);
     
-    if (RenderBox* renderer = renderBox())
+    if (RenderBox* renderer = renderBox()) {
 #if ENABLE(SUBPIXEL_LAYOUT)
-        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(renderer->clientWidth(), *renderer).toDouble(), renderer->document());
+        LayoutUnit clientWidth = subpixelMetricsEnabled(renderer->document()) ? renderer->clientWidth() : LayoutUnit(renderer->pixelSnappedClientWidth());
+        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(clientWidth, *renderer).toDouble(), renderer->document());
 #else
         return adjustForAbsoluteZoom(renderer->clientWidth(), *renderer);
 #endif
+    }
     return 0;
 }
 
@@ -796,12 +812,14 @@ double Element::clientHeight()
     if ((!inQuirksMode && document().documentElement() == this) || (inQuirksMode && isHTMLElement() && document().body() == this))
         return adjustForAbsoluteZoom(renderView.frameView().layoutHeight(), renderView);
 
-    if (RenderBox* renderer = renderBox())
+    if (RenderBox* renderer = renderBox()) {
 #if ENABLE(SUBPIXEL_LAYOUT)
-        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(renderer->clientHeight(), *renderer).toDouble(), renderer->document());
+        LayoutUnit clientHeight = subpixelMetricsEnabled(renderer->document()) ? renderer->clientHeight() : LayoutUnit(renderer->pixelSnappedClientHeight());
+        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(clientHeight, *renderer).toDouble(), renderer->document());
 #else
         return adjustForAbsoluteZoom(renderer->clientHeight(), *renderer);
 #endif
+    }
     return 0;
 }
 
