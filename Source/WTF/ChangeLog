@@ -1,3 +1,17 @@
+2014-07-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WTF] Add the move constructor, move assignment operator for HashTable
+        https://bugs.webkit.org/show_bug.cgi?id=130772
+
+        Reviewed by Darin Adler.
+
+        HashTable has both copy constructor and copy assignment operator, meaning that the move constructor
+        and move assignment operator are implicitly deleted. This patch defines both to avoid unnecessary
+        copies when moves can be performed.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::HashTable):
+
 2014-07-10  Alex Christensen  <achristensen@webkit.org>
 
         Enable same features on all Windows ports.
