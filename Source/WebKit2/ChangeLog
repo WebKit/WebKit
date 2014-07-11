@@ -1,3 +1,15 @@
+2014-07-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r170970) REGRESSION(r170974): [GTK] Build broken.
+        https://bugs.webkit.org/show_bug.cgi?id=134825
+
+        Unreviewed GTK build fix.
+
+        * Shared/SessionState.h: Put ifdefs for ViewSnapshot on Mac port.
+        * Shared/WebBackForwardListItem.h: Idem.
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformDefaultOpenGLCacheDirectory): Implement skeleton.
+
 2014-07-10  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] It should be safe to call WKContentViewInteraction's cleanupInteraction multiple times

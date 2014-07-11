@@ -57,8 +57,10 @@ public:
     const String& url() const { return m_itemState.pageState.mainFrameState.urlString; }
     const String& title() const { return m_itemState.pageState.title; }
 
+#if PLATFORM(COCOA)
     ViewSnapshot* snapshot() const { return m_itemState.snapshot.get(); }
     void setSnapshot(PassRefPtr<ViewSnapshot> snapshot) { m_itemState.snapshot = snapshot; }
+#endif
 
     static uint64_t highedUsedItemID();
 
