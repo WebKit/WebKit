@@ -234,8 +234,9 @@ void CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges()
     if (!m_listeningForPreferenceChanges) {
         m_listeningForPreferenceChanges = true;
         CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, 0, CFNotificationSuspensionBehaviorCoalesce);
-        updateCaptionStyleSheetOveride();
     }
+
+    updateCaptionStyleSheetOveride();
 }
 
 void CaptionUserPreferencesMediaAF::captionPreferencesChanged()
@@ -540,13 +541,14 @@ String CaptionUserPreferencesMediaAF::captionsStyleSheetOverride() const
     String windowCornerRadius = windowRoundedCornerRadiusCSS();
     if (!windowColor.isEmpty() || !windowCornerRadius.isEmpty()) {
         captionsOverrideStyleSheet.append(" video::");
-        captionsOverrideStyleSheet.append(VTTCueBox::vttCueBoxShadowPseudoId());
+        captionsOverrideStyleSheet.append(VTTCue::cueBackdropShadowPseudoId());
         captionsOverrideStyleSheet.append('{');
         
         if (!windowColor.isEmpty())
             captionsOverrideStyleSheet.append(windowColor);
-        if (!windowCornerRadius.isEmpty())
+        if (!windowCornerRadius.isEmpty()) {
             captionsOverrideStyleSheet.append(windowCornerRadius);
+        }
         
         captionsOverrideStyleSheet.append('}');
     }

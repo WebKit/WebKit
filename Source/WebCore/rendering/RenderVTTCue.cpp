@@ -74,7 +74,13 @@ bool RenderVTTCue::initializeLayoutParameters(InlineFlowBox*& firstLineBox, Layo
     ASSERT(firstChild());
 
     RenderBlock* parentBlock = containingBlock();
-    firstLineBox = toRenderInline(firstChild())->firstLineBox();
+
+    // firstChild() returns the wrapping (backdrop) <div>. The cue object is
+    // the <div>'s first child.
+    RenderObject* firstChild = this->firstChild();
+    RenderElement* backdropElement = toRenderElement(firstChild);
+    
+    firstLineBox = toRenderInline(backdropElement->firstChild())->firstLineBox();
     if (!firstLineBox)
         firstLineBox = this->firstRootBox();
 
@@ -334,7 +340,13 @@ void RenderVTTCue::repositionCueSnapToLinesSet()
 void RenderVTTCue::repositionGenericCue()
 {
     ASSERT(firstChild());
-    InlineFlowBox* firstLineBox = toRenderInline(firstChild())->firstLineBox();
+
+    // firstChild() returns the wrapping (backdrop) <div>. The cue object is
+    // the <div>'s first child.
+    RenderObject* firstChild = this->firstChild();
+    RenderElement* backdropElement = toRenderElement(firstChild);
+    
+    InlineFlowBox* firstLineBox = toRenderInline(backdropElement->firstChild())->firstLineBox();
     if (static_cast<TextTrackCueGeneric*>(m_cue)->useDefaultPosition() && firstLineBox) {
         LayoutUnit parentWidth = containingBlock()->logicalWidth();
         LayoutUnit width = firstLineBox->width();

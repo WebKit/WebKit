@@ -1,3 +1,16 @@
+2014-07-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Use a separate backdrop element to allow cues to have highlight and background color
+        https://bugs.webkit.org/show_bug.cgi?id=134821
+        <rdar://problem/15999721>
+
+        Reviewed by Eric Carlson.
+
+        Updated tests for new formatting logic.
+
+        * platform/mac/media/track/track-cue-rendering-horizontal-expected.png:
+        * platform/mac/media/track/track-cue-rendering-horizontal-expected.txt:
+
 2014-07-11  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: return integral results for offset*, client*, scroll* by default.

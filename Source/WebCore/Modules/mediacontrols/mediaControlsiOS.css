@@ -380,6 +380,10 @@ video::-webkit-media-text-track-display {
     font: 22px sans-serif;
 }
 
+video::-webkit-media-text-track-display-backdrop {
+    display: inline-block;
+}
+
 video::cue(:future) {
     color: gray;
 }

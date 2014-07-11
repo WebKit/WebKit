@@ -42,6 +42,7 @@
 namespace WebCore {
 
 class DocumentFragment;
+class HTMLDivElement;
 class HTMLSpanElement;
 class ScriptExecutionContext;
 class VTTCue;
@@ -73,6 +74,8 @@ class VTTCue : public TextTrackCue {
 public:
     static PassRefPtr<VTTCue> create(ScriptExecutionContext&, double start, double end, const String&);
     static PassRefPtr<VTTCue> create(ScriptExecutionContext&, const WebVTTCueData&);
+
+    static const AtomicString& cueBackdropShadowPseudoId();
 
     virtual ~VTTCue();
 
@@ -113,7 +116,7 @@ public:
 
     bool hasDisplayTree() const { return m_displayTree; }
     VTTCueBox* getDisplayTree(const IntSize& videoSize);
-    HTMLSpanElement* element() const { return m_cueBackgroundBox.get(); }
+    HTMLSpanElement* element() const { return m_cueHighlightBox.get(); }
 
     void updateDisplayTree(double);
     void removeDisplayTree();
@@ -202,7 +205,8 @@ private:
 #endif
 
     RefPtr<DocumentFragment> m_webVTTNodeTree;
-    RefPtr<HTMLSpanElement> m_cueBackgroundBox;
+    RefPtr<HTMLSpanElement> m_cueHighlightBox;
+    RefPtr<HTMLDivElement> m_cueBackdropBox;
     RefPtr<VTTCueBox> m_displayTree;
 
     CSSValueID m_displayDirection;
