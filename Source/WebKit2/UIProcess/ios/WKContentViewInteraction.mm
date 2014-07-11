@@ -220,8 +220,9 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
         _interactionViewsContainerView = adoptNS([[UIView alloc] init]);
         [_interactionViewsContainerView setOpaque:NO];
         [_interactionViewsContainerView layer].anchorPoint = CGPointZero;
+        [self.superview addSubview:_interactionViewsContainerView.get()];
     }
-    [_interactionViewsContainerView setHidden:NO];
+
     [self.layer addObserver:self forKeyPath:@"transform" options:NSKeyValueObservingOptionInitial context:nil];
 
     _touchEventGestureRecognizer = adoptNS([[UIWebTouchEventsGestureRecognizer alloc] initWithTarget:self action:@selector(_webTouchEventsRecognized:) touchDelegate:self]);
@@ -276,8 +277,13 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [_formInputSession invalidate];
     _formInputSession = nil;
     [_highlightView removeFromSuperview];
-    [self.layer removeObserver:self forKeyPath:@"transform"];
-    [_interactionViewsContainerView setHidden:YES];
+
+    if (_interactionViewsContainerView) {
+        [self.layer removeObserver:self forKeyPath:@"transform"];
+        [_interactionViewsContainerView removeFromSuperview];
+        _interactionViewsContainerView = nil;
+    }
+
     [_touchEventGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
 

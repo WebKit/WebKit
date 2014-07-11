@@ -1,3 +1,24 @@
+2014-07-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] It should be safe to call WKContentViewInteraction's cleanupInteraction multiple times
+        https://bugs.webkit.org/show_bug.cgi?id=134820
+
+        Reviewed by Andreas Kling.
+
+        If a view is destroyed just after a crash, "cleanupInteraction" is called twice: once on crash,
+        once on dealloc.
+
+        The code handling _interactionViewsContainerView is using KVO to monitor transform changes. It is not safe
+        to remove the observer if we are not already observing on that view.
+
+        To solve the problem, this patch makes the cleanup actually remove the view so that setup and cleanup
+        are completely symmetrical. If cleanup is called twice, the second time would not enter the branch because
+        the view is already nil.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+
 2014-07-10  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Move WKInspectorHighlightView to its own file
