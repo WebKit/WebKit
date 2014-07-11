@@ -2050,8 +2050,21 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return list.release();
         }
 #if ENABLE(CSS_GRID_LAYOUT)
-        case CSSPropertyWebkitGridAutoFlow:
-            return cssValuePool().createValue(style->gridAutoFlow());
+        case CSSPropertyWebkitGridAutoFlow: {
+            RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+            ASSERT(style->isGridAutoFlowDirectionRow() || style->isGridAutoFlowDirectionColumn());
+            if (style->isGridAutoFlowDirectionRow())
+                list->append(cssValuePool().createIdentifierValue(CSSValueRow));
+            else
+                list->append(cssValuePool().createIdentifierValue(CSSValueColumn));
+
+            if (style->isGridAutoFlowAlgorithmDense())
+                list->append(cssValuePool().createIdentifierValue(CSSValueDense));
+            else if (style->isGridAutoFlowAlgorithmStack())
+                list->append(cssValuePool().createIdentifierValue(CSSValueStack));
+
+            return list.release();
+        }
 
         // Specs mention that getComputedStyle() should return the used value of the property instead of the computed
         // one for grid-definition-{rows|columns} but not for the grid-auto-{rows|columns} as things like

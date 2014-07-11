@@ -123,8 +123,8 @@
 }
 
 /* Grid element flow. */
-.gridAutoFlowNone {
-    -webkit-grid-auto-flow: none;
+.gridAutoFlowStack {
+    -webkit-grid-auto-flow: stack;
 }
 
 .gridAutoFlowColumn {

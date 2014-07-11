@@ -176,6 +176,7 @@ public:
     bool parseGridTemplateAreasRow(NamedGridAreaMap&, const unsigned, unsigned&);
     PassRefPtr<CSSValue> parseGridTemplateAreas();
     void parseGridLineNames(CSSParserValueList&, CSSValueList&, CSSGridLineNamesValue* = nullptr);
+    PassRefPtr<CSSValue> parseGridAutoFlow(CSSParserValueList&);
 #endif
 
     bool parseDashboardRegions(CSSPropertyID, bool important);

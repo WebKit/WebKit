@@ -1,3 +1,69 @@
+2014-07-11  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Update grid-auto-flow to the new syntax
+        https://bugs.webkit.org/show_bug.cgi?id=134057
+
+        Reviewed by Sergio Villar Senin.
+
+        In last versions of the spec grid-auto-flow syntax has changed. New
+        syntax is:
+        [ row | column ] && dense? | stack && [ row | column ]?
+
+        Implemented parsing for new syntax and added/modified test cases in
+        current layout tests.
+
+        For the moment, the implementation keeps working in the same way, but
+        using "stack" value for grid-auto-flow property instead of "none". This
+        should be fixed in a follow-up patch once "stack" is properly
+        implemented.
+
+        Also "dense" needs to be reviewed. Right now auto-placement algorithm is
+        always "dense" and never "sparse".
+
+        No new tests, update current tests to add new cases.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue): Adapt to new syntax.
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue): Removed grid-auto-flow as it
+        is not a keyword anymore.
+        (WebCore::isKeywordPropertyID): Ditto.
+        (WebCore::CSSParser::parseValue): Add specific method for parsing
+        grid-auto-flow.
+        (WebCore::CSSParser::parseGridShorthand): Adapt parsing for
+        grid-auto-flow property inside the shorthand.
+        (WebCore::isValidGridAutoFlowId): Helper method to check if the CSSValue
+        id is a valid keyword for grid-auto-flow property.
+        (WebCore::CSSParser::parseGridAutoFlow): Implement new parsing for
+        grid-auto-flow.
+        * css/CSSParser.h: Method header for grid-auto-flow parsing.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator GridAutoFlow): Deleted.
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Deleted.
+        * css/CSSValueKeywords.in: Add new keywords required by grid-auto-flow:
+        "dense" and "stack".
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder): Remove
+        default handler as grid-auto-flow is not a keyword now.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty): Implement particular handler
+        for new grid-auto-flow syntax.
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::placeItemsOnGrid): Keep old "none" behavior as
+        "stack" behavior for the moment.
+        (WebCore::RenderGrid::autoPlacementMajorAxisDirection): Use the new
+        helper methods in RenderStyle.
+        (WebCore::RenderGrid::autoPlacementMinorAxisDirection): Ditto.
+        * rendering/style/GridResolvedPosition.cpp:
+        (WebCore::GridResolvedPosition::resolveGridPositionsFromStyle): Again
+        keep old "none" behavior for "stack".
+        * rendering/style/RenderStyle.h: Add new helper methods to know the
+        direction and algorithm of grid-auto-flow property.
+        * rendering/style/RenderStyleConstants.h: Redefine GridAutoFlow enum
+        using flags for algorithm and direction.
+        * rendering/style/StyleGridData.h: Change m_gridAutoFlow type to
+        unsigned.
+
 2014-07-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Pasting rich content does not perform a two-step paste

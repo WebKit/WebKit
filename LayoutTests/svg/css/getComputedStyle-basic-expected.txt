@@ -304,8 +304,8 @@ rect: style.getPropertyValue(-webkit-font-variant-ligatures) : normal
 rect: style.getPropertyCSSValue(-webkit-font-variant-ligatures) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-grid-auto-columns) : auto
 rect: style.getPropertyCSSValue(-webkit-grid-auto-columns) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-grid-auto-flow) : none
-rect: style.getPropertyCSSValue(-webkit-grid-auto-flow) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-auto-flow) : row
+rect: style.getPropertyCSSValue(-webkit-grid-auto-flow) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-grid-auto-rows) : auto
 rect: style.getPropertyCSSValue(-webkit-grid-auto-rows) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-grid-column-end) : auto
@@ -816,8 +816,8 @@ g: style.getPropertyValue(-webkit-font-variant-ligatures) : normal
 g: style.getPropertyCSSValue(-webkit-font-variant-ligatures) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-grid-auto-columns) : auto
 g: style.getPropertyCSSValue(-webkit-grid-auto-columns) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-grid-auto-flow) : none
-g: style.getPropertyCSSValue(-webkit-grid-auto-flow) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-auto-flow) : row
+g: style.getPropertyCSSValue(-webkit-grid-auto-flow) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-grid-auto-rows) : auto
 g: style.getPropertyCSSValue(-webkit-grid-auto-rows) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-grid-column-end) : auto

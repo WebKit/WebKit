@@ -153,7 +153,7 @@ zoom: 1;
 -webkit-font-smoothing: auto;
 -webkit-font-variant-ligatures: normal;
 -webkit-grid-auto-columns: auto;
--webkit-grid-auto-flow: none;
+-webkit-grid-auto-flow: row;
 -webkit-grid-auto-rows: auto;
 -webkit-grid-column-end: auto;
 -webkit-grid-column-start: auto;

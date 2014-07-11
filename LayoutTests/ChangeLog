@@ -1,3 +1,38 @@
+2014-07-11  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Update grid-auto-flow to the new syntax
+        https://bugs.webkit.org/show_bug.cgi?id=134057
+
+        Reviewed by Sergio Villar Senin.
+
+        Adapted current tests to the new syntax. Keeping old "none" behavior
+        using "stack".
+
+        Add new use cases to cover the new syntax to grid-auto-flow-get-set.html
+        and grid-shorthand-get-set.html.
+
+        * fast/css-grid-layout/grid-auto-flow-get-set-expected.txt:
+        * fast/css-grid-layout/grid-auto-flow-get-set.html:
+        * fast/css-grid-layout/grid-auto-flow-resolution.html:
+        * fast/css-grid-layout/grid-auto-flow-update-expected.txt:
+        * fast/css-grid-layout/grid-auto-flow-update.html:
+        * fast/css-grid-layout/grid-item-named-grid-area-resolution.html:
+        * fast/css-grid-layout/grid-item-z-index-change-repaint.html:
+        * fast/css-grid-layout/grid-item-z-index-stacking-context.html:
+        * fast/css-grid-layout/grid-shorthand-get-set-expected.txt:
+        * fast/css-grid-layout/grid-shorthand-get-set.html:
+        * fast/css-grid-layout/named-grid-lines-with-named-grid-areas-dynamic-get-set.html:
+        * fast/css-grid-layout/named-grid-lines-with-named-grid-areas-resolution.html:
+        * fast/css-grid-layout/resources/grid.css:
+        (.gridAutoFlowStack):
+        (.gridAutoFlowNone): Deleted.
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * ietestcenter/css3/grid/grid-column-001.htm:
+        * ietestcenter/css3/grid/grid-column-002.htm:
+        * ietestcenter/css3/grid/grid-column-003.htm:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2014-07-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Pasting rich content does not perform a two-step paste

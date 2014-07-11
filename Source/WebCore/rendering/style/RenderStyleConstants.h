@@ -537,7 +537,26 @@ enum LineAlign { LineAlignNone, LineAlignEdges };
 enum RubyPosition { RubyPositionBefore, RubyPositionAfter };
 
 #if ENABLE(CSS_GRID_LAYOUT)
-enum GridAutoFlow { AutoFlowNone, AutoFlowColumn, AutoFlowRow };
+static const size_t GridAutoFlowBits = 5;
+enum InternalGridAutoFlowAlgorithm {
+    InternalAutoFlowAlgorithmSparse = 0x1,
+    InternalAutoFlowAlgorithmDense = 0x2,
+    InternalAutoFlowAlgorithmStack = 0x4
+};
+
+enum InternalGridAutoFlowDirection {
+    InternalAutoFlowDirectionRow = 0x8,
+    InternalAutoFlowDirectionColumn = 0x10
+};
+
+enum GridAutoFlow {
+    AutoFlowRow = InternalAutoFlowAlgorithmSparse | InternalAutoFlowDirectionRow,
+    AutoFlowColumn = InternalAutoFlowAlgorithmSparse | InternalAutoFlowDirectionColumn,
+    AutoFlowRowDense = InternalAutoFlowAlgorithmDense | InternalAutoFlowDirectionRow,
+    AutoFlowColumnDense = InternalAutoFlowAlgorithmDense | InternalAutoFlowDirectionColumn,
+    AutoFlowStackRow = InternalAutoFlowAlgorithmStack | InternalAutoFlowDirectionRow,
+    AutoFlowStackColumn = InternalAutoFlowAlgorithmStack | InternalAutoFlowDirectionColumn
+};
 #endif
 
 // Reasonable maximum to prevent insane font sizes from causing crashes on some platforms (such as Windows).

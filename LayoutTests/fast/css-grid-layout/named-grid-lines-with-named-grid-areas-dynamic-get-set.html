@@ -10,6 +10,7 @@ function testLayout(gridDefinitions, itemsDefinitions)
     var gridContainer = document.getElementById("gridContainer");
     var gridElement = document.createElement("div");
     gridElement.className = "grid";
+    gridElement.style.webkitGridAutoFlow = "stack";
 
     for (var key in gridDefinitions) {
 	if (key == "rows")

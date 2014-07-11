@@ -3,83 +3,215 @@
 <head>
 <link href="resources/grid.css" rel="stylesheet">
 <style>
+.gridAutoFlowColumnDense {
+    -webkit-grid-auto-flow: column dense;
+}
+.gridAutoFlowRowDense {
+    -webkit-grid-auto-flow: row dense;
+}
+.gridAutoFlowDenseColumn {
+    -webkit-grid-auto-flow: dense column;
+}
+.gridAutoFlowDenseRow {
+    -webkit-grid-auto-flow: dense row;
+}
+.gridAutoFlowStackColumn {
+    -webkit-grid-auto-flow: stack column;
+}
+.gridAutoFlowStackRow {
+    -webkit-grid-auto-flow: stack row;
+}
+.gridAutoFlowColumnStack {
+    -webkit-grid-auto-flow: column stack;
+}
+.gridAutoFlowRowStack {
+    -webkit-grid-auto-flow: row stack;
+}
 .gridAutoFlowInherit {
     -webkit-grid-auto-flow: inherit;
 }
 /* Bad values. */
+.gridAutoFlowNone {
+    -webkit-grid-auto-flow: none;
+}
 .gridAutoFlowRows {
     -webkit-grid-auto-flow: rows;
 }
 .gridAutoFlowColumns {
     -webkit-grid-auto-flow: columns;
 }
+.gridAutoFlowDense {
+    -webkit-grid-auto-flow: dense;
+}
+.gridAutoFlowColumnFoo {
+    -webkit-grid-auto-flow: column foo;
+}
+.gridAutoFlowColumnColumn {
+    -webkit-grid-auto-flow: column column;
+}
+.gridAutoFlowDenseColumnStack {
+    -webkit-grid-auto-flow: dense column stack;
+}
+.gridAutoFlowDenseRowStack {
+    -webkit-grid-auto-flow: dense row stack;
+}
+.gridAutoFlowStackRowRow {
+    -webkit-grid-auto-flow: stack row row;
+}
 </style>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
 <div class="grid" id="gridInitial"></div>
-<div class="grid gridAutoFlowNone" id="gridAutoFlowNone"></div>
 <div class="grid gridAutoFlowColumn" id="gridAutoFlowColumn"></div>
 <div class="grid gridAutoFlowRow" id="gridAutoFlowRow"></div>
+<div class="grid gridAutoFlowColumnDense" id="gridAutoFlowColumnDense"></div>
+<div class="grid gridAutoFlowRowDense" id="gridAutoFlowRowDense"></div>
+<div class="grid gridAutoFlowDenseColumn" id="gridAutoFlowDenseColumn"></div>
+<div class="grid gridAutoFlowDenseRow" id="gridAutoFlowDenseRow"></div>
+<div class="grid gridAutoFlowStack" id="gridAutoFlowStack"></div>
+<div class="grid gridAutoFlowStackColumn" id="gridAutoFlowStackColumn"></div>
+<div class="grid gridAutoFlowStackRow" id="gridAutoFlowStackRow"></div>
+<div class="grid gridAutoFlowColumnStack" id="gridAutoFlowColumnStack"></div>
+<div class="grid gridAutoFlowRowStack" id="gridAutoFlowRowStack"></div>
 <div class="grid gridAutoFlowColumn">
     <div class="grid gridAutoFlowInherit" id="gridAutoFlowInherit"></div>
 </div>
 <div class="grid gridAutoFlowColumn">
     <div><div class="grid gridAutoFlowInherit" id="gridAutoFlowNoInherit"></div><div>
 </div>
+<div class="grid gridAutoFlowNone" id="gridAutoFlowNone"></div>
 <div class="grid gridAutoFlowColumns" id="gridAutoFlowColumns"></div>
 <div class="grid gridAutoFlowRows" id="gridAutoFlowRows"></div>
+<div class="grid gridAutoFlowDense" id="gridAutoFlowDense"></div>
+<div class="grid gridAutoFlowColumnFoo" id="gridAutoFlowColumnFoo"></div>
+<div class="grid gridAutoFlowColumnColumn" id="gridAutoFlowColumnColumn"></div>
+<div class="grid gridAutoFlowDenseColumnStack" id="gridAutoFlowDenseColumnStack"></div>
+<div class="grid gridAutoFlowDenseRowStack" id="gridAutoFlowDenseRowStack"></div>
+<div class="grid gridAutoFlowStackRowRow" id="gridAutoFlowStackRowRow"></div>
 <script>
-    description('Test that setting and getting grid-auto-flow works as expected');
+    description('Test that setting and getting -webkit-grid-auto-flow works as expected');
 
-    debug("Test getting -webkit-auto-flow set through CSS");
-    var gridAutoFlowNone = document.getElementById("gridAutoFlowNone");
-    shouldBe("window.getComputedStyle(gridAutoFlowNone, '').getPropertyValue('-webkit-grid-auto-flow')", "'none'");
-
+    debug("Test getting -webkit-grid-auto-flow set through CSS");
     var gridAutoFlowColumn = document.getElementById("gridAutoFlowColumn");
     shouldBe("window.getComputedStyle(gridAutoFlowColumn, '').getPropertyValue('-webkit-grid-auto-flow')", "'column'");
 
     var gridAutoFlowRow = document.getElementById("gridAutoFlowRow");
     shouldBe("window.getComputedStyle(gridAutoFlowRow, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
 
+    var gridAutoFlowColumnDense = document.getElementById("gridAutoFlowColumnDense");
+    shouldBe("window.getComputedStyle(gridAutoFlowColumnDense, '').getPropertyValue('-webkit-grid-auto-flow')", "'column dense'");
+
+    var gridAutoFlowRowDense = document.getElementById("gridAutoFlowRowDense");
+    shouldBe("window.getComputedStyle(gridAutoFlowRowDense, '').getPropertyValue('-webkit-grid-auto-flow')", "'row dense'");
+
+    var gridAutoFlowDenseColumn = document.getElementById("gridAutoFlowDenseColumn");
+    shouldBe("window.getComputedStyle(gridAutoFlowDenseColumn, '').getPropertyValue('-webkit-grid-auto-flow')", "'column dense'");
+
+    var gridAutoFlowDenseRow = document.getElementById("gridAutoFlowDenseRow");
+    shouldBe("window.getComputedStyle(gridAutoFlowDenseRow, '').getPropertyValue('-webkit-grid-auto-flow')", "'row dense'");
+
+    var gridAutoFlowStack = document.getElementById("gridAutoFlowStack");
+    shouldBe("window.getComputedStyle(gridAutoFlowStack, '').getPropertyValue('-webkit-grid-auto-flow')", "'row stack'");
+
+    var gridAutoFlowStackColumn = document.getElementById("gridAutoFlowStackColumn");
+    shouldBe("window.getComputedStyle(gridAutoFlowStackColumn, '').getPropertyValue('-webkit-grid-auto-flow')", "'column stack'");
+
+    var gridAutoFlowStackRow = document.getElementById("gridAutoFlowStackRow");
+    shouldBe("window.getComputedStyle(gridAutoFlowStackRow, '').getPropertyValue('-webkit-grid-auto-flow')", "'row stack'");
+
+    var gridAutoFlowColumnStack = document.getElementById("gridAutoFlowColumnStack");
+    shouldBe("window.getComputedStyle(gridAutoFlowColumnStack, '').getPropertyValue('-webkit-grid-auto-flow')", "'column stack'");
+
+    var gridAutoFlowRowStack = document.getElementById("gridAutoFlowRowStack");
+    shouldBe("window.getComputedStyle(gridAutoFlowRowStack, '').getPropertyValue('-webkit-grid-auto-flow')", "'row stack'");
+
+    var gridAutoFlowNone= document.getElementById("gridAutoFlowNone");
+    shouldBe("window.getComputedStyle(gridAutoFlowNone, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
+
     var gridAutoFlowColumns = document.getElementById("gridAutoFlowColumns");
-    shouldBe("window.getComputedStyle(gridAutoFlowColumns, '').getPropertyValue('-webkit-grid-auto-flow')", "'none'");
+    shouldBe("window.getComputedStyle(gridAutoFlowColumns, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
 
     var gridAutoFlowRows = document.getElementById("gridAutoFlowRows");
-    shouldBe("window.getComputedStyle(gridAutoFlowRows, '').getPropertyValue('-webkit-grid-auto-flow')", "'none'");
+    shouldBe("window.getComputedStyle(gridAutoFlowRows, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
+
+    var gridAutoFlowDense = document.getElementById("gridAutoFlowDense");
+    shouldBe("window.getComputedStyle(gridAutoFlowDense, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
+
+    var gridAutoFlowColumnFoo = document.getElementById("gridAutoFlowColumnFoo");
+    shouldBe("window.getComputedStyle(gridAutoFlowColumnFoo, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
+
+    var gridAutoFlowColumnColumn = document.getElementById("gridAutoFlowColumnColumn");
+    shouldBe("window.getComputedStyle(gridAutoFlowColumnColumn, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
+
+    var gridAutoFlowDenseColumnStack = document.getElementById("gridAutoFlowDenseColumnStack");
+    shouldBe("window.getComputedStyle(gridAutoFlowDenseColumnStack, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
+
+    var gridAutoFlowDenseRowStack = document.getElementById("gridAutoFlowDenseRowStack");
+    shouldBe("window.getComputedStyle(gridAutoFlowDenseRowStack, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
+
+    var gridAutoFlowStackRowRow = document.getElementById("gridAutoFlowStackRowRow");
+    shouldBe("window.getComputedStyle(gridAutoFlowStackRowRow, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
 
     var gridAutoFlowInherit = document.getElementById("gridAutoFlowInherit");
     shouldBe("window.getComputedStyle(gridAutoFlowInherit, '').getPropertyValue('-webkit-grid-auto-flow')", "'column'");
 
     var gridAutoFlowNoInherit = document.getElementById("gridAutoFlowNoInherit");
-    shouldBe("window.getComputedStyle(gridAutoFlowNoInherit, '').getPropertyValue('-webkit-grid-auto-flow')", "'none'");
+    shouldBe("window.getComputedStyle(gridAutoFlowNoInherit, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
 
     debug("");
     debug("Test the initial value");
     element = document.createElement("div");
     document.body.appendChild(element);
-    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'none'");
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
 
     debug("");
     debug("Test getting and setting -webkit-grid-auto-flow through JS");
     element.style.webkitGridAutoFlow = "column";
     shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'column'");
-
-    element = document.createElement("div");
-    document.body.appendChild(element);
+    element.style.webkitGridAutoFlow = "column dense";
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'column dense'");
+    element.style.webkitGridAutoFlow = "row dense";
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'row dense'");
+    element.style.webkitGridAutoFlow = "dense column";
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'column dense'");
+    element.style.webkitGridAutoFlow = "dense row";
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'row dense'");
     element.style.webkitGridAutoFlow = "row";
     shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
+    element.style.webkitGridAutoFlow = "stack";
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'row stack'");
+    element.style.webkitGridAutoFlow = "stack column";
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'column stack'");
+    element.style.webkitGridAutoFlow = "stack row";
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'row stack'");
+    element.style.webkitGridAutoFlow = "column stack";
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'column stack'");
+    element.style.webkitGridAutoFlow = "row stack";
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'row stack'");
 
     debug("");
     debug("Test getting and setting bad values for -webkit-grid-auto-flow through JS");
+    element = document.createElement("div");
+    document.body.appendChild(element);
     element.style.webkitGridAutoFlow = "noone";
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
+    element.style.webkitGridAutoFlow = "dense";
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
+    element.style.webkitGridAutoFlow = "column column";
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
+    element.style.webkitGridAutoFlow = "dense column stack";
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
+    element.style.webkitGridAutoFlow = "dense row stack";
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
+    element.style.webkitGridAutoFlow = "stack row row";
     shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
 
     debug("");
     debug("Test setting -webkit-grid-auto-flow to 'initial' through JS");
     // Reusing the value so that we can check that it is set back to its initial value.
     element.style.webkitGridAutoFlow = "initial";
-    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'none'");
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>
