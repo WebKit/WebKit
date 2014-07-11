@@ -1,3 +1,10 @@
+2014-07-10  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL build fix after r170970.
+
+        * UIProcess/efl/WebContextEfl.cpp:
+        (WebKit::WebContext::platformDefaultOpenGLCacheDirectory):
+
 2014-07-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r170970) REGRESSION(r170974): [GTK] Build broken.
