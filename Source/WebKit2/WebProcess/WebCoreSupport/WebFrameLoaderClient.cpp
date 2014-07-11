@@ -567,6 +567,14 @@ void WebFrameLoaderClient::dispatchDidLayout(LayoutMilestones milestones)
         webPage->injectedBundleLoaderClient().didFirstLayoutForFrame(webPage, m_frame, userData);
         webPage->send(Messages::WebPageProxy::DidFirstLayoutForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
 
+#if PLATFORM(MAC)
+        // FIXME: Do this on DidFirstVisuallyNonEmptyLayout when Mac Safari is able to handle it (<rdar://problem/17580021>)
+        if (m_frame->isMainFrame() && !m_didCompletePageTransition && !webPage->corePage()->settings().suppressesIncrementalRendering()) {
+            webPage->didCompletePageTransition();
+            m_didCompletePageTransition = true;
+        }
+#endif
+
 #if USE(TILED_BACKING_STORE)
         // Make sure viewport properties are dispatched on the main frame by the time the first layout happens.
         ASSERT(!webPage->useFixedLayout() || m_frame != m_frame->page()->mainWebFrame() || m_frame->coreFrame()->document()->didDispatchViewportPropertiesChanged());
