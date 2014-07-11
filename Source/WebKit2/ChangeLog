@@ -1,3 +1,39 @@
+2014-07-10  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Move WKInspectorHighlightView to its own file
+        https://bugs.webkit.org/show_bug.cgi?id=134819
+
+        Reviewed by Joseph Pecoraro.
+        
+        WKInspectorHighlightView brought a lot of path/quad-related code into WKContentView.mm,
+        so move it into its own file.
+
+        * UIProcess/WKInspectorHighlightView.h: Added.
+        * UIProcess/WKInspectorHighlightView.mm: Added.
+        (-[WKInspectorHighlightView dealloc]):
+        (-[WKInspectorHighlightView _removeAllLayers]):
+        (-[WKInspectorHighlightView _createLayers:]):
+        (findIntersectionOnLineBetweenPoints):
+        (quadIntersection):
+        (layerPathWithHole):
+        (layerPath):
+        (-[WKInspectorHighlightView _layoutForNodeHighlight:]):
+        (-[WKInspectorHighlightView _layoutForRectsHighlight:]):
+        (-[WKInspectorHighlightView update:]):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKInspectorHighlightView initWithFrame:]): Deleted.
+        (-[WKInspectorHighlightView dealloc]): Deleted.
+        (-[WKInspectorHighlightView _removeAllLayers]): Deleted.
+        (-[WKInspectorHighlightView _createLayers:]): Deleted.
+        (findIntersectionOnLineBetweenPoints): Deleted.
+        (quadIntersection): Deleted.
+        (layerPathWithHole): Deleted.
+        (layerPath): Deleted.
+        (-[WKInspectorHighlightView _layoutForNodeHighlight:]): Deleted.
+        (-[WKInspectorHighlightView _layoutForRectsHighlight:]): Deleted.
+        (-[WKInspectorHighlightView update:]): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-07-10  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r170935): WKWebView is always transparent until the first layer tree commit
