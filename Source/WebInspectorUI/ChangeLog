@@ -1,3 +1,44 @@
+2014-07-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Debugger Continue button is incorrectly sized
+        https://bugs.webkit.org/show_bug.cgi?id=134786
+
+        Reviewed by Timothy Hatcher.
+
+        Before this patch everything in the DebuggerDashboardView was flexing.
+        Normally, if the contents were not too wide, this would just behave
+        as expected and be centered. If the content was too wide, then each
+        element would flex uniformly and overlap uniformly. That was not expected.
+
+        This patch changes makes everything but the link have a non-flexible
+        size. If the link (at the end) flexs it will have a nice ellipsis
+        text truncation, and the rest of the content will be left justified.
+
+        This also fixes a few other minor issues seen in the view.
+
+        * UserInterface/Views/DebuggerDashboardView.css:
+        (.dashboard.debugger .navigation-bar):
+        Reduce the complexity, give the nav bar (the resume button) some simple padding.
+
+        (.dashboard.debugger > div):
+        Make everything non-flex by default.
+
+        (.dashboard.debugger > .location):
+        The location will have an inner element flex, so make it flex.
+
+        (.dashboard.debugger > .location > *):
+        Make everything in .location non-flex by default.
+
+        (.dashboard.debugger > .location .go-to-link):
+        Make the link flex and truncate cleanly.
+
+        (.dashboard.debugger > .location .function-name):
+        Fix vertical alignment when the toolbar has small icons.
+
+        * UserInterface/Views/DebuggerDashboardView.js:
+        (WebInspector.DebuggerDashboardView.prototype._rebuildLocation):
+        Fix class name spelling.
+
 2014-07-09  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Remove uses of 'bash' in build system

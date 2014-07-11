@@ -61,7 +61,7 @@ WebInspector.DebuggerDashboardView.IconStyleClassName = "icon";
 WebInspector.DebuggerDashboardView.MessageStyleClassName = "message";
 WebInspector.DebuggerDashboardView.DividerStyleClassName = "divider";
 WebInspector.DebuggerDashboardView.LocationStyleClassName = "location";
-WebInspector.DebuggerDashboardView.FunctionNameStyleClassname = "function-name";
+WebInspector.DebuggerDashboardView.FunctionNameStyleClassName = "function-name";
 
 WebInspector.DebuggerDashboardView.prototype = {
     constructor: WebInspector.DebuggerDashboardView,
@@ -94,7 +94,7 @@ WebInspector.DebuggerDashboardView.prototype = {
 
         var nameElement = document.createElement("div");
         nameElement.appendChild(document.createTextNode(functionName));
-        nameElement.classList.add(WebInspector.DebuggerDashboardView.FunctionNameStyleClassname);
+        nameElement.classList.add(WebInspector.DebuggerDashboardView.FunctionNameStyleClassName);
         this._locationElement.appendChild(nameElement);
 
         var sourceCodeLocation = WebInspector.debuggerManager.activeCallFrame.sourceCodeLocation;

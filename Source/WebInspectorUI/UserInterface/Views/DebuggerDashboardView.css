@@ -40,7 +40,7 @@
 
 .dashboard.debugger .navigation-bar {
     border: 0;
-    margin: 0 5px 0 -5px;
+    margin-right: 4px;
 }
 
 .toolbar:not(.small-size) .dashboard.debugger .navigation-bar {
@@ -85,6 +85,15 @@
 .dashboard.debugger > div {
     display: -webkit-flex;
     -webkit-align-items: center;
+    -webkit-flex: none;
+}
+
+.dashboard.debugger > .location {
+    -webkit-flex: initial;
+}
+
+.dashboard.debugger > .location > * {
+    -webkit-flex: none;
 }
 
 .dashboard.debugger > .location > :first-child {
@@ -105,6 +114,7 @@
 
 .dashboard.debugger > .location .function-name {
     color: rgb(30, 30, 30);
+    padding-bottom: 1px;
 }
 
 .dashboard.debugger > .location .function-name::after {
@@ -114,6 +124,10 @@
 .dashboard.debugger > .location .go-to-link {
     padding-bottom: 1px;
     -webkit-text-decoration-color: #aaa;
+    
+    -webkit-flex: initial;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .toolbar.collapsed .dashboard.debugger > :not(.message):not(.navigation-bar ) {
