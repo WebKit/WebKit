@@ -427,6 +427,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
+    static RenderStyle* styleForSelectionStart(Frame* , Node *&nodeToRemove);
     bool insertParagraphSeparatorInQuotedContent();
     const SimpleFontData* fontForSelection(bool&) const;
     NSDictionary* fontAttributesForSelectionStart() const;
@@ -489,8 +490,6 @@ private:
     PassRefPtr<DocumentFragment> createFragmentForImageResourceAndAddResource(PassRefPtr<ArchiveResource>);
     PassRefPtr<DocumentFragment> createFragmentAndAddResources(NSAttributedString *);
     void fillInUserVisibleForm(PasteboardURL&);
-
-    static RenderStyle* styleForSelectionStart(Frame* , Node *&nodeToRemove);
 #endif
 
     Frame& m_frame;

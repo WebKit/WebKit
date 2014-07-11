@@ -192,6 +192,8 @@
 #include "RemoteLayerTreeDrawingArea.h"
 #include "WebVideoFullscreenManager.h"
 #include <CoreGraphics/CoreGraphics.h>
+#include <CoreText/CTFontDescriptorPriv.h>
+#include <CoreText/CTFontPriv.h>
 #include <WebCore/Icon.h>
 #endif
 
@@ -743,6 +745,24 @@ EditorState WebPage::editorState() const
         const int maxSelectedTextLength = 200;
         if (selectedText.length() <= maxSelectedTextLength)
             result.wordAtSelection = selectedText;
+    }
+    if (!selection.isNone()) {
+        Node* nodeToRemove;
+        if (RenderStyle* style = Editor::styleForSelectionStart(&frame, nodeToRemove)) {
+            CTFontRef font = style->font().primaryFont()->getCTFont();
+            CTFontSymbolicTraits traits = font ? CTFontGetSymbolicTraits(font) : 0;
+            
+            if (traits & kCTFontTraitBold)
+                result.typingAttributes |= AttributeBold;
+            if (traits & kCTFontTraitItalic)
+                result.typingAttributes |= AttributeItalics;
+            
+            if (style->textDecorationsInEffect() & TextDecorationUnderline)
+                result.typingAttributes |= AttributeUnderline;
+            
+            if (nodeToRemove)
+                nodeToRemove->remove(ASSERT_NO_EXCEPTION);
+        }
     }
 #endif
 

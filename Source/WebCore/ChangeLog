@@ -1,3 +1,16 @@
+2014-07-11  Enrica Casucci  <enrica@apple.com>
+
+        Implement textStylingAtPosition in WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=134843
+        <rdar://problem/17614981>
+        
+        Reviewed by Benjamin Poulain.
+
+        Adding some exports and making styleForSelectionStart public.
+
+        * WebCore.exp.in:
+        * editing/Editor.h:
+
 2014-07-11  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r168868): eBay 'see all' links fail due to different JS bindings conversion behavior.

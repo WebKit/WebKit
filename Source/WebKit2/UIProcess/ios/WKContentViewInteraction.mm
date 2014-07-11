@@ -44,6 +44,7 @@
 #import "WebProcessProxy.h"
 #import "_WKFormDelegate.h"
 #import "_WKFormInputSession.h"
+#import <CoreText/CTFontDescriptor.h>
 #import <DataDetectorsUI/DDDetectionController.h>
 #import <TextInput/TI_NSStringExtras.h>
 #import <UIKit/UIApplication_Private.h>
@@ -1190,6 +1191,36 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     [[UIKeyboardImpl sharedInstance] replaceText:sender];
 }
 
+- (NSDictionary *)textStylingAtPosition:(UITextPosition *)position inDirection:(UITextStorageDirection)direction
+{
+    if (!position || !_page->editorState().isContentRichlyEditable)
+        return nil;
+
+    NSMutableDictionary* result = [NSMutableDictionary dictionary];
+
+    CTFontSymbolicTraits symbolicTraits = 0;
+    if (_page->editorState().typingAttributes & AttributeBold)
+        symbolicTraits |= kCTFontBoldTrait;
+    if (_page->editorState().typingAttributes & AttributeItalics)
+        symbolicTraits |= kCTFontTraitItalic;
+
+    // We chose a random font family and size.
+    // What matters are the traits but the caller expects a font object
+    // in the dictionary for NSFontAttributeName.
+    RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateWithNameAndSize(CFSTR("Helvetica"), 10));
+    if (symbolicTraits)
+        fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(fontDescriptor.get(), symbolicTraits, symbolicTraits));
+    
+    RetainPtr<CTFontRef> font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), 10, nullptr));
+    if (font)
+        [result setObject:(id)font.get() forKey:NSFontAttributeName];
+    
+    if (_page->editorState().typingAttributes & AttributeUnderline)
+        [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
+
+    return result;
+}
+
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {
     BOOL hasWebSelection = _webSelectionAssistant && !CGRectIsEmpty(_webSelectionAssistant.get().selectionFrame);
@@ -1198,6 +1229,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         return _page->editorState().isContentRichlyEditable && _page->editorState().selectionIsRange && !_showingTextStyleOptions;
     if (_showingTextStyleOptions)
         return (action == @selector(toggleBoldface:) || action == @selector(toggleItalics:) || action == @selector(toggleUnderline:));
+    if (action == @selector(toggleBoldface:) || action == @selector(toggleItalics:) || action == @selector(toggleUnderline:))
+        return _page->editorState().isContentRichlyEditable;
     if (action == @selector(cut:))
         return !_page->editorState().isInPasswordField && _page->editorState().isContentEditable && _page->editorState().selectionIsRange;
     
@@ -1336,7 +1369,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     if (!_page->editorState().isContentRichlyEditable)
         return;
 
-    _page->executeEditCommand(ASCIILiteral("toggleBold"));
+    [self executeEditCommandWithCallback:@"toggleBold"];
 }
 
 - (void)toggleItalics:(id)sender
@@ -1344,7 +1377,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     if (!_page->editorState().isContentRichlyEditable)
         return;
 
-    _page->executeEditCommand(ASCIILiteral("toggleItalic"));
+    [self executeEditCommandWithCallback:@"toggleItalic"];
 }
 
 - (void)toggleUnderline:(id)sender
@@ -1352,7 +1385,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     if (!_page->editorState().isContentRichlyEditable)
         return;
 
-    _page->executeEditCommand(ASCIILiteral("toggleUnderline"));
+    [self executeEditCommandWithCallback:@"toggleUnderline"];
 }
 
 - (void)_showTextStyleOptions:(id)sender

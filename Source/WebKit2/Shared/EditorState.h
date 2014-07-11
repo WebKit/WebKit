@@ -36,6 +36,13 @@
 
 namespace WebKit {
 
+enum TypingAttributes {
+    AttributeNone = 0,
+    AttributeBold = 1,
+    AttributeItalics = 2,
+    AttributeUnderline = 4
+};
+
 struct EditorState {
     EditorState()
         : shouldIgnoreCompositionSelectionChange(false)
@@ -52,6 +59,7 @@ struct EditorState {
         , characterBeforeSelection(0)
         , twoCharacterBeforeSelection(0)
         , selectedTextLength(0)
+        , typingAttributes(AttributeNone)
 #endif
     {
     }
@@ -79,6 +87,7 @@ struct EditorState {
     WebCore::IntRect firstMarkedRect;
     WebCore::IntRect lastMarkedRect;
     String markedText;
+    uint32_t typingAttributes;
 #endif
 
 #if PLATFORM(GTK)

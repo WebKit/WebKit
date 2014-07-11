@@ -59,6 +59,7 @@ void EditorState::encode(IPC::ArgumentEncoder& encoder) const
     encoder << firstMarkedRect;
     encoder << lastMarkedRect;
     encoder << markedText;
+    encoder << typingAttributes;
 #endif
 
 #if PLATFORM(GTK)
@@ -116,6 +117,8 @@ bool EditorState::decode(IPC::ArgumentDecoder& decoder, EditorState& result)
     if (!decoder.decode(result.lastMarkedRect))
         return false;
     if (!decoder.decode(result.markedText))
+        return false;
+    if (!decoder.decode(result.typingAttributes))
         return false;
 #endif
 
