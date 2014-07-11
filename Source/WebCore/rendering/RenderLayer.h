@@ -377,8 +377,6 @@ public:
     bool cannotBlitToWindow() const;
 
     bool isTransparent() const { return renderer().isTransparent() || renderer().hasMask(); }
-    RenderLayer* transparentPaintingAncestor();
-    void beginTransparencyLayers(GraphicsContext*, const RenderLayer* rootLayer, const LayoutRect& paintDirtyRect, PaintBehavior);
 
     bool hasReflection() const { return renderer().hasReflection(); }
     bool isReflection() const { return renderer().isReplica(); }
@@ -1011,6 +1009,9 @@ private:
     void paintOverflowControlsForFragments(const LayerFragments&, GraphicsContext*, const LayerPaintingInfo&);
     void paintMaskForFragments(const LayerFragments&, GraphicsContext*, const LayerPaintingInfo&, RenderObject* paintingRootForRenderer);
     void paintTransformedLayerIntoFragments(GraphicsContext*, const LayerPaintingInfo&, PaintLayerFlags);
+
+    RenderLayer* transparentPaintingAncestor();
+    void beginTransparencyLayers(GraphicsContext*, const LayerPaintingInfo&, const LayoutRect& dirtyRect);
 
     RenderLayer* hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,
         const LayoutRect& hitTestRect, const HitTestLocation&, bool appliedTransform,
