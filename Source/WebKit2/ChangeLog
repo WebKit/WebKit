@@ -1,3 +1,13 @@
+2014-07-12  Javier Fernandez  <jfernandez@igalia.com>
+
+        REGRESSION(r171024) [GTK] Build broken.
+        https://bugs.webkit.org/show_bug.cgi?id=134859
+
+        Unreviewed GTK build fix.
+
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformMediaCacheDirectory):
+
 2014-07-12  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/16020380> [Cocoa] Inform the client when back-forward navigation gestures begin and end
