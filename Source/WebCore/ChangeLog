@@ -1,3 +1,10 @@
+2014-07-11  Alex Christensen  <achristensen@webkit.org>
+
+        [WinCairo] Unreviewed build fix after r170937.
+
+        * WebCore.vcxproj/WebCoreGeneratedWinCairo.make:
+        Update and apply changes applied to WebCoreGenerated.make in r170937.
+
 2014-07-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Crash when using a stale InspectableNode Node
