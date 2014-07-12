@@ -276,7 +276,12 @@ String WebContext::platformDefaultCookieStorageDirectory() const
         path = NSHomeDirectory();
 
     path = path + "/Library/Cookies";
-    return stringByResolvingSymlinksInPath(path);
+    path = stringByResolvingSymlinksInPath(path);
+    // Temporary work around for <rdar://<rdar://problem/17513375>
+    if (path == "/var/mobile/Library/Cookies")
+        return String();
+
+    return path;
 #else
     notImplemented();
     return [@"" stringByStandardizingPath];

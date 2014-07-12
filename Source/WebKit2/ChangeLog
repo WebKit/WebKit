@@ -1,3 +1,17 @@
+2014-07-12  Oliver Hunt  <oliver@apple.com>
+
+        Temporary work around for <rdar://<rdar://problem/17513375>
+        https://bugs.webkit.org/show_bug.cgi?id=134848
+
+        Reviewed by Sam Weinig.
+
+        Temporarily work around <rdar://<rdar://problem/17513375> by
+        dropping the explicit cookie storage if it points out of the
+        container.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformDefaultCookieStorageDirectory):
+
 2014-07-11  Enrica Casucci  <enrica@apple.com>
 
         Implement textStylingAtPosition in WK2.
