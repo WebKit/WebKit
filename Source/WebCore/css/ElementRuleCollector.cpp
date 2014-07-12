@@ -280,10 +280,8 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData)
             return false;
         // We know a sufficiently simple single part selector matches simply because we found it from the rule hash.
         // This is limited to HTML only so we don't need to check the namespace.
-        if (ruleData.hasRightmostSelectorMatchingHTMLBasedOnRuleHash() && m_element.isHTMLElement()) {
-            if (!ruleData.hasMultipartSelector())
-                return true;
-        }
+        if (ruleData.hasRightmostSelectorMatchingHTMLBasedOnRuleHash() && m_element.isHTMLElement())
+            return true;
     }
 
 #if ENABLE(CSS_SELECTOR_JIT)

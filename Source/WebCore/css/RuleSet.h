@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2014 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -67,7 +67,6 @@ public:
     unsigned selectorIndex() const { return m_selectorIndex; }
 
     bool hasFastCheckableSelector() const { return m_hasFastCheckableSelector; }
-    bool hasMultipartSelector() const { return m_hasMultipartSelector; }
     bool hasRightmostSelectorMatchingHTMLBasedOnRuleHash() const { return m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash; }
     bool containsUncommonAttributeSelector() const { return m_containsUncommonAttributeSelector; }
     unsigned specificity() const { return m_specificity; }
@@ -104,7 +103,6 @@ private:
     unsigned m_position : 18;
     unsigned m_hasFastCheckableSelector : 1;
     unsigned m_specificity : 24;
-    unsigned m_hasMultipartSelector : 1;
     unsigned m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash : 1;
     unsigned m_containsUncommonAttributeSelector : 1;
     unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
@@ -185,7 +183,6 @@ public:
 
 private:
     void addChildRules(const Vector<RefPtr<StyleRuleBase>>&, const MediaQueryEvaluator& medium, StyleResolver*, bool hasDocumentSecurityOrigin, AddRuleFlags);
-    bool findBestRuleSetAndAdd(const CSSSelector*, RuleData&);
 
     AtomRuleMap m_idRules;
     AtomRuleMap m_classRules;

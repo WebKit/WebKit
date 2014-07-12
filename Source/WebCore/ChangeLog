@@ -1,3 +1,37 @@
+2014-07-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        Partition the CSS rules based on the most specific filter of the rightmost fragment
+        https://bugs.webkit.org/show_bug.cgi?id=134828
+
+        Reviewed by Andreas Kling.
+
+        Previously, RuleSet was partitioning each rule based on the rightmost filter.
+        While fast, this had the side effect of putting many selectors with ID match in the class
+        bucket (because the selectors are generally written starting with the ID).
+
+        This patch replace the code of findBestRuleSetAndAdd() by a simple loop going over all
+        the simple selectors in the rightmost fragment to find the best bucket.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ruleMatches):
+        * css/RuleSet.cpp:
+        (WebCore::isSelectorMatchingHTMLBasedOnRuleHash):
+        I unified ruleData.hasRightmostSelectorMatchingHTMLBasedOnRuleHash() and hasMultipartSelector().
+
+        (WebCore::RuleData::RuleData):
+        (WebCore::rulesCountForName):
+        (WebCore::RuleSet::addRule):
+        I removed the recursive part of findBestRuleSetAndAdd() (which was wrong anyway). The function
+        was useless so I just moved the algorithm to addRule() directly.
+
+        We first loop over all the CSSSelectors related by SubSelector, this correspond to the rightmost fragment.
+        If a filter with high specificity is found, we add the rule immediately and end there.
+        If a filter that is not very specific is found, we keep a pointer to the selector to use it later.
+
+        (WebCore::RuleSet::findBestRuleSetAndAdd): Deleted.
+        * css/RuleSet.h:
+        (WebCore::RuleData::hasMultipartSelector): Deleted.
+
 2014-07-11  Alex Christensen  <achristensen@webkit.org>
 
         [WinCairo] Unreviewed build fix after r170937.
