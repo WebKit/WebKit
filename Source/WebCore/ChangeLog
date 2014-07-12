@@ -1,3 +1,45 @@
+2014-07-11  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Separate MediaSource logging into its own log channel
+        https://bugs.webkit.org/show_bug.cgi?id=134809
+
+        Reviewed by Eric Carlson.
+
+        Separate out MediaSource logging (which can be quite verbose) into its own log channel,
+        distinct from the Media log channel. Add some per-sample logging and further sequester that
+        logging into its own MediaSourceSamples log channel.
+
+        Add the MediaSource and MediaSourceSamples channels:
+        * platform/Logging.h:
+
+        Move LOG(Media) -> LOG(MediaSource):
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::MediaSource):
+        (WebCore::MediaSource::~MediaSource):
+        (WebCore::MediaSource::setReadyState):
+        (WebCore::MediaSource::addSourceBuffer):
+        (WebCore::MediaSource::removeSourceBuffer):
+        (WebCore::MediaSource::isTypeSupported):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateSeekToTime):
+        (WebCore::SourceBuffer::sourceBufferPrivateAppendComplete):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidBecomeReadyForMoreSamples):
+        (WebCore::SourceBuffer::provideMediaData):
+        (WebCore::SourceBuffer::monitorBufferingRate):
+        (WebCore::SourceBuffer::textTrackAddCues):
+        (WebCore::SourceBuffer::hasFutureTime):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset):
+        (WebCore::SourceBufferPrivateAVFObjC::didFailToParseStreamDataWithError):
+        (WebCore::SourceBufferPrivateAVFObjC::processCodedFrame):
+        (WebCore::SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID):
+        (WebCore::SourceBufferPrivateAVFObjC::append):
+        (WebCore::SourceBufferPrivateAVFObjC::layerDidReceiveError):
+        (WebCore::SourceBufferPrivateAVFObjC::rendererDidReceiveError):
+        (WebCore::SourceBufferPrivateAVFObjC::flushAndEnqueueNonDisplayingSamples):
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample):
+
 2014-07-11  Brady Eidson  <beidson@apple.com>
 
         Phone numbers that span two lines are not detected.

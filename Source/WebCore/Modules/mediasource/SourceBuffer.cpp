@@ -310,7 +310,7 @@ void SourceBuffer::removedFromMediaSource()
 
 void SourceBuffer::sourceBufferPrivateSeekToTime(SourceBufferPrivate*, const MediaTime& time)
 {
-    LOG(Media, "SourceBuffer::sourceBufferPrivateSeekToTime(%p) - time(%s)", this, toString(time).utf8().data());
+    LOG(MediaSource, "SourceBuffer::sourceBufferPrivateSeekToTime(%p) - time(%s)", this, toString(time).utf8().data());
 
     for (auto& trackBufferPair : m_trackBufferMap) {
         TrackBuffer& trackBuffer = trackBufferPair.value;
@@ -505,7 +505,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(SourceBufferPrivate*, Appen
         const AtomicString& trackID = trackBufferPair.key;
 
         if (trackBuffer.needsReenqueueing) {
-            LOG(Media, "SourceBuffer::sourceBufferPrivateAppendComplete(%p) - reenqueuing at time (%s)", this, toString(currentMediaTime).utf8().data());
+            LOG(MediaSource, "SourceBuffer::sourceBufferPrivateAppendComplete(%p) - reenqueuing at time (%s)", this, toString(currentMediaTime).utf8().data());
             reenqueueMediaForTime(trackBuffer, trackID, currentMediaTime);
         } else
             provideMediaData(trackBuffer, trackID);
@@ -1162,6 +1162,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
                 MediaTime startTime = samplePair.second->presentationTime();
                 MediaTime endTime = startTime + samplePair.second->duration() + microsecond;
                 erasedRanges->add(startTime.toDouble(), endTime.toDouble());
+                LOG(MediaSource, "SourceBuffer::sourceBufferPrivateDidReceiveSample(%p) - removing sample(%s)", this, toString(*samplePair.second).utf8().data());
                 trackBuffer.samples.removeSample(samplePair.second.get());
             }
 
@@ -1327,7 +1328,7 @@ void SourceBuffer::textTrackKindChanged(TextTrack* track)
 
 void SourceBuffer::sourceBufferPrivateDidBecomeReadyForMoreSamples(SourceBufferPrivate*, AtomicString trackID)
 {
-    LOG(Media, "SourceBuffer::sourceBufferPrivateDidBecomeReadyForMoreSamples(%p)", this);
+    LOG(MediaSource, "SourceBuffer::sourceBufferPrivateDidBecomeReadyForMoreSamples(%p)", this);
     auto it = m_trackBufferMap.find(trackID);
     if (it == m_trackBufferMap.end())
         return;
@@ -1358,7 +1359,7 @@ void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, AtomicString track
     }
     trackBuffer.decodeQueue.erase(trackBuffer.decodeQueue.begin(), sampleIt);
 
-    LOG(Media, "SourceBuffer::provideMediaData(%p) - Enqueued %u samples", this, enqueuedSamples);
+    LOG(MediaSource, "SourceBuffer::provideMediaData(%p) - Enqueued %u samples", this, enqueuedSamples);
 }
 
 void SourceBuffer::reenqueueMediaForTime(TrackBuffer& trackBuffer, AtomicString trackID, const MediaTime& time)
@@ -1421,7 +1422,7 @@ void SourceBuffer::monitorBufferingRate()
 
     m_averageBufferRate = m_averageBufferRate * (1 - ExponentialMovingAverageCoefficient) + rateSinceLastMonitor * ExponentialMovingAverageCoefficient;
 
-    LOG(Media, "SourceBuffer::monitorBufferingRate(%p) - m_avegareBufferRate: %lf", this, m_averageBufferRate);
+    LOG(MediaSource, "SourceBuffer::monitorBufferingRate(%p) - m_avegareBufferRate: %lf", this, m_averageBufferRate);
 }
 
 bool SourceBuffer::hasCurrentTime() const

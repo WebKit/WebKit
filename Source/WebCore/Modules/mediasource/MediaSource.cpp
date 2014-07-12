@@ -79,14 +79,14 @@ MediaSource::MediaSource(ScriptExecutionContext& context)
     , m_readyState(closedKeyword())
     , m_asyncEventQueue(*this)
 {
-    LOG(Media, "MediaSource::MediaSource %p", this);
+    LOG(MediaSource, "MediaSource::MediaSource %p", this);
     m_sourceBuffers = SourceBufferList::create(scriptExecutionContext());
     m_activeSourceBuffers = SourceBufferList::create(scriptExecutionContext());
 }
 
 MediaSource::~MediaSource()
 {
-    LOG(Media, "MediaSource::~MediaSource %p", this);
+    LOG(MediaSource, "MediaSource::~MediaSource %p", this);
     ASSERT(isClosed());
 }
 
@@ -292,7 +292,7 @@ void MediaSource::setReadyState(const AtomicString& state)
     ASSERT(state == openKeyword() || state == closedKeyword() || state == endedKeyword());
 
     AtomicString oldState = readyState();
-    LOG(Media, "MediaSource::setReadyState() %p : %s -> %s", this, oldState.string().ascii().data(), state.string().ascii().data());
+    LOG(MediaSource, "MediaSource::setReadyState() %p : %s -> %s", this, oldState.string().ascii().data(), state.string().ascii().data());
 
     if (state == closedKeyword()) {
         m_private.clear();
@@ -400,7 +400,7 @@ void MediaSource::streamEndedWithError(const AtomicString& error, ExceptionCode&
 
 SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec)
 {
-    LOG(Media, "MediaSource::addSourceBuffer(%s) %p", type.ascii().data(), this);
+    LOG(MediaSource, "MediaSource::addSourceBuffer(%s) %p", type.ascii().data(), this);
 
     // 2.2 https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#widl-MediaSource-addSourceBuffer-SourceBuffer-DOMString-type
     // 1. If type is null or an empty then throw an INVALID_ACCESS_ERR exception and
@@ -447,7 +447,7 @@ SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec
 
 void MediaSource::removeSourceBuffer(SourceBuffer* buffer, ExceptionCode& ec)
 {
-    LOG(Media, "MediaSource::removeSourceBuffer() %p", this);
+    LOG(MediaSource, "MediaSource::removeSourceBuffer() %p", this);
     RefPtr<SourceBuffer> protect(buffer);
 
     // 2.2 https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#widl-MediaSource-removeSourceBuffer-void-SourceBuffer-sourceBuffer
@@ -602,7 +602,7 @@ void MediaSource::removeSourceBuffer(SourceBuffer* buffer, ExceptionCode& ec)
 
 bool MediaSource::isTypeSupported(const String& type)
 {
-    LOG(Media, "MediaSource::isTypeSupported(%s)", type.ascii().data());
+    LOG(MediaSource, "MediaSource::isTypeSupported(%s)", type.ascii().data());
 
     // Section 2.2 isTypeSupported() method steps.
     // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#widl-MediaSource-isTypeSupported-boolean-DOMString-type

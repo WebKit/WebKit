@@ -54,6 +54,8 @@ namespace WebCore {
     M(LiveConnect) \
     M(Loading) \
     M(Media) \
+    M(MediaSource) \
+    M(MediaSourceSamples) \
     M(MemoryPressure) \
     M(Network) \
     M(NotYetImplemented) \

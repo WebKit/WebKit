@@ -568,7 +568,7 @@ SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
 
 void SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
 {
-    LOG(Media, "SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset(%p)", this);
+    LOG(MediaSource, "SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset(%p)", this);
 
     m_asset = asset;
 
@@ -607,7 +607,7 @@ void SourceBufferPrivateAVFObjC::didFailToParseStreamDataWithError(NSError* erro
 #if LOG_DISABLED
     UNUSED_PARAM(error);
 #endif
-    LOG(Media, "SourceBufferPrivateAVFObjC::didFailToParseStreamDataWithError(%p) - error:\"%s\"", this, String([error description]).utf8().data());
+    LOG(MediaSource, "SourceBufferPrivateAVFObjC::didFailToParseStreamDataWithError(%p) - error:\"%s\"", this, String([error description]).utf8().data());
 
     m_parsingSucceeded = false;
 }
@@ -631,14 +631,19 @@ bool SourceBufferPrivateAVFObjC::processCodedFrame(int trackID, CMSampleBufferRe
         CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer);
         FloatSize formatSize = FloatSize(CMVideoFormatDescriptionGetPresentationDimensions(formatDescription, true, true));
         if (formatSize != m_cachedSize) {
-            LOG(Media, "SourceBufferPrivateAVFObjC::processCodedFrame(%p) - size change detected: {width=%lf, height=%lf", formatSize.width(), formatSize.height());
+            LOG(MediaSource, "SourceBufferPrivateAVFObjC::processCodedFrame(%p) - size change detected: {width=%lf, height=%lf", formatSize.width(), formatSize.height());
             m_cachedSize = formatSize;
             if (m_mediaSource)
                 m_mediaSource->player()->sizeChanged();
         }
     }
-    if (m_client)
-        m_client->sourceBufferPrivateDidReceiveSample(this, MediaSampleAVFObjC::create(sampleBuffer, trackID));
+
+
+    if (m_client) {
+        RefPtr<MediaSample> mediaSample = MediaSampleAVFObjC::create(sampleBuffer, trackID);
+        LOG(MediaSourceSamples, "SourceBufferPrivateAVFObjC::processCodedFrame(%p) - sample(%s)", this, toString(*mediaSample).utf8().data());
+        m_client->sourceBufferPrivateDidReceiveSample(this, mediaSample.release());
+    }
 
     return true;
 }
@@ -657,7 +662,7 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
 
     UNUSED_PARAM(trackID);
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-    LOG(Media, "SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(%p) - track:%d", this, trackID);
+    LOG(MediaSource, "SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(%p) - track:%d", this, trackID);
     m_protectedTrackID = trackID;
     RefPtr<Uint8Array> initDataArray = Uint8Array::create([initData length]);
     [initData getBytes:initDataArray->data() length:initDataArray->length()];
@@ -684,7 +689,7 @@ static dispatch_queue_t globalDataParserQueue()
 
 void SourceBufferPrivateAVFObjC::append(const unsigned char* data, unsigned length)
 {
-    LOG(Media, "SourceBufferPrivateAVFObjC::append(%p) - data:%p, length:%d", this, data, length);
+    LOG(MediaSource, "SourceBufferPrivateAVFObjC::append(%p) - data:%p, length:%d", this, data, length);
 
     RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:data length:length]);
     WeakPtr<SourceBufferPrivateAVFObjC> weakThis = createWeakPtr();
@@ -860,7 +865,7 @@ void SourceBufferPrivateAVFObjC::unregisterForErrorNotifications(SourceBufferPri
 
 void SourceBufferPrivateAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer *layer, NSError *error)
 {
-    LOG(Media, "SourceBufferPrivateAVFObjC::layerDidReceiveError(%p): layer(%p), error(%@)", this, layer, [error description]);
+    LOG(MediaSource, "SourceBufferPrivateAVFObjC::layerDidReceiveError(%p): layer(%p), error(%@)", this, layer, [error description]);
     for (auto& client : m_errorClients)
         client->layerDidReceiveError(layer, error);
 
@@ -872,7 +877,7 @@ void SourceBufferPrivateAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer
 
 void SourceBufferPrivateAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRenderer *renderer, NSError *error)
 {
-    LOG(Media, "SourceBufferPrivateAVFObjC::rendererDidReceiveError(%p): renderer(%p), error(%@)", this, renderer, [error description]);
+    LOG(MediaSource, "SourceBufferPrivateAVFObjC::rendererDidReceiveError(%p): renderer(%p), error(%@)", this, renderer, [error description]);
     for (auto& client : m_errorClients)
         client->rendererDidReceiveError(renderer, error);
 }
@@ -896,7 +901,7 @@ static RetainPtr<CMSampleBufferRef> createNonDisplayingCopy(CMSampleBufferRef sa
 void SourceBufferPrivateAVFObjC::flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>> mediaSamples, AtomicString trackIDString)
 {
     int trackID = trackIDString.toInt();
-    LOG(Media, "SourceBufferPrivateAVFObjC::flushAndEnqueueNonDisplayingSamples(%p) samples: %d samples, trackId: %d", this, mediaSamples.size(), trackID);
+    LOG(MediaSource, "SourceBufferPrivateAVFObjC::flushAndEnqueueNonDisplayingSamples(%p) samples: %d samples, trackId: %d", this, mediaSamples.size(), trackID);
 
     if (trackID == m_enabledVideoTrackID)
         flushAndEnqueueNonDisplayingSamples(mediaSamples, m_displayLayer.get());
@@ -927,6 +932,8 @@ void SourceBufferPrivateAVFObjC::flushAndEnqueueNonDisplayingSamples(Vector<RefP
     for (auto it = mediaSamples.begin(), end = mediaSamples.end(); it != end; ++it) {
         RefPtr<MediaSample>& mediaSample = *it;
 
+        LOG(MediaSourceSamples, "SourceBufferPrivateAVFObjC::flushAndEnqueueNonDisplayingSamples(%p) - sample(%s)", this, toString(*mediaSample).utf8().data());
+
         PlatformSample platformSample = mediaSample->platformSample();
         ASSERT(platformSample.type == PlatformSample::CMSampleBufferType);
 
@@ -950,6 +957,8 @@ void SourceBufferPrivateAVFObjC::enqueueSample(PassRefPtr<MediaSample> prpMediaS
     PlatformSample platformSample = mediaSample->platformSample();
     if (platformSample.type != PlatformSample::CMSampleBufferType)
         return;
+
+    LOG(MediaSourceSamples, "SourceBufferPrivateAVFObjC::enqueueSample(%p) - sample(%s)", this, toString(*mediaSample).utf8().data());
 
     if (trackID == m_enabledVideoTrackID) {
         [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
