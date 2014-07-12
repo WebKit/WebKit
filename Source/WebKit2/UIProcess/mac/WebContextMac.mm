@@ -278,7 +278,7 @@ String WebContext::platformDefaultCookieStorageDirectory() const
     path = path + "/Library/Cookies";
     path = stringByResolvingSymlinksInPath(path);
     // Temporary work around for <rdar://<rdar://problem/17513375>
-    if (path == "/var/mobile/Library/Cookies")
+    if (path == "/private/var/mobile/Library/Cookies")
         return String();
 
     return path;

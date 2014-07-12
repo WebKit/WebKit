@@ -1,3 +1,15 @@
+2014-07-12  Oliver Hunt  <oliver@apple.com>
+
+        Fix typo in prior patch
+        https://bugs.webkit.org/show_bug.cgi?id=134858
+
+        Reviewed by Sam Weinig.
+
+        Fix typo
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformDefaultCookieStorageDirectory):
+
 2014-07-12  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Client is not notified of same-document navigations
