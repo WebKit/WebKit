@@ -59,6 +59,13 @@ typedef NS_ENUM(NSInteger, _WKSameDocumentNavigationType) {
 
 - (NSData *)_webCryptoMasterKeyForWebView:(WKWebView *)webView;
 
+- (void)_webViewDidBeginNavigationGesture:(WKWebView *)webView;
+// Item is nil if the gesture ended without navigation.
+- (void)_webViewDidEndNavigationGesture:(WKWebView *)webView withNavigationToBackForwardListItem:(WKBackForwardListItem *)item;
+// Only called if how the gesture will end (with or without navigation) is known before it ends.
+- (void)_webViewWillEndNavigationGesture:(WKWebView *)webView withNavigationToBackForwardListItem:(WKBackForwardListItem *)item;
+
+
 #if TARGET_OS_IPHONE
 - (void)_webView:(WKWebView *)webView didStartLoadForQuickLookDocumentInMainFrameWithFileName:(NSString *)fileName uti:(NSString *)uti;
 - (void)_webView:(WKWebView *)webView didFinishLoadForQuickLookDocumentInMainFrame:(NSData *)documentData;

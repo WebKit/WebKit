@@ -157,7 +157,9 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
 {
     if (m_activeGestureType != ViewGestureType::None)
         return;
-    
+
+    m_webPageProxy.navigationGestureDidBegin();
+
     ViewSnapshotStore::shared().recordSnapshot(m_webPageProxy);
 
     WebKit::WebBackForwardListItem* targetItem = direction == SwipeDirection::Left ? m_webPageProxy.backForwardList().backItem() : m_webPageProxy.backForwardList().forwardItem();
@@ -209,6 +211,10 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     [transitionContext _setAnimator:animationController.get()];
     [transitionContext _setInteractor:transition];
     [transitionContext _setTransitionIsInFlight:YES];
+    [transitionContext _setInteractiveUpdateHandler:^(BOOL finish, CGFloat percent, BOOL transitionCompleted, _UIViewControllerTransitionContext *) {
+        if (finish)
+            m_webPageProxy.navigationGestureWillEnd(transitionCompleted, *targetItem);
+    }];
     [transitionContext _setCompletionHandler:^(_UIViewControllerTransitionContext *context, BOOL didComplete) { endSwipeGesture(targetItem, context, !didComplete); }];
     [transitionContext _setInteractiveUpdateHandler:^(BOOL, CGFloat, BOOL, _UIViewControllerTransitionContext *) { }];
 
@@ -240,6 +246,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     
     if (cancelled) {
         removeSwipeSnapshot();
+        m_webPageProxy.navigationGestureDidEnd(false, *targetItem);
         return;
     }
 
@@ -251,6 +258,8 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     // like we normally would when going back or forward, because we are
     // displaying the destination item's snapshot.
     ViewSnapshotStore::shared().disableSnapshotting();
+
+    m_webPageProxy.navigationGestureDidEnd(true, *targetItem);
     m_webPageProxy.goToBackForwardItem(targetItem);
     ViewSnapshotStore::shared().enableSnapshotting();
 
@@ -314,6 +323,8 @@ void ViewGestureController::removeSwipeSnapshot()
     
     m_snapshotRemovalTargetRenderTreeSize = 0;
     m_activeGestureType = ViewGestureType::None;
+
+    m_webPageProxy.navigationGestureSnapshotWasRemoved();
 }
 
 } // namespace WebKit

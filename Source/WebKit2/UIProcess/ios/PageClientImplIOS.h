@@ -167,6 +167,10 @@ private:
 
     virtual Vector<String> mimeTypesWithCustomContentProviders() override;
 
+    virtual void navigationGestureDidBegin() override;
+    virtual void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&) override;
+    virtual void navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem&) override;
+
     WKContentView *m_contentView;
     WKWebView *m_webView;
     RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;

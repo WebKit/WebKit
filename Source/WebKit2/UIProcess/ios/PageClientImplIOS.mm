@@ -32,8 +32,9 @@
 #import "DataReference.h"
 #import "DownloadProxy.h"
 #import "FindIndicator.h"
-#import "NativeWebKeyboardEvent.h"
 #import "InteractionInformationAtPosition.h"
+#import "NativeWebKeyboardEvent.h"
+#import "NavigationState.h"
 #import "ViewSnapshotStore.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
@@ -649,6 +650,21 @@ void PageClientImpl::didFinishDrawingPagesToPDF(const IPC::DataReference& pdfDat
 Vector<String> PageClientImpl::mimeTypesWithCustomContentProviders()
 {
     return m_webView.configuration._contentProviderRegistry._mimeTypesWithCustomContentProviders;
+}
+
+void PageClientImpl::navigationGestureDidBegin()
+{
+    NavigationState::fromWebPage(*m_webView->_page).navigationGestureDidBegin();
+}
+
+void PageClientImpl::navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem& item)
+{
+    NavigationState::fromWebPage(*m_webView->_page).navigationGestureWillEnd(willNavigate, item);
+}
+
+void PageClientImpl::navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem& item)
+{
+    NavigationState::fromWebPage(*m_webView->_page).navigationGestureDidEnd(willNavigate, item);
 }
 
 } // namespace WebKit

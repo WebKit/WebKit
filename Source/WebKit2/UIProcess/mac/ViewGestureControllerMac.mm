@@ -496,6 +496,8 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 {
     ASSERT(m_currentSwipeLiveLayers.isEmpty());
 
+    m_webPageProxy.navigationGestureDidBegin();
+
     m_activeGestureType = ViewGestureType::Swipe;
 
     CALayer *rootContentLayer = m_webPageProxy.acceleratedCompositingRootLayer();
@@ -626,6 +628,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
 
     if (cancelled) {
         removeSwipeSnapshot();
+        m_webPageProxy.navigationGestureDidEnd(false, *targetItem);
         return;
     }
 
@@ -639,6 +642,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     // like we normally would when going back or forward, because we are
     // displaying the destination item's snapshot.
     ViewSnapshotStore::shared().disableSnapshotting();
+    m_webPageProxy.navigationGestureDidEnd(true, *targetItem);
     m_webPageProxy.goToBackForwardItem(targetItem);
     ViewSnapshotStore::shared().enableSnapshotting();
 
@@ -685,6 +689,8 @@ void ViewGestureController::removeSwipeSnapshot()
     m_currentSwipeLiveLayers.clear();
 
     m_activeGestureType = ViewGestureType::None;
+
+    m_webPageProxy.navigationGestureSnapshotWasRemoved();
 }
 
 void ViewGestureController::endActiveGesture()

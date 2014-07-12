@@ -173,6 +173,10 @@ private:
     virtual void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
 #endif
 
+    virtual void navigationGestureDidBegin() override;
+    virtual void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&) override;
+    virtual void navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem&) override;
+
     NSView *activeView() const;
 
     WKView *m_wkView;

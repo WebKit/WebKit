@@ -1980,6 +1980,11 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return NO;
 }
 
+- (BOOL)_isShowingNavigationGestureSnapshot
+{
+    return _page->isShowingNavigationGestureSnapshot();
+}
+
 #pragma mark iOS-specific methods
 
 #if PLATFORM(IOS)

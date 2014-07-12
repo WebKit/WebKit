@@ -101,6 +101,8 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 
 @property (nonatomic, readonly) BOOL _networkRequestsInProgress;
 
+@property (nonatomic, readonly, getter=_isShowingNavigationGestureSnapshot) BOOL _showingNavigationGestureSnapshot;
+
 - (void)_close;
 
 #if TARGET_OS_IPHONE

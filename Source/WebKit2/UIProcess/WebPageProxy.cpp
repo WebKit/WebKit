@@ -355,6 +355,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_enableHorizontalRubberBanding(true)
     , m_backgroundExtendsBeyondPage(false)
     , m_shouldRecordNavigationSnapshots(false)
+    , m_isShowingNavigationGestureSnapshot(false)
     , m_pageCount(0)
     , m_renderTreeSize(0)
     , m_shouldSendEventsSynchronously(false)
@@ -5124,6 +5125,27 @@ void WebPageProxy::takeSnapshot(IntRect rect, IntSize bitmapSize, SnapshotOption
 
     uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
     m_process->send(Messages::WebPage::TakeSnapshot(rect, bitmapSize, options, callbackID), m_pageID);
+}
+
+void WebPageProxy::navigationGestureDidBegin()
+{
+    m_isShowingNavigationGestureSnapshot = true;
+    m_pageClient.navigationGestureDidBegin();
+}
+
+void WebPageProxy::navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem& item)
+{
+    m_pageClient.navigationGestureWillEnd(willNavigate, item);
+}
+
+void WebPageProxy::navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem& item)
+{
+    m_pageClient.navigationGestureDidEnd(willNavigate, item);
+}
+
+void WebPageProxy::navigationGestureSnapshotWasRemoved()
+{
+    m_isShowingNavigationGestureSnapshot = false;
 }
 
 } // namespace WebKit

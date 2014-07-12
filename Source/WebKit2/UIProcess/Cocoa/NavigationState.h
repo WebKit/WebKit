@@ -74,6 +74,11 @@ public:
     void didPerformServerRedirect(const WTF::String& sourceURL, const WTF::String& destinationURL);
     void didUpdateHistoryTitle(const WTF::String& title, const WTF::String& url);
 
+    // Called by the page client.
+    void navigationGestureDidBegin();
+    void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&);
+    void navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem&);
+
 private:
     class PolicyClient : public API::PolicyClient {
     public:
@@ -158,6 +163,9 @@ private:
         bool webViewDidReceiveAuthenticationChallenge : 1;
         bool webViewWebProcessDidCrash : 1;
         bool webCryptoMasterKeyForWebView : 1;
+        bool webViewDidBeginNavigationGesture : 1;
+        bool webViewWillEndNavigationGestureWithNavigationToBackForwardListItem : 1;
+        bool webViewDidEndNavigationGestureWithNavigationToBackForwardListItem : 1;
 #if USE(QUICK_LOOK)
         bool webViewDidStartLoadForQuickLookDocumentInMainFrame : 1;
         bool webViewDidFinishLoadForQuickLookDocumentInMainFrame : 1;

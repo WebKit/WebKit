@@ -897,6 +897,13 @@ public:
 
     void takeSnapshot(WebCore::IntRect, WebCore::IntSize bitmapSize, SnapshotOptions, std::function<void (const ShareableBitmap::Handle&, CallbackBase::Error)>);
 
+    void navigationGestureDidBegin();
+    void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&);
+    void navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem&);
+    void navigationGestureSnapshotWasRemoved();
+
+    bool isShowingNavigationGestureSnapshot() const { return m_isShowingNavigationGestureSnapshot; }
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);
     void platformInitialize();
@@ -1485,6 +1492,7 @@ private:
     bool m_backgroundExtendsBeyondPage;
 
     bool m_shouldRecordNavigationSnapshots;
+    bool m_isShowingNavigationGestureSnapshot;
 
     unsigned m_pageCount;
 
