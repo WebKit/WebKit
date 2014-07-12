@@ -69,6 +69,8 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << cookieStorageDirectoryExtensionHandle;
     encoder << openGLCacheDirectory;
     encoder << openGLCacheDirectoryExtensionHandle;
+    encoder << mediaCacheDirectory;
+    encoder << mediaCacheDirectoryExtensionHandle;
     encoder << shouldUseTestingNetworkSession;
     encoder << urlSchemesRegistererdAsEmptyDocument;
     encoder << urlSchemesRegisteredAsSecure;
@@ -165,6 +167,10 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
     if (!decoder.decode(parameters.openGLCacheDirectory))
         return false;
     if (!decoder.decode(parameters.openGLCacheDirectoryExtensionHandle))
+        return false;
+    if (!decoder.decode(parameters.mediaCacheDirectory))
+        return false;
+    if (!decoder.decode(parameters.mediaCacheDirectoryExtensionHandle))
         return false;
     if (!decoder.decode(parameters.shouldUseTestingNetworkSession))
         return false;

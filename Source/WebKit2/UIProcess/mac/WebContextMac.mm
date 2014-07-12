@@ -303,6 +303,18 @@ String WebContext::platformDefaultOpenGLCacheDirectory() const
 #endif
 }
 
+String WebContext::platformMediaCacheDirectory() const
+{
+#if PLATFORM(IOS)
+    String path = NSTemporaryDirectory();
+    path = path + "/MediaCache";
+    return stringByResolvingSymlinksInPath(path);
+#else
+    notImplemented();
+    return [@"" stringByStandardizingPath];
+#endif
+}
+
 String WebContext::platformDefaultWebSQLDatabaseDirectory()
 {
     NSString *databasesDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebDatabaseDirectoryDefaultsKey];

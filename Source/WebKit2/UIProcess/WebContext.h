@@ -426,6 +426,9 @@ private:
     String openGLCacheDirectory() const;
     String platformDefaultOpenGLCacheDirectory() const;
 
+    String mediaCacheDirectory() const;
+    String platformMediaCacheDirectory() const;
+
 #if PLATFORM(COCOA)
     void registerNotificationObservers();
     void unregisterNotificationObservers();
@@ -522,6 +525,7 @@ private:
     String m_overrideDiskCacheDirectory;
     String m_overrideCookieStorageDirectory;
     String m_overrideOpenGLCacheDirectory;
+    String m_overrideMediaCacheDirectory;
 
     String m_webSQLDatabaseDirectory;
     String m_indexedDBDatabaseDirectory;

@@ -594,6 +594,10 @@ WebProcessProxy& WebContext::createNewWebProcess()
     if (!parameters.openGLCacheDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.openGLCacheDirectory, parameters.openGLCacheDirectoryExtensionHandle);
 
+    parameters.mediaCacheDirectory = mediaCacheDirectory();
+    if (!parameters.mediaCacheDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(parameters.mediaCacheDirectory, parameters.mediaCacheDirectoryExtensionHandle);
+
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
 
     parameters.cacheModel = m_cacheModel;
@@ -1185,6 +1189,14 @@ String WebContext::openGLCacheDirectory() const
         return m_overrideOpenGLCacheDirectory;
 
     return platformDefaultOpenGLCacheDirectory();
+}
+
+String WebContext::mediaCacheDirectory() const
+{
+    if (!m_overrideMediaCacheDirectory.isEmpty())
+        return m_overrideMediaCacheDirectory;
+
+    return platformMediaCacheDirectory();
 }
 
 void WebContext::useTestingNetworkSession()

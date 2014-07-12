@@ -74,6 +74,8 @@ struct WebProcessCreationParameters {
     SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
     String openGLCacheDirectory;
     SandboxExtension::Handle openGLCacheDirectoryExtensionHandle;
+    String mediaCacheDirectory;
+    SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
 
     bool shouldUseTestingNetworkSession;
 

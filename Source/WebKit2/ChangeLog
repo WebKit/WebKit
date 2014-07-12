@@ -1,5 +1,29 @@
 2014-07-12  Oliver Hunt  <oliver@apple.com>
 
+        Extend WebContent sandbox to allow some extra access for frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=134844
+
+        Reviewed by Sam Weinig.
+
+        Open up the webcontent sandbox a bit so that some external frameworks
+        can work correctly.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess):
+        (WebKit::WebContext::mediaCacheDirectory):
+        * UIProcess/WebContext.h:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformMediaCacheDirectory):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
+2014-07-12  Oliver Hunt  <oliver@apple.com>
+
         Temporary work around for <rdar://<rdar://problem/17513375>
         https://bugs.webkit.org/show_bug.cgi?id=134848
 
