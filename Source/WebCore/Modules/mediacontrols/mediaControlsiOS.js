@@ -78,6 +78,9 @@ ControllerIOS.prototype = {
         if (!this.video.controls && allowsInline)
             return false;
 
+        if (this.video.currentSrc && this.video.error)
+            return true;
+
         if (!this.host.userGestureRequired && allowsInline)
             return false;
 
@@ -415,7 +418,8 @@ ControllerIOS.prototype = {
     },
 
     handleWirelessPickerButtonTouchStart: function() {
-        this.controls.wirelessTargetPicker.classList.add('active');
+        if (!this.video.error)
+            this.controls.wirelessTargetPicker.classList.add('active');
     },
 
     handleWirelessPickerButtonTouchEnd: function(event) {
@@ -427,6 +431,13 @@ ControllerIOS.prototype = {
     handleWirelessPickerButtonTouchCancel: function(event) {
         this.controls.wirelessTargetPicker.classList.remove('active');
         return true;
+    },
+
+    updateStatusDisplay: function(event)
+    {
+        this.controls.playButton.classList.toggle(this.ClassNames.failed, this.video.error !== null);
+        this.controls.startPlaybackButton.classList.toggle(this.ClassNames.failed, this.video.error !== null);
+        Controller.prototype.updateStatusDisplay.call(this, event);
     },
 
     get pageScaleFactor() {

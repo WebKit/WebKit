@@ -71,6 +71,7 @@ Controller.prototype = {
     ClassNames: {
         active: 'active',
         exit: 'exit',
+        failed: 'failed',
         hidden: 'hidden',
         hiding: 'hiding',
         hourLongTime: 'hour-long-time',
