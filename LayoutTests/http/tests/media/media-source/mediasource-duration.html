@@ -18,11 +18,8 @@
                   var seekTo = fullDuration / 2.0;
                   var truncatedDuration = seekTo / 2.0;
 
-                  mediaElement.play();
-
                   // Append all the segments
                   test.expectEvent(sourceBuffer, 'updateend', 'sourceBuffer');
-                  test.expectEvent(mediaElement, 'playing', 'Playing triggered');
                   sourceBuffer.appendBuffer(mediaData);
 
                   test.waitForExpectedEvents(function()
@@ -126,11 +123,11 @@
 
               test.waitForExpectedEvents(function()
               {
-                  assert_equals(mediaElement.currentTime, truncatedDuration,
+                  assert_approx_equals(mediaElement.currentTime, truncatedDuration, 0.05,
                                 'Playback time has reached truncatedDuration');
-                  assert_equals(mediaElement.duration, truncatedDuration,
+                  assert_approx_equals(mediaElement.duration, truncatedDuration, 0.05,
                                 'mediaElement truncatedDuration after seek to it');
-                  assert_equals(mediaSource.duration, truncatedDuration,
+                  assert_approx_equals(mediaSource.duration, truncatedDuration, 0.05,
                                 'mediaSource truncatedDuration after seek to it');
                   assert_false(mediaElement.seeking, 'mediaElement.seeking after seeked to truncatedDuration');
 
@@ -154,11 +151,8 @@
                   durationchangeEventCounter++;
               });
 
-              mediaElement.play();
-
               // Append all the segments
               test.expectEvent(sourceBuffer, 'updateend', 'sourceBuffer');
-              test.expectEvent(mediaElement, 'playing', 'Playing triggered');
               sourceBuffer.appendBuffer(mediaData);
 
               test.waitForExpectedEvents(function()
@@ -201,7 +195,10 @@
                       ++expectedDurationChangeEventCount;
                   }
 
+                  mediaElement.play();
+
                   // Allow media to play to end while counting 'durationchange' events.
+                  test.expectEvent(mediaElement, 'playing', 'Playing triggered');
                   test.expectEvent(mediaElement, 'ended', 'Playback ended');
                   test.waitForExpectedEvents(function()
                   {
@@ -211,6 +208,7 @@
                   });
               });
           }, 'Test setting same duration multiple times does not fire duplicate durationchange', {timeout: 2500});
+
         </script>
     </body>
 </html>

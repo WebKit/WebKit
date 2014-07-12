@@ -233,6 +233,7 @@ void SourceBuffer::abort(ExceptionCode& ec)
 
 void SourceBuffer::remove(double start, double end, ExceptionCode& ec)
 {
+    LOG(MediaSource, "SourceBuffer::remove(%p) - start(%s), end(%s)", this, toString(start).utf8().data(), toString(end).utf8().data());
     // Section 3.2 remove() method steps.
     // 1. If start is negative or greater than duration, then throw an InvalidAccessError exception and abort these steps.
     // 2. If end is less than or equal to start, then throw an InvalidAccessError exception and abort these steps.
@@ -308,9 +309,9 @@ void SourceBuffer::removedFromMediaSource()
     m_source = 0;
 }
 
-void SourceBuffer::sourceBufferPrivateSeekToTime(SourceBufferPrivate*, const MediaTime& time)
+void SourceBuffer::seekToTime(const MediaTime& time)
 {
-    LOG(MediaSource, "SourceBuffer::sourceBufferPrivateSeekToTime(%p) - time(%s)", this, toString(time).utf8().data());
+    LOG(MediaSource, "SourceBuffer::seekToTime(%p) - time(%s)", this, toString(time).utf8().data());
 
     for (auto& trackBufferPair : m_trackBufferMap) {
         TrackBuffer& trackBuffer = trackBufferPair.value;
@@ -318,8 +319,6 @@ void SourceBuffer::sourceBufferPrivateSeekToTime(SourceBufferPrivate*, const Med
 
         reenqueueMediaForTime(trackBuffer, trackID, time);
     }
-
-    m_source->monitorSourceBuffers();
 }
 
 MediaTime SourceBuffer::sourceBufferPrivateFastSeekTimeForMediaTime(SourceBufferPrivate*, const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
@@ -527,6 +526,8 @@ static bool decodeTimeComparator(const PresentationOrderSampleMap::MapType::valu
 
 void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& end)
 {
+    LOG(MediaSource, "SourceBuffer::removeCodedFrames(%p) - start(%s), end(%s)", this, toString(start).utf8().data(), toString(end).utf8().data());
+
     // 3.5.9 Coded Frame Removal Algorithm
     // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#sourcebuffer-coded-frame-removal
 
@@ -1449,7 +1450,8 @@ bool SourceBuffer::hasFutureTime() const
         return false;
 
     size_t found = ranges.find(nearest);
-    ASSERT(found != notFound);
+    if (found == notFound)
+        return false;
 
     bool ignoredValid = false;
     return ranges.end(found, ignoredValid) - currentTime > currentTimeFudgeFactor();

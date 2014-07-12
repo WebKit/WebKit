@@ -42,18 +42,21 @@ class MediaSourceGStreamer final : public MediaSourcePrivate {
 public:
     static void open(MediaSourcePrivateClient*, WebKitMediaSrc*);
     ~MediaSourceGStreamer();
-    AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&);
-    MediaTime duration() { return m_duration; }
-    void setDuration(const MediaTime&);
-    void markEndOfStream(EndOfStreamStatus);
-    void unmarkEndOfStream();
-    MediaPlayer::ReadyState readyState() const { return m_readyState; }
-    void setReadyState(MediaPlayer::ReadyState readyState) { m_readyState = readyState; }
 
 private:
+    // MediaSourcePrivate
+    virtual AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) override;
+    virtual void durationChanged() override;
+    virtual void markEndOfStream(EndOfStreamStatus) override;
+    virtual void unmarkEndOfStream() override;
+    virtual MediaPlayer::ReadyState readyState() const override { return m_readyState; }
+    virtual void setReadyState(MediaPlayer::ReadyState readyState) override { m_readyState = readyState; }
+    virtual void waitForSeekCompleted() override { }
+    virtual void seekCompleted() override { }
+
     RefPtr<MediaSourceClientGstreamer> m_client;
-    MediaSourceGStreamer(WebKitMediaSrc*);
-    MediaTime m_duration;
+    MediaSourcePrivateClient* m_mediaSource;
+    MediaSourceGStreamer(MediaSourcePrivateClient*, WebKitMediaSrc*);
     MediaPlayer::ReadyState m_readyState;
 };
 

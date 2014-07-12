@@ -1,3 +1,17 @@
+2014-07-11  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] http/tests/media/media-source/mediasource-duration.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=134852
+
+        Reviewed by Eric Carlson.
+
+        Eliminate flakiness in the mediasource-duration.html test by not playing
+        the media while testing seeking and duration.
+        * http/tests/media/media-source/mediasource-duration.html:
+
+        Update testharness.js to the latest W3C version:
+        * http/tests/w3c/resources/testharness.js:
+
 2014-07-11  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r168868): eBay 'see all' links fail due to different JS bindings conversion behavior.

@@ -30,19 +30,22 @@
 
 #include "ContentType.h"
 #include "ExceptionCodePlaceholder.h"
+#include "MediaSourcePrivateClient.h"
 #include "MockMediaPlayerMediaSource.h"
 #include "MockSourceBufferPrivate.h"
 
 namespace WebCore {
 
-RefPtr<MockMediaSourcePrivate> MockMediaSourcePrivate::create(MockMediaPlayerMediaSource* parent)
+RefPtr<MockMediaSourcePrivate> MockMediaSourcePrivate::create(MockMediaPlayerMediaSource* parent, MediaSourcePrivateClient* client)
 {
-    return adoptRef(new MockMediaSourcePrivate(parent));
+    RefPtr<MockMediaSourcePrivate> mediaSourcePrivate = adoptRef(new MockMediaSourcePrivate(parent, client));
+    client->setPrivateAndOpen(*mediaSourcePrivate);
+    return mediaSourcePrivate;
 }
 
-MockMediaSourcePrivate::MockMediaSourcePrivate(MockMediaPlayerMediaSource* parent)
+MockMediaSourcePrivate::MockMediaSourcePrivate(MockMediaPlayerMediaSource* parent, MediaSourcePrivateClient* client)
     : m_player(parent)
-    , m_duration(MediaTime::invalidTime())
+    , m_client(client)
     , m_isEnded(false)
     , m_totalVideoFrames(0)
     , m_droppedVideoFrames(0)
@@ -84,18 +87,19 @@ void MockMediaSourcePrivate::removeSourceBuffer(SourceBufferPrivate* buffer)
     m_sourceBuffers.remove(pos);
 }
 
-MediaTime MockMediaSourcePrivate::duration()
+double MockMediaSourcePrivate::duration()
 {
-    return m_duration;
+    return m_client->duration();
 }
 
-void MockMediaSourcePrivate::setDuration(const MediaTime& duration)
+std::unique_ptr<PlatformTimeRanges> MockMediaSourcePrivate::buffered()
 {
-    if (duration == m_duration)
-        return;
+    return m_client->buffered();
+}
 
-    m_duration = duration;
-    m_player->updateDuration(duration);
+void MockMediaSourcePrivate::durationChanged()
+{
+    m_player->updateDuration(MediaTime::createWithDouble(duration()));
 }
 
 void MockMediaSourcePrivate::markEndOfStream(EndOfStreamStatus status)
@@ -118,6 +122,16 @@ MediaPlayer::ReadyState MockMediaSourcePrivate::readyState() const
 void MockMediaSourcePrivate::setReadyState(MediaPlayer::ReadyState readyState)
 {
     m_player->setReadyState(readyState);
+}
+
+void MockMediaSourcePrivate::waitForSeekCompleted()
+{
+    m_player->waitForSeekCompleted();
+}
+
+void MockMediaSourcePrivate::seekCompleted()
+{
+    m_player->seekCompleted();
 }
 
 void MockMediaSourcePrivate::sourceBufferPrivateDidChangeActiveState(MockSourceBufferPrivate* buffer, bool active)

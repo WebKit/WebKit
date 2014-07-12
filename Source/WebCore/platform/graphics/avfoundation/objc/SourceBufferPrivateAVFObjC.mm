@@ -122,6 +122,7 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
 - (void)appendStreamData:(NSData *)data;
 - (void)setShouldProvideMediaData:(BOOL)shouldProvideMediaData forTrackID:(CMPersistentTrackID)trackID;
 - (BOOL)shouldProvideMediaDataForTrackID:(CMPersistentTrackID)trackID;
+- (void)providePendingMediaData;
 - (void)processContentKeyResponseData:(NSData *)contentKeyResponseData forTrackID:(CMPersistentTrackID)trackID;
 - (void)processContentKeyResponseError:(NSError *)error forTrackID:(CMPersistentTrackID)trackID;
 - (void)renewExpiringContentKeyResponseDataForTrackID:(CMPersistentTrackID)trackID;
@@ -682,7 +683,7 @@ static dispatch_queue_t globalDataParserQueue()
     static dispatch_queue_t globalQueue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        globalQueue = dispatch_queue_create("SourceBufferPrivateAVFObjC data parser queue", DISPATCH_QUEUE_SERIAL);
+        globalQueue = dispatch_queue_create("SourceBufferPrivateAVFObjC data parser queue", DISPATCH_QUEUE_CONCURRENT);
     });
     return globalQueue;
 }

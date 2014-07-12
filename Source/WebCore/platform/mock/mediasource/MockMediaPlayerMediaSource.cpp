@@ -84,10 +84,10 @@ MediaPlayer::SupportsType MockMediaPlayerMediaSource::supportsType(const MediaEn
 MockMediaPlayerMediaSource::MockMediaPlayerMediaSource(MediaPlayer* player)
     : m_player(player)
     , m_currentTime(MediaTime::zeroTime())
-    , m_duration(MediaTime::zeroTime())
     , m_readyState(MediaPlayer::HaveNothing)
     , m_networkState(MediaPlayer::Empty)
     , m_playing(false)
+    , m_seekCompleted(true)
 {
 }
 
@@ -102,9 +102,7 @@ void MockMediaPlayerMediaSource::load(const String&)
 
 void MockMediaPlayerMediaSource::load(const String&, MediaSourcePrivateClient* source)
 {
-    m_mediaSource = source;
-    m_mediaSourcePrivate = MockMediaSourcePrivate::create(this);
-    m_mediaSource->setPrivateAndOpen(*m_mediaSourcePrivate);
+    m_mediaSourcePrivate = MockMediaSourcePrivate::create(this, source);
 }
 
 void MockMediaPlayerMediaSource::cancelLoad()
@@ -143,7 +141,7 @@ void MockMediaPlayerMediaSource::setVisible(bool)
 
 bool MockMediaPlayerMediaSource::seeking() const
 {
-    return false;
+    return !m_seekCompleted;
 }
 
 bool MockMediaPlayerMediaSource::paused() const
@@ -168,8 +166,8 @@ double MockMediaPlayerMediaSource::maxTimeSeekableDouble() const
 
 std::unique_ptr<PlatformTimeRanges> MockMediaPlayerMediaSource::buffered() const
 {
-    if (m_mediaSource)
-        return m_mediaSource->buffered();
+    if (m_mediaSourcePrivate)
+        return m_mediaSourcePrivate->buffered();
 
     return PlatformTimeRanges::create();
 }
@@ -194,7 +192,7 @@ double MockMediaPlayerMediaSource::currentTimeDouble() const
 
 double MockMediaPlayerMediaSource::durationDouble() const
 {
-    return m_duration.toDouble();
+    return m_mediaSourcePrivate ? m_mediaSourcePrivate->duration() : 0;
 }
 
 void MockMediaPlayerMediaSource::seekWithTolerance(double time, double negativeTolerance, double positiveTolerance)
@@ -204,18 +202,21 @@ void MockMediaPlayerMediaSource::seekWithTolerance(double time, double negativeT
         m_mediaSourcePrivate->seekToTime(MediaTime::createWithDouble(time));
     } else
         m_currentTime = m_mediaSourcePrivate->seekToTime(MediaTime::createWithDouble(time), MediaTime::createWithDouble(negativeTolerance), MediaTime::createWithDouble(positiveTolerance));
-    m_player->timeChanged();
 
-    if (m_playing)
-        callOnMainThread(bind(&MockMediaPlayerMediaSource::advanceCurrentTime, this));
+    if (m_seekCompleted) {
+        m_player->timeChanged();
+
+        if (m_playing)
+            callOnMainThread(bind(&MockMediaPlayerMediaSource::advanceCurrentTime, this));
+    }
 }
 
 void MockMediaPlayerMediaSource::advanceCurrentTime()
 {
-    if (!m_mediaSource)
+    if (!m_mediaSourcePrivate)
         return;
 
-    auto buffered = m_mediaSource->buffered();
+    auto buffered = m_mediaSourcePrivate->buffered();
     size_t pos = buffered->find(m_currentTime);
     if (pos == notFound)
         return;
@@ -250,6 +251,23 @@ void MockMediaPlayerMediaSource::setNetworkState(MediaPlayer::NetworkState netwo
 
     m_networkState = networkState;
     m_player->networkStateChanged();
+}
+
+void MockMediaPlayerMediaSource::waitForSeekCompleted()
+{
+    m_seekCompleted = false;
+}
+
+void MockMediaPlayerMediaSource::seekCompleted()
+{
+    if (m_seekCompleted)
+        return;
+    m_seekCompleted = true;
+
+    m_player->timeChanged();
+
+    if (m_playing)
+        callOnMainThread(bind(&MockMediaPlayerMediaSource::advanceCurrentTime, this));
 }
 
 unsigned long MockMediaPlayerMediaSource::totalVideoFrames()

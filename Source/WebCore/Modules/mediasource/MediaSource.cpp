@@ -76,6 +76,8 @@ PassRefPtr<MediaSource> MediaSource::create(ScriptExecutionContext& context)
 MediaSource::MediaSource(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
     , m_mediaElement(0)
+    , m_duration(std::numeric_limits<double>::quiet_NaN())
+    , m_pendingSeekTime(MediaTime::invalidTime())
     , m_readyState(closedKeyword())
     , m_asyncEventQueue(*this)
 {
@@ -128,7 +130,7 @@ void MediaSource::removedFromRegistry()
 
 double MediaSource::duration() const
 {
-    return isClosed() ? std::numeric_limits<float>::quiet_NaN() : m_private->duration().toDouble();
+    return m_duration;
 }
 
 double MediaSource::currentTime() const
@@ -180,6 +182,60 @@ std::unique_ptr<PlatformTimeRanges> MediaSource::buffered() const
     return PlatformTimeRanges::create(intersectionRanges->ranges());
 }
 
+void MediaSource::seekToTime(const MediaTime& time)
+{
+    // 2.4.3 Seeking
+    // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#mediasource-seeking
+
+    m_pendingSeekTime = time;
+
+    // Run the following steps as part of the "Wait until the user agent has established whether or not the
+    // media data for the new playback position is available, and, if it is, until it has decoded enough data
+    // to play back that position" step of the seek algorithm:
+    // 1. The media element looks for media segments containing the new playback position in each SourceBuffer
+    // object in activeSourceBuffers.
+    for (auto& sourceBuffer : *m_activeSourceBuffers) {
+        // ↳ If one or more of the objects in activeSourceBuffers is missing media segments for the new
+        // playback position
+        if (!sourceBuffer->buffered()->ranges().contain(time)) {
+            // 1.1 Set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
+            m_private->setReadyState(MediaPlayer::HaveMetadata);
+
+            // 1.2 The media element waits until an appendBuffer() or an appendStream() call causes the coded
+            // frame processing algorithm to set the HTMLMediaElement.readyState attribute to a value greater
+            // than HAVE_METADATA.
+            LOG(MediaSource, "MediaSource::seekToTime(%p) - waitForSeekCompleted()", this);
+            m_private->waitForSeekCompleted();
+            return;
+        }
+        // ↳ Otherwise
+        // Continue
+    }
+
+    completeSeek();
+}
+
+void MediaSource::completeSeek()
+{
+    // 2.4.3 Seeking, ctd.
+    // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#mediasource-seeking
+
+    ASSERT(m_pendingSeekTime.isValid());
+
+    // 2. The media element resets all decoders and initializes each one with data from the appropriate
+    // initialization segment.
+    // 3. The media element feeds coded frames from the active track buffers into the decoders starting
+    // with the closest random access point before the new playback position.
+    for (auto& sourceBuffer : *m_activeSourceBuffers)
+        sourceBuffer->seekToTime(m_pendingSeekTime);
+
+    // 4. Resume the seek algorithm at the "Await a stable state" step.
+    m_private->seekCompleted();
+
+    m_pendingSeekTime = MediaTime::invalidTime();
+    monitorSourceBuffers();
+}
+
 void MediaSource::monitorSourceBuffers()
 {
     // 2.4.4 SourceBuffer Monitoring
@@ -217,6 +273,9 @@ void MediaSource::monitorSourceBuffers()
         // 3. Playback may resume at this point if it was previously suspended by a transition to HAVE_CURRENT_DATA.
         m_private->setReadyState(MediaPlayer::HaveEnoughData);
 
+        if (m_pendingSeekTime.isValid())
+            completeSeek();
+
         // 4. Abort these steps.
         return;
     }
@@ -230,6 +289,9 @@ void MediaSource::monitorSourceBuffers()
         // 2. If the previous value of HTMLMediaElement.readyState was less than HAVE_FUTURE_DATA, then queue a task to fire a simple event named canplay at the media element.
         // 3. Playback may resume at this point if it was previously suspended by a transition to HAVE_CURRENT_DATA.
         m_private->setReadyState(MediaPlayer::HaveFutureData);
+
+        if (m_pendingSeekTime.isValid())
+            completeSeek();
 
         // 4. Abort these steps.
         return;
@@ -246,7 +308,10 @@ void MediaSource::monitorSourceBuffers()
     // 3. Playback is suspended at this point since the media element doesn't have enough data to
     // advance the media timeline.
     m_private->setReadyState(MediaPlayer::HaveCurrentData);
-    
+
+    if (m_pendingSeekTime.isValid())
+        completeSeek();
+
     // 4. Abort these steps.
 }
 
@@ -283,9 +348,37 @@ void MediaSource::setDuration(double duration, ExceptionCode& ec)
 
 void MediaSource::setDurationInternal(double duration)
 {
-    m_private->setDuration(MediaTime::createWithDouble(duration));
-}
+    // Duration Change Algorithm
+    // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#duration-change-algorithm
 
+    // 1. If the current value of duration is equal to new duration, then return.
+    if (duration == m_duration)
+        return;
+
+    // 2. Set old duration to the current value of duration.
+    double oldDuration = m_duration;
+
+    // 3. Update duration to new duration.
+    m_duration = duration;
+
+    // 4. If the new duration is less than old duration, then call remove(new duration, old duration)
+    // on all objects in sourceBuffers.
+    if (!isnan(oldDuration) && duration < oldDuration) {
+        for (auto& sourceBuffer : *m_sourceBuffers)
+            sourceBuffer->remove(duration, oldDuration, IGNORE_EXCEPTION);
+    }
+
+    // 5. If a user agent is unable to partially render audio frames or text cues that start before and end after the
+    // duration, then run the following steps:
+    // 5.1 Update new duration to the highest end time reported by the buffered attribute across all SourceBuffer objects
+    // in sourceBuffers.
+    // 5.2 Update duration to new duration.
+    // NOTE: Assume UA is able to partially render audio frames.
+
+    // 6. Update the media controller duration to new duration and run the HTMLMediaElement duration change algorithm.
+    LOG(MediaSource, "MediaSource::setDurationInternal(%p) - duration(%g)", this, duration);
+    m_private->durationChanged();
+}
 
 void MediaSource::setReadyState(const AtomicString& state)
 {
@@ -297,6 +390,7 @@ void MediaSource::setReadyState(const AtomicString& state)
     if (state == closedKeyword()) {
         m_private.clear();
         m_mediaElement = 0;
+        m_duration = std::numeric_limits<double>::quiet_NaN();
     }
 
     if (oldState == state)
@@ -344,19 +438,18 @@ void MediaSource::streamEndedWithError(const AtomicString& error, ExceptionCode&
     DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, decode, ("decode", AtomicString::ConstructFromLiteral));
 
     // 2.4.7 https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#end-of-stream-algorithm
-    // 1. Change the readyState attribute value to "ended".
-    // 2. Queue a task to fire a simple event named sourceended at the MediaSource.
-    setReadyState(endedKeyword());
 
     // 3.
     if (error.isEmpty()) {
         // ↳ If error is not set, is null, or is an empty string
-        // 1. Run the duration change algorithm with new duration set to the highest end timestamp
-        // across all SourceBuffer objects in sourceBuffers.
-        MediaTime maxEndTimestamp;
-        for (auto it = m_sourceBuffers->begin(), end = m_sourceBuffers->end(); it != end; ++it)
-            maxEndTimestamp = std::max((*it)->highestPresentationEndTimestamp(), maxEndTimestamp);
-        m_private->setDuration(maxEndTimestamp);
+        // 1. Run the duration change algorithm with new duration set to the highest end time reported by
+        // the buffered attribute across all SourceBuffer objects in sourceBuffers.
+        double maxEndTime = 0;
+        for (auto& sourceBuffer : *m_sourceBuffers) {
+            if (auto length = sourceBuffer->buffered()->length())
+                maxEndTime = std::max(sourceBuffer->buffered()->end(length - 1, IGNORE_EXCEPTION), maxEndTime);
+        }
+        setDurationInternal(maxEndTime);
 
         // 2. Notify the media element that it now has all of the media data.
         m_private->markEndOfStream(MediaSourcePrivate::EosNoError);
@@ -396,6 +489,13 @@ void MediaSource::streamEndedWithError(const AtomicString& error, ExceptionCode&
         //   Throw an INVALID_ACCESS_ERR exception.
         ec = INVALID_ACCESS_ERR;
     }
+
+    // NOTE: Do steps 1 & 2 after step 3 to avoid the MediaSource's readyState being re-opened by a
+    // remove() operation resulting from a duration change.
+    // FIXME: Re-number or update this section once <https://www.w3.org/Bugs/Public/show_bug.cgi?id=26316> is resolved.
+    // 1. Change the readyState attribute value to "ended".
+    // 2. Queue a task to fire a simple event named sourceended at the MediaSource.
+    setReadyState(endedKeyword());
 }
 
 SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec)

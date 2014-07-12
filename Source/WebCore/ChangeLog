@@ -1,3 +1,138 @@
+2014-07-11  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] http/tests/media/media-source/mediasource-duration.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=134852
+
+        Reviewed by Eric Carlson.
+
+        Fixes the following tests:
+        http/tests/media/media-source/mediasource-config-change-mp4-a-bitrate.html
+        http/tests/media/media-source/mediasource-config-change-mp4-av-audio-bitrate.html
+        http/tests/media/media-source/mediasource-config-change-mp4-av-video-bitrate.html
+        http/tests/media/media-source/mediasource-config-change-mp4-v-bitrate.html
+        http/tests/media/media-source/mediasource-config-change-mp4-v-framerate.html
+        http/tests/media/media-source/mediasource-duration.html
+        http/tests/media/media-source/mediasource-play.html
+
+        The primary change necessary to fix the mediasource-duration.html test was to add support
+        for delaying the completion of a seek operation until the HTMLMediaElement's readyState
+        rises to > HAVE_CURRENT_DATA. This is accomplished by modifying MediaSourcePrivate to have
+        waitForSeekCompleted() and seekCompleted() virtual methods. These are called by MediaSource
+        when a seek operation results in the current time moving outside the currently buffered time
+        ranges, and when an append operation results in the readyState changing, respectively.
+
+        A number of other drive-by fixes were necessary to get this test fully passing, as noted
+        below.
+
+        Make the MediaSource the primary owner of the media's duration, rather than the MediaSourcePrivate.
+        Move the MediaSourcePrivateClient pointer to the MediaSourcePrivate from the MediaPlayerPrivate, so
+        the MediaSource's duration can be retrieved.  While we're at it, do the same thing for buffered.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::MediaSource): Initialize m_duration.
+        (WebCore::MediaSource::duration): Simple accessor.
+        (WebCore::MediaSource::setDurationInternal): Bring 'duration change algorithm' up to spec.
+        (WebCore::MediaSource::setReadyState): Reset m_duration on close.
+        * Modules/mediasource/MediaSource.h:
+        * platform/graphics/MediaSourcePrivate.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::load): Do not call setPrivateAndOpen().
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::durationDouble): Pass through to MediaSourcePrivateAVFObjC.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::buffered): Ditto.
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+        (WebCore::MediaSourcePrivateAVFObjC::create): Call setPrivateAndOpen().
+        (WebCore::MediaSourcePrivateAVFObjC::MediaSourcePrivateAVFObjC): Set m_client.
+        (WebCore::MediaSourcePrivateAVFObjC::duration): Pass through to MediaSourcePrivateClient.
+        (WebCore::MediaSourcePrivateAVFObjC::buffered): Ditto.
+        (WebCore::MediaSourcePrivateAVFObjC::durationChanged): Pass through to MediaPlayerPrivateMediaSourceAVFObjC.
+        (WebCore::MediaSourcePrivateAVFObjC::setDuration): Deleted.
+        * platform/graphics/gstreamer/MediaSourceGStreamer.cpp:
+        (WebCore::MediaSourceGStreamer::open): Pass in MediaSourcePrivateClient.
+        (WebCore::MediaSourceGStreamer::MediaSourceGStreamer): Initialize m_mediaSource.
+        (WebCore::MediaSourceGStreamer::durationChanged): Retrieve the duration from MediaSourcePrivateClient.
+        (WebCore::MediaSourceGStreamer::markEndOfStream): Remove unnecssary ASSERT.
+        (WebCore::MediaSourceGStreamer::unmarkEndOfStream): Ditto.
+        (WebCore::MediaSourceGStreamer::setDuration): Deleted.
+        * platform/graphics/gstreamer/MediaSourceGStreamer.h:
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::MockMediaPlayerMediaSource::load): Do not call setPrivateAndOpen().
+        (WebCore::MockMediaPlayerMediaSource::buffered): Pass through to MockMediaSourcePrivate.
+        (WebCore::MockMediaPlayerMediaSource::durationDouble): Ditto.
+        (WebCore::MockMediaPlayerMediaSource::advanceCurrentTime): Ditto.
+        * platform/mock/mediasource/MockMediaSourcePrivate.cpp:
+        (WebCore::MockMediaSourcePrivate::create): Call setPrivateAndOpen().
+        (WebCore::MockMediaSourcePrivate::MockMediaSourcePrivate): Set m_client.
+        (WebCore::MockMediaSourcePrivate::duration): Pass through to MediaSourcePrivateClient.
+        (WebCore::MockMediaSourcePrivate::buffered): Ditto.
+        (WebCore::MockMediaSourcePrivate::durationChanged): Pass thorugh to MockMediaPlayerMediaSource.
+        (WebCore::MockMediaSourcePrivate::setDuration): Deleted.
+
+        Route seekToTime through MediaSource, rather than through MediaSourcePrivate, so that
+        the time can be compared against the buffered ranges, and trigger the delay of the seek
+        operation if necessary. Add a seekTimer to MediaPlayerPrivateMediaSourceAVFObjC, as this
+        guarantees the order of asynchronous operations, rather than callOnMainThread, which can
+        cause async operations to occur out of order.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::seekToTime): Bring up to spec.
+        (WebCore::MediaSource::completeSeek): Ditto.
+        (WebCore::MediaSource::monitorSourceBuffers): Call completeSeek() when appropriate.
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateSeekToTime): Deleted.
+        (WebCore::SourceBuffer::seekToTime): Renamed from sourceBufferPrivateSeekToTime().
+        * platform/graphics/MediaSourcePrivate.h:
+        * platform/graphics/MediaSourcePrivateClient.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC): Add seekTimer. Only
+            call timeChanged() if no longer seeking, thereby triggering a 'seeked' event.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC): Clear m_seekTimer.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance): Use m_seekTimer.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekTimerFired): Call seekInternal.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekInternal): Add logging.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::waitForSeekCompleted): Added.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekCompleted): Added; trigger 'seeked'.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setReadyState): No longer attempt to finish seek when
+            readyState changes here; this has been moved up to MediaSource.cpp.
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+        (WebCore::MediaSourcePrivateAVFObjC::waitForSeekCompleted): Pass through to MediaPlayerPrivateMediaSourceAVFObjC.
+        (WebCore::MediaSourcePrivateAVFObjC::seekCompleted): Ditto.
+        (WebCore::MediaSourcePrivateAVFObjC::seekToTime): Pass through to MediaSourcePrivateClient.
+        (WebCore::MediaSourcePrivateAVFObjC::fastSeekTimeForMediaTime): Ditto.
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::MockMediaPlayerMediaSource::MockMediaPlayerMediaSource): Initialize m_seekCompleted.
+        (WebCore::MockMediaPlayerMediaSource::seeking): Check for an uncompleted seek operation. 
+        (WebCore::MockMediaPlayerMediaSource::seekWithTolerance): Ditto.
+        (WebCore::MockMediaPlayerMediaSource::waitForSeekCompleted): Added.
+        (WebCore::MockMediaPlayerMediaSource::seekCompleted): Added; trigger 'seeked'.
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.h:
+        * platform/mock/mediasource/MockMediaSourcePrivate.cpp:
+        (WebCore::MockMediaSourcePrivate::waitForSeekCompleted): Pass through to MockMediaPlayerMediaSource.
+        (WebCore::MockMediaSourcePrivate::seekCompleted): Ditto.
+        * platform/mock/mediasource/MockMediaSourcePrivate.h:
+
+        Drive-by fixes.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::streamEndedWithError): Re-order the steps in streamEndedWithError()
+            to avoid the MediaSource being closed and re-opened by the resulting duration change
+            operation.
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::remove): Added logging.
+        (WebCore::SourceBuffer::removeCodedFrames): Ditto.
+        (WebCore::SourceBuffer::hasFutureTime): Swap an ASSERT for an early-return; it's possible
+            for currentTime() to be outside of a buffered area.
+        * Modules/mediasource/SourceBuffer.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute): Do not issue an additional 'timeupdate' event
+            after finishSeek() issues one of its own.
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::globalDataParserQueue): Allow parsing operations to happen concurrently on
+            background queues.
+
 2014-07-12  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] update control type when playback state changes

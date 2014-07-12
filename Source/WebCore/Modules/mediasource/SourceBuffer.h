@@ -77,6 +77,7 @@ public:
     void abortIfUpdating();
     void removedFromMediaSource();
     const MediaTime& highestPresentationEndTimestamp() const { return m_highestPresentationEndTimestamp; }
+    void seekToTime(const MediaTime&);
 
 #if ENABLE(VIDEO_TRACK)
     VideoTrackList* videoTracks();
@@ -116,7 +117,6 @@ private:
     virtual bool sourceBufferPrivateHasAudio(const SourceBufferPrivate*) const override;
     virtual bool sourceBufferPrivateHasVideo(const SourceBufferPrivate*) const override;
     virtual void sourceBufferPrivateDidBecomeReadyForMoreSamples(SourceBufferPrivate*, AtomicString trackID) override;
-    virtual void sourceBufferPrivateSeekToTime(SourceBufferPrivate*, const MediaTime&);
     virtual MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(SourceBufferPrivate*, const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
     virtual void sourceBufferPrivateAppendComplete(SourceBufferPrivate*, AppendResult) override;
     virtual void sourceBufferPrivateDidReceiveRenderingError(SourceBufferPrivate*, int errorCode) override;

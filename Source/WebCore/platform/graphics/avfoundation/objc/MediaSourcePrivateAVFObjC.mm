@@ -32,6 +32,7 @@
 #import "ContentType.h"
 #import "ExceptionCodePlaceholder.h"
 #import "MediaPlayerPrivateMediaSourceAVFObjC.h"
+#import "MediaSourcePrivateClient.h"
 #import "SourceBufferPrivateAVFObjC.h"
 #import "SoftLinking.h"
 #import <objc/runtime.h>
@@ -43,14 +44,16 @@ namespace WebCore {
 #pragma mark -
 #pragma mark MediaSourcePrivateAVFObjC
 
-RefPtr<MediaSourcePrivateAVFObjC> MediaSourcePrivateAVFObjC::create(MediaPlayerPrivateMediaSourceAVFObjC* parent)
+RefPtr<MediaSourcePrivateAVFObjC> MediaSourcePrivateAVFObjC::create(MediaPlayerPrivateMediaSourceAVFObjC* parent, MediaSourcePrivateClient* client)
 {
-    return adoptRef(new MediaSourcePrivateAVFObjC(parent));
+    RefPtr<MediaSourcePrivateAVFObjC> mediaSourcePrivate = adoptRef(new MediaSourcePrivateAVFObjC(parent, client));
+    client->setPrivateAndOpen(*mediaSourcePrivate);
+    return mediaSourcePrivate;
 }
 
-MediaSourcePrivateAVFObjC::MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC* parent)
+MediaSourcePrivateAVFObjC::MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC* parent, MediaSourcePrivateClient* client)
     : m_player(parent)
-    , m_duration(MediaTime::invalidTime())
+    , m_client(client)
     , m_isEnded(false)
 {
 }
@@ -91,15 +94,16 @@ void MediaSourcePrivateAVFObjC::removeSourceBuffer(SourceBufferPrivate* buffer)
 
 MediaTime MediaSourcePrivateAVFObjC::duration()
 {
-    return m_duration;
+    return MediaTime::createWithDouble(m_client->duration());
 }
 
-void MediaSourcePrivateAVFObjC::setDuration(const MediaTime& duration)
+std::unique_ptr<PlatformTimeRanges> MediaSourcePrivateAVFObjC::buffered()
 {
-    if (duration == m_duration)
-        return;
+    return m_client->buffered();
+}
 
-    m_duration = duration;
+void MediaSourcePrivateAVFObjC::durationChanged()
+{
     m_player->durationChanged();
 }
 
@@ -124,6 +128,16 @@ MediaPlayer::ReadyState MediaSourcePrivateAVFObjC::readyState() const
 void MediaSourcePrivateAVFObjC::setReadyState(MediaPlayer::ReadyState readyState)
 {
     m_player->setReadyState(readyState);
+}
+
+void MediaSourcePrivateAVFObjC::waitForSeekCompleted()
+{
+    m_player->waitForSeekCompleted();
+}
+
+void MediaSourcePrivateAVFObjC::seekCompleted()
+{
+    m_player->seekCompleted();
 }
 
 void MediaSourcePrivateAVFObjC::sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateAVFObjC* buffer, bool active)
@@ -178,13 +192,12 @@ bool MediaSourcePrivateAVFObjC::hasVideo() const
     return std::any_of(m_activeSourceBuffers.begin(), m_activeSourceBuffers.end(), MediaSourcePrivateAVFObjCHasVideo);
 }
 
-void MediaSourcePrivateAVFObjC::seekToTime(MediaTime time)
+void MediaSourcePrivateAVFObjC::seekToTime(const MediaTime& time)
 {
-    for (auto& buffer : m_activeSourceBuffers)
-        buffer->seekToTime(time);
+    m_client->seekToTime(time);
 }
 
-MediaTime MediaSourcePrivateAVFObjC::fastSeekTimeForMediaTime(MediaTime targetTime, MediaTime negativeThreshold, MediaTime positiveThreshold)
+MediaTime MediaSourcePrivateAVFObjC::fastSeekTimeForMediaTime(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
 {
     MediaTime seekTime = targetTime;
 

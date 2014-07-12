@@ -4091,7 +4091,8 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
     // Always call scheduleTimeupdateEvent when the media engine reports a time discontinuity, 
     // it will only queue a 'timeupdate' event if we haven't already posted one at the current
     // movie time.
-    scheduleTimeupdateEvent(false);
+    else
+        scheduleTimeupdateEvent(false);
 
     double now = currentTime();
     double dur = duration();

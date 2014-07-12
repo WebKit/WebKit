@@ -39,13 +39,16 @@ class TimeRanges;
 
 class MockMediaSourcePrivate final : public MediaSourcePrivate {
 public:
-    static RefPtr<MockMediaSourcePrivate> create(MockMediaPlayerMediaSource*);
+    static RefPtr<MockMediaSourcePrivate> create(MockMediaPlayerMediaSource*, MediaSourcePrivateClient*);
     virtual ~MockMediaSourcePrivate();
 
     const Vector<MockSourceBufferPrivate*>& activeSourceBuffers() const { return m_activeSourceBuffers; }
 
     bool hasAudio() const;
     bool hasVideo() const;
+
+    double duration();
+    std::unique_ptr<PlatformTimeRanges> buffered();
 
     MockMediaPlayerMediaSource* player() const { return m_player; }
 
@@ -63,16 +66,17 @@ public:
     void incrementTotalFrameDelayBy(double delay) { m_totalFrameDelay += delay; }
 
 private:
-    MockMediaSourcePrivate(MockMediaPlayerMediaSource*);
+    MockMediaSourcePrivate(MockMediaPlayerMediaSource*, MediaSourcePrivateClient*);
 
     // MediaSourcePrivate Overrides
     virtual AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) override;
-    virtual MediaTime duration() override;
-    virtual void setDuration(const MediaTime&) override;
+    virtual void durationChanged() override;
     virtual void markEndOfStream(EndOfStreamStatus) override;
     virtual void unmarkEndOfStream() override;
     virtual MediaPlayer::ReadyState readyState() const override;
     virtual void setReadyState(MediaPlayer::ReadyState) override;
+    virtual void waitForSeekCompleted() override;
+    virtual void seekCompleted() override;
 
     void sourceBufferPrivateDidChangeActiveState(MockSourceBufferPrivate*, bool active);
     void removeSourceBuffer(SourceBufferPrivate*);
@@ -80,7 +84,7 @@ private:
     friend class MockSourceBufferPrivate;
 
     MockMediaPlayerMediaSource* m_player;
-    MediaTime m_duration;
+    RefPtr<MediaSourcePrivateClient> m_client;
     Vector<RefPtr<MockSourceBufferPrivate>> m_sourceBuffers;
     Vector<MockSourceBufferPrivate*> m_activeSourceBuffers;
     bool m_isEnded;

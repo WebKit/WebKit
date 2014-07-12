@@ -52,6 +52,8 @@ public:
     virtual MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState);
     void setNetworkState(MediaPlayer::NetworkState);
+    void waitForSeekCompleted();
+    void seekCompleted();
 
 private:
     MockMediaPlayerMediaSource(MediaPlayer*);
@@ -83,7 +85,6 @@ private:
     virtual double totalFrameDelay() override;
 
     MediaPlayer* m_player;
-    RefPtr<MediaSourcePrivateClient> m_mediaSource;
     RefPtr<MockMediaSourcePrivate> m_mediaSourcePrivate;
 
     MediaTime m_currentTime;
@@ -91,6 +92,7 @@ private:
     MediaPlayer::ReadyState m_readyState;
     MediaPlayer::NetworkState m_networkState;
     bool m_playing;
+    bool m_seekCompleted;
 };
 
 }

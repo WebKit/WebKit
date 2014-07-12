@@ -51,14 +51,16 @@ public:
 
     enum AddStatus { Ok, NotSupported, ReachedIdLimit };
     virtual AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) = 0;
-    virtual MediaTime duration() = 0;
-    virtual void setDuration(const MediaTime&) = 0;
+    virtual void durationChanged() = 0;
     enum EndOfStreamStatus { EosNoError, EosNetworkError, EosDecodeError };
     virtual void markEndOfStream(EndOfStreamStatus) = 0;
     virtual void unmarkEndOfStream() = 0;
 
     virtual MediaPlayer::ReadyState readyState() const = 0;
     virtual void setReadyState(MediaPlayer::ReadyState) = 0;
+
+    virtual void waitForSeekCompleted() = 0;
+    virtual void seekCompleted() = 0;
 };
 
 }

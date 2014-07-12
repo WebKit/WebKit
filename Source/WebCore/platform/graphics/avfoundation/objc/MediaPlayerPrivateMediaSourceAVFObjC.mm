@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
 #import "CDMSession.h"
+#import "Logging.h"
 #import "MediaSourcePrivateAVFObjC.h"
 #import "MediaSourcePrivateClient.h"
 #import "MediaTimeMac.h"
@@ -134,6 +135,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
     : m_player(player)
     , m_weakPtrFactory(this)
     , m_synchronizer(adoptNS([[getAVSampleBufferRenderSynchronizerClass() alloc] init]))
+    , m_seekTimer(this, &MediaPlayerPrivateMediaSourceAVFObjC::seekTimerFired)
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
     , m_rate(1)
@@ -149,18 +151,23 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
     // addPeriodicTimeObserverForInterval: throws an exception if you pass a non-numeric CMTime, so just use
     // an arbitrarily large time value of once an hour:
     __block auto weakThis = createWeakPtr();
-    m_timeJumpedObserver = [m_synchronizer addPeriodicTimeObserverForInterval:toCMTime(MediaTime::createWithDouble(3600)) queue:dispatch_get_main_queue() usingBlock:^(CMTime){
+    m_timeJumpedObserver = [m_synchronizer addPeriodicTimeObserverForInterval:toCMTime(MediaTime::createWithDouble(3600)) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+#if LOG_DISABLED
+        UNUSED_PARAM(time);
+#endif
         // FIXME: Remove the below once <rdar://problem/15798050> is fixed.
         if (!weakThis)
             return;
 
         if (m_seeking && !m_pendingSeek) {
+            LOG(MediaSource, "MediaPlayerPrivateMediaSourceAVFObjC::m_timeJumpedObserver(%p) - time(%s)", weakThis.get(), toString(toMediaTime(time)).utf8().data());
             m_seeking = false;
+
             if (shouldBePlaying())
                 [m_synchronizer setRate:m_rate];
+            if (!seeking())
+                m_player->timeChanged();
         }
-
-        m_player->timeChanged();
 
         if (m_pendingSeek)
             seekInternal();
@@ -177,6 +184,8 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
         [m_synchronizer removeTimeObserver:m_timeJumpedObserver.get()];
     if (m_durationObserver)
         [m_synchronizer removeTimeObserver:m_durationObserver.get()];
+
+    m_seekTimer.stop();
 }
 
 #pragma mark -
@@ -286,14 +295,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const String&)
     m_player->networkStateChanged();
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::load(const String& url, MediaSourcePrivateClient* source)
+void MediaPlayerPrivateMediaSourceAVFObjC::load(const String& url, MediaSourcePrivateClient* client)
 {
     UNUSED_PARAM(url);
 
-    m_mediaSource = source;
-    m_mediaSourcePrivate = MediaSourcePrivateAVFObjC::create(this);
-
-    m_mediaSource->setPrivateAndOpen(*m_mediaSourcePrivate);
+    m_mediaSourcePrivate = MediaSourcePrivateAVFObjC::create(this, client);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::cancelLoad()
@@ -406,7 +412,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setVisible(bool)
 
 double MediaPlayerPrivateMediaSourceAVFObjC::durationDouble() const
 {
-    return m_mediaSource ? m_mediaSource->duration() : 0;
+    return m_mediaSourcePrivate ? m_mediaSourcePrivate->duration().toDouble() : 0;
 }
 
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime() const
@@ -431,16 +437,19 @@ double MediaPlayerPrivateMediaSourceAVFObjC::initialTime() const
 
 void MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance(double time, double negativeThreshold, double positiveThreshold)
 {
+    LOG(MediaSource, "MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance(%p) - time(%s), negativeThreshold(%s), positiveThreshold(%s)", this, toString(time).utf8().data(), toString(negativeThreshold).utf8().data(), toString(positiveThreshold).utf8().data());
     m_seeking = true;
-    m_seekCompleted = false;
     auto weakThis = createWeakPtr();
     m_pendingSeek = std::make_unique<PendingSeek>(MediaTime::createWithDouble(time), MediaTime::createWithDouble(negativeThreshold), MediaTime::createWithDouble(positiveThreshold));
 
-    callOnMainThread([weakThis] {
-        if (!weakThis)
-            return;
-        weakThis.get()->seekInternal();
-    });
+    if (m_seekTimer.isActive())
+        m_seekTimer.stop();
+    m_seekTimer.startOneShot(0);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::seekTimerFired(Timer<MediaPlayerPrivateMediaSourceAVFObjC>&)
+{
+    seekInternal();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
@@ -460,8 +469,28 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
     else
         seekTime = m_mediaSourcePrivate->fastSeekTimeForMediaTime(pendingSeek->targetTime, pendingSeek->positiveThreshold, pendingSeek->negativeThreshold);
 
+    LOG(MediaSource, "MediaPlayerPrivateMediaSourceAVFObjC::seekInternal(%p) - seekTime(%s)", this, toString(seekTime).utf8().data());
+
     [m_synchronizer setRate:0 time:toCMTime(seekTime)];
     m_mediaSourcePrivate->seekToTime(seekTime);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::waitForSeekCompleted()
+{
+    if (!m_seeking)
+        return;
+    LOG(MediaSource, "MediaPlayerPrivateMediaSourceAVFObjC::waitForSeekCompleted(%p)", this);
+    m_seekCompleted = false;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::seekCompleted()
+{
+    if (m_seekCompleted)
+        return;
+    LOG(MediaSource, "MediaPlayerPrivateMediaSourceAVFObjC::seekCompleted(%p)", this);
+    m_seekCompleted = true;
+    if (!m_seeking)
+        m_player->timeChanged();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::seeking() const
@@ -503,7 +532,7 @@ double MediaPlayerPrivateMediaSourceAVFObjC::minTimeSeekable() const
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaSourceAVFObjC::buffered() const
 {
-    return m_mediaSource ? m_mediaSource->buffered() : PlatformTimeRanges::create();
+    return m_mediaSourcePrivate ? m_mediaSourcePrivate->buffered() : PlatformTimeRanges::create();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::didLoadingProgress() const
@@ -636,8 +665,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
     auto weakThis = createWeakPtr();
     NSArray* times = @[[NSValue valueWithCMTime:toCMTime(duration)]];
     m_durationObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[weakThis] {
-        if (weakThis)
+        if (weakThis) {
             weakThis->pauseInternal();
+            weakThis->m_player->timeChanged();
+        }
     }];
 
     if (m_playing && duration <= currentMediaTime())
@@ -675,11 +706,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setReadyState(MediaPlayer::ReadyState
         return;
 
     m_readyState = readyState;
-
-    if (!m_seekCompleted && m_readyState >= MediaPlayer::HaveCurrentData) {
-        m_seekCompleted = true;
-        m_player->timeChanged();
-    }
 
     if (shouldBePlaying())
         [m_synchronizer setRate:m_rate];

@@ -65,6 +65,8 @@ public:
     void setNetworkState(MediaPlayer::NetworkState);
 
     void seekInternal();
+    void waitForSeekCompleted();
+    void seekCompleted();
     void setLoadingProgresssed(bool flag) { m_loadingProgressed = flag; }
     void setHasAvailableVideoFrame(bool flag) { m_hasAvailableVideoFrame = flag; }
     void durationChanged();
@@ -157,6 +159,7 @@ private:
     void ensureLayer();
     void destroyLayer();
     bool shouldBePlaying() const;
+    void seekTimerFired(Timer<MediaPlayerPrivateMediaSourceAVFObjC>&);
 
     // MediaPlayer Factory Methods
     static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
@@ -182,7 +185,6 @@ private:
 
     MediaPlayer* m_player;
     WeakPtrFactory<MediaPlayerPrivateMediaSourceAVFObjC> m_weakPtrFactory;
-    RefPtr<MediaSourcePrivateClient> m_mediaSource;
     RefPtr<MediaSourcePrivateAVFObjC> m_mediaSourcePrivate;
     RetainPtr<AVAsset> m_asset;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
@@ -190,6 +192,7 @@ private:
     RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;
     RetainPtr<id> m_timeJumpedObserver;
     RetainPtr<id> m_durationObserver;
+    Timer<MediaPlayerPrivateMediaSourceAVFObjC> m_seekTimer;
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
     double m_rate;

@@ -45,30 +45,35 @@ namespace WebCore {
 
 class CDMSession;
 class MediaPlayerPrivateMediaSourceAVFObjC;
+class MediaSourcePrivateClient;
 class SourceBufferPrivateAVFObjC;
 class TimeRanges;
 
 class MediaSourcePrivateAVFObjC final : public MediaSourcePrivate {
 public:
-    static RefPtr<MediaSourcePrivateAVFObjC> create(MediaPlayerPrivateMediaSourceAVFObjC*);
+    static RefPtr<MediaSourcePrivateAVFObjC> create(MediaPlayerPrivateMediaSourceAVFObjC*, MediaSourcePrivateClient*);
     virtual ~MediaSourcePrivateAVFObjC();
 
     MediaPlayerPrivateMediaSourceAVFObjC* player() const { return m_player; }
     const Vector<SourceBufferPrivateAVFObjC*>& activeSourceBuffers() const { return m_activeSourceBuffers; }
 
     virtual AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) override;
-    virtual MediaTime duration() override;
-    virtual void setDuration(const MediaTime&) override;
+    virtual void durationChanged() override;
     virtual void markEndOfStream(EndOfStreamStatus) override;
     virtual void unmarkEndOfStream() override;
     virtual MediaPlayer::ReadyState readyState() const override;
     virtual void setReadyState(MediaPlayer::ReadyState) override;
+    virtual void waitForSeekCompleted() override;
+    virtual void seekCompleted() override;
+
+    MediaTime duration();
+    std::unique_ptr<PlatformTimeRanges> buffered();
 
     bool hasAudio() const;
     bool hasVideo() const;
 
-    void seekToTime(MediaTime);
-    MediaTime fastSeekTimeForMediaTime(MediaTime, MediaTime negativeThreshold, MediaTime positiveThreshold);
+    void seekToTime(const MediaTime&);
+    MediaTime fastSeekTimeForMediaTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
     IntSize naturalSize() const;
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
@@ -76,7 +81,7 @@ public:
 #endif
 
 private:
-    MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC*);
+    MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC*, MediaSourcePrivateClient*);
 
     void sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateAVFObjC*, bool active);
     void sourceBufferPrivateDidReceiveInitializationSegment(SourceBufferPrivateAVFObjC*);
@@ -89,7 +94,7 @@ private:
     friend class SourceBufferPrivateAVFObjC;
 
     MediaPlayerPrivateMediaSourceAVFObjC* m_player;
-    MediaTime m_duration;
+    RefPtr<MediaSourcePrivateClient> m_client;
     Vector<RefPtr<SourceBufferPrivateAVFObjC>> m_sourceBuffers;
     Vector<SourceBufferPrivateAVFObjC*> m_activeSourceBuffers;
     Deque<SourceBufferPrivateAVFObjC*> m_sourceBuffersNeedingSessions;

@@ -42,13 +42,16 @@ namespace WebCore {
 
 void MediaSourceGStreamer::open(MediaSourcePrivateClient* mediaSource, WebKitMediaSrc* src)
 {
-    mediaSource->setPrivateAndOpen(adoptRef(*new MediaSourceGStreamer(src)));
+    ASSERT(mediaSource);
+    mediaSource->setPrivateAndOpen(adoptRef(*new MediaSourceGStreamer(mediaSource, src)));
 }
 
-MediaSourceGStreamer::MediaSourceGStreamer(WebKitMediaSrc* src)
+MediaSourceGStreamer::MediaSourceGStreamer(MediaSourcePrivateClient* mediaSource, WebKitMediaSrc* src)
     : m_client(adoptRef(new MediaSourceClientGstreamer(src)))
+    , m_mediaSource(mediaSource)
     , m_readyState(MediaPlayer::HaveNothing)
 {
+    ASSERT(m_client);
 }
 
 MediaSourceGStreamer::~MediaSourceGStreamer()
@@ -61,22 +64,18 @@ MediaSourceGStreamer::AddStatus MediaSourceGStreamer::addSourceBuffer(const Cont
     return MediaSourceGStreamer::Ok;
 }
 
-void MediaSourceGStreamer::setDuration(const MediaTime& duration)
+void MediaSourceGStreamer::durationChanged()
 {
-    ASSERT(m_client);
-    m_duration = duration;
-    m_client->didReceiveDuration(duration.toDouble());
+    m_client->didReceiveDuration(m_mediaSource->duration());
 }
 
 void MediaSourceGStreamer::markEndOfStream(EndOfStreamStatus)
 {
-    ASSERT(m_client);
     m_client->didFinishLoading(0);
 }
 
 void MediaSourceGStreamer::unmarkEndOfStream()
 {
-    ASSERT(m_client);
 }
 
 }
