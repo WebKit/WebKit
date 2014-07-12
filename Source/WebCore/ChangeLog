@@ -1,3 +1,14 @@
+2014-07-12  Dean Jackson  <dino@apple.com>
+
+        [iOS Media] Start playback button should indicate when it can't play
+        https://bugs.webkit.org/show_bug.cgi?id=134851
+
+        Post-commit review with Eric Carlson on IRC.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.updateStatusDisplay): Remove the line that sets the
+        class on the inline play button.
+
 2014-07-11  Dean Jackson  <dino@apple.com>
 
         [iOS Media] Start playback button should indicate when it can't play

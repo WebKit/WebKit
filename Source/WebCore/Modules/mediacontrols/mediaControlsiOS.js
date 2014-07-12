@@ -435,7 +435,6 @@ ControllerIOS.prototype = {
 
     updateStatusDisplay: function(event)
     {
-        this.controls.playButton.classList.toggle(this.ClassNames.failed, this.video.error !== null);
         this.controls.startPlaybackButton.classList.toggle(this.ClassNames.failed, this.video.error !== null);
         Controller.prototype.updateStatusDisplay.call(this, event);
     },
