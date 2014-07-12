@@ -130,6 +130,7 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
 
     m_navigationDelegateMethods.webViewNavigationDidFailProvisionalLoadInSubframeWithError = [delegate respondsToSelector:@selector(_webView:navigation:didFailProvisionalLoadInSubframe:withError:)];
     m_navigationDelegateMethods.webViewNavigationDidFinishDocumentLoad = [delegate respondsToSelector:@selector(_webView:navigationDidFinishDocumentLoad:)];
+    m_navigationDelegateMethods.webViewNavigationDidSameDocumentNavigation = [delegate respondsToSelector:@selector(_webView:navigation:didSameDocumentNavigation:)];
     m_navigationDelegateMethods.webViewRenderingProgressDidChange = [delegate respondsToSelector:@selector(_webView:renderingProgressDidChange:)];
     m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallengeCompletionHandler = [delegate respondsToSelector:@selector(webView:didReceiveAuthenticationChallenge:completionHandler:)];
     m_navigationDelegateMethods.webViewCanAuthenticateAgainstProtectionSpace = [delegate respondsToSelector:@selector(_webView:canAuthenticateAgainstProtectionSpace:)];
@@ -566,6 +567,43 @@ void NavigationState::LoaderClient::didFailLoadWithErrorForFrame(WebPageProxy*, 
 
     auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState.m_webView, *webFrameProxy, error);
     [navigationDelegate webView:m_navigationState.m_webView didFailNavigation:navigation withError:errorWithRecoveryAttempter.get()];
+}
+
+static _WKSameDocumentNavigationType toWKSameDocumentNavigationType(SameDocumentNavigationType navigationType)
+{
+    switch (navigationType) {
+    case SameDocumentNavigationAnchorNavigation:
+        return _WKSameDocumentNavigationTypeAnchorNavigation;
+    case SameDocumentNavigationSessionStatePush:
+        return _WKSameDocumentNavigationTypeSessionStatePush;
+    case SameDocumentNavigationSessionStateReplace:
+        return _WKSameDocumentNavigationTypeSessionStateReplace;
+    case SameDocumentNavigationSessionStatePop:
+        return _WKSameDocumentNavigationTypeSessionStatePop;
+    }
+
+    ASSERT_NOT_REACHED();
+    return _WKSameDocumentNavigationTypeAnchorNavigation;
+}
+
+void NavigationState::LoaderClient::didSameDocumentNavigationForFrame(WebPageProxy*, WebFrameProxy* webFrameProxy, uint64_t navigationID, SameDocumentNavigationType navigationType, API::Object*)
+{
+    if (!webFrameProxy->isMainFrame())
+        return;
+
+    if (!m_navigationState.m_navigationDelegateMethods.webViewNavigationDidSameDocumentNavigation)
+        return;
+
+    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
+    if (!navigationDelegate)
+        return;
+
+    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
+    WKNavigation *navigation = nil;
+    if (navigationID)
+        navigation = m_navigationState.m_navigations.get(navigationID).get();
+
+    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView navigation:navigation didSameDocumentNavigation:toWKSameDocumentNavigationType(navigationType)];
 }
 
 void NavigationState::LoaderClient::didDestroyNavigation(WebPageProxy*, uint64_t navigationID)

@@ -328,7 +328,8 @@ void WebFrameLoaderClient::dispatchDidChangeLocationWithinPage()
     webPage->injectedBundleLoaderClient().didSameDocumentNavigationForFrame(webPage, m_frame, SameDocumentNavigationAnchorNavigation, userData);
 
     // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidSameDocumentNavigationForFrame(m_frame->frameID(), SameDocumentNavigationAnchorNavigation, m_frame->coreFrame()->document()->url().string(), InjectedBundleUserMessageEncoder(userData.get())));
+    WebDocumentLoader& documentLoader = static_cast<WebDocumentLoader&>(*m_frame->coreFrame()->loader().documentLoader());
+    webPage->send(Messages::WebPageProxy::DidSameDocumentNavigationForFrame(m_frame->frameID(), documentLoader.navigationID(), SameDocumentNavigationAnchorNavigation, m_frame->coreFrame()->document()->url().string(), InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebFrameLoaderClient::dispatchDidPushStateWithinPage()
@@ -343,7 +344,8 @@ void WebFrameLoaderClient::dispatchDidPushStateWithinPage()
     webPage->injectedBundleLoaderClient().didSameDocumentNavigationForFrame(webPage, m_frame, SameDocumentNavigationSessionStatePush, userData);
 
     // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidSameDocumentNavigationForFrame(m_frame->frameID(), SameDocumentNavigationSessionStatePush, m_frame->coreFrame()->document()->url().string(), InjectedBundleUserMessageEncoder(userData.get())));
+    WebDocumentLoader& documentLoader = static_cast<WebDocumentLoader&>(*m_frame->coreFrame()->loader().documentLoader());
+    webPage->send(Messages::WebPageProxy::DidSameDocumentNavigationForFrame(m_frame->frameID(), documentLoader.navigationID(), SameDocumentNavigationSessionStatePush, m_frame->coreFrame()->document()->url().string(), InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebFrameLoaderClient::dispatchDidReplaceStateWithinPage()
@@ -358,7 +360,8 @@ void WebFrameLoaderClient::dispatchDidReplaceStateWithinPage()
     webPage->injectedBundleLoaderClient().didSameDocumentNavigationForFrame(webPage, m_frame, SameDocumentNavigationSessionStateReplace, userData);
 
     // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidSameDocumentNavigationForFrame(m_frame->frameID(), SameDocumentNavigationSessionStateReplace, m_frame->coreFrame()->document()->url().string(), InjectedBundleUserMessageEncoder(userData.get())));
+    WebDocumentLoader& documentLoader = static_cast<WebDocumentLoader&>(*m_frame->coreFrame()->loader().documentLoader());
+    webPage->send(Messages::WebPageProxy::DidSameDocumentNavigationForFrame(m_frame->frameID(), documentLoader.navigationID(), SameDocumentNavigationSessionStateReplace, m_frame->coreFrame()->document()->url().string(), InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebFrameLoaderClient::dispatchDidPopStateWithinPage()
@@ -373,7 +376,8 @@ void WebFrameLoaderClient::dispatchDidPopStateWithinPage()
     webPage->injectedBundleLoaderClient().didSameDocumentNavigationForFrame(webPage, m_frame, SameDocumentNavigationSessionStatePop, userData);
 
     // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidSameDocumentNavigationForFrame(m_frame->frameID(), SameDocumentNavigationSessionStatePop, m_frame->coreFrame()->document()->url().string(), InjectedBundleUserMessageEncoder(userData.get())));
+    WebDocumentLoader& documentLoader = static_cast<WebDocumentLoader&>(*m_frame->coreFrame()->loader().documentLoader());
+    webPage->send(Messages::WebPageProxy::DidSameDocumentNavigationForFrame(m_frame->frameID(), documentLoader.navigationID(), SameDocumentNavigationSessionStatePop, m_frame->coreFrame()->document()->url().string(), InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebFrameLoaderClient::dispatchWillClose()

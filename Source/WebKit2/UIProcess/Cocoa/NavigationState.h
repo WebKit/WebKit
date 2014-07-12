@@ -102,6 +102,7 @@ private:
         virtual void didFinishDocumentLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t navigationID, API::Object*) override;
         virtual void didFinishLoadForFrame(WebPageProxy*, WebFrameProxy*, uint64_t navigationID, API::Object*) override;
         virtual void didFailLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, uint64_t navigationID, const WebCore::ResourceError&, API::Object*) override;
+        virtual void didSameDocumentNavigationForFrame(WebPageProxy*, WebFrameProxy*, uint64_t navigationID, SameDocumentNavigationType, API::Object*) override;
         virtual void didDestroyNavigation(WebKit::WebPageProxy*, uint64_t navigationID) override;
         virtual void didLayout(WebKit::WebPageProxy*, WebCore::LayoutMilestones, API::Object*) override;
         virtual bool canAuthenticateAgainstProtectionSpaceInFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebProtectionSpace*) override;
@@ -149,6 +150,7 @@ private:
         bool webViewNavigationDidFinishDocumentLoad : 1;
         bool webViewDidFinishNavigation : 1;
         bool webViewDidFailNavigationWithError : 1;
+        bool webViewNavigationDidSameDocumentNavigation : 1;
 
         bool webViewRenderingProgressDidChange : 1;
         bool webViewDidReceiveAuthenticationChallengeCompletionHandler : 1;

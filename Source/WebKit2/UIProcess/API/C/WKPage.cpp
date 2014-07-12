@@ -835,7 +835,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             m_client.didFailLoadWithErrorForFrame(toAPI(page), toAPI(frame), toAPI(error), toAPI(userData), m_client.base.clientInfo);
         }
 
-        virtual void didSameDocumentNavigationForFrame(WebPageProxy* page, WebFrameProxy* frame, SameDocumentNavigationType type, API::Object* userData) override
+        virtual void didSameDocumentNavigationForFrame(WebPageProxy* page, WebFrameProxy* frame, uint64_t, SameDocumentNavigationType type, API::Object* userData) override
         {
             if (!m_client.didSameDocumentNavigationForFrame)
                 return;

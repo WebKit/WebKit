@@ -1,3 +1,41 @@
+2014-07-12  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Client is not notified of same-document navigations
+        https://bugs.webkit.org/show_bug.cgi?id=134855
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::didSameDocumentNavigationForFrame): Added navigationID parameter.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient): Ditto.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h: Added new enum and delegate method.
+
+        * UIProcess/Cocoa/NavigationState.h: Declare override of
+        API::LoaderClient::didSameDocumentNavigationForFrame. Added flag in
+        m_navigationDelegateMethods struct.
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate): Initialize new m_navigationDelegateMethods
+        flag.
+        (WebKit::toWKSameDocumentNavigationType): Added this helper to convert from internal to API
+        values.
+        (WebKit::NavigationState::LoaderClient::didSameDocumentNavigationForFrame): Override to call
+        the delegate method, if implemented.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame): Added navigationID parameter,
+        which is forwarded to the client.
+        * UIProcess/WebPageProxy.h: Added navigationID parameter.
+        * UIProcess/WebPageProxy.messages.in: Ditto.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidChangeLocationWithinPage): Send the navigation ID.
+        (WebKit::WebFrameLoaderClient::dispatchDidPushStateWithinPage): Ditto.
+        (WebKit::WebFrameLoaderClient::dispatchDidReplaceStateWithinPage): Ditto.
+        (WebKit::WebFrameLoaderClient::dispatchDidPopStateWithinPage): Ditto.
+
 2014-07-12  Oliver Hunt  <oliver@apple.com>
 
         Extend WebContent sandbox to allow some extra access for frameworks

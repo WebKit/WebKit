@@ -34,6 +34,13 @@ static const WKNavigationActionPolicy _WKNavigationActionPolicyDownload = (WKNav
 
 static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownload = (WKNavigationResponsePolicy)(WKNavigationResponsePolicyAllow + 1);
 
+typedef NS_ENUM(NSInteger, _WKSameDocumentNavigationType) {
+    _WKSameDocumentNavigationTypeAnchorNavigation,
+    _WKSameDocumentNavigationTypeSessionStatePush,
+    _WKSameDocumentNavigationTypeSessionStateReplace,
+    _WKSameDocumentNavigationTypeSessionStatePop,
+} WK_AVAILABLE(10_10, 8_0);
+
 @protocol WKNavigationDelegatePrivate <WKNavigationDelegate>
 
 @optional
@@ -41,6 +48,7 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 - (void)_webView:(WKWebView *)webView navigation:(WKNavigation *)navigation didFailProvisionalLoadInSubframe:(WKFrameInfo *)subframe withError:(NSError *)error;
 
 - (void)_webView:(WKWebView *)webView navigationDidFinishDocumentLoad:(WKNavigation *)navigation;
+- (void)_webView:(WKWebView *)webView navigation:(WKNavigation *)navigation didSameDocumentNavigation:(_WKSameDocumentNavigationType)navigationType;
 
 - (void)_webView:(WKWebView *)webView renderingProgressDidChange:(_WKRenderingProgressEvents)progressEvents;
 

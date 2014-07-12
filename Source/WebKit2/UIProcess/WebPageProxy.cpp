@@ -2683,7 +2683,7 @@ void WebPageProxy::didFailLoadForFrame(uint64_t frameID, uint64_t navigationID, 
     m_loaderClient->didFailLoadWithErrorForFrame(this, frame, navigationID, error, userData.get());
 }
 
-void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint32_t opaqueSameDocumentNavigationType, const String& url, IPC::MessageDecoder& decoder)
+void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint64_t navigationID, uint32_t opaqueSameDocumentNavigationType, const String& url, IPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
     WebContextUserMessageDecoder messageDecoder(userData, process());
@@ -2703,7 +2703,7 @@ void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint32_t 
     frame->didSameDocumentNavigation(url);
 
     m_pageLoadState.commitChanges();
-    m_loaderClient->didSameDocumentNavigationForFrame(this, frame, static_cast<SameDocumentNavigationType>(opaqueSameDocumentNavigationType), userData.get());
+    m_loaderClient->didSameDocumentNavigationForFrame(this, frame, navigationID, static_cast<SameDocumentNavigationType>(opaqueSameDocumentNavigationType), userData.get());
 }
 
 void WebPageProxy::didReceiveTitleForFrame(uint64_t frameID, const String& title, IPC::MessageDecoder& decoder)

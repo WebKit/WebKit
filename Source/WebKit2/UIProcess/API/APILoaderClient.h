@@ -62,7 +62,7 @@ public:
     virtual void didFinishDocumentLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t, API::Object*) { }
     virtual void didFinishLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t, API::Object*) { }
     virtual void didFailLoadWithErrorForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t, const WebCore::ResourceError&, API::Object*) { }
-    virtual void didSameDocumentNavigationForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::SameDocumentNavigationType, API::Object*) { }
+    virtual void didSameDocumentNavigationForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t, WebKit::SameDocumentNavigationType, API::Object*) { }
     virtual void didReceiveTitleForFrame(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, API::Object*) { }
     virtual void didFirstLayoutForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }
     virtual void didDestroyNavigation(WebKit::WebPageProxy*, uint64_t) { }
