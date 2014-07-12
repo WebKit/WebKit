@@ -60,10 +60,10 @@ public:
     explicit InspectableNode(Node* node) : m_node(node) { }
     virtual Deprecated::ScriptValue get(JSC::ExecState* state) override
     {
-        return InspectorDOMAgent::nodeAsScriptValue(state, m_node);
+        return InspectorDOMAgent::nodeAsScriptValue(state, m_node.get());
     }
 private:
-    Node* m_node;
+    RefPtr<Node> m_node;
 };
 
 void PageConsoleAgent::addInspectedNode(ErrorString* errorString, int nodeId)

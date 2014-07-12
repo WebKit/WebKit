@@ -1,3 +1,12 @@
+2014-07-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Crash when using a stale InspectableNode Node
+        https://bugs.webkit.org/show_bug.cgi?id=134849
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/PageConsoleAgent.cpp:
+
 2014-07-11  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Separate MediaSource logging into its own log channel
