@@ -439,6 +439,12 @@ ControllerIOS.prototype = {
         Controller.prototype.updateStatusDisplay.call(this, event);
     },
 
+    setPlaying: function(isPlaying)
+    {
+        this.updateControls();
+        Controller.prototype.setPlaying.call(this, isPlaying);
+    },
+
     get pageScaleFactor() {
         return this._pageScaleFactor;
     },

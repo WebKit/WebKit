@@ -1,3 +1,20 @@
+2014-07-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] update control type when playback state changes
+        https://bugs.webkit.org/show_bug.cgi?id=134856
+
+        Reviewed by Dean Jackson.
+
+        Check to make sure the correct type of media controls are showing when playback state
+        changes so we don't end up with the wrong type of controls during playback.
+
+        * Modules/mediacontrols/mediaControlsApple.js: 
+        (Controller.prototype.HandledVideoEvents): Drive-by fix, call handlePlay on 'playing' instead
+            of 'play' so controls don't hide too early.
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.setPlaying): New, call updateControls to make sure inline
+            controls are shown when appropriate.
+
 2014-07-12  Dean Jackson  <dino@apple.com>
 
         [iOS Media] Start playback button should indicate when it can't play
