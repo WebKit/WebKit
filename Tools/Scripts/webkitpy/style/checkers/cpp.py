@@ -1217,28 +1217,28 @@ class _EnumState(object):
             if match(r'\s*' + expr_enum_end + r'$', line):
                 self.in_enum_decl = False
                 self.is_webidl_enum = False
+                return True
             elif match(expr_all_uppercase, line):
                 return self.is_webidl_enum
             elif match(expr_starts_lowercase, line):
                 return False
+        matched = match(expr_enum_start + r'$', line)
+        if matched:
+            self.in_enum_decl = True
         else:
-            matched = match(expr_enum_start + r'$', line)
+            matched = match(expr_enum_start + r'(?P<members>.*)' + expr_enum_end + r'$', line)
             if matched:
-                self.in_enum_decl = True
-            else:
-                matched = match(expr_enum_start + r'(?P<members>.*)' + expr_enum_end + r'$', line)
-                if matched:
-                    members = matched.group('members').split(',')
-                    found_invalid_member = False
-                    for member in members:
-                        if match(expr_all_uppercase, member):
-                            found_invalid_member = not self.is_webidl_enum
-                        if match(expr_starts_lowercase, member):
-                            found_invalid_member = True
-                        if found_invalid_member:
-                            self.is_webidl_enum = False
-                            return False
-                    return True
+                members = matched.group('members').split(',')
+                found_invalid_member = False
+                for member in members:
+                    if match(expr_all_uppercase, member):
+                        found_invalid_member = not self.is_webidl_enum
+                    if match(expr_starts_lowercase, member):
+                        found_invalid_member = True
+                    if found_invalid_member:
+                        self.is_webidl_enum = False
+                        return False
+                return True
         return True
 
 def check_for_non_standard_constructs(clean_lines, line_number,
