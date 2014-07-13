@@ -27,7 +27,11 @@
 
 #if WK_API_ENABLED
 
-#import <Foundation/Foundation.h>
+#if TARGET_OS_IPHONE
+@class UIImage;
+#else
+@class NSImage;
+#endif
 
 typedef NS_ENUM(NSInteger, _WKActivatedElementType) {
     _WKActivatedElementTypeLink,
@@ -40,6 +44,12 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 @property (nonatomic, readonly) NSURL *URL;
 @property (nonatomic, readonly) NSString *title;
 @property (nonatomic, readonly) _WKActivatedElementType type;
+@property (nonatomic, readonly) CGRect boundingRect;
+#if TARGET_OS_IPHONE
+@property (nonatomic, readonly, copy) UIImage *image;
+#else
+@property (nonatomic, readonly, copy) NSImage *image;
+#endif
 
 @end
 

@@ -1691,6 +1691,57 @@ PassRefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize&
     return snapshot.release();
 }
 
+PassRefPtr<WebImage> WebPage::snapshotNode(WebCore::Node& node, SnapshotOptions options, unsigned maximumPixelCount)
+{
+    Frame* coreFrame = m_mainFrame->coreFrame();
+    if (!coreFrame)
+        return nullptr;
+
+    FrameView* frameView = coreFrame->view();
+    if (!frameView)
+        return nullptr;
+
+    if (!node.renderer())
+        return nullptr;
+
+    LayoutRect topLevelRect;
+    IntRect snapshotRect = pixelSnappedIntRect(node.renderer()->paintingRootRect(topLevelRect));
+
+    double scaleFactor = 1;
+    IntSize snapshotSize = snapshotRect.size();
+    unsigned maximumHeight = maximumPixelCount / snapshotSize.width();
+    if (maximumHeight < static_cast<unsigned>(snapshotSize.height())) {
+        scaleFactor = static_cast<double>(maximumHeight) / snapshotSize.height();
+        snapshotSize = IntSize(snapshotSize.width() * scaleFactor, maximumHeight);
+    }
+
+    RefPtr<WebImage> snapshot = WebImage::create(snapshotSize, snapshotOptionsToImageOptions(options));
+    if (!snapshot->bitmap())
+        return nullptr;
+
+    auto graphicsContext = snapshot->bitmap()->createGraphicsContext();
+
+    if (!(options & SnapshotOptionsExcludeDeviceScaleFactor)) {
+        double deviceScaleFactor = corePage()->deviceScaleFactor();
+        graphicsContext->applyDeviceScaleFactor(deviceScaleFactor);
+        scaleFactor /= deviceScaleFactor;
+    }
+
+    graphicsContext->scale(FloatSize(scaleFactor, scaleFactor));
+    graphicsContext->translate(-snapshotRect.x(), -snapshotRect.y());
+
+    Color savedBackgroundColor = frameView->baseBackgroundColor();
+    frameView->setBaseBackgroundColor(Color::transparent);
+    frameView->setNodeToDraw(&node);
+
+    frameView->paintContentsForSnapshot(graphicsContext.get(), snapshotRect, FrameView::ExcludeSelection, FrameView::DocumentCoordinates);
+
+    frameView->setBaseBackgroundColor(savedBackgroundColor);
+    frameView->setNodeToDraw(nullptr);
+
+    return snapshot.release();
+}
+
 void WebPage::pageDidScroll()
 {
 #if PLATFORM(IOS)

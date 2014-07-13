@@ -28,16 +28,31 @@
 
 #if WK_API_ENABLED
 
+#import "ShareableBitmap.h"
 #import <wtf/RetainPtr.h>
+
+#if PLATFORM(IOS)
+#import <UIKit/UIImage.h>
+#endif
+
+#if PLATFORM(MAC)
+#import <AppKit/NSImage.h>
+#endif
 
 @implementation _WKActivatedElementInfo  {
     RetainPtr<NSURL> _URL;
     RetainPtr<NSString> _title;
     CGPoint _interactionLocation;
-    CGRect _boundingRect;
+    RefPtr<WebKit::ShareableBitmap> _image;
+#if PLATFORM(IOS)
+    RetainPtr<UIImage> _uiImage;
+#endif
+#if PLATFORM(MAC)
+    RetainPtr<NSImage> _nsImage;
+#endif
 }
 
-- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url location:(CGPoint)location title:(NSString *)title rect:(CGRect)rect
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url location:(CGPoint)location title:(NSString *)title rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image
 {
     if (!(self = [super init]))
         return nil;
@@ -47,6 +62,7 @@
     _title = adoptNS([title copy]);
     _boundingRect = rect;
     _type = type;
+    _image = image;
 
     return self;
 }
@@ -61,15 +77,42 @@
     return _title.get();
 }
 
-- (CGRect)_boundingRect
-{
-    return _boundingRect;
-}
-
 - (CGPoint)_interactionLocation
 {
     return _interactionLocation;
 }
+
+#if PLATFORM(IOS)
+- (UIImage *)image
+{
+    if (_uiImage)
+        return [[_uiImage copy] autorelease];
+
+    if (!_image)
+        return nil;
+
+    _uiImage = adoptNS([[UIImage alloc] initWithCGImage:_image->makeCGImageCopy().get()]);
+    _image = nullptr;
+
+    return [[_uiImage copy] autorelease];
+}
+#endif
+
+#if PLATFORM(MAC)
+- (NSImage *)image
+{
+    if (_nsImage)
+        return [[_nsImage copy] autorelease];
+
+    if (!_image)
+        return nil;
+
+    _nsImage = adoptNS([[NSImage alloc] initWithCGImage:_image->makeCGImageCopy().get() size:NSSizeFromCGSize(_boundingRect.size)]);
+    _image = nullptr;
+
+    return [[_nsImage copy] autorelease];
+}
+#endif
 
 @end
 

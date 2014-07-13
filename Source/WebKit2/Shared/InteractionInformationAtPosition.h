@@ -27,6 +27,7 @@
 #define InteractionInformationAtPosition_h
 
 #include "ArgumentCoders.h"
+#include "ShareableBitmap.h"
 #include <WebCore/IntPoint.h>
 #include <WebCore/SelectionRect.h>
 #include <wtf/text/WTFString.h>
@@ -50,6 +51,7 @@ struct InteractionInformationAtPosition {
     String url;
     String title;
     WebCore::IntRect bounds;
+    RefPtr<ShareableBitmap> image;
 
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, InteractionInformationAtPosition&);

@@ -233,7 +233,7 @@ using namespace WebKit;
         [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeCopy]];
 
     auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage
-        URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds]);
+        URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds image:positionInformation.image.get()]);
 
     RetainPtr<NSArray> actions = _view.page->uiClient().actionsForElement(elementInfo.get(), WTF::move(defaultActions));
 
@@ -269,7 +269,7 @@ using namespace WebKit;
         [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeCopy]];
 
     RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink
-        URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds]);
+        URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds image:positionInformation.image.get()]);
 
     RetainPtr<NSArray> actions = _view.page->uiClient().actionsForElement(elementInfo.get(), WTF::move(defaultActions));
 

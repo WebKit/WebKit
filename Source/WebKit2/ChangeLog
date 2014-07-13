@@ -1,5 +1,40 @@
 2014-07-13  Dan Bernstein  <mitz@apple.com>
 
+        <rdar://problem/17295636> [Cocoa] Include element snapshot in _WKActivatedElementInfo
+        https://bugs.webkit.org/show_bug.cgi?id=134872
+
+        Reviewed by Sam Weinig.
+
+        * Shared/InteractionInformationAtPosition.cpp:
+        (WebKit::InteractionInformationAtPosition::encode): Encode the image if there is one.
+        (WebKit::InteractionInformationAtPosition::decode): Decode the image if there is one.
+        * Shared/InteractionInformationAtPosition.h: Added an image member to the struct.
+
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.h: Exposed the boundingRect property and added
+        an image property.
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.mm:
+        (-[_WKActivatedElementInfo _initWithType:URL:location:title:rect:image:]): Added an image
+        parameter, which is stored in a new ivar.
+        (-[_WKActivatedElementInfo image]): Added this getter, which converts the ShareableBitmap
+        into a cached Cocoa image and returns it.
+        * UIProcess/API/Cocoa/_WKActivatedElementInfoInternal.h: Added image parameter to the
+        initializer, removed _boundingRect property declaration from here.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant showImageSheet]): Pass the image from the position information
+        into the _WKActivatedElementInfo initializer.
+        (-[WKActionSheetAssistant showLinkSheet]): Ditto.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::snapshotNode): Added.
+        * WebProcess/WebPage/WebPage.h:
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation): If the element is a link or an image, store a
+        snapshot of it in the image member of the InteractionInformationAtPosition.
+
+2014-07-13  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Clean up session state API a little
         https://bugs.webkit.org/show_bug.cgi?id=134871
 

@@ -27,12 +27,15 @@
 
 #if WK_API_ENABLED
 
+namespace WebKit {
+    class ShareableBitmap;
+}
+
 @interface _WKActivatedElementInfo ()
 
-- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url location:(CGPoint)location title:(NSString *)title rect:(CGRect)rect;
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url location:(CGPoint)location title:(NSString *)title rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image;
 
 @property (nonatomic, readonly) CGPoint _interactionLocation;
-@property (nonatomic, readonly) CGRect _boundingRect;
 
 @end
 
