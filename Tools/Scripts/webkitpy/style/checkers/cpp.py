@@ -3196,6 +3196,17 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
         error(line_number, 'runtime/bitfields', 5,
               'Please declare integral type bitfields with either signed or unsigned.')
 
+    # Beware of using enums as types for bitfields, there can sometimes be a mismatch
+    # between the signedness of the enum and the enum bitfield type.
+    # Visual Studio's 8.0 compiler is an example where it represents bit fields of
+    # enum types with a signed type, but enums as unsigned.
+    matched = re.match(r'\s*((const|mutable)\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\s+[a-zA-Z_][a-zA-Z0-9_]*\s*:\s*\d+\s*;', line)
+    if matched:
+        # Make sure the type is an enum and not an integral type
+        if not match(r'char|(short(\s+int)?)|int|long(\s+(long|int))|(signed|unsigned)(\s+int)?', matched.group(3)):
+            error(line_number, 'runtime/enum_bitfields', 5,
+                  'Please declare enum bitfields as unsigned integral types.')
+
     check_identifier_name_in_declaration(filename, line_number, line, file_state, error)
 
     # Check for unsigned int (should be just 'unsigned')
@@ -3784,6 +3795,7 @@ class CppChecker(object):
         'runtime/bitfields',
         'runtime/casting',
         'runtime/ctype_function',
+        'runtime/enum_bitfields',
         'runtime/explicit',
         'runtime/init',
         'runtime/int',

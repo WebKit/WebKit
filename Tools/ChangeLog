@@ -1,3 +1,21 @@
+2014-07-12  Brian Holt  <brian.holt@samsung.com>
+
+        Style Checker should prevent enums in bitfields
+        https://bugs.webkit.org/show_bug.cgi?id=57352
+
+        Reviewed by Darin Adler.
+
+        Added check that enums are not used as types for bitfields
+        and a unit test.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_language):
+        (CppChecker):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest):
+        (CppStyleTest.test_enum_bitfields):
+        (CppStyleTest.test_plain_integral_bitfields):
+
 2014-07-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Pasting rich content does not perform a two-step paste

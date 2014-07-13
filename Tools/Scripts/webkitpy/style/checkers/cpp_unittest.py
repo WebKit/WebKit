@@ -2502,6 +2502,14 @@ class CppStyleTest(CppStyleTestBase):
                          'Changing pointer instead of value (or unused value of '
                          'operator*).  [runtime/invalid_increment] [5]')
 
+    # Enum bitfields are not allowed and should be declared as unsigned integral types.
+    def test_enum_bitfields(self):
+        errmsg = ('Please declare enum bitfields as unsigned integral types.  [runtime/enum_bitfields] [5]')
+
+        self.assert_lint('AnEnum a : 30;', errmsg)
+        self.assert_lint('mutable AnEnum a : 14;', errmsg)
+        self.assert_lint('const AnEnum a : 6;', errmsg)
+
     # Integral bitfields must be declared with either signed or unsigned keyword.
     def test_plain_integral_bitfields(self):
         errmsg = ('Please declare integral type bitfields with either signed or unsigned.  [runtime/bitfields] [5]')
@@ -2511,6 +2519,7 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('const char a : 6;', errmsg)
         self.assert_lint('long int a : 30;', errmsg)
         self.assert_lint('int a = 1 ? 0 : 30;', '')
+
 
 class CleansedLinesTest(unittest.TestCase):
     def test_init(self):
