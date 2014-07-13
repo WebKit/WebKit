@@ -2,7 +2,7 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (0,0) size 401x277
+    RenderSVGContainer {g} at (0,0) size 181x277
       RenderSVGRect {rect} at (0,45) size 51x82 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=46.00] [width=50.00] [height=80.00]
       RenderSVGRect {rect} at (129,0) size 52x81 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=130.00] [y=0.00] [width=50.00] [height=80.00]
       RenderSVGRect {rect} at (249,45) size 2x82 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=250.00] [y=46.00] [width=0.00] [height=80.00]

@@ -151,4 +151,10 @@ bool RenderSVGRect::shapeDependentFillContains(const FloatPoint& point, const Wi
     return m_fillBoundingBox.contains(point.x(), point.y());
 }
 
+bool RenderSVGRect::isRenderingDisabled() const
+{
+    // A width or height of zero disables rendering for the element, and results in an empty bounding box.
+    return m_fillBoundingBox.isEmpty();
+}
+
 }

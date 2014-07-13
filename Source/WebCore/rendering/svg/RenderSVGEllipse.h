@@ -41,6 +41,7 @@ private:
 
     virtual void updateShapeFromElement();
     virtual bool isEmpty() const { return m_usePathFallback ? RenderSVGShape::isEmpty() : m_fillBoundingBox.isEmpty(); };
+    virtual bool isRenderingDisabled() const override;
     virtual void fillShape(GraphicsContext*) const;
     virtual void strokeShape(GraphicsContext*) const;
     virtual bool shapeDependentStrokeContains(const FloatPoint&);

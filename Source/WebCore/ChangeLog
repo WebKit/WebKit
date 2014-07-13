@@ -1,3 +1,59 @@
+2014-07-12  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        Elements with rendering disabled due to dimensions should not contribute to parent bounding box
+        https://bugs.webkit.org/show_bug.cgi?id=134184
+
+        Reviewed by Dirk Schulze.
+
+        SVG elements that have rendering disabled should not contribute to any ancestor elements bounding box.
+        Examples of elements with rendering disabled:
+        - basic shape with width <= 0 or height <= 0
+        - path with no path data (d attribute missing or empty)
+        - polyline or polygon element with no point data (points attribute missing or empty)
+
+        To achieve this a method (isRenderingDisabled) was added to RenderSVGShape and it's derived classes.
+        This is used to determine if an element is included when creating the union of child bounding boxes
+        in a container element.
+
+        Tests: svg/custom/GetBBox-path-nodata.html
+               svg/custom/GetBBox-polygon-nodata.html
+               svg/custom/GetBBox-polyline-nodata.html
+               svg/custom/getBBox-container-hiddenchild.html
+
+        * rendering/svg/RenderSVGEllipse.cpp:
+        (WebCore::RenderSVGEllipse::isRenderingDisabled):
+        New method added. Checks bounding box to determine if rendering is disabled.
+        * rendering/svg/RenderSVGEllipse.h:
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::RenderSVGPath::isRenderingDisabled):
+        New method added. Checks bounding box to determine if rendering is disabled.
+        * rendering/svg/RenderSVGPath.h:
+        * rendering/svg/RenderSVGRect.cpp:
+        (WebCore::RenderSVGRect::isRenderingDisabled):
+        New method added. Checks bounding box to determine if rendering is disabled.
+        * rendering/svg/RenderSVGRect.h:
+        * rendering/svg/RenderSVGShape.h:
+        (WebCore::RenderSVGShape::isRenderingDisabled):
+        New method added. Always returns false so that derived classes that do not
+        implement this method retain the existing behaviour.
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::computeContainerBoundingBoxes):
+        For each element potentially being included in the unioned bounding box of
+        a container, check isRenderingDisabled and skip that element if true.
+
+        * rendering/svg/RenderSVGEllipse.cpp:
+        (WebCore::RenderSVGEllipse::isRenderingDisabled):
+        * rendering/svg/RenderSVGEllipse.h:
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::RenderSVGPath::isRenderingDisabled):
+        * rendering/svg/RenderSVGPath.h:
+        * rendering/svg/RenderSVGRect.cpp:
+        (WebCore::RenderSVGRect::isRenderingDisabled):
+        * rendering/svg/RenderSVGRect.h:
+        * rendering/svg/RenderSVGShape.h:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::computeContainerBoundingBoxes):
+
 2014-07-12  Benjamin Poulain  <benjamin@webkit.org>
 
         Rename selectorListContainsUncommonAttributeSelector() to selectorListContainsAttributeSelector()

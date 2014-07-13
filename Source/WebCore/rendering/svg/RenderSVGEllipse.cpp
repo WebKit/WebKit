@@ -153,4 +153,10 @@ bool RenderSVGEllipse::shapeDependentFillContains(const FloatPoint& point, const
     return xrX * xrX + yrY * yrY <= 1.0;
 }
 
+bool RenderSVGEllipse::isRenderingDisabled() const
+{
+    // A radius of zero disables rendering of the element, and results in an empty bounding box.
+    return m_fillBoundingBox.isEmpty();
+}
+
 }

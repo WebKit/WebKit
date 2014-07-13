@@ -50,6 +50,8 @@ private:
     FloatRect zeroLengthSubpathRect(const FloatPoint&, float) const;
     void updateZeroLengthSubpaths();
 
+    virtual bool isRenderingDisabled() const override;
+
     Vector<FloatPoint> m_zeroLengthLinecapLocations;
 };
 

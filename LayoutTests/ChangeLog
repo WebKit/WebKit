@@ -1,3 +1,32 @@
+2014-07-12  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        Elements with rendering disabled due to dimensions should not contribute to parent bounding box
+        https://bugs.webkit.org/show_bug.cgi?id=134184
+
+        Reviewed by Dirk Schulze.
+
+        Test, for each element type, that when rendering is disabled, that element does not contribute
+        to the bounding box for an ancestor element.
+
+        Added test to ensure zero width/height polyline and polygon do contribute to ancestor bounding box.
+
+        Updated expected results for 1 existing test (shapes-rect-02-t) as this test included zero
+        width and zero height rects and these were previously included in the repaint rect.
+
+        * platform/mac/svg/W3C-SVG-1.1/shapes-rect-02-t-expected.txt:
+        * svg/custom/GetBBox-path-nodata-expected.txt: Added.
+        * svg/custom/GetBBox-path-nodata.html: Added.
+        * svg/custom/GetBBox-polygon-nodata-expected.txt: Added.
+        * svg/custom/GetBBox-polygon-nodata.html: Added.
+        * svg/custom/GetBBox-polyline-nodata-expected.txt: Added.
+        * svg/custom/GetBBox-polyline-nodata.html: Added.
+        * svg/custom/getBBox-container-hiddenchild-expected.txt: Added.
+        * svg/custom/getBBox-container-hiddenchild.html: Added.
+        * svg/custom/getBBox-perpendicular-polygon-expected.txt: Added.
+        * svg/custom/getBBox-perpendicular-polygon.svg: Added.
+        * svg/custom/getBBox-perpendicular-polyline-expected.txt: Added.
+        * svg/custom/getBBox-perpendicular-polyline.svg: Added.
+
 2014-07-11  Jer Noble  <jer.noble@apple.com>
 
         [MSE] http/tests/media/media-source/mediasource-duration.html is failing.

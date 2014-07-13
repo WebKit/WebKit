@@ -57,6 +57,7 @@ public:
     virtual void setNeedsTransformUpdate() override final { m_needsTransformUpdate = true; }
     virtual void fillShape(GraphicsContext*) const;
     virtual void strokeShape(GraphicsContext*) const;
+    virtual bool isRenderingDisabled() const = 0;
 
     bool hasPath() const { return m_path.get(); }
     Path& path() const
