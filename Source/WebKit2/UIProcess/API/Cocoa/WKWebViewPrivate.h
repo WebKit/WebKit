@@ -88,12 +88,8 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 @property (nonatomic, readonly) NSData *_sessionStateData;
 - (void)_restoreFromSessionStateData:(NSData *)sessionStateData;
 
-// FIXME: This should return a _WKSessionState object, not an id.
-@property (nonatomic, readonly) id _sessionState;
+@property (nonatomic, readonly) _WKSessionState *_sessionState;
 - (WKNavigation *)_restoreSessionState:(_WKSessionState *)sessionState andNavigate:(BOOL)navigate;
-
-// FIXME: Remove this once nobody is using it.
-- (void)_restoreFromSessionState:(id)sessionState;
 
 @property (nonatomic, setter=_setAllowsRemoteInspection:) BOOL _allowsRemoteInspection;
 

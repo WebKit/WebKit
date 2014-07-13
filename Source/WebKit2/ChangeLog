@@ -1,3 +1,15 @@
+2014-07-13  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Clean up session state API a little
+        https://bugs.webkit.org/show_bug.cgi?id=134871
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _sessionState]):
+        (-[WKWebView _restoreFromSessionState:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2014-07-13  Javier Fernandez  <jfernandez@igalia.com>
 
         REGRESSION(r171045) [GTK] Build broken.

@@ -1634,8 +1634,7 @@ static int32_t activeOrientation(WKWebView *webView)
     return [wrapper(*WebKit::encodeLegacySessionState(sessionState).release().leakRef()) autorelease];
 }
 
-// FIXME: This should return a _WKSessionState object.
-- (id)_sessionState
+- (_WKSessionState *)_sessionState
 {
     return adoptNS([[_WKSessionState alloc] _initWithSessionState:_page->sessionState()]).autorelease();
 }
@@ -1651,12 +1650,6 @@ static int32_t activeOrientation(WKWebView *webView)
         // FIXME: This is not necessarily always a reload navigation.
         _navigationState->createReloadNavigation(navigationID);
     }
-}
-
-// FIXME: Remove this once nobody is using it.
-- (void)_restoreFromSessionState:(id)sessionState
-{
-    [self _restoreSessionState:sessionState andNavigate:YES];
 }
 
 - (WKNavigation *)_restoreSessionState:(_WKSessionState *)sessionState andNavigate:(BOOL)navigate
