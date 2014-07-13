@@ -201,6 +201,9 @@ protected:
     virtual void beganEnterFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) override { }
     virtual void beganExitFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) override { }
 #endif
+    virtual void navigationGestureDidBegin() override { };
+    virtual void navigationGestureWillEnd(bool, WebBackForwardListItem&) override { };
+    virtual void navigationGestureDidEnd(bool, WebBackForwardListItem&) override { };
 
     WebViewClient m_client;
     RefPtr<WebPageProxy> m_page;

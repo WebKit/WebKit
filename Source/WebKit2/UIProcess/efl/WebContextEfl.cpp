@@ -138,6 +138,12 @@ String WebContext::platformDefaultOpenGLCacheDirectory() const
     return String();
 }
 
+String WebContext::platformMediaCacheDirectory() const
+{
+    notImplemented();
+    return String();
+}
+
 void WebContext::setIgnoreTLSErrors(bool ignoreTLSErrors)
 {
     m_ignoreTLSErrors = ignoreTLSErrors;
