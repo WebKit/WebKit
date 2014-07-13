@@ -382,4 +382,16 @@ void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String&,
 {
 }
 
+void PageClientImpl::navigationGestureDidBegin()
+{
+}
+
+void PageClientImpl::navigationGestureWillEnd(bool, WebBackForwardListItem&)
+{
+}
+
+void PageClientImpl::navigationGestureDidEnd(bool, WebBackForwardListItem&)
+{
+}
+
 } // namespace WebKit

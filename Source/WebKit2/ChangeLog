@@ -1,5 +1,18 @@
 2014-07-12  Javier Fernandez  <jfernandez@igalia.com>
 
+        REGRESSION(r171034) [GTK] Build broken.
+        https://bugs.webkit.org/show_bug.cgi?id=134861
+
+        Unreviewed GTK build fix.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::navigationGestureDidBegin):
+        (WebKit::PageClientImpl::navigationGestureWillEnd):
+        (WebKit::PageClientImpl::navigationGestureDidEnd):
+        * UIProcess/API/gtk/PageClientImpl.h:
+
+2014-07-12  Javier Fernandez  <jfernandez@igalia.com>
+
         REGRESSION(r171024) [GTK] Build broken.
         https://bugs.webkit.org/show_bug.cgi?id=134859
 
