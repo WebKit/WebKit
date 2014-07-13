@@ -1,3 +1,12 @@
+2014-07-12  Darin Adler  <darin@apple.com>
+
+        Try to fix 32-bit Mac build.
+
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::navigationGestureDidBegin): Added WK_API_ENABLED conditional.
+        (WebKit::PageClientImpl::navigationGestureWillEnd): Ditto.
+        (WebKit::PageClientImpl::navigationGestureDidEnd): Ditto.
+
 2014-07-12  Javier Fernandez  <jfernandez@igalia.com>
 
         REGRESSION(r171034) [GTK] Build broken.

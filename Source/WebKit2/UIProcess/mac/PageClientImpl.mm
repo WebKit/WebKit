@@ -689,17 +689,29 @@ void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntR
 
 void PageClientImpl::navigationGestureDidBegin()
 {
+#if WK_API_ENABLED
     NavigationState::fromWebPage(*m_webView->_page).navigationGestureDidBegin();
+#endif
 }
 
 void PageClientImpl::navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem& item)
 {
+#if WK_API_ENABLED
     NavigationState::fromWebPage(*m_webView->_page).navigationGestureWillEnd(willNavigate, item);
+#else
+    UNUSED_PARAM(willNavigate);
+    UNUSED_PARAM(item);
+#endif
 }
 
 void PageClientImpl::navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem& item)
 {
+#if WK_API_ENABLED
     NavigationState::fromWebPage(*m_webView->_page).navigationGestureDidEnd(willNavigate, item);
+#else
+    UNUSED_PARAM(willNavigate);
+    UNUSED_PARAM(item);
+#endif
 }
 
 } // namespace WebKit
