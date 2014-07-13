@@ -176,6 +176,7 @@ private:
     virtual void navigationGestureDidBegin() override;
     virtual void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&) override;
     virtual void navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem&) override;
+    virtual void willRecordNavigationSnapshot(WebBackForwardListItem&) override;
 
     NSView *activeView() const;
 

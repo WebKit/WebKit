@@ -78,6 +78,7 @@ public:
     void navigationGestureDidBegin();
     void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&);
     void navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem&);
+    void willRecordNavigationSnapshot(WebBackForwardListItem&);
 
 private:
     class PolicyClient : public API::PolicyClient {
@@ -166,6 +167,7 @@ private:
         bool webViewDidBeginNavigationGesture : 1;
         bool webViewWillEndNavigationGestureWithNavigationToBackForwardListItem : 1;
         bool webViewDidEndNavigationGestureWithNavigationToBackForwardListItem : 1;
+        bool webViewWillSnapshotBackForwardListItem : 1;
 #if USE(QUICK_LOOK)
         bool webViewDidStartLoadForQuickLookDocumentInMainFrame : 1;
         bool webViewDidFinishLoadForQuickLookDocumentInMainFrame : 1;

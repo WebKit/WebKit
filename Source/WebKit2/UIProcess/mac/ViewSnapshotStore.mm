@@ -119,6 +119,8 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy)
 
     pruneSnapshots(webPageProxy);
 
+    webPageProxy.willRecordNavigationSnapshot(*item);
+
     RefPtr<ViewSnapshot> snapshot = webPageProxy.takeViewSnapshot();
     if (!snapshot || !snapshot->hasImage())
         return;

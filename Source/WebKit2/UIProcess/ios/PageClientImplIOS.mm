@@ -667,6 +667,11 @@ void PageClientImpl::navigationGestureDidEnd(bool willNavigate, WebBackForwardLi
     NavigationState::fromWebPage(*m_webView->_page).navigationGestureDidEnd(willNavigate, item);
 }
 
+void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem& item)
+{
+    NavigationState::fromWebPage(*m_webView->_page).willRecordNavigationSnapshot(item);
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

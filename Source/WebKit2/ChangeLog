@@ -1,3 +1,38 @@
+2014-07-12  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Notify the client when a navigation snapshot is taken
+        https://bugs.webkit.org/show_bug.cgi?id=134865
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h: Declared new delegate method.
+
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate): Initialize new flag in
+        m_navigationDelegateMethods.
+        (WebKit::NavigationState::willRecordNavigationSnapshot): Added. Calls the new
+        WKNavigationDelegate method.
+
+        * UIProcess/PageClient.h: Declared new client function.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::willRecordNavigationSnapshot): Added. Calls the new client function.
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::willRecordNavigationSnapshot): Override that calls
+        NavigationState::willRecordNavigationSnapshot.
+
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::willRecordNavigationSnapshot): Ditto.
+
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::ViewSnapshotStore::recordSnapshot): Added a call to
+        WebPageProxy::willRecordNavigationSnapshot.
+
 2014-07-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, fix EFL build break since r171034.

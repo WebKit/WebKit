@@ -901,6 +901,7 @@ public:
     void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&);
     void navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem&);
     void navigationGestureSnapshotWasRemoved();
+    void willRecordNavigationSnapshot(WebBackForwardListItem&);
 
     bool isShowingNavigationGestureSnapshot() const { return m_isShowingNavigationGestureSnapshot; }
 

@@ -5143,6 +5143,11 @@ void WebPageProxy::navigationGestureDidEnd(bool willNavigate, WebBackForwardList
     m_pageClient.navigationGestureDidEnd(willNavigate, item);
 }
 
+void WebPageProxy::willRecordNavigationSnapshot(WebBackForwardListItem& item)
+{
+    m_pageClient.willRecordNavigationSnapshot(item);
+}
+
 void WebPageProxy::navigationGestureSnapshotWasRemoved()
 {
     m_isShowingNavigationGestureSnapshot = false;

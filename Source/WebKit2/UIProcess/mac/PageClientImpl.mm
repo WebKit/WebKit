@@ -714,6 +714,15 @@ void PageClientImpl::navigationGestureDidEnd(bool willNavigate, WebBackForwardLi
 #endif
 }
 
+void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem& item)
+{
+#if WK_API_ENABLED
+    NavigationState::fromWebPage(*m_webView->_page).willRecordNavigationSnapshot(item);
+#else
+    UNUSED_PARAM(item);
+#endif
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)
