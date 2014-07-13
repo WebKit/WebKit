@@ -1,3 +1,16 @@
+2014-07-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Use braced-init-list to create one-item Vector object in insertPerformanceEntry
+        https://bugs.webkit.org/show_bug.cgi?id=133675
+
+        Reviewed by Darin Adler.
+
+        * page/PerformanceUserTiming.cpp:
+        (WebCore::insertPerformanceEntry): Avoid wasting three lines for creating a
+        Vector object with just one item that in the end gets copied. Use the
+        braced-init-list syntax instead, leveraging Vector's std::initializer_list
+        constructor.
+
 2014-07-12  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Memory leaks with autoLoadImages off

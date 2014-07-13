@@ -81,11 +81,8 @@ static void insertPerformanceEntry(PerformanceEntryMap& performanceEntryMap, Pas
     PerformanceEntryMap::iterator it = performanceEntryMap.find(entry->name());
     if (it != performanceEntryMap.end())
         it->value.append(entry);
-    else {
-        Vector<RefPtr<PerformanceEntry> > v(1);
-        v[0] = entry;
-        performanceEntryMap.set(entry->name(), v);
-    }
+    else
+        performanceEntryMap.set(entry->name(), Vector<RefPtr<PerformanceEntry>>{ entry });
 }
 
 static void clearPeformanceEntries(PerformanceEntryMap& performanceEntryMap, const String& name)
