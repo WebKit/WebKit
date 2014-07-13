@@ -2127,6 +2127,7 @@ def check_namespace_indentation(clean_lines, line_number, file_extension, file_s
         else:
             looking_for_semicolon = False; # If we have a brace we may not need a semicolon.
         current_indentation_level += current_line.count('{') - current_line.count('}')
+        current_indentation_level += current_line.count('(') - current_line.count(')')
         if current_indentation_level < 0:
             break;
 

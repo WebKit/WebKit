@@ -3815,6 +3815,15 @@ class WebKitStyleTest(CppStyleTestBase):
             '}',
             'Code inside a namespace should not be indented.  [whitespace/indent] [4]',
             'foo.cpp')
+        self.assert_multi_line_lint(
+            'namespace WebCore {\n'
+            'static const char* vertexTemplate =\n'
+            '    STRINGIFY(\n'
+            '        attribute vec4 a_vertex;\n'
+            '        uniform mat4 u_modelViewMatrix;\n'
+            '    );\n'
+            '}\n',
+            '')
 
         # 5. A case label should line up with its switch statement. The
         #    case statement is indented.

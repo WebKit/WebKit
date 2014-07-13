@@ -1,3 +1,17 @@
+2014-07-12  Peter Szanka  <h868064@stud.u-szeged.hu>
+
+        Style checker complains about namespace indentation when there is no namespace
+        https://bugs.webkit.org/show_bug.cgi?id=105427
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_namespace_indentation):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_indentation):
+
+        The indentation level depends on the parantheses too, to avoid false warning in case of several statements inside macros.
+
 2014-07-12  Daker Fernandes Pinheiro  <daker.pinheiro@openbossa.org>
 
         Remove excessive nesting from _EnumState.process_clean_line at cpp style checker
