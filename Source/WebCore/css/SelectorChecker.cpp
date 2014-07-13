@@ -275,7 +275,7 @@ SelectorChecker::Match SelectorChecker::matchRecursively(const SelectorCheckingC
         // to follow the pseudo elements.
         nextContext.hasScrollbarPseudo = dynamicPseudo != NOPSEUDO && (context.scrollbar || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER);
         nextContext.hasSelectionPseudo = dynamicPseudo == SELECTION;
-        if ((context.elementStyle || m_mode == Mode::CollectingRules || m_mode == Mode::QueryingRules) && dynamicPseudo != NOPSEUDO
+        if ((context.elementStyle || m_mode == Mode::CollectingRules) && dynamicPseudo != NOPSEUDO
             && !nextContext.hasSelectionPseudo
             && !(nextContext.hasScrollbarPseudo && nextContext.selector->m_match == CSSSelector::PseudoClass))
             return SelectorFailsCompletely;

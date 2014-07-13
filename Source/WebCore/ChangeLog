@@ -1,3 +1,19 @@
+2014-07-13  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove an useless check from SelectorChecker
+        https://bugs.webkit.org/show_bug.cgi?id=134868
+
+        Reviewed by Darin Adler.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively):
+        The condition of this if() branch can never be met for the mode "QueryingRules".
+
+        The next condition in that if() is "dynamicPseudo != NOPSEUDO", which implies
+        a pseudo element was matched prior to the current context/simple selector.
+        This cannot happen with QueryingRules, since we never match pseudo elements for
+        SelectorQuery.
+
 2014-07-12  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         Elements with rendering disabled due to dimensions should not contribute to parent bounding box
