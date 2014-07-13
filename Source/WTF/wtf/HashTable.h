@@ -393,6 +393,8 @@ namespace WTF {
         void remove(iterator);
         void removeWithoutEntryConsistencyCheck(iterator);
         void removeWithoutEntryConsistencyCheck(const_iterator);
+        template<typename Functor>
+        void removeIf(const Functor&);
         void clear();
 
         static bool isEmptyBucket(const ValueType& value) { return isHashTraitsEmptyValue<KeyTraits>(Extractor::extract(value)); }
@@ -1028,6 +1030,28 @@ namespace WTF {
     inline void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::remove(const KeyType& key)
     {
         remove(find(key));
+    }
+
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    template<typename Functor>
+    inline void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::removeIf(const Functor& functor)
+    {
+        for (unsigned i = m_tableSize; i--;) {
+            if (isEmptyOrDeletedBucket(m_table[i]))
+                continue;
+            
+            if (!functor(m_table[i]))
+                continue;
+            
+            deleteBucket(m_table[i]);
+            ++m_deletedCount;
+            --m_keyCount;
+        }
+        
+        if (shouldShrink())
+            shrink();
+        
+        internalCheckTableConsistency();
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>

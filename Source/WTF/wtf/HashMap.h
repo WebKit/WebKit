@@ -120,6 +120,8 @@ public:
 
     bool remove(const KeyType&);
     bool remove(iterator);
+    template<typename Functor>
+    void removeIf(const Functor& functor);
     void clear();
 
     MappedType take(const KeyType&); // efficient combination of get with remove
@@ -351,6 +353,13 @@ inline bool HashMap<T, U, V, W, X>::remove(iterator it)
     m_impl.internalCheckTableConsistency();
     m_impl.removeWithoutEntryConsistencyCheck(it.m_impl);
     return true;
+}
+
+template<typename T, typename U, typename V, typename W, typename X>
+template<typename Functor>
+inline void HashMap<T, U, V, W, X>::removeIf(const Functor& functor)
+{
+    m_impl.removeIf(functor);
 }
 
 template<typename T, typename U, typename V, typename W, typename X>

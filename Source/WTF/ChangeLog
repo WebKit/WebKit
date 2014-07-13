@@ -1,3 +1,19 @@
+2014-07-13  Filip Pizlo  <fpizlo@apple.com>
+
+        HashMap should have removeIf()
+        https://bugs.webkit.org/show_bug.cgi?id=134870
+
+        Reviewed by Sam Weinig.
+        
+        Expose a new HashMap method, called removeIf(), which allows you to do an efficient
+        pass over the map and remove a bunch of things at once. This is used by DFG GCSE as
+        part of https://bugs.webkit.org/show_bug.cgi?id=134677.
+
+        * wtf/HashMap.h:
+        (WTF::X>::removeIf):
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::removeIf):
+
 2014-07-11  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] Enable DFG JIT.
