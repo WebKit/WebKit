@@ -36,8 +36,7 @@ namespace WebCore {
 enum AddRuleFlags {
     RuleHasNoSpecialState         = 0,
     RuleHasDocumentSecurityOrigin = 1,
-    RuleCanUseFastCheckSelector   = 1 << 1,
-    RuleIsInRegionRule            = 1 << 2,
+    RuleIsInRegionRule            = 1 << 1,
 };
     
 enum PropertyWhitelistType {
@@ -66,7 +65,7 @@ public:
     const CSSSelector* selector() const { return m_rule->selectorList().selectorAt(m_selectorIndex); }
     unsigned selectorIndex() const { return m_selectorIndex; }
 
-    bool hasFastCheckableSelector() const { return m_hasFastCheckableSelector; }
+    bool canMatchPseudoElement() const { return m_canMatchPseudoElement; }
     bool hasRightmostSelectorMatchingHTMLBasedOnRuleHash() const { return m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash; }
     bool containsUncommonAttributeSelector() const { return m_containsUncommonAttributeSelector; }
     unsigned specificity() const { return m_specificity; }
@@ -98,15 +97,15 @@ public:
 private:
     RefPtr<StyleRule> m_rule;
     unsigned m_selectorIndex : 13;
+    unsigned m_hasDocumentSecurityOrigin : 1;
     // This number was picked fairly arbitrarily. We can probably lower it if we need to.
     // Some simple testing showed <100,000 RuleData's on large sites.
     unsigned m_position : 18;
-    unsigned m_hasFastCheckableSelector : 1;
     unsigned m_specificity : 24;
     unsigned m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash : 1;
+    unsigned m_canMatchPseudoElement : 1;
     unsigned m_containsUncommonAttributeSelector : 1;
     unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
-    unsigned m_hasDocumentSecurityOrigin : 1;
     unsigned m_propertyWhitelistType : 2;
     // Use plain array instead of a Vector to minimize memory overhead.
     unsigned m_descendantSelectorIdentifierHashes[maximumIdentifierCount];

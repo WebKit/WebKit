@@ -36,7 +36,6 @@
 #include "MediaQueryEvaluator.h"
 #include "SecurityOrigin.h"
 #include "SelectorChecker.h"
-#include "SelectorCheckerFastPath.h"
 #include "SelectorFilter.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
@@ -66,6 +65,25 @@ static inline bool isSelectorMatchingHTMLBasedOnRuleHash(const CSSSelector& sele
     if (SelectorChecker::isCommonPseudoClassSelector(&selector))
         return true;
     return selector.m_match == CSSSelector::Id || selector.m_match == CSSSelector::Class;
+}
+
+static bool selectorCanMatchPseudoElement(const CSSSelector& rootSelector)
+{
+    const CSSSelector* selector = &rootSelector;
+    do {
+        if (selector->matchesPseudoElement())
+            return true;
+
+        if (const CSSSelectorList* selectorList = selector->selectorList()) {
+            for (const CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
+                if (selectorCanMatchPseudoElement(*subSelector))
+                    return true;
+            }
+        }
+
+        selector = selector->tagHistory();
+    } while (selector);
+    return false;
 }
 
 static inline bool selectorListContainsAttributeSelector(const CSSSelector* selector)
@@ -129,13 +147,13 @@ static inline PropertyWhitelistType determinePropertyWhitelistType(const AddRule
 RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned position, AddRuleFlags addRuleFlags)
     : m_rule(rule)
     , m_selectorIndex(selectorIndex)
+    , m_hasDocumentSecurityOrigin(addRuleFlags & RuleHasDocumentSecurityOrigin)
     , m_position(position)
-    , m_hasFastCheckableSelector((addRuleFlags & RuleCanUseFastCheckSelector) && SelectorCheckerFastPath::canUse(selector()))
     , m_specificity(selector()->specificity())
     , m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash(isSelectorMatchingHTMLBasedOnRuleHash(*selector()))
+    , m_canMatchPseudoElement(selectorCanMatchPseudoElement(*selector()))
     , m_containsUncommonAttributeSelector(WebCore::containsUncommonAttributeSelector(selector()))
     , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector()))
-    , m_hasDocumentSecurityOrigin(addRuleFlags & RuleHasDocumentSecurityOrigin)
     , m_propertyWhitelistType(determinePropertyWhitelistType(addRuleFlags, selector()))
 #if ENABLE(CSS_SELECTOR_JIT) && CSS_SELECTOR_JIT_PROFILING
     , m_compiledSelectorUseCount(0)
@@ -291,7 +309,7 @@ void RuleSet::addRegionRule(StyleRuleRegion* regionRule, bool hasDocumentSecurit
     // FIXME: Should this add other types of rules? (i.e. use addChildRules() directly?)
     const Vector<RefPtr<StyleRuleBase>>& childRules = regionRule->childRules();
     AddRuleFlags addRuleFlags = hasDocumentSecurityOrigin ? RuleHasDocumentSecurityOrigin : RuleHasNoSpecialState;
-    addRuleFlags = static_cast<AddRuleFlags>(addRuleFlags | RuleCanUseFastCheckSelector | RuleIsInRegionRule);
+    addRuleFlags = static_cast<AddRuleFlags>(addRuleFlags | RuleIsInRegionRule);
     for (unsigned i = 0; i < childRules.size(); ++i) {
         StyleRuleBase* regionStylingRule = childRules[i].get();
         if (regionStylingRule->isStyleRule())
@@ -354,7 +372,7 @@ void RuleSet::addRulesFromSheet(StyleSheetContents* sheet, const MediaQueryEvalu
     }
 
     bool hasDocumentSecurityOrigin = resolver && resolver->document().securityOrigin()->canRequest(sheet->baseURL());
-    AddRuleFlags addRuleFlags = static_cast<AddRuleFlags>((hasDocumentSecurityOrigin ? RuleHasDocumentSecurityOrigin : 0) | RuleCanUseFastCheckSelector);
+    AddRuleFlags addRuleFlags = static_cast<AddRuleFlags>((hasDocumentSecurityOrigin ? RuleHasDocumentSecurityOrigin : 0));
 
     addChildRules(sheet->childRules(), medium, resolver, hasDocumentSecurityOrigin, addRuleFlags);
 

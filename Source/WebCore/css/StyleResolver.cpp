@@ -109,7 +109,6 @@
 #include "SVGNames.h"
 #include "SVGURIReference.h"
 #include "SecurityOrigin.h"
-#include "SelectorCheckerFastPath.h"
 #include "Settings.h"
 #include "ShadowData.h"
 #include "ShadowRoot.h"

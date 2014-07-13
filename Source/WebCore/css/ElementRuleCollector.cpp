@@ -39,7 +39,6 @@
 #include "InspectorInstrumentation.h"
 #include "RenderRegion.h"
 #include "SVGElement.h"
-#include "SelectorCheckerFastPath.h"
 #include "SelectorCompiler.h"
 #include "StyleProperties.h"
 #include "StyledElement.h"
@@ -273,15 +272,11 @@ void ElementRuleCollector::matchUARules(RuleSet* rules)
 
 inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData)
 {
-    bool fastCheckableSelector = ruleData.hasFastCheckableSelector();
-    if (fastCheckableSelector) {
-        // We know this selector does not include any pseudo elements.
-        if (m_pseudoStyleRequest.pseudoId != NOPSEUDO)
-            return false;
-        // We know a sufficiently simple single part selector matches simply because we found it from the rule hash.
-        // This is limited to HTML only so we don't need to check the namespace.
-        if (ruleData.hasRightmostSelectorMatchingHTMLBasedOnRuleHash() && m_element.isHTMLElement())
-            return true;
+    // We know a sufficiently simple single part selector matches simply because we found it from the rule hash when filtering the RuleSet.
+    // This is limited to HTML only so we don't need to check the namespace (because of tag name match).
+    if (ruleData.hasRightmostSelectorMatchingHTMLBasedOnRuleHash() && m_element.isHTMLElement()) {
+        ASSERT_WITH_MESSAGE(m_pseudoStyleRequest.pseudoId == NOPSEUDO, "If we match based on the rule hash while collecting for a particular pseudo element ID, we would add incorrect rules for that pseudo element ID. We should never end in ruleMatches() with a pseudo element if the ruleData cannot match any pseudo element.");
+        return true;
     }
 
 #if ENABLE(CSS_SELECTOR_JIT)
@@ -319,16 +314,6 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData)
     }
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
-    if (fastCheckableSelector) {
-        if (ruleData.selector()->m_match == CSSSelector::Tag && !SelectorChecker::tagMatches(&m_element, ruleData.selector()->tagQName()))
-            return false;
-        SelectorCheckerFastPath selectorCheckerFastPath(ruleData.selector(), &m_element);
-        if (!selectorCheckerFastPath.matchesRightmostAttributeSelector())
-            return false;
-
-        return selectorCheckerFastPath.matches();
-    }
-
     // Slow path.
     SelectorChecker selectorChecker(m_element.document(), m_mode);
     SelectorChecker::SelectorCheckingContext context(ruleData.selector(), &m_element, SelectorChecker::VisitedMatchEnabled);
@@ -346,6 +331,10 @@ void ElementRuleCollector::collectMatchingRulesForList(const Vector<RuleData>* r
 
     for (unsigned i = 0, size = rules->size(); i < size; ++i) {
         const RuleData& ruleData = rules->data()[i];
+
+        if (!ruleData.canMatchPseudoElement() && m_pseudoStyleRequest.pseudoId != NOPSEUDO)
+            continue;
+
         if (m_canUseFastReject && m_selectorFilter.fastRejectSelector<RuleData::maximumIdentifierCount>(ruleData.descendantSelectorIdentifierHashes()))
             continue;
 

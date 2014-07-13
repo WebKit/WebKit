@@ -1,5 +1,35 @@
 2014-07-13  Benjamin Poulain  <benjamin@webkit.org>
 
+        Remove SelectorCheckerFastPath from the style resolution algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=134866
+
+        Reviewed by Antti Koivisto.
+
+        SelectorCheckerFastPath is now pure overhead because it can almost never match
+        if the CSS JIT was unable to compile.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ruleMatches):
+        The "pre-filter" behind fastCheckableSelector had two parts:
+        1) Filtering the pseudoID.
+        2) Filtering on the rule hash.
+
+        The first part has been generalized (RuleDatacanMatchPseudoElement())
+        and moved to collectMatchingRulesForList(). 
+
+        (WebCore::ElementRuleCollector::collectMatchingRulesForList):
+        * css/RuleSet.cpp:
+        (WebCore::selectorCanMatchPseudoElement):
+        (WebCore::RuleData::RuleData):
+        (WebCore::RuleSet::addRegionRule):
+        (WebCore::RuleSet::addRulesFromSheet):
+        * css/RuleSet.h:
+        (WebCore::RuleData::canMatchPseudoElement):
+        (WebCore::RuleData::hasFastCheckableSelector): Deleted.
+        * css/StyleResolver.cpp:
+
+2014-07-13  Benjamin Poulain  <benjamin@webkit.org>
+
         Remove an useless check from SelectorChecker
         https://bugs.webkit.org/show_bug.cgi?id=134868
 
