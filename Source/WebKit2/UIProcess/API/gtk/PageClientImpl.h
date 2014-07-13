@@ -125,6 +125,7 @@ private:
     virtual void navigationGestureDidBegin() override;
     virtual void navigationGestureWillEnd(bool, WebBackForwardListItem&) override;
     virtual void navigationGestureDidEnd(bool, WebBackForwardListItem&) override;
+    virtual void willRecordNavigationSnapshot(WebBackForwardListItem&) override;
 
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled) override;
 

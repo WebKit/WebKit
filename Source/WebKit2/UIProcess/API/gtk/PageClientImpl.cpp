@@ -394,4 +394,8 @@ void PageClientImpl::navigationGestureDidEnd(bool, WebBackForwardListItem&)
 {
 }
 
+void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem&)
+{
+}
+
 } // namespace WebKit
