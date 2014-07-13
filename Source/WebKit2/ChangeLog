@@ -1,3 +1,9 @@
+2014-07-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL build fix since r171045.
+
+        * UIProcess/CoordinatedGraphics/WebView.h:
+
 2014-07-12  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Notify the client when a navigation snapshot is taken

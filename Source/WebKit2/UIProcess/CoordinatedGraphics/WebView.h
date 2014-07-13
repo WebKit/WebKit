@@ -204,6 +204,7 @@ protected:
     virtual void navigationGestureDidBegin() override { };
     virtual void navigationGestureWillEnd(bool, WebBackForwardListItem&) override { };
     virtual void navigationGestureDidEnd(bool, WebBackForwardListItem&) override { };
+    virtual void willRecordNavigationSnapshot(WebBackForwardListItem&) override { };
 
     WebViewClient m_client;
     RefPtr<WebPageProxy> m_page;
