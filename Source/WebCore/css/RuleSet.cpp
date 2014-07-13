@@ -68,7 +68,7 @@ static inline bool isSelectorMatchingHTMLBasedOnRuleHash(const CSSSelector& sele
     return selector.m_match == CSSSelector::Id || selector.m_match == CSSSelector::Class;
 }
 
-static inline bool selectorListContainsUncommonAttributeSelector(const CSSSelector* selector)
+static inline bool selectorListContainsAttributeSelector(const CSSSelector* selector)
 {
     const CSSSelectorList* selectorList = selector->selectorList();
     if (!selectorList)
@@ -94,7 +94,7 @@ static inline bool containsUncommonAttributeSelector(const CSSSelector* selector
         // Allow certain common attributes (used in the default style) in the selectors that match the current element.
         if (selector->isAttributeSelector() && !isCommonAttributeSelectorAttribute(selector->attribute()))
             return true;
-        if (selectorListContainsUncommonAttributeSelector(selector))
+        if (selectorListContainsAttributeSelector(selector))
             return true;
         if (selector->relation() != CSSSelector::SubSelector) {
             selector = selector->tagHistory();
@@ -105,7 +105,7 @@ static inline bool containsUncommonAttributeSelector(const CSSSelector* selector
     for (; selector; selector = selector->tagHistory()) {
         if (selector->isAttributeSelector())
             return true;
-        if (selectorListContainsUncommonAttributeSelector(selector))
+        if (selectorListContainsAttributeSelector(selector))
             return true;
     }
     return false;

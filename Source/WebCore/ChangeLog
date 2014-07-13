@@ -1,3 +1,22 @@
+2014-07-12  Benjamin Poulain  <benjamin@webkit.org>
+
+        Rename selectorListContainsUncommonAttributeSelector() to selectorListContainsAttributeSelector()
+        https://bugs.webkit.org/show_bug.cgi?id=134862
+
+        Reviewed by Sam Weinig.
+
+        Unlike containsUncommonAttributeSelector(), selectorListContainsUncommonAttributeSelector() does not
+        evaluate the attribute for "uncommon" types.
+
+        It would be possible to change the function instead to evaluate common attributes based
+        on the match type and the pseudo class type. Such change would be more risky
+        and we would get very little benefit from it, I leave that for later if that ever becomes useful.
+
+        * css/RuleSet.cpp:
+        (WebCore::selectorListContainsAttributeSelector):
+        (WebCore::containsUncommonAttributeSelector):
+        (WebCore::selectorListContainsUncommonAttributeSelector): Deleted.
+
 2014-07-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Use braced-init-list to create one-item Vector object in insertPerformanceEntry
