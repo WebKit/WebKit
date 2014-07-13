@@ -1,3 +1,17 @@
+2014-07-12  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Memory leaks with autoLoadImages off
+        https://bugs.webkit.org/show_bug.cgi?id=124411
+
+        Reviewed by Darin Adler.
+
+        Do not emit notifyFinished for images with deferred load,
+        and allow deferred loads to be cancelled.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::checkNotify):
+        (WebCore::CachedResource::cancelLoad):
+
 2014-07-11  Jer Noble  <jer.noble@apple.com>
 
         [MSE] http/tests/media/media-source/mediasource-duration.html is failing.
