@@ -2,6 +2,14 @@
 
         [EFL] Unreviewed EFL gardening.
 
+        Remove failure expectations for tests that have been passing after r168350, r169309 and r169620.
+
+        * platform/efl/TestExpectations:
+
+2014-07-14  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Unreviewed EFL gardening.
+
         * platform/efl/css1/formatting_model/inline_elements-expected.png: Rebaseline after r170875.
         * platform/efl/css1/formatting_model/inline_elements-expected.txt: Rebaseline after r170875.
 
