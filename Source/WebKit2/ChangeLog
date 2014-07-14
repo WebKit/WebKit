@@ -1,3 +1,14 @@
+2014-07-14  Anders Carlsson  <andersca@apple.com>
+
+        Use the legacy session coder for encoding/decoding session state
+        https://bugs.webkit.org/show_bug.cgi?id=134910
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/Cocoa/SessionStateCoding.mm:
+        (WebKit::encodeSessionState):
+        (WebKit::decodeSessionState):
+
 2014-07-14  Oliver Hunt  <oliver@apple.com>
 
         Restrict network process to remote connections
