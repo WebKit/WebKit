@@ -160,10 +160,6 @@ public:
     bool needsFixedRootBackgroundLayer(const RenderLayer&) const;
     GraphicsLayer* fixedRootBackgroundLayer() const;
     
-    // Return the bounding box required for compositing layer and its childern, relative to ancestorLayer.
-    // If layerBoundingBox is not 0, on return it contains the bounding box of this layer only.
-    LayoutRect calculateCompositedBounds(const RenderLayer&, const RenderLayer& ancestorLayer) const;
-
     // Repaint the appropriate layers when the given RenderLayer starts or stops being composited.
     void repaintOnCompositingChange(RenderLayer&);
     

@@ -1,3 +1,19 @@
+2014-07-14  Zalan Bujtas  <zalan@apple.com>
+
+        Move composite bounds calculation to RenderLayerBacking.
+        https://bugs.webkit.org/show_bug.cgi?id=134864
+
+        Reviewed by Darin Adler.
+
+        No change in functionality.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+        * rendering/RenderLayerCompositor.cpp: it was just proxying the calculateLayerBounds()
+        to the RenderLayer.
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
 2014-07-14  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build.

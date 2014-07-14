@@ -440,8 +440,7 @@ static bool hasNonZeroTransformOrigin(const RenderObject& renderer)
 
 void RenderLayerBacking::updateCompositedBounds()
 {
-    LayoutRect layerBounds = compositor().calculateCompositedBounds(m_owningLayer, m_owningLayer);
-
+    LayoutRect layerBounds = m_owningLayer.calculateLayerBounds(&m_owningLayer, LayoutSize(), RenderLayer::DefaultCalculateLayerBoundsFlags | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask);
     // Clip to the size of the document or enclosing overflow-scroll layer.
     // If this or an ancestor is transformed, we can't currently compute the correct rect to intersect with.
     // We'd need RenderObject::convertContainerToLocalQuad(), which doesn't yet exist.
