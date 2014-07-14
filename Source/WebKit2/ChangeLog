@@ -1,6 +1,6 @@
 2014-07-14  Dan Bernstein  <mitz@apple.com>
 
-        NetworkProcess sometimes hangs under copyDefaultCredentialForProtectionSpace
+        <rdar://problem/17398060> NetworkProcess sometimes hangs under copyDefaultCredentialForProtectionSpace
         https://bugs.webkit.org/show_bug.cgi?id=134666
 
         Reviewed by Tim Horton.
