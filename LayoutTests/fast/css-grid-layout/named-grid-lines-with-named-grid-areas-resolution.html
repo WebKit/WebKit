@@ -107,7 +107,7 @@
 
 <!-- Check positioning using grid areas -->
 <div style="position: relative">
-  <div class="grid gridAreas gridNoLineNames">
+  <div class="grid gridAreas gridNoLineNames gridAutoFlowRowDense">
     <div class="sizedToGridArea" style="-webkit-grid-column: d;" data-offset-x="150" data-offset-y="0" data-expected-width="200" data-expected-height="50"></div>
     <div class="sizedToGridArea" style="-webkit-grid-row: d;" data-offset-x="0" data-offset-y="150" data-expected-width="50" data-expected-height="200"></div>
     <div class="sizedToGridArea" style="-webkit-grid-column: c;" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50"></div>
@@ -125,7 +125,7 @@
 
 <!-- Use grid area's implicit line names if defined before explicitly named grid lines -->
 <div style="position: relative">
-  <div class="grid gridAreas gridWithNamedLineAfterGridArea">
+  <div class="grid gridAreas gridWithNamedLineAfterGridArea gridAutoFlowRowDense">
     <div class="sizedToGridArea" style="-webkit-grid-column: d;" data-offset-x="150" data-offset-y="0" data-expected-width="200" data-expected-height="50"></div>
     <div class="sizedToGridArea" style="-webkit-grid-row: d;" data-offset-x="0" data-offset-y="150" data-expected-width="50" data-expected-height="200"></div>
     <div class="sizedToGridArea" style="-webkit-grid-column: c;" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50"></div>

@@ -77,7 +77,8 @@ private:
     std::unique_ptr<GridCoordinate> createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(const RenderBox*, GridTrackSizingDirection, const GridSpan&) const;
     void placeSpecifiedMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
     void placeAutoMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
-    void placeAutoMajorAxisItemOnGrid(RenderBox*);
+    typedef std::pair<size_t, size_t> AutoPlacementCursor;
+    void placeAutoMajorAxisItemOnGrid(RenderBox*, AutoPlacementCursor&);
     GridTrackSizingDirection autoPlacementMajorAxisDirection() const;
     GridTrackSizingDirection autoPlacementMinorAxisDirection() const;
 

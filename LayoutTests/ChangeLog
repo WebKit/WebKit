@@ -1,3 +1,32 @@
+2014-07-14  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Support sparse in auto-placement algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=134544
+
+        Reviewed by Sergio Villar Senin.
+
+        Test cases have been adapted accordingly, adding new cases to cover both
+        sparse and dense options.
+
+        * fast/css-grid-layout/grid-auto-flow-resolution-expected.txt:
+        * fast/css-grid-layout/grid-auto-flow-resolution.html:
+        * fast/css-grid-layout/grid-auto-flow-sparse-expected.txt: Added.
+        * fast/css-grid-layout/grid-auto-flow-sparse.html: Added.
+        * fast/css-grid-layout/grid-container-change-named-grid-lines-recompute-child.html:
+        * fast/css-grid-layout/grid-item-auto-placement-automatic-span-expected.txt:
+        * fast/css-grid-layout/grid-item-auto-placement-automatic-span.html:
+        * fast/css-grid-layout/grid-item-auto-placement-definite-span-expected.txt:
+        * fast/css-grid-layout/grid-item-auto-placement-definite-span.html:
+        * fast/css-grid-layout/grid-item-removal-auto-placement-update.html:
+        * fast/css-grid-layout/named-grid-lines-with-named-grid-areas-resolution.html:
+        * fast/css-grid-layout/resources/grid.css:
+        (.autoRowAutoColumnSpanning2):
+        (.autoRowSpanning2AutoColumn):
+        (.autoRowSpanning2AutoColumnSpanning3):
+        (.autoRowSpanning3AutoColumnSpanning2):
+        (.gridAutoFlowColumnDense):
+        (.gridAutoFlowRowDense):
+
 2014-07-14  Bear Travis  <betravis@adobe.com>
 
         [Feature Queries] Enable Feature Queries on Mac

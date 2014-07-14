@@ -89,11 +89,11 @@ class RenderGrid::GridIterator {
 public:
     // |direction| is the direction that is fixed to |fixedTrackIndex| so e.g
     // GridIterator(m_grid, ForColumns, 1) will walk over the rows of the 2nd column.
-    GridIterator(const Vector<Vector<Vector<RenderBox*, 1>>>& grid, GridTrackSizingDirection direction, size_t fixedTrackIndex)
+    GridIterator(const Vector<Vector<Vector<RenderBox*, 1>>>& grid, GridTrackSizingDirection direction, size_t fixedTrackIndex, size_t varyingTrackIndex = 0)
         : m_grid(grid)
         , m_direction(direction)
-        , m_rowIndex((direction == ForColumns) ? 0 : fixedTrackIndex)
-        , m_columnIndex((direction == ForColumns) ? fixedTrackIndex : 0)
+        , m_rowIndex((direction == ForColumns) ? varyingTrackIndex : fixedTrackIndex)
+        , m_columnIndex((direction == ForColumns) ? fixedTrackIndex : varyingTrackIndex)
         , m_childIndex(0)
     {
         ASSERT(m_rowIndex < m_grid.size());
@@ -756,27 +756,48 @@ void RenderGrid::placeSpecifiedMajorAxisItemsOnGrid(const Vector<RenderBox*>& au
 
 void RenderGrid::placeAutoMajorAxisItemsOnGrid(const Vector<RenderBox*>& autoGridItems)
 {
-    for (auto& autoGridItem : autoGridItems)
-        placeAutoMajorAxisItemOnGrid(autoGridItem);
+    AutoPlacementCursor autoPlacementCursor = {0, 0};
+    bool isGridAutoFlowDense = style().isGridAutoFlowAlgorithmDense();
+
+    for (auto& autoGridItem : autoGridItems) {
+        placeAutoMajorAxisItemOnGrid(autoGridItem, autoPlacementCursor);
+
+        if (isGridAutoFlowDense) {
+            autoPlacementCursor.first = 0;
+            autoPlacementCursor.second = 0;
+        }
+    }
 }
 
-void RenderGrid::placeAutoMajorAxisItemOnGrid(RenderBox* gridItem)
+void RenderGrid::placeAutoMajorAxisItemOnGrid(RenderBox* gridItem,
+AutoPlacementCursor& autoPlacementCursor)
 {
     std::unique_ptr<GridSpan> minorAxisPositions = GridResolvedPosition::resolveGridPositionsFromStyle(style(), *gridItem, autoPlacementMinorAxisDirection());
     ASSERT(!GridResolvedPosition::resolveGridPositionsFromStyle(style(), *gridItem, autoPlacementMajorAxisDirection()));
     GridSpan majorAxisPositions = GridResolvedPosition::resolveGridPositionsFromAutoPlacementPosition(style(), *gridItem, autoPlacementMajorAxisDirection(), GridResolvedPosition(0));
+
+    const size_t endOfMajorAxis = (autoPlacementMajorAxisDirection() == ForColumns) ? gridColumnCount() : gridRowCount();
+    size_t majorAxisAutoPlacementCursor = autoPlacementMajorAxisDirection() == ForColumns ? autoPlacementCursor.second : autoPlacementCursor.first;
+    size_t minorAxisAutoPlacementCursor = autoPlacementMajorAxisDirection() == ForColumns ? autoPlacementCursor.first : autoPlacementCursor.second;
+
     std::unique_ptr<GridCoordinate> emptyGridArea;
     if (minorAxisPositions) {
-        GridIterator iterator(m_grid, autoPlacementMinorAxisDirection(), minorAxisPositions->resolvedInitialPosition.toInt());
-        emptyGridArea = iterator.nextEmptyGridArea(minorAxisPositions->integerSpan(), majorAxisPositions.integerSpan());
+        // Move to the next track in major axis if initial position in minor axis is before auto-placement cursor.
+        if (minorAxisPositions->resolvedInitialPosition.toInt() < minorAxisAutoPlacementCursor)
+            majorAxisAutoPlacementCursor++;
+
+        if (majorAxisAutoPlacementCursor < endOfMajorAxis) {
+            GridIterator iterator(m_grid, autoPlacementMinorAxisDirection(), minorAxisPositions->resolvedInitialPosition.toInt(), majorAxisAutoPlacementCursor);
+            emptyGridArea = iterator.nextEmptyGridArea(minorAxisPositions->integerSpan(), majorAxisPositions.integerSpan());
+        }
+
         if (!emptyGridArea)
             emptyGridArea = createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(gridItem, autoPlacementMinorAxisDirection(), *minorAxisPositions);
     } else {
         GridSpan minorAxisPositions = GridResolvedPosition::resolveGridPositionsFromAutoPlacementPosition(style(), *gridItem, autoPlacementMinorAxisDirection(), GridResolvedPosition(0));
 
-        const size_t endOfMajorAxis = (autoPlacementMajorAxisDirection() == ForColumns) ? gridColumnCount() : gridRowCount();
-        for (size_t majorAxisIndex = 0; majorAxisIndex < endOfMajorAxis; ++majorAxisIndex) {
-            GridIterator iterator(m_grid, autoPlacementMajorAxisDirection(), majorAxisIndex);
+        for (size_t majorAxisIndex = majorAxisAutoPlacementCursor; majorAxisIndex < endOfMajorAxis; ++majorAxisIndex) {
+            GridIterator iterator(m_grid, autoPlacementMajorAxisDirection(), majorAxisIndex, minorAxisAutoPlacementCursor);
             emptyGridArea = iterator.nextEmptyGridArea(majorAxisPositions.integerSpan(), minorAxisPositions.integerSpan());
 
             if (emptyGridArea) {
@@ -790,6 +811,9 @@ void RenderGrid::placeAutoMajorAxisItemOnGrid(RenderBox* gridItem)
                 // We don't need to create a new empty grid area yet as we might find a valid one in the next iteration.
                 emptyGridArea = nullptr;
             }
+
+            // As we're moving to the next track in the major axis we should reset the auto-placement cursor in the minor axis.
+            minorAxisAutoPlacementCursor = 0;
         }
 
         if (!emptyGridArea)
@@ -797,6 +821,8 @@ void RenderGrid::placeAutoMajorAxisItemOnGrid(RenderBox* gridItem)
     }
 
     insertItemIntoGrid(gridItem, *emptyGridArea);
+    autoPlacementCursor.first = emptyGridArea->rows.resolvedInitialPosition.toInt();
+    autoPlacementCursor.second = emptyGridArea->columns.resolvedInitialPosition.toInt();
 }
 
 GridTrackSizingDirection RenderGrid::autoPlacementMajorAxisDirection() const
