@@ -2244,7 +2244,7 @@ def check_using_namespace(clean_lines, line_number, file_extension, error):
           "Do not use 'using namespace %s;'." % method_name)
 
 def check_max_min_macros(clean_lines, line_number, file_state, error):
-    """Looks use of MAX() and MIN() macros that should be replaced with std::max() and std::min().
+    """Looks for use of MAX() and MIN() macros that should be replaced with std::max() and std::min().
 
     Args:
       clean_lines: A CleansedLines instance containing the file.
@@ -2269,6 +2269,30 @@ def check_max_min_macros(clean_lines, line_number, file_state, error):
     error(line_number, 'runtime/max_min_macros', 4,
           'Use std::%s() or std::%s<type>() instead of the %s() macro.'
           % (max_min_macro_lower, max_min_macro_lower, max_min_macro))
+
+
+def check_wtf_move(clean_lines, line_number, file_state, error):
+    """Looks for use of 'std::move()' which should be replaced with 'WTF::move()'.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    # This check doesn't apply to C or Objective-C implementation files.
+    if file_state.is_c_or_objective_c():
+        return
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+
+    using_std_move = search(r'\bstd::move\s*\(', line)
+    if not using_std_move:
+        return
+
+    error(line_number, 'runtime/wtf_move', 4, "Use 'WTF::move()' instead of 'std::move()'.")
 
 
 def check_ctype_functions(clean_lines, line_number, file_state, error):
@@ -2759,6 +2783,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_using_std(clean_lines, line_number, file_state, error)
     check_using_namespace(clean_lines, line_number, file_extension, error)
     check_max_min_macros(clean_lines, line_number, file_state, error)
+    check_wtf_move(clean_lines, line_number, file_state, error)
     check_ctype_functions(clean_lines, line_number, file_state, error)
     check_switch_indentation(clean_lines, line_number, error)
     check_braces(clean_lines, line_number, error)
@@ -3813,6 +3838,7 @@ class CppChecker(object):
         'runtime/threadsafe_fn',
         'runtime/unsigned',
         'runtime/virtual',
+        'runtime/wtf_move',
         'whitespace/blank_line',
         'whitespace/braces',
         'whitespace/colon',

@@ -4719,6 +4719,18 @@ class WebKitStyleTest(CppStyleTestBase):
             '  [runtime/max_min_macros] [4]',
             'foo.h')
 
+    def test_wtf_move(self):
+        self.assert_lint(
+             'A a = WTF::move(b);',
+             '',
+             'foo.cpp')
+
+        self.assert_lint(
+            'A a = std::move(b);',
+            "Use 'WTF::move()' instead of 'std::move()'."
+            "  [runtime/wtf_move] [4]",
+            'foo.cpp')
+
     def test_ctype_fucntion(self):
         self.assert_lint(
             'int i = isascii(8);',
