@@ -40,7 +40,61 @@
 using namespace IPC;
 using namespace WebCore;
 
-static const CFIndex didCommitLayersRunLoopOrder = (CFIndex)RunLoopObserver::WellKnownRunLoopOrders::CoreAnimationCommit + 1;
+// FIXME: Mac will need something similar; we should figure out how to share this with DisplayRefreshMonitor without
+// breaking WebKit1 behavior or WebKit2-WebKit1 coexistence.
+#if PLATFORM(IOS)
+@interface OneShotDisplayLinkHandler : NSObject {
+    WebKit::RemoteLayerTreeDrawingAreaProxy* _drawingAreaProxy;
+    CADisplayLink *_displayLink;
+}
+
+- (id)initWithDrawingAreaProxy:(WebKit::RemoteLayerTreeDrawingAreaProxy*)drawingAreaProxy;
+- (void)displayLinkFired:(CADisplayLink *)sender;
+- (void)invalidate;
+- (void)schedule;
+
+@end
+
+@implementation OneShotDisplayLinkHandler
+
+- (id)initWithDrawingAreaProxy:(WebKit::RemoteLayerTreeDrawingAreaProxy*)drawingAreaProxy
+{
+    if (self = [super init]) {
+        _drawingAreaProxy = drawingAreaProxy;
+        // Note that CADisplayLink retains its target (self), so a call to -invalidate is needed on teardown.
+        _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkFired:)];
+        [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+        _displayLink.paused = YES;
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    ASSERT(!_displayLink);
+    [super dealloc];
+}
+
+- (void)displayLinkFired:(CADisplayLink *)sender
+{
+    ASSERT(isMainThread());
+    _drawingAreaProxy->didRefreshDisplay(sender.timestamp);
+    _displayLink.paused = YES;
+}
+
+- (void)invalidate
+{
+    [_displayLink invalidate];
+    _displayLink = nullptr;
+}
+
+- (void)schedule
+{
+    _displayLink.paused = NO;
+}
+
+@end
+#endif
 
 namespace WebKit {
 
@@ -51,6 +105,9 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy* w
     , m_pendingLayerTreeTransactionID(0)
     , m_lastVisibleTransactionID(0)
     , m_transactionIDForPendingCACommit(0)
+#if PLATFORM(IOS)
+    , m_displayLinkHandler(adoptNS([[OneShotDisplayLinkHandler alloc] initWithDrawingAreaProxy:this]))
+#endif
 {
 #if USE(IOSURFACE)
     // We don't want to pool surfaces in the UI process.
@@ -62,16 +119,16 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy* w
 
     if (m_webPageProxy->preferences().tiledScrollingIndicatorVisible())
         initializeDebugIndicator();
-
-    m_layerCommitObserver = RunLoopObserver::create(didCommitLayersRunLoopOrder, [this]() {
-        this->coreAnimationDidCommitLayers();
-    });
 }
 
 RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy()
 {
     m_callbacks.invalidate(CallbackBase::Error::OwnerWasInvalidated);
     m_webPageProxy->process().removeMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_webPageProxy->pageID());
+
+#if PLATFORM(IOS)
+    [m_displayLinkHandler invalidate];
+#endif
 }
 
 void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
@@ -167,7 +224,11 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
         asLayer(m_debugIndicatorLayerTreeHost->rootLayer()).name = @"Indicator host root";
     }
 
-    m_layerCommitObserver->schedule();
+#if PLATFORM(IOS)
+    [m_displayLinkHandler schedule];
+#else
+    didRefreshDisplay(monotonicallyIncreasingTime());
+#endif
 }
 
 void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(uint64_t layerID, const String& key, double startTime)
@@ -302,10 +363,8 @@ void RemoteLayerTreeDrawingAreaProxy::initializeDebugIndicator()
     }
 }
 
-void RemoteLayerTreeDrawingAreaProxy::coreAnimationDidCommitLayers()
+void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay(double)
 {
-    m_layerCommitObserver->invalidate();
-
     if (!m_webPageProxy->isValid())
         return;
 

@@ -1,3 +1,33 @@
+2014-07-14  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS] Throttle painting using a UI-process-side CADisplayLink
+        https://bugs.webkit.org/show_bug.cgi?id=134879
+        <rdar://problem/17641699>
+
+        Reviewed by Simon Fraser.
+
+        Just waiting for CA to commit is insufficient to actually throttle to 60fps,
+        because nothing will block the main runloop from spinning.
+
+        Instead, listen to a CADisplayLink, and send didUpdate to the WebProcess
+        the first time it fires after we commit. This is not a guarantee that
+        our content is on the screen, but we don't have any way to make that guarantee yet.
+
+        This will throttle painting, rAF, etc. to the display refresh rate.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (-[OneShotDisplayLinkHandler initWithDrawingAreaProxy:]):
+        (-[OneShotDisplayLinkHandler dealloc]):
+        (-[OneShotDisplayLinkHandler displayLinkFired:]):
+        (-[OneShotDisplayLinkHandler invalidate]):
+        (-[OneShotDisplayLinkHandler schedule]):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::coreAnimationDidCommitLayers): Deleted.
+
 2014-07-14  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/17657391> [iOS] Networking process writes persistent credentials to the keychain

@@ -31,7 +31,8 @@
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
-#include <WebCore/RunLoopObserver.h>
+
+OBJC_CLASS OneShotDisplayLinkHandler;
 
 namespace WebKit {
 
@@ -47,10 +48,10 @@ public:
 
     void acceleratedAnimationDidStart(uint64_t layerID, const String& key, double startTime);
 
-    void coreAnimationDidCommitLayers();
-
     uint64_t nextLayerTreeTransactionID() const { return m_pendingLayerTreeTransactionID + 1; }
     uint64_t lastCommittedLayerTreeTransactionID() const { return m_transactionIDForPendingCACommit; }
+
+    void didRefreshDisplay(double timestamp);
 
 private:
     virtual void sizeDidChange() override;
@@ -96,13 +97,13 @@ private:
     RetainPtr<CALayer> m_tileMapHostLayer;
     RetainPtr<CALayer> m_exposedRectIndicatorLayer;
 
-    std::unique_ptr<WebCore::RunLoopObserver> m_layerCommitObserver;
-
     uint64_t m_pendingLayerTreeTransactionID;
     uint64_t m_lastVisibleTransactionID;
     uint64_t m_transactionIDForPendingCACommit;
 
     CallbackMap m_callbacks;
+
+    RetainPtr<OneShotDisplayLinkHandler> m_displayLinkHandler;
 };
 
 DRAWING_AREA_PROXY_TYPE_CASTS(RemoteLayerTreeDrawingAreaProxy, type() == DrawingAreaTypeRemoteLayerTree);
