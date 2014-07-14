@@ -1,3 +1,16 @@
+2014-07-14  Bear Travis  <betravis@adobe.com>
+
+        [Feature Queries] Enable Feature Queries on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=134404
+
+        Reviewed by Antti Koivisto.
+
+        Enable Feature Queries on Mac and resume running the
+        feature tests.
+
+        * Configurations/FeatureDefines.xcconfig: Turn on
+        ENABLE_CSS3_CONDITIONAL_RULES.
+
 2014-07-11  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: return integral results for offset*, client*, scroll* by default.

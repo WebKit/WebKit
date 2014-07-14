@@ -1,3 +1,14 @@
+2014-07-14  Bear Travis  <betravis@adobe.com>
+
+        [Feature Queries] Enable Feature Queries on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=134404
+
+        Reviewed by Antti Koivisto.
+
+        Resume running the Feature Queries tests on Mac.
+
+        * platform/mac/TestExpectations: Unskip the tests.
+
 2014-07-14  Bruno de Oliveira Abinader  <bruno.d@partner.samsung.com>
 
         [css3-text] Add editing test for CSS3 Text Decoration properties
