@@ -789,6 +789,14 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     scrollView.contentOffset = contentOffset;
 }
 
+// WebCore stores the page scale factor as float instead of double. When we get a scale from WebCore,
+// we need to ignore differences that are within a small rounding error on floats.
+template <typename TypeA, typename TypeB>
+static inline bool withinEpsilon(TypeA a, TypeB b)
+{
+    return std::abs(a - b) < std::numeric_limits<float>::epsilon();
+}
+
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
 {
     if (_customContentView)

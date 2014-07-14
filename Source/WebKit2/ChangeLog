@@ -1,3 +1,28 @@
+2014-07-14  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Fix withinEpsilon()
+        https://bugs.webkit.org/show_bug.cgi?id=134798
+
+        Reviewed by Darin Adler.
+
+        Move the function back to WKWebView, it is no longer needed in WKContentView.
+
+        Use the real types as input to properly verify that the two inputs are within
+        a small value of the 32bit floating point.
+
+        The epsilon we use is always on 32 bits float because we want to avoid doing work for changes
+        that would not make any difference on float.
+
+        The source of those small changes comes from the fact UIProcess does a lot of processing
+        on CGFloat, which are double on 64bits architecture, while the WebProcess use 32bits floating point
+        for scale. When we are getting updates from the WebProcess, we should ignore any small differences
+        caused by the computations done with less precision.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (withinEpsilon):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        (withinEpsilon): Deleted.
+
 2014-07-14  Bear Travis  <betravis@adobe.com>
 
         [Feature Queries] Enable Feature Queries on Mac

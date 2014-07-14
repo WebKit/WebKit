@@ -184,9 +184,4 @@ struct WKAutoCorrectionData {
 - (void)_disableInspectorNodeSearch;
 @end
 
-static inline bool withinEpsilon(float a, float b)
-{
-    return fabs(a - b) < std::numeric_limits<float>::epsilon();
-}
-
 #endif // PLATFORM(IOS)
