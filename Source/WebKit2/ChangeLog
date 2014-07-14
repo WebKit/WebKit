@@ -1,3 +1,14 @@
+2014-07-14  Oliver Hunt  <oliver@apple.com>
+
+        Restrict network process to remote connections
+        https://bugs.webkit.org/show_bug.cgi?id=134908
+
+        Reviewed by Geoffrey Garen.
+
+        Further restrict network client
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2014-07-14  Tim Horton  <timothy_horton@apple.com>
 
         ASSERT(isMainThread()) under OneShotDisplayLinkHandler
