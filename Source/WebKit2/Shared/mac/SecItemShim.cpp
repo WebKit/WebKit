@@ -41,6 +41,21 @@
 #include <mutex>
 #include <wtf/NeverDestroyed.h>
 
+#if __has_include(<CFNetwork/CFURLConnectionPriv.h>)
+#include <CFNetwork/CFURLConnectionPriv.h>
+#else
+struct _CFNFrameworksStubs {
+    CFIndex version;
+
+    OSStatus (*SecItem_stub_CopyMatching)(CFDictionaryRef query, CFTypeRef *result);
+    OSStatus (*SecItem_stub_Add)(CFDictionaryRef attributes, CFTypeRef *result);
+    OSStatus (*SecItem_stub_Update)(CFDictionaryRef query, CFDictionaryRef attributesToUpdate);
+    OSStatus (*SecItem_stub_Delete)(CFDictionaryRef query);
+};
+#endif
+
+extern "C" void _CFURLConnectionSetFrameworkStubs(const struct _CFNFrameworksStubs* stubs);
+
 namespace WebKit {
 
 static BlockingResponseMap<SecItemResponseData>& responseMap()
@@ -136,6 +151,19 @@ void SecItemShim::initialize(ChildProcess* process)
 {
     sharedProcess = process;
 
+#if PLATFORM(IOS)
+    struct _CFNFrameworksStubs stubs = {
+        .version = 0,
+        .SecItem_stub_CopyMatching = webSecItemCopyMatching,
+        .SecItem_stub_Add = webSecItemAdd,
+        .SecItem_stub_Update = webSecItemUpdate,
+        .SecItem_stub_Delete = webSecItemDelete,
+    };
+
+    _CFURLConnectionSetFrameworkStubs(&stubs);
+#endif
+
+#if PLATFORM(MAC)
     const SecItemShimCallbacks callbacks = {
         webSecItemCopyMatching,
         webSecItemAdd,
@@ -145,6 +173,7 @@ void SecItemShim::initialize(ChildProcess* process)
     
     SecItemShimInitializeFunc func = reinterpret_cast<SecItemShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitSecItemShimInitialize"));
     func(callbacks);
+#endif
 }
 
 void SecItemShim::initializeConnection(IPC::Connection* connection)

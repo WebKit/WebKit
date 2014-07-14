@@ -30,6 +30,7 @@
 
 #import "NetworkProcessCreationParameters.h"
 #import "SandboxInitializationParameters.h"
+#import "SecItemShim.h"
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
@@ -79,6 +80,9 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t)
 
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
+#if ENABLE(SEC_ITEM_SHIM)
+    SecItemShim::shared().initialize(this);
+#endif
     platformInitializeNetworkProcessCocoa(parameters);
 }
 

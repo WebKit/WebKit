@@ -1,5 +1,26 @@
 2014-07-14  Dan Bernstein  <mitz@apple.com>
 
+        <rdar://problem/17657391> [iOS] Networking process writes persistent credentials to the keychain
+        https://bugs.webkit.org/show_bug.cgi?id=134878
+
+        Reviewed by Sam Weinig.
+
+        Route CFNetwork’s calls to Security API through to the UI process.
+
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess): Initialize SecItemShim.
+
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::SecItemShim::initialize): On iOS, rather than using a shim library, supply
+        CFNetwork with alternate functions to call.
+
+        * Shared/mac/SecItemShim.messages.in: Removed #if !PLATFORM(IOS).
+        * UIProcess/mac/SecItemShimProxy.messages.in: Ditto.
+
+        * config.h: Define ENABLE_SEC_ITEM_SHIM to 1 on iOS as well.
+
+2014-07-14  Dan Bernstein  <mitz@apple.com>
+
         <rdar://problem/17398060> NetworkProcess sometimes hangs under copyDefaultCredentialForProtectionSpace
         https://bugs.webkit.org/show_bug.cgi?id=134666
 
