@@ -635,6 +635,7 @@ public:
     {
         structure(vm)->flattenDictionaryStructure(vm, this);
     }
+    void shiftButterflyAfterFlattening(VM&, size_t outOfLineCapacityBefore, size_t outOfLineCapacityAfter);
 
     JSGlobalObject* globalObject() const
     {
@@ -770,6 +771,9 @@ protected:
         }
     }
         
+    size_t butterflyTotalSize();
+    size_t butterflyPreCapacity();
+
     Butterfly* createInitialUndecided(VM&, unsigned length);
     ContiguousJSValues createInitialInt32(VM&, unsigned length);
     ContiguousDoubles createInitialDouble(VM&, unsigned length);
@@ -1525,6 +1529,32 @@ ALWAYS_INLINE Register Register::withCallee(JSObject* callee)
 inline size_t offsetInButterfly(PropertyOffset offset)
 {
     return offsetInOutOfLineStorage(offset) + Butterfly::indexOfPropertyStorage();
+}
+
+inline size_t JSObject::butterflyPreCapacity()
+{
+    if (UNLIKELY(hasIndexingHeader()))
+        return butterfly()->indexingHeader()->preCapacity(structure());
+    return 0;
+}
+
+inline size_t JSObject::butterflyTotalSize()
+{
+    Structure* structure = this->structure();
+    Butterfly* butterfly = this->butterfly();
+    size_t preCapacity;
+    size_t indexingPayloadSizeInBytes;
+    bool hasIndexingHeader = this->hasIndexingHeader();
+
+    if (UNLIKELY(hasIndexingHeader)) {
+        preCapacity = butterfly->indexingHeader()->preCapacity(structure);
+        indexingPayloadSizeInBytes = butterfly->indexingHeader()->indexingPayloadSizeInBytes(structure);
+    } else {
+        preCapacity = 0;
+        indexingPayloadSizeInBytes = 0;
+    }
+
+    return Butterfly::totalSize(preCapacity, structure->outOfLineCapacity(), hasIndexingHeader, indexingPayloadSizeInBytes);
 }
 
 // Helpers for patching code where you want to emit a load or store and

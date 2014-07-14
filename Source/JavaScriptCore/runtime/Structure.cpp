@@ -720,6 +720,8 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
 {
     checkOffsetConsistency();
     ASSERT(isDictionary());
+
+    size_t beforeOutOfLineCapacity = this->outOfLineCapacity();
     if (isUncacheableDictionary()) {
         ASSERT(propertyTable());
 
@@ -748,10 +750,20 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
     m_dictionaryKind = NoneDictionaryKind;
     m_hasBeenFlattenedBefore = true;
 
-    // If the object had a Butterfly but after flattening/compacting we no longer have need of it,
-    // we need to zero it out because the collector depends on the Structure to know the size for copying.
-    if (object->butterfly() && !this->outOfLineCapacity() && !this->hasIndexingHeader(object))
-        object->setStructureAndButterfly(vm, this, 0);
+    size_t afterOutOfLineCapacity = this->outOfLineCapacity();
+
+    if (beforeOutOfLineCapacity != afterOutOfLineCapacity) {
+        ASSERT(beforeOutOfLineCapacity > afterOutOfLineCapacity);
+        // If the object had a Butterfly but after flattening/compacting we no longer have need of it,
+        // we need to zero it out because the collector depends on the Structure to know the size for copying.
+        if (object->butterfly() && !afterOutOfLineCapacity && !this->hasIndexingHeader(object))
+            object->setStructureAndButterfly(vm, this, 0);
+        // If the object was down-sized to the point where the base of the Butterfly is no longer within the 
+        // first CopiedBlock::blockSize bytes, we'll get the wrong answer if we try to mask the base back to 
+        // the CopiedBlock header. To prevent this case we need to memmove the Butterfly down.
+        else if (object->butterfly())
+            object->shiftButterflyAfterFlattening(vm, beforeOutOfLineCapacity, afterOutOfLineCapacity);
+    }
 
     return this;
 }

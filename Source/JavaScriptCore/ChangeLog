@@ -1,3 +1,30 @@
+2014-07-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Flattening dictionaries with oversize backing stores can cause crashes
+        https://bugs.webkit.org/show_bug.cgi?id=134906
+
+        Reviewed by Filip Pizlo.
+
+        The collector expects any pointers into CopiedSpace passed to copyLater are within 32 KB 
+        of the CopiedBlock header. This was always the case except for when flattening a dictionary 
+        caused the size of the Butterfly to decrease. This was equivalent to moving the base of the 
+        Butterfly to higher addresses. If the object was reduced sufficiently in size, the base 
+        would no longer be within the first 32 KB of the CopiedBlock and the next collection would 
+        choke on the Butterfly pointer.
+
+        This patch fixes this issue by detect this situation during flattening and memmove-ing 
+        the Butterfly down to where the old base was.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::shiftButterflyAfterFlattening):
+        * runtime/JSObject.h:
+        (JSC::JSObject::butterflyPreCapacity):
+        (JSC::JSObject::butterflyTotalSize):
+        * runtime/Structure.cpp:
+        (JSC::Structure::flattenDictionaryStructure):
+        * tests/stress/flatten-oversize-dictionary-object.js: Added.
+        (foo):
+
 2014-07-14  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove some dead code from FTLJITFinalizer

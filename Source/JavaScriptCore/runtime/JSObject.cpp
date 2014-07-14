@@ -2696,4 +2696,15 @@ JSObject* throwTypeError(ExecState* exec, const String& message)
     return exec->vm().throwException(exec, createTypeError(exec, message));
 }
 
+void JSObject::shiftButterflyAfterFlattening(VM& vm, size_t outOfLineCapacityBefore, size_t outOfLineCapacityAfter)
+{
+    Butterfly* butterfly = this->butterfly();
+    size_t preCapacity = this->butterflyPreCapacity();
+    void* currentBase = butterfly->base(preCapacity, outOfLineCapacityAfter);
+    void* newBase = butterfly->base(preCapacity, outOfLineCapacityBefore);
+
+    memmove(newBase, currentBase, this->butterflyTotalSize());
+    setButterflyWithoutChangingStructure(vm, Butterfly::fromBase(newBase, preCapacity, outOfLineCapacityAfter));
+}
+
 } // namespace JSC
