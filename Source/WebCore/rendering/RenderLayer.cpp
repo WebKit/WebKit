@@ -199,7 +199,6 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_staticInlinePosition(0)
     , m_staticBlockPosition(0)
     , m_enclosingPaginationLayer(0)
-    , m_enclosingLayerIsPaginatedAndComposited(false)
 {
     m_isNormalFlowOnly = shouldBeNormalFlowOnly();
     m_isSelfPaintingLayer = shouldBeSelfPaintingLayer();
@@ -382,10 +381,8 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
 
     if (flags & UpdatePagination)
         updatePagination();
-    else {
+    else
         m_enclosingPaginationLayer = nullptr;
-        m_enclosingLayerIsPaginatedAndComposited = false;
-    }
     
     if (m_hasVisibleContent) {
         // FIXME: LayoutState does not work with RenderLayers as there is not a 1-to-1
@@ -916,10 +913,46 @@ RenderLayer* RenderLayer::enclosingOverflowClipLayer(IncludeSelfOrNot includeSel
     return 0;
 }
 
+// FIXME: This is terrible. Bring back a cached bit for this someday. This crawl is going to slow down all
+// painting of content inside paginated layers.
+bool RenderLayer::hasCompositedLayerInEnclosingPaginationChain() const
+{
+    // No enclosing layer means no compositing in the chain.
+    if (!m_enclosingPaginationLayer)
+        return false;
+    
+    // If the enclosing layer is composited, we don't have to check anything in between us and that
+    // layer.
+    if (m_enclosingPaginationLayer->isComposited())
+        return true;
+
+    // If we are the enclosing pagination layer, then we can't be composited or we'd have passed the
+    // previous check.
+    if (m_enclosingPaginationLayer == this)
+        return false;
+
+    // The enclosing paginated layer is our ancestor and is not composited, so we have to check
+    // intermediate layers between us and the enclosing pagination layer. Start with our own layer.
+    if (isComposited())
+        return true;
+    
+    // For normal flow layers, we can recur up the layer tree.
+    if (isNormalFlowOnly())
+        return parent()->hasCompositedLayerInEnclosingPaginationChain();
+    
+    // Otherwise we have to go up the containing block chain. Find the first enclosing
+    // containing block layer ancestor, and check that.
+    RenderView* renderView = &renderer().view();
+    for (RenderBlock* containingBlock = renderer().containingBlock(); containingBlock && containingBlock != renderView; containingBlock = containingBlock->containingBlock()) {
+        if (containingBlock->hasLayer())
+            return containingBlock->layer()->hasCompositedLayerInEnclosingPaginationChain();
+    }
+    return false;
+}
+
 void RenderLayer::updatePagination()
 {
     m_enclosingPaginationLayer = nullptr;
-    m_enclosingLayerIsPaginatedAndComposited = false;
     
     if (!parent())
         return;
@@ -930,7 +963,6 @@ void RenderLayer::updatePagination()
     // to that layer easily.
     if (renderer().isInFlowRenderFlowThread()) {
         m_enclosingPaginationLayer = this;
-        m_enclosingLayerIsPaginatedAndComposited = isComposited();
         return;
     }
 
@@ -938,13 +970,10 @@ void RenderLayer::updatePagination()
         // Content inside a transform is not considered to be paginated, since we simply
         // paint the transform multiple times in each column, so we don't have to use
         // fragments for the transformed content.
-        if (parent()->hasTransform()) {
+        if (parent()->hasTransform())
             m_enclosingPaginationLayer = nullptr;
-            m_enclosingLayerIsPaginatedAndComposited = false;
-        } else {
+        else
             m_enclosingPaginationLayer = parent()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers);
-            m_enclosingLayerIsPaginatedAndComposited = isComposited() ? true : parent()->enclosingLayerIsPaginatedAndComposited();
-        }
         return;
     }
 
@@ -957,13 +986,10 @@ void RenderLayer::updatePagination()
             // Content inside a transform is not considered to be paginated, since we simply
             // paint the transform multiple times in each column, so we don't have to use
             // fragments for the transformed content.
-            if (containingBlock->layer()->hasTransform()) {
+            if (containingBlock->layer()->hasTransform())
                 m_enclosingPaginationLayer = nullptr;
-                m_enclosingLayerIsPaginatedAndComposited = false;
-            } else {
+            else
                 m_enclosingPaginationLayer = containingBlock->layer()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers);
-                m_enclosingLayerIsPaginatedAndComposited = isComposited() ? true : containingBlock->layer()->enclosingLayerIsPaginatedAndComposited();
-            }
             return;
         }
     }

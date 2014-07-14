@@ -514,14 +514,14 @@ public:
 
     void positionNewlyCreatedOverflowControls();
 
+    bool hasCompositedLayerInEnclosingPaginationChain() const;
     enum PaginationInclusionMode { ExcludeCompositedPaginatedLayers, IncludeCompositedPaginatedLayers };
     RenderLayer* enclosingPaginationLayer(PaginationInclusionMode mode) const
     {
-        if (mode == ExcludeCompositedPaginatedLayers && m_enclosingLayerIsPaginatedAndComposited)
+        if (mode == ExcludeCompositedPaginatedLayers && hasCompositedLayerInEnclosingPaginationChain())
             return nullptr;
         return m_enclosingPaginationLayer;
     }
-    bool enclosingLayerIsPaginatedAndComposited() const { return m_enclosingLayerIsPaginatedAndComposited; }
 
     void updateTransform();
     
@@ -1337,7 +1337,6 @@ private:
 
     // Pointer to the enclosing RenderLayer that caused us to be paginated. It is 0 if we are not paginated.
     RenderLayer* m_enclosingPaginationLayer;
-    bool m_enclosingLayerIsPaginatedAndComposited;
 
     IntRect m_blockSelectionGapsBounds;
 

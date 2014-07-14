@@ -1,3 +1,28 @@
+2014-07-11  David Hyatt  <hyatt@apple.com>
+
+        <rdar://problem/17305458> Cannot interact with video controls in ePubs
+        Bug 134836 - [New Multicolumn] Crawl to check for compositing between us and the enclosingPaginationLayer
+        https://bugs.webkit.org/show_bug.cgi?id=134836
+
+        Reviewed by Dean Jackson.
+
+        The paginatedAndComposited bit being set in updateLayerPositions just didn't work, since compositing states
+        can change without triggering that function. This patch just gets rid of the bit and does a crawl every time
+        to check. This ensures that changes in compositing states don't necessitate any changes in pagination,
+        since the lookup will always check the current compositing state.
+        
+        The new function that does this check is hasCompositedLayerInEnclosingPaginationChain.
+        
+        I have been unable to reproduce this issue, and this is therefore a purely speculative fix. I have no test
+        case to provide because of this.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::hasCompositedLayerInEnclosingPaginationChain):
+        (WebCore::RenderLayer::updatePagination):
+        * rendering/RenderLayer.h:
+
 2014-07-14  Zalan Bujtas  <zalan@apple.com>
 
         Move composite bounds calculation to RenderLayerBacking.
