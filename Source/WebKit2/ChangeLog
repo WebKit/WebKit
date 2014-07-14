@@ -1,5 +1,16 @@
 2014-07-14  Tim Horton  <timothy_horton@apple.com>
 
+        ASSERT(isMainThread()) under OneShotDisplayLinkHandler
+        https://bugs.webkit.org/show_bug.cgi?id=134900
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (-[OneShotDisplayLinkHandler displayLinkFired:]):
+        isMainThread means the Web thread sometimes.
+
+2014-07-14  Tim Horton  <timothy_horton@apple.com>
+
         Fix the build.
 
         * UIProcess/API/Cocoa/WKWebView.mm:

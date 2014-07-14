@@ -77,7 +77,7 @@ using namespace WebCore;
 
 - (void)displayLinkFired:(CADisplayLink *)sender
 {
-    ASSERT(isMainThread());
+    ASSERT(isUIThread());
     _drawingAreaProxy->didRefreshDisplay(sender.timestamp);
     _displayLink.paused = YES;
 }
