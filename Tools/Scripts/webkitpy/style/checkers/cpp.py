@@ -1145,19 +1145,27 @@ class _FileState(object):
     def __init__(self, clean_lines, file_extension):
         self._did_inside_namespace_indent_warning = False
         self._clean_lines = clean_lines
-        if file_extension in ['m', 'mm']:
+        if file_extension == 'm':
+            self._is_objective_cpp = False
             self._is_objective_c = True
+            self._is_c = False
+        elif file_extension == 'mm':
+            self._is_objective_cpp = True
+            self._is_objective_c = False
             self._is_c = False
         elif file_extension == 'h':
             # In the case of header files, it is unknown if the file
-            # is c / objective c or not, so set this value to None and then
+            # is C / Objective-C / Objective-C++ or not, so set this value to None and then
             # if it is requested, use heuristics to guess the value.
+            self._is_objective_cpp = None
             self._is_objective_c = None
             self._is_c = None
         elif file_extension == 'c':
+            self._is_objective_cpp = False
             self._is_c = True
             self._is_objective_c = False
         else:
+            self._is_objective_cpp = False
             self._is_objective_c = False
             self._is_c = False
 
@@ -1178,6 +1186,9 @@ class _FileState(object):
             else:
                 self._is_objective_c = False
         return self._is_objective_c
+
+    def is_objective_c_or_objective_cpp(self):
+        return self._is_objective_cpp or self.is_objective_c()
 
     def is_c(self):
         if self._is_c is None:
@@ -2663,8 +2674,8 @@ def check_for_comparisons_to_zero(clean_lines, line_number, error):
 
 
 def check_for_null(clean_lines, line_number, file_state, error):
-    # This check doesn't apply to C or Objective-C implementation files.
-    if file_state.is_c_or_objective_c():
+    # This check doesn't apply to C, Objective-C, Objective-C++ implementation files.
+    if file_state.is_c() or file_state.is_objective_c_or_objective_cpp():
         return
 
     line = clean_lines.elided[line_number]
@@ -2690,6 +2701,8 @@ def check_for_null(clean_lines, line_number, file_state, error):
         return
 
     if search(r'\bNULL\b', line):
+        # FIXME: We should recommend using nullptr instead of NULL in C++ code per
+        # <http://www.webkit.org/coding/coding-style.html#zero-null>.
         error(line_number, 'readability/null', 5, 'Use 0 instead of NULL.')
         return
 
@@ -2698,6 +2711,8 @@ def check_for_null(clean_lines, line_number, file_state, error):
     # matches, then do the check with strings collapsed to avoid giving errors for
     # NULLs occurring in strings.
     if search(r'\bNULL\b', line) and search(r'\bNULL\b', CleansedLines.collapse_strings(line)):
+        # FIXME: We should recommend using nullptr instead of 0 or null in C++ code per
+        # <http://www.webkit.org/coding/coding-style.html#zero-null>.
         error(line_number, 'readability/null', 4, 'Use 0 or null instead of NULL (even in *comments*).')
 
 def get_line_width(line):
@@ -3339,7 +3354,7 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
 
         # Remove "m_" and "s_" to allow them.
         modified_identifier = sub(r'(^|(?<=::))[ms]_', '', identifier)
-        if not file_state.is_objective_c() and modified_identifier.find('_') >= 0:
+        if not file_state.is_objective_c_or_objective_cpp() and modified_identifier.find('_') >= 0:
             # Various exceptions to the rule: JavaScript op codes functions, const_iterator.
             if (not (filename.find('JavaScriptCore') >= 0 and modified_identifier.find('op_') >= 0)
                 and not (filename.find('gtk') >= 0 and modified_identifier.startswith('webkit_') >= 0)

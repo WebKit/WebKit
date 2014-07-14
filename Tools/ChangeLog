@@ -1,3 +1,32 @@
+2014-07-14  Daniel Bates  <dabates@apple.com>
+
+        check-webkit-style should apply C++ rules to Objective-C++ files
+        https://bugs.webkit.org/show_bug.cgi?id=134884
+
+        Reviewed by Joseph Pecoraro.
+
+        Fixes an issue where check-webkit-style doesn't apply applicable C++ rules to
+        Objective-C++ files.
+
+        Currently check-webkit-style doesn't apply the following rules to Objective-C++
+        files: build/using_std, runtime/max_min_macros, runtime/wtf_move, readability/null.
+        Instead, we should teach check-webkit-style to apply these rules because, as
+        its name implies, an Objective-C++ file may contain C++ code.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_FileState.__init__): Add instance variable _is_objective_cpp to track whether a file has
+        extension mm (i.e. an Objective-C++ file).
+        (_FileState.is_objective_c_or_objective_cpp): Added; returns true if the file
+        has extension m or mm or if the file has extension h and contains Objective-C directives.
+        (check_for_null): No change in behavior; don't apply rule to Objective-C++ file.
+        (check_identifier_name_in_declaration): Substitute _FileState.is_objective_c_or_objective_cpp() for
+        _FileState.is_c_or_objective_c()
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_null_false_zero): Added test case for Objective-C++ file.
+        (WebKitStyleTest.test_max_macro): Add test case for Objective-C and Objective-C++ file.
+        (WebKitStyleTest.test_min_macro): Ditto.
+        (WebKitStyleTest.test_wtf_move): Add test case for Objective-C++ file.
+
 2014-07-14  Anders Carlsson  <andersca@apple.com>
 
         Make shouldKeepCurrentBackForwardListItemInList part of WKPageLoaderClientV5 to avoid breaking ABI

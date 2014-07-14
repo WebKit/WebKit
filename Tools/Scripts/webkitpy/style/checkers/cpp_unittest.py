@@ -4500,7 +4500,7 @@ class WebKitStyleTest(CppStyleTestBase):
             'myVariable = NULLify',
             '',
             'foo.cpp')
-        # Make sure that the NULL check does not apply to C and Objective-C files.
+        # Make sure that the NULL check does not apply to C, Objective-C, and Objective-C++ files.
         self.assert_lint(
             'functionCall(NULL)',
             '',
@@ -4509,6 +4509,10 @@ class WebKitStyleTest(CppStyleTestBase):
             'functionCall(NULL)',
             '',
             'foo.m')
+        self.assert_lint(
+            'functionCall(NULL)',
+            '',
+            'foo.mm')
 
         # Make sure that the NULL check does not apply to g_object_{set,get} and
         # g_str{join,concat}
@@ -4676,6 +4680,12 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [build/using_std] [4]",
             'foo.cpp')
 
+        self.assert_lint(
+            'using std::min;',
+            "Use 'using namespace std;' instead of 'using std::min;'."
+            "  [build/using_std] [4]",
+            'foo.mm')
+
     def test_using_namespace(self):
         self.assert_lint(
             'using namespace foo;',
@@ -4691,9 +4701,20 @@ class WebKitStyleTest(CppStyleTestBase):
 
         self.assert_lint(
             'int i = MAX(0, 1);',
+            '',
+            'foo.m')
+
+        self.assert_lint(
+            'int i = MAX(0, 1);',
             'Use std::max() or std::max<type>() instead of the MAX() macro.'
             '  [runtime/max_min_macros] [4]',
             'foo.cpp')
+
+        self.assert_lint(
+            'int i = MAX(0, 1);',
+            'Use std::max() or std::max<type>() instead of the MAX() macro.'
+            '  [runtime/max_min_macros] [4]',
+            'foo.mm')
 
         self.assert_lint(
             'inline int foo() { return MAX(0, 1); }',
@@ -4709,9 +4730,20 @@ class WebKitStyleTest(CppStyleTestBase):
 
         self.assert_lint(
             'int i = MIN(0, 1);',
+            '',
+            'foo.m')
+
+        self.assert_lint(
+            'int i = MIN(0, 1);',
             'Use std::min() or std::min<type>() instead of the MIN() macro.'
             '  [runtime/max_min_macros] [4]',
             'foo.cpp')
+
+        self.assert_lint(
+            'int i = MIN(0, 1);',
+            'Use std::min() or std::min<type>() instead of the MIN() macro.'
+            '  [runtime/max_min_macros] [4]',
+            'foo.mm')
 
         self.assert_lint(
             'inline int foo() { return MIN(0, 1); }',
@@ -4730,6 +4762,12 @@ class WebKitStyleTest(CppStyleTestBase):
             "Use 'WTF::move()' instead of 'std::move()'."
             "  [runtime/wtf_move] [4]",
             'foo.cpp')
+
+        self.assert_lint(
+            'A a = std::move(b);',
+            "Use 'WTF::move()' instead of 'std::move()'."
+            "  [runtime/wtf_move] [4]",
+            'foo.mm')
 
     def test_ctype_fucntion(self):
         self.assert_lint(
