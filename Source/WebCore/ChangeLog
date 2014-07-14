@@ -1,3 +1,13 @@
+2014-07-14  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Fix the !ENABLE(FILTERS) && !ENABLE(CSS_FILTERS) build after r167497
+        https://bugs.webkit.org/show_bug.cgi?id=134679
+
+        Reviewed by Darin Adler.
+
+        * html/ImageData.cpp:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+
 2014-07-14  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Support sparse in auto-placement algorithm

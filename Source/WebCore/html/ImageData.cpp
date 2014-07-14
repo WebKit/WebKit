@@ -31,6 +31,8 @@
 #include "ImageData.h"
 
 #include "ExceptionCode.h"
+#include <runtime/JSCInlines.h>
+#include <runtime/TypedArrayInlines.h>
 
 namespace WebCore {
 
