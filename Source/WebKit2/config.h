@@ -91,3 +91,9 @@
 #define HAVE_VOUCHERS 1
 #endif
 #endif
+
+#ifndef HAVE_SEC_ACCESS_CONTROL
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000)
+#define HAVE_SEC_ACCESS_CONTROL 1
+#endif
+#endif

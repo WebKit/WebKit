@@ -88,6 +88,12 @@ void encode(ArgumentEncoder&, SecKeychainItemRef);
 bool decode(ArgumentDecoder&, RetainPtr<SecKeychainItemRef>& result);
 #endif
 
+#if HAVE(SEC_ACCESS_CONTROL)
+// SecAccessControlRef
+void encode(ArgumentEncoder&, SecAccessControlRef);
+bool decode(ArgumentDecoder&, RetainPtr<SecAccessControlRef>& result);
+#endif
+
 #if PLATFORM(IOS)
 void setAllowsDecodingSecKeyRef(bool);
 #endif

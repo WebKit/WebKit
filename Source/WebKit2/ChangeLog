@@ -1,3 +1,25 @@
+2014-07-14  Dan Bernstein  <mitz@apple.com>
+
+        NetworkProcess sometimes hangs under copyDefaultCredentialForProtectionSpace
+        https://bugs.webkit.org/show_bug.cgi?id=134666
+
+        Reviewed by Tim Horton.
+
+        A SecItem may have an attribute whose value is a SecAccessControlRef, which is not supported
+        by ArgumentCodersCF. In debug builds, trying to encode a CFDictionary containing a value of
+        unsupprted type causes an assertion to fail, but in release builds encoding succeeds, and
+        only decoding fails, in this case silently, simply not delivering the
+        SecItemShim::secItemResponse message.
+
+        The fix is to teach ArgumentCodersCF about SecAccessControlRef.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::typeFromCFTypeRef): Check for the SecAccessControlRef type.
+        (IPC::encode): Encode the SecAccessControl serialized into CFData.
+        (IPC::decode): Deserialize a SecAccessControl from the decoded CFData.
+        * Shared/cf/ArgumentCodersCF.h:
+        * config.h: Defined HAVE_SEC_ACCESS_CONTROL.
+
 2014-07-13  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/17295636> [Cocoa] Include element snapshot in _WKActivatedElementInfo

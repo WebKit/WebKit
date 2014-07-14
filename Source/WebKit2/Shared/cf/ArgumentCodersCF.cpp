@@ -51,6 +51,15 @@ extern "C" OSStatus SecKeyCopyPersistentRef(SecKeyRef key, CFDataRef* persistent
 extern "C" OSStatus SecKeyFindWithPersistentRef(CFDataRef persistentRef, SecKeyRef* lookedUpData);
 #endif
 
+#if HAVE(SEC_ACCESS_CONTROL)
+#if defined(__has_include) && __has_include(<Security/SecAccessControlPriv.h>)
+#include <Security/SecAccessControlPriv.h>
+#endif
+
+extern "C" SecAccessControlRef SecAccessControlCreateFromData(CFAllocatorRef allocator, CFDataRef data, CFErrorRef *error);
+extern "C" CFDataRef SecAccessControlCopyData(SecAccessControlRef access_control);
+#endif
+
 using namespace WebCore;
 
 namespace IPC {
@@ -77,6 +86,9 @@ enum CFType {
 #endif
 #if HAVE(SEC_KEYCHAIN)
     SecKeychainItem,
+#endif
+#if HAVE(SEC_ACCESS_CONTROL)
+    SecAccessControl,
 #endif
     Null,
     Unknown,
@@ -117,6 +129,10 @@ static CFType typeFromCFTypeRef(CFTypeRef type)
 #if HAVE(SEC_KEYCHAIN)
     if (typeID == SecKeychainItemGetTypeID())
         return SecKeychainItem;
+#endif
+#if HAVE(SEC_ACCESS_CONTROL)
+    if (typeID == SecAccessControlGetTypeID())
+        return SecAccessControl;
 #endif
 
     ASSERT_NOT_REACHED();
@@ -166,6 +182,11 @@ void encode(ArgumentEncoder& encoder, CFTypeRef typeRef)
 #if HAVE(SEC_KEYCHAIN)
     case SecKeychainItem:
         encode(encoder, (SecKeychainItemRef)typeRef);
+        return;
+#endif
+#if HAVE(SEC_ACCESS_CONTROL)
+    case SecAccessControl:
+        encode(encoder, (SecAccessControlRef)typeRef);
         return;
 #endif
     case Null:
@@ -265,6 +286,15 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFTypeRef>& result)
         if (!decode(decoder, keychainItem))
             return false;
         result = adoptCF(keychainItem.leakRef());
+        return true;
+    }
+#endif
+#if HAVE(SEC_ACCESS_CONTROL)
+    case SecAccessControl: {
+        RetainPtr<SecAccessControlRef> accessControl;
+        if (!decode(decoder, accessControl))
+            return false;
+        result = adoptCF(accessControl.leakRef());
         return true;
     }
 #endif
@@ -682,6 +712,29 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<SecKeychainItemRef>& result)
     result = adoptCF(item);
     return true;
 }
+#endif
+
+#if HAVE(SEC_ACCESS_CONTROL)
+void encode(ArgumentEncoder& encoder, SecAccessControlRef accessControl)
+{
+    RetainPtr<CFDataRef> data = adoptCF(SecAccessControlCopyData(accessControl));
+    if (data)
+        encode(encoder, data.get());
+}
+
+bool decode(ArgumentDecoder& decoder, RetainPtr<SecAccessControlRef>& result)
+{
+    RetainPtr<CFDataRef> data;
+    if (!decode(decoder, data))
+        return false;
+
+    result = adoptCF(SecAccessControlCreateFromData(kCFAllocatorDefault, data.get(), nullptr));
+    if (!result)
+        return false;
+
+    return true;
+}
+
 #endif
 
 } // namespace IPC
