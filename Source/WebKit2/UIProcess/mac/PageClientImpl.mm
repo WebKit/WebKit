@@ -690,14 +690,16 @@ void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntR
 void PageClientImpl::navigationGestureDidBegin()
 {
 #if WK_API_ENABLED
-    NavigationState::fromWebPage(*m_webView->_page).navigationGestureDidBegin();
+    if (m_webView)
+        NavigationState::fromWebPage(*m_webView->_page).navigationGestureDidBegin();
 #endif
 }
 
 void PageClientImpl::navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem& item)
 {
 #if WK_API_ENABLED
-    NavigationState::fromWebPage(*m_webView->_page).navigationGestureWillEnd(willNavigate, item);
+    if (m_webView)
+        NavigationState::fromWebPage(*m_webView->_page).navigationGestureWillEnd(willNavigate, item);
 #else
     UNUSED_PARAM(willNavigate);
     UNUSED_PARAM(item);
@@ -707,7 +709,8 @@ void PageClientImpl::navigationGestureWillEnd(bool willNavigate, WebBackForwardL
 void PageClientImpl::navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem& item)
 {
 #if WK_API_ENABLED
-    NavigationState::fromWebPage(*m_webView->_page).navigationGestureDidEnd(willNavigate, item);
+    if (m_webView)
+        NavigationState::fromWebPage(*m_webView->_page).navigationGestureDidEnd(willNavigate, item);
 #else
     UNUSED_PARAM(willNavigate);
     UNUSED_PARAM(item);
@@ -717,7 +720,8 @@ void PageClientImpl::navigationGestureDidEnd(bool willNavigate, WebBackForwardLi
 void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem& item)
 {
 #if WK_API_ENABLED
-    NavigationState::fromWebPage(*m_webView->_page).willRecordNavigationSnapshot(item);
+    if (m_webView)
+        NavigationState::fromWebPage(*m_webView->_page).willRecordNavigationSnapshot(item);
 #else
     UNUSED_PARAM(item);
 #endif
