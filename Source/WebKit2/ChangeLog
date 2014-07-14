@@ -1,3 +1,29 @@
+2014-07-14  Benjamin Poulain  <benjamin@webkit.org>
+
+        [iOS][WK2] On rotation, RemoteLayerTreeDrawingArea renders one extra frame at the wrong orientation
+        https://bugs.webkit.org/show_bug.cgi?id=134875
+
+        Reviewed by Tim Horton.
+
+        On animated resize, the size of the DrawingAreaProxy was changed before the layout parameters were
+        changed. This in turn caused the WebProcess's DrawingArea to flush the layer tree while still
+        at the wrong orientation.
+
+        This patch fixes the issue by making a special case for animated resize:
+        -While starting animated resize, _frameOrBoundsChanged can be called several times in response to
+         the API's client changing the WKWebView. In that case, we do not update the drawing area.
+        -After the "updateBlock" is executed and the size have been changed, the dynamic viewport update
+         is computed, the dynamicViewportSizeUpdate is sent to the WebProcess, followed by the message
+         DrawingArea::updateGeometry(). Since both messages are asynchronous, they are received in that
+         order, and the updateGeometry() is always done after the viewport configuration has been updated.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _frameOrBoundsChanged]):
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView setMinimumSize:]): Deleted.
+
 2014-07-14  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Fix withinEpsilon()

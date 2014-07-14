@@ -356,11 +356,6 @@ private:
     [self updateFixedClippingView:fixedPositionRect];
 }
 
-- (void)setMinimumSize:(CGSize)size
-{
-    _page->drawingArea()->setSize(IntSize(size), IntSize(), IntSize());
-}
-
 - (void)didFinishScrolling
 {
     [self _didEndScrollingOrZooming];

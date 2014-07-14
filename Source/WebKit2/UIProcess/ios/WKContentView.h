@@ -63,7 +63,6 @@ struct WebPageConfiguration;
 
 - (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView;
 
-- (void)setMinimumSize:(CGSize)size;
 - (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect
     unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
     scale:(CGFloat)scale minimumScale:(CGFloat)minimumScale
