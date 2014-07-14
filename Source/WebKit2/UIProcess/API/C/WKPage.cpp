@@ -66,7 +66,7 @@ using namespace WebKit;
 
 namespace API {
 template<> struct ClientTraits<WKPageLoaderClientBase> {
-    typedef std::tuple<WKPageLoaderClientV0, WKPageLoaderClientV1, WKPageLoaderClientV2, WKPageLoaderClientV3, WKPageLoaderClientV4> Versions;
+    typedef std::tuple<WKPageLoaderClientV0, WKPageLoaderClientV1, WKPageLoaderClientV2, WKPageLoaderClientV3, WKPageLoaderClientV4, WKPageLoaderClientV5> Versions;
 };
 
 template<> struct ClientTraits<WKPagePolicyClientBase> {

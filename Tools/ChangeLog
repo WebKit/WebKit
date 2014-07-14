@@ -1,3 +1,17 @@
+2014-07-14  Anders Carlsson  <andersca@apple.com>
+
+        Make shouldKeepCurrentBackForwardListItemInList part of WKPageLoaderClientV5 to avoid breaking ABI
+        https://bugs.webkit.org/show_bug.cgi?id=134889
+
+        Reviewed by Beth Dakin.
+
+        Bump loader version number to 5.
+
+        * TestWebKitAPI/Tests/WebKit2/ShouldKeepCurrentBackForwardListItemInList.cpp:
+        (TestWebKitAPI::setPageLoaderClient):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions):
+
 2014-07-14  Daniel Bates  <dabates@apple.com>
 
         Teach check-webkit-style to suggest WTF::move() when it sees std::move()

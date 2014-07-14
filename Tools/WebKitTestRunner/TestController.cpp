@@ -469,8 +469,8 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient.base);
 
-    WKPageLoaderClientV4 pageLoaderClient = {
-        { 4, this },
+    WKPageLoaderClientV5 pageLoaderClient = {
+        { 5, this },
         0, // didStartProvisionalLoadForFrame
         0, // didReceiveServerRedirectForProvisionalLoadForFrame
         0, // didFailProvisionalLoadWithErrorForFrame

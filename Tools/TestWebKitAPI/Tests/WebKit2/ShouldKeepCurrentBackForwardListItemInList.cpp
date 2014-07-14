@@ -114,10 +114,10 @@ static bool shouldKeepCurrentBackForwardListItemInList(WKPageRef page, WKBackFor
 
 static void setPageLoaderClient(WKPageRef page)
 {
-    WKPageLoaderClientV4 loaderClient;
+    WKPageLoaderClientV5 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
-    loaderClient.base.version = 4;
+    loaderClient.base.version = 5;
     loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
     loaderClient.shouldKeepCurrentBackForwardListItemInList = shouldKeepCurrentBackForwardListItemInList;
     loaderClient.willGoToBackForwardListItem = willGoToBackForwardListItem;
