@@ -1,3 +1,30 @@
+2014-07-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Some videos play as inline audio-only content
+        https://bugs.webkit.org/show_bug.cgi?id=134898.
+        <rdar://problem/17629379>
+
+        Reviewed by Eric Carlson.
+
+        Add a new 'presentationType' accessor that indicates if the media
+        element is playing in 'audio' mode. This can happen if a video
+        element plays an HLS stream that starts off in audio-only mode.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::presentationType): Added.
+        * html/HTMLMediaElement.h:
+        * platform/audio/MediaSession.cpp:
+        (WebCore::MediaSession::presentationType): Added.
+        * platform/audio/MediaSession.h:
+        * platform/audio/MediaSessionManager.cpp: 
+        (WebCore::MediaSessionManager::sessionRestrictsInlineVideoPlayback):
+        Use the presentationType, rather than the mediaType to control
+        inline playback behavior.
+        * platform/audio/ios/AudioDestinationIOS.h:
+        (WebCore::AudioDestinationMac::presentationType): Add presentationType.
+        * platform/audio/mac/AudioDestinationMac.h:
+        (WebCore::AudioDestinationMac::presentationType): Ditto.
+
 2014-07-14  Bear Travis  <betravis@adobe.com>
 
         [Feature Queries] Enable Feature Queries on Mac

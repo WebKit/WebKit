@@ -53,6 +53,7 @@ private:
     OSStatus render(UInt32 numberOfFrames, AudioBufferList* ioData);
 
     virtual MediaSession::MediaType mediaType() const override { return MediaSession::WebAudio; }
+    virtual MediaSession::MediaType presentationType() const { return MediaSession::WebAudio; }
     virtual bool canReceiveRemoteControlCommands() const override { return false; }
     virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) override { }
     virtual bool overrideBackgroundPlaybackRestriction() const override { return false; }

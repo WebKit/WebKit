@@ -140,6 +140,11 @@ MediaSession::MediaType MediaSession::mediaType() const
     return m_client.mediaType();
 }
 
+MediaSession::MediaType MediaSession::presentationType() const
+{
+    return m_client.presentationType();
+}
+
 String MediaSession::title() const
 {
     return m_client.mediaSessionTitle();

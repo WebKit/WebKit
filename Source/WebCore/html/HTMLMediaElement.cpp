@@ -5939,6 +5939,14 @@ MediaSession::MediaType HTMLMediaElement::mediaType() const
     return MediaSession::Audio;
 }
 
+MediaSession::MediaType HTMLMediaElement::presentationType() const
+{
+    if (hasTagName(HTMLNames::videoTag))
+        return MediaSession::Video;
+
+    return MediaSession::Audio;
+}
+
 void HTMLMediaElement::pausePlayback()
 {
     LOG(Media, "HTMLMediaElement::pausePlayback - paused = %s", boolString(paused()));

@@ -270,7 +270,7 @@ MediaSession* MediaSessionManager::currentSession()
     
 bool MediaSessionManager::sessionRestrictsInlineVideoPlayback(const MediaSession& session) const
 {
-    MediaSession::MediaType sessionType = session.mediaType();
+    MediaSession::MediaType sessionType = session.presentationType();
     if (sessionType != MediaSession::Video)
         return false;
 

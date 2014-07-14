@@ -56,6 +56,7 @@ private:
 
     // MediaSessionClient
     virtual MediaSession::MediaType mediaType() const { return MediaSession::WebAudio; }
+    virtual MediaSession::MediaType presentationType() const { return MediaSession::WebAudio; }
     virtual bool canReceiveRemoteControlCommands() const { return false; }
     virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) { }
     virtual bool overrideBackgroundPlaybackRestriction() const { return false; }

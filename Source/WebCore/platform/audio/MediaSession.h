@@ -47,6 +47,7 @@ public:
         WebAudio,
     };
     MediaType mediaType() const;
+    MediaType presentationType() const;
 
     enum State {
         Idle,
@@ -115,6 +116,8 @@ public:
     MediaSessionClient() { }
     
     virtual MediaSession::MediaType mediaType() const = 0;
+    virtual MediaSession::MediaType presentationType() const = 0;
+
     virtual void resumePlayback() = 0;
     virtual void pausePlayback() = 0;
 
