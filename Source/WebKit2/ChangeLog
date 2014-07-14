@@ -1,3 +1,13 @@
+2014-07-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [UNIX] Log error description when failing to create shared memory file.
+        https://bugs.webkit.org/show_bug.cgi?id=134892
+
+        Reviewed by Darin Adler.
+
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::create): Print the string describing the error number (errno).
+
 2014-07-14  Benjamin Poulain  <benjamin@webkit.org>
 
         [iOS][WK2] On rotation, RemoteLayerTreeDrawingArea renders one extra frame at the wrong orientation
