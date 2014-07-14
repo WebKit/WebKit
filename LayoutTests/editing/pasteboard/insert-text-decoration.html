@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <div id="content">
+            <p>Longhands: <span style="-webkit-text-decoration-line: overline; -webkit-text-decoration-style: dotted; -webkit-text-decoration-color: blue;">overline dotted blue</span></p>
+            <p>Shorthand: <span style="-webkit-text-decoration: underline dashed red;">underline dashed red</span></p>
+        </div>
+        <div id="container" contenteditable="true"></div>
+        <script src="../../resources/dump-as-markup.js"></script>
+        <script>
+            Markup.description('This tests inserting elements with CSS3 text decoration properties');
+
+            var content = document.getElementById('content');
+            Markup.dump(content, 'Content to insert');
+
+            document.querySelector('div[contenteditable]').focus();
+            document.execCommand('InsertHTML', null, content.innerHTML);
+
+            Markup.dump('container', 'After insertion');
+        </script>
+    </body>
+</html>

@@ -1939,6 +1939,7 @@ webkit.org/b/128979 [ Release ] inspector-protocol/dom/getAccessibilityPropertie
 
 # CSS3_TEXT is disabled on Windows
 fast/css3-text [ Skip ]
+webkit.org/b/58491 editing/pasteboard/insert-text-decoration.html [ Skip ]
 
 # ACCELERATED_OVERFLOW_SCROLLING is disabled on Windows
 compositing/overflow/scrolling-without-painting.html [ Skip ]

@@ -749,6 +749,7 @@ webkit.org/b/89052 fast/css/image-orientation
 webkit.org/b/76173 fast/css3-text/css3-text-align-last
 webkit.org/b/99945 fast/css3-text/css3-text-justify [ Failure ]
 webkit.org/b/112755 fast/css3-text/css3-text-indent [ Failure ImageOnlyFailure ]
+webkit.org/b/58491 editing/pasteboard/insert-text-decoration.html [ Skip ]
 
 # MHTML is not yet enabled
 mhtml [ Skip ]

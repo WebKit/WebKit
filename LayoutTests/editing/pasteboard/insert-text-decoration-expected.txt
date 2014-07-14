@@ -1,0 +1,33 @@
+This tests inserting elements with CSS3 text decoration properties
+
+Content to insert:
+| "
+            "
+| <p>
+|   "Longhands: "
+|   <span>
+|     style="-webkit-text-decoration-line: overline; -webkit-text-decoration-style: dotted; -webkit-text-decoration-color: blue;"
+|     "overline dotted blue"
+| "
+            "
+| <p>
+|   "Shorthand: "
+|   <span>
+|     style="-webkit-text-decoration: underline dashed red;"
+|     "underline dashed red"
+| "
+        "
+
+After insertion:
+| <p>
+|   "Longhands: "
+|   <span>
+|     style="-webkit-text-decoration-line: overline; -webkit-text-decoration-style: dotted; -webkit-text-decoration-color: blue;"
+|     "overline dotted blue"
+| "
+            "
+| <p>
+|   "Shorthand: "
+|   <span>
+|     style="-webkit-text-decoration: underline dashed red;"
+|     "underline dashed red<#selection-caret>"

@@ -1,3 +1,18 @@
+2014-07-14  Bruno de Oliveira Abinader  <bruno.d@partner.samsung.com>
+
+        [css3-text] Add editing test for CSS3 Text Decoration properties
+        https://bugs.webkit.org/show_bug.cgi?id=120114
+
+        Reviewed by Darin Adler.
+
+        Adds editing layout test to verify that CSS3 Text Decoration properties
+        are being properly propagated.
+
+        * editing/pasteboard/insert-text-decoration-expected.txt: Added.
+        * editing/pasteboard/insert-text-decoration.html: Added.
+        * platform/mac/TestExpectations: Skip while CSS3_TEXT is disabled by default.
+        * platform/win/TestExpectations: Skip while CSS3_TEXT is disabled by default.
+
 2014-07-14  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Unreviewed EFL gardening.
