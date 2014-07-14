@@ -68,7 +68,6 @@ void link(State& state)
     CCallHelpers jit(&vm, codeBlock);
     
     OwnPtr<LinkBuffer> linkBuffer;
-    CCallHelpers::Label arityCheck;
 
     CCallHelpers::Address frame = CCallHelpers::Address(
         CCallHelpers::stackPointerRegister, -static_cast<int32_t>(AssemblyHelpers::prologueStackPointerDelta()));
@@ -208,7 +207,6 @@ void link(State& state)
     
     state.finalizer->entrypointLinkBuffer = linkBuffer.release();
     state.finalizer->function = state.generatedFunction;
-    state.finalizer->arityCheck = arityCheck;
     state.finalizer->jitCode = state.jitCode;
 }
 

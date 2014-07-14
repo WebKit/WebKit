@@ -54,7 +54,6 @@ public:
     OwnPtr<LinkBuffer> handleExceptionsLinkBuffer;
     Vector<SlowPathCall> slowPathCalls; // Calls inside the side code.
     Vector<OSRExitCompilationInfo> osrExit;
-    MacroAssembler::Label arityCheck;
     GeneratedFunction function;
     RefPtr<JITCode> jitCode;
 };

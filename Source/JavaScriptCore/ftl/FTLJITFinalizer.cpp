@@ -128,9 +128,6 @@ bool JITFinalizer::finalizeFunction()
             .executableMemory());
     }
     
-    MacroAssemblerCodePtr withArityCheck;
-    if (arityCheck.isSet())
-        withArityCheck = entrypointLinkBuffer->locationOf(arityCheck);
     jitCode->initializeArityCheckEntrypoint(
         FINALIZE_DFG_CODE(
             *entrypointLinkBuffer,
