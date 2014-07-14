@@ -2,6 +2,37 @@
 
         [EFL] Unreviewed EFL gardening.
 
+        Rebaseline tests after r170418 and r170433.
+
+        * platform/efl/fast/regions/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Added. Rebaseline after r170418.
+        * platform/efl/fast/regions/repaint/japanese-rl-selection-repaint-in-regions-expected.txt: Rebaseline after r170418.
+        * platform/efl/fast/text/decorations-with-text-combine-expected.png: Rebaseline after r170418.
+        * platform/efl/fast/text/decorations-with-text-combine-expected.txt: Rebaseline after r170418.
+        * platform/efl/fast/text/emphasis-vertical-expected.png: Rebaseline after r170418.
+        * platform/efl/fast/text/emphasis-vertical-expected.txt: Rebaseline after r170418.
+        * platform/efl/fast/text/international/002-expected.png: Rebaseline after r170418.
+        * platform/efl/fast/text/international/002-expected.txt: Rebaseline after r170418.
+        * platform/efl/fast/text/international/text-combine-image-test-expected.png: Rebaseline after r170418.
+        * platform/efl/fast/text/international/text-combine-image-test-expected.txt: Rebaseline after r170418.
+        * platform/efl/fast/text/international/wrap-CJK-001-expected.png: Rebaseline after r170418.
+        * platform/efl/fast/writing-mode/border-vertical-lr-expected.png: Rebaseline after r170418.
+        * platform/efl/fast/writing-mode/border-vertical-lr-expected.txt: Rebaseline after r170418.
+        * platform/efl/fast/writing-mode/japanese-lr-selection-expected.png: Rebaseline after r170418.
+        * platform/efl/fast/writing-mode/japanese-lr-selection-expected.txt: Rebaseline after r170418.
+        * platform/efl/fast/writing-mode/japanese-lr-text-expected.png: Rebaseline after r170418.
+        * platform/efl/fast/writing-mode/japanese-lr-text-expected.txt: Rebaseline after r170418.
+        * platform/efl/fast/writing-mode/japanese-rl-selection-expected.png: Rebaseline after r170418.
+        * platform/efl/fast/writing-mode/japanese-rl-selection-expected.txt: Rebaseline after r170418.
+        * platform/efl/fast/writing-mode/japanese-rl-text-expected.png: Rebaseline after r170418.
+        * platform/efl/fast/writing-mode/japanese-rl-text-expected.txt: Rebaseline after r170418.
+        * platform/efl/svg/W3C-SVG-1.1/filters-blend-01-b-expected.png: Rebaseline after r170433.
+        * platform/efl/svg/W3C-SVG-1.1/filters-blend-01-b-expected.txt: Added. Rebaseline after r170433.
+        * platform/efl/svg/filters/feBlend-all-blendmodes-expected.txt: Added. Rebaseline after r170433.
+
+2014-07-14  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Unreviewed EFL gardening.
+
         Remove failure expectations for tests that have been passing after r168350, r169309 and r169620.
 
         * platform/efl/TestExpectations:
