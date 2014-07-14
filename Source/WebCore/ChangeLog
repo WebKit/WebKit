@@ -1,3 +1,23 @@
+2014-07-14  Jeremy Jones  <jeremyj@apple.com>
+
+        WebVideoFullscreenInterfaceAVKit should only call the UI from main thread.
+        https://bugs.webkit.org/show_bug.cgi?id=134890
+
+        Reviewed by Eric Carlson.
+
+        dispatch_async to the main thread before setting properties that would affect the UI.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::setWebVideoFullscreenModel): wrap in call to dispatch_async
+        (WebVideoFullscreenInterfaceAVKit::setDuration): ditto
+        (WebVideoFullscreenInterfaceAVKit::setCurrentTime): ditto
+        (WebVideoFullscreenInterfaceAVKit::setRate): ditto
+        (WebVideoFullscreenInterfaceAVKit::setVideoDimensions): ditto
+        (WebVideoFullscreenInterfaceAVKit::setSeekableRanges): ditto
+        (WebVideoFullscreenInterfaceAVKit::setAudioMediaSelectionOptions): ditto
+        (WebVideoFullscreenInterfaceAVKit::setLegibleMediaSelectionOptions): ditto
+        (WebVideoFullscreenInterfaceAVKit::setExternalPlayback): ditto
+
 2014-07-14  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Fix the !ENABLE(FILTERS) && !ENABLE(CSS_FILTERS) build after r167497
