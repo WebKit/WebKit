@@ -26,6 +26,7 @@
 #ifndef MediaSessionManager_h
 #define MediaSessionManager_h
 
+#include <AudioHardwareListener.h>
 #include "MediaSession.h"
 #include "RemoteCommandListener.h"
 #include "Settings.h"
@@ -52,7 +53,7 @@ protected:
     MediaSessionManagerClient() { }
 };
 
-class MediaSessionManager : RemoteCommandListenerClient, SystemSleepListener::Client {
+class MediaSessionManager : private RemoteCommandListenerClient, private SystemSleepListener::Client, private AudioHardwareListener::Client {
 public:
     static MediaSessionManager& sharedManager();
     virtual ~MediaSessionManager() { }
@@ -94,8 +95,6 @@ public:
     virtual void stopMonitoringAirPlayRoutes() { }
 #endif
 
-    virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) override;
-
     void addClient(MediaSessionManagerClient*);
     void removeClient(MediaSessionManagerClient*);
 
@@ -114,8 +113,18 @@ private:
 
     void updateSessionState();
 
-    virtual void systemWillSleep();
-    virtual void systemDidWake();
+
+    // RemoteCommandListenerClient
+    virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) override;
+
+    // AudioHardwareListenerClient
+    virtual void audioHardwareDidBecomeActive() override { }
+    virtual void audioHardwareDidBecomeInactive() override { }
+    virtual void audioOutputDeviceChanged() override;
+
+    // SystemSleepListener
+    virtual void systemWillSleep() override;
+    virtual void systemDidWake() override;
 
     SessionRestrictions m_restrictions[MediaSession::WebAudio + 1];
 
@@ -123,6 +132,7 @@ private:
     Vector<MediaSessionManagerClient*> m_clients;
     std::unique_ptr<RemoteCommandListener> m_remoteCommandListener;
     std::unique_ptr<SystemSleepListener> m_systemSleepListener;
+    RefPtr<AudioHardwareListener> m_audioHardwareListener;
     bool m_interrupted;
 };
 

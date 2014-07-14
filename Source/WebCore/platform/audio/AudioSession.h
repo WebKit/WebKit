@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,6 @@
 
 namespace WebCore {
 
-class AudioSessionListener;
 class AudioSessionPrivate;
 
 class AudioSession {
@@ -57,9 +56,6 @@ public:
     void setCategoryOverride(CategoryType);
     CategoryType categoryOverride() const;
 
-    void addListener(AudioSessionListener*);
-    void removeListener(AudioSessionListener*);
-
     float sampleRate() const;
     size_t numberOfOutputChannels() const;
 
@@ -68,15 +64,11 @@ public:
     size_t preferredBufferSize() const;
     void setPreferredBufferSize(size_t);
 
-    void beganAudioInterruption();
-    void endedAudioInterruption();
-
 private:
     AudioSession();
     ~AudioSession();
 
     std::unique_ptr<AudioSessionPrivate> m_private;
-    HashSet<AudioSessionListener*> m_listeners;
 };
 
 }

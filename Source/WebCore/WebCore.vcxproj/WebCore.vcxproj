@@ -19309,7 +19309,6 @@
     <ClInclude Include="..\platform\FileSystem.h" />
     <ClInclude Include="..\platform\FloatConversion.h" />
     <ClInclude Include="..\platform\audio\AudioSession.h" />
-    <ClInclude Include="..\platform\audio\AudioSessionListener.h" />
     <ClInclude Include="..\platform\audio\MediaSession.h" />
     <ClInclude Include="..\platform\audio\MediaSessionManager.h" />
     <ClInclude Include="..\platform\graphics\ANGLEWebKitBridge.h" />

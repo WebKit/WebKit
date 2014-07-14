@@ -38,11 +38,15 @@ class AudioHardwareListenerMac : public AudioHardwareListener {
 public:
     static WTF::PassRefPtr<AudioHardwareListenerMac> create(Client&);
 
-protected:
+private:
     AudioHardwareListenerMac(Client&);
     virtual ~AudioHardwareListenerMac();
 
-    void setHardwareActive(AudioHardwareActivityType);
+    void processIsRunningChanged();
+    void outputDeviceChanged();
+
+    void propertyChanged(UInt32, const AudioObjectPropertyAddress[]);
+
     AudioObjectPropertyListenerBlock m_block;
 };
 

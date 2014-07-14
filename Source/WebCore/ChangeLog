@@ -1,3 +1,73 @@
+2014-07-14  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] don't enable low power audio mode on external output devices
+        https://bugs.webkit.org/show_bug.cgi?id=134877
+
+        Reviewed by Sam Weinig.
+
+        No new tests, this deals with changes to the audio hardware at runtime.
+
+        * WebCore.xcodeproj/project.pbxproj: Remove AudioSessionListener.h.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+
+        * platform/audio/AudioHardwareListener.cpp:
+        (WebCore::AudioHardwareListener::AudioHardwareListener): Initialize m_outputDeviceSupportsLowPowerMode
+            to true on iOS.
+        * platform/audio/AudioHardwareListener.h:
+        (WebCore::AudioHardwareListener::outputDeviceSupportsLowPowerMode): New accessor.
+        (WebCore::AudioHardwareListener::setHardwareActivity): New setter for derived classes.
+        (WebCore::AudioHardwareListener::setOutputDeviceSupportsLowPowerMode): Ditto.
+
+        Remove AudioSessionListener interface, it wasn't being used.
+        * platform/audio/AudioSession.cpp:
+        (WebCore::AudioSession::addListener): Deleted.
+        (WebCore::AudioSession::removeListener): Deleted.
+        (WebCore::AudioSession::beganAudioInterruption): Deleted.
+        (WebCore::AudioSession::endedAudioInterruption): Deleted.
+        * platform/audio/AudioSession.h:
+        * platform/audio/AudioSessionListener.h: Removed.
+
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::addSession): Allocate the AudioHardwareListener if necessary.
+        (WebCore::MediaSessionManager::removeSession): Free the AudioHardwareListener if necessary.
+        (WebCore::MediaSessionManager::audioOutputDeviceChanged): AudioHardwareListener client interface
+            called when the output device changes, call updateSessionState to make sure we are using
+            the correct buffer size.
+        * platform/audio/MediaSessionManager.h:
+
+        * platform/audio/ios/AudioDestinationIOS.h:
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSessionPrivate::AudioSessionPrivate): Drive-by cleanup, remove ObjC helper object
+            that was used to listen for OS notifications, it is no longer used.
+        (SOFT_LINK_POINTER): Deleted.
+        (-[WebAudioSessionHelper initWithCallback:]): Deleted.
+        (-[WebAudioSessionHelper dealloc]): Deleted.
+        (-[WebAudioSessionHelper interruption:]): Deleted.
+
+        * platform/audio/mac/AudioHardwareListenerMac.cpp:
+        (WebCore::currentDeviceSupportsLowPowerBufferSize): New, return true only if using build-in 
+            transport device.
+        (WebCore::processIsRunningPropertyDescriptor): Return reference to static AudioObjectPropertyAddress
+            for kAudioHardwarePropertyProcessIsRunning instead of declaring one in every method
+            that needs one.
+        (WebCore::outputDevicePropertyDescriptor): Return reference to static AudioObjectPropertyAddress
+            for kAudioHardwarePropertyDefaultOutputDevice.
+        (WebCore::AudioHardwareListenerMac::AudioHardwareListenerMac): Restructure and add audio object
+            listener for default output device.
+        (WebCore::AudioHardwareListenerMac::~AudioHardwareListenerMac): *Remove* listener audio object
+            property listener instead of *Adding* a new one. Remove new listener.
+        (WebCore::AudioHardwareListenerMac::propertyChanged): Enumerate the properties that changed,
+            call appropriate method.
+        (WebCore::AudioHardwareListenerMac::processIsRunningChanged): Renamed from setHardwareActive, 
+            cleanup.
+        (WebCore::AudioHardwareListenerMac::outputDeviceChanged): New, call client.audioHardwareOutputDeviceChanged.
+        (WebCore::AudioHardwareListenerMac::setHardwareActive): Deleted, renamed processIsRunningChanged.
+        * platform/audio/mac/AudioHardwareListenerMac.h:
+
+        * platform/audio/mac/MediaSessionManagerMac.cpp:
+        (MediaSessionManager::updateSessionState): Only set the output buffer size to 4K when hardware
+            supports it.
+
 2014-07-13  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove SelectorCheckerFastPath from the style resolution algorithm

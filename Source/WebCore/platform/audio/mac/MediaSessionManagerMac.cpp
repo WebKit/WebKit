@@ -50,7 +50,14 @@ void MediaSessionManager::updateSessionState()
     else if ((has(MediaSession::Video) || has(MediaSession::Audio)) && Settings::lowPowerVideoAudioBufferSizeEnabled()) {
         // FIXME: <http://webkit.org/b/116725> Figure out why enabling the code below
         // causes media LayoutTests to fail on 10.8.
-        AudioSession::sharedSession().setPreferredBufferSize(kLowPowerVideoBufferSize);
+
+        size_t bufferSize;
+        if (m_audioHardwareListener && m_audioHardwareListener->outputDeviceSupportsLowPowerMode())
+            bufferSize = kLowPowerVideoBufferSize;
+        else
+            bufferSize = kWebAudioBufferSize;
+
+        AudioSession::sharedSession().setPreferredBufferSize(bufferSize);
     }
 #endif
 

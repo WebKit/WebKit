@@ -101,6 +101,7 @@ private:
     // AudioHardwareListenerClient
     virtual void audioHardwareDidBecomeActive() override;
     virtual void audioHardwareDidBecomeInactive() override;
+    virtual void audioOutputDeviceChanged() override { }
 
     void platformInitializePluginProcess(const PluginProcessCreationParameters&);
     

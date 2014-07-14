@@ -1,3 +1,13 @@
+2014-07-14  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] don't enable low power audio mode on external output devices
+        https://bugs.webkit.org/show_bug.cgi?id=134877
+
+        Reviewed by Sam Weinig.
+
+        * PluginProcess/PluginProcess.h: Add an empty implementation of 
+            AudioHardwareListener::audioOutputDeviceChanged.
+
 2014-07-14  Tim Horton  <timothy_horton@apple.com>
 
         [iOS] Throttle painting using a UI-process-side CADisplayLink

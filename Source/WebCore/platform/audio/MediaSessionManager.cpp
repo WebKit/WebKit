@@ -119,10 +119,14 @@ void MediaSessionManager::addSession(MediaSession& session)
     m_sessions.append(&session);
     if (m_interrupted)
         session.setState(MediaSession::Interrupted);
-    updateSessionState();
 
     if (!m_remoteCommandListener)
         m_remoteCommandListener = RemoteCommandListener::create(*this);
+
+    if (!m_audioHardwareListener)
+        m_audioHardwareListener = AudioHardwareListener::create(*this);
+
+    updateSessionState();
 
     if (m_clients.isEmpty() || !(session.mediaType() == MediaSession::Video || session.mediaType() == MediaSession::Audio))
         return;
@@ -141,10 +145,13 @@ void MediaSessionManager::removeSession(MediaSession& session)
         return;
     
     m_sessions.remove(index);
-    updateSessionState();
 
-    if (m_sessions.isEmpty())
+    if (m_sessions.isEmpty()) {
         m_remoteCommandListener = nullptr;
+        m_audioHardwareListener = nullptr;
+    }
+
+    updateSessionState();
 
     if (m_clients.isEmpty() || !(session.mediaType() == MediaSession::Video || session.mediaType() == MediaSession::Audio))
         return;
@@ -337,6 +344,11 @@ void MediaSessionManager::systemDidWake()
 
     for (auto session : m_sessions)
         session->endInterruption(MediaSession::MayResumePlaying);
+}
+
+void MediaSessionManager::audioOutputDeviceChanged()
+{
+    updateSessionState();
 }
 
 }

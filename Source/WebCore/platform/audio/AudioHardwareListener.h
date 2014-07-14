@@ -44,18 +44,24 @@ public:
         virtual ~Client() { }
         virtual void audioHardwareDidBecomeActive() = 0;
         virtual void audioHardwareDidBecomeInactive() = 0;
+        virtual void audioOutputDeviceChanged() = 0;
     };
 
     static PassRefPtr<AudioHardwareListener> create(Client&);
     virtual ~AudioHardwareListener() { }
     
     AudioHardwareActivityType hardwareActivity() const { return m_activity; }
+    bool outputDeviceSupportsLowPowerMode() const { return m_outputDeviceSupportsLowPowerMode; }
 
 protected:
     AudioHardwareListener(Client&);
 
+    void setHardwareActivity(AudioHardwareActivityType activity) { m_activity = activity; }
+    void setOutputDeviceSupportsLowPowerMode(bool support) { m_outputDeviceSupportsLowPowerMode = support; }
+
     Client& m_client;
     AudioHardwareActivityType m_activity;
+    bool m_outputDeviceSupportsLowPowerMode;
 };
 
 }

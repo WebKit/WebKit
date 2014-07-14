@@ -54,57 +54,7 @@ SOFT_LINK_POINTER(AVFoundation, AVAudioSessionInterruptionTypeKey, NSString *)
 #define AVAudioSessionCategoryAudioProcessing getAVAudioSessionCategoryAudioProcessing()
 #define AVAudioSessionInterruptionTypeKey getAVAudioSessionInterruptionTypeKey()
 
-static NSString * const WCAVAudioSessionInterruptionNotification = @"AVAudioSessionInterruptionNotification";
-
-#if !ASSERT_DISABLED
-SOFT_LINK_POINTER(AVFoundation, AVAudioSessionInterruptionNotification, NSString *)
-#endif
-
-@interface WebAudioSessionHelper : NSObject {
-    WebCore::AudioSession* _callback;
-}
-- (id)initWithCallback:(WebCore::AudioSession*)callback;
-- (void)interruption:(NSNotification*)notification;
-@end
-
-@implementation WebAudioSessionHelper
-- (id)initWithCallback:(WebCore::AudioSession*)callback
-{
-    self = [super init];
-    if (!self)
-        return nil;
-
-    _callback = callback;
-
-    ASSERT([WCAVAudioSessionInterruptionNotification isEqualToString:getAVAudioSessionInterruptionNotification()]);
-
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(interruption:) name:WCAVAudioSessionInterruptionNotification object:nil];
-
-    return self;
-}
-
-- (void)dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:WCAVAudioSessionInterruptionNotification object:nil];
-    [super dealloc];
-}
-
-- (void)interruption:(NSNotification *)notification
-{
-    ASSERT([AVAudioSession sharedInstance] == [notification object]);
-    if ([AVAudioSession sharedInstance] != [notification object])
-        return;
-
-    NSUInteger type = [[[notification userInfo] objectForKey:AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
-    if (type == AVAudioSessionInterruptionTypeBegan)
-        _callback->beganAudioInterruption();
-    else
-        _callback->endedAudioInterruption();
-}
-@end
-
 namespace WebCore {
-
 
 #if !LOG_DISABLED
 static const char* categoryName(AudioSession::CategoryType category)
@@ -128,13 +78,11 @@ static const char* categoryName(AudioSession::CategoryType category)
 class AudioSessionPrivate {
 public:
     AudioSessionPrivate(AudioSession*);
-    RetainPtr<WebAudioSessionHelper> m_helper;
     AudioSession::CategoryType m_categoryOverride;
 };
 
-AudioSessionPrivate::AudioSessionPrivate(AudioSession* session)
-    : m_helper(adoptNS([[WebAudioSessionHelper alloc] initWithCallback:session]))
-    , m_categoryOverride(AudioSession::None)
+AudioSessionPrivate::AudioSessionPrivate(AudioSession*)
+    : m_categoryOverride(AudioSession::None)
 {
 }
 
