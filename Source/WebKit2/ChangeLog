@@ -1,3 +1,13 @@
+2014-07-14  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _frameOrBoundsChanged]):
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView _frameOrBoundsChanged]):
+
 2014-07-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [UNIX] Log error description when failing to create shared memory file.

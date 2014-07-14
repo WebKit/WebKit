@@ -251,7 +251,7 @@ using namespace WebKit;
     webPageProxy->setMaximumUnobscuredSize(size);
 
     [_scrollView setFrame:bounds];
-    webPageProxy->drawingArea()->setSize(IntSize(bounds.size), IntSize(), IntSize());
+    webPageProxy->drawingArea()->setSize(WebCore::IntSize(bounds.size), WebCore::IntSize(), WebCore::IntSize());
     [self _updateVisibleContentRects];
 }
 
