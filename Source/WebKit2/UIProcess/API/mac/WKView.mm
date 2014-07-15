@@ -3834,6 +3834,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_shouldDeferViewInWindowChanges = NO;
 
     if (_data->_viewInWindowChangeWasDeferred) {
+        [self _dispatchSetTopContentInset];
         _data->_page->viewStateDidChange(ViewState::IsInWindow);
         _data->_viewInWindowChangeWasDeferred = NO;
     }
@@ -3849,6 +3850,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_shouldDeferViewInWindowChanges = NO;
 
     if (_data->_viewInWindowChangeWasDeferred) {
+        [self _dispatchSetTopContentInset];
         _data->_page->viewStateDidChange(ViewState::IsInWindow);
         _data->_viewInWindowChangeWasDeferred = NO;
     }
@@ -3881,6 +3883,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return _data->_allowsBackForwardNavigationGestures;
 }
 
+- (void)_dispatchSetTopContentInset
+{
+    _data->_didScheduleSetTopContentInset = NO;
+    _data->_page->setTopContentInset(_data->_topContentInset);
+}
+
 - (void)_setTopContentInset:(CGFloat)contentInset
 {
     _data->_topContentInset = contentInset;
@@ -3891,9 +3899,8 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_didScheduleSetTopContentInset = YES;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        _data->_didScheduleSetTopContentInset = NO;
-
-        _data->_page->setTopContentInset(_data->_topContentInset);
+        if (_data->_didScheduleSetTopContentInset)
+            [self _dispatchSetTopContentInset];
     });
 }
 

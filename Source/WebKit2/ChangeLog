@@ -1,3 +1,20 @@
+2014-07-15  Timothy Horton  <timothy_horton@apple.com>
+
+        Dispatch top content inset changes immediately if synchronously waiting for view state changes
+        https://bugs.webkit.org/show_bug.cgi?id=134942
+        <rdar://problem/17666800>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView endDeferringViewInWindowChanges]):
+        (-[WKView endDeferringViewInWindowChangesSync]):
+        (-[WKView _dispatchSetTopContentInset]):
+        (-[WKView _setTopContentInset:]):
+        Send top content inset changes immediately before sync-waiting for new tiles from the Web Process.
+        This will ensure that the incoming contents have the right top content inset, and we don't
+        flash between the wrong inset and the right one.
+
 2014-07-15  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION(WK2 iOS): Safari hangs when switching focus from a field using the Tab key.
