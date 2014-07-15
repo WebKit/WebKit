@@ -455,9 +455,14 @@ LLINT_SLOW_PATH_DECL(stack_check)
     dataLogF("CodeBlock = %p.\n", exec->codeBlock());
     dataLogF("Num callee registers = %u.\n", exec->codeBlock()->m_numCalleeRegisters);
     dataLogF("Num vars = %u.\n", exec->codeBlock()->m_numVars);
-    dataLogF("Current end is at %p.\n", exec->vm().interpreter->stack().end());
+
+#if ENABLE(LLINT_C_LOOP)
+    dataLogF("Current end is at %p.\n", exec->vm().jsStackLimit());
+#else
+    dataLogF("Current end is at %p.\n", exec->vm().stackLimit());
 #endif
 
+#endif
     // This stack check is done in the prologue for a function call, and the
     // CallFrame is not completely set up yet. For example, if the frame needs
     // an activation object, the activation object will only be set up after
