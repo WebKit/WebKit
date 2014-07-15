@@ -1,3 +1,21 @@
+2014-07-14  Dean Jackson  <dino@apple.com>
+
+        Provide some large JPEG images with EXIF orientation for subsampling tests
+        https://bugs.webkit.org/show_bug.cgi?id=134847
+
+        Reviewed by Sam Weinig.
+
+        Four images (either 3000x2000 or 2000x3000) that each have EXIF rotation
+        attributes that should render with an arrow pointing UP. The
+        orientation-rotate-0.jpg should always render correctly, even if EXIF
+        rotation is ignored. The others are variations on that image that were
+        saved in rotated form, then reverted to the correct orientation via EXIF.
+
+        * fast/canvas/resources/orientation-rotate-0.jpg: Added.
+        * fast/canvas/resources/orientation-rotate-180.jpg: Added.
+        * fast/canvas/resources/orientation-rotate-90-ccw.jpg: Added.
+        * fast/canvas/resources/orientation-rotate-90-cw.jpg: Added.
+
 2014-07-14  Daniel Bates  <dabates@apple.com>
 
         [iOS] Add tests to ensure CSS :active and :hover are applied when processing touch events
