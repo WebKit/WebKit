@@ -721,7 +721,7 @@ void RenderLayerBacking::updateGeometry()
     FloatSize devicePixelOffsetFromRenderer;
     LayoutSize devicePixelFractionFromRenderer;
     calculateDevicePixelOffsetFromRenderer(rendererOffsetFromGraphicsLayer, devicePixelOffsetFromRenderer, devicePixelFractionFromRenderer, deviceScaleFactor);
-    m_devicePixelFractionFromRenderer = LayoutSize(fabs(devicePixelFractionFromRenderer.width().toFloat()), fabs(devicePixelFractionFromRenderer.height().toFloat()));
+    m_devicePixelFractionFromRenderer = LayoutSize(-devicePixelFractionFromRenderer.width(), -devicePixelFractionFromRenderer.height());
 
     adjustAncestorCompositingBoundsForFlowThread(ancestorCompositingBounds, compAncestor);
 

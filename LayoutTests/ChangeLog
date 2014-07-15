@@ -1,3 +1,19 @@
+2014-07-14  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Zero sized compositing container's content positioned off by one device pixel.
+        https://bugs.webkit.org/show_bug.cgi?id=134903
+
+        Reviewed by Simon Fraser.
+
+        The compositing layer boundaries are calculated using its renderer()'s and the renderer()'s
+        descendants' bounds. However when the renderer() is zero sized, its bounds are omitted.
+        In such cases, when the child content has offset from the renderer(), the subpixel adjustment
+        of the compositing layer becomes negative (-meaning that the compositing layer is to the right/bottom
+        direction from its renderer()). Remove fabs() to be able to express such direction.
+
+        * compositing/hidpi-compositing-layer-with-zero-sized-container-expected.html: Added.
+        * compositing/hidpi-compositing-layer-with-zero-sized-container.html: Added.
+
 2014-07-14  Dean Jackson  <dino@apple.com>
 
         Provide some large JPEG images with EXIF orientation for subsampling tests
