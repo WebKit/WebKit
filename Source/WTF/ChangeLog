@@ -1,3 +1,17 @@
+2014-07-15  Andreas Kling  <akling@apple.com>
+
+        Revert: Run the FastMalloc scavenger thread on iOS as well.
+        <https://webkit.org/b/134927>
+        <rdar://problem/17485079>
+
+        This appears to be the cause of some elusive crashes, and since I don't
+        have a way to reproduce them, let's just go back to not running the
+        scavenger thread on iOS.
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/FastMalloc.cpp:
+
 2014-07-13  Filip Pizlo  <fpizlo@apple.com>
 
         HashMap should have removeIf()
