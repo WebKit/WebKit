@@ -1,3 +1,13 @@
+2014-07-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        ScriptExecutable::forEachCodeBlock can dereference null CodeBlocks
+        https://bugs.webkit.org/show_bug.cgi?id=134928
+
+        Reviewed by Andreas Kling.
+
+        * bytecode/CodeBlock.h:
+        (JSC::ScriptExecutable::forEachCodeBlock): Check for null CodeBlocks before calling forEachRelatedCodeBlock.
+
 2014-07-15  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Buildfix if LLINT_SLOW_PATH_TRACING is enabled

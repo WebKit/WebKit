@@ -1282,12 +1282,14 @@ template <typename Functor> inline void ScriptExecutable::forEachCodeBlock(Funct
 {
     switch (type()) {
     case ProgramExecutableType: {
-        jsCast<ProgramExecutable*>(this)->m_programCodeBlock->forEachRelatedCodeBlock(std::forward<Functor>(functor));
+        if (CodeBlock* codeBlock = jsCast<ProgramExecutable*>(this)->m_programCodeBlock.get())
+            codeBlock->forEachRelatedCodeBlock(std::forward<Functor>(functor));
         break;
     }
         
     case EvalExecutableType: {
-        jsCast<EvalExecutable*>(this)->m_evalCodeBlock->forEachRelatedCodeBlock(std::forward<Functor>(functor));
+        if (CodeBlock* codeBlock = jsCast<EvalExecutable*>(this)->m_evalCodeBlock.get())
+            codeBlock->forEachRelatedCodeBlock(std::forward<Functor>(functor));
         break;
     }
         
