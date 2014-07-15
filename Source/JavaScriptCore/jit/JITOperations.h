@@ -74,6 +74,7 @@ extern "C" {
     O: JSObject*
     P: pointer (char*)
     Pc: Instruction* i.e. bytecode PC
+    Q: int64_t
     R: Register
     S: size_t
     Sprt: SlowPathReturnType
@@ -132,6 +133,8 @@ typedef double JIT_OPERATION (*D_JITOperation_D)(double);
 typedef double JIT_OPERATION (*D_JITOperation_DD)(double, double);
 typedef double JIT_OPERATION (*D_JITOperation_ZZ)(int32_t, int32_t);
 typedef double JIT_OPERATION (*D_JITOperation_EJ)(ExecState*, EncodedJSValue);
+typedef int64_t JIT_OPERATION(*Q_JITOperation_J)(EncodedJSValue);
+typedef int64_t JIT_OPERATION(*Q_JITOperation_D)(double);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_D)(double);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_E)(ExecState*);
 typedef size_t JIT_OPERATION (*S_JITOperation_ECC)(ExecState*, JSCell*, JSCell*);

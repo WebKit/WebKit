@@ -339,6 +339,7 @@ static EncodedJSValue JSC_HOST_CALL functionFalse2(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionUndefined1(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionUndefined2(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionEffectful42(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionIdentity(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionMakeMasquerader(ExecState*);
 
 #if ENABLE(SAMPLING_FLAGS)
@@ -479,6 +480,7 @@ protected:
         putDirectNativeFunction(vm, this, Identifier(&vm, "OSRExit"), 0, functionUndefined1, OSRExitIntrinsic, DontEnum | JSC::Function);
         putDirectNativeFunction(vm, this, Identifier(&vm, "isFinalTier"), 0, functionFalse2, IsFinalTierIntrinsic, DontEnum | JSC::Function);
         putDirectNativeFunction(vm, this, Identifier(&vm, "predictInt32"), 0, functionUndefined2, SetInt32HeapPredictionIntrinsic, DontEnum | JSC::Function);
+        putDirectNativeFunction(vm, this, Identifier(&vm, "fiatInt52"), 0, functionIdentity, FiatInt52Intrinsic, DontEnum | JSC::Function);
         
         addFunction(vm, "effectful42", functionEffectful42, 0);
         addFunction(vm, "makeMasquerader", functionMakeMasquerader, 0);
@@ -901,6 +903,8 @@ EncodedJSValue JSC_HOST_CALL functionFalse2(ExecState*) { return JSValue::encode
 
 EncodedJSValue JSC_HOST_CALL functionUndefined1(ExecState*) { return JSValue::encode(jsUndefined()); }
 EncodedJSValue JSC_HOST_CALL functionUndefined2(ExecState*) { return JSValue::encode(jsUndefined()); }
+
+EncodedJSValue JSC_HOST_CALL functionIdentity(ExecState* exec) { return JSValue::encode(exec->argument(0)); }
 
 EncodedJSValue JSC_HOST_CALL functionEffectful42(ExecState*)
 {

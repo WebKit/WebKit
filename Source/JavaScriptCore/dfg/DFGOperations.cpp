@@ -1045,6 +1045,19 @@ JSCell* JIT_OPERATION operationStringFromCharCode(ExecState* exec, int32_t op1)
     return JSC::stringFromCharCode(exec, op1);
 }
 
+int64_t JIT_OPERATION operationConvertBoxedDoubleToInt52(EncodedJSValue encodedValue)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    if (!value.isDouble())
+        return JSValue::notInt52;
+    return tryConvertToInt52(value.asDouble());
+}
+
+int64_t JIT_OPERATION operationConvertDoubleToInt52(double value)
+{
+    return tryConvertToInt52(value);
+}
+
 size_t JIT_OPERATION dfgConvertJSValueToInt32(ExecState* exec, EncodedJSValue value)
 {
     VM* vm = &exec->vm();

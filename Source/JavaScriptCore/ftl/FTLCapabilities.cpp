@@ -379,6 +379,8 @@ CapabilityLevel canCompile(Graph& graph)
                 case MiscUse:
                 case StringIdentUse:
                 case NotStringVarUse:
+                case MachineIntUse:
+                case DoubleRepMachineIntUse:
                     // These are OK.
                     break;
                 default:

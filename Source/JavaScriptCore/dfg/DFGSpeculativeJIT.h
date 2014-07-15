@@ -1231,6 +1231,16 @@ public:
         m_jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, result);
         return call;
     }
+    JITCompiler::Call callOperation(Q_JITOperation_J operation, GPRReg result, GPRReg value)
+    {
+        m_jit.setupArguments(value);
+        return appendCallSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(Q_JITOperation_D operation, GPRReg result, FPRReg value)
+    {
+        m_jit.setupArguments(value);
+        return appendCallSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(J_JITOperation_EI operation, GPRReg result, StringImpl* uid)
     {
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(uid));
@@ -2234,9 +2244,13 @@ public:
     // Helpers for performing type checks on an edge stored in the given registers.
     bool needsTypeCheck(Edge edge, SpeculatedType typesPassedThrough) { return m_interpreter.needsTypeCheck(edge, typesPassedThrough); }
     void typeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail);
-
+    
     void speculateInt32(Edge);
+#if USE(JSVALUE64)
+    void convertMachineInt(Edge, GPRReg resultGPR);
     void speculateMachineInt(Edge);
+    void speculateDoubleRepMachineInt(Edge);
+#endif // USE(JSVALUE64)
     void speculateNumber(Edge);
     void speculateDoubleReal(Edge);
     void speculateBoolean(Edge);

@@ -95,19 +95,31 @@ void AbstractValue::fixTypeForRepresentation(NodeFlags representation)
             m_type &= ~SpecMachineInt;
             m_type |= SpecInt52AsDouble;
         }
-        RELEASE_ASSERT(!(m_type & ~SpecFullDouble));
+        if (m_type & ~SpecFullDouble) {
+            startCrashing();
+            dataLog("Abstract value ", *this, " for double node has type outside SpecFullDouble.\n");
+            CRASH();
+        }
     } else if (representation == NodeResultInt52) {
         if (m_type & SpecInt52AsDouble) {
             m_type &= ~SpecInt52AsDouble;
             m_type |= SpecInt52;
         }
-        RELEASE_ASSERT(!(m_type & ~SpecMachineInt));
+        if (m_type & ~SpecMachineInt) {
+            startCrashing();
+            dataLog("Abstract value ", *this, " for int52 node has type outside SpecMachineInt.\n");
+            CRASH();
+        }
     } else {
         if (m_type & SpecInt52) {
             m_type &= ~SpecInt52;
             m_type |= SpecInt52AsDouble;
         }
-        RELEASE_ASSERT(!(m_type & ~SpecBytecodeTop));
+        if (m_type & ~SpecBytecodeTop) {
+            startCrashing();
+            dataLog("Abstract value ", *this, " for value node has type outside SpecBytecodeTop.\n");
+            CRASH();
+        }
     }
     
     checkConsistency();

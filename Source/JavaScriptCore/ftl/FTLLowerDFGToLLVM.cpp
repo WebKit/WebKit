@@ -770,7 +770,26 @@ private:
     
     void compileInt52Rep()
     {
-        setStrictInt52(m_out.signExt(lowInt32(m_node->child1()), m_out.int64));
+        switch (m_node->child1().useKind()) {
+        case Int32Use:
+            setStrictInt52(m_out.signExt(lowInt32(m_node->child1()), m_out.int64));
+            return;
+            
+        case MachineIntUse:
+            setStrictInt52(
+                jsValueToStrictInt52(
+                    m_node->child1(), lowJSValue(m_node->child1(), ManualOperandSpeculation)));
+            return;
+            
+        case DoubleRepMachineIntUse:
+            setStrictInt52(
+                doubleToStrictInt52(
+                    m_node->child1(), lowDouble(m_node->child1())));
+            return;
+            
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
     }
     
     void compileValueToInt32()
@@ -4640,9 +4659,6 @@ private:
     
     LValue doubleToInt32(LValue doubleValue, double low, double high, bool isSigned = true)
     {
-        // FIXME: Optimize double-to-int conversions.
-        // <rdar://problem/14938465>
-        
         LBasicBlock greatEnough = FTL_NEW_BLOCK(m_out, ("doubleToInt32 greatEnough"));
         LBasicBlock withinRange = FTL_NEW_BLOCK(m_out, ("doubleToInt32 withinRange"));
         LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("doubleToInt32 slowPath"));
@@ -5096,9 +5112,9 @@ private:
     }
     LValue jsValueToDouble(Edge edge, LValue boxedValue)
     {
-        LBasicBlock intCase = FTL_NEW_BLOCK(m_out, ("DoubleRep unboxing int case"));
-        LBasicBlock doubleCase = FTL_NEW_BLOCK(m_out, ("DoubleRep unboxing double case"));
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("DoubleRep unboxing continuation"));
+        LBasicBlock intCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble unboxing int case"));
+        LBasicBlock doubleCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble unboxing double case"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("jsValueToDouble unboxing continuation"));
             
         LValue isNotInt32;
         if (!m_interpreter.needsTypeCheck(edge, SpecInt32))
@@ -5126,6 +5142,54 @@ private:
         m_out.appendTo(continuation, lastNext);
             
         return m_out.phi(m_out.doubleType, intToDouble, unboxedDouble);
+    }
+    
+    LValue jsValueToStrictInt52(Edge edge, LValue boxedValue)
+    {
+        LBasicBlock intCase = FTL_NEW_BLOCK(m_out, ("jsValueToInt52 unboxing int case"));
+        LBasicBlock doubleCase = FTL_NEW_BLOCK(m_out, ("jsValueToInt52 unboxing double case"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("jsValueToInt52 unboxing continuation"));
+            
+        LValue isNotInt32;
+        if (!m_interpreter.needsTypeCheck(edge, SpecInt32))
+            isNotInt32 = m_out.booleanFalse;
+        else if (!m_interpreter.needsTypeCheck(edge, ~SpecInt32))
+            isNotInt32 = m_out.booleanTrue;
+        else
+            isNotInt32 = this->isNotInt32(boxedValue);
+        m_out.branch(isNotInt32, unsure(doubleCase), unsure(intCase));
+            
+        LBasicBlock lastNext = m_out.appendTo(intCase, doubleCase);
+            
+        ValueFromBlock intToInt52 = m_out.anchor(
+            m_out.signExt(unboxInt32(boxedValue), m_out.int64));
+        m_out.jump(continuation);
+            
+        m_out.appendTo(doubleCase, continuation);
+        
+        LValue possibleResult = m_out.call(
+            m_out.operation(operationConvertBoxedDoubleToInt52), boxedValue);
+        FTL_TYPE_CHECK(
+            jsValueValue(boxedValue), edge, SpecInt32 | SpecInt52AsDouble,
+            m_out.equal(possibleResult, m_out.constInt64(JSValue::notInt52)));
+            
+        ValueFromBlock doubleToInt52 = m_out.anchor(possibleResult);
+        m_out.jump(continuation);
+            
+        m_out.appendTo(continuation, lastNext);
+            
+        return m_out.phi(m_out.int64, intToInt52, doubleToInt52);
+    }
+    
+    LValue doubleToStrictInt52(Edge edge, LValue value)
+    {
+        LValue possibleResult = m_out.call(
+            m_out.operation(operationConvertDoubleToInt52), value);
+        FTL_TYPE_CHECK(
+            doubleValue(value), edge, SpecInt52AsDouble,
+            m_out.equal(possibleResult, m_out.constInt64(JSValue::notInt52)));
+        
+        return possibleResult;
     }
     
     LValue isNumber(LValue jsValue)
@@ -5212,6 +5276,9 @@ private:
         case KnownCellUse:
             ASSERT(!m_interpreter.needsTypeCheck(edge));
             break;
+        case MachineIntUse:
+            speculateMachineInt(edge);
+            break;
         case ObjectUse:
             speculateObject(edge);
             break;
@@ -5238,6 +5305,9 @@ private:
             break;
         case DoubleRepRealUse:
             speculateDoubleReal(edge);
+            break;
+        case DoubleRepMachineIntUse:
+            speculateDoubleRepMachineInt(edge);
             break;
         case BooleanUse:
             speculateBoolean(edge);
@@ -5273,6 +5343,14 @@ private:
     void speculateCell(Edge edge)
     {
         lowCell(edge);
+    }
+    
+    void speculateMachineInt(Edge edge)
+    {
+        if (!m_interpreter.needsTypeCheck(edge))
+            return;
+        
+        jsValueToStrictInt52(edge, lowJSValue(edge, ManualOperandSpeculation));
     }
     
     LValue isObject(LValue cell)
@@ -5513,6 +5591,14 @@ private:
         FTL_TYPE_CHECK(
             doubleValue(value), edge, SpecDoubleReal,
             m_out.doubleNotEqualOrUnordered(value, value));
+    }
+    
+    void speculateDoubleRepMachineInt(Edge edge)
+    {
+        if (!m_interpreter.needsTypeCheck(edge))
+            return;
+        
+        doubleToStrictInt52(edge, lowDouble(edge));
     }
     
     void speculateBoolean(Edge edge)

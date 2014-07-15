@@ -4817,6 +4817,14 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
     case DoubleRepRealUse:
         speculateDoubleReal(edge);
         break;
+#if USE(JSVALUE64)
+    case MachineIntUse:
+        speculateMachineInt(edge);
+        break;
+    case DoubleRepMachineIntUse:
+        speculateDoubleRepMachineInt(edge);
+        break;
+#endif
     case BooleanUse:
         speculateBoolean(edge);
         break;

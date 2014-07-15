@@ -587,6 +587,11 @@ struct Node {
         return result;
     }
     
+    bool isMachineIntConstant(CodeBlock* codeBlock)
+    {
+        return isConstant() && valueOfJSConstant(codeBlock).isMachineInt();
+    }
+    
     bool isBooleanConstant(CodeBlock* codeBlock)
     {
         return isConstant() && valueOfJSConstant(codeBlock).isBoolean();

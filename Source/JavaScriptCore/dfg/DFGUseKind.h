@@ -39,9 +39,11 @@ enum UseKind {
     Int32Use,
     KnownInt32Use,
     Int52RepUse,
+    MachineIntUse,
     NumberUse,
     DoubleRepUse,
     DoubleRepRealUse,
+    DoubleRepMachineIntUse,
     BooleanUse,
     CellUse,
     KnownCellUse,
@@ -70,12 +72,16 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
         return SpecInt32;
     case Int52RepUse:
         return SpecMachineInt;
+    case MachineIntUse:
+        return SpecInt32 | SpecInt52AsDouble;
     case NumberUse:
         return SpecBytecodeNumber;
     case DoubleRepUse:
         return SpecFullDouble;
     case DoubleRepRealUse:
         return SpecDoubleReal;
+    case DoubleRepMachineIntUse:
+        return SpecInt52AsDouble;
     case BooleanUse:
         return SpecBoolean;
     case CellUse:
@@ -139,6 +145,8 @@ inline bool isNumerical(UseKind kind)
     case Int52RepUse:
     case DoubleRepUse:
     case DoubleRepRealUse:
+    case MachineIntUse:
+    case DoubleRepMachineIntUse:
         return true;
     default:
         return false;
@@ -150,6 +158,7 @@ inline bool isDouble(UseKind kind)
     switch (kind) {
     case DoubleRepUse:
     case DoubleRepRealUse:
+    case DoubleRepMachineIntUse:
         return true;
     default:
         return false;

@@ -184,7 +184,8 @@ private:
             // as an excuse not to fold. The only thing we would need is a Int52RepInt32Use kind.
             bool hadInt32Check = false;
             if (m_node->op() == Int52Rep) {
-                ASSERT(m_node->child1().useKind() == Int32Use);
+                if (m_node->child1().useKind() != Int32Use)
+                    break;
                 hadInt32Check = true;
             }
             for (Node* node = m_node->child1().node(); ; node = node->child1().node()) {
@@ -211,7 +212,8 @@ private:
                 
                 switch (node->op()) {
                 case Int52Rep:
-                    ASSERT(node->child1().useKind() == Int32Use);
+                    if (node->child1().useKind() != Int32Use)
+                        break;
                     hadInt32Check = true;
                     continue;
                     

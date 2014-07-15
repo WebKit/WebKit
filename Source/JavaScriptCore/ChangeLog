@@ -1,3 +1,146 @@
+2014-07-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Allow for Int52Rep to see things other than Int32, and make this testable
+        https://bugs.webkit.org/show_bug.cgi?id=134873
+        <rdar://problem/17641915>
+
+        Reviewed by Geoffrey Garen and Mark Hahnenberg.
+        
+        A major premise of our type inference is that prediction propagation can say whatever it
+        wants and we'll still have valid IR after Fixup. This previously didn't work with Int52s.
+        We required some kind of agreement between prediction propagation and fixup over which
+        data flow paths were Int52 and which weren't.
+        
+        It turns out that we basically had such an agreement, with the exception of code that was
+        unreachable due to ForceOSRExit. Then, fixup and prediction propagation would disagree. It
+        might be nice to fix that bug - but it's only in the case of Int52 that such a thing would
+        be a bug! Normally, we allow sloppiness in prediction propagation.
+        
+        This patch allows us to be sloppy with Int52 prediction propagation by giving Int52Rep the
+        ability to see inputs other than Int32. This fixes the particular ForceOSRExit bug (see
+        int52-force-osr-exit-path.js for the reduced test case). To make sure that the newly
+        empowered Int52Rep is actually correct - in case we end up using it on paths other than
+        ForceOSRExit - this patch introduces an internal intrinsic called fiatInt52() that forces
+        us to attempt Int52 conversion on the input. This patch adds a bunch of tests that stress
+        this intrinsic. This means that we're now stressing Int52Rep more so than ever before!
+        
+        Note that it would still be a bug for prediction propagation to ever cause us to create an
+        Int52Rep node for a non-Int32 input. But, this will now be a performance bug, rather than
+        a crash bug.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::fixTypeForRepresentation):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::injectTypeConversionsForEdge):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::isMachineIntConstant):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isMachineIntConstant):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::convertMachineInt):
+        (JSC::DFG::SpeculativeJIT::speculateMachineInt):
+        (JSC::DFG::SpeculativeJIT::speculateDoubleRepMachineInt):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::isNumerical):
+        (JSC::DFG::isDouble):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileInt52Rep):
+        (JSC::FTL::LowerDFGToLLVM::doubleToInt32):
+        (JSC::FTL::LowerDFGToLLVM::jsValueToDouble):
+        (JSC::FTL::LowerDFGToLLVM::jsValueToStrictInt52):
+        (JSC::FTL::LowerDFGToLLVM::doubleToStrictInt52):
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::speculateMachineInt):
+        (JSC::FTL::LowerDFGToLLVM::speculateDoubleRepMachineInt):
+        * jit/JITOperations.h:
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionIdentity):
+        * runtime/Intrinsic.h:
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::tryConvertToInt52):
+        (JSC::isInt52):
+        (JSC::JSValue::isMachineInt):
+        * tests/stress/dead-fiat-double-to-int52-then-exit-not-int52.js: Added.
+        (foo):
+        * tests/stress/dead-fiat-double-to-int52.js: Added.
+        (foo):
+        * tests/stress/dead-fiat-int32-to-int52.js: Added.
+        (foo):
+        * tests/stress/dead-fiat-value-to-int52-double-path.js: Added.
+        (foo):
+        (bar):
+        * tests/stress/dead-fiat-value-to-int52-then-exit-not-double.js: Added.
+        (foo):
+        (bar):
+        * tests/stress/dead-fiat-value-to-int52-then-exit-not-int52.js: Added.
+        (foo):
+        (bar):
+        * tests/stress/dead-fiat-value-to-int52.js: Added.
+        (foo):
+        (bar):
+        * tests/stress/fiat-double-to-int52-then-exit-not-int52.js: Added.
+        (foo):
+        * tests/stress/fiat-double-to-int52-then-fail-to-fold.js: Added.
+        (foo):
+        * tests/stress/fiat-double-to-int52-then-fold.js: Added.
+        (foo):
+        * tests/stress/fiat-double-to-int52.js: Added.
+        (foo):
+        * tests/stress/fiat-int32-to-int52.js: Added.
+        (foo):
+        * tests/stress/fiat-value-to-int52-double-path.js: Added.
+        (foo):
+        (bar):
+        * tests/stress/fiat-value-to-int52-then-exit-not-double.js: Added.
+        (foo):
+        (bar):
+        * tests/stress/fiat-value-to-int52-then-exit-not-int52.js: Added.
+        (foo):
+        (bar):
+        * tests/stress/fiat-value-to-int52-then-fail-to-fold.js: Added.
+        (foo):
+        * tests/stress/fiat-value-to-int52-then-fold.js: Added.
+        (foo):
+        * tests/stress/fiat-value-to-int52.js: Added.
+        (foo):
+        (bar):
+        * tests/stress/int52-force-osr-exit-path.js: Added.
+        (foo):
+
 2014-07-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Flattening dictionaries with oversize backing stores can cause crashes

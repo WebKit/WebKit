@@ -119,6 +119,9 @@ inline uint32_t toUInt32(double number)
     return toInt32(number);
 }
 
+int64_t tryConvertToInt52(double);
+bool isInt52(double);
+
 class JSValue {
     friend struct EncodedJSValueHashTraits;
     friend class AssemblyHelpers;
@@ -287,6 +290,7 @@ public:
     // Constants used for Int52. Int52 isn't part of JSValue right now, but JSValues may be
     // converted to Int52s and back again.
     static const unsigned numberOfInt52Bits = 52;
+    static const int64_t notInt52 = static_cast<int64_t>(1) << numberOfInt52Bits;
     static const unsigned int52ShiftAmount = 12;
     
     static ptrdiff_t offsetOfPayload() { return OBJECT_OFFSETOF(JSValue, u.asBits.payload); }

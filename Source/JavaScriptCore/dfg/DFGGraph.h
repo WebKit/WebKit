@@ -332,6 +332,10 @@ public:
     {
         return node->isNumberConstant(m_codeBlock);
     }
+    bool isMachineIntConstant(Node* node)
+    {
+        return node->isMachineIntConstant(m_codeBlock);
+    }
     bool isBooleanConstant(Node* node)
     {
         return node->isBooleanConstant(m_codeBlock);

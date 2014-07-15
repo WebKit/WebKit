@@ -4633,6 +4633,7 @@ void SpeculativeJIT::compile(Node* node)
     case CheckTierUpAtReturn:
     case CheckTierUpAndOSREnter:
     case Int52Rep:
+    case FiatInt52:
     case Int52Constant:
     case CheckInBounds:
     case ArithIMul:

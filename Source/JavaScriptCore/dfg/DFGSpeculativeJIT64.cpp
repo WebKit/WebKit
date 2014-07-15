@@ -957,7 +957,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
 
 FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
 {
-    ASSERT(edge.useKind() == DoubleRepUse || edge.useKind() == DoubleRepRealUse);
+    ASSERT(edge.useKind() == DoubleRepUse || edge.useKind() == DoubleRepRealUse || edge.useKind() == DoubleRepMachineIntUse);
     ASSERT(edge->hasDoubleResult());
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
@@ -2035,12 +2035,51 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case Int52Rep: {
-        SpeculateInt32Operand operand(this, node->child1());
-        GPRTemporary result(this, Reuse, operand);
-        
-        m_jit.signExtend32ToPtr(operand.gpr(), result.gpr());
-        
-        strictInt52Result(result.gpr(), node);
+        switch (node->child1().useKind()) {
+        case Int32Use: {
+            SpeculateInt32Operand operand(this, node->child1());
+            GPRTemporary result(this, Reuse, operand);
+            
+            m_jit.signExtend32ToPtr(operand.gpr(), result.gpr());
+            
+            strictInt52Result(result.gpr(), node);
+            break;
+        }
+            
+        case MachineIntUse: {
+            GPRResult result(this);
+            GPRReg resultGPR = result.gpr();
+            
+            convertMachineInt(node->child1(), resultGPR);
+            
+            strictInt52Result(resultGPR, node);
+            break;
+        }
+            
+        case DoubleRepMachineIntUse: {
+            SpeculateDoubleOperand value(this, node->child1());
+            FPRReg valueFPR = value.fpr();
+            
+            GPRResult result(this);
+            GPRReg resultGPR = result.gpr();
+            
+            flushRegisters();
+            
+            callOperation(operationConvertDoubleToInt52, resultGPR, valueFPR);
+            
+            DFG_TYPE_CHECK(
+                JSValueRegs(), node->child1(), SpecInt52AsDouble,
+                m_jit.branch64(
+                    JITCompiler::Equal, resultGPR,
+                    JITCompiler::TrustedImm64(JSValue::notInt52)));
+            
+            strictInt52Result(resultGPR, node);
+            break;
+        }
+            
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
         break;
     }
         
@@ -4721,6 +4760,7 @@ void SpeculativeJIT::compile(Node* node)
     case ArithIMul:
     case MultiGetByOffset:
     case MultiPutByOffset:
+    case FiatInt52:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
@@ -4803,6 +4843,61 @@ void SpeculativeJIT::moveFalseTo(GPRReg gpr)
 void SpeculativeJIT::blessBoolean(GPRReg gpr)
 {
     m_jit.or32(TrustedImm32(ValueFalse), gpr);
+}
+
+void SpeculativeJIT::convertMachineInt(Edge valueEdge, GPRReg resultGPR)
+{
+    JSValueOperand value(this, valueEdge, ManualOperandSpeculation);
+    GPRReg valueGPR = value.gpr();
+    
+    JITCompiler::Jump notInt32 =
+        m_jit.branch64(JITCompiler::Below, valueGPR, GPRInfo::tagTypeNumberRegister);
+    
+    m_jit.signExtend32ToPtr(valueGPR, resultGPR);
+    JITCompiler::Jump done = m_jit.jump();
+    
+    notInt32.link(&m_jit);
+    silentSpillAllRegisters(resultGPR);
+    callOperation(operationConvertBoxedDoubleToInt52, resultGPR, valueGPR);
+    silentFillAllRegisters(resultGPR);
+
+    DFG_TYPE_CHECK(
+        JSValueRegs(valueGPR), valueEdge, SpecInt32 | SpecInt52AsDouble,
+        m_jit.branch64(
+            JITCompiler::Equal, resultGPR,
+            JITCompiler::TrustedImm64(JSValue::notInt52)));
+    done.link(&m_jit);
+}
+
+void SpeculativeJIT::speculateMachineInt(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecInt32 | SpecInt52AsDouble))
+        return;
+    
+    GPRTemporary temp(this);
+    convertMachineInt(edge, temp.gpr());
+}
+
+void SpeculativeJIT::speculateDoubleRepMachineInt(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecInt52AsDouble))
+        return;
+    
+    SpeculateDoubleOperand value(this, edge);
+    FPRReg valueFPR = value.fpr();
+    
+    GPRResult result(this);
+    GPRReg resultGPR = result.gpr();
+    
+    flushRegisters();
+    
+    callOperation(operationConvertDoubleToInt52, resultGPR, valueFPR);
+    
+    DFG_TYPE_CHECK(
+        JSValueRegs(), edge, SpecInt52AsDouble,
+        m_jit.branch64(
+            JITCompiler::Equal, resultGPR,
+            JITCompiler::TrustedImm64(JSValue::notInt52)));
 }
 
 #endif

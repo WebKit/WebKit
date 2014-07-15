@@ -992,6 +992,14 @@ private:
             break;
         }
 
+        case FiatInt52: {
+            RELEASE_ASSERT(enableInt52());
+            node->convertToIdentity();
+            fixEdge<Int52RepUse>(node->child1());
+            node->setResult(NodeResultInt52);
+            break;
+        }
+
         case GetArrayLength:
         case Phi:
         case Upsilon:
@@ -1011,8 +1019,8 @@ private:
         case ValueToInt32:
         case HardPhantom: // HardPhantom would be trivial to handle but anyway we assert that we won't see it here yet.
         case DoubleRep:
-        case Int52Rep:
         case ValueRep:
+        case Int52Rep:
         case DoubleConstant:
         case Int52Constant:
         case Identity: // This should have been cleaned up.
@@ -1909,13 +1917,19 @@ private:
         
         switch (edge.useKind()) {
         case DoubleRepUse:
-        case DoubleRepRealUse: {
+        case DoubleRepRealUse:
+        case DoubleRepMachineIntUse: {
             if (edge->hasDoubleResult())
                 break;
             
             addRequiredPhantom(edge.node());
 
-            if (edge->hasInt52Result()) {
+            if (edge->op() == JSConstant && m_graph.isNumberConstant(edge.node())) {
+                result = m_insertionSet.insertNode(
+                    m_indexInBlock, SpecBytecodeDouble, DoubleConstant, node->origin,
+                    OpInfo(m_graph.constantRegisterForConstant(
+                        jsDoubleNumber(m_graph.valueOfNumberConstant(edge.node())))));
+            } else if (edge->hasInt52Result()) {
                 result = m_insertionSet.insertNode(
                     m_indexInBlock, SpecInt52AsDouble, DoubleRep, node->origin,
                     Edge(edge.node(), Int52RepUse));
@@ -1935,27 +1949,22 @@ private:
             
             addRequiredPhantom(edge.node());
 
-            if (edge->hasDoubleResult()) {
-                // This will never happen.
-                startCrashing();
-                dataLog("Found an Int52RepUse to a double result: ", node, " -> ", edge, "\n");
-                m_graph.dump();
-                RELEASE_ASSERT_NOT_REACHED();
+            if (edge->op() == JSConstant && m_graph.isMachineIntConstant(edge.node())) {
+                result = m_insertionSet.insertNode(
+                    m_indexInBlock, SpecMachineInt, Int52Constant, node->origin,
+                    OpInfo(edge->constantNumber()));
+            } else if (edge->hasDoubleResult()) {
+                result = m_insertionSet.insertNode(
+                    m_indexInBlock, SpecMachineInt, Int52Rep, node->origin,
+                    Edge(edge.node(), DoubleRepMachineIntUse));
             } else if (edge->shouldSpeculateInt32ForArithmetic()) {
                 result = m_insertionSet.insertNode(
                     m_indexInBlock, SpecInt32, Int52Rep, node->origin,
                     Edge(edge.node(), Int32Use));
             } else {
-                // This is only here for dealing with constants.
-                if (edge->op() != JSConstant) {
-                    startCrashing();
-                    dataLog("Found an Int52RepUse on something that is neither Int32 nor a constant: ", node, " -> ", edge, "\n");
-                    m_graph.dump();
-                    RELEASE_ASSERT_NOT_REACHED();
-                }
                 result = m_insertionSet.insertNode(
-                    m_indexInBlock, SpecMachineInt, Int52Constant, node->origin,
-                    OpInfo(edge->constantNumber()));
+                    m_indexInBlock, SpecMachineInt, Int52Rep, node->origin,
+                    Edge(edge.node(), MachineIntUse));
             }
 
             edge.setNode(result);

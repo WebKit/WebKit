@@ -120,6 +120,9 @@ namespace JSC { namespace DFG {
     macro(Int52Rep, NodeResultInt52) \
     macro(ValueRep, NodeResultJS) \
     \
+    /* Bogus type asserting node. Useful for testing, disappears during Fixup. */\
+    macro(FiatInt52, NodeResultJS) \
+    \
     /* Nodes for arithmetic operations. */\
     macro(ArithAdd, NodeResultNumber) \
     macro(ArithSub, NodeResultNumber) \

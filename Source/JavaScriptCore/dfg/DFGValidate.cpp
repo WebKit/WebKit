@@ -117,7 +117,7 @@ public:
                     
                     m_myRefCounts.find(edge.node())->value++;
                     
-                    VALIDATE((node, edge), edge->hasDoubleResult() == (edge.useKind() == DoubleRepUse || edge.useKind() == DoubleRepRealUse));
+                    VALIDATE((node, edge), edge->hasDoubleResult() == (edge.useKind() == DoubleRepUse || edge.useKind() == DoubleRepRealUse || edge.useKind() == DoubleRepMachineIntUse));
                     VALIDATE((node, edge), edge->hasInt52Result() == (edge.useKind() == Int52RepUse));
                     
                     if (m_graph.m_form == SSA) {

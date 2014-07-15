@@ -497,15 +497,10 @@ ALWAYS_INLINE JSCell* JSValue::asCell() const
 
 #endif // USE(JSVALUE64)
 
-inline bool JSValue::isMachineInt() const
+inline int64_t tryConvertToInt52(double number)
 {
-    if (isInt32())
-        return true;
-    if (!isNumber())
-        return false;
-    double number = asDouble();
     if (number != number)
-        return false;
+        return JSValue::notInt52;
 #if OS(WINDOWS) && CPU(X86)
     // The VS Compiler for 32-bit builds generates a floating point error when attempting to cast
     // from an infinity to a 64-bit integer. We leave this routine with the floating point error
@@ -513,18 +508,32 @@ inline bool JSValue::isMachineInt() const
     //
     // To avoid this issue, we check for infinity here, and return false in that case.
     if (std::isinf(number))
-        return false;
+        return JSValue::notInt52;
 #endif
     int64_t asInt64 = static_cast<int64_t>(number);
     if (asInt64 != number)
-        return false;
+        return JSValue::notInt52;
     if (!asInt64 && std::signbit(number))
+        return JSValue::notInt52;
+    if (asInt64 >= (static_cast<int64_t>(1) << (JSValue::numberOfInt52Bits - 1)))
+        return JSValue::notInt52;
+    if (asInt64 < -(static_cast<int64_t>(1) << (JSValue::numberOfInt52Bits - 1)))
+        return JSValue::notInt52;
+    return asInt64;
+}
+
+inline bool isInt52(double number)
+{
+    return tryConvertToInt52(number) != JSValue::notInt52;
+}
+
+inline bool JSValue::isMachineInt() const
+{
+    if (isInt32())
+        return true;
+    if (!isNumber())
         return false;
-    if (asInt64 >= (static_cast<int64_t>(1) << (numberOfInt52Bits - 1)))
-        return false;
-    if (asInt64 < -(static_cast<int64_t>(1) << (numberOfInt52Bits - 1)))
-        return false;
-    return true;
+    return isInt52(asDouble());
 }
 
 inline int64_t JSValue::asMachineInt() const

@@ -63,6 +63,8 @@ public:
         case NotCellUse:
         case OtherUse:
         case MiscUse:
+        case MachineIntUse:
+        case DoubleRepMachineIntUse:
             return;
             
         case KnownInt32Use:
@@ -254,6 +256,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case DoubleRep:
     case Int52Rep:
     case BooleanToNumber:
+    case FiatInt52:
         return true;
         
     case GetByVal:

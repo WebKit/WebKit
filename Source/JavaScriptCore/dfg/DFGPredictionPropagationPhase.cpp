@@ -516,6 +516,12 @@ private:
             break;
         }
             
+        case FiatInt52: {
+            RELEASE_ASSERT(enableInt52());
+            changed |= setPrediction(SpecMachineInt);
+            break;
+        }
+
         case PutByValAlias:
         case GetArrayLength:
         case GetTypedArrayByteOffset:
@@ -536,8 +542,8 @@ private:
         case ValueToInt32:
         case HardPhantom:
         case DoubleRep:
-        case Int52Rep:
         case ValueRep:
+        case Int52Rep:
         case DoubleConstant:
         case Int52Constant:
         case Identity:

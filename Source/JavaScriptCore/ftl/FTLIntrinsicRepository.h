@@ -79,6 +79,8 @@ namespace JSC { namespace FTL {
     macro(P_JITOperation_EStPS, functionType(intPtr, intPtr, intPtr, intPtr, intPtr)) \
     macro(P_JITOperation_EStSS, functionType(intPtr, intPtr, intPtr, intPtr, intPtr)) \
     macro(P_JITOperation_EStZ, functionType(intPtr, intPtr, intPtr, int32)) \
+    macro(Q_JITOperation_D, functionType(int64, doubleType)) \
+    macro(Q_JITOperation_J, functionType(int64, int64)) \
     macro(S_JITOperation_EJ, functionType(intPtr, intPtr, int64)) \
     macro(S_JITOperation_EJJ, functionType(intPtr, intPtr, int64, int64)) \
     macro(S_JITOperation_J, functionType(intPtr, int64)) \

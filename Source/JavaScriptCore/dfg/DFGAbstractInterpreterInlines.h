@@ -337,10 +337,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case Int52Rep: {
-        RELEASE_ASSERT(node->child1().useKind() == Int32Use);
-        
         JSValue child = forNode(node->child1()).value();
-        if (child && child.isInt32()) {
+        if (child && child.isMachineInt()) {
             setConstant(node, child);
             break;
         }
@@ -1904,6 +1902,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case Unreachable:
     case LastNodeType:
     case ArithIMul:
+    case FiatInt52:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }

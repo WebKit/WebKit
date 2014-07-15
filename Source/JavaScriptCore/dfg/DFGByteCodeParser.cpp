@@ -1749,6 +1749,17 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
         return true;
     }
         
+    case FiatInt52Intrinsic: {
+        if (argumentCountIncludingThis != 2)
+            return false;
+        VirtualRegister operand = virtualRegisterForArgument(1, registerOffset);
+        if (enableInt52())
+            set(VirtualRegister(resultOperand), addToGraph(FiatInt52, get(operand)));
+        else
+            set(VirtualRegister(resultOperand), get(operand));
+        return true;
+    }
+        
     default:
         return false;
     }
