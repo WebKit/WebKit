@@ -1796,6 +1796,22 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [self resignFirstResponder];
 }
 
+- (NSArray *)keyCommands
+{
+    return @[[UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:0 action:@selector(_nextAccessoryTab:)],
+             [UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:UIKeyModifierShift action:@selector(_prevAccessoryTab:)]];
+}
+
+- (void)_nextAccessoryTab:(id)sender
+{
+    [self accessoryTab:YES];
+}
+
+- (void)_prevAccessoryTab:(id)sender
+{
+    [self accessoryTab:NO];
+}
+
 - (void)accessoryTab:(BOOL)isNext
 {
     [_inputPeripheral endEditing];

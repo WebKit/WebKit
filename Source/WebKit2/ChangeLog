@@ -1,3 +1,23 @@
+2014-07-15  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION(WK2 iOS): Safari hangs when switching focus from a field using the Tab key.
+        https://bugs.webkit.org/show_bug.cgi?id=134934
+        <rdar://problem/17224638>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        
+        Tab and back tab should be handled as special keys that have
+        a command associated. The command specifies for each key the relevant
+        action. This patch implements the commands property to create the association
+        between key and command and the relevant actions that will execute the same
+        code executed when the used taps on the < > buttons in the accessory bar.
+        
+        (-[WKContentView keyCommands]):
+        (-[WKContentView _nextAccessoryTab:]):
+        (-[WKContentView _prevAccessoryTab:]):
+
 2014-07-15  Oliver Hunt  <oliver@apple.com>
 
         More tidying of the webcontent sandbox profile
