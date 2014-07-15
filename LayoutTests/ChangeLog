@@ -1,3 +1,13 @@
+2014-07-15  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r155957): Invalid cast in WebCore::RenderNamedFlowThread::getRanges
+        https://bugs.webkit.org/show_bug.cgi?id=134888
+
+        Reviewed by Mihnea Ovidenie.
+
+        * fast/regions/flowthread-getranges-box-cast-expected.txt: Added.
+        * fast/regions/flowthread-getranges-box-cast.html: Added.
+
 2014-07-14  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Zero sized compositing container's content positioned off by one device pixel.

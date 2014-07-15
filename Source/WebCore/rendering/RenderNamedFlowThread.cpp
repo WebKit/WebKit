@@ -36,6 +36,7 @@
 #include "Range.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
+#include "RenderLineBreak.h"
 #include "RenderNamedFlowFragment.h"
 #include "RenderText.h"
 #include "RenderView.h"
@@ -664,11 +665,14 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range>>& rangeObjects, const
                 boundingBox = toRenderInline(renderer)->linesBoundingBox();
             else if (renderer->isText())
                 boundingBox = toRenderText(renderer)->linesBoundingBox();
-            else {
-                boundingBox =  toRenderBox(renderer)->frameRect();
+            else if (renderer->isLineBreak())
+                boundingBox = toRenderLineBreak(renderer)->linesBoundingBox();
+            else if (renderer->isBox()) {
+                boundingBox = toRenderBox(renderer)->frameRect();
                 if (toRenderBox(renderer)->isRelPositioned())
                     boundingBox.move(toRenderBox(renderer)->relativePositionLogicalOffset());
-            }
+            } else
+                continue;
 
             LayoutUnit offsetTop = renderer->containingBlock()->offsetFromLogicalTopOfFirstPage();
             const LayoutPoint logicalOffsetFromTop(isHorizontalWritingMode() ? LayoutUnit() :  offsetTop,

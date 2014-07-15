@@ -1,3 +1,15 @@
+2014-07-15  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r155957): Invalid cast in WebCore::RenderNamedFlowThread::getRanges
+        https://bugs.webkit.org/show_bug.cgi?id=134888
+
+        Reviewed by Mihnea Ovidenie.
+
+        Test: fast/regions/flowthread-getranges-box-cast.html
+
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::getRanges): Test the type before casting.
+
 2014-07-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Update GObject DOM bindings symbols file after r171014.
