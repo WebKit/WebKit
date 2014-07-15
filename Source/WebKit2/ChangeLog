@@ -1,3 +1,15 @@
+2014-07-15  Oliver Hunt  <oliver@apple.com>
+
+        More tidying of the webcontent sandbox profile
+        https://bugs.webkit.org/show_bug.cgi?id=134938
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove some excessive abilities from the profile and make
+        the required ones explicit.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2014-07-14  Andreas Kling  <akling@apple.com>
 
         [iOS] Don't progressively re-render tiles while pinch-zooming under memory pressure.

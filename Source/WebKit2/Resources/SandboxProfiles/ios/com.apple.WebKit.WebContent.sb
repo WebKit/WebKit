@@ -29,7 +29,7 @@
 (import "removed-dev-nodes.sb")
 (import "apple-UI-apps.sb")
 
-(apple-ui-app "com.apple.WebKit.WebContent" 'with-webkit 'with-opengl)
+(apple-ui-app "com.apple.WebKit.WebContent" 'with-opengl)
 (opengl)
 
 ;; Access CFNetwork shared cookies
@@ -87,7 +87,10 @@
 
 ;; Various services required by CFNetwork and other frameworks
 (allow mach-lookup
-       (global-name "com.apple.PowerManagement.control"))
+    (global-name "com.apple.PowerManagement.control")
+    (global-name "com.apple.accountsd.accountmanager"))
 
 (deny file-write-create (vnode-type SYMLINK))
 (deny file-read-xattr file-write-xattr (xattr-regex #"^com\.apple\.security\.private\."))
+
+(network-client (remote tcp))
