@@ -1,3 +1,22 @@
+2014-07-14  Dean Jackson  <dino@apple.com>
+
+        [PlugIns] Check for a non-null snapshot image before trying to decode it
+        https://bugs.webkit.org/show_bug.cgi?id=134913
+        <rdar://problem/17606033>
+
+        Reviewed by Tim Horton.
+
+        Changeset r169820 introduced a bug where we could examine the pixels of
+        an image (looking for solid colors) before checking if the image actually
+        existed.
+
+        I added a null check, and moved the code around a bit to avoid checking
+        for existence three times.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::pluginSnapshotTimerFired): Check that snapshotImage exists
+        before trying to look at it.
+
 2014-07-14  Anders Carlsson  <andersca@apple.com>
 
         Fix 32-bit build.

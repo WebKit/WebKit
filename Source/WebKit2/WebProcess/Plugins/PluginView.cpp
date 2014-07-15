@@ -1727,19 +1727,22 @@ void PluginView::pluginSnapshotTimerFired()
         if (snapshot)
             snapshotImage = snapshot->createImage();
         m_pluginElement->updateSnapshot(snapshotImage.get());
+
+        if (snapshotImage) {
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-        bool snapshotIsAlmostSolidColor = isAlmostSolidColor(toBitmapImage(snapshotImage.get()));
-        snapshotFound = snapshotImage && !snapshotIsAlmostSolidColor;
+            bool snapshotIsAlmostSolidColor = isAlmostSolidColor(toBitmapImage(snapshotImage.get()));
+            snapshotFound = !snapshotIsAlmostSolidColor;
 #endif
 
 #if PLATFORM(COCOA)
-        unsigned maximumSnapshotRetries = frame() ? frame()->settings().maximumPlugInSnapshotAttempts() : 0;
-        if (snapshotImage && snapshotIsAlmostSolidColor && m_countSnapshotRetries < maximumSnapshotRetries && !plugInCameOnScreen) {
-            ++m_countSnapshotRetries;
-            m_pluginSnapshotTimer.restart();
-            return;
-        }
+            unsigned maximumSnapshotRetries = frame() ? frame()->settings().maximumPlugInSnapshotAttempts() : 0;
+            if (snapshotIsAlmostSolidColor && m_countSnapshotRetries < maximumSnapshotRetries && !plugInCameOnScreen) {
+                ++m_countSnapshotRetries;
+                m_pluginSnapshotTimer.restart();
+                return;
+            }
 #endif
+        }
     }
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
