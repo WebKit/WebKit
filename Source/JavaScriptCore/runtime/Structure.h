@@ -315,11 +315,11 @@ public:
         return rareData()->objectToStringValue();
     }
 
-    void setObjectToStringValue(VM& vm, const JSCell* owner, JSString* value)
+    void setObjectToStringValue(VM& vm, JSString* value)
     {
         if (!m_hasRareData)
             allocateRareData(vm);
-        rareData()->setObjectToStringValue(vm, owner, value);
+        rareData()->setObjectToStringValue(vm, value);
     }
 
     bool staticFunctionsReified()
@@ -429,9 +429,9 @@ private:
     void despecifyAllFunctions(VM&);
 
     WriteBarrier<PropertyTable>& propertyTable();
-    PropertyTable* takePropertyTableOrCloneIfPinned(VM&, Structure* owner);
-    PropertyTable* copyPropertyTable(VM&, Structure* owner);
-    PropertyTable* copyPropertyTableForPinning(VM&, Structure* owner);
+    PropertyTable* takePropertyTableOrCloneIfPinned(VM&);
+    PropertyTable* copyPropertyTable(VM&);
+    PropertyTable* copyPropertyTableForPinning(VM&);
     JS_EXPORT_PRIVATE void materializePropertyMap(VM&);
     ALWAYS_INLINE void materializePropertyMapIfNecessary(VM& vm, DeferGC&)
     {
@@ -461,12 +461,12 @@ private:
             materializePropertyMap(vm);
     }
 
-    void setPreviousID(VM& vm, Structure* transition, Structure* structure)
+    void setPreviousID(VM& vm, Structure* structure)
     {
         if (m_hasRareData)
-            rareData()->setPreviousID(vm, transition, structure);
+            rareData()->setPreviousID(vm, structure);
         else
-            m_previousOrRareData.set(vm, transition, structure);
+            m_previousOrRareData.set(vm, this, structure);
     }
 
     void clearPreviousID()

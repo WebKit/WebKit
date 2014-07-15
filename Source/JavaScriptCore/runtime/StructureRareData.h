@@ -49,14 +49,14 @@ public:
     bool needsCloning() const { return false; }
 
     Structure* previousID() const;
-    void setPreviousID(VM&, Structure* transition, Structure*);
+    void setPreviousID(VM&, Structure*);
     void clearPreviousID();
 
     JSString* objectToStringValue() const;
-    void setObjectToStringValue(VM&, const JSCell* owner, JSString* value);
+    void setObjectToStringValue(VM&, JSString* value);
 
     JSPropertyNameIterator* enumerationCache();
-    void setEnumerationCache(VM&, const Structure* owner, JSPropertyNameIterator* value);
+    void setEnumerationCache(VM&, JSPropertyNameIterator* value);
 
     DECLARE_EXPORT_INFO;
 

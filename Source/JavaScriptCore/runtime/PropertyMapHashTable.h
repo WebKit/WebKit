@@ -163,8 +163,8 @@ public:
 
     // Constructor is passed an initial capacity, a PropertyTable to copy, or both.
     static PropertyTable* create(VM&, unsigned initialCapacity);
-    static PropertyTable* clone(VM&, JSCell* owner, const PropertyTable&);
-    static PropertyTable* clone(VM&, JSCell* owner, unsigned initialCapacity, const PropertyTable&);
+    static PropertyTable* clone(VM&, const PropertyTable&);
+    static PropertyTable* clone(VM&, unsigned initialCapacity, const PropertyTable&);
     ~PropertyTable();
 
     // Ordered iteration methods.
@@ -202,7 +202,7 @@ public:
     PropertyOffset nextOffset(PropertyOffset inlineCapacity);
 
     // Copy this PropertyTable, ensuring the copy has at least the capacity provided.
-    PropertyTable* copy(VM&, JSCell* owner, unsigned newCapacity);
+    PropertyTable* copy(VM&, unsigned newCapacity);
 
 #ifndef NDEBUG
     size_t sizeInMemory();
@@ -214,8 +214,8 @@ protected:
 
 private:
     PropertyTable(VM&, unsigned initialCapacity);
-    PropertyTable(VM&, JSCell*, const PropertyTable&);
-    PropertyTable(VM&, JSCell*, unsigned initialCapacity, const PropertyTable&);
+    PropertyTable(VM&, const PropertyTable&);
+    PropertyTable(VM&, unsigned initialCapacity, const PropertyTable&);
 
     PropertyTable(const PropertyTable&);
     // Used to insert a value known not to be in the table, and where we know capacity to be available.
@@ -498,15 +498,15 @@ inline PropertyOffset PropertyTable::nextOffset(PropertyOffset inlineCapacity)
     return offsetForPropertyNumber(size(), inlineCapacity);
 }
 
-inline PropertyTable* PropertyTable::copy(VM& vm, JSCell* owner, unsigned newCapacity)
+inline PropertyTable* PropertyTable::copy(VM& vm, unsigned newCapacity)
 {
     ASSERT(newCapacity >= m_keyCount);
 
     // Fast case; if the new table will be the same m_indexSize as this one, we can memcpy it,
     // save rehashing all keys.
     if (sizeForCapacity(newCapacity) == m_indexSize)
-        return PropertyTable::clone(vm, owner, *this);
-    return PropertyTable::clone(vm, owner, newCapacity, *this);
+        return PropertyTable::clone(vm, *this);
+    return PropertyTable::clone(vm, newCapacity, *this);
 }
 
 #ifndef NDEBUG

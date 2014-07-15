@@ -156,7 +156,7 @@ inline void Structure::setEnumerationCache(VM& vm, JSPropertyNameIterator* enume
     ASSERT(!isDictionary());
     if (!m_hasRareData)
         allocateRareData(vm);
-    rareData()->setEnumerationCache(vm, this, enumerationCache);
+    rareData()->setEnumerationCache(vm, enumerationCache);
 }
 
 inline JSPropertyNameIterator* Structure::enumerationCache()

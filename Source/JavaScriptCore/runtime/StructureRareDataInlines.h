@@ -35,7 +35,7 @@ inline Structure* StructureRareData::previousID() const
     return m_previous.get();
 }
 
-inline void StructureRareData::setPreviousID(VM& vm, Structure*, Structure* structure)
+inline void StructureRareData::setPreviousID(VM& vm, Structure* structure)
 {
     m_previous.set(vm, this, structure);
 }
@@ -50,7 +50,7 @@ inline JSString* StructureRareData::objectToStringValue() const
     return m_objectToStringValue.get();
 }
 
-inline void StructureRareData::setObjectToStringValue(VM& vm, const JSCell*, JSString* value)
+inline void StructureRareData::setObjectToStringValue(VM& vm, JSString* value)
 {
     m_objectToStringValue.set(vm, this, value);
 }

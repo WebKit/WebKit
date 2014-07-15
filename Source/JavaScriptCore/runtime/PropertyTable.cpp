@@ -44,16 +44,16 @@ PropertyTable* PropertyTable::create(VM& vm, unsigned initialCapacity)
     return table;
 }
 
-PropertyTable* PropertyTable::clone(VM& vm, JSCell* owner, const PropertyTable& other)
+PropertyTable* PropertyTable::clone(VM& vm, const PropertyTable& other)
 {
-    PropertyTable* table = new (NotNull, allocateCell<PropertyTable>(vm.heap)) PropertyTable(vm, owner, other);
+    PropertyTable* table = new (NotNull, allocateCell<PropertyTable>(vm.heap)) PropertyTable(vm, other);
     table->finishCreation(vm);
     return table;
 }
 
-PropertyTable* PropertyTable::clone(VM& vm, JSCell* owner, unsigned initialCapacity, const PropertyTable& other)
+PropertyTable* PropertyTable::clone(VM& vm, unsigned initialCapacity, const PropertyTable& other)
 {
-    PropertyTable* table = new (NotNull, allocateCell<PropertyTable>(vm.heap)) PropertyTable(vm, owner, initialCapacity, other);
+    PropertyTable* table = new (NotNull, allocateCell<PropertyTable>(vm.heap)) PropertyTable(vm, initialCapacity, other);
     table->finishCreation(vm);
     return table;
 }
@@ -69,7 +69,7 @@ PropertyTable::PropertyTable(VM& vm, unsigned initialCapacity)
     ASSERT(isPowerOf2(m_indexSize));
 }
 
-PropertyTable::PropertyTable(VM& vm, JSCell* owner, const PropertyTable& other)
+PropertyTable::PropertyTable(VM& vm, const PropertyTable& other)
     : JSCell(vm, vm.propertyTableStructure.get())
     , m_indexSize(other.m_indexSize)
     , m_indexMask(other.m_indexMask)
@@ -84,7 +84,7 @@ PropertyTable::PropertyTable(VM& vm, JSCell* owner, const PropertyTable& other)
     iterator end = this->end();
     for (iterator iter = begin(); iter != end; ++iter) {
         iter->key->ref();
-        vm.heap.writeBarrier(owner, iter->specificValue.get());
+        vm.heap.writeBarrier(this, iter->specificValue.get());
     }
 
     // Copy the m_deletedOffsets vector.
@@ -93,7 +93,7 @@ PropertyTable::PropertyTable(VM& vm, JSCell* owner, const PropertyTable& other)
         m_deletedOffsets = adoptPtr(new Vector<PropertyOffset>(*otherDeletedOffsets));
 }
 
-PropertyTable::PropertyTable(VM& vm, JSCell* owner, unsigned initialCapacity, const PropertyTable& other)
+PropertyTable::PropertyTable(VM& vm, unsigned initialCapacity, const PropertyTable& other)
     : JSCell(vm, vm.propertyTableStructure.get())
     , m_indexSize(sizeForCapacity(initialCapacity))
     , m_indexMask(m_indexSize - 1)
@@ -109,7 +109,7 @@ PropertyTable::PropertyTable(VM& vm, JSCell* owner, unsigned initialCapacity, co
         ASSERT(canInsert());
         reinsert(*iter);
         iter->key->ref();
-        vm.heap.writeBarrier(owner, iter->specificValue.get());
+        vm.heap.writeBarrier(this, iter->specificValue.get());
     }
 
     // Copy the m_deletedOffsets vector.

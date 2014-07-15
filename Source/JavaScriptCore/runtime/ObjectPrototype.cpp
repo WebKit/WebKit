@@ -225,7 +225,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
             return JSValue::encode(throwOutOfMemoryError(exec));
 
         result = jsNontrivialString(&vm, newString.release());
-        thisObject->structure(vm)->setObjectToStringValue(vm, thisObject, result);
+        thisObject->structure(vm)->setObjectToStringValue(vm, result);
     }
     return JSValue::encode(result);
 }

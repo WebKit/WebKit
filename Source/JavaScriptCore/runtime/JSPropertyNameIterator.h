@@ -110,7 +110,7 @@ namespace JSC {
         return m_enumerationCache.get();
     }
     
-    inline void StructureRareData::setEnumerationCache(VM& vm, const Structure*, JSPropertyNameIterator* value)
+    inline void StructureRareData::setEnumerationCache(VM& vm, JSPropertyNameIterator* value)
     {
         m_enumerationCache.set(vm, this, value);
     }

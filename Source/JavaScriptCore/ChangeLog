@@ -1,5 +1,49 @@
 2014-07-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Stores to PropertyTable use the Structure as the owner
+        https://bugs.webkit.org/show_bug.cgi?id=134595
+
+        Reviewed by Darin Adler.
+
+        Since PropertyTable is the object that does the marking of these references, it should be the owner.
+
+        Also removed some unused parameters to other methods that historically used the Structure as the owner.
+
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::StructureRareData::setEnumerationCache):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString):
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::copy):
+        * runtime/PropertyTable.cpp:
+        (JSC::PropertyTable::clone):
+        (JSC::PropertyTable::PropertyTable):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::despecifyFunctionTransition):
+        (JSC::Structure::attributeChangeTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::preventExtensionsTransition):
+        (JSC::Structure::takePropertyTableOrCloneIfPinned):
+        (JSC::Structure::nonPropertyTransition):
+        (JSC::Structure::copyPropertyTable):
+        (JSC::Structure::copyPropertyTableForPinning):
+        (JSC::Structure::putSpecificValue):
+        * runtime/Structure.h:
+        (JSC::Structure::setObjectToStringValue):
+        (JSC::Structure::setPreviousID):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::setEnumerationCache):
+        * runtime/StructureRareData.h:
+        * runtime/StructureRareDataInlines.h:
+        (JSC::StructureRareData::setPreviousID):
+        (JSC::StructureRareData::setObjectToStringValue):
+
+2014-07-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         ScriptExecutable::forEachCodeBlock can dereference null CodeBlocks
         https://bugs.webkit.org/show_bug.cgi?id=134928
 
