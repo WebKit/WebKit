@@ -1,3 +1,10 @@
+2014-07-15  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Unreviwed fix wrong indentation from r171082.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::placeAutoMajorAxisItemOnGrid):
+
 2014-07-14  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Zero sized compositing container's content positioned off by one device pixel.
