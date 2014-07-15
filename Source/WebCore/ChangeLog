@@ -1,3 +1,12 @@
+2014-07-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix after r171069.
+
+        Add missing AudioHardwareListener implementation on Windows.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+
 2014-07-15  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r155957): Invalid cast in WebCore::RenderNamedFlowThread::getRanges

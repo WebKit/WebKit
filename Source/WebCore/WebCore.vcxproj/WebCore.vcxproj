@@ -7329,6 +7329,7 @@
     <ClCompile Include="..\loader\cache\CachedTextTrack.cpp" />
     <ClCompile Include="..\loader\cache\CachedXSLStyleSheet.cpp" />
     <ClCompile Include="..\loader\cache\MemoryCache.cpp" />
+    <ClCompile Include="..\platform\audio\AudioHardwareListener.cpp" />
     <ClCompile Include="..\platform\CalculationValue.cpp" />
     <ClCompile Include="..\platform\Clock.cpp" />
     <ClCompile Include="..\platform\ClockGeneric.cpp" />
@@ -19285,6 +19286,7 @@
     <ClInclude Include="..\loader\cache\CachedXSLStyleSheet.h" />
     <ClInclude Include="..\loader\cache\CachePolicy.h" />
     <ClInclude Include="..\loader\cache\MemoryCache.h" />
+    <ClInclude Include="..\platform\audio\AudioHardwareListener.h" />
     <ClInclude Include="..\platform\CalculationValue.h" />
     <ClInclude Include="..\platform\Clock.h" />
     <ClInclude Include="..\platform\ClockGeneric.h" />
