@@ -103,6 +103,10 @@ public:
     float height() const { return size().height(); }
     virtual bool getHotSpot(IntPoint&) const { return false; }
 
+#if PLATFORM(IOS)
+    virtual FloatSize originalSize() const { return size(); }
+#endif
+
     bool setData(PassRefPtr<SharedBuffer> data, bool allDataReceived);
     virtual bool dataChanged(bool /*allDataReceived*/) { return false; }
     

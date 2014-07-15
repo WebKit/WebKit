@@ -581,7 +581,14 @@ void GraphicsContext::drawImage(Image* image, ColorSpace colorSpace, const Float
 {
     if (!image)
         return;
-    drawImage(image, colorSpace, destination, FloatRect(FloatPoint(), image->size()), imagePaintingOptions);
+    
+#if PLATFORM(IOS)
+    FloatRect srcRect(FloatPoint(), image->originalSize());
+#else
+    FloatRect srcRect(FloatPoint(), image->size());
+#endif
+        
+    drawImage(image, colorSpace, destination, srcRect, imagePaintingOptions);
 }
 
 void GraphicsContext::drawImage(Image* image, ColorSpace colorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& imagePaintingOptions)

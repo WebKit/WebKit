@@ -116,7 +116,12 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     float h = CGImageGetHeight(tileImage);
 
     RetainPtr<CGImageRef> subImage;
-    if (tileRect.size() == size())
+#if PLATFORM(IOS)
+    FloatSize imageSize = originalSize();
+#else
+    FloatSize imageSize = size();
+#endif
+    if (tileRect.size() == imageSize)
         subImage = tileImage;
     else {
         // Copying a sub-image out of a partially-decoded image stops the decoding of the original image. It should never happen

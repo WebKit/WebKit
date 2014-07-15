@@ -103,7 +103,11 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
 
     ASSERT(!isBitmapImage() || notSolidColor());
 
+#if PLATFORM(IOS)
+    FloatSize intrinsicTileSize = originalSize();
+#else
     FloatSize intrinsicTileSize = size();
+#endif
     if (hasRelativeWidth())
         intrinsicTileSize.setWidth(scaledTileSize.width());
     if (hasRelativeHeight())
@@ -257,7 +261,11 @@ FloatRect Image::adjustSourceRectForDownSampling(const FloatRect& srcRect, const
 
 void Image::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
 {
+#if PLATFORM(IOS)
+    intrinsicRatio = originalSize();
+#else
     intrinsicRatio = size();
+#endif
     intrinsicWidth = Length(intrinsicRatio.width(), Fixed);
     intrinsicHeight = Length(intrinsicRatio.height(), Fixed);
 }

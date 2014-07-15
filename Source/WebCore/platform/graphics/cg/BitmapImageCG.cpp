@@ -101,11 +101,11 @@ BitmapImage::BitmapImage(CGImageRef cgImage, ImageObserver* observer)
 
     // Since we don't have a decoder, we can't figure out the image orientation.
     // Set m_sizeRespectingOrientation to be the same as m_size so it's not 0x0.
-    m_sizeRespectingOrientation = IntSize(width, height);
+    m_sizeRespectingOrientation = m_size;
 
 #if PLATFORM(IOS)
-    m_originalSize = IntSize(width, height);
-    m_originalSizeRespectingOrientation = IntSize(width, height);
+    m_originalSize = m_size;
+    m_originalSizeRespectingOrientation = m_size;
 #endif
 
     m_frames.grow(1);
@@ -202,7 +202,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
     FloatRect srcRectForCurrentFrame = srcRect;
 
 #if PLATFORM(IOS)
-    if (m_originalSize.width() && m_originalSize.height())
+    if (m_originalSize != m_size && !m_originalSize.isEmpty())
         srcRectForCurrentFrame.scale(m_size.width() / static_cast<float>(m_originalSize.width()), m_size.height() / static_cast<float>(m_originalSize.height()));
 
     startAnimation(DoNotCatchUp);

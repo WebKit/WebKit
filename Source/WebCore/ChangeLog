@@ -1,3 +1,40 @@
+2014-07-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Fix issues drawing subsampled image elements and CSS images
+        https://bugs.webkit.org/show_bug.cgi?id=134944
+        <rdar://problem/17634095>
+
+        Reviewed by Dean Jackson.
+
+        After r170675 it is important for BitmapImage::draw() to be given a srcRect computed
+        using the original size of the image, not the subsampled size.
+        
+        So fix various code paths that end up in image drawing to use the originalSize(),
+        which requires giving Image a virtual function that just returns size(), and hence has
+        a FloatSize return value.
+        
+        Tested by setting a very low subsampling threshold and browsing various sites.
+        
+        A better longterm fix will happen via bug 134916.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::originalSize):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImage):
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        (WebCore::Image::computeIntrinsicDimensions):
+        * platform/graphics/Image.h:
+        (WebCore::Image::originalSize):
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        (WebCore::BitmapImage::BitmapImage): Just use m_size for initializing the other members.
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::Image::drawPattern):
+
 2014-07-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix after r171069.

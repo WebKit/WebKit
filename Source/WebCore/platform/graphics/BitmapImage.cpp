@@ -261,7 +261,7 @@ IntSize BitmapImage::sizeRespectingOrientation(ImageOrientationDescription descr
 }
 
 #if PLATFORM(IOS)
-IntSize BitmapImage::originalSize() const
+FloatSize BitmapImage::originalSize() const
 {
     updateSize();
     return m_originalSize;

@@ -138,7 +138,7 @@ public:
     virtual FloatSize size() const override;
     IntSize sizeRespectingOrientation(ImageOrientationDescription = ImageOrientationDescription()) const;
 #if PLATFORM(IOS)
-    virtual IntSize originalSize() const;
+    virtual FloatSize originalSize() const override;
     IntSize originalSizeRespectingOrientation() const;
 #endif
     IntSize currentFrameSize() const;

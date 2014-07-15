@@ -335,9 +335,9 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
 #if PLATFORM(IOS)
         float scaleHint = 1;
         if (m_image->isBitmapImage()) {
-            IntSize originalSize = toBitmapImage(m_image)->originalSize();
-            if (originalSize.width() && originalSize.height())
-                scaleHint = std::min<float>(1.0f, std::max(m_image->size().width() / originalSize.width(), m_image->size().width() / originalSize.height()));
+            FloatSize originalSize = toBitmapImage(m_image)->originalSize();
+            if (!originalSize.isEmpty())
+                scaleHint = std::min<float>(1, std::max(m_image->size().width() / originalSize.width(), m_image->size().width() / originalSize.height()));
         }
         m_decodedImage = adoptCF(decoder.createFrameAtIndex(0, &scaleHint));
 #else
