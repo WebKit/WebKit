@@ -141,6 +141,12 @@ static void initializeAllowedArgumentClasses(_WKRemoteObjectInterface *interface
     return [[[self alloc] initWithProtocol:protocol identifier:NSStringFromProtocol(protocol)] autorelease];
 }
 
+- (void)dealloc
+{
+    [_identifier release];
+    [super dealloc];
+}
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@: %p; protocol = \"%@\"; identifier = \"%@\">", NSStringFromClass(self.class), self, _identifier, NSStringFromProtocol(_protocol)];

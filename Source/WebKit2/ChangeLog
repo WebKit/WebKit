@@ -1,3 +1,15 @@
+2014-07-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Cocoa] _WKRemoteObjectInterface leaks NSString ivar
+        https://bugs.webkit.org/show_bug.cgi?id=134914
+
+        Reviewed by Simon Fraser.
+
+        Release our copied NSString in dealloc.
+
+        * Shared/API/Cocoa/_WKRemoteObjectInterface.mm:
+        (-[_WKRemoteObjectInterface dealloc]):
+
 2014-07-14  Dean Jackson  <dino@apple.com>
 
         [PlugIns] Check for a non-null snapshot image before trying to decode it
