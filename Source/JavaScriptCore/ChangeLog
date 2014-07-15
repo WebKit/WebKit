@@ -1,3 +1,102 @@
+2014-07-15  Benjamin Poulain  <benjamin@webkit.org>
+
+        Reduce the overhead of updating the AssemblerBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=134659
+
+        Reviewed by Gavin Barraclough.
+
+        In r164548, the linker was changed to allow the LinkBuffer to survive its MacroAssembler.
+        That feature is useful for JSC to get offsets inside a linked buffer in order to jump directly
+        there.
+
+        On ARM, we use branch compaction and we need to keep the "compaction offset" somewher to be able
+        to get the real address of a lable. That is done by reusing the memory of AssemblerData.
+
+        To share the memory between LinkBuffer and the Assembler, r164548 moved the AssemblerData into
+        a ref-counted object. Unfortunately, the extra complexity related to the new AssemblerData was enough
+        to make clang give up a bunch of optimizations.
+
+        This patch solve (some of) the problems by making AssemblerBuffer and AssemblerData super low overhead structures.
+        In particular, the grow() function becomes 8 Thumb instructions, which is easily inlined everywhere it is used.
+
+        Instead of sharing ownership between the Assembler and LinkBuffer, LinkBuffer now takes full ownership of
+        the AssemblerData. I feel this is also safer since LinkBuffer is reusing the AssemblerData is a very
+        specific way that would make it unusable for the Assembler.
+
+        -- Technical details --
+
+        From LinkBuffer, we don't want to ever access the Assembler after releasing its buffer (or writting anything
+        into it really). This was obviously already the case, but that was hard to prove from LinkBuffer::copyCompactAndLinkCode().
+        To make this easier to work with, I changed all the assembler specific function to be static. This way we know
+        exactly what code access the Assembler instance. The code that does access the instance is then moved
+        at the beginning, before we modify anything.
+
+        The function recordLinkOffsets() that was on the MacroAssembler and copied in Assembler was moved directly
+        to LinkBuffer. This make the modification of AssemblerData completely explicit, and that code is specific
+        to LinkBuffer anyway (see LinkBuffer::executableOffsetFor()).
+
+        -- Perf impact --
+
+        This does not put us exactly at before r164548 due to the missing inline buffer. Still, it is very close.
+        On ARMv7, this reduces the time spent in Assembler by half. On the CSS JIT, this reduces the compilation
+        time by ~20%.
+
+        I could not measure any difference on x86_64.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::jumpSizeDelta):
+        (JSC::ARM64Assembler::canCompact):
+        (JSC::ARM64Assembler::computeJumpType):
+        (JSC::ARM64Assembler::link):
+        (JSC::ARM64Assembler::recordLinkOffsets): Deleted.
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::ifThenElseConditionBit):
+        (JSC::ARMv7Assembler::ifThenElse):
+        (JSC::ARMv7Assembler::jumpSizeDelta):
+        (JSC::ARMv7Assembler::canCompact):
+        (JSC::ARMv7Assembler::computeJumpType):
+        (JSC::ARMv7Assembler::link):
+        (JSC::ARMv7Assembler::linkJumpT1):
+        (JSC::ARMv7Assembler::linkJumpT3):
+        (JSC::ARMv7Assembler::linkConditionalJumpT4):
+        (JSC::ARMv7Assembler::linkConditionalBX):
+        (JSC::ARMv7Assembler::recordLinkOffsets): Deleted.
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerData::AssemblerData):
+        (JSC::AssemblerData::operator=):
+        (JSC::AssemblerData::~AssemblerData):
+        (JSC::AssemblerData::buffer):
+        (JSC::AssemblerData::capacity):
+        (JSC::AssemblerData::grow):
+        (JSC::AssemblerBuffer::AssemblerBuffer):
+        (JSC::AssemblerBuffer::isAvailable):
+        (JSC::AssemblerBuffer::data):
+        (JSC::AssemblerBuffer::releaseAssemblerData):
+        (JSC::AssemblerBuffer::putIntegral):
+        (JSC::AssemblerBuffer::putIntegralUnchecked):
+        (JSC::AssemblerBuffer::append):
+        (JSC::AssemblerBuffer::grow):
+        (JSC::AssemblerBuffer::~AssemblerBuffer): Deleted.
+        (JSC::AssemblerBuffer::storage): Deleted.
+        * assembler/LinkBuffer.cpp:
+        (JSC::recordLinkOffsets):
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::LinkBuffer):
+        (JSC::LinkBuffer::executableOffsetFor):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::canCompact):
+        (JSC::MacroAssemblerARM64::computeJumpType):
+        (JSC::MacroAssemblerARM64::jumpSizeDelta):
+        (JSC::MacroAssemblerARM64::link):
+        (JSC::MacroAssemblerARM64::recordLinkOffsets): Deleted.
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::canCompact):
+        (JSC::MacroAssemblerARMv7::computeJumpType):
+        (JSC::MacroAssemblerARMv7::jumpSizeDelta):
+        (JSC::MacroAssemblerARMv7::link):
+        (JSC::MacroAssemblerARMv7::recordLinkOffsets): Deleted.
+
 2014-07-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Stores to PropertyTable use the Structure as the owner

@@ -87,7 +87,6 @@ public:
 #endif
         , m_didAllocate(false)
         , m_code(0)
-        , m_storage(macroAssembler.m_assembler.buffer().storage())
         , m_vm(&vm)
 #ifndef NDEBUG
         , m_completed(false)
@@ -103,7 +102,6 @@ public:
 #endif
         , m_didAllocate(false)
         , m_code(code)
-        , m_storage(macroAssembler.m_assembler.buffer().storage())
         , m_vm(&vm)
 #ifndef NDEBUG
         , m_completed(false)
@@ -250,7 +248,8 @@ public:
     {
         return m_code;
     }
-    
+
+    // FIXME: this does not account for the AssemblerData size!
     size_t size()
     {
         return m_size;
@@ -262,7 +261,7 @@ private:
     {
         if (!location)
             return 0;
-        return bitwise_cast<int32_t*>(m_storage->m_data.begin())[location / sizeof(int32_t) - 1];
+        return bitwise_cast<int32_t*>(m_assemblerStorage.buffer())[location / sizeof(int32_t) - 1];
     }
 #endif
     
@@ -303,10 +302,10 @@ private:
     size_t m_size;
 #if ENABLE(BRANCH_COMPACTION)
     size_t m_initialSize;
+    AssemblerData m_assemblerStorage;
 #endif
     bool m_didAllocate;
     void* m_code;
-    RefPtr<AssemblerData> m_storage;
     VM* m_vm;
 #ifndef NDEBUG
     bool m_completed;

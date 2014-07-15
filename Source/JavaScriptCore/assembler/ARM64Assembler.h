@@ -2877,20 +2877,20 @@ public:
 
     // Assembler admin methods:
 
-    int jumpSizeDelta(JumpType jumpType, JumpLinkType jumpLinkType) { return JUMP_ENUM_SIZE(jumpType) - JUMP_ENUM_SIZE(jumpLinkType); }
+    static int jumpSizeDelta(JumpType jumpType, JumpLinkType jumpLinkType) { return JUMP_ENUM_SIZE(jumpType) - JUMP_ENUM_SIZE(jumpLinkType); }
 
     static ALWAYS_INLINE bool linkRecordSourceComparator(const LinkRecord& a, const LinkRecord& b)
     {
         return a.from() < b.from();
     }
 
-    bool canCompact(JumpType jumpType)
+    static bool canCompact(JumpType jumpType)
     {
         // Fixed jumps cannot be compacted
         return (jumpType == JumpNoCondition) || (jumpType == JumpCondition) || (jumpType == JumpCompareAndBranch) || (jumpType == JumpTestBit);
     }
 
-    JumpLinkType computeJumpType(JumpType jumpType, const uint8_t* from, const uint8_t* to)
+    static JumpLinkType computeJumpType(JumpType jumpType, const uint8_t* from, const uint8_t* to)
     {
         switch (jumpType) {
         case JumpFixed:
@@ -2942,20 +2942,11 @@ public:
         return LinkJumpNoCondition;
     }
 
-    JumpLinkType computeJumpType(LinkRecord& record, const uint8_t* from, const uint8_t* to)
+    static JumpLinkType computeJumpType(LinkRecord& record, const uint8_t* from, const uint8_t* to)
     {
         JumpLinkType linkType = computeJumpType(record.type(), from, to);
         record.setLinkType(linkType);
         return linkType;
-    }
-
-    void recordLinkOffsets(int32_t regionStart, int32_t regionEnd, int32_t offset)
-    {
-        int32_t ptr = regionStart / sizeof(int32_t);
-        const int32_t end = regionEnd / sizeof(int32_t);
-        int32_t* offsets = static_cast<int32_t*>(m_buffer.data());
-        while (ptr < end)
-            offsets[ptr++] = offset;
     }
 
     Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink()
@@ -2964,7 +2955,7 @@ public:
         return m_jumpsToLink;
     }
 
-    void ALWAYS_INLINE link(LinkRecord& record, uint8_t* from, uint8_t* to)
+    static void ALWAYS_INLINE link(LinkRecord& record, uint8_t* from, uint8_t* to)
     {
         switch (record.linkType()) {
         case LinkJumpNoCondition:
