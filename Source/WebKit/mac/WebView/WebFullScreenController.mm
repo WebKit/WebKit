@@ -235,6 +235,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     NSView* contentView = [[self window] contentView];
     [contentView addSubview:_webView positioned:NSWindowBelow relativeTo:nil];
     [_webView setFrame:[contentView bounds]];
+    [[_webViewPlaceholder.get() window] recalculateKeyViewLoop];
     
     [[self window] makeResponder:webWindowFirstResponder firstResponderIfDescendantOfView:_webView];
     
