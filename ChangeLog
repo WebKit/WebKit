@@ -1,3 +1,17 @@
+2014-07-14  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Add tests to ensure CSS :active and :hover are applied when processing touch events
+        https://bugs.webkit.org/show_bug.cgi?id=134905
+        <rdar://problem/16602779> 
+
+        Reviewed by Simon Fraser.
+
+        Add a manual test to ensure that styles for CSS pseudo-class :hover aren't temporarily cleared
+        on the tapped element when processing a touchend as a result of finger pressing and releasing
+        on the same element that is initially positioned outside the visible content area.
+
+        * ManualTests/ios/touchstart-touchend-on-same-element-should-not-clear-hover.html: Added.
+
 2014-07-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Enable VIDEO_TRACK by default
