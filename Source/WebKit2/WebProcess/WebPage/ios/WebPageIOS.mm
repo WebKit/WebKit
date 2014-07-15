@@ -69,6 +69,7 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/MediaSessionManagerIOS.h>
+#import <WebCore/MemoryPressureHandler.h>
 #import <WebCore/Node.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
@@ -2451,6 +2452,10 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     }
 
     double boundedScale = std::min(m_viewportConfiguration.maximumScale(), std::max(m_viewportConfiguration.minimumScale(), filteredScale));
+
+    // Skip progressively redrawing tiles if pinch-zooming while the system is under memory pressure.
+    if (boundedScale != currentScale && !visibleContentRectUpdateInfo.inStableState() && memoryPressureHandler().isUnderMemoryPressure())
+        return;
 
     FloatRect exposedRect = visibleContentRectUpdateInfo.exposedRect();
     FloatRect adjustedExposedRect = adjustExposedRectForBoundedScale(exposedRect, visibleContentRectUpdateInfo.scale(), boundedScale);

@@ -1,3 +1,17 @@
+2014-07-14  Andreas Kling  <akling@apple.com>
+
+        [iOS] Don't progressively re-render tiles while pinch-zooming under memory pressure.
+        <https://webkit.org/b/134915>
+
+        When we're under memory pressure, the last thing we want to be doing is
+        creating gratuitous new IOSurfaces. Just wait for the gesture to end before
+        rendering at the new scale.
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2014-07-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Cocoa] _WKRemoteObjectInterface leaks NSString ivar
