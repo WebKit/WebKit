@@ -1,5 +1,17 @@
 2014-07-14  Jeremy Jones  <jeremyj@apple.com>
 
+        Fix crash on WebVideoFullscreenManagerProxy construction.
+        https://bugs.webkit.org/show_bug.cgi?id=134909
+
+        Unreviewed fix crash from r171089
+
+        Remove unnecessary dispatch to main queue since it can happen during construction.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::setWebVideoFullscreenModel): remove dispatch_async
+
+2014-07-14  Jeremy Jones  <jeremyj@apple.com>
+
         WebVideoFullscreenInterfaceAVKit should only call the UI from main thread.
         https://bugs.webkit.org/show_bug.cgi?id=134890
 
