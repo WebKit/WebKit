@@ -1,3 +1,30 @@
+2014-07-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS: Generalize CSS First Letter treatment
+        https://bugs.webkit.org/show_bug.cgi?id=134936
+
+        Reviewed by Benjamin Poulain.
+
+        first-letter pseudo element rule is handled differently from the other rules
+        such as first-line. This patch removes this special handling in SelectorChecker
+        and handles it in RulesFeatureSet.
+
+        * css/RuleFeature.cpp:
+        (WebCore::RuleFeatureSet::collectFeaturesFromSelector):
+        (WebCore::RuleFeatureSet::add):
+        (WebCore::RuleFeatureSet::clear):
+        * css/RuleFeature.h:
+        (WebCore::RuleFeatureSet::RuleFeatureSet):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::usesFirstLetterRules):
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::combineCSSFeatureFlags):
+        (WebCore::DocumentStyleSheetCollection::resetCSSFeatureFlags):
+        * dom/DocumentStyleSheetCollection.h:
+        (WebCore::DocumentStyleSheetCollection::setUsesFirstLetterRules): Deleted.
+
 2014-07-15  Simon Fraser  <simon.fraser@apple.com>
 
         Fix non-iOS builds.

@@ -72,6 +72,7 @@ void DocumentStyleSheetCollection::combineCSSFeatureFlags()
     const StyleResolver& styleResolver = m_document.ensureStyleResolver();
     m_usesSiblingRules = m_usesSiblingRules || styleResolver.usesSiblingRules();
     m_usesFirstLineRules = m_usesFirstLineRules || styleResolver.usesFirstLineRules();
+    m_usesFirstLetterRules = m_usesFirstLetterRules || styleResolver.usesFirstLetterRules();
     m_usesBeforeAfterRules = m_usesBeforeAfterRules || styleResolver.usesBeforeAfterRules();
 }
 
@@ -80,6 +81,7 @@ void DocumentStyleSheetCollection::resetCSSFeatureFlags()
     const StyleResolver& styleResolver = m_document.ensureStyleResolver();
     m_usesSiblingRules = styleResolver.usesSiblingRules();
     m_usesFirstLineRules = styleResolver.usesFirstLineRules();
+    m_usesFirstLetterRules = styleResolver.usesFirstLetterRules();
     m_usesBeforeAfterRules = styleResolver.usesBeforeAfterRules();
 }
 

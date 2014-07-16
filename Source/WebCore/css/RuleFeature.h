@@ -47,6 +47,7 @@ struct RuleFeature {
 struct RuleFeatureSet {
     RuleFeatureSet()
         : usesFirstLineRules(false)
+        , usesFirstLetterRules(false)
         , usesBeforeAfterRules(false)
     { }
 
@@ -61,6 +62,7 @@ struct RuleFeatureSet {
     Vector<RuleFeature> siblingRules;
     Vector<RuleFeature> uncommonAttributeRules;
     bool usesFirstLineRules;
+    bool usesFirstLetterRules;
     bool usesBeforeAfterRules;
 };
 

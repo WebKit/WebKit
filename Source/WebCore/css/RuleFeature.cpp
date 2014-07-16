@@ -46,6 +46,9 @@ void RuleFeatureSet::collectFeaturesFromSelector(const CSSSelector* selector)
         case CSSSelector::PseudoElementFirstLine:
             usesFirstLineRules = true;
             break;
+        case CSSSelector::PseudoElementFirstLetter:
+            usesFirstLetterRules = true;
+            break;
         case CSSSelector::PseudoElementBefore:
         case CSSSelector::PseudoElementAfter:
             usesBeforeAfterRules = true;
@@ -70,6 +73,7 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
     siblingRules.appendVector(other.siblingRules);
     uncommonAttributeRules.appendVector(other.uncommonAttributeRules);
     usesFirstLineRules = usesFirstLineRules || other.usesFirstLineRules;
+    usesFirstLetterRules = usesFirstLetterRules || other.usesFirstLetterRules;
     usesBeforeAfterRules = usesBeforeAfterRules || other.usesBeforeAfterRules;
 }
 
@@ -81,6 +85,7 @@ void RuleFeatureSet::clear()
     siblingRules.clear();
     uncommonAttributeRules.clear();
     usesFirstLineRules = false;
+    usesFirstLetterRules = false;
     usesBeforeAfterRules = false;
 }
 
