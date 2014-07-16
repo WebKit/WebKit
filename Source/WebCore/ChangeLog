@@ -1,5 +1,19 @@
 2014-07-16  Jer Noble  <jer.noble@apple.com>
 
+        REGRESSION(r171069) 75% repro crash in WebCore::AudioHardwareListenerMac::processIsRunningChanged()
+        https://bugs.webkit.org/show_bug.cgi?id=134986
+
+        Reviewed by Eric Carlson.
+
+        Add a WeakPtrFactory to AudioHardwareListenerMac, so that if CoreAudio calls our block after
+        being unregistered, we can bail early instead of calling into a deleted object.
+
+        * platform/audio/mac/AudioHardwareListenerMac.cpp:
+        (WebCore::AudioHardwareListenerMac::AudioHardwareListenerMac):
+        * platform/audio/mac/AudioHardwareListenerMac.h:
+
+2014-07-16  Jer Noble  <jer.noble@apple.com>
+
         [MSE] REGRESSION(r171033): ASSERT in WebCore::MediaSource::onReadyStateChange()
         https://bugs.webkit.org/show_bug.cgi?id=134941
 

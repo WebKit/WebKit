@@ -121,12 +121,15 @@ PassRefPtr<AudioHardwareListenerMac> AudioHardwareListenerMac::create(Client& cl
 
 AudioHardwareListenerMac::AudioHardwareListenerMac(Client& client)
     : AudioHardwareListener(client)
+    , m_weakFactory(this)
 {
     setHardwareActivity(isAudioHardwareProcessRunning());
     setOutputDeviceSupportsLowPowerMode(currentDeviceSupportsLowPowerBufferSize());
 
+    auto weakThis = m_weakFactory.createWeakPtr();
     m_block = Block_copy(^(UInt32 count, const AudioObjectPropertyAddress properties[]) {
-        propertyChanged(count, properties);
+        if (weakThis)
+            weakThis->propertyChanged(count, properties);
     });
 
     AudioObjectAddPropertyListenerBlock(kAudioObjectSystemObject, &processIsRunningPropertyDescriptor(), dispatch_get_main_queue(), m_block);

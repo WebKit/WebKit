@@ -27,6 +27,7 @@
 #define AudioHardwareListenerMac_h
 
 #include "AudioHardwareListener.h"
+#include <wtf/WeakPtr.h>
 
 #if PLATFORM(MAC)
 
@@ -48,6 +49,7 @@ private:
     void propertyChanged(UInt32, const AudioObjectPropertyAddress[]);
 
     AudioObjectPropertyListenerBlock m_block;
+    WeakPtrFactory<AudioHardwareListenerMac> m_weakFactory;
 };
 
 }
