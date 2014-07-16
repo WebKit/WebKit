@@ -1,3 +1,39 @@
+2014-07-15  Benjamin Poulain  <benjamin@webkit.org>
+
+        [iOS][WK2] Scrolling request from the scrolling tree must be limited to offsets in the document
+        https://bugs.webkit.org/show_bug.cgi?id=134952
+        <rdar://problem/17647116>
+
+        Reviewed by Enrica Casucci.
+
+        When we received a scroll request, we were taking that offset directly to set the UIScrollView
+        scroll position. This is a problem if a page request scrolling to an invalid position, we were
+        still doing it.
+
+        This patch limits the position to be inside the document.
+
+        -- Why not limit the scroll offset in the WebProcess when we receive the scroll request? --
+
+        Some pages rely on the page scale factor changing instantly, because that is how it worked
+        on WebKit1.
+
+        On WebKit2, the WebProcess cannot know the valid range because the obscured insets are changing
+        dynamically, and the page scale factor can change in response to WebProcess events (the focus
+        changing for example). To make the page works, the WebProcess does not restrict the scroll position.
+
+        In that architecture, the UIProcess has to sanitize the input, which was not done before this patch.
+
+        -- Why not use changeContentOffsetBoundedInValidRange()?
+
+        The scroll offset as seen by the page is relative to the unobscured rect. While the position used
+        for history item is a visual position. All we need in this case is a position in the view.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _scrollToContentOffset:]):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::resendLastVisibleContentRects):
+
 2014-07-15  Timothy Horton  <timothy_horton@apple.com>
 
         Dispatch top content inset changes immediately if synchronously waiting for view state changes

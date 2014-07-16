@@ -986,13 +986,30 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (_isAnimatingResize)
         return;
 
-    [_scrollView _stopScrollingAndZoomingAnimations];
-
     WebCore::FloatPoint scaledOffset = contentOffset;
     CGFloat zoomScale = contentZoomScale(self);
     scaledOffset.scale(zoomScale, zoomScale);
 
-    [_scrollView setContentOffset:[self _adjustedContentOffset:scaledOffset]];
+    WebCore::FloatPoint contentOffsetInDocument = scaledOffset;
+    WebCore::FloatSize documentSizeInSelfCoordinates([_contentView frame].size);
+    WebCore::FloatSize unobscuredRectSize(UIEdgeInsetsInsetRect(self.bounds, [self _computedContentInset]).size);
+
+    float maximumHorizontalOffset = documentSizeInSelfCoordinates.width() - unobscuredRectSize.width();
+    float maximumVerticalOffset = documentSizeInSelfCoordinates.height() - unobscuredRectSize.height();
+    contentOffsetInDocument.shrunkTo(WebCore::FloatPoint(maximumHorizontalOffset, maximumVerticalOffset));
+    contentOffsetInDocument.expandedTo(WebCore::FloatPoint(0, 0));
+
+    [_scrollView _stopScrollingAndZoomingAnimations];
+
+    CGPoint adjustedContentOffset = [self _adjustedContentOffset:contentOffsetInDocument];
+    if (!CGPointEqualToPoint(adjustedContentOffset, [_scrollView contentOffset]))
+        [_scrollView setContentOffset:adjustedContentOffset];
+    else {
+        // If we haven't changed anything, there would not be any VisibleContentRect update sent to the content.
+        // The WebProcess would keep the invalid contentOffset as its scroll position.
+        // To synchronize the WebProcess with what is on screen, we send the VisibleContentRect again.
+        _page->resendLastVisibleContentRects();
+    }
 }
 
 - (BOOL)_scrollToRect:(WebCore::FloatRect)targetRect origin:(WebCore::FloatPoint)origin minimumScrollDistance:(float)minimumScrollDistance
