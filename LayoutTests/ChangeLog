@@ -1,3 +1,23 @@
+2014-07-16  Roger Fong  <roger_fong@apple.com>
+
+        Captions container should not clip content.
+        https://bugs.webkit.org/show_bug.cgi?id=134840.
+        <rdar://problem/14553608>.
+
+        Reviewed by Simon Fraser.
+
+        * media/track/track-cue-rendering-snap-to-lines-not-set-expected.txt: Rebaseline.
+        * media/track/captions-webvtt/long-word-small-track-display.vtt: Added.
+        * media/track/track-in-band-subtitles-too-large-expected.txt: Added.
+        * media/track/track-in-band-subtitles-too-large.html: Added.
+        * media/track/track-long-word-container-sizing-expected.txt: Added.
+        * media/track/track-long-word-container-sizing.html: Added.
+        
+        We no longer break in the middle of a word, this test is no longer useful.
+        * media/track/captions-webvtt/long-word.vtt: Removed.
+        * media/track/track-word-breaking-expected.txt: Removed.
+        * media/track/track-word-breaking.html: Removed.
+
 2014-07-16  Mike West  <mkwst@chromium.org>
 
         CSP: Drop 'script-nonce' directive.

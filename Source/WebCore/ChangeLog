@@ -1,3 +1,24 @@
+2014-07-16  Roger Fong  <roger_fong@apple.com>
+
+        Captions container should not clip content.
+        https://bugs.webkit.org/show_bug.cgi?id=134840.
+        <rdar://problem/14553608>.
+
+        Reviewed by Simon Fraser.
+
+        Tests: media/track/track-in-band-subtitles-too-large.html
+               media/track/track-long-word-container-sizing.html
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (video::-webkit-media-text-track-container):
+        Set word break property of WebCTT cues to normal to make it consistent with in-band cues.
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGenericBoxElement::applyCSSProperties):
+        Set -webkit-min-content on min-width/min-height property of the text track display.
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCueBox::applyCSSProperties):
+        Do the same for WebVTT cues.
+
 2014-07-16  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] replace AVPlayerItem on the main thread

@@ -81,6 +81,11 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
             setInlineStyleProperty(CSSPropertyHeight, size,  CSSPrimitiveValue::CSS_PERCENTAGE);
     }
 
+    if (cue->getWritingDirection() == VTTCue::Horizontal)
+        setInlineStyleProperty(CSSPropertyMinWidth, "-webkit-min-content");
+    else
+        setInlineStyleProperty(CSSPropertyMinHeight, "-webkit-min-content");
+
     if (cue->foregroundColor().isValid())
         cueElement->setInlineStyleProperty(CSSPropertyColor, cue->foregroundColor().serialized());
     if (cue->highlightColor().isValid())
@@ -105,7 +110,6 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
         setInlineStyleProperty(CSSPropertyBackgroundColor, cue->backgroundColor().serialized());
     setInlineStyleProperty(CSSPropertyWebkitWritingMode, cue->getCSSWritingMode(), false);
     setInlineStyleProperty(CSSPropertyWhiteSpace, CSSValuePreWrap);
-    setInlineStyleProperty(CSSPropertyWordBreak, CSSValueNormal);
 }
 
 TextTrackCueGeneric::TextTrackCueGeneric(ScriptExecutionContext& context, double start, double end, const String& content)

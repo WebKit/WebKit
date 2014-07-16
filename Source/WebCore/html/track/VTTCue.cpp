@@ -174,9 +174,11 @@ void VTTCueBox::applyCSSProperties(const IntSize&)
     if (m_cue.vertical() == horizontalKeyword()) {
         setInlineStyleProperty(CSSPropertyWidth, static_cast<double>(m_cue.getCSSSize()), CSSPrimitiveValue::CSS_PERCENTAGE);
         setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
+        setInlineStyleProperty(CSSPropertyMinWidth, "-webkit-min-content");
     } else {
         setInlineStyleProperty(CSSPropertyWidth, CSSValueAuto);
         setInlineStyleProperty(CSSPropertyHeight, static_cast<double>(m_cue.getCSSSize()),  CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyMinHeight, "-webkit-min-content");
     }
 
     // The 'text-align' property on the (root) List of WebVTT Node Objects must

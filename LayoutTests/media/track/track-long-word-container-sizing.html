@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <script src=../media-file.js></script>
+        <script src=../media-controls.js></script>
+        <script>
+        var requirePixelDump = true;
+
+        function seekToCaption()
+        {
+            video.currentTime = 1;
+        }
+
+        function loaded()
+        {
+            if (window.testRunner)
+            {
+                testRunner.waitUntilDone();
+                findMediaElement();
+                video.src = findMediaFile('video', '../content/test');
+                waitForEvent('canplaythrough', seekToCaption);
+                waitForEvent('seeked', endTest);
+            }
+        }
+
+        setCaptionDisplayMode('AlwaysOn');
+        </script>
+
+        <script src=../video-test.js></script>
+    </head>
+    <body onload="loaded()">
+        <video controls >
+            <track src="captions-webvtt/long-word-small-track-display.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>
