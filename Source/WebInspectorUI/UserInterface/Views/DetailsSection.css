@@ -24,10 +24,33 @@
  */
 
 .details-section {
+    font-size: 10px;
+    background-color: rgb(242, 242, 242);
+    border-bottom: 1px solid rgb(153, 153, 153);
+}
+
+body.mac-platform.legacy .details-section {
     margin-top: -1px;
     margin-bottom: -1px;
 
-    font-size: 10px;
+    border-bottom: none;
+    background-color: transparent;
+}
+
+.details-section .details-section {
+    background-color: rgb(255, 255, 255);
+}
+
+body.mac-platform.legacy .details-section .details-section {
+    background-color: transparent;
+}
+
+.details-section .details-section:last-child {
+    border-bottom: none;
+}
+
+.details-section .details-section:first-child {
+    border-top: 1px solid rgb(153, 153, 153);
 }
 
 .details-section > .header {
@@ -35,13 +58,8 @@
     top: -1px;
     height: 23px;
 
-    border-top: 1px solid rgb(153, 153, 153);
-    border-bottom: 1px solid rgb(153, 153, 153);
-    box-shadow: inset rgba(255, 255, 255, 0.2) 0 1px 0;
-    background-image: linear-gradient(to bottom, rgb(238, 240, 244), rgb(224, 226, 230));
-
+    background-color: rgb(242, 242, 242);
     color: rgb(57, 57, 57);
-    text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
 
     white-space: nowrap;
     overflow: hidden;
@@ -56,13 +74,44 @@
     z-index: 200;
 }
 
-.details-section .details-section > .header {
-    background-image: linear-gradient(to bottom, rgb(250, 250, 250), rgb(240, 240, 240));
+body.mac-platform.legacy .details-section > .header {
+    border-bottom: 1px solid rgb(153, 153, 153);
+    box-shadow: inset rgba(255, 255, 255, 0.2) 0 1px 0;
+    background-color: transparent;
+    background-image: linear-gradient(to bottom, rgb(238, 240, 244), rgb(224, 226, 230));
 
+    border-top: 1px solid rgb(153, 153, 153);
+
+    text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
+}
+
+.details-section .details-section > .header {
     top: 21px;
+    background-color: rgb(255, 255, 255);
+
+    box-shadow: rgba(0, 0, 0, 0.1) 0 1px 0;
 
     /* Ensure these headers are displayed below the parent header but above scrollbars. */
     z-index: 100;
+
+}
+
+body.mac-platform.legacy .details-section .details-section > .header {
+    background-color: transparent;
+    background-image: linear-gradient(to bottom, rgb(250, 250, 250), rgb(240, 240, 240));
+    box-shadow: none;
+}
+
+.details-section .details-section.collaspsed > .header {
+    box-shadow: none;
+}
+
+.details-section.computed-style-properties:not(.collapsed) > .header {
+    background-color: rgb(255, 255, 255);
+}
+
+body.mac-platform.legacy .details-section.computed-style-properties:not(.collapsed) > .header {
+    background-color: transparent;
 }
 
 .details-section > .header::before {
@@ -133,9 +182,22 @@
 
 .details-section > .content > .group {
     display: table-row-group;
+    border-bottom: 1px solid rgb(153, 153, 153);
+}
+
+body.mac-platform.legacy .details-section > .content > .group {
+    border-bottom: none;
+}
+
+.details-section > .content > .group:last-child {
+    border-bottom: none;
 }
 
 .details-section > .content > .group:nth-child(even) {
+    background-color: rgb(233, 233, 233);
+}
+
+body.mac-platform.legacy .details-section > .content > .group:nth-child(even) {
     background-color: rgb(222, 222, 222);
 }
 
@@ -144,10 +206,10 @@
     border-top: 1px solid rgb(153, 153, 153);
 }
 
-.details-section > .content > .group:nth-child(even) > .row:not(.simple):last-child,
-.details-section > .content > .group:last-child > .row:not(.simple):last-child,
-.details-section > .content > .group:nth-child(even) > .row.simple:last-child > *,
-.details-section > .content > .group:last-child > .row.simple:last-child > * {
+body.mac-platform.legacy .details-section > .content > .group:nth-child(even) > .row:not(.simple):last-child,
+body.mac-platform.legacy .details-section > .content > .group:last-child > .row:not(.simple):last-child,
+body.mac-platform.legacy .details-section > .content > .group:nth-child(even) > .row.simple:last-child > *,
+body.mac-platform.legacy .details-section > .content > .group:last-child > .row.simple:last-child > * {
     border-bottom: 1px solid rgb(153, 153, 153);
 }
 

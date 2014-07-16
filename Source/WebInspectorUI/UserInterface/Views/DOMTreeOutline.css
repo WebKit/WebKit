@@ -44,8 +44,12 @@
     left: 3px;
     right: 3px;
 
-    background-color: rgba(56, 121, 217, 0.1);
+    background-color: rgba(0, 128, 252, 0.1);
     border-radius: 5px;
+}
+
+body.mac-platform.legacy .dom-tree-outline li.hovered:not(.selected) .selection {
+    background-color: rgba(56, 121, 217, 0.1);
 }
 
 .dom-tree-outline li .selection {
@@ -65,10 +69,18 @@
 .dom-tree-outline li.elements-drag-over .selection {
     display: block;
     margin-top: -2px;
+    border-top: 2px solid rgb(0, 128, 252);
+}
+
+body.mac-platform.legacy .dom-tree-outline li.elements-drag-over .selection {
     border-top: 2px solid rgb(56, 121, 217);
 }
 
 .dom-tree-outline:focus li.selected .selection {
+    background-color: rgb(0, 128, 252);
+}
+
+body.mac-platform.legacy .dom-tree-outline:focus li.selected .selection {
     background-color: rgb(56, 121, 217);
 }
 

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -1119,6 +1119,9 @@
     <None Include="..\UserInterface\Images\BackArrow.svg">
       <Filter>Images</Filter>
     </None>
+    <None Include="..\UserInterface\Images\BackArrowLegacy.svg">
+      <Filter>Images</Filter>
+    </None>
     <None Include="..\UserInterface\Images\BottomUpTree.svg">
       <Filter>Images</Filter>
     </None>
@@ -1294,6 +1297,9 @@
       <Filter>Images</Filter>
     </None>
     <None Include="..\UserInterface\Images\ForwardArrow.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\ForwardArrowLegacy.svg">
       <Filter>Images</Filter>
     </None>
     <None Include="..\UserInterface\Images\Function.svg">

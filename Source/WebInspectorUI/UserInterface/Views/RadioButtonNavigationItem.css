@@ -32,11 +32,16 @@
 }
 
 .navigation-bar .item.radio.button.text-only.selected {
+    color: rgb(52, 141, 220);
+    font-weight: bold;
+}
+
+body.mac-platform.legacy .navigation-bar .item.radio.button.text-only.selected {
+    color: rgb(0, 0, 0);
+
     background-repeat: no-repeat;
     background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.09) 12%, rgba(0, 0, 0, 0.06) 12%, transparent), linear-gradient(to bottom, rgba(0, 0, 0, 0.45), transparent),
         linear-gradient(to bottom, rgba(0, 0, 0, 0.45), transparent);
     background-size: 100% 100%, 1px 100%, 1px 100%;
     background-position: left top, left top, right top;
-
-    font-weight: bold;
 }

@@ -28,19 +28,32 @@
 
     width: 375px;
 
-    border: 1px solid rgb(163, 163, 163);
     border-radius: 4px;
+    background-color: rgb(252, 252, 252);
 
-    box-shadow: rgba(255, 255, 255, 0.45) 0 1px 0;
+    box-shadow: rgba(0, 0, 0, 0.15) 0 1px 0, inset white 0 1px 0;
 
     margin: 4px 10px;
     overflow: hidden;
 }
 
+body.mac-platform.legacy .toolbar .dashboard-container {
+    border: 1px solid rgb(163, 163, 163);
+    background-color: transparent;
+    box-shadow: rgba(255, 255, 255, 0.45) 0 0px 0;
+}
+
 body.window-inactive .toolbar .dashboard-container {
-    border-color: rgb(196, 196, 196);
+    border: 1px solid rgb(220, 220, 220);
+    background-color: rgb(246, 246, 246);
+    box-shadow: none;
+}
+
+body.mac-platform.legacy.window-inactive .toolbar .dashboard-container {
+    border: 1px solid rgb(196, 196, 196);
     background-image: none;
     background-color: rgb(239, 239, 239);
+    box-shadow: rgba(255, 255, 255, 0.45) 0 1px 0;
 }
 
 .toolbar.collapsed .dashboard-container {
@@ -78,16 +91,29 @@ body.window-inactive .toolbar .dashboard-container {
     left: 0;
     right: 0;
 
+    padding: 0 5px;
+
+    background-color: rgb(252, 252, 252);
+    box-shadow: inset white 0 1px 0;
+
+    -webkit-animation-duration: 0.4s;
+}
+
+body.window-inactive .toolbar .dashboard {
+    background-color: rgb(246, 246, 246);
+    box-shadow: none;
+}
+
+body.mac-platform.legacy .toolbar .dashboard,
+body.mac-platform.legacy.window-inactive .toolbar .dashboard {
     background-image: linear-gradient(to bottom, rgba(0, 128, 255, 0), rgba(0, 128, 255, 0.075)),
         linear-gradient(to right, rgba(0, 0, 0, 0.09), transparent, rgba(0, 0, 0, 0.09)),
         linear-gradient(to bottom, rgb(240, 244, 251), rgb(250, 253, 255));
     background-size: 100% 6px, auto, auto;
     background-position: bottom, center, center;
     background-repeat: no-repeat;
-
-    padding: 0 5px;
-
-    -webkit-animation-duration: 0.4s;
+    background-color: transparent;
+    box-shadow: none;
 }
 
 .toolbar .dashboard.visible {

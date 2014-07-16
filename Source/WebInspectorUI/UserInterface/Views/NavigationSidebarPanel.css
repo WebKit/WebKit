@@ -213,19 +213,34 @@
 .navigation-sidebar-panel-content-tree-outline .item.selected {
     color: white;
 
+    background-color: rgb(185, 184, 185);
+}
+
+body.mac-platform.legacy .navigation-sidebar-panel-content-tree-outline .item.selected {
     border-top: 1px solid rgb(162, 177, 201);
 
+    background-color: transparent;
     background-image: linear-gradient(to bottom, rgb(175, 190, 213), rgb(130, 151, 182));
     background-origin: padding;
     background-clip: padding;
 }
 
 .navigation-sidebar-panel-content-tree-outline:focus .item.selected {
+    background-color: rgb(0, 128, 252);
+}
+
+body.mac-platform.legacy .navigation-sidebar-panel-content-tree-outline:focus .item.selected {
+    background-color: transparent;
     border-top: 1px solid rgb(148, 174, 193);
     background-image: linear-gradient(to bottom, rgb(154, 180, 203), rgb(112, 139, 176));
 }
 
 body.window-inactive .navigation-sidebar-panel-content-tree-outline .item.selected {
+    background-color: rgb(212, 212, 212);
+}
+
+body.mac-platform.legacy.window-inactive .navigation-sidebar-panel-content-tree-outline .item.selected {
+    background-color: transparent;
     border-top: 1px solid rgb(168, 168, 168);
     background-image: linear-gradient(to bottom, rgb(194, 194, 194), rgb(158, 158, 158));
 }

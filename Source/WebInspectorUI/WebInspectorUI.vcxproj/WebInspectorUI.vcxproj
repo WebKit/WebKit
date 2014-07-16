@@ -427,6 +427,7 @@
     <None Include="..\UserInterface\Images\ApplicationCacheManifest%402x.png" />
     <None Include="..\UserInterface\Images\ApplicationCacheManifest.png" />
     <None Include="..\UserInterface\Images\BackArrow.svg" />
+    <None Include="..\UserInterface\Images\BackArrowLegacy.svg" />
     <None Include="..\UserInterface\Images\BottomUpTree.svg" />
     <None Include="..\UserInterface\Images\Breakpoint%402x.png" />
     <None Include="..\UserInterface\Images\Breakpoint.png" />
@@ -486,6 +487,7 @@
     <None Include="..\UserInterface\Images\FolderGeneric%402x.png" />
     <None Include="..\UserInterface\Images\FolderGeneric.png" />
     <None Include="..\UserInterface\Images\ForwardArrow.svg" />
+    <None Include="..\UserInterface\Images\ForwardArrowLegacy.svg" />
     <None Include="..\UserInterface\Images\Function.svg" />
     <None Include="..\UserInterface\Images\GoToArrow.svg" />
     <None Include="..\UserInterface\Images\HierarchicalNavigationItemChevron.svg" />

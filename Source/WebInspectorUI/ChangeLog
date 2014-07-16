@@ -1,3 +1,143 @@
+2014-07-15  Jonathan Wells  <jonowells@apple.com>
+
+        Web Inspector: Modernize UI styles and better sync with platform styles
+        https://bugs.webkit.org/show_bug.cgi?id=134846
+
+        Reviewed by Timothy Hatcher.
+
+        Updated styles to better match the OS UI design. Updated the forward/back button. 
+        Moved several rules to selectors that support older OS designs. Added global platform
+        data to support this patch.
+
+        * UserInterface/Images/BackArrow.svg: Added.
+        * UserInterface/Images/BackArrowLegacy.svg: Copied from Source/WebInspectorUI/UserInterface/Images/BackArrow.svg.
+        * UserInterface/Images/ForwardArrow.svg: Added.
+        * UserInterface/Images/ForwardArrowLegacy.svg: Copied from Source/WebInspectorUI/UserInterface/Images/ForwardArrow.svg.
+
+        * UserInterface/Base/ImageUtilities.js: Updated image version
+        (.generateImage.generateModernImage):
+        (.generateImage.generateLegacyImage):
+        (.generateImage):
+        Updated image generation to support modern look. Updated versioning scheme and version.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        (WebInspector.contentLoaded.WebInspector.Platform.version.toString):
+        (WebInspector.contentLoaded.WebInspector.Platform.toString):
+        (WebInspector.contentLoaded):
+        Added global platform information.
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser):
+        Updated back and forward buttons.
+
+        * UserInterface/Views/FindBanner.js:
+        (WebInspector.FindBanner.prototype._generateButtonsGlyphsIfNeeded):
+        Updated images for the find banner.
+
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+        Added new images.
+
+        * UserInterface/Views/ButtonToolbarItem.css:
+        (.toolbar .item.button > .label):
+        (body.mac-platform.legacy .toolbar .item.button > .label):
+        * UserInterface/Views/CSSStyleDeclarationSection.css:
+        (.style-declaration-section):
+        (body.mac-platform.legacy .style-declaration-section):
+        (body.mac-platform.legacy .style-declaration-section + .style-declaration-section):
+        (.style-declaration-section.last-in-group):
+        (body.mac-platform.legacy .style-declaration-section.last-in-group):
+        (.style-declaration-section.last-in-group + .style-declaration-section):
+        (body.mac-platform.legacy .style-declaration-section.last-in-group + .style-declaration-section):
+        (body.mac-platform.legacy .style-declaration-section.last-in-group + .style-declaration-section:last-child):
+        (.style-declaration-section + .style-declaration-section): Deleted.
+        (.style-declaration-section.last-in-group + .style-declaration-section:last-child): Deleted.
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content > .pseudo-classes):
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.dom-tree-outline li.hovered:not(.selected) .selection):
+        (body.mac-platform.legacy .dom-tree-outline li.hovered:not(.selected) .selection):
+        (.dom-tree-outline li.elements-drag-over .selection):
+        (body.mac-platform.legacy .dom-tree-outline li.elements-drag-over .selection):
+        (.dom-tree-outline:focus li.selected .selection):
+        (body.mac-platform.legacy .dom-tree-outline:focus li.selected .selection):
+        * UserInterface/Views/DashboardContainerView.css:
+        (.toolbar .dashboard-container):
+        (body.mac-platform.legacy .toolbar .dashboard-container):
+        (body.window-inactive .toolbar .dashboard-container):
+        (body.mac-platform.legacy.window-inactive .toolbar .dashboard-container):
+        (.toolbar .dashboard):
+        (body.window-inactive .toolbar .dashboard):
+        (body.mac-platform.legacy.window-inactive .toolbar .dashboard):
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid th):
+        (body.mac-platform.legacy .data-grid th):
+        (.data-grid tr.selected):
+        (body.mac-platform.legacy .data-grid tr.selected):
+        (.data-grid:focus tr.selected):
+        (body.mac-platform.legacy .data-grid:focus tr.selected):
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section):
+        (body.mac-platform.legacy .details-section):
+        (.details-section .details-section):
+        (body.mac-platform.legacy .details-section .details-section):
+        (.details-section .details-section:last-child):
+        (.details-section .details-section:first-child):
+        (.details-section > .header):
+        (body.mac-platform.legacy .details-section > .header):
+        (.details-section .details-section > .header):
+        (body.mac-platform.mountain-lion .details-section .details-section > .header):
+        (.details-section .details-section.collaspsed > .header):
+        (.details-section.computed-style-properties:not(.collapsed) > .header):
+        (body.mac-platform.legacy .details-section.computed-style-properties:not(.collapsed) > .header):
+        (.details-section > .content > .group):
+        (body.mac-platform.legacy .details-section > .content > .group):
+        (.details-section > .content > .group:last-child):
+        (.details-section > .content > .group:nth-child(even)):
+        (body.mac-platform.legacy .details-section > .content > .group:nth-child(even)):
+        (body.mac-platform.legacy .details-section > .content > .group:last-child > .row.simple:last-child > *):
+        (.details-section > .content > .group:last-child > .row.simple:last-child > *): Deleted.
+        * UserInterface/Views/FilterBar.css:
+        (.filter-bar > input[type="search"]):
+        (body.mac-platform.legacy .filter-bar > input[type="search"]):
+        * UserInterface/Views/NavigationSidebarPanel.css:
+        (.navigation-sidebar-panel-content-tree-outline .item.selected):
+        (body.mac-platform.legacy .navigation-sidebar-panel-content-tree-outline .item.selected):
+        (.navigation-sidebar-panel-content-tree-outline:focus .item.selected):
+        (body.mac-platform.legacy .navigation-sidebar-panel-content-tree-outline:focus .item.selected):
+        (body.window-inactive .navigation-sidebar-panel-content-tree-outline .item.selected):
+        (body.mac-platform.legacy.window-inactive .navigation-sidebar-panel-content-tree-outline .item.selected):
+        * UserInterface/Views/RadioButtonNavigationItem.css:
+        (.navigation-bar .item.radio.button.text-only.selected):
+        (body.mac-platform.legacy .navigation-bar .item.radio.button.text-only.selected):
+        * UserInterface/Views/RulesStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style .rules .label + .style-declaration-section):
+        (body.mac-platform.legacy .sidebar > .panel.details.css-style .rules .label + .style-declaration-section):
+        (.sidebar > .panel.details.css-style .rules .new-rule):
+        (body.mac-platform.legacy .sidebar > .panel.details.css-style .rules .new-rule):
+        (.sidebar > .panel.details.css-style .rules .new-rule + .style-declaration-section):
+        (body.mac-platform.legacy .sidebar > .panel.details.css-style .rules .new-rule + .style-declaration-section):
+        * UserInterface/Views/ScopeBar.css:
+        (.scope-bar > li):
+        (body.mac-platform.legacy .scope-bar > li):
+        (.scope-bar > li.selected):
+        (body.mac-platform.legacy .scope-bar > li.selected):
+        * UserInterface/Views/SearchBar.css:
+        (.search-bar > input[type="search"]):
+        (body.mac-platform.legacy .search-bar > input[type="search"]):
+        * UserInterface/Views/Sidebar.css:
+        (.sidebar):
+        (body.mac-platform.legacy .sidebar):
+        (body.mac-platform.legacy.window-inactive .sidebar):
+        (body.mac-platform.legacy .sidebar.right):
+        (body.window-inactive .sidebar): Deleted.
+        (.sidebar.right): Deleted.
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        (.sidebar > .panel.navigation.timeline > .title-bar):
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar):
+        Style updates for new look and feel.
+
 2014-07-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Debugger Pause button does not work

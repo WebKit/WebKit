@@ -75,13 +75,7 @@
     text-align: left;
     vertical-align: middle;
 
-    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), linear-gradient(to bottom, transparent, transparent),
-        linear-gradient(to bottom, white, white 25%, rgb(244, 244, 244) 50%, rgb(236, 236, 236) 50%, rgb(237, 237, 237));
-    background-size: 1px 11px, 0 0, 100% 100%;
-    background-position: left 2px, right 2px, center;
-    background-repeat: no-repeat;
-
-    box-shadow: inset rgba(255, 255, 255, 0.3) 0 -1px 0;
+    border-top: 1px solid rgb(179, 179, 179);
     border-bottom: 1px solid rgb(182, 182, 182);
 
     height: 15px;
@@ -89,6 +83,18 @@
     padding: 0 4px;
     white-space: nowrap;
     overflow: hidden;
+}
+
+body.mac-platform.legacy .data-grid th {
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), linear-gradient(to bottom, transparent, transparent),
+        linear-gradient(to bottom, white, white 25%, rgb(244, 244, 244) 50%, rgb(236, 236, 236) 50%, rgb(237, 237, 237));
+
+    background-size: 1px 11px, 0 0, 100% 100%;
+    background-position: left 2px, right 2px, center;
+    background-repeat: no-repeat;
+
+    box-shadow: inset rgba(255, 255, 255, 0.3) 0 -1px 0;
+    border-bottom: 1px solid rgb(182, 182, 182);
 }
 
 .data-grid th:first-child {
@@ -313,13 +319,21 @@ body.window-inactive .data-grid th.sort-descending {
 }
 
 .data-grid tr.selected {
-    background-color: rgb(212, 212, 212) !important;
+    background-color: rgb(185, 184, 185) !important;
     color: inherit !important;
 }
 
+body.mac-platform.legacy .data-grid tr.selected {
+    background-color: rgb(212, 212, 212) !important;
+}
+
 .data-grid:focus tr.selected {
-    background-color: rgb(56, 121, 217) !important;
+    background-color: rgb(0, 128, 252) !important;
     color: white !important;
+}
+
+body.mac-platform.legacy .data-grid:focus tr.selected {
+    background-color: rgb(56, 121, 217) !important;
 }
 
 .data-grid tr:not(.parent) td.disclosure {

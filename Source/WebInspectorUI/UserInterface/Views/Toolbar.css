@@ -59,8 +59,7 @@ body:not(.mac-platform) .toolbar {
     box-shadow: inset rgb(252, 252, 252) 0 1px 0;
 }
 
-body.docked.mac-platform.mountain-lion .toolbar,
-body.docked.mac-platform.mavericks .toolbar {
+body.docked.mac-platform.legacy .toolbar {
     background-image: linear-gradient(to bottom, rgb(216, 216, 216), rgb(190, 190, 190));
     box-shadow: inset rgba(255, 255, 255, 0.1) 0 1px 0, inset rgba(0, 0, 0, 0.02) 0 -1px 0;
 }

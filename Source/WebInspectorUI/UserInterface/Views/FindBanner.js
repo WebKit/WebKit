@@ -326,8 +326,17 @@ WebInspector.FindBanner.prototype = {
         specifications["normal"] = {fillColor: [81, 81, 81]};
         specifications["normal-active"] = {fillColor: [37, 37, 37]};
 
-        generateColoredImagesForCSS("Images/BackArrow.svg", specifications, 7, 7, "find-banner-previous-arrow-");
-        generateColoredImagesForCSS("Images/ForwardArrow.svg", specifications, 7, 7, "find-banner-next-arrow-");
+        var forwardArrow, backArrow;
+        if (WebInspector.Platform.name === "mac" && WebInspector.Platform.version.release < 10) {
+            forwardArrow = "Images/ForwardArrowLegacy.svg";
+            backArrow = "Images/BackArrowLegacy.svg";
+        } else {
+            forwardArrow = "Images/ForwardArrow.svg";
+            backArrow = "Images/BackArrow.svg";
+        }
+
+        generateColoredImagesForCSS(backArrow, specifications, 7, 7, "find-banner-previous-arrow-");
+        generateColoredImagesForCSS(forwardArrow, specifications, 7, 7, "find-banner-next-arrow-");
     }
 };
 

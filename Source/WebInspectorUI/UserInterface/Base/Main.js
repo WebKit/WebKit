@@ -167,7 +167,7 @@ WebInspector.loaded = function()
     };
 
     this._windowKeydownListeners = [];
-}
+};
 
 WebInspector.contentLoaded = function()
 {
@@ -193,15 +193,49 @@ WebInspector.contentLoaded = function()
         document.body.classList.add("nightly-build");
 
     // Add platform style classes so the UI can be tweaked per-platform.
-    document.body.classList.add(InspectorFrontendHost.platform() + "-platform");
+    WebInspector.Platform = {
+        name: InspectorFrontendHost.platform(),
+        codeName: "",
+        version: {
+            base: 0,
+            release: 0,
+            toString: function()
+            {
+                return this.base + "." + this.version;
+            }
+        },
+        toString: function()
+        {
+            return this.name;
+        }
+    };
 
-    if (InspectorFrontendHost.platform() === "mac") {
-        var versionMatch = / Mac OS X (\d+)_(\d+)/.exec(navigator.appVersion);
-        if (versionMatch && versionMatch[1] == 10 && versionMatch[2] == 8)
-            document.body.classList.add("mountain-lion");
-        else if (versionMatch && versionMatch[1] == 10 && versionMatch[2] == 9)
-            document.body.classList.add("mavericks");
+    var isLegacyMacOS = false;
+    var osVersionMatch = / Mac OS X (\d+)_(\d+)/.exec(navigator.appVersion);
+    if (osVersionMatch && osVersionMatch[1] === "10") {
+        WebInspector.Platform.version.base = 10;
+        switch(osVersionMatch[2]) {
+            case "10":
+                WebInspector.Platform.codeName = "yosemite";
+                WebInspector.Platform.version.release = 10;
+                break;
+            case "9":
+                WebInspector.Platform.codeName = "mavericks";
+                WebInspector.Platform.version.release = 9;
+                isLegacyMacOS = true;
+                break;
+            case "8":
+                WebInspector.Platform.codeName = "mountain-lion";
+                WebInspector.Platform.version.release = 8;
+                isLegacyMacOS = true;
+        }
     }
+
+    document.body.classList.add(WebInspector.Platform + "-platform");
+    if (WebInspector.Platform.codeName)
+        document.body.classList.add(WebInspector.Platform.codeName);
+    if (isLegacyMacOS)
+        document.body.classList.add("legacy");
 
     this.debuggableType = InspectorFrontendHost.debuggableType() === "web" ? WebInspector.DebuggableType.Web : WebInspector.DebuggableType.JavaScript;
     document.body.classList.add(this.debuggableType);

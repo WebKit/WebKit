@@ -59,6 +59,10 @@
 
 .toolbar .item.button > .label {
     text-align: center;
+    color: rgb(80, 80, 80);
+}
+
+body.mac-platform.legacy .toolbar .item.button > .label {
     text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
     color: rgb(60, 60, 60);
 }

@@ -43,7 +43,7 @@
     -webkit-appearance: none;
 
     border: 1px solid rgba(0, 0, 0, 0.35);
-    border-radius: 10px;
+    border-radius: 3px;
     background-color: rgba(255, 255, 255, 0.2);
     box-shadow: inset rgba(0, 0, 0, 0.1) 0 1px 0;
     background-clip: padding-box;
@@ -51,6 +51,10 @@
     height: 19px;
 
     transition: background-color 200ms ease-in-out;
+}
+
+body.mac-platform.legacy .filter-bar > input[type="search"] {
+    border-radius: 10px;
 }
 
 .filter-bar > input[type="search"]::-webkit-input-placeholder {
