@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 #import "APIFormClient.h"
+#import "CompletionHandlerCallChecker.h"
 #import "FindClient.h"
 #import "LegacySessionStateCoding.h"
 #import "NavigationState.h"
@@ -1976,7 +1977,9 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
                 }
             }
 
-            [formDelegate _webView:m_webView willSubmitFormValues:valueMap.get() userObject:userObject submissionHandler:^{
+            RefPtr<WebKit::CompletionHandlerCallChecker> checker = WebKit::CompletionHandlerCallChecker::create(formDelegate.get(), @selector(_webView:willSubmitFormValues:userObject:submissionHandler:));
+            [formDelegate _webView:m_webView willSubmitFormValues:valueMap.get() userObject:userObject submissionHandler:[listener, checker] {
+                checker->didCallCompletionHandler();
                 listener->continueSubmission();
             }];
             return true;
