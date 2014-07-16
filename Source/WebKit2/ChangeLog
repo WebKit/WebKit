@@ -1,3 +1,12 @@
+2014-07-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix r171124
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _scrollToContentOffset:]):
+        On landing, I changed the min/max branches to shrunkTo/expandedTo, but the return value
+        of those was ignored.
+
 2014-07-15  Dan Bernstein  <mitz@apple.com>
 
         WKWebView’s FormClient::willSubmitForm should use CompletionHandlerCallChecker

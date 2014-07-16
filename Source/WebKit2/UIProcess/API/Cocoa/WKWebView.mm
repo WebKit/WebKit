@@ -997,8 +997,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     float maximumHorizontalOffset = documentSizeInSelfCoordinates.width() - unobscuredRectSize.width();
     float maximumVerticalOffset = documentSizeInSelfCoordinates.height() - unobscuredRectSize.height();
-    contentOffsetInDocument.shrunkTo(WebCore::FloatPoint(maximumHorizontalOffset, maximumVerticalOffset));
-    contentOffsetInDocument.expandedTo(WebCore::FloatPoint(0, 0));
+    contentOffsetInDocument = contentOffsetInDocument.shrunkTo(WebCore::FloatPoint(maximumHorizontalOffset, maximumVerticalOffset));
+    contentOffsetInDocument = contentOffsetInDocument.expandedTo(WebCore::FloatPoint(0, 0));
 
     [_scrollView _stopScrollingAndZoomingAnimations];
 
