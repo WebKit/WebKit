@@ -464,6 +464,15 @@
             "heycam"
          ]
       },
+      "Carlos Alberto Lopez Perez" : {
+         "emails" : [
+            "clopez@igalia.com"
+         ],
+         "expertise" : "The WebKitGTK+ port, Tools, Build/test infrastructure",
+         "nicks" : [
+            "clopez"
+         ]
+      },
       "Carol Szabo" : {
          "emails" : [
             "carol@webkit.org",
