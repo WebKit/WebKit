@@ -221,7 +221,7 @@ class GlobalVariablesTest(unittest.TestCase):
                       "readability/naming")
         assertNoCheck("Tools/DumpRenderTree/gtk/DumpRenderTree.cpp",
                       "readability/null")
-        assertNoCheck("Source/WebKit/efl/ewk/ewk_view.h",
+        assertNoCheck("Source/WebKit2/UIProcess/API/efl/ewk_view.h",
                       "readability/naming")
         assertNoCheck("Source/WebCore/css/CSSParser.cpp",
                       "readability/naming")
