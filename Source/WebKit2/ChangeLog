@@ -1,3 +1,14 @@
+2014-07-16  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r170653): Web Content service’s Info.plist has wrong format
+        https://bugs.webkit.org/show_bug.cgi?id=134973
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKit2.xcodeproj/project.pbxproj: Updated the Add CFBundle Localization Info.plist Key
+        script build phases to convert Info.plist back to binary format if the
+        PLIST_FILE_OUTPUT_FORMAT build setting requires it.
+
 2014-07-15  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix r171124
