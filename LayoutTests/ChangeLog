@@ -1,5 +1,25 @@
 2014-07-16  Jinwoo Song  <jinwoo7.song@samsung.com>
 
+        [EFL] Unreviewed EFL gardening.
+
+        Rebaseline tests after r168575, r170138 and r170418.
+
+        * platform/efl/fast/dynamic/text-combine-expected.png: Rebaseline after r170418.
+        * platform/efl/fast/dynamic/text-combine-expected.txt: Rebaseline after r170418.
+        * platform/efl/fast/forms/control-restrict-line-height-expected.png: Rebaseline after r168575.
+        * platform/efl/fast/forms/control-restrict-line-height-expected.txt: Rebaseline after r168575.
+        * platform/efl/fast/forms/placeholder-position-expected.png: Rebaseline after r168575.
+        * platform/efl/fast/forms/placeholder-position-expected.txt: Rebaseline after r168575.
+        * platform/efl/fast/repaint/japanese-rl-selection-clear-expected.png: Rebaseline after r170418.
+        * platform/efl/fast/repaint/japanese-rl-selection-clear-expected.txt: Added. Rebaseline after r170418.
+        * platform/efl/fast/repaint/japanese-rl-selection-repaint-expected.png: Rebaseline after r170418.
+        * platform/efl/fast/repaint/japanese-rl-selection-repaint-expected.txt: Added. Rebaseline after r170418.
+        * platform/efl/fast/text/international/wrap-CJK-001-expected.txt: Added. Rebaseline after r170418.
+        * platform/efl/fast/writing-mode/Kusa-Makura-background-canvas-expected.png: Rebaseline after r170418.
+        * platform/efl/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt: Rebaseline after r170418.
+
+2014-07-16  Jinwoo Song  <jinwoo7.song@samsung.com>
+
         [EFL] Unreviewed EFL gardening after r170138.
 
         * platform/efl/accessibility/image-map2-expected.txt: Updated.

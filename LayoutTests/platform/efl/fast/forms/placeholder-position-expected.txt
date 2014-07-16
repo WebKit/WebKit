@@ -29,24 +29,24 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (205,265) size 0x0
       RenderTextControl {INPUT} at (5,270) size 178x29 [bgcolor=#FFFFFF] [border: (5px solid #000000)]
       RenderBR {BR} at (188,290) size 0x0
-      RenderTextControl {INPUT} at (2,306) size 192x28 [bgcolor=#FFFFFF]
-      RenderText {#text} at (196,312) size 4x17
-        text run at (196,312) width 4: " "
-      RenderTextControl {INPUT} at (202,306) size 192x28 [bgcolor=#FFFFFF]
-      RenderText {#text} at (396,312) size 4x17
-        text run at (396,312) width 4: " "
-      RenderBR {BR} at (400,326) size 0x0
-      RenderTextControl {INPUT} at (2,338) size 192x28 [bgcolor=#FFFFFF]
-      RenderText {#text} at (196,344) size 4x17
-        text run at (196,344) width 4: " "
-      RenderTextControl {INPUT} at (202,338) size 192x28 [bgcolor=#FFFFFF]
-      RenderText {#text} at (396,344) size 4x17
-        text run at (396,344) width 4: " "
-      RenderTextControl {INPUT} at (402,338) size 192x28 [bgcolor=#FFFFFF]
-      RenderText {#text} at (596,344) size 4x17
-        text run at (596,344) width 4: " "
-      RenderBR {BR} at (600,358) size 0x0
-      RenderBR {BR} at (196,390) size 0x0
+      RenderTextControl {INPUT} at (2,306) size 192x35 [bgcolor=#FFFFFF]
+      RenderText {#text} at (196,316) size 4x17
+        text run at (196,316) width 4: " "
+      RenderTextControl {INPUT} at (202,306) size 192x35 [bgcolor=#FFFFFF]
+      RenderText {#text} at (396,316) size 4x17
+        text run at (396,316) width 4: " "
+      RenderBR {BR} at (400,330) size 0x0
+      RenderTextControl {INPUT} at (2,345) size 192x28 [bgcolor=#FFFFFF]
+      RenderText {#text} at (196,351) size 4x17
+        text run at (196,351) width 4: " "
+      RenderTextControl {INPUT} at (202,345) size 192x28 [bgcolor=#FFFFFF]
+      RenderText {#text} at (396,351) size 4x17
+        text run at (396,351) width 4: " "
+      RenderTextControl {INPUT} at (402,345) size 192x28 [bgcolor=#FFFFFF]
+      RenderText {#text} at (596,351) size 4x17
+        text run at (596,351) width 4: " "
+      RenderBR {BR} at (600,365) size 0x0
+      RenderBR {BR} at (196,397) size 0x0
 layer at (14,16) size 185x18
   RenderBlock {DIV} at (4,6) size 185x18 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 84x17
@@ -95,37 +95,37 @@ layer at (19,284) size 166x17
       text run at (0,0) width 75: "placeholder"
 layer at (19,284) size 166x17
   RenderBlock {DIV} at (6,6) size 166x17
-layer at (14,320) size 185x18
-  RenderBlock {DIV} at (4,6) size 185x18
-    RenderText {#text} at (0,0) size 42x17
-      text run at (0,0) width 42: "Value"
-layer at (214,320) size 185x18
-  RenderBlock {DIV} at (4,6) size 185x18 [color=#A9A9A9]
-    RenderText {#text} at (0,0) size 84x17
-      text run at (0,0) width 84: "placeholder"
-layer at (214,320) size 185x18
-  RenderBlock {DIV} at (4,6) size 185x18
-layer at (14,352) size 185x18
+layer at (14,320) size 185x25
+  RenderBlock {DIV} at (4,6) size 185x25
+    RenderText {#text} at (0,4) size 42x17
+      text run at (0,4) width 42: "Value"
+layer at (214,320) size 185x25
+  RenderBlock {DIV} at (4,6) size 185x25 [color=#A9A9A9]
+    RenderText {#text} at (0,4) size 84x17
+      text run at (0,4) width 84: "placeholder"
+layer at (214,320) size 185x25
+  RenderBlock {DIV} at (4,6) size 185x25
+layer at (14,359) size 185x18
   RenderBlock {DIV} at (4,6) size 185x18
     RenderText {#text} at (71,0) size 43x17
       text run at (71,0) width 43: "Value"
-layer at (214,352) size 185x18
+layer at (214,359) size 185x18
   RenderBlock {DIV} at (4,6) size 185x18 [color=#A9A9A9]
     RenderText {#text} at (50,0) size 85x17
       text run at (50,0) width 85: "placeholder"
-layer at (214,352) size 185x18
+layer at (214,359) size 185x18
   RenderBlock {DIV} at (4,6) size 185x18
-layer at (414,352) size 185x18
+layer at (414,359) size 185x18
   RenderBlock {DIV} at (4,6) size 185x18 [color=#A9A9A9]
     RenderText {#text} at (50,0) size 85x17
       text run at (50,0) width 85: "placeholder"
-layer at (414,352) size 185x18
+layer at (414,359) size 185x18
   RenderBlock {DIV} at (4,6) size 185x18
-layer at (10,378) size 192x28
-  RenderTextControl {INPUT} at (2,370) size 192x28 [bgcolor=#FFFFFF]
-layer at (14,384) size 185x18
+layer at (10,385) size 192x28
+  RenderTextControl {INPUT} at (2,377) size 192x28 [bgcolor=#FFFFFF]
+layer at (14,391) size 185x18
   RenderBlock {DIV} at (4,6) size 185x18 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 84x17
       text run at (0,0) width 84: "placeholder"
-layer at (14,384) size 185x18
+layer at (14,391) size 185x18
   RenderBlock {DIV} at (4,6) size 185x18
