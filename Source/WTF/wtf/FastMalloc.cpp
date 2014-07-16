@@ -111,11 +111,7 @@
 #define ENABLE_TCMALLOC_HARDENING 1
 
 // Use a background thread to periodically scavenge memory to release back to the system
-#if PLATFORM(IOS)
-#define USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY 0
-#else
 #define USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY 1
-#endif
 
 #ifndef NDEBUG
 namespace WTF {

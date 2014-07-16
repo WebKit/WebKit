@@ -1,3 +1,16 @@
+2014-07-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r171107.
+        https://bugs.webkit.org/show_bug.cgi?id=134959
+
+        This was not the problem! (Requested by kling on #webkit).
+
+        Reverted changeset:
+
+        "Revert: Run the FastMalloc scavenger thread on iOS as well."
+        https://bugs.webkit.org/show_bug.cgi?id=134927
+        http://trac.webkit.org/changeset/171107
+
 2014-07-15  Andreas Kling  <akling@apple.com>
 
         Revert: Run the FastMalloc scavenger thread on iOS as well.
