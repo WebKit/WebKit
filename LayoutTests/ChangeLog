@@ -1,3 +1,10 @@
+2014-07-16  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Unreviewed EFL gardening after r170138.
+
+        * platform/efl/accessibility/image-map2-expected.txt: Updated.
+        * platform/efl/inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt: Updated.
+
 2014-07-15  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r155957): Invalid cast in WebCore::RenderNamedFlowThread::getRanges
