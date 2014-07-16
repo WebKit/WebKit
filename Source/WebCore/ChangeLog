@@ -1,3 +1,21 @@
+2014-07-16  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] replace AVPlayerItem on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=134983
+
+        Reviewed by Jer Noble.
+
+        No new tests, this fixes a problem with a thread configuration not present in the
+        test environment.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setAVPlayerItem): New, when called off of 
+            the main thread, dispatch to the main thread before setting AVPlayerItem.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer): Call setAVPlayerItem.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldBufferData): Ditto.
+
 2014-07-16  Jer Noble  <jer.noble@apple.com>
 
         [MSE] http/tests/media/media-source/mediasource-buffered.html is flakey

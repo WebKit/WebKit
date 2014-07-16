@@ -205,6 +205,8 @@ private:
     virtual void syncTextTrackBounds() override;
 #endif
 
+    void setAVPlayerItem(AVPlayerItem *);
+
     void createImageGenerator();
     void destroyImageGenerator();
     RetainPtr<CGImageRef> createImageForTimeInRect(float, const IntRect&);

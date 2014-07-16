@@ -106,6 +106,7 @@
 @property (nonatomic, readonly) NSURL *resolvedURL;
 @end
 
+typedef AVPlayer AVPlayerType;
 typedef AVPlayerItem AVPlayerItemType;
 typedef AVMetadataItem AVMetadataItemType;
 
@@ -763,6 +764,23 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
     setDelayCallbacks(false);
 }
 
+void MediaPlayerPrivateAVFoundationObjC::setAVPlayerItem(AVPlayerItemType *item)
+{
+    if (!m_avPlayer)
+        return;
+
+    if (pthread_main_np()) {
+        [m_avPlayer replaceCurrentItemWithPlayerItem:item];
+        return;
+    }
+
+    RetainPtr<AVPlayerType> strongPlayer = m_avPlayer.get();
+    RetainPtr<AVPlayerItemType> strongItem = item;
+    dispatch_async(dispatch_get_main_queue(), [strongPlayer, strongItem] {
+        [strongPlayer replaceCurrentItemWithPlayerItem:strongItem.get()];
+    });
+}
+
 void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 {
     if (m_avPlayer)
@@ -791,7 +809,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
         createAVPlayerLayer();
 
     if (m_avPlayerItem)
-        [m_avPlayer.get() replaceCurrentItemWithPlayerItem:m_avPlayerItem.get()];
+        setAVPlayerItem(m_avPlayerItem.get());
 
     setDelayCallbacks(false);
 }
@@ -815,7 +833,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
         [m_avPlayerItem.get() addObserver:m_objcObserver.get() forKeyPath:keyName options:options context:(void *)MediaPlayerAVFoundationObservationContextPlayerItem];
 
     if (m_avPlayer)
-        [m_avPlayer.get() replaceCurrentItemWithPlayerItem:m_avPlayerItem.get()];
+        setAVPlayerItem(m_avPlayerItem.get());
 
 #if PLATFORM(IOS)
     AtomicString value;
@@ -2398,10 +2416,7 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldBufferData(bool shouldBuffer)
     if (!m_avPlayer)
         return;
 
-    if (m_shouldBufferData)
-        [m_avPlayer.get() replaceCurrentItemWithPlayerItem:m_avPlayerItem.get()];
-    else
-        [m_avPlayer.get() replaceCurrentItemWithPlayerItem:nil];
+    setAVPlayerItem(shouldBuffer ? m_avPlayerItem.get() : nil);
 }
 
 #if ENABLE(DATACUE_VALUE)
