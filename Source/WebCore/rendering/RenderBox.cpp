@@ -2110,6 +2110,18 @@ LayoutRect RenderBox::clippedOverflowRectForRepaint(const RenderLayerModelObject
     return r;
 }
 
+static inline bool shouldAppyContainersClipAndOffset(const RenderLayerModelObject* repaintContainer, RenderBox* containerBox)
+{
+#if PLATFORM(IOS)
+    if (!repaintContainer || repaintContainer != containerBox)
+        return true;
+
+    return !containerBox->hasLayer() || !containerBox->layer()->usesCompositedScrolling();
+#else
+    return true;
+#endif
+}
+
 void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect& rect, bool fixed) const
 {
     // The rect we compute at each step is shifted by our x/y offset in the parent container's coordinate space.
@@ -2200,15 +2212,11 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
     rect.setLocation(topLeft);
     if (o->hasOverflowClip()) {
         RenderBox* containerBox = toRenderBox(o);
-#if PLATFORM(IOS)
-        if (!containerBox->layer() || !containerBox->layer()->usesCompositedScrolling()) {
-#endif
-        containerBox->applyCachedClipAndScrollOffsetForRepaint(rect);
-        if (rect.isEmpty())
-            return;
-#if PLATFORM(IOS)
-        } 
-#endif
+        if (shouldAppyContainersClipAndOffset(repaintContainer, containerBox)) {
+            containerBox->applyCachedClipAndScrollOffsetForRepaint(rect);
+            if (rect.isEmpty())
+                return;
+        }
     }
 
     if (containerSkipped) {

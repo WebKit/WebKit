@@ -1,5 +1,31 @@
 2014-07-15  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS] Fix touches inside accelerated overflow:scroll
+        https://bugs.webkit.org/show_bug.cgi?id=134961
+        <rdar://problem/16088789>
+
+        Reviewed by Benjamin Poulain.
+
+        When individual elements inside an overflow:scroll with -webkit-overflow-scrolling: touch
+        had touch event listeners, we would fail to take the scroll offset into account when
+        building the touch event region, causing touches on those elements to fail after scrolling.
+        
+        Touch event region building uses RenderObject::absoluteClippedOverflowRect(), and that
+        code path tries to fix up repaint rects to work correctly in composited overflow:scroll.
+        However, that broke the touch region computation.
+        
+        Fix by only ignoring the scroll offset for calls to computeRectForRepaint() which
+        have a non-null repaintContainer (which indicates that we're doing a repaint in the
+        compositing layer), and for which the repaintContainer is the containing block
+        which is using composited scrolling. This restores correct behavior to the event region
+        code which always calls this with a null repaintContainer.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::shouldAppyContainersClipAndOffset):
+        (WebCore::RenderBox::computeRectForRepaint):
+
+2014-07-15  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS] Fix issues drawing subsampled image elements and CSS images
         https://bugs.webkit.org/show_bug.cgi?id=134944
         <rdar://problem/17634095>
