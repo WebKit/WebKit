@@ -1,3 +1,13 @@
+2014-07-15  Alex Christensen  <achristensen@webkit.org>
+
+        Make css jit benchmark work on IE11.
+        https://bugs.webkit.org/show_bug.cgi?id=134956
+
+        Reviewed by Benjamin Poulain.
+
+        * blog-files/css-jit-introduction/html5-single-page-microbenchmark.html:
+        Remove an iframe which caused IE11 to try to open content as a URL.
+
 2014-07-08  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Update policy for Inactive Committer and Reviewer status
