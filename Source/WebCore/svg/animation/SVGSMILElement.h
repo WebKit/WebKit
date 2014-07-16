@@ -52,7 +52,7 @@ public:
     virtual bool hasValidAttributeName();
     virtual void animationAttributeChanged() = 0;
 
-    SMILTimeContainer* timeContainer() const { return m_timeContainer.get(); }
+    SMILTimeContainer* timeContainer() { return m_timeContainer.get(); }
 
     SVGElement* targetElement() const { return m_targetElement; }
     const QualifiedName& attributeName() const { return m_attributeName; }

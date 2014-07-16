@@ -1,3 +1,17 @@
+2014-07-16  Jeongeun Kim  <je_julie.kim@samsung.com>
+
+        mutable pointers from const methods, timeContainer().
+        https://bugs.webkit.org/show_bug.cgi?id=134757
+
+        Reviewed by Alexey Proskuryakov.
+
+        Avoid return mutable pointers from const methods.
+        No new tests, no behavior change.
+
+        * svg/SVGSVGElement.h:
+        * svg/animation/SVGSMILElement.h:
+        (WebCore::SVGSMILElement::timeContainer):
+
 2014-07-15  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS: Generalize CSS First Letter treatment

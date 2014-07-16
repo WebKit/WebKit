@@ -83,7 +83,7 @@ public:
     // Only used from the bindings.
     void updateCurrentTranslate();
 
-    SMILTimeContainer* timeContainer() const { return m_timeContainer.get(); }
+    SMILTimeContainer* timeContainer() { return m_timeContainer.get(); }
     
     void pauseAnimations();
     void unpauseAnimations();
