@@ -1,3 +1,14 @@
+2014-07-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Adding myself to contributors.json breaks a webkitpy test
+        https://bugs.webkit.org/show_bug.cgi?id=134958
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        (IRCCommandTest.test_whois): Be more specific and include also the
+        first name when asking for the whois of Xan in the unit test.
+
 2014-07-14  Daniel Bates  <dabates@apple.com>
 
         check-webkit-style should apply C++ rules to Objective-C++ files

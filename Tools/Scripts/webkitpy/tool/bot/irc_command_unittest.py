@@ -52,8 +52,8 @@ class IRCCommandTest(unittest.TestCase):
                           whois.execute("tom", ["TonyG@Chromium.org"], None, None))
         self.assertEqual('tom: rniwa is "Ryosuke Niwa" <rniwa@webkit.org> (:rniwa) (r). Why do you ask?',
                           whois.execute("tom", ["rniwa"], None, None))
-        self.assertEqual('tom: lopez is "Xan Lopez" <xan.lopez@gmail.com> (:xan) (r). Why do you ask?',
-                          whois.execute("tom", ["lopez"], None, None))
+        self.assertEqual('tom: Xan Lopez is "Xan Lopez" <xan.lopez@gmail.com> (:xan) (r). Why do you ask?',
+                          whois.execute("tom", ["Xan", "Lopez"], None, None))
         self.assertEqual(u'tom: Osztrogon\u00e1c is "Csaba Osztrogon\u00e1c" <ossy@webkit.org> (:ossy) (r). Why do you ask?',
                           whois.execute("tom", [u'Osztrogon\u00e1c'], None, None))
         self.assertEqual('tom: "Vicki Murley" <vicki@apple.com> hasn\'t told me their nick. Boo hoo :-(',
