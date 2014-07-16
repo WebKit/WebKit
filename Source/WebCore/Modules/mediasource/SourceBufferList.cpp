@@ -70,6 +70,24 @@ void SourceBufferList::clear()
     scheduleEvent(eventNames().removesourcebufferEvent);
 }
 
+void SourceBufferList::swap(Vector<RefPtr<SourceBuffer>>& other)
+{
+    int changeInSize = other.size() - m_list.size();
+    int addedEntries = 0;
+    for (auto& sourceBuffer : other) {
+        if (!m_list.contains(sourceBuffer))
+            ++addedEntries;
+    }
+    int removedEntries = addedEntries - changeInSize;
+
+    m_list.swap(other);
+
+    if (addedEntries)
+        scheduleEvent(eventNames().addsourcebufferEvent);
+    if (removedEntries)
+        scheduleEvent(eventNames().removesourcebufferEvent);
+}
+
 void SourceBufferList::scheduleEvent(const AtomicString& eventName)
 {
     RefPtr<Event> event = Event::create(eventName, false, false);

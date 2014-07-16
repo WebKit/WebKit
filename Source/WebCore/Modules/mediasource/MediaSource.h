@@ -123,6 +123,8 @@ protected:
     void scheduleEvent(const AtomicString& eventName);
     GenericEventQueue& asyncEventQueue() { return m_asyncEventQueue; }
 
+    void regenerateActiveSourceBuffers();
+
     static URLRegistry* s_registry;
 
     RefPtr<MediaSourcePrivate> m_private;

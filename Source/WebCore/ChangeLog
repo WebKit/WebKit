@@ -1,3 +1,25 @@
+2014-07-16  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] http/tests/media/media-source/mediasource-buffered.html is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=134949
+
+        Reviewed by Eric Carlson.
+
+        Depending on which SourceBuffer is successfully parsed first, the order of activeSourceBuffers
+        may change from run to run, breaking the http/tests/media/media-source/mediasource-buffered.html
+        test. Make the order of activeSourceBuffers the same as (a subset of) sourceBuffers, by replacing
+        calls to activeSourceBuffers->add() and with a new call to regenerateActiveSourceBuffers(), which
+        swaps the contents of the SourceBufferList with a new, ordered Vector.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::addSourceBuffer):
+        (WebCore::MediaSource::sourceBufferDidChangeAcitveState):
+        (WebCore::MediaSource::regenerateActiveSourceBuffers):
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/SourceBufferList.cpp:
+        (WebCore::SourceBufferList::swap):
+        * Modules/mediasource/SourceBufferList.h:
+
 2014-07-16  Mike West  <mkwst@chromium.org>
 
         CSP: Drop 'script-nonce' directive.

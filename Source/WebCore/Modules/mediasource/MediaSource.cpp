@@ -540,9 +540,8 @@ SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec
     RefPtr<SourceBuffer> buffer = SourceBuffer::create(sourceBufferPrivate.releaseNonNull(), this);
     // 6. Add the new object to sourceBuffers and fire a addsourcebuffer on that object.
     m_sourceBuffers->add(buffer);
+    regenerateActiveSourceBuffers();
 
-    if (buffer->active())
-        m_activeSourceBuffers->add(buffer);
     // 7. Return the new object to the caller.
     return buffer.get();
 }
@@ -745,12 +744,9 @@ void MediaSource::close()
     setReadyState(closedKeyword());
 }
 
-void MediaSource::sourceBufferDidChangeAcitveState(SourceBuffer* sourceBuffer, bool active)
+void MediaSource::sourceBufferDidChangeAcitveState(SourceBuffer*, bool)
 {
-    if (active && !m_activeSourceBuffers->contains(sourceBuffer))
-        m_activeSourceBuffers->add(sourceBuffer);
-    else if (!active && m_activeSourceBuffers->contains(sourceBuffer))
-        m_activeSourceBuffers->remove(sourceBuffer);
+    regenerateActiveSourceBuffers();
 }
 
 bool MediaSource::attachToElement(HTMLMediaElement* element)
@@ -867,6 +863,16 @@ EventTargetInterface MediaSource::eventTargetInterface() const
 URLRegistry& MediaSource::registry() const
 {
     return MediaSourceRegistry::registry();
+}
+
+void MediaSource::regenerateActiveSourceBuffers()
+{
+    Vector<RefPtr<SourceBuffer>> newList;
+    for (auto& sourceBuffer : *m_sourceBuffers) {
+        if (sourceBuffer->active())
+            newList.append(sourceBuffer);
+    }
+    m_activeSourceBuffers->swap(newList);
 }
 
 }
