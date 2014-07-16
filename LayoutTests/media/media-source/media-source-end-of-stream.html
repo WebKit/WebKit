@@ -95,7 +95,7 @@
 
     function updateEnd5() {
         waitForEventOnce('suspend', videoSuspend5);
-        run('source.endOfStream("")');
+        run('source.endOfStream()');
     }
 
     function videoSuspend5() {

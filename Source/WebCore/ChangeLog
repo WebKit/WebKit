@@ -1,3 +1,17 @@
+2014-07-16  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] REGRESSION(r171033): ASSERT in WebCore::MediaSource::onReadyStateChange()
+        https://bugs.webkit.org/show_bug.cgi?id=134941
+
+        Reviewed by Eric Carlson.
+
+        Only do our modified-order change of the readyState if the error parameter is empty,
+        as that's the only case where a duration change will cause an inadvertant readyState
+        change.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::streamEndedWithError):
+
 2014-07-16  Alexey Proskuryakov  <ap@apple.com>
 
         Remove svn:executable property erroneously added in <http://trac.webkit.org/changeset/171144> somehow.

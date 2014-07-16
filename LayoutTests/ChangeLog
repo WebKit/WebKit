@@ -1,3 +1,16 @@
+2014-07-16  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] REGRESSION(r171033): ASSERT in WebCore::MediaSource::onReadyStateChange()
+        https://bugs.webkit.org/show_bug.cgi?id=134941
+
+        Reviewed by Eric Carlson.
+
+        Update media/media-source/media-source-end-of-stream.html to use an empty parameter, rather
+        than an empty string parameter, to endOfStream().
+
+        * media/media-source/media-source-end-of-stream-expected.txt:
+        * media/media-source/media-source-end-of-stream.html:
+
 2014-07-16  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Unreviewed EFL gardening.

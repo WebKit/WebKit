@@ -453,7 +453,16 @@ void MediaSource::streamEndedWithError(const AtomicString& error, ExceptionCode&
 
         // 2. Notify the media element that it now has all of the media data.
         m_private->markEndOfStream(MediaSourcePrivate::EosNoError);
-    } else if (error == network) {
+    }
+
+    // NOTE: Do steps 1 & 2 after step 3 (with an empty error) to avoid the MediaSource's readyState being re-opened by a
+    // remove() operation resulting from a duration change.
+    // FIXME: Re-number or update this section once <https://www.w3.org/Bugs/Public/show_bug.cgi?id=26316> is resolved.
+    // 1. Change the readyState attribute value to "ended".
+    // 2. Queue a task to fire a simple event named sourceended at the MediaSource.
+    setReadyState(endedKeyword());
+
+    if (error == network) {
         // ↳ If error is set to "network"
         ASSERT(m_mediaElement);
         if (m_mediaElement->readyState() == HTMLMediaElement::HAVE_NOTHING) {
@@ -484,18 +493,11 @@ void MediaSource::streamEndedWithError(const AtomicString& error, ExceptionCode&
             //    NOTE: This step is handled by HTMLMediaElement::mediaLoadingFailedFatally().
             m_mediaElement->mediaLoadingFailedFatally(MediaPlayer::DecodeError);
         }
-    } else {
+    } else if (!error.isEmpty()) {
         // ↳ Otherwise
         //   Throw an INVALID_ACCESS_ERR exception.
         ec = INVALID_ACCESS_ERR;
     }
-
-    // NOTE: Do steps 1 & 2 after step 3 to avoid the MediaSource's readyState being re-opened by a
-    // remove() operation resulting from a duration change.
-    // FIXME: Re-number or update this section once <https://www.w3.org/Bugs/Public/show_bug.cgi?id=26316> is resolved.
-    // 1. Change the readyState attribute value to "ended".
-    // 2. Queue a task to fire a simple event named sourceended at the MediaSource.
-    setReadyState(endedKeyword());
 }
 
 SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec)
