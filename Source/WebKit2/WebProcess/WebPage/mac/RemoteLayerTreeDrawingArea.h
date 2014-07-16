@@ -54,7 +54,7 @@ public:
     RemoteLayerTreeDrawingArea(WebPage&, const WebPageCreationParameters&);
     virtual ~RemoteLayerTreeDrawingArea();
 
-    uint64_t currentTransactionID() const { return m_currentTransactionID; }
+    uint64_t nextTransactionID() const { return m_currentTransactionID + 1; }
 
 private:
     // DrawingArea

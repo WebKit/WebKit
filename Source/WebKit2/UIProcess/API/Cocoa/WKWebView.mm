@@ -170,6 +170,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     uint64_t _firstPaintAfterCommitLoadTransactionID;
     BOOL _isAnimatingResize;
     CATransform3D _resizeAnimationTransformAdjustments;
+    uint64_t _resizeAnimationTransformTransactionID;
     RetainPtr<UIView> _resizeAnimationView;
     CGFloat _lastAdjustmentForScroller;
 
@@ -804,7 +805,8 @@ static inline bool withinEpsilon(TypeA a, TypeB b)
         return;
 
     if (_isAnimatingResize) {
-        [_resizeAnimationView layer].sublayerTransform = _resizeAnimationTransformAdjustments;
+        if (layerTreeTransaction.transactionID() >= _resizeAnimationTransformTransactionID)
+            [_resizeAnimationView layer].sublayerTransform = _resizeAnimationTransformAdjustments;
         return;
     }
 
@@ -865,7 +867,7 @@ static inline bool withinEpsilon(TypeA a, TypeB b)
     }
 }
 
-- (void)_dynamicViewportUpdateChangedTargetToScale:(double)newScale position:(CGPoint)newScrollPosition
+- (void)_dynamicViewportUpdateChangedTargetToScale:(double)newScale position:(CGPoint)newScrollPosition nextValidLayerTreeTransactionID:(uint64_t)nextValidLayerTreeTransactionID
 {
     if (_isAnimatingResize) {
         CGFloat animatingScaleTarget = [[_resizeAnimationView layer] transform].m11;
@@ -878,6 +880,7 @@ static inline bool withinEpsilon(TypeA a, TypeB b)
 
         _resizeAnimationTransformAdjustments.m41 = (currentContentOffset.x - newContentOffset.x) / animatingScaleTarget;
         _resizeAnimationTransformAdjustments.m42 = (currentContentOffset.y - newContentOffset.y) / animatingScaleTarget;
+        _resizeAnimationTransformTransactionID = nextValidLayerTreeTransactionID;
     }
 }
 

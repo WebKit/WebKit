@@ -1322,7 +1322,9 @@ private:
     RefPtr<WebVideoFullscreenManagerProxy> m_videoFullscreenManager;
     VisibleContentRectUpdateInfo m_lastVisibleContentRectUpdate;
     int32_t m_deviceOrientation;
-    bool m_dynamicViewportSizeUpdateInProgress;
+    bool m_dynamicViewportSizeUpdateWaitingForTarget;
+    bool m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit;
+    uint64_t m_dynamicViewportSizeUpdateLayerTreeTransactionID;
 #endif
 
 #if ENABLE(VIBRATION)

@@ -250,13 +250,14 @@ void WebPageProxy::overflowScrollViewDidScroll()
 
 void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, const WebCore::FloatSize& minimumLayoutSizeForMinimalUI, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const FloatRect& targetUnobscuredRectInScrollViewCoordinates,  double targetScale, int32_t deviceOrientation)
 {
-    m_dynamicViewportSizeUpdateInProgress = true;
+    m_dynamicViewportSizeUpdateWaitingForTarget = true;
+    m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit = true;
     m_process->send(Messages::WebPage::DynamicViewportSizeUpdate(minimumLayoutSize, minimumLayoutSizeForMinimalUI, maximumUnobscuredSize, targetExposedContentRect, targetUnobscuredRect, targetUnobscuredRectInScrollViewCoordinates, targetScale, deviceOrientation), m_pageID);
 }
 
 void WebPageProxy::synchronizeDynamicViewportUpdate()
 {
-    if (m_dynamicViewportSizeUpdateInProgress) {
+    if (m_dynamicViewportSizeUpdateWaitingForTarget) {
         // We do not want the UIProcess to finish animated resize with the old content size, scale, etc.
         // If that happens, the UIProcess would start pushing new VisibleContentRectUpdateInfo to the WebProcess with
         // invalid informations.
@@ -268,15 +269,24 @@ void WebPageProxy::synchronizeDynamicViewportUpdate()
         //
         // The following is a workaround to have the UIProcess in a consistent state.
         // Instead of handling nested resize, we block the UIProcess until the animated resize finishes.
-        m_dynamicViewportSizeUpdateInProgress = false;
         double newScale;
         FloatPoint newScrollPosition;
-        if (m_process->sendSync(Messages::WebPage::SynchronizeDynamicViewportUpdate(), Messages::WebPage::SynchronizeDynamicViewportUpdate::Reply(newScale, newScrollPosition), m_pageID, std::chrono::seconds(2))) {
-            m_pageClient.dynamicViewportUpdateChangedTarget(newScale, newScrollPosition);
-
-            m_process->connection()->waitForAndDispatchImmediately<Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree>(m_pageID, std::chrono::seconds(1));
+        uint64_t nextValidLayerTreeTransactionID;
+        if (m_process->sendSync(Messages::WebPage::SynchronizeDynamicViewportUpdate(), Messages::WebPage::SynchronizeDynamicViewportUpdate::Reply(newScale, newScrollPosition, nextValidLayerTreeTransactionID), m_pageID, std::chrono::seconds(2))) {
+            m_dynamicViewportSizeUpdateWaitingForTarget = false;
+            m_dynamicViewportSizeUpdateLayerTreeTransactionID = nextValidLayerTreeTransactionID;
+            m_pageClient.dynamicViewportUpdateChangedTarget(newScale, newScrollPosition, nextValidLayerTreeTransactionID);
         }
+
     }
+
+    // If m_dynamicViewportSizeUpdateWaitingForTarget is false, we are waiting for the next valid frame with the hope it is the one for the new target.
+    // If m_dynamicViewportSizeUpdateWaitingForTarget is still true, this is a desesperate attempt to get the valid frame before finishing the animation.
+    if (m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit)
+        m_process->connection()->waitForAndDispatchImmediately<Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree>(m_pageID, std::chrono::seconds(1), IPC::InterruptWaitingIfSyncMessageArrives);
+
+    m_dynamicViewportSizeUpdateWaitingForTarget = false;
+    m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit = false;
 }
 
 void WebPageProxy::setViewportConfigurationMinimumLayoutSize(const WebCore::FloatSize& size)
@@ -306,6 +316,11 @@ void WebPageProxy::setDeviceOrientation(int32_t deviceOrientation)
 void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& layerTreeTransaction)
 {
     m_pageExtendedBackgroundColor = layerTreeTransaction.pageExtendedBackgroundColor();
+
+    if (!m_dynamicViewportSizeUpdateWaitingForTarget && m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit) {
+        if (layerTreeTransaction.transactionID() >= m_dynamicViewportSizeUpdateLayerTreeTransactionID)
+            m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit = false;
+    }
 
     m_pageClient.didCommitLayerTree(layerTreeTransaction);
 }
@@ -616,9 +631,10 @@ float WebPageProxy::textAutosizingWidth()
 
 void WebPageProxy::dynamicViewportUpdateChangedTarget(double newScale, const WebCore::FloatPoint& newScrollPosition)
 {
-    if (m_dynamicViewportSizeUpdateInProgress) {
-        m_dynamicViewportSizeUpdateInProgress = false;
-        m_pageClient.dynamicViewportUpdateChangedTarget(newScale, newScrollPosition);
+    if (m_dynamicViewportSizeUpdateWaitingForTarget) {
+        m_dynamicViewportSizeUpdateLayerTreeTransactionID = toRemoteLayerTreeDrawingAreaProxy(drawingArea())->nextLayerTreeTransactionID();
+        m_dynamicViewportSizeUpdateWaitingForTarget = false;
+        m_pageClient.dynamicViewportUpdateChangedTarget(newScale, newScrollPosition, m_dynamicViewportSizeUpdateLayerTreeTransactionID);
     }
 }
 

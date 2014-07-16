@@ -1,3 +1,53 @@
+2014-07-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Synchronize the dynamic viewport updates with their layer tree commit
+        https://bugs.webkit.org/show_bug.cgi?id=134965
+        Related to <rdar://problem/17082607>
+
+        Reviewed by Tim Horton.
+
+        Dynamic viewport update relies on the _resizeAnimationTransformAdjustments being applied
+        to the page at the new size during the transition.
+
+        Because of the races between the LayerTree Commit and DynamicViewportSizeUpdate, the transform
+        can be applied to the wrong set of tiles.
+        This is mostly a problem for unresponsive WebProcess or when the synchronization is done
+        immediately.
+
+        There is at least one more case that is not handled: if synchronizeDynamicViewportUpdate()
+        completely fails to get the new page, the UIProcess is in a somewhat messy state.
+        I will look into that separately than the layer tree synchronization.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]):
+        (-[WKWebView _dynamicViewportUpdateChangedTargetToScale:position:nextValidLayerTreeTransactionID:]):
+        (-[WKWebView _dynamicViewportUpdateChangedTargetToScale:position:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::resetState):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::dynamicViewportUpdateChangedTarget):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::dynamicViewportSizeUpdate):
+        (WebKit::WebPageProxy::synchronizeDynamicViewportUpdate):
+        (WebKit::WebPageProxy::didCommitLayerTree):
+        (WebKit::WebPageProxy::dynamicViewportUpdateChangedTarget):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::synchronizeDynamicViewportUpdate):
+        (WebKit::WebPage::updateVisibleContentRects):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        (WebKit::RemoteLayerTreeDrawingArea::nextTransactionID):
+        (WebKit::RemoteLayerTreeDrawingArea::currentTransactionID): Deleted.
+
 2014-07-16  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r170653): Web Content service’s Info.plist has wrong format

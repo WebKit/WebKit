@@ -274,7 +274,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_userAgent(standardUserAgent())
 #if PLATFORM(IOS)
     , m_deviceOrientation(0)
-    , m_dynamicViewportSizeUpdateInProgress(false)
+    , m_dynamicViewportSizeUpdateWaitingForTarget(false)
+    , m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit(false)
+    , m_dynamicViewportSizeUpdateLayerTreeTransactionID(0)
 #endif
     , m_geolocationPermissionRequestManager(*this)
     , m_notificationPermissionRequestManager(*this)
@@ -4344,7 +4346,9 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     }
 
     m_lastVisibleContentRectUpdate = VisibleContentRectUpdateInfo();
-    m_dynamicViewportSizeUpdateInProgress = false;
+    m_dynamicViewportSizeUpdateWaitingForTarget = false;
+    m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit = false;
+    m_dynamicViewportSizeUpdateLayerTreeTransactionID = 0;
 #endif
 
     CallbackBase::Error error;

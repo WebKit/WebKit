@@ -37,6 +37,7 @@
 #import "InjectedBundleUserMessageCoders.h"
 #import "InteractionInformationAtPosition.h"
 #import "PluginView.h"
+#import "RemoteLayerTreeDrawingArea.h"
 #import "VisibleContentRectUpdateInfo.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
 #import "WebChromeClient.h"
@@ -2324,10 +2325,11 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
     send(Messages::WebPageProxy::DynamicViewportUpdateChangedTarget(pageScaleFactor(), frameView.scrollPosition()));
 }
 
-void WebPage::synchronizeDynamicViewportUpdate(double& newTargetScale, FloatPoint& newScrollPosition)
+void WebPage::synchronizeDynamicViewportUpdate(double& newTargetScale, FloatPoint& newScrollPosition, uint64_t& nextValidLayerTreeTransactionID)
 {
     newTargetScale = pageScaleFactor();
     newScrollPosition = m_page->mainFrame().view()->scrollPosition();
+    nextValidLayerTreeTransactionID = toRemoteLayerTreeDrawingArea(*m_drawingArea).nextTransactionID();
 }
 
 void WebPage::resetViewportDefaultConfiguration(WebFrame* frame)
@@ -2437,7 +2439,7 @@ static inline FloatRect adjustExposedRectForBoundedScale(const FloatRect& expose
 void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo)
 {
     // Skip any VisibleContentRectUpdate that have been queued before DidCommitLoad suppresses the updates in the UIProcess.
-    if (visibleContentRectUpdateInfo.lastLayerTreeTransactionID() <= m_lastLayerTreeTransactionIDBeforeDidCommitLoad)
+    if (visibleContentRectUpdateInfo.lastLayerTreeTransactionID() <= m_firstLayerTreeTransactionIDAfterDidCommitLoad)
         return;
 
     m_hasReceivedVisibleContentRectsAfterDidCommitLoad = true;
