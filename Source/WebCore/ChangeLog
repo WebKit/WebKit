@@ -1,3 +1,15 @@
+2014-07-16  Daniel Bates  <dabates@apple.com>
+
+        Substitute CGRectZero for NSZeroRect in -[DOMNode hrefFrame].
+
+        Rubber-stamped by Zalan Bujtas.
+
+        The method -[DOMNode hrefFrame] returns a CGRect. So, when we don't have a renderer
+        we should return CGRectZero instead of a NSZeroRect.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMNode hrefFrame]): Also, fix up some code style issues.
+
 2014-07-16  Jeongeun Kim  <je_julie.kim@samsung.com>
 
         mutable pointers from const methods, timeContainer().

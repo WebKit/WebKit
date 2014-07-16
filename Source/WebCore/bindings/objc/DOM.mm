@@ -465,10 +465,9 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 - (CGRect)hrefFrame
 {
     RenderObject *renderer = [self _linkElement]->renderer();
-    
-    if(renderer) return renderer->absoluteBoundingBoxRect();
-    
-    return NSZeroRect;
+    if (renderer)
+        return renderer->absoluteBoundingBoxRect();
+    return CGRectZero;
 }
 
 - (NSString *)hrefLabel
