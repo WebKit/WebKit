@@ -1,3 +1,17 @@
+2014-07-16  Timothy Horton  <timothy_horton@apple.com>
+
+        Dispatch top content inset changes immediately if synchronously waiting for view state changes
+        ​https://bugs.webkit.org/show_bug.cgi?id=134942
+        <rdar://problem/17666800>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _dispatchSetTopContentInset]):
+        (-[WKView _setTopContentInset:]):
+        Move the check from _setTopContentInset: to _dispatchSetTopContentInset
+        that ensures that we only send the message if the top content inset changed.
+
 2014-07-16  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Synchronize the dynamic viewport updates with their layer tree commit

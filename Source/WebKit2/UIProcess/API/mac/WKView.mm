@@ -3885,6 +3885,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)_dispatchSetTopContentInset
 {
+    if (!_data->_didScheduleSetTopContentInset)
+        return;
+
     _data->_didScheduleSetTopContentInset = NO;
     _data->_page->setTopContentInset(_data->_topContentInset);
 }
@@ -3899,8 +3902,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_didScheduleSetTopContentInset = YES;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (_data->_didScheduleSetTopContentInset)
-            [self _dispatchSetTopContentInset];
+        [self _dispatchSetTopContentInset];
     });
 }
 
