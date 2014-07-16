@@ -1,3 +1,23 @@
+2014-07-16  Mike West  <mkwst@chromium.org>
+
+        CSP: Drop 'script-nonce' directive.
+        https://bugs.webkit.org/show_bug.cgi?id=134926
+
+        Reviewed by Darin Adler.
+
+        Dropping the nonce tests, as we're removing the functionality.
+
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-scriptsrc-blocked-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-scriptsrc-blocked.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-separators-allowed-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-separators-allowed.html: Removed.
+
 2014-07-16  Jer Noble  <jer.noble@apple.com>
 
         [MSE] REGRESSION(r171033): ASSERT in WebCore::MediaSource::onReadyStateChange()

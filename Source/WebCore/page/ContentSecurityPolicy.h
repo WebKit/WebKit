@@ -89,7 +89,6 @@ public:
     bool allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus = SendReport) const;
     bool allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus = SendReport) const;
     bool allowEval(JSC::ExecState* = 0, ReportingStatus = SendReport) const;
-    bool allowScriptNonce(const String& nonce, const String& contextURL, const WTF::OrdinalNumber& contextLine, const URL& = URL()) const;
     bool allowPluginType(const String& type, const String& typeAttribute, const URL&, ReportingStatus = SendReport) const;
 
     bool allowScriptFromSource(const URL&, ReportingStatus = SendReport) const;
@@ -114,7 +113,6 @@ public:
     void reportDuplicateDirective(const String&) const;
     void reportInvalidDirectiveValueCharacter(const String& directiveName, const String& value) const;
     void reportInvalidPathCharacter(const String& directiveName, const String& value, const char) const;
-    void reportInvalidNonce(const String&) const;
     void reportInvalidPluginTypes(const String&) const;
     void reportInvalidSandboxFlags(const String&) const;
     void reportInvalidSourceExpression(const String& directiveName, const String& source) const;

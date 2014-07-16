@@ -247,8 +247,6 @@ bool ScriptElement::requestScript(const String& sourceUrl)
         return false;
     if (!m_element.inDocument() || &m_element.document() != &originalDocument.get())
         return false;
-    if (!m_element.document().contentSecurityPolicy()->allowScriptNonce(m_element.fastGetAttribute(HTMLNames::nonceAttr), m_element.document().url(), m_startLineNumber, m_element.document().completeURL(sourceUrl)))
-        return false;
 
     ASSERT(!m_cachedScript);
     if (!stripLeadingAndTrailingHTMLSpaces(sourceUrl).isEmpty()) {
@@ -280,9 +278,6 @@ void ScriptElement::executeScript(const ScriptSourceCode& sourceCode)
     ASSERT(m_alreadyStarted);
 
     if (sourceCode.isEmpty())
-        return;
-
-    if (!m_element.document().contentSecurityPolicy()->allowScriptNonce(m_element.fastGetAttribute(HTMLNames::nonceAttr), m_element.document().url(), m_startLineNumber))
         return;
 
     if (!m_isExternalScript && !m_element.document().contentSecurityPolicy()->allowInlineScript(m_element.document().url(), m_startLineNumber))
