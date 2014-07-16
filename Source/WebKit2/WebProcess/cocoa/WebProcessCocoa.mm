@@ -174,23 +174,21 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
     // When the network process is enabled, each web process wants a stand-alone
     // NSURLCache, which it can disable to save memory.
-    if (!parameters.usesNetworkProcess) {
 #if PLATFORM(IOS)
-        if (!parameters.uiProcessBundleIdentifier.isNull()) {
-            [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
-                _initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
-                diskCapacity:parameters.nsURLCacheDiskCapacity
-                relativePath:parameters.uiProcessBundleIdentifier]).get()];
-        }
-#else
-        if (!parameters.diskCacheDirectory.isNull()) {
-            [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
-                initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
-                diskCapacity:parameters.nsURLCacheDiskCapacity
-                diskPath:parameters.diskCacheDirectory]).get()];
-        }
-#endif
+    if (!parameters.uiProcessBundleIdentifier.isNull()) {
+        [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
+            _initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
+            diskCapacity:parameters.nsURLCacheDiskCapacity
+            relativePath:parameters.uiProcessBundleIdentifier]).get()];
     }
+#else
+    if (!parameters.diskCacheDirectory.isNull()) {
+        [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
+            initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
+            diskCapacity:parameters.nsURLCacheDiskCapacity
+            diskPath:parameters.diskCacheDirectory]).get()];
+    }
+#endif
 
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
     m_presenterApplicationPid = parameters.presenterApplicationPid;

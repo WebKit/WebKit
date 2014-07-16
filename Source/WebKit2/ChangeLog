@@ -1,3 +1,16 @@
+2014-07-16  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/17669097> REGRESSION (r170155): Sandbox violations using a wrong
+        CFNetwork cache path in WebContent process
+
+        Rubber-stamped by Sam Weinig.
+
+        Before r170155, we incorrectly checked usesNetworkProcess(), which always returns
+        false at this point in initialization sequence. But we did the right thing, as we
+        always need to set the cache path, even when network process is used for most loading.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm: (WebKit::WebProcess::platformInitializeWebProcess):
+
 2014-07-16  Timothy Horton  <timothy_horton@apple.com>
 
         Dispatch top content inset changes immediately if synchronously waiting for view state changes
