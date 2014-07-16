@@ -2118,6 +2118,8 @@ static inline bool shouldAppyContainersClipAndOffset(const RenderLayerModelObjec
 
     return !containerBox->hasLayer() || !containerBox->layer()->usesCompositedScrolling();
 #else
+    UNUSED_PARAM(repaintContainer);
+    UNUSED_PARAM(containerBox);
     return true;
 #endif
 }
