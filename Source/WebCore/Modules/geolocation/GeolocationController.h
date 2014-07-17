@@ -30,6 +30,7 @@
 
 #include "Geolocation.h"
 #include "Page.h"
+#include "ViewStateChangeObserver.h"
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
@@ -41,10 +42,10 @@ class GeolocationError;
 class GeolocationPosition;
 class Page;
 
-class GeolocationController : public Supplement<Page> {
+class GeolocationController : public Supplement<Page>, private ViewStateChangeObserver {
     WTF_MAKE_NONCOPYABLE(GeolocationController);
 public:
-    explicit GeolocationController(GeolocationClient*);
+    explicit GeolocationController(Page&, GeolocationClient*);
     ~GeolocationController();
 
     void addObserver(Geolocation*, bool enableHighAccuracy);
@@ -64,13 +65,20 @@ public:
     static GeolocationController* from(Page* page) { return static_cast<GeolocationController*>(Supplement<Page>::from(page, supplementName())); }
 
 private:
+    Page& m_page;
     GeolocationClient* m_client;
 
+    virtual void viewStateDidChange(ViewState::Flags oldViewState, ViewState::Flags newViewState) override;
+
     RefPtr<GeolocationPosition> m_lastPosition;
+
     typedef HashSet<RefPtr<Geolocation>> ObserversSet;
     // All observers; both those requesting high accuracy and those not.
     ObserversSet m_observers;
     ObserversSet m_highAccuracyObservers;
+
+    // While the page is not visible, we pend permission requests.
+    HashSet<RefPtr<Geolocation>> m_pendedPermissionRequest;
 };
 
 } // namespace WebCore
