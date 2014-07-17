@@ -1,3 +1,16 @@
+2014-07-16  Saam Barati  <sbarati@apple.com>
+
+        Web Inspector: TextContentView calls the wrong super function in shown()
+        https://bugs.webkit.org/show_bug.cgi?id=135001
+
+        Reviewed by Timothy Hatcher.
+        TextContentView calls ResourceContentView.shown instead of ContentView.shown.
+        It should call ContentView.shown because ContentView is its prototype.
+
+
+        * UserInterface/Views/TextContentView.js:
+        (WebInspector.TextContentView.prototype.shown):
+
 2014-07-15  Jonathan Wells  <jonowells@apple.com>
 
         Web Inspector: Modernize UI styles and better sync with platform styles

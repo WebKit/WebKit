@@ -70,7 +70,7 @@ WebInspector.TextContentView.prototype = {
 
     shown: function()
     {
-        WebInspector.ResourceContentView.prototype.shown.call(this);
+        WebInspector.ContentView.prototype.shown.call(this);
 
         this._textEditor.shown();
     },
