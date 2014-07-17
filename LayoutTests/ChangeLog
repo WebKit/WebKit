@@ -1,3 +1,11 @@
+2014-07-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove inspector-protocol/profiler tests from TestExpectations, now that they no
+        longer exist.
+
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2014-07-17  Timothy Hatcher  <timothy@apple.com>
 
         Make console.profile record to the Timeline.

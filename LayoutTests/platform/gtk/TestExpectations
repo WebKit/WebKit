@@ -1021,7 +1021,6 @@ webkit.org/b/122571 inspector-protocol/debugger/setBreakpoint-condition.html [ T
 webkit.org/b/122571 inspector-protocol/debugger/removeBreakpoint.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/debugger/setVariableValue.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/debugger/call-frame-this-strict.html [ Timeout Pass ]
-webkit.org/b/122571 inspector-protocol/profiler/console-profile.html [ Failure Pass ]
 webkit.org/b/122571 inspector-protocol/dom/request-child-nodes-depth.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/dom/focus.html [ Failure Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/runtime/getProperties.html [ Timeout Pass ]
