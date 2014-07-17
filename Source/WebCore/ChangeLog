@@ -1,3 +1,27 @@
+2014-07-17  Beth Dakin  <bdakin@apple.com>
+
+        Fixed position elements are misplaced when a WK1 view has contentInsets set
+        https://bugs.webkit.org/show_bug.cgi?id=135031
+        -and corresponding-
+        <rdar://problem/17682335>
+
+        Reviewed by Tim Horton.
+
+        [NSScrollView documentVisibleRect] is not the rect that we are looking for when 
+        this function is called. WebCore is interested in the rect that does not include 
+        content that is within the inset region.
+
+        Implement contract() to avoid the awkwardness of calling expand() with negative 
+        values.
+        * platform/graphics/IntSize.h:
+        (WebCore::IntSize::contract):
+
+        Use _insetBounds instead of documentVisibleRect, and when it’s necessary to use 
+        the frame’s dimensions, extract the inset from that size.
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::platformVisibleContentRect):
+        (WebCore::ScrollView::platformVisibleContentSize):
+
 2014-07-17  Enrica Casucci  <enrica@apple.com>
 
         [REGRESSION WK2]The menu bar does not show up when tapping on the caret.
