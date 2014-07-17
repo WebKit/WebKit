@@ -1,3 +1,26 @@
+2014-07-17  Dean Jackson  <dino@apple.com>
+
+        <rdar://problem/17675068> Disable some features on this branch.
+
+        Reviewed originally by Simon Fraser.
+
+        Disable:
+        - CSS_EXCLUSIONS
+        - CSS_GRID_LAYOUT
+        - INPUT_TYPE_COLOR
+        - INPUT_TYPE_COLOR_POPUP
+        - CANVAS_PATH
+        - CSS_TRANSFORMS_ANIMATIONS_UNPREFIXED
+        - INDIE_UI
+        - SHARED_WORKERS
+        - NAVIGATOR_HWCONCURRENCY
+        - GAMEPAD
+        - PICTURE_SIZES
+        - CSS3_CONDITIONAL_RULES
+        - WILL_REVEAL_EDGE_EVENTS
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-07-16  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Adjust cliprect with devicePixelFractionFromRenderer() before painting.
