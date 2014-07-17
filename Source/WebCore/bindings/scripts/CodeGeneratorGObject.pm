@@ -968,6 +968,8 @@ sub GenerateFunction {
     my @callImplParams;
     foreach my $param (@{$function->parameters}) {
         my $paramIDLType = $param->type;
+        my $arrayOrSequenceType = $codeGenerator->GetArrayOrSequenceType($paramIDLType);
+        $paramIDLType = $arrayOrSequenceType if $arrayOrSequenceType ne "";
         my $paramType = GetGlibTypeName($paramIDLType);
         my $const = $paramType eq "gchar*" ? "const " : "";
         my $paramName = $param->name;
@@ -1011,7 +1013,10 @@ sub GenerateFunction {
     push(@functionHeader, " * \@self: A #${className}");
 
     foreach my $param (@{$function->parameters}) {
-        my $paramType = GetGlibTypeName($param->type);
+        my $paramIDLType = $param->type;
+        my $arrayOrSequenceType = $codeGenerator->GetArrayOrSequenceType($paramIDLType);
+        $paramIDLType = $arrayOrSequenceType if $arrayOrSequenceType ne "";
+        my $paramType = GetGlibTypeName($paramIDLType);
         # $paramType can have a trailing * in some cases
         $paramType =~ s/\*$//;
         my $paramName = $param->name;

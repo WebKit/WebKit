@@ -593,6 +593,20 @@ WEBKIT_API WebKitDOMbool*
 webkit_dom_test_obj_strict_function(WebKitDOMTestObj* self, const gchar* str, gfloat a, glong b, GError** error);
 
 /**
+ * webkit_dom_test_obj_strict_function_with_array:
+ * @self: A #WebKitDOMTestObj
+ * @objArg: A #WebKitDOMTestObj
+ * @array: A #glong
+ * @error: #GError
+ *
+ * Returns: (transfer none): A #WebKitDOMbool
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API WebKitDOMbool*
+webkit_dom_test_obj_strict_function_with_array(WebKitDOMTestObj* self, WebKitDOMTestObj* objArg, glong array, GError** error);
+
+/**
  * webkit_dom_test_obj_variadic_string_method:
  * @self: A #WebKitDOMTestObj
  * @head: A #gchar

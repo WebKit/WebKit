@@ -1492,6 +1492,25 @@ WebKitDOMbool* webkit_dom_test_obj_strict_function(WebKitDOMTestObj* self, const
     return WebKit::kit(gobjectResult.get());
 }
 
+WebKitDOMbool* webkit_dom_test_obj_strict_function_with_array(WebKitDOMTestObj* self, WebKitDOMTestObj* objArg, glong array, GError** error)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(objArg), 0);
+    g_return_val_if_fail(WEBKIT_DOM_IS_LONG[](array), 0);
+    g_return_val_if_fail(!error || !*error, 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    WebCore::TestObj* convertedObjArg = WebKit::core(objArg);
+    WebCore::long[]* convertedArray = WebKit::core(array);
+    WebCore::ExceptionCode ec = 0;
+    RefPtr<WebCore::bool> gobjectResult = WTF::getPtr(item->strictFunctionWithArray(convertedObjArg, array, ec));
+    if (ec) {
+        WebCore::ExceptionCodeDescription ecdesc(ec);
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+    }
+    return WebKit::kit(gobjectResult.get());
+}
+
 void webkit_dom_test_obj_variadic_string_method(WebKitDOMTestObj* self, const gchar* head, const gchar* tail)
 {
     WebCore::JSMainThreadNullState state;

@@ -1,3 +1,27 @@
+2014-07-17  Vineet Chaudhary  <code.vineet@gmail.com>
+
+        [GObject] StrictTypeChecking extended attribute fails for methods with sequence<T>.
+        https://bugs.webkit.org/show_bug.cgi?id=121698
+
+        Reviewed by Antonio Gomes.
+
+        GodeGenerator was including wrong heeaders as WebKitDOMlong[] for methods with
+        array parameters and StrictTypeChecking extended attribute.
+        No new tests. TestObj.idl covers the tests.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (GetArrayOrSequenceType):
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateFunction):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_strict_function_with_array):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestTypedefs.cpp:
+        (webkit_dom_test_typedefs_func):
+        (webkit_dom_test_typedefs_nullable_array_arg):
+        * bindings/scripts/test/GObject/WebKitDOMTestTypedefs.h:
+        * bindings/scripts/test/TestObj.idl:
+
 2014-07-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: Clean up return path

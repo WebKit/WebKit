@@ -26,12 +26,10 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "JSMainThreadExecState.h"
-#include "WebKitDOMDOMString[]Private.h"
 #include "WebKitDOMPrivate.h"
 #include "WebKitDOMSVGPointPrivate.h"
 #include "WebKitDOMSerializedScriptValuePrivate.h"
 #include "WebKitDOMTestTypedefsPrivate.h"
-#include "WebKitDOMlong[]Private.h"
 #include "gobject/ConvertToUTF8String.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
@@ -233,14 +231,14 @@ static void webkit_dom_test_typedefs_init(WebKitDOMTestTypedefs* request)
     new (priv) WebKitDOMTestTypedefsPrivate();
 }
 
-void webkit_dom_test_typedefs_func(WebKitDOMTestTypedefs* self, WebKitDOMlong[]* x)
+void webkit_dom_test_typedefs_func(WebKitDOMTestTypedefs* self, glong x)
 {
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_TEST_TYPEDEFS(self));
     g_return_if_fail(WEBKIT_DOM_IS_LONG[](x));
     WebCore::TestTypedefs* item = WebKit::core(self);
     WebCore::long[]* convertedX = WebKit::core(x);
-    item->func(convertedX);
+    item->func(x);
 }
 
 void webkit_dom_test_typedefs_set_shadow(WebKitDOMTestTypedefs* self, gfloat width, gfloat height, gfloat blur, const gchar* color, gfloat alpha)
@@ -253,7 +251,7 @@ void webkit_dom_test_typedefs_set_shadow(WebKitDOMTestTypedefs* self, gfloat wid
     item->setShadow(width, height, blur, convertedColor, alpha);
 }
 
-void webkit_dom_test_typedefs_nullable_array_arg(WebKitDOMTestTypedefs* self, WebKitDOMDOMString[]* arrayArg)
+void webkit_dom_test_typedefs_nullable_array_arg(WebKitDOMTestTypedefs* self, const gchar* arrayArg)
 {
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_TEST_TYPEDEFS(self));

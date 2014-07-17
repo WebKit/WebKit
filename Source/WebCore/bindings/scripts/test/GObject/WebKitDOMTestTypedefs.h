@@ -50,12 +50,12 @@ webkit_dom_test_typedefs_get_type(void);
 /**
  * webkit_dom_test_typedefs_func:
  * @self: A #WebKitDOMTestTypedefs
- * @x: A #WebKitDOMlong[]
+ * @x: A #glong
  *
  * Stability: Unstable
 **/
 WEBKIT_API void
-webkit_dom_test_typedefs_func(WebKitDOMTestTypedefs* self, WebKitDOMlong[]* x);
+webkit_dom_test_typedefs_func(WebKitDOMTestTypedefs* self, glong x);
 
 /**
  * webkit_dom_test_typedefs_set_shadow:
@@ -74,12 +74,12 @@ webkit_dom_test_typedefs_set_shadow(WebKitDOMTestTypedefs* self, gfloat width, g
 /**
  * webkit_dom_test_typedefs_nullable_array_arg:
  * @self: A #WebKitDOMTestTypedefs
- * @arrayArg: A #WebKitDOMDOMString[]
+ * @arrayArg: A #gchar
  *
  * Stability: Unstable
 **/
 WEBKIT_API void
-webkit_dom_test_typedefs_nullable_array_arg(WebKitDOMTestTypedefs* self, WebKitDOMDOMString[]* arrayArg);
+webkit_dom_test_typedefs_nullable_array_arg(WebKitDOMTestTypedefs* self, const gchar* arrayArg);
 
 /**
  * webkit_dom_test_typedefs_immutable_point_function:

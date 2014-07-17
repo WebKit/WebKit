@@ -450,6 +450,14 @@ sub GetArrayType
     return "";
 }
 
+sub GetArrayOrSequenceType
+{
+    my $object = shift;
+    my $type = shift;
+
+    return $object->GetArrayType($type) || $object->GetSequenceType($type);
+}
+
 sub AssertNotSequenceType
 {
     my $object = shift;

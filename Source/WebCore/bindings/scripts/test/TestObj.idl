@@ -231,10 +231,8 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     [StrictTypeChecking] attribute unrestricted float strictFloat;
     [StrictTypeChecking, RaisesException] bool strictFunction(DOMString str, unrestricted float a, long b);
 
-#if defined(TESTING_JS)
     [StrictTypeChecking, RaisesException] bool strictFunctionWithSequence(TestObj objArg, sequence<unsigned long> a);
     [StrictTypeChecking, RaisesException] bool strictFunctionWithArray(TestObj objArg, long[] array);
-#endif
 
     // ObjectiveC reserved words.
     readonly attribute long      description;
