@@ -2181,7 +2181,9 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
 #endif
 
     // The dirtyRect is in the coords of the painting root.
-    IntRect dirtyRect = enclosingIntRect(clip);
+    FloatRect adjustedClipRect = clip;
+    adjustedClipRect.move(-m_devicePixelFractionFromRenderer);
+    IntRect dirtyRect = enclosingIntRect(adjustedClipRect);
 
     if (graphicsLayer == m_graphicsLayer.get()
         || graphicsLayer == m_foregroundLayer.get()

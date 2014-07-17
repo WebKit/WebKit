@@ -1,3 +1,18 @@
+2014-07-16  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Adjust cliprect with devicePixelFractionFromRenderer() before painting.
+        https://bugs.webkit.org/show_bug.cgi?id=134950
+        <rdar://problem/17617994>
+
+        Reviewed by Simon Fraser.
+
+        The cliprect coming from the graphics layer needs to be adjusted with the subpixel gap
+        from renderer. This is symmetric with the offsetting we do, when the dirty rect is sent off to the GraphicsLayer.
+        It puts us back to the correct coordinating system for intersecting with renderers.
+
+        * compositing/hidpi-compositing-layer-with-tile-layers-on-subpixel-position-expected.html: Added.
+        * compositing/hidpi-compositing-layer-with-tile-layers-on-subpixel-position.html: Added.
+
 2014-07-16  Roger Fong  <roger_fong@apple.com>
 
         Captions container should not clip content.
