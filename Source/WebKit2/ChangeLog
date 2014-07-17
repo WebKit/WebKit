@@ -1,3 +1,14 @@
+2014-07-16  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Update order file paths for WebKit and WebKit2
+        <http://webkit.org/b/134993>
+        <rdar://problem/17557776>
+
+        Reviewed by Darin Adler.
+
+        * Configurations/Base.xcconfig: Add order file for iOS
+        named WebKit.order.
+
 2014-07-16  Brady Eidson  <beidson@apple.com>
 
         Add WebSecurityOrigin "webSecurityOriginFromDatabaseIdentifier" SPI and change _websiteDataURLForContainerWithURL: SPI
