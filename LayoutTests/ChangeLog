@@ -1,5 +1,11 @@
 2014-07-16  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed gardening. Skip some text track tests that fail only on release wk1 builds.
+
+        * platform/mac-wk1/TestExpectations:
+
+2014-07-16  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Skip in-band text track test on Mountain Lion.
 
         * platform/mac/TestExpectations:
