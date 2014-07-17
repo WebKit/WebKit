@@ -706,13 +706,32 @@ static IntPoint constrainPoint(const IntPoint& point, Frame* frame, Node* assist
     return constrainedPoint;
 }
 
+static IntRect selectionBoxForRange(WebCore::Range* range)
+{
+    if (!range)
+        return IntRect();
+    
+    IntRect boundingRect;
+    Vector<SelectionRect> selectionRects;
+    range->collectSelectionRects(selectionRects);
+    unsigned size = selectionRects.size();
+    
+    for (unsigned i = 0; i < size; ++i) {
+        const IntRect &coreRect = selectionRects[i].rect();
+        if (!i)
+            boundingRect = coreRect;
+        else
+            boundingRect.unite(coreRect);
+    }
+    return boundingRect;
+}
+
 PassRefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point, const VisiblePosition& position, SelectionFlags& flags)
 {
     HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint((point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent | HitTestRequest::AllowChildFrameContent);
 
     Node* currentNode = result.innerNode();
     RefPtr<Range> range;
-    IntRect boundingRect;
     FloatRect boundingRectInScrollViewCoordinates;
 
     if (currentNode->isTextNode()) {
@@ -722,18 +741,7 @@ PassRefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point,
         if (!range)
             return nullptr;
 
-        Vector<SelectionRect> selectionRects;
-        range->collectSelectionRects(selectionRects);
-        unsigned size = selectionRects.size();
-
-        for (unsigned i = 0; i < size; i++) {
-            const IntRect &coreRect = selectionRects[i].rect();
-            if (i == 0)
-                boundingRect = coreRect;
-            else
-                boundingRect.unite(coreRect);
-        }
-        boundingRectInScrollViewCoordinates = boundingRect;
+        boundingRectInScrollViewCoordinates = selectionBoxForRange(range.get());
         boundingRectInScrollViewCoordinates.scale(m_page->pageScaleFactor());
         if (boundingRectInScrollViewCoordinates.width() > m_blockSelectionDesiredSize.width() && boundingRectInScrollViewCoordinates.height() > m_blockSelectionDesiredSize.height())
             return wordRangeFromPosition(position);
@@ -746,8 +754,7 @@ PassRefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point,
 
     Node* bestChoice = currentNode;
     while (currentNode) {
-        boundingRect = currentNode->renderer()->absoluteBoundingBoxRect(true);
-        boundingRectInScrollViewCoordinates = boundingRect;
+        boundingRectInScrollViewCoordinates = currentNode->renderer()->absoluteBoundingBoxRect(true);
         boundingRectInScrollViewCoordinates.scale(m_page->pageScaleFactor());
         if (boundingRectInScrollViewCoordinates.width() > m_blockSelectionDesiredSize.width() && boundingRectInScrollViewCoordinates.height() > m_blockSelectionDesiredSize.height())
             break;
@@ -784,7 +791,7 @@ PassRefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point,
 
 PassRefPtr<Range> WebPage::rangeForBlockAtPoint(const IntPoint& point)
 {
-    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint((point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
+    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint((point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent | HitTestRequest::IgnoreClipping);
 
     Node* currentNode = result.innerNode();
     RefPtr<Range> range;
@@ -1090,8 +1097,7 @@ static inline IntPoint computeEdgeCenter(const IntRect& box, SelectionHandlePosi
 
 PassRefPtr<Range> WebPage::expandedRangeFromHandle(Range* currentRange, SelectionHandlePosition handlePosition)
 {
-    // FIXME: We should use boundingRect() instead of boundingBox() in this function when <rdar://problem/16063723> is fixed.
-    IntRect currentBox = currentRange->boundingBox();
+    IntRect currentBox = selectionBoxForRange(currentRange);
     IntPoint edgeCenter = computeEdgeCenter(currentBox, handlePosition);
     static const float maxDistance = 1000;
     const float multiple = powf(maxDistance, 1.0/(maxHitTests - 1));
@@ -1138,7 +1144,7 @@ PassRefPtr<Range> WebPage::expandedRangeFromHandle(Range* currentRange, Selectio
         else
             newRange = unionDOMRanges(currentRange, rangeAtPosition.get());
 
-        IntRect copyRect = newRange->boundingBox();
+        IntRect copyRect = selectionBoxForRange(newRange.get());
 
         // Is it different and bigger than the current?
         bool isBetterChoice = !(rectsEssentiallyTheSame(copyRect, currentBox, .05));
@@ -1188,8 +1194,7 @@ PassRefPtr<Range> WebPage::contractedRangeFromHandle(Range* currentRange, Select
     // see if we can break that down to a base and extent. Shrinking base and extent is comparatively straightforward.
     // Shrinking down to another element is unlikely to move just one edge, but we can try that as a fallback.
 
-    // FIXME: We should use boundingRect() instead of boundingBox() in this function when <rdar://problem/16063723> is fixed.
-    IntRect currentBox = currentRange->boundingBox();
+    IntRect currentBox = selectionBoxForRange(currentRange);
     IntPoint edgeCenter = computeEdgeCenter(currentBox, handlePosition);
     flags = IsBlockSelection;
 
@@ -1257,7 +1262,7 @@ PassRefPtr<Range> WebPage::contractedRangeFromHandle(Range* currentRange, Select
         else
             newRange = Range::create(newRange->startContainer()->document(), currentRange->startPosition(), newRange->startPosition());
 
-        IntRect copyRect = newRange->boundingBox();
+        IntRect copyRect = selectionBoxForRange(newRange.get());
         if (copyRect.isEmpty()) {
             bestRange = rangeForBlockAtPoint(testPoint);
             break;
@@ -1322,10 +1327,9 @@ void WebPage::computeExpandAndShrinkThresholdsForHandle(const IntPoint& point, S
     SelectionFlags flags;
     RefPtr<Range> contractedRange = contractedRangeFromHandle(currentRange.get(), handlePosition, flags);
 
-    // FIXME: We should use boundingRect() instead of boundingBox() in this function when <rdar://problem/16063723> is fixed.
-    IntRect currentBounds = currentRange->boundingBox();
-    IntRect expandedBounds = expandedRange->boundingBox();
-    IntRect contractedBounds = contractedRange->boundingBox();
+    IntRect currentBounds = selectionBoxForRange(currentRange.get());
+    IntRect expandedBounds = selectionBoxForRange(expandedRange.get());
+    IntRect contractedBounds = selectionBoxForRange(contractedRange.get());
 
     float current;
     float expanded;
@@ -1397,10 +1401,7 @@ PassRefPtr<WebCore::Range> WebPage::changeBlockSelection(const IntPoint& point, 
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     RefPtr<Range> currentRange = m_currentBlockSelection ? m_currentBlockSelection.get() : frame.selection().selection().toNormalizedRange();
-    // FIXME: We should use boundingRect() instead of boundingBox() in this function when <rdar://problem/16063723> is fixed.
-    IntRect currentRect = currentRange->boundingBox();
-
-    RefPtr<Range> newRange = shouldExpand(handlePosition, currentRect, point) ? expandedRangeFromHandle(currentRange.get(), handlePosition) : contractedRangeFromHandle(currentRange.get(), handlePosition, flags);
+    RefPtr<Range> newRange = shouldExpand(handlePosition, selectionBoxForRange(currentRange.get()), point) ? expandedRangeFromHandle(currentRange.get(), handlePosition) : contractedRangeFromHandle(currentRange.get(), handlePosition, flags);
 
     if (newRange) {
         m_currentBlockSelection = newRange;

@@ -349,6 +349,16 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     return 1 / [[self layer] transform].m11;
 }
 
+- (UIScrollView *)_scroller
+{
+    return [_webView scrollView];
+}
+
+- (CGRect)unobscuredContentRect
+{
+    return _page->unobscuredContentRect();
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     ASSERT([keyPath isEqualToString:@"transform"]);
