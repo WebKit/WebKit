@@ -11,6 +11,6 @@ main frame - didFinishDocumentLoadForFrame
 frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
 frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
 frame "<!--framePath //<!--frame0-->-->" - didFailLoadWithError
-main frame "webkitfullscreenchange" - didFinishLoadForFrame
+main frame "webkitendfullscreen" - didFinishLoadForFrame
 frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
 
