@@ -953,6 +953,7 @@ webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-style.html
 webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-legacy-api.html
 webkit.org/b/103663 [ MountainLion ] media/track/track-forced-subtitles-in-band.html
 webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-mode.html
+webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-subtitles-too-large.html
 
 # These two tests often timeout
 webkit.org/b/112492 media/track/track-language-preference.html [ Skip ]

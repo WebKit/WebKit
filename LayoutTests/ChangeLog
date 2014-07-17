@@ -1,3 +1,10 @@
+2014-07-16  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Skip in-band text track test on Mountain Lion.
+
+        * platform/mac/TestExpectations:
+        In-band text tracks not supported on ML.
+
 2014-07-16  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Adjust cliprect with devicePixelFractionFromRenderer() before painting.
