@@ -1,3 +1,16 @@
+2014-07-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Follow-up fix to r171195 to prevent ASSERT in fast/profiler/profile-with-no-title.html
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        Null / empty titles should be fine. Tests pass in release builds
+        which allowed empty titles, and it looks like the LegacyProfiler
+        stopProfiling handles empty titles as expected already.
+
+        * profiler/LegacyProfiler.cpp:
+        (JSC::LegacyProfiler::startProfiling):
+
 2014-07-16  Filip Pizlo  <fpizlo@apple.com>
 
         DFG Flush(SetLocal) store elimination is overzealous for captured variables in the presence of nodes that have no effects but may throw
