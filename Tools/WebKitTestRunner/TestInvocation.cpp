@@ -202,8 +202,10 @@ end:
     if (m_webProcessIsUnresponsive)
         dumpWebProcessUnresponsiveness();
     else if (!TestController::shared().resetStateToConsistentValues()) {
-        m_errorMessage = "Timed out loading about:blank before the next test";
-        dumpWebProcessUnresponsiveness();
+        // The process froze while loading about:blank, let's start a fresh one.
+        // It would be nice to report that the previous test froze after dumping results, but we have no way to do that.
+        TestController::shared().terminateWebContentProcess();
+        TestController::shared().resetStateToConsistentValues();
     }
 }
 
