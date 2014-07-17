@@ -52,6 +52,7 @@ class WorkerGlobalScope;
 typedef JSC::ExecState ScriptState;
 
 DOMWindow* domWindowFromExecState(JSC::ExecState*);
+Frame* frameFromExecState(JSC::ExecState*);
 ScriptExecutionContext* scriptExecutionContextFromExecState(JSC::ExecState*);
 
 JSC::ExecState* mainWorldExecState(Frame*);

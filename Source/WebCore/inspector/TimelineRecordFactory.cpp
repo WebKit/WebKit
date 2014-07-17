@@ -90,6 +90,13 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createFunctionCallData(const 
     return data.release();
 }
 
+PassRefPtr<InspectorObject> TimelineRecordFactory::createConsoleProfileData(const String& title)
+{
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setString("title", title);
+    return data.release();
+}
+
 PassRefPtr<InspectorObject> TimelineRecordFactory::createProbeSampleData(const ScriptBreakpointAction& action, int hitCount)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();

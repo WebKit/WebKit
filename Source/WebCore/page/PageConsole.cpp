@@ -170,8 +170,7 @@ void PageConsole::profile(JSC::ExecState* exec, const String& title)
 
 void PageConsole::profileEnd(JSC::ExecState* exec, const String& title)
 {
-    RefPtr<JSC::Profile> profile = InspectorInstrumentation::stopProfiling(&m_page, exec, title);
-    if (profile)
+    if (RefPtr<JSC::Profile> profile = InspectorInstrumentation::stopProfiling(&m_page, exec, title))
         m_profiles.append(profile.release());
 }
 

@@ -1,3 +1,19 @@
+2014-07-17  Timothy Hatcher  <timothy@apple.com>
+
+        Make console.profile record to the Timeline.
+
+        https://bugs.webkit.org/show_bug.cgi?id=134643
+
+        Reviewed by Joseph Pecoraro.
+
+        * fast/profiler/profile-with-no-title-expected.txt:
+
+        * inspector-protocol/profiler/console-profile-expected.txt: Removed.
+        * inspector-protocol/profiler/console-profile.html: Removed.
+        * inspector-protocol/profiler/console-profileEnd-parameterless-expected.txt: Removed.
+        * inspector-protocol/profiler/console-profileEnd-parameterless.html: Removed.
+        Removed because console.profile does not go through the profiler protocol now.
+
 2014-07-16  Roger Fong  <roger_fong@apple.com>
 
         Add test for r169820.

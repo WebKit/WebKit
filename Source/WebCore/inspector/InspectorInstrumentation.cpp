@@ -945,14 +945,14 @@ void InspectorInstrumentation::consoleTimeStampImpl(InstrumentingAgents* instrum
 
 void InspectorInstrumentation::startProfilingImpl(InstrumentingAgents* instrumentingAgents, JSC::ExecState* exec, const String& title)
 {
-    if (InspectorProfilerAgent* profilerAgent = instrumentingAgents->inspectorProfilerAgent())
-        profilerAgent->startProfiling(title, exec);
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->persistentInspectorTimelineAgent())
+        timelineAgent->startFromConsole(exec, title);
 }
 
 PassRefPtr<JSC::Profile> InspectorInstrumentation::stopProfilingImpl(InstrumentingAgents* instrumentingAgents, JSC::ExecState* exec, const String& title)
 {
-    if (InspectorProfilerAgent* profilerAgent = instrumentingAgents->inspectorProfilerAgent())
-        return profilerAgent->stopProfiling(title, exec);
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->persistentInspectorTimelineAgent())
+        return timelineAgent->stopFromConsole(exec, title);
     return nullptr;
 }
 

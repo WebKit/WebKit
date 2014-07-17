@@ -61,6 +61,7 @@ namespace WebCore {
         static PassRefPtr<Inspector::InspectorObject> createGCEventData(const size_t usedHeapSizeDelta);
 
         static PassRefPtr<Inspector::InspectorObject> createFunctionCallData(const String& scriptName, int scriptLine);
+        static PassRefPtr<Inspector::InspectorObject> createConsoleProfileData(const String& title);
 
         static PassRefPtr<Inspector::InspectorObject> createProbeSampleData(const Inspector::ScriptBreakpointAction&, int hitCount);
 

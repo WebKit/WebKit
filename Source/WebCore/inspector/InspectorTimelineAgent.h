@@ -43,6 +43,10 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
+namespace JSC {
+class Profile;
+}
+
 namespace WebCore {
 
 class Event;
@@ -97,6 +101,7 @@ enum class TimelineRecordType {
 
     FunctionCall,
     ProbeSample,
+    ConsoleProfile,
 
     RequestAnimationFrame,
     CancelAnimationFrame,
@@ -136,8 +141,8 @@ public:
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
 
-    virtual void start(ErrorString*, const int* maxCallStackDepth) override;
-    virtual void stop(ErrorString*) override;
+    virtual void start(ErrorString* = nullptr, const int* maxCallStackDepth = nullptr) override;
+    virtual void stop(ErrorString* = nullptr) override;
 
     int id() const { return m_id; }
 
@@ -146,6 +151,9 @@ public:
     void didCommitLoad();
 
     // Methods called from WebCore.
+    void startFromConsole(JSC::ExecState*, const String &title);
+    PassRefPtr<JSC::Profile> stopFromConsole(JSC::ExecState*, const String& title);
+
     void willCallFunction(const String& scriptName, int scriptLine, Frame*);
     void didCallFunction(Frame*);
 
@@ -224,10 +232,13 @@ private:
     friend class TimelineRecordStack;
 
     struct TimelineRecordEntry {
+        TimelineRecordEntry()
+            : type(TimelineRecordType::EventDispatch) { }
         TimelineRecordEntry(PassRefPtr<Inspector::InspectorObject> record, PassRefPtr<Inspector::InspectorObject> data, PassRefPtr<Inspector::InspectorArray> children, TimelineRecordType type)
             : record(record), data(data), children(children), type(type)
         {
         }
+
         RefPtr<Inspector::InspectorObject> record;
         RefPtr<Inspector::InspectorObject> data;
         RefPtr<Inspector::InspectorArray> children;
@@ -237,9 +248,13 @@ private:
     void sendEvent(PassRefPtr<Inspector::InspectorObject>);
     void appendRecord(PassRefPtr<Inspector::InspectorObject> data, TimelineRecordType, bool captureCallStack, Frame*);
     void pushCurrentRecord(PassRefPtr<Inspector::InspectorObject>, TimelineRecordType, bool captureCallStack, Frame*);
+    void pushCurrentRecord(const TimelineRecordEntry& record) { m_recordStack.append(record); }
+
+    TimelineRecordEntry createRecordEntry(PassRefPtr<Inspector::InspectorObject> data, TimelineRecordType, bool captureCallStack, Frame*);
 
     void setFrameIdentifier(Inspector::InspectorObject* record, Frame*);
 
+    void didCompleteRecordEntry(const TimelineRecordEntry&);
     void didCompleteCurrentRecord(TimelineRecordType);
 
     void addRecordToTimeline(PassRefPtr<Inspector::InspectorObject>, TimelineRecordType);
@@ -264,7 +279,8 @@ private:
     int m_maxCallStackDepth;
     InspectorType m_inspectorType;
     InspectorClient* m_client;
-    WeakPtrFactory<InspectorTimelineAgent> m_weakFactory;
+
+    Vector<TimelineRecordEntry> m_pendingConsoleProfileRecords;
 
     bool m_enabled;
     bool m_recordingProfile;

@@ -1,3 +1,19 @@
+2014-07-17  Timothy Hatcher  <timothy@apple.com>
+
+        Make console.profile record to the Timeline.
+
+        https://bugs.webkit.org/show_bug.cgi?id=134643
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebInspector/WebInspector.mm:
+        (-[WebInspector isProfilingJavaScript]):
+        (-[WebInspector toggleProfilingJavaScript:]):
+        (-[WebInspector startProfilingJavaScript:]):
+        (-[WebInspector stopProfilingJavaScript:]):
+        (-[WebInspector isJavaScriptProfilingEnabled]):
+        (-[WebInspector setJavaScriptProfilingEnabled:]):
+
 2014-07-16  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Update order file paths for WebKit and WebKit2

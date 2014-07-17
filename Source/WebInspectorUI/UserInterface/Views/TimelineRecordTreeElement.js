@@ -80,6 +80,9 @@ WebInspector.TimelineRecordTreeElement = function(timelineRecord, subtitleNameSt
         case WebInspector.ScriptTimelineRecord.EventType.ProbeSampleRecorded:
             iconStyleClass = WebInspector.TimelineRecordTreeElement.ProbeRecordIconStyleClass;
             break;
+        case WebInspector.ScriptTimelineRecord.EventType.ConsoleProfileRecorded:
+            iconStyleClass = WebInspector.TimelineRecordTreeElement.ConsoleProfileIconStyleClass;
+            break;
         case WebInspector.ScriptTimelineRecord.EventType.TimerFired:
         case WebInspector.ScriptTimelineRecord.EventType.TimerInstalled:
         case WebInspector.ScriptTimelineRecord.EventType.TimerRemoved:
@@ -116,6 +119,7 @@ WebInspector.TimelineRecordTreeElement.EventRecordIconStyleClass = "event-record
 WebInspector.TimelineRecordTreeElement.TimerRecordIconStyleClass = "timer-record";
 WebInspector.TimelineRecordTreeElement.AnimationRecordIconStyleClass = "animation-record";
 WebInspector.TimelineRecordTreeElement.ProbeRecordIconStyleClass = "probe-record";
+WebInspector.TimelineRecordTreeElement.ConsoleProfileIconStyleClass = "console-profile-record";
 
 WebInspector.TimelineRecordTreeElement.prototype = {
     constructor: WebInspector.TimelineRecordTreeElement,
