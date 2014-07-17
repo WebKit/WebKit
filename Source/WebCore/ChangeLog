@@ -1,5 +1,14 @@
 2014-07-16  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix a typo noticed by Darin.
+        
+        * rendering/RenderBox.cpp:
+        (WebCore::shouldApplyContainersClipAndOffset):
+        (WebCore::RenderBox::computeRectForRepaint):
+        (WebCore::shouldAppyContainersClipAndOffset): Deleted.
+
+2014-07-16  Simon Fraser  <simon.fraser@apple.com>
+
         Improve showTree() logging
         https://bugs.webkit.org/show_bug.cgi?id=134997
 
