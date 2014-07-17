@@ -940,6 +940,7 @@ static void setDefaultsToConsistentValuesForTesting()
 #endif
         @"NSOverlayScrollersEnabled": @NO,
         @"AppleShowScrollBars": @"Always",
+        @"NSButtonAnimationsEnabled": @NO, // Ideally, we should find a way to test animations, but for now, make sure that the dumped snapshot matches actual state.
         WebDatabaseDirectoryDefaultsKey: [libraryPath stringByAppendingPathComponent:@"Databases"],
         WebStorageDirectoryDefaultsKey: [libraryPath stringByAppendingPathComponent:@"LocalStorage"],
         WebKitLocalCacheDefaultsKey: [libraryPath stringByAppendingPathComponent:@"LocalCache"]

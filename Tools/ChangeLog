@@ -1,3 +1,14 @@
+2014-07-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Disable button animations in regression tests
+        https://bugs.webkit.org/show_bug.cgi?id=133647
+        <rdar://problem/16677530>
+
+        Reviewed by Dean Jackson.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm: (setDefaultsToConsistentValuesForTesting):
+        We already did this for WebKit2, let's do it for WebKit1 too.
+
 2014-07-16  Alexey Proskuryakov  <ap@apple.com>
 
         A test that hangs at cleanup stage confuses webkitpy hugely
