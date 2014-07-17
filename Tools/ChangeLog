@@ -1,3 +1,11 @@
+2014-07-17  Sam Weinig  <sam@webkit.org>
+
+        Fix failing API tests.
+
+        * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+        (-[ActiveOffscreenWindow isVisible]):
+        Override isVisible to make the NSWindows pretend they are visible.
+
 2014-07-17  Alexey Proskuryakov  <ap@apple.com>
 
         Disable button animations in regression tests
