@@ -1,3 +1,22 @@
+2014-07-17  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Add element.style coverage for grid-auto-flow
+        https://bugs.webkit.org/show_bug.cgi?id=134966
+
+        Reviewed by Sergio Villar Senin.
+
+        As follow-up patch after r170996 we're adding new test cases for
+        grid-auto-flow to check the correct behavior of element.style.
+
+        * fast/css-grid-layout/grid-auto-flow-get-set-expected.txt: Updated
+        expectations accordingly.
+        * fast/css-grid-layout/grid-auto-flow-get-set.html: Updated test to add
+        checks for element.style.
+        * fast/css-grid-layout/resources/grid-definitions-parsing-utils.js:
+        (checkGridAutoFlowSetCSSValue): Add new helper method to check
+        grid-auto-flow property.
+        (checkGridAutoFlowSetJSValue): Ditto.
+
 2014-07-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.
