@@ -30,6 +30,7 @@
 
 #include "RegisterAllocator.h"
 #include <JavaScriptCore/MacroAssembler.h>
+#include <limits>
 
 namespace WebCore {
 
@@ -38,12 +39,13 @@ public:
     class StackReference {
     public:
         StackReference()
-            : m_offsetFromTop(-1)
+            : m_offsetFromTop(std::numeric_limits<unsigned>::max())
         { }
         explicit StackReference(unsigned offset)
             : m_offsetFromTop(offset)
         { }
         operator unsigned() const { return m_offsetFromTop; }
+        bool isValid() const { return m_offsetFromTop != std::numeric_limits<unsigned>::max(); }
     private:
         unsigned m_offsetFromTop;
     };
@@ -132,13 +134,6 @@ public:
         RELEASE_ASSERT(m_offsetFromTop >= stackUnitInBytes());
         m_offsetFromTop -= stackUnitInBytes();
         m_assembler.popToRestore(registerID);
-    }
-
-    void popAndDiscard(StackReference stackReference)
-    {
-        RELEASE_ASSERT(stackReference == m_offsetFromTop);
-        m_assembler.addPtr(JSC::MacroAssembler::TrustedImm32(stackUnitInBytes()), JSC::MacroAssembler::stackPointerRegister);
-        m_offsetFromTop -= stackUnitInBytes();
     }
 
     void popAndDiscardUpTo(StackReference stackReference)

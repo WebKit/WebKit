@@ -1190,11 +1190,19 @@ void SelectorCodeGenerator::generateSelectorChecker()
 
     m_registerAllocator.allocateRegister(elementAddressRegister);
 
+    StackAllocator::StackReference temporaryStackBase;
+
     if (m_functionType == FunctionType::SelectorCheckerWithCheckingContext)
         m_checkingContextStackReference = m_stackAllocator.push(checkingContextRegister);
 
     if (m_needsAdjacentBacktrackingStart)
         m_adjacentBacktrackingStart = m_stackAllocator.allocateUninitialized();
+
+    // Remember the stack base of the temporary variables.
+    if (m_checkingContextStackReference.isValid())
+        temporaryStackBase = m_checkingContextStackReference;
+    else if (m_needsAdjacentBacktrackingStart)
+        temporaryStackBase = m_adjacentBacktrackingStart;
 
     Assembler::JumpList failureCases;
 
@@ -1223,7 +1231,8 @@ void SelectorCodeGenerator::generateSelectorChecker()
     m_registerAllocator.deallocateRegister(elementAddressRegister);
 
     if (m_functionType == FunctionType::SimpleSelectorChecker) {
-        if (!m_needsAdjacentBacktrackingStart && !reservedCalleeSavedRegisters && !needsEpilogue) {
+        if (!temporaryStackBase.isValid() && !reservedCalleeSavedRegisters && !needsEpilogue) {
+            ASSERT(!m_needsAdjacentBacktrackingStart);
             // Success.
             m_assembler.move(Assembler::TrustedImm32(1), returnRegister);
             m_assembler.ret();
@@ -1234,47 +1243,28 @@ void SelectorCodeGenerator::generateSelectorChecker()
                 m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
                 m_assembler.ret();
             }
-        } else {
-            // Success.
-            m_assembler.move(Assembler::TrustedImm32(1), returnRegister);
-
-            // Failure.
-            if (!failureCases.empty()) {
-                Assembler::Jump skipFailureCase = m_assembler.jump();
-                failureCases.link(&m_assembler);
-                m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
-                skipFailureCase.link(&m_assembler);
-            }
-
-            if (m_needsAdjacentBacktrackingStart)
-                m_stackAllocator.popAndDiscardUpTo(m_adjacentBacktrackingStart);
-            if (reservedCalleeSavedRegisters)
-                m_stackAllocator.pop(calleeSavedRegisterStackReferences, m_registerAllocator.restoreCalleeSavedRegisters());
-            if (needsEpilogue)
-                generateEpilogue();
-            m_assembler.ret();
+            return;
         }
-    } else {
-        ASSERT(m_functionType == FunctionType::SelectorCheckerWithCheckingContext);
-
-        // Success.
-        m_assembler.move(Assembler::TrustedImm32(1), returnRegister);
-
-        // Failure.
-        if (!failureCases.empty()) {
-            Assembler::Jump skipFailureCase = m_assembler.jump();
-            failureCases.link(&m_assembler);
-            m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
-            skipFailureCase.link(&m_assembler);
-        }
-
-        m_stackAllocator.popAndDiscardUpTo(m_checkingContextStackReference);
-        if (reservedCalleeSavedRegisters)
-            m_stackAllocator.pop(calleeSavedRegisterStackReferences, m_registerAllocator.restoreCalleeSavedRegisters());
-        if (needsEpilogue)
-            generateEpilogue();
-        m_assembler.ret();
     }
+
+    // Success.
+    m_assembler.move(Assembler::TrustedImm32(1), returnRegister);
+
+    // Failure.
+    if (!failureCases.empty()) {
+        Assembler::Jump skipFailureCase = m_assembler.jump();
+        failureCases.link(&m_assembler);
+        m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
+        skipFailureCase.link(&m_assembler);
+    }
+
+    if (temporaryStackBase.isValid())
+        m_stackAllocator.popAndDiscardUpTo(temporaryStackBase);
+    if (reservedCalleeSavedRegisters)
+        m_stackAllocator.pop(calleeSavedRegisterStackReferences, m_registerAllocator.restoreCalleeSavedRegisters());
+    if (needsEpilogue)
+        generateEpilogue();
+    m_assembler.ret();
 }
 
 static inline Assembler::Jump testIsElementFlagOnNode(Assembler::ResultCondition condition, Assembler& assembler, Assembler::RegisterID nodeAddress)

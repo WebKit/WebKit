@@ -1,3 +1,20 @@
+2014-07-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: Clean up return path
+        https://bugs.webkit.org/show_bug.cgi?id=135011
+
+        Reviewed by Benjamin Poulain.
+
+        Clean up the existing CSS JIT return path before adding new early return path
+        for pseudo elements.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+        * cssjit/StackAllocator.h:
+        (WebCore::StackAllocator::StackReference::StackReference):
+        (WebCore::StackAllocator::StackReference::isValid):
+        (WebCore::StackAllocator::popAndDiscard): Deleted.
+
 2014-07-16  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Adjust cliprect with devicePixelFractionFromRenderer() before painting.
