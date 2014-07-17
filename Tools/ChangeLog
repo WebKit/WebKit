@@ -1,3 +1,7 @@
+2014-07-17  Lucas Forschler  <lforschler@apple.com>
+
+        Rollout r171167. <rdar://problem/17716602>
+
 2014-07-16  Alexey Proskuryakov  <ap@apple.com>
 
         A test that hangs at cleanup stage confuses webkitpy hugely

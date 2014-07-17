@@ -668,10 +668,6 @@ bool TestController::resetStateToConsistentValues()
     return m_doneResetting;
 }
 
-void TestController::terminateWebContentProcess()
-{
-    WKPageTerminate(m_mainWebView->page());
-}
 
 void TestController::updateWebViewSizeForTest(const TestInvocation& test)
 {
