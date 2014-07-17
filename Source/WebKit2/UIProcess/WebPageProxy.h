@@ -360,7 +360,8 @@ public:
     void setDelegatesScrolling(bool delegatesScrolling) { m_delegatesScrolling = delegatesScrolling; }
     bool delegatesScrolling() const { return m_delegatesScrolling; }
 
-    void viewStateDidChange(WebCore::ViewState::Flags mayHaveChanged, bool wantsReply = false);
+    enum class ViewStateChangeDispatchMode { Deferrable, Immediate };
+    void viewStateDidChange(WebCore::ViewState::Flags mayHaveChanged, bool wantsReply = false, ViewStateChangeDispatchMode = ViewStateChangeDispatchMode::Deferrable);
     bool isInWindow() const { return m_viewState & WebCore::ViewState::IsInWindow; }
     void waitForDidUpdateViewState();
     void didUpdateViewState() { m_waitingForDidUpdateViewState = false; }

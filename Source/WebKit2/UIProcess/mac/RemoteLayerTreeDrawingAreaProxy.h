@@ -75,6 +75,7 @@ private:
     void initializeDebugIndicator();
 
     virtual void waitForDidUpdateViewState() override;
+    virtual void hideContentUntilNextUpdate() override;
     
     WebCore::FloatPoint indicatorLocation() const;
 

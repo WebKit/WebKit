@@ -511,7 +511,8 @@ private:
 - (void)_applicationWillEnterForeground:(NSNotification*)notification
 {
     _page->applicationWillEnterForeground();
-    _page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow, true);
+    _page->drawingArea()->hideContentUntilNextUpdate();
+    _page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow, true, WebPageProxy::ViewStateChangeDispatchMode::Immediate);
 }
 
 - (void)_applicationDidBecomeActive:(NSNotification*)notification

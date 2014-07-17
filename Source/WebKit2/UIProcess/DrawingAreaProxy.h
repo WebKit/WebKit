@@ -88,6 +88,8 @@ public:
     
     virtual void dispatchAfterEnsuringDrawing(std::function<void (CallbackBase::Error)>) { ASSERT_NOT_REACHED(); }
 
+    virtual void hideContentUntilNextUpdate() { ASSERT_NOT_REACHED(); }
+
 protected:
     explicit DrawingAreaProxy(DrawingAreaType, WebPageProxy*);
 
