@@ -1,5 +1,14 @@
 2014-07-17  Alexey Proskuryakov  <ap@apple.com>
 
+        fast/repaint/obscured-background-no-repaint.html is very flaky
+        https://bugs.webkit.org/show_bug.cgi?id=131477
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        Moved the expectation out of WK2, as this also happens with WK1 on some bots.
+
+2014-07-17  Alexey Proskuryakov  <ap@apple.com>
+
         Remove inspector-protocol/profiler tests from TestExpectations, now that they no
         longer exist.
 
