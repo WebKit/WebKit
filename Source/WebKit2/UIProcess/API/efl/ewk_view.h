@@ -39,6 +39,8 @@
  * - "file,chooser,request", Ewk_File_Chooser_Request*: reports that a request has been made for the user to choose
  *   a file (or several) on the file system. Call ewk_file_chooser_request_ref() on the request object to process it
  *   asynchronously.
+ * - "focus,notfound", Ewk_Focus_Direction*: reports that there was no element to be focused on the given direction.
+ *   The user can handle next focus behavior using the signal.
  * - "form,submission,request", Ewk_Form_Submission_Request*: Reports that a form request is about to be submitted.
  *   The Ewk_Form_Submission_Request passed contains information about the text fields of the form. This
  *   is typically used to store login information that can be used later to pre-fill the form.
@@ -274,6 +276,14 @@ typedef enum {
     EWK_PAGINATION_MODE_TOP_TO_BOTTOM, /**< go to the next page with scrolling top to bottom vertically. */
     EWK_PAGINATION_MODE_BOTTOM_TO_TOP /**< go to the next page with scrolling bottom to top vertically. */
 } Ewk_Pagination_Mode;
+
+/**
+ * Enum values used to set focus direction.
+ */
+typedef enum Ewk_Focus_Direction {
+    EWK_FOCUS_DIRECTION_FORWARD = 0,
+    EWK_FOCUS_DIRECTION_BACKWARD,
+} Ewk_Focus_Direction;
 
 /**
  * @typedef Ewk_View_Script_Execute_Cb Ewk_View_Script_Execute_Cb

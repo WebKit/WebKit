@@ -52,6 +52,7 @@ protected:
     bool waitUntilTitleChangedTo(const char* expectedTitle, double timeoutSeconds = defaultTimeoutSeconds);
     bool waitUntilURLChangedTo(const char* expectedURL, double timeoutSeconds = defaultTimeoutSeconds);
     bool waitUntilTrue(bool &flag, double timeoutSeconds = defaultTimeoutSeconds);
+    bool waitUntilDirectionChanged(Ewk_Focus_Direction &direction, double timeoutSeconds = defaultTimeoutSeconds);
     Eina_List* waitUntilSpellingLanguagesLoaded(unsigned expectedLanguageCount, double timeoutValue = defaultTimeoutSeconds);
 
     void mouseClick(int x, int y, int button = 1 /*Left*/);
@@ -62,6 +63,8 @@ protected:
     void multiDown(int id, int x, int y);
     void multiUp(int id, int x, int y);
     void multiMove(int id, int x, int y);
+    void keyDown(char* keyname, char* key, char* string, char* modifier);
+    void keyUp(char* keyname, char* key, char* string);
 
 private:
     Evas_Object* m_webView;

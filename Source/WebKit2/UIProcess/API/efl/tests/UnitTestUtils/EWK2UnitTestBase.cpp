@@ -239,6 +239,17 @@ bool EWK2UnitTestBase::waitUntilTrue(bool &flag, double timeoutSeconds)
     return !data.didTimeOut();
 }
 
+bool EWK2UnitTestBase::waitUntilDirectionChanged(Ewk_Focus_Direction &direction, double timeoutSeconds)
+{
+    CallbackDataTimer data(timeoutSeconds);
+    Ewk_Focus_Direction initialDirection = direction;
+
+    while (!data.isDone() && direction == initialDirection)
+        ecore_main_loop_iterate();
+
+    return !data.didTimeOut();
+}
+
 Eina_List* EWK2UnitTestBase::waitUntilSpellingLanguagesLoaded(unsigned expectedLanguageCount, double timeoutValue)
 {
     // Keep waiting until all languages has been loaded or leave afqter timeout.
@@ -310,6 +321,26 @@ void EWK2UnitTestBase::multiUp(int id, int x, int y)
 void EWK2UnitTestBase::multiMove(int id, int x, int y)
 {
     evas_event_feed_multi_move(evas_object_evas_get(m_webView), id, x, y, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+void EWK2UnitTestBase::keyDown(char* keyname, char* key, char* string, char* modifier)
+{
+    Evas* evas = evas_object_evas_get(m_webView);
+    ASSERT(evas);
+
+    if (modifier) {
+        evas_key_modifier_on(evas, modifier);
+        evas_event_feed_key_down(evas, keyname, key, string, 0, 0, 0);
+        evas_key_modifier_off(evas, modifier);
+        return;
+    }
+
+    evas_event_feed_key_down(evas, keyname, key, string, 0, 0, 0);
+}
+
+void EWK2UnitTestBase::keyUp(char* keyname, char* key, char* string)
+{
+    evas_event_feed_key_up(evas_object_evas_get(m_webView), keyname, key, string, 0, 0, 0);
 }
 
 } // namespace EWK2UnitTest

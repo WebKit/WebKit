@@ -1,3 +1,29 @@
+2014-07-17  Sanghyup Lee  <sh53.lee@samsung.com>
+
+        [EFL][WK2] Add a "focus,notfound" signal.
+        https://bugs.webkit.org/show_bug.cgi?id=134674
+
+        Reviewed by Gyuyoung Kim.
+
+        Add a "focus,notfound" signal to handover focus control to application
+        because there are no elements of webview to focus on the given direction.
+
+        Application can decide to move the focus to next widget of ewk_view or something else
+        by using this signal.
+
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp: Added keyDown and keyUp function.
+        (EWK2UnitTest::EWK2UnitTestBase::waitUntilDirectionChanged):
+        (EWK2UnitTest::EWK2UnitTestBase::keyDown):
+        (EWK2UnitTest::EWK2UnitTestBase::keyUp):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (EWK2ViewTest::FocusNotFoundCallback):
+        (TEST_F):
+        * UIProcess/efl/PageUIClientEfl.cpp: Removed unnecessary calls to evas_object_focus_set().
+        (WebKit::PageUIClientEfl::takeFocus):
+
 2014-07-16  Brady Eidson  <beidson@apple.com>
 
         Reintroduce the SPI _websiteDataURLForContainerWithURL: that was removed in r171160

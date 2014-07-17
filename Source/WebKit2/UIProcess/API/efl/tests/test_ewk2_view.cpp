@@ -238,6 +238,13 @@ public:
 
         obtainedPageContents = true;
     }
+
+    static void FocusNotFoundCallback(void* userData, Evas_Object*, void* eventInfo)
+    {
+        Ewk_Focus_Direction* direction = static_cast<Ewk_Focus_Direction*>(eventInfo);
+        Ewk_Focus_Direction* result = static_cast<Ewk_Focus_Direction*>(userData);
+        *result = *direction;
+    }
 };
 
 TEST_F(EWK2ViewTest, ewk_view_type_check)
@@ -1200,4 +1207,37 @@ TEST_F(EWK2ViewTest, ewk_view_contents_size_get)
 
     EXPECT_EQ(2000, contentsWidth);
     EXPECT_EQ(3000, contentsHeight);
+}
+
+TEST_F(EWK2ViewTest, ewk_focus_notfound)
+{
+    const char contents[] =
+        "<!DOCTYPE html>"
+        "<body><input type='text' autofocus></body>";
+    ewk_view_html_string_load(webView(), contents, 0, 0);
+    ASSERT_TRUE(waitUntilLoadFinished());
+
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
+    ewk_settings_spatial_navigation_enabled_set(settings, EINA_TRUE);
+
+    Ewk_Focus_Direction direction = EWK_FOCUS_DIRECTION_FORWARD;
+    evas_object_smart_callback_add(webView(), "focus,notfound", FocusNotFoundCallback, &direction);
+
+    keyDown("Tab", "Tab", 0, "Shift");
+    keyUp("Tab", "Tab", 0);
+
+    ASSERT_TRUE(waitUntilDirectionChanged(direction));
+    EXPECT_EQ(EWK_FOCUS_DIRECTION_BACKWARD, direction);
+
+    // Set focus to the input element again.
+    keyDown("Tab", "Tab", 0, 0);
+    keyUp("Tab", "Tab", 0);
+
+    keyDown("Tab", "Tab", 0, 0);
+    keyUp("Tab", "Tab", 0);
+
+    ASSERT_TRUE(waitUntilDirectionChanged(direction));
+    EXPECT_EQ(EWK_FOCUS_DIRECTION_FORWARD, direction);
+
+    evas_object_smart_callback_del(webView(), "focus,notfound", FocusNotFoundCallback);
 }

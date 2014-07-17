@@ -27,6 +27,7 @@
 #define EwkViewCallbacks_h
 
 #include "WKEinaSharedString.h"
+#include "WKPageUIClient.h"
 #include "ewk_view.h"
 #include <Evas.h>
 #include <WebKit/WKGeometry.h>
@@ -52,6 +53,7 @@ enum CallbackType {
     DownloadJobFinished,
     DownloadJobRequested,
     FileChooserRequest,
+    FocusNotFound,
     NewFormSubmissionRequest,
     LoadError,
     LoadFinished,
@@ -144,6 +146,24 @@ struct CallBack <callbackType, Ewk_CSS_Size*> : public EvasObjectHolder {
     }
 };
 
+template <CallbackType callbackType>
+struct CallBack <callbackType, Ewk_Focus_Direction> : public EvasObjectHolder {
+    explicit CallBack(Evas_Object* view)
+        : EvasObjectHolder(view)
+    { }
+
+    void call(Ewk_Focus_Direction direction)
+    {
+        evas_object_smart_callback_call(m_object, CallBackInfo<callbackType>::name(), &direction);
+    }
+
+    void call(const WKFocusDirection arg)
+    {
+        Ewk_Focus_Direction direction = (arg == kWKFocusDirectionForward) ? EWK_FOCUS_DIRECTION_FORWARD : EWK_FOCUS_DIRECTION_BACKWARD;
+        call(direction);
+    }
+};
+
 #define DECLARE_EWK_VIEW_CALLBACK(callbackType, string, type) \
 template <>                                                   \
 struct CallBackInfo<callbackType> {                           \
@@ -161,6 +181,7 @@ DECLARE_EWK_VIEW_CALLBACK(DownloadJobFailed, "download,failed", Ewk_Download_Job
 DECLARE_EWK_VIEW_CALLBACK(DownloadJobFinished, "download,finished", Ewk_Download_Job*);
 DECLARE_EWK_VIEW_CALLBACK(DownloadJobRequested, "download,request", Ewk_Download_Job*);
 DECLARE_EWK_VIEW_CALLBACK(FileChooserRequest, "file,chooser,request", Ewk_File_Chooser_Request*);
+DECLARE_EWK_VIEW_CALLBACK(FocusNotFound, "focus,notfound", Ewk_Focus_Direction);
 DECLARE_EWK_VIEW_CALLBACK(NewFormSubmissionRequest, "form,submission,request", Ewk_Form_Submission_Request*);
 DECLARE_EWK_VIEW_CALLBACK(LoadError, "load,error", Ewk_Error*);
 DECLARE_EWK_VIEW_CALLBACK(LoadFinished, "load,finished", void);

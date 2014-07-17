@@ -98,10 +98,9 @@ void PageUIClientEfl::close(WKPageRef, const void* clientInfo)
     toPageUIClientEfl(clientInfo)->m_view->close();
 }
 
-void PageUIClientEfl::takeFocus(WKPageRef, WKFocusDirection, const void* clientInfo)
+void PageUIClientEfl::takeFocus(WKPageRef, WKFocusDirection direction, const void* clientInfo)
 {
-    // FIXME: this is only a partial implementation.
-    evas_object_focus_set(toPageUIClientEfl(clientInfo)->m_view->evasObject(), false);
+    toPageUIClientEfl(clientInfo)->m_view->smartCallback<FocusNotFound>().call(direction);
 }
 
 void PageUIClientEfl::focus(WKPageRef, const void* clientInfo)
