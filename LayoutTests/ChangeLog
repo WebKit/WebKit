@@ -1,3 +1,11 @@
+2014-07-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Report and mark new failures. Update some expectations.
+        * platform/gtk/http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect-expected.txt: Rebaseline after r171033.
+        * platform/gtk/svg/W3C-SVG-1.1/shapes-rect-02-t-expected.txt: Added. Rebaseline after r171046.
+
 2014-07-16  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed gardening. Skip some text track tests that fail only on release wk1 builds.
