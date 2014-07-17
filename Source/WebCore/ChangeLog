@@ -1,3 +1,25 @@
+2014-07-16  Brady Eidson  <beidson@apple.com>
+
+        Add WebSecurityOrigin "webSecurityOriginFromDatabaseIdentifier" SPI and change _websiteDataURLForContainerWithURL: SPI
+        <rdar://problem/17454712> and https://bugs.webkit.org/show_bug.cgi?id=134984
+
+        Reviewed by Dan Bernstein.
+
+        Change _websiteDataURLForContainerWithURL: SPI to include an optional bundle identifier argument:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (+[WKProcessPool _websiteDataURLForContainerWithURL:bundleIdentifierIfNotInContainer:]):
+        (+[WKProcessPool _websiteDataURLForContainerWithURL:]): Deleted.
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+
+        Add a big shiny comment in a few key places:
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::initializeDatabaseProcess):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::UniqueIDBDatabase):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::applyPlatformSpecificConfigurationDefaults):
+        (WebKit::WebContext::ensureDatabaseProcess):
+
 2014-07-16  Roger Fong  <roger_fong@apple.com>
 
         Captions container should not clip content.

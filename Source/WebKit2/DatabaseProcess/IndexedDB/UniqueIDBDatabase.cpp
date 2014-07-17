@@ -62,6 +62,10 @@ UniqueIDBDatabase::UniqueIDBDatabase(const UniqueIDBDatabaseIdentifier& identifi
     if (m_inMemory)
         return;
 
+    // *********
+    // IMPORTANT: Do not change the directory structure for indexed databases on disk without first consulting a reviewer from Apple (<rdar://problem/17454712>)
+    // *********
+
     // Each unique Indexed Database exists in a directory named for the database, which exists in a directory representing its opening origin.
     m_databaseRelativeDirectory = pathByAppendingComponent(databaseFilenameIdentifier(identifier.openingOrigin()), filenameForDatabaseName());
 

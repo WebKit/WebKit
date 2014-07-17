@@ -97,6 +97,10 @@ void DatabaseProcess::removeUniqueIDBDatabase(const UniqueIDBDatabase& database)
 
 void DatabaseProcess::initializeDatabaseProcess(const DatabaseProcessCreationParameters& parameters)
 {
+    // *********
+    // IMPORTANT: Do not change the directory structure for indexed databases on disk without first consulting a reviewer from Apple (<rdar://problem/17454712>)
+    // *********
+
     m_indexedDatabaseDirectory = parameters.indexedDatabaseDirectory;
     SandboxExtension::consumePermanently(parameters.indexedDatabaseDirectoryExtensionHandle);
 

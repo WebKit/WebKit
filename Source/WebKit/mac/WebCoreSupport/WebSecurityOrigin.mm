@@ -38,6 +38,16 @@
 using namespace WebCore;
 
 @implementation WebSecurityOrigin
+
++ (id)webSecurityOriginFromDatabaseIdentifier:(NSString *)databaseIdentifier
+{
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::maybeCreateFromDatabaseIdentifier(databaseIdentifier);
+    if (!origin)
+        return nil;
+
+    return [[[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin.get()] autorelease];
+}
+
 - (id)initWithURL:(NSURL *)url
 {
     self = [super init];
@@ -45,8 +55,8 @@ using namespace WebCore;
         return nil;
 
     RefPtr<SecurityOrigin> origin = SecurityOrigin::create(URL([url absoluteURL]));
-    origin->ref();
-    _private = reinterpret_cast<WebSecurityOriginPrivate *>(origin.get());
+    SecurityOrigin* rawOrigin = origin.release().leakRef();
+    _private = reinterpret_cast<WebSecurityOriginPrivate *>(rawOrigin);
 
     return self;
 }

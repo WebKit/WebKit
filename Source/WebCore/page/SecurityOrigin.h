@@ -54,6 +54,11 @@ public:
     static PassRefPtr<SecurityOrigin> createUnique();
 
     static PassRefPtr<SecurityOrigin> createFromDatabaseIdentifier(const String&);
+    // Alternate form of createFromDatabaseIdentifier that returns a nullptr on failure, instead of an empty origin.
+    // FIXME: Many users of createFromDatabaseIdentifier seem to expect maybeCreateFromDatabaseIdentifier behavior,
+    // but they aren't getting it so they might be buggy.
+    static PassRefPtr<SecurityOrigin> maybeCreateFromDatabaseIdentifier(const String&);
+
     static PassRefPtr<SecurityOrigin> createFromString(const String&);
     static PassRefPtr<SecurityOrigin> create(const String& protocol, const String& host, int port);
 

@@ -35,6 +35,8 @@
     id<WebQuotaManager> _databaseQuotaManager;
 }
 
++ (id)webSecurityOriginFromDatabaseIdentifier:(NSString *)databaseIdentifier;
+
 - (id)initWithURL:(NSURL *)url;
 
 - (NSString *)protocol;
