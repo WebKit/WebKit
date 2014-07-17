@@ -83,6 +83,26 @@ using namespace WebCore;
     return FloatQuad(p1, p2, p3, p4);
 }
 
+- (CGPoint)p1
+{
+    return p1;
+}
+
+- (CGPoint)p2
+{
+    return p2;
+}
+
+- (CGPoint)p3
+{
+    return p3;
+}
+
+- (CGPoint)p4
+{
+    return p4;
+}
+
 @end
 
 #endif // ENABLE(TOUCH_EVENTS)

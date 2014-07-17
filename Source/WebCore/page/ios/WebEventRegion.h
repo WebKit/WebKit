@@ -35,6 +35,10 @@
 }
 - (id)initWithPoints:(CGPoint)inP1 :(CGPoint)inP2 :(CGPoint)inP3 :(CGPoint)inP4;
 - (BOOL)hitTest:(CGPoint)point;
+- (CGPoint)p1;
+- (CGPoint)p2;
+- (CGPoint)p3;
+- (CGPoint)p4;
 @end
 
 #endif // WebEventRegion_h

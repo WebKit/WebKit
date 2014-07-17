@@ -1,3 +1,19 @@
+2014-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Expose the points on WebEventRegion
+        https://bugs.webkit.org/show_bug.cgi?id=134978
+
+        Reviewed by Tim Horton.
+
+        Expose WebEventRegion's points so that UIKit can get at them.
+
+        * page/ios/WebEventRegion.h:
+        * page/ios/WebEventRegion.mm:
+        (-[WebEventRegion p1]):
+        (-[WebEventRegion p2]):
+        (-[WebEventRegion p3]):
+        (-[WebEventRegion p4]):
+
 2014-07-16  Brady Eidson  <beidson@apple.com>
 
         Add WebSecurityOrigin "webSecurityOriginFromDatabaseIdentifier" SPI and change _websiteDataURLForContainerWithURL: SPI
