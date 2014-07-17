@@ -1392,3 +1392,5 @@ webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/id.html [ Pass Failu
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/pauseOnExit.html [ Pass Failure ]
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/startTime.html [ Pass Failure ]
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/track.html [ Pass Failure ]
+
+webkit.org/b/134490 [ MountainLion ] media/video-ended-event-negative-playback.html [ Pass Failure ]
