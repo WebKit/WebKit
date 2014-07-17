@@ -1,5 +1,18 @@
 2014-07-16  Simon Fraser  <simon.fraser@apple.com>
 
+        Improve showTree() logging
+        https://bugs.webkit.org/show_bug.cgi?id=134997
+
+        Reviewed by Tim Horton.
+
+        Have the debug showTree(), which dumps the Node/Element tree, show which nodes need
+        style recalc, and print element renderers.
+
+        * dom/Node.cpp:
+        (WebCore::Node::showNode):
+
+2014-07-16  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS] Expose the points on WebEventRegion
         https://bugs.webkit.org/show_bug.cgi?id=134978
 

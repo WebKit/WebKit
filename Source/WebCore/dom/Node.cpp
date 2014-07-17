@@ -1528,7 +1528,7 @@ void Node::showNode(const char* prefix) const
         StringBuilder attrs;
         appendAttributeDesc(this, attrs, classAttr, " CLASS=");
         appendAttributeDesc(this, attrs, styleAttr, " STYLE=");
-        fprintf(stderr, "%s%s\t%p%s\n", prefix, nodeName().utf8().data(), this, attrs.toString().utf8().data());
+        fprintf(stderr, "%s%s\t%p (renderer %p) %s%s%s\n", prefix, nodeName().utf8().data(), this, renderer(), attrs.toString().utf8().data(), needsStyleRecalc() ? " (needs style recalc)" : "", childNeedsStyleRecalc() ? " (child needs style recalc)" : "");
     }
 }
 
