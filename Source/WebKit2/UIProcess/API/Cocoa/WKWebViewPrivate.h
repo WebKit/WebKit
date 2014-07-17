@@ -137,6 +137,7 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 
 - (void)_beginAnimatedResizeWithUpdates:(void (^)(void))updateBlock;
 - (void)_endAnimatedResize;
+- (void)_resizeWhileHidingContentWithUpdates:(void (^)(void))updateBlock;
 
 - (void)_snapshotRect:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler;
 
