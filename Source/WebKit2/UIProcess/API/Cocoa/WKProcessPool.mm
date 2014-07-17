@@ -105,6 +105,11 @@ enum : NSUInteger {
 
 @implementation WKProcessPool (WKPrivate)
 
++ (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL
+{
+    return [WKProcessPool _websiteDataURLForContainerWithURL:containerURL bundleIdentifierIfNotInContainer:nil];
+}
+
 + (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL bundleIdentifierIfNotInContainer:(NSString *)bundleIdentifier
 {
     NSURL *url = [containerURL URLByAppendingPathComponent:@"Library" isDirectory:YES];

@@ -1,3 +1,14 @@
+2014-07-16  Brady Eidson  <beidson@apple.com>
+
+        Reintroduce the SPI _websiteDataURLForContainerWithURL: that was removed in r171160
+        https://bugs.webkit.org/show_bug.cgi?id=134984
+
+        Reviewed by David Kilzer.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (+[WKProcessPool _websiteDataURLForContainerWithURL:]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+
 2014-07-16  Alexey Proskuryakov  <ap@apple.com>
 
         A test that hangs at cleanup stage confuses webkitpy hugely
