@@ -92,7 +92,6 @@ extern "C" JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(void (*callback)(const char*
     
     const char* args[] = {
         "llvmForJSC.dylib",
-        "-enable-stackmap-liveness=true",
         "-enable-patchpoint-liveness=true"
     };
     llvm::cl::ParseCommandLineOptions(sizeof(args) / sizeof(const char*), args);
