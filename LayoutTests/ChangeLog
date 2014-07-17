@@ -1,3 +1,13 @@
+2014-07-16  Roger Fong  <roger_fong@apple.com>
+
+        Add test for r169820.
+        https://bugs.webkit.org/show_bug.cgi?id=135002.
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac-wk2/plugins/snapshotting/autoplay-dominant-blank-plugin-moved-into-view-expected.txt: Added.
+        * plugins/snapshotting/autoplay-dominant-blank-plugin-moved-into-view.html: Added.
+
 2014-07-17  Alexey Proskuryakov  <ap@apple.com>
 
         plugins/quicktime-plugin-replacement.html is flaky
