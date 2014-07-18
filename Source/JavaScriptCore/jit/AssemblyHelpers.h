@@ -481,15 +481,10 @@ public:
     }
 #endif
     
+    void callExceptionFuzz();
+    
     enum ExceptionCheckKind { NormalExceptionCheck, InvertedExceptionCheck };
-    Jump emitExceptionCheck(ExceptionCheckKind kind = NormalExceptionCheck)
-    {
-#if USE(JSVALUE64)
-        return branchTest64(kind == NormalExceptionCheck ? NonZero : Zero, AbsoluteAddress(vm()->addressOfException()));
-#elif USE(JSVALUE32_64)
-        return branch32(kind == NormalExceptionCheck ? NotEqual : Equal, AbsoluteAddress(reinterpret_cast<char*>(vm()->addressOfException()) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), TrustedImm32(JSValue::EmptyValueTag));
-#endif
-    }
+    Jump emitExceptionCheck(ExceptionCheckKind kind = NormalExceptionCheck);
 
 #if ENABLE(SAMPLING_COUNTERS)
     static void emitCount(MacroAssembler& jit, AbstractSamplingCounter& counter, int32_t increment = 1)

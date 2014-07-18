@@ -186,6 +186,7 @@ public:
     // Add a call out from JIT code, with a fast exception check that tests if the return value is zero.
     void fastExceptionCheck()
     {
+        callExceptionFuzz();
         m_exceptionChecks.append(branchTestPtr(Zero, GPRInfo::returnValueGPR));
     }
     

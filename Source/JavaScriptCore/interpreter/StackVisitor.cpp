@@ -278,7 +278,7 @@ Arguments* StackVisitor::Frame::existingArguments()
         reg = codeBlock()->argumentsRegister();
     
     JSValue result = callFrame()->r(unmodifiedArgumentsRegister(reg).offset()).jsValue();
-    if (!result)
+    if (!result || !result.isCell()) // Protect against Undefined in case we throw in op_enter.
         return 0;
     return jsCast<Arguments*>(result);
 }

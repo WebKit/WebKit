@@ -457,13 +457,19 @@ static bool unwindCallFrame(StackVisitor& visitor)
         RELEASE_ASSERT(!visitor->isInlinedFrame());
 #endif
         activation = callFrame->uncheckedActivation();
-        if (activation)
-            jsCast<JSActivation*>(activation)->tearOff(*scope->vm());
+        // Protect against the activation not being created, or the variable still being
+        // initialized to Undefined inside op_enter.
+        if (activation && activation.isCell()) {
+            JSActivation* activationObject = jsCast<JSActivation*>(activation);
+            // Protect against throwing exceptions after tear-off.
+            if (!activationObject->isTornOff())
+                activationObject->tearOff(*scope->vm());
+        }
     }
 
     if (codeBlock->codeType() == FunctionCode && codeBlock->usesArguments()) {
         if (Arguments* arguments = visitor->existingArguments()) {
-            if (activation)
+            if (activation && activation.isCell())
                 arguments->didTearOffActivation(callFrame, jsCast<JSActivation*>(activation));
 #if ENABLE(DFG_JIT)
             else if (visitor->isInlinedFrame())

@@ -762,8 +762,6 @@ void JIT::emit_op_neq_null(Instruction* currentInstruction)
 
 void JIT::emit_op_enter(Instruction*)
 {
-    emitEnterOptimizationCheck();
-    
     // Even though CTI doesn't use them, we initialize our constant
     // registers to zap stale pointers, to avoid unnecessarily prolonging
     // object lifetime and increasing GC pressure.
@@ -772,6 +770,8 @@ void JIT::emit_op_enter(Instruction*)
         emitInitRegister(virtualRegisterForLocal(j).offset());
 
     emitWriteBarrier(m_codeBlock->ownerExecutable());
+
+    emitEnterOptimizationCheck();
 }
 
 void JIT::emit_op_create_activation(Instruction* currentInstruction)

@@ -167,7 +167,10 @@ void JIT::privateCompileMainPass()
                 AbsoluteAddress(m_compilation->executionCounterFor(Profiler::OriginStack(Profiler::Origin(
                     m_compilation->bytecodes(), m_bytecodeOffset)))->address()));
         }
-
+        
+        if (Options::eagerlyUpdateTopCallFrame())
+            updateTopCallFrame();
+        
         switch (opcodeID) {
         DEFINE_SLOW_OP(del_by_val)
         DEFINE_SLOW_OP(in)

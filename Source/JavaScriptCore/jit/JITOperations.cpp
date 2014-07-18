@@ -51,9 +51,13 @@
 #include "JSCInlines.h"
 #include "Repatch.h"
 #include "RepatchBuffer.h"
+#include "TestRunnerUtils.h"
 #include <wtf/InlineASM.h>
 
 namespace JSC {
+
+static unsigned s_numberOfExceptionFuzzChecks;
+unsigned numberOfExceptionFuzzChecks() { return s_numberOfExceptionFuzzChecks; }
 
 extern "C" {
 
@@ -1028,7 +1032,7 @@ SlowPathReturnType JIT_OPERATION operationOptimize(ExecState* exec, int32_t byte
     DeferGCForAWhile deferGC(vm.heap);
     
     CodeBlock* codeBlock = exec->codeBlock();
-
+    
     if (bytecodeIndex) {
         // If we're attempting to OSR from a loop, assume that this should be
         // separately optimized.
@@ -1797,6 +1801,31 @@ void JIT_OPERATION operationVMHandleException(ExecState* exec)
 
     ASSERT(!exec->isVMEntrySentinel());
     genericUnwind(vm, exec, vm->exception());
+}
+
+// This function "should" just take the ExecState*, but doing so would make it more difficult
+// to call from exception check sites. So, unlike all of our other functions, we allow
+// ourselves to play some gnarly ABI tricks just to simplify the calling convention. This is
+// particularly safe here since this is never called on the critical path - it's only for
+// testing.
+void JIT_OPERATION operationExceptionFuzz()
+{
+    ASSERT(Options::enableExceptionFuzz());
+
+    // This probably "just works" for GCC also, but I haven't tried.
+#if COMPILER(CLANG)
+    ExecState* exec = static_cast<ExecState*>(__builtin_frame_address(1));
+    DeferGCForAWhile deferGC(exec->vm().heap);
+    
+    s_numberOfExceptionFuzzChecks++;
+    
+    unsigned fireTarget = Options::fireExceptionFuzzAt();
+    if (fireTarget == s_numberOfExceptionFuzzChecks) {
+        printf("JSC EXCEPTION FUZZ: Throwing fuzz exception with call frame %p and return address %p.\n", exec, __builtin_return_address(0));
+        exec->vm().throwException(
+            exec, createError(exec->lexicalGlobalObject(), ASCIILiteral("Exception Fuzz")));
+    }
+#endif // COMPILER(CLANG)
 }
 
 } // extern "C"

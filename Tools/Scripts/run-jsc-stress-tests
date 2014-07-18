@@ -733,6 +733,10 @@ def runProfiler
     end
 end
 
+def runExceptionFuzz
+    addRunCommand("exception-fuzz", ["perl", (HELPERS_PATH + "js-exception-fuzz").to_s, pathToVM.to_s, $benchmark.to_s], silentOutputHandler, simpleErrorHandler)
+end
+
 def runLayoutTest(kind, *options)
     raise unless $benchmark.to_s =~ /\.js$/
     testName = $~.pre_match

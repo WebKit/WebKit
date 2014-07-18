@@ -28,6 +28,7 @@
 
 #if ENABLE(JIT)
 
+#include "JITOperations.h"
 #include "JSCInlines.h"
 
 namespace JSC {
@@ -194,6 +195,33 @@ void AssemblyHelpers::jitAssertArgumentCountSane()
     ok.link(this);
 }
 #endif // !ASSERT_DISABLED
+
+void AssemblyHelpers::callExceptionFuzz()
+{
+    if (!Options::enableExceptionFuzz())
+        return;
+
+    ASSERT(stackAlignmentBytes() >= sizeof(void*) * 2);
+    subPtr(TrustedImm32(stackAlignmentBytes()), stackPointerRegister);
+    poke(GPRInfo::returnValueGPR, 0);
+    poke(GPRInfo::returnValueGPR2, 1);
+    move(TrustedImmPtr(bitwise_cast<void*>(operationExceptionFuzz)), GPRInfo::nonPreservedNonReturnGPR);
+    call(GPRInfo::nonPreservedNonReturnGPR);
+    peek(GPRInfo::returnValueGPR, 0);
+    peek(GPRInfo::returnValueGPR2, 1);
+    addPtr(TrustedImm32(stackAlignmentBytes()), stackPointerRegister);
+}
+
+AssemblyHelpers::Jump AssemblyHelpers::emitExceptionCheck(ExceptionCheckKind kind)
+{
+    callExceptionFuzz();
+    
+#if USE(JSVALUE64)
+    return branchTest64(kind == NormalExceptionCheck ? NonZero : Zero, AbsoluteAddress(vm()->addressOfException()));
+#elif USE(JSVALUE32_64)
+    return branch32(kind == NormalExceptionCheck ? NotEqual : Equal, AbsoluteAddress(reinterpret_cast<char*>(vm()->addressOfException()) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), TrustedImm32(JSValue::EmptyValueTag));
+#endif
+}
 
 void AssemblyHelpers::emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, TrustedImmPtr structure, RegisterID dest)
 {
