@@ -1,3 +1,9 @@
+2014-07-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix cloop build.
+
+        * Scripts/jsc-stress-test-helpers/js-exception-fuzz:
+
 2014-07-18  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
 
         Fix -v|--verbose option in sort-export-file script.

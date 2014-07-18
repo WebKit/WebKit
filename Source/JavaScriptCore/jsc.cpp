@@ -1274,8 +1274,10 @@ int jscmain(int argc, char** argv)
                 fprintf(stderr, "could not save profiler output.\n");
         }
         
+#if ENABLE(JIT)
         if (Options::enableExceptionFuzz())
             printf("JSC EXCEPTION FUZZ: encountered %u checks.\n", numberOfExceptionFuzzChecks());
+#endif
     }
     
     return result;

@@ -88,6 +88,11 @@ if ($verbose) {
     print "Seed: $seed\n";
 }
 
+if (!$checkCount) {
+    print "Exception fuzz testing not supported by jsc binary.\n";
+    exit 0;
+}
+
 srand($seed);
 
 for (my $iteration = 0; $iteration < $repeat; ++$iteration) {
