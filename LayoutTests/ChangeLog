@@ -1,3 +1,15 @@
+2014-07-18  Radu Stavila  <stavila@adobe.com>
+
+        REGRESSION (r169105): Crash in selection
+        https://bugs.webkit.org/show_bug.cgi?id=134303
+
+        Reviewed by Ryosuke Niwa.
+
+        Added test for the crash that occurred in some cases when selecting.
+
+        * fast/regions/selection/crash-deselect-expected.txt: Added.
+        * fast/regions/selection/crash-deselect.html: Added.
+
 2014-07-17  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Embedded non-compositing rotate transform paints to wrong position.
