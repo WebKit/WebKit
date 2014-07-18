@@ -1,3 +1,17 @@
+2014-07-18  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r171218.
+        https://bugs.webkit.org/show_bug.cgi?id=135055
+
+        Made fast/dom/HTMLObjectElement/beforeload-set-text-
+        crash.xhtml crash (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "REGRESSION (r169105): Crash in selection"
+        https://bugs.webkit.org/show_bug.cgi?id=134303
+        http://trac.webkit.org/changeset/171218
+
 2014-07-18  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Unreviewed GTK gardening. Tests passing after SVN r171001
