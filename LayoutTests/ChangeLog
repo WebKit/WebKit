@@ -1,3 +1,9 @@
+2014-07-18  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Unreviewed gardening. Removing failure expectations for tests now passing.
+
+        * platform/gtk/TestExpectations: Removed failure expectations.
+
 2014-07-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r171218.

@@ -1234,9 +1234,6 @@ webkit.org/b/95935 http/tests/security/cross-origin-plugin.html [ Failure ]
 # https://bugs.webkit.org/show_bug.cgi?id=39160
 webkit.org/b/39160 security/block-test-no-port.html [ Failure ]
 
-# Apparently our WebkitTestRunner is disregarding window features? We open the window sized 800x600.
-webkit.org/b/122535 fast/dom/Window/open-window-min-size.html [ Failure ]
-
 # Unexplained failures
 Bug(GTK) editing/selection/5136696.html [ Failure ]
 Bug(GTK) editing/selection/inactive-selection.html [ Failure ]
@@ -1775,11 +1772,6 @@ webkit.org/b/121593 accessibility/radio-button-title-label.html  [ Failure ]
 
 webkit.org/b/121905 fast/images/exif-orientation.html [ Failure ]
 
-webkit.org/b/122147 fast/css/drop-shadow-viewport-height.html [ ImageOnlyFailure ]
-webkit.org/b/122147 fast/css/drop-shadow-viewport-vmax.html [ ImageOnlyFailure ]
-webkit.org/b/122147 fast/css/drop-shadow-viewport-vmin.html [ ImageOnlyFailure ]
-webkit.org/b/122147 fast/css/drop-shadow-viewport-width.html [ ImageOnlyFailure ]
-
 webkit.org/b/124360 media/video-canvas-drawing-output.html [ Failure ]
 
 webkit.org/b/124504 fast/text/break-word-pre-wrap.html [ ImageOnlyFailure ]
@@ -1963,8 +1955,6 @@ webkit.org/b/132126 media/track/track-cues-cuechange.html [ Timeout Pass ]
 webkit.org/b/132126 media/track/track-cues-enter-exit.html [ Timeout Pass ]
 webkit.org/b/132126 media/video-poster-background.html [ ImageOnlyFailure ]
 webkit.org/b/132126 media/restore-from-page-cache.html [ Crash ]
-
-webkit.org/b/132232 fast/forms/textarea-placeholder-wrapping.html [ ImageOnlyFailure ]
 
 webkit.org/b/132233 fast/regions/clip-to-padding-box-vertical-lr.html [ ImageOnlyFailure ]
 
