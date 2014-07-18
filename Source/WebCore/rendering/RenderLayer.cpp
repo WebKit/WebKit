@@ -1694,7 +1694,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext* context, const LayerP
         m_usedTransparency = true;
         context->save();
         LayoutRect adjustedClipRect = paintingExtent(*this, paintingInfo.rootLayer, dirtyRect, paintingInfo.paintBehavior);
-        adjustedClipRect.move(paintingInfo.subPixelAccumulation);
+        adjustedClipRect.move(paintingInfo.subpixelAccumulation);
         FloatRect pixelSnappedClipRect = pixelSnappedForPainting(adjustedClipRect, renderer().document().deviceScaleFactor());
         context->clip(pixelSnappedClipRect);
 
@@ -3589,7 +3589,7 @@ void RenderLayer::clipToRect(const LayerPaintingInfo& paintingInfo, GraphicsCont
     if (clipRect.rect() != paintingInfo.paintDirtyRect || clipRect.hasRadius()) {
         context->save();
         LayoutRect adjustedClipRect = clipRect.rect();
-        adjustedClipRect.move(paintingInfo.subPixelAccumulation);
+        adjustedClipRect.move(paintingInfo.subpixelAccumulation);
         context->clip(pixelSnappedForPainting(adjustedClipRect, deviceScaleFactor));
     }
 
@@ -3602,7 +3602,7 @@ void RenderLayer::clipToRect(const LayerPaintingInfo& paintingInfo, GraphicsCont
     for (RenderLayer* layer = rule == IncludeSelfForBorderRadius ? this : parent(); layer; layer = layer->parent()) {
         if (layer->renderer().hasOverflowClip() && layer->renderer().style().hasBorderRadius() && inContainingBlockChain(this, layer)) {
             LayoutRect adjustedClipRect = LayoutRect(toLayoutPoint(layer->offsetFromAncestor(paintingInfo.rootLayer)), layer->size());
-            adjustedClipRect.move(paintingInfo.subPixelAccumulation);
+            adjustedClipRect.move(paintingInfo.subpixelAccumulation);
             context->clipRoundedRect(layer->renderer().style().getRoundedInnerBorderFor(adjustedClipRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor));
         }
 
@@ -4149,21 +4149,21 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext* context, const 
     LayoutSize offsetFromParent = offsetFromAncestor(paintingInfo.rootLayer);
     offsetFromParent += translationOffset;
     TransformationMatrix transform(renderableTransform(paintingInfo.paintBehavior));
-    FloatSize devicePixelSnappedOffsetFromParent = toFloatSize(roundedForPainting(toLayoutPoint(offsetFromParent), deviceScaleFactor));
-    // Translate the graphics context to the snapping position to avoid off-device-pixel positing.
-    transform.translateRight(devicePixelSnappedOffsetFromParent.width(), devicePixelSnappedOffsetFromParent.height());
+    // Add the subpixel accumulation to the current layer's offset so that we can always snap the translateRight value to where the renderer() is supposed to be painting.
+    LayoutSize offsetForThisLayer = offsetFromParent + paintingInfo.subpixelAccumulation;
+    FloatSize devicePixelSnappedOffsetForThisLayer = toFloatSize(roundedForPainting(toLayoutPoint(offsetForThisLayer), deviceScaleFactor));
     // We handle accumulated subpixels through nested layers here. Since the context gets translated to device pixels,
-    // all we need to do is add the delta to the accumulated pixels coming from ancestor layers. With deep nesting of subpixel positioned
-    // boxes, this could grow to a relatively large number, but the translateRight() balances it.
-    FloatSize delta = offsetFromParent - devicePixelSnappedOffsetFromParent;
-    LayoutSize adjustedSubPixelAccumulation = paintingInfo.subPixelAccumulation + LayoutSize(delta);
+    // all we need to do is add the delta to the accumulated pixels coming from ancestor layers.
+    // Translate the graphics context to the snapping position to avoid off-device-pixel positing.
+    transform.translateRight(devicePixelSnappedOffsetForThisLayer.width(), devicePixelSnappedOffsetForThisLayer.height());
     // Apply the transform.
     GraphicsContextStateSaver stateSaver(*context);
     context->concatCTM(transform.toAffineTransform());
 
     // Now do a paint with the root layer shifted to be us.
-    LayerPaintingInfo transformedPaintingInfo(this, LayoutRect(enclosingRectForPainting(transform.inverse().mapRect(paintingInfo.paintDirtyRect), deviceScaleFactor)), paintingInfo.paintBehavior,
-        adjustedSubPixelAccumulation, paintingInfo.subtreePaintRoot, paintingInfo.overlapTestRequests);
+    LayoutSize adjustedSubpixelAccumulation = offsetForThisLayer - LayoutSize(devicePixelSnappedOffsetForThisLayer);
+    LayerPaintingInfo transformedPaintingInfo(this, LayoutRect(enclosingRectForPainting(transform.inverse().mapRect(paintingInfo.paintDirtyRect), deviceScaleFactor)),
+        paintingInfo.paintBehavior, adjustedSubpixelAccumulation, paintingInfo.subtreePaintRoot, paintingInfo.overlapTestRequests);
     paintLayerContentsAndReflection(context, transformedPaintingInfo, paintFlags);
 }
 
@@ -4419,7 +4419,7 @@ void RenderLayer::paintBackgroundForFragments(const LayerFragments& layerFragmen
         // Paint the background.
         // FIXME: Eventually we will collect the region from the fragment itself instead of just from the paint info.
         PaintInfo paintInfo(context, fragment.backgroundRect.rect(), PaintPhaseBlockBackground, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer());
-        renderer().paint(paintInfo, toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subPixelAccumulation));
+        renderer().paint(paintInfo, toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subpixelAccumulation));
 
         if (localPaintingInfo.clipToDirtyRect)
             restoreClip(context, localPaintingInfo.paintDirtyRect, fragment.backgroundRect);
@@ -4494,7 +4494,7 @@ void RenderLayer::paintForegroundForFragmentsWithPhase(PaintPhase phase, const L
         PaintInfo paintInfo(context, fragment.foregroundRect.rect(), phase, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer());
         if (phase == PaintPhaseForeground)
             paintInfo.overlapTestRequests = localPaintingInfo.overlapTestRequests;
-        renderer().paint(paintInfo, toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subPixelAccumulation));
+        renderer().paint(paintInfo, toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subpixelAccumulation));
         
         if (shouldClip)
             restoreClip(context, localPaintingInfo.paintDirtyRect, fragment.foregroundRect);
@@ -4512,7 +4512,7 @@ void RenderLayer::paintOutlineForFragments(const LayerFragments& layerFragments,
         // Paint our own outline
         PaintInfo paintInfo(context, fragment.outlineRect.rect(), PaintPhaseSelfOutline, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer());
         clipToRect(localPaintingInfo, context, fragment.outlineRect, DoNotIncludeSelfForBorderRadius);
-        renderer().paint(paintInfo, toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subPixelAccumulation));
+        renderer().paint(paintInfo, toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subpixelAccumulation));
         restoreClip(context, localPaintingInfo.paintDirtyRect, fragment.outlineRect);
     }
 }
@@ -4531,7 +4531,7 @@ void RenderLayer::paintMaskForFragments(const LayerFragments& layerFragments, Gr
         // Paint the mask.
         // FIXME: Eventually we will collect the region from the fragment itself instead of just from the paint info.
         PaintInfo paintInfo(context, fragment.backgroundRect.rect(), PaintPhaseMask, PaintBehaviorNormal, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer());
-        renderer().paint(paintInfo, toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subPixelAccumulation));
+        renderer().paint(paintInfo, toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subpixelAccumulation));
         
         if (localPaintingInfo.clipToDirtyRect)
             restoreClip(context, localPaintingInfo.paintDirtyRect, fragment.backgroundRect);
@@ -4543,7 +4543,7 @@ void RenderLayer::paintOverflowControlsForFragments(const LayerFragments& layerF
     for (size_t i = 0; i < layerFragments.size(); ++i) {
         const LayerFragment& fragment = layerFragments.at(i);
         clipToRect(localPaintingInfo, context, fragment.backgroundRect);
-        paintOverflowControls(context, roundedIntPoint(toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subPixelAccumulation)),
+        paintOverflowControls(context, roundedIntPoint(toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subpixelAccumulation)),
             pixelSnappedIntRect(fragment.backgroundRect.rect()), true);
         restoreClip(context, localPaintingInfo.paintDirtyRect, fragment.backgroundRect);
     }
@@ -6731,7 +6731,8 @@ void RenderLayer::paintFlowThreadIfRegionForFragments(const LayerFragments& frag
         if (shouldClip)
             clipToRect(paintingInfo, context, clipRect);
 
-        flowThreadLayer->paintNamedFlowThreadInsideRegion(context, flowFragment, paintingInfo.paintDirtyRect, fragment.layerBounds.location() + paintingInfo.subPixelAccumulation, paintingInfo.paintBehavior, paintFlags);
+        flowThreadLayer->paintNamedFlowThreadInsideRegion(context, flowFragment, paintingInfo.paintDirtyRect, fragment.layerBounds.location() + paintingInfo.subpixelAccumulation,
+            paintingInfo.paintBehavior, paintFlags);
 
         if (shouldClip)
             restoreClip(context, paintingInfo.paintDirtyRect, clipRect);
