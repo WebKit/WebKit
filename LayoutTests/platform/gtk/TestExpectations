@@ -1986,11 +1986,7 @@ webkit.org/b/132921 plugins/evaluate-js-after-removing-plugin-element.html [ Fai
 
 webkit.org/b/132923 http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Failure ]
 
-webkit.org/b/133146 css3/flexbox/flex-rounding.html [ Failure ]
-webkit.org/b/133146 fast/css/image-resolution/image-resolution.html [ Failure ]
-webkit.org/b/133146 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
 webkit.org/b/133146 fast/sub-pixel/inline-block-with-padding.html [ Failure ]
-webkit.org/b/133146 fast/sub-pixel/client-rect-has-subpixel-precision.html  [ ImageOnlyFailure ]
 
 webkit.org/b/133147 fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-large-radius.html [ ImageOnlyFailure ]
 webkit.org/b/133147 fast/shapes/shape-outside-floats/shape-outside-rounded-inset.html [ ImageOnlyFailure ]
