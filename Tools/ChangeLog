@@ -1,5 +1,11 @@
 2014-07-18  Filip Pizlo  <fpizlo@apple.com>
 
+        Really remove dependency on ShellQuote.
+
+        * Scripts/jsc-stress-test-helpers/js-exception-fuzz:
+
+2014-07-18  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix build for platforms that don't have ShellQuote.
         
         * Scripts/jsc-stress-test-helpers/js-exception-fuzz: Take a single argument that has the whole command string.
