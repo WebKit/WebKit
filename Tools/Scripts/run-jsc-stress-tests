@@ -279,13 +279,21 @@ def frameworkFromJSCPath(jscPath)
     end
 end
 
-def pathToVM
+def pathToBundleResourceFromBenchmarkDirectory(resourcePath)
     dir = Pathname.new(".")
     $benchmarkDirectory.each_filename {
         | pathComponent |
         dir += ".."
     }
-    dir + $jscPath
+    dir + resourcePath
+end
+
+def pathToVM
+    pathToBundleResourceFromBenchmarkDirectory($jscPath)
+end
+
+def pathToHelpers
+    pathToBundleResourceFromBenchmarkDirectory(".helpers")
 end
 
 def prefixCommand(prefix)
@@ -688,7 +696,7 @@ end
 def runProfiler
     profilerOutput = uniqueFilename(".json")
     if $canRunDisplayProfilerOutput
-        addRunCommand("profiler", ["ruby", (HELPERS_PATH + "profiler-test-helper").to_s, (SCRIPTS_PATH + "display-profiler-output").to_s, profilerOutput.to_s, pathToVM.to_s, "-p", profilerOutput.to_s, $benchmark.to_s], silentOutputHandler, simpleErrorHandler)
+        addRunCommand("profiler", ["ruby", (pathToHelpers + "profiler-test-helper").to_s, (SCRIPTS_PATH + "display-profiler-output").to_s, profilerOutput.to_s, pathToVM.to_s, "-p", profilerOutput.to_s, $benchmark.to_s], silentOutputHandler, simpleErrorHandler)
     else
         puts "Running simple version of #{$collectionName}/#{$benchmark} because some required Ruby features are unavailable."
         run("profiler-simple", "-p", profilerOutput.to_s)
@@ -697,7 +705,7 @@ end
 
 def runExceptionFuzz
     subCommand = escapeAll([pathToVM.to_s, $benchmark.to_s])
-    addRunCommand("exception-fuzz", ["perl", (HELPERS_PATH + "js-exception-fuzz").to_s, subCommand], silentOutputHandler, simpleErrorHandler)
+    addRunCommand("exception-fuzz", ["perl", (pathToHelpers + "js-exception-fuzz").to_s, subCommand], silentOutputHandler, simpleErrorHandler)
 end
 
 def runLayoutTest(kind, *options)
@@ -1067,6 +1075,10 @@ def prepareBundle
             end
         }
     end
+    
+    Dir.chdir($outputDir) {
+        FileUtils.cp_r HELPERS_PATH, ".helpers"
+    }
 
     ARGV.each {
         | collection |
