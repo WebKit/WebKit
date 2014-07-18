@@ -1,3 +1,13 @@
+2014-07-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add a manual test for r135044
+
+        <https://bugs.webkit.org/show_bug.cgi?id=135044>
+
+        Rubber-stamped by Andy Estes.
+
+        * ManualTests/ios/typing-in-field-that-clears-on-keyup.html: Added.
+
 2014-07-18  Dana Burkart  <dburkart@apple.com>
 
         Add a new 'analyze' target to the makefile. This will make use of a new
