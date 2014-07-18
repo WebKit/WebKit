@@ -47,8 +47,7 @@ static const size_t maximumSnapshotCacheSize = 50 * (1024 * 1024);
 namespace WebKit {
 
 ViewSnapshotStore::ViewSnapshotStore()
-    : m_enabled(true)
-    , m_snapshotCacheSize(0)
+    : m_snapshotCacheSize(0)
 {
 }
 
@@ -109,10 +108,10 @@ void ViewSnapshotStore::pruneSnapshots(WebPageProxy& webPageProxy)
 
 void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy)
 {
-    WebBackForwardListItem* item = webPageProxy.backForwardList().currentItem();
-
-    if (!m_enabled)
+    if (webPageProxy.isShowingNavigationGestureSnapshot())
         return;
+
+    WebBackForwardListItem* item = webPageProxy.backForwardList().currentItem();
 
     if (!item)
         return;

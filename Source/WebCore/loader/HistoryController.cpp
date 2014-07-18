@@ -465,10 +465,8 @@ void HistoryController::updateForCommit()
         // the provisional item for restoring state.
         // Note previousItem must be set before we close the URL, which will
         // happen when the data source is made non-provisional below
-        m_frameLoadComplete = false;
-        m_previousItem = m_currentItem;
         ASSERT(m_provisionalItem);
-        m_currentItem = m_provisionalItem;
+        setCurrentItem(m_provisionalItem.get());
         m_provisionalItem = 0;
 
         // Tell all other frames in the tree to commit their provisional items and
@@ -509,9 +507,7 @@ void HistoryController::recursiveUpdateForCommit()
             view->setWasScrolledByUser(false);
 
         // Now commit the provisional item
-        m_frameLoadComplete = false;
-        m_previousItem = m_currentItem;
-        m_currentItem = m_provisionalItem;
+        setCurrentItem(m_provisionalItem.get());
         m_provisionalItem = 0;
 
         // Restore form state (works from currentItem)
@@ -560,9 +556,7 @@ void HistoryController::recursiveUpdateForSameDocumentNavigation()
         return;
 
     // Commit the provisional item.
-    m_frameLoadComplete = false;
-    m_previousItem = m_currentItem;
-    m_currentItem = m_provisionalItem;
+    setCurrentItem(m_provisionalItem.get());
     m_provisionalItem = 0;
 
     // Iterate over the rest of the tree.
@@ -580,6 +574,8 @@ void HistoryController::updateForFrameLoadCompleted()
 
 void HistoryController::setCurrentItem(HistoryItem* item)
 {
+    m_frame.loader().client().willChangeCurrentHistoryItem();
+
     m_frameLoadComplete = false;
     m_previousItem = m_currentItem;
     m_currentItem = item;
@@ -658,9 +654,7 @@ PassRefPtr<HistoryItem> HistoryController::createItem()
     initializeItem(item.get());
     
     // Set the item for which we will save document state
-    m_frameLoadComplete = false;
-    m_previousItem = m_currentItem;
-    m_currentItem = item;
+    setCurrentItem(item.get());
     
     return item.release();
 }
@@ -888,8 +882,10 @@ void HistoryController::replaceCurrentItem(HistoryItem* item)
     m_previousItem = nullptr;
     if (m_provisionalItem)
         m_provisionalItem = item;
-    else
+    else {
+        m_frame.loader().client().willChangeCurrentHistoryItem();
         m_currentItem = item;
+    }
 }
 
 } // namespace WebCore

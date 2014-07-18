@@ -839,6 +839,8 @@ public:
 
     void didChangeScrollOffsetForFrame(WebCore::Frame*);
 
+    void willChangeCurrentHistoryItem();
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

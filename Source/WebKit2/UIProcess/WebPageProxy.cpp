@@ -893,8 +893,6 @@ uint64_t WebPageProxy::goForward()
     if (!forwardItem)
         return 0;
 
-    recordNavigationSnapshot();
-
     auto transaction = m_pageLoadState.transaction();
 
     m_pageLoadState.setPendingAPIRequestURL(transaction, forwardItem->url());
@@ -916,8 +914,6 @@ uint64_t WebPageProxy::goBack()
     if (!backItem)
         return 0;
 
-    recordNavigationSnapshot();
-
     auto transaction = m_pageLoadState.transaction();
 
     m_pageLoadState.setPendingAPIRequestURL(transaction, backItem->url());
@@ -938,8 +934,6 @@ uint64_t WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
     if (!isValid())
         return reattachToWebProcessWithItem(item);
 
-    recordNavigationSnapshot();
-    
     auto transaction = m_pageLoadState.transaction();
 
     m_pageLoadState.setPendingAPIRequestURL(transaction, item->url());
@@ -2508,10 +2502,8 @@ void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, uint64_t na
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK_URL(url);
 
-    if (frame->isMainFrame()) {
-        recordNavigationSnapshot();
+    if (frame->isMainFrame())
         m_pageLoadState.didStartProvisionalLoad(transaction, url, unreachableURL);
-    }
 
     frame->setUnreachableURL(unreachableURL);
     frame->didStartProvisionalLoad(url);
@@ -5158,6 +5150,11 @@ void WebPageProxy::willRecordNavigationSnapshot(WebBackForwardListItem& item)
 void WebPageProxy::navigationGestureSnapshotWasRemoved()
 {
     m_isShowingNavigationGestureSnapshot = false;
+}
+
+void WebPageProxy::willChangeCurrentHistoryItem()
+{
+    recordNavigationSnapshot();
 }
 
 } // namespace WebKit

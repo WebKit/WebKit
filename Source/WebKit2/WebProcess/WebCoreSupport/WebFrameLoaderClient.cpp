@@ -1621,4 +1621,13 @@ PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext
     return context.release();
 }
 
+void WebFrameLoaderClient::willChangeCurrentHistoryItem()
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    webPage->willChangeCurrentHistoryItem();
+}
+
 } // namespace WebKit
