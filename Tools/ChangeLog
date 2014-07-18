@@ -1,3 +1,15 @@
+2014-07-18  Dana Burkart  <dburkart@apple.com>
+
+        Add a new 'analyze' target to the makefile. This will make use of a new
+        'PATH_TO_SCAN_BUILD' which, if set will wrap xcodebuild in the clang
+        static analyzer.
+        https://bugs.webkit.org/show_bug.cgi?id=135057
+        <rdar://problem/10193187>
+
+        Reviewed by David Kilzer.
+
+        * Makefile:
+
 2014-07-18  Filip Pizlo  <fpizlo@apple.com>
 
         Fix EFL+GTK.
