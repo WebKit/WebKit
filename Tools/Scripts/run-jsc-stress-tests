@@ -1043,6 +1043,7 @@ def prepareBundle
             $testingFrameworkPath = frameworkFromJSCPath($jscPath)
         end
     else
+        originalJSCPath = $jscPath
         vmDir = $outputDir + ".vm"
         FileUtils.mkdir_p vmDir
         
@@ -1055,7 +1056,7 @@ def prepareBundle
             source = frameworkPath
             destination = Pathname.new(".vm")
         else
-            source = jscPath
+            source = originalJSCPath
             destination = $jscPath
 
             Dir.chdir($outputDir) {
