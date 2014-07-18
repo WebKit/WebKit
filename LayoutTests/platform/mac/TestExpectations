@@ -1398,3 +1398,5 @@ webkit.org/b/134490 [ MountainLion ] media/video-ended-event-negative-playback.h
 webkit.org/b/135015 plugins/quicktime-plugin-replacement.html [ Pass Failure ]
 
 webkit.org/b/131477 fast/repaint/obscured-background-no-repaint.html [ Pass Failure ]
+
+webkit.org/b/135071 [ MountainLion ] media/video-seek-with-negative-playback.html [ Pass Failure Timeout ]

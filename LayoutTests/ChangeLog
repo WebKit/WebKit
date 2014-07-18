@@ -1,3 +1,10 @@
+2014-07-18  Alexey Proskuryakov  <ap@apple.com>
+
+        media/video-seek-with-negative-playback.html is flaky on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=135071
+
+        * platform/mac/TestExpectations: Marked it as such.
+
 2014-07-18  Zalan Bujtas  <zalan@apple.com>
 
         Add timeout for transition end. Speculative layout test fix.
