@@ -1,3 +1,13 @@
+2014-07-17  David Kilzer  <ddkilzer@apple.com>
+
+        SECTORDER_FLAGS should be defined in target's xcconfig file, not Base.xcconfig
+        <http://webkit.org/b/135006>
+
+        Reviewed by Darin Adler.
+
+        * WebKit.xcodeproj/project.pbxproj: Remove references to unused
+        WebKit.xcconfig file.
+
 2014-07-09  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Remove uses of 'bash' in build system

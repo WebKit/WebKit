@@ -42,6 +42,10 @@ OTHER_LDFLAGS_iphoneos = $(FRAMEWORK_AND_LIBRARY_LDFLAGS) -framework WebKitLegac
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
 OTHER_LDFLAGS_macosx = $(ASAN_OTHER_LDFLAGS) $(FRAMEWORK_AND_LIBRARY_LDFLAGS) -sub_umbrella WebCore -framework WebKitLegacy -sub_umbrella WebKitLegacy;
 
+SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION)_$(PLATFORM_NAME));
+SECTORDER_FLAGS_Production_iphoneos = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/WebKit.order;
+SECTORDER_FLAGS_Production_macosx = -Wl,-order_file,mac/WebKit2.order;
+
 EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(PLATFORM_NAME));
 EXCLUDED_SOURCE_FILE_NAMES_iphoneos = *.pdf com.apple.WebKit.Databases.sb com.apple.WebKit.NetworkProcess.sb com.apple.WebProcess.sb PlugInSandboxProfiles/*.sb;
 EXCLUDED_SOURCE_FILE_NAMES_iphonesimulator = $(EXCLUDED_SOURCE_FILE_NAMES_iphoneos);

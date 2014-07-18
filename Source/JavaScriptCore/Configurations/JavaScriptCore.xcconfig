@@ -1,4 +1,4 @@
-// Copyright (C) 2009 Apple Inc. All rights reserved.
+// Copyright (C) 2009, 2014 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -41,6 +41,11 @@ OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
 OTHER_LDFLAGS_iphoneos = $(OTHER_LDFLAGS_BASE);
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
 OTHER_LDFLAGS_macosx = $(OTHER_LDFLAGS_BASE) -sub_library libobjc -framework CoreServices;
+
+SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION)_$(PLATFORM_NAME));
+SECTORDER_FLAGS_Production_iphoneos = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/JavaScriptCore.order;
+SECTORDER_FLAGS_Production_macosx = -Wl,-order_file,JavaScriptCore.order;
+
 GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;
 GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 HEADER_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore" $(HEADER_SEARCH_PATHS);

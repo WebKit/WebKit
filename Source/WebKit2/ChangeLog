@@ -1,3 +1,17 @@
+2014-07-17  David Kilzer  <ddkilzer@apple.com>
+
+        SECTORDER_FLAGS should be defined in target's xcconfig file, not Base.xcconfig
+        <http://webkit.org/b/135006>
+
+        Reviewed by Darin Adler.
+
+        * Configurations/Base.xcconfig: Move SECTORDER_FLAGS to
+        WebKit.xcconfig.
+        * Configurations/DebugRelease.xcconfig: Remove empty
+        SECTORDER_FLAGS definition.
+        * Configurations/WebKit.xcconfig: Use $(CONFIGURATION) so
+        SECTORDER_FLAGS is only set on Production builds.
+
 2014-07-17  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r171167): LoaderClient processDidCrash call is made after load state changes

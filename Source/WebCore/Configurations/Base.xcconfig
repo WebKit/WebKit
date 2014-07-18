@@ -1,4 +1,4 @@
-// Copyright (C) 2009, 2010, 2013 Apple Inc. All rights reserved.
+// Copyright (C) 2009, 2010, 2013, 2014 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -107,10 +107,6 @@ STRIP_INSTALLED_PRODUCT_debug = NO;
 DEAD_CODE_STRIPPING_debug = NO;
 DEAD_CODE_STRIPPING_normal = YES;
 DEAD_CODE_STRIPPING = $(DEAD_CODE_STRIPPING_$(CURRENT_VARIANT));
-
-SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(PLATFORM_NAME));
-SECTORDER_FLAGS_iphoneos = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/WebCore.order;
-SECTORDER_FLAGS_macosx = -Wl,-order_file,WebCore.order;
 
 WEBCORE_SQLITE3_HEADER_SEARCH_PATHS = $(NEXT_ROOT)/usr/local/include/WebCoreSQLite3;
 SQLITE3_HEADER_SEARCH_PATHS = $(SQLITE3_HEADER_SEARCH_PATHS_$(PLATFORM_NAME));

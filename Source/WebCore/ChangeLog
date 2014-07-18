@@ -1,3 +1,19 @@
+2014-07-17  David Kilzer  <ddkilzer@apple.com>
+
+        SECTORDER_FLAGS should be defined in target's xcconfig file, not Base.xcconfig
+        <http://webkit.org/b/135006>
+
+        Reviewed by Darin Adler.
+
+        * Configurations/Base.xcconfig: Move SECTORDER_FLAGS to
+        WebCore.xcconfig.
+        * Configurations/DebugRelease.xcconfig: Remove empty
+        SECTORDER_FLAGS definition.
+        * Configurations/WebCoreTestShim.xcconfig: Ditto.
+        * Configurations/WebCoreTestSupport.xcconfig: Ditto.
+        * Configurations/WebCore.xcconfig: Use $(CONFIGURATION) so
+        SECTORDER_FLAGS is only set on Production builds.
+
 2014-07-17  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Embedded non-compositing rotate transform paints to wrong position.

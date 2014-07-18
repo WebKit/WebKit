@@ -1,4 +1,4 @@
-// Copyright (C) 2009, 2010, 2013 Apple Inc. All rights reserved.
+// Copyright (C) 2009, 2010, 2013, 2014 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -100,10 +100,6 @@ STRIP_INSTALLED_PRODUCT_debug = NO;
 // Dead code stripping needs to be on in the debug variant to avoid link errors.  This is due to unconditionally
 // building the MiG bindings for WebKitPluginClient even when the functions that the bindings wrap are not built.
 DEAD_CODE_STRIPPING = YES;
-
-SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(PLATFORM_NAME));
-SECTORDER_FLAGS_iphoneos = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/WebKitLegacy.order;
-SECTORDER_FLAGS_macosx = -Wl,-order_file,mac/WebKit.order;
 
 SDKROOT = macosx.internal;
 

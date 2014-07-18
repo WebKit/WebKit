@@ -1,4 +1,4 @@
-// Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
+// Copyright (C) 2009, 2010, 2014 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -74,6 +74,10 @@ OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
 OTHER_LDFLAGS_iphoneos = $(OTHER_LDFLAGS_iphonesimulator) -framework IOSurface;
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_BASE) -framework CFNetwork -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework OpenGLES -lMobileGestalt;
 OTHER_LDFLAGS_macosx = $(OTHER_LDFLAGS_BASE) -sub_library libobjc -umbrella WebKit -allowable_client WebCoreTestSupport -allowable_client WebKit2 -allowable_client WebKitLegacy -framework ApplicationServices -framework AudioUnit -framework Carbon -framework Cocoa -framework IOSurface -framework OpenGL;
+
+SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION)_$(PLATFORM_NAME));
+SECTORDER_FLAGS_Production_iphoneos = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/WebCore.order;
+SECTORDER_FLAGS_Production_macosx = -Wl,-order_file,WebCore.order;
 
 NORMAL_WEBCORE_FRAMEWORKS_DIR = $(NORMAL_WEBCORE_FRAMEWORKS_DIR_$(PLATFORM_NAME));
 NORMAL_WEBCORE_FRAMEWORKS_DIR_iphoneos = $(PRODUCTION_FRAMEWORKS_DIR);
