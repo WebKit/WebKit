@@ -409,15 +409,18 @@ WebInspector.DOMTreeElement.prototype = {
                 var button = document.createElement("button");
                 button.className = "show-all-nodes";
                 button.value = "";
+
                 var item = new TreeElement(button, null, false);
                 item.selectable = false;
                 item.expandAllButton = true;
+
                 this.insertChild(item, targetButtonIndex);
-                this.expandAllButtonElement = item.listItemElement.firstChild;
+                this.expandAllButtonElement = button;
                 this.expandAllButtonElement.__treeElement = item;
                 this.expandAllButtonElement.addEventListener("click", this.handleLoadAllChildren.bind(this), false);
             } else if (!this.expandAllButtonElement.__treeElement.parent)
                 this.insertChild(this.expandAllButtonElement.__treeElement, targetButtonIndex);
+
             this.expandAllButtonElement.textContent = WebInspector.UIString("Show All Nodes (%d More)").format(childNodeCount - expandedChildCount);
         } else if (this.expandAllButtonElement)
             delete this.expandAllButtonElement;
