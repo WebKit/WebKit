@@ -100,7 +100,7 @@ if ENV["WEBKIT_TEST_CHILD_PROCESSES"]
 end
 
 $jscPath = nil
-$copy = true
+$doNotMessWithVMPath = false
 $enableFTL = false
 $memoryLimited = false
 $outputDir = Pathname.new("results")
@@ -157,7 +157,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     when '--jsc'
         jscArg = arg
     when '--no-copy'
-        $copy = false
+        $doNotMessWithVMPath = true
     when '--output-dir'
         $outputDir = Pathname.new(arg)
     when '--ftl-jit'
@@ -192,10 +192,10 @@ unless jscArg
     exit 1
 end
 
-if $copy
-    $jscPath = Pathname.new(jscArg).realpath
-else
+if $doNotMessWithVMPath
     $jscPath = Pathname.new(jscArg)
+else
+    $jscPath = Pathname.new(jscArg).realpath
 end
 
 $progressMeter = ($verbosity == 0 and $stdout.tty?)
@@ -1027,7 +1027,14 @@ end
 def prepareBundle
     raise if $bundle
 
-    if $copy
+    if $doNotMessWithVMPath
+        if !$remote and !$tarball
+            $testingFrameworkPath = frameworkFromJSCPath($jscPath).realpath
+            $jscPath = Pathname.new($jscPath).realpath
+        else
+            $testingFrameworkPath = frameworkFromJSCPath($jscPath)
+        end
+    else
         vmDir = $outputDir + ".vm"
         FileUtils.mkdir_p vmDir
         
@@ -1059,13 +1066,6 @@ def prepareBundle
                 end
             end
         }
-    else
-        if !$remote and !$tarball
-            $testingFrameworkPath = frameworkFromJSCPath($jscPath).realpath
-            $jscPath = Pathname.new($jscPath).realpath
-        else
-            $testingFrameworkPath = frameworkFromJSCPath($jscPath)
-        end
     end
 
     ARGV.each {
