@@ -73,6 +73,7 @@ private:
     LazyInitialized<_WKVisitedLinkProvider> _visitedLinkProvider;
     LazyInitialized<_WKWebsiteDataStore> _websiteDataStore;
     WebKit::WeakObjCPtr<WKWebView> _relatedWebView;
+    WebKit::WeakObjCPtr<WKWebView> _alternateWebViewForNavigationGestures;
     RetainPtr<NSString> _groupIdentifier;
 #if PLATFORM(IOS)
     LazyInitialized<WKWebViewContentProviderRegistry> _contentProviderRegistry;
@@ -107,6 +108,7 @@ private:
     configuration._visitedLinkProvider = self._visitedLinkProvider;
     configuration._websiteDataStore = self._websiteDataStore;
     configuration._relatedWebView = _relatedWebView.get().get();
+    configuration._alternateWebViewForNavigationGestures = _alternateWebViewForNavigationGestures.get().get();
 #if PLATFORM(IOS)
     configuration._contentProviderRegistry = self._contentProviderRegistry;
 #endif
@@ -219,6 +221,16 @@ private:
 - (void)_setRelatedWebView:(WKWebView *)relatedWebView
 {
     _relatedWebView = relatedWebView;
+}
+
+- (WKWebView *)_alternateWebViewForNavigationGestures
+{
+    return _alternateWebViewForNavigationGestures.getAutoreleased();
+}
+
+- (void)_setAlternateWebViewForNavigationGestures:(WKWebView *)alternateView
+{
+    _alternateWebViewForNavigationGestures = alternateView;
 }
 
 - (NSString *)_groupIdentifier

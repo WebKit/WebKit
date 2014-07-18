@@ -27,6 +27,7 @@
 #define ViewGestureController_h
 
 #include "MessageReceiver.h"
+#include "WeakObjCPtr.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/Timer.h>
 #include <wtf/RetainPtr.h>
@@ -36,6 +37,7 @@ OBJC_CLASS CALayer;
 #if PLATFORM(IOS)
 OBJC_CLASS UIView;
 OBJC_CLASS WKSwipeTransitionController;
+OBJC_CLASS WKWebView;
 OBJC_CLASS _UIViewControllerTransitionContext;
 OBJC_CLASS _UINavigationInteractiveTransitionBase;
 #else
@@ -104,6 +106,7 @@ public:
     void setShouldIgnorePinnedState(bool ignore) { m_shouldIgnorePinnedState = ignore; }
 #else
     void installSwipeHandler(UIView *gestureRecognizerView, UIView *swipingView);
+    void setAlternateBackForwardListSourceView(WKWebView *);
     bool canSwipeInDirection(SwipeDirection);
     void beginSwipeGesture(_UINavigationInteractiveTransitionBase *, SwipeDirection);
     void endSwipeGesture(WebBackForwardListItem* targetItem, _UIViewControllerTransitionContext *, bool cancelled);
@@ -139,7 +142,7 @@ private:
     CALayer *determineLayerAdjacentToSnapshotForParent(SwipeDirection, CALayer *snapshotLayerParent) const;
     void applyDebuggingPropertiesToSwipeViews();
 #endif
-    
+
     WebPageProxy& m_webPageProxy;
     ViewGestureType m_activeGestureType;
     
@@ -186,6 +189,8 @@ private:
     RetainPtr<WKSwipeTransitionController> m_swipeInteractiveTransitionDelegate;
     uint64_t m_snapshotRemovalTargetRenderTreeSize;
     bool m_shouldRemoveSnapshotWhenTargetRenderTreeSizeHit;
+    WeakObjCPtr<WKWebView> m_alternateBackForwardListSourceView;
+    RefPtr<WebPageProxy> m_webPageProxyForBackForwardListForCurrentSwipe;
 #endif
 };
 

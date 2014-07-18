@@ -1481,6 +1481,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         if (!_gestureController) {
             _gestureController = std::make_unique<WebKit::ViewGestureController>(*_page);
             _gestureController->installSwipeHandler(self, [self scrollView]);
+            _gestureController->setAlternateBackForwardListSourceView([_configuration _alternateWebViewForNavigationGestures]);
         }
     } else
         _gestureController = nullptr;

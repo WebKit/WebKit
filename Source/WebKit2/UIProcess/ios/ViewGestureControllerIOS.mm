@@ -31,6 +31,8 @@
 #import "ViewGestureControllerMessages.h"
 #import "ViewGestureGeometryCollectorMessages.h"
 #import "ViewSnapshotStore.h"
+#import "WKBackForwardListItemInternal.h"
+#import "WKWebViewInternal.h"
 #import "WebBackForwardList.h"
 #import "WebPageGroup.h"
 #import "WebPageMessages.h"
@@ -146,6 +148,11 @@ ViewGestureController::~ViewGestureController()
     viewGestureControllersForAllPages().remove(m_webPageProxy.pageID());
 }
 
+void ViewGestureController::setAlternateBackForwardListSourceView(WKWebView *view)
+{
+    m_alternateBackForwardListSourceView = view;
+}
+
 void ViewGestureController::installSwipeHandler(UIView *gestureRecognizerView, UIView *swipingView)
 {
     ASSERT(!m_swipeInteractiveTransitionDelegate);
@@ -158,11 +165,20 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     if (m_activeGestureType != ViewGestureType::None)
         return;
 
-    m_webPageProxy.navigationGestureDidBegin();
+    m_webPageProxyForBackForwardListForCurrentSwipe = m_alternateBackForwardListSourceView.get() ? m_alternateBackForwardListSourceView.get()->_page : &m_webPageProxy;
 
-    ViewSnapshotStore::shared().recordSnapshot(m_webPageProxy);
+    m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidBegin();
 
-    WebKit::WebBackForwardListItem* targetItem = direction == SwipeDirection::Left ? m_webPageProxy.backForwardList().backItem() : m_webPageProxy.backForwardList().forwardItem();
+    m_webPageProxy.recordNavigationSnapshot();
+
+    auto backForwardList = m_webPageProxyForBackForwardListForCurrentSwipe->backForwardList();
+
+    // Copy the snapshot from this view to the one that owns the back forward list, so that
+    // swiping forward will have the correct snapshot.
+    if (m_webPageProxyForBackForwardListForCurrentSwipe != &m_webPageProxy)
+        backForwardList.currentItem()->setSnapshot(m_webPageProxy.backForwardList().currentItem()->snapshot());
+
+    WebBackForwardListItem* targetItem = direction == SwipeDirection::Left ? backForwardList.backItem() : backForwardList.forwardItem();
 
     CGRect liveSwipeViewFrame = [m_liveSwipeView frame];
 
@@ -213,7 +229,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     [transitionContext _setTransitionIsInFlight:YES];
     [transitionContext _setInteractiveUpdateHandler:^(BOOL finish, CGFloat percent, BOOL transitionCompleted, _UIViewControllerTransitionContext *) {
         if (finish)
-            m_webPageProxy.navigationGestureWillEnd(transitionCompleted, *targetItem);
+            m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureWillEnd(transitionCompleted, *targetItem);
     }];
     [transitionContext _setCompletionHandler:^(_UIViewControllerTransitionContext *context, BOOL didComplete) { endSwipeGesture(targetItem, context, !didComplete); }];
     [transitionContext _setInteractiveUpdateHandler:^(BOOL, CGFloat, BOOL, _UIViewControllerTransitionContext *) { }];
@@ -226,9 +242,10 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
 
 bool ViewGestureController::canSwipeInDirection(SwipeDirection direction)
 {
+    auto backForwardList = m_alternateBackForwardListSourceView.get() ? m_alternateBackForwardListSourceView.get()->_page->backForwardList() : m_webPageProxy.backForwardList();
     if (direction == SwipeDirection::Left)
-        return !!m_webPageProxy.backForwardList().backItem();
-    return !!m_webPageProxy.backForwardList().forwardItem();
+        return !!backForwardList.backItem();
+    return !!backForwardList.forwardItem();
 }
 
 void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, _UIViewControllerTransitionContext *context, bool cancelled)
@@ -243,10 +260,12 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     m_liveSwipeViewClippingView = nullptr;
     [m_transitionContainerView removeFromSuperview];
     m_transitionContainerView = nullptr;
-    
+
     if (cancelled) {
+        // removeSwipeSnapshot will clear m_webPageProxyForBackForwardListForCurrentSwipe, so hold on to it here.
+        RefPtr<WebPageProxy> webPageProxyForBackForwardListForCurrentSwipe = m_webPageProxyForBackForwardListForCurrentSwipe;
         removeSwipeSnapshot();
-        m_webPageProxy.navigationGestureDidEnd(false, *targetItem);
+        webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidEnd(false, *targetItem);
         return;
     }
 
@@ -259,8 +278,9 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     // displaying the destination item's snapshot.
     ViewSnapshotStore::shared().disableSnapshotting();
 
-    m_webPageProxy.navigationGestureDidEnd(true, *targetItem);
-    m_webPageProxy.goToBackForwardItem(targetItem);
+    m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidEnd(true, *targetItem);
+    m_webPageProxyForBackForwardListForCurrentSwipe->goToBackForwardItem(targetItem);
+
     ViewSnapshotStore::shared().enableSnapshotting();
 
     uint64_t pageID = m_webPageProxy.pageID();
@@ -324,7 +344,8 @@ void ViewGestureController::removeSwipeSnapshot()
     m_snapshotRemovalTargetRenderTreeSize = 0;
     m_activeGestureType = ViewGestureType::None;
 
-    m_webPageProxy.navigationGestureSnapshotWasRemoved();
+    m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureSnapshotWasRemoved();
+    m_webPageProxyForBackForwardListForCurrentSwipe = nullptr;
 }
 
 } // namespace WebKit
