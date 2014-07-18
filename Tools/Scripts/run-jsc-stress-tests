@@ -135,7 +135,7 @@ def usage
     exit 1
 end
 
-jscArg = ""
+jscArg = nil
 
 GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--jsc', '-j', GetoptLong::REQUIRED_ARGUMENT],
@@ -187,12 +187,15 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     end
 }
 
-if jscArg
-    if $copy
-        $jscPath = Pathname.new(jscArg).realpath
-    else
-        $jscPath = Pathname.new(jscArg)
-    end
+unless jscArg
+    $stderr.puts "Error: must specify -jsc <path>"
+    exit 1
+end
+
+if $copy
+    $jscPath = Pathname.new(jscArg).realpath
+else
+    $jscPath = Pathname.new(jscArg)
 end
 
 $progressMeter = ($verbosity == 0 and $stdout.tty?)
@@ -200,11 +203,6 @@ $progressMeter = ($verbosity == 0 and $stdout.tty?)
 if $bundle
     $jscPath = $bundle + ".vm" + "JavaScriptCore.framework" + "Resources" + "jsc"
     $outputDir = $bundle
-end
-
-unless $jscPath
-    $stderr.puts "Error: must specify -jsc <path>"
-    exit 1
 end
 
 # Try to determine architecture. Return nil on failure.
@@ -279,46 +277,6 @@ def frameworkFromJSCPath(jscPath)
         $stderr.puts "Warning: cannot identify JSC framework, doing generic VM copy."
         nil
     end
-end
-
-def prepareFramework(jscPath)
-    frameworkPath = frameworkFromJSCPath(jscPath)
-    destinationFrameworkPath = Pathname.new(".vm") + "JavaScriptCore.framework"
-    $jscPath = destinationFrameworkPath + "Resources" + "jsc"
-    $testingFrameworkPath = Pathname.new("..") + destinationFrameworkPath
-
-    if frameworkPath
-        source = frameworkPath
-        destination = Pathname.new(".vm")
-    else
-        source = jscPath
-        destination = $jscPath
-
-        Dir.chdir($outputDir) {
-            FileUtils.mkdir_p $jscPath.dirname
-        }
-    end
-
-    Dir.chdir($outputDir) {
-        if $copyVM
-            FileUtils.cp_r source, destination
-        else
-            begin 
-                FileUtils.ln_s source, destination
-            rescue
-                FileUtils.cp_r source, destination
-            end
-        end
-    }
-end
-
-def copyVMToBundle
-    raise if $bundle
-
-    vmDir = $outputDir + ".vm"
-    FileUtils.mkdir_p vmDir
-   
-    prepareFramework($jscPath) 
 end
 
 def pathToVM
@@ -1070,7 +1028,37 @@ def prepareBundle
     raise if $bundle
 
     if $copy
-        copyVMToBundle
+        vmDir = $outputDir + ".vm"
+        FileUtils.mkdir_p vmDir
+        
+        frameworkPath = frameworkFromJSCPath($jscPath)
+        destinationFrameworkPath = Pathname.new(".vm") + "JavaScriptCore.framework"
+        $jscPath = destinationFrameworkPath + "Resources" + "jsc"
+        $testingFrameworkPath = Pathname.new("..") + destinationFrameworkPath
+
+        if frameworkPath
+            source = frameworkPath
+            destination = Pathname.new(".vm")
+        else
+            source = jscPath
+            destination = $jscPath
+
+            Dir.chdir($outputDir) {
+                FileUtils.mkdir_p $jscPath.dirname
+            }
+        end
+
+        Dir.chdir($outputDir) {
+            if $copyVM
+                FileUtils.cp_r source, destination
+            else
+                begin 
+                    FileUtils.ln_s source, destination
+                rescue
+                    FileUtils.cp_r source, destination
+                end
+            end
+        }
     else
         if !$remote and !$tarball
             $testingFrameworkPath = frameworkFromJSCPath($jscPath).realpath

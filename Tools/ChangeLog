@@ -1,5 +1,17 @@
 2014-07-18  Filip Pizlo  <fpizlo@apple.com>
 
+        Refactor run-jsc-stress-tests VM copying code to remove some abstractions
+        https://bugs.webkit.org/show_bug.cgi?id=135059
+
+        Reviewed by Mark Lam.
+        
+        This is meant to make it easier for me to extend the copying functionality to copy things other than
+        the framework.
+
+        * Scripts/run-jsc-stress-tests:
+
+2014-07-18  Filip Pizlo  <fpizlo@apple.com>
+
         Fix cloop build.
 
         * Scripts/jsc-stress-test-helpers/js-exception-fuzz:
