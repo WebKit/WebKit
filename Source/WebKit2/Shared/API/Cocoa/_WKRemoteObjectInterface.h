@@ -36,8 +36,8 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 - (id)initWithProtocol:(Protocol *)protocol identifier:(NSString *)identifier;
 
-@property (readonly) Protocol *protocol;
-@property (readonly) NSString *identifier;
+@property (readonly, nonatomic) Protocol *protocol;
+@property (readonly, nonatomic) NSString *identifier;
 
 - (NSSet *)classesForSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex;
 - (void)setClasses:(NSSet *)classes forSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex;

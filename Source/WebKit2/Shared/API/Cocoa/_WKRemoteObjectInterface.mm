@@ -42,6 +42,7 @@ const char *_protocol_getMethodTypeEncoding(Protocol *p, SEL sel, BOOL isRequire
 
 @implementation _WKRemoteObjectInterface {
     HashMap<SEL, Vector<RetainPtr<NSSet>>> _allowedArgumentClasses;
+    RetainPtr<NSString> _identifier;
 }
 
 static bool isContainerClass(Class objectClass)
@@ -129,7 +130,7 @@ static void initializeAllowedArgumentClasses(_WKRemoteObjectInterface *interface
         return nil;
 
     _protocol = protocol;
-    _identifier = [identifier copy];
+    _identifier = adoptNS([identifier copy]);
 
     initializeAllowedArgumentClasses(self);
 
@@ -141,15 +142,14 @@ static void initializeAllowedArgumentClasses(_WKRemoteObjectInterface *interface
     return [[[self alloc] initWithProtocol:protocol identifier:NSStringFromProtocol(protocol)] autorelease];
 }
 
-- (void)dealloc
+- (NSString *)identifier
 {
-    [_identifier release];
-    [super dealloc];
+    return _identifier.get();
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@: %p; protocol = \"%@\"; identifier = \"%@\">", NSStringFromClass(self.class), self, _identifier, NSStringFromProtocol(_protocol)];
+    return [NSString stringWithFormat:@"<%@: %p; protocol = \"%@\"; identifier = \"%@\">", NSStringFromClass(self.class), self, _identifier.get(), NSStringFromProtocol(_protocol)];
 }
 
 static RetainPtr<NSSet>& classesForSelectorArgument(_WKRemoteObjectInterface *interface, SEL selector, NSUInteger argumentIndex)
