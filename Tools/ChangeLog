@@ -1,3 +1,14 @@
+2014-07-18  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
+
+        Fix -v|--verbose option in sort-export-file script.
+        https://bugs.webkit.org/show_bug.cgi?id=135043
+
+        Reviewed by Tim Horton.
+
+        -v|--verbose option does not work. Option added to getOptionsResult.
+
+        * Scripts/sort-export-file:
+
 2014-07-18  Filip Pizlo  <fpizlo@apple.com>
 
         Really remove dependency on ShellQuote.

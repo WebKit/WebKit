@@ -39,6 +39,7 @@ my $shouldBeVerbose;
 
 my $getOptionsResult = GetOptions(
     'h|help' => \$shouldShowHelp,
+    'v|verbose' => \$shouldBeVerbose,
     'w|warnings!' => \$shouldPrintWarnings,
 );
 
