@@ -4274,6 +4274,9 @@ void WebPageProxy::processDidCrash()
 {
     ASSERT(m_isValid);
 
+    // There is a nested transaction in resetStateAfterProcessExited() that we don't want to commit before the client call.
+    PageLoadState::Transaction transaction = m_pageLoadState.transaction();
+
     resetStateAfterProcessExited();
 
     m_loaderClient->processDidCrash(this);
@@ -4431,7 +4434,7 @@ void WebPageProxy::resetStateAfterProcessExited()
     m_pageClient.dismissDictionaryLookupPanel();
 #endif
 
-    auto transaction = m_pageLoadState.transaction();
+    PageLoadState::Transaction transaction = m_pageLoadState.transaction();
     m_pageLoadState.reset(transaction);
 }
 
