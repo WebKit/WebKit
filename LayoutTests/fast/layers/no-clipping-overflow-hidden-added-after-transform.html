@@ -14,7 +14,7 @@ div {
 
 #transformed {
     -webkit-transform: rotate(0deg) translate3d(0, 0, 0);
-    -webkit-transition: -webkit-transform linear 0s;
+    -webkit-transition: -webkit-transform linear 1ms;
     background: green;
 }
 
@@ -30,11 +30,20 @@ div {
     <div id="transformed"></div>
 </div>
 <script>
+    function transitionFinished() {
+        if (window.testRunner)
+            window.testRunner.notifyDone();
+    }
+
     if (!window.eventSender)
         alert("To manually test, hover over the green div. The overflow should be properly clipped.");
 
+    if (window.testRunner)
+      window.testRunner.waitUntilDone();
+
     var transformed = document.getElementById("transformed");
     transformed.parentNode.setAttribute("id", "overflowHidden");
+    transformed.addEventListener("webkitTransitionEnd", transitionFinished, true);
     eventSender.mouseMoveTo(transformed.offsetLeft + 10, transformed.offsetTop + 10);
 </script>
 </body>

@@ -1,3 +1,9 @@
+2014-07-18  Zalan Bujtas  <zalan@apple.com>
+
+        Add timeout for transition end. Speculative layout test fix.
+
+        * fast/layers/no-clipping-overflow-hidden-added-after-transform.html:
+
 2014-07-18  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Unreviewed gardening. Removing failure expectations for tests now passing.
