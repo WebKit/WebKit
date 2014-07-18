@@ -62,8 +62,8 @@ my $checkCount;
 
 sub fail {
     my $context = shift;
-    flush STDOUT;
-    flush STDERR;
+    select((select(STDOUT), $ |= 1)[0]); # This is a perlism for flush. We need to do it this way to support older perls.
+    select((select(STDERR), $ |= 1)[0]);
     die "Failure for command $commandString with seed $seed, repeat $repeat: $context";
 }
 

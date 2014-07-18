@@ -1,5 +1,16 @@
 2014-07-18  Filip Pizlo  <fpizlo@apple.com>
 
+        Exception fuzzing should work on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=135070
+
+        Reviewed by Mark Hahnenberg.
+
+        * Scripts/jsc-stress-test-helpers/js-exception-fuzz:
+        (fail):
+        * Scripts/run-jsc-stress-tests:
+
+2014-07-18  Filip Pizlo  <fpizlo@apple.com>
+
         run-jsc-stress-tests should be able to run helper-based tests in remote mode
         https://bugs.webkit.org/show_bug.cgi?id=135064
 

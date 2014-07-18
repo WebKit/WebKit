@@ -22,9 +22,4 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - path: exceptionFuzz
-  cmd: |
-      if $architecture !~ /x86/i and $hostOS == "darwin"
-          skip
-      else
-          runExceptionFuzz
-      end
+  cmd: runExceptionFuzz

@@ -1395,6 +1395,7 @@ end
 
 clean($outputDir + "failed")
 clean($outputDir + ".vm")
+clean($outputDir + ".helpers")
 clean($outputDir + ".runner")
 clean($outputDir + ".tests")
 clean($outputDir + "_payload")
