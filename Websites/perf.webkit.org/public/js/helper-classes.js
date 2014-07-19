@@ -85,19 +85,30 @@ function TestBuild(repositories, builders, platform, rawRun) {
                 previousRevision = undefined;
 
             var revisionPrefix = '';
-            var revisionDelimitor = '-';
+            var revisionDelimiter = '-';
+            var isHash = false;
             if (parseInt(currentRevision) == currentRevision) { // e.g. r12345.
                 revisionPrefix = 'r';
                 if (previousRevision)
                     previousRevision = (parseInt(previousRevision) + 1);
             } else if (currentRevision.indexOf(' ') >= 0) // e.g. 10.9 13C64.
-                revisionDelimitor = ' - ';
+                revisionDelimiter = ' - ';
+            else if (currentRevision.length == 40) // e.g. git hash
+                isHash = true;
 
             var labelForThisRepository;
-            if (previousRevision)
-                labelForThisRepository = revisionPrefix + previousRevision + revisionDelimitor + revisionPrefix + currentRevision;
-            else
-                labelForThisRepository = '@ ' + revisionPrefix + currentRevision;
+            if (isHash) {
+                formattedCurrentHash = currentRevision.substring(0, 8);
+                if (previousRevision)
+                    labelForThisRepository = previousRevision.substring(0, 8) + '..' + formattedCurrentHash;
+                else
+                    labelForThisRepository = '@ ' + formattedCurrentHash;
+            } else {
+                if (previousRevision)
+                    labelForThisRepository = revisionPrefix + previousRevision + revisionDelimiter + revisionPrefix + currentRevision;
+                else
+                    labelForThisRepository = '@ ' + revisionPrefix + currentRevision;
+            }
 
             var url;
             var repository = repositories[repositoryName];

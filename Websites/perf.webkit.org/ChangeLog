@@ -1,3 +1,19 @@
+2014-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard shouldn't show the full git hash
+        https://bugs.webkit.org/show_bug.cgi?id=135083
+
+        Reviewed by Benjamin Poulain.
+
+        Detect Git/Mercurial hash by checking the length.
+
+        If it's a hash, use the first 8 characters in the label
+        while retaining the full length to be used in hyperlinks.
+
+        * public/js/helper-classes.js:
+        (.this.formattedRevisions):
+        (TestBuild):
+
 2014-05-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add an instruction on how to backup the database.
