@@ -407,9 +407,11 @@ PluginView* PluginView::currentPluginView()
 static char* createUTF8String(const String& str)
 {
     CString cstr = str.utf8();
-    char* result = reinterpret_cast<char*>(fastMalloc(cstr.length() + 1));
+    const size_t cstrLength = cstr.length();
+    char* result = reinterpret_cast<char*>(fastMalloc(cstrLength + 1));
 
-    strncpy(result, cstr.data(), cstr.length() + 1);
+    memcpy(result, cstr.data(), cstrLength);
+    result[cstrLength] = '\0';
 
     return result;
 }
