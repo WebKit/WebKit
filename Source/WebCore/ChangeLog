@@ -1,5 +1,25 @@
 2014-07-19  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r169848
+
+    2014-06-11  David Kilzer  <ddkilzer@apple.com>
+
+            Viewport arguments should ignore invalid characters in values
+            <http://webkit.org/b/133555>
+            <rdar://problem/17179650>
+
+            Reviewed by Daniel Bates.
+
+            Test: fast/viewport/viewport-warnings-7.html
+
+            * dom/Document.cpp:
+            (WebCore::Document::processArguments): Set |length| based on
+            |buffer|, not |features|.  Switch to using a for loop.  Switch
+            to unsigned types since we are working with positive offsets
+            into a String.
+
+2014-07-19  Lucas Forschler  <lforschler@apple.com>
+
         Merge r169726
 
     2014-06-09  Alexey Proskuryakov  <ap@apple.com>
