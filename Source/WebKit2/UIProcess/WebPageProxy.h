@@ -1271,6 +1271,10 @@ private:
     void didFinishLoadForQuickLookDocumentInMainFrame(const QuickLookDocumentData&);
 #endif
 
+#if USE(CONTENT_FILTERING)
+    void contentFilterDidBlockLoadForFrame(const WebCore::ContentFilter&, uint64_t frameID);
+#endif
+
     uint64_t generateNavigationID();
 
     WebPreferencesStore preferencesStore() const;

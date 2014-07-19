@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS) && USE(CONTENT_FILTERING)
 
+#import "ResourceRequest.h"
 #import "WebCoreThreadRun.h"
 
 #if defined(__has_include) && __has_include(<WebContentAnalysis/WebFilterEvaluator.h>)
@@ -40,21 +41,25 @@
 
 namespace WebCore {
 
-const char* ContentFilter::scheme()
+static inline const char* scheme()
 {
     static const char contentFilterScheme[] = "x-apple-content-filter";
     return contentFilterScheme;
 }
-    
-void ContentFilter::requestUnblockAndDispatchIfSuccessful(Function<void()> function)
+
+bool ContentFilter::handleUnblockRequestAndDispatchIfSuccessful(const ResourceRequest& request, std::function<void()> function)
 {
+    if (!request.url().protocolIs(scheme()))
+        return false;
+
+    if (!equalIgnoringCase(request.url().host(), "unblock"))
+        return false;
+
     [m_platformContentFilter unblockWithCompletion:^(BOOL unblocked, NSError *) {
-        if (unblocked) {
-            WebThreadRun(^{
-                function();
-            });
-        }
+        if (unblocked)
+            function();
     }];
+    return true;
 }
 
 } // namespace WebCore

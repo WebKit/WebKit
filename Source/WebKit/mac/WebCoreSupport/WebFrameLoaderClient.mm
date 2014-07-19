@@ -667,6 +667,7 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
 {
     ASSERT(!m_webFrame->_private->provisionalURL);
     m_webFrame->_private->provisionalURL = core(m_webFrame.get())->loader().provisionalDocumentLoader()->url().string();
+    m_webFrame->_private->contentFilterForBlockedLoad = nullptr;
 
     WebView *webView = getWebView(m_webFrame.get());
 #if !PLATFORM(IOS)
@@ -881,6 +882,11 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& action, const ResourceRequest& request, PassRefPtr<FormState> formState, FramePolicyFunction function)
 {
+    if ([m_webFrame _contentFilterDidHandleNavigationAction:request]) {
+        function(PolicyIgnore);
+        return;
+    }
+
     WebView *webView = getWebView(m_webFrame.get());
     [[webView _policyDelegateForwarder] webView:webView
                 decidePolicyForNavigationAction:actionDictionary(action, formState)
@@ -2237,6 +2243,11 @@ void WebFrameLoaderClient::didCreateQuickLookHandle(WebCore::QuickLookHandle& ha
     handle.setClient(adoptRef(new QuickLookDocumentWriter(handle)));
 }
 #endif
+
+void WebFrameLoaderClient::contentFilterDidBlockLoad(std::unique_ptr<WebCore::ContentFilter> contentFilter)
+{
+    m_webFrame->_private->contentFilterForBlockedLoad = WTF::move(contentFilter);
+}
 
 @implementation WebFramePolicyListener
 

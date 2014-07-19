@@ -1630,4 +1630,12 @@ void WebFrameLoaderClient::willChangeCurrentHistoryItem()
     webPage->willChangeCurrentHistoryItem();
 }
 
+#if USE(CONTENT_FILTERING)
+void WebFrameLoaderClient::contentFilterDidBlockLoad(std::unique_ptr<WebCore::ContentFilter> contentFilter)
+{
+    if (WebPage* webPage = m_frame->page())
+        webPage->send(Messages::WebPageProxy::ContentFilterDidBlockLoadForFrame(*contentFilter, m_frame->frameID()));
+}
+#endif
+
 } // namespace WebKit

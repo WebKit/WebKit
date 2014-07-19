@@ -256,11 +256,6 @@ namespace WebCore {
 
         void checkLoadComplete();
 
-#if USE(CONTENT_FILTERING)
-        void setContentFilterForBlockedLoad(PassRefPtr<ContentFilter>);
-        bool handleContentFilterRequest(const ResourceRequest&);
-#endif
-
         // The URL of the document resulting from this DocumentLoader.
         URL documentURL() const;
 
@@ -415,8 +410,7 @@ namespace WebCore {
         OwnPtr<ApplicationCacheHost> m_applicationCacheHost;
 
 #if USE(CONTENT_FILTERING)
-        RefPtr<ContentFilter> m_contentFilter;
-        RefPtr<ContentFilter> m_contentFilterForBlockedLoad;
+        std::unique_ptr<ContentFilter> m_contentFilter;
 #endif
     };
 

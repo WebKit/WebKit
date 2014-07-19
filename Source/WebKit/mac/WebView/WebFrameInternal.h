@@ -30,6 +30,7 @@
 
 #import "WebFramePrivate.h"
 #import "WebPreferencesPrivate.h"
+#import <WebCore/ContentFilter.h>
 #import <WebCore/EditAction.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameSelection.h>
@@ -90,7 +91,8 @@ WebView *getWebView(WebFrame *webFrame);
     RetainPtr<NSString> provisionalURL;
 #if PLATFORM(IOS)
     BOOL isCommitting;
-#endif    
+#endif
+    std::unique_ptr<WebCore::ContentFilter> contentFilterForBlockedLoad;
 }
 @end
 
@@ -181,6 +183,8 @@ WebView *getWebView(WebFrame *webFrame);
 - (BOOL)_canSaveAsWebArchive;
 
 - (void)_commitData:(NSData *)data;
+
+- (BOOL)_contentFilterDidHandleNavigationAction:(const WebCore::ResourceRequest&)request;
 
 @end
 

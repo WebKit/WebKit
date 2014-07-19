@@ -127,6 +127,9 @@ bool WebFrameProxy::isDisplayingPDFDocument() const
 void WebFrameProxy::didStartProvisionalLoad(const String& url)
 {
     m_frameLoadState.didStartProvisionalLoad(url);
+#if USE(CONTENT_FILTERING)
+    m_contentFilterForBlockedLoad = nullptr;
+#endif
 }
 
 void WebFrameProxy::didReceiveServerRedirectForProvisionalLoad(const String& url)
@@ -229,5 +232,21 @@ void WebFrameProxy::setUnreachableURL(const String& unreachableURL)
 {
     m_frameLoadState.setUnreachableURL(unreachableURL);
 }
+
+#if USE(CONTENT_FILTERING)
+bool WebFrameProxy::contentFilterDidHandleNavigationAction(const WebCore::ResourceRequest& request)
+{
+#if PLATFORM(IOS)
+    if (m_contentFilterForBlockedLoad) {
+        RefPtr<WebPageProxy> retainedPage = m_page;
+        return m_contentFilterForBlockedLoad->handleUnblockRequestAndDispatchIfSuccessful(request, [retainedPage] {
+            retainedPage->reload(false);
+        });
+    }
+#endif
+
+    return false;
+}
+#endif
 
 } // namespace WebKit

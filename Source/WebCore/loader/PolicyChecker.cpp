@@ -46,10 +46,6 @@
 #include "QuickLook.h"
 #endif
 
-#if USE(CONTENT_FILTERING)
-#include "ContentFilter.h"
-#endif
-
 namespace WebCore {
 
 PolicyChecker::PolicyChecker(Frame& frame)
@@ -106,15 +102,6 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, Docume
     if (!request.isNull() && request.url().protocolIs(QLPreviewProtocol())) {
         continueAfterNavigationPolicy(PolicyUse);
         return;
-    }
-#endif
-
-#if USE(CONTENT_FILTERING)
-    if (DocumentLoader* documentLoader = m_frame.loader().documentLoader()) {
-        if (documentLoader->handleContentFilterRequest(request)) {
-            continueAfterNavigationPolicy(PolicyIgnore);
-            return;
-        }
     }
 #endif
 
