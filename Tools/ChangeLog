@@ -1,3 +1,10 @@
+2014-07-18  Sam Weinig  <sam@webkit.org>
+
+        Revert accidental commit to MiniBrowser to make everything layer backed.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController windowDidLoad]):
+
 2014-07-18  Dana Burkart  <dburkart@apple.com>
 
         Add a new 'analyze' target to the makefile. This will make use of a new
