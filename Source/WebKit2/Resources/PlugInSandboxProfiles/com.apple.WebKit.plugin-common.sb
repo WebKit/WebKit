@@ -323,6 +323,7 @@
 
 ;; Camera
 (define (webkit-camera)
+    (shared-preferences-read "com.apple.coremedia")
     (allow mach-lookup (extension "com.apple.app-sandbox.mach"))
     (allow mach-lookup
         (global-name "com.apple.cmio.AppleCameraAssistant")
