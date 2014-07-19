@@ -1200,8 +1200,10 @@ unsigned AccessibilityObject::doAXLineForIndex(unsigned index)
 void AccessibilityObject::updateBackingStore()
 {
     // Updating the layout may delete this object.
-    if (Document* document = this->document())
-        document->updateLayoutIgnorePendingStylesheets();
+    if (Document* document = this->document()) {
+        if (!document->view()->isInLayout())
+            document->updateLayoutIgnorePendingStylesheets();
+    }
 }
 #endif
 
