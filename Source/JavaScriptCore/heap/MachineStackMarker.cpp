@@ -465,6 +465,7 @@ void MachineThreads::gatherFromOtherThread(ConservativeRoots& conservativeRoots,
     void* stackPointer = otherThreadStackPointer(regs);
     void* stackBase = thread->stackBase;
     swapIfBackwards(stackPointer, stackBase);
+    stackPointer = reinterpret_cast<void*>(WTF::roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<size_t>(stackPointer)));
     conservativeRoots.add(stackPointer, stackBase);
 
     freePlatformThreadRegisters(regs);
