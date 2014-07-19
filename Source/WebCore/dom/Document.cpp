@@ -3491,13 +3491,12 @@ void Document::unregisterNodeListForInvalidation(LiveNodeList& list)
     m_nodeListAndCollectionCounts[list.invalidationType()]--;
     if (!list.isRegisteredForInvalidationAtDocument())
         return;
-    if (!m_listsInvalidatedAtDocument.size()) {
-        ASSERT(m_inInvalidateNodeListAndCollectionCaches);
-        return;
-    }
-    ASSERT(m_listsInvalidatedAtDocument.contains(&list));
-    m_listsInvalidatedAtDocument.remove(&list);
+
     list.setRegisteredForInvalidationAtDocument(false);
+    ASSERT(m_inInvalidateNodeListAndCollectionCaches
+        ? m_listsInvalidatedAtDocument.isEmpty()
+        : m_listsInvalidatedAtDocument.contains(&list));
+    m_listsInvalidatedAtDocument.remove(&list);
 }
 
 void Document::registerCollection(HTMLCollection& collection)
@@ -3511,14 +3510,13 @@ void Document::unregisterCollection(HTMLCollection& collection)
 {
     ASSERT(m_nodeListAndCollectionCounts[collection.invalidationType()]);
     m_nodeListAndCollectionCounts[collection.invalidationType()]--;
-    if (collection.isRootedAtDocument()) {
-        if (!m_collectionsInvalidatedAtDocument.size()) {
-            ASSERT(m_inInvalidateNodeListAndCollectionCaches);
-            return;
-        }
-        ASSERT(m_collectionsInvalidatedAtDocument.contains(&collection));
-        m_collectionsInvalidatedAtDocument.remove(&collection);
-    }
+    if (!collection.isRootedAtDocument())
+        return;
+
+    ASSERT(m_inInvalidateNodeListAndCollectionCaches
+        ? m_collectionsInvalidatedAtDocument.isEmpty()
+        : m_collectionsInvalidatedAtDocument.contains(&collection));
+    m_collectionsInvalidatedAtDocument.remove(&collection);
 }
 
 void Document::collectionCachedIdNameMap(const HTMLCollection& collection)
