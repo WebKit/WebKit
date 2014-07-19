@@ -488,6 +488,8 @@ bool TextResourceDecoder::checkForCSSCharset(const char* data, size_t len, bool&
         int encodingNameLength = pos - dataStart;
         
         ++pos;
+        if (pos == dataEnd)
+            return false;
 
         if (*pos == ';')
             setEncoding(findTextEncoding(dataStart, encodingNameLength), EncodingFromCSSCharset);

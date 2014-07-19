@@ -1,3 +1,21 @@
+2014-07-18  Dana Burkart  <dburkart@apple.com>
+
+        Merge r169318
+
+    2014-05-25  David Kilzer  <ddkilzer@apple.com>
+
+            Crash in WebCore::TextResourceDecoder::checkForCSSCharset
+            <http://webkit.org/b/133257>
+            <rdar://problem/17027109>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Test: fast/encoding/css-charset-missing-semi-colon-and-newline.html
+
+            * loader/TextResourceDecoder.cpp:
+            (WebCore::TextResourceDecoder::checkForCSSCharset): Add early
+            return.
+
 2014-05-30  Dana Burkart  <dburkart@apple.com>
 
         Supplementary build fix for <rdar://problem/16848509>, borrowed from <rdar://problem/16701806>.
