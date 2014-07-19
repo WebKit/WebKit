@@ -1,3 +1,16 @@
+2014-07-18  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        _WKActivatedElementInfo.title should fallback to innerText if the link doesn't have title attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=135077
+
+        When populate InteractionInformationAtPosition's title value, use a link element's innerText if it
+        doesn't have title attribute.
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2014-07-18  Andy Estes  <aestes@apple.com>
 
         [iOS] Tapping "Allow Website" on a restricted page does not bring up the keypad
