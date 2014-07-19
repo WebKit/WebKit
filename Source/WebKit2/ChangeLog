@@ -1,3 +1,16 @@
+2014-07-18  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] position:fixed in iframes with programmatic scroll could end up in the wrong place
+        https://bugs.webkit.org/show_bug.cgi?id=135078
+        <rdar://problem/17401823>
+
+        Reviewed by Tim Horton.
+        
+        Fix the logging of requested scroll position and frame scale factor.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (WebKit::RemoteScrollingTreeTextStream::dump):
+
 2014-07-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Cocoa] Use RetainPtr in _WKRemoteObjectInterface

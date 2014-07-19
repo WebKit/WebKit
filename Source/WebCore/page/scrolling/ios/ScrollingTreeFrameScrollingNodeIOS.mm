@@ -170,8 +170,13 @@ void ScrollingTreeFrameScrollingNodeIOS::updateChildNodesAfterScroll(const Float
     if (!m_children)
         return;
 
-    FloatRect fixedPositionRect = scrollingTree().fixedPositionRect();
-    
+
+    FloatRect fixedPositionRect;
+    if (!parent())
+        fixedPositionRect = scrollingTree().fixedPositionRect();
+    else
+        fixedPositionRect = FloatRect(scrollOffset, scrollableAreaSize());
+
     for (auto& child : *m_children)
         child->updateLayersAfterAncestorChange(*this, fixedPositionRect, FloatSize());
 }
