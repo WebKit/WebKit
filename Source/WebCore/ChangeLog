@@ -1,3 +1,17 @@
+2014-07-19  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/135085> Ensure that make_names.pl generates the same result when run multiple times.
+
+        Perl 5.18 introduced hash randomization. This results in the iteration order of hashes being different
+        from one run to the next. To ensure identical output we can iterate over the hash keys in sorted order.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * bindings/scripts/StaticString.pm:
+        (GenerateStrings):
+        (GenerateStringAsserts):
+        * dom/make_names.pl:
+
 2014-07-19  Zan Dobersek  <zdobersek@igalia.com>
 
         Document::unregisterNodeListforInvalidation() and Document::unregisterCollection() have incorrect assertions

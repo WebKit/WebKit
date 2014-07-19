@@ -119,7 +119,7 @@ if (length($fontNamesIn)) {
 
     print F StaticString::GenerateStrings(\%parameters);
 
-    while ( my ($name, $identifier) = each %parameters ) {
+    for my $name (sort keys %parameters) {
         print F "DEFINE_GLOBAL(AtomicString, $name)\n";
     }
 
@@ -128,7 +128,7 @@ if (length($fontNamesIn)) {
     print F "\n";
     print F StaticString::GenerateStringAsserts(\%parameters);
 
-    while ( my ($name, $identifier) = each %parameters ) {
+    for my $name (sort keys %parameters) {
         # FIXME: Would like to use static_cast here, but there are differences in const
         # depending on whether SKIP_STATIC_CONSTRUCTORS_ON_GCC is used, so stick with a
         # C-style cast for now.
