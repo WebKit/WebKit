@@ -1,3 +1,9 @@
+2014-07-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Report and mark new failures. Update some expectations.
+
 2014-07-18  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] position:fixed in iframes with programmatic scroll could end up in the wrong place

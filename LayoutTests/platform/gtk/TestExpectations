@@ -424,6 +424,7 @@ webkit.org/b/131347 fast/inline/hidpi-selection-gap-and-inline-selection-have-ga
 webkit.org/b/131347 fast/inline/hidpi-selection-gap-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-selection-gap-overlaps-inline-selection.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/layers/hidpi-transform-on-child-content-is-mispositioned.html [ Crash ImageOnlyFailure Pass ]
 webkit.org/b/131347 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]
 webkit.org/b/131347 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.html [ Failure ]
 webkit.org/b/131347 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
@@ -515,6 +516,13 @@ webkit.org/b/105870 [ Debug ] webaudio/audionode-connect-order.html [ Crash ]
 
 webkit.org/b/133797 fast/dom/NavigatorContentUtils/register-protocol-handler.html [ Crash ]
 
+webkit.org/b/135050 animations/animation-end-event-short-iterations.html [ Crash Pass ]
+
+webkit.org/b/135051 fast/regions/repaint/region-painting-composited-element.html [ Crash Pass ]
+webkit.org/b/135051 fast/regions/repaint/region-painting-in-composited-view.html [ Crash Pass ]
+
+webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html [ ImageOnlyFailure Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -582,7 +590,7 @@ webkit.org/b/89650 svg/W3C-SVG-1.1/struct-dom-06-b.svg [ Failure Pass ]
 webkit.org/b/80158 plugins/netscape-plugin-page-cache-works.html [ Failure Pass ]
 
 webkit.org/b/89811 media/media-blocked-by-beforeload.html [ Failure Pass ]
-webkit.org/b/84856 media/media-controller-playback.html [ Failure Timeout Pass ]
+webkit.org/b/84856 media/media-controller-playback.html [ Crash Failure Timeout Pass ]
 
 webkit.org/b/83878 media/track/track-mode.html [ Failure Pass ]
 
@@ -633,17 +641,18 @@ webkit.org/b/114254 css3/masking/clip-path-animation.html [ Timeout Pass ]
 webkit.org/b/114254 css3/images/cross-fade-background-size.html [ Timeout Pass ]
 webkit.org/b/114254 css3/calc/background-position-parsing.html [ Timeout Pass ]
 webkit.org/b/114254 css3/flexbox/align-absolute-child.html [ Timeout Pass ]
-webkit.org/b/114254 css1/text_properties/letter_spacing.html [ Timeout Pass ]
+webkit.org/b/114254 css1/text_properties/letter_spacing.html [ Crash Timeout Pass ]
 webkit.org/b/114254 css1/formatting_model/canvas.html [ Timeout Pass ]
 webkit.org/b/114254 css1/classification/display.html [ Timeout Pass ]
 webkit.org/b/114254 css1/box_properties/acid_test.html [ Timeout Pass ]
 webkit.org/b/114254 css1/pseudo/anchor.html [ Timeout Pass ]
 webkit.org/b/114254 css1/basic/class_as_selector.html [ Timeout Pass ]
-webkit.org/b/114254 css1/units/color_units.html [ Timeout Pass ]
+webkit.org/b/114254 css1/units/color_units.html [ Crash Timeout Pass ]
 webkit.org/b/114254 css1/conformance/forward_compatible_parsing.html [ Timeout Pass ]
 webkit.org/b/114254 css1/font_properties/font.html [ Timeout Pass ]
+webkit.org/b/114254 css1/units/length_units.html [ Crash Timeout Pass ]
 webkit.org/b/114254 css2.1/20110323/absolute-non-replaced-height-001.htm [ Timeout Pass ]
-webkit.org/b/114254 css2.1/t09-c5526c-display-00-e.html [ Timeout Pass ]
+webkit.org/b/114254 css2.1/t09-c5526c-display-00-e.html [ Crash Timeout Pass ]
 
 webkit.org/b/114735 svg/filters/filter-hidden-content.svg [ Failure Pass ]
 
@@ -757,14 +766,14 @@ Bug(GTK) fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure Pass ]
 Bug(GTK) fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure Pass ]
 Bug(GTK) fast/workers/storage/change-version-handle-reuse-worker.html [ Failure Pass ]
 Bug(GTK) fast/workers/storage/change-version-sync.html [ Failure Pass ]
-Bug(GTK) fast/workers/storage/empty-statement-sync.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/empty-statement-sync.html [ Failure Crash Pass ]
 Bug(GTK) fast/workers/storage/execute-sql-args-sync.html [ Failure Pass ]
-Bug(GTK) fast/workers/storage/execute-sql-args-worker.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/execute-sql-args-worker.html [ Failure Crash Pass ]
 Bug(GTK) fast/workers/storage/multiple-transactions.html [ Failure Pass ]
 Bug(GTK) fast/workers/storage/multiple-transactions-on-different-handles.html [ Failure Pass ]
 Bug(GTK) fast/workers/storage/multiple-transactions-on-different-handles-sync.html [ Failure Pass ]
-Bug(GTK) fast/workers/storage/open-database-empty-version-sync.html [ Failure Pass ]
-Bug(GTK) fast/workers/storage/open-database-set-empty-version-sync.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/open-database-empty-version-sync.html [ Failure Timeout Pass ]
+Bug(GTK) fast/workers/storage/open-database-set-empty-version-sync.html [ Failure Crash Pass ]
 Bug(GTK) fast/workers/storage/open-database-while-transaction-in-progress.html [ Failure Crash Pass ]
 Bug(GTK) fast/workers/storage/open-database-while-transaction-in-progress-sync.html [ Failure Pass ]
 Bug(GTK) fast/workers/storage/read-and-write-transactions-dont-run-together.html [ Failure Pass ]
@@ -798,13 +807,13 @@ webkit.org/b/132248 media/media-fragments/TC0078.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0079.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0085.html [ Failure Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0086.html [ Failure Timeout Pass ]
-webkit.org/b/132248 media/media-fragments/TC0087.html [ Failure Timeout Pass ]
+webkit.org/b/132248 media/media-fragments/TC0087.html [ Failure Timeout Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0088.html [ Failure Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0089.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0090.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0091.html [ Failure Pass ]
 
-webkit.org/b/132249 http/tests/media/video-cookie.html [ Failure Pass ]
+webkit.org/b/132249 http/tests/media/video-cookie.html [ Timeout Failure Pass ]
 
 webkit.org/b/132250 media/audio-mpeg4-supported.html [ Timeout Pass ]
 webkit.org/b/132251 media/controls-drag-timebar.html [ Timeout Pass ]
@@ -901,6 +910,17 @@ webkit.org/b/135003 jquery/attributes.html [ Timeout Pass ]
 webkit.org/b/135003 jquery/core.html [ Timeout Pass ]
 
 webkit.org/b/135004 fast/forms/textarea/textarea-state-restore.html [ Timeout Pass ]
+
+
+webkit.org/b/135087 fast/frames/frame-programmatic-noresize.html [ Failure Pass ]
+webkit.org/b/135087 fast/frames/frame-with-noresize-can-be-resized-after-removal-of-noresize.html [ Failure Pass ]
+webkit.org/b/135087 fast/frames/frame-with-noresize-can-be-resized-after-setting-noResize-to-false.html [ Failure Pass ]
+
+webkit.org/b/135088 media/video-colorspace-yuv420.html [ Crash Pass ]
+
+webkit.org/b/135089 animations/animation-welcome-safari.html [ Failure Timeout Pass ]
+
+webkit.org/b/135090 fast/regions/repaint/fixed-in-named-flow-cb-changed2.html [ ImageOnlyFailure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -1062,6 +1082,22 @@ webkit.org/b/133808 media/video-trackmenu-selection.html [ Timeout ]
 
 webkit.org/b/134559 fast/parser/xml-error-adopted.xml [ Timeout Pass ]
 
+webkit.org/b/135052 fast/workers/worker-multi-startup.html [ Timeout Pass ]
+
+webkit.org/b/135053 html5lib/webkit-resumer.html [ Timeout Pass ]
+
+webkit.org/b/135086 media/video-seek-with-negative-playback.html [ Timeout Pass ]
+
+webkit.org/b/135091 fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Timeout Pass ]
+
+webkit.org/b/135092 js/cached-window-prototype-properties.html [ Timeout Pass ]
+
+webkit.org/b/135093 media/track/track-cues-missed.html [ Timeout Pass ]
+
+webkit.org/b/135094 fast/workers/worker-exception-during-navigation.html [ Timeout Pass ]
+
+webkit.org/b/135095 fast/loader/child-frame-add-after-back-forward.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1129,8 +1165,8 @@ webkit.org/b/63706 fast/events/drag-and-drop-subframe-dataTransfer.html [ Failur
 webkit.org/b/63706 fast/events/drag-link.html [ Failure ]
 webkit.org/b/63706 fast/events/drag-parent-node.html [ Failure ]
 webkit.org/b/63706 fast/events/dropzone-001.html [ Failure Timeout ]
-webkit.org/b/63706 fast/events/dropzone-002.html [ Failure ]
-webkit.org/b/63706 fast/events/dropzone-003.html [ Failure ]
+webkit.org/b/63706 fast/events/dropzone-002.html [ Failure Timeout ]
+webkit.org/b/63706 fast/events/dropzone-003.html [ Failure Timeout ]
 webkit.org/b/63706 fast/events/ondrop-text-html.html [ Failure ]
 webkit.org/b/63706 fast/events/selectstart-by-drag.html [ Failure ]
 webkit.org/b/63706 fast/events/standalone-image-drag-to-editable.html [ Failure Timeout ]
@@ -1414,7 +1450,7 @@ Bug(GTK) fast/loader/api-test-new-window-data-load-base-url.html [ Failure ]
 Bug(GTK) fast/loader/api-test-go-to-current-back-forward-item.html [ Failure ]
 
 # Paged continuousMouseScrollBy() events are not supported in GTK.
-Bug(GTK) fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html [ Failure ]
+Bug(GTK) fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html [ Failure Timeout ]
 Bug(GTK) fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html [ Failure ]
 Bug(GTK) fast/events/platform-wheelevent-paging-x-in-scrolling-div.html [ Failure ]
 Bug(GTK) fast/events/platform-wheelevent-paging-x-in-scrolling-page.html [ Failure ]
@@ -1542,7 +1578,7 @@ webkit.org/b/105693 http/tests/multipart/multipart-wait-before-boundary.html [ S
 webkit.org/b/54251 http/tests/multipart/invalid-image-data.html [ Failure ]
 
 # Fails because it does not throw a couple of expected exceptions
-Bug(GTK) http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure ]
+Bug(GTK) http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure Timeout ]
 
 webkit.org/b/72248 editing/spelling/spelling-unified-emulation.html [ Failure ]
 
@@ -1896,7 +1932,7 @@ webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_ev
 webkit.org/b/107818 media/controls-styling.html [ Failure ]
 
 # New chromium based controls
-webkit.org/b/107825 media/audio-delete-while-step-button-clicked.html [ Failure ]
+webkit.org/b/107825 media/audio-delete-while-step-button-clicked.html [ Failure Timeout ]
 webkit.org/b/107825 media/nodesFromRect-shadowContent.html [ Failure ]
 webkit.org/b/107825 media/video-controls-fullscreen-volume.html [ Failure ]
 
@@ -1945,7 +1981,7 @@ webkit.org/b/132126 animations/3d/change-transform-in-end-event.html [ Timeout P
 webkit.org/b/132126 animations/added-while-suspended.html [ Timeout Pass ]
 webkit.org/b/132126 animations/animation-iteration-event-destroy-renderer.html [ Timeout Pass Crash ]
 webkit.org/b/132126 animations/animation-direction-normal.html [ Failure Pass ]
-webkit.org/b/132126 animations/animation-direction-reverse.html [ Failure Pass ]
+webkit.org/b/132126 animations/animation-direction-reverse.html [ Crash Failure Pass ]
 webkit.org/b/132126 animations/play-state-paused.html [ Failure ]
 webkit.org/b/132126 animations/play-state-suspend.html [ Failure ]
 webkit.org/b/132126 animations/suspend-resume-animation.html [ Failure ]
