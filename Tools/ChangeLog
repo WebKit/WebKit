@@ -1,3 +1,9 @@
+2014-07-19  Anders Carlsson  <andersca@apple.com>
+
+        Update.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2014-07-18  Sam Weinig  <sam@webkit.org>
 
         Revert accidental commit to MiniBrowser to make everything layer backed.

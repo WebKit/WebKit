@@ -362,7 +362,7 @@
         "RenderLayers" : [ "simon.fraser@apple.com", "kondapallykalyan@gmail.com" ],
         "SVG": ["schenney@chromium.org", "pdr@google.com", "fmalita@chromium.org", "dominik.rottsches@intel.com", "gyuyoung.kim@webkit.org", "sergio.correia@openbossa.org" ],
         "SVNScripts": [ "dbates@webkit.org" ],
-        "ScrollingCoordinator": [ "andersca@apple.com", "jamesr@chromium.org", "tonikitoo@webkit.org", "cmarcelo@webkit.org", "luiz@webkit.org" ],
+        "ScrollingCoordinator": [ "jamesr@chromium.org", "tonikitoo@webkit.org", "cmarcelo@webkit.org", "luiz@webkit.org" ],
         "Selectors": [ "allan.jensen@digia.com" ],
         "SoupNetwork": [ "gns@gnome.org", "mrobinson@webkit.org", "danw@gnome.org", "dchris@gmail.com", "cgarcia@igalia.com", "berto@igalia.com" ],
         "TextureMapper" : [ "noam@webkit.org", "cmarcelo@webkit.org", "luiz@webkit.org", "kondapallykalyan@gmail.com" ],
