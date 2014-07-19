@@ -373,7 +373,7 @@ messages -> WebPage LegacyReceiver {
 #endif
 
 #if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
-    SetAcceleratedCompositingWindowId(int64_t id)
+    SetAcceleratedCompositingWindowId(uint64_t nativeWindowHandle)
 #endif
   
     SetScrollPinningBehavior(uint32_t pinning)

@@ -1,3 +1,18 @@
+2014-07-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        Consistently use uint64_t as the handle parameter type for the SetAcceleratedCompositingWindowId message
+        https://bugs.webkit.org/show_bug.cgi?id=135047
+
+        Reviewed by Darin Adler.
+
+        UIProcess' WebPageProxy is handling this parameter as an uint64_t, it should be handled as such
+        in WebProcess as well.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Also changed the parameter name to match other places.
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::setAcceleratedCompositingWindowId):
+
 2014-07-18  Oliver Hunt  <oliver@apple.com>
 
         We don't provide an extension to the temp file used for uploads

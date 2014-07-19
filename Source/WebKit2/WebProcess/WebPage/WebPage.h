@@ -631,7 +631,7 @@ public:
     void cancelComposition();
 #elif PLATFORM(GTK)
 #if USE(TEXTURE_MAPPER_GL)
-    void setAcceleratedCompositingWindowId(int64_t nativeWindowHandle);
+    void setAcceleratedCompositingWindowId(uint64_t nativeWindowHandle);
 #endif
 #endif
 

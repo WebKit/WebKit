@@ -163,7 +163,7 @@ PassRefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const URL&)
 }
 
 #if USE(TEXTURE_MAPPER_GL)
-void WebPage::setAcceleratedCompositingWindowId(int64_t nativeWindowHandle)
+void WebPage::setAcceleratedCompositingWindowId(uint64_t nativeWindowHandle)
 {
     m_nativeWindowHandle = nativeWindowHandle;
 }
