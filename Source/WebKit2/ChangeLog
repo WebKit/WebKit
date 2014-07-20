@@ -1,6 +1,6 @@
 2014-07-20  Dan Bernstein  <mitz@apple.com>
 
-        <rdar://problem/17739804> REGRESSION (r171057): Crash in WebPage::getPositionInformation()
+        <rdar://problem/17739526> REGRESSION (r171057): Crash in WebPage::getPositionInformation()
         https://bugs.webkit.org/show_bug.cgi?id=135099
 
         Reviewed by David Kilzer.
