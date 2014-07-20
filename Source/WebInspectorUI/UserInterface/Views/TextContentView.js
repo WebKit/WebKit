@@ -77,7 +77,7 @@ WebInspector.TextContentView.prototype = {
 
     hidden: function()
     {
-        WebInspector.ResourceContentView.prototype.hidden.call(this);
+        WebInspector.ContentView.prototype.hidden.call(this);
 
         this._textEditor.hidden();
     },
