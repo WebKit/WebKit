@@ -1,5 +1,18 @@
 2014-07-19  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r170946
+
+    2014-07-08  Jeffrey Pfau  <jpfau@apple.com>
+
+            Fix flaky loading tests
+            https://bugs.webkit.org/show_bug.cgi?id=133696
+
+            Reviewed by Ryosuke Niwa.
+
+            * platform/wk2/TestExpectations: Unskip no-longer failing tests
+
+2014-07-19  Lucas Forschler  <lforschler@apple.com>
+
         Merge r170135
 
     2014-06-11  Jeffrey Pfau  <jpfau@apple.com>
