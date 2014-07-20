@@ -815,7 +815,7 @@ static bool eventTargetIsPlatformWidget(Element* eventTarget)
     return widget->platformWidget();
 }
 
-void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheelEvent, const HitTestResult& result, Element*& wheelEventTarget, ContainerNode*& scrollableContainer, ScrollableArea*& scrollableArea, bool& isOverWidget)
+void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheelEvent, const HitTestResult& result, RefPtr<Element>& wheelEventTarget, RefPtr<ContainerNode>& scrollableContainer, ScrollableArea*& scrollableArea, bool& isOverWidget)
 {
     FrameView* view = m_frame.view();
 
@@ -825,9 +825,9 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
         scrollableContainer = wheelEventTarget;
         scrollableArea = view;
     } else {
-        if (eventTargetIsPlatformWidget(wheelEventTarget)) {
+        if (eventTargetIsPlatformWidget(wheelEventTarget.get())) {
             scrollableContainer = wheelEventTarget;
-            scrollableArea = scrollViewForEventTarget(wheelEventTarget);
+            scrollableArea = scrollViewForEventTarget(wheelEventTarget.get());
         } else {
             scrollableContainer = findEnclosingScrollableContainer(*wheelEventTarget);
             if (scrollableContainer) {
@@ -847,6 +847,7 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
         else
             m_startedGestureAtScrollLimit = false;
         m_latchedWheelEventElement = wheelEventTarget;
+        // FIXME: What prevents us from deleting this scrollable container while still holding a pointer to it?
         m_latchedScrollableContainer = scrollableContainer;
         m_widgetIsLatched = result.isOverWidget();
         isOverWidget = m_widgetIsLatched;
