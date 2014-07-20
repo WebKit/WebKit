@@ -1,3 +1,14 @@
+2014-07-20  Diego Pino Garcia  <dpino@igalia.com>
+
+        ES6: Implement Math.sign()
+        https://bugs.webkit.org/show_bug.cgi?id=134980
+
+        Reviewed by Darin Adler.
+
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::finishCreation):
+        (JSC::mathProtoFuncSign):
+
 2014-07-18  Filip Pizlo  <fpizlo@apple.com>
 
         Exception fuzzing should work on iOS

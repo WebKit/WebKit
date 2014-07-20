@@ -1,3 +1,13 @@
+2014-07-20  Diego Pino Garcia  <dpino@igalia.com>
+
+        ES6: Implement Math.sign()
+        https://bugs.webkit.org/show_bug.cgi?id=134980
+
+        Reviewed by Darin Adler.
+
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * js/script-tests/math.js:
+
 2014-07-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.

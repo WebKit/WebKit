@@ -181,6 +181,24 @@ PASS Math.round(-9007199254740991) is -9007199254740991
 PASS Math.round(-1.7976931348623157e+308) is -1.7976931348623157e+308
 PASS Math.round(Infinity) is Infinity
 PASS Math.round(-Infinity) is -Infinity
+PASS Math.sign(NaN) is NaN
+PASS Math.sign('string') is NaN
+PASS Math.sign([1, 2, 3]) is NaN
+PASS Math.sign({}) is NaN
+PASS Math.sign(0) is 0
+PASS Math.sign(-0) is -0
+PASS Math.sign(-1) is -1
+PASS Math.sign(1) is 1
+PASS Math.sign(0.1) is 1
+PASS Math.sign(-0.1) is -1
+PASS Math.sign(10000) is 1
+PASS Math.sign(-10000) is -1
+PASS Math.sign(Number.MIN_VALUE) is 1
+PASS Math.sign(-Number.MIN_VALUE) is -1
+PASS Math.sign(Number.MAX_VALUE) is 1
+PASS Math.sign(-Number.MAX_VALUE) is -1
+PASS Math.sign(Infinity) is 1
+PASS Math.sign(-Infinity) is -1
 PASS Math.sin(NaN) is NaN
 PASS Math.sin(0) is 0
 PASS Math.sin(-0) is -0

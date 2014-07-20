@@ -61,6 +61,7 @@ static EncodedJSValue JSC_HOST_CALL mathProtoFuncMin(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncPow(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncRandom(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncRound(ExecState*);
+static EncodedJSValue JSC_HOST_CALL mathProtoFuncSign(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncSin(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncSinh(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncSqrt(ExecState*);
@@ -120,6 +121,7 @@ void MathObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "pow"), 2, mathProtoFuncPow, PowIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "random"), 0, mathProtoFuncRandom, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "round"), 1, mathProtoFuncRound, RoundIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "sign"), 1, mathProtoFuncSign, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "sin"), 1, mathProtoFuncSin, SinIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "sinh"), 1, mathProtoFuncSinh, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "sqrt"), 1, mathProtoFuncSqrt, SqrtIntrinsic, DontEnum | Function);
@@ -301,6 +303,16 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncRound(ExecState* exec)
     double arg = exec->argument(0).toNumber(exec);
     double integer = ceil(arg);
     return JSValue::encode(jsNumber(integer - (integer - arg > 0.5)));
+}
+
+EncodedJSValue JSC_HOST_CALL mathProtoFuncSign(ExecState* exec)
+{
+    double arg = exec->argument(0).toNumber(exec);
+    if (std::isnan(arg))
+        return JSValue::encode(jsNaN());
+    if (!arg)
+        return JSValue::encode(std::signbit(arg) ? jsNumber(-0.0) : jsNumber(0));
+    return JSValue::encode(jsNumber(std::signbit(arg) ? -1 : 1));
 }
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncSin(ExecState* exec)

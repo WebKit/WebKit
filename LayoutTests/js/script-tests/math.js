@@ -254,6 +254,25 @@ shouldBe("Math.round(-1.7976931348623157e+308)", "-1.7976931348623157e+308");
 shouldBe("Math.round(Infinity)", "Infinity");
 shouldBe("Math.round(-Infinity)", "-Infinity");
 
+shouldBe("Math.sign(NaN)", "NaN");
+shouldBe("Math.sign('string')", "NaN");
+shouldBe("Math.sign([1, 2, 3])", "NaN");
+shouldBe("Math.sign({})", "NaN");
+shouldBe("Math.sign(0)", "0");
+shouldBe("Math.sign(-0)", "-0");
+shouldBe("Math.sign(-1)", "-1");
+shouldBe("Math.sign(1)", "1");
+shouldBe("Math.sign(0.1)", "1");
+shouldBe("Math.sign(-0.1)", "-1");
+shouldBe("Math.sign(10000)", "1");
+shouldBe("Math.sign(-10000)", "-1");
+shouldBe("Math.sign(Number.MIN_VALUE)", "1");
+shouldBe("Math.sign(-Number.MIN_VALUE)", "-1");
+shouldBe("Math.sign(Number.MAX_VALUE)", "1");
+shouldBe("Math.sign(-Number.MAX_VALUE)", "-1");
+shouldBe("Math.sign(Infinity)", "1");
+shouldBe("Math.sign(-Infinity)", "-1");
+
 shouldBe("Math.sin(NaN)", "NaN");
 shouldBe("Math.sin(0)", "0");
 shouldBe("Math.sin(-0)", "-0");
