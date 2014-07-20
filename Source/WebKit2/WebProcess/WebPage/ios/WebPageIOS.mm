@@ -1859,7 +1859,8 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
 
             if (elementIsLinkOrImage) {
                 // Ensure that the image contains at most 600K pixels, so that it is not too big.
-                info.image = snapshotNode(*element, SnapshotOptionsShareable, 600 * 1024)->bitmap();
+                if (RefPtr<WebImage> snapshot = snapshotNode(*element, SnapshotOptionsShareable, 600 * 1024))
+                    info.image = snapshot->bitmap();
             }
             if (linkElement)
                 info.url = [(NSURL *)linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr))) absoluteString];

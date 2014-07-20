@@ -1,3 +1,13 @@
+2014-07-20  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/17739804> REGRESSION (r171057): Crash in WebPage::getPositionInformation()
+        https://bugs.webkit.org/show_bug.cgi?id=135099
+
+        Reviewed by David Kilzer.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation): Added a null check.
+
 2014-07-19  Zan Dobersek  <zdobersek@igalia.com>
 
         Consistently use uint64_t as the handle parameter type for the SetAcceleratedCompositingWindowId message
