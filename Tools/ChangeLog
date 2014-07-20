@@ -1,3 +1,15 @@
+2014-07-20  David Kilzer  <ddkilzer@apple.com>
+
+        Checker: Value stored to 'kernResult' is never read (LayoutTestHelper.m:164)
+        <http://webkit.org/b/135096>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        (lockDownDiscreteGraphics): Check the return values of
+        IOServiceOpen() and IOObjectRelease(), and log if not
+        KERN_SUCCESS.
+
 2014-07-19  Anders Carlsson  <andersca@apple.com>
 
         Update.

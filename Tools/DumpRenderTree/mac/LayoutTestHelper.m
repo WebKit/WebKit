@@ -162,7 +162,14 @@ void lockDownDiscreteGraphics()
 
     // This call stalls until the graphics device lock is granted.
     kernResult = IOServiceOpen(serviceObject, mach_task_self(), 1, &permanentLockDownService);
-    IOObjectRelease(serviceObject);
+    if (kernResult != KERN_SUCCESS) {
+        NSLog(@"IOServiceOpen() failed in %s with kernResult = %d", __FUNCTION__, kernResult);
+        return;
+    }
+
+    kernResult = IOObjectRelease(serviceObject);
+    if (kernResult != KERN_SUCCESS)
+        NSLog(@"IOObjectRelease() failed in %s with kernResult = %d", __FUNCTION__, kernResult);
 }
 
 int main(int argc, char* argv[])
