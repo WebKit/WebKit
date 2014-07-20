@@ -682,6 +682,8 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
 
     if (behavior & LayerTreeAsTextDebug) {
         writeIndent(ts, indent + 1);
+        ts << "(primary-layer-id " << primaryLayerID() << ")\n";
+        writeIndent(ts, indent + 1);
         ts << "(client " << static_cast<void*>(&m_client) << ")\n";
     }
 

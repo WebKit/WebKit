@@ -1,3 +1,17 @@
+2014-07-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Print layerIDs in GraphicsLayer dumps
+        https://bugs.webkit.org/show_bug.cgi?id=135100
+
+        Reviewed by Darin Adler.
+
+        When calling showGraphicsLayerTree() from the debugger, it's useful to show
+        layerIDs so they can be correlated with remote layer tree transactions. So
+        when dumping with debug info, dump the primary layer ID.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties):
+
 2014-07-20  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] ignore requests to set volume
