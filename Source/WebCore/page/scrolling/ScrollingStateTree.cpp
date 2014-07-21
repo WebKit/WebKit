@@ -33,7 +33,7 @@
 #include "ScrollingStateFrameScrollingNode.h"
 #include "ScrollingStateOverflowScrollingNode.h"
 #include "ScrollingStateStickyNode.h"
-#include <wtf/Text/CString.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
