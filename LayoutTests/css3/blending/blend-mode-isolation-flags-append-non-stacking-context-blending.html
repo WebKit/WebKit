@@ -1,58 +1,39 @@
 <!DOCTYPE HTML>
-<html>
-    <head>
-        <!-- This test will check if the isolation flag is properly computed when we append a subtree
-          having blending elements. -->
-        <style>
-            div {
-                width: 100px;
-                height: 100px;
-                /* This forces render layers, avoiding normal flow only issues */
-                position: relative;
-            }
+<head>
+    <!-- This test will check if the isolation flag is properly computed when we append a subtree having blending elements. -->
+    <link rel="stylesheet" href="resources/blending-style.css">
+    <style>
+        div {
+            /* This forces render layers, avoiding normal flow only issues */
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="isolating lime box">
+        <div id="target" class="yellow box" style="left: 50px;"></div>
+    </div>
+    <script type="text/javascript">
+        if (window.testRunner)
+            window.testRunner.waitUntilDone();
 
-            .stacking-context {
-                isolation: isolate;
-            }
+        function change() {
+            var blendingElement = document.createElement("div");
+            blendingElement.className = "fuchsia difference box";
+            blendingElement.style.left = "-25px";
 
-            .blending {
-                mix-blend-mode: difference;
-            }
+            var toAppend = document.createElement("div");
+            toAppend.className = "box";
+            toAppend.style.backgroundColor = "#ffff44"
+            toAppend.appendChild(blendingElement);
 
-            .leaf {
-                background-color: #ff00ff;
-                left:-25px;
-            }
+            var target = document.getElementById("target");
+            target.appendChild(toAppend);
 
-            .append-root {
-                background-color: #ffff44;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="stacking-context" style="background-color: #00ff00;">
-            <div id="target" style="background-color: #ffff00; left: 50px;"></div>
-        </div>
-        <script type="text/javascript">
             if (window.testRunner)
-                window.testRunner.waitUntilDone();
+                window.testRunner.notifyDone();
+        }
 
-            function change() {
-                var blendingElement = document.createElement("div");
-                blendingElement.className = "blending leaf";
-
-                var toAppend = document.createElement("div");
-                toAppend.className = "append-root";
-                toAppend.appendChild(blendingElement);
-
-                var target = document.getElementById("target");
-                target.appendChild(toAppend);
-
-                if (window.testRunner)
-                    window.testRunner.notifyDone();
-            }
-
-            window.setTimeout("change()", 10);
-        </script>
-    </body>
-</html>
+        window.setTimeout("change()", 10);
+    </script>
+</body>

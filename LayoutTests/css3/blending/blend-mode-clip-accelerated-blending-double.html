@@ -1,38 +1,18 @@
 <!DOCTYPE HTML>
+
+<link rel="stylesheet" href="resources/blending-style.css">
 <style>
-    .parent {
-        width: 100px;
-        height: 100px;
-    }
     .child {
         width: 400px;
         height: 50px;
-    }
-    .isolating {
-        isolation: isolate;
-    }
-    .clipping {
-        overflow: hidden;
-    }
-    .blending {
-        mix-blend-mode: difference;
-    }
-    .accelerated {
-        -webkit-transform: translateZ(0px);
-    }
-    .black {
-        background-color: rgb(0, 0, 0);
-    }
-    .green {
-        background-color: rgb(0, 255, 0);
     }
 </style>
 
 <p>Test if blending works when the blending layer is clipped by one accelerated layer and by one software layer.<br />
 Test passes if you see a green rectangle.</p>
-<div class="isolating accelerated clipping green parent">
-    <div class="clipping parent" style="position: relative; left: 10px; right: 10px;">
-        <div class="accelerated blending black child"></div>
-        <div class="accelerated green child"></div>
+<div class="isolating accelerated clipping lime box">
+    <div class="clipping box" style="position: relative; left: 10px; right: 10px;">
+        <div class="accelerated black child difference"></div>
+        <div class="accelerated lime child"></div>
     </div>
 </div>

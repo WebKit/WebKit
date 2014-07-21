@@ -1,47 +1,34 @@
 <!DOCTYPE HTML>
-<html>
-    <head>
-        <!-- This test will check if the isolation flag is properly computed when we remove
-            the stacking context status from the isolating element. -->
-        <style>
-            div {
-                width: 100px;
-                height: 100px;
-                /* This forces render layers, avoiding normal flow only issues */
-                position: relative;
-            }
-
-            .stacking-context {
-                isolation: isolate;
-            }
-
-            .blending {
-                mix-blend-mode: difference;
-            }
-
-        </style>
-    </head>
-    <body>
-        <div class="stacking-context" style="background-color: #00ff00;">
-            <div id="target" class="stacking-context" style="background-color: #ffff00; left: 50px;">
-                <div>
-                    <div class="blending" style="background-color: #ff00ff; left:-25px;"></div>
-                </div>
+<head>
+    <!-- This test will check if the isolation flag is properly computed when we remove the stacking context status from the isolating element. -->
+    <link rel="stylesheet" href="resources/blending-style.css">
+    <style>
+        div {
+            /* This forces render layers, avoiding normal flow only issues */
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="isolating lime box">
+        <div id="target" class="isolating yellow box" style="left: 50px;">
+            <div class="box">
+                <div class="fuchsia box difference" style="left:-25px;"></div>
             </div>
         </div>
-        <script type="text/javascript">
+    </div>
+    <script type="text/javascript">
+        if (window.testRunner)
+            window.testRunner.waitUntilDone();
+
+        function change() {
+            var target = document.getElementById("target");
+            target.className = "yellow box";
+
             if (window.testRunner)
-                window.testRunner.waitUntilDone();
+                window.testRunner.notifyDone();
+        }
 
-            function change() {
-                var target = document.getElementById("target");
-                target.className = "";
-
-                if (window.testRunner)
-                    window.testRunner.notifyDone();
-            }
-
-            window.setTimeout("change()", 10);
-        </script>
-    </body>
-</html>
+        window.setTimeout("change()", 10);
+    </script>
+</body>

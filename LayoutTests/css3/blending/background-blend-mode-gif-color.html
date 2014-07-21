@@ -1,31 +1,30 @@
 <!DOCTYPE HTML>
-<html>
 <head>
-<style>
-    div {
-        width: 130px;
-        height: 130px;
-        background-color: green;
-        float: left;
-        margin: 5px;
-    }
-</style>
-<script type="text/javascript">
-    if (window.testRunner)
-        window.testRunner.waitUntilDone();
+    <style>
+        div {
+            width: 130px;
+            height: 130px;
+            background-color: green;
+            float: left;
+            margin: 5px;
+        }
+    </style>
+    <script type="text/javascript">
+        if (window.testRunner)
+            window.testRunner.waitUntilDone();
 
-    var greenWhite1px400msGif = "url('data:image/gif;base64,R0lGODlhAQABAJECAAB/Jv///////wAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQJKAACACwAAAAAAQABAAACAkQBACH5BAkoAAIALAAAAAABAAEAAAICTAEAOw==')";
+        var greenWhite1px400msGif = "url('data:image/gif;base64,R0lGODlhAQABAJECAAB/Jv///////wAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQJKAACACwAAAAAAQABAAACAkQBACH5BAkoAAIALAAAAAABAAEAAAICTAEAOw==')";
 
-    window.onload = function () {
-        var list = document.getElementsByTagName('div');
-        for (var i = 0; i < list.length; i++)
-            list[i].style.backgroundImage = greenWhite1px400msGif;
-        setTimeout(function () {
-            if (window.testRunner)
-                window.testRunner.notifyDone();
-        }, 0);
-    };
-</script>
+        window.onload = function () {
+            var list = document.getElementsByTagName('div');
+            for (var i = 0; i < list.length; i++)
+                list[i].style.backgroundImage = greenWhite1px400msGif;
+            setTimeout(function () {
+                if (window.testRunner)
+                    window.testRunner.notifyDone();
+            }, 0);
+        };
+    </script>
 </head>
 <!-- This file should contain a gif on top of a background color with every type of blending. -->
 <body>
@@ -41,4 +40,3 @@
     <div style="background-blend-mode: difference, normal"></div>
     <div style="background-blend-mode: exclusion, normal"></div>
 </body>
-</html>

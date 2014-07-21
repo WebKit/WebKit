@@ -1,28 +1,13 @@
  <!DOCTYPE HTML>
 <!-- Test if the blend mode property is propagated to the ancestorClippingLayer. -->
 
- <style>
- 	.parent {
- 		width: 100px;
- 		height: 100px;
- 		background: yellow;
- 		overflow: hidden;
- 	}
+<link rel="stylesheet" href="resources/blending-style.css">
 
- 	.child {
- 		width: 200px;
- 		height: 200px;
- 		background: red;
- 		-webkit-transform:translateZ(0px);
- 		mix-blend-mode: difference;
- 	}
- </style>
-
- <div class="parent">
-     <div class="child"></div>
+ <div class="yellow clipping box">
+     <div class="accelerated red bigbox difference"></div>
  </div>
  <pre id="layerTree"></pre>
- 
+
  <script>
     if (window.testRunner)
         window.testRunner.dumpAsText();

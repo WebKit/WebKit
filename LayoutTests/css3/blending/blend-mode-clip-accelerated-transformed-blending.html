@@ -1,29 +1,17 @@
 <!DOCTYPE HTML>
-<style>
-   .parent {
-       width: 100px;
-       height: 100px;
-       overflow:hidden;
-       background: rgb(0, 255, 0);
-       isolation: isolate;
-   }
 
+<link rel="stylesheet" href="resources/blending-style.css">
+<style>
    .child {
-        width: 400px;
-        height: 20px;
-        background: rgb(0, 0, 0);
         position: relative;
         top: 110px;
         left: -80px;
         -webkit-transform: rotateZ(45deg) rotateY(30deg);
    }
-   .blending {
-        mix-blend-mode: difference;
-    }
 </style>
 
 <p>This test checks that blending works if the isolating layer has overflow hidden and the blending layer has 3d transform.<br />
 Test passes if you see a green rectangle.</p>
-<div class="parent">
-    <div class="blending child"></div>
+<div class="isolating clipping lime box">
+    <div class="black hbar child difference"></div>
 </div>

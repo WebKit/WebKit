@@ -1,30 +1,18 @@
 <!DOCTYPE HTML>
+
+<link rel="stylesheet" href="resources/blending-style.css">
 <style>
    .parent {
        width: 300px;
        height: 300px;
        position: absolute;
        clip: rect(0px, 100px, 100px, 0px);
-       background: rgb(0, 255, 0);
-       isolation: isolate;
    }
-
-   .child {
-        width: 400px;
-        height: 400px;
-        background: rgb(0, 0, 0);
-   }
-   .blending {
-        mix-blend-mode: difference;
-    }
-    .accelerated {
-        -webkit-transform: translateZ(0px);
-    }
 </style>
 
 <p>This test checks that blending works if the isolating layer is absolute positioned and has a clip rect.<br />
 Test passes if you see a green rectangle.</p>
 
-<div class="parent">
-    <div class="accelerated blending child"></div>
+<div class="isolating lime parent">
+    <div class="accelerated black hugebox difference"></div>
 </div>

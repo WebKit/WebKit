@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
 <head>
+    <link rel="stylesheet" href="resources/blending-style.css">
     <style>
         .example {
             width: 180px;
@@ -63,7 +64,7 @@
 
         <!-- parent is a stacking context -->
         <div class="example">
-            <div class="blendingbg" style="-webkit-transform: translateZ(0)">
+            <div class="accelerated blendingbg">
                 <img src="resources/ducky.png" style="mix-blend-mode: difference;">
             </div>
         </div>
@@ -79,7 +80,7 @@
 
         <!-- intermediate hierarchy with stacking context -->
         <div class="example">
-            <div class="blendingbg" style="-webkit-transform: translateZ(0)">
+            <div class="accelerated blendingbg">
                 <div class="intermediate">
                     <img src="resources/ducky.png" style="mix-blend-mode: difference;">
                 </div>
@@ -88,7 +89,7 @@
 
         <!-- intermediate hierarchy that overflows -->
         <div class="example">
-            <div class="blendingbg" style="-webkit-transform: translateZ(0)">
+            <div class="accelerated blendingbg">
                 <div class="intermediate" style="overflow: hidden">
                     <img src="resources/ducky.png" style="mix-blend-mode: difference;">
                 </div>

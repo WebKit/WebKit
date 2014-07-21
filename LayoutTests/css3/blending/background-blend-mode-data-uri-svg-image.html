@@ -2,6 +2,7 @@
 
 <!-- This file should two green squares, each having a dotted border. -->
 
+<link rel="stylesheet" href="resources/blending-style.css">
 <style>
     div {
         border: 5px navy;
@@ -11,19 +12,12 @@
                 <rect width="100" height="100" fill="#F00"/> \
             </svg>'
             ), #FF0;
-        width: 130px;
-        height: 130px;
         background-blend-mode: difference, normal
     }
 </style>
 
-<script type="text/javascript">
-    if (window.testRunner)
-        window.testRunner.overridePreference("WebKitAcceleratedCompositingEnabled", "1");
-</script>
-
 <!-- Test the software path. -->
-<div></div>
+<div class="box130px"></div>
 
 <!-- Test the hardware path. -->
-<div style="-webkit-transform: translateZ(0)"></div>
+<div class="accelerated box130px"></div>

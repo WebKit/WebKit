@@ -1,10 +1,6 @@
 <!DOCTYPE HTML>
 <head>
-    <script>
-      if (window.testRunner)
-        window.testRunner.overridePreference("WebKitAcceleratedCompositingEnabled", "1");
-    </script>
-
+    <link rel="stylesheet" href="resources/blending-style.css">
     <style>
         img {
             width: 130px;
@@ -20,16 +16,12 @@
             display: block;
             float: left;
         }
-
-        .composited {
-            -webkit-transform: translateZ(0);
-        }
      </style>
  </head>
 
 <!-- This file should contain two images of a duck on top of a gradient with reflection.
 Both the duck and the reflection should blend.  -->
 <body>
-    <ul><li><img style="mix-blend-mode: multiply" src="resources/ducky.png"></li></ul>
-    <ul><li><img class="composited" style="mix-blend-mode: multiply" src="resources/ducky.png"></li></ul>
+    <ul><li><img class="multiply" src="resources/ducky.png"></li></ul>
+    <ul><li><img class="composited multiply" src="resources/ducky.png"></li></ul>
 </body>

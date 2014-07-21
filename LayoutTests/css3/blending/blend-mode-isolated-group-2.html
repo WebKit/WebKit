@@ -1,5 +1,7 @@
 <!DOCTYPE HTML>
 <!-- Test that an element having mix-blend-mode applied blends only with the contents of the parent stacking context.-->
+
+<link rel="stylesheet" href="resources/blending-style.css">
 <style>
     body {
         background: blue;
@@ -21,10 +23,6 @@
     .child {
         background: url('resources/ducky.png') no-repeat 0 0 /100% 100%, green;
         mix-blend-mode: multiply;
-    }
-
-    .composited {
-        -webkit-transform: translateZ(0);
     }
 </style>
 

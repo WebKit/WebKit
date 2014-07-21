@@ -1,28 +1,8 @@
 <!DOCTYPE HTML>
 <!-- Test to ensure that "isolation:isolate" creates a stacking context, thus preventing blending with the parent element. -->
-<style>
-    div {
-        margin: 20px;
-        width: 130px;
-        height: 130px;
-    }
-
-    .parent {
-        background: rgb(55, 55, 55);
-        position: fixed;
-        width: 300px;
-        height: 300px;
-    }
-
-    .isolator {
-        isolation: isolate;
-        background: violet;
-    }
-
-    .child {
-        mix-blend-mode: multiply;
-        background: olive;
-    }
-
-</style>
-<div class="parent"><div class="isolator"><div class="child"></div></div></div>
+<link rel="stylesheet" href="resources/blending-style.css">
+<div class="gray7 bigbox">
+    <div class="isolating yellow box" style="margin-left: 30px;">
+        <div class="aqua box multiply" style="margin-left: 30px;"></div>
+    </div>
+</div>

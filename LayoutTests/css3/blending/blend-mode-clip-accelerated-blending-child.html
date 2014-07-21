@@ -1,28 +1,8 @@
 <!DOCTYPE HTML>
-<style>
-   .parent {
-       width: 100px;
-       height: 100px;
-       overflow:hidden;
-       background: rgb(0, 255, 0);
-       isolation: isolate;
-   }
-
-   .child {
-        width: 400px;
-        height: 400px;
-        background: rgb(0, 0, 0);
-   }
-   .blending {
-        mix-blend-mode: difference;
-    }
-    .accelerated {
-        -webkit-transform: translateZ(0px);
-    }
-</style>
+<link rel="stylesheet" href="resources/blending-style.css">
 
 <p>This test checks that blending works if the isolating layer has overflow hidden and the blending layer is accelerated.<br />
 Test passes if you see a green rectangle.</p>
-<div class="parent">
-    <div class="accelerated blending child"></div>
+<div class="clipping isolating lime box">
+    <div class="accelerated black hugebox difference"></div>
 </div>

@@ -1,27 +1,8 @@
 <!DOCTYPE HTML>
 
-<style>
-	.parent {
-		width: 100px;
-		height: 100px;
-		overflow:hidden;
-		background: rgb(0, 255, 0);
-		isolation:isolate;
-	}
-
-	.blender {
-		mix-blend-mode: difference;
-	}
-
-	.accelerated {
-		-webkit-transform: translateZ(0px);
-	}
-</style>
+<link rel="stylesheet" href="resources/blending-style.css">
 
 <p>This test checks that accelerated blending works when the backdrop is a normal flow only layer.</p>
-<div class="parent">
-    <div class="blender accelerated" onclick="alert(this.className);this.className = ((this.className == 'blender accelerated') ? 'accelerated' : 'blender accelerated')" style="margin-left: 10px;
-		width: 400px;
-		height: 20px;
-		background: rgb(0, 0, 0);"></div>
+<div class="clipping isolating lime box">
+    <div class="accelerated black hbar difference" style="margin-left: 10px;"></div>
 </div>

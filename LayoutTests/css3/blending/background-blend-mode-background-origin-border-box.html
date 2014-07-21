@@ -1,22 +1,16 @@
 <!-- Blend a background image and a background color specifying background-origin: border-box  -->
 <!DOCTYPE HTML>
-<html>
 <head>
-<style>
-div {
-	border: 10px double;
-    padding: 10px;
-	background: url('resources/white_square.svg'),  #777777;
-	background-origin: border-box;
-	width: 200px;
-    height: 200px;
-    margin: 10px;
-    background-blend-mode: multiply;
-}
-</style>
+    <link rel="stylesheet" href="resources/blending-style.css">
+    <style>
+        div {
+            border: 10px double;
+            padding: 10px;
+            background-origin: border-box;
+        }
+    </style>
 </head>
 
 <body>
-    <div></div>
+    <div class="gray7 margin10 bigbox white-svg bg-multiply"></div>
 </body>
-</html>

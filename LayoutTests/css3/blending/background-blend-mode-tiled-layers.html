@@ -2,6 +2,7 @@
 
 <!-- Test background blend mode with several tiled layers. Test passes if you can see 6 lime squares. -->
 
+<link rel="stylesheet" href="resources/blending-style.css">
 <style>
     div {
         margin: 5px;
@@ -35,16 +36,7 @@
             ), 100%) 0 0 /50% 50%, #FF0;
     }
 
-    .accelerated {
-        -webkit-transform: translateZ(0);
-    }
-
 </style>
-
-<script type="text/javascript">
-    if (window.testRunner)
-        window.testRunner.overridePreference("WebKitAcceleratedCompositingEnabled", "1");
-</script>
 
 <div class="tiledSVG"></div>
 <div class="tiledSVG accelerated"></div>

@@ -1,24 +1,11 @@
 <!DOCTYPE HTML>
-<style>
-   .parent {
-       width: 100px;
-       height: 100px;
-       overflow:hidden;
-       background: rgb(0, 255, 0);
-       isolation: isolate;
-   }
-   .blending {
-        mix-blend-mode: difference;
-    }
-    .accelerated {
-        -webkit-transform: translateZ(0px);
-    }
-</style>
+
+<link rel="stylesheet" href="resources/blending-style.css">
 
 <!-- <p>This test checks that blending works if the isolating layer has overflow hidden and the blending layer is an accelerated canvas.<br /> -->
 <!-- Test passes if you see a green rectangle.</p> -->
-<div class="parent">
-    <canvas class="blending" id="blending-canvas" width="400" height="400"></canvas>
+<div class="clipping isolating red box">
+    <canvas class="difference" id="blending-canvas" width="400" height="400"></canvas>
 </div>
 <pre id="layers">Layer tree goes here in DRT</pre>
 <script>

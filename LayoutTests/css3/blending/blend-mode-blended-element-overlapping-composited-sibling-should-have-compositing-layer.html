@@ -1,23 +1,9 @@
 <!DOCTYPE HTML-->
 
-<style>
-    div {
-        width: 100px;
-        height: 100px;
-    }
+<link rel="stylesheet" href="resources/blending-style.css">
 
-    .composited_sibling {
-        -webkit-transform: translateZ(0);
-    }
-
-    .blender {
-        margin-top: -30px;
-        mix-blend-mode: difference;
-    }
-</style>
-
-<div class="composited_sibling"></div>
-<div class="blender"></div>
+<div class="composited box"></div>
+<div class="box difference" style="margin-top: -30px"></div>
 <pre id="layerTree"></pre>
 <script>
     if (window.testRunner)

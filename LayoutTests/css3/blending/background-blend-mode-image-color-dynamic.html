@@ -1,24 +1,16 @@
 <!DOCTYPE HTML>
-<html>
 <head>
-<style>
-    div {
-        width: 130px;
-        height: 130px;
-        background: url('resources/ducky.png') no-repeat 0 0 /100% 100%, green;
-        background-blend-mode: normal, normal;
-    }
-</style>
-<script>
-    function blendDuck() {
-        document.body.offsetTop;
-        document.getElementById('blender').style.backgroundBlendMode = "multiply, normal";
-    }
-</script>
+    <link rel="stylesheet" href="resources/blending-style.css">
+    <script>
+        function blendDuck() {
+            document.body.offsetTop;
+            var blender = document.getElementById('blender');
+            blender.className = blender.className + " bg-multiply";
+        }
+    </script>
 </head>
 <!-- This file should contain a duck with multiply blending set from script. -->
 <body onload="blendDuck()">
     <p>Test passes if the duck is green</p>
-    <div id="blender"></div>
+    <div id="blender" class="green box bg-full ducky"></div>
 </body>
-</html>

@@ -1,27 +1,9 @@
 <!DOCTYPE html>
-<html>
 <head>
-<style>
-    div {
-        background-blend-mode: multiply, normal;
-        width: 200px;
-        height: 200px;
-        margin: 10px;
-    }
-
-    #png {
-        background: url('resources/ducky.png') no-repeat 0 0 /100% 100%, green;
-    }
-
-    #jpg {
-        background: url('resources/ducky.jpg') no-repeat 0 0 /100% 100%, green;
-    }
-
-</style>
-<!-- This file should contain two divs that should perform blending with the background color.-->
+    <link rel="stylesheet" href="resources/blending-style.css">
 </head>
+<!-- This file should contain two divs that should perform blending with the background color.-->
 <body>
-    <div id="png"></div>
-    <div id="jpg">
+    <div class="green margin10 bg-full bigbox bg-multiply ducky"></div>
+    <div class="green margin10 bg-full bigbox bg-multiply ducky-jpg"></div>
 </body>
-</html>

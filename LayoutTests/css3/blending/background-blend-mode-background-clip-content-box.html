@@ -1,20 +1,14 @@
 <!-- Blend a background image and a background color specifying background-clip: content-box  -->
 <!DOCTYPE HTML>
-<html>
 <head>
-<style>
-div { 
-	background: url('resources/white_square.svg'),  #777777;
-	-webkit-background-clip: content-box;
-	width: 200px;
-    height: 200px;
-    margin: 10px;
-    background-blend-mode: multiply;
-}
-</style>
+    <link rel="stylesheet" href="resources/blending-style.css">
+    <style>
+        div {
+            -webkit-background-clip: content-box;
+        }
+    </style>
 </head>
 
 <body>
-    <div></div>
+    <div class="gray7 margin10 bigbox white-svg bg-multiply"></div>
 </body>
-</html>

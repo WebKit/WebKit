@@ -1,3 +1,134 @@
+2014-07-21  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] Cleanup tests in css3/blending
+        https://bugs.webkit.org/show_bug.cgi?id=132600
+
+        Reviewed by Mihnea Ovidenie.
+
+        Summary of changes:
+        - move common stylesheet classes to blending-style.css.
+        - remove trailing white spaces.
+        - replace tabs with spaces.
+        - remove the 'html' tags for consistency with the most of blending tests.
+        
+        This patch does not change the txt and png test expectations.
+
+        * css3/blending/background-blend-mode-background-attachement-fixed-expected.html:
+        * css3/blending/background-blend-mode-background-attachement-fixed.html:
+        * css3/blending/background-blend-mode-background-clip-content-box-expected.html:
+        * css3/blending/background-blend-mode-background-clip-content-box.html:
+        * css3/blending/background-blend-mode-background-clip-padding-box-expected.html:
+        * css3/blending/background-blend-mode-background-clip-padding-box.html:
+        * css3/blending/background-blend-mode-background-origin-border-box-expected.html:
+        * css3/blending/background-blend-mode-background-origin-border-box.html:
+        * css3/blending/background-blend-mode-background-position-percentage-expected.html:
+        * css3/blending/background-blend-mode-background-position-percentage.html:
+        * css3/blending/background-blend-mode-background-repeat-no-repeat-expected.html:
+        * css3/blending/background-blend-mode-background-repeat-no-repeat.html:
+        * css3/blending/background-blend-mode-background-size-contain-expected.html:
+        * css3/blending/background-blend-mode-background-size-contain.html:
+        * css3/blending/background-blend-mode-background-size-cover-expected.html:
+        * css3/blending/background-blend-mode-background-size-cover.html:
+        * css3/blending/background-blend-mode-body-image-expected.html:
+        * css3/blending/background-blend-mode-body-image.html:
+        * css3/blending/background-blend-mode-body-transparent-color-and-image-expected.html:
+        * css3/blending/background-blend-mode-body-transparent-color-and-image.html:
+        * css3/blending/background-blend-mode-body-transparent-image-expected.html:
+        * css3/blending/background-blend-mode-body-transparent-image.html:
+        * css3/blending/background-blend-mode-crossfade-image-expected.html:
+        * css3/blending/background-blend-mode-crossfade-image.html:
+        * css3/blending/background-blend-mode-data-uri-svg-image-expected.html:
+        * css3/blending/background-blend-mode-data-uri-svg-image.html:
+        * css3/blending/background-blend-mode-default-value.html:
+        * css3/blending/background-blend-mode-different-image-formats.html:
+        * css3/blending/background-blend-mode-gif-color-2.html:
+        * css3/blending/background-blend-mode-gif-color.html:
+        * css3/blending/background-blend-mode-gradient-color.html:
+        * css3/blending/background-blend-mode-gradient-gradient.html:
+        * css3/blending/background-blend-mode-gradient-image.html:
+        * css3/blending/background-blend-mode-image-color-dynamic-expected.html:
+        * css3/blending/background-blend-mode-image-color-dynamic.html:
+        * css3/blending/background-blend-mode-image-color.html:
+        * css3/blending/background-blend-mode-image-image.html:
+        * css3/blending/background-blend-mode-image-svg.html:
+        * css3/blending/background-blend-mode-multiple-background-layers.html:
+        * css3/blending/background-blend-mode-separate-layer-declaration-expected.html:
+        * css3/blending/background-blend-mode-separate-layer-declaration.html:
+        * css3/blending/background-blend-mode-single-layer-no-blending.html:
+        * css3/blending/background-blend-mode-svg-color.html:
+        * css3/blending/background-blend-mode-svg-expected.html:
+        * css3/blending/background-blend-mode-svg.html:
+        * css3/blending/background-blend-mode-tiled-layers.html:
+        * css3/blending/blend-mode-accelerated-parent-overflow-hidden-expected.html:
+        * css3/blending/blend-mode-accelerated-parent-overflow-hidden.html:
+        * css3/blending/blend-mode-accelerated-with-multiple-stacking-contexts.html:
+        * css3/blending/blend-mode-ancestor-clipping-layer.html:
+        * css3/blending/blend-mode-background.html:
+        * css3/blending/blend-mode-blended-element-overlapping-composited-sibling-should-have-compositing-layer.html:
+        * css3/blending/blend-mode-body-child-background-color-expected.html:
+        * css3/blending/blend-mode-body-child-background-color.html:
+        * css3/blending/blend-mode-body-child-isolate-background-color-expected.html:
+        * css3/blending/blend-mode-body-child-isolate-background-color.html:
+        * css3/blending/blend-mode-body-child-isolate-html-background-color-expected.html:
+        * css3/blending/blend-mode-body-child-isolate-html-background-color.html:
+        * css3/blending/blend-mode-body-child.html:
+        * css3/blending/blend-mode-body-element-expected.html:
+        * css3/blending/blend-mode-body-element.html:
+        * css3/blending/blend-mode-clip-accelerated-blending-canvas.html:
+        * css3/blending/blend-mode-clip-accelerated-blending-child-expected.html:
+        * css3/blending/blend-mode-clip-accelerated-blending-child.html:
+        * css3/blending/blend-mode-clip-accelerated-blending-double-expected.html:
+        * css3/blending/blend-mode-clip-accelerated-blending-double.html:
+        * css3/blending/blend-mode-clip-accelerated-blending-with-siblings-expected.html:
+        * css3/blending/blend-mode-clip-accelerated-blending-with-siblings.html:
+        * css3/blending/blend-mode-clip-accelerated-transformed-blending-expected.html:
+        * css3/blending/blend-mode-clip-accelerated-transformed-blending.html:
+        * css3/blending/blend-mode-clip-rect-accelerated-blending-expected.html:
+        * css3/blending/blend-mode-clip-rect-accelerated-blending.html:
+        * css3/blending/blend-mode-html-element-screen.html:
+        * css3/blending/blend-mode-isolated-group-1.html:
+        * css3/blending/blend-mode-isolated-group-2.html:
+        * css3/blending/blend-mode-isolated-group-3.html:
+        * css3/blending/blend-mode-isolation-accelerated-overflow-hidden.html:
+        * css3/blending/blend-mode-isolation-flags-append-non-stacking-context-blending.html:
+        * css3/blending/blend-mode-isolation-flags-append-stacking-context-blending.html:
+        * css3/blending/blend-mode-isolation-flags-remove-non-stacking-context-blending.html:
+        * css3/blending/blend-mode-isolation-flags-remove-stacking-context-blending.html:
+        * css3/blending/blend-mode-isolation-flags-turn-off-blending-no-isolation.html:
+        * css3/blending/blend-mode-isolation-flags-turn-off-blending.html:
+        * css3/blending/blend-mode-isolation-flags-turn-off-stacking-context.html:
+        * css3/blending/blend-mode-isolation-flags-turn-on-blending.html:
+        * css3/blending/blend-mode-isolation-flags-turn-on-stacking-context.html:
+        * css3/blending/blend-mode-isolation-overflow-hidden-expected.html:
+        * css3/blending/blend-mode-isolation-overflow-hidden.html:
+        * css3/blending/blend-mode-isolation-turn-off-self-painting-layer.html:
+        * css3/blending/blend-mode-isolation-turn-off-self-painting-layer1.html:
+        * css3/blending/blend-mode-isolation-turn-off-self-painting-layer2.html:
+        * css3/blending/blend-mode-isolation-turn-on-self-painting-layer.html:
+        * css3/blending/blend-mode-layers.html:
+        * css3/blending/blend-mode-overflow.html:
+        * css3/blending/blend-mode-parent-of-composited-blended-has-layer.html:
+        * css3/blending/blend-mode-reflection.html:
+        * css3/blending/blend-mode-simple-composited.html:
+        * css3/blending/blend-mode-transform-style.html:
+        * css3/blending/blend-mode-with-accelerated-sibling.html:
+        * css3/blending/blend-mode-with-body-expected.html:
+        * css3/blending/blend-mode-with-body.html:
+        * css3/blending/blend-mode-with-composited-descendant-should-have-layer.html:
+        * css3/blending/effect-background-blend-mode-stacking.html:
+        * css3/blending/isolation-isolate-blended-child-expected.html:
+        * css3/blending/isolation-isolate-blended-child.html:
+        * css3/blending/repaint/blend-mode-isolate-stacking-context.html:
+        * css3/blending/repaint/blend-mode-turn-off-isolation-no-effect.html:
+        * css3/blending/repaint/blend-mode-turn-off-isolation.html:
+        * css3/blending/resources/blending-style.css: Added.
+        This file contains classes shared by multiple blending tests.
+        
+        * css3/blending/resources/dump-layer-tree.js: Added.
+        * css3/blending/script-tests/background-blend-mode-property-parsing.js:
+        * css3/blending/script-tests/blend-mode-property-parsing-invalid.js:
+        * css3/blending/script-tests/blend-mode-property-parsing.js:
+
 2014-07-21  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Rename gridAutoFlow[Row|Column] to gridAutoFlow[Row|Column]Sparse

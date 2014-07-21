@@ -1,23 +1,10 @@
 <!DOCTYPE HTML>
 <head>
-    <style>
-        div {
-            width: 100px;
-            height: 100px;
-            background-color: black;
-        }
-        body {
-            mix-blend-mode: difference;
-            background-color: green;
-        }
-        p {
-            color: black;
-        }
-    </style>
+    <link rel="stylesheet" href="resources/blending-style.css">
 </head>
 
-<body>
+<body class="green difference text-black">
     <p>This file tests that body element will blend with body's background-color.<br/>
        Test passes if you see a clean green background.</p>
-    <div></div>
+    <div class="black box"></div>
 </body>

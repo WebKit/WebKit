@@ -14,7 +14,7 @@ function testInvalidFilterRule(description, rule)
 
     stylesheet.insertRule("body { mix-blend-mode: " + rule + "; }", 0);
     cssRule = stylesheet.cssRules.item(0);
-  
+
     shouldBe("cssRule.type", "1");
 
     declaration = cssRule.style;
