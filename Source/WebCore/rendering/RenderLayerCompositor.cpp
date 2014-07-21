@@ -2610,7 +2610,9 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
 
     // FIXME: acceleratedCompositingForFixedPositionEnabled should probably be renamed acceleratedCompositingForViewportConstrainedPositionEnabled().
     const Settings& settings = m_renderView.frameView().frame().settings();
-    if (!settings.acceleratedCompositingForFixedPositionEnabled())
+    Page* page = this->page();
+    bool clientRequiresCompositing = page && page->chrome().client().requiresAcceleratedCompositingForViewportConstrainedPosition();
+    if (!(settings.acceleratedCompositingForFixedPositionEnabled() || clientRequiresCompositing))
         return false;
 
     if (isSticky)
