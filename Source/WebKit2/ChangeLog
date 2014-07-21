@@ -1,3 +1,17 @@
+2014-07-20  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        Fix warnings caused by unused parameter.
+        https://bugs.webkit.org/show_bug.cgi?id=134975
+
+        Reviewed by Gyuyoung Kim.
+
+        Fix warnings on EwkView.cpp and LegacySessionStateCodingNone.cpp that are caused by unused parameter data.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkViewEventHandler<EVAS_CALLBACK_MOUSE_IN>::handleEvent):
+        * UIProcess/LegacySessionStateCodingNone.cpp:
+        (WebKit::decodeLegacySessionState):
+
 2014-07-20  Jeremy Jones  <jeremyj@apple.com>
 
         Disable ff/rw based on canPlayFastForward and canPlayFastRewind.

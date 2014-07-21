@@ -44,7 +44,7 @@ RefPtr<API::Data> encodeLegacySessionHistoryEntryData(const FrameState&)
     return API::Data::create(nullptr, 0);
 }
 
-bool decodeLegacySessionState(const uint8_t* data, size_t, SessionState&)
+bool decodeLegacySessionState(const uint8_t*, size_t, SessionState&)
 {
     notImplemented();
     return false;
