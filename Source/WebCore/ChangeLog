@@ -1,3 +1,17 @@
+2014-07-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Add helper functions to dump the scrolling state tree from the debugger
+        https://bugs.webkit.org/show_bug.cgi?id=135101
+
+        Reviewed by Darin Adler.
+
+        Add debug-only showScrollingStateTree() functions that take a ScrollingStateTree* and ScrollingStateNode*
+        for use while debugging.
+
+        * page/scrolling/ScrollingStateTree.cpp:
+        (showScrollingStateTree):
+        * page/scrolling/ScrollingStateTree.h:
+
 2014-07-20  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK1] Single touch div scrolling doesn't work in framesets (breaks Word previews)

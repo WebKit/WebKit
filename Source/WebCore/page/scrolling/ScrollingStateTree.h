@@ -105,6 +105,11 @@ private:
 
 } // namespace WebCore
 
+#ifndef NDEBUG
+void showScrollingStateTree(const WebCore::ScrollingStateTree*);
+void showScrollingStateTree(const WebCore::ScrollingStateNode*);
+#endif
+
 #endif // ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
 
 #endif // ScrollingStateTree_h

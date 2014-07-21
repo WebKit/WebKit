@@ -33,6 +33,7 @@
 #include "ScrollingStateFrameScrollingNode.h"
 #include "ScrollingStateOverflowScrollingNode.h"
 #include "ScrollingStateStickyNode.h"
+#include <wtf/Text/CString.h>
 
 namespace WebCore {
 
@@ -245,5 +246,31 @@ ScrollingStateNode* ScrollingStateTree::stateNodeForID(ScrollingNodeID scrollLay
 }
 
 } // namespace WebCore
+
+#ifndef NDEBUG
+void showScrollingStateTree(const WebCore::ScrollingStateTree* tree)
+{
+    if (!tree)
+        return;
+
+    auto rootNode = tree->rootStateNode();
+    if (!rootNode) {
+        fprintf(stderr, "Scrolling state tree %p with no root node\n", tree);
+        return;
+    }
+
+    String output = rootNode->scrollingStateTreeAsText();
+    fprintf(stderr, "%s\n", output.utf8().data());
+}
+
+void showScrollingStateTree(const WebCore::ScrollingStateNode* node)
+{
+    if (!node)
+        return;
+
+    showScrollingStateTree(&node->scrollingStateTree());
+}
+
+#endif
 
 #endif // ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
