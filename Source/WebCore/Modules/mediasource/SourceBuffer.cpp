@@ -562,7 +562,8 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
         // and the next sync sample frame are removed. But we must start from the first sample in decode order, not
         // presentation order.
         PresentationOrderSampleMap::iterator minDecodeTimeIter = std::min_element(removePresentationStart, removePresentationEnd, decodeTimeComparator);
-        DecodeOrderSampleMap::iterator removeDecodeStart = trackBuffer.samples.decodeOrder().findSampleWithDecodeTime(minDecodeTimeIter->second->decodeTime());
+        DecodeOrderSampleMap::KeyType decodeKey(minDecodeTimeIter->second->decodeTime(), minDecodeTimeIter->second->presentationTime());
+        DecodeOrderSampleMap::iterator removeDecodeStart = trackBuffer.samples.decodeOrder().findSampleWithDecodeKey(decodeKey);
 
         DecodeOrderSampleMap::MapType erasedSamples(removeDecodeStart, removeDecodeEnd);
 
@@ -1157,8 +1158,8 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
 
             // Otherwise: Remove all coded frames between the coded frames removed in the previous step
             // and the next random access point after those removed frames.
-            auto firstDecodeIter = trackBuffer.samples.decodeOrder().findSampleWithDecodeTime(erasedSamples.decodeOrder().begin()->first);
-            auto lastDecodeIter = trackBuffer.samples.decodeOrder().findSampleWithDecodeTime(erasedSamples.decodeOrder().rbegin()->first);
+            auto firstDecodeIter = trackBuffer.samples.decodeOrder().findSampleWithDecodeKey(erasedSamples.decodeOrder().begin()->first);
+            auto lastDecodeIter = trackBuffer.samples.decodeOrder().findSampleWithDecodeKey(erasedSamples.decodeOrder().rbegin()->first);
             auto nextSyncIter = trackBuffer.samples.decodeOrder().findSyncSampleAfterDecodeIterator(lastDecodeIter);
             dependentSamples.insert(firstDecodeIter, nextSyncIter);
 
@@ -1186,7 +1187,9 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         // Otherwise:
         // Add the coded frame with the presentation timestamp, decode timestamp, and frame duration to the track buffer.
         trackBuffer.samples.addSample(sample);
-        trackBuffer.decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeTimestamp, sample));
+
+        DecodeOrderSampleMap::KeyType decodeKey(decodeTimestamp, presentationTimestamp);
+        trackBuffer.decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, sample));
 
         // 1.18 Set last decode timestamp for track buffer to decode timestamp.
         trackBuffer.lastDecodeTimestamp = decodeTimestamp;
@@ -1380,8 +1383,8 @@ void SourceBuffer::reenqueueMediaForTime(TrackBuffer& trackBuffer, AtomicString 
     }
 
     // Seach backward for the previous sync sample.
-    MediaTime currentSampleDecodeTime = currentSamplePTSIterator->second->decodeTime();
-    auto currentSampleDTSIterator = trackBuffer.samples.decodeOrder().findSampleWithDecodeTime(currentSampleDecodeTime);
+    DecodeOrderSampleMap::KeyType decodeKey(currentSamplePTSIterator->second->decodeTime(), currentSamplePTSIterator->second->presentationTime());
+    auto currentSampleDTSIterator = trackBuffer.samples.decodeOrder().findSampleWithDecodeKey(decodeKey);
     ASSERT(currentSampleDTSIterator != trackBuffer.samples.decodeOrder().end());
 
     auto reverseCurrentSampleIter = --DecodeOrderSampleMap::reverse_iterator(currentSampleDTSIterator);

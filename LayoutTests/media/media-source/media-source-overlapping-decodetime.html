@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var samples;
+    var bufferedSamples;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest()
+    {
+        findMediaElement();
+
+        source = new MediaSource();
+        waitForEventOn(source, 'sourceopen', sourceOpen);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen()
+    {
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        waitForEventOn(sourceBuffer, 'updateend', loadOrderedSamples, false, true);
+        initSegment = makeAInit(8, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+    }
+
+    function loadOrderedSamples()
+    {
+       samples = concatenateSamples([
+            makeASample(0, 0, 1, 1, SAMPLE_FLAG.SYNC, 0),
+            makeASample(1, 1, 1, 1, SAMPLE_FLAG.NONE, 0),
+            makeASample(2, 2, 1, 1, SAMPLE_FLAG.NONE, 0),
+            makeASample(3, 3, 1, 1, SAMPLE_FLAG.SYNC, 0),
+            makeASample(4, 4, 1, 1, SAMPLE_FLAG.NONE, 0),
+            makeASample(5, 5, 1, 1, SAMPLE_FLAG.NONE, 0),
+        ]);
+        waitForEventOn(sourceBuffer, 'updateend', loadMoreOrderedSamples, false, true);
+        run('sourceBuffer.appendBuffer(samples)');
+    }
+
+    function loadMoreOrderedSamples()
+    {
+        samples = concatenateSamples([
+            makeASample(4, 3, 1, 1, SAMPLE_FLAG.SYNC, 1),
+            makeASample(5, 4, 1, 1, SAMPLE_FLAG.NONE, 1),
+            makeASample(6, 5, 1, 1, SAMPLE_FLAG.NONE, 1),
+        ]);
+        waitForEventOn(sourceBuffer, 'updateend', samplesAdded, false, true);
+        run('sourceBuffer.appendBuffer(samples)');
+    }
+
+     function samplesAdded()
+    {
+        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        testExpected("bufferedSamples.length", 7);
+        bufferedSamples.forEach(consoleWrite);
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
