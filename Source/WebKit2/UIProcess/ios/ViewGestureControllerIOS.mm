@@ -136,7 +136,7 @@ namespace WebKit {
 ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
     , m_activeGestureType(ViewGestureType::None)
-    , m_swipeWatchdogTimer(this, &ViewGestureController::swipeSnapshotWatchdogTimerFired)
+    , m_swipeWatchdogTimer(RunLoop::main(), this, &ViewGestureController::swipeSnapshotWatchdogTimerFired)
     , m_snapshotRemovalTargetRenderTreeSize(0)
     , m_shouldRemoveSnapshotWhenTargetRenderTreeSizeHit(false)
 {
@@ -310,7 +310,7 @@ void ViewGestureController::setRenderTreeSize(uint64_t renderTreeSize)
         removeSwipeSnapshot();
 }
 
-void ViewGestureController::swipeSnapshotWatchdogTimerFired(Timer<ViewGestureController>*)
+void ViewGestureController::swipeSnapshotWatchdogTimerFired()
 {
     removeSwipeSnapshot();
 }

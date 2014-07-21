@@ -28,7 +28,7 @@
 
 #include "ProcessAssertion.h"
 
-#include <WebCore/Timer.h>
+#include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -69,12 +69,12 @@ private:
     AssertionState assertionState();
     void updateAssertion();
     void updateAssertionNow();
-    void suspendTimerFired(WebCore::Timer<ProcessThrottler>*);
+    void suspendTimerFired();
     
     WebProcessProxy* m_process;
     WeakPtrFactory<ProcessThrottler> m_weakPtrFactory;
     std::unique_ptr<ProcessAndUIAssertion> m_assertion;
-    WebCore::Timer<ProcessThrottler> m_suspendTimer;
+    RunLoop::Timer<ProcessThrottler> m_suspendTimer;
     unsigned m_foregroundCount;
     unsigned m_backgroundCount;
     int m_suspendMessageCount;

@@ -29,8 +29,8 @@
 #include "MessageReceiver.h"
 #include "WeakObjCPtr.h"
 #include <WebCore/FloatRect.h>
-#include <WebCore/Timer.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/RunLoop.h>
 
 OBJC_CLASS CALayer;
 
@@ -119,7 +119,7 @@ private:
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
     
     void removeSwipeSnapshot();
-    void swipeSnapshotWatchdogTimerFired(WebCore::Timer<ViewGestureController>*);
+    void swipeSnapshotWatchdogTimerFired();
 
 #if PLATFORM(MAC)
     // Message handlers.
@@ -146,7 +146,7 @@ private:
     WebPageProxy& m_webPageProxy;
     ViewGestureType m_activeGestureType;
     
-    WebCore::Timer<ViewGestureController> m_swipeWatchdogTimer;
+    RunLoop::Timer<ViewGestureController> m_swipeWatchdogTimer;
 
 #if USE(IOSURFACE)
     RefPtr<WebCore::IOSurface> m_currentSwipeSnapshotSurface;
