@@ -1404,3 +1404,5 @@ webkit.org/b/135071 [ MountainLion ] media/video-seek-with-negative-playback.htm
 webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Pass Failure ]
 
 webkit.org/b/131787 fast/canvas/canvas-putImageData-zero-alpha.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/135133 [ MountainLion ] fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Pass ImageOnlyFailure ]
