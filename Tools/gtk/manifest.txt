@@ -101,6 +101,4 @@ file Tools/Scripts/webkitdirs.pm
 file Tools/jhbuild/jhbuildutils.py
 
 directory $build/Documentation/webkit2gtk/html Documentation/webkit2gtk/html
-directory $build/Documentation/webkit2gtk/html Documentation/webkit2gtk/html
-directory $build/Documentation/webkitdomgtk/html Documentation/webkitdomgtk/html
 directory $build/Documentation/webkitdomgtk/html Documentation/webkitdomgtk/html

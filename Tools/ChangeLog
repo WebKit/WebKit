@@ -1,5 +1,14 @@
 2014-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Documentation files are added twice to the tarball
+        https://bugs.webkit.org/show_bug.cgi?id=135115
+
+        Reviewed by Sergio Villar Senin.
+
+        * gtk/manifest.txt: Remove duplicated rules.
+
+2014-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Simplify make-dist command line arguments
         https://bugs.webkit.org/show_bug.cgi?id=134832
 
