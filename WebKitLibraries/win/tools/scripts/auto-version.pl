@@ -87,7 +87,7 @@ if (!defined $BUILD_MAJOR_VERSION && !defined $BUILD_MINOR_VERSION) {
 # Cut the major component down to three characters by dropping any
 # extra leading digits, then adjust the major version portion of the
 # version string to match.
-$BUILD_MAJOR_VERSION =~ s/^.*(\d\d\d+)$/$1/;
+$BUILD_MAJOR_VERSION =~ s/^.*(\d\d\d)$/$1/;
 
 # Have the minor and tiny components default to zero if not present.
 if (!defined $BUILD_MINOR_VERSION) {
@@ -103,7 +103,7 @@ $PROPOSED_VERSION = "$BUILD_MAJOR_VERSION.$BUILD_MINOR_VERSION.$BUILD_TINY_VERSI
 # major version and the remaining two characters as the minor version.
 # The minor version is shifted down to the tiny version, with the tiny
 # version becoming the variant version.
-$BUILD_MAJOR_VERSION =~ m/^.*(\d)(\d\d)/;
+$BUILD_MAJOR_VERSION =~ m/^[^\d]*(\d)(\d{1,})/;
 my $MAJOR_VERSION = $1;
 my $MINOR_VERSION = $2;
 my $TINY_VERSION = $BUILD_MINOR_VERSION;
