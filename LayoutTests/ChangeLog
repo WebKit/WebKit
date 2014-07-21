@@ -1,3 +1,12 @@
+2014-07-21  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed hidpi test gardening.
+
+        * fast/inline/hidpi-selection-gap-on-subpixel-position-expected.html:
+        * fast/inline/hidpi-selection-gap-on-subpixel-position.html: Speculative fix.
+        * fast/inline/hidpi-selection-gap-overlaps-inline-selection-expected.html:
+        * fast/inline/hidpi-selection-gap-overlaps-inline-selection.html: Use Ahem.
+
 2014-07-21  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION(r150169): http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html fails
