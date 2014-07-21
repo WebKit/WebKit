@@ -63,8 +63,8 @@
 </head>
 <body>
 <div class="grid" id="gridInitial"></div>
-<div class="grid gridAutoFlowColumn" id="gridAutoFlowColumn"></div>
-<div class="grid gridAutoFlowRow" id="gridAutoFlowRow"></div>
+<div class="grid gridAutoFlowColumnSparse" id="gridAutoFlowColumnSparse"></div>
+<div class="grid gridAutoFlowRowSparse" id="gridAutoFlowRowSparse"></div>
 <div class="grid gridAutoFlowColumnDense" id="gridAutoFlowColumnDense"></div>
 <div class="grid gridAutoFlowRowDense" id="gridAutoFlowRowDense"></div>
 <div class="grid gridAutoFlowDenseColumn" id="gridAutoFlowDenseColumn"></div>
@@ -74,10 +74,10 @@
 <div class="grid gridAutoFlowStackRow" id="gridAutoFlowStackRow"></div>
 <div class="grid gridAutoFlowColumnStack" id="gridAutoFlowColumnStack"></div>
 <div class="grid gridAutoFlowRowStack" id="gridAutoFlowRowStack"></div>
-<div class="grid gridAutoFlowColumn">
+<div class="grid gridAutoFlowColumnSparse">
     <div class="grid gridAutoFlowInherit" id="gridAutoFlowInherit"></div>
 </div>
-<div class="grid gridAutoFlowColumn">
+<div class="grid gridAutoFlowColumnSparse">
     <div><div class="grid gridAutoFlowInherit" id="gridAutoFlowNoInherit"></div><div>
 </div>
 <div class="grid gridAutoFlowNone" id="gridAutoFlowNone"></div>
@@ -94,8 +94,8 @@
     description('Test that setting and getting -webkit-grid-auto-flow works as expected');
 
     debug("Test getting -webkit-grid-auto-flow set through CSS");
-    checkGridAutoFlowSetCSSValue("gridAutoFlowColumn", "column");
-    checkGridAutoFlowSetCSSValue("gridAutoFlowRow", "row");
+    checkGridAutoFlowSetCSSValue("gridAutoFlowColumnSparse", "column");
+    checkGridAutoFlowSetCSSValue("gridAutoFlowRowSparse", "row");
     checkGridAutoFlowSetCSSValue("gridAutoFlowColumnDense", "column dense");
     checkGridAutoFlowSetCSSValue("gridAutoFlowRowDense", "row dense");
     checkGridAutoFlowSetCSSValue("gridAutoFlowDenseColumn", "column dense");

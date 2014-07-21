@@ -1,3 +1,29 @@
+2014-07-21  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Rename gridAutoFlow[Row|Column] to gridAutoFlow[Row|Column]Sparse
+        https://bugs.webkit.org/show_bug.cgi?id=135013
+
+        Rename CSS styles in grid layout tests to make the name more explicit.
+        As the default mode for auto-placement algorithm is "sparse".
+
+        Reviewed by Darin Adler.
+
+        * fast/css-grid-layout/grid-auto-columns-rows-auto-flow-resolution.html:
+        * fast/css-grid-layout/grid-auto-flow-get-set-expected.txt:
+        * fast/css-grid-layout/grid-auto-flow-get-set.html:
+        * fast/css-grid-layout/grid-auto-flow-resolution.html:
+        * fast/css-grid-layout/grid-auto-flow-sparse.html:
+        * fast/css-grid-layout/grid-item-addition-auto-placement-update.html:
+        * fast/css-grid-layout/grid-item-auto-placement-automatic-span.html:
+        * fast/css-grid-layout/grid-item-auto-placement-definite-span.html:
+        * fast/css-grid-layout/grid-item-order-auto-flow-resolution.html:
+        * fast/css-grid-layout/grid-item-removal-auto-placement-update.html:
+        * fast/css-grid-layout/resources/grid.css:
+        (.gridAutoFlowColumnSparse):
+        (.gridAutoFlowRowSparse):
+        (.gridAutoFlowColumn): Deleted.
+        (.gridAutoFlowRow): Deleted.
+
 2014-07-20  Diego Pino Garcia  <dpino@igalia.com>
 
         ES6: Implement Math.sign()

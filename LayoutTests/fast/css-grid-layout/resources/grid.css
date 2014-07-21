@@ -151,7 +151,7 @@
     -webkit-grid-auto-flow: stack;
 }
 
-.gridAutoFlowColumn {
+.gridAutoFlowColumnSparse {
     -webkit-grid-auto-flow: column;
 }
 
@@ -159,7 +159,7 @@
     -webkit-grid-auto-flow: column dense;
 }
 
-.gridAutoFlowRow {
+.gridAutoFlowRowSparse {
     -webkit-grid-auto-flow: row;
 }
 

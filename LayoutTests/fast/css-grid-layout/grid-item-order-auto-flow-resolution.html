@@ -23,14 +23,14 @@
 
     <!-- Step 1, grid item with a major-axis position that is not 'auto'. -->
     <div style="position: relative">
-        <div class="grid gridAutoFlowRow">
+        <div class="grid gridAutoFlowRowSparse">
             <div class="sizedToGridArea firstRowAutoColumn" data-offset-x="50" data-offset-y="0" data-expected-width="100" data-expected-height="50"></div>
             <div class="sizedToGridArea firstRowAutoColumn negativeOrder" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50"></div>
         </div>
     </div>
 
     <div style="position: relative">
-        <div class="grid gridAutoFlowRow">
+        <div class="grid gridAutoFlowRowSparse">
             <div class="sizedToGridArea firstRowAutoColumn positiveOrder" data-offset-x="50" data-offset-y="0" data-expected-width="100" data-expected-height="50"></div>
             <div class="sizedToGridArea firstRowAutoColumn" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50"></div>
         </div>
@@ -38,14 +38,14 @@
 
     <!-- Step 4.1, grid items with a minor-axis position that is not 'auto'. -->
     <div style="position: relative">
-        <div class="grid gridAutoFlowColumn">
+        <div class="grid gridAutoFlowColumnSparse">
             <div class="sizedToGridArea secondRowAutoColumn" data-offset-x="50" data-offset-y="50" data-expected-width="100" data-expected-height="100"></div>
             <div class="sizedToGridArea secondRowAutoColumn negativeOrder" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="100"></div>
         </div>
     </div>
 
     <div style="position: relative">
-        <div class="grid gridAutoFlowColumn">
+        <div class="grid gridAutoFlowColumnSparse">
             <div class="sizedToGridArea secondRowAutoColumn positiveOrder" data-offset-x="50" data-offset-y="50" data-expected-width="100" data-expected-height="100"></div>
             <div class="sizedToGridArea secondRowAutoColumn" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="100"></div>
         </div>
@@ -53,14 +53,14 @@
 
     <!-- Step 4.2, both minor and major-axis position are 'auto'. -->
     <div style="position: relative">
-        <div class="grid gridAutoFlowColumn">
+        <div class="grid gridAutoFlowColumnSparse">
             <div class="sizedToGridArea" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="100"></div>
             <div class="sizedToGridArea negativeOrder" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50"></div>
         </div>
     </div>
 
     <div style="position: relative">
-        <div class="grid gridAutoFlowColumn">
+        <div class="grid gridAutoFlowColumnSparse">
             <div class="sizedToGridArea positiveOrder" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="100"></div>
             <div class="sizedToGridArea" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50"></div>
         </div>

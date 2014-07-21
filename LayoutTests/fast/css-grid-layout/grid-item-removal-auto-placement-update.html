@@ -25,17 +25,17 @@ function testRemoval(gridElementID, autoFlowElementID, size)
 
 function testRemovals()
 {
-    checkLayout("#gridAutoFlowColumn");
-    testRemoval("gridAutoFlowColumn", "autoFlowColumnElement", { 'width': '100', 'height': '100' });
-    testRemoval("gridAutoFlowColumn", "autoFlowColumnElement", { 'width': '100', 'height': '50' });
-    testRemoval("gridAutoFlowColumn", "autoFlowColumnElement", { 'width': '50', 'height': '100' });
-    testRemoval("gridAutoFlowColumn", "autoFlowColumnElement", { 'width': '50', 'height': '50' });
+    checkLayout("#gridAutoFlowColumnSparse");
+    testRemoval("gridAutoFlowColumnSparse", "autoFlowColumnElement", { 'width': '100', 'height': '100' });
+    testRemoval("gridAutoFlowColumnSparse", "autoFlowColumnElement", { 'width': '100', 'height': '50' });
+    testRemoval("gridAutoFlowColumnSparse", "autoFlowColumnElement", { 'width': '50', 'height': '100' });
+    testRemoval("gridAutoFlowColumnSparse", "autoFlowColumnElement", { 'width': '50', 'height': '50' });
 
-    checkLayout("#gridAutoFlowRow");
-    testRemoval("gridAutoFlowRow", "autoFlowRowElement", { 'width': '100', 'height': '100' });
-    testRemoval("gridAutoFlowRow", "autoFlowRowElement", { 'width': '100', 'height': '50' });
-    testRemoval("gridAutoFlowRow", "autoFlowRowElement", { 'width': '50', 'height': '50' });
-    testRemoval("gridAutoFlowRow", "autoFlowRowElement", { 'width': '50', 'height': '50' });
+    checkLayout("#gridAutoFlowRowSparse");
+    testRemoval("gridAutoFlowRowSparse", "autoFlowRowElement", { 'width': '100', 'height': '100' });
+    testRemoval("gridAutoFlowRowSparse", "autoFlowRowElement", { 'width': '100', 'height': '50' });
+    testRemoval("gridAutoFlowRowSparse", "autoFlowRowElement", { 'width': '50', 'height': '50' });
+    testRemoval("gridAutoFlowRowSparse", "autoFlowRowElement", { 'width': '50', 'height': '50' });
 
     checkLayout("#gridAutoFlowColumnWithAutoItems");
     testRemoval("gridAutoFlowColumnWithAutoItems", "autoFlowRowElementWithAutoItems", { 'width': '100', 'height': '100' });
@@ -56,7 +56,7 @@ window.addEventListener("load", testRemovals, false);
 <p>This test checks that the tracks' auto positions are recomputed after removing a grid item.</p>
 
 <div class="unconstrainedContainer">
-    <div class="grid gridAutoFlowColumn" id="gridAutoFlowColumn">
+    <div class="grid gridAutoFlowColumnSparse" id="gridAutoFlowColumnSparse">
         <div class="sizedToGridArea secondRowSecondColumn">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea firstRowSecondColumn">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea secondRowFirstColumn">XXXXX XXXXX XXXXX</div>
@@ -66,7 +66,7 @@ window.addEventListener("load", testRemovals, false);
 </div>
 
 <div class="unconstrainedContainer">
-    <div class="grid gridAutoFlowRow" id="gridAutoFlowRow">
+    <div class="grid gridAutoFlowRowSparse" id="gridAutoFlowRowSparse">
         <div class="sizedToGridArea secondRowSecondColumn">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea firstRowSecondColumn">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea firstRowFirstColumn">XXXXX XXXXX XXXXX</div>
