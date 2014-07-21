@@ -241,7 +241,7 @@
 
   <autotools id="gst-plugins-bad"
              autogen-sh="configure"
-             autogenargs="--disable-examples --enable-faad">
+             autogenargs="--disable-examples --enable-faad --enable-mpg123">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>

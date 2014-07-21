@@ -1,3 +1,15 @@
+2014-07-20  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Enable mpg123 feature for gst-plugin-bad.
+        https://bugs.webkit.org/show_bug.cgi?id=135016
+
+        Reviewed by Laszlo Gombos.
+
+        enable-mpg123 feature is added to jhbuild in order to support playback of mp3 format.
+
+        * efl/install-dependencies:
+        * efl/jhbuild.modules:
+
 2014-07-20  Dan Bernstein  <mitz@apple.com>
 
         Test for <rdar://problems/17742611> -[_WKActivatedElementInfo image] is often empty

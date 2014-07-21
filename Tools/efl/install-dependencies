@@ -51,6 +51,7 @@ function installDependenciesWithApt {
         libicu-dev \
         libjpeg-dev \
         liblua5.1-0-dev \
+        libmpg123-dev \
         libp11-kit-dev \
         libpng-dev \
         libpulse-dev \
