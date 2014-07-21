@@ -1011,8 +1011,12 @@ void WebChromeClient::exitFullScreenForElement(Element* element)
 
 bool WebChromeClient::requiresAcceleratedCompositingForViewportConstrainedPosition() const
 {
+#if !PLATFORM(IOS)
     NSView<WebDocumentView> *documentView = [[[m_webView _selectedOrMainFrame] frameView] documentView];
     return [documentView isKindOfClass:[WebHTMLView class]] && documentView.layer;
+#else
+    return false;
+#endif
 }
 
 #if ENABLE(SUBTLE_CRYPTO)
