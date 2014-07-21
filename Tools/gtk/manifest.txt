@@ -2,6 +2,9 @@
 exclude #$
 exclude ChangeLog
 exclude Makefile
+exclude PlatformEfl.cmake
+exclude PlatformWin.cmake
+exclude PlatformWinCE.cmake
 exclude tags$
 exclude ~$
 exclude \.#$
@@ -13,9 +16,12 @@ exclude \.gitignore$
 exclude \.gyp$
 exclude \.icns$
 exclude \.lproj$
+exclude \.m$
+exclude \.mm$
 exclude \.nib$
 exclude \.o$
 exclude \.order$
+exclude \.orig$
 exclude \.pdf$
 exclude \.plist$
 exclude \.pro\.user$
@@ -23,28 +29,57 @@ exclude \.project$
 exclude \.props$
 exclude \.pyc$
 exclude \.pyo$
+exclude \.rej$
+exclude \.sb$
+exclude \.sb\.in$
 exclude \.settings$
 exclude \.svn$
 exclude \.sw[a-p]$
 exclude \.vcxproj$
+exclude \.xib$
 exclude \.xcconfig$
 exclude \.xcodeproj$
 
+# Exclude directories from other ports
+exclude .*\/(mac|ios|cf|cg|cocoa|Cocoa|objc|avfoundation|ca|curl|efl|win|wince)\/.*$
+
 directory Source
-exclude Source/WebCore/platform/audio/resources/IRC_Composite_.*\.wav$
+exclude Source/WebCore/platform/audio/resources
 exclude Source/WebCore/bindings/scripts/test
 exclude Source/WebCore/platform/efl/DefaultTheme
-exclude Source/autotools$
+exclude Source/WebCore/Resources
+exclude Source/bmalloc
+exclude Source/cmake/EFLHelpers.cmake$
+exclude Source/cmake/OptionsWinCairo.cmake$
+exclude Source/cmake/OptionsWindows.cmake$
+exclude Source/cmake/OptionsWinCE.cmake$
+exclude Source/cmake/OptionsAppleWin.cmake$
+exclude Source/cmake/OptionsEfl.cmake$
+exclude Source/cmake/eflsymbols.filter$
 
 # Most of the files in Source/WebKit are not necessary to build GTK+ and
 # the directory includes lots of images, so we're a bit more picky here.
 exclude Source/WebKit/.*
+exclude Source/WebKit2/Configurations
+exclude Source/WebKit2/Resources
 exclude Source/WebKit2/gtk/NEWS$
 
 # We do want to include the NEWS, but we want it to be in the root of the archive.
 file Source/WebKit2/gtk/NEWS NEWS
 
 file Source/WebCore/English.lproj/mediaControlsLocalizedStrings.js Source/WebCore/English.lproj/mediaControlsLocalizedStrings.js
+
+# Include only the resources we actually build
+file Source/WebCore/Resources/deleteButton.png
+file Source/WebCore/Resources/deleteButton@2x.png
+file Source/WebCore/Resources/missingImage.png
+file Source/WebCore/Resources/missingImage@2x.png
+file Source/WebCore/Resources/panIcon.png
+file Source/WebCore/Resources/textAreaResizeCorner.png
+file Source/WebCore/Resources/textAreaResizeCorner@2x.png
+file Source/WebCore/Resources/urlIcon.png
+file Source/WebCore/Resources/inputSpeech.png
+file Source/WebCore/platform/audio/resources/Composite.wav
 
 directory Tools/gtk
 directory Tools/ImageDiff
