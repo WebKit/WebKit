@@ -276,8 +276,8 @@ private:
     RetainPtr<AVPlayer> m_avPlayer;
     RetainPtr<AVPlayerItem> m_avPlayerItem;
     RetainPtr<AVPlayerLayer> m_videoLayer;
-    RetainPtr<PlatformLayer> m_videoInlineLayer;
 #if PLATFORM(IOS)
+    RetainPtr<PlatformLayer> m_videoInlineLayer;
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     FloatRect m_videoFullscreenFrame;
     MediaPlayer::VideoGravity m_videoFullscreenGravity;

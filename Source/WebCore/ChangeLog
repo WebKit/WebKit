@@ -23,6 +23,21 @@
 
 2014-07-20  Jeremy Jones  <jeremyj@apple.com>
 
+        Fix test crashes when cloning video layer since r171286
+        https://bugs.webkit.org/show_bug.cgi?id=135112
+
+        Unreviewed. Fix crashing tests by conditionalizing inline video layer change.
+        compositing/video/video-reflection.html [ Crash ]
+        media/video-layer-crash.html [ Crash ]
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h: add conditional
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm: ditto
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer): ditto
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer): ditto
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformLayer): ditto
+
+2014-07-20  Jeremy Jones  <jeremyj@apple.com>
+
         Disable ff/rw based on canPlayFastForward and canPlayFastRewind.
         https://bugs.webkit.org/show_bug.cgi?id=134894
 

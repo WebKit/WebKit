@@ -586,26 +586,27 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
     m_videoLayer = adoptNS([[AVPlayerLayer alloc] init]);
     [m_videoLayer setPlayer:m_avPlayer.get()];
     [m_videoLayer setBackgroundColor:cachedCGColor(Color::black, ColorSpaceDeviceRGB)];
-    m_videoInlineLayer = adoptNS([[WebVideoContainerLayer alloc] init]);
 #ifndef NDEBUG
     [m_videoLayer setName:@"MediaPlayerPrivate AVPlayerLayer"];
 #endif
     [m_videoLayer addObserver:m_objcObserver.get() forKeyPath:@"readyForDisplay" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextAVPlayerLayer];
     updateVideoLayerGravity();
     IntSize defaultSize = player()->mediaPlayerClient() ? player()->mediaPlayerClient()->mediaPlayerContentBoxRect().pixelSnappedSize() : IntSize();
-    [m_videoInlineLayer setFrame:CGRectMake(0, 0, defaultSize.width(), defaultSize.height())];
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoLayer(%p) - returning %p", this, m_videoLayer.get());
 
 #if PLATFORM(IOS)
+    m_videoInlineLayer = adoptNS([[WebVideoContainerLayer alloc] init]);
+    [m_videoInlineLayer setFrame:CGRectMake(0, 0, defaultSize.width(), defaultSize.height())];
     if (m_videoFullscreenLayer) {
         [m_videoLayer setFrame:[m_videoFullscreenLayer bounds]];
         [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
-    } else
-#endif
-    {
+    } else {
         [m_videoInlineLayer insertSublayer:m_videoLayer.get() atIndex:0];
         [m_videoLayer setFrame:m_videoInlineLayer.get().bounds];
     }
+#else
+    [m_videoLayer setFrame:CGRectMake(0, 0, defaultSize.width(), defaultSize.height())];
+#endif
 }
 
 void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
@@ -621,10 +622,10 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
 #if PLATFORM(IOS)
     if (m_videoFullscreenLayer)
         [m_videoLayer removeFromSuperlayer];
+    m_videoInlineLayer = nil;
 #endif
 
     m_videoLayer = nil;
-    m_videoInlineLayer = nil;
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame() const
@@ -955,7 +956,11 @@ PlatformMedia MediaPlayerPrivateAVFoundationObjC::platformMedia() const
 
 PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
 {
+#if PLATFORM(IOS)
     return m_haveBeenAskedToCreateLayer ? m_videoInlineLayer.get() : nullptr;
+#else
+    return m_haveBeenAskedToCreateLayer ? m_videoLayer.get() : nullptr;
+#endif
 }
 
 #if PLATFORM(IOS)
