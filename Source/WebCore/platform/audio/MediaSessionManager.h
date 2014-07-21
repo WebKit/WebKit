@@ -59,8 +59,8 @@ public:
     virtual ~MediaSessionManager() { }
 
     bool has(MediaSession::MediaType) const;
-    bool hasActive() const;
     int count(MediaSession::MediaType) const;
+    bool activeAudioSessionRequired() const;
 
     void beginInterruption(MediaSession::InterruptionType);
     void endInterruption(MediaSession::EndInterruptionFlags);
