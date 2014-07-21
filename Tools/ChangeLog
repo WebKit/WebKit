@@ -1,3 +1,16 @@
+2014-07-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Extend auto-version.pl to support 5-tuple versions
+        https://bugs.webkit.org/show_bug.cgi?id=135124
+        <rdar://problem/17750334>
+
+        Reviewed by David Kilzer.
+
+        Add test cases for auto-version.pl.
+
+        * Scripts/webkitperl/auto-version_unittest: Added.
+        * Scripts/webkitperl/auto-version_unittest/autoVersionTests.pl: Added.
+
 2014-07-21  Dean Jackson  <dino@apple.com>
 
         Allow MiniBrowser WK1 to do element fullscreen
