@@ -25,6 +25,7 @@ messages -> WebVideoFullscreenManagerProxy {
     SetCurrentTime(double currentTime, double hostTime)
     SetVideoDimensions(bool hasVideo, unsigned width, unsigned height)
     SetSeekableRangesVector(Vector<std::pair<double, double>> ranges);
+    SetCanPlayFastReverse(bool value);
     SetAudioMediaSelectionOptions(Vector<String> options, uint64_t selectedIndex);
     SetLegibleMediaSelectionOptions(Vector<String> options, uint64_t selectedIndex);
     SetExternalPlaybackProperties(bool enabled, uint32_t targetType, String localizedDeviceName);

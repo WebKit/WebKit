@@ -49,6 +49,7 @@ public:
     virtual void setRate(bool isPlaying, float playbackRate) = 0;
     virtual void setVideoDimensions(bool hasVideo, float width, float height) = 0;
     virtual void setSeekableRanges(const TimeRanges&) = 0;
+    virtual void setCanPlayFastReverse(bool) = 0;
     virtual void setAudioMediaSelectionOptions(const Vector<String>& options, uint64_t selectedIndex) = 0;
     virtual void setLegibleMediaSelectionOptions(const Vector<String>& options, uint64_t selectedIndex) = 0;
     virtual void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, String localizedDeviceName) = 0;

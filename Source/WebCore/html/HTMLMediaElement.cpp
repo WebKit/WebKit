@@ -3103,6 +3103,9 @@ double HTMLMediaElement::nextScanRate()
     double rate = std::min(ScanMaximumRate, fabs(playbackRate() * 2));
     if (m_scanDirection == Backward)
         rate *= -1;
+#if PLATFORM(IOS)
+    rate = std::min(std::max(rate, minFastReverseRate()), maxFastForwardRate());
+#endif
     return rate;
 }
 
@@ -4856,6 +4859,16 @@ void HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent()
 }
 #endif
 
+double HTMLMediaElement::minFastReverseRate() const
+{
+    return m_player ? m_player->minFastReverseRate() : 0;
+}
+
+double HTMLMediaElement::maxFastForwardRate() const
+{
+    return m_player ? m_player->maxFastForwardRate() : 0;
+}
+    
 bool HTMLMediaElement::isFullscreen() const
 {
     if (m_isFullscreen)

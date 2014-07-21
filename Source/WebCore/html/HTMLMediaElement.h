@@ -188,6 +188,8 @@ public:
     virtual void pause() override;
     virtual void setShouldBufferData(bool) override;
     void fastSeek(double);
+    double minFastReverseRate() const;
+    double maxFastForwardRate() const;
 
 // captions
     bool webkitHasClosedCaptions() const;

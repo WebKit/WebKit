@@ -116,6 +116,9 @@ public:
     virtual bool hasClosedCaptions() const { return false; }    
     virtual void setClosedCaptionsVisible(bool) { }
 
+    virtual double maxFastForwardRate() const { return std::numeric_limits<double>::infinity(); }
+    virtual double minFastReverseRate() const { return -std::numeric_limits<double>::infinity(); }
+
     virtual MediaPlayer::NetworkState networkState() const = 0;
     virtual MediaPlayer::ReadyState readyState() const = 0;
 

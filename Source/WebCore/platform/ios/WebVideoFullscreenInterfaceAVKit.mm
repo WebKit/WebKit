@@ -91,7 +91,7 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
 @property(assign) WebVideoFullscreenModel* delegate;
 
 @property (readonly) BOOL canScanForward;
-@property (readonly) BOOL canScanBackward;
+@property BOOL canScanBackward;
 @property (readonly) BOOL canSeekToBeginning;
 @property (readonly) BOOL canSeekToEnd;
 
@@ -299,16 +299,6 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
     UNUSED_PARAM(sender);
     ASSERT(self.delegate);
     self.delegate->endScanning();
-}
-
-- (BOOL)canScanBackward
-{
-    return [self canPlay];
-}
-
-+ (NSSet *)keyPathsForValuesAffectingCanScanBackward
-{
-    return [NSSet setWithObject:@"canPlay"];
 }
 
 - (void)beginScanningBackward:(id)sender
@@ -676,6 +666,11 @@ void WebVideoFullscreenInterfaceAVKit::setSeekableRanges(const TimeRanges& timeR
         
         protect.clear();
     });
+}
+
+void WebVideoFullscreenInterfaceAVKit::setCanPlayFastReverse(bool canPlayFastReverse)
+{
+    playerController().canScanBackward = canPlayFastReverse;
 }
 
 static NSMutableArray *mediaSelectionOptions(const Vector<String>& options)
