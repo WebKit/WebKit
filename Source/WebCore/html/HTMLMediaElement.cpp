@@ -429,8 +429,9 @@ void HTMLMediaElement::registerWithDocument(Document& document)
 #if !PLATFORM(IOS)
     document.registerForMediaVolumeCallbacks(this);
     document.registerForPrivateBrowsingStateChangedCallbacks(this);
-    document.registerForVisibilityStateChangedCallbacks(this);
 #endif
+
+    document.registerForVisibilityStateChangedCallbacks(this);
 
 #if ENABLE(VIDEO_TRACK)
     document.registerForCaptionPreferencesChangedCallbacks(this);
@@ -452,8 +453,9 @@ void HTMLMediaElement::unregisterWithDocument(Document& document)
 #if !PLATFORM(IOS)
     document.unregisterForMediaVolumeCallbacks(this);
     document.unregisterForPrivateBrowsingStateChangedCallbacks(this);
-    document.unregisterForVisibilityStateChangedCallbacks(this);
 #endif
+
+    document.unregisterForVisibilityStateChangedCallbacks(this);
 
 #if ENABLE(VIDEO_TRACK)
     document.unregisterForCaptionPreferencesChangedCallbacks(this);
