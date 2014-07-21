@@ -1,3 +1,12 @@
+2014-07-21  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed hidpi test gardening.
+
+        Use Ahem font to ensure font size predictability.
+
+        * fast/inline/hidpi-selection-gap-and-inline-selection-have-gap-rtl-expected.html:
+        * fast/inline/hidpi-selection-gap-and-inline-selection-have-gap-rtl.html:
+
 2014-07-21  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening
