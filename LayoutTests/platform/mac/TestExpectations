@@ -1400,3 +1400,5 @@ webkit.org/b/135015 plugins/quicktime-plugin-replacement.html [ Pass Failure ]
 webkit.org/b/131477 fast/repaint/obscured-background-no-repaint.html [ Pass Failure ]
 
 webkit.org/b/135071 [ MountainLion ] media/video-seek-with-negative-playback.html [ Pass Failure Timeout ]
+
+webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Pass Failure ]

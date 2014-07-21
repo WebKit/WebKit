@@ -254,8 +254,6 @@ webkit.org/b/114572 platform/mac-wk2/plugins/mouse-events-scaled.html [ Pass Fai
 webkit.org/b/114573 fast/repaint/selection-gap-fixed-child.html [ Failure ]
 webkit.org/b/114573 fast/repaint/selection-gap-flipped-fixed-child.html [ Failure ]
 
-webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
-
 webkit.org/b/116478 storage/websql/open-database-creation-callback-isolated-world.html [ Pass Failure ]
 webkit.org/b/116478 storage/websql/statement-error-callback-isolated-world.html [ Pass Failure ]
 webkit.org/b/116478 storage/websql/transaction-success-callback-isolated-world.html [ Pass Failure ]
