@@ -381,6 +381,8 @@ private:
     void notifyIFramesOfCompositingChange();
 
     bool isFlushingLayers() const { return m_flushingLayers; }
+    void updateScrollCoordinatedLayersAfterFlushIncludingSubframes();
+    void updateScrollCoordinatedLayersAfterFlush();
     
     Page* page() const;
     
