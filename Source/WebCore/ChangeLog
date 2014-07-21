@@ -1,3 +1,26 @@
+2014-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update GObject DOM bindings test results after r171285.
+
+        * bindings/scripts/test/GObject/WebKitDOMTestActiveDOMObject.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructor.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestException.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestNamedConstructor.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestNode.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestNondeterministic.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestTypedefs.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMattribute.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMreadonly.cpp:
+
 2014-07-20  Pratik Solanki  <psolanki@apple.com>
 
         Reduce the chances of a race condition when sharing SharedBuffer

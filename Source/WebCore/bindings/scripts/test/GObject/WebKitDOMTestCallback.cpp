@@ -25,6 +25,7 @@
 #include "DOMObjectCache.h"
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "ExceptionCodeDescription.h"
 #include "JSMainThreadExecState.h"
 #include "WebKitDOMDOMStringListPrivate.h"
 #include "WebKitDOMFloat32ArrayPrivate.h"

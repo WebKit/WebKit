@@ -25,6 +25,7 @@
 #include "DOMObjectCache.h"
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "ExceptionCodeDescription.h"
 #include "GObjectEventListener.h"
 #include "JSMainThreadExecState.h"
 #include "WebKitDOMEventPrivate.h"
