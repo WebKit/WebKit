@@ -19,9 +19,6 @@
 #ifndef ExceptionCode_h
 #define ExceptionCode_h
 
-// FIXME: Move this header into the files that actually need it.
-#include "ExceptionCodeDescription.h"
-
 namespace WebCore {
 
     // The DOM standards use unsigned short for exception codes.

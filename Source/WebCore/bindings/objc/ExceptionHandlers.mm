@@ -27,6 +27,7 @@
 #include "ExceptionHandlers.h"
 
 #include "ExceptionCode.h"
+#include "ExceptionCodeDescription.h"
 
 NSString *DOMException = @"DOMException";
 NSString *DOMRangeException = @"DOMRangeException";

@@ -27,8 +27,9 @@
  */
 
 #include "config.h"
-
 #include "FileException.h"
+
+#include "ExceptionCodeDescription.h"
 
 namespace WebCore {
 

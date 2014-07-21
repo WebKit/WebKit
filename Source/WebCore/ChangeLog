@@ -1,3 +1,30 @@
+2014-07-20  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Move ExceptionCodeDescription.h into the files that actually need it
+        https://bugs.webkit.org/show_bug.cgi?id=134968
+
+        Reviewed by Darin Adler.
+
+        No new tests because no functional changes.
+
+        * Modules/indexeddb/IDBDatabaseException.cpp:
+        * Modules/webdatabase/SQLException.cpp:
+        * bindings/js/JSDOMBinding.cpp:
+        * bindings/objc/ExceptionHandlers.mm:
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (Generate):
+        * dom/DOMCoreException.cpp:
+        * dom/EventException.cpp:
+        * dom/ExceptionBase.cpp:
+        * dom/ExceptionCode.h:
+        * dom/RangeException.cpp:
+        * fileapi/FileException.cpp:
+        * inspector/DOMEditor.cpp:
+        * inspector/InspectorDOMAgent.cpp:
+        * svg/SVGException.cpp:
+        * xml/XMLHttpRequestException.cpp:
+        * xml/XPathException.cpp:
+
 2014-07-20  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problems/17742611> -[_WKActivatedElementInfo image] is often empty

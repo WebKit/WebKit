@@ -29,6 +29,8 @@
 #include "config.h"
 #include "XPathException.h"
 
+#include "ExceptionCodeDescription.h"
+
 namespace WebCore {
 
 static struct XPathExceptionNameDescription {

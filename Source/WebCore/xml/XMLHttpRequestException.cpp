@@ -29,6 +29,8 @@
 #include "config.h"
 #include "XMLHttpRequestException.h"
 
+#include "ExceptionCodeDescription.h"
+
 namespace WebCore {
 
 static struct XMLHttpRequestExceptionNameDescription {

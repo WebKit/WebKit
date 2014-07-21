@@ -27,6 +27,7 @@
 #include "DOMObjectHashTableMap.h"
 #include "DOMStringList.h"
 #include "ExceptionCode.h"
+#include "ExceptionCodeDescription.h"
 #include "ExceptionHeaders.h"
 #include "ExceptionInterfaces.h"
 #include "Frame.h"

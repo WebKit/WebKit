@@ -29,8 +29,9 @@
 #include "config.h"
 
 #if ENABLE(INDEXED_DATABASE)
-
 #include "IDBDatabaseException.h"
+
+#include "ExceptionCodeDescription.h"
 
 namespace WebCore {
 

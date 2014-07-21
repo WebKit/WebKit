@@ -29,6 +29,8 @@
 #include "config.h"
 #include "DOMCoreException.h"
 
+#include "ExceptionCodeDescription.h"
+
 namespace WebCore {
 
 static struct CoreException {

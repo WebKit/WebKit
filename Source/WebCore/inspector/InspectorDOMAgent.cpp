@@ -59,6 +59,7 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
+#include "ExceptionCodeDescription.h"
 #include "FrameTree.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"

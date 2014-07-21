@@ -29,6 +29,8 @@
 #include "config.h"
 #include "EventException.h"
 
+#include "ExceptionCodeDescription.h"
+
 namespace WebCore {
 
 static struct EventExceptionNameDescription {

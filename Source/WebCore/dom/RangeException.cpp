@@ -29,6 +29,8 @@
 #include "config.h"
 #include "RangeException.h"
 
+#include "ExceptionCodeDescription.h"
+
 namespace WebCore {
 
 static struct RangeExceptionNameDescription {

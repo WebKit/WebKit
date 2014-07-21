@@ -29,8 +29,9 @@
 #include "config.h"
 
 #if ENABLE(SQL_DATABASE)
-
 #include "SQLException.h"
+
+#include "ExceptionCodeDescription.h"
 
 namespace WebCore {
 

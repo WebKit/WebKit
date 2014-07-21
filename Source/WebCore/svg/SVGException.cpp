@@ -29,6 +29,8 @@
 #include "config.h"
 #include "SVGException.h"
 
+#include "ExceptionCodeDescription.h"
+
 namespace WebCore {
 
 static struct SVGExceptionNameDescription {
