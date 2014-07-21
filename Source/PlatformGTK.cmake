@@ -57,8 +57,7 @@ if (ENABLE_WEBKIT2)
         COMMAND ${TOOLS_DIR}/gtk/make-dist.py
                 --source-dir=${CMAKE_SOURCE_DIR}
                 --build-dir=${CMAKE_BINARY_DIR}
-                --tarball-root=/webkitgtk-${PROJECT_VERSION}
-                -o ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
+                --version=${PROJECT_VERSION}
                 ${TOOLS_DIR}/gtk/manifest.txt
     )
 
@@ -81,8 +80,7 @@ if (ENABLE_WEBKIT2)
                 --check
                 --source-dir=${CMAKE_SOURCE_DIR}
                 --build-dir=${CMAKE_BINARY_DIR}
-                --tarball-root=/webkitgtk-${PROJECT_VERSION}
-                -o ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
+                --version=/webkitgtk-${PROJECT_VERSION}
                 ${TOOLS_DIR}/gtk/manifest.txt
         COMMAND xz -f ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
     )

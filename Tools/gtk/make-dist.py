@@ -264,19 +264,37 @@ if __name__ == "__main__":
         def __call__(self, parser, namespace, values, option_string=None):
             setattr(namespace, self.dest, os.path.abspath(values))
 
+    def ensure_version_if_possible(arguments):
+        if arguments.version is not None:
+            return
+
+        pkgconfig_file = os.path.join(arguments.build_dir, "Source/WebKit2/webkit2gtk-3.0.pc")
+        if os.path.isfile(pkgconfig_file):
+            p = subprocess.Popen(['pkg-config', '--modversion', pkgconfig_file], stdout=subprocess.PIPE)
+            version = p.communicate()[0]
+            if version:
+                arguments.version = version.rstrip('\n')
+
+
+    def get_tarball_root_and_output_filename_from_arguments(arguments):
+        tarball_root = "webkitgtk"
+        if arguments.version is not None:
+            tarball_root += '-' + arguments.version
+
+        output_filename = os.path.join(arguments.build_dir, tarball_root + ".tar")
+        return tarball_root, output_filename
+
     parser = argparse.ArgumentParser(description='Build a distribution bundle.')
     parser.add_argument('-c', '--check', action='store_true',
                         help='Check the tarball')
     parser.add_argument('-s', '--source-dir', type=str, action=FilePathAction, default=os.getcwd(),
                         help='The top-level directory of the source distribution. ' + \
                               'Directory for relative paths. Defaults to current directory.')
-    parser.add_argument('--tarball-root', type=str, default='/',
-                        help='The top-level path of the tarball. By default files are added to the root of the tarball.')
-    parser.add_argument('-b', '--build-dir', type=str, action=FilePathAction, default=None,
+    parser.add_argument('--version', type=str, default=None,
+                        help='The version of the tarball to generate')
+    parser.add_argument('-b', '--build-dir', type=str, action=FilePathAction, default=os.getcwd(),
                         help='The top-level path of directory of the build root. ' + \
-                              'By default there is no build root.')
-    parser.add_argument('-o', type=str, action=FilePathAction, default='out.tar', dest="output_filename",
-                        help='The tarfile to produce. By default this is "out.tar"')
+                              'By default is the current directory.')
     parser.add_argument('manifest_filename', metavar="manifest", type=str, action=FilePathAction, help='The path to the manifest file.')
 
     arguments = parser.parse_args()
@@ -286,8 +304,11 @@ if __name__ == "__main__":
     # to be the source directory.
     os.chdir(arguments.source_dir)
 
-    manifest = Manifest(arguments.manifest_filename, arguments.source_dir, arguments.build_dir, arguments.tarball_root)
-    manifest.create_tarfile(arguments.output_filename)
+    ensure_version_if_possible(arguments)
+    tarball_root, output_filename = get_tarball_root_and_output_filename_from_arguments(arguments)
+
+    manifest = Manifest(arguments.manifest_filename, arguments.source_dir, arguments.build_dir, tarball_root)
+    manifest.create_tarfile(output_filename)
 
     if arguments.check:
-        Distcheck(arguments.source_dir, arguments.build_dir).check(arguments.output_filename)
+        Distcheck(arguments.source_dir, arguments.build_dir).check(output_filename)
