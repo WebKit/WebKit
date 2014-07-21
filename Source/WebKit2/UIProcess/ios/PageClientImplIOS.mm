@@ -530,6 +530,11 @@ void PageClientImpl::startAssistingNode(const AssistedNodeInformation& nodeInfor
     [m_contentView _startAssistingNode:nodeInformation userIsInteracting:userIsInteracting blurPreviousNode:blurPreviousNode userObject:userObject];
 }
 
+bool PageClientImpl::isAssistingNode()
+{
+    return [m_contentView isAssistingNode];
+}
+
 void PageClientImpl::stopAssistingNode()
 {
     [m_contentView _stopAssistingNode];

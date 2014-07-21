@@ -220,6 +220,9 @@ WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect&
     FloatSize contentsSize = m_pageClient.contentsSize();
     FloatRect documentRect = FloatRect(FloatPoint(), contentsSize);
 
+    if (m_pageClient.isAssistingNode())
+        return documentRect;
+
     if (constraint == UnobscuredRectConstraint::ConstrainedToDocumentRect)
         constrainedUnobscuredRect.intersect(documentRect);
 

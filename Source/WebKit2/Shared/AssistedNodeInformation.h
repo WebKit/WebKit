@@ -102,6 +102,7 @@ struct AssistedNodeInformation {
         , isMultiSelect(false)
         , isReadOnly(false)
         , allowsUserScaling(false)
+        , insideFixedPosition(false)
         , autocapitalizeType(WebAutocapitalizeTypeDefault)
         , elementType(InputType::None)
         , selectedIndex(-1)
@@ -120,6 +121,7 @@ struct AssistedNodeInformation {
     bool isMultiSelect;
     bool isReadOnly;
     bool allowsUserScaling;
+    bool insideFixedPosition;
     WebAutocapitalizeType autocapitalizeType;
     InputType elementType;
     String formAction;

@@ -79,6 +79,7 @@ void AssistedNodeInformation::encode(IPC::ArgumentEncoder& encoder) const
     encoder << isMultiSelect;
     encoder << isReadOnly;
     encoder << allowsUserScaling;
+    encoder << insideFixedPosition;
     encoder << value;
     encoder << valueAsNumber;
     encoder << title;
@@ -132,6 +133,9 @@ bool AssistedNodeInformation::decode(IPC::ArgumentDecoder& decoder, AssistedNode
         return false;
 
     if (!decoder.decode(result.allowsUserScaling))
+        return false;
+
+    if (!decoder.decode(result.insideFixedPosition))
         return false;
 
     if (!decoder.decode(result.value))
