@@ -47,6 +47,7 @@
     [_webView setUIDelegate:self];
     [_webView setResourceLoadDelegate:self];
     [_webView setPolicyDelegate:self];
+    [[WebPreferences standardPreferences] setFullScreenEnabled:YES];
 
     [containerView addSubview:_webView];
 }
