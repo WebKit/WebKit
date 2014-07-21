@@ -356,10 +356,10 @@ void SharedBuffer::append(const char* data, unsigned length)
         bytesToCopy = std::min(length, segmentSize);
     }
 #else
-    m_size += length;
     if (m_buffer.isEmpty())
         m_buffer.reserveInitialCapacity(length);
     m_buffer.append(data, length);
+    m_size += length;
 #endif
 }
 
