@@ -488,6 +488,17 @@ void WebContext::getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessPro
 
     m_databaseProcess->getDatabaseProcessConnection(reply);
 }
+
+void WebContext::databaseProcessCrashed(DatabaseProcessProxy* databaseProcessProxy)
+{
+    ASSERT(m_databaseProcess);
+    ASSERT(databaseProcessProxy == m_databaseProcess.get());
+
+    for (auto& supplement : m_supplements)
+        supplement.value->processDidClose(databaseProcessProxy);
+
+    m_databaseProcess = nullptr;
+}
 #endif
 
 void WebContext::willStartUsingPrivateBrowsing()

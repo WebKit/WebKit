@@ -302,6 +302,7 @@ public:
 #if ENABLE(DATABASE_PROCESS)
     void ensureDatabaseProcess();
     void getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>);
+    void databaseProcessCrashed(DatabaseProcessProxy*);
 #endif
 
 #if PLATFORM(COCOA)
