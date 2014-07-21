@@ -2,6 +2,15 @@
 
         Unreviewed hidpi test gardening.
 
+        Use Ahem font to ensure font size predictability.
+
+        * fast/forms/hidpi-fieldset-on-subpixel-position-when-legend-is-present-expected.html:
+        * fast/forms/hidpi-fieldset-on-subpixel-position-when-legend-is-present.html:
+
+2014-07-21  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed hidpi test gardening.
+
         * fast/inline/hidpi-selection-gap-on-subpixel-position-expected.html:
         * fast/inline/hidpi-selection-gap-on-subpixel-position.html: Speculative fix.
         * fast/inline/hidpi-selection-gap-overlaps-inline-selection-expected.html:
