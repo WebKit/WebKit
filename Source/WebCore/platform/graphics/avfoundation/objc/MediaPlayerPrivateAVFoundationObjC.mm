@@ -86,6 +86,19 @@
 #import <VideoToolbox/VideoToolbox.h>
 #endif
 
+@interface WebVideoContainerLayer : CALayer
+@end
+
+@implementation WebVideoContainerLayer
+
+- (void)setBounds:(CGRect)bounds
+{
+    [super setBounds:bounds];
+    for (CALayer* layer in self.sublayers)
+        layer.frame = bounds;
+}
+@end
+
 #if ENABLE(AVF_CAPTIONS)
 // Note: This must be defined before our SOFT_LINK macros:
 @class AVMediaSelectionOption;
@@ -573,21 +586,26 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
     m_videoLayer = adoptNS([[AVPlayerLayer alloc] init]);
     [m_videoLayer setPlayer:m_avPlayer.get()];
     [m_videoLayer setBackgroundColor:cachedCGColor(Color::black, ColorSpaceDeviceRGB)];
+    m_videoInlineLayer = adoptNS([[WebVideoContainerLayer alloc] init]);
 #ifndef NDEBUG
     [m_videoLayer setName:@"MediaPlayerPrivate AVPlayerLayer"];
 #endif
     [m_videoLayer addObserver:m_objcObserver.get() forKeyPath:@"readyForDisplay" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextAVPlayerLayer];
     updateVideoLayerGravity();
     IntSize defaultSize = player()->mediaPlayerClient() ? player()->mediaPlayerClient()->mediaPlayerContentBoxRect().pixelSnappedSize() : IntSize();
-    [m_videoLayer setFrame:CGRectMake(0, 0, defaultSize.width(), defaultSize.height())];
+    [m_videoInlineLayer setFrame:CGRectMake(0, 0, defaultSize.width(), defaultSize.height())];
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoLayer(%p) - returning %p", this, m_videoLayer.get());
 
 #if PLATFORM(IOS)
     if (m_videoFullscreenLayer) {
-        [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
+        [m_videoLayer setFrame:[m_videoFullscreenLayer bounds]];
         [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
-    }
+    } else
 #endif
+    {
+        [m_videoInlineLayer insertSublayer:m_videoLayer.get() atIndex:0];
+        [m_videoLayer setFrame:m_videoInlineLayer.get().bounds];
+    }
 }
 
 void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
@@ -605,7 +623,8 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
         [m_videoLayer removeFromSuperlayer];
 #endif
 
-    m_videoLayer = 0;
+    m_videoLayer = nil;
+    m_videoInlineLayer = nil;
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame() const
@@ -936,7 +955,7 @@ PlatformMedia MediaPlayerPrivateAVFoundationObjC::platformMedia() const
 
 PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
 {
-    return m_haveBeenAskedToCreateLayer ? m_videoLayer.get() : nullptr;
+    return m_haveBeenAskedToCreateLayer ? m_videoInlineLayer.get() : nullptr;
 }
 
 #if PLATFORM(IOS)
@@ -945,16 +964,23 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* 
     if (m_videoFullscreenLayer == videoFullscreenLayer)
         return;
 
-    if (m_videoFullscreenLayer)
-       [m_videoLayer removeFromSuperlayer];
-
     m_videoFullscreenLayer = videoFullscreenLayer;
 
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
     if (m_videoFullscreenLayer && m_videoLayer) {
-        CGRect frame = CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height());
-        [m_videoLayer setFrame:frame];
+        [m_videoLayer setFrame:[m_videoFullscreenLayer bounds]];
+        [m_videoLayer removeFromSuperlayer];
         [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
-    }
+    } else if (m_videoInlineLayer && m_videoLayer) {
+        [m_videoLayer setFrame:[m_videoInlineLayer bounds]];
+        [m_videoLayer removeFromSuperlayer];
+        [m_videoInlineLayer insertSublayer:m_videoLayer.get() atIndex:0];
+    } else if (m_videoLayer)
+        [m_videoLayer removeFromSuperlayer];
+
+    [CATransaction commit];
 
     if (m_videoFullscreenLayer && m_textTrackRepresentationLayer) {
         syncTextTrackBounds();
@@ -971,9 +997,12 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame(FloatRect frame
     if (!m_videoFullscreenLayer)
         return;
 
-    if (m_videoLayer)
+    if (m_videoLayer) {
+        [CATransaction begin];
+        [CATransaction setDisableActions:YES];
         [m_videoLayer setFrame:CGRectMake(0, 0, frame.width(), frame.height())];
-
+        [CATransaction commit];
+    }
     syncTextTrackBounds();
 }
 

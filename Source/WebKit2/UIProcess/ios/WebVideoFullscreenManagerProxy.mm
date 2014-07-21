@@ -109,12 +109,12 @@ void WebVideoFullscreenManagerProxy::requestExitFullscreen()
 void WebVideoFullscreenManagerProxy::didExitFullscreen()
 {
     m_page->send(Messages::WebVideoFullscreenManager::DidExitFullscreen(), m_page->pageID());
-    [m_layerHost removeFromSuperlayer];
-    m_layerHost.clear();
 }
     
 void WebVideoFullscreenManagerProxy::didCleanupFullscreen()
 {
+    [m_layerHost removeFromSuperlayer];
+    m_layerHost.clear();
     m_page->send(Messages::WebVideoFullscreenManager::DidCleanupFullscreen(), m_page->pageID());
 }
 
