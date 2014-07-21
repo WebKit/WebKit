@@ -120,6 +120,10 @@
     display: inline-block;
 
     width: 7px;
+    height: 11px;
+}
+
+body.mac-platform.legacy .find-banner > button > .glyph {
     height: 7px;
 }
 
@@ -150,8 +154,12 @@
 
 .find-banner > button.segmented.left > .glyph {
     background-image: -webkit-canvas(find-banner-previous-arrow-normal);
-    background-size: 7px 7px;
+    background-size: 7px 11px;
     background-repeat: no-repeat;
+}
+
+body.mac-platform.legacy .find-banner > button.segmented.left > .glyph {
+    background-size: 7px 7px;
 }
 
 .find-banner > button.segmented.left:active:not(:disabled) > .glyph {
@@ -170,8 +178,12 @@
 
 .find-banner > button.segmented.right > .glyph {
     background-image: -webkit-canvas(find-banner-next-arrow-normal);
-    background-size: 7px 7px;
+    background-size: 7px 11px;
     background-repeat: no-repeat;
+}
+
+body.mac-platform.legacy .find-banner > button.segmented.right > .glyph {
+    background-size: 7px 7px;
 }
 
 .find-banner > button.segmented.right:active:not(:disabled) > .glyph {
@@ -180,6 +192,13 @@
 
 .find-banner > button.segmented {
     min-width: 22px;
+    padding-top: 3px;
+    padding-bottom: 2px;
+}
+
+body.mac-platform.legacy .find-banner > button.segmented {
+    padding-top: 2px;
+    padding-bottom: 3px;
 }
 
 .find-banner > button.segmented:active {
