@@ -1,3 +1,11 @@
+2014-07-21  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Remove passing tests from TestExpectations file.
+
+        * platform/efl/TestExpectations:
+
 2014-07-21  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Cleanup tests in css3/blending

@@ -337,7 +337,6 @@ webkit.org/b/86623 fast/events/drag-and-drop-fire-drag-dragover.html
 webkit.org/b/86623 fast/events/drag-and-drop.html
 webkit.org/b/86623 fast/events/drag-customData.html
 webkit.org/b/86623 fast/events/drag-dataTransferItemList.html
-webkit.org/b/86623 fast/events/drag-display-none-element.html [ Failure ]
 webkit.org/b/86623 fast/events/drag-image-filename.html [ Failure ]
 webkit.org/b/86623 fast/events/drag-in-frames.html [ Failure ]
 webkit.org/b/86623 fast/events/drag-link.html [ Failure ]
@@ -862,6 +861,12 @@ webkit.org/b/133305 fast/text/mark-matches-rendering.html [ ImageOnlyFailure Pas
 webkit.org/b/109417 webgl/conformance/textures/texture-attachment-formats.html [ Crash Failure ]
 webkit.org/b/109945 webgl/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Crash Failure ]
 
+webkit.org/b/106405 http/tests/loading/basic-auth-resend-wrong-credentials.html [ Failure Pass ]
+webkit.org/b/106405 http/tests/loading/basic-credentials-sent-automatically.html [ Failure Pass ]
+webkit.org/b/106405 http/tests/misc/401-alternative-content.php [ Crash Pass ]
+
+webkit.org/b/84589 http/tests/security/cross-frame-access-get.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -886,6 +891,8 @@ webkit.org/b/102367 fast/forms/zoomed-controls.html [ Pass ]
 
 # Test marked in TestExpectations as failing on non-retina displays, passing on EFL port
 webkit.org/b/129113 fast/multicol/newmulticol/clipping.html [ Pass ]
+
+webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
@@ -1006,7 +1013,6 @@ Bug(EFL) fast/regions/overflow/overflow-last-region-vert-lr.html [ ImageOnlyFail
 webkit.org/b/84589 fast/events/show-modal-dialog-onblur-onfocus.html [ Failure ]
 webkit.org/b/84589 fast/harness/show-modal-dialog.html [ Failure ]
 webkit.org/b/84589 fast/events/scroll-event-during-modal-dialog.html [ Failure ]
-webkit.org/b/84589 http/tests/security/cross-frame-access-get.html [ Failure ]
 
 # Quota API is not supported.
 webkit.org/b/106507 storage/storageinfo-missing-arguments.html
@@ -1279,9 +1285,6 @@ webkit.org/b/98613 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
 # Ref test whose output looks exactly the same but fails of EFL port.
 Bug(EFL) fast/multicol/newmulticol/float-multicol.html [ ImageOnlyFailure Pass ]
 
-# Ref test that is failing on EFL port due to blurry rect borders.
-webkit.org/b/116023 svg/as-image/svg-as-image-canvas.html [ ImageOnlyFailure ]
-
 # EFL does not yet support global selection
 webkit.org/b/88238 editing/pasteboard/paste-global-selection.html [ Skip ]
 
@@ -1409,9 +1412,6 @@ webkit.org/b/105030 fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
 webkit.org/b/105029 fast/canvas/webgl/webgl-composite-modes.html [ ImageOnlyFailure Pass ]
 webkit.org/b/105029 fast/canvas/webgl/webgl-composite-modes-repaint.html [ ImageOnlyFailure Pass ]
 webkit.org/b/133979 svg/wicd/rightsizing-grid.xhtml [ Failure ]
-
-# Failing touch events case
-webkit.org/b/105406 fast/events/touch/touch-input-element-change-documents.html [ Failure ]
 
 # WebAudio remaining issues
 webkit.org/b/105294 webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Failure ]
@@ -1554,17 +1554,6 @@ webkit.org/b/119782 fast/forms/search-styled.html [ Failure ]
 
 # Color bleeds through; might work with newer cairo (works when running with Fedora 20's system cairo).
 fast/backgrounds/background-opaque-images-over-color.html [ ImageOnlyFailure ]
-
-webkit.org/b/106405 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Failure ]
-webkit.org/b/106405 http/tests/loading/basic-auth-resend-wrong-credentials.html [ Failure ]
-webkit.org/b/106405 http/tests/loading/basic-credentials-sent-automatically.html [ Failure ]
-webkit.org/b/106405 http/tests/misc/401-alternative-content.php [ Failure ]
-webkit.org/b/106405 http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html [ Failure ]
-webkit.org/b/106405 http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html [ Failure ]
-webkit.org/b/106405 http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html [ Failure ]
-webkit.org/b/106405 http/tests/security/401-logout/401-logout.php [ Failure ]
-webkit.org/b/106405 http/tests/xmlhttprequest/failed-auth.html [ Failure ]
-webkit.org/b/106405 http/tests/xmlhttprequest/remember-bad-password.html [ Failure ]
 
 webkit.org/b/122963 fast/regions/auto-size/autoheight-regions-mark.html [ Missing ]
 webkit.org/b/122963 fast/regions/flows-dependency-dynamic-remove.html [ Missing ]
@@ -1790,7 +1779,6 @@ webkit.org/b/107286 fast/css/sticky/sticky-top-overflow.html [ ImageOnlyFailure 
 webkit.org/b/107286 fast/css/sticky/sticky-top-overflow-container-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/107286 fast/css/sticky/sticky-left.html [ ImageOnlyFailure ]
 webkit.org/b/107286 fast/css/sticky/sticky-as-positioning-container.html [ ImageOnlyFailure ]
-webkit.org/b/107286 fast/css/sticky/sticky-left-percentage.html [ ImageOnlyFailure ]
 webkit.org/b/107286 fast/css/sticky/sticky-writing-mode-vertical-rl.html [ ImageOnlyFailure ]
 webkit.org/b/107286 fast/css/sticky/sticky-stacking-context.html [ ImageOnlyFailure ]
 webkit.org/b/107286 fast/css/sticky/inflow-sticky.html [ ImageOnlyFailure ]
@@ -2123,10 +2111,6 @@ webkit.org/b/133307 fast/forms/number/number-spinbutton-in-multi-column.html [ F
 webkit.org/b/133308 fast/selectors/hover-quirks.html [ Failure ]
 
 # Failures EFL since the inception
-webkit.org/b/133734 css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html [ Failure ]
-webkit.org/b/133735 css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Failure ]
-webkit.org/b/133737 css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Failure ]
-webkit.org/b/133734 css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Failure ]
 webkit.org/b/133972 mathml/presentation/foreign-element-in-token.html [ Failure ]
 webkit.org/b/133973 fast/borders/hidpi-border-radius-with-subpixel-margin-not-renderable.html [ ImageOnlyFailure ]
 
