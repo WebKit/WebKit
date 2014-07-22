@@ -9,31 +9,31 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
-AXChildren: 
+AXChildren: <array of size 1>
 AXHelp: 
-AXParent: 
+AXParent: <AXCell>
 AXSize: NSSize: {124, 18}
 AXTitle: 
 AXDescription: 
 AXValue: 
 AXFocused: 0
 AXEnabled: 1
-AXWindow: 
+AXWindow: <AXCell>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: 
-AXEndTextMarker: 
+AXStartTextMarker: <AXCell>
+AXEndTextMarker: <AXCell>
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: 
+AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: test
-AXDOMClassList: 
+AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXColumnHeaderUIElements: 
-AXRowHeaderUIElements: 
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
 AXElementBusy: 0
 AXRequired: 0
 
@@ -41,31 +41,31 @@ AXRequired: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
-AXChildren: 
+AXChildren: <array of size 1>
 AXHelp: 
-AXParent: 
+AXParent: <AXCell>
 AXSize: NSSize: {54, 18}
 AXTitle: 
 AXDescription: 
 AXValue: 
 AXFocused: 0
 AXEnabled: 1
-AXWindow: 
+AXWindow: <AXCell>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: 
-AXEndTextMarker: 
+AXStartTextMarker: <AXCell>
+AXEndTextMarker: <AXCell>
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: 
+AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
-AXDOMClassList: 
+AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {1, 1}
-AXColumnHeaderUIElements: 
-AXRowHeaderUIElements: 
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
 AXElementBusy: 0
 AXRequired: 0
 
@@ -73,66 +73,64 @@ AXRequired: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
-AXChildren: 
+AXChildren: <array of size 1>
 AXHelp: 
-AXParent: 
+AXParent: <AXCell>
 AXSize: NSSize: {54, 18}
 AXTitle: 
 AXDescription: 
 AXValue: 
 AXFocused: 0
 AXEnabled: 1
-AXWindow: 
+AXWindow: <AXCell>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: 
-AXEndTextMarker: 
+AXStartTextMarker: <AXCell>
+AXEndTextMarker: <AXCell>
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: 
+AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
-AXDOMClassList: 
+AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {2, 1}
-AXColumnHeaderUIElements: 
-AXRowHeaderUIElements: 
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
 AXElementBusy: 0
 AXRequired: 0
 
 ------------
 
-
-
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
-AXChildren: 
+AXChildren: <array of size 1>
 AXHelp: 
-AXParent: 
+AXParent: <AXCell>
 AXSize: NSSize: {28, 18}
 AXTitle: 
 AXDescription: 
 AXValue: 
 AXFocused: 0
 AXEnabled: 1
-AXWindow: 
+AXWindow: <AXCell>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: 
-AXEndTextMarker: 
+AXStartTextMarker: <AXCell>
+AXEndTextMarker: <AXCell>
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: 
+AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: obj1
-AXDOMClassList: 
+AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXColumnHeaderUIElements: 
-AXRowHeaderUIElements: 
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
 AXElementBusy: 0
 AXRequired: 0
 
@@ -140,36 +138,35 @@ AXRequired: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
-AXChildren: 
+AXChildren: <array of size 1>
 AXHelp: 
-AXParent: 
+AXParent: <AXCell>
 AXSize: NSSize: {28, 18}
 AXTitle: 
 AXDescription: 
 AXValue: 
 AXFocused: 0
 AXEnabled: 1
-AXWindow: 
+AXWindow: <AXCell>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: 
-AXEndTextMarker: 
+AXStartTextMarker: <AXCell>
+AXEndTextMarker: <AXCell>
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: 
+AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
-AXDOMClassList: 
+AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXColumnHeaderUIElements: 
-AXRowHeaderUIElements: 
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
 AXElementBusy: 0
 AXRequired: 0
 
 ------------
-
 PASS successfullyParsed is true
 
 TEST COMPLETE

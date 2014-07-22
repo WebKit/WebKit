@@ -37,9 +37,10 @@
 
           var grid = accessibilityController.accessibleElementById("grid");
 
-          debug(grid.attributesOfColumnHeaders());
-          debug("\n");
-          debug(grid.attributesOfRowHeaders());
+          var output = grid.attributesOfColumnHeaders();
+          output += "\n";
+          output += grid.attributesOfRowHeaders();
+          document.getElementById("console").innerText = output;
     }
 
 </script>
