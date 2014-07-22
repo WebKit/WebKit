@@ -1,3 +1,20 @@
+2014-07-22  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win] Crash after plugin is unloaded.
+        https://bugs.webkit.org/show_bug.cgi?id=119044
+
+        Reviewed by Darin Adler.
+
+        We need to invalidate all runtime objects when a plugin view is destroyed, in case the plugin is unloaded,
+        and one of these runtime objects accesses the plugin function table upon destruction afterwards, which will cause a crash.
+        If we use the weak pointer to the runtime object when invalidating, it will be null if it's in the WeakImpl::Dead state.
+        This means the runtime object will not be invalidated, possibly causing a crash if the plugin is unloaded.
+        It should be safe to use the raw pointer to the runtime object when invalidating, since finalized runtime objects
+        will be removed from the set of runtime objects in the method RootObject::finalize().
+
+        * bridge/runtime_root.cpp:
+        (JSC::Bindings::RootObject::invalidate): Make sure all runtime objects are invalidated by getting the raw runtime object pointer from the hash key.
+
 2014-07-22  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION (WebKit2): Selection inside accelerated overflow:scroll doesn't track scrolling.

@@ -106,13 +106,10 @@ void RootObject::invalidate()
         return;
 
     {
-        HashMap<RuntimeObject*, JSC::Weak<RuntimeObject>>::iterator end = m_runtimeObjects.end();
-        for (HashMap<RuntimeObject*, JSC::Weak<RuntimeObject>>::iterator it = m_runtimeObjects.begin(); it != end; ++it) {
-            RuntimeObject* runtimeObject = it->value.get();
-            if (!runtimeObject) // Skip zombies.
-                continue;
+        // Get the objects from the keys; the values might be nulled.
+        // Safe because finalized runtime objects are removed from m_runtimeObjects by RootObject::finalize.
+        for (RuntimeObject* runtimeObject : m_runtimeObjects.keys())
             runtimeObject->invalidate();
-        }
 
         m_runtimeObjects.clear();
     }
