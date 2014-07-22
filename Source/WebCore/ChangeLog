@@ -1,3 +1,15 @@
+2014-07-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Rollout r170529 due to ~10% performance regression on the
+        perf test Animation/balls.
+        https://bugs.webkit.org/show_bug.cgi?id=134972
+
+        Reviewed by Martin Robinson.
+
+        Reverted changeset:
+        "Increase priority on SharedTimer source."
+        https://trac.webkit.org/r170529
+
 2014-07-18  Dirk Schulze  <krit@webkit.org>
 
         Turn width/height to presentation attributes
