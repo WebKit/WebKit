@@ -1,3 +1,12 @@
+2014-07-22  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix attempt on the EFL port after r171362.
+
+        Build break because of -Werror=return-type
+
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::makesCalls):
+
 2014-07-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         JSLock release should only modify the AtomicStringTable if it modified in acquire

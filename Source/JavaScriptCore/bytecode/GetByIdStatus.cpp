@@ -374,6 +374,8 @@ bool GetByIdStatus::makesCalls() const
         return true;
     }
     RELEASE_ASSERT_NOT_REACHED();
+
+    return false;
 }
 
 void GetByIdStatus::dump(PrintStream& out) const
