@@ -54,6 +54,10 @@
 #include "JSWebSocket.h"
 #endif
 
+#if ENABLE(USER_MESSAGE_HANDLERS)
+#include "JSWebKitNamespace.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -90,6 +94,16 @@ static EncodedJSValue namedItemGetter(ExecState* exec, JSObject* slotBase, Encod
 
     return JSValue::encode(toJS(exec, thisObj->globalObject(), toHTMLDocument(document)->windowNamedItem(*atomicPropertyName)));
 }
+
+#if ENABLE(USER_MESSAGE_HANDLERS)
+static EncodedJSValue jsDOMWindowWebKit(ExecState* exec, JSObject*, EncodedJSValue thisValue, PropertyName)
+{
+    JSDOMWindow* castedThis = toJSDOMWindow(JSValue::decode(thisValue));
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->impl()))
+        return JSValue::encode(jsUndefined());
+    return JSValue::encode(toJS(exec, castedThis->globalObject(), castedThis->impl().webkitNamespace()));
+}
+#endif
 
 bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
@@ -173,6 +187,13 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
         slot.setCacheableCustom(thisObject, allowsAccess ? entry->attributes() : ReadOnly | DontDelete | DontEnum, entry->propertyGetter());
         return true;
     }
+
+#if ENABLE(USER_MESSAGE_HANDLERS)
+    if (propertyName == exec->propertyNames().webkit && thisObject->impl().shouldHaveWebKitNamespaceForWorld(thisObject->world())) {
+        slot.setCacheableCustom(thisObject, allowsAccess ? DontDelete | ReadOnly : ReadOnly | DontDelete | DontEnum, jsDOMWindowWebKit);
+        return true;
+    }
+#endif
 
     // Do prototype lookup early so that functions and attributes in the prototype can have
     // precedence over the index and name getters.  
