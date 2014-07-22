@@ -372,6 +372,13 @@ my @testCases =
     },
 );
 
+# This test should only be run on Windows
+if ($^O ne 'MSWin32') {
+    plan(tests => 1);
+    is(1, 1, 'do nothing for non-Windows builds.');
+    exit 0;    
+}
+
 my $testCasesCount = scalar(@testCases) * 10; # 10 expected results
 plan(tests => $testCasesCount);
 
