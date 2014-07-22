@@ -299,6 +299,30 @@ String WebContext::platformDefaultOpenGLCacheDirectory() const
 #endif
 }
 
+String WebContext::platformDefaultNetworkingHSTSDatabasePath() const
+{
+#if PLATFORM(IOS)
+    String path = pathForProcessContainer();
+    if (path.isEmpty())
+        path = NSHomeDirectory();
+
+    path = path + "/Library/Caches/com.apple.WebKit.Networking/";
+    path = stringByResolvingSymlinksInPath(path);
+
+    NSError *error = nil;
+    NSString* nsPath = path;
+    if (![[NSFileManager defaultManager] createDirectoryAtPath:nsPath withIntermediateDirectories:YES attributes:nil error:&error]) {
+        NSLog(@"could not create \"%@\", error %@", nsPath, error);
+        return String();
+    }
+
+    return path + "HSTS.plist";
+#else
+    notImplemented();
+    return [@"" stringByStandardizingPath];
+#endif
+}
+
 String WebContext::platformMediaCacheDirectory() const
 {
 #if PLATFORM(IOS)

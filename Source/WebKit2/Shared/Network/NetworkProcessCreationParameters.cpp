@@ -44,6 +44,10 @@ void NetworkProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) con
     encoder << diskCacheDirectoryExtensionHandle;
     encoder << cookieStorageDirectory;
     encoder << cookieStorageDirectoryExtensionHandle;
+#if PLATFORM(IOS)
+    encoder << hstsDatabasePath;
+    encoder << hstsDatabasePathExtensionHandle;
+#endif
     encoder << shouldUseTestingNetworkSession;
 #if ENABLE(CUSTOM_PROTOCOLS)
     encoder << urlSchemesRegisteredForCustomProtocols;
@@ -79,6 +83,12 @@ bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Net
         return false;
     if (!decoder.decode(result.cookieStorageDirectoryExtensionHandle))
         return false;
+#if PLATFORM(IOS)
+    if (!decoder.decode(result.hstsDatabasePath))
+        return false;
+    if (!decoder.decode(result.hstsDatabasePathExtensionHandle))
+        return false;
+#endif
     if (!decoder.decode(result.shouldUseTestingNetworkSession))
         return false;
 #if ENABLE(CUSTOM_PROTOCOLS)

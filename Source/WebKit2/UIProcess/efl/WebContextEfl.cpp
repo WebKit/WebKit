@@ -138,7 +138,7 @@ String WebContext::platformDefaultOpenGLCacheDirectory() const
     return String();
 }
 
-String WebContext::platformMediaCacheDirectory() const
+String WebContext::platformDefaultNetworkingHSTSDatabasePath() const
 {
     notImplemented();
     return String();

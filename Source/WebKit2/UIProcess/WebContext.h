@@ -427,6 +427,9 @@ private:
     String openGLCacheDirectory() const;
     String platformDefaultOpenGLCacheDirectory() const;
 
+    String networkingHSTSDatabasePath() const;
+    String platformDefaultNetworkingHSTSDatabasePath() const;
+
     String mediaCacheDirectory() const;
     String platformMediaCacheDirectory() const;
 

@@ -160,6 +160,12 @@ String WebContext::platformMediaCacheDirectory() const
     return String();
 }
 
+String WebContext::platformDefaultNetworkingHSTSDatabasePath() const
+{
+    notImplemented();
+    return String();
+}
+
 void WebContext::setIgnoreTLSErrors(bool ignoreTLSErrors)
 {
     m_ignoreTLSErrors = ignoreTLSErrors;
