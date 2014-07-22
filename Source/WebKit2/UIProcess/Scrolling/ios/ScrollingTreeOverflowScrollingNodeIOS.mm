@@ -70,6 +70,7 @@ using namespace WebCore;
 
     if (scrollView.panGestureRecognizer.state == UIGestureRecognizerStateBegan)
         _scrollingTreeNode->overflowScrollViewWillStartPanGesture();
+    _scrollingTreeNode->overflowScrollWillStart();
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)willDecelerate
@@ -77,6 +78,7 @@ using namespace WebCore;
     if (_inUserInteraction && !willDecelerate) {
         _inUserInteraction = NO;
         _scrollingTreeNode->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
+        _scrollingTreeNode->overflowScrollDidEnd();
     }
 }
 
@@ -85,6 +87,7 @@ using namespace WebCore;
     if (_inUserInteraction) {
         _inUserInteraction = NO;
         _scrollingTreeNode->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
+        _scrollingTreeNode->overflowScrollDidEnd();
     }
 }
 
@@ -230,6 +233,16 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateChildNodesAfterScroll(const Fl
 
     for (auto& child : *m_children)
         child->updateLayersAfterAncestorChange(*this, fixedPositionRect, scrollDelta);
+}
+
+void ScrollingTreeOverflowScrollingNodeIOS::overflowScrollWillStart()
+{
+    scrollingTree().scrollingTreeNodeWillStartScroll();
+}
+
+void ScrollingTreeOverflowScrollingNodeIOS::overflowScrollDidEnd()
+{
+    scrollingTree().scrollingTreeNodeDidEndScroll();
 }
 
 void ScrollingTreeOverflowScrollingNodeIOS::overflowScrollViewWillStartPanGesture()

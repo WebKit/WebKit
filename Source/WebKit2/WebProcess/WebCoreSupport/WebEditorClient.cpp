@@ -339,6 +339,13 @@ void WebEditorClient::textDidChangeInTextArea(Element* element)
     m_page->injectedBundleFormClient().textDidChangeInTextArea(m_page, toHTMLTextAreaElement(element), webFrame);
 }
 
+#if !PLATFORM(IOS)
+void WebEditorClient::overflowScrollPositionChanged()
+{
+    notImplemented();
+}
+#endif
+
 static bool getActionTypeForKeyEvent(KeyboardEvent* event, WKInputFieldActionType& type)
 {
     String key = event->keyIdentifier();

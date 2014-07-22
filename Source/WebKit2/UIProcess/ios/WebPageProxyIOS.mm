@@ -251,6 +251,16 @@ void WebPageProxy::overflowScrollViewDidScroll()
     m_pageClient.overflowScrollViewDidScroll();
 }
 
+void WebPageProxy::overflowScrollWillStartScroll()
+{
+    m_pageClient.overflowScrollWillStartScroll();
+}
+
+void WebPageProxy::overflowScrollDidEndScroll()
+{
+    m_pageClient.overflowScrollDidEndScroll();
+}
+
 void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, const WebCore::FloatSize& minimumLayoutSizeForMinimalUI, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const FloatRect& targetUnobscuredRectInScrollViewCoordinates,  double targetScale, int32_t deviceOrientation)
 {
     if (!isValid())

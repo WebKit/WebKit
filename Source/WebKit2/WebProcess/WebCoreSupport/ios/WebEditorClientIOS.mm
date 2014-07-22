@@ -134,6 +134,11 @@ int WebEditorClient::pasteboardChangeCount()
     return 0;
 }
 
+void WebEditorClient::overflowScrollPositionChanged()
+{
+    m_page->didChangeSelection();
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

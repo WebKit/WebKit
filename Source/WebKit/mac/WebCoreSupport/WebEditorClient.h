@@ -132,6 +132,7 @@ private:
     virtual bool doTextFieldCommandFromEvent(WebCore::Element*, WebCore::KeyboardEvent*) override;
     virtual void textWillBeDeletedInTextField(WebCore::Element*) override;
     virtual void textDidChangeInTextArea(WebCore::Element*) override;
+    virtual void overflowScrollPositionChanged() override { };
 
 #if PLATFORM(IOS)
     virtual void startDelayingAndCoalescingContentChangeNotifications() override;

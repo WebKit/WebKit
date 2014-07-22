@@ -28,6 +28,7 @@
 #if ENABLE(ASYNC_SCROLLING)
 #include "AsyncScrollingCoordinator.h"
 
+#include "EditorClient.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsLayer.h"
@@ -308,6 +309,8 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
         scrollableArea->setIsUserScroll(scrollingLayerPositionAction == SyncScrollingLayerPosition);
         scrollableArea->scrollToOffsetWithoutAnimation(scrollPosition);
         scrollableArea->setIsUserScroll(false);
+        if (scrollingLayerPositionAction == SetScrollingLayerPosition)
+            m_page->editorClient()->overflowScrollPositionChanged();
     }
 }
 

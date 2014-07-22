@@ -471,6 +471,7 @@ public:
     virtual bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*) override { return false; }
     virtual void textWillBeDeletedInTextField(Element*) override { }
     virtual void textDidChangeInTextArea(Element*) override { }
+    virtual void overflowScrollPositionChanged() override { }
 
 #if PLATFORM(IOS)
     virtual void startDelayingAndCoalescingContentChangeNotifications() override { }

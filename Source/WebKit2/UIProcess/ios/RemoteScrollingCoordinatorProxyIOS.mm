@@ -103,6 +103,16 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartPanGesture()
     m_webPageProxy.overflowScrollViewWillStartPanGesture();
 }
 
+void RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartScroll()
+{
+    m_webPageProxy.overflowScrollWillStartScroll();
+}
+    
+void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidEndScroll()
+{
+    m_webPageProxy.overflowScrollDidEndScroll();
+}
+
 } // namespace WebKit
 
 

@@ -147,6 +147,9 @@ private:
     virtual void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale) override;
     virtual void overflowScrollViewWillStartPanGesture() override;
     virtual void overflowScrollViewDidScroll() override;
+    virtual void overflowScrollWillStartScroll() override;
+    virtual void overflowScrollDidEndScroll() override;
+
     virtual void didFinishDrawingPagesToPDF(const IPC::DataReference&) override;
 
     // Auxiliary Client Creation

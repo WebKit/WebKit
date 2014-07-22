@@ -645,6 +645,16 @@ void PageClientImpl::overflowScrollViewDidScroll()
     [m_contentView _didScroll];
 }
 
+void PageClientImpl::overflowScrollWillStartScroll()
+{
+    [m_contentView _overflowScrollingWillBegin];
+}
+
+void PageClientImpl::overflowScrollDidEndScroll()
+{
+    [m_contentView _overflowScrollingDidEnd];
+}
+
 void PageClientImpl::didFinishDrawingPagesToPDF(const IPC::DataReference& pdfData)
 {
     RetainPtr<CFDataRef> data = adoptCF(CFDataCreate(kCFAllocatorDefault, pdfData.data(), pdfData.size()));
