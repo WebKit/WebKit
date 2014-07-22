@@ -20,7 +20,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXLink: 'Delicious cake'>
 AXEndTextMarker: <AXLink: 'Delicious cake'>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink: 'Delicious cake'>
@@ -50,7 +50,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXImage>
 AXEndTextMarker: <AXImage>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXImage>

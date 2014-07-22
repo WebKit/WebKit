@@ -25,7 +25,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXCell>
 AXEndTextMarker: <AXCell>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
@@ -60,7 +60,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXCell>
 AXEndTextMarker: <AXCell>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
@@ -95,7 +95,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXCell>
 AXEndTextMarker: <AXCell>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
@@ -130,7 +130,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXCell>
 AXEndTextMarker: <AXCell>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
@@ -165,7 +165,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXCell>
 AXEndTextMarker: <AXCell>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>

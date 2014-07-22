@@ -18,7 +18,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXTable>
 AXEndTextMarker: <AXTable>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
@@ -60,7 +60,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXTable>
 AXEndTextMarker: <AXTable>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
@@ -101,7 +101,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXGroup>
 AXEndTextMarker: <AXGroup>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
@@ -133,7 +133,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXTable>
 AXEndTextMarker: <AXTable>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
@@ -174,7 +174,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXTable>
 AXEndTextMarker: <AXTable>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
@@ -215,7 +215,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXTable>
 AXEndTextMarker: <AXTable>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
@@ -257,7 +257,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXTable>
 AXEndTextMarker: <AXTable>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
@@ -298,7 +298,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXGroup>
 AXEndTextMarker: <AXGroup>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
@@ -330,7 +330,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXGroup>
 AXEndTextMarker: <AXGroup>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
@@ -362,7 +362,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXTable>
 AXEndTextMarker: <AXTable>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
@@ -403,7 +403,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXGroup>
 AXEndTextMarker: <AXGroup>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
@@ -435,7 +435,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXGroup>
 AXEndTextMarker: <AXGroup>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
@@ -473,7 +473,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXTable>
 AXEndTextMarker: <AXTable>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
@@ -514,7 +514,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXTable>
 AXEndTextMarker: <AXTable>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
@@ -556,7 +556,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXGroup>
 AXEndTextMarker: <AXGroup>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
@@ -589,7 +589,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXTable>
 AXEndTextMarker: <AXTable>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
@@ -632,7 +632,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXTable>
 AXEndTextMarker: <AXTable>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
@@ -675,7 +675,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXTable>
 AXEndTextMarker: <AXTable>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
@@ -717,7 +717,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXTable>
 AXEndTextMarker: <AXTable>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
@@ -781,7 +781,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXTable>
 AXEndTextMarker: <AXTable>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>

@@ -15,7 +15,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXWebArea>
 AXEndTextMarker: <AXWebArea>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXWebArea>

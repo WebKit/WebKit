@@ -2762,8 +2762,6 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([attributeName isEqualToString: NSAccessibilityLinkedUIElementsAttribute]) {
         AccessibilityObject::AccessibilityChildrenVector linkedUIElements;
         m_object->linkedUIElements(linkedUIElements);
-        if (linkedUIElements.size() == 0)
-            return nil;
         return convertToNSArray(linkedUIElements);
     }
     

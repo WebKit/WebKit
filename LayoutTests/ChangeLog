@@ -1,5 +1,35 @@
 2014-07-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [Mac] Cocoa throws exception when the return type of NSAccessibilityLinkedUIElementsAttribute is not an array
+        https://bugs.webkit.org/show_bug.cgi?id=135165
+
+        Reviewed by Simon Fraser.
+
+        Updating tests.
+
+        * accessibility/parent-delete-expected.txt:
+        * accessibility/transformed-element-expected.txt:
+        * platform/mac/accessibility/aria-columnrowheaders-expected.txt:
+        * platform/mac/accessibility/bounds-for-range-expected.txt:
+        * platform/mac/accessibility/document-attributes-expected.txt:
+        * platform/mac/accessibility/document-links-expected.txt:
+        * platform/mac/accessibility/image-link-expected.txt:
+        * platform/mac/accessibility/image-map2-expected.txt:
+        * platform/mac/accessibility/internal-link-anchors-expected.txt:
+        * platform/mac/accessibility/internal-link-anchors2-expected.txt:
+        * platform/mac/accessibility/lists-expected.txt:
+        * platform/mac/accessibility/plugin-expected.txt:
+        * platform/mac/accessibility/table-attributes-expected.txt:
+        * platform/mac/accessibility/table-cell-spans-expected.txt:
+        * platform/mac/accessibility/table-cells-expected.txt:
+        * platform/mac/accessibility/table-detection-expected.txt:
+        * platform/mac/accessibility/table-one-cell-expected.txt:
+        * platform/mac/accessibility/table-sections-expected.txt:
+        * platform/mac/accessibility/table-with-rules-expected.txt:
+        * platform/mac-mountainlion/accessibility/lists-expected.txt:
+
+2014-07-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [Mac] accessibility/aria-columnrowheaders.html doesn't test lengths of arrays
         https://bugs.webkit.org/show_bug.cgi?id=135166
 

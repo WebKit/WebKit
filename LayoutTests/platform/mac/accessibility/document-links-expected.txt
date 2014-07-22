@@ -17,7 +17,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: (null)
 AXEndTextMarker: (null)
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink>
@@ -47,7 +47,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: (null)
 AXEndTextMarker: (null)
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink>
@@ -77,7 +77,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXLink: 'link 3'>
 AXEndTextMarker: <AXLink: 'link 3'>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink: 'link 3'>
@@ -106,7 +106,7 @@ AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXLink: 'link 4'>
 AXEndTextMarker: <AXLink: 'link 4'>
 AXVisited: 0
-AXLinkedUIElements: (null)
+AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink: 'link 4'>
