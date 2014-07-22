@@ -36,8 +36,10 @@
 (allow file-read* (extension "com.apple.webkit.read"))
 
 ;; Access to client's cache folder & re-vending to CFNetwork.
-(allow file-read* file-write* (extension "com.apple.nsurlstorage.extension-cache"))
-(allow file-issue-extension (extension-class "com.apple.nsurlstorage.extension-cache"))
+;; FIXME: Remove the webkti specific extension classes <rdar://problem/17755931>
+(allow file-issue-extension (require-all
+    (require-any (extension "com.apple.webkit.read-write") (extension "com.apple.app-sandbox.read-write"))
+    (extension-class "com.apple.nsurlstorage.extension-cache")))
 
 ;; App sandbox extensions
 (allow file-read* file-write* (extension "com.apple.app-sandbox.read-write"))

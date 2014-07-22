@@ -10,6 +10,10 @@
 	<true/>
 	<key>com.apple.private.webinspector.proxy-application</key>
 	<true/>
+	<key>com.apple.locationd.authorizeapplications</key>
+	<true/>
+	<key>com.apple.locationd.effective_bundle</key>
+	<true/>
 	<key>seatbelt-profiles</key>
 	<array>
 		<string>com.apple.WebKit.WebContent</string>
