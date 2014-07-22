@@ -93,7 +93,7 @@ JSLock::~JSLock()
 void JSLock::willDestroyVM(VM* vm)
 {
     ASSERT_UNUSED(vm, m_vm == vm);
-    m_vm = 0;
+    m_vm = nullptr;
 }
 
 void JSLock::setExclusiveThread(std::thread::id threadId)
@@ -167,8 +167,10 @@ void JSLock::unlock(intptr_t unlockCount)
 
 void JSLock::willReleaseLock()
 {
-    if (m_vm)
-        m_vm->setStackPointerAtVMEntry(nullptr);
+    if (!m_vm)
+        return;
+
+    m_vm->setStackPointerAtVMEntry(nullptr);
 
     wtfThreadData().setCurrentAtomicStringTable(m_entryAtomicStringTable);
 }
