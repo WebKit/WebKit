@@ -394,7 +394,7 @@ foreach my $testCase (@testCases) {
     open(TEST_OUTPUT, '<', $outputFile) or die "Unable to open $outputFile";
 
     while (my $line = <TEST_OUTPUT>) {
-        foreach my $expectedResultKey (keys $expectedResults) {
+        foreach my $expectedResultKey (keys %$expectedResults) {
             if ($line !~ m/$expectedResultKey/) {
                 next;
             }
