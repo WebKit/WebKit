@@ -28,10 +28,6 @@
 (import "common.sb")
 (import "removed-dev-nodes.sb")
 
-;; Access CFNetwork shared cookies
-;; This is too generous -- <rdar://problem/17496756>
-(apple-cookie-access 'with-read-write)
-
 ;; Sandbox extensions
 (allow file-read* (extension "com.apple.webkit.read"))
 

@@ -32,10 +32,6 @@
 (apple-ui-app "com.apple.WebKit.WebContent" 'with-opengl)
 (opengl)
 
-;; Access CFNetwork shared cookies
-;; This is too generous -- <rdar://problem/17496756>
-(apple-cookie-access 'with-read-write)
-
 ;; Access to media controls
 (play-media)
 (media-remote)
