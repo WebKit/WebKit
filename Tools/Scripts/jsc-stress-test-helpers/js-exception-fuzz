@@ -67,6 +67,10 @@ sub fail {
     die "Failure for command $commandString with seed $seed, repeat $repeat: $context";
 }
 
+if (shift @ARGV) {
+    die "Ignoring garbage arguments; only the first non-option argument is used as the command string.";
+}
+
 open (my $testInput, "$commandString --enableExceptionFuzz=true |") or fail("Cannot execute initial command when getting check count");
 while (my $inputLine = <$testInput>) {
     chomp($inputLine);

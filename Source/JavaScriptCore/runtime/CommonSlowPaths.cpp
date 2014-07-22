@@ -32,6 +32,7 @@
 #include "CodeProfiling.h"
 #include "CommonSlowPathsExceptions.h"
 #include "ErrorHandlingScope.h"
+#include "ExceptionFuzz.h"
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
 #include "Interpreter.h"
@@ -92,6 +93,7 @@ namespace JSC {
     } while (false)
 
 #define CHECK_EXCEPTION() do {                    \
+        doExceptionFuzzingIfEnabled(exec, "CommonSlowPaths", pc);   \
         if (UNLIKELY(vm.exception())) {           \
             RETURN_TO_THROW(exec, pc);               \
             END_IMPL();                           \

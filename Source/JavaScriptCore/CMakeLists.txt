@@ -380,7 +380,8 @@ set(JavaScriptCore_SOURCES
     runtime/ErrorHandlingScope.cpp
     runtime/ErrorInstance.cpp
     runtime/ErrorPrototype.cpp
-    runtime/ExceptionHelpers.cpp
+    runtime/ExceptionFuzz.cpp
+    runtime/ExceptionHelpers.cpp 
     runtime/Executable.cpp
     runtime/FunctionConstructor.cpp
     runtime/FunctionExecutableDump.cpp

@@ -1,3 +1,24 @@
+2014-07-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Extend exception fuzzing to the LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=135076
+
+        Reviewed by Oliver Hunt.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JITOperations.cpp:
+        (JSC::numberOfExceptionFuzzChecks): Deleted.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall):
+        * runtime/CommonSlowPaths.cpp:
+        * runtime/ExceptionFuzz.cpp: Added.
+        (JSC::numberOfExceptionFuzzChecks):
+        (JSC::doExceptionFuzzing):
+        * runtime/ExceptionFuzz.h: Added.
+        (JSC::doExceptionFuzzingIfEnabled):
+
 2014-07-21  Mark Lam  <mark.lam@apple.com>
 
         Refactor ArrayPrototype to use getLength() and putLength() utility functions.

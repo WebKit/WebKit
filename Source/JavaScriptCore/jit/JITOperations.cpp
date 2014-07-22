@@ -38,6 +38,7 @@
 #include "Debugger.h"
 #include "Error.h"
 #include "ErrorHandlingScope.h"
+#include "ExceptionFuzz.h"
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
 #include "JIT.h"
@@ -55,9 +56,6 @@
 #include <wtf/InlineASM.h>
 
 namespace JSC {
-
-static unsigned s_numberOfExceptionFuzzChecks;
-unsigned numberOfExceptionFuzzChecks() { return s_numberOfExceptionFuzzChecks; }
 
 extern "C" {
 
@@ -1810,21 +1808,11 @@ void JIT_OPERATION operationVMHandleException(ExecState* exec)
 // testing.
 void JIT_OPERATION operationExceptionFuzz()
 {
-    ASSERT(Options::enableExceptionFuzz());
-
     // This probably "just works" for GCC also, but I haven't tried.
 #if COMPILER(CLANG)
     ExecState* exec = static_cast<ExecState*>(__builtin_frame_address(1));
-    DeferGCForAWhile deferGC(exec->vm().heap);
-    
-    s_numberOfExceptionFuzzChecks++;
-    
-    unsigned fireTarget = Options::fireExceptionFuzzAt();
-    if (fireTarget == s_numberOfExceptionFuzzChecks) {
-        printf("JSC EXCEPTION FUZZ: Throwing fuzz exception with call frame %p and return address %p.\n", exec, __builtin_return_address(0));
-        exec->vm().throwException(
-            exec, createError(exec->lexicalGlobalObject(), ASCIILiteral("Exception Fuzz")));
-    }
+    void* returnPC = __builtin_return_address(0);
+    doExceptionFuzzing(exec, "JITOperations", returnPC);
 #endif // COMPILER(CLANG)
 }
 

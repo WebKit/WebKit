@@ -667,6 +667,7 @@
     <ClCompile Include="..\runtime\ErrorHandlingScope.cpp" />
     <ClCompile Include="..\runtime\ErrorInstance.cpp" />
     <ClCompile Include="..\runtime\ErrorPrototype.cpp" />
+    <ClCompile Include="..\runtime\ExceptionFuzz.cpp" />
     <ClCompile Include="..\runtime\ExceptionHelpers.cpp" />
     <ClCompile Include="..\runtime\Executable.cpp" />
     <ClCompile Include="..\runtime\FunctionConstructor.cpp" />
@@ -1378,6 +1379,7 @@
     <ClInclude Include="..\runtime\ErrorHandlingScope.h" />
     <ClInclude Include="..\runtime\ErrorInstance.h" />
     <ClInclude Include="..\runtime\ErrorPrototype.h" />
+    <ClInclude Include="..\runtime\ExceptionFuzz.h" />
     <ClInclude Include="..\runtime\ExceptionHelpers.h" />
     <ClInclude Include="..\runtime\Executable.h" />
     <ClInclude Include="..\runtime\Float32Array.h" />

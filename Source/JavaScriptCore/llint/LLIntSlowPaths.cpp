@@ -31,6 +31,7 @@
 #include "CommonSlowPaths.h"
 #include "CommonSlowPathsExceptions.h"
 #include "ErrorHandlingScope.h"
+#include "ExceptionFuzz.h"
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
 #include "Interpreter.h"
@@ -90,6 +91,7 @@ namespace JSC { namespace LLInt {
     } while (false)
 
 #define LLINT_CHECK_EXCEPTION() do {                    \
+        doExceptionFuzzingIfEnabled(exec, "LLIntSlowPaths", pc);    \
         if (UNLIKELY(vm.exception())) {                 \
             pc = returnToThrow(exec);                   \
             LLINT_END_IMPL();                           \
@@ -147,17 +149,20 @@ namespace JSC { namespace LLInt {
         LLINT_CALL_END_IMPL(0, callToThrow(__ct_exec));                 \
     } while (false)
 
-#define LLINT_CALL_CHECK_EXCEPTION(exec) do {                           \
+#define LLINT_CALL_CHECK_EXCEPTION(exec, execCallee) do {               \
         ExecState* __cce_exec = (exec);                                 \
+        ExecState* __cce_execCallee = (execCallee);                     \
+        doExceptionFuzzingIfEnabled(__cce_exec, "LLIntSlowPaths/call", nullptr); \
         if (UNLIKELY(vm.exception()))                                   \
-            LLINT_CALL_END_IMPL(0, callToThrow(__cce_exec));            \
+            LLINT_CALL_END_IMPL(0, callToThrow(__cce_execCallee));      \
     } while (false)
 
-#define LLINT_CALL_RETURN(exec, callTarget) do {                        \
+#define LLINT_CALL_RETURN(exec, execCallee, callTarget) do {            \
         ExecState* __cr_exec = (exec);                                  \
+        ExecState* __cr_execCallee = (execCallee);                      \
         void* __cr_callTarget = (callTarget);                           \
-        LLINT_CALL_CHECK_EXCEPTION(__cr_exec);                          \
-        LLINT_CALL_END_IMPL(__cr_exec, __cr_callTarget);                \
+        LLINT_CALL_CHECK_EXCEPTION(__cr_exec, __cr_execCallee);         \
+        LLINT_CALL_END_IMPL(__cr_execCallee, __cr_callTarget);          \
     } while (false)
 
 #define LLINT_RETURN_CALLEE_FRAME(execCallee) do {                      \
@@ -1041,7 +1046,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
             execCallee->setCallee(asObject(callee));
             vm.hostCallReturnValue = JSValue::decode(callData.native.function(execCallee));
             
-            LLINT_CALL_RETURN(execCallee, LLInt::getCodePtr(getHostCallReturnValue));
+            LLINT_CALL_RETURN(execCallee, execCallee, LLInt::getCodePtr(getHostCallReturnValue));
         }
         
 #if LLINT_SLOW_PATH_TRACING
@@ -1064,7 +1069,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
         execCallee->setCallee(asObject(callee));
         vm.hostCallReturnValue = JSValue::decode(constructData.native.function(execCallee));
 
-        LLINT_CALL_RETURN(execCallee, LLInt::getCodePtr(getHostCallReturnValue));
+        LLINT_CALL_RETURN(execCallee, execCallee, LLInt::getCodePtr(getHostCallReturnValue));
     }
     
 #if LLINT_SLOW_PATH_TRACING
@@ -1077,10 +1082,12 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
 
 inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, CodeSpecializationKind kind, JSValue calleeAsValue, LLIntCallLinkInfo* callLinkInfo = 0)
 {
-#if LLINT_SLOW_PATH_TRACING
-    dataLogF("Performing call with recorded PC = %p\n", execCallee->callerFrame()->currentVPC());
-#endif
+    ExecState* exec = execCallee->callerFrame();
 
+#if LLINT_SLOW_PATH_TRACING
+    dataLogF("Performing call with recorded PC = %p\n", exec->currentVPC());
+#endif
+    
     JSCell* calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (!calleeAsFunctionCell)
         return handleHostCall(execCallee, pc, calleeAsValue, kind);
@@ -1100,7 +1107,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
         JSObject* error = functionExecutable->prepareForExecution(execCallee, callee, &scope, kind);
         execCallee->setScope(scope);
         if (error)
-            LLINT_CALL_THROW(execCallee->callerFrame(), error);
+            LLINT_CALL_THROW(exec, error);
         codeBlock = functionExecutable->codeBlockFor(kind);
         ASSERT(codeBlock);
         ArityCheckMode arity;
@@ -1114,9 +1121,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     ASSERT(!!codePtr);
     
     if (!LLINT_ALWAYS_ACCESS_SLOW && callLinkInfo) {
-        ExecState* execCaller = execCallee->callerFrame();
-        
-        CodeBlock* callerCodeBlock = execCaller->codeBlock();
+        CodeBlock* callerCodeBlock = exec->codeBlock();
 
         ConcurrentJITLocker locker(callerCodeBlock->m_lock);
         
@@ -1126,10 +1131,10 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
         callLinkInfo->lastSeenCallee.set(vm, callerCodeBlock->ownerExecutable(), callee);
         callLinkInfo->machineCodeTarget = codePtr;
         if (codeBlock)
-            codeBlock->linkIncomingCall(execCaller, callLinkInfo);
+            codeBlock->linkIncomingCall(exec, callLinkInfo);
     }
 
-    LLINT_CALL_RETURN(execCallee, codePtr.executableAddress());
+    LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress());
 }
 
 inline SlowPathReturnType genericCall(ExecState* exec, Instruction* pc, CodeSpecializationKind kind)
@@ -1172,7 +1177,7 @@ LLINT_SLOW_PATH_DECL(slow_path_size_frame_for_varargs)
     
     ExecState* execCallee = sizeFrameForVarargs(exec, &vm.interpreter->stack(),
         LLINT_OP_C(4).jsValue(), pc[5].u.operand, pc[6].u.operand);
-    LLINT_CALL_CHECK_EXCEPTION(exec);
+    LLINT_CALL_CHECK_EXCEPTION(exec, exec);
     
     vm.newCallFrameReturnValue = execCallee;
 
@@ -1191,7 +1196,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_varargs)
     ExecState* execCallee = vm.newCallFrameReturnValue;
 
     loadVarargs(exec, execCallee, LLINT_OP_C(3).jsValue(), LLINT_OP_C(4).jsValue(), pc[6].u.operand);
-    LLINT_CALL_CHECK_EXCEPTION(exec);
+    LLINT_CALL_CHECK_EXCEPTION(exec, exec);
     
     execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;
     execCallee->setCallerFrame(exec);
@@ -1212,7 +1217,7 @@ LLINT_SLOW_PATH_DECL(slow_path_construct_varargs)
     ExecState* execCallee = vm.newCallFrameReturnValue;
     
     loadVarargs(exec, execCallee, LLINT_OP_C(3).jsValue(), LLINT_OP_C(4).jsValue(), pc[6].u.operand);
-    LLINT_CALL_CHECK_EXCEPTION(exec);
+    LLINT_CALL_CHECK_EXCEPTION(exec, exec);
     
     execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;
     execCallee->setCallerFrame(exec);
@@ -1240,7 +1245,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_eval)
         return setUpCall(execCallee, pc, CodeForCall, calleeAsValue);
     
     vm.hostCallReturnValue = eval(execCallee);
-    LLINT_CALL_RETURN(execCallee, LLInt::getCodePtr(getHostCallReturnValue));
+    LLINT_CALL_RETURN(exec, execCallee, LLInt::getCodePtr(getHostCallReturnValue));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_tear_off_activation)
