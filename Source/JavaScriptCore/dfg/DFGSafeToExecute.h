@@ -257,6 +257,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case Int52Rep:
     case BooleanToNumber:
     case FiatInt52:
+    case GetGetter:
+    case GetSetter:
         return true;
         
     case GetByVal:
@@ -289,6 +291,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
             StructureSet(node->structureTransitionData().previousStructure));
         
     case GetByOffset:
+    case GetGetterSetterByOffset:
     case PutByOffset:
         return state.forNode(node->child1()).m_currentKnownStructure.isValidOffset(
             graph.m_storageAccessData[node->storageAccessDataIndex()].offset);

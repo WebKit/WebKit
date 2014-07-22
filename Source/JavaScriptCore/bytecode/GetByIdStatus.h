@@ -26,6 +26,7 @@
 #ifndef GetByIdStatus_h
 #define GetByIdStatus_h
 
+#include "CallLinkStatus.h"
 #include "CodeOrigin.h"
 #include "ConcurrentJITLock.h"
 #include "ExitingJITType.h"
@@ -83,7 +84,7 @@ public:
     const GetByIdVariant& operator[](size_t index) const { return at(index); }
 
     bool takesSlowPath() const { return m_state == TakesSlowPath || m_state == MakesCalls; }
-    bool makesCalls() const { return m_state == MakesCalls; }
+    bool makesCalls() const;
     
     bool wasSeenInJIT() const { return m_wasSeenInJIT; }
     
@@ -94,9 +95,10 @@ private:
     static bool hasExitSite(const ConcurrentJITLocker&, CodeBlock*, unsigned bytecodeIndex, ExitingJITType = ExitFromAnything);
 #endif
 #if ENABLE(JIT)
-    static GetByIdStatus computeForStubInfo(const ConcurrentJITLocker&, CodeBlock*, StructureStubInfo*, StringImpl* uid);
+    static GetByIdStatus computeForStubInfo(
+        const ConcurrentJITLocker&, CodeBlock* profiledBlock, StructureStubInfo*,
+        StringImpl* uid, CallLinkStatus::ExitSiteData);
 #endif
-    bool computeForChain(CodeBlock*, StringImpl* uid, PassRefPtr<IntendedStructureChain>);
     static GetByIdStatus computeFromLLInt(CodeBlock*, unsigned bytecodeIndex, StringImpl* uid);
     
     bool appendVariant(const GetByIdVariant&);

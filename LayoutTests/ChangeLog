@@ -1,3 +1,43 @@
+2014-07-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Merge r168635, r168780, r169005, r169014, and r169143 from ftlopt.
+
+    2014-05-20  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] DFG bytecode parser should turn GetById with nothing but a Getter stub as stuff+handleCall, and handleCall should be allowed to inline if it wants to
+            https://bugs.webkit.org/show_bug.cgi?id=133105
+    
+            Reviewed by Michael Saboff.
+    
+            * js/regress/getter-no-activation-expected.txt: Added.
+            * js/regress/getter-no-activation.html: Added.
+            * js/regress/script-tests/getter-no-activation.js: Added.
+            * js/regress/getter-richards-expected.txt: Added.
+            * js/regress/getter-richards.html: Added.
+            * js/regress/script-tests/getter-richards.js: Added.
+    
+    2014-05-08  Filip Pizlo  <fpizlo@apple.com>
+    
+            jsSubstring() should be lazy
+            https://bugs.webkit.org/show_bug.cgi?id=132556
+    
+            Reviewed by Andreas Kling.
+            
+            These tests get 35-50% faster.
+    
+            * js/regress/script-tests/substring-concat-weird.js: Added.
+            (foo):
+            * js/regress/script-tests/substring-concat.js: Added.
+            (foo):
+            * js/regress/script-tests/substring.js: Added.
+            (foo):
+            * js/regress/substring-concat-expected.txt: Added.
+            * js/regress/substring-concat-weird-expected.txt: Added.
+            * js/regress/substring-concat-weird.html: Added.
+            * js/regress/substring-concat.html: Added.
+            * js/regress/substring-expected.txt: Added.
+            * js/regress/substring.html: Added.
+    
 2014-07-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Mac] Cocoa throws exception when the return type of NSAccessibilityLinkedUIElementsAttribute is not an array

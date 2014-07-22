@@ -1433,6 +1433,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
         
     case GetCallee:
+    case GetGetter:
+    case GetSetter:
         forNode(node).setType(SpecFunction);
         break;
         
@@ -1655,6 +1657,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case GetByOffset: {
         forNode(node).makeHeapTop();
+        break;
+    }
+        
+    case GetGetterSetterByOffset: {
+        forNode(node).set(m_graph, m_graph.m_vm.getterSetterStructure.get());
         break;
     }
         

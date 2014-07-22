@@ -1,3 +1,17 @@
+2014-07-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Merge r168635, r168780, r169005, r169014, and r169143 from ftlopt.
+
+    2014-05-20  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] DFG bytecode parser should turn GetById with nothing but a Getter stub as stuff+handleCall, and handleCall should be allowed to inline if it wants to
+            https://bugs.webkit.org/show_bug.cgi?id=133105
+    
+            Reviewed by Michael Saboff.
+    
+            * wtf/Bag.h:
+            (WTF::Bag::iterator::operator!=):
+    
 2014-07-19  Zan Dobersek  <zdobersek@igalia.com>
 
         [WTF] Add the move constructor, move assignment operator for HashTable

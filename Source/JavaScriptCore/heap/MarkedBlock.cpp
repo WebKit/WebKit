@@ -74,6 +74,8 @@ MarkedBlock::FreeList MarkedBlock::specializedSweep()
     ASSERT(blockState != Allocated && blockState != FreeListed);
     ASSERT(!(dtorType == MarkedBlock::None && sweepMode == SweepOnly));
 
+    SamplingRegion samplingRegion((dtorType != MarkedBlock::None && blockState != New) ? "Calling destructors" : "sweeping");
+    
     // This produces a free list that is ordered in reverse through the block.
     // This is fine, since the allocation code makes no assumptions about the
     // order of the free list.

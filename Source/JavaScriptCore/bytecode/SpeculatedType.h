@@ -59,7 +59,7 @@ static const SpeculatedType SpecObject             = 0x0000ffff; // Bitmask used
 static const SpeculatedType SpecStringIdent        = 0x00010000; // It's definitely a JSString, and it's an identifier.
 static const SpeculatedType SpecStringVar          = 0x00020000; // It's definitely a JSString, and it's not an identifier.
 static const SpeculatedType SpecString             = 0x00030000; // It's definitely a JSString.
-static const SpeculatedType SpecCellOther          = 0x00040000; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString.
+static const SpeculatedType SpecCellOther          = 0x00040000; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString. FIXME: This shouldn't be part of heap-top or bytecode-top. https://bugs.webkit.org/show_bug.cgi?id=133078
 static const SpeculatedType SpecCell               = 0x0007ffff; // It's definitely a JSCell.
 static const SpeculatedType SpecInt32              = 0x00200000; // It's definitely an Int32.
 static const SpeculatedType SpecInt52              = 0x00400000; // It's definitely an Int52 and we intend it to unbox it.

@@ -49,7 +49,6 @@ void StructureStubInfo::deref()
         return;
     }
     case access_get_by_id_self:
-    case access_get_by_id_chain:
     case access_put_by_id_transition_normal:
     case access_put_by_id_transition_direct:
     case access_put_by_id_replace:
@@ -66,11 +65,6 @@ bool StructureStubInfo::visitWeakReferences(RepatchBuffer& repatchBuffer)
     switch (accessType) {
     case access_get_by_id_self:
         if (!Heap::isMarked(u.getByIdSelf.baseObjectStructure.get()))
-            return false;
-        break;
-    case access_get_by_id_chain:
-        if (!Heap::isMarked(u.getByIdChain.baseObjectStructure.get())
-            || !Heap::isMarked(u.getByIdChain.chain.get()))
             return false;
         break;
     case access_get_by_id_list: {

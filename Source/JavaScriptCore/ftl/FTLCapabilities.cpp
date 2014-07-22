@@ -72,6 +72,9 @@ inline CapabilityLevel canCompile(Node* node)
     case NewArray:
     case NewArrayBuffer:
     case GetByOffset:
+    case GetGetterSetterByOffset:
+    case GetGetter:
+    case GetSetter:
     case PutByOffset:
     case GetGlobalVar:
     case PutGlobalVar:

@@ -193,6 +193,20 @@ private:
             changed |= setPrediction(node->getHeapPrediction());
             break;
         }
+            
+        case GetGetterSetterByOffset: {
+            changed |= setPrediction(SpecCellOther);
+            break;
+        }
+
+        case GetGetter:
+        case GetSetter:
+        case GetCallee:
+        case NewFunctionNoCheck:
+        case NewFunctionExpression: {
+            changed |= setPrediction(SpecFunction);
+            break;
+        }
 
         case StringCharCodeAt: {
             changed |= setPrediction(SpecInt32);
@@ -396,12 +410,19 @@ private:
                 changed |= mergePrediction(SpecFullDouble);
                 break;
             case Array::Uint32Array:
-                if (isInt32Speculation(node->getHeapPrediction()))
+                if (isInt32SpeculationForArithmetic(node->getHeapPrediction()))
                     changed |= mergePrediction(SpecInt32);
                 else if (enableInt52())
                     changed |= mergePrediction(SpecMachineInt);
                 else
                     changed |= mergePrediction(SpecInt32 | SpecInt52AsDouble);
+                break;
+            case Array::Int8Array:
+            case Array::Uint8Array:
+            case Array::Int16Array:
+            case Array::Uint16Array:
+            case Array::Int32Array:
+                changed |= mergePrediction(SpecInt32);
                 break;
             default:
                 changed |= mergePrediction(node->getHeapPrediction());
@@ -440,11 +461,6 @@ private:
         case SkipTopScope:
         case SkipScope: {
             changed |= setPrediction(SpecObjectOther);
-            break;
-        }
-            
-        case GetCallee: {
-            changed |= setPrediction(SpecFunction);
             break;
         }
             
@@ -507,12 +523,6 @@ private:
                 changed |= mergePrediction((child & ~SpecEmpty) | SpecFunction);
             else
                 changed |= mergePrediction(child);
-            break;
-        }
-            
-        case NewFunctionNoCheck:
-        case NewFunctionExpression: {
-            changed |= setPrediction(SpecFunction);
             break;
         }
             

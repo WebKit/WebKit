@@ -120,26 +120,36 @@ CallLinkStatus CallLinkStatus::computeFor(
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(map);
 #if ENABLE(DFG_JIT)
-    if (profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache))
-        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCacheWatchpoint))
-        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadExecutable)))
+    ExitSiteData exitSiteData = computeExitSiteData(locker, profiledBlock, bytecodeIndex);
+    if (exitSiteData.m_takesSlowPath)
         return takesSlowPath();
     
     CallLinkInfo* callLinkInfo = map.get(CodeOrigin(bytecodeIndex));
     if (!callLinkInfo)
         return computeFromLLInt(locker, profiledBlock, bytecodeIndex);
     
-    CallLinkStatus result = computeFor(locker, *callLinkInfo);
-    if (!result)
-        return computeFromLLInt(locker, profiledBlock, bytecodeIndex);
-    
-    if (profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadFunction)))
-        result.makeClosureCall();
-    
-    return result;
+    return computeFor(locker, *callLinkInfo, exitSiteData);
 #else
     return CallLinkStatus();
 #endif
+}
+
+CallLinkStatus::ExitSiteData CallLinkStatus::computeExitSiteData(
+    const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex,
+    ExitingJITType exitingJITType)
+{
+    ExitSiteData exitSiteData;
+    
+#if ENABLE(DFG_JIT)
+    exitSiteData.m_takesSlowPath =
+        profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache, exitingJITType))
+        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCacheWatchpoint, exitingJITType))
+        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadExecutable, exitingJITType));
+    exitSiteData.m_badFunction =
+        profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadFunction, exitingJITType));
+#endif
+    
+    return exitSiteData;
 }
 
 #if ENABLE(JIT)
@@ -173,6 +183,19 @@ CallLinkStatus CallLinkStatus::computeFor(const ConcurrentJITLocker&, CallLinkIn
 
     return CallLinkStatus(target);
 }
+
+CallLinkStatus CallLinkStatus::computeFor(
+    const ConcurrentJITLocker& locker, CallLinkInfo& callLinkInfo, ExitSiteData exitSiteData)
+{
+    if (exitSiteData.m_takesSlowPath)
+        return takesSlowPath();
+    
+    CallLinkStatus result = computeFor(locker, callLinkInfo);
+    if (exitSiteData.m_badFunction)
+        result.makeClosureCall();
+    
+    return result;
+}
 #endif
 
 void CallLinkStatus::computeDFGStatuses(
@@ -185,9 +208,6 @@ void CallLinkStatus::computeDFGStatuses(
         CallLinkInfo& info = **iter;
         CodeOrigin codeOrigin = info.codeOrigin;
         
-        bool takeSlowPath;
-        bool badFunction;
-        
         // Check if we had already previously made a terrible mistake in the FTL for this
         // code origin. Note that this is approximate because we could have a monovariant
         // inline in the FTL that ended up failing. We should fix that at some point by
@@ -197,28 +217,16 @@ void CallLinkStatus::computeDFGStatuses(
         // InlineCallFrames.
         CodeBlock* currentBaseline =
             baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, baselineCodeBlock);
+        ExitSiteData exitSiteData;
         {
             ConcurrentJITLocker locker(currentBaseline->m_lock);
-            takeSlowPath =
-                currentBaseline->hasExitSite(locker, DFG::FrequentExitSite(codeOrigin.bytecodeIndex, BadCache, ExitFromFTL))
-                || currentBaseline->hasExitSite(locker, DFG::FrequentExitSite(codeOrigin.bytecodeIndex, BadCacheWatchpoint, ExitFromFTL))
-                || currentBaseline->hasExitSite(locker, DFG::FrequentExitSite(codeOrigin.bytecodeIndex, BadExecutable, ExitFromFTL));
-            badFunction =
-                currentBaseline->hasExitSite(locker, DFG::FrequentExitSite(codeOrigin.bytecodeIndex, BadFunction, ExitFromFTL));
+            exitSiteData = computeExitSiteData(
+                locker, currentBaseline, codeOrigin.bytecodeIndex, ExitFromFTL);
         }
         
         {
             ConcurrentJITLocker locker(dfgCodeBlock->m_lock);
-            if (takeSlowPath)
-                map.add(info.codeOrigin, takesSlowPath());
-            else {
-                CallLinkStatus status = computeFor(locker, info);
-                if (status.isSet()) {
-                    if (badFunction)
-                        status.makeClosureCall();
-                    map.add(info.codeOrigin, status);
-                }
-            }
+            map.add(info.codeOrigin, computeFor(locker, info, exitSiteData));
         }
     }
 #else

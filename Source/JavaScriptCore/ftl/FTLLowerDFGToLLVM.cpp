@@ -495,7 +495,14 @@ private:
             compileStringCharCodeAt();
             break;
         case GetByOffset:
+        case GetGetterSetterByOffset:
             compileGetByOffset();
+            break;
+        case GetGetter:
+            compileGetGetter();
+            break;
+        case GetSetter:
+            compileGetSetter();
             break;
         case MultiGetByOffset:
             compileMultiGetByOffset();
@@ -3185,6 +3192,16 @@ private:
         
         setJSValue(loadProperty(
             lowStorage(m_node->child1()), data.identifierNumber, data.offset));
+    }
+    
+    void compileGetGetter()
+    {
+        setJSValue(m_out.loadPtr(lowCell(m_node->child1()), m_heaps.GetterSetter_getter));
+    }
+    
+    void compileGetSetter()
+    {
+        setJSValue(m_out.loadPtr(lowCell(m_node->child1()), m_heaps.GetterSetter_setter));
     }
     
     void compileMultiGetByOffset()

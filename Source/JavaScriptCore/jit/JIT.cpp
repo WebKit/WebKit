@@ -109,6 +109,17 @@ void JIT::emitEnterOptimizationCheck()
 }
 #endif
 
+void JIT::assertStackPointerOffset()
+{
+    if (ASSERT_DISABLED)
+        return;
+    
+    addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, regT0);
+    Jump ok = branchPtr(Equal, regT0, stackPointerRegister);
+    breakpoint();
+    ok.link(this);
+}
+
 #define NEXT_OPCODE(name) \
     m_bytecodeOffset += OPCODE_LENGTH(name); \
     break;
@@ -574,7 +585,7 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
 #endif
         move(TrustedImmPtr(m_vm->arityCheckFailReturnThunks->returnPCsFor(*m_vm, m_codeBlock->numParameters())), thunkReg);
         loadPtr(BaseIndex(thunkReg, regT0, timesPtr()), thunkReg);
-        emitNakedCall(m_vm->getCTIStub(arityFixup).code());
+        emitNakedCall(m_vm->getCTIStub(arityFixupGenerator).code());
 
 #if !ASSERT_DISABLED
         m_bytecodeOffset = (unsigned)-1; // Reset this, in order to guard its use with ASSERTs.

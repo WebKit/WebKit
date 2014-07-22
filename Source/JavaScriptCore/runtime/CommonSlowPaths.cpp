@@ -165,7 +165,7 @@ static CommonSlowPaths::ArityCheckData* setupArityCheckData(VM& vm, int slotsToA
     result->paddedStackSpace = slotsToAdd;
 #if ENABLE(JIT)
     if (vm.canUseJIT()) {
-        result->thunkToCall = vm.getCTIStub(arityFixup).code().executableAddress();
+        result->thunkToCall = vm.getCTIStub(arityFixupGenerator).code().executableAddress();
         result->returnPC = vm.arityCheckFailReturnThunks->returnPCFor(vm, slotsToAdd * stackAlignmentRegisters()).executableAddress();
     } else
 #endif

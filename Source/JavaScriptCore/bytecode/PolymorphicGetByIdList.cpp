@@ -58,27 +58,11 @@ GetByIdAccess GetByIdAccess::fromStructureStubInfo(StructureStubInfo& stubInfo)
     
     GetByIdAccess result;
     
-    switch (stubInfo.accessType) {
-    case access_get_by_id_self:
-        result.m_type = SimpleInline;
-        result.m_structure.copyFrom(stubInfo.u.getByIdSelf.baseObjectStructure);
-        result.m_stubRoutine = JITStubRoutine::createSelfManagedRoutine(initialSlowPath);
-        break;
-        
-    case access_get_by_id_chain:
-        result.m_structure.copyFrom(stubInfo.u.getByIdChain.baseObjectStructure);
-        result.m_chain.copyFrom(stubInfo.u.getByIdChain.chain);
-        result.m_chainCount = stubInfo.u.getByIdChain.count;
-        result.m_stubRoutine = stubInfo.stubRoutine;
-        if (stubInfo.u.getByIdChain.isDirect)
-            result.m_type = SimpleStub;
-        else
-            result.m_type = Getter;
-        break;
-        
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-    }
+    RELEASE_ASSERT(stubInfo.accessType == access_get_by_id_self);
+    
+    result.m_type = SimpleInline;
+    result.m_structure.copyFrom(stubInfo.u.getByIdSelf.baseObjectStructure);
+    result.m_stubRoutine = JITStubRoutine::createSelfManagedRoutine(initialSlowPath);
     
     return result;
 }
@@ -109,7 +93,6 @@ PolymorphicGetByIdList* PolymorphicGetByIdList::from(StructureStubInfo& stubInfo
     
     ASSERT(
         stubInfo.accessType == access_get_by_id_self
-        || stubInfo.accessType == access_get_by_id_chain
         || stubInfo.accessType == access_unset);
     
     PolymorphicGetByIdList* result = new PolymorphicGetByIdList(stubInfo);

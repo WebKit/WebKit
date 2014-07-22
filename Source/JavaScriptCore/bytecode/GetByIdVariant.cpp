@@ -26,9 +26,30 @@
 #include "config.h"
 #include "GetByIdVariant.h"
 
+#include "CallLinkStatus.h"
 #include "JSCInlines.h"
 
 namespace JSC {
+
+GetByIdVariant::~GetByIdVariant() { }
+
+GetByIdVariant::GetByIdVariant(const GetByIdVariant& other)
+{
+    *this = other;
+}
+
+GetByIdVariant& GetByIdVariant::operator=(const GetByIdVariant& other)
+{
+    m_structureSet = other.m_structureSet;
+    m_chain = other.m_chain;
+    m_specificValue = other.m_specificValue;
+    m_offset = other.m_offset;
+    if (other.m_callLinkStatus)
+        m_callLinkStatus = std::make_unique<CallLinkStatus>(*other.m_callLinkStatus);
+    else
+        m_callLinkStatus = nullptr;
+    return *this;
+}
 
 void GetByIdVariant::dump(PrintStream& out) const
 {
@@ -45,7 +66,10 @@ void GetByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const
     out.print(
         "<", inContext(structureSet(), context), ", ",
         pointerDumpInContext(chain(), context), ", ",
-        inContext(specificValue(), context), ", ", offset(), ">");
+        inContext(specificValue(), context), ", ", offset());
+    if (m_callLinkStatus)
+        out.print("call: ", *m_callLinkStatus);
+    out.print(">");
 }
 
 } // namespace JSC

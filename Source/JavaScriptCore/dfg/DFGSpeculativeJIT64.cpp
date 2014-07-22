@@ -35,6 +35,7 @@
 #include "DFGOperations.h"
 #include "DFGSlowPathGenerator.h"
 #include "Debugger.h"
+#include "GetterSetter.h"
 #include "JSCInlines.h"
 #include "ObjectPrototype.h"
 #include "SpillRegistersMode.h"
@@ -3938,7 +3939,8 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case GetByOffset: {
+    case GetByOffset:
+    case GetGetterSetterByOffset: {
         StorageOperand storage(this, node->child1());
         GPRTemporary result(this, Reuse, storage);
         
@@ -3950,6 +3952,32 @@ void SpeculativeJIT::compile(Node* node)
         m_jit.load64(JITCompiler::Address(storageGPR, offsetRelativeToBase(storageAccessData.offset)), resultGPR);
         
         jsValueResult(resultGPR, node);
+        break;
+    }
+        
+    case GetGetter: {
+        SpeculateCellOperand op1(this, node->child1());
+        GPRTemporary result(this, Reuse, op1);
+        
+        GPRReg op1GPR = op1.gpr();
+        GPRReg resultGPR = result.gpr();
+        
+        m_jit.loadPtr(JITCompiler::Address(op1GPR, GetterSetter::offsetOfGetter()), resultGPR);
+        
+        cellResult(resultGPR, node);
+        break;
+    }
+        
+    case GetSetter: {
+        SpeculateCellOperand op1(this, node->child1());
+        GPRTemporary result(this, Reuse, op1);
+        
+        GPRReg op1GPR = op1.gpr();
+        GPRReg resultGPR = result.gpr();
+        
+        m_jit.loadPtr(JITCompiler::Address(op1GPR, GetterSetter::offsetOfSetter()), resultGPR);
+        
+        cellResult(resultGPR, node);
         break;
     }
         

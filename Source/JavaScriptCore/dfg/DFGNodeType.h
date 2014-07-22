@@ -181,7 +181,10 @@ namespace JSC { namespace DFG {
     macro(GetIndexedPropertyStorage, NodeResultStorage) \
     macro(ConstantStoragePointer, NodeResultStorage) \
     macro(TypedArrayWatchpoint, NodeMustGenerate) \
+    macro(GetGetter, NodeResultJS) \
+    macro(GetSetter, NodeResultJS) \
     macro(GetByOffset, NodeResultJS) \
+    macro(GetGetterSetterByOffset, NodeResultJS) \
     macro(MultiGetByOffset, NodeResultJS) \
     macro(PutByOffset, NodeMustGenerate) \
     macro(MultiPutByOffset, NodeMustGenerate) \

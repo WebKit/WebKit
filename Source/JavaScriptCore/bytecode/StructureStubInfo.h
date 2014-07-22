@@ -47,7 +47,6 @@ class PolymorphicPutByIdList;
 
 enum AccessType {
     access_get_by_id_self,
-    access_get_by_id_chain,
     access_get_by_id_list,
     access_put_by_id_transition_normal,
     access_put_by_id_transition_direct,
@@ -61,7 +60,6 @@ inline bool isGetByIdAccess(AccessType accessType)
 {
     switch (accessType) {
     case access_get_by_id_self:
-    case access_get_by_id_chain:
     case access_get_by_id_list:
         return true;
     default:
@@ -105,16 +103,6 @@ struct StructureStubInfo {
         accessType = access_get_by_id_self;
 
         u.getByIdSelf.baseObjectStructure.set(vm, owner, baseObjectStructure);
-    }
-
-    void initGetByIdChain(VM& vm, JSCell* owner, Structure* baseObjectStructure, StructureChain* chain, unsigned count, bool isDirect)
-    {
-        accessType = access_get_by_id_chain;
-
-        u.getByIdChain.baseObjectStructure.set(vm, owner, baseObjectStructure);
-        u.getByIdChain.chain.set(vm, owner, chain);
-        u.getByIdChain.count = count;
-        u.getByIdChain.isDirect = isDirect;
     }
 
     void initGetByIdList(PolymorphicGetByIdList* list)

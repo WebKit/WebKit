@@ -158,9 +158,6 @@ ArrayMode ArrayMode::refine(
     // should just trust the array profile.
     
     switch (type()) {
-    case Array::Unprofiled:
-        return ArrayMode(Array::ForceExit);
-        
     case Array::Undecided:
         if (!value)
             return withType(Array::ForceExit);
@@ -189,6 +186,7 @@ ArrayMode ArrayMode::refine(
             return withConversion(Array::RageConvert);
         return *this;
         
+    case Array::Unprofiled:
     case Array::SelectUsingPredictions: {
         base &= ~SpecOther;
         
@@ -239,6 +237,8 @@ ArrayMode ArrayMode::refine(
         if (isFloat64ArraySpeculation(base))
             return result.withType(Array::Float64Array);
 
+        if (type() == Array::Unprofiled)
+            return ArrayMode(Array::ForceExit);
         return ArrayMode(Array::Generic);
     }
 

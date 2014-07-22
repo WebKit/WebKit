@@ -215,6 +215,14 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         write(World);
         return;
         
+    case GetGetter:
+        read(GetterSetter_getter);
+        return;
+        
+    case GetSetter:
+        read(GetterSetter_setter);
+        return;
+        
     case GetCallee:
         read(AbstractHeap(Variables, JSStack::Callee));
         return;
@@ -484,6 +492,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         return;
         
     case GetByOffset:
+    case GetGetterSetterByOffset:
         read(AbstractHeap(NamedProperties, graph.m_storageAccessData[node->storageAccessDataIndex()].identifierNumber));
         return;
         

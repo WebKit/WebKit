@@ -201,6 +201,10 @@ public:
     StructureStubInfo* addStubInfo();
     Bag<StructureStubInfo>::iterator stubInfoBegin() { return m_stubInfos.begin(); }
     Bag<StructureStubInfo>::iterator stubInfoEnd() { return m_stubInfos.end(); }
+    
+    // O(n) operation. Use getStubInfoMap() unless you really only intend to get one
+    // stub info.
+    StructureStubInfo* findStubInfo(CodeOrigin);
 
     void resetStub(StructureStubInfo&);
     
@@ -1191,7 +1195,7 @@ inline CodeBlock* baselineCodeBlockForInlineCallFrame(InlineCallFrame* inlineCal
     RELEASE_ASSERT(inlineCallFrame);
     ExecutableBase* executable = inlineCallFrame->executable.get();
     RELEASE_ASSERT(executable->structure()->classInfo() == FunctionExecutable::info());
-    return static_cast<FunctionExecutable*>(executable)->baselineCodeBlockFor(inlineCallFrame->isCall ? CodeForCall : CodeForConstruct);
+    return static_cast<FunctionExecutable*>(executable)->baselineCodeBlockFor(inlineCallFrame->specializationKind());
 }
 
 inline CodeBlock* baselineCodeBlockForOriginAndBaselineCodeBlock(const CodeOrigin& codeOrigin, CodeBlock* baselineCodeBlock)

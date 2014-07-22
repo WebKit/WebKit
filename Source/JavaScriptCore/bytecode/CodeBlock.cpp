@@ -348,11 +348,6 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
                 out.printf("self");
                 baseStructure = stubInfo.u.getByIdSelf.baseObjectStructure.get();
                 break;
-            case access_get_by_id_chain:
-                out.printf("chain");
-                baseStructure = stubInfo.u.getByIdChain.baseObjectStructure.get();
-                chain = stubInfo.u.getByIdChain.chain.get();
-                break;
             case access_get_by_id_list:
                 out.printf("list");
                 list = stubInfo.u.getByIdList.list;
@@ -2323,6 +2318,15 @@ StructureStubInfo* CodeBlock::addStubInfo()
 {
     ConcurrentJITLocker locker(m_lock);
     return m_stubInfos.add();
+}
+
+StructureStubInfo* CodeBlock::findStubInfo(CodeOrigin codeOrigin)
+{
+    for (StructureStubInfo* stubInfo : m_stubInfos) {
+        if (stubInfo->codeOrigin == codeOrigin)
+            return stubInfo;
+    }
+    return nullptr;
 }
 
 CallLinkInfo* CodeBlock::addCallLinkInfo()

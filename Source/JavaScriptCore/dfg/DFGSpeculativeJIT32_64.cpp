@@ -35,6 +35,7 @@
 #include "DFGOperations.h"
 #include "DFGSlowPathGenerator.h"
 #include "Debugger.h"
+#include "GetterSetter.h"
 #include "JSActivation.h"
 #include "ObjectPrototype.h"
 #include "JSCInlines.h"
@@ -3831,6 +3832,47 @@ void SpeculativeJIT::compile(Node* node)
         m_jit.load32(JITCompiler::Address(storageGPR, offsetRelativeToBase(storageAccessData.offset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTagGPR);
         
         jsValueResult(resultTagGPR, resultPayloadGPR, node);
+        break;
+    }
+        
+    case GetGetterSetterByOffset: {
+        StorageOperand storage(this, node->child1());
+        GPRTemporary resultPayload(this);
+        
+        GPRReg storageGPR = storage.gpr();
+        GPRReg resultPayloadGPR = resultPayload.gpr();
+        
+        StorageAccessData& storageAccessData = m_jit.graph().m_storageAccessData[node->storageAccessDataIndex()];
+        
+        m_jit.load32(JITCompiler::Address(storageGPR, offsetRelativeToBase(storageAccessData.offset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), resultPayloadGPR);
+        
+        cellResult(resultPayloadGPR, node);
+        break;
+    }
+        
+    case GetGetter: {
+        SpeculateCellOperand op1(this, node->child1());
+        GPRTemporary result(this, Reuse, op1);
+        
+        GPRReg op1GPR = op1.gpr();
+        GPRReg resultGPR = result.gpr();
+        
+        m_jit.loadPtr(JITCompiler::Address(op1GPR, GetterSetter::offsetOfGetter()), resultGPR);
+        
+        cellResult(resultGPR, node);
+        break;
+    }
+        
+    case GetSetter: {
+        SpeculateCellOperand op1(this, node->child1());
+        GPRTemporary result(this, Reuse, op1);
+        
+        GPRReg op1GPR = op1.gpr();
+        GPRReg resultGPR = result.gpr();
+        
+        m_jit.loadPtr(JITCompiler::Address(op1GPR, GetterSetter::offsetOfSetter()), resultGPR);
+        
+        cellResult(resultGPR, node);
         break;
     }
         

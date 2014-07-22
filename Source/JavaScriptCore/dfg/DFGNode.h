@@ -1157,7 +1157,7 @@ struct Node {
     
     bool hasStorageAccessData()
     {
-        return op() == GetByOffset || op() == PutByOffset;
+        return op() == GetByOffset || op() == GetGetterSetterByOffset || op() == PutByOffset;
     }
     
     unsigned storageAccessDataIndex()

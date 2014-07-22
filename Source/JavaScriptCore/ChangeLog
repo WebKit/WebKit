@@ -1,3 +1,294 @@
+2014-07-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Merge r168635, r168780, r169005, r169014, and r169143 from ftlopt.
+
+    2014-05-20  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] DFG bytecode parser should turn GetById with nothing but a Getter stub as stuff+handleCall, and handleCall should be allowed to inline if it wants to
+            https://bugs.webkit.org/show_bug.cgi?id=133105
+    
+            Reviewed by Michael Saboff.
+            
+            - GetByIdStatus now knows about getters and can report intelligent things about them.
+              As is usually the case with how we do these things, GetByIdStatus knows more about
+              getters than the DFG can actually handle: it'll report details about polymorphic
+              getter calls even though the DFG won't be able to handle those. This is fine; the DFG
+              will see those statuses and bail to a generic slow path.
+            
+            - The DFG::ByteCodeParser now knows how to set up and do handleCall() for a getter call.
+              This can, and usually does, result in inlining of getters!
+            
+            - CodeOrigin and OSR exit know about inlined getter calls. When you OSR out of an
+              inlined getter, we set the return PC to a getter return thunk that fixes up the stack.
+              We use the usual offset-true-return-PC trick, where OSR exit places the true return PC
+              of the getter's caller as a phony argument that only the thunk knows how to find.
+            
+            - Removed a bunch of dead monomorphic chain support from StructureStubInfo.
+            
+            - A large chunk of this change is dragging GetGetterSetterByOffset, GetGetter, and
+              GetSetter through the DFG and FTL. GetGetterSetterByOffset is like GetByOffset except
+              that we know that we're returning a GetterSetter cell. GetGetter and GetSetter extract
+              the getter, or setter, from the GetterSetter.
+            
+            This is a ~2.5x speed-up on the getter microbenchmarks that we already had. So far none
+            of the "real" benchmarks exercise getters enough for this to matter. But I noticed that
+            some of the variants of the Richards benchmark in other languages - for example
+            Wolczko's Java translation of a C++ translation of Deutsch's Smalltalk version - use
+            getters and setters extensively. So, I created a getter/setter JavaScript version of
+            Richards and put it in regress/script-tests/getter-richards.js. That sees about a 2.4x
+            speed-up from this patch, which is very reassuring.
+    
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::printGetByIdCacheStatus):
+            (JSC::CodeBlock::findStubInfo):
+            * bytecode/CodeBlock.h:
+            * bytecode/CodeOrigin.cpp:
+            (WTF::printInternal):
+            * bytecode/CodeOrigin.h:
+            (JSC::InlineCallFrame::specializationKindFor):
+            * bytecode/GetByIdStatus.cpp:
+            (JSC::GetByIdStatus::computeFor):
+            (JSC::GetByIdStatus::computeForStubInfo):
+            (JSC::GetByIdStatus::makesCalls):
+            (JSC::GetByIdStatus::computeForChain): Deleted.
+            * bytecode/GetByIdStatus.h:
+            (JSC::GetByIdStatus::makesCalls): Deleted.
+            * bytecode/GetByIdVariant.cpp:
+            (JSC::GetByIdVariant::~GetByIdVariant):
+            (JSC::GetByIdVariant::GetByIdVariant):
+            (JSC::GetByIdVariant::operator=):
+            (JSC::GetByIdVariant::dumpInContext):
+            * bytecode/GetByIdVariant.h:
+            (JSC::GetByIdVariant::GetByIdVariant):
+            (JSC::GetByIdVariant::callLinkStatus):
+            * bytecode/PolymorphicGetByIdList.cpp:
+            (JSC::GetByIdAccess::fromStructureStubInfo):
+            (JSC::PolymorphicGetByIdList::from):
+            * bytecode/SpeculatedType.h:
+            * bytecode/StructureStubInfo.cpp:
+            (JSC::StructureStubInfo::deref):
+            (JSC::StructureStubInfo::visitWeakReferences):
+            * bytecode/StructureStubInfo.h:
+            (JSC::isGetByIdAccess):
+            (JSC::StructureStubInfo::initGetByIdChain): Deleted.
+            * dfg/DFGAbstractHeap.h:
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::addCall):
+            (JSC::DFG::ByteCodeParser::handleCall):
+            (JSC::DFG::ByteCodeParser::handleInlining):
+            (JSC::DFG::ByteCodeParser::handleGetByOffset):
+            (JSC::DFG::ByteCodeParser::handleGetById):
+            (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+            (JSC::DFG::ByteCodeParser::parse):
+            * dfg/DFGCSEPhase.cpp:
+            (JSC::DFG::CSEPhase::getGetterSetterByOffsetLoadElimination):
+            (JSC::DFG::CSEPhase::getInternalFieldLoadElimination):
+            (JSC::DFG::CSEPhase::performNodeCSE):
+            (JSC::DFG::CSEPhase::getTypedArrayByteOffsetLoadElimination): Deleted.
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize):
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::fixupNode):
+            * dfg/DFGJITCompiler.cpp:
+            (JSC::DFG::JITCompiler::linkFunction):
+            * dfg/DFGNode.h:
+            (JSC::DFG::Node::hasStorageAccessData):
+            * dfg/DFGNodeType.h:
+            * dfg/DFGOSRExitCompilerCommon.cpp:
+            (JSC::DFG::reifyInlinedCallFrames):
+            * dfg/DFGPredictionPropagationPhase.cpp:
+            (JSC::DFG::PredictionPropagationPhase::propagate):
+            * dfg/DFGSafeToExecute.h:
+            (JSC::DFG::safeToExecute):
+            * dfg/DFGSpeculativeJIT32_64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * ftl/FTLAbstractHeapRepository.cpp:
+            * ftl/FTLAbstractHeapRepository.h:
+            * ftl/FTLCapabilities.cpp:
+            (JSC::FTL::canCompile):
+            * ftl/FTLLink.cpp:
+            (JSC::FTL::link):
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::compileNode):
+            (JSC::FTL::LowerDFGToLLVM::compileGetGetter):
+            (JSC::FTL::LowerDFGToLLVM::compileGetSetter):
+            * jit/AccessorCallJITStubRoutine.h:
+            * jit/JIT.cpp:
+            (JSC::JIT::assertStackPointerOffset):
+            (JSC::JIT::privateCompile):
+            * jit/JIT.h:
+            * jit/JITPropertyAccess.cpp:
+            (JSC::JIT::emit_op_get_by_id):
+            * jit/ThunkGenerators.cpp:
+            (JSC::arityFixupGenerator):
+            (JSC::baselineGetterReturnThunkGenerator):
+            (JSC::baselineSetterReturnThunkGenerator):
+            (JSC::arityFixup): Deleted.
+            * jit/ThunkGenerators.h:
+            * runtime/CommonSlowPaths.cpp:
+            (JSC::setupArityCheckData):
+            * tests/stress/exit-from-getter.js: Added.
+            * tests/stress/poly-chain-getter.js: Added.
+            (Cons):
+            (foo):
+            (test):
+            * tests/stress/poly-chain-then-getter.js: Added.
+            (Cons1):
+            (Cons2):
+            (foo):
+            (test):
+            * tests/stress/poly-getter-combo.js: Added.
+            (Cons1):
+            (Cons2):
+            (foo):
+            (test):
+            (.test):
+            * tests/stress/poly-getter-then-chain.js: Added.
+            (Cons1):
+            (Cons2):
+            (foo):
+            (test):
+            * tests/stress/poly-getter-then-self.js: Added.
+            (foo):
+            (test):
+            (.test):
+            * tests/stress/poly-self-getter.js: Added.
+            (foo):
+            (test):
+            (getter):
+            * tests/stress/poly-self-then-getter.js: Added.
+            (foo):
+            (test):
+            * tests/stress/weird-getter-counter.js: Added.
+            (foo):
+            (test):
+    
+    2014-05-17  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Factor out how CallLinkStatus uses exit site data
+            https://bugs.webkit.org/show_bug.cgi?id=133042
+    
+            Reviewed by Anders Carlsson.
+            
+            This makes it easier to use CallLinkStatus from clients that are calling into after
+            already holding some of the relevant locks. This is necessary because we use a "one lock
+            at a time" policy for CodeBlock locks: if you hold one then you're not allowed to acquire
+            any of the others. So, any code that needs to lock multiple CodeBlock locks needs to sort
+            of lock one, do some stuff, release it, then lock another, and then do more stuff. The
+            exit site data corresponds to the stuff you do while holding the baseline lock, while the
+            CallLinkInfo method corresponds to the stuff you do while holding the CallLinkInfo owner's
+            lock.
+    
+            * bytecode/CallLinkStatus.cpp:
+            (JSC::CallLinkStatus::computeFor):
+            (JSC::CallLinkStatus::computeExitSiteData):
+            (JSC::CallLinkStatus::computeDFGStatuses):
+            * bytecode/CallLinkStatus.h:
+            (JSC::CallLinkStatus::ExitSiteData::ExitSiteData):
+    
+    2014-05-17  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] InlineCallFrame::isCall should be an enumeration
+            https://bugs.webkit.org/show_bug.cgi?id=133034
+    
+            Reviewed by Sam Weinig.
+            
+            Once we start inlining getters and setters, we'll want InlineCallFrame to be able to tell
+            us that the inlined call was a getter call or a setter call. Initially I thought I would
+            have a new field called "kind" that would have components NormalCall, GetterCall, and
+            SetterCall. But that doesn't make sense, because for GetterCall and SetterCall, isCall
+            would have to be true. Hence, It makes more sense to have one enumeration that is Call,
+            Construct, GetterCall, or SetterCall. This patch is a first step towards this.
+            
+            It's interesting that isClosureCall should probably still be separate, since getter and
+            setter inlining could inline closure calls.
+    
+            * bytecode/CodeBlock.h:
+            (JSC::baselineCodeBlockForInlineCallFrame):
+            * bytecode/CodeOrigin.cpp:
+            (JSC::InlineCallFrame::dumpInContext):
+            (WTF::printInternal):
+            * bytecode/CodeOrigin.h:
+            (JSC::InlineCallFrame::kindFor):
+            (JSC::InlineCallFrame::specializationKindFor):
+            (JSC::InlineCallFrame::InlineCallFrame):
+            (JSC::InlineCallFrame::specializationKind):
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+            * dfg/DFGOSRExitPreparation.cpp:
+            (JSC::DFG::prepareCodeOriginForOSRExit):
+            * runtime/Arguments.h:
+            (JSC::Arguments::finishCreation):
+    
+    2014-05-13  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] DFG should not exit due to inadequate profiling coverage when it can trivially fill in the profiling coverage due to variable constant inference and the better prediction modeling of typed array GetByVals
+            https://bugs.webkit.org/show_bug.cgi?id=132896
+    
+            Reviewed by Geoffrey Garen.
+            
+            This is a slight win on SunSpider, but it's meant to ultimately help us on
+            embenchen/lua. We already do well on that benchmark but our convergence is slower than
+            I'd like.
+    
+            * dfg/DFGArrayMode.cpp:
+            (JSC::DFG::ArrayMode::refine):
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::parseBlock):
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::fixupNode):
+            * dfg/DFGPredictionPropagationPhase.cpp:
+            (JSC::DFG::PredictionPropagationPhase::propagate):
+    
+    2014-05-08  Filip Pizlo  <fpizlo@apple.com>
+    
+            jsSubstring() should be lazy
+            https://bugs.webkit.org/show_bug.cgi?id=132556
+    
+            Reviewed by Andreas Kling.
+            
+            jsSubstring() is now lazy by using a special rope that is a substring instead of a
+            concatenation. To make this patch super simple, we require that a substring's base is
+            never a rope. Hence, when resolving a rope, we either go down a non-recursive substring
+            path, or we go down a concatenation path which may see exactly one level of substrings in
+            its fibers.
+            
+            This is up to a 50% speed-up on microbenchmarks and a 10% speed-up on Octane/regexp.
+            
+            Relanding this with assertion fixes.
+    
+            * heap/MarkedBlock.cpp:
+            (JSC::MarkedBlock::specializedSweep):
+            * runtime/JSString.cpp:
+            (JSC::JSRopeString::visitFibers):
+            (JSC::JSRopeString::resolveRopeInternal8):
+            (JSC::JSRopeString::resolveRopeInternal16):
+            (JSC::JSRopeString::clearFibers):
+            (JSC::JSRopeString::resolveRope):
+            (JSC::JSRopeString::resolveRopeSlowCase8):
+            (JSC::JSRopeString::resolveRopeSlowCase):
+            * runtime/JSString.h:
+            (JSC::JSRopeString::finishCreation):
+            (JSC::JSRopeString::append):
+            (JSC::JSRopeString::create):
+            (JSC::JSRopeString::offsetOfFibers):
+            (JSC::JSRopeString::fiber):
+            (JSC::JSRopeString::substringBase):
+            (JSC::JSRopeString::substringOffset):
+            (JSC::JSRopeString::notSubstringSentinel):
+            (JSC::JSRopeString::substringSentinel):
+            (JSC::JSRopeString::isSubstring):
+            (JSC::JSRopeString::setIsSubstring):
+            (JSC::jsSubstring):
+            * runtime/RegExpMatchesArray.cpp:
+            (JSC::RegExpMatchesArray::reifyAllProperties):
+            * runtime/StringPrototype.cpp:
+            (JSC::stringProtoFuncSubstring):
+    
 2014-07-21  Sam Weinig  <sam@webkit.org>
 
         [Cocoa] WKScriptMessageHandlers don't seem to function properly after navigating

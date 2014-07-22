@@ -30,6 +30,7 @@
 #include "CodeOrigin.h"
 #include "CodeSpecializationKind.h"
 #include "ConcurrentJITLock.h"
+#include "ExitingJITType.h"
 #include "Intrinsic.h"
 #include "JSCJSValue.h"
 
@@ -79,10 +80,23 @@ public:
     static CallLinkStatus computeFor(
         CodeBlock*, unsigned bytecodeIndex, const CallLinkInfoMap&);
 
+    struct ExitSiteData {
+        ExitSiteData()
+            : m_takesSlowPath(false)
+            , m_badFunction(false)
+        {
+        }
+        
+        bool m_takesSlowPath;
+        bool m_badFunction;
+    };
+    static ExitSiteData computeExitSiteData(const ConcurrentJITLocker&, CodeBlock*, unsigned bytecodeIndex, ExitingJITType = ExitFromAnything);
+    
 #if ENABLE(JIT)
     // Computes the status assuming that we never took slow path and never previously
     // exited.
     static CallLinkStatus computeFor(const ConcurrentJITLocker&, CallLinkInfo&);
+    static CallLinkStatus computeFor(const ConcurrentJITLocker&, CallLinkInfo&, ExitSiteData);
 #endif
     
     typedef HashMap<CodeOrigin, CallLinkStatus, CodeOriginApproximateHash> ContextMap;

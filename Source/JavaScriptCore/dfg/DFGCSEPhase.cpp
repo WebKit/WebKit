@@ -690,6 +690,40 @@ private:
         return 0;
     }
     
+    Node* getGetterSetterByOffsetLoadElimination(unsigned identifierNumber, Node* base)
+    {
+        for (unsigned i = m_indexInBlock; i--;) {
+            Node* node = m_currentBlock->at(i);
+            if (node == base)
+                break;
+
+            switch (node->op()) {
+            case GetGetterSetterByOffset:
+                if (node->child2() == base
+                    && m_graph.m_storageAccessData[node->storageAccessDataIndex()].identifierNumber == identifierNumber)
+                    return node;
+                break;
+                    
+            case PutByValDirect:
+            case PutByVal:
+            case PutByValAlias:
+                if (m_graph.byValIsPure(node)) {
+                    // If PutByVal speculates that it's accessing an array with an
+                    // integer index, then it's impossible for it to cause a structure
+                    // change.
+                    break;
+                }
+                return 0;
+                
+            default:
+                if (m_graph.clobbersWorld(node))
+                    return 0;
+                break;
+            }
+        }
+        return 0;
+    }
+    
     Node* putByOffsetStoreElimination(unsigned identifierNumber, Node* child1)
     {
         for (unsigned i = m_indexInBlock; i--;) {
@@ -845,25 +879,18 @@ private:
         return 0;
     }
     
-    Node* getTypedArrayByteOffsetLoadElimination(Node* child1)
+    Node* getInternalFieldLoadElimination(NodeType op, Node* child1)
     {
         for (unsigned i = m_indexInBlock; i--;) {
             Node* node = m_currentBlock->at(i);
             if (node == child1) 
                 break;
 
-            switch (node->op()) {
-            case GetTypedArrayByteOffset: {
-                if (node->child1() == child1)
-                    return node;
-                break;
-            }
+            if (node->op() == op && node->child1() == child1)
+                return node;
 
-            default:
-                if (m_graph.clobbersWorld(node))
-                    return 0;
-                break;
-            }
+            if (m_graph.clobbersWorld(node))
+                return 0;
         }
         return 0;
     }
@@ -1437,10 +1464,12 @@ private:
             break;
         }
             
-        case GetTypedArrayByteOffset: {
+        case GetTypedArrayByteOffset:
+        case GetGetter:
+        case GetSetter: {
             if (cseMode == StoreElimination)
                 break;
-            setReplacement(getTypedArrayByteOffsetLoadElimination(node->child1().node()));
+            setReplacement(getInternalFieldLoadElimination(node->op(), node->child1().node()));
             break;
         }
 
@@ -1454,6 +1483,12 @@ private:
             if (cseMode == StoreElimination)
                 break;
             setReplacement(getByOffsetLoadElimination(m_graph.m_storageAccessData[node->storageAccessDataIndex()].identifierNumber, node->child2().node()));
+            break;
+            
+        case GetGetterSetterByOffset:
+            if (cseMode == StoreElimination)
+                break;
+            setReplacement(getGetterSetterByOffsetLoadElimination(m_graph.m_storageAccessData[node->storageAccessDataIndex()].identifierNumber, node->child2().node()));
             break;
             
         case MultiGetByOffset:

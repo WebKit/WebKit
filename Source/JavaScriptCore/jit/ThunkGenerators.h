@@ -113,7 +113,10 @@ inline ThunkGenerator virtualThunkGeneratorFor(
 MacroAssemblerCodeRef nativeCallGenerator(VM*);
 MacroAssemblerCodeRef nativeConstructGenerator(VM*);
 MacroAssemblerCodeRef nativeTailCallGenerator(VM*);
-MacroAssemblerCodeRef arityFixup(VM*);
+MacroAssemblerCodeRef arityFixupGenerator(VM*);
+
+MacroAssemblerCodeRef baselineGetterReturnThunkGenerator(VM* vm);
+MacroAssemblerCodeRef baselineSetterReturnThunkGenerator(VM* vm);
 
 MacroAssemblerCodeRef charCodeAtThunkGenerator(VM*);
 MacroAssemblerCodeRef charAtThunkGenerator(VM*);

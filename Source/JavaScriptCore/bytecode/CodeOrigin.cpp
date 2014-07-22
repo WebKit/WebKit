@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -178,7 +178,7 @@ void InlineCallFrame::dumpInContext(PrintStream& out, DumpContext* context) cons
     out.print(briefFunctionInformation(), ":<", RawPointer(executable.get()));
     if (executable->isStrictMode())
         out.print(" (StrictMode)");
-    out.print(", bc#", caller.bytecodeIndex, ", ", specializationKind());
+    out.print(", bc#", caller.bytecodeIndex, ", ", kind);
     if (isClosureCall)
         out.print(", closure call");
     else
@@ -194,4 +194,27 @@ void InlineCallFrame::dump(PrintStream& out) const
 }
 
 } // namespace JSC
+
+namespace WTF {
+
+void printInternal(PrintStream& out, JSC::InlineCallFrame::Kind kind)
+{
+    switch (kind) {
+    case JSC::InlineCallFrame::Call:
+        out.print("Call");
+        return;
+    case JSC::InlineCallFrame::Construct:
+        out.print("Construct");
+        return;
+    case JSC::InlineCallFrame::GetterCall:
+        out.print("GetterCall");
+        return;
+    case JSC::InlineCallFrame::SetterCall:
+        out.print("SetterCall");
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+} // namespace WTF
 

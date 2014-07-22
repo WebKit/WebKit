@@ -494,6 +494,11 @@ private:
         }
 
         case GetByVal: {
+            if (!node->prediction()) {
+                m_insertionSet.insertNode(
+                    m_indexInBlock, SpecNone, ForceOSRExit, node->origin);
+            }
+            
             node->setArrayMode(
                 node->arrayMode().refine(
                     m_graph, node,
@@ -877,7 +882,9 @@ private:
         case GetClosureRegisters:
         case SkipTopScope:
         case SkipScope:
-        case GetScope: {
+        case GetScope:
+        case GetGetter:
+        case GetSetter: {
             fixEdge<KnownCellUse>(node->child1());
             break;
         }
@@ -937,7 +944,8 @@ private:
             break;
         }
             
-        case GetByOffset: {
+        case GetByOffset:
+        case GetGetterSetterByOffset: {
             if (!node->child1()->hasStorageResult())
                 fixEdge<KnownCellUse>(node->child1());
             fixEdge<KnownCellUse>(node->child2());
@@ -1035,6 +1043,8 @@ private:
             Node* globalObjectNode = m_insertionSet.insertNode(
                 m_indexInBlock, SpecNone, WeakJSConstant, node->origin, 
                 OpInfo(m_graph.globalObjectFor(node->origin.semantic)));
+            // FIXME: This probably shouldn't have an unconditional barrier.
+            // https://bugs.webkit.org/show_bug.cgi?id=133104
             Node* barrierNode = m_graph.addNode(
                 SpecNone, StoreBarrier, m_currentNode->origin, 
                 Edge(globalObjectNode, KnownCellUse));

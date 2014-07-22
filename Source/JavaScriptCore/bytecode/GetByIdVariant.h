@@ -26,6 +26,7 @@
 #ifndef GetByIdVariant_h
 #define GetByIdVariant_h
 
+#include "CallLinkStatus.h"
 #include "IntendedStructureChain.h"
 #include "JSCJSValue.h"
 #include "PropertyOffset.h"
@@ -33,6 +34,7 @@
 
 namespace JSC {
 
+class CallLinkStatus;
 class GetByIdStatus;
 struct DumpContext;
 
@@ -41,11 +43,13 @@ public:
     GetByIdVariant(
         const StructureSet& structureSet = StructureSet(),
         PropertyOffset offset = invalidOffset, JSValue specificValue = JSValue(),
-        PassRefPtr<IntendedStructureChain> chain = nullptr)
+        PassRefPtr<IntendedStructureChain> chain = nullptr,
+        std::unique_ptr<CallLinkStatus> callLinkStatus = nullptr)
         : m_structureSet(structureSet)
         , m_chain(chain)
         , m_specificValue(specificValue)
         , m_offset(offset)
+        , m_callLinkStatus(std::move(callLinkStatus))
     {
         if (!structureSet.size()) {
             ASSERT(offset == invalidOffset);
@@ -54,12 +58,18 @@ public:
         }
     }
     
+    ~GetByIdVariant();
+    
+    GetByIdVariant(const GetByIdVariant&);
+    GetByIdVariant& operator=(const GetByIdVariant&);
+    
     bool isSet() const { return !!m_structureSet.size(); }
     bool operator!() const { return !isSet(); }
     const StructureSet& structureSet() const { return m_structureSet; }
     IntendedStructureChain* chain() const { return const_cast<IntendedStructureChain*>(m_chain.get()); }
     JSValue specificValue() const { return m_specificValue; }
     PropertyOffset offset() const { return m_offset; }
+    CallLinkStatus* callLinkStatus() const { return m_callLinkStatus.get(); }
     
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
@@ -71,6 +81,7 @@ private:
     RefPtr<IntendedStructureChain> m_chain;
     JSValue m_specificValue;
     PropertyOffset m_offset;
+    std::unique_ptr<CallLinkStatus> m_callLinkStatus;
 };
 
 } // namespace JSC

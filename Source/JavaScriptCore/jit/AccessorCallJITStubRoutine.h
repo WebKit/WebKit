@@ -46,7 +46,6 @@ public:
     
     virtual bool visitWeak(RepatchBuffer&) override;
     
-private:
     std::unique_ptr<CallLinkInfo> m_callLinkInfo;
 };
 
