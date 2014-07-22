@@ -1137,6 +1137,7 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, bool want
     }
     m_viewStateChangeDispatcher->schedule();
 #else
+    UNUSED_PARAM(dispatchMode);
     dispatchViewStateChange();
 #endif
 }
