@@ -30,7 +30,6 @@
 #import "ImmutableDictionary.h"
 #import "PluginInfoStore.h"
 #import "PluginInformation.h"
-#import "PluginSandboxProfile.h"
 #import "StringUtilities.h"
 #import "WKAPICast.h"
 #import "WKPluginInformation.h"

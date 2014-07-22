@@ -29,6 +29,7 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #import "PluginProcessProxy.h"
+#import "PluginSandboxProfile.h"
 #import <WebCore/WebCoreNSStringExtras.h>
 #import <wtf/HashSet.h>
 #import <wtf/MainThread.h>
@@ -392,7 +393,9 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
     if (!getPluginInfoFromPropertyLists(bundle.get(), plugin) &&
         !getPluginInfoFromCarbonResources(bundle.get(), plugin))
         return false;
-    
+
+    plugin.hasSandboxProfile = pluginHasSandboxProfile(plugin.bundleIdentifier);
+
     RetainPtr<CFStringRef> filename = adoptCF(CFURLCopyLastPathComponent(bundleURL.get()));
     plugin.info.file = filename.get();
     

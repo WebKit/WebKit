@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "PluginInformation.h"
+#ifndef SandboxUtilities_h
+#define SandboxUtilities_h
 
-#import "PluginModuleInfo.h"
-#import "StringUtilities.h"
-#import "WebNumber.h"
-#import "WebString.h"
-#import <WebKitSystemInterface.h>
+#include <sys/types.h>
 
 namespace WebKit {
 
-void getPlatformPluginModuleInformation(const PluginModuleInfo& plugin, ImmutableDictionary::MapType& map)
-{
-    map.set(pluginInformationBundleIdentifierKey(), WebString::create(plugin.bundleIdentifier));
-    map.set(pluginInformationBundleVersionKey(), WebString::create(plugin.versionString));
-    map.set(pluginInformationBundleShortVersionKey(), WebString::create(plugin.shortVersionString));
-    map.set(pluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey(), WebBoolean::create(WKIsPluginUpdateAvailable(nsStringFromWebCoreString(plugin.bundleIdentifier))));
-    map.set(pluginInformationHasSandboxProfileKey(), WebBoolean::create(plugin.hasSandboxProfile));
+bool processIsSandboxed(pid_t);
+
 }
 
-} // namespace WebKit
+#endif // SandboxUtilities_h

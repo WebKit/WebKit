@@ -27,6 +27,7 @@
 
 #if HAVE(XPC)
 
+#import "SandboxUtilities.h"
 #import "XPCServiceEntryPoint.h"
 
 extern "C" mach_port_t xpc_dictionary_copy_mach_send(xpc_object_t, const char*);
@@ -62,6 +63,11 @@ bool XPCServiceInitializerDelegate::getClientProcessName(String& clientProcessNa
 bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, String>&)
 {
     return true;
+}
+
+bool XPCServiceInitializerDelegate::isClientSandboxed()
+{
+    return processIsSandboxed(xpc_connection_get_pid(m_connection));
 }
 
 } // namespace WebKit

@@ -50,6 +50,8 @@ public:
     virtual bool getExtraInitializationData(HashMap<String, String>& extraInitializationData);
 
 protected:
+    bool isClientSandboxed();
+    
     xpc_connection_t m_connection;
     xpc_object_t m_initializerMessage;
 };

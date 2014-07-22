@@ -1,3 +1,48 @@
+2014-07-22  Dana Burkart  <dburkart@apple.com>
+
+        Merge r169448
+
+    2014-05-29  Alexey Proskuryakov  <ap@apple.com>
+
+            [Mac] Always use plug-in sandbox with sandboxed clients
+            https://bugs.webkit.org/show_bug.cgi?id=133358
+            <rdar://problem/15637695>
+
+            Reviewed by Anders Carlsson.
+
+            * PluginProcess/mac/PluginProcessMac.mm: (WebKit::PluginProcess::initializeSandbox):
+            Refuse to start if parent process is sandboxed, and plug-in process is not going to be.
+            None of this should run in normal case, because there are also checks on UI process side.
+            
+            * Shared/Plugins/PluginModuleInfo.h:
+            * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+            (WebKit::NetscapePluginModule::getPluginInfo):
+            Added a member to PluginModuleInfo, telling whether the plug-in has a sandbox profile.
+
+            * Shared/Plugins/Netscape/mac/PluginInformationMac.mm:
+            (WebKit::getPlatformPluginModuleInformation): Use the new PluginModuleInfo member,
+            we no longer need to check the file system here.
+
+            * WebKit2.xcodeproj/project.pbxproj:
+            * Shared/mac/SandboxUtilities.h: Added.
+            * Shared/mac/SandboxUtilities.cpp: Added. (WebKit::processIsSandboxed):
+            This code is simple, but include magic is not. Moved it to a separate file to
+            avoid repeating.
+
+            * UIProcess/API/C/mac/WKContextPrivateMac.mm: Removed an unused include.
+
+            * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+            (WebKit::PluginInfoStore::shouldUsePlugin): Don't use unsandboxed plug-ins in
+            sandboxed applications.
+
+            * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+            (WebKit::PluginProcessProxy::platformGetLaunchOptions): Don't ever pass disable-sandbox
+            from sandboxed processes.
+
+            * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+            (WebKit::XPCServiceInitializerDelegate::isClientSandboxed):
+            Use the new shared code in SandboxUtilities.h.
+
 2014-07-19  Lucas Forschler  <lforschler@apple.com>
 
         Merge r169448

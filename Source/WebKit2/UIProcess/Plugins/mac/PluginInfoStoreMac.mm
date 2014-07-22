@@ -28,11 +28,14 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
+#import "Logging.h"
 #import "NetscapePluginModule.h"
+#import "SandboxUtilities.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/WebCoreNSStringExtras.h>
 #import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/CString.h>
 
 using namespace WebCore;
 
@@ -101,8 +104,15 @@ bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlu
         }
     }
 
-    if (plugin.bundleIdentifier == "com.apple.java.JavaAppletPlugin")
+    if (plugin.bundleIdentifier == "com.apple.java.JavaAppletPlugin") {
+        LOG(Plugins, "Ignoring com.apple.java.JavaAppletPlugin");
         return false;
+    }
+
+    if (processIsSandboxed(getpid()) && !plugin.hasSandboxProfile) {
+        LOG(Plugins, "Ignoring unsandboxed plug-in %s", plugin.bundleIdentifier.utf8().data());
+        return false;
+    }
 
     return true;
 }

@@ -56,6 +56,7 @@ struct PluginModuleInfo {
     String versionString;
     String shortVersionString;
     String preferencePanePath;
+    bool hasSandboxProfile;
 #endif
 };
 

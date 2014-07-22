@@ -36,6 +36,7 @@
 #import "PluginProcessShim.h"
 #import "PluginSandboxProfile.h"
 #import "SandboxInitializationParameters.h"
+#import "SandboxUtilities.h"
 #import <CoreAudio/AudioHardware.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebKitSystemInterface.h>
@@ -456,12 +457,32 @@ void PluginProcess::initializeProcessName(const ChildProcessInitializationParame
 
 void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
-    if (parameters.extraInitializationData.get("disable-sandbox") == "1")
+    // PluginProcess may already be sandboxed if its parent process was sandboxed, and launched a child process instead of an XPC service.
+    // This is generally not expected, however we currently always spawn a child process to create a MIME type preferences file.
+    if (processIsSandboxed(getpid())) {
+        RELEASE_ASSERT(!parameters.connectionIdentifier.xpcConnection);
+        RELEASE_ASSERT(processIsSandboxed(getppid()));
         return;
+    }
+
+    bool parentIsSandboxed = parameters.connectionIdentifier.xpcConnection && processIsSandboxed(xpc_connection_get_pid(parameters.connectionIdentifier.xpcConnection));
+
+    if (parameters.extraInitializationData.get("disable-sandbox") == "1") {
+        if (parentIsSandboxed) {
+            WTFLogAlways("Sandboxed processes may not disable plug-in sandbox, terminating %s.", parameters.clientIdentifier.utf8().data());
+            exit(EX_OSERR);
+        }
+        return;
+    }
 
     String sandboxProfile = pluginSandboxProfile(m_pluginBundleIdentifier);
-    if (sandboxProfile.isEmpty())
+    if (sandboxProfile.isEmpty()) {
+        if (parentIsSandboxed) {
+            WTFLogAlways("Sandboxed processes may only use sandboxed plug-ins, terminating %s.", parameters.clientIdentifier.utf8().data());
+            exit(EX_OSERR);
+        }
         return;
+    }
 
     sandboxParameters.setSandboxProfile(sandboxProfile);
 
