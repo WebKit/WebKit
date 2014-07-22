@@ -1,3 +1,19 @@
+2014-07-22  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GStreamer] [GTK] WebKit does not build with GStreamer 1.4
+        https://bugs.webkit.org/show_bug.cgi?id=135114
+
+        Reviewed by Philippe Normand.
+
+        Fix build with GStreamer 1.4
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        Change GstMpegTs-prefixed types to use the GstMpegts prefix.
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::processMpegTsSection):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        Ditto.
+
 2014-07-21  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Improve event throttling for Scroll Events
