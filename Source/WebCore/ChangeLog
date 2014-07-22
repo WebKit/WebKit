@@ -1,3 +1,18 @@
+2014-07-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Fix Crash when handling Legible Output callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=134946
+
+        Reviewed by Dean Jackson.
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::processNativeSamples): Remove
+        Windows-specific 'ASSERT_NOT_REACHED' code path.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::createLegibleOutputSubtypes): Added.
+        (WebCore::AVFWrapper::createPlayerItem): Updated to request native
+        samples from AVFoundationCF.
+
 2014-07-21  Sam Weinig  <sam@webkit.org>
 
         [Cocoa] WKScriptMessageHandlers don't seem to function properly after navigating
