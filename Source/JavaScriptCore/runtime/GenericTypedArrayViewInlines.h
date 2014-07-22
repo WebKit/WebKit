@@ -62,8 +62,10 @@ PassRefPtr<GenericTypedArrayView<Adaptor>> GenericTypedArrayView<Adaptor>::creat
     PassRefPtr<ArrayBuffer> passedBuffer, unsigned byteOffset, unsigned length)
 {
     RefPtr<ArrayBuffer> buffer = passedBuffer;
-    if (!verifySubRange<typename Adaptor::Type>(buffer, byteOffset, length))
-        return 0;
+    if (!verifySubRangeLength(buffer, byteOffset, length, sizeof(typename Adaptor::Type))
+        || !verifyByteOffsetAlignment(byteOffset, sizeof(typename Adaptor::Type))) {
+        return nullptr;
+    }
     
     return adoptRef(new GenericTypedArrayView(buffer, byteOffset, length));
 }

@@ -1,3 +1,14 @@
+2014-07-21  Diego Pino Garcia  <dpino@igalia.com>
+
+        new Int32Array(new ArrayBuffer(100), 1, 1) shouldn't throw an error that says "RangeError: Byte offset and length out of range of buffer"
+        https://bugs.webkit.org/show_bug.cgi?id=125391
+
+        Reviewed by Darin Adler.
+
+        * fast/canvas/webgl/data-view-crash-expected.txt:
+        * fast/canvas/webgl/data-view-test-expected.txt:
+        * fast/canvas/webgl/data-view-test.html:
+
 2014-07-21  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION: fast/layers/no-clipping-overflow-hidden-added-after-transform.html is flaky

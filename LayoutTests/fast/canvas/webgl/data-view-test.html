@@ -230,7 +230,7 @@ function runNegativeIndexTests(isTestingGet)
 
 function runConstructorTests()
 {
-    arayBuffer = (new Uint8Array([1, 2])).buffer;
+    arrayBuffer = (new Uint8Array([1, 2])).buffer;
 
     debug("");
     debug("Test for constructor not called as a function");
@@ -245,27 +245,35 @@ function runConstructorTests()
 
     debug("");
     debug("Test for constructor taking 1 argument");
-    shouldBeDefined("view = new DataView(arayBuffer)");
+    shouldBeDefined("view = new DataView(arrayBuffer)");
     shouldBe("view.byteOffset", "0");
     shouldBe("view.byteLength", "2");
 
     debug("");
     debug("Test for constructor taking 2 arguments");
-    shouldBeDefined("view = new DataView(arayBuffer, 1)");
+    shouldBeDefined("view = new DataView(arrayBuffer, 1)");
     shouldBe("view.byteOffset", "1");
     shouldBe("view.byteLength", "1");
 
     debug("");
     debug("Test for constructor taking 3 arguments");
-    shouldBeDefined("view = new DataView(arayBuffer, 0, 1)");
+    shouldBeDefined("view = new DataView(arrayBuffer, 0, 1)");
     shouldBe("view.byteOffset", "0");
     shouldBe("view.byteLength", "1");
 
     debug("");
     debug("Test for constructor throwing exception");
-    shouldThrow("view = new DataView(arayBuffer, 0, 3)");
-    shouldThrow("view = new DataView(arayBuffer, 1, 2)");
-    shouldThrow("view = new DataView(arayBuffer, 2, 1)");
+    shouldThrow("view = new DataView(arrayBuffer, 0, 3)");
+    shouldThrow("view = new DataView(arrayBuffer, 1, 2)");
+    shouldThrow("view = new DataView(arrayBuffer, 2, 1)");
+
+    debug("");
+    debug("Test for constructor throwing wrong byteoffset exception");
+    shouldThrow("view = new Int32Array(new ArrayBuffer(100), 1, 1)");
+
+    debug("");
+    debug("Test for constructor wrong length exception takes precedence over wrong byteoffset exception");
+    shouldThrow("view = new Int32Array(new ArrayBuffer(100), 1, 101)");
 }
 
 function runGetTests()

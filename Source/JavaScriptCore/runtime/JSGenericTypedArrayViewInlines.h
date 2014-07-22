@@ -83,10 +83,14 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
     unsigned byteOffset, unsigned length)
 {
     RefPtr<ArrayBuffer> buffer = passedBuffer;
-    if (!ArrayBufferView::verifySubRange<typename Adaptor::Type>(buffer, byteOffset, length)) {
-        exec->vm().throwException(
-            exec, createRangeError(exec, "Byte offset and length out of range of buffer"));
-        return 0;
+    size_t size = sizeof(typename Adaptor::Type);
+    if (!ArrayBufferView::verifySubRangeLength(buffer, byteOffset, length, size)) {
+        exec->vm().throwException(exec, createRangeError(exec, "Length out of range of buffer"));
+        return nullptr;
+    }
+    if (!ArrayBufferView::verifyByteOffsetAlignment(byteOffset, size)) {
+        exec->vm().throwException(exec, createRangeError(exec, "Byte offset is not aligned"));
+        return nullptr;
     }
     ConstructionContext context(exec->vm(), structure, buffer, byteOffset, length);
     ASSERT(context);
