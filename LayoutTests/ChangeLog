@@ -1,3 +1,15 @@
+2014-07-22  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] [WK2] selection-gap-fixed-child.html and selection-gap-flipped-fixed-child.html
+        have been failing since they were added in r148258
+        https://bugs.webkit.org/show_bug.cgi?id=114573
+
+        Landing actual results as expected for WK2. This test isn't meaningful for WK2, because of layers.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac-wk2/fast/repaint/selection-gap-fixed-child-expected.txt: Added.
+        * platform/mac-wk2/fast/repaint/selection-gap-flipped-fixed-child-expected.txt: Added.
+
 2014-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Clicking on links while accessibility is enabled does not render as expected
