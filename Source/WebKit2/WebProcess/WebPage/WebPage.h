@@ -223,6 +223,7 @@ public:
 
 #if PLATFORM(COCOA)
     void willCommitLayerTree(RemoteLayerTreeTransaction&);
+    void didFlushLayerTreeAtTime(std::chrono::milliseconds);
 #endif
 
 #if ENABLE(INSPECTOR)
@@ -509,6 +510,8 @@ public:
     void dispatchAsynchronousTouchEvents(const Vector<WebTouchEvent, 1>& queue);
     void contentSizeCategoryDidChange(const String&);
     void executeEditCommandWithCallback(const String&, uint64_t callbackID);
+
+    std::chrono::milliseconds eventThrottlingDelay() const;
 #if ENABLE(INSPECTOR)
     void showInspectorHighlight(const WebCore::Highlight&);
     void hideInspectorHighlight();
@@ -748,7 +751,7 @@ public:
     void setDeviceOrientation(int32_t);
     void dynamicViewportSizeUpdate(const WebCore::FloatSize& minimumLayoutSize, const WebCore::FloatSize& minimumLayoutSizeForMinimalUI, const WebCore::FloatSize& maximumUnobscuredSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, double scale, int32_t deviceOrientation);
     void synchronizeDynamicViewportUpdate(double& newTargetScale, WebCore::FloatPoint& newScrollPosition, uint64_t& nextValidLayerTreeTransactionID);
-    void updateVisibleContentRects(const VisibleContentRectUpdateInfo&);
+    void updateVisibleContentRects(const VisibleContentRectUpdateInfo&, double oldestTimestamp);
     bool scaleWasSetByUIProcess() const { return m_scaleWasSetByUIProcess; }
     void willStartUserTriggeredZooming();
     void applicationWillResignActive();
@@ -1235,6 +1238,9 @@ private:
     bool m_userIsInteracting;
     bool m_hasPendingBlurNotification;
     bool m_useTestingViewportConfiguration;
+    bool m_isInStableState;
+    std::chrono::milliseconds m_oldestNonStableUpdateVisibleContentRectsTimestamp;
+    std::chrono::milliseconds m_estimatedLatency;
     WebCore::FloatSize m_screenSize;
     WebCore::FloatSize m_availableScreenSize;
     RefPtr<WebCore::Range> m_currentBlockSelection;

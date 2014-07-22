@@ -1679,6 +1679,14 @@ void WebPage::executeEditCommandWithCallback(const String& commandName, uint64_t
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
+std::chrono::milliseconds WebPage::eventThrottlingDelay() const
+{
+    if (m_isInStableState || m_estimatedLatency <= std::chrono::milliseconds(1000 / 60))
+        return std::chrono::milliseconds::zero();
+
+    return std::chrono::milliseconds(std::min<std::chrono::milliseconds::rep>(m_estimatedLatency.count() * 2, 1000));
+}
+
 void WebPage::syncApplyAutocorrection(const String& correction, const String& originalText, bool& correctionApplied)
 {
     RefPtr<Range> range;
@@ -2463,18 +2471,19 @@ static inline FloatRect adjustExposedRectForBoundedScale(const FloatRect& expose
     return adjustExposedRectForNewScale(exposedRect, exposedRectScale, newScale);
 }
 
-void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo)
+void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo, double oldestTimestamp)
 {
     // Skip any VisibleContentRectUpdate that have been queued before DidCommitLoad suppresses the updates in the UIProcess.
     if (visibleContentRectUpdateInfo.lastLayerTreeTransactionID() < m_firstLayerTreeTransactionIDAfterDidCommitLoad)
         return;
 
     m_hasReceivedVisibleContentRectsAfterDidCommitLoad = true;
+    m_isInStableState = visibleContentRectUpdateInfo.inStableState();
 
     double scaleNoiseThreshold = 0.005;
     double filteredScale = visibleContentRectUpdateInfo.scale();
     double currentScale = m_page->pageScaleFactor();
-    if (!visibleContentRectUpdateInfo.inStableState() && fabs(filteredScale - m_page->pageScaleFactor()) < scaleNoiseThreshold) {
+    if (!m_isInStableState && fabs(filteredScale - m_page->pageScaleFactor()) < scaleNoiseThreshold) {
         // Tiny changes of scale during interactive zoom cause content to jump by one pixel, creating
         // visual noise. We filter those useless updates.
         filteredScale = currentScale;
@@ -2483,8 +2492,15 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     double boundedScale = std::min(m_viewportConfiguration.maximumScale(), std::max(m_viewportConfiguration.minimumScale(), filteredScale));
 
     // Skip progressively redrawing tiles if pinch-zooming while the system is under memory pressure.
-    if (boundedScale != currentScale && !visibleContentRectUpdateInfo.inStableState() && memoryPressureHandler().isUnderMemoryPressure())
+    if (boundedScale != currentScale && !m_isInStableState && memoryPressureHandler().isUnderMemoryPressure())
         return;
+
+    if (m_isInStableState)
+        m_hasStablePageScaleFactor = true;
+    else {
+        if (m_oldestNonStableUpdateVisibleContentRectsTimestamp == std::chrono::milliseconds::zero())
+            m_oldestNonStableUpdateVisibleContentRectsTimestamp = std::chrono::milliseconds(static_cast<std::chrono::milliseconds::rep>(oldestTimestamp * 1000));
+    }
 
     FloatRect exposedRect = visibleContentRectUpdateInfo.exposedRect();
     FloatRect adjustedExposedRect = adjustExposedRectForBoundedScale(exposedRect, visibleContentRectUpdateInfo.scale(), boundedScale);
@@ -2492,18 +2508,15 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
 
     IntPoint scrollPosition = roundedIntPoint(visibleContentRectUpdateInfo.unobscuredRect().location());
 
-    if (!m_hasStablePageScaleFactor && visibleContentRectUpdateInfo.inStableState())
-        m_hasStablePageScaleFactor = true;
-
     float floatBoundedScale = boundedScale;
     bool hasSetPageScale = false;
     if (floatBoundedScale != currentScale) {
         m_scaleWasSetByUIProcess = true;
-        m_hasStablePageScaleFactor = visibleContentRectUpdateInfo.inStableState();
+        m_hasStablePageScaleFactor = m_isInStableState;
 
         m_dynamicSizeUpdateHistory.clear();
 
-        m_page->setPageScaleFactor(floatBoundedScale, scrollPosition, visibleContentRectUpdateInfo.inStableState());
+        m_page->setPageScaleFactor(floatBoundedScale, scrollPosition, m_isInStableState);
         hasSetPageScale = true;
 
         if (LayerTreeHost* layerTreeHost = m_drawingArea->layerTreeHost())
@@ -2511,7 +2524,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
         send(Messages::WebPageProxy::PageScaleFactorDidChange(floatBoundedScale));
     }
 
-    if (!hasSetPageScale && visibleContentRectUpdateInfo.inStableState()) {
+    if (!hasSetPageScale && m_isInStableState) {
         m_page->setPageScaleFactor(floatBoundedScale, scrollPosition, true);
         hasSetPageScale = true;
     }
@@ -2529,7 +2542,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
 
     frameView.setScrollVelocity(horizontalVelocity, verticalVelocity, scaleChangeRate, visibleContentRectUpdateInfo.timestamp());
 
-    if (visibleContentRectUpdateInfo.inStableState())
+    if (m_isInStableState)
         m_page->mainFrame().view()->setCustomFixedPositionLayoutRect(enclosingIntRect(visibleContentRectUpdateInfo.customFixedPositionRect()));
 
     if (!visibleContentRectUpdateInfo.isChangingObscuredInsetsInteractively())

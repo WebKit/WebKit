@@ -171,6 +171,7 @@ FrameView::FrameView(Frame& frame)
     , m_wasScrolledByUser(false)
     , m_inProgrammaticScroll(false)
     , m_safeToPropagateScrollToParent(true)
+    , m_delayedScrollEventTimer(this, &FrameView::delayedScrollEventTimerFired)
     , m_isTrackingRepaints(false)
     , m_shouldUpdateWhileOffscreen(true)
     , m_exposedRect(FloatRect::infiniteRect())
@@ -256,6 +257,7 @@ void FrameView::reset()
     m_firstLayoutCallbackPending = false;
     m_wasScrolledByUser = false;
     m_safeToPropagateScrollToParent = true;
+    m_delayedScrollEventTimer.stop();
     m_lastViewportSize = IntSize();
     m_lastZoomFactor = 1.0f;
     m_isTrackingRepaints = false;
@@ -1704,6 +1706,11 @@ IntPoint FrameView::maximumScrollPosition() const
     return maximumOffset;
 }
 
+void FrameView::delayedScrollEventTimerFired(Timer<FrameView>&)
+{
+    sendScrollEvent();
+}
+
 bool FrameView::fixedElementsLayoutRelativeToFrame() const
 {
     return frame().settings().fixedElementsLayoutRelativeToFrame();
@@ -2040,9 +2047,14 @@ void FrameView::scrollPositionChangedViaPlatformWidget(const IntPoint& oldPositi
 
 void FrameView::scrollPositionChanged(const IntPoint& oldPosition, const IntPoint& newPosition)
 {
-    frame().eventHandler().sendScrollEvent();
-    frame().eventHandler().dispatchFakeMouseMoveEventSoon();
-    
+    std::chrono::milliseconds throttlingDelay = frame().page()->chrome().client().eventThrottlingDelay();
+
+    if (throttlingDelay == std::chrono::milliseconds::zero()) {
+        m_delayedScrollEventTimer.stop();
+        sendScrollEvent();
+    } else if (!m_delayedScrollEventTimer.isActive())
+        m_delayedScrollEventTimer.startOneShot(throttlingDelay);
+
     if (Document* document = frame().document())
         document->sendWillRevealEdgeEventsIfNeeded(oldPosition, newPosition, visibleContentRect(), contentsSize());
 
@@ -4136,6 +4148,12 @@ void FrameView::scrollableAreaSetChanged()
         if (auto* scrollingCoordinator = page->scrollingCoordinator())
             scrollingCoordinator->frameViewNonFastScrollableRegionChanged(this);
     }
+}
+
+void FrameView::sendScrollEvent()
+{
+    frame().eventHandler().sendScrollEvent();
+    frame().eventHandler().dispatchFakeMouseMoveEventSoon();
 }
 
 void FrameView::removeChild(Widget* widget)

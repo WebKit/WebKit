@@ -241,6 +241,7 @@ public:
     virtual bool isRubberBandInProgress() const override;
     virtual IntPoint minimumScrollPosition() const override;
     virtual IntPoint maximumScrollPosition() const override;
+    void delayedScrollEventTimerFired(Timer<FrameView>&);
 
     // This is different than visibleContentRect() in that it ignores negative (or overly positive)
     // offsets from rubber-banding, and it takes zooming into account. 
@@ -597,6 +598,7 @@ private:
     void scrollToAnchor();
     void scrollPositionChanged(const IntPoint& oldPosition, const IntPoint& newPosition);
     void scrollableAreaSetChanged();
+    void sendScrollEvent();
 
     bool hasCustomScrollbars() const;
 
@@ -666,6 +668,7 @@ private:
     bool m_wasScrolledByUser;
     bool m_inProgrammaticScroll;
     bool m_safeToPropagateScrollToParent;
+    Timer<FrameView> m_delayedScrollEventTimer;
 
     double m_lastPaintTime;
 

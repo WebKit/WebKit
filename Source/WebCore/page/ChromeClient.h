@@ -236,6 +236,8 @@ public:
     virtual void didPreventDefaultForEvent() = 0;
 #endif
 
+    virtual std::chrono::milliseconds eventThrottlingDelay() { return std::chrono::milliseconds::zero(); };
+
 #if PLATFORM(IOS)
     virtual void didReceiveMobileDocType(bool) = 0;
     virtual void setNeedsScrollNotifications(Frame*, bool) = 0;
