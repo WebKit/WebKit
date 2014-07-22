@@ -275,7 +275,7 @@ void WebInspector::stopJavaScriptDebugging()
         m_frontendClient->setDebuggingEnabled(false);
 }
 
-void WebInspector::setJavaScriptProfilingEnabled(bool enabled)
+void WebInspector::setJavaScriptProfilingEnabled(bool)
 {
     // No longer supported.
 }

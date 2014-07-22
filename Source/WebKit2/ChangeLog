@@ -1,5 +1,17 @@
 2014-07-22  Shivakumar JM  <shiva.jm@samsung.com>
 
+        Web Inspector: Fix unused parameter build warning
+        https://bugs.webkit.org/show_bug.cgi?id=135151
+
+        Reviewed by Joseph Pecoraro.
+
+        Fix unused parameter build warning by removing the parameter name 
+
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::setJavaScriptProfilingEnabled):
+
+2014-07-22  Shivakumar JM  <shiva.jm@samsung.com>
+
         Fix unused parameter build warning in UIProcess module
         https://bugs.webkit.org/show_bug.cgi?id=135154
 
