@@ -1,3 +1,26 @@
+2014-07-21  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Add Ewk prefix to enums of ewk_navigation_policy
+        https://bugs.webkit.org/show_bug.cgi?id=135144
+
+        Reviewed by Gyuyoung Kim.
+
+        All public enums of ewebkit should start with Ewk prefix.
+        This patch added Ewk prefix to Ewk_Event_Mouse_Button and Ewk_Event_Modifiers.
+        In addition, added missing description and default value for Ewk_Event_Modifier.
+
+        * UIProcess/API/efl/ewk_navigation_policy_decision.cpp:
+        (toEwkEventMouseButton):
+        (toEwkEventModifiers):
+        (EwkNavigationPolicyDecision::mouseButton):
+        (EwkNavigationPolicyDecision::modifiers):
+        (ewk_navigation_policy_mouse_button_get):
+        (ewk_navigation_policy_modifiers_get):
+        (toEventMouseButton): Deleted.
+        (toEventModifierKeys): Deleted.
+        * UIProcess/API/efl/ewk_navigation_policy_decision.h:
+        * UIProcess/API/efl/ewk_navigation_policy_decision_private.h:
+
 2014-07-21  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Improve event throttling for Scroll Events

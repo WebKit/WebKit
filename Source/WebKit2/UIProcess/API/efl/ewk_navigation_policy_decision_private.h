@@ -56,8 +56,8 @@ public:
     void download();
 
     Ewk_Navigation_Type navigationType() const;
-    Event_Mouse_Button mouseButton() const;
-    Event_Modifier_Keys modifiers() const;
+    Ewk_Event_Mouse_Button mouseButton() const;
+    Ewk_Event_Modifiers modifiers() const;
     const char* frameName() const;
     EwkUrlRequest* request() const;
 

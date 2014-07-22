@@ -57,18 +57,20 @@ typedef enum  {
 
 /// Enum containing button types
 typedef enum {
-    EVENT_MOUSE_BUTTON_NONE = -1,
-    EVENT_MOUSE_BUTTON_LEFT = 0,
-    EVENT_MOUSE_BUTTON_MIDDLE = 1,
-    EVENT_MOUSE_BUTTON_RIGHT = 2
-} Event_Mouse_Button;
+    EWK_EVENT_MOUSE_BUTTON_NONE = -1,
+    EWK_EVENT_MOUSE_BUTTON_LEFT = 0,
+    EWK_EVENT_MOUSE_BUTTON_MIDDLE = 1,
+    EWK_EVENT_MOUSE_BUTTON_RIGHT = 2
+} Ewk_Event_Mouse_Button;
 
+/// Enum containing modifier key
 typedef enum {
-    EVENT_MODIFIER_KEY_SHIFT = 1 << 0,
-    EVENT_MODIFIER_KEY_CTRL = 1 << 1,
-    EVENT_MODIFIER_KEY_ALT = 1 << 2,
-    EVENT_MODIFIER_KEY_META = 1 << 3
-} Event_Modifier_Keys;
+    EWK_EVENT_MODIFIER_NONE = 0,
+    EWK_EVENT_MODIFIER_SHIFT = 1 << 0,
+    EWK_EVENT_MODIFIER_CTRL = 1 << 1,
+    EWK_EVENT_MODIFIER_ALT = 1 << 2,
+    EWK_EVENT_MODIFIER_META = 1 << 3
+} Ewk_Event_Modifiers;
 
 /**
  * Query type for this navigation policy decision.
@@ -86,7 +88,7 @@ EAPI Ewk_Navigation_Type ewk_navigation_policy_navigation_type_get(const Ewk_Nav
  *
  * @return the mouse button clicked to trigger the navigation.
  */
-EAPI Event_Mouse_Button ewk_navigation_policy_mouse_button_get(const Ewk_Navigation_Policy_Decision *decision);
+EAPI Ewk_Event_Mouse_Button ewk_navigation_policy_mouse_button_get(const Ewk_Navigation_Policy_Decision *decision);
 
 /**
  * Query modifier keys for this navigation policy decision.
@@ -95,7 +97,7 @@ EAPI Event_Mouse_Button ewk_navigation_policy_mouse_button_get(const Ewk_Navigat
  *
  * @return the modifier keys used when triggering the navigation.
  */
-EAPI Event_Modifier_Keys ewk_navigation_policy_modifiers_get(const Ewk_Navigation_Policy_Decision *decision);
+EAPI Ewk_Event_Modifiers ewk_navigation_policy_modifiers_get(const Ewk_Navigation_Policy_Decision *decision);
 
 /**
  * Query frame name for this navigation policy decision.

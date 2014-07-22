@@ -53,35 +53,35 @@ inline static Ewk_Navigation_Type toEwkNavigationType(WKFrameNavigationType navi
     return EWK_NAVIGATION_TYPE_LINK_ACTIVATED;
 }
 
-inline static Event_Mouse_Button toEventMouseButton(WKEventMouseButton mouseButton)
+inline static Ewk_Event_Mouse_Button toEwkEventMouseButton(WKEventMouseButton mouseButton)
 {
     switch (mouseButton) {
     case kWKEventMouseButtonNoButton:
-        return EVENT_MOUSE_BUTTON_NONE;
+        return EWK_EVENT_MOUSE_BUTTON_NONE;
     case kWKEventMouseButtonLeftButton:
-        return EVENT_MOUSE_BUTTON_LEFT;
+        return EWK_EVENT_MOUSE_BUTTON_LEFT;
     case kWKEventMouseButtonMiddleButton:
-        return EVENT_MOUSE_BUTTON_MIDDLE;
+        return EWK_EVENT_MOUSE_BUTTON_MIDDLE;
     case kWKEventMouseButtonRightButton:
-        return EVENT_MOUSE_BUTTON_RIGHT;
+        return EWK_EVENT_MOUSE_BUTTON_RIGHT;
     }
     ASSERT_NOT_REACHED();
 
-    return EVENT_MOUSE_BUTTON_NONE;
+    return EWK_EVENT_MOUSE_BUTTON_NONE;
 }
 
-inline static Event_Modifier_Keys toEventModifierKeys(WKEventModifiers modifiers)
+inline static Ewk_Event_Modifiers toEwkEventModifiers(WKEventModifiers modifiers)
 {
-    unsigned keys = 0;
+    unsigned keys = EWK_EVENT_MODIFIER_NONE;
     if (modifiers & kWKEventModifiersShiftKey)
-        keys |= EVENT_MODIFIER_KEY_SHIFT;
+        keys |= EWK_EVENT_MODIFIER_SHIFT;
     if (modifiers & kWKEventModifiersControlKey)
         keys |= kWKEventModifiersControlKey;
     if (modifiers & kWKEventModifiersAltKey)
-        keys |= EVENT_MODIFIER_KEY_ALT;
+        keys |= EWK_EVENT_MODIFIER_ALT;
     if (modifiers & kWKEventModifiersMetaKey)
-        keys |= EVENT_MODIFIER_KEY_META;
-    return static_cast<Event_Modifier_Keys>(keys);
+        keys |= EWK_EVENT_MODIFIER_META;
+    return static_cast<Ewk_Event_Modifiers>(keys);
 }
 
 EwkNavigationPolicyDecision::EwkNavigationPolicyDecision(WKFramePolicyListenerRef listener, WKFrameNavigationType navigationType, WKEventMouseButton mouseButton, WKEventModifiers modifiers, PassRefPtr<EwkUrlRequest> request, const char* frameName)
@@ -106,14 +106,14 @@ Ewk_Navigation_Type EwkNavigationPolicyDecision::navigationType() const
     return toEwkNavigationType(m_navigationType);
 }
 
-Event_Mouse_Button EwkNavigationPolicyDecision::mouseButton() const
+Ewk_Event_Mouse_Button EwkNavigationPolicyDecision::mouseButton() const
 {
-    return toEventMouseButton(m_mouseButton);
+    return toEwkEventMouseButton(m_mouseButton);
 }
 
-Event_Modifier_Keys EwkNavigationPolicyDecision::modifiers() const
+Ewk_Event_Modifiers EwkNavigationPolicyDecision::modifiers() const
 {
-    return toEventModifierKeys(m_modifiers);
+    return toEwkEventModifiers(m_modifiers);
 }
 
 const char* EwkNavigationPolicyDecision::frameName() const
@@ -151,16 +151,16 @@ Ewk_Navigation_Type ewk_navigation_policy_navigation_type_get(const Ewk_Navigati
     return impl->navigationType();
 }
 
-Event_Mouse_Button ewk_navigation_policy_mouse_button_get(const Ewk_Navigation_Policy_Decision* decision)
+Ewk_Event_Mouse_Button ewk_navigation_policy_mouse_button_get(const Ewk_Navigation_Policy_Decision* decision)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationPolicyDecision, decision, impl, EVENT_MOUSE_BUTTON_NONE);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationPolicyDecision, decision, impl, EWK_EVENT_MOUSE_BUTTON_NONE);
 
     return impl->mouseButton();
 }
 
-Event_Modifier_Keys ewk_navigation_policy_modifiers_get(const Ewk_Navigation_Policy_Decision* decision)
+Ewk_Event_Modifiers ewk_navigation_policy_modifiers_get(const Ewk_Navigation_Policy_Decision* decision)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationPolicyDecision, decision, impl, static_cast<Event_Modifier_Keys>(0));
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationPolicyDecision, decision, impl, EWK_EVENT_MODIFIER_NONE);
 
     return impl->modifiers();
 }
