@@ -373,7 +373,7 @@ my @testCases =
 );
 
 # This test should only be run on Windows
-if ($^O ne 'MSWin32') {
+if ($^O ne 'MSWin32' && $^O ne 'cygwin') {
     plan(tests => 1);
     is(1, 1, 'do nothing for non-Windows builds.');
     exit 0;    

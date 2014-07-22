@@ -1,5 +1,13 @@
 2014-07-21  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Follow-up for r171324.
+
+        * Scripts/webkitperl/auto-version_unittest/autoVersionTests.pl: Cygwin
+        perl reports itself as 'cygwin'; native Windows Perl reports as
+        'MSWin32'. We need to handle both cases.
+
+2014-07-21  Brent Fulgham  <bfulgham@apple.com>
+
         Unreviewed build fix after r171319.
 
         * Scripts/webkitperl/auto-version_unittest/autoVersionTests.pl: This test should
