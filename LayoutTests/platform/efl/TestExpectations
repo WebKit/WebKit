@@ -789,7 +789,17 @@ webkit.org/b/124935 webgl/1.0.2/conformance/uniforms/out-of-bounds-uniform-array
 webkit.org/b/128905 media/video-fast-seek.html [ Crash Pass ]
 webkit.org/b/128905 media/video-extreme-playbackrate-crash.html [ Crash Pass ]
 
+webkit.org/b/125517 compositing/regions/crash-transform-inside-region.html [ Crash Pass ]
 webkit.org/b/125517 compositing/regions/floated-region-with-transformed-child.html [ ImageOnlyFailure Pass ]
+webkit.org/b/125517 compositing/regions/move-layer-from-one-region-to-another.html [ Crash Pass ]
+webkit.org/b/125517 compositing/regions/propagate-region-box-shadow-border-padding.html [ Crash Pass ]
+webkit.org/b/125517 compositing/regions/propagate-region-box-shadow-border-padding-for-video.html [ ImageOnlyFailure Crash Pass ]
+webkit.org/b/125517 compositing/regions/region-as-layer-in-another-flowthread.html [ Crash Pass ]
+webkit.org/b/125517 compositing/regions/transformed-layer-inside-transformed-layer.html [ Crash Pass ]
+webkit.org/b/125517 compositing/regions/transform-transparent-positioned-video-inside-region.html [ ImageOnlyFailure Crash ]
+webkit.org/b/125517 compositing/regions/z-index-update.html [ Crash Pass ]
+
+webkit.org/b/125573 compositing/backgrounds/fixed-backgrounds.html [ Crash Pass ]
 
 # Regressions in svg/clip-path
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure Pass ]
@@ -866,6 +876,8 @@ webkit.org/b/106405 http/tests/loading/basic-credentials-sent-automatically.html
 webkit.org/b/106405 http/tests/misc/401-alternative-content.php [ Crash Pass ]
 
 webkit.org/b/84589 http/tests/security/cross-frame-access-get.html [ Crash Pass ]
+
+webkit.org/b/127723 accessibility/menu-list-sends-change-notification.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
@@ -1522,7 +1534,7 @@ webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-cover.html [
 webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-padding.html [ ImageOnlyFailure Crash ]
 webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-position.html [ ImageOnlyFailure Crash ]
 webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-size.html [ ImageOnlyFailure Crash ]
-webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-contain-no-repeat.html [ ImageOnlyFailure Crash ]
+webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-contain-no-repeat.html [ Pass Crash ]
 
 # Unidentified failing media tests
 webkit.org/b/115419 media/media-can-play-ogg.html [ Failure ]
@@ -1887,23 +1899,6 @@ webkit.org/b/125496 animations/cross-fade-list-style-image.html [ Failure ]
 webkit.org/b/125496 animations/cross-fade-webkit-mask-box-image.html [ Failure ]
 webkit.org/b/125496 animations/cross-fade-webkit-mask-image.html [ Failure ]
 
-# Added in r157725, failing due differences in media player controls rendering
-webkit.org/b/125517 compositing/regions/propagate-region-box-shadow-border-padding-for-video.html [ ImageOnlyFailure ]
-webkit.org/b/125517 compositing/regions/transform-transparent-positioned-video-inside-region.html [ ImageOnlyFailure ]
-
-# Added in r157725, failing due insigificant pixel differences on bot
-webkit.org/b/125517 compositing/regions/crash-transform-inside-region.html [ ImageOnlyFailure ]
-webkit.org/b/125517 compositing/regions/move-layer-from-one-region-to-another.html [ ImageOnlyFailure ]
-webkit.org/b/125517 compositing/regions/propagate-region-box-shadow-border-padding.html [ ImageOnlyFailure ]
-webkit.org/b/125517 compositing/regions/region-as-layer-in-another-flowthread.html [ ImageOnlyFailure ]
-webkit.org/b/125517 compositing/regions/transformed-layer-inside-transformed-layer.html [ ImageOnlyFailure ]
-webkit.org/b/125517 compositing/regions/z-index-update.html [ ImageOnlyFailure ]
-webkit.org/b/125517 compositing/regions/z-index.html [ ImageOnlyFailure ]
-
-webkit.org/b/125573 compositing/backgrounds/fixed-backgrounds.html [ ImageOnlyFailure ]
-
-webkit.org/b/125578 compositing/images/positioned-image-content-rect.html [ ImageOnlyFailure ]
-
 # Added in r161626, failing due insigificant pixel differences
 webkit.org/b/127054 fast/regions/overflow/overflow-in-variable-width-regions-inline-bt.html [ ImageOnlyFailure ]
 webkit.org/b/127054 fast/regions/overflow/overflow-in-variable-width-regions-inline-continuation.html [ ImageOnlyFailure ]
@@ -1926,8 +1921,6 @@ webkit.org/b/127477 css2.1/t1604-c542-letter-sp-00-b-a.html [ Missing ]
 webkit.org/b/127489 http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
 
 webkit.org/b/126619 http/tests/media/video-auth.html [ Failure ]
-
-webkit.org/b/127723 accessibility/menu-list-sends-change-notification.html [ Failure ]
 
 webkit.org/b/127725 media/video-restricted-no-preload-auto.html [ Failure ]
 
@@ -2011,8 +2004,6 @@ webkit.org/b/127286 webgl/conformance/typedarrays/data-view-test.html [ Failure 
 webkit.org/b/109941 webgl/conformance/textures/origin-clean-conformance.html [ Failure ]
 webkit.org/b/109941 webgl/1.0.1/conformance/textures/origin-clean-conformance.html [ Failure ]
 
-webkit.org/b/127780 compositing/regions/position-layers-inside-regions-overflow-hidden.html [ ImageOnlyFailure ]
-
 # Failing since added in r162960
 webkit.org/b/128733 fast/css/sticky/sticky-table-row-top.html [ ImageOnlyFailure ]
 webkit.org/b/128733 fast/css/sticky/sticky-table-thead-top.html [ ImageOnlyFailure ]
@@ -2022,8 +2013,6 @@ webkit.org/b/128734 plugins/nested-plugin-objects.html [ Failure ]
 webkit.org/b/128734 plugins/netscape-destroy-plugin-script-objects.html [ Failure ]
 
 webkit.org/b/129735 fast/regions/box-decorations-over-region-padding.html [ ImageOnlyFailure ]
-
-webkit.org/b/129815 fast/sub-pixel/clip-rect-box-consistent-rounding.html [ ImageOnlyFailure ]
 
 webkit.org/b/129818 fast/canvas/webgl/webgl-draw-buffers.html [ Failure ]
 
@@ -2051,7 +2040,6 @@ webkit.org/b/131987 fast/borders/hidpi-double-border-with-border-radius-always-p
 webkit.org/b/131987 fast/borders/hidpi-simple-hairline-border-painting.html [ ImageOnlyFailure ]
 webkit.org/b/131987 fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlines.html [ ImageOnlyFailure ]
 webkit.org/b/131987 fast/inline/hidpi-select-inline-on-subpixel-position.html [ ImageOnlyFailure ]
-webkit.org/b/131987 fast/inline/hidpi-selection-gap-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131987 fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
 webkit.org/b/131987 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]
 webkit.org/b/131987 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
@@ -2068,7 +2056,6 @@ webkit.org/b/133306 fast/canvas/webgl/css-webkit-canvas-repaint.html [ Failure ]
 
 # Failures EFL WK2 since the inception
 webkit.org/b/133484 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure ]
-webkit.org/b/133508 accessibility/table-fallback-roles-expose-element-attributes.html [ Failure ]
 
 # Failing at least from 2014-05-01, but cause unknown
 webkit.org/b/133507 accessibility/media-element.html [ Failure ]
@@ -2077,8 +2064,6 @@ webkit.org/b/133509 accessibility/table-with-footer-section-above-body.html [ Fa
 webkit.org/b/130187 accessibility/aria-hidden-false-works-in-subtrees.html [ Missing ]
 
 webkit.org/b/131496 accessibility/help-text.html [ Failure ]
-
-webkit.org/b/130189 fast/regions/assert-hit-test-image.html [ Failure ]
 
 # ENABLE(WEBVTT_REGIONS) is disabled
 webkit.org/b/109570 media/track/regions-webvtt [ Skip ]
@@ -2101,10 +2086,7 @@ webkit.org/b/133220 fast/events/shadow-event-path.html [ Failure ]
 webkit.org/b/133220 fast/events/shadow-event-path-2.html [ Failure ]
 
 # Failing after r168868
-webkit.org/b/133146 css3/flexbox/flex-rounding.html [ Failure ]
-webkit.org/b/133146 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
 webkit.org/b/133146 fast/sub-pixel/inline-block-with-padding.html [ Failure ]
-webkit.org/b/133146 fast/sub-pixel/client-rect-has-subpixel-precision.html [ ImageOnlyFailure ]
 
 webkit.org/b/133307 fast/forms/number/number-spinbutton-in-multi-column.html [ Failure ]
 

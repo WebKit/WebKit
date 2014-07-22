@@ -1,3 +1,9 @@
+2014-07-22  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        * platform/efl/TestExpectations: Update incorrect test expectations for passing and crashing tests.
+
 2014-07-18  Dirk Schulze  <krit@webkit.org>
 
         Turn width/height to presentation attributes
