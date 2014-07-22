@@ -1009,16 +1009,6 @@ void WebChromeClient::exitFullScreenForElement(Element* element)
 
 #endif // ENABLE(FULLSCREEN_API)
 
-bool WebChromeClient::requiresAcceleratedCompositingForViewportConstrainedPosition() const
-{
-#if !PLATFORM(IOS)
-    NSView<WebDocumentView> *documentView = [[[m_webView _selectedOrMainFrame] frameView] documentView];
-    return [documentView isKindOfClass:[WebHTMLView class]] && documentView.layer;
-#else
-    return false;
-#endif
-}
-
 #if ENABLE(SUBTLE_CRYPTO)
 bool WebChromeClient::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) const
 {
