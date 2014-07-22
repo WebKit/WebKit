@@ -1,5 +1,12 @@
 2014-07-22  Filip Pizlo  <fpizlo@apple.com>
 
+        Fix cloop build.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeExitSiteData):
+
+2014-07-22  Filip Pizlo  <fpizlo@apple.com>
+
         Merge r168635, r168780, r169005, r169014, and r169143 from ftlopt.
 
     2014-05-20  Filip Pizlo  <fpizlo@apple.com>

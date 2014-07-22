@@ -147,6 +147,11 @@ CallLinkStatus::ExitSiteData CallLinkStatus::computeExitSiteData(
         || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadExecutable, exitingJITType));
     exitSiteData.m_badFunction =
         profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadFunction, exitingJITType));
+#else
+    UNUSED_PARAM(locker);
+    UNUSED_PARAM(profiledBlock);
+    UNUSED_PARAM(bytecodeIndex);
+    UNUSED_PARAM(exitingJITType);
 #endif
     
     return exitSiteData;
