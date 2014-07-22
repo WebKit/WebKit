@@ -1,3 +1,25 @@
+2014-07-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard spends 2s processing JSON data during the page loads
+        https://bugs.webkit.org/show_bug.cgi?id=135152
+
+        Reviewed by Andreas Kling.
+
+        In the Apple internal dashboard, we were spending as much as 2 seconds
+        converting raw JSON data into proper JS objects while loading the dashboard.
+
+        This caused the apparent unresponsiveness of the dashboard despite of the fact
+        charts themselves updated almost instantaneously.
+
+        * public/index.html:
+        * public/js/helper-classes.js:
+        (TestBuild): Compute the return values of formattedTime and formattedBuildTime
+        lazily as creating new Date objects and running string replace is expensive.
+        (TestBuild.formattedTime):
+        (TestBuild.formattedBuildTime):
+        (PerfTestRuns.setResults): Added. Pushing each result was the biggest bottle neck.
+        (PerfTestRuns.addResult): Deleted.
+
 2014-07-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard shouldn't show the full git hash

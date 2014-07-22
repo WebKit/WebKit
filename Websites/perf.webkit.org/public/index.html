@@ -835,8 +835,7 @@ function fetchTest(repositories, builders, filename, platform, metric, callback)
             // We should create PerfTestResult on demand.
             return new PerfTestResult(runs, rawRun, new TestBuild(repositories, builders, platform, rawRun));
         });
-        sortedResults = results.sort(function (a, b) { return a.build().time() - b.build().time(); });
-        sortedResults.forEach(function (result) { runs.addResult(result); });
+        runs.setResults(results.sort(function (a, b) { return a.build().time() - b.build().time(); }));
         return runs;
     }
 

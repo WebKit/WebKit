@@ -58,14 +58,22 @@ function TestBuild(repositories, builders, platform, rawRun) {
     if (!maxTime)
         maxTime = rawRun.buildTime;
     maxTime = TestBuild.UTCtoPST(maxTime);
-    var maxTimeString = new Date(maxTime).toISOString().replace('T', ' ').replace(/\.\d+Z$/, '');
+    var maxTimeString;
     var buildTime = TestBuild.UTCtoPST(rawRun.buildTime);
-    var buildTimeString = new Date(buildTime).toISOString().replace('T', ' ').replace(/\.\d+Z$/, '');
+    var buildTimeString;
 
     this.time = function () { return maxTime; }
-    this.formattedTime = function () { return maxTimeString; }
+    this.formattedTime = function () {
+        if (!maxTimeString)
+            maxTimeString = new Date(maxTime).toISOString().replace('T', ' ').replace(/\.\d+Z$/, '');
+        return maxTimeString;
+    }
     this.buildTime = function () { return buildTime; }
-    this.formattedBuildTime = function () { return buildTimeString; }
+    this.formattedBuildTime = function () {
+        if (!buildTimeString)
+            new Date(buildTime).toISOString().replace('T', ' ').replace(/\.\d+Z$/, '');
+        return buildTimeString;
+    }
     this.builder = function () { return builders[rawRun.builder].name; }
     this.buildNumber = function () { return rawRun.buildNumber; }
     this.buildUrl = function () {
@@ -178,10 +186,8 @@ function PerfTestRuns(metric, platform) {
 
     this.metric = function () { return metric; }
     this.platform = function () { return platform; }
-    this.addResult = function (newResult) {
-        if (results.indexOf(newResult) >= 0)
-            return;
-        results.push(newResult);
+    this.setResults = function (newResults) {
+        results = newResults;
         cachedUnit = null;
         cachedScalingFactor = null;
     }
