@@ -8429,7 +8429,7 @@ bool LayerFlushController::flushLayers()
         _private->fullscreenController = [[WebVideoFullscreenController alloc] init];
         [_private->fullscreenController setMediaElement:videoElement];
 #if PLATFORM(IOS)
-        [_private->fullscreenController enterFullscreen:nil];
+        [_private->fullscreenController enterFullscreen:(UIView *)[[[self window] hostLayer] delegate]];
 #else
         [_private->fullscreenController enterFullscreen:[[self window] screen]];
 #endif

@@ -50,9 +50,9 @@ using namespace WebCore;
     return nullptr;
 }
 
-- (void)enterFullscreen:(UIScreen *)screen
+- (void)enterFullscreen:(UIView *)view
 {
-    UNUSED_PARAM(screen);
+    UNUSED_PARAM(view);
 }
 
 - (void)exitFullscreen
@@ -114,11 +114,10 @@ public:
     return _mediaElement.get();
 }
 
-- (void)enterFullscreen:(UIScreen *)screen
+- (void)enterFullscreen:(UIView *)view
 {
     [self retain]; // Balanced by -release in didExitFullscreen:
     
-    UNUSED_PARAM(screen);
     _interface = adoptRef(new WebVideoFullscreenInterfaceAVKit);
     _interface->setWebVideoFullscreenChangeObserver(&_changeObserver);
     _model = adoptRef(new WebVideoFullscreenModelMediaElement);
@@ -126,7 +125,7 @@ public:
     _interface->setWebVideoFullscreenModel(_model.get());
     _model->setMediaElement(_mediaElement.get());
     _videoFullscreenLayer = [CALayer layer];
-    _interface->setupFullscreen(*_videoFullscreenLayer.get(), _mediaElement->screenRect());
+    _interface->setupFullscreen(*_videoFullscreenLayer.get(), _mediaElement->screenRect(), view);
 }
 
 - (void)exitFullscreen

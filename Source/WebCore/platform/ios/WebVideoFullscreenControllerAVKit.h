@@ -30,12 +30,12 @@
 
 #import <WebCore/HTMLMediaElement.h>
 
-OBJC_CLASS UIScreen;
+OBJC_CLASS UIView;
 
 @interface WebVideoFullscreenController : NSObject
 - (void)setMediaElement:(WebCore::HTMLMediaElement*)mediaElement;
 - (WebCore::HTMLMediaElement*)mediaElement;
-- (void)enterFullscreen:(UIScreen *)screen;
+- (void)enterFullscreen:(UIView *)view;
 - (void)exitFullscreen;
 - (void)requestHideAndExitFullscreen;
 @end
