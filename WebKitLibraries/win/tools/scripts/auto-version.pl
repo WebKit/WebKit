@@ -71,14 +71,12 @@ if (!defined $ENVIRONMENT_VERSION) {
 my $PROPOSED_VERSION = (defined $ENVIRONMENT_VERSION) ? $ENVIRONMENT_VERSION : $FALLBACK_VERSION;
 chomp($PROPOSED_VERSION);
 
-my ($BUILD_MAJOR_VERSION, $BUILD_MINOR_VERSION, $BUILD_TINY_VERSION) = splitVersion($PROPOSED_VERSION);
-
-$PROPOSED_VERSION = "$BUILD_MAJOR_VERSION.$BUILD_MINOR_VERSION.$BUILD_TINY_VERSION";
+my ($BUILD_MAJOR_VERSION, $BUILD_MINOR_VERSION, $BUILD_TINY_VERSION, $ADJUSTED_PROPOSED_VERSION) = splitVersion($PROPOSED_VERSION);
 
 my ($MAJOR_VERSION, $MINOR_VERSION) = splitBuildMajorVersion($BUILD_MAJOR_VERSION);
 my $TINY_VERSION = $BUILD_MINOR_VERSION;
 my $VARIANT_VERSION = $BUILD_TINY_VERSION;
-my $VERSION_TEXT = $PROPOSED_VERSION;
+my $VERSION_TEXT = $ADJUSTED_PROPOSED_VERSION;
 my $VERSION_TEXT_SHORT = $VERSION_TEXT;
 
 my $SVN_REVISION = '';
@@ -124,9 +122,10 @@ sub splitVersion($)
 {
     my $PROPOSED_VERSION = shift;
 
-    # Split out the three components of the dotted version number.  We pad
-    # the input with trailing dots to handle the case where the input version
-    # has fewer components than we expect.
+    $PROPOSED_VERSION =~ s/^\s+//g; # Get rid of any leading whitespace
+    $PROPOSED_VERSION =~ s/\s+$//g; # Get rid of any trailing whitespace
+
+    # Split out the components of the dotted version number.
     my @components = split(/\./, $PROPOSED_VERSION) or die "Couldn't parse $PROPOSED_VERSION";
     my $componentCount = scalar(@components);
 
@@ -145,9 +144,14 @@ sub splitVersion($)
     # Cut the major component down to three characters by dropping any
     # extra leading digits, then adjust the major version portion of the
     # version string to match.
+    my $originalLength = length($BUILD_MAJOR_VERSION);
     $BUILD_MAJOR_VERSION =~ s/^.*(\d\d\d)$/$1/;
 
-    return ($BUILD_MAJOR_VERSION, $BUILD_MINOR_VERSION, $BUILD_TINY_VERSION);
+    my $charactersToRemove = $originalLength - length($BUILD_MAJOR_VERSION);
+
+    $PROPOSED_VERSION = substr($PROPOSED_VERSION, $charactersToRemove);
+
+    return ($BUILD_MAJOR_VERSION, $BUILD_MINOR_VERSION, $BUILD_TINY_VERSION, $PROPOSED_VERSION);
 }
 
 sub splitBuildMajorVersion($)

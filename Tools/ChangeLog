@@ -1,3 +1,15 @@
+2014-07-22  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct handling of __VERSION_TEXT__ for 4+-tuple versions
+        https://bugs.webkit.org/show_bug.cgi?id=135161
+        <rdar://problem/17763546>
+
+        Reviewed by David Kilzer.
+
+        * Scripts/webkitperl/auto-version_unittest/autoVersionTests.pl:
+        Add additional test cases to catch errors in multiple-tuple
+        version string handling.
+
 2014-07-18  Filip Pizlo  <fpizlo@apple.com>
 
         Extend exception fuzzing to the LLInt

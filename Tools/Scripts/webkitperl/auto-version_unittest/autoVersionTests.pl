@@ -35,9 +35,9 @@ my @testCases =
     {
         'RC_ProjectSourceVersion' => '5300.4.3.2.1',
         expectedResults => {
-            '__VERSION_TEXT__' => '300.4.3',
-            '__BUILD_NUMBER__' => '300.4.3',
-            '__BUILD_NUMBER_SHORT__' => '300.4.3',
+            '__VERSION_TEXT__' => '300.4.3.2.1',
+            '__BUILD_NUMBER__' => '300.4.3.2.1',
+            '__BUILD_NUMBER_SHORT__' => '300.4.3.2.1',
             '__VERSION_MAJOR__' => '3',
             '__VERSION_MINOR__' => '00',
             '__VERSION_TINY__' => '4',
@@ -51,9 +51,9 @@ my @testCases =
     {
         'RC_ProjectSourceVersion' => '530.4.3.2.1',
         expectedResults => {
-            '__VERSION_TEXT__' => '530.4.3',
-            '__BUILD_NUMBER__' => '530.4.3',
-            '__BUILD_NUMBER_SHORT__' => '530.4.3',
+            '__VERSION_TEXT__' => '530.4.3.2.1',
+            '__BUILD_NUMBER__' => '530.4.3.2.1',
+            '__BUILD_NUMBER_SHORT__' => '530.4.3.2.1',
             '__VERSION_MAJOR__' => '5',
             '__VERSION_MINOR__' => '30',
             '__VERSION_TINY__' => '4',
@@ -67,9 +67,9 @@ my @testCases =
     {
         'RC_ProjectSourceVersion' => '53.4.3.2.1',
         expectedResults => {
-            '__VERSION_TEXT__' => '53.4.3',
-            '__BUILD_NUMBER__' => '53.4.3',
-            '__BUILD_NUMBER_SHORT__' => '53.4.3',
+            '__VERSION_TEXT__' => '53.4.3.2.1',
+            '__BUILD_NUMBER__' => '53.4.3.2.1',
+            '__BUILD_NUMBER_SHORT__' => '53.4.3.2.1',
             '__VERSION_MAJOR__' => '5',
             '__VERSION_MINOR__' => '3',
             '__VERSION_TINY__' => '4',
@@ -83,9 +83,9 @@ my @testCases =
     {
         'RC_ProjectSourceVersion' => '5.4.3.2.1',
         expectedResults => {
-            '__VERSION_TEXT__' => '5.4.3',
-            '__BUILD_NUMBER__' => '5.4.3',
-            '__BUILD_NUMBER_SHORT__' => '5.4.3',
+            '__VERSION_TEXT__' => '5.4.3.2.1',
+            '__BUILD_NUMBER__' => '5.4.3.2.1',
+            '__BUILD_NUMBER_SHORT__' => '5.4.3.2.1',
             '__VERSION_MAJOR__' => '5',
             '__VERSION_MINOR__' => '',
             '__VERSION_TINY__' => '4',
@@ -99,9 +99,9 @@ my @testCases =
     {
         'RC_ProjectSourceVersion' => '5300.4.3.2',
         expectedResults => {
-            '__VERSION_TEXT__' => '300.4.3',
-            '__BUILD_NUMBER__' => '300.4.3',
-            '__BUILD_NUMBER_SHORT__' => '300.4.3',
+            '__VERSION_TEXT__' => '300.4.3.2',
+            '__BUILD_NUMBER__' => '300.4.3.2',
+            '__BUILD_NUMBER_SHORT__' => '300.4.3.2',
             '__VERSION_MAJOR__' => '3',
             '__VERSION_MINOR__' => '00',
             '__VERSION_TINY__' => '4',
@@ -115,9 +115,9 @@ my @testCases =
     {
         'RC_ProjectSourceVersion' => '530.4.3.2',
         expectedResults => {
-            '__VERSION_TEXT__' => '530.4.3',
-            '__BUILD_NUMBER__' => '530.4.3',
-            '__BUILD_NUMBER_SHORT__' => '530.4.3',
+            '__VERSION_TEXT__' => '530.4.3.2',
+            '__BUILD_NUMBER__' => '530.4.3.2',
+            '__BUILD_NUMBER_SHORT__' => '530.4.3.2',
             '__VERSION_MAJOR__' => '5',
             '__VERSION_MINOR__' => '30',
             '__VERSION_TINY__' => '4',
@@ -131,9 +131,9 @@ my @testCases =
     {
         'RC_ProjectSourceVersion' => '53.4.3.2',
         expectedResults => {
-            '__VERSION_TEXT__' => '53.4.3',
-            '__BUILD_NUMBER__' => '53.4.3',
-            '__BUILD_NUMBER_SHORT__' => '53.4.3',
+            '__VERSION_TEXT__' => '53.4.3.2',
+            '__BUILD_NUMBER__' => '53.4.3.2',
+            '__BUILD_NUMBER_SHORT__' => '53.4.3.2',
             '__VERSION_MAJOR__' => '5',
             '__VERSION_MINOR__' => '3',
             '__VERSION_TINY__' => '4',
@@ -147,9 +147,9 @@ my @testCases =
     {
         'RC_ProjectSourceVersion' => '5.4.3.2',
         expectedResults => {
-            '__VERSION_TEXT__' => '5.4.3',
-            '__BUILD_NUMBER__' => '5.4.3',
-            '__BUILD_NUMBER_SHORT__' => '5.4.3',
+            '__VERSION_TEXT__' => '5.4.3.2',
+            '__BUILD_NUMBER__' => '5.4.3.2',
+            '__BUILD_NUMBER_SHORT__' => '5.4.3.2',
             '__VERSION_MAJOR__' => '5',
             '__VERSION_MINOR__' => '',
             '__VERSION_TINY__' => '4',
@@ -227,9 +227,9 @@ my @testCases =
     {
         'RC_ProjectSourceVersion' => '5300.4',
         expectedResults => {
-            '__VERSION_TEXT__' => '300.4.0',
-            '__BUILD_NUMBER__' => '300.4.0',
-            '__BUILD_NUMBER_SHORT__' => '300.4.0',
+            '__VERSION_TEXT__' => '300.4',
+            '__BUILD_NUMBER__' => '300.4',
+            '__BUILD_NUMBER_SHORT__' => '300.4',
             '__VERSION_MAJOR__' => '3',
             '__VERSION_MINOR__' => '00',
             '__VERSION_TINY__' => '4',
@@ -243,9 +243,9 @@ my @testCases =
     {
         'RC_ProjectSourceVersion' => '530.4',
         expectedResults => {
-            '__VERSION_TEXT__' => '530.4.0',
-            '__BUILD_NUMBER__' => '530.4.0',
-            '__BUILD_NUMBER_SHORT__' => '530.4.0',
+            '__VERSION_TEXT__' => '530.4',
+            '__BUILD_NUMBER__' => '530.4',
+            '__BUILD_NUMBER_SHORT__' => '530.4',
             '__VERSION_MAJOR__' => '5',
             '__VERSION_MINOR__' => '30',
             '__VERSION_TINY__' => '4',
@@ -259,9 +259,9 @@ my @testCases =
     {
         'RC_ProjectSourceVersion' => '53.4',
         expectedResults => {
-            '__VERSION_TEXT__' => '53.4.0',
-            '__BUILD_NUMBER__' => '53.4.0',
-            '__BUILD_NUMBER_SHORT__' => '53.4.0',
+            '__VERSION_TEXT__' => '53.4',
+            '__BUILD_NUMBER__' => '53.4',
+            '__BUILD_NUMBER_SHORT__' => '53.4',
             '__VERSION_MAJOR__' => '5',
             '__VERSION_MINOR__' => '3',
             '__VERSION_TINY__' => '4',
@@ -275,9 +275,9 @@ my @testCases =
     {
         'RC_ProjectSourceVersion' => '5.4',
         expectedResults => {
-            '__VERSION_TEXT__' => '5.4.0',
-            '__BUILD_NUMBER__' => '5.4.0',
-            '__BUILD_NUMBER_SHORT__' => '5.4.0',
+            '__VERSION_TEXT__' => '5.4',
+            '__BUILD_NUMBER__' => '5.4',
+            '__BUILD_NUMBER_SHORT__' => '5.4',
             '__VERSION_MAJOR__' => '5',
             '__VERSION_MINOR__' => '',
             '__VERSION_TINY__' => '4',
@@ -291,9 +291,9 @@ my @testCases =
     {
         'RC_ProjectSourceVersion' => '5300',
         expectedResults => {
-            '__VERSION_TEXT__' => '300.0.0',
-            '__BUILD_NUMBER__' => '300.0.0',
-            '__BUILD_NUMBER_SHORT__' => '300.0.0',
+            '__VERSION_TEXT__' => '300',
+            '__BUILD_NUMBER__' => '300',
+            '__BUILD_NUMBER_SHORT__' => '300',
             '__VERSION_MAJOR__' => '3',
             '__VERSION_MINOR__' => '00',
             '__VERSION_TINY__' => '0',
@@ -307,9 +307,9 @@ my @testCases =
     {
         'RC_ProjectSourceVersion' => '530',
         expectedResults => {
-            '__VERSION_TEXT__' => '530.0.0',
-            '__BUILD_NUMBER__' => '530.0.0',
-            '__BUILD_NUMBER_SHORT__' => '530.0.0',
+            '__VERSION_TEXT__' => '530',
+            '__BUILD_NUMBER__' => '530',
+            '__BUILD_NUMBER_SHORT__' => '530',
             '__VERSION_MAJOR__' => '5',
             '__VERSION_MINOR__' => '30',
             '__VERSION_TINY__' => '0',
@@ -320,13 +320,125 @@ my @testCases =
         },
     },
 
+    {
+        'RC_ProjectSourceVersion' => '10530.1.1.1',
+        expectedResults => {
+            '__VERSION_TEXT__' => '530.1.1.1',
+            '__BUILD_NUMBER__' => '530.1.1.1',
+            '__BUILD_NUMBER_SHORT__' => '530.1.1.1',
+            '__VERSION_MAJOR__' => '5',
+            '__VERSION_MINOR__' => '30',
+            '__VERSION_TINY__' => '1',
+            '__VERSION_BUILD__' => '1',
+            '__BUILD_NUMBER_MAJOR__' => '530',
+            '__BUILD_NUMBER_MINOR__' => '1',
+            '__BUILD_NUMBER_VARIANT__' => '1',
+        },
+    },
+
+    {
+        'RC_ProjectSourceVersion' => '10530.30.20.10',
+        expectedResults => {
+            '__VERSION_TEXT__' => '530.30.20.10',
+            '__BUILD_NUMBER__' => '530.30.20.10',
+            '__BUILD_NUMBER_SHORT__' => '530.30.20.10',
+            '__VERSION_MAJOR__' => '5',
+            '__VERSION_MINOR__' => '30',
+            '__VERSION_TINY__' => '30',
+            '__VERSION_BUILD__' => '20',
+            '__BUILD_NUMBER_MAJOR__' => '530',
+            '__BUILD_NUMBER_MINOR__' => '30',
+            '__BUILD_NUMBER_VARIANT__' => '20',
+        },
+    },
+
+    {
+        'RC_ProjectSourceVersion' => '10530.300.200.100',
+        expectedResults => {
+            '__VERSION_TEXT__' => '530.300.200.100',
+            '__BUILD_NUMBER__' => '530.300.200.100',
+            '__BUILD_NUMBER_SHORT__' => '530.300.200.100',
+            '__VERSION_MAJOR__' => '5',
+            '__VERSION_MINOR__' => '30',
+            '__VERSION_TINY__' => '300',
+            '__VERSION_BUILD__' => '200',
+            '__BUILD_NUMBER_MAJOR__' => '530',
+            '__BUILD_NUMBER_MINOR__' => '300',
+            '__BUILD_NUMBER_VARIANT__' => '200',
+        },
+    },
+
+    {
+        'RC_ProjectSourceVersion' => '10530.3000.2000.1000',
+        expectedResults => {
+            '__VERSION_TEXT__' => '530.3000.2000.1000',
+            '__BUILD_NUMBER__' => '530.3000.2000.1000',
+            '__BUILD_NUMBER_SHORT__' => '530.3000.2000.1000',
+            '__VERSION_MAJOR__' => '5',
+            '__VERSION_MINOR__' => '30',
+            '__VERSION_TINY__' => '3000',
+            '__VERSION_BUILD__' => '2000',
+            '__BUILD_NUMBER_MAJOR__' => '530',
+            '__BUILD_NUMBER_MINOR__' => '3000',
+            '__BUILD_NUMBER_VARIANT__' => '2000',
+        },
+    },
+
+    {
+        'RC_ProjectSourceVersion' => '7530.3000.2000.1000',
+        expectedResults => {
+            '__VERSION_TEXT__' => '530.3000.2000.1000',
+            '__BUILD_NUMBER__' => '530.3000.2000.1000',
+            '__BUILD_NUMBER_SHORT__' => '530.3000.2000.1000',
+            '__VERSION_MAJOR__' => '5',
+            '__VERSION_MINOR__' => '30',
+            '__VERSION_TINY__' => '3000',
+            '__VERSION_BUILD__' => '2000',
+            '__BUILD_NUMBER_MAJOR__' => '530',
+            '__BUILD_NUMBER_MINOR__' => '3000',
+            '__BUILD_NUMBER_VARIANT__' => '2000',
+        },
+    },
+
+    {
+        'RC_ProjectSourceVersion' => '7530.300.200.100',
+        expectedResults => {
+            '__VERSION_TEXT__' => '530.300.200.100',
+            '__BUILD_NUMBER__' => '530.300.200.100',
+            '__BUILD_NUMBER_SHORT__' => '530.300.200.100',
+            '__VERSION_MAJOR__' => '5',
+            '__VERSION_MINOR__' => '30',
+            '__VERSION_TINY__' => '300',
+            '__VERSION_BUILD__' => '200',
+            '__BUILD_NUMBER_MAJOR__' => '530',
+            '__BUILD_NUMBER_MINOR__' => '300',
+            '__BUILD_NUMBER_VARIANT__' => '200',
+        },
+    },
+
+    {
+        'RC_ProjectSourceVersion' => '7530.30.20.10',
+        expectedResults => {
+            '__VERSION_TEXT__' => '530.30.20.10',
+            '__BUILD_NUMBER__' => '530.30.20.10',
+            '__BUILD_NUMBER_SHORT__' => '530.30.20.10',
+            '__VERSION_MAJOR__' => '5',
+            '__VERSION_MINOR__' => '30',
+            '__VERSION_TINY__' => '30',
+            '__VERSION_BUILD__' => '20',
+            '__BUILD_NUMBER_MAJOR__' => '530',
+            '__BUILD_NUMBER_MINOR__' => '30',
+            '__BUILD_NUMBER_VARIANT__' => '20',
+        },
+    },
+
     # Smallest "Valid" case
     {
         'RC_ProjectSourceVersion' => '53',
         expectedResults => {
-            '__VERSION_TEXT__' => '53.0.0',
-            '__BUILD_NUMBER__' => '53.0.0',
-            '__BUILD_NUMBER_SHORT__' => '53.0.0',
+            '__VERSION_TEXT__' => '53',
+            '__BUILD_NUMBER__' => '53',
+            '__BUILD_NUMBER_SHORT__' => '53',
             '__VERSION_MAJOR__' => '5',
             '__VERSION_MINOR__' => '3',
             '__VERSION_TINY__' => '0',
@@ -341,9 +453,9 @@ my @testCases =
     {
         'RC_ProjectSourceVersion' => '5',
         expectedResults => {
-            '__VERSION_TEXT__' => '5.0.0',
-            '__BUILD_NUMBER__' => '5.0.0',
-            '__BUILD_NUMBER_SHORT__' => '5.0.0',
+            '__VERSION_TEXT__' => '5',
+            '__BUILD_NUMBER__' => '5',
+            '__BUILD_NUMBER_SHORT__' => '5',
             '__VERSION_MAJOR__' => '5',
             '__VERSION_MINOR__' => '',
             '__VERSION_TINY__' => '0',
@@ -358,9 +470,60 @@ my @testCases =
     {
         'RC_ProjectSourceVersion' => '214747.99.99.99.99',
         expectedResults => {
-            '__VERSION_TEXT__' => '747.99.99',
-            '__BUILD_NUMBER__' => '747.99.99',
-            '__BUILD_NUMBER_SHORT__' => '747.99.99',
+            '__VERSION_TEXT__' => '747.99.99.99.99',
+            '__BUILD_NUMBER__' => '747.99.99.99.99',
+            '__BUILD_NUMBER_SHORT__' => '747.99.99.99.99',
+            '__VERSION_MAJOR__' => '7',
+            '__VERSION_MINOR__' => '47',
+            '__VERSION_TINY__' => '99',
+            '__VERSION_BUILD__' => '99',
+            '__BUILD_NUMBER_MAJOR__' => '747',
+            '__BUILD_NUMBER_MINOR__' => '99',
+            '__BUILD_NUMBER_VARIANT__' => '99',
+        },
+    },
+
+    # Leading Whitespace
+    {
+        'RC_ProjectSourceVersion' => '        214747.99.99.99.99',
+        expectedResults => {
+            '__VERSION_TEXT__' => '747.99.99.99.99',
+            '__BUILD_NUMBER__' => '747.99.99.99.99',
+            '__BUILD_NUMBER_SHORT__' => '747.99.99.99.99',
+            '__VERSION_MAJOR__' => '7',
+            '__VERSION_MINOR__' => '47',
+            '__VERSION_TINY__' => '99',
+            '__VERSION_BUILD__' => '99',
+            '__BUILD_NUMBER_MAJOR__' => '747',
+            '__BUILD_NUMBER_MINOR__' => '99',
+            '__BUILD_NUMBER_VARIANT__' => '99',
+        },
+    },
+
+    # Trailing Whitespace
+    {
+        'RC_ProjectSourceVersion' => '214747.99.99.99.99      ',
+        expectedResults => {
+            '__VERSION_TEXT__' => '747.99.99.99.99',
+            '__BUILD_NUMBER__' => '747.99.99.99.99',
+            '__BUILD_NUMBER_SHORT__' => '747.99.99.99.99',
+            '__VERSION_MAJOR__' => '7',
+            '__VERSION_MINOR__' => '47',
+            '__VERSION_TINY__' => '99',
+            '__VERSION_BUILD__' => '99',
+            '__BUILD_NUMBER_MAJOR__' => '747',
+            '__BUILD_NUMBER_MINOR__' => '99',
+            '__BUILD_NUMBER_VARIANT__' => '99',
+        },
+    },
+
+    # Leading and Trailing Whitespace
+    {
+        'RC_ProjectSourceVersion' => '        214747.99.99.99.99      ',
+        expectedResults => {
+            '__VERSION_TEXT__' => '747.99.99.99.99',
+            '__BUILD_NUMBER__' => '747.99.99.99.99',
+            '__BUILD_NUMBER_SHORT__' => '747.99.99.99.99',
             '__VERSION_MAJOR__' => '7',
             '__VERSION_MINOR__' => '47',
             '__VERSION_TINY__' => '99',
@@ -386,7 +549,7 @@ foreach my $testCase (@testCases) {
     my $toolsPath = $ENV{'WEBKIT_LIBRARIES'};
     my $autoVersionScript = File::Spec->catfile($toolsPath, 'tools', 'scripts', 'auto-version.pl');
     my $testOutputDir = tempdir(CLEANUP => 1);
-    `RC_ProjectSourceVersion=$testCase->{'RC_ProjectSourceVersion'} perl $autoVersionScript $testOutputDir`;
+    `RC_ProjectSourceVersion="$testCase->{'RC_ProjectSourceVersion'}" perl $autoVersionScript $testOutputDir`;
 
     my $expectedResults = $testCase->{expectedResults};
 
