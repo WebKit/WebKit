@@ -56,6 +56,7 @@ public:
         SVG_LENGTHTYPE_PC = LengthTypePC
     };
 
+    // FIXME: Once all SVGLength users use Length internally, we make this a wrapper for Length.
     SVGLength(SVGLengthMode = LengthModeOther, const String& valueAsString = String());
     SVGLength(const SVGLengthContext&, float, SVGLengthMode = LengthModeOther, SVGLengthType = LengthTypeNumber);
     SVGLength(const SVGLength&);

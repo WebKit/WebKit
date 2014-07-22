@@ -27,6 +27,7 @@ namespace WebCore {
 
 class SVGElement;
 class SVGLength;
+struct Length;
 
 typedef int ExceptionCode;
 
@@ -64,6 +65,7 @@ public:
     static FloatPoint resolvePoint(const SVGElement*, SVGUnitTypes::SVGUnitType, const SVGLength& x, const SVGLength& y);
     static float resolveLength(const SVGElement*, SVGUnitTypes::SVGUnitType, const SVGLength&);
 
+    float valueForLength(const Length&, SVGLengthMode = LengthModeOther);
     float convertValueToUserUnits(float, SVGLengthMode, SVGLengthType fromUnit, ExceptionCode&) const;
     float convertValueFromUserUnits(float, SVGLengthMode, SVGLengthType toUnit, ExceptionCode&) const;
 

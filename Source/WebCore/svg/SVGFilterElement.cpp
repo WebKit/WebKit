@@ -167,11 +167,15 @@ void SVGFilterElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGElementInstance::InvalidationGuard invalidationGuard(this);
-    
+
+    if (attrName == SVGNames::widthAttr
+        || attrName == SVGNames::heightAttr) {
+        invalidateSVGPresentationAttributeStyle();
+        return;
+    }
+
     if (attrName == SVGNames::xAttr
-        || attrName == SVGNames::yAttr
-        || attrName == SVGNames::widthAttr
-        || attrName == SVGNames::heightAttr)
+        || attrName == SVGNames::yAttr)
         updateRelativeLengthsInformation();
 
     if (RenderObject* object = renderer())
@@ -231,14 +235,6 @@ bool SVGFilterElement::childShouldCreateRenderer(const Node& child) const
     }
 
     return allowedChildElementTags.get().contains<SVGAttributeHashTranslator>(svgElement.tagQName());
-}
-
-bool SVGFilterElement::selfHasRelativeLengths() const
-{
-    return x().isRelative()
-        || y().isRelative()
-        || width().isRelative()
-        || height().isRelative();
 }
 
 }

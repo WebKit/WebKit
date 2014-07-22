@@ -56,7 +56,7 @@ void RenderSVGRect::updateShapeFromElement()
     m_outerStrokeRect = FloatRect();
 
     SVGLengthContext lengthContext(&rectElement());
-    FloatSize boundingBoxSize(rectElement().width().value(lengthContext), rectElement().height().value(lengthContext));
+    FloatSize boundingBoxSize(lengthContext.valueForLength(style().width(), LengthModeWidth), lengthContext.valueForLength(style().height(), LengthModeHeight));
 
     // Element is invalid if either dimension is negative.
     if (boundingBoxSize.width() < 0 || boundingBoxSize.height() < 0)

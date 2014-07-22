@@ -134,11 +134,15 @@ void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGElementInstance::InvalidationGuard invalidationGuard(this);
-    
+
+    if (attrName == SVGNames::widthAttr
+        || attrName == SVGNames::heightAttr) {
+        invalidateSVGPresentationAttributeStyle();
+        return;
+    }
+
     if (attrName == SVGNames::xAttr
-        || attrName == SVGNames::yAttr
-        || attrName == SVGNames::widthAttr
-        || attrName == SVGNames::heightAttr)
+        || attrName == SVGNames::yAttr)
         updateRelativeLengthsInformation();
 
     if (RenderObject* object = renderer())
@@ -159,14 +163,6 @@ void SVGMaskElement::childrenChanged(const ChildChange& change)
 RenderPtr<RenderElement> SVGMaskElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     return createRenderer<RenderSVGResourceMasker>(*this, WTF::move(style));
-}
-
-bool SVGMaskElement::selfHasRelativeLengths() const
-{
-    return x().isRelative()
-        || y().isRelative()
-        || width().isRelative()
-        || height().isRelative();
 }
 
 }

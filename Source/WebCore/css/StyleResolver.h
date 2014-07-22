@@ -206,6 +206,7 @@ public:
 
 public:
     bool useSVGZoomRules();
+    bool useSVGZoomRulesForLength();
 
     static bool colorFromPrimitiveValueIsDerivedFromElement(CSSPrimitiveValue*);
     Color colorFromPrimitiveValue(CSSPrimitiveValue*, bool forVisitedLink = false) const;

@@ -120,11 +120,15 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGElementInstance::InvalidationGuard invalidationGuard(this);
-    
+
+    if (attrName == SVGNames::widthAttr
+        || attrName == SVGNames::heightAttr) {
+        invalidateSVGPresentationAttributeStyle();
+        return;
+    }
+
     bool isLengthAttribute = attrName == SVGNames::xAttr
                           || attrName == SVGNames::yAttr
-                          || attrName == SVGNames::widthAttr
-                          || attrName == SVGNames::heightAttr
                           || attrName == SVGNames::rxAttr
                           || attrName == SVGNames::ryAttr;
 
@@ -147,16 +151,6 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     ASSERT_NOT_REACHED();
-}
-
-bool SVGRectElement::selfHasRelativeLengths() const
-{
-    return x().isRelative()
-        || y().isRelative()
-        || width().isRelative()
-        || height().isRelative()
-        || rx().isRelative()
-        || ry().isRelative();
 }
 
 RenderPtr<RenderElement> SVGRectElement::createElementRenderer(PassRef<RenderStyle> style)

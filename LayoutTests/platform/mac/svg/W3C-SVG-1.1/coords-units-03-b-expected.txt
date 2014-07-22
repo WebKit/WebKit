@@ -38,8 +38,8 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (230,68) size 158x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 158x15
             chunk 1 text run 1 at (230.00,80.00) startOffset 0 endOffset 30 width 158.00: "Relative to font x-height (ex)"
-        RenderSVGContainer {g} at (20,140) size 200x1
-          RenderSVGRect {rect} at (20,140) size 200x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=80.00] [width=200.00] [height=1.00]
+        RenderSVGContainer {g} at (20,140) size 180x1
+          RenderSVGRect {rect} at (20,140) size 180x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=80.00] [width=200.00] [height=1.00]
         RenderSVGText {text} at (20,86) size 93x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 93x15
             chunk 1 text run 1 at (20.00,98.00) startOffset 0 endOffset 15 width 93.00: "41.67% = 200 px"

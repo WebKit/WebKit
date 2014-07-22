@@ -1,3 +1,38 @@
+2014-07-18  Dirk Schulze  <krit@webkit.org>
+
+        Turn width/height to presentation attributes
+        https://bugs.webkit.org/show_bug.cgi?id=135046
+
+        Reviewed by Dean Jackson.
+
+        We already had a lot of tests for animating width/height as property.
+        So far they assumed that this is not possible. They simply needed to
+        be updated.
+
+        Furthermore, I added reference tests to test different inheritance
+        scenarios of CSS properties and setting them to elements.
+
+        A parsing test makes sure that the global property values inherit is
+        supported as well as CSS parsing rules for SVG attributes.
+        Negative tests test not-allowed behavior.
+
+        * platform/mac/svg/W3C-SVG-1.1/coords-units-03-b-expected.txt:
+        * svg/animations/attributeTypes-expected.txt:
+        * svg/animations/resources/attributeTypes.svg:
+        * svg/animations/script-tests/attributeTypes.js:
+        (sample1):
+        (sample2):
+        (sample3):
+        * svg/css/getComputedStyle-basic-expected.txt:
+        * svg/css/parse-height-expected.txt: Added.
+        * svg/css/parse-height.html: Added.
+        * svg/css/parse-width-expected.txt: Added.
+        * svg/css/parse-width.html: Added.
+        * svg/css/width-height-presentation-attribute-expected.svg: Added.
+        * svg/css/width-height-presentation-attribute.svg: Added.
+        * svg/custom/mask-excessive-malloc-expected.txt:
+        * svg/hixie/error/015-expected.txt:
+
 2014-07-21  Diego Pino Garcia  <dpino@igalia.com>
 
         new Int32Array(new ArrayBuffer(100), 1, 1) shouldn't throw an error that says "RangeError: Byte offset and length out of range of buffer"

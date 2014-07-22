@@ -112,13 +112,14 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGElementInstance::InvalidationGuard invalidationGuard(this);
-    
-    bool isLengthAttribute = attrName == SVGNames::xAttr
-                          || attrName == SVGNames::yAttr
-                          || attrName == SVGNames::widthAttr
-                          || attrName == SVGNames::heightAttr;
 
-    if (isLengthAttribute)
+    if (attrName == SVGNames::widthAttr
+        || attrName == SVGNames::heightAttr) {
+        invalidateSVGPresentationAttributeStyle();
+        return;
+    }
+
+    if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr)
         updateRelativeLengthsInformation();
 
     if (auto renderer = this->renderer())
@@ -156,14 +157,6 @@ bool SVGForeignObjectElement::rendererIsNeeded(const RenderStyle& style)
     }
 
     return SVGGraphicsElement::rendererIsNeeded(style);
-}
-
-bool SVGForeignObjectElement::selfHasRelativeLengths() const
-{
-    return x().isRelative()
-        || y().isRelative()
-        || width().isRelative()
-        || height().isRelative();
 }
 
 }

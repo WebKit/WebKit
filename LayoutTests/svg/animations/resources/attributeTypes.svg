@@ -8,8 +8,8 @@
 </rect>
 
 <!-- 'width' is a XML attribute, attributeType is set to "CSS". 'width' is not a presentation attribute, so this animation won't run. -->
-<rect x="150" width="100" height="100" fill="green">
-    <animate id="an2" attributeType="CSS" attributeName="width" fill="freeze" from="100" to="10" begin="0s" dur="4s"/>
+<rect x="150" width="10" height="100" fill="green">
+    <animate id="an2" attributeType="CSS" attributeName="width" fill="freeze" from="10" to="100" begin="0s" dur="4s"/>
 </rect>
 
 <!-- 'fill' is a presentation attribute, mapped to CSS, attributeType is set to "auto": this animation runs. -->

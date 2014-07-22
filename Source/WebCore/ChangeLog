@@ -1,3 +1,154 @@
+2014-07-18  Dirk Schulze  <krit@webkit.org>
+
+        Turn width/height to presentation attributes
+        https://bugs.webkit.org/show_bug.cgi?id=135046
+
+        Reviewed by Dean Jackson.
+
+        The elements <svg>, <image>, <pattern>, <mask> and <foreignObject> have the
+        'width' and 'height' attributes. So far they can just be set by SVG DOM or
+        setAttribute. Furthermore, animations just work with SVG Animation - No support
+        for CSS Animations and CSS Transitions. We started to turn the width and height
+        attributes on SVG roots to presentation attributes already. A presentation
+        attribute is a CSS property that can also be set by DOM (or now by SVG DOM).
+
+        This patch turns all width and height attributes to presentation attributes. It
+        basically allows authors to style width and height with CSS as well. Width and
+        height can now be set with CSS style sheets and can be animated with CSS.
+
+        To some degree it made it possible to remove code duplication. However, since
+        SVG DOM requires us to use SVGLength types and since we did not turn all
+        SVG attributes to the CSS length values (and our internal Length struct) yet,
+        we still need a hybrid - a bridge between SVGLength (for SVG DOM) and Length (for
+        RenderStyle). Once we move all attributes to use the Length struct, we can make SVGLength
+        a wrapper for Length and can move more code to the render tree.
+
+        The current challenge is to synchronize SVG DOM, normal DOM and RenderStyle.
+        With this patch we handle most part in RenderStyle. SVG DOM changes are
+        synchronized to DOM and RenderStyle will call needsStyleRecalc. Furthermore,
+        SVG Animations will continue to animate the SVG DOM (and synchronize the changes
+        back to RenderStyle) if the element has a JS property for the currently animated
+        attribute.
+
+        Short example:
+
+            <rect>
+                <animate attributeName="width">
+            </rect>
+
+        The <rect> element has the SVG DOM property 'width'. Therefore, we animate the SVG DOM
+        property and synchronize RenderStyle.
+
+            <ellipse>
+                <animate attributeName="width">
+            </ellipse>
+
+        The <ellipse> element does NOT have the SVG DOM property 'width'. Therefore, we
+        animate the CSS property directly. With synchronizing RenderStyle in all cases, we
+        make sure that the CSS cascade works even on animating on multiple SVG hierarchy
+        levels (animation of 'width' on <g> and inheriting the property value on a child
+        <rect>).
+
+        With using presentation attributes, we also inherit the CSS property parsing for
+        SVG attributes. <rect width="  100px  "> is possible now. (Note the trailing whitespaces.)
+        This follows a recent resolution of the SVG WG.
+
+        Since we turned width and height to presentation attributes, the layout optimization
+        selfHasRelativeLengths() in the DOM can't be used anymore. selfHasRelativeLengths() was
+        intended to solve a problem where we did not layout relatively position/sized elements
+        when the parent changes its size. However, as a side effect it did not call layout
+        for absolutely positioned/sized elements since the layout does not change. I run
+        all performance tests that we have and even wrote a test with hundreds of elements
+        that would be affected by this optimization. The differences were inside the sigma
+        of a normal test run. (Means I couldn't measure a performance difference.)
+        Therefore, it is not worth it to keep the "optimization" around and I will probably
+        remove it entirely for all basic shapes but <path> and <polygon> in future patches.
+
+        Tests: svg/css/parse-height.html
+               svg/css/parse-width.html
+               svg/css/width-height-presentation-attribute-expected.svg
+               svg/css/width-height-presentation-attribute.svg
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue): We never calculated the computed
+            value of width/height for SVG elements and returned auto instead. This is based
+            on a rule of CSS 2 and needs to be fixed in CSS3.
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyLength::applyValue): Length always incorporates the zoom level.
+            In SVG we still apply the zoom after all operations by scaling the context. We need
+            to take this in account for Length and don't apply zoom on SVG inline elements.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::useSVGZoomRulesForLength):
+            See above.
+        * css/StyleResolver.h:
+        * rendering/svg/RenderSVGRect.cpp:
+        (WebCore::RenderSVGRect::updateShapeFromElement): Do not call width() and height() on
+            SVG DOM but use the values of RenderStyle instead.
+        * rendering/svg/SVGPathData.cpp:
+        (WebCore::updatePathFromRectElement): Ditto.
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::resetAnimatedType): We need to differ between CSS properties
+            with and without SVG DOM on the current element. In the later case we animate the 
+            SVG DOM and need to synch RenderStyle.
+        (WebCore::SVGAnimateElement::clearAnimatedType): Ditto.
+        (WebCore::SVGAnimateElement::applyResultsToTarget): Ditto.
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::isTargetAttributeCSSProperty): This checks if the CSS property
+            has to be synched with SVG DOM.
+        (WebCore::SVGAnimationElement::shouldApplyAnimation): Ditto.
+        * svg/SVGAnimationElement.h:
+        * svg/SVGElement.cpp:
+        (WebCore::populateAttributeNameToCSSPropertyIDMap): Add width and heigth to the CSS property
+            list for presentation attributes.
+        (WebCore::populateCSSPropertyWithSVGDOMNameToAnimatedPropertyTypeMap): CSS properties with
+            SVG DOM synchronization need to be treated differently. Collect them in a separate map.
+        (WebCore::cssPropertyWithSVGDOMNameToAnimatedPropertyTypeMap): Caller for the map.
+        (WebCore::SVGElement::animatedPropertyTypeForAttribute): We need to check both maps here:
+            CSS properties and CSS properties with SVG DOM synch.
+        (WebCore::SVGElement::isAnimatableCSSProperty): Ditto.
+        (WebCore::SVGElement::isPresentationAttributeWithSVGDOM): Just return true if the property name
+            is in the map of properties with SVG DOM for the current element.
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::invalidateSVGPresentationAttributeStyle): Call needsStyleRecalc.
+        * svg/SVGFilterElement.cpp: Make width/height presentation attribute.
+        (WebCore::SVGFilterElement::svgAttributeChanged):
+        (WebCore::SVGFilterElement::selfHasRelativeLengths): Deleted.
+        * svg/SVGFilterElement.h: Ditto.
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::svgAttributeChanged):
+        (WebCore::SVGForeignObjectElement::selfHasRelativeLengths): Deleted.
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGImageElement.cpp: Ditto.
+        (WebCore::SVGImageElement::svgAttributeChanged):
+        (WebCore::SVGImageElement::isPresentationAttribute): Deleted.
+        (WebCore::SVGImageElement::collectStyleForPresentationAttribute): Deleted.
+        (WebCore::SVGImageElement::selfHasRelativeLengths): Deleted.
+        * svg/SVGImageElement.h:
+        * svg/SVGLength.h: Transform an Length value to an absolute value by taking the SVG viewport
+            into account. (An SVG viewport is not the same as the CSS viewport.)
+        * svg/SVGLengthContext.cpp: Ditto.
+        (WebCore::SVGLengthContext::valueForLength):
+        * svg/SVGLengthContext.h:
+        * svg/SVGMaskElement.cpp: Make width/height presentation attribute.
+        (WebCore::SVGMaskElement::svgAttributeChanged):
+        (WebCore::SVGMaskElement::selfHasRelativeLengths): Deleted.
+        * svg/SVGMaskElement.h:
+        * svg/SVGPatternElement.cpp: Ditto.
+        (WebCore::SVGPatternElement::svgAttributeChanged):
+        (WebCore::SVGPatternElement::selfHasRelativeLengths): Deleted.
+        * svg/SVGPatternElement.h:
+        * svg/SVGRectElement.cpp: Ditto.
+        (WebCore::SVGRectElement::svgAttributeChanged):
+        (WebCore::SVGRectElement::selfHasRelativeLengths): Deleted.
+        * svg/SVGRectElement.h:
+        * svg/SVGSVGElement.cpp: Ditto.
+        (WebCore::SVGSVGElement::svgAttributeChanged): Clean up redundant layout calls.
+        (WebCore::SVGSVGElement::isPresentationAttribute): Deleted.
+        (WebCore::SVGSVGElement::collectStyleForPresentationAttribute): Deleted.
+        * svg/SVGSVGElement.h:
+        * svg/properties/SVGAnimatedProperty.cpp: Synchronize SVG DOM with DOM.
+        (WebCore::SVGAnimatedProperty::commitChange):
+
 2014-07-22  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GStreamer] [GTK] WebKit does not build with GStreamer 1.4

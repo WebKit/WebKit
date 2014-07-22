@@ -111,6 +111,7 @@ static NEVER_INLINE void populateAttributeNameToCSSPropertyIDMap(HashMap<AtomicS
         &glyph_orientation_horizontalAttr,
         &glyph_orientation_verticalAttr,
         &image_renderingAttr,
+        &SVGNames::heightAttr,
         &kerningAttr,
         &letter_spacingAttr,
         &lighting_colorAttr,
@@ -140,6 +141,7 @@ static NEVER_INLINE void populateAttributeNameToCSSPropertyIDMap(HashMap<AtomicS
         &unicode_bidiAttr,
         &vector_effectAttr,
         &visibilityAttr,
+        &SVGNames::widthAttr,
         &word_spacingAttr,
         &writing_modeAttr,
     };
@@ -229,6 +231,30 @@ static inline HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>& 
     static NeverDestroyed<HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>> map;
     if (map.get().isEmpty())
         populateAttributeNameToAnimatedPropertyTypeMap(map);
+    return map;
+}
+
+static NEVER_INLINE void populateCSSPropertyWithSVGDOMNameToAnimatedPropertyTypeMap(HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>& map)
+{
+    struct TableEntry {
+        const QualifiedName& attributeName;
+        AnimatedPropertyType type;
+    };
+
+    static const TableEntry table[] = {
+        { SVGNames::heightAttr, AnimatedLength },
+        { SVGNames::widthAttr, AnimatedLength },
+    };
+
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(table); ++i)
+        map.add(table[i].attributeName.impl(), table[i].type);
+}
+
+static inline HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>& cssPropertyWithSVGDOMNameToAnimatedPropertyTypeMap()
+{
+    static NeverDestroyed<HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>> map;
+    if (map.get().isEmpty())
+        populateCSSPropertyWithSVGDOMNameToAnimatedPropertyTypeMap(map);
     return map;
 }
 
@@ -508,8 +534,15 @@ void SVGElement::animatedPropertyTypeForAttribute(const QualifiedName& attribute
 
     auto& map = attributeNameToAnimatedPropertyTypeMap();
     auto it = map.find(attributeName.impl());
-    if (it != map.end())
+    if (it != map.end()) {
         propertyTypes.append(it->value);
+        return;
+    }
+
+    auto& cssPropertyWithSVGDOMMap = cssPropertyWithSVGDOMNameToAnimatedPropertyTypeMap();
+    auto svgPropertyIterator = cssPropertyWithSVGDOMMap.find(attributeName.impl());
+    if (svgPropertyIterator != cssPropertyWithSVGDOMMap.end())
+        propertyTypes.append(svgPropertyIterator->value);
 }
 
 bool SVGElement::haveLoadedRequiredResources()
@@ -965,7 +998,15 @@ CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& 
 
 bool SVGElement::isAnimatableCSSProperty(const QualifiedName& attributeName)
 {
-    return attributeNameToAnimatedPropertyTypeMap().contains(attributeName.impl());
+    return attributeNameToAnimatedPropertyTypeMap().contains(attributeName.impl())
+        || cssPropertyWithSVGDOMNameToAnimatedPropertyTypeMap().contains(attributeName.impl());
+}
+
+bool SVGElement::isPresentationAttributeWithSVGDOM(const QualifiedName& attributeName)
+{
+    Vector<AnimatedPropertyType> propertyTypes;
+    localAttributeToPropertyMap().animatedPropertyTypeForAttribute(attributeName, propertyTypes);
+    return !propertyTypes.isEmpty();
 }
 
 bool SVGElement::isPresentationAttribute(const QualifiedName& name) const

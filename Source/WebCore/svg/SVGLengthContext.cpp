@@ -27,6 +27,7 @@
 #include "ExceptionCode.h"
 #include "FontMetrics.h"
 #include "Frame.h"
+#include "LengthFunctions.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGViewportContainer.h"
 #include "RenderView.h"
@@ -83,6 +84,27 @@ float SVGLengthContext::resolveLength(const SVGElement* context, SVGUnitTypes::S
 
     // FIXME: valueAsPercentage() won't be correct for eg. cm units. They need to be resolved in user space and then be considered in objectBoundingBox space.
     return x.valueAsPercentage();
+}
+
+float SVGLengthContext::valueForLength(const Length& length, SVGLengthMode mode)
+{
+    if (length.isPercent())
+        return convertValueFromPercentageToUserUnits(length.value() / 100, mode, IGNORE_EXCEPTION);
+    if (length.isAuto())
+        return 0;
+
+    FloatSize viewportSize;
+    determineViewport(viewportSize);
+
+    switch (mode) {
+    case LengthModeWidth:
+        return floatValueForLength(length, viewportSize.width());
+    case LengthModeHeight:
+        return floatValueForLength(length, viewportSize.height());
+    case LengthModeOther:
+        return floatValueForLength(length, sqrtf(viewportSize.diagonalLengthSquared() / 2));
+    };
+    return 0;
 }
 
 float SVGLengthContext::convertValueToUserUnits(float value, SVGLengthMode mode, SVGLengthType fromUnit, ExceptionCode& ec) const

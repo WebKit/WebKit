@@ -104,9 +104,9 @@
 #include "RuleSet.h"
 #include "SVGDocument.h"
 #include "SVGDocumentExtensions.h"
-#include "SVGElement.h"
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"
+#include "SVGSVGElement.h"
 #include "SVGURIReference.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -1859,6 +1859,12 @@ inline bool StyleResolver::isValidCueStyleProperty(CSSPropertyID id)
 bool StyleResolver::useSVGZoomRules()
 {
     return m_state.element() && m_state.element()->isSVGElement();
+}
+
+// Scale with/height properties on inline SVG root.
+bool StyleResolver::useSVGZoomRulesForLength()
+{
+    return m_state.element() && m_state.element()->isSVGElement() && !(isSVGSVGElement(m_state.element()) && m_state.element()->parentNode());
 }
 
 #if ENABLE(CSS_GRID_LAYOUT)

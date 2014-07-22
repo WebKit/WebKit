@@ -7,8 +7,8 @@ function sample1() {
     shouldBe("rect1.width.baseVal.value", "10");
     expectFillColor(rect1, 0, 128, 0);
 
-    shouldBe("rect2.width.animVal.value", "100");
-    shouldBe("rect2.width.baseVal.value", "100");
+    shouldBeCloseEnough("rect2.width.animVal.value", "10");
+    shouldBe("rect2.width.baseVal.value", "10");
     expectFillColor(rect2, 0, 128, 0);
 
     shouldBe("rect3.width.animVal.value", "100");
@@ -27,8 +27,8 @@ function sample2() {
     shouldBe("rect1.width.baseVal.value", "10");
     expectFillColor(rect1, 0, 128, 0);
 
-    shouldBe("rect2.width.animVal.value", "100");
-    shouldBe("rect2.width.baseVal.value", "100");
+    shouldBeCloseEnough("rect2.width.animVal.value", "55");
+    shouldBe("rect2.width.baseVal.value", "10");
     expectFillColor(rect2, 0, 128, 0);
 
     shouldBe("rect3.width.animVal.value", "100");
@@ -47,8 +47,8 @@ function sample3() {
     shouldBe("rect1.width.baseVal.value", "10");
     expectFillColor(rect1, 0, 128, 0);
 
-    shouldBe("rect2.width.animVal.value", "100");
-    shouldBe("rect2.width.baseVal.value", "100");
+    shouldBeCloseEnough("rect2.width.animVal.value", "100");
+    shouldBe("rect2.width.baseVal.value", "10");
     expectFillColor(rect2, 0, 128, 0);
 
     shouldBe("rect3.width.animVal.value", "100");

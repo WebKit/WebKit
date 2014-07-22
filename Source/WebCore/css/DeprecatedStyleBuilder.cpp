@@ -384,16 +384,19 @@ public:
                 setValue(styleResolver->style(), Length(FitContent));
         }
 
+        CSSToLengthConversionData conversionData = styleResolver->useSVGZoomRulesForLength() ?
+            styleResolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
+            : styleResolver->state().cssToLengthConversionData();
         if (autoEnabled && primitiveValue->getValueID() == CSSValueAuto)
             setValue(styleResolver->style(), Length());
         else if (primitiveValue->isLength()) {
-            Length length = primitiveValue->computeLength<Length>(styleResolver->state().cssToLengthConversionData());
+            Length length = primitiveValue->computeLength<Length>(conversionData);
             length.setHasQuirk(primitiveValue->isQuirkValue());
             setValue(styleResolver->style(), length);
         } else if (primitiveValue->isPercentage())
             setValue(styleResolver->style(), Length(primitiveValue->getDoubleValue(), Percent));
         else if (primitiveValue->isCalculatedPercentageWithLength())
-            setValue(styleResolver->style(), Length(primitiveValue->cssCalcValue()->createCalculationValue(styleResolver->state().cssToLengthConversionData())));
+            setValue(styleResolver->style(), Length(primitiveValue->cssCalcValue()->createCalculationValue(conversionData)));
     }
 
     static PropertyHandler createHandler()

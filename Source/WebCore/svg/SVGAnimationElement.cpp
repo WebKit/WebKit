@@ -353,8 +353,13 @@ bool SVGAnimationElement::isAccumulated() const
     return value == sum && animationMode() != ToAnimation;
 }
 
-bool SVGAnimationElement::isTargetAttributeCSSProperty(SVGElement*, const QualifiedName& attributeName)
+bool SVGAnimationElement::isTargetAttributeCSSProperty(SVGElement* element, const QualifiedName& attributeName)
 {
+    // FIXME: Must be isSVGTextPositioningElement(element) instead.
+    if (isSVGTextElement(element)
+        && (attributeName == SVGNames::xAttr || attributeName == SVGNames::yAttr))
+        return false;
+
     return SVGElement::isAnimatableCSSProperty(attributeName);
 }
 
@@ -364,8 +369,12 @@ SVGAnimationElement::ShouldApplyAnimation SVGAnimationElement::shouldApplyAnimat
         return DontApplyAnimation;
 
     // Always animate CSS properties, using the ApplyCSSAnimation code path, regardless of the attributeType value.
-    if (isTargetAttributeCSSProperty(targetElement, attributeName))
+    if (isTargetAttributeCSSProperty(targetElement, attributeName)) {
+        if (targetElement->isPresentationAttributeWithSVGDOM(attributeName))
+            return ApplyXMLandCSSAnimation;
         return ApplyCSSAnimation;
+    }
+
 
     // If attributeType="CSS" and attributeName doesn't point to a CSS property, ignore the animation.
     if (attributeType() == AttributeTypeCSS)

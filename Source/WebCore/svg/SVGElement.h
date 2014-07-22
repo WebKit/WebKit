@@ -64,6 +64,7 @@ public:
 
     virtual String title() const override;
     static bool isAnimatableCSSProperty(const QualifiedName&);
+    bool isPresentationAttributeWithSVGDOM(const QualifiedName&);
     bool isKnownAttribute(const QualifiedName&);
     PassRefPtr<CSSValue> getPresentationAttribute(const String& name);
     virtual bool supportsMarkers() const { return false; }
@@ -86,7 +87,7 @@ public:
 
     virtual void svgAttributeChanged(const QualifiedName&);
 
-    virtual void animatedPropertyTypeForAttribute(const QualifiedName&, Vector<AnimatedPropertyType>&);
+    void animatedPropertyTypeForAttribute(const QualifiedName&, Vector<AnimatedPropertyType>&);
 
     void sendSVGLoadEventIfPossible(bool sendParentLoadEvents = false);
     void sendSVGLoadEventIfPossibleAsynchronously();
@@ -96,7 +97,12 @@ public:
     virtual AffineTransform* supplementalTransform() { return 0; }
 
     void invalidateSVGAttributes() { ensureUniqueElementData().setAnimatedSVGAttributesAreDirty(true); }
-    void invalidateSVGPresentationAttributeStyle() { ensureUniqueElementData().setPresentationAttributeStyleIsDirty(true); }
+    void invalidateSVGPresentationAttributeStyle()
+    {
+        ensureUniqueElementData().setPresentationAttributeStyleIsDirty(true);
+        // Trigger style recalculation for "elements as resource" (e.g. referenced by feImage).
+        setNeedsStyleRecalc(InlineStyleChange);
+    }
 
     const HashSet<SVGElementInstance*>& instancesForElement() const;
 

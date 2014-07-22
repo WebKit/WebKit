@@ -159,11 +159,15 @@ void SVGPatternElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGElementInstance::InvalidationGuard invalidationGuard(this);
-    
+
+    if (attrName == SVGNames::widthAttr
+        || attrName == SVGNames::heightAttr) {
+        invalidateSVGPresentationAttributeStyle();
+        return;
+    }
+
     if (attrName == SVGNames::xAttr
-        || attrName == SVGNames::yAttr
-        || attrName == SVGNames::widthAttr
-        || attrName == SVGNames::heightAttr)
+        || attrName == SVGNames::yAttr)
         updateRelativeLengthsInformation();
 
     if (RenderObject* object = renderer())
@@ -250,14 +254,6 @@ AffineTransform SVGPatternElement::localCoordinateSpaceTransform(SVGLocatable::C
     AffineTransform matrix;
     patternTransform().concatenate(matrix);
     return matrix;
-}
-
-bool SVGPatternElement::selfHasRelativeLengths() const
-{
-    return x().isRelative()
-        || y().isRelative()
-        || width().isRelative()
-        || height().isRelative();
 }
 
 }

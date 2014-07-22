@@ -21,8 +21,11 @@
 #include "SVGPathData.h"
 
 #include "Path.h"
+#include "RenderElement.h"
+#include "RenderStyle.h"
 #include "SVGCircleElement.h"
 #include "SVGEllipseElement.h"
+#include "SVGLengthContext.h"
 #include "SVGLineElement.h"
 #include "SVGNames.h"
 #include "SVGPathElement.h"
@@ -104,12 +107,16 @@ static void updatePathFromPolylineElement(SVGElement* element, Path& path)
 static void updatePathFromRectElement(SVGElement* element, Path& path)
 {
     SVGRectElement* rect = toSVGRectElement(element);
+    RenderElement* renderer = rect->renderer();
+    if (!renderer)
+        return;
 
+    RenderStyle& style = renderer->style();
     SVGLengthContext lengthContext(element);
-    float width = rect->width().value(lengthContext);
+    float width = lengthContext.valueForLength(style.width(), LengthModeWidth);
     if (width <= 0)
         return;
-    float height = rect->height().value(lengthContext);
+    float height = lengthContext.valueForLength(style.height(), LengthModeHeight);
     if (height <= 0)
         return;
     float x = rect->x().value(lengthContext);

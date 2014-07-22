@@ -90,7 +90,7 @@ rect: style.getPropertyValue(font-variant) : normal
 rect: style.getPropertyCSSValue(font-variant) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(font-weight) : normal
 rect: style.getPropertyCSSValue(font-weight) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(height) : auto
+rect: style.getPropertyValue(height) : 100px
 rect: style.getPropertyCSSValue(height) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(image-rendering) : auto
 rect: style.getPropertyCSSValue(image-rendering) : [object CSSPrimitiveValue]
@@ -190,7 +190,7 @@ rect: style.getPropertyValue(white-space) : normal
 rect: style.getPropertyCSSValue(white-space) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(widows) : auto
 rect: style.getPropertyCSSValue(widows) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(width) : auto
+rect: style.getPropertyValue(width) : 100px
 rect: style.getPropertyCSSValue(width) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(word-break) : normal
 rect: style.getPropertyCSSValue(word-break) : [object CSSPrimitiveValue]
