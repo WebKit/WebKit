@@ -1,5 +1,21 @@
 2014-07-23  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171367
+
+    2014-07-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+            JSLock release should only modify the AtomicStringTable if it modified in acquire
+            https://bugs.webkit.org/show_bug.cgi?id=135143
+
+            Reviewed by Pratik Solanki.
+
+            * runtime/JSLock.cpp:
+            (JSC::JSLock::willDestroyVM):
+            (JSC::JSLock::willReleaseLock):
+            Only set the AtomicStringTable when there was a VM, to balance JSLock::didAcquireLock.
+
+2014-07-23  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171355
 
     2014-07-21  Sam Weinig  <sam@webkit.org>
