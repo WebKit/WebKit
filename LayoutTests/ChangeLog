@@ -1,5 +1,19 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171316.
+
+    2014-07-21  Jer Noble  <jer.noble@apple.com>
+
+            [MSE] YouTube video decode error when variant-switching
+            https://bugs.webkit.org/show_bug.cgi?id=135128
+
+            Reviewed by Brent Fulgham.
+
+            * media/media-source/media-source-overlapping-decodetime-expected.txt: Added.
+            * media/media-source/media-source-overlapping-decodetime.html: Added.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171250.
 
     2014-07-18  Simon Fraser  <simon.fraser@apple.com>

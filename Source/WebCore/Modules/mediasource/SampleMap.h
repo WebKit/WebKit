@@ -65,7 +65,8 @@ private:
 class DecodeOrderSampleMap {
     friend class SampleMap;
 public:
-    typedef std::map<MediaTime, RefPtr<MediaSample>> MapType;
+    typedef std::pair<MediaTime, MediaTime> KeyType;
+    typedef std::map<KeyType, RefPtr<MediaSample>> MapType;
     typedef MapType::iterator iterator;
     typedef MapType::reverse_iterator reverse_iterator;
     typedef std::pair<reverse_iterator, reverse_iterator> reverse_iterator_range;
@@ -75,8 +76,8 @@ public:
     reverse_iterator rbegin() { return m_samples.rbegin(); }
     reverse_iterator rend() { return m_samples.rend(); }
 
-    iterator findSampleWithDecodeTime(const MediaTime&);
-    reverse_iterator reverseFindSampleWithDecodeTime(const MediaTime&);
+    iterator findSampleWithDecodeKey(const KeyType&);
+    reverse_iterator reverseFindSampleWithDecodeKey(const KeyType&);
     reverse_iterator findSyncSamplePriorToPresentationTime(const MediaTime&, const MediaTime& threshold = MediaTime::positiveInfiniteTime());
     reverse_iterator findSyncSamplePriorToDecodeIterator(reverse_iterator);
     iterator findSyncSampleAfterPresentationTime(const MediaTime&, const MediaTime& threshold = MediaTime::positiveInfiniteTime());
