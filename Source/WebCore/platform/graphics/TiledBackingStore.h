@@ -56,9 +56,6 @@ public:
     float contentsScale() { return m_contentsScale; }
     void setContentsScale(float);
 
-    bool contentsFrozen() const { return m_contentsFrozen; }
-    void setContentsFrozen(bool);
-
     void updateTileBuffers();
 
     void invalidate(const IntRect& dirtyRect);
@@ -89,11 +86,6 @@ private:
 
     void createTiles();
     void computeCoverAndKeepRect(const IntRect& visibleRect, IntRect& coverRect, IntRect& keepRect) const;
-
-    bool isBackingStoreUpdatesSuspended() const;
-    bool isTileBufferUpdatesSuspended() const;
-
-    void commitScaleChange();
 
     bool resizeEdgeTiles();
     void setCoverRect(const IntRect& rect) { m_coverRect = rect; }
@@ -132,10 +124,8 @@ private:
     IntRect m_rect;
 
     float m_contentsScale;
-    float m_pendingScale;
 
     bool m_commitTileUpdatesOnIdleEventLoop;
-    bool m_contentsFrozen;
     bool m_supportsAlpha;
     bool m_pendingTileCreation;
 

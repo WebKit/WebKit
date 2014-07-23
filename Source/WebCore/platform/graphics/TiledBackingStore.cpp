@@ -43,9 +43,7 @@ TiledBackingStore::TiledBackingStore(TiledBackingStoreClient* client, std::uniqu
     , m_tileSize(defaultTileDimension, defaultTileDimension)
     , m_coverAreaMultiplier(2.0f)
     , m_contentsScale(1.f)
-    , m_pendingScale(0)
     , m_commitTileUpdatesOnIdleEventLoop(false)
-    , m_contentsFrozen(false)
     , m_supportsAlpha(false)
     , m_pendingTileCreation(false)
 {
@@ -105,9 +103,6 @@ void TiledBackingStore::invalidate(const IntRect& contentsDirtyRect)
 
 void TiledBackingStore::updateTileBuffers()
 {
-    if (m_contentsFrozen)
-        return;
-
     m_client->tiledBackingStorePaintBegin();
 
     Vector<IntRect> paintedArea;
@@ -174,20 +169,10 @@ IntRect TiledBackingStore::visibleRect() const
 
 void TiledBackingStore::setContentsScale(float scale)
 {
-    if (m_pendingScale == m_contentsScale) {
-        m_pendingScale = 0;
+    if (scale == m_contentsScale)
         return;
-    }
-    m_pendingScale = scale;
-    if (m_contentsFrozen)
-        return;
-    commitScaleChange();
-}
 
-void TiledBackingStore::commitScaleChange()
-{
-    m_contentsScale = m_pendingScale;
-    m_pendingScale = 0;
+    m_contentsScale = scale;
     m_tiles.clear();
     coverWithTilesIfNeeded();
 }
@@ -234,10 +219,6 @@ bool TiledBackingStore::visibleAreaIsCovered() const
 
 void TiledBackingStore::createTiles()
 {
-    // Guard here as as these can change before the timer fires.
-    if (isBackingStoreUpdatesSuspended())
-        return;
-
     // Update our backing store geometry.
     const IntRect previousRect = m_rect;
     m_rect = mapFromContents(m_client->tiledBackingStoreContentsRect());
@@ -426,16 +407,6 @@ void TiledBackingStore::computeCoverAndKeepRect(const IntRect& visibleRect, IntR
     ASSERT(coverRect.isEmpty() || keepRect.contains(coverRect));
 }
 
-bool TiledBackingStore::isBackingStoreUpdatesSuspended() const
-{
-    return m_contentsFrozen;
-}
-
-bool TiledBackingStore::isTileBufferUpdatesSuspended() const
-{
-    return m_contentsFrozen;
-}
-
 bool TiledBackingStore::resizeEdgeTiles()
 {
     bool wasResized = false;
@@ -537,7 +508,7 @@ void TiledBackingStore::startTileBufferUpdateTimer()
     if (!m_commitTileUpdatesOnIdleEventLoop)
         return;
 
-    if (m_tileBufferUpdateTimer.isActive() || isTileBufferUpdatesSuspended())
+    if (m_tileBufferUpdateTimer.isActive())
         return;
     m_tileBufferUpdateTimer.startOneShot(0);
 }
@@ -553,7 +524,7 @@ void TiledBackingStore::startBackingStoreUpdateTimer(double interval)
     if (!m_commitTileUpdatesOnIdleEventLoop)
         return;
 
-    if (m_backingStoreUpdateTimer.isActive() || isBackingStoreUpdatesSuspended())
+    if (m_backingStoreUpdateTimer.isActive())
         return;
     m_backingStoreUpdateTimer.startOneShot(interval);
 }
@@ -562,26 +533,6 @@ void TiledBackingStore::backingStoreUpdateTimerFired(Timer<TiledBackingStore>*)
 {
     ASSERT(m_commitTileUpdatesOnIdleEventLoop);
     createTiles();
-}
-
-void TiledBackingStore::setContentsFrozen(bool freeze)
-{
-    if (m_contentsFrozen == freeze)
-        return;
-
-    m_contentsFrozen = freeze;
-
-    // Restart the timers. There might be pending invalidations that
-    // were not painted or created because tiles are not created or
-    // painted when in frozen state.
-    if (m_contentsFrozen)
-        return;
-    if (m_pendingScale)
-        commitScaleChange();
-    else {
-        startBackingStoreUpdateTimer();
-        startTileBufferUpdateTimer();
-    }
 }
 
 void TiledBackingStore::setSupportsAlpha(bool a)

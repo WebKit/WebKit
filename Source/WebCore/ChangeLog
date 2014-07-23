@@ -1,3 +1,26 @@
+2014-07-22  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Remove dead APIs from TiledBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=135158
+
+        Reviewed by Gyuyoung Kim.
+
+        setContentsFrozen and related code of TiledBackingStore are not used since Qt port is removed.
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::TiledBackingStore):
+        (WebCore::TiledBackingStore::updateTileBuffers):
+        (WebCore::TiledBackingStore::setContentsScale):
+        (WebCore::TiledBackingStore::createTiles):
+        (WebCore::TiledBackingStore::startTileBufferUpdateTimer):
+        (WebCore::TiledBackingStore::startBackingStoreUpdateTimer):
+        (WebCore::TiledBackingStore::commitScaleChange): Deleted.
+        (WebCore::TiledBackingStore::isBackingStoreUpdatesSuspended): Deleted.
+        (WebCore::TiledBackingStore::isTileBufferUpdatesSuspended): Deleted.
+        (WebCore::TiledBackingStore::setContentsFrozen): Deleted.
+        * platform/graphics/TiledBackingStore.h:
+        (WebCore::TiledBackingStore::contentsFrozen): Deleted.
+
 2014-07-22  Alex Christensen  <achristensen@webkit.org>
 
         Fix window-inactive css selectors when using querySelector.
