@@ -4946,10 +4946,6 @@ PlatformMedia HTMLMediaElement::platformMedia() const
 
 PlatformLayer* HTMLMediaElement::platformLayer() const
 {
-#if PLATFORM(IOS)
-    if (m_videoFullscreenLayer)
-        return nullptr;
-#endif
     return m_player ? m_player->platformLayer() : nullptr;
 }
 

@@ -33,6 +33,7 @@
 #import "WebVideoFullscreenManagerMessages.h"
 #import "WebVideoFullscreenManagerProxyMessages.h"
 #import <QuartzCore/CoreAnimation.h>
+#import <WebCore/Color.h>
 #import <WebCore/Event.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/FrameView.h>
@@ -166,9 +167,13 @@ void WebVideoFullscreenManager::didSetupFullscreen()
 #ifndef NDEBUG
     [videoLayer setName:@"Web video fullscreen manager layer"];
 #endif
-    
+
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    [videoLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparent, WebCore::ColorSpaceDeviceRGB)];
     m_layerHostingContext->setRootLayer(videoLayer);
     setVideoFullscreenLayer(videoLayer);
+    [CATransaction commit];
     m_page->send(Messages::WebVideoFullscreenManagerProxy::EnterFullscreen(), m_page->pageID());
 }
     

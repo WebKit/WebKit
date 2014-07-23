@@ -161,9 +161,9 @@ public:
 - (void)didCleanupFullscreen
 {
     WebThreadRun(^{
+        _model->setVideoFullscreenLayer(nil);
         _interface->setWebVideoFullscreenModel(nullptr);
         _model->setWebVideoFullscreenInterface(nullptr);
-        _model->setVideoFullscreenLayer(nil);
         _model->setMediaElement(nullptr);
         _interface->setWebVideoFullscreenChangeObserver(nullptr);
         _model = nullptr;

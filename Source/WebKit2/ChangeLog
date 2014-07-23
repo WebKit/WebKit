@@ -1,5 +1,24 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171286.
+
+    2014-07-20  Jeremy Jones  <jeremyj@apple.com>
+
+            Decrease flicker when enter and exit fullscreen.
+            https://bugs.webkit.org/show_bug.cgi?id=134919
+
+            Reviewed by Simon Fraser.
+
+            Change the sequence of tear down and use transparency to prevent flicker when entering and exiting fullscreen.
+
+            * UIProcess/ios/WebVideoFullscreenManagerProxy.mm: wait to remove layerHost until didCleanupFullscreen
+            (WebKit::WebVideoFullscreenManagerProxy::didExitFullscreen): removed from here
+            (WebKit::WebVideoFullscreenManagerProxy::didCleanupFullscreen): added here
+            * WebProcess/ios/WebVideoFullscreenManager.mm:
+            (WebKit::WebVideoFullscreenManager::didSetupFullscreen): use transparent background during transition
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171280.
 
     2014-07-20  Dan Bernstein  <mitz@apple.com>

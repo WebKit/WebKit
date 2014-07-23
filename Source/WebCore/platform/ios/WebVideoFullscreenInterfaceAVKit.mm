@@ -774,15 +774,18 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreen(PlatformLayer& videoLayer
         [m_viewController addChildViewController:m_playerViewController.get()];
         [[m_viewController view] addSubview:[m_playerViewController view]];
         [m_playerViewController view].frame = initialRect;
+        [[m_playerViewController view] setBackgroundColor:[getUIColorClass() clearColor]];
         [m_playerViewController didMoveToParentViewController:m_viewController.get()];
         [[m_playerViewController view] layoutIfNeeded];
 
         [CATransaction commit];
-        
-        if (m_fullscreenChangeObserver)
-            m_fullscreenChangeObserver->didSetupFullscreen();
-        
-        protect.clear();
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (m_fullscreenChangeObserver)
+                m_fullscreenChangeObserver->didSetupFullscreen();
+            
+            protect.clear();
+        });
     });
 }
 

@@ -1,5 +1,42 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171286.
+
+    2014-07-20  Jeremy Jones  <jeremyj@apple.com>
+
+            Decrease flicker when enter and exit fullscreen.
+            https://bugs.webkit.org/show_bug.cgi?id=134919
+
+            Reviewed by Simon Fraser.
+
+            Put AVPlayerLayer in a container layer so moving it between inline and fullscreen
+            is as easy as adding and removing it from a containter layer; no need to do a layout.
+
+            Make sure fullscreen layers are transparent before moving moving the AVPlayerLayer
+            between inline and fullscreen so you don't briefly see the empty fullscreen layers.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::platformLayer): remove fullscreen special case.
+            (WebCore::HTMLMediaElement::setVideoFullscreenLayer): no need to recalc style
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h: add inline container layer
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm: 
+            add WebVideoContainerLayer to contain AVPlayerLayer and keep layout correct.
+            (-[WebVideoContainerLayer setBounds:]): forward setbounds to set child frame.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer): create the video container layer
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer): destroy the video container layer
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::platformLayer): use container layer instead of video layer
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer): use transactions to prevent unwanted animation.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame): ditto
+            * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+            (PlatformCALayerMac::layerTypeForPlatformLayer): WebVideoContainerLayer is a kind of AVPlayerLayer
+            * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+            (-[WebVideoFullscreenController didCleanupFullscreen]): remove video fullscreen layer first
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+            (WebVideoFullscreenInterfaceAVKit::setupFullscreen): make background transparent during transition.
+               dispatch_async to allow CATransaction to complete before calling didSetupFullscreen()
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171284.
 
     2014-07-20  Dan Bernstein  <mitz@apple.com>
