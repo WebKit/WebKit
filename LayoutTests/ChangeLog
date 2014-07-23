@@ -1,3 +1,13 @@
+2014-07-23  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        ASSERTION FAILED: generatingElement() in WebCore::RenderNamedFlowFragment::regionOversetState
+        https://bugs.webkit.org/show_bug.cgi?id=135153
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/multicol-as-region-prevented-expected.html: Added.
+        * fast/regions/multicol-as-region-prevented.html: Added.
+
 2014-07-10  Radu Stavila  <stavila@adobe.com>
 
         REGRESSION (r169105): Crash in selection

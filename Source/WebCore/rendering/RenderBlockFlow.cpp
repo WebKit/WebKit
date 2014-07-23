@@ -3015,7 +3015,8 @@ void RenderBlockFlow::createRenderNamedFlowFragmentIfNeeded()
     if (!document().cssRegionsEnabled() || renderNamedFlowFragment() || isRenderNamedFlowFragment())
         return;
 
-    if (style().isDisplayRegionType() && style().hasFlowFrom()) {
+    // FIXME: Multicolumn regions not yet supported (http://dev.w3.org/csswg/css-regions/#multi-column-regions)
+    if (style().isDisplayRegionType() && style().hasFlowFrom() && !style().specifiesColumns()) {
         RenderNamedFlowFragment* flowFragment = new RenderNamedFlowFragment(document(), RenderNamedFlowFragment::createStyle(style()));
         flowFragment->initializeStyle();
         setRenderNamedFlowFragment(flowFragment);
