@@ -1,5 +1,19 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171280.
+
+    2014-07-20  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/17739804> REGRESSION (r171057): Crash in WebPage::getPositionInformation()
+            https://bugs.webkit.org/show_bug.cgi?id=135099
+
+            Reviewed by David Kilzer.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::getPositionInformation): Added a null check.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171257.
 
     2014-07-18  Oliver Hunt  <oliver@apple.com>
