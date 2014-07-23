@@ -44,7 +44,6 @@
     [RaisesException] void setTextAutosizingFontScaleFactor(unrestricted float fontScaleFactor);
 
     // Features
-    [RaisesException] void setCSSExclusionsEnabled(boolean enabled);
     [RaisesException] void setCSSShapesEnabled(boolean enabled);
 
     // Media

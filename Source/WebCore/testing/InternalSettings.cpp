@@ -66,8 +66,7 @@
 namespace WebCore {
 
 InternalSettings::Backup::Backup(Settings& settings)
-    : m_originalCSSExclusionsEnabled(RuntimeEnabledFeatures::sharedFeatures().cssExclusionsEnabled())
-    , m_originalCSSShapesEnabled(RuntimeEnabledFeatures::sharedFeatures().cssShapesEnabled())
+    : m_originalCSSShapesEnabled(RuntimeEnabledFeatures::sharedFeatures().cssShapesEnabled())
     , m_originalEditingBehavior(settings.editingBehaviorType())
 #if ENABLE(TEXT_AUTOSIZING)
     , m_originalTextAutosizingEnabled(settings.textAutosizingEnabled())
@@ -96,7 +95,6 @@ InternalSettings::Backup::Backup(Settings& settings)
 
 void InternalSettings::Backup::restoreTo(Settings& settings)
 {
-    RuntimeEnabledFeatures::sharedFeatures().setCSSExclusionsEnabled(m_originalCSSExclusionsEnabled);
     RuntimeEnabledFeatures::sharedFeatures().setCSSShapesEnabled(m_originalCSSShapesEnabled);
     settings.setEditingBehaviorType(m_originalEditingBehavior);
 
@@ -328,12 +326,6 @@ void InternalSettings::setTextAutosizingFontScaleFactor(float fontScaleFactor, E
     UNUSED_PARAM(fontScaleFactor);
     UNUSED_PARAM(ec);
 #endif
-}
-
-void InternalSettings::setCSSExclusionsEnabled(bool enabled, ExceptionCode& ec)
-{
-    UNUSED_PARAM(ec);
-    RuntimeEnabledFeatures::sharedFeatures().setCSSExclusionsEnabled(enabled);
 }
 
 void InternalSettings::setCSSShapesEnabled(bool enabled, ExceptionCode& ec)

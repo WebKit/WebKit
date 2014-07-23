@@ -1,3 +1,15 @@
+2014-07-23  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Remove CSS_EXCLUSIONS compile flag and leftover code
+        https://bugs.webkit.org/show_bug.cgi?id=135175
+
+        Reviewed by Zoltan Horvath.
+
+        At this point, the CSS_EXCLUSIONS flag guards nothing but some useless
+        stubs. This removes the flag and the useless code.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-07-22  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION (WebKit2): Selection inside accelerated overflow:scroll doesn't track scrolling.

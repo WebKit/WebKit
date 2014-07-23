@@ -66,14 +66,6 @@ public:
     bool webkitIndexedDBEnabled() const { return m_isIndexedDBEnabled; }
     bool indexedDBEnabled() const { return m_isIndexedDBEnabled; }
 
-#if ENABLE(CSS_EXCLUSIONS)
-    void setCSSExclusionsEnabled(bool isEnabled) { m_isCSSExclusionsEnabled = isEnabled; }
-    bool cssExclusionsEnabled() const { return m_isCSSExclusionsEnabled; }
-#else
-    void setCSSExclusionsEnabled(bool) { }
-    bool cssExclusionsEnabled() const { return false; }
-#endif
-
 #if ENABLE(CSS_SHAPES)
     void setCSSShapesEnabled(bool isEnabled) { m_isCSSShapesEnabled = isEnabled; }
     bool cssShapesEnabled() const { return m_isCSSShapesEnabled; }
@@ -240,7 +232,6 @@ private:
     bool m_isDeviceMotionEnabled;
     bool m_isDeviceOrientationEnabled;
     bool m_isSpeechInputEnabled;
-    bool m_isCSSExclusionsEnabled;
     bool m_isCSSShapesEnabled;
     bool m_isCSSRegionsEnabled;
     bool m_isCSSCompositingEnabled;
