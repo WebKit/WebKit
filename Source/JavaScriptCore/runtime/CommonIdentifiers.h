@@ -166,6 +166,7 @@
     macro(value) \
     macro(valueOf) \
     macro(values) \
+    macro(webkit) \
     macro(window) \
     macro(writable)
 

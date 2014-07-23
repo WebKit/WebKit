@@ -39,10 +39,6 @@
 #include <runtime/Microtask.h>
 #include <wtf/MainThread.h>
 
-#if ENABLE(USER_MESSAGE_HANDLERS)
-#include "JSWebKitNamespace.h"
-#endif
-
 #if PLATFORM(IOS)
 #include "ChromeClient.h"
 #include "WebSafeGCActivityCallbackIOS.h"
@@ -81,11 +77,6 @@ void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowShell* shell)
     };
     
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
-
-#if ENABLE(USER_MESSAGE_HANDLERS)
-    if (m_impl->shouldHaveWebKitNamespaceForWorld(world()))
-        putDirect(vm, Identifier(&vm, "webkit"), toJS(globalExec(), this, m_impl->webkitNamespace()), DontDelete | ReadOnly);
-#endif
 }
 
 void JSDOMWindowBase::destroy(JSCell* cell)
