@@ -1,5 +1,16 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171338.
+
+    2014-07-21  Pratik Solanki  <psolanki@apple.com>
+
+            Unreviewed iOS build fix after r171321.
+
+            * WebView/WebView.mm:
+            (-[WebView _preferencesChanged:]):
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171321.
 
     2014-07-21  Beth Dakin  <bdakin@apple.com>
