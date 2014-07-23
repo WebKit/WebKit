@@ -1,5 +1,32 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171246.
+
+    2014-07-18  Beth Dakin  <bdakin@apple.com>
+
+            Fixed position elements are misplaced when a WK1 view has contentInsets set
+            https://bugs.webkit.org/show_bug.cgi?id=135031
+            -and corresponding-
+            <rdar://problem/17682335>
+
+            Reviewed by Tim Horton.
+
+            [NSScrollView documentVisibleRect] includes content that is within the inset-area 
+            of a view, but WebCore is interested in the content that is fully visible, so we 
+            need to factor the inset sizes out of this rect.
+
+            Implement contract() to avoid the awkwardness of calling expand() with negative 
+            values.
+            * platform/graphics/IntSize.h:
+            (WebCore::IntSize::contract):
+
+            Factor out insets
+            * platform/mac/ScrollViewMac.mm:
+            (WebCore::ScrollView::platformVisibleContentRect):
+            (WebCore::ScrollView::platformVisibleContentSize):
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171239.
 
     2014-07-18  Tim Horton  <timothy_horton@apple.com>

@@ -81,6 +81,12 @@ public:
         m_height += height;
     }
 
+    void contract(int width, int height)
+    {
+        m_width -= width;
+        m_height -= height;
+    }
+
     void scale(float widthScale, float heightScale)
     {
         m_width = static_cast<int>(static_cast<float>(m_width) * widthScale);
