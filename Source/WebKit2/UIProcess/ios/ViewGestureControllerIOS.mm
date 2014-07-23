@@ -165,11 +165,10 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     if (m_activeGestureType != ViewGestureType::None)
         return;
 
-    m_webPageProxyForBackForwardListForCurrentSwipe = m_alternateBackForwardListSourceView.get() ? m_alternateBackForwardListSourceView.get()->_page : &m_webPageProxy;
-
-    m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidBegin();
-
     m_webPageProxy.recordNavigationSnapshot();
+
+    m_webPageProxyForBackForwardListForCurrentSwipe = m_alternateBackForwardListSourceView.get() ? m_alternateBackForwardListSourceView.get()->_page : &m_webPageProxy;
+    m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidBegin();
 
     auto backForwardList = m_webPageProxyForBackForwardListForCurrentSwipe->backForwardList();
 
@@ -273,15 +272,8 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     if (ViewSnapshot* snapshot = targetItem->snapshot())
         m_snapshotRemovalTargetRenderTreeSize = snapshot->renderTreeSize() * swipeSnapshotRemovalRenderTreeSizeTargetFraction;
 
-    // We don't want to replace the current back-forward item's snapshot
-    // like we normally would when going back or forward, because we are
-    // displaying the destination item's snapshot.
-    ViewSnapshotStore::shared().disableSnapshotting();
-
     m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidEnd(true, *targetItem);
     m_webPageProxyForBackForwardListForCurrentSwipe->goToBackForwardItem(targetItem);
-
-    ViewSnapshotStore::shared().enableSnapshotting();
 
     uint64_t pageID = m_webPageProxy.pageID();
     m_webPageProxy.drawingArea()->dispatchAfterEnsuringDrawing([pageID] (CallbackBase::Error error) {

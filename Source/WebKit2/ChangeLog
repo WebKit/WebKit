@@ -1,5 +1,78 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171239.
+
+    2014-07-18  Tim Horton  <timothy_horton@apple.com>
+
+            Take navigation snapshots whenever the current back-forward item is going to change
+            https://bugs.webkit.org/show_bug.cgi?id=135058
+            <rdar://problem/17464515>
+
+            Reviewed by Dan Bernstein.
+
+            Instead of trying to have the UI process figure out when to take navigation snapshots by itself,
+            snapshot whenever the Web process says that the current back-forward item is going to change.
+            This fixes snapshotting timing with pushState, and lets us bottleneck snapshotting down to
+            just two places instead of 5.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::goForward):
+            (WebKit::WebPageProxy::goBack):
+            (WebKit::WebPageProxy::goToBackForwardItem):
+            (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+            We no longer need to special-case taking navigation snapshots
+            when the UI process changes the back forward item or upon
+            didStartProvisionalLoadForFrame, because we'll always snapshot
+            in willChangeCurrentHistoryItem in all of these cases.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::willChangeCurrentHistoryItem):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            Add willChangeCurrentHistoryItem message, which comes from the Web process.
+            When it arrives, take a navigation snapshot.
+
+            * UIProcess/ios/ViewGestureControllerIOS.mm:
+            (WebKit::ViewGestureController::beginSwipeGesture):
+            Take the pre-swipe navigation snapshot before telling WebPageProxy that we're doing a swipe,
+            so that it doesn't bail from taking the snapshot because we have a snapshot up.
+
+            (WebKit::ViewGestureController::endSwipeGesture):
+            We no longer need to explicitly disable snapshotting while navigating, because
+            we will avoid taking the snapshot if there's a snapshot being displayed.
+
+            * UIProcess/mac/ViewGestureControllerMac.mm:
+            (WebKit::ViewGestureController::~ViewGestureController):
+            Remove the snapshot if it's still up when ViewGestureController is destroyed.
+            The Mac version of ViewGestureController is destroyed on Web process crashes
+            because it is a message receiver, so it is not guaranteed to have the same
+            lifetime as the WebPageProxy and friends.
+
+            (WebKit::ViewGestureController::trackSwipeGesture):
+            Make use of recordNavigationSnapshot.
+
+            (WebKit::ViewGestureController::endSwipeGesture):
+            Ditto from the Mac version.
+
+            * UIProcess/mac/ViewSnapshotStore.h:
+            (WebKit::ViewSnapshotStore::disableSnapshotting): Deleted.
+            (WebKit::ViewSnapshotStore::enableSnapshotting): Deleted.
+            * UIProcess/mac/ViewSnapshotStore.mm:
+            (WebKit::ViewSnapshotStore::ViewSnapshotStore):
+            (WebKit::ViewSnapshotStore::recordSnapshot):
+            Remove the snapshot disabling mechanism and bail from snapshotting if we're
+            showing a snapshot, as mentioned above.
+
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::willChangeCurrentHistoryItem):
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::willChangeCurrentHistoryItem):
+            * WebProcess/WebPage/WebPage.h:
+            Proxy willChangeCurrentHistoryItem from HistoryController to the UI process.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171225.
 
     2014-07-18  Jon Honeycutt  <jhoneycutt@apple.com>

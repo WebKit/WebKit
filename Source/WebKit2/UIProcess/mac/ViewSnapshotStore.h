@@ -119,9 +119,6 @@ public:
 
     void recordSnapshot(WebPageProxy&);
 
-    void disableSnapshotting() { m_enabled = false; }
-    void enableSnapshotting() { m_enabled = true; }
-
     void discardSnapshotImages();
 
 #if USE_RENDER_SERVER_VIEW_SNAPSHOTS
@@ -133,7 +130,6 @@ private:
     void willRemoveImageFromSnapshot(ViewSnapshot&);
     void pruneSnapshots(WebPageProxy&);
 
-    bool m_enabled;
     size_t m_snapshotCacheSize;
 
     ListHashSet<ViewSnapshot*> m_snapshotsWithImages;

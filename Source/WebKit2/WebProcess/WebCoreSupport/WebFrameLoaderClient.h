@@ -130,6 +130,7 @@ private:
     virtual void updateGlobalHistoryRedirectLinks() override;
     
     virtual bool shouldGoToHistoryItem(WebCore::HistoryItem*) const override;
+    virtual void willChangeCurrentHistoryItem() override;
 
     virtual void didDisplayInsecureContent() override;
     virtual void didRunInsecureContent(WebCore::SecurityOrigin*, const WebCore::URL&) override;
