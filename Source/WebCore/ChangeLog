@@ -1,3 +1,17 @@
+2014-07-23  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r171455.
+        https://bugs.webkit.org/show_bug.cgi?id=135209
+
+        completely broke selection highlight invalidation (Requested
+        by thorton on #webkit).
+
+        Reverted changeset:
+
+        "REGRESSION (r169105): Crash in selection"
+        https://bugs.webkit.org/show_bug.cgi?id=134303
+        http://trac.webkit.org/changeset/171455
+
 2014-07-23  Alex Christensen  <achristensen@webkit.org>
 
         Compile window-inactive and fullscreen pseudoclasses in css selectors.
