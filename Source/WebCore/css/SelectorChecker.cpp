@@ -32,7 +32,6 @@
 #include "CSSSelectorList.h"
 #include "Document.h"
 #include "ElementTraversal.h"
-#include "FocusController.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLAnchorElement.h"
@@ -481,9 +480,6 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             // CSS scrollbars match a specific subset of pseudo classes, and they have specialized rules for each
             // (since there are no elements involved).
             return checkScrollbarPseudoClass(context, &element->document(), selector);
-        } else if (context.hasSelectionPseudo) {
-            if (selector->pseudoClassType() == CSSSelector::PseudoClassWindowInactive)
-                return !element->document().page()->focusController().isActive();
         }
 
         // Normal element pseudo class checking.
@@ -745,17 +741,11 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
         case CSSSelector::PseudoClassFullScreen:
             return matchesFullScreenPseudoClass(element);
         case CSSSelector::PseudoClassAnimatingFullScreenTransition:
-            if (element != element->document().webkitCurrentFullScreenElement())
-                return false;
-            return element->document().isAnimatingFullScreen();
+            return matchesFullScreenAnimatingFullScreenTransitionPseudoClass(element);
         case CSSSelector::PseudoClassFullScreenAncestor:
-            return element->containsFullScreenElement();
+            return matchesFullScreenAncestorPseudoClass(element);
         case CSSSelector::PseudoClassFullScreenDocument:
-            // While a Document is in the fullscreen state, the 'full-screen-document' pseudoclass applies
-            // to all elements of that Document.
-            if (!element->document().webkitIsFullScreen())
-                return false;
-            return true;
+            return matchesFullScreenDocumentPseudoClass(element);
 #endif
         case CSSSelector::PseudoClassInRange:
             return isInRange(element);
@@ -777,7 +767,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             }
 
         case CSSSelector::PseudoClassWindowInactive:
-            return !element->document().page()->focusController().isActive();
+            return isWindowInactive(element);
 
         case CSSSelector::PseudoClassHorizontal:
         case CSSSelector::PseudoClassVertical:

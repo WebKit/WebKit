@@ -1,3 +1,25 @@
+2014-07-23  Alex Christensen  <achristensen@webkit.org>
+
+        Compile window-inactive and fullscreen pseudoclasses in css selectors.
+        https://bugs.webkit.org/show_bug.cgi?id=135200
+
+        Reviewed by Benjamin Poulain.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        Removed the check of context.hasSelectionPseudo for a window-inactive pseudoclass.
+        Moved logic to SelectorCheckerTestFunctions.h to share with the selector compiler.
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::isWindowInactive):
+        (WebCore::matchesFullScreenAnimatingFullScreenTransitionPseudoClass):
+        (WebCore::matchesFullScreenAncestorPseudoClass):
+        (WebCore::matchesFullScreenDocumentPseudoClass):
+        Added from SelectorChecker.cpp.
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        Added unoptimized pseudoclass cases for window-inactive and fullscreen pseudoclasses.
+        Explicitly listed uncompiled pseudoclasses for future work instead of using a default.
+
 2014-07-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Use NO_RETURN_DUE_TO_CRASH on Windows.

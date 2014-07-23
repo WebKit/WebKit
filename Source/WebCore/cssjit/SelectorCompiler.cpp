@@ -396,9 +396,22 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClassValid:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isValid));
         return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassWindowInactive:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isWindowInactive));
+        return FunctionType::SimpleSelectorChecker;
+            
 #if ENABLE(FULLSCREEN_API)
     case CSSSelector::PseudoClassFullScreen:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesFullScreenPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassFullScreenDocument:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesFullScreenDocumentPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassFullScreenAncestor:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesFullScreenAncestorPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassAnimatingFullScreenTransition:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesFullScreenAnimatingFullScreenTransitionPseudoClass));
         return FunctionType::SimpleSelectorChecker;
 #endif
 #if ENABLE(VIDEO_TRACK)
@@ -409,6 +422,30 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesPastCuePseudoClass));
         return FunctionType::SimpleSelectorChecker;
 #endif
+
+    // FIXME: Compile these pseudoclasses, too!
+    case CSSSelector::PseudoClassEmpty:
+    case CSSSelector::PseudoClassFirstOfType:
+    case CSSSelector::PseudoClassLastOfType:
+    case CSSSelector::PseudoClassOnlyOfType:
+    case CSSSelector::PseudoClassNthOfType:
+    case CSSSelector::PseudoClassNthLastChild:
+    case CSSSelector::PseudoClassNthLastOfType:
+    case CSSSelector::PseudoClassVisited:
+    case CSSSelector::PseudoClassDrag:
+    case CSSSelector::PseudoClassFullPageMedia:
+    case CSSSelector::PseudoClassScope:
+    case CSSSelector::PseudoClassCornerPresent:
+    case CSSSelector::PseudoClassDecrement:
+    case CSSSelector::PseudoClassIncrement:
+    case CSSSelector::PseudoClassHorizontal:
+    case CSSSelector::PseudoClassVertical:
+    case CSSSelector::PseudoClassStart:
+    case CSSSelector::PseudoClassEnd:
+    case CSSSelector::PseudoClassDoubleButton:
+    case CSSSelector::PseudoClassSingleButton:
+    case CSSSelector::PseudoClassNoButton:
+        return FunctionType::CannotCompile;
 
     // Optimized pseudo selectors.
     case CSSSelector::PseudoClassAnyLink:
@@ -533,10 +570,13 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
             }
             return FunctionType::SimpleSelectorChecker;
         }
-
-    default:
-        break;
+            
+    case CSSSelector::PseudoClassUnknown:
+        ASSERT_NOT_REACHED();
+        return FunctionType::CannotMatchAnything;
     }
+    
+    ASSERT_NOT_REACHED();
     return FunctionType::CannotCompile;
 }
 

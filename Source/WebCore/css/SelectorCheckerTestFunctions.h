@@ -26,6 +26,7 @@
 #ifndef SelectorCheckerTestFunctions_h
 #define SelectorCheckerTestFunctions_h
 
+#include "FocusController.h"
 #include "HTMLInputElement.h"
 #include "HTMLOptionElement.h"
 #include <wtf/Compiler.h>
@@ -111,6 +112,11 @@ ALWAYS_INLINE bool isValid(const Element* element)
     return element->willValidate() && element->isValidFormControlElement();
 }
 
+ALWAYS_INLINE bool isWindowInactive(const Element* element)
+{
+    return !element->document().page()->focusController().isActive();
+}
+    
 inline bool matchesLangPseudoClass(const Element* element, AtomicStringImpl* filter)
 {
     AtomicString value;
@@ -162,6 +168,27 @@ ALWAYS_INLINE bool matchesFullScreenPseudoClass(const Element* element)
     if (!element->document().webkitIsFullScreen())
         return false;
     return element == element->document().webkitCurrentFullScreenElement();
+}
+
+ALWAYS_INLINE bool matchesFullScreenAnimatingFullScreenTransitionPseudoClass(const Element* element)
+{
+    if (element != element->document().webkitCurrentFullScreenElement())
+        return false;
+    return element->document().isAnimatingFullScreen();
+}
+
+ALWAYS_INLINE bool matchesFullScreenAncestorPseudoClass(const Element* element)
+{
+    return element->containsFullScreenElement();
+}
+
+ALWAYS_INLINE bool matchesFullScreenDocumentPseudoClass(const Element* element)
+{
+    // While a Document is in the fullscreen state, the 'full-screen-document' pseudoclass applies
+    // to all elements of that Document.
+    if (!element->document().webkitIsFullScreen())
+        return false;
+    return true;
 }
 #endif
 
