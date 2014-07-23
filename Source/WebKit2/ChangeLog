@@ -1,5 +1,29 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171329.
+
+    2014-07-21  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRESSION (r170361): In landscape with UI hidden, fixed position elements at top of screen are too low
+            https://bugs.webkit.org/show_bug.cgi?id=135141
+            <rdar://problem/17627525>
+
+            Reviewed by Benjamin Poulain.
+            
+            We can't use the WKWebView's UIScrollView contentInsets to determine the unobscured rect
+            in MobileSafari, because contentInsets can't be changed dynamically while scrolling.
+            To get around this, MobileSafari sets obscured insets instead (but also sets a fixed
+            contentInset).
+            
+            So if the client calls _setObscuredInsets:, always use _obscuredInsets to compute the 
+            content insets.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _computedContentInset]):
+            (-[WKWebView _setObscuredInsets:]):
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171326.
 
     2014-07-21  Oliver Hunt  <oliver@apple.com>

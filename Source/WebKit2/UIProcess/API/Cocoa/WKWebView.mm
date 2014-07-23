@@ -161,7 +161,8 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     CGFloat _viewportMetaTagWidth;
 
     UIEdgeInsets _obscuredInsets;
-    bool _isChangingObscuredInsetsInteractively;
+    BOOL _haveSetObscuredInsets;
+    BOOL _isChangingObscuredInsetsInteractively;
 
     UIInterfaceOrientation _interfaceOrientationOverride;
     BOOL _overridesInterfaceOrientation;
@@ -732,7 +733,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 
 - (UIEdgeInsets)_computedContentInset
 {
-    if (!UIEdgeInsetsEqualToEdgeInsets(_obscuredInsets, UIEdgeInsetsZero))
+    if (_haveSetObscuredInsets)
         return _obscuredInsets;
 
     return [_scrollView contentInset];
@@ -2060,6 +2061,8 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     ASSERT(obscuredInsets.left >= 0);
     ASSERT(obscuredInsets.bottom >= 0);
     ASSERT(obscuredInsets.right >= 0);
+    
+    _haveSetObscuredInsets = YES;
 
     if (UIEdgeInsetsEqualToEdgeInsets(_obscuredInsets, obscuredInsets))
         return;
