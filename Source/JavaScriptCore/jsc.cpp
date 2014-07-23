@@ -1273,6 +1273,9 @@ int jscmain(int argc, char** argv)
             if (!vm->m_perBytecodeProfiler->save(options.m_profilerOutput.utf8().data()))
                 fprintf(stderr, "could not save profiler output.\n");
         }
+        
+        if (Options::enableExceptionFuzz())
+            printf("JSC EXCEPTION FUZZ: encountered %u checks.\n", numberOfExceptionFuzzChecks());
     }
     
     return result;

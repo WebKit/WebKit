@@ -44,6 +44,8 @@ JS_EXPORT_PRIVATE JSValue numberOfDFGCompiles(ExecState*);
 JS_EXPORT_PRIVATE JSValue setNeverInline(ExecState*);
 JS_EXPORT_PRIVATE JSValue optimizeNextInvocation(ExecState*);
 
+JS_EXPORT_PRIVATE unsigned numberOfExceptionFuzzChecks();
+
 } // namespace JSC
 
 #endif // TestRunnerUtils_h

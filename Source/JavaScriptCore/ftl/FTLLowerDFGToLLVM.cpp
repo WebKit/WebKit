@@ -5760,6 +5760,9 @@ private:
         if (mode == NoExceptions)
             return;
         
+        if (Options::enableExceptionFuzz())
+            m_out.call(m_out.operation(operationExceptionFuzz));
+        
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Exception check continuation"));
         
         m_out.branch(

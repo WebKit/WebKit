@@ -1,5 +1,28 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171213.
+
+    2014-07-15  Filip Pizlo  <fpizlo@apple.com>
+
+            Need ability to fuzz exception throwing
+            https://bugs.webkit.org/show_bug.cgi?id=134945
+            <rdar://problem/17722027>
+
+            Reviewed by Sam Weinig.
+            
+            Adds a new script, js-exception-fuzz, which will run some jsc command-line using
+            exception fuzzing. This means that we will force exceptions to be thrown in random
+            places to see how the engine reacts. This is now integrated with the various test
+            drivers, so run-javascriptcore-tests will run some exception fuzzing tests by
+            default.
+
+            * Scripts/jsc-stress-test-helpers/js-exception-fuzz: Added.
+            (fail):
+            * Scripts/run-javascriptcore-tests:
+            * Scripts/run-jsc-stress-tests:
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171167.
 
     2014-07-16  Alexey Proskuryakov  <ap@apple.com>

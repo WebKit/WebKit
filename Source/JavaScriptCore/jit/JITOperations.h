@@ -143,6 +143,7 @@ typedef size_t JIT_OPERATION (*S_JITOperation_EJJ)(ExecState*, EncodedJSValue, E
 typedef size_t JIT_OPERATION (*S_JITOperation_EOJss)(ExecState*, JSObject*, JSString*);
 typedef size_t JIT_OPERATION (*S_JITOperation_J)(EncodedJSValue);
 typedef SlowPathReturnType JIT_OPERATION (*Sprt_JITOperation_EZ)(ExecState*, int32_t);
+typedef void JIT_OPERATION (*V_JITOperation)();
 typedef void JIT_OPERATION (*V_JITOperation_E)(ExecState*);
 typedef void JIT_OPERATION (*V_JITOperation_EC)(ExecState*, JSCell*);
 typedef void JIT_OPERATION (*V_JITOperation_ECb)(ExecState*, CodeBlock*);
@@ -299,6 +300,8 @@ void JIT_OPERATION operationUnconditionalWriteBarrier(ExecState*, JSCell*);
 void JIT_OPERATION operationOSRWriteBarrier(ExecState*, JSCell*);
 
 void JIT_OPERATION operationInitGlobalConst(ExecState*, Instruction*);
+
+void JIT_OPERATION operationExceptionFuzz();
 
 } // extern "C"
 

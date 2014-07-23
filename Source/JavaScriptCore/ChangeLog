@@ -1,5 +1,56 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171213.
+
+    2014-07-15  Filip Pizlo  <fpizlo@apple.com>
+
+            Need ability to fuzz exception throwing
+            https://bugs.webkit.org/show_bug.cgi?id=134945
+            <rdar://problem/17722027>
+
+            Reviewed by Sam Weinig.
+            
+            Adds the ability to instrument exception checks, and to force some random
+            exception check to artificially throw an exception. Also adds new tests that
+            are suitable for testing this. Note that this is closely tied to the Tools
+            directory changes that are also part of this changeset.
+            
+            This also fixes an activation tear-off bug that arises if we ever throw an
+            exception from operationOptimize, or if due to some other bug it's only due
+            to the operationOptimize exception check that we realize that there is an
+            exception to be thrown.
+
+            * dfg/DFGJITCompiler.h:
+            (JSC::DFG::JITCompiler::fastExceptionCheck):
+            * ftl/FTLIntrinsicRepository.h:
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::callCheck):
+            * interpreter/Interpreter.cpp:
+            (JSC::unwindCallFrame):
+            * jit/AssemblyHelpers.cpp:
+            (JSC::AssemblyHelpers::callExceptionFuzz):
+            (JSC::AssemblyHelpers::emitExceptionCheck):
+            * jit/AssemblyHelpers.h:
+            (JSC::AssemblyHelpers::emitExceptionCheck): Deleted.
+            * jit/JIT.cpp:
+            (JSC::JIT::privateCompileMainPass):
+            * jit/JITOpcodes.cpp:
+            (JSC::JIT::emit_op_enter):
+            * jit/JITOperations.cpp:
+            (JSC::numberOfExceptionFuzzChecks):
+            * jit/JITOperations.h:
+            * jsc.cpp:
+            (jscmain):
+            * runtime/Options.h:
+            * runtime/TestRunnerUtils.h:
+            * tests/exceptionFuzz.yaml: Added.
+            * tests/exceptionFuzz: Added.
+            * tests/exceptionFuzz/3d-cube.js: Added.
+            * tests/exceptionFuzz/date-format-xparb.js: Added.
+            * tests/exceptionFuzz/earley-boyer.js: Added.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171204.
 
     2014-07-17  Joseph Pecoraro  <pecoraro@apple.com>

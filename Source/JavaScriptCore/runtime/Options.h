@@ -141,6 +141,7 @@ typedef const char* optionString;
     v(bool, testTheFTL, false) \
     v(bool, verboseSanitizeStack, false) \
     v(bool, alwaysDoFullCollection, false) \
+    v(bool, eagerlyUpdateTopCallFrame, false) \
     \
     v(bool, enableOSREntryToDFG, true) \
     v(bool, enableOSREntryToFTL, true) \
@@ -269,7 +270,10 @@ typedef const char* optionString;
     v(bool, disableGC, false) \
     v(unsigned, gcMaxHeapSize, 0) \
     v(bool, recordGCPauseTimes, false) \
-    v(bool, logHeapStatisticsAtExit, false)
+    v(bool, logHeapStatisticsAtExit, false) \
+    \
+    v(bool, enableExceptionFuzz, false) \
+    v(unsigned, fireExceptionFuzzAt, 0)
 
 class Options {
 public:
