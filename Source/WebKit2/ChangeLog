@@ -1,5 +1,26 @@
 2014-07-23  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171368
+
+    2014-07-22  Benjamin Poulain  <bpoulain@apple.com>
+
+            [iOS][WK2] WebPageProxy should not do anything when responding to an animated resize is the page is not in a valid state
+            https://bugs.webkit.org/show_bug.cgi?id=135169
+            <rdar://problem/17740149>
+
+            Reviewed by Tim Horton.
+
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::dynamicViewportSizeUpdate):
+            Neither m_dynamicViewportSizeUpdateWaitingForTarget nor m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit should
+            be modified if there is not WebProcess to respond to DynamicViewportSizeUpdate.
+
+            (WebKit::WebPageProxy::synchronizeDynamicViewportUpdate):
+            We should not attempt to synchronize anything if the page was closed before the end of the dynamic viewport
+            update.
+
+2014-07-23  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171363
 
     2014-07-22  Oliver Hunt  <oliver@apple.com>

@@ -253,6 +253,9 @@ void WebPageProxy::overflowScrollViewDidScroll()
 
 void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, const WebCore::FloatSize& minimumLayoutSizeForMinimalUI, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const FloatRect& targetUnobscuredRectInScrollViewCoordinates,  double targetScale, int32_t deviceOrientation)
 {
+    if (!isValid())
+        return;
+
     m_dynamicViewportSizeUpdateWaitingForTarget = true;
     m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit = true;
     m_process->send(Messages::WebPage::DynamicViewportSizeUpdate(minimumLayoutSize, minimumLayoutSizeForMinimalUI, maximumUnobscuredSize, targetExposedContentRect, targetUnobscuredRect, targetUnobscuredRectInScrollViewCoordinates, targetScale, deviceOrientation), m_pageID);
@@ -260,6 +263,9 @@ void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize,
 
 void WebPageProxy::synchronizeDynamicViewportUpdate()
 {
+    if (!isValid())
+        return;
+
     if (m_dynamicViewportSizeUpdateWaitingForTarget) {
         // We do not want the UIProcess to finish animated resize with the old content size, scale, etc.
         // If that happens, the UIProcess would start pushing new VisibleContentRectUpdateInfo to the WebProcess with
