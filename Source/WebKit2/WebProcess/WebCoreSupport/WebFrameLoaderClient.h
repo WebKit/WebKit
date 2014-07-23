@@ -228,6 +228,10 @@ private:
     virtual void didCreateQuickLookHandle(WebCore::QuickLookHandle&) override;
 #endif
 
+#if USE(CONTENT_FILTERING)
+    virtual void contentFilterDidBlockLoad(std::unique_ptr<WebCore::ContentFilter>) override;
+#endif
+
     WebFrame* m_frame;
     RefPtr<PluginView> m_pluginView;
     bool m_hasSentResponseToPluginView;

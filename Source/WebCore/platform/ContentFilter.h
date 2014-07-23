@@ -30,57 +30,62 @@
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/ThreadSafeRefCounted.h>
 
 #if PLATFORM(IOS)
-#include <wtf/Functional.h>
+#include <functional>
 #endif
 
 #if PLATFORM(COCOA)
-OBJC_CLASS NSMutableData;
+OBJC_CLASS NSData;
+OBJC_CLASS NSKeyedArchiver;
+OBJC_CLASS NSKeyedUnarchiver;
 OBJC_CLASS WebFilterEvaluator;
 #endif
 
 #define HAVE_NE_FILTER_SOURCE TARGET_OS_EMBEDDED || (!TARGET_OS_IPHONE && __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100)
 
 #if HAVE(NE_FILTER_SOURCE)
-#import <atomic>
 #import <dispatch/dispatch.h>
 OBJC_CLASS NEFilterSource;
+OBJC_CLASS NSMutableData;
 #endif
 
 namespace WebCore {
 
+class ResourceRequest;
 class ResourceResponse;
 
-class ContentFilter : public ThreadSafeRefCounted<ContentFilter> {
+class ContentFilter {
 public:
-    static PassRefPtr<ContentFilter> create(const ResourceResponse&);
     static bool isEnabled();
 
-    virtual ~ContentFilter();
+    explicit ContentFilter(const ResourceResponse&);
+    ~ContentFilter();
 
     void addData(const char* data, int length);
     void finishedAddingData();
     bool needsMoreData() const;
     bool didBlockData() const;
     const char* getReplacementData(int& length) const;
-    
+
+#if PLATFORM(COCOA)
+    ContentFilter();
+    void encode(NSKeyedArchiver *) const;
+    static bool decode(NSKeyedUnarchiver *, ContentFilter&);
+#endif
+
 #if PLATFORM(IOS)
-    static const char* scheme();
-    void requestUnblockAndDispatchIfSuccessful(Function<void()>);
+    bool handleUnblockRequestAndDispatchIfSuccessful(const ResourceRequest&, std::function<void()>);
 #endif
 
 private:
-    explicit ContentFilter(const ResourceResponse&);
-    
 #if PLATFORM(COCOA)
     RetainPtr<WebFilterEvaluator> m_platformContentFilter;
     RetainPtr<NSData> m_replacementData;
 #endif
 
 #if HAVE(NE_FILTER_SOURCE)
-    std::atomic<long> m_neFilterSourceStatus;
+    long m_neFilterSourceStatus;
     RetainPtr<NEFilterSource> m_neFilterSource;
     dispatch_queue_t m_neFilterSourceQueue;
     RetainPtr<NSMutableData> m_originalData;

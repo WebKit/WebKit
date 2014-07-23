@@ -1,5 +1,38 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171252.
+
+    2014-07-18  Andy Estes  <aestes@apple.com>
+
+            [iOS] Tapping "Allow Website" on a restricted page does not bring up the keypad
+            https://bugs.webkit.org/show_bug.cgi?id=135072
+            <rdar://problem/17528188>
+
+            Reviewed by David Kilzer.
+
+            * Shared/WebCoreArgumentCoders.h: Declared an ArgumentCoder for WebCore::ContentFilter.
+            * Shared/mac/WebCoreArgumentCodersMac.mm:
+            (IPC::ArgumentCoder<ContentFilter>::encode): Encoded the ContentFilter using a NSKeyedArchiver.
+            (IPC::ArgumentCoder<ContentFilter>::decode): Decoded the ContentFilter using a NSKeyedUnarchiver.
+            * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+            (WebKit::WebPageProxy::contentFilterDidBlockLoadForFrame): Called WebFrameProxy::setContentFilterForBlockedLoad().
+            * UIProcess/WebFrameProxy.cpp:
+            (WebKit::WebFrameProxy::didStartProvisionalLoad): Reset m_contentFilterForBlockedLoad to nullptr.
+            (WebKit::WebFrameProxy::contentFilterDidHandleNavigationAction): Called ContentFilter::handleUnblockRequestAndDispatchIfSuccessful().
+            If the unblock is successful, reload the WebPageProxy.
+            * UIProcess/WebFrameProxy.h:
+            (WebKit::WebFrameProxy::setContentFilterForBlockedLoad):
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::decidePolicyForNavigationAction): Check if this is navigation represents an unblock
+            request and ignore if so.
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in: Defined ContentFilterDidBlockLoadForFrame.
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::contentFilterDidBlockLoad): Sent ContentFilterDidBlockLoadForFrame to the WebPageProxy.
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171250.
 
 2014-07-18  Simon Fraser  <simon.fraser@apple.com>

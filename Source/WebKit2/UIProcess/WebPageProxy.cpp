@@ -2854,6 +2854,14 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint64_t na
         listener->setNavigationID(newNavigationID);
     }
 
+#if USE(CONTENT_FILTERING)
+    if (frame->contentFilterDidHandleNavigationAction(request)) {
+        receivedPolicyAction = true;
+        policyAction = PolicyIgnore;
+        return;
+    }
+#endif
+
     ASSERT(!m_inDecidePolicyForNavigationAction);
 
     m_inDecidePolicyForNavigationAction = true;

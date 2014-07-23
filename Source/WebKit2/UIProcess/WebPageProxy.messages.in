@@ -405,4 +405,8 @@ messages -> WebPageProxy {
 #endif
 
     WillChangeCurrentHistoryItem()
+
+#if USE(CONTENT_FILTERING)
+    ContentFilterDidBlockLoadForFrame(WebCore::ContentFilter contentFilter, uint64_t frameID)
+#endif
 }

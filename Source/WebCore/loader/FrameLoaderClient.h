@@ -98,6 +98,10 @@ namespace WebCore {
     class QuickLookHandle;
 #endif
 
+#if USE(CONTENT_FILTERING)
+    class ContentFilter;
+#endif
+
     typedef std::function<void (PolicyAction)> FramePolicyFunction;
 
     class FrameLoaderClient {
@@ -330,6 +334,10 @@ namespace WebCore {
 
 #if USE(QUICK_LOOK)
         virtual void didCreateQuickLookHandle(QuickLookHandle&) { }
+#endif
+
+#if USE(CONTENT_FILTERING)
+        virtual void contentFilterDidBlockLoad(std::unique_ptr<ContentFilter>) { }
 #endif
     };
 

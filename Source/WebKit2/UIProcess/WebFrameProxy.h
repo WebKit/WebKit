@@ -35,6 +35,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
+#if USE(CONTENT_FILTERING)
+#include <WebCore/ContentFilter.h>
+#endif
+
 namespace IPC {
     class ArgumentDecoder;
     class Connection;
@@ -113,6 +117,11 @@ public:
     WebFramePolicyListenerProxy* setUpPolicyListenerProxy(uint64_t listenerID);
     WebFormSubmissionListenerProxy* setUpFormSubmissionListenerProxy(uint64_t listenerID);
 
+#if USE(CONTENT_FILTERING)
+    void setContentFilterForBlockedLoad(std::unique_ptr<WebCore::ContentFilter> contentFilter) { m_contentFilterForBlockedLoad = WTF::move(contentFilter); }
+    bool contentFilterDidHandleNavigationAction(const WebCore::ResourceRequest&);
+#endif
+
 private:
     WebFrameProxy(WebPageProxy* page, uint64_t frameID);
 
@@ -126,6 +135,10 @@ private:
     RefPtr<WebCertificateInfo> m_certificateInfo;
     RefPtr<WebFrameListenerProxy> m_activeListener;
     uint64_t m_frameID;
+
+#if USE(CONTENT_FILTERING)
+    std::unique_ptr<WebCore::ContentFilter> m_contentFilterForBlockedLoad;
+#endif
 };
 
 } // namespace WebKit

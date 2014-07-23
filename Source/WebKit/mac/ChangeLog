@@ -1,5 +1,27 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171252.
+
+    2014-07-18  Andy Estes  <aestes@apple.com>
+
+            [iOS] Tapping "Allow Website" on a restricted page does not bring up the keypad
+            https://bugs.webkit.org/show_bug.cgi?id=135072
+            <rdar://problem/17528188>
+
+            Reviewed by David Kilzer.
+
+            * WebCoreSupport/WebFrameLoaderClient.h: Override contentFilterDidBlockLoad().
+            * WebCoreSupport/WebFrameLoaderClient.mm:
+            (WebFrameLoaderClient::dispatchDidStartProvisionalLoad): Reset contentFilterForBlockedLoad to nullptr.
+            (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction): Check if this is navigation represents an
+            unblock request and ignore if so.
+            * WebView/WebFrame.mm:
+            (-[WebFrame _contentFilterDidHandleNavigationAction:]): Called ContentFilter::handleUnblockRequestAndDispatchIfSuccessful().
+            If the unblock is successful, reload the main frame.
+            * WebView/WebFrameInternal.h:
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171195.
 
     2014-07-17  Timothy Hatcher  <timothy@apple.com>

@@ -1,5 +1,46 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171252.
+
+    2014-07-18  Andy Estes  <aestes@apple.com>
+
+            [iOS] Tapping "Allow Website" on a restricted page does not bring up the keypad
+            https://bugs.webkit.org/show_bug.cgi?id=135072
+            <rdar://problem/17528188>
+
+            Reviewed by David Kilzer.
+
+            No new tests. Content filtering is not testable from WebKit.
+
+            * WebCore.exp.in: Exported necessary ContentFilter symbols.
+            * loader/DocumentLoader.cpp:
+            (WebCore::DocumentLoader::finishedLoading): Called FrameLoaderClient::contentFilterDidBlockLoad().
+            (WebCore::DocumentLoader::responseReceived): Created a new ContentFilter.
+            (WebCore::DocumentLoader::dataReceived): Called FrameLoaderClient::contentFilterDidBlockLoad().
+            (WebCore::DocumentLoader::setContentFilterForBlockedLoad): Deleted.
+            (WebCore::DocumentLoader::handleContentFilterRequest): Deleted.
+            * loader/DocumentLoader.h:
+            * loader/FrameLoaderClient.h:
+            (WebCore::FrameLoaderClient::contentFilterDidBlockLoad):
+            * loader/PolicyChecker.cpp:
+            (WebCore::PolicyChecker::checkNavigationPolicy): Removed the check for unblock navigations, as this is now
+            handled at the WebKit layer.
+            * platform/ContentFilter.h: ContentFilter no longer needs to be RefCounted, so made various changes in order to
+            make it compatible with unique_ptr.
+            * platform/ios/ContentFilterIOS.mm:
+            (WebCore::scheme): Changed from a public member function to a static inline free function.
+            (WebCore::ContentFilter::handleUnblockRequestAndDispatchIfSuccessful): Renamed from requestUnblockAndDispatchIfSuccessful.
+            * platform/mac/ContentFilterMac.mm:
+            (WebCore::ContentFilter::ContentFilter): Added a default constructor for use during message decoding.
+            (WebCore::ContentFilter::addData): Removed calls to ref() and deref(). These were never actually needed since
+            we were dispatching the block synchronously.
+            (WebCore::ContentFilter::finishedAddingData): Ditto.
+            (WebCore::ContentFilter::encode): Encoded m_platformContentFilter to the NSKeyedArchiver if it conforms to NSSecureCoding.
+            (WebCore::ContentFilter::decode): Decoded m_platformContentFilter from the NSKeyedUnarchiver if it conforms to NSSecureCoding.
+            (WebCore::ContentFilter::create): Deleted.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171250.
 
     2014-07-18  Simon Fraser  <simon.fraser@apple.com>

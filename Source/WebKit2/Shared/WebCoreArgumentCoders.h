@@ -105,6 +105,12 @@ struct ViewportArguments;
 }
 #endif
 
+#if USE(CONTENT_FILTERING)
+namespace WebCore {
+class ContentFilter;
+}
+#endif
+
 namespace IPC {
 
 template<> struct ArgumentCoder<WebCore::AffineTransform> {
@@ -435,6 +441,13 @@ template<> struct ArgumentCoder<WebCore::BlobPart> {
     static void encode(ArgumentEncoder&, const WebCore::BlobPart&);
     static bool decode(ArgumentDecoder&, WebCore::BlobPart&);
 };
+
+#if USE(CONTENT_FILTERING)
+template<> struct ArgumentCoder<WebCore::ContentFilter> {
+    static void encode(ArgumentEncoder&, const WebCore::ContentFilter&);
+    static bool decode(ArgumentDecoder&, WebCore::ContentFilter&);
+};
+#endif
 
 } // namespace IPC
 

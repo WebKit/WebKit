@@ -85,9 +85,12 @@ SOFT_LINK_CLASS(NetworkExtension, NEFilterSource);
 
 namespace WebCore {
 
-PassRefPtr<ContentFilter> ContentFilter::create(const ResourceResponse& response)
+ContentFilter::ContentFilter()
+#if HAVE(NE_FILTER_SOURCE)
+    : m_neFilterSourceStatus(NEFilterSourceStatusNeedsMoreData)
+    , m_neFilterSourceQueue(0)
+#endif
 {
-    return adoptRef(new ContentFilter(response));
 }
 
 ContentFilter::ContentFilter(const ResourceResponse& response)
@@ -150,11 +153,9 @@ void ContentFilter::addData(const char* data, int length)
     // additional copy.
     [m_originalData appendBytes:data length:length];
 
-    ref();
     dispatch_semaphore_t neFilterSourceSemaphore = dispatch_semaphore_create(0);
     [m_neFilterSource addData:[NSData dataWithBytes:(void*)data length:length] withCompletionQueue:m_neFilterSourceQueue completionHandler:^(NEFilterSourceStatus status, NSData *) {
         m_neFilterSourceStatus = status;
-        deref();
         dispatch_semaphore_signal(neFilterSourceSemaphore);
     }];
 
@@ -179,11 +180,9 @@ void ContentFilter::finishedAddingData()
     if (!m_neFilterSource)
         return;
 
-    ref();
     dispatch_semaphore_t neFilterSourceSemaphore = dispatch_semaphore_create(0);
     [m_neFilterSource dataCompleteWithCompletionQueue:m_neFilterSourceQueue completionHandler:^(NEFilterSourceStatus status, NSData *) {
         m_neFilterSourceStatus = status;
-        deref();
         dispatch_semaphore_signal(neFilterSourceSemaphore);
     }];
 
@@ -232,6 +231,27 @@ const char* ContentFilter::getReplacementData(int& length) const
 
     length = [originalData length];
     return static_cast<const char*>([originalData bytes]);
+}
+
+static NSString * const platformContentFilterKey = @"platformContentFilter";
+
+void ContentFilter::encode(NSKeyedArchiver *archiver) const
+{
+    if ([getWebFilterEvaluatorClass() conformsToProtocol:@protocol(NSSecureCoding)])
+        [archiver encodeObject:m_platformContentFilter.get() forKey:platformContentFilterKey];
+}
+
+bool ContentFilter::decode(NSKeyedUnarchiver *unarchiver, ContentFilter& contentFilter)
+{
+    @try {
+        if ([getWebFilterEvaluatorClass() conformsToProtocol:@protocol(NSSecureCoding)])
+            contentFilter.m_platformContentFilter = (WebFilterEvaluator *)[unarchiver decodeObjectOfClass:getWebFilterEvaluatorClass() forKey:platformContentFilterKey];
+        return true;
+    } @catch (NSException *exception) {
+        LOG_ERROR("The platform content filter being decoded is not a WebFilterEvaluator.");
+    }
+
+    return false;
 }
 
 } // namespace WebCore

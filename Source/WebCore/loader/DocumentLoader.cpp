@@ -413,7 +413,7 @@ void DocumentLoader::finishedLoading(double finishTime)
             dataReceived(m_mainResource.get(), data, length);
 
         if (m_contentFilter->didBlockData())
-            setContentFilterForBlockedLoad(m_contentFilter);
+            frameLoader()->client().contentFilterDidBlockLoad(WTF::move(m_contentFilter));
     }
 #endif
 
@@ -664,7 +664,7 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
 
 #if USE(CONTENT_FILTERING)
     if (response.url().protocolIsInHTTPFamily() && ContentFilter::isEnabled())
-        m_contentFilter = ContentFilter::create(response);
+        m_contentFilter = std::make_unique<ContentFilter>(response);
 #endif
 
     frameLoader()->policyChecker().checkContentPolicy(m_response, [this](PolicyAction policy) {
@@ -874,7 +874,7 @@ void DocumentLoader::dataReceived(CachedResource* resource, const char* data, in
         loadWasBlockedBeforeFinishing = m_contentFilter->didBlockData();
 
         if (loadWasBlockedBeforeFinishing)
-            setContentFilterForBlockedLoad(m_contentFilter);
+            frameLoader()->client().contentFilterDidBlockLoad(WTF::move(m_contentFilter));
     }
 #endif
 
@@ -1564,39 +1564,5 @@ void DocumentLoader::handledOnloadEvents()
     m_wasOnloadHandled = true;
     applicationCacheHost()->stopDeferringEvents();
 }
-
-#if USE(CONTENT_FILTERING)
-void DocumentLoader::setContentFilterForBlockedLoad(PassRefPtr<ContentFilter> contentFilter)
-{
-    ASSERT(!m_contentFilterForBlockedLoad);
-    ASSERT(contentFilter);
-    ASSERT(contentFilter->didBlockData());
-    m_contentFilterForBlockedLoad = contentFilter;
-}
-
-bool DocumentLoader::handleContentFilterRequest(const ResourceRequest& request)
-{
-    // FIXME: Remove PLATFORM(IOS)-guard once we upstream ContentFilterIOS.mm and
-    // implement ContentFilter::requestUnblockAndDispatchIfSuccessful() for Mac.
-#if PLATFORM(IOS)
-    if (!m_contentFilterForBlockedLoad)
-        return false;
-
-    if (!request.url().protocolIs(ContentFilter::scheme()))
-        return false;
-
-    if (equalIgnoringCase(request.url().host(), "unblock")) {
-        // Tell the FrameLoader to reload if the unblock is successful.
-        m_contentFilterForBlockedLoad->requestUnblockAndDispatchIfSuccessful(bind(&FrameLoader::reload, &(m_frame->loader()), false));
-        return true;
-    }
-
-    return false;
-#else
-    UNUSED_PARAM(request);
-    return false;
-#endif
-}
-#endif
 
 } // namespace WebCore

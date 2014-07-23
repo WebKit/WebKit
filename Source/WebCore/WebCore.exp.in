@@ -3460,3 +3460,13 @@ __ZN7WebCore9PageGroup18captionPreferencesEv
 #if ENABLE(VIEW_MODE_CSS_MEDIA)
 __ZN7WebCore4Page11setViewModeENS0_8ViewModeE
 #endif
+
+#if USE(CONTENT_FILTERING)
+#if PLATFORM(IOS)
+__ZN7WebCore13ContentFilter43handleUnblockRequestAndDispatchIfSuccessfulERKNS_15ResourceRequestENSt3__18functionIFvvEEE
+#endif
+__ZN7WebCore13ContentFilter6decodeEP17NSKeyedUnarchiverRS0_
+__ZN7WebCore13ContentFilterC1Ev
+__ZN7WebCore13ContentFilterD1Ev
+__ZNK7WebCore13ContentFilter6encodeEP15NSKeyedArchiver
+#endif
