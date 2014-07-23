@@ -1,3 +1,13 @@
+2014-07-23  Oliver Hunt  <oliver@apple.com>
+
+        Incorrect commit for sandbox profile
+        https://bugs.webkit.org/show_bug.cgi?id=135214
+        <rdar://17739108>
+
+        Reviewed by Anders Carlsson.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2014-07-23  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/17782623> [iOS] Client-certificate authentication isn’t working with some certificates
