@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLAbbreviatedTypes_h
-#define FTLAbbreviatedTypes_h
+#ifndef BundlePath_h
+#define BundlePath_h
 
-#if ENABLE(FTL_JIT)
+#include <string>
+#include <wtf/text/CString.h>
 
-#include "LLVMAPI.h"
+namespace JSC {
 
-namespace JSC { namespace FTL {
+const CString& bundlePath();
 
-typedef LLVMAtomicOrdering LAtomicOrdering;
-typedef LLVMBasicBlockRef LBasicBlock;
-typedef LLVMBuilderRef LBuilder;
-typedef LLVMCallConv LCallConv;
-typedef LLVMContextRef LContext;
-typedef LLVMIntPredicate LIntPredicate;
-typedef LLVMLinkage LLinkage;
-typedef LLVMModuleRef LModule;
-typedef LLVMRealPredicate LRealPredicate;
-typedef LLVMTypeRef LType;
-typedef LLVMValueRef LValue;
-typedef LLVMMemoryBufferRef LMemoryBuffer;
+} // namespace JSC
 
-} } // namespace JSC::FTL
-
-#endif // ENABLE(FTL_JIT)
-
-#endif // FTLAbbreviatedTypes_h
+#endif // BundlePath_h
 

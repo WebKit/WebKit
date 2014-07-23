@@ -1,3 +1,81 @@
+2014-07-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Merge r169628 from ftlopt.
+
+    2014-06-04  Matthew Mirman  <mmirman@apple.com>
+    
+            Added system for inlining native functions via the FTL.
+            https://bugs.webkit.org/show_bug.cgi?id=131515
+    
+            Reviewed by Filip Pizlo.
+    
+            Also fixed the build to not compress the bitcode and to 
+            include all of the relevant runtime. With GCC_GENERATE_DEBUGGING_SYMBOLS = NO, 
+            the produced bitcode files are a 100th the size they were before.  
+            Now we can include all of the relevant runtime files with only a 3mb overhead. 
+            This is the same overhead as for two compressed files before, 
+            but done more efficiently (on both ends) and with less code.
+            
+            Deciding whether to inline native functions is left up to LLVM. 
+            The entire module containing the function is linked into the current 
+            compiled JS so that inlining the native functions shouldn't make them smaller.
+            
+            Rather than loading Runtime.symtbl at runtime FTLState.cpp now generates a file 
+            InlineRuntimeSymbolTable.h which statically builds the symbol table hash table.  
+            
+            * JavaScriptCore.xcodeproj/project.pbxproj: Added back runtime files to compile.
+            * build-symbol-table-index.py: Changed bitcode suffix. 
+            Added inclusion of only tested symbols.  
+            Added output to InlineRuntimeSymbolTable.h. 
+            * build-symbol-table-index.sh: Changed bitcode suffix.
+            * copy-llvm-ir-to-derived-sources.sh: Removed gzip compression.
+            * tested-symbols.symlst: Added.
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::handleCall):  
+            Now sets the knownFunction of the call node if such a function exists 
+            and emits a check that during runtime the callee is in fact known.
+            * dfg/DFGNode.h:
+            Added functions to set the known function of a call node.
+            (JSC::DFG::Node::canBeKnownFunction): Added.
+            (JSC::DFG::Node::hasKnownFunction): Added.
+            (JSC::DFG::Node::knownFunction): Added.
+            (JSC::DFG::Node::giveKnownFunction): Added.
+            * ftl/FTLAbbreviatedTypes.h: Added a typedef for LLVMMemoryBufferRef
+            * ftl/FTLAbbreviations.h: Added some abbreviations.
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::isInlinableSize): Added. Hardcoded threshold to 275.
+            (JSC::FTL::LowerDFGToLLVM::getModuleByPathForSymbol): Added.
+            (JSC::FTL::LowerDFGToLLVM::getFunctionBySymbol): Added.
+            (JSC::FTL::LowerDFGToLLVM::possiblyCompileInlineableNativeCall): Added.
+            (JSC::FTL::LowerDFGToLLVM::compileCallOrConstruct):  
+            Added call to possiblyCompileInlineableNativeCall
+            * ftl/FTLOutput.h:
+            (JSC::FTL::Output::allocaName):  Added. Useful for debugging.
+            * ftl/FTLState.cpp:
+            (JSC::FTL::State::State): Added an include for InlineRuntimeSymbolTable.h
+            * ftl/FTLState.h: Added symbol table hash table.
+            * ftl/FTLCompile.cpp:
+            (JSC::FTL::compile): Added inlining and dead function elimination passes.
+            * heap/HandleStack.h: Added JS_EXPORT_PRIVATE to a few functions to get inlining to compile.
+            * llvm/InitializeLLVMMac.mm: Deleted.
+            * llvm/InitializeLLVMMac.cpp: Added.
+            * llvm/LLVMAPIFunctions.h: Added macros to include Bitcode parsing and linking functions.
+            * llvm/LLVMHeaders.h: Added includes for Bitcode parsing and linking.
+            * runtime/BundlePath.h: Added.
+            * runtime/BundlePath.mm: Added.
+            * runtime/DateInstance.h: Added JS_EXPORT_PRIVATE to a few functions to get inlining to compile.
+            * runtime/DateInstance.h: ditto.
+            * runtime/DateConversion.h: ditto.
+            * runtime/ExceptionHelpers.h: ditto.
+            * runtime/JSCJSValue.h: ditto.
+            * runtime/JSArray.h: ditto.
+            * runtime/JSDateMath.h: ditto.
+            * runtime/JSObject.h: ditto.
+            * runtime/JSObject.h: ditto.
+            * runtime/RegExp.h: ditto.
+            * runtime/Structure.h: ditto.
+            * runtime/Options.h:  Added maximumLLVMInstructionCountForNativeInlining.
+    
 2014-07-22  Mark Lam  <mark.lam@apple.com>
 
         Array.concat() should work on runtime arrays too.

@@ -246,14 +246,14 @@ public:
     JSObject* toObject(ExecState*, JSGlobalObject*) const;
 
     // Integer conversions.
-    JS_EXPORT_PRIVATE double toInteger(ExecState*) const;
-    double toIntegerPreserveNaN(ExecState*) const;
+    double toInteger(ExecState*) const;
+    JS_EXPORT_PRIVATE double toIntegerPreserveNaN(ExecState*) const;
     int32_t toInt32(ExecState*) const;
     uint32_t toUInt32(ExecState*) const;
 
     // Floating point conversions (this is a convenience method for webcore;
     // signle precision float is not a representation used in JS or JSC).
-    float toFloat(ExecState* exec) const { return static_cast<float>(toNumber(exec)); }
+    JS_EXPORT_PRIVATE float toFloat(ExecState* exec) const { return static_cast<float>(toNumber(exec)); }
 
     // Object operations, with the toObject operation included.
     JSValue get(ExecState*, PropertyName) const;
@@ -261,8 +261,8 @@ public:
     JSValue get(ExecState*, unsigned propertyName) const;
     JSValue get(ExecState*, unsigned propertyName, PropertySlot&) const;
     void put(ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    void putToPrimitive(ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    void putToPrimitiveByIndex(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
+    JS_EXPORT_PRIVATE void putToPrimitive(ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    JS_EXPORT_PRIVATE void putToPrimitiveByIndex(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
     void putByIndex(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
 
     JSValue toThis(ExecState*, ECMAMode) const;

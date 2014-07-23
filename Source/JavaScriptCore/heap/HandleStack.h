@@ -53,7 +53,7 @@ public:
     void visit(HeapRootVisitor&);
 
 private:
-    void grow();
+    JS_EXPORT_PRIVATE void grow();
     void zapTo(Frame&);
     HandleSlot findFirstAfter(HandleSlot);
 

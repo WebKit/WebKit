@@ -31,7 +31,7 @@ namespace JSC {
         void finishCreation(VM&);
         JS_EXPORT_PRIVATE void finishCreation(VM&, double);
 
-        static void destroy(JSCell*);
+        JS_EXPORT_PRIVATE static void destroy(JSCell*);
  
     public:
         typedef JSWrapperObject Base;
@@ -74,8 +74,8 @@ namespace JSC {
         }
 
     private:
-        const GregorianDateTime* calculateGregorianDateTime(ExecState*) const;
-        const GregorianDateTime* calculateGregorianDateTimeUTC(ExecState*) const;
+        JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTime(ExecState*) const;
+        JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTimeUTC(ExecState*) const;
 
         mutable RefPtr<DateInstanceData> m_data;
     };

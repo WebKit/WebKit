@@ -120,13 +120,13 @@ public:
     static Structure* attributeChangeTransition(VM&, Structure*, PropertyName, unsigned attributes);
     JS_EXPORT_PRIVATE static Structure* toCacheableDictionaryTransition(VM&, Structure*);
     static Structure* toUncacheableDictionaryTransition(VM&, Structure*);
-    static Structure* sealTransition(VM&, Structure*);
-    static Structure* freezeTransition(VM&, Structure*);
+    JS_EXPORT_PRIVATE static Structure* sealTransition(VM&, Structure*);
+    JS_EXPORT_PRIVATE static Structure* freezeTransition(VM&, Structure*);
     static Structure* preventExtensionsTransition(VM&, Structure*);
-    static Structure* nonPropertyTransition(VM&, Structure*, NonPropertyTransition);
+    JS_EXPORT_PRIVATE static Structure* nonPropertyTransition(VM&, Structure*, NonPropertyTransition);
 
-    bool isSealed(VM&);
-    bool isFrozen(VM&);
+    JS_EXPORT_PRIVATE bool isSealed(VM&);
+    JS_EXPORT_PRIVATE bool isFrozen(VM&);
     bool isExtensible() const { return !m_preventExtensions; }
     bool didTransition() const { return m_didTransition; }
     bool putWillGrowOutOfLineStorage();
@@ -518,7 +518,7 @@ private:
         
     bool checkOffsetConsistency() const;
 
-    void allocateRareData(VM&);
+    JS_EXPORT_PRIVATE void allocateRareData(VM&);
     void cloneRareDataFrom(VM&, const Structure*);
 
     static const int s_maxTransitionLength = 64;

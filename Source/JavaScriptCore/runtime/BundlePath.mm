@@ -24,34 +24,33 @@
  */
 
 #import "config.h"
-#import "InitializeLLVM.h"
+#import "BundlePath.h"
 
-#if HAVE(LLVM)
-
-#import "InitializeLLVMPOSIX.h"
 #import <Foundation/Foundation.h>
+#import <string>
 
-// Use the "JS" prefix to make check-for-inappropriate-objc-class-names happy. I
-// think this is better than hacking that script.
-
-@interface JSJavaScriptCoreBundleFinder : NSObject
+@interface JSJavaScriptCoreFinder : NSObject
 @end
 
-@implementation JSJavaScriptCoreBundleFinder
+@implementation JSJavaScriptCoreFinder
 @end
+
 
 namespace JSC {
 
-void initializeLLVMImpl()
+const CString* constantBundlePath = nullptr;
+
+const CString& bundlePath()
 {
-    @autoreleasepool {
-        NSBundle *myBundle = [NSBundle bundleForClass:[JSJavaScriptCoreBundleFinder class]];
-        NSString *path = [[myBundle bundlePath] stringByAppendingPathComponent:@"Libraries/libllvmForJSC.dylib"];
-        
-        initializeLLVMPOSIX([path UTF8String]);
+    if (!constantBundlePath) {
+        @autoreleasepool {
+            NSBundle* myBundle = [NSBundle bundleForClass:[JSJavaScriptCoreFinder class]];
+
+            constantBundlePath = new CString([[myBundle bundlePath] UTF8String]);
+        }
     }
+
+    return *constantBundlePath;
 }
 
 } // namespace JSC
-
-#endif // HAVE(LLVM)

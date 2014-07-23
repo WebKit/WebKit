@@ -61,7 +61,7 @@ namespace JSC {
         const char* errorMessage() const { return m_constructionError; }
 
         JS_EXPORT_PRIVATE int match(VM&, const String&, unsigned startOffset, Vector<int, 32>& ovector);
-        MatchResult match(VM&, const String&, unsigned startOffset);
+        JS_EXPORT_PRIVATE MatchResult match(VM&, const String&, unsigned startOffset);
         unsigned numSubpatterns() const { return m_numSubpatterns; }
 
         bool hasCode()

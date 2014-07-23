@@ -1255,6 +1255,8 @@ void ByteCodeParser::handleCall(
     }
         
     Intrinsic intrinsic = callLinkStatus.intrinsicFor(specializationKind);
+
+    JSFunction* knownFunction = nullptr;
     if (intrinsic != NoIntrinsic) {
         emitFunctionChecks(callLinkStatus, callTarget, registerOffset, specializationKind);
             
@@ -1271,9 +1273,13 @@ void ByteCodeParser::handleCall(
         if (m_graph.compilation())
             m_graph.compilation()->noticeInlinedCall();
         return;
-    }
+    } else if (JSFunction* function = callLinkStatus.function())
+        if (function->isHostFunction()) {
+            emitFunctionChecks(callLinkStatus, callTarget, registerOffset, specializationKind);
+            knownFunction = function;
+        }
     
-    addCall(result, op, callTarget, argumentCountIncludingThis, registerOffset);
+    addCall(result, op, callTarget, argumentCountIncludingThis, registerOffset)->giveKnownFunction(knownFunction);
 }
 
 void ByteCodeParser::emitFunctionChecks(const CallLinkStatus& callLinkStatus, Node* callTarget, int registerOffset, CodeSpecializationKind kind)

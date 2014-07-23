@@ -31,7 +31,7 @@ do
     if [ -d "$RUNTIME_DERIVED_SOURCES_DIR/$arch" ];
     then
         mkdir -p "$RUNTIME_INSTALL_DIR/$arch"
-        cp "$RUNTIME_DERIVED_SOURCES_DIR/$arch"/*.bc.gz "$RUNTIME_INSTALL_DIR/$arch"/.
+        cp "$RUNTIME_DERIVED_SOURCES_DIR/$arch"/*.bc "$RUNTIME_INSTALL_DIR/$arch"/.
         ${SRCROOT}/build-symbol-table-index.py $arch
     fi
 done

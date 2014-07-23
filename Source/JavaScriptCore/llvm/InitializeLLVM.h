@@ -28,9 +28,14 @@
 
 #if HAVE(LLVM)
 
+#include <string>
+#include <wtf/text/CString.h>
+
 namespace JSC {
 
 void initializeLLVMImpl();
+
+extern const CString* llvmBitcodeLibraryForInliningPath;
 
 // You msut call this before using JSC::llvm. It's safe to call this multiple times.
 // Returns true if we successfully loaded LLVM. Returns false if we didn't.

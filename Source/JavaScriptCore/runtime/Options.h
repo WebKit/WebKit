@@ -197,6 +197,8 @@ typedef const char* optionString;
     v(unsigned, maximumInliningDepthForMustInline, 7) \
     v(unsigned, maximumInliningRecursionForMustInline, 3) \
     \
+    v(unsigned, maximumLLVMInstructionCountForNativeInlining, 80) \
+    \
     /* Maximum size of a caller for enabling inlining. This is purely to protect us */\
     /* from super long compiles that take a lot of memory. */\
     v(unsigned, maximumInliningCallerSize, 10000) \

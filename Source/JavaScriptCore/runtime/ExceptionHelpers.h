@@ -50,9 +50,9 @@ JSObject* createNotAFunctionError(ExecState*, JSValue);
 JSObject* createErrorForInvalidGlobalAssignment(ExecState*, const String&);
 JSString* errorDescriptionForValue(ExecState*, JSValue);
 
-JSObject* throwOutOfMemoryError(ExecState*);
-JSObject* throwStackOverflowError(ExecState*);
-JSObject* throwTerminatedExecutionException(ExecState*);
+JS_EXPORT_PRIVATE JSObject* throwOutOfMemoryError(ExecState*);
+JS_EXPORT_PRIVATE JSObject* throwStackOverflowError(ExecState*);
+JS_EXPORT_PRIVATE JSObject* throwTerminatedExecutionException(ExecState*);
 
 
 class TerminatedExecutionError : public JSNonFinalObject {

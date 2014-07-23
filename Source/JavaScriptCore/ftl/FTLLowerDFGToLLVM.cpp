@@ -28,6 +28,7 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "BundlePath.h"
 #include "CodeBlockWithJITType.h"
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGInPlaceAbstractState.h"
@@ -40,10 +41,12 @@
 #include "FTLOutput.h"
 #include "FTLThunks.h"
 #include "FTLWeightedTarget.h"
-#include "OperandsInlines.h"
 #include "JSCInlines.h"
+#include "OperandsInlines.h"
 #include "VirtualRegister.h"
 #include <atomic>
+#include <dlfcn.h>
+#include <llvm/InitializeLLVM.h>
 #include <wtf/ProcessID.h>
 
 namespace JSC { namespace FTL {
@@ -92,6 +95,8 @@ public:
         , m_state(state.graph)
         , m_interpreter(state.graph, m_state)
         , m_stackmapIDs(0)
+        , m_tbaaKind(mdKindID(state.context, "tbaa"))
+        , m_tbaaStructKind(mdKindID(state.context, "tbaa.struct"))
     {
     }
     
@@ -108,7 +113,7 @@ public:
         m_graph.m_dominators.computeIfNecessary(m_graph);
         
         m_ftlState.module =
-            llvm->ModuleCreateWithNameInContext(name.data(), m_ftlState.context);
+            moduleCreateWithNameInContext(name.data(), m_ftlState.context);
         
         m_ftlState.function = addFunction(
             m_ftlState.module, name.data(), functionType(m_out.int64));
@@ -137,7 +142,35 @@ public:
         
         m_out.appendTo(m_prologue, stackOverflow);
         createPhiVariables();
+
+        Vector<BasicBlock*> depthFirst;
+        m_graph.getBlocksInDepthFirstOrder(depthFirst);
+
+        int maxNumberOfArguments = -1;
+        for (unsigned blockIndex = depthFirst.size(); blockIndex--; ) {
+            BasicBlock* block = depthFirst[blockIndex];
+            for (unsigned nodeIndex = block->size(); nodeIndex--; ) {
+                Node* m_node = block->at(nodeIndex);
+                if (m_node->hasKnownFunction()) {
+                    int numArgs = m_node->numChildren();
+                    NativeFunction func = m_node->knownFunction()->nativeFunction();
+                    Dl_info info;
+                    if (dladdr((void*)func, &info)) {
+                        LValue callee = getFunctionBySymbol(info.dli_sname);
+                        if (callee && numArgs > maxNumberOfArguments)
+                            maxNumberOfArguments = numArgs;
+                    }
+                }
+            }
+        }
+
         LValue capturedAlloca = m_out.alloca(arrayType(m_out.int64, m_graph.m_nextMachineLocal));
+
+        if (maxNumberOfArguments >= 0) {
+            m_execState = m_out.alloca(arrayType(m_out.int64, JSStack::CallFrameHeaderSize + maxNumberOfArguments));
+            m_execStorage = m_out.ptrToInt(m_execState, m_out.intPtr);        
+        }
+
         m_captured = m_out.add(
             m_out.ptrToInt(capturedAlloca, m_out.intPtr),
             m_out.constIntPtr(m_graph.m_nextMachineLocal * sizeof(Register)));
@@ -174,9 +207,8 @@ public:
             m_out.stackmapIntrinsic(), m_out.constInt64(m_ftlState.handleExceptionStackmapID),
             m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
         m_out.unreachable();
-        
-        Vector<BasicBlock*> depthFirst;
-        m_graph.getBlocksInDepthFirstOrder(depthFirst);
+
+
         for (unsigned i = 0; i < depthFirst.size(); ++i)
             compileBlock(depthFirst[i]);
         
@@ -3598,15 +3630,19 @@ private:
     {
         setBoolean(m_out.bitNot(boolify(m_node->child1())));
     }
-    
+
     void compileCallOrConstruct()
     {
         int dummyThisArgument = m_node->op() == Call ? 0 : 1;
         int numPassedArgs = m_node->numChildren() - 1;
         int numArgs = numPassedArgs + dummyThisArgument;
-        
-        LValue callee = lowJSValue(m_graph.varArgChild(m_node, 0));
-        
+
+        if (m_node->hasKnownFunction()
+            && possiblyCompileInlineableNativeCall(dummyThisArgument, numPassedArgs, numArgs))
+            return;
+
+        LValue jsCallee = lowJSValue(m_graph.varArgChild(m_node, 0));
+
         unsigned stackmapID = m_stackmapIDs++;
         
         Vector<LValue> arguments;
@@ -3614,10 +3650,10 @@ private:
         arguments.append(m_out.constInt32(sizeOfCall()));
         arguments.append(constNull(m_out.ref8));
         arguments.append(m_out.constInt32(1 + JSStack::CallFrameHeaderSize - JSStack::CallerFrameAndPCSize + numArgs));
-        arguments.append(callee); // callee -> %rax
+        arguments.append(jsCallee); // callee -> %rax
         arguments.append(getUndef(m_out.int64)); // code block
         arguments.append(getUndef(m_out.int64)); // scope chain
-        arguments.append(callee); // callee -> stack
+        arguments.append(jsCallee); // callee -> stack
         arguments.append(m_out.constInt64(numArgs)); // argument count and zeros for the tag
         if (dummyThisArgument)
             arguments.append(getUndef(m_out.int64));
@@ -3633,7 +3669,7 @@ private:
         
         setJSValue(call);
     }
-    
+
     void compileJump()
     {
         m_out.jump(lowBlock(m_node->targetBlock()));
@@ -3983,6 +4019,159 @@ private:
 #endif
     }
     
+    bool possiblyCompileInlineableNativeCall(int dummyThisArgument, int numPassedArgs, int numArgs)
+    {
+        JSFunction* knownFunction = m_node->knownFunction();
+        NativeFunction function = knownFunction->nativeFunction();
+        Dl_info info;
+        if (dladdr((void*)function, &info)) {
+            LValue callee = getFunctionBySymbol(info.dli_sname);
+            LType typeCallee;
+            if (callee && (typeCallee = typeOf(callee)) && (typeCallee = getElementType(typeCallee))) {
+
+                JSScope* scope = knownFunction->scopeUnchecked();
+                m_out.storePtr(m_callFrame, m_execStorage, m_heaps.CallFrame_callerFrame);
+                m_out.storePtr(constNull(m_out.intPtr), addressFor(m_execStorage, JSStack::CodeBlock));
+                m_out.storePtr(weakPointer(scope), addressFor(m_execStorage, JSStack::ScopeChain));
+                m_out.storePtr(weakPointer(knownFunction), addressFor(m_execStorage, JSStack::Callee));
+
+                m_out.store64(m_out.constInt64(numArgs), addressFor(m_execStorage, JSStack::ArgumentCount));
+
+                if (dummyThisArgument) 
+                    m_out.storePtr(getUndef(m_out.int64), addressFor(m_execStorage, JSStack::ThisArgument));
+                
+                for (int i = 0; i < numPassedArgs; ++i) {
+                    m_out.storePtr(lowJSValue(m_graph.varArgChild(m_node, 1 + i)),
+                        addressFor(m_execStorage, dummyThisArgument ? JSStack::FirstArgument : JSStack::ThisArgument, i * sizeof(Register)));
+                }
+
+                LType typeCalleeArg;
+                getParamTypes(typeCallee, &typeCalleeArg);
+                LValue calleeCallFrame = m_out.address(m_execState, m_heaps.CallFrame_callerFrame).value();
+                m_out.storePtr(m_out.ptrToInt(calleeCallFrame, m_out.intPtr), m_out.absolute(&vm().topCallFrame));
+                
+                LValue call = vmCall(callee, 
+                    m_out.bitCast(calleeCallFrame, typeCalleeArg));
+
+                if (Options::verboseCompilation())
+                    dataLog("Inlining: ", info.dli_sname, "\n");
+
+                setJSValue(call);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    LValue getFunctionBySymbol(const CString symbol)
+    {
+        if (!m_ftlState.symbolTable.contains(symbol)) 
+            return nullptr;
+        if (!getModuleByPathForSymbol(m_ftlState.symbolTable.get(symbol), symbol))
+            return nullptr;
+        return getNamedFunction(m_ftlState.module, symbol.data());
+    }
+
+    bool getModuleByPathForSymbol(const CString path, const CString symbol)
+    {
+        if (m_ftlState.nativeLoadedLibraries.contains(path)) {
+            LValue function = getNamedFunction(m_ftlState.module, symbol.data());
+            if (!isInlinableSize(function)) {
+                // We had no choice but to compile this function, but don't try to inline it ever again.
+                m_ftlState.symbolTable.remove(symbol);
+                return false;
+            }
+            return true;
+        }
+
+        LMemoryBuffer memBuf;
+        
+        ASSERT(isX86() || isARM64());
+
+        const CString actualPath = toCString(bundlePath().data(), 
+            isX86() ? "/Resources/Runtime/x86_64/" : "/Resources/Runtime/arm64/",
+            path.data());
+
+        if (createMemoryBufferWithContentsOfFile(actualPath.data(), &memBuf, nullptr)) {
+            if (Options::verboseCompilation()) 
+                dataLog("Failed to load module at ", actualPath.data(), "\n for symbol ", symbol.data());
+            return false;
+        }
+
+        LModule module;
+
+        if (parseBitcodeInContext(m_ftlState.context, memBuf, &module, nullptr)) {
+            disposeMemoryBuffer(memBuf);
+            return false;
+        }
+
+        disposeMemoryBuffer(memBuf);
+        
+        if (LValue function = getNamedFunction(m_ftlState.module, symbol.data())) {
+            if (!isInlinableSize(function)) {
+                m_ftlState.symbolTable.remove(symbol);
+                disposeModule(module);
+                return false;
+            }
+        }
+
+        Vector<CString> namedFunctions;
+        for (LValue function = getFirstFunction(module); function; function = getNextFunction(function)) {
+            CString functionName(getValueName(function));
+            namedFunctions.append(functionName);
+            
+            for (LBasicBlock basicBlock = getFirstBasicBlock(function); basicBlock; basicBlock = getNextBasicBlock(basicBlock)) {
+                for (LValue instruction = getFirstInstruction(basicBlock); instruction; instruction = getNextInstruction(instruction)) {
+                    setMetadata(instruction, m_tbaaKind, nullptr);
+                    setMetadata(instruction, m_tbaaStructKind, nullptr);
+                }
+            }
+        }
+
+        Vector<CString> namedGlobals;
+        for (LValue global = getFirstGlobal(module); global; global = getNextGlobal(global)) {
+            CString globalName(getValueName(global));
+            namedGlobals.append(globalName);
+        }
+
+        if (linkModules(m_ftlState.module, module, LLVMLinkerDestroySource, nullptr))
+            return false;
+        
+        for (CString* symbol = namedFunctions.begin(); symbol != namedFunctions.end(); ++symbol) {
+            LValue function = getNamedFunction(m_ftlState.module, symbol->data());
+            setVisibility(function, LLVMHiddenVisibility);
+            if (!isDeclaration(function)) {
+                setLinkage(function, LLVMPrivateLinkage);
+
+                if (ASSERT_DISABLED)
+                    removeFunctionAttr(function, LLVMStackProtectAttribute);
+            }
+        }
+
+        for (CString* symbol = namedGlobals.begin(); symbol != namedGlobals.end(); ++symbol) {
+            LValue global = getNamedGlobal(m_ftlState.module, symbol->data());
+            setVisibility(global, LLVMHiddenVisibility);
+            if (!isDeclaration(global))
+                setLinkage(global, LLVMPrivateLinkage);
+        }
+
+        m_ftlState.nativeLoadedLibraries.add(path);
+        return true;
+    }
+
+    bool isInlinableSize(LValue function)
+    {
+        size_t instructionCount = 0;
+        size_t maxSize = Options::maximumLLVMInstructionCountForNativeInlining();
+        for (LBasicBlock basicBlock = getFirstBasicBlock(function); basicBlock; basicBlock = getNextBasicBlock(basicBlock)) {
+            for (LValue instruction = getFirstInstruction(basicBlock); instruction; instruction = getNextInstruction(instruction)) {
+                if (++instructionCount >= maxSize)
+                    return false;
+            }
+        }
+        return true;
+    }
+
     LValue didOverflowStack()
     {
         // This does a very simple leaf function analysis. The invariant of FTL call
@@ -6237,6 +6426,8 @@ private:
     LBasicBlock m_handleExceptions;
     HashMap<BasicBlock*, LBasicBlock> m_blocks;
     
+    LValue m_execState;
+    LValue m_execStorage;
     LValue m_callFrame;
     LValue m_captured;
     LValue m_tagTypeNumber;
@@ -6268,6 +6459,8 @@ private:
     Node* m_node;
     
     uint32_t m_stackmapIDs;
+    unsigned m_tbaaKind;
+    unsigned m_tbaaStructKind;
 };
 
 void lowerDFGToLLVM(State& state)

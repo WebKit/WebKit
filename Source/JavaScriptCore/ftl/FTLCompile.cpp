@@ -523,18 +523,32 @@ void compile(State& state, Safepoint::Result& safepointResult)
         if (Options::llvmSimpleOpt()) {
             modulePasses = llvm->CreatePassManager();
             llvm->AddTargetData(llvm->GetExecutionEngineTargetData(engine), modulePasses);
+
+            LLVMTargetMachineRef targetMachine = llvm->GetExecutionEngineTargetMachine(engine);
+             
+            llvm->AddAnalysisPasses(targetMachine, modulePasses);
             llvm->AddPromoteMemoryToRegisterPass(modulePasses);
+ 
+            llvm->AddGlobalOptimizerPass(modulePasses);
+ 
+            llvm->AddFunctionInliningPass(modulePasses);
+            llvm->AddPruneEHPass(modulePasses);
+            llvm->AddGlobalDCEPass(modulePasses);
+             
             llvm->AddConstantPropagationPass(modulePasses);
+            llvm->AddAggressiveDCEPass(modulePasses);
             llvm->AddInstructionCombiningPass(modulePasses);
-            llvm->AddTypeBasedAliasAnalysisPass(modulePasses);
             llvm->AddBasicAliasAnalysisPass(modulePasses);
+            llvm->AddTypeBasedAliasAnalysisPass(modulePasses);
             llvm->AddGVNPass(modulePasses);
             llvm->AddCFGSimplificationPass(modulePasses);
             llvm->AddDeadStoreEliminationPass(modulePasses);
+ 
             llvm->RunPassManager(modulePasses, state.module);
         } else {
             LLVMPassManagerBuilderRef passBuilder = llvm->PassManagerBuilderCreate();
             llvm->PassManagerBuilderSetOptLevel(passBuilder, Options::llvmOptimizationLevel());
+            llvm->PassManagerBuilderUseInlinerWithThreshold(passBuilder, 275);
             llvm->PassManagerBuilderSetSizeLevel(passBuilder, Options::llvmSizeLevel());
         
             functionPasses = llvm->CreateFunctionPassManagerForModule(state.module);

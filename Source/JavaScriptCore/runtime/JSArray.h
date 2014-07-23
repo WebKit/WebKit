@@ -61,20 +61,20 @@ public:
 
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool throwException);
 
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+    JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 
     DECLARE_EXPORT_INFO;
         
     unsigned length() const { return getArrayLength(); }
     // OK to use on new arrays, but not if it might be a RegExpMatchArray.
-    bool setLength(ExecState*, unsigned, bool throwException = false);
+    JS_EXPORT_PRIVATE bool setLength(ExecState*, unsigned, bool throwException = false);
 
-    void sort(ExecState*);
-    void sort(ExecState*, JSValue compareFunction, CallType, const CallData&);
-    void sortNumeric(ExecState*, JSValue compareFunction, CallType, const CallData&);
+    JS_EXPORT_PRIVATE void sort(ExecState*);
+    JS_EXPORT_PRIVATE void sort(ExecState*, JSValue compareFunction, CallType, const CallData&);
+    JS_EXPORT_PRIVATE void sortNumeric(ExecState*, JSValue compareFunction, CallType, const CallData&);
 
-    void push(ExecState*, JSValue);
-    JSValue pop(ExecState*);
+    JS_EXPORT_PRIVATE void push(ExecState*, JSValue);
+    JS_EXPORT_PRIVATE JSValue pop(ExecState*);
 
     enum ShiftCountMode {
         // This form of shift hints that we're doing queueing. With this assumption in hand,
@@ -131,8 +131,8 @@ public:
         }
     }
 
-    void fillArgList(ExecState*, MarkedArgumentBuffer&);
-    void copyToArguments(ExecState*, CallFrame*, uint32_t length, int32_t firstVarArgOffset);
+    JS_EXPORT_PRIVATE void fillArgList(ExecState*, MarkedArgumentBuffer&);
+    JS_EXPORT_PRIVATE void copyToArguments(ExecState*, CallFrame*, uint32_t length, int32_t firstVarArgOffset);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, IndexingType indexingType)
     {
@@ -157,7 +157,7 @@ private:
     }
         
     bool shiftCountWithAnyIndexingType(ExecState*, unsigned& startIndex, unsigned count);
-    bool shiftCountWithArrayStorage(VM&, unsigned startIndex, unsigned count, ArrayStorage*);
+    JS_EXPORT_PRIVATE bool shiftCountWithArrayStorage(VM&, unsigned startIndex, unsigned count, ArrayStorage*);
 
     bool unshiftCountWithAnyIndexingType(ExecState*, unsigned startIndex, unsigned count);
     bool unshiftCountWithArrayStorage(ExecState*, unsigned startIndex, unsigned count, ArrayStorage*);

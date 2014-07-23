@@ -111,8 +111,8 @@ public:
     JS_EXPORT_PRIVATE static String className(const JSObject*);
 
     JSValue prototype() const;
-    void setPrototype(VM&, JSValue prototype);
-    bool setPrototypeWithCycleCheck(ExecState*, JSValue prototype);
+    JS_EXPORT_PRIVATE void setPrototype(VM&, JSValue prototype);
+    JS_EXPORT_PRIVATE bool setPrototypeWithCycleCheck(ExecState*, JSValue prototype);
         
     bool mayInterceptIndexedAccesses()
     {
@@ -132,9 +132,9 @@ public:
     // The key difference between this and getOwnPropertySlot is that getOwnPropertySlot
     // currently returns incorrect results for the DOM window (with non-own properties)
     // being returned. Once this is fixed we should migrate code & remove this method.
-    bool getOwnPropertyDescriptor(ExecState*, PropertyName, PropertyDescriptor&);
+    JS_EXPORT_PRIVATE bool getOwnPropertyDescriptor(ExecState*, PropertyName, PropertyDescriptor&);
 
-    bool allowsAccessFrom(ExecState*);
+    JS_EXPORT_PRIVATE bool allowsAccessFrom(ExecState*);
 
     unsigned getArrayLength() const
     {
@@ -592,7 +592,7 @@ public:
     JS_EXPORT_PRIVATE void putDirectNativeFunction(VM&, JSGlobalObject*, const PropertyName&, unsigned functionLength, NativeFunction, Intrinsic, unsigned attributes);
     JS_EXPORT_PRIVATE JSFunction* putDirectBuiltinFunction(VM&, JSGlobalObject*, const PropertyName&, FunctionExecutable*, unsigned attributes);
     JSFunction* putDirectBuiltinFunctionWithoutTransition(VM&, JSGlobalObject*, const PropertyName&, FunctionExecutable*, unsigned attributes);
-    void putDirectNativeFunctionWithoutTransition(VM&, JSGlobalObject*, const PropertyName&, unsigned functionLength, NativeFunction, Intrinsic, unsigned attributes);
+    JS_EXPORT_PRIVATE void putDirectNativeFunctionWithoutTransition(VM&, JSGlobalObject*, const PropertyName&, unsigned functionLength, NativeFunction, Intrinsic, unsigned attributes);
 
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
 
@@ -603,8 +603,8 @@ public:
     bool isActivationObject() const;
     bool isErrorInstance() const;
 
-    void seal(VM&);
-    void freeze(VM&);
+    JS_EXPORT_PRIVATE void seal(VM&);
+    JS_EXPORT_PRIVATE void freeze(VM&);
     JS_EXPORT_PRIVATE void preventExtensions(VM&);
     bool isSealed(VM& vm) { return structure(vm)->isSealed(vm); }
     bool isFrozen(VM& vm) { return structure(vm)->isFrozen(vm); }
@@ -989,7 +989,7 @@ private:
     ContiguousDoubles ensureDoubleSlow(VM&);
     ContiguousJSValues ensureContiguousSlow(VM&);
     ContiguousJSValues rageEnsureContiguousSlow(VM&);
-    ArrayStorage* ensureArrayStorageSlow(VM&);
+    JS_EXPORT_PRIVATE ArrayStorage* ensureArrayStorageSlow(VM&);
     
     enum DoubleToContiguousMode { EncodeValueAsDouble, RageConvertDoubleToValue };
     template<DoubleToContiguousMode mode>

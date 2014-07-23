@@ -1016,6 +1016,40 @@ struct Node {
         m_opInfo2 = prediction;
     }
     
+    bool canBeKnownFunction()
+    {
+        switch (op()) {
+        case Construct:
+        case Call:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    bool hasKnownFunction()
+    {
+        switch (op()) {
+        case Construct:
+        case Call:
+            return (bool)m_opInfo;
+        default:
+            return false;
+        }
+    }
+    
+    JSFunction* knownFunction()
+    {
+        ASSERT(canBeKnownFunction());
+        return bitwise_cast<JSFunction*>(m_opInfo);
+    }
+
+    void giveKnownFunction(JSFunction* callData) 
+    {
+        ASSERT(canBeKnownFunction());
+        m_opInfo = bitwise_cast<uintptr_t>(callData);
+    }
+
     bool hasFunction()
     {
         switch (op()) {

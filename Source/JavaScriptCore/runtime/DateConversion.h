@@ -39,7 +39,7 @@ enum DateTimeFormat {
     DateTimeFormatDateAndTime = DateTimeFormatDate | DateTimeFormatTime
 };
 
-WTF::String formatDateTime(const GregorianDateTime&, DateTimeFormat, bool asUTCVariant);
+JS_EXPORT_PRIVATE WTF::String formatDateTime(const GregorianDateTime&, DateTimeFormat, bool asUTCVariant);
 
 } // namespace JSC
 

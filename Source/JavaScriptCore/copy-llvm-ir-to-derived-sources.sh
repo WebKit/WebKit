@@ -35,7 +35,7 @@ do
         for file in "$OBJ_DIR/$arch"/*.o;
         do
             file_name=${file##*/}
-            gzip -9 -c "$file" > "$RUNTIME_DERIVED_SOURCES_DIR/$arch/${file_name%.o}.bc.gz"
+            cp "$file" "$RUNTIME_DERIVED_SOURCES_DIR/$arch/${file_name%.o}.bc"
         done
     fi
 done

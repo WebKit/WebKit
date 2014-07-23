@@ -81,6 +81,9 @@ public:
     RefPtr<DataSection> stackmapsSection;
     
     void dumpState(const char* when);
+
+    HashSet<CString> nativeLoadedLibraries;
+    HashMap<CString, CString> symbolTable;
 };
 
 } } // namespace JSC::FTL

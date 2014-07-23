@@ -23,31 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLAbbreviatedTypes_h
-#define FTLAbbreviatedTypes_h
+#include "config.h"
+#include "InitializeLLVM.h"
 
-#if ENABLE(FTL_JIT)
+#if HAVE(LLVM)
 
-#include "LLVMAPI.h"
+#include "BundlePath.h"
+#include "InitializeLLVMPOSIX.h"
+#include <wtf/StringPrintStream.h>
 
-namespace JSC { namespace FTL {
+// Use the "JS" prefix to make check-for-inappropriate-objc-class-names happy. I
+// think this is better than hacking that script.
 
-typedef LLVMAtomicOrdering LAtomicOrdering;
-typedef LLVMBasicBlockRef LBasicBlock;
-typedef LLVMBuilderRef LBuilder;
-typedef LLVMCallConv LCallConv;
-typedef LLVMContextRef LContext;
-typedef LLVMIntPredicate LIntPredicate;
-typedef LLVMLinkage LLinkage;
-typedef LLVMModuleRef LModule;
-typedef LLVMRealPredicate LRealPredicate;
-typedef LLVMTypeRef LType;
-typedef LLVMValueRef LValue;
-typedef LLVMMemoryBufferRef LMemoryBuffer;
+namespace JSC {
 
-} } // namespace JSC::FTL
+void initializeLLVMImpl()
+{
+    initializeLLVMPOSIX(toCString(bundlePath().data(), "/Libraries/libllvmForJSC.dylib").data());
+}
 
-#endif // ENABLE(FTL_JIT)
+} // namespace JSC
 
-#endif // FTLAbbreviatedTypes_h
-
+#endif // HAVE(LLVM)
