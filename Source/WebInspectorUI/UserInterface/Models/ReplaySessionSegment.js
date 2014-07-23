@@ -47,14 +47,13 @@ WebInspector.ReplaySessionSegment = function(identifier, payload)
 {
     WebInspector.Object.call(this);
 
-    console.assert(identifier === payload.id);
+    var segment = payload.segment;
+    console.assert(identifier === segment.id);
 
     this.identifier = identifier;
-    this._timestamp = payload.timestamp;
+    this._timestamp = segment.timestamp;
 
-    this._queues = payload.queues;
-
-    // XXX: make objects for the queues and inputs?
+    this._queues = segment.queues;
 };
 
 WebInspector.ReplaySessionSegment.prototype = {

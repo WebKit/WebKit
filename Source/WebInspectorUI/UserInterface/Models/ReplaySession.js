@@ -63,9 +63,10 @@ WebInspector.ReplaySession.prototype = {
 
     _updateFromPayload: function(payload)
     {
-        console.assert(payload.id === this.identifier);
+        var session = payload.session;
+        console.assert(session.id === this.identifier);
 
-        var segmentIds = payload.segments;
+        var segmentIds = session.segments;
         var oldSegments = this._segments;
         var pendingSegments = [];
         for (var segmentId of segmentIds)

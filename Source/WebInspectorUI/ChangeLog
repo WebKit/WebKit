@@ -1,3 +1,25 @@
+2014-07-23  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: InspectorBackend's promise-based agent API does not support multiple return values
+        https://bugs.webkit.org/show_bug.cgi?id=135207
+
+        Reviewed by Joseph Pecoraro.
+
+        The promise wrapper implementation assumed that the protocol callback supplies a single 'payload'
+        return value, but InspectorBackend will actually unpack multiple return values as multiple
+        callback arguments. Set a special flag so it will not try to apply multiple return values.
+
+        It would read better if multiple return values could be spread to the resolve callback, but
+        multiple argument support are not required by the Promises specification, so we won't use them.
+
+        * UserInterface/Controllers/ReplayManager.js: Fix uses of promise return values.
+        (WebInspector.ReplayManager):
+        * UserInterface/Models/ReplaySession.js:
+        * UserInterface/Models/ReplaySessionSegment.js:
+        (WebInspector.ReplaySessionSegment):
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackend.Command.prototype.promise):
+
 2014-07-21  Saam Barati  <sbarati@apple.com>
 
         Web Inspector: Add esprima to the WebInspector.

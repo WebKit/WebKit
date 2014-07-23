@@ -50,8 +50,8 @@ WebInspector.ReplayManager = function()
         return;
 
     ReplayAgent.getAvailableSessions.promise()
-        .then(function(sessionIds) {
-            for (var sessionId of sessionIds)
+        .then(function(payload) {
+            for (var sessionId of payload.ids)
                 WebInspector.replayManager.sessionCreated(sessionId);
         });
 };

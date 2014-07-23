@@ -373,6 +373,10 @@ InspectorBackend.Command.prototype = {
             function convertToPromiseCallback(error, payload) {
                 return error ? reject(error) : resolve(payload);
             }
+            // FIXME: this should be indicated by invoking the command differently, rather
+            // than by setting a magical property on the callback. <webkit.org/b/132386>
+            convertToPromiseCallback.expectsResultObject = true;
+
             promiseArguments.push(convertToPromiseCallback);
             instance._invokeWithArguments.apply(instance, promiseArguments);
         });

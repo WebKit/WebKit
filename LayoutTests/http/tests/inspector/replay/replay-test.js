@@ -38,7 +38,7 @@ InspectorTest.Replay.runSingleSegmentRefTest = function(stateComparator)
         return RuntimeAgent.evaluate.promise("dumpNondeterministicState()");
     })
     .then(function(payload) {
-        stateDuringCapturing = payload.value;
+        stateDuringCapturing = payload.result.value;
         return new Promise(function stopCapturing(resolve, reject) {
             WebInspector.replayManager.stopCapturing();
             WebInspector.replayManager.addEventListener(WebInspector.ReplayManager.Event.CaptureStopped, resolve);
@@ -66,7 +66,7 @@ InspectorTest.Replay.runSingleSegmentRefTest = function(stateComparator)
         return RuntimeAgent.evaluate.promise("dumpNondeterministicState()");
     })
     .then(function(payload) {
-        stateDuringReplaying = payload.value;
+        stateDuringReplaying = payload.result.value;
         return new Promise(function waitForReplayingToFinish(resolve, reject) {
             WebInspector.replayManager.addEventListener(WebInspector.ReplayManager.Event.PlaybackFinished, resolve);
         });
