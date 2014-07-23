@@ -267,6 +267,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     if (!_backgroundWindow)
         _backgroundWindow = createBackgroundFullscreenWindow(NSZeroRect);
 
+    [self.window orderBack: self]; // Make sure the full screen window is part of the correct Space.
     [[self window] enterFullScreenMode:self];
 }
 
