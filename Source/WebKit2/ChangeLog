@@ -1,5 +1,20 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171194.
+
+    2014-07-17  Brady Eidson  <beidson@apple.com>
+
+            Crash in ServicesOverlayController::~ServicesOverlayController.
+            <rdar://problem/17622172> and https://bugs.webkit.org/show_bug.cgi?id=135022
+
+            Reviewed by Tim Horton.
+
+            * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+            (WebKit::ServicesOverlayController::~ServicesOverlayController): Don’t need to uninstall the
+                PageOverlay as it has already been destroyed by this point in WebPage::~WebPage.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171191.
 
     2014-07-17  Tim Horton  <timothy_horton@apple.com>
