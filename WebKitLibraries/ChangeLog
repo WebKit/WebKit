@@ -1,3 +1,23 @@
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
+        Merge r171305.
+
+    2014-07-21  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Correct auto-version.pl script for two-digit version numbers
+            https://bugs.webkit.org/show_bug.cgi?id=135119
+            <rdar://problem/17743959>
+
+            Reviewed by David Kilzer.
+
+            The $MAJOR_VERSION must be the first digit of $BUILD_MAJOR_VERSION,
+            and $MINOR_VERSION must be the remaining digits.
+
+            Also correct regexp (line 90) that was allowing version numbers
+            larger than three digits to be processed.
+
+            * win/tools/scripts/auto-version.pl: Correct regular expression.
+
 2014-07-10  Alex Christensen  <achristensen@webkit.org>
 
         Enable same features on all Windows ports.
