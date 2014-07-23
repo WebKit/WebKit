@@ -1,5 +1,19 @@
 2014-07-23  Oliver Hunt  <oliver@apple.com>
 
+        Add a pseudo target to create sandbox override roots
+        https://bugs.webkit.org/show_bug.cgi?id=135216
+        <rdar://17785560>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Just a duplicate of the standard ios sandbox target, targetting
+        the profile overrides directory.  This means we can make roots
+        that "Just Work".
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2014-07-23  Oliver Hunt  <oliver@apple.com>
+
         Incorrect commit for sandbox profile
         https://bugs.webkit.org/show_bug.cgi?id=135214
         <rdar://17739108>
