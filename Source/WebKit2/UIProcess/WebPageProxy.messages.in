@@ -404,7 +404,7 @@ messages -> WebPageProxy {
     DidFinishLoadForQuickLookDocumentInMainFrame(WebKit::QuickLookDocumentData data)
 #endif
 
-    WillChangeCurrentHistoryItem()
+    WillChangeCurrentHistoryItemForMainFrame()
 
 #if USE(CONTENT_FILTERING)
     ContentFilterDidBlockLoadForFrame(WebCore::ContentFilter contentFilter, uint64_t frameID)
