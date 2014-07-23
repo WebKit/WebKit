@@ -1,3 +1,15 @@
+2014-07-22  Alex Christensen  <achristensen@webkit.org>
+
+        Fix window-inactive css selectors when using querySelector.
+        https://bugs.webkit.org/show_bug.cgi?id=135149
+
+        Reviewed by Tim Horton.
+
+        * fast/selectors/querySelector-window-inactive-expected.txt: Added.
+        * fast/selectors/querySelector-window-inactive.html: Added.
+        * platform/wk2/TestExpectations:
+        Added querySelector-window-inactive.html to list of tests that do not work in WK2 because of setWindowIsKey. 
+
 2014-07-22  Filip Pizlo  <fpizlo@apple.com>
 
         Merge r168635, r168780, r169005, r169014, and r169143 from ftlopt.

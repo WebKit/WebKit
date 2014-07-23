@@ -776,6 +776,9 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
                 break;
             }
 
+        case CSSSelector::PseudoClassWindowInactive:
+            return !element->document().page()->focusController().isActive();
+
         case CSSSelector::PseudoClassHorizontal:
         case CSSSelector::PseudoClassVertical:
         case CSSSelector::PseudoClassDecrement:
@@ -789,7 +792,6 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             return false;
 
         case CSSSelector::PseudoClassUnknown:
-        default:
             ASSERT_NOT_REACHED();
             break;
         }
