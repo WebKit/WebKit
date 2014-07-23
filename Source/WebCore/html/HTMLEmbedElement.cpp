@@ -29,6 +29,7 @@
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameView.h"
 #include "HTMLDocument.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
@@ -70,7 +71,13 @@ static inline RenderWidget* findWidgetRenderer(const Node* n)
 
 RenderWidget* HTMLEmbedElement::renderWidgetForJSBindings() const
 {
-    document()->updateLayoutIgnorePendingStylesheets();
+    FrameView* view = document()->view();
+    if (!view || (!view->isInLayout() && !view->isPainting())) {
+        // Needs to load the plugin immediatedly because this function is called
+        // when JavaScript code accesses the plugin.
+        // FIXME: <rdar://16893708> Check if dispatching events here is safe.
+        document()->updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasksSynchronously);
+    }
     return findWidgetRenderer(this);
 }
 

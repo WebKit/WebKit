@@ -87,7 +87,10 @@ RenderWidget* HTMLAppletElement::renderWidgetForJSBindings() const
     if (!canEmbedJava())
         return 0;
 
-    document()->updateLayoutIgnorePendingStylesheets();
+    // Needs to load the plugin immediatedly because this function is called
+    // when JavaScript code accesses the plugin.
+    // FIXME: <rdar://16893708> Check if dispatching events here is safe.
+    document()->updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasksSynchronously);
     return renderPart();
 }
 

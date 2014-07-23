@@ -520,6 +520,7 @@ private:
 
     bool updateWidgets();
     void updateWidget(RenderObject*);
+    void updateEmbeddedObjectsTimerFired(Timer<FrameView>*);
     void scrollToAnchor();
     void scrollPositionChanged();
 
@@ -567,6 +568,7 @@ private:
     int m_layoutCount;
     unsigned m_nestedLayoutCount;
     Timer<FrameView> m_postLayoutTasksTimer;
+    Timer<FrameView> m_updateEmbeddedObjectsTimer;
     bool m_firstLayoutCallbackPending;
 
     bool m_firstLayout;

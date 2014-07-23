@@ -52,6 +52,7 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "HTMLContentElement.h"
+#include "HTMLIFrameElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
@@ -1895,6 +1896,28 @@ void Internals::stopTrackingRepaints(Document* document, ExceptionCode& ec)
 
     FrameView* frameView = document->view();
     frameView->setTracksRepaints(false);
+}
+
+void Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(ExceptionCode& ec)
+{
+    updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(nullptr, ec);
+}
+
+void Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(Node* node, ExceptionCode& ec)
+{
+    Document* document;
+    if (!node)
+        document = contextDocument();
+    else if (node->isDocumentNode())
+        document = toDocument(node);
+    else if (node->hasTagName(HTMLNames::iframeTag))
+        document = toHTMLIFrameElement(node)->contentDocument();
+    else {
+        ec = TypeError;
+        return;
+    }
+
+    document->updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasksSynchronously);
 }
 
 #if USE(LAZY_NATIVE_CURSOR)

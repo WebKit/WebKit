@@ -1,3 +1,17 @@
+2014-07-22  Dana Burkart  <dburkart@apple.com>
+
+        Merge r169475
+
+    2014-05-28  Jon Honeycutt  <jhoneycutt@apple.com> 
+    
+            Roll r168668 back in. 
+    
+            <https://bugs.webkit.org/show_bug.cgi?id=132621> 
+     
+            Reviewed by Brent Fulgham. 
+     
+            * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: 
+
 2014-05-19  Lucas Forschler  <lforschler@apple.com>
 
         Merge r169098

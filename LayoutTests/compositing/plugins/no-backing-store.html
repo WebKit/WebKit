@@ -6,11 +6,12 @@
       margin: 10px;
     }
   </style>
+  <script src="../../resources/plugin.js"></script>
   <script type="text/javascript" charset="utf-8">
-    if (window.testRunner) {
+    if (window.testRunner)
         testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
+
+    runAfterPluginLoad(doTest, DoNotNotifyDone);
 
     function doTest()
     {
@@ -22,7 +23,6 @@
             }
         }, 0)
     }
-    window.addEventListener('load', doTest, false);
   </script>
 </head>
 <body>
