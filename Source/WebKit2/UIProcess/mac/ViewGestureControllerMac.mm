@@ -97,7 +97,7 @@ namespace WebKit {
 ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
     , m_activeGestureType(ViewGestureType::None)
-    , m_swipeWatchdogTimer(this, &ViewGestureController::swipeSnapshotWatchdogTimerFired)
+    , m_swipeWatchdogTimer(RunLoop::main(), this, &ViewGestureController::swipeSnapshotWatchdogTimerFired)
     , m_lastMagnificationGestureWasSmartMagnification(false)
     , m_visibleContentRectIsValid(false)
     , m_frameHandlesMagnificationGesture(false)
@@ -657,7 +657,7 @@ void ViewGestureController::didHitRenderTreeSizeThreshold()
     removeSwipeSnapshot();
 }
 
-void ViewGestureController::swipeSnapshotWatchdogTimerFired(WebCore::Timer<ViewGestureController>*)
+void ViewGestureController::swipeSnapshotWatchdogTimerFired()
 {
     removeSwipeSnapshot();
 }

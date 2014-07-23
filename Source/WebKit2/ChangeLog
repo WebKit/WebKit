@@ -1,5 +1,31 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171317.
+
+    2014-07-21  Timothy Horton  <timothy_horton@apple.com>
+
+            Random crashes on the Web Thread due to Timers firing on the wrong thread in the UI process
+            https://bugs.webkit.org/show_bug.cgi?id=135132
+            <rdar://problem/17719832>
+
+            Reviewed by Simon Fraser.
+
+            * UIProcess/ProcessThrottler.cpp:
+            (WebKit::ProcessThrottler::ProcessThrottler):
+            (WebKit::ProcessThrottler::suspendTimerFired):
+            * UIProcess/ProcessThrottler.h:
+            * UIProcess/ios/ViewGestureControllerIOS.mm:
+            (WebKit::ViewGestureController::ViewGestureController):
+            (WebKit::ViewGestureController::swipeSnapshotWatchdogTimerFired):
+            * UIProcess/mac/ViewGestureController.h:
+            * UIProcess/mac/ViewGestureControllerMac.mm:
+            (WebKit::ViewGestureController::ViewGestureController):
+            (WebKit::ViewGestureController::swipeSnapshotWatchdogTimerFired):
+            We can't use WebCore timers in the UI process because of coexistence concerns
+            (they fire on the Web Thread if there is one!), so use RunLoop::Timer instead.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171314.
 
     2014-07-21  Andy Estes  <aestes@apple.com>

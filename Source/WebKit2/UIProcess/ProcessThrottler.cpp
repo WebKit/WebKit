@@ -65,7 +65,7 @@ ProcessThrottler::BackgroundActivityToken::~BackgroundActivityToken()
 ProcessThrottler::ProcessThrottler(WebProcessProxy* process)
     : m_process(process)
     , m_weakPtrFactory(this)
-    , m_suspendTimer(this, &ProcessThrottler::suspendTimerFired)
+    , m_suspendTimer(RunLoop::main(), this, &ProcessThrottler::suspendTimerFired)
     , m_foregroundCount(0)
     , m_backgroundCount(0)
     , m_suspendMessageCount(0)
@@ -116,7 +116,7 @@ void ProcessThrottler::didConnnectToProcess(pid_t pid)
     m_assertion = std::make_unique<ProcessAndUIAssertion>(pid, assertionState());
 }
     
-void ProcessThrottler::suspendTimerFired(WebCore::Timer<ProcessThrottler>*)
+void ProcessThrottler::suspendTimerFired()
 {
     updateAssertionNow();
 }
