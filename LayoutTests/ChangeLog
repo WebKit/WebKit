@@ -1,3 +1,20 @@
+2014-07-23  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r171347
+
+    2014-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Clicking on links while accessibility is enabled does not render as expected
+            https://bugs.webkit.org/show_bug.cgi?id=135074
+
+            Reviewed by Chris Fleizach.
+
+            Delete a node and its parent, then call allAttributes() on the accessibility representation of
+            the deleted child and make sure there is no crash.
+
+            * accessibility/parent-delete-expected.txt: Added
+            * accessibility/parent-delete.html: Added
+
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
         Merge r171316.

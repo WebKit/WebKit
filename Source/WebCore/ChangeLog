@@ -1,5 +1,28 @@
 2014-07-23  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171347
+
+    2014-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Clicking on links while accessibility is enabled sometimes crashes
+            https://bugs.webkit.org/show_bug.cgi?id=135074
+
+            Reviewed by Chris Fleizach.
+
+            When an accessibility request comes in from the system, we call updateBackingStore() on the
+            relevant AccessibilityObject, which triggers a relayout of the entire document. This relayout
+            might delete that accessibility node and its parent, which would cause the node to be deleted.
+            After the stack unwinds, we then call a member function on the node without checking for this
+            condition.
+
+            Test: accessibility/parent-delete.html
+
+            * accessibility/AccessibilityObject.cpp:
+            (WebCore::AccessibilityObject::updateBackingStore): Retain the node for the duration of the
+            function.
+
+2014-07-23  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171345
 
     2014-07-22  Jeremy Jones  <jeremyj@apple.com>

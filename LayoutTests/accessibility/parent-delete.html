@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function runTest() {
+    var accessibilityElement;
+    {
+        var outer = document.getElementById("outer");
+        var inner = document.getElementById("inner");
+        var editable = document.getElementById("editable");
+        var result = document.getElementById("result");
+        editable.focus();
+        if (window.accessibilityController) {
+            var accessibilityElement = accessibilityController.focusedElement;
+        }
+        inner.removeChild(editable);
+        outer.removeChild(inner);
+    }
+    if (window.accessibilityController) {
+        result.innerText = accessibilityElement.allAttributes();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+This test passes if there is no crash.
+<div id="outer" style="display: none;">
+    <div id="inner" style="display: none;">
+        <div id="editable" contenteditable="true" style="display: none;">
+            This is some throwaway text
+        </div>
+    </div>
+</div>
+<div id="result"></div>
+</body>
+</html>

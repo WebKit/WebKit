@@ -1429,6 +1429,8 @@ unsigned AccessibilityObject::doAXLineForIndex(unsigned index)
 void AccessibilityObject::updateBackingStore()
 {
     // Updating the layout may delete this object.
+    RefPtr<AccessibilityObject> protector(this);
+
     if (Document* document = this->document()) {
         if (!document->view()->isInLayout())
             document->updateLayoutIgnorePendingStylesheets();
