@@ -1019,7 +1019,12 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
             terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
             return gpr;
         }
-        RELEASE_ASSERT(info.spillFormat() & DataFormatJS);
+        
+        if (!(info.spillFormat() & DataFormatJS)) {
+            terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
+            return gpr;
+        }
+        
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
         m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
 
