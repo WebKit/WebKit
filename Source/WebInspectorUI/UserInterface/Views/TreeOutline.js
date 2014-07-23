@@ -85,15 +85,8 @@ TreeOutline.prototype.appendChild = function(child)
     if (child.hasChildren && child.treeOutline._treeElementsExpandedState[child.identifier] !== undefined)
         child.expanded = child.treeOutline._treeElementsExpandedState[child.identifier];
 
-    if (!this._childrenListNode) {
-        this._childrenListNode = this.treeOutline._childrenListNode.ownerDocument.createElement("ol");
-        this._childrenListNode.parentTreeElement = this;
-        this._childrenListNode.classList.add("children");
-        if (this.hidden)
-            this._childrenListNode.classList.add("hidden");
-    }
-
-    child._attach();
+    if (this._childrenListNode)
+        child._attach();
 
     if (this.treeOutline.onadd)
         this.treeOutline.onadd(child);
@@ -141,15 +134,8 @@ TreeOutline.prototype.insertChild = function(child, index)
     if (child.hasChildren && child.treeOutline._treeElementsExpandedState[child.identifier] !== undefined)
         child.expanded = child.treeOutline._treeElementsExpandedState[child.identifier];
 
-    if (!this._childrenListNode) {
-        this._childrenListNode = this.treeOutline._childrenListNode.ownerDocument.createElement("ol");
-        this._childrenListNode.parentTreeElement = this;
-        this._childrenListNode.classList.add("children");
-        if (this.hidden)
-            this._childrenListNode.classList.add("hidden");
-    }
-
-    child._attach();
+    if (this._childrenListNode)
+        child._attach();
 
     if (this.treeOutline.onadd)
         this.treeOutline.onadd(child);
@@ -358,6 +344,7 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
         // again, to prevent infinite recursion.
         if (ancestors[i] === representedObject)
             continue;
+
         // FIXME: we could do something faster than findTreeElement since we will know the next
         // ancestor exists in the tree.
         item = this.findTreeElement(ancestors[i], isAncestor, getParent);

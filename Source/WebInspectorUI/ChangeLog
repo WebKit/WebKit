@@ -1,3 +1,23 @@
+2014-07-22  Dana Burkart  <dburkart@apple.com>
+
+        Merge r171227.
+
+    2014-07-18  Timothy Hatcher  <timothy@apple.com>
+
+            Revert r169735 since it broke Timeline, and fix bug 129696 in a more targeted way.
+
+            REGRESSION (r169735): Web Inspector: Timeline tree outline missing data until collapse-expand.
+            https://bugs.webkit.org/show_bug.cgi?id=134845
+
+            Reviewed by Joseph Pecoraro.
+
+            * UserInterface/Views/DOMTreeElement.js:
+            (WebInspector.DOMTreeElement.prototype.adjustCollapsedRange): Use button isteand of assuming
+            item.listItemElement will be ready to use. The listItemElement node is lazily created.
+            * UserInterface/Views/TreeOutline.js:
+            (TreeOutline.prototype.appendChild): Don't attach unless _childrenListNode exists.
+            (TreeOutline.prototype.insertChild): Ditto.
+
 2014-07-17  Timothy Hatcher  <timothy@apple.com>
 
         Make console.profile record to the Timeline.
