@@ -1,5 +1,16 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171228.
+
+    2014-07-18  Filip Pizlo  <fpizlo@apple.com>
+
+            Fix cloop build.
+
+            * jsc.cpp:
+            (jscmain):
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171213.
 
     2014-07-15  Filip Pizlo  <fpizlo@apple.com>
